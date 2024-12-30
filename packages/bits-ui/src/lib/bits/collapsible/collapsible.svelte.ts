@@ -2,9 +2,8 @@ import { afterTick, useRefById } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, BitsPointerEvent } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent } from "$lib/internal/types.js";
 
 const COLLAPSIBLE_ROOT_ATTR = "data-collapsible-root";
 const COLLAPSIBLE_CONTENT_ATTR = "data-collapsible-content";

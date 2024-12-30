@@ -1,17 +1,22 @@
-import { box, useRefById } from "svelte-toolbelt";
-import { useEventListener } from "runed";
+import { box, executeCallbacks, onMountEffect, useRefById } from "svelte-toolbelt";
 import { untrack } from "svelte";
-import { TOOLTIP_OPEN_EVENT } from "./utils.js";
+import { on } from "svelte/events";
+import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/use-timeout-fn.svelte.js";
-import { isElement, isFocusVisible } from "$lib/internal/is.js";
+import { isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
+import { CustomEventDispatcher } from "$lib/internal/events.js";
 
 const CONTENT_ATTR = "data-tooltip-content";
 const TRIGGER_ATTR = "data-tooltip-trigger";
+
+export const TooltipOpenEvent = new CustomEventDispatcher("bits.tooltip.open", {
+	bubbles: false,
+	cancelable: false,
+});
 
 type TooltipProviderStateProps = ReadableBoxedValues<{
 	delayDuration: number;
@@ -143,20 +148,18 @@ class TooltipRootState {
 			}
 		});
 
-		$effect(() => {
-			this.open.current;
-			untrack(() => {
+		watch(
+			() => this.open.current,
+			(isOpen) => {
 				if (!this.provider.onClose) return;
-				const isOpen = this.open.current;
 				if (isOpen) {
 					this.provider.onOpen();
-
-					document.dispatchEvent(new CustomEvent(TOOLTIP_OPEN_EVENT));
+					TooltipOpenEvent.dispatch(document);
 				} else {
 					this.provider.onClose();
 				}
-			});
-		});
+			}
+		);
 	}
 
 	handleOpen = () => {
@@ -310,8 +313,7 @@ class TooltipContentState {
 		});
 
 		$effect(() => {
-			if (!this.root.open.current) return;
-			if (this.root.disableHoverableContent) return;
+			if (!this.root.open.current || this.root.disableHoverableContent) return;
 			const { isPointerInTransit, onPointerExit } = useGraceArea(
 				() => this.root.triggerNode,
 				() => this.root.contentNode
@@ -323,17 +325,18 @@ class TooltipContentState {
 			});
 		});
 
-		$effect(() => {
-			useEventListener(window, "scroll", (e) => {
-				const target = e.target;
-				if (!isElement(target)) return;
-				if (target.contains(this.root.triggerNode)) {
-					this.root.handleClose();
-				}
-			});
-
-			useEventListener(window, TOOLTIP_OPEN_EVENT, this.root.handleClose);
-		});
+		onMountEffect(() =>
+			executeCallbacks(
+				on(window, "scroll", (e) => {
+					const target = e.target as HTMLElement | null;
+					if (!target) return;
+					if (target.contains(this.root.triggerNode)) {
+						this.root.handleClose();
+					}
+				}),
+				TooltipOpenEvent.listen(window, this.root.handleClose)
+			)
+		);
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
@@ -357,24 +360,21 @@ class TooltipContentState {
 // CONTEXT METHODS
 //
 
-const [setTooltipProviderContext, getTooltipProviderContext] =
-	createContext<TooltipProviderState>("Tooltip.Provider");
-
-const [setTooltipRootContext, getTooltipRootContext] =
-	createContext<TooltipRootState>("Tooltip.Root");
+const TooltipProviderContext = new Context<TooltipProviderState>("Tooltip.Provider");
+const TooltipRootContext = new Context<TooltipRootState>("Tooltip.Root");
 
 export function useTooltipProvider(props: TooltipProviderStateProps) {
-	return setTooltipProviderContext(new TooltipProviderState(props));
+	return TooltipProviderContext.set(new TooltipProviderState(props));
 }
 
 export function useTooltipRoot(props: TooltipRootStateProps) {
-	return setTooltipRootContext(new TooltipRootState(props, getTooltipProviderContext()));
+	return TooltipRootContext.set(new TooltipRootState(props, TooltipProviderContext.get()));
 }
 
 export function useTooltipTrigger(props: TooltipTriggerStateProps) {
-	return new TooltipTriggerState(props, getTooltipRootContext());
+	return new TooltipTriggerState(props, TooltipRootContext.get());
 }
 
 export function useTooltipContent(props: TooltipContentStateProps) {
-	return new TooltipContentState(props, getTooltipRootContext());
+	return new TooltipContentState(props, TooltipRootContext.get());
 }

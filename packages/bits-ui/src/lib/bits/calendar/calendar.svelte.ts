@@ -21,7 +21,6 @@ import {
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";

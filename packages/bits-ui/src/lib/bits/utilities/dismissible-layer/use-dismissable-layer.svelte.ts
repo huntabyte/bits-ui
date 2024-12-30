@@ -9,6 +9,8 @@ import {
 	onDestroyEffect,
 	useRefById,
 } from "svelte-toolbelt";
+import { watch } from "runed";
+import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -72,22 +74,19 @@ export class DismissibleLayerState {
 			unsubEvents();
 		};
 
-		$effect(() => {
-			if (this.#enabled.current && this.currNode) {
-				afterSleep(1, () => {
-					if (!this.currNode) return;
-					globalThis.bitsDismissableLayers.set(
-						this,
-						untrack(() => this.#behaviorType)
-					);
+		watch([() => this.#enabled.current, () => this.currNode], ([enabled, currNode]) => {
+			if (!enabled || !currNode) return;
+			afterSleep(1, () => {
+				if (!this.currNode) return;
+				globalThis.bitsDismissableLayers.set(
+					this,
+					untrack(() => this.#behaviorType)
+				);
 
-					unsubEvents();
-					unsubEvents = this.#addEventListeners();
-				});
-			}
-			return () => {
-				cleanup();
-			};
+				unsubEvents();
+				unsubEvents = this.#addEventListeners();
+			});
+			return cleanup;
 		});
 
 		onDestroyEffect(() => {
@@ -120,11 +119,11 @@ export class DismissibleLayerState {
 			 * to avoid checking if is responsible layer during interaction end
 			 * when a new floating element may have been opened.
 			 */
-			addEventListener(
+			on(
 				this.#documentObj,
 				"pointerdown",
 				executeCallbacks(this.#markInterceptedEvent, this.#markResponsibleLayer),
-				true
+				{ capture: true }
 			),
 
 			/**
@@ -132,7 +131,7 @@ export class DismissibleLayerState {
 			 * Mark interaction-start event as non-intercepted. Debounce `onInteractOutsideStart`
 			 * to avoid prematurely checking if other events were intercepted.
 			 */
-			addEventListener(
+			on(
 				this.#documentObj,
 				"pointerdown",
 				executeCallbacks(this.#markNonInterceptedEvent, this.#handleInteractOutside)
@@ -141,7 +140,7 @@ export class DismissibleLayerState {
 			/**
 			 * HANDLE FOCUS OUTSIDE
 			 */
-			addEventListener(this.#documentObj, "focusin", this.#handleFocus)
+			on(this.#documentObj, "focusin", this.#handleFocus)
 		);
 	}
 

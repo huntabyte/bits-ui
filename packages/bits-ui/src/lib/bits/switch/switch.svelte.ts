@@ -11,7 +11,6 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-switch-root";

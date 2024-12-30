@@ -20,7 +20,7 @@ import {
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createCustomEvent } from "$lib/internal/events.js";
+import { CustomEventDispatcher } from "$lib/internal/events.js";
 import type {
 	AnyFn,
 	BitsFocusEvent,
@@ -63,7 +63,7 @@ export type MenuRootStateProps = ReadableBoxedValues<{
 	onClose: AnyFn;
 };
 
-export const [dispatchMenuOpen, listenMenuOpen] = createCustomEvent("bitsmenuopen", {
+export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 	bubbles: false,
 	cancelable: true,
 });
@@ -230,7 +230,7 @@ class MenuContentState {
 						this.rovingFocusGroup.focusFirstCandidate();
 					});
 				};
-				return listenMenuOpen(contentNode, handler);
+				return MenuOpenEvent.listen(contentNode, handler);
 			}
 		);
 	}
@@ -645,7 +645,7 @@ class MenuSubTriggerState {
 			afterTick(() => {
 				const contentNode = this.#submenu.contentNode;
 				if (!contentNode) return;
-				dispatchMenuOpen(contentNode);
+				MenuOpenEvent.dispatch(contentNode);
 			});
 			e.preventDefault();
 		}

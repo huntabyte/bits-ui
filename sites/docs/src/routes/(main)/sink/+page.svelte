@@ -6,6 +6,7 @@
 	let open = $state(false);
 	let pointerdown = $state(false);
 
+	// @ts-expect-error - shh
 	function onOpenChange(value) {
 		if (pointerdown) {
 			return;

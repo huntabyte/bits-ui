@@ -13,7 +13,6 @@ import type {
 	SegmentPart,
 } from "$lib/shared/index.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";

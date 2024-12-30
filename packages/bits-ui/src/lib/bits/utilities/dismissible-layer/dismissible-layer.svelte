@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { DismissibleLayerImplProps } from "./types.js";
-	import { useDismissibleLayer } from "./useDismissibleLayer.svelte.js";
+	import { useDismissibleLayer } from "./use-dismissable-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {

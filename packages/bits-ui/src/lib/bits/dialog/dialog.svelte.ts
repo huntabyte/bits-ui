@@ -1,9 +1,7 @@
 import { useRefById } from "svelte-toolbelt";
-import type { KeyboardEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { Context } from "runed";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,

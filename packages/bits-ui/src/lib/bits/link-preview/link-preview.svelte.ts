@@ -1,14 +1,11 @@
-import { untrack } from "svelte";
 import { afterSleep, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { addEventListener } from "$lib/internal/events.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 
 const CONTENT_ATTR = "data-link-preview-content";

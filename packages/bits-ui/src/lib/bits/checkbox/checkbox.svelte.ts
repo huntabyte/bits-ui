@@ -5,7 +5,6 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 const CHECKBOX_ROOT_ATTR = "data-checkbox-root";
 const CHECKBOX_GROUP_ATTR = "data-checkbox-group";

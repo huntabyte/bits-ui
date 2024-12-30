@@ -4,7 +4,7 @@ import { watch } from "runed";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
 import { createEventHook } from "./create-event-hook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
-import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
+import type { Side } from "$lib/bits/utilities/floating-layer/use-floating-layer.svelte.js";
 
 export function useGraceArea(
 	getTriggerNode: Getter<HTMLElement | null>,

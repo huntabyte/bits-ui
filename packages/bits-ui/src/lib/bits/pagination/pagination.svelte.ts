@@ -8,7 +8,6 @@ import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { type Orientation, useId } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 const ROOT_ATTR = "data-pagination-root";
 const PAGE_ATTR = "data-pagination-page";

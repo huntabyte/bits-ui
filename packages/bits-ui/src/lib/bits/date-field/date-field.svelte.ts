@@ -22,7 +22,6 @@ import {
 } from "$lib/internal/attrs.js";
 import { isBrowser, isNumberString } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { useId } from "$lib/internal/use-id.js";
 import type {
 	DateAndTimeSegmentObj,

@@ -15,7 +15,6 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 const ACCORDION_ROOT_ATTR = "data-accordion-root";
 const ACCORDION_TRIGGER_ATTR = "data-accordion-trigger";
@@ -405,9 +404,8 @@ type InitAccordionProps = WithRefProps<
 	}>
 >;
 
-const AccordionRootContext = new Context<AccordionState>("Accordion.Root")
+const AccordionRootContext = new Context<AccordionState>("Accordion.Root");
 const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
-
 
 export function useAccordionRoot(props: InitAccordionProps) {
 	const { type, ...rest } = props;
@@ -419,7 +417,7 @@ export function useAccordionRoot(props: InitAccordionProps) {
 }
 
 export function useAccordionItem(props: Omit<AccordionItemStateProps, "rootState">) {
-	const rootState = AccordionRootContext.get()
+	const rootState = AccordionRootContext.get();
 	return AccordionItemContext.set(new AccordionItemState({ ...props, rootState }));
 }
 

@@ -25,7 +25,6 @@ import {
 	getDataSelected,
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {

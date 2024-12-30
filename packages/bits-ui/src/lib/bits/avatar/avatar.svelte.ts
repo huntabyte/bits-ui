@@ -3,7 +3,6 @@ import { type ReadableBox, type WritableBox, useRefById } from "svelte-toolbelt"
 import type { HTMLImgAttributes } from "svelte/elements";
 import { Context } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 

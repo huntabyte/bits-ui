@@ -1,4 +1,5 @@
 import { type WritableBox, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -13,7 +14,6 @@ import {
 	type UseRovingFocusReturn,
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-toggle-group-root";
@@ -245,12 +245,7 @@ function getToggleItemDataState(condition: boolean) {
 	return condition ? "on" : "off";
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setToggleGroupRootContext, getToggleGroupRootContext] =
-	createContext<ToggleGroupState>("ToggleGroup.Root");
+const ToggleGroupRootContext = new Context<ToggleGroupState>("ToggleGroup.Root");
 
 type InitToggleGroupProps = WithRefProps<
 	{
@@ -270,10 +265,9 @@ export function useToggleGroupRoot(props: InitToggleGroupProps) {
 		type === "single"
 			? new ToggleGroupSingleState(rest as ToggleGroupSingleStateProps)
 			: new ToggleGroupMultipleState(rest as ToggleGroupMultipleStateProps);
-	return setToggleGroupRootContext(rootState);
+	return ToggleGroupRootContext.set(rootState);
 }
 
 export function useToggleGroupItem(props: Omit<ToggleGroupItemStateProps, "rootState">) {
-	const rootState = getToggleGroupRootContext();
-	return new ToggleGroupItemState({ ...props, rootState });
+	return new ToggleGroupItemState({ ...props, rootState: ToggleGroupRootContext.get() });
 }
