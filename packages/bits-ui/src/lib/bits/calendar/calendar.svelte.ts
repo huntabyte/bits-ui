@@ -8,6 +8,7 @@ import {
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
 import { useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
@@ -943,70 +944,58 @@ export class CalendarHeaderState {
 	);
 }
 
-const [setCalendarRootContext, getCalendarRootContext] = createContext<CalendarRootState>(
-	["Calendar.Root", "RangeCalendar.Root"],
-	"Calendar.Root",
-	false
+export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
+	"Calendar.Root | RangeCalender.Root"
 );
 
-const [setCalendarCellContext, getCalendarCellContext] =
-	createContext<CalendarCellState>("Calendar.Cell");
+const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
 
 export function useCalendarRoot(props: CalendarRootStateProps) {
-	return setCalendarRootContext(new CalendarRootState(props));
+	return CalendarRootContext.set(new CalendarRootState(props));
 }
 
 export function useCalendarGrid(props: CalendarGridStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridState(props, root);
+	return new CalendarGridState(props, CalendarRootContext.get());
 }
 
 export function useCalendarCell(props: CalendarCellStateProps) {
-	const root = getCalendarRootContext();
-	return setCalendarCellContext(new CalendarCellState(props, root));
+	return CalendarCellContext.set(
+		new CalendarCellState(props, CalendarRootContext.get() as CalendarRootState)
+	);
 }
 
 export function useCalendarNextButton(props: CalendarNextButtonStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarNextButtonState(props, root);
+	return new CalendarNextButtonState(props, CalendarRootContext.get());
 }
 
 export function useCalendarPrevButton(props: CalendarPrevButtonStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarPrevButtonState(props, root);
+	return new CalendarPrevButtonState(props, CalendarRootContext.get());
 }
 
 export function useCalendarDay(props: CalendarDayStateProps) {
-	const cell = getCalendarCellContext();
-	return new CalendarDayState(props, cell);
+	return new CalendarDayState(props, CalendarCellContext.get());
 }
 
 export function useCalendarGridBody(props: CalendarGridBodyStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridBodyState(props, root);
+	return new CalendarGridBodyState(props, CalendarRootContext.get());
 }
 
 export function useCalendarGridHead(props: CalendarGridHeadStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridHeadState(props, root);
+	return new CalendarGridHeadState(props, CalendarRootContext.get());
 }
 
 export function useCalendarGridRow(props: CalendarGridRowStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridRowState(props, root);
+	return new CalendarGridRowState(props, CalendarRootContext.get());
 }
 
 export function useCalendarHeadCell(props: CalendarHeadCellStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarHeadCellState(props, root);
+	return new CalendarHeadCellState(props, CalendarRootContext.get());
 }
 
 export function useCalendarHeader(props: CalendarHeaderStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarHeaderState(props, root);
+	return new CalendarHeaderState(props, CalendarRootContext.get());
 }
 
 export function useCalendarHeading(props: CalendarHeadingStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarHeadingState(props, root);
+	return new CalendarHeadingState(props, CalendarRootContext.get());
 }

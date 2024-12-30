@@ -1,4 +1,5 @@
 import { useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -374,21 +375,16 @@ function getPageItems({ page = 1, totalPages, siblingCount = 1 }: GetPageItemsPr
 	return pageItems;
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setPaginationRootContext, getPaginationRootContext] =
-	createContext<PaginationRootState>("Pagination.Root");
+const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
 
 export function usePaginationRoot(props: PaginationRootStateProps) {
-	return setPaginationRootContext(new PaginationRootState(props));
+	return PaginationRootContext.set(new PaginationRootState(props));
 }
 
 export function usePaginationPage(props: PaginationPageStateProps) {
-	return new PaginationPageState(props, getPaginationRootContext());
+	return new PaginationPageState(props, PaginationRootContext.get());
 }
 
 export function usePaginationButton(props: PaginationButtonStateProps) {
-	return new PaginationButtonState(props, getPaginationRootContext());
+	return new PaginationButtonState(props, PaginationRootContext.get());
 }

@@ -5,6 +5,7 @@
 
 import { untrack } from "svelte";
 import { executeCallbacks, useRefById } from "svelte-toolbelt";
+import { on } from "svelte/events";
 import { getRangeStyles, getThumbStyles, getTickStyles } from "./helpers.js";
 import {
 	getAriaDisabled,
@@ -16,12 +17,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type {
-	BitsKeyboardEvent,
-	BitsPointerEvent,
-	OnChangeFn,
-	WithRefProps,
-} from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
 import { createContext } from "$lib/internal/create-context.js";
@@ -90,14 +86,12 @@ class SliderRootState {
 		});
 
 		$effect(() => {
-			const unsub = executeCallbacks(
-				addEventListener(document, "pointerdown", this.handlePointerDown),
-				addEventListener(document, "pointerup", this.handlePointerUp),
-				addEventListener(document, "pointermove", this.handlePointerMove),
-				addEventListener(document, "pointerleave", this.handlePointerUp)
+			return executeCallbacks(
+				on(document, "pointerdown", this.handlePointerDown),
+				on(document, "pointerup", this.handlePointerUp),
+				on(document, "pointermove", this.handlePointerMove),
+				on(document, "pointerleave", this.handlePointerUp)
 			);
-
-			return unsub;
 		});
 
 		$effect(() => {

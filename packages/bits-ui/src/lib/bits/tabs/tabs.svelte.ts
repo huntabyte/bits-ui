@@ -1,7 +1,6 @@
 import { untrack } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { useRefById } from "svelte-toolbelt";
-import type { FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from "svelte/elements";
 import type { TabsActivationMode } from "./types.js";
 import {
 	getAriaOrientation,

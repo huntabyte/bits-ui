@@ -1,8 +1,8 @@
-import { type ReadableBoxedValues, afterSleep, afterTick, useRefById } from "svelte-toolbelt";
+import { type ReadableBoxedValues, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -189,22 +189,20 @@ class PopoverCloseState {
 //
 // CONTEXT METHODS
 //
-
-const [setPopoverRootContext, getPopoverRootContext] =
-	createContext<PopoverRootState>("Popover.Root");
+const PopoverRootContext = new Context<PopoverRootState>("Popover.Root");
 
 export function usePopoverRoot(props: PopoverRootStateProps) {
-	return setPopoverRootContext(new PopoverRootState(props));
+	return PopoverRootContext.set(new PopoverRootState(props));
 }
 
 export function usePopoverTrigger(props: PopoverTriggerStateProps) {
-	return new PopoverTriggerState(props, getPopoverRootContext());
+	return new PopoverTriggerState(props, PopoverRootContext.get());
 }
 
 export function usePopoverContent(props: PopoverContentStateProps) {
-	return new PopoverContentState(props, getPopoverRootContext());
+	return new PopoverContentState(props, PopoverRootContext.get());
 }
 
 export function usePopoverClose(props: PopoverCloseStateProps) {
-	return new PopoverCloseState(props, getPopoverRootContext());
+	return new PopoverCloseState(props, PopoverRootContext.get());
 }

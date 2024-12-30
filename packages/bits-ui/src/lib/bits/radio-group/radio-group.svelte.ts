@@ -1,5 +1,5 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
-import type { FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from "svelte/elements";
+import { Context } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsFocusEvent,
@@ -13,7 +13,6 @@ import {
 	type UseRovingFocusReturn,
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
 
 const RADIO_GROUP_ROOT_ATTR = "data-radio-group-root";
@@ -199,21 +198,16 @@ class RadioGroupInputState {
 	}
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setRadioGroupRootContext, getRadioGroupRootContext] =
-	createContext<RadioGroupRootState>("RadioGroup.Root");
+const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
 
 export function useRadioGroupRoot(props: RadioGroupRootStateProps) {
-	return setRadioGroupRootContext(new RadioGroupRootState(props));
+	return RadioGroupRootContext.set(new RadioGroupRootState(props));
 }
 
 export function useRadioGroupItem(props: RadioGroupItemStateProps) {
-	return new RadioGroupItemState(props, getRadioGroupRootContext());
+	return new RadioGroupItemState(props, RadioGroupRootContext.get());
 }
 
 export function useRadioGroupInput() {
-	return new RadioGroupInputState(getRadioGroupRootContext());
+	return new RadioGroupInputState(RadioGroupRootContext.get());
 }

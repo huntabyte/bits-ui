@@ -1,6 +1,6 @@
 import { untrack } from "svelte";
 import { afterTick, box, useRefById } from "svelte-toolbelt";
-import { Previous } from "runed";
+import { Context, Previous } from "runed";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
@@ -12,7 +12,6 @@ import {
 	getDataOrientation,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { useId } from "$lib/internal/use-id.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
@@ -27,21 +26,15 @@ import type {
 import { noop } from "$lib/internal/noop.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 
-const [setNavigationMenuRootContext] =
-	createContext<NavigationMenuRootState>("NavigationMenu.Root");
-
-const [setNavigationMenuMenuContext, getNavigationMenuMenuContext] = createContext<
-	NavigationMenuMenuState | NavigationMenuSubState
->("NavigationMenu.Root or NavigationMenu.Sub");
-
-const [setNavigationMenuListContext, getNavigationMenuListContext] =
-	createContext<NavigationMenuListState>("NavigationMenu.List");
-
-const [setNavigationMenuItemContext, getNavigationMenuItemContext] =
-	createContext<NavigationMenuItemState>("NavigationMenu.Item");
-
-const [setNavigationMenuContentContext, getNavigationMenuContentContext] =
-	createContext<NavigationMenuContentState>("NavigationMenu.Content");
+const NavigationMenuRootContext = new Context<NavigationMenuRootState>("NavigationMenu.Root");
+const NavigationMenuMenuContext = new Context<NavigationMenuMenuState | NavigationMenuSubState>(
+	"NavigationMenu.Root | NavigationMenu.Sub"
+);
+const NavigationMenuListContext = new Context<NavigationMenuListState>("NavigationMenu.List");
+const NavigationMenuItemContext = new Context<NavigationMenuItemState>("NavigationMenu.Item");
+const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
+	"NavigationMenu.Content"
+);
 
 const ROOT_ATTR = "data-navigation-menu-root";
 const SUB_ATTR = "data-navigation-menu-sub";
@@ -1074,46 +1067,47 @@ export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 		rootState
 	);
 
-	setNavigationMenuMenuContext(menuState);
-	return setNavigationMenuRootContext(rootState);
+	NavigationMenuMenuContext.set(menuState);
+	return NavigationMenuRootContext.set(rootState);
 }
 
 export function useNavigationMenuList(props: NavigationMenuListStateProps) {
-	const menuState = getNavigationMenuMenuContext();
-	return setNavigationMenuListContext(new NavigationMenuListState(props, menuState));
+	return NavigationMenuListContext.set(
+		new NavigationMenuListState(props, NavigationMenuMenuContext.get())
+	);
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
-	const listState = getNavigationMenuListContext();
-	return setNavigationMenuItemContext(
+	const listState = NavigationMenuListContext.get();
+	return NavigationMenuItemContext.set(
 		new NavigationMenuItemState(props, listState, listState.menu)
 	);
 }
 
 export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps) {
-	return new NavigationMenuTriggerState(props, getNavigationMenuItemContext());
+	return new NavigationMenuTriggerState(props, NavigationMenuItemContext.get());
 }
 
 export function useNavigationMenuContent(props: NavigationMenuContentStateProps) {
-	return setNavigationMenuContentContext(
-		new NavigationMenuContentState(props, getNavigationMenuItemContext())
+	return NavigationMenuContentContext.set(
+		new NavigationMenuContentState(props, NavigationMenuItemContext.get())
 	);
 }
 
 export function useNavigationMenuViewport(props: NavigationMenuViewportStateProps) {
-	return new NavigationMenuViewportState(props, getNavigationMenuMenuContext());
+	return new NavigationMenuViewportState(props, NavigationMenuMenuContext.get());
 }
 
 export function useNavigationMenuIndicator(props: NavigationMenuIndicatorStateProps) {
-	return new NavigationMenuIndicatorState(props, getNavigationMenuMenuContext());
+	return new NavigationMenuIndicatorState(props, NavigationMenuMenuContext.get());
 }
 
 export function useNavigationMenuLink(props: NavigationMenuLinkStateProps) {
-	const content = getNavigationMenuContentContext(null);
+	const content = NavigationMenuContentContext.getOr(null);
 	if (content) {
 		return new NavigationMenuLinkState(props, content.item, content);
 	}
-	return new NavigationMenuLinkState(props, getNavigationMenuItemContext());
+	return new NavigationMenuLinkState(props, NavigationMenuItemContext.get());
 }
 
 /// Utils

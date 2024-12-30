@@ -1,3 +1,4 @@
+import { on } from "svelte/events";
 import type { Arrayable } from "$lib/internal/types.js";
 
 export type EventCallback<E extends Event = Event> = (event: E) => void;
@@ -76,8 +77,7 @@ export function createCustomEvent<T = unknown>(
 			callback(event as CustomEventType);
 		};
 
-		// @ts-expect-error shh
-		return addEventListener(element, eventName, handler);
+		return on(element, eventName, handler);
 	}
 
 	return [dispatch, listen] as const;

@@ -1,6 +1,7 @@
 import { untrack } from "svelte";
 import { type ReadableBox, type WritableBox, useRefById } from "svelte-toolbelt";
 import type { HTMLImgAttributes } from "svelte/elements";
+import { Context } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import { createContext } from "$lib/internal/create-context.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -175,22 +176,16 @@ class AvatarFallbackState {
 	);
 }
 
-/**
- * CONTEXT METHODS
- */
-
-const [setAvatarRootContext, getAvatarRootContext] = createContext<AvatarRootState>("Avatar.Root");
+const AvatarRootContext = new Context<AvatarRootState>("Avatar.Root");
 
 export function useAvatarRoot(props: AvatarRootStateProps) {
-	return setAvatarRootContext(new AvatarRootState(props));
+	return AvatarRootContext.set(new AvatarRootState(props));
 }
 
 export function useAvatarImage(props: AvatarImageStateProps) {
-	const root = getAvatarRootContext();
-	return new AvatarImageState(props, root);
+	return new AvatarImageState(props, AvatarRootContext.get());
 }
 
 export function useAvatarFallback(props: AvatarFallbackStateProps) {
-	const root = getAvatarRootContext();
-	return new AvatarFallbackState(props, root);
+	return new AvatarFallbackState(props, AvatarRootContext.get());
 }

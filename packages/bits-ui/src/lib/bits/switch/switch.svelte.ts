@@ -1,4 +1,5 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import {
 	getAriaChecked,
 	getAriaHidden,
@@ -143,20 +144,16 @@ class SwitchThumbState {
 	);
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setSwitchRootContext, getSwitchRootContext] = createContext<SwitchRootState>("Switch.Root");
+const SwitchRootContext = new Context<SwitchRootState>("Switch.Root");
 
 export function useSwitchRoot(props: SwitchRootStateProps) {
-	return setSwitchRootContext(new SwitchRootState(props));
+	return SwitchRootContext.set(new SwitchRootState(props));
 }
 
 export function useSwitchInput(): SwitchInputState {
-	return new SwitchInputState(getSwitchRootContext());
+	return new SwitchInputState(SwitchRootContext.get());
 }
 
 export function useSwitchThumb(props: SwitchThumbStateProps): SwitchThumbState {
-	return new SwitchThumbState(props, getSwitchRootContext());
+	return new SwitchThumbState(props, SwitchRootContext.get());
 }

@@ -1,6 +1,7 @@
 import type { DateValue } from "@internationalized/date";
 import { untrack } from "svelte";
 import { box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -296,23 +297,23 @@ type DateRangeFieldInputStateProps = WritableBoxedValues<{
 	}> &
 	WithRefProps;
 
-const [setDateRangeFieldRootContext, getDateRangeFieldRootContext] =
-	createContext<DateRangeFieldRootState>("DateRangeField.Root");
+export const DateRangeFieldRootContext = new Context<DateRangeFieldRootState>(
+	"DateRangeField.Root"
+);
 
 export function useDateRangeFieldRoot(props: DateRangeFieldRootStateProps) {
-	return setDateRangeFieldRootContext(new DateRangeFieldRootState(props));
+	return DateRangeFieldRootContext.set(new DateRangeFieldRootState(props));
 }
 
 export function useDateRangeFieldLabel(props: DateRangeFieldLabelStateProps) {
-	const root = getDateRangeFieldRootContext();
-	return new DateRangeFieldLabelState(props, root);
+	return new DateRangeFieldLabelState(props, DateRangeFieldRootContext.get());
 }
 
 export function useDateRangeFieldInput(
 	props: Omit<DateRangeFieldInputStateProps, "value">,
 	type: "start" | "end"
 ) {
-	const root = getDateRangeFieldRootContext();
+	const root = DateRangeFieldRootContext.get();
 	const fieldState = useDateFieldRoot(
 		{
 			value: type === "start" ? root.startValue : root.endValue,
@@ -337,5 +338,3 @@ export function useDateRangeFieldInput(
 
 	return new DateFieldInputState({ name: props.name, id: props.id, ref: props.ref }, fieldState);
 }
-
-export { getDateRangeFieldRootContext };

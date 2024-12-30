@@ -1,5 +1,7 @@
 import { untrack } from "svelte";
 import { afterSleep, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { Context, watch } from "runed";
+import { on } from "svelte/events";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
@@ -39,43 +41,45 @@ class LinkPreviewRootState {
 		this.openDelay = props.openDelay;
 		this.closeDelay = props.closeDelay;
 
-		$effect(() => {
-			if (!this.open.current) {
-				untrack(() => (this.hasSelection = false));
-				return;
+		watch(
+			() => this.open.current,
+			(isOpen) => {
+				if (!isOpen) {
+					this.hasSelection = false;
+					return;
+				}
+
+				const handlePointerUp = () => {
+					this.containsSelection = false;
+					this.isPointerDownOnContent = false;
+
+					afterSleep(1, () => {
+						const isSelection = document.getSelection()?.toString() !== "";
+
+						if (isSelection) {
+							this.hasSelection = true;
+						} else {
+							this.hasSelection = false;
+						}
+					});
+				};
+
+				const unsubListener = on(document, "pointerup", handlePointerUp);
+
+				if (!this.contentNode) return;
+				const tabCandidates = getTabbableCandidates(this.contentNode);
+
+				for (const candidate of tabCandidates) {
+					candidate.setAttribute("tabindex", "-1");
+				}
+
+				return () => {
+					unsubListener();
+					this.hasSelection = false;
+					this.isPointerDownOnContent = false;
+				};
 			}
-
-			const handlePointerUp = () => {
-				this.containsSelection = false;
-				this.isPointerDownOnContent = false;
-
-				afterSleep(1, () => {
-					const isSelection = document.getSelection()?.toString() !== "";
-
-					if (isSelection) {
-						this.hasSelection = true;
-					} else {
-						this.hasSelection = false;
-					}
-				});
-			};
-
-			const unsubListener = addEventListener(document, "pointerup", handlePointerUp);
-
-			const contentNode = untrack(() => this.contentNode);
-			if (!contentNode) return;
-			const tabCandidates = getTabbableCandidates(contentNode);
-
-			for (const candidate of tabCandidates) {
-				candidate.setAttribute("tabindex", "-1");
-			}
-
-			return () => {
-				unsubListener();
-				this.hasSelection = false;
-				this.isPointerDownOnContent = false;
-			};
-		});
+		);
 	}
 
 	clearTimeout() {
@@ -205,19 +209,22 @@ class LinkPreviewContentState {
 			deps: () => this.root.open.current,
 		});
 
-		$effect(() => {
-			if (!this.root.open.current) return;
-			const { isPointerInTransit, onPointerExit } = useGraceArea(
-				() => this.root.triggerNode,
-				() => this.#ref.current
-			);
+		watch(
+			() => this.root.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				const { isPointerInTransit, onPointerExit } = useGraceArea(
+					() => this.root.triggerNode,
+					() => this.#ref.current
+				);
 
-			this.root.isPointerInTransit = isPointerInTransit;
+				this.root.isPointerInTransit = isPointerInTransit;
 
-			onPointerExit(() => {
-				this.root.handleClose();
-			});
-		});
+				onPointerExit(() => {
+					this.root.handleClose();
+				});
+			}
+		);
 
 		onDestroyEffect(() => {
 			this.root.clearTimeout();
@@ -260,17 +267,16 @@ class LinkPreviewContentState {
 	);
 }
 
-const [setLinkPreviewRootContext, getLinkPreviewRootContext] =
-	createContext<LinkPreviewRootState>("LinkPreview.Root");
+const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
 
 export function useLinkPreviewRoot(props: LinkPreviewRootStateProps) {
-	return setLinkPreviewRootContext(new LinkPreviewRootState(props));
+	return LinkPreviewRootContext.set(new LinkPreviewRootState(props));
 }
 
 export function useLinkPreviewTrigger(props: LinkPreviewTriggerStateProps) {
-	return new LinkPreviewTriggerState(props, getLinkPreviewRootContext());
+	return new LinkPreviewTriggerState(props, LinkPreviewRootContext.get());
 }
 
 export function useLinkPreviewContent(props: LinkPreviewContentStateProps) {
-	return new LinkPreviewContentState(props, getLinkPreviewRootContext());
+	return new LinkPreviewContentState(props, LinkPreviewRootContext.get());
 }

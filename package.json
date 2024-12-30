@@ -28,15 +28,15 @@
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.8",
 		"prettier-plugin-tailwindcss": "0.5.13",
-		"svelte": "^5.1.16",
+		"svelte": "^5.16.0",
 		"svelte-eslint-parser": "^0.41.1",
 		"wrangler": "^3.87.0"
 	},
 	"type": "module",
 	"engines": {
-		"pnpm": ">=8.7.0",
+		"pnpm": ">=9.0.0",
 		"node": ">=18"
 	},
-	"packageManager": "pnpm@9.6.0",
+	"packageManager": "pnpm@9.14.4",
 	"private": true
 }

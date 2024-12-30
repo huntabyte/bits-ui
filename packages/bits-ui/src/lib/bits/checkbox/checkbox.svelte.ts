@@ -1,6 +1,6 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
 import type { HTMLButtonAttributes } from "svelte/elements";
-import { watch } from "runed";
+import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
@@ -282,40 +282,27 @@ class CheckboxInputState {
 	);
 }
 
-//
-// HELPERS
-//
-
 function getCheckboxDataState(checked: boolean, indeterminate: boolean) {
-	if (indeterminate) {
-		return "indeterminate";
-	}
+	if (indeterminate) return "indeterminate";
 	return checked ? "checked" : "unchecked";
 }
 
-//
-// CONTEXT METHODS
-//
+const CheckboxGroupContext = new Context<CheckboxGroupState>("Checkbox.Group");
 
-const [setCheckboxGroupContext, getCheckboxGroupContext] =
-	createContext<CheckboxGroupState>("Checkbox.Group");
-
-const [setCheckboxRootContext, getCheckboxRootContext] =
-	createContext<CheckboxRootState>("Checkbox.Root");
+const CheckboxRootContext = new Context<CheckboxRootState>("Checkbox.Root");
 
 export function useCheckboxGroup(props: CheckboxGroupStateProps) {
-	return setCheckboxGroupContext(new CheckboxGroupState(props));
+	return CheckboxGroupContext.set(new CheckboxGroupState(props));
 }
 
 export function useCheckboxRoot(props: CheckboxRootStateProps) {
-	return setCheckboxRootContext(new CheckboxRootState(props, getCheckboxGroupContext(null)));
+	return CheckboxRootContext.set(new CheckboxRootState(props, CheckboxGroupContext.getOr(null)));
 }
 
 export function useCheckboxGroupLabel(props: CheckboxGroupLabelStateProps) {
-	return new CheckboxGroupLabelState(props, getCheckboxGroupContext());
+	return new CheckboxGroupLabelState(props, CheckboxGroupContext.get());
 }
 
 export function useCheckboxInput(): CheckboxInputState {
-	const root = getCheckboxRootContext();
-	return new CheckboxInputState(root);
+	return new CheckboxInputState(CheckboxRootContext.get());
 }
