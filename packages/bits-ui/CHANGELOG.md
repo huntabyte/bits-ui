@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.75
+
+### Patch Changes
+
+-   fix: expose `updatePositionStrategy` prop for tooltip content ([#1026](https://github.com/huntabyte/bits-ui/pull/1026))
+
+-   cleanup internals, update Svelte ([#1024](https://github.com/huntabyte/bits-ui/pull/1024))
+
 ## 0.22.0
 
 ### Minor Changes
