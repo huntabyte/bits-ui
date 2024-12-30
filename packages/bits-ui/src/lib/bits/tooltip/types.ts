@@ -137,6 +137,7 @@ export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 		| "arrowPadding"
 		| "sticky"
 		| "hideWhenDetached"
+		| "updatePositionStrategy"
 		| "dir"
 	> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
