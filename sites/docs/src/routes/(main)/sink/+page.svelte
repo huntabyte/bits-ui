@@ -52,7 +52,7 @@
 							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Portal>
-							<Tooltip.Content>
+							<Tooltip.Content updatePositionStrategy="always">
 								<div class="tooltip-content">
 									{value[index]}
 								</div>
