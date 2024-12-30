@@ -59,17 +59,9 @@ class ToggleRootState {
 	);
 }
 
-//
-// METHODS
-//
-
 export function useToggleRoot(props: ToggleRootStateProps) {
 	return new ToggleRootState(props);
 }
-
-//
-// HELPERS
-//
 
 export function getToggleDataState(condition: boolean): "on" | "off" {
 	return condition ? "on" : "off";

@@ -976,7 +976,7 @@ describe("date field", () => {
  * object with functions that return the time segments if they exist, so they
  * can be used on an as-needed basis without invoking errors.
  */
-// eslint-disable-next-line ts/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getTimeSegments(getByTestId: (...args: any[]) => HTMLElement) {
 	return {
 		getHour: () => getByTestId("hour"),

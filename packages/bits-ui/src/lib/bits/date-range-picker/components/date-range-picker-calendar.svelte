@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateRangePickerCalendarProps } from "../types.js";
-	import { getDateRangePickerRootContext } from "../date-range-picker.svelte.js";
+	import { DateRangePickerRootContext } from "../date-range-picker.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { useRangeCalendarRoot } from "$lib/bits/range-calendar/range-calendar.svelte.js";
 
@@ -13,7 +13,7 @@
 		...restProps
 	}: DateRangePickerCalendarProps = $props();
 
-	const dateRangePickerRootState = getDateRangePickerRootContext();
+	const dateRangePickerRootState = DateRangePickerRootContext.get();
 
 	const rangeCalendarState = useRangeCalendarRoot({
 		id: box.with(() => id),

@@ -13,6 +13,7 @@
 		mounted: box.with(() => isMounted.current),
 	});
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const mergedProps = $derived(mergeProps(restProps, scrollbarYState.props)) as any;
 </script>
 

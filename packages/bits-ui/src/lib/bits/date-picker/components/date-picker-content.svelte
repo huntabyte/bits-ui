@@ -8,7 +8,7 @@
 
 	const mergedProps = $derived(
 		mergeProps({ onOpenAutoFocus }, { onOpenAutoFocus: pickerOpenFocus })
-	) as any;
+	);
 </script>
 
 <PopoverContent {...mergedProps} bind:ref {...restProps} />

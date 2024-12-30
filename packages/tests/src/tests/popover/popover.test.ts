@@ -75,7 +75,7 @@ describe("popover", () => {
 
 	it("should close on outside click by default", async () => {
 		const mockFn = vi.fn();
-		const { user, getContent, getByTestId } = await open({
+		const { user, getByTestId } = await open({
 			contentProps: {
 				onInteractOutside: mockFn,
 			},

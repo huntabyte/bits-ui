@@ -6,8 +6,8 @@ import {
 	onDestroyEffect,
 	useRefById,
 } from "svelte-toolbelt";
-import { tick, untrack } from "svelte";
-import { IsFocusWithin } from "runed";
+import { Context, IsFocusWithin, watch } from "runed";
+import { on } from "svelte/events";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -20,7 +20,7 @@ import {
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { addEventListener, createCustomEvent } from "$lib/internal/events.js";
+import { CustomEventDispatcher } from "$lib/internal/events.js";
 import type {
 	AnyFn,
 	BitsFocusEvent,
@@ -41,28 +41,18 @@ import {
 	getDataDisabled,
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { Direction } from "$lib/shared/index.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
-const [setMenuRootContext, getMenuRootContext] = createContext<MenuRootState>("Menu.Root");
-
-const [setMenuMenuContext, getMenuMenuContext] = createContext<MenuMenuState>(
-	["Menu.Root", "Menu.Sub"],
-	"MenuContext"
+const MenuRootContext = new Context<MenuRootState>("Menu.Root");
+const MenuMenuContext = new Context<MenuMenuState>("Menu.Root | Menu.Sub");
+const MenuContentContext = new Context<MenuContentState>("Menu.Content");
+const MenuGroupContext = new Context<MenuGroupState | MenuRadioGroupState>(
+	"Menu.Group | Menu.RadioGroup"
 );
-
-const [setMenuContentContext, getMenuContentContext] =
-	createContext<MenuContentState>("Menu.Content");
-
-const [setMenuGroupContext, getMenuGroupContext] = createContext<
-	MenuGroupState | MenuRadioGroupState
->("Menu.Group");
-
-const [setMenuRadioGroupContext, getMenuRadioGroupContext] =
-	createContext<MenuRadioGroupState>("Menu.RadioGroup");
+const MenuRadioGroupContext = new Context<MenuRadioGroupState>("Menu.RadioGroup");
 
 type MenuVariant = "context-menu" | "dropdown-menu" | "menubar";
 
@@ -73,7 +63,7 @@ export type MenuRootStateProps = ReadableBoxedValues<{
 	onClose: AnyFn;
 };
 
-export const [dispatchMenuOpen, listenMenuOpen] = createCustomEvent("bitsmenuopen", {
+export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 	bubbles: false,
 	cancelable: true,
 });
@@ -99,23 +89,19 @@ class MenuRootState {
 			const handleKeydown = (_: KeyboardEvent) => {
 				this.isUsingKeyboard = true;
 
-				const disposePointerDown = addEventListener(
-					document,
-					"pointerdown",
-					handlePointer,
-					{ capture: true, once: true }
-				);
-				const disposePointerMove = addEventListener(
-					document,
-					"pointermove",
-					handlePointer,
-					{ capture: true, once: true }
-				);
+				const disposePointerDown = on(document, "pointerdown", handlePointer, {
+					capture: true,
+					once: true,
+				});
+				const disposePointerMove = on(document, "pointermove", handlePointer, {
+					capture: true,
+					once: true,
+				});
 
 				callbacksToDispose.push(disposePointerDown, disposePointerMove);
 			};
 
-			const disposeKeydown = addEventListener(document, "keydown", handleKeydown, {
+			const disposeKeydown = on(document, "keydown", handleKeydown, {
 				capture: true,
 			});
 			callbacksToDispose.push(disposeKeydown);
@@ -149,12 +135,13 @@ class MenuMenuState {
 		this.parentMenu = parentMenu;
 
 		if (parentMenu) {
-			$effect(() => {
-				parentMenu.open;
-				untrack(() => {
-					if (!this.parentMenu?.open) this.open.current = false;
-				});
-			});
+			watch(
+				() => parentMenu.open,
+				(isOpen) => {
+					if (isOpen) return;
+					this.open.current = false;
+				}
+			);
 		}
 	}
 
@@ -233,17 +220,19 @@ class MenuContentState {
 			orientation: box.with(() => "vertical"),
 		});
 
-		$effect(() => {
-			const contentNode = this.parentMenu.contentNode;
-			if (!contentNode) return;
-			const handler = () => {
-				afterTick(() => {
-					if (!this.parentMenu.root.isUsingKeyboard) return;
-					this.rovingFocusGroup.focusFirstCandidate();
-				});
-			};
-			return listenMenuOpen(contentNode, handler);
-		});
+		watch(
+			() => this.parentMenu.contentNode,
+			(contentNode) => {
+				if (!contentNode) return;
+				const handler = () => {
+					afterTick(() => {
+						if (!this.parentMenu.root.isUsingKeyboard) return;
+						this.rovingFocusGroup.focusFirstCandidate();
+					});
+				};
+				return MenuOpenEvent.listen(contentNode, handler);
+			}
+		);
 	}
 
 	#getCandidateNodes() {
@@ -656,7 +645,7 @@ class MenuSubTriggerState {
 			afterTick(() => {
 				const contentNode = this.#submenu.contentNode;
 				if (!contentNode) return;
-				dispatchMenuOpen(contentNode);
+				MenuOpenEvent.dispatch(contentNode);
 			});
 			e.preventDefault();
 		}
@@ -897,7 +886,6 @@ type MenuRadioItemStateProps = ReadableBoxedValues<{
 class MenuRadioItemState {
 	#id: MenuRadioItemStateProps["id"];
 	#ref: MenuRadioItemStateProps["ref"];
-	#closeOnSelect: MenuRadioItemStateProps["closeOnSelect"];
 	#item: MenuItemState;
 	#value: MenuRadioItemStateProps["value"];
 	#group: MenuRadioGroupState;
@@ -909,7 +897,6 @@ class MenuRadioItemState {
 		this.#ref = props.ref;
 		this.#group = group;
 		this.#value = props.value;
-		this.#closeOnSelect = props.closeOnSelect;
 
 		useRefById({
 			id: this.#id,
@@ -1070,13 +1057,15 @@ class ContextMenuTriggerState {
 			deps: () => this.#parentMenu.open.current,
 		});
 
-		$effect(() => {
-			this.#point;
-			this.virtualElement.current = {
-				getBoundingClientRect: () =>
-					DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
-			};
-		});
+		watch(
+			() => this.#point,
+			(point) => {
+				this.virtualElement.current = {
+					getBoundingClientRect: () =>
+						DOMRect.fromRect({ width: 0, height: 0, ...point }),
+				};
+			}
+		);
 
 		$effect(() => {
 			if (this.#disabled.current) {
@@ -1084,11 +1073,7 @@ class ContextMenuTriggerState {
 			}
 		});
 
-		$effect(() => {
-			return () => {
-				this.#clearLongPressTimer();
-			};
-		});
+		onDestroyEffect(() => this.#clearLongPressTimer());
 	}
 
 	#clearLongPressTimer() {
@@ -1150,87 +1135,73 @@ class ContextMenuTriggerState {
 
 type MenuItemCombinedProps = MenuItemSharedStateProps & MenuItemStateProps;
 
-//
-// CONTEXT METHODS
-//
-
 export function useMenuRoot(props: MenuRootStateProps) {
-	return setMenuRootContext(new MenuRootState(props));
+	return MenuRootContext.set(new MenuRootState(props));
 }
 
 export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
-	const menu = new MenuMenuState(props, root);
-	return setMenuMenuContext(menu);
+	return MenuMenuContext.set(new MenuMenuState(props, root));
 }
 
 export function useMenuSubmenu(props: MenuMenuStateProps) {
-	const menu = getMenuMenuContext();
-	return setMenuMenuContext(new MenuMenuState(props, menu.root, menu));
+	const menu = MenuMenuContext.get();
+	return MenuMenuContext.set(new MenuMenuState(props, menu.root, menu));
 }
 
 export function useMenuSubTrigger(props: MenuItemSharedStateProps) {
-	const content = getMenuContentContext();
+	const content = MenuContentContext.get();
 	const item = new MenuItemSharedState(props, content);
-	const submenu = getMenuMenuContext();
+	const submenu = MenuMenuContext.get();
 	return new MenuSubTriggerState(item, content, submenu);
 }
 
 export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {
-	const menu = getMenuMenuContext();
-	return new DropdownMenuTriggerState(props, menu);
+	return new DropdownMenuTriggerState(props, MenuMenuContext.get());
 }
 
 export function useMenuContextTrigger(props: ContextMenuTriggerStateProps) {
-	const menu = getMenuMenuContext();
-	return new ContextMenuTriggerState(props, menu);
+	return new ContextMenuTriggerState(props, MenuMenuContext.get());
 }
 
 export function useMenuContent(props: MenuContentStateProps) {
-	const menu = getMenuMenuContext();
-	return setMenuContentContext(new MenuContentState(props, menu));
+	return MenuContentContext.set(new MenuContentState(props, MenuMenuContext.get()));
 }
 
 export function useMenuItem(props: MenuItemCombinedProps) {
-	const content = getMenuContentContext();
-	const item = new MenuItemSharedState(props, content);
+	const item = new MenuItemSharedState(props, MenuContentContext.get());
 	return new MenuItemState(props, item);
 }
 
 export function useMenuCheckboxItem(props: MenuItemCombinedProps & MenuCheckboxItemStateProps) {
-	const content = getMenuContentContext();
-	const item = new MenuItemState(props, new MenuItemSharedState(props, content));
+	const item = new MenuItemState(props, new MenuItemSharedState(props, MenuContentContext.get()));
 	return new MenuCheckboxItemState(props, item);
 }
 
 export function useMenuRadioGroup(props: MenuRadioGroupStateProps) {
-	const content = getMenuContentContext();
-	const radioGroup = new MenuRadioGroupState(props, content);
-	return setMenuGroupContext(setMenuRadioGroupContext(radioGroup));
+	return MenuGroupContext.set(
+		MenuRadioGroupContext.set(new MenuRadioGroupState(props, MenuContentContext.get()))
+	);
 }
 
 export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombinedProps) {
-	const radioGroup = getMenuRadioGroupContext();
+	const radioGroup = MenuRadioGroupContext.get();
 	const sharedItem = new MenuItemSharedState(props, radioGroup.content);
 	const item = new MenuItemState(props, sharedItem);
 	return new MenuRadioItemState(props, item, radioGroup);
 }
 
 export function useMenuGroup(props: MenuGroupStateProps) {
-	const root = getMenuRootContext();
-	return setMenuGroupContext(new MenuGroupState(props, root));
+	return MenuGroupContext.set(new MenuGroupState(props, MenuRootContext.get()));
 }
 
 export function useMenuGroupHeading(props: MenuGroupHeadingStateProps) {
-	const group = getMenuGroupContext();
-	return new MenuGroupHeadingState(props, group);
+	return new MenuGroupHeadingState(props, MenuGroupContext.get());
 }
 
 export function useMenuSeparator(props: MenuSeparatorStateProps) {
-	const root = getMenuRootContext();
-	return new MenuSeparatorState(props, root);
+	return new MenuSeparatorState(props, MenuRootContext.get());
 }
 
 export function useMenuArrow() {
-	const root = getMenuRootContext();
-	return new MenuArrowState(root);
+	return new MenuArrowState(MenuRootContext.get());
 }

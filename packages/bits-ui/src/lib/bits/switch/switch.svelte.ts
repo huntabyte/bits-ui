@@ -1,4 +1,5 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import {
 	getAriaChecked,
 	getAriaHidden,
@@ -10,7 +11,6 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-switch-root";
@@ -143,20 +143,16 @@ class SwitchThumbState {
 	);
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setSwitchRootContext, getSwitchRootContext] = createContext<SwitchRootState>("Switch.Root");
+const SwitchRootContext = new Context<SwitchRootState>("Switch.Root");
 
 export function useSwitchRoot(props: SwitchRootStateProps) {
-	return setSwitchRootContext(new SwitchRootState(props));
+	return SwitchRootContext.set(new SwitchRootState(props));
 }
 
 export function useSwitchInput(): SwitchInputState {
-	return new SwitchInputState(getSwitchRootContext());
+	return new SwitchInputState(SwitchRootContext.get());
 }
 
 export function useSwitchThumb(props: SwitchThumbStateProps): SwitchThumbState {
-	return new SwitchThumbState(props, getSwitchRootContext());
+	return new SwitchThumbState(props, SwitchRootContext.get());
 }

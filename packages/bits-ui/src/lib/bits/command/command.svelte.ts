@@ -1,9 +1,9 @@
 import { untrack } from "svelte";
 import { afterSleep, afterTick, srOnlyStyles, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import { commandScore } from "./command-score.js";
 import type { CommandState } from "./types.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -45,14 +45,11 @@ export function defaultFilter(value: string, search: string, keywords?: string[]
 	return commandScore(value, search, keywords);
 }
 
-const [setCommandRootContext, getCommandRootContext] =
-	createContext<CommandRootState>("Command.Root");
-
-const [setCommandListContext, getCommandListContext] =
-	createContext<CommandListState>("Command.List");
-
-export const [setCommandGroupContainerContext, getCommandGroupContainerContext] =
-	createContext<CommandGroupContainerState>("Command.Group");
+const CommandRootContext = new Context<CommandRootState>("Command.Root");
+const CommandListContext = new Context<CommandListState>("Command.List");
+export const CommandGroupContainerContext = new Context<CommandGroupContainerState>(
+	"Command.Group"
+);
 
 type CommandRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -67,9 +64,6 @@ type CommandRootStateProps = WithRefProps<
 			value: string;
 		}>
 >;
-
-// eslint-disable-next-line ts/no-explicit-any
-type SetState = <K extends keyof CommandState>(key: K, value: CommandState[K], opts?: any) => void;
 
 class CommandRootState {
 	#updateScheduled = false;
@@ -844,7 +838,7 @@ class CommandItemState {
 		this.#disabled = props.disabled;
 		this.#onSelectProp = props.onSelect;
 		this.#forceMount = props.forceMount;
-		this.#group = getCommandGroupContainerContext(null);
+		this.#group = CommandGroupContainerContext.getOr(null);
 		this.trueValue = props.value.current;
 
 		useRefById({
@@ -1118,37 +1112,33 @@ class CommandViewportState {
 }
 
 export function useCommandRoot(props: CommandRootStateProps) {
-	return setCommandRootContext(new CommandRootState(props));
+	return CommandRootContext.set(new CommandRootState(props));
 }
 
 export function useCommandEmpty(props: CommandEmptyStateProps) {
-	const root = getCommandRootContext();
-	return new CommandEmptyState(props, root);
+	return new CommandEmptyState(props, CommandRootContext.get());
 }
 
 export function useCommandItem(props: CommandItemStateProps) {
-	const root = getCommandRootContext();
-	return new CommandItemState(props, root);
+	return new CommandItemState(props, CommandRootContext.get());
 }
 
 export function useCommandGroupContainer(props: CommandGroupContainerStateProps) {
-	const root = getCommandRootContext();
-	return setCommandGroupContainerContext(new CommandGroupContainerState(props, root));
+	return CommandGroupContainerContext.set(
+		new CommandGroupContainerState(props, CommandRootContext.get())
+	);
 }
 
 export function useCommandGroupHeading(props: CommandGroupHeadingStateProps) {
-	const groupContainer = getCommandGroupContainerContext();
-	return new CommandGroupHeadingState(props, groupContainer);
+	return new CommandGroupHeadingState(props, CommandGroupContainerContext.get());
 }
 
 export function useCommandGroupItems(props: CommandGroupItemsStateProps) {
-	const groupContainer = getCommandGroupContainerContext();
-	return new CommandGroupItemsState(props, groupContainer);
+	return new CommandGroupItemsState(props, CommandGroupContainerContext.get());
 }
 
 export function useCommandInput(props: CommandInputStateProps) {
-	const root = getCommandRootContext();
-	return new CommandInputState(props, root);
+	return new CommandInputState(props, CommandRootContext.get());
 }
 
 export function useCommandLoading(props: CommandLoadingStateProps) {
@@ -1156,21 +1146,17 @@ export function useCommandLoading(props: CommandLoadingStateProps) {
 }
 
 export function useCommandSeparator(props: CommandSeparatorStateProps) {
-	const root = getCommandRootContext();
-	return new CommandSeparatorState(props, root);
+	return new CommandSeparatorState(props, CommandRootContext.get());
 }
 
 export function useCommandList(props: CommandListStateProps) {
-	const root = getCommandRootContext();
-	return setCommandListContext(new CommandListState(props, root));
+	return CommandListContext.set(new CommandListState(props, CommandRootContext.get()));
 }
 
 export function useCommandViewport(props: CommandViewportStateProps) {
-	const list = getCommandListContext();
-	return new CommandViewportState(props, list);
+	return new CommandViewportState(props, CommandListContext.get());
 }
 
 export function useCommandLabel(props: CommandLabelStateProps) {
-	const root = getCommandRootContext();
-	return new CommandLabelState(props, root);
+	return new CommandLabelState(props, CommandRootContext.get());
 }

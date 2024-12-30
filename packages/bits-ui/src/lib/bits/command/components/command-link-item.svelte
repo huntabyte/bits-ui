@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CommandLinkItemProps } from "../types.js";
-	import { getCommandGroupContainerContext, useCommandItem } from "../command.svelte.js";
+	import { CommandGroupContainerContext, useCommandItem } from "../command.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
 
@@ -18,7 +18,7 @@
 		...restProps
 	}: CommandLinkItemProps = $props();
 
-	const group = getCommandGroupContainerContext(null);
+	const group = CommandGroupContainerContext.getOr(null);
 
 	const itemState = useCommandItem({
 		id: box.with(() => id),

@@ -1,4 +1,3 @@
-import { untrack } from "svelte";
 import {
 	type Middleware,
 	type Placement,
@@ -12,7 +11,7 @@ import {
 	size,
 } from "@floating-ui/dom";
 import { box, cssToStyleObj, styleToString, useRefById } from "svelte-toolbelt";
-import { ElementSize } from "runed";
+import { Context, ElementSize, watch } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { useId } from "$lib/internal/use-id.js";
@@ -20,7 +19,6 @@ import type { Box, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -266,12 +264,12 @@ class FloatingContentState {
 			this.root.customAnchorNode.current = props.customAnchor.current;
 		}
 
-		$effect(() => {
-			props.customAnchor.current;
-			untrack(() => {
-				this.root.customAnchorNode.current = props.customAnchor.current;
-			});
-		});
+		watch(
+			() => props.customAnchor.current,
+			(customAnchor) => {
+				this.root.customAnchorNode.current = customAnchor;
+			}
+		);
 
 		useRefById({
 			id: this.wrapperId,
@@ -304,14 +302,13 @@ class FloatingContentState {
 			this.onPlaced?.current();
 		});
 
-		$effect(() => {
-			const contentNode = this.contentRef.current;
-			if (!contentNode) return;
-
-			untrack(() => {
+		watch(
+			() => this.contentRef.current,
+			(contentNode) => {
+				if (!contentNode) return;
 				this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
-			});
-		});
+			}
+		);
 
 		$effect(() => {
 			this.floating.floating.current = this.wrapperRef.current;
@@ -374,30 +371,23 @@ class FloatingAnchorState {
 	}
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setFloatingRootContext, getFloatingRootContext] =
-	createContext<FloatingRootState>("Floating.Root");
-
-const [setFloatingContentContext, getFloatingContentContext] =
-	createContext<FloatingContentState>("Floating.Content");
+const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");
+const FloatingContentContext = new Context<FloatingContentState>("Floating.Content");
 
 export function useFloatingRootState() {
-	return setFloatingRootContext(new FloatingRootState());
+	return FloatingRootContext.set(new FloatingRootState());
 }
 
 export function useFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
-	return setFloatingContentContext(new FloatingContentState(props, getFloatingRootContext()));
+	return FloatingContentContext.set(new FloatingContentState(props, FloatingRootContext.get()));
 }
 
 export function useFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
-	return new FloatingArrowState(props, getFloatingContentContext());
+	return new FloatingArrowState(props, FloatingContentContext.get());
 }
 
 export function useFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
-	return new FloatingAnchorState(props, getFloatingRootContext());
+	return new FloatingAnchorState(props, FloatingRootContext.get());
 }
 
 //

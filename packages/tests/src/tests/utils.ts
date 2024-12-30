@@ -117,5 +117,5 @@ export async function fireFocus(node: HTMLElement) {
 	await sleep(20);
 }
 
-// eslint-disable-next-line ts/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyFn = (...args: any[]) => any;

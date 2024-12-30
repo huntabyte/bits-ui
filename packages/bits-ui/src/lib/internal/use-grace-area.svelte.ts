@@ -1,9 +1,10 @@
 import { type Getter, executeCallbacks } from "svelte-toolbelt";
+import { on } from "svelte/events";
+import { watch } from "runed";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
 import { createEventHook } from "./create-event-hook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
-import { addEventListener } from "./events.js";
-import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
+import type { Side } from "$lib/bits/utilities/floating-layer/use-floating-layer.svelte.js";
 
 export function useGraceArea(
 	getTriggerNode: Getter<HTMLElement | null>,
@@ -33,9 +34,8 @@ export function useGraceArea(
 		isPointerInTransit.current = true;
 	}
 
-	$effect(() => {
+	watch([() => triggerNode, () => contentNode], ([triggerNode, contentNode]) => {
 		if (!triggerNode || !contentNode) return;
-
 		const handleTriggerLeave = (e: PointerEvent) => {
 			handleCreateGraceArea(e, contentNode!);
 		};
@@ -44,34 +44,38 @@ export function useGraceArea(
 			handleCreateGraceArea(e, triggerNode!);
 		};
 
-		const unsub = executeCallbacks(
-			addEventListener(triggerNode, "pointerleave", handleTriggerLeave),
-			addEventListener(contentNode, "pointerleave", handleContentLeave)
+		return executeCallbacks(
+			on(triggerNode, "pointerleave", handleTriggerLeave),
+			on(contentNode, "pointerleave", handleContentLeave)
 		);
-		return unsub;
 	});
 
-	$effect(() => {
-		if (!pointerGraceArea) return;
+	watch(
+		() => pointerGraceArea,
+		(pointerGraceArea) => {
+			const handleTrackPointerGrace = (e: PointerEvent) => {
+				if (!pointerGraceArea) return;
+				const target = e.target;
+				if (!isElement(target)) return;
+				const pointerPosition = { x: e.clientX, y: e.clientY };
+				const hasEnteredTarget =
+					triggerNode?.contains(target) || contentNode?.contains(target);
+				const isPointerOutsideGraceArea = !isPointInPolygon(
+					pointerPosition,
+					pointerGraceArea
+				);
 
-		function handleTrackPointerGrace(e: PointerEvent) {
-			if (!pointerGraceArea) return;
-			const target = e.target;
-			if (!isElement(target)) return;
-			const pointerPosition = { x: e.clientX, y: e.clientY };
-			const hasEnteredTarget = triggerNode?.contains(target) || contentNode?.contains(target);
-			const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);
+				if (hasEnteredTarget) {
+					handleRemoveGraceArea();
+				} else if (isPointerOutsideGraceArea) {
+					handleRemoveGraceArea();
+					pointerExit.trigger();
+				}
+			};
 
-			if (hasEnteredTarget) {
-				handleRemoveGraceArea();
-			} else if (isPointerOutsideGraceArea) {
-				handleRemoveGraceArea();
-				pointerExit.trigger();
-			}
+			return on(document, "pointermove", handleTrackPointerGrace);
 		}
-
-		return addEventListener(document, "pointermove", handleTrackPointerGrace);
-	});
+	);
 
 	return {
 		isPointerInTransit,

@@ -1,6 +1,12 @@
-import { Previous } from "runed";
-import { untrack } from "svelte";
-import { afterTick, srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { Context, Previous, watch } from "runed";
+import {
+	afterTick,
+	onDestroyEffect,
+	srOnlyStyles,
+	styleToString,
+	useRefById,
+} from "svelte-toolbelt";
+import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
 	getAriaExpanded,
@@ -11,7 +17,6 @@ import {
 	getRequired,
 } from "$lib/internal/attrs.js";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
 	BitsEvent,
@@ -22,7 +27,6 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { addEventListener } from "$lib/internal/events.js";
 import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
 
@@ -191,12 +195,15 @@ class SelectSingleRootState extends SelectBaseRootState {
 			}
 		});
 
-		$effect(() => {
-			if (!this.open.current) return;
-			afterTick(() => {
-				this.setInitialHighlightedNode();
-			});
-		});
+		watch(
+			() => this.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				afterTick(() => {
+					this.setInitialHighlightedNode();
+				});
+			}
+		);
 	}
 
 	includesItem(itemValue: string) {
@@ -238,14 +245,17 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		super(props);
 		this.value = props.value;
 
-		$effect(() => {
-			if (!this.open.current) return;
-			afterTick(() => {
-				if (!this.highlightedNode) {
-					this.setInitialHighlightedNode();
-				}
-			});
-		});
+		watch(
+			() => this.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				afterTick(() => {
+					if (!this.highlightedNode) {
+						this.setInitialHighlightedNode();
+					}
+				});
+			}
+		);
 	}
 
 	includesItem(itemValue: string) {
@@ -745,17 +755,15 @@ class SelectContentState {
 			deps: () => this.root.open.current,
 		});
 
-		$effect(() => {
-			return () => {
-				this.root.contentNode = null;
-			};
-		});
+		onDestroyEffect(() => (this.root.contentNode = null));
 
-		$effect(() => {
-			if (this.root.open.current === false) {
+		watch(
+			() => this.root.open.current,
+			(isOpen) => {
+				if (isOpen) return;
 				this.isPositioned = false;
 			}
-		});
+		);
 
 		this.onpointermove = this.onpointermove.bind(this);
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
@@ -861,10 +869,14 @@ class SelectItemState {
 			ref: this.#ref,
 		});
 
-		$effect(() => {
-			if (!this.mounted) return;
-			untrack(() => this.root.setInitialHighlightedNode());
-		});
+		watch(
+			() => this.mounted,
+			(isMounted) => {
+				if (!isMounted) return;
+				this.root.setInitialHighlightedNode();
+			}
+		);
+
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1099,11 +1111,14 @@ class SelectScrollButtonImplState {
 			deps: () => this.mounted.current,
 		});
 
-		$effect(() => {
-			if (!this.mounted.current) return;
-			const activeItem = untrack(() => this.root.highlightedNode);
-			activeItem?.scrollIntoView({ block: "nearest" });
-		});
+		watch(
+			() => this.mounted.current,
+			(isMounted) => {
+				if (!isMounted) return;
+				const activeItem = this.root.highlightedNode;
+				activeItem?.scrollIntoView({ block: "nearest" });
+			}
+		);
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1161,32 +1176,27 @@ class SelectScrollDownButtonState {
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
-		$effect(() => {
-			const viewport = this.content.viewportNode;
-			const isPositioned = this.content.isPositioned;
-			if (!viewport || !isPositioned) return;
+		watch(
+			[() => this.content.viewportNode, () => this.content.isPositioned],
+			([viewportNode, isPositioned]) => {
+				if (!viewportNode || !isPositioned) return;
 
-			let cleanup = noop;
-
-			untrack(() => {
 				const handleScroll = () => {
 					afterTick(() => {
-						const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+						const maxScroll = viewportNode.scrollHeight - viewportNode.clientHeight;
 						const paddingTop = Number.parseInt(
-							getComputedStyle(viewport).paddingTop,
+							getComputedStyle(viewportNode).paddingTop,
 							10
 						);
 
-						this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
+						this.canScrollDown =
+							Math.ceil(viewportNode.scrollTop) < maxScroll - paddingTop;
 					});
 				};
 				handleScroll();
-
-				cleanup = addEventListener(viewport, "scroll", handleScroll);
-			});
-
-			return cleanup;
-		});
+				return on(viewportNode, "scroll", handleScroll);
+			}
+		);
 
 		$effect(() => {
 			if (this.state.mounted.current) return;
@@ -1220,25 +1230,22 @@ class SelectScrollUpButtonState {
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
-		$effect(() => {
-			const viewport = this.content.viewportNode;
-			const isPositioned = this.content.isPositioned;
-			if (!viewport || !isPositioned) return;
+		watch(
+			[() => this.content.viewportNode, () => this.content.isPositioned],
+			([viewportNode, isPositioned]) => {
+				if (!viewportNode || !isPositioned) return;
 
-			let cleanup = noop;
-
-			untrack(() => {
 				const handleScroll = () => {
-					const paddingTop = Number.parseInt(getComputedStyle(viewport).paddingTop, 10);
-					this.canScrollUp = viewport.scrollTop - paddingTop > 0;
+					const paddingTop = Number.parseInt(
+						getComputedStyle(viewportNode).paddingTop,
+						10
+					);
+					this.canScrollUp = viewportNode.scrollTop - paddingTop > 0;
 				};
 				handleScroll();
-
-				cleanup = addEventListener(viewport, "scroll", handleScroll);
-			});
-
-			return cleanup;
-		});
+				return on(viewportNode, "scroll", handleScroll);
+			}
+		);
 
 		$effect(() => {
 			if (this.state.mounted.current) return;
@@ -1278,20 +1285,9 @@ type InitSelectProps = {
 		isCombobox: boolean;
 	};
 
-const [setSelectRootContext, getSelectRootContext] = createContext<SelectRootState>([
-	"Select.Root",
-	"Combobox.Root",
-]);
-
-const [setSelectGroupContext, getSelectGroupContext] = createContext<SelectGroupState>([
-	"Select.Group",
-	"Combobox.Group",
-]);
-
-const [setSelectContentContext, getSelectContentContext] = createContext<SelectContentState>([
-	"Select.Content",
-	"Combobox.Content",
-]);
+const SelectRootContext = new Context<SelectRootState>("Select.Root | Combobox.Root");
+const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobox.Group");
+const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
 
 export function useSelectRoot(props: InitSelectProps) {
 	const { type, ...rest } = props;
@@ -1301,55 +1297,55 @@ export function useSelectRoot(props: InitSelectProps) {
 			? new SelectSingleRootState(rest as SelectSingleRootStateProps)
 			: new SelectMultipleRootState(rest as SelectMultipleRootStateProps);
 
-	return setSelectRootContext(rootState);
+	return SelectRootContext.set(rootState);
 }
 
 export function useSelectInput(props: SelectInputStateProps) {
-	return new SelectInputState(props, getSelectRootContext());
+	return new SelectInputState(props, SelectRootContext.get());
 }
 
 export function useSelectContent(props: SelectContentStateProps) {
-	return setSelectContentContext(new SelectContentState(props, getSelectRootContext()));
+	return SelectContentContext.set(new SelectContentState(props, SelectRootContext.get()));
 }
 
 export function useSelectTrigger(props: SelectTriggerStateProps) {
-	return new SelectTriggerState(props, getSelectRootContext());
+	return new SelectTriggerState(props, SelectRootContext.get());
 }
 
 export function useSelectComboTrigger(props: SelectComboTriggerStateProps) {
-	return new SelectComboTriggerState(props, getSelectRootContext());
+	return new SelectComboTriggerState(props, SelectRootContext.get());
 }
 
 export function useSelectItem(props: SelectItemStateProps) {
-	return new SelectItemState(props, getSelectRootContext());
+	return new SelectItemState(props, SelectRootContext.get());
 }
 
 export function useSelectViewport(props: SelectViewportStateProps) {
-	return new SelectViewportState(props, getSelectContentContext());
+	return new SelectViewportState(props, SelectContentContext.get());
 }
 
 export function useSelectScrollUpButton(props: SelectScrollButtonImplStateProps) {
 	return new SelectScrollUpButtonState(
-		new SelectScrollButtonImplState(props, getSelectContentContext())
+		new SelectScrollButtonImplState(props, SelectContentContext.get())
 	);
 }
 
 export function useSelectScrollDownButton(props: SelectScrollButtonImplStateProps) {
 	return new SelectScrollDownButtonState(
-		new SelectScrollButtonImplState(props, getSelectContentContext())
+		new SelectScrollButtonImplState(props, SelectContentContext.get())
 	);
 }
 
 export function useSelectGroup(props: SelectGroupStateProps) {
-	return setSelectGroupContext(new SelectGroupState(props, getSelectRootContext()));
+	return SelectGroupContext.set(new SelectGroupState(props, SelectRootContext.get()));
 }
 
 export function useSelectGroupHeading(props: SelectGroupHeadingStateProps) {
-	return new SelectGroupHeadingState(props, getSelectGroupContext());
+	return new SelectGroupHeadingState(props, SelectGroupContext.get());
 }
 
 export function useSelectHiddenInput(props: SelectHiddenInputStateProps) {
-	return new SelectHiddenInputState(props, getSelectRootContext());
+	return new SelectHiddenInputState(props, SelectRootContext.get());
 }
 
 ////////////////////////////////////

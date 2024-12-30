@@ -51,7 +51,7 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			 * A callback function that is called when the input is completely filled.
 			 *
 			 */
-			// eslint-disable-next-line ts/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			onComplete?: (...args: any[]) => void;
 
 			/**

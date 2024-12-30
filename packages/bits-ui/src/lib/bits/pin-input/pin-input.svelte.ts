@@ -29,11 +29,11 @@ type PinInputRootStateProps = WithRefProps<
 		ReadableBoxedValues<{
 			inputId: string;
 			disabled: boolean;
-			// eslint-disable-next-line ts/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			onComplete: (...args: any[]) => void;
 			onPaste?: (text: string) => string;
 
-			// eslint-disable-next-line ts/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			pattern: any;
 			maxLength: number;
 			pushPasswordManagerStrategy: "increase-width" | "none";
@@ -586,7 +586,7 @@ class PinInputCellState {
 	);
 }
 
-// eslint-disable-next-line ts/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function syncTimeouts(cb: (...args: any[]) => unknown): number[] {
 	const t1 = setTimeout(cb, 0); // For faster machines
 	const t2 = setTimeout(cb, 1_0);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it } from "vitest";
 import { getDirectionalKeys } from "./get-directional-keys.js";
 import { kbd } from "./kbd.js";
@@ -36,9 +37,7 @@ describe("getDirectionalKeys", () => {
 	});
 
 	it("should handle invalid direction and orientation values", () => {
-		// eslint-disable-next-line ts/no-explicit-any
 		const result1 = getDirectionalKeys("invalid" as any, "horizontal");
-		// eslint-disable-next-line ts/no-explicit-any
 		const result2 = getDirectionalKeys("ltr", "invalid" as any);
 		expect(result1).toEqual({
 			nextKey: kbd.ARROW_RIGHT,

@@ -1,6 +1,6 @@
 import type { DateValue } from "@internationalized/date";
+import { Context } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { DateMatcher, SegmentPart } from "$lib/shared/index.js";
 import type { Granularity, HourCycle, WeekStartsOn } from "$lib/shared/date/types.js";
 
@@ -38,9 +38,8 @@ class DatePickerRootState {
 	constructor(readonly props: DatePickerRootStateProps) {}
 }
 
-export const [setDatePickerRootContext, getDatePickerRootContext] =
-	createContext<DatePickerRootState>("DatePicker.Root");
+export const DatePickerRootContext = new Context<DatePickerRootState>("DatePicker.Root");
 
 export function useDatePickerRoot(props: DatePickerRootStateProps) {
-	return setDatePickerRootContext(new DatePickerRootState(props));
+	return DatePickerRootContext.set(new DatePickerRootState(props));
 }

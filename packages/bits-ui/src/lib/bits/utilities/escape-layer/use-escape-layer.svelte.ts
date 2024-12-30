@@ -1,8 +1,9 @@
-import { untrack } from "svelte";
 import type { ReadableBox } from "svelte-toolbelt";
+import { watch } from "runed";
+import { on } from "svelte/events";
 import type { EscapeBehaviorType, EscapeLayerImplProps } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import { type EventCallback, addEventListener } from "$lib/internal/events.js";
+import type { EventCallback } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { noop } from "$lib/internal/noop.js";
 
@@ -21,25 +22,24 @@ export class EscapeLayerState {
 		this.#enabled = props.enabled;
 
 		let unsubEvents = noop;
+		watch(
+			() => this.#enabled.current,
+			(enabled) => {
+				if (enabled) {
+					globalThis.bitsEscapeLayers.set(this, this.#behaviorType);
+					unsubEvents = this.#addEventListener();
+				}
 
-		$effect(() => {
-			if (this.#enabled.current) {
-				globalThis.bitsEscapeLayers.set(
-					this,
-					untrack(() => this.#behaviorType)
-				);
-				unsubEvents = this.#addEventListener();
+				return () => {
+					unsubEvents();
+					globalThis.bitsEscapeLayers.delete(this);
+				};
 			}
-
-			return () => {
-				unsubEvents();
-				globalThis.bitsEscapeLayers.delete(this);
-			};
-		});
+		);
 	}
 
 	#addEventListener = () => {
-		return addEventListener(document, "keydown", this.#onkeydown, { passive: false });
+		return on(document, "keydown", this.#onkeydown, { passive: false });
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {

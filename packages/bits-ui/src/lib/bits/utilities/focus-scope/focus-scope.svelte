@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { FocusScopeImplProps } from "./types.js";
-	import { useFocusScope } from "./useFocusScope.svelte.js";
+	import { useFocusScope } from "./use-focus-scope.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {

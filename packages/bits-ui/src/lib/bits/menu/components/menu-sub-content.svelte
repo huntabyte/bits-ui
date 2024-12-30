@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
-	import { dispatchMenuOpen, useMenuContent } from "../menu.svelte.js";
+	import { MenuOpenEvent, useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -72,7 +72,7 @@
 			subContentState.parentMenu.root.isUsingKeyboard &&
 			subContentState.parentMenu.contentNode
 		) {
-			dispatchMenuOpen(subContentState.parentMenu.contentNode);
+			MenuOpenEvent.dispatch(subContentState.parentMenu.contentNode);
 		}
 	}
 

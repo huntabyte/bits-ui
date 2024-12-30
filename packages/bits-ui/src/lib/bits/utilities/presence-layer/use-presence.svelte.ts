@@ -1,6 +1,6 @@
-import { type ReadableBox, afterTick } from "svelte-toolbelt";
-import { Previous } from "runed";
-import { untrack } from "svelte";
+import { type ReadableBox, afterTick, executeCallbacks } from "svelte-toolbelt";
+import { Previous, watch } from "runed";
+import { on } from "svelte/events";
 import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 
 export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
@@ -10,12 +10,10 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 	let node = $state<HTMLElement | null>(null);
 	const prevPresent = new Previous(() => present.current);
 
-	$effect(() => {
-		if (!id.current) return;
-		if (!present.current) return;
-
+	watch([() => id.current, () => present.current], ([id, present]) => {
+		if (!id || !present) return;
 		afterTick(() => {
-			node = document.getElementById(id.current);
+			node = document.getElementById(id);
 		});
 	});
 
@@ -33,9 +31,9 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 		},
 	});
 
-	$effect(() => {
-		const currPresent = present.current;
-		untrack(() => {
+	watch(
+		() => present.current,
+		(currPresent) => {
 			if (!node) {
 				node = document.getElementById(id.current);
 			}
@@ -67,8 +65,8 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 					dispatch("UNMOUNT");
 				}
 			}
-		});
-	});
+		}
+	);
 
 	/**
 	 * Triggering an ANIMATION_OUT during an ANIMATION_IN will fire an `animationcancel`
@@ -77,9 +75,7 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 	 */
 
 	function handleAnimationEnd(event: AnimationEvent) {
-		if (!node) {
-			node = document.getElementById(id.current);
-		}
+		if (!node) node = document.getElementById(id.current);
 		if (!node) return;
 		const currAnimationName = getAnimationName(node);
 		const isCurrentAnimation =
@@ -91,41 +87,36 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 	}
 
 	function handleAnimationStart(event: AnimationEvent) {
-		if (!node) {
-			node = document.getElementById(id.current);
-		}
+		if (!node) node = document.getElementById(id.current);
 		if (!node) return;
 		if (event.target === node) {
 			prevAnimationNameState = getAnimationName(node);
 		}
 	}
 
-	$effect(() => {
-		state.current;
-		untrack(() => {
-			if (!node) {
-				node = document.getElementById(id.current);
-			}
+	watch(
+		() => state.current,
+		() => {
+			if (!node) node = document.getElementById(id.current);
 			if (!node) return;
 			const currAnimationName = getAnimationName(node);
 			prevAnimationNameState = state.current === "mounted" ? currAnimationName : "none";
-		});
-	});
+		}
+	);
 
-	$effect(() => {
-		if (!node) return;
+	watch(
+		() => node,
+		(node) => {
+			if (!node) return;
+			styles = getComputedStyle(node);
 
-		styles = getComputedStyle(node);
-		node.addEventListener("animationstart", handleAnimationStart);
-		node.addEventListener("animationcancel", handleAnimationEnd);
-		node.addEventListener("animationend", handleAnimationEnd);
-
-		return () => {
-			node?.removeEventListener("animationstart", handleAnimationStart);
-			node?.removeEventListener("animationcancel", handleAnimationEnd);
-			node?.removeEventListener("animationend", handleAnimationEnd);
-		};
-	});
+			return executeCallbacks(
+				on(node, "animationstart", handleAnimationStart),
+				on(node, "animationcancel", handleAnimationEnd),
+				on(node, "animationend", handleAnimationEnd)
+			);
+		}
+	);
 
 	const isPresentDerived = $derived(["mounted", "unmountSuspended"].includes(state.current));
 

@@ -87,14 +87,14 @@ vi.mock("$app/stores", (): typeof stores => {
 	};
 });
 
-// eslint-disable-next-line ts/no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 globalThis.ResizeObserver = require("resize-observer-polyfill");
 Element.prototype.scrollIntoView = () => {};
-// eslint-disable-next-line ts/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 Element.prototype.hasPointerCapture = (() => {}) as any;
 
 // @ts-expect-error - shut it
-globalThis.window.CSS.supports = (property: string, value: string) => true;
+globalThis.window.CSS.supports = (_property: string, _value: string) => true;
 
 globalThis.document.elementsFromPoint = () => [];
 globalThis.document.elementFromPoint = () => null;

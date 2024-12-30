@@ -1,9 +1,9 @@
 import { afterTick, useRefById } from "svelte-toolbelt";
+import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, BitsPointerEvent } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent } from "$lib/internal/types.js";
 
 const COLLAPSIBLE_ROOT_ATTR = "data-collapsible-root";
 const COLLAPSIBLE_CONTENT_ATTR = "data-collapsible-content";
@@ -99,11 +99,8 @@ class CollapsibleContentState {
 			};
 		});
 
-		$effect(() => {
-			this.present;
-			const node = this.#ref.current;
+		watch([() => this.#ref.current, () => this.present], ([node]) => {
 			if (!node) return;
-
 			afterTick(() => {
 				if (!this.#ref.current) return;
 				// get the dimensions of the element
@@ -216,23 +213,20 @@ class CollapsibleTriggerState {
 	);
 }
 
-const [setCollapsibleRootContext, getCollapsibleRootContext] =
-	createContext<CollapsibleRootState>("Collapsible.Root");
+const CollapsibleRootContext = new Context<CollapsibleRootState>("Collapsible.Root");
 
 export function useCollapsibleRoot(props: CollapsibleRootStateProps) {
-	return setCollapsibleRootContext(new CollapsibleRootState(props));
+	return CollapsibleRootContext.set(new CollapsibleRootState(props));
 }
 
 export function useCollapsibleTrigger(
 	props: CollapsibleTriggerStateProps
 ): CollapsibleTriggerState {
-	const root = getCollapsibleRootContext();
-	return new CollapsibleTriggerState(props, root);
+	return new CollapsibleTriggerState(props, CollapsibleRootContext.get());
 }
 
 export function useCollapsibleContent(
 	props: CollapsibleContentStateProps
 ): CollapsibleContentState {
-	const root = getCollapsibleRootContext();
-	return new CollapsibleContentState(props, root);
+	return new CollapsibleContentState(props, CollapsibleRootContext.get());
 }

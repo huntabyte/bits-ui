@@ -1,8 +1,7 @@
 import { useRefById } from "svelte-toolbelt";
-import type { KeyboardEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
+import { Context } from "runed";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -451,41 +450,40 @@ class AlertDialogCancelState {
 	);
 }
 
-const [setDialogRootContext, getDialogRootContext] = createContext<DialogRootState>("Dialog.Root");
+const DialogRootContext = new Context<DialogRootState>("Dialog.Root");
 
 export function useDialogRoot(props: DialogRootStateProps) {
-	return setDialogRootContext(new DialogRootState(props));
+	return DialogRootContext.set(new DialogRootState(props));
 }
 
 export function useDialogTrigger(props: DialogTriggerStateProps) {
-	const root = getDialogRootContext();
-	return new DialogTriggerState(props, root);
+	return new DialogTriggerState(props, DialogRootContext.get());
 }
 
 export function useDialogTitle(props: DialogTitleStateProps) {
-	return new DialogTitleState(props, getDialogRootContext());
+	return new DialogTitleState(props, DialogRootContext.get());
 }
 
 export function useDialogContent(props: DialogContentStateProps) {
-	return new DialogContentState(props, getDialogRootContext());
+	return new DialogContentState(props, DialogRootContext.get());
 }
 
 export function useDialogOverlay(props: DialogOverlayStateProps) {
-	return new DialogOverlayState(props, getDialogRootContext());
+	return new DialogOverlayState(props, DialogRootContext.get());
 }
 
 export function useDialogDescription(props: DialogDescriptionStateProps) {
-	return new DialogDescriptionState(props, getDialogRootContext());
+	return new DialogDescriptionState(props, DialogRootContext.get());
 }
 
 export function useDialogClose(props: DialogCloseStateProps) {
-	return new DialogCloseState(props, getDialogRootContext());
+	return new DialogCloseState(props, DialogRootContext.get());
 }
 
 export function useAlertDialogCancel(props: AlertDialogCancelStateProps) {
-	return new AlertDialogCancelState(props, getDialogRootContext());
+	return new AlertDialogCancelState(props, DialogRootContext.get());
 }
 
 export function useAlertDialogAction(props: DialogActionStateProps) {
-	return new DialogActionState(props, getDialogRootContext());
+	return new DialogActionState(props, DialogRootContext.get());
 }

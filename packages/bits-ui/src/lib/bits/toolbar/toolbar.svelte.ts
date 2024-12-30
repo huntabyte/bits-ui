@@ -1,4 +1,5 @@
 import { type WritableBox, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -13,7 +14,6 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
 const ROOT_ATTR = "data-toolbar-root";
@@ -387,17 +387,11 @@ function getToggleItemDataState(condition: boolean) {
 	return condition ? "on" : "off";
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setToolbarRootContext, getToolbarRootContext] =
-	createContext<ToolbarRootState>("Toolbar.Root");
-const [setToolbarGroupContext, getToolbarGroupContext] =
-	createContext<ToolbarGroupState>("Toolbar.Group");
+const ToolbarRootContext = new Context<ToolbarRootState>("Toolbar.Root");
+const ToolbarGroupContext = new Context<ToolbarGroupState>("Toolbar.Group");
 
 export function useToolbarRoot(props: ToolbarRootStateProps) {
-	return setToolbarRootContext(new ToolbarRootState(props));
+	return ToolbarRootContext.set(new ToolbarRootState(props));
 }
 
 type InitToolbarGroupProps = WithRefProps<
@@ -411,24 +405,24 @@ type InitToolbarGroupProps = WithRefProps<
 
 export function useToolbarGroup(props: InitToolbarGroupProps) {
 	const { type, ...rest } = props;
-	const rootState = getToolbarRootContext();
+	const rootState = ToolbarRootContext.get();
 	const groupState =
 		type === "single"
 			? new ToolbarGroupSingleState(rest as ToolbarGroupSingleStateProps, rootState)
 			: new ToolbarGroupMultipleState(rest as ToolbarGroupMultipleStateProps, rootState);
 
-	return setToolbarGroupContext(groupState);
+	return ToolbarGroupContext.set(groupState);
 }
 
 export function useToolbarGroupItem(props: ToolbarGroupItemStateProps) {
-	const group = getToolbarGroupContext();
+	const group = ToolbarGroupContext.get();
 	return new ToolbarGroupItemState(props, group, group.root);
 }
 
 export function useToolbarButton(props: ToolbarButtonStateProps) {
-	return new ToolbarButtonState(props, getToolbarRootContext());
+	return new ToolbarButtonState(props, ToolbarRootContext.get());
 }
 
 export function useToolbarLink(props: ToolbarLinkStateProps) {
-	return new ToolbarLinkState(props, getToolbarRootContext());
+	return new ToolbarLinkState(props, ToolbarRootContext.get());
 }

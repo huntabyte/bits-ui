@@ -2,9 +2,10 @@
  * This logic is adapted from the @melt-ui/svelte slider, which was mostly written by
  * Abdelrahman (https://github.com/abdel-17)
  */
-
 import { untrack } from "svelte";
 import { executeCallbacks, useRefById } from "svelte-toolbelt";
+import { on } from "svelte/events";
+import { Context } from "runed";
 import { getRangeStyles, getThumbStyles, getTickStyles } from "./helpers.js";
 import {
 	getAriaDisabled,
@@ -16,15 +17,8 @@ import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type {
-	BitsKeyboardEvent,
-	BitsPointerEvent,
-	OnChangeFn,
-	WithRefProps,
-} from "$lib/internal/types.js";
-import { addEventListener } from "$lib/internal/events.js";
+import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { snapValueToStep } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
@@ -90,14 +84,12 @@ class SliderRootState {
 		});
 
 		$effect(() => {
-			const unsub = executeCallbacks(
-				addEventListener(document, "pointerdown", this.handlePointerDown),
-				addEventListener(document, "pointerup", this.handlePointerUp),
-				addEventListener(document, "pointermove", this.handlePointerMove),
-				addEventListener(document, "pointerleave", this.handlePointerUp)
+			return executeCallbacks(
+				on(document, "pointerdown", this.handlePointerDown),
+				on(document, "pointerup", this.handlePointerUp),
+				on(document, "pointermove", this.handlePointerMove),
+				on(document, "pointerleave", this.handlePointerUp)
 			);
-
-			return unsub;
 		});
 
 		$effect(() => {
@@ -352,7 +344,6 @@ class SliderRootState {
 
 		let count = Math.ceil(difference / step);
 
-		// eslint-disable-next-line eqeqeq
 		if (difference % step == 0) {
 			count++;
 		}
@@ -611,20 +602,20 @@ class SliderTickState {
 	);
 }
 
-const [setSliderRootContext, getSliderRootContext] = createContext<SliderRootState>("Slider.Root");
+const SliderRootContext = new Context<SliderRootState>("Slider.Root");
 
 export function useSliderRoot(props: SliderRootStateProps) {
-	return setSliderRootContext(new SliderRootState(props));
+	return SliderRootContext.set(new SliderRootState(props));
 }
 
 export function useSliderRange(props: SliderRangeStateProps) {
-	return new SliderRangeState(props, getSliderRootContext());
+	return new SliderRangeState(props, SliderRootContext.get());
 }
 
 export function useSliderThumb(props: SliderThumbStateProps) {
-	return new SliderThumbState(props, getSliderRootContext());
+	return new SliderThumbState(props, SliderRootContext.get());
 }
 
 export function useSliderTick(props: SliderTickStateProps) {
-	return new SliderTickState(props, getSliderRootContext());
+	return new SliderTickState(props, SliderRootContext.get());
 }
