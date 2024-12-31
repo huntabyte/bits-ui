@@ -31,7 +31,7 @@
 </script>
 
 <div class="container">
-	<Slider.Root bind:value class="root">
+	<Slider.Root type="multiple" bind:value class="root">
 		{#snippet children({ thumbs })}
 			<div class="track">
 				<Slider.Range class="range" />

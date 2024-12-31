@@ -48,7 +48,7 @@ class AccordionBaseState {
 		this.#ref = props.ref;
 
 		useRefById({
-			id: props.id,
+			id: this.#id,
 			ref: this.#ref,
 		});
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps, type WritableBox } from "svelte-toolbelt";
 	import type { SliderRootProps } from "../types.js";
 	import { useSliderRoot } from "../slider.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -10,7 +10,8 @@
 		child,
 		id = useId(),
 		ref = $bindable(null),
-		value = $bindable([]),
+		value = $bindable(),
+		type,
 		onValueChange = noop,
 		onValueCommit = noop,
 		disabled = false,
@@ -24,6 +25,10 @@
 		...restProps
 	}: SliderRootProps = $props();
 
+	if (value === undefined) {
+		value = type === "single" ? 0 : [];
+	}
+
 	const rootState = useSliderRoot({
 		id: box.with(() => id),
 		ref: box.with(
@@ -34,13 +39,16 @@
 			() => value,
 			(v) => {
 				if (controlledValue) {
+					// @ts-expect-error - we know
 					onValueChange(v);
 				} else {
 					value = v;
+					// @ts-expect-error - we know
 					onValueChange(v);
 				}
 			}
-		),
+		) as WritableBox<number> | WritableBox<number[]>,
+		// @ts-expect-error - we know
 		onValueCommit: box.with(() => onValueCommit),
 		disabled: box.with(() => disabled),
 		min: box.with(() => min),
@@ -49,6 +57,7 @@
 		dir: box.with(() => dir),
 		autoSort: box.with(() => autoSort),
 		orientation: box.with(() => orientation),
+		type,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
