@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.0.0-next.76
+
+### Patch Changes
+
+-   breaking: `Slider.Root` now requires a `type` prop to specify whether the slider should be a `"single"` or `"multiple"` slider, which determines whether the value and change function arguments should be of type `number` or `number[]` ([#1032](https://github.com/huntabyte/bits-ui/pull/1032))
+
+-   fix: `Popover` trigger close detection ([#1030](https://github.com/huntabyte/bits-ui/pull/1030))
+
+-   Dialog/Alert Dialog: change `Dialog.Close` and `AlertDialog.Cancel` events from `pointerdown` to `click` ([#1028](https://github.com/huntabyte/bits-ui/pull/1028))
+
 ## 1.0.0-next.75
 
 ### Patch Changes
