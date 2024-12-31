@@ -1,7 +1,7 @@
 <script lang="ts" module>
-	import { Slider } from "bits-ui";
+	import { Slider, type SliderMultipleRootProps } from "bits-ui";
 
-	export type SliderTestProps = Slider.RootProps & {
+	export type SliderMultiTestProps = Omit<SliderMultipleRootProps, "type"> & {
 		resetMin?: number;
 		resetMax?: number;
 		resetStep?: number;
@@ -18,7 +18,7 @@
 		resetMax,
 		resetStep,
 		...restProps
-	}: SliderTestProps = $props();
+	}: SliderMultiTestProps = $props();
 
 	$effect(() => {
 		if (resetMin !== undefined) {
@@ -38,7 +38,7 @@
 </script>
 
 <main>
-	<Slider.Root data-testid="root" bind:value {...restProps} {min} {max} {step}>
+	<Slider.Root type="multiple" data-testid="root" bind:value {...restProps} {min} {max} {step}>
 		{#snippet children({ thumbs, ticks })}
 			<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
 				<Slider.Range data-testid="range" class="bg-primary absolute h-full" />

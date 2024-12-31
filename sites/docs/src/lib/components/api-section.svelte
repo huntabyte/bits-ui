@@ -19,7 +19,7 @@
 				class="inline-flex h-[29px] items-center justify-center rounded-button bg-accent px-3 font-mono text-[17px] font-medium leading-tight tracking-tight dark:text-neutral-900"
 			>
 				<h3 class="font-semibold">
-					<span class="font-normal text-foreground/65 dark:text-neutral-900/50"
+					<span class="font-normal text-foreground/80 dark:text-neutral-900/80"
 						>{$page.data.title.replaceAll(" ", "")}.</span
 					>{schema.title}
 				</h3>

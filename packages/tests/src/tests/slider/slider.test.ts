@@ -3,19 +3,19 @@ import { render } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
-import SliderTest, { type SliderTestProps } from "./slider-test.svelte";
-import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.svelte";
+import SliderMultiTest, { type SliderMultiTestProps } from "./slider-test-multi.svelte";
+import SliderRangeTest, { type SliderMultiRangeTestProps } from "./slider-range-test.svelte";
 
 const kbd = getTestKbd();
 
-function renderSlider(props: SliderTestProps = {}) {
-	return render(SliderTest, { ...props });
+function renderSlider(props: SliderMultiTestProps = {}) {
+	return render(SliderMultiTest, { ...props });
 }
-function renderSliderRange(props: SliderRangeTestProps = {}) {
+function renderSliderRange(props: SliderMultiRangeTestProps = {}) {
 	return render(SliderRangeTest, { ...props });
 }
 
-function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default") {
+function setup(props: SliderMultiTestProps = {}, kind: "default" | "range" = "default") {
 	const user = setupUserEvents();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let returned: any;
@@ -31,7 +31,7 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 
 describe("slider (default)", () => {
 	it("should have no accessibility violations", async () => {
-		const { container } = render(SliderTest);
+		const { container } = render(SliderMultiTest);
 
 		expect(await axe(container)).toHaveNoViolations();
 	});

@@ -543,7 +543,7 @@ export const dirProp = createEnumProp({
 	definition: DirProp,
 	options: ["ltr", "rtl"],
 	description: "The reading direction of the app.",
-	default: "ltr",
+	default: "'ltr'",
 });
 
 export const orientationDataAttr = createEnumDataAttr({
