@@ -9,6 +9,7 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
+import { isElement } from "$lib/internal/is.js";
 
 type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -106,16 +107,27 @@ class PopoverTriggerState {
 	);
 }
 
-type PopoverContentStateProps = WithRefProps;
+type PopoverContentStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		onInteractOutside: (e: PointerEvent) => void;
+		onEscapeKeydown: (e: KeyboardEvent) => void;
+		onCloseAutoFocus: (e: Event) => void;
+	}>;
 class PopoverContentState {
 	#id: PopoverContentStateProps["id"];
 	#ref: PopoverContentStateProps["ref"];
 	root: PopoverRootState;
+	#onInteractOutside: PopoverContentStateProps["onInteractOutside"];
+	#onEscapeKeydown: PopoverContentStateProps["onEscapeKeydown"];
+	#onCloseAutoFocus: PopoverContentStateProps["onCloseAutoFocus"];
 
 	constructor(props: PopoverContentStateProps, root: PopoverRootState) {
 		this.#id = props.id;
 		this.root = root;
 		this.#ref = props.ref;
+		this.#onEscapeKeydown = props.onEscapeKeydown;
+		this.#onInteractOutside = props.onInteractOutside;
+		this.#onCloseAutoFocus = props.onCloseAutoFocus;
 
 		useRefById({
 			id: this.#id,
@@ -125,6 +137,32 @@ class PopoverContentState {
 				this.root.contentNode = node;
 			},
 		});
+
+		this.handleInteractOutside = this.handleInteractOutside.bind(this);
+		this.handleEscapeKeydown = this.handleEscapeKeydown.bind(this);
+		this.handleCloseAutoFocus = this.handleCloseAutoFocus.bind(this);
+	}
+
+	handleInteractOutside(e: PointerEvent) {
+		this.#onInteractOutside.current(e);
+		if (e.defaultPrevented) return;
+		if (!isElement(e.target)) return;
+		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
+		if (closestTrigger === this.root.triggerNode) return;
+		this.root.handleClose();
+	}
+
+	handleEscapeKeydown(e: KeyboardEvent) {
+		this.#onEscapeKeydown.current(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	}
+
+	handleCloseAutoFocus(e: Event) {
+		this.#onCloseAutoFocus.current(e);
+		if (e.defaultPrevented) return;
+		e.preventDefault();
+		this.root.triggerNode?.focus();
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
