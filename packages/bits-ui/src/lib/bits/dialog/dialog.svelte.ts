@@ -158,7 +158,6 @@ class DialogCloseState {
 		this.#disabled = props.disabled;
 
 		this.onclick = this.onclick.bind(this);
-		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
@@ -171,16 +170,6 @@ class DialogCloseState {
 	onclick(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		if (e.button > 0) return;
-		this.#root.handleClose();
-	}
-
-	onpointerdown(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
-		if (e.button > 0) return;
-		// by default, it will attempt to focus this trigger on pointerdown
-		// since this also closes the dialog and restores focus we want to prevent that behavior
-		e.preventDefault();
-
 		this.#root.handleClose();
 	}
 
@@ -197,7 +186,6 @@ class DialogCloseState {
 			({
 				id: this.#id.current,
 				[this.#attr]: "",
-				onpointerdown: this.onpointerdown,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				...this.#root.sharedProps,
@@ -399,7 +387,6 @@ class AlertDialogCancelState {
 		this.#root = root;
 		this.#disabled = props.disabled;
 		this.onclick = this.onclick.bind(this);
-		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
@@ -418,17 +405,6 @@ class AlertDialogCancelState {
 		this.#root.handleClose();
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
-		if (e.button > 0) return;
-		// by default, it will attempt to focus this trigger on pointerdown
-		// since this also opens the dialog we want to prevent that behavior
-		e.preventDefault();
-
-		this.#root.handleClose();
-	}
-
 	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
@@ -442,7 +418,6 @@ class AlertDialogCancelState {
 			({
 				id: this.#id.current,
 				[this.#root.attrs.cancel]: "",
-				onpointerdown: this.onpointerdown,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				...this.#root.sharedProps,
