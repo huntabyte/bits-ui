@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.77
+
+### Patch Changes
+
+-   breaking: remove `controlled<State>` props in favor of Svelte's [Function Bindings](https://svelte.dev/docs/svelte/bind#Function-bindings) ([#1034](https://github.com/huntabyte/bits-ui/pull/1034))
+
 ## 1.0.0-next.76
 
 ### Patch Changes
