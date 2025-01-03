@@ -38,7 +38,7 @@
 			</div>
 			<Tooltip.Provider>
 				{#each thumbs as index}
-					<Tooltip.Root controlledOpen {open} {onOpenChange} delayDuration={0}>
+					<Tooltip.Root bind:open={() => open, onOpenChange} delayDuration={0}>
 						<Tooltip.Trigger>
 							{#snippet child({ props })}
 								<Slider.Thumb

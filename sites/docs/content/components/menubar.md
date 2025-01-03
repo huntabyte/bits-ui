@@ -169,7 +169,7 @@ Use the `bind:value` directive for effortless two-way synchronization between yo
 
 ### Change Handler
 
-You can also use the `onValueCHange` prop to update local state when the menubar's active menu changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menus open or close.
+You can also use the `onValueChange` prop to update local state when the menubar's active menu changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menus open or close.
 
 ```svelte {3,7-11}
 <script lang="ts">

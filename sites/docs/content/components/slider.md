@@ -136,13 +136,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Slider.Root` component.
-2. Provide a `value` prop to `Slider.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -150,7 +144,7 @@ To implement controlled state:
 	let myValue = $state(0);
 </script>
 
-<Slider.Root type="single" controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Slider.Root type="single" bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Slider.Root>
 ```
