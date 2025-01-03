@@ -33,15 +33,6 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue "ltr"
 	 */
 	dir?: Direction;
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
 }>;
 
 export type MenuRootProps = MenuRootPropsWithoutHTML;
@@ -132,16 +123,6 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		onCheckedChange?: OnChangeFn<boolean>;
 
 		/**
-		 * Whether or not the checked state is controlled or not. If `true`, the component will not
-		 * update the checked state internally, instead it will call `onCheckedChange` when it
-		 * would have otherwise, and it is up to you to update the `checked` prop that is passed
-		 * to the component.
-		 *
-		 * @defaultValue false
-		 */
-		controlledChecked?: boolean;
-
-		/**
 		 * Whether the checkbox is in an indeterminate state or not.
 		 *
 		 * @defaultValue false
@@ -152,16 +133,6 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 * A callback function called when the indeterminate state changes.
 		 */
 		onIndeterminateChange?: OnChangeFn<boolean>;
-
-		/**
-		 * Whether the indeterminate state is controlled or not. If `true`, the checkbox will
-		 * not update the indeterminate state internally, instead it will call
-		 * `onIndeterminateChange` when it would have otherwise, and it is up to you to update
-		 * the `indeterminate` prop that is passed to the component.
-		 *
-		 * @defaultValue false
-		 */
-		controlledIndeterminate?: boolean;
 
 		/**
 		 * Whether or not the menu item should close when selected.
@@ -196,15 +167,6 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
 }>;
 
 export type MenuSubProps = MenuSubPropsWithoutHTML;
@@ -259,15 +221,6 @@ export type MenuRadioGroupPropsWithoutHTML = WithChild<{
 	 * A callback that is fired when the selected radio item changes.
 	 */
 	onValueChange?: OnChangeFn<string>;
-
-	/**
-	 * Whether or not the value state is controlled or not. If `true`, the component will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
 }>;
 
 export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML &

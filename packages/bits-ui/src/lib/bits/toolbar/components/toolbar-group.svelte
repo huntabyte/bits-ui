@@ -13,7 +13,6 @@
 		onValueChange = noop,
 		type,
 		disabled = false,
-		controlledValue = false,
 		child,
 		children,
 		...restProps
@@ -21,12 +20,7 @@
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];
-		if (controlledValue) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			onValueChange(defaultValue as any);
-		} else {
-			value = defaultValue;
-		}
+		value = defaultValue;
 	}
 
 	const groupState = useToolbarGroup({
@@ -36,14 +30,9 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				if (controlledValue) {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					onValueChange(v as any);
-				} else {
-					value = v;
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					onValueChange(v as any);
-				}
+				value = v;
+				// @ts-expect-error - we know
+				onValueChange(v);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		ref: box.with(

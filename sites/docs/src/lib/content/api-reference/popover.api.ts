@@ -11,7 +11,6 @@ import { FloatingContentChildSnippetProps } from "./extended-types/floating/inde
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -49,7 +48,6 @@ export const root = createApiSchema<PopoverRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		children: childrenSnippet(),
 	},
 });

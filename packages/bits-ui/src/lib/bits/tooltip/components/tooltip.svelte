@@ -13,7 +13,6 @@
 		disableCloseOnTriggerClick,
 		disableHoverableContent,
 		ignoreNonKeyboardFocus,
-		controlledOpen = false,
 		children,
 	}: TooltipRootProps = $props();
 
@@ -21,12 +20,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		delayDuration: box.with(() => delayDuration),

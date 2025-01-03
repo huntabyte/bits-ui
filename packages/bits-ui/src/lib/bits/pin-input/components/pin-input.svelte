@@ -21,7 +21,6 @@
 		disabled = false,
 		value = $bindable(""),
 		onValueChange = noop,
-		controlledValue = false,
 		onPaste,
 		...restProps
 	}: PinInputRootProps = $props();
@@ -43,12 +42,8 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		pushPasswordManagerStrategy: box.with(() => pushPasswordManagerStrategy),

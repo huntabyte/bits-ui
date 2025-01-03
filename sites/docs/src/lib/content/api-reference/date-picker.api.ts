@@ -25,9 +25,6 @@ import {
 } from "./date-field.api.js";
 import {
 	childrenSnippet,
-	controlledOpenProp,
-	controlledPlaceholderProp,
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -45,7 +42,6 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 	props: {
 		value: calendarRoot.props!.value,
 		onValueChange: calendarRoot.props!.onValueChange,
-		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the popover content.",
@@ -55,10 +51,8 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		placeholder: calendarRoot.props!.placeholder,
 		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
-		controlledPlaceholder: controlledPlaceholderProp,
 		isDateUnavailable: calendarRoot.props!.isDateUnavailable,
 		isDateDisabled: calendarRoot.props!.isDateDisabled,
 		validate: dateFieldRoot.props!.validate,

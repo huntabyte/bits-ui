@@ -33,7 +33,7 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	 *
 	 * @bindable
 	 */
-	placeholder?: DateValue | undefined;
+	placeholder?: DateValue;
 
 	/**
 	 * A callback that is called when the date field's placeholder value changes.
@@ -56,13 +56,13 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	 * The minimum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date before this date.
 	 */
-	minValue?: DateValue | undefined;
+	minValue?: DateValue;
 
 	/**
 	 * The maximum acceptable date. When provided, the date field
 	 * will be marked as invalid if the user enters a date after this date.
 	 */
-	maxValue?: DateValue | undefined;
+	maxValue?: DateValue;
 
 	/**
 	 * If true, the date field will be disabled and users will not be able
@@ -150,25 +150,6 @@ export type DateRangeFieldRootPropsWithoutHTML = WithChild<{
 	 * only part of the value is changed/completed.
 	 */
 	onEndValueChange?: OnChangeFn<DateValue | undefined>;
-
-	/**
-	 * Whether or not the value is controlled or not. If `true`, the component will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
-
-	/**
-	 * Whether or not the placeholder is controlled or not. If `true`, the component will not update
-	 * the placeholder state internally, instead it will call `onPlaceholderChange` when it would
-	 * have otherwise, and it is up to you to update the `value` prop that is passed to the
-	 * component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledPlaceholder?: boolean;
 
 	/**
 	 * The `id` of the element which contains the error messages for the date field when the

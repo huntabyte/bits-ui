@@ -56,16 +56,6 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		onCheckedChange?: OnChangeFn<boolean>;
 
 		/**
-		 * Whether or not the checkbox is controlled or not. If `true`, the checkbox will not update
-		 * the checked state internally, instead it will call `onCheckedChange` when it would have
-		 * otherwise, and it is up to you to update the `checked` prop that is passed to the
-		 * component.
-		 *
-		 * @defaultValue false
-		 */
-		controlledChecked?: boolean;
-
-		/**
 		 * Whether the checkbox is in an indeterminate state or not.
 		 *
 		 * @defaultValue false
@@ -76,16 +66,6 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 * A callback function called when the indeterminate state changes.
 		 */
 		onIndeterminateChange?: OnChangeFn<boolean>;
-
-		/**
-		 * Whether the indeterminate state is controlled or not. If `true`, the checkbox will
-		 * not update the indeterminate state internally, instead it will call
-		 * `onIndeterminateChange` when it would have otherwise, and it is up to you to update
-		 * the `indeterminate` prop that is passed to the component.
-		 *
-		 * @defaultValue false
-		 */
-		controlledIndeterminate?: boolean;
 	},
 	CheckboxRootSnippetProps
 >;
@@ -133,16 +113,6 @@ export type CheckboxGroupPropsWithoutHTML = WithChild<{
 	 * A callback function called when the value changes.
 	 */
 	onValueChange?: OnChangeFn<string[]>;
-
-	/**
-	 * Whether or not the checkbox group value is controlled or not. If `true`, the
-	 * checkbox group will not update the value internally, instead it will call
-	 * `onValueChange` when it would have otherwise, and it is up to you to update
-	 * the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
 }>;
 
 export type CheckboxGroupProps = CheckboxGroupPropsWithoutHTML &

@@ -12,7 +12,6 @@
 		onPressedChange = noop,
 		disabled = false,
 		type = "button",
-		controlledPressed = false,
 		children,
 		child,
 		...restProps
@@ -22,12 +21,8 @@
 		pressed: box.with(
 			() => pressed,
 			(v) => {
-				if (controlledPressed) {
-					onPressedChange(v);
-				} else {
-					pressed = v;
-					onPressedChange(v);
-				}
+				pressed = v;
+				onPressedChange(v);
 			}
 		),
 		disabled: box.with(() => disabled ?? false),

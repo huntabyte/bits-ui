@@ -17,8 +17,6 @@
 		loop = false,
 		scrollAlignment = "nearest",
 		required = false,
-		controlledOpen = false,
-		controlledValue = false,
 		items = [],
 		allowDeselect = true,
 		children,
@@ -26,12 +24,7 @@
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];
-		if (controlledValue) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			onValueChange(defaultValue as any);
-		} else {
-			value = defaultValue;
-		}
+		value = defaultValue;
 	}
 
 	const rootState = useSelectRoot({
@@ -39,14 +32,9 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				if (controlledValue) {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					onValueChange(v as any);
-				} else {
-					value = v;
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					onValueChange(v as any);
-				}
+				value = v;
+				// @ts-expect-error - we know
+				onValueChange(v);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),
@@ -54,12 +42,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		loop: box.with(() => loop),

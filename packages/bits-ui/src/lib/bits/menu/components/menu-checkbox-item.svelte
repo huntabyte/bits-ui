@@ -14,10 +14,8 @@
 		onCheckedChange = noop,
 		disabled = false,
 		onSelect = noop,
-		controlledChecked = false,
 		closeOnSelect = true,
 		indeterminate = $bindable(false),
-		controlledIndeterminate = false,
 		onIndeterminateChange = noop,
 		...restProps
 	}: MenuCheckboxItemProps = $props();
@@ -26,12 +24,8 @@
 		checked: box.with(
 			() => checked,
 			(v) => {
-				if (controlledChecked) {
-					onCheckedChange(v);
-				} else {
-					checked = v;
-					onCheckedChange(v);
-				}
+				checked = v;
+				onCheckedChange(v);
 			}
 		),
 		id: box.with(() => id),
@@ -45,12 +39,8 @@
 		indeterminate: box.with(
 			() => indeterminate,
 			(v) => {
-				if (controlledIndeterminate) {
-					onIndeterminateChange(v);
-				} else {
-					indeterminate = v;
-					onIndeterminateChange(v);
-				}
+				indeterminate = v;
+				onIndeterminateChange(v);
 			}
 		),
 	});

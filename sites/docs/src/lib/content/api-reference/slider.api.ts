@@ -7,7 +7,6 @@ import type {
 import { SliderRootOnValueChangeProp } from "./extended-types/slider/index.js";
 import { OrientationProp, SingleOrMultipleProp } from "./extended-types/shared/index.js";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -47,7 +46,6 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			description:
 				"A callback function called when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called immediately after the user starts dragging.",
 		}),
-		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

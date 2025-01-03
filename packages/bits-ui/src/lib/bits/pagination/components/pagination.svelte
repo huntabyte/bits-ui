@@ -15,7 +15,6 @@
 		onPageChange = noop,
 		loop = false,
 		orientation = "horizontal",
-		controlledPage = false,
 		child,
 		children,
 		...restProps
@@ -28,12 +27,8 @@
 		page: box.with(
 			() => page,
 			(v) => {
-				if (controlledPage) {
-					onPageChange(v);
-				} else {
-					page = v;
-					onPageChange?.(v);
-				}
+				page = v;
+				onPageChange?.(v);
 			}
 		),
 		loop: box.with(() => loop),
