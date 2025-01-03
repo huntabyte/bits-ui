@@ -15,9 +15,7 @@
 		name = undefined,
 		value = "on",
 		id = useId(),
-		controlledChecked = false,
 		indeterminate = $bindable(false),
-		controlledIndeterminate = false,
 		onIndeterminateChange,
 		child,
 		type = "button",
@@ -28,12 +26,8 @@
 		checked: box.with(
 			() => checked,
 			(v) => {
-				if (controlledChecked) {
-					onCheckedChange?.(v);
-				} else {
-					checked = v;
-					onCheckedChange?.(v);
-				}
+				checked = v;
+				onCheckedChange?.(v);
 			}
 		),
 		disabled: box.with(() => disabled ?? false),
@@ -48,12 +42,8 @@
 		indeterminate: box.with(
 			() => indeterminate,
 			(v) => {
-				if (controlledIndeterminate) {
-					onIndeterminateChange?.(v);
-				} else {
-					indeterminate = v;
-					onIndeterminateChange?.(v);
-				}
+				indeterminate = v;
+				onIndeterminateChange?.(v);
 			}
 		),
 		type: box.with(() => type),

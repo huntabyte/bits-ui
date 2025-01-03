@@ -15,7 +15,6 @@ import { FloatingContentChildSnippetProps } from "./extended-types/floating/inde
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -102,7 +101,6 @@ export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		disabled,
 		delayDuration,
 		disableHoverableContent,

@@ -18,7 +18,6 @@
 		required = false,
 		id = useId(),
 		onValueChange = noop,
-		controlledValue = false,
 		...restProps
 	}: RadioGroupRootProps = $props();
 
@@ -33,12 +32,8 @@
 			() => value,
 			(v) => {
 				if (v === value) return;
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange?.(v);
-				}
+				value = v;
+				onValueChange?.(v);
 			}
 		),
 		ref: box.with(

@@ -37,10 +37,8 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 	props: {
 		value: rangeFieldRoot.props!.value,
 		onValueChange: rangeFieldRoot.props!.onValueChange,
-		controlledValue: rangeFieldRoot.props!.controlledValue,
 		placeholder: rangeFieldRoot.props!.placeholder,
 		onPlaceholderChange: rangeFieldRoot.props!.onPlaceholderChange,
-		controlledPlaceholder: rangeFieldRoot.props!.controlledPlaceholder,
 		readonlySegments: rangeFieldRoot.props!.readonlySegments,
 		isDateUnavailable: calendarRoot.props!.isDateUnavailable,
 		minValue: rangeFieldRoot.props!.minValue,
@@ -70,7 +68,6 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		numberOfMonths: rangeCalendarRoot.props!.numberOfMonths,
 		open: datePickerRoot.props!.open,
 		onOpenChange: datePickerRoot.props!.onOpenChange,
-		controlledOpen: datePickerRoot.props!.controlledOpen,
 		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
 		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
 		...withChildProps({ elType: "HTMLDivElement" }),

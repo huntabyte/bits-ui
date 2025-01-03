@@ -194,13 +194,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Select.Root` component.
-2. Provide a `value` prop to `Select.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -208,7 +202,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<Select.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Select.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Select.Root>
 ```
@@ -283,13 +277,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledOpen` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `Select.Root` component.
-2. Provide an `open` prop to `Select.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -297,7 +285,7 @@ To implement controlled state:
 	let myOpen = $state(false);
 </script>
 
-<Select.Root controlledOpen open={myOpen} onOpenChange={(v) => (myOpen = v)}>
+<Select.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </Select.Root>
 ```

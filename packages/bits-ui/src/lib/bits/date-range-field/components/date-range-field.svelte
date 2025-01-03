@@ -31,8 +31,6 @@
 		child,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
-		controlledPlaceholder = false,
-		controlledValue = false,
 		errorMessageId,
 		...restProps
 	}: DateRangeFieldRootProps = $props();
@@ -47,20 +45,13 @@
 			defaultValue: value?.start,
 		});
 
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+		placeholder = defaultPlaceholder;
 	}
 
 	if (value === undefined) {
 		const defaultValue = { start: undefined, end: undefined };
-		if (controlledValue) {
-			onValueChange(defaultValue);
-		} else {
-			value = defaultValue;
-		}
+
+		value = defaultValue;
 	}
 
 	const rootState = useDateRangeFieldRoot({
@@ -82,24 +73,16 @@
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v);
-				}
+				placeholder = v;
+				onPlaceholderChange(v);
 			}
 		),
 		readonlySegments: box.with(() => readonlySegments),
 		value: box.with(
 			() => value as DateRange,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		startValue: box.with(

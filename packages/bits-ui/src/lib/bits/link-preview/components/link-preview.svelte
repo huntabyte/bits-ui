@@ -10,7 +10,6 @@
 		onOpenChange = noop,
 		openDelay = 700,
 		closeDelay = 300,
-		controlledOpen = false,
 		children,
 	}: LinkPreviewRootProps = $props();
 
@@ -18,12 +17,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		openDelay: box.with(() => openDelay),

@@ -21,7 +21,6 @@
 		dir = "ltr",
 		autoSort = true,
 		orientation = "horizontal",
-		controlledValue = false,
 		...restProps
 	}: SliderRootProps = $props();
 
@@ -38,14 +37,9 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					// @ts-expect-error - we know
-					onValueChange(v);
-				} else {
-					value = v;
-					// @ts-expect-error - we know
-					onValueChange(v);
-				}
+				value = v;
+				// @ts-expect-error - we know
+				onValueChange(v);
 			}
 		) as WritableBox<number> | WritableBox<number[]>,
 		// @ts-expect-error - we know

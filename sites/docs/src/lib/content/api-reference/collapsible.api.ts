@@ -4,7 +4,6 @@ import type {
 	CollapsibleTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -35,7 +34,6 @@ export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the collapsible's open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description:

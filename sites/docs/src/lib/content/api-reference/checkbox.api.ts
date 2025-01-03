@@ -4,9 +4,6 @@ import type {
 	CheckboxRootPropsWithoutHTML,
 } from "bits-ui";
 import {
-	controlledCheckedProp,
-	controlledIndeterminateProp,
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -41,7 +38,6 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 			description:
 				"A callback that is fired when the checkbox button's checked state changes.",
 		}),
-		controlledChecked: controlledCheckedProp,
 		indeterminate: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether the checkbox is an indeterminate state or not.",
@@ -51,7 +47,6 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 			definition: CheckboxRootOnIndeterminateChangeProp,
 			description: "A callback that is fired when the indeterminate state changes.",
 		}),
-		controlledIndeterminate: controlledIndeterminateProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description:
@@ -108,7 +103,6 @@ export const group = createApiSchema<CheckboxGroupPropsWithoutHTML>({
 			definition: CheckboxGroupOnValueChangeProp,
 			description: "A callback that is fired when the checkbox group's value state changes.",
 		}),
-		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description:

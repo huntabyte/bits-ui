@@ -157,13 +157,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the checkbox's checked state, use the `controlledChecked` prop. This approach requires you to manually manage the checked state, giving you full control over when and how the checkbox responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledChecked` prop to `true` on the `Checkbox.Root` component.
-2. Provide a `checked` prop to `Checkbox.Root`, which should be a variable holding the current state.
-3. Implement an `onCheckedChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -171,7 +165,7 @@ To implement controlled state:
 	let myChecked = $state(false);
 </script>
 
-<Checkbox.Root controlledChecked checked={myChecked} onCheckedChange={(c) => (myChecked = c)}>
+<Checkbox.Root bind:checked={() => myChecked, (newChecked) => (myChecked = newChecked)}>
 	<!-- ... -->
 </Checkbox.Root>
 ```
@@ -242,13 +236,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the checkbox's checked state, use the `controlledIndeterminate` prop. This approach requires you to manually manage the `indeterminate` state, giving you full control over when and how the checkbox responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledIndeterminate` prop to `true` on the `Checkbox.Root` component.
-2. Provide a `indeterminate` prop to `Checkbox.Root`, which should be a variable holding the current state.
-3. Implement an `onIndeterminateChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -257,9 +245,8 @@ To implement controlled state:
 </script>
 
 <Checkbox.Root
-	controlledIndeterminate
-	indeterminate={myIndeterminate}
-	onIndeterminateChange={(i) => (myIndeterminate = i)}
+	bind:indeterminate={() => myIndeterminate,
+	(newIndeterminate) => (myIndeterminate = newIndeterminate)}
 >
 	<!-- ... -->
 </Checkbox.Root>
@@ -414,13 +401,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 #### 3. Fully Controlled
 
-For complete control over the Checkbox Group's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the group responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Checkbox.Group` component.
-2. Provide a `value` prop to `Checkbox.Group`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -428,7 +409,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<Checkbox.Group controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Checkbox.Group bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Checkbox.Group>
 ```

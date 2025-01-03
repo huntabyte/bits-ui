@@ -18,10 +18,6 @@ import type {
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledCheckedProp,
-	controlledIndeterminateProp,
-	controlledOpenProp,
-	controlledValueProp,
 	createBooleanProp,
 	createDataAttrSchema,
 	createFunctionProp,
@@ -86,7 +82,6 @@ const props = {
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the menu's open state changes.",
 	}),
-	controlledOpen: controlledOpenProp,
 	dir: dirProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuRootPropsWithoutHTML>;
@@ -101,7 +96,6 @@ const subProps = {
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the submenu's open state changes.",
 	}),
-	controlledOpen: controlledOpenProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuSubPropsWithoutHTML>;
 
@@ -184,7 +178,6 @@ const checkboxItemProps = {
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
 	}),
-	controlledChecked: controlledCheckedProp,
 	indeterminate: createBooleanProp({
 		default: C.FALSE,
 		description: "Whether the checkbox menu item is in an indeterminate state or not.",
@@ -194,7 +187,6 @@ const checkboxItemProps = {
 		definition: CheckboxRootOnIndeterminateChangeProp,
 		description: "A callback that is fired when the indeterminate state changes.",
 	}),
-	controlledIndeterminate: controlledIndeterminateProp,
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
 		elType: "HTMLDivElement",
@@ -212,7 +204,6 @@ const radioGroupProps = {
 		definition: OnStringValueChangeProp,
 		description: "A callback that is fired when the radio group's value changes.",
 	}),
-	controlledValue: controlledValueProp,
 	...withChildProps({ elType: "HTMLDivElement" }),
 } satisfies PropObj<DropdownMenuRadioGroupPropsWithoutHTML>;
 

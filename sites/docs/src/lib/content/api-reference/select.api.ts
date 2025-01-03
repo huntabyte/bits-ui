@@ -27,8 +27,6 @@ import { FloatingContentChildSnippetProps } from "./extended-types/floating/inde
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -82,7 +80,6 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			description:
 				"A callback that is fired when the select value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
-		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the select menu.",
@@ -92,7 +89,6 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the select menu's open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the select component is disabled.",

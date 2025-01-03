@@ -6,8 +6,6 @@ import type {
 } from "bits-ui";
 import {
 	childrenSnippet,
-	controlledPlaceholderProp,
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -47,7 +45,6 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			definition: OnDateValueChangeProp,
 			description: "A function that is called when the selected date changes.",
 		}),
-		controlledValue: controlledValueProp,
 		placeholder: createPropSchema({
 			type: dateValueProp,
 			description:
@@ -58,7 +55,6 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
 		}),
-		controlledPlaceholder: controlledPlaceholderProp,
 		required: createBooleanProp({
 			description: "Whether or not the date field is required.",
 			default: C.FALSE,

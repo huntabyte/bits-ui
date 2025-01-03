@@ -14,7 +14,6 @@
 		dir = "ltr",
 		loop = true,
 		onValueChange = noop,
-		controlledValue = false,
 		...restProps
 	}: MenubarRootProps = $props();
 
@@ -23,12 +22,8 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange?.(v);
-				}
+				value = v;
+				onValueChange?.(v);
 			}
 		),
 		dir: box.with(() => dir),

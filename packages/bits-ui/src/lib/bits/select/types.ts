@@ -64,24 +64,6 @@ export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	scrollAlignment?: "nearest" | "center";
 
 	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
-
-	/**
-	 * Whether or not the value state is controlled or not. If `true`, the component will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
-
-	/**
 	 * Optionally provide an array of `value` and `label` pairs that will be used to match
 	 * and trigger selection when the trigger is focused and a key is pressed while the content
 	 * is closed. It's also used to handle form autofill.

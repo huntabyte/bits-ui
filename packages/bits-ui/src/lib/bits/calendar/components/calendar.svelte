@@ -33,8 +33,6 @@
 		type,
 		disableDaysOutsideMonth = true,
 		initialFocus = false,
-		controlledValue = false,
-		controlledPlaceholder = false,
 		...restProps
 	}: CalendarRootProps = $props();
 
@@ -43,26 +41,14 @@
 			defaultPlaceholder: undefined,
 			defaultValue: value,
 		});
-
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+		placeholder = defaultPlaceholder;
 	}
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];
-		if (controlledValue) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			onValueChange(defaultValue as any);
-		} else {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			value = defaultValue as any;
-		}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		value = defaultValue as any;
 	}
-
-	value === undefined && (value = type === "single" ? undefined : []);
 
 	const rootState = useCalendarRoot({
 		id: box.with(() => id),
@@ -88,26 +74,17 @@
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v as DateValue);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v as DateValue);
-				}
+				placeholder = v;
+				onPlaceholderChange(v as DateValue);
 			}
 		),
 		preventDeselect: box.with(() => preventDeselect),
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					onValueChange(v as any);
-				} else {
-					value = v;
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					onValueChange(v as any);
-				}
+				value = v;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				onValueChange(v as any);
 			}
 		),
 		type: box.with(() => type),

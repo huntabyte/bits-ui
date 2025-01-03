@@ -4,24 +4,15 @@
 	import type { DialogRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 
-	let {
-		open = $bindable(false),
-		onOpenChange = noop,
-		controlledOpen = false,
-		children,
-	}: DialogRootProps = $props();
+	let { open = $bindable(false), onOpenChange = noop, children }: DialogRootProps = $props();
 
 	useDialogRoot({
 		variant: box.with(() => "dialog"),
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 	});

@@ -9,7 +9,6 @@ import type {
 	NavigationMenuViewportPropsWithoutHTML,
 } from "bits-ui";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createEnumProp,
@@ -38,7 +37,6 @@ export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active menu value changes.",
 		}),
-		controlledValue: controlledValueProp,
 		dir: dirProp,
 		skipDelayDuration: createNumberProp({
 			default: "300",
