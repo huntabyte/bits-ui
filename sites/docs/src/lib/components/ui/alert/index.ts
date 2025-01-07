@@ -5,7 +5,7 @@ import Description from "./alert-description.svelte";
 import Title from "./alert-title.svelte";
 
 export const alertVariants = tv({
-	base: "relative w-full rounded-[16px] p-5 [&>h5]:tracking-normal ",
+	base: "relative w-full rounded-[16px] p-5 [&>h5]:tracking-normal",
 
 	variants: {
 		variant: {

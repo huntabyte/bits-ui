@@ -1,6 +1,7 @@
 import { afterTick, useRefById } from "svelte-toolbelt";
+import { Context, watch } from "runed";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -14,7 +15,6 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 const ACCORDION_ROOT_ATTR = "data-accordion-root";
 const ACCORDION_TRIGGER_ATTR = "data-accordion-trigger";
@@ -48,7 +48,7 @@ class AccordionBaseState {
 		this.#ref = props.ref;
 
 		useRefById({
-			id: props.id,
+			id: this.#id,
 			ref: this.#ref,
 		});
 
@@ -213,9 +213,8 @@ class AccordionTriggerState {
 		this.#root = itemState.root;
 		this.#id = props.id;
 		this.#ref = props.ref;
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
+		this.onclick = this.onclick.bind(this);
 
 		useRefById({
 			id: props.id,
@@ -223,18 +222,10 @@ class AccordionTriggerState {
 		});
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	onclick(e: BitsMouseEvent) {
 		if (this.#isDisabled) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
+		if (e.button !== 0) return e.preventDefault();
 		this.#itemState.updateValue();
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.#isDisabled) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#itemState.updateValue();
-		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -261,8 +252,7 @@ class AccordionTriggerState {
 				[ACCORDION_TRIGGER_ATTR]: "",
 				tabindex: 0,
 				//
-				onpointerdown: this.onpointerdown,
-				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 			}) as const
 	);
@@ -311,11 +301,8 @@ class AccordionContentState {
 			};
 		});
 
-		$effect(() => {
-			this.present;
-			const node = this.#ref.current;
+		watch([() => this.present, () => this.#ref.current], ([_, node]) => {
 			if (!node) return;
-
 			afterTick(() => {
 				if (!this.#ref.current) return;
 				// get the dimensions of the element
@@ -417,10 +404,8 @@ type InitAccordionProps = WithRefProps<
 	}>
 >;
 
-const [setAccordionRootContext, getAccordionRootContext] =
-	createContext<AccordionState>("Accordion.Root");
-const [setAccordionItemContext, getAccordionItemContext] =
-	createContext<AccordionItemState>("Accordion.Item");
+const AccordionRootContext = new Context<AccordionState>("Accordion.Root");
+const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
 
 export function useAccordionRoot(props: InitAccordionProps) {
 	const { type, ...rest } = props;
@@ -428,25 +413,22 @@ export function useAccordionRoot(props: InitAccordionProps) {
 		type === "single"
 			? new AccordionSingleState(rest as AccordionSingleStateProps)
 			: new AccordionMultiState(rest as AccordionMultiStateProps);
-	return setAccordionRootContext(rootState);
+	return AccordionRootContext.set(rootState);
 }
 
 export function useAccordionItem(props: Omit<AccordionItemStateProps, "rootState">) {
-	const rootState = getAccordionRootContext();
-	return setAccordionItemContext(new AccordionItemState({ ...props, rootState }));
+	const rootState = AccordionRootContext.get();
+	return AccordionItemContext.set(new AccordionItemState({ ...props, rootState }));
 }
 
 export function useAccordionTrigger(props: AccordionTriggerStateProps): AccordionTriggerState {
-	const item = getAccordionItemContext();
-	return new AccordionTriggerState(props, item);
+	return new AccordionTriggerState(props, AccordionItemContext.get());
 }
 
 export function useAccordionContent(props: AccordionContentStateProps): AccordionContentState {
-	const item = getAccordionItemContext();
-	return new AccordionContentState(props, item);
+	return new AccordionContentState(props, AccordionItemContext.get());
 }
 
 export function useAccordionHeader(props: AccordionHeaderStateProps): AccordionHeaderState {
-	const item = getAccordionItemContext();
-	return new AccordionHeaderState(props, item);
+	return new AccordionHeaderState(props, AccordionItemContext.get());
 }

@@ -46,10 +46,6 @@ class ProgressRootState {
 	);
 }
 
-//
-// HELPERS
-//
-
 function getProgressDataState(
 	value: number | null,
 	max: number
@@ -57,10 +53,6 @@ function getProgressDataState(
 	if (value === null) return "indeterminate";
 	return value === max ? "loaded" : "loading";
 }
-
-//
-// STATE PROVIDERS
-//
 
 export function useProgressRootState(props: ProgressRootStateProps) {
 	return new ProgressRootState(props);

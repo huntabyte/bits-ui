@@ -1,3 +1,4 @@
+```ts
 export type Page = {
 	type: "page";
 	/** The page number the `PageItem` represents */
@@ -12,3 +13,4 @@ export type PageItem = (Page | Ellipsis) & {
 	/** Unique key for the item, for svelte #each block */
 	key: string;
 };
+```

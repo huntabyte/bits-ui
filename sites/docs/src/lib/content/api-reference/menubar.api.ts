@@ -19,7 +19,6 @@ import type {
 	MenubarTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createFunctionProp,
@@ -43,7 +42,6 @@ export const root = createApiSchema<MenubarRootPropsWithoutHTML>({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active menu value changes.",
 		}),
-		controlledValue: controlledValueProp,
 		dir: dirProp,
 		loop: createBooleanProp({
 			default: C.TRUE,

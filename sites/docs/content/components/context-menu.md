@@ -197,13 +197,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `ContextMenu.Root` component.
-2. Provide an `open` prop to `ContextMenu.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -211,7 +205,7 @@ To implement controlled state:
 	let myOpen = $state(false);
 </script>
 
-<ContextMenu.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<ContextMenu.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </ContextMenu.Root>
 ```

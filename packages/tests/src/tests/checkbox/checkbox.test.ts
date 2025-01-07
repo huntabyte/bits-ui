@@ -1,6 +1,6 @@
 import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it, vi } from "vitest";
+import { describe, it } from "vitest";
 import { type ComponentProps, tick } from "svelte";
 import type { Checkbox } from "bits-ui";
 import { getTestKbd, setupUserEvents } from "../utils.js";

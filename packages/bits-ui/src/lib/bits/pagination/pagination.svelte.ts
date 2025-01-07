@@ -1,13 +1,13 @@
 import { useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { type Orientation, useId } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 const ROOT_ATTR = "data-pagination-root";
 const PAGE_ATTR = "data-pagination-page";
@@ -143,23 +143,14 @@ class PaginationPageState {
 			ref: this.#ref,
 		});
 
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	onclick(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
+		if (e.button !== 0) return;
 		this.#root.setPage(this.page.current.value);
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.setPage(this.page.current.value);
-		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -180,8 +171,7 @@ class PaginationPageState {
 				"data-selected": this.#isSelected ? "" : undefined,
 				[PAGE_ATTR]: "",
 				//
-				onpointerdown: this.onpointerdown,
-				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 			}) as const
 	);
@@ -217,8 +207,7 @@ class PaginationButtonState {
 			ref: this.#ref,
 		});
 
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
@@ -233,18 +222,10 @@ class PaginationButtonState {
 		return false;
 	});
 
-	onpointerdown(e: BitsPointerEvent) {
+	onclick(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
+		if (e.button !== 0) return;
 		this.#action();
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#action();
-		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -264,8 +245,7 @@ class PaginationButtonState {
 				[NEXT_ATTR]: this.type === "next" ? "" : undefined,
 				disabled: this.#isDisabled,
 				//
-				onpointerdown: this.onpointerdown,
-				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 			}) as const
 	);
@@ -394,21 +374,16 @@ function getPageItems({ page = 1, totalPages, siblingCount = 1 }: GetPageItemsPr
 	return pageItems;
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setPaginationRootContext, getPaginationRootContext] =
-	createContext<PaginationRootState>("Pagination.Root");
+const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
 
 export function usePaginationRoot(props: PaginationRootStateProps) {
-	return setPaginationRootContext(new PaginationRootState(props));
+	return PaginationRootContext.set(new PaginationRootState(props));
 }
 
 export function usePaginationPage(props: PaginationPageStateProps) {
-	return new PaginationPageState(props, getPaginationRootContext());
+	return new PaginationPageState(props, PaginationRootContext.get());
 }
 
 export function usePaginationButton(props: PaginationButtonStateProps) {
-	return new PaginationButtonState(props, getPaginationRootContext());
+	return new PaginationButtonState(props, PaginationRootContext.get());
 }

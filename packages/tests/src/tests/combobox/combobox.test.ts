@@ -35,7 +35,7 @@ const testItems: Item[] = [
 function setupSingle(
 	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
 	items: Item[] = testItems,
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	component: Component<any, any, any> = ComboboxTest
 ) {
 	const user = setupUserEvents();
@@ -687,13 +687,12 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should select a default item when provided", async () => {
-		const { getByTestId, queryByTestId, input, container, getHiddenInputs } =
-			await openMultiple({
-				value: ["2"],
-				inputProps: {
-					defaultValue: "B",
-				},
-			});
+		const { getByTestId, queryByTestId, input, getHiddenInputs } = await openMultiple({
+			value: ["2"],
+			inputProps: {
+				defaultValue: "B",
+			},
+		});
 		expect(queryByTestId("2-indicator")).not.toBeNull();
 		expect(input).toHaveValue("B");
 

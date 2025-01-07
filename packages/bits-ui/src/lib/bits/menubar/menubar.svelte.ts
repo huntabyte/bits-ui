@@ -1,5 +1,13 @@
-import { type ReadableBox, afterTick, box, useRefById } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	afterTick,
+	box,
+	onDestroyEffect,
+	onMountEffect,
+	useRefById,
+} from "svelte-toolbelt";
 import { untrack } from "svelte";
+import { Context } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import {
@@ -7,11 +15,9 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/arrays.js";
-import { isBrowser } from "$lib/internal/is.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
@@ -133,24 +139,19 @@ class MenubarMenuState {
 			}
 		});
 
-		// register content id to value map on mount
-		$effect(() => {
-			untrack(() => {
-				this.root.valueToContentId.set(
-					this.value.current,
-					box.with(() => this.contentNode?.id ?? "")
-				);
-			});
+		onMountEffect(() => {
+			this.root.valueToContentId.set(
+				this.value.current,
+				box.with(() => this.contentNode?.id ?? "")
+			);
+		});
 
-			// unregister on unmount
-			return () => {
-				this.root.valueToContentId.delete(this.value.current);
-			};
+		onDestroyEffect(() => {
+			this.root.valueToContentId.delete(this.value.current);
 		});
 	}
 
 	getTriggerNode() {
-		if (!isBrowser) return null;
 		return this.triggerNode;
 	}
 }
@@ -191,14 +192,12 @@ class MenubarTriggerState {
 			},
 		});
 
-		$effect(() => {
-			untrack(() => {
-				this.root.registerTrigger(props.id.current);
-			});
+		onMountEffect(() => {
+			this.root.registerTrigger(props.id.current);
+		});
 
-			return () => {
-				this.root.deRegisterTrigger(props.id.current);
-			};
+		onDestroyEffect(() => {
+			this.root.deRegisterTrigger(props.id.current);
 		});
 
 		$effect(() => {
@@ -392,24 +391,21 @@ class MenubarContentState {
 	);
 }
 
-const [setMenubarRootContext, getMenubarRootContext] =
-	createContext<MenubarRootState>("Menubar.Root");
-
-const [setMenubarMenuContext, getMenubarMenuContext] =
-	createContext<MenubarMenuState>("Menubar.Menu");
+const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
+const MenubarMenuContext = new Context<MenubarMenuState>("Menubar.Menu");
 
 export function useMenubarRoot(props: MenubarRootStateProps) {
-	return setMenubarRootContext(new MenubarRootState(props));
+	return MenubarRootContext.set(new MenubarRootState(props));
 }
 
 export function useMenubarMenu(props: MenubarMenuStateProps) {
-	return setMenubarMenuContext(new MenubarMenuState(props, getMenubarRootContext()));
+	return MenubarMenuContext.set(new MenubarMenuState(props, MenubarRootContext.get()));
 }
 
 export function useMenubarTrigger(props: MenubarTriggerStateProps) {
-	return new MenubarTriggerState(props, getMenubarMenuContext());
+	return new MenubarTriggerState(props, MenubarMenuContext.get());
 }
 
 export function useMenubarContent(props: MenubarContentStateProps) {
-	return new MenubarContentState(props, getMenubarMenuContext());
+	return new MenubarContentState(props, MenubarMenuContext.get());
 }

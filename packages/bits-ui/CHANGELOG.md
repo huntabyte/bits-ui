@@ -1,5 +1,47 @@
 # bits-ui
 
+## 1.0.0-next.77
+
+### Patch Changes
+
+-   breaking: remove `controlled<State>` props in favor of Svelte's [Function Bindings](https://svelte.dev/docs/svelte/bind#Function-bindings) ([#1034](https://github.com/huntabyte/bits-ui/pull/1034))
+
+## 1.0.0-next.76
+
+### Patch Changes
+
+-   breaking: `Slider.Root` now requires a `type` prop to specify whether the slider should be a `"single"` or `"multiple"` slider, which determines whether the value and change function arguments should be of type `number` or `number[]` ([#1032](https://github.com/huntabyte/bits-ui/pull/1032))
+
+-   fix: `Popover` trigger close detection ([#1030](https://github.com/huntabyte/bits-ui/pull/1030))
+
+-   Dialog/Alert Dialog: change `Dialog.Close` and `AlertDialog.Cancel` events from `pointerdown` to `click` ([#1028](https://github.com/huntabyte/bits-ui/pull/1028))
+
+## 1.0.0-next.75
+
+### Patch Changes
+
+-   fix: expose `updatePositionStrategy` prop for tooltip content ([#1026](https://github.com/huntabyte/bits-ui/pull/1026))
+
+-   cleanup internals, update Svelte ([#1024](https://github.com/huntabyte/bits-ui/pull/1024))
+
+## 0.22.0
+
+### Minor Changes
+
+-   Resolves peer dependency issues for Svelte 5 projects ([#868](https://github.com/huntabyte/bits-ui/pull/868))
+
+## 1.0.0-next.74
+
+### Patch Changes
+
+-   revert to `onclick` events for most components except where it makes sense (like menus, select, etc.) ([#1011](https://github.com/huntabyte/bits-ui/pull/1011))
+
+## 1.0.0-next.73
+
+### Patch Changes
+
+-   Update Svelte `peerDependency` from `^5.0.0-next.1` to `^5.0.0` ([#869](https://github.com/huntabyte/bits-ui/pull/869))
+
 ## 1.0.0-next.72
 
 ### Minor Changes

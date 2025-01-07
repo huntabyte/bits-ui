@@ -18,7 +18,6 @@
 		label = "",
 		vimBindings = true,
 		disablePointerSelection = false,
-		controlledValue = false,
 		children,
 		child,
 		...restProps
@@ -36,12 +35,8 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		vimBindings: box.with(() => vimBindings),

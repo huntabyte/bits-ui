@@ -41,9 +41,6 @@
 		numberOfMonths = 1,
 		closeOnDateSelect = true,
 		initialFocus = false,
-		controlledPlaceholder = false,
-		controlledValue = false,
-		controlledOpen = false,
 		errorMessageId,
 		children,
 	}: DatePickerRootProps = $props();
@@ -55,20 +52,12 @@
 			defaultValue: value,
 		});
 
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+		placeholder = defaultPlaceholder;
 	}
 
 	function onDateSelect() {
 		if (closeOnDateSelect) {
-			if (controlledOpen) {
-				onOpenChange(false);
-			} else {
-				open = false;
-			}
+			open = false;
 		}
 	}
 
@@ -76,34 +65,22 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v as DateValue);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v as DateValue);
-				}
+				placeholder = v;
+				onPlaceholderChange(v as DateValue);
 			}
 		),
 		isDateUnavailable: box.with(() => isDateUnavailable),

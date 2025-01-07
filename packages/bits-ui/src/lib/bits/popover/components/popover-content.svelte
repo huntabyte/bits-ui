@@ -28,28 +28,12 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onInteractOutside: box.with(() => onInteractOutside),
+		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-
-	function handleInteractOutside(e: PointerEvent) {
-		onInteractOutside(e);
-		if (e.defaultPrevented) return;
-		contentState.root.close();
-	}
-
-	function handleEscapeKeydown(e: KeyboardEvent) {
-		onEscapeKeydown(e);
-		if (e.defaultPrevented) return;
-		contentState.root.close();
-	}
-
-	function handleCloseAutoFocus(e: Event) {
-		onCloseAutoFocus(e);
-		if (e.defaultPrevented) return;
-		e.preventDefault();
-		contentState.root.triggerNode?.focus();
-	}
 </script>
 
 {#if forceMount}
@@ -57,9 +41,9 @@
 		{...mergedProps}
 		enabled={contentState.root.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onCloseAutoFocus={handleCloseAutoFocus}
+		onInteractOutside={contentState.handleInteractOutside}
+		onEscapeKeydown={contentState.handleEscapeKeydown}
+		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop
@@ -85,9 +69,9 @@
 		{...mergedProps}
 		present={contentState.root.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onCloseAutoFocus={handleCloseAutoFocus}
+		onInteractOutside={contentState.handleInteractOutside}
+		onEscapeKeydown={contentState.handleEscapeKeydown}
+		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop

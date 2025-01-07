@@ -44,9 +44,6 @@
 		closeOnRangeSelect = true,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
-		controlledValue = false,
-		controlledPlaceholder = false,
-		controlledOpen = false,
 		validate = noop,
 		errorMessageId,
 		child,
@@ -58,11 +55,7 @@
 	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (value === undefined) {
-		if (controlledValue) {
-			onValueChange({ start: undefined, end: undefined });
-		} else {
-			value = { start: undefined, end: undefined };
-		}
+		value = { start: undefined, end: undefined };
 	}
 
 	if (placeholder === undefined) {
@@ -71,20 +64,13 @@
 			defaultPlaceholder: undefined,
 			defaultValue: value?.start,
 		});
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+
+		placeholder = defaultPlaceholder;
 	}
 
 	function onRangeSelect() {
 		if (closeOnRangeSelect) {
-			if (controlledOpen) {
-				onOpenChange(false);
-			} else {
-				open = false;
-			}
+			open = false;
 		}
 	}
 
@@ -92,34 +78,22 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		value: box.with(
 			() => value as DateRange,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v as DateValue);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v as DateValue);
-				}
+				placeholder = v;
+				onPlaceholderChange(v as DateValue);
 			}
 		),
 		isDateUnavailable: box.with(() => isDateUnavailable),

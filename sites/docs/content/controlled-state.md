@@ -49,11 +49,7 @@ Controlled state puts you in charge of the component's state management. Use thi
 -   You want to synchronize the component's state with other parts of your application.
 -   You require custom logic for state updates.
 
-To implement controlled state:
-
--   Set the `controlled<State>` prop to true (e.g., `controlledValue`).
--   Pass a local state variable to the component.
--   Use the `on<State>`Change callback to update the local state (e.g., `onValueChange`).
+To implement controlled state, use [Function Bindings](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the state externally. This approach allows you to control the state updates and perform additional logic as needed.
 
 Here's an example of how you might use controlled state with the `Accordion` component:
 
@@ -63,22 +59,10 @@ Here's an example of how you might use controlled state with the `Accordion` com
 	let myValue = $state("");
 </script>
 
-<Accordion.Root type="single" controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Accordion.Root type="single" bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Accordion.Root>
 ```
-
-In this controlled state example:
-
--   We set `controlledValue` to true.
--   We pass our local `myValue` state to the value prop.
--   We use `onValueChange` to handle state updates
-
-<Callout>
-
-Unlike uncontrolled state, controlled state does not update the state before calling the `onValueChange` function.
-
-</Callout>
 
 ## Best Practices
 

@@ -6,7 +6,6 @@ import type {
 	AccordionTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -65,7 +64,6 @@ const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 			description:
 				"A callback function called when the active accordion item value changes. If the `type` is `'single'`, the argument will be a string. If `type` is `'multiple'`, the argument will be an array of strings.",
 		}),
-		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			description:
 				"Whether or not the accordion is disabled. When disabled, the accordion cannot be interacted with.",

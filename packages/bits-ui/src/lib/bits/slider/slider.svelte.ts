@@ -2,9 +2,16 @@
  * This logic is adapted from the @melt-ui/svelte slider, which was mostly written by
  * Abdelrahman (https://github.com/abdel-17)
  */
-
 import { untrack } from "svelte";
-import { executeCallbacks, useRefById } from "svelte-toolbelt";
+import {
+	executeCallbacks,
+	onMountEffect,
+	useRefById,
+	type Box,
+	type ReadableBox,
+} from "svelte-toolbelt";
+import { on } from "svelte/events";
+import { Context, watch } from "runed";
 import { getRangeStyles, getThumbStyles, getTickStyles } from "./helpers.js";
 import {
 	getAriaDisabled,
@@ -16,15 +23,8 @@ import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type {
-	BitsKeyboardEvent,
-	BitsPointerEvent,
-	OnChangeFn,
-	WithRefProps,
-} from "$lib/internal/types.js";
-import { addEventListener } from "$lib/internal/events.js";
+import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { snapValueToStep } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
@@ -32,7 +32,7 @@ const SLIDER_THUMB_ATTR = "data-slider-thumb";
 const SLIDER_RANGE_ATTR = "data-slider-range";
 const SLIDER_TICK_ATTR = "data-slider-tick";
 
-type SliderRootStateProps = WithRefProps<
+type SliderBaseRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		orientation: Orientation;
@@ -41,27 +41,20 @@ type SliderRootStateProps = WithRefProps<
 		step: number;
 		dir: Direction;
 		autoSort: boolean;
-		onValueCommit: OnChangeFn<number[]>;
-	}> &
-		WritableBoxedValues<{
-			value: number[];
-		}>
+	}>
 >;
 
-class SliderRootState {
-	id: SliderRootStateProps["id"];
-	ref: SliderRootStateProps["ref"];
-	value: SliderRootStateProps["value"];
-	disabled: SliderRootStateProps["disabled"];
-	orientation: SliderRootStateProps["orientation"];
-	min: SliderRootStateProps["min"];
-	max: SliderRootStateProps["max"];
-	step: SliderRootStateProps["step"];
-	dir: SliderRootStateProps["dir"];
-	autoSort: SliderRootStateProps["autoSort"];
-	activeThumb = $state<{ node: HTMLElement; idx: number } | null>(null);
+class SliderBaseRootState {
+	id: SliderBaseRootStateProps["id"];
+	ref: SliderBaseRootStateProps["ref"];
+	disabled: SliderBaseRootStateProps["disabled"];
+	orientation: SliderBaseRootStateProps["orientation"];
+	min: SliderBaseRootStateProps["min"];
+	max: SliderBaseRootStateProps["max"];
+	step: SliderBaseRootStateProps["step"];
+	dir: SliderBaseRootStateProps["dir"];
+	autoSort: SliderBaseRootStateProps["autoSort"];
 	isActive = $state(false);
-	currentThumbIdx = $state(0);
 	direction: "rl" | "lr" | "tb" | "bt" = $derived.by(() => {
 		if (this.orientation.current === "horizontal") {
 			return this.dir.current === "rtl" ? "rl" : "lr";
@@ -69,9 +62,8 @@ class SliderRootState {
 			return this.dir.current === "rtl" ? "tb" : "bt";
 		}
 	});
-	onValueCommit: SliderRootStateProps["onValueCommit"];
 
-	constructor(props: SliderRootStateProps) {
+	constructor(props: SliderBaseRootStateProps) {
 		this.id = props.id;
 		this.ref = props.ref;
 		this.disabled = props.disabled;
@@ -81,44 +73,320 @@ class SliderRootState {
 		this.step = props.step;
 		this.dir = props.dir;
 		this.autoSort = props.autoSort;
-		this.value = props.value;
-		this.onValueCommit = props.onValueCommit;
 
 		useRefById({
 			id: this.id,
 			ref: this.ref,
 		});
+	}
 
-		$effect(() => {
-			const unsub = executeCallbacks(
-				addEventListener(document, "pointerdown", this.handlePointerDown),
-				addEventListener(document, "pointerup", this.handlePointerUp),
-				addEventListener(document, "pointermove", this.handlePointerMove),
-				addEventListener(document, "pointerleave", this.handlePointerUp)
+	#touchAction = $derived.by(() => {
+		if (this.disabled.current) return undefined;
+		return this.orientation.current === "horizontal" ? "pan-y" : "pan-x";
+	});
+
+	getAllThumbs = () => {
+		const node = this.ref.current;
+		if (!node) return [];
+		return Array.from(node.querySelectorAll<HTMLElement>(`[${SLIDER_THUMB_ATTR}]`));
+	};
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.id.current,
+				"data-orientation": getDataOrientation(this.orientation.current),
+				"data-disabled": getDataDisabled(this.disabled.current),
+				style: {
+					touchAction: this.#touchAction,
+				},
+				[SLIDER_ROOT_ATTR]: "",
+			}) as const
+	);
+}
+
+type SliderSingleRootStateProps = SliderBaseRootStateProps &
+	ReadableBoxedValues<{
+		onValueCommit: OnChangeFn<number>;
+	}> &
+	WritableBoxedValues<{
+		value: number;
+	}>;
+
+class SliderSingleRootState extends SliderBaseRootState {
+	value: SliderSingleRootStateProps["value"];
+	onValueCommit: SliderSingleRootStateProps["onValueCommit"];
+	isMulti = false as const;
+
+	constructor(props: SliderSingleRootStateProps) {
+		super(props);
+		this.value = props.value;
+		this.onValueCommit = props.onValueCommit;
+
+		onMountEffect(() => {
+			return executeCallbacks(
+				on(document, "pointerdown", this.handlePointerDown),
+				on(document, "pointerup", this.handlePointerUp),
+				on(document, "pointermove", this.handlePointerMove),
+				on(document, "pointerleave", this.handlePointerUp)
 			);
-
-			return unsub;
 		});
 
-		$effect(() => {
-			const step = this.step.current;
-			const min = this.min.current;
-			const max = this.max.current;
-			const value = this.value.current;
+		watch(
+			[
+				() => this.step.current,
+				() => this.min.current,
+				() => this.max.current,
+				() => this.value.current,
+			],
+			([step, min, max, value]) => {
+				const isValidValue = (v: number) => {
+					const snappedValue = snapValueToStep(v, min, max, step);
+					return snappedValue === v;
+				};
 
-			const isValidValue = (v: number) => {
-				const snappedValue = snapValueToStep(v, min, max, step);
-				return snappedValue === v;
-			};
+				const gcv = (v: number) => {
+					return snapValueToStep(v, min, max, step);
+				};
 
-			const gcv = (v: number) => {
-				return snapValueToStep(v, min, max, step);
-			};
-
-			if (value.some((v) => !isValidValue(v))) {
-				this.value.current = value.map(gcv);
+				if (!isValidValue(value)) {
+					this.value.current = gcv(value);
+				}
 			}
+		);
+	}
+
+	applyPosition({ clientXY, start, end }: { clientXY: number; start: number; end: number }) {
+		const min = this.min.current;
+		const max = this.max.current;
+		const percent = (clientXY - start) / (end - start);
+		const val = percent * (max - min) + min;
+
+		if (val < min) {
+			this.updateValue(min);
+		} else if (val > max) {
+			this.updateValue(max);
+		} else {
+			const step = this.step.current;
+
+			const currStep = Math.floor((val - min) / step);
+			const midpointOfCurrStep = min + currStep * step + step / 2;
+			const midpointOfNextStep = min + (currStep + 1) * step + step / 2;
+			const newValue =
+				val >= midpointOfCurrStep && val < midpointOfNextStep
+					? (currStep + 1) * step + min
+					: currStep * step + min;
+
+			if (newValue <= max) {
+				this.updateValue(newValue);
+			}
+		}
+	}
+
+	updateValue = (newValue: number) => {
+		this.value.current = snapValueToStep(
+			newValue,
+			this.min.current,
+			this.max.current,
+			this.step.current
+		);
+	};
+
+	handlePointerMove = (e: PointerEvent) => {
+		if (!this.isActive || this.disabled.current) return;
+		e.preventDefault();
+		e.stopPropagation();
+
+		const sliderNode = this.ref.current;
+		const activeThumb = this.getAllThumbs()[0];
+		if (!sliderNode || !activeThumb) return;
+
+		activeThumb.focus();
+
+		const { left, right, top, bottom } = sliderNode.getBoundingClientRect();
+
+		if (this.direction === "lr") {
+			this.applyPosition({
+				clientXY: e.clientX,
+				start: left,
+				end: right,
+			});
+		} else if (this.direction === "rl") {
+			this.applyPosition({
+				clientXY: e.clientX,
+				start: right,
+				end: left,
+			});
+		} else if (this.direction === "bt") {
+			this.applyPosition({
+				clientXY: e.clientY,
+				start: bottom,
+				end: top,
+			});
+		} else if (this.direction === "tb") {
+			this.applyPosition({
+				clientXY: e.clientY,
+				start: top,
+				end: bottom,
+			});
+		}
+	};
+
+	handlePointerDown = (e: PointerEvent) => {
+		if (e.button !== 0 || this.disabled.current) return;
+		const sliderNode = this.ref.current;
+		const closestThumb = this.getAllThumbs()[0];
+		if (!closestThumb || !sliderNode) return;
+
+		const target = e.target;
+		if (!isElementOrSVGElement(target) || !sliderNode.contains(target)) return;
+		e.preventDefault();
+
+		closestThumb.focus();
+		this.isActive = true;
+
+		this.handlePointerMove(e);
+	};
+
+	handlePointerUp = () => {
+		if (this.disabled.current) return;
+		if (this.isActive) {
+			this.onValueCommit.current(untrack(() => this.value.current));
+		}
+		this.isActive = false;
+	};
+
+	getPositionFromValue = (thumbValue: number) => {
+		const min = this.min.current;
+		const max = this.max.current;
+
+		return ((thumbValue - min) / (max - min)) * 100;
+	};
+
+	thumbsPropsArr = $derived.by(() => {
+		const currValue = this.value.current;
+		return Array.from({ length: 1 }, () => {
+			const thumbValue = currValue;
+			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
+			const style = getThumbStyles(this.direction, thumbPosition);
+
+			return {
+				role: "slider",
+				"aria-valuemin": this.min.current,
+				"aria-valuemax": this.max.current,
+				"aria-valuenow": thumbValue,
+				"aria-disabled": getAriaDisabled(this.disabled.current),
+				"aria-orientation": getAriaOrientation(this.orientation.current),
+				"data-value": thumbValue,
+				tabindex: this.disabled.current ? -1 : 0,
+				style,
+				[SLIDER_THUMB_ATTR]: "",
+			} as const;
 		});
+	});
+
+	thumbsRenderArr = $derived.by(() => {
+		return this.thumbsPropsArr.map((_, i) => i);
+	});
+
+	ticksPropsArr = $derived.by(() => {
+		const max = this.max.current;
+		const min = this.min.current;
+		const step = this.step.current;
+		const difference = max - min;
+
+		let count = Math.ceil(difference / step);
+
+		if (difference % step == 0) {
+			count++;
+		}
+		const currValue = this.value.current;
+
+		return Array.from({ length: count }, (_, i) => {
+			const tickPosition = i * (step / difference) * 100;
+
+			const isFirst = i === 0;
+			const isLast = i === count - 1;
+			const offsetPercentage = isFirst ? 0 : isLast ? -100 : -50;
+			const style = getTickStyles(this.direction, tickPosition, offsetPercentage);
+			const tickValue = min + i * step;
+			const bounded = tickValue <= currValue;
+
+			return {
+				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-orientation": getDataOrientation(this.orientation.current),
+				"data-bounded": bounded ? "" : undefined,
+				"data-value": tickValue,
+				style,
+				[SLIDER_TICK_ATTR]: "",
+			} as const;
+		});
+	});
+
+	ticksRenderArr = $derived.by(() => {
+		return this.ticksPropsArr.map((_, i) => i);
+	});
+
+	snippetProps = $derived.by(
+		() =>
+			({
+				ticks: this.ticksRenderArr,
+				thumbs: this.thumbsRenderArr,
+			}) as const
+	);
+}
+
+type SliderMultiRootStateProps = SliderBaseRootStateProps &
+	ReadableBoxedValues<{
+		onValueCommit: OnChangeFn<number[]>;
+	}> &
+	WritableBoxedValues<{
+		value: number[];
+	}>;
+
+class SliderMultiRootState extends SliderBaseRootState {
+	value: SliderMultiRootStateProps["value"];
+	isMulti = true as const;
+	activeThumb = $state<{ node: HTMLElement; idx: number } | null>(null);
+	currentThumbIdx = $state(0);
+	onValueCommit: SliderMultiRootStateProps["onValueCommit"];
+
+	constructor(props: SliderMultiRootStateProps) {
+		super(props);
+		this.value = props.value;
+		this.onValueCommit = props.onValueCommit;
+
+		onMountEffect(() => {
+			return executeCallbacks(
+				on(document, "pointerdown", this.handlePointerDown),
+				on(document, "pointerup", this.handlePointerUp),
+				on(document, "pointermove", this.handlePointerMove),
+				on(document, "pointerleave", this.handlePointerUp)
+			);
+		});
+
+		watch(
+			[
+				() => this.step.current,
+				() => this.min.current,
+				() => this.max.current,
+				() => this.value.current,
+			],
+			([step, min, max, value]) => {
+				const isValidValue = (v: number) => {
+					const snappedValue = snapValueToStep(v, min, max, step);
+					return snappedValue === v;
+				};
+
+				const gcv = (v: number) => {
+					return snapValueToStep(v, min, max, step);
+				};
+
+				if (value.some((v) => !isValidValue(v))) {
+					this.value.current = value.map(gcv);
+				}
+			}
+		);
 	}
 
 	applyPosition({
@@ -352,7 +620,6 @@ class SliderRootState {
 
 		let count = Math.ceil(difference / step);
 
-		// eslint-disable-next-line eqeqeq
 		if (difference % step == 0) {
 			count++;
 		}
@@ -393,24 +660,6 @@ class SliderRootState {
 				thumbs: this.thumbsRenderArr,
 			}) as const
 	);
-
-	#touchAction = $derived.by(() => {
-		if (this.disabled.current) return undefined;
-		return this.orientation.current === "horizontal" ? "pan-y" : "pan-x";
-	});
-
-	props = $derived.by(
-		() =>
-			({
-				id: this.id.current,
-				"data-orientation": getDataOrientation(this.orientation.current),
-				"data-disabled": getDataDisabled(this.disabled.current),
-				style: {
-					touchAction: this.#touchAction,
-				},
-				[SLIDER_ROOT_ATTR]: "",
-			}) as const
-	);
 }
 
 const VALID_SLIDER_KEYS = [
@@ -441,10 +690,14 @@ class SliderRangeState {
 	}
 
 	rangeStyles = $derived.by(() => {
-		const value = this.#root.value.current;
-		const min = value.length > 1 ? this.#root.getPositionFromValue(Math.min(...value) ?? 0) : 0;
-		const max = 100 - this.#root.getPositionFromValue(Math.max(...value) ?? 0);
-
+		const min = Array.isArray(this.#root.value.current)
+			? this.#root.value.current.length > 1
+				? this.#root.getPositionFromValue(Math.min(...this.#root.value.current) ?? 0)
+				: 0
+			: 0;
+		const max = Array.isArray(this.#root.value.current)
+			? 100 - this.#root.getPositionFromValue(Math.max(...this.#root.value.current) ?? 0)
+			: 100 - this.#root.getPositionFromValue(this.#root.value.current);
 		return {
 			position: "absolute",
 			...getRangeStyles(this.#root.direction, min, max),
@@ -491,7 +744,11 @@ class SliderThumbState {
 	}
 
 	#updateValue(newValue: number) {
-		this.#root.updateValue(newValue, this.#index.current);
+		if (this.#root.isMulti) {
+			this.#root.updateValue(newValue, this.#index.current);
+		} else {
+			this.#root.updateValue(newValue);
+		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -502,7 +759,9 @@ class SliderThumbState {
 		if (!thumbs.length) return;
 
 		const idx = thumbs.indexOf(currNode);
-		this.#root.currentThumbIdx = idx;
+		if (this.#root.isMulti) {
+			this.#root.currentThumbIdx = idx;
+		}
 
 		if (!VALID_SLIDER_KEYS.includes(e.key)) return;
 
@@ -511,7 +770,7 @@ class SliderThumbState {
 		const min = this.#root.min.current;
 		const max = this.#root.max.current;
 		const value = this.#root.value.current;
-		const thumbValue = value[idx]!;
+		const thumbValue = Array.isArray(value) ? value[idx]! : value;
 		const orientation = this.#root.orientation.current;
 		const direction = this.#root.direction;
 		const step = this.#root.step.current;
@@ -566,6 +825,7 @@ class SliderThumbState {
 				}
 				break;
 		}
+		// @ts-expect-error - this is fine
 		this.#root.onValueCommit.current(this.#root.value.current);
 	}
 
@@ -611,20 +871,33 @@ class SliderTickState {
 	);
 }
 
-const [setSliderRootContext, getSliderRootContext] = createContext<SliderRootState>("Slider.Root");
+type SliderRootState = SliderSingleRootState | SliderMultiRootState;
 
-export function useSliderRoot(props: SliderRootStateProps) {
-	return setSliderRootContext(new SliderRootState(props));
+type InitSliderRootStateProps = {
+	type: "single" | "multiple";
+	value: Box<number> | Box<number[]>;
+	onValueCommit: ReadableBox<OnChangeFn<number>> | ReadableBox<OnChangeFn<number[]>>;
+} & Omit<SliderBaseRootStateProps, "type">;
+
+const SliderRootContext = new Context<SliderRootState>("Slider.Root");
+
+export function useSliderRoot(props: InitSliderRootStateProps) {
+	const { type, ...rest } = props;
+	const rootState =
+		type === "single"
+			? new SliderSingleRootState(rest as SliderSingleRootStateProps)
+			: new SliderMultiRootState(rest as SliderMultiRootStateProps);
+	return SliderRootContext.set(rootState);
 }
 
 export function useSliderRange(props: SliderRangeStateProps) {
-	return new SliderRangeState(props, getSliderRootContext());
+	return new SliderRangeState(props, SliderRootContext.get());
 }
 
 export function useSliderThumb(props: SliderThumbStateProps) {
-	return new SliderThumbState(props, getSliderRootContext());
+	return new SliderThumbState(props, SliderRootContext.get());
 }
 
 export function useSliderTick(props: SliderTickStateProps) {
-	return new SliderTickState(props, getSliderRootContext());
+	return new SliderTickState(props, SliderRootContext.get());
 }

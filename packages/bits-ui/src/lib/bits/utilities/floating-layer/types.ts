@@ -1,6 +1,6 @@
 import type { Snippet } from "svelte";
 import type { ReadableBox } from "svelte-toolbelt";
-import type { Align, Boundary, Side } from "./useFloatingLayer.svelte.js";
+import type { Align, Boundary, Side } from "./use-floating-layer.svelte.js";
 import type { Arrayable } from "$lib/internal/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
 import type { Measurable } from "$lib/internal/floating-svelte/types.js";
@@ -70,6 +70,13 @@ export type FloatingLayerContentProps = {
 
 	hideWhenDetached?: boolean;
 
+	/**
+	 * "optimized" will only update the position when necessary, while "always"
+	 * will update the position on each animation frame, which is useful if the floating
+	 * content is following something like a mouse cursor.
+	 *
+	 * @defaultValue "optimized"
+	 */
 	updatePositionStrategy?: "optimized" | "always";
 
 	content?: Snippet<[{ props: Record<string, unknown>; wrapperProps: Record<string, unknown> }]>;

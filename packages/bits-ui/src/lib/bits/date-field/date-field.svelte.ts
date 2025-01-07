@@ -2,6 +2,7 @@ import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import { type WritableBox, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
+import { Context } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
@@ -21,7 +22,6 @@ import {
 } from "$lib/internal/attrs.js";
 import { isBrowser, isNumberString } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { useId } from "$lib/internal/use-id.js";
 import type {
 	DateAndTimeSegmentObj,
@@ -1440,7 +1440,7 @@ class DateFieldYearSegmentState {
 		}
 	}
 
-	onfocusout(e: BitsFocusEvent) {
+	onfocusout(_: BitsFocusEvent) {
 		this.#root.states.year.hasLeftFocus = true;
 		this.#pressedKeys = [];
 		this.#resetBackspaceCount();
@@ -2454,38 +2454,33 @@ function isBackspace(key: string) {
 	return key === kbd.BACKSPACE;
 }
 
-const [setDateFieldRootContext, getDateFieldRootContext] =
-	createContext<DateFieldRootState>("DateField.Root");
+const DateFieldRootContext = new Context<DateFieldRootState>("DateField.Root");
 
 export function useDateFieldRoot(
 	props: DateFieldRootStateProps,
 	rangeRoot?: DateRangeFieldRootState
 ) {
-	return setDateFieldRootContext(new DateFieldRootState(props, rangeRoot));
+	return DateFieldRootContext.set(new DateFieldRootState(props, rangeRoot));
 }
 
 export function useDateFieldInput(props: DateFieldInputStateProps) {
-	const root = getDateFieldRootContext();
-	return new DateFieldInputState(props, root);
+	return new DateFieldInputState(props, DateFieldRootContext.get());
 }
 
 export function useDateFieldHiddenInput() {
-	const root = getDateFieldRootContext();
-	return new DateFieldHiddenInputState(root);
+	return new DateFieldHiddenInputState(DateFieldRootContext.get());
 }
 
 export function useDateFieldSegment(part: SegmentPart, props: WithRefProps) {
-	const root = getDateFieldRootContext();
 	return segmentPartToInstance({
 		part,
 		segmentProps: props,
-		root,
+		root: DateFieldRootContext.get(),
 	});
 }
 
 export function useDateFieldLabel(props: DateFieldLabelStateProps) {
-	const root = getDateFieldRootContext();
-	return new DateFieldLabelState(props, root);
+	return new DateFieldLabelState(props, DateFieldRootContext.get());
 }
 
 type SegmentPartToInstanceProps = {

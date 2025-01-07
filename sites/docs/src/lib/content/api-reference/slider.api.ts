@@ -5,15 +5,15 @@ import type {
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
 import { SliderRootOnValueChangeProp } from "./extended-types/slider/index.js";
-import { OrientationProp } from "./extended-types/shared/index.js";
+import { OrientationProp, SingleOrMultipleProp } from "./extended-types/shared/index.js";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
 	createEnumProp,
 	createFunctionProp,
 	createNumberProp,
+	createUnionProp,
 	dirProp,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
@@ -23,10 +23,18 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root slider component which contains the remaining slider components.",
 	props: {
+		type: createUnionProp({
+			options: ["'single'", "'multiple'"],
+			description:
+				"The type of the slider. If set to `'multiple'`, the slider will allow multiple thumbs and the `value` will be an array of numbers.",
+			required: true,
+			definition: SingleOrMultipleProp,
+		}),
 		value: {
-			default: "[]",
-			type: "number[]",
-			description: "The current value of the slider.",
+			default: "0",
+			type: "number",
+			description:
+				"The current value of the slider. If the `type` is set to `'multiple'`, this should be an array of numbers and will default to an empty array.",
 			bindable: true,
 		},
 		onValueChange: createFunctionProp({
@@ -38,7 +46,6 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			description:
 				"A callback function called when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called immediately after the user starts dragging.",
 		}),
-		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",
@@ -53,7 +60,7 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 		}),
 		orientation: createEnumProp({
 			options: ["horizontal", "vertical"],
-			default: '"horizontal"',
+			default: "'horizontal'",
 			description: "The orientation of the slider.",
 			definition: OrientationProp,
 		}),
@@ -65,7 +72,7 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 		autoSort: createBooleanProp({
 			default: C.TRUE,
 			description:
-				"Whether to automatically sort the values in the array when moving thumbs past one another.",
+				"Whether to automatically sort the values in the array when moving thumbs past one another. This is only applicable to the `'multiple'` type.",
 		}),
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},

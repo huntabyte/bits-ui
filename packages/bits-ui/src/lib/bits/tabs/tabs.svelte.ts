@@ -1,7 +1,6 @@
-import { untrack } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { useRefById } from "svelte-toolbelt";
-import type { FocusEventHandler, KeyboardEventHandler, MouseEventHandler } from "svelte/elements";
+import { Context, watch } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
 	getAriaOrientation,
@@ -24,7 +23,6 @@ import {
 	type UseRovingFocusReturn,
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 const ROOT_ATTR = "data-tabs-root";
 const LIST_ATTR = "data-tabs-list";
@@ -184,17 +182,8 @@ class TabsTriggerState {
 			ref: this.#ref,
 		});
 
-		$effect(() => {
-			// we want to track the value & id
-			const id = this.#id.current;
-			const value = this.#value.current;
-
-			return untrack(() => {
-				const deregister = this.#root.registerTrigger(id, value);
-				return () => {
-					deregister();
-				};
-			});
+		watch([() => this.#id.current, () => this.#value.current], ([id, value]) => {
+			return this.#root.registerTrigger(id, value);
 		});
 
 		$effect(() => {
@@ -215,17 +204,17 @@ class TabsTriggerState {
 		this.#root.setValue(this.#value.current);
 	}
 
-	onfocus = (_: BitsFocusEvent) => {
+	onfocus(_: BitsFocusEvent) {
 		if (this.#root.activationMode.current !== "automatic" || this.#isDisabled) return;
 		this.#activate();
-	};
+	}
 
-	onclick = (_: BitsMouseEvent) => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#isDisabled) return;
 		this.#activate();
-	};
+	}
 
-	onkeydown = (e: BitsKeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
@@ -233,7 +222,7 @@ class TabsTriggerState {
 			return;
 		}
 		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -285,17 +274,8 @@ class TabsContentState {
 			ref: this.#ref,
 		});
 
-		$effect(() => {
-			// we want to track the value & id
-			const id = this.#id.current;
-			const value = this.#value.current;
-
-			untrack(() => {
-				const deregister = this.#root.registerContent(id, value);
-				return () => {
-					deregister();
-				};
-			});
+		watch([() => this.#id.current, () => this.#value.current], ([id, value]) => {
+			return this.#root.registerContent(id, value);
 		});
 	}
 
@@ -314,31 +294,23 @@ class TabsContentState {
 	);
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setTabsRootContext, getTabsRootContext] = createContext<TabsRootState>("Tabs.Root");
+const TabsRootContext = new Context<TabsRootState>("Tabs.Root");
 
 export function useTabsRoot(props: TabsRootStateProps) {
-	return setTabsRootContext(new TabsRootState(props));
+	return TabsRootContext.set(new TabsRootState(props));
 }
 
 export function useTabsTrigger(props: TabsTriggerStateProps) {
-	return new TabsTriggerState(props, getTabsRootContext());
+	return new TabsTriggerState(props, TabsRootContext.get());
 }
 
 export function useTabsList(props: TabsListStateProps) {
-	return new TabsListState(props, getTabsRootContext());
+	return new TabsListState(props, TabsRootContext.get());
 }
 
 export function useTabsContent(props: TabsContentStateProps) {
-	return new TabsContentState(props, getTabsRootContext());
+	return new TabsContentState(props, TabsRootContext.get());
 }
-
-//
-// HELPERS
-//
 
 function getTabDataState(condition: boolean): "active" | "inactive" {
 	return condition ? "active" : "inactive";

@@ -1,109 +1,116 @@
-<script lang="ts">
-	import { Combobox } from "bits-ui";
-	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
-	import Check from "phosphor-svelte/lib/Check";
-	import OrangeSlice from "phosphor-svelte/lib/OrangeSlice";
-	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
-	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
-	import { useDebounce } from "runed";
+<script>
+	import { Slider, Tooltip } from "bits-ui";
+	import { on } from "svelte/events";
 
-	const fruits = [
-		{ value: "mango", label: "Mango" },
-		{ value: "watermelon", label: "Watermelon" },
-		{ value: "apple", label: "Apple" },
-		{ value: "pineapple", label: "Pineapple" },
-		{ value: "orange", label: "Orange" },
-		{ value: "grape", label: "Grape" },
-		{ value: "strawberry", label: "Strawberry" },
-		{ value: "banana", label: "Banana" },
-		{ value: "kiwi", label: "Kiwi" },
-		{ value: "peach", label: "Peach" },
-		{ value: "cherry", label: "Cherry" },
-		{ value: "blueberry", label: "Blueberry" },
-		{ value: "raspberry", label: "Raspberry" },
-		{ value: "blackberry", label: "Blackberry" },
-		{ value: "plum", label: "Plum" },
-		{ value: "apricot", label: "Apricot" },
-		{ value: "pear", label: "Pear" },
-		{ value: "grapefruit", label: "Grapefruit" },
-	];
+	let value = $state([0]);
+	let open = $state(false);
+	let pointerdown = $state(false);
 
-	let searchValue = $state("");
-	let debouncedSearchValue = $state("");
+	// @ts-expect-error - shh
+	function onOpenChange(value) {
+		if (pointerdown) {
+			return;
+		}
 
-	const updateSearchValue = useDebounce(
-		(value: string) => {
-			debouncedSearchValue = value;
-		},
-		() => 1000
-	);
+		open = value;
+	}
 
-	const filteredFruits = $derived(
-		debouncedSearchValue === ""
-			? []
-			: fruits.filter((fruit) =>
-					fruit.label.toLowerCase().includes(debouncedSearchValue.toLowerCase())
-				)
-	);
+	function onPointerDown() {
+		pointerdown = true;
+		open = true;
+	}
+
+	function onPointerUp() {
+		pointerdown = false;
+		open = false;
+	}
+
+	$effect(() => {
+		return on(document, "pointerup", onPointerUp);
+	});
 </script>
 
-<Combobox.Root
-	type="single"
-	name="favoriteFruit"
-	onOpenChange={(o) => {
-		if (!o) searchValue = "";
-	}}
->
-	<div class="relative">
-		<OrangeSlice
-			class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
-		/>
-		<Combobox.Input
-			oninput={(e) => {
-				searchValue = e.currentTarget.value;
-				updateSearchValue(searchValue);
-			}}
-			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
-			placeholder="Search a fruit"
-			aria-label="Search a fruit"
-		/>
-		<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2">
-			<CaretUpDown class="size-6 text-muted-foreground" />
-		</Combobox.Trigger>
-	</div>
-	<Combobox.Portal>
-		<Combobox.Content
-			class="max-h-96 w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-none"
-			sideOffset={10}
-		>
-			<Combobox.ScrollUpButton class="flex w-full items-center justify-center">
-				<CaretDoubleUp class="size-3" />
-			</Combobox.ScrollUpButton>
-			<Combobox.Viewport class="p-1">
-				{#each filteredFruits as fruit, i (i + fruit.value)}
-					<Combobox.Item
-						class="flex h-10 w-full select-none items-center rounded-button py-3 pl-5 pr-1.5 text-sm capitalize outline-none  data-[highlighted]:bg-muted"
-						value={fruit.value}
-						label={fruit.label}
-					>
-						{#snippet children({ selected })}
-							{fruit.label}
-							{#if selected}
-								<div class="ml-auto">
-									<Check />
+<div class="container">
+	<Slider.Root type="multiple" bind:value class="root">
+		{#snippet children({ thumbs })}
+			<div class="track">
+				<Slider.Range class="range" />
+			</div>
+			<Tooltip.Provider>
+				{#each thumbs as index}
+					<Tooltip.Root bind:open={() => open, onOpenChange} delayDuration={0}>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
+								<Slider.Thumb
+									{...props}
+									{index}
+									onpointerdown={() => {
+										onPointerDown();
+									}}
+									class="thumb"
+								/>
+							{/snippet}
+						</Tooltip.Trigger>
+						<Tooltip.Portal>
+							<Tooltip.Content updatePositionStrategy="always">
+								<div class="tooltip-content">
+									{value[index]}
 								</div>
-							{/if}
-						{/snippet}
-					</Combobox.Item>
-				{:else}
-					<span class="block px-5 py-2 text-sm text-muted-foreground">
-						No results found, try again.
-					</span>
+								<Tooltip.Arrow />
+							</Tooltip.Content>
+						</Tooltip.Portal>
+					</Tooltip.Root>
 				{/each}
-			</Combobox.Viewport>
-			<Combobox.ScrollDownButton class="flex w-full items-center justify-center">
-				<CaretDoubleDown class="size-3" />
-			</Combobox.ScrollDownButton>
-		</Combobox.Content>
-	</Combobox.Portal>
-</Combobox.Root>
+			</Tooltip.Provider>
+		{/snippet}
+	</Slider.Root>
+</div>
+
+<style>
+	.container {
+		width: 280px;
+	}
+
+	:global(.root) {
+		position: relative;
+		width: 100%;
+		display: flex;
+		align-items: center;
+	}
+
+	:global(.track) {
+		position: relative;
+		height: 8px;
+		width: 100%;
+		flex-grow: 1;
+		overflow: hidden;
+		border-radius: 9999px;
+		background-color: gray;
+	}
+
+	:global(.range) {
+		position: absolute;
+		height: 100%;
+		background-color: orange;
+	}
+
+	:global(.thumb) {
+		height: 25px;
+		width: 25px;
+		border-radius: 9999px;
+		background-color: orange;
+	}
+
+	.tooltip-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 25px;
+		height: 25px;
+		border-radius: 9999px;
+		background-color: orange;
+		color: black;
+		font-size: 0.75rem;
+		font-weight: 500;
+	}
+</style>

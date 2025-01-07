@@ -116,7 +116,7 @@ describe("pin Input", () => {
 			await user.keyboard(key);
 		}
 		expect(mockComplete).toHaveBeenCalledTimes(1);
-		for (const key of keys) {
+		for (const _key of keys) {
 			await user.keyboard(kbd.BACKSPACE);
 		}
 

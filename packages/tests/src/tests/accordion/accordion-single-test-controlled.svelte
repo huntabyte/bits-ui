@@ -27,7 +27,7 @@
 	{value}
 </div>
 
-<button data-testid="update-value" onclick={() => (value = "item-2")}> Update Value </button>
+<button data-testid="update-value" onclick={() => (value = "item-1")}> Update Value </button>
 
 <Accordion.Root type="single" bind:value={value as string} {disabled} data-testid="root">
 	{#each items as { value, title, disabled, content, level }}

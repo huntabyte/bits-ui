@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useFloatingArrowState } from "../useFloatingLayer.svelte.js";
+	import { useFloatingArrowState } from "../use-floating-layer.svelte.js";
 	import { Arrow, type ArrowProps } from "$lib/bits/utilities/arrow/index.js";
 	import { useId } from "$lib/internal/use-id.js";
 
@@ -14,8 +14,7 @@
 		),
 	});
 
-	// explicit any here because the `asChild` and `child` are causing this to never out
-	const mergedProps = $derived<any>(mergeProps(restProps, arrowState.props));
+	const mergedProps = $derived(mergeProps(restProps, arrowState.props));
 </script>
 
 <Arrow {...mergedProps} />

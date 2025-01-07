@@ -205,7 +205,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -214,7 +214,7 @@ For complete control over the dialog's open state, use the `controlledOpen` prop
 	let myOpen = $state(false);
 </script>
 
-<AlertDialog.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<AlertDialog.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </AlertDialog.Root>
 ```

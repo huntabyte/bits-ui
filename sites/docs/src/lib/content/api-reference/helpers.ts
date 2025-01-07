@@ -543,7 +543,7 @@ export const dirProp = createEnumProp({
 	definition: DirProp,
 	options: ["ltr", "rtl"],
 	description: "The reading direction of the app.",
-	default: "ltr",
+	default: "'ltr'",
 });
 
 export const orientationDataAttr = createEnumDataAttr({
@@ -571,46 +571,4 @@ export const valueDateRangeProp: PropSchema = createPropSchema({
 export const valueDateRangeChangeFn: PropSchema = createFunctionProp({
 	definition: DateOnRangeChangeProp,
 	description: "A function that is called when the selected date range changes.",
-});
-
-export const controlledValueProp = createBooleanProp({
-	default: C.FALSE,
-	description:
-		"Whether or not the `value` is controlled or not. If `true`, the component will not update the `value` state internally, instead it will call `onValueChange` when it would have otherwise, and it is up to you to update the `value` prop that is passed to the component.",
-});
-
-export const controlledPlaceholderProp = createBooleanProp({
-	default: C.FALSE,
-	description:
-		"Whether or not the `placeholder` is controlled or not. If `true`, the component will not update the `placeholder` state internally, instead it will call `onPlaceholderChange` when it would have otherwise, and it is up to you to update the `placeholder` prop that is passed to the component.",
-});
-
-export const controlledOpenProp = createBooleanProp({
-	default: C.FALSE,
-	description:
-		"Whether or not the `open` state is controlled or not. If `true`, the component will not update the `open` state internally, instead it will call `onOpenChange` when it would have otherwise, and it is up to you to update the `open` prop that is passed to the component.",
-});
-
-export const controlledCheckedProp = createBooleanProp({
-	default: C.FALSE,
-	description:
-		"Whether or not the `checked` state is controlled or not. If `true`, the component will not update the `checked` state internally, instead it will call `onCheckedChange` when it would have otherwise, and it is up to you to update the `checked` prop that is passed to the component.",
-});
-
-export const controlledIndeterminateProp = createBooleanProp({
-	default: C.FALSE,
-	description:
-		"Whether or not the `indeterminate` state is controlled or not. If `true`, the component will not update the `indeterminate` state internally, instead it will call `onIndeterminateChange` when it would have otherwise, and it is up to you to update the `indeterminate` prop that is passed to the component.",
-});
-
-export const controlledPressedProp = createBooleanProp({
-	default: C.FALSE,
-	description:
-		"Whether or not the `pressed` state is controlled or not. If `true`, the component will not update the `pressed` state internally, instead it will call `onPressedChange` when it would have otherwise, and it is up to you to update the `pressed` prop that is passed to the component.",
-});
-
-export const controlledPageProp = createBooleanProp({
-	default: C.FALSE,
-	description:
-		"Whether or not the `page` state is controlled or not. If `true`, the component will not update the `page` state internally, instead it will call `onPageChange` when it would have otherwise, and it is up to you to update the `page` prop that is passed to the component.",
 });

@@ -7,91 +7,130 @@ export type SliderRootSnippetProps = {
 	thumbs: number[];
 };
 
-export type SliderRootPropsWithoutHTML = WithChild<
-	{
-		/**
-		 * The value of the slider.
-		 * @bindable
-		 */
-		value?: number[];
+export type BaseSliderRootPropsWithoutHTML = {
+	/**
+	 * Whether to automatically sort the values in the array when moving thumbs past
+	 * one another.
+	 *
+	 * @defaultValue true
+	 */
+	autoSort?: boolean;
+	/**
+	 * The minimum value of the slider.
+	 *
+	 * @defaultValue 0
+	 */
+	min?: number;
 
-		/**
-		 * A callback function called when the value changes.
-		 */
-		onValueChange?: OnChangeFn<number[]>;
+	/**
+	 * The maximum value of the slider.
+	 *
+	 * @defaultValue 100
+	 */
+	max?: number;
 
-		/**
-		 * A callback function called when the user stops dragging the thumb,
-		 * which is useful for knowing when the user has finished interacting with the
-		 * slider and _commits_ the value.
-		 */
-		onValueCommit?: OnChangeFn<number[]>;
+	/**
+	 * The amount to increment the value by when the user presses the arrow keys.
+	 *
+	 * @defaultValue 1
+	 */
+	step?: number;
 
-		/**
-		 * Whether to automatically sort the values in the array when moving thumbs past
-		 * one another.
-		 *
-		 * @defaultValue true
-		 */
-		autoSort?: boolean;
-		/**
-		 * The minimum value of the slider.
-		 *
-		 * @defaultValue 0
-		 */
-		min?: number;
+	/**
+	 * The direction of the slider.
+	 *
+	 * For vertical sliders, setting `dir` to `'rtl'` will caus the slider to start
+	 * from the top and move downwards. For horizontal sliders, setting `dir` to `'rtl'`
+	 * will cause the slider to start from the left and move rightwards.
+	 *
+	 * @defaultValue 'ltr'
+	 */
+	dir?: Direction;
 
-		/**
-		 * The maximum value of the slider.
-		 *
-		 * @defaultValue 100
-		 */
-		max?: number;
+	/**
+	 * The orientation of the slider.
+	 *
+	 * @defaultValue "horizontal"
+	 */
+	orientation?: Orientation;
 
-		/**
-		 * The amount to increment the value by when the user presses the arrow keys.
-		 *
-		 * @defayltValue 1
-		 */
-		step?: number;
+	/**
+	 * Whether the slider is disabled or not.
+	 *
+	 * @defaultValue false
+	 */
+	disabled?: boolean;
+};
 
-		/**
-		 * The direction of the slider.
-		 *
-		 * For vertical sliders, setting `dir` to `'rtl'` will caus the slider to start
-		 * from the top and move downwards. For horizontal sliders, setting `dir` to `'rtl'`
-		 * will cause the slider to start from the left and move rightwards.
-		 *
-		 * @defaultValue 'ltr'
-		 */
-		dir?: Direction;
+export type SliderSingleRootPropsWithoutHTML = BaseSliderRootPropsWithoutHTML & {
+	/**
+	 * The type of slider. If set to `'multiple'`, the slider will
+	 * allow multiple ticks and the `value` will be an array of numbers.
+	 *
+	 * @required
+	 */
+	type: "single";
 
-		/**
-		 * The orientation of the slider.
-		 *
-		 * @defaultValue "horizontal"
-		 */
-		orientation?: Orientation;
+	/**
+	 * The value of the slider.
+	 * @bindable
+	 */
+	value?: number;
 
-		/**
-		 * Whether the slider is disabled or not.
-		 *
-		 * @defaultValue false
-		 */
-		disabled?: boolean;
+	/**
+	 * A callback function called when the value changes.
+	 */
+	onValueChange?: OnChangeFn<number>;
 
-		/**
-		 * Whether or not the value state is controlled or not. If `true`, the component will
-		 * not update the value state internally, instead it will call `onValueChange` when it
-		 * would have otherwise, and it is up to you to update the `value` prop that is passed
-		 * to the component.
-		 *
-		 * @defaultValue false
-		 */
-		controlledValue?: boolean;
-	},
-	SliderRootSnippetProps
->;
+	/**
+	 * A callback function called when the user stops dragging the
+	 * thumb and the value is committed.
+	 */
+	onValueCommit?: OnChangeFn<number>;
+};
+
+export type SliderMultiRootPropsWithoutHTML = BaseSliderRootPropsWithoutHTML & {
+	/**
+	 * The type of slider. If set to `'multiple'`, the slider will
+	 * allow multiple ticks and the `value` will be an array of numbers.
+	 *
+	 * @required
+	 */
+	type: "multiple";
+
+	/**
+	 * The value of the slider.
+	 * @bindable
+	 */
+	value?: number[];
+
+	/**
+	 * A callback function called when the value changes.
+	 */
+	onValueChange?: OnChangeFn<number[]>;
+
+	/**
+	 * A callback function called when the user stops dragging the
+	 * thumb and the value is committed.
+	 */
+	onValueCommit?: OnChangeFn<number[]>;
+};
+
+export type SliderRootPropsWithoutHTML =
+	| WithChild<SliderSingleRootPropsWithoutHTML, SliderRootSnippetProps>
+	| WithChild<SliderMultiRootPropsWithoutHTML, SliderRootSnippetProps>;
+
+export type SliderSingleRootProps = SliderSingleRootPropsWithoutHTML &
+	Without<
+		BitsPrimitiveSpanAttributes,
+		WithChild<SliderSingleRootPropsWithoutHTML, SliderRootSnippetProps>
+	>;
+
+export type SliderMultipleRootProps = SliderMultiRootPropsWithoutHTML &
+	Without<
+		BitsPrimitiveSpanAttributes,
+		WithChild<SliderMultiRootPropsWithoutHTML, SliderRootSnippetProps>
+	>;
 
 export type SliderRootProps = SliderRootPropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderRootPropsWithoutHTML>;

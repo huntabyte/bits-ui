@@ -1,3 +1,4 @@
+import { on } from "svelte/events";
 import type { Arrayable } from "$lib/internal/types.js";
 
 export type EventCallback<E extends Event = Event> = (event: E) => void;
@@ -54,48 +55,31 @@ export function addEventListener(
  * @template T - The type of data that will be passed in the event detail
  * @param eventName - The name of the custom event
  * @param options - CustomEvent options (bubbles, cancelable, etc.)
- * @returns A tuple containing dispatch and listen functions
  */
-export function createCustomEvent<T = unknown>(
-	eventName: string,
-	options: Omit<CustomEventInit<T>, "detail"> = { bubbles: true, cancelable: true }
-) {
-	type CustomEventType = CustomEvent<T>;
-	type EventListener = (event: CustomEventType) => void;
+export class CustomEventDispatcher<T = unknown> {
+	constructor(
+		readonly eventName: string,
+		readonly options: Omit<CustomEventInit<T>, "detail"> = { bubbles: true, cancelable: true }
+	) {}
 
-	/**
-	 * Dispatches a custom event on the specified element with the given detail.
-	 *
-	 * @returns The dispatched event.
-	 */
-	function dispatch(element: HTMLElement, detail?: T): CustomEvent<T> {
-		const event = new CustomEvent<T>(eventName, {
-			...options,
+	createEvent(detail?: T): CustomEvent<T> {
+		return new CustomEvent<T>(this.eventName, {
+			...this.options,
 			detail,
 		});
+	}
+
+	dispatch(element: EventTarget, detail?: T): CustomEvent<T> {
+		const event = this.createEvent(detail);
 		element.dispatchEvent(event);
 		return event;
 	}
 
-	/**
-	 *
-	 * Listens for a custom event on the specified element and calls the given callback
-	 * when the event is triggered.
-	 *
-	 * @returns A function that removes the event listener from the target element(s).
-	 */
-	function listen(
-		element: EventTarget,
-		callback: EventListener,
-		options?: AddEventListenerOptions
-	) {
+	listen(element: EventTarget, callback: (event: CustomEvent<T>) => void) {
 		const handler = (event: Event) => {
-			callback(event as CustomEventType);
+			callback(event as CustomEvent<T>);
 		};
 
-		// @ts-expect-error shh
-		return addEventListener(element, eventName, handler, options);
+		return on(element, this.eventName, handler);
 	}
-
-	return [dispatch, listen] as const;
 }

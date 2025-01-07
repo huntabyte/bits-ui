@@ -1,9 +1,15 @@
 import { type ReadableBoxedValues, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	BitsPointerEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
+import { isElement } from "$lib/internal/is.js";
 
 type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -12,7 +18,6 @@ type PopoverRootStateProps = WritableBoxedValues<{
 class PopoverRootState {
 	open: PopoverRootStateProps["open"];
 	contentNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
 	triggerNode = $state<HTMLElement | null>(null);
 
 	constructor(props: PopoverRootStateProps) {
@@ -23,7 +28,7 @@ class PopoverRootState {
 		this.open.current = !this.open.current;
 	}
 
-	close() {
+	handleClose() {
 		if (!this.open.current) return;
 		this.open.current = false;
 	}
@@ -51,23 +56,23 @@ class PopoverTriggerState {
 			},
 		});
 
+		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
+	}
+
+	onclick(e: BitsMouseEvent) {
+		if (this.#disabled.current) return;
+		if (e.button !== 0) return;
+		this.#root.toggleOpen();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
-		this.#root.toggleOpen();
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.toggleOpen();
-		}
+		if (e.button !== 0) return;
+		// We prevent default to prevent focus from moving to the trigger
+		// since this action will open the popover and focus will move to the content
+		e.preventDefault();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -78,8 +83,8 @@ class PopoverTriggerState {
 	}
 
 	#getAriaControls() {
-		if (this.#root.open.current && this.#root.contentId) {
-			return this.#root.contentId;
+		if (this.#root.open.current && this.#root.contentNode?.id) {
+			return this.#root.contentNode?.id;
 		}
 		return undefined;
 	}
@@ -97,21 +102,32 @@ class PopoverTriggerState {
 				//
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
-				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 			}) as const
 	);
 }
 
-type PopoverContentStateProps = WithRefProps;
+type PopoverContentStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		onInteractOutside: (e: PointerEvent) => void;
+		onEscapeKeydown: (e: KeyboardEvent) => void;
+		onCloseAutoFocus: (e: Event) => void;
+	}>;
 class PopoverContentState {
 	#id: PopoverContentStateProps["id"];
 	#ref: PopoverContentStateProps["ref"];
 	root: PopoverRootState;
+	#onInteractOutside: PopoverContentStateProps["onInteractOutside"];
+	#onEscapeKeydown: PopoverContentStateProps["onEscapeKeydown"];
+	#onCloseAutoFocus: PopoverContentStateProps["onCloseAutoFocus"];
 
 	constructor(props: PopoverContentStateProps, root: PopoverRootState) {
 		this.#id = props.id;
 		this.root = root;
 		this.#ref = props.ref;
+		this.#onEscapeKeydown = props.onEscapeKeydown;
+		this.#onInteractOutside = props.onInteractOutside;
+		this.#onCloseAutoFocus = props.onCloseAutoFocus;
 
 		useRefById({
 			id: this.#id,
@@ -119,22 +135,50 @@ class PopoverContentState {
 			deps: () => this.root.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
-				this.root.contentId = node?.id;
 			},
 		});
+
+		this.handleInteractOutside = this.handleInteractOutside.bind(this);
+		this.handleEscapeKeydown = this.handleEscapeKeydown.bind(this);
+		this.handleCloseAutoFocus = this.handleCloseAutoFocus.bind(this);
+	}
+
+	handleInteractOutside(e: PointerEvent) {
+		this.#onInteractOutside.current(e);
+		if (e.defaultPrevented) return;
+		if (!isElement(e.target)) return;
+		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
+		if (closestTrigger === this.root.triggerNode) return;
+		this.root.handleClose();
+	}
+
+	handleEscapeKeydown(e: KeyboardEvent) {
+		this.#onEscapeKeydown.current(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	}
+
+	handleCloseAutoFocus(e: Event) {
+		this.#onCloseAutoFocus.current(e);
+		if (e.defaultPrevented) return;
+		e.preventDefault();
+		this.root.triggerNode?.focus();
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		tabindex: -1,
-		"data-state": getDataOpenClosed(this.root.open.current),
-		"data-popover-content": "",
-		style: {
-			pointerEvents: "auto",
-		},
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.#id.current,
+				tabindex: -1,
+				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-popover-content": "",
+				style: {
+					pointerEvents: "auto",
+				},
+			}) as const
+	);
 }
 
 type PopoverCloseStateProps = WithRefProps;
@@ -158,14 +202,14 @@ class PopoverCloseState {
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	onclick(e: BitsPointerEvent) {
-		this.#root.close();
+	onclick(_: BitsPointerEvent) {
+		this.#root.handleClose();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
-		this.#root.close();
+		this.#root.handleClose();
 	}
 
 	props = $derived.by(
@@ -183,22 +227,20 @@ class PopoverCloseState {
 //
 // CONTEXT METHODS
 //
-
-const [setPopoverRootContext, getPopoverRootContext] =
-	createContext<PopoverRootState>("Popover.Root");
+const PopoverRootContext = new Context<PopoverRootState>("Popover.Root");
 
 export function usePopoverRoot(props: PopoverRootStateProps) {
-	return setPopoverRootContext(new PopoverRootState(props));
+	return PopoverRootContext.set(new PopoverRootState(props));
 }
 
 export function usePopoverTrigger(props: PopoverTriggerStateProps) {
-	return new PopoverTriggerState(props, getPopoverRootContext());
+	return new PopoverTriggerState(props, PopoverRootContext.get());
 }
 
 export function usePopoverContent(props: PopoverContentStateProps) {
-	return new PopoverContentState(props, getPopoverRootContext());
+	return new PopoverContentState(props, PopoverRootContext.get());
 }
 
 export function usePopoverClose(props: PopoverCloseStateProps) {
-	return new PopoverCloseState(props, getPopoverRootContext());
+	return new PopoverCloseState(props, PopoverRootContext.get());
 }

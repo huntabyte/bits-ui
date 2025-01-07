@@ -111,15 +111,6 @@ export type TooltipRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
 }>;
 
 export type TooltipRootProps = TooltipRootPropsWithoutHTML;
@@ -137,6 +128,7 @@ export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 		| "arrowPadding"
 		| "sticky"
 		| "hideWhenDetached"
+		| "updatePositionStrategy"
 		| "dir"
 	> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &

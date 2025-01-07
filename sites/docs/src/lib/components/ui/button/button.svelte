@@ -12,6 +12,6 @@
 	}: HTMLButtonAttributes & { variant?: Variant; size?: Size } = $props();
 </script>
 
-<button class={cn(buttonVariants({ variant, size, className }))} {...restProps}>
+<button class={cn(buttonVariants({ variant, size }), className)} {...restProps}>
 	{@render children?.()}
 </button>

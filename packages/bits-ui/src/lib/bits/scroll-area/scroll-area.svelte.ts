@@ -5,7 +5,7 @@
  * Incredible thought must have went into solving all the intricacies of this component.
  */
 
-import { useDebounce } from "runed";
+import { Context, useDebounce } from "runed";
 import { untrack } from "svelte";
 import { box, executeCallbacks, useRefById } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
@@ -16,7 +16,6 @@ import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared
 import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 
 const SCROLL_AREA_ROOT_ATTR = "data-scroll-area-root";
 const SCROLL_AREA_VIEWPORT_ATTR = "data-scroll-area-viewport";
@@ -920,77 +919,76 @@ class ScrollAreaCornerImplState {
 	}));
 }
 
-export const [setScrollAreaRootContext, getScrollAreaRootContext] =
-	createContext<ScrollAreaRootState>("ScrollArea.Root");
-
-export const [setScrollAreaScrollbarContext, getScrollAreaScrollbarContext] =
-	createContext<ScrollAreaScrollbarState>("ScrollArea.Scrollbar");
-
-export const [setScrollAreaScrollbarVisibleContext, getScrollAreaScrollbarVisibleContext] =
-	createContext<ScrollAreaScrollbarVisibleState>("ScrollArea.ScrollbarVisible");
-
-export const [setScrollAreaScrollbarAxisContext, getScrollAreaScrollbarAxisContext] =
-	createContext<ScrollbarAxis>("ScrollArea.ScrollbarAxis");
-
-export const [setScrollAreaScrollbarSharedContext, getScrollAreaScrollbarSharedContext] =
-	createContext<ScrollAreaScrollbarSharedState>("ScrollArea.ScrollbarShared");
+export const ScrollAreaRootContext = new Context<ScrollAreaRootState>("ScrollArea.Root");
+export const ScrollAreaScrollbarContext = new Context<ScrollAreaScrollbarState>(
+	"ScrollArea.Scrollbar"
+);
+export const ScrollAreaScrollbarVisibleContext = new Context<ScrollAreaScrollbarVisibleState>(
+	"ScrollArea.ScrollbarVisible"
+);
+export const ScrollAreaScrollbarAxisContext = new Context<ScrollbarAxis>(
+	"ScrollArea.ScrollbarAxis"
+);
+export const ScrollAreaScrollbarSharedContext = new Context<ScrollAreaScrollbarSharedState>(
+	"ScrollArea.ScrollbarShared"
+);
 
 export function useScrollAreaRoot(props: ScrollAreaRootStateProps) {
-	return setScrollAreaRootContext(new ScrollAreaRootState(props));
+	return ScrollAreaRootContext.set(new ScrollAreaRootState(props));
 }
 
 export function useScrollAreaViewport(props: ScrollAreaViewportStateProps) {
-	return new ScrollAreaViewportState(props, getScrollAreaRootContext());
+	return new ScrollAreaViewportState(props, ScrollAreaRootContext.get());
 }
 
 export function useScrollAreaScrollbar(props: ScrollAreaScrollbarStateProps) {
-	return setScrollAreaScrollbarContext(
-		new ScrollAreaScrollbarState(props, getScrollAreaRootContext())
+	return ScrollAreaScrollbarContext.set(
+		new ScrollAreaScrollbarState(props, ScrollAreaRootContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarVisible() {
-	return setScrollAreaScrollbarVisibleContext(
-		new ScrollAreaScrollbarVisibleState(getScrollAreaScrollbarContext())
+	return ScrollAreaScrollbarVisibleContext.set(
+		new ScrollAreaScrollbarVisibleState(ScrollAreaScrollbarContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarAuto() {
-	return new ScrollAreaScrollbarAutoState(getScrollAreaScrollbarContext());
+	return new ScrollAreaScrollbarAutoState(ScrollAreaScrollbarContext.get());
 }
 
 export function useScrollAreaScrollbarScroll() {
-	return new ScrollAreaScrollbarScrollState(getScrollAreaScrollbarContext());
+	return new ScrollAreaScrollbarScrollState(ScrollAreaScrollbarContext.get());
 }
 
 export function useScrollAreaScrollbarHover() {
-	return new ScrollAreaScrollbarHoverState(getScrollAreaScrollbarContext());
+	return new ScrollAreaScrollbarHoverState(ScrollAreaScrollbarContext.get());
 }
 
 export function useScrollAreaScrollbarX(props: ScrollbarAxisStateProps) {
-	return setScrollAreaScrollbarAxisContext(
-		new ScrollAreaScrollbarXState(props, getScrollAreaScrollbarVisibleContext())
+	return ScrollAreaScrollbarAxisContext.set(
+		new ScrollAreaScrollbarXState(props, ScrollAreaScrollbarVisibleContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarY(props: ScrollbarAxisStateProps) {
-	return setScrollAreaScrollbarAxisContext(
-		new ScrollAreaScrollbarYState(props, getScrollAreaScrollbarVisibleContext())
+	return ScrollAreaScrollbarAxisContext.set(
+		new ScrollAreaScrollbarYState(props, ScrollAreaScrollbarVisibleContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarShared() {
-	return setScrollAreaScrollbarSharedContext(
-		new ScrollAreaScrollbarSharedState(getScrollAreaScrollbarAxisContext())
+	return ScrollAreaScrollbarSharedContext.set(
+		new ScrollAreaScrollbarSharedState(ScrollAreaScrollbarAxisContext.get())
 	);
 }
 
 export function useScrollAreaThumb(props: ScrollAreaThumbImplStateProps) {
-	return new ScrollAreaThumbImplState(props, getScrollAreaScrollbarSharedContext());
+	return new ScrollAreaThumbImplState(props, ScrollAreaScrollbarSharedContext.get());
 }
 
 export function useScrollAreaCorner(props: ScrollAreaCornerImplStateProps) {
-	return new ScrollAreaCornerImplState(props, getScrollAreaRootContext());
+	return new ScrollAreaCornerImplState(props, ScrollAreaRootContext.get());
 }
 
 function toInt(value?: string) {

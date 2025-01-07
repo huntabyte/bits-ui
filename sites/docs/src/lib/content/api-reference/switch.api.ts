@@ -1,6 +1,5 @@
 import type { SwitchRootPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
 import {
-	controlledCheckedProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -35,7 +34,6 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 			definition: SwitchRootOnCheckedChangeProp,
 			description: "A callback function called when the checked state of the switch changes.",
 		}),
-		controlledChecked: controlledCheckedProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

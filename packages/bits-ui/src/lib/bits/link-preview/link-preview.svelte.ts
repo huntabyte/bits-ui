@@ -1,12 +1,11 @@
-import { untrack } from "svelte";
 import { afterSleep, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { Context, watch } from "runed";
+import { on } from "svelte/events";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { addEventListener } from "$lib/internal/events.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 
 const CONTENT_ATTR = "data-link-preview-content";
@@ -29,7 +28,6 @@ class LinkPreviewRootState {
 	containsSelection = $state(false);
 	timeout: number | null = null;
 	contentNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isPointerInTransit = box(false);
@@ -40,43 +38,45 @@ class LinkPreviewRootState {
 		this.openDelay = props.openDelay;
 		this.closeDelay = props.closeDelay;
 
-		$effect(() => {
-			if (!this.open.current) {
-				untrack(() => (this.hasSelection = false));
-				return;
+		watch(
+			() => this.open.current,
+			(isOpen) => {
+				if (!isOpen) {
+					this.hasSelection = false;
+					return;
+				}
+
+				const handlePointerUp = () => {
+					this.containsSelection = false;
+					this.isPointerDownOnContent = false;
+
+					afterSleep(1, () => {
+						const isSelection = document.getSelection()?.toString() !== "";
+
+						if (isSelection) {
+							this.hasSelection = true;
+						} else {
+							this.hasSelection = false;
+						}
+					});
+				};
+
+				const unsubListener = on(document, "pointerup", handlePointerUp);
+
+				if (!this.contentNode) return;
+				const tabCandidates = getTabbableCandidates(this.contentNode);
+
+				for (const candidate of tabCandidates) {
+					candidate.setAttribute("tabindex", "-1");
+				}
+
+				return () => {
+					unsubListener();
+					this.hasSelection = false;
+					this.isPointerDownOnContent = false;
+				};
 			}
-
-			const handlePointerUp = () => {
-				this.containsSelection = false;
-				this.isPointerDownOnContent = false;
-
-				afterSleep(1, () => {
-					const isSelection = document.getSelection()?.toString() !== "";
-
-					if (isSelection) {
-						this.hasSelection = true;
-					} else {
-						this.hasSelection = false;
-					}
-				});
-			};
-
-			const unsubListener = addEventListener(document, "pointerup", handlePointerUp);
-
-			const contentNode = untrack(() => this.contentNode);
-			if (!contentNode) return;
-			const tabCandidates = getTabbableCandidates(contentNode);
-
-			for (const candidate of tabCandidates) {
-				candidate.setAttribute("tabindex", "-1");
-			}
-
-			return () => {
-				unsubListener();
-				this.hasSelection = false;
-				this.isPointerDownOnContent = false;
-			};
-		});
+		);
 	}
 
 	clearTimeout() {
@@ -170,7 +170,7 @@ class LinkPreviewTriggerState {
 				"aria-haspopup": "dialog",
 				"aria-expanded": getAriaExpanded(this.#root.open.current),
 				"data-state": getDataOpenClosed(this.#root.open.current),
-				"aria-controls": this.#root.contentId,
+				"aria-controls": this.#root.contentNode?.id,
 				role: "button",
 				[TRIGGER_ATTR]: "",
 				onpointerenter: this.onpointerenter,
@@ -202,24 +202,26 @@ class LinkPreviewContentState {
 			ref: this.#ref,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
-				this.root.contentId = node?.id;
 			},
 			deps: () => this.root.open.current,
 		});
 
-		$effect(() => {
-			if (!this.root.open.current) return;
-			const { isPointerInTransit, onPointerExit } = useGraceArea(
-				() => this.root.triggerNode,
-				() => this.#ref.current
-			);
+		watch(
+			() => this.root.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				const { isPointerInTransit, onPointerExit } = useGraceArea(
+					() => this.root.triggerNode,
+					() => this.#ref.current
+				);
 
-			this.root.isPointerInTransit = isPointerInTransit;
+				this.root.isPointerInTransit = isPointerInTransit;
 
-			onPointerExit(() => {
-				this.root.handleClose();
-			});
-		});
+				onPointerExit(() => {
+					this.root.handleClose();
+				});
+			}
+		);
 
 		onDestroyEffect(() => {
 			this.root.clearTimeout();
@@ -262,17 +264,16 @@ class LinkPreviewContentState {
 	);
 }
 
-const [setLinkPreviewRootContext, getLinkPreviewRootContext] =
-	createContext<LinkPreviewRootState>("LinkPreview.Root");
+const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
 
 export function useLinkPreviewRoot(props: LinkPreviewRootStateProps) {
-	return setLinkPreviewRootContext(new LinkPreviewRootState(props));
+	return LinkPreviewRootContext.set(new LinkPreviewRootState(props));
 }
 
 export function useLinkPreviewTrigger(props: LinkPreviewTriggerStateProps) {
-	return new LinkPreviewTriggerState(props, getLinkPreviewRootContext());
+	return new LinkPreviewTriggerState(props, LinkPreviewRootContext.get());
 }
 
 export function useLinkPreviewContent(props: LinkPreviewContentStateProps) {
-	return new LinkPreviewContentState(props, getLinkPreviewRootContext());
+	return new LinkPreviewContentState(props, LinkPreviewRootContext.get());
 }

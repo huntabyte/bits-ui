@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ScrollAreaThumbProps } from "../types.js";
-	import { getScrollAreaScrollbarVisibleContext } from "../scroll-area.svelte.js";
+	import { ScrollAreaScrollbarVisibleContext } from "../scroll-area.svelte.js";
 	import ScrollAreaThumbImpl from "./scroll-area-thumb-impl.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
@@ -12,7 +12,7 @@
 		...restProps
 	}: ScrollAreaThumbProps = $props();
 
-	const scrollbarState = getScrollAreaScrollbarVisibleContext();
+	const scrollbarState = ScrollAreaScrollbarVisibleContext.get();
 </script>
 
 <PresenceLayer present={forceMount || scrollbarState.hasThumb} {...restProps} {id}>

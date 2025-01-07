@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { EscapeLayerImplProps } from "./types.js";
-	import { useEscapeLayer } from "./useEscapeLayer.svelte.js";
+	import { useEscapeLayer } from "./use-escape-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {

@@ -54,10 +54,11 @@
 			preventScroll={false}
 			side="top"
 			sideOffset={10}
-			class="z-50 rounded-card border border-border bg-background p-4 shadow-popover"
+			class="focus-override z-50 rounded-card border border-border bg-background p-4 shadow-popover outline-none"
 		>
 			<div class="max-h-[400px] max-w-[700px] overflow-auto">
 				<Code class="h-auto bg-transparent px-0 tracking-tight text-foreground">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html parseTypeDef(typeDef)}
 				</Code>
 			</div>
@@ -71,7 +72,7 @@
 		>
 			{@const TypeDef = typeDef}
 			<div
-				class="[&_[data-line]]:!pr-2.5 [&_pre]:!my-0 [&_pre]:!mb-0 [&_pre]:mt-0 [&_pre]:!overflow-x-visible [&_pre]:border-0 [&_pre]:p-0 [&_pre]:!pb-0 [&_pre]:!pt-0"
+				class="[&_[data-line]]:!pr-2.5 [&_pre]:!my-0 [&_pre]:!mb-0 [&_pre]:mt-0 [&_pre]:!overflow-x-visible [&_pre]:border-0 [&_pre]:p-0 [&_pre]:!pb-0 [&_pre]:!pt-0 [&_pre]:!outline-none [&_pre]:!ring-0 [&_pre]:!ring-offset-0"
 			>
 				<TypeDef />
 			</div>

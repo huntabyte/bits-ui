@@ -1,4 +1,3 @@
-import { untrack } from "svelte";
 import {
 	type ReadableBox,
 	box,
@@ -6,9 +5,11 @@ import {
 	executeCallbacks,
 	useRefById,
 } from "svelte-toolbelt";
+import { watch } from "runed";
+import { on } from "svelte/events";
 import type { TextSelectionLayerImplProps } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import { type EventCallback, addEventListener } from "$lib/internal/events.js";
+import type { EventCallback } from "$lib/internal/events.js";
 import { noop } from "$lib/internal/noop.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { isOrContainsTarget } from "$lib/internal/elements.js";
@@ -30,6 +31,7 @@ export class TextSelectionLayerState {
 		this.#enabled = props.preventOverflowTextSelection;
 		this.#onPointerDownProp = props.onPointerDown;
 		this.#onPointerUpProp = props.onPointerUp;
+
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
@@ -38,26 +40,27 @@ export class TextSelectionLayerState {
 
 		let unsubEvents = noop;
 
-		$effect(() => {
-			if (this.#enabled.current) {
-				globalThis.bitsTextSelectionLayers.set(
-					this,
-					untrack(() => this.#enabled)
-				);
-				unsubEvents = this.#addEventListeners();
+		watch(
+			() => this.#enabled.current,
+			(isEnabled) => {
+				if (isEnabled) {
+					globalThis.bitsTextSelectionLayers.set(this, this.#enabled);
+					unsubEvents();
+					unsubEvents = this.#addEventListeners();
+				}
+				return () => {
+					unsubEvents();
+					this.#resetSelectionLock();
+					globalThis.bitsTextSelectionLayers.delete(this);
+				};
 			}
-			return () => {
-				unsubEvents();
-				this.#resetSelectionLock();
-				globalThis.bitsTextSelectionLayers.delete(this);
-			};
-		});
+		);
 	}
 
 	#addEventListeners() {
 		return executeCallbacks(
-			addEventListener(document, "pointerdown", this.#pointerdown),
-			addEventListener(
+			on(document, "pointerdown", this.#pointerdown),
+			on(
 				document,
 				"pointerup",
 				composeHandlers(this.#resetSelectionLock, this.#onPointerUpProp)

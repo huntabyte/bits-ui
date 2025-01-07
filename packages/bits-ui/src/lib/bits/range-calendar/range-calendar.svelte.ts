@@ -7,6 +7,8 @@ import {
 } from "@internationalized/date";
 import { untrack } from "svelte";
 import { useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
+import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
@@ -23,7 +25,6 @@ import {
 	getDataSelected,
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
@@ -772,26 +773,19 @@ class RangeCalendarDayState {
 			}) as const
 	);
 }
-const [setRangeCalendarRootContext, getRangeCalendarRootContext] =
-	createContext<RangeCalendarRootState>(
-		["Calendar.Root", "RangeCalendar.Root"],
-		"Calendar.Root",
-		false
-	);
 
-const [setRangeCalendarCellContext, getRangeCalendarCellContext] =
-	createContext<RangeCalendarCellState>("RangeCalendar.Cell");
+const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");
 
 export function useRangeCalendarRoot(props: RangeCalendarRootStateProps) {
-	return setRangeCalendarRootContext(new RangeCalendarRootState(props));
+	return CalendarRootContext.set(new RangeCalendarRootState(props));
 }
 
 export function useRangeCalendarCell(props: RangeCalendarCellStateProps) {
-	return setRangeCalendarCellContext(
-		new RangeCalendarCellState(props, getRangeCalendarRootContext())
+	return RangeCalendarCellContext.set(
+		new RangeCalendarCellState(props, CalendarRootContext.get() as RangeCalendarRootState)
 	);
 }
 
 export function useRangeCalendarDay(props: RangeCalendarDayStateProps) {
-	return new RangeCalendarDayState(props, getRangeCalendarCellContext());
+	return new RangeCalendarDayState(props, RangeCalendarCellContext.get());
 }

@@ -4,7 +4,7 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SliderDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -36,16 +36,22 @@ Bits UI provides primitives that enable you to build your own custom slider comp
 
 Here's an example of how you might create a reusable `MySlider` component.
 
-```svelte title="MySlider.svelte"
+```svelte title="MyMultiSlider.svelte"
 <script lang="ts">
+	import type { ComponentProps } from "svelte";
 	import { Slider } from "bits-ui";
 
-	type Props = WithoutChildren<Slider.RootProps>;
+	type Props = WithoutChildren<ComponentProps<typeof Slider.Root>>;
 
 	let { value = $bindable(), ref = $bindable(null), ...restProps }: Props = $props();
 </script>
 
-<Slider.Root bind:value bind:ref {...restProps}>
+<!--
+ Since we have to destructure the `value` to make it `$bindable`, we need to use `as any` here to avoid
+ type errors from the discriminated union of `"single" | "multiple"`.
+ (an unfortunate consequence of having to destructure bindable values)
+  -->
+<Slider.Root bind:value bind:ref {...restProps as any}>
 	{#snippet children({ thumbs, ticks })}
 		<Slider.Range />
 		{#each thumbs as index}
@@ -65,10 +71,12 @@ You can then use the `MySlider` component in your application like so:
 <script lang="ts">
 	import MySlider from "$lib/components/MySlider.svelte";
 
-	let someValue = $state([5, 10]);
+	let multiValue = $state([5, 10]);
+	let singleValue = $state(50);
 </script>
 
-<MySlider bind:value={someValue} />
+<MySlider bind:value={multiValue} type="multiple" />
+<MySlider bind:value={singleValue} type="single" />
 ```
 
 ## Managing Value State
@@ -82,12 +90,12 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 ```svelte
 <script lang="ts">
 	import { Slider } from "bits-ui";
-	let myValue = $state([0]);
+	let myValue = $state(0);
 </script>
 
-<button onclick={() => (myValue = [20])}> Set value to 20 </button>
+<button onclick={() => (myValue = 20)}> Set value to 20 </button>
 
-<Slider.Root bind:value={myValue}>
+<Slider.Root bind:value={myValue} type="single">
 	<!-- ... -->
 </Slider.Root>
 ```
@@ -105,10 +113,11 @@ For more granular control or to perform additional logic on state changes, use t
 ```svelte
 <script lang="ts">
 	import { Slider } from "bits-ui";
-	let myValue = $state([0]);
+	let myValue = $state(0);
 </script>
 
 <Slider.Root
+	type="single"
 	value={myValue}
 	onValueChange={(v) => {
 		myValue = v;
@@ -127,21 +136,15 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Slider.Root` component.
-2. Provide a `value` prop to `Slider.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
 	import { Slider } from "bits-ui";
-	let myValue = $state([0]);
+	let myValue = $state(0);
 </script>
 
-<Slider.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Slider.Root type="single" bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Slider.Root>
 ```
@@ -180,10 +183,11 @@ If the `value` prop has more than one value, the slider will render multiple thu
 <script lang="ts">
 	import { Slider } from "bits-ui";
 
+	// we have two numbers in the array, so the slider will render two thumbs
 	let value = $state([5, 7]);
 </script>
 
-<Slider.Root min={0} max={10} step={1} bind:value>
+<Slider.Root type="multiple" min={0} max={10} step={1} bind:value>
 	{#snippet children({ ticks, thumbs })}
 		<Slider.Range />
 
@@ -200,12 +204,44 @@ If the `value` prop has more than one value, the slider will render multiple thu
 
 To determine the number of ticks that will be rendered, you can simply divide the `max` value by the `step` value.
 
+## Single Type
+
+Set the `type` prop to `"single"` to allow only one accordion item to be open at a time.
+
+```svelte /type="single"/
+<Slider.Root type="single" />
+```
+
+<ComponentPreviewV2 name="slider-demo" comp="Slider">
+
+{#snippet preview()}
+<SliderDemo />
+{/snippet}
+
+</ComponentPreviewV2>
+
+## Multiple Type
+
+Set the `type` prop to `"multiple"` to allow multiple accordion items to be open at the same time.
+
+```svelte /type="multiple"/
+<Slider.Root type="multiple" />
+```
+
+<ComponentPreviewV2 name="slider-demo-multiple" comp="Slider">
+
+{#snippet preview()}
+<SliderDemoMultiple />
+{/snippet}
+
+</ComponentPreviewV2>
+
 ## Vertical Orientation
 
 You can use the `orientation` prop to change the orientation of the slider, which defaults to `"horizontal"`.
 
 ```svelte
-<Slider.Root orientation="vertical">
+<Slider.Root type="single" orientation="vertical">
 	<!-- ... -->
 </Slider.Root>
 ```
@@ -215,7 +251,7 @@ You can use the `orientation` prop to change the orientation of the slider, whic
 You can use the `dir` prop to change the reading direction of the slider, which defaults to `"ltr"`.
 
 ```svelte
-<Slider.Root dir="rtl">
+<Slider.Root type="single" dir="rtl">
 	<!-- ... -->
 </Slider.Root>
 ```
@@ -227,7 +263,7 @@ By default, the slider will sort the values from smallest to largest, so if you 
 You can disable this behavior by setting the `autoSort` prop to `false`.
 
 ```svelte
-<Slider.Root autoSort={false}>
+<Slider.Root type="multiple" autoSort={false}>
 	<!-- ... -->
 </Slider.Root>
 ```
@@ -245,12 +281,15 @@ Here's an example of how you might do that:
 	import MySlider from "$lib/components/MySlider.svelte";
 
 	let expectedIncome = $state([50, 100]);
+	let desiredIncome = $state(50);
 </script>
 
 <form method="POST">
-	<MySlider bind:value={expectedIncome} />
+	<MySlider type="multiple" bind:value={expectedIncome} />
 	<input type="hidden" name="expectedIncomeStart" value={expectedIncome[0]} />
 	<input type="hidden" name="expectedIncomeEnd" value={expectedIncome[1]} />
+	<MySlider type="single" bind:value={desiredIncome} />
+	<input type="hidden" name="expectedIncomeEnd" value={desiredIncome} />
 	<button type="submit">Submit</button>
 </form>
 ```
