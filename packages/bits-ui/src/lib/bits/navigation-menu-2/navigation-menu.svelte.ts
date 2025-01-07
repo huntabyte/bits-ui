@@ -13,10 +13,9 @@ import {
 	onDestroyEffect,
 	useRefById,
 } from "svelte-toolbelt";
-import { watch } from "runed";
+import { Context, watch } from "runed";
 import { type Snippet, untrack } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
-import { createContext } from "$lib/internal/create-context.js";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
 import {
 	getAriaExpanded,
@@ -33,9 +32,9 @@ import type {
 	BitsPointerEvent,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createCustomEvent } from "$lib/internal/events.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { PreviousWithInit } from "$lib/internal/previous-with-init.svelte.js";
+import { CustomEventDispatcher } from "$lib/internal/events.js";
 
 const ROOT_ATTR = "data-navigation-menu-root";
 const SUB_ATTR = "data-navigation-menu-sub";
@@ -576,18 +575,15 @@ type NavigationMenuLinkStateProps = WithRefProps &
 		onSelect: (e: Event) => void;
 	}>;
 
-const [dispatchLinkSelect, listenLinkSelect] = createCustomEvent("bitsLinkSelect", {
+const LINK_SELECT_EVENT = new CustomEventDispatcher("bitsLinkSelect", {
 	bubbles: true,
 	cancelable: true,
 });
 
-const [dispatchRootContentDismiss, listenRootContentDismiss] = createCustomEvent(
-	"bitsRootContentDismiss",
-	{
-		cancelable: true,
-		bubbles: true,
-	}
-);
+const ROOT_CONTENT_DISMISS_EVENT = new CustomEventDispatcher("bitsRootContentDismiss", {
+	cancelable: true,
+	bubbles: true,
+});
 
 class NavigationMenuLinkState {
 	id: NavigationMenuLinkStateProps["id"];
@@ -612,11 +608,11 @@ class NavigationMenuLinkState {
 	onclick(e: BitsMouseEvent<HTMLAnchorElement>) {
 		const currTarget = e.currentTarget;
 
-		listenLinkSelect(currTarget, (e) => this.onSelect.current(e), { once: true });
-		const linkSelectEvent = dispatchLinkSelect(currTarget);
+		LINK_SELECT_EVENT.listen(currTarget, (e) => this.onSelect.current(e), { once: true });
+		const linkSelectEvent = LINK_SELECT_EVENT.dispatch(currTarget);
 
 		if (!linkSelectEvent.defaultPrevented && !e.metaKey) {
-			dispatchRootContentDismiss(currTarget);
+			ROOT_CONTENT_DISMISS_EVENT.dispatch(currTarget);
 		}
 	}
 
@@ -843,8 +839,7 @@ class NavigationMenuContentImplState {
 						this.itemContext.triggerNode?.focus();
 					}
 				};
-
-				const removeListener = listenRootContentDismiss(content, handleClose);
+				const removeListener = ROOT_CONTENT_DISMISS_EVENT.listen(content, handleClose);
 
 				return () => {
 					removeListener();
@@ -1023,84 +1018,84 @@ class NavigationMenuViewportImplState {
 	);
 }
 
-const [setNavigationMenuProviderContext, getNavigationMenuProviderContext] =
-	createContext<NavigationMenuProviderState>("NavigationMenu.Root", "NavigationMenuProvider");
+const NavigationMenuProviderContext = new Context<NavigationMenuProviderState>(
+	"NavigationMenu.Root"
+);
 
-const [setNavigationMenuItemContext, getNavigationMenuItemContext] =
-	createContext<NavigationMenuItemState>("NavigationMenu.Item");
+const NavigationMenuItemContext = new Context<NavigationMenuItemState>("NavigationMenu.Item");
 
-const [setNavigationMenuListContext, getNavigationMenuListContext] =
-	createContext<NavigationMenuListState>("NavigationMenu.List");
+const NavigationMenuListContext = new Context<NavigationMenuListState>("NavigationMenu.List");
 
-const [setNavigationMenuContentContext, getNavigationMenuContentContext] =
-	createContext<NavigationMenuContentState>("NavigationMenu.Content");
+const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
+	"NavigationMenu.Content"
+);
 
 export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 	return new NavigationMenuRootState(props);
 }
 
 export function useNavigationMenuProvider(props: NavigationMenuProviderStateProps) {
-	return setNavigationMenuProviderContext(new NavigationMenuProviderState(props));
+	return NavigationMenuProviderContext.set(new NavigationMenuProviderState(props));
 }
 
 export function useNavigationMenuSub(props: NavigationMenuSubStateProps) {
-	return new NavigationMenuSubState(props, getNavigationMenuProviderContext());
+	return new NavigationMenuSubState(props, NavigationMenuProviderContext.get());
 }
 
 export function useNavigationMenuList(props: NavigationMenuListStateProps) {
-	return setNavigationMenuListContext(
-		new NavigationMenuListState(props, getNavigationMenuProviderContext())
+	return NavigationMenuListContext.set(
+		new NavigationMenuListState(props, NavigationMenuProviderContext.get())
 	);
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
-	return setNavigationMenuItemContext(
-		new NavigationMenuItemState(props, getNavigationMenuListContext())
+	return NavigationMenuItemContext.set(
+		new NavigationMenuItemState(props, NavigationMenuListContext.get())
 	);
 }
 
 export function useNavigationMenuIndicatorImpl(props: NavigationMenuIndicatorStateProps) {
 	return new NavigationMenuIndicatorImplState(props, {
-		provider: getNavigationMenuProviderContext(),
-		list: getNavigationMenuListContext(),
+		provider: NavigationMenuProviderContext.get(),
+		list: NavigationMenuListContext.get(),
 	});
 }
 
 export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps) {
 	return new NavigationMenuTriggerState(props, {
-		provider: getNavigationMenuProviderContext(),
-		item: getNavigationMenuItemContext(),
-		list: getNavigationMenuListContext(),
+		provider: NavigationMenuProviderContext.get(),
+		item: NavigationMenuItemContext.get(),
+		list: NavigationMenuListContext.get(),
 	});
 }
 
 export function useNavigationMenuContent(props: NavigationMenuContentStateProps) {
-	return setNavigationMenuContentContext(
+	return NavigationMenuContentContext.set(
 		new NavigationMenuContentState(props, {
-			provider: getNavigationMenuProviderContext(),
-			item: getNavigationMenuItemContext(),
-			list: getNavigationMenuListContext(),
+			provider: NavigationMenuProviderContext.get(),
+			item: NavigationMenuItemContext.get(),
+			list: NavigationMenuListContext.get(),
 		})
 	);
 }
 
 export function useNavigationMenuLink(props: NavigationMenuLinkStateProps) {
-	return new NavigationMenuLinkState(props, getNavigationMenuProviderContext());
+	return new NavigationMenuLinkState(props, NavigationMenuProviderContext.get());
 }
 
 export function useNavigationMenuContentImpl(
 	props: NavigationMenuContentImplStateProps,
-	itemState: NavigationMenuItemState = getNavigationMenuItemContext()
+	itemState: NavigationMenuItemState = NavigationMenuItemContext.get()
 ) {
 	return new NavigationMenuContentImplState(props, itemState);
 }
 
 export function useNavigationMenuViewport() {
-	return new NavigationMenuViewportState(getNavigationMenuProviderContext());
+	return new NavigationMenuViewportState(NavigationMenuProviderContext.get());
 }
 
 export function useNavigationMenuViewportImpl(props: NavigationMenuViewportImplStateProps) {
-	return new NavigationMenuViewportImplState(props, getNavigationMenuProviderContext());
+	return new NavigationMenuViewportImplState(props, NavigationMenuProviderContext.get());
 }
 
 export function useNavigationMenuViewportContentMounter(
@@ -1108,13 +1103,13 @@ export function useNavigationMenuViewportContentMounter(
 ) {
 	return new NavigationMenuViewportContentMounterState(
 		props,
-		getNavigationMenuProviderContext(),
-		getNavigationMenuContentContext()
+		NavigationMenuProviderContext.get(),
+		NavigationMenuContentContext.get()
 	);
 }
 
 export function useNavigationMenuIndicator() {
-	return new NavigationMenuIndicatorState(getNavigationMenuProviderContext());
+	return new NavigationMenuIndicatorState(NavigationMenuProviderContext.get());
 }
 
 //
