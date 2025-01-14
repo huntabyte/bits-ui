@@ -24,17 +24,21 @@ const useBodyLockStackCount = createSharedHook(() => {
 		return false;
 	});
 
-	let initialBodyStyle: Partial<CSSStyleDeclaration> = $state<Partial<CSSStyleDeclaration>>({});
+	// let initialBodyStyle: Partial<CSSStyleDeclaration> = $state<Partial<CSSStyleDeclaration>>({});
+	let initialBodyStyleAttr: string | null = $state<string | null>(null);
 
 	let stopTouchMoveListener: Fn | null = null;
 
 	function resetBodyStyle() {
 		if (!isBrowser) return;
-		document.body.style.paddingRight = initialBodyStyle.paddingRight ?? "";
-		document.body.style.marginRight = initialBodyStyle.marginRight ?? "";
-		document.body.style.pointerEvents = initialBodyStyle.pointerEvents ?? "";
+		// document.body.style.paddingRight = initialBodyStyle.paddingRight ?? "";
+		// document.body.style.marginRight = initialBodyStyle.marginRight ?? "";
+		// document.body.style.pointerEvents = initialBodyStyle.pointerEvents ?? "";
+		// document.body.style.overflow = initialBodyStyle.overflow ?? "";
+
+		if (initialBodyStyleAttr) document.body.setAttribute("style", initialBodyStyleAttr);
 		document.body.style.removeProperty("--scrollbar-width");
-		document.body.style.overflow = initialBodyStyle.overflow ?? "";
+
 		isIOS && stopTouchMoveListener?.();
 	}
 
@@ -45,19 +49,35 @@ const useBodyLockStackCount = createSharedHook(() => {
 				return;
 			}
 
+			initialBodyStyleAttr = document.body.getAttribute("style");
 			const bodyStyle = getComputedStyle(document.body);
-			initialBodyStyle.overflow = bodyStyle.overflow;
-			initialBodyStyle.paddingRight = bodyStyle.paddingRight;
-			initialBodyStyle.marginRight = bodyStyle.marginRight;
-			initialBodyStyle.pointerEvents = bodyStyle.pointerEvents;
+
+			// since we want to restore document.body.style to original state, we
+			// should capture initial state from document.body.getAttribute("style")
+			// instead of getComputedStyle(document.body), otherwise we will "restore"
+			// values that weren't originally present
+			console.log("[useBodyLockStackCount] [initial-style-attr]", initialBodyStyleAttr);
+			console.log("[useBodyLockStackCount] [computed-style]", {
+				paddingRight: bodyStyle.paddingRight,
+				marginRight: bodyStyle.marginRight,
+				pointerEvents: bodyStyle.pointerEvents,
+				overflow: bodyStyle.overflow,
+			});
+
+			// initialBodyStyle.overflow = bodyStyle.overflow;
+			// initialBodyStyle.paddingRight = bodyStyle.paddingRight;
+			// initialBodyStyle.marginRight = bodyStyle.marginRight;
+			// initialBodyStyle.pointerEvents = bodyStyle.pointerEvents;
+
+			// we can still use getComputedStyle() for other calculations:
 
 			// TODO: account for RTL direction, etc.
 			const verticalScrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-			const paddingRight = Number.parseInt(initialBodyStyle.paddingRight ?? "0", 10);
+			const paddingRight = Number.parseInt(bodyStyle.paddingRight ?? "0", 10);
 
 			const config = {
 				padding: paddingRight + verticalScrollbarWidth,
-				margin: Number.parseInt(initialBodyStyle.marginRight ?? "0", 10),
+				margin: Number.parseInt(bodyStyle.marginRight ?? "0", 10),
 			};
 
 			if (verticalScrollbarWidth > 0) {
