@@ -1,10 +1,10 @@
 <script lang="ts">
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import { noop } from "$lib/internal/noop.js";
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { useSelectRoot } from "../select.svelte.js";
 	import type { SelectRootProps } from "../types.js";
 	import SelectHiddenInput from "./select-hidden-input.svelte";
-	import { noop } from "$lib/internal/noop.js";
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 
 	let {
 		value = $bindable(),
@@ -18,7 +18,7 @@
 		scrollAlignment = "nearest",
 		required = false,
 		items = [],
-		allowDeselect = true,
+		allowDeselect = false,
 		children,
 	}: SelectRootProps = $props();
 
