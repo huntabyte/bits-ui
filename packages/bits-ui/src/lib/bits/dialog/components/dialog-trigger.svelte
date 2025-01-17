@@ -22,7 +22,7 @@
 		disabled: box.with(() => Boolean(disabled)),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
+	const mergedProps = $derived(mergeProps({ disabled, ...restProps }, triggerState.props));
 </script>
 
 {#if child}
