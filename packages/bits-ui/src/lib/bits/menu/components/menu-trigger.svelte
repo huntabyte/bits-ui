@@ -24,7 +24,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type, disabled }));
 </script>
 
 <FloatingLayerAnchor {id}>
