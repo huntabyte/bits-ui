@@ -97,29 +97,33 @@ class DialogTriggerState {
 				this.#root.triggerId = node?.id;
 			},
 		});
+
+		this.onclick = this.onclick.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	onclick = (e: BitsMouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.#disabled.current) return;
 		if (e.button > 0) return;
 		this.#root.handleOpen();
-	};
+	}
 
-	onpointerdown = (e: BitsPointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.#disabled.current) return;
 		if (e.button > 0) return;
 		// by default, it will attempt to focus this trigger on pointerdown
 		// since this also opens the dialog we want to prevent that behavior
 		e.preventDefault();
-	};
+	}
 
-	onkeydown = (e: BitsKeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#root.handleOpen();
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -132,6 +136,7 @@ class DialogTriggerState {
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
+				disabled: this.#disabled.current ? true : undefined,
 				...this.#root.sharedProps,
 			}) as const
 	);
@@ -188,6 +193,7 @@ class DialogCloseState {
 				[this.#attr]: "",
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				disabled: this.#disabled.current ? true : undefined,
 				...this.#root.sharedProps,
 			}) as const
 	);
