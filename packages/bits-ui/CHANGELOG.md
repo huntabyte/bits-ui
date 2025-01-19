@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.0.0-next.78
+
+### Patch Changes
+
+-   Allow `<Button/>` with `href` to be disabled. ([#1055](https://github.com/huntabyte/bits-ui/pull/1055))
+
+-   BREAKING: `Select` - change default value of `allowDeselect` to `false` to align with native HTML `<select>` ([#1049](https://github.com/huntabyte/bits-ui/pull/1049))
+
+-   fix: ensure `disabled` is passed through to `Dialog.Trigger` and `Dialog.Close` ([#1057](https://github.com/huntabyte/bits-ui/pull/1057))
+
 ## 1.0.0-next.77
 
 ### Patch Changes
