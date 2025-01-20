@@ -39,7 +39,7 @@ description: Organizes and presents a collection of menu options or actions with
 			<Menubar.RadioGroup>
 				<Menubar.RadioItem>
 					<Menubar.RadioIndicator />
-				<Menubar.RadioItem>
+				</Menubar.RadioItem>
 			</Menubar.RadioGroup>
 
 			<Menubar.Sub>
