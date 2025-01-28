@@ -23,30 +23,26 @@ describe("is-using-keyboard", () => {
 	});
 
 	it("should detect keyboard usage", async () => {
-		const { user, isUsingKeyboard, unmount } = setup();
+		const { user, isUsingKeyboard } = setup();
 
 		expect(isUsingKeyboard.current).toBe(false);
 
 		user.keyboard(kbd.SPACE);
 		expect(isUsingKeyboard.current).toBe(false);
-
-		unmount();
 	});
 
 	it("should detect pointer usage (down)", async () => {
-		const { user, isUsingKeyboard, unmount } = setup();
+		const { user, isUsingKeyboard } = setup();
 
 		await user.keyboard(kbd.SPACE);
 		expect(isUsingKeyboard.current).toBe(true);
 
 		await user.pointerDownUp(document.body);
 		expect(isUsingKeyboard.current).toBe(false);
-
-		unmount();
 	});
 
 	it("should detect pointer usage (move)", async () => {
-		const { user, isUsingKeyboard, unmount } = setup();
+		const { user, isUsingKeyboard } = setup();
 
 		await user.keyboard(kbd.SPACE);
 		expect(isUsingKeyboard.current).toBe(true);
@@ -61,20 +57,16 @@ describe("is-using-keyboard", () => {
 		]);
 
 		expect(isUsingKeyboard.current).toBe(false);
-
-		unmount();
 	});
 
 	it("should detect keyboard usage after pointer usage", async () => {
-		const { user, isUsingKeyboard, unmount } = setup();
+		const { user, isUsingKeyboard } = setup();
 
 		await user.pointerDownUp(document.body);
 		expect(isUsingKeyboard.current).toBe(false);
 
 		await user.keyboard(kbd.SPACE);
 		expect(isUsingKeyboard.current).toBe(true);
-
-		unmount();
 	});
 
 	it("should set up only once", async () => {
