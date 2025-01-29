@@ -1,116 +1,70 @@
-<script>
-	import { Slider, Tooltip } from "bits-ui";
-	import { on } from "svelte/events";
+<script lang="ts">
+	import { Button } from "$lib/components/ui/button/index.js";
+	import { Dialog, Popover } from "bits-ui";
 
-	let value = $state([0]);
+	const frameworks = [
+		{
+			value: "sveltekit",
+			label: "SvelteKit",
+		},
+		{
+			value: "next.js",
+			label: "Next.js",
+		},
+		{
+			value: "nuxt.js",
+			label: "Nuxt.js",
+		},
+		{
+			value: "remix",
+			label: "Remix",
+		},
+		{
+			value: "astro",
+			label: "Astro",
+		},
+	];
+
 	let open = $state(false);
-	let pointerdown = $state(false);
+	let value = $state("");
+	let triggerRef = $state<HTMLButtonElement>(null!);
 
-	// @ts-expect-error - shh
-	function onOpenChange(value) {
-		if (pointerdown) {
-			return;
-		}
+	const selectedValue = $derived(frameworks.find((f) => f.value === value)?.label);
 
-		open = value;
-	}
-
-	function onPointerDown() {
-		pointerdown = true;
-		open = true;
-	}
-
-	function onPointerUp() {
-		pointerdown = false;
-		open = false;
-	}
-
-	$effect(() => {
-		return on(document, "pointerup", onPointerUp);
-	});
+	// // We want to refocus the trigger button when the user selects
+	// // an item from the list so users can continue navigating the
+	// // rest of the form with the keyboard.
+	// function closeAndFocusTrigger() {
+	// 	open = false;
+	// 	tick().then(() => {
+	// 		triggerRef.focus();
+	// 	});
+	// }
 </script>
 
-<div class="container">
-	<Slider.Root type="multiple" bind:value class="root">
-		{#snippet children({ thumbs })}
-			<div class="track">
-				<Slider.Range class="range" />
-			</div>
-			<Tooltip.Provider>
-				{#each thumbs as index}
-					<Tooltip.Root bind:open={() => open, onOpenChange} delayDuration={0}>
-						<Tooltip.Trigger>
-							{#snippet child({ props })}
-								<Slider.Thumb
-									{...props}
-									{index}
-									onpointerdown={() => {
-										onPointerDown();
-									}}
-									class="thumb"
-								/>
-							{/snippet}
-						</Tooltip.Trigger>
-						<Tooltip.Portal>
-							<Tooltip.Content updatePositionStrategy="always">
-								<div class="tooltip-content">
-									{value[index]}
-								</div>
-								<Tooltip.Arrow />
-							</Tooltip.Content>
-						</Tooltip.Portal>
-					</Tooltip.Root>
-				{/each}
-			</Tooltip.Provider>
+<Dialog.Root>
+	<Dialog.Trigger>
+		{#snippet child({ props })}
+			<Button variant="outline" {...props}>Edit profile</Button>
 		{/snippet}
-	</Slider.Root>
-</div>
-
-<style>
-	.container {
-		width: 280px;
-	}
-
-	:global(.root) {
-		position: relative;
-		width: 100%;
-		display: flex;
-		align-items: center;
-	}
-
-	:global(.track) {
-		position: relative;
-		height: 8px;
-		width: 100%;
-		flex-grow: 1;
-		overflow: hidden;
-		border-radius: 9999px;
-		background-color: gray;
-	}
-
-	:global(.range) {
-		position: absolute;
-		height: 100%;
-		background-color: orange;
-	}
-
-	:global(.thumb) {
-		height: 25px;
-		width: 25px;
-		border-radius: 9999px;
-		background-color: orange;
-	}
-
-	.tooltip-content {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 25px;
-		height: 25px;
-		border-radius: 9999px;
-		background-color: orange;
-		color: black;
-		font-size: 0.75rem;
-		font-weight: 500;
-	}
-</style>
+	</Dialog.Trigger>
+	<Dialog.Content>
+		<Dialog.Title>Edit profile</Dialog.Title>
+		<Popover.Root bind:open>
+			<Popover.Trigger bind:ref={triggerRef}>
+				{#snippet child({ props })}
+					<Button
+						variant="outline"
+						class="w-[200px] justify-between"
+						{...props}
+						role="combobox"
+						aria-expanded={open}
+					>
+						{selectedValue || "Select a framework..."}
+					</Button>
+				{/snippet}
+			</Popover.Trigger>
+			<Popover.Content class="w-[200px] p-0">Testing</Popover.Content>
+		</Popover.Root>
+	</Dialog.Content>
+</Dialog.Root>
