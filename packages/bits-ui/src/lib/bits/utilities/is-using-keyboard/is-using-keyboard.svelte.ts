@@ -1,4 +1,5 @@
-import { type AnyFn, addEventListener, executeCallbacks } from "svelte-toolbelt";
+import { type AnyFn, executeCallbacks } from "svelte-toolbelt";
+import { on } from "svelte/events";
 
 // Using global state to avoid multiple listeners.
 let isUsingKeyboard = $state(false);
@@ -22,19 +23,19 @@ export class IsUsingKeyboard {
 					};
 
 					callbacksToDispose.push(
-						addEventListener(document, "pointerdown", handlePointer, {
+						on(document, "pointerdown", handlePointer, {
 							capture: true,
 						})
 					);
 
 					callbacksToDispose.push(
-						addEventListener(document, "pointermove", handlePointer, {
+						on(document, "pointermove", handlePointer, {
 							capture: true,
 						})
 					);
 
 					callbacksToDispose.push(
-						addEventListener(document, "keydown", handleKeydown, {
+						on(document, "keydown", handleKeydown, {
 							capture: true,
 						})
 					);
