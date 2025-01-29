@@ -5,7 +5,7 @@ import IsUsingKeyboardTest from "./is-using-keyboard-test.svelte";
 
 const kbd = getTestKbd();
 
-describe("is-using-keyboard", () => {
+describe("IsUsingKeyboard", () => {
 	function setup() {
 		const mounted = render(IsUsingKeyboardTest);
 		const user = setupUserEvents();

@@ -4,6 +4,11 @@ import { on } from "svelte/events";
 // Using global state to avoid multiple listeners.
 let isUsingKeyboard = $state(false);
 
+/**
+ * Detects whether the user is currently using the keyboard
+ * or not by listening to keyboard and pointer events. Uses shared global
+ * state to avoid listener duplication.
+ */
 export class IsUsingKeyboard {
 	static _refs = 0; // Reference counting to avoid multiple listeners.
 	static _cleanup?: AnyFn;
@@ -25,25 +30,17 @@ export class IsUsingKeyboard {
 					callbacksToDispose.push(
 						on(document, "pointerdown", handlePointer, {
 							capture: true,
-						})
-					);
-
-					callbacksToDispose.push(
+						}),
 						on(document, "pointermove", handlePointer, {
 							capture: true,
-						})
-					);
-
-					callbacksToDispose.push(
+						}),
 						on(document, "keydown", handleKeydown, {
 							capture: true,
 						})
 					);
 
-					return () => {
-						// Don't forget to spread and call twice.
-						executeCallbacks(...callbacksToDispose)();
-					};
+					// Don't forget to spread and call twice.
+					return executeCallbacks(...callbacksToDispose);
 				});
 			}
 
