@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.79
+
+### Patch Changes
+
+-   fix: floating focus loops ([#1072](https://github.com/huntabyte/bits-ui/pull/1072))
+
 ## 1.0.0-next.78
 
 ### Patch Changes
