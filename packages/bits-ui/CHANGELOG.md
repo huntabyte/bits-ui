@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.81
+
+### Patch Changes
+
+-   update `runed` to support Astro builds ([#1078](https://github.com/huntabyte/bits-ui/pull/1078))
+
 ## 1.0.0-next.80
 
 ### Patch Changes
