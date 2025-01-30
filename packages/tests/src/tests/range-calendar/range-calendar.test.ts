@@ -1,4 +1,4 @@
-import { render } from "@testing-library/svelte/svelte5";
+import { fireEvent, render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
@@ -30,17 +30,21 @@ const shortWeekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const longWeekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 // prettier-ignore
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October" ,"November", "December"];
+const SELECTED_DAY_SELECTOR = "[data-bits-day][data-selected]";
+const SELECTED_ATTR = "data-selected";
 
 function setup(props: Partial<RangeCalendarTestProps> = {}) {
 	const user = userEvent.setup();
 	const returned = render(RangeCalendarTest, { ...props });
 	const calendar = returned.getByTestId("calendar");
 	expect(calendar).toBeVisible();
-	return { ...returned, user, calendar };
-}
 
-const SELECTED_DAY_SELECTOR = "[data-bits-day][data-selected]";
-const SELECTED_ATTR = "data-selected";
+	function getSelectedDays() {
+		return calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
+	}
+
+	return { ...returned, user, calendar, getSelectedDays };
+}
 
 describe("calendar", () => {
 	it("should have no accessibility violations", async () => {
@@ -48,34 +52,47 @@ describe("calendar", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it("should respect a default value if provided - `CalendarDate`", async () => {
-		const { calendar, getByTestId } = setup({ value: calendarDateRange });
+	describe("respects default value if provided", () => {
+		it("CalendarDate", async () => {
+			const { getSelectedDays, getByTestId } = setup({ value: calendarDateRange });
 
-		const selectedDays = calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
-		expect(selectedDays).toHaveLength(6);
+			expect(getSelectedDays()).toHaveLength(6);
 
-		const heading = getByTestId("heading");
-		expect(heading).toHaveTextContent("January 1980");
+			const heading = getByTestId("heading");
+			expect(heading).toHaveTextContent("January 1980");
+		});
+
+		it("CalendarDateTime", async () => {
+			const { getSelectedDays, getByTestId } = setup({ value: calendarDateTimeRange });
+
+			expect(getSelectedDays()).toHaveLength(6);
+
+			const heading = getByTestId("heading");
+			expect(heading).toHaveTextContent("January 1980");
+		});
+
+		it("ZonedDateTime", async () => {
+			const { getSelectedDays, getByTestId } = setup({ value: zonedDateTimeRange });
+
+			expect(getSelectedDays()).toHaveLength(6);
+
+			const heading = getByTestId("heading");
+			expect(heading).toHaveTextContent("January 1980");
+		});
 	});
 
-	it("should respect a default value if provided - `CalendarDateTime`", async () => {
-		const { calendar, getByTestId } = setup({ value: calendarDateTimeRange });
+	it("should allow clearing the selected range", async () => {
+		const { getByText, getSelectedDays } = setup({
+			value: calendarDateRange,
+		});
 
-		const selectedDays = calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
-		expect(selectedDays).toHaveLength(6);
+		expect(getSelectedDays()).toHaveLength(6);
 
-		const heading = getByTestId("heading");
-		expect(heading).toHaveTextContent("January 1980");
-	});
+		const clearButton = getByText("clear");
 
-	it("should respect a default value if provided - `ZonedDateTime`", async () => {
-		const { calendar, getByTestId } = setup({ value: zonedDateTimeRange });
+		await fireEvent.click(clearButton);
 
-		const selectedDays = calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
-		expect(selectedDays).toHaveLength(6);
-
-		const heading = getByTestId("heading");
-		expect(heading).toHaveTextContent("January 1980");
+		expect(getSelectedDays()).toHaveLength(0);
 	});
 
 	it("should reset range on select when a range is already selected", async () => {
@@ -296,36 +313,38 @@ describe("calendar", () => {
 		expect(thirdDayInMonth).not.toHaveAttribute(SELECTED_ATTR);
 	});
 
-	it("should format the weekday labels correctly - `'narrow'`", async () => {
-		const { getByTestId } = setup({
-			placeholder: calendarDateRange.start,
-			weekdayFormat: "narrow",
+	describe("correct weekday label formatting", () => {
+		it("narrow", async () => {
+			const { getByTestId } = setup({
+				placeholder: calendarDateRange.start,
+				weekdayFormat: "narrow",
+			});
+			for (const [i, weekday] of narrowWeekdays.entries()) {
+				const weekdayEl = getByTestId(`weekday-1-${i}`);
+				expect(weekdayEl).toHaveTextContent(weekday);
+			}
 		});
-		for (const [i, weekday] of narrowWeekdays.entries()) {
-			const weekdayEl = getByTestId(`weekday-1-${i}`);
-			expect(weekdayEl).toHaveTextContent(weekday);
-		}
-	});
 
-	it("should format the weekday labels correctly - `'short'`", async () => {
-		const { getByTestId } = setup({
-			placeholder: calendarDateRange.start,
-			weekdayFormat: "short",
+		it("short", async () => {
+			const { getByTestId } = setup({
+				placeholder: calendarDateRange.start,
+				weekdayFormat: "short",
+			});
+			for (const [i, weekday] of shortWeekdays.entries()) {
+				const weekdayEl = getByTestId(`weekday-1-${i}`);
+				expect(weekdayEl).toHaveTextContent(weekday);
+			}
 		});
-		for (const [i, weekday] of shortWeekdays.entries()) {
-			const weekdayEl = getByTestId(`weekday-1-${i}`);
-			expect(weekdayEl).toHaveTextContent(weekday);
-		}
-	});
 
-	it("should format the weekday labels correctly - `'long'`", async () => {
-		const { getByTestId } = setup({
-			placeholder: calendarDateRange.start,
-			weekdayFormat: "long",
+		it("long`", async () => {
+			const { getByTestId } = setup({
+				placeholder: calendarDateRange.start,
+				weekdayFormat: "long",
+			});
+			for (const [i, weekday] of longWeekdays.entries()) {
+				const weekdayEl = getByTestId(`weekday-1-${i}`);
+				expect(weekdayEl).toHaveTextContent(weekday);
+			}
 		});
-		for (const [i, weekday] of longWeekdays.entries()) {
-			const weekdayEl = getByTestId(`weekday-1-${i}`);
-			expect(weekdayEl).toHaveTextContent(weekday);
-		}
 	});
 });
