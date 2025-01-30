@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.80
+
+### Patch Changes
+
+-   fix: clean up event listeners for menus ([#1071](https://github.com/huntabyte/bits-ui/pull/1071))
+
+-   fix(RangeCalendar): allow `value` to be cleared ([#1075](https://github.com/huntabyte/bits-ui/pull/1075))
+
 ## 1.0.0-next.79
 
 ### Patch Changes
