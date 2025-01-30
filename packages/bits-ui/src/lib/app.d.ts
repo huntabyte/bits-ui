@@ -11,4 +11,8 @@ declare global {
 	var bitsEscapeLayers: Map<EscapeLayerState, ReadableBox<EscapeBehaviorType>>;
 	var bitsTextSelectionLayers: Map<TextSelectionLayerState, ReadableBox<boolean>>;
 	var bitsIdCounter: { current: number };
+	var bitsBodyLockStackCount: {
+		readonly map: SvelteMap<string, boolean>;
+		resetBodyStyle: () => void;
+	};
 }
