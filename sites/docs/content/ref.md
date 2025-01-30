@@ -11,7 +11,7 @@ For example, `Accordion.Trigger`'s `ref` gives access to its rendered `HTMLButto
 <script lang="ts">
 	import { Accordion } from "bits-ui";
 
-	let triggerRef = $state<HTMLButtonElement>();
+	let triggerRef = $state<HTMLButtonElement | null>(null);
 
 	function focusTrigger() {
 		triggerRef?.focus();
@@ -34,7 +34,7 @@ Bits UI tracks the reference to the underlying element using its `id` attribute.
 	import CustomButton from "./CustomButton.svelte";
 	import { Accordion } from "bits-ui";
 
-	let triggerRef = $state<HTMLButtonElement>();
+	let triggerRef = $state<HTMLButtonElement | null>(null);
 
 	function focusTrigger() {
 		triggerRef?.focus();
@@ -55,7 +55,7 @@ One caveat is that if you wish to use a custom `id` on the element, you must pas
 	import CustomButton from "./CustomButton.svelte";
 	import { Accordion } from "bits-ui";
 
-	let triggerRef = $state<HTMLButtonElement>();
+	let triggerRef = $state<HTMLButtonElement | null>(null);
 
 	function focusTrigger() {
 		triggerRef?.focus();
@@ -78,7 +78,7 @@ The following example would not work, as the `Accordion.Trigger` component has n
 	import CustomButton from "./CustomButton.svelte";
 	import { Accordion } from "bits-ui";
 
-	let triggerRef = $state<HTMLButtonElement>();
+	let triggerRef = $state<HTMLButtonElement | null>(null);
 
 	function focusTrigger() {
 		triggerRef?.focus(); // will always be undefined
