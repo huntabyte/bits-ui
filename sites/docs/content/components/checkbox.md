@@ -245,9 +245,8 @@ For complete control over the component's state, use a [Function Binding](https:
 </script>
 
 <Checkbox.Root
-	bind:indeterminate={
-		() => myIndeterminate, (newIndeterminate) => (myIndeterminate = newIndeterminate)
-	}
+	bind:indeterminate={() => myIndeterminate,
+	(newIndeterminate) => (myIndeterminate = newIndeterminate)}
 >
 	<!-- ... -->
 </Checkbox.Root>
