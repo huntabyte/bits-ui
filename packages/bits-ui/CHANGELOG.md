@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.82
+
+### Patch Changes
+
+-   fix issue with default `open` and `disabled` Portal ([#1080](https://github.com/huntabyte/bits-ui/pull/1080))
+
 ## 1.0.0-next.81
 
 ### Patch Changes
