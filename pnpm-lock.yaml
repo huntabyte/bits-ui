@@ -81,8 +81,8 @@ importers:
         specifier: ^0.23.2
         version: 0.23.2(svelte@5.19.4)
       svelte-toolbelt:
-        specifier: ^0.7.0
-        version: 0.7.0(svelte@5.19.4)
+        specifier: ^0.7.1
+        version: 0.7.1(svelte@5.19.4)
     devDependencies:
       '@sveltejs/kit':
         specifier: ^2.16.1
@@ -3357,11 +3357,6 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
-  runed@0.20.0:
-    resolution: {integrity: sha512-YqPxaUdWL5nUXuSF+/v8a+NkVN8TGyEGbQwTA25fLY35MR/2bvZ1c6sCbudoo1kT4CAJPh4kUkcgGVxW127WKw==}
-    peerDependencies:
-      svelte: ^5.7.0
-
   runed@0.23.1:
     resolution: {integrity: sha512-h1ZDmin0LBoSMEZxvHOJbCWsUBz4099cjI+/rQ4FZystgOq294s5Rh+OEeu9HIObc8XQQEya23eAhJeal0VBuA==}
     peerDependencies:
@@ -3578,8 +3573,8 @@ packages:
     peerDependencies:
       svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
 
-  svelte-toolbelt@0.7.0:
-    resolution: {integrity: sha512-i/Tv4NwAWWqJnK5H0F8y/ubDnogDYlwwyzKhrspTUFzrFuGnYshqd2g4/R43ds841wmaFiSW/HsdsdWhPOlrAA==}
+  svelte-toolbelt@0.7.1:
+    resolution: {integrity: sha512-HcBOcR17Vx9bjaOceUvxkY3nGmbBmCBBbuWLLEWO6jtmWH8f/QoWmbyUfQZrpDINH39en1b8mptfPQT9VKQ1xQ==}
     engines: {node: '>=18', pnpm: '>=8.7.0'}
     peerDependencies:
       svelte: ^5.0.0
@@ -7412,11 +7407,6 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
-  runed@0.20.0(svelte@5.19.4):
-    dependencies:
-      esm-env: 1.2.1
-      svelte: 5.19.4
-
   runed@0.23.1(svelte@5.19.4):
     dependencies:
       esm-env: 1.2.1
@@ -7649,10 +7639,10 @@ snapshots:
     dependencies:
       svelte: 5.19.4
 
-  svelte-toolbelt@0.7.0(svelte@5.19.4):
+  svelte-toolbelt@0.7.1(svelte@5.19.4):
     dependencies:
       clsx: 2.1.1
-      runed: 0.20.0(svelte@5.19.4)
+      runed: 0.23.2(svelte@5.19.4)
       style-to-object: 1.0.8
       svelte: 5.19.4
 
