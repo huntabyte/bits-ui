@@ -1230,22 +1230,20 @@ class SelectScrollUpButtonState {
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
-		watch(
-			[() => this.content.viewportNode, () => this.content.isPositioned],
-			([viewportNode, isPositioned]) => {
-				if (!viewportNode || !isPositioned) return;
+		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
+			if (!this.content.viewportNode || !this.content.isPositioned) return;
 
-				const handleScroll = () => {
-					const paddingTop = Number.parseInt(
-						getComputedStyle(viewportNode).paddingTop,
-						10
-					);
-					this.canScrollUp = viewportNode.scrollTop - paddingTop > 0;
-				};
-				handleScroll();
-				return on(viewportNode, "scroll", handleScroll);
-			}
-		);
+			const handleScroll = () => {
+				if (!this.content.viewportNode) return;
+				const paddingTop = Number.parseInt(
+					getComputedStyle(this.content.viewportNode).paddingTop,
+					10
+				);
+				this.canScrollUp = this.content.viewportNode.scrollTop - paddingTop > 0.1;
+			};
+			handleScroll();
+			return on(this.content.viewportNode, "scroll", handleScroll);
+		});
 
 		$effect(() => {
 			if (this.state.mounted.current) return;
