@@ -108,12 +108,10 @@ class SelectBaseRootState {
 		});
 	}
 
-	setHighlightedNode(node: HTMLElement | null) {
+	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
-		if (node) {
-			if (this.isUsingKeyboard) {
-				node.scrollIntoView({ block: "nearest" });
-			}
+		if (node && (this.isUsingKeyboard || initial)) {
+			node.scrollIntoView({ block: "nearest" });
 		}
 	}
 
@@ -220,14 +218,14 @@ class SelectSingleRootState extends SelectBaseRootState {
 		if (this.value.current !== "") {
 			const node = this.getNodeByValue(this.value.current);
 			if (node) {
-				this.setHighlightedNode(node);
+				this.setHighlightedNode(node, true);
 				return;
 			}
 		}
 		// if no value is set, we want to highlight the first item
 		const firstCandidate = this.getCandidateNodes()[0];
 		if (!firstCandidate) return;
-		this.setHighlightedNode(firstCandidate);
+		this.setHighlightedNode(firstCandidate, true);
 	}
 }
 
@@ -276,14 +274,14 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		if (this.value.current.length && this.value.current[0] !== "") {
 			const node = this.getNodeByValue(this.value.current[0]!);
 			if (node) {
-				this.setHighlightedNode(node);
+				this.setHighlightedNode(node, true);
 				return;
 			}
 		}
 		// if no value is set, we want to highlight the first item
 		const firstCandidate = this.getCandidateNodes()[0];
 		if (!firstCandidate) return;
-		this.setHighlightedNode(firstCandidate);
+		this.setHighlightedNode(firstCandidate, true);
 	}
 }
 
@@ -871,8 +869,8 @@ class SelectItemState {
 
 		watch(
 			() => this.mounted,
-			(isMounted) => {
-				if (!isMounted) return;
+			() => {
+				if (!this.mounted) return;
 				this.root.setInitialHighlightedNode();
 			}
 		);
@@ -1094,7 +1092,9 @@ class SelectScrollButtonImplState {
 	ref: SelectScrollButtonImplStateProps["ref"];
 	content: SelectContentState;
 	root: SelectBaseRootState;
-	autoScrollTimer = $state<number | null>(null);
+	autoScrollInterval: number | null = null;
+	userScrollTimer = -1;
+	isUserScrolling = false;
 	onAutoScroll: () => void = noop;
 	mounted: SelectScrollButtonImplStateProps["mounted"];
 
@@ -1113,8 +1113,12 @@ class SelectScrollButtonImplState {
 
 		watch(
 			() => this.mounted.current,
-			(isMounted) => {
-				if (!isMounted) return;
+			() => {
+				if (!this.mounted.current) {
+					this.isUserScrolling = false;
+					return;
+				}
+				if (this.isUserScrolling) return;
 				const activeItem = this.root.highlightedNode;
 				activeItem?.scrollIntoView({ block: "nearest" });
 			}
@@ -1125,28 +1129,36 @@ class SelectScrollButtonImplState {
 		this.onpointerleave = this.onpointerleave.bind(this);
 	}
 
-	clearAutoScrollTimer() {
-		if (this.autoScrollTimer === null) return;
-		window.clearInterval(this.autoScrollTimer);
-		this.autoScrollTimer = null;
+	handleUserScroll() {
+		window.clearTimeout(this.userScrollTimer);
+		this.isUserScrolling = true;
+		this.userScrollTimer = window.setTimeout(() => {
+			this.isUserScrolling = false;
+		}, 200);
+	}
+
+	clearAutoScrollInterval() {
+		if (this.autoScrollInterval === null) return;
+		window.clearInterval(this.autoScrollInterval);
+		this.autoScrollInterval = null;
 	}
 
 	onpointerdown(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
-		this.autoScrollTimer = window.setInterval(() => {
+		if (this.autoScrollInterval !== null) return;
+		this.autoScrollInterval = window.setInterval(() => {
 			this.onAutoScroll();
 		}, 50);
 	}
 
 	onpointermove(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
-		this.autoScrollTimer = window.setInterval(() => {
+		if (this.autoScrollInterval !== null) return;
+		this.autoScrollInterval = window.setInterval(() => {
 			this.onAutoScroll();
 		}, 50);
 	}
 
 	onpointerleave(_: BitsPointerEvent) {
-		this.clearAutoScrollTimer();
+		this.clearAutoScrollInterval();
 	}
 
 	props = $derived.by(
@@ -1176,31 +1188,36 @@ class SelectScrollDownButtonState {
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
-		watch(
-			[() => this.content.viewportNode, () => this.content.isPositioned],
-			([viewportNode, isPositioned]) => {
-				if (!viewportNode || !isPositioned) return;
+		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
+			if (!this.content.viewportNode || !this.content.isPositioned) return;
 
-				const handleScroll = () => {
-					afterTick(() => {
-						const maxScroll = viewportNode.scrollHeight - viewportNode.clientHeight;
-						const paddingTop = Number.parseInt(
-							getComputedStyle(viewportNode).paddingTop,
-							10
-						);
+			const handleScroll = (init = false) => {
+				afterTick(() => {
+					if (!this.content.viewportNode) return;
+					if (!init) {
+						this.state.handleUserScroll();
+					}
 
-						this.canScrollDown =
-							Math.ceil(viewportNode.scrollTop) < maxScroll - paddingTop;
-					});
-				};
-				handleScroll();
-				return on(viewportNode, "scroll", handleScroll);
-			}
-		);
+					const maxScroll =
+						this.content.viewportNode.scrollHeight -
+						this.content.viewportNode.clientHeight;
+					const paddingTop = Number.parseInt(
+						getComputedStyle(this.content.viewportNode).paddingTop,
+						10
+					);
+
+					this.canScrollDown =
+						Math.ceil(this.content.viewportNode.scrollTop) < maxScroll - paddingTop;
+				});
+			};
+			handleScroll(true);
+
+			return on(this.content.viewportNode, "scroll", () => handleScroll());
+		});
 
 		$effect(() => {
 			if (this.state.mounted.current) return;
-			this.state.clearAutoScrollTimer();
+			this.state.clearAutoScrollInterval();
 		});
 	}
 
@@ -1233,7 +1250,10 @@ class SelectScrollUpButtonState {
 		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
 			if (!this.content.viewportNode || !this.content.isPositioned) return;
 
-			const handleScroll = () => {
+			const handleScroll = (init = false) => {
+				if (!init) {
+					this.state.handleUserScroll();
+				}
 				if (!this.content.viewportNode) return;
 				const paddingTop = Number.parseInt(
 					getComputedStyle(this.content.viewportNode).paddingTop,
@@ -1241,22 +1261,21 @@ class SelectScrollUpButtonState {
 				);
 				this.canScrollUp = this.content.viewportNode.scrollTop - paddingTop > 0.1;
 			};
-			handleScroll();
-			return on(this.content.viewportNode, "scroll", handleScroll);
+			handleScroll(true);
+			return on(this.content.viewportNode, "scroll", () => handleScroll());
 		});
 
 		$effect(() => {
 			if (this.state.mounted.current) return;
-			this.state.clearAutoScrollTimer();
+			this.state.clearAutoScrollInterval();
 		});
 	}
 
 	handleAutoScroll = () => {
 		afterTick(() => {
-			const viewport = this.content.viewportNode;
-			const selectedItem = this.root.highlightedNode;
-			if (!viewport || !selectedItem) return;
-			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
+			if (!this.content.viewportNode || !this.root.highlightedNode) return;
+			this.content.viewportNode.scrollTop =
+				this.content.viewportNode.scrollTop - this.root.highlightedNode.offsetHeight;
 		});
 	};
 
