@@ -6,7 +6,7 @@ import {
 	waitFor,
 } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
+import { describe, it, vi } from "vitest";
 import { tick } from "svelte";
 import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
@@ -49,6 +49,8 @@ async function open(props: DialogTestProps = {}) {
 	expect(contentAfter).not.toBeNull();
 	return { getByTestId, queryByTestId, user };
 }
+
+const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
 
 describe("dialog", () => {
 	it("should have no accessibility violations", async () => {
@@ -99,6 +101,9 @@ describe("dialog", () => {
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+			contentRect as DOMRect
+		);
 		await user.click(overlay);
 		await sleep(25);
 

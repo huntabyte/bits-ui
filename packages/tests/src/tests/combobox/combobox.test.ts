@@ -1,6 +1,6 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
+import { describe, it, vi } from "vitest";
 import { type Component, tick } from "svelte";
 import { type AnyFn, getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
@@ -31,6 +31,8 @@ const testItems: Item[] = [
 		label: "D",
 	},
 ];
+
+const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
 
 function setupSingle(
 	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
@@ -216,8 +218,10 @@ describe("combobox - single", () => {
 	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openSingle();
 		await sleep(100);
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+			contentRect as DOMRect
+		);
 		await user.click(outside);
-		await sleep(100);
 		expect(getContent()).toBeNull();
 	});
 

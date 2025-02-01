@@ -36,6 +36,8 @@ const testItems: Item[] = [
 	},
 ];
 
+const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
+
 function setupSingle(
 	props: Partial<SelectSingleTestProps | SelectForceMountTestProps> = {},
 	items: Item[] = testItems,
@@ -223,6 +225,11 @@ describe("select - single", () => {
 	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openSingle();
 		await sleep(100);
+
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+			contentRect as DOMRect
+		);
+
 		await user.click(outside);
 		await sleep(100);
 		expect(getContent()).toBeNull();
@@ -623,8 +630,10 @@ describe("select - multiple", () => {
 	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openMultiple();
 		await sleep(100);
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+			contentRect as DOMRect
+		);
 		await user.click(outside);
-		await sleep(100);
 		expect(getContent()).toBeNull();
 	});
 

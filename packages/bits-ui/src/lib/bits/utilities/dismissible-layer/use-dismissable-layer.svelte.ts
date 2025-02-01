@@ -18,6 +18,7 @@ import { debounce } from "$lib/internal/debounce.js";
 import { noop } from "$lib/internal/noop.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
 import { isElement } from "$lib/internal/is.js";
+import { isClickTrulyOutside } from "$lib/internal/dom.js";
 
 globalThis.bitsDismissableLayers ??= new Map<
 	DismissibleLayerState,
@@ -269,7 +270,9 @@ function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
 	if (!isElement(target)) return false;
 	const ownerDocument = getOwnerDocument(target);
 	const isValid =
-		ownerDocument.documentElement.contains(target) && !isOrContainsTarget(node, target);
+		ownerDocument.documentElement.contains(target) &&
+		!isOrContainsTarget(node, target) &&
+		isClickTrulyOutside(e, node);
 	return isValid;
 }
 
