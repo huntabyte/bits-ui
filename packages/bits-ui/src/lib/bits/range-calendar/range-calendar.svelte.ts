@@ -109,7 +109,7 @@ export class RangeCalendarRootState {
 	formatter: Formatter;
 	accessibleHeadingId = useId();
 	focusedValue = $state<DateValue | undefined>(undefined);
-	lastPressedDateValue = $state<DateValue | undefined>(undefined);
+	lastPressedDateValue: DateValue | undefined = undefined;
 
 	constructor(props: RangeCalendarRootStateProps) {
 		this.value = props.value;
@@ -415,14 +415,11 @@ export class RangeCalendarRootState {
 
 		const isStartBeforeFocused = isBefore(this.startValue.current, this.focusedValue);
 		const start = isStartBeforeFocused ? this.startValue.current : this.focusedValue;
-
 		const end = isStartBeforeFocused ? this.focusedValue : this.startValue.current;
+		const range = { start, end };
 
-		if (isSameDay(start.add({ days: 1 }), end)) {
-			return {
-				start,
-				end,
-			};
+		if (isSameDay(start.add({ days: 1 }), end) || isSameDay(start, end)) {
+			return range;
 		}
 
 		const isValid = areAllDaysBetweenValid(
@@ -431,12 +428,8 @@ export class RangeCalendarRootState {
 			this.isDateUnavailable,
 			this.isDateDisabled
 		);
-		if (isValid) {
-			return {
-				start,
-				end,
-			};
-		}
+
+		if (isValid) return range;
 		return null;
 	});
 
