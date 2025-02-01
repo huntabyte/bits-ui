@@ -432,7 +432,6 @@ class PinInputRootState {
 			if (!e.clipboardData || !input) return;
 			const content = e.clipboardData.getData("text/plain");
 			const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
-			console.log("sanitizedContent", sanitizedContent);
 			if (
 				sanitizedContent.length > 0 &&
 				this.#regexPattern &&
@@ -448,7 +447,6 @@ class PinInputRootState {
 		e.preventDefault();
 
 		const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
-		console.log("sanitized content", sanitizedContent);
 		if (
 			sanitizedContent.length > 0 &&
 			this.#regexPattern &&
