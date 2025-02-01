@@ -11,13 +11,7 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(PinInputTest, { ...props });
-	const cell0 = returned.getByTestId("cell-0");
-	const cell1 = returned.getByTestId("cell-1");
-	const cell2 = returned.getByTestId("cell-2");
-	const cell3 = returned.getByTestId("cell-3");
-	const cell4 = returned.getByTestId("cell-4");
-	const cell5 = returned.getByTestId("cell-5");
-	const cells = [cell0, cell1, cell2, cell3, cell4, cell5];
+	const cells = new Array(6).fill(null).map((_, i) => returned.getByTestId(`cell-${i}`));
 	const binding = returned.getByTestId("binding");
 	const hiddenInput = returned.getByTestId("input");
 	return {
@@ -170,5 +164,38 @@ describe("pin Input", () => {
 		expect(hiddenInput).toHaveValue("");
 		await user.keyboard("1$");
 		expect(hiddenInput).toHaveValue("1");
+	});
+
+	it("should allow pasting numbers that match the pattern", async () => {
+		const mockComplete = vi.fn();
+		const mockClipboard = "123456";
+		await navigator.clipboard.writeText(mockClipboard);
+
+		const { user, hiddenInput } = setup({
+			pattern: REGEXP_ONLY_DIGITS,
+			onComplete: mockComplete,
+		});
+
+		await user.click(hiddenInput);
+		await user.paste(mockClipboard);
+
+		expect(mockComplete).toHaveBeenCalledTimes(1);
+		expect(mockComplete).toHaveBeenCalledWith("123456");
+	});
+
+	it("should not allow pasting numbers that do not match the pattern", async () => {
+		const mockComplete = vi.fn();
+		const mockClipboard = "abcdef";
+		await navigator.clipboard.writeText(mockClipboard);
+
+		const { user, hiddenInput } = setup({
+			pattern: REGEXP_ONLY_DIGITS,
+			onComplete: mockComplete,
+		});
+
+		await user.click(hiddenInput);
+		await user.paste(mockClipboard);
+
+		expect(mockComplete).toHaveBeenCalledTimes(0);
 	});
 });
