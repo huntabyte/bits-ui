@@ -44,7 +44,7 @@
 				</Calendar.GridHead>
 				<Calendar.GridBody>
 					{#each month.weeks as weekDates}
-						<Calendar.GridRow class="flex w-full">
+						<Calendar.GridRow class="flex justify-between w-full">
 							{#each weekDates as date}
 								<Calendar.Cell
 									{date}
