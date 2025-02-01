@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
-import type { Component } from "svelte";
+import { type Component } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
 import PopoverForceMountTest, {
@@ -73,16 +73,32 @@ describe("popover", () => {
 		expect(getContent()).toBeNull();
 	});
 
-	it("should close on outside click by default", async () => {
+	it("should close on outside click", async () => {
 		const mockFn = vi.fn();
-		const { user, getByTestId } = await open({
-			contentProps: {
-				onInteractOutside: mockFn,
-			},
+		const { getByTestId, user } = await open({
+			contentProps: { onInteractOutside: mockFn },
 		});
+
 		const outside = getByTestId("outside");
+
+		const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+			contentRect as DOMRect
+		);
 		await user.click(outside);
-		expect(mockFn).toHaveBeenCalledTimes(1);
+
+		expect(mockFn).toHaveBeenCalledOnce();
+	});
+
+	it("should not close when clicking within bounds", async () => {
+		const mockFn = vi.fn();
+		const { user, content } = await open({
+			contentProps: { onInteractOutside: mockFn },
+		});
+
+		await user.click(content);
+
+		expect(mockFn).not.toHaveBeenCalled();
 	});
 
 	it("should close when the close button is clicked", async () => {
