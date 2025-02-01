@@ -36,4 +36,5 @@ export { Toggle } from "./toggle/index.js";
 export { ToggleGroup } from "./toggle-group/index.js";
 export { Toolbar } from "./toolbar/index.js";
 export { Tooltip } from "./tooltip/index.js";
+export { IsUsingKeyboard } from "./utilities/is-using-keyboard/is-using-keyboard.svelte.js";
 export { default as Portal } from "./utilities/portal/portal.svelte";

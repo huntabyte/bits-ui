@@ -38,6 +38,7 @@ export {
 	Toolbar,
 	Tooltip,
 	Portal,
+	IsUsingKeyboard,
 } from "./bits/index.js";
 
 export * from "./shared/index.js";

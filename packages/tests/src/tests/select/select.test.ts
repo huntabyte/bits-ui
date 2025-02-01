@@ -1,15 +1,15 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
-import { describe, it, vi } from "vitest";
 import { type Component } from "svelte";
-import { type AnyFn, getTestKbd, setupUserEvents, sleep } from "../utils.js";
+import { describe, it, vi } from "vitest";
 import { getTestId } from "../helpers/select.js";
-import SelectTest from "./select-test.svelte";
-import type { Item, SelectSingleTestProps } from "./select-test.svelte";
-import type { SelectMultipleTestProps } from "./select-multi-test.svelte";
-import SelectMultiTest from "./select-multi-test.svelte";
+import { type AnyFn, getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import type { SelectForceMountTestProps } from "./select-force-mount-test.svelte";
 import SelectForceMountTest from "./select-force-mount-test.svelte";
+import type { SelectMultipleTestProps } from "./select-multi-test.svelte";
+import SelectMultiTest from "./select-multi-test.svelte";
+import type { Item, SelectSingleTestProps } from "./select-test.svelte";
+import SelectTest from "./select-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -35,6 +35,8 @@ const testItems: Item[] = [
 		label: "D",
 	},
 ];
+
+const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
 
 function setupSingle(
 	props: Partial<SelectSingleTestProps | SelectForceMountTestProps> = {},
@@ -223,6 +225,11 @@ describe("select - single", () => {
 	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openSingle();
 		await sleep(100);
+
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+			contentRect as DOMRect
+		);
+
 		await user.click(outside);
 		await sleep(100);
 		expect(getContent()).toBeNull();
@@ -499,8 +506,27 @@ describe("select - single", () => {
 		expect(content).toBeVisible();
 	});
 
-	it("should deselect the selected item when the user clicks on the selected item", async () => {
+	it("should not deselect the selected item when the user clicks on the selected item", async () => {
 		const { getByTestId, user, trigger } = await openSingle();
+
+		const [item0] = getItems(getByTestId);
+		await user.click(item0!);
+		expectSelected(item0!);
+		await user.click(trigger);
+
+		const [item0v2] = getItems(getByTestId);
+		await user.click(item0v2!);
+		expectSelected(item0v2!);
+		await user.click(trigger);
+
+		const [item0v3] = getItems(getByTestId);
+		expectSelected(item0v3!);
+	});
+
+	it("should allow deselecting an item when `allowDeselect` is true", async () => {
+		const { getByTestId, user, trigger } = await openSingle({
+			allowDeselect: true,
+		});
 		const [_, item1] = getItems(getByTestId);
 		await user.click(item1!);
 		expectSelected(item1!);
@@ -510,25 +536,6 @@ describe("select - single", () => {
 
 		await user.click(item2!);
 		expectNotSelected(item2!);
-	});
-
-	it("should not allow deselecting an item when `allowDeselect` is false", async () => {
-		const { getByTestId, user, trigger } = await openSingle({
-			allowDeselect: false,
-		});
-
-		const [item0] = getItems(getByTestId);
-		await user.click(item0!);
-		expectSelected(item0!);
-		await user.click(trigger);
-
-		const [item0v2] = getItems(getByTestId);
-
-		await user.click(item0v2!);
-		expectSelected(item0v2!);
-		await user.click(trigger);
-		const [item0v3] = getItems(getByTestId);
-		expectSelected(item0v3!);
 	});
 });
 
@@ -623,8 +630,10 @@ describe("select - multiple", () => {
 	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openMultiple();
 		await sleep(100);
+		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
+			contentRect as DOMRect
+		);
 		await user.click(outside);
-		await sleep(100);
 		expect(getContent()).toBeNull();
 	});
 

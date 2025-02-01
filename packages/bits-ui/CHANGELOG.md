@@ -1,5 +1,57 @@
 # bits-ui
 
+## 1.0.0-next.84
+
+### Patch Changes
+
+-   fix: RangeCalendar allow selecting `maxValue` as complete range ([#1091](https://github.com/huntabyte/bits-ui/pull/1091))
+
+-   fix: Dialog/Popover clientX/Y detection to prevent password managers and other injected elements from closing the dialog when pressed ([#1089](https://github.com/huntabyte/bits-ui/pull/1089))
+
+## 1.0.0-next.83
+
+### Patch Changes
+
+-   fix: Pin Input paste behavior ([#1085](https://github.com/huntabyte/bits-ui/pull/1085))
+
+-   fix: Select/Combo scroll ([#1083](https://github.com/huntabyte/bits-ui/pull/1083))
+
+## 1.0.0-next.82
+
+### Patch Changes
+
+-   fix issue with default `open` and `disabled` Portal ([#1080](https://github.com/huntabyte/bits-ui/pull/1080))
+
+## 1.0.0-next.81
+
+### Patch Changes
+
+-   update `runed` to support Astro builds ([#1078](https://github.com/huntabyte/bits-ui/pull/1078))
+
+## 1.0.0-next.80
+
+### Patch Changes
+
+-   fix: clean up event listeners for menus ([#1071](https://github.com/huntabyte/bits-ui/pull/1071))
+
+-   fix(RangeCalendar): allow `value` to be cleared ([#1075](https://github.com/huntabyte/bits-ui/pull/1075))
+
+## 1.0.0-next.79
+
+### Patch Changes
+
+-   fix: floating focus loops ([#1072](https://github.com/huntabyte/bits-ui/pull/1072))
+
+## 1.0.0-next.78
+
+### Patch Changes
+
+-   Allow `<Button/>` with `href` to be disabled. ([#1055](https://github.com/huntabyte/bits-ui/pull/1055))
+
+-   BREAKING: `Select` - change default value of `allowDeselect` to `false` to align with native HTML `<select>` ([#1049](https://github.com/huntabyte/bits-ui/pull/1049))
+
+-   fix: ensure `disabled` is passed through to `Dialog.Trigger` and `Dialog.Close` ([#1057](https://github.com/huntabyte/bits-ui/pull/1057))
+
 ## 1.0.0-next.77
 
 ### Patch Changes

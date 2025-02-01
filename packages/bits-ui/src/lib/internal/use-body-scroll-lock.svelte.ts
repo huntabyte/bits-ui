@@ -108,6 +108,7 @@ export function useBodyScrollLock(
 ) {
 	const id = useId();
 	const countState = useBodyLockStackCount();
+	if (!countState) return;
 	const _restoreScrollDelay = $derived(restoreScrollDelay());
 
 	countState.map.set(id, initialState ?? false);

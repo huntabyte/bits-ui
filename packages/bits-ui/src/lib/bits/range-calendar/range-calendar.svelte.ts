@@ -5,9 +5,8 @@ import {
 	isSameMonth,
 	isToday,
 } from "@internationalized/date";
-import { untrack } from "svelte";
 import { useRefById } from "svelte-toolbelt";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -110,7 +109,7 @@ export class RangeCalendarRootState {
 	formatter: Formatter;
 	accessibleHeadingId = useId();
 	focusedValue = $state<DateValue | undefined>(undefined);
-	lastPressedDateValue = $state<DateValue | undefined>(undefined);
+	lastPressedDateValue: DateValue | undefined = undefined;
 
 	constructor(props: RangeCalendarRootStateProps) {
 		this.value = props.value;
@@ -198,45 +197,51 @@ export class RangeCalendarRootState {
 		 * Synchronize the start and end values with the `value` in case
 		 * it is updated externally.
 		 */
-		$effect(() => {
-			const value = this.value.current;
-			untrack(() => {
+		watch(
+			() => this.value.current,
+			(value) => {
 				if (value.start && value.end) {
 					this.startValue.current = value.start;
 					this.endValue.current = value.end;
 				} else if (value.start) {
 					this.startValue.current = value.start;
 					this.endValue.current = undefined;
+				} else if (value.start === undefined && value.end === undefined) {
+					this.startValue.current = undefined;
+					this.endValue.current = undefined;
 				}
-			});
-		});
+			}
+		);
 
 		/**
 		 * Synchronize the placeholder value with the current start value
 		 */
-		$effect(() => {
-			this.value.current;
-			untrack(() => {
-				const startValue = this.value.current.start;
+		watch(
+			() => this.value.current,
+			(value) => {
+				const startValue = value.start;
 				if (startValue && this.placeholder.current !== startValue) {
 					this.placeholder.current = startValue;
 				}
-			});
-		});
+			}
+		);
 
-		$effect(() => {
-			const startValue = this.startValue.current;
-			const endValue = this.endValue.current;
-
-			untrack(() => {
-				const value = this.value.current;
-				if (value && value.start === startValue && value.end === endValue) {
+		watch(
+			[() => this.startValue.current, () => this.endValue.current],
+			([startValue, endValue]) => {
+				if (
+					this.value.current &&
+					this.value.current.start === startValue &&
+					this.value.current.end === endValue
+				) {
 					return;
 				}
 
 				if (startValue && endValue) {
 					this.#updateValue((prev) => {
-						if (prev.start === startValue && prev.end === endValue) return prev;
+						if (prev.start === startValue && prev.end === endValue) {
+							return prev;
+						}
 						if (isBefore(endValue, startValue)) {
 							const start = startValue;
 							const end = endValue;
@@ -250,14 +255,16 @@ export class RangeCalendarRootState {
 							};
 						}
 					});
-				} else if (value && value.start && value.end) {
-					this.value.current = {
-						start: undefined,
-						end: undefined,
-					};
+				} else if (
+					this.value.current &&
+					this.value.current.start &&
+					this.value.current.end
+				) {
+					this.value.current.start = undefined;
+					this.value.current.end = undefined;
 				}
-			});
-		});
+			}
+		);
 
 		this.shiftFocus = this.shiftFocus.bind(this);
 		this.handleCellClick = this.handleCellClick.bind(this);
@@ -408,14 +415,11 @@ export class RangeCalendarRootState {
 
 		const isStartBeforeFocused = isBefore(this.startValue.current, this.focusedValue);
 		const start = isStartBeforeFocused ? this.startValue.current : this.focusedValue;
-
 		const end = isStartBeforeFocused ? this.focusedValue : this.startValue.current;
+		const range = { start, end };
 
-		if (isSameDay(start.add({ days: 1 }), end)) {
-			return {
-				start,
-				end,
-			};
+		if (isSameDay(start.add({ days: 1 }), end) || isSameDay(start, end)) {
+			return range;
 		}
 
 		const isValid = areAllDaysBetweenValid(
@@ -424,12 +428,8 @@ export class RangeCalendarRootState {
 			this.isDateUnavailable,
 			this.isDateDisabled
 		);
-		if (isValid) {
-			return {
-				start,
-				end,
-			};
-		}
+
+		if (isValid) return range;
 		return null;
 	});
 

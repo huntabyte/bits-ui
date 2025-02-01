@@ -83,10 +83,9 @@ class SelectBaseRootState {
 		if (!this.highlightedNode) return null;
 		return this.highlightedNode.getAttribute("data-label");
 	});
-	isUsingKeyboard = $state(false);
-	isCombobox = $state(false);
+	isUsingKeyboard = false;
+	isCombobox = false;
 	bitsAttrs: SelectBitsAttrs;
-	triggerPointerDownPos = $state.raw<{ x: number; y: number } | null>({ x: 0, y: 0 });
 
 	constructor(props: SelectBaseRootStateProps) {
 		this.disabled = props.disabled;
@@ -108,12 +107,10 @@ class SelectBaseRootState {
 		});
 	}
 
-	setHighlightedNode(node: HTMLElement | null) {
+	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
-		if (node) {
-			if (this.isUsingKeyboard) {
-				node.scrollIntoView({ block: "nearest" });
-			}
+		if (node && (this.isUsingKeyboard || initial)) {
+			node.scrollIntoView({ block: "nearest" });
 		}
 	}
 
@@ -197,11 +194,9 @@ class SelectSingleRootState extends SelectBaseRootState {
 
 		watch(
 			() => this.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				afterTick(() => {
-					this.setInitialHighlightedNode();
-				});
+			() => {
+				if (!this.open.current) return;
+				this.setInitialHighlightedNode();
 			}
 		);
 	}
@@ -216,18 +211,20 @@ class SelectSingleRootState extends SelectBaseRootState {
 	}
 
 	setInitialHighlightedNode() {
-		if (this.highlightedNode && document.contains(this.highlightedNode)) return;
-		if (this.value.current !== "") {
-			const node = this.getNodeByValue(this.value.current);
-			if (node) {
-				this.setHighlightedNode(node);
-				return;
+		afterTick(() => {
+			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
+			if (this.value.current !== "") {
+				const node = this.getNodeByValue(this.value.current);
+				if (node) {
+					this.setHighlightedNode(node, true);
+					return;
+				}
 			}
-		}
-		// if no value is set, we want to highlight the first item
-		const firstCandidate = this.getCandidateNodes()[0];
-		if (!firstCandidate) return;
-		this.setHighlightedNode(firstCandidate);
+			// if no value is set, we want to highlight the first item
+			const firstCandidate = this.getCandidateNodes()[0];
+			if (!firstCandidate) return;
+			this.setHighlightedNode(firstCandidate, true);
+		});
 	}
 }
 
@@ -247,13 +244,9 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 		watch(
 			() => this.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				afterTick(() => {
-					if (!this.highlightedNode) {
-						this.setInitialHighlightedNode();
-					}
-				});
+			() => {
+				if (!this.open.current) return;
+				this.setInitialHighlightedNode();
 			}
 		);
 	}
@@ -272,18 +265,20 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 
 	setInitialHighlightedNode() {
-		if (this.highlightedNode) return;
-		if (this.value.current.length && this.value.current[0] !== "") {
-			const node = this.getNodeByValue(this.value.current[0]!);
-			if (node) {
-				this.setHighlightedNode(node);
-				return;
+		afterTick(() => {
+			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
+			if (this.value.current.length && this.value.current[0] !== "") {
+				const node = this.getNodeByValue(this.value.current[0]!);
+				if (node) {
+					this.setHighlightedNode(node, true);
+					return;
+				}
 			}
-		}
-		// if no value is set, we want to highlight the first item
-		const firstCandidate = this.getCandidateNodes()[0];
-		if (!firstCandidate) return;
-		this.setHighlightedNode(firstCandidate);
+			// if no value is set, we want to highlight the first item
+			const firstCandidate = this.getCandidateNodes()[0];
+			if (!firstCandidate) return;
+			this.setHighlightedNode(firstCandidate, true);
+		});
 	}
 }
 
@@ -316,31 +311,27 @@ class SelectInputState {
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
-		const open = this.root.open.current;
-		const inputValue = this.root.inputValue;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
-		if (!open) {
+		if (!this.root.open.current) {
 			if (INTERACTION_KEYS.includes(e.key)) return;
 			if (e.key === kbd.TAB) return;
-			if (e.key === kbd.BACKSPACE && inputValue === "") return;
+			if (e.key === kbd.BACKSPACE && this.root.inputValue === "") return;
 			this.root.handleOpen();
 			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
 			// set correctly.
-			afterTick(() => {
-				if (this.root.hasValue) return;
-				const candidateNodes = this.root.getCandidateNodes();
-				if (!candidateNodes.length) return;
+			if (this.root.hasValue) return;
+			const candidateNodes = this.root.getCandidateNodes();
+			if (!candidateNodes.length) return;
 
-				if (e.key === kbd.ARROW_DOWN) {
-					const firstCandidate = candidateNodes[0]!;
-					this.root.setHighlightedNode(firstCandidate);
-				} else if (e.key === kbd.ARROW_UP) {
-					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
-					this.root.setHighlightedNode(lastCandidate);
-				}
-			});
+			if (e.key === kbd.ARROW_DOWN) {
+				const firstCandidate = candidateNodes[0]!;
+				this.root.setHighlightedNode(firstCandidate);
+			} else if (e.key === kbd.ARROW_UP) {
+				const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+				this.root.setHighlightedNode(lastCandidate);
+			}
 			return;
 		}
 
@@ -351,17 +342,19 @@ class SelectInputState {
 
 		if (e.key === kbd.ENTER && !e.isComposing) {
 			e.preventDefault();
-			const highlightedValue = this.root.highlightedValue;
 
-			const isCurrentSelectedValue = highlightedValue === this.root.value.current;
+			const isCurrentSelectedValue = this.root.highlightedValue === this.root.value.current;
 
 			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
 				this.root.handleClose();
 				return;
 			}
 
-			if (highlightedValue) {
-				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+			if (this.root.highlightedValue) {
+				this.root.toggleItem(
+					this.root.highlightedValue,
+					this.root.highlightedLabel ?? undefined
+				);
 			}
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
 				this.root.handleClose();
@@ -405,14 +398,11 @@ class SelectInputState {
 		if (!this.root.highlightedNode) {
 			this.root.setHighlightedToFirstCandidate();
 		}
-		// this.root.setHighlightedToFirstCandidate();
 	}
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.inputValue = e.currentTarget.value;
-		afterTick(() => {
-			this.root.setHighlightedToFirstCandidate();
-		});
+		this.root.setHighlightedToFirstCandidate();
 	}
 
 	props = $derived.by(
@@ -548,12 +538,8 @@ class SelectTriggerState {
 		this.#domTypeahead.resetTypeahead();
 	}
 
-	#handlePointerOpen(e: PointerEvent) {
+	#handlePointerOpen(_: PointerEvent) {
 		this.#handleOpen();
-		this.root.triggerPointerDownPos = {
-			x: Math.round(e.pageX),
-			y: Math.round(e.pageY),
-		};
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -576,19 +562,17 @@ class SelectTriggerState {
 
 			// we need to wait for a tick after the menu opens to ensure
 			// the highlighted nodes are set correctly
-			afterTick(() => {
-				if (this.root.hasValue) return;
-				const candidateNodes = this.root.getCandidateNodes();
-				if (!candidateNodes.length) return;
+			if (this.root.hasValue) return;
+			const candidateNodes = this.root.getCandidateNodes();
+			if (!candidateNodes.length) return;
 
-				if (e.key === kbd.ARROW_DOWN) {
-					const firstCandidate = candidateNodes[0]!;
-					this.root.setHighlightedNode(firstCandidate);
-				} else if (e.key === kbd.ARROW_UP) {
-					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
-					this.root.setHighlightedNode(lastCandidate);
-				}
-			});
+			if (e.key === kbd.ARROW_DOWN) {
+				const firstCandidate = candidateNodes[0]!;
+				this.root.setHighlightedNode(firstCandidate);
+			} else if (e.key === kbd.ARROW_UP) {
+				const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+				this.root.setHighlightedNode(lastCandidate);
+			}
 			return;
 		}
 
@@ -599,9 +583,8 @@ class SelectTriggerState {
 
 		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
 			e.preventDefault();
-			const highlightedValue = this.root.highlightedValue;
 
-			const isCurrentSelectedValue = highlightedValue === this.root.value.current;
+			const isCurrentSelectedValue = this.root.highlightedValue === this.root.value.current;
 
 			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
 				this.root.handleClose();
@@ -609,8 +592,11 @@ class SelectTriggerState {
 			}
 
 			//"" is a valid value for a select item so we need to check for that
-			if (highlightedValue !== null) {
-				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+			if (this.root.highlightedValue !== null) {
+				this.root.toggleItem(
+					this.root.highlightedValue,
+					this.root.highlightedLabel ?? undefined
+				);
 			}
 
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
@@ -684,7 +670,7 @@ class SelectTriggerState {
 	 * `pointerdown` fires before the `focus` event, so we can prevent the default
 	 * behavior of focusing the button and keep focus on the input.
 	 */
-	onpointerdown = (e: BitsPointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.disabled.current) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
@@ -705,14 +691,14 @@ class SelectTriggerState {
 				this.root.handleClose();
 			}
 		}
-	};
+	}
 
-	onpointerup = (e: BitsPointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			this.#handlePointerOpen(e);
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -755,12 +741,15 @@ class SelectContentState {
 			deps: () => this.root.open.current,
 		});
 
-		onDestroyEffect(() => (this.root.contentNode = null));
+		onDestroyEffect(() => {
+			this.root.contentNode = null;
+			this.isPositioned = false;
+		});
 
 		watch(
 			() => this.root.open.current,
-			(isOpen) => {
-				if (isOpen) return;
+			() => {
+				if (this.root.open.current) return;
 				this.isPositioned = false;
 			}
 		);
@@ -843,7 +832,6 @@ class SelectItemState {
 	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
 	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
 	prevHighlighted = new Previous(() => this.isHighlighted);
-	textId = $state("");
 	mounted = $state(false);
 
 	constructor(props: SelectItemStateProps, root: SelectRootState) {
@@ -856,7 +844,13 @@ class SelectItemState {
 		this.#id = props.id;
 		this.#ref = props.ref;
 
-		$effect(() => {
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			deps: () => this.mounted,
+		});
+
+		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
 				this.onHighlight.current();
 			} else if (this.prevHighlighted.current) {
@@ -864,15 +858,10 @@ class SelectItemState {
 			}
 		});
 
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-
 		watch(
 			() => this.mounted,
-			(isMounted) => {
-				if (!isMounted) return;
+			() => {
+				if (!this.mounted) return;
 				this.root.setInitialHighlightedNode();
 			}
 		);
@@ -1087,66 +1076,84 @@ class SelectViewportState {
 	);
 }
 
-type SelectScrollButtonImplStateProps = WithRefProps<ReadableBoxedValues<{ mounted: boolean }>>;
+type SelectScrollButtonImplStateProps = WithRefProps;
 
 class SelectScrollButtonImplState {
 	id: SelectScrollButtonImplStateProps["id"];
 	ref: SelectScrollButtonImplStateProps["ref"];
 	content: SelectContentState;
 	root: SelectBaseRootState;
-	autoScrollTimer = $state<number | null>(null);
+	autoScrollInterval: number | null = null;
+	userScrollTimer = -1;
+	isUserScrolling = false;
 	onAutoScroll: () => void = noop;
-	mounted: SelectScrollButtonImplStateProps["mounted"];
+	mounted = $state(false);
 
 	constructor(props: SelectScrollButtonImplStateProps, content: SelectContentState) {
 		this.ref = props.ref;
 		this.id = props.id;
-		this.mounted = props.mounted;
 		this.content = content;
 		this.root = content.root;
 
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			deps: () => this.mounted.current,
+			deps: () => this.mounted,
 		});
 
 		watch(
-			() => this.mounted.current,
-			(isMounted) => {
-				if (!isMounted) return;
+			() => this.mounted,
+			() => {
+				if (!this.mounted) {
+					this.isUserScrolling = false;
+					return;
+				}
+				if (this.isUserScrolling) return;
 				const activeItem = this.root.highlightedNode;
 				activeItem?.scrollIntoView({ block: "nearest" });
 			}
 		);
+
+		$effect(() => {
+			if (this.mounted) return;
+			this.clearAutoScrollInterval();
+		});
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 	}
 
-	clearAutoScrollTimer() {
-		if (this.autoScrollTimer === null) return;
-		window.clearInterval(this.autoScrollTimer);
-		this.autoScrollTimer = null;
+	handleUserScroll() {
+		window.clearTimeout(this.userScrollTimer);
+		this.isUserScrolling = true;
+		this.userScrollTimer = window.setTimeout(() => {
+			this.isUserScrolling = false;
+		}, 200);
+	}
+
+	clearAutoScrollInterval() {
+		if (this.autoScrollInterval === null) return;
+		window.clearInterval(this.autoScrollInterval);
+		this.autoScrollInterval = null;
 	}
 
 	onpointerdown(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
-		this.autoScrollTimer = window.setInterval(() => {
+		if (this.autoScrollInterval !== null) return;
+		this.autoScrollInterval = window.setInterval(() => {
 			this.onAutoScroll();
 		}, 50);
 	}
 
 	onpointermove(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
-		this.autoScrollTimer = window.setInterval(() => {
+		if (this.autoScrollInterval !== null) return;
+		this.autoScrollInterval = window.setInterval(() => {
 			this.onAutoScroll();
 		}, 50);
 	}
 
 	onpointerleave(_: BitsPointerEvent) {
-		this.clearAutoScrollTimer();
+		this.clearAutoScrollInterval();
 	}
 
 	props = $derived.by(
@@ -1177,40 +1184,51 @@ class SelectScrollDownButtonState {
 		this.state.onAutoScroll = this.handleAutoScroll;
 
 		watch(
-			[() => this.content.viewportNode, () => this.content.isPositioned],
-			([viewportNode, isPositioned]) => {
-				if (!viewportNode || !isPositioned) return;
+			[
+				() => this.content.viewportNode,
+				() => this.content.isPositioned,
+				() => this.root.open.current,
+			],
+			() => {
+				if (
+					!this.content.viewportNode ||
+					!this.content.isPositioned ||
+					!this.root.open.current
+				) {
+					return;
+				}
 
-				const handleScroll = () => {
-					afterTick(() => {
-						const maxScroll = viewportNode.scrollHeight - viewportNode.clientHeight;
-						const paddingTop = Number.parseInt(
-							getComputedStyle(viewportNode).paddingTop,
-							10
-						);
+				this.handleScroll(true);
 
-						this.canScrollDown =
-							Math.ceil(viewportNode.scrollTop) < maxScroll - paddingTop;
-					});
-				};
-				handleScroll();
-				return on(viewportNode, "scroll", handleScroll);
+				return on(this.content.viewportNode, "scroll", () => this.handleScroll());
 			}
 		);
-
-		$effect(() => {
-			if (this.state.mounted.current) return;
-			this.state.clearAutoScrollTimer();
-		});
 	}
+	/**
+	 * @param manual - if true, it means the function was invoked manually outside of an event
+	 * listener, so we don't call `handleUserScroll` to prevent the auto scroll from kicking in.
+	 */
+	handleScroll = (manual = false) => {
+		if (!manual) {
+			this.state.handleUserScroll();
+		}
+		if (!this.content.viewportNode) return;
+		const maxScroll =
+			this.content.viewportNode.scrollHeight - this.content.viewportNode.clientHeight;
+		const paddingTop = Number.parseInt(
+			getComputedStyle(this.content.viewportNode).paddingTop,
+			10
+		);
+
+		this.canScrollDown =
+			Math.ceil(this.content.viewportNode.scrollTop) < maxScroll - paddingTop;
+	};
 
 	handleAutoScroll = () => {
-		afterTick(() => {
-			const viewport = this.content.viewportNode;
-			const selectedItem = this.root.highlightedNode;
-			if (!viewport || !selectedItem) return;
-			viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
-		});
+		const viewport = this.content.viewportNode;
+		const selectedItem = this.root.highlightedNode;
+		if (!viewport || !selectedItem) return;
+		viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
 	};
 
 	props = $derived.by(
@@ -1230,36 +1248,34 @@ class SelectScrollUpButtonState {
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
-		watch(
-			[() => this.content.viewportNode, () => this.content.isPositioned],
-			([viewportNode, isPositioned]) => {
-				if (!viewportNode || !isPositioned) return;
+		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
+			if (!this.content.viewportNode || !this.content.isPositioned) return;
 
-				const handleScroll = () => {
-					const paddingTop = Number.parseInt(
-						getComputedStyle(viewportNode).paddingTop,
-						10
-					);
-					this.canScrollUp = viewportNode.scrollTop - paddingTop > 0;
-				};
-				handleScroll();
-				return on(viewportNode, "scroll", handleScroll);
-			}
-		);
-
-		$effect(() => {
-			if (this.state.mounted.current) return;
-			this.state.clearAutoScrollTimer();
+			this.handleScroll(true);
+			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
 		});
 	}
 
+	/**
+	 * @param manual - if true, it means the function was invoked manually outside of an event
+	 * listener, so we don't call `handleUserScroll` to prevent the auto scroll from kicking in.
+	 */
+	handleScroll = (manual = false) => {
+		if (!manual) {
+			this.state.handleUserScroll();
+		}
+		if (!this.content.viewportNode) return;
+		const paddingTop = Number.parseInt(
+			getComputedStyle(this.content.viewportNode).paddingTop,
+			10
+		);
+		this.canScrollUp = this.content.viewportNode.scrollTop - paddingTop > 0.1;
+	};
+
 	handleAutoScroll = () => {
-		afterTick(() => {
-			const viewport = this.content.viewportNode;
-			const selectedItem = this.root.highlightedNode;
-			if (!viewport || !selectedItem) return;
-			viewport.scrollTop = viewport.scrollTop - selectedItem.offsetHeight;
-		});
+		if (!this.content.viewportNode || !this.root.highlightedNode) return;
+		this.content.viewportNode.scrollTop =
+			this.content.viewportNode.scrollTop - this.root.highlightedNode.offsetHeight;
 	};
 
 	props = $derived.by(

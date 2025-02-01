@@ -1,31 +1,32 @@
 <script lang="ts">
 	import { RangeCalendar } from "bits-ui";
-	import CaretLeft from "phosphor-svelte/lib/CaretLeft";
-	import CaretRight from "phosphor-svelte/lib/CaretRight";
-	import { cn } from "$lib/utils/index.js";
-	import type { ComponentProps } from "svelte";
 
-	let { value = $bindable() }: ComponentProps<typeof RangeCalendar.Root> = $props();
+	function cn(str: string) {
+		return str;
+	}
+
+	let { value = $bindable() } = $props();
 </script>
 
 <RangeCalendar.Root
+	bind:value
 	class="mt-6 rounded-15px border border-dark-10 bg-background-alt p-[22px] shadow-card"
 	weekdayFormat="short"
 	fixedWeeks={true}
-	bind:value
+	numberOfMonths={2}
 >
 	{#snippet children({ months, weekdays })}
 		<RangeCalendar.Header class="flex items-center justify-between">
 			<RangeCalendar.PrevButton
 				class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt hover:bg-muted active:scale-98"
 			>
-				<CaretLeft class="size-6" />
+				←
 			</RangeCalendar.PrevButton>
 			<RangeCalendar.Heading class="text-[15px] font-medium" />
 			<RangeCalendar.NextButton
 				class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt hover:bg-muted active:scale-98"
 			>
-				<CaretRight class="size-6" />
+				→
 			</RangeCalendar.NextButton>
 		</RangeCalendar.Header>
 		<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">

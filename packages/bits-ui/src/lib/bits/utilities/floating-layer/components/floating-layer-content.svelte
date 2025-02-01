@@ -24,6 +24,7 @@
 		style = {},
 		wrapperId = useId(),
 		customAnchor = null,
+		enabled,
 	}: ContentImplProps = $props();
 
 	const contentState = useFloatingContentState({
@@ -43,7 +44,7 @@
 		strategy: box.with(() => strategy),
 		dir: box.with(() => dir),
 		style: box.with(() => style),
-		enabled: box.with(() => false),
+		enabled: box.with(() => enabled),
 		wrapperId: box.with(() => wrapperId),
 		customAnchor: box.with(() => customAnchor),
 	});

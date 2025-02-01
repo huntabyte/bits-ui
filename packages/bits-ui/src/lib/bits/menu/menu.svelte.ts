@@ -1,13 +1,5 @@
-import {
-	afterTick,
-	box,
-	executeCallbacks,
-	mergeProps,
-	onDestroyEffect,
-	useRefById,
-} from "svelte-toolbelt";
+import { afterTick, box, mergeProps, onDestroyEffect, useRefById } from "svelte-toolbelt";
 import { Context, IsFocusWithin, watch } from "runed";
-import { on } from "svelte/events";
 import {
 	FIRST_LAST_KEYS,
 	type GraceIntent,
@@ -43,6 +35,7 @@ import {
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
+import { IsUsingKeyboard } from "$lib/index.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -71,45 +64,13 @@ export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 class MenuRootState {
 	onClose: MenuRootStateProps["onClose"];
 	variant: MenuRootStateProps["variant"];
-	isUsingKeyboard = $state(false);
+	isUsingKeyboard = new IsUsingKeyboard();
 	dir: MenuRootStateProps["dir"];
 
 	constructor(props: MenuRootStateProps) {
 		this.onClose = props.onClose;
 		this.dir = props.dir;
 		this.variant = props.variant;
-
-		$effect(() => {
-			const callbacksToDispose: AnyFn[] = [];
-
-			const handlePointer = (_: PointerEvent) => {
-				this.isUsingKeyboard = false;
-			};
-
-			const handleKeydown = (_: KeyboardEvent) => {
-				this.isUsingKeyboard = true;
-
-				const disposePointerDown = on(document, "pointerdown", handlePointer, {
-					capture: true,
-					once: true,
-				});
-				const disposePointerMove = on(document, "pointermove", handlePointer, {
-					capture: true,
-					once: true,
-				});
-
-				callbacksToDispose.push(disposePointerDown, disposePointerMove);
-			};
-
-			const disposeKeydown = on(document, "keydown", handleKeydown, {
-				capture: true,
-			});
-			callbacksToDispose.push(disposeKeydown);
-
-			return () => {
-				executeCallbacks(callbacksToDispose);
-			};
-		});
 	}
 
 	getAttr(name: string) {
@@ -226,7 +187,7 @@ class MenuContentState {
 				if (!contentNode) return;
 				const handler = () => {
 					afterTick(() => {
-						if (!this.parentMenu.root.isUsingKeyboard) return;
+						if (!this.parentMenu.root.isUsingKeyboard.current) return;
 						this.rovingFocusGroup.focusFirstCandidate();
 					});
 				};
@@ -307,7 +268,7 @@ class MenuContentState {
 	}
 
 	onfocus(_: BitsFocusEvent) {
-		if (!this.parentMenu.root.isUsingKeyboard) return;
+		if (!this.parentMenu.root.isUsingKeyboard.current) return;
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	}
 
@@ -504,7 +465,7 @@ class MenuItemState {
 		this.#onSelect.current(selectEvent);
 		afterTick(() => {
 			if (selectEvent.defaultPrevented) {
-				this.#item.content.parentMenu.root.isUsingKeyboard = false;
+				this.#item.content.parentMenu.root.isUsingKeyboard.current = false;
 				return;
 			}
 			if (this.#closeOnSelect.current) {
