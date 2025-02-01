@@ -123,6 +123,7 @@ export type FloatingLayerContentImplProps = {
 	 * Callback that is called when the floating element is placed.
 	 */
 	onPlaced?: () => void;
+	enabled: boolean;
 } & FloatingLayerContentProps;
 
 export type FloatingLayerAnchorProps = {

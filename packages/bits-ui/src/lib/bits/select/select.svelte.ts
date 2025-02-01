@@ -83,10 +83,9 @@ class SelectBaseRootState {
 		if (!this.highlightedNode) return null;
 		return this.highlightedNode.getAttribute("data-label");
 	});
-	isUsingKeyboard = $state(false);
-	isCombobox = $state(false);
+	isUsingKeyboard = false;
+	isCombobox = false;
 	bitsAttrs: SelectBitsAttrs;
-	triggerPointerDownPos = $state.raw<{ x: number; y: number } | null>({ x: 0, y: 0 });
 
 	constructor(props: SelectBaseRootStateProps) {
 		this.disabled = props.disabled;
@@ -539,12 +538,8 @@ class SelectTriggerState {
 		this.#domTypeahead.resetTypeahead();
 	}
 
-	#handlePointerOpen(e: PointerEvent) {
+	#handlePointerOpen(_: PointerEvent) {
 		this.#handleOpen();
-		this.root.triggerPointerDownPos = {
-			x: Math.round(e.pageX),
-			y: Math.round(e.pageY),
-		};
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -675,7 +670,7 @@ class SelectTriggerState {
 	 * `pointerdown` fires before the `focus` event, so we can prevent the default
 	 * behavior of focusing the button and keep focus on the input.
 	 */
-	onpointerdown = (e: BitsPointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.disabled.current) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
@@ -696,14 +691,14 @@ class SelectTriggerState {
 				this.root.handleClose();
 			}
 		}
-	};
+	}
 
-	onpointerup = (e: BitsPointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			this.#handlePointerOpen(e);
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
@@ -746,12 +741,15 @@ class SelectContentState {
 			deps: () => this.root.open.current,
 		});
 
-		onDestroyEffect(() => (this.root.contentNode = null));
+		onDestroyEffect(() => {
+			this.root.contentNode = null;
+			this.isPositioned = false;
+		});
 
 		watch(
 			() => this.root.open.current,
-			(isOpen) => {
-				if (isOpen) return;
+			() => {
+				if (this.root.open.current) return;
 				this.isPositioned = false;
 			}
 		);
@@ -834,7 +832,6 @@ class SelectItemState {
 	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
 	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
 	prevHighlighted = new Previous(() => this.isHighlighted);
-	textId = $state("");
 	mounted = $state(false);
 
 	constructor(props: SelectItemStateProps, root: SelectRootState) {
@@ -847,18 +844,18 @@ class SelectItemState {
 		this.#id = props.id;
 		this.#ref = props.ref;
 
-		$effect(() => {
+		useRefById({
+			id: this.#id,
+			ref: this.#ref,
+			deps: () => this.mounted,
+		});
+
+		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
 				this.onHighlight.current();
 			} else if (this.prevHighlighted.current) {
 				this.onUnhighlight.current();
 			}
-		});
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.mounted,
 		});
 
 		watch(
@@ -1186,13 +1183,26 @@ class SelectScrollDownButtonState {
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
-		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.content.viewportNode || !this.content.isPositioned) return;
+		watch(
+			[
+				() => this.content.viewportNode,
+				() => this.content.isPositioned,
+				() => this.root.open.current,
+			],
+			() => {
+				if (
+					!this.content.viewportNode ||
+					!this.content.isPositioned ||
+					!this.root.open.current
+				) {
+					return;
+				}
 
-			this.handleScroll(true);
+				this.handleScroll(true);
 
-			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
-		});
+				return on(this.content.viewportNode, "scroll", () => this.handleScroll());
+			}
+		);
 	}
 	/**
 	 * @param manual - if true, it means the function was invoked manually outside of an event

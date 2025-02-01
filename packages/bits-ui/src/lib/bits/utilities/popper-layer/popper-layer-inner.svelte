@@ -70,6 +70,7 @@
 	{style}
 	{onPlaced}
 	{customAnchor}
+	{enabled}
 >
 	{#snippet content({ props: floatingProps, wrapperProps })}
 		{#if restProps.forceMount && enabled}
