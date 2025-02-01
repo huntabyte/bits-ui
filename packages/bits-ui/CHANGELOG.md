@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.83
+
+### Patch Changes
+
+-   fix: Pin Input paste behavior ([#1085](https://github.com/huntabyte/bits-ui/pull/1085))
+
+-   fix: Select/Combo scroll ([#1083](https://github.com/huntabyte/bits-ui/pull/1083))
+
 ## 1.0.0-next.82
 
 ### Patch Changes
