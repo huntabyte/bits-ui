@@ -195,11 +195,9 @@ class SelectSingleRootState extends SelectBaseRootState {
 
 		watch(
 			() => this.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				afterTick(() => {
-					this.setInitialHighlightedNode();
-				});
+			() => {
+				if (!this.open.current) return;
+				this.setInitialHighlightedNode();
 			}
 		);
 	}
@@ -214,18 +212,20 @@ class SelectSingleRootState extends SelectBaseRootState {
 	}
 
 	setInitialHighlightedNode() {
-		if (this.highlightedNode && document.contains(this.highlightedNode)) return;
-		if (this.value.current !== "") {
-			const node = this.getNodeByValue(this.value.current);
-			if (node) {
-				this.setHighlightedNode(node, true);
-				return;
+		afterTick(() => {
+			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
+			if (this.value.current !== "") {
+				const node = this.getNodeByValue(this.value.current);
+				if (node) {
+					this.setHighlightedNode(node, true);
+					return;
+				}
 			}
-		}
-		// if no value is set, we want to highlight the first item
-		const firstCandidate = this.getCandidateNodes()[0];
-		if (!firstCandidate) return;
-		this.setHighlightedNode(firstCandidate, true);
+			// if no value is set, we want to highlight the first item
+			const firstCandidate = this.getCandidateNodes()[0];
+			if (!firstCandidate) return;
+			this.setHighlightedNode(firstCandidate, true);
+		});
 	}
 }
 
@@ -245,13 +245,9 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 		watch(
 			() => this.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				afterTick(() => {
-					if (!this.highlightedNode) {
-						this.setInitialHighlightedNode();
-					}
-				});
+			() => {
+				if (!this.open.current) return;
+				this.setInitialHighlightedNode();
 			}
 		);
 	}
@@ -270,18 +266,20 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 
 	setInitialHighlightedNode() {
-		if (this.highlightedNode) return;
-		if (this.value.current.length && this.value.current[0] !== "") {
-			const node = this.getNodeByValue(this.value.current[0]!);
-			if (node) {
-				this.setHighlightedNode(node, true);
-				return;
+		afterTick(() => {
+			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
+			if (this.value.current.length && this.value.current[0] !== "") {
+				const node = this.getNodeByValue(this.value.current[0]!);
+				if (node) {
+					this.setHighlightedNode(node, true);
+					return;
+				}
 			}
-		}
-		// if no value is set, we want to highlight the first item
-		const firstCandidate = this.getCandidateNodes()[0];
-		if (!firstCandidate) return;
-		this.setHighlightedNode(firstCandidate, true);
+			// if no value is set, we want to highlight the first item
+			const firstCandidate = this.getCandidateNodes()[0];
+			if (!firstCandidate) return;
+			this.setHighlightedNode(firstCandidate, true);
+		});
 	}
 }
 
@@ -314,31 +312,27 @@ class SelectInputState {
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
-		const open = this.root.open.current;
-		const inputValue = this.root.inputValue;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
-		if (!open) {
+		if (!this.root.open.current) {
 			if (INTERACTION_KEYS.includes(e.key)) return;
 			if (e.key === kbd.TAB) return;
-			if (e.key === kbd.BACKSPACE && inputValue === "") return;
+			if (e.key === kbd.BACKSPACE && this.root.inputValue === "") return;
 			this.root.handleOpen();
 			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
 			// set correctly.
-			afterTick(() => {
-				if (this.root.hasValue) return;
-				const candidateNodes = this.root.getCandidateNodes();
-				if (!candidateNodes.length) return;
+			if (this.root.hasValue) return;
+			const candidateNodes = this.root.getCandidateNodes();
+			if (!candidateNodes.length) return;
 
-				if (e.key === kbd.ARROW_DOWN) {
-					const firstCandidate = candidateNodes[0]!;
-					this.root.setHighlightedNode(firstCandidate);
-				} else if (e.key === kbd.ARROW_UP) {
-					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
-					this.root.setHighlightedNode(lastCandidate);
-				}
-			});
+			if (e.key === kbd.ARROW_DOWN) {
+				const firstCandidate = candidateNodes[0]!;
+				this.root.setHighlightedNode(firstCandidate);
+			} else if (e.key === kbd.ARROW_UP) {
+				const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+				this.root.setHighlightedNode(lastCandidate);
+			}
 			return;
 		}
 
@@ -349,17 +343,19 @@ class SelectInputState {
 
 		if (e.key === kbd.ENTER && !e.isComposing) {
 			e.preventDefault();
-			const highlightedValue = this.root.highlightedValue;
 
-			const isCurrentSelectedValue = highlightedValue === this.root.value.current;
+			const isCurrentSelectedValue = this.root.highlightedValue === this.root.value.current;
 
 			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
 				this.root.handleClose();
 				return;
 			}
 
-			if (highlightedValue) {
-				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+			if (this.root.highlightedValue) {
+				this.root.toggleItem(
+					this.root.highlightedValue,
+					this.root.highlightedLabel ?? undefined
+				);
 			}
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
 				this.root.handleClose();
@@ -403,14 +399,11 @@ class SelectInputState {
 		if (!this.root.highlightedNode) {
 			this.root.setHighlightedToFirstCandidate();
 		}
-		// this.root.setHighlightedToFirstCandidate();
 	}
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.inputValue = e.currentTarget.value;
-		afterTick(() => {
-			this.root.setHighlightedToFirstCandidate();
-		});
+		this.root.setHighlightedToFirstCandidate();
 	}
 
 	props = $derived.by(
@@ -574,19 +567,17 @@ class SelectTriggerState {
 
 			// we need to wait for a tick after the menu opens to ensure
 			// the highlighted nodes are set correctly
-			afterTick(() => {
-				if (this.root.hasValue) return;
-				const candidateNodes = this.root.getCandidateNodes();
-				if (!candidateNodes.length) return;
+			if (this.root.hasValue) return;
+			const candidateNodes = this.root.getCandidateNodes();
+			if (!candidateNodes.length) return;
 
-				if (e.key === kbd.ARROW_DOWN) {
-					const firstCandidate = candidateNodes[0]!;
-					this.root.setHighlightedNode(firstCandidate);
-				} else if (e.key === kbd.ARROW_UP) {
-					const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
-					this.root.setHighlightedNode(lastCandidate);
-				}
-			});
+			if (e.key === kbd.ARROW_DOWN) {
+				const firstCandidate = candidateNodes[0]!;
+				this.root.setHighlightedNode(firstCandidate);
+			} else if (e.key === kbd.ARROW_UP) {
+				const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
+				this.root.setHighlightedNode(lastCandidate);
+			}
 			return;
 		}
 
@@ -597,9 +588,8 @@ class SelectTriggerState {
 
 		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
 			e.preventDefault();
-			const highlightedValue = this.root.highlightedValue;
 
-			const isCurrentSelectedValue = highlightedValue === this.root.value.current;
+			const isCurrentSelectedValue = this.root.highlightedValue === this.root.value.current;
 
 			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
 				this.root.handleClose();
@@ -607,8 +597,11 @@ class SelectTriggerState {
 			}
 
 			//"" is a valid value for a select item so we need to check for that
-			if (highlightedValue !== null) {
-				this.root.toggleItem(highlightedValue, this.root.highlightedLabel ?? undefined);
+			if (this.root.highlightedValue !== null) {
+				this.root.toggleItem(
+					this.root.highlightedValue,
+					this.root.highlightedLabel ?? undefined
+				);
 			}
 
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
@@ -1192,23 +1185,20 @@ class SelectScrollDownButtonState {
 			if (!this.content.viewportNode || !this.content.isPositioned) return;
 
 			const handleScroll = (init = false) => {
-				afterTick(() => {
-					if (!this.content.viewportNode) return;
-					if (!init) {
-						this.state.handleUserScroll();
-					}
+				if (!this.content.viewportNode) return;
+				if (!init) {
+					this.state.handleUserScroll();
+				}
 
-					const maxScroll =
-						this.content.viewportNode.scrollHeight -
-						this.content.viewportNode.clientHeight;
-					const paddingTop = Number.parseInt(
-						getComputedStyle(this.content.viewportNode).paddingTop,
-						10
-					);
+				const maxScroll =
+					this.content.viewportNode.scrollHeight - this.content.viewportNode.clientHeight;
+				const paddingTop = Number.parseInt(
+					getComputedStyle(this.content.viewportNode).paddingTop,
+					10
+				);
 
-					this.canScrollDown =
-						Math.ceil(this.content.viewportNode.scrollTop) < maxScroll - paddingTop;
-				});
+				this.canScrollDown =
+					Math.ceil(this.content.viewportNode.scrollTop) < maxScroll - paddingTop;
 			};
 			handleScroll(true);
 
@@ -1222,12 +1212,10 @@ class SelectScrollDownButtonState {
 	}
 
 	handleAutoScroll = () => {
-		afterTick(() => {
-			const viewport = this.content.viewportNode;
-			const selectedItem = this.root.highlightedNode;
-			if (!viewport || !selectedItem) return;
-			viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
-		});
+		const viewport = this.content.viewportNode;
+		const selectedItem = this.root.highlightedNode;
+		if (!viewport || !selectedItem) return;
+		viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
 	};
 
 	props = $derived.by(
@@ -1272,11 +1260,9 @@ class SelectScrollUpButtonState {
 	}
 
 	handleAutoScroll = () => {
-		afterTick(() => {
-			if (!this.content.viewportNode || !this.root.highlightedNode) return;
-			this.content.viewportNode.scrollTop =
-				this.content.viewportNode.scrollTop - this.root.highlightedNode.offsetHeight;
-		});
+		if (!this.content.viewportNode || !this.root.highlightedNode) return;
+		this.content.viewportNode.scrollTop =
+			this.content.viewportNode.scrollTop - this.root.highlightedNode.offsetHeight;
 	};
 
 	props = $derived.by(
