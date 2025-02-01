@@ -52,6 +52,23 @@ type InitialLoad = {
 	isIOS: boolean;
 };
 
+const KEYS_TO_IGNORE = [
+	"Backspace",
+	"Delete",
+	"ArrowLeft",
+	"ArrowRight",
+	"ArrowUp",
+	"ArrowDown",
+	"Home",
+	"End",
+	"Escape",
+	"Enter",
+	"Tab",
+	"Shift",
+	"Control",
+	"Meta",
+];
+
 class PinInputRootState {
 	#id: PinInputRootStateProps["id"];
 	#ref: PinInputRootStateProps["ref"];
@@ -212,41 +229,18 @@ class PinInputRootState {
 				onComplete(value);
 			}
 		});
-
-		this.onkeydown = this.onkeydown.bind(this);
-
-		this.oninput = this.oninput.bind(this);
-		this.onfocus = this.onfocus.bind(this);
-		this.onmouseover = this.onmouseover.bind(this);
-		this.onmouseleave = this.onmouseleave.bind(this);
-		this.onblur = this.onblur.bind(this);
-		this.onpaste = this.onpaste.bind(this);
 	}
 
-	keysToIgnore = [
-		"Backspace",
-		"Delete",
-		"ArrowLeft",
-		"ArrowRight",
-		"ArrowUp",
-		"ArrowDown",
-		"Home",
-		"End",
-		"Escape",
-		"Enter",
-		"Tab",
-		"Shift",
-		"Control",
-		"Meta",
-	];
-
-	onkeydown(e: BitsKeyboardEvent) {
+	onkeydown = (e: BitsKeyboardEvent) => {
 		const key = e.key;
-		if (this.keysToIgnore.includes(key)) return;
+		if (KEYS_TO_IGNORE.includes(key)) return;
+		// if ctrl or cmd is pressed, they are likely to be shortcuts and should not be tested
+		// against the regex
+		if (e.ctrlKey || e.metaKey) return;
 		if (key && this.#regexPattern && !this.#regexPattern.test(key)) {
 			e.preventDefault();
 		}
-	}
+	};
 
 	#rootStyles = $derived.by(() => ({
 		position: "relative",
@@ -398,7 +392,7 @@ class PinInputRootState {
 		this.#prevInputMetadata.prev = [s, e, dir];
 	};
 
-	oninput(e: BitsEvent<Event, HTMLInputElement>) {
+	oninput = (e: BitsEvent<Event, HTMLInputElement>) => {
 		const newValue = e.currentTarget.value.slice(0, this.#maxLength.current);
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			e.preventDefault();
@@ -417,7 +411,7 @@ class PinInputRootState {
 			document.dispatchEvent(new Event("selectionchange"));
 		}
 		this.value.current = newValue;
-	}
+	};
 
 	onfocus = (_: BitsFocusEvent<HTMLInputElement>) => {
 		const input = this.#inputRef.current;
@@ -438,6 +432,7 @@ class PinInputRootState {
 			if (!e.clipboardData || !input) return;
 			const content = e.clipboardData.getData("text/plain");
 			const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
+			console.log("sanitizedContent", sanitizedContent);
 			if (
 				sanitizedContent.length > 0 &&
 				this.#regexPattern &&
@@ -453,6 +448,7 @@ class PinInputRootState {
 		e.preventDefault();
 
 		const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
+		console.log("sanitized content", sanitizedContent);
 		if (
 			sanitizedContent.length > 0 &&
 			this.#regexPattern &&
@@ -513,7 +509,7 @@ class PinInputRootState {
 		"data-pin-input-input-mss": this.#mirrorSelectionStart,
 		"data-pin-input-input-mse": this.#mirrorSelectionEnd,
 		inputmode: this.#inputmode.current,
-		pattern: this.#regexPattern?.source,
+		// pattern: this.#regexPattern?.source,
 		maxlength: this.#maxLength.current,
 		value: this.value.current,
 		disabled: getDisabled(this.#disabled.current),

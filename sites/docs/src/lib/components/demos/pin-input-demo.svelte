@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { PinInput, type PinInputRootSnippetProps } from "bits-ui";
+	import { PinInput, REGEXP_ONLY_DIGITS, type PinInputRootSnippetProps } from "bits-ui";
 	import { toast } from "svelte-sonner";
 	import { cn } from "$lib/utils/styles.js";
 
@@ -18,6 +18,7 @@
 	class="group/pininput flex items-center text-foreground has-[:disabled]:opacity-30"
 	maxlength={6}
 	{onComplete}
+	pattern={REGEXP_ONLY_DIGITS}
 >
 	{#snippet children({ cells })}
 		<div class="flex">

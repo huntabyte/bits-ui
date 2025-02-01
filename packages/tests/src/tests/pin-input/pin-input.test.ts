@@ -171,4 +171,10 @@ describe("pin Input", () => {
 		await user.keyboard("1$");
 		expect(hiddenInput).toHaveValue("1");
 	});
+
+	it("should allow pasting numbers that match the pattern", async () => {
+		const { user, hiddenInput } = setup({
+			pattern: REGEXP_ONLY_DIGITS,
+		});
+	});
 });
