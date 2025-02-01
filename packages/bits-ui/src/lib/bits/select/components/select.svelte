@@ -51,8 +51,8 @@
 		onSelectedChange: (({ next }: { next: $$Props["selected"] }) => {
 			if (Array.isArray(next)) {
 				if (!Array.isArray(selected) || !arraysAreEqual(selected, next)) {
-					onSelectedChange?.(next);
 					selected = next;
+					onSelectedChange?.(next);
 					return next;
 				}
 				return next;

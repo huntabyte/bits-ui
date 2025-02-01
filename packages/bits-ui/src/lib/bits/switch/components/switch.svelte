@@ -31,8 +31,8 @@
 		defaultChecked: checked,
 		onCheckedChange: ({ next }) => {
 			if (checked !== next) {
-				onCheckedChange?.(next);
 				checked = next;
+				onCheckedChange?.(next);
 			}
 			return next;
 		},
