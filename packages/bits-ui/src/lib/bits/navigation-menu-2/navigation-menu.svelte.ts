@@ -2,18 +2,18 @@
  * Based on Radix UI's Navigation Menu
  * https://www.radix-ui.com/docs/primitives/components/navigation-menu
  */
-
 import {
 	type AnyFn,
 	type ReadableBox,
 	type ReadableBoxedValues,
 	type WithRefProps,
 	type WritableBoxedValues,
+	afterTick,
 	box,
 	onDestroyEffect,
 	useRefById,
 } from "svelte-toolbelt";
-import { Context, watch } from "runed";
+import { Context, watch, watchOnce } from "runed";
 import { type Snippet, untrack } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
@@ -461,29 +461,20 @@ class NavigationMenuTriggerState {
 			deps: () => this.focusProxyMounted,
 		});
 
-		$effect(() => {
-			const node = this.ref.current;
-
-			if (node) {
-				const unregister = this.listContext.registerTrigger(node);
-
-				return () => {
-					unregister();
-				};
+		watch(
+			() => this.ref.current,
+			() => {
+				const node = this.ref.current;
+				if (!node) return;
+				return this.listContext.registerTrigger(node);
 			}
-		});
-
-		this.onpointerenter = this.onpointerenter.bind(this);
-		this.onpointerleave = this.onpointerleave.bind(this);
-		this.onclick = this.onclick.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
-		this.focusProxyOnFocus = this.focusProxyOnFocus.bind(this);
+		);
 	}
 
-	onpointerenter(_: BitsPointerEvent<HTMLButtonElement>) {
+	onpointerenter = (_: BitsPointerEvent<HTMLButtonElement>) => {
 		this.wasClickClose = false;
 		this.itemContext.wasEscapeClose = false;
-	}
+	};
 
 	onpointermove = whenMouse(() => {
 		if (
@@ -504,12 +495,12 @@ class NavigationMenuTriggerState {
 		this.hasPointerMoveOpened = false;
 	});
 
-	onclick(_: BitsMouseEvent<HTMLButtonElement>) {
+	onclick = (_: BitsMouseEvent<HTMLButtonElement>) => {
 		this.context.onItemSelect(this.itemContext.value.current);
 		this.wasClickClose = this.open;
-	}
+	};
 
-	onkeydown(e: BitsKeyboardEvent<HTMLButtonElement>) {
+	onkeydown = (e: BitsKeyboardEvent<HTMLButtonElement>) => {
 		const verticalEntryKey =
 			this.context.dir.current === "rtl" ? kbd.ARROW_LEFT : kbd.ARROW_RIGHT;
 		const entryKey = { horizontal: kbd.ARROW_DOWN, vertical: verticalEntryKey }[
@@ -520,9 +511,9 @@ class NavigationMenuTriggerState {
 			// prevent focus group from handling the event
 			e.preventDefault();
 		}
-	}
+	};
 
-	focusProxyOnFocus(e: BitsFocusEvent) {
+	focusProxyOnFocus = (e: BitsFocusEvent) => {
 		const content = this.itemContext.contentNode;
 		const prevFocusedElement = e.relatedTarget as HTMLElement | null;
 		const wasTriggerFocused = this.ref.current && prevFocusedElement === this.ref.current;
@@ -531,7 +522,7 @@ class NavigationMenuTriggerState {
 		if (wasTriggerFocused || !wasFocusFromContent) {
 			this.itemContext.onFocusProxyEnter(wasTriggerFocused ? "start" : "end");
 		}
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -601,11 +592,9 @@ class NavigationMenuLinkState {
 			id: this.id,
 			ref: this.ref,
 		});
-
-		this.onclick = this.onclick.bind(this);
 	}
 
-	onclick(e: BitsMouseEvent<HTMLAnchorElement>) {
+	onclick = (e: BitsMouseEvent<HTMLAnchorElement>) => {
 		const currTarget = e.currentTarget;
 
 		LINK_SELECT_EVENT.listen(currTarget, (e) => this.onSelect.current(e), { once: true });
@@ -614,7 +603,7 @@ class NavigationMenuLinkState {
 		if (!linkSelectEvent.defaultPrevented && !e.metaKey) {
 			ROOT_CONTENT_DISMISS_EVENT.dispatch(currTarget);
 		}
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -745,13 +734,11 @@ class NavigationMenuContentState {
 			id: this.id,
 			ref: this.ref,
 		});
-
-		this.onpointerenter = this.onpointerenter.bind(this);
 	}
 
-	onpointerenter(_: BitsPointerEvent) {
+	onpointerenter = (_: BitsPointerEvent) => {
 		this.context.onContentEnter;
-	}
+	};
 
 	onpointerleave = whenMouse(() => {
 		this.context.onContentLeave();
@@ -846,31 +833,26 @@ class NavigationMenuContentImplState {
 				};
 			}
 		);
-
-		this.onFocusOutside = this.onFocusOutside.bind(this);
-		this.onInteractOutside = this.onInteractOutside.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onEscapeKeydown = this.onEscapeKeydown.bind(this);
 	}
 
-	onFocusOutside(e: Event) {
+	onFocusOutside = (e: Event) => {
 		this.itemContext.onContentFocusOutside();
 		const target = e.target as HTMLElement;
 		// only dismiss content when focus moves outside of the menu
 		if (this.context.rootNavigationMenuRef.current?.contains(target)) {
 			e.preventDefault();
 		}
-	}
+	};
 
-	onInteractOutside(e: PointerEvent) {
+	onInteractOutside = (e: PointerEvent) => {
 		const target = e.target as HTMLElement;
 		const isTrigger = this.listContext.listTriggers.some((trigger) => trigger.contains(target));
 		const isRootViewport =
 			this.context.isRootMenu && this.context.viewportRef.current?.contains(target);
 		if (isTrigger || isRootViewport || !this.context.isRootMenu) e.preventDefault();
-	}
+	};
 
-	onkeydown(e: BitsKeyboardEvent) {
+	onkeydown = (e: BitsKeyboardEvent) => {
 		const isMetaKey = e.altKey || e.ctrlKey || e.metaKey;
 		const isTabKey = e.key === kbd.TAB && !isMetaKey;
 		if (!isTabKey) return;
@@ -891,13 +873,13 @@ class NavigationMenuContentImplState {
 			// tab/shift+tab keypress on the proxy instead
 			this.itemContext.focusProxyNode?.focus();
 		}
-	}
+	};
 
-	onEscapeKeydown(_: KeyboardEvent) {
+	onEscapeKeydown = (_: KeyboardEvent) => {
 		// prevent the dropdown from reopening after the
 		// escape key has been pressed
 		this.itemContext.wasEscapeClose = true;
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -964,16 +946,33 @@ class NavigationMenuViewportImplState {
 	viewportWidth = $derived.by(() => (this.size ? `${this.size.width}px` : undefined));
 	viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
 	open = $derived.by(() => Boolean(this.context.value.current));
-	// We persist the last active content value as the viewport may be animating out
-	// and we want the content to remain mounted for the lifecycle of the viewport.
-	activeContentValue = $derived.by(() =>
-		this.open ? this.context.value.current : this.context.previousValue.current
-	);
+
+	activeContentValue = $state<string | undefined>();
 
 	constructor(props: NavigationMenuViewportImplStateProps, context: NavigationMenuProviderState) {
 		this.id = props.id;
 		this.ref = props.ref;
 		this.context = context;
+
+		// We persist the last active content value as the viewport may be animating out
+		// and we want the content to remain mounted for the lifecycle of the viewport.
+		watch.pre(
+			[
+				() => this.open,
+				() => this.context.value.current,
+				() => this.context.previousValue.current,
+			],
+			() => {
+				if (this.open) {
+					this.activeContentValue = this.context.value.current;
+				} else {
+					this.activeContentValue = undefined;
+					afterTick(() => {
+						this.activeContentValue = this.context.previousValue.current;
+					});
+				}
+			}
+		);
 
 		useRefById({
 			id: this.id,
