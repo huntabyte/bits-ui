@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.84
+
+### Patch Changes
+
+-   fix: RangeCalendar allow selecting `maxValue` as complete range ([#1091](https://github.com/huntabyte/bits-ui/pull/1091))
+
+-   fix: Dialog/Popover clientX/Y detection to prevent password managers and other injected elements from closing the dialog when pressed ([#1089](https://github.com/huntabyte/bits-ui/pull/1089))
+
 ## 1.0.0-next.83
 
 ### Patch Changes
