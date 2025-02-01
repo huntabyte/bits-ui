@@ -13,22 +13,19 @@
 		...restProps
 	}: SelectScrollUpButtonProps = $props();
 
-	let mounted = $state(false);
-
-	const scrollDownButtonState = useSelectScrollUpButton({
+	const scrollButtonState = useSelectScrollUpButton({
 		id: box.with(() => id),
-		mounted: box.with(() => mounted),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, scrollDownButtonState.props));
+	const mergedProps = $derived(mergeProps(restProps, scrollButtonState.props));
 </script>
 
-{#if scrollDownButtonState.canScrollUp}
-	<Mounted onMountedChange={(m) => (mounted = m)} />
+{#if scrollButtonState.canScrollUp}
+	<Mounted onMountedChange={(v) => (scrollButtonState.state.mounted = v)} />
 	{#if child}
 		{@render child({ props: restProps })}
 	{:else}
