@@ -858,6 +858,7 @@ class SelectItemState {
 		useRefById({
 			id: this.#id,
 			ref: this.#ref,
+			deps: () => this.mounted,
 		});
 
 		watch(
@@ -1078,7 +1079,7 @@ class SelectViewportState {
 	);
 }
 
-type SelectScrollButtonImplStateProps = WithRefProps<ReadableBoxedValues<{ mounted: boolean }>>;
+type SelectScrollButtonImplStateProps = WithRefProps;
 
 class SelectScrollButtonImplState {
 	id: SelectScrollButtonImplStateProps["id"];
@@ -1089,25 +1090,24 @@ class SelectScrollButtonImplState {
 	userScrollTimer = -1;
 	isUserScrolling = false;
 	onAutoScroll: () => void = noop;
-	mounted: SelectScrollButtonImplStateProps["mounted"];
+	mounted = $state(false);
 
 	constructor(props: SelectScrollButtonImplStateProps, content: SelectContentState) {
 		this.ref = props.ref;
 		this.id = props.id;
-		this.mounted = props.mounted;
 		this.content = content;
 		this.root = content.root;
 
 		useRefById({
 			id: this.id,
 			ref: this.ref,
-			deps: () => this.mounted.current,
+			deps: () => this.mounted,
 		});
 
 		watch(
-			() => this.mounted.current,
+			() => this.mounted,
 			() => {
-				if (!this.mounted.current) {
+				if (!this.mounted) {
 					this.isUserScrolling = false;
 					return;
 				}
@@ -1116,6 +1116,11 @@ class SelectScrollButtonImplState {
 				activeItem?.scrollIntoView({ block: "nearest" });
 			}
 		);
+
+		$effect(() => {
+			if (this.mounted) return;
+			this.clearAutoScrollInterval();
+		});
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1184,32 +1189,30 @@ class SelectScrollDownButtonState {
 		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
 			if (!this.content.viewportNode || !this.content.isPositioned) return;
 
-			const handleScroll = (init = false) => {
-				if (!this.content.viewportNode) return;
-				if (!init) {
-					this.state.handleUserScroll();
-				}
+			this.handleScroll(true);
 
-				const maxScroll =
-					this.content.viewportNode.scrollHeight - this.content.viewportNode.clientHeight;
-				const paddingTop = Number.parseInt(
-					getComputedStyle(this.content.viewportNode).paddingTop,
-					10
-				);
-
-				this.canScrollDown =
-					Math.ceil(this.content.viewportNode.scrollTop) < maxScroll - paddingTop;
-			};
-			handleScroll(true);
-
-			return on(this.content.viewportNode, "scroll", () => handleScroll());
-		});
-
-		$effect(() => {
-			if (this.state.mounted.current) return;
-			this.state.clearAutoScrollInterval();
+			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
 		});
 	}
+	/**
+	 * @param manual - if true, it means the function was invoked manually outside of an event
+	 * listener, so we don't call `handleUserScroll` to prevent the auto scroll from kicking in.
+	 */
+	handleScroll = (manual = false) => {
+		if (!manual) {
+			this.state.handleUserScroll();
+		}
+		if (!this.content.viewportNode) return;
+		const maxScroll =
+			this.content.viewportNode.scrollHeight - this.content.viewportNode.clientHeight;
+		const paddingTop = Number.parseInt(
+			getComputedStyle(this.content.viewportNode).paddingTop,
+			10
+		);
+
+		this.canScrollDown =
+			Math.ceil(this.content.viewportNode.scrollTop) < maxScroll - paddingTop;
+	};
 
 	handleAutoScroll = () => {
 		const viewport = this.content.viewportNode;
@@ -1238,26 +1241,26 @@ class SelectScrollUpButtonState {
 		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
 			if (!this.content.viewportNode || !this.content.isPositioned) return;
 
-			const handleScroll = (init = false) => {
-				if (!init) {
-					this.state.handleUserScroll();
-				}
-				if (!this.content.viewportNode) return;
-				const paddingTop = Number.parseInt(
-					getComputedStyle(this.content.viewportNode).paddingTop,
-					10
-				);
-				this.canScrollUp = this.content.viewportNode.scrollTop - paddingTop > 0.1;
-			};
-			handleScroll(true);
-			return on(this.content.viewportNode, "scroll", () => handleScroll());
-		});
-
-		$effect(() => {
-			if (this.state.mounted.current) return;
-			this.state.clearAutoScrollInterval();
+			this.handleScroll(true);
+			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
 		});
 	}
+
+	/**
+	 * @param manual - if true, it means the function was invoked manually outside of an event
+	 * listener, so we don't call `handleUserScroll` to prevent the auto scroll from kicking in.
+	 */
+	handleScroll = (manual = false) => {
+		if (!manual) {
+			this.state.handleUserScroll();
+		}
+		if (!this.content.viewportNode) return;
+		const paddingTop = Number.parseInt(
+			getComputedStyle(this.content.viewportNode).paddingTop,
+			10
+		);
+		this.canScrollUp = this.content.viewportNode.scrollTop - paddingTop > 0.1;
+	};
 
 	handleAutoScroll = () => {
 		if (!this.content.viewportNode || !this.root.highlightedNode) return;
