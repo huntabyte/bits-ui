@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.85
+
+### Patch Changes
+
+-   fix: Pin Input paste behavior ([#1096](https://github.com/huntabyte/bits-ui/pull/1096))
+
 ## 1.0.0-next.84
 
 ### Patch Changes
