@@ -1,6 +1,6 @@
 import { Previous, watch } from "runed";
 import { untrack } from "svelte";
-import { type WritableBox, afterTick, box, useRefById } from "svelte-toolbelt";
+import { type WritableBox, box, useRefById } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
