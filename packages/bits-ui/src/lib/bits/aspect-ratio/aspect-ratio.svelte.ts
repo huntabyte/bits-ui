@@ -6,7 +6,7 @@ const ASPECT_RATIO_ROOT_ATTR = "data-aspect-ratio-root";
 
 type AspectRatioRootStateProps = WithRefProps<ReadableBoxedValues<{ ratio: number }>>;
 
-export class AspectRatioRootState {
+class AspectRatioRootState {
 	#ref: AspectRatioRootStateProps["ref"];
 	#id: AspectRatioRootStateProps["id"];
 	#ratio: AspectRatioRootStateProps["ratio"];

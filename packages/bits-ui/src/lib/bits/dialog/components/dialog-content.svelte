@@ -38,7 +38,11 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<PresenceLayer {...mergedProps} {forceMount} present={contentState.root.open.current || forceMount}>
+<PresenceLayer
+	{...mergedProps}
+	{forceMount}
+	present={contentState.root.opts.open.current || forceMount}
+>
 	{#snippet presence({ present })}
 		<FocusScope
 			loop
@@ -46,7 +50,7 @@
 				forceMount,
 				present: present.current,
 				trapFocus,
-				open: contentState.root.open.current,
+				open: contentState.root.opts.open.current,
 			})}
 			{...mergedProps}
 			onCloseAutoFocus={(e) => {
@@ -76,7 +80,7 @@
 					>
 						<TextSelectionLayer {...mergedProps} enabled={present.current}>
 							{#if child}
-								{#if contentState.root.open.current}
+								{#if contentState.root.opts.open.current}
 									<ScrollLock {preventScroll} {restoreScrollDelay} />
 								{/if}
 								{@render child({

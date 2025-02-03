@@ -117,7 +117,7 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted onMountedChange={(m) => (contentState.root.contentMounted = m)} />
+			<Mounted bind:mounted={contentState.root.contentMounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

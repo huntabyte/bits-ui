@@ -5,16 +5,12 @@ const ROOT_ATTR = "data-label-root";
 
 type LabelRootStateProps = WithRefProps;
 class LabelRootState {
-	#id: LabelRootStateProps["id"];
-	#ref: LabelRootStateProps["ref"];
-	constructor(props: LabelRootStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
+	constructor(readonly opts: LabelRootStateProps) {
 		this.onmousedown = this.onmousedown.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 	}
 
@@ -22,10 +18,14 @@ class LabelRootState {
 		if (e.detail > 1) e.preventDefault();
 	}
 
-	props = $derived({
-		[ROOT_ATTR]: "",
-		onmousedown: this.onmousedown,
-	} as const);
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				[ROOT_ATTR]: "",
+				onmousedown: this.onmousedown,
+			}) as const
+	);
 }
 
 export function setLabelRootState(props: LabelRootStateProps) {

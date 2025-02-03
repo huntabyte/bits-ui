@@ -22,49 +22,36 @@ type CheckboxGroupStateProps = WithRefProps<
 >;
 
 class CheckboxGroupState {
-	id: CheckboxGroupStateProps["id"];
-	ref: CheckboxGroupStateProps["ref"];
-	value: CheckboxGroupStateProps["value"];
-	disabled: CheckboxGroupStateProps["disabled"];
-	required: CheckboxGroupStateProps["required"];
-	name: CheckboxGroupStateProps["name"];
 	labelId = $state<string | undefined>(undefined);
 
-	constructor(props: CheckboxGroupStateProps) {
-		this.id = props.id;
-		this.ref = props.ref;
-		this.value = props.value;
-		this.disabled = props.disabled;
-		this.required = props.required;
-		this.name = props.name;
-
+	constructor(readonly opts: CheckboxGroupStateProps) {
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 	}
 
 	addValue(checkboxValue: string | undefined) {
 		if (!checkboxValue) return;
-		if (!this.value.current.includes(checkboxValue)) {
-			this.value.current.push(checkboxValue);
+		if (!this.opts.value.current.includes(checkboxValue)) {
+			this.opts.value.current.push(checkboxValue);
 		}
 	}
 
 	removeValue(checkboxValue: string | undefined) {
 		if (!checkboxValue) return;
-		const index = this.value.current.indexOf(checkboxValue);
+		const index = this.opts.value.current.indexOf(checkboxValue);
 		if (index === -1) return;
-		this.value.current.splice(index, 1);
+		this.opts.value.current.splice(index, 1);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "group",
 				"aria-labelledby": this.labelId,
-				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[CHECKBOX_GROUP_ATTR]: "",
 			}) as const
 	);
@@ -73,18 +60,13 @@ class CheckboxGroupState {
 type CheckboxGroupLabelStateProps = WithRefProps;
 
 class CheckboxGroupLabelState {
-	id: CheckboxGroupLabelStateProps["id"];
-	ref: CheckboxGroupLabelStateProps["ref"];
-	group: CheckboxGroupState;
-
-	constructor(props: CheckboxGroupLabelStateProps, group: CheckboxGroupState) {
-		this.id = props.id;
-		this.ref = props.ref;
-		this.group = group;
-
+	constructor(
+		readonly opts: CheckboxGroupLabelStateProps,
+		readonly group: CheckboxGroupState
+	) {
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 			onRefChange: (node) => {
 				if (node) {
 					group.labelId = node.id;
@@ -98,8 +80,8 @@ class CheckboxGroupLabelState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-disabled": getDataDisabled(this.group.disabled.current),
+				id: this.opts.id.current,
+				"data-disabled": getDataDisabled(this.group.opts.disabled.current),
 				[CHECKBOX_GROUP_LABEL_ATTR]: "",
 			}) as const
 	);
@@ -120,79 +102,61 @@ type CheckboxRootStateProps = WithRefProps<
 >;
 
 class CheckboxRootState {
-	#id: CheckboxRootStateProps["id"];
-	#ref: CheckboxRootStateProps["ref"];
-	#type: CheckboxRootStateProps["type"];
-	checked: CheckboxRootStateProps["checked"];
-	#disabled: CheckboxRootStateProps["disabled"];
-	#required: CheckboxRootStateProps["required"];
-	#name: CheckboxRootStateProps["name"];
-	value: CheckboxRootStateProps["value"];
-	indeterminate: CheckboxRootStateProps["indeterminate"];
-	group: CheckboxGroupState | null = null;
-
 	trueName = $derived.by(() => {
-		if (this.group && this.group.name.current) {
-			return this.group.name.current;
+		if (this.group && this.group.opts.name.current) {
+			return this.group.opts.name.current;
 		} else {
-			return this.#name.current;
+			return this.opts.name.current;
 		}
 	});
 	trueRequired = $derived.by(() => {
-		if (this.group && this.group.required.current) {
+		if (this.group && this.group.opts.required.current) {
 			return true;
 		}
-		return this.#required.current;
+		return this.opts.required.current;
 	});
 	trueDisabled = $derived.by(() => {
-		if (this.group && this.group.disabled.current) {
+		if (this.group && this.group.opts.disabled.current) {
 			return true;
 		}
-		return this.#disabled.current;
+		return this.opts.disabled.current;
 	});
 
-	constructor(props: CheckboxRootStateProps, group: CheckboxGroupState | null = null) {
-		this.checked = props.checked;
-		this.#disabled = props.disabled;
-		this.#required = props.required;
-		this.#name = props.name;
-		this.value = props.value;
-		this.#ref = props.ref;
-		this.#id = props.id;
-		this.indeterminate = props.indeterminate;
-		this.#type = props.type;
-		this.group = group;
+	constructor(
+		readonly opts: CheckboxRootStateProps,
+		readonly group: CheckboxGroupState | null = null
+	) {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 
 		watch(
-			[() => $state.snapshot(this.group?.value.current), () => this.value.current],
+			[() => $state.snapshot(this.group?.opts.value.current), () => this.opts.value.current],
 			([groupValue, value]) => {
 				if (!groupValue || !value) return;
-				this.checked.current = groupValue.includes(value);
+				this.opts.checked.current = groupValue.includes(value);
 			}
 		);
 
 		watch(
-			() => this.checked.current,
+			() => this.opts.checked.current,
 			(checked) => {
 				if (!this.group) return;
 				if (checked) {
-					this.group?.addValue(this.value.current);
+					this.group?.addValue(this.opts.value.current);
 				} else {
-					this.group?.removeValue(this.value.current);
+					this.group?.removeValue(this.opts.value.current);
 				}
 			}
 		);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.key === kbd.ENTER) e.preventDefault();
 		if (e.key === kbd.SPACE) {
 			e.preventDefault();
@@ -201,37 +165,40 @@ class CheckboxRootState {
 	}
 
 	#toggle() {
-		if (this.indeterminate.current) {
-			this.indeterminate.current = false;
-			this.checked.current = true;
+		if (this.opts.indeterminate.current) {
+			this.opts.indeterminate.current = false;
+			this.opts.checked.current = true;
 		} else {
-			this.checked.current = !this.checked.current;
+			this.opts.checked.current = !this.opts.checked.current;
 		}
 	}
 
 	onclick(_: BitsMouseEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		this.#toggle();
 	}
 
 	snippetProps = $derived.by(() => ({
-		checked: this.checked.current,
-		indeterminate: this.indeterminate.current,
+		checked: this.opts.checked.current,
+		indeterminate: this.opts.indeterminate.current,
 	}));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "checkbox",
-				type: this.#type.current,
+				type: this.opts.type.current,
 				disabled: this.trueDisabled,
-				"aria-checked": getAriaChecked(this.checked.current, this.indeterminate.current),
+				"aria-checked": getAriaChecked(
+					this.opts.checked.current,
+					this.opts.indeterminate.current
+				),
 				"aria-required": getAriaRequired(this.trueRequired),
 				"data-disabled": getDataDisabled(this.trueDisabled),
 				"data-state": getCheckboxDataState(
-					this.checked.current,
-					this.indeterminate.current
+					this.opts.checked.current,
+					this.opts.indeterminate.current
 				),
 				[CHECKBOX_ROOT_ATTR]: "",
 				//
@@ -246,35 +213,32 @@ class CheckboxRootState {
 //
 
 class CheckboxInputState {
-	root: CheckboxRootState;
 	trueChecked = $derived.by(() => {
 		if (this.root.group) {
 			if (
-				this.root.value.current !== undefined &&
-				this.root.group.value.current.includes(this.root.value.current)
+				this.root.opts.value.current !== undefined &&
+				this.root.group.opts.value.current.includes(this.root.opts.value.current)
 			) {
 				return true;
 			}
 			return false;
 		}
-		return this.root.checked.current;
+		return this.root.opts.checked.current;
 	});
 
 	shouldRender = $derived.by(() => Boolean(this.root.trueName));
 
-	constructor(root: CheckboxRootState) {
-		this.root = root;
-	}
+	constructor(readonly root: CheckboxRootState) {}
 
 	props = $derived.by(
 		() =>
 			({
 				type: "checkbox",
-				checked: this.root.checked.current === true,
+				checked: this.root.opts.checked.current === true,
 				disabled: this.root.trueDisabled,
 				required: this.root.trueRequired,
 				name: this.root.trueName,
-				value: this.root.value.current,
+				value: this.root.opts.value.current,
 				"aria-hidden": "true",
 				style: styleToString(srOnlyStyles),
 			}) as const

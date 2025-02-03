@@ -24,22 +24,12 @@ type AvatarRootStateProps = WithRefProps<{
 type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
-	#id: AvatarRootStateProps["id"];
-	#ref: AvatarRootStateProps["ref"];
-	delayMs: AvatarRootStateProps["delayMs"];
-	loadingStatus: AvatarRootStateProps["loadingStatus"];
-
-	constructor(props: AvatarRootStateProps) {
-		this.delayMs = props.delayMs;
-		this.loadingStatus = props.loadingStatus;
-		this.#ref = props.ref;
-		this.#id = props.id;
-
+	constructor(readonly opts: AvatarRootStateProps) {
 		this.loadImage = this.loadImage.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 	}
 
@@ -51,14 +41,14 @@ class AvatarRootState {
 		if (crossorigin !== undefined) image.crossOrigin = crossorigin;
 		if (referrerPolicy) image.referrerPolicy = referrerPolicy;
 
-		this.loadingStatus.current = "loading";
+		this.opts.loadingStatus.current = "loading";
 		image.onload = () => {
 			imageTimerId = window.setTimeout(() => {
-				this.loadingStatus.current = "loaded";
-			}, this.delayMs.current);
+				this.opts.loadingStatus.current = "loaded";
+			}, this.opts.delayMs.current);
 		};
 		image.onerror = () => {
-			this.loadingStatus.current = "error";
+			this.opts.loadingStatus.current = "error";
 		};
 		return () => {
 			window.clearTimeout(imageTimerId);
@@ -68,9 +58,9 @@ class AvatarRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				[AVATAR_ROOT_ATTR]: "",
-				"data-status": this.loadingStatus.current,
+				"data-status": this.opts.loadingStatus.current,
 			}) as const
 	);
 }
@@ -88,38 +78,27 @@ type AvatarImageStateProps = WithRefProps<
 >;
 
 class AvatarImageState {
-	#id: AvatarImageStateProps["id"];
-	#ref: AvatarImageStateProps["ref"];
-	#crossOrigin: AvatarImageStateProps["crossOrigin"];
-	#referrerPolicy: AvatarImageStateProps["referrerPolicy"];
-	#src: AvatarImageStateProps["src"];
-	#root: AvatarRootState;
-
-	constructor(props: AvatarImageStateProps, root: AvatarRootState) {
-		this.#root = root;
-		this.#src = props.src;
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#crossOrigin = props.crossOrigin;
-		this.#referrerPolicy = props.referrerPolicy;
-
+	constructor(
+		readonly opts: AvatarImageStateProps,
+		readonly root: AvatarRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 
 		$effect.pre(() => {
-			if (!this.#src.current) {
-				this.#root.loadingStatus.current = "error";
+			if (!this.opts.src.current) {
+				this.root.opts.loadingStatus.current = "error";
 				return;
 			}
 			// dependency on crossorigin
-			this.#crossOrigin.current;
+			this.opts.crossOrigin.current;
 			untrack(() =>
-				this.#root.loadImage(
-					this.#src.current ?? "",
-					this.#crossOrigin.current,
-					this.#referrerPolicy.current
+				this.root.loadImage(
+					this.opts.src.current ?? "",
+					this.opts.crossOrigin.current,
+					this.opts.referrerPolicy.current
 				)
 			);
 		});
@@ -128,15 +107,15 @@ class AvatarImageState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				style: {
-					display: this.#root.loadingStatus.current === "loaded" ? "block" : "none",
+					display: this.root.opts.loadingStatus.current === "loaded" ? "block" : "none",
 				},
-				"data-status": this.#root.loadingStatus.current,
+				"data-status": this.root.opts.loadingStatus.current,
 				[AVATAR_IMAGE_ATTR]: "",
-				src: this.#src.current,
-				crossorigin: this.#crossOrigin.current,
-				referrerpolicy: this.#referrerPolicy.current,
+				src: this.opts.src.current,
+				crossorigin: this.opts.crossOrigin.current,
+				referrerpolicy: this.opts.referrerPolicy.current,
 			}) as const
 	);
 }
@@ -148,18 +127,13 @@ class AvatarImageState {
 type AvatarFallbackStateProps = WithRefProps;
 
 class AvatarFallbackState {
-	#id: AvatarFallbackStateProps["id"];
-	#ref: AvatarFallbackStateProps["ref"];
-	#root: AvatarRootState;
-
-	constructor(props: AvatarFallbackStateProps, root: AvatarRootState) {
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: AvatarFallbackStateProps,
+		readonly root: AvatarRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 	}
 
@@ -167,9 +141,9 @@ class AvatarFallbackState {
 		() =>
 			({
 				style: {
-					display: this.#root.loadingStatus.current === "loaded" ? "none" : undefined,
+					display: this.root.opts.loadingStatus.current === "loaded" ? "none" : undefined,
 				},
-				"data-status": this.#root.loadingStatus.current,
+				"data-status": this.root.opts.loadingStatus.current,
 				[AVATAR_FALLBACK_ATTR]: "",
 			}) as const
 	);

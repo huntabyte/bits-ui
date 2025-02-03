@@ -24,8 +24,6 @@
 		...restProps
 	}: ContextMenuContentStaticProps = $props();
 
-	let isMounted = $state(false);
-
 	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
@@ -33,7 +31,6 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -91,7 +88,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
@@ -122,7 +119,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

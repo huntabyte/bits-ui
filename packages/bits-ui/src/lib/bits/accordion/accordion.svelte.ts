@@ -35,39 +35,28 @@ type AccordionBaseStateProps = WithRefProps<
 >;
 
 class AccordionBaseState {
-	#id: AccordionBaseStateProps["id"];
-	#ref: AccordionBaseStateProps["ref"];
-	disabled: AccordionBaseStateProps["disabled"];
-	#loop: AccordionBaseStateProps["loop"];
-	orientation: AccordionBaseStateProps["orientation"];
 	rovingFocusGroup: UseRovingFocusReturn;
 
-	constructor(props: AccordionBaseStateProps) {
-		this.#id = props.id;
-		this.disabled = props.disabled;
-		this.#ref = props.ref;
-
+	constructor(readonly opts: AccordionBaseStateProps) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 
-		this.orientation = props.orientation;
-		this.#loop = props.loop;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.#id,
+			rootNodeId: this.opts.id,
 			candidateAttr: ACCORDION_TRIGGER_ATTR,
-			loop: this.#loop,
-			orientation: this.orientation,
+			loop: this.opts.loop,
+			orientation: this.opts.orientation,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				"data-orientation": getDataOrientation(this.orientation.current),
-				"data-disabled": getDataDisabled(this.disabled.current),
+				id: this.opts.id.current,
+				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[ACCORDION_ROOT_ATTR]: "",
 			}) as const
 	);
@@ -80,22 +69,20 @@ class AccordionBaseState {
 type AccordionSingleStateProps = AccordionBaseStateProps & WritableBoxedValues<{ value: string }>;
 
 export class AccordionSingleState extends AccordionBaseState {
-	#value: AccordionSingleStateProps["value"];
 	isMulti = false as const;
 
-	constructor(props: AccordionSingleStateProps) {
-		super(props);
-		this.#value = props.value;
+	constructor(readonly opts: AccordionSingleStateProps) {
+		super(opts);
 		this.includesItem = this.includesItem.bind(this);
 		this.toggleItem = this.toggleItem.bind(this);
 	}
 
 	includesItem(item: string) {
-		return this.#value.current === item;
+		return this.opts.value.current === item;
 	}
 
 	toggleItem(item: string) {
-		this.#value.current = this.includesItem(item) ? "" : item;
+		this.opts.value.current = this.includesItem(item) ? "" : item;
 	}
 }
 
@@ -144,41 +131,33 @@ type AccordionItemStateProps = WithRefProps<
 >;
 
 export class AccordionItemState {
-	#id: AccordionItemStateProps["id"];
-	#ref: AccordionItemStateProps["ref"];
-	value: AccordionItemStateProps["value"];
-	disabled: AccordionItemStateProps["disabled"];
 	root: AccordionState;
-	isActive = $derived.by(() => this.root.includesItem(this.value.current));
-	isDisabled = $derived.by(() => this.disabled.current || this.root.disabled.current);
+	isActive = $derived.by(() => this.root.includesItem(this.opts.value.current));
+	isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 
-	constructor(props: AccordionItemStateProps) {
-		this.value = props.value;
-		this.disabled = props.disabled;
-		this.root = props.rootState;
-		this.#id = props.id;
-		this.#ref = props.ref;
+	constructor(readonly opts: AccordionItemStateProps) {
+		this.root = opts.rootState;
 
 		this.updateValue = this.updateValue.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 			deps: () => this.isActive,
 		});
 	}
 
 	updateValue() {
-		this.root.toggleItem(this.value.current);
+		this.root.toggleItem(this.opts.value.current);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.isActive),
 				"data-disabled": getDataDisabled(this.isDisabled),
-				"data-orientation": getDataOrientation(this.root.orientation.current),
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				[ACCORDION_ITEM_ATTR]: "",
 			}) as const
 	);
@@ -195,60 +174,55 @@ type AccordionTriggerStateProps = WithRefProps<
 >;
 
 class AccordionTriggerState {
-	#ref: AccordionTriggerStateProps["ref"];
-	#disabled: AccordionTriggerStateProps["disabled"];
-	#id: AccordionTriggerStateProps["id"];
 	#root: AccordionState;
-	#itemState: AccordionItemState;
 	#isDisabled = $derived.by(
 		() =>
-			this.#disabled.current ||
-			this.#itemState.disabled.current ||
-			this.#root.disabled.current
+			this.opts.disabled.current ||
+			this.itemState.opts.disabled.current ||
+			this.#root.opts.disabled.current
 	);
 
-	constructor(props: AccordionTriggerStateProps, itemState: AccordionItemState) {
-		this.#disabled = props.disabled;
-		this.#itemState = itemState;
+	constructor(
+		readonly opts: AccordionTriggerStateProps,
+		readonly itemState: AccordionItemState
+	) {
 		this.#root = itemState.root;
-		this.#id = props.id;
-		this.#ref = props.ref;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
 
 		useRefById({
-			id: props.id,
-			ref: this.#ref,
+			id: opts.id,
+			ref: this.opts.ref,
 		});
 	}
 
 	onclick(e: BitsMouseEvent) {
 		if (this.#isDisabled) return;
 		if (e.button !== 0) return e.preventDefault();
-		this.#itemState.updateValue();
+		this.itemState.updateValue();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.#itemState.updateValue();
+			this.itemState.updateValue();
 			return;
 		}
 
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
+		this.#root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				disabled: this.#isDisabled,
-				"aria-expanded": getAriaExpanded(this.#itemState.isActive),
+				"aria-expanded": getAriaExpanded(this.itemState.isActive),
 				"aria-disabled": getAriaDisabled(this.#isDisabled),
 				"data-disabled": getDataDisabled(this.#isDisabled),
-				"data-state": getDataOpenClosed(this.#itemState.isActive),
-				"data-orientation": getDataOrientation(this.#root.orientation.current),
+				"data-state": getDataOpenClosed(this.itemState.isActive),
+				"data-orientation": getDataOrientation(this.#root.opts.orientation.current),
 				[ACCORDION_TRIGGER_ATTR]: "",
 				tabindex: 0,
 				//
@@ -268,27 +242,23 @@ type AccordionContentStateProps = WithRefProps<
 	}>
 >;
 class AccordionContentState {
-	item: AccordionItemState;
-	#ref: AccordionContentStateProps["ref"];
-	#id: AccordionContentStateProps["id"];
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = $state(0);
 	#height = $state(0);
-	#forceMount: AccordionContentStateProps["forceMount"];
 
-	present = $derived.by(() => this.#forceMount.current || this.item.isActive);
+	present = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
 
-	constructor(props: AccordionContentStateProps, item: AccordionItemState) {
+	constructor(
+		readonly opts: AccordionContentStateProps,
+		readonly item: AccordionItemState
+	) {
 		this.item = item;
-		this.#forceMount = props.forceMount;
 		this.#isMountAnimationPrevented = this.item.isActive;
-		this.#id = props.id;
-		this.#ref = props.ref;
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 
 		$effect.pre(() => {
@@ -301,10 +271,10 @@ class AccordionContentState {
 			};
 		});
 
-		watch([() => this.present, () => this.#ref.current], ([_, node]) => {
+		watch([() => this.present, () => this.opts.ref.current], ([_, node]) => {
 			if (!node) return;
 			afterTick(() => {
-				if (!this.#ref.current) return;
+				if (!this.opts.ref.current) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
 					transitionDuration: node.style.transitionDuration,
@@ -336,10 +306,10 @@ class AccordionContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
 				"data-disabled": getDataDisabled(this.item.isDisabled),
-				"data-orientation": getDataOrientation(this.item.root.orientation.current),
+				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
 				[ACCORDION_CONTENT_ATTR]: "",
 				style: {
 					"--bits-accordion-content-height": `${this.#height}px`,
@@ -356,32 +326,25 @@ type AccordionHeaderStateProps = WithRefProps<
 >;
 
 class AccordionHeaderState {
-	#id: AccordionHeaderStateProps["id"];
-	#ref: AccordionHeaderStateProps["ref"];
-	#level: AccordionHeaderStateProps["level"];
-	#item: AccordionItemState;
-	constructor(props: AccordionHeaderStateProps, item: AccordionItemState) {
-		this.#level = props.level;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: AccordionHeaderStateProps,
+		readonly item: AccordionItemState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
-
-		this.#item = item;
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "heading",
-				"aria-level": this.#level.current,
-				"data-heading-level": this.#level.current,
-				"data-state": getDataOpenClosed(this.#item.isActive),
-				"data-orientation": getDataOrientation(this.#item.root.orientation.current),
+				"aria-level": this.opts.level.current,
+				"data-heading-level": this.opts.level.current,
+				"data-state": getDataOpenClosed(this.item.isActive),
+				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
 				[ACCORDION_HEADER_ATTR]: "",
 			}) as const
 	);
