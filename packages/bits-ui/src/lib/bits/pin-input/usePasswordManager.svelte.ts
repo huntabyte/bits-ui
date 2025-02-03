@@ -27,11 +27,6 @@ export function usePasswordManagerBadge({
 	pushPasswordManagerStrategy,
 	isFocused,
 }: UsePasswordManagerBadgeProps) {
-	let pwmMetadata = $state({
-		done: false,
-		refocused: false,
-	});
-
 	let hasPwmBadge = $state(false);
 	let hasPwmBadgeSpace = $state(false);
 	let done = $state(false);
@@ -76,19 +71,6 @@ export function usePasswordManagerBadge({
 
 		hasPwmBadge = true;
 		done = true;
-
-		// for specific PWMs the input has to be re-focused
-		// to trigger a reposition of the badge
-		if (!pwmMetadata.refocused && document.activeElement === input) {
-			const selections = [input.selectionStart ?? 0, input.selectionEnd ?? 0];
-			input.blur();
-			input.focus();
-			input.focus();
-			// recover the previous selection
-			input.setSelectionRange(selections[0]!, selections[1]!);
-
-			pwmMetadata.refocused = true;
-		}
 	}
 
 	$effect(() => {

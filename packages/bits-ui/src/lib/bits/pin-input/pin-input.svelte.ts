@@ -1,4 +1,4 @@
-import { Previous } from "runed";
+import { Previous, watch } from "runed";
 import { untrack } from "svelte";
 import { type WritableBox, box, useRefById } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
@@ -196,9 +196,7 @@ class PinInputRootState {
 			});
 		});
 
-		$effect(() => {
-			this.value.current;
-			this.#inputRef.current;
+		watch([() => this.value.current, () => this.#inputRef.current], () => {
 			syncTimeouts(() => {
 				const input = this.#inputRef.current;
 				if (!input) return;
@@ -427,33 +425,15 @@ class PinInputRootState {
 
 	onpaste = (e: BitsEvent<ClipboardEvent>) => {
 		const input = this.#inputRef.current;
+		if (!input) return;
 
-		if (!this.#initialLoad.isIOS) {
-			if (!e.clipboardData || !input) return;
-			const content = e.clipboardData.getData("text/plain");
-			const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
-			if (
-				sanitizedContent.length > 0 &&
-				this.#regexPattern &&
-				!this.#regexPattern.test(sanitizedContent)
-			) {
-				e.preventDefault();
-				return;
-			}
-		}
-
-		if (!this.#initialLoad.isIOS || !e.clipboardData || !input) return;
-		const content = e.clipboardData.getData("text/plain");
-		e.preventDefault();
-
-		const sanitizedContent = this.#onPaste?.current?.(content) ?? content;
-		if (
-			sanitizedContent.length > 0 &&
-			this.#regexPattern &&
-			!this.#regexPattern.test(sanitizedContent)
-		) {
+		if (!this.#onPaste?.current && (!this.#initialLoad.isIOS || !e.clipboardData || !input)) {
 			return;
 		}
+
+		const _content = e.clipboardData?.getData("text/plain") ?? "";
+		const content = this.#onPaste?.current ? this.#onPaste.current(_content) : _content;
+		e.preventDefault();
 
 		const start = input.selectionStart === null ? undefined : input.selectionStart;
 		const end = input.selectionEnd === null ? undefined : input.selectionEnd;
@@ -463,9 +443,8 @@ class PinInputRootState {
 		const initNewVal = this.value.current;
 
 		const newValueUncapped = isReplacing
-			? initNewVal.slice(0, start) + sanitizedContent + initNewVal.slice(end)
-			: initNewVal.slice(0, start) + sanitizedContent + initNewVal.slice(start);
-
+			? initNewVal.slice(0, start) + content + initNewVal.slice(end)
+			: initNewVal.slice(0, start) + content + initNewVal.slice(start);
 		const newValue = newValueUncapped.slice(0, this.#maxLength.current);
 
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
