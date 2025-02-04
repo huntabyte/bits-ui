@@ -35,7 +35,7 @@ type DatePickerRootStateProps = WritableBoxedValues<{
 	}>;
 
 class DatePickerRootState {
-	constructor(readonly props: DatePickerRootStateProps) {}
+	constructor(readonly opts: DatePickerRootStateProps) {}
 }
 
 export const DatePickerRootContext = new Context<DatePickerRootState>("DatePicker.Root");

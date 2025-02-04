@@ -79,8 +79,7 @@ class DialogTriggerState {
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.triggerNode = node;
 				this.root.triggerId = node?.id;
@@ -147,8 +146,7 @@ class DialogCloseState {
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.root.opts.open.current,
 		});
 	}
@@ -189,10 +187,7 @@ class DialogActionState {
 		readonly opts: DialogActionStateProps,
 		readonly root: DialogRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -216,8 +211,7 @@ class DialogTitleState {
 		readonly root: DialogRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.titleNode = node;
 				this.root.titleId = node?.id;
@@ -246,8 +240,7 @@ class DialogDescriptionState {
 		readonly root: DialogRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
 				this.root.descriptionNode = node;
@@ -274,8 +267,7 @@ class DialogContentState {
 		readonly root: DialogRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
@@ -310,8 +302,7 @@ class DialogOverlayState {
 		readonly root: DialogRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.root.opts.open.current,
 		});
 	}
@@ -345,8 +336,7 @@ class AlertDialogCancelState {
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
 				this.root.cancelNode = node;

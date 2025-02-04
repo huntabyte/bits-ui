@@ -46,10 +46,7 @@ class PaginationRootState {
 	);
 
 	constructor(readonly opts: PaginationRootStateProps) {
-		useRefById({
-			id: opts.id,
-			ref: opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	setPage(page: number) {
@@ -113,10 +110,7 @@ class PaginationPageState {
 		readonly opts: PaginationPageStateProps,
 		readonly root: PaginationRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -168,10 +162,7 @@ class PaginationButtonState {
 		readonly opts: PaginationButtonStateProps,
 		readonly root: PaginationRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);

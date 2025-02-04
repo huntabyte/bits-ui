@@ -140,8 +140,7 @@ class MenuContentState {
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.parentMenu.opts.open.current,
 			onRefChange: (node) => {
 				if (this.parentMenu.contentNode !== node) {
@@ -346,8 +345,7 @@ class MenuItemSharedState {
 		this.onblur = this.onblur.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.content.mounted,
 		});
 	}
@@ -505,8 +503,7 @@ class MenuSubTriggerState {
 		});
 
 		useRefById({
-			id: this.item.opts.id,
-			ref: this.item.opts.ref,
+			...this.item.opts,
 			onRefChange: (node) => {
 				this.submenu.triggerNode = node;
 			},
@@ -664,12 +661,7 @@ class MenuGroupState {
 		readonly opts: MenuGroupStateProps,
 		readonly root: MenuRootState
 	) {
-		this.root = root;
-
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(this.opts);
 	}
 
 	props = $derived.by(
@@ -690,8 +682,7 @@ class MenuGroupHeadingState {
 		readonly group: MenuGroupState | MenuRadioGroupState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.group.groupHeadingId = node?.id;
 			},
@@ -715,10 +706,7 @@ class MenuSeparatorState {
 		readonly opts: MenuSeparatorStateProps,
 		readonly root: MenuRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -758,10 +746,7 @@ class MenuRadioGroupState {
 		this.content = content;
 		this.root = content.parentMenu.root;
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	setValue(v: string) {
@@ -793,10 +778,7 @@ class MenuRadioItemState {
 		readonly item: MenuItemState,
 		readonly group: MenuRadioGroupState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	selectValue() {
@@ -834,8 +816,7 @@ class DropdownMenuTriggerState {
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (ref) => {
 				this.parentMenu.triggerNode = ref;
 			},
@@ -925,8 +906,7 @@ class ContextMenuTriggerState {
 		this.onpointerup = this.onpointerup.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.parentMenu.triggerNode = node;
 			},

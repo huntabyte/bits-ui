@@ -8,10 +8,7 @@ class LabelRootState {
 	constructor(readonly opts: LabelRootStateProps) {
 		this.onmousedown = this.onmousedown.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	onmousedown(e: BitsMouseEvent) {

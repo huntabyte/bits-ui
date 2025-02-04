@@ -3,7 +3,6 @@ import { watch } from "runed";
 import { on } from "svelte/events";
 import type { EscapeBehaviorType, EscapeLayerImplProps } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { EventCallback } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { noop } from "$lib/internal/noop.js";
 
@@ -12,21 +11,13 @@ globalThis.bitsEscapeLayers ??= new Map<EscapeLayerState, ReadableBox<EscapeBeha
 type EscapeLayerStateProps = ReadableBoxedValues<Required<Omit<EscapeLayerImplProps, "children">>>;
 
 export class EscapeLayerState {
-	#onEscapeProp: ReadableBox<EventCallback<KeyboardEvent>>;
-	#behaviorType: ReadableBox<EscapeBehaviorType>;
-	#enabled: ReadableBox<boolean>;
-
-	constructor(props: EscapeLayerStateProps) {
-		this.#behaviorType = props.escapeKeydownBehavior;
-		this.#onEscapeProp = props.onEscapeKeydown;
-		this.#enabled = props.enabled;
-
+	constructor(readonly opts: EscapeLayerStateProps) {
 		let unsubEvents = noop;
 		watch(
-			() => this.#enabled.current,
+			() => opts.enabled.current,
 			(enabled) => {
 				if (enabled) {
-					globalThis.bitsEscapeLayers.set(this, this.#behaviorType);
+					globalThis.bitsEscapeLayers.set(this, opts.escapeKeydownBehavior);
 					unsubEvents = this.#addEventListener();
 				}
 
@@ -46,9 +37,9 @@ export class EscapeLayerState {
 		if (e.key !== kbd.ESCAPE || !isResponsibleEscapeLayer(this)) return;
 		const clonedEvent = new KeyboardEvent(e.type, e);
 		e.preventDefault();
-		const behaviorType = this.#behaviorType.current;
+		const behaviorType = this.opts.escapeKeydownBehavior.current;
 		if (behaviorType !== "close" && behaviorType !== "defer-otherwise-close") return;
-		this.#onEscapeProp.current(clonedEvent);
+		this.opts.onEscapeKeydown.current(clonedEvent);
 	};
 }
 

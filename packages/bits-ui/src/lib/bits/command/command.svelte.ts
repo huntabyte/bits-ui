@@ -140,10 +140,7 @@ class CommandRootState {
 		this._commandState = defaultState;
 		this.commandState = defaultState;
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -543,8 +540,7 @@ class CommandEmptyState {
 		});
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.shouldRender,
 		});
 	}
@@ -584,8 +580,7 @@ class CommandGroupContainerState {
 		this.trueValue = opts.value.current;
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.shouldRender,
 		});
 
@@ -627,8 +622,7 @@ class CommandGroupHeadingState {
 		readonly group: CommandGroupContainerState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.group.headingNode = node;
 			},
@@ -651,10 +645,7 @@ class CommandGroupItemsState {
 		readonly opts: CommandGroupItemsStateProps,
 		readonly group: CommandGroupContainerState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -691,8 +682,7 @@ class CommandInputState {
 		readonly root: CommandRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.inputNode = node;
 			},
@@ -779,8 +769,7 @@ class CommandItemState {
 		this.trueValue = opts.value.current;
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => Boolean(this.root.commandState.search),
 		});
 
@@ -866,10 +855,7 @@ type CommandLoadingStateProps = WithRefProps<
 
 class CommandLoadingState {
 	constructor(readonly opts: CommandLoadingStateProps) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -901,8 +887,7 @@ class CommandSeparatorState {
 		readonly root: CommandRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.shouldRender,
 		});
 	}
@@ -927,10 +912,7 @@ class CommandListState {
 		readonly opts: CommandListStateProps,
 		readonly root: CommandRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -952,8 +934,7 @@ class CommandLabelState {
 		readonly root: CommandRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.labelNode = node;
 			},
@@ -979,8 +960,7 @@ class CommandViewportState {
 		readonly list: CommandListState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.list.root.viewportNode = node;
 			},

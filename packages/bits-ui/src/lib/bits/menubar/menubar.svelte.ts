@@ -53,10 +53,7 @@ class MenubarRootState {
 		this.registerTrigger = this.registerTrigger.bind(this);
 		this.deRegisterTrigger = this.deRegisterTrigger.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.opts.id,
@@ -167,8 +164,7 @@ class MenubarTriggerState {
 		this.onblur = this.onblur.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.menu.triggerNode = node;
 			},
@@ -283,8 +279,7 @@ class MenubarContentState {
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.menu.contentNode = node;
 			},

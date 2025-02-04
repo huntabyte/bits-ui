@@ -25,10 +25,7 @@ class CheckboxGroupState {
 	labelId = $state<string | undefined>(undefined);
 
 	constructor(readonly opts: CheckboxGroupStateProps) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	addValue(checkboxValue: string | undefined) {
@@ -65,8 +62,7 @@ class CheckboxGroupLabelState {
 		readonly group: CheckboxGroupState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				if (node) {
 					group.labelId = node.id;
@@ -129,10 +125,7 @@ class CheckboxRootState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		watch(
 			[() => $state.snapshot(this.group?.opts.value.current), () => this.opts.value.current],

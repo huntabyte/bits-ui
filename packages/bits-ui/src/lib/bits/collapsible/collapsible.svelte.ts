@@ -23,10 +23,7 @@ class CollapsibleRootState {
 	constructor(readonly opts: CollapsibleRootStateProps) {
 		this.toggleOpen = this.toggleOpen.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	toggleOpen() {
@@ -59,12 +56,10 @@ class CollapsibleContentState {
 		readonly opts: CollapsibleContentStateProps,
 		readonly root: CollapsibleRootState
 	) {
-		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.present,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
@@ -147,10 +142,7 @@ class CollapsibleTriggerState {
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	onclick(e: BitsMouseEvent) {

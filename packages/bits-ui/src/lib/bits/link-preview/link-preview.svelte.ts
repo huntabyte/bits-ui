@@ -122,8 +122,7 @@ class LinkPreviewTriggerState {
 		this.onblur = this.onblur.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.triggerNode = node;
 			},
@@ -181,8 +180,7 @@ class LinkPreviewContentState {
 		this.onfocusout = this.onfocusout.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},

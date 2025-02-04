@@ -93,10 +93,7 @@ export class RangeCalendarRootState {
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.opts.locale.current);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		this.months = createMonths({
 			dateObj: this.opts.placeholder.current,
@@ -608,10 +605,7 @@ export class RangeCalendarCellState {
 		readonly opts: RangeCalendarCellStateProps,
 		readonly root: RangeCalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -668,10 +662,7 @@ class RangeCalendarDayState {
 		readonly opts: RangeCalendarDayStateProps,
 		readonly cell: RangeCalendarCellState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
 		this.onmouseenter = this.onmouseenter.bind(this);

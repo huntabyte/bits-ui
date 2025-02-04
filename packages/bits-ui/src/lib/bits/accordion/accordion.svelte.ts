@@ -38,10 +38,7 @@ class AccordionBaseState {
 	rovingFocusGroup: UseRovingFocusReturn;
 
 	constructor(readonly opts: AccordionBaseStateProps) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(this.opts);
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.opts.id,
@@ -141,8 +138,7 @@ export class AccordionItemState {
 		this.updateValue = this.updateValue.bind(this);
 
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.isActive,
 		});
 	}
@@ -190,10 +186,7 @@ class AccordionTriggerState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	onclick(e: BitsMouseEvent) {
@@ -256,10 +249,7 @@ class AccordionContentState {
 		this.item = item;
 		this.#isMountAnimationPrevented = this.item.isActive;
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -330,10 +320,7 @@ class AccordionHeaderState {
 		readonly opts: AccordionHeaderStateProps,
 		readonly item: AccordionItemState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(

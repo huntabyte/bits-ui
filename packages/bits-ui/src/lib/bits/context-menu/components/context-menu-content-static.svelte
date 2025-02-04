@@ -67,7 +67,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		enabled={contentState.parentMenu.open.current}
+		enabled={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -98,7 +98,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		present={contentState.parentMenu.open.current}
+		present={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}

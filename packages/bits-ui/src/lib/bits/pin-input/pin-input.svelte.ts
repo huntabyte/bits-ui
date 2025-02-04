@@ -1,5 +1,5 @@
 import { Previous, watch } from "runed";
-import { untrack } from "svelte";
+import { onMount } from "svelte";
 import { type WritableBox, box, useRefById } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
@@ -11,9 +11,8 @@ import type {
 	BitsMouseEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { noop } from "$lib/internal/noop.js";
-import { addEventListener } from "$lib/internal/events.js";
 import { getDisabled } from "$lib/internal/attrs.js";
+import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
 export const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
@@ -107,68 +106,59 @@ class PinInputRootState {
 			pushPasswordManagerStrategy: this.opts.pushPasswordManagerStrategy,
 		});
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		useRefById({
 			id: this.opts.inputId,
 			ref: this.#inputRef,
 		});
 
-		$effect(() => {
-			let unsub = noop;
-			return untrack(() => {
-				const input = this.#inputRef.current;
-				const container = this.opts.ref.current;
+		onMount(() => {
+			const input = this.#inputRef.current;
+			const container = this.opts.ref.current;
 
-				if (!input || !container) return;
+			if (!input || !container) return;
 
-				if (this.#initialLoad.value.current !== input.value) {
-					this.opts.value.current = input.value;
-				}
+			if (this.#initialLoad.value.current !== input.value) {
+				this.opts.value.current = input.value;
+			}
 
-				this.#prevInputMetadata.prev = [
-					input.selectionStart,
-					input.selectionEnd,
-					input.selectionDirection ?? "none",
-				];
+			this.#prevInputMetadata.prev = [
+				input.selectionStart,
+				input.selectionEnd,
+				input.selectionDirection ?? "none",
+			];
 
-				unsub = addEventListener(
-					document,
-					"selectionchange",
-					this.#onDocumentSelectionChange,
-					{ capture: true }
-				);
-
-				this.#onDocumentSelectionChange();
-				if (document.activeElement === input) {
-					this.#isFocused.current = true;
-				}
-
-				if (!document.getElementById("pin-input-style")) {
-					this.#applyStyles();
-				}
-
-				const updateRootHeight = () => {
-					if (container) {
-						container.style.setProperty(
-							"--bits-pin-input-root-height",
-							`${input.clientHeight}px`
-						);
-					}
-				};
-				updateRootHeight();
-
-				const resizeObserver = new ResizeObserver(updateRootHeight);
-				resizeObserver.observe(input);
-
-				return () => {
-					unsub();
-					resizeObserver.disconnect();
-				};
+			const unsub = on(document, "selectionchange", this.#onDocumentSelectionChange, {
+				capture: true,
 			});
+
+			this.#onDocumentSelectionChange();
+			if (document.activeElement === input) {
+				this.#isFocused.current = true;
+			}
+
+			if (!document.getElementById("pin-input-style")) {
+				this.#applyStyles();
+			}
+
+			const updateRootHeight = () => {
+				if (container) {
+					container.style.setProperty(
+						"--bits-pin-input-root-height",
+						`${input.clientHeight}px`
+					);
+				}
+			};
+			updateRootHeight();
+
+			const resizeObserver = new ResizeObserver(updateRootHeight);
+			resizeObserver.observe(input);
+
+			return () => {
+				unsub();
+				resizeObserver.disconnect();
+			};
 		});
 
 		watch([() => this.opts.value.current, () => this.#inputRef.current], () => {

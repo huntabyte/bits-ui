@@ -78,9 +78,6 @@ export type FloatingContentStateProps = ReadableBoxedValues<{
 }>;
 
 class FloatingContentState {
-	// state
-	root: FloatingRootState;
-
 	// nodes
 	contentRef = box<HTMLElement | null>(null);
 	wrapperRef = box<HTMLElement | null>(null);
@@ -88,47 +85,32 @@ class FloatingContentState {
 
 	// ids
 	arrowId: Box<string> = box(useId());
-	id: FloatingContentStateProps["id"];
-	wrapperId: FloatingContentStateProps["wrapperId"];
-
-	style: FloatingContentStateProps["style"];
 
 	#transformedStyle = $derived.by(() => {
-		if (typeof this.style === "string") return cssToStyleObj(this.style);
-		if (!this.style) return {};
+		if (typeof this.opts.style === "string") return cssToStyleObj(this.opts.style);
+		if (!this.opts.style) return {};
 	});
-	#dir: FloatingContentStateProps["dir"];
-	#side: FloatingContentStateProps["side"];
-	#sideOffset: FloatingContentStateProps["sideOffset"];
-	#align: FloatingContentStateProps["align"];
-	#alignOffset: FloatingContentStateProps["alignOffset"];
-	#arrowPadding: FloatingContentStateProps["arrowPadding"];
-	#avoidCollisions: FloatingContentStateProps["avoidCollisions"];
-	#collisionBoundary: FloatingContentStateProps["collisionBoundary"];
-	#collisionPadding: FloatingContentStateProps["collisionPadding"];
-	#sticky: FloatingContentStateProps["sticky"];
-	#hideWhenDetached: FloatingContentStateProps["hideWhenDetached"];
-	#strategy: FloatingContentStateProps["strategy"];
+
 	#updatePositionStrategy =
 		undefined as unknown as FloatingContentStateProps["updatePositionStrategy"];
-	onPlaced: FloatingContentStateProps["onPlaced"];
-	enabled: FloatingContentStateProps["enabled"];
 	#arrowSize = new ElementSize(() => this.arrowRef.current ?? undefined);
 	#arrowWidth = $derived(this.#arrowSize?.width ?? 0);
 	#arrowHeight = $derived(this.#arrowSize?.height ?? 0);
 	#desiredPlacement = $derived.by(
 		() =>
-			(this.#side?.current +
-				(this.#align.current !== "center" ? `-${this.#align.current}` : "")) as Placement
+			(this.opts.side?.current +
+				(this.opts.align.current !== "center"
+					? `-${this.opts.align.current}`
+					: "")) as Placement
 	);
 	#boundary = $derived.by(() =>
-		Array.isArray(this.#collisionBoundary.current)
-			? this.#collisionBoundary.current
-			: [this.#collisionBoundary.current]
+		Array.isArray(this.opts.collisionBoundary.current)
+			? this.opts.collisionBoundary.current
+			: [this.opts.collisionBoundary.current]
 	);
 	hasExplicitBoundaries = $derived(this.#boundary.length > 0);
 	detectOverflowOptions = $derived.by(() => ({
-		padding: this.#collisionPadding.current,
+		padding: this.opts.collisionPadding.current,
 		boundary: this.#boundary.filter(isNotNull),
 		altBoundary: this.hasExplicitBoundaries,
 	}));
@@ -140,17 +122,17 @@ class FloatingContentState {
 		() =>
 			[
 				offset({
-					mainAxis: this.#sideOffset.current + this.#arrowHeight,
-					alignmentAxis: this.#alignOffset.current,
+					mainAxis: this.opts.sideOffset.current + this.#arrowHeight,
+					alignmentAxis: this.opts.alignOffset.current,
 				}),
-				this.#avoidCollisions.current &&
+				this.opts.avoidCollisions.current &&
 					shift({
 						mainAxis: true,
 						crossAxis: false,
-						limiter: this.#sticky.current === "partial" ? limitShift() : undefined,
+						limiter: this.opts.sticky.current === "partial" ? limitShift() : undefined,
 						...this.detectOverflowOptions,
 					}),
-				this.#avoidCollisions.current && flip({ ...this.detectOverflowOptions }),
+				this.opts.avoidCollisions.current && flip({ ...this.detectOverflowOptions }),
 				size({
 					...this.detectOverflowOptions,
 					apply: ({ rects, availableWidth, availableHeight }) => {
@@ -162,9 +144,12 @@ class FloatingContentState {
 					},
 				}),
 				this.arrowRef.current &&
-					arrow({ element: this.arrowRef.current, padding: this.#arrowPadding.current }),
+					arrow({
+						element: this.arrowRef.current,
+						padding: this.opts.arrowPadding.current,
+					}),
 				transformOrigin({ arrowWidth: this.#arrowWidth, arrowHeight: this.#arrowHeight }),
-				this.#hideWhenDetached.current &&
+				this.opts.hideWhenDetached.current &&
 					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
 			].filter(Boolean) as Middleware[]
 	);
@@ -179,7 +164,7 @@ class FloatingContentState {
 	wrapperProps = $derived.by(
 		() =>
 			({
-				id: this.wrapperId.current,
+				id: this.opts.wrapperId.current,
 				"data-bits-floating-content-wrapper": "",
 				style: {
 					...this.floating.floatingStyles,
@@ -202,7 +187,7 @@ class FloatingContentState {
 					...this.#transformedStyle,
 				},
 				// Floating UI calculates logical alignment based the `dir` attribute
-				dir: this.#dir.current,
+				dir: this.opts.dir.current,
 			}) as const
 	);
 	props = $derived.by(
@@ -239,52 +224,35 @@ class FloatingContentState {
 		visibility: this.cannotCenterArrow ? "hidden" : undefined,
 	});
 
-	constructor(props: FloatingContentStateProps, root: FloatingRootState) {
-		this.id = props.id;
-		this.#side = props.side;
-		this.#sideOffset = props.sideOffset;
-		this.#align = props.align;
-		this.#alignOffset = props.alignOffset;
-		this.#arrowPadding = props.arrowPadding;
-		this.#avoidCollisions = props.avoidCollisions;
-		this.#collisionBoundary = props.collisionBoundary;
-		this.#collisionPadding = props.collisionPadding;
-		this.#sticky = props.sticky;
-		this.#hideWhenDetached = props.hideWhenDetached;
-		this.#updatePositionStrategy = props.updatePositionStrategy;
-		this.onPlaced = props.onPlaced;
-		this.#strategy = props.strategy;
-		this.#dir = props.dir;
-		this.style = props.style;
-		this.root = root;
-		this.enabled = props.enabled;
-		this.wrapperId = props.wrapperId;
-
-		if (props.customAnchor) {
-			this.root.customAnchorNode.current = props.customAnchor.current;
+	constructor(
+		readonly opts: FloatingContentStateProps,
+		readonly root: FloatingRootState
+	) {
+		if (opts.customAnchor) {
+			this.root.customAnchorNode.current = opts.customAnchor.current;
 		}
 
 		watch(
-			() => props.customAnchor.current,
+			() => opts.customAnchor.current,
 			(customAnchor) => {
 				this.root.customAnchorNode.current = customAnchor;
 			}
 		);
 
 		useRefById({
-			id: this.wrapperId,
+			id: this.opts.wrapperId,
 			ref: this.wrapperRef,
-			deps: () => this.enabled.current,
+			deps: () => this.opts.enabled.current,
 		});
 
 		useRefById({
-			id: this.id,
+			id: this.opts.id,
 			ref: this.contentRef,
-			deps: () => this.enabled.current,
+			deps: () => this.opts.enabled.current,
 		});
 
 		this.floating = useFloating({
-			strategy: () => this.#strategy.current,
+			strategy: () => this.opts.strategy.current,
 			placement: () => this.#desiredPlacement,
 			middleware: () => this.middleware,
 			reference: this.root.anchorNode,
@@ -294,12 +262,12 @@ class FloatingContentState {
 				});
 				return cleanup;
 			},
-			open: () => this.enabled.current,
+			open: () => this.opts.enabled.current,
 		});
 
 		$effect(() => {
 			if (!this.floating.isPositioned) return;
-			this.onPlaced?.current();
+			this.opts.onPlaced?.current();
 		});
 
 		watch(
@@ -319,31 +287,25 @@ class FloatingContentState {
 type FloatingArrowStateProps = WithRefProps;
 
 class FloatingArrowState {
-	#id: FloatingArrowStateProps["id"];
-	#ref: FloatingArrowStateProps["ref"];
-	#content: FloatingContentState;
-
-	constructor(props: FloatingArrowStateProps, content: FloatingContentState) {
-		this.#content = content;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: FloatingArrowStateProps,
+		readonly content: FloatingContentState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
-				this.#content.arrowRef.current = node;
+				this.content.arrowRef.current = node;
 			},
-			deps: () => this.#content.enabled.current,
+			deps: () => this.content.opts.enabled.current,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				style: this.#content.arrowStyle,
-				"data-side": this.#content.placedSide,
+				id: this.opts.id.current,
+				style: this.content.arrowStyle,
+				"data-side": this.content.placedSide,
 			}) as const
 	);
 }
@@ -356,12 +318,15 @@ type FloatingAnchorStateProps = ReadableBoxedValues<{
 class FloatingAnchorState {
 	ref = box<HTMLElement | null>(null);
 
-	constructor(props: FloatingAnchorStateProps, root: FloatingRootState) {
-		if (props.virtualEl && props.virtualEl.current) {
-			root.triggerNode = box.from(props.virtualEl.current);
+	constructor(
+		readonly opts: FloatingAnchorStateProps,
+		readonly root: FloatingRootState
+	) {
+		if (opts.virtualEl && opts.virtualEl.current) {
+			root.triggerNode = box.from(opts.virtualEl.current);
 		} else {
 			useRefById({
-				id: props.id,
+				id: opts.id,
 				ref: this.ref,
 				onRefChange: (node) => {
 					root.triggerNode.current = node;

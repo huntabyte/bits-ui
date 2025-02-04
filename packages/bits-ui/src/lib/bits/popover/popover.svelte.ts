@@ -39,8 +39,7 @@ class PopoverTriggerState {
 		readonly root: PopoverRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.triggerNode = node;
 			},
@@ -109,8 +108,7 @@ class PopoverContentState {
 		readonly root: PopoverRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
@@ -168,8 +166,7 @@ class PopoverCloseState {
 		readonly root: PopoverRootState
 	) {
 		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
+			...opts,
 			deps: () => this.root.opts.open.current,
 		});
 		this.onclick = this.onclick.bind(this);

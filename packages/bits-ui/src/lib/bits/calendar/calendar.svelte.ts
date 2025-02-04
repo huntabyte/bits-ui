@@ -103,10 +103,7 @@ export class CalendarRootState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.getBitsAttr = this.getBitsAttr.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		this.months = createMonths({
 			dateObj: this.opts.placeholder.current,
@@ -456,27 +453,19 @@ export class CalendarRootState {
 
 export type CalendarHeadingStateProps = WithRefProps;
 export class CalendarHeadingState {
-	id: CalendarHeadingStateProps["id"];
-	ref: CalendarHeadingStateProps["ref"];
 	headingValue = $derived.by(() => this.root.headingValue);
 
 	constructor(
-		props: CalendarHeadingStateProps,
+		readonly opts: CalendarHeadingStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
@@ -522,10 +511,7 @@ class CalendarCellState {
 		readonly opts: CalendarCellStateProps,
 		readonly root: CalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -581,10 +567,7 @@ class CalendarDayState {
 	) {
 		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	#tabindex = $derived.by(() =>
@@ -637,10 +620,7 @@ export class CalendarNextButtonState {
 	) {
 		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -676,10 +656,7 @@ export class CalendarPrevButtonState {
 	) {
 		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -711,10 +688,7 @@ export class CalendarGridState {
 		readonly opts: CalendarGridStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -739,10 +713,7 @@ export class CalendarGridBodyState {
 		readonly opts: CalendarGridBodyStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -763,10 +734,7 @@ export class CalendarGridHeadState {
 		readonly opts: CalendarGridHeadStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -787,10 +755,7 @@ export class CalendarGridRowState {
 		readonly opts: CalendarGridRowStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -811,10 +776,7 @@ export class CalendarHeadCellState {
 		readonly opts: CalendarHeadCellStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -835,10 +797,7 @@ export class CalendarHeaderState {
 		readonly opts: CalendarHeaderStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(

@@ -27,10 +27,7 @@ class AvatarRootState {
 	constructor(readonly opts: AvatarRootStateProps) {
 		this.loadImage = this.loadImage.bind(this);
 
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
@@ -82,10 +79,7 @@ class AvatarImageState {
 		readonly opts: AvatarImageStateProps,
 		readonly root: AvatarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		$effect.pre(() => {
 			if (!this.opts.src.current) {
@@ -131,10 +125,7 @@ class AvatarFallbackState {
 		readonly opts: AvatarFallbackStateProps,
 		readonly root: AvatarRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
