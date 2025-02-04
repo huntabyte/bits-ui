@@ -392,24 +392,27 @@ class PinInputRootState {
 		const input = this.#inputRef.current;
 		if (!input) return;
 
+		const getNewValue = (finalContent: string | undefined) => {
+			const start = input.selectionStart === null ? undefined : input.selectionStart;
+			const end = input.selectionEnd === null ? undefined : input.selectionEnd;
+			const isReplacing = start !== end;
+			const initNewVal = this.opts.value.current;
+			const newValueUncapped = isReplacing
+				? initNewVal.slice(0, start) + finalContent + initNewVal.slice(end)
+				: initNewVal.slice(0, start) + finalContent + initNewVal.slice(start);
+			return newValueUncapped.slice(0, this.opts.maxLength.current);
+		};
+
+		const isValueInvalid = (newValue: string) => {
+			return newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue);
+		};
+
 		if (
 			!this.opts.onPaste?.current &&
 			(!this.#initialLoad.isIOS || !e.clipboardData || !input)
 		) {
-			const contentData = e.clipboardData?.getData("text/plain");
-			const start = input.selectionStart === null ? undefined : input.selectionStart;
-			const end = input.selectionEnd === null ? undefined : input.selectionEnd;
-
-			const isReplacing = start !== end;
-
-			const initNewVal = this.opts.value.current;
-
-			const newValueUncapped = isReplacing
-				? initNewVal.slice(0, start) + contentData + initNewVal.slice(end)
-				: initNewVal.slice(0, start) + contentData + initNewVal.slice(start);
-			const newValue = newValueUncapped.slice(0, this.opts.maxLength.current);
-
-			if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
+			const newValue = getNewValue(e.clipboardData?.getData("text/plain"));
+			if (isValueInvalid(newValue)) {
 				e.preventDefault();
 			}
 			return;
@@ -419,21 +422,9 @@ class PinInputRootState {
 		const content = this.opts.onPaste?.current ? this.opts.onPaste.current(_content) : _content;
 		e.preventDefault();
 
-		const start = input.selectionStart === null ? undefined : input.selectionStart;
-		const end = input.selectionEnd === null ? undefined : input.selectionEnd;
+		const newValue = getNewValue(content);
 
-		const isReplacing = start !== end;
-
-		const initNewVal = this.opts.value.current;
-
-		const newValueUncapped = isReplacing
-			? initNewVal.slice(0, start) + content + initNewVal.slice(end)
-			: initNewVal.slice(0, start) + content + initNewVal.slice(start);
-		const newValue = newValueUncapped.slice(0, this.opts.maxLength.current);
-
-		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
-			return;
-		}
+		if (isValueInvalid(newValue)) return;
 
 		input.value = newValue;
 		this.opts.value.current = newValue;
