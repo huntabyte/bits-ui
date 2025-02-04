@@ -355,7 +355,7 @@ class PinInputRootState {
 		this.#prevInputMetadata.prev = [s, e, dir];
 	};
 
-	oninput = (e: BitsEvent<Event, HTMLInputElement>) => {
+	oninput = (e: BitsEvent<InputEvent, HTMLInputElement>) => {
 		const newValue = e.currentTarget.value.slice(0, this.opts.maxLength.current);
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			e.preventDefault();
@@ -396,6 +396,22 @@ class PinInputRootState {
 			!this.opts.onPaste?.current &&
 			(!this.#initialLoad.isIOS || !e.clipboardData || !input)
 		) {
+			const contentData = e.clipboardData?.getData("text/plain");
+			const start = input.selectionStart === null ? undefined : input.selectionStart;
+			const end = input.selectionEnd === null ? undefined : input.selectionEnd;
+
+			const isReplacing = start !== end;
+
+			const initNewVal = this.opts.value.current;
+
+			const newValueUncapped = isReplacing
+				? initNewVal.slice(0, start) + contentData + initNewVal.slice(end)
+				: initNewVal.slice(0, start) + contentData + initNewVal.slice(start);
+			const newValue = newValueUncapped.slice(0, this.opts.maxLength.current);
+
+			if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
+				e.preventDefault();
+			}
 			return;
 		}
 
@@ -454,7 +470,7 @@ class PinInputRootState {
 		"data-pin-input-input-mss": this.#mirrorSelectionStart,
 		"data-pin-input-input-mse": this.#mirrorSelectionEnd,
 		inputmode: this.opts.inputmode.current,
-		// pattern: this.#regexPattern?.source,
+		pattern: this.#regexPattern?.source,
 		maxlength: this.opts.maxLength.current,
 		value: this.opts.value.current,
 		disabled: getDisabled(this.opts.disabled.current),
