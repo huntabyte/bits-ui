@@ -60,12 +60,12 @@
 	{@render children?.()}
 </FloatingLayer>
 
-{#if Array.isArray(rootState.value.current)}
-	{#if rootState.value.current.length}
-		{#each rootState.value.current as item}
+{#if Array.isArray(rootState.opts.value.current)}
+	{#if rootState.opts.value.current.length}
+		{#each rootState.opts.value.current as item}
 			<SelectHiddenInput value={item} />
 		{/each}
 	{/if}
 {:else}
-	<SelectHiddenInput bind:value={rootState.value.current as string} />
+	<SelectHiddenInput bind:value={rootState.opts.value.current as string} />
 {/if}

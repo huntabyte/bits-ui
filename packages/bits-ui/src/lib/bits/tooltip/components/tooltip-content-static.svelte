@@ -46,7 +46,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		isStatic
-		enabled={contentState.root.open.current}
+		enabled={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -74,7 +74,7 @@
 	<PopperLayer
 		{...mergedProps}
 		isStatic
-		present={contentState.root.open.current}
+		present={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}

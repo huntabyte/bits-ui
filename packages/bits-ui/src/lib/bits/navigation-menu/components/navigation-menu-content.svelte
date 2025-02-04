@@ -66,10 +66,10 @@
 				>
 					{#snippet children({ props: dismissibleProps })}
 						{#if child}
-							<Mounted bind:isMounted />
+							<Mounted bind:mounted={isMounted} />
 							{@render child({ props: mergeProps(dismissibleProps, mergedProps) })}
 						{:else}
-							<Mounted bind:isMounted />
+							<Mounted bind:mounted={isMounted} />
 							<div {...mergeProps(dismissibleProps, mergedProps)}>
 								{@render contentChildren?.()}
 							</div>

@@ -25,7 +25,7 @@
 </script>
 
 {#if scrollButtonState.canScrollDown}
-	<Mounted onMountedChange={(v) => (scrollButtonState.state.mounted = v)} />
+	<Mounted bind:mounted={scrollButtonState.state.mounted} />
 	{#if child}
 		{@render child({ props: restProps })}
 	{:else}

@@ -9,7 +9,6 @@ import { watch } from "runed";
 import { on } from "svelte/events";
 import type { TextSelectionLayerImplProps } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { EventCallback } from "$lib/internal/events.js";
 import { noop } from "$lib/internal/noop.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { isOrContainsTarget } from "$lib/internal/elements.js";
@@ -19,32 +18,23 @@ type StateProps = ReadableBoxedValues<Required<Omit<TextSelectionLayerImplProps,
 globalThis.bitsTextSelectionLayers ??= new Map<TextSelectionLayerState, ReadableBox<boolean>>();
 
 export class TextSelectionLayerState {
-	#id: StateProps["id"];
-	#onPointerDownProp: ReadableBox<EventCallback<PointerEvent>>;
-	#onPointerUpProp: ReadableBox<EventCallback<PointerEvent>>;
-	#enabled: ReadableBox<boolean>;
 	#unsubSelectionLock = noop;
 	#ref = box<HTMLElement | null>(null);
 
-	constructor(props: StateProps) {
-		this.#id = props.id;
-		this.#enabled = props.preventOverflowTextSelection;
-		this.#onPointerDownProp = props.onPointerDown;
-		this.#onPointerUpProp = props.onPointerUp;
-
+	constructor(readonly opts: StateProps) {
 		useRefById({
-			id: this.#id,
+			id: opts.id,
 			ref: this.#ref,
-			deps: () => this.#enabled.current,
+			deps: () => this.opts.enabled.current,
 		});
 
 		let unsubEvents = noop;
 
 		watch(
-			() => this.#enabled.current,
+			() => this.opts.enabled.current,
 			(isEnabled) => {
 				if (isEnabled) {
-					globalThis.bitsTextSelectionLayers.set(this, this.#enabled);
+					globalThis.bitsTextSelectionLayers.set(this, this.opts.enabled);
 					unsubEvents();
 					unsubEvents = this.#addEventListeners();
 				}
@@ -63,7 +53,7 @@ export class TextSelectionLayerState {
 			on(
 				document,
 				"pointerup",
-				composeHandlers(this.#resetSelectionLock, this.#onPointerUpProp)
+				composeHandlers(this.#resetSelectionLock, this.opts.onPointerUp.current)
 			)
 		);
 	}
@@ -71,14 +61,14 @@ export class TextSelectionLayerState {
 	#pointerdown = (e: PointerEvent) => {
 		const node = this.#ref.current;
 		const target = e.target;
-		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabled.current) return;
+		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.opts.enabled.current) return;
 		/**
 		 * We only lock user-selection overflow if layer is the top most layer and
 		 * pointerdown occurred inside the node. You are still allowed to select text
 		 * outside the node provided pointerdown occurs outside the node.
 		 */
 		if (!isHighestLayer(this) || !isOrContainsTarget(node, target)) return;
-		this.#onPointerDownProp.current(e);
+		this.opts.onPointerDown.current(e);
 		if (e.defaultPrevented) return;
 		this.#unsubSelectionLock = preventTextSelectionOverflow(node);
 	};

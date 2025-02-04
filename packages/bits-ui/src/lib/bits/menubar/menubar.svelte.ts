@@ -25,8 +25,8 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 
-const ROOT_ATTR = "data-menubar-root";
-const TRIGGER_ATTR = "data-menubar-trigger";
+const MENUBAR_ROOT_ATTR = "data-menubar-root";
+const MENUBAR_TRIGGER_ATTR = "data-menubar-trigger";
 
 type MenubarRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -39,24 +39,13 @@ type MenubarRootStateProps = WithRefProps<
 >;
 
 class MenubarRootState {
-	id: MenubarRootStateProps["id"];
-	ref: MenubarRootStateProps["ref"];
-	value: MenubarRootStateProps["value"];
-	dir: MenubarRootStateProps["dir"];
-	loop: MenubarRootStateProps["loop"];
 	rovingFocusGroup: UseRovingFocusReturn;
 	currentTabStopId = box<string | null>(null);
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
 	valueToContentId = new Map<string, ReadableBox<string>>();
 
-	constructor(props: MenubarRootStateProps) {
-		this.value = props.value;
-		this.dir = props.dir;
-		this.loop = props.loop;
-		this.id = props.id;
-		this.ref = props.ref;
-
+	constructor(readonly opts: MenubarRootStateProps) {
 		this.onMenuClose = this.onMenuClose.bind(this);
 		this.onMenuOpen = this.onMenuOpen.bind(this);
 		this.onMenuToggle = this.onMenuToggle.bind(this);
@@ -64,15 +53,12 @@ class MenubarRootState {
 		this.registerTrigger = this.registerTrigger.bind(this);
 		this.deRegisterTrigger = this.deRegisterTrigger.bind(this);
 
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.id,
-			candidateAttr: TRIGGER_ATTR,
-			loop: this.loop,
+			rootNodeId: this.opts.id,
+			candidateAttr: MENUBAR_TRIGGER_ATTR,
+			loop: this.opts.loop,
 			orientation: box.with(() => "horizontal"),
 			currentTabStopId: this.currentTabStopId,
 		});
@@ -87,30 +73,30 @@ class MenubarRootState {
 	}
 
 	getTriggers() {
-		const node = this.ref.current;
+		const node = this.opts.ref.current;
 		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${TRIGGER_ATTR}]`));
+		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${MENUBAR_TRIGGER_ATTR}]`));
 	}
 
 	onMenuOpen(id: string) {
-		this.value.current = id;
+		this.opts.value.current = id;
 		this.currentTabStopId.current = id;
 	}
 
 	onMenuClose() {
-		this.value.current = "";
+		this.opts.value.current = "";
 	}
 
 	onMenuToggle(id: string) {
-		this.value.current = this.value.current ? "" : id;
+		this.opts.value.current = this.opts.value.current ? "" : id;
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "menubar",
-				[ROOT_ATTR]: "",
+				[MENUBAR_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -120,17 +106,15 @@ type MenubarMenuStateProps = ReadableBoxedValues<{
 }>;
 
 class MenubarMenuState {
-	root: MenubarRootState;
-	value: MenubarMenuStateProps["value"];
-	open = $derived.by(() => this.root.value.current === this.value.current);
+	open = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	wasOpenedByKeyboard = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 
-	constructor(props: MenubarMenuStateProps, root: MenubarRootState) {
-		this.value = props.value;
-		this.root = root;
-
+	constructor(
+		readonly opts: MenubarMenuStateProps,
+		readonly root: MenubarRootState
+	) {
 		$effect(() => {
 			if (!this.open) {
 				untrack(() => {
@@ -141,13 +125,13 @@ class MenubarMenuState {
 
 		onMountEffect(() => {
 			this.root.valueToContentId.set(
-				this.value.current,
+				this.opts.value.current,
 				box.with(() => this.contentNode?.id ?? "")
 			);
 		});
 
 		onDestroyEffect(() => {
-			this.root.valueToContentId.delete(this.value.current);
+			this.root.valueToContentId.delete(this.opts.value.current);
 		});
 	}
 
@@ -163,19 +147,14 @@ type MenubarTriggerStateProps = WithRefProps<
 >;
 
 class MenubarTriggerState {
-	id: MenubarTriggerStateProps["id"];
-	ref: MenubarTriggerStateProps["ref"];
-	disabled: MenubarTriggerStateProps["disabled"];
-	menu: MenubarMenuState;
 	root: MenubarRootState;
 	isFocused = $state(false);
 	#tabIndex = $state(0);
 
-	constructor(props: MenubarTriggerStateProps, menu: MenubarMenuState) {
-		this.disabled = props.disabled;
-		this.menu = menu;
-		this.id = props.id;
-		this.ref = props.ref;
+	constructor(
+		readonly opts: MenubarTriggerStateProps,
+		readonly menu: MenubarMenuState
+	) {
 		this.root = menu.root;
 
 		this.onpointerdown = this.onpointerdown.bind(this);
@@ -185,19 +164,18 @@ class MenubarTriggerState {
 		this.onblur = this.onblur.bind(this);
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.menu.triggerNode = node;
 			},
 		});
 
 		onMountEffect(() => {
-			this.root.registerTrigger(props.id.current);
+			this.root.registerTrigger(opts.id.current);
 		});
 
 		onDestroyEffect(() => {
-			this.root.deRegisterTrigger(props.id.current);
+			this.root.deRegisterTrigger(opts.id.current);
 		});
 
 		$effect(() => {
@@ -209,31 +187,31 @@ class MenubarTriggerState {
 
 	onpointerdown(e: BitsPointerEvent) {
 		// only call if the left button but not when the CTRL key is pressed
-		if (!this.disabled.current && e.button === 0 && e.ctrlKey === false) {
+		if (!this.opts.disabled.current && e.button === 0 && e.ctrlKey === false) {
 			// prevent trigger from focusing when opening
 			// which allows the content to focus without competition
 			if (!this.menu.open) {
 				e.preventDefault();
 			}
-			this.root.onMenuOpen(this.menu.value.current);
+			this.root.onMenuOpen(this.menu.opts.value.current);
 		}
 	}
 
 	onpointerenter(_: BitsPointerEvent) {
-		const isMenubarOpen = Boolean(this.root.value.current);
+		const isMenubarOpen = Boolean(this.root.opts.value.current);
 		if (isMenubarOpen && !this.menu.open) {
-			this.root.onMenuOpen(this.menu.value.current);
+			this.root.onMenuOpen(this.menu.opts.value.current);
 			this.menu.getTriggerNode()?.focus();
 		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (this.disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
-			this.root.onMenuToggle(this.menu.value.current);
+			this.root.onMenuToggle(this.menu.opts.value.current);
 		}
 		if (e.key === kbd.ARROW_DOWN) {
-			this.root.onMenuOpen(this.menu.value.current);
+			this.root.onMenuOpen(this.menu.opts.value.current);
 		}
 		// prevent keydown from scrolling window / first focused item
 		// from inadvertently closing the menu
@@ -258,17 +236,17 @@ class MenubarTriggerState {
 			({
 				type: "button",
 				role: "menuitem",
-				id: this.id.current,
+				id: this.opts.id.current,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.menu.open),
 				"aria-controls": this.menu.open ? this.menu.contentNode?.id : undefined,
 				"data-highlighted": this.isFocused ? "" : undefined,
 				"data-state": getDataOpenClosed(this.menu.open),
-				"data-disabled": getDataDisabled(this.disabled.current),
-				"data-menu-value": this.menu.value.current,
-				disabled: this.disabled.current ? true : undefined,
+				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-menu-value": this.menu.opts.value.current,
+				disabled: this.opts.disabled.current ? true : undefined,
 				tabIndex: this.#tabIndex,
-				[TRIGGER_ATTR]: "",
+				[MENUBAR_TRIGGER_ATTR]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onkeydown: this.onkeydown,
@@ -285,18 +263,13 @@ type MenubarContentStateProps = WithRefProps<
 >;
 
 class MenubarContentState {
-	id: MenubarContentStateProps["id"];
-	ref: MenubarContentStateProps["ref"];
-	menu: MenubarMenuState;
 	root: MenubarRootState;
 	hasInteractedOutside = $state(false);
-	interactOutsideBehavior: MenubarContentStateProps["interactOutsideBehavior"];
 
-	constructor(props: MenubarContentStateProps, menu: MenubarMenuState) {
-		this.interactOutsideBehavior = props.interactOutsideBehavior;
-		this.menu = menu;
-		this.id = props.id;
-		this.ref = props.ref;
+	constructor(
+		readonly opts: MenubarContentStateProps,
+		readonly menu: MenubarMenuState
+	) {
 		this.root = menu.root;
 
 		this.onCloseAutoFocus = this.onCloseAutoFocus.bind(this);
@@ -306,8 +279,7 @@ class MenubarContentState {
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.menu.contentNode = node;
 			},
@@ -316,7 +288,7 @@ class MenubarContentState {
 	}
 
 	onCloseAutoFocus(e: Event) {
-		const menubarOpen = Boolean(this.root.value.current);
+		const menubarOpen = Boolean(this.root.opts.value.current);
 		if (!menubarOpen && !this.hasInteractedOutside) {
 			this.menu.getTriggerNode()?.focus();
 		}
@@ -338,7 +310,7 @@ class MenubarContentState {
 	}
 
 	onOpenAutoFocus() {
-		afterTick(() => this.ref.current?.focus());
+		afterTick(() => this.opts.ref.current?.focus());
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -348,7 +320,7 @@ class MenubarContentState {
 		const targetIsSubTrigger = target.hasAttribute("data-menu-sub-trigger");
 		const isKeydownInsideSubMenu = target.closest("[data-menu-content]") !== e.currentTarget;
 
-		const prevMenuKey = this.root.dir.current === "rtl" ? kbd.ARROW_RIGHT : kbd.ARROW_LEFT;
+		const prevMenuKey = this.root.opts.dir.current === "rtl" ? kbd.ARROW_RIGHT : kbd.ARROW_LEFT;
 		const isPrevKey = prevMenuKey === e.key;
 		const isNextKey = !isPrevKey;
 
@@ -361,9 +333,9 @@ class MenubarContentState {
 		let candidateValues = items.map((item) => item.getAttribute("data-menu-value")!);
 		if (isPrevKey) candidateValues.reverse();
 
-		const currentIndex = candidateValues.indexOf(this.menu.value.current);
+		const currentIndex = candidateValues.indexOf(this.menu.opts.value.current);
 
-		candidateValues = this.root.loop.current
+		candidateValues = this.root.opts.loop.current
 			? wrapArray(candidateValues, currentIndex + 1)
 			: candidateValues.slice(currentIndex + 1);
 		const [nextValue] = candidateValues;
@@ -373,7 +345,7 @@ class MenubarContentState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				"aria-labelledby": this.menu.triggerNode?.id,
 				style: {
 					"--bits-menubar-content-transform-origin":

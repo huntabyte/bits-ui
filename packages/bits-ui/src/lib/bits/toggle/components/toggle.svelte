@@ -37,9 +37,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, pressed: toggleState.pressed.current })}
+	{@render child({ props: mergedProps, ...toggleState.snippetProps })}
 {:else}
 	<button {...mergedProps}>
-		{@render children?.({ pressed: toggleState.pressed.current })}
+		{@render children?.(toggleState.snippetProps)}
 	</button>
 {/if}

@@ -12,35 +12,22 @@ type ProgressRootStateProps = WithRefProps<
 >;
 
 class ProgressRootState {
-	#id: ProgressRootStateProps["id"];
-	#ref: ProgressRootStateProps["ref"];
-	#value: ProgressRootStateProps["value"];
-	#max: ProgressRootStateProps["max"];
-
-	constructor(props: ProgressRootStateProps) {
-		this.#value = props.value;
-		this.#max = props.max;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(readonly opts: ProgressRootStateProps) {
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
 				role: "meter",
-				value: this.#value.current,
-				max: this.#max.current,
+				value: this.opts.value.current,
+				max: this.opts.max.current,
 				"aria-valuemin": 0,
-				"aria-valuemax": this.#max.current,
-				"aria-valuenow": this.#value.current,
-				"data-value": this.#value.current,
-				"data-state": getProgressDataState(this.#value.current, this.#max.current),
-				"data-max": this.#max.current,
+				"aria-valuemax": this.opts.max.current,
+				"aria-valuenow": this.opts.value.current,
+				"data-value": this.opts.value.current,
+				"data-state": getProgressDataState(this.opts.value.current, this.opts.max.current),
+				"data-max": this.opts.max.current,
 				[ROOT_ATTR]: "",
 			}) as const
 	);

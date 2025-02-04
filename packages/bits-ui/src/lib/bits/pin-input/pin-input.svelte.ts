@@ -1,5 +1,5 @@
 import { Previous, watch } from "runed";
-import { untrack } from "svelte";
+import { onMount } from "svelte";
 import { type WritableBox, box, useRefById } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
@@ -11,9 +11,8 @@ import type {
 	BitsMouseEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { noop } from "$lib/internal/noop.js";
-import { addEventListener } from "$lib/internal/events.js";
 import { getDisabled } from "$lib/internal/attrs.js";
+import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
 export const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
@@ -70,133 +69,99 @@ const KEYS_TO_IGNORE = [
 ];
 
 class PinInputRootState {
-	#id: PinInputRootStateProps["id"];
-	#ref: PinInputRootStateProps["ref"];
-	#inputId: PinInputRootStateProps["inputId"];
 	#inputRef = box<HTMLInputElement | null>(null);
 	#isHoveringInput = $state(false);
 	#isFocused = box(false);
 	#mirrorSelectionStart = $state<number | null>(null);
 	#mirrorSelectionEnd = $state<number | null>(null);
-	#onComplete: PinInputRootStateProps["onComplete"];
-	#onPaste: PinInputRootStateProps["onPaste"];
-	value: PinInputRootStateProps["value"];
-	#previousValue = new Previous(() => this.value.current ?? "");
-	#maxLength: PinInputRootStateProps["maxLength"];
-	#disabled: PinInputRootStateProps["disabled"];
-	#pattern: PinInputRootStateProps["pattern"];
-	#textAlign: PinInputRootStateProps["textAlign"];
-	#autocomplete: PinInputRootStateProps["autocomplete"];
-	#inputmode: PinInputRootStateProps["inputmode"];
+
+	#previousValue = new Previous(() => this.opts.value.current ?? "");
+
 	#regexPattern = $derived.by(() => {
-		if (typeof this.#pattern.current === "string") {
-			return new RegExp(this.#pattern.current);
+		if (typeof this.opts.pattern.current === "string") {
+			return new RegExp(this.opts.pattern.current);
 		} else {
-			return this.#pattern.current;
+			return this.opts.pattern.current;
 		}
 	});
 	#prevInputMetadata = $state<PrevInputMetadata>({
 		prev: [null, null, "none"],
 		willSyntheticBlur: false,
 	});
-	#pushPasswordManagerStrategy: PinInputRootStateProps["pushPasswordManagerStrategy"];
 	#pwmb: ReturnType<typeof usePasswordManagerBadge>;
 	#initialLoad: InitialLoad;
 
-	constructor(props: PinInputRootStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#pushPasswordManagerStrategy = props.pushPasswordManagerStrategy;
-		this.value = props.value;
-		this.#pattern = props.pattern;
-		this.#maxLength = props.maxLength;
-		this.#onComplete = props.onComplete;
-		this.#disabled = props.disabled;
-		this.#textAlign = props.textAlign;
-		this.#autocomplete = props.autocomplete;
-		this.#inputmode = props.inputmode;
-		this.#inputId = props.inputId;
-		this.#onPaste = props.onPaste;
-
+	constructor(readonly opts: PinInputRootStateProps) {
 		this.#initialLoad = {
-			value: this.value,
+			value: this.opts.value,
 			isIOS:
 				typeof window !== "undefined" &&
 				window?.CSS?.supports("-webkit-touch-callout", "none"),
 		};
 
 		this.#pwmb = usePasswordManagerBadge({
-			containerRef: this.#ref,
+			containerRef: this.opts.ref,
 			inputRef: this.#inputRef,
 			isFocused: this.#isFocused,
-			pushPasswordManagerStrategy: this.#pushPasswordManagerStrategy,
+			pushPasswordManagerStrategy: this.opts.pushPasswordManagerStrategy,
 		});
 
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+		useRefById(opts);
 
 		useRefById({
-			id: this.#inputId,
+			id: this.opts.inputId,
 			ref: this.#inputRef,
 		});
 
-		$effect(() => {
-			let unsub = noop;
-			return untrack(() => {
-				const input = this.#inputRef.current;
-				const container = this.#ref.current;
+		onMount(() => {
+			const input = this.#inputRef.current;
+			const container = this.opts.ref.current;
 
-				if (!input || !container) return;
+			if (!input || !container) return;
 
-				if (this.#initialLoad.value.current !== input.value) {
-					this.value.current = input.value;
-				}
+			if (this.#initialLoad.value.current !== input.value) {
+				this.opts.value.current = input.value;
+			}
 
-				this.#prevInputMetadata.prev = [
-					input.selectionStart,
-					input.selectionEnd,
-					input.selectionDirection ?? "none",
-				];
+			this.#prevInputMetadata.prev = [
+				input.selectionStart,
+				input.selectionEnd,
+				input.selectionDirection ?? "none",
+			];
 
-				unsub = addEventListener(
-					document,
-					"selectionchange",
-					this.#onDocumentSelectionChange,
-					{ capture: true }
-				);
-
-				this.#onDocumentSelectionChange();
-				if (document.activeElement === input) {
-					this.#isFocused.current = true;
-				}
-
-				if (!document.getElementById("pin-input-style")) {
-					this.#applyStyles();
-				}
-
-				const updateRootHeight = () => {
-					if (container) {
-						container.style.setProperty(
-							"--bits-pin-input-root-height",
-							`${input.clientHeight}px`
-						);
-					}
-				};
-				updateRootHeight();
-
-				const resizeObserver = new ResizeObserver(updateRootHeight);
-				resizeObserver.observe(input);
-
-				return () => {
-					unsub();
-					resizeObserver.disconnect();
-				};
+			const unsub = on(document, "selectionchange", this.#onDocumentSelectionChange, {
+				capture: true,
 			});
+
+			this.#onDocumentSelectionChange();
+			if (document.activeElement === input) {
+				this.#isFocused.current = true;
+			}
+
+			if (!document.getElementById("pin-input-style")) {
+				this.#applyStyles();
+			}
+
+			const updateRootHeight = () => {
+				if (container) {
+					container.style.setProperty(
+						"--bits-pin-input-root-height",
+						`${input.clientHeight}px`
+					);
+				}
+			};
+			updateRootHeight();
+
+			const resizeObserver = new ResizeObserver(updateRootHeight);
+			resizeObserver.observe(input);
+
+			return () => {
+				unsub();
+				resizeObserver.disconnect();
+			};
 		});
 
-		watch([() => this.value.current, () => this.#inputRef.current], () => {
+		watch([() => this.opts.value.current, () => this.#inputRef.current], () => {
 			syncTimeouts(() => {
 				const input = this.#inputRef.current;
 				if (!input) return;
@@ -217,10 +182,10 @@ class PinInputRootState {
 
 		$effect(() => {
 			// invoke `onComplete` when the input is completely filled.
-			const value = this.value.current;
+			const value = this.opts.value.current;
 			const prevValue = this.#previousValue.current;
-			const maxLength = this.#maxLength.current;
-			const onComplete = this.#onComplete.current;
+			const maxLength = this.opts.maxLength.current;
+			const onComplete = this.opts.onComplete.current;
 
 			if (prevValue === undefined) return;
 			if (value !== prevValue && prevValue.length < maxLength && value.length === maxLength) {
@@ -242,7 +207,7 @@ class PinInputRootState {
 
 	#rootStyles = $derived.by(() => ({
 		position: "relative",
-		cursor: this.#disabled.current ? "default" : "text",
+		cursor: this.opts.disabled.current ? "default" : "text",
 		userSelect: "none",
 		WebkitUserSelect: "none",
 		pointerEvents: "none",
@@ -251,7 +216,7 @@ class PinInputRootState {
 	rootProps = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				[ROOT_ATTR]: "",
 				style: this.#rootStyles,
 			}) as const
@@ -279,7 +244,7 @@ class PinInputRootState {
 			: undefined,
 		height: "100%",
 		display: "flex",
-		textAlign: this.#textAlign.current,
+		textAlign: this.opts.textAlign.current,
 		opacity: "1",
 		color: "transparent",
 		pointerEvents: "all",
@@ -328,7 +293,7 @@ class PinInputRootState {
 
 	#onDocumentSelectionChange = () => {
 		const input = this.#inputRef.current;
-		const container = this.#ref.current;
+		const container = this.opts.ref.current;
 		if (!input || !container) return;
 
 		if (document.activeElement !== input) {
@@ -391,7 +356,7 @@ class PinInputRootState {
 	};
 
 	oninput = (e: BitsEvent<Event, HTMLInputElement>) => {
-		const newValue = e.currentTarget.value.slice(0, this.#maxLength.current);
+		const newValue = e.currentTarget.value.slice(0, this.opts.maxLength.current);
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			e.preventDefault();
 			return;
@@ -408,13 +373,13 @@ class PinInputRootState {
 			// a value with smaller length, which is not ideal for performance.
 			document.dispatchEvent(new Event("selectionchange"));
 		}
-		this.value.current = newValue;
+		this.opts.value.current = newValue;
 	};
 
 	onfocus = (_: BitsFocusEvent<HTMLInputElement>) => {
 		const input = this.#inputRef.current;
 		if (input) {
-			const start = Math.min(input.value.length, this.#maxLength.current - 1);
+			const start = Math.min(input.value.length, this.opts.maxLength.current - 1);
 			const end = input.value.length;
 			input.setSelectionRange(start, end);
 			this.#mirrorSelectionStart = start;
@@ -427,12 +392,15 @@ class PinInputRootState {
 		const input = this.#inputRef.current;
 		if (!input) return;
 
-		if (!this.#onPaste?.current && (!this.#initialLoad.isIOS || !e.clipboardData || !input)) {
+		if (
+			!this.opts.onPaste?.current &&
+			(!this.#initialLoad.isIOS || !e.clipboardData || !input)
+		) {
 			return;
 		}
 
 		const _content = e.clipboardData?.getData("text/plain") ?? "";
-		const content = this.#onPaste?.current ? this.#onPaste.current(_content) : _content;
+		const content = this.opts.onPaste?.current ? this.opts.onPaste.current(_content) : _content;
 		e.preventDefault();
 
 		const start = input.selectionStart === null ? undefined : input.selectionStart;
@@ -440,21 +408,21 @@ class PinInputRootState {
 
 		const isReplacing = start !== end;
 
-		const initNewVal = this.value.current;
+		const initNewVal = this.opts.value.current;
 
 		const newValueUncapped = isReplacing
 			? initNewVal.slice(0, start) + content + initNewVal.slice(end)
 			: initNewVal.slice(0, start) + content + initNewVal.slice(start);
-		const newValue = newValueUncapped.slice(0, this.#maxLength.current);
+		const newValue = newValueUncapped.slice(0, this.opts.maxLength.current);
 
 		if (newValue.length > 0 && this.#regexPattern && !this.#regexPattern.test(newValue)) {
 			return;
 		}
 
 		input.value = newValue;
-		this.value.current = newValue;
+		this.opts.value.current = newValue;
 
-		const selStart = Math.min(newValue.length, this.#maxLength.current - 1);
+		const selStart = Math.min(newValue.length, this.opts.maxLength.current - 1);
 		const selEnd = newValue.length;
 
 		input.setSelectionRange(selStart, selEnd);
@@ -479,17 +447,17 @@ class PinInputRootState {
 	};
 
 	inputProps = $derived.by(() => ({
-		id: this.#inputId.current,
+		id: this.opts.inputId.current,
 		style: this.#inputStyle,
-		autocomplete: this.#autocomplete.current || "one-time-code",
+		autocomplete: this.opts.autocomplete.current || "one-time-code",
 		"data-pin-input-input": "",
 		"data-pin-input-input-mss": this.#mirrorSelectionStart,
 		"data-pin-input-input-mse": this.#mirrorSelectionEnd,
-		inputmode: this.#inputmode.current,
+		inputmode: this.opts.inputmode.current,
 		// pattern: this.#regexPattern?.source,
-		maxlength: this.#maxLength.current,
-		value: this.value.current,
-		disabled: getDisabled(this.#disabled.current),
+		maxlength: this.opts.maxLength.current,
+		value: this.opts.value.current,
+		disabled: getDisabled(this.opts.disabled.current),
 		//
 		onpaste: this.onpaste,
 		oninput: this.oninput,
@@ -501,7 +469,7 @@ class PinInputRootState {
 	}));
 
 	#cells = $derived.by(() =>
-		Array.from({ length: this.#maxLength.current }).map((_, idx) => {
+		Array.from({ length: this.opts.maxLength.current }).map((_, idx) => {
 			const isActive =
 				this.#isFocused.current &&
 				this.#mirrorSelectionStart !== null &&
@@ -510,7 +478,8 @@ class PinInputRootState {
 					idx === this.#mirrorSelectionStart) ||
 					(idx >= this.#mirrorSelectionStart && idx < this.#mirrorSelectionEnd));
 
-			const char = this.value.current[idx] !== undefined ? this.value.current[idx] : null;
+			const char =
+				this.opts.value.current[idx] !== undefined ? this.opts.value.current[idx] : null;
 
 			return {
 				char,
@@ -533,28 +502,20 @@ type PinInputCellStateProps = WithRefProps &
 	}>;
 
 class PinInputCellState {
-	#id: PinInputCellStateProps["id"];
-	#ref: PinInputCellStateProps["ref"];
-	#cell: PinInputCellStateProps["cell"];
-
-	constructor(props: PinInputCellStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#cell = props.cell;
-
+	constructor(readonly opts: PinInputCellStateProps) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				[CELL_ATTR]: "",
-				"data-active": this.#cell.current.isActive ? "" : undefined,
-				"data-inactive": !this.#cell.current.isActive ? "" : undefined,
+				"data-active": this.opts.cell.current.isActive ? "" : undefined,
+				"data-inactive": !this.opts.cell.current.isActive ? "" : undefined,
 			}) as const
 	);
 }

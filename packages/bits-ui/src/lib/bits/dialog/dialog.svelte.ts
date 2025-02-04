@@ -33,8 +33,6 @@ type DialogRootStateProps = WritableBoxedValues<{
 	}>;
 
 class DialogRootState {
-	open: DialogRootStateProps["open"];
-	variant: DialogRootStateProps["variant"];
 	triggerNode = $state<HTMLElement | null>(null);
 	titleNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -44,29 +42,27 @@ class DialogRootState {
 	triggerId = $state<string | undefined>(undefined);
 	descriptionId = $state<string | undefined>(undefined);
 	cancelNode = $state<HTMLElement | null>(null);
-	attrs = $derived.by(() => createAttrs(this.variant.current));
+	attrs = $derived.by(() => createAttrs(this.opts.variant.current));
 
-	constructor(props: DialogRootStateProps) {
-		this.open = props.open;
-		this.variant = props.variant;
+	constructor(readonly opts: DialogRootStateProps) {
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 	}
 
 	handleOpen() {
-		if (this.open.current) return;
-		this.open.current = true;
+		if (this.opts.open.current) return;
+		this.opts.open.current = true;
 	}
 
 	handleClose() {
-		if (!this.open.current) return;
-		this.open.current = false;
+		if (!this.opts.open.current) return;
+		this.opts.open.current = false;
 	}
 
 	sharedProps = $derived.by(
 		() =>
 			({
-				"data-state": getDataOpenClosed(this.open.current),
+				"data-state": getDataOpenClosed(this.opts.open.current),
 			}) as const
 	);
 }
@@ -74,27 +70,19 @@ class DialogRootState {
 type DialogTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
 
 class DialogTriggerState {
-	#id: DialogTriggerStateProps["id"];
-	#ref: DialogTriggerStateProps["ref"];
-	#root: DialogRootState;
-	#disabled: DialogTriggerStateProps["disabled"];
-
-	constructor(props: DialogTriggerStateProps, root: DialogRootState) {
-		this.#id = props.id;
-		this.#root = root;
-		this.#ref = props.ref;
-		this.#disabled = props.disabled;
-
+	constructor(
+		readonly opts: DialogTriggerStateProps,
+		readonly root: DialogRootState
+	) {
 		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
-				this.#root.triggerNode = node;
-				this.#root.triggerId = node?.id;
+				this.root.triggerNode = node;
+				this.root.triggerId = node?.id;
 			},
 		});
 
@@ -104,13 +92,13 @@ class DialogTriggerState {
 	}
 
 	onclick(e: BitsMouseEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
-		this.#root.handleOpen();
+		this.root.handleOpen();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
 		// by default, it will attempt to focus this trigger on pointerdown
 		// since this also opens the dialog we want to prevent that behavior
@@ -118,26 +106,26 @@ class DialogTriggerState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.#root.handleOpen();
+			this.root.handleOpen();
 		}
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.#root.open.current),
-				"aria-controls": this.#root.contentId,
-				[this.#root.attrs.trigger]: "",
+				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-controls": this.root.contentId,
+				[this.root.attrs.trigger]: "",
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
-				disabled: this.#disabled.current ? true : undefined,
-				...this.#root.sharedProps,
+				disabled: this.opts.disabled.current ? true : undefined,
+				...this.root.sharedProps,
 			}) as const
 	);
 }
@@ -148,53 +136,44 @@ type DialogCloseStateProps = WithRefProps &
 		disabled: boolean;
 	}>;
 class DialogCloseState {
-	#id: DialogCloseStateProps["id"];
-	#ref: DialogCloseStateProps["ref"];
-	#root: DialogRootState;
-	#variant: DialogCloseStateProps["variant"];
-	#disabled: DialogCloseStateProps["disabled"];
-	#attr = $derived.by(() => this.#root.attrs[this.#variant.current]);
+	#attr = $derived.by(() => this.root.attrs[this.opts.variant.current]);
 
-	constructor(props: DialogCloseStateProps, root: DialogRootState) {
-		this.#root = root;
-		this.#ref = props.ref;
-		this.#id = props.id;
-		this.#variant = props.variant;
-		this.#disabled = props.disabled;
-
+	constructor(
+		readonly opts: DialogCloseStateProps,
+		readonly root: DialogRootState
+	) {
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.#root.open.current,
+			...opts,
+			deps: () => this.root.opts.open.current,
 		});
 	}
 
 	onclick(e: BitsMouseEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
-		this.#root.handleClose();
+		this.root.handleClose();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.#root.handleClose();
+			this.root.handleClose();
 		}
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				[this.#attr]: "",
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				disabled: this.#disabled.current ? true : undefined,
-				...this.#root.sharedProps,
+				disabled: this.opts.disabled.current ? true : undefined,
+				...this.root.sharedProps,
 			}) as const
 	);
 }
@@ -202,28 +181,21 @@ class DialogCloseState {
 type DialogActionStateProps = WithRefProps;
 
 class DialogActionState {
-	#id: DialogActionStateProps["id"];
-	#ref: DialogActionStateProps["ref"];
-	#root: DialogRootState;
-	#attr = $derived.by(() => this.#root.attrs.action);
+	#attr = $derived.by(() => this.root.attrs.action);
 
-	constructor(props: DialogActionStateProps, root: DialogRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#root = root;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(
+		readonly opts: DialogActionStateProps,
+		readonly root: DialogRootState
+	) {
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				[this.#attr]: "",
-				...this.#root.sharedProps,
+				...this.root.sharedProps,
 			}) as const
 	);
 }
@@ -234,36 +206,28 @@ type DialogTitleStateProps = WithRefProps<
 	}>
 >;
 class DialogTitleState {
-	#id: DialogTitleStateProps["id"];
-	#ref: DialogTitleStateProps["ref"];
-	#root: DialogRootState;
-	#level: DialogTitleStateProps["level"];
-
-	constructor(props: DialogTitleStateProps, root: DialogRootState) {
-		this.#id = props.id;
-		this.#root = root;
-		this.#ref = props.ref;
-		this.#level = props.level;
-
+	constructor(
+		readonly opts: DialogTitleStateProps,
+		readonly root: DialogRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
-				this.#root.titleNode = node;
-				this.#root.titleId = node?.id;
+				this.root.titleNode = node;
+				this.root.titleId = node?.id;
 			},
-			deps: () => this.#root.open.current,
+			deps: () => this.root.opts.open.current,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "heading",
-				"aria-level": this.#level.current,
-				[this.#root.attrs.title]: "",
-				...this.#root.sharedProps,
+				"aria-level": this.opts.level.current,
+				[this.root.attrs.title]: "",
+				...this.root.sharedProps,
 			}) as const
 	);
 }
@@ -271,22 +235,16 @@ class DialogTitleState {
 type DialogDescriptionStateProps = WithRefProps;
 
 class DialogDescriptionState {
-	#id: DialogDescriptionStateProps["id"];
-	#ref: DialogDescriptionStateProps["ref"];
-	#root: DialogRootState;
-
-	constructor(props: DialogDescriptionStateProps, root: DialogRootState) {
-		this.#id = props.id;
-		this.#root = root;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: DialogDescriptionStateProps,
+		readonly root: DialogRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.#root.open.current,
+			...opts,
+			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
-				this.#root.descriptionNode = node;
-				this.#root.descriptionId = node?.id;
+				this.root.descriptionNode = node;
+				this.root.descriptionId = node?.id;
 			},
 		});
 	}
@@ -294,9 +252,9 @@ class DialogDescriptionState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				[this.#root.attrs.description]: "",
-				...this.#root.sharedProps,
+				id: this.opts.id.current,
+				[this.root.attrs.description]: "",
+				...this.root.sharedProps,
 			}) as const
 	);
 }
@@ -304,19 +262,13 @@ class DialogDescriptionState {
 type DialogContentStateProps = WithRefProps;
 
 class DialogContentState {
-	#id: DialogContentStateProps["id"];
-	#ref: DialogContentStateProps["ref"];
-	root: DialogRootState;
-
-	constructor(props: DialogContentStateProps, root: DialogRootState) {
-		this.#id = props.id;
-		this.root = root;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: DialogContentStateProps,
+		readonly root: DialogRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.root.open.current,
+			...opts,
+			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 				this.root.contentId = node?.id;
@@ -324,13 +276,13 @@ class DialogContentState {
 		});
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				role: this.root.variant.current === "alert-dialog" ? "alertdialog" : "dialog",
+				id: this.opts.id.current,
+				role: this.root.opts.variant.current === "alert-dialog" ? "alertdialog" : "dialog",
 				"aria-describedby": this.root.descriptionId,
 				"aria-labelledby": this.root.titleId,
 				[this.root.attrs.content]: "",
@@ -345,28 +297,22 @@ class DialogContentState {
 type DialogOverlayStateProps = WithRefProps;
 
 class DialogOverlayState {
-	#id: DialogOverlayStateProps["id"];
-	#ref: DialogOverlayStateProps["ref"];
-	root: DialogRootState;
-
-	constructor(props: DialogOverlayStateProps, root: DialogRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.root = root;
-
+	constructor(
+		readonly opts: DialogOverlayStateProps,
+		readonly root: DialogRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.root.open.current,
+			...opts,
+			deps: () => this.root.opts.open.current,
 		});
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				[this.root.attrs.overlay]: "",
 				style: {
 					pointerEvents: "auto",
@@ -382,51 +328,44 @@ type AlertDialogCancelStateProps = WithRefProps &
 	}>;
 
 class AlertDialogCancelState {
-	#id: AlertDialogCancelStateProps["id"];
-	#ref: AlertDialogCancelStateProps["ref"];
-	#root: DialogRootState;
-	#disabled: AlertDialogCancelStateProps["disabled"];
-
-	constructor(props: AlertDialogCancelStateProps, root: DialogRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#root = root;
-		this.#disabled = props.disabled;
+	constructor(
+		readonly opts: AlertDialogCancelStateProps,
+		readonly root: DialogRootState
+	) {
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.#root.open.current,
+			...opts,
+			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
-				this.#root.cancelNode = node;
+				this.root.cancelNode = node;
 			},
 		});
 	}
 
 	onclick(e: BitsMouseEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
-		this.#root.handleClose();
+		this.root.handleClose();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.#root.handleClose();
+			this.root.handleClose();
 		}
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				[this.#root.attrs.cancel]: "",
+				id: this.opts.id.current,
+				[this.root.attrs.cancel]: "",
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...this.#root.sharedProps,
+				...this.root.sharedProps,
 			}) as const
 	);
 }

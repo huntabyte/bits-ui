@@ -44,10 +44,10 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked: rootState.checked.current })}
+	{@render child({ props: mergedProps, ...rootState.snippetProps })}
 {:else}
 	<button {...mergedProps}>
-		{@render children?.({ checked: rootState.checked.current })}
+		{@render children?.(rootState.snippetProps)}
 	</button>
 {/if}
 

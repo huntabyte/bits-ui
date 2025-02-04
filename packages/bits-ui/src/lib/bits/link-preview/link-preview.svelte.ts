@@ -8,8 +8,8 @@ import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/intern
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 
-const CONTENT_ATTR = "data-link-preview-content";
-const TRIGGER_ATTR = "data-link-preview-trigger";
+const LINK_PREVIEW_CONTENT_ATTR = "data-link-preview-content";
+const LINK_PREVIEW_TRIGGER_ATTR = "data-link-preview-trigger";
 
 type LinkPreviewRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -20,9 +20,6 @@ type LinkPreviewRootStateProps = WritableBoxedValues<{
 	}>;
 
 class LinkPreviewRootState {
-	open: LinkPreviewRootStateProps["open"];
-	openDelay: LinkPreviewRootStateProps["openDelay"];
-	closeDelay: LinkPreviewRootStateProps["closeDelay"];
 	hasSelection = $state(false);
 	isPointerDownOnContent = $state(false);
 	containsSelection = $state(false);
@@ -31,15 +28,11 @@ class LinkPreviewRootState {
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isPointerInTransit = box(false);
-	isOpening = $state(false);
+	isOpening = false;
 
-	constructor(props: LinkPreviewRootStateProps) {
-		this.open = props.open;
-		this.openDelay = props.openDelay;
-		this.closeDelay = props.closeDelay;
-
+	constructor(readonly opts: LinkPreviewRootStateProps) {
 		watch(
-			() => this.open.current,
+			() => this.opts.open.current,
 			(isOpen) => {
 				if (!isOpen) {
 					this.hasSelection = false;
@@ -88,20 +81,20 @@ class LinkPreviewRootState {
 
 	handleOpen() {
 		this.clearTimeout();
-		if (this.open.current) return;
+		if (this.opts.open.current) return;
 		this.isOpening = true;
 		this.timeout = window.setTimeout(() => {
 			if (this.isOpening) {
-				this.open.current = true;
+				this.opts.open.current = true;
 				this.isOpening = false;
 			}
-		}, this.openDelay.current);
+		}, this.opts.openDelay.current);
 	}
 
 	immediateClose() {
 		this.clearTimeout();
 		this.isOpening = false;
-		this.open.current = false;
+		this.opts.open.current = false;
 	}
 
 	handleClose() {
@@ -110,8 +103,8 @@ class LinkPreviewRootState {
 
 		if (!this.isPointerDownOnContent && !this.hasSelection) {
 			this.timeout = window.setTimeout(() => {
-				this.open.current = false;
-			}, this.closeDelay.current);
+				this.opts.open.current = false;
+			}, this.opts.closeDelay.current);
 		}
 	}
 }
@@ -119,60 +112,54 @@ class LinkPreviewRootState {
 type LinkPreviewTriggerStateProps = WithRefProps;
 
 class LinkPreviewTriggerState {
-	#id: LinkPreviewTriggerStateProps["id"];
-	#ref: LinkPreviewTriggerStateProps["ref"];
-	#root: LinkPreviewRootState;
-
-	constructor(props: LinkPreviewTriggerStateProps, root: LinkPreviewRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#root = root;
-
+	constructor(
+		readonly opts: LinkPreviewTriggerStateProps,
+		readonly root: LinkPreviewRootState
+	) {
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
 		this.onblur = this.onblur.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
-				this.#root.triggerNode = node;
+				this.root.triggerNode = node;
 			},
 		});
 	}
 
 	onpointerenter(e: BitsPointerEvent) {
 		if (isTouch(e)) return;
-		this.#root.handleOpen();
+		this.root.handleOpen();
 	}
 
 	onpointerleave(e: BitsPointerEvent) {
 		if (isTouch(e)) return;
-		if (!this.#root.contentMounted) {
-			this.#root.immediateClose();
+		if (!this.root.contentMounted) {
+			this.root.immediateClose();
 		}
 	}
 
 	onfocus(e: BitsFocusEvent) {
 		if (!isFocusVisible(e.currentTarget)) return;
-		this.#root.handleOpen();
+		this.root.handleOpen();
 	}
 
 	onblur(_: BitsFocusEvent) {
-		this.#root.handleClose();
+		this.root.handleClose();
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.#root.open.current),
-				"data-state": getDataOpenClosed(this.#root.open.current),
-				"aria-controls": this.#root.contentNode?.id,
+				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				"aria-controls": this.root.contentNode?.id,
 				role: "button",
-				[TRIGGER_ATTR]: "",
+				[LINK_PREVIEW_TRIGGER_ATTR]: "",
 				onpointerenter: this.onpointerenter,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
@@ -184,35 +171,29 @@ class LinkPreviewTriggerState {
 type LinkPreviewContentStateProps = WithRefProps;
 
 class LinkPreviewContentState {
-	#id: LinkPreviewContentStateProps["id"];
-	#ref: LinkPreviewContentStateProps["ref"];
-	root: LinkPreviewRootState;
-
-	constructor(props: LinkPreviewContentStateProps, root: LinkPreviewRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.root = root;
-
+	constructor(
+		readonly opts: LinkPreviewContentStateProps,
+		readonly root: LinkPreviewRootState
+	) {
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			deps: () => this.root.open.current,
+			deps: () => this.root.opts.open.current,
 		});
 
 		watch(
-			() => this.root.open.current,
+			() => this.root.opts.open.current,
 			(isOpen) => {
 				if (!isOpen) return;
 				const { isPointerInTransit, onPointerExit } = useGraceArea(
 					() => this.root.triggerNode,
-					() => this.#ref.current
+					() => this.opts.ref.current
 				);
 
 				this.root.isPointerInTransit = isPointerInTransit;
@@ -248,15 +229,15 @@ class LinkPreviewContentState {
 		e.preventDefault();
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				tabindex: -1,
-				"data-state": getDataOpenClosed(this.root.open.current),
-				[CONTENT_ATTR]: "",
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				[LINK_PREVIEW_CONTENT_ATTR]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onfocusout: this.onfocusout,

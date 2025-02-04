@@ -36,23 +36,23 @@ const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
 	"NavigationMenu.Content"
 );
 
-const ROOT_ATTR = "data-navigation-menu-root";
-const SUB_ATTR = "data-navigation-menu-sub";
-const ITEM_ATTR = "data-navigation-menu-item";
-const INDICATOR_ATTR = "data-navigation-menu-indicator";
-const LIST_ATTR = "data-navigation-menu-list";
-const TRIGGER_ATTR = "data-navigation-menu-trigger";
-const CONTENT_ATTR = "data-navigation-menu-content";
-const LINK_ATTR = "data-navigation-menu-link";
+const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
+const NAVIGATION_MENU_SUB_ATTR = "data-navigation-menu-sub";
+const NAVIGATION_MENU_ITEM_ATTR = "data-navigation-menu-item";
+const NAVIGATION_MENU_INDICATOR_ATTR = "data-navigation-menu-indicator";
+const NAVIGATION_MENU_LIST_ATTR = "data-navigation-menu-list";
+const NAVIGATION_MENU_TRIGGER_ATTR = "data-navigation-menu-trigger";
+const NAVIGATION_MENU_CONTENT_ATTR = "data-navigation-menu-content";
+const NAVIGATION_MENU_LINK_ATTR = "data-navigation-menu-link";
 
-type NavigationMenuRootStateProps = ReadableBoxedValues<{
-	id: string;
-	delayDuration: number;
-	skipDelayDuration: number;
-	orientation: Orientation;
-	dir: Direction;
-}> &
-	WritableBoxedValues<{ value: string; ref: HTMLElement | null }>;
+type NavigationMenuRootStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		delayDuration: number;
+		skipDelayDuration: number;
+		orientation: Orientation;
+		dir: Direction;
+	}> &
+	WritableBoxedValues<{ value: string }>;
 
 class NavigationMenuRootState {
 	id: NavigationMenuRootStateProps["id"];
@@ -189,7 +189,7 @@ class NavigationMenuRootState {
 				"aria-label": "Main",
 				"data-orientation": getDataOrientation(this.orientation.current),
 				dir: this.dir.current,
-				[ROOT_ATTR]: "",
+				[NAVIGATION_MENU_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -262,13 +262,12 @@ class NavigationMenuMenuState {
 	}
 }
 
-type NavigationMenuSubStateProps = ReadableBoxedValues<{
-	id: string;
-	orientation: Orientation;
-}> &
+type NavigationMenuSubStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		orientation: Orientation;
+	}> &
 	WritableBoxedValues<{
 		value: string;
-		ref: HTMLElement | null;
 	}>;
 
 class NavigationMenuSubState {
@@ -331,16 +330,13 @@ class NavigationMenuSubState {
 			({
 				id: this.id.current,
 				"data-orientation": getDataOrientation(this.orientation.current),
-				[SUB_ATTR]: "",
+				[NAVIGATION_MENU_SUB_ATTR]: "",
 			}) as const
 	);
 }
 
-type NavigationMenuListStateProps = ReadableBoxedValues<{
-	id: string;
-}> &
+type NavigationMenuListStateProps = WithRefProps &
 	WritableBoxedValues<{
-		ref: HTMLElement | null;
 		indicatorTrackRef: HTMLElement | null;
 	}>;
 
@@ -360,8 +356,8 @@ class NavigationMenuListState {
 		this.indicatorTrackRef = props.indicatorTrackRef;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.#id,
-			candidateAttr: TRIGGER_ATTR,
-			candidateSelector: `:is([${TRIGGER_ATTR}], [data-list-link]):not([data-disabled])`,
+			candidateAttr: NAVIGATION_MENU_TRIGGER_ATTR,
+			candidateSelector: `:is([${NAVIGATION_MENU_TRIGGER_ATTR}], [data-list-link]):not([data-disabled])`,
 			loop: box.with(() => false),
 			orientation: this.menu.orientation,
 		});
@@ -396,7 +392,7 @@ class NavigationMenuListState {
 			({
 				id: this.#id.current,
 				"data-orientation": getDataOrientation(this.menu.orientation.current),
-				[LIST_ATTR]: "",
+				[NAVIGATION_MENU_LIST_ATTR]: "",
 			}) as const
 	);
 }
@@ -471,24 +467,19 @@ class NavigationMenuItemState {
 		() =>
 			({
 				id: this.id.current,
-				[ITEM_ATTR]: "",
+				[NAVIGATION_MENU_ITEM_ATTR]: "",
 			}) as const
 	);
 }
 
-type NavigationMenuTriggerStateProps = ReadableBoxedValues<{
-	id: string;
-	disabled: boolean;
-	focusProxyMounted: boolean;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
+type NavigationMenuTriggerStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		disabled: boolean;
 	}>;
-
 class NavigationMenuTriggerState {
 	#id: NavigationMenuTriggerStateProps["id"];
 	#ref: NavigationMenuTriggerStateProps["ref"];
-	focusProxyMounted: NavigationMenuTriggerStateProps["focusProxyMounted"];
+	focusProxyMounted = $state(false);
 	menu: NavigationMenuMenuState | NavigationMenuSubState;
 	item: NavigationMenuItemState;
 	disabled: NavigationMenuTriggerStateProps["disabled"];
@@ -502,7 +493,6 @@ class NavigationMenuTriggerState {
 		this.item = item;
 		this.menu = item.menu;
 		this.disabled = props.disabled;
-		this.focusProxyMounted = props.focusProxyMounted;
 
 		useRefById({
 			id: this.#id,
@@ -518,7 +508,7 @@ class NavigationMenuTriggerState {
 			onRefChange: (node) => {
 				this.item.focusProxyNode = node;
 			},
-			deps: () => this.focusProxyMounted.current,
+			deps: () => this.focusProxyMounted,
 		});
 
 		$effect(() => {
@@ -600,7 +590,7 @@ class NavigationMenuTriggerState {
 				onpointerleave: this.onpointerleave,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				[TRIGGER_ATTR]: "",
+				[NAVIGATION_MENU_TRIGGER_ATTR]: "",
 			}) as const
 	);
 
@@ -689,12 +679,7 @@ class NavigationMenuLinkState {
 	);
 }
 
-type NavigationMenuIndicatorStateProps = ReadableBoxedValues<{
-	id: string;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
+type NavigationMenuIndicatorStateProps = WithRefProps;
 
 class NavigationMenuIndicatorState {
 	id: NavigationMenuIndicatorStateProps["id"];
@@ -773,18 +758,15 @@ class NavigationMenuIndicatorState {
 									: undefined,
 							}),
 				},
-				[INDICATOR_ATTR]: "",
+				[NAVIGATION_MENU_INDICATOR_ATTR]: "",
 			}) as const
 	);
 }
 
-type NavigationMenuContentStateProps = ReadableBoxedValues<{
-	id: string;
-	forceMount: boolean;
-	isMounted: boolean;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
+type NavigationMenuContentStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		forceMount: boolean;
+		isMounted: boolean;
 	}>;
 
 type MotionAttribute = "to-start" | "to-end" | "from-start" | "from-end";
@@ -928,7 +910,7 @@ class NavigationMenuContentState {
 			undefined,
 			{
 				itemsArray: candidates,
-				attributeName: `[${LINK_ATTR}]`,
+				attributeName: `[${NAVIGATION_MENU_LINK_ATTR}]`,
 				loop: false,
 				enableIgnoredElement: true,
 			}
@@ -947,7 +929,7 @@ class NavigationMenuContentState {
 					this.menu.value.current === this.item.value.current
 				),
 				"data-orientation": getDataOrientation(this.menu.orientation.current),
-				[CONTENT_ATTR]: "",
+				[NAVIGATION_MENU_CONTENT_ATTR]: "",
 				style: {
 					pointerEvents: !this.open && this.menu.isRoot ? "none" : undefined,
 				},
@@ -956,12 +938,7 @@ class NavigationMenuContentState {
 	);
 }
 
-type NavigationMenuViewportStateProps = ReadableBoxedValues<{
-	id: string;
-}> &
-	WritableBoxedValues<{
-		ref: HTMLElement | null;
-	}>;
+type NavigationMenuViewportStateProps = WithRefProps;
 
 class NavigationMenuViewportState {
 	id: NavigationMenuViewportStateProps["id"];

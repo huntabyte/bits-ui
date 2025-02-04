@@ -1,4 +1,3 @@
-import { untrack } from "svelte";
 import {
 	type ReadableBox,
 	type WritableBox,
@@ -38,29 +37,24 @@ export class DismissibleLayerState {
 	#isResponsibleLayer = false;
 	node: WritableBox<HTMLElement | null> = box(null);
 	#documentObj = undefined as unknown as Document;
-	#enabled: ReadableBox<boolean>;
 	#isFocusInsideDOMTree = $state(false);
 	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
 	currNode = $state<HTMLElement | null>(null);
-	#isValidEventProp: DismissibleLayerStateProps["isValidEvent"];
 	#unsubClickListener = noop;
 
-	constructor(props: DismissibleLayerStateProps) {
-		this.#enabled = props.enabled;
-		this.#isValidEventProp = props.isValidEvent;
-
+	constructor(readonly opts: DismissibleLayerStateProps) {
 		useRefById({
-			id: props.id,
+			id: opts.id,
 			ref: this.node,
-			deps: () => this.#enabled.current,
+			deps: () => opts.enabled.current,
 			onRefChange: (node) => {
 				this.currNode = node;
 			},
 		});
 
-		this.#behaviorType = props.interactOutsideBehavior;
-		this.#interactOutsideProp = props.onInteractOutside;
-		this.#onFocusOutside = props.onFocusOutside;
+		this.#behaviorType = opts.interactOutsideBehavior;
+		this.#interactOutsideProp = opts.onInteractOutside;
+		this.#onFocusOutside = opts.onFocusOutside;
 
 		$effect(() => {
 			this.#documentObj = getOwnerDocument(this.currNode);
@@ -75,14 +69,11 @@ export class DismissibleLayerState {
 			unsubEvents();
 		};
 
-		watch([() => this.#enabled.current, () => this.currNode], ([enabled, currNode]) => {
+		watch([() => this.opts.enabled.current, () => this.currNode], ([enabled, currNode]) => {
 			if (!enabled || !currNode) return;
 			afterSleep(1, () => {
 				if (!this.currNode) return;
-				globalThis.bitsDismissableLayers.set(
-					this,
-					untrack(() => this.#behaviorType)
-				);
+				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
 
 				unsubEvents();
 				unsubEvents = this.#addEventListeners();
@@ -159,7 +150,7 @@ export class DismissibleLayerState {
 			return;
 		}
 		const isEventValid =
-			this.#isValidEventProp.current(e, this.currNode) || isValidEvent(e, this.currNode);
+			this.opts.isValidEvent.current(e, this.currNode) || isValidEvent(e, this.currNode);
 
 		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			this.#unsubClickListener();

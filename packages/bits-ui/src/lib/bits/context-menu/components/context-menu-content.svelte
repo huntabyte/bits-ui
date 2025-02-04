@@ -24,8 +24,6 @@
 		...restProps
 	}: ContextMenuContentProps = $props();
 
-	let isMounted = $state(false);
-
 	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
@@ -33,7 +31,6 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -69,7 +66,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		enabled={contentState.parentMenu.open.current}
+		enabled={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -91,7 +88,7 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
@@ -100,7 +97,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		present={contentState.parentMenu.open.current}
+		present={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -122,7 +119,7 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

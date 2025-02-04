@@ -12,7 +12,7 @@
 		Boolean(scrollAreaState.scrollbarXNode && scrollAreaState.scrollbarYNode)
 	);
 	const hasCorner = $derived(
-		scrollAreaState.type.current !== "scroll" && hasBothScrollbarsVisible
+		scrollAreaState.opts.type.current !== "scroll" && hasBothScrollbarsVisible
 	);
 </script>
 
