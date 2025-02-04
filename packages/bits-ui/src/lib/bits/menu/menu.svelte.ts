@@ -33,7 +33,7 @@ import {
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
+import { useGraceArea } from "$lib/internal/use-grace-area-2.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -85,9 +85,9 @@ class MenuMenuState {
 	) {
 		if (parentMenu) {
 			watch(
-				() => parentMenu.opts.open,
-				(isOpen) => {
-					if (isOpen) return;
+				() => parentMenu.opts.open.current,
+				() => {
+					if (parentMenu.opts.open.current) return;
 					this.opts.open.current = false;
 				}
 			);
@@ -131,25 +131,6 @@ class MenuContentState {
 		this.onfocus = this.onfocus.bind(this);
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 
-		this.graceArea = useGraceArea(
-			() => parentMenu.triggerNode,
-			() => opts.ref.current,
-			{
-				getEnabled: () =>
-					parentMenu.opts.open.current &&
-					Boolean(
-						parentMenu.triggerNode?.hasAttribute(parentMenu.root.getAttr("sub-trigger"))
-					),
-				onPointerExit: () => {
-					if (this.graceArea.isPointerInTransit.current) {
-						return;
-					} else {
-						this.parentMenu.onClose();
-					}
-				},
-			}
-		);
-
 		useRefById({
 			...opts,
 			deps: () => this.parentMenu.opts.open.current,
@@ -157,6 +138,21 @@ class MenuContentState {
 				if (this.parentMenu.contentNode !== node) {
 					this.parentMenu.contentNode = node;
 				}
+			},
+		});
+
+		this.graceArea = useGraceArea({
+			contentNode: () => this.parentMenu.contentNode,
+			triggerNode: () => this.parentMenu.triggerNode,
+			enabled: () =>
+				this.parentMenu.opts.open.current &&
+				Boolean(
+					this.parentMenu.triggerNode?.hasAttribute(
+						this.parentMenu.root.getAttr("sub-trigger")
+					)
+				),
+			onPointerExit: () => {
+				// this.parentMenu.opts.open.current = false;
 			},
 		});
 
@@ -187,10 +183,6 @@ class MenuContentState {
 				window.clearTimeout(this.#timer);
 			}
 		});
-
-		$effect(() => {
-			console.log("pointer in transit", this.graceArea.isPointerInTransit.current);
-		});
 	}
 
 	#getCandidateNodes() {
@@ -205,8 +197,7 @@ class MenuContentState {
 	}
 
 	#isPointerMovingToSubmenu(_: BitsPointerEvent) {
-		const result = this.graceArea.isPointerInTransit.current;
-		console.log("result", result);
+		const result = this.graceArea.isPointerInTransit;
 		return result;
 		// const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
 		// return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
@@ -274,8 +265,8 @@ class MenuContentState {
 	}
 
 	onItemLeave(e: BitsPointerEvent) {
+		if (e.currentTarget.hasAttribute(this.parentMenu.root.getAttr("sub-trigger"))) return;
 		if (this.#isPointerMovingToSubmenu(e)) return;
-		console.log("focusing content node");
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
@@ -500,7 +491,7 @@ class MenuSubTriggerState {
 		});
 
 		useRefById({
-			...this.item.opts,
+			...item.opts,
 			onRefChange: (node) => {
 				this.submenu.triggerNode = node;
 			},
@@ -515,8 +506,12 @@ class MenuSubTriggerState {
 
 	onpointermove(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
-		const defaultPrevented = this.content.onItemEnter(e);
-		if (defaultPrevented) return;
+		console.log(
+			"subtrigger pointer move, moving to grace area",
+			this.content.graceArea.isPointerInTransit
+		);
+		// const defaultPrevented = this.content.onItemEnter(e);
+		// if (defaultPrevented) return;
 		if (
 			!this.item.opts.disabled.current &&
 			!this.submenu.opts.open.current &&
