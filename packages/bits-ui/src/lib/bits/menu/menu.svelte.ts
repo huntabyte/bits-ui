@@ -506,10 +506,7 @@ class MenuSubTriggerState {
 
 	onpointermove(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
-		console.log(
-			"subtrigger pointer move, moving to grace area",
-			this.content.graceArea.isPointerInTransit
-		);
+
 		// const defaultPrevented = this.content.onItemEnter(e);
 		// if (defaultPrevented) return;
 		if (
