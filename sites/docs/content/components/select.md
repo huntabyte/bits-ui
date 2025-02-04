@@ -90,12 +90,17 @@ Here's an example of how you might create a reusable `MySelect` component that r
 		// any other specific component props if needed
 	};
 
-	let { value = $bindable(""), items, contentProps, placeholder, ...restProps }: Props = $props();
+	let { value = $bindable(), items, contentProps, placeholder, ...restProps }: Props = $props();
 
 	const selectedLabel = $derived(items.find((item) => item.value === value)?.label);
 </script>
 
-<Select.Root bind:value {...restProps}>
+<!--
+TypeScript Discriminated Unions + destructing (required for "bindable") do not
+get along, so we shut typescript up by casting `value` to `never`, however,
+from the perspective of the consumer of this component, it will be typed appropriately.
+-->
+<Select.Root bind:value={value as never} {...restProps}>
 	<Select.Trigger>
 		{selectedLabel ? selectedLabel : placeholder}
 	</Select.Trigger>
@@ -104,12 +109,10 @@ Here's an example of how you might create a reusable `MySelect` component that r
 			<Select.ScrollUpButton>up</Select.ScrollUpButton>
 			<Select.Viewport>
 				{#each items as { value, label, disabled } (value)}
-					<Select.Item {value} textValue={label} {disabled}>
+					<Select.Item {value} {label} {disabled}>
 						{#snippet children({ selected })}
 							{selected ? "✅" : ""}
-							<Select.ItemText>
-								{item.label}
-							</Select.ItemText>
+							{item.label}
 						{/snippet}
 					</Select.Item>
 				{/each}
