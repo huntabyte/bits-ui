@@ -1,12 +1,10 @@
 import { afterTick, box, mergeProps, onDestroyEffect, useRefById } from "svelte-toolbelt";
-import { Context, IsFocusWithin, watch } from "runed";
+import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,
-	type GraceIntent,
 	LAST_KEYS,
 	SELECTION_KEYS,
 	SUB_OPEN_KEYS,
-	type Side,
 	getCheckedState,
 	isMouseEvent,
 } from "./utils.js";
@@ -34,8 +32,8 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
-import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { IsUsingKeyboard } from "$lib/index.js";
+import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -116,28 +114,41 @@ type MenuContentStateProps = WithRefProps &
 
 class MenuContentState {
 	search = $state("");
-	#timer = $state(0);
-	pointerGraceTimer = $state(0);
-	#pointerGraceIntent = $state<GraceIntent | null>(null);
-	#pointerDir = $state<Side>("right");
-	#lastPointerX = $state(0);
+	#timer = 0;
 	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
-	isFocusWithin = new IsFocusWithin(() => this.parentMenu.contentNode ?? undefined);
+	graceArea: ReturnType<typeof useGraceArea>;
 
 	constructor(
 		readonly opts: MenuContentStateProps,
 		readonly parentMenu: MenuMenuState
 	) {
-		this.parentMenu = parentMenu;
-		this.parentMenu.contentId = opts.id;
+		parentMenu.contentId = opts.id;
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onblur = this.onblur.bind(this);
-		this.onpointermove = this.onpointermove.bind(this);
 		this.onfocus = this.onfocus.bind(this);
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
+
+		this.graceArea = useGraceArea(
+			() => parentMenu.triggerNode,
+			() => opts.ref.current,
+			{
+				getEnabled: () =>
+					parentMenu.opts.open.current &&
+					Boolean(
+						parentMenu.triggerNode?.hasAttribute(parentMenu.root.getAttr("sub-trigger"))
+					),
+				onPointerExit: () => {
+					if (this.graceArea.isPointerInTransit.current) {
+						return;
+					} else {
+						this.parentMenu.onClose();
+					}
+				},
+			}
+		);
 
 		useRefById({
 			...opts,
@@ -147,10 +158,6 @@ class MenuContentState {
 					this.parentMenu.contentNode = node;
 				}
 			},
-		});
-
-		onDestroyEffect(() => {
-			window.clearTimeout(this.#timer);
 		});
 
 		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
@@ -174,6 +181,16 @@ class MenuContentState {
 				return MenuOpenEvent.listen(contentNode, handler);
 			}
 		);
+
+		$effect(() => {
+			if (!this.parentMenu.opts.open.current) {
+				window.clearTimeout(this.#timer);
+			}
+		});
+
+		$effect(() => {
+			console.log("pointer in transit", this.graceArea.isPointerInTransit.current);
+		});
 	}
 
 	#getCandidateNodes() {
@@ -187,13 +204,12 @@ class MenuContentState {
 		return candidates;
 	}
 
-	#isPointerMovingToSubmenu(e: BitsPointerEvent) {
-		const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
-		return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
-	}
-
-	onPointerGraceIntentChange(intent: GraceIntent | null) {
-		this.#pointerGraceIntent = intent;
+	#isPointerMovingToSubmenu(_: BitsPointerEvent) {
+		const result = this.graceArea.isPointerInTransit.current;
+		console.log("result", result);
+		return result;
+		// const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
+		// return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -252,23 +268,6 @@ class MenuContentState {
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	}
 
-	onpointermove(e: BitsPointerEvent) {
-		if (!isMouseEvent(e)) return;
-		const target = e.target;
-		if (!isElement(target)) return;
-		const pointerXHasChanged = this.#lastPointerX !== e.clientX;
-		const currentTarget = e.currentTarget;
-		if (!isElement(currentTarget)) return;
-
-		// We don't use `event.movementX` for this check because Safari will
-		// always return `0` on a pointer event.
-		if (currentTarget.contains(target) && pointerXHasChanged) {
-			const newDir = e.clientX > this.#lastPointerX ? "right" : "left";
-			this.#pointerDir = newDir;
-			this.#lastPointerX = e.clientX;
-		}
-	}
-
 	onItemEnter(e: BitsPointerEvent) {
 		if (this.#isPointerMovingToSubmenu(e)) return true;
 		return false;
@@ -276,6 +275,7 @@ class MenuContentState {
 
 	onItemLeave(e: BitsPointerEvent) {
 		if (this.#isPointerMovingToSubmenu(e)) return;
+		console.log("focusing content node");
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
@@ -317,7 +317,6 @@ class MenuContentState {
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
-				onpointermove: this.onpointermove,
 				onfocus: this.onfocus,
 				dir: this.parentMenu.root.opts.dir.current,
 				style: {
@@ -366,11 +365,9 @@ class MenuItemSharedState {
 	}
 
 	onpointerleave(e: BitsPointerEvent) {
-		afterTick(() => {
-			if (e.defaultPrevented) return;
-			if (!isMouseEvent(e)) return;
-			this.content.onItemLeave(e);
-		});
+		if (e.defaultPrevented) return;
+		if (!isMouseEvent(e)) return;
+		this.content.onItemLeave(e);
 	}
 
 	onfocus(e: BitsFocusEvent) {
@@ -412,7 +409,7 @@ type MenuItemStateProps = ReadableBoxedValues<{
 }>;
 
 class MenuItemState {
-	#isPointerDown = $state(false);
+	#isPointerDown = false;
 	root: MenuRootState;
 
 	constructor(
@@ -525,7 +522,6 @@ class MenuSubTriggerState {
 			!this.submenu.opts.open.current &&
 			!this.#openTimer
 		) {
-			this.content.onPointerGraceIntentChange(null);
 			this.#openTimer = window.setTimeout(() => {
 				this.submenu.onOpen();
 				this.#clearOpenTimer();
@@ -537,30 +533,15 @@ class MenuSubTriggerState {
 		if (!isMouseEvent(e)) return;
 		this.#clearOpenTimer();
 
-		const contentNode = this.submenu.contentNode;
-		const subTriggerNode = this.item.opts.ref.current;
+		// const contentNode = this.submenu.contentNode;
+		// const subTriggerNode = this.item.opts.ref.current;
 
-		if (contentNode && subTriggerNode) {
-			const polygon = makeHullFromElements([subTriggerNode, contentNode]);
-			const side = contentNode?.dataset.side as Side;
-
-			this.content.onPointerGraceIntentChange({
-				area: polygon,
-				side,
-			});
-
-			window.clearTimeout(this.content.pointerGraceTimer);
-			this.content.pointerGraceTimer = window.setTimeout(
-				() => this.content.onPointerGraceIntentChange(null),
-				300
-			);
-		} else {
-			const defaultPrevented = this.content.onTriggerLeave(e);
-			if (defaultPrevented) return;
-
-			// There's 100ms where the user may leave an item before the submenu was opened.
-			this.content.onPointerGraceIntentChange(null);
-		}
+		// if (contentNode && subTriggerNode) {
+		// 	// TODO: tidy
+		// } else {
+		// 	const defaultPrevented = this.content.onTriggerLeave(e);
+		// 	if (defaultPrevented) return;
+		// }
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -892,8 +873,7 @@ class ContextMenuTriggerState {
 	virtualElement = box({
 		getBoundingClientRect: () => DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
 	});
-
-	#longPressTimer = $state<number | null>(null);
+	#longPressTimer: number | null = null;
 
 	constructor(
 		readonly opts: ContextMenuTriggerStateProps,

@@ -8,11 +8,13 @@ import type { Side } from "$lib/bits/utilities/floating-layer/use-floating-layer
 
 export function useGraceArea(
 	getTriggerNode: Getter<HTMLElement | null>,
-	getContentNode: Getter<HTMLElement | null>
+	getContentNode: Getter<HTMLElement | null>,
+	opts = {
+		getEnabled: () => true,
+		onPointerExit: () => {},
+	}
 ) {
 	const isPointerInTransit = boxAutoReset(false, 300);
-	const triggerNode = $derived(getTriggerNode());
-	const contentNode = $derived(getContentNode());
 
 	let pointerGraceArea = $state<Polygon | null>(null);
 	const pointerExit = createEventHook<void>();
@@ -34,21 +36,24 @@ export function useGraceArea(
 		isPointerInTransit.current = true;
 	}
 
-	watch([() => triggerNode, () => contentNode], ([triggerNode, contentNode]) => {
-		if (!triggerNode || !contentNode) return;
-		const handleTriggerLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, contentNode!);
-		};
+	watch(
+		[getTriggerNode, getContentNode, opts.getEnabled],
+		([triggerNode, contentNode, enabled]) => {
+			if (!triggerNode || !contentNode || !enabled) return;
+			const handleTriggerLeave = (e: PointerEvent) => {
+				handleCreateGraceArea(e, contentNode!);
+			};
 
-		const handleContentLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, triggerNode!);
-		};
+			const handleContentLeave = (e: PointerEvent) => {
+				handleCreateGraceArea(e, triggerNode!);
+			};
 
-		return executeCallbacks(
-			on(triggerNode, "pointerleave", handleTriggerLeave),
-			on(contentNode, "pointerleave", handleContentLeave)
-		);
-	});
+			return executeCallbacks(
+				on(triggerNode, "pointerleave", handleTriggerLeave),
+				on(contentNode, "pointerleave", handleContentLeave)
+			);
+		}
+	);
 
 	watch(
 		() => pointerGraceArea,
@@ -59,7 +64,7 @@ export function useGraceArea(
 				if (!isElement(target)) return;
 				const pointerPosition = { x: e.clientX, y: e.clientY };
 				const hasEnteredTarget =
-					triggerNode?.contains(target) || contentNode?.contains(target);
+					getTriggerNode()?.contains(target) || getContentNode()?.contains(target);
 				const isPointerOutsideGraceArea = !isPointInPolygon(
 					pointerPosition,
 					pointerGraceArea
@@ -76,6 +81,14 @@ export function useGraceArea(
 			return on(document, "pointermove", handleTrackPointerGrace);
 		}
 	);
+
+	watch(opts.getEnabled, (enabled) => {
+		if (enabled) {
+			const { off } = pointerExit.on(opts.onPointerExit);
+
+			return off;
+		}
+	});
 
 	return {
 		isPointerInTransit,
