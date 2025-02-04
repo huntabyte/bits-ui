@@ -104,12 +104,10 @@ Here's an example of how you might create a reusable `MySelect` component that r
 			<Select.ScrollUpButton>up</Select.ScrollUpButton>
 			<Select.Viewport>
 				{#each items as { value, label, disabled } (value)}
-					<Select.Item {value} textValue={label} {disabled}>
+					<Select.Item {value} {label} {disabled}>
 						{#snippet children({ selected })}
 							{selected ? "✅" : ""}
-							<Select.ItemText>
-								{item.label}
-							</Select.ItemText>
+							{item.label}
 						{/snippet}
 					</Select.Item>
 				{/each}
