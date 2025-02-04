@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.86
+
+### Patch Changes
+
+-   fix: Pin Input allowing paste on non-matching ([#1101](https://github.com/huntabyte/bits-ui/pull/1101))
+
 ## 1.0.0-next.85
 
 ### Patch Changes
