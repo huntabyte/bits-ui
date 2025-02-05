@@ -364,18 +364,18 @@ This method allows you to implement custom logic when the `Escape` key is presse
 
 ### Interaction Outside
 
-By default, interacting outside the Alert Dialog content area closes the Alert Dialog. Bits UI offers two ways to modify this behavior.
+By default, interacting outside the Alert Dialog content area does not close the dialog. Bits UI offers two ways to modify this behavior.
 
 #### Method 1: `interactOutsideBehavior`
 
 The `interactOutsideBehavior` prop allows you to customize the behavior taken by the component when an interaction (touch, mouse, or pointer event) occurs outside the content. It accepts one of the following values:
 
--   `'close'` (default): Closes the Alert Dialog immediately.
--   `'ignore'`: Prevents the Alert Dialog from closing.
+-   `'ignore'` (default): Prevents the Alert Dialog from closing.
+-   `'close'`: Closes the Alert Dialog immediately.
 -   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
 -   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the event and not close.
 
-To always prevent the Alert Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Alert.Content`:
+To make the Alert Dialog close when an interaction occurs outside the content, set the `interactOutsideBehavior` prop to `'close'` on `AlertDialog.Content`:
 
 ```svelte /interactOutsideBehavior="ignore"/
 <AlertDialog.Content interactOutsideBehavior="ignore">
