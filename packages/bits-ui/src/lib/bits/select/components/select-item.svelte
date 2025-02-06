@@ -43,8 +43,4 @@
 	</div>
 {/if}
 
-<Mounted
-	onMountedChange={(m) => {
-		itemState.mounted = m;
-	}}
-/>
+<Mounted bind:mounted={itemState.mounted} />
