@@ -36,6 +36,7 @@ import {
 import type { Direction } from "$lib/shared/index.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { IsUsingKeyboard } from "$lib/index.js";
+import { getNextFocusable, getPreviousFocusable } from "$lib/internal/dom.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -218,8 +219,25 @@ class MenuContentState {
 		const candidateNodes = this.#getCandidateNodes();
 
 		if (isKeydownInside) {
-			// menus do not respect the tab key
-			if (e.key === kbd.TAB) e.preventDefault();
+			if (e.key === kbd.TAB) {
+				e.preventDefault();
+				if (this.parentMenu.triggerNode) {
+					const nextFocusable = getNextFocusable(this.parentMenu.triggerNode);
+					const prevFocusable = getPreviousFocusable(this.parentMenu.triggerNode);
+					this.parentMenu.opts.open.current = false;
+
+					if (e.shiftKey) {
+						if (prevFocusable) {
+							setTimeout(() => prevFocusable.focus(), 1);
+						}
+					} else {
+						if (nextFocusable) {
+							setTimeout(() => nextFocusable.focus(), 1);
+						}
+					}
+				}
+			}
+
 			if (!isModifierKey && isCharacterKey) {
 				this.#handleTypeaheadSearch(e.key, candidateNodes);
 			}
