@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.87
+
+### Patch Changes
+
+-   fix: click events firing on elements behind the content when selecting Combobox.Item ([#1109](https://github.com/huntabyte/bits-ui/pull/1109))
+
 ## 1.0.0-next.86
 
 ### Patch Changes
