@@ -1,13 +1,5 @@
-import {
-	type ReadableBox,
-	afterTick,
-	box,
-	onDestroyEffect,
-	onMountEffect,
-	useRefById,
-} from "svelte-toolbelt";
-import { untrack } from "svelte";
-import { Context } from "runed";
+import { type ReadableBox, afterTick, box, useRefById } from "svelte-toolbelt";
+import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import {
@@ -24,6 +16,11 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
+import {
+	FocusScopeContext,
+	type FocusScopeContextValue,
+} from "../utilities/focus-scope/use-focus-scope.svelte.js";
+import { onMount } from "svelte";
 
 const MENUBAR_ROOT_ATTR = "data-menubar-root";
 const MENUBAR_TRIGGER_ATTR = "data-menubar-trigger";
@@ -40,19 +37,11 @@ type MenubarRootStateProps = WithRefProps<
 
 class MenubarRootState {
 	rovingFocusGroup: UseRovingFocusReturn;
-	currentTabStopId = box<string | null>(null);
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
 	valueToContentId = new Map<string, ReadableBox<string>>();
 
 	constructor(readonly opts: MenubarRootStateProps) {
-		this.onMenuClose = this.onMenuClose.bind(this);
-		this.onMenuOpen = this.onMenuOpen.bind(this);
-		this.onMenuToggle = this.onMenuToggle.bind(this);
-
-		this.registerTrigger = this.registerTrigger.bind(this);
-		this.deRegisterTrigger = this.deRegisterTrigger.bind(this);
-
 		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
@@ -60,16 +49,37 @@ class MenubarRootState {
 			candidateAttr: MENUBAR_TRIGGER_ATTR,
 			loop: this.opts.loop,
 			orientation: box.with(() => "horizontal"),
-			currentTabStopId: this.currentTabStopId,
 		});
+
+		this.onMenuClose = this.onMenuClose.bind(this);
+		this.onMenuOpen = this.onMenuOpen.bind(this);
+		this.onMenuToggle = this.onMenuToggle.bind(this);
+		this.registerTrigger = this.registerTrigger.bind(this);
 	}
 
+	/**
+	 * @param id - the id of the trigger to register
+	 * @returns - a function to de-register the trigger
+	 */
 	registerTrigger(id: string) {
 		this.triggerIds.push(id);
+
+		return () => {
+			this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
+		};
 	}
 
-	deRegisterTrigger(id: string) {
-		this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
+	/**
+	 * @param value - the value of the menu to register
+	 * @param contentId - the content id to associate with the value
+	 * @returns - a function to de-register the menu
+	 */
+	registerMenu(value: string, contentId: ReadableBox<string>) {
+		this.valueToContentId.set(value, contentId);
+
+		return () => {
+			this.valueToContentId.delete(value);
+		};
 	}
 
 	getTriggers() {
@@ -78,9 +88,9 @@ class MenubarRootState {
 		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${MENUBAR_TRIGGER_ATTR}]`));
 	}
 
-	onMenuOpen(id: string) {
+	onMenuOpen(id: string, triggerId: string) {
 		this.opts.value.current = id;
-		this.currentTabStopId.current = id;
+		this.rovingFocusGroup.setCurrentTabStopId(triggerId);
 	}
 
 	onMenuClose() {
@@ -115,28 +125,29 @@ class MenubarMenuState {
 		readonly opts: MenubarMenuStateProps,
 		readonly root: MenubarRootState
 	) {
-		$effect(() => {
-			if (!this.open) {
-				untrack(() => {
+		watch(
+			() => this.open,
+			() => {
+				if (!this.open) {
 					this.wasOpenedByKeyboard = false;
-				});
+				}
 			}
-		});
+		);
 
-		onMountEffect(() => {
-			this.root.valueToContentId.set(
+		onMount(() => {
+			return this.root.registerMenu(
 				this.opts.value.current,
 				box.with(() => this.contentNode?.id ?? "")
 			);
-		});
-
-		onDestroyEffect(() => {
-			this.root.valueToContentId.delete(this.opts.value.current);
 		});
 	}
 
 	getTriggerNode() {
 		return this.triggerNode;
+	}
+
+	openMenu() {
+		this.root.onMenuOpen(this.opts.value.current, this.triggerNode?.id ?? "");
 	}
 }
 
@@ -170,12 +181,8 @@ class MenubarTriggerState {
 			},
 		});
 
-		onMountEffect(() => {
-			this.root.registerTrigger(opts.id.current);
-		});
-
-		onDestroyEffect(() => {
-			this.root.deRegisterTrigger(opts.id.current);
+		onMount(() => {
+			return this.root.registerTrigger(opts.id.current);
 		});
 
 		$effect(() => {
@@ -193,25 +200,26 @@ class MenubarTriggerState {
 			if (!this.menu.open) {
 				e.preventDefault();
 			}
-			this.root.onMenuOpen(this.menu.opts.value.current);
+			this.menu.openMenu();
 		}
 	}
 
 	onpointerenter(_: BitsPointerEvent) {
 		const isMenubarOpen = Boolean(this.root.opts.value.current);
 		if (isMenubarOpen && !this.menu.open) {
-			this.root.onMenuOpen(this.menu.opts.value.current);
+			this.menu.openMenu();
 			this.menu.getTriggerNode()?.focus();
 		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (this.opts.disabled.current) return;
+		if (e.key === kbd.TAB) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			this.root.onMenuToggle(this.menu.opts.value.current);
 		}
 		if (e.key === kbd.ARROW_DOWN) {
-			this.root.onMenuOpen(this.menu.opts.value.current);
+			this.menu.openMenu();
 		}
 		// prevent keydown from scrolling window / first focused item
 		// from inadvertently closing the menu
@@ -245,7 +253,7 @@ class MenubarTriggerState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-menu-value": this.menu.opts.value.current,
 				disabled: this.opts.disabled.current ? true : undefined,
-				tabIndex: this.#tabIndex,
+				tabindex: this.#tabIndex,
 				[MENUBAR_TRIGGER_ATTR]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
@@ -265,12 +273,14 @@ type MenubarContentStateProps = WithRefProps<
 class MenubarContentState {
 	root: MenubarRootState;
 	hasInteractedOutside = $state(false);
+	focusScopeContext: FocusScopeContextValue;
 
 	constructor(
 		readonly opts: MenubarContentStateProps,
 		readonly menu: MenubarMenuState
 	) {
 		this.root = menu.root;
+		this.focusScopeContext = FocusScopeContext.get();
 
 		this.onCloseAutoFocus = this.onCloseAutoFocus.bind(this);
 		this.onFocusOutside = this.onFocusOutside.bind(this);
@@ -288,8 +298,11 @@ class MenubarContentState {
 	}
 
 	onCloseAutoFocus(e: Event) {
-		const menubarOpen = Boolean(this.root.opts.value.current);
-		if (!menubarOpen && !this.hasInteractedOutside) {
+		if (
+			!this.root.opts.value.current &&
+			!this.hasInteractedOutside &&
+			!this.focusScopeContext.ignoreCloseAutoFocus
+		) {
 			this.menu.getTriggerNode()?.focus();
 		}
 
@@ -330,16 +343,20 @@ class MenubarContentState {
 		if (isKeydownInsideSubMenu && isPrevKey) return;
 
 		const items = this.root.getTriggers().filter((trigger) => !trigger.disabled);
-		let candidateValues = items.map((item) => item.getAttribute("data-menu-value")!);
-		if (isPrevKey) candidateValues.reverse();
+		let candidates = items.map((item) => ({
+			value: item.getAttribute("data-menu-value")!,
+			triggerId: item.id ?? "",
+		}));
+		if (isPrevKey) candidates.reverse();
+		const candidateValues = candidates.map(({ value }) => value);
 
 		const currentIndex = candidateValues.indexOf(this.menu.opts.value.current);
 
-		candidateValues = this.root.opts.loop.current
-			? wrapArray(candidateValues, currentIndex + 1)
-			: candidateValues.slice(currentIndex + 1);
-		const [nextValue] = candidateValues;
-		if (nextValue) this.root.onMenuOpen(nextValue);
+		candidates = this.root.opts.loop.current
+			? wrapArray(candidates, currentIndex + 1)
+			: candidates.slice(currentIndex + 1);
+		const [nextValue] = candidates;
+		if (nextValue) this.menu.root.onMenuOpen(nextValue.value, nextValue.triggerId);
 	}
 
 	props = $derived.by(

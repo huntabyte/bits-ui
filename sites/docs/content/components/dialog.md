@@ -412,7 +412,7 @@ The `interactOutsideBehavior` prop allows you to customize the behavior taken by
 -   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will close immediately.
 -   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will ignore the event and not close.
 
-To always prevent the Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Dialog.Content`:
+To always prevent the Dialog from closing when an interaction occurs outside the content, set the `interactOutsideBehavior` prop to `'ignore'` on `Dialog.Content`:
 
 ```svelte /interactOutsideBehavior="ignore"/
 <Dialog.Content interactOutsideBehavior="ignore">

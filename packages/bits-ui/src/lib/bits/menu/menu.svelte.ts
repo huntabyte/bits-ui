@@ -34,6 +34,8 @@ import {
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
 import { useGraceArea } from "$lib/internal/use-grace-area-2.svelte.js";
+import { getTabbableFrom } from "$lib/internal/tabbable.js";
+import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -61,6 +63,7 @@ export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 
 class MenuRootState {
 	isUsingKeyboard = new IsUsingKeyboard();
+	ignoreCloseAutoFocus = $state(false);
 
 	constructor(readonly opts: MenuRootStateProps) {}
 
@@ -81,7 +84,7 @@ class MenuMenuState {
 	constructor(
 		readonly opts: MenuMenuStateProps,
 		readonly root: MenuRootState,
-		readonly parentMenu?: MenuMenuState
+		readonly parentMenu: MenuMenuState | null
 	) {
 		if (parentMenu) {
 			watch(
@@ -203,8 +206,48 @@ class MenuContentState {
 		// return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
 	}
 
+	handleTabKeyDown(e: BitsKeyboardEvent) {
+		/**
+		 * We locate the root `menu`'s trigger by going up the tree until
+		 * we find a menu that has no parent. This will allow us to focus the next
+		 * tabbable element before/after the root trigger.
+		 */
+		let rootMenu = this.parentMenu;
+		while (rootMenu.parentMenu !== null) {
+			rootMenu = rootMenu.parentMenu;
+		}
+		// if for some unforeseen reason the root menu has no trigger, we bail
+		if (!rootMenu.triggerNode) return;
+
+		// cancel default tab behavior
+		e.preventDefault();
+
+		// find the next/previous tabbable
+		const nodeToFocus = getTabbableFrom(rootMenu.triggerNode, e.shiftKey ? "prev" : "next");
+		if (nodeToFocus) {
+			/**
+			 * We set a flag to ignore the `onCloseAutoFocus` event handler
+			 * as well as the fallbacks inside the focus scope to prevent
+			 * race conditions causing focus to fall back to the body even
+			 * though we're trying to focus the next tabbable element.
+			 */
+			this.parentMenu.root.ignoreCloseAutoFocus = true;
+			rootMenu.onClose();
+			nodeToFocus.focus();
+			afterTick(() => {
+				this.parentMenu.root.ignoreCloseAutoFocus = false;
+			});
+		} else {
+			document.body.focus();
+		}
+	}
+
 	onkeydown(e: BitsKeyboardEvent) {
 		if (e.defaultPrevented) return;
+		if (e.key === kbd.TAB) {
+			this.handleTabKeyDown(e);
+			return;
+		}
 
 		const target = e.target;
 		const currentTarget = e.currentTarget;
@@ -213,6 +256,7 @@ class MenuContentState {
 		const isKeydownInside =
 			target.closest(`[${this.parentMenu.root.getAttr("content")}]`)?.id ===
 			this.parentMenu.contentId.current;
+
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -225,8 +269,6 @@ class MenuContentState {
 		const candidateNodes = this.#getCandidateNodes();
 
 		if (isKeydownInside) {
-			// menus do not respect the tab key
-			if (e.key === kbd.TAB) e.preventDefault();
 			if (!isModifierKey && isCharacterKey) {
 				this.#handleTypeaheadSearch(e.key, candidateNodes);
 			}
@@ -951,6 +993,7 @@ class ContextMenuTriggerState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
+				tabindex: -1,
 				//
 				onpointerdown: this.onpointerdown,
 				onpointermove: this.onpointermove,
@@ -964,11 +1007,17 @@ class ContextMenuTriggerState {
 type MenuItemCombinedProps = MenuItemSharedStateProps & MenuItemStateProps;
 
 export function useMenuRoot(props: MenuRootStateProps) {
-	return MenuRootContext.set(new MenuRootState(props));
+	const root = new MenuRootState(props);
+	FocusScopeContext.set({
+		get ignoreCloseAutoFocus() {
+			return root.ignoreCloseAutoFocus;
+		},
+	});
+	return MenuRootContext.set(root);
 }
 
 export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
-	return MenuMenuContext.set(new MenuMenuState(props, root));
+	return MenuMenuContext.set(new MenuMenuState(props, root, null));
 }
 
 export function useMenuSubmenu(props: MenuMenuStateProps) {

@@ -1,6 +1,6 @@
 {
 	"name": "bits-ui",
-	"version": "1.0.0-next.85",
+	"version": "1.0.0-next.88",
 	"license": "MIT",
 	"repository": "github:huntabyte/bits-ui",
 	"funding": "https://github.com/sponsors/huntabyte",
@@ -52,7 +52,8 @@
 		"@internationalized/date": "^3.5.6",
 		"esm-env": "^1.1.2",
 		"runed": "^0.23.2",
-		"svelte-toolbelt": "^0.7.1"
+		"svelte-toolbelt": "^0.7.1",
+		"tabbable": "^6.2.0"
 	},
 	"peerDependencies": {
 		"svelte": "^5.11.0"

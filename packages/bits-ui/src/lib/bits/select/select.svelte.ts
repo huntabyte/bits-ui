@@ -815,6 +815,25 @@ class SelectItemState {
 		this.onpointermove = this.onpointermove.bind(this);
 	}
 
+	handleSelect() {
+		if (this.opts.disabled.current) return;
+		const isCurrentSelectedValue = this.opts.value.current === this.root.opts.value.current;
+
+		// if allowDeselect is false and the item is already selected and we're not in a
+		// multi select, do nothing and close the menu
+		if (!this.root.opts.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+			this.root.handleClose();
+			return;
+		}
+
+		// otherwise, toggle the item and if we're not in a multi select, close the menu
+		this.root.toggleItem(this.opts.value.current, this.opts.label.current);
+
+		if (!this.root.isMulti && !isCurrentSelectedValue) {
+			this.root.handleClose();
+		}
+	}
+
 	snippetProps = $derived.by(() => ({
 		selected: this.isSelected,
 		highlighted: this.isHighlighted,
@@ -831,24 +850,21 @@ class SelectItemState {
 	 * multiple clicks.
 	 */
 	onpointerup(e: BitsPointerEvent) {
-		if (e.defaultPrevented) return;
+		if (e.defaultPrevented || !this.opts.ref.current) return;
 		// prevent any default behavior
 		e.preventDefault();
-		if (this.opts.disabled.current) return;
-		const isCurrentSelectedValue = this.opts.value.current === this.root.opts.value.current;
 
-		// if allowDeselect is false and the item is already selected and we're not in a
-		// multi select, do nothing and close the menu
-		if (!this.root.opts.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
-			this.root.handleClose();
+		/**
+		 * For one reason or another, when it's a touch pointer and _only_ in combobox mode,
+		 * we need to listen for the immediate click event to handle the selection, otherwise
+		 * a click event will be fired on the element behind the item after the content closes.
+		 */
+		if (e.pointerType === "touch") {
+			on(this.opts.ref.current, "click", () => this.handleSelect(), { once: true });
 			return;
 		}
 
-		// otherwise, toggle the item and if we're not in a multi select, close the menu
-		this.root.toggleItem(this.opts.value.current, this.opts.label.current);
-		if (!this.root.isMulti && !isCurrentSelectedValue) {
-			this.root.handleClose();
-		}
+		this.handleSelect();
 	}
 
 	onpointermove(_: BitsPointerEvent) {
