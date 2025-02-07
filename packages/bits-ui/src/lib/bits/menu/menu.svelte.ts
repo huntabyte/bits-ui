@@ -305,13 +305,7 @@ class MenuContentState {
 	}
 
 	onItemEnter(e: BitsPointerEvent) {
-		if (this.#isPointerMovingToSubmenu(e)) {
-			console.log("pointer is moving to submenu");
-			return true;
-		} else {
-			console.log("pointer is not moving to submenu");
-			return false;
-		}
+		return this.#isPointerMovingToSubmenu(e);
 	}
 
 	onItemLeave(e: BitsPointerEvent) {
