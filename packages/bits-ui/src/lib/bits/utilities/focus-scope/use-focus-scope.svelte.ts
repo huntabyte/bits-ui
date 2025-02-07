@@ -21,9 +21,11 @@ const AutoFocusOnDestroyEvent = new CustomEventDispatcher("focusScope.autoFocusO
 	cancelable: true,
 });
 
-export const FocusScopeContext = new Context<{
+export type FocusScopeContextValue = {
 	ignoreCloseAutoFocus: boolean;
-}>("FocusScope");
+};
+
+export const FocusScopeContext = new Context<FocusScopeContextValue>("FocusScope");
 
 type UseFocusScopeProps = ReadableBoxedValues<{
 	/**
@@ -205,8 +207,8 @@ export function useFocusScope({
 	function handleClose(prevFocusedElement: HTMLElement | null) {
 		const destroyEvent = AutoFocusOnDestroyEvent.createEvent();
 		onCloseAutoFocus.current(destroyEvent);
-		const shouldIgnore = ctx.ignoreCloseAutoFocus;
 
+		const shouldIgnore = ctx.ignoreCloseAutoFocus;
 		afterSleep(0, () => {
 			if (!destroyEvent.defaultPrevented && prevFocusedElement && !shouldIgnore) {
 				focus(prevFocusedElement ?? document.body, { select: true });

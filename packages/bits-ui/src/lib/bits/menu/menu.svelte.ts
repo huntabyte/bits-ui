@@ -37,6 +37,7 @@ import type { Direction } from "$lib/shared/index.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { IsUsingKeyboard } from "$lib/index.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
+import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -64,6 +65,7 @@ export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 
 class MenuRootState {
 	isUsingKeyboard = new IsUsingKeyboard();
+	ignoreCloseAutoFocus = $state(false);
 
 	constructor(readonly opts: MenuRootStateProps) {}
 
@@ -126,7 +128,6 @@ class MenuContentState {
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
 	isFocusWithin = new IsFocusWithin(() => this.parentMenu.contentNode ?? undefined);
-	ignoreCloseAutoFocus = $state(false);
 
 	constructor(
 		readonly opts: MenuContentStateProps,
@@ -153,7 +154,6 @@ class MenuContentState {
 
 		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
-			this.ignoreCloseAutoFocus = false;
 		});
 
 		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
@@ -225,10 +225,12 @@ class MenuContentState {
 			 * race conditions causing focus to fall back to the body even
 			 * though we're trying to focus the next tabbable element.
 			 */
-			this.ignoreCloseAutoFocus = true;
+			this.parentMenu.root.ignoreCloseAutoFocus = true;
 			rootMenu.onClose();
 			nodeToFocus.focus();
-			this.ignoreCloseAutoFocus = false;
+			afterTick(() => {
+				this.parentMenu.root.ignoreCloseAutoFocus = false;
+			});
 		} else {
 			document.body.focus();
 		}
@@ -236,6 +238,10 @@ class MenuContentState {
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (e.defaultPrevented) return;
+		if (e.key === kbd.TAB) {
+			this.handleTabKeyDown(e);
+			return;
+		}
 
 		const target = e.target;
 		const currentTarget = e.currentTarget;
@@ -244,11 +250,6 @@ class MenuContentState {
 		const isKeydownInside =
 			target.closest(`[${this.parentMenu.root.getAttr("content")}]`)?.id ===
 			this.parentMenu.contentId.current;
-
-		if (e.key === kbd.TAB) {
-			this.handleTabKeyDown(e);
-			return;
-		}
 
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
@@ -262,8 +263,6 @@ class MenuContentState {
 		const candidateNodes = this.#getCandidateNodes();
 
 		if (isKeydownInside) {
-			// menus do not respect the tab key
-			if (e.key === kbd.TAB) e.preventDefault();
 			if (!isModifierKey && isCharacterKey) {
 				this.#handleTypeaheadSearch(e.key, candidateNodes);
 			}
@@ -1023,6 +1022,7 @@ class ContextMenuTriggerState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
+				tabindex: -1,
 				//
 				onpointerdown: this.onpointerdown,
 				onpointermove: this.onpointermove,
@@ -1036,7 +1036,13 @@ class ContextMenuTriggerState {
 type MenuItemCombinedProps = MenuItemSharedStateProps & MenuItemStateProps;
 
 export function useMenuRoot(props: MenuRootStateProps) {
-	return MenuRootContext.set(new MenuRootState(props));
+	const root = new MenuRootState(props);
+	FocusScopeContext.set({
+		get ignoreCloseAutoFocus() {
+			return root.ignoreCloseAutoFocus;
+		},
+	});
+	return MenuRootContext.set(root);
 }
 
 export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {

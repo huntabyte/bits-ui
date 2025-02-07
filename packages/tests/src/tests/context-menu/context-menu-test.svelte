@@ -26,6 +26,7 @@
 
 <main>
 	<div data-testid="outside">outside</div>
+	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<ContextMenu.Root bind:open {...restProps}>
 			<ContextMenu.Trigger
@@ -104,6 +105,7 @@
 			</ContextMenu.Portal>
 		</ContextMenu.Root>
 	</div>
+	<button data-testid="next-button">next button</button>
 
 	<!-- Buttons to test binding -->
 	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>

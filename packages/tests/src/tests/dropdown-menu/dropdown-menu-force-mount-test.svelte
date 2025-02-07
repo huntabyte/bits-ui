@@ -106,6 +106,7 @@
 
 <main>
 	<div data-testid="outside">outside</div>
+	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<DropdownMenu.Root bind:open {...restProps}>
 			<DropdownMenu.Trigger data-testid="trigger">open</DropdownMenu.Trigger>
@@ -128,6 +129,7 @@
 			</DropdownMenu.Portal>
 		</DropdownMenu.Root>
 	</div>
+	<button data-testid="next-button">next button</button>
 
 	<!-- Buttons to test binding -->
 	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>

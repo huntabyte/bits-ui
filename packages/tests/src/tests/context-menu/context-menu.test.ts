@@ -1,7 +1,6 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import type { Component } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import ContextMenuTest from "./context-menu-test.svelte";
 import type { ContextMenuTestProps } from "./context-menu-test.svelte";
@@ -10,15 +9,17 @@ import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
 
 const kbd = getTestKbd();
 
+type ContextMenuSetupProps = (ContextMenuTestProps | ContextMenuForceMountTestProps) & {
+	component?: typeof ContextMenuTest | typeof ContextMenuForceMountTest;
+};
+
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(
-	props: ContextMenuTestProps | ContextMenuForceMountTestProps = {},
-	component: Component = ContextMenuTest
-) {
+function setup(props: ContextMenuSetupProps = {}) {
+	const { component = ContextMenuTest, ...rest } = props;
 	const user = setupUserEvents();
-	const returned = render(component, { ...props });
+	const returned = render(component, { ...rest });
 	const trigger = returned.getByTestId("trigger");
 	function getContent() {
 		return returned.queryByTestId("content");
@@ -36,7 +37,7 @@ function setup(
 	};
 }
 
-async function open(props: ContextMenuTestProps = {}) {
+async function open(props: ContextMenuSetupProps = {}) {
 	const { getByTestId, queryByTestId, user, trigger, getContent, ...returned } = setup(props);
 
 	expect(getContent()).toBeNull();
@@ -311,18 +312,16 @@ describe("context menu", () => {
 	});
 
 	it("should forceMount the content when `forceMount` is true", async () => {
-		const { getByTestId } = setup({}, ContextMenuForceMountTest);
+		const { getByTestId } = setup({ component: ContextMenuForceMountTest });
 
 		expect(getByTestId("content")).toBeVisible();
 	});
 
 	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-		const { queryByTestId, getByTestId, user, trigger } = setup(
-			{
-				withOpenCheck: true,
-			},
-			ContextMenuForceMountTest
-		);
+		const { queryByTestId, getByTestId, user, trigger } = setup({
+			withOpenCheck: true,
+			component: ContextMenuForceMountTest,
+		});
 		expect(queryByTestId("content")).toBeNull();
 
 		await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
@@ -330,4 +329,32 @@ describe("context menu", () => {
 		const content = getByTestId("content");
 		expect(content).toBeVisible();
 	});
+
+	it.each([ContextMenuTest, ContextMenuForceMountTest])(
+		"should close the menu and focus the next tabbable element when `TAB` is pressed while the menu is open",
+		async (component) => {
+			const { user, getByTestId, queryByTestId } = await open({
+				component,
+				withOpenCheck: true,
+			});
+			const nextButton = getByTestId("next-button");
+			await user.keyboard(kbd.TAB);
+			await waitFor(() => expect(nextButton).toHaveFocus());
+			expect(queryByTestId("content")).toBeNull();
+		}
+	);
+
+	it.each([ContextMenuTest, ContextMenuForceMountTest])(
+		"should close the menu and focus the previous tabbable element when `SHIFT+TAB` is pressed while the menu is open",
+		async (component) => {
+			const { user, getByTestId, queryByTestId } = await open({
+				component,
+				withOpenCheck: true,
+			});
+			const previousButton = getByTestId("previous-button");
+			await user.keyboard(kbd.SHIFT_TAB);
+			await waitFor(() => expect(previousButton).toHaveFocus());
+			expect(queryByTestId("content")).toBeNull();
+		}
+	);
 });

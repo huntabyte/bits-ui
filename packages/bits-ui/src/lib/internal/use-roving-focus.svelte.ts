@@ -45,7 +45,7 @@ type UseRovingFocusProps = {
 
 export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
 
-export function useRovingFocus(props: UseRovingFocusProps) {
+export function useRovingFocus(props: UseRovingFocusProps, log = false) {
 	const currentTabStopId: WritableBox<string | null> = props.currentTabStopId
 		? props.currentTabStopId
 		: box<string | null>(null);
@@ -88,7 +88,6 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		const currentIndex = items.indexOf(node);
 		const dir = getElemDirection(rootNode);
 		const { nextKey, prevKey } = getDirectionalKeys(dir, props.orientation.current);
-
 		const loop = props.loop.current;
 
 		const keyToIndex = {
@@ -126,6 +125,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 	function getTabIndex(node: HTMLElement | null | undefined) {
 		const items = getCandidateNodes();
 		const anyActive = currentTabStopId.current !== null;
+
 		if (node && !anyActive && items[0] === node) {
 			currentTabStopId.current = node.id;
 			return 0;
@@ -134,6 +134,12 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		}
 
 		return -1;
+	}
+
+	if (log) {
+		$effect(() => {
+			console.log("current tab stop id", currentTabStopId.current);
+		});
 	}
 
 	return {

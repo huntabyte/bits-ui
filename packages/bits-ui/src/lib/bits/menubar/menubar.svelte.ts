@@ -6,8 +6,7 @@ import {
 	onMountEffect,
 	useRefById,
 } from "svelte-toolbelt";
-import { untrack } from "svelte";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import {
@@ -24,6 +23,10 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
+import {
+	FocusScopeContext,
+	type FocusScopeContextValue,
+} from "../utilities/focus-scope/use-focus-scope.svelte.js";
 
 const MENUBAR_ROOT_ATTR = "data-menubar-root";
 const MENUBAR_TRIGGER_ATTR = "data-menubar-trigger";
@@ -55,13 +58,16 @@ class MenubarRootState {
 
 		useRefById(opts);
 
-		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.opts.id,
-			candidateAttr: MENUBAR_TRIGGER_ATTR,
-			loop: this.opts.loop,
-			orientation: box.with(() => "horizontal"),
-			currentTabStopId: this.currentTabStopId,
-		});
+		this.rovingFocusGroup = useRovingFocus(
+			{
+				rootNodeId: this.opts.id,
+				candidateAttr: MENUBAR_TRIGGER_ATTR,
+				loop: this.opts.loop,
+				orientation: box.with(() => "horizontal"),
+				currentTabStopId: this.currentTabStopId,
+			},
+			true
+		);
 	}
 
 	registerTrigger(id: string) {
@@ -115,13 +121,14 @@ class MenubarMenuState {
 		readonly opts: MenubarMenuStateProps,
 		readonly root: MenubarRootState
 	) {
-		$effect(() => {
-			if (!this.open) {
-				untrack(() => {
+		watch(
+			() => this.open,
+			() => {
+				if (!this.open) {
 					this.wasOpenedByKeyboard = false;
-				});
+				}
 			}
-		});
+		);
 
 		onMountEffect(() => {
 			this.root.valueToContentId.set(
@@ -207,6 +214,7 @@ class MenubarTriggerState {
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (this.opts.disabled.current) return;
+		if (e.key === kbd.TAB) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			this.root.onMenuToggle(this.menu.opts.value.current);
 		}
@@ -245,7 +253,7 @@ class MenubarTriggerState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-menu-value": this.menu.opts.value.current,
 				disabled: this.opts.disabled.current ? true : undefined,
-				tabIndex: this.#tabIndex,
+				tabindex: this.#tabIndex,
 				[MENUBAR_TRIGGER_ATTR]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
@@ -265,12 +273,14 @@ type MenubarContentStateProps = WithRefProps<
 class MenubarContentState {
 	root: MenubarRootState;
 	hasInteractedOutside = $state(false);
+	focusScopeContext: FocusScopeContextValue;
 
 	constructor(
 		readonly opts: MenubarContentStateProps,
 		readonly menu: MenubarMenuState
 	) {
 		this.root = menu.root;
+		this.focusScopeContext = FocusScopeContext.get();
 
 		this.onCloseAutoFocus = this.onCloseAutoFocus.bind(this);
 		this.onFocusOutside = this.onFocusOutside.bind(this);
@@ -288,8 +298,11 @@ class MenubarContentState {
 	}
 
 	onCloseAutoFocus(e: Event) {
-		const menubarOpen = Boolean(this.root.opts.value.current);
-		if (!menubarOpen && !this.hasInteractedOutside) {
+		if (
+			!this.root.opts.value.current &&
+			!this.hasInteractedOutside &&
+			!this.focusScopeContext.ignoreCloseAutoFocus
+		) {
 			this.menu.getTriggerNode()?.focus();
 		}
 
