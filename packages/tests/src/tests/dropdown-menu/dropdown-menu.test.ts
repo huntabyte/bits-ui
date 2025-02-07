@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { type Component, tick } from "svelte";
+import { tick } from "svelte";
 import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
@@ -11,15 +11,17 @@ import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte"
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
 
+type DropdownMenuSetupProps = (DropdownMenuTestProps | DropdownMenuForceMountTestProps) & {
+	component?: typeof DropdownMenuTest | typeof DropdownMenuForceMountTest;
+};
+
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(
-	props: DropdownMenuTestProps | DropdownMenuForceMountTestProps = {},
-	component: Component = DropdownMenuTest
-) {
+function setup(props: DropdownMenuSetupProps = {}) {
+	const { component: comp = DropdownMenuTest, ...rest } = props;
 	const user = setupUserEvents();
-	const { getByTestId, queryByTestId } = render(component, { ...props });
+	const { getByTestId, queryByTestId } = render(comp, { ...rest });
 	const trigger = getByTestId("trigger");
 	return {
 		getByTestId,
@@ -29,7 +31,7 @@ function setup(
 	};
 }
 
-async function openWithPointer(props: DropdownMenuTestProps = {}) {
+async function openWithPointer(props: DropdownMenuSetupProps = {}) {
 	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
@@ -39,7 +41,7 @@ async function openWithPointer(props: DropdownMenuTestProps = {}) {
 	return { getByTestId, queryByTestId, user, trigger };
 }
 
-async function openWithKbd(props: DropdownMenuTestProps = {}, key: string = kbd.ENTER) {
+async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd.ENTER) {
 	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
@@ -342,18 +344,16 @@ describe("dropdown menu", () => {
 	});
 
 	it("should forceMount the content when `forceMount` is true", async () => {
-		const { getByTestId } = setup({}, DropdownMenuForceMountTest);
+		const { getByTestId } = setup({ component: DropdownMenuForceMountTest });
 
 		expect(getByTestId("content")).toBeVisible();
 	});
 
 	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-		const { queryByTestId, getByTestId, user, trigger } = setup(
-			{
-				withOpenCheck: true,
-			},
-			DropdownMenuForceMountTest
-		);
+		const { queryByTestId, getByTestId, user, trigger } = setup({
+			withOpenCheck: true,
+			component: DropdownMenuForceMountTest,
+		});
 		expect(queryByTestId("content")).toBeNull();
 
 		await user.click(trigger);
@@ -361,4 +361,35 @@ describe("dropdown menu", () => {
 		const content = getByTestId("content");
 		expect(content).toBeVisible();
 	});
+
+	it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
+		"should close the menu and focus the next tabbable element when `TAB` is pressed while the menu is open",
+		async (component) => {
+			const { trigger, user, getByTestId, queryByTestId } = await openWithKbd({
+				component,
+				withOpenCheck: true,
+			});
+			const nextButton = getByTestId("next-button");
+			await user.keyboard(kbd.TAB);
+			await waitFor(() => expect(nextButton).toHaveFocus());
+
+			expect(queryByTestId("content")).toBeNull();
+			await user.click(trigger);
+			await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
+		}
+	);
+
+	it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
+		"should close the menu and focus the previous tabbable element when `SHIFT+TAB` is pressed while the menu is open",
+		async (component) => {
+			const { user, getByTestId, queryByTestId } = await openWithKbd({
+				component,
+				withOpenCheck: true,
+			});
+			const previousButton = getByTestId("previous-button");
+			await user.keyboard(kbd.SHIFT_TAB);
+			await waitFor(() => expect(previousButton).toHaveFocus());
+			expect(queryByTestId("content")).toBeNull();
+		}
+	);
 });
