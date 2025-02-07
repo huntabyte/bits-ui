@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.88
+
+### Patch Changes
+
+-   fix: allow tabbing out of menus to previous and next tabbable item in the dom ([#1111](https://github.com/huntabyte/bits-ui/pull/1111))
+
 ## 1.0.0-next.87
 
 ### Patch Changes
