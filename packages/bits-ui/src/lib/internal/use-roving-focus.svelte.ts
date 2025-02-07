@@ -1,4 +1,4 @@
-import { type ReadableBox, type WritableBox, box } from "svelte-toolbelt";
+import { type ReadableBox, box } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./get-directional-keys.js";
 import { kbd } from "./kbd.js";
@@ -36,19 +36,12 @@ type UseRovingFocusProps = {
 	 * A callback function called when a candidate is focused.
 	 */
 	onCandidateFocus?: (node: HTMLElement) => void;
-
-	/**
-	 * The current tab stop id.
-	 */
-	currentTabStopId?: WritableBox<string | null>;
 };
 
 export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
 
-export function useRovingFocus(props: UseRovingFocusProps, log = false) {
-	const currentTabStopId: WritableBox<string | null> = props.currentTabStopId
-		? props.currentTabStopId
-		: box<string | null>(null);
+export function useRovingFocus(props: UseRovingFocusProps) {
+	const currentTabStopId = box<string | null>(null);
 
 	function getCandidateNodes() {
 		if (!isBrowser) return [];
@@ -134,12 +127,6 @@ export function useRovingFocus(props: UseRovingFocusProps, log = false) {
 		}
 
 		return -1;
-	}
-
-	if (log) {
-		$effect(() => {
-			console.log("current tab stop id", currentTabStopId.current);
-		});
 	}
 
 	return {

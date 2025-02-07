@@ -4,7 +4,6 @@
 	import { useMenuMenu, useMenuRoot } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { FocusScopeContext } from "$lib/bits/utilities/focus-scope/use-focus-scope.svelte.js";
 
 	let {
 		open = $bindable(false),
