@@ -200,7 +200,6 @@ class MenuContentState {
 	}
 
 	handleTabKeyDown(e: BitsKeyboardEvent) {
-		// we want to locate the root `parentMenu`'s trigger by going up the tree
 		/**
 		 * We locate the root `menu`'s trigger by going up the tree until
 		 * we find a menu that has no parent. This will allow us to focus the next
