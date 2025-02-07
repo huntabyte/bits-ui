@@ -33,7 +33,7 @@ import {
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
-import { useGraceArea } from "$lib/internal/use-grace-area-2.svelte.js";
+import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 
@@ -64,6 +64,7 @@ export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 class MenuRootState {
 	isUsingKeyboard = new IsUsingKeyboard();
 	ignoreCloseAutoFocus = $state(false);
+	isPointerInTransit = $state(false);
 
 	constructor(readonly opts: MenuRootStateProps) {}
 
@@ -121,7 +122,6 @@ class MenuContentState {
 	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
-	graceArea: ReturnType<typeof useGraceArea>;
 
 	constructor(
 		readonly opts: MenuContentStateProps,
@@ -144,7 +144,7 @@ class MenuContentState {
 			},
 		});
 
-		this.graceArea = useGraceArea({
+		useGraceArea({
 			contentNode: () => this.parentMenu.contentNode,
 			triggerNode: () => this.parentMenu.triggerNode,
 			enabled: () =>
@@ -155,7 +155,10 @@ class MenuContentState {
 					)
 				),
 			onPointerExit: () => {
-				// this.parentMenu.opts.open.current = false;
+				this.parentMenu.opts.open.current = false;
+			},
+			setIsPointerInTransit: (value) => {
+				this.parentMenu.root.isPointerInTransit = value;
 			},
 		});
 
@@ -200,7 +203,7 @@ class MenuContentState {
 	}
 
 	#isPointerMovingToSubmenu(_: BitsPointerEvent) {
-		const result = this.graceArea.isPointerInTransit;
+		const result = this.parentMenu.root.isPointerInTransit;
 		return result;
 		// const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
 		// return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
@@ -302,8 +305,13 @@ class MenuContentState {
 	}
 
 	onItemEnter(e: BitsPointerEvent) {
-		if (this.#isPointerMovingToSubmenu(e)) return true;
-		return false;
+		if (this.#isPointerMovingToSubmenu(e)) {
+			console.log("pointer is moving to submenu");
+			return true;
+		} else {
+			console.log("pointer is not moving to submenu");
+			return false;
+		}
 	}
 
 	onItemLeave(e: BitsPointerEvent) {
@@ -549,8 +557,6 @@ class MenuSubTriggerState {
 	onpointermove(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
 
-		// const defaultPrevented = this.content.onItemEnter(e);
-		// if (defaultPrevented) return;
 		if (
 			!this.item.opts.disabled.current &&
 			!this.submenu.opts.open.current &&
@@ -566,16 +572,6 @@ class MenuSubTriggerState {
 	onpointerleave(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
 		this.#clearOpenTimer();
-
-		// const contentNode = this.submenu.contentNode;
-		// const subTriggerNode = this.item.opts.ref.current;
-
-		// if (contentNode && subTriggerNode) {
-		// 	// TODO: tidy
-		// } else {
-		// 	const defaultPrevented = this.content.onTriggerLeave(e);
-		// 	if (defaultPrevented) return;
-		// }
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {

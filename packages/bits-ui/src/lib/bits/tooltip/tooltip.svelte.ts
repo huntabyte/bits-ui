@@ -278,17 +278,16 @@ class TooltipContentState {
 			deps: () => this.root.opts.open.current,
 		});
 
-		$effect(() => {
-			if (!this.root.opts.open.current || this.root.disableHoverableContent) return;
-			const { isPointerInTransit, onPointerExit } = useGraceArea(
-				() => this.root.triggerNode,
-				() => this.root.contentNode
-			);
-
-			this.root.provider.isPointerInTransit = isPointerInTransit;
-			onPointerExit(() => {
+		useGraceArea({
+			triggerNode: () => this.root.triggerNode,
+			contentNode: () => this.root.contentNode,
+			enabled: () => this.root.opts.open.current && this.root.disableHoverableContent,
+			onPointerExit: () => {
 				this.root.handleClose();
-			});
+			},
+			setIsPointerInTransit: (value) => {
+				this.root.provider.isPointerInTransit.current = value;
+			},
 		});
 
 		onMountEffect(() =>

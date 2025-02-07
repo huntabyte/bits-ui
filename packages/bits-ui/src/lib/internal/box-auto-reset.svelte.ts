@@ -18,6 +18,7 @@ export function boxAutoReset<T>(
 	function resetAfter() {
 		return window.setTimeout(() => {
 			value = defaultValue;
+			onChange(defaultValue);
 		}, afterMs);
 	}
 

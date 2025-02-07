@@ -1,4 +1,4 @@
-import { afterSleep, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { afterSleep, onDestroyEffect, useRefById } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -27,7 +27,6 @@ class LinkPreviewRootState {
 	contentNode = $state<HTMLElement | null>(null);
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
-	isPointerInTransit = box(false);
 	isOpening = false;
 
 	constructor(readonly opts: LinkPreviewRootStateProps) {
@@ -187,22 +186,14 @@ class LinkPreviewContentState {
 			deps: () => this.root.opts.open.current,
 		});
 
-		watch(
-			() => this.root.opts.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				const { isPointerInTransit, onPointerExit } = useGraceArea(
-					() => this.root.triggerNode,
-					() => this.opts.ref.current
-				);
-
-				this.root.isPointerInTransit = isPointerInTransit;
-
-				onPointerExit(() => {
-					this.root.handleClose();
-				});
-			}
-		);
+		useGraceArea({
+			triggerNode: () => this.root.triggerNode,
+			contentNode: () => this.opts.ref.current,
+			enabled: () => this.root.opts.open.current,
+			onPointerExit: () => {
+				this.root.handleClose();
+			},
+		});
 
 		onDestroyEffect(() => {
 			this.root.clearTimeout();

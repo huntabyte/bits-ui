@@ -2,22 +2,25 @@ import { type Getter, executeCallbacks } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { watch } from "runed";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
-import { createEventHook } from "./create-event-hook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
 import type { Side } from "$lib/bits/utilities/floating-layer/use-floating-layer.svelte.js";
+interface UseGraceAreaOpts {
+	enabled: Getter<boolean>;
+	triggerNode: Getter<HTMLElement | null>;
+	contentNode: Getter<HTMLElement | null>;
+	onPointerExit: () => void;
+	setIsPointerInTransit?: (value: boolean) => void;
+}
+export function useGraceArea(opts: UseGraceAreaOpts) {
+	const enabled = $derived(opts.enabled());
 
-export function useGraceArea(
-	getTriggerNode: Getter<HTMLElement | null>,
-	getContentNode: Getter<HTMLElement | null>,
-	opts = {
-		getEnabled: () => true,
-		onPointerExit: () => {},
-	}
-) {
-	const isPointerInTransit = boxAutoReset(false, 300);
+	const isPointerInTransit = boxAutoReset(false as boolean, 300, (value) => {
+		if (enabled) {
+			opts.setIsPointerInTransit?.(value);
+		}
+	});
 
 	let pointerGraceArea = $state<Polygon | null>(null);
-	const pointerExit = createEventHook<void>();
 
 	function handleRemoveGraceArea() {
 		pointerGraceArea = null;
@@ -37,7 +40,7 @@ export function useGraceArea(
 	}
 
 	watch(
-		[getTriggerNode, getContentNode, opts.getEnabled],
+		[opts.triggerNode, opts.contentNode, opts.enabled],
 		([triggerNode, contentNode, enabled]) => {
 			if (!triggerNode || !contentNode || !enabled) return;
 			const handleTriggerLeave = (e: PointerEvent) => {
@@ -57,14 +60,14 @@ export function useGraceArea(
 
 	watch(
 		() => pointerGraceArea,
-		(pointerGraceArea) => {
+		() => {
 			const handleTrackPointerGrace = (e: PointerEvent) => {
 				if (!pointerGraceArea) return;
 				const target = e.target;
 				if (!isElement(target)) return;
 				const pointerPosition = { x: e.clientX, y: e.clientY };
 				const hasEnteredTarget =
-					getTriggerNode()?.contains(target) || getContentNode()?.contains(target);
+					opts.triggerNode()?.contains(target) || opts.contentNode()?.contains(target);
 				const isPointerOutsideGraceArea = !isPointInPolygon(
 					pointerPosition,
 					pointerGraceArea
@@ -74,7 +77,7 @@ export function useGraceArea(
 					handleRemoveGraceArea();
 				} else if (isPointerOutsideGraceArea) {
 					handleRemoveGraceArea();
-					pointerExit.trigger();
+					opts.onPointerExit();
 				}
 			};
 
@@ -82,17 +85,8 @@ export function useGraceArea(
 		}
 	);
 
-	watch(opts.getEnabled, (enabled) => {
-		if (enabled) {
-			const { off } = pointerExit.on(opts.onPointerExit);
-
-			return off;
-		}
-	});
-
 	return {
 		isPointerInTransit,
-		onPointerExit: pointerExit.on,
 	};
 }
 
@@ -120,34 +114,35 @@ function getExitSideFromRect(point: Point, rect: DOMRect): Side {
 }
 
 function getPaddedExitPoints(exitPoint: Point, exitSide: Side, padding = 5) {
-	const paddedExitPoints: Point[] = [];
+	// we extend the tip of the exit point to make it easier to navigate without
+	// a minor jitter triggering a pointer exit
+	const tipPadding = padding * 1.5;
 	switch (exitSide) {
 		case "top":
-			paddedExitPoints.push(
+			return [
 				{ x: exitPoint.x - padding, y: exitPoint.y + padding },
-				{ x: exitPoint.x + padding, y: exitPoint.y + padding }
-			);
-			break;
+				{ x: exitPoint.x, y: exitPoint.y - tipPadding },
+				{ x: exitPoint.x + padding, y: exitPoint.y + padding },
+			];
 		case "bottom":
-			paddedExitPoints.push(
+			return [
 				{ x: exitPoint.x - padding, y: exitPoint.y - padding },
-				{ x: exitPoint.x + padding, y: exitPoint.y - padding }
-			);
-			break;
-		case "left":
-			paddedExitPoints.push(
+				{ x: exitPoint.x, y: exitPoint.y + tipPadding },
 				{ x: exitPoint.x + padding, y: exitPoint.y - padding },
-				{ x: exitPoint.x + padding, y: exitPoint.y + padding }
-			);
-			break;
+			];
+		case "left":
+			return [
+				{ x: exitPoint.x + padding, y: exitPoint.y - padding },
+				{ x: exitPoint.x - tipPadding, y: exitPoint.y },
+				{ x: exitPoint.x + padding, y: exitPoint.y + padding },
+			];
 		case "right":
-			paddedExitPoints.push(
+			return [
 				{ x: exitPoint.x - padding, y: exitPoint.y - padding },
-				{ x: exitPoint.x - padding, y: exitPoint.y + padding }
-			);
-			break;
+				{ x: exitPoint.x + tipPadding, y: exitPoint.y },
+				{ x: exitPoint.x - padding, y: exitPoint.y + padding },
+			];
 	}
-	return paddedExitPoints;
 }
 
 function getPointsFromRect(rect: DOMRect) {
