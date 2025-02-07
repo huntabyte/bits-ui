@@ -8,6 +8,7 @@
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { FocusScopeContext } from "$lib/bits/utilities/focus-scope/use-focus-scope.svelte.js";
 
 	let {
 		id = useId(),
@@ -31,6 +32,12 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+	});
+
+	FocusScopeContext.set({
+		get ignoreCloseAutoFocus() {
+			return contentState.ignoreCloseAutoFocus;
+		},
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

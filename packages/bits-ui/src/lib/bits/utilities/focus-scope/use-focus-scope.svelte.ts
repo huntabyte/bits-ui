@@ -1,5 +1,5 @@
 import { afterSleep, afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
-import { watch } from "runed";
+import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import {
 	createFocusScopeAPI,
@@ -20,6 +20,10 @@ const AutoFocusOnDestroyEvent = new CustomEventDispatcher("focusScope.autoFocusO
 	bubbles: false,
 	cancelable: true,
 });
+
+export const FocusScopeContext = new Context<{
+	ignoreCloseAutoFocus: boolean;
+}>("FocusScope");
 
 type UseFocusScopeProps = ReadableBoxedValues<{
 	/**
@@ -75,6 +79,7 @@ export function useFocusScope({
 	const focusScopeStack = createFocusScopeStack();
 	const focusScope = createFocusScopeAPI();
 	const ref = box<HTMLElement | null>(null);
+	const ctx = FocusScopeContext.getOr({ ignoreCloseAutoFocus: false });
 
 	useRefById({
 		id,
@@ -93,12 +98,15 @@ export function useFocusScope({
 			if (container.contains(target)) {
 				lastFocusedElement = target;
 			} else {
+				if (ctx.ignoreCloseAutoFocus) return;
 				focus(lastFocusedElement, { select: true });
 			}
 		};
 
 		const handleFocusOut = (event: FocusEvent) => {
-			if (focusScope.paused || !container) return;
+			if (focusScope.paused || !container || ctx.ignoreCloseAutoFocus) {
+				return;
+			}
 			const relatedTarget = event.relatedTarget;
 			if (!isHTMLElement(relatedTarget)) return;
 			// A `focusout` event with a `null` `relatedTarget` will happen in at least two cases:
@@ -116,7 +124,9 @@ export function useFocusScope({
 
 			// If the focus has moved to an actual legitimate element (`relatedTarget !== null`)
 			// that is outside the container, we move focus to the last valid focused element inside.
-			if (!container.contains(relatedTarget)) focus(lastFocusedElement, { select: true });
+			if (!container.contains(relatedTarget)) {
+				focus(lastFocusedElement, { select: true });
+			}
 		};
 
 		// When the focused element gets removed from the DOM, browsers move focus
@@ -147,11 +157,11 @@ export function useFocusScope({
 	watch([() => forceMount.current, () => ref.current], ([forceMount, container]) => {
 		if (forceMount) return;
 		const prevFocusedElement = document.activeElement as HTMLElement | null;
-		handleMount(container, prevFocusedElement);
+		handleOpen(container, prevFocusedElement);
 
 		return () => {
 			if (!container) return;
-			handleDestroy(prevFocusedElement);
+			handleClose(prevFocusedElement);
 		};
 	});
 
@@ -160,16 +170,16 @@ export function useFocusScope({
 		([forceMount, container]) => {
 			if (!forceMount) return;
 			const prevFocusedElement = document.activeElement as HTMLElement | null;
-			handleMount(container, prevFocusedElement);
+			handleOpen(container, prevFocusedElement);
 
 			return () => {
 				if (!container) return;
-				handleDestroy(prevFocusedElement);
+				handleClose(prevFocusedElement);
 			};
 		}
 	);
 
-	function handleMount(container: HTMLElement | null, prevFocusedElement: HTMLElement | null) {
+	function handleOpen(container: HTMLElement | null, prevFocusedElement: HTMLElement | null) {
 		if (!container) container = document.getElementById(id.current);
 		if (!container) return;
 		focusScopeStack.add(focusScope);
@@ -192,12 +202,13 @@ export function useFocusScope({
 		}
 	}
 
-	function handleDestroy(prevFocusedElement: HTMLElement | null) {
+	function handleClose(prevFocusedElement: HTMLElement | null) {
 		const destroyEvent = AutoFocusOnDestroyEvent.createEvent();
 		onCloseAutoFocus.current(destroyEvent);
+		const shouldIgnore = ctx.ignoreCloseAutoFocus;
 
 		afterSleep(0, () => {
-			if (!destroyEvent.defaultPrevented && prevFocusedElement) {
+			if (!destroyEvent.defaultPrevented && prevFocusedElement && !shouldIgnore) {
 				focus(prevFocusedElement ?? document.body, { select: true });
 			}
 			focusScopeStack.remove(focusScope);

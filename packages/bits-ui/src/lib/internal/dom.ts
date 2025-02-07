@@ -1,3 +1,17 @@
+export function getDocument(element?: Element | null) {
+	return element?.ownerDocument ?? document;
+}
+
+export function activeElement(doc: Document) {
+	let activeElement = doc.activeElement;
+
+	while (activeElement?.shadowRoot?.activeElement != null) {
+		activeElement = activeElement.shadowRoot.activeElement;
+	}
+
+	return activeElement;
+}
+
 export function getFirstNonCommentChild(element: HTMLElement | null) {
 	if (!element) return null;
 	for (const child of element.childNodes) {

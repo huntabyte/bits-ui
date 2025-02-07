@@ -36,6 +36,7 @@ import {
 import type { Direction } from "$lib/shared/index.js";
 import { isPointerInGraceArea, makeHullFromElements } from "$lib/internal/polygon.js";
 import { IsUsingKeyboard } from "$lib/index.js";
+import { getTabbableFrom } from "$lib/internal/tabbable.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -83,7 +84,7 @@ class MenuMenuState {
 	constructor(
 		readonly opts: MenuMenuStateProps,
 		readonly root: MenuRootState,
-		readonly parentMenu?: MenuMenuState
+		readonly parentMenu: MenuMenuState | null
 	) {
 		if (parentMenu) {
 			watch(
@@ -125,6 +126,7 @@ class MenuContentState {
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
 	isFocusWithin = new IsFocusWithin(() => this.parentMenu.contentNode ?? undefined);
+	ignoreCloseAutoFocus = $state(false);
 
 	constructor(
 		readonly opts: MenuContentStateProps,
@@ -151,6 +153,7 @@ class MenuContentState {
 
 		onDestroyEffect(() => {
 			window.clearTimeout(this.#timer);
+			this.ignoreCloseAutoFocus = false;
 		});
 
 		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
@@ -196,6 +199,41 @@ class MenuContentState {
 		this.#pointerGraceIntent = intent;
 	}
 
+	handleTabKeyDown(e: BitsKeyboardEvent) {
+		// we want to locate the root `parentMenu`'s trigger by going up the tree
+		/**
+		 * We locate the root `menu`'s trigger by going up the tree until
+		 * we find a menu that has no parent. This will allow us to focus the next
+		 * tabbable element before/after the root trigger.
+		 */
+		let rootMenu = this.parentMenu;
+		while (rootMenu.parentMenu !== null) {
+			rootMenu = rootMenu.parentMenu;
+		}
+		// if for some unforeseen reason the root menu has no trigger, we bail
+		if (!rootMenu.triggerNode) return;
+
+		// cancel default tab behavior
+		e.preventDefault();
+
+		// find the next/previous tabbable
+		const nodeToFocus = getTabbableFrom(rootMenu.triggerNode, e.shiftKey ? "prev" : "next");
+		if (nodeToFocus) {
+			/**
+			 * We set a flag to ignore the `onCloseAutoFocus` event handler
+			 * as well as the fallbacks inside the focus scope to prevent
+			 * race conditions causing focus to fall back to the body even
+			 * though we're trying to focus the next tabbable element.
+			 */
+			this.ignoreCloseAutoFocus = true;
+			rootMenu.onClose();
+			nodeToFocus.focus();
+			this.ignoreCloseAutoFocus = false;
+		} else {
+			document.body.focus();
+		}
+	}
+
 	onkeydown(e: BitsKeyboardEvent) {
 		if (e.defaultPrevented) return;
 
@@ -206,6 +244,12 @@ class MenuContentState {
 		const isKeydownInside =
 			target.closest(`[${this.parentMenu.root.getAttr("content")}]`)?.id ===
 			this.parentMenu.contentId.current;
+
+		if (e.key === kbd.TAB) {
+			this.handleTabKeyDown(e);
+			return;
+		}
+
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
 
@@ -996,7 +1040,7 @@ export function useMenuRoot(props: MenuRootStateProps) {
 }
 
 export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
-	return MenuMenuContext.set(new MenuMenuState(props, root));
+	return MenuMenuContext.set(new MenuMenuState(props, root, null));
 }
 
 export function useMenuSubmenu(props: MenuMenuStateProps) {
