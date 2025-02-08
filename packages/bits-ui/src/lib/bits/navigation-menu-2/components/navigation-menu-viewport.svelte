@@ -8,8 +8,6 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
-		children,
-		child,
 		forceMount = false,
 		...restProps
 	}: NavigationMenuViewportProps = $props();
@@ -19,6 +17,6 @@
 
 <PresenceLayer {id} present={forceMount || viewportState.open}>
 	{#snippet presence()}
-		<NavigationMenuViewportImpl {children} {child} {forceMount} {id} bind:ref {...restProps} />
+		<NavigationMenuViewportImpl {forceMount} {id} bind:ref {...restProps} />
 	{/snippet}
 </PresenceLayer>

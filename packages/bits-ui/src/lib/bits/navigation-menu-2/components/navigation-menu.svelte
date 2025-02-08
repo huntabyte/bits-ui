@@ -16,7 +16,6 @@
 		skipDelayDuration = 300,
 		dir = "ltr",
 		orientation = "horizontal",
-		controlledValue = false,
 		...restProps
 	}: NavigationMenuRootProps = $props();
 
@@ -26,12 +25,8 @@
 			() => value,
 			(v) => {
 				rootState.handleValueChange(v);
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		delayDuration: box.with(() => delayDuration),

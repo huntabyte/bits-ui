@@ -13,7 +13,6 @@
 		value = $bindable(""),
 		onValueChange = noop,
 		orientation = "horizontal",
-		controlledValue = false,
 		...restProps
 	}: NavigationMenuSubProps = $props();
 
@@ -22,12 +21,8 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		orientation: box.with(() => orientation),
