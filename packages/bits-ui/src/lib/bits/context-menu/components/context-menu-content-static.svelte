@@ -16,6 +16,7 @@
 		ref = $bindable(null),
 		loop = true,
 		onInteractOutside = noop,
+		onCloseAutoFocus = noop,
 		preventScroll = true,
 		// we need to explicitly pass this prop to the PopperLayer to override
 		// the default menu behavior of handling outside interactions on the trigger
@@ -31,6 +32,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

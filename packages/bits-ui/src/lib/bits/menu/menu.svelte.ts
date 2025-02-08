@@ -36,6 +36,7 @@ import { IsUsingKeyboard } from "$lib/index.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
+import { isTabbable } from "tabbable";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -114,7 +115,10 @@ class MenuMenuState {
 type MenuContentStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		loop: boolean;
-	}>;
+		onCloseAutoFocus: (event: Event) => void;
+	}> & {
+		isSub?: boolean;
+	};
 
 class MenuContentState {
 	search = $state("");
@@ -122,6 +126,7 @@ class MenuContentState {
 	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
+	#isSub: boolean;
 
 	constructor(
 		readonly opts: MenuContentStateProps,
@@ -129,6 +134,7 @@ class MenuContentState {
 	) {
 		parentMenu.contentId = opts.id;
 
+		this.#isSub = opts.isSub ?? false;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onblur = this.onblur.bind(this);
 		this.onfocus = this.onfocus.bind(this);
@@ -202,12 +208,17 @@ class MenuContentState {
 		return candidates;
 	}
 
-	#isPointerMovingToSubmenu(_: BitsPointerEvent) {
-		const result = this.parentMenu.root.isPointerInTransit;
-		return result;
-		// const isMovingTowards = this.#pointerDir === this.#pointerGraceIntent?.side;
-		// return isMovingTowards && isPointerInGraceArea(e, this.#pointerGraceIntent?.area);
+	#isPointerMovingToSubmenu() {
+		return this.parentMenu.root.isPointerInTransit;
 	}
+
+	onCloseAutoFocus = (e: Event) => {
+		this.opts.onCloseAutoFocus.current(e);
+		if (e.defaultPrevented || this.#isSub) return;
+		if (this.parentMenu.triggerNode && isTabbable(this.parentMenu.triggerNode)) {
+			this.parentMenu.triggerNode.focus();
+		}
+	};
 
 	handleTabKeyDown(e: BitsKeyboardEvent) {
 		/**
@@ -304,20 +315,21 @@ class MenuContentState {
 		afterTick(() => this.rovingFocusGroup.focusFirstCandidate());
 	}
 
-	onItemEnter(e: BitsPointerEvent) {
-		return this.#isPointerMovingToSubmenu(e);
+	onItemEnter() {
+		return this.#isPointerMovingToSubmenu();
 	}
 
 	onItemLeave(e: BitsPointerEvent) {
 		if (e.currentTarget.hasAttribute(this.parentMenu.root.getAttr("sub-trigger"))) return;
-		if (this.#isPointerMovingToSubmenu(e)) return;
+		if (this.#isPointerMovingToSubmenu() || this.parentMenu.root.isUsingKeyboard.current)
+			return;
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus();
 		this.rovingFocusGroup.setCurrentTabStopId("");
 	}
 
-	onTriggerLeave(e: BitsPointerEvent) {
-		if (this.#isPointerMovingToSubmenu(e)) return true;
+	onTriggerLeave() {
+		if (this.#isPointerMovingToSubmenu()) return true;
 		return false;
 	}
 
@@ -353,6 +365,7 @@ class MenuContentState {
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
 				onfocus: this.onfocus,
+				onCloseAutoFocus: (e: Event) => this.onCloseAutoFocus(e),
 				dir: this.parentMenu.root.opts.dir.current,
 				style: {
 					pointerEvents: "auto",
@@ -391,7 +404,7 @@ class MenuItemSharedState {
 		if (this.opts.disabled.current) {
 			this.content.onItemLeave(e);
 		} else {
-			const defaultPrevented = this.content.onItemEnter(e);
+			const defaultPrevented = this.content.onItemEnter();
 			if (defaultPrevented) return;
 			const item = e.currentTarget;
 			if (!isHTMLElement(item)) return;
@@ -956,6 +969,7 @@ class ContextMenuTriggerState {
 
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.opts.disabled.current || isMouseEvent(e)) return;
+		e.preventDefault();
 		this.#clearLongPressTimer();
 		this.#longPressTimer = window.setTimeout(() => this.#handleOpen(e), 700);
 	}

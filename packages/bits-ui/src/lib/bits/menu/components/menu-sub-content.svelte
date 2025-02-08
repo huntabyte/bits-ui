@@ -36,6 +36,8 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		isSub: true,
+		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
 	});
 
 	function onkeydown(e: KeyboardEvent) {
@@ -108,7 +110,6 @@
 		{...mergedProps}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
-		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
 		enabled={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
