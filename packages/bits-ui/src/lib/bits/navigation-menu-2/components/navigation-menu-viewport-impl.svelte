@@ -40,7 +40,7 @@
 				<NavigationMenuContentImpl
 					itemState={item}
 					{...item.contentProps.current}
-					children={item.contentChild.current}
+					children={item.contentChildren.current}
 					child={item.contentChild.current}
 					onRefChange={(v) => {
 						if (isActive && v) {

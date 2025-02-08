@@ -8,6 +8,7 @@ import {
 	type ReadableBoxedValues,
 	type WithRefProps,
 	type WritableBoxedValues,
+	afterSleep,
 	afterTick,
 	box,
 	onDestroyEffect,
@@ -345,7 +346,8 @@ export class NavigationMenuItemState {
 	contentId = $derived.by(() => this.contentNode?.id);
 	triggerId = $derived.by(() => this.triggerNode?.id);
 	contentChildren: ReadableBox<Snippet | undefined> = box(undefined);
-	contentChild: ReadableBox<Snippet | undefined> = box(undefined);
+	contentChild: ReadableBox<Snippet<[{ props: Record<string, unknown> }]> | undefined> =
+		box(undefined);
 	contentProps: ReadableBox<Record<string, unknown>> = box({});
 
 	constructor(
@@ -357,10 +359,11 @@ export class NavigationMenuItemState {
 		if (!this.contentNode) return;
 		this.restoreContentTabOrder();
 		const candidates = getTabbableCandidates(this.contentNode);
+		console.log("candidates", candidates);
 		if (candidates.length) focusFirst(side === "start" ? candidates : candidates.reverse());
 	};
 
-	#handleContextExit = () => {
+	#handleContentExit = () => {
 		if (!this.contentNode) return;
 		const candidates = getTabbableCandidates(this.contentNode);
 		if (candidates.length) this.restoreContentTabOrder = removeFromTabOrder(candidates);
@@ -368,8 +371,8 @@ export class NavigationMenuItemState {
 
 	onEntryKeydown = this.#handleContentEntry;
 	onFocusProxyEnter = this.#handleContentEntry;
-	onRootContentClose = this.#handleContextExit;
-	onContentFocusOutside = this.#handleContextExit;
+	onRootContentClose = this.#handleContentExit;
+	onContentFocusOutside = this.#handleContentExit;
 
 	props = $derived.by(
 		() =>
@@ -386,7 +389,7 @@ type NavigationMenuTriggerStateProps = WithRefProps &
 	}>;
 
 class NavigationMenuTriggerState {
-	focusProxyId = box.with(() => useId());
+	focusProxyId = box(useId());
 	focusProxyRef = box<HTMLElement | null>(null);
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
@@ -507,7 +510,7 @@ class NavigationMenuTriggerState {
 	focusProxyProps = $derived.by(
 		() =>
 			({
-				"aria-hidden": "true",
+				id: this.focusProxyId.current,
 				tabindex: 0,
 				onfocus: this.focusProxyOnFocus,
 			}) as const
@@ -679,7 +682,13 @@ class NavigationMenuContentState {
 		this.itemContext = context.item;
 		this.listContext = context.list;
 
-		useRefById(opts);
+		useRefById({
+			...opts,
+			onRefChange: (node) => {
+				this.itemContext.contentNode = node;
+			},
+			deps: () => this.context.value.current,
+		});
 	}
 
 	onpointerenter = (_: BitsPointerEvent) => {
@@ -751,7 +760,7 @@ class NavigationMenuContentImplState {
 			deps: () => this.context.value.current,
 		});
 
-		watch(
+		watch.pre(
 			[
 				() => this.itemContext.opts.value.current,
 				() => this.itemContext.triggerNode,
@@ -813,7 +822,7 @@ class NavigationMenuContentImplState {
 			// If we can't focus that means we're at the edges
 			// so focus the proxy and let browser handle
 			// tab/shift+tab keypress on the proxy instead
-			this.itemContext.focusProxyNode?.focus();
+			handleProxyFocus(this.itemContext.focusProxyNode);
 		}
 	};
 
@@ -836,7 +845,7 @@ class NavigationMenuContentImplState {
 
 type NavigationMenuViewportContentMounterStateProps = ReadableBoxedValues<{
 	children: Snippet | undefined;
-	child: Snippet | undefined;
+	child: Snippet<[{ props: Record<string, unknown> }]> | undefined;
 	props: Record<string, unknown>;
 }>;
 
@@ -950,7 +959,9 @@ const NavigationMenuProviderContext = new Context<NavigationMenuProviderState>(
 	"NavigationMenu.Root"
 );
 
-const NavigationMenuItemContext = new Context<NavigationMenuItemState>("NavigationMenu.Item");
+export const NavigationMenuItemContext = new Context<NavigationMenuItemState>(
+	"NavigationMenu.Item"
+);
 
 const NavigationMenuListContext = new Context<NavigationMenuListState>("NavigationMenu.List");
 
@@ -977,9 +988,8 @@ export function useNavigationMenuList(props: NavigationMenuListStateProps) {
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
-	return NavigationMenuItemContext.set(
-		new NavigationMenuItemState(props, NavigationMenuListContext.get())
-	);
+	const listContext = NavigationMenuListContext.get();
+	return NavigationMenuItemContext.set(new NavigationMenuItemState(props, listContext));
 }
 
 export function useNavigationMenuIndicatorImpl(props: NavigationMenuIndicatorStateProps) {
@@ -1008,17 +1018,20 @@ export function useNavigationMenuContent(props: NavigationMenuContentStateProps)
 }
 
 export function useNavigationMenuLink(props: NavigationMenuLinkStateProps) {
+	const provider = NavigationMenuProviderContext.get();
+	const item = NavigationMenuItemContext.get();
+
 	return new NavigationMenuLinkState(props, {
-		provider: NavigationMenuProviderContext.get(),
-		item: NavigationMenuItemContext.get(),
+		provider,
+		item,
 	});
 }
 
 export function useNavigationMenuContentImpl(
 	props: NavigationMenuContentImplStateProps,
-	itemState: NavigationMenuItemState = NavigationMenuItemContext.get()
+	itemState?: NavigationMenuItemState
 ) {
-	return new NavigationMenuContentImplState(props, itemState);
+	return new NavigationMenuContentImplState(props, itemState ?? NavigationMenuItemContext.get());
 }
 
 export function useNavigationMenuViewport() {
@@ -1056,14 +1069,18 @@ function focusFirst(candidates: HTMLElement[]) {
 }
 
 function removeFromTabOrder(candidates: HTMLElement[]) {
+	console.log("removing from tab order", candidates);
 	candidates.forEach((candidate) => {
 		candidate.dataset.tabindex = candidate.getAttribute("tabindex") || "";
 		candidate.setAttribute("tabindex", "-1");
 	});
 	return () => {
+		console.log("restoring tab order");
 		candidates.forEach((candidate) => {
 			const prevTabIndex = candidate.dataset.tabindex as string;
-			candidate.setAttribute("tabindex", prevTabIndex);
+			if (prevTabIndex) {
+				candidate.setAttribute("tabindex", prevTabIndex);
+			}
 		});
 	};
 }
@@ -1076,4 +1093,34 @@ function whenMouse<T extends HTMLElement = HTMLElement>(
 	handler: BitsPointerEventHandler<T>
 ): BitsPointerEventHandler<T> {
 	return (e) => (e.pointerType === "mouse" ? handler(e) : undefined);
+}
+
+/**
+ *
+ * We apply the `aria-hidden` attribute to elements that should not be visible to screen readers
+ * under specific circumstances, mostly when in a "modal" context or when they are strictly for
+ * utility purposes, like the focus guards.
+ *
+ * When these elements receive focus before we can remove the aria-hidden attribute, we need to
+ * handle the focus in a way that does not cause an error to be logged.
+ *
+ * This function handles the focus of the guard element first by momentary removing the
+ * `aria-hidden` attribute, focusing the guard (which will cause something else to focus), and then
+ * restoring the attribute.
+ */
+function handleProxyFocus(
+	guard: HTMLElement | null,
+	focusOptions?: Parameters<HTMLElement["focus"]>[0]
+) {
+	if (!guard) return;
+	const ariaHidden = guard.getAttribute("aria-hidden");
+	guard.removeAttribute("aria-hidden");
+	guard.focus(focusOptions);
+	afterSleep(0, () => {
+		if (ariaHidden === null) {
+			guard.setAttribute("aria-hidden", "");
+		} else {
+			guard.setAttribute("aria-hidden", ariaHidden);
+		}
+	});
 }

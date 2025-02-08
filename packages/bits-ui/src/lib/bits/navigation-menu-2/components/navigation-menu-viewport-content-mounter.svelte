@@ -3,7 +3,11 @@
 	import { box } from "svelte-toolbelt";
 	import { useNavigationMenuViewportContentMounter } from "../navigation-menu.svelte.js";
 
-	let { children, child, ...restProps }: { children?: Snippet; child?: Snippet<any> } = $props();
+	let {
+		children,
+		child,
+		...restProps
+	}: { children?: Snippet; child?: Snippet<[{ props: Record<string, unknown> }]> } = $props();
 
 	useNavigationMenuViewportContentMounter({
 		children: box.with(() => children),

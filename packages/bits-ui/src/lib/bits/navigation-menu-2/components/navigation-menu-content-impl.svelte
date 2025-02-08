@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { untrack } from "svelte";
+	import { untrack, type Snippet } from "svelte";
 	import type { NavigationMenuContentProps } from "../types.js";
 	import {
+		NavigationMenuItemContext,
 		NavigationMenuItemState,
 		useNavigationMenuContentImpl,
 	} from "../navigation-menu.svelte.js";
@@ -24,9 +25,10 @@
 		itemState,
 		onRefChange,
 		...restProps
-	}: NavigationMenuContentProps & {
+	}: Omit<NavigationMenuContentProps, "child"> & {
 		itemState?: NavigationMenuItemState;
 		onRefChange?: (ref: HTMLElement | null) => void;
+		child?: Snippet<[{ props: Record<string, unknown> }]>;
 	} = $props();
 
 	const contentImplState = useNavigationMenuContentImpl(
@@ -42,6 +44,10 @@
 		},
 		itemState
 	);
+
+	if (itemState) {
+		NavigationMenuItemContext.set(itemState);
+	}
 
 	const mergedProps = $derived(mergeProps(restProps, contentImplState.props));
 </script>
