@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.90
+
+### Patch Changes
+
+-   feat: add `clearOnDeselect` prop to `Combobox.Input` to clear the input's value when the last (multiple) or only (single) item is deselected. ([#1118](https://github.com/huntabyte/bits-ui/pull/1118))
+
 ## 1.0.0-next.89
 
 ### Patch Changes
