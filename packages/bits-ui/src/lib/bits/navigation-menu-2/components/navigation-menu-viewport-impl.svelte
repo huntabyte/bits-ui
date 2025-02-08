@@ -30,12 +30,9 @@
 </script>
 
 <div {...mergedProps}>
-	{#each viewportContent as [value, item]}
+	{#each viewportContent as [value, item] (value)}
 		{@const isActive = viewportState.activeContentValue === value}
-		<PresenceLayer
-			id={(item.contentProps.current.id as string) ?? useId()}
-			present={forceMount || isActive}
-		>
+		<PresenceLayer id={item.contentProps.current.id as string} present={forceMount || isActive}>
 			{#snippet presence()}
 				<NavigationMenuContentImpl
 					itemState={item}
