@@ -37,12 +37,15 @@ import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { PreviousWithInit } from "$lib/internal/previous-with-init.svelte.js";
 import { CustomEventDispatcher } from "$lib/internal/events.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
+import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 
 const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
 const NAVIGATION_MENU_SUB_ATTR = "data-navigation-menu-sub";
-const NAVIGATION_MENU_LIST_ATTR = "data-navigation-menu-list";
 const NAVIGATION_MENU_ITEM_ATTR = "data-navigation-menu-item";
+const NAVIGATION_MENU_INDICATOR_ATTR = "data-navigation-menu-indicator";
+const NAVIGATION_MENU_LIST_ATTR = "data-navigation-menu-list";
 const NAVIGATION_MENU_TRIGGER_ATTR = "data-navigation-menu-trigger";
+const NAVIGATION_MENU_CONTENT_ATTR = "data-navigation-menu-content";
 const NAVIGATION_MENU_LINK_ATTR = "data-navigation-menu-link";
 
 type NavigationMenuProviderStateProps = ReadableBoxedValues<{
@@ -410,7 +413,12 @@ class NavigationMenuTriggerState {
 		this.itemContext = context.item;
 		this.listContext = context.list;
 
-		useRefById(opts);
+		useRefById({
+			...opts,
+			onRefChange: (node) => {
+				this.itemContext.triggerNode = node;
+			},
+		});
 
 		useRefById({
 			id: this.focusProxyId,
@@ -540,6 +548,7 @@ const ROOT_CONTENT_DISMISS_EVENT = new CustomEventDispatcher("bitsRootContentDis
 });
 
 class NavigationMenuLinkState {
+	isFocused = $state(false);
 	constructor(
 		readonly opts: NavigationMenuLinkStateProps,
 		readonly context: {
@@ -562,7 +571,16 @@ class NavigationMenuLinkState {
 	};
 
 	onkeydown = (e: BitsKeyboardEvent) => {
+		if (this.context.item.contentNode) return;
 		this.context.item.listContext.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
+	};
+
+	onfocus = (_: BitsFocusEvent) => {
+		this.isFocused = true;
+	};
+
+	onblur = (_: BitsFocusEvent) => {
+		this.isFocused = false;
 	};
 
 	props = $derived.by(
@@ -571,8 +589,11 @@ class NavigationMenuLinkState {
 				id: this.opts.id.current,
 				"data-active": this.opts.active.current ? "" : undefined,
 				"aria-current": this.opts.active.current ? "page" : undefined,
+				"data-focused": this.isFocused ? "" : undefined,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				onfocus: this.onfocus,
+				onblur: this.onblur,
 				[NAVIGATION_MENU_LINK_ATTR]: "",
 			}) as const
 	);
@@ -657,6 +678,7 @@ class NavigationMenuIndicatorImplState {
 									}),
 						}
 					: undefined,
+				[NAVIGATION_MENU_INDICATOR_ATTR]: "",
 			}) as const
 	);
 }
@@ -802,24 +824,48 @@ class NavigationMenuContentImplState {
 	onkeydown = (e: BitsKeyboardEvent) => {
 		const isMetaKey = e.altKey || e.ctrlKey || e.metaKey;
 		const isTabKey = e.key === kbd.TAB && !isMetaKey;
-		if (!isTabKey) return;
 		const candidates = getTabbableCandidates(e.currentTarget);
-		const focusedElement = document.activeElement;
-		const index = candidates.findIndex((candidate) => candidate === focusedElement);
-		const isMovingBackwards = e.shiftKey;
-		const nextCandidates = isMovingBackwards
-			? candidates.slice(0, index).reverse()
-			: candidates.slice(index + 1, candidates.length);
 
-		if (focusFirst(nextCandidates)) {
-			// prevent browser tab keydown because we've handled focus
-			e.preventDefault();
-		} else {
-			// If we can't focus that means we're at the edges
-			// so focus the proxy and let browser handle
-			// tab/shift+tab keypress on the proxy instead
-			handleProxyFocus(this.itemContext.focusProxyNode);
+		if (isTabKey) {
+			const focusedElement = document.activeElement;
+			const index = candidates.findIndex((candidate) => candidate === focusedElement);
+			const isMovingBackwards = e.shiftKey;
+			const nextCandidates = isMovingBackwards
+				? candidates.slice(0, index).reverse()
+				: candidates.slice(index + 1, candidates.length);
+			if (focusFirst(nextCandidates)) {
+				// prevent browser tab keydown because we've handled focus
+				e.preventDefault();
+				return;
+			} else {
+				// If we can't focus that means we're at the edges
+				// so focus the proxy and let browser handle
+				// tab/shift+tab keypress on the proxy instead
+				handleProxyFocus(this.itemContext.focusProxyNode);
+				return;
+			}
 		}
+
+		let activeEl: HTMLElement = document.activeElement as HTMLElement;
+
+		if (this.itemContext.contentNode) {
+			const focusedNode =
+				this.itemContext.contentNode.querySelector<HTMLElement>("[data-focused]");
+			if (focusedNode) {
+				activeEl = focusedNode;
+			}
+		}
+
+		if (activeEl === this.itemContext.triggerNode) return;
+
+		const newSelectedElement = useArrowNavigation(e, activeEl, undefined, {
+			itemsArray: candidates,
+			attributeName: `[${NAVIGATION_MENU_LINK_ATTR}]`,
+			loop: false,
+			enableIgnoredElement: true,
+		});
+
+		newSelectedElement?.focus();
 	};
 
 	onEscapeKeydown = (_: KeyboardEvent) => {
@@ -836,6 +882,7 @@ class NavigationMenuContentImplState {
 				"data-motion": this.motionAttribute ?? undefined,
 				"data-orientation": getDataOrientation(this.context.orientation.current),
 				onkeydown: this.onkeydown,
+				[NAVIGATION_MENU_CONTENT_ATTR]: "",
 			}) as const
 	);
 }

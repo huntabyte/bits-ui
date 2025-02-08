@@ -80,8 +80,9 @@ export function useArrowNavigation(
 	if (
 		!currentElement ||
 		(options.enableIgnoredElement && ignoredElement.includes(currentElement.nodeName))
-	)
+	) {
 		return null;
+	}
 
 	const {
 		arrowKeyOptions = "both",
