@@ -10,7 +10,6 @@ import {
 	type WritableBoxedValues,
 	afterSleep,
 	box,
-	onDestroyEffect,
 	useRefById,
 } from "svelte-toolbelt";
 import { Context, Previous, watch } from "runed";
@@ -118,12 +117,6 @@ class NavigationMenuRootState {
 	constructor(readonly opts: NavigationMenuRootStateProps) {
 		useRefById(opts);
 
-		onDestroyEffect(() => {
-			window.clearTimeout(this.openTimer);
-			window.clearTimeout(this.closeTimer);
-			window.clearTimeout(this.skipDelayTimer);
-		});
-
 		this.provider = useNavigationMenuProvider({
 			value: this.opts.value,
 			dir: this.opts.dir,
@@ -138,6 +131,14 @@ class NavigationMenuRootState {
 			onContentLeave: () => this.#onContentLeave(),
 			onItemSelect: (itemValue) => this.#onItemSelect(itemValue),
 			onItemDismiss: () => this.#onItemDismiss(),
+		});
+
+		$effect(() => {
+			return () => {
+				window.clearTimeout(this.openTimer);
+				window.clearTimeout(this.closeTimer);
+				window.clearTimeout(this.skipDelayTimer);
+			};
 		});
 	}
 
@@ -420,7 +421,7 @@ class NavigationMenuTriggerState {
 			deps: () => this.focusProxyMounted,
 		});
 
-		watch(
+		watch.pre(
 			() => this.opts.ref.current,
 			() => {
 				const node = this.opts.ref.current;
@@ -626,13 +627,13 @@ class NavigationMenuIndicatorImplState {
 		this.context = context.provider;
 		this.listContext = context.list;
 
+		useResizeObserver(() => this.activeTrigger, this.handlePositionChange);
+		useResizeObserver(() => this.context.indicatorTrackRef.current, this.handlePositionChange);
+
 		useRefById({
 			...opts,
 			deps: () => this.context.opts.value.current,
 		});
-
-		useResizeObserver(() => this.activeTrigger, this.handlePositionChange);
-		useResizeObserver(() => this.context.indicatorTrackRef.current, this.handlePositionChange);
 	}
 
 	handlePositionChange = () => {
@@ -873,6 +874,9 @@ class NavigationMenuContentImplState {
 				"aria-labelledby": this.itemContext.triggerId,
 				"data-motion": this.motionAttribute ?? undefined,
 				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-state": getDataOpenClosed(
+					this.context.opts.value.current === this.itemContext.opts.value.current
+				),
 				onkeydown: this.onkeydown,
 				[NAVIGATION_MENU_CONTENT_ATTR]: "",
 			}) as const
@@ -895,15 +899,15 @@ class NavigationMenuViewportContentMounterState {
 		this.contentContext.itemContext.contentChild = opts.child;
 		this.contentContext.itemContext.contentProps = opts.props;
 
-		$effect(() => {
-			this.context.onViewportContentChange(
-				this.contentContext.value,
-				this.contentContext.itemContext
-			);
-		});
+		this.context.onViewportContentChange(
+			this.contentContext.value,
+			this.contentContext.itemContext
+		);
 
-		onDestroyEffect(() => {
-			this.context.onViewportContentRemove(this.contentContext.value);
+		$effect(() => {
+			return () => {
+				this.context.onViewportContentRemove(this.contentContext.value);
+			};
 		});
 	}
 }

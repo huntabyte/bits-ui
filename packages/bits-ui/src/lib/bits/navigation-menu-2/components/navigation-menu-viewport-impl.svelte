@@ -29,7 +29,7 @@
 	});
 </script>
 
-<div {...mergedProps}>
+<div {...mergedProps} bind:this={ref}>
 	{#each viewportContent as [value, item] (value)}
 		{@const isActive = viewportState.activeContentValue === value}
 		<PresenceLayer id={item.contentProps.current.id as string} present={forceMount || isActive}>

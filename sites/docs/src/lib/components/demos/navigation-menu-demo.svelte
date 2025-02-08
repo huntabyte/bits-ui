@@ -156,6 +156,9 @@
 		<NavMenu.Viewport
 			class="text-popover-foreground data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center]  overflow-hidden rounded-md  border bg-background shadow-lg transition-[width,_height] duration-300 md:w-[var(--bits-navigation-menu-viewport-width)]"
 		/>
+		<!-- <NavMenu.Viewport
+			class="text-popover-foreground relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md  border bg-background shadow-lg md:w-[var(--bits-navigation-menu-viewport-width)]"
+		/> -->
 	</div>
 </NavMenu.Root>
 
