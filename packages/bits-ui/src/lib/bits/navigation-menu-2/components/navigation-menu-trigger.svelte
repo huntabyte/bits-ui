@@ -36,8 +36,8 @@
 {/if}
 
 {#if triggerState.open}
-	<Mounted bind:mounted={triggerState.focusProxyMounted} />
 	<VisuallyHidden {...triggerState.focusProxyProps} />
+	<Mounted bind:mounted={triggerState.focusProxyMounted} />
 	{#if triggerState.context.viewportRef.current}
 		<span aria-owns={triggerState.itemContext.contentId ?? undefined}></span>
 	{/if}

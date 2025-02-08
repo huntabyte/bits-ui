@@ -45,6 +45,7 @@
 					onRefChange={(v) => {
 						if (isActive && v) {
 							viewportState.contentNode = v;
+							item.contentNode = v;
 						}
 					}}
 				/>

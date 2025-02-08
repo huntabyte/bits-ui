@@ -359,7 +359,6 @@ export class NavigationMenuItemState {
 		if (!this.contentNode) return;
 		this.restoreContentTabOrder();
 		const candidates = getTabbableCandidates(this.contentNode);
-		console.log("candidates", candidates);
 		if (candidates.length) focusFirst(side === "start" ? candidates : candidates.reverse());
 	};
 
@@ -573,6 +572,7 @@ class NavigationMenuLinkState {
 				"data-active": this.opts.active.current ? "" : undefined,
 				"aria-current": this.opts.active.current ? "page" : undefined,
 				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 				[NAVIGATION_MENU_LINK_ATTR]: "",
 			}) as const
 	);
@@ -682,13 +682,7 @@ class NavigationMenuContentState {
 		this.itemContext = context.item;
 		this.listContext = context.list;
 
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.itemContext.contentNode = node;
-			},
-			deps: () => this.context.value.current,
-		});
+		useRefById(opts);
 	}
 
 	onpointerenter = (_: BitsPointerEvent) => {
@@ -792,7 +786,9 @@ class NavigationMenuContentImplState {
 		// only dismiss content when focus moves outside of the menu
 		if (this.context.rootNavigationMenuRef.current?.contains(target)) {
 			e.preventDefault();
+			return;
 		}
+		this.context.onItemDismiss();
 	};
 
 	onInteractOutside = (e: PointerEvent) => {
@@ -839,6 +835,7 @@ class NavigationMenuContentImplState {
 				"aria-labelledby": this.itemContext.triggerId,
 				"data-motion": this.motionAttribute ?? undefined,
 				"data-orientation": getDataOrientation(this.context.orientation.current),
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -886,7 +883,6 @@ class NavigationMenuViewportImplState {
 	viewportWidth = $derived.by(() => (this.size ? `${this.size.width}px` : undefined));
 	viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
 	open = $derived.by(() => Boolean(this.context.value.current));
-
 	activeContentValue = $state<string | undefined>();
 
 	constructor(
@@ -1069,18 +1065,14 @@ function focusFirst(candidates: HTMLElement[]) {
 }
 
 function removeFromTabOrder(candidates: HTMLElement[]) {
-	console.log("removing from tab order", candidates);
 	candidates.forEach((candidate) => {
 		candidate.dataset.tabindex = candidate.getAttribute("tabindex") || "";
 		candidate.setAttribute("tabindex", "-1");
 	});
 	return () => {
-		console.log("restoring tab order");
 		candidates.forEach((candidate) => {
 			const prevTabIndex = candidate.dataset.tabindex as string;
-			if (prevTabIndex) {
-				candidate.setAttribute("tabindex", prevTabIndex);
-			}
+			candidate.setAttribute("tabindex", prevTabIndex);
 		});
 	};
 }
