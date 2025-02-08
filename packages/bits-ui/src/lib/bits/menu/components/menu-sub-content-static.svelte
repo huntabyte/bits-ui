@@ -36,6 +36,7 @@
 			(v) => (ref = v)
 		),
 		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
+		isSub: true,
 	});
 
 	function onkeydown(e: KeyboardEvent) {
