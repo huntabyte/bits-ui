@@ -17,6 +17,7 @@
 		loop = true,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
+		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		forceMount = false,
 		...restProps
 	}: MenuContentProps = $props();
@@ -28,6 +29,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocusProp),
 	});
 
 	const mergedProps = $derived(

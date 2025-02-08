@@ -11,6 +11,7 @@ import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { CustomEventDispatcher, type EventCallback } from "$lib/internal/events.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { isTabbable } from "tabbable";
 
 const AutoFocusOnMountEvent = new CustomEventDispatcher("focusScope.autoFocusOnMount", {
 	bubbles: false,
@@ -211,7 +212,9 @@ export function useFocusScope({
 		const shouldIgnore = ctx.ignoreCloseAutoFocus;
 		afterSleep(0, () => {
 			if (!destroyEvent.defaultPrevented && prevFocusedElement && !shouldIgnore) {
-				focus(prevFocusedElement ?? document.body, { select: true });
+				focus(isTabbable(prevFocusedElement) ? prevFocusedElement : document.body, {
+					select: true,
+				});
 			}
 			focusScopeStack.remove(focusScope);
 		});

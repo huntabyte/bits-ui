@@ -17,6 +17,7 @@
 		loop = true,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
+		onCloseAutoFocus = noop,
 		forceMount = false,
 		...restProps
 	}: DropdownMenuContentStaticProps = $props();
@@ -28,6 +29,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
