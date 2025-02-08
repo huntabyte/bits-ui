@@ -63,7 +63,6 @@ interface ArrowNavigationOptions {
 const ignoredElement = ["INPUT", "TEXTAREA"];
 
 /**
- * Allow arrow navigation for every html element with data-radix-vue-collection-item tag
  *
  * @param e               Keyboard event
  * @param currentElement  Event initiator element or any element that wants to handle the navigation
