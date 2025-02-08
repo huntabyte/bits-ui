@@ -40,6 +40,13 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 	 * the input when the combobox is first mounted if there is already a value set.
 	 */
 	defaultValue?: string;
+
+	/**
+	 * Whether to clear the input when the last item is deselected.
+	 *
+	 * @default false
+	 */
+	clearOnDeselect?: boolean;
 }>;
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
