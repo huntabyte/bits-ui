@@ -1,8 +1,7 @@
-import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
+import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
 import type { Menubar } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import MenubarTest from "./menubar-test.svelte";
@@ -31,45 +30,6 @@ describe("menubar", () => {
 		expect(await axe(container)).toHaveNoViolations();
 	});
 
-	it.skip("should have bits data attrs", async () => {
-		const menuId = "1";
-		const { user, getTrigger, getByTestId, queryByTestId } = setup();
-		const trigger = getTrigger(menuId);
-		await user.click(trigger);
-		await user.click(trigger);
-		const content = queryByTestId("1-content");
-		await tick();
-		await waitFor(() => expect(content).not.toBeNull());
-
-		const root = getByTestId("root");
-		expect(root).toHaveAttribute("data-menubar-root");
-
-		const parts = [
-			"content",
-			"trigger",
-			"group",
-			"group-heading",
-			"separator",
-			"sub-trigger",
-			"item",
-			"checkbox-item",
-			"radio-group",
-			"radio-item",
-			"checkbox-indicator",
-		];
-		const mappedParts = parts.map((part) => `${menuId}-${part}`);
-
-		for (const part in parts) {
-			const el = screen.getByTestId(mappedParts[part] as string);
-			expect(el).toHaveAttribute(`data-menu-${parts[part]}`);
-		}
-
-		await user.click(getByTestId("1-sub-trigger"));
-
-		const subContent = getByTestId("1-sub-content");
-		expect(subContent).toHaveAttribute(`data-menu-sub-content`);
-	});
-
 	it("should navigate triggers within the menubar using arrow keys", async () => {
 		const { user, getTrigger } = setup();
 		const trigger = getTrigger("1");
@@ -84,7 +44,7 @@ describe("menubar", () => {
 		expect(getTrigger("1")).toHaveFocus();
 	});
 
-	it("should respect the loop prop", async () => {
+	it("should respect `loop: false`", async () => {
 		const { user, getTrigger } = setup({ loop: false });
 		const trigger = getTrigger("1");
 		trigger.focus();
@@ -112,5 +72,30 @@ describe("menubar", () => {
 		await user.keyboard(kbd.ARROW_LEFT);
 		expect(getContent("1")).toBeVisible();
 		expect(content2).not.toBeVisible();
+	});
+
+	it("should close the menu and focus the next tabbable element when `TAB` is pressed while the menu is open", async () => {
+		const { user, getTrigger, getContent, getByTestId } = setup();
+		const trigger = getTrigger("1");
+		trigger.focus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		const content1 = getContent("1");
+		await waitFor(() => expect(content1).toBeVisible());
+
+		const nextButton = getByTestId("next-button");
+		await user.keyboard(kbd.TAB);
+		await waitFor(() => expect(nextButton).toHaveFocus());
+	});
+
+	it("should close the menu and focus the previous tabbable element when `SHIFT+TAB` is pressed while the menu is open", async () => {
+		const { user, getTrigger, getContent, getByTestId } = setup();
+		const trigger = getTrigger("1");
+		trigger.focus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		const content1 = getContent("1");
+		expect(content1).toBeVisible();
+		const previousButton = getByTestId("previous-button");
+		await user.keyboard(kbd.SHIFT_TAB);
+		await waitFor(() => expect(previousButton).toHaveFocus());
 	});
 });

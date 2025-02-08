@@ -23,7 +23,7 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 	};
 }
 
-describe("pin Input", () => {
+describe("Pin Input", () => {
 	it("should have no accessibility violations", async () => {
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();
@@ -197,5 +197,23 @@ describe("pin Input", () => {
 		await user.paste(mockClipboard);
 
 		expect(mockComplete).toHaveBeenCalledTimes(0);
+	});
+
+	it("should allow pasting more than the max-length if transformation is provided", async () => {
+		const mockComplete = vi.fn();
+		const mockClipboard = "1-2-3-4-5-6";
+		await navigator.clipboard.writeText(mockClipboard);
+
+		const { user, hiddenInput } = setup({
+			maxlength: 6,
+			onComplete: mockComplete,
+			onPaste: (text) => text.replace(/-/g, ""),
+		});
+
+		await user.click(hiddenInput);
+		await user.paste(mockClipboard);
+
+		expect(mockComplete).toHaveBeenCalledTimes(1);
+		expect(mockComplete).toHaveBeenCalledWith("123456");
 	});
 });

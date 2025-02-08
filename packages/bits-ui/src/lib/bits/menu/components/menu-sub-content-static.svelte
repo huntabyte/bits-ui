@@ -28,8 +28,6 @@
 		...restProps
 	}: MenuSubContentStaticProps = $props();
 
-	let isMounted = $state(false);
-
 	const subContentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
@@ -37,14 +35,15 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
+		isSub: true,
 	});
 
 	function onkeydown(e: KeyboardEvent) {
 		const isKeyDownInside = (e.currentTarget as HTMLElement).contains(e.target as HTMLElement);
-		const isCloseKey = SUB_CLOSE_KEYS[subContentState.parentMenu.root.dir.current].includes(
-			e.key
-		);
+		const isCloseKey = SUB_CLOSE_KEYS[
+			subContentState.parentMenu.root.opts.dir.current
+		].includes(e.key);
 		if (isKeyDownInside && isCloseKey) {
 			subContentState.parentMenu.onClose();
 			const triggerNode = subContentState.parentMenu.triggerNode;
@@ -109,9 +108,8 @@
 		{...mergedProps}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
-		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		enabled={subContentState.parentMenu.open.current}
+		enabled={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}
@@ -131,7 +129,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
@@ -141,7 +139,7 @@
 		{escapeKeydownBehavior}
 		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		present={subContentState.parentMenu.open.current}
+		present={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}
@@ -161,7 +159,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

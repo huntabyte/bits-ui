@@ -170,7 +170,7 @@ describe("combobox - single", () => {
 		await openSingle({}, key);
 	});
 
-	it("should applie the appropriate `aria-labelledby` attribute to the group", async () => {
+	it("should apply the appropriate `aria-labelledby` attribute to the group", async () => {
 		const { group, groupHeading } = await openSingle();
 
 		expect(group).toHaveAttribute("aria-labelledby", groupHeading.id);
@@ -446,6 +446,25 @@ describe("combobox - single", () => {
 		const [item0v3] = getItems(getByTestId);
 		expectSelected(item0v3!);
 	});
+
+	it("should clear the input when the selected item is deselected when `clearOnDeselect` is `true`", async () => {
+		const { getByTestId, user, trigger, input } = await openSingle({
+			inputProps: {
+				clearOnDeselect: true,
+			},
+		});
+
+		const [item0] = getItems(getByTestId);
+		await user.click(item0!);
+		expectSelected(item0!);
+		expect(input).toHaveValue("A");
+		await user.click(trigger);
+		const [item0v2] = getItems(getByTestId);
+		await user.click(item0v2!);
+
+		expect(input).toHaveValue("");
+		expect(input).not.toHaveValue("A");
+	});
 });
 
 ////////////////////////////////////
@@ -716,6 +735,38 @@ describe("combobox - multiple", () => {
 
 		await user.click(submit);
 		expect(submittedValues).toHaveLength(0);
+	});
+
+	it("should clear the input when the last item is deselected when `clearOnDeselect` is `true`", async () => {
+		const { getByTestId, user, queryByTestId, input, getHiddenInputs } = await openMultiple({
+			inputProps: {
+				clearOnDeselect: true,
+			},
+		});
+		const [item, item2, item3] = getItems(getByTestId);
+		await waitFor(() => expect(queryByTestId("1-indicator")).toBeNull());
+		await user.click(item!);
+		expect(input).toHaveValue("A");
+		expect(getHiddenInputs()).toHaveLength(1);
+		expect(getHiddenInputs()[0]).toHaveValue("1");
+		await user.click(input);
+
+		expectSelected(item!);
+		await waitFor(() => expect(queryByTestId("1-indicator")).not.toBeNull());
+		await user.click(item);
+		expect(input).toHaveValue("");
+		expect(input).not.toHaveValue("A");
+		await user.click(item2);
+		await user.click(item3);
+		expect(getHiddenInputs()).toHaveLength(2);
+		expect(getHiddenInputs()[0]).toHaveValue("2");
+		expect(getHiddenInputs()[1]).toHaveValue("3");
+		await user.click(item3);
+		expect(getHiddenInputs()).toHaveLength(1);
+		expect(getHiddenInputs()[0]).toHaveValue("2");
+		await user.click(item2);
+		expect(input).toHaveValue("");
+		expect(getHiddenInputs()).toHaveLength(0);
 	});
 });
 

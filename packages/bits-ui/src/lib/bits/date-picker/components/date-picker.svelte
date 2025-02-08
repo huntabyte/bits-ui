@@ -108,24 +108,24 @@
 	});
 
 	usePopoverRoot({
-		open: pickerRootState.props.open,
+		open: pickerRootState.opts.open,
 	});
 
 	useDateFieldRoot({
-		value: pickerRootState.props.value,
-		disabled: pickerRootState.props.disabled,
-		readonly: pickerRootState.props.readonly,
-		readonlySegments: pickerRootState.props.readonlySegments,
+		value: pickerRootState.opts.value,
+		disabled: pickerRootState.opts.disabled,
+		readonly: pickerRootState.opts.readonly,
+		readonlySegments: pickerRootState.opts.readonlySegments,
 		validate: box.with(() => validate),
 		onInvalid: box.with(() => onInvalid),
-		minValue: pickerRootState.props.minValue,
-		maxValue: pickerRootState.props.maxValue,
-		granularity: pickerRootState.props.granularity,
-		hideTimeZone: pickerRootState.props.hideTimeZone,
-		hourCycle: pickerRootState.props.hourCycle,
-		locale: pickerRootState.props.locale,
-		required: pickerRootState.props.required,
-		placeholder: pickerRootState.props.placeholder,
+		minValue: pickerRootState.opts.minValue,
+		maxValue: pickerRootState.opts.maxValue,
+		granularity: pickerRootState.opts.granularity,
+		hideTimeZone: pickerRootState.opts.hideTimeZone,
+		hourCycle: pickerRootState.opts.hourCycle,
+		locale: pickerRootState.opts.locale,
+		required: pickerRootState.opts.required,
+		placeholder: pickerRootState.opts.placeholder,
 		errorMessageId: box.with(() => errorMessageId),
 		isInvalidProp: box.with(() => undefined),
 	});

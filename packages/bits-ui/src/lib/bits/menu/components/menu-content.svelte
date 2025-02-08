@@ -17,11 +17,10 @@
 		loop = true,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
+		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		forceMount = false,
 		...restProps
 	}: MenuContentProps = $props();
-
-	let isMounted = $state(false);
 
 	const contentState = useMenuContent({
 		id: box.with(() => id),
@@ -30,7 +29,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocusProp),
 	});
 
 	const mergedProps = $derived(
@@ -55,7 +54,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
-		enabled={contentState.parentMenu.open.current}
+		enabled={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		trapFocus
@@ -79,13 +78,13 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
-		present={contentState.parentMenu.open.current}
+		present={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		trapFocus
@@ -109,7 +108,7 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

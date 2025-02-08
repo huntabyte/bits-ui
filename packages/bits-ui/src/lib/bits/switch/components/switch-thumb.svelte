@@ -24,9 +24,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked: thumbState.root.checked.current })}
+	{@render child({ props: mergedProps, ...thumbState.snippetProps })}
 {:else}
 	<span {...mergedProps}>
-		{@render children?.({ checked: thumbState.root.checked.current })}
+		{@render children?.(thumbState.snippetProps)}
 	</span>
 {/if}

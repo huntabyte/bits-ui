@@ -15,8 +15,6 @@
 		...restProps
 	}: NavigationMenuTriggerProps = $props();
 
-	let focusProxyMounted = $state(false);
-
 	const triggerState = useNavigationMenuTrigger({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled ?? false),
@@ -24,7 +22,6 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		focusProxyMounted: box.with(() => focusProxyMounted),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
@@ -39,7 +36,7 @@
 {/if}
 
 {#if triggerState.open}
-	<Mounted bind:isMounted={focusProxyMounted} />
+	<Mounted bind:mounted={triggerState.focusProxyMounted} />
 	<VisuallyHidden {...triggerState.visuallyHiddenProps} />
 	{#if triggerState.menu.viewportNode}
 		<span aria-owns={triggerState.item.contentNode?.id ?? undefined}></span>

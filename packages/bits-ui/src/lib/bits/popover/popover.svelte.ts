@@ -16,43 +16,32 @@ type PopoverRootStateProps = WritableBoxedValues<{
 }>;
 
 class PopoverRootState {
-	open: PopoverRootStateProps["open"];
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 
-	constructor(props: PopoverRootStateProps) {
-		this.open = props.open;
-	}
+	constructor(readonly opts: PopoverRootStateProps) {}
 
 	toggleOpen() {
-		this.open.current = !this.open.current;
+		this.opts.open.current = !this.opts.open.current;
 	}
 
 	handleClose() {
-		if (!this.open.current) return;
-		this.open.current = false;
+		if (!this.opts.open.current) return;
+		this.opts.open.current = false;
 	}
 }
 
 type PopoverTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
 
 class PopoverTriggerState {
-	#id: PopoverTriggerStateProps["id"];
-	#ref: PopoverTriggerStateProps["ref"];
-	#disabled: PopoverTriggerStateProps["disabled"];
-	#root: PopoverRootState;
-
-	constructor(props: PopoverTriggerStateProps, root: PopoverRootState) {
-		this.#id = props.id;
-		this.#root = root;
-		this.#ref = props.ref;
-		this.#disabled = props.disabled;
-
+	constructor(
+		readonly opts: PopoverTriggerStateProps,
+		readonly root: PopoverRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
-				this.#root.triggerNode = node;
+				this.root.triggerNode = node;
 			},
 		});
 
@@ -62,13 +51,13 @@ class PopoverTriggerState {
 	}
 
 	onclick(e: BitsMouseEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.button !== 0) return;
-		this.#root.toggleOpen();
+		this.root.toggleOpen();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (e.button !== 0) return;
 		// We prevent default to prevent focus from moving to the trigger
 		// since this action will open the popover and focus will move to the content
@@ -76,15 +65,15 @@ class PopoverTriggerState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (this.#disabled.current) return;
+		if (this.opts.disabled.current) return;
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
-		this.#root.toggleOpen();
+		this.root.toggleOpen();
 	}
 
 	#getAriaControls() {
-		if (this.#root.open.current && this.#root.contentNode?.id) {
-			return this.#root.contentNode?.id;
+		if (this.root.opts.open.current && this.root.contentNode?.id) {
+			return this.root.contentNode?.id;
 		}
 		return undefined;
 	}
@@ -92,13 +81,13 @@ class PopoverTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.#root.open.current),
-				"data-state": getDataOpenClosed(this.#root.open.current),
+				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"aria-controls": this.#getAriaControls(),
 				"data-popover-trigger": "",
-				disabled: this.#disabled.current,
+				disabled: this.opts.disabled.current,
 				//
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
@@ -114,25 +103,13 @@ type PopoverContentStateProps = WithRefProps &
 		onCloseAutoFocus: (e: Event) => void;
 	}>;
 class PopoverContentState {
-	#id: PopoverContentStateProps["id"];
-	#ref: PopoverContentStateProps["ref"];
-	root: PopoverRootState;
-	#onInteractOutside: PopoverContentStateProps["onInteractOutside"];
-	#onEscapeKeydown: PopoverContentStateProps["onEscapeKeydown"];
-	#onCloseAutoFocus: PopoverContentStateProps["onCloseAutoFocus"];
-
-	constructor(props: PopoverContentStateProps, root: PopoverRootState) {
-		this.#id = props.id;
-		this.root = root;
-		this.#ref = props.ref;
-		this.#onEscapeKeydown = props.onEscapeKeydown;
-		this.#onInteractOutside = props.onInteractOutside;
-		this.#onCloseAutoFocus = props.onCloseAutoFocus;
-
+	constructor(
+		readonly opts: PopoverContentStateProps,
+		readonly root: PopoverRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.root.open.current,
+			...opts,
+			deps: () => this.root.opts.open.current,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
@@ -144,7 +121,7 @@ class PopoverContentState {
 	}
 
 	handleInteractOutside(e: PointerEvent) {
-		this.#onInteractOutside.current(e);
+		this.opts.onInteractOutside.current(e);
 		if (e.defaultPrevented) return;
 		if (!isElement(e.target)) return;
 		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
@@ -153,26 +130,26 @@ class PopoverContentState {
 	}
 
 	handleEscapeKeydown(e: KeyboardEvent) {
-		this.#onEscapeKeydown.current(e);
+		this.opts.onEscapeKeydown.current(e);
 		if (e.defaultPrevented) return;
 		this.root.handleClose();
 	}
 
 	handleCloseAutoFocus(e: Event) {
-		this.#onCloseAutoFocus.current(e);
+		this.opts.onCloseAutoFocus.current(e);
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		this.root.triggerNode?.focus();
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				tabindex: -1,
-				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-popover-content": "",
 				style: {
 					pointerEvents: "auto",
@@ -184,38 +161,32 @@ class PopoverContentState {
 type PopoverCloseStateProps = WithRefProps;
 
 class PopoverCloseState {
-	#id: PopoverCloseStateProps["id"];
-	#ref: PopoverCloseStateProps["ref"];
-	#root: PopoverRootState;
-
-	constructor(props: PopoverCloseStateProps, root: PopoverRootState) {
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: PopoverCloseStateProps,
+		readonly root: PopoverRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-			deps: () => this.#root.open.current,
+			...opts,
+			deps: () => this.root.opts.open.current,
 		});
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
 	onclick(_: BitsPointerEvent) {
-		this.#root.handleClose();
+		this.root.handleClose();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE)) return;
 		e.preventDefault();
-		this.#root.handleClose();
+		this.root.handleClose();
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				type: "button",

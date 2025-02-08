@@ -83,6 +83,9 @@ importers:
       svelte-toolbelt:
         specifier: ^0.7.1
         version: 0.7.1(svelte@5.19.4)
+      tabbable:
+        specifier: ^6.2.0
+        version: 6.2.0
     devDependencies:
       '@sveltejs/kit':
         specifier: ^2.16.1

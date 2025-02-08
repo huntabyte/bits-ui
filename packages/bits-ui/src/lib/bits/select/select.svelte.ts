@@ -56,14 +56,6 @@ type SelectBaseRootStateProps = ReadableBoxedValues<{
 	};
 
 class SelectBaseRootState {
-	disabled: SelectBaseRootStateProps["disabled"];
-	required: SelectBaseRootStateProps["required"];
-	name: SelectBaseRootStateProps["name"];
-	loop: SelectBaseRootStateProps["loop"];
-	open: SelectBaseRootStateProps["open"];
-	scrollAlignment: SelectBaseRootStateProps["scrollAlignment"];
-	items: SelectBaseRootStateProps["items"];
-	allowDeselect: SelectBaseRootStateProps["allowDeselect"];
 	touchedInput = $state(false);
 	inputValue = $state<string>("");
 	inputNode = $state<HTMLElement | null>(null);
@@ -87,21 +79,11 @@ class SelectBaseRootState {
 	isCombobox = false;
 	bitsAttrs: SelectBitsAttrs;
 
-	constructor(props: SelectBaseRootStateProps) {
-		this.disabled = props.disabled;
-		this.required = props.required;
-		this.name = props.name;
-		this.loop = props.loop;
-		this.open = props.open;
-		this.scrollAlignment = props.scrollAlignment;
-		this.isCombobox = props.isCombobox;
-		this.items = props.items;
-		this.allowDeselect = props.allowDeselect;
-
+	constructor(readonly opts: SelectBaseRootStateProps) {
+		this.isCombobox = opts.isCombobox;
 		this.bitsAttrs = getSelectBitsAttrs(this);
-
 		$effect.pre(() => {
-			if (!this.open.current) {
+			if (!this.opts.open.current) {
 				this.setHighlightedNode(null);
 			}
 		});
@@ -136,11 +118,11 @@ class SelectBaseRootState {
 	}
 
 	setOpen(open: boolean) {
-		this.open.current = open;
+		this.opts.open.current = open;
 	}
 
 	toggleOpen() {
-		this.open.current = !this.open.current;
+		this.opts.open.current = !this.opts.open.current;
 	}
 
 	handleOpen() {
@@ -163,58 +145,58 @@ type SelectSingleRootStateProps = SelectBaseRootStateProps &
 	}>;
 
 class SelectSingleRootState extends SelectBaseRootState {
-	value: SelectSingleRootStateProps["value"];
 	isMulti = false as const;
-	hasValue = $derived.by(() => this.value.current !== "");
+	hasValue = $derived.by(() => this.opts.value.current !== "");
 	currentLabel = $derived.by(() => {
-		if (!this.items.current.length) return "";
-		const match = this.items.current.find((item) => item.value === this.value.current)?.label;
+		if (!this.opts.items.current.length) return "";
+		const match = this.opts.items.current.find(
+			(item) => item.value === this.opts.value.current
+		)?.label;
 		return match ?? "";
 	});
 	candidateLabels: string[] = $derived.by(() => {
-		if (!this.items.current.length) return [];
-		const filteredItems = this.items.current.filter((item) => !item.disabled);
+		if (!this.opts.items.current.length) return [];
+		const filteredItems = this.opts.items.current.filter((item) => !item.disabled);
 		return filteredItems.map((item) => item.label);
 	});
 	dataTypeaheadEnabled = $derived.by(() => {
 		if (this.isMulti) return false;
-		if (this.items.current.length === 0) return false;
+		if (this.opts.items.current.length === 0) return false;
 		return true;
 	});
 
-	constructor(props: SelectSingleRootStateProps) {
-		super(props);
-		this.value = props.value;
+	constructor(readonly opts: SelectSingleRootStateProps) {
+		super(opts);
 
 		$effect(() => {
-			if (!this.open.current && this.highlightedNode) {
+			if (!this.opts.open.current && this.highlightedNode) {
 				this.setHighlightedNode(null);
 			}
 		});
 
 		watch(
-			() => this.open.current,
+			() => this.opts.open.current,
 			() => {
-				if (!this.open.current) return;
+				if (!this.opts.open.current) return;
 				this.setInitialHighlightedNode();
 			}
 		);
 	}
 
 	includesItem(itemValue: string) {
-		return this.value.current === itemValue;
+		return this.opts.value.current === itemValue;
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
-		this.value.current = this.includesItem(itemValue) ? "" : itemValue;
+		this.opts.value.current = this.includesItem(itemValue) ? "" : itemValue;
 		this.inputValue = itemLabel;
 	}
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
 			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
-			if (this.value.current !== "") {
-				const node = this.getNodeByValue(this.value.current);
+			if (this.opts.value.current !== "") {
+				const node = this.getNodeByValue(this.opts.value.current);
 				if (node) {
 					this.setHighlightedNode(node, true);
 					return;
@@ -234,32 +216,30 @@ type SelectMultipleRootStateProps = SelectBaseRootStateProps &
 	}>;
 
 class SelectMultipleRootState extends SelectBaseRootState {
-	value: SelectMultipleRootStateProps["value"];
 	isMulti = true as const;
-	hasValue = $derived.by(() => this.value.current.length > 0);
+	hasValue = $derived.by(() => this.opts.value.current.length > 0);
 
-	constructor(props: SelectMultipleRootStateProps) {
-		super(props);
-		this.value = props.value;
+	constructor(readonly opts: SelectMultipleRootStateProps) {
+		super(opts);
 
 		watch(
-			() => this.open.current,
+			() => this.opts.open.current,
 			() => {
-				if (!this.open.current) return;
+				if (!this.opts.open.current) return;
 				this.setInitialHighlightedNode();
 			}
 		);
 	}
 
 	includesItem(itemValue: string) {
-		return this.value.current.includes(itemValue);
+		return this.opts.value.current.includes(itemValue);
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
 		if (this.includesItem(itemValue)) {
-			this.value.current = this.value.current.filter((v) => v !== itemValue);
+			this.opts.value.current = this.opts.value.current.filter((v) => v !== itemValue);
 		} else {
-			this.value.current = [...this.value.current, itemValue];
+			this.opts.value.current = [...this.opts.value.current, itemValue];
 		}
 		this.inputValue = itemLabel;
 	}
@@ -267,8 +247,8 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	setInitialHighlightedNode() {
 		afterTick(() => {
 			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
-			if (this.value.current.length && this.value.current[0] !== "") {
-				const node = this.getNodeByValue(this.value.current[0]!);
+			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
+				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
 					this.setHighlightedNode(node, true);
 					return;
@@ -284,21 +264,18 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 type SelectRootState = SelectSingleRootState | SelectMultipleRootState;
 
-type SelectInputStateProps = WithRefProps;
+type SelectInputStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		clearOnDeselect: boolean;
+	}>;
 
 class SelectInputState {
-	#id: SelectInputStateProps["id"];
-	#ref: SelectInputStateProps["ref"];
-	root: SelectRootState;
-
-	constructor(props: SelectInputStateProps, root: SelectRootState) {
-		this.root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: SelectInputStateProps,
+		readonly root: SelectRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.inputNode = node;
 			},
@@ -306,6 +283,20 @@ class SelectInputState {
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.oninput = this.oninput.bind(this);
+
+		watch(
+			[() => this.root.opts.value.current, () => this.opts.clearOnDeselect.current],
+			([value, clearOnDeselect], [prevValue]) => {
+				if (!clearOnDeselect) return;
+				if (Array.isArray(value) && Array.isArray(prevValue)) {
+					if (value.length === 0 && prevValue.length !== 0) {
+						this.root.inputValue = "";
+					}
+				} else if (value === "" && prevValue !== "") {
+					this.root.inputValue = "";
+				}
+			}
+		);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -314,7 +305,7 @@ class SelectInputState {
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
-		if (!this.root.open.current) {
+		if (!this.root.opts.open.current) {
 			if (INTERACTION_KEYS.includes(e.key)) return;
 			if (e.key === kbd.TAB) return;
 			if (e.key === kbd.BACKSPACE && this.root.inputValue === "") return;
@@ -343,9 +334,14 @@ class SelectInputState {
 		if (e.key === kbd.ENTER && !e.isComposing) {
 			e.preventDefault();
 
-			const isCurrentSelectedValue = this.root.highlightedValue === this.root.value.current;
+			const isCurrentSelectedValue =
+				this.root.highlightedValue === this.root.opts.value.current;
 
-			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+			if (
+				!this.root.opts.allowDeselect.current &&
+				isCurrentSelectedValue &&
+				!this.root.isMulti
+			) {
 				this.root.handleClose();
 				return;
 			}
@@ -373,7 +369,7 @@ class SelectInputState {
 				? candidateNodes.indexOf(currHighlightedNode)
 				: -1;
 
-			const loop = this.root.loop.current;
+			const loop = this.root.opts.loop.current;
 			let nextItem: HTMLElement | undefined;
 
 			if (e.key === kbd.ARROW_DOWN) {
@@ -408,14 +404,14 @@ class SelectInputState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "combobox",
-				disabled: this.root.disabled.current ? true : undefined,
+				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
-				"aria-expanded": getAriaExpanded(this.root.open.current),
-				"data-state": getDataOpenClosed(this.root.open.current),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				onkeydown: this.onkeydown,
 				oninput: this.oninput,
 				[this.root.bitsAttrs.input]: "",
@@ -426,19 +422,11 @@ class SelectInputState {
 type SelectComboTriggerStateProps = WithRefProps;
 
 class SelectComboTriggerState {
-	#id: SelectComboTriggerStateProps["id"];
-	#ref: SelectComboTriggerStateProps["ref"];
-	root: SelectBaseRootState;
-
-	constructor(props: SelectComboTriggerStateProps, root: SelectBaseRootState) {
-		this.root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(
+		readonly opts: SelectComboTriggerStateProps,
+		readonly root: SelectBaseRootState
+	) {
+		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
@@ -459,7 +447,7 @@ class SelectComboTriggerState {
 	 * behavior of focusing the button and keep focus on the input.
 	 */
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.disabled.current) return;
+		if (this.root.opts.disabled.current) return;
 		e.preventDefault();
 		if (document.activeElement !== this.root.inputNode) {
 			this.root.inputNode?.focus();
@@ -470,11 +458,11 @@ class SelectComboTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				disabled: this.root.disabled.current ? true : undefined,
+				id: this.opts.id.current,
+				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
-				"data-state": getDataOpenClosed(this.root.open.current),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[this.root.bitsAttrs.trigger]: "",
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
@@ -485,20 +473,15 @@ class SelectComboTriggerState {
 type SelectTriggerStateProps = WithRefProps;
 
 class SelectTriggerState {
-	#id: SelectTriggerStateProps["id"];
-	#ref: SelectTriggerStateProps["ref"];
-	root: SelectRootState;
 	#domTypeahead: DOMTypeahead;
 	#dataTypeahead: DataTypeahead;
 
-	constructor(props: SelectTriggerStateProps, root: SelectRootState) {
-		this.root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: SelectTriggerStateProps,
+		readonly root: SelectRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.triggerNode = node;
 			},
@@ -518,10 +501,12 @@ class SelectTriggerState {
 			},
 			onMatch: (label: string) => {
 				if (this.root.isMulti) return;
-				if (!this.root.items.current) return;
-				const matchedItem = this.root.items.current.find((item) => item.label === label);
+				if (!this.root.opts.items.current) return;
+				const matchedItem = this.root.opts.items.current.find(
+					(item) => item.label === label
+				);
 				if (!matchedItem) return;
-				this.root.value.current = matchedItem.value;
+				this.root.opts.value.current = matchedItem.value;
 			},
 			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
 		});
@@ -533,7 +518,7 @@ class SelectTriggerState {
 	}
 
 	#handleOpen() {
-		this.root.open.current = true;
+		this.root.opts.open.current = true;
 		this.#dataTypeahead.resetTypeahead();
 		this.#domTypeahead.resetTypeahead();
 	}
@@ -546,7 +531,7 @@ class SelectTriggerState {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 
-		if (!this.root.open.current) {
+		if (!this.root.opts.open.current) {
 			if (
 				e.key === kbd.ENTER ||
 				e.key === kbd.SPACE ||
@@ -584,9 +569,14 @@ class SelectTriggerState {
 		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
 			e.preventDefault();
 
-			const isCurrentSelectedValue = this.root.highlightedValue === this.root.value.current;
+			const isCurrentSelectedValue =
+				this.root.highlightedValue === this.root.opts.value.current;
 
-			if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+			if (
+				!this.root.opts.allowDeselect.current &&
+				isCurrentSelectedValue &&
+				!this.root.isMulti
+			) {
 				this.root.handleClose();
 				return;
 			}
@@ -616,7 +606,7 @@ class SelectTriggerState {
 				? candidateNodes.indexOf(currHighlightedNode)
 				: -1;
 
-			const loop = this.root.loop.current;
+			const loop = this.root.opts.loop.current;
 			let nextItem: HTMLElement | undefined;
 
 			if (e.key === kbd.ARROW_DOWN) {
@@ -671,7 +661,7 @@ class SelectTriggerState {
 	 * behavior of focusing the button and keep focus on the input.
 	 */
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.disabled.current) return;
+		if (this.root.opts.disabled.current) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -684,7 +674,7 @@ class SelectTriggerState {
 		// only call the handle if it's a left click, since pointerdown is triggered
 		// by right clicks as well, but not when ctrl is pressed
 		if (e.button === 0 && e.ctrlKey === false) {
-			if (this.root.open.current === false) {
+			if (this.root.opts.open.current === false) {
 				this.#handlePointerOpen(e);
 				e.preventDefault();
 			} else {
@@ -703,11 +693,11 @@ class SelectTriggerState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				disabled: this.root.disabled.current ? true : undefined,
+				id: this.opts.id.current,
+				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
-				"data-state": getDataOpenClosed(this.root.open.current),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-placeholder": this.root.hasValue ? undefined : "",
 				[this.root.bitsAttrs.trigger]: "",
 				onpointerdown: this.onpointerdown,
@@ -721,24 +711,19 @@ class SelectTriggerState {
 type SelectContentStateProps = WithRefProps;
 
 class SelectContentState {
-	id: SelectContentStateProps["id"];
-	ref: SelectContentStateProps["ref"];
 	viewportNode = $state<HTMLElement | null>(null);
-	root: SelectRootState;
 	isPositioned = $state(false);
 
-	constructor(props: SelectContentStateProps, root: SelectRootState) {
-		this.root = root;
-		this.id = props.id;
-		this.ref = props.ref;
-
+	constructor(
+		readonly opts: SelectContentStateProps,
+		readonly root: SelectRootState
+	) {
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.contentNode = node;
 			},
-			deps: () => this.root.open.current,
+			deps: () => this.root.opts.open.current,
 		});
 
 		onDestroyEffect(() => {
@@ -747,9 +732,9 @@ class SelectContentState {
 		});
 
 		watch(
-			() => this.root.open.current,
+			() => this.root.opts.open.current,
 			() => {
-				if (this.root.open.current) return;
+				if (this.root.opts.open.current) return;
 				this.isPositioned = false;
 			}
 		);
@@ -763,23 +748,14 @@ class SelectContentState {
 	}
 
 	#styles = $derived.by(() => {
-		if (this.root.isCombobox) {
-			return {
-				"--bits-combobox-content-transform-origin": "var(--bits-floating-transform-origin)",
-				"--bits-combobox-content-available-width": "var(--bits-floating-available-width)",
-				"--bits-combobox-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-combobox-anchor-width": "var(--bits-floating-anchor-width)",
-				"--bits-combobox-anchor-height": "var(--bits-floating-anchor-height)",
-			};
-		} else {
-			return {
-				"--bits-select-content-transform-origin": "var(--bits-floating-transform-origin)",
-				"--bits-select-content-available-width": "var(--bits-floating-available-width)",
-				"--bits-select-content-available-height": "var(--bits-floating-available-height)",
-				"--bits-select-anchor-width": "var(--bits-floating-anchor-width)",
-				"--bits-select-anchor-height": "var(--bits-floating-anchor-height)",
-			};
-		}
+		const prefix = this.root.isCombobox ? "--bits-combobox" : "--bits-select";
+		return {
+			[`${prefix}-content-transform-origin`]: "var(--bits-floating-transform-origin)",
+			[`${prefix}-content-available-width`]: "var(--bits-floating-available-width)",
+			[`${prefix}-content-available-height`]: "var(--bits-floating-available-height)",
+			[`${prefix}-anchor-width`]: " var(--bits-floating-anchor-width)",
+			[`${prefix}-anchor-height`]: "var(--bits-floating-anchor-height)",
+		};
 	});
 
 	handleInteractOutside(e: PointerEvent) {
@@ -788,14 +764,14 @@ class SelectContentState {
 		}
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.root.open.current }));
+	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "listbox",
-				"data-state": getDataOpenClosed(this.root.open.current),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				[this.root.bitsAttrs.content]: "",
 				style: {
 					display: "flex",
@@ -821,40 +797,25 @@ type SelectItemStateProps = WithRefProps<
 >;
 
 class SelectItemState {
-	#id: SelectItemStateProps["id"];
-	#ref: SelectItemStateProps["ref"];
-	root: SelectRootState;
-	value: SelectItemStateProps["value"];
-	label: SelectItemStateProps["label"];
-	onHighlight: SelectItemStateProps["onHighlight"];
-	onUnhighlight: SelectItemStateProps["onUnhighlight"];
-	disabled: SelectItemStateProps["disabled"];
-	isSelected = $derived.by(() => this.root.includesItem(this.value.current));
-	isHighlighted = $derived.by(() => this.root.highlightedValue === this.value.current);
+	isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
+	isHighlighted = $derived.by(() => this.root.highlightedValue === this.opts.value.current);
 	prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
 
-	constructor(props: SelectItemStateProps, root: SelectRootState) {
-		this.root = root;
-		this.value = props.value;
-		this.disabled = props.disabled;
-		this.label = props.label;
-		this.onHighlight = props.onHighlight;
-		this.onUnhighlight = props.onUnhighlight;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: SelectItemStateProps,
+		readonly root: SelectRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			deps: () => this.mounted,
 		});
 
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
-				this.onHighlight.current();
+				this.opts.onHighlight.current();
 			} else if (this.prevHighlighted.current) {
-				this.onUnhighlight.current();
+				this.opts.onUnhighlight.current();
 			}
 		});
 
@@ -869,6 +830,25 @@ class SelectItemState {
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
+	}
+
+	handleSelect() {
+		if (this.opts.disabled.current) return;
+		const isCurrentSelectedValue = this.opts.value.current === this.root.opts.value.current;
+
+		// if allowDeselect is false and the item is already selected and we're not in a
+		// multi select, do nothing and close the menu
+		if (!this.root.opts.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+			this.root.handleClose();
+			return;
+		}
+
+		// otherwise, toggle the item and if we're not in a multi select, close the menu
+		this.root.toggleItem(this.opts.value.current, this.opts.label.current);
+
+		if (!this.root.isMulti && !isCurrentSelectedValue) {
+			this.root.handleClose();
+		}
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -887,46 +867,44 @@ class SelectItemState {
 	 * multiple clicks.
 	 */
 	onpointerup(e: BitsPointerEvent) {
-		if (e.defaultPrevented) return;
+		if (e.defaultPrevented || !this.opts.ref.current) return;
 		// prevent any default behavior
 		e.preventDefault();
-		if (this.disabled.current) return;
-		const isCurrentSelectedValue = this.value.current === this.root.value.current;
 
-		// if allowDeselect is false and the item is already selected and we're not in a
-		// multi select, do nothing and close the menu
-		if (!this.root.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
-			this.root.handleClose();
+		/**
+		 * For one reason or another, when it's a touch pointer and _only_ in combobox mode,
+		 * we need to listen for the immediate click event to handle the selection, otherwise
+		 * a click event will be fired on the element behind the item after the content closes.
+		 */
+		if (e.pointerType === "touch") {
+			on(this.opts.ref.current, "click", () => this.handleSelect(), { once: true });
 			return;
 		}
 
-		// otherwise, toggle the item and if we're not in a multi select, close the menu
-		this.root.toggleItem(this.value.current, this.label.current);
-		if (!this.root.isMulti && !isCurrentSelectedValue) {
-			this.root.handleClose();
-		}
+		this.handleSelect();
 	}
 
 	onpointermove(_: BitsPointerEvent) {
-		if (this.root.highlightedNode !== this.#ref.current) {
-			this.root.setHighlightedNode(this.#ref.current);
+		if (this.root.highlightedNode !== this.opts.ref.current) {
+			this.root.setHighlightedNode(this.opts.ref.current);
 		}
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.value.current) ? "true" : undefined,
-				"data-value": this.value.current,
-				"data-disabled": getDataDisabled(this.disabled.current),
+				"aria-selected": this.root.includesItem(this.opts.value.current)
+					? "true"
+					: undefined,
+				"data-value": this.opts.value.current,
+				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-highlighted":
-					this.root.highlightedValue === this.value.current ? "" : undefined,
-				"data-selected": this.root.includesItem(this.value.current) ? "" : undefined,
-				"data-label": this.label.current,
+					this.root.highlightedValue === this.opts.value.current ? "" : undefined,
+				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
+				"data-label": this.opts.label.current,
 				[this.root.bitsAttrs.item]: "",
-
 				onpointermove: this.onpointermove,
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
@@ -937,26 +915,19 @@ class SelectItemState {
 type SelectGroupStateProps = WithRefProps;
 
 class SelectGroupState {
-	#id: SelectGroupStateProps["id"];
-	#ref: SelectGroupStateProps["ref"];
-	root: SelectBaseRootState;
 	labelNode = $state<HTMLElement | null>(null);
 
-	constructor(props: SelectGroupStateProps, root: SelectBaseRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.root = root;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(
+		readonly opts: SelectGroupStateProps,
+		readonly root: SelectBaseRootState
+	) {
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "group",
 				[this.root.bitsAttrs.group]: "",
 				"aria-labelledby": this.labelNode?.id ?? undefined,
@@ -967,18 +938,12 @@ class SelectGroupState {
 type SelectGroupHeadingStateProps = WithRefProps;
 
 class SelectGroupHeadingState {
-	#id: SelectGroupHeadingStateProps["id"];
-	#ref: SelectGroupHeadingStateProps["ref"];
-	group: SelectGroupState;
-
-	constructor(props: SelectGroupHeadingStateProps, group: SelectGroupState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.group = group;
-
+	constructor(
+		readonly opts: SelectGroupHeadingStateProps,
+		readonly group: SelectGroupState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
 				group.labelNode = node;
 			},
@@ -988,7 +953,7 @@ class SelectGroupHeadingState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				[this.group.root.bitsAttrs["group-label"]]: "",
 			}) as const
 	);
@@ -999,13 +964,12 @@ type SelectHiddenInputStateProps = ReadableBoxedValues<{
 }>;
 
 class SelectHiddenInputState {
-	#value: SelectHiddenInputStateProps["value"];
-	root: SelectBaseRootState;
-	shouldRender = $derived.by(() => this.root.name.current !== "");
+	shouldRender = $derived.by(() => this.root.opts.name.current !== "");
 
-	constructor(props: SelectHiddenInputStateProps, root: SelectBaseRootState) {
-		this.root = root;
-		this.#value = props.value;
+	constructor(
+		readonly opts: SelectHiddenInputStateProps,
+		readonly root: SelectBaseRootState
+	) {
 		this.onfocus = this.onfocus.bind(this);
 	}
 
@@ -1022,10 +986,10 @@ class SelectHiddenInputState {
 	props = $derived.by(
 		() =>
 			({
-				disabled: getDisabled(this.root.disabled.current),
-				required: getRequired(this.root.required.current),
-				name: this.root.name.current,
-				value: this.#value.current,
+				disabled: getDisabled(this.root.opts.disabled.current),
+				required: getRequired(this.root.opts.required.current),
+				name: this.root.opts.name.current,
+				value: this.opts.value.current,
 				style: styleToString(srOnlyStyles),
 				tabindex: -1,
 				onfocus: this.onfocus,
@@ -1036,32 +1000,28 @@ class SelectHiddenInputState {
 type SelectViewportStateProps = WithRefProps;
 
 class SelectViewportState {
-	#id: SelectViewportStateProps["id"];
-	#ref: SelectViewportStateProps["ref"];
 	root: SelectBaseRootState;
-	content: SelectContentState;
 	prevScrollTop = $state(0);
 
-	constructor(props: SelectViewportStateProps, content: SelectContentState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.content = content;
+	constructor(
+		readonly opts: SelectViewportStateProps,
+		readonly content: SelectContentState
+	) {
 		this.root = content.root;
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
 				this.content.viewportNode = node;
 			},
-			deps: () => this.root.open.current,
+			deps: () => this.root.opts.open.current,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "presentation",
 				[this.root.bitsAttrs.viewport]: "",
 				style: {
@@ -1079,9 +1039,6 @@ class SelectViewportState {
 type SelectScrollButtonImplStateProps = WithRefProps;
 
 class SelectScrollButtonImplState {
-	id: SelectScrollButtonImplStateProps["id"];
-	ref: SelectScrollButtonImplStateProps["ref"];
-	content: SelectContentState;
 	root: SelectBaseRootState;
 	autoScrollInterval: number | null = null;
 	userScrollTimer = -1;
@@ -1089,15 +1046,14 @@ class SelectScrollButtonImplState {
 	onAutoScroll: () => void = noop;
 	mounted = $state(false);
 
-	constructor(props: SelectScrollButtonImplStateProps, content: SelectContentState) {
-		this.ref = props.ref;
-		this.id = props.id;
-		this.content = content;
+	constructor(
+		readonly opts: SelectScrollButtonImplStateProps,
+		readonly content: SelectContentState
+	) {
 		this.root = content.root;
 
 		useRefById({
-			id: this.id,
-			ref: this.ref,
+			...opts,
 			deps: () => this.mounted,
 		});
 
@@ -1159,7 +1115,7 @@ class SelectScrollButtonImplState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
 				style: {
 					flexShrink: 0,
@@ -1172,13 +1128,11 @@ class SelectScrollButtonImplState {
 }
 
 class SelectScrollDownButtonState {
-	state: SelectScrollButtonImplState;
 	content: SelectContentState;
 	root: SelectBaseRootState;
 	canScrollDown = $state(false);
 
-	constructor(state: SelectScrollButtonImplState) {
-		this.state = state;
+	constructor(readonly state: SelectScrollButtonImplState) {
 		this.content = state.content;
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
@@ -1187,13 +1141,13 @@ class SelectScrollDownButtonState {
 			[
 				() => this.content.viewportNode,
 				() => this.content.isPositioned,
-				() => this.root.open.current,
+				() => this.root.opts.open.current,
 			],
 			() => {
 				if (
 					!this.content.viewportNode ||
 					!this.content.isPositioned ||
-					!this.root.open.current
+					!this.root.opts.open.current
 				) {
 					return;
 				}
@@ -1237,13 +1191,11 @@ class SelectScrollDownButtonState {
 }
 
 class SelectScrollUpButtonState {
-	state: SelectScrollButtonImplState;
 	content: SelectContentState;
 	root: SelectBaseRootState;
 	canScrollUp = $state(false);
 
-	constructor(state: SelectScrollButtonImplState) {
-		this.state = state;
+	constructor(readonly state: SelectScrollButtonImplState) {
 		this.content = state.content;
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;

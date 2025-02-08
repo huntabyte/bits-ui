@@ -1,5 +1,35 @@
 # bits-ui
 
+## 1.0.0-next.89
+
+### Patch Changes
+
+-   fix: Menu grace areas to enable top/bottom submenus ([#1114](https://github.com/huntabyte/bits-ui/pull/1114))
+
+## 1.0.0-next.88
+
+### Patch Changes
+
+-   fix: allow tabbing out of menus to previous and next tabbable item in the dom ([#1111](https://github.com/huntabyte/bits-ui/pull/1111))
+
+## 1.0.0-next.87
+
+### Patch Changes
+
+-   fix: click events firing on elements behind the content when selecting Combobox.Item ([#1109](https://github.com/huntabyte/bits-ui/pull/1109))
+
+## 1.0.0-next.86
+
+### Patch Changes
+
+-   fix: Pin Input allowing paste on non-matching ([#1101](https://github.com/huntabyte/bits-ui/pull/1101))
+
+## 1.0.0-next.85
+
+### Patch Changes
+
+-   fix: Pin Input paste behavior ([#1096](https://github.com/huntabyte/bits-ui/pull/1096))
+
 ## 1.0.0-next.84
 
 ### Patch Changes
