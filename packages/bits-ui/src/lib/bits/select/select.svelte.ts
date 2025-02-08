@@ -264,7 +264,10 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 type SelectRootState = SelectSingleRootState | SelectMultipleRootState;
 
-type SelectInputStateProps = WithRefProps;
+type SelectInputStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		clearOnDeselect: boolean;
+	}>;
 
 class SelectInputState {
 	constructor(
@@ -280,6 +283,20 @@ class SelectInputState {
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.oninput = this.oninput.bind(this);
+
+		watch(
+			[() => this.root.opts.value.current, () => this.opts.clearOnDeselect.current],
+			([value, clearOnDeselect], [prevValue]) => {
+				if (!clearOnDeselect) return;
+				if (Array.isArray(value) && Array.isArray(prevValue)) {
+					if (value.length === 0 && prevValue.length !== 0) {
+						this.root.inputValue = "";
+					}
+				} else if (value === "" && prevValue !== "") {
+					this.root.inputValue = "";
+				}
+			}
+		);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {

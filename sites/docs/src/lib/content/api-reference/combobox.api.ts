@@ -114,6 +114,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"Whether or not the user can deselect the selected item by pressing it in a single select.",
 		}),
+
 		items: createPropSchema({
 			type: {
 				type: "array",
@@ -279,6 +280,10 @@ export const input = createApiSchema<ComboboxInputPropsWithoutHTML>({
 		defaultValue: createStringProp({
 			description:
 				"The default value of the input. This is not a reactive prop and is only used to populate the input when the combobox is first mounted if there is already a value set.",
+		}),
+		clearOnDeselect: createBooleanProp({
+			description: "Whether to clear the input when the last item is deselected.",
+			default: C.FALSE,
 		}),
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
