@@ -969,7 +969,6 @@ class ContextMenuTriggerState {
 
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.opts.disabled.current || isMouseEvent(e)) return;
-		e.preventDefault();
 		this.#clearLongPressTimer();
 		this.#longPressTimer = window.setTimeout(() => this.#handleOpen(e), 700);
 	}
