@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.89
+
+### Patch Changes
+
+-   fix: Menu grace areas to enable top/bottom submenus ([#1114](https://github.com/huntabyte/bits-ui/pull/1114))
+
 ## 1.0.0-next.88
 
 ### Patch Changes
