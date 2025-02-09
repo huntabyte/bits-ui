@@ -354,8 +354,8 @@ class NavigationMenuTriggerState {
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
 	listContext: NavigationMenuListState;
-	hasPointerMoveOpened = $state(false);
-	wasClickClose = $state(false);
+	hasPointerMoveOpened = box(false);
+	wasClickClose = false;
 	open = $derived.by(
 		() => this.itemContext.opts.value.current === this.context.opts.value.current
 	);
@@ -369,6 +369,7 @@ class NavigationMenuTriggerState {
 			list: NavigationMenuListState;
 		}
 	) {
+		this.hasPointerMoveOpened = boxAutoReset(false, 300);
 		this.context = context.provider;
 		this.itemContext = context.item;
 		this.listContext = context.list;
@@ -409,22 +410,28 @@ class NavigationMenuTriggerState {
 			this.opts.disabled.current ||
 			this.wasClickClose ||
 			this.itemContext.wasEscapeClose ||
-			this.hasPointerMoveOpened
+			this.hasPointerMoveOpened.current
 		) {
 			return;
 		}
 		this.context.onTriggerEnter(this.itemContext.opts.value.current);
-		this.hasPointerMoveOpened = true;
+		this.hasPointerMoveOpened.current = true;
 	});
 
 	onpointerleave = whenMouse(() => {
 		if (this.opts.disabled.current) return;
 		this.context.onTriggerLeave();
-		this.hasPointerMoveOpened = false;
+		this.hasPointerMoveOpened.current = false;
 	});
 
 	onclick = (_: BitsMouseEvent<HTMLButtonElement>) => {
-		this.context.onItemSelect(this.itemContext.opts.value.current);
+		// if opened via pointer move, we prevent the click event
+		if (this.hasPointerMoveOpened.current) return;
+		if (this.open) {
+			this.context.onItemSelect("");
+		} else {
+			this.context.onItemSelect(this.itemContext.opts.value.current);
+		}
 		this.wasClickClose = this.open;
 	};
 
