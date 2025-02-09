@@ -118,8 +118,8 @@ class NavigationMenuRootState {
 	#derivedDelay = $derived.by(() => {
 		const isOpen = this.opts?.value?.current !== "";
 		if (isOpen || this.isDelaySkipped.current) {
-			// 150ms for user to switch trigger or move into content view
-			return 150;
+			// 150 for user to switch trigger or move into content view
+			return 100;
 		} else {
 			return this.opts.delayDuration.current;
 		}
@@ -703,7 +703,7 @@ class NavigationMenuContentState {
 	}
 
 	onpointerenter = (_: BitsPointerEvent) => {
-		this.context.onContentEnter;
+		this.context.onContentEnter();
 	};
 
 	onpointerleave = whenMouse(() => {
@@ -863,8 +863,9 @@ class NavigationMenuContentImplState {
 	};
 
 	onEscapeKeydown = (_: KeyboardEvent) => {
-		// prevent the dropdown from reopening after the
-		// escape key has been pressed
+		this.context.onItemDismiss();
+		this.itemContext.triggerNode?.focus();
+		// prevent the dropdown from reopening after the escape key has been pressed
 		this.itemContext.wasEscapeClose = true;
 	};
 
