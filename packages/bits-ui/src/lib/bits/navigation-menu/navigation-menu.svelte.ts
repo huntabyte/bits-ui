@@ -810,9 +810,6 @@ class NavigationMenuContentImplState {
 		// prevent parent menus handling sub-menu keydown events
 		const target = e.target;
 		if (!isElement(target)) return;
-		console.log("target", target);
-		console.log("closest nav menu", target.closest(`[${NAVIGATION_MENU_ATTR}]`));
-		console.log("ref");
 		if (
 			target.closest(`[${NAVIGATION_MENU_ATTR}]`) !==
 			this.context.opts.rootNavigationMenuRef.current

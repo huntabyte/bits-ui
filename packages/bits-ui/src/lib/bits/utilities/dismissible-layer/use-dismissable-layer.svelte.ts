@@ -35,9 +35,9 @@ export class DismissibleLayerState {
 		pointerdown: false,
 	};
 	#isResponsibleLayer = false;
+	#isFocusInsideDOMTree = false;
 	node: WritableBox<HTMLElement | null> = box(null);
 	#documentObj = undefined as unknown as Document;
-	#isFocusInsideDOMTree = $state(false);
 	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
 	currNode = $state<HTMLElement | null>(null);
 	#unsubClickListener = noop;
