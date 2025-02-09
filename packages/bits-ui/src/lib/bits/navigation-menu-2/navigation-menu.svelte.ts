@@ -87,15 +87,6 @@ class NavigationMenuProviderState {
 		this.onItemDismiss = opts.onItemDismiss;
 		this.onItemSelect = opts.onItemSelect;
 	}
-
-	onViewportContentChange(contentValue: string, item: NavigationMenuItemState) {
-		this.viewportContent.set(contentValue, item);
-	}
-
-	onViewportContentRemove(contentValue: string) {
-		if (!this.viewportContent.has(contentValue)) return;
-		this.viewportContent.delete(contentValue);
-	}
 }
 
 type NavigationMenuRootStateProps = WithRefProps<
@@ -138,11 +129,11 @@ class NavigationMenuRootState {
 			onTriggerEnter: (itemValue) => {
 				this.#onTriggerEnter(itemValue);
 			},
-			onTriggerLeave: () => this.#onTriggerLeave(),
-			onContentEnter: () => this.#onContentEnter(),
-			onContentLeave: () => this.#onContentLeave(),
-			onItemSelect: (itemValue) => this.#onItemSelect(itemValue),
-			onItemDismiss: () => this.#onItemDismiss(),
+			onTriggerLeave: this.#onTriggerLeave,
+			onContentEnter: this.#onContentEnter,
+			onContentLeave: this.#onContentLeave,
+			onItemSelect: this.#onItemSelect,
+			onItemDismiss: this.#onItemDismiss,
 		});
 	}
 
@@ -156,35 +147,35 @@ class NavigationMenuRootState {
 		() => this.#derivedDelay
 	);
 
-	#onTriggerEnter(itemValue: string) {
+	#onTriggerEnter = (itemValue: string) => {
 		this.#debouncedFn(itemValue);
-	}
+	};
 
-	#onTriggerLeave() {
+	#onTriggerLeave = () => {
 		this.isDelaySkipped.current = false;
 		this.#debouncedFn("");
-	}
+	};
 
-	#onContentEnter() {
+	#onContentEnter = () => {
 		this.#debouncedFn();
-	}
+	};
 
-	#onContentLeave() {
+	#onContentLeave = () => {
 		this.#debouncedFn("");
-	}
+	};
 
-	#onItemSelect(itemValue: string) {
+	#onItemSelect = (itemValue: string) => {
 		this.setValue(itemValue);
-	}
+	};
 
-	#onItemDismiss() {
+	#onItemDismiss = () => {
 		this.setValue("");
-	}
+	};
 
-	setValue(newValue: string) {
+	setValue = (newValue: string) => {
 		this.previousValue.current = this.opts.value.current;
 		this.opts.value.current = newValue;
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -222,16 +213,16 @@ class NavigationMenuSubState {
 			dir: this.context.opts.dir,
 			orientation: this.opts.orientation,
 			rootNavigationMenuRef: this.context.opts.rootNavigationMenuRef,
-			onTriggerEnter: (itemValue) => this.setValue(itemValue),
-			onItemSelect: (itemValue) => this.setValue(itemValue),
+			onTriggerEnter: this.setValue,
+			onItemSelect: this.setValue,
 			onItemDismiss: () => this.setValue(""),
 			previousValue: this.previousValue,
 		});
 	}
 
-	setValue(newValue: string) {
+	setValue = (newValue: string) => {
 		this.opts.value.current = newValue;
-	}
+	};
 
 	props = $derived.by(
 		() =>
@@ -986,12 +977,9 @@ export function useNavigationMenuList(props: NavigationMenuListStateProps) {
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
-	try {
-		const listContext = NavigationMenuListContext.get();
-		return NavigationMenuItemContext.set(new NavigationMenuItemState(props, listContext));
-	} catch {
-		console.error("Error on Item");
-	}
+	return NavigationMenuItemContext.set(
+		new NavigationMenuItemState(props, NavigationMenuListContext.get())
+	);
 }
 
 export function useNavigationMenuIndicatorImpl(props: NavigationMenuIndicatorStateProps) {
@@ -1020,12 +1008,9 @@ export function useNavigationMenuContent(props: NavigationMenuContentStateProps)
 }
 
 export function useNavigationMenuLink(props: NavigationMenuLinkStateProps) {
-	const provider = NavigationMenuProviderContext.get();
-	const item = NavigationMenuItemContext.get();
-
 	return new NavigationMenuLinkState(props, {
-		provider,
-		item,
+		provider: NavigationMenuProviderContext.get(),
+		item: NavigationMenuItemContext.get(),
 	});
 }
 
