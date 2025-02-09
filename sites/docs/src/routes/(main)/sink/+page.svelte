@@ -2,5 +2,5 @@
 	import PopoverDemo from "$lib/components/demos/popover-demo.svelte";
 </script>
 
-<PopoverDemo />
-<PopoverDemo />
+<PopoverDemo id="A" />
+<PopoverDemo id="B" />

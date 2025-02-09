@@ -102,7 +102,6 @@ export function useFocusScope({
 				lastFocusedElement = target;
 			} else {
 				if (ctx.ignoreCloseAutoFocus) return;
-				console.log("1");
 				focus(lastFocusedElement, { select: true });
 			}
 		};
@@ -129,7 +128,6 @@ export function useFocusScope({
 			// If the focus has moved to an actual legitimate element (`relatedTarget !== null`)
 			// that is outside the container, we move focus to the last valid focused element inside.
 			if (!container.contains(relatedTarget)) {
-				console.log("2");
 				focus(lastFocusedElement, { select: true });
 			}
 		};
@@ -143,7 +141,6 @@ export function useFocusScope({
 		const handleMutations = (_: MutationRecord[]) => {
 			const lastFocusedElementExists = container?.contains(lastFocusedElement);
 			if (!lastFocusedElementExists) {
-				console.log("3");
 				focus(container);
 			}
 		};
@@ -187,7 +184,7 @@ export function useFocusScope({
 
 	function handleOpen(container: HTMLElement | null, prevFocusedElement: HTMLElement | null) {
 		if (!container) container = document.getElementById(id.current);
-		if (!container) return;
+		if (!container || !enabled.current) return;
 		focusScopeStack.add(focusScope);
 		const hasFocusedCandidate = container.contains(prevFocusedElement);
 
@@ -198,11 +195,9 @@ export function useFocusScope({
 			if (!mountEvent.defaultPrevented) {
 				afterTick(() => {
 					if (!container) return;
-					console.log("4");
 					focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
 
 					if (document.activeElement === prevFocusedElement) {
-						console.log("5");
 						focus(container);
 					}
 				});
