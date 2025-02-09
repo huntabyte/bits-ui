@@ -20,7 +20,6 @@ export {
 	LinkPreview,
 	Menubar,
 	NavigationMenu,
-	NavMenu,
 	Pagination,
 	PinInput,
 	Popover,
