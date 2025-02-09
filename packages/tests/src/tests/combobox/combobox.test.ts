@@ -1,6 +1,6 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
-import { describe, it, vi } from "vitest";
+import { describe, it } from "vitest";
 import { type Component, tick } from "svelte";
 import {
 	type AnyFn,
@@ -37,8 +37,6 @@ const testItems: Item[] = [
 		label: "D",
 	},
 ];
-
-const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
 
 function setupSingle(
 	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
