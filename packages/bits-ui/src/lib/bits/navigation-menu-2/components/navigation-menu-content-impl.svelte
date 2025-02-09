@@ -15,8 +15,8 @@
 	let {
 		ref = $bindable(null),
 		id = useId(),
-		child: _child,
-		children: _childrenProp,
+		child: childProp,
+		children: childrenProp,
 		onInteractOutside = noop,
 		onFocusOutside = noop,
 		onEscapeKeydown = noop,
@@ -78,11 +78,12 @@
 			{escapeKeydownBehavior}
 		>
 			{@const finalProps = mergeProps(mergedProps, dismissibleProps)}
-			{#if contentImplState.itemContext.contentChild.current}
-				{@render contentImplState.itemContext.contentChild.current?.({ props: finalProps })}
+
+			{#if childProp}
+				{@render childProp({ props: finalProps })}
 			{:else}
 				<div {...finalProps}>
-					{@render contentImplState.itemContext.contentChildren.current?.()}
+					{@render childrenProp?.()}
 				</div>
 			{/if}
 		</EscapeLayer>

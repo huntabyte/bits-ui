@@ -12,8 +12,8 @@ import {
 	box,
 	useRefById,
 } from "svelte-toolbelt";
-import { Context, Previous, watch } from "runed";
-import { type Snippet, untrack } from "svelte";
+import { Context, watch } from "runed";
+import { type Snippet } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
 import {
@@ -32,7 +32,6 @@ import type {
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
-import { PreviousWithInit } from "$lib/internal/previous-with-init.svelte.js";
 import { CustomEventDispatcher } from "$lib/internal/events.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
@@ -64,7 +63,6 @@ type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 	};
 
 class NavigationMenuProviderState {
-	previousValue: PreviousWithInit<string>;
 	indicatorTrackRef = box<HTMLElement | null>(null);
 	viewportRef = box<HTMLElement | null>(null);
 	viewportContent = new SvelteMap<string, NavigationMenuItemState>();
@@ -76,7 +74,6 @@ class NavigationMenuProviderState {
 	onItemDismiss: NavigationMenuProviderStateProps["onItemDismiss"];
 
 	constructor(readonly opts: NavigationMenuProviderStateProps) {
-		this.previousValue = new PreviousWithInit(() => this.opts.value.current);
 		this.onTriggerEnter = opts.onTriggerEnter;
 		this.onTriggerLeave = opts.onTriggerLeave ?? noop;
 		this.onContentEnter = opts.onContentEnter ?? noop;
@@ -421,7 +418,7 @@ class NavigationMenuTriggerState {
 			deps: () => this.focusProxyMounted,
 		});
 
-		watch.pre(
+		watch(
 			() => this.opts.ref.current,
 			() => {
 				const node = this.opts.ref.current;
@@ -725,37 +722,15 @@ type NavigationMenuContentImplStateProps = WithRefProps;
 class NavigationMenuContentImplState {
 	context: NavigationMenuProviderState;
 	listContext: NavigationMenuListState;
-	prevMotionAttribute = new Previous<MotionAttribute | null>(() => this.motionAttribute);
 
-	motionAttribute: MotionAttribute | null = $derived.by(() => {
-		const items = untrack(() => this.listContext.listTriggers);
-		const values = items.map((item) => item.getAttribute("data-value")).filter(Boolean);
-		if (this.context.opts.dir.current === "rtl") values.reverse();
-		const index = values.indexOf(this.context.opts.value.current);
-		const prevIndex = values.indexOf(this.context.previousValue.current);
-		const isSelected = this.itemContext.opts.value.current === this.context.opts.value.current;
-		const wasSelected = prevIndex === values.indexOf(this.itemContext.opts.value.current);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	log = (...args: any[]) => {
+		if (this.itemContext.opts.value.current === "getting-started") {
+			console.log(...args);
+		}
+	};
 
-		// We only want to update selected and the last selected content
-		// this avoids animations being interrupted outside of that range
-		if (!isSelected && !wasSelected)
-			return untrack(() => this.prevMotionAttribute.current ?? null);
-
-		const attribute = (() => {
-			// Don't provide a direction on the initial open
-			if (index !== prevIndex) {
-				// If we're moving to this item from another
-				if (isSelected && prevIndex !== -1)
-					return index > prevIndex ? "from-end" : "from-start";
-				// If we're leaving this item for another
-				if (wasSelected && index !== -1) return index > prevIndex ? "to-start" : "to-end";
-			}
-			// Otherwise we're entering from close or leaving the list
-			// entirely and should not animate in any direction
-			return null;
-		})();
-		return attribute;
-	});
+	motionAttribute: MotionAttribute | null = $state(null);
 
 	constructor(
 		readonly opts: NavigationMenuContentImplStateProps,
@@ -768,6 +743,45 @@ class NavigationMenuContentImplState {
 			...opts,
 			deps: () => this.context.opts.value.current,
 		});
+
+		watch.pre(
+			[() => this.context.opts.value.current, () => this.listContext.listTriggers],
+			([rootValue], [rootPreviousValue]) => {
+				const items = this.listContext.listTriggers;
+				const values = items.map((item) => item.getAttribute("data-value")).filter(Boolean);
+				if (this.context.opts.dir.current === "rtl") values.reverse();
+				const index = values.indexOf(rootValue);
+				const prevIndex = values.indexOf(rootPreviousValue ?? "");
+				this.log("index", index, "prevIndex", prevIndex);
+				const isSelected = this.itemContext.opts.value.current === rootValue;
+				const wasSelected =
+					prevIndex === values.indexOf(this.itemContext.opts.value.current);
+
+				// We only want to update selected and the last selected content
+				// this avoids animations being interrupted outside of that range
+				if (!isSelected && !wasSelected) {
+					return;
+				}
+
+				const attribute = (() => {
+					// Don't provide a direction on the initial open
+					if (index !== prevIndex) {
+						this.log("index not equal to prev index");
+						// If we're moving to this item from another
+						if (isSelected && prevIndex !== -1)
+							return index > prevIndex ? "from-end" : "from-start";
+						// If we're leaving this item for another
+						if (wasSelected && index !== -1)
+							return index > prevIndex ? "to-start" : "to-end";
+					}
+					// Otherwise we're entering from close or leaving the list
+					// entirely and should not animate in any direction
+					return null;
+				})();
+
+				this.motionAttribute = attribute;
+			}
+		);
 
 		watch.pre(
 			[
@@ -921,30 +935,24 @@ class NavigationMenuViewportState {
 type NavigationMenuViewportImplStateProps = WithRefProps;
 
 class NavigationMenuViewportImplState {
-	size = $state<{ width: number; height: number } | null>(null);
+	size = $state.raw<{ width: number; height: number } | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	viewportWidth = $derived.by(() => (this.size ? `${this.size.width}px` : undefined));
 	viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
 	open = $derived.by(() => Boolean(this.context.opts.value.current));
-	activeContentValue = $state<string | undefined>();
+	activeContentValue = $state<string | undefined>(undefined);
 
 	constructor(
 		readonly opts: NavigationMenuViewportImplStateProps,
 		readonly context: NavigationMenuProviderState
 	) {
-		// We persist the last active content value as the viewport may be animating out
-		// and we want the content to remain mounted for the lifecycle of the viewport.
 		watch(
-			[
-				() => this.open,
-				() => this.context.opts.value.current,
-				() => this.context.previousValue.current,
-			],
-			() => {
-				if (this.open) {
-					this.activeContentValue = this.context.opts.value.current;
+			() => this.context.opts.value.current,
+			(value, previousValue) => {
+				if (value !== "") {
+					this.activeContentValue = value;
 				} else {
-					this.activeContentValue = this.context.previousValue.current;
+					this.activeContentValue = previousValue;
 				}
 			}
 		);

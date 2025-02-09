@@ -6,11 +6,11 @@
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import type { NavigationMenuContentProps } from "$lib/types.js";
+	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 
 	let {
 		ref = $bindable(null),
 		id = useId(),
-		forceMount = false,
 		children,
 		child,
 		...restProps
@@ -27,7 +27,16 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-{#if !contentState.context.viewportRef.current}
+{#if contentState.context.viewportRef.current}
+	<Portal
+		to={contentState.context.viewportRef.current}
+		disabled={!contentState.context.viewportRef.current}
+	>
+		<NavigationMenuContentImpl {...mergedProps} {children} {child} />
+	</Portal>
+{/if}
+
+<!-- {#if !contentState.context.viewportRef.current}
 	<PresenceLayer {id} present={forceMount || contentState.open}>
 		{#snippet presence()}
 			<NavigationMenuContentImpl {...mergedProps} {children} {child} />
@@ -35,4 +44,4 @@
 	</PresenceLayer>
 {:else}
 	<NavigationMenuViewportContentMounter {children} {child} {...mergedProps} />
-{/if}
+{/if} -->

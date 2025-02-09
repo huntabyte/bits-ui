@@ -66,7 +66,7 @@
 {/snippet}
 
 <NavMenu.Root class="relative z-10 flex w-screen flex-1 items-center justify-center">
-	<NavMenu.List class="group flex flex-1 list-none items-center justify-center space-x-1">
+	<NavMenu.List class="group flex flex-1 list-none items-center justify-center">
 		<NavMenu.Item value="getting-started">
 			<NavMenu.Trigger
 				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
@@ -154,7 +154,7 @@
 	</NavMenu.List>
 	<div class="perspective-[2000px] absolute left-0 top-full flex w-full justify-center">
 		<NavMenu.Viewport
-			class="text-popover-foreground data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center]  overflow-hidden rounded-md  border bg-background shadow-lg transition-[width,_height] duration-300 md:w-[var(--bits-navigation-menu-viewport-width)]"
+			class="text-popover-foreground data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md  border bg-background shadow-lg transition-[width,_height] duration-300 md:w-[var(--bits-navigation-menu-viewport-width)]"
 		/>
 		<!-- <NavMenu.Viewport
 			class="text-popover-foreground relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md  border bg-background shadow-lg md:w-[var(--bits-navigation-menu-viewport-width)]"
