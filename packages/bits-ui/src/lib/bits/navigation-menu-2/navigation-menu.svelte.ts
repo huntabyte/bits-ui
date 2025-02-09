@@ -108,10 +108,6 @@ type NavigationMenuRootStateProps = WithRefProps<
 >;
 
 class NavigationMenuRootState {
-	openTimer = -1;
-	closeTimer = -1;
-	skipDelayTimer = -1;
-	isOpenDelayed = true;
 	provider: NavigationMenuProviderState;
 	previousValue = box("");
 	isDelaySkipped: WritableBox<boolean>;
@@ -144,14 +140,6 @@ class NavigationMenuRootState {
 			onContentLeave: () => this.#onContentLeave(),
 			onItemSelect: (itemValue) => this.#onItemSelect(itemValue),
 			onItemDismiss: () => this.#onItemDismiss(),
-		});
-
-		$effect(() => {
-			return () => {
-				window.clearTimeout(this.openTimer);
-				window.clearTimeout(this.closeTimer);
-				window.clearTimeout(this.skipDelayTimer);
-			};
 		});
 	}
 
