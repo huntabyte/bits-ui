@@ -41,13 +41,3 @@
 		</PresenceLayer>
 	</Portal>
 {/if}
-
-<!-- {#if !contentState.context.viewportRef.current}
-	<PresenceLayer {id} present={forceMount || contentState.open}>
-		{#snippet presence()}
-			<NavigationMenuContentImpl {...mergedProps} {children} {child} />
-		{/snippet}
-	</PresenceLayer>
-{:else}
-	<NavigationMenuViewportContentMounter {children} {child} {...mergedProps} />
-{/if} -->
