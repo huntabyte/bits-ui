@@ -1056,10 +1056,14 @@ export function useNavigationMenuList(props: NavigationMenuListStateProps) {
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
-	const listState = NavigationMenuListContext.get();
-	return NavigationMenuItemContext.set(
-		new NavigationMenuItemState(props, listState, listState.menu)
-	);
+	try {
+		const listState = NavigationMenuListContext.get();
+		return NavigationMenuItemContext.set(
+			new NavigationMenuItemState(props, listState, listState.menu)
+		);
+	} catch {
+		console.log("error on item");
+	}
 }
 
 export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps) {

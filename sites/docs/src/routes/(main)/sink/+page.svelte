@@ -1,29 +1,229 @@
 <script lang="ts">
-	import { getLocalTimeZone, today } from "@internationalized/date";
-	import type { DateRange } from "bits-ui";
-	import RangeCalendarDemo from "$lib/components/demos/range-calendar-demo.svelte";
+	import { NavMenu } from "bits-ui";
+	import CaretDown from "phosphor-svelte/lib/CaretDown";
+	import { cn } from "$lib/utils/styles.js";
 
-	let now = $state(today(getLocalTimeZone()));
+	const components: { title: string; href: string; description: string }[] = [
+		{
+			title: "Alert Dialog",
+			href: "/docs/components/alert-dialog",
+			description:
+				"A modal dialog that interrupts the user with important content and expects a response.",
+		},
+		{
+			title: "Link Preview",
+			href: "/docs/components/link-preview",
+			description: "For sighted users to preview content available behind a link.",
+		},
+		{
+			title: "Progress",
+			href: "/docs/components/progress",
+			description:
+				"Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+		},
+		{
+			title: "Scroll Area",
+			href: "/docs/components/scroll-area",
+			description: "Visually or semantically separates content.",
+		},
+		{
+			title: "Tabs",
+			href: "/docs/components/tabs",
+			description:
+				"A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+		},
+		{
+			title: "Tooltip",
+			href: "/docs/components/tooltip",
+			description:
+				"A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+		},
+	];
 
-	let value = $state<DateRange>({
-		start: now,
-		end: now.add({ days: 6 }),
-	});
-
-	$inspect("Value cleared", value);
-
-	function clearDays() {
-		value = {
-			start: undefined,
-			end: undefined,
-		};
-	}
+	type ListItemProps = {
+		className?: string;
+		title: string;
+		href: string;
+		content: string;
+	};
 </script>
 
-<div class="space-y-4 p-3">
-	<RangeCalendarDemo bind:value />
+{#snippet LinkGroup({ items }: { items: string[] })}
+	<ul class="m-0 flex list-none flex-col gap-2 p-[22px]">
+		{#each items as item, index (index)}
+			<li>
+				<NavMenu.Link
+					href="#example"
+					class="flex items-center rounded px-4 py-2 hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground"
+				>
+					{item}
+				</NavMenu.Link>
+			</li>
+		{/each}
+	</ul>
+{/snippet}
 
-	<div class="text-center">
-		<button onclick={clearDays}>Clear days</button>
+{#snippet ListItem({ className, title, content, href }: ListItemProps)}
+	<li>
+		<NavMenu.Link
+			class={cn(
+				"block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground",
+				className
+			)}
+			{href}
+		>
+			<div class="text-sm font-medium leading-none">{title}</div>
+			<p class="line-clamp-2 text-sm leading-snug text-muted-foreground">
+				{content}
+			</p>
+		</NavMenu.Link>
+	</li>
+{/snippet}
+
+<NavMenu.Root class="relative z-10 flex w-full justify-center">
+	<NavMenu.List class="group flex list-none items-center justify-center p-1">
+		<NavMenu.Item>
+			<NavMenu.Trigger
+				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
+			>
+				Products
+				<CaretDown
+					class="duration-[250] relative top-[1px] ml-1 size-3 transition-transform group-data-[state=open]:rotate-180"
+					aria-hidden="true"
+				/>
+			</NavMenu.Trigger>
+			<NavMenu.Content
+				class="absolute left-0 top-0 w-full data-[motion=from-end]:animate-enterFromRight data-[motion=from-start]:animate-enterFromLeft data-[motion=to-end]:animate-exitToRight data-[motion=to-start]:animate-exitToLeft sm:w-auto"
+			>
+				<NavMenu.Sub>
+					<NavMenu.List class="flex list-none rounded-md p-1">
+						<NavMenu.Item value="extensibility">
+							<NavMenu.Trigger
+								class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
+							>
+								Extensibility
+								<CaretDown
+									class="duration-[250] relative top-[1px] ml-1 size-3 transition-transform group-data-[state=open]:rotate-180"
+									aria-hidden="true"
+								/>
+							</NavMenu.Trigger>
+							<NavMenu.Content
+								class="absolute left-0 top-10 contents w-full rounded-xl sm:w-auto"
+							>
+								{@render LinkGroup({
+									items: [
+										"Fusce pellentesque555",
+										"Aliquam porttitor333",
+										"Pellentesque33933",
+										"Fusce pellentesque666",
+										"Aliquam porttitor495895",
+										"Pellentesque585",
+									],
+								})}
+							</NavMenu.Content>
+						</NavMenu.Item>
+						<NavMenu.Item value="security">
+							<NavMenu.Trigger
+								class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
+							>
+								Security
+								<CaretDown
+									class="duration-[250] relative top-[1px] ml-1 size-3 transition-transform group-data-[state=open]:rotate-180"
+									aria-hidden="true"
+								/>
+							</NavMenu.Trigger>
+							<NavMenu.Content
+								class="absolute left-0 top-10 contents w-full rounded-xl sm:w-auto"
+							>
+								{@render LinkGroup({
+									items: [
+										"Fusce pellentesque5",
+										"Aliquam porttitor4",
+										"Pellentesque7",
+									],
+								})}
+							</NavMenu.Content>
+						</NavMenu.Item>
+					</NavMenu.List>
+					<NavMenu.Viewport class="w-full" />
+				</NavMenu.Sub>
+				<ul
+					class="m-0 grid list-none gap-x-2.5 p-[22px] sm:w-[600px] sm:grid-flow-col sm:grid-rows-3"
+				>
+					<li class="row-span-3">
+						<NavMenu.Link
+							href="/"
+							class="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+						>
+							<!-- <Icons.logo class="h-6 w-6" /> -->
+							<div class="mb-2 mt-4 text-lg font-medium">Bits UI</div>
+							<p class="text-sm leading-tight text-muted-foreground">
+								The headless components for Svelte.
+							</p>
+						</NavMenu.Link>
+					</li>
+
+					{@render ListItem({
+						href: "/docs",
+						title: "Introduction",
+						content: "Headless components for Svelte and SvelteKit",
+					})}
+					{@render ListItem({
+						href: "/docs/getting-started",
+						title: "Getting Started",
+						content: "How to install and use Bits UI",
+					})}
+					{@render ListItem({
+						href: "/docs/styling",
+						title: "Styling",
+						content: "How to style Bits UI components",
+					})}
+				</ul>
+			</NavMenu.Content>
+		</NavMenu.Item>
+		<NavMenu.Item>
+			<NavMenu.Trigger
+				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
+			>
+				Components
+				<CaretDown
+					class="duration-[250] relative top-[1px] ml-1 size-3 transition-transform group-data-[state=open]:rotate-180"
+					aria-hidden="true"
+				/>
+			</NavMenu.Trigger>
+			<NavMenu.Content
+				class="absolute left-0 top-0 w-full data-[motion=from-end]:animate-enterFromRight data-[motion=from-start]:animate-enterFromLeft data-[motion=to-end]:animate-exitToRight data-[motion=to-start]:animate-exitToLeft sm:w-auto"
+			>
+				<ul class="grid w-[400px] gap-3 p-6 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+					{#each components as component (component.title)}
+						{@render ListItem({
+							href: component.href,
+							title: component.title,
+							content: component.description,
+						})}
+					{/each}
+				</ul>
+			</NavMenu.Content>
+		</NavMenu.Item>
+		<NavMenu.Item>
+			<NavMenu.Link
+				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
+				href="/docs"
+			>
+				Documentation
+			</NavMenu.Link>
+		</NavMenu.Item>
+		<NavMenu.Indicator
+			class="top-full z-10 flex h-2.5 items-end justify-center overflow-hidden opacity-100 transition-[all,transform_250ms_ease] duration-200 data-[state=hidden]:animate-fadeOut data-[state=visible]:animate-fadeIn data-[state=hidden]:opacity-0"
+		>
+			<div
+				class="relative top-[70%] size-2.5 rotate-[45deg] rounded-tl-[2px] bg-border"
+			></div>
+		</NavMenu.Indicator>
+	</NavMenu.List>
+	<div class="absolute left-0 top-full flex w-full justify-center perspective-[2000px]">
+		<NavMenu.Viewport
+			class="text-popover-foreground relative mt-2.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border bg-background shadow-lg transition-[width,_height] duration-300 data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn sm:w-[var(--bits-navigation-menu-viewport-width)] "
+		/>
 	</div>
-</div>
+</NavMenu.Root>

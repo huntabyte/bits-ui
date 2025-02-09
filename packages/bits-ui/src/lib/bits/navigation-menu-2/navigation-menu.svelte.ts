@@ -38,8 +38,10 @@ import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
+import { isElement } from "$lib/internal/is.js";
 
 const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
+const NAVIGATION_MENU_ATTR = "data-navigation-menu";
 const NAVIGATION_MENU_SUB_ATTR = "data-navigation-menu-sub";
 const NAVIGATION_MENU_ITEM_ATTR = "data-navigation-menu-item";
 const NAVIGATION_MENU_INDICATOR_ATTR = "data-navigation-menu-indicator";
@@ -191,6 +193,7 @@ class NavigationMenuRootState {
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				dir: this.opts.dir.current,
 				[NAVIGATION_MENU_ROOT_ATTR]: "",
+				[NAVIGATION_MENU_ATTR]: "",
 			}) as const
 	);
 }
@@ -236,6 +239,7 @@ class NavigationMenuSubState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[NAVIGATION_MENU_SUB_ATTR]: "",
+				[NAVIGATION_MENU_ATTR]: "",
 			}) as const
 	);
 }
@@ -805,6 +809,11 @@ class NavigationMenuContentImplState {
 	};
 
 	onkeydown = (e: BitsKeyboardEvent) => {
+		// prevent parent menus handling sub-menu keydown events
+		const target = e.target;
+		if (!isElement(target)) return;
+		if (target.closest(`[${NAVIGATION_MENU_ATTR}]`) !== this.opts.ref.current) return;
+
 		const isMetaKey = e.altKey || e.ctrlKey || e.metaKey;
 		const isTabKey = e.key === kbd.TAB && !isMetaKey;
 		const candidates = getTabbableCandidates(e.currentTarget);
@@ -977,8 +986,12 @@ export function useNavigationMenuList(props: NavigationMenuListStateProps) {
 }
 
 export function useNavigationMenuItem(props: NavigationMenuItemStateProps) {
-	const listContext = NavigationMenuListContext.get();
-	return NavigationMenuItemContext.set(new NavigationMenuItemState(props, listContext));
+	try {
+		const listContext = NavigationMenuListContext.get();
+		return NavigationMenuItemContext.set(new NavigationMenuItemState(props, listContext));
+	} catch {
+		console.error("Error on Item");
+	}
 }
 
 export function useNavigationMenuIndicatorImpl(props: NavigationMenuIndicatorStateProps) {
