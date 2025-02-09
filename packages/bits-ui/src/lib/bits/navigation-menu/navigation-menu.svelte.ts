@@ -689,6 +689,7 @@ class NavigationMenuIndicatorState {
 	isHorizontal = $derived.by(() => this.menu.orientation.current === "horizontal");
 	isVisible = $derived.by(() => Boolean(this.menu.value.current));
 	indicatorRef: NavigationMenuIndicatorStateProps["ref"];
+	mounted = $state(false);
 
 	constructor(
 		props: NavigationMenuIndicatorStateProps,

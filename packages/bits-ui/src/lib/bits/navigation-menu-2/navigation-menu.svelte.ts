@@ -14,7 +14,7 @@ import {
 	box,
 	useRefById,
 } from "svelte-toolbelt";
-import { Context, useDebounce, useResizeObserver, watch } from "runed";
+import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
@@ -37,6 +37,7 @@ import { CustomEventDispatcher } from "$lib/internal/events.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
+import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 
 const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
 const NAVIGATION_MENU_SUB_ATTR = "data-navigation-menu-sub";
@@ -242,10 +243,11 @@ class NavigationMenuSubState {
 type NavigationMenuListStateProps = WithRefProps;
 
 class NavigationMenuListState {
-	wrapperId = box.with(() => useId());
+	wrapperId = box(useId());
 	wrapperRef = box<HTMLElement | null>(null);
 	listTriggers = $state.raw<HTMLElement[]>([]);
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	wrapperMounted = $state(false);
 
 	constructor(
 		readonly opts: NavigationMenuListStateProps,
@@ -259,6 +261,7 @@ class NavigationMenuListState {
 			onRefChange: (node) => {
 				this.context.indicatorTrackRef.current = node;
 			},
+			deps: () => this.wrapperMounted,
 		});
 
 		this.rovingFocusGroup = useRovingFocus({
@@ -577,7 +580,7 @@ class NavigationMenuIndicatorImplState {
 	listContext: NavigationMenuListState;
 	position = $state.raw<{ size: number; offset: number } | null>(null);
 	isHorizontal = $derived.by(() => this.context.opts.orientation.current === "horizontal");
-	isVisible = $derived.by(() => Boolean(this.context.opts.value.current));
+	isVisible = $derived.by(() => !!this.context.opts.value.current);
 	activeTrigger = $derived.by(() => {
 		const items = this.listContext.listTriggers;
 		const triggerNode = items.find(
@@ -624,22 +627,20 @@ class NavigationMenuIndicatorImplState {
 				id: this.opts.id.current,
 				"data-state": this.isVisible ? "visible" : "hidden",
 				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
-				style: this.position
-					? {
-							position: "absolute",
-							...(this.isHorizontal
-								? {
-										left: 0,
-										width: `${this.position.size}px`,
-										transform: `translateX(${this.position.offset}px)`,
-									}
-								: {
-										top: 0,
-										height: `${this.position.size}px`,
-										transform: `translateY(${this.position.offset}px)`,
-									}),
-						}
-					: undefined,
+				style: {
+					position: "absolute",
+					...(this.isHorizontal
+						? {
+								left: 0,
+								width: `${this.position?.size}px`,
+								transform: `translateX(${this.position?.offset}px)`,
+							}
+						: {
+								top: 0,
+								height: `${this.position?.size}px`,
+								transform: `translateY(${this.position?.offset}px)`,
+							}),
+				},
 				[NAVIGATION_MENU_INDICATOR_ATTR]: "",
 			}) as const
 	);

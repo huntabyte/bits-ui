@@ -3,6 +3,7 @@
 	import type { NavigationMenuListProps } from "../types.js";
 	import { useNavigationMenuList } from "../navigation-menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
@@ -26,10 +27,12 @@
 
 {#if child}
 	{@render child({ props: mergedProps, wrapperProps })}
+	<Mounted bind:mounted={listState.wrapperMounted} />
 {:else}
 	<div {...wrapperProps}>
 		<ul {...mergedProps}>
 			{@render children?.()}
 		</ul>
 	</div>
+	<Mounted bind:mounted={listState.wrapperMounted} />
 {/if}

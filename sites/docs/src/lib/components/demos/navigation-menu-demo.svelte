@@ -22,7 +22,7 @@
 				"Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
 		},
 		{
-			title: "Scroll-area",
+			title: "Scroll Area",
 			href: "/docs/components/scroll-area",
 			description: "Visually or semantically separates content.",
 		},
@@ -65,8 +65,8 @@
 	</li>
 {/snippet}
 
-<NavMenu.Root class="relative z-10 flex w-screen flex-1 items-center justify-center">
-	<NavMenu.List class="group flex flex-1 list-none items-center justify-center">
+<NavMenu.Root class="relative z-10 flex w-full justify-center">
+	<NavMenu.List class="group flex list-none items-center justify-center p-1">
 		<NavMenu.Item value="getting-started">
 			<NavMenu.Trigger
 				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
@@ -147,10 +147,10 @@
 			</NavMenu.Link>
 		</NavMenu.Item>
 		<NavMenu.Indicator
-			class="top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in"
+			class="top-full z-10 flex h-2.5 items-end justify-center overflow-hidden opacity-100 transition-[all,transform_250ms_ease] duration-200 data-[state=hidden]:animate-fadeOut data-[state=visible]:animate-fadeIn data-[state=hidden]:opacity-0"
 		>
 			<div
-				class="relative top-[60%] size-2 rotate-45 rounded-tl-sm bg-border shadow-md"
+				class="relative top-[70%] size-2.5 rotate-[45deg] rounded-tl-[2px] bg-border"
 			></div>
 		</NavMenu.Indicator>
 	</NavMenu.List>
@@ -158,10 +158,5 @@
 		<NavMenu.Viewport
 			class="text-popover-foreground relative mt-2.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border bg-background shadow-lg transition-[width,_height] duration-300 data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn sm:w-[var(--bits-navigation-menu-viewport-width)] "
 		/>
-		<!-- <NavMenu.Viewport
-			class="text-popover-foreground relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md  border bg-background shadow-lg md:w-[var(--bits-navigation-menu-viewport-width)]"
-		/> -->
 	</div>
 </NavMenu.Root>
-
-<!-- origin-[top_center] overflow-hidden rounded-md bg-white transition-[width,_height] duration-300 data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn -->

@@ -23,12 +23,10 @@
 	const mergedProps = $derived(mergeProps(restProps, indicatorState.props));
 </script>
 
-{#if indicatorState.position}
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
-		<div {...mergedProps}>
-			{@render children?.()}
-		</div>
-	{/if}
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
 {/if}
