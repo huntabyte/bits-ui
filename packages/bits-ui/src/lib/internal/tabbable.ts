@@ -15,7 +15,7 @@ function getTabbableOptions() {
 	} as const;
 }
 
-function getTabbableIn(container: HTMLElement, direction: "next" | "prev") {
+export function getTabbableIn(container: HTMLElement, direction: "next" | "prev") {
 	const allTabbable = tabbable(container, getTabbableOptions());
 
 	if (direction === "prev") {

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuIndicatorProps } from "../types.js";
 	import { useNavigationMenuIndicator } from "../navigation-menu.svelte.js";
+	import NavigationMenuIndicatorImpl from "./navigation-menu-indicator-impl.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
@@ -15,28 +16,15 @@
 		...restProps
 	}: NavigationMenuIndicatorProps = $props();
 
-	const indicatorState = useNavigationMenuIndicator({
-		id: box.with(() => id),
-		ref: box.with(
-			() => ref,
-			(v) => (ref = v)
-		),
-	});
-
-	const mergedProps = $derived(mergeProps(restProps, indicatorState.props));
+	const indicatorState = useNavigationMenuIndicator();
+	const mergedProps = $derived(mergeProps(restProps));
 </script>
 
-{#if indicatorState.menu.indicatorTrackNode}
-	<Portal to={indicatorState.menu.indicatorTrackNode}>
+{#if indicatorState.context.indicatorTrackRef.current}
+	<Portal to={indicatorState.context.indicatorTrackRef.current}>
 		<PresenceLayer {id} present={forceMount || indicatorState.isVisible}>
 			{#snippet presence()}
-				{#if child}
-					{@render child({ props: mergedProps })}
-				{:else}
-					<div {...mergedProps}>
-						{@render children?.()}
-					</div>
-				{/if}
+				<NavigationMenuIndicatorImpl {...mergedProps} {children} {child} {id} bind:ref />
 			{/snippet}
 		</PresenceLayer>
 	</Portal>
