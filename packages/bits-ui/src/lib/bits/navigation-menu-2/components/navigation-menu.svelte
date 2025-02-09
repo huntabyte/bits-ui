@@ -24,7 +24,6 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				rootState.handleValueChange(v);
 				value = v;
 				onValueChange(v);
 			}

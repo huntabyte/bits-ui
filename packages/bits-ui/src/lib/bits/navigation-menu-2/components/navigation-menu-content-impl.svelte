@@ -78,7 +78,6 @@
 			{escapeKeydownBehavior}
 		>
 			{@const finalProps = mergeProps(mergedProps, dismissibleProps)}
-
 			{#if childProp}
 				{@render childProp({ props: finalProps })}
 			{:else}

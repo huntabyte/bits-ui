@@ -78,7 +78,7 @@
 				/>
 			</NavMenu.Trigger>
 			<NavMenu.Content
-				class="data-[motion=from-end]:animate-enterFromRight data-[motion=from-start]:animate-enterFromLeft data-[motion=to-end]:animate-exitToRight data-[motion=to-start]:animate-exitToLeft absolute left-0 top-0 z-50 w-full sm:w-auto"
+				class="absolute left-0 top-0 w-full data-[motion=from-end]:animate-enterFromRight data-[motion=from-start]:animate-enterFromLeft data-[motion=to-end]:animate-exitToRight data-[motion=to-start]:animate-exitToLeft sm:w-auto"
 			>
 				<ul
 					class="m-0 grid list-none gap-x-2.5 p-[22px] sm:w-[600px] sm:grid-flow-col sm:grid-rows-3"
@@ -124,7 +124,9 @@
 					aria-hidden="true"
 				/>
 			</NavMenu.Trigger>
-			<NavMenu.Content class="absolute left-0 top-0 z-50 w-full md:w-auto">
+			<NavMenu.Content
+				class="absolute left-0 top-0 w-full data-[motion=from-end]:animate-enterFromRight data-[motion=from-start]:animate-enterFromLeft data-[motion=to-end]:animate-exitToRight data-[motion=to-start]:animate-exitToLeft sm:w-auto"
+			>
 				<ul class="grid w-[400px] gap-3 p-6 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
 					{#each components as component (component.title)}
 						{@render ListItem({
@@ -152,9 +154,9 @@
 			></div>
 		</NavMenu.Indicator>
 	</NavMenu.List>
-	<div class="perspective-[2000px] absolute left-0 top-full flex w-full justify-center">
+	<div class="absolute left-0 top-full flex w-full justify-center perspective-[2000px]">
 		<NavMenu.Viewport
-			class="text-popover-foreground data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md  border bg-background shadow-lg transition-[width,_height] duration-300 md:w-[var(--bits-navigation-menu-viewport-width)]"
+			class="text-popover-foreground relative mt-2.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border bg-background shadow-lg transition-[width,_height] duration-300 data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn sm:w-[var(--bits-navigation-menu-viewport-width)] "
 		/>
 		<!-- <NavMenu.Viewport
 			class="text-popover-foreground relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md  border bg-background shadow-lg md:w-[var(--bits-navigation-menu-viewport-width)]"

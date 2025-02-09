@@ -2,17 +2,17 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { useNavigationMenuContent } from "../navigation-menu.svelte.js";
 	import NavigationMenuContentImpl from "./navigation-menu-content-impl.svelte";
-	import NavigationMenuViewportContentMounter from "./navigation-menu-viewport-content-mounter.svelte";
-	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import type { NavigationMenuContentProps } from "$lib/types.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
+	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
 	let {
 		ref = $bindable(null),
 		id = useId(),
 		children,
 		child,
+		forceMount = false,
 		...restProps
 	}: NavigationMenuContentProps = $props();
 
@@ -28,11 +28,15 @@
 </script>
 
 {#if contentState.context.viewportRef.current}
-	<Portal
-		to={contentState.context.viewportRef.current}
-		disabled={!contentState.context.viewportRef.current}
-	>
-		<NavigationMenuContentImpl {...mergedProps} {children} {child} />
+	<Portal to={contentState.context.viewportRef.current}>
+		<PresenceLayer
+			{id}
+			present={forceMount || contentState.open || contentState.isLastActiveValue}
+		>
+			{#snippet presence()}
+				<NavigationMenuContentImpl {...mergedProps} {children} {child} />
+			{/snippet}
+		</PresenceLayer>
 	</Portal>
 {/if}
 
