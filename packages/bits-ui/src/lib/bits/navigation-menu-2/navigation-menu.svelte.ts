@@ -666,6 +666,7 @@ class NavigationMenuContentState {
 	open = $derived.by(
 		() => this.itemContext.opts.value.current === this.context.opts.value.current
 	);
+	mounted = $state(false);
 	value = $derived.by(() => this.itemContext.opts.value.current);
 	// We persist the last active content value as the viewport may be animating out
 	// and we want the content to remain mounted for the lifecycle of the viewport.
@@ -692,7 +693,13 @@ class NavigationMenuContentState {
 		this.itemContext = context.item;
 		this.listContext = context.list;
 
-		useRefById(opts);
+		useRefById({
+			...opts,
+			onRefChange: (node) => {
+				this.itemContext.contentNode = node;
+			},
+			deps: () => this.mounted,
+		});
 	}
 
 	onpointerenter = (_: BitsPointerEvent) => {

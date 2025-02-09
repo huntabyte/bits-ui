@@ -6,6 +6,7 @@
 	import type { NavigationMenuContentProps } from "$lib/types.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		ref = $bindable(null),
@@ -35,6 +36,7 @@
 		>
 			{#snippet presence()}
 				<NavigationMenuContentImpl {...mergedProps} {children} {child} />
+				<Mounted bind:mounted={contentState.mounted} />
 			{/snippet}
 		</PresenceLayer>
 	</Portal>
