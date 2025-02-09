@@ -1,5 +1,6 @@
 import { type Matcher, type MatcherOptions, fireEvent } from "@testing-library/svelte";
 import { userEvent } from "@testing-library/user-event";
+import { vi } from "vitest";
 
 export function sleep(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -119,3 +120,21 @@ export async function fireFocus(node: HTMLElement) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyFn = (...args: any[]) => any;
+
+type Rect = {
+	left: number;
+	top: number;
+	right: number;
+	bottom: number;
+};
+
+export function mockBoundingClientRect(
+	rect: Rect = {
+		left: 100,
+		top: 100,
+		right: 200,
+		bottom: 200,
+	}
+): void {
+	vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(rect as DOMRect);
+}

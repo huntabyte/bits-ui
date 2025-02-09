@@ -2,7 +2,13 @@ import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
 import { type Component, tick } from "svelte";
-import { type AnyFn, getTestKbd, setupUserEvents, sleep } from "../utils.js";
+import {
+	type AnyFn,
+	getTestKbd,
+	mockBoundingClientRect,
+	setupUserEvents,
+	sleep,
+} from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
 import type { ComboboxMultipleTestProps } from "./combobox-multi-test.svelte";
@@ -218,9 +224,7 @@ describe("combobox - single", () => {
 	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openSingle();
 		await sleep(100);
-		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
-			contentRect as DOMRect
-		);
+		mockBoundingClientRect();
 		await user.click(outside);
 		expect(getContent()).toBeNull();
 	});

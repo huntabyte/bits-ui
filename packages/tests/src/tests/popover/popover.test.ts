@@ -1,12 +1,13 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
-import { type Component } from "svelte";
-import { getTestKbd, setupUserEvents } from "../utils.js";
+import type { Component } from "svelte";
+import { getTestKbd, mockBoundingClientRect, setupUserEvents, sleep } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
 import PopoverForceMountTest, {
 	type PopoverForceMountTestProps,
 } from "./popover-force-mount-test.svelte";
+import PopoverSiblingsTest from "./popover-siblings-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -81,10 +82,7 @@ describe("popover", () => {
 
 		const outside = getByTestId("outside");
 
-		const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
-		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
-			contentRect as DOMRect
-		);
+		mockBoundingClientRect();
 		await user.click(outside);
 
 		expect(mockFn).toHaveBeenCalledOnce();
@@ -203,5 +201,23 @@ describe("popover", () => {
 		await user.pointerDownUp(trigger);
 		const content = getByTestId("content");
 		expect(content).toBeVisible();
+	});
+
+	it("should correctly handle focus when closing one popover by clicking another popover's trigger", async () => {
+		const user = setupUserEvents();
+		const { getByText, queryByText } = render(PopoverSiblingsTest);
+		await user.pointerDownUp(getByText("open-1"));
+		expect(queryByText("content-1")).toBeInTheDocument();
+		mockBoundingClientRect();
+		await user.pointerDownUp(getByText("open-2"));
+		await sleep(100);
+		await waitFor(() => expect(queryByText("content-1")).toBeNull());
+		expect(queryByText("content-2")).toBeInTheDocument();
+		expect(queryByText("close-2")).toHaveFocus();
+		mockBoundingClientRect({ top: 400, left: 400, right: 400, bottom: 400 });
+		await user.pointerDownUp(getByText("open-3"));
+		await sleep(100);
+		await waitFor(() => expect(queryByText("content-2")).toBeNull());
+		expect(queryByText("close-3")).toHaveFocus();
 	});
 });

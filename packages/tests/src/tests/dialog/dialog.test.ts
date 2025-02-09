@@ -6,10 +6,11 @@ import {
 	waitFor,
 } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it, vi } from "vitest";
+import { describe, it } from "vitest";
 import { tick } from "svelte";
-import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
+import { getTestKbd, mockBoundingClientRect, setupUserEvents, sleep } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
+import DialogNestedTest from "./dialog-nested-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -49,8 +50,6 @@ async function open(props: DialogTestProps = {}) {
 	expect(contentAfter).not.toBeNull();
 	return { getByTestId, queryByTestId, user };
 }
-
-const contentRect = { left: 100, right: 200, top: 100, bottom: 200 };
 
 describe("dialog", () => {
 	it("should have no accessibility violations", async () => {
@@ -98,12 +97,9 @@ describe("dialog", () => {
 
 	it("should close when the overlay is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
-		await sleep(100);
 
 		const overlay = getByTestId("overlay");
-		vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(
-			contentRect as DOMRect
-		);
+		mockBoundingClientRect();
 		await user.click(overlay);
 		await sleep(25);
 
@@ -241,5 +237,29 @@ describe("dialog", () => {
 		expect(description.id).not.toBe("description-id");
 		expect(description.id).toBe("new-id");
 		expect(content).toHaveAttribute("aria-describedby", description.id);
+	});
+
+	describe("nested", () => {
+		it("should handle focus scoping correctly", async () => {
+			const user = setupUserEvents();
+			const { queryByTestId, getByTestId } = render(DialogNestedTest);
+			const trigger = getByTestId("first-open");
+			await user.pointerDownUp(trigger);
+			await tick();
+			await waitFor(() => expect(queryByTestId("first-close")).toBeInTheDocument());
+			expect(queryByTestId("first-close")).toHaveFocus();
+			await user.keyboard(kbd.TAB);
+			expect(queryByTestId("second-open")).toHaveFocus();
+			await user.keyboard(kbd.TAB);
+			expect(queryByTestId("first-close")).toHaveFocus();
+			await user.keyboard(kbd.TAB);
+			await user.keyboard(kbd.ENTER);
+			await tick();
+			expect(queryByTestId("second-close")).toBeInTheDocument();
+			await user.keyboard(kbd.TAB);
+			expect(queryByTestId("second-close")).toHaveFocus();
+			await user.keyboard(kbd.ESCAPE);
+			expect(queryByTestId("second-open")).toHaveFocus();
+		});
 	});
 });
