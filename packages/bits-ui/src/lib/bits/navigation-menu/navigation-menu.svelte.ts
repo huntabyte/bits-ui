@@ -212,7 +212,7 @@ class NavigationMenuSubState {
 			value: this.opts.value,
 			dir: this.context.opts.dir,
 			orientation: this.opts.orientation,
-			rootNavigationMenuRef: this.context.opts.rootNavigationMenuRef,
+			rootNavigationMenuRef: this.opts.ref,
 			onTriggerEnter: this.setValue,
 			onItemSelect: this.setValue,
 			onItemDismiss: () => this.setValue(""),
@@ -803,7 +803,14 @@ class NavigationMenuContentImplState {
 		// prevent parent menus handling sub-menu keydown events
 		const target = e.target;
 		if (!isElement(target)) return;
-		if (target.closest(`[${NAVIGATION_MENU_ATTR}]`) !== this.opts.ref.current) return;
+		console.log("target", target);
+		console.log("closest nav menu", target.closest(`[${NAVIGATION_MENU_ATTR}]`));
+		console.log("ref");
+		if (
+			target.closest(`[${NAVIGATION_MENU_ATTR}]`) !==
+			this.context.opts.rootNavigationMenuRef.current
+		)
+			return;
 
 		const isMetaKey = e.altKey || e.ctrlKey || e.metaKey;
 		const isTabKey = e.key === kbd.TAB && !isMetaKey;
