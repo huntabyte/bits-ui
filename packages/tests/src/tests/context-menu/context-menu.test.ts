@@ -110,7 +110,6 @@ describe("context menu", () => {
 	});
 
 	it("should manage focus correctly when opened with pointer", async () => {
-		cleanup();
 		const { queryByTestId, user } = await open();
 		const item = queryByTestId("item");
 		expect(item).not.toHaveFocus();

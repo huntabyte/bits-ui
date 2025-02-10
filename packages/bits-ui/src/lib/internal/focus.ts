@@ -35,6 +35,7 @@ export function focusWithoutScroll(element: HTMLElement) {
  */
 export function focus(element?: FocusableTarget | null, { select = false } = {}) {
 	if (!(element && element.focus)) return;
+	if (document.activeElement === element) return;
 	const previouslyFocusedElement = document.activeElement;
 	// prevent scroll on focus
 	element.focus({ preventScroll: true });

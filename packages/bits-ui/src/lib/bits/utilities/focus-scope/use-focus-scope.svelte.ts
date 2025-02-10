@@ -83,6 +83,7 @@ export function useFocusScope({
 	const focusScope = createFocusScopeAPI();
 	const ref = box<HTMLElement | null>(null);
 	const ctx = FocusScopeContext.getOr({ ignoreCloseAutoFocus: false });
+	let lastFocusedElement: HTMLElement | null = null;
 
 	useRefById({
 		id,
@@ -90,64 +91,52 @@ export function useFocusScope({
 		deps: () => enabled.current,
 	});
 
-	let lastFocusedElement: HTMLElement | null = null;
+	function manageFocus(event: FocusEvent) {
+		if (focusScope.paused || !ref.current || focusScope.isHandlingFocus) return;
+		focusScope.isHandlingFocus = true;
+
+		try {
+			const target = event.target;
+			if (!isHTMLElement(target)) return;
+
+			const isWithinActiveScope = ref.current.contains(target);
+
+			if (event.type === "focusin") {
+				if (isWithinActiveScope) {
+					lastFocusedElement = target;
+				} else {
+					if (ctx.ignoreCloseAutoFocus) return;
+					focus(lastFocusedElement, { select: true });
+				}
+			} else if (event.type === "focusout") {
+				if (!isWithinActiveScope && !ctx.ignoreCloseAutoFocus) {
+					focus(lastFocusedElement, { select: true });
+				}
+			}
+		} finally {
+			focusScope.isHandlingFocus = false;
+		}
+	}
+
+	// When the focused element gets removed from the DOM, browsers move focus
+	// back to the document.body. In this case, we move focus to the container
+	// to keep focus trapped correctly.
+	// instead of leaning on document.activeElement, we use lastFocusedElement to check
+	// if the element still exists inside the container,
+	// if not then we focus to the container
+	function handleMutations(_: MutationRecord[]) {
+		const lastFocusedElementExists = ref.current?.contains(lastFocusedElement);
+		if (!lastFocusedElementExists && ref.current) {
+			focus(ref.current);
+		}
+	}
 
 	watch([() => ref.current, () => enabled.current], ([container, enabled]) => {
 		if (!container || !enabled) return;
-		const handleFocusIn = (event: FocusEvent) => {
-			if (focusScope.paused || !container) return;
-			const target = event.target;
-			if (!isHTMLElement(target)) return;
-			if (container.contains(target)) {
-				lastFocusedElement = target;
-			} else {
-				if (ctx.ignoreCloseAutoFocus) return;
-				focus(lastFocusedElement, { select: true });
-			}
-		};
-
-		const handleFocusOut = (event: FocusEvent) => {
-			if (focusScope.paused || !container || ctx.ignoreCloseAutoFocus) {
-				return;
-			}
-			const relatedTarget = event.relatedTarget;
-			if (!isHTMLElement(relatedTarget)) return;
-			// A `focusout` event with a `null` `relatedTarget` will happen in at least two cases:
-			//
-			// 1. When the user switches app/tabs/windows/the browser itself loses focus.
-			// 2. In Google Chrome, when the focused element is removed from the DOM.
-			//
-			// We let the browser do its thing here because:
-			//
-			// 1. The browser already keeps a memory of what's focused for when the
-			// page gets refocused.
-			// 2. In Google Chrome, if we try to focus the deleted focused element it throws
-			// the CPU to 100%, so we avoid doing anything for this reason here too.
-			if (relatedTarget === null) return;
-
-			// If the focus has moved to an actual legitimate element (`relatedTarget !== null`)
-			// that is outside the container, we move focus to the last valid focused element inside.
-			if (!container.contains(relatedTarget)) {
-				focus(lastFocusedElement, { select: true });
-			}
-		};
-
-		// When the focused element gets removed from the DOM, browsers move focus
-		// back to the document.body. In this case, we move focus to the container
-		// to keep focus trapped correctly.
-		// instead of leaning on document.activeElement, we use lastFocusedElement to check
-		// if the element still exists inside the container,
-		// if not then we focus to the container
-		const handleMutations = (_: MutationRecord[]) => {
-			const lastFocusedElementExists = container?.contains(lastFocusedElement);
-			if (!lastFocusedElementExists) {
-				focus(container);
-			}
-		};
 
 		const removeEvents = executeCallbacks(
-			on(document, "focusin", handleFocusIn),
-			on(document, "focusout", handleFocusOut)
+			on(document, "focusin", manageFocus),
+			on(document, "focusout", manageFocus)
 		);
 		const mutationObserver = new MutationObserver(handleMutations);
 		mutationObserver.observe(container, { childList: true, subtree: true });
