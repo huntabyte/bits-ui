@@ -90,7 +90,7 @@ export function useFocusScope({
 		deps: () => enabled.current,
 	});
 
-	let lastFocusedElement = $state<HTMLElement | null>(null);
+	let lastFocusedElement: HTMLElement | null = null;
 
 	watch([() => ref.current, () => enabled.current], ([container, enabled]) => {
 		if (!container || !enabled) return;
@@ -184,7 +184,7 @@ export function useFocusScope({
 
 	function handleOpen(container: HTMLElement | null, prevFocusedElement: HTMLElement | null) {
 		if (!container) container = document.getElementById(id.current);
-		if (!container) return;
+		if (!container || !enabled.current) return;
 		focusScopeStack.add(focusScope);
 		const hasFocusedCandidate = container.contains(prevFocusedElement);
 

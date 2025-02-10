@@ -124,6 +124,7 @@ class PopoverContentState {
 		this.opts.onInteractOutside.current(e);
 		if (e.defaultPrevented) return;
 		if (!isElement(e.target)) return;
+
 		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
 		if (closestTrigger === this.root.triggerNode) return;
 		this.root.handleClose();

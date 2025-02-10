@@ -267,6 +267,10 @@ class MenubarTriggerState {
 type MenubarContentStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		interactOutsideBehavior: InteractOutsideBehaviorType;
+		onOpenAutoFocus: (e: Event) => void;
+		onCloseAutoFocus: (e: Event) => void;
+		onFocusOutside: (e: FocusEvent) => void;
+		onInteractOutside: (e: PointerEvent) => void;
 	}>
 >;
 
@@ -298,6 +302,8 @@ class MenubarContentState {
 	}
 
 	onCloseAutoFocus(e: Event) {
+		this.opts.onCloseAutoFocus.current(e);
+		if (e.defaultPrevented) return;
 		if (
 			!this.root.opts.value.current &&
 			!this.hasInteractedOutside &&
@@ -310,19 +316,23 @@ class MenubarContentState {
 		e.preventDefault();
 	}
 
-	onFocusOutside(e: Event) {
+	onFocusOutside(e: FocusEvent) {
 		const target = e.target as HTMLElement;
 		const isMenubarTrigger = this.root
 			.getTriggers()
 			.some((trigger) => trigger.contains(target));
 		if (isMenubarTrigger) e.preventDefault();
+		this.opts.onFocusOutside.current(e);
 	}
 
-	onInteractOutside() {
+	onInteractOutside(e: PointerEvent) {
 		this.hasInteractedOutside = true;
+		this.opts.onInteractOutside.current(e);
 	}
 
-	onOpenAutoFocus() {
+	onOpenAutoFocus(e: Event) {
+		this.opts.onOpenAutoFocus.current(e);
+		if (e.defaultPrevented) return;
 		afterTick(() => this.opts.ref.current?.focus());
 	}
 
