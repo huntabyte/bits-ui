@@ -1,5 +1,17 @@
 # bits-ui
 
+## 1.0.0-next.91
+
+### Patch Changes
+
+-   feat: Navigation Menu Submenu support ([#1001](https://github.com/huntabyte/bits-ui/pull/1001))
+
+-   fix: forward user-defined `Menubar.Content` props ([#1123](https://github.com/huntabyte/bits-ui/pull/1123))
+
+-   fix: issues with select/combobox highlighted for mobile ([#1124](https://github.com/huntabyte/bits-ui/pull/1124))
+
+-   fix: bug causing focus scopes to conflict ([#1123](https://github.com/huntabyte/bits-ui/pull/1123))
+
 ## 1.0.0-next.90
 
 ### Patch Changes
