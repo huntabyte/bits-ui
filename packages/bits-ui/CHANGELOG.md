@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.0.0-next.93
+
+### Patch Changes
+
+-   fix: infinite loops caused by rapid open/close of nested focus scopes ([#1132](https://github.com/huntabyte/bits-ui/pull/1132))
+
+-   fix: tooltip not closing when pointer leave ([#1133](https://github.com/huntabyte/bits-ui/pull/1133))
+
 ## 1.0.0-next.92
 
 ### Patch Changes
