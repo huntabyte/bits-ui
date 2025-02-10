@@ -11,6 +11,14 @@
 	import { navigation } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
 	import "$lib/styles/app.postcss";
+	import { onMount } from "svelte";
+
+	onMount(async () => {
+		if (dev) {
+			const eruda = (await import("eruda")).default;
+			eruda.init();
+		}
+	});
 </script>
 
 <ModeWatcher />

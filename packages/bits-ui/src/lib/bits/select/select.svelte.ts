@@ -29,6 +29,7 @@ import type {
 import { noop } from "$lib/internal/noop.js";
 import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
+import { isIOS } from "$lib/internal/is.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -857,7 +858,7 @@ class SelectItemState {
 	}));
 
 	onpointerdown(e: BitsPointerEvent) {
-		// prevent focus from leaving the combobox
+		// prevent focus from leaving the input/select trigger
 		e.preventDefault();
 	}
 
@@ -869,22 +870,44 @@ class SelectItemState {
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
 		// prevent any default behavior
-		e.preventDefault();
 
 		/**
-		 * For one reason or another, when it's a touch pointer and _only_ in combobox mode,
-		 * we need to listen for the immediate click event to handle the selection, otherwise
-		 * a click event will be fired on the element behind the item after the content closes.
+		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
+		 * we need to listen for the immediate click event to handle the selection,
+		 * otherwise a click event will fire on the element _behind_ the item.
 		 */
-		if (e.pointerType === "touch") {
-			on(this.opts.ref.current, "click", () => this.handleSelect(), { once: true });
+		if (e.pointerType === "touch" && !isIOS) {
+			on(
+				this.opts.ref.current,
+				"click",
+				() => {
+					this.handleSelect();
+					// set highlighted node since we don't do it on `pointermove` events
+					// for touch devices
+					this.root.setHighlightedNode(this.opts.ref.current);
+				},
+				{ once: true }
+			);
 			return;
 		}
+		e.preventDefault();
 
 		this.handleSelect();
+		if (e.pointerType === "touch") {
+			// set highlighted node since we don't do it on `pointermove` events
+			// for touch devices
+			this.root.setHighlightedNode(this.opts.ref.current);
+		}
 	}
 
-	onpointermove(_: BitsPointerEvent) {
+	onpointermove(e: BitsPointerEvent) {
+		/**
+		 * We don't want to highlight items on touch devices when scrolling,
+		 * as this is confusing behavior, so we return here and instead handle
+		 * the highlighting on the `pointerup` (or following `click`) event for
+		 * touch devices only.
+		 */
+		if (e.pointerType === "touch") return;
 		if (this.root.highlightedNode !== this.opts.ref.current) {
 			this.root.setHighlightedNode(this.opts.ref.current);
 		}
