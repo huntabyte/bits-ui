@@ -1,4 +1,4 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/svelte/svelte5";
+import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
@@ -110,7 +110,6 @@ describe("context menu", () => {
 	});
 
 	it("should manage focus correctly when opened with pointer", async () => {
-		cleanup();
 		const { queryByTestId, user } = await open();
 		const item = queryByTestId("item");
 		expect(item).not.toHaveFocus();
