@@ -7,7 +7,7 @@ export { Calendar } from "./calendar/index.js";
 export { Checkbox } from "./checkbox/index.js";
 export { Collapsible } from "./collapsible/index.js";
 export { Combobox } from "./combobox/index.js";
-export { Command } from "./command/index.js";
+export { Command, computeCommandScore } from "./command/index.js";
 export { ContextMenu } from "./context-menu/index.js";
 export { DateField } from "./date-field/index.js";
 export { DatePicker } from "./date-picker/index.js";

@@ -37,7 +37,7 @@ const PENALTY_SKIPPED = 0.999;
 const PENALTY_CASE_MISMATCH = 0.9999;
 // Match higher for letters closer to the beginning of the word
 // If the word has more characters than the user typed, it should
-// be penalised slightly.
+// be penalized slightly.
 //
 // i.e. "html" is more likely than "html5" if I type "html".
 //
@@ -52,7 +52,7 @@ const COUNT_GAPS_REGEXP = /[\\/_+.#"@[({&]/g;
 const IS_SPACE_REGEXP = /[\s-]/;
 const COUNT_SPACE_REGEXP = /[\s-]/g;
 
-function commandScoreInner(
+function computeCommandScoreInner(
 	string,
 	abbreviation,
 	lowerString,
@@ -62,16 +62,12 @@ function commandScoreInner(
 	memoizedResults
 ) {
 	if (abbreviationIndex === abbreviation.length) {
-		if (stringIndex === string.length) {
-			return SCORE_CONTINUE_MATCH;
-		}
+		if (stringIndex === string.length) return SCORE_CONTINUE_MATCH;
 		return PENALTY_NOT_COMPLETE;
 	}
 
 	const memoizeKey = `${stringIndex},${abbreviationIndex}`;
-	if (memoizedResults[memoizeKey] !== undefined) {
-		return memoizedResults[memoizeKey];
-	}
+	if (memoizedResults[memoizeKey] !== undefined) return memoizedResults[memoizeKey];
 
 	const abbreviationChar = lowerAbbreviation.charAt(abbreviationIndex);
 	let index = lowerString.indexOf(abbreviationChar, stringIndex);
@@ -80,7 +76,7 @@ function commandScoreInner(
 	let score, transposedScore, wordBreaks, spaceBreaks;
 
 	while (index >= 0) {
-		score = commandScoreInner(
+		score = computeCommandScoreInner(
 			string,
 			abbreviation,
 			lowerString,
@@ -121,10 +117,10 @@ function commandScoreInner(
 				lowerString.charAt(index - 1) ===
 					lowerAbbreviation.charAt(abbreviationIndex + 1)) ||
 			(lowerAbbreviation.charAt(abbreviationIndex + 1) ===
-				lowerAbbreviation.charAt(abbreviationIndex) && // allow duplicate letters. Ref #7428
+				lowerAbbreviation.charAt(abbreviationIndex) &&
 				lowerString.charAt(index - 1) !== lowerAbbreviation.charAt(abbreviationIndex))
 		) {
-			transposedScore = commandScoreInner(
+			transposedScore = computeCommandScoreInner(
 				string,
 				abbreviation,
 				lowerString,
@@ -150,22 +146,60 @@ function commandScoreInner(
 	return highScore;
 }
 
+/**
+ *
+ * @param string
+ * @returns
+ */
 function formatInput(string) {
 	// convert all valid space characters to space so they match each other
 	return string.toLowerCase().replace(COUNT_SPACE_REGEXP, " ");
 }
 
-export function commandScore(string: string, abbreviation: string, aliases?: string[]): number {
-	/* NOTE:
-	 * in the original, we used to do the lower-casing on each recursive call, but this meant that toLowerCase()
-	 * was the dominating cost in the algorithm, passing both is a little ugly, but considerably faster.
+/**
+ * Given a command, a search query, and (optionally) a list of keywords for the command,
+ * computes a score between 0 and 1 that represents how well the search query matches the
+ * abbreviation and keywords. 1 is a perfect match, 0 is no match.
+ *
+ * The score is calculated based on the following rules:
+ * - The scores are arranged so that a continuous match of characters will result in a total
+ * score of 1. The best case, this character is a match, and either this is the start of the string
+ * or the previous character was also a match.
+ * - A new match at the start of a word scores better than a new match elsewhere as it's more likely
+ * that the user will type the starts of fragments.
+ * - Word jumps between spaces are scored slightly higher than slashes, brackets, hyphens, etc.
+ * - A continuous match of characters will result in a total score of 1.
+ * - A new match at the start of a word scores better than a new match elsewhere as it's more likely that the user will type the starts of fragments.
+ * - Any other match isn't ideal, but we include it for completeness.
+ * - If the user transposed two letters, it should be significantly penalized.
+ * - The goodness of a match should decay slightly with each missing character.
+ * - Match higher for letters closer to the beginning of the word.
+ *
+ * @param command - The value to score against the search string (e.g. a command name like "Calculator")
+ * @param search - The search string to score against the value/aliases
+ * @param commandKeywords - An optional list of aliases/keywords to score against the search string - e.g. ["math", "add", "divide", "multiply", "subtract"]
+ * @returns A score between 0 and 1 that represents how well the search string matches the
+ * command (and keywords)
+ */
+export function computeCommandScore(
+	command: string,
+	search: string,
+	commandKeywords?: string[]
+): number {
+	/**
+	 * NOTE: We used to do lower-casing on each recursive call, but this meant that `toLowerCase()`
+	 * was the dominating cost in the algorithm. Passing both is a little ugly, but considerably
+	 * faster.
 	 */
-	string = aliases && aliases.length > 0 ? `${`${string} ${aliases?.join(" ")}`}` : string;
-	return commandScoreInner(
-		string,
-		abbreviation,
-		formatInput(string),
-		formatInput(abbreviation),
+	command =
+		commandKeywords && commandKeywords.length > 0
+			? `${`${command} ${commandKeywords?.join(" ")}`}`
+			: command;
+	return computeCommandScoreInner(
+		command,
+		search,
+		formatInput(command),
+		formatInput(search),
 		0,
 		0,
 		{}

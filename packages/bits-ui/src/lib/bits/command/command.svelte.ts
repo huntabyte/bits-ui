@@ -1,8 +1,6 @@
-import { untrack } from "svelte";
 import { afterSleep, afterTick, srOnlyStyles, useRefById } from "svelte-toolbelt";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
-import { commandScore } from "./command-score.js";
 import type { CommandState } from "./types.js";
 import type {
 	BitsKeyboardEvent,
@@ -20,7 +18,9 @@ import {
 	getDataSelected,
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
+import { computeCommandScore } from "./index.js";
 
+// attributes
 const COMMAND_ROOT_ATTR = "data-command-root";
 const COMMAND_LIST_ATTR = "data-command-list";
 const COMMAND_INPUT_ATTR = "data-command-input";
@@ -33,18 +33,14 @@ const COMMAND_GROUP_HEADING_ATTR = "data-command-group-heading";
 const COMMAND_ITEM_ATTR = "data-command-item";
 const COMMAND_VIEWPORT_ATTR = "data-command-viewport";
 const COMMAND_INPUT_LABEL_ATTR = "data-command-input-label";
+const COMMAND_VALUE_ATTR = "data-value";
 
-const VALUE_ATTR = `data-value`;
-
-const GROUP_SELECTOR = `[${COMMAND_GROUP_ATTR}]`;
-const GROUP_ITEMS_SELECTOR = `[${COMMAND_GROUP_ITEMS_ATTR}]`;
-const GROUP_HEADING_SELECTOR = `[${COMMAND_GROUP_HEADING_ATTR}]`;
-const ITEM_SELECTOR = `[${COMMAND_ITEM_ATTR}]`;
-const VALID_ITEM_SELECTOR = `${ITEM_SELECTOR}:not([aria-disabled="true"])`;
-
-export function defaultFilter(value: string, search: string, keywords?: string[]): number {
-	return commandScore(value, search, keywords);
-}
+// selectors
+const COMMAND_GROUP_SELECTOR = `[${COMMAND_GROUP_ATTR}]`;
+const COMMAND_GROUP_ITEMS_SELECTOR = `[${COMMAND_GROUP_ITEMS_ATTR}]`;
+const COMMAND_GROUP_HEADING_SELECTOR = `[${COMMAND_GROUP_HEADING_ATTR}]`;
+const COMMAND_ITEM_SELECTOR = `[${COMMAND_ITEM_ATTR}]`;
+const COMMAND_VALID_ITEM_SELECTOR = `${COMMAND_ITEM_SELECTOR}:not([aria-disabled="true"])`;
 
 const CommandRootContext = new Context<CommandRootState>("Command.Root");
 const CommandListContext = new Context<CommandListState>("Command.List");
@@ -146,7 +142,7 @@ class CommandRootState {
 	}
 
 	#score(value: string, keywords?: string[]) {
-		const filter = this.opts.filter.current ?? defaultFilter;
+		const filter = this.opts.filter.current ?? computeCommandScore;
 		const score = value ? filter(value, this._commandState.search, keywords) : 0;
 		return score;
 	}
@@ -192,13 +188,13 @@ class CommandRootState {
 		});
 
 		for (const item of sorted) {
-			const group = item.closest(GROUP_ITEMS_SELECTOR);
+			const group = item.closest(COMMAND_GROUP_ITEMS_SELECTOR);
 
 			if (group) {
 				const itemToAppend =
 					item.parentElement === group
 						? item
-						: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
+						: item.closest(`${COMMAND_GROUP_ITEMS_SELECTOR} > *`);
 
 				if (itemToAppend) {
 					group.appendChild(itemToAppend);
@@ -207,7 +203,7 @@ class CommandRootState {
 				const itemToAppend =
 					item.parentElement === listInsertionElement
 						? item
-						: item.closest(`${GROUP_ITEMS_SELECTOR} > *`);
+						: item.closest(`${COMMAND_GROUP_ITEMS_SELECTOR} > *`);
 
 				if (itemToAppend) {
 					listInsertionElement?.appendChild(itemToAppend);
@@ -219,7 +215,7 @@ class CommandRootState {
 
 		for (const group of sortedGroups) {
 			const element = listInsertionElement?.querySelector(
-				`${GROUP_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(group[0])}"]`
+				`${COMMAND_GROUP_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(group[0])}"]`
 			);
 			element?.parentElement?.appendChild(element);
 		}
@@ -240,7 +236,7 @@ class CommandRootState {
 			const item = this.#getValidItems().find(
 				(item) => item.getAttribute("aria-disabled") !== "true"
 			);
-			const value = item?.getAttribute(VALUE_ATTR);
+			const value = item?.getAttribute(COMMAND_VALUE_ATTR);
 			this.setValue(value || "");
 		});
 	}
@@ -283,7 +279,7 @@ class CommandRootState {
 		const node = this.opts.ref.current;
 		if (!node) return [];
 		const validItems = Array.from(
-			node.querySelectorAll<HTMLElement>(VALID_ITEM_SELECTOR)
+			node.querySelectorAll<HTMLElement>(COMMAND_VALID_ITEM_SELECTOR)
 		).filter((el): el is HTMLElement => !!el);
 		return validItems;
 	}
@@ -292,7 +288,7 @@ class CommandRootState {
 		const node = this.opts.ref.current;
 		if (!node) return;
 		const selectedNode = node.querySelector<HTMLElement>(
-			`${VALID_ITEM_SELECTOR}[aria-selected="true"]`
+			`${COMMAND_VALID_ITEM_SELECTOR}[aria-selected="true"]`
 		);
 		if (!selectedNode) return;
 		return selectedNode;
@@ -307,8 +303,8 @@ class CommandRootState {
 			const firstChildOfParent = getFirstNonCommentChild(grandparent) as HTMLElement | null;
 			if (firstChildOfParent && firstChildOfParent.dataset?.value === item.dataset?.value) {
 				item
-					?.closest(GROUP_SELECTOR)
-					?.querySelector(GROUP_HEADING_SELECTOR)
+					?.closest(COMMAND_GROUP_SELECTOR)
+					?.querySelector(COMMAND_GROUP_HEADING_SELECTOR)
 					?.scrollIntoView({ block: "nearest" });
 				return;
 			}
@@ -320,7 +316,7 @@ class CommandRootState {
 		const items = this.#getValidItems();
 		const item = items[index];
 		if (item) {
-			this.setValue(item.getAttribute(VALUE_ATTR) ?? "");
+			this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
 		}
 	}
 
@@ -342,25 +338,25 @@ class CommandRootState {
 		}
 
 		if (newSelected) {
-			this.setValue(newSelected.getAttribute(VALUE_ATTR) ?? "");
+			this.setValue(newSelected.getAttribute(COMMAND_VALUE_ATTR) ?? "");
 		}
 	}
 
 	#updateSelectedByGroup(change: 1 | -1) {
 		const selected = this.#getSelectedItem();
-		let group = selected?.closest(GROUP_SELECTOR);
+		let group = selected?.closest(COMMAND_GROUP_SELECTOR);
 		let item: HTMLElement | null | undefined;
 
 		while (group && !item) {
 			group =
 				change > 0
-					? findNextSibling(group, GROUP_SELECTOR)
-					: findPreviousSibling(group, GROUP_SELECTOR);
-			item = group?.querySelector(VALID_ITEM_SELECTOR);
+					? findNextSibling(group, COMMAND_GROUP_SELECTOR)
+					: findPreviousSibling(group, COMMAND_GROUP_SELECTOR);
+			item = group?.querySelector(COMMAND_VALID_ITEM_SELECTOR);
 		}
 
 		if (item) {
-			this.setValue(item.getAttribute(VALUE_ATTR) ?? "");
+			this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
 		} else {
 			this.#updateSelectedByItem(change);
 		}
@@ -671,7 +667,7 @@ type CommandInputStateProps = WithRefProps<
 class CommandInputState {
 	#selectedItemId = $derived.by(() => {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
-			`${ITEM_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(this.opts.value.current)}"]`
+			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(this.opts.value.current)}"]`
 		);
 		if (!item) return;
 		return item?.getAttribute("id") ?? undefined;
@@ -688,23 +684,24 @@ class CommandInputState {
 			},
 		});
 
-		$effect(() => {
-			const node = this.opts.ref.current;
-			untrack(() => {
+		watch(
+			() => this.opts.ref.current,
+			() => {
+				const node = this.opts.ref.current;
 				if (node && this.opts.autofocus.current) {
 					afterSleep(10, () => node.focus());
 				}
-			});
-		});
+			}
+		);
 
-		$effect(() => {
-			this.opts.value.current;
-			untrack(() => {
+		watch(
+			() => this.opts.value.current,
+			() => {
 				if (this.root.commandState.search !== this.opts.value.current) {
 					this.root.setState("search", this.opts.value.current);
 				}
-			});
-		});
+			}
+		);
 	}
 
 	props = $derived.by(
@@ -773,35 +770,30 @@ class CommandItemState {
 			deps: () => Boolean(this.root.commandState.search),
 		});
 
-		$effect(() => {
-			this.opts.id.current;
-			this.#group?.opts.id.current;
-			if (!this.opts.forceMount.current) {
-				return untrack(() => {
-					return this.root.registerItem(
-						this.opts.id.current,
-						this.#group?.opts.id.current
-					);
-				});
+		watch(
+			[
+				() => this.opts.id.current,
+				() => this.#group?.opts.id.current,
+				() => this.opts.forceMount.current,
+			],
+			() => {
+				if (this.opts.forceMount.current) return;
+				return this.root.registerItem(this.opts.id.current, this.#group?.opts.id.current);
 			}
-		});
+		);
 
-		$effect(() => {
-			const value = this.opts.value.current;
-			const node = this.opts.ref.current;
-			if (!node) return;
-			if (!value && node.textContent) {
-				this.trueValue = node.textContent.trim();
+		watch([() => this.opts.value.current, () => this.opts.ref.current], () => {
+			if (!this.opts.ref.current) return;
+			if (!this.opts.value.current && this.opts.ref.current.textContent) {
+				this.trueValue = this.opts.ref.current.textContent.trim();
 			}
 
-			untrack(() => {
-				this.root.registerValue(
-					this.opts.id.current,
-					this.trueValue,
-					opts.keywords.current.map((keyword) => keyword.trim())
-				);
-				node.setAttribute(VALUE_ATTR, this.trueValue);
-			});
+			this.root.registerValue(
+				this.opts.id.current,
+				this.trueValue,
+				opts.keywords.current.map((kw) => kw.trim())
+			);
+			this.opts.ref.current.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
 		});
 
 		// bindings

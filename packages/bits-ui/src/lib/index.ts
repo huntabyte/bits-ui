@@ -38,6 +38,7 @@ export {
 	Tooltip,
 	Portal,
 	IsUsingKeyboard,
+	computeCommandScore,
 } from "./bits/index.js";
 
 export * from "./shared/index.js";
