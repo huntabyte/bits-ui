@@ -354,4 +354,14 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	],
 });
 
-export const combobox = [root, trigger, content, contentStatic, item, input, groupHeading, arrow];
+export const combobox = [
+	root,
+	trigger,
+	content,
+	contentStatic,
+	item,
+	input,
+	group,
+	groupHeading,
+	arrow,
+];
