@@ -281,7 +281,7 @@ class TooltipContentState {
 		useGraceArea({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
-			enabled: () => this.root.opts.open.current && this.root.disableHoverableContent,
+			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
 			onPointerExit: () => {
 				this.root.handleClose();
 			},
