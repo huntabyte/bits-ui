@@ -47,6 +47,11 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	filter?: (value: string, search: string, keywords?: string[]) => number;
 
 	/**
+	 * A function that is called when the command state changes.
+	 */
+	onStateChange?: (state: Readonly<CommandState>) => void;
+
+	/**
 	 * Optionally provide or bind to the selected command menu item.
 	 */
 	value?: string;
@@ -74,15 +79,6 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue true
 	 */
 	vimBindings?: boolean;
-
-	/**
-	 * Whether or not the command is controlled or not. If `true`, the command will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
 }>;
 
 export type CommandRootProps = CommandRootPropsWithoutHTML &

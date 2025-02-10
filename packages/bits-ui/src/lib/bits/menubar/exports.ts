@@ -15,6 +15,7 @@ export { default as SubContentStatic } from "$lib/bits/menu/components/menu-sub-
 export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigger.svelte";
 export { default as RadioGroup } from "$lib/bits/menu/components/menu-radio-group.svelte";
 export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
+export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 
 export type {
 	MenubarRootProps as RootProps,

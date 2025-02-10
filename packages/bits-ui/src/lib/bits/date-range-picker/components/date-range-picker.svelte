@@ -12,7 +12,7 @@
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
-		open = false,
+		open = $bindable(false),
 		onOpenChange = noop,
 		value = $bindable(),
 		id = useId(),
@@ -44,9 +44,6 @@
 		closeOnRangeSelect = true,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
-		controlledValue = false,
-		controlledPlaceholder = false,
-		controlledOpen = false,
 		validate = noop,
 		errorMessageId,
 		child,
@@ -58,11 +55,7 @@
 	let endValue = $state<DateValue | undefined>(value?.end);
 
 	if (value === undefined) {
-		if (controlledValue) {
-			onValueChange({ start: undefined, end: undefined });
-		} else {
-			value = { start: undefined, end: undefined };
-		}
+		value = { start: undefined, end: undefined };
 	}
 
 	if (placeholder === undefined) {
@@ -71,20 +64,13 @@
 			defaultPlaceholder: undefined,
 			defaultValue: value?.start,
 		});
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+
+		placeholder = defaultPlaceholder;
 	}
 
 	function onRangeSelect() {
 		if (closeOnRangeSelect) {
-			if (controlledOpen) {
-				onOpenChange(false);
-			} else {
-				open = false;
-			}
+			open = false;
 		}
 	}
 
@@ -92,34 +78,22 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		value: box.with(
 			() => value as DateRange,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v as DateValue);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v as DateValue);
-				}
+				placeholder = v;
+				onPlaceholderChange(v as DateValue);
 			}
 		),
 		isDateUnavailable: box.with(() => isDateUnavailable),
@@ -160,30 +134,30 @@
 	});
 
 	usePopoverRoot({
-		open: pickerRootState.props.open,
+		open: pickerRootState.opts.open,
 	});
 
 	const fieldRootState = useDateRangeFieldRoot({
-		value: pickerRootState.props.value,
-		disabled: pickerRootState.props.disabled,
-		readonly: pickerRootState.props.readonly,
-		readonlySegments: pickerRootState.props.readonlySegments,
+		value: pickerRootState.opts.value,
+		disabled: pickerRootState.opts.disabled,
+		readonly: pickerRootState.opts.readonly,
+		readonlySegments: pickerRootState.opts.readonlySegments,
 		validate: box.with(() => validate),
-		minValue: pickerRootState.props.minValue,
-		maxValue: pickerRootState.props.maxValue,
-		granularity: pickerRootState.props.granularity,
-		hideTimeZone: pickerRootState.props.hideTimeZone,
-		hourCycle: pickerRootState.props.hourCycle,
-		locale: pickerRootState.props.locale,
-		required: pickerRootState.props.required,
-		placeholder: pickerRootState.props.placeholder,
+		minValue: pickerRootState.opts.minValue,
+		maxValue: pickerRootState.opts.maxValue,
+		granularity: pickerRootState.opts.granularity,
+		hideTimeZone: pickerRootState.opts.hideTimeZone,
+		hourCycle: pickerRootState.opts.hourCycle,
+		locale: pickerRootState.opts.locale,
+		required: pickerRootState.opts.required,
+		placeholder: pickerRootState.opts.placeholder,
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
 		),
-		startValue: pickerRootState.props.startValue,
-		endValue: pickerRootState.props.endValue,
+		startValue: pickerRootState.opts.startValue,
+		endValue: pickerRootState.opts.endValue,
 		onInvalid: box.with(() => onInvalid),
 		errorMessageId: box.with(() => errorMessageId),
 	});

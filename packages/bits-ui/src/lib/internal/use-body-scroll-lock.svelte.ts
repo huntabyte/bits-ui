@@ -1,6 +1,5 @@
 import { SvelteMap } from "svelte/reactivity";
 import { type Getter, afterSleep, afterTick, box } from "svelte-toolbelt";
-import { Previous } from "runed";
 import { untrack } from "svelte";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
@@ -24,8 +23,6 @@ const useBodyLockStackCount = createSharedHook(() => {
 		}
 		return false;
 	});
-
-	const prevLocked = new Previous(() => locked);
 
 	let initialBodyStyle: Partial<CSSStyleDeclaration> = $state<Partial<CSSStyleDeclaration>>({});
 
@@ -111,6 +108,7 @@ export function useBodyScrollLock(
 ) {
 	const id = useId();
 	const countState = useBodyLockStackCount();
+	if (!countState) return;
 	const _restoreScrollDelay = $derived(restoreScrollDelay());
 
 	countState.map.set(id, initialState ?? false);
@@ -123,16 +121,24 @@ export function useBodyScrollLock(
 	$effect(() => {
 		return () => {
 			countState.map.delete(id);
-			const length = Array.from(countState.map.values()).length;
-			if (length === 0) {
-				if (_restoreScrollDelay === null) {
-					countState.resetBodyStyle();
-				} else {
-					afterSleep(_restoreScrollDelay, () => countState.resetBodyStyle());
-				}
+			// if any locks are still active, we don't reset the body style
+			if (isAnyLocked(countState.map)) return;
+
+			// if no locks are active (meaning this was the last lock), we reset the body style
+			if (_restoreScrollDelay === null) {
+				requestAnimationFrame(() => countState.resetBodyStyle());
+			} else {
+				afterSleep(_restoreScrollDelay, () => countState.resetBodyStyle());
 			}
 		};
 	});
 
 	return locked;
+}
+
+function isAnyLocked(map: Map<string, boolean>) {
+	for (const [_, value] of map) {
+		if (value) return true;
+	}
+	return false;
 }

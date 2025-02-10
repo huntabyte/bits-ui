@@ -1,18 +1,18 @@
 import { useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { type Orientation, useId } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
 
-const ROOT_ATTR = "data-pagination-root";
-const PAGE_ATTR = "data-pagination-page";
-const PREV_ATTR = "data-pagination-prev";
-const NEXT_ATTR = "data-pagination-next";
+const PAGINATION_ROOT_ATTR = "data-pagination-root";
+const PAGINATION_PAGE_ATTR = "data-pagination-page";
+const PAGINATION_PREV_ATTR = "data-pagination-prev";
+const PAGINATION_NEXT_ATTR = "data-pagination-next";
 
 type PaginationRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -28,80 +28,66 @@ type PaginationRootStateProps = WithRefProps<
 >;
 
 class PaginationRootState {
-	id: PaginationRootStateProps["id"];
-	ref: PaginationRootStateProps["ref"];
-	orientation: PaginationRootStateProps["orientation"];
-	count: PaginationRootStateProps["count"];
-	perPage: PaginationRootStateProps["perPage"];
-	siblingCount: PaginationRootStateProps["siblingCount"];
-	page: PaginationRootStateProps["page"];
-	loop: PaginationRootStateProps["loop"];
-	totalPages = $derived.by(() => Math.ceil(this.count.current / this.perPage.current));
+	totalPages = $derived.by(() => {
+		if (this.opts.count.current === 0) return 1;
+		return Math.ceil(this.opts.count.current / this.opts.perPage.current);
+	});
 	range = $derived.by(() => {
-		const start = (this.page.current - 1) * this.perPage.current;
-		const end = Math.min(start + this.perPage.current, this.count.current);
+		const start = (this.opts.page.current - 1) * this.opts.perPage.current;
+		const end = Math.min(start + this.opts.perPage.current, this.opts.count.current);
 		return { start, end };
 	});
 	pages = $derived.by(() =>
 		getPageItems({
-			page: this.page.current,
+			page: this.opts.page.current,
 			totalPages: this.totalPages,
-			siblingCount: this.siblingCount.current,
+			siblingCount: this.opts.siblingCount.current,
 		})
 	);
 
-	constructor(props: PaginationRootStateProps) {
-		this.id = props.id;
-		this.perPage = props.perPage;
-		this.count = props.count;
-		this.siblingCount = props.siblingCount;
-		this.page = props.page;
-		this.orientation = props.orientation;
-		this.loop = props.loop;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+	constructor(readonly opts: PaginationRootStateProps) {
+		useRefById(opts);
 	}
 
-	setPage = (page: number) => {
-		this.page.current = page;
-	};
+	setPage(page: number) {
+		this.opts.page.current = page;
+	}
 
-	getPageTriggerNodes = () => {
-		const node = this.ref.current;
+	getPageTriggerNodes() {
+		const node = this.opts.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLElement>("[data-pagination-page]"));
-	};
+	}
 
-	getButtonNode = (type: "prev" | "next") => {
-		const node = this.ref.current;
+	getButtonNode(type: "prev" | "next") {
+		const node = this.opts.ref.current;
 		if (!node) return;
 		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
-	};
+	}
 
-	prevPage = () => {
-		this.page.current = Math.max(this.page.current - 1, 1);
-	};
+	hasPrevPage = $derived.by(() => this.opts.page.current > 1);
+	hasNextPage = $derived.by(() => this.opts.page.current < this.totalPages);
 
-	nextPage = () => {
-		this.page.current = Math.min(this.page.current + 1, this.totalPages);
-	};
+	prevPage() {
+		this.opts.page.current = Math.max(this.opts.page.current - 1, 1);
+	}
+
+	nextPage() {
+		this.opts.page.current = Math.min(this.opts.page.current + 1, this.totalPages);
+	}
 
 	snippetProps = $derived.by(() => ({
 		pages: this.pages,
 		range: this.range,
-		currentPage: this.page.current,
+		currentPage: this.opts.page.current,
 	}));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-orientation": getDataOrientation(this.orientation.current),
-				[ROOT_ATTR]: "",
+				id: this.opts.id.current,
+				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				[PAGINATION_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -118,61 +104,44 @@ type PaginationPageStateProps = WithRefProps<
 >;
 
 class PaginationPageState {
-	#id: PaginationPageStateProps["id"];
-	#ref: PaginationPageStateProps["ref"];
-	#root: PaginationRootState;
-	#disabled: PaginationPageStateProps["disabled"];
-	page: PaginationPageStateProps["page"];
-	#isSelected = $derived.by(() => this.page.current.value === this.#root.page.current);
+	#isSelected = $derived.by(() => this.opts.page.current.value === this.root.opts.page.current);
 
-	constructor(props: PaginationPageStateProps, root: PaginationRootState) {
-		this.#root = root;
-		this.#id = props.id;
-		this.page = props.page;
-		this.#ref = props.ref;
-		this.#disabled = props.disabled;
+	constructor(
+		readonly opts: PaginationPageStateProps,
+		readonly root: PaginationRootState
+	) {
+		useRefById(opts);
 
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
-		this.#root.setPage(this.page.current.value);
-	};
+	onclick(e: BitsMouseEvent) {
+		if (this.opts.disabled.current) return;
+		if (e.button !== 0) return;
+		this.root.setPage(this.opts.page.current.value);
+	}
 
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#root.setPage(this.page.current.value);
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.#root.setPage(this.page.current.value);
+			this.root.setPage(this.opts.page.current.value);
 		} else {
-			handleTriggerKeydown(e, this.#ref.current, this.#root);
+			handleTriggerKeydown(e, this.opts.ref.current, this.root);
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				"aria-label": `Page ${this.page.current}`,
-				"data-value": `${this.page.current.value}`,
+				id: this.opts.id.current,
+				"aria-label": `Page ${this.opts.page.current.value}`,
+				"data-value": `${this.opts.page.current.value}`,
 				"data-selected": this.#isSelected ? "" : undefined,
-				[PAGE_ATTR]: "",
+				[PAGINATION_PAGE_ATTR]: "",
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -189,62 +158,52 @@ type PaginationButtonStateProps = WithRefProps<{
 	}>;
 
 class PaginationButtonState {
-	id: PaginationButtonStateProps["id"];
-	#ref: PaginationButtonStateProps["ref"];
-	#disabled: PaginationButtonStateProps["disabled"];
-	#root: PaginationRootState;
-	type = $state() as PaginationButtonStateProps["type"];
+	constructor(
+		readonly opts: PaginationButtonStateProps,
+		readonly root: PaginationRootState
+	) {
+		useRefById(opts);
 
-	constructor(props: PaginationButtonStateProps, root: PaginationRootState) {
-		this.#root = root;
-		this.id = props.id;
-		this.type = props.type;
-		this.#ref = props.ref;
-		this.#disabled = props.disabled;
-
-		useRefById({
-			id: this.id,
-			ref: this.#ref,
-		});
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#action = () => {
-		this.type === "prev" ? this.#root.prevPage() : this.#root.nextPage();
-	};
+	#action() {
+		this.opts.type === "prev" ? this.root.prevPage() : this.root.nextPage();
+	}
 
-	#onpointerdown = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
+	#isDisabled = $derived.by(() => {
+		if (this.opts.disabled.current) return true;
+		if (this.opts.type === "prev") return !this.root.hasPrevPage;
+		if (this.opts.type === "next") return !this.root.hasNextPage;
+		return false;
+	});
+
+	onclick(e: BitsMouseEvent) {
+		if (this.opts.disabled.current) return;
+		if (e.button !== 0) return;
 		this.#action();
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#action();
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
 			this.#action();
 		} else {
-			handleTriggerKeydown(e, this.#ref.current, this.#root);
+			handleTriggerKeydown(e, this.opts.ref.current, this.root);
 		}
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				[PREV_ATTR]: this.type === "prev" ? "" : undefined,
-				[NEXT_ATTR]: this.type === "next" ? "" : undefined,
+				id: this.opts.id.current,
+				[PAGINATION_PREV_ATTR]: this.opts.type === "prev" ? "" : undefined,
+				[PAGINATION_NEXT_ATTR]: this.opts.type === "next" ? "" : undefined,
+				disabled: this.#isDisabled,
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -267,7 +226,7 @@ function handleTriggerKeydown(
 	node: HTMLElement | null,
 	root: PaginationRootState
 ) {
-	if (!node || !root.ref.current) return;
+	if (!node || !root.opts.ref.current) return;
 	const items = root.getPageTriggerNodes();
 	const nextButton = root.getButtonNode("next");
 	const prevButton = root.getButtonNode("prev");
@@ -281,11 +240,11 @@ function handleTriggerKeydown(
 
 	const currentIndex = items.indexOf(node);
 
-	const dir = getElemDirection(root.ref.current);
+	const dir = getElemDirection(root.opts.ref.current);
 
-	const { nextKey, prevKey } = getDirectionalKeys(dir, root.orientation.current);
+	const { nextKey, prevKey } = getDirectionalKeys(dir, root.opts.orientation.current);
 
-	const loop = root.loop.current;
+	const loop = root.opts.loop.current;
 
 	const keyToIndex = {
 		[nextKey]: currentIndex + 1,
@@ -372,21 +331,16 @@ function getPageItems({ page = 1, totalPages, siblingCount = 1 }: GetPageItemsPr
 	return pageItems;
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setPaginationRootContext, getPaginationRootContext] =
-	createContext<PaginationRootState>("Pagination.Root");
+const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
 
 export function usePaginationRoot(props: PaginationRootStateProps) {
-	return setPaginationRootContext(new PaginationRootState(props));
+	return PaginationRootContext.set(new PaginationRootState(props));
 }
 
 export function usePaginationPage(props: PaginationPageStateProps) {
-	return new PaginationPageState(props, getPaginationRootContext());
+	return new PaginationPageState(props, PaginationRootContext.get());
 }
 
 export function usePaginationButton(props: PaginationButtonStateProps) {
-	return new PaginationButtonState(props, getPaginationRootContext());
+	return new PaginationButtonState(props, PaginationRootContext.get());
 }

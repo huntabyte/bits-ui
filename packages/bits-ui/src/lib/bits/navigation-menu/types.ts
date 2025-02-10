@@ -1,4 +1,11 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { EscapeBehaviorType } from "../utilities/escape-layer/types.js";
+import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
+import type {
+	OnChangeFn,
+	WithChild,
+	WithChildNoChildrenSnippetProps,
+	Without,
+} from "$lib/internal/types.js";
 import type {
 	BitsPrimitiveAnchorAttributes,
 	BitsPrimitiveButtonAttributes,
@@ -21,13 +28,6 @@ export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 	 * The callback to call when a menu item is selected.
 	 */
 	onValueChange?: OnChangeFn<string>;
-
-	/**
-	 * Whether or not the value state is controlled or not. If `true`, the component will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 */
-	controlledValue?: boolean;
 
 	/**
 	 * The duration from when the mouse enters a trigger until the content opens.
@@ -81,7 +81,16 @@ export type NavigationMenuSubPropsWithoutHTML = WithChild<{
 export type NavigationMenuSubProps = NavigationMenuSubPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, NavigationMenuSubPropsWithoutHTML>;
 
-export type NavigationMenuListPropsWithoutHTML = WithChild;
+export type NavigationMenuListPropsWithoutHTML = WithChildNoChildrenSnippetProps<
+	{},
+	{
+		/**
+		 * Attributes to spread onto a wrapper element around the content.
+		 * Do not style the wrapper element, its styles are computed by Floating UI.
+		 */
+		wrapperProps: Record<string, unknown>;
+	}
+>;
 
 export type NavigationMenuListProps = NavigationMenuListPropsWithoutHTML &
 	Without<BitsPrimitiveUListAttributes, NavigationMenuListPropsWithoutHTML>;
@@ -126,6 +135,16 @@ export type NavigationMenuContentPropsWithoutHTML = WithChild<{
 	 * Default behavior can be prevented with `event.preventDefault()`
 	 */
 	onEscapeKeydown?: (event: KeyboardEvent) => void;
+
+	/**
+	 * Behavior when the escape key is pressed while the menu content is open.
+	 */
+	escapeKeydownBehavior?: EscapeBehaviorType;
+
+	/**
+	 * Behavior when an interaction occurs outside the content.
+	 */
+	interactOutsideBehavior?: InteractOutsideBehaviorType;
 
 	/**
 	 * Whether to forcefully mount the content, regardless of the open state.

@@ -20,7 +20,6 @@ import {
 } from "./extended-types/dialog/index.js";
 import {
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -58,7 +57,6 @@ const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback function called when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		children: childrenSnippet(),
 	},
 });

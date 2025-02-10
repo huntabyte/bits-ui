@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { FocusScopeImplProps } from "./types.js";
-	import { useFocusScope } from "./useFocusScope.svelte.js";
+	import { useFocusScope } from "./use-focus-scope.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {
@@ -11,6 +11,7 @@
 		onCloseAutoFocus = noop,
 		onOpenAutoFocus = noop,
 		focusScope,
+		forceMount = false,
 	}: FocusScopeImplProps = $props();
 
 	const focusScopeState = useFocusScope({
@@ -19,6 +20,7 @@
 		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 		onOpenAutoFocus: box.with(() => onOpenAutoFocus),
 		id: box.with(() => id),
+		forceMount: box.with(() => forceMount),
 	});
 </script>
 

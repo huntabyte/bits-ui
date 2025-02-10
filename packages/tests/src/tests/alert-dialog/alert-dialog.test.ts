@@ -5,11 +5,10 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import type { Component } from "svelte";
-import { getTestKbd, sleep } from "../utils.js";
+import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
 
@@ -30,8 +29,7 @@ async function expectIsOpen(
 }
 
 function setup(props: AlertDialogTestProps = {}, component: Component = AlertDialogTest) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
-	// @ts-expect-error - testing lib needs to update their generic types
+	const user = setupUserEvents();
 	const returned = render(component, { ...props });
 	const trigger = returned.getByTestId("trigger");
 
@@ -46,7 +44,7 @@ async function open(props: AlertDialogTestProps = {}) {
 	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
-	await user.click(trigger);
+	await user.pointerDownUp(trigger);
 	const contentAfter = getByTestId("content");
 	expect(contentAfter).not.toBeNull();
 	const cancel = getByTestId("cancel");
@@ -56,7 +54,6 @@ async function open(props: AlertDialogTestProps = {}) {
 
 describe("alert dialog", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(AlertDialogTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -106,7 +103,7 @@ describe("alert dialog", () => {
 		expect(initContent).toBeNull();
 
 		const trigger = getByTestId("trigger");
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 
 		const overlay = getByTestId("overlay");
 		expect(overlay).toBeInTheDocument();
@@ -123,7 +120,7 @@ describe("alert dialog", () => {
 	it("should close when the cancel button is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
 		const cancel = getByTestId("cancel");
-		await user.click(cancel);
+		await user.pointerDownUp(cancel);
 		expectIsClosed(queryByTestId);
 	});
 
@@ -140,7 +137,7 @@ describe("alert dialog", () => {
 		await sleep(100);
 
 		const overlay = getByTestId("overlay");
-		await user.click(overlay);
+		await user.pointerDownUp(overlay);
 		await sleep(25);
 
 		const contentAfter2 = queryByTestId("content");
@@ -178,7 +175,7 @@ describe("alert dialog", () => {
 	it("should not close when content is clicked", async () => {
 		const { user, getByTestId, queryByTestId } = await open();
 		const content = getByTestId("content");
-		await user.click(content);
+		await user.pointerDownUp(content);
 		await expectIsOpen(queryByTestId);
 	});
 
@@ -188,7 +185,7 @@ describe("alert dialog", () => {
 		const trigger = getByTestId("trigger");
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 		expect(binding).toHaveTextContent("true");
 		await user.keyboard(kbd.ESCAPE);
 		expect(binding).toHaveTextContent("false");

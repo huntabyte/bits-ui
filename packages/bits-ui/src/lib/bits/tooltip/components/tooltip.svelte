@@ -8,12 +8,11 @@
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
-		disabled = false,
+		disabled,
 		delayDuration,
-		disableCloseOnTriggerClick = false,
+		disableCloseOnTriggerClick,
 		disableHoverableContent,
-		ignoreNonKeyboardFocus = false,
-		controlledOpen = false,
+		ignoreNonKeyboardFocus,
 		children,
 	}: TooltipRootProps = $props();
 
@@ -21,12 +20,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		delayDuration: box.with(() => delayDuration),

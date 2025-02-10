@@ -27,20 +27,15 @@ export function usePasswordManagerBadge({
 	pushPasswordManagerStrategy,
 	isFocused,
 }: UsePasswordManagerBadgeProps) {
-	let pwmMetadata = $state({
-		done: false,
-		refocused: false,
-	});
-
 	let hasPwmBadge = $state(false);
 	let hasPwmBadgeSpace = $state(false);
 	let done = $state(false);
 
 	function willPushPwmBadge() {
-		const strat = pushPasswordManagerStrategy.current;
-		if (strat === "none") return false;
+		const strategy = pushPasswordManagerStrategy.current;
+		if (strategy === "none") return false;
 
-		const increaseWidthCase = strat === "increase-width" && hasPwmBadge && hasPwmBadgeSpace;
+		const increaseWidthCase = strategy === "increase-width" && hasPwmBadge && hasPwmBadgeSpace;
 
 		return increaseWidthCase;
 	}
@@ -62,11 +57,11 @@ export function usePasswordManagerBadge({
 		const y = centeredY;
 
 		// do an extra search to check for all the password manager badges
-		const pwms = document.querySelectorAll(PASSWORD_MANAGER_SELECTORS);
+		const passwordManagerStrategy = document.querySelectorAll(PASSWORD_MANAGER_SELECTORS);
 
-		// if no password manager is detected, dispatch document.elementfrompoint to
+		// if no password manager is detected, dispatch document.elementFromPoint to
 		// identify the badges
-		if (pwms.length === 0) {
+		if (passwordManagerStrategy.length === 0) {
 			const maybeBadgeEl = document.elementFromPoint(x, y);
 
 			// if the found element is the container,
@@ -76,19 +71,6 @@ export function usePasswordManagerBadge({
 
 		hasPwmBadge = true;
 		done = true;
-
-		// for specific PWMs the input has to be re-focused
-		// to trigger a reposition of the badge
-		if (!pwmMetadata.refocused && document.activeElement === input) {
-			const selections = [input.selectionStart ?? 0, input.selectionEnd ?? 0];
-			input.blur();
-			input.focus();
-			input.focus();
-			// recover the previous selection
-			input.setSelectionRange(selections[0]!, selections[1]!);
-
-			pwmMetadata.refocused = true;
-		}
 	}
 
 	$effect(() => {

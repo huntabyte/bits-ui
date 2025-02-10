@@ -11,13 +11,13 @@
 		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
+		onStateChange = noop,
 		loop = false,
 		shouldFilter = true,
 		filter = defaultFilter,
 		label = "",
 		vimBindings = true,
 		disablePointerSelection = false,
-		controlledValue = false,
 		children,
 		child,
 		...restProps
@@ -35,16 +35,13 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		vimBindings: box.with(() => vimBindings),
 		disablePointerSelection: box.with(() => disablePointerSelection),
+		onStateChange: box.with(() => onStateChange),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

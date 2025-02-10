@@ -4,7 +4,7 @@ description: Provides additional information or context when users hover over or
 ---
 
 <script>
-	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, APISection, Callout } from '$lib/components'
+	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -44,7 +44,7 @@ The `Tooltip.Provider` component is required to be an ancestor of the `Tooltip.R
 	import { Tooltip } from "bits-ui";
 </script>
 
-<Tooltip.Provider delayDuration={0} disabledHoverableContent={true}>
+<Tooltip.Provider delayDuration={0} disableHoverableContent={true}>
 	<!-- Will have a delayDuration of 0 and disableHoverableContent of true -->
 	<Tooltip.Root>
 		<Tooltip.Trigger />
@@ -135,22 +135,15 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the tooltip responds to open/close events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `Tooltip.Root` component.
-2. Provide an `open` prop to `Tooltip.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
 	import { Tooltip } from "bits-ui";
-
 	let myOpen = $state(false);
 </script>
 
-<Tooltip.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<Tooltip.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </Tooltip.Root>
 ```
@@ -302,10 +295,12 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 <Tooltip.Root>
 	<!-- ... other tooltip components -->
 	<Tooltip.Content forceMount>
-		{#snippet child({ props, open })}
+		{#snippet child({ wrapperProps, props, open })}
 			{#if open}
-				<div {...props} transition:fly>
-					<!-- ... -->
+				<div {...wrapperProps}>
+					<div {...props} transition:fly>
+						<!-- ... -->
+					</div>
 				</div>
 			{/if}
 		{/snippet}
@@ -314,6 +309,14 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content components that handles this logic if you intend to use this approach throughout your app. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="tooltip-demo-transition" comp="Tooltip" containerClass="mt-4">
+
+{#snippet preview()}
+<TooltipDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Opt-out of Floating UI
 

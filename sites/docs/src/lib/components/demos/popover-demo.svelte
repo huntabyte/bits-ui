@@ -16,7 +16,6 @@
 	</Popover.Trigger>
 	<Popover.Portal>
 		<Popover.Content
-			id="Content-A"
 			class="z-30 w-full max-w-[328px] rounded-[12px] border border-dark-10 bg-background p-4 shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
 			sideOffset={8}
 		>
@@ -44,7 +43,7 @@
 						>
 						<input
 							type="number"
-							class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
+							class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-base text-foreground sm:text-sm"
 							bind:value={width}
 						/>
 					</div>
@@ -56,7 +55,7 @@
 						>
 						<input
 							type="number"
-							class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-sm text-foreground"
+							class="h-input w-[119px] rounded-10px border border-border-input bg-background pl-10 pr-2 text-base text-foreground sm:text-sm"
 							bind:value={height}
 						/>
 					</div>

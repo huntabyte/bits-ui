@@ -1,10 +1,11 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
+	import { type Snippet, untrack } from "svelte";
 	import { Collapsible, ScrollArea, Tabs } from "bits-ui";
 	import DemoCodeTabs from "./demo-code-tabs.svelte";
 	import TailwindConfig from "./code-renders/tailwind-config.svelte";
 	import AppCSS from "./code-renders/app-css.svelte";
 	import { cn } from "$lib/utils/styles.js";
+	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 
 	type Props = {
 		fileName?: string;
@@ -36,8 +37,18 @@
 
 	let open = $state(false);
 	let activeValue = $state(fileName);
-
+	let codeWrapper = $state<HTMLElement>(null!);
 	const expandable = $derived(!nonExpandableItems.includes(activeValue));
+	const copyToClipboard = useCopyToClipboard();
+
+	$effect(() => {
+		activeValue;
+		codeWrapper;
+		untrack(() => {
+			if (!codeWrapper) return;
+			copyToClipboard?.setCodeString(codeWrapper.innerText.trim() ?? "");
+		});
+	});
 </script>
 
 <DemoCodeTabs
@@ -48,6 +59,7 @@
 	}}
 	bind:open
 	{expandable}
+	bind:ref={codeWrapper}
 >
 	<Collapsible.Root bind:open>
 		{#each items as item (item.value)}

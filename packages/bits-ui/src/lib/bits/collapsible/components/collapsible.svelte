@@ -12,7 +12,6 @@
 		ref = $bindable(null),
 		open = $bindable(false),
 		disabled = false,
-		controlledOpen = false,
 		onOpenChange = noop,
 		...restProps
 	}: CollapsibleRootProps = $props();
@@ -21,12 +20,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		disabled: box.with(() => disabled),

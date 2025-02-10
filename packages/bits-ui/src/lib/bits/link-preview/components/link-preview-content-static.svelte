@@ -4,6 +4,8 @@
 	import { useLinkPreviewContent } from "../link-preview.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	let {
 		children,
@@ -25,36 +27,74 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-</script>
 
-<PopperLayer
-	isStatic={true}
-	{...mergedProps}
-	present={contentState.root.open.current || forceMount}
-	{id}
-	onInteractOutside={(e) => {
+	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside?.(e);
 		if (e.defaultPrevented) return;
-		contentState.root.immediateClose();
-	}}
-	onEscapeKeydown={(e) => {
+		contentState.root.handleClose();
+	}
+
+	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown?.(e);
 		if (e.defaultPrevented) return;
-		contentState.root.immediateClose();
-	}}
-	onOpenAutoFocus={(e) => e.preventDefault()}
-	onCloseAutoFocus={(e) => e.preventDefault()}
-	trapFocus={false}
-	loop={false}
-	preventScroll={false}
->
-	{#snippet popper({ props })}
-		{#if child}
-			{@render child({ props, ...contentState.snippetProps })}
-		{:else}
-			<div {...props}>
-				{@render children?.(contentState.snippetProps)}
-			</div>
-		{/if}
-	{/snippet}
-</PopperLayer>
+		contentState.root.handleClose();
+	}
+</script>
+
+{#if forceMount}
+	<PopperLayerForceMount
+		{...mergedProps}
+		enabled={contentState.root.opts.open.current}
+		isStatic
+		{id}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onOpenAutoFocus={(e) => e.preventDefault()}
+		onCloseAutoFocus={(e) => e.preventDefault()}
+		trapFocus={false}
+		loop={false}
+		preventScroll={false}
+		forceMount={true}
+	>
+		{#snippet popper({ props })}
+			{@const mergedProps = mergeProps(props, {
+				style: getFloatingContentCSSVars("link-preview"),
+			})}
+			{#if child}
+				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...mergedProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PopperLayerForceMount>
+{:else if !forceMount}
+	<PopperLayer
+		{...mergedProps}
+		present={contentState.root.opts.open.current}
+		isStatic
+		{id}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onOpenAutoFocus={(e) => e.preventDefault()}
+		onCloseAutoFocus={(e) => e.preventDefault()}
+		trapFocus={false}
+		loop={false}
+		preventScroll={false}
+		forceMount={false}
+	>
+		{#snippet popper({ props })}
+			{@const mergedProps = mergeProps(props, {
+				style: getFloatingContentCSSVars("link-preview"),
+			})}
+			{#if child}
+				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...mergedProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PopperLayer>
+{/if}

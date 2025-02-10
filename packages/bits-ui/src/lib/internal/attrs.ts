@@ -30,11 +30,14 @@ export function getAriaSelected(condition: boolean): "true" | "false" {
 	return condition ? "true" : "false";
 }
 
-export function getAriaChecked(condition: boolean | "indeterminate"): "true" | "false" | "mixed" {
-	if (condition === "indeterminate") {
+export function getAriaChecked(
+	checked: boolean,
+	indeterminate: boolean
+): "true" | "false" | "mixed" {
+	if (indeterminate) {
 		return "mixed";
 	}
-	return condition ? "true" : "false";
+	return checked ? "true" : "false";
 }
 
 export function getAriaOrientation(

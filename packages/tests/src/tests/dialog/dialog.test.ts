@@ -5,12 +5,12 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/svelte/svelte5";
-import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { tick } from "svelte";
-import { getTestKbd, sleep } from "../utils.js";
+import { getTestKbd, mockBoundingClientRect, setupUserEvents, sleep } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
+import DialogNestedTest from "./dialog-nested-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -29,8 +29,7 @@ async function expectIsOpen(
 }
 
 function setup(props: DialogTestProps = {}) {
-	const user = userEvent.setup({ pointerEventsCheck: 0 });
-	// @ts-expect-error - testing lib needs to update their generic types
+	const user = setupUserEvents();
 	const returned = render(DialogTest, { ...props });
 	const trigger = returned.getByTestId("trigger");
 
@@ -45,7 +44,8 @@ async function open(props: DialogTestProps = {}) {
 	const { getByTestId, queryByTestId, user, trigger } = setup(props);
 	const content = queryByTestId("content");
 	expect(content).toBeNull();
-	await user.click(trigger);
+	await user.pointerDownUp(trigger);
+	await tick();
 	const contentAfter = getByTestId("content");
 	expect(contentAfter).not.toBeNull();
 	return { getByTestId, queryByTestId, user };
@@ -53,7 +53,6 @@ async function open(props: DialogTestProps = {}) {
 
 describe("dialog", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(DialogTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -98,9 +97,9 @@ describe("dialog", () => {
 
 	it("should close when the overlay is clicked", async () => {
 		const { getByTestId, queryByTestId, user } = await open();
-		await sleep(100);
 
 		const overlay = getByTestId("overlay");
+		mockBoundingClientRect();
 		await user.click(overlay);
 		await sleep(25);
 
@@ -155,14 +154,14 @@ describe("dialog", () => {
 		const trigger = getByTestId("trigger");
 		const binding = getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 		expect(binding).toHaveTextContent("true");
 		await user.keyboard(kbd.ESCAPE);
 		expect(binding).toHaveTextContent("false");
 
 		const toggle = getByTestId("toggle");
 		expectIsClosed(queryByTestId);
-		await user.click(toggle);
+		await user.pointerDownUp(toggle);
 		await expectIsOpen(queryByTestId);
 	});
 
@@ -238,5 +237,29 @@ describe("dialog", () => {
 		expect(description.id).not.toBe("description-id");
 		expect(description.id).toBe("new-id");
 		expect(content).toHaveAttribute("aria-describedby", description.id);
+	});
+
+	describe("nested", () => {
+		it("should handle focus scoping correctly", async () => {
+			const user = setupUserEvents();
+			const { queryByTestId, getByTestId } = render(DialogNestedTest);
+			const trigger = getByTestId("first-open");
+			await user.pointerDownUp(trigger);
+			await tick();
+			await waitFor(() => expect(queryByTestId("first-close")).toBeInTheDocument());
+			expect(queryByTestId("first-close")).toHaveFocus();
+			await user.keyboard(kbd.TAB);
+			expect(queryByTestId("second-open")).toHaveFocus();
+			await user.keyboard(kbd.TAB);
+			expect(queryByTestId("first-close")).toHaveFocus();
+			await user.keyboard(kbd.TAB);
+			await user.keyboard(kbd.ENTER);
+			await tick();
+			expect(queryByTestId("second-close")).toBeInTheDocument();
+			await user.keyboard(kbd.TAB);
+			expect(queryByTestId("second-close")).toHaveFocus();
+			await user.keyboard(kbd.ESCAPE);
+			expect(queryByTestId("second-open")).toHaveFocus();
+		});
 	});
 });

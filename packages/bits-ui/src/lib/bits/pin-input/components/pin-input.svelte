@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PinInputRootProps } from "../types.js";
-	import { REGEXP_ONLY_DIGITS, usePinInput } from "../pin-input.svelte.js";
+	import { usePinInput } from "../pin-input.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
@@ -11,7 +11,7 @@
 		ref = $bindable(null),
 		maxlength = 6,
 		textalign = "left",
-		pattern = REGEXP_ONLY_DIGITS,
+		pattern,
 		inputmode = "numeric",
 		onComplete = noop,
 		pushPasswordManagerStrategy = "increase-width",
@@ -21,7 +21,6 @@
 		disabled = false,
 		value = $bindable(""),
 		onValueChange = noop,
-		controlledValue = false,
 		onPaste,
 		...restProps
 	}: PinInputRootProps = $props();
@@ -43,12 +42,8 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		pushPasswordManagerStrategy: box.with(() => pushPasswordManagerStrategy),

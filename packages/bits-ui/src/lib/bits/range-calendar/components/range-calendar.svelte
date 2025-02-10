@@ -33,8 +33,6 @@
 		disableDaysOutsideMonth = true,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
-		controlledPlaceholder = false,
-		controlledValue = false,
 		...restProps
 	}: RangeCalendarRootProps = $props();
 
@@ -46,24 +44,13 @@
 			defaultPlaceholder: undefined,
 			defaultValue: value?.start,
 		});
-
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+		placeholder = defaultPlaceholder;
 	}
 
 	if (value === undefined) {
 		const defaultValue = { start: undefined, end: undefined };
-		if (controlledValue) {
-			onValueChange(defaultValue);
-		} else {
-			value = defaultValue;
-		}
+		value = defaultValue;
 	}
-
-	value === undefined && (value = { start: undefined, end: undefined });
 
 	const rootState = useRangeCalendarRoot({
 		id: box.with(() => id),
@@ -74,23 +61,15 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		placeholder: box.with(
 			() => placeholder!,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v);
-				}
+				placeholder = v;
+				onPlaceholderChange(v);
 			}
 		),
 		disabled: box.with(() => disabled),

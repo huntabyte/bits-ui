@@ -11,7 +11,7 @@ export type IsAny<T> = IfAny<T, true, false>;
 // so we need to check if T is any first
 type Callback<T> =
 	IsAny<T> extends true
-		? // eslint-disable-next-line ts/no-explicit-any
+		? // eslint-disable-next-line @typescript-eslint/no-explicit-any
 			(param: any) => void
 		: [T] extends [void]
 			? () => void

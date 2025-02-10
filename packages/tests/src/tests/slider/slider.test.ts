@@ -3,23 +3,21 @@ import { render } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
-import SliderTest, { type SliderTestProps } from "./slider-test.svelte";
-import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.svelte";
+import SliderMultiTest, { type SliderMultiTestProps } from "./slider-test-multi.svelte";
+import SliderRangeTest, { type SliderMultiRangeTestProps } from "./slider-range-test.svelte";
 
 const kbd = getTestKbd();
 
-function renderSlider(props: SliderTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
-	return render(SliderTest, { ...props });
+function renderSlider(props: SliderMultiTestProps = {}) {
+	return render(SliderMultiTest, { ...props });
 }
-function renderSliderRange(props: SliderRangeTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
+function renderSliderRange(props: SliderMultiRangeTestProps = {}) {
 	return render(SliderRangeTest, { ...props });
 }
 
-function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default") {
+function setup(props: SliderMultiTestProps = {}, kind: "default" | "range" = "default") {
 	const user = setupUserEvents();
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let returned: any;
 	if (kind === "default") {
 		returned = renderSlider(props);
@@ -32,9 +30,8 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 }
 
 describe("slider (default)", () => {
-	it("should haveno accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
-		const { container } = render(SliderTest);
+	it("should have no accessibility violations", async () => {
+		const { container } = render(SliderMultiTest);
 
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -108,6 +105,17 @@ describe("slider (default)", () => {
 		await user.keyboard(kbd.END);
 
 		expectPercentage({ percentage: 100, thumb, range });
+	});
+
+	it("should not allow the value to change when the `disabled` prop is set to true", async () => {
+		const { getByTestId, user } = setup({ disabled: true });
+
+		const thumb = getByTestId("thumb");
+		const range = getByTestId("range");
+
+		thumb.focus();
+		await user.keyboard(kbd.HOME);
+		expectPercentage({ percentage: 30, thumb, range });
 	});
 });
 

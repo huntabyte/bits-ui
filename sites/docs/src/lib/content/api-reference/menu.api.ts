@@ -18,14 +18,10 @@ import type {
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledCheckedProp,
-	controlledOpenProp,
-	controlledValueProp,
 	createBooleanProp,
 	createDataAttrSchema,
 	createFunctionProp,
 	createStringProp,
-	createUnionProp,
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
@@ -38,11 +34,7 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import {
-	CheckedChildSnippetProps,
-	CheckedChildrenSnippetProps,
-	CheckedProp,
 	NoopProp,
-	OnCheckedChangeProp,
 	OnOpenChangeProp,
 	OnStringValueChangeProp,
 	OpenChildSnippetProps,
@@ -53,6 +45,13 @@ import {
 } from "./extended-types/shared/index.js";
 import { MenuCheckedStateAttr } from "./extended-types/menu/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
+import {
+	CheckboxRootChildSnippetProps,
+	CheckboxRootChildrenSnippetProps,
+	CheckboxRootOnCheckedChangeProp,
+	CheckboxRootOnIndeterminateChangeProp,
+} from "./extended-types/checkbox/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
 import { enums } from "$lib/content/api-reference/helpers.js";
@@ -65,6 +64,10 @@ const sharedItemProps = {
 	onSelect: createFunctionProp({
 		definition: NoopProp,
 		description: "A callback that is fired when the menu item is selected.",
+	}),
+	closeOnSelect: createBooleanProp({
+		default: C.TRUE,
+		description: "Whether or not the menu item should close when selected.",
 	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
 } as const;
@@ -79,7 +82,6 @@ const props = {
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the menu's open state changes.",
 	}),
-	controlledOpen: controlledOpenProp,
 	dir: dirProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuRootPropsWithoutHTML>;
@@ -94,7 +96,6 @@ const subProps = {
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the submenu's open state changes.",
 	}),
-	controlledOpen: controlledOpenProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuSubPropsWithoutHTML>;
 
@@ -114,7 +115,7 @@ const contentProps = {
 	...withChildProps({
 		elType: "HTMLDivElement",
 		childrenDef: OpenChildrenSnippetProps,
-		childDef: OpenChildSnippetProps,
+		childDef: FloatingContentChildSnippetProps,
 	}),
 } satisfies PropObj<DropdownMenuContentPropsWithoutHTML>;
 
@@ -167,24 +168,30 @@ const checkboxItemProps = {
 		description:
 			"Whether or not the checkbox menu item is disabled. Disabled items cannot be interacted with and are skipped when navigating with the keyboard.",
 	}),
-	checked: createUnionProp({
-		options: ["boolean", "'indeterminate'"],
+	checked: createBooleanProp({
 		default: C.FALSE,
 		description: "The checkbox menu item's checked state.",
 		bindable: true,
-		definition: CheckedProp,
 	}),
 	onCheckedChange: createFunctionProp({
-		definition: OnCheckedChangeProp,
+		definition: CheckboxRootOnCheckedChangeProp,
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
 	}),
-	controlledChecked: controlledCheckedProp,
+	indeterminate: createBooleanProp({
+		default: C.FALSE,
+		description: "Whether the checkbox menu item is in an indeterminate state or not.",
+		bindable: true,
+	}),
+	onIndeterminateChange: createFunctionProp({
+		definition: CheckboxRootOnIndeterminateChangeProp,
+		description: "A callback that is fired when the indeterminate state changes.",
+	}),
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
 		elType: "HTMLDivElement",
-		childrenDef: CheckedChildrenSnippetProps,
-		childDef: CheckedChildSnippetProps,
+		childrenDef: CheckboxRootChildrenSnippetProps,
+		childDef: CheckboxRootChildSnippetProps,
 	}),
 } satisfies PropObj<DropdownMenuCheckboxItemPropsWithoutHTML>;
 
@@ -197,7 +204,6 @@ const radioGroupProps = {
 		definition: OnStringValueChangeProp,
 		description: "A callback that is fired when the radio group's value changes.",
 	}),
-	controlledValue: controlledValueProp,
 	...withChildProps({ elType: "HTMLDivElement" }),
 } satisfies PropObj<DropdownMenuRadioGroupPropsWithoutHTML>;
 

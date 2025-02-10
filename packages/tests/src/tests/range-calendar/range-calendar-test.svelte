@@ -6,11 +6,19 @@
 
 <script lang="ts">
 	let { placeholder, value, ...restProps }: RangeCalendarTestProps = $props();
+
+	function clear() {
+		value = {
+			start: undefined,
+			end: undefined,
+		};
+	}
 </script>
 
 <main>
 	<div data-testid="start-value">{String(value?.start)}</div>
 	<div data-testid="end-value">{String(value?.end)}</div>
+	<button onclick={clear}>clear</button>
 
 	<RangeCalendar.Root bind:placeholder bind:value {...restProps} data-testid="calendar">
 		{#snippet children({ months, weekdays })}

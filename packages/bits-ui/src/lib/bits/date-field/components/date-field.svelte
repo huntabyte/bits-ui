@@ -23,8 +23,6 @@
 		readonly = false,
 		readonlySegments = [],
 		required = false,
-		controlledPlaceholder = false,
-		controlledValue = false,
 		errorMessageId,
 		children,
 	}: DateFieldRootProps = $props();
@@ -36,34 +34,22 @@
 			defaultValue: value,
 		});
 
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+		placeholder = defaultPlaceholder;
 	}
 
 	useDateFieldRoot({
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v);
-				}
+				placeholder = v;
+				onPlaceholderChange(v);
 			}
 		),
 		disabled: box.with(() => disabled),

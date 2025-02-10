@@ -33,7 +33,7 @@
 		{#if children}
 			{@render children?.(dayState.snippetProps)}
 		{:else}
-			{dayState.cell.date.current.day}
+			{dayState.cell.opts.date.current.day}
 		{/if}
 	</div>
 {/if}

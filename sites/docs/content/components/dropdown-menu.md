@@ -4,7 +4,7 @@ description: Displays a menu of items that users can select from when triggered.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, DropdownMenuDemo, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, DropdownMenuDemo, DropdownMenuDemoTransition, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -172,13 +172,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `DropdownMenu.Root` component.
-2. Provide an `open` prop to `DropdownMenu.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -186,7 +180,7 @@ To implement controlled state:
 	let myOpen = $state(false);
 </script>
 
-<DropdownMenu.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<DropdownMenu.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </DropdownMenu.Root>
 ```
@@ -256,8 +250,10 @@ You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheck
 </script>
 
 <DropdownMenu.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked })}
-		{#if checked}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
 			✅
 		{/if}
 		Notifications
@@ -331,11 +327,13 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </script>
 
 <DropdownMenu.Content forceMount>
-	{#snippet child({ props, open })}
+	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
-			<div {...props} transition:fly>
-				<DropdownMenu.Item>Item 1</DropdownMenu.Item>
-				<DropdownMenu.Item>Item 2</DropdownMenu.Item>
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<DropdownMenu.Item>Item 1</DropdownMenu.Item>
+					<DropdownMenu.Item>Item 2</DropdownMenu.Item>
+				</div>
 			</div>
 		{/if}
 	{/snippet}
@@ -343,6 +341,14 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="dropdown-menu-demo-transition" comp="DropdownMenu" containerClass="mt-4">
+
+{#snippet preview()}
+<DropdownMenuDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Custom Anchor
 

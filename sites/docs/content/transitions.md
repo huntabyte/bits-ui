@@ -3,6 +3,10 @@ title: Transitions
 description: Learn how to use transitions with Bits UI components.
 ---
 
+<script>
+	import Callout from '$lib/components/callout.svelte';
+</script>
+
 Svelte Transitions are one of the awesome features of Svelte. Unfortunately, they don't play very nicely with components, due to the fact that they rely on various directives like `in:`, `out:`, and `transition:`, which aren't supported by components.
 
 In previous version of Bits UI, we had a workaround for this by exposing a ton of `transition*` props on the components that we felt were most likely to be used with transitions. However, this was a bit of a hack and limited us to _only_ Svelte Transitions, and users who wanted to use other libraries or just CSS were left out.
@@ -91,4 +95,34 @@ Which can then be used alongside the other `Dialog.*` components:
 		</MyDialogContent>
 	</Dialog.Portal>
 </Dialog.Root>
+```
+
+### Floating Content Components
+
+`Content` components that rely on Floating UI require a slight modification to how the `child` snippet is used.
+
+For example, if we were to use the `Popover.Content` component, we need to add a wrapper element within the `child` snippet, and spread the `wrapperProps` snippet prop to it.
+
+```svelte {12,16} /wrapperProps,/
+<script lang="ts">
+	import { Popover } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<Popover.Root>
+	<Popover.Trigger>Open Popover</Popover.Trigger>
+	<Popover.Portal>
+		<Popover.Content forceMount>
+			{#snippet child({ wrapperProps, props, open })}
+				{#if open}
+					<div {...wrapperProps}>
+						<div {...props} transition:fly>
+							<!-- ... -->
+						</div>
+					</div>
+				{/if}
+			{/snippet}
+		</Popover.Content>
+	</Popover.Portal>
+</Popover.Root>
 ```

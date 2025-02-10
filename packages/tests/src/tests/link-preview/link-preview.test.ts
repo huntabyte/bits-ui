@@ -14,7 +14,6 @@ function setup(
 	component: Component = LinkPreviewTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const { getByTestId, queryByTestId } = render(component, { ...props });
 	const trigger = getByTestId("trigger");
 	return { trigger, getByTestId, queryByTestId, user };
@@ -31,7 +30,6 @@ async function open(props: LinkPreviewTestProps = {}) {
 
 describe("link preview", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(LinkPreviewTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

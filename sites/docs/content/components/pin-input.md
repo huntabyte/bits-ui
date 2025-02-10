@@ -114,13 +114,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `PinInput.Root` component.
-2. Provide a `value` prop to `PinInput.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -128,7 +122,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<PinInput.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<PinInput.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </PinInput.Root>
 ```
@@ -180,6 +174,30 @@ To submit the form when the input is complete, you can use the `onComplete` prop
 		<!-- ... -->
 	</PinInput.Root>
 </form>
+```
+
+## Patterns
+
+You can use the `pattern` prop to restrict the characters that can be entered or pasted into the input.
+
+<Callout type="warning" title="Note!">
+Client-side validation cannot replace server-side validation. Use this in addition to server-side validation for an improved user experience.
+</Callout>
+
+Bits UI exports a few common patterns that you can import and use in your application.
+
+-   `REGEXP_ONLY_DIGITS` - Only allow digits to be entered.
+-   `REGEXP_ONLY_CHARS` - Only allow characters to be entered.
+-   `REGEXP_ONLY_DIGITS_AND_CHARS` - Only allow digits and characters to be entered.
+
+```svelte
+<script lang="ts">
+	import { PinInput, REGEXP_ONLY_DIGITS } from "bits-ui";
+</script>
+
+<PinInput.Root pattern={REGEXP_ONLY_DIGITS}>
+	<!-- ... -->
+</PinInput.Root>
 ```
 
 <APISection {schemas} />

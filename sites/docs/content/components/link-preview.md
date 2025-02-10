@@ -4,7 +4,7 @@ description: Displays a summarized preview of a linked content's details or info
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, LinkPreviewDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, LinkPreviewDemo, LinkPreviewDemoTransition, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -95,13 +95,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `LinkPreview.Root` component.
-2. Provide an `open` prop to `LinkPreview.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -109,7 +103,7 @@ To implement controlled state:
 	let myOpen = $state(false);
 </script>
 
-<LinkPreview.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<LinkPreview.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </LinkPreview.Root>
 ```
@@ -170,5 +164,38 @@ If you wish to instead anchor the content to a different element, you can pass e
 	</LinkPreview.Content>
 </LinkPreview.Root>
 ```
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `LinkPreview.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fly/
+<script lang="ts">
+	import { LinkPreview } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<LinkPreview.Content forceMount>
+	{#snippet child({ wrapperProps, props, open })}
+		{#if open}
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<!-- ... -->
+				</div>
+			</div>
+		{/if}
+	{/snippet}
+</LinkPreview.Content>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="link-preview-demo-transition" comp="LinkPreview" containerClass="mt-4">
+
+{#snippet preview()}
+<LinkPreviewDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

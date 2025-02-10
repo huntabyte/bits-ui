@@ -4,7 +4,7 @@ description: Enables users to choose from a list of options presented in a dropd
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, Callout } from '$lib/components'
 	export let schemas;
 </script>
 
@@ -90,32 +90,29 @@ Here's an example of how you might create a reusable `MySelect` component that r
 		// any other specific component props if needed
 	};
 
-	let { value = $bindable(""), items, contentProps, placeholder, ...restProps }: Props = $props();
+	let { value = $bindable(), items, contentProps, placeholder, ...restProps }: Props = $props();
 
 	const selectedLabel = $derived(items.find((item) => item.value === value)?.label);
 </script>
 
-<Select.Root bind:value {...restProps}>
+<!--
+TypeScript Discriminated Unions + destructing (required for "bindable") do not
+get along, so we shut typescript up by casting `value` to `never`, however,
+from the perspective of the consumer of this component, it will be typed appropriately.
+-->
+<Select.Root bind:value={value as never} {...restProps}>
 	<Select.Trigger>
-		{#if selectedLabel}
-			<Select.Value>
-				{selectedLabel}
-			</Select.Value>
-		{:else}
-			<Select.Value {placeholder} />
-		{/if}
+		{selectedLabel ? selectedLabel : placeholder}
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content {...contentProps}>
 			<Select.ScrollUpButton>up</Select.ScrollUpButton>
 			<Select.Viewport>
 				{#each items as { value, label, disabled } (value)}
-					<Select.Item {value} textValue={label} {disabled}>
+					<Select.Item {value} {label} {disabled}>
 						{#snippet children({ selected })}
 							{selected ? "✅" : ""}
-							<Select.ItemText>
-								{item.label}
-							</Select.ItemText>
+							{item.label}
 						{/snippet}
 					</Select.Item>
 				{/each}
@@ -200,13 +197,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Select.Root` component.
-2. Provide a `value` prop to `Select.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -214,7 +205,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<Select.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Select.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Select.Root>
 ```
@@ -289,13 +280,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledOpen` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `Select.Root` component.
-2. Provide an `open` prop to `Select.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -303,7 +288,7 @@ To implement controlled state:
 	let myOpen = $state(false);
 </script>
 
-<Select.Root controlledOpen open={myOpen} onOpenChange={(v) => (myOpen = v)}>
+<Select.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </Select.Root>
 ```
@@ -443,5 +428,38 @@ To trigger side effects when an item is highlighted or unhighlighted, you can us
 <!-- ... -->
 </Select.Item>
 ```
+
+## Svelte Transitions
+
+You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `Select.Content` component to use Svelte Transitions or another animation library that requires more control.
+
+```svelte /forceMount/ /transition:fly/
+<script lang="ts">
+	import { Select } from "bits-ui";
+	import { fly } from "svelte/transition";
+</script>
+
+<Select.Content forceMount>
+	{#snippet child({ wrapperProps, props, open })}
+		{#if open}
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<!-- ... -->
+				</div>
+			</div>
+		{/if}
+	{/snippet}
+</Select.Content>
+```
+
+Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="select-demo-transition" comp="Select" containerClass="mt-4">
+
+{#snippet preview()}
+<SelectDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

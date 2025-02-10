@@ -11,10 +11,10 @@ import {
 	OpenChildSnippetProps,
 	OpenChildrenSnippetProps,
 } from "./extended-types/shared/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -101,7 +101,6 @@ export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		disabled,
 		delayDuration,
 		disableHoverableContent,
@@ -143,7 +142,7 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			childDef: FloatingContentChildSnippetProps,
 		}),
 	},
 	dataAttributes: [

@@ -8,6 +8,7 @@ import {
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
 import { useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
@@ -20,8 +21,7 @@ import {
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
@@ -76,80 +76,49 @@ type CalendarRootStateProps = WithRefProps<
 >;
 
 export class CalendarRootState {
-	ref: CalendarRootStateProps["ref"];
-	id: CalendarRootStateProps["id"];
-	value: CalendarRootStateProps["value"];
-	placeholder: CalendarRootStateProps["placeholder"];
-	preventDeselect: CalendarRootStateProps["preventDeselect"];
-	minValue: CalendarRootStateProps["minValue"];
-	maxValue: CalendarRootStateProps["maxValue"];
-	disabled: CalendarRootStateProps["disabled"];
-	pagedNavigation: CalendarRootStateProps["pagedNavigation"];
-	weekStartsOn: CalendarRootStateProps["weekStartsOn"];
-	weekdayFormat: CalendarRootStateProps["weekdayFormat"];
-	isDateDisabledProp: CalendarRootStateProps["isDateDisabled"];
-	isDateUnavailableProp: CalendarRootStateProps["isDateUnavailable"];
-	fixedWeeks: CalendarRootStateProps["fixedWeeks"];
-	numberOfMonths: CalendarRootStateProps["numberOfMonths"];
-	locale: CalendarRootStateProps["locale"];
-	calendarLabel: CalendarRootStateProps["calendarLabel"];
-	type: CalendarRootStateProps["type"];
-	readonly: CalendarRootStateProps["readonly"];
-	disableDaysOutsideMonth: CalendarRootStateProps["disableDaysOutsideMonth"];
-	onDateSelect: CalendarRootStateProps["onDateSelect"];
-	initialFocus: CalendarRootStateProps["initialFocus"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
 
-	constructor(props: CalendarRootStateProps) {
-		this.value = props.value;
-		this.placeholder = props.placeholder;
-		this.preventDeselect = props.preventDeselect;
-		this.minValue = props.minValue;
-		this.maxValue = props.maxValue;
-		this.disabled = props.disabled;
-		this.pagedNavigation = props.pagedNavigation;
-		this.weekStartsOn = props.weekStartsOn;
-		this.weekdayFormat = props.weekdayFormat;
-		this.isDateDisabledProp = props.isDateDisabled;
-		this.isDateUnavailableProp = props.isDateUnavailable;
-		this.fixedWeeks = props.fixedWeeks;
-		this.numberOfMonths = props.numberOfMonths;
-		this.locale = props.locale;
-		this.calendarLabel = props.calendarLabel;
-		this.type = props.type;
-		this.readonly = props.readonly;
-		this.id = props.id;
-		this.ref = props.ref;
-		this.disableDaysOutsideMonth = props.disableDaysOutsideMonth;
-		this.onDateSelect = props.onDateSelect;
-		this.initialFocus = props.initialFocus;
-
+	constructor(readonly opts: CalendarRootStateProps) {
 		this.announcer = getAnnouncer();
-		this.formatter = createFormatter(this.locale.current);
+		this.formatter = createFormatter(this.opts.locale.current);
 
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		this.setMonths = this.setMonths.bind(this);
+		this.nextPage = this.nextPage.bind(this);
+		this.prevPage = this.prevPage.bind(this);
+		this.prevYear = this.prevYear.bind(this);
+		this.nextYear = this.nextYear.bind(this);
+		this.setYear = this.setYear.bind(this);
+		this.setMonth = this.setMonth.bind(this);
+		this.isOutsideVisibleMonths = this.isOutsideVisibleMonths.bind(this);
+		this.isDateDisabled = this.isDateDisabled.bind(this);
+		this.isDateSelected = this.isDateSelected.bind(this);
+		this.shiftFocus = this.shiftFocus.bind(this);
+		this.handleCellClick = this.handleCellClick.bind(this);
+		this.handleMultipleUpdate = this.handleMultipleUpdate.bind(this);
+		this.handleSingleUpdate = this.handleSingleUpdate.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.getBitsAttr = this.getBitsAttr.bind(this);
+
+		useRefById(opts);
 
 		this.months = createMonths({
-			dateObj: this.placeholder.current,
-			weekStartsOn: this.weekStartsOn.current,
-			locale: this.locale.current,
-			fixedWeeks: this.fixedWeeks.current,
-			numberOfMonths: this.numberOfMonths.current,
+			dateObj: this.opts.placeholder.current,
+			weekStartsOn: this.opts.weekStartsOn.current,
+			locale: this.opts.locale.current,
+			fixedWeeks: this.opts.fixedWeeks.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
 		});
 
 		$effect(() => {
-			const initialFocus = untrack(() => this.initialFocus.current);
+			const initialFocus = untrack(() => this.opts.initialFocus.current);
 			if (initialFocus) {
 				// focus the first `data-focused` day node
 				const firstFocusedDay =
-					this.ref.current?.querySelector<HTMLElement>(`[data-focused]`);
+					this.opts.ref.current?.querySelector<HTMLElement>(`[data-focused]`);
 				if (firstFocusedDay) {
 					firstFocusedDay.focus();
 				}
@@ -157,9 +126,9 @@ export class CalendarRootState {
 		});
 
 		$effect(() => {
-			if (!this.ref.current) return;
+			if (!this.opts.ref.current) return;
 			const removeHeading = createAccessibleHeading({
-				calendarNode: this.ref.current,
+				calendarNode: this.opts.ref.current,
 				label: this.fullCalendarLabel,
 				accessibleHeadingId: this.accessibleHeadingId,
 			});
@@ -167,20 +136,20 @@ export class CalendarRootState {
 		});
 
 		$effect(() => {
-			if (this.formatter.getLocale() === this.locale.current) return;
-			this.formatter.setLocale(this.locale.current);
+			if (this.formatter.getLocale() === this.opts.locale.current) return;
+			this.formatter.setLocale(this.opts.locale.current);
 		});
 
 		/**
 		 * Updates the displayed months based on changes in the placeholder value.
 		 */
 		useMonthViewPlaceholderSync({
-			placeholder: this.placeholder,
+			placeholder: this.opts.placeholder,
 			getVisibleMonths: () => this.visibleMonths,
-			weekStartsOn: this.weekStartsOn,
-			locale: this.locale,
-			fixedWeeks: this.fixedWeeks,
-			numberOfMonths: this.numberOfMonths,
+			weekStartsOn: this.opts.weekStartsOn,
+			locale: this.opts.locale,
+			fixedWeeks: this.opts.fixedWeeks,
+			numberOfMonths: this.opts.numberOfMonths,
 			setMonths: (months: Month<DateValue>[]) => (this.months = months),
 		});
 
@@ -189,12 +158,12 @@ export class CalendarRootState {
 		 * which determines the month to show in the calendar.
 		 */
 		useMonthViewOptionsSync({
-			fixedWeeks: this.fixedWeeks,
-			locale: this.locale,
-			numberOfMonths: this.numberOfMonths,
-			placeholder: this.placeholder,
-			setMonths: this.#setMonths,
-			weekStartsOn: this.weekStartsOn,
+			fixedWeeks: this.opts.fixedWeeks,
+			locale: this.opts.locale,
+			numberOfMonths: this.opts.numberOfMonths,
+			placeholder: this.opts.placeholder,
+			setMonths: this.setMonths,
+			weekStartsOn: this.opts.weekStartsOn,
 		});
 
 		/**
@@ -211,22 +180,28 @@ export class CalendarRootState {
 		 * Synchronize the placeholder value with the current value.
 		 */
 		$effect(() => {
-			this.value.current;
+			this.opts.value.current;
 			untrack(() => {
-				const value = this.value.current;
+				const value = this.opts.value.current;
 				if (Array.isArray(value) && value.length) {
 					const lastValue = value[value.length - 1];
-					if (lastValue && this.placeholder.current !== lastValue) {
-						this.placeholder.current = lastValue;
+					if (lastValue && this.opts.placeholder.current !== lastValue) {
+						this.opts.placeholder.current = lastValue;
 					}
-				} else if (!Array.isArray(value) && value && this.placeholder.current !== value) {
-					this.placeholder.current = value;
+				} else if (
+					!Array.isArray(value) &&
+					value &&
+					this.opts.placeholder.current !== value
+				) {
+					this.opts.placeholder.current = value;
 				}
 			});
 		});
 	}
 
-	#setMonths = (months: Month<DateValue>[]) => (this.months = months);
+	setMonths(months: Month<DateValue>[]) {
+		this.months = months;
+	}
 
 	/**
 	 * This derived state holds an array of localized day names for the current
@@ -239,78 +214,78 @@ export class CalendarRootState {
 		return getWeekdays({
 			months: this.months,
 			formatter: this.formatter,
-			weekdayFormat: this.weekdayFormat.current,
+			weekdayFormat: this.opts.weekdayFormat.current,
 		});
 	});
 
 	/**
 	 * Navigates to the next page of the calendar.
 	 */
-	nextPage = () => {
+	nextPage() {
 		handleCalendarNextPage({
-			fixedWeeks: this.fixedWeeks.current,
-			locale: this.locale.current,
-			numberOfMonths: this.numberOfMonths.current,
-			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
-			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
-			weekStartsOn: this.weekStartsOn.current,
+			fixedWeeks: this.opts.fixedWeeks.current,
+			locale: this.opts.locale.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
+			pagedNavigation: this.opts.pagedNavigation.current,
+			setMonths: this.setMonths,
+			setPlaceholder: (date: DateValue) => (this.opts.placeholder.current = date),
+			weekStartsOn: this.opts.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
 	/**
 	 * Navigates to the previous page of the calendar.
 	 */
-	prevPage = () => {
+	prevPage() {
 		handleCalendarPrevPage({
-			fixedWeeks: this.fixedWeeks.current,
-			locale: this.locale.current,
-			numberOfMonths: this.numberOfMonths.current,
-			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
-			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
-			weekStartsOn: this.weekStartsOn.current,
+			fixedWeeks: this.opts.fixedWeeks.current,
+			locale: this.opts.locale.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
+			pagedNavigation: this.opts.pagedNavigation.current,
+			setMonths: this.setMonths,
+			setPlaceholder: (date: DateValue) => (this.opts.placeholder.current = date),
+			weekStartsOn: this.opts.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
-	nextYear = () => {
-		this.placeholder.current = this.placeholder.current.add({ years: 1 });
-	};
+	nextYear() {
+		this.opts.placeholder.current = this.opts.placeholder.current.add({ years: 1 });
+	}
 
-	prevYear = () => {
-		this.placeholder.current = this.placeholder.current.subtract({ years: 1 });
-	};
+	prevYear() {
+		this.opts.placeholder.current = this.opts.placeholder.current.subtract({ years: 1 });
+	}
 
-	setYear = (year: number) => {
-		this.placeholder.current = this.placeholder.current.set({ year });
-	};
+	setYear(year: number) {
+		this.opts.placeholder.current = this.opts.placeholder.current.set({ year });
+	}
 
-	setMonth = (month: number) => {
-		this.placeholder.current = this.placeholder.current.set({ month });
-	};
+	setMonth(month: number) {
+		this.opts.placeholder.current = this.opts.placeholder.current.set({ month });
+	}
 
 	isNextButtonDisabled = $derived.by(() => {
 		return getIsNextButtonDisabled({
-			maxValue: this.maxValue.current,
+			maxValue: this.opts.maxValue.current,
 			months: this.months,
-			disabled: this.disabled.current,
+			disabled: this.opts.disabled.current,
 		});
 	});
 
 	isPrevButtonDisabled = $derived.by(() => {
 		return getIsPrevButtonDisabled({
-			minValue: this.minValue.current,
+			minValue: this.opts.minValue.current,
 			months: this.months,
-			disabled: this.disabled.current,
+			disabled: this.opts.disabled.current,
 		});
 	});
 
 	isInvalid = $derived.by(() => {
-		const value = this.value.current;
-		const isDateDisabled = this.isDateDisabledProp.current;
-		const isDateUnavailable = this.isDateUnavailableProp.current;
+		const value = this.opts.value.current;
+		const isDateDisabled = this.opts.isDateDisabled.current;
+		const isDateUnavailable = this.opts.isDateUnavailable.current;
 		if (Array.isArray(value)) {
 			if (!value.length) return false;
 			for (const date of value) {
@@ -329,29 +304,29 @@ export class CalendarRootState {
 		return getCalendarHeadingValue({
 			months: this.months,
 			formatter: this.formatter,
-			locale: this.locale.current,
+			locale: this.opts.locale.current,
 		});
 	});
 
 	fullCalendarLabel = $derived.by(() => {
-		return `${this.calendarLabel.current} ${this.headingValue}`;
+		return `${this.opts.calendarLabel.current} ${this.headingValue}`;
 	});
 
-	isOutsideVisibleMonths = (date: DateValue) => {
+	isOutsideVisibleMonths(date: DateValue) {
 		return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	};
+	}
 
-	isDateDisabled = (date: DateValue) => {
-		if (this.isDateDisabledProp.current(date) || this.disabled.current) return true;
-		const minValue = this.minValue.current;
-		const maxValue = this.maxValue.current;
+	isDateDisabled(date: DateValue) {
+		if (this.opts.isDateDisabled.current(date) || this.opts.disabled.current) return true;
+		const minValue = this.opts.minValue.current;
+		const maxValue = this.opts.maxValue.current;
 		if (minValue && isBefore(date, minValue)) return true;
 		if (maxValue && isBefore(maxValue, date)) return true;
 		return false;
-	};
+	}
 
-	isDateSelected = (date: DateValue) => {
-		const value = this.value.current;
+	isDateSelected(date: DateValue) {
+		const value = this.opts.value.current;
 		if (Array.isArray(value)) {
 			return value.some((d) => isSameDay(d, date));
 		} else if (!value) {
@@ -359,37 +334,37 @@ export class CalendarRootState {
 		} else {
 			return isSameDay(value, date);
 		}
-	};
+	}
 
-	#shiftFocus = (node: HTMLElement, add: number) => {
+	shiftFocus(node: HTMLElement, add: number) {
 		return shiftCalendarFocus({
 			node,
 			add,
-			placeholder: this.placeholder,
-			calendarNode: this.ref.current,
+			placeholder: this.opts.placeholder,
+			calendarNode: this.opts.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,
 			isNextButtonDisabled: this.isNextButtonDisabled,
 			months: this.months,
-			numberOfMonths: this.numberOfMonths.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
 		});
-	};
+	}
 
-	handleCellClick = (_: Event, date: DateValue) => {
-		const readonly = this.readonly.current;
+	handleCellClick(_: Event, date: DateValue) {
+		const readonly = this.opts.readonly.current;
 		if (readonly) return;
-		const isDateDisabled = this.isDateDisabledProp.current;
-		const isDateUnavailable = this.isDateUnavailableProp.current;
+		const isDateDisabled = this.opts.isDateDisabled.current;
+		const isDateUnavailable = this.opts.isDateUnavailable.current;
 		if (isDateDisabled?.(date) || isDateUnavailable?.(date)) return;
 
-		const prev = this.value.current;
-		const multiple = this.type.current === "multiple";
+		const prev = this.opts.value.current;
+		const multiple = this.opts.type.current === "multiple";
 		if (multiple) {
 			if (Array.isArray(prev) || prev === undefined) {
-				this.value.current = this.#handleMultipleUpdate(prev, date);
+				this.opts.value.current = this.handleMultipleUpdate(prev, date);
 			}
 		} else {
 			if (!Array.isArray(prev)) {
-				const next = this.#handleSingleUpdate(prev, date);
+				const next = this.handleSingleUpdate(prev, date);
 				if (!next) {
 					this.announcer.announce("Selected date is now empty.", "polite", 5000);
 				} else {
@@ -398,22 +373,22 @@ export class CalendarRootState {
 						"polite"
 					);
 				}
-				this.value.current = next;
+				this.opts.value.current = next;
 				if (next !== undefined) {
-					this.onDateSelect?.current?.();
+					this.opts.onDateSelect?.current?.();
 				}
 			}
 		}
-	};
+	}
 
-	#handleMultipleUpdate = (prev: DateValue[] | undefined, date: DateValue) => {
+	handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
 		if (!prev) return [date];
 		if (!Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for multiple prop.");
 			return;
 		}
 		const index = prev.findIndex((d) => isSameDay(d, date));
-		const preventDeselect = this.preventDeselect.current;
+		const preventDeselect = this.opts.preventDeselect.current;
 		if (index === -1) {
 			return [...prev, date];
 		} else if (preventDeselect) {
@@ -421,87 +396,79 @@ export class CalendarRootState {
 		} else {
 			const next = prev.filter((d) => !isSameDay(d, date));
 			if (!next.length) {
-				this.placeholder.current = date;
+				this.opts.placeholder.current = date;
 				return undefined;
 			}
 			return next;
 		}
-	};
+	}
 
-	#handleSingleUpdate = (prev: DateValue | undefined, date: DateValue) => {
+	handleSingleUpdate(prev: DateValue | undefined, date: DateValue) {
 		if (Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for single prop.");
 		}
 		if (!prev) return date;
-		const preventDeselect = this.preventDeselect.current;
+		const preventDeselect = this.opts.preventDeselect.current;
 		if (!preventDeselect && isSameDay(prev, date)) {
-			this.placeholder.current = date;
+			this.opts.placeholder.current = date;
 			return undefined;
 		}
 		return date;
-	};
+	}
 
-	#onkeydown = (event: KeyboardEvent) => {
+	onkeydown(event: BitsKeyboardEvent) {
 		handleCalendarKeydown({
 			event,
 			handleCellClick: this.handleCellClick,
-			shiftFocus: this.#shiftFocus,
-			placeholderValue: this.placeholder.current,
+			shiftFocus: this.shiftFocus,
+			placeholderValue: this.opts.placeholder.current,
 		});
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		months: this.months,
 		weekdays: this.weekdays,
 	}));
 
-	getBitsAttr = (part: CalendarParts) => {
+	getBitsAttr(part: CalendarParts) {
 		return `data-bits-calendar-${part}`;
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
 				...getCalendarElementProps({
 					fullCalendarLabel: this.fullCalendarLabel,
-					id: this.id.current,
+					id: this.opts.id.current,
 					isInvalid: this.isInvalid,
-					disabled: this.disabled.current,
-					readonly: this.readonly.current,
+					disabled: this.opts.disabled.current,
+					readonly: this.opts.readonly.current,
 				}),
 				[this.getBitsAttr("root")]: "",
 				//
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
 
 export type CalendarHeadingStateProps = WithRefProps;
 export class CalendarHeadingState {
-	id: CalendarHeadingStateProps["id"];
-	ref: CalendarHeadingStateProps["ref"];
 	headingValue = $derived.by(() => this.root.headingValue);
 
 	constructor(
-		props: CalendarHeadingStateProps,
+		readonly opts: CalendarHeadingStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
-				"data-readonly": getDataReadonly(this.root.readonly.current),
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("heading")]: "",
 			}) as const
 	);
@@ -515,18 +482,22 @@ type CalendarCellStateProps = WithRefProps<
 >;
 
 class CalendarCellState {
-	id: CalendarCellStateProps["id"];
-	ref: CalendarCellStateProps["ref"];
-	date: CalendarCellStateProps["date"];
-	month: CalendarCellStateProps["month"];
-	cellDate = $derived.by(() => toDate(this.date.current));
-	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.current));
-	isUnavailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
-	isDateToday = $derived.by(() => isToday(this.date.current, getLocalTimeZone()));
-	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.current, this.month.current));
-	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.current));
-	isFocusedDate = $derived.by(() => isSameDay(this.date.current, this.root.placeholder.current));
-	isSelectedDate = $derived.by(() => this.root.isDateSelected(this.date.current));
+	cellDate = $derived.by(() => toDate(this.opts.date.current));
+	isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
+	isUnavailable = $derived.by(() =>
+		this.root.opts.isDateUnavailable.current(this.opts.date.current)
+	);
+	isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
+	isOutsideMonth = $derived.by(
+		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
+	);
+	isOutsideVisibleMonths = $derived.by(() =>
+		this.root.isOutsideVisibleMonths(this.opts.date.current)
+	);
+	isFocusedDate = $derived.by(() =>
+		isSameDay(this.opts.date.current, this.root.opts.placeholder.current)
+	);
+	isSelectedDate = $derived.by(() => this.root.isDateSelected(this.opts.date.current));
 	labelText = $derived.by(() =>
 		this.root.formatter.custom(this.cellDate, {
 			weekday: "long",
@@ -537,18 +508,10 @@ class CalendarCellState {
 	);
 
 	constructor(
-		props: CalendarCellStateProps,
+		readonly opts: CalendarCellStateProps,
 		readonly root: CalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-		this.date = props.date;
-		this.month = props.month;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -560,7 +523,7 @@ class CalendarCellState {
 	ariaDisabled = $derived.by(() => {
 		return (
 			this.isDisabled ||
-			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current) ||
+			(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current) ||
 			this.isUnavailable
 		);
 	});
@@ -574,10 +537,10 @@ class CalendarCellState {
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
 				"data-focused": this.isFocusedDate ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
-				"data-value": this.date.current.toString(),
+				"data-value": this.opts.date.current.toString(),
 				"data-disabled": getDataDisabled(
 					this.isDisabled ||
-						(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current)
+						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
 				),
 			}) as const
 	);
@@ -585,7 +548,7 @@ class CalendarCellState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "gridcell",
 				"aria-selected": getAriaSelected(this.isSelectedDate),
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
@@ -598,47 +561,40 @@ class CalendarCellState {
 type CalendarDayStateProps = WithRefProps;
 
 class CalendarDayState {
-	id: CalendarDayStateProps["id"];
-	ref: CalendarDayStateProps["ref"];
-
 	constructor(
-		props: CalendarDayStateProps,
+		readonly opts: CalendarDayStateProps,
 		readonly cell: CalendarCellState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
+		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	#tabindex = $derived.by(() =>
 		this.cell.isFocusedDate
 			? 0
-			: (this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.current) ||
+			: (this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 				  this.cell.isDisabled
 				? undefined
 				: -1
 	);
 
-	#onclick = (e: MouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.cell.isDisabled) return;
-		this.cell.root.handleCellClick(e, this.cell.date.current);
-	};
+		this.cell.root.handleCellClick(e, this.cell.opts.date.current);
+	}
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
 		unavailable: this.cell.isUnavailable,
 		selected: this.cell.isSelectedDate,
-		day: `${this.cell.date.current.day}`,
+		day: `${this.cell.opts.date.current.day}`,
 	}));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "button",
 				"aria-label": this.cell.labelText,
 				"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),
@@ -648,7 +604,7 @@ class CalendarDayState {
 				// Shared logic for range calendar and calendar
 				"data-bits-day": "",
 				//
-				onclick: this.#onclick,
+				onclick: this.onclick,
 			}) as const
 	);
 }
@@ -656,32 +612,26 @@ class CalendarDayState {
 export type CalendarNextButtonStateProps = WithRefProps;
 
 export class CalendarNextButtonState {
-	id: CalendarNextButtonStateProps["id"];
-	ref: CalendarNextButtonStateProps["ref"];
 	isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
 
 	constructor(
-		props: CalendarNextButtonStateProps,
+		readonly opts: CalendarNextButtonStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
+		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.isDisabled) return;
 		this.root.nextPage();
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "button",
 				type: "button",
 				"aria-label": "Next",
@@ -690,7 +640,7 @@ export class CalendarNextButtonState {
 				disabled: this.isDisabled,
 				[this.root.getBitsAttr("next-button")]: "",
 				//
-				onclick: this.#onclick,
+				onclick: this.onclick,
 			}) as const
 	);
 }
@@ -698,32 +648,26 @@ export class CalendarNextButtonState {
 export type CalendarPrevButtonStateProps = WithRefProps;
 
 export class CalendarPrevButtonState {
-	id: CalendarPrevButtonStateProps["id"];
-	ref: CalendarPrevButtonStateProps["ref"];
 	isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
 
 	constructor(
-		props: CalendarPrevButtonStateProps,
+		readonly opts: CalendarPrevButtonStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
+		this.onclick = this.onclick.bind(this);
 
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.isDisabled) return;
 		this.root.prevPage();
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "button",
 				type: "button",
 				"aria-label": "Previous",
@@ -732,7 +676,7 @@ export class CalendarPrevButtonState {
 				disabled: this.isDisabled,
 				[this.root.getBitsAttr("prev-button")]: "",
 				//
-				onclick: this.#onclick,
+				onclick: this.onclick,
 			}) as const
 	);
 }
@@ -740,32 +684,23 @@ export class CalendarPrevButtonState {
 export type CalendarGridStateProps = WithRefProps;
 
 export class CalendarGridState {
-	id: CalendarGridStateProps["id"];
-	ref: CalendarGridStateProps["ref"];
-
 	constructor(
-		props: CalendarGridStateProps,
+		readonly opts: CalendarGridStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				tabindex: -1,
 				role: "grid",
-				"aria-readonly": getAriaReadonly(this.root.readonly.current),
-				"aria-disabled": getAriaDisabled(this.root.disabled.current),
-				"data-readonly": getDataReadonly(this.root.readonly.current),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"aria-readonly": getAriaReadonly(this.root.opts.readonly.current),
+				"aria-disabled": getAriaDisabled(this.root.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("grid")]: "",
 			}) as const
 	);
@@ -774,28 +709,19 @@ export class CalendarGridState {
 export type CalendarGridBodyStateProps = WithRefProps;
 
 export class CalendarGridBodyState {
-	id: CalendarGridBodyStateProps["id"];
-	ref: CalendarGridBodyStateProps["ref"];
-
 	constructor(
-		props: CalendarGridBodyStateProps,
+		readonly opts: CalendarGridBodyStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-disabled": getDataDisabled(this.root.disabled.current),
-				"data-readonly": getDataReadonly(this.root.readonly.current),
+				id: this.opts.id.current,
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-body")]: "",
 			}) as const
 	);
@@ -804,28 +730,19 @@ export class CalendarGridBodyState {
 export type CalendarGridHeadStateProps = WithRefProps;
 
 export class CalendarGridHeadState {
-	id: CalendarGridHeadStateProps["id"];
-	ref: CalendarGridHeadStateProps["ref"];
-
 	constructor(
-		props: CalendarGridHeadStateProps,
+		readonly opts: CalendarGridHeadStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-disabled": getDataDisabled(this.root.disabled.current),
-				"data-readonly": getDataReadonly(this.root.readonly.current),
+				id: this.opts.id.current,
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-head")]: "",
 			}) as const
 	);
@@ -834,28 +751,19 @@ export class CalendarGridHeadState {
 export type CalendarGridRowStateProps = WithRefProps;
 
 export class CalendarGridRowState {
-	id: CalendarGridRowStateProps["id"];
-	ref: CalendarGridRowStateProps["ref"];
-
 	constructor(
-		props: CalendarGridRowStateProps,
+		readonly opts: CalendarGridRowStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-disabled": getDataDisabled(this.root.disabled.current),
-				"data-readonly": getDataReadonly(this.root.readonly.current),
+				id: this.opts.id.current,
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-row")]: "",
 			}) as const
 	);
@@ -864,28 +772,19 @@ export class CalendarGridRowState {
 export type CalendarHeadCellStateProps = WithRefProps;
 
 export class CalendarHeadCellState {
-	id: CalendarHeadCellStateProps["id"];
-	ref: CalendarHeadCellStateProps["ref"];
-
 	constructor(
-		props: CalendarHeadCellStateProps,
+		readonly opts: CalendarHeadCellStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-disabled": getDataDisabled(this.root.disabled.current),
-				"data-readonly": getDataReadonly(this.root.readonly.current),
+				id: this.opts.id.current,
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("head-cell")]: "",
 			}) as const
 	);
@@ -894,97 +793,76 @@ export class CalendarHeadCellState {
 export type CalendarHeaderStateProps = WithRefProps;
 
 export class CalendarHeaderState {
-	id: CalendarHeaderStateProps["id"];
-	ref: CalendarHeaderStateProps["ref"];
-
 	constructor(
-		props: CalendarHeaderStateProps,
+		readonly opts: CalendarHeaderStateProps,
 		readonly root: CalendarRootState | RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				"data-disabled": getDataDisabled(this.root.disabled.current),
-				"data-readonly": getDataReadonly(this.root.readonly.current),
+				id: this.opts.id.current,
+				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("header")]: "",
 			}) as const
 	);
 }
 
-const [setCalendarRootContext, getCalendarRootContext] = createContext<CalendarRootState>(
-	["Calendar.Root", "RangeCalendar.Root"],
-	"Calendar.Root",
-	false
+export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
+	"Calendar.Root | RangeCalender.Root"
 );
 
-const [setCalendarCellContext, getCalendarCellContext] =
-	createContext<CalendarCellState>("Calendar.Cell");
+const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
 
 export function useCalendarRoot(props: CalendarRootStateProps) {
-	return setCalendarRootContext(new CalendarRootState(props));
+	return CalendarRootContext.set(new CalendarRootState(props));
 }
 
 export function useCalendarGrid(props: CalendarGridStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridState(props, root);
+	return new CalendarGridState(props, CalendarRootContext.get());
 }
 
 export function useCalendarCell(props: CalendarCellStateProps) {
-	const root = getCalendarRootContext();
-	return setCalendarCellContext(new CalendarCellState(props, root));
+	return CalendarCellContext.set(
+		new CalendarCellState(props, CalendarRootContext.get() as CalendarRootState)
+	);
 }
 
 export function useCalendarNextButton(props: CalendarNextButtonStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarNextButtonState(props, root);
+	return new CalendarNextButtonState(props, CalendarRootContext.get());
 }
 
 export function useCalendarPrevButton(props: CalendarPrevButtonStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarPrevButtonState(props, root);
+	return new CalendarPrevButtonState(props, CalendarRootContext.get());
 }
 
 export function useCalendarDay(props: CalendarDayStateProps) {
-	const cell = getCalendarCellContext();
-	return new CalendarDayState(props, cell);
+	return new CalendarDayState(props, CalendarCellContext.get());
 }
 
 export function useCalendarGridBody(props: CalendarGridBodyStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridBodyState(props, root);
+	return new CalendarGridBodyState(props, CalendarRootContext.get());
 }
 
 export function useCalendarGridHead(props: CalendarGridHeadStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridHeadState(props, root);
+	return new CalendarGridHeadState(props, CalendarRootContext.get());
 }
 
 export function useCalendarGridRow(props: CalendarGridRowStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarGridRowState(props, root);
+	return new CalendarGridRowState(props, CalendarRootContext.get());
 }
 
 export function useCalendarHeadCell(props: CalendarHeadCellStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarHeadCellState(props, root);
+	return new CalendarHeadCellState(props, CalendarRootContext.get());
 }
 
 export function useCalendarHeader(props: CalendarHeaderStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarHeaderState(props, root);
+	return new CalendarHeaderState(props, CalendarRootContext.get());
 }
 
 export function useCalendarHeading(props: CalendarHeadingStateProps) {
-	const root = getCalendarRootContext();
-	return new CalendarHeadingState(props, root);
+	return new CalendarHeadingState(props, CalendarRootContext.get());
 }

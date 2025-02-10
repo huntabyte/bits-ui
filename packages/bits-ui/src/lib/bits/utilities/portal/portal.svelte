@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { getAllContexts, mount, unmount, untrack } from "svelte";
+	import { getAllContexts, mount, unmount } from "svelte";
 	import { DEV } from "esm-env";
+	import { watch } from "runed";
 	import PortalConsumer from "./portal-consumer.svelte";
 	import type { PortalProps } from "./types.js";
 	import { isBrowser } from "$lib/internal/is.js";
@@ -36,30 +37,30 @@
 		return localTarget;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let instance: any;
 
-	$effect(() => {
+	function unmountInstance() {
+		if (instance) {
+			unmount(instance);
+			instance = null;
+		}
+	}
+
+	watch([() => target, () => disabled], ([target, disabled]) => {
 		if (!target || disabled) {
-			if (instance) {
-				unmount(instance);
-				instance = null;
-			}
+			unmountInstance();
 			return;
 		}
-		untrack(
-			() =>
-				(instance = mount(PortalConsumer, {
-					target: target as any,
-					props: { children },
-					context,
-				}))
-		);
+		instance = mount(PortalConsumer, {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			target: target as any,
+			props: { children },
+			context,
+		});
 
 		return () => {
-			if (instance) {
-				unmount(instance);
-				instance = null;
-			}
+			unmountInstance();
 		};
 	});
 </script>

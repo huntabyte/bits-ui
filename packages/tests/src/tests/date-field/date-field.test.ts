@@ -23,7 +23,6 @@ const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
 function setup(props: DateFieldTestProps = {}) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(DateFieldTest, { ...props });
 	const month = returned.getByTestId("month");
 	const day = returned.getByTestId("day");
@@ -892,6 +891,84 @@ describe("date field", () => {
 		await user.keyboard(kbd.ARROW_UP);
 		expect(input).toHaveValue(value.add({ years: 1 }).toString());
 	});
+
+	it("should handle 24 hour time appropriately", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
+		const { getByTestId, user } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		hour.focus();
+		await user.keyboard("22");
+		expect(hour).toHaveTextContent("22");
+	});
+
+	it("should allow 00 to be entered when hourCycle is 24", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
+		const { getByTestId, user } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		hour.focus();
+		await user.keyboard("00");
+		expect(hour).toHaveTextContent("00");
+	});
+
+	it("navigating to 00 with ArrowUp/Down when hourCycle is 24 should show 00 and not 0", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 1, 30, 30, 0);
+		const { getByTestId, user } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		hour.focus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(hour).toHaveTextContent("00");
+		expect(hour.textContent).not.toBe("0");
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(hour).toHaveTextContent("23");
+		await user.keyboard(kbd.ARROW_UP);
+		expect(hour).toHaveTextContent("00");
+	});
+
+	it("should display correct hour when prepopulated with value and hourCycle is 24", async () => {
+		const value = new CalendarDateTime(2023, 10, 12, 0, 30, 30, 0);
+		const { getByTestId } = setup({
+			name: "hello",
+			value,
+			hourCycle: 24,
+		});
+
+		const { getHour } = getTimeSegments(getByTestId);
+		const hour = getHour();
+		expect(hour).toHaveTextContent("00");
+	});
+
+	it("should reset the segment values when the value is reset", async () => {
+		const { getByTestId, user, day, month, year } = setup({
+			value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
+			granularity: "second",
+		});
+
+		const reset = getByTestId("reset");
+
+		await user.click(reset);
+
+		expect(day).toHaveTextContent("dd");
+		expect(month).toHaveTextContent("mm");
+		expect(year).toHaveTextContent("yyyy");
+	});
 });
 
 /**
@@ -899,7 +976,7 @@ describe("date field", () => {
  * object with functions that return the time segments if they exist, so they
  * can be used on an as-needed basis without invoking errors.
  */
-// eslint-disable-next-line ts/no-explicit-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getTimeSegments(getByTestId: (...args: any[]) => HTMLElement) {
 	return {
 		getHour: () => getByTestId("hour"),

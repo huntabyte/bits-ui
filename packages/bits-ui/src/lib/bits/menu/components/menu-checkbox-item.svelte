@@ -14,7 +14,9 @@
 		onCheckedChange = noop,
 		disabled = false,
 		onSelect = noop,
-		controlledChecked = false,
+		closeOnSelect = true,
+		indeterminate = $bindable(false),
+		onIndeterminateChange = noop,
 		...restProps
 	}: MenuCheckboxItemProps = $props();
 
@@ -22,12 +24,8 @@
 		checked: box.with(
 			() => checked,
 			(v) => {
-				if (controlledChecked) {
-					onCheckedChange(v);
-				} else {
-					checked = v;
-					onCheckedChange(v);
-				}
+				checked = v;
+				onCheckedChange(v);
 			}
 		),
 		id: box.with(() => id),
@@ -36,6 +34,14 @@
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
+		),
+		closeOnSelect: box.with(() => closeOnSelect),
+		indeterminate: box.with(
+			() => indeterminate,
+			(v) => {
+				indeterminate = v;
+				onIndeterminateChange(v);
+			}
 		),
 	});
 
@@ -49,9 +55,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked })}
+	{@render child({ props: mergedProps, ...checkboxItemState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.({ checked })}
+		{@render children?.(checkboxItemState.snippetProps)}
 	</div>
 {/if}

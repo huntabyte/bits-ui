@@ -7,7 +7,6 @@ import type {
 import { OnStringValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import { TabsRootActivationModeProp, TabsTriggerStateProp } from "./extended-types/tabs/index.js";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -30,7 +29,6 @@ const root = createApiSchema<TabsRootPropsWithoutHTML>({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active tab value changes.",
 		}),
-		controlledValue: controlledValueProp,
 		activationMode: createEnumProp({
 			options: ["automatic", "manual"],
 			description:

@@ -34,7 +34,8 @@
 	} = $props();
 </script>
 
-<DemoContainer size="sm">
+<DemoContainer size="sm" wrapperClass="rounded-b-card">
+	<!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
 	<Accordion.Root bind:value bind:ref class="w-full sm:max-w-[70%]" {...restProps as any}>
 		{#each items as item, i (item.title + i)}
 			<CustomAccordionItem {...item} />

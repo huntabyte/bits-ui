@@ -33,7 +33,7 @@
 					<span>Email</span>
 				</Menubar.Item>
 				<Menubar.CheckboxItem data-testid="{id}-sub-checkbox-item">
-					{#snippet children({ checked })}
+					{#snippet children({ checked, indeterminate: _indeterminate })}
 						{#if checked}
 							<span data-testid="{id}-sub-checkbox-indicator"> checked </span>
 						{/if}
@@ -45,7 +45,7 @@
 		<Menubar.Item disabled data-testid="{id}-disabled-item">disabled item</Menubar.Item>
 		<Menubar.Item disabled data-testid="{id}-disabled-item-2">disabled item 2</Menubar.Item>
 		<Menubar.CheckboxItem data-testid="{id}-checkbox-item">
-			{#snippet children({ checked })}
+			{#snippet children({ checked, indeterminate: _indeterminate })}
 				{#if checked}
 					<span data-testid="{id}-checkbox-indicator"> checked </span>
 				{/if}

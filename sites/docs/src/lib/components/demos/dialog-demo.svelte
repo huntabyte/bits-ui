@@ -21,8 +21,9 @@
 		>
 			<Dialog.Title
 				class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
-				>Create API key</Dialog.Title
 			>
+				Create API key
+			</Dialog.Title>
 			<Separator.Root class="-mx-5 mb-6 mt-5 block h-px bg-muted" />
 			<Dialog.Description class="text-sm text-foreground-alt">
 				Create and manage API keys. You can create multiple keys to organize your
@@ -33,7 +34,7 @@
 				<div class="relative w-full">
 					<input
 						id="apiKey"
-						class="inline-flex h-input w-full items-center rounded-card-sm border border-border-input bg-background px-4 text-sm placeholder:text-foreground-alt/50 hover:border-dark-40 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background"
+						class="inline-flex h-input w-full items-center rounded-card-sm border border-border-input bg-background px-4 text-base placeholder:text-foreground-alt/50 hover:border-dark-40 focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background sm:text-sm"
 						placeholder="secret_api_key"
 						name="name"
 					/>

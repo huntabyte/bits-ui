@@ -10,6 +10,7 @@
 		ref = $bindable(null),
 		child,
 		defaultValue,
+		clearOnDeselect = false,
 		...restProps
 	}: ComboboxInputProps = $props();
 
@@ -19,6 +20,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		clearOnDeselect: box.with(() => clearOnDeselect),
 	});
 
 	if (defaultValue) {

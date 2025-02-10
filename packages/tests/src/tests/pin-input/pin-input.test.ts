@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
-import type { PinInput } from "bits-ui";
+import { type PinInput, REGEXP_ONLY_DIGITS } from "bits-ui";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import PinInputTest from "./pin-input-test.svelte";
 
@@ -11,13 +11,7 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 	const user = setupUserEvents();
 	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(PinInputTest, { ...props });
-	const cell0 = returned.getByTestId("cell-0");
-	const cell1 = returned.getByTestId("cell-1");
-	const cell2 = returned.getByTestId("cell-2");
-	const cell3 = returned.getByTestId("cell-3");
-	const cell4 = returned.getByTestId("cell-4");
-	const cell5 = returned.getByTestId("cell-5");
-	const cells = [cell0, cell1, cell2, cell3, cell4, cell5];
+	const cells = new Array(6).fill(null).map((_, i) => returned.getByTestId(`cell-${i}`));
 	const binding = returned.getByTestId("binding");
 	const hiddenInput = returned.getByTestId("input");
 	return {
@@ -29,9 +23,8 @@ function setup(props: Partial<PinInput.RootProps> = {}) {
 	};
 }
 
-describe("pin Input", () => {
+describe("Pin Input", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(PinInputTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -117,7 +110,7 @@ describe("pin Input", () => {
 			await user.keyboard(key);
 		}
 		expect(mockComplete).toHaveBeenCalledTimes(1);
-		for (const key of keys) {
+		for (const _key of keys) {
 			await user.keyboard(kbd.BACKSPACE);
 		}
 
@@ -149,6 +142,76 @@ describe("pin Input", () => {
 
 		await user.click(hiddenInput);
 		await user.paste("123-456");
+
+		expect(mockComplete).toHaveBeenCalledTimes(1);
+		expect(mockComplete).toHaveBeenCalledWith("123456");
+	});
+
+	it("should ignore keys that do not match the pattern", async () => {
+		const { user, hiddenInput } = setup({
+			pattern: REGEXP_ONLY_DIGITS,
+		});
+
+		await user.click(hiddenInput);
+		await user.keyboard("123");
+		expect(hiddenInput).toHaveValue("123");
+
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		await user.keyboard(kbd.BACKSPACE);
+		expect(hiddenInput).toHaveValue("");
+		await user.keyboard("$");
+		expect(hiddenInput).toHaveValue("");
+		await user.keyboard("1$");
+		expect(hiddenInput).toHaveValue("1");
+	});
+
+	it("should allow pasting numbers that match the pattern", async () => {
+		const mockComplete = vi.fn();
+		const mockClipboard = "123456";
+		await navigator.clipboard.writeText(mockClipboard);
+
+		const { user, hiddenInput } = setup({
+			pattern: REGEXP_ONLY_DIGITS,
+			onComplete: mockComplete,
+		});
+
+		await user.click(hiddenInput);
+		await user.paste(mockClipboard);
+
+		expect(mockComplete).toHaveBeenCalledTimes(1);
+		expect(mockComplete).toHaveBeenCalledWith("123456");
+	});
+
+	it("should not allow pasting numbers that do not match the pattern", async () => {
+		const mockComplete = vi.fn();
+		const mockClipboard = "abcdef";
+		await navigator.clipboard.writeText(mockClipboard);
+
+		const { user, hiddenInput } = setup({
+			pattern: REGEXP_ONLY_DIGITS,
+			onComplete: mockComplete,
+		});
+
+		await user.click(hiddenInput);
+		await user.paste(mockClipboard);
+
+		expect(mockComplete).toHaveBeenCalledTimes(0);
+	});
+
+	it("should allow pasting more than the max-length if transformation is provided", async () => {
+		const mockComplete = vi.fn();
+		const mockClipboard = "1-2-3-4-5-6";
+		await navigator.clipboard.writeText(mockClipboard);
+
+		const { user, hiddenInput } = setup({
+			maxlength: 6,
+			onComplete: mockComplete,
+			onPaste: (text) => text.replace(/-/g, ""),
+		});
+
+		await user.click(hiddenInput);
+		await user.paste(mockClipboard);
 
 		expect(mockComplete).toHaveBeenCalledTimes(1);
 		expect(mockComplete).toHaveBeenCalledWith("123456");

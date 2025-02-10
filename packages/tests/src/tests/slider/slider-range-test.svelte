@@ -1,15 +1,15 @@
 <script lang="ts" module>
-	import { Slider } from "bits-ui";
+	import { Slider, type SliderMultipleRootProps } from "bits-ui";
 
-	export type SliderRangeTestProps = Slider.RootProps;
+	export type SliderMultiRangeTestProps = Omit<SliderMultipleRootProps, "type">;
 </script>
 
 <script lang="ts">
-	let { value = [20, 80], ...restProps }: SliderRangeTestProps = $props();
+	let { value = [20, 80], ...restProps }: SliderMultiRangeTestProps = $props();
 </script>
 
 <main>
-	<Slider.Root data-testid="root" bind:value {...restProps}>
+	<Slider.Root type="multiple" data-testid="root" bind:value {...restProps}>
 		{#snippet children({ thumbs, ticks })}
 			<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
 				<Slider.Range data-testid="range" class="bg-primary absolute h-full" />

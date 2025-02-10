@@ -93,13 +93,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Toolbar.Group` component.
-2. Provide a `value` prop to `Toolbar.Group`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -108,15 +102,7 @@ To implement controlled state:
 </script>
 
 <Toolbar.Root>
-	<Toolbar.Group
-		type="single"
-		controlledValue
-		value={myValue}
-		onValueChange={(v) => {
-			myValue = v;
-			// additional logic here.
-		}}
-	>
+	<Toolbar.Group type="single" bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 		<!-- ... -->
 	</Toolbar.Group>
 </Toolbar.Root>

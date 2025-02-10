@@ -2,7 +2,13 @@ import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { type Component, tick } from "svelte";
-import { type AnyFn, getTestKbd, setupUserEvents, sleep } from "../utils.js";
+import {
+	type AnyFn,
+	getTestKbd,
+	mockBoundingClientRect,
+	setupUserEvents,
+	sleep,
+} from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
 import type { ComboboxMultipleTestProps } from "./combobox-multi-test.svelte";
@@ -35,11 +41,10 @@ const testItems: Item[] = [
 function setupSingle(
 	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
 	items: Item[] = testItems,
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	component: Component<any, any, any> = ComboboxTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(component, { name: "test", ...props, items });
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
@@ -70,13 +75,13 @@ function setupSingle(
 
 function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(ComboboxMultiTest, { name: "test", ...props, items });
 	const input = returned.getByTestId("input");
 	const trigger = returned.getByTestId("trigger");
 	const openBinding = returned.getByTestId("open-binding");
 	const valueBinding = returned.getByTestId("value-binding");
 	const outside = returned.getByTestId("outside");
+	const submit = returned.getByTestId("submit");
 
 	function getHiddenInputs(name = "test") {
 		return returned.container.querySelectorAll<HTMLElement>(`input[name="${name}"]`);
@@ -93,6 +98,7 @@ function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: It
 		openBinding,
 		valueBinding,
 		outside,
+		submit,
 		getHiddenInputs,
 		getContent,
 		...returned,
@@ -155,8 +161,7 @@ async function openMultiple(
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("combobox - single", () => {
-	it("should have noaccessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
+	it("should have no accessibility violations", async () => {
 		const { container } = render(ComboboxTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -169,7 +174,7 @@ describe("combobox - single", () => {
 		await openSingle({}, key);
 	});
 
-	it("should applie the appropriate `aria-labelledby` attribute to the group", async () => {
+	it("should apply the appropriate `aria-labelledby` attribute to the group", async () => {
 		const { group, groupHeading } = await openSingle();
 
 		expect(group).toHaveAttribute("aria-labelledby", groupHeading.id);
@@ -217,8 +222,8 @@ describe("combobox - single", () => {
 	it("should close on outside click", async () => {
 		const { user, getContent, outside } = await openSingle();
 		await sleep(100);
+		mockBoundingClientRect();
 		await user.click(outside);
-		await sleep(100);
 		expect(getContent()).toBeNull();
 	});
 
@@ -443,6 +448,25 @@ describe("combobox - single", () => {
 		const [item0v3] = getItems(getByTestId);
 		expectSelected(item0v3!);
 	});
+
+	it("should clear the input when the selected item is deselected when `clearOnDeselect` is `true`", async () => {
+		const { getByTestId, user, trigger, input } = await openSingle({
+			inputProps: {
+				clearOnDeselect: true,
+			},
+		});
+
+		const [item0] = getItems(getByTestId);
+		await user.click(item0!);
+		expectSelected(item0!);
+		expect(input).toHaveValue("A");
+		await user.click(trigger);
+		const [item0v2] = getItems(getByTestId);
+		await user.click(item0v2!);
+
+		expect(input).toHaveValue("");
+		expect(input).not.toHaveValue("A");
+	});
 });
 
 ////////////////////////////////////
@@ -450,7 +474,6 @@ describe("combobox - single", () => {
 ////////////////////////////////////
 describe("combobox - multiple", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ComboboxMultiTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -470,9 +493,9 @@ describe("combobox - multiple", () => {
 		expect(input).toHaveValue("B");
 	});
 
-	it("should render a hidden input if the `name` prop is passed", async () => {
+	it("should not render a hidden input if the `name` prop is passed and a value is not selected", async () => {
 		const { getHiddenInputs } = setupMultiple();
-		expect(getHiddenInputs()).toHaveLength(1);
+		expect(getHiddenInputs()).toHaveLength(0);
 	});
 
 	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
@@ -540,12 +563,12 @@ describe("combobox - multiple", () => {
 
 	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const { content, getByTestId } = await openMultiple({ portalProps: { disabled: true } });
-		const main = getByTestId("main");
-		expect(content.parentElement?.parentElement).toBe(main);
+		const form = getByTestId("form");
+		expect(content.parentElement?.parentElement).toBe(form);
 	});
 
 	it("should respect binding the `open` prop", async () => {
-		const { getContent, getByTestId, user, openBinding } = await openMultiple();
+		const { getContent, user, openBinding } = await openMultiple();
 		expect(openBinding).toHaveTextContent("true");
 		await user.click(openBinding);
 		expect(openBinding).toHaveTextContent("false");
@@ -689,19 +712,63 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should select a default item when provided", async () => {
-		const { getByTestId, queryByTestId, input, container, getHiddenInputs } =
-			await openMultiple({
-				value: ["2"],
-				inputProps: {
-					defaultValue: "B",
-				},
-			});
+		const { getByTestId, queryByTestId, input, getHiddenInputs } = await openMultiple({
+			value: ["2"],
+			inputProps: {
+				defaultValue: "B",
+			},
+		});
 		expect(queryByTestId("2-indicator")).not.toBeNull();
 		expect(input).toHaveValue("B");
 
 		expect(getHiddenInputs()[0]).toHaveValue("2");
 		const [_, item2] = getItems(getByTestId);
 		expectSelected(item2!);
+	});
+
+	it("should submit an empty array when the user submits the form without selecting any items", async () => {
+		let submittedValues: string[] | undefined;
+		const { submit, user } = setupMultiple({
+			onFormSubmit: (fd) => {
+				submittedValues = fd.getAll("themes") as string[];
+			},
+			name: "themes",
+		});
+
+		await user.click(submit);
+		expect(submittedValues).toHaveLength(0);
+	});
+
+	it("should clear the input when the last item is deselected when `clearOnDeselect` is `true`", async () => {
+		const { getByTestId, user, queryByTestId, input, getHiddenInputs } = await openMultiple({
+			inputProps: {
+				clearOnDeselect: true,
+			},
+		});
+		const [item, item2, item3] = getItems(getByTestId);
+		await waitFor(() => expect(queryByTestId("1-indicator")).toBeNull());
+		await user.click(item!);
+		expect(input).toHaveValue("A");
+		expect(getHiddenInputs()).toHaveLength(1);
+		expect(getHiddenInputs()[0]).toHaveValue("1");
+		await user.click(input);
+
+		expectSelected(item!);
+		await waitFor(() => expect(queryByTestId("1-indicator")).not.toBeNull());
+		await user.click(item);
+		expect(input).toHaveValue("");
+		expect(input).not.toHaveValue("A");
+		await user.click(item2);
+		await user.click(item3);
+		expect(getHiddenInputs()).toHaveLength(2);
+		expect(getHiddenInputs()[0]).toHaveValue("2");
+		expect(getHiddenInputs()[1]).toHaveValue("3");
+		await user.click(item3);
+		expect(getHiddenInputs()).toHaveLength(1);
+		expect(getHiddenInputs()[0]).toHaveValue("2");
+		await user.click(item2);
+		expect(input).toHaveValue("");
+		expect(getHiddenInputs()).toHaveLength(0);
 	});
 });
 

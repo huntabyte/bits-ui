@@ -5,18 +5,18 @@
  * Incredible thought must have went into solving all the intricacies of this component.
  */
 
-import { useDebounce } from "runed";
+import { Context, useDebounce } from "runed";
 import { untrack } from "svelte";
-import { afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
+import { box, executeCallbacks, useRefById } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
 import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
+import { on } from "svelte/events";
 
 const SCROLL_AREA_ROOT_ATTR = "data-scroll-area-root";
 const SCROLL_AREA_VIEWPORT_ATTR = "data-scroll-area-viewport";
@@ -43,11 +43,6 @@ type ScrollAreaRootStateProps = WithRefProps<
 >;
 
 class ScrollAreaRootState {
-	#id: ScrollAreaRootStateProps["id"];
-	#ref: ScrollAreaRootStateProps["ref"];
-	dir: ScrollAreaRootStateProps["dir"];
-	type: ScrollAreaRootStateProps["type"];
-	scrollHideDelay: ScrollAreaRootStateProps["scrollHideDelay"];
 	scrollAreaNode = $state<HTMLElement | null>(null);
 	viewportNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -58,16 +53,9 @@ class ScrollAreaRootState {
 	scrollbarXEnabled = $state(false);
 	scrollbarYEnabled = $state(false);
 
-	constructor(props: ScrollAreaRootStateProps) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.dir = props.dir;
-		this.type = props.type;
-		this.scrollHideDelay = props.scrollHideDelay;
-
+	constructor(readonly opts: ScrollAreaRootStateProps) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
 				this.scrollAreaNode = node;
 			},
@@ -77,8 +65,8 @@ class ScrollAreaRootState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				dir: this.dir.current,
+				id: this.opts.id.current,
+				dir: this.opts.dir.current,
 				style: {
 					position: "relative",
 					"--bits-scroll-area-corner-height": `${this.cornerHeight}px`,
@@ -92,20 +80,15 @@ class ScrollAreaRootState {
 type ScrollAreaViewportStateProps = WithRefProps;
 
 class ScrollAreaViewportState {
-	#id: ScrollAreaViewportStateProps["id"];
-	#ref: ScrollAreaViewportStateProps["ref"];
 	#contentId = box(useId());
 	#contentRef = box<HTMLElement | null>(null);
-	root: ScrollAreaRootState;
 
-	constructor(props: ScrollAreaViewportStateProps, root: ScrollAreaRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.root = root;
-
+	constructor(
+		readonly opts: ScrollAreaViewportStateProps,
+		readonly root: ScrollAreaRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
 				this.root.viewportNode = node;
 			},
@@ -123,7 +106,7 @@ class ScrollAreaViewportState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				style: {
 					overflowX: this.root.scrollbarXEnabled ? "scroll" : "hidden",
 					overflowY: this.root.scrollbarYEnabled ? "scroll" : "hidden",
@@ -136,10 +119,15 @@ class ScrollAreaViewportState {
 		() =>
 			({
 				id: this.#contentId.current,
-				style: {
-					minWidth: "100%",
-					display: "table",
-				},
+				"data-scroll-area-content": "",
+				/**
+				 * When horizontal scrollbar is visible: this element should be at least
+				 * as wide as its children for size calculations to work correctly.
+				 *
+				 * When horizontal scrollbar is NOT visible: this element's width should
+				 * be constrained by the parent container to enable `text-overflow: ellipsis`
+				 */
+				style: { minWidth: this.root.scrollbarXEnabled ? "fit-content" : undefined },
 			}) as const
 	);
 }
@@ -151,19 +139,13 @@ type ScrollAreaScrollbarStateProps = WithRefProps<
 >;
 
 class ScrollAreaScrollbarState {
-	ref: ScrollAreaScrollbarStateProps["ref"];
-	id: ScrollAreaScrollbarStateProps["id"];
-	root: ScrollAreaRootState;
-	orientation: ScrollAreaScrollbarStateProps["orientation"];
-	isHorizontal = $derived.by(() => this.orientation.current === "horizontal");
+	isHorizontal = $derived.by(() => this.opts.orientation.current === "horizontal");
 	hasThumb = $state(false);
 
-	constructor(props: ScrollAreaScrollbarStateProps, root: ScrollAreaRootState) {
-		this.root = root;
-		this.orientation = props.orientation;
-		this.ref = props.ref;
-		this.id = props.id;
-
+	constructor(
+		readonly opts: ScrollAreaScrollbarStateProps,
+		readonly root: ScrollAreaRootState
+	) {
 		$effect(() => {
 			this.isHorizontal
 				? (this.root.scrollbarXEnabled = true)
@@ -181,15 +163,13 @@ class ScrollAreaScrollbarState {
 class ScrollAreaScrollbarHoverState {
 	root: ScrollAreaRootState;
 	isVisible = $state(false);
-	scrollbar: ScrollAreaScrollbarState;
 
-	constructor(scrollbar: ScrollAreaScrollbarState) {
+	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
 		this.root = scrollbar.root;
-		this.scrollbar = scrollbar;
 
 		$effect(() => {
 			const scrollAreaNode = this.root.scrollAreaNode;
-			const hideDelay = this.root.scrollHideDelay.current;
+			const hideDelay = this.root.opts.scrollHideDelay.current;
 			let hideTimer = 0;
 			if (!scrollAreaNode) return;
 			const handlePointerEnter = () => {
@@ -208,8 +188,8 @@ class ScrollAreaScrollbarHoverState {
 			};
 
 			const unsubListeners = executeCallbacks(
-				addEventListener(scrollAreaNode, "pointerenter", handlePointerEnter),
-				addEventListener(scrollAreaNode, "pointerleave", handlePointerLeave)
+				on(scrollAreaNode, "pointerenter", handlePointerEnter),
+				on(scrollAreaNode, "pointerleave", handlePointerLeave)
 			);
 
 			return () => {
@@ -228,9 +208,7 @@ class ScrollAreaScrollbarHoverState {
 }
 
 class ScrollAreaScrollbarScrollState {
-	orientation: ScrollAreaScrollbarState["orientation"];
 	root: ScrollAreaRootState;
-	scrollbar: ScrollAreaScrollbarState;
 	machine = useStateMachine("hidden", {
 		hidden: {
 			SCROLL: "scrolling",
@@ -251,16 +229,14 @@ class ScrollAreaScrollbarScrollState {
 	});
 	isHidden = $derived.by(() => this.machine.state.current === "hidden");
 
-	constructor(scrollbar: ScrollAreaScrollbarState) {
-		this.scrollbar = scrollbar;
+	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
 		this.root = scrollbar.root;
-		this.orientation = this.scrollbar.orientation;
 
 		const debounceScrollend = useDebounce(() => this.machine.dispatch("SCROLL_END"), 100);
 
 		$effect(() => {
 			const _state = this.machine.state.current;
-			const scrollHideDelay = this.root.scrollHideDelay.current;
+			const scrollHideDelay = this.root.opts.scrollHideDelay.current;
 			if (_state === "idle") {
 				const hideTimer = window.setTimeout(
 					() => this.machine.dispatch("HIDE"),
@@ -289,33 +265,34 @@ class ScrollAreaScrollbarScrollState {
 			const unsubListener = addEventListener(viewportNode, "scroll", handleScroll);
 			return unsubListener;
 		});
+
+		this.onpointerenter = this.onpointerenter.bind(this);
+		this.onpointerleave = this.onpointerleave.bind(this);
 	}
 
-	#onpointerenter = () => {
+	onpointerenter(_: BitsPointerEvent) {
 		this.machine.dispatch("POINTER_ENTER");
-	};
+	}
 
-	#onpointerleave = () => {
+	onpointerleave(_: BitsPointerEvent) {
 		this.machine.dispatch("POINTER_LEAVE");
-	};
+	}
 
 	props = $derived.by(
 		() =>
 			({
 				"data-state": this.machine.state.current === "hidden" ? "hidden" : "visible",
-				onpointerenter: this.#onpointerenter,
-				onpointerleave: this.#onpointerleave,
+				onpointerenter: this.onpointerenter,
+				onpointerleave: this.onpointerleave,
 			}) as const
 	);
 }
 
 class ScrollAreaScrollbarAutoState {
-	scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
 	isVisible = $state(false);
 
-	constructor(scrollbar: ScrollAreaScrollbarState) {
-		this.scrollbar = scrollbar;
+	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
 		this.root = scrollbar.root;
 
 		const handleResize = useDebounce(() => {
@@ -339,7 +316,6 @@ class ScrollAreaScrollbarAutoState {
 }
 
 class ScrollAreaScrollbarVisibleState {
-	scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
 	thumbNode = $state<HTMLElement | null>(null);
 	pointerOffset = $state(0);
@@ -352,8 +328,7 @@ class ScrollAreaScrollbarVisibleState {
 	hasThumb = $derived.by(() => Boolean(this.thumbRatio > 0 && this.thumbRatio < 1));
 	prevTransformStyle = "";
 
-	constructor(scrollbar: ScrollAreaScrollbarState) {
-		this.scrollbar = scrollbar;
+	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
 		this.root = scrollbar.root;
 
 		$effect(() => {
@@ -367,72 +342,72 @@ class ScrollAreaScrollbarVisibleState {
 		});
 	}
 
-	setSizes = (sizes: Sizes) => {
+	setSizes(sizes: Sizes) {
 		this.sizes = sizes;
-	};
+	}
 
-	getScrollPosition = (pointerPos: number, dir?: Direction) => {
+	getScrollPosition(pointerPos: number, dir?: Direction) {
 		return getScrollPositionFromPointer({
 			pointerPos,
 			pointerOffset: this.pointerOffset,
 			sizes: this.sizes,
 			dir,
 		});
-	};
+	}
 
-	onThumbPointerUp = () => {
+	onThumbPointerUp() {
 		this.pointerOffset = 0;
-	};
+	}
 
-	onThumbPointerDown = (pointerPos: number) => {
+	onThumbPointerDown(pointerPos: number) {
 		this.pointerOffset = pointerPos;
-	};
+	}
 
-	xOnThumbPositionChange = () => {
+	xOnThumbPositionChange() {
 		if (!(this.root.viewportNode && this.thumbNode)) return;
 		const scrollPos = this.root.viewportNode.scrollLeft;
 		const offset = getThumbOffsetFromScroll({
 			scrollPos,
 			sizes: this.sizes,
-			dir: this.root.dir.current,
+			dir: this.root.opts.dir.current,
 		});
 		const transformStyle = `translate3d(${offset}px, 0, 0)`;
 		this.thumbNode.style.transform = transformStyle;
-	};
+	}
 
-	xOnWheelScroll = (scrollPos: number) => {
+	xOnWheelScroll(scrollPos: number) {
 		if (!this.root.viewportNode) return;
 		this.root.viewportNode.scrollLeft = scrollPos;
-	};
+	}
 
-	xOnDragScroll = (pointerPos: number) => {
+	xOnDragScroll(pointerPos: number) {
 		if (!this.root.viewportNode) return;
 		this.root.viewportNode.scrollLeft = this.getScrollPosition(
 			pointerPos,
-			this.root.dir.current
+			this.root.opts.dir.current
 		);
-	};
+	}
 
-	yOnThumbPositionChange = () => {
+	yOnThumbPositionChange() {
 		if (!(this.root.viewportNode && this.thumbNode)) return;
 		const scrollPos = this.root.viewportNode.scrollTop;
 		const offset = getThumbOffsetFromScroll({ scrollPos, sizes: this.sizes });
 		const transformStyle = `translate3d(0, ${offset}px, 0)`;
 		this.thumbNode.style.transform = transformStyle;
-	};
+	}
 
-	yOnWheelScroll = (scrollPos: number) => {
+	yOnWheelScroll(scrollPos: number) {
 		if (!this.root.viewportNode) return;
 		this.root.viewportNode.scrollTop = scrollPos;
-	};
+	}
 
-	yOnDragScroll = (pointerPos: number) => {
+	yOnDragScroll(pointerPos: number) {
 		if (!this.root.viewportNode) return;
 		this.root.viewportNode.scrollTop = this.getScrollPosition(
 			pointerPos,
-			this.root.dir.current
+			this.root.opts.dir.current
 		);
-	};
+	}
 }
 
 type ScrollbarAxisStateProps = ReadableBoxedValues<{ mounted: boolean }>;
@@ -452,33 +427,30 @@ type ScrollbarAxisState = {
 };
 
 class ScrollAreaScrollbarXState implements ScrollbarAxisState {
-	#id: WithRefProps["id"];
-	#mounted: ScrollbarAxisStateProps["mounted"];
-	ref: WithRefProps["ref"];
-	scrollbarVis: ScrollAreaScrollbarVisibleState;
 	root: ScrollAreaRootState;
 	computedStyle = $state<CSSStyleDeclaration>();
+	scrollbar: ScrollAreaScrollbarState;
 
-	constructor(props: ScrollbarAxisStateProps, scrollbarVis: ScrollAreaScrollbarVisibleState) {
-		this.#mounted = props.mounted;
+	constructor(
+		readonly opts: ScrollbarAxisStateProps,
+		readonly scrollbarVis: ScrollAreaScrollbarVisibleState
+	) {
 		this.scrollbarVis = scrollbarVis;
-		this.#id = this.scrollbarVis.scrollbar.id;
-		this.ref = this.scrollbarVis.scrollbar.ref;
 		this.root = scrollbarVis.root;
+		this.scrollbar = scrollbarVis.scrollbar;
 
 		useRefById({
-			id: this.#id,
-			ref: this.ref,
+			...this.scrollbar.opts,
 			onRefChange: (node) => {
 				this.root.scrollbarXNode = node;
 			},
-			deps: () => this.#mounted.current,
+			deps: () => this.opts.mounted.current,
 		});
 
 		$effect(() => {
-			if (!this.ref.current) return;
-			if (this.#mounted.current) {
-				this.computedStyle = getComputedStyle(this.ref.current!);
+			if (!this.scrollbar.opts.ref.current) return;
+			if (this.opts.mounted.current) {
+				this.computedStyle = getComputedStyle(this.scrollbar.opts.ref.current!);
 			}
 		});
 
@@ -516,12 +488,13 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 	};
 
 	onResize = () => {
-		if (!(this.ref.current && this.root.viewportNode && this.computedStyle)) return;
+		if (!(this.scrollbar.opts.ref.current && this.root.viewportNode && this.computedStyle))
+			return;
 		this.scrollbarVis.setSizes({
 			content: this.root.viewportNode.scrollWidth,
 			viewport: this.root.viewportNode.offsetWidth,
 			scrollbar: {
-				size: this.ref.current.clientWidth,
+				size: this.scrollbar.opts.ref.current.clientWidth,
 				paddingStart: toInt(this.computedStyle.paddingLeft),
 				paddingEnd: toInt(this.computedStyle.paddingRight),
 			},
@@ -535,16 +508,16 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.scrollbar.opts.id.current,
 				"data-orientation": "horizontal",
 				style: {
 					bottom: 0,
 					left:
-						this.root.dir.current === "rtl"
+						this.root.opts.dir.current === "rtl"
 							? "var(--bits-scroll-area-corner-width)"
 							: 0,
 					right:
-						this.root.dir.current === "ltr"
+						this.root.opts.dir.current === "ltr"
 							? "var(--bits-scroll-area-corner-width)"
 							: 0,
 					"--bits-scroll-area-thumb-width": `${this.thumbSize}px`,
@@ -554,33 +527,29 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 }
 
 class ScrollAreaScrollbarYState implements ScrollbarAxisState {
-	#id: WithRefProps["id"];
-	#mounted: ScrollbarAxisStateProps["mounted"];
-	ref: WithRefProps["ref"];
-	scrollbarVis: ScrollAreaScrollbarVisibleState;
 	root: ScrollAreaRootState;
+	scrollbar: ScrollAreaScrollbarState;
 	computedStyle = $state<CSSStyleDeclaration>();
 
-	constructor(props: ScrollbarAxisStateProps, scrollbarVis: ScrollAreaScrollbarVisibleState) {
-		this.#mounted = props.mounted;
-		this.scrollbarVis = scrollbarVis;
-		this.#id = this.scrollbarVis.scrollbar.id;
-		this.ref = this.scrollbarVis.scrollbar.ref;
+	constructor(
+		readonly opts: ScrollbarAxisStateProps,
+		readonly scrollbarVis: ScrollAreaScrollbarVisibleState
+	) {
 		this.root = scrollbarVis.root;
+		this.scrollbar = scrollbarVis.scrollbar;
 
 		useRefById({
-			id: this.scrollbarVis.scrollbar.id,
-			ref: this.scrollbarVis.scrollbar.ref,
+			...this.scrollbar.opts,
 			onRefChange: (node) => {
 				this.root.scrollbarYNode = node;
 			},
-			deps: () => this.#mounted.current,
+			deps: () => this.opts.mounted.current,
 		});
 
 		$effect(() => {
-			if (!this.ref.current) return;
-			if (this.#mounted.current) {
-				this.computedStyle = getComputedStyle(this.ref.current!);
+			if (!this.scrollbar.opts.ref.current) return;
+			if (this.opts.mounted.current) {
+				this.computedStyle = getComputedStyle(this.scrollbar.opts.ref.current!);
 			}
 		});
 
@@ -589,25 +558,32 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 			// that when it shows again it will be positioned correctly.
 			this.onResize();
 		});
+
+		this.onThumbPointerDown = this.onThumbPointerDown.bind(this);
+		this.onDragScroll = this.onDragScroll.bind(this);
+		this.onThumbPointerUp = this.onThumbPointerUp.bind(this);
+		this.onThumbPositionChange = this.onThumbPositionChange.bind(this);
+		this.onWheelScroll = this.onWheelScroll.bind(this);
+		this.onResize = this.onResize.bind(this);
 	}
 
-	onThumbPointerDown = (pointerPos: { x: number; y: number }) => {
+	onThumbPointerDown(pointerPos: { x: number; y: number }) {
 		this.scrollbarVis.onThumbPointerDown(pointerPos.y);
-	};
+	}
 
-	onDragScroll = (pointerPos: { x: number; y: number }) => {
+	onDragScroll(pointerPos: { x: number; y: number }) {
 		this.scrollbarVis.yOnDragScroll(pointerPos.y);
-	};
+	}
 
-	onThumbPointerUp = () => {
+	onThumbPointerUp() {
 		this.scrollbarVis.onThumbPointerUp();
-	};
+	}
 
-	onThumbPositionChange = () => {
+	onThumbPositionChange() {
 		this.scrollbarVis.yOnThumbPositionChange();
-	};
+	}
 
-	onWheelScroll = (e: WheelEvent, maxScrollPos: number) => {
+	onWheelScroll(e: WheelEvent, maxScrollPos: number) {
 		if (!this.root.viewportNode) return;
 		const scrollPos = this.root.viewportNode.scrollTop + e.deltaY;
 		this.scrollbarVis.yOnWheelScroll(scrollPos);
@@ -615,20 +591,21 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 		if (isScrollingWithinScrollbarBounds(scrollPos, maxScrollPos)) {
 			e.preventDefault();
 		}
-	};
+	}
 
-	onResize = () => {
-		if (!(this.ref.current && this.root.viewportNode && this.computedStyle)) return;
+	onResize() {
+		if (!(this.scrollbar.opts.ref.current && this.root.viewportNode && this.computedStyle))
+			return;
 		this.scrollbarVis.setSizes({
 			content: this.root.viewportNode.scrollHeight,
 			viewport: this.root.viewportNode.offsetHeight,
 			scrollbar: {
-				size: this.ref.current.clientHeight,
+				size: this.scrollbar.opts.ref.current.clientHeight,
 				paddingStart: toInt(this.computedStyle.paddingTop),
 				paddingEnd: toInt(this.computedStyle.paddingBottom),
 			},
 		});
-	};
+	}
 
 	thumbSize = $derived.by(() => {
 		return getThumbSize(this.scrollbarVis.sizes);
@@ -637,12 +614,12 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.scrollbar.opts.id.current,
 				"data-orientation": "vertical",
 				style: {
 					top: 0,
-					right: this.root.dir.current === "ltr" ? 0 : undefined,
-					left: this.root.dir.current === "rtl" ? 0 : undefined,
+					right: this.root.opts.dir.current === "ltr" ? 0 : undefined,
+					left: this.root.opts.dir.current === "rtl" ? 0 : undefined,
 					bottom: "var(--bits-scroll-area-corner-height)",
 					"--bits-scroll-area-thumb-height": `${this.thumbSize}px`,
 				},
@@ -653,9 +630,9 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 type ScrollbarAxis = ScrollAreaScrollbarXState | ScrollAreaScrollbarYState;
 
 class ScrollAreaScrollbarSharedState {
-	scrollbarState: ScrollbarAxis;
 	root: ScrollAreaRootState;
 	scrollbarVis: ScrollAreaScrollbarVisibleState;
+	scrollbar: ScrollAreaScrollbarState;
 	rect = $state.raw<DOMRect | null>(null);
 	prevWebkitUserSelect = $state<string>("");
 	handleResize: () => void;
@@ -667,10 +644,10 @@ class ScrollAreaScrollbarSharedState {
 		() => this.scrollbarVis.sizes.content - this.scrollbarVis.sizes.viewport
 	);
 
-	constructor(scrollbarState: ScrollbarAxis) {
-		this.scrollbarState = scrollbarState;
+	constructor(readonly scrollbarState: ScrollbarAxis) {
 		this.root = scrollbarState.root;
 		this.scrollbarVis = scrollbarState.scrollbarVis;
+		this.scrollbar = scrollbarState.scrollbarVis.scrollbar;
 		this.handleResize = useDebounce(() => this.scrollbarState.onResize(), 10);
 		this.handleThumbPositionChange = this.scrollbarState.onThumbPositionChange;
 		this.handleWheelScroll = this.scrollbarState.onWheelScroll;
@@ -679,7 +656,7 @@ class ScrollAreaScrollbarSharedState {
 
 		$effect(() => {
 			const maxScrollPos = this.maxScrollPos;
-			const scrollbarNode = this.scrollbarState.ref.current;
+			const scrollbarNode = this.scrollbar.opts.ref.current;
 			// we want to react to the viewport node changing so we leave this here
 			this.root.viewportNode;
 			const handleWheel = (e: WheelEvent) => {
@@ -705,35 +682,39 @@ class ScrollAreaScrollbarSharedState {
 			this.handleThumbPositionChange();
 		});
 
-		useResizeObserver(() => this.scrollbarState.ref.current, this.handleResize);
+		useResizeObserver(() => this.scrollbar.opts.ref.current, this.handleResize);
 		useResizeObserver(() => this.root.contentNode, this.handleResize);
+
+		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointermove = this.onpointermove.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
 	}
 
-	handleDragScroll = (e: PointerEvent) => {
+	handleDragScroll(e: PointerEvent) {
 		if (!this.rect) return;
 		const x = e.clientX - this.rect.left;
 		const y = e.clientY - this.rect.top;
 		this.scrollbarState.onDragScroll({ x, y });
-	};
+	}
 
-	#onpointerdown = (e: PointerEvent) => {
+	onpointerdown(e: BitsPointerEvent) {
 		if (e.button !== 0) return;
 		const target = e.target as HTMLElement;
 		target.setPointerCapture(e.pointerId);
-		this.rect = this.scrollbarState.ref.current?.getBoundingClientRect() ?? null;
+		this.rect = this.scrollbar.opts.ref.current?.getBoundingClientRect() ?? null;
 		// pointer capture doesn't prevent text selection in Safari
 		// so we remove text selection manually when scrolling
 		this.prevWebkitUserSelect = document.body.style.webkitUserSelect;
 		document.body.style.webkitUserSelect = "none";
 		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "auto";
 		this.handleDragScroll(e);
-	};
+	}
 
-	#onpointermove = (e: PointerEvent) => {
+	onpointermove(e: BitsPointerEvent) {
 		this.handleDragScroll(e);
-	};
+	}
 
-	#onpointerup = (e: PointerEvent) => {
+	onpointerup(e: BitsPointerEvent) {
 		const target = e.target as HTMLElement;
 		if (target.hasPointerCapture(e.pointerId)) {
 			target.releasePointerCapture(e.pointerId);
@@ -741,7 +722,7 @@ class ScrollAreaScrollbarSharedState {
 		document.body.style.webkitUserSelect = this.prevWebkitUserSelect;
 		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "";
 		this.rect = null;
-	};
+	}
 
 	props = $derived.by(() =>
 		mergeProps({
@@ -751,9 +732,9 @@ class ScrollAreaScrollbarSharedState {
 				...this.scrollbarState.props.style,
 			},
 			[SCROLL_AREA_SCROLLBAR_ATTR]: "",
-			onpointerdown: this.#onpointerdown,
-			onpointermove: this.#onpointermove,
-			onpointerup: this.#onpointerup,
+			onpointerdown: this.onpointerdown,
+			onpointermove: this.onpointermove,
+			onpointerup: this.onpointerup,
 		})
 	);
 }
@@ -763,10 +744,7 @@ type ScrollAreaThumbImplStateProps = WithRefProps &
 		mounted: boolean;
 	}>;
 class ScrollAreaThumbImplState {
-	#id: ScrollAreaThumbImplStateProps["id"];
-	#ref: ScrollAreaThumbImplStateProps["ref"];
 	#root: ScrollAreaRootState;
-	#scrollbarState: ScrollAreaScrollbarSharedState;
 	#removeUnlinkedScrollListener = $state<() => void>();
 	#debounceScrollEnd = useDebounce(() => {
 		if (this.#removeUnlinkedScrollListener) {
@@ -774,25 +752,19 @@ class ScrollAreaThumbImplState {
 			this.#removeUnlinkedScrollListener = undefined;
 		}
 	}, 100);
-	#mounted: ScrollAreaThumbImplStateProps["mounted"];
 
 	constructor(
-		props: ScrollAreaThumbImplStateProps,
-		scrollbarState: ScrollAreaScrollbarSharedState
+		readonly opts: ScrollAreaThumbImplStateProps,
+		readonly scrollbarState: ScrollAreaScrollbarSharedState
 	) {
 		this.#root = scrollbarState.root;
-		this.#scrollbarState = scrollbarState;
-		this.#mounted = props.mounted;
-		this.#id = props.id;
-		this.#ref = props.ref;
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			...opts,
 			onRefChange: (node) => {
-				this.#scrollbarState.scrollbarVis.thumbNode = node;
+				this.scrollbarState.scrollbarVis.thumbNode = node;
 			},
-			deps: () => this.#mounted.current,
+			deps: () => this.opts.mounted.current,
 		});
 
 		$effect(() => {
@@ -803,43 +775,46 @@ class ScrollAreaThumbImplState {
 				if (!this.#removeUnlinkedScrollListener) {
 					const listener = addUnlinkedScrollListener(
 						viewportNode,
-						this.#scrollbarState.handleThumbPositionChange
+						this.scrollbarState.handleThumbPositionChange
 					);
 					this.#removeUnlinkedScrollListener = listener;
-					this.#scrollbarState.handleThumbPositionChange();
+					this.scrollbarState.handleThumbPositionChange();
 				}
 			};
-			this.#scrollbarState.handleThumbPositionChange();
+			this.scrollbarState.handleThumbPositionChange();
 			const unsubListener = addEventListener(viewportNode, "scroll", handleScroll);
 			return unsubListener;
 		});
+
+		this.onpointerdowncapture = this.onpointerdowncapture.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
 	}
 
-	#onpointerdowncapture = (e: PointerEvent) => {
+	onpointerdowncapture(e: BitsPointerEvent) {
 		const thumb = e.target as HTMLElement;
 		if (!thumb) return;
 		const thumbRect = thumb.getBoundingClientRect();
 		const x = e.clientX - thumbRect.left;
 		const y = e.clientY - thumbRect.top;
-		this.#scrollbarState.handleThumbPointerDown({ x, y });
-	};
+		this.scrollbarState.handleThumbPointerDown({ x, y });
+	}
 
-	#onpointerup = () => {
-		this.#scrollbarState.handleThumbPointerUp();
-	};
+	onpointerup(_: BitsPointerEvent) {
+		this.scrollbarState.handleThumbPointerUp();
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				"data-state": this.#scrollbarState.scrollbarVis.hasThumb ? "visible" : "hidden",
+				id: this.opts.id.current,
+				"data-state": this.scrollbarState.scrollbarVis.hasThumb ? "visible" : "hidden",
 				style: {
 					width: "var(--bits-scroll-area-thumb-width)",
 					height: "var(--bits-scroll-area-thumb-height)",
-					transform: this.#scrollbarState.scrollbarVis.prevTransformStyle,
+					transform: this.scrollbarState.scrollbarVis.prevTransformStyle,
 				},
-				onpointerdowncapture: this.#onpointerdowncapture,
-				onpointerup: this.#onpointerup,
+				onpointerdowncapture: this.onpointerdowncapture,
+				onpointerup: this.onpointerup,
 				[SCROLL_AREA_THUMB_ATTR]: "",
 			}) as const
 	);
@@ -848,127 +823,119 @@ class ScrollAreaThumbImplState {
 type ScrollAreaCornerImplStateProps = WithRefProps;
 
 class ScrollAreaCornerImplState {
-	#id: ScrollAreaCornerImplStateProps["id"];
-	#ref: ScrollAreaCornerImplStateProps["ref"];
-	#root: ScrollAreaRootState;
 	#width = $state(0);
 	#height = $state(0);
 	hasSize = $derived(Boolean(this.#width && this.#height));
 
-	constructor(props: ScrollAreaCornerImplStateProps, root: ScrollAreaRootState) {
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: ScrollAreaCornerImplStateProps,
+		readonly root: ScrollAreaRootState
+	) {
 		useResizeObserver(
-			() => this.#root.scrollbarXNode,
+			() => this.root.scrollbarXNode,
 			() => {
-				const height = this.#root.scrollbarXNode?.offsetHeight || 0;
-				this.#root.cornerHeight = height;
+				const height = this.root.scrollbarXNode?.offsetHeight || 0;
+				this.root.cornerHeight = height;
 				this.#height = height;
 			}
 		);
 
 		useResizeObserver(
-			() => this.#root.scrollbarYNode,
+			() => this.root.scrollbarYNode,
 			() => {
-				const width = this.#root.scrollbarYNode?.offsetWidth || 0;
-				this.#root.cornerWidth = width;
+				const width = this.root.scrollbarYNode?.offsetWidth || 0;
+				this.root.cornerWidth = width;
 				this.#width = width;
 			}
 		);
 
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+		useRefById(opts);
 	}
 
 	props = $derived.by(() => ({
-		id: this.#id.current,
+		id: this.opts.id.current,
 		style: {
 			width: this.#width,
 			height: this.#height,
 			position: "absolute",
-			right: this.#root.dir.current === "ltr" ? 0 : undefined,
-			left: this.#root.dir.current === "rtl" ? 0 : undefined,
+			right: this.root.opts.dir.current === "ltr" ? 0 : undefined,
+			left: this.root.opts.dir.current === "rtl" ? 0 : undefined,
 			bottom: 0,
 		},
 		[SCROLL_AREA_CORNER_ATTR]: "",
 	}));
 }
 
-export const [setScrollAreaRootContext, getScrollAreaRootContext] =
-	createContext<ScrollAreaRootState>("ScrollArea.Root");
-
-export const [setScrollAreaScrollbarContext, getScrollAreaScrollbarContext] =
-	createContext<ScrollAreaScrollbarState>("ScrollArea.Scrollbar");
-
-export const [setScrollAreaScrollbarVisibleContext, getScrollAreaScrollbarVisibleContext] =
-	createContext<ScrollAreaScrollbarVisibleState>("ScrollArea.ScrollbarVisible");
-
-export const [setScrollAreaScrollbarAxisContext, getScrollAreaScrollbarAxisContext] =
-	createContext<ScrollbarAxis>("ScrollArea.ScrollbarAxis");
-
-export const [setScrollAreaScrollbarSharedContext, getScrollAreaScrollbarSharedContext] =
-	createContext<ScrollAreaScrollbarSharedState>("ScrollArea.ScrollbarShared");
+export const ScrollAreaRootContext = new Context<ScrollAreaRootState>("ScrollArea.Root");
+export const ScrollAreaScrollbarContext = new Context<ScrollAreaScrollbarState>(
+	"ScrollArea.Scrollbar"
+);
+export const ScrollAreaScrollbarVisibleContext = new Context<ScrollAreaScrollbarVisibleState>(
+	"ScrollArea.ScrollbarVisible"
+);
+export const ScrollAreaScrollbarAxisContext = new Context<ScrollbarAxis>(
+	"ScrollArea.ScrollbarAxis"
+);
+export const ScrollAreaScrollbarSharedContext = new Context<ScrollAreaScrollbarSharedState>(
+	"ScrollArea.ScrollbarShared"
+);
 
 export function useScrollAreaRoot(props: ScrollAreaRootStateProps) {
-	return setScrollAreaRootContext(new ScrollAreaRootState(props));
+	return ScrollAreaRootContext.set(new ScrollAreaRootState(props));
 }
 
 export function useScrollAreaViewport(props: ScrollAreaViewportStateProps) {
-	return new ScrollAreaViewportState(props, getScrollAreaRootContext());
+	return new ScrollAreaViewportState(props, ScrollAreaRootContext.get());
 }
 
 export function useScrollAreaScrollbar(props: ScrollAreaScrollbarStateProps) {
-	return setScrollAreaScrollbarContext(
-		new ScrollAreaScrollbarState(props, getScrollAreaRootContext())
+	return ScrollAreaScrollbarContext.set(
+		new ScrollAreaScrollbarState(props, ScrollAreaRootContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarVisible() {
-	return setScrollAreaScrollbarVisibleContext(
-		new ScrollAreaScrollbarVisibleState(getScrollAreaScrollbarContext())
+	return ScrollAreaScrollbarVisibleContext.set(
+		new ScrollAreaScrollbarVisibleState(ScrollAreaScrollbarContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarAuto() {
-	return new ScrollAreaScrollbarAutoState(getScrollAreaScrollbarContext());
+	return new ScrollAreaScrollbarAutoState(ScrollAreaScrollbarContext.get());
 }
 
 export function useScrollAreaScrollbarScroll() {
-	return new ScrollAreaScrollbarScrollState(getScrollAreaScrollbarContext());
+	return new ScrollAreaScrollbarScrollState(ScrollAreaScrollbarContext.get());
 }
 
 export function useScrollAreaScrollbarHover() {
-	return new ScrollAreaScrollbarHoverState(getScrollAreaScrollbarContext());
+	return new ScrollAreaScrollbarHoverState(ScrollAreaScrollbarContext.get());
 }
 
 export function useScrollAreaScrollbarX(props: ScrollbarAxisStateProps) {
-	return setScrollAreaScrollbarAxisContext(
-		new ScrollAreaScrollbarXState(props, getScrollAreaScrollbarVisibleContext())
+	return ScrollAreaScrollbarAxisContext.set(
+		new ScrollAreaScrollbarXState(props, ScrollAreaScrollbarVisibleContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarY(props: ScrollbarAxisStateProps) {
-	return setScrollAreaScrollbarAxisContext(
-		new ScrollAreaScrollbarYState(props, getScrollAreaScrollbarVisibleContext())
+	return ScrollAreaScrollbarAxisContext.set(
+		new ScrollAreaScrollbarYState(props, ScrollAreaScrollbarVisibleContext.get())
 	);
 }
 
 export function useScrollAreaScrollbarShared() {
-	return setScrollAreaScrollbarSharedContext(
-		new ScrollAreaScrollbarSharedState(getScrollAreaScrollbarAxisContext())
+	return ScrollAreaScrollbarSharedContext.set(
+		new ScrollAreaScrollbarSharedState(ScrollAreaScrollbarAxisContext.get())
 	);
 }
 
 export function useScrollAreaThumb(props: ScrollAreaThumbImplStateProps) {
-	return new ScrollAreaThumbImplState(props, getScrollAreaScrollbarSharedContext());
+	return new ScrollAreaThumbImplState(props, ScrollAreaScrollbarSharedContext.get());
 }
 
 export function useScrollAreaCorner(props: ScrollAreaCornerImplStateProps) {
-	return new ScrollAreaCornerImplState(props, getScrollAreaRootContext());
+	return new ScrollAreaCornerImplState(props, ScrollAreaRootContext.get());
 }
 
 function toInt(value?: string) {

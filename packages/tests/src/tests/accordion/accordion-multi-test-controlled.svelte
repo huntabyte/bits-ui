@@ -25,7 +25,7 @@
 	{value}
 </div>
 
-<button data-testid="update-value" onclick={() => value.push("item-2")}> Update Value </button>
+<button data-testid="update-value" onclick={() => value.push("item-1")}> Update Value </button>
 
 <Accordion.Root
 	type="multiple"

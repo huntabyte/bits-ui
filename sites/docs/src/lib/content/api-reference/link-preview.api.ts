@@ -9,7 +9,6 @@ import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -46,7 +45,6 @@ export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		openDelay: createNumberProp({
 			default: "700",
 			description:

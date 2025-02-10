@@ -2,8 +2,10 @@
 	import { Tabs } from "bits-ui";
 	import type { Snippet } from "svelte";
 	import CopySimple from "phosphor-svelte/lib/CopySimple";
+	import Check from "phosphor-svelte/lib/Check";
 	import { noop } from "@melt-ui/svelte/internal/helpers";
 	import { cn } from "$lib/utils/styles.js";
+	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 
 	type Props = {
 		value?: string;
@@ -12,16 +14,20 @@
 		children: Snippet;
 		open: boolean;
 		expandable?: boolean;
+		ref?: HTMLElement | null;
 	};
 
 	let {
 		value = $bindable(),
 		open = $bindable(),
+		ref = $bindable(null),
 		onValueChange = noop,
 		items,
 		expandable = true,
 		children,
 	}: Props = $props();
+
+	const copyToClipboard = useCopyToClipboard();
 </script>
 
 <Tabs.Root {value} {onValueChange}>
@@ -56,10 +62,17 @@
 				)}
 				aria-label="Copy"
 				data-copy-code
+				onclick={() => copyToClipboard?.copyToClipboard()}
 			>
-				<CopySimple class="size-4" />
+				{#if !copyToClipboard || !copyToClipboard.isCopied}
+					<CopySimple class="size-4" />
+				{:else}
+					<Check class="size-4" />
+				{/if}
 			</button>
 		</div>
 	</div>
-	{@render children()}
+	<div style="display: contents;" bind:this={ref}>
+		{@render children()}
+	</div>
 </Tabs.Root>

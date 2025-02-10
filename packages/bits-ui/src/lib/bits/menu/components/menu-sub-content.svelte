@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { afterTick, box, mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
-	import { useMenuContent } from "../menu.svelte.js";
+	import { MenuOpenEvent, useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -9,6 +9,7 @@
 	import { isHTMLElement } from "$lib/internal/is.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	let {
 		id = useId(),
@@ -28,8 +29,6 @@
 		...restProps
 	}: MenuSubContentProps = $props();
 
-	let isMounted = $state(false);
-
 	const subContentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
@@ -37,14 +36,15 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		isSub: true,
+		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
 	});
 
 	function onkeydown(e: KeyboardEvent) {
 		const isKeyDownInside = (e.currentTarget as HTMLElement).contains(e.target as HTMLElement);
-		const isCloseKey = SUB_CLOSE_KEYS[subContentState.parentMenu.root.dir.current].includes(
-			e.key
-		);
+		const isCloseKey = SUB_CLOSE_KEYS[
+			subContentState.parentMenu.root.opts.dir.current
+		].includes(e.key);
 		if (isKeyDownInside && isCloseKey) {
 			subContentState.parentMenu.onClose();
 			const triggerNode = subContentState.parentMenu.triggerNode;
@@ -63,48 +63,37 @@
 		})
 	);
 
-	function onOpenAutoFocus(e: Event) {
-		afterTick(() => {
-			e.preventDefault();
-			if (subContentState.parentMenu.root.isUsingKeyboard.current) {
-				const subContentEl = subContentState.parentMenu.contentNode;
-				subContentEl?.focus();
-			}
-		});
-	}
-
-	function onCloseAutoFocus(e: Event) {
-		e.preventDefault();
-	}
-</script>
-
-<PopperLayer
-	{...mergedProps}
-	{interactOutsideBehavior}
-	{escapeKeydownBehavior}
-	onCloseAutoFocus={(e) => {
-		onCloseAutoFocusProp(e);
-		if (e.defaultPrevented) return;
-		onCloseAutoFocus(e);
-	}}
-	onOpenAutoFocus={(e) => {
+	function handleOpenAutoFocus(e: Event) {
 		onOpenAutoFocusProp(e);
 		if (e.defaultPrevented) return;
-		onOpenAutoFocus(e);
-	}}
-	present={subContentState.parentMenu.open.current || forceMount}
-	onInteractOutside={(e) => {
+		e.preventDefault();
+		if (
+			subContentState.parentMenu.root.isUsingKeyboard &&
+			subContentState.parentMenu.contentNode
+		) {
+			MenuOpenEvent.dispatch(subContentState.parentMenu.contentNode);
+		}
+	}
+
+	function handleCloseAutoFocus(e: Event) {
+		onCloseAutoFocusProp(e);
+		if (e.defaultPrevented) return;
+		e.preventDefault();
+	}
+
+	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		subContentState.parentMenu.onClose();
-	}}
-	onEscapeKeydown={(e) => {
-		// TODO: users should be able to cancel this
+	}
+
+	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
 		subContentState.parentMenu.onClose();
-	}}
-	onFocusOutside={(e) => {
+	}
+
+	function handleOnFocusOutside(e: FocusEvent) {
 		onFocusOutside(e);
 		if (e.defaultPrevented) return;
 		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
@@ -113,22 +102,76 @@
 		if (e.target.id !== subContentState.parentMenu.triggerNode?.id) {
 			subContentState.parentMenu.onClose();
 		}
-	}}
-	preventScroll={false}
-	{loop}
-	trapFocus={false}
->
-	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, mergedProps, {
-			style: getFloatingContentCSSVars("menu"),
-		})}
-		{#if child}
-			{@render child({ props: finalProps, ...subContentState.snippetProps })}
-		{:else}
-			<div {...finalProps}>
-				{@render children?.()}
-			</div>
-		{/if}
-		<Mounted bind:isMounted />
-	{/snippet}
-</PopperLayer>
+	}
+</script>
+
+{#if forceMount}
+	<PopperLayerForceMount
+		{...mergedProps}
+		{interactOutsideBehavior}
+		{escapeKeydownBehavior}
+		onOpenAutoFocus={handleOpenAutoFocus}
+		enabled={subContentState.parentMenu.opts.open.current}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onFocusOutside={handleOnFocusOutside}
+		preventScroll={false}
+		{loop}
+		trapFocus={false}
+	>
+		{#snippet popper({ props, wrapperProps })}
+			{@const finalProps = mergeProps(props, mergedProps, {
+				style: getFloatingContentCSSVars("menu"),
+			})}
+			{#if child}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
+			{:else}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
+				</div>
+			{/if}
+			<Mounted bind:mounted={subContentState.mounted} />
+		{/snippet}
+	</PopperLayerForceMount>
+{:else if !forceMount}
+	<PopperLayer
+		{...mergedProps}
+		{interactOutsideBehavior}
+		{escapeKeydownBehavior}
+		onCloseAutoFocus={handleCloseAutoFocus}
+		onOpenAutoFocus={handleOpenAutoFocus}
+		present={subContentState.parentMenu.opts.open.current}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onFocusOutside={handleOnFocusOutside}
+		preventScroll={false}
+		{loop}
+		trapFocus={false}
+	>
+		{#snippet popper({ props, wrapperProps })}
+			{@const finalProps = mergeProps(props, mergedProps, {
+				style: getFloatingContentCSSVars("menu"),
+			})}
+			{#if child}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
+			{:else}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
+				</div>
+			{/if}
+			<Mounted bind:mounted={subContentState.mounted} />
+		{/snippet}
+	</PopperLayer>
+{/if}

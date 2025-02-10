@@ -103,7 +103,7 @@
 
 	/* === Scrollbars === */
 
-	::-webkit-scrollbar {
+	/* ::-webkit-scrollbar {
 		@apply w-2;
 		@apply h-2;
 	}
@@ -117,7 +117,7 @@
 
 	::-webkit-scrollbar-corner {
 		background: rgba(0, 0, 0, 0);
-	}
+	} */
 
 	/* Firefox */
 	/* https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-color#browser_compatibility */
@@ -148,7 +148,7 @@
 	*:not(body):not(.focus-override) {
 		outline: none !important;
 		&:focus-visible {
-			@apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-foreground focus-visible:ring-offset-1 focus-visible:ring-offset-background;
+			@apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-1 focus-visible:ring-offset-background;
 		}
 	}
 

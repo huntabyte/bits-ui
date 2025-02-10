@@ -17,7 +17,7 @@
 	onOpenChange={(open) => {
 		if (!open) menuState.root.onMenuClose();
 	}}
-	dir={menuState.root.dir.current}
+	dir={menuState.root.opts.dir.current}
 	_internal_variant="menubar"
 	{...restProps}
 />

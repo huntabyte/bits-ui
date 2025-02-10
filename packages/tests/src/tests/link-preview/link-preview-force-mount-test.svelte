@@ -17,6 +17,18 @@
 	}: LinkPreviewForceMountTestProps = $props();
 </script>
 
+{#snippet Content({
+	props,
+	wrapperProps,
+}: {
+	props: Record<string, unknown>;
+	wrapperProps: Record<string, unknown>;
+})}
+	<div {...wrapperProps}>
+		<div {...props}>Content</div>
+	</div>
+{/snippet}
+
 <main data-testid="main">
 	<LinkPreview.Root bind:open {...restProps} openDelay={50} closeDelay={50}>
 		<LinkPreview.Trigger
@@ -35,9 +47,9 @@
 					{...contentProps}
 					forceMount
 				>
-					{#snippet child({ props, open })}
-						{#if open}
-							<div {...props}>Content</div>
+					{#snippet child(props)}
+						{#if props.open}
+							{@render Content(props)}
 						{/if}
 					{/snippet}
 				</LinkPreview.Content>
@@ -48,8 +60,8 @@
 					{...contentProps}
 					forceMount
 				>
-					{#snippet child({ props })}
-						<div {...props}>Content</div>
+					{#snippet child(props)}
+						{@render Content(props)}
 					{/snippet}
 				</LinkPreview.Content>
 			{/if}

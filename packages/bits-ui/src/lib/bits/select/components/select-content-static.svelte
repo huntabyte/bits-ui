@@ -5,6 +5,7 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	let {
 		id = useId(),
@@ -26,43 +27,74 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-</script>
 
-<PopperLayer
-	isStatic={true}
-	{...mergedProps}
-	present={contentState.root.open.current || forceMount}
-	{id}
-	onInteractOutside={(e) => {
+	function handleInteractOutside(e: PointerEvent) {
 		contentState.handleInteractOutside(e);
 		if (e.defaultPrevented) return;
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
 		contentState.root.handleClose();
-	}}
-	onEscapeKeydown={(e) => {
+	}
+
+	function handleEscapeKeydown(e: KeyboardEvent) {
 		onEscapeKeydown(e);
 		if (e.defaultPrevented) return;
 		contentState.root.handleClose();
-	}}
-	onOpenAutoFocus={(e) => e.preventDefault()}
-	onCloseAutoFocus={(e) => e.preventDefault()}
-	trapFocus={false}
-	loop={false}
-	preventScroll={false}
-	onPlaced={() => (contentState.isPositioned = true)}
-	{forceMount}
->
-	{#snippet popper({ props })}
-		{@const finalProps = mergeProps(props, {
-			style: contentState.props.style,
-		})}
-		{#if child}
-			{@render child({ props: finalProps, ...contentState.snippetProps })}
-		{:else}
-			<div {...finalProps}>
-				{@render children?.()}
-			</div>
-		{/if}
-	{/snippet}
-</PopperLayer>
+	}
+</script>
+
+{#if forceMount}
+	<PopperLayerForceMount
+		{...mergedProps}
+		isStatic
+		enabled={contentState.root.opts.open.current}
+		{id}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onOpenAutoFocus={(e) => e.preventDefault()}
+		onCloseAutoFocus={(e) => e.preventDefault()}
+		trapFocus={false}
+		loop={false}
+		preventScroll={false}
+		onPlaced={() => (contentState.isPositioned = true)}
+		forceMount={true}
+	>
+		{#snippet popper({ props })}
+			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
+			{#if child}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...finalProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PopperLayerForceMount>
+{:else if !forceMount}
+	<PopperLayer
+		{...mergedProps}
+		isStatic
+		present={contentState.root.opts.open.current}
+		{id}
+		onInteractOutside={handleInteractOutside}
+		onEscapeKeydown={handleEscapeKeydown}
+		onOpenAutoFocus={(e) => e.preventDefault()}
+		onCloseAutoFocus={(e) => e.preventDefault()}
+		trapFocus={false}
+		loop={false}
+		preventScroll={false}
+		onPlaced={() => (contentState.isPositioned = true)}
+		forceMount={false}
+	>
+		{#snippet popper({ props })}
+			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
+			{#if child}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
+			{:else}
+				<div {...finalProps}>
+					{@render children?.()}
+				</div>
+			{/if}
+		{/snippet}
+	</PopperLayer>
+{/if}

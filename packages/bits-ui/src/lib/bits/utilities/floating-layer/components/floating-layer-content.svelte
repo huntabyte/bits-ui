@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useFloatingContentState } from "../useFloatingLayer.svelte.js";
+	import { useFloatingContentState } from "../use-floating-layer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { useId } from "$lib/internal/use-id.js";
 
@@ -24,6 +24,7 @@
 		style = {},
 		wrapperId = useId(),
 		customAnchor = null,
+		enabled,
 	}: ContentImplProps = $props();
 
 	const contentState = useFloatingContentState({
@@ -43,7 +44,7 @@
 		strategy: box.with(() => strategy),
 		dir: box.with(() => dir),
 		style: box.with(() => style),
-		enabled: box.with(() => false),
+		enabled: box.with(() => enabled),
 		wrapperId: box.with(() => wrapperId),
 		customAnchor: box.with(() => customAnchor),
 	});
@@ -57,6 +58,4 @@
 	);
 </script>
 
-<div {...mergedProps}>
-	{@render content?.({ props: contentState.props })}
-</div>
+{@render content?.({ props: contentState.props, wrapperProps: mergedProps })}

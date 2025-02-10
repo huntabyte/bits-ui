@@ -4,7 +4,7 @@ description: Displays options or actions relevant to a specific context or selec
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ContextMenuDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, ContextMenuDemo, ContextMenuDemoTransition, Callout } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -197,13 +197,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `ContextMenu.Root` component.
-2. Provide an `open` prop to `ContextMenu.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -211,7 +205,7 @@ To implement controlled state:
 	let myOpen = $state(false);
 </script>
 
-<ContextMenu.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<ContextMenu.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </ContextMenu.Root>
 ```
@@ -242,8 +236,10 @@ You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckb
 </script>
 
 <ContextMenu.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked })}
-		{#if checked}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
 			✅
 		{/if}
 		Notifications
@@ -303,8 +299,6 @@ You can create nested menus using the `ContextMenu.Sub` component to create comp
 </ContextMenu.Content>
 ```
 
-<!-- <ContextMenuDemoNested /> -->
-
 ## Svelte Transitions
 
 You can use the `forceMount` prop along with the `child` snippet to forcefully mount the `ContextMenu.Content` component to use Svelte Transitions or another animation library that requires more control.
@@ -316,11 +310,13 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </script>
 
 <ContextMenu.Content forceMount>
-	{#snippet child({ props, open })}
+	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
-			<div {...props} transition:fly>
-				<ContextMenu.Item>Item 1</ContextMenu.Item>
-				<ContextMenu.Item>Item 2</ContextMenu.Item>
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<ContextMenu.Item>Item 1</ContextMenu.Item>
+					<ContextMenu.Item>Item 2</ContextMenu.Item>
+				</div>
 			</div>
 		{/if}
 	{/snippet}
@@ -328,5 +324,13 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
+
+<ComponentPreviewV2 name="context-menu-demo-transition" comp="ContextMenu" containerClass="mt-4">
+
+{#snippet preview()}
+<ContextMenuDemoTransition />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

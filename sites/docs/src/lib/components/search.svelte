@@ -52,12 +52,12 @@
 		</span>
 		<span class="flex items-center gap-[1px]">
 			<kbd
-				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd sm:flex"
+				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd dark:bg-dark-10 dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)] sm:flex"
 			>
 				<span class="text-xs">⌘</span>
 			</kbd>
 			<kbd
-				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd sm:flex"
+				class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-[10px] font-medium opacity-100 shadow-kbd dark:bg-dark-10 dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)] sm:flex"
 			>
 				K
 			</kbd>
@@ -77,14 +77,14 @@
 			<Dialog.Description class="sr-only">Search for documentation</Dialog.Description>
 			<Command.Root
 				shouldFilter={false}
-				class="flex h-full w-full flex-col divide-y divide-border self-start overflow-hidden rounded-xl border border-muted bg-background"
+				class="flex h-full w-full flex-col divide-y divide-border self-start overflow-hidden rounded-xl  bg-background"
 			>
 				<Command.Input
 					bind:value={searchQuery}
 					autocomplete="off"
 					spellcheck="false"
 					type="search"
-					class="focus-override inline-flex h-input w-[296px] truncate rounded-xl bg-background px-4 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-0"
+					class="focus-override inline-flex h-input w-full truncate rounded-xl bg-background px-4 text-sm transition-colors placeholder:text-foreground-alt/50 focus:outline-none focus:ring-0"
 					placeholder="Search for something..."
 				/>
 				{#if searchQuery !== "" && results.length === 0}

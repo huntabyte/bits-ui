@@ -3,6 +3,7 @@
 	import type { NavigationMenuListProps } from "../types.js";
 	import { useNavigationMenuList } from "../navigation-menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	let {
 		id = useId(),
@@ -18,19 +19,20 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		indicatorTrackRef: box(null),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, listState.props));
-	const indicatorTrackProps = $derived(mergeProps(listState.indicatorTrackProps, {}));
+	const wrapperProps = $derived(mergeProps(listState.wrapperProps));
 </script>
 
-<div {...indicatorTrackProps}>
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
+{#if child}
+	{@render child({ props: mergedProps, wrapperProps })}
+	<Mounted bind:mounted={listState.wrapperMounted} />
+{:else}
+	<div {...wrapperProps}>
 		<ul {...mergedProps}>
 			{@render children?.()}
 		</ul>
-	{/if}
-</div>
+	</div>
+	<Mounted bind:mounted={listState.wrapperMounted} />
+{/if}

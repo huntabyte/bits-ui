@@ -1,12 +1,13 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it, vi } from "vitest";
-import { type Component, tick } from "svelte";
-import { getTestKbd, setupUserEvents } from "../utils.js";
+import type { Component } from "svelte";
+import { getTestKbd, mockBoundingClientRect, setupUserEvents, sleep } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
 import PopoverForceMountTest, {
 	type PopoverForceMountTestProps,
 } from "./popover-force-mount-test.svelte";
+import PopoverSiblingsTest from "./popover-siblings-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -16,7 +17,6 @@ function setup(
 ) {
 	const user = setupUserEvents();
 
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(component, { ...props });
 	const { getByTestId, queryByTestId } = returned;
 	const trigger = getByTestId("trigger");
@@ -30,7 +30,7 @@ async function open(props: PopoverTestProps = {}, openWith: "click" | (string & 
 	const { trigger, getByTestId, queryByTestId, user, getContent, ...returned } = setup(props);
 	expect(getContent()).toBeNull();
 	if (openWith === "click") {
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 	} else {
 		trigger.focus();
 		await user.keyboard(openWith);
@@ -42,7 +42,6 @@ async function open(props: PopoverTestProps = {}, openWith: "click" | (string & 
 
 describe("popover", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(PopoverTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});
@@ -75,22 +74,35 @@ describe("popover", () => {
 		expect(getContent()).toBeNull();
 	});
 
-	it("should close on outside click by default", async () => {
+	it("should close on outside click", async () => {
 		const mockFn = vi.fn();
-		const { user, getContent, getByTestId } = await open({
-			contentProps: {
-				onInteractOutside: mockFn,
-			},
+		const { getByTestId, user } = await open({
+			contentProps: { onInteractOutside: mockFn },
 		});
+
 		const outside = getByTestId("outside");
+
+		mockBoundingClientRect();
 		await user.click(outside);
-		expect(mockFn).toHaveBeenCalledTimes(1);
+
+		expect(mockFn).toHaveBeenCalledOnce();
+	});
+
+	it("should not close when clicking within bounds", async () => {
+		const mockFn = vi.fn();
+		const { user, content } = await open({
+			contentProps: { onInteractOutside: mockFn },
+		});
+
+		await user.click(content);
+
+		expect(mockFn).not.toHaveBeenCalled();
 	});
 
 	it("should close when the close button is clicked", async () => {
 		const { user, getContent, getByTestId } = await open();
 		const close = getByTestId("close");
-		await user.click(close);
+		await user.pointerDownUp(close);
 		expect(getContent()).toBeNull();
 	});
 
@@ -153,7 +165,7 @@ describe("popover", () => {
 			},
 		});
 		const outside = getByTestId("outside");
-		await user.click(outside);
+		await user.pointerDownUp(outside);
 		expect(getContent()).not.toBeNull();
 	});
 
@@ -186,8 +198,26 @@ describe("popover", () => {
 			PopoverForceMountTest
 		);
 		expect(queryByTestId("content")).toBeNull();
-		await user.click(trigger);
+		await user.pointerDownUp(trigger);
 		const content = getByTestId("content");
 		expect(content).toBeVisible();
+	});
+
+	it("should correctly handle focus when closing one popover by clicking another popover's trigger", async () => {
+		const user = setupUserEvents();
+		const { getByText, queryByText } = render(PopoverSiblingsTest);
+		await user.pointerDownUp(getByText("open-1"));
+		expect(queryByText("content-1")).toBeInTheDocument();
+		mockBoundingClientRect();
+		await user.pointerDownUp(getByText("open-2"));
+		await sleep(100);
+		await waitFor(() => expect(queryByText("content-1")).toBeNull());
+		expect(queryByText("content-2")).toBeInTheDocument();
+		expect(queryByText("close-2")).toHaveFocus();
+		mockBoundingClientRect({ top: 400, left: 400, right: 400, bottom: 400 });
+		await user.pointerDownUp(getByText("open-3"));
+		await sleep(100);
+		await waitFor(() => expect(queryByText("content-2")).toBeNull());
+		expect(queryByText("close-3")).toHaveFocus();
 	});
 });

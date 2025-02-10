@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { TextSelectionLayerImplProps } from "./types.js";
-	import { useTextSelectionLayer } from "./useTextSelectionLayer.svelte.js";
+	import { useTextSelectionLayer } from "./use-text-selection-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {

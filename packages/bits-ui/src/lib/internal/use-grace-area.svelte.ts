@@ -1,18 +1,26 @@
 import { type Getter, executeCallbacks } from "svelte-toolbelt";
+import { on } from "svelte/events";
+import { watch } from "runed";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
-import { createEventHook } from "./create-event-hook.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
-import { addEventListener } from "./events.js";
-import type { Side } from "$lib/bits/utilities/floating-layer/useFloatingLayer.svelte.js";
+import type { Side } from "$lib/bits/utilities/floating-layer/use-floating-layer.svelte.js";
+interface UseGraceAreaOpts {
+	enabled: Getter<boolean>;
+	triggerNode: Getter<HTMLElement | null>;
+	contentNode: Getter<HTMLElement | null>;
+	onPointerExit: () => void;
+	setIsPointerInTransit?: (value: boolean) => void;
+}
+export function useGraceArea(opts: UseGraceAreaOpts) {
+	const enabled = $derived(opts.enabled());
 
-export function useGraceArea(
-	triggerNode: Getter<HTMLElement | null>,
-	contentNode: Getter<HTMLElement | null>
-) {
-	const isPointerInTransit = boxAutoReset(false, 300);
+	const isPointerInTransit = boxAutoReset(false as boolean, 300, (value) => {
+		if (enabled) {
+			opts.setIsPointerInTransit?.(value);
+		}
+	});
 
 	let pointerGraceArea = $state<Polygon | null>(null);
-	const pointerExit = createEventHook<void>();
 
 	function handleRemoveGraceArea() {
 		pointerGraceArea = null;
@@ -31,53 +39,54 @@ export function useGraceArea(
 		isPointerInTransit.current = true;
 	}
 
-	$effect(() => {
-		const trigger = triggerNode();
-		const content = contentNode();
-		if (!trigger || !content) return;
+	watch(
+		[opts.triggerNode, opts.contentNode, opts.enabled],
+		([triggerNode, contentNode, enabled]) => {
+			if (!triggerNode || !contentNode || !enabled) return;
+			const handleTriggerLeave = (e: PointerEvent) => {
+				handleCreateGraceArea(e, contentNode!);
+			};
 
-		const handleTriggerLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, content!);
-		};
+			const handleContentLeave = (e: PointerEvent) => {
+				handleCreateGraceArea(e, triggerNode!);
+			};
 
-		const handleContentLeave = (e: PointerEvent) => {
-			handleCreateGraceArea(e, trigger!);
-		};
-
-		const unsub = executeCallbacks(
-			addEventListener(trigger, "pointerleave", handleTriggerLeave),
-			addEventListener(content, "pointerleave", handleContentLeave)
-		);
-		return unsub;
-	});
-
-	$effect(() => {
-		if (!pointerGraceArea) return;
-
-		function handleTrackPointerGrace(e: PointerEvent) {
-			if (!pointerGraceArea) return;
-			const target = e.target;
-			if (!isElement(target)) return;
-			const trigger = triggerNode();
-			const content = contentNode();
-			const pointerPosition = { x: e.clientX, y: e.clientY };
-			const hasEnteredTarget = trigger?.contains(target) || content?.contains(target);
-			const isPointerOutsideGraceArea = !isPointInPolygon(pointerPosition, pointerGraceArea);
-
-			if (hasEnteredTarget) {
-				handleRemoveGraceArea();
-			} else if (isPointerOutsideGraceArea) {
-				handleRemoveGraceArea();
-				pointerExit.trigger();
-			}
+			return executeCallbacks(
+				on(triggerNode, "pointerleave", handleTriggerLeave),
+				on(contentNode, "pointerleave", handleContentLeave)
+			);
 		}
+	);
 
-		return addEventListener(document, "pointermove", handleTrackPointerGrace);
-	});
+	watch(
+		() => pointerGraceArea,
+		() => {
+			const handleTrackPointerGrace = (e: PointerEvent) => {
+				if (!pointerGraceArea) return;
+				const target = e.target;
+				if (!isElement(target)) return;
+				const pointerPosition = { x: e.clientX, y: e.clientY };
+				const hasEnteredTarget =
+					opts.triggerNode()?.contains(target) || opts.contentNode()?.contains(target);
+				const isPointerOutsideGraceArea = !isPointInPolygon(
+					pointerPosition,
+					pointerGraceArea
+				);
+
+				if (hasEnteredTarget) {
+					handleRemoveGraceArea();
+				} else if (isPointerOutsideGraceArea) {
+					handleRemoveGraceArea();
+					opts.onPointerExit();
+				}
+			};
+
+			return on(document, "pointermove", handleTrackPointerGrace);
+		}
+	);
 
 	return {
 		isPointerInTransit,
-		onPointerExit: pointerExit.on,
 	};
 }
 
@@ -105,34 +114,35 @@ function getExitSideFromRect(point: Point, rect: DOMRect): Side {
 }
 
 function getPaddedExitPoints(exitPoint: Point, exitSide: Side, padding = 5) {
-	const paddedExitPoints: Point[] = [];
+	// we extend the tip of the exit point to make it easier to navigate without
+	// a minor jitter triggering a pointer exit
+	const tipPadding = padding * 1.5;
 	switch (exitSide) {
 		case "top":
-			paddedExitPoints.push(
+			return [
 				{ x: exitPoint.x - padding, y: exitPoint.y + padding },
-				{ x: exitPoint.x + padding, y: exitPoint.y + padding }
-			);
-			break;
+				{ x: exitPoint.x, y: exitPoint.y - tipPadding },
+				{ x: exitPoint.x + padding, y: exitPoint.y + padding },
+			];
 		case "bottom":
-			paddedExitPoints.push(
+			return [
 				{ x: exitPoint.x - padding, y: exitPoint.y - padding },
-				{ x: exitPoint.x + padding, y: exitPoint.y - padding }
-			);
-			break;
-		case "left":
-			paddedExitPoints.push(
+				{ x: exitPoint.x, y: exitPoint.y + tipPadding },
 				{ x: exitPoint.x + padding, y: exitPoint.y - padding },
-				{ x: exitPoint.x + padding, y: exitPoint.y + padding }
-			);
-			break;
+			];
+		case "left":
+			return [
+				{ x: exitPoint.x + padding, y: exitPoint.y - padding },
+				{ x: exitPoint.x - tipPadding, y: exitPoint.y },
+				{ x: exitPoint.x + padding, y: exitPoint.y + padding },
+			];
 		case "right":
-			paddedExitPoints.push(
+			return [
 				{ x: exitPoint.x - padding, y: exitPoint.y - padding },
-				{ x: exitPoint.x - padding, y: exitPoint.y + padding }
-			);
-			break;
+				{ x: exitPoint.x + tipPadding, y: exitPoint.y },
+				{ x: exitPoint.x - padding, y: exitPoint.y + padding },
+			];
 	}
-	return paddedExitPoints;
 }
 
 function getPointsFromRect(rect: DOMRect) {

@@ -12,7 +12,6 @@ import {
 } from "./extended-types/shared/index.js";
 import { ToggleRootStateDataAttr } from "./extended-types/toggle/index.js";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -101,7 +100,6 @@ const group = createApiSchema<ToolbarGroupPropsWithoutHTML>({
 			definition: OnChangeStringOrArrayProp,
 			description: "A callback function called when the value changes.",
 		}),
-		controlledValue: controlledValueProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

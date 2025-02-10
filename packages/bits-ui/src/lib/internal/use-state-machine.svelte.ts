@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { box } from "svelte-toolbelt";
 
 interface Machine<S> {
@@ -7,11 +8,7 @@ type MachineState<T> = keyof T;
 type MachineEvent<T> = keyof UnionToIntersection<T[keyof T]>;
 
 // 🤯 https://fettblog.eu/typescript-union-to-intersection/
-// eslint-disable-next-line ts/no-explicit-any
-type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (
-	x: infer R
-	// eslint-disable-next-line ts/no-explicit-any
-) => any
+type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x: infer R) => any
 	? R
 	: never;
 

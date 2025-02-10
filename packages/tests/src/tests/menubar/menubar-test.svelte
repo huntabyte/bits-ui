@@ -2,14 +2,16 @@
 	import { Menubar } from "bits-ui";
 	import MenubarMenu from "./menubar-menu-test.svelte";
 
-	type $$Props = Menubar.RootProps;
+	let restProps: Menubar.RootProps = $props();
 </script>
 
 <main>
-	<Menubar.Root {...$$restProps} data-testid="root">
+	<button data-testid="previous-button">previous button</button>
+	<Menubar.Root {...restProps} data-testid="root">
 		<MenubarMenu id="1" />
 		<MenubarMenu id="2" />
 		<MenubarMenu id="3" />
 		<MenubarMenu id="4" />
 	</Menubar.Root>
+	<button data-testid="next-button">next button</button>
 </main>

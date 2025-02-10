@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CommandItemProps } from "../types.js";
-	import { getCommandGroupContainerContext, useCommandItem } from "../command.svelte.js";
+	import { useCommandItem } from "../command.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { useId } from "$lib/internal/use-id.js";
 
@@ -18,8 +18,6 @@
 		...restProps
 	}: CommandItemProps = $props();
 
-	const group = getCommandGroupContainerContext(null);
-
 	const itemState = useCommandItem({
 		id: box.with(() => id),
 		ref: box.with(
@@ -31,7 +29,6 @@
 		onSelect: box.with(() => onSelect),
 		forceMount: box.with(() => forceMount),
 		keywords: box.with(() => keywords),
-		group,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));

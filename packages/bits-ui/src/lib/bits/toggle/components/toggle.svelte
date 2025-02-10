@@ -12,7 +12,6 @@
 		onPressedChange = noop,
 		disabled = false,
 		type = "button",
-		controlledPressed = false,
 		children,
 		child,
 		...restProps
@@ -22,12 +21,8 @@
 		pressed: box.with(
 			() => pressed,
 			(v) => {
-				if (controlledPressed) {
-					onPressedChange(v);
-				} else {
-					pressed = v;
-					onPressedChange(v);
-				}
+				pressed = v;
+				onPressedChange(v);
 			}
 		),
 		disabled: box.with(() => disabled ?? false),
@@ -42,9 +37,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, pressed: toggleState.pressed.current })}
+	{@render child({ props: mergedProps, ...toggleState.snippetProps })}
 {:else}
 	<button {...mergedProps}>
-		{@render children?.({ pressed: toggleState.pressed.current })}
+		{@render children?.(toggleState.snippetProps)}
 	</button>
 {/if}
