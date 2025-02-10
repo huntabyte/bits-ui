@@ -42,7 +42,8 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	 * with `1` being a perfect match, and `0` being no match, resulting
 	 * in the item being hidden entirely.
 	 *
-	 * By default, it will use the `command-score` package to score.
+	 * By default, it will use the `computeCommandScore` function exported
+	 * by this package to compute the score.
 	 */
 	filter?: (value: string, search: string, keywords?: string[]) => number;
 
