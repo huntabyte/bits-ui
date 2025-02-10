@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.92
+
+### Patch Changes
+
+-   feat: export `computeCommandScore` for use in custom Command filters ([#1127](https://github.com/huntabyte/bits-ui/pull/1127))
+
 ## 1.0.0-next.91
 
 ### Patch Changes
