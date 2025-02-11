@@ -73,7 +73,7 @@
 			>
 				Getting started
 				<CaretDown
-					class="duration-[250] relative top-[1px] ml-1 size-3 transition-transform group-data-[state=open]:rotate-180"
+					class="relative top-[1px] ml-1 size-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
 					aria-hidden="true"
 				/>
 			</NavigationMenu.Trigger>
@@ -121,7 +121,7 @@
 			>
 				Components
 				<CaretDown
-					class="duration-[250] relative top-[1px] ml-1 size-3 transition-transform group-data-[state=open]:rotate-180"
+					class="relative top-[1px] ml-1 size-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
 					aria-hidden="true"
 				/>
 			</NavigationMenu.Trigger>
@@ -159,7 +159,7 @@
 	<div class="absolute left-0 top-full flex w-full justify-center perspective-[2000px]">
 		<NavigationMenu.Viewport
 			forceMount
-			class="text-popover-foreground relative mt-2.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border bg-background shadow-lg transition-[width,_height] duration-300 data-[state=closed]:hidden data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn sm:w-[var(--bits-navigation-menu-viewport-width)]"
+			class="text-popover-foreground relative mt-2.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border bg-background shadow-lg transition-[width,_height] duration-200 data-[state=closed]:hidden data-[state=closed]:animate-scaleOut data-[state=open]:animate-scaleIn sm:w-[var(--bits-navigation-menu-viewport-width)]"
 		/>
 	</div>
 </NavigationMenu.Root>
