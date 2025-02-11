@@ -10,10 +10,10 @@
 	};
 
 	type Props = {
-		disabled: boolean;
-		items: Item[];
-		value: string[];
-		onValueChange: (v: string[]) => void;
+		disabled?: boolean;
+		items?: Item[];
+		value?: string[];
+		onValueChange?: (v: string[]) => void;
 	} & Omit<BitsPrimitiveDivAttributes, "value">;
 
 	let { disabled = false, items = [], value: valueProp = [], ...restProps }: Props = $props();

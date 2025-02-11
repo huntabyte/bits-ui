@@ -1,15 +1,7 @@
-<script lang="ts" module>
-	import { AlertDialog, type WithoutChildrenOrChild } from "bits-ui";
-	export type AlertDialogTestProps = AlertDialog.RootProps & {
-		contentProps?: Omit<AlertDialog.ContentProps, "asChild" | "child" | "children">;
-		portalProps?: AlertDialog.PortalProps;
-		titleProps?: WithoutChildrenOrChild<AlertDialog.TitleProps>;
-		descriptionProps?: WithoutChildrenOrChild<AlertDialog.DescriptionProps>;
-		withOpenCheck?: boolean;
-	};
-</script>
-
 <script lang="ts">
+	import { AlertDialog } from "bits-ui";
+	import type { AlertDialogTestProps } from "./alert-dialog-test.svelte";
+
 	let {
 		open = false,
 		contentProps = {},

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion } from "bits-ui";
+	import { Accordion, type AccordionRootSingleProps } from "bits-ui";
 
 	type Item = {
 		value: string;
@@ -13,15 +13,13 @@
 		disabled = false,
 		items = [],
 		value = "",
-	}: Omit<
-		Accordion.RootProps & {
-			items: Item[];
-		},
-		"type"
-	> = $props();
+		...restProps
+	}: Omit<AccordionRootSingleProps, "type"> & {
+		items: Item[];
+	} = $props();
 </script>
 
-<Accordion.Root type="single" value={value as string} {disabled} data-testid="root">
+<Accordion.Root {value} {disabled} data-testid="root" type="single" {...restProps}>
 	{#each items as { value, title, disabled, content, level }}
 		<Accordion.Item {value} {disabled} data-testid="{value}-item">
 			<Accordion.Header {level} data-testid="{value}-header">

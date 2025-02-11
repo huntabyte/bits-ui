@@ -89,6 +89,12 @@ export type AccordionRootPropsWithoutHTML =
 export type AccordionRootProps = AccordionRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, AccordionRootPropsWithoutHTML>;
 
+export type AccordionRootSingleProps = AccordionRootSinglePropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, AccordionRootSinglePropsWithoutHTML>;
+
+export type AccordionMultipleProps = AccordionRootMultiplePropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, AccordionRootMultiplePropsWithoutHTML>;
+
 export type AccordionTriggerPropsWithoutHTML = WithChild;
 
 export type AccordionTriggerProps = AccordionTriggerPropsWithoutHTML &

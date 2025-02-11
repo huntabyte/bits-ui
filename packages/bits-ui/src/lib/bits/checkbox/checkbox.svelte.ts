@@ -2,7 +2,12 @@ import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	OnChangeFn,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 
@@ -15,6 +20,7 @@ type CheckboxGroupStateProps = WithRefProps<
 		name: string | undefined;
 		disabled: boolean;
 		required: boolean;
+		onValueChange: OnChangeFn<string[]>;
 	}> &
 		WritableBoxedValues<{
 			value: string[];
@@ -32,6 +38,7 @@ class CheckboxGroupState {
 		if (!checkboxValue) return;
 		if (!this.opts.value.current.includes(checkboxValue)) {
 			this.opts.value.current.push(checkboxValue);
+			this.opts.onValueChange.current(this.opts.value.current);
 		}
 	}
 
@@ -40,6 +47,7 @@ class CheckboxGroupState {
 		const index = this.opts.value.current.indexOf(checkboxValue);
 		if (index === -1) return;
 		this.opts.value.current.splice(index, 1);
+		this.opts.onValueChange.current(this.opts.value.current);
 	}
 
 	props = $derived.by(

@@ -29,8 +29,12 @@
 		name: box.with(() => name),
 		value: box.with(
 			() => value,
-			(v) => onValueChange(v)
+			(v) => {
+				value = v;
+				onValueChange(v);
+			}
 		),
+		onValueChange: box.with(() => onValueChange),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));

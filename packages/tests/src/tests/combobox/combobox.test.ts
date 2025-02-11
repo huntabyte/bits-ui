@@ -1,6 +1,6 @@
 import { render, waitFor } from "@testing-library/svelte";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
+import { describe, it, vi } from "vitest";
 import { type Component, tick } from "svelte";
 import {
 	type AnyFn,
@@ -262,6 +262,16 @@ describe("combobox - single", () => {
 		expect(valueBinding).toHaveTextContent("1");
 		await user.click(valueBinding);
 		expect(valueBinding).toHaveTextContent("empty");
+	});
+
+	it("should call `onValueChange` when the value changes", async () => {
+		const mock = vi.fn();
+		const t = await openSingle({
+			onValueChange: mock,
+		});
+		const [item1] = getItems(t.getByTestId);
+		await t.user.click(item1);
+		expect(mock).toHaveBeenCalledWith("1");
 	});
 
 	it("should select items when clicked", async () => {
@@ -583,6 +593,14 @@ describe("combobox - multiple", () => {
 		expect(valueBinding.textContent).toEqual("1,2");
 		await user.click(valueBinding);
 		expect(valueBinding.textContent).toEqual("empty");
+	});
+
+	it("should call `onValueChange` when the value changes", async () => {
+		const mock = vi.fn();
+		const t = await openMultiple({ value: ["1", "2"], onValueChange: mock });
+		const [item1] = getItems(t.getByTestId);
+		await t.user.click(item1);
+		expect(mock).toHaveBeenCalledWith(["2"]);
 	});
 
 	it("should select items when clicked", async () => {
