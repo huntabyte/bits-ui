@@ -49,6 +49,7 @@ const NAVIGATION_MENU_LIST_ATTR = "data-navigation-menu-list";
 const NAVIGATION_MENU_TRIGGER_ATTR = "data-navigation-menu-trigger";
 const NAVIGATION_MENU_CONTENT_ATTR = "data-navigation-menu-content";
 const NAVIGATION_MENU_LINK_ATTR = "data-navigation-menu-link";
+const NAVIGATION_MENU_VIEWPORT_ATTR = "data-navigation-menu-viewport";
 
 type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 	dir: Direction;
@@ -947,6 +948,7 @@ class NavigationMenuViewportState {
 					"--bits-navigation-menu-viewport-width": this.viewportWidth,
 					"--bits-navigation-menu-viewport-height": this.viewportHeight,
 				},
+				[NAVIGATION_MENU_VIEWPORT_ATTR]: "",
 				onpointerenter: this.context.onContentEnter,
 				onpointerleave: this.context.onContentLeave,
 			}) as const

@@ -5,7 +5,7 @@ navLabel: New
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, NavigationMenuDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount } from '$lib/components/index.js'
 	export let schemas;
 </script>
 
@@ -247,5 +247,28 @@ Combining these with `position: absolute;` allows you to create smooth overlappi
 	}
 }
 ```
+
+### Force Mounting
+
+You may wish for the links in the Navigation Menu to persist in the DOM, regardless of whether the menu is open or not. This is particularly useful for SEO purposes. You can achieve this by using the `forceMount` prop on the `NavigationMenu.Content` and `NavigationMenu.Viewport` components.
+
+<Callout type="warning">
+
+**Note:** Using `forceMount` requires you to manage the visibility of the elements yourself, using the `data-state` attributes on the `NavigationMenu.Content` and `NavigationMenu.Viewport` components.
+
+</Callout>
+
+```svelte /forceMount/
+<NavigationMenu.Content forceMount></NavigationMenu.Content>
+<NavigationMenu.Viewport forceMount></NavigationMenu.Viewport>
+```
+
+<ComponentPreviewV2 name="navigation-menu-demo-force-mount" comp="Navigation Menu">
+
+{#snippet preview()}
+<NavigationMenuDemoForceMount />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

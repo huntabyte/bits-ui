@@ -36,6 +36,7 @@ export { default as SelectDemoMultiple } from "./select-demo-multiple.svelte";
 export { default as SelectDemoTransition } from "./select-demo-transition.svelte";
 export { default as MenubarDemo } from "./menubar-demo.svelte";
 export { default as NavigationMenuDemo } from "./navigation-menu-demo.svelte";
+export { default as NavigationMenuDemoForceMount } from "./navigation-menu-demo-force-mount.svelte";
 export { default as PaginationDemo } from "./pagination-demo.svelte";
 export { default as PinInputDemo } from "./pin-input-demo.svelte";
 export { default as PopoverDemo } from "./popover-demo.svelte";
