@@ -76,7 +76,7 @@ class CommandRootState {
 	_commandState = $state<CommandState>(null!);
 
 	#snapshot() {
-		return this._commandState;
+		return $state.snapshot(this._commandState);
 	}
 
 	#scheduleUpdate() {
@@ -91,7 +91,7 @@ class CommandRootState {
 
 			if (hasStateChanged) {
 				this.commandState = currentState;
-				this.opts.onStateChange?.current?.($state.snapshot(currentState));
+				this.opts.onStateChange?.current?.(currentState);
 			}
 		});
 	}
