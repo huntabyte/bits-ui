@@ -5,7 +5,7 @@ description: Provides additional information or context when users hover over or
 
 <script>
 	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="tooltip-demo" comp="Tooltip">

@@ -5,7 +5,7 @@ description: A control element that switches between two states, providing a bin
 
 <script>
 	import { APISection, ComponentPreviewV2, ToggleDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="toggle-demo" comp="Toggle">

@@ -5,7 +5,7 @@ description: Displays frequently used actions or tools in a compact, easily acce
 
 <script>
 	import { APISection, ComponentPreviewV2, ToolbarDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="toolbar-demo" comp="Toolbar">

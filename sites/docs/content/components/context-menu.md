@@ -5,7 +5,7 @@ description: Displays options or actions relevant to a specific context or selec
 
 <script>
 	import { APISection, ComponentPreviewV2, ContextMenuDemo, ContextMenuDemoTransition, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="context-menu-demo" comp="ContextMenu">

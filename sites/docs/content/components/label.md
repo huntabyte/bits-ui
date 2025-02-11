@@ -5,7 +5,7 @@ description: Identifies or describes associated UI elements.
 
 <script>
 	import { APISection, ComponentPreviewV2, LabelDemo } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="label-demo" comp="Label">

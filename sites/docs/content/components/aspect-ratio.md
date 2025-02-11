@@ -5,7 +5,7 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 
 <script>
 	import { APISection, ComponentPreviewV2, AspectRatioDemo } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="aspect-ratio-demo" comp="Aspect Ratio" nonExpandableItems={["App.svelte"]}>

@@ -5,7 +5,7 @@ description: A toggle control enabling users to switch between "on" and "off" st
 
 <script>
 	import { APISection, ComponentPreviewV2, SwitchDemo, SwitchDemoCustom, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="switch-demo" comp="Switch">

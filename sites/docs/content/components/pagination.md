@@ -5,7 +5,7 @@ description: Facilitates navigation between pages.
 
 <script>
 	import { APISection, ComponentPreviewV2, PaginationDemo, Callout } from '$lib/components/index.js'
-	export let schemas
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="pagination-demo" comp="Pagination">

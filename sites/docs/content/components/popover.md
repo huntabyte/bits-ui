@@ -5,7 +5,7 @@ description: Display supplementary content or information when users interact wi
 
 <script>
 	import { APISection, ComponentPreviewV2, PopoverDemo, PopoverDemoTransition, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="popover-demo" comp="Popover">

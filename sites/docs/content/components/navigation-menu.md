@@ -6,7 +6,7 @@ navLabel: New
 
 <script>
 	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="navigation-menu-demo" comp="Navigation Menu">

@@ -5,7 +5,7 @@ description: Provides a consistent scroll area across platforms.
 
 <script>
 	import { APISection, ComponentPreviewV2, ScrollAreaDemo, ScrollAreaDemoCustom } from '$lib/components'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="scroll-area-demo" comp="Scroll Area">

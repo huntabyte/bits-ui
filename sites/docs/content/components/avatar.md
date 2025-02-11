@@ -5,7 +5,7 @@ description: Represents a user or entity with a recognizable image or placeholde
 
 <script>
 	import { APISection, ComponentPreviewV2, AvatarDemo } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="avatar-demo" comp="Avatar">

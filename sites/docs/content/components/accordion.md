@@ -5,7 +5,7 @@ description: Organizes content into collapsible sections, allowing users to focu
 
 <script>
 	import { APISection, ComponentPreviewV2, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, Callout } from '$lib/components/index.js'
-	export let schemas
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="accordion-demo" comp="Accordion">

@@ -5,7 +5,7 @@ description: Allows users to select a single option from a list of mutually excl
 
 <script>
 	import { APISection, ComponentPreviewV2, RadioGroupDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="radio-group-demo" comp="RadioGroup">
