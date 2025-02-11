@@ -82,9 +82,9 @@
 				forceMount
 			>
 				<ul
-					class="m-0 grid list-none gap-x-2.5 p-[22px] sm:w-[600px] sm:grid-flow-col sm:grid-rows-3"
+					class="m-0 grid list-none gap-x-2.5 p-3 sm:w-[600px] sm:grid-flow-col sm:grid-rows-3 sm:p-[22px]"
 				>
-					<li class="row-span-3">
+					<li class="row-span-3 mb-2 sm:mb-0">
 						<NavigationMenu.Link
 							href="/"
 							class="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
@@ -129,7 +129,9 @@
 				forceMount
 				class="absolute left-0 top-0 w-full data-[state=closed]:hidden data-[motion=from-end]:animate-enterFromRight data-[motion=from-start]:animate-enterFromLeft data-[motion=to-end]:animate-exitToRight data-[motion=to-start]:animate-exitToLeft sm:w-auto"
 			>
-				<ul class="grid w-[400px] gap-3 p-6 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+				<ul
+					class="grid gap-3 p-3 sm:w-[400px] sm:p-6 md:w-[500px] md:grid-cols-2 lg:w-[600px]"
+				>
 					{#each components as component (component.title)}
 						{@render ListItem({
 							href: component.href,
@@ -145,7 +147,8 @@
 				class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"
 				href="/docs"
 			>
-				Documentation
+				<span class="hidden sm:inline"> Documentation </span>
+				<span class="inline sm:hidden"> Docs </span>
 			</NavigationMenu.Link>
 		</NavigationMenu.Item>
 		<NavigationMenu.Indicator
