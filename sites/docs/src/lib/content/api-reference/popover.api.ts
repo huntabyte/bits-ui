@@ -13,6 +13,7 @@ import {
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
@@ -87,6 +88,28 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "popover-content",
 			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-popover-content-transform-origin",
+			description: "The transform origin of the popover content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-content-available-width",
+			description: "The available width of the popover content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-content-available-height",
+			description: "The available height of the popover content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-anchor-width",
+			description: "The width of the popover trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-anchor-height",
+			description: "The height of the popover trigger element.",
 		}),
 	],
 });
