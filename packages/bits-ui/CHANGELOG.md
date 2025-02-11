@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.94
+
+### Patch Changes
+
+-   fix: `onStateChange` of `Command.Root` not firing after initial mount ([#1138](https://github.com/huntabyte/bits-ui/pull/1138))
+
 ## 1.0.0-next.93
 
 ### Patch Changes
