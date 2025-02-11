@@ -6,7 +6,7 @@ description: Enables users to input specific dates within a designated field.
 <script>
 	import { CalendarDateTime, CalendarDate, now, getLocalTimeZone, parseDate, today } from "@internationalized/date";
 	import { APISection, ComponentPreviewV2, DateFieldDemo, DateFieldDemoCustom, DemoContainer, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="date-field-demo" comp="Date Field">

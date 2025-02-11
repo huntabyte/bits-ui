@@ -5,7 +5,7 @@ description: Conceals or reveals content sections, enhancing space utilization a
 
 <script>
 	import { APISection, ComponentPreviewV2, CollapsibleDemo, CollapsibleDemoTransitions, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="collapsible-demo" comp="Collapsible">

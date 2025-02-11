@@ -5,7 +5,7 @@ description: Groups multiple toggle controls, allowing users to enable one or mu
 
 <script>
 	import { APISection, ComponentPreviewV2, ToggleGroupDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="toggle-group-demo" comp="ToggleGroup">

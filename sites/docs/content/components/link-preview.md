@@ -5,7 +5,7 @@ description: Displays a summarized preview of a linked content's details or info
 
 <script>
 	import { APISection, ComponentPreviewV2, LinkPreviewDemo, LinkPreviewDemoTransition, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="link-preview-demo" comp="LinkPreview">

@@ -5,7 +5,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 
 <script>
 	import { APISection, ComponentPreviewV2, ComboboxDemo, ComboboxDemoTransition, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="combobox-demo" comp="Combobox">
@@ -342,7 +342,7 @@ When using this component, you'll need to handle the positioning of the content 
 
 ## Custom Anchor
 
-By default, the `Combobox.Content` is anchored to the `Combobox.Trigger` component, which determines where the content is positioned.
+By default, the `Combobox.Content` is anchored to the `Combobox.Input` component, which determines where the content is positioned.
 
 If you wish to instead anchor the content to a different element, you can pass either a selector string or an `HTMLElement` to the `customAnchor` prop of the `Combobox.Content` component.
 

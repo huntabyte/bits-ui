@@ -5,7 +5,7 @@ description: Allows users to select a value from a continuous range by sliding a
 
 <script>
 	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="slider-demo" comp="Slider">

@@ -5,7 +5,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 
 <script>
 	import { APISection, ComponentPreviewV2, CalendarDemo, Callout } from '$lib/components'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="calendar-demo" comp="Calendar">

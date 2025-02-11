@@ -5,7 +5,7 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 
 <script>
 	import { APISection, ComponentPreviewV2, CheckboxDemo, CheckboxDemoCustom, CheckboxDemoGroup, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="checkbox-demo" comp="Checkbox">

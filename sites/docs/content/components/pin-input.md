@@ -6,7 +6,7 @@ navLabel: New
 
 <script>
 	import { APISection, ComponentPreviewV2, PinInputDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="pin-input-demo" comp="PinInput">

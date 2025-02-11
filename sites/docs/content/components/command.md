@@ -6,7 +6,7 @@ navLabel: New
 
 <script>
 	import { APISection, ComponentPreviewV2, CommandDemo, CommandDemoDialog, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="command-demo" comp="Command">

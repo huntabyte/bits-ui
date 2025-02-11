@@ -5,7 +5,7 @@ description: Enables users to choose from a list of options presented in a dropd
 
 <script>
 	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, Callout } from '$lib/components'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="select-demo" comp="Select">

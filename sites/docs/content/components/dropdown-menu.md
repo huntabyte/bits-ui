@@ -5,7 +5,7 @@ description: Displays a menu of items that users can select from when triggered.
 
 <script>
 	import { APISection, ComponentPreviewV2, DropdownMenuDemo, DropdownMenuDemoTransition, Callout } from '$lib/components'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="dropdown-menu-demo" comp="DropdownMenu">

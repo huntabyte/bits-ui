@@ -5,7 +5,7 @@ description: Organizes content into distinct sections, allowing users to switch 
 
 <script>
 	import { APISection, ComponentPreviewV2, TabsDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="tabs-demo" comp="Tabs">

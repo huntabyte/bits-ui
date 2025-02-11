@@ -5,7 +5,7 @@ description: A modal window presenting content or seeking user input without nav
 
 <script>
 	import { APISection, ComponentPreviewV2, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="dialog-demo" comp="Dialog">

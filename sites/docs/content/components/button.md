@@ -5,7 +5,7 @@ description: A component that if passed a `href` prop will render an anchor elem
 
 <script>
 	import { APISection, ComponentPreviewV2, ButtonDemo } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="button-demo" comp="Avatar" nonExpandableItems={["App.svelte"]}>
