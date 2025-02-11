@@ -45,6 +45,14 @@
 		onStateChange: box.with(() => onStateChange),
 	});
 
+	export const updateSelectedToIndex: (typeof rootState)["updateSelectedToIndex"] = (i) =>
+		rootState.updateSelectedToIndex(i);
+	export const updateSelectedByGroup: (typeof rootState)["updateSelectedByGroup"] = (c) =>
+		rootState.updateSelectedByGroup(c);
+	export const updateSelectedByItem: (typeof rootState)["updateSelectedByItem"] = (c) =>
+		rootState.updateSelectedByItem(c);
+	export const getNumValidItems = () => rootState.numValidItems;
+
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 

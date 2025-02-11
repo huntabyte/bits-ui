@@ -312,7 +312,7 @@ class CommandRootState {
 		});
 	}
 
-	#updateSelectedToIndex(index: number) {
+	updateSelectedToIndex(index: number) {
 		const items = this.#getValidItems();
 		const item = items[index];
 		if (item) {
@@ -320,7 +320,7 @@ class CommandRootState {
 		}
 	}
 
-	#updateSelectedByItem(change: 1 | -1) {
+	updateSelectedByItem(change: 1 | -1) {
 		const selected = this.#getSelectedItem();
 		const items = this.#getValidItems();
 		const index = items.findIndex((item) => item === selected);
@@ -342,7 +342,7 @@ class CommandRootState {
 		}
 	}
 
-	#updateSelectedByGroup(change: 1 | -1) {
+	updateSelectedByGroup(change: 1 | -1) {
 		const selected = this.#getSelectedItem();
 		let group = selected?.closest(COMMAND_GROUP_SELECTOR);
 		let item: HTMLElement | null | undefined;
@@ -358,8 +358,12 @@ class CommandRootState {
 		if (item) {
 			this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
 		} else {
-			this.#updateSelectedByItem(change);
+			this.updateSelectedByItem(change);
 		}
+	}
+
+	get numValidItems() {
+		return this.#getValidItems().length;
 	}
 
 	// keep id -> { value, keywords } mapping up to date
@@ -419,7 +423,7 @@ class CommandRootState {
 	}
 
 	#last() {
-		return this.#updateSelectedToIndex(this.#getValidItems().length - 1);
+		return this.updateSelectedToIndex(this.#getValidItems().length - 1);
 	}
 
 	#next(e: BitsKeyboardEvent) {
@@ -428,9 +432,9 @@ class CommandRootState {
 		if (e.metaKey) {
 			this.#last();
 		} else if (e.altKey) {
-			this.#updateSelectedByGroup(1);
+			this.updateSelectedByGroup(1);
 		} else {
-			this.#updateSelectedByItem(1);
+			this.updateSelectedByItem(1);
 		}
 	}
 
@@ -439,13 +443,13 @@ class CommandRootState {
 
 		if (e.metaKey) {
 			// First item
-			this.#updateSelectedToIndex(0);
+			this.updateSelectedToIndex(0);
 		} else if (e.altKey) {
 			// Previous group
-			this.#updateSelectedByGroup(-1);
+			this.updateSelectedByGroup(-1);
 		} else {
 			// Previous item
-			this.#updateSelectedByItem(-1);
+			this.updateSelectedByItem(-1);
 		}
 	}
 
@@ -476,7 +480,7 @@ class CommandRootState {
 			case kbd.HOME:
 				// first item
 				e.preventDefault();
-				this.#updateSelectedToIndex(0);
+				this.updateSelectedToIndex(0);
 				break;
 			case kbd.END:
 				// last item
