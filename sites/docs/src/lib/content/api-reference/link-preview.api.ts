@@ -11,6 +11,7 @@ import {
 	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
@@ -98,6 +99,28 @@ export const content = createApiSchema<LinkPreviewContentPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "link-preview-content",
 			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-link-preview-content-transform-origin",
+			description: "The transform origin of the link preview content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-content-available-width",
+			description: "The available width of the link preview content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-content-available-height",
+			description: "The available height of the link preview content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-anchor-width",
+			description: "The width of the link preview trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-anchor-height",
+			description: "The height of the link preview trigger element.",
 		}),
 	],
 });

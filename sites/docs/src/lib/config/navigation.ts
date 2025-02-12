@@ -154,7 +154,6 @@ export const navigation: Navigation = {
 					href: "/docs/figma-file",
 					items: [],
 					icon: FigmaLogo,
-					label: "New",
 				},
 				{
 					title: "Migration Guide",
