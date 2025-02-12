@@ -2,4 +2,6 @@
 "bits-ui": major
 ---
 
-Svelte 5 pre-release. This release includes many breaking changes, bug fixes, and new features that are not possible to include in the previous release. Please see the [@next documentation](https://huntabyte-next.bits-ui.pages.dev/) for more information.
+Bits UI v1 (Svelte 5). This release includes many breaking changes, bug fixes, and new features.
+
+Please see the [Migration Guide](https://bits-ui.com/docs/migration-guide) and [Documentation](https://bits-ui.com/docs) to learn more.
