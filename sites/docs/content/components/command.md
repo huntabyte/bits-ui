@@ -254,4 +254,93 @@ If you want one of the items to get all the benefits of a link (prefetching, etc
 </Command.LinkItem>
 ```
 
+## Imperative API
+
+For more advanced use cases, such as custom keybindings, the `Command.Root` component exposes several methods for programmatic control.
+
+Access these by binding to the component:
+
+```svelte
+<script lang="ts">
+	import { Command } from "bits-ui";
+	let command: typeof Command.Root;
+</script>
+
+<Command.Root bind:this={command}>
+	<!-- ... -->
+</Command.Root>
+```
+
+### Methods
+
+#### `getValidItems()`
+
+Returns an array of valid (non-disabled, visible) command items. Useful for checking bounds before operations.
+
+```ts
+const items = command.getValidItems();
+console.log(items.length); // number of selectable items
+```
+
+#### `updateSelectedToIndex(index: number)`
+
+Sets selection to item at specified index. No-op if index is invalid.
+
+```ts
+// select third item (if it exists)
+command.updateSelectedToIndex(2);
+
+// with bounds check
+const items = command.getValidItems();
+if (index < items.length) {
+	command.updateSelectedToIndex(index);
+}
+```
+
+#### `updateSelectedByGroup(change: 1 | -1)`
+
+Moves selection to first item in next/previous group. Falls back to next/previous item if no group found.
+
+```ts
+command.updateSelectedByGroup(1); // move to next group
+command.updateSelectedByGroup(-1); // move to previous group
+```
+
+#### `updateSelectedByItem(change: 1 | -1)`
+
+Moves selection up/down relative to current item. Wraps around if `loop` option enabled.
+
+```ts
+command.updateSelectedByItem(1); // next item
+command.updateSelectedByItem(-1); // previous item
+```
+
+### Usage Example
+
+```svelte
+<script lang="ts">
+	import { Command } from "bits-ui";
+
+	let command: typeof Command.Root;
+
+	function jumpToLastItem() {
+		if (!command) return;
+		const items = command.getValidItems();
+		if (!items.length) return;
+		command.updateSelectedToIndex(items.length - 1);
+	}
+</script>
+
+<svelte:window
+	onkeydown={(e) => {
+		if (e.key === "o") {
+			jumpToLastItem();
+		}
+	}}
+/>
+<Command.Root bind:this={command}>
+	<!-- Command content -->
+</Command.Root>
+```
+
 <APISection {schemas} />

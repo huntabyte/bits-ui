@@ -19,6 +19,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
+import { noop } from "$lib/internal/noop.js";
 
 // attributes
 const COMMAND_ROOT_ATTR = "data-command-root";
@@ -141,13 +142,26 @@ class CommandRootState {
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
+	/**
+	 * Calculates score for an item based on search text and keywords.
+	 * Higher score = better match.
+	 *
+	 * @param value - Item's display text
+	 * @param keywords - Optional keywords to boost scoring
+	 * @returns Score from 0-1, where 0 = no match
+	 */
 	#score(value: string, keywords?: string[]) {
 		const filter = this.opts.filter.current ?? computeCommandScore;
 		const score = value ? filter(value, this._commandState.search, keywords) : 0;
 		return score;
 	}
 
-	#sort() {
+	/**
+	 * Sorts items and groups based on search scores.
+	 * Groups are sorted by their highest scoring item.
+	 * When no search active, selects first item.
+	 */
+	#sort(): void {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
 			// If no search and no selection yet, select first item
 			if (!this.commandState.value) this.#selectFirstItem();
@@ -179,7 +193,7 @@ class CommandRootState {
 		// Sort groups to bottom (pushes all non-grouped items to the top)
 		const listInsertionElement = this.viewportNode;
 
-		const sorted = this.#getValidItems().sort((a, b) => {
+		const sorted = this.getValidItems().sort((a, b) => {
 			const valueA = a.getAttribute("id");
 			const valueB = b.getAttribute("id");
 			const scoresA = scores.get(valueA!) ?? 0;
@@ -221,6 +235,11 @@ class CommandRootState {
 		}
 	}
 
+	/**
+	 * Sets current value and triggers re-render if cleared.
+	 *
+	 * @param value - New value to set
+	 */
 	setValue(value: string, opts?: boolean) {
 		if (value !== this.opts.value.current && value === "") {
 			afterTick(() => {
@@ -231,9 +250,12 @@ class CommandRootState {
 		this.opts.value.current = value;
 	}
 
-	#selectFirstItem() {
+	/**
+	 * Selects first non-disabled item on next tick.
+	 */
+	#selectFirstItem(): void {
 		afterTick(() => {
-			const item = this.#getValidItems().find(
+			const item = this.getValidItems().find(
 				(item) => item.getAttribute("aria-disabled") !== "true"
 			);
 			const value = item?.getAttribute(COMMAND_VALUE_ATTR);
@@ -241,7 +263,11 @@ class CommandRootState {
 		});
 	}
 
-	#filterItems() {
+	/**
+	 * Updates filtered items/groups based on search.
+	 * Recalculates scores and filtered count.
+	 */
+	#filterItems(): void {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
 			this._commandState.filtered.count = this.allItems.size;
 			return;
@@ -275,7 +301,13 @@ class CommandRootState {
 		this._commandState.filtered.count = itemCount;
 	}
 
-	#getValidItems() {
+	/**
+	 * Gets all non-disabled, visible command items.
+	 *
+	 * @returns Array of valid item elements
+	 * @remarks Exposed for direct item access and bound checking
+	 */
+	getValidItems(): HTMLElement[] {
 		const node = this.opts.ref.current;
 		if (!node) return [];
 		const validItems = Array.from(
@@ -284,7 +316,12 @@ class CommandRootState {
 		return validItems;
 	}
 
-	#getSelectedItem() {
+	/**
+	 * Gets currently selected command item.
+	 *
+	 * @returns Selected element or undefined
+	 */
+	#getSelectedItem(): HTMLElement | undefined {
 		const node = this.opts.ref.current;
 		if (!node) return;
 		const selectedNode = node.querySelector<HTMLElement>(
@@ -294,7 +331,11 @@ class CommandRootState {
 		return selectedNode;
 	}
 
-	#scrollSelectedIntoView() {
+	/**
+	 * Scrolls selected item into view.
+	 * Special handling for first items in groups.
+	 */
+	#scrollSelectedIntoView(): void {
 		afterSleep(1, () => {
 			const item = this.#getSelectedItem();
 			if (!item) return;
@@ -312,17 +353,53 @@ class CommandRootState {
 		});
 	}
 
+	/**
+	 * Sets selection to item at specified index in valid items array.
+	 * If index is out of bounds, does nothing.
+	 *
+	 * @param index - Zero-based index of item to select
+	 * @remarks
+	 * Uses `getValidItems()` to get selectable items, filtering out disabled/hidden ones.
+	 * Access valid items directly via `getValidItems()` to check bounds before calling.
+	 *
+	 * @example
+	 * // get valid items length for bounds check
+	 * const items = getValidItems()
+	 * if (index < items.length) {
+	 *   updateSelectedToIndex(index)
+	 * }
+	 */
 	updateSelectedToIndex(index: number) {
-		const items = this.#getValidItems();
+		const items = this.getValidItems();
 		const item = items[index];
 		if (item) {
 			this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
 		}
 	}
 
-	updateSelectedByItem(change: 1 | -1) {
+	/**
+	 * Updates selected item by moving up/down relative to current selection.
+	 * Handles wrapping when loop option is enabled.
+	 *
+	 * @param change - Direction to move: 1 for next item, -1 for previous item
+	 * @remarks
+	 * The loop behavior wraps:
+	 * - From last item to first when moving next
+	 * - From first item to last when moving previous
+	 *
+	 * Uses `getValidItems()` to get all selectable items, which filters out disabled/hidden items.
+	 * You can call `getValidItems()` directly to get the current valid items array.
+	 *
+	 * @example
+	 * // select next item
+	 * updateSelectedByItem(1)
+	 *
+	 * // get all valid items
+	 * const items = getValidItems()
+	 */
+	updateSelectedByItem(change: 1 | -1): void {
 		const selected = this.#getSelectedItem();
-		const items = this.#getValidItems();
+		const items = this.getValidItems();
 		const index = items.findIndex((item) => item === selected);
 
 		// Get item at this index
@@ -342,7 +419,19 @@ class CommandRootState {
 		}
 	}
 
-	updateSelectedByGroup(change: 1 | -1) {
+	/**
+	 * Moves selection to the first valid item in the next/previous group.
+	 * If no group is found, falls back to selecting the next/previous item globally.
+	 *
+	 * @param change - Direction to move: 1 for next group, -1 for previous group
+	 * @example
+	 * // move to first item in next group
+	 * updateSelectedByGroup(1)
+	 *
+	 * // move to first item in previous group
+	 * updateSelectedByGroup(-1)
+	 */
+	updateSelectedByGroup(change: 1 | -1): void {
 		const selected = this.#getSelectedItem();
 		let group = selected?.closest(COMMAND_GROUP_SELECTOR);
 		let item: HTMLElement | null | undefined;
@@ -362,13 +451,17 @@ class CommandRootState {
 		}
 	}
 
-	get numValidItems() {
-		return this.#getValidItems().length;
-	}
-
-	// keep id -> { value, keywords } mapping up to date
-	registerValue(id: string, value: string, keywords?: string[]) {
-		if (value === this.allIds.get(id)?.value) return;
+	/**
+	 * Maps item id to display value and search keywords.
+	 * Returns cleanup function to remove mapping.
+	 *
+	 * @param id - Unique item identifier
+	 * @param value - Display text
+	 * @param keywords - Optional search boost terms
+	 * @returns Cleanup function
+	 */
+	registerValue(id: string, value: string, keywords?: string[]): () => void {
+		if (value === this.allIds.get(id)?.value) return noop;
 		this.allIds.set(id, { value, keywords });
 		this._commandState.filtered.items.set(id, this.#score(value, keywords));
 
@@ -379,7 +472,15 @@ class CommandRootState {
 		};
 	}
 
-	registerItem(id: string, groupId: string | undefined) {
+	/**
+	 * Registers item in command list and its group.
+	 * Handles filtering, sorting and selection updates.
+	 *
+	 * @param id - Item identifier
+	 * @param groupId - Optional group to add item to
+	 * @returns Cleanup function that handles selection
+	 */
+	registerItem(id: string, groupId: string | undefined): () => void {
 		this.allItems.add(id);
 
 		// Track this item within the group
@@ -411,7 +512,13 @@ class CommandRootState {
 		};
 	}
 
-	registerGroup(id: string) {
+	/**
+	 * Creates empty group if not exists.
+	 *
+	 * @param id - Group identifier
+	 * @returns Cleanup function
+	 */
+	registerGroup(id: string): () => void {
 		if (!this.allGroups.has(id)) {
 			this.allGroups.set(id, new Set());
 		}
@@ -422,10 +529,21 @@ class CommandRootState {
 		};
 	}
 
+	/**
+	 * Selects last valid item.
+	 */
 	#last() {
-		return this.updateSelectedToIndex(this.#getValidItems().length - 1);
+		return this.updateSelectedToIndex(this.getValidItems().length - 1);
 	}
 
+	/**
+	 * Handles next item selection:
+	 * - Meta: Jump to last
+	 * - Alt: Next group
+	 * - Default: Next item
+	 *
+	 * @param e - Keyboard event
+	 */
 	#next(e: BitsKeyboardEvent) {
 		e.preventDefault();
 
@@ -438,6 +556,14 @@ class CommandRootState {
 		}
 	}
 
+	/**
+	 * Handles previous item selection:
+	 * - Meta: Jump to first
+	 * - Alt: Previous group
+	 * - Default: Previous item
+	 *
+	 * @param e - Keyboard event
+	 */
 	#prev(e: BitsKeyboardEvent) {
 		e.preventDefault();
 
