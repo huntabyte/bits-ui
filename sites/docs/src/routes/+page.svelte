@@ -69,9 +69,9 @@
 	</header>
 
 	<section
-		class="flex h-[calc(100svh-76px)] flex-col justify-between overflow-hidden pt-[7em] desktop:max-h-[900px]"
+		class="flex  flex-col justify-between overflow-hidden pt-[7em] desktop:max-h-[900px]"
 	>
-		<div class="mx-auto w-7/12 text-center">
+		<div class="mx-auto lg:w-7/12 text-center">
 			<a
 				href="/docs"
 				class="inline-flex gap-2 rounded-card-lg border border-border-input bg-white py-1.5 pl-3 pr-4 shadow-mini dark:border-[#F4F4F5]/20 dark:bg-[#242429]"
@@ -83,12 +83,12 @@
 				>
 			</a>
 			<h1
-				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA]"
+				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[3.25rem] lg:text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA]"
 			>
 				The headless components for Svelte
 			</h1>
 			<p
-				class="mx-auto mb-[2em] w-9/12 text-[1.125rem] font-medium leading-[144%] text-muted-foreground"
+				class="mx-auto mb-[2em] lg:w-9/12 text-[1.125rem] font-medium leading-[144%] text-muted-foreground"
 			>
 				Bits UI is a collection of headless component primitives that enable you to build
 				your own custom components.
@@ -111,7 +111,7 @@
 			</Button.Root>
 		</div>
 
-		<div class="mx-auto mt-20 grid grid-cols-2 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
+		<div class="mx-auto mt-20 grid grid-cols-1 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
 			<div class="relative hidden lg:order-1 lg:block">
 				<div class="square {$mode === 'dark' ? 'dark' : ''}"></div>
 			</div>
@@ -128,8 +128,8 @@
 	</section>
 </div>
 
-<section class="mx-auto mb-44 mt-20 w-10/12">
-	<h2 class=" mb-10 w-1/3 text-balance text-foreground">
+<section class=" mb-44 mt-20 mx-5 lg:w-10/12 lg:max-w-[1036px] lg:mx-auto ">
+	<h2 class="mb-10 lg:w-1/3 text-balance text-foreground">
 		<small
 			class="rounded-3xl border border-foreground px-2 py-[3px] text-[13px] font-medium tracking-[0.01em]"
 			><span class="mr-3 inline-block h-[10px] w-[10px] rounded-full bg-foreground/90"
@@ -140,73 +140,51 @@
 			>Main benefits of using our headless collection</span
 		>
 	</h2>
-	<div class="grid grid-cols-3 gap-x-[15px]">
-		<div class="overflow-hidden rounded-card-lg border border-border shadow-card">
-			<div class="mx-2 my-[10px] rounded-15px bg-background pb-5 pl-6 pr-2 pt-2">
-				<div class="flex items-center justify-between">
-					<h3 class="text-[17px] font-semibold -tracking-[0.01em]">Customizable</h3>
-					<div
-						class="inline-flex h-[50px] w-[50px] items-center justify-center rounded-full bg-foreground"
-					>
-						<SlidersHorizontal class="size-6 text-background" />
-					</div>
-				</div>
+	<div class="grid lg:grid-cols-3 gap-3 lg:gap-x-[15px]">
+
+		<div class="overflow-hidden rounded-card-lg border border-border shadow-card">	
+      <div class="mx-[7px] my-[9px] rounded-15px bg-background dotted_bg">		
+        <h3 class="text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-5 text-foreground">Customizable</h3>
 
 				<div class="pb-16 pt-9">
-					<div class="relative left-[18px] aspect-[388/295] w-full bg-transparent">
+					<div class="relative aspect-[354/259] w-full bg-transparent overflow-hidden ml-auto left-12">
 						<Customizable />
 					</div>
 				</div>
 
-				<div class="text-sm font-medium text-muted-foreground">
+				<div class="text-sm font-medium text-muted-foreground px-[14px] pb-4">
 					Wide range of props for customizing
 				</div>
 			</div>
 		</div>
 
-		<div class="overflow-hidden rounded-card-lg shadow-card">
-			<div class="rounded-15px bg-[#F8F8F8] pb-[30px] pl-8 pr-4 pt-[18px]">
-				<div class="flex items-center justify-between">
-					<h3 class="text-[17px] font-semibold -tracking-[0.01em]">Accessible</h3>
-					<div
-						class="inline-flex h-[50px] w-[50px] items-center justify-center rounded-full bg-foreground"
-					>
-						<Keyboard class="size-6 text-background" />
-					</div>
-				</div>
+    <div class="overflow-hidden rounded-card-lg border border-border shadow-card bg-[#F8F8F8]">	
+      <div class="px-[7px] py-[9px] bg-transparent">		
+        <h3 class="text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-5 text-foreground">Accessible</h3>
 
 				<div class="pb-16 pt-9">
-					<div class="relative left-[18px] aspect-[388/295] w-full bg-transparent">
+					<div class="relative aspect-[354/259] w-full bg-transparent overflow-hidden left-9">
 						<Accessible />
 					</div>
 				</div>
 
-				<div class="text-sm font-medium text-muted-foreground">
+				<div class="text-sm font-medium text-muted-foreground px-[14px] pb-4">
 					Components are accessible by default
 				</div>
 			</div>
 		</div>
 
-		<div class="overflow-hidden rounded-card-lg shadow-card">
-			<div class="rounded-15px bg-foreground pb-[30px] pl-8 pr-4 pt-[18px]">
-				<div class="flex items-center justify-between">
-					<h3 class="text-[17px] font-semibold -tracking-[0.01em] text-background">
-						Consistent
-					</h3>
-					<div
-						class="inline-flex h-[50px] w-[50px] items-center justify-center rounded-full bg-background"
-					>
-						<Stack class="size-6 text-foreground" />
-					</div>
-				</div>
+    <div class="overflow-hidden rounded-card-lg border border-border shadow-card bg-[#2A2A2E]">	
+      <div class="px-[7px] py-[9px] bg-transparent">		
+        <h3 class="text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-5 text-background">Consistent</h3>
 
 				<div class="pb-16 pt-9">
-					<div class="relative left-[18px] aspect-[388/295] w-full bg-transparent">
+					<div class="relative aspect-[354/259] w-full bg-transparent overflow-hidden left-[50px]">
 						<Consistent />
 					</div>
 				</div>
 
-				<div class="text-sm font-medium text-background/40">
+				<div class="text-sm font-medium px-[14px] pb-4 text-white/40">
 					Components are as intuitive as possible
 				</div>
 			</div>
@@ -214,9 +192,9 @@
 	</div>
 </section>
 
-<footer class="border-t border-black/10 pt-6 px-[22px] pb-28 flex justify-between">
-  <div class="text-sm font-medium text-muted-foreground flex items-center gap-3"><span class="w-3 h-3 aspect-square rounded-full bg-foreground/20 block"></span>2025 Bits UI team</div>
-  <ul class="flex gap-[26px] items-center justify-end">
+<footer class="border-t border-black/10 pt-6 px-[22px] pb-10 flex justify-between">
+  <div class="text-sm font-medium text-muted-foreground flex items-center gap-2 lg:gap-3"><span class="w-3 h-3 aspect-square rounded-full bg-foreground/20 block"></span>2025 Bits UI team</div>
+  <ul class="flex gap-3 lg:gap-[26px] items-center justify-end">
     <li><a href="https://github.com/huntabyte/bits-ui" target="_blank" class="text-sm font-medium text-muted-foreground">Github</a></li>
     <li><a href="https://github.com/huntabyte/bits-ui/releases" target="_blank" class="text-sm font-medium text-muted-foreground">Changelog</a></li>
   </ul>
@@ -304,4 +282,10 @@
 			}
 		}
 	}
+  .dotted_bg{
+    background: white;
+    background-image: radial-gradient(#DEDEDE 1px, transparent 0);
+    background-size: 15px 15px;
+    background-position: 0px 0px;
+  }
 </style>
