@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.95
+
+### Patch Changes
+
+-   fix: `Checkbox.Group` not firing `onValueChange` ([#1146](https://github.com/huntabyte/bits-ui/pull/1146))
+
 ## 1.0.0-next.94
 
 ### Patch Changes
