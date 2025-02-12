@@ -63,7 +63,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
-		enabled={contentState.root.open.current}
+		enabled={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -74,15 +74,17 @@
 		preventScroll={false}
 		forceMount={true}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("tooltip"),
 			})}
 			{#if child}
-				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...mergedProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...mergedProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}
@@ -90,7 +92,7 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
-		present={contentState.root.open.current}
+		present={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -101,15 +103,17 @@
 		preventScroll={false}
 		forceMount={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("tooltip"),
 			})}
 			{#if child}
-				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...mergedProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...mergedProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}

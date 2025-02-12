@@ -1,12 +1,11 @@
 ---
 title: Command
 description: A command menu component that can be used to search, filter, and select items.
-navLabel: New
 ---
 
 <script>
 	import { APISection, ComponentPreviewV2, CommandDemo, CommandDemoDialog, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="command-demo" comp="Command">
@@ -52,7 +51,7 @@ Here's an overview of how the Command component is structured in code:
 
 ```svelte
 <script lang="ts">
-	import { Combobox } from "bits-ui";
+	import { Command } from "bits-ui";
 </script>
 
 <Command.Root>
@@ -105,19 +104,17 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 
 ### 2. Change Handler
 
-For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+To perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute side effects when the value changes.
 
 ```svelte
 <script lang="ts">
 	import { Command } from "bits-ui";
-	let myValue = $state("");
 </script>
 
 <Command.Root
-	value={myValue}
 	onValueChange={(value) => {
-		myValue = value;
-		// additional logic here.
+		// do something with the new value
+		console.log(value);
 	}}
 >
 	<!-- ... -->
@@ -132,13 +129,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Command.Root` component.
-2. Provide a `value` prop to `Command.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally. You pass a getter function and a setter function to the `bind:value` directive, giving you full control over how the value is updated/retrieved.
 
 ```svelte
 <script lang="ts">
@@ -146,7 +137,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<Command.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Command.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Command.Root>
 ```
@@ -193,8 +184,37 @@ The following example shows how you might implement a strict substring match fil
 <script lang="ts">
 	import { Command } from "bits-ui";
 
-	function customFilter(value: string, search: string, keywords?: string[]): number {
-		return value.includes(search) ? 1 : 0;
+	function customFilter(
+		commandValue: string,
+		search: string,
+		commandKeywords?: string[]
+	): number {
+		return commandValue.includes(search) ? 1 : 0;
+	}
+</script>
+
+<Command.Root filter={customFilter}>
+	<!-- ... -->
+</Command.Root>
+```
+
+### Extend Default Filter
+
+By default, the `Command` component uses the `computeCommandScore` function to determine the score of each item and filters/sorts them accordingly. This function is exported for you to use and extend as needed.
+
+```svelte
+<script lang="ts">
+	import { Command, computeCommandScore } from "bits-ui";
+
+	function customFilter(
+		commandValue: string,
+		search: string,
+		commandKeywords?: string[]
+	): number {
+		const score = computeCommandScore(commandValue, search, commandKeywords);
+
+		// Add custom logic here
+		return score;
 	}
 </script>
 

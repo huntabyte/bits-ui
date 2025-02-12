@@ -16,6 +16,7 @@
 		ref = $bindable(null),
 		loop = true,
 		onInteractOutside = noop,
+		onCloseAutoFocus = noop,
 		preventScroll = true,
 		// we need to explicitly pass this prop to the PopperLayer to override
 		// the default menu behavior of handling outside interactions on the trigger
@@ -24,8 +25,6 @@
 		...restProps
 	}: ContextMenuContentProps = $props();
 
-	let isMounted = $state(false);
-
 	const contentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
@@ -33,7 +32,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -69,7 +68,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		enabled={contentState.parentMenu.open.current}
+		enabled={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -78,18 +77,20 @@
 		{loop}
 		{id}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("context-menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
@@ -98,7 +99,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		present={contentState.parentMenu.open.current}
+		present={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -107,18 +108,20 @@
 		{loop}
 		{id}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("context-menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

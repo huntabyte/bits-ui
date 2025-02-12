@@ -14,6 +14,7 @@ import type {
 	BitsPrimitiveDivAttributes,
 } from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type TooltipProviderPropsWithoutHTML = WithChildren<{
 	/**
@@ -110,26 +111,9 @@ export type TooltipRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
 }>;
 
 export type TooltipRootProps = TooltipRootPropsWithoutHTML;
-
-export type TooltipContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
-	 * conditionally render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
 
 export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<
@@ -144,6 +128,7 @@ export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 		| "arrowPadding"
 		| "sticky"
 		| "hideWhenDetached"
+		| "updatePositionStrategy"
 		| "dir"
 	> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
@@ -155,7 +140,7 @@ export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 			 */
 			forceMount?: boolean;
 		},
-	TooltipContentSnippetProps
+	FloatingContentSnippetProps
 >;
 
 export type TooltipContentProps = TooltipContentPropsWithoutHTML &
@@ -172,7 +157,7 @@ export type TooltipContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetPro
 			 */
 			forceMount?: boolean;
 		},
-	TooltipContentSnippetProps
+	StaticContentSnippetProps
 >;
 
 export type TooltipContentStaticProps = TooltipContentStaticPropsWithoutHTML &

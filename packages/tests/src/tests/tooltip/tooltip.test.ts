@@ -14,7 +14,6 @@ function setup(
 	component: Component = TooltipTest
 ) {
 	const user = setupUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(component, { ...props });
 	const trigger = returned.getByTestId("trigger");
 	return { ...returned, trigger, user };

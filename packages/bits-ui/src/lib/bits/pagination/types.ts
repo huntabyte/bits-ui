@@ -59,15 +59,6 @@ export type PaginationRootPropsWithoutHTML = WithChild<
 		 * @defaultValue "horizontal"
 		 */
 		orientation?: "horizontal" | "vertical";
-
-		/**
-		 * Whether or not the page state is controlled or not. If `true`, the component will not update
-		 * the page state internally, instead it will call `onPageChange` when it would have
-		 * otherwise, and it is up to you to update the `page` prop that is passed to the component.
-		 *
-		 * @defaultValue false
-		 */
-		controlledPage?: boolean;
 	},
 	PaginationSnippetProps
 >;

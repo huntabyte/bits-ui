@@ -35,6 +35,7 @@ export function focusWithoutScroll(element: HTMLElement) {
  */
 export function focus(element?: FocusableTarget | null, { select = false } = {}) {
 	if (!(element && element.focus)) return;
+	if (document.activeElement === element) return;
 	const previouslyFocusedElement = document.activeElement;
 	// prevent scroll on focus
 	element.focus({ preventScroll: true });
@@ -82,7 +83,7 @@ export function findVisible(elements: HTMLElement[], container: HTMLElement) {
 export function getTabbableCandidates(container: HTMLElement) {
 	const nodes: HTMLElement[] = [];
 	const walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
-		// eslint-disable-next-line ts/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		acceptNode: (node: any) => {
 			const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
 			if (node.disabled || node.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;

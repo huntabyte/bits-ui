@@ -1,5 +1,5 @@
 import type { Snippet } from "svelte";
-import type { FocusScopeContainerProps } from "./useFocusScope.svelte.js";
+import type { FocusScopeContainerProps } from "./use-focus-scope.svelte.js";
 import type { EventCallback } from "$lib/internal/events.js";
 
 export type FocusScopeProps = {

@@ -15,11 +15,13 @@
 			<div class="flex items-center gap-2.5">
 				{#each pages as page (page.key)}
 					{#if page.type === "ellipsis"}
-						<div class="text-[15px] font-medium text-foreground-alt">...</div>
+						<div class="select-none text-[15px] font-medium text-foreground-alt">
+							...
+						</div>
 					{:else}
 						<Pagination.Page
 							{page}
-							class="inline-flex size-10 items-center justify-center rounded-[9px] bg-transparent text-[15px] font-medium hover:bg-dark-10 active:scale-98 disabled:cursor-not-allowed disabled:opacity-50 hover:disabled:bg-transparent data-[selected]:bg-foreground data-[selected]:text-background"
+							class="inline-flex size-10 select-none items-center justify-center rounded-[9px] bg-transparent text-[15px] font-medium hover:bg-dark-10 active:scale-98 disabled:cursor-not-allowed disabled:opacity-50 hover:disabled:bg-transparent data-[selected]:bg-foreground data-[selected]:text-background"
 						>
 							{page.value}
 						</Pagination.Page>

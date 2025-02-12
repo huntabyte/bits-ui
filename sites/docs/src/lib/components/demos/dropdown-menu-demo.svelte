@@ -10,7 +10,7 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import DotOutline from "phosphor-svelte/lib/DotOutline";
 
-	let notifications = $state<"indeterminate" | boolean>(false);
+	let notifications = $state<boolean>(false);
 	let invited = $state("");
 </script>
 

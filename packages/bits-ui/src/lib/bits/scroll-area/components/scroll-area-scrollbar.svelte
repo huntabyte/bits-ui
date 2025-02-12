@@ -24,7 +24,7 @@
 		),
 	});
 
-	const type = $derived(scrollbarState.root.type.current);
+	const type = $derived(scrollbarState.root.opts.type.current);
 </script>
 
 {#if type === "hover"}

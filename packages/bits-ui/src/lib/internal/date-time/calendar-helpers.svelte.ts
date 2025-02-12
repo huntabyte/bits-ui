@@ -361,7 +361,7 @@ export function handleCalendarKeydown({
 }: HandleCalendarKeydownProps) {
 	const currentCell = event.target;
 	if (!isCalendarDayNode(currentCell)) return;
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	if (!ARROW_KEYS.includes(event.key as any) && !SELECT_KEYS.includes(event.key)) return;
 
 	event.preventDefault();
@@ -373,7 +373,7 @@ export function handleCalendarKeydown({
 		[kbd.ARROW_RIGHT]: 1,
 	};
 
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	if (ARROW_KEYS.includes(event.key as any)) {
 		const add = kbdFocusMap[event.key as (typeof ARROW_KEYS)[number]];
 		if (add !== undefined) {

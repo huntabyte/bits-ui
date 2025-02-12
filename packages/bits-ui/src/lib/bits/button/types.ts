@@ -10,12 +10,14 @@ type AnchorElement = ButtonRootPropsWithoutHTML &
 	WithoutChildren<Omit<HTMLAnchorAttributes, "href" | "type">> & {
 		href: HTMLAnchorAttributes["href"];
 		type?: never;
+		disabled?: HTMLButtonAttributes["disabled"];
 	};
 
 type ButtonElement = ButtonRootPropsWithoutHTML &
 	WithoutChildren<Omit<HTMLButtonAttributes, "type" | "href">> & {
 		type?: HTMLButtonAttributes["type"];
 		href?: never;
+		disabled?: HTMLButtonAttributes["disabled"];
 	};
 
 export type ButtonRootProps = AnchorElement | ButtonElement;

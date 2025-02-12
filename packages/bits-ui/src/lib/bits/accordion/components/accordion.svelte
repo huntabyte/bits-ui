@@ -16,7 +16,6 @@
 		onValueChange = noop,
 		loop = true,
 		orientation = "vertical",
-		controlledValue = false,
 		...restProps
 	}: AccordionRootProps = $props();
 
@@ -27,12 +26,9 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v as any);
-				} else {
-					value = v;
-					onValueChange(v as any);
-				}
+				value = v;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				onValueChange(v as any);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		id: box.with(() => id),

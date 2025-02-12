@@ -2,25 +2,22 @@
 import { render } from "@testing-library/svelte";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import { tick } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
-import SliderTest, { type SliderTestProps } from "./slider-test.svelte";
-import SliderRangeTest, { type SliderRangeTestProps } from "./slider-range-test.svelte";
+import SliderMultiTest, { type SliderMultiTestProps } from "./slider-test-multi.svelte";
+import SliderRangeTest, { type SliderMultiRangeTestProps } from "./slider-range-test.svelte";
 
 const kbd = getTestKbd();
 
-function renderSlider(props: SliderTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
-	return render(SliderTest, { ...props });
+function renderSlider(props: SliderMultiTestProps = {}) {
+	return render(SliderMultiTest, { ...props });
 }
-function renderSliderRange(props: SliderRangeTestProps = {}) {
-	// @ts-expect-error - testing lib needs to update their generic types
+function renderSliderRange(props: SliderMultiRangeTestProps = {}) {
 	return render(SliderRangeTest, { ...props });
 }
 
-function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default") {
+function setup(props: SliderMultiTestProps = {}, kind: "default" | "range" = "default") {
 	const user = setupUserEvents();
-	// eslint-disable-next-line ts/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let returned: any;
 	if (kind === "default") {
 		returned = renderSlider(props);
@@ -34,8 +31,7 @@ function setup(props: SliderTestProps = {}, kind: "default" | "range" = "default
 
 describe("slider (default)", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
-		const { container } = render(SliderTest);
+		const { container } = render(SliderMultiTest);
 
 		expect(await axe(container)).toHaveNoViolations();
 	});

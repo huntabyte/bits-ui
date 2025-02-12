@@ -14,6 +14,7 @@ import type {
 } from "$lib/shared/attributes.js";
 import type { Direction } from "$lib/shared/index.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type MenuRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -32,15 +33,6 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue "ltr"
 	 */
 	dir?: Direction;
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
 }>;
 
 export type MenuRootProps = MenuRootPropsWithoutHTML;
@@ -54,18 +46,10 @@ export type _SharedMenuContentProps = {
 	loop?: boolean;
 };
 
-export type MenuContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
-	 * conditionally render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
-
 export type MenuContentPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		FloatingContentSnippetProps
 	>
 >;
 
@@ -75,7 +59,7 @@ export type MenuContentProps = MenuContentPropsWithoutHTML &
 export type MenuContentStaticPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		StaticContentSnippetProps
 	>
 >;
 
@@ -120,31 +104,35 @@ export type MenuItemPropsWithoutHTML<U extends Record<PropertyKey, unknown> = { 
 export type MenuItemProps = MenuItemPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenuItemPropsWithoutHTML>;
 
-export type MenuCheckboxItemSnippetProps = { checked: boolean | "indeterminate" };
+export type MenuCheckboxItemSnippetProps = { checked: boolean; indeterminate: boolean };
 
 export type MenuCheckboxItemPropsWithoutHTML =
 	MenuItemPropsWithoutHTML<MenuCheckboxItemSnippetProps> & {
 		/**
-		 * The checked state of the checkbox item.
+		 * The checked state of the checkbox. It can be one of:
+		 * - `true` for checked
+		 * - `false` for unchecked
 		 *
-		 * Supports two-way binding with `bind:checked`.
+		 * @defaultValue false
 		 */
-		checked?: boolean | "indeterminate";
+		checked?: boolean;
 
 		/**
 		 * A callback that is fired when the checked state changes.
 		 */
-		onCheckedChange?: OnChangeFn<boolean | "indeterminate">;
+		onCheckedChange?: OnChangeFn<boolean>;
 
 		/**
-		 * Whether or not the checked state is controlled or not. If `true`, the component will not
-		 * update the checked state internally, instead it will call `onCheckedChange` when it
-		 * would have otherwise, and it is up to you to update the `checked` prop that is passed
-		 * to the component.
+		 * Whether the checkbox is in an indeterminate state or not.
 		 *
 		 * @defaultValue false
 		 */
-		controlledChecked?: boolean;
+		indeterminate?: boolean;
+
+		/**
+		 * A callback function called when the indeterminate state changes.
+		 */
+		onIndeterminateChange?: OnChangeFn<boolean>;
 
 		/**
 		 * Whether or not the menu item should close when selected.
@@ -179,15 +167,6 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
 }>;
 
 export type MenuSubProps = MenuSubPropsWithoutHTML;
@@ -195,7 +174,7 @@ export type MenuSubProps = MenuSubPropsWithoutHTML;
 export type MenuSubContentPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "preventScroll"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		FloatingContentSnippetProps
 	>
 >;
 
@@ -205,7 +184,7 @@ export type MenuSubContentProps = MenuSubContentPropsWithoutHTML &
 export type MenuSubContentStaticPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "preventScroll"> & _SharedMenuContentProps,
-		MenuContentSnippetProps
+		StaticContentSnippetProps
 	>
 >;
 
@@ -242,15 +221,6 @@ export type MenuRadioGroupPropsWithoutHTML = WithChild<{
 	 * A callback that is fired when the selected radio item changes.
 	 */
 	onValueChange?: OnChangeFn<string>;
-
-	/**
-	 * Whether or not the value state is controlled or not. If `true`, the component will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
 }>;
 
 export type MenuRadioGroupProps = MenuRadioGroupPropsWithoutHTML &

@@ -21,11 +21,10 @@ import {
 } from "./extended-types/shared/index.js";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
 import { ItemsProp } from "./extended-types/select/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -79,7 +78,6 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"A callback that is fired when the combobox value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
-		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the combobox menu.",
@@ -89,7 +87,6 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the combobox menu's open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the combobox component is disabled.",
@@ -117,6 +114,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"Whether or not the user can deselect the selected item by pressing it in a single select.",
 		}),
+
 		items: createPropSchema({
 			type: {
 				type: "array",
@@ -152,7 +150,7 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			childDef: FloatingContentChildSnippetProps,
 		}),
 	},
 	dataAttributes: [
@@ -283,6 +281,10 @@ export const input = createApiSchema<ComboboxInputPropsWithoutHTML>({
 			description:
 				"The default value of the input. This is not a reactive prop and is only used to populate the input when the combobox is first mounted if there is already a value set.",
 		}),
+		clearOnDeselect: createBooleanProp({
+			description: "Whether to clear the input when the last item is deselected.",
+			default: C.FALSE,
+		}),
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
 	dataAttributes: [
@@ -352,4 +354,14 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	],
 });
 
-export const combobox = [root, trigger, content, contentStatic, item, input, groupHeading, arrow];
+export const combobox = [
+	root,
+	trigger,
+	content,
+	contentStatic,
+	item,
+	input,
+	group,
+	groupHeading,
+	arrow,
+];

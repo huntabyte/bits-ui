@@ -17,11 +17,10 @@
 		loop = true,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
+		onCloseAutoFocus = noop,
 		forceMount = false,
 		...restProps
 	}: DropdownMenuContentProps = $props();
-
-	let isMounted = $state(false);
 
 	const contentState = useMenuContent({
 		id: box.with(() => id),
@@ -30,7 +29,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -52,7 +51,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
-		enabled={contentState.parentMenu.open.current}
+		enabled={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		trapFocus
@@ -60,24 +59,26 @@
 		forceMount={true}
 		{id}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("dropdown-menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
-		present={contentState.parentMenu.open.current}
+		present={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		trapFocus
@@ -85,18 +86,20 @@
 		forceMount={false}
 		{id}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("dropdown-menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

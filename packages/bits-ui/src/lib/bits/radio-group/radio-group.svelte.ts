@@ -1,13 +1,19 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import type { Orientation } from "$lib/shared/index.js";
 import {
 	type UseRovingFocusReturn,
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
+import { kbd } from "$lib/internal/kbd.js";
 
 const RADIO_GROUP_ROOT_ATTR = "data-radio-group-root";
 const RADIO_GROUP_ITEM_ATTR = "data-radio-group-item";
@@ -23,54 +29,39 @@ type RadioGroupRootStateProps = WithRefProps<
 		WritableBoxedValues<{ value: string }>
 >;
 class RadioGroupRootState {
-	#id: RadioGroupRootStateProps["id"];
-	#ref: RadioGroupRootStateProps["ref"];
-	disabled: RadioGroupRootStateProps["disabled"];
-	required: RadioGroupRootStateProps["required"];
-	loop: RadioGroupRootStateProps["loop"];
-	orientation: RadioGroupRootStateProps["orientation"];
-	name: RadioGroupRootStateProps["name"];
-	value: RadioGroupRootStateProps["value"];
 	rovingFocusGroup: UseRovingFocusReturn;
+	hasValue = $derived.by(() => this.opts.value.current !== "");
 
-	constructor(props: RadioGroupRootStateProps) {
-		this.#id = props.id;
-		this.disabled = props.disabled;
-		this.required = props.required;
-		this.loop = props.loop;
-		this.orientation = props.orientation;
-		this.name = props.name;
-		this.value = props.value;
-		this.#ref = props.ref;
+	constructor(readonly opts: RadioGroupRootStateProps) {
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.#id,
+			rootNodeId: this.opts.id,
 			candidateAttr: RADIO_GROUP_ITEM_ATTR,
-			loop: this.loop,
-			orientation: this.orientation,
+			loop: this.opts.loop,
+			orientation: this.opts.orientation,
 		});
 
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 	}
 
-	isChecked = (value: string) => {
-		return this.value.current === value;
-	};
+	isChecked(value: string) {
+		return this.opts.value.current === value;
+	}
 
-	setValue = (value: string) => {
-		this.value.current = value;
-	};
+	setValue(value: string) {
+		this.opts.value.current = value;
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "radiogroup",
-				"aria-required": getAriaRequired(this.required.current),
-				"data-disabled": getDataDisabled(this.disabled.current),
-				"data-orientation": this.orientation.current,
+				"aria-required": getAriaRequired(this.opts.required.current),
+				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-orientation": this.opts.orientation.current,
 				[RADIO_GROUP_ROOT_ATTR]: "",
 			}) as const
 	);
@@ -88,53 +79,47 @@ type RadioGroupItemStateProps = WithRefProps<
 >;
 
 class RadioGroupItemState {
-	#id: RadioGroupItemStateProps["id"];
-	#ref: RadioGroupItemStateProps["ref"];
-	#root: RadioGroupRootState;
-	#disabled: RadioGroupItemStateProps["disabled"];
-	#value: RadioGroupItemStateProps["value"];
-	checked = $derived.by(() => this.#root.value.current === this.#value.current);
-	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
-	#isChecked = $derived.by(() => this.#root.isChecked(this.#value.current));
+	checked = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
+	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
+	#isChecked = $derived.by(() => this.root.isChecked(this.opts.value.current));
 
-	constructor(props: RadioGroupItemStateProps, root: RadioGroupRootState) {
-		this.#disabled = props.disabled;
-		this.#value = props.value;
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
+	constructor(
+		readonly opts: RadioGroupItemStateProps,
+		readonly root: RadioGroupRootState
+	) {
 		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+			id: this.opts.id,
+			ref: this.opts.ref,
 		});
 
 		$effect(() => {
-			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
 		});
+
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onfocus = this.onfocus.bind(this);
 	}
 
-	#onpointerdown = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") return e.preventDefault();
-		this.#root.setValue(this.#value.current);
-	};
+	onclick(_: BitsMouseEvent) {
+		if (this.opts.disabled.current) return;
+		this.root.setValue(this.opts.value.current);
+	}
 
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
+	onfocus(_: BitsFocusEvent) {
+		if (!this.root.hasValue) return;
+		this.root.setValue(this.opts.value.current);
+	}
+
+	onkeydown(e: BitsKeyboardEvent) {
+		if (this.#isDisabled) return;
+		if (e.key === kbd.SPACE) {
 			e.preventDefault();
-			this.#root.setValue(this.#value.current);
+			this.root.setValue(this.opts.value.current);
+			return;
 		}
-	};
-
-	#onfocus = () => {
-		this.#root.setValue(this.#value.current);
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e, true);
-	};
+		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
+	}
 
 	#tabIndex = $state(0);
 
@@ -143,22 +128,21 @@ class RadioGroupItemState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				disabled: this.#isDisabled ? true : undefined,
-				"data-value": this.#value.current,
-				"data-orientation": this.#root.orientation.current,
+				"data-value": this.opts.value.current,
+				"data-orientation": this.root.opts.orientation.current,
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": this.#isChecked ? "checked" : "unchecked",
-				"aria-checked": getAriaChecked(this.#isChecked),
+				"aria-checked": getAriaChecked(this.#isChecked, false),
 				[RADIO_GROUP_ITEM_ATTR]: "",
 				type: "button",
 				role: "radio",
 				tabindex: this.#tabIndex,
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onkeydown: this.#onkeydown,
-				onfocus: this.#onfocus,
+				onkeydown: this.onkeydown,
+				onfocus: this.onfocus,
+				onclick: this.onclick,
 			}) as const
 	);
 }
@@ -168,15 +152,14 @@ class RadioGroupItemState {
 //
 
 class RadioGroupInputState {
-	#root: RadioGroupRootState;
-	shouldRender = $derived.by(() => this.#root.name.current !== undefined);
+	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 	props = $derived.by(
 		() =>
 			({
-				name: this.#root.name.current,
-				value: this.#root.value.current,
-				required: this.#root.required.current,
-				disabled: this.#root.disabled.current,
+				name: this.root.opts.name.current,
+				value: this.root.opts.value.current,
+				required: this.root.opts.required.current,
+				disabled: this.root.opts.disabled.current,
 				"aria-hidden": "true",
 				hidden: true,
 				style: styleToString(srOnlyStyles),
@@ -184,26 +167,19 @@ class RadioGroupInputState {
 			}) as const
 	);
 
-	constructor(root: RadioGroupRootState) {
-		this.#root = root;
-	}
+	constructor(readonly root: RadioGroupRootState) {}
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setRadioGroupRootContext, getRadioGroupRootContext] =
-	createContext<RadioGroupRootState>("RadioGroup.Root");
+const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
 
 export function useRadioGroupRoot(props: RadioGroupRootStateProps) {
-	return setRadioGroupRootContext(new RadioGroupRootState(props));
+	return RadioGroupRootContext.set(new RadioGroupRootState(props));
 }
 
 export function useRadioGroupItem(props: RadioGroupItemStateProps) {
-	return new RadioGroupItemState(props, getRadioGroupRootContext());
+	return new RadioGroupItemState(props, RadioGroupRootContext.get());
 }
 
 export function useRadioGroupInput() {
-	return new RadioGroupInputState(getRadioGroupRootContext());
+	return new RadioGroupInputState(RadioGroupRootContext.get());
 }

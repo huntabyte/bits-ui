@@ -70,8 +70,9 @@
 	{style}
 	{onPlaced}
 	{customAnchor}
+	{enabled}
 >
-	{#snippet content({ props: floatingProps })}
+	{#snippet content({ props: floatingProps, wrapperProps })}
 		{#if restProps.forceMount && enabled}
 			<ScrollLock {preventScroll} />
 		{:else if !restProps.forceMount}
@@ -115,6 +116,7 @@
 											},
 										}
 									),
+									wrapperProps,
 								})}
 							</TextSelectionLayer>
 						{/snippet}

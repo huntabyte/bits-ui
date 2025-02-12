@@ -19,9 +19,9 @@ import type {
 	MenubarTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createFunctionProp,
 	createStringProp,
 	dirProp,
@@ -43,7 +43,6 @@ export const root = createApiSchema<MenubarRootPropsWithoutHTML>({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active menu value changes.",
 		}),
-		controlledValue: controlledValueProp,
 		dir: dirProp,
 		loop: createBooleanProp({
 			default: C.TRUE,
@@ -84,6 +83,28 @@ export const content = createApiSchema<MenubarContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	...m.content,
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-menubar-menu-content-transform-origin",
+			description: "The transform origin of the dropdown menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-menubar-menu-content-available-width",
+			description: "The available width of the dropdown menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-menubar-menu-content-available-height",
+			description: "The available height of the dropdown menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-menubar-menu-anchor-width",
+			description: "The width of the dropdown menu trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-menubar-menu-anchor-height",
+			description: "The height of the dropdown menu trigger element.",
+		}),
+	],
 });
 
 export const contentStatic = createApiSchema<MenubarContentStaticPropsWithoutHTML>({

@@ -18,7 +18,6 @@
 		name = undefined,
 		type = "button",
 		onCheckedChange = noop,
-		controlledChecked = false,
 		...restProps
 	}: SwitchRootProps = $props();
 
@@ -26,12 +25,8 @@
 		checked: box.with(
 			() => checked,
 			(v) => {
-				if (controlledChecked) {
-					onCheckedChange(v);
-				} else {
-					checked = v;
-					onCheckedChange?.(v);
-				}
+				checked = v;
+				onCheckedChange?.(v);
 			}
 		),
 		disabled: box.with(() => disabled ?? false),
@@ -49,10 +44,10 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, checked: rootState.checked.current })}
+	{@render child({ props: mergedProps, ...rootState.snippetProps })}
 {:else}
 	<button {...mergedProps}>
-		{@render children?.({ checked: rootState.checked.current })}
+		{@render children?.(rootState.snippetProps)}
 	</button>
 {/if}
 

@@ -44,7 +44,7 @@
 </script>
 
 <PresenceLayer {id} {present} {...restProps}>
-	{#snippet presence({ present })}
+	{#snippet presence()}
 		<PopperLayerInner
 			{popper}
 			{onEscapeKeydown}
@@ -72,7 +72,7 @@
 			{onPlaced}
 			{customAnchor}
 			{isStatic}
-			enabled={present.current}
+			enabled={present}
 			{onInteractOutside}
 			{onCloseAutoFocus}
 			{onOpenAutoFocus}

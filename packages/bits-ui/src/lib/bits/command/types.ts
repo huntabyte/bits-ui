@@ -42,9 +42,15 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	 * with `1` being a perfect match, and `0` being no match, resulting
 	 * in the item being hidden entirely.
 	 *
-	 * By default, it will use the `command-score` package to score.
+	 * By default, it will use the `computeCommandScore` function exported
+	 * by this package to compute the score.
 	 */
 	filter?: (value: string, search: string, keywords?: string[]) => number;
+
+	/**
+	 * A function that is called when the command state changes.
+	 */
+	onStateChange?: (state: Readonly<CommandState>) => void;
 
 	/**
 	 * Optionally provide or bind to the selected command menu item.
@@ -74,15 +80,6 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue true
 	 */
 	vimBindings?: boolean;
-
-	/**
-	 * Whether or not the command is controlled or not. If `true`, the command will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
 }>;
 
 export type CommandRootProps = CommandRootPropsWithoutHTML &

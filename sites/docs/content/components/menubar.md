@@ -5,7 +5,7 @@ description: Organizes and presents a collection of menu options or actions with
 
 <script>
 	import { APISection, ComponentPreviewV2, MenubarDemo } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="menubar-demo" comp="Menubar">
@@ -169,7 +169,7 @@ Use the `bind:value` directive for effortless two-way synchronization between yo
 
 ### Change Handler
 
-You can also use the `onValueCHange` prop to update local state when the menubar's active menu changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menus open or close.
+You can also use the `onValueChange` prop to update local state when the menubar's active menu changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menus open or close.
 
 ```svelte {3,7-11}
 <script lang="ts">
@@ -200,8 +200,10 @@ You can use the `Menubar.CheckboxItem` component to create a `menuitemcheckbox` 
 </script>
 
 <Menubar.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked })}
-		{#if checked}
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
 			✅
 		{/if}
 		Notifications
@@ -270,11 +272,13 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </script>
 
 <Menubar.Content forceMount>
-	{#snippet child({ props, open })}
+	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
-			<div {...props} transition:fly>
-				<Menubar.Item>Item 1</Menubar.Item>
-				<Menubar.Item>Item 2</Menubar.Item>
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<Menubar.Item>Item 1</Menubar.Item>
+					<Menubar.Item>Item 2</Menubar.Item>
+				</div>
 			</div>
 		{/if}
 	{/snippet}

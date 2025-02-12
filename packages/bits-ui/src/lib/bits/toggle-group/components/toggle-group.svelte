@@ -16,7 +16,6 @@
 		loop = true,
 		orientation = "horizontal",
 		rovingFocus = true,
-		controlledValue = false,
 		child,
 		children,
 		...restProps
@@ -24,11 +23,8 @@
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];
-		if (controlledValue) {
-			onValueChange(defaultValue as any);
-		} else {
-			value = defaultValue;
-		}
+
+		value = defaultValue;
 	}
 
 	const rootState = useToggleGroupRoot({
@@ -36,12 +32,9 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v as any);
-				} else {
-					value = v;
-					onValueChange?.(v as any);
-				}
+				value = v;
+				// @ts-expect-error - we know
+				onValueChange(v);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),

@@ -21,7 +21,7 @@
 		}
 	}
 
-	const mergedProps = $derived(mergeProps({ onkeydown }, { onkeydown: onKeydown })) as any;
+	const mergedProps = $derived(mergeProps({ onkeydown }, { onkeydown: onKeydown }));
 </script>
 
 <PopoverTrigger {...restProps} bind:ref data-segment="trigger" {...mergedProps} />

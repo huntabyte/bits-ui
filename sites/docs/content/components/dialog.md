@@ -5,7 +5,7 @@ description: A modal window presenting content or seeking user input without nav
 
 <script>
 	import { APISection, ComponentPreviewV2, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="dialog-demo" comp="Dialog">
@@ -219,22 +219,15 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `Dialog.Root` component.
-2. Provide an `open` prop to `Dialog.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
 	import { Dialog } from "bits-ui";
-
 	let myOpen = $state(false);
 </script>
 
-<Dialog.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<Dialog.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </Dialog.Root>
 ```
@@ -419,7 +412,7 @@ The `interactOutsideBehavior` prop allows you to customize the behavior taken by
 -   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will close immediately.
 -   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Dialog will ignore the event and not close.
 
-To always prevent the Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Dialog.Content`:
+To always prevent the Dialog from closing when an interaction occurs outside the content, set the `interactOutsideBehavior` prop to `'ignore'` on `Dialog.Content`:
 
 ```svelte /interactOutsideBehavior="ignore"/
 <Dialog.Content interactOutsideBehavior="ignore">

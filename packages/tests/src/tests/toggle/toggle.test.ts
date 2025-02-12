@@ -10,7 +10,6 @@ const kbd = getTestKbd();
 
 function setup(props: Toggle.RootProps = {}) {
 	const user = userEvent.setup();
-	// @ts-expect-error - testing lib needs to update their generic types
 	const returned = render(ToggleTest, { ...props });
 	const root = returned.getByTestId("root");
 	return {
@@ -22,7 +21,6 @@ function setup(props: Toggle.RootProps = {}) {
 
 describe("toggle", () => {
 	it("should have no accessibility violations", async () => {
-		// @ts-expect-error - testing lib needs to update their generic types
 		const { container } = render(ToggleTest);
 		expect(await axe(container)).toHaveNoViolations();
 	});

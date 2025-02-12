@@ -186,19 +186,6 @@ export function isBetweenInclusive(date: DateValue, start: DateValue, end: DateV
 	return isAfterOrSame(date, start) && isBeforeOrSame(date, end);
 }
 
-/**
- * Determine if a date is between a start and end reference date.
- *
- * @param date - is this date between the `start` and `end` dates
- * @param start - the start reference date to make the comparison against
- * @param end - the end reference date to make the comparison against
- *
- * @see {@link isBetweenInclusive} for inclusive
- */
-function isBetween(date: DateValue, start: DateValue, end: DateValue) {
-	return isAfter(date, start) && isBefore(date, end);
-}
-
 export function getLastFirstDayOfWeek<T extends DateValue = DateValue>(
 	date: T,
 	firstDayOfWeek: number,

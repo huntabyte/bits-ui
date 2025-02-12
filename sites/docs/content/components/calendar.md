@@ -5,7 +5,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 
 <script>
 	import { APISection, ComponentPreviewV2, CalendarDemo, Callout } from '$lib/components'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="calendar-demo" comp="Calendar">
@@ -132,13 +132,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's placeholder state, use the `controlledPlaceholder` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledPlaceholder` prop to `true` on the `Calendar.Root` component.
-2. Provide a `placeholder` prop to `Calendar.Root`, which should be a variable holding the current state.
-3. Implement an `onPlaceholderChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -147,9 +141,7 @@ To implement controlled state:
 </script>
 
 <Calendar.Root
-	controlledPlaceholder
-	placeholder={myPlaceholder}
-	onPlaceholderChange={(p) => (myPlaceholder = p)}
+	bind:placeholder={() => myPlaceholder, (newPlaceholder) => (myPlaceholder = newPlaceholder)}
 >
 	<!-- ... -->
 </Calendar.Root>
@@ -225,13 +217,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Calendar.Root` component.
-2. Provide a `value` prop to `Calendar.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -239,7 +225,7 @@ To implement controlled state:
 	let myValue = $state();
 </script>
 
-<Calendar.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Calendar.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Calendar.Root>
 ```

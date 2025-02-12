@@ -5,7 +5,7 @@ description: Organizes content into distinct sections, allowing users to switch 
 
 <script>
 	import { APISection, ComponentPreviewV2, TabsDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="tabs-demo" comp="Tabs">
@@ -87,13 +87,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Tabs.Root` component.
-2. Provide a `value` prop to `Tabs.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -101,7 +95,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<Tabs.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Tabs.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Tabs.Root>
 ```

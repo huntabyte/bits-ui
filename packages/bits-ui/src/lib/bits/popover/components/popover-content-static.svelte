@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { PopoverContentProps } from "../types.js";
+	import type { PopoverContentStaticProps } from "../types.js";
 	import { usePopoverContent } from "../popover.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
@@ -19,8 +19,9 @@
 		onInteractOutside = noop,
 		trapFocus = true,
 		preventScroll = false,
+
 		...restProps
-	}: PopoverContentProps = $props();
+	}: PopoverContentStaticProps = $props();
 
 	const contentState = usePopoverContent({
 		id: box.with(() => id),
@@ -28,39 +29,23 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onInteractOutside: box.with(() => onInteractOutside),
+		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-
-	function handleInteractOutside(e: PointerEvent) {
-		onInteractOutside(e);
-		if (e.defaultPrevented) return;
-		contentState.root.close();
-	}
-
-	function handleEscapeKeydown(e: KeyboardEvent) {
-		onEscapeKeydown(e);
-		if (e.defaultPrevented) return;
-		contentState.root.close();
-	}
-
-	function handleCloseAutoFocus(e: Event) {
-		onCloseAutoFocus(e);
-		if (e.defaultPrevented) return;
-		e.preventDefault();
-		contentState.root.triggerNode?.focus();
-	}
 </script>
 
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
 		isStatic
-		enabled={contentState.root.open.current}
+		enabled={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onCloseAutoFocus={handleCloseAutoFocus}
+		onInteractOutside={contentState.handleInteractOutside}
+		onEscapeKeydown={contentState.handleEscapeKeydown}
+		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop
@@ -83,11 +68,11 @@
 	<PopperLayer
 		{...mergedProps}
 		isStatic
-		present={contentState.root.open.current}
+		present={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onCloseAutoFocus={handleCloseAutoFocus}
+		onInteractOutside={contentState.handleInteractOutside}
+		onEscapeKeydown={contentState.handleEscapeKeydown}
+		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop

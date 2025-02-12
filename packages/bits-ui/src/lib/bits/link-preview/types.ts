@@ -14,6 +14,7 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -56,26 +57,9 @@ export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
 }>;
 
 export type LinkPreviewRootProps = LinkPreviewRootPropsWithoutHTML;
-
-export type LinkPreviewContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to
-	 * conditionally render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
 
 export type LinkPreviewContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<
@@ -101,13 +85,13 @@ export type LinkPreviewContentPropsWithoutHTML = WithChildNoChildrenSnippetProps
 			 */
 			forceMount?: boolean;
 		},
-	LinkPreviewContentSnippetProps
+	FloatingContentSnippetProps
 >;
 
 export type LinkPreviewContentProps = LinkPreviewContentPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, LinkPreviewContentPropsWithoutHTML>;
 
-export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
+export type LinkPreviewContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Pick<FloatingLayerContentProps, "dir"> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
@@ -118,7 +102,7 @@ export type LinkPreviewContentStaticPropsWithoutHTML = WithChild<
 			 */
 			forceMount?: boolean;
 		},
-	LinkPreviewContentSnippetProps
+	StaticContentSnippetProps
 >;
 
 export type LinkPreviewContentStaticProps = LinkPreviewContentStaticPropsWithoutHTML &

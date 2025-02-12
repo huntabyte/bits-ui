@@ -49,7 +49,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{side}
-		enabled={contentState.root.open.current}
+		enabled={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -61,13 +61,15 @@
 		onPlaced={() => (contentState.isPositioned = true)}
 		forceMount={true}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}
@@ -76,7 +78,7 @@
 	<PopperLayer
 		{...mergedProps}
 		{side}
-		present={contentState.root.open.current}
+		present={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -88,13 +90,15 @@
 		onPlaced={() => (contentState.isPositioned = true)}
 		forceMount={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}

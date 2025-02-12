@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { MenuContentProps } from "../types.js";
+	import type { MenuContentStaticProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -17,11 +17,10 @@
 		loop = true,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
+		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		forceMount = false,
 		...restProps
-	}: MenuContentProps = $props();
-
-	let isMounted = $state(false);
+	}: MenuContentStaticProps = $props();
 
 	const contentState = useMenuContent({
 		id: box.with(() => id),
@@ -30,7 +29,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocusProp),
 	});
 
 	const mergedProps = $derived(
@@ -55,7 +54,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
-		enabled={contentState.parentMenu.open.current}
+		enabled={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		trapFocus
@@ -78,13 +77,13 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
-		present={contentState.parentMenu.open.current}
+		present={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		trapFocus
@@ -107,7 +106,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

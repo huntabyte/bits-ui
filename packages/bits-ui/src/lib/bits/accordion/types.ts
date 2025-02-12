@@ -32,16 +32,6 @@ export type BaseAccordionRootPropsWithoutHTML = {
 	 * @defaultValue "vertical"
 	 */
 	orientation?: Orientation;
-
-	/**
-	 * Whether the value of the accordion is controlled or not.
-	 * If `true`, the accordion will not update the value internally, instead
-	 * it will call `onValueChange` when it would have otherwise, and it is up to you
-	 * to update the `value` prop.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
 };
 
 export type AccordionRootSinglePropsWithoutHTML = BaseAccordionRootPropsWithoutHTML & {
@@ -98,6 +88,12 @@ export type AccordionRootPropsWithoutHTML =
 
 export type AccordionRootProps = AccordionRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, AccordionRootPropsWithoutHTML>;
+
+export type AccordionRootSingleProps = AccordionRootSinglePropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, AccordionRootSinglePropsWithoutHTML>;
+
+export type AccordionMultipleProps = AccordionRootMultiplePropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, AccordionRootMultiplePropsWithoutHTML>;
 
 export type AccordionTriggerPropsWithoutHTML = WithChild;
 

@@ -5,7 +5,7 @@ description: A modal window that alerts users with important information and awa
 
 <script>
 	import { APISection, ComponentPreviewV2, AlertDialogDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="alert-dialog-demo" comp="Alert Dialog">
@@ -205,7 +205,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the dialog's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -214,7 +214,7 @@ For complete control over the dialog's open state, use the `controlledOpen` prop
 	let myOpen = $state(false);
 </script>
 
-<AlertDialog.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<AlertDialog.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </AlertDialog.Root>
 ```
@@ -364,18 +364,18 @@ This method allows you to implement custom logic when the `Escape` key is presse
 
 ### Interaction Outside
 
-By default, interacting outside the Alert Dialog content area closes the Alert Dialog. Bits UI offers two ways to modify this behavior.
+By default, interacting outside the Alert Dialog content area does not close the dialog. Bits UI offers two ways to modify this behavior.
 
 #### Method 1: `interactOutsideBehavior`
 
 The `interactOutsideBehavior` prop allows you to customize the behavior taken by the component when an interaction (touch, mouse, or pointer event) occurs outside the content. It accepts one of the following values:
 
--   `'close'` (default): Closes the Alert Dialog immediately.
--   `'ignore'`: Prevents the Alert Dialog from closing.
+-   `'ignore'` (default): Prevents the Alert Dialog from closing.
+-   `'close'`: Closes the Alert Dialog immediately.
 -   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
 -   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the event and not close.
 
-To always prevent the Alert Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Alert.Content`:
+To make the Alert Dialog close when an interaction occurs outside the content, set the `interactOutsideBehavior` prop to `'close'` on `AlertDialog.Content`:
 
 ```svelte /interactOutsideBehavior="ignore"/
 <AlertDialog.Content interactOutsideBehavior="ignore">

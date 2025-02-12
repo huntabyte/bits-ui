@@ -1,4 +1,5 @@
 import { type WritableBox, box } from "svelte-toolbelt";
+import { noop } from "./noop.js";
 
 /**
  * Creates a box which will be reset to the default value after some time.
@@ -6,13 +7,18 @@ import { type WritableBox, box } from "svelte-toolbelt";
  * @param defaultValue The value which will be set.
  * @param afterMs      A zero-or-greater delay in milliseconds.
  */
-export function boxAutoReset<T>(defaultValue: T, afterMs: number = 10000): WritableBox<T> {
-	let timeout: NodeJS.Timeout | null = null;
+export function boxAutoReset<T>(
+	defaultValue: T,
+	afterMs: number = 10000,
+	onChange: (value: T) => void = noop
+): WritableBox<T> {
+	let timeout: number | null = null;
 	let value = $state(defaultValue);
 
 	function resetAfter() {
-		return setTimeout(() => {
+		return window.setTimeout(() => {
 			value = defaultValue;
+			onChange(defaultValue);
 		}, afterMs);
 	}
 
@@ -26,6 +32,7 @@ export function boxAutoReset<T>(defaultValue: T, afterMs: number = 10000): Writa
 		() => value,
 		(v) => {
 			value = v;
+			onChange(v);
 			if (timeout) clearTimeout(timeout);
 			timeout = resetAfter();
 		}

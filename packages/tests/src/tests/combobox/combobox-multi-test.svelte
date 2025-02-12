@@ -21,6 +21,7 @@
 		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
 		items: Item[];
 		searchValue?: string;
+		onFormSubmit?: (fd: FormData) => void;
 	};
 </script>
 
@@ -34,6 +35,7 @@
 		searchValue = "",
 		inputProps,
 		onOpenChange,
+		onFormSubmit,
 		...restProps
 	}: ComboboxMultipleTestProps = $props();
 
@@ -45,58 +47,71 @@
 </script>
 
 <main data-testid="main">
-	<Combobox.Root
-		bind:value
-		bind:open
-		type="multiple"
-		{...restProps}
-		onOpenChange={(v) => {
-			onOpenChange?.(v);
-			if (!v) searchValue = "";
+	<form
+		data-testid="form"
+		method="POST"
+		onsubmit={(e) => {
+			e.preventDefault();
+			const formData = new FormData(e.target as HTMLFormElement);
+			onFormSubmit?.(formData);
 		}}
 	>
-		<Combobox.Trigger data-testid="trigger">Open combobox</Combobox.Trigger>
-		<Combobox.Input
-			data-testid="input"
-			aria-label="open combobox"
-			oninput={(e) => (searchValue = e.currentTarget.value)}
-			{...inputProps}
-		/>
-		<Combobox.Portal {...portalProps}>
-			<Combobox.Content data-testid="content" {...contentProps}>
-				<Combobox.Group data-testid="group">
-					<Combobox.GroupHeading data-testid="group-label">Options</Combobox.GroupHeading>
-					{#each filteredItems as { value, label, disabled }}
-						<Combobox.Item data-testid={value} {disabled} {value} {label}>
-							{#snippet children({ selected })}
-								{#if selected}
-									<span data-testid="{value}-indicator">x</span>
-								{/if}
-								{label}
-							{/snippet}
-						</Combobox.Item>
-					{/each}
-				</Combobox.Group>
-			</Combobox.Content>
-		</Combobox.Portal>
-	</Combobox.Root>
-	<div data-testid="outside"></div>
-	<button data-testid="input-binding" onclick={() => (searchValue = "")}>
-		{#if searchValue === ""}
-			empty
-		{:else}
-			{searchValue}
-		{/if}
-	</button>
-	<button data-testid="open-binding" onclick={() => (open = !open)}>
-		{open}
-	</button>
-	<button data-testid="value-binding" onclick={() => (value = [])}>
-		{#if value.length === 0}
-			empty
-		{:else}
-			{value}
-		{/if}
-	</button>
+		<Combobox.Root
+			bind:value
+			bind:open
+			type="multiple"
+			{...restProps}
+			onOpenChange={(v) => {
+				onOpenChange?.(v);
+				if (!v) searchValue = "";
+			}}
+		>
+			<Combobox.Trigger data-testid="trigger">Open combobox</Combobox.Trigger>
+			<Combobox.Input
+				data-testid="input"
+				aria-label="open combobox"
+				oninput={(e) => (searchValue = e.currentTarget.value)}
+				{...inputProps}
+			/>
+			<Combobox.Portal {...portalProps}>
+				<Combobox.Content data-testid="content" {...contentProps}>
+					<Combobox.Group data-testid="group">
+						<Combobox.GroupHeading data-testid="group-label"
+							>Options</Combobox.GroupHeading
+						>
+						{#each filteredItems as { value, label, disabled }}
+							<Combobox.Item data-testid={value} {disabled} {value} {label}>
+								{#snippet children({ selected, highlighted: _highlighted })}
+									{#if selected}
+										<span data-testid="{value}-indicator">x</span>
+									{/if}
+									{label}
+								{/snippet}
+							</Combobox.Item>
+						{/each}
+					</Combobox.Group>
+				</Combobox.Content>
+			</Combobox.Portal>
+		</Combobox.Root>
+		<div data-testid="outside"></div>
+		<button type="button" data-testid="input-binding" onclick={() => (searchValue = "")}>
+			{#if searchValue === ""}
+				empty
+			{:else}
+				{searchValue}
+			{/if}
+		</button>
+		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
+			{open}
+		</button>
+		<button type="button" data-testid="value-binding" onclick={() => (value = [])}>
+			{#if value.length === 0}
+				empty
+			{:else}
+				{value}
+			{/if}
+		</button>
+		<button data-testid="submit" type="submit"> Submit </button>
+	</form>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>

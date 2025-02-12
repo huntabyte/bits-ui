@@ -1,4 +1,5 @@
 import { type WritableBox, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import {
 	getAriaChecked,
 	getAriaPressed,
@@ -13,16 +14,15 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
-const ROOT_ATTR = "data-toolbar-root";
+const TOOLBAR_ROOT_ATTR = "data-toolbar-root";
 // all links, buttons, and items must have the ITEM_ATTR for roving focus
-const ITEM_ATTR = "data-toolbar-item";
-const GROUP_ATTR = "data-toolbar-group";
-const GROUP_ITEM_ATTR = "data-toolbar-group-item";
-const LINK_ATTR = "data-toolbar-link";
-const BUTTON_ATTR = "data-toolbar-button";
+const TOOLBAR_ITEM_ATTR = "data-toolbar-item";
+const TOOLBAR_GROUP_ATTR = "data-toolbar-group";
+const TOOLBAR_GROUP_ITEM_ATTR = "data-toolbar-group-item";
+const TOOLBAR_LINK_ATTR = "data-toolbar-link";
+const TOOLBAR_BUTTON_ATTR = "data-toolbar-button";
 
 type ToolbarRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -32,38 +32,26 @@ type ToolbarRootStateProps = WithRefProps<
 >;
 
 class ToolbarRootState {
-	#id: ToolbarRootStateProps["id"];
-	#ref: ToolbarRootStateProps["ref"];
-	orientation: ToolbarRootStateProps["orientation"];
-	#loop: ToolbarRootStateProps["loop"];
 	rovingFocusGroup: UseRovingFocusReturn;
 
-	constructor(props: ToolbarRootStateProps) {
-		this.#id = props.id;
-		this.orientation = props.orientation;
-		this.#loop = props.loop;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(readonly opts: ToolbarRootStateProps) {
+		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
-			orientation: this.orientation,
-			loop: this.#loop,
-			rootNodeId: this.#id,
-			candidateAttr: ITEM_ATTR,
+			orientation: this.opts.orientation,
+			loop: this.opts.loop,
+			rootNodeId: this.opts.id,
+			candidateAttr: TOOLBAR_ITEM_ATTR,
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "toolbar",
-				"data-orientation": this.orientation.current,
-				[ROOT_ATTR]: "",
+				"data-orientation": this.opts.orientation.current,
+				[TOOLBAR_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -75,31 +63,21 @@ type ToolbarGroupBaseStateProps = WithRefProps<
 >;
 
 class ToolbarGroupBaseState {
-	id: ToolbarGroupBaseStateProps["id"];
-	ref: ToolbarGroupBaseStateProps["ref"];
-	disabled: ToolbarGroupBaseStateProps["disabled"];
-	root: ToolbarRootState;
-
-	constructor(props: ToolbarGroupBaseStateProps, root: ToolbarRootState) {
-		this.id = props.id;
-		this.ref = props.ref;
-		this.disabled = props.disabled;
-		this.root = root;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+	constructor(
+		readonly opts: ToolbarGroupBaseStateProps,
+		readonly root: ToolbarRootState
+	) {
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
-				[GROUP_ATTR]: "",
+				id: this.opts.id.current,
+				[TOOLBAR_GROUP_ATTR]: "",
 				role: "group",
-				"data-orientation": getDataOrientation(this.root.orientation.current),
-				"data-disabled": getDataDisabled(this.disabled.current),
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-disabled": getDataDisabled(this.opts.disabled.current),
 			}) as const
 	);
 }
@@ -114,29 +92,26 @@ type ToolbarGroupSingleStateProps = ToolbarGroupBaseStateProps &
 	}>;
 
 class ToolbarGroupSingleState extends ToolbarGroupBaseState {
-	#value: ToolbarGroupSingleStateProps["value"];
 	isMulti = false;
-	anyPressed = $derived.by(() => this.#value.current !== "");
+	anyPressed = $derived.by(() => this.opts.value.current !== "");
 
-	constructor(props: ToolbarGroupSingleStateProps, root: ToolbarRootState) {
-		super(props, root);
-		this.#value = props.value;
+	constructor(
+		readonly opts: ToolbarGroupSingleStateProps,
+		readonly root: ToolbarRootState
+	) {
+		super(opts, root);
 	}
 
-	includesItem = (item: string) => {
-		return this.#value.current === item;
-	};
+	includesItem(item: string) {
+		return this.opts.value.current === item;
+	}
 
-	toggleItem = (item: string) => {
+	toggleItem(item: string) {
 		if (this.includesItem(item)) {
-			this.#value.current = "";
+			this.opts.value.current = "";
 		} else {
-			this.#value.current = item;
+			this.opts.value.current = item;
 		}
-	};
-
-	createItem(props: ToolbarGroupItemStateProps) {
-		return new ToolbarGroupItemState(props, this, this.root);
 	}
 }
 
@@ -150,26 +125,27 @@ type ToolbarGroupMultipleStateProps = ToolbarGroupBaseStateProps &
 	}>;
 
 class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
-	#value: ToolbarGroupMultipleStateProps["value"];
 	isMulti = true;
-	anyPressed = $derived.by(() => this.#value.current.length > 0);
+	anyPressed = $derived.by(() => this.opts.value.current.length > 0);
 
-	constructor(props: ToolbarGroupMultipleStateProps, root: ToolbarRootState) {
-		super(props, root);
-		this.#value = props.value;
+	constructor(
+		readonly opts: ToolbarGroupMultipleStateProps,
+		readonly root: ToolbarRootState
+	) {
+		super(opts, root);
 	}
 
-	includesItem = (item: string) => {
-		return this.#value.current.includes(item);
-	};
+	includesItem(item: string) {
+		return this.opts.value.current.includes(item);
+	}
 
-	toggleItem = (item: string) => {
+	toggleItem(item: string) {
 		if (this.includesItem(item)) {
-			this.#value.current = this.#value.current.filter((v) => v !== item);
+			this.opts.value.current = this.opts.value.current.filter((v) => v !== item);
 		} else {
-			this.#value.current = [...this.#value.current, item];
+			this.opts.value.current = [...this.opts.value.current, item];
 		}
-	};
+	}
 }
 
 type ToolbarGroupState = ToolbarGroupSingleState | ToolbarGroupMultipleState;
@@ -186,65 +162,52 @@ type ToolbarGroupItemStateProps = WithRefProps<
 >;
 
 class ToolbarGroupItemState {
-	#id: ToolbarGroupItemStateProps["id"];
-	#ref: ToolbarGroupSingleState["ref"];
-	#group: ToolbarGroupState;
-	#root: ToolbarRootState;
-	#value: ToolbarGroupItemStateProps["value"];
-	#disabled: ToolbarGroupItemStateProps["disabled"];
-	#isDisabled = $derived.by(() => this.#disabled.current || this.#group.disabled.current);
+	#isDisabled = $derived.by(() => this.opts.disabled.current || this.group.opts.disabled.current);
 
 	constructor(
-		props: ToolbarGroupItemStateProps,
-		group: ToolbarGroupState,
-		root: ToolbarRootState
+		readonly opts: ToolbarGroupItemStateProps,
+		readonly group: ToolbarGroupState,
+		readonly root: ToolbarRootState
 	) {
-		this.#value = props.value;
-		this.#disabled = props.disabled;
-		this.#group = group;
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+		useRefById(opts);
 
 		$effect(() => {
-			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
 		});
+
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	toggleItem = () => {
+	#toggleItem() {
 		if (this.#isDisabled) return;
-		this.#group.toggleItem(this.#value.current);
-	};
+		this.group.toggleItem(this.opts.value.current);
+	}
 
-	#onclick = () => {
+	onclick(_: BitsMouseEvent) {
 		if (this.#isDisabled) return;
-		this.toggleItem();
-	};
+		this.#toggleItem();
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			this.toggleItem();
+			this.#toggleItem();
 			return;
 		}
 
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
+	}
 
-	isPressed = $derived.by(() => this.#group.includesItem(this.#value.current));
+	isPressed = $derived.by(() => this.group.includesItem(this.opts.value.current));
 
 	#ariaChecked = $derived.by(() => {
-		return this.#group.isMulti ? undefined : getAriaChecked(this.isPressed);
+		return this.group.isMulti ? undefined : getAriaChecked(this.isPressed, false);
 	});
 
 	#ariaPressed = $derived.by(() => {
-		return this.#group.isMulti ? getAriaPressed(this.isPressed) : undefined;
+		return this.group.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
 	#tabIndex = $state(0);
@@ -252,21 +215,21 @@ class ToolbarGroupItemState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				role: this.#group.isMulti ? undefined : "radio",
+				id: this.opts.id.current,
+				role: this.group.isMulti ? undefined : "radio",
 				tabindex: this.#tabIndex,
-				"data-orientation": getDataOrientation(this.#root.orientation.current),
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": getToggleItemDataState(this.isPressed),
-				"data-value": this.#value.current,
+				"data-value": this.opts.value.current,
 				"aria-pressed": this.#ariaPressed,
 				"aria-checked": this.#ariaChecked,
-				[ITEM_ATTR]: "",
-				[GROUP_ITEM_ATTR]: "",
+				[TOOLBAR_ITEM_ATTR]: "",
+				[TOOLBAR_GROUP_ITEM_ATTR]: "",
 				disabled: getDisabled(this.#isDisabled),
 				//
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -274,48 +237,45 @@ class ToolbarGroupItemState {
 type ToolbarLinkStateProps = WithRefProps;
 
 class ToolbarLinkState {
-	#id: ToolbarLinkStateProps["id"];
-	#ref: ToolbarLinkStateProps["ref"];
-	#root: ToolbarRootState;
-
-	constructor(props: ToolbarLinkStateProps, root: ToolbarRootState) {
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(
+		readonly opts: ToolbarLinkStateProps,
+		readonly root: ToolbarRootState
+	) {
+		useRefById(opts);
 
 		$effect(() => {
-			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	onkeydown(e: BitsKeyboardEvent) {
+		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
+	}
 
 	#role = $derived.by(() => {
-		if (!this.#ref.current) return undefined;
-		const tagName = this.#ref.current.tagName;
+		if (!this.opts.ref.current) return undefined;
+		const tagName = this.opts.ref.current.tagName;
 		if (tagName !== "A") return "link" as const;
 		return undefined;
 	});
 
 	#tabIndex = $state(0);
 
-	props = $derived.by(() => ({
-		id: this.#id.current,
-		[LINK_ATTR]: "",
-		[ITEM_ATTR]: "",
-		role: this.#role,
-		tabindex: this.#tabIndex,
-		"data-orientation": getDataOrientation(this.#root.orientation.current),
-		//
-		onkeydown: this.#onkeydown,
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				[TOOLBAR_LINK_ATTR]: "",
+				[TOOLBAR_ITEM_ATTR]: "",
+				role: this.#role,
+				tabindex: this.#tabIndex,
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				//
+				onkeydown: this.onkeydown,
+			}) as const
+	);
 }
 
 type ToolbarButtonStateProps = WithRefProps<
@@ -325,36 +285,28 @@ type ToolbarButtonStateProps = WithRefProps<
 >;
 
 class ToolbarButtonState {
-	#id: ToolbarButtonStateProps["id"];
-	#ref: ToolbarButtonStateProps["ref"];
-	#root: ToolbarRootState;
-	#disabled: ToolbarButtonStateProps["disabled"];
-
-	constructor(props: ToolbarButtonStateProps, root: ToolbarRootState) {
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#disabled = props.disabled;
-		this.#root = root;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(
+		readonly opts: ToolbarButtonStateProps,
+		readonly root: ToolbarRootState
+	) {
+		useRefById(opts);
 
 		$effect(() => {
-			this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
 		});
+
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	#onkeydown = (e: KeyboardEvent) => {
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+	onkeydown(e: BitsKeyboardEvent) {
+		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
+	}
 
 	#tabIndex = $state(0);
 
 	#role = $derived.by(() => {
-		if (!this.#ref.current) return undefined;
-		const tagName = this.#ref.current.tagName;
+		if (!this.opts.ref.current) return undefined;
+		const tagName = this.opts.ref.current.tagName;
 		if (tagName !== "BUTTON") return "button" as const;
 		return undefined;
 	});
@@ -362,16 +314,16 @@ class ToolbarButtonState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				[ITEM_ATTR]: "",
-				[BUTTON_ATTR]: "",
+				id: this.opts.id.current,
+				[TOOLBAR_ITEM_ATTR]: "",
+				[TOOLBAR_BUTTON_ATTR]: "",
 				role: this.#role,
 				tabindex: this.#tabIndex,
-				"data-disabled": getDataDisabled(this.#disabled.current),
-				"data-orientation": getDataOrientation(this.#root.orientation.current),
-				disabled: getDisabled(this.#disabled.current),
+				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				disabled: getDisabled(this.opts.disabled.current),
 				//
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -384,17 +336,11 @@ function getToggleItemDataState(condition: boolean) {
 	return condition ? "on" : "off";
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setToolbarRootContext, getToolbarRootContext] =
-	createContext<ToolbarRootState>("Toolbar.Root");
-const [setToolbarGroupContext, getToolbarGroupContext] =
-	createContext<ToolbarGroupState>("Toolbar.Group");
+const ToolbarRootContext = new Context<ToolbarRootState>("Toolbar.Root");
+const ToolbarGroupContext = new Context<ToolbarGroupState>("Toolbar.Group");
 
 export function useToolbarRoot(props: ToolbarRootStateProps) {
-	return setToolbarRootContext(new ToolbarRootState(props));
+	return ToolbarRootContext.set(new ToolbarRootState(props));
 }
 
 type InitToolbarGroupProps = WithRefProps<
@@ -408,24 +354,24 @@ type InitToolbarGroupProps = WithRefProps<
 
 export function useToolbarGroup(props: InitToolbarGroupProps) {
 	const { type, ...rest } = props;
-	const rootState = getToolbarRootContext();
+	const rootState = ToolbarRootContext.get();
 	const groupState =
 		type === "single"
 			? new ToolbarGroupSingleState(rest as ToolbarGroupSingleStateProps, rootState)
 			: new ToolbarGroupMultipleState(rest as ToolbarGroupMultipleStateProps, rootState);
 
-	return setToolbarGroupContext(groupState);
+	return ToolbarGroupContext.set(groupState);
 }
 
 export function useToolbarGroupItem(props: ToolbarGroupItemStateProps) {
-	const group = getToolbarGroupContext();
+	const group = ToolbarGroupContext.get();
 	return new ToolbarGroupItemState(props, group, group.root);
 }
 
 export function useToolbarButton(props: ToolbarButtonStateProps) {
-	return new ToolbarButtonState(props, getToolbarRootContext());
+	return new ToolbarButtonState(props, ToolbarRootContext.get());
 }
 
 export function useToolbarLink(props: ToolbarLinkStateProps) {
-	return new ToolbarLinkState(props, getToolbarRootContext());
+	return new ToolbarLinkState(props, ToolbarRootContext.get());
 }

@@ -22,7 +22,7 @@
 		{#if children}
 			{@render children?.()}
 		{:else}
-			<svg {width} {height} viewBox="0 0 30 10" preserveAspectRatio="none">
+			<svg {width} {height} viewBox="0 0 30 10" preserveAspectRatio="none" data-arrow="">
 				<polygon points="0,0 30,0 15,10" fill="currentColor" />
 			</svg>
 		{/if}

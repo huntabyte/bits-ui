@@ -51,7 +51,7 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			 * A callback function that is called when the input is completely filled.
 			 *
 			 */
-			// eslint-disable-next-line ts/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			onComplete?: (...args: any[]) => void;
 
 			/**
@@ -68,16 +68,6 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			 * Optionally provide an ID to apply to the hidden input element.
 			 */
 			inputId?: string;
-
-			/**
-			 * Whether or not the value state is controlled or not. If `true`, the component will
-			 * not update the value state internally, instead it will call `onValueChange` when
-			 * it would have otherwise, and it is up to you to update the `value` prop that is
-			 * passed to the component.
-			 *
-			 * @defaultValue false
-			 */
-			controlledValue?: boolean;
 
 			/**
 			 * The children snippet used to render the individual cells.

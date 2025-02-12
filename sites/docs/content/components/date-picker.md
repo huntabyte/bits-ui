@@ -5,7 +5,7 @@ description: Facilitates the selection of dates through an input and calendar-ba
 
 <script>
 	import { APISection, ComponentPreviewV2, DatePickerDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="date-picker-demo" comp="Date Picker">
@@ -138,13 +138,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's placeholder state, use the `controlledPlaceholder` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledPlaceholder` prop to `true` on the `DatePicker.Root` component.
-2. Provide a `placeholder` prop to `DatePicker.Root`, which should be a variable holding the current state.
-3. Implement an `onPlaceholderChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -153,9 +147,7 @@ To implement controlled state:
 </script>
 
 <DatePicker.Root
-	controlledPlaceholder
-	placeholder={myPlaceholder}
-	onPlaceholderChange={(p) => (myPlaceholder = p)}
+	bind:placeholder={() => myPlaceholder, (newPlaceholder) => (myPlaceholder = newPlaceholder)}
 >
 	<!-- ... -->
 </DatePicker.Root>
@@ -231,13 +223,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `DatePicker.Root` component.
-2. Provide a `value` prop to `DatePicker.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -245,7 +231,7 @@ To implement controlled state:
 	let myValue = $state();
 </script>
 
-<DatePicker.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<DatePicker.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </DatePicker.Root>
 ```
@@ -320,22 +306,15 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's open state, use the `controlledOpen` prop. This approach requires you to manually manage the open state, giving you full control over when and how the dialog responds to open/close events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `DatePicker.Root` component.
-2. Provide an `open` prop to `DatePicker.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
 	import { DatePicker } from "bits-ui";
-
 	let myOpen = $state(false);
 </script>
 
-<DatePicker.Root controlledOpen open={myOpen} onOpenChange={(o) => (myOpen = o)}>
+<DatePicker.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </DatePicker.Root>
 ```

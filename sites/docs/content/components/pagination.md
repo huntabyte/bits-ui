@@ -5,7 +5,7 @@ description: Facilitates navigation between pages.
 
 <script>
 	import { APISection, ComponentPreviewV2, PaginationDemo, Callout } from '$lib/components/index.js'
-	export let schemas
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="pagination-demo" comp="Pagination">
@@ -88,13 +88,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's pressed state, use the `controlledPage` prop. This approach requires you to manually manage the state, giving you full control over when and how the component responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledPage` prop to `true` on the `Pagination.Root` component.
-2. Provide a `page` prop to `Pagination.Root`, which should be a variable holding the current state.
-3. Implement an `onPageChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -102,7 +96,7 @@ To implement controlled state:
 	let myPage = $state(1);
 </script>
 
-<Pagination.Root controlledPage page={myPage} onPageChange={(p) => (myPage = p)}>
+<Pagination.Root bind:page={() => myPage, (newPage) => (myPage = newPage)}>
 	<!-- ... -->
 </Pagination.Root>
 ```

@@ -10,10 +10,10 @@
 	};
 
 	type Props = {
-		disabled: boolean;
-		items: Item[];
-		value: string[];
-		onValueChange: (v: string[]) => void;
+		disabled?: boolean;
+		items?: Item[];
+		value?: string[];
+		onValueChange?: (v: string[]) => void;
 	} & Omit<BitsPrimitiveDivAttributes, "value">;
 
 	let { disabled = false, items = [], value: valueProp = [], ...restProps }: Props = $props();
@@ -25,7 +25,7 @@
 	{value}
 </div>
 
-<button data-testid="update-value" onclick={() => value.push("item-2")}> Update Value </button>
+<button data-testid="update-value" onclick={() => value.push("item-1")}> Update Value </button>
 
 <Accordion.Root
 	type="multiple"

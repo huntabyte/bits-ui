@@ -3,12 +3,16 @@
 	import CaretLeft from "phosphor-svelte/lib/CaretLeft";
 	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { cn } from "$lib/utils/index.js";
+	import type { ComponentProps } from "svelte";
+
+	let { value = $bindable() }: ComponentProps<typeof RangeCalendar.Root> = $props();
 </script>
 
 <RangeCalendar.Root
 	class="mt-6 rounded-15px border border-dark-10 bg-background-alt p-[22px] shadow-card"
 	weekdayFormat="short"
 	fixedWeeks={true}
+	bind:value
 >
 	{#snippet children({ months, weekdays })}
 		<RangeCalendar.Header class="flex items-center justify-between">

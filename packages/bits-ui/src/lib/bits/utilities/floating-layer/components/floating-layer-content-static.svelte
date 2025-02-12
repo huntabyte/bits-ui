@@ -5,7 +5,9 @@
 		content,
 		onPlaced,
 	}: {
-		content?: Snippet<[{ props: Record<string, unknown> }]>;
+		content?: Snippet<
+			[{ props: Record<string, unknown>; wrapperProps: Record<string, unknown> }]
+		>;
 		onPlaced?: () => void;
 	} = $props();
 
@@ -14,4 +16,4 @@
 	});
 </script>
 
-{@render content?.({ props: {} })}
+{@render content?.({ props: {}, wrapperProps: {} })}

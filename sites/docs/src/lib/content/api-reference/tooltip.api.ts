@@ -11,12 +11,13 @@ import {
 	OpenChildSnippetProps,
 	OpenChildrenSnippetProps,
 } from "./extended-types/shared/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
@@ -101,7 +102,6 @@ export const root = createApiSchema<TooltipRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		disabled,
 		delayDuration,
 		disableHoverableContent,
@@ -143,7 +143,7 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			childDef: FloatingContentChildSnippetProps,
 		}),
 	},
 	dataAttributes: [
@@ -151,6 +151,28 @@ export const content = createApiSchema<TooltipContentPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "tooltip-content",
 			description: "Present on the tooltip content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-tooltip-content-transform-origin",
+			description: "The transform origin of the tooltip content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-tooltip-content-available-width",
+			description: "The available width of the tooltip content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-tooltip-content-available-height",
+			description: "The available height of the tooltip content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-tooltip-anchor-width",
+			description: "The width of the tooltip trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-tooltip-anchor-height",
+			description: "The height of the tooltip trigger element.",
 		}),
 	],
 });

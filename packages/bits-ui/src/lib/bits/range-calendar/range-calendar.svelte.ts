@@ -5,11 +5,17 @@ import {
 	isSameMonth,
 	isToday,
 } from "@internationalized/date";
-import { untrack } from "svelte";
 import { useRefById } from "svelte-toolbelt";
+import { Context, watch } from "runed";
+import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import {
 	getAriaDisabled,
@@ -18,7 +24,6 @@ import {
 	getDataSelected,
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
-import { createContext } from "$lib/internal/create-context.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
@@ -76,79 +81,31 @@ type RangeCalendarRootStateProps = WithRefProps<
 >;
 
 export class RangeCalendarRootState {
-	id: RangeCalendarRootStateProps["id"];
-	ref: RangeCalendarRootStateProps["ref"];
-	value: RangeCalendarRootStateProps["value"];
-	placeholder: RangeCalendarRootStateProps["placeholder"];
-	preventDeselect: RangeCalendarRootStateProps["preventDeselect"];
-	minValue: RangeCalendarRootStateProps["minValue"];
-	maxValue: RangeCalendarRootStateProps["maxValue"];
-	disabled: RangeCalendarRootStateProps["disabled"];
-	pagedNavigation: RangeCalendarRootStateProps["pagedNavigation"];
-	weekStartsOn: RangeCalendarRootStateProps["weekStartsOn"];
-	weekdayFormat: RangeCalendarRootStateProps["weekdayFormat"];
-	isDateDisabledProp: RangeCalendarRootStateProps["isDateDisabled"];
-	isDateUnavailableProp: RangeCalendarRootStateProps["isDateUnavailable"];
-	fixedWeeks: RangeCalendarRootStateProps["fixedWeeks"];
-	numberOfMonths: RangeCalendarRootStateProps["numberOfMonths"];
-	locale: RangeCalendarRootStateProps["locale"];
-	calendarLabel: RangeCalendarRootStateProps["calendarLabel"];
-	readonly: RangeCalendarRootStateProps["readonly"];
-	disableDaysOutsideMonth: RangeCalendarRootStateProps["disableDaysOutsideMonth"];
-	onRangeSelect: RangeCalendarRootStateProps["onRangeSelect"];
-	startValue: RangeCalendarRootStateProps["startValue"];
-	endValue: RangeCalendarRootStateProps["endValue"];
 	months: Month<DateValue>[] = $state([]);
 	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
 	focusedValue = $state<DateValue | undefined>(undefined);
-	lastPressedDateValue = $state<DateValue | undefined>(undefined);
+	lastPressedDateValue: DateValue | undefined = undefined;
 
-	constructor(props: RangeCalendarRootStateProps) {
-		this.value = props.value;
-		this.placeholder = props.placeholder;
-		this.preventDeselect = props.preventDeselect;
-		this.minValue = props.minValue;
-		this.maxValue = props.maxValue;
-		this.disabled = props.disabled;
-		this.pagedNavigation = props.pagedNavigation;
-		this.weekStartsOn = props.weekStartsOn;
-		this.weekdayFormat = props.weekdayFormat;
-		this.isDateDisabledProp = props.isDateDisabled;
-		this.isDateUnavailableProp = props.isDateUnavailable;
-		this.fixedWeeks = props.fixedWeeks;
-		this.numberOfMonths = props.numberOfMonths;
-		this.locale = props.locale;
-		this.calendarLabel = props.calendarLabel;
-		this.readonly = props.readonly;
-		this.disableDaysOutsideMonth = props.disableDaysOutsideMonth;
-		this.id = props.id;
-		this.ref = props.ref;
-		this.onRangeSelect = props.onRangeSelect;
-		this.startValue = props.startValue;
-		this.endValue = props.endValue;
-
+	constructor(readonly opts: RangeCalendarRootStateProps) {
 		this.announcer = getAnnouncer();
-		this.formatter = createFormatter(this.locale.current);
+		this.formatter = createFormatter(this.opts.locale.current);
 
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 
 		this.months = createMonths({
-			dateObj: this.placeholder.current,
-			weekStartsOn: this.weekStartsOn.current,
-			locale: this.locale.current,
-			fixedWeeks: this.fixedWeeks.current,
-			numberOfMonths: this.numberOfMonths.current,
+			dateObj: this.opts.placeholder.current,
+			weekStartsOn: this.opts.weekStartsOn.current,
+			locale: this.opts.locale.current,
+			fixedWeeks: this.opts.fixedWeeks.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
 		});
 
 		$effect(() => {
-			if (this.formatter.getLocale() === this.locale.current) return;
-			this.formatter.setLocale(this.locale.current);
+			if (this.formatter.getLocale() === this.opts.locale.current) return;
+			this.formatter.setLocale(this.opts.locale.current);
 		});
 
 		/**
@@ -156,13 +113,13 @@ export class RangeCalendarRootState {
 		 * which determines the month to show in the calendar.
 		 */
 		useMonthViewPlaceholderSync({
-			placeholder: this.placeholder,
+			placeholder: this.opts.placeholder,
 			getVisibleMonths: () => this.visibleMonths,
-			weekStartsOn: this.weekStartsOn,
-			locale: this.locale,
-			fixedWeeks: this.fixedWeeks,
-			numberOfMonths: this.numberOfMonths,
-			setMonths: this.#setMonths,
+			weekStartsOn: this.opts.weekStartsOn,
+			locale: this.opts.locale,
+			fixedWeeks: this.opts.fixedWeeks,
+			numberOfMonths: this.opts.numberOfMonths,
+			setMonths: this.setMonths,
 		});
 
 		/**
@@ -170,12 +127,12 @@ export class RangeCalendarRootState {
 		 * which determines the month to show in the calendar.
 		 */
 		useMonthViewOptionsSync({
-			fixedWeeks: this.fixedWeeks,
-			locale: this.locale,
-			numberOfMonths: this.numberOfMonths,
-			placeholder: this.placeholder,
-			setMonths: this.#setMonths,
-			weekStartsOn: this.weekStartsOn,
+			fixedWeeks: this.opts.fixedWeeks,
+			locale: this.opts.locale,
+			numberOfMonths: this.opts.numberOfMonths,
+			placeholder: this.opts.placeholder,
+			setMonths: this.setMonths,
+			weekStartsOn: this.opts.weekStartsOn,
 		});
 
 		/**
@@ -192,50 +149,56 @@ export class RangeCalendarRootState {
 		 * Synchronize the start and end values with the `value` in case
 		 * it is updated externally.
 		 */
-		$effect(() => {
-			const value = this.value.current;
-			untrack(() => {
+		watch(
+			() => this.opts.value.current,
+			(value) => {
 				if (value.start && value.end) {
-					this.startValue.current = value.start;
-					this.endValue.current = value.end;
+					this.opts.startValue.current = value.start;
+					this.opts.endValue.current = value.end;
 				} else if (value.start) {
-					this.startValue.current = value.start;
-					this.endValue.current = undefined;
+					this.opts.startValue.current = value.start;
+					this.opts.endValue.current = undefined;
+				} else if (value.start === undefined && value.end === undefined) {
+					this.opts.startValue.current = undefined;
+					this.opts.endValue.current = undefined;
 				}
-			});
-		});
+			}
+		);
 
 		/**
 		 * Synchronize the placeholder value with the current start value
 		 */
-		$effect(() => {
-			this.value.current;
-			untrack(() => {
-				const startValue = this.value.current.start;
-				if (startValue && this.placeholder.current !== startValue) {
-					this.placeholder.current = startValue;
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				const startValue = value.start;
+				if (startValue && this.opts.placeholder.current !== startValue) {
+					this.opts.placeholder.current = startValue;
 				}
-			});
-		});
+			}
+		);
 
-		$effect(() => {
-			const startValue = this.startValue.current;
-			const endValue = this.endValue.current;
-
-			untrack(() => {
-				const value = this.value.current;
-				if (value && value.start === startValue && value.end === endValue) {
+		watch(
+			[() => this.opts.startValue.current, () => this.opts.endValue.current],
+			([startValue, endValue]) => {
+				if (
+					this.opts.value.current &&
+					this.opts.value.current.start === startValue &&
+					this.opts.value.current.end === endValue
+				) {
 					return;
 				}
 
 				if (startValue && endValue) {
 					this.#updateValue((prev) => {
-						if (prev.start === startValue && prev.end === endValue) return prev;
+						if (prev.start === startValue && prev.end === endValue) {
+							return prev;
+						}
 						if (isBefore(endValue, startValue)) {
 							const start = startValue;
 							const end = endValue;
-							this.setStartValue(end);
-							this.setEndValue(start);
+							this.#setStartValue(end);
+							this.#setEndValue(start);
 							return { start: endValue, end: startValue };
 						} else {
 							return {
@@ -244,34 +207,52 @@ export class RangeCalendarRootState {
 							};
 						}
 					});
-				} else if (value && value.start && value.end) {
-					this.value.current = {
-						start: undefined,
-						end: undefined,
-					};
+				} else if (
+					this.opts.value.current &&
+					this.opts.value.current.start &&
+					this.opts.value.current.end
+				) {
+					this.opts.value.current.start = undefined;
+					this.opts.value.current.end = undefined;
 				}
-			});
-		});
+			}
+		);
+
+		this.shiftFocus = this.shiftFocus.bind(this);
+		this.handleCellClick = this.handleCellClick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
+		this.nextPage = this.nextPage.bind(this);
+		this.prevPage = this.prevPage.bind(this);
+		this.nextYear = this.nextYear.bind(this);
+		this.prevYear = this.prevYear.bind(this);
+		this.setYear = this.setYear.bind(this);
+		this.setMonth = this.setMonth.bind(this);
+		this.isDateDisabled = this.isDateDisabled.bind(this);
+		this.isDateUnavailable = this.isDateUnavailable.bind(this);
+		this.isOutsideVisibleMonths = this.isOutsideVisibleMonths.bind(this);
+		this.isSelected = this.isSelected.bind(this);
 	}
 
-	#updateValue = (cb: (value: DateRange) => DateRange) => {
-		const value = this.value.current;
+	#updateValue(cb: (value: DateRange) => DateRange) {
+		const value = this.opts.value.current;
 		const newValue = cb(value);
-		this.value.current = newValue;
+		this.opts.value.current = newValue;
 		if (newValue.start && newValue.end) {
-			this.onRangeSelect?.current?.();
+			this.opts.onRangeSelect?.current?.();
 		}
-	};
+	}
 
-	setStartValue = (value: DateValue | undefined) => {
-		this.startValue.current = value;
-	};
+	#setStartValue(value: DateValue | undefined) {
+		this.opts.startValue.current = value;
+	}
 
-	setEndValue = (value: DateValue | undefined) => {
-		this.endValue.current = value;
-	};
+	#setEndValue(value: DateValue | undefined) {
+		this.opts.endValue.current = value;
+	}
 
-	#setMonths = (months: Month<DateValue>[]) => (this.months = months);
+	setMonths = (months: Month<DateValue>[]) => {
+		this.months = months;
+	};
 
 	/**
 	 * This derived state holds an array of localized day names for the current
@@ -284,41 +265,41 @@ export class RangeCalendarRootState {
 		return getWeekdays({
 			months: this.months,
 			formatter: this.formatter,
-			weekdayFormat: this.weekdayFormat.current,
+			weekdayFormat: this.opts.weekdayFormat.current,
 		});
 	});
 
-	isOutsideVisibleMonths = (date: DateValue) => {
+	isOutsideVisibleMonths(date: DateValue) {
 		return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	};
+	}
 
-	isDateDisabled = (date: DateValue) => {
-		if (this.isDateDisabledProp.current(date) || this.disabled.current) return true;
-		const minValue = this.minValue.current;
-		const maxValue = this.maxValue.current;
+	isDateDisabled(date: DateValue) {
+		if (this.opts.isDateDisabled.current(date) || this.opts.disabled.current) return true;
+		const minValue = this.opts.minValue.current;
+		const maxValue = this.opts.maxValue.current;
 		if (minValue && isBefore(date, minValue)) return true;
 		if (maxValue && isAfter(date, maxValue)) return true;
 		return false;
-	};
+	}
 
-	isDateUnavailable = (date: DateValue) => {
-		if (this.isDateUnavailableProp.current(date)) return true;
+	isDateUnavailable(date: DateValue) {
+		if (this.opts.isDateUnavailable.current(date)) return true;
 		return false;
-	};
+	}
 
 	isStartInvalid = $derived.by(() => {
-		if (!this.startValue.current) return false;
+		if (!this.opts.startValue.current) return false;
 		return (
-			this.isDateUnavailable(this.startValue.current) ||
-			this.isDateDisabled(this.startValue.current)
+			this.isDateUnavailable(this.opts.startValue.current) ||
+			this.isDateDisabled(this.opts.startValue.current)
 		);
 	});
 
 	isEndInvalid = $derived.by(() => {
-		if (!this.endValue.current) return false;
+		if (!this.opts.endValue.current) return false;
 		return (
-			this.isDateUnavailable(this.endValue.current) ||
-			this.isDateDisabled(this.endValue.current)
+			this.isDateUnavailable(this.opts.endValue.current) ||
+			this.isDateDisabled(this.opts.endValue.current)
 		);
 	});
 
@@ -326,9 +307,9 @@ export class RangeCalendarRootState {
 		if (this.isStartInvalid || this.isEndInvalid) return true;
 
 		if (
-			this.endValue.current &&
-			this.startValue.current &&
-			isBefore(this.endValue.current, this.startValue.current)
+			this.opts.endValue.current &&
+			this.opts.startValue.current &&
+			isBefore(this.opts.endValue.current, this.opts.startValue.current)
 		)
 			return true;
 
@@ -337,17 +318,17 @@ export class RangeCalendarRootState {
 
 	isNextButtonDisabled = $derived.by(() => {
 		return getIsNextButtonDisabled({
-			maxValue: this.maxValue.current,
+			maxValue: this.opts.maxValue.current,
 			months: this.months,
-			disabled: this.disabled.current,
+			disabled: this.opts.disabled.current,
 		});
 	});
 
 	isPrevButtonDisabled = $derived.by(() => {
 		return getIsPrevButtonDisabled({
-			minValue: this.minValue.current,
+			minValue: this.opts.minValue.current,
 			months: this.months,
-			disabled: this.disabled.current,
+			disabled: this.opts.disabled.current,
 		});
 	});
 
@@ -355,45 +336,49 @@ export class RangeCalendarRootState {
 		return getCalendarHeadingValue({
 			months: this.months,
 			formatter: this.formatter,
-			locale: this.locale.current,
+			locale: this.opts.locale.current,
 		});
 	});
 
-	fullCalendarLabel = $derived.by(() => `${this.calendarLabel.current} ${this.headingValue}`);
+	fullCalendarLabel = $derived.by(
+		() => `${this.opts.calendarLabel.current} ${this.headingValue}`
+	);
 
-	isSelectionStart = (date: DateValue) => {
-		if (!this.startValue.current) return false;
-		return isSameDay(date, this.startValue.current);
-	};
+	isSelectionStart(date: DateValue) {
+		if (!this.opts.startValue.current) return false;
+		return isSameDay(date, this.opts.startValue.current);
+	}
 
-	isSelectionEnd = (date: DateValue) => {
-		if (!this.endValue.current) return false;
-		return isSameDay(date, this.endValue.current);
-	};
+	isSelectionEnd(date: DateValue) {
+		if (!this.opts.endValue.current) return false;
+		return isSameDay(date, this.opts.endValue.current);
+	}
 
-	isSelected = (date: DateValue) => {
-		if (this.startValue.current && isSameDay(this.startValue.current, date)) return true;
-		if (this.endValue.current && isSameDay(this.endValue.current, date)) return true;
-		if (this.startValue.current && this.endValue.current) {
-			return isBetweenInclusive(date, this.startValue.current, this.endValue.current);
+	isSelected(date: DateValue) {
+		if (this.opts.startValue.current && isSameDay(this.opts.startValue.current, date))
+			return true;
+		if (this.opts.endValue.current && isSameDay(this.opts.endValue.current, date)) return true;
+		if (this.opts.startValue.current && this.opts.endValue.current) {
+			return isBetweenInclusive(
+				date,
+				this.opts.startValue.current,
+				this.opts.endValue.current
+			);
 		}
 		return false;
-	};
+	}
 
 	highlightedRange = $derived.by(() => {
-		if (this.startValue.current && this.endValue.current) return null;
-		if (!this.startValue.current || !this.focusedValue) return null;
+		if (this.opts.startValue.current && this.opts.endValue.current) return null;
+		if (!this.opts.startValue.current || !this.focusedValue) return null;
 
-		const isStartBeforeFocused = isBefore(this.startValue.current, this.focusedValue);
-		const start = isStartBeforeFocused ? this.startValue.current : this.focusedValue;
+		const isStartBeforeFocused = isBefore(this.opts.startValue.current, this.focusedValue);
+		const start = isStartBeforeFocused ? this.opts.startValue.current : this.focusedValue;
+		const end = isStartBeforeFocused ? this.focusedValue : this.opts.startValue.current;
+		const range = { start, end };
 
-		const end = isStartBeforeFocused ? this.focusedValue : this.startValue.current;
-
-		if (isSameDay(start.add({ days: 1 }), end)) {
-			return {
-				start,
-				end,
-			};
+		if (isSameDay(start.add({ days: 1 }), end) || isSameDay(start, end)) {
+			return range;
 		}
 
 		const isValid = areAllDaysBetweenValid(
@@ -402,156 +387,152 @@ export class RangeCalendarRootState {
 			this.isDateUnavailable,
 			this.isDateDisabled
 		);
-		if (isValid) {
-			return {
-				start,
-				end,
-			};
-		}
+
+		if (isValid) return range;
 		return null;
 	});
 
-	#shiftFocus = (node: HTMLElement, add: number) => {
+	shiftFocus(node: HTMLElement, add: number) {
 		return shiftCalendarFocus({
 			node,
 			add,
-			placeholder: this.placeholder,
-			calendarNode: this.ref.current,
+			placeholder: this.opts.placeholder,
+			calendarNode: this.opts.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,
 			isNextButtonDisabled: this.isNextButtonDisabled,
 			months: this.months,
-			numberOfMonths: this.numberOfMonths.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
 		});
-	};
+	}
 
-	#announceEmpty = () => {
+	#announceEmpty() {
 		this.announcer.announce("Selected date is now empty.", "polite");
-	};
+	}
 
-	#announceSelectedDate = (date: DateValue) => {
+	#announceSelectedDate(date: DateValue) {
 		this.announcer.announce(
 			`Selected Date: ${this.formatter.selectedDate(date, false)}`,
 			"polite"
 		);
-	};
+	}
 
-	#announceSelectedRange = (start: DateValue, end: DateValue) => {
+	#announceSelectedRange(start: DateValue, end: DateValue) {
 		this.announcer.announce(
 			`Selected Dates: ${this.formatter.selectedDate(start, false)} to ${this.formatter.selectedDate(end, false)}`,
 			"polite"
 		);
-	};
+	}
 
-	handleCellClick = (e: Event, date: DateValue) => {
+	handleCellClick(e: Event, date: DateValue) {
 		if (this.isDateDisabled(date) || this.isDateUnavailable(date)) return;
 		const prevLastPressedDate = this.lastPressedDateValue;
 		this.lastPressedDateValue = date;
 
-		if (this.startValue.current && this.highlightedRange === null) {
+		if (this.opts.startValue.current && this.highlightedRange === null) {
 			if (
-				isSameDay(this.startValue.current, date) &&
-				!this.preventDeselect.current &&
-				!this.endValue.current
+				isSameDay(this.opts.startValue.current, date) &&
+				!this.opts.preventDeselect.current &&
+				!this.opts.endValue.current
 			) {
-				this.setStartValue(undefined);
-				this.placeholder.current = date;
+				this.#setStartValue(undefined);
+				this.opts.placeholder.current = date;
 				this.#announceEmpty();
 				return;
-			} else if (!this.endValue.current) {
+			} else if (!this.opts.endValue.current) {
 				e.preventDefault();
 				if (prevLastPressedDate && isSameDay(prevLastPressedDate, date)) {
-					this.setStartValue(date);
+					this.#setStartValue(date);
 					this.#announceSelectedDate(date);
 				}
 			}
 		}
 
 		if (
-			this.startValue.current &&
-			this.endValue.current &&
-			isSameDay(this.endValue.current, date) &&
-			!this.preventDeselect.current
+			this.opts.startValue.current &&
+			this.opts.endValue.current &&
+			isSameDay(this.opts.endValue.current, date) &&
+			!this.opts.preventDeselect.current
 		) {
-			this.setStartValue(undefined);
-			this.setEndValue(undefined);
-			this.placeholder.current = date;
+			this.#setStartValue(undefined);
+			this.#setEndValue(undefined);
+			this.opts.placeholder.current = date;
 			this.#announceEmpty();
 			return;
 		}
 
-		if (!this.startValue.current) {
+		if (!this.opts.startValue.current) {
 			this.#announceSelectedDate(date);
-			this.setStartValue(date);
-		} else if (!this.endValue.current) {
-			this.#announceSelectedRange(this.startValue.current, date);
-			this.setEndValue(date);
-		} else if (this.endValue.current && this.startValue.current) {
-			this.setEndValue(undefined);
+			this.#setStartValue(date);
+		} else if (!this.opts.endValue.current) {
+			this.#announceSelectedRange(this.opts.startValue.current, date);
+			this.#setEndValue(date);
+		} else if (this.opts.endValue.current && this.opts.startValue.current) {
+			this.#setEndValue(undefined);
 			this.#announceSelectedDate(date);
-			this.setStartValue(date);
+			this.#setStartValue(date);
 		}
-	};
+	}
 
-	#onkeydown = (event: KeyboardEvent) => {
+	onkeydown(event: BitsKeyboardEvent) {
 		return handleCalendarKeydown({
 			event,
 			handleCellClick: this.handleCellClick,
-			placeholderValue: this.placeholder.current,
-			shiftFocus: this.#shiftFocus,
+			placeholderValue: this.opts.placeholder.current,
+			shiftFocus: this.shiftFocus,
 		});
-	};
+	}
 
 	/**
 	 * Navigates to the next page of the calendar.
 	 */
-	nextPage = () => {
+	nextPage() {
 		handleCalendarNextPage({
-			fixedWeeks: this.fixedWeeks.current,
-			locale: this.locale.current,
-			numberOfMonths: this.numberOfMonths.current,
-			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
-			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
-			weekStartsOn: this.weekStartsOn.current,
+			fixedWeeks: this.opts.fixedWeeks.current,
+			locale: this.opts.locale.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
+			pagedNavigation: this.opts.pagedNavigation.current,
+			setMonths: this.setMonths,
+			setPlaceholder: (date: DateValue) => (this.opts.placeholder.current = date),
+			weekStartsOn: this.opts.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
 	/**
 	 * Navigates to the previous page of the calendar.
 	 */
-	prevPage = () => {
+	prevPage() {
 		handleCalendarPrevPage({
-			fixedWeeks: this.fixedWeeks.current,
-			locale: this.locale.current,
-			numberOfMonths: this.numberOfMonths.current,
-			pagedNavigation: this.pagedNavigation.current,
-			setMonths: this.#setMonths,
-			setPlaceholder: (date: DateValue) => (this.placeholder.current = date),
-			weekStartsOn: this.weekStartsOn.current,
+			fixedWeeks: this.opts.fixedWeeks.current,
+			locale: this.opts.locale.current,
+			numberOfMonths: this.opts.numberOfMonths.current,
+			pagedNavigation: this.opts.pagedNavigation.current,
+			setMonths: this.setMonths,
+			setPlaceholder: (date: DateValue) => (this.opts.placeholder.current = date),
+			weekStartsOn: this.opts.weekStartsOn.current,
 			months: this.months,
 		});
-	};
+	}
 
-	nextYear = () => {
-		this.placeholder.current = this.placeholder.current.add({ years: 1 });
-	};
+	nextYear() {
+		this.opts.placeholder.current = this.opts.placeholder.current.add({ years: 1 });
+	}
 
-	prevYear = () => {
-		this.placeholder.current = this.placeholder.current.subtract({ years: 1 });
-	};
+	prevYear() {
+		this.opts.placeholder.current = this.opts.placeholder.current.subtract({ years: 1 });
+	}
 
-	setYear = (year: number) => {
-		this.placeholder.current = this.placeholder.current.set({ year });
-	};
+	setYear(year: number) {
+		this.opts.placeholder.current = this.opts.placeholder.current.set({ year });
+	}
 
-	setMonth = (month: number) => {
-		this.placeholder.current = this.placeholder.current.set({ month });
-	};
+	setMonth(month: number) {
+		this.opts.placeholder.current = this.opts.placeholder.current.set({ month });
+	}
 
-	getBitsAttr = (part: CalendarParts) => {
+	getBitsAttr(part: CalendarParts) {
 		return `data-range-calendar-${part}`;
-	};
+	}
 
 	snippetProps = $derived.by(() => ({
 		months: this.months,
@@ -563,14 +544,14 @@ export class RangeCalendarRootState {
 			({
 				...getCalendarElementProps({
 					fullCalendarLabel: this.fullCalendarLabel,
-					id: this.id.current,
+					id: this.opts.id.current,
 					isInvalid: this.isInvalid,
-					disabled: this.disabled.current,
-					readonly: this.readonly.current,
+					disabled: this.opts.disabled.current,
+					readonly: this.opts.readonly.current,
 				}),
 				[this.getBitsAttr("root")]: "",
 				//
-				onkeydown: this.#onkeydown,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -583,24 +564,28 @@ type RangeCalendarCellStateProps = WithRefProps<
 >;
 
 export class RangeCalendarCellState {
-	id: RangeCalendarCellStateProps["id"];
-	ref: RangeCalendarCellStateProps["ref"];
-	date: RangeCalendarCellStateProps["date"];
-	month: RangeCalendarCellStateProps["month"];
-	cellDate = $derived.by(() => toDate(this.date.current));
-	isDisabled = $derived.by(() => this.root.isDateDisabled(this.date.current));
-	isUnavailable = $derived.by(() => this.root.isDateUnavailableProp.current(this.date.current));
-	isDateToday = $derived.by(() => isToday(this.date.current, getLocalTimeZone()));
-	isOutsideMonth = $derived.by(() => !isSameMonth(this.date.current, this.month.current));
-	isOutsideVisibleMonths = $derived.by(() => this.root.isOutsideVisibleMonths(this.date.current));
-	isFocusedDate = $derived.by(() => isSameDay(this.date.current, this.root.placeholder.current));
-	isSelectedDate = $derived.by(() => this.root.isSelected(this.date.current));
-	isSelectionStart = $derived.by(() => this.root.isSelectionStart(this.date.current));
-	isSelectionEnd = $derived.by(() => this.root.isSelectionEnd(this.date.current));
+	cellDate = $derived.by(() => toDate(this.opts.date.current));
+	isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
+	isUnavailable = $derived.by(() =>
+		this.root.opts.isDateUnavailable.current(this.opts.date.current)
+	);
+	isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
+	isOutsideMonth = $derived.by(
+		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
+	);
+	isOutsideVisibleMonths = $derived.by(() =>
+		this.root.isOutsideVisibleMonths(this.opts.date.current)
+	);
+	isFocusedDate = $derived.by(() =>
+		isSameDay(this.opts.date.current, this.root.opts.placeholder.current)
+	);
+	isSelectedDate = $derived.by(() => this.root.isSelected(this.opts.date.current));
+	isSelectionStart = $derived.by(() => this.root.isSelectionStart(this.opts.date.current));
+	isSelectionEnd = $derived.by(() => this.root.isSelectionEnd(this.opts.date.current));
 	isHighlighted = $derived.by(() =>
 		this.root.highlightedRange
 			? isBetweenInclusive(
-					this.date.current,
+					this.opts.date.current,
 					this.root.highlightedRange.start,
 					this.root.highlightedRange.end
 				)
@@ -617,18 +602,10 @@ export class RangeCalendarCellState {
 	);
 
 	constructor(
-		props: RangeCalendarCellStateProps,
+		readonly opts: RangeCalendarCellStateProps,
 		readonly root: RangeCalendarRootState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
-		this.date = props.date;
-		this.month = props.month;
-
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		useRefById(opts);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -640,7 +617,7 @@ export class RangeCalendarCellState {
 	ariaDisabled = $derived.by(() => {
 		return (
 			this.isDisabled ||
-			(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current) ||
+			(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current) ||
 			this.isUnavailable
 		);
 	});
@@ -657,10 +634,10 @@ export class RangeCalendarCellState {
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
-				"data-value": this.date.current.toString(),
+				"data-value": this.opts.date.current.toString(),
 				"data-disabled": getDataDisabled(
 					this.isDisabled ||
-						(this.isOutsideMonth && this.root.disableDaysOutsideMonth.current)
+						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
 				),
 			}) as const
 	);
@@ -668,7 +645,7 @@ export class RangeCalendarCellState {
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "gridcell",
 				"aria-selected": getAriaSelected(this.isSelectedDate),
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
@@ -681,57 +658,52 @@ export class RangeCalendarCellState {
 type RangeCalendarDayStateProps = WithRefProps;
 
 class RangeCalendarDayState {
-	id: RangeCalendarDayStateProps["id"];
-	ref: RangeCalendarDayStateProps["ref"];
-
 	constructor(
-		props: RangeCalendarDayStateProps,
+		readonly opts: RangeCalendarDayStateProps,
 		readonly cell: RangeCalendarCellState
 	) {
-		this.id = props.id;
-		this.ref = props.ref;
+		useRefById(opts);
 
-		useRefById({
-			id: this.id,
-			ref: this.ref,
-		});
+		this.onclick = this.onclick.bind(this);
+		this.onmouseenter = this.onmouseenter.bind(this);
+		this.onfocusin = this.onfocusin.bind(this);
 	}
 
 	#tabindex = $derived.by(() =>
 		this.cell.isFocusedDate
 			? 0
-			: (this.cell.isOutsideMonth && this.cell.root.disableDaysOutsideMonth.current) ||
+			: (this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 				  this.cell.isDisabled
 				? undefined
 				: -1
 	);
 
-	#onclick = (e: MouseEvent) => {
+	onclick(e: BitsMouseEvent) {
 		if (this.cell.isDisabled) return;
-		this.cell.root.handleCellClick(e, this.cell.date.current);
-	};
+		this.cell.root.handleCellClick(e, this.cell.opts.date.current);
+	}
 
-	#onmouseenter = () => {
+	onmouseenter(_: BitsMouseEvent) {
 		if (this.cell.isDisabled) return;
-		this.cell.root.focusedValue = this.cell.date.current;
-	};
+		this.cell.root.focusedValue = this.cell.opts.date.current;
+	}
 
-	#onfocusin = () => {
+	onfocusin(_: BitsFocusEvent) {
 		if (this.cell.isDisabled) return;
-		this.cell.root.focusedValue = this.cell.date.current;
-	};
+		this.cell.root.focusedValue = this.cell.opts.date.current;
+	}
 
 	snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
 		unavailable: this.cell.isUnavailable,
 		selected: this.cell.isSelectedDate,
-		day: `${this.cell.date.current.day}`,
+		day: `${this.cell.opts.date.current.day}`,
 	}));
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.id.current,
+				id: this.opts.id.current,
 				role: "button",
 				"aria-label": this.cell.labelText,
 				"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),
@@ -741,32 +713,25 @@ class RangeCalendarDayState {
 				// Shared logic for range calendar and calendar
 				"data-bits-day": "",
 				//
-				onclick: this.#onclick,
-				onmouseenter: this.#onmouseenter,
-				onfocusin: this.#onfocusin,
+				onclick: this.onclick,
+				onmouseenter: this.onmouseenter,
+				onfocusin: this.onfocusin,
 			}) as const
 	);
 }
-const [setRangeCalendarRootContext, getRangeCalendarRootContext] =
-	createContext<RangeCalendarRootState>(
-		["Calendar.Root", "RangeCalendar.Root"],
-		"Calendar.Root",
-		false
-	);
 
-const [setRangeCalendarCellContext, getRangeCalendarCellContext] =
-	createContext<RangeCalendarCellState>("RangeCalendar.Cell");
+const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");
 
 export function useRangeCalendarRoot(props: RangeCalendarRootStateProps) {
-	return setRangeCalendarRootContext(new RangeCalendarRootState(props));
+	return CalendarRootContext.set(new RangeCalendarRootState(props));
 }
 
 export function useRangeCalendarCell(props: RangeCalendarCellStateProps) {
-	return setRangeCalendarCellContext(
-		new RangeCalendarCellState(props, getRangeCalendarRootContext())
+	return RangeCalendarCellContext.set(
+		new RangeCalendarCellState(props, CalendarRootContext.get() as RangeCalendarRootState)
 	);
 }
 
 export function useRangeCalendarDay(props: RangeCalendarDayStateProps) {
-	return new RangeCalendarDayState(props, getRangeCalendarCellContext());
+	return new RangeCalendarDayState(props, RangeCalendarCellContext.get());
 }

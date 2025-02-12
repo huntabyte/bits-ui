@@ -12,7 +12,6 @@
 		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
-		controlledValue = false,
 		...restProps
 	}: MenuRadioGroupProps = $props();
 
@@ -20,12 +19,8 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		ref: box.with(

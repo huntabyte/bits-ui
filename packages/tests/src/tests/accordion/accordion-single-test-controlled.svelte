@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion } from "bits-ui";
+	import { Accordion, type AccordionRootSingleProps } from "bits-ui";
 
 	type Item = {
 		value: string;
@@ -13,12 +13,9 @@
 		disabled = false,
 		items = [],
 		value: valueProp = "",
-	}: Omit<
-		Accordion.RootProps & {
-			items: Item[];
-		},
-		"type"
-	> = $props();
+	}: Omit<AccordionRootSingleProps, "type"> & {
+		items: Item[];
+	} = $props();
 
 	let value = $state(valueProp);
 </script>
@@ -27,7 +24,7 @@
 	{value}
 </div>
 
-<button data-testid="update-value" onclick={() => (value = "item-2")}> Update Value </button>
+<button data-testid="update-value" onclick={() => (value = "item-1")}> Update Value </button>
 
 <Accordion.Root type="single" bind:value={value as string} {disabled} data-testid="root">
 	{#each items as { value, title, disabled, content, level }}

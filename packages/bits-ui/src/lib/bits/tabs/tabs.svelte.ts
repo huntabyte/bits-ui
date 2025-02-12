@@ -1,6 +1,6 @@
-import { untrack } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { useRefById } from "svelte-toolbelt";
+import { Context, watch } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
 	getAriaOrientation,
@@ -12,18 +12,22 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 import {
 	type UseRovingFocusReturn,
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
-import { createContext } from "$lib/internal/create-context.js";
 
-const ROOT_ATTR = "data-tabs-root";
-const LIST_ATTR = "data-tabs-list";
-const TRIGGER_ATTR = "data-tabs-trigger";
-const CONTENT_ATTR = "data-tabs-content";
+const TABS_ROOT_ATTR = "data-tabs-root";
+const TABS_LIST_ATTR = "data-tabs-list";
+const TABS_TRIGGER_ATTR = "data-tabs-trigger";
+const TABS_CONTENT_ATTR = "data-tabs-content";
 
 type TabsRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -38,13 +42,6 @@ type TabsRootStateProps = WithRefProps<
 >;
 
 class TabsRootState {
-	#id: TabsRootStateProps["id"];
-	ref: TabsRootStateProps["ref"];
-	orientation: TabsRootStateProps["orientation"];
-	loop: TabsRootStateProps["loop"];
-	activationMode: TabsRootStateProps["activationMode"];
-	value: TabsRootStateProps["value"];
-	disabled: TabsRootStateProps["disabled"];
 	rovingFocusGroup: UseRovingFocusReturn;
 	triggerIds = $state<string[]>([]);
 	// holds the trigger ID for each value to associate it with the content
@@ -52,29 +49,18 @@ class TabsRootState {
 	// holds the content ID for each value to associate it with the trigger
 	valueToContentId = new SvelteMap<string, string>();
 
-	constructor(props: TabsRootStateProps) {
-		this.#id = props.id;
-		this.ref = props.ref;
-		this.orientation = props.orientation;
-		this.loop = props.loop;
-		this.activationMode = props.activationMode;
-		this.value = props.value;
-		this.disabled = props.disabled;
-
-		useRefById({
-			id: this.#id,
-			ref: this.ref,
-		});
+	constructor(readonly opts: TabsRootStateProps) {
+		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
-			candidateAttr: TRIGGER_ATTR,
-			rootNodeId: this.#id,
-			loop: this.loop,
-			orientation: this.orientation,
+			candidateAttr: TABS_TRIGGER_ATTR,
+			rootNodeId: this.opts.id,
+			loop: this.opts.loop,
+			orientation: this.opts.orientation,
 		});
 	}
 
-	registerTrigger = (id: string, value: string) => {
+	registerTrigger(id: string, value: string) {
 		this.triggerIds.push(id);
 		this.valueToTriggerId.set(value, id);
 
@@ -83,27 +69,27 @@ class TabsRootState {
 			this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
 			this.valueToTriggerId.delete(value);
 		};
-	};
+	}
 
-	registerContent = (id: string, value: string) => {
+	registerContent(id: string, value: string) {
 		this.valueToContentId.set(value, id);
 
 		// returns the deregister function
 		return () => {
 			this.valueToContentId.delete(value);
 		};
-	};
+	}
 
-	setValue = (v: string) => {
-		this.value.current = v;
-	};
+	setValue(v: string) {
+		this.opts.value.current = v;
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
-				"data-orientation": getDataOrientation(this.orientation.current),
-				[ROOT_ATTR]: "",
+				id: this.opts.id.current,
+				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				[TABS_ROOT_ATTR]: "",
 			}) as const
 	);
 }
@@ -115,30 +101,23 @@ class TabsRootState {
 type TabsListStateProps = WithRefProps;
 
 class TabsListState {
-	#id: TabsListStateProps["id"];
-	#ref: TabsListStateProps["ref"];
-	#root: TabsRootState;
-	#isDisabled = $derived.by(() => this.#root.disabled.current);
+	#isDisabled = $derived.by(() => this.root.opts.disabled.current);
 
-	constructor(props: TabsListStateProps, root: TabsRootState) {
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(
+		readonly opts: TabsListStateProps,
+		readonly root: TabsRootState
+	) {
+		useRefById(opts);
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "tablist",
-				"aria-orientation": getAriaOrientation(this.#root.orientation.current),
-				"data-orientation": getDataOrientation(this.#root.orientation.current),
-				[LIST_ATTR]: "",
+				"aria-orientation": getAriaOrientation(this.root.opts.orientation.current),
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				[TABS_LIST_ATTR]: "",
 				"data-disabled": getDataDisabled(this.#isDisabled),
 			}) as const
 	);
@@ -156,104 +135,77 @@ type TabsTriggerStateProps = WithRefProps<
 >;
 
 class TabsTriggerState {
-	#root: TabsRootState;
-	#id: TabsTriggerStateProps["id"];
-	#ref: TabsTriggerStateProps["ref"];
-	#disabled: TabsTriggerStateProps["disabled"];
-	#value: TabsTriggerStateProps["value"];
-	#isActive = $derived.by(() => this.#root.value.current === this.#value.current);
-	#isDisabled = $derived.by(() => this.#disabled.current || this.#root.disabled.current);
+	#isActive = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
+	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 	#tabIndex = $state(0);
-	#ariaControls = $derived.by(() => this.#root.valueToContentId.get(this.#value.current));
+	#ariaControls = $derived.by(() => this.root.valueToContentId.get(this.opts.value.current));
 
-	constructor(props: TabsTriggerStateProps, root: TabsRootState) {
-		this.#root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-		this.#value = props.value;
-		this.#disabled = props.disabled;
+	constructor(
+		readonly opts: TabsTriggerStateProps,
+		readonly root: TabsRootState
+	) {
+		useRefById(opts);
 
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
+		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
+			return this.root.registerTrigger(id, value);
 		});
 
 		$effect(() => {
-			// we want to track the value & id
-			const id = this.#id.current;
-			const value = this.#value.current;
-
-			return untrack(() => {
-				const deregister = this.#root.registerTrigger(id, value);
-				return () => {
-					deregister();
-				};
-			});
-		});
-
-		$effect(() => {
-			if (this.#root.triggerIds.length) {
-				this.#tabIndex = this.#root.rovingFocusGroup.getTabIndex(this.#ref.current);
+			this.root.triggerIds.length;
+			if (this.#isActive || !this.root.opts.value.current) {
+				this.#tabIndex = 0;
+			} else {
+				this.#tabIndex = -1;
 			}
 		});
+		this.onfocus = this.onfocus.bind(this);
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	activate = () => {
-		if (this.#root.value.current === this.#value.current) return;
-		this.#root.setValue(this.#value.current);
-	};
+	#activate() {
+		if (this.root.opts.value.current === this.opts.value.current) return;
+		this.root.setValue(this.opts.value.current);
+	}
 
-	#onfocus = () => {
-		if (this.#root.activationMode.current !== "automatic" || this.#disabled.current) return;
-		this.activate();
-	};
+	onfocus(_: BitsFocusEvent) {
+		if (this.root.opts.activationMode.current !== "automatic" || this.#isDisabled) return;
+		this.#activate();
+	}
 
-	#onpointerdown = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch" || e.button !== 0) return e.preventDefault();
-		e.preventDefault();
-		this.#ref.current?.focus();
-		this.activate();
-	};
+	onclick(_: BitsMouseEvent) {
+		if (this.#isDisabled) return;
+		this.#activate();
+	}
 
-	#onpointerup = (e: PointerEvent) => {
-		if (this.#disabled.current) return;
-		if (e.pointerType === "touch") {
-			e.preventDefault();
-			this.#ref.current?.focus();
-			this.activate();
-		}
-	};
-
-	#onkeydown = (e: KeyboardEvent) => {
+	onkeydown(e: BitsKeyboardEvent) {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.activate();
+			this.#activate();
 			return;
 		}
-		this.#root.rovingFocusGroup.handleKeydown(this.#ref.current, e);
-	};
+		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
+	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "tab",
 				"data-state": getTabDataState(this.#isActive),
-				"data-value": this.#value.current,
-				"data-orientation": getDataOrientation(this.#root.orientation.current),
-				"data-disabled": getDataDisabled(this.#disabled.current),
+				"data-value": this.opts.value.current,
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-disabled": getDataDisabled(this.#isDisabled),
 				"aria-selected": getAriaSelected(this.#isActive),
 				"aria-controls": this.#ariaControls,
-				[TRIGGER_ATTR]: "",
-				disabled: getDisabled(this.#disabled.current),
+				[TABS_TRIGGER_ATTR]: "",
+				disabled: getDisabled(this.#isDisabled),
 				tabindex: this.#tabIndex,
 				//
-				onpointerdown: this.#onpointerdown,
-				onpointerup: this.#onpointerup,
-				onfocus: this.#onfocus,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onfocus: this.onfocus,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
@@ -268,78 +220,52 @@ type TabsContentStateProps = WithRefProps<
 >;
 
 class TabsContentState {
-	#root: TabsRootState;
-	#id: TabsContentStateProps["id"];
-	#ref: TabsContentStateProps["ref"];
-	#value: TabsContentStateProps["value"];
-	#isActive = $derived.by(() => this.#root.value.current === this.#value.current);
-	#ariaLabelledBy = $derived.by(() => this.#root.valueToTriggerId.get(this.#value.current));
+	#isActive = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
+	#ariaLabelledBy = $derived.by(() => this.root.valueToTriggerId.get(this.opts.value.current));
 
-	constructor(props: TabsContentStateProps, root: TabsRootState) {
-		this.#root = root;
-		this.#value = props.value;
-		this.#id = props.id;
-		this.#ref = props.ref;
+	constructor(
+		readonly opts: TabsContentStateProps,
+		readonly root: TabsRootState
+	) {
+		useRefById(opts);
 
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
-
-		$effect(() => {
-			// we want to track the value & id
-			const id = this.#id.current;
-			const value = this.#value.current;
-
-			untrack(() => {
-				const deregister = this.#root.registerContent(id, value);
-				return () => {
-					deregister();
-				};
-			});
+		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
+			return this.root.registerContent(id, value);
 		});
 	}
 
 	props = $derived.by(
 		() =>
 			({
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "tabpanel",
 				hidden: getHidden(!this.#isActive),
 				tabindex: 0,
-				"data-value": this.#value.current,
+				"data-value": this.opts.value.current,
 				"data-state": getTabDataState(this.#isActive),
 				"aria-labelledby": this.#ariaLabelledBy,
-				[CONTENT_ATTR]: "",
+				[TABS_CONTENT_ATTR]: "",
 			}) as const
 	);
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setTabsRootContext, getTabsRootContext] = createContext<TabsRootState>("Tabs.Root");
+const TabsRootContext = new Context<TabsRootState>("Tabs.Root");
 
 export function useTabsRoot(props: TabsRootStateProps) {
-	return setTabsRootContext(new TabsRootState(props));
+	return TabsRootContext.set(new TabsRootState(props));
 }
 
 export function useTabsTrigger(props: TabsTriggerStateProps) {
-	return new TabsTriggerState(props, getTabsRootContext());
+	return new TabsTriggerState(props, TabsRootContext.get());
 }
 
 export function useTabsList(props: TabsListStateProps) {
-	return new TabsListState(props, getTabsRootContext());
+	return new TabsListState(props, TabsRootContext.get());
 }
 
 export function useTabsContent(props: TabsContentStateProps) {
-	return new TabsContentState(props, getTabsRootContext());
+	return new TabsContentState(props, TabsRootContext.get());
 }
-
-//
-// HELPERS
-//
 
 function getTabDataState(condition: boolean): "active" | "inactive" {
 	return condition ? "active" : "inactive";

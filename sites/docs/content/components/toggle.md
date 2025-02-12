@@ -5,7 +5,7 @@ description: A control element that switches between two states, providing a bin
 
 <script>
 	import { APISection, ComponentPreviewV2, ToggleDemo, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="toggle-demo" comp="Toggle">
@@ -78,13 +78,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's pressed state, use the `controlledPressed` prop. This approach requires you to manually manage the checked state, giving you full control over when and how the component responds to change events.
-
-To implement controlled state:
-
-1. Set the `controlledPressed` prop to `true` on the `Toggle.Root` component.
-2. Provide a `pressed` prop to `Toggle.Root`, which should be a variable holding the current state.
-3. Implement an `onPressedChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -92,7 +86,7 @@ To implement controlled state:
 	let myPressed = $state(false);
 </script>
 
-<Toggle.Root controlledPressed pressed={myPressed} onPressedChange={(p) => (myPressed = p)}>
+<Toggle.Root bind:pressed={() => myPressed, (newPressed) => (myPressed = newPressed)}>
 	<!-- ... -->
 </Toggle.Root>
 ```

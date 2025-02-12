@@ -25,16 +25,6 @@ export type ToggleRootPropsWithoutHTML = WithChild<
 		 * @defaultValue false
 		 */
 		disabled?: boolean | null | undefined;
-
-		/**
-		 * Whether or not the pressed state is controlled or not. If `true`, the component will not
-		 * update the pressed state internally, instead it will call `onPressedChange` when it
-		 * would have otherwise, and it is up to you to update the `pressed` prop that is passed to
-		 * the component.
-		 *
-		 * @defaultValue false
-		 */
-		controlledPressed?: boolean;
 	},
 	ToggleRootSnippetProps
 >;

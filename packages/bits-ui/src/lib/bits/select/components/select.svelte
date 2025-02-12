@@ -1,10 +1,10 @@
 <script lang="ts">
+	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import { noop } from "$lib/internal/noop.js";
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { useSelectRoot } from "../select.svelte.js";
 	import type { SelectRootProps } from "../types.js";
 	import SelectHiddenInput from "./select-hidden-input.svelte";
-	import { noop } from "$lib/internal/noop.js";
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 
 	let {
 		value = $bindable(),
@@ -17,20 +17,15 @@
 		loop = false,
 		scrollAlignment = "nearest",
 		required = false,
-		controlledOpen = false,
-		controlledValue = false,
 		items = [],
-		allowDeselect = true,
+		allowDeselect = false,
 		children,
 	}: SelectRootProps = $props();
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];
-		if (controlledValue) {
-			onValueChange(defaultValue as any);
-		} else {
-			value = defaultValue;
-		}
+
+		value = defaultValue;
 	}
 
 	const rootState = useSelectRoot({
@@ -38,12 +33,9 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v as any);
-				} else {
-					value = v;
-					onValueChange(v as any);
-				}
+				value = v;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				onValueChange(v as any);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),
@@ -51,12 +43,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		loop: box.with(() => loop),
@@ -72,14 +60,12 @@
 	{@render children?.()}
 </FloatingLayer>
 
-{#if Array.isArray(rootState.value.current)}
-	{#if rootState.value.current.length === 0}
-		<SelectHiddenInput value="" />
-	{:else}
-		{#each rootState.value.current as item}
+{#if Array.isArray(rootState.opts.value.current)}
+	{#if rootState.opts.value.current.length}
+		{#each rootState.opts.value.current as item}
 			<SelectHiddenInput value={item} />
 		{/each}
 	{/if}
 {:else}
-	<SelectHiddenInput bind:value={rootState.value.current as string} />
+	<SelectHiddenInput bind:value={rootState.opts.value.current as string} />
 {/if}

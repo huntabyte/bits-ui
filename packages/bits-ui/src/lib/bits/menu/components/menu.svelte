@@ -9,7 +9,6 @@
 		open = $bindable(false),
 		dir = "ltr",
 		onOpenChange = noop,
-		controlledOpen = false,
 		_internal_variant: variant = "dropdown-menu",
 		children,
 	}: MenuRootProps & {
@@ -20,12 +19,8 @@
 		variant: box.with(() => variant),
 		dir: box.with(() => dir),
 		onClose: () => {
-			if (controlledOpen) {
-				onOpenChange(false);
-			} else {
-				open = false;
-				onOpenChange?.(false);
-			}
+			open = false;
+			onOpenChange(false);
 		},
 	});
 
@@ -33,12 +28,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 	});

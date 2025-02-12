@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Accordion } from "bits-ui";
+	import { Accordion, type AccordionRootSingleProps } from "bits-ui";
 
 	type Item = {
 		value: string;
@@ -14,13 +14,10 @@
 		items = [],
 		value = "",
 		withOpenCheck = false,
-	}: Omit<
-		Accordion.RootProps & {
-			items: Item[];
-			withOpenCheck?: boolean;
-		},
-		"type"
-	> = $props();
+	}: Omit<AccordionRootSingleProps, "type"> & {
+		items?: Item[];
+		withOpenCheck?: boolean;
+	} = $props();
 </script>
 
 <Accordion.Root type="single" value={value as string} {disabled} data-testid="root">
@@ -43,7 +40,7 @@
 				</Accordion.Content>
 			{:else}
 				<Accordion.Content data-testid="{value}-content" forceMount>
-					{#snippet child({ props })}
+					{#snippet child({ props, open: _open })}
 						<div {...props}>
 							{content}
 						</div>

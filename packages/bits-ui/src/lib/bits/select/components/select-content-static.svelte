@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { SelectContentProps } from "../types.js";
+	import type { SelectContentStaticProps } from "../types.js";
 	import { useSelectContent } from "../select.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
@@ -11,13 +11,12 @@
 		id = useId(),
 		ref = $bindable(null),
 		forceMount = false,
-		side = "bottom",
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		children,
 		child,
 		...restProps
-	}: SelectContentProps = $props();
+	}: SelectContentStaticProps = $props();
 
 	const contentState = useSelectContent({
 		id: box.with(() => id),
@@ -48,8 +47,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		isStatic
-		{side}
-		enabled={contentState.root.open.current}
+		enabled={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -76,8 +74,7 @@
 	<PopperLayer
 		{...mergedProps}
 		isStatic
-		{side}
-		present={contentState.root.open.current}
+		present={contentState.root.opts.open.current}
 		{id}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}

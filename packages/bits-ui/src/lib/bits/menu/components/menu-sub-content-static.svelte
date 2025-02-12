@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { afterTick, box, mergeProps } from "svelte-toolbelt";
-	import type { MenuSubContentProps } from "../types.js";
+	import type { MenuSubContentStaticProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -25,11 +25,8 @@
 		onOpenAutoFocus: onOpenAutoFocusProp = noop,
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		onFocusOutside = noop,
-		side = "right",
 		...restProps
-	}: MenuSubContentProps = $props();
-
-	let isMounted = $state(false);
+	}: MenuSubContentStaticProps = $props();
 
 	const subContentState = useMenuContent({
 		id: box.with(() => id),
@@ -38,14 +35,15 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
+		isSub: true,
 	});
 
 	function onkeydown(e: KeyboardEvent) {
 		const isKeyDownInside = (e.currentTarget as HTMLElement).contains(e.target as HTMLElement);
-		const isCloseKey = SUB_CLOSE_KEYS[subContentState.parentMenu.root.dir.current].includes(
-			e.key
-		);
+		const isCloseKey = SUB_CLOSE_KEYS[
+			subContentState.parentMenu.root.opts.dir.current
+		].includes(e.key);
 		if (isKeyDownInside && isCloseKey) {
 			subContentState.parentMenu.onClose();
 			const triggerNode = subContentState.parentMenu.triggerNode;
@@ -58,7 +56,6 @@
 
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
-			side,
 			onkeydown,
 			[dataAttr]: "",
 		})
@@ -69,7 +66,7 @@
 		if (e.defaultPrevented) return;
 		afterTick(() => {
 			e.preventDefault();
-			if (subContentState.parentMenu.root.isUsingKeyboard.current) {
+			if (subContentState.parentMenu.root.isUsingKeyboard) {
 				const subContentEl = subContentState.parentMenu.contentNode;
 				subContentEl?.focus();
 			}
@@ -111,9 +108,8 @@
 		{...mergedProps}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
-		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		enabled={subContentState.parentMenu.open.current}
+		enabled={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}
@@ -133,7 +129,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
@@ -143,7 +139,7 @@
 		{escapeKeydownBehavior}
 		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		present={subContentState.parentMenu.open.current}
+		present={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}
@@ -163,7 +159,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

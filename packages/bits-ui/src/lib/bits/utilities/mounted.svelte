@@ -1,19 +1,17 @@
 <script lang="ts">
-	import { untrack } from "svelte";
+	import { onMountEffect } from "svelte-toolbelt";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {
-		isMounted = $bindable(false),
+		mounted = $bindable(false),
 		onMountedChange = noop,
-	}: { isMounted?: boolean; onMountedChange?: (mounted: boolean) => void } = $props();
+	}: { mounted?: boolean; onMountedChange?: (mounted: boolean) => void } = $props();
 
-	$effect(() => {
-		untrack(() => {
-			isMounted = true;
-			onMountedChange(true);
-		});
+	onMountEffect(() => {
+		mounted = true;
+		onMountedChange(true);
 		return () => {
-			isMounted = false;
+			mounted = false;
 			onMountedChange(false);
 		};
 	});

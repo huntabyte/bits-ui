@@ -9,9 +9,9 @@ import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
@@ -46,7 +46,6 @@ export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		openDelay: createNumberProp({
 			default: "700",
 			description:
@@ -100,6 +99,28 @@ export const content = createApiSchema<LinkPreviewContentPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "link-preview-content",
 			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-link-preview-content-transform-origin",
+			description: "The transform origin of the link preview content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-content-available-width",
+			description: "The available width of the link preview content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-content-available-height",
+			description: "The available height of the link preview content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-anchor-width",
+			description: "The width of the link preview trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-link-preview-anchor-height",
+			description: "The height of the link preview trigger element.",
 		}),
 	],
 });

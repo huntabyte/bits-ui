@@ -38,15 +38,19 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<PresenceLayer {...mergedProps} {forceMount} present={contentState.root.open.current || forceMount}>
-	{#snippet presence({ present })}
+<PresenceLayer
+	{...mergedProps}
+	{forceMount}
+	present={contentState.root.opts.open.current || forceMount}
+>
+	{#snippet presence()}
 		<FocusScope
 			loop
 			trapFocus={shouldTrapFocus({
 				forceMount,
-				present: present.current,
+				present: contentState.root.opts.open.current,
 				trapFocus,
-				open: contentState.root.open.current,
+				open: contentState.root.opts.open.current,
 			})}
 			{...mergedProps}
 			onCloseAutoFocus={(e) => {
@@ -58,7 +62,7 @@
 			{#snippet focusScope({ props: focusScopeProps })}
 				<EscapeLayer
 					{...mergedProps}
-					enabled={present.current}
+					enabled={contentState.root.opts.open.current}
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
 						if (e.defaultPrevented) return;
@@ -67,16 +71,19 @@
 				>
 					<DismissibleLayer
 						{...mergedProps}
-						enabled={present.current}
+						enabled={contentState.root.opts.open.current}
 						onInteractOutside={(e) => {
 							onInteractOutside(e);
 							if (e.defaultPrevented) return;
 							contentState.root.handleClose();
 						}}
 					>
-						<TextSelectionLayer {...mergedProps} enabled={present.current}>
+						<TextSelectionLayer
+							{...mergedProps}
+							enabled={contentState.root.opts.open.current}
+						>
 							{#if child}
-								{#if contentState.root.open.current}
+								{#if contentState.root.opts.open.current}
 									<ScrollLock {preventScroll} {restoreScrollDelay} />
 								{/if}
 								{@render child({

@@ -18,7 +18,7 @@ import type {
 	DropdownMenuTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { menu } from "./menu.api.js";
-import { createApiSchema } from "./helpers.js";
+import { createApiSchema, createCSSVarSchema } from "./helpers.js";
 
 export const root = createApiSchema<DropdownMenuRootPropsWithoutHTML>({
 	title: "Root",
@@ -43,6 +43,28 @@ export const content = createApiSchema<DropdownMenuContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	...menu.content,
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-dropdown-menu-content-transform-origin",
+			description: "The transform origin of the dropdown menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-dropdown-menu-content-available-width",
+			description: "The available width of the dropdown menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-dropdown-menu-content-available-height",
+			description: "The available height of the dropdown menu content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-dropdown-menu-anchor-width",
+			description: "The width of the dropdown menu trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-dropdown-menu-anchor-height",
+			description: "The height of the dropdown menu trigger element.",
+		}),
+	],
 });
 
 export const contentStatic = createApiSchema<DropdownMenuContentStaticPropsWithoutHTML>({

@@ -13,6 +13,7 @@ import type {
 	WithChildren,
 	Without,
 } from "$lib/internal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 
 export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -61,24 +62,6 @@ export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue `"nearest"`
 	 */
 	scrollAlignment?: "nearest" | "center";
-
-	/**
-	 * Whether or not the open state is controlled or not. If `true`, the component will not update
-	 * the open state internally, instead it will call `onOpenChange` when it would have
-	 * otherwise, and it is up to you to update the `open` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledOpen?: boolean;
-
-	/**
-	 * Whether or not the value state is controlled or not. If `true`, the component will not update
-	 * the value state internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
 
 	/**
 	 * Optionally provide an array of `value` and `label` pairs that will be used to match
@@ -177,19 +160,11 @@ export type _SharedSelectContentProps = {
 	loop?: boolean;
 };
 
-export type SelectContentSnippetProps = {
-	/**
-	 * Whether the content is open or closed. Used alongside the `forceMount` prop to conditionally
-	 * render the content using Svelte transitions.
-	 */
-	open: boolean;
-};
-
 export type SelectContentPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedSelectContentProps,
-		SelectContentSnippetProps
+		FloatingContentSnippetProps
 	>
 >;
 
@@ -200,7 +175,7 @@ export type SelectContentStaticPropsWithoutHTML = Expand<
 	WithChildNoChildrenSnippetProps<
 		Omit<PopperLayerStaticProps, "content" | "onOpenAutoFocus" | "trapFocus"> &
 			_SharedSelectContentProps,
-		SelectContentSnippetProps
+		StaticContentSnippetProps
 	>
 >;
 

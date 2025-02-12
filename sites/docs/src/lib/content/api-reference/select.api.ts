@@ -1,33 +1,6 @@
-import type {
-	SelectArrowPropsWithoutHTML,
-	SelectContentPropsWithoutHTML,
-	SelectContentStaticPropsWithoutHTML,
-	SelectGroupHeadingPropsWithoutHTML,
-	SelectGroupPropsWithoutHTML,
-	SelectItemPropsWithoutHTML,
-	SelectRootPropsWithoutHTML,
-	SelectScrollDownButtonPropsWithoutHTML,
-	SelectScrollUpButtonPropsWithoutHTML,
-	SelectTriggerPropsWithoutHTML,
-	SelectViewportPropsWithoutHTML,
-} from "bits-ui";
-import {
-	NoopProp,
-	OnChangeStringOrArrayProp,
-	OnOpenChangeProp,
-	OpenChildSnippetProps,
-	OpenChildrenSnippetProps,
-	OpenClosedProp,
-	SingleOrMultipleProp,
-	StringOrArrayStringProp,
-} from "./extended-types/shared/index.js";
-import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
-import { ItemsProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -50,6 +23,32 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
+import type {
+	SelectArrowPropsWithoutHTML,
+	SelectContentPropsWithoutHTML,
+	SelectContentStaticPropsWithoutHTML,
+	SelectGroupHeadingPropsWithoutHTML,
+	SelectGroupPropsWithoutHTML,
+	SelectItemPropsWithoutHTML,
+	SelectRootPropsWithoutHTML,
+	SelectScrollDownButtonPropsWithoutHTML,
+	SelectScrollUpButtonPropsWithoutHTML,
+	SelectTriggerPropsWithoutHTML,
+	SelectViewportPropsWithoutHTML,
+} from "bits-ui";
+import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
+import { ItemsProp } from "./extended-types/select/index.js";
+import {
+	NoopProp,
+	OnChangeStringOrArrayProp,
+	OnOpenChangeProp,
+	OpenChildSnippetProps,
+	OpenChildrenSnippetProps,
+	OpenClosedProp,
+	SingleOrMultipleProp,
+	StringOrArrayStringProp,
+} from "./extended-types/shared/index.js";
 
 const stateDataAttr = createEnumDataAttr({
 	name: "state",
@@ -81,7 +80,6 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			description:
 				"A callback that is fired when the select value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
 		}),
-		controlledValue: controlledValueProp,
 		open: createBooleanProp({
 			default: C.FALSE,
 			description: "The open state of the select menu.",
@@ -91,7 +89,6 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the select menu's open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the select component is disabled.",
@@ -115,7 +112,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			description: "Whether or not the select menu should loop through items.",
 		}),
 		allowDeselect: createBooleanProp({
-			default: C.TRUE,
+			default: C.FALSE,
 			description:
 				"Whether or not the user can deselect the selected item by pressing it in a single select.",
 		}),
@@ -151,7 +148,7 @@ export const content = createApiSchema<SelectContentPropsWithoutHTML>({
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			childDef: FloatingContentChildSnippetProps,
 		}),
 	},
 	dataAttributes: [

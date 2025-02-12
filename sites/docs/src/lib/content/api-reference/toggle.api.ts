@@ -4,7 +4,6 @@ import {
 	ToggleRootStateDataAttr,
 } from "./extended-types/toggle/index.js";
 import {
-	controlledPressedProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -26,7 +25,6 @@ const root = createApiSchema<ToggleRootPropsWithoutHTML>({
 			definition: ToggleRootOnPressedChangeProp,
 			description: "A callback function called when the pressed state of the toggle changes.",
 		}),
-		controlledPressed: controlledPressedProp,
 		disabled: createBooleanProp({
 			default: C.FALSE,
 			description: "Whether or not the switch is disabled.",

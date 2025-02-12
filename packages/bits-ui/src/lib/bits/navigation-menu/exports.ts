@@ -6,6 +6,7 @@ export { default as Link } from "./components/navigation-menu-link.svelte";
 export { default as List } from "./components/navigation-menu-list.svelte";
 export { default as Trigger } from "./components/navigation-menu-trigger.svelte";
 export { default as Viewport } from "./components/navigation-menu-viewport.svelte";
+export { default as Sub } from "./components/navigation-menu-sub.svelte";
 
 export type {
 	NavigationMenuRootProps as RootProps,
@@ -16,4 +17,5 @@ export type {
 	NavigationMenuIndicatorProps as IndicatorProps,
 	NavigationMenuContentProps as ContentProps,
 	NavigationMenuLinkProps as LinkProps,
+	NavigationMenuSubProps as SubProps,
 } from "./types.js";

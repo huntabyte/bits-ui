@@ -20,12 +20,15 @@
 <main>
 	<RadioGroup.Root data-testid="root" bind:value {...restProps}>
 		{#each items as { value, disabled }}
-			<RadioGroup.Item {value} {disabled} data-testid="{value}-item">
+			<RadioGroup.Item id={value} {value} {disabled} data-testid="{value}-item">
 				{#snippet children({ checked })}
 					<span data-testid="{value}-indicator"> {checked} </span>
 					{value}
 				{/snippet}
 			</RadioGroup.Item>
+			<label for={value} data-testid="{value}-label">
+				Label for {value}
+			</label>
 		{/each}
 	</RadioGroup.Root>
 	<button

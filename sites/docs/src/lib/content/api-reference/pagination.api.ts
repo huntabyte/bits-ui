@@ -6,7 +6,6 @@ import type {
 } from "bits-ui";
 import { pageItemProp } from "./extended-types/index.js";
 import {
-	controlledPageProp,
 	createApiSchema,
 	createBooleanProp,
 	createDataAttrSchema,
@@ -40,7 +39,6 @@ export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 			definition: PaginationOnPageChangeProp,
 			description: "A function called when the selected page changes.",
 		}),
-		controlledPage: controlledPageProp,
 		perPage: createNumberProp({
 			description: "The number of items per page.",
 			default: "1",

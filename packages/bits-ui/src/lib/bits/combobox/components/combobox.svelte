@@ -17,8 +17,6 @@
 		loop = false,
 		scrollAlignment = "nearest",
 		required = false,
-		controlledOpen = false,
-		controlledValue = false,
 		items = [],
 		allowDeselect = true,
 		children,
@@ -26,11 +24,7 @@
 
 	if (value === undefined) {
 		const defaultValue = type === "single" ? "" : [];
-		if (controlledValue) {
-			onValueChange(defaultValue as any);
-		} else {
-			value = defaultValue;
-		}
+		value = defaultValue;
 	}
 
 	const rootState = useSelectRoot({
@@ -38,12 +32,9 @@
 		value: box.with(
 			() => value!,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v as any);
-				} else {
-					value = v;
-					onValueChange(v as any);
-				}
+				value = v;
+				// @ts-expect-error - we know
+				onValueChange(v);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
 		disabled: box.with(() => disabled),
@@ -51,12 +42,8 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		loop: box.with(() => loop),
@@ -72,14 +59,12 @@
 	{@render children?.()}
 </FloatingLayer>
 
-{#if Array.isArray(rootState.value.current)}
-	{#if rootState.value.current.length === 0}
-		<ListboxHiddenInput value="" />
-	{:else}
-		{#each rootState.value.current as item}
+{#if Array.isArray(rootState.opts.value.current)}
+	{#if rootState.opts.value.current.length}
+		{#each rootState.opts.value.current as item}
 			<ListboxHiddenInput value={item} />
 		{/each}
 	{/if}
 {:else}
-	<ListboxHiddenInput bind:value={rootState.value.current as string} />
+	<ListboxHiddenInput bind:value={rootState.opts.value.current as string} />
 {/if}

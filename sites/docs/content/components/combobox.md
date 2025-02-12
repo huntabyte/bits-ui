@@ -5,7 +5,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 
 <script>
 	import { APISection, ComponentPreviewV2, ComboboxDemo, ComboboxDemoTransition, Callout } from '$lib/components/index.js'
-	export let schemas;
+	let { schemas } = $props()
 </script>
 
 <ComponentPreviewV2 name="combobox-demo" comp="Combobox">
@@ -202,13 +202,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledValue` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledValue` prop to `true` on the `Combobox.Root` component.
-2. Provide a `value` prop to `Combobox.Root`, which should be a variable holding the current state.
-3. Implement an `onValueChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -216,7 +210,7 @@ To implement controlled state:
 	let myValue = $state("");
 </script>
 
-<Combobox.Root controlledValue value={myValue} onValueChange={(v) => (myValue = v)}>
+<Combobox.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
 	<!-- ... -->
 </Combobox.Root>
 ```
@@ -291,13 +285,7 @@ For more granular control or to perform additional logic on state changes, use t
 
 ### 3. Fully Controlled
 
-For complete control over the component's value state, use the `controlledOpen` prop. This approach requires you to manually manage the value state, giving you full control over when and how the component responds to value change events.
-
-To implement controlled state:
-
-1. Set the `controlledOpen` prop to `true` on the `Combobox.Root` component.
-2. Provide an `open` prop to `Combobox.Root`, which should be a variable holding the current state.
-3. Implement an `onOpenChange` handler to update the state when the internal state changes.
+For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
@@ -305,7 +293,7 @@ To implement controlled state:
 	let myOpen = $state(false);
 </script>
 
-<Combobox.Root controlledOpen open={myOpen} onOpenChange={(v) => (myOpen = v)}>
+<Combobox.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
 	<!-- ... -->
 </Combobox.Root>
 ```
@@ -354,7 +342,7 @@ When using this component, you'll need to handle the positioning of the content 
 
 ## Custom Anchor
 
-By default, the `Combobox.Content` is anchored to the `Combobox.Trigger` component, which determines where the content is positioned.
+By default, the `Combobox.Content` is anchored to the `Combobox.Input` component, which determines where the content is positioned.
 
 If you wish to instead anchor the content to a different element, you can pass either a selector string or an `HTMLElement` to the `customAnchor` prop of the `Combobox.Content` component.
 
@@ -433,10 +421,12 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 </script>
 
 <Combobox.Content forceMount>
-	{#snippet child({ props, open })}
+	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
-			<div {...props} transition:fly>
-				<!-- ... -->
+			<div {...wrapperProps}>
+				<div {...props} transition:fly>
+					<!-- ... -->
+				</div>
 			</div>
 		{/if}
 	{/snippet}

@@ -11,7 +11,7 @@
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 
 	let {
-		open = false,
+		open = $bindable(false),
 		onOpenChange = noop,
 		value = $bindable(),
 		onValueChange = noop,
@@ -41,9 +41,6 @@
 		numberOfMonths = 1,
 		closeOnDateSelect = true,
 		initialFocus = false,
-		controlledPlaceholder = false,
-		controlledValue = false,
-		controlledOpen = false,
 		errorMessageId,
 		children,
 	}: DatePickerRootProps = $props();
@@ -55,20 +52,12 @@
 			defaultValue: value,
 		});
 
-		if (controlledPlaceholder) {
-			onPlaceholderChange(defaultPlaceholder);
-		} else {
-			placeholder = defaultPlaceholder;
-		}
+		placeholder = defaultPlaceholder;
 	}
 
 	function onDateSelect() {
 		if (closeOnDateSelect) {
-			if (controlledOpen) {
-				onOpenChange(false);
-			} else {
-				open = false;
-			}
+			open = false;
 		}
 	}
 
@@ -76,34 +65,22 @@
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange(v);
-				}
+				open = v;
+				onOpenChange(v);
 			}
 		),
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
-				if (controlledPlaceholder) {
-					onPlaceholderChange(v as DateValue);
-				} else {
-					placeholder = v;
-					onPlaceholderChange(v as DateValue);
-				}
+				placeholder = v;
+				onPlaceholderChange(v as DateValue);
 			}
 		),
 		isDateUnavailable: box.with(() => isDateUnavailable),
@@ -131,24 +108,24 @@
 	});
 
 	usePopoverRoot({
-		open: pickerRootState.props.open,
+		open: pickerRootState.opts.open,
 	});
 
 	useDateFieldRoot({
-		value: pickerRootState.props.value,
-		disabled: pickerRootState.props.disabled,
-		readonly: pickerRootState.props.readonly,
-		readonlySegments: pickerRootState.props.readonlySegments,
+		value: pickerRootState.opts.value,
+		disabled: pickerRootState.opts.disabled,
+		readonly: pickerRootState.opts.readonly,
+		readonlySegments: pickerRootState.opts.readonlySegments,
 		validate: box.with(() => validate),
 		onInvalid: box.with(() => onInvalid),
-		minValue: pickerRootState.props.minValue,
-		maxValue: pickerRootState.props.maxValue,
-		granularity: pickerRootState.props.granularity,
-		hideTimeZone: pickerRootState.props.hideTimeZone,
-		hourCycle: pickerRootState.props.hourCycle,
-		locale: pickerRootState.props.locale,
-		required: pickerRootState.props.required,
-		placeholder: pickerRootState.props.placeholder,
+		minValue: pickerRootState.opts.minValue,
+		maxValue: pickerRootState.opts.maxValue,
+		granularity: pickerRootState.opts.granularity,
+		hideTimeZone: pickerRootState.opts.hideTimeZone,
+		hourCycle: pickerRootState.opts.hourCycle,
+		locale: pickerRootState.opts.locale,
+		required: pickerRootState.opts.required,
+		placeholder: pickerRootState.opts.placeholder,
 		errorMessageId: box.with(() => errorMessageId),
 		isInvalidProp: box.with(() => undefined),
 	});

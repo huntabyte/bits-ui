@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { afterTick, box, mergeProps } from "svelte-toolbelt";
+	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
-	import { useMenuContent } from "../menu.svelte.js";
+	import { MenuOpenEvent, useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -29,8 +29,6 @@
 		...restProps
 	}: MenuSubContentProps = $props();
 
-	let isMounted = $state(false);
-
 	const subContentState = useMenuContent({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
@@ -38,14 +36,15 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		isMounted: box.with(() => isMounted),
+		isSub: true,
+		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
 	});
 
 	function onkeydown(e: KeyboardEvent) {
 		const isKeyDownInside = (e.currentTarget as HTMLElement).contains(e.target as HTMLElement);
-		const isCloseKey = SUB_CLOSE_KEYS[subContentState.parentMenu.root.dir.current].includes(
-			e.key
-		);
+		const isCloseKey = SUB_CLOSE_KEYS[
+			subContentState.parentMenu.root.opts.dir.current
+		].includes(e.key);
 		if (isKeyDownInside && isCloseKey) {
 			subContentState.parentMenu.onClose();
 			const triggerNode = subContentState.parentMenu.triggerNode;
@@ -67,13 +66,13 @@
 	function handleOpenAutoFocus(e: Event) {
 		onOpenAutoFocusProp(e);
 		if (e.defaultPrevented) return;
-		afterTick(() => {
-			e.preventDefault();
-			if (subContentState.parentMenu.root.isUsingKeyboard.current) {
-				const subContentEl = subContentState.parentMenu.contentNode;
-				subContentEl?.focus();
-			}
-		});
+		e.preventDefault();
+		if (
+			subContentState.parentMenu.root.isUsingKeyboard &&
+			subContentState.parentMenu.contentNode
+		) {
+			MenuOpenEvent.dispatch(subContentState.parentMenu.contentNode);
+		}
 	}
 
 	function handleCloseAutoFocus(e: Event) {
@@ -111,9 +110,8 @@
 		{...mergedProps}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
-		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		enabled={subContentState.parentMenu.open.current}
+		enabled={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}
@@ -121,18 +119,24 @@
 		{loop}
 		trapFocus={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
 				style: getFloatingContentCSSVars("menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...subContentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
@@ -142,7 +146,7 @@
 		{escapeKeydownBehavior}
 		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		present={subContentState.parentMenu.open.current}
+		present={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}
@@ -150,18 +154,24 @@
 		{loop}
 		trapFocus={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
 				style: getFloatingContentCSSVars("menu"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...subContentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps,
+					...subContentState.snippetProps,
+				})}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
-			<Mounted bind:isMounted />
+			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

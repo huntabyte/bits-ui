@@ -28,6 +28,7 @@
 
 <main>
 	<div data-testid="outside">outside</div>
+	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<DropdownMenu.Root bind:open {...restProps}>
 			<DropdownMenu.Trigger data-testid="trigger">open</DropdownMenu.Trigger>
@@ -55,7 +56,7 @@
 								bind:checked={subChecked}
 								data-testid="sub-checkbox-item"
 							>
-								{#snippet children({ checked })}
+								{#snippet children({ checked, indeterminate: _indeterminate })}
 									<span data-testid="sub-checkbox-indicator">
 										{checked}
 									</span>
@@ -71,7 +72,7 @@
 						>disabled item 2</DropdownMenu.Item
 					>
 					<DropdownMenu.CheckboxItem bind:checked data-testid="checkbox-item">
-						{#snippet children({ checked })}
+						{#snippet children({ checked, indeterminate: _indeterminate })}
 							<span data-testid="checkbox-indicator">
 								{checked}
 							</span>
@@ -97,6 +98,7 @@
 			</DropdownMenu.Portal>
 		</DropdownMenu.Root>
 	</div>
+	<button data-testid="next-button">next button</button>
 
 	<!-- Buttons to test binding -->
 	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>

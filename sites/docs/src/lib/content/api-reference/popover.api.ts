@@ -7,12 +7,13 @@ import type {
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
+import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
-	controlledOpenProp,
 	createApiSchema,
 	createBooleanProp,
+	createCSSVarSchema,
 	createDataAttrSchema,
 	createEnumDataAttr,
 	createFunctionProp,
@@ -48,7 +49,6 @@ export const root = createApiSchema<PopoverRootPropsWithoutHTML>({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
 		}),
-		controlledOpen: controlledOpenProp,
 		children: childrenSnippet(),
 	},
 });
@@ -81,13 +81,35 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 		},
 		forceMount: forceMountProp,
 		dir: dirProp,
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({ elType: "HTMLDivElement", childDef: FloatingContentChildSnippetProps }),
 	},
 	dataAttributes: [
 		openClosedDataAttr,
 		createDataAttrSchema({
 			name: "popover-content",
 			description: "Present on the content element.",
+		}),
+	],
+	cssVars: [
+		createCSSVarSchema({
+			name: "--bits-popover-content-transform-origin",
+			description: "The transform origin of the popover content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-content-available-width",
+			description: "The available width of the popover content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-content-available-height",
+			description: "The available height of the popover content element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-anchor-width",
+			description: "The width of the popover trigger element.",
+		}),
+		createCSSVarSchema({
+			name: "--bits-popover-anchor-height",
+			description: "The height of the popover trigger element.",
 		}),
 	],
 });

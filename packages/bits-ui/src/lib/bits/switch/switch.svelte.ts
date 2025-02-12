@@ -1,4 +1,5 @@
 import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { Context } from "runed";
 import {
 	getAriaChecked,
 	getAriaHidden,
@@ -10,11 +11,10 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { createContext } from "$lib/internal/create-context.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 
-const ROOT_ATTR = "data-switch-root";
-const THUMB_ATTR = "data-switch-thumb";
+const SWITCH_ROOT_ATTR = "data-switch-root";
+const SWITCH_THUMB_ATTR = "data-switch-thumb";
 
 type SwitchRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -28,84 +28,69 @@ type SwitchRootStateProps = WithRefProps<
 		}>
 >;
 class SwitchRootState {
-	#id: SwitchRootStateProps["id"];
-	#ref: SwitchRootStateProps["ref"];
-	checked: SwitchRootStateProps["checked"];
-	disabled: SwitchRootStateProps["disabled"];
-	required: SwitchRootStateProps["required"];
-	name: SwitchRootStateProps["name"];
-	value: SwitchRootStateProps["value"];
+	constructor(readonly opts: SwitchRootStateProps) {
+		useRefById(opts);
 
-	constructor(props: SwitchRootStateProps) {
-		this.checked = props.checked;
-		this.disabled = props.disabled;
-		this.required = props.required;
-		this.name = props.name;
-		this.value = props.value;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onclick = this.onclick.bind(this);
 	}
 
-	#toggle = () => {
-		this.checked.current = !this.checked.current;
-	};
+	#toggle() {
+		this.opts.checked.current = !this.opts.checked.current;
+	}
 
-	#onkeydown = (e: KeyboardEvent) => {
-		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE) || this.disabled.current) return;
+	onkeydown(e: BitsKeyboardEvent) {
+		if (!(e.key === kbd.ENTER || e.key === kbd.SPACE) || this.opts.disabled.current) return;
 		e.preventDefault();
 		this.#toggle();
-	};
+	}
 
-	#onclick = (e: PointerEvent) => {
-		if (this.disabled.current) return;
+	onclick(_: BitsPointerEvent) {
+		if (this.opts.disabled.current) return;
 		this.#toggle();
-	};
+	}
 
 	sharedProps = $derived.by(() => ({
-		"data-disabled": getDataDisabled(this.disabled.current),
-		"data-state": getDataChecked(this.checked.current),
-		"data-required": getDataRequired(this.required.current),
+		"data-disabled": getDataDisabled(this.opts.disabled.current),
+		"data-state": getDataChecked(this.opts.checked.current),
+		"data-required": getDataRequired(this.opts.required.current),
+	}));
+
+	snippetProps = $derived.by(() => ({
+		checked: this.opts.checked.current,
 	}));
 
 	props = $derived.by(
 		() =>
 			({
 				...this.sharedProps,
-				id: this.#id.current,
+				id: this.opts.id.current,
 				role: "switch",
-				disabled: getDisabled(this.disabled.current),
-				"aria-checked": getAriaChecked(this.checked.current),
-				"aria-required": getAriaRequired(this.required.current),
-				[ROOT_ATTR]: "",
+				disabled: getDisabled(this.opts.disabled.current),
+				"aria-checked": getAriaChecked(this.opts.checked.current, false),
+				"aria-required": getAriaRequired(this.opts.required.current),
+				[SWITCH_ROOT_ATTR]: "",
 				//
-				onclick: this.#onclick,
-				onkeydown: this.#onkeydown,
+				onclick: this.onclick,
+				onkeydown: this.onkeydown,
 			}) as const
 	);
 }
 
 class SwitchInputState {
-	#root: SwitchRootState;
-	shouldRender = $derived.by(() => this.#root.name.current !== undefined);
+	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 
-	constructor(root: SwitchRootState) {
-		this.#root = root;
-	}
+	constructor(readonly root: SwitchRootState) {}
 
 	props = $derived.by(
 		() =>
 			({
 				type: "checkbox",
-				name: this.#root.name.current,
-				value: this.#root.value.current,
-				checked: this.#root.checked.current,
-				disabled: this.#root.disabled.current,
-				required: this.#root.required.current,
+				name: this.root.opts.name.current,
+				value: this.root.opts.value.current,
+				checked: this.root.opts.checked.current,
+				disabled: this.root.opts.disabled.current,
+				required: this.root.opts.required.current,
 				"aria-hidden": getAriaHidden(true),
 				style: styleToString(srOnlyStyles),
 			}) as const
@@ -115,45 +100,37 @@ class SwitchInputState {
 type SwitchThumbStateProps = WithRefProps;
 
 class SwitchThumbState {
-	#id: SwitchThumbStateProps["id"];
-	#ref: SwitchThumbStateProps["ref"];
-	root: SwitchRootState;
-
-	constructor(props: SwitchThumbStateProps, root: SwitchRootState) {
-		this.root = root;
-		this.#id = props.id;
-		this.#ref = props.ref;
-
-		useRefById({
-			id: this.#id,
-			ref: this.#ref,
-		});
+	constructor(
+		readonly opts: SwitchThumbStateProps,
+		readonly root: SwitchRootState
+	) {
+		useRefById(opts);
 	}
+
+	snippetProps = $derived.by(() => ({
+		checked: this.root.opts.checked.current,
+	}));
 
 	props = $derived.by(
 		() =>
 			({
 				...this.root.sharedProps,
-				id: this.#id.current,
-				[THUMB_ATTR]: "",
+				id: this.opts.id.current,
+				[SWITCH_THUMB_ATTR]: "",
 			}) as const
 	);
 }
 
-//
-// CONTEXT METHODS
-//
-
-const [setSwitchRootContext, getSwitchRootContext] = createContext<SwitchRootState>("Switch.Root");
+const SwitchRootContext = new Context<SwitchRootState>("Switch.Root");
 
 export function useSwitchRoot(props: SwitchRootStateProps) {
-	return setSwitchRootContext(new SwitchRootState(props));
+	return SwitchRootContext.set(new SwitchRootState(props));
 }
 
 export function useSwitchInput(): SwitchInputState {
-	return new SwitchInputState(getSwitchRootContext());
+	return new SwitchInputState(SwitchRootContext.get());
 }
 
 export function useSwitchThumb(props: SwitchThumbStateProps): SwitchThumbState {
-	return new SwitchThumbState(props, getSwitchRootContext());
+	return new SwitchThumbState(props, SwitchRootContext.get());
 }

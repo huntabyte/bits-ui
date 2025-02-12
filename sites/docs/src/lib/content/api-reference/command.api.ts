@@ -13,9 +13,8 @@ import type {
 	CommandViewportPropsWithoutHTML,
 } from "bits-ui";
 import { NoopProp, OnStringValueChangeProp } from "./extended-types/shared/index.js";
-import { CommandFilterProp } from "./extended-types/command/index.js";
+import { CommandFilterProp, CommandOnStateChangeProp } from "./extended-types/command/index.js";
 import {
-	controlledValueProp,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -41,7 +40,6 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 			definition: OnStringValueChangeProp,
 			description: "A callback that is fired when the command value changes.",
 		}),
-		controlledValue: controlledValueProp,
 		label: createStringProp({
 			description:
 				"An accessible label for the command menu. This is not visible and is only used for screen readers.",
@@ -55,6 +53,11 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 			default: C.TRUE,
 			description:
 				"Whether or not the command menu should filter items. This is useful when you want to apply custom filtering logic outside of the Command component.",
+		}),
+		onStateChange: createFunctionProp({
+			definition: CommandOnStateChangeProp,
+			description: `A callback that fires when the command's internal state changes. This callback receives a readonly snapshot of the current state.
+			The callback is debounced and only fires once per batch of related updates (e.g., when typing triggers filtering and selection changes).`,
 		}),
 		loop: createBooleanProp({
 			default: C.FALSE,

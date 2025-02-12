@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DatePickerCalendarProps } from "../types.js";
-	import { getDatePickerRootContext } from "../date-picker.svelte.js";
+	import { DatePickerRootContext } from "../date-picker.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { useCalendarRoot } from "$lib/bits/calendar/calendar.svelte.js";
 
@@ -13,7 +13,7 @@
 		...restProps
 	}: DatePickerCalendarProps = $props();
 
-	const datePickerRootState = getDatePickerRootContext();
+	const datePickerRootState = DatePickerRootContext.get();
 
 	const calendarState = useCalendarRoot({
 		id: box.with(() => id),
@@ -21,26 +21,26 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		calendarLabel: datePickerRootState.props.calendarLabel,
-		fixedWeeks: datePickerRootState.props.fixedWeeks,
-		isDateDisabled: datePickerRootState.props.isDateDisabled,
-		isDateUnavailable: datePickerRootState.props.isDateUnavailable,
-		locale: datePickerRootState.props.locale,
-		numberOfMonths: datePickerRootState.props.numberOfMonths,
-		pagedNavigation: datePickerRootState.props.pagedNavigation,
-		preventDeselect: datePickerRootState.props.preventDeselect,
-		readonly: datePickerRootState.props.readonly,
+		calendarLabel: datePickerRootState.opts.calendarLabel,
+		fixedWeeks: datePickerRootState.opts.fixedWeeks,
+		isDateDisabled: datePickerRootState.opts.isDateDisabled,
+		isDateUnavailable: datePickerRootState.opts.isDateUnavailable,
+		locale: datePickerRootState.opts.locale,
+		numberOfMonths: datePickerRootState.opts.numberOfMonths,
+		pagedNavigation: datePickerRootState.opts.pagedNavigation,
+		preventDeselect: datePickerRootState.opts.preventDeselect,
+		readonly: datePickerRootState.opts.readonly,
 		type: box.with(() => "single"),
-		weekStartsOn: datePickerRootState.props.weekStartsOn,
-		weekdayFormat: datePickerRootState.props.weekdayFormat,
-		disabled: datePickerRootState.props.disabled,
-		disableDaysOutsideMonth: datePickerRootState.props.disableDaysOutsideMonth,
-		maxValue: datePickerRootState.props.maxValue,
-		minValue: datePickerRootState.props.minValue,
-		placeholder: datePickerRootState.props.placeholder,
-		value: datePickerRootState.props.value,
-		onDateSelect: datePickerRootState.props.onDateSelect,
-		initialFocus: datePickerRootState.props.initialFocus,
+		weekStartsOn: datePickerRootState.opts.weekStartsOn,
+		weekdayFormat: datePickerRootState.opts.weekdayFormat,
+		disabled: datePickerRootState.opts.disabled,
+		disableDaysOutsideMonth: datePickerRootState.opts.disableDaysOutsideMonth,
+		maxValue: datePickerRootState.opts.maxValue,
+		minValue: datePickerRootState.opts.minValue,
+		placeholder: datePickerRootState.opts.placeholder,
+		value: datePickerRootState.opts.value,
+		onDateSelect: datePickerRootState.opts.onDateSelect,
+		initialFocus: datePickerRootState.opts.initialFocus,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, calendarState.props));

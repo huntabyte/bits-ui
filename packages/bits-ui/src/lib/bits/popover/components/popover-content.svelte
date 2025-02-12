@@ -28,52 +28,38 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onInteractOutside: box.with(() => onInteractOutside),
+		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-
-	function handleInteractOutside(e: PointerEvent) {
-		onInteractOutside(e);
-		if (e.defaultPrevented) return;
-		contentState.root.close();
-	}
-
-	function handleEscapeKeydown(e: KeyboardEvent) {
-		onEscapeKeydown(e);
-		if (e.defaultPrevented) return;
-		contentState.root.close();
-	}
-
-	function handleCloseAutoFocus(e: Event) {
-		onCloseAutoFocus(e);
-		if (e.defaultPrevented) return;
-		e.preventDefault();
-		contentState.root.triggerNode?.focus();
-	}
 </script>
 
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
-		enabled={contentState.root.open.current}
+		enabled={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onCloseAutoFocus={handleCloseAutoFocus}
+		onInteractOutside={contentState.handleInteractOutside}
+		onEscapeKeydown={contentState.handleEscapeKeydown}
+		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop
 		forceMount={true}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("popover"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}
@@ -81,25 +67,27 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
-		present={contentState.root.open.current}
+		present={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onCloseAutoFocus={handleCloseAutoFocus}
+		onInteractOutside={contentState.handleInteractOutside}
+		onEscapeKeydown={contentState.handleEscapeKeydown}
+		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop
 		forceMount={false}
 	>
-		{#snippet popper({ props })}
+		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("popover"),
 			})}
 			{#if child}
-				{@render child({ props: finalProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...finalProps}>
-					{@render children?.()}
+				<div {...wrapperProps}>
+					<div {...finalProps}>
+						{@render children?.()}
+					</div>
 				</div>
 			{/if}
 		{/snippet}

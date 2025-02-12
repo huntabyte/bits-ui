@@ -10,6 +10,7 @@
 </script>
 
 <main>
+	<button data-testid="reset" onclick={() => (value = undefined)}>Reset</button>
 	<div data-testid="value">{value}</div>
 	<DateField.Root bind:value bind:placeholder {...restProps}>
 		<div>

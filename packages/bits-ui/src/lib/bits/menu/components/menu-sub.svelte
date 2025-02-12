@@ -5,23 +5,14 @@
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
-	let {
-		open = $bindable(false),
-		onOpenChange = noop,
-		controlledOpen = false,
-		children,
-	}: MenuSubProps = $props();
+	let { open = $bindable(false), onOpenChange = noop, children }: MenuSubProps = $props();
 
 	useMenuSubmenu({
 		open: box.with(
 			() => open,
 			(v) => {
-				if (controlledOpen) {
-					onOpenChange(v);
-				} else {
-					open = v;
-					onOpenChange?.(v);
-				}
+				open = v;
+				onOpenChange?.(v);
 			}
 		),
 	});

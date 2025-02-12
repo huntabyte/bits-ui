@@ -8,6 +8,7 @@ import Palette from "phosphor-svelte/lib/Palette";
 import Resize from "phosphor-svelte/lib/Resize";
 import Sticker from "phosphor-svelte/lib/Sticker";
 import FigmaLogo from "phosphor-svelte/lib/FigmaLogo";
+import Swap from "phosphor-svelte/lib/Swap";
 import { componentDocs, typeHelperDocs, utilityDocs } from "$content/index.js";
 
 export type NavItem = {
@@ -153,7 +154,12 @@ export const navigation: Navigation = {
 					href: "/docs/figma-file",
 					items: [],
 					icon: FigmaLogo,
-					label: "New",
+				},
+				{
+					title: "Migration Guide",
+					href: "/docs/migration-guide",
+					items: [],
+					icon: Swap,
 				},
 			],
 		},
