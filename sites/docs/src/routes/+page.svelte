@@ -214,6 +214,14 @@
 	</div>
 </section>
 
+<footer class="border-t border-black/10 pt-6 px-[22px] pb-28 flex justify-between">
+  <div class="text-sm font-medium text-muted-foreground flex items-center gap-3"><span class="w-3 h-3 aspect-square rounded-full bg-foreground/20 block"></span>2025 Bits UI team</div>
+  <ul class="flex gap-[26px] items-center justify-end">
+    <li><a href="https://github.com/huntabyte/bits-ui" target="_blank" class="text-sm font-medium text-muted-foreground">Github</a></li>
+    <li><a href="https://github.com/huntabyte/bits-ui/releases" target="_blank" class="text-sm font-medium text-muted-foreground">Changelog</a></li>
+  </ul>
+</footer>
+
 <style lang="postcss">
 	h1 {
 		background: linear-gradient(
