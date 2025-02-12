@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.96
+
+### Patch Changes
+
+-   feat: expose imperative methods on `Command.Root` for more advanced use cases ([#1141](https://github.com/huntabyte/bits-ui/pull/1141))
+
 ## 1.0.0-next.95
 
 ### Patch Changes
