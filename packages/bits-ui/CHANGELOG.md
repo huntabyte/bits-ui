@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.98
+
+### Patch Changes
+
+-   breaking: rename `PinInput` `onPaste` to `pasteTransformer` ([#1152](https://github.com/huntabyte/bits-ui/pull/1152))
+
 ## 1.0.0-next.97
 
 ### Patch Changes
