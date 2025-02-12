@@ -140,16 +140,16 @@ For more in-depth information on controlled components and advanced state manage
 
 </Callout>
 
-## Paste Handling
+## Paste Transformation
 
-The `onPaste` prop allows you to sanitize pasted text. This can be useful for cleaning up pasted text, like removing hyphens or other characters that should not make it into the input. This function should return the sanitized text.
+The `pasteTransformer` prop allows you to sanitize/transform pasted text. This can be useful for cleaning up pasted text, like removing hyphens or other characters that should not make it into the input. This function should return the sanitized text, which will be used as the new value of the input.
 
 ```svelte
 <script lang="ts">
 	import { PinInput } from "bits-ui";
 </script>
 
-<PinInput.Root onPaste={(text) => text.replace(/-/g, "")}>
+<PinInput.Root pasteTransformer={(text) => text.replace(/-/g, "")}>
 	<!-- ... -->
 </PinInput.Root>
 ```
