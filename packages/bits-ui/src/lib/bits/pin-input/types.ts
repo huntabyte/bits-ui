@@ -33,7 +33,7 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			 * Use this function to clean up the pasted text, like removing hyphens or other
 			 * characters that should not make it into the input.
 			 */
-			onPaste?: (text: string) => string;
+			pasteTransformer?: (text: string) => string;
 
 			/**
 			 * The max length of the input.

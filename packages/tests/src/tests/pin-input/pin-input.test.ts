@@ -137,7 +137,7 @@ describe("Pin Input", () => {
 		const mockComplete = vi.fn();
 		const { user, hiddenInput } = setup({
 			onComplete: mockComplete,
-			onPaste: (text) => text.replace(/-/g, ""),
+			pasteTransformer: (text) => text.replace(/-/g, ""),
 		});
 
 		await user.click(hiddenInput);
@@ -207,7 +207,7 @@ describe("Pin Input", () => {
 		const { user, hiddenInput } = setup({
 			maxlength: 6,
 			onComplete: mockComplete,
-			onPaste: (text) => text.replace(/-/g, ""),
+			pasteTransformer: (text) => text.replace(/-/g, ""),
 		});
 
 		await user.click(hiddenInput);

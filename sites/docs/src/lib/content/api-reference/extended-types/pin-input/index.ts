@@ -4,4 +4,4 @@ export { default as PinInputRootPushPasswordManagerStrategyProp } from "./pin-in
 export { default as PinInputCellCellProp } from "./pin-input-cell-cell-prop.md";
 export { default as PinInputRootChildSnippetProps } from "./pin-input-root-child-snippet-props.md";
 export { default as PinInputRootChildrenSnippetProps } from "./pin-input-root-children-snippet-props.md";
-export { default as PinInputRootOnPasteProp } from "./pin-input-root-on-paste.md";
+export { default as PinInputRootPasteTransformerProp } from "./pin-input-root-paste-transformer.md";

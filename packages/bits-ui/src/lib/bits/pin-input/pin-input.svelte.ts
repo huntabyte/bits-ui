@@ -30,8 +30,7 @@ type PinInputRootStateProps = WithRefProps<
 			disabled: boolean;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			onComplete: (...args: any[]) => void;
-			onPaste?: (text: string) => string;
-
+			pasteTransformer?: (text: string) => string;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			pattern: any;
 			maxLength: number;
@@ -408,7 +407,7 @@ class PinInputRootState {
 		};
 
 		if (
-			!this.opts.onPaste?.current &&
+			!this.opts.pasteTransformer?.current &&
 			(!this.#initialLoad.isIOS || !e.clipboardData || !input)
 		) {
 			const newValue = getNewValue(e.clipboardData?.getData("text/plain"));
@@ -419,7 +418,9 @@ class PinInputRootState {
 		}
 
 		const _content = e.clipboardData?.getData("text/plain") ?? "";
-		const content = this.opts.onPaste?.current ? this.opts.onPaste.current(_content) : _content;
+		const content = this.opts.pasteTransformer?.current
+			? this.opts.pasteTransformer.current(_content)
+			: _content;
 		e.preventDefault();
 
 		const newValue = getNewValue(content);
