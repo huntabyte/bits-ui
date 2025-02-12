@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.0.0-next.97
+
+### Patch Changes
+
+-   fix: use `getAttribute("style")` instead of `getComputedStyle()` when restoring styles on body scroll lock removal ([#1045](https://github.com/huntabyte/bits-ui/pull/1045))
+
 ## 1.0.0-next.96
 
 ### Patch Changes
