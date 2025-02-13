@@ -73,11 +73,11 @@
 					username: "paja",
 				})}
 				{@render UserListItem({
-					alt: "@pavelstianko",
+					alt: "@CokaKoala",
 					src: "/avatar-1.png",
 					fallback: "PS",
-					firstName: "Pavel",
-					username: "pavelstianko",
+					firstName: "Adrian",
+					username: "AdrianGonz97",
 				})}
 			</Tabs.Content>
 		</Tabs.Root>
