@@ -1,41 +1,55 @@
 <script lang="ts">
-	import { type Month, melt } from "@melt-ui/svelte";
-	import type { DateValue } from "@internationalized/date";
-	import { getCtx } from "../ctx.js";
-	import type { CalendarEvents, CalendarProps } from "../index.js";
-	import { createDispatcher } from "$lib/internal/events.js";
+	import { box, mergeProps } from "svelte-toolbelt";
+	import type { DatePickerCalendarProps } from "../types.js";
+	import { DatePickerRootContext } from "../date-picker.svelte.js";
+	import { useId } from "$lib/internal/use-id.js";
+	import { useCalendarRoot } from "$lib/bits/calendar/calendar.svelte.js";
 
-	type $$Props = CalendarProps;
-	type $$Events = CalendarEvents;
+	let {
+		children,
+		child,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: DatePickerCalendarProps = $props();
 
-	export let asChild: $$Props["asChild"] = false;
-	export let id: $$Props["id"] = undefined;
-	export let el: $$Props["el"] = undefined;
+	const datePickerRootState = DatePickerRootContext.get();
 
-	const {
-		elements: { calendar },
-		states: { months: localMonths, weekdays },
-		ids,
-		getCalendarAttrs,
-	} = getCtx();
+	const calendarState = useCalendarRoot({
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+		calendarLabel: datePickerRootState.opts.calendarLabel,
+		fixedWeeks: datePickerRootState.opts.fixedWeeks,
+		isDateDisabled: datePickerRootState.opts.isDateDisabled,
+		isDateUnavailable: datePickerRootState.opts.isDateUnavailable,
+		locale: datePickerRootState.opts.locale,
+		numberOfMonths: datePickerRootState.opts.numberOfMonths,
+		pagedNavigation: datePickerRootState.opts.pagedNavigation,
+		preventDeselect: datePickerRootState.opts.preventDeselect,
+		readonly: datePickerRootState.opts.readonly,
+		type: box.with(() => "single"),
+		weekStartsOn: datePickerRootState.opts.weekStartsOn,
+		weekdayFormat: datePickerRootState.opts.weekdayFormat,
+		disabled: datePickerRootState.opts.disabled,
+		disableDaysOutsideMonth: datePickerRootState.opts.disableDaysOutsideMonth,
+		maxValue: datePickerRootState.opts.maxValue,
+		minValue: datePickerRootState.opts.minValue,
+		placeholder: datePickerRootState.opts.placeholder,
+		value: datePickerRootState.opts.value,
+		onDateSelect: datePickerRootState.opts.onDateSelect,
+		initialFocus: datePickerRootState.opts.initialFocus,
+	});
 
-	$: if (id) {
-		ids.calendar.calendar.set(id);
-	}
-
-	const attrs = getCalendarAttrs("root");
-	const dispatch = createDispatcher();
-
-	$: builder = $calendar;
-	$: Object.assign(builder, attrs);
-	let months: Month<DateValue>[] = $localMonths;
-	$: months = $localMonths;
+	const mergedProps = $derived(mergeProps(restProps, calendarState.props));
 </script>
 
-{#if asChild}
-	<slot {builder} {months} weekdays={$weekdays} />
+{#if child}
+	{@render child({ props: mergedProps, ...calendarState.snippetProps })}
 {:else}
-	<div bind:this={el} use:melt={builder} {...$$restProps} on:m-keydown={dispatch}>
-		<slot {builder} {months} weekdays={$weekdays} />
+	<div {...mergedProps}>
+		{@render children?.(calendarState.snippetProps)}
 	</div>
 {/if}
