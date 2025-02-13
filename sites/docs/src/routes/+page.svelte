@@ -2,7 +2,6 @@
 	import "$lib/styles/app.postcss";
 	import { Button } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
-	import { mode } from "mode-watcher";
 	import CardAir from "$lib/components/homepage/card-air.svelte";
 	import CardSound from "$lib/components/homepage/card-sound.svelte";
 	import CardTimer from "$lib/components/homepage/card-timer.svelte";
@@ -14,7 +13,16 @@
 	import Accessible from "$lib/components/homepage/svg-accessible.svelte";
 	import AccessibleDark from "$lib/components/homepage/svg-accessible-dark.svelte";
 	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
+	import { goto } from "$app/navigation";
 </script>
+
+<svelte:window
+	onkeydown={(e) => {
+		if (e.key === "s" && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
+			goto("/docs");
+		}
+	}}
+/>
 
 <div class="border-b border-solid border-black/10 bg-white dark:border-white/20 dark:bg-[#171717]">
 	<header class="flex items-center justify-between px-3 py-[17px] lg:grid lg:grid-cols-3 lg:px-5">
@@ -47,7 +55,7 @@
 						href="https://github.com/huntabyte/bits-ui"
 						target="_blank"
 						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground dark:text-white/50 dark:data-[active]:bg-white/10 dark:data-[active]:text-white/100"
-						>Github</a
+						>GitHub</a
 					>
 				</li>
 			</ul>
@@ -82,7 +90,7 @@
 				<Sparkle class="mt-[2px] size-3 lg:size-4" aria-label="Stars" />
 				<span
 					class="inline-block border-l border-l-border-input pl-3 text-[11px] font-medium text-foreground lg:text-[13px]"
-					>New Svelte 5 version</span
+					>New Stable 1.0 Release</span
 				>
 			</a>
 			<h1
@@ -91,10 +99,10 @@
 				The headless components for Svelte
 			</h1>
 			<p
-				class="mx-auto mb-[2em] text-[0.9rem] font-medium leading-[144%] text-muted-foreground lg:w-9/12 lg:text-[1.125rem]"
+				class="mx-auto mb-[2em] max-w-[75%] text-[0.9rem] font-medium leading-[144%] text-muted-foreground md:w-9/12 md:text-[1.125rem]"
 			>
-				Bits UI is a collection of headless component primitives that enable you to build
-				your own custom components.
+				Flexible, unstyled, and accessible primitives that provide the foundation for
+				building your own high-quality component library.
 			</p>
 			<Button.Root
 				class="inline-flex h-10 items-center justify-center rounded-input bg-dark
@@ -118,7 +126,10 @@
 			class="mx-2.5 mt-24 grid grid-cols-2 gap-0 sm:mx-auto sm:w-[500px] sm:max-w-[500px] lg:w-[unset] lg:max-w-[unset] lg:grid-cols-[1fr_repeat(4,259px)_1fr]"
 		>
 			<div class="relative hidden lg:order-1 lg:block">
-				<div class="square {$mode === 'dark' ? 'dark' : ''}"></div>
+				<div class="square block dark:hidden dark:after:!hidden"></div>
+				<div
+					class="dark_square hidden after:!hidden dark:block dark:after:!inline-block"
+				></div>
 			</div>
 
 			<CardSound />
@@ -127,7 +138,10 @@
 			<CardTimer />
 
 			<div class="relative hidden lg:order-6 lg:block">
-				<div class="circle {$mode === 'dark' ? 'dark' : ''}"></div>
+				<div class="circle block dark:hidden dark:after:!hidden"></div>
+				<div
+					class="dark_circle hidden after:!hidden dark:block dark:after:!inline-block"
+				></div>
 			</div>
 		</div>
 	</section>
@@ -144,7 +158,7 @@
 		>
 		<span
 			class="mt-2 block font-['Cal_Sans'] text-[28px] font-semibold leading-[118%] tracking-[0.02em] lg:text-[32px]"
-			>Main benefits of using our headless collection</span
+			>The foundation for your next web project</span
 		>
 	</h2>
 	<div class="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-x-[15px]">
@@ -171,7 +185,7 @@
 				<div
 					class="px-[14px] pb-4 text-[11px] font-medium text-muted-foreground lg:text-sm"
 				>
-					Wide range of props for customizing
+					Freedom with foundation.
 				</div>
 			</div>
 		</div>
@@ -198,7 +212,7 @@
 				<div
 					class="px-[14px] pb-2 text-[11px] font-medium text-muted-foreground lg:pb-4 lg:text-sm"
 				>
-					Components are accessible by default
+					Built for everyone, by default.
 				</div>
 			</div>
 		</div>
@@ -210,7 +224,7 @@
 				<h3
 					class="px-[14px] pt-4 text-base font-semibold leading-[1] -tracking-[0.01em] text-background dark:text-foreground lg:pt-5 lg:text-[17px]"
 				>
-					Consistent
+					Unified
 				</h3>
 
 				<div class="pb-5 pt-8 lg:pb-16 lg:pt-9">
@@ -224,7 +238,7 @@
 				<div
 					class="px-[14px] pb-2 text-[11px] font-medium text-white/40 dark:text-[#B0B0B3] lg:pb-4 lg:text-sm"
 				>
-					Components are as intuitive as possible
+					Predictable patterns, powerful results.
 				</div>
 			</div>
 		</div>
@@ -243,7 +257,7 @@
 			<a
 				href="https://github.com/huntabyte/bits-ui"
 				target="_blank"
-				class="text-sm font-medium text-muted-foreground">Github</a
+				class="text-sm font-medium text-muted-foreground">GitHub</a
 			>
 		</li>
 		<li>
@@ -291,15 +305,31 @@
 				#fff 100%
 			);
 		}
-		&.dark {
-			background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='40' ry='40' stroke='%23B2B2B2FF' stroke-width='2' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-			&:after {
-				background: radial-gradient(
-					83.66% 83.66% at 95.63% 5.58%,
-					rgba(255, 255, 255, 0) 0%,
-					#171717 100%
-				);
-			}
+	}
+
+	.dark_square {
+		display: inline-block;
+		aspect-ratio: 1/1;
+		background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='40' ry='40' stroke='%23B2B2B2FF' stroke-width='2' stroke-dasharray='2%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+		border-radius: 40px;
+		position: absolute;
+		bottom: -50%;
+		right: 10px;
+		width: 100%;
+		min-width: 200px;
+		&:after {
+			content: "";
+			display: inline-block;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			aspect-ratio: 1/1;
+			background: radial-gradient(
+				83.66% 83.66% at 95.63% 5.58%,
+				rgba(255, 255, 255, 0) 0%,
+				#171717 100%
+			);
 		}
 	}
 
@@ -327,15 +357,31 @@
 				#fff 100%
 			);
 		}
-		&.dark {
-			background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='200' ry='200' stroke='%23B2B2B2FF' stroke-width='2' stroke-dasharray='2%2c8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-			&:after {
-				background: radial-gradient(
-					84.28% 84.28% at 40.53% 20.39%,
-					rgba(255, 255, 255, 0) 0%,
-					#171717 100%
-				);
-			}
+	}
+
+	.dark_circle {
+		display: inline-block;
+		aspect-ratio: 1/1;
+		background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='200' ry='200' stroke='%23B2B2B2FF' stroke-width='2' stroke-dasharray='2%2c8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+		border-radius: 200px;
+		width: 100%;
+		position: absolute;
+		bottom: -50%;
+		left: 10px;
+		min-width: 200px;
+		&:after {
+			content: "";
+			display: inline-block;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			aspect-ratio: 1/1;
+			background: radial-gradient(
+				84.28% 84.28% at 40.53% 20.39%,
+				rgba(255, 255, 255, 0) 0%,
+				#171717 100%
+			);
 		}
 	}
 	.dotted_bg {

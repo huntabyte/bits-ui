@@ -2,18 +2,15 @@
 	import Fan from "phosphor-svelte/lib/Fan";
 	import { Tabs } from "bits-ui";
 	import HomeSlider from "$lib/components/homepage/home-slider.svelte";
-	import { mode } from "mode-watcher";
-	let foo = $state([50]);
+
+	let fanSpeed = $state(50);
 
 	const temps: number[] = [50, 80, 95, 80, 50, 40, 60];
 </script>
 
 <div class="relative order-2 lg:order-3 lg:-translate-y-3">
 	<div
-		class="line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)] lg:hidden {$mode ===
-		'dark'
-			? 'dark'
-			: ''}"
+		class="line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)] lg:hidden"
 	></div>
 	<div
 		class="mx-1.5 my-3 flex aspect-square flex-col justify-between rounded-card-lg bg-[#e0f2fe] px-3 pb-6 pt-5 dark:bg-[#C7E6FA] lg:m-2.5 lg:px-5 lg:pb-8"
@@ -47,7 +44,7 @@
 			<div class="text-right font-semibold text-indigo-950">
 				<div
 					class="spin_anim ml-auto w-min"
-					style="animation-duration: {(101 - foo[0]) * 100}ms;"
+					style="animation-duration: {(101 - fanSpeed) * 100}ms;"
 				>
 					<Fan class="ml-auto size-6 " />
 				</div>
@@ -87,7 +84,7 @@
 				</div>
 			</div>
 
-			<HomeSlider bind:value={foo} />
+			<HomeSlider bind:value={fanSpeed} />
 		</div>
 	</div>
 </div>
@@ -107,17 +104,10 @@
 		animation-iteration-count: infinite;
 	}
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, white 50%),
+		background: linear-gradient(to right, transparent 50%, hsl(var(--line)) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
 			100% 1px;
-		&.dark {
-			background: linear-gradient(to right, transparent 50%, #171717 50%),
-				linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
-			background-size:
-				10px 1px,
-				100% 1px;
-		}
 	}
 </style>

@@ -1,26 +1,16 @@
 <script lang="ts">
-	import { mode } from "mode-watcher";
 	import HomeToolbar from "$lib/components/homepage/home-toolbar.svelte";
 </script>
 
 <div class="relative order-1 translate-y-14 lg:order-2 lg:translate-y-1/3">
 	<div
-		class="line_top_gradient absolute -left-10 top-0 hidden h-[1px] w-[calc(100%+50px)] lg:block {$mode ===
-		'dark'
-			? 'dark'
-			: ''}"
+		class="line_top_gradient absolute -left-10 top-0 hidden h-[1px] w-[calc(100%+50px)] lg:block"
 	></div>
 	<div
-		class="line_left_gradient absolute -top-[100px] bottom-0 left-0 hidden w-px rotate-180 lg:block {$mode ===
-		'dark'
-			? 'dark'
-			: ''}"
+		class="line_left_gradient absolute -top-[100px] bottom-0 left-0 hidden w-px rotate-180 lg:block"
 	></div>
 	<div
-		class="line_right_gradient absolute -top-20 bottom-7 right-0 w-px rotate-180 lg:-top-[200px] lg:bottom-0 {$mode ===
-		'dark'
-			? 'dark'
-			: ''}"
+		class="line_right_gradient absolute -top-20 bottom-7 right-0 w-px rotate-180 lg:-top-[200px] lg:bottom-0"
 	></div>
 
 	<div
@@ -63,45 +53,24 @@
 <style lang="postcss">
 	/* lines */
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, white 50%),
+		background: linear-gradient(to right, transparent 50%, hsl(var(--line)) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
 			100% 1px;
-		&.dark {
-			background: linear-gradient(to right, transparent 50%, #171717 50%),
-				linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
-			background-size:
-				10px 1px,
-				100% 1px;
-		}
 	}
 	.line_left_gradient {
-		background: linear-gradient(to top, transparent 50%, white 50%),
+		background: linear-gradient(to top, transparent 50%, hsl(var(--line)) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,
 			100% 100%;
-		&.dark {
-			background: linear-gradient(to top, transparent 50%, #171717 50%),
-				linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
-			background-size:
-				1px 10px,
-				100% 100%;
-		}
 	}
 	.line_right_gradient {
-		background: linear-gradient(to top, transparent 50%, white 50%),
+		background: linear-gradient(to top, transparent 50%, hsl(var(--line)) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,
 			100% 100%;
-		&.dark {
-			background: linear-gradient(to top, transparent 50%, #171717 50%),
-				linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
-			background-size:
-				1px 10px,
-				100% 100%;
-		}
 	}
 </style>

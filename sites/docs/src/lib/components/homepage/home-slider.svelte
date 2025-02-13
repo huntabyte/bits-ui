@@ -2,15 +2,14 @@
 	import { Slider } from "bits-ui";
 	import { cn } from "$lib/utils/styles.js";
 
-	let { value = $bindable([5]) }: { value: number[] } = $props();
+	let { value = $bindable(5) }: { value: number } = $props();
 </script>
 
 <div class="w-full">
 	<Slider.Root
+		type="single"
 		{value}
-		onValueCommit={(v) => {
-			value = v;
-		}}
+		onValueCommit={(v) => (value = v)}
 		class="relative flex w-full touch-none select-none items-center rounded-full shadow-mini-inset dark:bg-[#F4F4F51A] dark:shadow-[0px_0.7px_0px_0px_rgba(0,_0,_0,_0.04)_inset]"
 	>
 		{#snippet children({ thumbs })}

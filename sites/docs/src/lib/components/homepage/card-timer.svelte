@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { mode } from "mode-watcher";
 	import X from "phosphor-svelte/lib/X";
 	import HomeSwitch from "$lib/components/homepage/home-switch.svelte";
 	import HomeSelect from "$lib/components/homepage/home-select.svelte";
@@ -49,16 +48,10 @@
 
 <div class="relative order-4 lg:order-5 lg:translate-y-[7%]">
 	<div
-		class="line_top_gradient absolute left-8 top-0 hidden h-[1px] w-[calc(100%+50px)] lg:block {$mode ===
-		'dark'
-			? 'dark'
-			: ''}"
+		class="line_top_gradient absolute left-8 top-0 hidden h-[1px] w-[calc(100%+50px)] lg:block"
 	></div>
 	<div
-		class="line_right_gradient absolute -top-[200px] bottom-0 right-0 hidden w-px rotate-180 lg:block {$mode ===
-		'dark'
-			? 'dark'
-			: ''}"
+		class="line_right_gradient absolute -top-[200px] bottom-0 right-0 hidden w-px rotate-180 lg:block"
 	></div>
 	<div class="m-1.5 lg:m-[10px]">
 		<div
@@ -122,32 +115,18 @@
 
 <style lang="postcss">
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, white 50%),
+		background: linear-gradient(to right, transparent 50%, hsl(var(--line)) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
 			100% 1px;
-		&.dark {
-			background: linear-gradient(to right, transparent 50%, #171717 50%),
-				linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
-			background-size:
-				10px 1px,
-				100% 1px;
-		}
 	}
 	.line_right_gradient {
-		background: linear-gradient(to top, transparent 50%, white 50%),
+		background: linear-gradient(to top, transparent 50%, hsl(var(--line)) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,
 			100% 100%;
-		&.dark {
-			background: linear-gradient(to top, transparent 50%, #171717 50%),
-				linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
-			background-size:
-				1px 10px,
-				100% 100%;
-		}
 	}
 
 	.ping_anim {
