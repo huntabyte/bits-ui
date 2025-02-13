@@ -15,6 +15,7 @@ It provides global state that is shared across all instances of the class to pre
 <script lang="ts">
 	import { IsUsingKeyboard } from "bits-ui";
 
+	const isUsingKeyboard = new IsUsingKeyboard();
 	const shouldShowMenu = $derived(isUsingKeyboard.current);
 </script>
 ```
