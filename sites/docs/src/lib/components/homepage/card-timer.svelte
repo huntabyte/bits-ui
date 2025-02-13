@@ -47,38 +47,38 @@
 	let foo = $state("new");
 </script>
 
-<div class="relative order-1 lg:order-5 lg:translate-y-[7%]">
+<div class="relative order-4 lg:order-5 lg:translate-y-[7%]">
 	<div
-		class="line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)] {$mode ===
+		class="hidden lg:block line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)] {$mode ===
 		'dark'
 			? 'dark'
 			: ''}"
 	></div>
 	<div
-		class="line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180 {$mode ===
+		class="hidden lg:block line_right_gradient absolute -top-[200px] bottom-0 right-0 w-px rotate-180 {$mode ===
 		'dark'
 			? 'dark'
 			: ''}"
 	></div>
-	<div class="m-[10px]">
+	<div class="m-1.5 lg:m-[10px]">
 		<div
-			class="aspect-square w-full rounded-card-lg border border-border-input bg-white px-[14px] py-3 shadow-card dark:bg-[#FAF8F5]"
+			class="aspect-square w-full rounded-card-lg border border-border-input bg-white p-2 lg:px-[14px] lg:py-3 shadow-card dark:bg-[#FAF8F5]"
 		>
-			<div class="mb-5 rounded-15px bg-foreground p-1 dark:bg-[#171717]">
-				<div class="rounded-xl bg-[rgba(81,84,95,0.6)] px-2 pb-8 pt-3 text-white">
-					<div class="text-[2.563rem] font-medium leading-[100%]">
+			<div class="mb-3 lg:mb-5 rounded-15px bg-foreground p-1 dark:bg-[#171717]">
+				<div class="rounded-xl bg-[rgba(81,84,95,0.6)] px-2 pb-7 lg:pb-8 pt-3 text-white">
+					<div class="text-[1.88519rem] lg:text-[2.563rem] font-medium leading-[100%]">
 						{displayTime}
 					</div>
-					<div class="text-[13px] font-medium">
+					<div class="text-xxs lg:text-[13px] font-medium">
 						Task:
-						<span class="relative ml-1 mr-2 mt-[2px] inline-flex h-[10px] w-[10px]">
+						<span class="relative ml-1 mr-1 lg:mr-2 mt-[2px] inline-flex h-[7px] w-[7px] lg:h-[10px] lg:w-[10px]">
 							<span
 								class="{checked
 									? 'ping_anim'
 									: ''} absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"
 							></span>
 							<span
-								class="relative inline-flex h-[10px] w-[10px] rounded-full bg-rose-500"
+								class="relative inline-flex h-[7px] w-[7px] lg:h-[10px] lg:w-[10px] rounded-full bg-rose-500"
 							></span>
 						</span>
 						<span class="capitalize">{foo}</span>
@@ -88,7 +88,7 @@
 					{#each chips as chip, i}
 						<div
 							data-active={i === 0 ? "" : undefined}
-							class="group flex select-none items-center rounded-[25px] bg-[#31343e] px-2 text-[11px] text-white/70 data-[active]:bg-white data-[active]:text-foreground dark:data-[active]:text-[#171717]"
+							class="group flex select-none items-center rounded-[25px] bg-[#31343e] px-1 lg:px-2 text-[8px] lg:text-[11px] text-white/70 data-[active]:bg-white data-[active]:text-foreground dark:data-[active]:text-[#171717]"
 						>
 							{chip}
 							<X

@@ -8,7 +8,7 @@
 </script>
 
 <div
-	class="relative order-3 flex h-min border border-solid border-[#cacaca] lg:order-4 lg:translate-y-[40%]"
+	class="relative order-3 flex h-min border border-solid border-[#cacaca] lg:order-4 translate-y-14  lg:translate-y-[40%]"
 >
 	<div
 		class="circle absolute left-0 top-0 aspect-square w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border-input bg-white dark:border-white dark:bg-[#131313]"
@@ -30,20 +30,20 @@
 	></div>
 
 	<div
-		class="m-[10px] aspect-square w-full rounded-card-lg bg-[#FEFCE8] px-[14px] py-3 dark:bg-[#FFFBD4]"
+		class="m-1.5 lg:m-[10px] aspect-square w-full rounded-card-lg bg-[#FEFCE8] px-3 lg:px-[14px] py-3 dark:bg-[#FFFBD4]"
 	>
 		<Tabs.Root value="follow">
 			<Tabs.List
-				class="mb-[14px] flex h-10 items-center rounded-input bg-[#18181B12] px-[3px] py-1 shadow-mini-inset dark:shadow-[0px_1px_0px_0px_rgba(0,_0,_0,_0.04)_inset]"
+				class="mb-[10px] lg:mb-[14px] flex h-7 lg:h-10 items-center rounded-input bg-[#18181B12] px-[3px] py-1 shadow-mini-inset dark:shadow-[0px_1px_0px_0px_rgba(0,_0,_0,_0.04)_inset]"
 			>
 				<Tabs.Trigger
 					value="follow"
-					class="h-8 w-full rounded-[7px] text-sm font-medium text-foreground/70 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-mini dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
+					class="h-[23px] lg:h-8 w-full rounded-[7px] text-xxs lg:text-sm font-medium text-foreground/70 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-mini dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
 					>Follow</Tabs.Trigger
 				>
 				<Tabs.Trigger
 					value="other"
-					class="h-8 w-full rounded-[7px] text-sm font-medium text-foreground/70 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-mini dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
+					class="h-[23px] lg:h-8 w-full rounded-[7px] text-xxs lg:text-sm font-medium text-foreground/70 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-mini dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
 					>Other</Tabs.Trigger
 				>
 			</Tabs.List>
@@ -101,7 +101,7 @@
 		<div class="flex">
 			<Avatar.Root
 				bind:loadingStatus
-				class="h-10 w-10 rounded-full border {loadingStatus === 'loaded'
+				class="h-7 w-7 lg:h-10 lg:w-10 rounded-full border {loadingStatus === 'loaded'
 					? 'border-foreground'
 					: 'border-transparent'} bg-muted text-[17px] font-medium uppercase text-muted-foreground dark:border-[#807F82]"
 			>
@@ -112,18 +112,18 @@
 					<Avatar.Fallback class="border border-muted">{fallback}</Avatar.Fallback>
 				</div>
 			</Avatar.Root>
-			<div class="name ml-2">
-				<h3 class="text-sm font-medium text-foreground dark:text-[#171717]">{firstName}</h3>
-				<p class="text-[12px] font-medium text-muted-foreground dark:text-[#171717]/50">
+			<div class="name ml-1.5 lg:ml-2">
+				<h3 class="text-xxs lg:text-sm font-medium text-foreground dark:text-[#171717]">{firstName}</h3>
+				<p class="text-[9px] lg:text-[12px] font-medium text-muted-foreground dark:text-[#171717]/50">
 					@{username}
 				</p>
 			</div>
 		</div>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger
-				class="focus-visible text-a-foreground inline-flex size-8 select-none items-center justify-center rounded-[7px] border border-border-input bg-white text-sm font-medium shadow-mini hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 dark:border-[#D8D8D8] dark:shadow-[0px_0.8px_0px_0.8px_rgba(0,_0,_0,_0.04)] dark:hover:bg-white"
+				class="focus-visible text-a-foreground inline-flex size-6 lg:size-8 select-none items-center justify-center rounded-[7px] border border-border-input bg-white text-sm font-medium shadow-mini hover:bg-muted focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-98 dark:border-[#D8D8D8] dark:shadow-[0px_0.8px_0px_0.8px_rgba(0,_0,_0,_0.04)] dark:hover:bg-white"
 			>
-				<DotsThreeVertical class="size-5 text-foreground dark:text-[#171717]" />
+				<DotsThreeVertical class="size-4 lg:size-5 text-foreground dark:text-[#171717]" />
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content

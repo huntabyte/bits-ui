@@ -19,7 +19,7 @@
 </script>
 
 <div class="border-b border-solid border-black/10 bg-white dark:border-white/20 dark:bg-[#171717]">
-	<header class="grid grid-cols-3 px-5 py-[17px]">
+	<header class="flex items-center justify-between lg:grid lg:grid-cols-3 px-3 lg:px-5 py-[17px]">
 		<a
 			href="/"
 			class="ml-2 mt-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -27,7 +27,7 @@
 			<Logo />
 		</a>
 
-		<nav class="mt-2 text-center">
+		<nav class="flex items-center lg:block mt-2 text-center">
 			<ul>
 				<li class="inline-block">
 					<a
@@ -39,22 +39,25 @@
 				</li>
 				<li class="inline-block">
 					<a
-						href="/"
-						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground dark:text-white/50 dark:data-[active]:bg-white/10 dark:data-[active]:text-white/100"
-						>Showcase</a
-					>
-				</li>
-				<li class="inline-block">
-					<a
 						href="/docs"
 						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground dark:text-white/50 dark:data-[active]:bg-white/10 dark:data-[active]:text-white/100"
 						>Docs</a
 					>
 				</li>
+        <li class="inline-block">
+					<a
+						href="https://github.com/huntabyte/bits-ui" target="_blank"
+						class="rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-[1] tracking-[0.01em] data-[active]:bg-black/5 data-[active]:text-foreground dark:text-white/50 dark:data-[active]:bg-white/10 dark:data-[active]:text-white/100"
+						>Github</a
+					>
+				</li>
 			</ul>
+      <div class="block lg:hidden relative top-[1px]">
+        <LightSwitch />
+      </div>
 		</nav>
 
-		<div class="flex justify-end gap-3">
+		<div class="hidden lg:flex justify-end gap-3">
 			<LightSwitch />
 
 			<Button.Root
@@ -69,26 +72,26 @@
 	</header>
 
 	<section
-		class="flex  flex-col justify-between overflow-hidden pt-[7em] desktop:max-h-[900px]"
+		class="flex  flex-col justify-between overflow-hidden pt-20 lg:pt-[7em] desktop:max-h-[900px]"
 	>
-		<div class="mx-auto lg:w-7/12 text-center">
+		<div class="mx-7 lg:mx-auto lg:w-7/12 text-center">
 			<a
 				href="/docs"
 				class="inline-flex gap-2 rounded-card-lg border border-border-input bg-white py-1.5 pl-3 pr-4 shadow-mini dark:border-[#F4F4F5]/20 dark:bg-[#242429]"
 			>
-				<Sparkle class="mt-[2px] size-4" aria-label="Stars" />
+				<Sparkle class="mt-[2px] size-3 lg:size-4" aria-label="Stars" />
 				<span
-					class="inline-block border-l border-l-border-input pl-3 text-[13px] font-medium text-foreground"
+					class="inline-block border-l border-l-border-input pl-3 text-[11px] lg:text-[13px] font-medium text-foreground"
 					>New Svelte 5 version</span
 				>
 			</a>
 			<h1
-				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[3.25rem] lg:text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA]"
+				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[2.875rem] lg:text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA]"
 			>
 				The headless components for Svelte
 			</h1>
 			<p
-				class="mx-auto mb-[2em] lg:w-9/12 text-[1.125rem] font-medium leading-[144%] text-muted-foreground"
+				class="mx-auto mb-[2em] lg:w-9/12 text-[0.9rem] lg:text-[1.125rem] font-medium leading-[144%] text-muted-foreground"
 			>
 				Bits UI is a collection of headless component primitives that enable you to build
 				your own custom components.
@@ -100,7 +103,7 @@
 				href="/docs"
 			>
 				<kbd
-					class="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-xxs font-medium opacity-100 shadow-[0px_2px_0px_0px_#59595b] dark:border-[rgba(0,_0,_0,_0.10)] dark:bg-white dark:shadow-[0px_2px_0px_0px_#B8B8B8] sm:flex"
+					class="pointer-events-none h-5 select-none items-center gap-1 rounded border bg-background-alt px-1.5 font-mono text-xxs font-medium opacity-100 shadow-[0px_2px_0px_0px_#59595b] dark:border-[rgba(0,_0,_0,_0.10)] dark:bg-white dark:shadow-[0px_2px_0px_0px_#B8B8B8] flex"
 				>
 					<span class="text-xs text-foreground-alt">S</span>
 				</kbd>
@@ -111,7 +114,7 @@
 			</Button.Root>
 		</div>
 
-		<div class="mx-auto mt-20 grid grid-cols-1 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
+		<div class="mx-2.5 lg:mx-auto mt-20 grid grid-cols-2 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
 			<div class="relative hidden lg:order-1 lg:block">
 				<div class="square {$mode === 'dark' ? 'dark' : ''}"></div>
 			</div>
