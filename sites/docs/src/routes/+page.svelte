@@ -72,11 +72,11 @@
 	</header>
 
 	<section
-		class="flex  flex-col justify-between overflow-hidden pt-20 lg:pt-[7em] desktop:max-h-[900px]"
+		class="flex flex-col justify-between overflow-hidden pt-20 lg:pt-[7em] desktop:max-h-[900px]"
 	>
 		<div class="mx-7 lg:mx-auto lg:w-7/12 text-center">
 			<a
-				href="/docs"
+				href="https://github.com/huntabyte/bits-ui/releases" target="_blank"
 				class="inline-flex gap-2 rounded-card-lg border border-border-input bg-white py-1.5 pl-3 pr-4 shadow-mini dark:border-[#F4F4F5]/20 dark:bg-[#242429]"
 			>
 				<Sparkle class="mt-[2px] size-3 lg:size-4" aria-label="Stars" />
@@ -114,7 +114,7 @@
 			</Button.Root>
 		</div>
 
-		<div class="mx-2.5 lg:mx-auto mt-20 grid grid-cols-2 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
+		<div class="mx-2.5 sm:max-w-[500px] sm:w-[500px] lg:max-w-[unset] lg:w-[unset] sm:mx-auto mt-24 grid grid-cols-2 gap-0 lg:grid-cols-[1fr_repeat(4,259px)_1fr]">
 			<div class="relative hidden lg:order-1 lg:block">
 				<div class="square {$mode === 'dark' ? 'dark' : ''}"></div>
 			</div>
@@ -131,31 +131,31 @@
 	</section>
 </div>
 
-<section class=" mb-44 mt-20 mx-5 lg:w-10/12 lg:max-w-[1036px] lg:mx-auto ">
+<section class=" mb-44 mt-20 mx-2.5 lg:w-10/12 lg:max-w-[1036px] sm:mx-auto sm:max-w-[500px]">
 	<h2 class="mb-10 lg:w-1/3 text-balance text-foreground">
 		<small
 			class="rounded-3xl border border-foreground px-2 py-[3px] text-[13px] font-medium tracking-[0.01em]"
-			><span class="mr-3 inline-block h-[10px] w-[10px] rounded-full bg-foreground/90"
-			></span>Explore</small
+			><span class="mr-2.5 inline-block h-[7px] w-[7px] rounded-full bg-foreground/90"
+			></span>explore</small
 		>
 		<span
-			class="mt-2 block font-['Cal_Sans'] text-[32px] font-semibold leading-[118%] tracking-[0.02em]"
+			class="mt-2 block font-['Cal_Sans'] text-[28px] lg:text-[32px] font-semibold leading-[118%] tracking-[0.02em]"
 			>Main benefits of using our headless collection</span
 		>
 	</h2>
-	<div class="grid lg:grid-cols-3 gap-3 lg:gap-x-[15px]">
+	<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-x-[15px]">
 
-		<div class="overflow-hidden rounded-card-lg border border-border shadow-card">	
+		<div class="overflow-hidden rounded-card-lg border border-border shadow-card col-span-2 lg:col-span-1">	
       <div class="mx-[7px] my-[9px] rounded-15px bg-background dotted_bg">		
-        <h3 class="text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-5 text-foreground">Customizable</h3>
+        <h3 class="text-base lg:text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-4 lg:pt-5 text-foreground leading-[1]">Customizable</h3>
 
-				<div class="pb-16 pt-9">
-					<div class="relative aspect-[354/259] w-full bg-transparent overflow-hidden ml-auto left-12">
+				<div class="pb-10 lg:pb-16 pt-8 lg:pt-9">
+					<div class="relative aspect-[354/259] w-10/12 lg:w-full bg-transparent overflow-hidden mx-auto lg:ml-auto lg:left-12 ">
 						<Customizable />
 					</div>
 				</div>
 
-				<div class="text-sm font-medium text-muted-foreground px-[14px] pb-4">
+				<div class="text-[11px] lg:text-sm font-medium text-muted-foreground px-[14px] pb-4">
 					Wide range of props for customizing
 				</div>
 			</div>
@@ -163,31 +163,31 @@
 
     <div class="overflow-hidden rounded-card-lg border border-border shadow-card bg-[#F8F8F8]">	
       <div class="px-[7px] py-[9px] bg-transparent">		
-        <h3 class="text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-5 text-foreground">Accessible</h3>
+        <h3 class="text-base lg:text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-4 lg:pt-5 text-foreground leading-[1]">Accessible</h3>
 
-				<div class="pb-16 pt-9">
-					<div class="relative aspect-[354/259] w-full bg-transparent overflow-hidden left-9">
+				<div class="pb-5 lg:pb-16 pt-8 lg:pt-9">
+					<div class="relative aspect-[186/150] lg:aspect-[354/259] w-full bg-transparent overflow-hidden left-[30px] lg:left-9">
 						<Accessible />
 					</div>
 				</div>
 
-				<div class="text-sm font-medium text-muted-foreground px-[14px] pb-4">
+				<div class="text-[11px] lg:text-sm font-medium text-muted-foreground px-[14px] pb-2 lg:pb-4">
 					Components are accessible by default
 				</div>
 			</div>
 		</div>
 
-    <div class="overflow-hidden rounded-card-lg border border-border shadow-card bg-[#2A2A2E]">	
+    <div class="overflow-hidden rounded-card-lg border border-white shadow-card bg-[#2A2A2E]">	
       <div class="px-[7px] py-[9px] bg-transparent">		
-        <h3 class="text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-5 text-background">Consistent</h3>
+        <h3 class="text-base lg:text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-4 lg:pt-5 text-background leading-[1]">Consistent</h3>
 
-				<div class="pb-16 pt-9">
-					<div class="relative aspect-[354/259] w-full bg-transparent overflow-hidden left-[50px]">
+				<div class="pb-5 lg:pb-16 pt-8 lg:pt-9">
+					<div class="relative aspect-[186/150] lg:aspect-[354/259] w-full bg-transparent overflow-hidden left-6 lg:left-[50px]">
 						<Consistent />
 					</div>
 				</div>
 
-				<div class="text-sm font-medium px-[14px] pb-4 text-white/40">
+				<div class="text-[11px] lg:text-sm font-medium px-[14px] pb-2 lg:pb-4 text-white/40">
 					Components are as intuitive as possible
 				</div>
 			</div>

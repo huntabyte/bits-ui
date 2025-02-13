@@ -35,7 +35,7 @@
 		</div>
 
 		<div
-			class="relative mx-auto mt-3 lg:mt-[5px] aspect-square w-[115px] lg:w-[189px] rounded-[50%] bg-background dark:bg-white"
+			class="relative mx-auto mt-3 lg:mt-[5px] aspect-square w-[115px] sm:w-10/12 lg:w-[189px] rounded-[50%] bg-background dark:bg-white"
 		>
 			<div
 				class="absolute left-1/2 top-2.5 h-4 lg:h-[26px] w-[5px] lg:w-2 -translate-x-1/2 rounded-card-sm bg-rose-500"
