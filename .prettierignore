@@ -22,4 +22,4 @@ CHANGELOG.md
 
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-sites/docs/src/routes/api/search.json/search.json
+docs/src/routes/api/search.json/search.json
