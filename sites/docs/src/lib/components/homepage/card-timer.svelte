@@ -49,7 +49,7 @@
 
 <div class="relative order-4 lg:order-5 lg:translate-y-[7%]">
 	<div
-		class="hidden lg:block line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)] {$mode ===
+		class="hidden lg:block line_top_gradient absolute left-8 top-0 h-[1px] w-[calc(100%+50px)] {$mode ===
 		'dark'
 			? 'dark'
 			: ''}"

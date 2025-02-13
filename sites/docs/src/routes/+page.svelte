@@ -15,6 +15,7 @@
 
 	import Customizable from "$lib/components/homepage/svg-customizable.svelte";
 	import Accessible from "$lib/components/homepage/svg-accessible.svelte";
+  import AccessibleDark from "$lib/components/homepage/svg-accessible-dark.svelte";
 	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
 </script>
 
@@ -86,7 +87,7 @@
 				>
 			</a>
 			<h1
-				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[2.875rem] lg:text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA]"
+				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[2.875rem] lg:text-[4.25rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA] dark:selection:text-background"
 			>
 				The headless components for Svelte
 			</h1>
@@ -131,7 +132,7 @@
 	</section>
 </div>
 
-<section class=" mb-44 mt-20 mx-2.5 lg:w-10/12 lg:max-w-[1036px] sm:mx-auto sm:max-w-[500px]">
+<section class="mb-20 lg:mb-40 mt-11 lg:mt-24 mx-2.5 lg:w-10/12 lg:max-w-[1036px] sm:mx-auto sm:max-w-[500px]">
 	<h2 class="mb-10 lg:w-1/3 text-balance text-foreground">
 		<small
 			class="rounded-3xl border border-foreground px-2 py-[3px] text-[13px] font-medium tracking-[0.01em]"
@@ -146,7 +147,7 @@
 	<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-x-[15px]">
 
 		<div class="overflow-hidden rounded-card-lg border border-border shadow-card col-span-2 lg:col-span-1">	
-      <div class="mx-[7px] my-[9px] rounded-15px bg-background dotted_bg">		
+      <div class="mx-[7px] my-[9px] rounded-15px bg-background dotted_bg dark:bg-[#1E1E22] bg-[radial-gradient(#DEDEDE_1px,transparent_0)] dark:bg-[radial-gradient(#36363A_1px,transparent_0)]">		
         <h3 class="text-base lg:text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-4 lg:pt-5 text-foreground leading-[1]">Customizable</h3>
 
 				<div class="pb-10 lg:pb-16 pt-8 lg:pt-9">
@@ -161,13 +162,14 @@
 			</div>
 		</div>
 
-    <div class="overflow-hidden rounded-card-lg border border-border shadow-card bg-[#F8F8F8]">	
+    <div class="overflow-hidden rounded-card-lg border border-border shadow-card bg-[#F8F8F8] dark:bg-muted">	
       <div class="px-[7px] py-[9px] bg-transparent">		
         <h3 class="text-base lg:text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-4 lg:pt-5 text-foreground leading-[1]">Accessible</h3>
 
 				<div class="pb-5 lg:pb-16 pt-8 lg:pt-9">
-					<div class="relative aspect-[186/150] lg:aspect-[354/259] w-full bg-transparent overflow-hidden left-[30px] lg:left-9">
+					<div class="relative aspect-[186/150] lg:aspect-[354/259] w-full bg-transparent overflow-hidden left-[30px] lg:left-14">
 						<Accessible />
+            <AccessibleDark />
 					</div>
 				</div>
 
@@ -177,9 +179,9 @@
 			</div>
 		</div>
 
-    <div class="overflow-hidden rounded-card-lg border border-white shadow-card bg-[#2A2A2E]">	
+    <div class="overflow-hidden rounded-card-lg border border-white shadow-card bg-[#2A2A2E] dark:bg-[#3A3C42] dark:border-[#F4F4F5]/10">	
       <div class="px-[7px] py-[9px] bg-transparent">		
-        <h3 class="text-base lg:text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-4 lg:pt-5 text-background leading-[1]">Consistent</h3>
+        <h3 class="text-base lg:text-[17px] font-semibold -tracking-[0.01em] px-[14px] pt-4 lg:pt-5 text-background dark:text-foreground leading-[1]">Consistent</h3>
 
 				<div class="pb-5 lg:pb-16 pt-8 lg:pt-9">
 					<div class="relative aspect-[186/150] lg:aspect-[354/259] w-full bg-transparent overflow-hidden left-6 lg:left-[50px]">
@@ -187,7 +189,7 @@
 					</div>
 				</div>
 
-				<div class="text-[11px] lg:text-sm font-medium px-[14px] pb-2 lg:pb-4 text-white/40">
+				<div class="text-[11px] lg:text-sm font-medium px-[14px] pb-2 lg:pb-4 text-white/40 dark:text-[#B0B0B3]">
 					Components are as intuitive as possible
 				</div>
 			</div>
@@ -195,7 +197,7 @@
 	</div>
 </section>
 
-<footer class="border-t border-black/10 pt-6 px-[22px] pb-10 flex justify-between">
+<footer class="border-t border-black/10 dark:border-foreground/10 pt-6 px-[22px] pb-10 flex justify-between">
   <div class="text-sm font-medium text-muted-foreground flex items-center gap-2 lg:gap-3"><span class="w-3 h-3 aspect-square rounded-full bg-foreground/20 block"></span>2025 Bits UI team</div>
   <ul class="flex gap-3 lg:gap-[26px] items-center justify-end">
     <li><a href="https://github.com/huntabyte/bits-ui" target="_blank" class="text-sm font-medium text-muted-foreground">Github</a></li>
@@ -286,8 +288,7 @@
 		}
 	}
   .dotted_bg{
-    background: white;
-    background-image: radial-gradient(#DEDEDE 1px, transparent 0);
+    //background-image: radial-gradient(#DEDEDE 1px, transparent 0);
     background-size: 15px 15px;
     background-position: 0px 0px;
   }

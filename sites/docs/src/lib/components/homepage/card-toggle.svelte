@@ -8,25 +8,25 @@
 </script>
 
 <div
-	class="relative order-3 flex h-min border border-solid border-[#cacaca] lg:order-4 translate-y-14  lg:translate-y-[40%]"
+	class="relative order-3 flex h-min border border-solid border-[#cccccc] lg:order-4 translate-y-14  lg:translate-y-[40%]"
 >
 	<div
-		class="circle absolute left-0 top-0 aspect-square w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border-input bg-white dark:border-white dark:bg-[#131313]"
+		class="circle absolute left-0 top-0 aspect-square w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
-		class="circle absolute right-0 top-0 aspect-square w-3 -translate-y-1/2 translate-x-1/2 rounded-full border border-border-input bg-white dark:border-white dark:bg-[#131313]"
+		class="circle absolute right-0 top-0 aspect-square w-3 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
-		class="middle absolute left-1/2 top-0 aspect-[24/6] w-6 -translate-x-1/2 -translate-y-1/2 rounded-[7px] border border-border-input bg-white dark:border-white dark:bg-[#131313]"
+		class="middle absolute left-1/2 top-0 aspect-[24/6] w-6 -translate-x-1/2 -translate-y-1/2 rounded-[7px] border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
-		class="middle absolute bottom-0 left-1/2 aspect-[24/6] w-6 -translate-x-1/2 translate-y-1/2 rounded-[7px] border border-border-input bg-white dark:border-white dark:bg-[#131313]"
+		class="middle absolute bottom-0 left-1/2 aspect-[24/6] w-6 -translate-x-1/2 translate-y-1/2 rounded-[7px] border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
-		class="circle absolute bottom-0 left-0 aspect-square w-3 -translate-x-1/2 translate-y-1/2 rounded-full border border-border-input bg-white dark:border-white dark:bg-[#131313]"
+		class="circle absolute bottom-0 left-0 aspect-square w-3 -translate-x-1/2 translate-y-1/2 rounded-full border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
-		class="circle absolute bottom-0 right-0 aspect-square w-3 translate-x-1/2 translate-y-1/2 rounded-full border border-border-input bg-white dark:border-white dark:bg-[#131313]"
+		class="circle absolute bottom-0 right-0 aspect-square w-3 translate-x-1/2 translate-y-1/2 rounded-full border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 
 	<div
