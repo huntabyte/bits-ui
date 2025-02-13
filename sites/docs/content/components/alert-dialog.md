@@ -106,8 +106,8 @@ This example is used in a few places throughout this documentation page to give 
 				{@render description()}
 			</AlertDialog.Description>
 			{@render children?.()}
-			<AlertDialog.Cancel>Cancel</AlertDialog.Close>
-			<AlertDialog.Action>Confirm</AlertDialog.Close>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action>Confirm</AlertDialog.Action>
 		</AlertDialog.Content>
 	</AlertDialog.Portal>
 </AlertDialog.Root>
