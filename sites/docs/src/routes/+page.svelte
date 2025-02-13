@@ -2,9 +2,6 @@
 	import "$lib/styles/app.postcss";
 	import { Button } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
-	import SlidersHorizontal from "phosphor-svelte/lib/SlidersHorizontal";
-	import Keyboard from "phosphor-svelte/lib/Keyboard";
-	import Stack from "phosphor-svelte/lib/Stack";
 	import { mode } from "mode-watcher";
 	import CardAir from "$lib/components/homepage/card-air.svelte";
 	import CardSound from "$lib/components/homepage/card-sound.svelte";
