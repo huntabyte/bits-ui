@@ -25,6 +25,8 @@ Once you learn how to use the new version of Bits UI, we're confident you'll fin
 -   The `multiple` prop has been removed from the `Accordion.Root` component and replaced with a _required_ `type` prop which can be set to either `'single'` or `'multiple'`. This is used as a discriminant to properly type the `value` prop as either a `string` or `string[]`.
 -   The various `transition` props have been removed from the `Accordion.Content` component. See the [Transitions](/docs/transitions) documentation for more information.
 
+See the [Accordion](/docs/components/accordion) documentation for more information.
+
 ## Alert Dialog
 
 -   The various `transition` props have been removed from the `AlertDialog.Content` and `AlertDialog.Overlay` components. See the [Transitions](/docs/transitions) documentation for more information.
@@ -39,6 +41,10 @@ Once you learn how to use the new version of Bits UI, we're confident you'll fin
 
 -   The `Checkbox.Indicator` component has been removed in favor of using the `children` snippet prop to get a reference to the `checked` state and render a custom indicator. See the [Checkbox](/docs/components/checkbox) documentation for more information.
 -   The `Checkbox.Input` component has been removed in favor of automatically rendering a hidden input when the `name` prop is provided to the `Checkbox.Root` component.
+-   The `checked` state of the `Checkbox` component is now of type `boolean` instead of `boolean | 'indeterminate'`, `indeterminate` is its own state now and can be managed via the `indeterminate` prop.
+-   A new component, `Checkbox.Group` has been introduced to support checkbox groups.
+
+See the [Checkbox](/docs/components/checkbox) documentation for more information.
 
 ## Combobox
 
@@ -56,7 +62,7 @@ Once you learn how to use the new version of Bits UI, we're confident you'll fin
 
 ## Pin Input
 
--   The `PinInput` component has been overhauled to better act as an OTP input component. See the [Pin Input](/docs/components/pin-input) documentation for more information.
+-   The `PinInput` component has been completely overhauled to better act as an OTP input component, with code and inspiration taken from [Input OTP](https://github.com/guilhermerodz/input-otp) by [Guilherme Rodz](https://x.com/guilhermerodz). The best way to migrate is to reference the [Pin Input](/docs/components/pin-input) documentation to see how to use the new component.
 
 ## Select
 
@@ -65,6 +71,11 @@ Once you learn how to use the new version of Bits UI, we're confident you'll fin
 -   The select now automatically renders a hidden input when the `name` prop is provided to the `Select.Root` component.
 -   The `Select.ItemIndicator` component has been removed in favor of using the `children` snippet prop to get a reference to the `selected` state and render a custom indicator. See the [Select](/docs/components/select) documentation for more information.
 -   `Select.Group` and `Select.GroupHeading` have been added to support groups within the Select.
+
+## Slider
+
+-   `Slider.Root` now requires a `type` prop to be set to either `'single'` or `'multiple'` to properly type the `value` as either a `number` or `number[]`.
+-   A new prop, `onValueCommit` has been introduced which is called when the user commits a value change (e.g. by releasing the mouse button or pressing Enter). This is useful for scenarios where you want to update the value only when the user has finished interacting with the slider, not for each movement of the thumb.
 
 ## Tooltip
 

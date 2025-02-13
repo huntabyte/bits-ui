@@ -21,7 +21,7 @@
 		disabled = false,
 		value = $bindable(""),
 		onValueChange = noop,
-		onPaste,
+		pasteTransformer,
 		...restProps
 	}: PinInputRootProps = $props();
 
@@ -47,7 +47,7 @@
 			}
 		),
 		pushPasswordManagerStrategy: box.with(() => pushPasswordManagerStrategy),
-		onPaste: box.with(() => onPaste),
+		pasteTransformer: box.with(() => pasteTransformer),
 	});
 
 	const mergedInputProps = $derived(mergeProps(restProps, rootState.inputProps));

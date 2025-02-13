@@ -1,7 +1,7 @@
 // Credit to @paoloricciuti for this code via melt :)
 import { render } from "@testing-library/svelte";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
+import { describe, it, vi } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import SliderMultiTest, { type SliderMultiTestProps } from "./slider-test-multi.svelte";
 import SliderRangeTest, { type SliderMultiRangeTestProps } from "./slider-range-test.svelte";
@@ -29,97 +29,102 @@ function setup(props: SliderMultiTestProps = {}, kind: "default" | "range" = "de
 	return { root, user, ...returned };
 }
 
-describe("slider (default)", () => {
-	it("should have no accessibility violations", async () => {
-		const { container } = render(SliderMultiTest);
+it("should have no accessibility violations", async () => {
+	const { container } = render(SliderMultiTest);
 
-		expect(await axe(container)).toHaveNoViolations();
-	});
-
-	it("should have a thumb positioned at 30% of the container", async () => {
-		const { getByTestId } = setup();
-
-		const thumb = getByTestId("thumb");
-		expect(thumb).toBeInTheDocument();
-
-		expect(isCloseEnough(30, thumb.style.left)).toBeTruthy();
-	});
-	it("should have a range that covers from 0 to 30%", async () => {
-		const { getByTestId } = setup();
-
-		const range = getByTestId("range");
-		expect(range).toBeInTheDocument();
-
-		expect(isCloseEnough(0, range.style.left)).toBeTruthy();
-		expect(isCloseEnough(70, range.style.right)).toBeTruthy();
-	});
-
-	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
-		"should change by 1% when pressing %s",
-		async (key) => {
-			const { getByTestId, user } = setup();
-
-			const thumb = getByTestId("thumb");
-			const range = getByTestId("range");
-
-			thumb.focus();
-			await user.keyboard(key);
-
-			expectPercentage({ percentage: 31, thumb, range });
-		}
-	);
-
-	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
-		"should change by 1% when pressing %s",
-		async (key) => {
-			const { getByTestId, user } = setup();
-
-			const thumb = getByTestId("thumb");
-			const range = getByTestId("range");
-			thumb.focus();
-
-			await user.keyboard(key);
-
-			expectPercentage({ percentage: 29, thumb, range });
-		}
-	);
-
-	it("should go to minimum when pressing Home", async () => {
-		const { getByTestId, user } = setup();
-
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
-
-		thumb.focus();
-		await user.keyboard(kbd.HOME);
-
-		expectPercentage({ percentage: 0, thumb, range });
-	});
-
-	it("should go to maximum when pressing End", async () => {
-		const { getByTestId, user } = setup();
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
-
-		thumb.focus();
-		await user.keyboard(kbd.END);
-
-		expectPercentage({ percentage: 100, thumb, range });
-	});
-
-	it("should not allow the value to change when the `disabled` prop is set to true", async () => {
-		const { getByTestId, user } = setup({ disabled: true });
-
-		const thumb = getByTestId("thumb");
-		const range = getByTestId("range");
-
-		thumb.focus();
-		await user.keyboard(kbd.HOME);
-		expectPercentage({ percentage: 30, thumb, range });
-	});
+	expect(await axe(container)).toHaveNoViolations();
 });
 
-describe("slider (range)", () => {
+it("should have a thumb positioned at 30% of the container", async () => {
+	const { getByTestId } = setup();
+
+	const thumb = getByTestId("thumb");
+	expect(thumb).toBeInTheDocument();
+
+	expect(isCloseEnough(30, thumb.style.left)).toBeTruthy();
+});
+it("should have a range that covers from 0 to 30%", async () => {
+	const { getByTestId } = setup();
+
+	const range = getByTestId("range");
+	expect(range).toBeInTheDocument();
+
+	expect(isCloseEnough(0, range.style.left)).toBeTruthy();
+	expect(isCloseEnough(70, range.style.right)).toBeTruthy();
+});
+
+it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("should change by 1% when pressing %s", async (key) => {
+	const { getByTestId, user } = setup();
+
+	const thumb = getByTestId("thumb");
+	const range = getByTestId("range");
+
+	thumb.focus();
+	await user.keyboard(key);
+
+	expectPercentage({ percentage: 31, thumb, range });
+});
+
+it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("should change by 1% when pressing %s", async (key) => {
+	const { getByTestId, user } = setup();
+
+	const thumb = getByTestId("thumb");
+	const range = getByTestId("range");
+	thumb.focus();
+
+	await user.keyboard(key);
+
+	expectPercentage({ percentage: 29, thumb, range });
+});
+
+it("should go to minimum when pressing Home", async () => {
+	const { getByTestId, user } = setup();
+
+	const thumb = getByTestId("thumb");
+	const range = getByTestId("range");
+
+	thumb.focus();
+	await user.keyboard(kbd.HOME);
+
+	expectPercentage({ percentage: 0, thumb, range });
+});
+
+it("should go to maximum when pressing End", async () => {
+	const { getByTestId, user } = setup();
+	const thumb = getByTestId("thumb");
+	const range = getByTestId("range");
+
+	thumb.focus();
+	await user.keyboard(kbd.END);
+
+	expectPercentage({ percentage: 100, thumb, range });
+});
+
+it("should call onValueChange when the value changes", async () => {
+	const mock = vi.fn();
+	const { getByTestId, user } = setup({
+		onValueChange: mock,
+	});
+
+	const thumb = getByTestId("thumb");
+	thumb.focus();
+
+	await user.keyboard(kbd.ARROW_RIGHT);
+	expect(mock).toHaveBeenCalledWith([31]);
+});
+
+it("should not allow the value to change when the `disabled` prop is set to true", async () => {
+	const { getByTestId, user } = setup({ disabled: true });
+
+	const thumb = getByTestId("thumb");
+	const range = getByTestId("range");
+
+	thumb.focus();
+	await user.keyboard(kbd.HOME);
+	expectPercentage({ percentage: 30, thumb, range });
+});
+
+describe("range", () => {
 	it("should have no accessibility violations", async () => {
 		const { container } = setup({}, "range");
 
@@ -137,6 +142,7 @@ describe("slider (range)", () => {
 		expect(isCloseEnough(20, thumb0.style.left)).toBeTruthy();
 		expect(isCloseEnough(80, thumb1.style.left)).toBeTruthy();
 	});
+
 	it("should have a range that covers from 20% to 80%", async () => {
 		const { getByTestId } = setup({}, "range");
 
@@ -235,6 +241,35 @@ describe("slider (range)", () => {
 		}
 	);
 
+	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
+		"should call onValueChange when handlers swap places when they overlap pressing %s (going up)",
+		async (key) => {
+			const mock = vi.fn();
+			const { getByTestId, user } = setup(
+				{
+					value: [49, 51],
+					onValueChange: mock,
+				},
+				"range"
+			);
+
+			const thumb0 = getByTestId("thumb-0");
+			const thumb1 = getByTestId("thumb-1");
+			const range = getByTestId("range");
+
+			thumb0.focus();
+			await user.keyboard(key);
+			expect(mock).toHaveBeenCalledWith([50, 51]);
+			await user.keyboard(key);
+			expect(mock).toHaveBeenCalledWith([51, 51]);
+			await user.keyboard(key);
+			expect(mock).toHaveBeenCalledWith([51, 52]);
+
+			expectPercentages({ percentages: [51, 52], thumbs: [thumb0, thumb1], range });
+			expect(thumb1).toHaveFocus();
+		}
+	);
+
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should swap handler places when they overlap pressing %s (going down)",
 		async (key) => {
@@ -314,7 +349,7 @@ describe("slider (range)", () => {
 	});
 });
 
-describe("slider (small min, max, step)", () => {
+describe("small min, max, step", () => {
 	it("should have a thumb positioned at 50% of the container", async () => {
 		const { getByTestId } = setup({
 			value: [0.5],

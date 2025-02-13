@@ -1,5 +1,31 @@
 # bits-ui
 
+## 1.1.0
+
+_(NPM doesn't allow us to publish 1.0.0)_
+
+Bits UI v1 (Svelte 5). This release includes many breaking changes, bug fixes, and new features. ([#690](https://github.com/huntabyte/bits-ui/pull/690))
+
+Please see the [Migration Guide](https://bits-ui.com/docs/migration-guide) and [Documentation](https://bits-ui.com/docs) to learn more.
+
+## 1.0.0-next.98
+
+### Patch Changes
+
+-   breaking: rename `PinInput` `onPaste` to `pasteTransformer` ([#1152](https://github.com/huntabyte/bits-ui/pull/1152))
+
+## 1.0.0-next.97
+
+### Patch Changes
+
+-   fix: use `getAttribute("style")` instead of `getComputedStyle()` when restoring styles on body scroll lock removal ([#1045](https://github.com/huntabyte/bits-ui/pull/1045))
+
+## 1.0.0-next.96
+
+### Patch Changes
+
+-   feat: expose imperative methods on `Command.Root` for more advanced use cases ([#1141](https://github.com/huntabyte/bits-ui/pull/1141))
+
 ## 1.0.0-next.95
 
 ### Patch Changes
