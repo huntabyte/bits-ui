@@ -94,12 +94,12 @@
 				>
 			</a>
 			<h1
-				class="mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA] dark:selection:text-background lg:text-[4.25rem]"
+				class="mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased selection:text-foreground dark:!text-[#EAEAEA] dark:selection:text-background lg:max-w-3xl lg:text-[4.25rem]"
 			>
 				The headless components for Svelte
 			</h1>
 			<p
-				class="mx-auto mb-[2em] max-w-[75%] text-[0.9rem] font-medium leading-[144%] text-muted-foreground md:w-9/12 md:text-[1.125rem]"
+				class="mx-auto mb-[2em] max-w-sm text-[0.9rem] font-medium leading-[144%] text-muted-foreground sm:max-w-2xl md:w-9/12 md:max-w-2xl md:text-[1.125rem]"
 			>
 				Flexible, unstyled, and accessible primitives that provide the foundation for
 				building your own high-quality component library.
