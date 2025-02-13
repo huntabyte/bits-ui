@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.1.0
+
+### Minor Changes
+
+-   Bits UI v1 (Svelte 5). This release includes many breaking changes, bug fixes, and new features. ([#690](https://github.com/huntabyte/bits-ui/pull/690)) ([#1158](https://github.com/huntabyte/bits-ui/pull/1158))
+
 ## 1.0.0
 
 Bits UI v1 (Svelte 5). This release includes many breaking changes, bug fixes, and new features. ([#690](https://github.com/huntabyte/bits-ui/pull/690))
