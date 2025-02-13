@@ -21,6 +21,9 @@ export default {
 					input: "hsl(var(--border-input))",
 					"input-hover": "hsl(var(--border-input-hover))",
 				},
+				line: {
+					DEFAULT: "hsl(var(--line))",
+				},
 				background: {
 					DEFAULT: "hsl(var(--background) / <alpha-value>)",
 					alt: "hsl(var(--background-alt) / <alpha-value>)",
@@ -95,6 +98,9 @@ export default {
 				80: ".80",
 				98: ".98",
 				99: ".99",
+			},
+			screens: {
+				desktop: "1440px",
 			},
 		},
 		keyframes: {
