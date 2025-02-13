@@ -3,53 +3,55 @@
 	import HomeToolbar from "$lib/components/homepage/home-toolbar.svelte";
 </script>
 
-<div class="relative order-1 lg:order-2 translate-y-14 lg:translate-y-1/3">
+<div class="relative order-1 translate-y-14 lg:order-2 lg:translate-y-1/3">
 	<div
-		class="hidden lg:block line_top_gradient absolute -left-10 top-0 h-[1px] w-[calc(100%+50px)] {$mode ===
+		class="line_top_gradient absolute -left-10 top-0 hidden h-[1px] w-[calc(100%+50px)] lg:block {$mode ===
 		'dark'
 			? 'dark'
 			: ''}"
 	></div>
 	<div
-		class="hidden lg:block line_left_gradient absolute -top-[100px] bottom-0 left-0 w-px rotate-180 {$mode ===
+		class="line_left_gradient absolute -top-[100px] bottom-0 left-0 hidden w-px rotate-180 lg:block {$mode ===
 		'dark'
 			? 'dark'
 			: ''}"
 	></div>
 	<div
-		class="line_right_gradient absolute -top-20 lg:-top-[200px] bottom-7 lg:bottom-0 right-0 w-px rotate-180 {$mode ===
+		class="line_right_gradient absolute -top-20 bottom-7 right-0 w-px rotate-180 lg:-top-[200px] lg:bottom-0 {$mode ===
 		'dark'
 			? 'dark'
 			: ''}"
 	></div>
 
 	<div
-		class="dark:border:[rgba(254,_254,_254,_0.15)] m-1.5 lg:m-2.5 aspect-square overflow-hidden rounded-card-lg bg-foreground px-[14px] py-2.5 lg:py-3 dark:border dark:bg-[#2A2B2E]"
+		class="dark:border:[rgba(254,_254,_254,_0.15)] m-1.5 aspect-square overflow-hidden rounded-card-lg bg-foreground px-[14px] py-2.5 dark:border dark:bg-[#2A2B2E] lg:m-2.5 lg:py-3"
 	>
-		<div class="flex justify-between items-start">
-			<h3 class="ml-1.5 lg:mt-[7px] text-sm lg:text-xl font-medium text-background dark:text-white">
+		<div class="flex items-start justify-between">
+			<h3
+				class="ml-1.5 text-sm font-medium text-background dark:text-white lg:mt-[7px] lg:text-xl"
+			>
 				<span class="">Sound</span>
-				<small class="block text-[10px] lg:text-xs opacity-50 leading-[1]">control</small>
+				<small class="block text-[10px] leading-[1] opacity-50 lg:text-xs">control</small>
 			</h3>
 			<HomeToolbar />
 		</div>
 
 		<div
-			class="relative mx-auto mt-3 lg:mt-[5px] aspect-square w-[115px] sm:w-10/12 lg:w-[189px] rounded-[50%] bg-background dark:bg-white"
+			class="relative mx-auto mt-3 aspect-square w-[115px] rounded-[50%] bg-background dark:bg-white sm:w-10/12 lg:mt-[5px] lg:w-[189px]"
 		>
 			<div
-				class="absolute left-1/2 top-2.5 h-4 lg:h-[26px] w-[5px] lg:w-2 -translate-x-1/2 rounded-card-sm bg-rose-500"
+				class="absolute left-1/2 top-2.5 h-4 w-[5px] -translate-x-1/2 rounded-card-sm bg-rose-500 lg:h-[26px] lg:w-2"
 			></div>
 			<div
 				class="absolute left-2 right-2 top-1/2 flex -translate-y-1/2 items-center justify-between"
 			>
 				<div
-					class="text-[8px] lg:text-[13px] flex items-center gap-1 lg:gap-2 text-[#17171766] before:inline-block before:aspect-square before:size-1 lg:before:size-[7px] before:rounded-[50%] before:bg-[#cbcbcbb2] before:content-['']"
+					class="flex items-center gap-1 text-[8px] text-[#17171766] before:inline-block before:aspect-square before:size-1 before:rounded-[50%] before:bg-[#cbcbcbb2] before:content-[''] lg:gap-2 lg:text-[13px] lg:before:size-[7px]"
 				>
 					L
 				</div>
 				<div
-					class="text-[8px] lg:text-[13px] flex items-center gap-1 lg:gap-2 text-[#17171766] after:inline-block after:aspect-square after:size-1 lg:after:size-[7px] after:rounded-[50%] after:bg-[#cbcbcbb2] after:content-['']"
+					class="flex items-center gap-1 text-[8px] text-[#17171766] after:inline-block after:aspect-square after:size-1 after:rounded-[50%] after:bg-[#cbcbcbb2] after:content-[''] lg:gap-2 lg:text-[13px] lg:after:size-[7px]"
 				>
 					R
 				</div>
