@@ -1,5 +1,289 @@
 # bits-ui
 
+## 1.0.0
+
+### Major Changes
+
+-   Bits UI v1 (Svelte 5). This release includes many breaking changes, bug fixes, and new features. ([#690](https://github.com/huntabyte/bits-ui/pull/690))
+
+    Please see the [Migration Guide](https://bits-ui.com/docs/migration-guide) and [Documentation](https://bits-ui.com/docs) to learn more.
+
+### Minor Changes
+
+-   feat: `Checkbox.Group` and `Checkbox.GroupLabel` components ([#1003](https://github.com/huntabyte/bits-ui/pull/1003))
+
+### Patch Changes
+
+-   fix: clean up event listeners for menus ([#1071](https://github.com/huntabyte/bits-ui/pull/1071))
+
+-   fix: allow resetting `DateField` value ([#988](https://github.com/huntabyte/bits-ui/pull/988))
+
+-   fix: make layers global for use with other libs that depend on Bits UI (like `vaul-svelte`) ([#873](https://github.com/huntabyte/bits-ui/pull/873))
+
+-   fix: pin input pattern checking ([#848](https://github.com/huntabyte/bits-ui/pull/848))
+
+-   fix: toolbar item events ([#813](https://github.com/huntabyte/bits-ui/pull/813))
+
+-   `DropdownMenu.Trigger` should default to `type="button"` while enabling users to override via the `type` prop ([#951](https://github.com/huntabyte/bits-ui/pull/951))
+
+-   fix: Combobox & Select trigger default to `type="button"` ([#802](https://github.com/huntabyte/bits-ui/pull/802))
+
+-   Add ID Attribute to Toggle Root Component ([#823](https://github.com/huntabyte/bits-ui/pull/823))
+
+-   fix: scrollbar flicker ([#806](https://github.com/huntabyte/bits-ui/pull/806))
+
+-   fix: Pin Input paste behavior ([#1085](https://github.com/huntabyte/bits-ui/pull/1085))
+
+-   breaking: remove `controlled<State>` props in favor of Svelte's [Function Bindings](https://svelte.dev/docs/svelte/bind#Function-bindings) ([#1034](https://github.com/huntabyte/bits-ui/pull/1034))
+
+-   gracefully handle internally cancelled interactoutside events ([#726](https://github.com/huntabyte/bits-ui/pull/726))
+
+-   fix: `Command` arrow navigation after empty state displayed ([#997](https://github.com/huntabyte/bits-ui/pull/997))
+
+-   next: fix pointer event restoration ([#695](https://github.com/huntabyte/bits-ui/pull/695))
+
+-   feat: add `onStateChange` callback to `Command` component ([#972](https://github.com/huntabyte/bits-ui/pull/972))
+
+-   fix: Combobox `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: issues with body scroll lock not resetting on destroy with no transition time ([#775](https://github.com/huntabyte/bits-ui/pull/775))
+
+-   feat: Navigation Menu Submenu support ([#1001](https://github.com/huntabyte/bits-ui/pull/1001))
+
+-   add `data-arrow` attribute to floating arrow svg ([#906](https://github.com/huntabyte/bits-ui/pull/906))
+
+-   breaking: `Slider.Root` now requires a `type` prop to specify whether the slider should be a `"single"` or `"multiple"` slider, which determines whether the value and change function arguments should be of type `number` or `number[]` ([#1032](https://github.com/huntabyte/bits-ui/pull/1032))
+
+-   fix: DateField 24 hour cycling ([#945](https://github.com/huntabyte/bits-ui/pull/945))
+
+-   fix: use `getAttribute("style")` instead of `getComputedStyle()` when restoring styles on body scroll lock removal ([#1045](https://github.com/huntabyte/bits-ui/pull/1045))
+
+-   feat: export and document `Portal` utility component ([#716](https://github.com/huntabyte/bits-ui/pull/716))
+
+-   Update Svelte `peerDependency` from `^5.0.0-next.1` to `^5.0.0` ([#869](https://github.com/huntabyte/bits-ui/pull/869))
+
+-   fix: ensure `disabled` attribute is passed to a disabled tooltip trigger ([#916](https://github.com/huntabyte/bits-ui/pull/916))
+
+-   fix: dont use `display: table` in scroll area ([#863](https://github.com/huntabyte/bits-ui/pull/863))
+
+-   Alert Dialog: `Action` button no longer closes the dialog to accomodate form submission / other asynchronous action ([#718](https://github.com/huntabyte/bits-ui/pull/718))
+
+-   fix: derived updates ([#802](https://github.com/huntabyte/bits-ui/pull/802))
+
+-   fix: issue with nested scroll prevention ([#896](https://github.com/huntabyte/bits-ui/pull/896))
+
+-   BREAKING: Update `child` snippet behavior of Floating UI-based `Content` components ([#994](https://github.com/huntabyte/bits-ui/pull/994))
+
+-   fix: Pin Input allowing paste on non-matching ([#1101](https://github.com/huntabyte/bits-ui/pull/1101))
+
+-   fix: ensure `Tooltip.Provider` props are applied to `Tooltip.Root` unless overridden ([#878](https://github.com/huntabyte/bits-ui/pull/878))
+
+-   fix(Pagination): disable prev/next buttons when no prev/next page ([#910](https://github.com/huntabyte/bits-ui/pull/910))
+
+-   fix(RangeCalendar): allow `value` to be cleared ([#1075](https://github.com/huntabyte/bits-ui/pull/1075))
+
+-   rename various `BitsHTMLAttributes` types to avoid autocomplete interference with Svelte's `HTMLAttributes` types ([#744](https://github.com/huntabyte/bits-ui/pull/744))
+
+-   fix: issue where you were unable to navigate to the previous menu from within a menu of the menubar via arrow keys ([#990](https://github.com/huntabyte/bits-ui/pull/990))
+
+-   fix: remove defaults from `Tooltip.Root` to favor `Tooltip.Provider` ([#880](https://github.com/huntabyte/bits-ui/pull/880))
+
+-   fix: Select/Combo scroll ([#1083](https://github.com/huntabyte/bits-ui/pull/1083))
+
+-   fix: ensure highlighted item is reset when items mount/unmount ([#919](https://github.com/huntabyte/bits-ui/pull/919))
+
+-   fix: pagination page aria-label ([#854](https://github.com/huntabyte/bits-ui/pull/854))
+
+-   fix: bug with calendar months sometimes not rendering the first day of the month ([#777](https://github.com/huntabyte/bits-ui/pull/777))
+
+-   fix: forward user-defined `Menubar.Content` props ([#1123](https://github.com/huntabyte/bits-ui/pull/1123))
+
+-   update `PaginationSnippetProps` type ([#761](https://github.com/huntabyte/bits-ui/pull/761))
+
+-   Forward `dir` prop to underling elements ([#701](https://github.com/huntabyte/bits-ui/pull/701))
+
+-   fix: `avoidCollisions` in Floating UI components ([#984](https://github.com/huntabyte/bits-ui/pull/984))
+
+-   fix: `onStateChange` of `Command.Root` not firing after initial mount ([#1138](https://github.com/huntabyte/bits-ui/pull/1138))
+
+-   breaking: rename `PinInput` `onPaste` to `pasteTransformer` ([#1152](https://github.com/huntabyte/bits-ui/pull/1152))
+
+-   fix: issue causing labels associated with radio group items not to select the item ([#943](https://github.com/huntabyte/bits-ui/pull/943))
+
+-   fix: make `*Menu.CheckboxItem` `indeterminate` prop bindable ([#900](https://github.com/huntabyte/bits-ui/pull/900))
+
+-   fix: issues with select/combobox highlighted for mobile ([#1124](https://github.com/huntabyte/bits-ui/pull/1124))
+
+-   Allow `Select` to be opened with the `Enter` key. ([#785](https://github.com/huntabyte/bits-ui/pull/785))
+
+-   feat: export `computeCommandScore` for use in custom Command filters ([#1127](https://github.com/huntabyte/bits-ui/pull/1127))
+
+-   fix: Tooltip `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   Allow `<Button/>` with `href` to be disabled. ([#1055](https://github.com/huntabyte/bits-ui/pull/1055))
+
+-   feat: add `clearOnDeselect` prop to `Combobox.Input` to clear the input's value when the last (multiple) or only (single) item is deselected. ([#1118](https://github.com/huntabyte/bits-ui/pull/1118))
+
+-   fix: RangeCalendar allow selecting `maxValue` as complete range ([#1091](https://github.com/huntabyte/bits-ui/pull/1091))
+
+-   perf: optimize command methods ([#992](https://github.com/huntabyte/bits-ui/pull/992))
+
+-   add tooltip data-attr ([#908](https://github.com/huntabyte/bits-ui/pull/908))
+
+-   optimize classes via prototype bindings ([#986](https://github.com/huntabyte/bits-ui/pull/986))
+
+-   fix: pagination with `count={0}` displaying page 0 ([#893](https://github.com/huntabyte/bits-ui/pull/893))
+
+-   fix: Menu grace areas to enable top/bottom submenus ([#1114](https://github.com/huntabyte/bits-ui/pull/1114))
+
+-   fix: command click events ([#816](https://github.com/huntabyte/bits-ui/pull/816))
+
+-   fix issue with default `open` and `disabled` Portal ([#1080](https://github.com/huntabyte/bits-ui/pull/1080))
+
+-   next: fix command `scrollIntoView` issues ([#714](https://github.com/huntabyte/bits-ui/pull/714))
+
+-   fix: issue with `LinkPreview` where content wouldn't close when the trigger was entered and exited quickly ([#889](https://github.com/huntabyte/bits-ui/pull/889))
+
+-   change: don't include `open` on `children` snippet props, only `child` ([#737](https://github.com/huntabyte/bits-ui/pull/737))
+
+-   set `preventScroll` to `true` by default on `ContextMenu` ([#709](https://github.com/huntabyte/bits-ui/pull/709))
+
+-   fix: pin input paste not working without pattern ([#897](https://github.com/huntabyte/bits-ui/pull/897))
+
+-   Breaking: replace existing `Select` implementation with `Listbox` and remove standalone `Listbox` as `Select` now has the exact functionality ([#769](https://github.com/huntabyte/bits-ui/pull/769))
+
+-   Select: add `data-placeholder` to `Select.Trigger` when the select doesn't have a value ([#778](https://github.com/huntabyte/bits-ui/pull/778))
+
+-   ensure minimum esm-env version is a working version ([#840](https://github.com/huntabyte/bits-ui/pull/840))
+
+-   fix: infinite loops caused by rapid open/close of nested focus scopes ([#1132](https://github.com/huntabyte/bits-ui/pull/1132))
+
+-   fix: cleanup a few untracks that were left unhandled ([#746](https://github.com/huntabyte/bits-ui/pull/746))
+
+-   feat: expose imperative methods on `Command.Root` for more advanced use cases ([#1141](https://github.com/huntabyte/bits-ui/pull/1141))
+
+-   fix: `Checkbox.Group` not firing `onValueChange` ([#1146](https://github.com/huntabyte/bits-ui/pull/1146))
+
+-   fix: cleanup focus scope handlers ([#936](https://github.com/huntabyte/bits-ui/pull/936))
+
+-   fix bug preventing `crossorigin` and `referrerpolicy` attributes to work with `Avatar.Image` component ([#721](https://github.com/huntabyte/bits-ui/pull/721))
+
+-   fix: DropdownMenu & ContextMenu `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: Select `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   update `runed` to support Astro builds ([#1078](https://github.com/huntabyte/bits-ui/pull/1078))
+
+-   fix(Combobox): scroll highlighted item into view when navigating the list with keyboard ([#699](https://github.com/huntabyte/bits-ui/pull/699))
+
+-   DropdownMenu.Trigger `type="button"` by default ([#953](https://github.com/huntabyte/bits-ui/pull/953))
+
+-   fix: various pointer/click issues ([#794](https://github.com/huntabyte/bits-ui/pull/794))
+
+-   Allow users to override the `type` attribute on `Checkbox.Root` ([#934](https://github.com/huntabyte/bits-ui/pull/934))
+
+-   fix: expose `updatePositionStrategy` prop for tooltip content ([#1026](https://github.com/huntabyte/bits-ui/pull/1026))
+
+-   fix: align `Tabs` component ARIA attribute with W3C spec ([#702](https://github.com/huntabyte/bits-ui/pull/702))
+
+-   add `closeOnSelect` prop to all the menu item components ([#859](https://github.com/huntabyte/bits-ui/pull/859))
+
+-   fix: `TabTrigger` default tabindex handling ([#949](https://github.com/huntabyte/bits-ui/pull/949))
+
+-   fix: Avatar should render fallback if src is updated and is `null`/`undefined` ([#929](https://github.com/huntabyte/bits-ui/pull/929))
+
+-   fix: Range Calendar external value updates ([#851](https://github.com/huntabyte/bits-ui/pull/851))
+
+-   cleanup internals, update Svelte ([#1024](https://github.com/huntabyte/bits-ui/pull/1024))
+
+-   Listbox/Combobox: gracefully handle deselect when `type="single"` ([#713](https://github.com/huntabyte/bits-ui/pull/713))
+
+-   breaking: rename `onValueChangeEnd` to `onValueCommit` ([#774](https://github.com/huntabyte/bits-ui/pull/774))
+
+-   expose `currentPage` to the `Pagination.Root` snippets ([#759](https://github.com/huntabyte/bits-ui/pull/759))
+
+-   improve export strategy ([#966](https://github.com/huntabyte/bits-ui/pull/966))
+
+-   fix: issues with dismissable layer siblings being confused ([#785](https://github.com/huntabyte/bits-ui/pull/785))
+
+-   fix: Select trigger refocus in firefox/safari ([#735](https://github.com/huntabyte/bits-ui/pull/735))
+
+-   BREAKING: `Checkbox` and `*Menu.CheckboxItem` `checked` prop is now of type `boolean` with `indeterminate` being a separate prop ([#898](https://github.com/huntabyte/bits-ui/pull/898))
+
+-   fix: `Popover` trigger close detection ([#1030](https://github.com/huntabyte/bits-ui/pull/1030))
+
+-   Select/Combobox: add `allowDeselect` prop ([#819](https://github.com/huntabyte/bits-ui/pull/819))
+
+-   fix: Dialog buttons not responding on certain mobile platforms ([#937](https://github.com/huntabyte/bits-ui/pull/937))
+
+-   next: improve tree-shaking ([#728](https://github.com/huntabyte/bits-ui/pull/728))
+
+-   fix: make `open` prop of `DateRangePicker` and `DatePicker` `$bindable` ([#975](https://github.com/huntabyte/bits-ui/pull/975))
+
+-   fix: Pin Input paste behavior ([#1096](https://github.com/huntabyte/bits-ui/pull/1096))
+
+-   fix: floating focus loops ([#1072](https://github.com/huntabyte/bits-ui/pull/1072))
+
+-   fix: ensure `crossorigin` isn't applied to image if it is `undefined` or not passed as a prop ([#724](https://github.com/huntabyte/bits-ui/pull/724))
+
+-   Dialog/Alert Dialog: change `Dialog.Close` and `AlertDialog.Cancel` events from `pointerdown` to `click` ([#1028](https://github.com/huntabyte/bits-ui/pull/1028))
+
+-   fix: popover `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: Scroll Area scrollbar positioning issue after scroll then hide ([#804](https://github.com/huntabyte/bits-ui/pull/804))
+
+-   fix: export `Portal` from `Menubar` namespace ([#955](https://github.com/huntabyte/bits-ui/pull/955))
+
+-   fix: Link preview not closing on pointer leave ([#825](https://github.com/huntabyte/bits-ui/pull/825))
+
+-   Radio Group: allow both arrow up/down and left/right per WAI-ARIA spec ([#742](https://github.com/huntabyte/bits-ui/pull/742))
+
+-   BREAKING: `Select` - change default value of `allowDeselect` to `false` to align with native HTML `<select>` ([#1049](https://github.com/huntabyte/bits-ui/pull/1049))
+
+-   fix: slider disabled still allowed pointer to change value ([#882](https://github.com/huntabyte/bits-ui/pull/882))
+
+-   fix: nested outside clicks ([#875](https://github.com/huntabyte/bits-ui/pull/875))
+
+-   fix: allow `Select` to handle empty string values via keyboard ([#979](https://github.com/huntabyte/bits-ui/pull/979))
+
+-   fix(Button): make `ref` prop `$bindable` ([#798](https://github.com/huntabyte/bits-ui/pull/798))
+
+-   fix: ensure `disabled` is passed through to `Dialog.Trigger` and `Dialog.Close` ([#1057](https://github.com/huntabyte/bits-ui/pull/1057))
+
+-   fix: `Dialog` and `AlertDialog` `child` transition and add `restoreScrollDelay` prop to support custom transitions ([#831](https://github.com/huntabyte/bits-ui/pull/831))
+
+-   fix: Dialog/Popover clientX/Y detection to prevent password managers and other injected elements from closing the dialog when pressed ([#1089](https://github.com/huntabyte/bits-ui/pull/1089))
+
+-   fix: tooltip not closing when pointer leave ([#1133](https://github.com/huntabyte/bits-ui/pull/1133))
+
+-   fix: allow tabbing out of menus to previous and next tabbable item in the dom ([#1111](https://github.com/huntabyte/bits-ui/pull/1111))
+
+-   export REGEXP helpers from pin input ([#821](https://github.com/huntabyte/bits-ui/pull/821))
+
+-   fix: add role="option" to select items ([#857](https://github.com/huntabyte/bits-ui/pull/857))
+
+-   Add support for typeahead select when the trigger is focused and content is closed via the `items` prop on `Select.Root`. ([#769](https://github.com/huntabyte/bits-ui/pull/769))
+
+-   fix: LinkPreview `forceMount` ([#844](https://github.com/huntabyte/bits-ui/pull/844))
+
+-   fix: don't auto select first radio item unless there is already a selected value ([#927](https://github.com/huntabyte/bits-ui/pull/927))
+
+-   fix: radio group onValueChange loop ([#939](https://github.com/huntabyte/bits-ui/pull/939))
+
+-   fix: `Select` and `Combobox` infinite loop on item selection ([#925](https://github.com/huntabyte/bits-ui/pull/925))
+
+-   fix: click events firing on elements behind the content when selecting Combobox.Item ([#1109](https://github.com/huntabyte/bits-ui/pull/1109))
+
+-   fix: ensure `disabled` is passed to `Popover.Trigger` ([#918](https://github.com/huntabyte/bits-ui/pull/918))
+
+-   update Svelte to `5.0.0-next.260` ([#707](https://github.com/huntabyte/bits-ui/pull/707))
+
+-   revert to `onclick` events for most components except where it makes sense (like menus, select, etc.) ([#1011](https://github.com/huntabyte/bits-ui/pull/1011))
+
+-   fix: bug causing focus scopes to conflict ([#1123](https://github.com/huntabyte/bits-ui/pull/1123))
+
+-   fix: only submit values with `FormData` on Combobox/Select `type="multiple"` if a value is selected to align with native `<select multiple>` behavior ([#961](https://github.com/huntabyte/bits-ui/pull/961))
+
 ## 1.0.0-next.98
 
 ### Patch Changes
