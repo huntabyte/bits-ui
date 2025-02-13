@@ -2,15 +2,9 @@
 
 ## 1.1.0
 
-### Minor Changes
+(NPM doesn't allow us to publish 1.0.0)
 
 -   Bits UI v1 (Svelte 5). This release includes many breaking changes, bug fixes, and new features. ([#690](https://github.com/huntabyte/bits-ui/pull/690)) ([#1158](https://github.com/huntabyte/bits-ui/pull/1158))
-
-## 1.0.0
-
-Bits UI v1 (Svelte 5). This release includes many breaking changes, bug fixes, and new features. ([#690](https://github.com/huntabyte/bits-ui/pull/690))
-
-Please see the [Migration Guide](https://bits-ui.com/docs/migration-guide) and [Documentation](https://bits-ui.com/docs) to learn more.
 
 ## 1.0.0-next.98
 
