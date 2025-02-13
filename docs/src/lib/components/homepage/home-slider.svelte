@@ -1,0 +1,31 @@
+<script lang="ts">
+	import { Slider } from "bits-ui";
+	import { cn } from "$lib/utils/styles.js";
+
+	let { value = $bindable(5) }: { value: number } = $props();
+</script>
+
+<div class="w-full">
+	<Slider.Root
+		type="single"
+		{value}
+		onValueCommit={(v) => (value = v)}
+		class="shadow-mini-inset relative flex w-full touch-none select-none items-center rounded-full dark:bg-[#F4F4F51A] dark:shadow-[0px_0.7px_0px_0px_rgba(0,_0,_0,_0.04)_inset]"
+	>
+		{#snippet children({ thumbs })}
+			<span
+				class="bg-dark/10 relative h-[6px] w-full grow overflow-hidden rounded-full lg:h-2"
+			>
+				<Slider.Range class="bg-dark absolute h-full dark:bg-[#18181B]" />
+			</span>
+			{#each thumbs as index}
+				<Slider.Thumb
+					{index}
+					class={cn(
+						"bg-background shadow-mini hover:border-dark-40 focus-visible:ring-foreground active:scale-98 dark:bg-foreground block size-[18px] cursor-pointer rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 lg:size-[25px] dark:shadow-[0px_0.7px_0px_0.7px_rgba(0,_0,_0,_0.04);]"
+					)}
+				/>
+			{/each}
+		{/snippet}
+	</Slider.Root>
+</div>

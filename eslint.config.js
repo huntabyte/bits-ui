@@ -46,12 +46,12 @@ export default tseslint.config(
 			".svelte-kit/",
 			"dist/",
 			".svelte-kit/**/*",
-			"sites/docs/.svelte-kit/**/*",
-			"sites/docs/.velite/**/*",
+			"docs/.svelte-kit/**/*",
+			"docs/.velite/**/*",
 			".svelte-kit",
 			"packages/bits-ui/dist/**/*",
 			"packages/bits-ui/.svelte-kit/**/*",
-			"packages/tests/.svelte-kit/**/*",
+			"tests/.svelte-kit/**/*",
 		],
 	}
 );
