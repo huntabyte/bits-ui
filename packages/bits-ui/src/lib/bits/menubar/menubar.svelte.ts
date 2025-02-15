@@ -46,7 +46,7 @@ class MenubarRootState {
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.opts.id,
-			candidateAttr: MENUBAR_TRIGGER_ATTR,
+			candidateSelector: `[${MENUBAR_TRIGGER_ATTR}]:not([data-disabled])`,
 			loop: this.opts.loop,
 			orientation: box.with(() => "horizontal"),
 		});

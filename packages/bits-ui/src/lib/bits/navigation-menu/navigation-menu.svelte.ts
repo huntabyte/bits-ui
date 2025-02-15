@@ -262,7 +262,6 @@ class NavigationMenuListState {
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: opts.id,
-			candidateAttr: NAVIGATION_MENU_ITEM_ATTR,
 			candidateSelector: `:is([${NAVIGATION_MENU_TRIGGER_ATTR}], [data-list-link]):not([data-disabled])`,
 			loop: box.with(() => false),
 			orientation: this.context.opts.orientation,

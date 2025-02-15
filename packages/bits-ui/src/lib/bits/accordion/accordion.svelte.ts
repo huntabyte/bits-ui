@@ -42,7 +42,7 @@ class AccordionBaseState {
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.opts.id,
-			candidateAttr: ACCORDION_TRIGGER_ATTR,
+			candidateSelector: `[${ACCORDION_TRIGGER_ATTR}]:not([data-disabled])`,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});

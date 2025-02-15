@@ -11,7 +11,7 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"lint:fix": "eslint --fix .",
-		"test": "pnpm -F \"./packages/**\" --parallel --reporter append-only --color test",
+		"test": "pnpm \"/test:/\" --reporter append-only --color",
 		"test:components": "pnpm -F tests test",
 		"test:utils": "pnpm -F bits-ui test"
 	},

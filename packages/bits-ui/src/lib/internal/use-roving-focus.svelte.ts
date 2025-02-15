@@ -7,14 +7,9 @@ import type { Orientation } from "$lib/shared/index.js";
 
 type UseRovingFocusProps = {
 	/**
-	 * The selector used to find the focusable candidates.
+	 * The selector used to find the candidates of the roving focus group.
 	 */
-	candidateAttr: string;
-
-	/**
-	 * Custom candidate selector
-	 */
-	candidateSelector?: string;
+	candidateSelector: string;
 
 	/**
 	 * The id of the root node
@@ -42,23 +37,20 @@ export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
 
 export function useRovingFocus(props: UseRovingFocusProps) {
 	const currentTabStopId = box<string | null>(null);
+	let recomputeDep = $state(false);
+
+	const isAnyActive = $derived.by(() => {
+		recomputeDep;
+		if (!currentTabStopId.current || !isBrowser) return false;
+		return Boolean(document.getElementById(currentTabStopId.current));
+	});
 
 	function getCandidateNodes() {
 		if (!isBrowser) return [];
 		const node = document.getElementById(props.rootNodeId.current);
 		if (!node) return [];
 
-		if (props.candidateSelector) {
-			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(props.candidateSelector)
-			);
-			return candidates;
-		} else {
-			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(`[${props.candidateAttr}]:not([data-disabled])`)
-			);
-			return candidates;
-		}
+		return Array.from(node.querySelectorAll<HTMLElement>(props.candidateSelector));
 	}
 
 	function focusFirstCandidate() {
@@ -117,9 +109,8 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 	function getTabIndex(node: HTMLElement | null | undefined) {
 		const items = getCandidateNodes();
-		const anyActive = currentTabStopId.current !== null;
 
-		if (node && !anyActive && items[0] === node) {
+		if (node && !isAnyActive && items[0] === node) {
 			currentTabStopId.current = node.id;
 			return 0;
 		} else if (node?.id === currentTabStopId.current) {
@@ -129,6 +120,39 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		return -1;
 	}
 
+	function handleFocus(node: HTMLElement | null) {
+		if (!node) return;
+		currentTabStopId.current = node.id;
+		node.focus();
+		props.onCandidateFocus?.(node);
+	}
+
+	function navigateBackward(node: HTMLElement | null | undefined, fallback?: HTMLElement | null) {
+		const rootNode = document.getElementById(props.rootNodeId.current);
+		if (!rootNode || !node) return;
+		const items = getCandidateNodes();
+		if (!items.length) return;
+		const currentIndex = items.indexOf(node);
+		const prevIndex = currentIndex - 1;
+		const prevItem = items[prevIndex];
+		if (!prevItem) {
+			if (fallback) {
+				fallback?.focus();
+			}
+			return;
+		}
+		handleFocus(prevItem);
+	}
+
+	function focusLastCandidate() {
+		const items = getCandidateNodes();
+		if (!items.length) return false;
+		const lastItem = items[items.length - 1];
+		if (!lastItem) return false;
+		handleFocus(lastItem);
+		return true;
+	}
+
 	return {
 		setCurrentTabStopId(id: string) {
 			currentTabStopId.current = id;
@@ -136,6 +160,11 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		getTabIndex,
 		handleKeydown,
 		focusFirstCandidate,
+		focusLastCandidate,
+		navigateBackward,
 		currentTabStopId,
+		recomputeActiveTabNode() {
+			recomputeDep = !recomputeDep;
+		},
 	};
 }

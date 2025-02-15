@@ -33,7 +33,7 @@ class ToggleGroupBaseState {
 
 	constructor(readonly opts: ToggleGroupBaseStateProps) {
 		this.rovingFocusGroup = useRovingFocus({
-			candidateAttr: TOGGLE_GROUP_ITEM_ATTR,
+			candidateSelector: `[${TOGGLE_GROUP_ITEM_ATTR}]:not([data-disabled])`,
 			rootNodeId: opts.id,
 			loop: opts.loop,
 			orientation: opts.orientation,
