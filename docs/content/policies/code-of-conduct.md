@@ -3,17 +3,18 @@ title: Code of Conduct
 description: Our expectations for community behavior
 ---
 
-We want Bits UI to be a welcoming and productive community for everyone. To that end, all participants are expected to show respect and courtesy to others in all interactions.
+We want Bits UI to be a welcoming and productive community for everyone. To that end, all participants are expected to show respect and courtesy in all interactions.
 
-**In short: Don't be an asshole.**
+**In short: Treat others with respect and contribute positively.**
 
-More specifically:
+## Community Guidelines
 
--   **Be Respectful:** Treat everyone with respect, even if you disagree. Personal attacks, harassment, and aggressive behavior are not acceptable.
--   **Be Constructive:** Focus on constructive feedback and discussions. Avoid unproductive negativity or complaining without offering solutions.
--   **Focus on Contributions**: We welcome contributions based on their merit and value to the project. All contributors will be treated fairly and respectfully, and discriminatory behavior is not allowed.
+-   **Be Respectful** – Treat everyone with respect, even when you disagree. Personal attacks, harassment, and aggressive behavior are not tolerated.
+-   **Be Constructive** – Focus on productive discussions and feedback. Avoid negativity without offering solutions.
+-   **Follow Contribution Guidelines** – Feature requests should start as discussions before being considered for implementation. Issues should be limited to confirmed bugs or accepted feature requests ready for development.
+-   **Keep Discussions On-Topic** – Use the appropriate channels for discussions, issues, and pull requests to keep the project organized and efficient.
 
-**Unacceptable behavior includes (but is not limited to):**
+## Unacceptable Behavior Includes (but is not limited to):
 
 -   Personal attacks, insults, or threats.
 -   Harassment, bullying, or intimidation.
@@ -21,7 +22,7 @@ More specifically:
 -   Spamming, trolling, or deliberately disruptive behavior.
 -   Sharing private information without consent.
 
-**Enforcement:**
+## Enforcement
 
 Maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, issues, and other contributions that do not align with this Code of Conduct. In serious cases, participants may be temporarily or permanently banned from the project.
 
