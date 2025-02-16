@@ -254,11 +254,14 @@ You can change how long a user needs to hover over a trigger before the tooltip 
 
 ## Close on Trigger Click
 
-By default, the tooltip will close when the user clicks the trigger. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true`.
+By default, the tooltip will close when the user clicks the trigger. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true` on `Tooltip.Root`, and set the `interactOutsideBehavior` prop to `'ignore'` on `Tooltip.Content`.
 
-```svelte /disableCloseOnTriggerClick/
+```svelte /disableCloseOnTriggerClick/ /interactOutsideBehavior="ignore"/
 <Tooltip.Root disableCloseOnTriggerClick>
 	<!-- .... -->
+	<Tooltip.Content interactOutsideBehavior="ignore">
+		<!-- .... -->
+	</Tooltip.Content>
 </Tooltip.Root>
 ```
 
