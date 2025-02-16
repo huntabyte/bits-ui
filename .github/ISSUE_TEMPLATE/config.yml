@@ -2,7 +2,7 @@ blank_issues_enabled: false
 contact_links:
     - name: Feature Request
       url: https://github.com/huntabyte/bits-ui/discussions/new?category=feature-requests-ideas
-      about: If you have a feature requests, propose it in the discussions forums.
+      about: If you have a feature request, propose it in the discussions forums. All feature requests start as a discussion, and only after they are approved/discussed, they will be converted into an issue by a maintainer. See [how we track bugs and feature requests](https://bits-ui.com/docs/policies/tracking-bugs-and-feature-requests) for more information.
     - name: Get Help
       url: https://github.com/huntabyte/bits-ui/discussions/new?category=help
       about: If you can't get something to work the way you expect, open a question in our discussion forums.
