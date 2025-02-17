@@ -2,30 +2,30 @@ import { render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { it } from "vitest";
-import type { Progress } from "bits-ui";
-import ProgressTest from "./progress-test.svelte";
+import type { Meter } from "bits-ui";
+import MeterTest from "./meter-test.svelte";
 
-function setup(props: Progress.RootProps = {}) {
+function setup(props: Meter.RootProps = {}) {
 	const user = userEvent.setup();
-	const returned = render(ProgressTest, { ...props });
+	const returned = render(MeterTest, { ...props });
 	const { getByTestId } = returned;
 	const root = getByTestId("root");
 	return { root, user, ...returned };
 }
 
 it("should have no accessibility violations", async () => {
-	const { container } = render(ProgressTest);
+	const { container } = render(MeterTest);
 	expect(await axe(container)).toHaveNoViolations();
 });
 
 it("should have bits data attrs", async () => {
 	const { root } = setup();
-	expect(root).toHaveAttribute("data-progress-root");
+	expect(root).toHaveAttribute("data-meter-root");
 });
 
-it("should have role='progressbar'", async () => {
+it("should have role='meter'", async () => {
 	const { root } = setup();
-	expect(root).toHaveAttribute("role", "progressbar");
+	expect(root).toHaveAttribute("role", "meter");
 });
 
 it("should forward `aria-labelledby` and `aria-valuetext`", async () => {
@@ -58,16 +58,6 @@ it("should react to updates to the value prop", async () => {
 	await user.click(binding);
 	expect(binding).toHaveTextContent("50");
 	expect(root).toHaveAttribute("aria-valuenow", "50");
-});
-
-it("should not have an `aria-valuenow` attribute when the `value` is `null`", async () => {
-	const { root } = setup({ value: null });
-	expect(root).not.toHaveAttribute("aria-valuenow");
-});
-
-it("should apply the `data-indeterminate` attribute when the `value` is `null`", async () => {
-	const { root } = setup({ value: null });
-	expect(root).toHaveAttribute("data-indeterminate");
 });
 
 it("should have a default value of 0", async () => {

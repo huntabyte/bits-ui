@@ -35,6 +35,8 @@ export { default as SelectDemoCustomAnchor } from "./select-demo-custom-anchor.s
 export { default as SelectDemoMultiple } from "./select-demo-multiple.svelte";
 export { default as SelectDemoTransition } from "./select-demo-transition.svelte";
 export { default as MenubarDemo } from "./menubar-demo.svelte";
+export { default as MeterDemo } from "./meter-demo.svelte";
+export { default as MeterDemoCustom } from "./meter-demo-custom.svelte";
 export { default as NavigationMenuDemo } from "./navigation-menu-demo.svelte";
 export { default as NavigationMenuDemoForceMount } from "./navigation-menu-demo-force-mount.svelte";
 export { default as PaginationDemo } from "./pagination-demo.svelte";
@@ -42,6 +44,7 @@ export { default as PinInputDemo } from "./pin-input-demo.svelte";
 export { default as PopoverDemo } from "./popover-demo.svelte";
 export { default as PopoverDemoTransition } from "./popover-demo-transition.svelte";
 export { default as ProgressDemo } from "./progress-demo.svelte";
+export { default as ProgressDemoCustom } from "./progress-demo-custom.svelte";
 export { default as RadioGroupDemo } from "./radio-group-demo.svelte";
 export { default as RangeCalendarDemo } from "./range-calendar-demo.svelte";
 export { default as ScrollAreaDemo } from "./scroll-area-demo.svelte";

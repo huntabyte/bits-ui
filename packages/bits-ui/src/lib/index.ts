@@ -19,6 +19,7 @@ export {
 	Label,
 	LinkPreview,
 	Menubar,
+	Meter,
 	NavigationMenu,
 	Pagination,
 	PinInput,

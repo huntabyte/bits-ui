@@ -1,0 +1,38 @@
+<script lang="ts">
+	import { box, mergeProps } from "svelte-toolbelt";
+	import type { MeterRootProps } from "../types.js";
+	import { useMeterRootState } from "../meter.svelte.js";
+	import { useId } from "$lib/internal/use-id.js";
+
+	let {
+		child,
+		children,
+		value = 0,
+		max = 100,
+		min = 0,
+		id = useId(),
+		ref = $bindable(null),
+		...restProps
+	}: MeterRootProps = $props();
+
+	const rootState = useMeterRootState({
+		value: box.with(() => value),
+		max: box.with(() => max),
+		min: box.with(() => min),
+		id: box.with(() => id),
+		ref: box.with(
+			() => ref,
+			(v) => (ref = v)
+		),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, rootState.props));
+</script>
+
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
+{/if}
