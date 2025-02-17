@@ -1,15 +1,12 @@
 <script lang="ts">
-	import { type DateRange, DateRangePicker } from "bits-ui";
+	import { DateRangePicker } from "bits-ui";
 	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
 	import CaretLeft from "phosphor-svelte/lib/CaretLeft";
 	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { cn } from "$lib/utils/index.js";
-
-	let value: DateRange = $state({ start: undefined, end: undefined });
 </script>
 
 <DateRangePicker.Root
-	bind:value
 	weekdayFormat="short"
 	fixedWeeks={true}
 	class="flex w-full max-w-[340px] flex-col gap-1.5"

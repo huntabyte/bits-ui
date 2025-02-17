@@ -1,7 +1,6 @@
 import type { DateValue } from "@internationalized/date";
-import { untrack } from "svelte";
 import { box, onDestroyEffect, useRefById } from "svelte-toolbelt";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -58,22 +57,6 @@ export class DateRangeFieldRootState {
 	startValueComplete = $derived.by(() => this.opts.startValue.current !== undefined);
 	endValueComplete = $derived.by(() => this.opts.endValue.current !== undefined);
 	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
-	mergedValues = $derived.by(() => {
-		if (
-			this.opts.startValue.current === undefined ||
-			this.opts.endValue.current === undefined
-		) {
-			return {
-				start: undefined,
-				end: undefined,
-			};
-		} else {
-			return {
-				start: this.opts.startValue.current,
-				end: this.opts.endValue.current,
-			};
-		}
-	});
 
 	constructor(readonly opts: DateRangeFieldRootStateProps) {
 		this.formatter = createFormatter(this.opts.locale.current);
@@ -94,53 +77,78 @@ export class DateRangeFieldRootState {
 			this.formatter.setLocale(this.opts.locale.current);
 		});
 
-		$effect(() => {
-			const startValue = this.opts.value.current.start;
-			untrack(() => {
-				if (startValue) this.opts.placeholder.current = startValue;
-			});
-		});
-
-		$effect(() => {
-			const endValue = this.opts.value.current.end;
-			untrack(() => {
-				if (endValue) this.opts.placeholder.current = endValue;
-			});
-		});
+		/**
+		 * Synchronize the start and end values with the `value` in case
+		 * it is updated externally.
+		 */
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				if (value.start && value.end) {
+					this.opts.startValue.current = value.start;
+					this.opts.endValue.current = value.end;
+				} else if (value.start) {
+					this.opts.startValue.current = value.start;
+					this.opts.endValue.current = undefined;
+				} else if (value.start === undefined && value.end === undefined) {
+					this.opts.startValue.current = undefined;
+					this.opts.endValue.current = undefined;
+				}
+			}
+		);
 
 		/**
-		 * Sync values set programatically with the `startValue` and `endValue`
+		 * Synchronize the placeholder value with the current start value
 		 */
-		$effect(() => {
-			const value = this.opts.value.current;
-			untrack(() => {
-				if (value.start !== undefined && value.start !== this.opts.startValue.current) {
-					this.#setStartValue(value.start);
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				const startValue = value.start;
+				if (startValue && this.opts.placeholder.current !== startValue) {
+					this.opts.placeholder.current = startValue;
 				}
-				if (value.end !== undefined && value.end !== this.opts.endValue.current) {
-					this.#setEndValue(value.end);
-				}
-			});
-		});
-
-		// TODO: Handle description element
-
-		$effect(() => {
-			const placeholder = untrack(() => this.opts.placeholder.current);
-			const startValue = untrack(() => this.opts.startValue.current);
-
-			if (this.startValueComplete && placeholder !== startValue) {
-				untrack(() => {
-					if (startValue) {
-						this.opts.placeholder.current = startValue;
-					}
-				});
 			}
-		});
+		);
 
-		$effect(() => {
-			this.opts.value.current = this.mergedValues;
-		});
+		watch(
+			[() => this.opts.startValue.current, () => this.opts.endValue.current],
+			([startValue, endValue]) => {
+				if (
+					this.opts.value.current &&
+					this.opts.value.current.start === startValue &&
+					this.opts.value.current.end === endValue
+				) {
+					return;
+				}
+
+				if (startValue && endValue) {
+					this.#updateValue((prev) => {
+						if (prev.start === startValue && prev.end === endValue) {
+							return prev;
+						}
+						if (isBefore(endValue, startValue)) {
+							const start = startValue;
+							const end = endValue;
+							this.#setStartValue(end);
+							this.#setEndValue(start);
+							return { start: endValue, end: startValue };
+						} else {
+							return {
+								start: startValue,
+								end: endValue,
+							};
+						}
+					});
+				} else if (
+					this.opts.value.current &&
+					this.opts.value.current.start &&
+					this.opts.value.current.end
+				) {
+					this.opts.value.current.start = undefined;
+					this.opts.value.current.end = undefined;
+				}
+			}
+		);
 	}
 
 	validationStatus = $derived.by(() => {
@@ -185,6 +193,12 @@ export class DateRangeFieldRootState {
 		if (this.validationStatus === false) return false;
 		return true;
 	});
+
+	#updateValue(cb: (value: DateRange) => DateRange) {
+		const value = this.opts.value.current;
+		const newValue = cb(value);
+		this.opts.value.current = newValue;
+	}
 
 	#setStartValue(value: DateValue | undefined) {
 		this.opts.startValue.current = value;
