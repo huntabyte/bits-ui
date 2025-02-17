@@ -3,6 +3,7 @@ import {
 	createApiSchema,
 	createDataAttrSchema,
 	createNumberProp,
+	createPropSchema,
 	withChildProps,
 } from "./helpers.js";
 import { ProgressStateAttr } from "./extended-types/progress/index.js";
@@ -13,12 +14,16 @@ export const root = createApiSchema<ProgressRootPropsWithoutHTML>({
 	props: {
 		max: createNumberProp({
 			default: "100",
-			description:
-				"The maximum value of the progress bar. Used to calculate the percentage of the progress bar.",
+			description: "The maximum value of the progress bar.",
 		}),
-		value: createNumberProp({
+		min: createNumberProp({
 			default: "0",
-			description: "The current value of the progress bar.",
+			description: "The minimum value of the progress bar.",
+		}),
+		value: createPropSchema({
+			default: "0",
+			description: "The current value of the progress bar. If set to `null` ",
+			type: "number | null",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -34,8 +39,16 @@ export const root = createApiSchema<ProgressRootPropsWithoutHTML>({
 			isEnum: true,
 		}),
 		createDataAttrSchema({
+			name: "min",
+			description: "The minimum value of the progress bar.",
+		}),
+		createDataAttrSchema({
 			name: "max",
 			description: "The maximum value of the progress bar.",
+		}),
+		createDataAttrSchema({
+			name: "indeterminate",
+			description: "Present when the value is `null`.",
 		}),
 		createDataAttrSchema({
 			name: "progress-root",
