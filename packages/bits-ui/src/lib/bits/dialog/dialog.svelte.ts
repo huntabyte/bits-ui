@@ -2,12 +2,7 @@ import { useRefById } from "svelte-toolbelt";
 import { Context } from "runed";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type {
-	BitsKeyboardEvent,
-	BitsMouseEvent,
-	BitsPointerEvent,
-	WithRefProps,
-} from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
@@ -74,10 +69,6 @@ class DialogTriggerState {
 		readonly opts: DialogTriggerStateProps,
 		readonly root: DialogRootState
 	) {
-		this.onclick = this.onclick.bind(this);
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
-
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -87,7 +78,6 @@ class DialogTriggerState {
 		});
 
 		this.onclick = this.onclick.bind(this);
-		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
@@ -95,14 +85,6 @@ class DialogTriggerState {
 		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
 		this.root.handleOpen();
-	}
-
-	onpointerdown(e: BitsPointerEvent) {
-		if (this.opts.disabled.current) return;
-		if (e.button > 0) return;
-		// by default, it will attempt to focus this trigger on pointerdown
-		// since this also opens the dialog we want to prevent that behavior
-		e.preventDefault();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -121,7 +103,6 @@ class DialogTriggerState {
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"aria-controls": this.root.contentId,
 				[this.root.attrs.trigger]: "",
-				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
 				disabled: this.opts.disabled.current ? true : undefined,
