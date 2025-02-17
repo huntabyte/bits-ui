@@ -23,6 +23,17 @@ it("should have bits data attrs", async () => {
 	expect(root).toHaveAttribute("data-progress-root");
 });
 
+it("should have role='progressbar'", async () => {
+	const { root } = setup();
+	expect(root).toHaveAttribute("role", "progressbar");
+});
+
+it("should forward `aria-labelledby` and `aria-valuetext`", async () => {
+	const { root } = setup({ "aria-labelledby": "label", "aria-valuetext": "value" });
+	expect(root).toHaveAttribute("aria-labelledby", "label");
+	expect(root).toHaveAttribute("aria-valuetext", "value");
+});
+
 it("should respect the value prop", async () => {
 	const { root } = setup({ value: 50 });
 	expect(root).toHaveAttribute("aria-valuenow", "50");
