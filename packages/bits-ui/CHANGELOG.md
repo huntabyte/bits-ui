@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.2.1
+
+### Patch Changes
+
+-   fix: issue where `Dialog` would apply `:focus-visible` to trigger on close, even if opened and closed via pointer ([#1197](https://github.com/huntabyte/bits-ui/pull/1197))
+
+-   fix: `DateRangePicker` not allowing range selection under certain value conditions ([#1195](https://github.com/huntabyte/bits-ui/pull/1195))
+
 ## 1.2.0
 
 ### Minor Changes
