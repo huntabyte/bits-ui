@@ -2,4 +2,4 @@
 "bits-ui": minor
 ---
 
-feat: `Meter` component
+New Component: `Meter` [documentation](https://bits-ui.com/docs/components/meter)
