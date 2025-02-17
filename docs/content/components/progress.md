@@ -16,6 +16,24 @@ description: Visualizes the progress or completion status of a task or process.
 
 </ComponentPreviewV2>
 
+While often visually similar, progress bars and [Meters](/docs/components/meter) serve distinct purposes:
+
+**Progress**:
+
+-   Shows **completion status** of a task
+-   Value only increases as task progresses
+-   Examples: File upload, installation status, form completion
+-   Use when tracking advancement toward completion
+
+**Meter**:
+
+-   Displays a **static measurement** within a known range (0-100)
+-   Value can fluctuate up/down based on real-time measurements
+-   Examples: CPU usage, battery level, sound volume
+-   Use when showing current state relative to capacity
+
+If a meter better fits your requirements, check out the [Meter](/docs/components/meter) component.
+
 ## Structure
 
 ```svelte

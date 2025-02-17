@@ -18,6 +18,7 @@ export { DropdownMenu } from "./dropdown-menu/index.js";
 export { Label } from "./label/index.js";
 export { LinkPreview } from "./link-preview/index.js";
 export { Menubar } from "./menubar/index.js";
+export { Meter } from "./meter/index.js";
 export { NavigationMenu } from "./navigation-menu/index.js";
 export { Pagination } from "./pagination/index.js";
 export { PinInput } from "./pin-input/index.js";
