@@ -41,7 +41,6 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
-	onCloseAutoFocusProp,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -134,7 +133,6 @@ export const content = createApiSchema<ComboboxContentPropsWithoutHTML>({
 		...floatingProps(),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
-		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
 		loop: createBooleanProp({

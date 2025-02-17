@@ -365,13 +365,16 @@ class MenuContentState {
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
 				onfocus: this.onfocus,
-				onCloseAutoFocus: (e: Event) => this.onCloseAutoFocus(e),
 				dir: this.parentMenu.root.opts.dir.current,
 				style: {
 					pointerEvents: "auto",
 				},
 			}) as const
 	);
+
+	popperProps = {
+		onCloseAutoFocus: (e: Event) => this.onCloseAutoFocus(e),
+	};
 }
 
 type MenuItemSharedStateProps = WithRefProps &

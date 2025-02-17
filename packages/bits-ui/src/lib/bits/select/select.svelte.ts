@@ -709,7 +709,11 @@ class SelectTriggerState {
 	);
 }
 
-type SelectContentStateProps = WithRefProps;
+type SelectContentStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		onInteractOutside: (e: PointerEvent) => void;
+		onEscapeKeydown: (e: KeyboardEvent) => void;
+	}>;
 
 class SelectContentState {
 	viewportNode = $state<HTMLElement | null>(null);
@@ -741,7 +745,6 @@ class SelectContentState {
 		);
 
 		this.onpointermove = this.onpointermove.bind(this);
-		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 	}
 
 	onpointermove(_: BitsPointerEvent) {
@@ -759,11 +762,29 @@ class SelectContentState {
 		};
 	});
 
-	handleInteractOutside(e: PointerEvent) {
+	onInteractOutside = (e: PointerEvent) => {
 		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
 			e.preventDefault();
+			return;
 		}
-	}
+		this.opts.onInteractOutside.current(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	};
+
+	onEscapeKeydown = (e: KeyboardEvent) => {
+		this.opts.onEscapeKeydown.current(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	};
+
+	onOpenAutoFocus = (e: Event) => {
+		e.preventDefault();
+	};
+
+	onCloseAutoFocus = (e: Event) => {
+		e.preventDefault();
+	};
 
 	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
@@ -785,6 +806,18 @@ class SelectContentState {
 				onpointermove: this.onpointermove,
 			}) as const
 	);
+
+	popperProps = {
+		onInteractOutside: this.onInteractOutside,
+		onEscapeKeydown: this.onEscapeKeydown,
+		onOpenAutoFocus: this.onOpenAutoFocus,
+		onCloseAutoFocus: this.onCloseAutoFocus,
+		trapFocus: false,
+		loop: false,
+		onPlaced: () => {
+			this.isPositioned = true;
+		},
+	};
 }
 
 type SelectItemStateProps = WithRefProps<

@@ -51,6 +51,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
+		{...contentState.popperProps}
 		enabled={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -77,6 +78,7 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
+		{...contentState.popperProps}
 		present={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}

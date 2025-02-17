@@ -114,13 +114,9 @@ class PopoverContentState {
 				this.root.contentNode = node;
 			},
 		});
-
-		this.handleInteractOutside = this.handleInteractOutside.bind(this);
-		this.handleEscapeKeydown = this.handleEscapeKeydown.bind(this);
-		this.handleCloseAutoFocus = this.handleCloseAutoFocus.bind(this);
 	}
 
-	handleInteractOutside(e: PointerEvent) {
+	onInteractOutside = (e: PointerEvent) => {
 		this.opts.onInteractOutside.current(e);
 		if (e.defaultPrevented) return;
 		if (!isElement(e.target)) return;
@@ -128,20 +124,20 @@ class PopoverContentState {
 		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
 		if (closestTrigger === this.root.triggerNode) return;
 		this.root.handleClose();
-	}
+	};
 
-	handleEscapeKeydown(e: KeyboardEvent) {
+	onEscapeKeydown = (e: KeyboardEvent) => {
 		this.opts.onEscapeKeydown.current(e);
 		if (e.defaultPrevented) return;
 		this.root.handleClose();
-	}
+	};
 
-	handleCloseAutoFocus(e: Event) {
+	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current(e);
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		this.root.triggerNode?.focus();
-	}
+	};
 
 	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
@@ -157,6 +153,12 @@ class PopoverContentState {
 				},
 			}) as const
 	);
+
+	popperProps = {
+		onInteractOutside: this.onInteractOutside,
+		onEscapeKeydown: this.onEscapeKeydown,
+		onCloseAutoFocus: this.onCloseAutoFocus,
+	};
 }
 
 type PopoverCloseStateProps = WithRefProps;

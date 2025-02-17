@@ -17,7 +17,6 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
-	onCloseAutoFocusProp,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -132,7 +131,6 @@ export const content = createApiSchema<SelectContentPropsWithoutHTML>({
 		...floatingProps(),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
-		onCloseAutoFocus: onCloseAutoFocusProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
 		loop: createBooleanProp({

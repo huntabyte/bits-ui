@@ -19,7 +19,6 @@
 		onInteractOutside = noop,
 		trapFocus = true,
 		preventScroll = false,
-
 		...restProps
 	}: PopoverContentStaticProps = $props();
 
@@ -40,12 +39,10 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
+		{...contentState.popperProps}
 		isStatic
 		enabled={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={contentState.handleInteractOutside}
-		onEscapeKeydown={contentState.handleEscapeKeydown}
-		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop
@@ -67,12 +64,10 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
+		{...contentState.popperProps}
 		isStatic
 		present={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={contentState.handleInteractOutside}
-		onEscapeKeydown={contentState.handleEscapeKeydown}
-		onCloseAutoFocus={contentState.handleCloseAutoFocus}
 		{trapFocus}
 		{preventScroll}
 		loop

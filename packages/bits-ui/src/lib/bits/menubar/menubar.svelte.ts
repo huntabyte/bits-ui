@@ -286,10 +286,6 @@ class MenubarContentState {
 		this.root = menu.root;
 		this.focusScopeContext = FocusScopeContext.get();
 
-		this.onCloseAutoFocus = this.onCloseAutoFocus.bind(this);
-		this.onFocusOutside = this.onFocusOutside.bind(this);
-		this.onInteractOutside = this.onInteractOutside.bind(this);
-		this.onOpenAutoFocus = this.onOpenAutoFocus.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById({
@@ -301,7 +297,7 @@ class MenubarContentState {
 		});
 	}
 
-	onCloseAutoFocus(e: Event) {
+	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current(e);
 		if (e.defaultPrevented) return;
 		if (
@@ -314,27 +310,27 @@ class MenubarContentState {
 
 		this.hasInteractedOutside = false;
 		e.preventDefault();
-	}
+	};
 
-	onFocusOutside(e: FocusEvent) {
+	onFocusOutside = (e: FocusEvent) => {
 		const target = e.target as HTMLElement;
 		const isMenubarTrigger = this.root
 			.getTriggers()
 			.some((trigger) => trigger.contains(target));
 		if (isMenubarTrigger) e.preventDefault();
 		this.opts.onFocusOutside.current(e);
-	}
+	};
 
-	onInteractOutside(e: PointerEvent) {
+	onInteractOutside = (e: PointerEvent) => {
 		this.hasInteractedOutside = true;
 		this.opts.onInteractOutside.current(e);
-	}
+	};
 
-	onOpenAutoFocus(e: Event) {
+	onOpenAutoFocus = (e: Event) => {
 		this.opts.onOpenAutoFocus.current(e);
 		if (e.defaultPrevented) return;
 		afterTick(() => this.opts.ref.current?.focus());
-	}
+	};
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key !== kbd.ARROW_LEFT && e.key !== kbd.ARROW_RIGHT) return;
@@ -388,6 +384,13 @@ class MenubarContentState {
 				"data-menu-content": "",
 			}) as const
 	);
+
+	popperProps = {
+		onCloseAutoFocus: this.onCloseAutoFocus,
+		onFocusOutside: this.onFocusOutside,
+		onInteractOutside: this.onInteractOutside,
+		onOpenAutoFocus: this.onOpenAutoFocus,
+	};
 }
 
 const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
