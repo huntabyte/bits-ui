@@ -167,7 +167,11 @@ class LinkPreviewTriggerState {
 	);
 }
 
-type LinkPreviewContentStateProps = WithRefProps;
+type LinkPreviewContentStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		onInteractOutside: (e: PointerEvent) => void;
+		onEscapeKeydown: (e: KeyboardEvent) => void;
+	}>;
 
 class LinkPreviewContentState {
 	constructor(
@@ -220,6 +224,26 @@ class LinkPreviewContentState {
 		e.preventDefault();
 	}
 
+	onInteractOutside = (e: PointerEvent) => {
+		this.opts.onInteractOutside.current(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	};
+
+	onEscapeKeydown = (e: KeyboardEvent) => {
+		this.opts.onEscapeKeydown.current?.(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	};
+
+	onOpenAutoFocus = (e: Event) => {
+		e.preventDefault();
+	};
+
+	onCloseAutoFocus = (e: Event) => {
+		e.preventDefault();
+	};
+
 	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	props = $derived.by(
@@ -234,6 +258,13 @@ class LinkPreviewContentState {
 				onfocusout: this.onfocusout,
 			}) as const
 	);
+
+	popperProps = {
+		onInteractOutside: this.onInteractOutside,
+		onEscapeKeydown: this.onEscapeKeydown,
+		onOpenAutoFocus: this.onOpenAutoFocus,
+		onCloseAutoFocus: this.onCloseAutoFocus,
+	};
 }
 
 const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");

@@ -3,7 +3,7 @@ import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useTimeoutFn } from "$lib/internal/use-timeout-fn.svelte.js";
-import { isFocusVisible } from "$lib/internal/is.js";
+import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
@@ -263,7 +263,11 @@ class TooltipTriggerState {
 	}));
 }
 
-type TooltipContentStateProps = WithRefProps;
+type TooltipContentStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		onInteractOutside: (e: PointerEvent) => void;
+		onEscapeKeydown: (e: KeyboardEvent) => void;
+	}>;
 
 class TooltipContentState {
 	constructor(
@@ -304,6 +308,34 @@ class TooltipContentState {
 		);
 	}
 
+	onInteractOutside = (e: PointerEvent) => {
+		if (
+			isElement(e.target) &&
+			this.root.triggerNode?.contains(e.target) &&
+			this.root.disableCloseOnTriggerClick
+		) {
+			e.preventDefault();
+			return;
+		}
+		this.opts.onInteractOutside.current(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	};
+
+	onEscapeKeydown = (e: KeyboardEvent) => {
+		this.opts.onEscapeKeydown.current?.(e);
+		if (e.defaultPrevented) return;
+		this.root.handleClose();
+	};
+
+	onOpenAutoFocus = (e: Event) => {
+		e.preventDefault();
+	};
+
+	onCloseAutoFocus = (e: Event) => {
+		e.preventDefault();
+	};
+
 	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	props = $derived.by(
@@ -319,6 +351,13 @@ class TooltipContentState {
 				[TOOLTIP_CONTENT_ATTR]: "",
 			}) as const
 	);
+
+	popperProps = {
+		onInteractOutside: this.onInteractOutside,
+		onEscapeKeydown: this.onEscapeKeydown,
+		onOpenAutoFocus: this.onOpenAutoFocus,
+		onCloseAutoFocus: this.onCloseAutoFocus,
+	};
 }
 
 //

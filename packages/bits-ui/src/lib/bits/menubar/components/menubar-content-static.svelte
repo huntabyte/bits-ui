@@ -33,12 +33,4 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<MenuContentStatic
-	bind:ref
-	{...mergedProps}
-	preventScroll={false}
-	onInteractOutside={contentState.onInteractOutside}
-	onFocusOutside={contentState.onFocusOutside}
-	onCloseAutoFocus={contentState.onCloseAutoFocus}
-	onOpenAutoFocus={contentState.onOpenAutoFocus}
-/>
+<MenuContentStatic bind:ref {...mergedProps} {...contentState.popperProps} preventScroll={false} />

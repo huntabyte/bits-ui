@@ -6,14 +6,15 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		children,
 		child,
 		id = useId(),
 		ref = $bindable(null),
-		onInteractOutside,
-		onEscapeKeydown,
+		onInteractOutside = noop,
+		onEscapeKeydown = noop,
 		forceMount = false,
 		...restProps
 	}: LinkPreviewContentStaticProps = $props();
@@ -24,33 +25,20 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onInteractOutside: box.with(() => onInteractOutside),
+		onEscapeKeydown: box.with(() => onEscapeKeydown),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-
-	function handleInteractOutside(e: PointerEvent) {
-		onInteractOutside?.(e);
-		if (e.defaultPrevented) return;
-		contentState.root.handleClose();
-	}
-
-	function handleEscapeKeydown(e: KeyboardEvent) {
-		onEscapeKeydown?.(e);
-		if (e.defaultPrevented) return;
-		contentState.root.handleClose();
-	}
 </script>
 
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
+		{...contentState.popperProps}
 		enabled={contentState.root.opts.open.current}
 		isStatic
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onOpenAutoFocus={(e) => e.preventDefault()}
-		onCloseAutoFocus={(e) => e.preventDefault()}
 		trapFocus={false}
 		loop={false}
 		preventScroll={false}
@@ -72,13 +60,10 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
+		{...contentState.popperProps}
 		present={contentState.root.opts.open.current}
 		isStatic
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onOpenAutoFocus={(e) => e.preventDefault()}
-		onCloseAutoFocus={(e) => e.preventDefault()}
 		trapFocus={false}
 		loop={false}
 		preventScroll={false}

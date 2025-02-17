@@ -26,37 +26,20 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onInteractOutside: box.with(() => onInteractOutside),
+		onEscapeKeydown: box.with(() => onEscapeKeydown),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-
-	function handleInteractOutside(e: PointerEvent) {
-		contentState.handleInteractOutside(e);
-		if (e.defaultPrevented) return;
-		onInteractOutside(e);
-		if (e.defaultPrevented) return;
-		contentState.root.handleClose();
-	}
-
-	function handleEscapeKeydown(e: KeyboardEvent) {
-		onEscapeKeydown(e);
-		if (e.defaultPrevented) return;
-		contentState.root.handleClose();
-	}
 </script>
 
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
+		{...contentState.popperProps}
 		{side}
 		enabled={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onOpenAutoFocus={(e) => e.preventDefault()}
-		onCloseAutoFocus={(e) => e.preventDefault()}
-		trapFocus={false}
-		loop={false}
 		{preventScroll}
 		onPlaced={() => (contentState.isPositioned = true)}
 		forceMount={true}
@@ -77,17 +60,11 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
+		{...contentState.popperProps}
 		{side}
 		present={contentState.root.opts.open.current}
 		{id}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		onOpenAutoFocus={(e) => e.preventDefault()}
-		onCloseAutoFocus={(e) => e.preventDefault()}
-		trapFocus={false}
-		loop={false}
 		{preventScroll}
-		onPlaced={() => (contentState.isPositioned = true)}
 		forceMount={false}
 	>
 		{#snippet popper({ props, wrapperProps })}

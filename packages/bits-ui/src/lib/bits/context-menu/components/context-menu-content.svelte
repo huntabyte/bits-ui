@@ -65,6 +65,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
+		{...contentState.popperProps}
 		side="right"
 		sideOffset={2}
 		align="start"
@@ -96,6 +97,7 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
+		{...contentState.popperProps}
 		side="right"
 		sideOffset={2}
 		align="start"
