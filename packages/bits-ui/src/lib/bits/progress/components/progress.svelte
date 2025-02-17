@@ -9,6 +9,7 @@
 		children,
 		value = 0,
 		max = 100,
+		min = 0,
 		id = useId(),
 		ref = $bindable(null),
 		...restProps
@@ -17,6 +18,7 @@
 	const rootState = useProgressRootState({
 		value: box.with(() => value),
 		max: box.with(() => max),
+		min: box.with(() => min),
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

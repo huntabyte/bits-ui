@@ -34,9 +34,13 @@ describe("progress", () => {
 		expect(root).toHaveAttribute("aria-valuemax", "20");
 	});
 
+	it("should respect the min prop", async () => {
+		const { root } = setup({ min: 10 });
+		expect(root).toHaveAttribute("aria-valuemin", "10");
+	});
+
 	it("should react to updates to the value prop", async () => {
-		const user = userEvent.setup();
-		const { getByTestId } = render(ProgressTest);
+		const { user, getByTestId } = setup();
 		const root = getByTestId("root");
 		const binding = getByTestId("binding");
 		expect(root).toHaveAttribute("aria-valuenow", "0");
@@ -44,5 +48,25 @@ describe("progress", () => {
 		await user.click(binding);
 		expect(binding).toHaveTextContent("50");
 		expect(root).toHaveAttribute("aria-valuenow", "50");
+	});
+
+	it("should not have an `aria-valuenow` attribute when the `value` is `null`", async () => {
+		const { root } = setup({ value: null });
+		expect(root).not.toHaveAttribute("aria-valuenow");
+	});
+
+	it("should apply the `data-indeterminate` attribute when the `value` is `null`", async () => {
+		const { root } = setup({ value: null });
+		expect(root).toHaveAttribute("data-indeterminate");
+	});
+
+	it("should have a default value of 0", async () => {
+		const { root } = setup();
+		expect(root).toHaveAttribute("aria-valuenow", "0");
+	});
+
+	it("should have a default max of 100", async () => {
+		const { root } = setup();
+		expect(root).toHaveAttribute("aria-valuemax", "100");
 	});
 });
