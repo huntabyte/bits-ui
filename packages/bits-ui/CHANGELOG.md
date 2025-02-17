@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.3.0
+
+### Minor Changes
+
+-   New Component: `Meter` [documentation](https://bits-ui.com/docs/components/meter) ([#1199](https://github.com/huntabyte/bits-ui/pull/1199))
+
+### Patch Changes
+
+-   fix: issue where `RadioGroup` tabindex wasn't calculated before other focus logic kicks in, causing a value to be unintentionally overwritten ([#1200](https://github.com/huntabyte/bits-ui/pull/1200))
+
 ## 1.2.1
 
 ### Patch Changes
