@@ -92,6 +92,13 @@ class RadioGroupItemState {
 			ref: this.opts.ref,
 		});
 
+		if (this.opts.value.current === this.root.opts.value.current) {
+			this.root.rovingFocusGroup.setCurrentTabStopId(this.opts.id.current);
+			this.#tabIndex = 0;
+		} else if (!this.root.opts.value.current) {
+			this.#tabIndex = 0;
+		}
+
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
 		});
@@ -121,7 +128,7 @@ class RadioGroupItemState {
 		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
 	}
 
-	#tabIndex = $state(0);
+	#tabIndex = $state(-1);
 
 	snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
 

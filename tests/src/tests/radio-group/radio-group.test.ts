@@ -1,10 +1,11 @@
-import { render } from "@testing-library/svelte/svelte5";
+import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { it } from "vitest";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, setupUserEvents } from "../utils.js";
 import RadioGroupTest from "./radio-group-test.svelte";
 import type { Item, RadioGroupTestProps } from "./radio-group-test.svelte";
+import RadioGroupPopoverTest from "./radio-group-popover-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -250,4 +251,20 @@ it("should change the value when a label associated with an item is clicked", as
 
 	await user.click(label);
 	expect(getByTestId(indicatorIds[itemIdx] as string)).toHaveTextContent("true");
+});
+
+it("should not change value when a value is set and an onOpenAutoFocus occurs", async () => {
+	const user = setupUserEvents();
+	const { getByTestId, queryByTestId } = render(RadioGroupPopoverTest, {
+		value: "b",
+		items: testItems,
+	});
+
+	await user.pointerDownUp(getByTestId("trigger"));
+	await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
+
+	expect(getByTestId("value")).toHaveTextContent("b");
+
+	const item1 = getByTestId(`${testItems[1]?.value}-item`);
+	expect(item1).toHaveFocus();
 });
