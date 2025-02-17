@@ -1,5 +1,27 @@
 # bits-ui
 
+## 1.2.0
+
+### Minor Changes
+
+-   feat: expose `min` prop on `Progress.Root` to specify a custom minimum value for the progress bar (defaults to `0`) ([#1193](https://github.com/huntabyte/bits-ui/pull/1193))
+
+-   feat: apply `data-indeterminate` to `Progress.Root` when the `value` is `null` for easier styling of indeterminate state ([#1193](https://github.com/huntabyte/bits-ui/pull/1193))
+
+-   feat: apply `data-min` attribute to `Progress.Root` for custom styling based on the minimum value of the progress bar ([#1193](https://github.com/huntabyte/bits-ui/pull/1193))
+
+### Patch Changes
+
+-   fix: don't apply `aria-valuenow` and `data-value` attributes when `Progress.Root`'s `value === null` ([#1193](https://github.com/huntabyte/bits-ui/pull/1193))
+
+-   fix: remove invalid `max` attribute applied to the `Progress.Root` element as it is redundant to `aria-valuemax` ([#1193](https://github.com/huntabyte/bits-ui/pull/1193))
+
+-   fix: bug causing `disableCloseOnTriggerClick` to not be respected in `Tooltip` ([#1191](https://github.com/huntabyte/bits-ui/pull/1191))
+
+-   fix: removed improperly exposed/unused `onCloseAutoFocus` prop from `Combobox.Content/ContentStatic` and `Select.Content/ContentStatic` ([#1191](https://github.com/huntabyte/bits-ui/pull/1191))
+
+-   fix: change `Progress.Root` `role` from `"meter"` to `"progressbar"` to improve accessibility ([#1193](https://github.com/huntabyte/bits-ui/pull/1193))
+
 ## 1.1.0
 
 _(NPM doesn't allow us to publish 1.0.0)_
