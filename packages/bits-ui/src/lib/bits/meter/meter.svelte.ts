@@ -20,10 +20,7 @@ class MeterRootState {
 	props = $derived.by(
 		() =>
 			({
-				// from MDN, caniuse, and other sources, it isn't clear that thr `role="meter"` is
-				// fully supported by screen readers. We fallback to 'progressbar' role if meter
-				// isn't supported.
-				role: "meter progressbar",
+				role: "meter",
 				value: this.opts.value.current,
 				"aria-valuemin": this.opts.min.current,
 				"aria-valuemax": this.opts.max.current,

@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Meter } from "bits-ui";
+	import { Meter, useId } from "bits-ui";
 
 	let value = $state(2000);
+	const labelId = useId();
 
 	const max = 4000;
 	const min = 0;
@@ -19,11 +20,11 @@
 
 <div class="flex w-[60%] flex-col gap-2">
 	<div class="flex items-center justify-between text-sm font-medium">
-		<span id="fuel-label"> Tokens used </span>
+		<span id={labelId}> Tokens used </span>
 		<span>{value} / {max}</span>
 	</div>
 	<Meter.Root
-		aria-labelledby="fuel-label"
+		aria-labelledby={labelId}
 		aria-valuetext="{value} out of {max}"
 		{value}
 		{min}

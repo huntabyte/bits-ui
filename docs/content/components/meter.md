@@ -25,14 +25,14 @@ While often visually similar, meters and [Progress](/docs/components/progress) b
 -   Examples: CPU usage, battery level, sound volume
 -   Use when showing current state relative to capacity
 
-**Progress**:
+**Progress bar**:
 
 -   Shows **completion status** of a task
 -   Value only increases as task progresses
 -   Examples: File upload, installation status, form completion
 -   Use when tracking advancement toward completion
 
-If you need a progress bar, check out the [Progress](/docs/components/progress) component.
+If a progress bar better fits your requirements, check out the [Progress](/docs/components/progress) component.
 
 ## Structure
 
@@ -92,5 +92,11 @@ Of course, you'd want to apply your own styles and other customizations to the `
 <br>
 
 <MeterDemoCustom value={3000} label="Tokens remaining" valueLabel="3000 / 4000" max={4000} />
+
+## Accessibility
+
+If a visual label is used, the ID of the label element should be pass via the `aria-labelledby` prop to `Meter.Root`. If no visual label is used, the `aria-label` prop should be used to provide a text description of the progress bar.
+
+Assistive technologies often present `aria-valuenow` as a percentage. If conveying the value of the meter only in terms of a percentage would not be user friendly, the `aria-valuetext` property should be set to a string that makes the meter value understandable. For example, a battery meter value might be conveyed as `aria-valuetext="50% (6 hours) remaining"`. [[source](https://www.w3.org/WAI/ARIA/apg/patterns/meter/)]
 
 <APISection {schemas} />
