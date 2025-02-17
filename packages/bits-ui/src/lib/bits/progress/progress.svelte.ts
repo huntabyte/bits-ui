@@ -8,6 +8,7 @@ type ProgressRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		value: number | null;
 		max: number;
+		min: number;
 	}>
 >;
 
@@ -19,15 +20,18 @@ class ProgressRootState {
 	props = $derived.by(
 		() =>
 			({
-				role: "meter",
+				role: "progressbar",
 				value: this.opts.value.current,
-				max: this.opts.max.current,
-				"aria-valuemin": 0,
+				"aria-valuemin": this.opts.min.current,
 				"aria-valuemax": this.opts.max.current,
-				"aria-valuenow": this.opts.value.current,
-				"data-value": this.opts.value.current,
+				"aria-valuenow":
+					this.opts.value.current === null ? undefined : this.opts.value.current,
+				"data-value":
+					this.opts.value.current === null ? undefined : this.opts.value.current,
 				"data-state": getProgressDataState(this.opts.value.current, this.opts.max.current),
 				"data-max": this.opts.max.current,
+				"data-min": this.opts.min.current,
+				"data-indeterminate": this.opts.value.current === null ? "" : undefined,
 				[ROOT_ATTR]: "",
 			}) as const
 	);
