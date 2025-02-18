@@ -64,6 +64,14 @@ See the [Checkbox](/docs/components/checkbox) documentation for more information
 
 -   The `PinInput` component has been completely overhauled to better act as an OTP input component, with code and inspiration taken from [Input OTP](https://github.com/guilhermerodz/input-otp) by [Guilherme Rodz](https://x.com/guilhermerodz). The best way to migrate is to reference the [Pin Input](/docs/components/pin-input) documentation to see how to use the new component.
 
+## Radio Group
+
+-   `RadioGroup.ItemIndicator` has been removed in favor of using the `children` snippet prop to get a reference to the `checked` state which provides more flexibility to render a custom indicator as needed. See the [Radio Group](/docs/components/radio-group) documentation for more information.
+
+## Scroll Area
+
+-   `ScrollArea.Content` has been removed as it is not necessary for functionality in Bits UI v1.
+
 ## Select
 
 -   The `multiple` prop has been removed from the `Select.Root` component and replaced with a _required_ `type` prop which can be set to either `'single'` or `'multiple'`. This is used as a discriminant to properly type the `value` prop as either a `string` or `string[]`.
@@ -71,6 +79,7 @@ See the [Checkbox](/docs/components/checkbox) documentation for more information
 -   The select now automatically renders a hidden input when the `name` prop is provided to the `Select.Root` component.
 -   The `Select.ItemIndicator` component has been removed in favor of using the `children` snippet prop to get a reference to the `selected` state and render a custom indicator. See the [Select](/docs/components/select) documentation for more information.
 -   `Select.Group` and `Select.GroupHeading` have been added to support groups within the Select.
+-   `Select.Value` has been removed in favor of enabling developers to use the `value` prop to render your own custom label in the trigger to represent the value.
 
 ## Slider
 
