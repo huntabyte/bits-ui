@@ -1,5 +1,6 @@
 import { Context, Previous, watch } from "runed";
 import {
+	afterSleep,
 	afterTick,
 	onDestroyEffect,
 	srOnlyStyles,
@@ -592,6 +593,7 @@ class SelectTriggerState {
 
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
 				this.root.handleClose();
+				return;
 			}
 		}
 
@@ -1113,18 +1115,19 @@ class SelectScrollButtonImplState {
 			deps: () => this.mounted,
 		});
 
-		watch(
-			() => this.mounted,
-			() => {
-				if (!this.mounted) {
-					this.isUserScrolling = false;
-					return;
-				}
-				if (this.isUserScrolling) return;
-				const activeItem = this.root.highlightedNode;
-				activeItem?.scrollIntoView({ block: "nearest" });
+		watch([() => this.mounted], () => {
+			if (!this.mounted) {
+				this.isUserScrolling = false;
+				return;
 			}
-		);
+			if (this.isUserScrolling) return;
+
+			afterSleep(2, () => {
+				const activeItem = this.root.highlightedNode;
+				console.log("scrolling into view");
+				activeItem?.scrollIntoView({ block: "nearest" });
+			});
+		});
 
 		$effect(() => {
 			if (this.mounted) return;
@@ -1193,26 +1196,15 @@ class SelectScrollDownButtonState {
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
-		watch(
-			[
-				() => this.content.viewportNode,
-				() => this.content.isPositioned,
-				() => this.root.opts.open.current,
-			],
-			() => {
-				if (
-					!this.content.viewportNode ||
-					!this.content.isPositioned ||
-					!this.root.opts.open.current
-				) {
-					return;
-				}
-
-				this.handleScroll(true);
-
-				return on(this.content.viewportNode, "scroll", () => this.handleScroll());
+		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
+			if (!this.content.viewportNode || !this.content.isPositioned) {
+				return;
 			}
-		);
+
+			this.handleScroll(true);
+
+			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
+		});
 	}
 	/**
 	 * @param manual - if true, it means the function was invoked manually outside of an event
