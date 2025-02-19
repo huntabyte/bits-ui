@@ -37,7 +37,7 @@
 
 <Select.Root type="single" onValueChange={(v) => (value = v)}>
 	<Select.Trigger
-		class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
+		class="h-input rounded-9px border-border-input bg-background data-[placeholder]:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />
@@ -55,7 +55,7 @@
 			<Select.Viewport class="p-1">
 				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="rounded-button data-[highlighted]:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75 data-[disabled]:opacity-50"
+						class="rounded-button data-[highlighted]:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize outline-none  data-[disabled]:opacity-50"
 						value={theme.value}
 						label={theme.label}
 						disabled={theme.disabled}

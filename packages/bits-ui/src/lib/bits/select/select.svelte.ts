@@ -1,5 +1,6 @@
 import { Context, Previous, watch } from "runed";
 import {
+	afterSleep,
 	afterTick,
 	onDestroyEffect,
 	srOnlyStyles,
@@ -222,6 +223,12 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 	constructor(readonly opts: SelectMultipleRootStateProps) {
 		super(opts);
+
+		$effect(() => {
+			if (!this.opts.open.current && this.highlightedNode) {
+				this.setHighlightedNode(null);
+			}
+		});
 
 		watch(
 			() => this.opts.open.current,
@@ -592,6 +599,7 @@ class SelectTriggerState {
 
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
 				this.root.handleClose();
+				return;
 			}
 		}
 
@@ -657,10 +665,6 @@ class SelectTriggerState {
 		currTarget.focus();
 	}
 
-	/**
-	 * `pointerdown` fires before the `focus` event, so we can prevent the default
-	 * behavior of focusing the button and keep focus on the input.
-	 */
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
@@ -677,7 +681,6 @@ class SelectTriggerState {
 		if (e.button === 0 && e.ctrlKey === false) {
 			if (this.root.opts.open.current === false) {
 				this.#handlePointerOpen(e);
-				e.preventDefault();
 			} else {
 				this.root.handleClose();
 			}
@@ -1113,18 +1116,13 @@ class SelectScrollButtonImplState {
 			deps: () => this.mounted,
 		});
 
-		watch(
-			() => this.mounted,
-			() => {
-				if (!this.mounted) {
-					this.isUserScrolling = false;
-					return;
-				}
-				if (this.isUserScrolling) return;
-				const activeItem = this.root.highlightedNode;
-				activeItem?.scrollIntoView({ block: "nearest" });
+		watch([() => this.mounted], () => {
+			if (!this.mounted) {
+				this.isUserScrolling = false;
+				return;
 			}
-		);
+			if (this.isUserScrolling) return;
+		});
 
 		$effect(() => {
 			if (this.mounted) return;
@@ -1187,30 +1185,34 @@ class SelectScrollDownButtonState {
 	content: SelectContentState;
 	root: SelectBaseRootState;
 	canScrollDown = $state(false);
+	scrollIntoViewTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
 	constructor(readonly state: SelectScrollButtonImplState) {
 		this.content = state.content;
 		this.root = state.root;
 		this.state.onAutoScroll = this.handleAutoScroll;
 
+		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
+			if (!this.content.viewportNode || !this.content.isPositioned) {
+				return;
+			}
+
+			this.handleScroll(true);
+
+			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
+		});
+
 		watch(
-			[
-				() => this.content.viewportNode,
-				() => this.content.isPositioned,
-				() => this.root.opts.open.current,
-			],
+			() => this.state.mounted,
 			() => {
-				if (
-					!this.content.viewportNode ||
-					!this.content.isPositioned ||
-					!this.root.opts.open.current
-				) {
-					return;
+				if (!this.state.mounted) return;
+				if (this.scrollIntoViewTimer) {
+					clearTimeout(this.scrollIntoViewTimer);
 				}
-
-				this.handleScroll(true);
-
-				return on(this.content.viewportNode, "scroll", () => this.handleScroll());
+				this.scrollIntoViewTimer = afterSleep(5, () => {
+					const activeItem = this.root.highlightedNode;
+					activeItem?.scrollIntoView({ block: "nearest" });
+				});
 			}
 		);
 	}

@@ -41,7 +41,6 @@
 		enabled={contentState.root.opts.open.current}
 		{id}
 		{preventScroll}
-		onPlaced={() => (contentState.isPositioned = true)}
 		forceMount={true}
 	>
 		{#snippet popper({ props, wrapperProps })}
