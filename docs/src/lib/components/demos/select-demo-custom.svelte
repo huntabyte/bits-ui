@@ -51,17 +51,17 @@
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="border-muted bg-background shadow-popover max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] rounded-xl border px-1 py-3 outline-none"
+			class="border-muted bg-background shadow-popover w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] rounded-xl border px-1 py-3 outline-none"
 			sideOffset={10}
 			{...contentProps}
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">
 				<CaretDoubleUp class="size-3" />
 			</Select.ScrollUpButton>
-			<Select.Viewport class="p-1">
+			<Select.Viewport class="max-h-96 p-1">
 				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="rounded-button data-[highlighted]:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75"
+						class="rounded-button data-[highlighted]:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize outline-none"
 						value={theme.value}
 						label={theme.label}
 					>

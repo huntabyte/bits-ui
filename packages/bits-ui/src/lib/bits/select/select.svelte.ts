@@ -1,6 +1,5 @@
 import { Context, Previous, watch } from "runed";
 import {
-	afterSleep,
 	afterTick,
 	onDestroyEffect,
 	srOnlyStyles,
@@ -223,6 +222,12 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 	constructor(readonly opts: SelectMultipleRootStateProps) {
 		super(opts);
+
+		$effect(() => {
+			if (!this.opts.open.current && this.highlightedNode) {
+				this.setHighlightedNode(null);
+			}
+		});
 
 		watch(
 			() => this.opts.open.current,
@@ -1122,11 +1127,11 @@ class SelectScrollButtonImplState {
 			}
 			if (this.isUserScrolling) return;
 
-			afterSleep(2, () => {
-				const activeItem = this.root.highlightedNode;
-				console.log("scrolling into view");
-				activeItem?.scrollIntoView({ block: "nearest" });
-			});
+			// afterSleep(0, () => {
+			// 	const activeItem = this.root.highlightedNode;
+			// 	console.log("scrolling into view");
+			// 	activeItem?.scrollIntoView({ block: "nearest" });
+			// });
 		});
 
 		$effect(() => {
