@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.3.1
+
+### Patch Changes
+
+-   fix: issue where selected item in select/combobox wouldnt scroll into view if scroll down button was present on open ([#1209](https://github.com/huntabyte/bits-ui/pull/1209))
+
+-   fix: Include `data-button-root` on `<Button/>` ([#1212](https://github.com/huntabyte/bits-ui/pull/1212))
+
+-   fix: `Select.Trigger` receiving `focus-visible` even though it was never interacted with via keyboard ([#1209](https://github.com/huntabyte/bits-ui/pull/1209))
+
 ## 1.3.0
 
 ### Minor Changes
