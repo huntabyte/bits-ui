@@ -690,7 +690,11 @@ class SelectTriggerState {
 	onpointerup(e: BitsPointerEvent) {
 		e.preventDefault();
 		if (e.pointerType === "touch") {
-			this.#handlePointerOpen(e);
+			if (this.root.opts.open.current === false) {
+				this.#handlePointerOpen(e);
+			} else {
+				this.root.handleClose();
+			}
 		}
 	}
 
