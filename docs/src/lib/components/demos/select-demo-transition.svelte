@@ -47,7 +47,7 @@
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="focus-override border-muted bg-background shadow-popover z-50  w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3 outline-none"
+			class="focus-override border-muted bg-background shadow-popover z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3 outline-none"
 			sideOffset={10}
 			forceMount
 		>
@@ -58,7 +58,7 @@
 							<Select.ScrollUpButton class="flex w-full items-center justify-center">
 								<CaretDoubleUp class="size-3" />
 							</Select.ScrollUpButton>
-							<Select.Viewport class="max-h-96 p-1">
+							<Select.Viewport class="p-1">
 								{#each themes as theme, i (i + theme.value)}
 									<Select.Item
 										class="rounded-button data-[highlighted]:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75"

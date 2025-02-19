@@ -1,5 +1,6 @@
 import { Context, Previous, watch } from "runed";
 import {
+	afterSleep,
 	afterTick,
 	onDestroyEffect,
 	srOnlyStyles,
@@ -1126,12 +1127,6 @@ class SelectScrollButtonImplState {
 				return;
 			}
 			if (this.isUserScrolling) return;
-
-			// afterSleep(0, () => {
-			// 	const activeItem = this.root.highlightedNode;
-			// 	console.log("scrolling into view");
-			// 	activeItem?.scrollIntoView({ block: "nearest" });
-			// });
 		});
 
 		$effect(() => {
@@ -1195,6 +1190,7 @@ class SelectScrollDownButtonState {
 	content: SelectContentState;
 	root: SelectBaseRootState;
 	canScrollDown = $state(false);
+	scrollIntoViewTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
 	constructor(readonly state: SelectScrollButtonImplState) {
 		this.content = state.content;
@@ -1210,6 +1206,20 @@ class SelectScrollDownButtonState {
 
 			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
 		});
+
+		watch(
+			() => this.state.mounted,
+			() => {
+				if (!this.state.mounted) return;
+				if (this.scrollIntoViewTimer) {
+					clearTimeout(this.scrollIntoViewTimer);
+				}
+				this.scrollIntoViewTimer = afterSleep(5, () => {
+					const activeItem = this.root.highlightedNode;
+					activeItem?.scrollIntoView({ block: "nearest" });
+				});
+			}
+		);
 	}
 	/**
 	 * @param manual - if true, it means the function was invoked manually outside of an event
