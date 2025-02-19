@@ -46,7 +46,6 @@ class PopoverTriggerState {
 		});
 
 		this.onclick = this.onclick.bind(this);
-		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
@@ -54,14 +53,6 @@ class PopoverTriggerState {
 		if (this.opts.disabled.current) return;
 		if (e.button !== 0) return;
 		this.root.toggleOpen();
-	}
-
-	onpointerdown(e: BitsPointerEvent) {
-		if (this.opts.disabled.current) return;
-		if (e.button !== 0) return;
-		// We prevent default to prevent focus from moving to the trigger
-		// since this action will open the popover and focus will move to the content
-		e.preventDefault();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -89,7 +80,6 @@ class PopoverTriggerState {
 				"data-popover-trigger": "",
 				disabled: this.opts.disabled.current,
 				//
-				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
 			}) as const
