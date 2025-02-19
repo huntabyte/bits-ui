@@ -13,6 +13,7 @@
 
 <svelte:element
 	this={href ? "a" : "button"}
+	data-button-root
 	type={href ? undefined : type}
 	href={href && !disabled ? href : undefined}
 	disabled={href ? undefined : disabled}
