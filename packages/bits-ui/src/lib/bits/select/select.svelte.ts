@@ -665,10 +665,6 @@ class SelectTriggerState {
 		currTarget.focus();
 	}
 
-	/**
-	 * `pointerdown` fires before the `focus` event, so we can prevent the default
-	 * behavior of focusing the button and keep focus on the input.
-	 */
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
@@ -685,7 +681,6 @@ class SelectTriggerState {
 		if (e.button === 0 && e.ctrlKey === false) {
 			if (this.root.opts.open.current === false) {
 				this.#handlePointerOpen(e);
-				e.preventDefault();
 			} else {
 				this.root.handleClose();
 			}
