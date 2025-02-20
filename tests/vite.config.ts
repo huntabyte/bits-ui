@@ -1,3 +1,4 @@
+import tailwindcss from "@tailwindcss/vite";
 import process from "node:process";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
@@ -15,7 +16,7 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
-	plugins: [vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
+	plugins: [vitestBrowserConditionPlugin, sveltekit(), svelteTesting(), tailwindcss()],
 	test: {
 		include: ["src/**/*.{test,spec}.{js,ts}"],
 		// jest like globals
@@ -28,5 +29,8 @@ export default defineConfig({
 		coverage: {
 			exclude: ["./other/setup-test.ts"],
 		},
+	},
+	optimizeDeps: {
+		exclude: ["bits-ui"],
 	},
 });
