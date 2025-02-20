@@ -154,7 +154,7 @@ The Alert Dialog component supports multiple ways to manage the open state, cate
 
 ### Two-Way Binding
 
-Use `bind:value` for simple, automatic state synchronization:
+Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
