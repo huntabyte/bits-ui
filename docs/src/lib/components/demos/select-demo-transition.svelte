@@ -47,7 +47,7 @@
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="focus-override border-muted bg-background shadow-popover outline-hidden z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3"
+			class="focus-override border-muted bg-background shadow-popover outline-hidden z-50 h-96 max-h-[var(--bits-select-content-available-height)] w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3"
 			sideOffset={10}
 			forceMount
 		>
