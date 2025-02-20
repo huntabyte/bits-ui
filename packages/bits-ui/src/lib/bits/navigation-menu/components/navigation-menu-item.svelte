@@ -8,6 +8,7 @@
 		id = useId(),
 		value = useId(),
 		ref = $bindable(null),
+		openOnHover = true,
 		child,
 		children,
 		...restProps
@@ -20,6 +21,7 @@
 			(v) => (ref = v)
 		),
 		value: box.with(() => value),
+		openOnHover: box.with(() => openOnHover),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));

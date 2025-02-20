@@ -100,6 +100,16 @@ export type NavigationMenuItemPropsWithoutHTML = WithChild<{
 	 * The value of the menu item.
 	 */
 	value?: string;
+
+	/**
+	 * Whether the item's `NavigationMenu.Content` should open when the trigger is hovered.
+	 * If `false`, the content will only open when the trigger is pressed, and will not close
+	 * when the mouse leaves the content/trigger, requiring the user to either click the trigger,
+	 * press escape, or click outside the content to close it.
+	 *
+	 * @default true
+	 */
+	openOnHover?: boolean;
 }>;
 
 export type NavigationMenuItemProps = NavigationMenuItemPropsWithoutHTML &
