@@ -8,7 +8,7 @@
 	<div class="flex items-center justify-between space-x-10">
 		<h4 class="text-[15px] font-medium">@huntabyte starred 3 repositories</h4>
 		<Collapsible.Trigger
-			class="rounded-9px border-border-input bg-background-alt text-foreground shadow-btn hover:bg-muted active:scale-98 inline-flex h-10 w-10 items-center justify-center border transition-all"
+			class="rounded-9px border-border-input bg-background-alt text-foreground shadow-btn hover:bg-muted inline-flex h-10 w-10 items-center justify-center border transition-all active:scale-[0.98]"
 		>
 			<CaretUpDown class="size-4 " weight="bold" />
 			<span class="sr-only">Toggle</span>

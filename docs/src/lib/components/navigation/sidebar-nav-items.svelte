@@ -13,7 +13,7 @@
 				<a
 					href={item.href}
 					class={cn(
-						"text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background group inline-flex w-full items-center rounded-md px-2.5 py-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+						"text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden group inline-flex w-full items-center rounded-md px-2.5 py-1.5 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2",
 						item.disabled && "cursor-not-allowed opacity-60 ",
 						$page.url.pathname === item.href ? "bg-muted" : "hover:bg-muted/50"
 					)}

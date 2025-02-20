@@ -180,16 +180,16 @@ Combining these with `position: absolute;` allows you to create smooth overlappi
 	animation-timing-function: ease;
 }
 .NavigationMenuContent[data-motion="from-start"] {
-	animation-name: enterFromLeft;
+	animation-name: enter-from-left;
 }
 .NavigationMenuContent[data-motion="from-end"] {
-	animation-name: enterFromRight;
+	animation-name: enter-from-right;
 }
 .NavigationMenuContent[data-motion="to-start"] {
-	animation-name: exitToLeft;
+	animation-name: exit-to-left;
 }
 .NavigationMenuContent[data-motion="to-end"] {
-	animation-name: exitToRight;
+	animation-name: exit-to-right;
 }
 
 .NavigationMenuViewport {
@@ -202,7 +202,7 @@ Combining these with `position: absolute;` allows you to create smooth overlappi
 		250ms ease;
 }
 
-@keyframes enterFromRight {
+@keyframes enter-from-right {
 	from {
 		opacity: 0;
 		transform: translateX(200px);
@@ -213,7 +213,7 @@ Combining these with `position: absolute;` allows you to create smooth overlappi
 	}
 }
 
-@keyframes enterFromLeft {
+@keyframes enter-from-left {
 	from {
 		opacity: 0;
 		transform: translateX(-200px);
@@ -224,7 +224,7 @@ Combining these with `position: absolute;` allows you to create smooth overlappi
 	}
 }
 
-@keyframes exitToRight {
+@keyframes exit-to-right {
 	from {
 		opacity: 1;
 		transform: translateX(0);
@@ -235,7 +235,7 @@ Combining these with `position: absolute;` allows you to create smooth overlappi
 	}
 }
 
-@keyframes exitToLeft {
+@keyframes exit-to-left {
 	from {
 		opacity: 1;
 		transform: translateX(0);

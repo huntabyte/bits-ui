@@ -20,7 +20,7 @@
 
 <div
 	class={cn(
-		"rounded-tl-card rounded-tr-card border-muted relative border-2 bg-zinc-50 !ring-transparent dark:bg-neutral-900/50",
+		"rounded-tl-card rounded-tr-card border-muted ring-transparent! relative border-2 bg-zinc-50 dark:bg-neutral-900/50",
 		wrapperClass
 	)}
 >

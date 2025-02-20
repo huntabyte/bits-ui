@@ -14,21 +14,21 @@
 		<Toolbar.GroupItem
 			aria-label="wave sine"
 			value="sine"
-			class="bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-foreground data-[state=on]:bg-foreground data-[state=on]:text-background active:data-[state=on]:bg-dark-10 inline-flex size-6 items-center justify-center rounded-[7px] transition-all lg:size-8  dark:bg-white dark:text-[#808080] dark:data-[state=on]:bg-[#18181B] dark:data-[state=on]:text-white"
+			class="bg-background-alt text-foreground/60 hover:bg-muted active:bg-foreground data-[state=on]:bg-foreground data-[state=on]:text-background active:data-[state=on]:bg-dark-10 inline-flex size-6 items-center justify-center rounded-[7px] transition-all active:scale-[0.98] lg:size-8  dark:bg-white dark:text-[#808080] dark:data-[state=on]:bg-[#18181B] dark:data-[state=on]:text-white"
 		>
 			<WaveSine class="size-[14px] lg:size-5" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="wave square"
 			value="square"
-			class="bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-foreground data-[state=on]:bg-foreground data-[state=on]:text-background active:data-[state=on]:bg-dark-10 inline-flex size-6 items-center justify-center rounded-[7px] transition-all lg:size-8 dark:bg-white dark:text-[#808080] dark:data-[state=on]:bg-[#18181B] dark:data-[state=on]:text-white"
+			class="bg-background-alt text-foreground/60 hover:bg-muted active:bg-foreground data-[state=on]:bg-foreground data-[state=on]:text-background active:data-[state=on]:bg-dark-10 inline-flex size-6 items-center justify-center rounded-[7px] transition-all active:scale-[0.98] lg:size-8 dark:bg-white dark:text-[#808080] dark:data-[state=on]:bg-[#18181B] dark:data-[state=on]:text-white"
 		>
 			<WaveSquare class="size-[14px] lg:size-5" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="wave triangle"
 			value="triangle"
-			class="bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-foreground data-[state=on]:bg-foreground data-[state=on]:text-background active:data-[state=on]:bg-dark-10 inline-flex size-6 items-center justify-center rounded-[7px] transition-all lg:size-8 dark:bg-white dark:text-[#808080] dark:data-[state=on]:bg-[#18181B] dark:data-[state=on]:text-white"
+			class="bg-background-alt text-foreground/60 hover:bg-muted active:bg-foreground data-[state=on]:bg-foreground data-[state=on]:text-background active:data-[state=on]:bg-dark-10 inline-flex size-6 items-center justify-center rounded-[7px] transition-all active:scale-[0.98] lg:size-8 dark:bg-white dark:text-[#808080] dark:data-[state=on]:bg-[#18181B] dark:data-[state=on]:text-white"
 		>
 			<WaveTriangle class="size-[14px] lg:size-5" />
 		</Toolbar.GroupItem>

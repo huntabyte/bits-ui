@@ -2,7 +2,6 @@
 	import { type Snippet, untrack } from "svelte";
 	import { Collapsible, ScrollArea, Tabs } from "bits-ui";
 	import DemoCodeTabs from "./demo-code-tabs.svelte";
-	import TailwindConfig from "./code-renders/tailwind-config.svelte";
 	import AppCSS from "./code-renders/app-css.svelte";
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
@@ -15,7 +14,7 @@
 	};
 	let {
 		children,
-		fileName = "App.svelte",
+		fileName = "app.svelte",
 		class: className,
 		nonExpandableItems = [],
 	}: Props = $props();
@@ -24,10 +23,6 @@
 		{
 			label: fileName,
 			value: fileName,
-		},
-		{
-			label: "tailwind.config.js",
-			value: "tailwind.config.js",
 		},
 		{
 			label: "app.css",
@@ -72,20 +67,18 @@
 						<ScrollArea.Viewport
 							class={cn(
 								"h-full max-h-[800px] min-h-80 w-full",
-								!open && "!max-h-80",
+								!open && "max-h-80!",
 								className
 							)}
 						>
 							<div
 								class={cn(
-									"w-full [&_pre]:!my-0 [&_pre]:!mt-0 [&_pre]:!rounded-none [&_pre]:!rounded-b-none [&_pre]:!rounded-tl-none [&_pre]:!rounded-tr-none [&_pre]:!border-t-0 [&_pre]:!border-none [&_pre]:!px-2 [&_pre]:!pb-5 [&_pre]:!pt-2",
+									"[&_pre]:my-0! [&_pre]:mt-0! [&_pre]:rounded-none! [&_pre]:rounded-b-none! [&_pre]:rounded-tl-none! [&_pre]:rounded-tr-none! [&_pre]:border-t-0! [&_pre]:border-none! [&_pre]:px-2! [&_pre]:pb-5! [&_pre]:pt-2! w-full",
 									className
 								)}
 							>
 								{#if item.value === fileName}
 									{@render children()}
-								{:else if item.value === "tailwind.config.js"}
-									<TailwindConfig />
 								{:else if item.value === "app.css"}
 									<AppCSS />
 								{/if}

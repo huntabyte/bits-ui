@@ -22,8 +22,8 @@
 <Dialog.Root bind:open={dialogOpen}>
 	<Dialog.Trigger
 		class="rounded-input bg-dark text-background
-	shadow-mini hover:bg-dark/95 focus-visible:ring-foreground focus-visible:ring-offset-background active:scale-98 inline-flex
-	h-12 select-none items-center justify-center whitespace-nowrap px-[21px] text-[15px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+	shadow-mini hover:bg-dark/95 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex
+	h-12 select-none items-center justify-center whitespace-nowrap px-[21px] text-[15px] font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]"
 	>
 		Open Command Menu ⌘J
 	</Dialog.Trigger>
@@ -32,7 +32,7 @@
 			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
 		/>
 		<Dialog.Content
-			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95  data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 w-full max-w-[94%] translate-x-[-50%] translate-y-[-50%] outline-none sm:max-w-[490px] md:w-full"
+			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95  data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] outline-hidden fixed left-[50%] top-[50%] z-50 w-full max-w-[94%] translate-x-[-50%] translate-y-[-50%] sm:max-w-[490px] md:w-full"
 		>
 			<Dialog.Title class="sr-only">Command Menu</Dialog.Title>
 			<Dialog.Description class="sr-only">
@@ -43,7 +43,7 @@
 				class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 			>
 				<Command.Input
-					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 inline-flex w-[296px] truncate rounded-xl px-4 text-sm transition-colors focus:outline-none focus:ring-0"
+					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex w-[296px] truncate rounded-xl px-4 text-sm transition-colors focus:ring-0"
 					placeholder="Search for something..."
 				/>
 				<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
@@ -61,21 +61,21 @@
 							</Command.GroupHeading>
 							<Command.GroupItems>
 								<Command.Item
-									class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["getting started", "tutorial"]}
 								>
 									<Sticker class="size-4" />
 									Introduction
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["child", "custom element", "snippets"]}
 								>
 									<CodeBlock class="size-4 " />
 									Delegation
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["css", "theme", "colors", "fonts", "tailwind"]}
 								>
 									<Palette class="size-4" />
@@ -92,21 +92,21 @@
 							</Command.GroupHeading>
 							<Command.GroupItems>
 								<Command.Item
-									class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["dates", "times"]}
 								>
 									<CalendarBlank class="size-4" />
 									Calendar
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["buttons", "forms"]}
 								>
 									<RadioButton class="size-4" />
 									Radio Group
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["inputs", "text", "autocomplete"]}
 								>
 									<Textbox class="size-4" />

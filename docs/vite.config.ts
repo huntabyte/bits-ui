@@ -1,9 +1,9 @@
-import { URL, fileURLToPath } from "node:url";
 import { sveltekit } from "@sveltejs/kit/vite";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [tailwindcss(), sveltekit()],
 	assetsInclude: ["**/*.md"],
 	server: {
 		fs: {
@@ -12,13 +12,5 @@ export default defineConfig({
 	},
 	optimizeDeps: {
 		exclude: ["bits-ui"],
-	},
-	resolve: {
-		alias: [
-			{
-				find: "contentlayer/generated",
-				replacement: fileURLToPath(new URL("./.contentlayer/generated", import.meta.url)),
-			},
-		],
 	},
 });

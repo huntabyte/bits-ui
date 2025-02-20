@@ -2,7 +2,7 @@
 	import { AspectRatio } from "bits-ui";
 </script>
 
-<AspectRatio.Root ratio={14 / 9} class="scale-80 rounded-[15px] bg-transparent">
+<AspectRatio.Root ratio={14 / 9} class="rounded-15px scale-[0.8] bg-transparent">
 	<img
 		src="/abstract.png"
 		alt="an abstract painting"

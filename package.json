@@ -11,7 +11,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"lint:fix": "eslint --fix .",
-		"test": "pnpm -F \"./{packages,tests}/**\" --parallel --reporter append-only --color test","test:components": "pnpm -F tests test",
+		"test": "pnpm -F \"./{packages,tests}/**\" --parallel --reporter append-only --color test",
+		"test:components": "pnpm -F tests test",
 		"test:utils": "pnpm -F bits-ui test"
 	},
 	"keywords": [],
@@ -30,7 +31,7 @@
 		"globals": "^15.11.0",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.3.3",
-		"prettier-plugin-tailwindcss": "^0.6.8",
+		"prettier-plugin-tailwindcss": "^0.6.11",
 		"svelte": "^5.19.4",
 		"svelte-eslint-parser": "^0.43.0",
 		"typescript": "^5.6.3",

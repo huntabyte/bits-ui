@@ -1,3 +1,5 @@
+@import "./app.css";
+
 .markdown code:not(pre > code):not(.custom) {
 	@apply bg-muted text-foreground relative rounded px-[0.375rem] py-[0.125rem] font-mono text-sm font-semibold;
 }
@@ -8,10 +10,8 @@
 .markdown h4 code,
 .markdown h5 code,
 .markdown h6 code {
-	/* Reset the styles */
 	all: unset !important;
-	/* Or specify exactly how you want it to look */
-	@apply font-mono before:content-['`'] after:content-['`'] !important;
+	@apply font-mono! before:content-['`']! after:content-['`']!;
 }
 
 [data-theme*=" "] {
@@ -30,7 +30,7 @@
 }
 
 [data-metadata] [data-copy-code] {
-	@apply top-16 !important;
+	@apply top-16!;
 }
 
 [data-rehype-pretty-code-figure] {
@@ -78,23 +78,23 @@
 }
 
 [data-chars-id="ul"] {
-	@apply border-border border-b font-bold !important;
+	@apply border-border! border-b! font-bold!;
 }
 
 [data-chars-id="hi"] {
-	@apply rounded p-1 font-bold !important;
+	@apply rounded! p-1! font-bold!;
 }
 
 [data-chars-id="r"] {
-	@apply border-border font-bold !important;
+	@apply border-border! font-bold!;
 }
 
 [data-chars-id="t"] {
-	@apply border-b font-bold !important;
+	@apply border-b! font-bold!;
 }
 
 [data-chars-id="c"] {
-	@apply border-b font-bold !important;
+	@apply border-b! font-bold!;
 }
 
 [data-rehype-pretty-code-title] {
@@ -106,7 +106,7 @@
 }
 
 [data-callout] > p:last-child {
-	@apply mb-0 !important;
+	@apply mb-0!;
 }
 
 code[data-theme*=" "],

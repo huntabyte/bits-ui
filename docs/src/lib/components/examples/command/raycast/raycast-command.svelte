@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { mode } from "mode-watcher";
-	import "./raycast.postcss";
+	import "./raycast.css";
 	import { Command } from "bits-ui";
 	import { FigmaIcon, LinearIcon, RaycastIcon, SlackIcon, YouTubeIcon } from "../icons/index.js";
 	import Logo from "../logo.svelte";

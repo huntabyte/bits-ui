@@ -12,7 +12,7 @@
 	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 >
 	<Command.Input
-		class="focus-override h-input bg-background placeholder:text-foreground-alt/50 inline-flex w-[296px] truncate rounded-xl px-4 text-sm transition-colors focus:outline-none focus:ring-0"
+		class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex w-[296px] truncate rounded-xl px-4 text-sm transition-colors focus:ring-0"
 		placeholder="Search for something..."
 	/>
 	<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
@@ -28,21 +28,21 @@
 				</Command.GroupHeading>
 				<Command.GroupItems>
 					<Command.Item
-						class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["getting started", "tutorial"]}
 					>
 						<Sticker class="size-4" />
 						Introduction
 					</Command.Item>
 					<Command.Item
-						class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["child", "custom element", "snippets"]}
 					>
 						<CodeBlock class="size-4 " />
 						Delegation
 					</Command.Item>
 					<Command.Item
-						class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["css", "theme", "colors", "fonts", "tailwind"]}
 					>
 						<Palette class="size-4" />
@@ -57,21 +57,21 @@
 				</Command.GroupHeading>
 				<Command.GroupItems>
 					<Command.Item
-						class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["dates", "times"]}
 					>
 						<CalendarBlank class="size-4" />
 						Calendar
 					</Command.Item>
 					<Command.Item
-						class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["buttons", "forms"]}
 					>
 						<RadioButton class="size-4" />
 						Radio Group
 					</Command.Item>
 					<Command.Item
-						class="rounded-button data-[selected]:bg-muted flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize outline-none"
+						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["inputs", "text", "autocomplete"]}
 					>
 						<Textbox class="size-4" />

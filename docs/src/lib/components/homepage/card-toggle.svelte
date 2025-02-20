@@ -17,10 +17,10 @@
 		class="circle absolute right-0 top-0 aspect-square w-3 -translate-y-1/2 translate-x-1/2 rounded-full border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
-		class="middle absolute left-1/2 top-0 aspect-[24/6] w-6 -translate-x-1/2 -translate-y-1/2 rounded-[7px] border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
+		class="middle aspect-24/6 absolute left-1/2 top-0 w-6 -translate-x-1/2 -translate-y-1/2 rounded-[7px] border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
-		class="middle absolute bottom-0 left-1/2 aspect-[24/6] w-6 -translate-x-1/2 translate-y-1/2 rounded-[7px] border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
+		class="middle aspect-24/6 absolute bottom-0 left-1/2 w-6 -translate-x-1/2 translate-y-1/2 rounded-[7px] border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
 	></div>
 	<div
 		class="circle absolute bottom-0 left-0 aspect-square w-3 -translate-x-1/2 translate-y-1/2 rounded-full border border-[#A3A3A4] bg-white dark:border-white dark:bg-[#131313]"
@@ -125,17 +125,17 @@
 		</div>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger
-				class="focus-visible text-a-foreground border-border-input shadow-mini hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background active:scale-98 inline-flex size-6 select-none items-center justify-center rounded-[7px] border bg-white text-sm font-medium focus-visible:ring-2 focus-visible:ring-offset-2 lg:size-8 dark:border-[#D8D8D8] dark:shadow-[0px_0.8px_0px_0.8px_rgba(0,_0,_0,_0.04)] dark:hover:bg-white"
+				class="focus-visible text-a-foreground border-border-input shadow-mini hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex size-6 select-none items-center justify-center rounded-[7px] border bg-white text-sm font-medium focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] lg:size-8 dark:border-[#D8D8D8] dark:shadow-[0px_0.8px_0px_0.8px_rgba(0,_0,_0,_0.04)] dark:hover:bg-white"
 			>
 				<DotsThreeVertical class="text-foreground size-4 lg:size-5 dark:text-[#171717]" />
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content
-					class="focus-override border-muted bg-background shadow-popover w-[229px] rounded-xl border px-1 py-1.5 outline-none focus-visible:outline-none"
+					class="focus-override border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[229px] rounded-xl border px-1 py-1.5"
 					sideOffset={8}
 				>
 					<DropdownMenu.Item
-						class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent"
+						class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
 					>
 						<div class="flex items-center">
 							<UserCircle class="text-foreground-alt mr-2 size-5" />
@@ -156,7 +156,7 @@
 					</DropdownMenu.Item>
 
 					<DropdownMenu.Item
-						class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium !ring-0 !ring-transparent"
+						class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
 					>
 						<div class="flex items-center">
 							<Cardholder class="text-foreground-alt mr-2 size-5" />

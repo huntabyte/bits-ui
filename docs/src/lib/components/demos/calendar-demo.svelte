@@ -22,13 +22,13 @@
 	{#snippet children({ months, weekdays })}
 		<Calendar.Header class="flex items-center justify-between">
 			<Calendar.PrevButton
-				class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 inline-flex size-10 items-center justify-center active:transition-all"
+				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98] active:transition-all"
 			>
 				<CaretLeft class="size-6" />
 			</Calendar.PrevButton>
 			<Calendar.Heading class="text-[15px] font-medium" />
 			<Calendar.NextButton
-				class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 inline-flex size-10 items-center justify-center active:transition-all"
+				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98] active:transition-all"
 			>
 				<CaretRight class="size-6" />
 			</Calendar.NextButton>
@@ -40,7 +40,7 @@
 						<Calendar.GridRow class="mb-1 flex w-full justify-between">
 							{#each weekdays as day}
 								<Calendar.HeadCell
-									class="text-muted-foreground w-10 rounded-md text-xs !font-normal"
+									class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
 								>
 									<div>{day.slice(0, 2)}</div>
 								</Calendar.HeadCell>
@@ -54,13 +54,13 @@
 									<Calendar.Cell
 										{date}
 										month={month.value}
-										class="relative size-10 !p-0 text-center text-sm"
+										class="p-0! relative size-10 text-center text-sm"
 									>
 										<Calendar.Day
-											class="rounded-9px text-foreground hover:border-foreground data-[selected]:bg-foreground data-[disabled]:text-foreground/30 data-[selected]:text-background data-[unavailable]:text-muted-foreground group relative inline-flex size-10 items-center justify-center whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[selected]:font-medium data-[unavailable]:line-through"
+											class="rounded-9px text-foreground hover:border-foreground data-selected:bg-foreground data-disabled:text-foreground/30 data-selected:text-background data-unavailable:text-muted-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-medium data-unavailable:line-through group relative inline-flex size-10 items-center justify-center whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal"
 										>
 											<div
-												class="bg-foreground group-data-[selected]:bg-background absolute top-[5px] hidden size-1 rounded-full group-data-[today]:block"
+												class="bg-foreground group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full"
 											></div>
 											{date.day}
 										</Calendar.Day>

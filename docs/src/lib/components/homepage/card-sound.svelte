@@ -21,7 +21,7 @@
 				class="text-background ml-1.5 text-sm font-medium lg:mt-[7px] lg:text-xl dark:text-white"
 			>
 				<span class="">Sound</span>
-				<small class="block text-[10px] leading-[1] opacity-50 lg:text-xs">control</small>
+				<small class="block text-[10px] leading-none opacity-50 lg:text-xs">control</small>
 			</h3>
 			<HomeToolbar />
 		</div>
@@ -50,24 +50,24 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	/* lines */
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, hsl(var(--line)) 50%),
+		background: linear-gradient(to right, transparent 50%, var(--line) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
 			100% 1px;
 	}
 	.line_left_gradient {
-		background: linear-gradient(to top, transparent 50%, hsl(var(--line)) 50%),
+		background: linear-gradient(to top, transparent 50%, var(--line) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,
 			100% 100%;
 	}
 	.line_right_gradient {
-		background: linear-gradient(to top, transparent 50%, hsl(var(--line)) 50%),
+		background: linear-gradient(to top, transparent 50%, var(--line) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,
