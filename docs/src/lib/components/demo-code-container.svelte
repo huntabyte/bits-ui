@@ -2,7 +2,6 @@
 	import { type Snippet, untrack } from "svelte";
 	import { Collapsible, ScrollArea, Tabs } from "bits-ui";
 	import DemoCodeTabs from "./demo-code-tabs.svelte";
-	import TailwindConfig from "./code-renders/tailwind-config.svelte";
 	import AppCSS from "./code-renders/app-css.svelte";
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
@@ -15,7 +14,7 @@
 	};
 	let {
 		children,
-		fileName = "App.svelte",
+		fileName = "app.svelte",
 		class: className,
 		nonExpandableItems = [],
 	}: Props = $props();
@@ -24,10 +23,6 @@
 		{
 			label: fileName,
 			value: fileName,
-		},
-		{
-			label: "tailwind.config.js",
-			value: "tailwind.config.js",
 		},
 		{
 			label: "app.css",
@@ -84,8 +79,6 @@
 							>
 								{#if item.value === fileName}
 									{@render children()}
-								{:else if item.value === "tailwind.config.js"}
-									<TailwindConfig />
 								{:else if item.value === "app.css"}
 									<AppCSS />
 								{/if}
