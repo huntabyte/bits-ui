@@ -6,6 +6,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+	font-family: "Cal Sans";
+	font-style: normal;
+	font-weight: 600;
+	font-display: swap;
+	src: url("/CalSans-SemiBold.woff2") format("woff2");
+}
+
 :root {
 	/* Colors */
 	--background: hsl(0 0% 100%);
@@ -296,12 +304,4 @@
 	.link {
 		@apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;
 	}
-}
-
-@font-face {
-	font-family: "Cal Sans";
-	font-style: normal;
-	font-weight: 600;
-	font-display: swap;
-	src: url("/CalSans-SemiBold.woff2") format("woff2");
 }

@@ -34,7 +34,7 @@
 		<Code class="bg-transparent px-0">enum</Code>
 		<Popover.Root>
 			<Popover.Trigger
-				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex items-center justify-center transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2"
+				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 			>
 				<Info class="size-4" weight="bold" />
 				<span class="sr-only">See type definition</span>

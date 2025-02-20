@@ -78,7 +78,7 @@
 						>
 							<div
 								class={cn(
-									"w-full [&_pre]:my-0! [&_pre]:mt-0! [&_pre]:rounded-none! [&_pre]:rounded-b-none! [&_pre]:rounded-tl-none! [&_pre]:rounded-tr-none! [&_pre]:border-t-0! [&_pre]:border-none! [&_pre]:px-2! [&_pre]:pb-5! [&_pre]:pt-2!",
+									"[&_pre]:my-0! [&_pre]:mt-0! [&_pre]:rounded-none! [&_pre]:rounded-b-none! [&_pre]:rounded-tl-none! [&_pre]:rounded-tr-none! [&_pre]:border-t-0! [&_pre]:border-none! [&_pre]:px-2! [&_pre]:pb-5! [&_pre]:pt-2! w-full",
 									className
 								)}
 							>

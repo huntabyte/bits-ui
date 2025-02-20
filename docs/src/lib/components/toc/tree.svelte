@@ -60,7 +60,7 @@
 						href="#{heading.id}"
 						use:melt={$item(heading.id)}
 						use:hoverAction
-						class="hover:text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background data-active:text-foreground transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2"
+						class="hover:text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background data-active:text-foreground focus-visible:outline-hidden transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 					>
 						<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html nodeWithoutSpan}

@@ -42,7 +42,7 @@
 	<SheetPrimitive.Content class={cn(sheetVariants({ side }), className)} {...restProps}>
 		{@render children?.()}
 		<SheetPrimitive.Close
-			class="focus:ring-ring data-[state=open]:bg-secondary ring-offset-background absolute right-4 top-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
+			class="focus:ring-ring data-[state=open]:bg-secondary ring-offset-background rounded-xs focus:outline-hidden absolute right-4 top-4 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none"
 		>
 			<X class="h-4 w-4" />
 			<span class="sr-only">Close</span>

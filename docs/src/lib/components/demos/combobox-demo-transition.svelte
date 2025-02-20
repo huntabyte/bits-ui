@@ -52,7 +52,7 @@
 		/>
 		<Combobox.Input
 			oninput={(e) => (searchValue = e.currentTarget.value)}
-			class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 focus:ring-foreground focus:ring-offset-background inline-flex w-[296px] truncate border px-11 text-base transition-colors focus:outline-hidden focus:ring-2 focus:ring-offset-2 sm:text-sm"
+			class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 focus:ring-foreground focus:ring-offset-background focus:outline-hidden inline-flex w-[296px] truncate border px-11 text-base transition-colors focus:ring-2 focus:ring-offset-2 sm:text-sm"
 			placeholder="Search a fruit"
 			aria-label="Search a fruit"
 		/>
@@ -62,7 +62,7 @@
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-			class="border-muted bg-background shadow-popover max-h-96 w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border px-1 py-3 outline-hidden"
+			class="border-muted bg-background shadow-popover outline-hidden max-h-96 w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border px-1 py-3"
 			sideOffset={10}
 			forceMount
 		>
@@ -78,7 +78,7 @@
 							<Combobox.Viewport class="p-1">
 								{#each filteredFruits as fruit, i (i + fruit.value)}
 									<Combobox.Item
-										class="rounded-button data-highlighted:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize  outline-hidden"
+										class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm  capitalize"
 										value={fruit.value}
 										label={fruit.label}
 									>

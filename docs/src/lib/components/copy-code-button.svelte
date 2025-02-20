@@ -11,7 +11,7 @@
 
 <button
 	class={cn(
-		"text-muted-foreground hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background relative inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2",
+		"text-muted-foreground hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2",
 		className
 	)}
 	on:click={copyCode}

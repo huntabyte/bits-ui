@@ -15,7 +15,7 @@
 
 <PinInput.Root
 	bind:value
-	class="group/pininput text-foreground flex items-center has-disabled:opacity-30"
+	class="group/pininput text-foreground has-disabled:opacity-30 flex items-center"
 	maxlength={6}
 	{onComplete}
 	pattern={REGEXP_ONLY_DIGITS}
