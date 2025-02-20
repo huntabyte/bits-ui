@@ -18,12 +18,12 @@
 		<div class="flex justify-between">
 			<Tabs.Root value="c" class="flex items-center font-medium">
 				<Tabs.Content value="c" class="select-none"
-					><span class="text-[2.70288rem] leading-[1] text-indigo-950 lg:text-[3.625rem]"
+					><span class="text-[2.70288rem] leading-none text-indigo-950 lg:text-[3.625rem]"
 						>21</span
 					></Tabs.Content
 				>
 				<Tabs.Content value="f" class="select-none"
-					><span class="text-[2.70288rem] leading-[1] text-indigo-950 lg:text-[3.625rem]"
+					><span class="text-[2.70288rem] leading-none text-indigo-950 lg:text-[3.625rem]"
 						>69</span
 					></Tabs.Content
 				>
@@ -67,7 +67,7 @@
 					</div>
 				{/each}
 				<div
-					class="absolute -left-1.5 top-1/2 aspect-[212/30] w-[calc(100%+10px)] -translate-y-1/2"
+					class="aspect-212/30 absolute -left-1.5 top-1/2 w-[calc(100%+10px)] -translate-y-1/2"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -89,7 +89,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	@keyframes spin {
 		from {
 			transform: rotate(0deg);
@@ -104,7 +104,7 @@
 		animation-iteration-count: infinite;
 	}
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, hsl(var(--line)) 50%),
+		background: linear-gradient(to right, transparent 50%, var(--line) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,

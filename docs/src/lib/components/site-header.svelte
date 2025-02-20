@@ -18,7 +18,7 @@
 
 				<a
 					href="/"
-					class="focus-visible:ring-foreground focus-visible:ring-offset-background ml-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 md:mr-[125px]"
+					class="focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden ml-2 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 md:mr-[125px]"
 				>
 					<Logo />
 				</a>
@@ -31,7 +31,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 					aria-label="Light Switch"
-					class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background relative inline-flex h-10 w-10 items-center justify-center px-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+					class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative inline-flex h-10 w-10 items-center justify-center px-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 				>
 					<Github class="size-5" />
 				</Button.Root>

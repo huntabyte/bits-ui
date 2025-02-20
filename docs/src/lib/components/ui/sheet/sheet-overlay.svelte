@@ -6,6 +6,6 @@
 </script>
 
 <SheetPrimitive.Overlay
-	class={cn("bg-background/80 fixed inset-0 z-50 backdrop-blur-sm", className)}
+	class={cn("bg-background/80 backdrop-blur-xs fixed inset-0 z-50", className)}
 	{...restProps}
 />

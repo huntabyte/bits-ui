@@ -11,7 +11,7 @@
 		SearchIcon,
 		SliderIcon,
 	} from "./icons/index.js";
-	import "./framer.pcss";
+	import "./framer.css";
 
 	let value = $state("Button");
 

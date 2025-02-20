@@ -12,7 +12,7 @@
 		href="https://github.com/sveltejs"
 		target="_blank"
 		rel="noreferrer noopener"
-		class="rounded-sm underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black"
+		class="rounded-xs underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black"
 	>
 		<Avatar.Root
 			bind:loadingStatus={loadingStatusTrigger}

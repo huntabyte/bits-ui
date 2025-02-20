@@ -15,21 +15,21 @@
 	<ToggleGroup.Item
 		aria-label="toggle bold"
 		value="bold"
-		class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+		class="rounded-9px bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 	>
 		<TextB class="size-6" />
 	</ToggleGroup.Item>
 	<ToggleGroup.Item
 		aria-label="toggle italic"
 		value="italic"
-		class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+		class="rounded-9px bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 	>
 		<TextItalic class="size-6" />
 	</ToggleGroup.Item>
 	<ToggleGroup.Item
 		aria-label="toggle strikethrough"
 		value="strikethrough"
-		class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+		class="rounded-9px bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 	>
 		<TextStrikethrough class="size-6" />
 	</ToggleGroup.Item>

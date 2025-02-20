@@ -18,13 +18,13 @@
 	{#snippet children({ months, weekdays })}
 		<RangeCalendar.Header class="flex items-center justify-between">
 			<RangeCalendar.PrevButton
-				class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 inline-flex size-10 items-center justify-center"
+				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98]"
 			>
 				←
 			</RangeCalendar.PrevButton>
 			<RangeCalendar.Heading class="text-[15px] font-medium" />
 			<RangeCalendar.NextButton
-				class="rounded-9px bg-background-alt hover:bg-muted active:scale-98 inline-flex size-10 items-center justify-center"
+				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98]"
 			>
 				→
 			</RangeCalendar.NextButton>
@@ -36,7 +36,7 @@
 						<RangeCalendar.GridRow class="mb-1 flex w-full justify-between">
 							{#each weekdays as day}
 								<RangeCalendar.HeadCell
-									class="text-muted-foreground w-10 rounded-md text-xs !font-normal"
+									class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
 								>
 									<div>{day.slice(0, 2)}</div>
 								</RangeCalendar.HeadCell>
@@ -50,15 +50,15 @@
 									<RangeCalendar.Cell
 										{date}
 										month={month.value}
-										class="relative m-0 size-10 !p-0 text-center text-sm focus-within:z-20"
+										class="p-0! relative m-0 size-10 text-center text-sm focus-within:z-20"
 									>
 										<RangeCalendar.Day
 											class={cn(
-												"rounded-9px bg-background text-foreground hover:border-foreground focus-visible:!ring-foreground data-[selection-end]:rounded-9px data-[selection-start]:rounded-9px data-[highlighted]:bg-muted data-[selected]:bg-muted data-[selection-end]:bg-foreground data-[selection-start]:bg-foreground data-[disabled]:text-foreground/30 data-[selected]:text-foreground data-[selection-end]:text-background data-[selection-start]:text-background data-[unavailable]:text-muted-foreground data-[selected]:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:border-foreground group relative inline-flex size-10 items-center justify-center overflow-visible whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal data-[disabled]:pointer-events-none data-[outside-month]:pointer-events-none data-[highlighted]:rounded-none data-[selected]:font-medium data-[selection-end]:font-medium data-[selection-start]:font-medium data-[unavailable]:line-through data-[selection-start]:focus-visible:ring-2 data-[selection-start]:focus-visible:!ring-offset-2 data-[selected]:[&:not([data-selection-start])]:[&:not([data-selection-end])]:rounded-none data-[selected]:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:!ring-0 data-[selected]:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:!ring-offset-0"
+												"rounded-9px text-foreground hover:border-foreground focus-visible:ring-foreground! data-selection-end:rounded-9px data-selection-start:rounded-9px data-highlighted:bg-muted data-selected:bg-muted data-selection-end:bg-foreground data-selection-start:bg-foreground data-disabled:text-foreground/30 data-selected:text-foreground data-selection-end:text-background data-selection-start:text-background data-unavailable:text-muted-foreground data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:border-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none data-highlighted:rounded-none data-selected:font-medium data-selection-end:font-medium data-selection-start:font-medium data-unavailable:line-through data-selection-start:focus-visible:ring-2 data-selection-start:focus-visible:ring-offset-2! data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:rounded-none data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:ring-0! data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:ring-offset-0! group relative inline-flex size-10 items-center justify-center overflow-visible whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal"
 											)}
 										>
 											<div
-												class="bg-foreground group-data-[selected]:bg-background absolute top-[5px] hidden size-1 rounded-full group-data-[today]:block"
+												class="bg-foreground group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full"
 											></div>
 											{date.day}
 										</RangeCalendar.Day>
