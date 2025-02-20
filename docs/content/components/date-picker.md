@@ -38,8 +38,8 @@ Before diving into this component, it's important to understand how dates/times 
 					{value}
 				</DatePicker.Segment>
 			{/each}
+			<DatePicker.Trigger />
 		{/snippet}
-		<DatePicker.Trigger />
 	</DatePicker.Input>
 	<DatePicker.Content>
 		<DatePicker.Calendar>
