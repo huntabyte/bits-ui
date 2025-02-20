@@ -18,28 +18,27 @@ description: A modal window that alerts users with important information and awa
 
 ## Key Features
 
--   **Compound Component Structure**: Offers a set of sub-components that work together to create a fully-featured alert dialog.
--   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
--   **Customizable**: Each sub-component can be styled and configured independently.
--   **Portal Support**: Content can be rendered in a portal, ensuring proper stacking context.
--   **Managed Focus**: Automatically manages focus, with the option to take control if needed.
--   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the dialog's open state.
-
-## Architecture
-
-The Alert Dialog component is composed of several sub-components, each with a specific role:
-
--   **Root**: The main container component that manages the state of the dialog. Provides context for all child components.
--   **Trigger**: A button that toggles the dialog's open state.
--   **Portal**: Renders its children in a portal, outside the normal DOM hierarchy.
--   **Overlay**: A backdrop that sits behind the dialog content.
--   **Content**: The main container for the dialog's content.
--   **Title**: Renders the dialog's title.
--   **Description**: Renders a description or additional context for the dialog.
--   **Cancel**: A button that closes the dialog by cancelling the action.
--   **Action**: A button that closes the dialog by taking an action.
+-   **Compound Component Structure**: Build flexible, customizable alert dialogs using sub-components.
+-   **Accessibility**: ARIA-compliant with full keyboard navigation support.
+-   **Portal Support**: Render content outside the normal DOM hierarchy for proper stacking.
+-   **Managed Focus**: Automatically traps focus with customization options.
+-   **Flexible State**: Supports both controlled and uncontrolled open states.
 
 ## Structure
+
+The Alert Dialog is built from sub-components, each with a specific purpose:
+
+-   **Root**: Manages state and provides context to child components.
+-   **Trigger**: Toggles the dialog's open/closed state.
+-   **Portal**: Renders its children in a portal, outside the normal DOM hierarchy.
+-   **Overlay**: Displays a backdrop behind the dialog.
+-   **Content**: Holds the dialog's main content.
+-   **Title**: Displays the dialog's title.
+-   **Description**: Displays a description or additional context for the dialog.
+-   **Cancel**: Closes the dialog without action.
+-   **Action**: Confirms the dialog's action.
+
+Here's a simple example of an Alert Dialog:
 
 ```svelte
 <script lang="ts">
@@ -47,14 +46,14 @@ The Alert Dialog component is composed of several sub-components, each with a sp
 </script>
 
 <AlertDialog.Root>
-	<AlertDialog.Trigger />
+	<AlertDialog.Trigger>Open Dialog</AlertDialog.Trigger>
 	<AlertDialog.Portal>
 		<AlertDialog.Overlay />
 		<AlertDialog.Content>
-			<AlertDialog.Title />
-			<AlertDialog.Description />
-			<AlertDialog.Cancel />
-			<AlertDialog.Action />
+			<AlertDialog.Title>Confirm Action</AlertDialog.Title>
+			<AlertDialog.Description>Are you sure?</AlertDialog.Description>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action>Confirm</AlertDialog.Action>
 		</AlertDialog.Content>
 	</AlertDialog.Portal>
 </AlertDialog.Root>
@@ -62,11 +61,7 @@ The Alert Dialog component is composed of several sub-components, each with a sp
 
 ## Reusable Components
 
-Bits UI provides a decent number of components to construct an Alert Dialog. The idea is to provide a set of building blocks that can be used to create a variety of different components. It's recommended to use these components to build your own reusable Alert Dialog components that can be used throughout your application.
-
-The following example shows at a high level how you might create a reusable Alert Dialog component. We've mixed and matched string props and snippets to demonstrate the flexibility of the component API. Use whatever makes sense for you.
-
-This example is used in a few places throughout this documentation page to give you a better idea of how it's used.
+For consistency across your app, create a reusable Alert Dialog component. Here's an example:
 
 ```svelte title="MyAlertDialog.svelte"
 <script lang="ts">
@@ -149,15 +144,19 @@ Alternatively, you can define the snippets separately and pass them as props to 
 </MyAlertDialog>
 ```
 
-## Managing Open State
+<Callout type="tip">
+Use string props for simplicity or snippets for dynamic content.
+</Callout>
 
-Bits UI offers several approaches to manage and synchronize the Alert Dialog's open state, catering to different levels of control and integration needs.
+## State Management
 
-### 1. Two-Way Binding
+The Alert Dialog component supports multiple ways to manage the open state, catering to different use cases.
 
-For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the dialog's internal state.
+### Two-Way Binding
 
-```svelte {3,6,8}
+Use `bind:value` for simple, automatic state synchronization:
+
+```svelte
 <script lang="ts">
 	import { AlertDialog } from "bits-ui";
 	let isOpen = $state(false);
@@ -170,47 +169,41 @@ For seamless state synchronization, use Svelte's `bind:open` directive. This met
 </AlertDialog.Root>
 ```
 
-#### Key Benefits
+#### Why Use It?
 
--   Simplifies state management
--   Automatically updates isOpen when the dialog closes (e.g., via escape key)
--   Allows external control (e.g., opening via a separate button)
+-   Effortless state updates
+-   External controls (e.g., buttons) work out of the box
 
-### 2. Change Handler
+### Change Handler
 
-For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use `onOpenChange` for custom logic on state changes:
 
-```svelte {3,7-11}
+```svelte
 <script lang="ts">
 	import { AlertDialog } from "bits-ui";
-	let isOpen = $state(false);
 </script>
 
 <AlertDialog.Root
-	open={isOpen}
 	onOpenChange={(open) => {
-		isOpen = open;
-		// additional logic here.
+		console.log("Dialog is now", open ? "open" : "closed");
 	}}
 >
 	<!-- ... -->
 </AlertDialog.Root>
 ```
 
-#### Use Cases
+#### When to Use?
 
 -   Implementing custom behaviors on open/close
--   Integrating with external state management solutions
 -   Triggering side effects (e.g., logging, data fetching)
 
-### 3. Fully Controlled
+### Fully Controlled
 
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for total control:
 
 ```svelte
 <script lang="ts">
 	import { AlertDialog } from "bits-ui";
-
 	let myOpen = $state(false);
 </script>
 
@@ -219,7 +212,7 @@ For complete control over the component's state, use a [Function Binding](https:
 </AlertDialog.Root>
 ```
 
-#### When to Use
+#### When to Use?
 
 -   Implementing complex open/close logic
 -   Coordinating multiple UI elements
@@ -227,25 +220,25 @@ For complete control over the component's state, use a [Function Binding](https:
 
 <Callout>
 
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+Fully controlled state requires careful management to avoid bugs. Prefer two-way binding unless you need fine-grained control.
 
 </Callout>
 
-## Managing Focus
+## Focus Management
 
 ### Focus Trap
 
-By default, when a dialog is opened, focus will be trapped within the Dialog, preventing the user from interacting with the rest of the page. This follows the [WAI-ARIA design pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/examples/alertdialog/) for alert dialogs.
-
-Although it isn't recommended unless absolutely necessary, you can disabled this behavior by setting the `trapFocus` prop to `false` on the `AlertDialog.Content` component.
+Focus is trapped within the dialog by default. To disable:
 
 ```svelte /trapFocus={false}/
 <AlertDialog.Content trapFocus={false}>
 	<!-- ... -->
 </AlertDialog.Content>
 ```
+
+<Callout type="warning">
+Disabling focus trap may reduce accessibility. Use with caution.
+</Callout>
 
 ### Open Focus
 

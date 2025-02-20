@@ -27,7 +27,7 @@ The Accordion component is a versatile UI element designed to manage large amoun
 -   **Smooth Transitions**: Leverage CSS variables or Svelte transitions for animated expansions.
 -   **Flexible State**: Use uncontrolled defaults or take full control with bound values.
 
-## Basic Structure
+## Structure
 
 The Accordion is a compound component made up of several sub-components:
 
