@@ -94,7 +94,7 @@
 				>
 			</a>
 			<h1
-				class="selection:text-foreground dark:selection:text-background dark:text-[#EAEAEA]! mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] font-['Cal_Sans'] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased lg:max-w-3xl lg:text-[4.25rem]"
+				class="selection:text-foreground dark:selection:text-background dark:text-[#EAEAEA]! font-display mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased lg:max-w-3xl lg:text-[4.25rem]"
 			>
 				The headless components for Svelte
 			</h1>
@@ -157,7 +157,7 @@
 			></span>explore</small
 		>
 		<span
-			class="mt-2 block font-['Cal_Sans'] text-[28px] font-semibold leading-[118%] tracking-[0.02em] lg:text-[32px]"
+			class="font-display mt-2 block text-[28px] font-semibold leading-[118%] tracking-[0.02em] lg:text-[32px]"
 			>The foundation for your next web project</span
 		>
 	</h2>
