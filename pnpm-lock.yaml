@@ -81,6 +81,9 @@ importers:
       '@melt-ui/pp':
         specifier: ^0.3.0
         version: 0.3.2(@melt-ui/svelte@0.76.2(svelte@5.19.4))(svelte@5.19.4)
+      '@nobie-org/tailwindcss-animate':
+        specifier: ^1.0.9
+        version: 1.0.9(tailwindcss@4.0.7)
       '@prettier/sync':
         specifier: 0.3.0
         version: 0.3.0(prettier@3.3.3)
@@ -1274,6 +1277,11 @@ packages:
     resolution: {integrity: sha512-7SbOa11tXUS95T3fReL+dwDs5FyJtCEqrqG3inRziDws346SYLsxOQ6HmX+4BkIsQh1R8U3XNa+EMmdMt38lMA==}
     peerDependencies:
       svelte: '>=3 <5'
+
+  '@nobie-org/tailwindcss-animate@1.0.9':
+    resolution: {integrity: sha512-2YpGjpgYRrRP1lVxWYJw7UFlVTHTjeD/yxZWoxE1dnTUhEzpFMRksiefW26ZFnWnOIgj2DI8xyk17PA+rkssBw==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || >=4.0.0-beta || insiders'
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -5071,6 +5079,10 @@ snapshots:
       focus-trap: 7.5.4
       nanoid: 5.0.7
       svelte: 5.19.4
+
+  '@nobie-org/tailwindcss-animate@1.0.9(tailwindcss@4.0.7)':
+    dependencies:
+      tailwindcss: 4.0.7
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
