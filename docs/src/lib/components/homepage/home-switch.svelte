@@ -17,7 +17,7 @@
 		bind:checked
 		id="play_btn"
 		name="play"
-		class="focus-visible:ring-foreground focus-visible:ring-offset-background data-[state=checked]:bg-foreground data-[state=unchecked]:bg-dark-10 data-[state=unchecked]:shadow-mini-inset dark:data-[state=checked]:bg-foreground peer inline-flex h-7 min-h-7 w-11 shrink-0 cursor-pointer items-center rounded-full px-[3px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 lg:h-9 lg:min-h-9 lg:w-[62px]  dark:shadow-inner dark:data-[state=checked]:bg-[rgba(0,0,0,0.17)] dark:data-[state=unchecked]:bg-[rgba(0,0,0,0.17)]"
+		class="focus-visible:ring-foreground focus-visible:ring-offset-background data-[state=checked]:bg-foreground data-[state=unchecked]:bg-dark-10 data-[state=unchecked]:shadow-mini-inset dark:data-[state=checked]:bg-foreground peer inline-flex h-7 min-h-7 w-11 shrink-0 cursor-pointer items-center rounded-full px-[3px] transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 lg:h-9 lg:min-h-9 lg:w-[62px]  dark:shadow-inner dark:data-[state=checked]:bg-[rgba(0,0,0,0.17)] dark:data-[state=unchecked]:bg-[rgba(0,0,0,0.17)]"
 		{...restProps}
 	>
 		<Switch.Thumb

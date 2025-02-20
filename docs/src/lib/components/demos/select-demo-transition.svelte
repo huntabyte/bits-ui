@@ -47,7 +47,7 @@
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="focus-override border-muted bg-background shadow-popover z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3 outline-none"
+			class="focus-override border-muted bg-background shadow-popover z-50 max-h-96 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3 outline-hidden"
 			sideOffset={10}
 			forceMount
 		>
@@ -61,7 +61,7 @@
 							<Select.Viewport class="p-1">
 								{#each themes as theme, i (i + theme.value)}
 									<Select.Item
-										class="rounded-button data-[highlighted]:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize outline-none duration-75"
+										class="rounded-button data-highlighted:bg-muted flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize outline-hidden duration-75"
 										value={theme.value}
 										label={theme.label}
 									>

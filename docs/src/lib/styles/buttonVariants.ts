@@ -3,11 +3,11 @@ import { tv } from "tailwind-variants";
 /**
  * hover:button-gradient inline-flex h-12 items-center justify-center rounded-input
 		bg-dark px-[21px] text-[15px] font-semibold text-background
-		shadow-mini outline-none ring-dark ring-offset-4 ring-offset-background transition-all focus:ring-1
+		shadow-mini outline-hidden ring-dark ring-offset-4 ring-offset-background transition-all focus:ring-1
  */
 
 export const buttonVariants = tv({
-	base: "ring-offset-background inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+	base: "ring-offset-background inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
 	variants: {
 		variant: {
 			default: "bg-primary text-primary-foreground hover:bg-primary/90",

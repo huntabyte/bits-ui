@@ -7,7 +7,7 @@
 		Hotel dates
 	</DateRangeField.Label>
 	<div
-		class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover group-data-[invalid]:border-destructive flex w-full select-none items-center border px-2 py-3 text-sm tracking-[0.01em]"
+		class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover group-data-invalid:border-destructive flex w-full select-none items-center border px-2 py-3 text-sm tracking-[0.01em]"
 	>
 		{#each ["start", "end"] as const as type}
 			<DateRangeField.Input {type}>
@@ -21,7 +21,7 @@
 							{:else}
 								<DateRangeField.Segment
 									{part}
-									class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground px-1 py-1 focus-visible:!ring-0 focus-visible:!ring-offset-0"
+									class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground px-1 py-1 focus-visible:ring-0! focus-visible:ring-offset-0!"
 								>
 									{value}
 								</DateRangeField.Segment>

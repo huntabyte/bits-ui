@@ -21,7 +21,7 @@
 		class="rounded-card bg-background shadow-popover z-50 max-h-[400px] overflow-auto"
 	>
 		{@const Definition = definition}
-		<div class="[&_[data-line]]:!pr-2.5 [&_pre]:!my-0 [&_pre]:!mb-0 [&_pre]:!mt-0">
+		<div class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:mt-0!">
 			<Definition />
 		</div>
 	</Popover.Content>
@@ -34,7 +34,7 @@
 		<Code class="bg-transparent px-0">enum</Code>
 		<Popover.Root>
 			<Popover.Trigger
-				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex items-center justify-center transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2"
 			>
 				<Info class="size-4" weight="bold" />
 				<span class="sr-only">See type definition</span>

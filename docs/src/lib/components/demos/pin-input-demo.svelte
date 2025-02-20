@@ -15,7 +15,7 @@
 
 <PinInput.Root
 	bind:value
-	class="group/pininput text-foreground flex items-center has-[:disabled]:opacity-30"
+	class="group/pininput text-foreground flex items-center has-disabled:opacity-30"
 	maxlength={6}
 	{onComplete}
 	pattern={REGEXP_ONLY_DIGITS}
@@ -51,7 +51,7 @@
 			"border-foreground/20 border-y border-r first:rounded-l-md first:border-l last:rounded-r-md",
 			"text-foreground group-focus-within/pininput:border-foreground/40 group-hover/pininput:border-foreground/40",
 			"outline outline-0",
-			"data-[active]:outline-1 data-[active]:outline-white"
+			"data-active:outline-1 data-active:outline-white"
 		)}
 	>
 		{#if cell.char !== null}

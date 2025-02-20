@@ -14,7 +14,7 @@
 				<a
 					href={item.href}
 					class={cn(
-						"text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+						"text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2",
 						$page.url.pathname === item.href
 							? "bg-muted"
 							: "hover:bg-muted/50 bg-transparent"

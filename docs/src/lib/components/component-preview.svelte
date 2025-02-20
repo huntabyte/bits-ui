@@ -32,7 +32,7 @@
 					value === "preview"
 						? "shadow-mini font-semibold hover:bg-opacity-90"
 						: "hover:text-foreground-alt shadow-none transition-all",
-					"focus-visible:ring-foreground focus-visible:ring-offset-background group relative bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+					"focus-visible:ring-foreground focus-visible:ring-offset-background group relative bg-transparent focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2"
 				)}
 			>
 				<span
@@ -55,7 +55,7 @@
 					value === "code"
 						? "shadow-mini bg-transparent font-semibold hover:bg-opacity-90"
 						: "hover:text-foreground-alt bg-transparent shadow-none transition-all",
-					"focus-visible:ring-foreground focus-visible:ring-offset-background group relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+					"focus-visible:ring-foreground focus-visible:ring-offset-background group relative focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2"
 				)}
 			>
 				<span
@@ -72,7 +72,7 @@
 				{/if}
 			</Tabs.Trigger>
 		</Tabs.List>
-		<Tabs.Content value="code" class="!ring-transparent">
+		<Tabs.Content value="code" class="ring-transparent!">
 			<div
 				class="![&_pre]:mt-0 ![&_pre]:rounded-card w-full [&_pre]:max-h-[443px] [&_pre]:min-h-[443px] [&_pre]:overflow-auto"
 			>
@@ -81,7 +81,7 @@
 		</Tabs.Content>
 		<Tabs.Content
 			value="preview"
-			class="rounded-card border-muted relative border-2 bg-zinc-50 !ring-transparent dark:bg-neutral-900/50"
+			class="rounded-card border-muted relative border-2 bg-zinc-50 ring-transparent! dark:bg-neutral-900/50"
 		>
 			<div
 				class={cn(

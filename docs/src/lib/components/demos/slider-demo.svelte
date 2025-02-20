@@ -20,7 +20,7 @@
 			<Slider.Thumb
 				index={0}
 				class={cn(
-					"border-border-input bg-background hover:border-dark-40 focus-visible:ring-foreground active:scale-98 dark:bg-foreground dark:shadow-card block size-[25px] cursor-pointer rounded-full border shadow transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+					"border-border-input bg-background hover:border-dark-40 focus-visible:ring-foreground dark:bg-foreground dark:shadow-card focus-visible:outline-hidden block size-[25px] cursor-pointer rounded-full border shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
 				)}
 			/>
 		{/snippet}

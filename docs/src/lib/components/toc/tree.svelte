@@ -51,7 +51,7 @@
 			<li class="mt-0 {level === 1 && 'border-l'}">
 				<div
 					class={cn(
-						"text-muted-foreground data-[hover]:border-l-foreground -mx-[1px] inline-flex items-center justify-center gap-1 border-l border-l-transparent pb-2 pl-4 no-underline transition-colors",
+						"text-muted-foreground data-hover:border-l-foreground -mx-[1px] inline-flex items-center justify-center gap-1 border-l border-l-transparent pb-2 pl-4 no-underline transition-colors",
 						level !== 1 ? "pl-8" : "",
 						$isActive(heading.id) && "border-l-foreground"
 					)}
@@ -60,7 +60,7 @@
 						href="#{heading.id}"
 						use:melt={$item(heading.id)}
 						use:hoverAction
-						class="hover:text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background data-[active]:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+						class="hover:text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background data-active:text-foreground transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2"
 					>
 						<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html nodeWithoutSpan}

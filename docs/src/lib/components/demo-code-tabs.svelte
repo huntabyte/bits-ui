@@ -48,7 +48,7 @@
 			{#if expandable}
 				<button
 					class={cn(
-						"text-foreground ring-offset-background hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background hidden select-none items-center justify-center whitespace-nowrap rounded-[7px] px-2.5 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 sm:inline-flex"
+						"text-foreground ring-offset-background hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background hidden select-none items-center justify-center whitespace-nowrap rounded-[7px] px-2.5 py-1.5 text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 sm:inline-flex"
 					)}
 					onclick={() => (open = !open)}
 					aria-label="Toggle code expansion"
@@ -58,7 +58,7 @@
 			{/if}
 			<button
 				class={cn(
-					"text-muted-foreground hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background relative inline-flex items-center justify-center rounded-md px-2 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+					"text-muted-foreground hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background relative inline-flex items-center justify-center rounded-md px-2 py-1.5 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2"
 				)}
 				aria-label="Copy"
 				data-copy-code
