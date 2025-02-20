@@ -10,7 +10,7 @@
 	import SidebarNav from "$lib/components/navigation/sidebar-nav.svelte";
 	import { navigation } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/index.js";
-	import "$lib/styles/app.postcss";
+	import "$lib/styles/app.css";
 	import { onMount } from "svelte";
 
 	onMount(async () => {

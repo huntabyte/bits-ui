@@ -89,7 +89,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	@keyframes spin {
 		from {
 			transform: rotate(0deg);

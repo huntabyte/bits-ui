@@ -50,7 +50,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	/* lines */
 	.line_top_gradient {
 		background: linear-gradient(to right, transparent 50%, hsl(var(--line)) 50%),

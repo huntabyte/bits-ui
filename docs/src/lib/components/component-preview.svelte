@@ -99,15 +99,3 @@
 		</Tabs.Content>
 	</Tabs.Root>
 </div>
-
-<style lang="postcss">
-	.activeTheme {
-		background: var(--grayA5);
-		border-radius: 9999px;
-		height: 32px;
-		width: 100%;
-		top: 0;
-		position: absolute;
-		left: 0;
-	}
-</style>

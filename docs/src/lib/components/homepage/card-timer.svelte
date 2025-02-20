@@ -113,7 +113,7 @@
 	</div>
 </div>
 
-<style lang="postcss">
+<style>
 	.line_top_gradient {
 		background: linear-gradient(to right, transparent 50%, hsl(var(--line)) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));

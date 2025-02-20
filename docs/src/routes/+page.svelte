@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "$lib/styles/app.postcss";
+	import "$lib/styles/app.css";
 	import { Button } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
 	import CardAir from "$lib/components/homepage/card-air.svelte";
@@ -270,7 +270,7 @@
 	</ul>
 </footer>
 
-<style lang="postcss">
+<style>
 	h1 {
 		background: linear-gradient(
 				180deg,
