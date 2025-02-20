@@ -10,7 +10,7 @@
 <Popover.Root>
 	<Popover.Trigger
 		class="rounded-input bg-dark
-	text-background shadow-mini hover:bg-dark/95 active:scale-98 inline-flex h-10 select-none items-center justify-center whitespace-nowrap px-[21px] text-[15px] font-medium transition-all hover:cursor-pointer"
+	text-background shadow-mini hover:bg-dark/95 inline-flex h-10 select-none items-center justify-center whitespace-nowrap px-[21px] text-[15px] font-medium transition-all hover:cursor-pointer active:scale-[0.98]"
 	>
 		Resize
 	</Popover.Trigger>
@@ -62,7 +62,7 @@
 				</div>
 				<Toggle.Root
 					aria-label="toggle constrain portions"
-					class="bg-background hover:bg-muted active:scale-98 data-[state=on]:bg-muted inline-flex size-10 items-center justify-center rounded-[9px] transition-all"
+					class="bg-background hover:bg-muted data-[state=on]:bg-muted inline-flex size-10 items-center justify-center rounded-[9px] transition-all active:scale-[0.98]"
 				>
 					<LinkSimpleHorizontalBreak class="size-6" />
 				</Toggle.Root>

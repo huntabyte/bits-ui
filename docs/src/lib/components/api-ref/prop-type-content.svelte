@@ -32,7 +32,7 @@
 			<Tooltip.Portal>
 				<Tooltip.Content side="top" sideOffset={8}>
 					<div
-						class="rounded-input border-dark-10 bg-background shadow-popover flex items-center justify-center border p-3 text-sm font-medium outline-none"
+						class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden flex items-center justify-center border p-3 text-sm font-medium"
 					>
 						{tooltipContent}
 					</div>
@@ -54,7 +54,7 @@
 			preventScroll={false}
 			side="top"
 			sideOffset={10}
-			class="focus-override rounded-card border-border bg-background shadow-popover z-50 border p-4 outline-none"
+			class="focus-override rounded-card border-border bg-background shadow-popover outline-hidden z-50 border p-4"
 		>
 			<div class="max-h-[400px] max-w-[700px] overflow-auto">
 				<Code class="text-foreground h-auto bg-transparent px-0 tracking-tight">
@@ -72,7 +72,7 @@
 		>
 			{@const TypeDef = typeDef}
 			<div
-				class="[&_[data-line]]:!pr-2.5 [&_pre]:!my-0 [&_pre]:!mb-0 [&_pre]:mt-0 [&_pre]:!overflow-x-visible [&_pre]:border-0 [&_pre]:p-0 [&_pre]:!pb-0 [&_pre]:!pt-0 [&_pre]:!outline-none [&_pre]:!ring-0 [&_pre]:!ring-offset-0"
+				class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pb-0! [&_pre]:pt-0! [&_pre]:outline-hidden! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
 			>
 				<TypeDef />
 			</div>
@@ -87,7 +87,7 @@
 		<Code class="bg-transparent px-0">{type.type}</Code>
 		<Popover.Root>
 			<Popover.Trigger
-				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 			>
 				<Info class="size-4" weight="bold" />
 				<span class="sr-only">See type definition</span>

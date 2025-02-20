@@ -10,7 +10,7 @@
 		RemoveLabelIcon,
 		SetDueDateIcon,
 	} from "./icons/index.js";
-	import "./linear.pcss";
+	import "./linear.css";
 
 	type Item = {
 		icon: Component;

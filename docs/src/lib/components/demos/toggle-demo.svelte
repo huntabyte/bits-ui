@@ -18,7 +18,7 @@
 	</div>
 	<Toggle.Root
 		aria-label="toggle code visibility"
-		class="bg-background-alt hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center rounded-[9px] transition-all"
+		class="bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center rounded-[9px] transition-all active:scale-[0.98]"
 		bind:pressed={unlocked}
 	>
 		<LockKeyOpen class="size-6" />

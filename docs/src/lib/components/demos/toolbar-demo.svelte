@@ -19,21 +19,21 @@
 		<Toolbar.GroupItem
 			aria-label="toggle bold"
 			value="bold"
-			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 		>
 			<TextB class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="toggle italic"
 			value="italic"
-			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 		>
 			<TextItalic class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="toggle strikethrough"
 			value="strikethrough"
-			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 		>
 			<TextStrikethrough class="size-6" />
 		</Toolbar.GroupItem>
@@ -45,21 +45,21 @@
 		<Toolbar.GroupItem
 			aria-label="align left"
 			value="left"
-			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 		>
 			<TextAlignLeft class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="align center"
 			value="center"
-			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 		>
 			<TextAlignCenter class="size-6" />
 		</Toolbar.GroupItem>
 		<Toolbar.GroupItem
 			aria-label="align right"
 			value="right"
-			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:scale-98 active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all"
+			class="rounded-9px bg-background-alt text-foreground/60 hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=on]:text-foreground/80 active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
 		>
 			<TextAlignRight class="size-6" />
 		</Toolbar.GroupItem>
@@ -69,7 +69,7 @@
 
 	<div class="flex items-center">
 		<Toolbar.Button
-			class="rounded-9px text-foreground/80 hover:bg-muted active:scale-98 active:bg-dark-10 inline-flex items-center  justify-center px-3 py-2 text-sm font-medium transition-all"
+			class="rounded-9px text-foreground/80 hover:bg-muted active:bg-dark-10 inline-flex items-center justify-center  px-3 py-2 text-sm font-medium transition-all active:scale-[0.98]"
 		>
 			<Sparkle class="mr-2 size-6" />
 			<span> Ask AI </span>

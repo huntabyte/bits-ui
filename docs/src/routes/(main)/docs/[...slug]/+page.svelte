@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "$lib/styles/markdown.postcss";
+	import "$lib/styles/markdown.css";
 	import PageHeader from "$lib/components/page-header/page-header.svelte";
 	import PageHeaderDescription from "$lib/components/page-header/page-header-description.svelte";
 	import PageHeaderHeading from "$lib/components/page-header/page-header-heading.svelte";

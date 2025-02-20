@@ -18,29 +18,26 @@ description: Organizes content into collapsible sections, allowing users to focu
 
 ## Overview
 
-The Accordion component is a versatile UI element that organizes content into collapsible sections, enabling users to focus on specific information while reducing visual clutter. It's particularly useful for presenting large amounts of related content in a compact, navigable format.
+The Accordion component is a versatile UI element designed to manage large amounts of content by organizing it into collapsible sections. It's ideal for FAQs, settings panels, or any interface where users need to focus on specific information without being overwhelmed by visual clutter.
 
 ## Key Features
 
--   **Customizable Behavior**: Can be configured for single or multiple open sections.
--   **Accessibility**: ARIA attributes for screen reader compatibility and keyboard navigation.
--   **Transition Support**: CSS variables and data attributes for smooth transitions between states.
--   **Flexible State Management**: Supports controlled and uncontrolled state, take control if needed.
--   **Compound Component Structure**: Provides a set of sub-components that work together to create a fully-featured accordion.
-
-## Architecture
-
-The Accordion component is composed of several sub-components, each with a specific role:
-
--   **Root**: The root element that wraps all accordion items and manages the overall state.
--   **Item**: Individual sections within the accordion.
--   **Trigger**: The button that toggles the visibility of the content.
--   **Header**: The title or heading of each item.
--   **Content**: The expandable/collapsible body of each item.
+-   **Single or Multiple Mode**: Toggle between allowing one open section or multiple sections at once.
+-   **Accessible by Default**: Built-in ARIA attributes and keyboard navigation support.
+-   **Smooth Transitions**: Leverage CSS variables or Svelte transitions for animated expansions.
+-   **Flexible State**: Use uncontrolled defaults or take full control with bound values.
 
 ## Structure
 
-Here's an overview of how the Accordion component is structured in code:
+The Accordion is a compound component made up of several sub-components:
+
+-   **`Root`**: Wraps all items and manages state.
+-   **`Item`**: Represents a single collapsible section.
+-   **`Header`**: Displays the title or label.
+-   **`Trigger`**: The clickable element that toggles the content.
+-   **`Content`**: The collapsible body of each item.
+
+Here's a basic example:
 
 ```svelte
 <script lang="ts">
@@ -48,20 +45,22 @@ Here's an overview of how the Accordion component is structured in code:
 </script>
 
 <Accordion.Root>
-	<Accordion.Item>
+	<Accordion.Item value="item-1">
 		<Accordion.Header>
-			<Accordion.Trigger />
+			<Accordion.Trigger>Section 1</Accordion.Trigger>
 		</Accordion.Header>
-		<Accordion.Content />
+		<Accordion.Content>Content for section 1 goes here.</Accordion.Content>
 	</Accordion.Item>
 </Accordion.Root>
 ```
 
 ## Reusable Components
 
-If you're planning to use the `Accordion` component throughout your application, it's recommended to create reusable wrapper components to reduce the amount of code you need to write each time.
+To streamline usage in larger applications, create custom wrapper components for repeated patterns. Below is an example of a reusable `MyAccordionItem` and `MyAccordion`.
 
-For each individual item, you need an `Accordion.Item`, `Accordion.Header`, `Accordion.Trigger` and `Accordion.Content` component. We can combine these into a single `MyAccordionItem` component that makes it easier to reuse.
+### Item Wrapper
+
+Combines `Item`, `Header`, `Trigger`, and `Content` into a single component:
 
 ```svelte title="MyAccordionItem.svelte"
 <script lang="ts">
@@ -85,9 +84,9 @@ For each individual item, you need an `Accordion.Item`, `Accordion.Header`, `Acc
 </Accordion.Item>
 ```
 
-We used the [`WithoutChildrenOrChild`](/docs/type-helpers/without-children-or-child) type helper to omit the `child` and `children` snippet props from `Accordion.ItemProps`, since we are opting out of using [delegation](/docs/child-snippet) and are already taking care of rendering the children as text via the `content` prop.
+### Accordion Wrapper
 
-For our `MyAccordion` component, we'll accept all the props that `Accordion.Root` accepts, as well as an additional `items` prop that will be used to render the `MyAccordionItem` components.
+Wraps `Root` and renders multiple `MyAccordionItem` components:
 
 ```svelte title="MyAccordion.svelte"
 <script lang="ts">
@@ -122,25 +121,33 @@ For our `MyAccordion` component, we'll accept all the props that `Accordion.Root
 </Accordion.Root>
 ```
 
+### Usage Example
+
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import { MyAccordion, MyAccordionItem } from "$lib/components";
+	import MyAccordion from "$lib/components/MyAccordion.svelte";
+	const items = [
+		{ title: "Item 1", content: "Content 1" },
+		{ title: "Item 2", content: "Content 2" },
+	];
 </script>
 
-<MyAccordion type="single">
-	<MyAccordionItem title="Item 1">Content 1</MyAccordionItem>
-	<MyAccordionItem title="Item 2">Content 2</MyAccordionItem>
-	<MyAccordionItem title="Item 3">Content 3</MyAccordionItem>
-</MyAccordion>
+<MyAccordion type="single" {items} />
 ```
 
-## Managing Value State
+<Callout type="tip">
 
-Bits UI offers several approaches to manage and synchronize the Accordion's value state, catering to different levels of control and integration needs.
+Use unique `value` props for each `Item` if you plan to control the state programatically.
 
-### 1. Two-Way Binding
+</Callout>
 
-For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the accordion's internal state.
+## State Management
+
+The Accordion supports multiple ways to manage which items are open, catering to different use cases.
+
+### Two-Way Binding
+
+Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -169,51 +176,35 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 </Accordion.Root>
 ```
 
-#### Key Benefits
+#### Why Use It?
 
--   Simplifies state management
--   Automatically updates `myValue` when the accordion changes (e.g., via clicking on an item's trigger)
--   Allows external control (e.g., opening an item via a separate button)
+-   Effortless state updates
+-   External controls (e.g., buttons) work out of the box
 
-### 2. Change Handler
+### Change Handler
 
-For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use `onValueChange` for custom logic on state changes:
 
 ```svelte
 <script lang="ts">
 	import { Accordion } from "bits-ui";
-	let myValue = $state<string[]>([]);
 </script>
 
 <Accordion.Root
 	type="multiple"
-	value={myValue}
 	onValueChange={(value) => {
-		myValue = value;
-		// additional logic here.
+		console.log("Accordion state changed!");
 	}}
->
-	<Accordion.Item value="item-1">
-		<!-- ... -->
-	</Accordion.Item>
-	<Accordion.Item value="item-2">
-		<!-- ... -->
-	</Accordion.Item>
-	<Accordion.Item value="item-3">
-		<!-- ... -->
-	</Accordion.Item>
-</Accordion.Root>
+></Accordion.Root>
 ```
 
-#### Use Cases
+#### When to Use?
 
--   Implementing custom behaviors on value change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
+-   Add logging, validation, or side effects.
 
-### 3. Fully Controlled
+### Fully Controlled
 
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for total control:
 
 ```svelte
 <script lang="ts">
@@ -232,47 +223,59 @@ For complete control over the component's state, use a [Function Binding](https:
 -   Coordinating multiple UI elements
 -   Debugging state-related issues
 
-<Callout>
+<Callout type="warning">
 
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+Fully controlled state requires careful management to avoid bugs. Prefer two-way binding unless you need fine-grained control.
 
 </Callout>
 
-## Single Type
+## Customization
+
+### Single vs. Multiple
 
 Set the `type` prop to `"single"` to allow only one accordion item to be open at a time.
 
 ```svelte /type="single"/
-<CustomAccordion type="single" />
+<MyAccordion
+	type="single"
+	items={[
+		{ title: "Title A", content: "Content A" },
+		{ title: "Title B", content: "Content B" },
+		{ title: "Title C", content: "Content C" },
+	]}
+/>
 ```
 
 <AccordionDemoCustom type="single" />
 
-## Multiple Type
-
 Set the `type` prop to `"multiple"` to allow multiple accordion items to be open at the same time.
 
 ```svelte /type="multiple"/
-<CustomAccordion type="multiple" />
+<MyAccordion
+	type="multiple"
+	items={[
+		{ title: "Title A", content: "Content A" },
+		{ title: "Title B", content: "Content B" },
+		{ title: "Title C", content: "Content C" },
+	]}
+/>
 ```
 
-<AccordionDemoCustom type="multiple" />
+<AccordionDemoCustom type="single" />
 
-## Default Open Items
+### Default Open Items
 
-To set default open items, pass them as the `value` prop, which will be an array if the `type` is `"multiple"`, or a string if the `type` is `"single"`.
+Set the `value` prop to pre-open items:
 
 ```svelte /value={["A", "C"]}/
-<CustomAccordion value={["A", "C"]} type="multiple" />
+<MyAccordion value={["A", "C"]} type="multiple" />
 ```
 
 <AccordionDemoCustom value={["A", "C"]} type="multiple" />
 
-## Disable Items
+### Disable Items
 
-To disable an individual accordion item, set the `disabled` prop to `true`. This will prevent users from interacting with the item.
+Disable specific items with the `disabled` prop:
 
 ```svelte {2}
 <Accordion.Root type="single">
@@ -282,11 +285,11 @@ To disable an individual accordion item, set the `disabled` prop to `true`. This
 </Accordion.Root>
 ```
 
-## Svelte Transitions
+### Svelte Transitions
 
 The Accordion component can be enhanced with Svelte's built-in transition effects or other animation libraries.
 
-### Using `forceMount` and `child` Snippets
+#### Using `forceMount` and `child` Snippets
 
 To apply Svelte transitions to Accordion components, use the `forceMount` prop in combination with the `child` snippet. This approach gives you full control over the mounting behavior and animation of the `Accordion.Content`.
 
@@ -317,7 +320,7 @@ In this example:
 
 </ComponentPreviewV2>
 
-### Best Practices
+#### Best Practices
 
 For cleaner code and better maintainability, consider creating custom reusable components that encapsulate this transition logic.
 

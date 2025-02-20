@@ -19,7 +19,7 @@
 	</ContextMenu.Trigger>
 	<ContextMenu.Portal>
 		<ContextMenu.Content
-			class="focus-override border-muted bg-background shadow-popover w-[229px] rounded-xl border px-1 py-1.5 outline-none focus-visible:outline-none"
+			class="focus-override border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[229px] rounded-xl border px-1 py-1.5"
 			forceMount
 		>
 			{#snippet child({ wrapperProps, props, open })}
@@ -27,7 +27,7 @@
 					<div {...wrapperProps}>
 						<div {...props} transition:fly={{ duration: 300 }}>
 							<ContextMenu.Item
-								class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent"
+								class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
 							>
 								<div class="flex items-center">
 									<PencilSimpleLine class="text-foreground-alt mr-2 size-5" />
@@ -48,7 +48,7 @@
 							</ContextMenu.Item>
 							<ContextMenu.Sub>
 								<ContextMenu.SubTrigger
-									class="rounded-button data-[highlighted]:bg-muted data-[state=open]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent"
+									class="rounded-button data-highlighted:bg-muted data-[state=open]:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
 								>
 									<div class="flex items-center">
 										<PlusCircle class="text-foreground-alt mr-2 size-5" />
@@ -68,38 +68,38 @@
 									</div>
 								</ContextMenu.SubTrigger>
 								<ContextMenu.SubContent
-									class="border-muted bg-background shadow-popover z-[100] w-[209px] rounded-xl border px-1 py-1.5 !ring-0 !ring-transparent"
+									class="border-muted bg-background shadow-popover z-100 ring-0! ring-transparent! w-[209px] rounded-xl border px-1 py-1.5"
 									sideOffset={10}
 								>
 									<ContextMenu.Item
-										class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent"
+										class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal"
 									>
 										Header
 									</ContextMenu.Item>
 									<ContextMenu.Item
-										class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent"
+										class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal"
 									>
 										Paragraph
 									</ContextMenu.Item>
 									<ContextMenu.Item
-										class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent"
+										class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal"
 									>
 										Codeblock
 									</ContextMenu.Item>
 									<ContextMenu.Item
-										class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent"
+										class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal"
 									>
 										List
 									</ContextMenu.Item>
 									<ContextMenu.Item
-										class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal outline-none !ring-0 !ring-transparent"
+										class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-normal"
 									>
 										Task
 									</ContextMenu.Item>
 								</ContextMenu.SubContent>
 							</ContextMenu.Sub>
 							<ContextMenu.Item
-								class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent"
+								class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
 							>
 								<div class="flex items-center">
 									<CopySimple class="text-foreground-alt mr-2 size-5" />
@@ -120,7 +120,7 @@
 							</ContextMenu.Item>
 							<ContextMenu.Separator class="bg-muted -mx-1 my-1 block h-px" />
 							<ContextMenu.Item
-								class="rounded-button data-[highlighted]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium outline-none !ring-0 !ring-transparent"
+								class="rounded-button data-highlighted:bg-muted outline-hidden ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
 							>
 								<div class="flex items-center">
 									<Trash class="text-foreground-alt mr-2 size-5" />
