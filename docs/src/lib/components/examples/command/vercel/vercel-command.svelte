@@ -2,7 +2,7 @@
 	import { Command } from "bits-ui";
 	import Home from "./home.svelte";
 	import Projects from "./projects.svelte";
-	import "./vercel.pcss";
+	import "./vercel.css";
 
 	let inputValue = $state("");
 
