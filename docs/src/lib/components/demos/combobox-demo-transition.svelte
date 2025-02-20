@@ -62,11 +62,7 @@
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-<<<<<<< HEAD
 			class="border-muted bg-background shadow-popover outline-hidden h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border px-1 py-3"
-=======
-			class="border-muted bg-background shadow-popover outline-hidden max-h-96 w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border px-1 py-3"
->>>>>>> main
 			sideOffset={10}
 			forceMount
 		>
