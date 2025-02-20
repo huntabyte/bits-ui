@@ -3,22 +3,37 @@ title: Migration Guide
 description: Learn how to migrate from 0.x to 1.x
 ---
 
-Anything before 1.0 is considered a pre-release version and is not guaranteed to be stable. While this guide may not be all encompassing, there were a lot of changes made not only to the library, but to Svelte itself.
+<script>
+	import { Callout } from '$lib/components';
+</script>
 
-The hope is that this information will get you most of the way there, but it's _highly_ encouraged to check the documentation for the components you're using to determine what else may have changed.
+Bits UI v1 is a major update that introduces significant improvements, but it also comes with breaking changes. Since anything before v1.0 was a pre-release, backward compatibility was not guaranteed. This guide will help you transition smoothly, though it may not cover every edge case.
 
-## Why Migrate?
+We highly recommend reviewing the documentation for each component you use, as their APIs may have changed.
 
-Bits UI has been completely rewritten from the ground up to support Svelte 5. The rewrite has provided us with a number of benefits in the form of performance improvements, bug fixes, more flexible APIs, and an overall improved developer experience.
+<Callout>
 
-Once you learn how to use the new version of Bits UI, we're confident you'll find it to be a much more capable headless component library than before.
+Looking for the old documentation? You can still access Bits UI v0.x at [v0.bits-ui.com](https://v0.bits-ui.com). However, we encourage you to migrate as soon as possible to take advantage of the latest features and improvements.
+
+</Callout>
+
+## Why Upgrade?
+
+Bits UI has been completely rewritten for Svelte 5, bringing several key benefits:
+
+-   **Performance improvements** – Faster rendering and reduced overhead.
+-   **More flexible APIs** – Easier customization and integration.
+-   **Bug fixes and stability** – Addressing every bug and issue from v0.x.
+-   **Better developer experience** – Improved consistency and documentation.
+
+Once you get familiar with Bits UI v1, we're confident you'll find it to be a more powerful and streamlined headless component library.
 
 ## Shared Changes
 
--   The `el` prop has been replaced with a `ref` prop across all components that render an HTML element. See the [Ref](/docs/ref) documentation for more information.
--   The `asChild` prop has been replaced with a `child` snippet prop across all components that render an HTML element. See the [Child Snippet](/docs/child-snippet) documentation for more information.
--   Components that used to accept `transition` props no longer do in favor of using the `child` snippet along with `forceMount` to use Svelte transitions. See the [Transitions](/docs/transitions) documentation for more information.
--   Components that used to provide data via `let:` directives now provide that data via `children`/`child` snippet props.
+-   **`el` prop replaced with `ref`**: The `el` prop has been removed across all components that render and HTML element. Use the `ref` prop instead. See the [ref](/docs/ref) documentation for more information.
+-   **`asChild` prop replaced with `child` snippet**: Components that previously used `asChild` now use the `child` snippet prop. See the [Child Snippet](/docs/child-snippet) documentation.
+-   **Transition props removed**: Components no longer accept `transition` props. Instead, use the `child` snippet along with `forceMount` to leverage Svelte transitions. More details in the [Transitions](/docs/transitions) documentation.
+-   **`let:` directives replaced with snippet props**: Components that used to expose data via `let:` directives now provide it through `children`/`child` snippet props.
 
 ## Accordion
 
@@ -53,16 +68,22 @@ See the [Checkbox](/docs/components/checkbox) documentation for more information
 -   The combobox now automatically renders a hidden input when the `name` prop is provided to the `Combobox.Root` component.
 -   The `Combobox.ItemIndicator` component has been removed in favor of using the `children` snippet prop to get a reference to the `selected` state and render a custom indicator. See the [Combobox](/docs/components/combobox) documentation for more information.
 -   `Combobox.Group` and `Combobox.GroupHeading` have been added to support groups within the combobox.
+-   In Bits UI v0, the `Combobox.Content` was automatically portalled unless you explicitly set the `portal` prop to `false`. In v1, we provide a `Combobox.Portal` component that you can wrap around the `Combobox.Content` to portal the content. `Combobox.Portal` accepts a `to` prop that can be used to specify the target portal container (defaults to `document.body`), and a `disabled` prop that can be used to disable portalling.
 
 ## Context Menu/Dropdown Menu/Menubar Menu
 
--   The `.RadioIndicator` and `.CheckboxIndicator` components have been removed in favor of using the `children` snippet prop to get a reference to the `checked` or `selected` state and render a custom indicator. See the [Context Menu](/docs/components/context-menu), [Dropdown Menu](/docs/components/dropdown-menu), and [Menubar](/docs/components/menubar) documentation for more information.
--   The `.Label` component, which was used as the heading for a group of items has been replaced with the `.GroupHeading` component.
+-   The `*Menu.RadioIndicator` and `*Menu.CheckboxIndicator` components have been removed in favor of using the `children` snippet prop to get a reference to the `checked` or `selected` state and render a custom indicator. See the [Context Menu](/docs/components/context-menu), [Dropdown Menu](/docs/components/dropdown-menu), and [Menubar](/docs/components/menubar) documentation for more information.
+-   The `*Menu.Label` component, which was used as the heading for a group of items has been replaced with the `*Menu.GroupHeading` component.
 -   The `href` prop on the `.Item` components has been removed in favor of the `child` snippet and rendering your own anchor element.
+-   In Bits UI v0, the `*Menu.Content` was automatically portalled unless you explicitly set the `portal` prop to `false`. In v1, we provide a `*Menu.Portal` component that you can wrap around the `*Menu.Content` to portal the content. `*Menu.Portal` accepts a `to` prop that can be used to specify the target portal container (defaults to `document.body`), and a `disabled` prop that can be used to disable portalling.
 
 ## Pin Input
 
 -   The `PinInput` component has been completely overhauled to better act as an OTP input component, with code and inspiration taken from [Input OTP](https://github.com/guilhermerodz/input-otp) by [Guilherme Rodz](https://x.com/guilhermerodz). The best way to migrate is to reference the [Pin Input](/docs/components/pin-input) documentation to see how to use the new component.
+
+## Popover
+
+-   In Bits UI v0, the `Popover.Content` was automatically portalled unless you explicitly set the `portal` prop to `false`. In v1, we provide a `Popover.Portal` component that you can wrap around the `Popover.Content` to portal the content. `Popover.Portal` accepts a `to` prop that can be used to specify the target portal container (defaults to `document.body`), and a `disabled` prop that can be used to disable portalling.
 
 ## Radio Group
 
@@ -80,6 +101,7 @@ See the [Checkbox](/docs/components/checkbox) documentation for more information
 -   The `Select.ItemIndicator` component has been removed in favor of using the `children` snippet prop to get a reference to the `selected` state and render a custom indicator. See the [Select](/docs/components/select) documentation for more information.
 -   `Select.Group` and `Select.GroupHeading` have been added to support groups within the Select.
 -   `Select.Value` has been removed in favor of enabling developers to use the `value` prop to render your own custom label in the trigger to represent the value.
+-   In Bits UI v0, the `Select.Content` was automatically portalled unless you explicitly set the `portal` prop to `false`. In v1, we provide a `Select.Portal` component that you can wrap around the `Select.Content` to portal the content. `Select.Portal` accepts a `to` prop that can be used to specify the target portal container (defaults to `document.body`), and a `disabled` prop that can be used to disable portalling.
 
 ## Slider
 
