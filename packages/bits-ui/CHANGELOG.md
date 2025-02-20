@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.3.2
+
+### Patch Changes
+
+-   fix: `Select.Trigger` toggle on touch devices ([#1219](https://github.com/huntabyte/bits-ui/pull/1219))
+
+-   fix: `Popover.Trigger` receiving focusable when closed with outside click ([#1218](https://github.com/huntabyte/bits-ui/pull/1218))
+
 ## 1.3.1
 
 ### Patch Changes
