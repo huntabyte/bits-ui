@@ -61,11 +61,11 @@ type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 		previousValue: string;
 	}> & {
 		isRootMenu: boolean;
-		onTriggerEnter: (itemValue: string) => void;
+		onTriggerEnter: (itemValue: string, itemState: NavigationMenuItemState | null) => void;
 		onTriggerLeave?: () => void;
 		onContentEnter?: () => void;
 		onContentLeave?: () => void;
-		onItemSelect: (itemValue: string) => void;
+		onItemSelect: (itemValue: string, itemState: NavigationMenuItemState | null) => void;
 		onItemDismiss: () => void;
 	};
 
@@ -73,6 +73,7 @@ class NavigationMenuProviderState {
 	indicatorTrackRef = box<HTMLElement | null>(null);
 	viewportRef = box<HTMLElement | null>(null);
 	viewportContent = new SvelteMap<string, NavigationMenuItemState>();
+	activeItem: NavigationMenuItemState | null = null;
 	onTriggerEnter: NavigationMenuProviderStateProps["onTriggerEnter"];
 	onTriggerLeave: () => void = noop;
 	onContentEnter: () => void = noop;
@@ -127,8 +128,8 @@ class NavigationMenuRootState {
 			orientation: this.opts.orientation,
 			rootNavigationMenuRef: this.opts.ref,
 			isRootMenu: true,
-			onTriggerEnter: (itemValue) => {
-				this.#onTriggerEnter(itemValue);
+			onTriggerEnter: (itemValue, itemState) => {
+				this.#onTriggerEnter(itemValue, itemState);
 			},
 			onTriggerLeave: this.#onTriggerLeave,
 			onContentEnter: this.#onContentEnter,
@@ -139,43 +140,50 @@ class NavigationMenuRootState {
 	}
 
 	#debouncedFn = useDebounce(
-		(val?: string) => {
+		(val: string | undefined, itemState: NavigationMenuItemState | null) => {
 			// passing `undefined` meant to reset the debounce timer
 			if (typeof val === "string") {
-				this.setValue(val);
+				this.setValue(val, itemState);
 			}
 		},
 		() => this.#derivedDelay
 	);
 
-	#onTriggerEnter = (itemValue: string) => {
-		this.#debouncedFn(itemValue);
+	#onTriggerEnter = (itemValue: string, itemState: NavigationMenuItemState | null) => {
+		this.#debouncedFn(itemValue, itemState);
 	};
 
 	#onTriggerLeave = () => {
 		this.isDelaySkipped.current = false;
-		this.#debouncedFn("");
+		this.#debouncedFn("", null);
 	};
 
 	#onContentEnter = () => {
-		this.#debouncedFn();
+		this.#debouncedFn(undefined, null);
 	};
 
 	#onContentLeave = () => {
-		this.#debouncedFn("");
+		if (
+			this.provider.activeItem &&
+			this.provider.activeItem.opts.openOnHover.current === false
+		) {
+			return;
+		}
+		this.#debouncedFn("", null);
 	};
 
-	#onItemSelect = (itemValue: string) => {
-		this.setValue(itemValue);
+	#onItemSelect = (itemValue: string, itemState: NavigationMenuItemState | null) => {
+		this.setValue(itemValue, itemState);
 	};
 
 	#onItemDismiss = () => {
-		this.setValue("");
+		this.setValue("", null);
 	};
 
-	setValue = (newValue: string) => {
+	setValue = (newValue: string, itemState: NavigationMenuItemState | null) => {
 		this.previousValue.current = this.opts.value.current;
 		this.opts.value.current = newValue;
+		this.provider.activeItem = itemState;
 	};
 
 	props = $derived.by(
@@ -296,6 +304,7 @@ class NavigationMenuListState {
 type NavigationMenuItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		value: string;
+		openOnHover: boolean;
 	}>
 >;
 
@@ -411,16 +420,19 @@ class NavigationMenuTriggerState {
 			this.opts.disabled.current ||
 			this.wasClickClose ||
 			this.itemContext.wasEscapeClose ||
-			this.hasPointerMoveOpened.current
+			this.hasPointerMoveOpened.current ||
+			!this.itemContext.opts.openOnHover.current
 		) {
 			return;
 		}
-		this.context.onTriggerEnter(this.itemContext.opts.value.current);
+		this.context.onTriggerEnter(this.itemContext.opts.value.current, this.itemContext);
 		this.hasPointerMoveOpened.current = true;
 	});
 
 	onpointerleave = whenMouse(() => {
-		if (this.opts.disabled.current) return;
+		if (this.opts.disabled.current || !this.itemContext.opts.openOnHover.current) {
+			return;
+		}
 		this.context.onTriggerLeave();
 		this.hasPointerMoveOpened.current = false;
 	});
@@ -429,9 +441,9 @@ class NavigationMenuTriggerState {
 		// if opened via pointer move, we prevent the click event
 		if (this.hasPointerMoveOpened.current) return;
 		if (this.open) {
-			this.context.onItemSelect("");
+			this.context.onItemSelect("", null);
 		} else {
-			this.context.onItemSelect(this.itemContext.opts.value.current);
+			this.context.onItemSelect(this.itemContext.opts.value.current, this.itemContext);
 		}
 		this.wasClickClose = this.open;
 	};
@@ -699,6 +711,7 @@ class NavigationMenuContentState {
 	};
 
 	onpointerleave = whenMouse(() => {
+		if (!this.itemContext.opts.openOnHover.current) return;
 		this.context.onContentLeave();
 	});
 
@@ -802,9 +815,32 @@ class NavigationMenuContentImplState {
 	onInteractOutside = (e: PointerEvent) => {
 		const target = e.target as HTMLElement;
 		const isTrigger = this.listContext.listTriggers.some((trigger) => trigger.contains(target));
-		const isRootViewport =
-			this.context.opts.isRootMenu && this.context.viewportRef.current?.contains(target);
-		if (isTrigger || isRootViewport || !this.context.opts.isRootMenu) e.preventDefault();
+
+		const isRootMenu = this.context.opts.isRootMenu;
+
+		// we handle interactions outside differently for submenus
+		if (!isRootMenu) {
+			const isInteractionInViewport = this.context.viewportRef.current?.contains(target);
+			if (isTrigger || isInteractionInViewport) {
+				e.preventDefault();
+				return;
+			}
+			if (!this.itemContext.opts.openOnHover.current) {
+				this.context.onItemSelect("", null);
+				return;
+			}
+		}
+
+		const isRootViewport = isRootMenu && this.context.viewportRef.current?.contains(target);
+
+		if (isTrigger || isRootViewport || !this.context.opts.isRootMenu) {
+			console.log("on interact outside, not root menu so keeping open");
+			e.preventDefault();
+			return;
+		}
+		if (!this.itemContext.opts.openOnHover.current) {
+			this.context.onItemSelect("", null);
+		}
 	};
 
 	onkeydown = (e: BitsKeyboardEvent) => {

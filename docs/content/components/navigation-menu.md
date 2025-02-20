@@ -262,12 +262,12 @@ You may wish for the links in the Navigation Menu to persist in the DOM, regardl
 <NavigationMenu.Viewport forceMount></NavigationMenu.Viewport>
 ```
 
-<ComponentPreviewV2 name="navigation-menu-demo-force-mount" comp="Navigation Menu">
+### Disable Open on Hover
 
-{#snippet preview()}
-<NavigationMenuDemoForceMount />
-{/snippet}
+To prevent the menu from opening on hover, you can set the `openOnHover` prop to `false` on the `NavigationMenu.Item` component. When `openOnHover` is set to `false`, the menu will only open when the `NavigationMenu.Trigger` is clicked, and will not close when the mouse moves away from the menu/trigger area, instead expecting the user to either click the trigger again, click outside the menu, or use the `Escape` key to close the menu.
 
-</ComponentPreviewV2>
+```svelte /openOnHover={false}/
+<NavigationMenu.Item openOnHover={false}></NavigationMenu.Item>
+```
 
 <APISection {schemas} />
