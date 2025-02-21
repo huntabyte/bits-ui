@@ -1,7 +1,6 @@
 <script module>
 	import { defineMeta } from "@storybook/addon-svelte-csf";
 	import AccordionBase from "./accordion-base.svelte";
-	import { Accordion } from "bits-ui";
 
 	const items = [
 		{
@@ -28,12 +27,6 @@
 		title: "Components/Accordion",
 		tags: ["autodocs"],
 		component: AccordionBase,
-		subcomponents: {
-			Content: Accordion.Content,
-			Header: Accordion.Header,
-			Item: Accordion.Item,
-			Trigger: Accordion.Trigger,
-		},
 		argTypes: {
 			type: {
 				control: { type: "radio" },
