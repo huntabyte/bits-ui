@@ -1,6 +1,7 @@
 <script module>
 	import { defineMeta } from "@storybook/addon-svelte-csf";
-	import Accordion from "./accordion.svelte";
+	import AccordionBase from "./accordion-base.svelte";
+	import { Accordion } from "bits-ui";
 
 	const items = [
 		{
@@ -24,17 +25,29 @@
 
 	// More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 	const { Story } = defineMeta({
-		title: "Example/Accordion",
-		component: Accordion,
+		title: "Components/Accordion",
+		tags: ["autodocs"],
+		component: AccordionBase,
+		subcomponents: {
+			Content: Accordion.Content,
+			Header: Accordion.Header,
+			Item: Accordion.Item,
+			Trigger: Accordion.Trigger,
+		},
 		argTypes: {
 			type: {
-				control: { type: "select" },
+				control: { type: "radio" },
 				options: ["single", "multiple"],
+			},
+			disabled: {
+				control: { type: "boolean" },
+				defaultValue: false,
 			},
 		},
 		args: {
 			type: "single",
 			items,
+			disabled: false,
 		},
 	});
 </script>

@@ -347,6 +347,9 @@ importers:
       '@vitest/ui':
         specifier: ^2.1.8
         version: 2.1.8(vitest@2.1.8)
+      clsx:
+        specifier: ^2.1.0
+        version: 2.1.1
       jest-axe:
         specifier: ^9.0.0
         version: 9.0.0
