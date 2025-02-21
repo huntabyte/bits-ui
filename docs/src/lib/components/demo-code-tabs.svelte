@@ -6,6 +6,7 @@
 	import { noop } from "@melt-ui/svelte/internal/helpers";
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
+	import { openInStackBlitz } from "$lib/utils/open-in-stackblitz.js";
 
 	type Props = {
 		value?: string;
@@ -59,7 +60,13 @@
 				</button>
 			{/if}
 			{#if name}
-				<button> StackBlitz </button>
+				<button
+					onclick={async () => {
+						await openInStackBlitz(name);
+					}}
+				>
+					StackBlitz
+				</button>
 			{/if}
 			<button
 				class={cn(

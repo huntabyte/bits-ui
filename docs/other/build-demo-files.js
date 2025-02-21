@@ -185,12 +185,15 @@ async function main() {
 			packageJson.devDependencies[dep] = docsDep;
 		}
 
+		packageJson.scripts["start"] = "vite";
+
 		const dependencies = packageJson ? extractDependencies(packageJson) : [];
 		console.log(`Extracted ${dependencies.length} dependencies.`);
 
 		const output = {
 			files: {
 				...files,
+				"package.json": JSON.stringify(packageJson, null, 2),
 				...libFiles,
 			},
 			dependencies,

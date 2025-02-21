@@ -3,27 +3,26 @@ import sdk from "@stackblitz/sdk";
 
 export async function openInStackBlitz(demoName: string) {
 	try {
-		const res = await fetch(`/api/demos?name=${demoName}`);
+		const res = await fetch(`/api/demos.json?name=${demoName}`);
 		if (!res.ok) {
 			throw new Error("Failed to fetch demo code");
 		}
 		const { code: demoCode } = await res.json();
 
-		sdk.default.openProject(
+		sdk.openProject(
 			{
 				title: "Bits UI Demo",
-				description: "Demo component for Bits UI",
 				files: {
 					...stackblitzData.files,
+					"pnpm-lock.yaml": "",
 					"src/routes/+page.svelte": demoCode,
 				},
-				dependencies: stackblitzData.dependencies,
-				template: "javascript",
+				template: "node",
 			},
 			{
 				newWindow: true,
 				openFile: "src/routes/+page.svelte",
-				startScript: "pnpm dev",
+				terminalHeight: 200,
 			}
 		);
 	} catch (err) {
