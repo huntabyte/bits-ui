@@ -40,4 +40,11 @@
 			{/snippet}
 		</PresenceLayer>
 	</Portal>
+{:else}
+	<PresenceLayer {id} present={forceMount || contentState.open || contentState.isLastActiveValue}>
+		{#snippet presence()}
+			<NavigationMenuContentImpl {...mergedProps} {children} {child} />
+			<Mounted bind:mounted={contentState.mounted} />
+		{/snippet}
+	</PresenceLayer>
 {/if}
