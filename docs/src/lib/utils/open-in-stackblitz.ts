@@ -1,7 +1,7 @@
 import { stackblitzData } from "$lib/generated/stackblitz-data.js";
 import sdk from "@stackblitz/sdk";
 
-export async function openInStackBlitz(demoName: string) {
+export async function openInStackBlitz(demoName: string, componentName?: string) {
 	try {
 		const res = await fetch(`/api/demos.json?name=${demoName}`);
 		if (!res.ok) {
@@ -9,9 +9,10 @@ export async function openInStackBlitz(demoName: string) {
 		}
 		const { code: demoCode } = await res.json();
 
+		// @ts-expect-error - sh
 		sdk.openProject(
 			{
-				title: "Bits UI Demo",
+				title: `${componentName ?? demoName} - Bits UI`,
 				files: {
 					...stackblitzData.files,
 					"pnpm-lock.yaml": "",

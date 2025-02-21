@@ -6,6 +6,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import { fileURLToPath } from "url";
 import docsPackageJson from "../package.json" with { type: "json" };
+import bitsPackageJson from "../../packages/bits-ui/package.json" with { type: "json" };
 
 const execPromise = promisify(exec);
 
@@ -46,9 +47,8 @@ const IGNORE_LIST = ["node_modules", ".svelte-kit", "pnpm-lock.yaml", "static/fa
  * Recursively collects file information from a directory, excluding specified directories.
  * @param {string} currentDir - The current directory to traverse.
  * @param {string} baseDir - The project root directory for calculating relative paths.
- * @returns {Promise<Record<string, string>>} - Array of objects with path as key and content as value.
  */
-async function collectFiles(currentDir, baseDir) {
+async function collectFiles(currentDir: string, baseDir: string): Promise<Record<string, string>> {
 	const entries = await fs.readdir(currentDir, { withFileTypes: true });
 
 	const files = {};
@@ -81,16 +81,15 @@ async function collectFiles(currentDir, baseDir) {
 		}
 	}
 
-	// @ts-expect-error - shh
 	return files;
 }
 
 /**
  * Extracts deps from package.json content.
- * @param {Record<string, any>} packageJsonContent - The content of package.json as a string.
- * @returns {Record<string, string>} - Array of objects with package name as key and version as value.
+ * @param packageJsonContent - The content of package.json as a string.
+ * @returns - Array of objects with package name as key and version as value.
  */
-function extractDependencies(packageJsonContent) {
+function extractDependencies(packageJsonContent: typeof docsPackageJson): Record<string, string> {
 	try {
 		const pkg = packageJsonContent;
 		return { ...pkg.dependencies, ...pkg.devDependencies };
@@ -104,10 +103,9 @@ function extractDependencies(packageJsonContent) {
 
 /**
  * Removes a directory and all its contents recursively.
- * @param {string} dirPath - The directory to remove.
- * @returns {Promise<void>}
+ * @param dirPath - The directory to remove.
  */
-async function removeDir(dirPath) {
+async function removeDir(dirPath: string): Promise<void> {
 	const entries = await fs.readdir(dirPath, { withFileTypes: true });
 	for (const entry of entries) {
 		const fullPath = join(dirPath, entry.name);
@@ -120,12 +118,12 @@ async function removeDir(dirPath) {
 	await fs.rmdir(dirPath);
 }
 
-async function buildDemoComponentJson() {
+async function buildDemoRegistry() {
 	const dir = join(__dirname, "../src/lib/components/demos");
 	// get all .svelte files in the directory
 	const files = await fs.readdir(dir);
-	/** @type Record<string, string> */
-	const components = {};
+
+	const components: Record<string, string> = {};
 	for (const file of files) {
 		const name = file.replace(".svelte", "");
 		const content = await fs.readFile(join(dir, file), "utf-8");
@@ -138,13 +136,48 @@ async function buildDemoComponentJson() {
 	await fs.writeFile(demoJsonPath, jsonOutput, "utf-8");
 }
 
+async function createSvelteProject(projectDir: string) {
+	const command =
+		"pnpx sv@latest create . --template=minimal --types=ts --no-add-ons --no-install";
+	console.log(`Running command: ${command} in ${projectDir}`);
+	await execPromise(command, { cwd: projectDir });
+	console.log("Project created successfully.");
+}
+
+async function addTailwindCSS(projectDir: string) {
+	// add tailwindcss
+	const command2 = "pnpx sv@latest add tailwindcss --no-preconditions --no-install";
+	console.log(`Running command: ${command2} in ${projectDir}`);
+	await execPromise(command2, { cwd: projectDir });
+	console.log("TailwindCSS added successfully.");
+}
+
+function buildDependenciesObj(packageJsonContent: string): Record<string, string> {
+	// extract deps
+	const packageJson = JSON.parse(packageJsonContent);
+	for (const dep of bitsDeps) {
+		if (dep === "bits-ui") {
+			packageJson.devDependencies["bits-ui"] = bitsPackageJson.version;
+			continue;
+		}
+		// @ts-expect-error shhh
+		const docsDep = docsPackageJson.devDependencies[dep];
+
+		packageJson.devDependencies[dep] = docsDep;
+	}
+
+	packageJson.scripts["start"] = "vite";
+
+	return packageJson ? extractDependencies(packageJson) : {};
+}
+
 /**
  * Main function to create a Svelte project, collect its file information,
  * extract dependencies, and clean up.
- * @returns {Promise<void>}
  */
-async function main() {
+async function main(): Promise<void> {
 	let projectDir = "";
+
 	try {
 		// create temp dir
 		const tempDir = tmpdir();
@@ -153,18 +186,8 @@ async function main() {
 		await fs.mkdir(projectDir, { recursive: true });
 		console.log(`Created temporary directory: ${projectDir}`);
 
-		// create svelte project
-		const command =
-			"pnpx sv@latest create . --template=minimal --types=ts --no-add-ons --no-install";
-		console.log(`Running command: ${command} in ${projectDir}`);
-		await execPromise(command, { cwd: projectDir });
-		console.log("Project created successfully.");
-
-		// add tailwindcss
-		const command2 = "pnpx sv@latest add tailwindcss --no-preconditions --no-install";
-		console.log(`Running command: ${command2} in ${projectDir}`);
-		await execPromise(command2, { cwd: projectDir });
-		console.log("TailwindCSS added successfully.");
+		await createSvelteProject(projectDir);
+		await addTailwindCSS(projectDir);
 
 		// collect files
 		console.log("Collecting files...");
@@ -175,7 +198,7 @@ async function main() {
 		const packageJson = JSON.parse(files["package.json"]);
 		for (const dep of bitsDeps) {
 			if (dep === "bits-ui") {
-				packageJson.devDependencies["bits-ui"] = "latest";
+				packageJson.devDependencies["bits-ui"] = bitsPackageJson.version;
 				continue;
 			}
 
@@ -187,7 +210,7 @@ async function main() {
 
 		packageJson.scripts["start"] = "vite";
 
-		const dependencies = packageJson ? extractDependencies(packageJson) : [];
+		const dependencies = buildDependenciesObj(files["package.json"]);
 		console.log(`Extracted ${dependencies.length} dependencies.`);
 
 		const output = {
@@ -224,11 +247,10 @@ async function main() {
 	}
 
 	try {
-		await buildDemoComponentJson();
+		await buildDemoRegistry();
 	} catch (err) {
 		console.error(err);
 	}
 }
 
-// Execute the main function
 main();
