@@ -15,7 +15,9 @@
 		"test:components": "pnpm -F tests test",
 		"test:utils": "pnpm -F bits-ui test"
 	},
-	"keywords": [],
+	"keywords": [
+		
+	],
 	"author": "Hunter Johnston <https://github.com/huntabyte>",
 	"license": "MIT",
 	"devDependencies": {
@@ -44,5 +46,10 @@
 		"node": ">=18"
 	},
 	"packageManager": "pnpm@9.14.4",
-	"private": true
+	"private": true,
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"esbuild"
+		]
+	}
 }
