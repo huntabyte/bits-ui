@@ -42,11 +42,13 @@
 
 <Select.Root type="multiple" bind:value>
 	<Select.Trigger
-		class="min-h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
+		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />
-		{selectedLabel}
+		<span class="w-[calc(296px-11px-11px-9px)] truncate text-start">
+			{selectedLabel}
+		</span>
 		<CaretUpDown class="text-muted-foreground ml-auto size-6" />
 	</Select.Trigger>
 	<Select.Portal>
