@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Command, Dialog } from "bits-ui";
-	import Sticker from "phosphor-svelte/lib/Sticker";
+	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
 	import CodeBlock from "phosphor-svelte/lib/CodeBlock";
 	import Palette from "phosphor-svelte/lib/Palette";
-	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
 	import RadioButton from "phosphor-svelte/lib/RadioButton";
+	import Sticker from "phosphor-svelte/lib/Sticker";
 	import Textbox from "phosphor-svelte/lib/Textbox";
 
 	let dialogOpen = $state(false);
@@ -43,7 +43,7 @@
 				class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 			>
 				<Command.Input
-					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex w-[296px] truncate rounded-xl px-4 text-sm transition-colors focus:ring-0"
+					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex truncate rounded-xl px-4 text-sm transition-colors focus:ring-0"
 					placeholder="Search for something..."
 				/>
 				<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
