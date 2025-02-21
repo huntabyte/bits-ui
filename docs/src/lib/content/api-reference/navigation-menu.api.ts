@@ -71,6 +71,10 @@ export const item = createApiSchema<NavigationMenuItemPropsWithoutHTML>({
 		value: createStringProp({
 			description: "The value of the item.",
 		}),
+		openOnHover: createBooleanProp({
+			default: C.TRUE,
+			description: "Whether or not the content belonging to the item should open on hover.",
+		}),
 		...withChildProps({ elType: "HTMLLiElement" }),
 	},
 });
