@@ -6,7 +6,7 @@
 		melt,
 	} from "@melt-ui/svelte";
 	import Tree from "./tree.svelte";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 
 	let {
 		tree = [],

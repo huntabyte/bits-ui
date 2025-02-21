@@ -11,12 +11,14 @@
 		children: Snippet;
 		class?: string;
 		nonExpandableItems?: string[];
+		name?: string;
 	};
 	let {
 		children,
 		fileName = "app.svelte",
 		class: className,
 		nonExpandableItems = [],
+		name,
 	}: Props = $props();
 
 	const items = $derived([
@@ -55,6 +57,7 @@
 	bind:open
 	{expandable}
 	bind:ref={codeWrapper}
+	{name}
 >
 	<Collapsible.Root bind:open>
 		{#each items as item (item.value)}

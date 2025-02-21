@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Dialog as SheetPrimitive, type WithoutChildren } from "bits-ui";
 	import type { Snippet } from "svelte";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 
 	let {
 		class: className,

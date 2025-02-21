@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLTableAttributes } from "svelte/elements";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 
 	let { class: className, children, ...restProps }: HTMLTableAttributes = $props();
 </script>

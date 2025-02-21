@@ -12,6 +12,7 @@
 		containerClass?: string;
 		size?: "xs" | "sm" | "default" | "lg";
 		nonExpandableItems?: string[];
+		name: string;
 	};
 
 	let {
@@ -21,6 +22,7 @@
 		class: className,
 		containerClass,
 		size,
+		name,
 		nonExpandableItems = [],
 	}: Props = $props();
 
@@ -30,6 +32,6 @@
 <DemoContainer wrapperClass={containerClass} {size}>
 	{@render preview()}
 </DemoContainer>
-<DemoCodeContainer {fileName} class={className} {nonExpandableItems}>
+<DemoCodeContainer {fileName} class={className} {nonExpandableItems} {name}>
 	{@render children()}
 </DemoCodeContainer>

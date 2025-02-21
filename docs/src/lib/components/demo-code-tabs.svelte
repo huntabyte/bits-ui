@@ -15,6 +15,7 @@
 		open: boolean;
 		expandable?: boolean;
 		ref?: HTMLElement | null;
+		name?: string;
 	};
 
 	let {
@@ -25,6 +26,7 @@
 		items,
 		expandable = true,
 		children,
+		name,
 	}: Props = $props();
 
 	const copyToClipboard = useCopyToClipboard();
@@ -55,6 +57,9 @@
 				>
 					{open ? "Collapse" : "Expand"} Code
 				</button>
+			{/if}
+			{#if name}
+				<button> StackBlitz </button>
 			{/if}
 			<button
 				class={cn(

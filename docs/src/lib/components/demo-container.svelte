@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 	type Props = {
 		align?: "start" | "center" | "end";
 		size?: "xs" | "sm" | "default" | "lg";
