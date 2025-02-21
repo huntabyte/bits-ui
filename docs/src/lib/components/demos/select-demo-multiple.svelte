@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Select } from "bits-ui";
+	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
+	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
+	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
 	import Check from "phosphor-svelte/lib/Check";
 	import Palette from "phosphor-svelte/lib/Palette";
-	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
-	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
-	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
 	const themes = [
 		{ value: "light-monochrome", label: "Light Monochrome" },
@@ -42,7 +42,7 @@
 
 <Select.Root type="multiple" bind:value>
 	<Select.Trigger
-		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
+		class="min-h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />
