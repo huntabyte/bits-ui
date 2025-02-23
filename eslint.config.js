@@ -48,6 +48,8 @@ export default tseslint.config(
 			".svelte-kit/**/*",
 			"docs/.svelte-kit/**/*",
 			"docs/.velite/**/*",
+			"docs/src/lib/generated/stackblitz-data.ts",
+			"docs/src/routes/api/demos.json/demos.json",
 			".svelte-kit",
 			"packages/bits-ui/dist/**/*",
 			"packages/bits-ui/.svelte-kit/**/*",
