@@ -8,11 +8,12 @@
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
 		"dev:content": "velite dev --watch",
 		"dev:svelte": "vite dev",
-		"build": "velite && node ./other/update-velite-output.js && pnpm build:search && vite build",
+		"build": "velite && node ./other/update-velite-output.js && pnpm build:search && pnpm build:demos && vite build",
 		"build:content": "velite",
 		"preview": "vite preview",
 		"build:search": "node ./other/build-search-data.js",
-		"check": "pnpm build:content && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+		"build:demos": "pnpx tsx ./other/build-demo-files.ts",
+		"check": "pnpm build:content && pnpm build:demos && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.5.6",
