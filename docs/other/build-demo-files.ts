@@ -12,7 +12,10 @@ const execPromise = promisify(exec);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const cssFilePath = join(__dirname, "../src/lib/styles/app.css");
-const cssContent = readFileSync(cssFilePath, "utf-8");
+const cssContent = readFileSync(cssFilePath, "utf-8")
+	.split("\n")
+	.filter((line) => !line.startsWith("@import") && !line.startsWith("@plugin"))
+	.join("\n");
 const stackblitzDataPath = join(__dirname, "../src/lib/generated/stackblitz-data.ts");
 const demoJsonPath = join(__dirname, "../src/routes/api/demos.json/demos.json");
 
@@ -22,7 +25,6 @@ const bitsDeps = [
 	"@internationalized/date",
 	"phosphor-svelte",
 	"clsx",
-	"@nobie-org/tailwindcss-animate",
 	"tailwind-merge",
 ];
 
@@ -40,6 +42,42 @@ export type StackBlitzData = {
 
 // prettier-ignore
 export const stackblitzData: StackBlitzData = `;
+
+function createAppHtml(cssContents: string) {
+	return appHtml.replace("%css.contents%", cssContents);
+}
+
+const appHtml = `<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link
+			href="https://bits-ui.com/favicon-light.svg"
+			rel="icon"
+			media="(prefers-color-scheme: light)"
+		/>
+		<link
+			href="https://bits-ui.com/favicon-dark.svg"
+			rel="icon"
+			media="(prefers-color-scheme: dark)"
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- Tailwind v4 does not support Web Containers, so we do this -->
+		<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+		<style type="text/tailwindcss">
+			%css.contents%
+		</style>
+		%sveltekit.head%
+	</head>
+
+	<body
+		data-sveltekit-preload-data="hover"
+		class="bg-background overflow-y-scroll font-sans antialiased"
+	>
+		<div>%sveltekit.body%</div>
+	</body>
+</html>
+`;
 
 const IGNORE_LIST = ["node_modules", ".svelte-kit", "pnpm-lock.yaml", "static/favicon.png"];
 
@@ -66,14 +104,7 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<Record
 			if (IGNORE_LIST.includes(relPath)) continue;
 
 			if (relPath === "src/app.html") {
-				content = content.replace(
-					"%sveltekit.assets%/favicon.png",
-					"https://bits-ui.com/favicon.png"
-				);
-			}
-
-			if (relPath === "src/app.css") {
-				content = cssContent;
+				content = createAppHtml(cssContent);
 			}
 
 			// @ts-expect-error - shh
@@ -118,16 +149,20 @@ async function removeDir(dirPath: string): Promise<void> {
 	await fs.rmdir(dirPath);
 }
 
+// replace relative image paths with absolute paths to Bits UI's website
+function replaceImageSrc(str: string) {
+	return str.replace(/src="\/([^"]*)"/g, 'src="https://bits-ui.com/$1"');
+}
+
 async function buildDemoRegistry() {
 	const dir = join(__dirname, "../src/lib/components/demos");
-	// get all .svelte files in the directory
 	const files = await fs.readdir(dir);
 
 	const components: Record<string, string> = {};
 	for (const file of files) {
 		const name = file.replace(".svelte", "");
 		const content = await fs.readFile(join(dir, file), "utf-8");
-		components[name] = content;
+		components[name] = replaceImageSrc(content);
 	}
 
 	const jsonOutput = JSON.stringify(components, null, 2);
@@ -144,13 +179,14 @@ async function createSvelteProject(projectDir: string) {
 	console.log("Project created successfully.");
 }
 
-async function addTailwindCSS(projectDir: string) {
-	// add tailwindcss
-	const command2 = "pnpx sv@latest add tailwindcss --no-preconditions --no-install";
-	console.log(`Running command: ${command2} in ${projectDir}`);
-	await execPromise(command2, { cwd: projectDir });
-	console.log("TailwindCSS added successfully.");
-}
+// tailwind v4 does not support web containers
+// async function addTailwindCSS(projectDir: string) {
+// 	// add tailwindcss
+// 	const command2 = "pnpx sv@latest add tailwindcss --no-preconditions --no-install";
+// 	console.log(`Running command: ${command2} in ${projectDir}`);
+// 	await execPromise(command2, { cwd: projectDir });
+// 	console.log("TailwindCSS added successfully.");
+// }
 
 function buildDependenciesObj(packageJsonContent: string): Record<string, string> {
 	// extract deps
@@ -162,7 +198,6 @@ function buildDependenciesObj(packageJsonContent: string): Record<string, string
 		}
 		// @ts-expect-error shhh
 		const docsDep = docsPackageJson.devDependencies[dep];
-
 		packageJson.devDependencies[dep] = docsDep;
 	}
 
@@ -187,7 +222,8 @@ async function main(): Promise<void> {
 		console.log(`Created temporary directory: ${projectDir}`);
 
 		await createSvelteProject(projectDir);
-		await addTailwindCSS(projectDir);
+		// Tailwind v4 does not provide support for Web Containers
+		// await addTailwindCSS(projectDir);
 
 		// collect files
 		console.log("Collecting files...");
