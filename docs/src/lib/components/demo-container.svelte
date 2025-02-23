@@ -17,7 +17,7 @@
 		class?: string;
 		wrapperClass?: string;
 		componentName?: string;
-		name: string;
+		name?: string;
 		children: Snippet;
 	} = $props();
 </script>
