@@ -8,7 +8,7 @@ description: Represents a user or entity with a recognizable image or placeholde
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="avatar-demo" comp="Avatar">
+<ComponentPreviewV2 name="avatar-demo" componentName="Avatar">
 
 {#snippet preview()}
 <AvatarDemo />

@@ -8,7 +8,7 @@ description: A modal window presenting content or seeking user input without nav
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="dialog-demo" comp="Dialog">
+<ComponentPreviewV2 name="dialog-demo" componentName="Dialog">
 
 {#snippet preview()}
 <DialogDemo />

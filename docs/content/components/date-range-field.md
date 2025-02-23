@@ -8,7 +8,7 @@ description: Allows users to input a range of dates within a designated field.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="date-range-field-demo" comp="Date Range Field">
+<ComponentPreviewV2 name="date-range-field-demo" componentName="Date Range Field">
 
 {#snippet preview()}
 <DateRangeFieldDemo />

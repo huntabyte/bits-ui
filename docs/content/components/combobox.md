@@ -8,7 +8,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="combobox-demo" comp="Combobox">
+<ComponentPreviewV2 name="combobox-demo" componentName="Combobox">
 
 {#snippet preview()}
 <ComboboxDemo />
@@ -435,7 +435,7 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="combobox-demo-transition" comp="Select" containerClass="mt-4">
+<ComponentPreviewV2 name="combobox-demo-transition" componentName="Select" containerClass="mt-4">
 
 {#snippet preview()}
 <ComboboxDemoTransition />

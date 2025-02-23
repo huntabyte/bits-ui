@@ -8,7 +8,7 @@ description: Provides additional information or context when users hover over or
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="tooltip-demo" comp="Tooltip">
+<ComponentPreviewV2 name="tooltip-demo" componentName="Tooltip">
 
 {#snippet preview()}
 <TooltipDemo />
@@ -310,7 +310,7 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content components that handles this logic if you intend to use this approach throughout your app. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="tooltip-demo-transition" comp="Tooltip" containerClass="mt-4">
+<ComponentPreviewV2 name="tooltip-demo-transition" componentName="Tooltip" containerClass="mt-4">
 
 {#snippet preview()}
 <TooltipDemoTransition />

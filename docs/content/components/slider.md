@@ -8,7 +8,7 @@ description: Allows users to select a value from a continuous range by sliding a
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="slider-demo" comp="Slider">
+<ComponentPreviewV2 name="slider-demo" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemo />
@@ -212,7 +212,7 @@ Set the `type` prop to `"single"` to allow only one accordion item to be open at
 <Slider.Root type="single" />
 ```
 
-<ComponentPreviewV2 name="slider-demo" comp="Slider">
+<ComponentPreviewV2 name="slider-demo" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemo />
@@ -228,7 +228,7 @@ Set the `type` prop to `"multiple"` to allow multiple accordion items to be open
 <Slider.Root type="multiple" />
 ```
 
-<ComponentPreviewV2 name="slider-demo-multiple" comp="Slider">
+<ComponentPreviewV2 name="slider-demo-multiple" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemoMultiple />

@@ -6,18 +6,6 @@
 	import { noop } from "@melt-ui/svelte/internal/helpers";
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
-	import { openInStackBlitz } from "$lib/utils/open-in-stackblitz.js";
-
-	type Props = {
-		value?: string;
-		onValueChange?: (value: string) => void;
-		items: { value: string; label: string }[];
-		children: Snippet;
-		open: boolean;
-		expandable?: boolean;
-		ref?: HTMLElement | null;
-		name?: string;
-	};
 
 	let {
 		value = $bindable(),
@@ -27,8 +15,15 @@
 		items,
 		expandable = true,
 		children,
-		name,
-	}: Props = $props();
+	}: {
+		value?: string;
+		onValueChange?: (value: string) => void;
+		items: { value: string; label: string }[];
+		children: Snippet;
+		open: boolean;
+		expandable?: boolean;
+		ref?: HTMLElement | null;
+	} = $props();
 
 	const copyToClipboard = useCopyToClipboard();
 </script>
@@ -57,15 +52,6 @@
 					aria-label="Toggle code expansion"
 				>
 					{open ? "Collapse" : "Expand"} Code
-				</button>
-			{/if}
-			{#if name}
-				<button
-					onclick={async () => {
-						await openInStackBlitz(name);
-					}}
-				>
-					StackBlitz
 				</button>
 			{/if}
 			<button

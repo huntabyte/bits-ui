@@ -8,7 +8,7 @@ description: Visualizes the progress or completion status of a task or process.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="progress-demo" comp="Progress">
+<ComponentPreviewV2 name="progress-demo" componentName="Progress">
 
 {#snippet preview()}
 <ProgressDemo />

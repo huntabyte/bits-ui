@@ -9,7 +9,7 @@ description: Enables users to input specific dates within a designated field.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="date-field-demo" comp="Date Field">
+<ComponentPreviewV2 name="date-field-demo" componentName="Date Field">
 
 {#snippet preview()}
 <DateFieldDemo />
@@ -79,7 +79,7 @@ The following example shows how you might create a reusable `MyDateField` compon
 </DateField.Root>
 ```
 
-<ComponentPreviewV2 size="xs" fileName="MyDateField.svelte" containerClass="mt-4" name="date-field-demo-custom" comp="DateField">
+<ComponentPreviewV2 size="xs" fileName="MyDateField.svelte" containerClass="mt-4" name="date-field-demo-custom" componentName="DateField">
 
 {#snippet preview()}
 <DateFieldDemoCustom labelText="Select a date" />

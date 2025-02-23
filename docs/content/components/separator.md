@@ -8,7 +8,7 @@ description: Visually separates content or UI elements for clarity and organizat
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="separator-demo" comp="Separator">
+<ComponentPreviewV2 name="separator-demo" componentName="Separator">
 
 {#snippet preview()}
 <SeparatorDemo />

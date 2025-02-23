@@ -8,13 +8,18 @@ export async function openInStackBlitz(demoName: string, componentName?: string)
 			throw new Error("Failed to fetch demo code");
 		}
 		const { code: demoCode } = await res.json();
+		const clonedFiles = { ...stackblitzData.files };
+
+		clonedFiles["src/routes/+layout.svelte"] = stackblitzData.files[
+			"src/routes/+layout.svelte"
+		].replace("%component.name%", componentName ?? demoName);
 
 		// @ts-expect-error - sh
 		sdk.openProject(
 			{
 				title: `${componentName ?? demoName} - Bits UI`,
 				files: {
-					...stackblitzData.files,
+					...clonedFiles,
 					"pnpm-lock.yaml": "",
 					"src/routes/+page.svelte": demoCode,
 				},
@@ -23,7 +28,7 @@ export async function openInStackBlitz(demoName: string, componentName?: string)
 			{
 				newWindow: true,
 				openFile: "src/routes/+page.svelte",
-				terminalHeight: 200,
+				terminalHeight: 10,
 			}
 		);
 	} catch (err) {

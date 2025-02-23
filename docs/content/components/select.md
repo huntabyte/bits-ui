@@ -8,7 +8,7 @@ description: Enables users to choose from a list of options presented in a dropd
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="select-demo" comp="Select">
+<ComponentPreviewV2 name="select-demo" componentName="Select">
 
 {#snippet preview()}
 <SelectDemo />
@@ -323,7 +323,7 @@ The `type` prop can be set to `'multiple'` to allow multiple items to be selecte
 </Select.Root>
 ```
 
-<ComponentPreviewV2 name="select-demo-multiple" comp="Select">
+<ComponentPreviewV2 name="select-demo-multiple" componentName="Select">
 
 {#snippet preview()}
 <SelectDemoMultiple />
@@ -454,7 +454,7 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="select-demo-transition" comp="Select" containerClass="mt-4">
+<ComponentPreviewV2 name="select-demo-transition" componentName="Select" containerClass="mt-4">
 
 {#snippet preview()}
 <SelectDemoTransition />

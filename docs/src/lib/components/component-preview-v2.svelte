@@ -4,17 +4,6 @@
 	import DemoCodeContainer from "./demo-code-container.svelte";
 	import { setCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 
-	type Props = {
-		fileName?: string;
-		preview: Snippet;
-		children: Snippet;
-		class?: string;
-		containerClass?: string;
-		size?: "xs" | "sm" | "default" | "lg";
-		nonExpandableItems?: string[];
-		name: string;
-	};
-
 	let {
 		preview,
 		children,
@@ -24,14 +13,25 @@
 		size,
 		name,
 		nonExpandableItems = [],
-	}: Props = $props();
+		componentName = fileName,
+	}: {
+		fileName?: string;
+		componentName?: string;
+		preview: Snippet;
+		children: Snippet;
+		class?: string;
+		containerClass?: string;
+		size?: "xs" | "sm" | "default" | "lg";
+		nonExpandableItems?: string[];
+		name: string;
+	} = $props();
 
 	setCopyToClipboard();
 </script>
 
-<DemoContainer wrapperClass={containerClass} {size}>
+<DemoContainer wrapperClass={containerClass} {size} {componentName} {name}>
 	{@render preview()}
 </DemoContainer>
-<DemoCodeContainer {fileName} class={className} {nonExpandableItems} {name}>
+<DemoCodeContainer {fileName} class={className} {nonExpandableItems}>
 	{@render children()}
 </DemoCodeContainer>

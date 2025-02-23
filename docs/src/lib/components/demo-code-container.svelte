@@ -6,20 +6,17 @@
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 
-	type Props = {
-		fileName?: string;
-		children: Snippet;
-		class?: string;
-		nonExpandableItems?: string[];
-		name?: string;
-	};
 	let {
 		children,
 		fileName = "app.svelte",
 		class: className,
 		nonExpandableItems = [],
-		name,
-	}: Props = $props();
+	}: {
+		fileName?: string;
+		children: Snippet;
+		class?: string;
+		nonExpandableItems?: string[];
+	} = $props();
 
 	const items = $derived([
 		{
@@ -57,7 +54,6 @@
 	bind:open
 	{expandable}
 	bind:ref={codeWrapper}
-	{name}
 >
 	<Collapsible.Root bind:open>
 		{#each items as item (item.value)}

@@ -8,7 +8,7 @@ description: Identifies or describes associated UI elements.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="label-demo" comp="Label">
+<ComponentPreviewV2 name="label-demo" componentName="Label">
 
 {#snippet preview()}
 <LabelDemo />

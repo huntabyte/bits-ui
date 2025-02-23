@@ -2,7 +2,7 @@ import { json, type RequestHandler } from "@sveltejs/kit";
 import demos from "./demos.json" with { type: "json" };
 
 const demoNote = `<!--
-\tNOTE: Tailwind v4 does not support web container environments, so animations powered by tailwindcss-animate will not work in this environment until we figure out how to use plugins with the CDN.
+\tNOTE: Tailwind v4 does not support web container environments, so animations powered by tailwindcss-animate will not work in this environment.
 -->\n`;
 
 export const GET: RequestHandler = async ({ url }) => {
