@@ -10,14 +10,13 @@ import bitsPackageJson from "../../packages/bits-ui/package.json" with { type: "
 
 const execPromise = promisify(exec);
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const cssFilePath = join(__dirname, "../src/lib/styles/app.css");
-const cssContent = readFileSync(cssFilePath, "utf-8")
+const __DIRNAME = dirname(fileURLToPath(import.meta.url));
+const CSS_CONTENT = readFileSync(join(__DIRNAME, "../src/lib/styles/app.css"), "utf-8")
 	.split("\n")
 	.filter((line) => !line.startsWith("@import") && !line.startsWith("@plugin"))
 	.join("\n");
-const stackblitzDataPath = join(__dirname, "../src/lib/generated/stackblitz-data.ts");
-const demoJsonPath = join(__dirname, "../src/routes/api/demos.json/demos.json");
+const STACKBLITZ_DATA_PATH = join(__DIRNAME, "../src/lib/generated/stackblitz-data.ts");
+const DEMO_JSON_PATH = join(__DIRNAME, "../src/routes/api/demos.json/demos.json");
 
 // ideally we extract these on a per demo basis, but for now this will do
 const BITS_DEPS = [
@@ -29,9 +28,9 @@ const BITS_DEPS = [
 ];
 
 const libFiles = {
-	"src/lib/utils/styles.ts": readFileSync(join(__dirname, "../src/lib/utils/styles.ts"), "utf8"),
+	"src/lib/utils/styles.ts": readFileSync(join(__DIRNAME, "../src/lib/utils/styles.ts"), "utf8"),
 	"src/routes/+layout.svelte": readFileSync(
-		join(__dirname, "../src/lib/components/stackblitz-demo-layout.svelte"),
+		join(__DIRNAME, "../src/lib/components/stackblitz-demo-layout.svelte"),
 		"utf8"
 	),
 };
@@ -68,7 +67,7 @@ const APP_HTML_TEMPLATE = `<!doctype html>
 		<!-- Tailwind v4 does not support Web Containers, so we do this -->
 		<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 		<style type="text/tailwindcss">
-			${cssContent}
+			${CSS_CONTENT}
 		</style>
 		%sveltekit.head%
 	</head>
@@ -158,7 +157,7 @@ function replaceImageSrc(str: string) {
 }
 
 async function buildDemoRegistry() {
-	const dir = join(__dirname, "../src/lib/components/demos");
+	const dir = join(__DIRNAME, "../src/lib/components/demos");
 	const files = await fs.readdir(dir);
 
 	const components: Record<string, string> = {};
@@ -169,8 +168,8 @@ async function buildDemoRegistry() {
 	}
 
 	const jsonOutput = JSON.stringify(components, null, 2);
-	await fs.mkdir(dirname(demoJsonPath), { recursive: true });
-	await fs.writeFile(demoJsonPath, jsonOutput, "utf-8");
+	await fs.mkdir(dirname(DEMO_JSON_PATH), { recursive: true });
+	await fs.writeFile(DEMO_JSON_PATH, jsonOutput, "utf-8");
 }
 
 async function createSvelteProject(): Promise<string> {
@@ -240,8 +239,8 @@ async function main(): Promise<void> {
 			dependencies,
 		};
 		const jsonOutput = JSON.stringify(output, null, 2);
-		await fs.mkdir(dirname(stackblitzDataPath), { recursive: true });
-		await fs.writeFile(stackblitzDataPath, OUTPUT_BASE_CONTENT + jsonOutput, "utf-8");
+		await fs.mkdir(dirname(STACKBLITZ_DATA_PATH), { recursive: true });
+		await fs.writeFile(STACKBLITZ_DATA_PATH, OUTPUT_BASE_CONTENT + jsonOutput, "utf-8");
 	} catch (error) {
 		if (error instanceof Error) {
 			console.error("An error occurred:", error.message);
