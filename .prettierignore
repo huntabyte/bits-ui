@@ -23,3 +23,5 @@ CHANGELOG.md
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 docs/src/routes/api/search.json/search.json
+docs/src/routes/api/demos.json/demos.json
+docs/src/routes/api/demos.json/stackblitz-files.json
