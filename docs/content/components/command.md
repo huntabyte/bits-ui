@@ -8,7 +8,7 @@ description: A command menu component that can be used to search, filter, and se
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="command-demo" comp="Command">
+<ComponentPreviewV2 name="command-demo" componentName="Command">
 
 {#snippet preview()}
 <CommandDemo />
@@ -162,7 +162,7 @@ You can combine the `Command` component with the `Dialog` component to display t
 
 <br>
 
-<ComponentPreviewV2 name="command-demo-dialog" comp="Command" size="xs">
+<ComponentPreviewV2 name="command-demo-dialog" componentName="Command" size="xs">
 
 {#snippet preview()}
 <CommandDemoDialog />

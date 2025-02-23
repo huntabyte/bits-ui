@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Switch } from "bits-ui";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 
 	let { class: className, checked = $bindable(false), ...restProps }: Switch.RootProps = $props();
 </script>

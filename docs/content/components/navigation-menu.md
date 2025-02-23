@@ -8,7 +8,7 @@ description: A list of links that allow users to navigate between pages of a web
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="navigation-menu-demo" comp="Navigation Menu">
+<ComponentPreviewV2 name="navigation-menu-demo" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemo />
@@ -262,7 +262,7 @@ You may wish for the links in the Navigation Menu to persist in the DOM, regardl
 <NavigationMenu.Viewport forceMount></NavigationMenu.Viewport>
 ```
 
-<ComponentPreviewV2 name="navigation-menu-demo-force-mount" comp="Navigation Menu">
+<ComponentPreviewV2 name="navigation-menu-demo-force-mount" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemoForceMount />

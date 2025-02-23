@@ -8,7 +8,7 @@ description: Facilitates the selection of dates through an input and calendar-ba
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="date-picker-demo" comp="Date Picker">
+<ComponentPreviewV2 name="date-picker-demo" componentName="Date Picker">
 
 {#snippet preview()}
 <DatePickerDemo />

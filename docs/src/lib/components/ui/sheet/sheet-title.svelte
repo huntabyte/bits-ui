@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Dialog as SheetPrimitive } from "bits-ui";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 
 	let { class: className, children, ...restProps }: SheetPrimitive.TitleProps = $props();
 </script>

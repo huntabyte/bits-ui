@@ -154,16 +154,13 @@ function rehypeHandleMetadata() {
 export function rehypeComponentExample() {
 	return async (tree) => {
 		const nameRegex = /name="([^"]+)"/;
-		const compRegex = /comp="([^"]+)"/;
 		visit(tree, (node, index, parent) => {
 			if (node?.type === "raw" && node?.value?.startsWith("<ComponentPreview")) {
 				const currNode = node;
 				const nameMatch = currNode.value.match(nameRegex);
 				const name = nameMatch ? nameMatch[1] : null;
-				const compMatch = currNode.value.match(compRegex);
-				const comp = compMatch ? compMatch[1] : null;
 
-				if (!name || !comp) return null;
+				if (!name) return null;
 
 				try {
 					const sourceCode = getComponentSourceFileContent(name);

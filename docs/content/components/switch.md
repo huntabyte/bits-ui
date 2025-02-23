@@ -8,7 +8,7 @@ description: A toggle control enabling users to switch between "on" and "off" st
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="switch-demo" comp="Switch">
+<ComponentPreviewV2 name="switch-demo" componentName="Switch">
 
 {#snippet preview()}
 <SwitchDemo />

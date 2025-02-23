@@ -3,7 +3,7 @@
 	import { cubicInOut } from "svelte/easing";
 	import { crossfade } from "svelte/transition";
 	import { buttonVariants } from "./ui/button/index.js";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 	let className: string;
 	export let align: "center" | "start" | "end" = "center";
 	export { className as class };

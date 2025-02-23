@@ -1,5 +1,5 @@
 import type { RequestHandler } from "@sveltejs/kit";
-import search from "./search.json" assert { type: "json" };
+import search from "./search.json" with { type: "json" };
 
 export const prerender = true;
 

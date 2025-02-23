@@ -8,7 +8,7 @@ description: Organizes content into distinct sections, allowing users to switch 
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="tabs-demo" comp="Tabs">
+<ComponentPreviewV2 name="tabs-demo" componentName="Tabs">
 
 {#snippet preview()}
 <TabsDemo />

@@ -6,18 +6,17 @@
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 
-	type Props = {
-		fileName?: string;
-		children: Snippet;
-		class?: string;
-		nonExpandableItems?: string[];
-	};
 	let {
 		children,
 		fileName = "app.svelte",
 		class: className,
 		nonExpandableItems = [],
-	}: Props = $props();
+	}: {
+		fileName?: string;
+		children: Snippet;
+		class?: string;
+		nonExpandableItems?: string[];
+	} = $props();
 
 	const items = $derived([
 		{

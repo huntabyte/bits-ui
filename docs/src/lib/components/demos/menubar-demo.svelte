@@ -3,7 +3,6 @@
 	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import Cat from "phosphor-svelte/lib/Cat";
 	import Check from "phosphor-svelte/lib/Check";
-	import { SwitchOff, SwitchOn } from "$icons/index.js";
 
 	let selectedView = $state("table");
 	let selectedProfile = $state("pavel");
@@ -219,9 +218,9 @@
 							{config.label}
 							<div class="ml-auto flex items-center">
 								{#if checked}
-									<SwitchOn />
+									{@render SwitchOn()}
 								{:else}
-									<SwitchOff />
+									{@render SwitchOff()}
 								{/if}
 							</div>
 						{/snippet}
@@ -297,3 +296,23 @@
 		</Menubar.Portal>
 	</Menubar.Menu>
 </Menubar.Root>
+
+{#snippet SwitchOn()}
+	<div
+		class="bg-dark-10 peer inline-flex h-[15.6px] min-h-[15.6px] w-[26px] shrink-0 items-center rounded-full px-[1.5px]"
+	>
+		<span
+			class="bg-background dark:border-border-input dark:shadow-mini pointer-events-none block size-[13px] shrink-0 translate-x-[10px] rounded-full"
+		></span>
+	</div>
+{/snippet}
+
+{#snippet SwitchOff()}
+	<div
+		class="bg-dark-10 shadow-mini-inset peer inline-flex h-[15.6px] w-[26px] shrink-0 items-center rounded-full px-[3px] transition-colors"
+	>
+		<span
+			class="bg-background shadow-mini dark:border-border-input dark:shadow-mini pointer-events-none block size-[13px] shrink-0 translate-x-0 rounded-full transition-transform dark:border"
+		></span>
+	</div>
+{/snippet}

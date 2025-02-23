@@ -24,7 +24,7 @@
 	import X from "phosphor-svelte/lib/X";
 	import type { Snippet } from "svelte";
 	import SheetOverlay from "./sheet-overlay.svelte";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 
 	let {
 		side = "right",

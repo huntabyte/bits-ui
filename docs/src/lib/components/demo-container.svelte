@@ -1,21 +1,25 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { cn } from "$lib/utils/index.js";
-	type Props = {
-		align?: "start" | "center" | "end";
-		size?: "xs" | "sm" | "default" | "lg";
-		class?: string;
-		wrapperClass?: string;
-		children: Snippet;
-	};
+	import { cn } from "$lib/utils/styles.js";
+	import OpenInStackblitz from "./open-in-stackblitz.svelte";
 
 	let {
 		align = "center",
 		size = "default",
 		class: className,
+		name,
+		componentName = name,
 		wrapperClass,
 		children,
-	}: Props = $props();
+	}: {
+		align?: "start" | "center" | "end";
+		size?: "xs" | "sm" | "default" | "lg";
+		class?: string;
+		wrapperClass?: string;
+		componentName?: string;
+		name?: string;
+		children: Snippet;
+	} = $props();
 </script>
 
 <div
@@ -41,4 +45,7 @@
 	>
 		{@render children()}
 	</div>
+	{#if name}
+		<OpenInStackblitz demoName={name} {componentName} />
+	{/if}
 </div>

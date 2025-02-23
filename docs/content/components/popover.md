@@ -8,7 +8,7 @@ description: Display supplementary content or information when users interact wi
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="popover-demo" comp="Popover">
+<ComponentPreviewV2 name="popover-demo" componentName="Popover">
 
 {#snippet preview()}
 <PopoverDemo />
@@ -285,7 +285,7 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="popover-demo-transition" comp="Popover" containerClass="mt-4">
+<ComponentPreviewV2 name="popover-demo-transition" componentName="Popover" containerClass="mt-4">
 
 {#snippet preview()}
 <PopoverDemoTransition />

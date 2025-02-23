@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Check from "phosphor-svelte/lib/Check";
 	import CopySimple from "phosphor-svelte/lib/CopySimple";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 	let className: string | undefined | null = undefined;
 
 	export let copyCode: () => void;

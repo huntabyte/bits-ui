@@ -8,7 +8,7 @@ description: A modal window that alerts users with important information and awa
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="alert-dialog-demo" comp="Alert Dialog">
+<ComponentPreviewV2 name="alert-dialog-demo" componentName="Alert Dialog">
 
 {#snippet preview()}
 <AlertDialogDemo />

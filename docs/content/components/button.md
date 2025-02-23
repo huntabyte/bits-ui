@@ -8,7 +8,7 @@ description: A component that if passed a `href` prop will render an anchor elem
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="button-demo" comp="Avatar" nonExpandableItems={["App.svelte"]}>
+<ComponentPreviewV2 name="button-demo" componentName="Button" nonExpandableItems={["App.svelte"]}>
 
 {#snippet preview()}
 <ButtonDemo />

@@ -8,7 +8,7 @@ description: Organizes content into collapsible sections, allowing users to focu
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="accordion-demo" comp="Accordion">
+<ComponentPreviewV2 name="accordion-demo" componentName="Accordion">
 
 {#snippet preview()}
 <AccordionDemo />
@@ -312,7 +312,7 @@ In this example:
 -   Svelte's `#if` block controls when the content is visible.
 -   Transition directives (`transition:fade` and `transition:fly`) apply the animations.
 
-<ComponentPreviewV2 name="accordion-demo-transitions" comp="Accordion">
+<ComponentPreviewV2 name="accordion-demo-transitions" componentName="Accordion">
 
 {#snippet preview()}
 <AccordionDemoTransitions />

@@ -8,7 +8,7 @@ description: Displays frequently used actions or tools in a compact, easily acce
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="toolbar-demo" comp="Toolbar">
+<ComponentPreviewV2 name="toolbar-demo" componentName="Toolbar">
 
 {#snippet preview()}
 <ToolbarDemo slot="preview" />

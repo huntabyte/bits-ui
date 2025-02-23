@@ -9,7 +9,7 @@
 	import TableOfContents from "$lib/components/toc/table-of-contents.svelte";
 	import SidebarNav from "$lib/components/navigation/sidebar-nav.svelte";
 	import { navigation } from "$lib/config/index.js";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "$lib/utils/styles.js";
 	import "$lib/styles/app.css";
 	import { onMount } from "svelte";
 

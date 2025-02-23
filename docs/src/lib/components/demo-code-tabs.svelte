@@ -7,16 +7,6 @@
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 
-	type Props = {
-		value?: string;
-		onValueChange?: (value: string) => void;
-		items: { value: string; label: string }[];
-		children: Snippet;
-		open: boolean;
-		expandable?: boolean;
-		ref?: HTMLElement | null;
-	};
-
 	let {
 		value = $bindable(),
 		open = $bindable(),
@@ -25,7 +15,15 @@
 		items,
 		expandable = true,
 		children,
-	}: Props = $props();
+	}: {
+		value?: string;
+		onValueChange?: (value: string) => void;
+		items: { value: string; label: string }[];
+		children: Snippet;
+		open: boolean;
+		expandable?: boolean;
+		ref?: HTMLElement | null;
+	} = $props();
 
 	const copyToClipboard = useCopyToClipboard();
 </script>

@@ -8,7 +8,7 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="checkbox-demo" comp="Checkbox">
+<ComponentPreviewV2 name="checkbox-demo" componentName="Checkbox">
 
 {#snippet preview()}
 <CheckboxDemo />
@@ -326,7 +326,7 @@ You can use the `Checkbox.Group` component to create a checkbox group.
 </Checkbox.Group>
 ```
 
-<ComponentPreviewV2 name="checkbox-demo-group" comp="Checkbox" containerClass="mt-6">
+<ComponentPreviewV2 name="checkbox-demo-group" componentName="Checkbox" containerClass="mt-6">
 
 {#snippet preview()}
 <CheckboxDemoGroup />
