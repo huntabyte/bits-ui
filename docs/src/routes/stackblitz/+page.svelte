@@ -1,8 +1,8 @@
 <script lang="ts">
-	import AccordionDemo from "$lib/components/demos/accordion-demo.svelte";
+	import ContextMenuDemo from "$lib/components/demos/context-menu-demo.svelte";
 	import StackblitzDemoContainer from "$lib/components/stackblitz-demo-container.svelte";
 </script>
 
-<StackblitzDemoContainer>
-	<AccordionDemo />
+<StackblitzDemoContainer name="Context Menu">
+	<ContextMenuDemo />
 </StackblitzDemoContainer>
