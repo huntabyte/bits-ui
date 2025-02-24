@@ -126,6 +126,9 @@ importers:
       concurrently:
         specifier: ^8.2.2
         version: 8.2.2
+      consola:
+        specifier: ^3.4.0
+        version: 3.4.0
       eruda:
         specifier: ^3.4.1
         version: 3.4.1
@@ -2119,6 +2122,10 @@ packages:
 
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
+
+  consola@3.4.0:
+    resolution: {integrity: sha512-EiPU8G6dQG0GFHNR8ljnZFki/8a+cQwEQ+7wpxdChl02Q8HXlwEZWD5lqAF8vC2sEC3Tehr8hy7vErz88LHyUA==}
+    engines: {node: ^14.18.0 || >=16.10.0}
 
   cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
@@ -5952,6 +5959,8 @@ snapshots:
       yargs: 17.7.2
 
   confbox@0.1.8: {}
+
+  consola@3.4.0: {}
 
   cookie@0.6.0: {}
 
