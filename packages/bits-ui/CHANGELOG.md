@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.3
+
+### Patch Changes
+
+-   fix: `Switch` hidden input receiving focus ([#1243](https://github.com/huntabyte/bits-ui/pull/1243))
+
 ## 1.3.2
 
 ### Patch Changes
