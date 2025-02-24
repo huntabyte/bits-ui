@@ -93,6 +93,7 @@ class SwitchInputState {
 				required: this.root.opts.required.current,
 				"aria-hidden": getAriaHidden(true),
 				style: styleToString(srOnlyStyles),
+				tabindex: -1,
 			}) as const
 	);
 }
