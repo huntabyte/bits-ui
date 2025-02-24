@@ -33,6 +33,7 @@
 		"autoprefixer": "^10.4.20",
 		"clsx": "^2.1.0",
 		"concurrently": "^8.2.2",
+		"consola": "^3.4.0",
 		"eruda": "^3.4.1",
 		"marked": "^14.1.4",
 		"mdsx": "^0.0.6",
