@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix: ensure all hidden inputs are not focusable
+fix: ensure all hidden inputs are not tabbable
