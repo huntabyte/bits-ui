@@ -75,11 +75,11 @@ By default, the `placeholder` will be set to the current date, and be of type `C
 
 ## Managing Placeholder State
 
-Bits UI offers several approaches to manage and synchronize the component's placeholder state, catering to different levels of control and integration needs.
+This section covers how to manage the `placeholder` state of the Calendar.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:placeholder` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -97,77 +97,40 @@ For seamless state synchronization, use Svelte's `bind:placeholder` directive. T
 </Calendar.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myPlaceholder` when the internal state changes
--   Allows external control (e.g., changing the placeholder via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onPlaceholderChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte {3,7-11}
-<script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
-</script>
-
-<Calendar.Root
-	placeholder={myPlaceholder}
-	onPlaceholderChange={(p) => {
-		placeholder = p;
-	}}
->
-	<!-- ... -->
-</Calendar.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on placeholder change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Calendar } from "bits-ui";
-	let myPlaceholder = $state();
+	import type { DateValue } from "@internationalized/date";
+
+	let myPlaceholder = $state<DateValue>();
+
+	function getPlaceholder() {
+		return myPlaceholder;
+	}
+
+	function setPlaceholder(newPlaceholder: DateValue) {
+		myPlaceholder = newPlaceholder;
+	}
 </script>
 
-<Calendar.Root
-	bind:placeholder={() => myPlaceholder, (newPlaceholder) => (myPlaceholder = newPlaceholder)}
->
+<Calendar.Root bind:placeholder={getPlaceholder, setPlaceholder}>
 	<!-- ... -->
 </Calendar.Root>
 ```
 
-#### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
+See the [State Management](/docs/state-management) documentation for more information.
 
 ## Managing Value State
 
-Bits UI offers several approaches to manage and synchronize the component's value state, catering to different levels of control and integration needs.
+This section covers how to manage the `value` state of the Calendar.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -177,72 +140,36 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 </script>
 
 <button onclick={() => (myValue = myValue.add({ days: 1 }))}> Add 1 day </button>
-<Calendar.Root bind:value={myValue}>
+<Calendar.Root type="single" bind:value={myValue}>
 	<!-- ... -->
 </Calendar.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myValue` when the internal state changes
--   Allows external control (e.g., changing the value via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte {3,7-11}
-<script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
-</script>
-
-<Calendar.Root
-	value={myValue}
-	onValueChange={(v) => {
-		value = v.set({ hour: v.hour + 1 });
-	}}
->
-	<!-- ... -->
-</Calendar.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on value change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Calendar } from "bits-ui";
+	import type { DateValue } from "@internationalized/date";
 	let myValue = $state();
+
+	function getValue() {
+		return myValue;
+	}
+
+	function setValue(newValue: DateValue) {
+		myValue = newValue;
+	}
 </script>
 
-<Calendar.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
+<Calendar.Root type="single" bind:value={getValue, setValue}>
 	<!-- ... -->
 </Calendar.Root>
 ```
 
-#### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
+See the [State Management](/docs/state-management) documentation for more information.
 
 ## Default Value
 

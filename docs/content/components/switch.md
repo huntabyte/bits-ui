@@ -88,11 +88,11 @@ You can then use the `MySwitch` component in your application like so:
 
 ## Managing Checked State
 
-Bits UI offers several approaches to manage and synchronize the Switch's checked state, catering to different levels of control and integration needs.
+This section covers how to manage the `checked` state of the component.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:checked` directive. This method automatically keeps your local state in sync with the switch's internal state.
+Use `bind:checked` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -105,65 +105,28 @@ For seamless state synchronization, use Svelte's `bind:checked` directive. This 
 <Switch.Root bind:checked={myChecked} />
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myChecked` when the switch changes (e.g., via clicking on the switch)
--   Allows external control (e.g., checking via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onCheckedChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Switch } from "bits-ui";
 	let myChecked = $state(false);
+
+	function getChecked() {
+		return myChecked;
+	}
+
+	function setChecked(newChecked: boolean) {
+		myChecked = newChecked;
+	}
 </script>
 
-<Switch.Root
-	checked={myChecked}
-	onCheckedChange={(checked) => {
-		myChecked = checked;
-		// additional logic here.
-	}}
-/>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on checked/unchecked
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
-
-```svelte
-<script lang="ts">
-	import { Switch } from "bits-ui";
-	let myChecked = $state(false);
-</script>
-
-<Switch.Root bind:checked={() => myChecked, (newChecked) => (myChecked = newChecked)}>
+<Switch.Root bind:checked={getChecked, setChecked}>
 	<!-- ... -->
 </Switch.Root>
 ```
-
-#### When to Use
-
--   Implementing complex checked/unchecked logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Disabled State
 

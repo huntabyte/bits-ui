@@ -148,11 +148,11 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 
 ## Managing Value State
 
-Bits UI offers several approaches to manage and synchronize the Combobox's value state, catering to different levels of control and integration needs.
+This section covers how to manage the `value` state of the Combobox.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -162,80 +162,41 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 
 <button onclick={() => (myValue = "A")}> Select A </button>
 
-<Combobox.Root bind:value={myValue}>
+<Combobox.Root type="single" bind:value={myValue}>
 	<!-- ... -->
 </Combobox.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myValue` when the internal state changes (e.g., via clicking on an item)
--   Allows external control (e.g., selecting an item via a separate button)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
 	let myValue = $state("");
+
+	function getValue() {
+		return myValue;
+	}
+
+	function setValue(newValue: string) {
+		myValue = newValue;
+	}
 </script>
 
-<Combobox.Root
-	value={myValue}
-	onValueChange={(value) => {
-		myValue = value;
-		// additional logic here.
-	}}
->
+<Combobox.Root type="single" bind:value={getValue, setValue}>
 	<!-- ... -->
 </Combobox.Root>
 ```
-
-#### Use Cases
-
--   Implementing custom behaviors on value change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
-
-```svelte
-<script lang="ts">
-	import { Combobox } from "bits-ui";
-	let myValue = $state("");
-</script>
-
-<Combobox.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
-	<!-- ... -->
-</Combobox.Root>
-```
-
-#### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Managing Open State
 
-Bits UI offers several approaches to manage and synchronize the Combobox's open state, catering to different levels of control and integration needs.
+This section covers how to manage the `open` state of the Combobox.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -250,67 +211,28 @@ For seamless state synchronization, use Svelte's `bind:open` directive. This met
 </Combobox.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myOpen` when the internal state changes (e.g., via clicking on the trigger/input)
--   Allows external control (e.g., opening via a separate button)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Combobox } from "bits-ui";
 	let myOpen = $state(false);
+
+	function getOpen() {
+		return myOpen;
+	}
+
+	function setOpen(newOpen: boolean) {
+		myOpen = newOpen;
+	}
 </script>
 
-<Combobox.Root
-	open={myOpen}
-	onOpenChange={(o) => {
-		myOpen = o;
-		// additional logic here.
-	}}
->
+<Combobox.Root type="single" bind:open={getOpen, setOpen}>
 	<!-- ... -->
 </Combobox.Root>
 ```
-
-#### Use Cases
-
--   Implementing custom behaviors on open change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
-
-```svelte
-<script lang="ts">
-	import { Combobox } from "bits-ui";
-	let myOpen = $state(false);
-</script>
-
-<Combobox.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
-	<!-- ... -->
-</Combobox.Root>
-```
-
-#### When to Use
-
--   Implementing complex open/close logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Opt-out of Floating UI
 

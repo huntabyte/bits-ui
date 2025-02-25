@@ -148,9 +148,9 @@ Alternatively, you can define the snippets separately and pass them as props to 
 Use string props for simplicity or snippets for dynamic content.
 </Callout>
 
-## State Management
+## Managing Open State
 
-The Alert Dialog component supports multiple ways to manage the open state, catering to different use cases.
+This section covers how to manage the `open` state of the Alert Dialog.
 
 ### Two-Way Binding
 
@@ -169,34 +169,6 @@ Use `bind:open` for simple, automatic state synchronization:
 </AlertDialog.Root>
 ```
 
-#### Why Use It?
-
--   Effortless state updates
--   External controls (e.g., buttons) work out of the box
-
-### Change Handler
-
-Use `onOpenChange` for custom logic on state changes:
-
-```svelte
-<script lang="ts">
-	import { AlertDialog } from "bits-ui";
-</script>
-
-<AlertDialog.Root
-	onOpenChange={(open) => {
-		console.log("Dialog is now", open ? "open" : "closed");
-	}}
->
-	<!-- ... -->
-</AlertDialog.Root>
-```
-
-#### When to Use?
-
--   Implementing custom behaviors on open/close
--   Triggering side effects (e.g., logging, data fetching)
-
 ### Fully Controlled
 
 Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for total control:
@@ -205,24 +177,22 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 <script lang="ts">
 	import { AlertDialog } from "bits-ui";
 	let myOpen = $state(false);
+
+	function getOpen() {
+		return myOpen;
+	}
+
+	function setOpen(newOpen: boolean) {
+		myOpen = newOpen;
+	}
 </script>
 
-<AlertDialog.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
+<AlertDialog.Root bind:open={getOpen, setOpen}>
 	<!-- ... -->
 </AlertDialog.Root>
 ```
 
-#### When to Use?
-
--   Implementing complex open/close logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-Fully controlled state requires careful management to avoid bugs. Prefer two-way binding unless you need fine-grained control.
-
-</Callout>
+See the [State Management](/docs/state-management) documentation for more information.
 
 ## Focus Management
 

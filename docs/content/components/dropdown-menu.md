@@ -118,11 +118,11 @@ You can then use the `MyDropdownMenu` component like this:
 
 ## Managing Open State
 
-Bits UI offers several approaches to manage and synchronize the Dropdown Menu's open state, catering to different levels of control and integration needs.
+This section covers how to manage the `open` state of the menu.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -137,67 +137,28 @@ For seamless state synchronization, use Svelte's `bind:open` directive. This met
 </DropdownMenu.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `isOpen` when the menu closes/opens (e.g., via escape key)
--   Allows external control (e.g., opening via a separate button)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte {3,7-11}
-<script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-	let isOpen = $state(false);
-</script>
-
-<DropdownMenu.Root
-	open={isOpen}
-	onOpenChange={(o) => {
-		isOpen = o;
-		// additional logic here.
-	}}
->
-	<!-- ... -->
-</DropdownMenu.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on open/close
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { DropdownMenu } from "bits-ui";
 	let myOpen = $state(false);
+
+	function getOpen() {
+		return myOpen;
+	}
+
+	function setOpen(newOpen: boolean) {
+		myOpen = newOpen;
+	}
 </script>
 
-<DropdownMenu.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
+<DropdownMenu.Root bind:open={getOpen, setOpen}>
 	<!-- ... -->
 </DropdownMenu.Root>
 ```
-
-#### When to Use
-
--   Implementing complex open/close logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Groups
 

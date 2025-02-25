@@ -34,11 +34,11 @@ description: Display supplementary content or information when users interact wi
 
 ## Managing Open State
 
-Bits UI offers several approaches to manage and synchronize the Popover's open state, catering to different levels of control and integration needs.
+This section covers how to manage the `open` state of the component.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:open` directive. This method automatically keeps your local state in sync with the dialog's internal state.
+Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -53,67 +53,28 @@ For seamless state synchronization, use Svelte's `bind:open` directive. This met
 </Popover.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `isOpen` when the popover closes/opens (e.g., via escape key)
--   Allows external control (e.g., opening via a separate button)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onOpenChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte {3,7-11}
-<script lang="ts">
-	import { Popover } from "bits-ui";
-	let isOpen = $state(false);
-</script>
-
-<Popover.Root
-	open={isOpen}
-	onOpenChange={(o) => {
-		isOpen = o;
-		// additional logic here.
-	}}
->
-	<!-- ... -->
-</Popover.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on open/close
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Popover } from "bits-ui";
 	let myOpen = $state(false);
+
+	function getOpen() {
+		return myOpen;
+	}
+
+	function setOpen(newOpen: boolean) {
+		myOpen = newOpen;
+	}
 </script>
 
-<Popover.Root bind:open={() => myOpen, (newOpen) => (myOpen = newOpen)}>
+<Popover.Root bind:open={getOpen, setOpen}>
 	<!-- ... -->
 </Popover.Root>
 ```
-
-#### When to Use
-
--   Implementing complex open/close logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Managing Focus
 
