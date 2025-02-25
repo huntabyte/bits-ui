@@ -86,7 +86,9 @@ function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item
 	const submit = returned.getByTestId("submit");
 
 	function getHiddenInputs(name = "test") {
-		return returned.container.querySelectorAll<HTMLElement>(`input[name="${name}"]`);
+		return Array.from(
+			returned.container.querySelectorAll<HTMLElement>(`input[name="${name}"]`)
+		);
 	}
 
 	function getContent() {

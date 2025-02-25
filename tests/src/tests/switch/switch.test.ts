@@ -103,7 +103,6 @@ it("should not include the input when the `name` prop isn't passed/undefined", a
 });
 
 it("should render the input when the `name` prop is passed", async () => {
-	// passed by default
 	const { input } = setup();
 	expect(input).toBeInTheDocument();
 });

@@ -14,7 +14,6 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { hiddenInputBaseProps } from "$lib/internal/hidden-input-base-props.js";
 
 const RADIO_GROUP_ROOT_ATTR = "data-radio-group-root";
 const RADIO_GROUP_ITEM_ATTR = "data-radio-group-item";
@@ -165,7 +164,6 @@ class RadioGroupInputState {
 				value: this.root.opts.value.current,
 				required: this.root.opts.required.current,
 				disabled: this.root.opts.disabled.current,
-				...hiddenInputBaseProps,
 			}) as const
 	);
 

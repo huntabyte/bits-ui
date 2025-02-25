@@ -1,14 +1,10 @@
 <script lang="ts">
 	import { useDateFieldHiddenInput } from "../date-field.svelte.js";
-	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
+	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
 
 	const hiddenInputState = useDateFieldHiddenInput();
 </script>
 
 {#if hiddenInputState.shouldRender}
-	<VisuallyHidden>
-		{#snippet child({ props })}
-			<input {...props} {...hiddenInputState.props} />
-		{/snippet}
-	</VisuallyHidden>
+	<HiddenInput {...hiddenInputState.props} />
 {/if}

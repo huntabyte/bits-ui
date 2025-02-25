@@ -1,9 +1,10 @@
 <script lang="ts">
+	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
 	import { useRadioGroupInput } from "../radio-group.svelte.js";
 
 	const inputState = useRadioGroupInput();
 </script>
 
 {#if inputState.shouldRender}
-	<input {...inputState.props} />
+	<HiddenInput {...inputState.props} />
 {/if}

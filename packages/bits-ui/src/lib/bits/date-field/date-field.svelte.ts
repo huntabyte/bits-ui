@@ -61,7 +61,6 @@ import {
 	moveToNextSegment,
 	moveToPrevSegment,
 } from "$lib/internal/date-time/field/segments.js";
-import { hiddenInputBaseProps } from "$lib/internal/hidden-input-base-props.js";
 
 export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
 const DATE_FIELD_LABEL_ATTR = "data-date-field-label";
@@ -673,7 +672,6 @@ class DateFieldHiddenInputState {
 			name: this.root.name,
 			value: this.isoValue,
 			required: this.root.required.current,
-			...hiddenInputBaseProps,
 		};
 	});
 }

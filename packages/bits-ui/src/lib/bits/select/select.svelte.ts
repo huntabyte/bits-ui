@@ -24,7 +24,6 @@ import { noop } from "$lib/internal/noop.js";
 import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
 import { isIOS } from "$lib/internal/is.js";
-import { hiddenInputBaseProps } from "$lib/internal/hidden-input-base-props.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -1048,7 +1047,6 @@ class SelectHiddenInputState {
 				name: this.root.opts.name.current,
 				value: this.opts.value.current,
 				onfocus: this.onfocus,
-				...hiddenInputBaseProps,
 			}) as const
 	);
 }

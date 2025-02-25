@@ -11,7 +11,6 @@ import {
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
-import { hiddenInputBaseProps } from "$lib/internal/hidden-input-base-props.js";
 
 const SWITCH_ROOT_ATTR = "data-switch-root";
 const SWITCH_THUMB_ATTR = "data-switch-thumb";
@@ -91,7 +90,6 @@ class SwitchInputState {
 				checked: this.root.opts.checked.current,
 				disabled: this.root.opts.disabled.current,
 				required: this.root.opts.required.current,
-				...hiddenInputBaseProps,
 			}) as const
 	);
 }

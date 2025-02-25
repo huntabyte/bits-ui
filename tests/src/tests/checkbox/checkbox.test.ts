@@ -75,6 +75,12 @@ it("should not render the checkbox input if a name prop isn't passed", async () 
 it("should render the checkbox input if a name prop is passed", async () => {
 	const { input } = setup({ name: "checkbox" });
 	expect(input).toBeInTheDocument();
+	expect(input).toHaveAttribute("type", "checkbox");
+});
+
+it("should not have input as part of tab order", async () => {
+	const { input } = setup({ name: "abc" });
+	expect(input).toHaveAttribute("tabindex", "-1");
 });
 
 it('should default the value to "on", when no value prop is passed', async () => {

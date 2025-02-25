@@ -10,7 +10,6 @@ import type {
 } from "$lib/internal/types.js";
 import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { hiddenInputBaseProps } from "$lib/internal/hidden-input-base-props.js";
 
 const CHECKBOX_ROOT_ATTR = "data-checkbox-root";
 const CHECKBOX_GROUP_ATTR = "data-checkbox-group";
@@ -241,7 +240,6 @@ class CheckboxInputState {
 				required: this.root.trueRequired,
 				name: this.root.trueName,
 				value: this.root.opts.value.current,
-				...hiddenInputBaseProps,
 			}) as const
 	);
 }
