@@ -1,8 +1,7 @@
-import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { useRefById } from "svelte-toolbelt";
 import { Context } from "runed";
 import {
 	getAriaChecked,
-	getAriaHidden,
 	getAriaRequired,
 	getDataChecked,
 	getDataDisabled,
@@ -91,9 +90,6 @@ class SwitchInputState {
 				checked: this.root.opts.checked.current,
 				disabled: this.root.opts.disabled.current,
 				required: this.root.opts.required.current,
-				"aria-hidden": getAriaHidden(true),
-				style: styleToString(srOnlyStyles),
-				tabindex: -1,
 			}) as const
 	);
 }

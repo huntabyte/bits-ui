@@ -1,21 +1,15 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useSelectHiddenInput } from "../select.svelte.js";
-	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
+	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
 
-	type Props = {
-		value?: string;
-	};
-
-	let { value = $bindable("") }: Props = $props();
+	let { value = $bindable("") }: { value?: string } = $props();
 
 	const hiddenInputState = useSelectHiddenInput({
 		value: box.with(() => value),
 	});
 </script>
 
-<VisuallyHidden>
-	{#if hiddenInputState.shouldRender}
-		<input {...hiddenInputState.props} bind:value />
-	{/if}
-</VisuallyHidden>
+{#if hiddenInputState.shouldRender}
+	<HiddenInput {...hiddenInputState.props} bind:value />
+{/if}

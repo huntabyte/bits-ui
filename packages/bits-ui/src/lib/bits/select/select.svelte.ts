@@ -1,12 +1,5 @@
 import { Context, Previous, watch } from "runed";
-import {
-	afterSleep,
-	afterTick,
-	onDestroyEffect,
-	srOnlyStyles,
-	styleToString,
-	useRefById,
-} from "svelte-toolbelt";
+import { afterSleep, afterTick, onDestroyEffect, useRefById } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -1053,8 +1046,6 @@ class SelectHiddenInputState {
 				required: getRequired(this.root.opts.required.current),
 				name: this.root.opts.name.current,
 				value: this.opts.value.current,
-				style: styleToString(srOnlyStyles),
-				tabindex: -1,
 				onfocus: this.onfocus,
 			}) as const
 	);

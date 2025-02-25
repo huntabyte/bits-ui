@@ -1,4 +1,4 @@
-import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { useRefById } from "svelte-toolbelt";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -240,8 +240,6 @@ class CheckboxInputState {
 				required: this.root.trueRequired,
 				name: this.root.trueName,
 				value: this.root.opts.value.current,
-				"aria-hidden": "true",
-				style: styleToString(srOnlyStyles),
 			}) as const
 	);
 }

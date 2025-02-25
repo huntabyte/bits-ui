@@ -1,4 +1,4 @@
-import { srOnlyStyles, styleToString, useRefById } from "svelte-toolbelt";
+import { useRefById } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
@@ -87,10 +87,7 @@ class RadioGroupItemState {
 		readonly opts: RadioGroupItemStateProps,
 		readonly root: RadioGroupRootState
 	) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+		useRefById(opts);
 
 		if (this.opts.value.current === this.root.opts.value.current) {
 			this.root.rovingFocusGroup.setCurrentTabStopId(this.opts.id.current);
@@ -167,10 +164,6 @@ class RadioGroupInputState {
 				value: this.root.opts.value.current,
 				required: this.root.opts.required.current,
 				disabled: this.root.opts.disabled.current,
-				"aria-hidden": "true",
-				hidden: true,
-				style: styleToString(srOnlyStyles),
-				tabIndex: -1,
 			}) as const
 	);
 
