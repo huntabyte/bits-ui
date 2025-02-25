@@ -104,60 +104,11 @@ You can then use the `MyCheckbox` component in your application like so:
 
 ## Managing Checked State
 
-Bits UI offers several approaches to manage and synchronize the Checkbox's checked state, catering to different levels of control and integration needs.
+This section covers how to manage the `checked` state of the Checkbox.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:checked` directive. This method automatically keeps your local state in sync with the checkbox's internal state.
-
-```svelte
-<script lang="ts">
-	import MyCheckbox from "$lib/components/MyCheckbox.svelte";
-	let myChecked = $state(false);
-</script>
-
-<button onclick={() => (myChecked = false)}> uncheck </button>
-
-<MyCheckbox bind:checked={myChecked} />
-```
-
-#### Key Benefits
-
--   Simplifies state management
--   Automatically updates `myChecked` when the checkbox changes (e.g., via clicking on the checkbox)
--   Allows external control (e.g., checking via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onCheckedChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte
-<script lang="ts">
-	import MyCheckbox from "$lib/components/MyCheckbox.svelte";
-	let myChecked = $state(false);
-</script>
-
-<MyCheckbox
-	checked={myChecked}
-	onCheckedChange={(checked) => {
-		myChecked = checked;
-		if (checked === "indeterminate") {
-			// do something different
-		}
-		// additional logic here.
-	}}
-/>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on checked/unchecked
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use `bind:checked` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -165,32 +116,41 @@ For complete control over the component's state, use a [Function Binding](https:
 	let myChecked = $state(false);
 </script>
 
-<Checkbox.Root bind:checked={() => myChecked, (newChecked) => (myChecked = newChecked)}>
+<button onclick={() => (myChecked = false)}> uncheck </button>
+
+<Checkbox.Root bind:checked={myChecked} />
+```
+
+### Fully Controlled
+
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
+
+```svelte
+<script lang="ts">
+	import { Checkbox } from "bits-ui";
+	let myChecked = $state(false);
+
+	function getChecked() {
+		return myChecked;
+	}
+
+	function setChecked(newChecked: boolean) {
+		myChecked = newChecked;
+	}
+</script>
+
+<Checkbox.Root bind:checked={getChecked, setChecked}>
 	<!-- ... -->
 </Checkbox.Root>
 ```
 
-#### When to Use
-
--   Implementing complex checked/unchecked logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
-
 ## Managing Indeterminate State
 
-Bits UI offers several approaches to manage and synchronize the Checkbox's `indeterminate` state, catering to different levels of control and integration needs.
+This section covers how to manage the `indeterminate` state of the Checkbox.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:indeterminate` directive. This method automatically keeps your local state in sync with the checkbox's internal state.
+Use `bind:indeterminate` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -203,69 +163,28 @@ For seamless state synchronization, use Svelte's `bind:indeterminate` directive.
 <MyCheckbox bind:indeterminate={myIndeterminate} />
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myIndeterminate` when the checkbox changes (e.g., via clicking on the checkbox)
--   Allows external control (e.g., checking via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onIndeterminateChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte
-<script lang="ts">
-	import MyCheckbox from "$lib/components/MyCheckbox.svelte";
-	let myIndeterminate = $state(true);
-</script>
-
-<MyCheckbox
-	indeterminate={myIndeterminate}
-	onIndeterminateChange={(indeterminate) => {
-		myIndeterminate = indeterminate;
-		// additional logic here.
-	}}
-/>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Checkbox } from "bits-ui";
 	let myIndeterminate = $state(true);
+
+	function getIndeterminate() {
+		return myIndeterminate;
+	}
+
+	function setIndeterminate(newIndeterminate: boolean) {
+		myIndeterminate = newIndeterminate;
+	}
 </script>
 
-<Checkbox.Root
-	bind:indeterminate={
-		() => myIndeterminate, (newIndeterminate) => (myIndeterminate = newIndeterminate)
-	}
->
+<Checkbox.Root bind:indeterminate={getIndeterminate, setIndeterminate}>
 	<!-- ... -->
 </Checkbox.Root>
 ```
-
-#### When to Use
-
--   Implementing complex indeterminate logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Disabled State
 
@@ -336,11 +255,11 @@ You can use the `Checkbox.Group` component to create a checkbox group.
 
 ### Managing Value State
 
-Bits UI offers several approaches to manage and synchronize a Checkbox Group's value state, catering to different levels of control and integration needs.
+This section covers how to manage the `value` state of a Checkbox Group.
 
-#### 1. Two-Way Binding
+#### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the group's internal state.
+Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -364,70 +283,28 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 </Checkbox.Group>
 ```
 
-##### Key Benefits
+#### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myValue` when the accordion changes (e.g., via clicking on an item's trigger)
--   Allows external control (e.g., opening an item via a separate button)
-
-#### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Checkbox } from "bits-ui";
 	let myValue = $state<string[]>([]);
+
+	function getValue() {
+		return myValue;
+	}
+
+	function setValue(newValue: string[]) {
+		myValue = newValue;
+	}
 </script>
 
-<Checkbox.Group
-	value={myValue}
-	onValueChange={(value) => {
-		myValue = value;
-		// additional logic here.
-	}}
->
-	<Checkbox.GroupLabel>Items</Checkbox.GroupLabel>
-	<Checkbox.Root value="item-1" />
-	<Checkbox.Root value="item-2" />
-	<Checkbox.Root value="item-3" />
-</Accordion.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on value change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-#### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
-
-```svelte
-<script lang="ts">
-	import { Checkbox } from "bits-ui";
-	let myValue = $state("");
-</script>
-
-<Checkbox.Group bind:value={() => myValue, (newValue) => (myValue = newValue)}>
+<Checkbox.Group bind:value={getValue, setValue}>
 	<!-- ... -->
 </Checkbox.Group>
 ```
-
-##### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ### HTML Forms
 

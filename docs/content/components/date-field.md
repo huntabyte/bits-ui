@@ -137,11 +137,11 @@ If you're creating a date field for something like a birthday, ensure your place
 
 ## Managing Placeholder State
 
-Bits UI offers several approaches to manage and synchronize the component's placeholder state, catering to different levels of control and integration needs.
+This section covers how to manage the `placeholder` state of the Date Field.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:placeholder` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -159,77 +159,37 @@ For seamless state synchronization, use Svelte's `bind:placeholder` directive. T
 </DateField.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myPlaceholder` when the internal state changes
--   Allows external control (e.g., changing the placeholder via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onPlaceholderChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { DateField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+	import type { DateValue } from "@internationalized/date";
+	let myPlaceholder = $state<DateValue>();
+
+	function getPlaceholder() {
+		return myPlaceholder;
+	}
+
+	function setPlaceholder(newPlaceholder: DateValue) {
+		myPlaceholder = newPlaceholder;
+	}
 </script>
 
-<DateField.Root
-	placeholder={myPlaceholder}
-	onPlaceholderChange={(p) => {
-		placeholder = p;
-	}}
->
+<DateField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
 	<!-- ... -->
 </DateField.Root>
 ```
-
-#### Use Cases
-
--   Implementing custom behaviors on placeholder change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
-
-```svelte
-<script lang="ts">
-	import { DateField } from "bits-ui";
-	let myPlaceholder = $state();
-</script>
-
-<DateField.Root
-	bind:placeholder={() => myPlaceholder, (newPlaceholder) => (myPlaceholder = newPlaceholder)}
->
-	<!-- ... -->
-</DateField.Root>
-```
-
-#### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Managing Value State
 
-Bits UI offers several approaches to manage and synchronize the component's value state, catering to different levels of control and integration needs.
+This section covers how to manage the `value` state of the Date Field.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -244,67 +204,29 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 </DateField.Root>
 ```
 
-#### Key Benefits
-
--   Simplifies state management
--   Automatically updates `myValue` when the internal state changes
--   Allows external control (e.g., changing the value via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte
-<script lang="ts">
-	import { DateField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
-</script>
-
-<DateField.Root
-	value={myValue}
-	onValueChange={(v) => {
-		value = v.set({ hour: v.hour + 1 });
-	}}
->
-	<!-- ... -->
-</DateField.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on value change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
+### Fully Controlled
 
 For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
 
 ```svelte
 <script lang="ts">
 	import { DateField } from "bits-ui";
-	let myValue = $state();
+	import type { DateValue } from "@internationalized/date";
+	let myValue = $state<DateValue>();
+
+	function getValue() {
+		return myValue;
+	}
+
+	function setValue(newValue: DateValue) {
+		myValue = newValue;
+	}
 </script>
 
-<DateField.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
+<DateField.Root bind:value={getValue, setValue}>
 	<!-- ... -->
 </DateField.Root>
 ```
-
-#### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 ## Default Value
 

@@ -118,7 +118,7 @@ For complete control over the component's state, use a [Function Binding](https:
 
 While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
 
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
+For more in-depth information on controlled components and advanced state management techniques, refer to our [State Management](/docs/state-management) documentation.
 
 </Callout>
 

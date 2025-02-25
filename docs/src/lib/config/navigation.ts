@@ -144,8 +144,8 @@ export const navigation: Navigation = {
 					icon: CalendarBlank,
 				},
 				{
-					title: "Controlled State",
-					href: "/docs/controlled-state",
+					title: "State Management",
+					href: "/docs/state-management",
 					items: [],
 					icon: CirclesThreePlus,
 				},

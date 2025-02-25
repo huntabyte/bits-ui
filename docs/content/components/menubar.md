@@ -142,13 +142,13 @@ Now, we can use the `MyMenubarMenu` component within a `Menubar.Root` component 
 </Menubar.Root>
 ```
 
-## Value State
+## Managing Value State
 
-Bits UI provides flexible options for controlling and synchronizing the menubar's active value state. The `value` represents the currently opened menu within the menubar.
+This section covers how to manage the `value` state of the menubar.
 
 ### Two-Way Binding
 
-Use the `bind:value` directive for effortless two-way synchronization between your local state and the menubar's internal state.
+Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
@@ -167,24 +167,31 @@ Use the `bind:value` directive for effortless two-way synchronization between yo
 </Menubar.Root>
 ```
 
-### Change Handler
+### Fully Controlled
 
-You can also use the `onValueChange` prop to update local state when the menubar's active menu changes. This is useful when you don't want two-way binding for one reason or another, or you want to perform additional logic when the menus open or close.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
-```svelte {3,7-11}
+```svelte
 <script lang="ts">
 	import { Menubar } from "bits-ui";
 	let activeValue = $state("");
+
+	function getValue() {
+		return activeValue;
+	}
+
+	function setValue(newValue: string) {
+		activeValue = newValue;
+	}
 </script>
 
-<Menubar.Root
-	value={activeValue}
-	onOpenChange={(value) => {
-		activeValue = value;
-		// additional logic here.
-	}}
->
-	<!-- ... -->
+<Menubar.Root bind:value={getValue, setValue}>
+	<Menubar.Menu value="menu-1">
+		<!-- ... -->
+	</Menubar.Menu>
+	<Menubar.Menu value="menu-2">
+		<!-- ... -->
+	</Menubar.Menu>
 </Menubar.Root>
 ```
 
@@ -258,8 +265,6 @@ You can create nested menus using the `Menubar.Sub` component to create complex 
 	</Menubar.Sub>
 </Menubar.Content>
 ```
-
-<!-- <MenubarDemoNested /> -->
 
 ## Svelte Transitions
 

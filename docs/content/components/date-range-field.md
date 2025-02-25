@@ -51,11 +51,11 @@ The `DateRangeField` component combines two [Date Field](/docs/components/date-f
 
 ## Managing Placeholder State
 
-Bits UI offers several approaches to manage and synchronize the component's placeholder state, catering to different levels of control and integration needs.
+This section covers how to manage the `placeholder` state of the component.
 
-### 1. Two-Way Binding
+### Two-Way Binding
 
-For seamless state synchronization, use Svelte's `bind:placeholder` directive. This method automatically keeps your local state in sync with the component's internal state.
+Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
@@ -69,82 +69,43 @@ For seamless state synchronization, use Svelte's `bind:placeholder` directive. T
 </DateRangeField.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myPlaceholder` when the internal state changes
--   Allows external control (e.g., changing the placeholder via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onPlaceholderChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
-<script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
-</script>
-
-<DateRangeField.Root
-	placeholder={myPlaceholder}
-	onPlaceholderChange={(p) => {
-		myPlaceholder = p.set({ year: 2025 });
-	}}
->
-	<!-- ... -->
-</DateRangeField.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on placeholder change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
-
-```svelte
-<script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	let myPlaceholder = $state();
-</script>
-
-<DateRangeField.Root
-	bind:placeholder={() => myPlaceholder, (newPlaceholder) => (myPlaceholder = newPlaceholder)}
->
-	<!-- ... -->
-</DateRangeField.Root>
-```
-
-#### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
-
-## Managing Value State
-
-Bits UI offers several approaches to manage and synchronize the component's value state, catering to different levels of control and integration needs.
-
-### 1. Two-Way Binding
-
-For seamless state synchronization, use Svelte's `bind:value` directive. This method automatically keeps your local state in sync with the component's internal state.
-
-```svelte {3,6,8}
 <script lang="ts">
 	import { DateRangeField } from "bits-ui";
 	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state({
+	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+
+	function getPlaceholder() {
+		return myPlaceholder;
+	}
+
+	function setPlaceholder(newPlaceholder: CalendarDateTime) {
+		myPlaceholder = newPlaceholder;
+	}
+</script>
+
+<DateRangeField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
+	<!-- ... -->
+</DateRangeField.Root>
+```
+
+## Managing Value State
+
+This section covers how to manage the `value` state of the component.
+
+### Two-Way Binding
+
+Use `bind:value` for simple, automatic state synchronization:
+
+```svelte {3,6,8}
+<script lang="ts">
+	import { DateRangeField, type DateRange } from "bits-ui";
+	import { CalendarDateTime } from "@internationalized/date";
+	let myValue = $state<DateRange>({
 		start: new CalendarDateTime(2024, 8, 3, 12, 30),
 		end: new CalendarDateTime(2024, 8, 4, 12, 30),
 	});
@@ -165,72 +126,30 @@ For seamless state synchronization, use Svelte's `bind:value` directive. This me
 </DateRangeField.Root>
 ```
 
-#### Key Benefits
+### Fully Controlled
 
--   Simplifies state management
--   Automatically updates `myValue` when the internal state changes
--   Allows external control (e.g., changing the value via a separate button/programmatically)
-
-### 2. Change Handler
-
-For more granular control or to perform additional logic on state changes, use the `onValueChange` prop. This approach is useful when you need to execute custom logic alongside state updates.
-
-```svelte {3,7-11}
-<script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state({
-		start: new CalendarDateTime(2024, 8, 3, 12, 30),
-		end: new CalendarDateTime(2024, 8, 4, 12, 30),
-	});
-</script>
-
-<DateRangeField.Root
-	value={myValue}
-	onValueChange={(v) => {
-		value = {
-			start: v.start?.set({ hour: v.start.hour + 1 }),
-			end: v.end?.set({ hour: v.end.hour + 1 }),
-		};
-	}}
->
-	<!-- ... -->
-</DateRangeField.Root>
-```
-
-#### Use Cases
-
--   Implementing custom behaviors on value change
--   Integrating with external state management solutions
--   Triggering side effects (e.g., logging, data fetching)
-
-### 3. Fully Controlled
-
-For complete control over the component's state, use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) to manage the value state externally.
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { DateRangeField } from "bits-ui";
-	let myValue = $state();
+	let myValue = $state<DateRange>({
+		start: undefined,
+		end: undefined,
+	});
+
+	function getValue() {
+		return myValue;
+	}
+
+	function setValue(newValue: DateRange) {
+		myValue = newValue;
+	}
 </script>
 
-<DateRangeField.Root bind:value={() => myValue, (newValue) => (myValue = newValue)}>
+<DateRangeField.Root bind:value={getValue, setValue}>
 	<!-- ... -->
 </DateRangeField.Root>
 ```
-
-#### When to Use
-
--   Implementing complex logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout>
-
-While powerful, fully controlled state should be used judiciously as it increases complexity and can cause unexpected behaviors if not handled carefully.
-
-For more in-depth information on controlled components and advanced state management techniques, refer to our [Controlled State](/docs/controlled-state) documentation.
-
-</Callout>
 
 <APISection {schemas} />

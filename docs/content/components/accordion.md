@@ -141,9 +141,9 @@ Use unique `value` props for each `Item` if you plan to control the state progra
 
 </Callout>
 
-## State Management
+## Managing Value State
 
-The Accordion supports multiple ways to manage which items are open, catering to different use cases.
+This section covers how to manage the `value` state of the Accordion.
 
 ### Two-Way Binding
 
@@ -153,6 +153,7 @@ Use `bind:value` for simple, automatic state synchronization:
 <script lang="ts">
 	import { Accordion } from "bits-ui";
 	let myValue = $state<string[]>([]);
+	const numberOfItemsOpen = $derived(myValue.length);
 </script>
 
 <button
@@ -176,58 +177,30 @@ Use `bind:value` for simple, automatic state synchronization:
 </Accordion.Root>
 ```
 
-#### Why Use It?
-
--   Effortless state updates
--   External controls (e.g., buttons) work out of the box
-
-### Change Handler
-
-Use `onValueChange` for custom logic on state changes:
-
-```svelte
-<script lang="ts">
-	import { Accordion } from "bits-ui";
-</script>
-
-<Accordion.Root
-	type="multiple"
-	onValueChange={(value) => {
-		console.log("Accordion state changed!");
-	}}
-></Accordion.Root>
-```
-
-#### When to Use?
-
--   Add logging, validation, or side effects.
-
 ### Fully Controlled
 
-Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for total control:
+Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) for complete control over the state's reads and writes.
 
 ```svelte
 <script lang="ts">
 	import { Accordion } from "bits-ui";
 	let myValue = $state("");
+
+	function getValue() {
+		return myValue;
+	}
+
+	function setValue(newValue: string) {
+		myValue = newValue;
+	}
 </script>
 
-<Accordion.Root type="single" bind:value={() => myValue, (newValue) => (myValue = newValue)}>
+<Accordion.Root type="single" bind:value={getValue, setValue}>
 	<!-- ... -->
 </Accordion.Root>
 ```
 
-#### When to Use
-
--   Implementing complex open/close logic
--   Coordinating multiple UI elements
--   Debugging state-related issues
-
-<Callout type="warning">
-
-Fully controlled state requires careful management to avoid bugs. Prefer two-way binding unless you need fine-grained control.
-
-</Callout>
+See the [State Management](/docs/state-management) documentation for more information.
 
 ## Customization
 
