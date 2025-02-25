@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.4
+
+### Patch Changes
+
+-   fix: ensure all hidden inputs are not in the tab order ([#1245](https://github.com/huntabyte/bits-ui/pull/1245))
+
 ## 1.3.3
 
 ### Patch Changes
