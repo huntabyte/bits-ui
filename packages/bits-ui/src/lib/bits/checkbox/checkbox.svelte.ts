@@ -132,10 +132,9 @@ class CheckboxRootState {
 	) {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
-
 		useRefById(opts);
 
-		watch(
+		watch.pre(
 			[() => $state.snapshot(this.group?.opts.value.current), () => this.opts.value.current],
 			([groupValue, value]) => {
 				if (!groupValue || !value) return;
@@ -143,7 +142,7 @@ class CheckboxRootState {
 			}
 		);
 
-		watch(
+		watch.pre(
 			() => this.opts.checked.current,
 			(checked) => {
 				if (!this.group) return;
@@ -249,7 +248,7 @@ function getCheckboxDataState(checked: boolean, indeterminate: boolean) {
 	return checked ? "checked" : "unchecked";
 }
 
-const CheckboxGroupContext = new Context<CheckboxGroupState>("Checkbox.Group");
+export const CheckboxGroupContext = new Context<CheckboxGroupState>("Checkbox.Group");
 
 const CheckboxRootContext = new Context<CheckboxRootState>("Checkbox.Root");
 
@@ -257,8 +256,8 @@ export function useCheckboxGroup(props: CheckboxGroupStateProps) {
 	return CheckboxGroupContext.set(new CheckboxGroupState(props));
 }
 
-export function useCheckboxRoot(props: CheckboxRootStateProps) {
-	return CheckboxRootContext.set(new CheckboxRootState(props, CheckboxGroupContext.getOr(null)));
+export function useCheckboxRoot(props: CheckboxRootStateProps, group: CheckboxGroupState | null) {
+	return CheckboxRootContext.set(new CheckboxRootState(props, group));
 }
 
 export function useCheckboxGroupLabel(props: CheckboxGroupLabelStateProps) {

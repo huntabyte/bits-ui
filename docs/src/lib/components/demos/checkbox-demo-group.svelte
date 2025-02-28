@@ -6,12 +6,7 @@
 	let myValue = $state<string[]>(["marketing", "news"]);
 </script>
 
-<Checkbox.Group
-	class="flex flex-col gap-3"
-	bind:value={myValue}
-	name="notifications"
-	onValueChange={(v) => console.log(v)}
->
+<Checkbox.Group class="flex flex-col gap-3" bind:value={myValue} name="notifications">
 	<Checkbox.GroupLabel class="text-foreground-alt text-sm font-medium">
 		Notifications
 	</Checkbox.GroupLabel>
