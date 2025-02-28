@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxRootProps } from "../types.js";
-	import { useCheckboxRoot } from "../checkbox.svelte.js";
+	import { CheckboxGroupContext, useCheckboxRoot } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 
@@ -22,32 +22,45 @@
 		...restProps
 	}: CheckboxRootProps = $props();
 
-	const rootState = useCheckboxRoot({
-		checked: box.with(
-			() => checked,
-			(v) => {
-				checked = v;
-				onCheckedChange?.(v);
-			}
-		),
-		disabled: box.with(() => disabled ?? false),
-		required: box.with(() => required),
-		name: box.with(() => name),
-		value: box.with(() => value),
-		id: box.with(() => id),
-		ref: box.with(
-			() => ref,
-			(v) => (ref = v)
-		),
-		indeterminate: box.with(
-			() => indeterminate,
-			(v) => {
-				indeterminate = v;
-				onIndeterminateChange?.(v);
-			}
-		),
-		type: box.with(() => type),
-	});
+	const group = CheckboxGroupContext.getOr(null);
+
+	if (group && value) {
+		if (group.opts.value.current.includes(value)) {
+			checked = true;
+		} else {
+			checked = false;
+		}
+	}
+
+	const rootState = useCheckboxRoot(
+		{
+			checked: box.with(
+				() => checked,
+				(v) => {
+					checked = v;
+					onCheckedChange?.(v);
+				}
+			),
+			disabled: box.with(() => disabled ?? false),
+			required: box.with(() => required),
+			name: box.with(() => name),
+			value: box.with(() => value),
+			id: box.with(() => id),
+			ref: box.with(
+				() => ref,
+				(v) => (ref = v)
+			),
+			indeterminate: box.with(
+				() => indeterminate,
+				(v) => {
+					indeterminate = v;
+					onIndeterminateChange?.(v);
+				}
+			),
+			type: box.with(() => type),
+		},
+		group
+	);
 
 	const mergedProps = $derived(mergeProps({ ...restProps }, rootState.props));
 </script>
