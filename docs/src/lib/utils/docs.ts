@@ -2,35 +2,23 @@ import { error, redirect } from "@sveltejs/kit";
 import type { Component } from "svelte";
 import type { Doc } from "$content/index.js";
 import { getAPISchemas, isBit } from "$lib/content/api-reference/index.js";
-import type { APISchema } from "$lib/types/index.js";
+import { utilityDocs, componentDocs, docs, typeHelperDocs } from "$content/index.js";
+
+const allDocs = [...docs, ...componentDocs, ...utilityDocs, ...typeHelperDocs];
 
 export type FrontMatter = Pick<Doc, "title" | "description">;
 
-export type DocFile = {
-	default: Component;
-	metadata: FrontMatter;
-};
-
-export type DocResolver = () => Promise<DocFile>;
-
-type TDoc = {
-	component: DocFile["default"];
-	metadata: DocFile["metadata"];
-	title: string;
-};
-
-type ComponentDoc = {
-	component: DocFile["default"];
-	metadata: DocFile["metadata"];
-	title: DocFile["metadata"]["title"];
-	schemas: APISchema[];
-};
+export type DocResolver = () => Promise<{ default: Component; metadata: Doc }>;
 
 export function slugFromPath(path: string) {
 	return path.replace("/content/", "").replace(".md", "");
 }
 
-export async function getDoc(slug: string): Promise<TDoc> {
+function getDocMetadata(slug: string) {
+	return allDocs.find((doc) => doc.slug === slug);
+}
+
+export async function getDoc(slug: string) {
 	if (slug === "components") {
 		redirect(303, "/docs/components/accordion");
 	}
@@ -47,19 +35,19 @@ export async function getDoc(slug: string): Promise<TDoc> {
 	}
 
 	const doc = await match?.resolver?.();
+	const metadata = getDocMetadata(slug);
 
-	if (!doc || !doc.metadata) {
-		error(404);
+	if (!doc || !metadata) {
+		error(404, "Could not find the document.");
 	}
 
 	return {
 		component: doc.default,
-		metadata: doc.metadata,
-		title: doc.metadata.title,
+		metadata: metadata,
 	};
 }
 
-export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
+export async function getComponentDoc(slug: string) {
 	if (slug === "components") {
 		redirect(303, "/docs/components/accordion");
 	}
@@ -78,12 +66,15 @@ export async function getComponentDoc(slug: string): Promise<ComponentDoc> {
 	}
 
 	const doc = await match?.resolver?.();
-	if (!doc || !doc.metadata) error(404);
+	const metadata = getDocMetadata(slug);
+	console.log("metadata", metadata);
+	if (!doc || !metadata) {
+		error(404, "Could not find the document.");
+	}
 
 	return {
 		component: doc.default,
-		metadata: doc.metadata,
-		title: doc.metadata.title,
+		metadata: metadata,
 		schemas: getAPISchemas(slug),
 	};
 }

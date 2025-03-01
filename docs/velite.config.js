@@ -8,6 +8,7 @@ const sharedSchema = s
 		content: s.markdown(),
 		navLabel: s.string().optional(),
 		raw: s.raw(),
+		toc: s.toc(),
 	})
 	.transform((data) => {
 		return {

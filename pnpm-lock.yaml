@@ -160,8 +160,8 @@ importers:
         specifier: ^0.5.5
         version: 0.5.5
       runed:
-        specifier: ^0.23.1
-        version: 0.23.2(svelte@5.19.4)
+        specifier: ^0.23.4
+        version: 0.23.4(svelte@5.19.4)
       shiki:
         specifier: ^1.22.2
         version: 1.22.2
@@ -3660,6 +3660,11 @@ packages:
 
   runed@0.23.2:
     resolution: {integrity: sha512-AhHCb5/B+YQW6ar1pzhGQOQy+byfjCH63ofuhrexSWwQKhC0EbQ60Z/wMYwETLo3ZubhwlNryxBt0seOMOrVFQ==}
+    peerDependencies:
+      svelte: ^5.7.0
+
+  runed@0.23.4:
+    resolution: {integrity: sha512-9q8oUiBYeXIDLWNK5DfCWlkL0EW3oGbk845VdKlPeia28l751VpfesaB/+7pI6rnbx1I6rqoZ2fZxptOJLxILA==}
     peerDependencies:
       svelte: ^5.7.0
 
@@ -7917,6 +7922,11 @@ snapshots:
       queue-microtask: 1.2.3
 
   runed@0.23.2(svelte@5.19.4):
+    dependencies:
+      esm-env: 1.2.2
+      svelte: 5.19.4
+
+  runed@0.23.4(svelte@5.19.4):
     dependencies:
       esm-env: 1.2.2
       svelte: 5.19.4

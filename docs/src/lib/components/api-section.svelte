@@ -10,7 +10,7 @@
 	let { schemas = [] }: { schemas: APISchema[] } = $props();
 </script>
 
-<H2>API Reference</H2>
+<H2 id="api-reference">API Reference</H2>
 
 <div class="flex flex-col gap-12 pt-8">
 	{#each schemas as schema}
@@ -18,9 +18,9 @@
 			<div
 				class="rounded-button bg-accent inline-flex h-[29px] items-center justify-center px-3 font-mono text-[17px] font-medium leading-tight tracking-tight dark:text-neutral-900"
 			>
-				<h3 class="font-semibold">
+				<h3 class="font-semibold" id={schema.title.toLowerCase()}>
 					<span class="text-foreground/80 font-normal dark:text-neutral-900/80"
-						>{page.data.title.replaceAll(" ", "")}.</span
+						>{page.data.metadata.title.replaceAll(" ", "")}.</span
 					>{schema.title}
 				</h3>
 			</div>

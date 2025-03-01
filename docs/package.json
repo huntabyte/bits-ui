@@ -44,7 +44,7 @@
 		"rehype-slug": "^6.0.0",
 		"remark-gfm": "^4.0.0",
 		"remove-markdown": "^0.5.5",
-		"runed": "^0.23.1",
+		"runed": "^0.23.4",
 		"shiki": "^1.22.2",
 		"svelte": "^5.19.4",
 		"svelte-check": "^4.1.4",
