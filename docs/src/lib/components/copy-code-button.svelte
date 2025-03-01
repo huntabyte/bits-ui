@@ -2,15 +2,17 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import CopySimple from "phosphor-svelte/lib/CopySimple";
 	import { cn } from "$lib/utils/styles.js";
+	import type { HTMLButtonAttributes } from "svelte/elements";
 
-	interface Props {
-		class?: string | undefined | null;
+	let {
+		class: className,
+		copyCode,
+		copied = false,
+		...rest
+	}: {
 		copyCode: () => void;
 		copied?: boolean;
-		[key: string]: any;
-	}
-
-	let { class: className, copyCode, copied = false, ...rest }: Props = $props();
+	} & HTMLButtonAttributes = $props();
 </script>
 
 <button
