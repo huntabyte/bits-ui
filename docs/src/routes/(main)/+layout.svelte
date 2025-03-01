@@ -2,7 +2,7 @@
 	import { Toaster } from "svelte-sonner";
 	import { ModeWatcher } from "mode-watcher";
 	import { dev } from "$app/environment";
-	import { page } from "$app/stores";
+	import { page } from "$app/state";
 	import Metadata from "$lib/components/metadata.svelte";
 	import SiteHeader from "$lib/components/site-header.svelte";
 	import TailwindIndicator from "$lib/components/tailwind-indicator.svelte";
@@ -34,14 +34,14 @@
 		<main
 			class={cn(
 				"relative pb-6 pl-4 pr-4 pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
-				$page.error ?? "xl:grid"
+				page.error ?? "xl:grid"
 			)}
 		>
 			<div class="mx-auto w-full min-w-0 md:max-w-[760px]" id="content">
 				<slot />
 			</div>
 
-			{#if !$page.error}
+			{#if !page.error}
 				<div class="hidden text-sm xl:block">
 					<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6">
 						<TableOfContents />

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from "$app/stores";
+	import { page } from "$app/state";
 	import type { SidebarNavItem } from "$lib/config/index.js";
 	import { cn } from "$lib/utils/styles.js";
 
@@ -15,7 +15,7 @@
 					href={item.href}
 					class={cn(
 						"text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2",
-						$page.url.pathname === item.href
+						page.url.pathname === item.href
 							? "bg-muted"
 							: "hover:bg-muted/50 bg-transparent"
 					)}

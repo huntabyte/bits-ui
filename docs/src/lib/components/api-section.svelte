@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from "$app/stores";
+	import { page } from "$app/state";
 	import CSSVarsTable from "$lib/components/api-ref/css-vars-table.svelte";
 	import DataAttrsTable from "$lib/components/api-ref/data-attrs-table.svelte";
 	import PropsTable from "$lib/components/api-ref/props-table.svelte";
@@ -20,7 +20,7 @@
 			>
 				<h3 class="font-semibold">
 					<span class="text-foreground/80 font-normal dark:text-neutral-900/80"
-						>{$page.data.title.replaceAll(" ", "")}.</span
+						>{page.data.title.replaceAll(" ", "")}.</span
 					>{schema.title}
 				</h3>
 			</div>
