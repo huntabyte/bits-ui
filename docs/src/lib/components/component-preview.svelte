@@ -6,7 +6,7 @@
 	import { cn } from "$lib/utils/styles.js";
 	import type { Snippet } from "svelte";
 	import type { HTMLAttributes } from "svelte/elements";
-	
+
 	let {
 		class: className,
 		align = "center",
@@ -17,8 +17,7 @@
 		align?: "center" | "start" | "end";
 		children?: Snippet;
 		preview?: Snippet;
-	 } = $props();
-	
+	} = $props();
 
 	const [send, receive] = crossfade({
 		duration: 250,

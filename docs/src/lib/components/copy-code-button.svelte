@@ -7,11 +7,10 @@
 		class?: string | undefined | null;
 		copyCode: () => void;
 		copied?: boolean;
-		[key: string]: any
+		[key: string]: any;
 	}
 
 	let { class: className, copyCode, copied = false, ...rest }: Props = $props();
-	
 </script>
 
 <button
