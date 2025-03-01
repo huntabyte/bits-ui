@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.5
+
+### Patch Changes
+
+-   fix: Checkboxes within a group not reflecting correct `checked` state during SSR ([#1254](https://github.com/huntabyte/bits-ui/pull/1254))
+
 ## 1.3.4
 
 ### Patch Changes
