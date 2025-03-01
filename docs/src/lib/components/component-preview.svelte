@@ -4,21 +4,32 @@
 	import { crossfade } from "svelte/transition";
 	import { buttonVariants } from "./ui/button/index.js";
 	import { cn } from "$lib/utils/styles.js";
-	let className: string;
-	export let align: "center" | "start" | "end" = "center";
-	export { className as class };
+	import type { Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
+
+	let {
+		class: className,
+		align = "center",
+		children,
+		preview,
+		...restProps
+	}: HTMLAttributes<HTMLDivElement> & {
+		align?: "center" | "start" | "end";
+		children?: Snippet;
+		preview?: Snippet;
+	} = $props();
 
 	const [send, receive] = crossfade({
 		duration: 250,
 		easing: cubicInOut,
 	});
 
-	let value = "preview";
+	let value = $state("preview");
 </script>
 
 <div
 	class={cn("group relative mb-4 mt-10 flex flex-col space-y-2", className)}
-	{...$$restProps}
+	{...restProps}
 	data-preview
 >
 	<Tabs.Root class="relative mr-auto w-full" bind:value>
@@ -76,7 +87,7 @@
 			<div
 				class="![&_pre]:mt-0 ![&_pre]:rounded-card w-full [&_pre]:max-h-[443px] [&_pre]:min-h-[443px] [&_pre]:overflow-auto"
 			>
-				<slot />
+				{@render children?.()}
 			</div>
 		</Tabs.Content>
 		<Tabs.Content
@@ -94,7 +105,7 @@
 					className
 				)}
 			>
-				<slot name="preview" />
+				{@render preview?.()}
 			</div>
 		</Tabs.Content>
 	</Tabs.Root>
