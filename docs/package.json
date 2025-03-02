@@ -17,7 +17,6 @@
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.5.6",
-		"@melt-ui/pp": "^0.3.0",
 		"@nobie-org/tailwindcss-animate": "^1.0.9",
 		"@prettier/sync": "0.3.0",
 		"@stackblitz/sdk": "^1.11.0",
@@ -63,7 +62,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@melt-ui/svelte": "0.76.2",
 		"bits-ui": "workspace:*",
 		"flexsearch": "^0.7.43"
 	}
