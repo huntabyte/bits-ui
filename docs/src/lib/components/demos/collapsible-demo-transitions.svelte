@@ -32,7 +32,7 @@
 					<div
 						class="rounded-9px bg-muted inline-flex h-12 w-full items-center px-[18px] py-3"
 					>
-						@melt-ui/melt-ui
+						@svecosystem/runed
 					</div>
 				</div>
 			{/if}
