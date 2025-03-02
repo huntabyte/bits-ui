@@ -15,7 +15,9 @@ export function slugFromPath(path: string) {
 }
 
 function getDocMetadata(slug: string) {
-	return allDocs.find((doc) => doc.slug === slug);
+	console.log("slug", slug);
+	console.log(allDocs.map((doc) => doc.slugFull));
+	return allDocs.find((doc) => doc.slugFull === `/${slug}`);
 }
 
 export async function getDoc(slug: string) {
@@ -36,6 +38,7 @@ export async function getDoc(slug: string) {
 
 	const doc = await match?.resolver?.();
 	const metadata = getDocMetadata(slug);
+	console.log(metadata);
 
 	if (!doc || !metadata) {
 		error(404, "Could not find the document.");
@@ -52,19 +55,20 @@ export async function getComponentDoc(slug: string) {
 		redirect(303, "/docs/components/accordion");
 	}
 
-	if (!isBit(slug)) error(404);
+	const componentName = slug.split("/").pop();
+
+	if (!isBit(componentName!)) error(404);
 
 	const modules = import.meta.glob("/content/**/*.md");
 
 	let match: { path?: string; resolver?: DocResolver } = {};
 
 	for (const [path, resolver] of Object.entries(modules)) {
-		if (slugFromPath(path).replace("components/", "") === slug) {
+		if (slugFromPath(path) === slug) {
 			match = { path, resolver: resolver as unknown as DocResolver };
 			break;
 		}
 	}
-
 	const doc = await match?.resolver?.();
 	const metadata = getDocMetadata(slug);
 	console.log("metadata", metadata);
@@ -75,6 +79,6 @@ export async function getComponentDoc(slug: string) {
 	return {
 		component: doc.default,
 		metadata: metadata,
-		schemas: getAPISchemas(slug),
+		schemas: getAPISchemas(componentName),
 	};
 }

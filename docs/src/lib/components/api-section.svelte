@@ -18,7 +18,7 @@
 			<div
 				class="rounded-button bg-accent inline-flex h-[29px] items-center justify-center px-3 font-mono text-[17px] font-medium leading-tight tracking-tight dark:text-neutral-900"
 			>
-				<h3 class="font-semibold" id={schema.title.toLowerCase()}>
+				<h3 class="scroll-m-20 font-semibold" id={schema.title.toLowerCase()}>
 					<span class="text-foreground/80 font-normal dark:text-neutral-900/80"
 						>{page.data.metadata.title.replaceAll(" ", "")}.</span
 					>{schema.title}

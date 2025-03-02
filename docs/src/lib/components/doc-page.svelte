@@ -26,16 +26,20 @@
 
 	const PageComponent = $derived(component);
 
-	const apiSchemaToc: TocItem = $derived({
-		title: "API Reference",
-		url: "#api-reference",
-		items: schemas.map((schema) => ({
-			title: schema.title,
-			url: `#${schema.title.toLowerCase()}`,
-		})),
+	const apiSchemaToc: TocItem | null = $derived.by(() => {
+		if (!schemas.length) return null;
+
+		return {
+			title: "API Reference",
+			url: "#api-reference",
+			items: schemas.map((schema) => ({
+				title: schema.title,
+				url: `#${schema.title.toLowerCase()}`,
+			})),
+		};
 	});
 
-	const fullToc = $derived([...toc, apiSchemaToc]);
+	const fullToc = $derived(apiSchemaToc ? [...toc, apiSchemaToc] : toc);
 </script>
 
 <Metadata {title} {description} />
@@ -65,17 +69,3 @@
 		</main>
 	</div>
 </div>
-
-<!-- <div class="relative flex flex-row-reverse items-start pb-6 pl-4 pr-4 pt-16 md:pl-0">
-	<aside class="sticky">
-		<div class="sticky top-24 hidden pl-16 xl:block">
-
-		</div>
-	</aside>
-
-	<div class={cn("relative mx-auto w-full", page.error ?? "xl:grid")}>
-		<main class="mx-auto w-full min-w-0 md:max-w-[760px]" id="content">
-
-		</main>
-	</div>
-</div> -->

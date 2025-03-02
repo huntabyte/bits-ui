@@ -23,7 +23,10 @@ export default defineConfig({
 		docs: {
 			name: "Doc",
 			pattern: "./*.md",
-			schema: sharedSchema,
+			schema: sharedSchema.transform((d) => ({
+				...d,
+				slug: d.path,
+			})),
 		},
 		componentDocs: {
 			name: "ComponentDoc",
