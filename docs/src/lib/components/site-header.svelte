@@ -27,7 +27,7 @@
 			</div>
 			<div class="flex items-center justify-end">
 				<Button.Root
-					href={siteConfig.links.github}
+					href={siteConfig.links?.github}
 					target="_blank"
 					rel="noopener noreferrer"
 					aria-label="Light Switch"
