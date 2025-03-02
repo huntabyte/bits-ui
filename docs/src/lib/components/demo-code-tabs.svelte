@@ -3,7 +3,6 @@
 	import type { Snippet } from "svelte";
 	import CopySimple from "phosphor-svelte/lib/CopySimple";
 	import Check from "phosphor-svelte/lib/Check";
-	import { noop } from "@melt-ui/svelte/internal/helpers";
 	import { cn } from "$lib/utils/styles.js";
 	import { useCopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 
@@ -11,7 +10,7 @@
 		value = $bindable(),
 		open = $bindable(),
 		ref = $bindable(null),
-		onValueChange = noop,
+		onValueChange = () => {},
 		items,
 		expandable = true,
 		children,

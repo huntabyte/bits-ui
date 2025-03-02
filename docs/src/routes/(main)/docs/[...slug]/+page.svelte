@@ -1,17 +1,8 @@
 <script lang="ts">
 	import "$lib/styles/markdown.css";
-	import PageHeader from "$lib/components/page-header/page-header.svelte";
-	import PageHeaderDescription from "$lib/components/page-header/page-header-description.svelte";
-	import PageHeaderHeading from "$lib/components/page-header/page-header-heading.svelte";
+	import DocPage from "$lib/components/doc-page.svelte";
 
 	let { data } = $props();
-	const Component = $derived(data.component);
 </script>
 
-<div class="markdown pb-24">
-	<PageHeader>
-		<PageHeaderHeading>{data.metadata.title}</PageHeaderHeading>
-		<PageHeaderDescription>{data.metadata.description}</PageHeaderDescription>
-	</PageHeader>
-	<Component />
-</div>
+<DocPage component={data.component} {...data.metadata} />

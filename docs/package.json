@@ -17,7 +17,6 @@
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.5.6",
-		"@melt-ui/pp": "^0.3.0",
 		"@nobie-org/tailwindcss-animate": "^1.0.9",
 		"@prettier/sync": "0.3.0",
 		"@stackblitz/sdk": "^1.11.0",
@@ -44,7 +43,7 @@
 		"rehype-slug": "^6.0.0",
 		"remark-gfm": "^4.0.0",
 		"remove-markdown": "^0.5.5",
-		"runed": "^0.23.1",
+		"runed": "^0.23.4",
 		"shiki": "^1.22.2",
 		"svelte": "^5.19.4",
 		"svelte-check": "^4.1.4",
@@ -63,7 +62,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@melt-ui/svelte": "0.76.2",
 		"bits-ui": "workspace:*",
 		"flexsearch": "^0.7.43"
 	}

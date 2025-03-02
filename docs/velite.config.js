@@ -8,6 +8,7 @@ const sharedSchema = s
 		content: s.markdown(),
 		navLabel: s.string().optional(),
 		raw: s.raw(),
+		toc: s.toc(),
 	})
 	.transform((data) => {
 		return {
@@ -22,7 +23,10 @@ export default defineConfig({
 		docs: {
 			name: "Doc",
 			pattern: "./*.md",
-			schema: sharedSchema,
+			schema: sharedSchema.transform((d) => ({
+				...d,
+				slug: d.path,
+			})),
 		},
 		componentDocs: {
 			name: "ComponentDoc",
