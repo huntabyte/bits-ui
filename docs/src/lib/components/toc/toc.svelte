@@ -48,8 +48,6 @@
 
 		Array.from(sections.keys()).forEach((element) => observer.observe(element));
 
-		console.log(sections.keys());
-
 		return () => observer.disconnect();
 	});
 </script>

@@ -15,8 +15,6 @@ export function slugFromPath(path: string) {
 }
 
 function getDocMetadata(slug: string) {
-	console.log("slug", slug);
-	console.log(allDocs.map((doc) => doc.slugFull));
 	return allDocs.find((doc) => doc.slugFull === `/${slug}`);
 }
 
@@ -38,7 +36,6 @@ export async function getDoc(slug: string) {
 
 	const doc = await match?.resolver?.();
 	const metadata = getDocMetadata(slug);
-	console.log(metadata);
 
 	if (!doc || !metadata) {
 		error(404, "Could not find the document.");
@@ -71,7 +68,7 @@ export async function getComponentDoc(slug: string) {
 	}
 	const doc = await match?.resolver?.();
 	const metadata = getDocMetadata(slug);
-	console.log("metadata", metadata);
+
 	if (!doc || !metadata) {
 		error(404, "Could not find the document.");
 	}
