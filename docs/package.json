@@ -8,7 +8,7 @@
 		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
 		"dev:content": "velite dev --watch",
 		"dev:svelte": "vite dev",
-		"build": "pnpm build:content && pnpm build:search && pnpm build:demos && vite build && pnpm build:llms",
+		"build": "pnpm build:content && pnpm build:search && pnpm build:demos && vite build && pnpm build:llms && vite build",
 		"build:llms": "pnpx tsx ./other/build-llms-txt.ts",
 		"build:content": "velite && node ./other/update-velite-output.js",
 		"preview": "vite preview",

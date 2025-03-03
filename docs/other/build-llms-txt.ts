@@ -182,13 +182,7 @@ async function main() {
 			const baseName = basename(fileName, ".html");
 			const dirPath = dirname(fileName);
 
-			const outputPath = join(
-				__dirname,
-				"../.svelte-kit/cloudflare/docs",
-				dirPath,
-				baseName,
-				"llms.txt"
-			);
+			const outputPath = join(__dirname, "../static/docs", dirPath, baseName, "llms.txt");
 			const outputDir = dirname(outputPath);
 			await mkdir(outputDir, { recursive: true });
 			await writeFile(outputPath, cleanedContent);
@@ -228,12 +222,12 @@ async function main() {
 		// generate and save root llms.txt
 		console.info("Generating root llms.txt");
 		const rootLLMsContent = await generateRootLLMsTxt(fileNames);
-		const rootOutputPath = join(__dirname, "../.svelte-kit/cloudflare", "llms.txt");
+		const rootOutputPath = join(__dirname, "../static", "llms.txt");
 		await writeFile(rootOutputPath, rootLLMsContent);
 
 		// save combined documentation
 		console.info("Saving `/docs/llms.txt` with all content");
-		const allOutputPath = join(__dirname, "../.svelte-kit/cloudflare/docs", "llms.txt");
+		const allOutputPath = join(__dirname, "../static/docs", "llms.txt");
 		await writeFile(allOutputPath, allContent.trim());
 	} catch (error) {
 		console.error("Error building llms.txt files:", error);
