@@ -3,10 +3,13 @@ import rehypeParse from "rehype-parse";
 import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
 import remarkGfm from "remark-gfm";
-import { dirname, join, relative } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { JSDOM } from "jsdom";
+import consola from "consola";
+
+consola.wrapConsole();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -83,45 +86,158 @@ async function transformAndSaveMarkdown(rawHtml: string) {
 
 	const cleanMarkdown = processedFile
 		.replace(/\n{3,}/g, "\n\n") // replace 3+ newlines with 2
-		.replace(/- \n\s+/g, "- ") // fix bullet point spacing
+		.replace(/- \n\s+/g, "- ") // fix basic bullet point spacing
+		.replace(/(- [^\n]*)(?:\n\s+([^\n-][^\n]*))/g, "$1 $2") // multi-line bullets with indented continuations
 		.replace(/(\n|^)[ \t]+\n/g, "$1") // start of line or after newline
 		.replace(/\n[ \t]+($|\n)/g, "$1") // end of line or before newline
 		.replace(/(\S+)\s*\n\s*(`[^`]+?`)/g, "$1 $2") // inline code that handles special characters
 		.replace(/(`[^`]+?`)\s*\n\s*(\S+)/g, "$1 $2") // for parentheses with code blocks inside
 		.replace(/\(\s*\n\s*(`[^`]+?`)/g, "($1")
 		.replace(/(`[^`]+?`)\s*\n\s*\)/g, "$1)")
+		.replace(/\\`([^`]+?)\\`/g, "`$1`") // remove escaping backticks around inline code
 		.replace(/```([a-z]*)\n\t/g, "```$1\n"); // fix code block indents
 
 	return cleanMarkdown;
 }
 
-async function main() {
-	const rootPath = join(__dirname, "../.svelte-kit/cloudflare/docs");
-	const files = await collectFiles(rootPath, rootPath);
-	const fileNames = Object.keys(files);
+async function generateRootLLMsTxt(fileNames: string[]) {
+	let content = "# Bits UI Documentation for LLMs\n\n";
 
-	let content = "";
+	content += "> Bits UI is a headless component library for Svelte.\n\n";
 
-	// build markdown files
+	content +=
+		"This site provides documentation in a format optimized for Large Language Models, with each page available as a clean markdown file.\n\n";
+
+	content += "## Complete Documentation\n\n";
+	content +=
+		"- [Complete documentation](https://bits-ui.com/docs/llms.txt): The complete Bits UI documentation included all general content, components, type helpers, and utilities\n";
+
+	const sections: Record<string, string[]> = {
+		General: [],
+		Components: [],
+		Utilities: [],
+		"Type Helpers": [],
+	};
+
 	for (const fileName of fileNames) {
 		if (!fileName.endsWith(".html")) continue;
 
-		const fileContent = files[fileName];
-		const endFileName = fileName.split("/").pop();
-		const cleanedContent = await transformAndSaveMarkdown(fileContent);
-		await writeFile(
-			join(__dirname, `/md/`, endFileName!.replaceAll(".html", ".md")),
-			cleanedContent
-		);
-		if (fileName.includes("introduction")) {
-			content = cleanedContent + "\n\n" + content;
-		} else {
-			content += cleanedContent + "\n\n";
+		const baseName = basename(fileName, ".html");
+		const dirPath = dirname(fileName);
+		const relativePath = join(dirPath, baseName, "llms.txt");
+
+		if (dirPath === ".") {
+			sections["General"].push(`${baseName}|${relativePath}`);
+		} else if (dirPath.startsWith("components")) {
+			sections["Components"].push(`${baseName}|${relativePath}`);
+		} else if (dirPath.startsWith("utilities")) {
+			sections["Utilities"].push(`${baseName}|${relativePath}`);
+		} else if (dirPath.startsWith("type-helpers")) {
+			sections["Type Helpers"].push(`${baseName}|${relativePath}`);
 		}
 	}
 
-	// merge all markdown files into a single file
-	await writeFile(join(__dirname, "/md/all.md"), content);
+	for (const [sectionName, files] of Object.entries(sections)) {
+		if (files.length === 0) continue;
+
+		content += `## ${sectionName}\n\n`;
+
+		for (const file of files) {
+			const [baseName, path] = file.split("|");
+			const linkTitle = baseName.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+			content += `- [${linkTitle} Documentation](https://bits-ui.com/docs/${path}): Detailed documentation for ${linkTitle}\n`;
+		}
+
+		content += "\n";
+	}
+
+	return content;
+}
+
+async function main() {
+	try {
+		consola.info("Starting to build LLMS files...");
+		const rootPath = join(__dirname, "../.svelte-kit/cloudflare/docs");
+		console.info("Collecting files from", rootPath);
+		const files = await collectFiles(rootPath, rootPath);
+		const fileNames = Object.keys(files);
+
+		// store content by category
+		const contentByCategory: Record<string, string[]> = {
+			Introduction: [],
+			"Other Main content": [],
+			Components: [],
+			Utilities: [],
+			"Type Helpers": [],
+		};
+
+		// build individual llms.txt files and collect content
+		for (const fileName of fileNames) {
+			console.info("Processing", fileName);
+			if (!fileName.endsWith(".html")) continue;
+
+			const fileContent = files[fileName];
+			const cleanedContent = await transformAndSaveMarkdown(fileContent);
+
+			const baseName = basename(fileName, ".html");
+			const dirPath = dirname(fileName);
+
+			const outputPath = join(
+				__dirname,
+				"../.svelte-kit/cloudflare/docs",
+				dirPath,
+				baseName,
+				"llms.txt"
+			);
+			const outputDir = dirname(outputPath);
+			await mkdir(outputDir, { recursive: true });
+			await writeFile(outputPath, cleanedContent);
+
+			// Categorize content
+			const contentWithSeparator =
+				cleanedContent + "\n\n----------------------------------------------------\n\n";
+			if (dirPath === "." && baseName === "introduction") {
+				contentByCategory["Introduction"].push(contentWithSeparator);
+			} else if (dirPath === ".") {
+				if (baseName === "migration-guide") continue;
+				contentByCategory["Other Main content"].push(contentWithSeparator);
+			} else if (dirPath.startsWith("components")) {
+				contentByCategory["Components"].push(contentWithSeparator);
+			} else if (dirPath.startsWith("utilities")) {
+				contentByCategory["Utilities"].push(contentWithSeparator);
+			} else if (dirPath.startsWith("type-helpers")) {
+				contentByCategory["Type Helpers"].push(contentWithSeparator);
+			}
+		}
+
+		// combine content in the specified order
+		const order = [
+			"Introduction",
+			"Other Main content",
+			"Components",
+			"Utilities",
+			"Type Helpers",
+		];
+		let allContent = "";
+		for (const category of order) {
+			if (contentByCategory[category].length > 0) {
+				allContent += contentByCategory[category].join("");
+			}
+		}
+
+		// generate and save root llms.txt
+		console.info("Generating root llms.txt");
+		const rootLLMsContent = await generateRootLLMsTxt(fileNames);
+		const rootOutputPath = join(__dirname, "../.svelte-kit/cloudflare", "llms.txt");
+		await writeFile(rootOutputPath, rootLLMsContent);
+
+		// save combined documentation
+		console.info("Saving `/docs/llms.txt` with all content");
+		const allOutputPath = join(__dirname, "../.svelte-kit/cloudflare/docs", "llms.txt");
+		await writeFile(allOutputPath, allContent.trim());
+	} catch (error) {
+		console.error("Error building llms.txt files:", error);
+	}
 }
 
 main();
