@@ -9,6 +9,7 @@
 	import PageHeader from "./page-header/page-header.svelte";
 	import PageHeaderHeading from "./page-header/page-header-heading.svelte";
 	import PageHeaderDescription from "./page-header/page-header-description.svelte";
+	import { Tooltip } from "bits-ui";
 
 	let {
 		component,
@@ -64,6 +65,42 @@
 			<PageHeader>
 				<PageHeaderHeading>{title}</PageHeaderHeading>
 				<PageHeaderDescription>{description}</PageHeaderDescription>
+				<div class="flex items-center gap-2">
+					<Tooltip.Provider delayDuration={0} disableHoverableContent>
+						<Tooltip.Root>
+							<Tooltip.Trigger
+								data-llm-ignore
+								class="hover:bg-muted/50 mb-11 mt-3 rounded-[4px] border px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
+							>
+								Copy Markdown
+							</Tooltip.Trigger>
+							<Tooltip.Content sideOffset={8} class="z-50">
+								<div
+									class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden w-fit items-center justify-center text-balance border p-3 text-sm font-medium"
+								>
+									Copy this documentation page as markdown to your clipboard.
+								</div>
+							</Tooltip.Content>
+						</Tooltip.Root>
+						<Tooltip.Root>
+							<Tooltip.Trigger
+								data-llm-ignore
+								class="hover:bg-muted/50 mb-11 mt-3 rounded-[4px] border px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
+							>
+								{#snippet child({ props })}
+									<a {...props} target="_blank" href="##"> llms.txt </a>
+								{/snippet}
+							</Tooltip.Trigger>
+							<Tooltip.Content sideOffset={8} class="z-50">
+								<div
+									class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden w-fit items-center justify-center text-balance border p-3 text-sm font-medium"
+								>
+									Visit the llms.txt file for this documentation page.
+								</div>
+							</Tooltip.Content>
+						</Tooltip.Root>
+					</Tooltip.Provider>
+				</div>
 			</PageHeader>
 			<PageComponent {schemas} />
 		</main>
