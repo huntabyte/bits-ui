@@ -127,7 +127,7 @@ async function generateRootLLMsTxt(fileNames: string[]) {
 
 	content += "## Complete Documentation\n\n";
 	content +=
-		"- [Complete documentation](https://bits-ui.com/docs/llms.txt): The complete Bits UI documentation included all general content, components, type helpers, and utilities\n\n";
+		"- [Complete documentation](https://bits-ui.com/docs/llms.txt): The complete Bits UI documentation including all general content, components, type helpers, and utilities\n\n";
 
 	const sections: Record<string, string[]> = {
 		General: [],
