@@ -57,9 +57,7 @@
 							<Check class="size-3.5" />
 						{/if}
 					</Tooltip.Trigger>
-					{@render TooltipContent(
-						`Copy the complete ${metadata.title} docs as markdown.`
-					)}
+					{@render TooltipContent("Copy this doc page as markdown.")}
 				</Tooltip.Root>
 				<Tooltip.Root>
 					<Tooltip.Trigger data-llm-ignore class={triggerClasses}>
@@ -70,7 +68,7 @@
 							</a>
 						{/snippet}
 					</Tooltip.Trigger>
-					{@render TooltipContent(`Visit the llms.txt file for ${metadata.title}.`)}
+					{@render TooltipContent(`Visit the llms.txt file for this doc page.`)}
 				</Tooltip.Root>
 			</Tooltip.Provider>
 		</div>
