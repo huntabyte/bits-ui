@@ -48,7 +48,7 @@
 	{/if}
 {/snippet}
 
-{#snippet TypeContent({ typeDef }: { typeDef: string | Component })}
+{#snippet TypeContent({ typeDef, typeString }: { typeDef: string | Component; typeString: string })}
 	{#if typeof typeDef === "string"}
 		<Popover.Content
 			preventScroll={false}
@@ -63,6 +63,9 @@
 				</Code>
 			</div>
 		</Popover.Content>
+		<span aria-hidden="true" class="hidden">
+			- {typeDef}
+		</span>
 	{:else}
 		<Popover.Content
 			preventScroll={false}
@@ -77,6 +80,9 @@
 				<TypeDef />
 			</div>
 		</Popover.Content>
+		<span aria-hidden="true" class="hidden">
+			- {typeString}
+		</span>
 	{/if}
 {/snippet}
 
@@ -87,12 +93,13 @@
 		<Code class="bg-transparent px-0">{type.type}</Code>
 		<Popover.Root>
 			<Popover.Trigger
+				data-llm-ignore
 				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 			>
 				<Info class="size-4" weight="bold" />
 				<span class="sr-only">See type definition</span>
 			</Popover.Trigger>
-			{@render TypeContent({ typeDef: type.definition })}
+			{@render TypeContent({ typeDef: type.definition, typeString: type.stringDefinition })}
 		</Popover.Root>
 	{/if}
 </div>

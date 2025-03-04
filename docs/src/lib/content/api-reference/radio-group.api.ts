@@ -25,6 +25,7 @@ export const root = createApiSchema<RadioGroupRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: OnStringValueChangeProp,
 			description: "A callback that is fired when the radio group's value changes.",
+			stringDefinition: "(value: string) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

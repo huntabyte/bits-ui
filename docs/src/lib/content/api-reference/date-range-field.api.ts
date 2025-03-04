@@ -30,6 +30,7 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 			type: {
 				type: "DateRange",
 				definition: DateRangeProp,
+				stringDefinition: "{ start: DateValue; end: DateValue }",
 			},
 			description: "The selected date range.",
 			bindable: true,
@@ -37,6 +38,7 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: DateOnRangeChangeProp,
 			description: "A function that is called when the selected date changes.",
+			stringDefinition: "(value: DateRange) => void",
 		}),
 		placeholder: dateFieldRoot.props!.placeholder,
 		onPlaceholderChange: dateFieldRoot.props!.onPlaceholderChange,
@@ -56,10 +58,12 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		onStartValueChange: createFunctionProp({
 			definition: OnStartEndValueChangeProp,
 			description: "A function that is called when the start date changes.",
+			stringDefinition: "(value: DateValue) => void",
 		}),
 		onEndValueChange: createFunctionProp({
 			definition: OnStartEndValueChangeProp,
 			description: "A function that is called when the end date changes.",
+			stringDefinition: "(value: DateValue) => void",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
@@ -114,6 +118,7 @@ export const segment = createApiSchema<DateRangeFieldSegmentPropsWithoutHTML>({
 			type: {
 				type: "SegmentPart",
 				definition: DateFieldSegmentPartProp,
+				stringDefinition: `"month" | "day" | "year" | "hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal"`,
 			},
 			description: "The part of the date to render.",
 			required: true,

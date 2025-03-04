@@ -90,6 +90,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: CalendarOnValueChangeProp,
 			description: "A function that is called when the selected date changes.",
+			stringDefinition: "(value: DateValue) => void | (value: DateValue[]) => void",
 		}),
 		placeholder: {
 			type: dateValueProp,
@@ -99,6 +100,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 		onPlaceholderChange: createFunctionProp({
 			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
+			stringDefinition: "(date: DateValue) => void",
 		}),
 		pagedNavigation: createBooleanProp({
 			description:
@@ -132,10 +134,12 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 		isDateDisabled: createFunctionProp({
 			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is disabled.",
+			stringDefinition: "(date: DateValue) => boolean",
 		}),
 		isDateUnavailable: createFunctionProp({
 			definition: DateMatcherProp,
 			description: "A function that returns whether or not a date is unavailable.",
+			stringDefinition: "(date: DateValue) => boolean",
 		}),
 		maxValue: createPropSchema({
 			type: dateValueProp,

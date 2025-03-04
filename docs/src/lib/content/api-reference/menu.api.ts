@@ -64,6 +64,7 @@ const sharedItemProps = {
 	onSelect: createFunctionProp({
 		definition: NoopProp,
 		description: "A callback that is fired when the menu item is selected.",
+		stringDefinition: "() => void",
 	}),
 	closeOnSelect: createBooleanProp({
 		default: C.TRUE,
@@ -81,6 +82,7 @@ const props = {
 	onOpenChange: createFunctionProp({
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the menu's open state changes.",
+		stringDefinition: "(open: boolean) => void",
 	}),
 	dir: dirProp,
 	children: childrenSnippet(),
@@ -95,6 +97,7 @@ const subProps = {
 	onOpenChange: createFunctionProp({
 		definition: OnOpenChangeProp,
 		description: "A callback that is fired when the submenu's open state changes.",
+		stringDefinition: "(open: boolean) => void",
 	}),
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuSubPropsWithoutHTML>;
@@ -177,6 +180,7 @@ const checkboxItemProps = {
 		definition: CheckboxRootOnCheckedChangeProp,
 		description:
 			"A callback that is fired when the checkbox menu item's checked state changes.",
+		stringDefinition: "(checked: boolean) => void",
 	}),
 	indeterminate: createBooleanProp({
 		default: C.FALSE,
@@ -186,6 +190,7 @@ const checkboxItemProps = {
 	onIndeterminateChange: createFunctionProp({
 		definition: CheckboxRootOnIndeterminateChangeProp,
 		description: "A callback that is fired when the indeterminate state changes.",
+		stringDefinition: "(indeterminate: boolean) => void",
 	}),
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
@@ -203,6 +208,7 @@ const radioGroupProps = {
 	onValueChange: createFunctionProp({
 		definition: OnStringValueChangeProp,
 		description: "A callback that is fired when the radio group's value changes.",
+		stringDefinition: "(value: string) => void",
 	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
 } satisfies PropObj<DropdownMenuRadioGroupPropsWithoutHTML>;

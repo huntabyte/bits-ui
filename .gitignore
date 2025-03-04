@@ -75,3 +75,5 @@ web_modules/
 .env.local
 .contentlayer
 docs/.velite
+docs/static/docs/**/*.txt
+docs/static/llms.txt

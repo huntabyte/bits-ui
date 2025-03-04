@@ -6,21 +6,16 @@
 	import type { TocItem } from "$lib/utils/use-toc.svelte.js";
 	import Toc from "./toc/toc.svelte";
 	import type { APISchema } from "$lib/types/api.js";
-	import PageHeader from "./page-header/page-header.svelte";
-	import PageHeaderHeading from "./page-header/page-header-heading.svelte";
-	import PageHeaderDescription from "./page-header/page-header-description.svelte";
+	import type { DocMetadata } from "$lib/utils/docs.js";
+	import DocPageHeader from "./doc-page-header.svelte";
 
 	let {
 		component,
-		title,
-		description,
-		toc,
+		metadata,
 		schemas = [],
 	}: {
 		component: Component;
-		title: string;
-		description?: string;
-		toc: TocItem[];
+		metadata: DocMetadata;
 		schemas?: APISchema[];
 	} = $props();
 
@@ -39,10 +34,10 @@
 		};
 	});
 
-	const fullToc = $derived(apiSchemaToc ? [...toc, apiSchemaToc] : toc);
+	const fullToc = $derived(apiSchemaToc ? [...metadata.toc, apiSchemaToc] : metadata.toc);
 </script>
 
-<Metadata {title} {description} />
+<Metadata {...metadata} />
 
 <div
 	class={cn(
@@ -53,7 +48,7 @@
 	{#if !page.error}
 		<aside class="order-2 hidden text-sm xl:block">
 			<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6">
-				{#key title}
+				{#key metadata.title}
 					<Toc toc={{ items: fullToc }} />
 				{/key}
 			</div>
@@ -61,10 +56,7 @@
 	{/if}
 	<div class="order-1 mx-auto w-full min-w-0 md:max-w-[760px]">
 		<main class="markdown pb-24" id="main-content">
-			<PageHeader>
-				<PageHeaderHeading>{title}</PageHeaderHeading>
-				<PageHeaderDescription>{description}</PageHeaderDescription>
-			</PageHeader>
+			<DocPageHeader {metadata} />
 			<PageComponent {schemas} />
 		</main>
 	</div>

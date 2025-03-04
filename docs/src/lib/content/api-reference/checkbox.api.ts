@@ -29,14 +29,14 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 	props: {
 		checked: createBooleanProp({
 			default: C.FALSE,
-			description:
-				"The checkbox button's checked state. This can be a boolean or the string 'indeterminate', which would typically display a dash in the checkbox.",
+			description: "The checkbox button's checked state.",
 			bindable: true,
 		}),
 		onCheckedChange: createFunctionProp({
 			definition: CheckboxRootOnCheckedChangeProp,
 			description:
 				"A callback that is fired when the checkbox button's checked state changes.",
+			stringDefinition: "(checked: boolean) => void",
 		}),
 		indeterminate: createBooleanProp({
 			default: C.FALSE,
@@ -46,6 +46,7 @@ export const root = createApiSchema<CheckboxRootPropsWithoutHTML>({
 		onIndeterminateChange: createFunctionProp({
 			definition: CheckboxRootOnIndeterminateChangeProp,
 			description: "A callback that is fired when the indeterminate state changes.",
+			stringDefinition: "(indeterminate: boolean) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
@@ -102,6 +103,7 @@ export const group = createApiSchema<CheckboxGroupPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: CheckboxGroupOnValueChangeProp,
 			description: "A callback that is fired when the checkbox group's value state changes.",
+			stringDefinition: "(value: string[]) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

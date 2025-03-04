@@ -38,6 +38,7 @@ export const root = createApiSchema<PaginationRootPropsWithoutHTML>({
 		onPageChange: createFunctionProp({
 			definition: PaginationOnPageChangeProp,
 			description: "A function called when the selected page changes.",
+			stringDefinition: "(page: number) => void",
 		}),
 		perPage: createNumberProp({
 			description: "The number of items per page.",

@@ -48,6 +48,7 @@ export const root = createApiSchema<PopoverRootPropsWithoutHTML>({
 		onOpenChange: createFunctionProp({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
+			stringDefinition: "(open: boolean) => void",
 		}),
 		children: childrenSnippet(),
 	},

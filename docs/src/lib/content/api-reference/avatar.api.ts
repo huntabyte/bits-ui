@@ -35,6 +35,7 @@ export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
 		onLoadingStatusChange: createFunctionProp({
 			definition: OnLoadingStatusChangeProp,
 			description: "A callback function called when the loading status of the image changes.",
+			stringDefinition: "(status: LoadingStatus) => void",
 		}),
 		delayMs: createNumberProp({
 			default: "0",

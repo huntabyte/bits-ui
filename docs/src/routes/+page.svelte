@@ -254,6 +254,11 @@
 	</div>
 	<ul class="flex items-center justify-end gap-3 lg:gap-[26px]">
 		<li>
+			<a href="/llms.txt" target="_blank" class="text-muted-foreground text-sm font-medium"
+				>LLMs</a
+			>
+		</li>
+		<li>
 			<a
 				href="https://github.com/huntabyte/bits-ui"
 				target="_blank"

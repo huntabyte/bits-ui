@@ -24,6 +24,7 @@ const root = createApiSchema<ToggleRootPropsWithoutHTML>({
 		onPressedChange: createFunctionProp({
 			definition: ToggleRootOnPressedChangeProp,
 			description: "A callback function called when the pressed state of the toggle changes.",
+			stringDefinition: "(pressed: boolean) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

@@ -29,7 +29,7 @@
 
 <Tabs.Root {value} {onValueChange}>
 	<div class="flex items-center justify-between border-x-2 pb-2 pt-1">
-		<Tabs.List class="flex items-center">
+		<Tabs.List class="flex items-center" data-llm-ignore>
 			{#each items as item}
 				<Tabs.Trigger
 					value={item.value}
@@ -41,7 +41,10 @@
 				</Tabs.Trigger>
 			{/each}
 		</Tabs.List>
-		<div class="flex items-center gap-2 border-b-2 border-transparent pr-2 text-sm">
+		<div
+			class="flex items-center gap-2 border-b-2 border-transparent pr-2 text-sm"
+			data-llm-ignore
+		>
 			{#if expandable}
 				<button
 					class={cn(

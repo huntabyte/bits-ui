@@ -3,22 +3,24 @@ import type { Component } from "svelte";
 import type { Doc } from "$content/index.js";
 import { getAPISchemas, isBit } from "$lib/content/api-reference/index.js";
 import { utilityDocs, componentDocs, docs, typeHelperDocs } from "$content/index.js";
+import type { APISchema } from "$lib/types/api.js";
 
 const allDocs = [...docs, ...componentDocs, ...utilityDocs, ...typeHelperDocs];
 
-export type FrontMatter = Pick<Doc, "title" | "description">;
-
 export type DocResolver = () => Promise<{ default: Component; metadata: Doc }>;
+export type DocMetadata = (typeof allDocs)[number];
 
-export function slugFromPath(path: string) {
+export function slugFromPath(path: string): string {
 	return path.replace("/content/", "").replace(".md", "");
 }
 
-function getDocMetadata(slug: string) {
+function getDocMetadata(slug: string): DocMetadata | undefined {
 	return allDocs.find((doc) => doc.slugFull === `/${slug}`);
 }
 
-export async function getDoc(slug: string) {
+export async function getDoc(
+	slug: string
+): Promise<{ component: Component; metadata: DocMetadata }> {
 	if (slug === "components") {
 		redirect(303, "/docs/components/accordion");
 	}
@@ -47,7 +49,9 @@ export async function getDoc(slug: string) {
 	};
 }
 
-export async function getComponentDoc(slug: string) {
+export async function getComponentDoc(
+	slug: string
+): Promise<{ component: Component; metadata: DocMetadata; schemas: APISchema[] }> {
 	if (slug === "components") {
 		redirect(303, "/docs/components/accordion");
 	}

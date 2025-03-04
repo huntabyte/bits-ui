@@ -45,6 +45,7 @@ export const root = createApiSchema<LinkPreviewRootPropsWithoutHTML>({
 		onOpenChange: createFunctionProp({
 			definition: OnOpenChangeProp,
 			description: "A callback that fires when the open state changes.",
+			stringDefinition: "(open: boolean) => void",
 		}),
 		openDelay: createNumberProp({
 			default: "700",

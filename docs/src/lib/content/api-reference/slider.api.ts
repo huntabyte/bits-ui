@@ -40,11 +40,13 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: SliderRootOnValueChangeProp,
 			description: "A callback function called when the value state of the slider changes.",
+			stringDefinition: "(value: number) => void | (value: number[]) => void",
 		}),
 		onValueCommit: createFunctionProp({
 			definition: SliderRootOnValueChangeProp,
 			description:
 				"A callback function called when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called immediately after the user starts dragging.",
+			stringDefinition: "(value: number) => void | (value: number[]) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

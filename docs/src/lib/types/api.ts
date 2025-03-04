@@ -3,6 +3,7 @@ import type { Component } from "svelte";
 export type PropType = {
 	type: string;
 	definition: string | Component;
+	stringDefinition: string;
 };
 
 export type PropSchema = {

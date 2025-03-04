@@ -28,6 +28,7 @@ const root = createApiSchema<TabsRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active tab value changes.",
+			stringDefinition: "(value: string) => void",
 		}),
 		activationMode: createEnumProp({
 			options: ["automatic", "manual"],

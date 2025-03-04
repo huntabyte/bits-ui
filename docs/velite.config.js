@@ -9,6 +9,7 @@ const sharedSchema = s
 		navLabel: s.string().optional(),
 		raw: s.raw(),
 		toc: s.toc(),
+		llms: s.boolean().default(true),
 	})
 	.transform((data) => {
 		return {

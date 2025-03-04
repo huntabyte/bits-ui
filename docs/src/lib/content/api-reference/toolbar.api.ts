@@ -99,6 +99,7 @@ const group = createApiSchema<ToolbarGroupPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: OnChangeStringOrArrayProp,
 			description: "A callback function called when the value changes.",
+			stringDefinition: "(value: string) => void | (value: string[]) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
