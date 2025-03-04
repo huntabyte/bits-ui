@@ -14,6 +14,15 @@ const config = {
 			"$icons/*": "src/lib/components/icons/*",
 			"$content/*": ".velite/*",
 		},
+		prerender: {
+			handleHttpError: ({ path, message }) => {
+				// ignore deliberate link to shiny 404 page
+				if (path.includes("llms.txt")) return;
+
+				// otherwise fail the build
+				throw new Error(message);
+			},
+		},
 	},
 };
 
