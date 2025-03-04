@@ -76,6 +76,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			definition: OnChangeStringOrArrayProp,
 			description:
 				"A callback that is fired when the combobox value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
+			stringDefinition: "(string) => void | (string[]) => void",
 		}),
 		open: createBooleanProp({
 			default: C.FALSE,
@@ -85,6 +86,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 		onOpenChange: createFunctionProp({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the combobox menu's open state changes.",
+			stringDefinition: "(open: boolean) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
@@ -118,6 +120,7 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			type: {
 				type: "array",
 				definition: ItemsProp,
+				stringDefinition: `{ value: string; label: string; disabled?: boolean}[]`,
 			},
 			description:
 				"Optionally provide an array of objects representing the items in the select for autofill capabilities. Only applicable to combobox's with type `single`",
@@ -232,10 +235,12 @@ export const item = createApiSchema<ComboboxItemPropsWithoutHTML>({
 		onHighlight: createFunctionProp({
 			definition: NoopProp,
 			description: "A callback that is fired when the item is highlighted.",
+			stringDefinition: "() => void",
 		}),
 		onUnhighlight: createFunctionProp({
 			definition: NoopProp,
 			description: "A callback that is fired when the item is unhighlighted.",
+			stringDefinition: "() => void",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},

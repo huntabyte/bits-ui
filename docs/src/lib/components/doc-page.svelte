@@ -6,22 +6,16 @@
 	import type { TocItem } from "$lib/utils/use-toc.svelte.js";
 	import Toc from "./toc/toc.svelte";
 	import type { APISchema } from "$lib/types/api.js";
-	import PageHeader from "./page-header/page-header.svelte";
-	import PageHeaderHeading from "./page-header/page-header-heading.svelte";
-	import PageHeaderDescription from "./page-header/page-header-description.svelte";
-	import { Tooltip } from "bits-ui";
+	import type { DocMetadata } from "$lib/utils/docs.js";
+	import DocPageHeader from "./doc-page-header.svelte";
 
 	let {
 		component,
-		title,
-		description,
-		toc,
+		metadata,
 		schemas = [],
 	}: {
 		component: Component;
-		title: string;
-		description?: string;
-		toc: TocItem[];
+		metadata: DocMetadata;
 		schemas?: APISchema[];
 	} = $props();
 
@@ -40,10 +34,10 @@
 		};
 	});
 
-	const fullToc = $derived(apiSchemaToc ? [...toc, apiSchemaToc] : toc);
+	const fullToc = $derived(apiSchemaToc ? [...metadata.toc, apiSchemaToc] : metadata.toc);
 </script>
 
-<Metadata {title} {description} />
+<Metadata {...metadata} />
 
 <div
 	class={cn(
@@ -54,7 +48,7 @@
 	{#if !page.error}
 		<aside class="order-2 hidden text-sm xl:block">
 			<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6">
-				{#key title}
+				{#key metadata.title}
 					<Toc toc={{ items: fullToc }} />
 				{/key}
 			</div>
@@ -62,46 +56,7 @@
 	{/if}
 	<div class="order-1 mx-auto w-full min-w-0 md:max-w-[760px]">
 		<main class="markdown pb-24" id="main-content">
-			<PageHeader>
-				<PageHeaderHeading>{title}</PageHeaderHeading>
-				<PageHeaderDescription>{description}</PageHeaderDescription>
-				<div class="flex items-center gap-2">
-					<Tooltip.Provider delayDuration={0} disableHoverableContent>
-						<Tooltip.Root>
-							<Tooltip.Trigger
-								data-llm-ignore
-								class="hover:bg-muted/50 mb-11 mt-3 rounded-[4px] border px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
-							>
-								Copy Markdown
-							</Tooltip.Trigger>
-							<Tooltip.Content sideOffset={8} class="z-50">
-								<div
-									class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden w-fit items-center justify-center text-balance border p-3 text-sm font-medium"
-								>
-									Copy this documentation page as markdown to your clipboard.
-								</div>
-							</Tooltip.Content>
-						</Tooltip.Root>
-						<Tooltip.Root>
-							<Tooltip.Trigger
-								data-llm-ignore
-								class="hover:bg-muted/50 mb-11 mt-3 rounded-[4px] border px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
-							>
-								{#snippet child({ props })}
-									<a {...props} target="_blank" href="##"> llms.txt </a>
-								{/snippet}
-							</Tooltip.Trigger>
-							<Tooltip.Content sideOffset={8} class="z-50">
-								<div
-									class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden w-fit items-center justify-center text-balance border p-3 text-sm font-medium"
-								>
-									Visit the llms.txt file for this documentation page.
-								</div>
-							</Tooltip.Content>
-						</Tooltip.Root>
-					</Tooltip.Provider>
-				</div>
-			</PageHeader>
+			<DocPageHeader {metadata} />
 			<PageComponent {schemas} />
 		</main>
 	</div>

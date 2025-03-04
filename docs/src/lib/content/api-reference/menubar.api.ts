@@ -42,6 +42,7 @@ export const root = createApiSchema<MenubarRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active menu value changes.",
+			stringDefinition: "(value: string) => void",
 		}),
 		dir: dirProp,
 		loop: createBooleanProp({

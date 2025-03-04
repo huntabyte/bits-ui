@@ -33,6 +33,7 @@ const root = createApiSchema<PinInputRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			description: "A callback function that is called when the value of the input changes.",
 			definition: OnStringValueChangeProp,
+			stringDefinition: "(value: string) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
@@ -52,11 +53,13 @@ const root = createApiSchema<PinInputRootPropsWithoutHTML>({
 		onComplete: createFunctionProp({
 			description: "A callback function that is called when the input is completely filled.",
 			definition: PinInputRootOnCompleteProp,
+			stringDefinition: "(...args: any[]) => void",
 		}),
 		pasteTransformer: createFunctionProp({
 			description:
 				"A callback function that is called when the user pastes text into the input. It receives the pasted text as an argument and should return the sanitized text. Useful for cleaning up pasted text, like removing hyphens or other characters that should not make it into the input.",
 			definition: PinInputRootPasteTransformerProp,
+			stringDefinition: "(text: string) => string",
 		}),
 		inputId: createStringProp({
 			description: "Optionally provide an ID to apply to the hidden input element.",
@@ -89,6 +92,14 @@ const cell = createApiSchema<PinInputCellPropsWithoutHTML>({
 			definition: PinInputCellCellProp,
 			description:
 				"The cell object provided by the `cells` snippet prop from the `PinInput.Root` component.",
+			stringDefinition: `type Cell = {
+	/** The character displayed in the cell. */
+	char: string | null | undefined;
+	/** Whether the cell is active. */
+	isActive: boolean;
+	/** Whether the cell has a fake caret. */
+	hasFakeCaret: boolean;
+}`,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},

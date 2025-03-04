@@ -33,6 +33,7 @@ export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
 		onOpenChange: createFunctionProp({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the collapsible's open state changes.",
+			stringDefinition: "(open: boolean) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

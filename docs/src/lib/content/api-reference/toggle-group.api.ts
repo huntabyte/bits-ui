@@ -39,6 +39,7 @@ const root = createApiSchema<ToggleGroupRootPropsWithoutHTML>({
 			definition: OnChangeStringOrArrayProp,
 			description:
 				"A callback function called when the value of the toggle group changes. The type of the value is dependent on the type of the toggle group.",
+			stringDefinition: "(value: string) => void | (value: string[]) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

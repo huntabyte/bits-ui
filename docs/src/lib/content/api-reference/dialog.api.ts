@@ -55,6 +55,7 @@ export const root = createApiSchema<DialogRootPropsWithoutHTML>({
 		onOpenChange: createFunctionProp({
 			definition: OnOpenChangeProp,
 			description: "A callback function called when the open state changes.",
+			stringDefinition: "(open: boolean) => void",
 		}),
 		children: childrenSnippet(),
 	},

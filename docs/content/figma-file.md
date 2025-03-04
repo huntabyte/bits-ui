@@ -1,6 +1,7 @@
 ---
 title: Figma
 description: Every component recreated in Figma.
+llms: false
 ---
 
 The Figma UI Kit is open sourced by [Pavel Stianko](https://twitter.com/pavel_stianko).

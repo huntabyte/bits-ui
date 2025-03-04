@@ -36,6 +36,7 @@ export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active menu value changes.",
+			stringDefinition: "(value: string) => void",
 		}),
 		dir: dirProp,
 		skipDelayDuration: createNumberProp({
@@ -109,6 +110,7 @@ export const link = createApiSchema<NavigationMenuLinkPropsWithoutHTML>({
 		onSelect: createFunctionProp({
 			definition: "() => void",
 			description: "A callback function called when the link is selected.",
+			stringDefinition: "() => void",
 		}),
 		...withChildProps({ elType: "HTMLAnchorElement" }),
 	},

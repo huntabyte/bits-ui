@@ -78,6 +78,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			definition: OnChangeStringOrArrayProp,
 			description:
 				"A callback that is fired when the select value changes. When the type is `'single'`, the argument will be a string. When the type is `'multiple'`, the argument will be an array of strings.",
+			stringDefinition: "(value: string) => void | (value: string[]) => void",
 		}),
 		open: createBooleanProp({
 			default: C.FALSE,
@@ -87,6 +88,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 		onOpenChange: createFunctionProp({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the select menu's open state changes.",
+			stringDefinition: "(open: boolean) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
@@ -119,6 +121,7 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 			definition: ItemsProp,
 			description:
 				"Optionally provide an array of `value` and `label` pairs that will be used to match and trigger selection when the trigger is focused and a key is pressed while the content is closed. Additionally, this will be used for form autofill when the type is single.",
+			stringDefinition: `{ value: string; label: string; disabled?: boolean}[]`,
 		}),
 		children: childrenSnippet(),
 	},
@@ -231,10 +234,12 @@ export const item = createApiSchema<SelectItemPropsWithoutHTML>({
 		onHighlight: createFunctionProp({
 			definition: NoopProp,
 			description: "A callback that is fired when the item is highlighted.",
+			stringDefinition: "() => void",
 		}),
 		onUnhighlight: createFunctionProp({
 			definition: NoopProp,
 			description: "A callback that is fired when the item is unhighlighted.",
+			stringDefinition: "() => void",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},

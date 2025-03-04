@@ -44,6 +44,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: OnDateValueChangeProp,
 			description: "A function that is called when the selected date changes.",
+			stringDefinition: "(value: DateValue) => void",
 		}),
 		placeholder: createPropSchema({
 			type: dateValueProp,
@@ -54,6 +55,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 		onPlaceholderChange: createFunctionProp({
 			definition: OnPlaceholderChangeProp,
 			description: "A function that is called when the placeholder date changes.",
+			stringDefinition: "(value: DateValue) => void",
 		}),
 		required: createBooleanProp({
 			description: "Whether or not the date field is required.",
@@ -62,10 +64,12 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 		validate: createFunctionProp({
 			definition: DateValidateProp,
 			description: "A function that returns whether or not a date is unavailable.",
+			stringDefinition: "(value: DateValue) => boolean",
 		}),
 		onInvalid: createFunctionProp({
 			definition: DateOnInvalidProp,
 			description: "A callback fired when the date field's value is invalid.",
+			stringDefinition: "(value: DateValue) => void",
 		}),
 		errorMessageId: createStringProp({
 			description:
@@ -111,6 +115,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 			type: {
 				type: "EditableSegmentPart[]",
 				definition: DateFieldEditableSegmentPartProp,
+				stringDefinition: `"day" | "month" | "year" | "hour" | "minute" | "second" | "dayPeriod"`,
 			},
 			description:
 				"An array of segments that should be readonly, which prevent user input on them.",
@@ -157,6 +162,7 @@ export const segment = createApiSchema<DateFieldSegmentPropsWithoutHTML>({
 			type: {
 				type: "SegmentPart",
 				definition: SegmentPartProp,
+				stringDefinition: `"month" | "day" | "year" | "hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal";`,
 			},
 			description: "The part of the date to render.",
 			required: true,

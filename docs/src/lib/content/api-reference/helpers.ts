@@ -6,6 +6,7 @@ import {
 	DirProp,
 	EscapeKeydownBehaviorProp,
 	InteractOutsideBehaviorProp,
+	OnAutoFocusProp,
 	OnEscapeKeydownProp,
 	OnFocusOutsideProp,
 	OnInteractOutsideProp,
@@ -69,11 +70,15 @@ export function createUnionProp({
 	bindable = false,
 	default: defaultProp,
 	definition,
-}: { options: string[]; definition?: Component } & SharedPropOptions): PropSchema {
+}: {
+	options: string[];
+	definition?: Component;
+} & SharedPropOptions): PropSchema {
 	return {
 		type: {
 			type: C.UNION,
 			definition: definition ?? union(...options),
+			stringDefinition: union(...options),
 		},
 		description,
 		required,
@@ -94,6 +99,7 @@ export function createEnumProp({
 		type: {
 			type: C.ENUM,
 			definition: definition ?? enums(...options),
+			stringDefinition: enums(...options),
 		},
 		description,
 		required,
@@ -108,11 +114,13 @@ export function createObjectProp({
 	required = false,
 	bindable = false,
 	default: defaultProp,
-}: { definition: string } & SharedPropOptions): PropSchema {
+	stringDefinition,
+}: { definition: string; stringDefinition: string } & SharedPropOptions): PropSchema {
 	return {
 		type: {
 			type: C.OBJECT,
 			definition,
+			stringDefinition,
 		},
 		description,
 		required,
@@ -127,11 +135,13 @@ export function createFunctionProp({
 	required = false,
 	bindable = false,
 	default: defaultProp,
-}: { definition: string | Component } & SharedPropOptions): PropSchema {
+	stringDefinition,
+}: { definition: string | Component; stringDefinition: string } & SharedPropOptions): PropSchema {
 	return {
 		type: {
 			type: C.FUNCTION,
 			definition,
+			stringDefinition,
 		},
 		description,
 		required,
@@ -266,23 +276,35 @@ export function escape(str: string): string {
 	return str;
 }
 
-export function childSnippet(definition?: string | Component): PropSchema {
+export function childSnippet(
+	definition?: string | Component,
+	stringDefinition?: string
+): PropSchema {
 	return {
 		type: {
 			type: C.SNIPPET,
 			definition: definition || ChildDefaultSnippetProps,
+			stringDefinition:
+				stringDefinition ||
+				`type SnippetProps = {
+	props: Record<string, unknown>;
+};`,
 		},
 		description:
 			"Use render delegation to render your own element. See [Child Snippet](/docs/child-snippet) docs for more information.",
 	};
 }
 
-export function childrenSnippet(definition?: string | Component): PropSchema {
+export function childrenSnippet(
+	definition?: string | Component,
+	stringDefinition?: string
+): PropSchema {
 	if (definition) {
 		return {
 			type: {
 				type: C.SNIPPET,
 				definition,
+				stringDefinition: stringDefinition ?? "Snippet",
 			},
 			description: "The children content to render.",
 		};
@@ -463,12 +485,14 @@ export const dismissibleOnInteractOutsideProp = createFunctionProp({
 	definition: OnInteractOutsideProp,
 	description:
 		"Callback fired when an outside interaction event occurs, which is a `pointerdown` event. You can call `event.preventDefault()` to prevent the default behavior of handling the outside interaction.",
+	stringDefinition: "(event: PointerEvent) => void",
 });
 
 export const dismissibleOnFocusOutsideProp = createFunctionProp({
 	definition: OnFocusOutsideProp,
 	description:
 		"Callback fired when focus leaves the dismissible layer. You can call `event.preventDefault()` to prevent the default behavior on focus leaving the layer.",
+	stringDefinition: "(event: FocusEvent) => void",
 });
 
 export const dismissibleInteractOutsideBehaviorProp: PropSchema = createEnumProp({
@@ -497,6 +521,7 @@ export const escapeOnEscapeKeydownProp: PropSchema = createFunctionProp({
 	definition: OnEscapeKeydownProp,
 	description:
 		"Callback fired when an escape keydown event occurs in the floating content. You can call `event.preventDefault()` to prevent the default behavior of handling the escape keydown event.",
+	stringDefinition: "(event: KeyboardEvent) => void",
 });
 
 export const escapeLayerProps = {
@@ -511,15 +536,17 @@ export const forceMountProp = createBooleanProp({
 });
 
 export const onOpenAutoFocusProp = createFunctionProp({
-	definition: OnFocusOutsideProp,
+	definition: OnAutoFocusProp,
 	description:
 		"Event handler called when auto-focusing the content as it is opened. Can be prevented.",
+	stringDefinition: "(event: Event) => void",
 });
 
 export const onCloseAutoFocusProp = createFunctionProp({
-	definition: OnFocusOutsideProp,
+	definition: OnAutoFocusProp,
 	description:
 		"Event handler called when auto-focusing the content as it is closed. Can be prevented.",
+	stringDefinition: "(event: Event) => void",
 });
 
 export const trapFocusProp = createBooleanProp({
@@ -563,6 +590,12 @@ export const valueDateRangeProp: PropSchema = createPropSchema({
 	type: {
 		type: "DateRange",
 		definition: DateRangeProp,
+		stringDefinition: `import type { DateValue } from "@internationalized/date";
+
+type DateRange = {
+	start: DateValue | undefined;
+	end: DateValue | undefined;
+};`,
 	},
 	description: "The selected date range.",
 	bindable: true,
@@ -571,4 +604,5 @@ export const valueDateRangeProp: PropSchema = createPropSchema({
 export const valueDateRangeChangeFn: PropSchema = createFunctionProp({
 	definition: DateOnRangeChangeProp,
 	description: "A function that is called when the selected date range changes.",
+	stringDefinition: `(range: DateRange) => void`,
 });

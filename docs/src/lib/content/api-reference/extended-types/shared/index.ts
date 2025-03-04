@@ -36,3 +36,4 @@ export { default as SingleOrMultipleProp } from "./single-or-multiple-prop.md";
 export { default as StringOrArrayStringProp } from "./string-or-array-string-prop.md";
 export { default as WeekdayFormatProp } from "./weekday-format-prop.md";
 export { default as OnDateValueChangeProp } from "./on-date-value-change-prop.md";
+export { default as OnAutoFocusProp } from "./on-auto-focus-prop.md";

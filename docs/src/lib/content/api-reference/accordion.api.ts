@@ -63,6 +63,7 @@ const root = createApiSchema<AccordionRootPropsWithoutHTML>({
 			definition: OnChangeStringOrArrayProp,
 			description:
 				"A callback function called when the active accordion item value changes. If the `type` is `'single'`, the argument will be a string. If `type` is `'multiple'`, the argument will be an array of strings.",
+			stringDefinition: "string | string[]",
 		}),
 		disabled: createBooleanProp({
 			description:

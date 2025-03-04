@@ -28,6 +28,7 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<FileMa
 				const subFiles = await collectFiles(fullPath, baseDir);
 				Object.assign(files, subFiles);
 			} else if (entry.isFile()) {
+				if (fullPath.includes("figma")) continue;
 				let content = await readFile(fullPath, "utf-8");
 
 				files[relPath] = content;
@@ -41,6 +42,21 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<FileMa
 		);
 	}
 }
+
+const REGEX_PATTERNS = {
+	multipleNewlines: /\n{3,}/g,
+	bulletSpacing: /- \n\s+/g,
+	multiLineBullets: /(- [^\n]*)(?:\n\s+([^\n-][^\n]*))/g,
+	startLineSpaces: /(\n|^)[ \t]+\n/g,
+	endLineSpaces: /\n[ \t]+($|\n)/g,
+	inlineCodeBefore: /(\S+)\s*\n\s*(`[^`]+?`)/g,
+	inlineCodeAfter: /(`[^`]+?`)\s*\n\s*(\S+)/g,
+	parenCodeStart: /\(\s*\n\s*(`[^`]+?`)/g,
+	parenCodeEnd: /(`[^`]+?`)\s*\n\s*\)/g,
+	escapedBackticks: /\\`([^`]+?)\\`/g,
+	codeBlockIndent: /```([a-z]*)\n\t/g,
+	htmlComments: /<!--.*?-->/gs,
+} as const;
 
 async function transformAndSaveMarkdown(rawHtml: string) {
 	const dom = new JSDOM(rawHtml);
@@ -66,38 +82,39 @@ async function transformAndSaveMarkdown(rawHtml: string) {
 
 	const html = targetElement ? targetElement.innerHTML : "";
 
-	function removeHTMLComments(html: string) {
-		return html.replace(/<!--.*?-->/gs, "");
-	}
-
 	const file = await unified()
 		.use(rehypeParse)
 		.use(rehypeRemark)
 		.use(remarkGfm)
 		.use(remarkStringify, {
-			bullet: "-", // Use dashes for bullets
-			listItemIndent: "one", // Controls list item indentation
+			bullet: "-",
+			listItemIndent: "one",
 			tightDefinitions: true,
 			fences: true,
 		})
 		.process(html);
 
-	const processedFile = removeHTMLComments(String(file)).trim();
+	const sanitizedFile = String(file)
+		.replace(REGEX_PATTERNS.htmlComments, "")
+		.replace(REGEX_PATTERNS.multipleNewlines, "\n\n")
+		.replace(REGEX_PATTERNS.bulletSpacing, "- ")
+		.replace(REGEX_PATTERNS.multiLineBullets, "$1 $2")
+		.replace(REGEX_PATTERNS.startLineSpaces, "$1")
+		.replace(REGEX_PATTERNS.endLineSpaces, "$1")
+		.replace(REGEX_PATTERNS.inlineCodeBefore, "$1 $2")
+		.replace(REGEX_PATTERNS.inlineCodeAfter, "$1 $2")
+		.replace(REGEX_PATTERNS.parenCodeStart, "($1")
+		.replace(REGEX_PATTERNS.parenCodeEnd, "$1)")
+		.replace(REGEX_PATTERNS.escapedBackticks, "`$1`")
+		.replace(REGEX_PATTERNS.codeBlockIndent, "```$1\n")
+		.replace(/\u00C2/g, "") // Â
+		.replace(/\u2014/g, "") // â€”
+		// eslint-disable-next-line no-control-regex
+		.replace(/[^\u0000-\u007F]/g, "")
+		.replaceAll("\t", " ")
+		.trim();
 
-	const cleanMarkdown = processedFile
-		.replace(/\n{3,}/g, "\n\n") // replace 3+ newlines with 2
-		.replace(/- \n\s+/g, "- ") // fix basic bullet point spacing
-		.replace(/(- [^\n]*)(?:\n\s+([^\n-][^\n]*))/g, "$1 $2") // multi-line bullets with indented continuations
-		.replace(/(\n|^)[ \t]+\n/g, "$1") // start of line or after newline
-		.replace(/\n[ \t]+($|\n)/g, "$1") // end of line or before newline
-		.replace(/(\S+)\s*\n\s*(`[^`]+?`)/g, "$1 $2") // inline code that handles special characters
-		.replace(/(`[^`]+?`)\s*\n\s*(\S+)/g, "$1 $2") // for parentheses with code blocks inside
-		.replace(/\(\s*\n\s*(`[^`]+?`)/g, "($1")
-		.replace(/(`[^`]+?`)\s*\n\s*\)/g, "$1)")
-		.replace(/\\`([^`]+?)\\`/g, "`$1`") // remove escaping backticks around inline code
-		.replace(/```([a-z]*)\n\t/g, "```$1\n"); // fix code block indents
-
-	return cleanMarkdown;
+	return sanitizedFile;
 }
 
 async function generateRootLLMsTxt(fileNames: string[]) {

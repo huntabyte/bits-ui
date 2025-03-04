@@ -33,6 +33,7 @@ const root = createApiSchema<SwitchRootPropsWithoutHTML>({
 		onCheckedChange: createFunctionProp({
 			definition: SwitchRootOnCheckedChangeProp,
 			description: "A callback function called when the checked state of the switch changes.",
+			stringDefinition: "(checked: boolean) => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

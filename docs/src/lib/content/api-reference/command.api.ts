@@ -39,6 +39,7 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 		onValueChange: createFunctionProp({
 			definition: OnStringValueChangeProp,
 			description: "A callback that is fired when the command value changes.",
+			stringDefinition: "(value: string) => void",
 		}),
 		label: createStringProp({
 			description:
@@ -48,6 +49,7 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 			definition: CommandFilterProp,
 			description:
 				"A custom filter function used to filter items. This function should return a number between `0` and `1`, with `1` being a perfect match, and `0` being no match, resulting in the item being hidden entirely. The items are  sorted/filtered based on this score.",
+			stringDefinition: "(value: string, search: string, keywords?: string[]) => number;",
 		}),
 		shouldFilter: createBooleanProp({
 			default: C.TRUE,
@@ -58,6 +60,23 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 			definition: CommandOnStateChangeProp,
 			description: `A callback that fires when the command's internal state changes. This callback receives a readonly snapshot of the current state.
 			The callback is debounced and only fires once per batch of related updates (e.g., when typing triggers filtering and selection changes).`,
+			stringDefinition: `type CommandState = {
+	/** The value of the search query */
+	search: string;
+	/** The value of the selected command menu item */
+	value: string;
+	/** The filtered items */
+	filtered: {
+		/** The count of all visible items. */
+		count: number;
+		/** Map from visible item id to its search store. */
+		items: Map<string, number>;
+		/** Set of groups with at least one visible item. */
+		groups: Set<string>;
+	};
+};
+
+type onStateChange = (state: Readonly<CommandState>) => void;`,
 		}),
 		loop: createBooleanProp({
 			default: C.FALSE,
@@ -214,6 +233,7 @@ const item = createApiSchema<CommandItemPropsWithoutHTML>({
 		onSelect: createFunctionProp({
 			definition: NoopProp,
 			description: "A callback that is fired when the item is selected.",
+			stringDefinition: "() => void",
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,

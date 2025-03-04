@@ -7,31 +7,24 @@ type CopyToClipboardProps = {
 
 export class CopyToClipboard {
 	isCopied = $state(false);
-	onCopy: CopyToClipboardProps["onCopy"];
-	timeout: CopyToClipboardProps["timeout"];
 	codeString = $state("");
+	timeout = $derived.by(() => this.opts.timeout ?? 2000);
 
-	constructor(props?: CopyToClipboardProps) {
-		this.onCopy = props?.onCopy;
-		this.timeout = props?.timeout ?? 2000;
-	}
+	constructor(readonly opts: CopyToClipboardProps = {}) {}
 
 	setCodeString = (v: string) => {
 		this.codeString = v;
 	};
 
 	copyToClipboard = (value: string = this.codeString) => {
-		if (typeof window === "undefined" || !navigator.clipboard.writeText) {
-			return;
-		}
-
+		if (typeof window === "undefined" || !navigator.clipboard.writeText) return;
 		if (!value) return;
 
 		navigator.clipboard.writeText(value).then(() => {
 			this.isCopied = true;
 
-			if (this.onCopy) {
-				this.onCopy();
+			if (this.opts.onCopy) {
+				this.opts.onCopy();
 			}
 
 			setTimeout(() => {
