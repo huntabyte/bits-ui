@@ -4,27 +4,15 @@
 	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { cn } from "$lib/utils/styles.js";
 	import type { ComponentProps } from "svelte";
-	import { CalendarDate } from "@internationalized/date";
 
 	let { value = $bindable() }: ComponentProps<typeof RangeCalendar.Root> = $props();
-
-	const thisSunday = new CalendarDate(2025, 3, 9);
-	const thisMonday = new CalendarDate(2025, 3, 3);
-
-	const placeholder = new CalendarDate(2025, 1, 3);
 </script>
 
 <RangeCalendar.Root
 	class="rounded-15px border-dark-10 bg-background-alt shadow-card mt-6 border p-[22px]"
 	weekdayFormat="short"
 	fixedWeeks={true}
-	{placeholder}
-	value={{ start: thisMonday, end: thisSunday }}
-	numberOfMonths={3}
-	weekStartsOn={1}
-	minValue={new CalendarDate(2020, 1, 1)}
-	maxValue={new CalendarDate(2025, 3, 9)}
-	disableDaysOutsideMonth
+	bind:value
 >
 	{#snippet children({ months, weekdays })}
 		<RangeCalendar.Header class="flex items-center justify-between">
