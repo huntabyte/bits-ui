@@ -571,11 +571,11 @@ class CalendarDayState {
 	}
 
 	#tabindex = $derived.by(() =>
-		this.cell.isFocusedDate
-			? 0
-			: (this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
-				  this.cell.isDisabled
-				? undefined
+		(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
+		this.cell.isDisabled
+			? undefined
+			: this.cell.isFocusedDate
+				? 0
 				: -1
 	);
 
