@@ -18,7 +18,6 @@
 <main>
 	<div data-testid="start-value">{String(value?.start)}</div>
 	<div data-testid="end-value">{String(value?.end)}</div>
-	<button onclick={clear}>clear</button>
 
 	<RangeCalendar.Root bind:placeholder bind:value {...restProps} data-testid="calendar">
 		{#snippet children({ months, weekdays })}
@@ -64,4 +63,5 @@
 			</div>
 		{/snippet}
 	</RangeCalendar.Root>
+	<button onclick={clear}>clear</button>
 </main>

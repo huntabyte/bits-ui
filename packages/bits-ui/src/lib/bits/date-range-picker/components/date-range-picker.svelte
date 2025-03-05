@@ -57,14 +57,12 @@
 	if (value === undefined) {
 		value = { start: undefined, end: undefined };
 	}
+	const defaultPlaceholder = getDefaultDate({
+		granularity,
+		defaultValue: value?.start,
+	});
 
 	if (placeholder === undefined) {
-		const defaultPlaceholder = getDefaultDate({
-			granularity,
-			defaultPlaceholder: undefined,
-			defaultValue: value?.start,
-		});
-
 		placeholder = defaultPlaceholder;
 	}
 
@@ -131,6 +129,7 @@
 				onEndValueChange(v);
 			}
 		),
+		defaultPlaceholder,
 	});
 
 	usePopoverRoot({

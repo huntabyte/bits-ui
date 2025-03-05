@@ -45,13 +45,12 @@
 		children,
 	}: DatePickerRootProps = $props();
 
-	if (placeholder === undefined) {
-		const defaultPlaceholder = getDefaultDate({
-			granularity,
-			defaultPlaceholder: undefined,
-			defaultValue: value,
-		});
+	const defaultPlaceholder = getDefaultDate({
+		granularity,
+		defaultValue: value,
+	});
 
+	if (placeholder === undefined) {
 		placeholder = defaultPlaceholder;
 	}
 
@@ -105,6 +104,7 @@
 		numberOfMonths: box.with(() => numberOfMonths),
 		initialFocus: box.with(() => initialFocus),
 		onDateSelect: box.with(() => onDateSelect),
+		defaultPlaceholder,
 	});
 
 	usePopoverRoot({

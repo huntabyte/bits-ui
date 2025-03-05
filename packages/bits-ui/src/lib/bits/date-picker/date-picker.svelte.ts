@@ -32,7 +32,7 @@ type DatePickerRootStateProps = WritableBoxedValues<{
 		disableDaysOutsideMonth: boolean;
 		initialFocus: boolean;
 		onDateSelect?: () => void;
-	}>;
+	}> & { defaultPlaceholder: DateValue };
 
 class DatePickerRootState {
 	constructor(readonly opts: DatePickerRootStateProps) {}
