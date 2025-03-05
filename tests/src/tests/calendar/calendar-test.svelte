@@ -22,9 +22,7 @@
 
 <main>
 	<div data-testid="value">{String(value?.toString())}</div>
-	<button onclick={() => changeValue("day")} data-testid="add-day"> Add Day </button>
-	<button onclick={() => changeValue("month")} data-testid="add-month">Add Month</button>
-	<button onclick={() => changeValue("year")} data-testid="add-year">Add Year</button>
+
 	<Calendar.Root type="single" bind:placeholder bind:value {...restProps} data-testid="calendar">
 		{#snippet children({ months, weekdays })}
 			<Calendar.Header data-testid="header">
@@ -69,4 +67,7 @@
 			</div>
 		{/snippet}
 	</Calendar.Root>
+	<button onclick={() => changeValue("day")} data-testid="add-day"> Add Day </button>
+	<button onclick={() => changeValue("month")} data-testid="add-month">Add Month</button>
+	<button onclick={() => changeValue("year")} data-testid="add-year">Add Year</button>
 </main>

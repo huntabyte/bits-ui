@@ -37,13 +37,15 @@ function setup(props: Partial<RangeCalendarTestProps> = {}) {
 	const user = userEvent.setup();
 	const returned = render(RangeCalendarTest, { ...props });
 	const calendar = returned.getByTestId("calendar");
+	const prevButton = returned.getByTestId("prev-button");
+	const nextButton = returned.getByTestId("next-button");
 	expect(calendar).toBeVisible();
 
 	function getSelectedDays() {
 		return calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
 	}
 
-	return { ...returned, user, calendar, getSelectedDays };
+	return { ...returned, user, calendar, getSelectedDays, prevButton, nextButton };
 }
 
 it("should have no accessibility violations", async () => {
@@ -345,4 +347,19 @@ describe("correct weekday label formatting", () => {
 			expect(weekdayEl).toHaveTextContent(weekday);
 		}
 	});
+});
+
+it("should not allow focusing on disabled dates, even if they are the only selected date, it should fallback to the first available date within the view", async () => {
+	const { getByTestId, user, prevButton, nextButton } = setup({
+		value: { start: new CalendarDate(1980, 1, 3), end: new CalendarDate(1980, 1, 3) },
+		isDateDisabled: (date) => date.day === 3,
+	});
+
+	expect(document.body).toHaveFocus();
+	await user.keyboard(kbd.TAB);
+	expect(prevButton).toHaveFocus();
+	await user.keyboard(kbd.TAB);
+	expect(nextButton).toHaveFocus();
+	await user.keyboard(kbd.TAB);
+	expect(getByTestId("date-1-1")).toHaveFocus();
 });

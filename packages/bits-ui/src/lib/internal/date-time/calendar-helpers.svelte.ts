@@ -1,4 +1,12 @@
-import { type DateValue, endOfMonth, isSameMonth, startOfMonth } from "@internationalized/date";
+import {
+	CalendarDate,
+	type DateValue,
+	endOfMonth,
+	isSameDay,
+	isSameMonth,
+	parseDate,
+	startOfMonth,
+} from "@internationalized/date";
 import { type ReadableBox, type WritableBox, afterTick, styleToString } from "svelte-toolbelt";
 import { untrack } from "svelte";
 import {
@@ -13,9 +21,10 @@ import {
 import type { Formatter } from "./formatter.js";
 import { getDataDisabled, getDataInvalid, getDataReadonly } from "$lib/internal/attrs.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
-import { isHTMLElement } from "$lib/internal/is.js";
+import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { Month } from "$lib/shared/index.js";
+import type { DateMatcher, Month } from "$lib/shared/index.js";
+import { watch } from "runed";
 
 /**
  * Checks if a given node is a calendar cell element.
@@ -720,4 +729,70 @@ export function pickerOpenFocus(e: Event) {
 		e.preventDefault();
 		nodeToFocus?.focus();
 	}
+}
+
+export function getFirstNonDisabledDateInView(calendarRef: HTMLElement): CalendarDate | undefined {
+	if (!isBrowser) return;
+	const daysInView = Array.from(
+		calendarRef.querySelectorAll<HTMLElement>("[data-bits-day]:not([aria-disabled=true])")
+	);
+	if (daysInView.length === 0) return;
+	const value = daysInView[0]?.getAttribute("data-value");
+	if (!value) return;
+	return parseDate(value);
+}
+
+/**
+ * Ensures the placeholder is not set to a disabled date,
+ * which would prevent the user from entering the Calendar
+ * via the keyboard.
+ */
+export function useEnsureNonDisabledPlaceholder({
+	ref,
+	placeholder,
+	defaultPlaceholder,
+	minValue,
+	maxValue,
+	isDateDisabled,
+}: {
+	ref: WritableBox<HTMLElement | null>;
+	placeholder: WritableBox<DateValue | undefined>;
+	isDateDisabled: ReadableBox<DateMatcher>;
+	minValue: ReadableBox<DateValue | undefined>;
+	maxValue: ReadableBox<DateValue | undefined>;
+	defaultPlaceholder: DateValue;
+}) {
+	function isDisabled(date: DateValue) {
+		if (isDateDisabled.current(date)) return true;
+		if (minValue.current && isBefore(date, minValue.current)) return true;
+		if (maxValue.current && isBefore(maxValue.current, date)) return true;
+		return false;
+	}
+
+	watch(
+		() => ref.current,
+		() => {
+			if (!ref.current) return;
+			/**
+			 * If the placeholder is still the default placeholder and it's a disabled date, find
+			 * the first available date in the calendar view and set it as the placeholder.
+			 *
+			 * This prevents the placeholder from being a disabled date and no date being tabbable
+			 * preventing the user from entering the Calendar. If all dates in the view are
+			 * disabled, currently that is considered an error on the developer's part and should
+			 * be handled by them.
+			 *
+			 * Perhaps in the future we can introduce a dev-only log message to prevent this from
+			 * being a silent error.
+			 */
+			if (
+				placeholder.current &&
+				isSameDay(placeholder.current, defaultPlaceholder) &&
+				isDisabled(defaultPlaceholder)
+			) {
+				placeholder.current =
+					getFirstNonDisabledDateInView(ref.current) ?? defaultPlaceholder;
+			}
+		}
+	);
 }

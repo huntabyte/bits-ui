@@ -8,7 +8,7 @@
 		return date.day === 17 || date.day === 18;
 	};
 
-	let value = $state(today(getLocalTimeZone()));
+	// let value = $state(today(getLocalTimeZone()));
 </script>
 
 <Calendar.Root
@@ -17,7 +17,7 @@
 	weekdayFormat="short"
 	fixedWeeks={true}
 	type="single"
-	bind:value
+	isDateDisabled={(d) => d.day === 4}
 >
 	{#snippet children({ months, weekdays })}
 		<Calendar.Header class="flex items-center justify-between">

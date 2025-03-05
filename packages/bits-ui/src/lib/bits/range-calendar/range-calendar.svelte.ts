@@ -38,6 +38,7 @@ import {
 	handleCalendarNextPage,
 	handleCalendarPrevPage,
 	shiftCalendarFocus,
+	useEnsureNonDisabledPlaceholder,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
@@ -77,7 +78,9 @@ type RangeCalendarRootStateProps = WithRefProps<
 			 * is selected. It is not intended to be used by the user.
 			 */
 			onRangeSelect?: () => void;
-		}>
+		}> & {
+			defaultPlaceholder: DateValue;
+		}
 >;
 
 export class RangeCalendarRootState {
@@ -231,6 +234,15 @@ export class RangeCalendarRootState {
 		this.isDateUnavailable = this.isDateUnavailable.bind(this);
 		this.isOutsideVisibleMonths = this.isOutsideVisibleMonths.bind(this);
 		this.isSelected = this.isSelected.bind(this);
+
+		useEnsureNonDisabledPlaceholder({
+			placeholder: opts.placeholder,
+			defaultPlaceholder: opts.defaultPlaceholder,
+			isDateDisabled: opts.isDateDisabled,
+			maxValue: opts.maxValue,
+			minValue: opts.minValue,
+			ref: opts.ref,
+		});
 	}
 
 	#updateValue(cb: (value: DateRange) => DateRange) {

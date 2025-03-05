@@ -14,13 +14,11 @@ import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
 
 type GetDefaultDateProps = {
 	defaultValue?: DateValue | DateValue[] | undefined;
-	defaultPlaceholder?: DateValue | undefined;
 	granularity?: Granularity;
 };
 
 const defaultDateDefaults = {
 	defaultValue: undefined,
-	defaultPlaceholder: undefined,
 	granularity: "day",
 };
 
@@ -34,9 +32,9 @@ const defaultDateDefaults = {
  * behavior the user expects based on the props they've provided.
  *
  */
-export function getDefaultDate(props?: GetDefaultDateProps): DateValue {
-	const withDefaults = { ...defaultDateDefaults, ...props };
-	const { defaultValue, defaultPlaceholder, granularity } = withDefaults;
+export function getDefaultDate(opts: GetDefaultDateProps): DateValue {
+	const withDefaults = { ...defaultDateDefaults, ...opts };
+	const { defaultValue, granularity } = withDefaults;
 
 	if (Array.isArray(defaultValue) && defaultValue.length) {
 		return defaultValue[defaultValue.length - 1]!;
@@ -44,8 +42,6 @@ export function getDefaultDate(props?: GetDefaultDateProps): DateValue {
 
 	if (defaultValue && !Array.isArray(defaultValue)) {
 		return defaultValue;
-	} else if (defaultPlaceholder) {
-		return defaultPlaceholder;
 	} else {
 		const date = new Date();
 		const year = date.getFullYear();

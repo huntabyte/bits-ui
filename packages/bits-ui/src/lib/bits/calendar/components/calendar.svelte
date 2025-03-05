@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { DateValue } from "@internationalized/date";
+	import { type DateValue } from "@internationalized/date";
 	import { useCalendarRoot } from "../calendar.svelte.js";
 	import type { CalendarRootProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -36,11 +36,11 @@
 		...restProps
 	}: CalendarRootProps = $props();
 
+	const defaultPlaceholder = getDefaultDate({
+		defaultValue: value,
+	});
+
 	if (placeholder === undefined) {
-		const defaultPlaceholder = getDefaultDate({
-			defaultPlaceholder: undefined,
-			defaultValue: value,
-		});
 		placeholder = defaultPlaceholder;
 	}
 
@@ -88,6 +88,7 @@
 			}
 		),
 		type: box.with(() => type),
+		defaultPlaceholder,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

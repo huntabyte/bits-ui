@@ -24,16 +24,20 @@ function setup(props: Partial<CalendarSingleTestProps> = {}) {
 	const user = userEvent.setup();
 	const returned = render(CalendarTest, { ...props, type: "single" });
 	const calendar = returned.getByTestId("calendar");
+	const prevButton = returned.getByTestId("prev-button");
+	const nextButton = returned.getByTestId("next-button");
 	expect(calendar).toBeVisible();
-	return { ...returned, user, calendar };
+	return { ...returned, user, calendar, prevButton, nextButton };
 }
 
 function setupMulti(props: Partial<CalendarMultiTestProps> = {}) {
 	const user = userEvent.setup();
 	const returned = render(CalendarMultiTest, { ...props, type: "multiple" });
 	const calendar = returned.getByTestId("calendar");
+	const prevButton = returned.getByTestId("prev-button");
+	const nextButton = returned.getByTestId("next-button");
 	expect(calendar).toBeVisible();
-	return { ...returned, user, calendar };
+	return { ...returned, user, calendar, prevButton, nextButton };
 }
 
 describe("calendar", () => {
@@ -557,6 +561,21 @@ describe("calendar", () => {
 			expect(weekdayEl).toHaveTextContent(weekday);
 		}
 	});
+
+	it("should not allow focusing on disabled dates, even if they are the only selected date, it should fallback to the first available date within the view", async () => {
+		const { getByTestId, user, prevButton, nextButton } = setup({
+			value: new CalendarDate(1980, 1, 3),
+			isDateDisabled: (date) => date.day === 3,
+		});
+
+		expect(document.body).toHaveFocus();
+		await user.keyboard(kbd.TAB);
+		expect(prevButton).toHaveFocus();
+		await user.keyboard(kbd.TAB);
+		expect(nextButton).toHaveFocus();
+		await user.keyboard(kbd.TAB);
+		expect(getByTestId("date-1-1")).toHaveFocus();
+	});
 });
 
 describe("calendar - `multiple`", () => {
@@ -641,5 +660,20 @@ describe("calendar - `multiple`", () => {
 		expect(selectedDays2.length).toBe(1);
 		await user.click(selectedDays2[0] as HTMLElement);
 		expect(getSelectedDays(calendar).length).toBe(1);
+	});
+
+	it("should not allow focusing on disabled dates, even if they are the only selected date, it should fallback to the first available date within the view", async () => {
+		const { getByTestId, user, prevButton, nextButton } = setupMulti({
+			value: [new CalendarDate(1980, 1, 3)],
+			isDateDisabled: (date) => date.day === 3,
+		});
+
+		expect(document.body).toHaveFocus();
+		await user.keyboard(kbd.TAB);
+		expect(prevButton).toHaveFocus();
+		await user.keyboard(kbd.TAB);
+		expect(nextButton).toHaveFocus();
+		await user.keyboard(kbd.TAB);
+		expect(getByTestId("date-1-1")).toHaveFocus();
 	});
 });

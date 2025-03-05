@@ -8,7 +8,7 @@ import {
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
 import { useRefById } from "svelte-toolbelt";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
@@ -39,6 +39,7 @@ import {
 	handleCalendarNextPage,
 	handleCalendarPrevPage,
 	shiftCalendarFocus,
+	useEnsureNonDisabledPlaceholder,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
@@ -72,7 +73,9 @@ type CalendarRootStateProps = WithRefProps<
 			 * is selected. It is not intended to be used by the user.
 			 */
 			onDateSelect?: () => void;
-		}>
+		}> & {
+			defaultPlaceholder: DateValue;
+		}
 >;
 
 export class CalendarRootState {
@@ -179,9 +182,9 @@ export class CalendarRootState {
 		/**
 		 * Synchronize the placeholder value with the current value.
 		 */
-		$effect(() => {
-			this.opts.value.current;
-			untrack(() => {
+		watch(
+			() => this.opts.value.current,
+			() => {
 				const value = this.opts.value.current;
 				if (Array.isArray(value) && value.length) {
 					const lastValue = value[value.length - 1];
@@ -195,7 +198,16 @@ export class CalendarRootState {
 				) {
 					this.opts.placeholder.current = value;
 				}
-			});
+			}
+		);
+
+		useEnsureNonDisabledPlaceholder({
+			placeholder: opts.placeholder,
+			defaultPlaceholder: opts.defaultPlaceholder,
+			isDateDisabled: opts.isDateDisabled,
+			maxValue: opts.maxValue,
+			minValue: opts.minValue,
+			ref: opts.ref,
 		});
 	}
 
