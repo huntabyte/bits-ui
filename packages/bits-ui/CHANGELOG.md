@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.3.6
+
+### Patch Changes
+
+-   fix(Calendar): ensure outside days are not focusable when `disableOutsideDays` is `true` ([#1264](https://github.com/huntabyte/bits-ui/pull/1264))
+
+-   fix(Range Calendar): ensure outside days are not focusable when `disableOutsideDays` is `true` ([#1264](https://github.com/huntabyte/bits-ui/pull/1264))
+
+-   fix: ensure default placeholder is not a disabled date, which would prevent users from navigating the calendar using tab/keyboard ([#1264](https://github.com/huntabyte/bits-ui/pull/1264))
+
 ## 1.3.5
 
 ### Patch Changes
