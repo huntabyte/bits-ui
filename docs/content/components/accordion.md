@@ -18,41 +18,47 @@ description: Organizes content into collapsible sections, allowing users to focu
 
 ## Overview
 
-The Accordion component is a versatile UI element designed to manage large amounts of content by organizing it into collapsible sections. It's ideal for FAQs, settings panels, or any interface where users need to focus on specific information without being overwhelmed by visual clutter.
+The Accordion component is a versatile UI element designed to organize content into collapsible sections, helping users focus on specific information without being overwhelmed by visual clutter.
 
-## Key Features
-
--   **Single or Multiple Mode**: Toggle between allowing one open section or multiple sections at once.
--   **Accessible by Default**: Built-in ARIA attributes and keyboard navigation support.
--   **Smooth Transitions**: Leverage CSS variables or Svelte transitions for animated expansions.
--   **Flexible State**: Use uncontrolled defaults or take full control with bound values.
-
-## Structure
-
-The Accordion is a compound component made up of several sub-components:
-
--   **`Root`**: Wraps all items and manages state.
--   **`Item`**: Represents a single collapsible section.
--   **`Header`**: Displays the title or label.
--   **`Trigger`**: The clickable element that toggles the content.
--   **`Content`**: The collapsible body of each item.
-
-Here's a basic example:
+## Quick Start
 
 ```svelte
 <script lang="ts">
 	import { Accordion } from "bits-ui";
 </script>
 
-<Accordion.Root>
+<Accordion.Root type="single">
 	<Accordion.Item value="item-1">
 		<Accordion.Header>
-			<Accordion.Trigger>Section 1</Accordion.Trigger>
+			<Accordion.Trigger>Item 1 Title</Accordion.Trigger>
 		</Accordion.Header>
-		<Accordion.Content>Content for section 1 goes here.</Accordion.Content>
+		<Accordion.Content>This is the collapsible content for this section.</Accordion.Content>
+	</Accordion.Item>
+	<Accordion.Item value="item-2">
+		<Accordion.Header>
+			<Accordion.Trigger>Item 2 Title</Accordion.Trigger>
+		</Accordion.Header>
+		<Accordion.Content>This is the collapsible content for this section.</Accordion.Content>
 	</Accordion.Item>
 </Accordion.Root>
 ```
+
+## Key Features
+
+-   **Single or Multiple Mode**: Toggle between allowing one open section or multiple sections at once.
+-   **Accessible by Default**: Built-in ARIA attributes and keyboard navigation support.
+-   **Smooth Transitions**: Leverage CSS variables or Svelte transitions for animated open/close effects.
+-   **Flexible State**: Use uncontrolled defaults or take full control with bound values.
+
+## Structure
+
+The Accordion is a compound component made up of several parts:
+
+-   `Accordion.Root`: Container that manages overall state
+-   `Accordion.Item`: Individual collapsible section
+-   `Accordion.Header`: Contains the visible heading
+-   `Accordion.Trigger`: The clickable element that toggles content visibility
+-   `Accordion.Content`: The collapsible body content
 
 ## Reusable Components
 

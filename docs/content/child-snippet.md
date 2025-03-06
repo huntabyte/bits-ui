@@ -3,66 +3,82 @@ title: Child Snippet
 description: Learn how to use the `child` snippet to render your own elements.
 ---
 
-## Usage
+The `child` snippet is a powerful feature that gives you complete control over the rendered elements in Bits UI components, allowing for customization while maintaining accessibility and functionality.
 
-Many Bits UI components have a default HTML element that wraps their `children`. For example, `Accordion.Trigger` typically renders as:
+## When to Use It
+
+You should use the `child` snippet when you need:
+
+-   Svelte-specific features like transitions, animations, actions, or scoped styles
+-   Integration with custom components in your application
+-   Precise control over the DOM structure
+-   Advanced composition of components
+
+## Basic Usage
+
+Many Bits UI components have default HTML elements that wrap their content. For example, `Accordion.Trigger` renders a `<button>` element by default:
 
 ```svelte
-<button>
+<button {...props}>
 	{@render children()}
 </button>
 ```
 
-While you can set standard button attributes, you might need more control for:
-
--   Applying Svelte transitions or actions
--   Using custom components
--   Scoped CSS
-
-This is where the `child` snippet comes in.
-
-Components supporting render delegation accept an optional child prop, which is a Svelte snippet. When used, the component passes its attributes to this snippet, allowing you to apply them to any element.
-
-Let's take a look at an example using the `Accordion.Trigger` component:
-
-```svelte
-<Accordion.Trigger>
-	{#snippet child({ props })}
-		<div {...props}>Open accordion item</div>
-	{/snippet}
-</Accordion.Trigger>
-```
-
-The `props` object includes event handlers, ARIA attributes, and any other attributes passed to `Accordion.Trigger`. Note that when using `child`, other children outside this snippet are ignored.
-
-## Custom IDs & Attributes
-
-To use custom IDs, event handlers, or other attributes with a custom element, you must pass them to the component first. This is crucial because:
-
--   Many Bits UI internals rely on specific IDs
--   Props are merged using a [`mergeProps`](/docs/utilities/merge-props) function to handle cancelling internal handlers, etc.
-
-Correct usage:
-
-```svelte
-<Accordion.Trigger id="my-custom-id" onclick={() => console.log("clicked")}>
-	<!-- your custom ID and event handler is now inside the `props` object -->
-	{#snippet child({ props })}
-		<div {...props}>Open accordion item</div>
-	{/snippet}
-</Accordion.Trigger>
-```
-
-In this example, `my-custom-id`, the click event handler, and my-custom-class are properly merged into the `props` object, ensuring they work alongside Bits UI's internal logic.
-
-Behind the scenes, components using the child prop typically implement logic similar to this:
+When you need to customize this element, the `child` snippet lets you take control:
 
 ```svelte
 <script lang="ts">
-	// other imports/props/logic omitted for brevity
+	import MyCustomButton from "$lib/components";
+	import { Accordion } from "bits-ui";
+</script>
+
+<Accordion.Trigger>
+	{#snippet child({ props })}
+		<MyCustomButton {...props}>Toggle Item</MyCustomButton>
+	{/snippet}
+</Accordion.Trigger>
+
+<!-- or -->
+
+<Accordion.Trigger>
+	{#snippet child({ props })}
+		<button {...props} class="scoped-button">Toggle Item</button>
+	{/snippet}
+</Accordion.Trigger>
+
+<style>
+	.scoped-button {
+		background-color: #3182ce;
+		color: #fff;
+	}
+</style>
+```
+
+In this example:
+
+-   The `props` parameter contains all necessary attributes and event handlers
+-   The `{...props}` spread applies these to your custom element/component
+-   You can add scoped styles, transitions, actions, etc. directly to the element
+
+## How It Works
+
+When you use the `child` snippet:
+
+1. The component passes all internal props and your custom props passed to the component via the `props` snippet parameter
+2. You decide which element receives these props
+3. The component's internal logic continues to work correctly
+
+### Behind the Scenes
+
+Components that support the `child` snippet typically implement logic similar to:
+
+```svelte
+<script lang="ts">
+	// Bits UI component internal logic
 	let { child, children, ...restProps } = $props();
 	const trigger = makeTrigger();
 
+	// Merge internal props with user props
 	const mergedProps = $derived(mergeProps(restProps, trigger.props));
 </script>
 
@@ -75,19 +91,64 @@ Behind the scenes, components using the child prop typically implement logic sim
 {/if}
 ```
 
-## Floating Content Components
+## Working with Props
 
-Floating content components (tooltips, popovers, dropdowns, etc.) require special handling when used with the `child` snippet due to their positioning requirements with Floating UI.
+### Custom IDs & Attributes
 
-### Implementation Details
+To use custom IDs, event handlers, or other attributes, pass them to the component first:
 
-When implementing floating content, you must:
+```svelte
+<Accordion.Trigger
+	id="my-custom-id"
+	data-testid="accordion-trigger"
+	onclick={() => console.log("clicked")}
+>
+	{#snippet child({ props })}
+		<button {...props}>Open accordion item</button>
+	{/snippet}
+</Accordion.Trigger>
+```
 
--   Include a wrapper element within the `child` snippet
--   Spread the `wrapperProps` prop to this wrapper element
--   Place your floating content inside this wrapper
+The `props` object will now include:
 
-```svelte {4,8} /wrapperProps/
+-   Your custom ID (`id="my-custom-id"`)
+-   Your data attribute (`data-testid="accordion-trigger"`)
+-   Your click event handler, properly merged with internal handlers
+-   All required ARIA attributes and internal event handlers
+
+## Combining with Svelte Features
+
+You can apply Svelte-specific features to your custom elements, such as transitions, actions, and scoped styles:
+
+```svelte
+<Accordion.Trigger>
+	{#snippet child({ props })}
+		<div {...props} use:myCustomAction class="my-custom-trigger">
+			<!-- ... -->
+		</div>
+	{/snippet}
+</Accordion.Trigger>
+
+<style>
+	.my-custom-trigger {
+		background-color: #3182ce;
+		color: #fff;
+	}
+</style>
+```
+
+## Floating Components
+
+Floating content components (tooltips, popovers, dropdowns, etc.) require special handling due to their positioning requirements.
+
+### Required Structure
+
+For floating components, you must use a two-level structure:
+
+1. An **outer wrapper element** with `{...wrapperProps}`
+2. An **inner content element** with `{...props}`
+
+```svelte
 <Popover.Content>
 	{#snippet child({ wrapperProps, props, open })}
 		{#if open}
@@ -101,13 +162,14 @@ When implementing floating content, you must:
 </Popover.Content>
 ```
 
-### Important Considerations
+### Important Rules for Floating Content
 
--   The wrapper element must remain unstyled as its positioning is managed internally by Floating UI
--   The `wrapperProps` contain computed positioning data essential for proper floating behavior
--   Modifying the wrapper element's styles or structure may break positioning calculations
+-   The wrapper element with `{...wrapperProps}` must remain **unstyled**
+-   Positioning is handled by the wrapper element; styling goes on the inner content element
+-   The `open` parameter lets you conditionally render the content, triggering Svelte transitions
+-   Always maintain this two-level structure to ensure proper positioning and behavior
 
-### Affected Components
+### Components Requiring Wrapper Elements
 
 The following components require a wrapper element:
 
@@ -120,3 +182,59 @@ The following components require a wrapper element:
 -   `Popover.Content`
 -   `Select.Content`
 -   `Tooltip.Content`
+
+## Examples
+
+### Basic Custom Element
+
+```svelte
+<Collapsible.Trigger>
+	{#snippet child({ props })}
+		<button {...props}>
+			<Icon name="star" />
+			<span>Favorite</span>
+		</button>
+	{/snippet}
+</Collapsible.Trigger>
+```
+
+### With Svelte Transitions
+
+```svelte
+<Dialog.Content>
+	{#snippet child({ props, open })}
+		{#if open}
+			<div {...props} transition:scale={{ start: 0.95 }}>
+				Dialog content with a scale transition
+			</div>
+		{/if}
+	{/snippet}
+</Dialog.Content>
+```
+
+### Floating Element Example
+
+```svelte
+<Tooltip.Content>
+	{#snippet child({ wrapperProps, props, open })}
+		{#if open}
+			<div {...wrapperProps}>
+				<div {...props} transition:fade>Custom tooltip content</div>
+			</div>
+		{/if}
+	{/snippet}
+</Tooltip.Content>
+```
+
+## Common Pitfalls
+
+-   **Missing props spread**: Always include `{...props}` on your custom element
+-   **Styling the wrapper**: Never style the wrapper element in floating components
+-   **Direct children**: When using child, other children outside the snippet are ignored
+-   **Missing structure**: For floating elements, forgetting the two-level structure will break positioning
+
+## Related Resources
+
+-   [mergeProps](/docs/utilities/merge-props) Utility
+-   [Styling Guide](/docs/styling)
+-   [Transitions Guide](/docs/transitions)

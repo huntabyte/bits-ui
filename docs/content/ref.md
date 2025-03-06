@@ -3,9 +3,11 @@ title: Ref
 description: Learn about the $bindable ref prop.
 ---
 
-Bits UI components with underlying HTML elements provide a `ref` prop for direct element access.
+The `ref` prop provides direct access to the underlying HTML elements in Bits UI components, enabling you to manipulate the DOM when necessary.
 
-For example, `Accordion.Trigger`'s `ref` gives access to its rendered `HTMLButtonElement`:
+## Basic Usage
+
+Every Bits UI component that renders an HTML element exposes a `ref` prop that you can bind to access the rendered element. This is particularly useful for programmatically manipulating the element, such as focusing inputs or measuring dimensions.
 
 ```svelte
 <script lang="ts">
@@ -20,14 +22,16 @@ For example, `Accordion.Trigger`'s `ref` gives access to its rendered `HTMLButto
 
 <button onclick={focusTrigger}>Focus trigger</button>
 
-<Accordion.Trigger bind:ref={triggerRef}>
-	<!-- ... -->
-</Accordion.Trigger>
+<Accordion.Trigger bind:ref={triggerRef}>Trigger content</Accordion.Trigger>
 ```
 
-## With delegation
+## With Child Snippet
 
-Bits UI tracks the reference to the underlying element using its `id` attribute. This means that even if you use a custom element/component with [delegation](/docs/child-snippet), the `ref` prop will still work.
+Bits UI uses element IDs to track references to underlying elements. This approach ensures that the `ref` prop works correctly even when using the [child snippet](/docs/child-snippet).
+
+### Simple Delegation Example
+
+The `ref` binding will automatically work with delegated child elements/components.
 
 ```svelte
 <script lang="ts">
@@ -48,7 +52,9 @@ Bits UI tracks the reference to the underlying element using its `id` attribute.
 </Accordion.Trigger>
 ```
 
-One caveat is that if you wish to use a custom `id` on the element, you must pass it to the component first, so it can be registered and associated with the `ref` prop. The `id` you pass will be passed down via the `props` snippet prop on the `child` snippet.
+### Using Custom IDs
+
+When you need to use a custom `id` on the element, pass it to the parent component first so it can be correctly registered with the `ref` binding:
 
 ```svelte
 <script lang="ts">
@@ -56,46 +62,60 @@ One caveat is that if you wish to use a custom `id` on the element, you must pas
 	import { Accordion } from "bits-ui";
 
 	let triggerRef = $state<HTMLButtonElement | null>(null);
-
-	function focusTrigger() {
-		triggerRef?.focus();
-	}
-
 	const myCustomId = "my-custom-id";
 </script>
 
 <Accordion.Trigger bind:ref={triggerRef} id={myCustomId}>
 	{#snippet child({ props })}
-		<CustomButton {...props} /> <!-- custom id will be passed down to the child -->
+		<!-- The custom ID will be included in props -->
+		<CustomButton {...props} />
 	{/snippet}
 </Accordion.Trigger>
 ```
 
-The following example would not work, as the `Accordion.Trigger` component has no idea what the `id` of the `CustomButton` is.
+### Common Pitfalls
+
+Avoid setting the `id` directly on the child component/element, as this breaks the connection between the `ref` binding and the element:
 
 ```svelte
-<script lang="ts">
-	import CustomButton from "./CustomButton.svelte";
-	import { Accordion } from "bits-ui";
-
-	let triggerRef = $state<HTMLButtonElement | null>(null);
-
-	function focusTrigger() {
-		triggerRef?.focus(); // will always be undefined
-	}
-</script>
-
+<!-- ❌ This won't work correctly -->
 <Accordion.Trigger bind:ref={triggerRef}>
 	{#snippet child({ props })}
-		<CustomButton {...props} id="my-custom-id" /> <!-- this won't work -->
+		<CustomButton {...props} id="my-custom-id" />
 	{/snippet}
 </Accordion.Trigger>
 ```
+
+In this example, the `Accordion.Trigger` component can't track the element because it doesn't know the custom ID.
 
 ## Why Possibly `null`?
 
-The `ref` prop may be `null` until the element has mounted, especially with the many components that use conditional rendering. This `HTMLElement | null` type mimics browser DOM methods like `getElementById`.
+The `ref` value may be `null` until the component mounts in the DOM. This behavior is consistent with native DOM methods like `getElementById` which can return `null`.
 
-## WithElementRef
+## Creating Your Own `ref` Props
 
-Bits UI exposes a [`WithElementRef`](/docs/type-helpers/with-element-ref) type which enables you to create your own components following the same `ref` prop pattern.
+To implement the same ref pattern in your custom components, Bits UI provides a [WithElementRef](/docs/type-helpers/with-element-ref) type helper. This enables you to create type-safe components that follow the same pattern.
+
+```svelte
+<script lang="ts">
+	import { WithElementRef } from "bits-ui";
+	import type { HTMLButtonAttributes } from "svelte/elements";
+
+	// Define props with the ref type
+	let {
+		ref = $bindable(null),
+		children,
+		...rest
+	}: WithElementRef<
+		HTMLButtonAttributes & {
+			yourPropA: string;
+			yourPropB: number;
+		},
+		HTMLButtonElement
+	> = $props();
+</script>
+
+<button bind:this={ref} {...rest}>
+	{@render children?.()}
+</button>
+```
