@@ -45,7 +45,7 @@
 })}
 	{@const id = useId()}
 	<div class="flex flex-col gap-1">
-		<label class="text-sm font-medium" for={id}>{label}</label>
+		<label class="select-none text-sm font-medium" for={id}>{label}</label>
 		<input
 			{type}
 			{id}
