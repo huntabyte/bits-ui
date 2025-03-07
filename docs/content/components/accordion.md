@@ -4,7 +4,8 @@ description: Organizes content into collapsible sections, allowing users to focu
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, AccordionDemoHorizontalCards, Callout, AccordionDemoCheckoutSteps } from '$lib/components/index.js'
+
 	let { schemas } = $props()
 </script>
 
@@ -345,5 +346,33 @@ You can then use the `MyAccordionContent` component alongside the other `Accordi
 	</Accordion.Item>
 </Accordion.Root>
 ```
+
+## Examples
+
+The following examples demonstrate different ways to use the Accordion component.
+
+### Horizontal Cards
+
+Use the Accordion component to create a horizontal card layout with collapsible sections.
+
+<ComponentPreviewV2 name="accordion-demo-horizontal-cards" componentName="Accordion Horizontal Cards">
+
+{#snippet preview()}
+<AccordionDemoHorizontalCards />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Checkout Steps
+
+Use the Accordion component to create a multi-step checkout process.
+
+<ComponentPreviewV2 name="accordion-demo-checkout-steps" componentName="Accordion Checkout Steps">
+
+{#snippet preview()}
+<AccordionDemoCheckoutSteps />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />
