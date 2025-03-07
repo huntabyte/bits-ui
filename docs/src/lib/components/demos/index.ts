@@ -1,6 +1,8 @@
 export { default as AccordionDemo } from "./accordion-demo.svelte";
 export { default as AccordionDemoCustom } from "./accordion-demo-custom.svelte";
 export { default as AccordionDemoTransitions } from "./accordion-demo-transitions.svelte";
+export { default as AccordionDemoHorizontalCards } from "./accordion-demo-horizontal-cards.svelte";
+export { default as AccordionDemoCheckoutSteps } from "./accordion-demo-checkout-steps.svelte";
 export { default as AlertDialogDemo } from "./alert-dialog-demo.svelte";
 export { default as AspectRatioDemo } from "./aspect-ratio-demo.svelte";
 export { default as AvatarDemo } from "./avatar-demo.svelte";
