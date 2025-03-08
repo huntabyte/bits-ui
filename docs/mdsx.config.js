@@ -199,11 +199,18 @@ export function rehypeComponentExample() {
 	};
 }
 
+function transformComponentSourceContent(src = "") {
+	return src.replaceAll(`import { cn } from "$lib/utils/styles.js"`, `import cn from "clsx"`);
+}
+
 function getComponentSourceFileContent(src = "") {
 	if (!src) return null;
 
 	// Read the source file.
 	const filePath = path.join(process.cwd(), `./src/lib/components/demos/${src}.svelte`);
 
-	return prettier.format(readFileSync(filePath, "utf-8"), codeBlockPrettierConfig);
+	return prettier.format(
+		transformComponentSourceContent(readFileSync(filePath, "utf-8")),
+		codeBlockPrettierConfig
+	);
 }
