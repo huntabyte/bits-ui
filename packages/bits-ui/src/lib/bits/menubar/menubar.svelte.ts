@@ -300,14 +300,6 @@ class MenubarContentState {
 	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current(e);
 		if (e.defaultPrevented) return;
-		if (
-			!this.root.opts.value.current &&
-			!this.hasInteractedOutside &&
-			!this.focusScopeContext.ignoreCloseAutoFocus
-		) {
-			this.menu.getTriggerNode()?.focus();
-		}
-
 		this.hasInteractedOutside = false;
 		e.preventDefault();
 	};
