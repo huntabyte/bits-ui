@@ -76,6 +76,7 @@
 				value = todayDate;
 			}}
 		>
+			<span class="sr-only"> Set date to </span>
 			Today
 		</Button.Root>
 		<Button.Root
@@ -84,6 +85,7 @@
 				value = todayDate.add({ days: 1 });
 			}}
 		>
+			<span class="sr-only"> Set date to </span>
 			Tomorrow
 		</Button.Root>
 		<Button.Root
@@ -92,6 +94,7 @@
 				value = todayDate.add({ days: 3 });
 			}}
 		>
+			<span class="sr-only"> Set date to </span>
 			In 3 days
 		</Button.Root>
 		<Button.Root
@@ -100,6 +103,7 @@
 				value = todayDate.add({ days: 7 });
 			}}
 		>
+			<span class="sr-only"> Set date to </span>
 			In a week
 		</Button.Root>
 		<Button.Root
@@ -108,6 +112,7 @@
 				value = todayDate.add({ months: 1 });
 			}}
 		>
+			<span class="sr-only"> Set date to </span>
 			In a month
 		</Button.Root>
 		<Button.Root
@@ -116,6 +121,7 @@
 				value = todayDate.add({ years: 1 });
 			}}
 		>
+			<span class="sr-only"> Set date to </span>
 			In a year
 		</Button.Root>
 	</div>
