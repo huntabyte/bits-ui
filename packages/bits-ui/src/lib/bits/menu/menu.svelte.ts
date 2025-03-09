@@ -570,7 +570,8 @@ class MenuSubTriggerState {
 		if (
 			!this.item.opts.disabled.current &&
 			!this.submenu.opts.open.current &&
-			!this.#openTimer
+			!this.#openTimer &&
+			!this.content.parentMenu.root.isPointerInTransit
 		) {
 			this.#openTimer = window.setTimeout(() => {
 				this.submenu.onOpen();
