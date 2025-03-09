@@ -2,7 +2,7 @@
 	import { Calendar } from "bits-ui";
 	import { DateFormatter, getLocalTimeZone, today } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
+	const currentDate = today(getLocalTimeZone());
 	let value = $state(today(getLocalTimeZone()));
 
 	const formatter = new DateFormatter("en-US", {
@@ -10,7 +10,7 @@
 	});
 
 	const monthList = Array.from({ length: 12 }, (_, i) => {
-		const month = todayDate.set({ month: i + 1 });
+		const month = currentDate.set({ month: i + 1 });
 		return {
 			value: month.month,
 			label: formatter.format(month.toDate(getLocalTimeZone())),
@@ -19,7 +19,7 @@
 
 	const currentYear = new Date().getFullYear();
 	const yearList = Array.from({ length: 30 }, (_, i) => currentYear - i);
-	let placeholder = $state(todayDate);
+	let placeholder = $state(currentDate);
 </script>
 
 <Calendar.Root

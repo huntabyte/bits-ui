@@ -4,9 +4,48 @@
 	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { getLocalTimeZone, today } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
+	const currentDate = today(getLocalTimeZone());
 
-	let value = $state(todayDate);
+	let value = $state(currentDate);
+
+	const presets = [
+		{
+			label: "Today",
+			onclick: () => {
+				value = currentDate;
+			},
+		},
+		{
+			label: "Tomorrow",
+			onclick: () => {
+				value = currentDate.add({ days: 1 });
+			},
+		},
+		{
+			label: "In 3 days",
+			onclick: () => {
+				value = currentDate.add({ days: 3 });
+			},
+		},
+		{
+			label: "In a week",
+			onclick: () => {
+				value = currentDate.add({ days: 7 });
+			},
+		},
+		{
+			label: "In a month",
+			onclick: () => {
+				value = currentDate.add({ months: 1 });
+			},
+		},
+		{
+			label: "In a year",
+			onclick: () => {
+				value = currentDate.add({ years: 1 });
+			},
+		},
+	];
 </script>
 
 <div
@@ -70,59 +109,14 @@
 	</Calendar.Root>
 	<Separator.Root class="bg-dark-10 h-px w-full" />
 	<div class="flex w-full flex-row flex-wrap items-center gap-2">
-		<Button.Root
-			class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
-			onclick={() => {
-				value = todayDate;
-			}}
-		>
-			<span class="sr-only"> Set date to </span>
-			Today
-		</Button.Root>
-		<Button.Root
-			class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
-			onclick={() => {
-				value = todayDate.add({ days: 1 });
-			}}
-		>
-			<span class="sr-only"> Set date to </span>
-			Tomorrow
-		</Button.Root>
-		<Button.Root
-			class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
-			onclick={() => {
-				value = todayDate.add({ days: 3 });
-			}}
-		>
-			<span class="sr-only"> Set date to </span>
-			In 3 days
-		</Button.Root>
-		<Button.Root
-			class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
-			onclick={() => {
-				value = todayDate.add({ days: 7 });
-			}}
-		>
-			<span class="sr-only"> Set date to </span>
-			In a week
-		</Button.Root>
-		<Button.Root
-			class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
-			onclick={() => {
-				value = todayDate.add({ months: 1 });
-			}}
-		>
-			<span class="sr-only"> Set date to </span>
-			In a month
-		</Button.Root>
-		<Button.Root
-			class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
-			onclick={() => {
-				value = todayDate.add({ years: 1 });
-			}}
-		>
-			<span class="sr-only"> Set date to </span>
-			In a year
-		</Button.Root>
+		{#each presets as preset}
+			<Button.Root
+				class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
+				onclick={preset.onclick}
+			>
+				<span class="sr-only"> Set date to </span>
+				{preset.label}
+			</Button.Root>
+		{/each}
 	</div>
 </div>
