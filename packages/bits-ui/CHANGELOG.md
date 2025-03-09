@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.3.7
+
+### Patch Changes
+
+-   fix: multiple submenus in the same menu being open at the same time if too close ([#1275](https://github.com/huntabyte/bits-ui/pull/1275))
+
+-   chore: cleanup `MenubarContent` internals ([#1271](https://github.com/huntabyte/bits-ui/pull/1271))
+
 ## 1.3.6
 
 ### Patch Changes
