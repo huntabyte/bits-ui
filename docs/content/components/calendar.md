@@ -4,7 +4,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CalendarDemo, CalendarDemoSelects, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -379,6 +379,18 @@ This example demonstrates how to use the `placeholder` prop to set the month and
 
 {#snippet preview()}
 <CalendarDemoSelects />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Preset Dates
+
+This example demonstrates how to programatically set the `value` of the calendar to a specific date when a user presses a button.
+
+<ComponentPreviewV2 name="calendar-demo-presets" componentName="Calendar Presets">
+
+{#snippet preview()}
+<CalendarDemoPresets />
 {/snippet}
 
 </ComponentPreviewV2>

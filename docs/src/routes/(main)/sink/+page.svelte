@@ -1,10 +1,10 @@
 <script lang="ts">
 	import DemoContainer from "$lib/components/demo-container.svelte";
-	import CalendarDemoSelects from "$lib/components/demos/calendar-demo-selects.svelte";
+	import CalendarDemoPresets from "$lib/components/demos/calendar-demo-presets.svelte";
 </script>
 
 <div class="w-full max-w-[756px]">
 	<DemoContainer>
-		<CalendarDemoSelects />
+		<CalendarDemoPresets />
 	</DemoContainer>
 </div>
