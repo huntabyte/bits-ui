@@ -26,11 +26,11 @@ type AvatarImageSrc = string | null | undefined;
 class AvatarRootState {
 	constructor(readonly opts: AvatarRootStateProps) {
 		this.loadImage = this.loadImage.bind(this);
-
 		useRefById(opts);
 	}
 
 	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
+		if (this.opts.loadingStatus.current === "loaded") return;
 		let imageTimerId: number;
 		const image = new Image();
 

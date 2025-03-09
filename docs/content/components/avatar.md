@@ -92,4 +92,23 @@ You could then use the `MyAvatar` component in your application like so:
 <MyAvatar src="https://github.com/huntabyte.png" alt="huntabyte" fallback="HJ" />
 ```
 
+## Immediate Image Rendering
+
+One of the key value-adds of the Avatar component is to safely attempt to load the image on the client side and show a fallback while loading or if the image fails to load. However, in some cases where you are certain that the image will load, you may want to skip the load check and show the image directly.
+
+You can achieve this by setting the `loadingStatus` prop to `'loaded'` on the `Avatar.Root` component:
+
+```svelte /loadingStatus="loaded"/
+<Avatar.Root loadingStatus="loaded">
+	<!-- ... -->
+</Avatar.Root>
+```
+
+This is particularly useful when:
+
+-   You have a mix of guaranteed and non-guaranteed image loads in your application
+-   The image is being loaded from a reliable source with high availability
+-   You're working with locally stored images that don't require a network request
+-   You want to optimize performance by eliminating the load check for certain avatars
+
 <APISection {schemas} />
