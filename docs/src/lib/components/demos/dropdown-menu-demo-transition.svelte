@@ -17,13 +17,13 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="focus-visible border-bordinput bg-backgrounder-lt text-a-foreground shadow-btn hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex h-10 w-10 select-none items-center justify-center rounded-full border text-sm font-medium focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]"
+		class="border-input shadow-btn hover:bg-muted inline-flex h-10 w-10 select-none items-center justify-center rounded-full border text-sm font-medium active:scale-[0.98]"
 	>
 		<DotsThree class="text-foreground h-6 w-6" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
-			class="focus-override border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[229px] rounded-xl border px-1 py-1.5"
+			class="border-muted bg-background shadow-popover w-[229px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
 			sideOffset={8}
 			forceMount
 		>
@@ -32,7 +32,7 @@
 					<div {...wrapperProps}>
 						<div {...props} transition:fly={{ duration: 300 }}>
 							<DropdownMenu.Item
-								class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+								class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 							>
 								<div class="flex items-center">
 									<UserCircle class="text-foreground-alt mr-2 size-5" />
@@ -52,7 +52,7 @@
 								</div>
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
-								class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+								class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 							>
 								<div class="flex items-center">
 									<Cardholder class="text-foreground-alt mr-2 size-5" />
@@ -72,7 +72,7 @@
 								</div>
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
-								class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+								class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 							>
 								<div class="flex items-center">
 									<GearSix class="text-foreground-alt mr-2 size-5" />
@@ -93,7 +93,7 @@
 							</DropdownMenu.Item>
 							<DropdownMenu.CheckboxItem
 								bind:checked={notifications}
-								class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+								class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 							>
 								{#snippet children({ checked })}
 									<div class="flex items-center pr-4">
@@ -109,7 +109,7 @@
 							</DropdownMenu.CheckboxItem>
 							<DropdownMenu.Sub>
 								<DropdownMenu.SubTrigger
-									class="rounded-button data-highlighted:bg-muted data-[state=open]:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+									class="rounded-button data-highlighted:bg-muted data-[state=open]:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 								>
 									<div class="flex items-center">
 										<UserCirclePlus class="text-foreground-alt mr-2 size-5" />
@@ -120,14 +120,13 @@
 									</div>
 								</DropdownMenu.SubTrigger>
 								<DropdownMenu.SubContent
-									id="subcontent"
-									class="border-muted bg-background shadow-popover ring-0! ring-transparent! w-[209px] rounded-xl border px-1 py-1.5"
+									class="border-muted bg-background shadow-popover w-[209px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
 									sideOffset={10}
 								>
 									<DropdownMenu.RadioGroup bind:value={invited}>
 										<DropdownMenu.RadioItem
 											value="huntabyte"
-											class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+											class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 										>
 											{#snippet children({ checked })}
 												<Avatar.Root
@@ -151,7 +150,7 @@
 										</DropdownMenu.RadioItem>
 										<DropdownMenu.RadioItem
 											value="pavel"
-											class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+											class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 										>
 											{#snippet children({ checked })}
 												<Avatar.Root
@@ -175,7 +174,7 @@
 										</DropdownMenu.RadioItem>
 										<DropdownMenu.RadioItem
 											value="cokakoala"
-											class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+											class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 										>
 											{#snippet children({ checked })}
 												<Avatar.Root
@@ -199,7 +198,7 @@
 										</DropdownMenu.RadioItem>
 										<DropdownMenu.RadioItem
 											value="tglide"
-											class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium"
+											class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 										>
 											{#snippet children({ checked })}
 												<Avatar.Root

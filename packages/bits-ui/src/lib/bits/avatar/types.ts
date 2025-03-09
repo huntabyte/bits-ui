@@ -19,6 +19,12 @@ export type AvatarRootPropsWithoutHTML = WithChild<{
 
 	/**
 	 * The loading status of the image.
+	 *
+	 * If you are confident that the image exists and will load successfully, you can
+	 * set this to `"loaded"` to skip the loading process (which shows the fallback)
+	 * and immediately show the image.
+	 *
+	 * @default "loading"
 	 */
 	loadingStatus?: AvatarImageLoadingStatus;
 
