@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.8
+
+### Patch Changes
+
+-   fix: menubar focus restore on escape ([#1277](https://github.com/huntabyte/bits-ui/pull/1277))
+
 ## 1.3.7
 
 ### Patch Changes
