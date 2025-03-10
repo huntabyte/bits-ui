@@ -65,6 +65,7 @@ export { default as ToggleGroupDemo } from "./toggle-group-demo.svelte";
 export { default as ToolbarDemo } from "./toolbar-demo.svelte";
 export { default as TooltipDemo } from "./tooltip-demo.svelte";
 export { default as TooltipDemoCustom } from "./tooltip-demo-custom.svelte";
+export { default as TooltipDemoCustomAnchor } from "./tooltip-demo-custom-anchor.svelte";
 export { default as TooltipDemoDelayDuration } from "./tooltip-demo-delay-duration.svelte";
 export { default as TooltipDemoTransition } from "./tooltip-demo-transition.svelte";
 export { default as DateFieldDemoCustom } from "./date-field-demo-custom.svelte";

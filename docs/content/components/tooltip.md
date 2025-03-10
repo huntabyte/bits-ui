@@ -4,7 +4,7 @@ description: Provides additional information or context when users hover over or
 ---
 
 <script>
-	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
+	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoCustomAnchor, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -306,7 +306,7 @@ By default, the `Tooltip.Content` is anchored to the `Tooltip.Trigger` component
 
 If you wish to instead anchor the content to a different element, you can pass either a selector `string` or an `HTMLElement` to the `customAnchor` prop of the `Tooltip.Content` component.
 
-```svelte
+```svelte /customAnchor/
 <script lang="ts">
 	import { Tooltip } from "bits-ui";
 	let customAnchor = $state<HTMLElement>(null!);
@@ -321,5 +321,13 @@ If you wish to instead anchor the content to a different element, you can pass e
 	</Tooltip.Content>
 </Tooltip.Root>
 ```
+
+<ComponentPreviewV2 name="tooltip-demo-custom-anchor" componentName="Tooltip Custom Anchor">
+
+{#snippet preview()}
+<TooltipDemoCustomAnchor />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />
