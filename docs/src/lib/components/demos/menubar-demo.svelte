@@ -68,7 +68,6 @@
 	</div>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			id="file"
 			class="rounded-9px data-highlighted:bg-muted data-[state=open]:bg-muted inline-flex h-10 cursor-default items-center justify-center px-3 text-sm font-medium focus-visible:outline-none"
 		>
 			File
@@ -197,7 +196,6 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			id="view"
 			class="rounded-9px data-highlighted:bg-muted data-[state=open]:bg-muted inline-flex h-10 cursor-default items-center justify-center px-3 text-sm font-medium focus-visible:outline-none"
 		>
 			View
@@ -253,7 +251,6 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			id="profiles"
 			class="data-highlighted:bg-muted data-[state=open]:bg-muted mr-[20px] inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium focus-visible:outline-none"
 		>
 			Profiles

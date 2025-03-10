@@ -276,7 +276,6 @@ type MenubarContentStateProps = WithRefProps<
 
 class MenubarContentState {
 	root: MenubarRootState;
-	hasInteractedOutside = $state(false);
 	focusScopeContext: FocusScopeContextValue;
 
 	constructor(
@@ -300,8 +299,6 @@ class MenubarContentState {
 	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current(e);
 		if (e.defaultPrevented) return;
-		this.hasInteractedOutside = false;
-		e.preventDefault();
 	};
 
 	onFocusOutside = (e: FocusEvent) => {
@@ -314,7 +311,6 @@ class MenubarContentState {
 	};
 
 	onInteractOutside = (e: PointerEvent) => {
-		this.hasInteractedOutside = true;
 		this.opts.onInteractOutside.current(e);
 	};
 
