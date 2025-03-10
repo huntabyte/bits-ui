@@ -57,6 +57,17 @@ it("should respect `loop: false`", async () => {
 	expect(getTrigger("4")).toHaveFocus();
 });
 
+it.skip("should return focus to the menu trigger when closed via `ESC`", async () => {
+	const { user, getTrigger, getContent } = setup();
+	const trigger = getTrigger("1");
+	trigger.focus();
+	await user.keyboard(kbd.ARROW_DOWN);
+	const content1 = getContent("1");
+	await waitFor(() => expect(content1).toBeVisible());
+	await user.keyboard(kbd.ESCAPE);
+	await waitFor(() => expect(trigger).toHaveFocus());
+});
+
 it("should navigate between menus when using the arrow keys and focus is within a menu", async () => {
 	const { user, getTrigger, getContent } = setup();
 	const trigger = getTrigger("1");

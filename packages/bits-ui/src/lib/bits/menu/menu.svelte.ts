@@ -231,7 +231,9 @@ class MenuContentState {
 			rootMenu = rootMenu.parentMenu;
 		}
 		// if for some unforeseen reason the root menu has no trigger, we bail
-		if (!rootMenu.triggerNode) return;
+		if (!rootMenu.triggerNode) {
+			return;
+		}
 
 		// cancel default tab behavior
 		e.preventDefault();
@@ -247,9 +249,11 @@ class MenuContentState {
 			 */
 			this.parentMenu.root.ignoreCloseAutoFocus = true;
 			rootMenu.onClose();
-			nodeToFocus.focus();
 			afterTick(() => {
-				this.parentMenu.root.ignoreCloseAutoFocus = false;
+				nodeToFocus.focus();
+				afterTick(() => {
+					this.parentMenu.root.ignoreCloseAutoFocus = false;
+				});
 			});
 		} else {
 			document.body.focus();

@@ -24,14 +24,7 @@
 		),
 	});
 
-	useMenuDropdownTrigger({
-		id: box.with(() => id),
-		disabled: box.with(() => disabled ?? false),
-		ref: box.with(
-			() => ref,
-			(v) => (ref = v)
-		),
-	});
+	useMenuDropdownTrigger(triggerState.opts);
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
