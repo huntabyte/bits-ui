@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.9
+
+### Patch Changes
+
+-   fix: expose `customAnchor` type for `Tooltip.Content` props ([#1280](https://github.com/huntabyte/bits-ui/pull/1280))
+
 ## 1.3.8
 
 ### Patch Changes
