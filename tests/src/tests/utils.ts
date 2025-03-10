@@ -87,17 +87,17 @@ export function setupUserEvents(): CustomUserEvents {
 
 	const click = async (element: HTMLElement) => {
 		await originalClick(element);
-		await sleep(10);
+		await sleep(20);
 	};
 
 	const keyboard = async (keys: string) => {
 		await originalKeyboard(keys);
-		await sleep(10);
+		await sleep(20);
 	};
 
 	const pointer: typeof originalPointer = async (input) => {
 		await originalPointer(input);
-		await sleep(10);
+		await sleep(20);
 	};
 
 	const pointerDownUp = async (target: HTMLElement | null) => {
@@ -105,7 +105,7 @@ export function setupUserEvents(): CustomUserEvents {
 		await fireEvent.pointerDown(target);
 		await fireEvent.pointerUp(target);
 		await fireEvent.click(target);
-		await sleep(10);
+		await sleep(20);
 	};
 
 	Object.assign(user, { click, keyboard, pointer, pointerDownUp });
