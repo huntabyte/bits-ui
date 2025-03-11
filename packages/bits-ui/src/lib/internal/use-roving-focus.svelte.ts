@@ -42,13 +42,6 @@ export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
 
 export function useRovingFocus(props: UseRovingFocusProps) {
 	const currentTabStopId = box<string | null>(null);
-	let recomputeDep = $state(false);
-
-	const isAnyActive = $derived.by(() => {
-		recomputeDep;
-		if (!currentTabStopId.current || !isBrowser) return false;
-		return Boolean(document.getElementById(currentTabStopId.current));
-	});
 
 	function getCandidateNodes() {
 		if (!isBrowser) return [];
@@ -56,20 +49,22 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		if (!node) return [];
 
 		if (props.candidateSelector) {
-			return Array.from(node.querySelectorAll<HTMLElement>(props.candidateSelector));
+			const candidates = Array.from(
+				node.querySelectorAll<HTMLElement>(props.candidateSelector)
+			);
+			return candidates;
 		} else {
-			return Array.from(
+			const candidates = Array.from(
 				node.querySelectorAll<HTMLElement>(`[${props.candidateAttr}]:not([data-disabled])`)
 			);
+			return candidates;
 		}
 	}
 
-	function focusCandidate(type: "first" | "last") {
+	function focusFirstCandidate() {
 		const items = getCandidateNodes();
 		if (!items.length) return;
-		const node = type === "first" ? items[0] : items[items.length - 1];
-		if (!node) return;
-		handleFocus(node);
+		items[0]?.focus();
 	}
 
 	function handleKeydown(
@@ -120,17 +115,11 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		return itemToFocus;
 	}
 
-	function handleFocus(node: HTMLElement | null) {
-		if (!node) return;
-		currentTabStopId.current = node.id;
-		node.focus();
-		props.onCandidateFocus?.(node);
-	}
-
 	function getTabIndex(node: HTMLElement | null | undefined) {
 		const items = getCandidateNodes();
+		const anyActive = currentTabStopId.current !== null;
 
-		if (node && !isAnyActive && items[0] === node) {
+		if (node && !anyActive && items[0] === node) {
 			currentTabStopId.current = node.id;
 			return 0;
 		} else if (node?.id === currentTabStopId.current) {
@@ -140,34 +129,14 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		return -1;
 	}
 
-	function navigateBackward(node: HTMLElement | null | undefined, fallback?: HTMLElement | null) {
-		const rootNode = document.getElementById(props.rootNodeId.current);
-		if (!rootNode || !node) return;
-		const items = getCandidateNodes();
-		if (!items.length) return;
-		const currentIndex = items.indexOf(node);
-		const prevIndex = currentIndex - 1;
-		const prevItem = items[prevIndex];
-		if (!prevItem) {
-			if (fallback) {
-				fallback?.focus();
-			}
-			return;
-		}
-		handleFocus(prevItem);
-	}
-
 	return {
 		setCurrentTabStopId(id: string) {
 			currentTabStopId.current = id;
 		},
 		getTabIndex,
 		handleKeydown,
-		focusFirstCandidate: () => focusCandidate("first"),
-		focusLastCandidate: () => focusCandidate("last"),
+		focusFirstCandidate,
 		currentTabStopId,
-		recomputeActiveTabNode: () => (recomputeDep = !recomputeDep),
-		navigateBackward,
 	};
 }
 
@@ -312,6 +281,7 @@ export class RovingFocusGroup {
 
 	getTabIndex = (node: HTMLElement | null | undefined) => {
 		const items = this.#getCandidateNodes();
+
 		if (node && !this.#anyActive && items[0] === node) {
 			this.currentTabStopId.current = node.id;
 			return 0;

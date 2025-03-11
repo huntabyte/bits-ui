@@ -10,6 +10,46 @@ import type {
 export type TagsInputBlurBehavior = "clear" | "add" | "none";
 export type TagsInputPasteBehavior = "add" | "none";
 
+/**
+ * Custom announcers to use for the tags input. These will be read out when the various
+ * actions are performed to screen readers. For each that isn't provided, the following
+ * default announcers will be used. The goal is to eventually support localization on our
+ * end for these, but for now we want to allow for custom announcers to be passed in.
+ *
+ * - `add`: `(value: string) => "${value} added"`
+ * - `addMultiple`: `(value: string[]) => "${values.join(", ")} added"`
+ * - `edit`: `(fromValue: string, toValue: string) => "${fromValue} changed to ${toValue}"`
+ * - `remove`: `(value: string) => "${value} removed"`
+ */
+export type TagsInputAnnounceTransformers = {
+	/**
+	 * A function that returns the announcement to make when a tag is edited.
+	 * @param fromValue - the value that was changed from
+	 * @param toValue - the value that was changed to
+	 * @returns - the announcement to make
+	 */
+	edit?: (fromValue: string, toValue: string) => string;
+	/**
+	 * A function that returns the announcement to make when a tag is added.
+	 * @param value - the value that was added
+	 * @returns  the announcement to make
+	 */
+	add?: (addedValue: string) => string;
+	/**
+	 * A function that returns the announcement to make when multiple tags are
+	 * added at once.
+	 * @param value - the value that was added
+	 * @returns  the announcement to make
+	 */
+	addMultiple?: (addedValues: string[]) => string;
+	/**
+	 * A function that returns the announcement to make when a tag is removed.
+	 * @param value - the value that was removed
+	 * @returns the announcement to make
+	 */
+	remove?: (removedValue: string) => string;
+};
+
 export type TagsInputRootPropsWithoutHTML = WithChild<{
 	/**
 	 * The value of the tags input.
@@ -24,18 +64,9 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	onValueChange?: OnChangeFn<string[]>;
 
 	/**
-	 * Whether or not the value is controlled or not. If `true`, the component will not update
-	 * the value internally, instead it will call `onValueChange` when it would have
-	 * otherwise, and it is up to you to update the `value` prop that is passed to the component.
-	 *
-	 * @defaultValue false
-	 */
-	controlledValue?: boolean;
-
-	/**
 	 * The delimiter used to separate tags.
 	 *
-	 * @defaultValue [","]
+	 * @default [","]
 	 */
 	delimiters?: string[];
 
@@ -61,6 +92,19 @@ export type TagsInputRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue false
 	 */
 	required?: boolean;
+
+	/**
+	 * Custom announcers to use for the tags input. These will be read out when the various
+	 * actions are performed to screen readers. For each that isn't provided, the following
+	 * default announcers will be used. The goal is to eventually support localization on our
+	 * end for these, but for now we want to allow for custom announcers to be passed in.
+	 *
+	 * - `add`: `(value: string) => "${value} added"`
+	 * - `addMultiple`: `(value: string[]) => "${values.join(", ")} added"`
+	 * - `edit`: `(fromValue: string, toValue: string) => "${fromValue} changed to ${toValue}"`
+	 * - `remove`: `(value: string) => "${value} removed"`
+	 */
+	announceTransformers?: TagsInputAnnounceTransformers;
 }>;
 
 export type TagsInputRootProps = TagsInputRootPropsWithoutHTML &

@@ -12,7 +12,7 @@
 		>
 			<TagsInput.List class="flex min-h-5 flex-wrap gap-1.5">
 				{#each value as tag, index}
-					<TagsInput.Tag value={tag} {index}>
+					<TagsInput.Tag value={tag} {index} editMode="input">
 						<TagsInput.TagContent
 							class="flex items-center gap-3 rounded-[4px] bg-[#FCDAFE] text-[0.7rem] font-semibold leading-none text-[#2A266B] no-underline group-hover:no-underline"
 						>
@@ -34,7 +34,6 @@
 			<TagsInput.Input
 				class="focus-override bg-transparent focus:outline-none focus:ring-0 "
 				placeholder="Add a tag..."
-				aria-label="Add a tag"
 				blurBehavior="add"
 			/>
 		</div>

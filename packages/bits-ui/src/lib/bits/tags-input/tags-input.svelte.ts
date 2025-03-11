@@ -14,7 +14,11 @@ import type {
 	MouseEventHandler,
 } from "svelte/elements";
 import { Context } from "runed";
-import type { TagsInputBlurBehavior, TagsInputPasteBehavior } from "./types.js";
+import type {
+	TagsInputAnnounceTransformers,
+	TagsInputBlurBehavior,
+	TagsInputPasteBehavior,
+} from "./types.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { getAriaHidden, getDataInvalid, getRequired } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -40,6 +44,7 @@ type TagsInputRootStateProps = WithRefProps &
 		name: string;
 		required: boolean;
 		validate: (value: string) => boolean;
+		announceTransformers: TagsInputAnnounceTransformers | undefined;
 	}>;
 
 // prettier-ignore
@@ -128,19 +133,31 @@ class TagsInputRootState {
 	};
 
 	announceEdit = (from: string, to: string) => {
-		this.#announce(`${from} has been changed to ${to}`);
+		const message = this.opts.announceTransformers?.current?.edit
+			? this.opts.announceTransformers.current.edit(from, to)
+			: `${from} has been changed to ${to}`;
+		this.#announce(message);
 	};
 
 	announceRemove = (value: string) => {
-		this.#announce(`${value} has been removed`);
+		const message = this.opts.announceTransformers?.current?.remove
+			? this.opts.announceTransformers.current.remove(value)
+			: `${value} has been removed`;
+		this.#announce(message);
 	};
 
 	announceAdd = (value: string) => {
-		this.#announce(`${value} has been added`);
+		const message = this.opts.announceTransformers?.current?.add
+			? this.opts.announceTransformers.current.add(value)
+			: `${value} has been added`;
+		this.#announce(message);
 	};
 
 	announceAddMultiple = (values: string[]) => {
-		this.#announce(`${values.join(", ")} has been added`);
+		const message = this.opts.announceTransformers?.current?.addMultiple
+			? this.opts.announceTransformers.current.addMultiple(values)
+			: `${values.join(", ")} has been added`;
+		this.#announce(message);
 	};
 
 	props = $derived.by(
@@ -439,7 +456,6 @@ class TagsInputTagEditInputState {
 				style: this.#style,
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
-				"aria-label": `Edit ${this.tag.opts.value.current}`,
 				"aria-describedby": this.tag.list.root.editDescriptionNode?.id,
 				"aria-hidden": getAriaHidden(!this.tag.isEditing),
 			}) as const
@@ -654,7 +670,7 @@ class TagsInputTagHiddenInputState {
 				value: this.tag.opts.value.current,
 				style: srOnlyStyles,
 				required: getRequired(this.tag.list.root.opts.required.current),
-				"aria-hidden": getAriaHidden(true),
+				"aria-hidden": "true",
 			}) as const
 	);
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps, srOnlyStyles } from "svelte-toolbelt";
+	import { box, mergeProps, srOnlyStylesString } from "svelte-toolbelt";
 	import type { TagsInputTagProps } from "../types.js";
 	import { useTagsInputTag } from "../tags-input.svelte.js";
 	import TagsInputTagHiddenInput from "./tags-input-tag-hidden-input.svelte";
@@ -10,7 +10,7 @@
 		ref = $bindable(null),
 		value,
 		index,
-		editMode = "input",
+		editMode = "none",
 		removable = true,
 		children,
 		child,
@@ -33,17 +33,12 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, tagState.props));
-	const mergedBtnProps = $derived(mergeProps({ style: srOnlyStyles }));
 </script>
 
 {#snippet EditButton()}
 	{#if tagState.opts.editMode.current !== "none"}
-		<button
-			tabindex={-1}
-			onclick={tagState.startEditing}
-			aria-label="Edit {tagState.opts.value.current}"
-			{...mergedBtnProps}
-		>
+		<button tabindex={-1} onclick={tagState.startEditing} style={srOnlyStylesString}>
+			Edit {value}
 		</button>
 	{/if}
 {/snippet}

@@ -13,12 +13,12 @@
 		ref = $bindable(null),
 		onValueChange = noop,
 		validate = () => true,
-		controlledValue = false,
 		delimiters = [","],
 		required = false,
 		name = "",
 		children,
 		child,
+		announceTransformers,
 		...restProps
 	}: TagsInputRootProps = $props();
 
@@ -27,12 +27,8 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				if (controlledValue) {
-					onValueChange(v);
-				} else {
-					value = v;
-					onValueChange(v);
-				}
+				value = v;
+				onValueChange(v);
 			}
 		),
 		ref: box.with(
@@ -43,6 +39,7 @@
 		name: box.with(() => name),
 		required: box.with(() => required),
 		validate: box.with(() => validate),
+		announceTransformers: box.with(() => announceTransformers),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

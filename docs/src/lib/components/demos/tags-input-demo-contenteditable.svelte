@@ -31,7 +31,6 @@
 			<TagsInput.Input
 				class="focus-override bg-transparent focus:outline-none focus:ring-0 "
 				placeholder="Add a tag..."
-				aria-label="Add a tag"
 				blurBehavior="add"
 			/>
 		</div>
