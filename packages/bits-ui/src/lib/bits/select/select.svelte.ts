@@ -697,7 +697,6 @@ class SelectTriggerState {
 				id: this.opts.id.current,
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
-				role: "combobox",
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
