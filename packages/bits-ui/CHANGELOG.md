@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.10
+
+### Patch Changes
+
+-   fix: accessibility issues on `Select.Trigger` ([#1285](https://github.com/huntabyte/bits-ui/pull/1285))
+
 ## 1.3.9
 
 ### Patch Changes
