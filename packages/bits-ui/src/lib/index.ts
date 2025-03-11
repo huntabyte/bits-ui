@@ -33,6 +33,7 @@ export {
 	Slider,
 	Switch,
 	Tabs,
+	TagsInput,
 	Toggle,
 	ToggleGroup,
 	Toolbar,
