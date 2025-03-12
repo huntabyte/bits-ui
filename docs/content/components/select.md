@@ -112,7 +112,7 @@ from the perspective of the consumer of this component, it will be typed appropr
 					<Select.Item {value} {label} {disabled}>
 						{#snippet children({ selected })}
 							{selected ? "✅" : ""}
-							{item.label}
+							{label}
 						{/snippet}
 					</Select.Item>
 				{/each}
