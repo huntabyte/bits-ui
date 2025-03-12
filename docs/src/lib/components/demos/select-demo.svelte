@@ -35,7 +35,7 @@
 	);
 </script>
 
-<Select.Root type="single" onValueChange={(v) => (value = v)}>
+<Select.Root type="single" onValueChange={(v) => (value = v)} items={themes}>
 	<Select.Trigger
 		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"

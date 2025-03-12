@@ -2,10 +2,10 @@ import { error, redirect } from "@sveltejs/kit";
 import type { Component } from "svelte";
 import type { Doc } from "$content/index.js";
 import { getAPISchemas, isBit } from "$lib/content/api-reference/index.js";
-import { utilityDocs, componentDocs, docs, typeHelperDocs } from "$content/index.js";
+import { utilityDocs, componentDocs, docs, typeHelperDocs, policyDocs } from "$content/index.js";
 import type { APISchema } from "$lib/types/api.js";
 
-const allDocs = [...docs, ...componentDocs, ...utilityDocs, ...typeHelperDocs];
+const allDocs = [...docs, ...componentDocs, ...utilityDocs, ...typeHelperDocs, ...policyDocs];
 
 export type DocResolver = () => Promise<{ default: Component; metadata: Doc }>;
 export type DocMetadata = (typeof allDocs)[number];

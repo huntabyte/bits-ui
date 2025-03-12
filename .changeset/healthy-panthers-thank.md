@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix: issue with `aria-activedescendant` on `Command` component
+fix(Command): ensure correct `aria-activedescendant` is applied to `Command.Input`

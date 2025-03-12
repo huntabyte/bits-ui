@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-improve: combobox/select acccessibility
+improve(Combobox): add `aria-multiselectable` attribute to the content when type is `multiple`

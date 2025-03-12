@@ -954,9 +954,7 @@ class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.opts.value.current)
-					? "true"
-					: undefined,
+				"aria-selected": this.root.includesItem(this.opts.value.current) ? "true" : "false",
 				"data-value": this.opts.value.current,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-highlighted":

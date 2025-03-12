@@ -2,4 +2,5 @@
 "bits-ui": patch
 ---
 
-fix: ensure `AlertDialog` focuses content first to read alert information to screen readers
+fix(AlertDialog): ensure `AlertDialog.Content` receives focus first on open to read alert title/description to screen readers
+
