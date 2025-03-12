@@ -119,5 +119,7 @@
 	<button aria-label="radio-sub" data-testid="sub-radio-binding" onclick={() => (subRadio = "")}
 		>{subRadio}</button
 	>
+	<button data-testid="on-focus-override" id="on-focus-override">on-focus-override</button>
+
 	<div id="portal-target" data-testid="portal-target"></div>
 </main>
