@@ -48,10 +48,16 @@
 				<button data-testid="update-id" onclick={() => (descriptionId = "new-id")}
 					>Reactively update description id</button
 				>
+				<button data-testid="open-focus-override" id="open-focus-override"
+					>open focus override</button
+				>
 			</Dialog.Content>
 		</Dialog.Portal>
 	</Dialog.Root>
 	<p data-testid="binding">{open}</p>
 	<button data-testid="toggle" onclick={() => (open = !open)}>toggle</button>
+	<button data-testid="close-focus-override" id="close-focus-override"
+		>close focus override</button
+	>
 	<div id="portalTarget" data-testid="portalTarget"></div>
 </main>

@@ -44,5 +44,10 @@ export default defineConfig({
 			pattern: "./type-helpers/**/*.md",
 			schema: sharedSchema,
 		},
+		policyDocs: {
+			name: "PolicyDoc",
+			pattern: "./policies/**/*.md",
+			schema: sharedSchema,
+		},
 	},
 });

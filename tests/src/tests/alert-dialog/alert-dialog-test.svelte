@@ -39,10 +39,16 @@
 				</AlertDialog.Description>
 				<AlertDialog.Cancel data-testid="cancel">cancel</AlertDialog.Cancel>
 				<AlertDialog.Action data-testid="action">action</AlertDialog.Action>
+				<button id="open-focus-override" data-testid="open-focus-override">
+					open focus override
+				</button>
 			</AlertDialog.Content>
 		</AlertDialog.Portal>
 	</AlertDialog.Root>
 	<p data-testid="binding">{open}</p>
 	<button data-testid="toggle" onclick={() => (open = !open)}>toggle</button>
+	<button id="close-focus-override" data-testid="close-focus-override">
+		close focus override
+	</button>
 	<div id="portalTarget" data-testid="portalTarget"></div>
 </main>

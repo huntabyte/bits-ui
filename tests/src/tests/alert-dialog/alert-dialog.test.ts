@@ -48,11 +48,16 @@ async function open(props: AlertDialogTestProps = {}) {
 	expect(contentAfter).not.toBeNull();
 	const cancel = getByTestId("cancel");
 	const action = getByTestId("action");
-	return { getByTestId, queryByTestId, user, action, cancel };
+	return { getByTestId, queryByTestId, user, action, cancel, content: contentAfter };
 }
 
 it("should have no accessibility violations", async () => {
 	const { container } = render(AlertDialogTest);
+	expect(await axe(container)).toHaveNoViolations();
+});
+
+it("should have no accessibility violations when open", async () => {
+	const { container } = render(AlertDialogTest, { open: true });
 	expect(await axe(container)).toHaveNoViolations();
 });
 
@@ -104,9 +109,9 @@ it("should forceMount the content and overlay when their `forceMount` prop is tr
 	expect(getByTestId("content")).toBeInTheDocument();
 });
 
-it("should focus the cancel button by default when opened", async () => {
-	const { cancel } = await open();
-	expect(cancel).toHaveFocus();
+it("should focus the alert dialog content when opened to ensure screen readers announce the 'alert' prior to the user choosing to focus cancel/action", async () => {
+	const { content } = await open();
+	expect(content).toHaveFocus();
 });
 
 it("should close when the cancel button is clicked", async () => {
@@ -223,4 +228,32 @@ it("should allow setting a custom level for the `AlertDialog.Title` element", as
 	});
 
 	expect(getByTestId("title")).toHaveAttribute("aria-level", "3");
+});
+
+it("should respect `onOpenAutoFocus` prop", async () => {
+	const { getByTestId } = await open({
+		contentProps: {
+			onOpenAutoFocus: (e) => {
+				e.preventDefault();
+				document.getElementById("open-focus-override")?.focus();
+			},
+		},
+	});
+
+	expect(getByTestId("open-focus-override")).toHaveFocus();
+});
+
+it("should respect `onCloseAutoFocus` prop", async () => {
+	const { getByTestId, user } = await open({
+		contentProps: {
+			onCloseAutoFocus: (e) => {
+				e.preventDefault();
+				document.getElementById("close-focus-override")?.focus();
+			},
+		},
+	});
+
+	await user.keyboard(kbd.ESCAPE);
+
+	expect(getByTestId("close-focus-override")).toHaveFocus();
 });

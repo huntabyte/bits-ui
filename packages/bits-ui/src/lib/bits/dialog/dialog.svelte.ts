@@ -154,6 +154,7 @@ class DialogCloseState {
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				disabled: this.opts.disabled.current ? true : undefined,
+				tabindex: 0,
 				...this.root.sharedProps,
 			}) as const
 	);
@@ -264,12 +265,15 @@ class DialogContentState {
 			({
 				id: this.opts.id.current,
 				role: this.root.opts.variant.current === "alert-dialog" ? "alertdialog" : "dialog",
+				"aria-modal": "true",
 				"aria-describedby": this.root.descriptionId,
 				"aria-labelledby": this.root.titleId,
 				[this.root.attrs.content]: "",
 				style: {
 					pointerEvents: "auto",
+					outline: this.root.opts.variant.current === "alert-dialog" ? "none" : undefined,
 				},
+				tabindex: this.root.opts.variant.current === "alert-dialog" ? -1 : undefined,
 				...this.root.sharedProps,
 			}) as const
 	);
@@ -346,6 +350,7 @@ class AlertDialogCancelState {
 				[this.root.attrs.cancel]: "",
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				tabindex: 0,
 				...this.root.sharedProps,
 			}) as const
 	);

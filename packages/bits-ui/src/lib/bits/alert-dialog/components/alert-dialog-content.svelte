@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { afterTick, box, mergeProps } from "svelte-toolbelt";
 	import type { AlertDialogContentProps } from "../types.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
@@ -64,7 +64,9 @@
 				onOpenAutoFocus(e);
 				if (e.defaultPrevented) return;
 				e.preventDefault();
-				contentState.root.cancelNode?.focus();
+				afterTick(() => {
+					contentState.opts.ref.current?.focus();
+				});
 			}}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}

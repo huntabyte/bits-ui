@@ -325,7 +325,7 @@ class CommandRootState {
 		const node = this.opts.ref.current;
 		if (!node) return;
 		const selectedNode = node.querySelector<HTMLElement>(
-			`${COMMAND_VALID_ITEM_SELECTOR}[aria-selected="true"]`
+			`${COMMAND_VALID_ITEM_SELECTOR}[data-selected]`
 		);
 		if (!selectedNode) return;
 		return selectedNode;
@@ -797,7 +797,7 @@ type CommandInputStateProps = WithRefProps<
 class CommandInputState {
 	#selectedItemId = $derived.by(() => {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
-			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(this.opts.value.current)}"]`
+			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(this.root.opts.value.current)}"]`
 		);
 		if (!item) return;
 		return item?.getAttribute("id") ?? undefined;
