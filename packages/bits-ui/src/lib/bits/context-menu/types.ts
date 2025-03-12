@@ -7,10 +7,7 @@ export type ContextMenuContentPropsWithoutHTML = Omit<
 	"align" | "side" | "sideOffset"
 >;
 
-export type ContextMenuContentProps = Omit<
-	MenuContentProps,
-	"side" | "onOpenAutoFocus" | "sideOffset" | "align"
->;
+export type ContextMenuContentProps = Omit<MenuContentProps, "side" | "sideOffset" | "align">;
 
 export type ContextMenuTriggerPropsWithoutHTML = WithChild<{
 	/**

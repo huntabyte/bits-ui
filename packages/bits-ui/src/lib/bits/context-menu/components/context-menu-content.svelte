@@ -17,6 +17,7 @@
 		loop = true,
 		onInteractOutside = noop,
 		onCloseAutoFocus = noop,
+		onOpenAutoFocus = noop,
 		preventScroll = true,
 		// we need to explicitly pass this prop to the PopperLayer to override
 		// the default menu behavior of handling outside interactions on the trigger
@@ -73,6 +74,7 @@
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
+		{onOpenAutoFocus}
 		{isValidEvent}
 		trapFocus
 		{loop}
@@ -105,6 +107,7 @@
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
+		{onOpenAutoFocus}
 		{isValidEvent}
 		trapFocus
 		{loop}
