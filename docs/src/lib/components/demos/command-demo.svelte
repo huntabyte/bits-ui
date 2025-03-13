@@ -12,7 +12,7 @@
 	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 >
 	<Command.Input
-		class="focus-override h-input placeholder:text-foreground-alt/50 focus:outline-hidden bg-background inline-flex truncate rounded-xl px-4 text-sm transition-colors focus:ring-0"
+		class="focus-override h-input placeholder:text-foreground-alt/50 focus:outline-hidden bg-background inline-flex truncate rounded-tl-xl rounded-tr-xl px-4 text-sm transition-colors focus:ring-0"
 		placeholder="Search for something..."
 	/>
 	<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
@@ -50,7 +50,7 @@
 					</Command.Item>
 				</Command.GroupItems>
 			</Command.Group>
-			<Command.Separator />
+			<Command.Separator class="bg-foreground/5 h-px w-full" />
 			<Command.Group>
 				<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
 					Components

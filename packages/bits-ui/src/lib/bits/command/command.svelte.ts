@@ -75,6 +75,8 @@ class CommandRootState {
 	commandState = $state.raw<CommandState>(null!);
 	// internal state that we mutate in batches and publish to the `state` at once
 	_commandState = $state<CommandState>(null!);
+	// whether the search has had a value other than ""
+	searchHasHadValue = $state(false);
 
 	#snapshot() {
 		return $state.snapshot(this._commandState);
@@ -107,6 +109,9 @@ class CommandRootState {
 			this.#filterItems();
 			this.#sort();
 			this.#selectFirstItem();
+			afterTick(() => {
+				this.#selectFirstItem();
+			});
 		} else if (key === "value") {
 			// opts is a boolean referring to whether it should NOT be scrolled into view
 			if (!opts) {
@@ -140,6 +145,12 @@ class CommandRootState {
 		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
+
+		$effect(() => {
+			if (this._commandState.search !== "") {
+				this.searchHasHadValue = true;
+			}
+		});
 	}
 
 	/**
@@ -336,17 +347,18 @@ class CommandRootState {
 	 * Special handling for first items in groups.
 	 */
 	#scrollSelectedIntoView(): void {
-		afterSleep(1, () => {
+		afterTick(() => {
 			const item = this.#getSelectedItem();
 			if (!item) return;
 			const grandparent = item.parentElement?.parentElement;
 			if (!grandparent) return;
 			const firstChildOfParent = getFirstNonCommentChild(grandparent) as HTMLElement | null;
 			if (firstChildOfParent && firstChildOfParent.dataset?.value === item.dataset?.value) {
-				item
+				const closestGroupHeader = item
 					?.closest(COMMAND_GROUP_SELECTOR)
-					?.querySelector(COMMAND_GROUP_HEADING_SELECTOR)
-					?.scrollIntoView({ block: "nearest" });
+					?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
+				closestGroupHeader?.scrollIntoView({ block: "nearest" });
+
 				return;
 			}
 			item.scrollIntoView({ block: "nearest" });
@@ -497,16 +509,18 @@ class CommandRootState {
 
 		this.#scheduleUpdate();
 		return () => {
+			const selectedItem = this.#getSelectedItem();
 			this.allIds.delete(id);
 			this.allItems.delete(id);
 			this.commandState.filtered.items.delete(id);
-			const selectedItem = this.#getSelectedItem();
 
 			this.#filterItems();
 
 			// The item removed have been the selected one,
 			// so selection should be moved to the first
-			if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
+			if (selectedItem?.getAttribute("id") === id) {
+				this.#selectFirstItem();
+			}
 
 			this.#scheduleUpdate();
 		};
@@ -650,18 +664,20 @@ type CommandEmptyStateProps = WithRefProps &
 
 class CommandEmptyState {
 	#isInitialRender = true;
-
-	shouldRender = $derived.by(
-		() =>
-			(this.root._commandState.filtered.count === 0 && this.#isInitialRender === false) ||
+	shouldRender = $derived.by(() => {
+		return (
+			(this.root._commandState.filtered.count === 0 &&
+				this.#isInitialRender === false &&
+				this.root.searchHasHadValue) ||
 			this.opts.forceMount.current
-	);
+		);
+	});
 
 	constructor(
 		readonly opts: CommandEmptyStateProps,
 		readonly root: CommandRootState
 	) {
-		$effect(() => {
+		$effect.pre(() => {
 			this.#isInitialRender = false;
 		});
 
@@ -710,9 +726,12 @@ class CommandGroupContainerState {
 			deps: () => this.shouldRender,
 		});
 
-		$effect(() => {
-			return this.root.registerGroup(this.opts.id.current);
-		});
+		watch(
+			() => this.opts.id.current,
+			() => {
+				return this.root.registerGroup(this.opts.id.current);
+			}
+		);
 
 		$effect(() => {
 			if (this.opts.value.current) {
@@ -872,6 +891,7 @@ class CommandItemState {
 	});
 	trueValue = $state("");
 	shouldRender = $derived.by(() => {
+		this.opts.ref.current;
 		if (
 			this.#trueForceMount ||
 			this.root.opts.shouldFilter.current === false ||
@@ -905,6 +925,7 @@ class CommandItemState {
 				() => this.opts.id.current,
 				() => this.#group?.opts.id.current,
 				() => this.opts.forceMount.current,
+				() => this.opts.ref.current,
 			],
 			() => {
 				if (this.opts.forceMount.current) return;
@@ -1001,7 +1022,7 @@ type CommandSeparatorStateProps = WithRefProps &
 
 class CommandSeparatorState {
 	shouldRender = $derived.by(
-		() => !this.root.commandState.search || this.opts.forceMount.current
+		() => !this.root._commandState.search || this.opts.forceMount.current
 	);
 
 	constructor(
@@ -1018,7 +1039,8 @@ class CommandSeparatorState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "separator",
+				// role="separator" cannot belong to a role="listbox"
+				"aria-hidden": "true",
 				[COMMAND_SEPARATOR_ATTR]: "",
 			}) as const
 	);

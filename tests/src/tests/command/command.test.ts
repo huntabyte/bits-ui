@@ -1,58 +1,98 @@
-import { computeCommandScore } from "bits-ui";
+import { render } from "@testing-library/svelte/svelte5";
+import { axe } from "jest-axe";
+import { it } from "vitest";
+import type { ComponentProps } from "svelte";
+import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
+import CommandTest from "./command-test.svelte";
 
-describe("computeCommandScore", () => {
-	it("returns 1 for exact matches", () => {
-		expect(computeCommandScore("test", "test")).toBe(1);
+const kbd = getTestKbd();
+
+function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
+	const user = setupUserEvents();
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const returned = render(CommandTest, props as any);
+	const input = returned.getByTestId("input");
+	const root = returned.getByTestId("root");
+	const list = returned.getByTestId("list");
+	return {
+		...returned,
+		root,
+		input,
+		list,
+		user,
+	};
+}
+
+it("should have no accessibility violations", async () => {
+	const { container } = render(CommandTest);
+	expect(await axe(container)).toHaveNoViolations();
+});
+
+it("should select the first item by default", async () => {
+	const t = setup();
+
+	// since we aren't hardcoding a value for the item, we need to wait for
+	// the component to render before we can check if the first item is selected
+	await sleep(0);
+	expect(t.queryByText("Introduction")).toHaveAttribute("data-selected");
+});
+
+it("should allow forcing the selected value", async () => {
+	const t = setup({ value: "Introduction" });
+
+	expect(t.queryByText("Introduction")).toHaveAttribute("data-selected");
+});
+
+it("should render the separator when search is empty and remove it when search is not empty", async () => {
+	const t = setup();
+
+	expect(t.queryByTestId("separator")).toBeInTheDocument();
+	await t.user.type(t.input, "a");
+	expect(t.queryByTestId("separator")).not.toBeInTheDocument();
+});
+
+it("should always render the separator when forceMount", async () => {
+	const t = setup({
+		separatorProps: {
+			forceMount: true,
+		},
 	});
 
-	it("handles case insensitive matches", () => {
-		expect(computeCommandScore("Test", "test")).toBeCloseTo(0.9999);
-		expect(computeCommandScore("TEST", "test")).toBeCloseTo(0.9999);
-	});
+	expect(t.queryByTestId("separator")).toBeInTheDocument();
+	await t.user.type(t.input, "a");
+	expect(t.queryByTestId("separator")).toBeInTheDocument();
+});
 
-	it("scores prefix matches higher", () => {
-		const prefixScore = computeCommandScore("test", "te");
-		const middleScore = computeCommandScore("test", "es");
-		expect(prefixScore).toBeGreaterThan(middleScore);
-	});
+it("should show empty state when no items are found", async () => {
+	const t = setup();
 
-	it("penalizes non-continuous matches", () => {
-		const continuousScore = computeCommandScore("test", "te");
-		const skipScore = computeCommandScore("test", "tt");
-		expect(continuousScore).toBeGreaterThan(skipScore);
-	});
+	expect(t.queryByTestId("empty")).not.toBeInTheDocument();
 
-	it("handles word boundaries in commands", () => {
-		const spaceScore = computeCommandScore("copy paste", "cp");
-		const slashScore = computeCommandScore("copy/paste", "cp");
-		expect(spaceScore).toBeGreaterThan(slashScore);
-	});
+	t.input.focus();
+	await t.user.type(t.input, "zzzzzzzz");
+	expect(t.queryByTestId("empty")).toBeInTheDocument();
+});
 
-	it("considers keywords in scoring", () => {
-		const score = computeCommandScore("Calculator", "add", ["math", "add", "subtract"]);
-		expect(score).toBeGreaterThan(0);
-	});
+it("should restore original order when search is cleared", async () => {
+	const t = setup();
 
-	it("handles transposed characters", () => {
-		const correctScore = computeCommandScore("string", "st");
-		const transposedScore = computeCommandScore("string", "ts");
-		expect(correctScore).toBeGreaterThan(transposedScore);
-		expect(transposedScore).toBeGreaterThan(0);
-	});
+	t.input.focus();
+	await t.user.keyboard("d");
+	expect(t.input).toHaveValue("d");
+	expect(t.queryByText("Delegation")).toHaveAttribute("data-selected");
+	expect(t.getByTestId("group-a-items").children[0]).toHaveTextContent("Delegation");
+	await t.user.keyboard(kbd.BACKSPACE);
+	expect(t.input).toHaveValue("");
+	expect(t.queryByText("Introduction")).toHaveAttribute("data-selected");
+	expect(t.getByTestId("group-a-items").children[0]).toHaveTextContent("Introduction");
+});
 
-	it("returns 0 for no matches", () => {
-		expect(computeCommandScore("test", "xyz")).toBe(0);
-	});
+it("should hide the group if all items are filtered out", async () => {
+	const t = setup();
 
-	it("handles special characters in commands", () => {
-		expect(computeCommandScore("copy@paste", "cp")).toBeGreaterThan(0);
-		expect(computeCommandScore("copy#paste", "cp")).toBeGreaterThan(0);
-		expect(computeCommandScore("copy[paste]", "cp")).toBeGreaterThan(0);
-	});
-
-	it("handles empty inputs", () => {
-		expect(computeCommandScore("", "")).toBe(1);
-		expect(computeCommandScore("test", "")).toBe(0.99);
-		expect(computeCommandScore("", "test")).toBe(0);
-	});
+	await t.user.type(t.input, "radio");
+	expect(t.queryByTestId("group-a")).not.toBeVisible();
+	expect(t.queryByTestId("group-b")).toBeVisible();
+	expect(t.queryByText("Radio Group")).toHaveAttribute("data-selected");
 });
