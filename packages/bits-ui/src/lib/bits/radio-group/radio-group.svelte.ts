@@ -1,5 +1,5 @@
 import { useRefById } from "svelte-toolbelt";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsFocusEvent,
@@ -82,6 +82,7 @@ class RadioGroupItemState {
 	checked = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 	#isChecked = $derived.by(() => this.root.isChecked(this.opts.value.current));
+	#tabIndex = $state(-1);
 
 	constructor(
 		readonly opts: RadioGroupItemStateProps,
@@ -98,6 +99,13 @@ class RadioGroupItemState {
 
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
+		});
+
+		watch([() => this.opts.value.current, () => this.root.opts.value.current], () => {
+			if (this.opts.value.current === this.root.opts.value.current) {
+				this.root.rovingFocusGroup.setCurrentTabStopId(this.opts.id.current);
+				this.#tabIndex = 0;
+			}
 		});
 
 		this.onclick = this.onclick.bind(this);
@@ -124,8 +132,6 @@ class RadioGroupItemState {
 		}
 		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
 	}
-
-	#tabIndex = $state(-1);
 
 	snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
 
