@@ -75,6 +75,8 @@ class CommandRootState {
 	commandState = $state.raw<CommandState>(null!);
 	// internal state that we mutate in batches and publish to the `state` at once
 	_commandState = $state<CommandState>(null!);
+	// whether the search has had a value other than ""
+	searchHasHadValue = $state(false);
 
 	#snapshot() {
 		return $state.snapshot(this._commandState);
@@ -143,6 +145,12 @@ class CommandRootState {
 		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
+
+		$effect(() => {
+			if (this._commandState.search !== "") {
+				this.searchHasHadValue = true;
+			}
+		});
 	}
 
 	/**
@@ -656,12 +664,14 @@ type CommandEmptyStateProps = WithRefProps &
 
 class CommandEmptyState {
 	#isInitialRender = true;
-
-	shouldRender = $derived.by(
-		() =>
-			(this.root._commandState.filtered.count === 0 && this.#isInitialRender === false) ||
+	shouldRender = $derived.by(() => {
+		return (
+			(this.root._commandState.filtered.count === 0 &&
+				this.#isInitialRender === false &&
+				this.root.searchHasHadValue) ||
 			this.opts.forceMount.current
-	);
+		);
+	});
 
 	constructor(
 		readonly opts: CommandEmptyStateProps,
@@ -881,6 +891,7 @@ class CommandItemState {
 	});
 	trueValue = $state("");
 	shouldRender = $derived.by(() => {
+		this.opts.ref.current;
 		if (
 			this.#trueForceMount ||
 			this.root.opts.shouldFilter.current === false ||
@@ -914,6 +925,7 @@ class CommandItemState {
 				() => this.opts.id.current,
 				() => this.#group?.opts.id.current,
 				() => this.opts.forceMount.current,
+				() => this.opts.ref.current,
 			],
 			() => {
 				if (this.opts.forceMount.current) return;
