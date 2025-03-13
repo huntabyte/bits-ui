@@ -667,7 +667,7 @@ class CommandEmptyState {
 		readonly opts: CommandEmptyStateProps,
 		readonly root: CommandRootState
 	) {
-		$effect(() => {
+		$effect.pre(() => {
 			this.#isInitialRender = false;
 		});
 
@@ -1010,7 +1010,7 @@ type CommandSeparatorStateProps = WithRefProps &
 
 class CommandSeparatorState {
 	shouldRender = $derived.by(
-		() => !this.root.commandState.search || this.opts.forceMount.current
+		() => !this.root._commandState.search || this.opts.forceMount.current
 	);
 
 	constructor(
@@ -1027,7 +1027,8 @@ class CommandSeparatorState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "separator",
+				// role="separator" cannot belong to a role="listbox"
+				"aria-hidden": "true",
 				[COMMAND_SEPARATOR_ATTR]: "",
 			}) as const
 	);

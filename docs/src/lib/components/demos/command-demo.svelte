@@ -50,7 +50,7 @@
 					</Command.Item>
 				</Command.GroupItems>
 			</Command.Group>
-			<Command.Separator />
+			<Command.Separator class="bg-foreground/5 h-px w-full" />
 			<Command.Group>
 				<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
 					Components
