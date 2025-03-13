@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.3.12
+
+### Patch Changes
+
+-   fix(Radio Group): ensure currently selected value receives focus when entering radio group via tab ([#1296](https://github.com/huntabyte/bits-ui/pull/1296))
+
+-   fix(Command): ensure original order is properly restored when search is cleared ([#1293](https://github.com/huntabyte/bits-ui/pull/1293))
+
 ## 1.3.11
 
 ### Patch Changes
