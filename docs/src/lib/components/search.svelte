@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MagnifyingGlass from "phosphor-svelte/lib/MagnifyingGlass";
 	import { onMount } from "svelte";
-	import { Command, Dialog } from "bits-ui";
+	import { Button, Command, Dialog } from "bits-ui";
 	import {
 		type SearchContent,
 		createContentIndex,
@@ -44,11 +44,19 @@
 		}
 	}}
 >
+	<Button.Root
+		onclick={() => (dialogOpen = true)}
+		aria-label="Search Docs"
+		class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center px-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:hidden"
+	>
+		<MagnifyingGlass class="size-5" />
+	</Button.Root>
+
 	<Dialog.Trigger
-		class="bg-muted text-muted-foreground ring-offset-background hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative inline-flex h-10 items-center justify-between gap-3 whitespace-nowrap rounded-[9px] px-3 text-sm  font-normal transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 md:w-72"
+		class="bg-muted text-muted-foreground ring-offset-background hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative hidden h-10 items-center justify-between gap-3 whitespace-nowrap rounded-[9px] px-3 text-sm font-normal transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:inline-flex sm:w-72"
 	>
 		<span class="flex items-center gap-2">
-			<MagnifyingGlass class="size-5" aria-label="Sun" />Search Docs ...
+			<MagnifyingGlass class="size-5" />Search Docs ...
 		</span>
 		<span class="flex items-center gap-[1px]">
 			<kbd
@@ -68,7 +76,7 @@
 			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
 		/>
 		<Dialog.Content
-			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] outline-hidden fixed left-[50%] top-[20%] z-50 w-full max-w-[94%] translate-x-[-50%] translate-y-[0%] sm:max-w-[490px] md:w-full"
+			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%] outline-hidden fixed left-[50%] top-[20%] z-50 w-full max-w-[94%] translate-x-[-50%] translate-y-[0%] sm:max-w-[490px] md:w-full"
 			onCloseAutoFocus={(e) => {
 				e.preventDefault();
 			}}
@@ -84,7 +92,7 @@
 					autocomplete="off"
 					spellcheck="false"
 					type="search"
-					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex w-full truncate rounded-xl px-4 text-sm transition-colors focus:ring-0"
+					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex w-full touch-manipulation truncate rounded-xl px-4 text-base transition-colors focus:ring-0"
 					placeholder="Search for something..."
 				/>
 				{#if searchQuery !== "" && results.length === 0}
