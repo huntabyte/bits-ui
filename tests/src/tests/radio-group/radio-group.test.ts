@@ -1,7 +1,7 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import { it } from "vitest";
+import { describe, it } from "vitest"; // Updated to include describe
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import RadioGroupTest from "./radio-group-test.svelte";
 import type { Item, RadioGroupTestProps } from "./radio-group-test.svelte";
@@ -9,262 +9,255 @@ import RadioGroupPopoverTest from "./radio-group-popover-test.svelte";
 
 const kbd = getTestKbd();
 
-const testItems: Item[] = [
-	{
-		value: "a",
-		disabled: false,
-	},
-	{
-		value: "b",
-		disabled: false,
-	},
-	{
-		value: "c",
-		disabled: false,
-	},
-	{
-		value: "d",
-		disabled: false,
-	},
+const TEST_ITEMS: Item[] = [
+	{ value: "a", disabled: false },
+	{ value: "b", disabled: false },
+	{ value: "c", disabled: false },
+	{ value: "d", disabled: false },
 ];
 
-const itemIds = testItems.map((item) => `${item.value}-item`);
-const labelIds = testItems.map((item) => `${item.value}-label`);
-const indicatorIds = testItems.map((item) => `${item.value}-indicator`);
+const ITEM_IDS = TEST_ITEMS.map((item) => `${item.value}-item`);
+const LABEL_IDS = TEST_ITEMS.map((item) => `${item.value}-label`);
+const INDICATOR_IDS = TEST_ITEMS.map((item) => `${item.value}-indicator`);
 
-function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = testItems) {
+function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = TEST_ITEMS) {
 	const user = userEvent.setup();
 	const returned = render(RadioGroupTest, { ...props, items });
 	const input = document.querySelector("input") as HTMLInputElement;
-	return {
-		user,
-		input,
-		...returned,
-	};
+	return { user, input, ...returned };
 }
 
-function randItem() {
-	return Math.floor(Math.random() * 3);
+function getRandomItemIndex(length = TEST_ITEMS.length) {
+	return Math.floor(Math.random() * length);
 }
 
-it("should have no accessibility violations", async () => {
-	const { container } = render(RadioGroupTest);
-	expect(await axe(container)).toHaveNoViolations();
-});
-
-it("should have bits data attrs", async () => {
-	const { getByTestId } = render(RadioGroupTest, {
-		items: [testItems[0] as Item],
-		value: testItems[0]?.value,
+describe("Accessibility", () => {
+	it("should have no accessibility violations", async () => {
+		const { container } = render(RadioGroupTest);
+		expect(await axe(container)).toHaveNoViolations();
 	});
-	const root = getByTestId("root");
-	const item = getByTestId(`${testItems[0]?.value}-item`);
-
-	expect(root).toHaveAttribute("data-radio-group-root");
-	expect(item).toHaveAttribute("data-radio-group-item");
 });
 
-it("should change the value when an item is clicked", async () => {
-	const { getByTestId, user } = setup();
+describe("Data Attributes", () => {
+	it("should have bits data attrs", async () => {
+		const { getByTestId } = render(RadioGroupTest, {
+			items: [TEST_ITEMS[0] as Item],
+			value: TEST_ITEMS[0]?.value,
+		});
+		const root = getByTestId("root");
+		const item = getByTestId(`${TEST_ITEMS[0]?.value}-item`);
 
-	for (const indicator of indicatorIds) {
-		expect(getByTestId(indicator)).toHaveTextContent("false");
-	}
-	const itemIdx = randItem();
-	const item = getByTestId(itemIds[itemIdx] as string);
-	await user.click(item);
-	expect(getByTestId(indicatorIds[itemIdx] as string)).toHaveTextContent("true");
+		expect(root).toHaveAttribute("data-radio-group-root");
+		expect(item).toHaveAttribute("data-radio-group-item");
+	});
 });
 
-it("should not change the value when a disabled item is clicked", async () => {
-	const { getByTestId, user } = setup({}, [...testItems, { value: "e", disabled: true }]);
+describe("Value Changes", () => {
+	it("should change the value when an item is clicked", async () => {
+		const t = setup();
 
-	const item = getByTestId("e-item");
-	await user.click(item);
-	expect(getByTestId("e-indicator")).toHaveTextContent("false");
-});
-
-it("should navigate through the items using the keyboard (up and down)", async () => {
-	const { getByTestId, user } = setup();
-
-	const item0 = getByTestId(itemIds[0] as string);
-	const item1 = getByTestId(itemIds[1] as string);
-	const item2 = getByTestId(itemIds[2] as string);
-	const item3 = getByTestId(itemIds[3] as string);
-	item0.focus();
-	expect(item0).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(item1).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(item2).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(item3).toHaveFocus();
-	await user.keyboard(kbd.ARROW_UP);
-	expect(item2).toHaveFocus();
-	await user.keyboard(kbd.ARROW_UP);
-	expect(item1).toHaveFocus();
-	await user.keyboard(kbd.ARROW_UP);
-	expect(item0).toHaveFocus();
-});
-
-it("should navigate through the items using the keyboard (left and right)", async () => {
-	const { getByTestId, user } = setup();
-
-	const item0 = getByTestId(itemIds[0] as string);
-	const item1 = getByTestId(itemIds[1] as string);
-	const item2 = getByTestId(itemIds[2] as string);
-	const item3 = getByTestId(itemIds[3] as string);
-	item0.focus();
-	expect(item0).toHaveFocus();
-	await user.keyboard(kbd.ARROW_RIGHT);
-	expect(item1).toHaveFocus();
-	await user.keyboard(kbd.ARROW_RIGHT);
-	expect(item2).toHaveFocus();
-	await user.keyboard(kbd.ARROW_RIGHT);
-	expect(item3).toHaveFocus();
-	await user.keyboard(kbd.ARROW_LEFT);
-	expect(item2).toHaveFocus();
-	await user.keyboard(kbd.ARROW_LEFT);
-	expect(item1).toHaveFocus();
-	await user.keyboard(kbd.ARROW_LEFT);
-	expect(item0).toHaveFocus();
-});
-
-it("should respect the loop prop", async () => {
-	const { getByTestId, user } = setup({
-		loop: false,
+		for (const indicator of INDICATOR_IDS) {
+			expect(t.getByTestId(indicator)).toHaveTextContent("false");
+		}
+		const itemIdx = getRandomItemIndex();
+		const item = t.getByTestId(ITEM_IDS[itemIdx] as string);
+		await t.user.click(item);
+		expect(t.getByTestId(INDICATOR_IDS[itemIdx] as string)).toHaveTextContent("true");
 	});
 
-	const item0 = getByTestId(itemIds[0] as string);
-	const item3 = getByTestId(itemIds[3] as string);
-	item0.focus();
-	expect(item0).toHaveFocus();
-	await user.keyboard(kbd.ARROW_UP);
-	expect(item0).toHaveFocus();
+	it("should not change the value when a disabled item is clicked", async () => {
+		const t = setup({}, [...TEST_ITEMS, { value: "e", disabled: true }]);
 
-	item3.focus();
-	expect(item3).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(item3).toHaveFocus();
-});
-
-it("should respect the value prop & binding", async () => {
-	const { getByTestId, user, queryByTestId } = setup({
-		value: "b",
-	});
-	const binding = getByTestId("binding");
-	expect(binding).toHaveTextContent("b");
-	const bindingIndic = getByTestId("b-indicator");
-	expect(bindingIndic).toHaveTextContent("true");
-	await user.click(binding);
-	expect(binding).toHaveTextContent("a");
-	expect(queryByTestId("b-indicator")).toHaveTextContent("false");
-	const bindingIndic2 = getByTestId("a-indicator");
-	expect(bindingIndic2).toHaveTextContent("true");
-});
-
-it("should respect the loop prop using arrow left and right keys", async () => {
-	const { getByTestId, user } = setup({
-		loop: false,
+		const item = t.getByTestId("e-item");
+		await t.user.click(item);
+		expect(t.getByTestId("e-indicator")).toHaveTextContent("false");
 	});
 
-	const item0 = getByTestId(itemIds[0] as string);
-	const item3 = getByTestId(itemIds[3] as string);
-	item0.focus();
-	expect(item0).toHaveFocus();
-	await user.keyboard(kbd.ARROW_LEFT);
-	expect(item0).toHaveFocus();
+	it("should change the value when a label associated with an item is clicked", async () => {
+		const t = setup();
 
-	item3.focus();
-	expect(item3).toHaveFocus();
-	await user.keyboard(kbd.ARROW_RIGHT);
-	expect(item3).toHaveFocus();
-});
+		for (const indicator of INDICATOR_IDS) {
+			expect(t.getByTestId(indicator)).toHaveTextContent("false");
+		}
+		const itemIdx = getRandomItemIndex();
+		const label = t.getByTestId(LABEL_IDS[itemIdx] as string);
 
-it("should not render an input if the `name` prop isn't passed", async () => {
-	const { input } = setup();
-
-	expect(input).not.toBeInTheDocument();
-});
-
-it("should render an input if the `name` prop is passed", async () => {
-	const { input } = setup({
-		name: "radio-group",
+		await t.user.click(label);
+		expect(t.getByTestId(INDICATOR_IDS[itemIdx] as string)).toHaveTextContent("true");
 	});
 
-	expect(input).toBeInTheDocument();
+	it("should respect the value prop & binding", async () => {
+		const t = setup({ value: "b" });
+		const binding = t.getByTestId("binding");
+		expect(binding).toHaveTextContent("b");
+		const bindingIndic = t.getByTestId("b-indicator");
+		expect(bindingIndic).toHaveTextContent("true");
+		await t.user.click(binding);
+		expect(binding).toHaveTextContent("a");
+		expect(t.queryByTestId("b-indicator")).toHaveTextContent("false");
+		const bindingIndic2 = t.getByTestId("a-indicator");
+		expect(bindingIndic2).toHaveTextContent("true");
+	});
 });
 
-it("should syncs the inputs value with the radio group value", async () => {
-	const { getByTestId, user, input } = setup({ name: "radio-group" });
+describe("Keyboard Navigation", () => {
+	it("should navigate through the items using the keyboard (up and down)", async () => {
+		const t = setup();
+		const [item0, item1, item2, item3] = ITEM_IDS.map((id) => t.getByTestId(id as string));
 
-	await user.click(getByTestId("a-item"));
-	expect(input).toHaveValue("a");
-	await user.click(getByTestId("b-item"));
-	expect(input).toHaveValue("b");
-});
-
-it("should make the input required if the radio group is required", async () => {
-	const { input } = setup({
-		required: true,
-		name: "radio-group",
+		item0.focus();
+		expect(item0).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(item1).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(item2).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(item3).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_UP);
+		expect(item2).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_UP);
+		expect(item1).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_UP);
+		expect(item0).toHaveFocus();
 	});
 
-	expect(input).toHaveAttribute("required");
-});
+	it("should navigate through the items using the keyboard (left and right)", async () => {
+		const t = setup();
+		const [item0, item1, item2, item3] = ITEM_IDS.map((id) => t.getByTestId(id as string));
 
-it("should make the input disabled if the radio group is disabled", async () => {
-	const { input } = setup({
-		disabled: true,
-		name: "radio-group",
+		item0.focus();
+		expect(item0).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		expect(item1).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		expect(item2).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		expect(item3).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(item2).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(item1).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(item0).toHaveFocus();
 	});
 
-	expect(input).toHaveAttribute("disabled");
-});
+	it("should respect the loop prop using arrow up and down keys", async () => {
+		const t = setup({ loop: false });
+		const [item0, _, __, item3] = ITEM_IDS.map((id) => t.getByTestId(id as string));
 
-it("should not automatically select the first item focused when the radio group does not have a value", async () => {
-	const { getByTestId, user, input } = setup({ name: "radio-group" });
+		item0.focus();
+		expect(item0).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_UP);
+		expect(item0).toHaveFocus();
 
-	const aItem = getByTestId("a-item");
-	aItem.focus();
-	expect(input).toHaveValue("");
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(input).toHaveValue("");
-	const bItem = getByTestId("b-item");
-	expect(bItem).toHaveFocus();
-	await user.keyboard(kbd.SPACE);
-	expect(input).toHaveValue("b");
-	await user.keyboard(kbd.ARROW_UP);
-	expect(aItem).toHaveFocus();
-	expect(input).toHaveValue("a");
-});
-
-it("should change the value when a label associated with an item is clicked", async () => {
-	const { getByTestId, user } = setup();
-
-	for (const indicator of indicatorIds) {
-		expect(getByTestId(indicator)).toHaveTextContent("false");
-	}
-	const itemIdx = randItem();
-
-	const label = getByTestId(labelIds[itemIdx] as string);
-
-	await user.click(label);
-	expect(getByTestId(indicatorIds[itemIdx] as string)).toHaveTextContent("true");
-});
-
-it("should not change value when a value is set and an onOpenAutoFocus occurs", async () => {
-	const user = setupUserEvents();
-	const { getByTestId, queryByTestId } = render(RadioGroupPopoverTest, {
-		value: "b",
-		items: testItems,
+		item3.focus();
+		expect(item3).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(item3).toHaveFocus();
 	});
 
-	await user.pointerDownUp(getByTestId("trigger"));
-	await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
+	it("should respect the loop prop using arrow left and right keys", async () => {
+		const t = setup({ loop: false });
+		const [item0, _, __, item3] = ITEM_IDS.map((id) => t.getByTestId(id as string));
 
-	expect(getByTestId("value")).toHaveTextContent("b");
+		item0.focus();
+		expect(item0).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(item0).toHaveFocus();
 
-	const item1 = getByTestId(`${testItems[1]?.value}-item`);
-	expect(item1).toHaveFocus();
+		item3.focus();
+		expect(item3).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		expect(item3).toHaveFocus();
+	});
+});
+
+describe("Input Behavior", () => {
+	it("should not render an input if the `name` prop isn't passed", async () => {
+		const t = setup();
+		expect(t.input).not.toBeInTheDocument();
+	});
+
+	it("should render an input if the `name` prop is passed", async () => {
+		const t = setup({ name: "radio-group" });
+		expect(t.input).toBeInTheDocument();
+	});
+
+	it("should sync the input's value with the radio group value", async () => {
+		const t = setup({ name: "radio-group" });
+
+		await t.user.click(t.getByTestId("a-item"));
+		expect(t.input).toHaveValue("a");
+		await t.user.click(t.getByTestId("b-item"));
+		expect(t.input).toHaveValue("b");
+	});
+
+	it("should make the input required if the radio group is required", async () => {
+		const t = setup({ required: true, name: "radio-group" });
+		expect(t.input).toHaveAttribute("required");
+	});
+
+	it("should make the input disabled if the radio group is disabled", async () => {
+		const t = setup({ disabled: true, name: "radio-group" });
+		expect(t.input).toHaveAttribute("disabled");
+	});
+
+	it("should not automatically select the first item focused when the radio group does not have a value", async () => {
+		const t = setup({ name: "radio-group" });
+
+		const aItem = t.getByTestId("a-item");
+		aItem.focus();
+		expect(t.input).toHaveValue("");
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(t.input).toHaveValue("");
+		const bItem = t.getByTestId("b-item");
+		expect(bItem).toHaveFocus();
+		await t.user.keyboard(kbd.SPACE);
+		expect(t.input).toHaveValue("b");
+		await t.user.keyboard(kbd.ARROW_UP);
+		expect(aItem).toHaveFocus();
+		expect(t.input).toHaveValue("a");
+	});
+});
+
+describe("Focus Management", () => {
+	it("should focus the first item when no value is set and focus enters the group", async () => {
+		const t = setup();
+
+		await t.user.keyboard(kbd.TAB);
+		await waitFor(() => expect(t.getByTestId("a-item")).toHaveFocus());
+	});
+
+	it("should focus the selected item when a value is set and focus enters the group", async () => {
+		const t = setup({ value: "b" });
+
+		await t.user.keyboard(kbd.TAB);
+		await waitFor(() => expect(t.getByTestId("b-item")).toHaveFocus());
+	});
+
+	it("should focus the selected item when a value is selected and focus leaves and comes back to the group", async () => {
+		const t = setup();
+
+		await t.user.click(t.getByTestId("b-item"));
+		await t.user.keyboard(kbd.TAB);
+		expect(t.getByTestId("binding")).toHaveFocus();
+		await t.user.keyboard(kbd.SHIFT_TAB);
+		await waitFor(() => expect(t.getByTestId("b-item")).toHaveFocus());
+	});
+
+	it("should not change value when a value is set and an onOpenAutoFocus occurs", async () => {
+		const user = setupUserEvents();
+		const t = render(RadioGroupPopoverTest, {
+			value: "b",
+			items: TEST_ITEMS,
+		});
+
+		await user.pointerDownUp(t.getByTestId("trigger"));
+		await waitFor(() => expect(t.queryByTestId("content")).not.toBeNull());
+
+		expect(t.getByTestId("value")).toHaveTextContent("b");
+
+		const item1 = t.getByTestId(`${TEST_ITEMS[1]?.value}-item`);
+		expect(item1).toHaveFocus();
+	});
 });
