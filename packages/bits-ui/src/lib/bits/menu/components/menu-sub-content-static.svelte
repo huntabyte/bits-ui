@@ -25,6 +25,7 @@
 		onOpenAutoFocus: onOpenAutoFocusProp = noop,
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		onFocusOutside = noop,
+		trapFocus = false,
 		...restProps
 	}: MenuSubContentStaticProps = $props();
 
@@ -115,7 +116,7 @@
 		onFocusOutside={handleOnFocusOutside}
 		preventScroll={false}
 		{loop}
-		trapFocus={false}
+		{trapFocus}
 		isStatic
 	>
 		{#snippet popper({ props })}
@@ -145,7 +146,7 @@
 		onFocusOutside={handleOnFocusOutside}
 		preventScroll={false}
 		{loop}
-		trapFocus={false}
+		{trapFocus}
 		isStatic
 	>
 		{#snippet popper({ props })}
