@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.13
+
+### Patch Changes
+
+-   fix(Context Menu): forward `trapFocus` prop ([#1303](https://github.com/huntabyte/bits-ui/pull/1303))
+
 ## 1.3.12
 
 ### Patch Changes
