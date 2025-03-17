@@ -23,6 +23,7 @@
 		// the default menu behavior of handling outside interactions on the trigger
 		onEscapeKeydown = noop,
 		forceMount = false,
+		trapFocus = true,
 		...restProps
 	}: ContextMenuContentProps = $props();
 
@@ -76,7 +77,7 @@
 		onEscapeKeydown={handleEscapeKeydown}
 		{onOpenAutoFocus}
 		{isValidEvent}
-		trapFocus
+		{trapFocus}
 		{loop}
 		{id}
 	>
@@ -109,7 +110,7 @@
 		onEscapeKeydown={handleEscapeKeydown}
 		{onOpenAutoFocus}
 		{isValidEvent}
-		trapFocus
+		{trapFocus}
 		{loop}
 		{id}
 	>

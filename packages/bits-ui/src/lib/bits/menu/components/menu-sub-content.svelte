@@ -26,6 +26,7 @@
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		onFocusOutside = noop,
 		side = "right",
+		trapFocus = false,
 		...restProps
 	}: MenuSubContentProps = $props();
 
@@ -117,7 +118,7 @@
 		onFocusOutside={handleOnFocusOutside}
 		preventScroll={false}
 		{loop}
-		trapFocus={false}
+		{trapFocus}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
@@ -152,7 +153,7 @@
 		onFocusOutside={handleOnFocusOutside}
 		preventScroll={false}
 		{loop}
-		trapFocus={false}
+		{trapFocus}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
