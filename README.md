@@ -14,7 +14,8 @@
 Flexible, unstyled, and accessible primitives that provide the foundation for building your own high-quality component library.
 
 ## Documentation
-Visit https://bits-ui.com/docs to view the documentation. 
+
+Visit https://bits-ui.com/docs to view the documentation.
 
 ## Credits
 
