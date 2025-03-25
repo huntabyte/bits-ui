@@ -33,12 +33,17 @@ export type MenubarRootPropsWithoutHTML = WithChild<{
 export type MenubarRootProps = MenubarRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenubarRootPropsWithoutHTML>;
 
-export type MenubarMenuPropsWithoutHTML =  Omit<MenuRootProps, 'dir'> & WithChildren<{
+export type MenubarMenuPropsWithoutHTML =  WithChildren<{
 	/**
 	 * The `value` assigned to the menu. Used to programmatically control the menu's open state
 	 * within the menubar.
 	 */
 	value?: string;
+
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
 export type MenubarMenuProps = MenubarMenuPropsWithoutHTML;

@@ -6,11 +6,10 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
-	let { value = useId(), open = $bindable(false), onOpenChange = noop, ...restProps }: MenubarMenuProps = $props();
+	let { value = useId(), onOpenChange = noop, ...restProps }: MenubarMenuProps = $props();
 
 	const menuState = useMenubarMenu({
 		value: box.with(() => value),
-		open: box.with(() => open)
 	});
 </script>
 

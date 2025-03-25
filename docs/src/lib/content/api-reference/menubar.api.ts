@@ -63,7 +63,7 @@ export const menu = createApiSchema<MenubarMenuPropsWithoutHTML>({
 			description:
 				"The value of this menu within the menubar, used to identify it when determining which menu is active.",
 		}),
-		...{ ...m.root.props, dir: undefined},
+		...{ ...m.root.props, dir: undefined, open: undefined },
 	},
 });
 
