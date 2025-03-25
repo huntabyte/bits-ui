@@ -113,6 +113,7 @@ class MenubarRootState {
 
 type MenubarMenuStateProps = ReadableBoxedValues<{
 	value: string;
+	open: boolean;
 }>;
 
 class MenubarMenuState {

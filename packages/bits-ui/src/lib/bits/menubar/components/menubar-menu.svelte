@@ -4,11 +4,13 @@
 	import { useMenubarMenu } from "../menubar.svelte.js";
 	import Menu from "$lib/bits/menu/components/menu.svelte";
 	import { useId } from "$lib/internal/use-id.js";
+	import { noop } from "$lib/internal/noop.js";
 
-	let { value = useId(), ...restProps }: MenubarMenuProps = $props();
+	let { value = useId(), open = $bindable(false), onOpenChange = noop, ...restProps }: MenubarMenuProps = $props();
 
 	const menuState = useMenubarMenu({
 		value: box.with(() => value),
+		open: box.with(() => open)
 	});
 </script>
 
@@ -16,6 +18,8 @@
 	open={menuState.open}
 	onOpenChange={(open) => {
 		if (!open) menuState.root.onMenuClose();
+
+		onOpenChange(open);
 	}}
 	dir={menuState.root.opts.dir.current}
 	_internal_variant="menubar"

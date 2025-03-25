@@ -1,5 +1,5 @@
 import type { ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { MenuArrowProps } from "../menu/types.js";
+import type { MenuArrowProps, MenuRootProps } from "../menu/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
@@ -33,7 +33,7 @@ export type MenubarRootPropsWithoutHTML = WithChild<{
 export type MenubarRootProps = MenubarRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenubarRootPropsWithoutHTML>;
 
-export type MenubarMenuPropsWithoutHTML = WithChildren<{
+export type MenubarMenuPropsWithoutHTML =  Omit<MenuRootProps, 'dir'> & WithChildren<{
 	/**
 	 * The `value` assigned to the menu. Used to programmatically control the menu's open state
 	 * within the menubar.
