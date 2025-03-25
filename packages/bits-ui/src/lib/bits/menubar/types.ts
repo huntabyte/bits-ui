@@ -1,5 +1,5 @@
 import type { ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
-import type { MenuArrowProps, MenuRootProps } from "../menu/types.js";
+import type { MenuArrowProps } from "../menu/types.js";
 import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
