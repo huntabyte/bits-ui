@@ -33,7 +33,7 @@ export type MenubarRootPropsWithoutHTML = WithChild<{
 export type MenubarRootProps = MenubarRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenubarRootPropsWithoutHTML>;
 
-export type MenubarMenuPropsWithoutHTML =  WithChildren<{
+export type MenubarMenuPropsWithoutHTML = WithChildren<{
 	/**
 	 * The `value` assigned to the menu. Used to programmatically control the menu's open state
 	 * within the menubar.
