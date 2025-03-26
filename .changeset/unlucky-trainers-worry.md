@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix: Add `onOpenChange` prop to `<Menubar.Menu/>`
+fix(Menubar): Add `onOpenChange` prop to `<Menubar.Menu/>`
