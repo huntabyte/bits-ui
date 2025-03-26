@@ -88,7 +88,7 @@ class MenubarRootState {
 		const currHandler = this.valueToChangeHandler.get(currValue)?.current;
 		const nextHandler = this.valueToChangeHandler.get(value)?.current;
 		this.opts.value.current = value;
-		if (currHandler && currHandler !== nextHandler) {
+		if (currHandler && currValue !== value) {
 			currHandler(false);
 		}
 		if (nextHandler) {
