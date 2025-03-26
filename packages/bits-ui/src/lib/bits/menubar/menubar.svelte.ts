@@ -14,6 +14,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsPointerEvent,
+	OnChangeFn,
 	WithRefProps,
 } from "$lib/internal/types.js";
 import {
@@ -39,7 +40,7 @@ class MenubarRootState {
 	rovingFocusGroup: UseRovingFocusReturn;
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
-	valueToContentId = new Map<string, ReadableBox<string>>();
+	valueToChangeHandler = new Map<string, ReadableBox<OnChangeFn<boolean>>>();
 
 	constructor(readonly opts: MenubarRootStateProps) {
 		useRefById(opts);
@@ -74,12 +75,25 @@ class MenubarRootState {
 	 * @param contentId - the content id to associate with the value
 	 * @returns - a function to de-register the menu
 	 */
-	registerMenu(value: string, contentId: ReadableBox<string>) {
-		this.valueToContentId.set(value, contentId);
+	registerMenu(value: string, onOpenChange: ReadableBox<OnChangeFn<boolean>>) {
+		this.valueToChangeHandler.set(value, onOpenChange);
 
 		return () => {
-			this.valueToContentId.delete(value);
+			this.valueToChangeHandler.delete(value);
 		};
+	}
+
+	updateValue(value: string) {
+		const currValue = this.opts.value.current;
+		const currHandler = this.valueToChangeHandler.get(currValue)?.current;
+		const nextHandler = this.valueToChangeHandler.get(value)?.current;
+		this.opts.value.current = value;
+		if (currHandler && currValue !== value) {
+			currHandler(false);
+		}
+		if (nextHandler) {
+			nextHandler(true);
+		}
 	}
 
 	getTriggers() {
@@ -89,16 +103,16 @@ class MenubarRootState {
 	}
 
 	onMenuOpen(id: string, triggerId: string) {
-		this.opts.value.current = id;
+		this.updateValue(id);
 		this.rovingFocusGroup.setCurrentTabStopId(triggerId);
 	}
 
 	onMenuClose() {
-		this.opts.value.current = "";
+		this.updateValue("");
 	}
 
 	onMenuToggle(id: string) {
-		this.opts.value.current = this.opts.value.current ? "" : id;
+		this.updateValue(this.opts.value.current ? "" : id);
 	}
 
 	props = $derived.by(
@@ -113,6 +127,7 @@ class MenubarRootState {
 
 type MenubarMenuStateProps = ReadableBoxedValues<{
 	value: string;
+	onOpenChange: OnChangeFn<boolean>;
 }>;
 
 class MenubarMenuState {
@@ -135,10 +150,7 @@ class MenubarMenuState {
 		);
 
 		onMount(() => {
-			return this.root.registerMenu(
-				this.opts.value.current,
-				box.with(() => this.contentNode?.id ?? "")
-			);
+			return this.root.registerMenu(this.opts.value.current, opts.onOpenChange);
 		});
 	}
 

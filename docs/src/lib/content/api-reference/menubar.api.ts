@@ -19,6 +19,7 @@ import type {
 	MenubarTriggerPropsWithoutHTML,
 } from "bits-ui";
 import {
+	childrenSnippet,
 	createApiSchema,
 	createBooleanProp,
 	createCSSVarSchema,
@@ -28,7 +29,7 @@ import {
 	withChildProps,
 } from "./helpers.js";
 import { menu as m } from "./menu.api.js";
-import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
+import { OnOpenChangeProp, OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
 export const root = createApiSchema<MenubarRootPropsWithoutHTML>({
@@ -63,7 +64,12 @@ export const menu = createApiSchema<MenubarMenuPropsWithoutHTML>({
 			description:
 				"The value of this menu within the menubar, used to identify it when determining which menu is active.",
 		}),
-		...m.root.props,
+		onOpenChange: createFunctionProp({
+			definition: OnOpenChangeProp,
+			description: "A callback that is fired when the submenu's open state changes.",
+			stringDefinition: "(open: boolean) => void",
+		}),
+		children: childrenSnippet(),
 	},
 });
 

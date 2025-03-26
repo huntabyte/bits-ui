@@ -4,11 +4,13 @@
 	import { useMenubarMenu } from "../menubar.svelte.js";
 	import Menu from "$lib/bits/menu/components/menu.svelte";
 	import { useId } from "$lib/internal/use-id.js";
+	import { noop } from "$lib/internal/noop.js";
 
-	let { value = useId(), ...restProps }: MenubarMenuProps = $props();
+	let { value = useId(), onOpenChange = noop, ...restProps }: MenubarMenuProps = $props();
 
 	const menuState = useMenubarMenu({
 		value: box.with(() => value),
+		onOpenChange: box.with(() => onOpenChange),
 	});
 </script>
 

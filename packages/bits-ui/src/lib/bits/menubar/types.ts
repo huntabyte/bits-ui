@@ -39,6 +39,11 @@ export type MenubarMenuPropsWithoutHTML = WithChildren<{
 	 * within the menubar.
 	 */
 	value?: string;
+
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
 export type MenubarMenuProps = MenubarMenuPropsWithoutHTML;
