@@ -179,7 +179,7 @@ You can also use the `onValueChange` prop to update local state when the menubar
 
 <Menubar.Root
 	value={activeValue}
-	onOpenChange={(value) => {
+	onValueChange={(value) => {
 		activeValue = value;
 		// additional logic here.
 	}}
