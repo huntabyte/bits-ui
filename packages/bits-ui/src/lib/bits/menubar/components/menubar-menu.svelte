@@ -10,6 +10,7 @@
 
 	const menuState = useMenubarMenu({
 		value: box.with(() => value),
+		onOpenChange: box.with(() => onOpenChange),
 	});
 </script>
 
@@ -17,7 +18,6 @@
 	open={menuState.open}
 	onOpenChange={(open) => {
 		if (!open) menuState.root.onMenuClose();
-		onOpenChange(open);
 	}}
 	dir={menuState.root.opts.dir.current}
 	_internal_variant="menubar"

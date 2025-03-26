@@ -13,12 +13,12 @@ const kbd = getTestKbd();
 function setup(props: MenubarTestProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(MenubarTest, { ...props });
-	const { getByTestId } = returned;
+	const { getByTestId, queryByTestId } = returned;
 
 	const getTrigger = (id: string) => getByTestId(`${id}-trigger`);
-	const getContent = (id: string) => getByTestId(`${id}-content`);
-	const getSubTrigger = (id: string) => getByTestId(`${id}-sub-trigger`);
-	const getSubContent = (id: string) => getByTestId(`${id}-sub-content`);
+	const getContent = (id: string) => queryByTestId(`${id}-content`);
+	const getSubTrigger = (id: string) => queryByTestId(`${id}-sub-trigger`);
+	const getSubContent = (id: string) => queryByTestId(`${id}-sub-content`);
 
 	return { user, ...returned, getTrigger, getContent, getSubTrigger, getSubContent };
 }
@@ -109,40 +109,31 @@ it("should close the menu and focus the previous tabbable element when `SHIFT+TA
 });
 
 it("should call the menus `onOpenChange` callback when the menu is opened or closed", async () => {
-	const one = vi.fn();
-	const two = vi.fn();
-	const three = vi.fn();
-	const four = vi.fn();
+	const callbacks = {
+		one: vi.fn(),
+		two: vi.fn(),
+		three: vi.fn(),
+		four: vi.fn(),
+	};
 	const { user, getTrigger, getContent } = setup({
-		one: {
-			onOpenChange: one,
-		},
-		two: {
-			onOpenChange: two,
-		},
-		three: {
-			onOpenChange: three,
-		},
-		four: {
-			onOpenChange: four,
-		},
+		one: { onOpenChange: callbacks.one },
+		two: { onOpenChange: callbacks.two },
+		three: { onOpenChange: callbacks.three },
+		four: { onOpenChange: callbacks.four },
 	});
-	const trigger = getTrigger("1");
-	trigger.focus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	const content1 = getContent("1");
-	expect(content1).toBeVisible();
-	expect(one).toHaveBeenCalledWith(true);
-	await user.keyboard(kbd.ESCAPE);
-	await waitFor(() => expect(content1).not.toBeVisible());
-	expect(one).toHaveBeenCalledWith(false);
-	expect(two).not.toHaveBeenCalled();
-	await user.keyboard(kbd.ARROW_RIGHT);
-	await user.keyboard(kbd.ARROW_DOWN);
-	const content2 = getContent("2");
-	expect(content2).toBeVisible();
-	expect(two).toHaveBeenCalledWith(true);
-	await user.keyboard(kbd.ESCAPE);
-	await waitFor(() => expect(content2).not.toBeVisible());
-	expect(two).toHaveBeenCalledWith(false);
+
+	for (const id of ["1", "2", "3", "4"]) {
+		// @ts-expect-error - sh
+		const callback = callbacks[Object.keys(callbacks)[Number(id) - 1]];
+
+		await user.click(getTrigger(id));
+		await waitFor(() => expect(getContent(id)).toBeVisible());
+		expect(callback).toHaveBeenCalledWith(true);
+		expect(callback).toHaveBeenCalledTimes(1);
+
+		await user.keyboard(kbd.ESCAPE);
+		await waitFor(() => expect(getContent(id)).not.toBeInTheDocument());
+		expect(callback).toHaveBeenCalledWith(false);
+		expect(callback).toHaveBeenCalledTimes(2);
+	}
 });
