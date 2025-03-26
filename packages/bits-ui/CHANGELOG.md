@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.14
+
+### Patch Changes
+
+-   fix(Menubar): Add `onOpenChange` prop to `<Menubar.Menu/>` ([#1324](https://github.com/huntabyte/bits-ui/pull/1324))
+
 ## 1.3.13
 
 ### Patch Changes
