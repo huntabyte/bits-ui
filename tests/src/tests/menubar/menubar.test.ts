@@ -1,17 +1,16 @@
 import { render, waitFor } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import { it } from "vitest";
-import type { Menubar } from "bits-ui";
+import { it, vi } from "vitest";
 import { getTestKbd } from "../utils.js";
-import MenubarTest from "./menubar-test.svelte";
+import MenubarTest, { type MenubarTestProps } from "./menubar-test.svelte";
 
 const kbd = getTestKbd();
 
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(props: Menubar.RootProps = {}) {
+function setup(props: MenubarTestProps = {}) {
 	const user = userEvent.setup();
 	const returned = render(MenubarTest, { ...props });
 	const { getByTestId } = returned;
@@ -107,4 +106,43 @@ it("should close the menu and focus the previous tabbable element when `SHIFT+TA
 	const previousButton = getByTestId("previous-button");
 	await user.keyboard(kbd.SHIFT_TAB);
 	await waitFor(() => expect(previousButton).toHaveFocus());
+});
+
+it("should call the menus `onOpenChange` callback when the menu is opened or closed", async () => {
+	const one = vi.fn();
+	const two = vi.fn();
+	const three = vi.fn();
+	const four = vi.fn();
+	const { user, getTrigger, getContent } = setup({
+		one: {
+			onOpenChange: one,
+		},
+		two: {
+			onOpenChange: two,
+		},
+		three: {
+			onOpenChange: three,
+		},
+		four: {
+			onOpenChange: four,
+		},
+	});
+	const trigger = getTrigger("1");
+	trigger.focus();
+	await user.keyboard(kbd.ARROW_DOWN);
+	const content1 = getContent("1");
+	expect(content1).toBeVisible();
+	expect(one).toHaveBeenCalledWith(true);
+	await user.keyboard(kbd.ESCAPE);
+	await waitFor(() => expect(content1).not.toBeVisible());
+	expect(one).toHaveBeenCalledWith(false);
+	expect(two).not.toHaveBeenCalled();
+	await user.keyboard(kbd.ARROW_RIGHT);
+	await user.keyboard(kbd.ARROW_DOWN);
+	const content2 = getContent("2");
+	expect(content2).toBeVisible();
+	expect(two).toHaveBeenCalledWith(true);
+	await user.keyboard(kbd.ESCAPE);
+	await waitFor(() => expect(content2).not.toBeVisible());
+	expect(two).toHaveBeenCalledWith(false);
 });

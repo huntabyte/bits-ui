@@ -17,7 +17,6 @@
 	open={menuState.open}
 	onOpenChange={(open) => {
 		if (!open) menuState.root.onMenuClose();
-
 		onOpenChange(open);
 	}}
 	dir={menuState.root.opts.dir.current}
