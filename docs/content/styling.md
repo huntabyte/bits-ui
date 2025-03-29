@@ -77,7 +77,7 @@ Use the global class with the component:
 	import { Accordion } from "bits-ui";
 </script>
 
-<Accordion.Trigger class="button">Click me</Accordion.Trigger>
+<Accordion.Trigger class="accordion-trigger">Click me</Accordion.Trigger>
 ```
 
 ### Scoped Styles
