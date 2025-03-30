@@ -203,32 +203,92 @@ export function backward<T>(
 }
 
 /**
- * This is the "meat" of the typeahead matching logic. It takes in all the values,
- * the search and the current match, and returns the next match (or `undefined`).
+ * Finds the next matching item from a list of values based on a search string.
  *
- * We normalize the search because if a user has repeatedly pressed a character,
- * we want the exact same behavior as if we only had that one character
- * (ie. cycle through options starting with that character)
+ * This function handles several special cases in typeahead behavior:
  *
- * We also reorder the values by wrapping the array around the current match.
- * This is so we always look forward from the current match, and picking the first
- * match will always be the correct one.
+ * 1. Space handling: When a search string ends with a space, it handles it specially:
+ *    - If there's only one match for the text before the space, it ignores the space
+ *    - If there are multiple matches and the current match already starts with the search prefix
+ *      followed by a space, it keeps the current match (doesn't change selection on space)
+ *    - Only after typing characters beyond the space will it move to a more specific match
  *
- * Finally, if the normalized search is exactly one character, we exclude the
- * current match from the values because otherwise it would be the first to match always
- * and focus would never move. This is as opposed to the regular case, where we
- * don't want focus to move if the current match still matches.
+ * 2. Repeated character handling: If a search consists of repeated characters (e.g., "aaa"),
+ *    it treats it as a single character for matching purposes
+ *
+ * 3. Cycling behavior: The function wraps around the values array starting from the current match
+ *    to find the next appropriate match, creating a cycling selection behavior
+ *
+ * @param values - Array of string values to search through (e.g., the text content of menu items)
+ * @param search - The current search string typed by the user
+ * @param currentMatch - The currently selected/matched item, if any
+ * @returns The next matching value that should be selected, or undefined if no match is found
  */
 export function getNextMatch(values: string[], search: string, currentMatch?: string) {
+	const lowerSearch = search.toLowerCase();
+
+	if (lowerSearch.endsWith(" ")) {
+		const searchWithoutSpace = lowerSearch.slice(0, -1);
+		const matchesWithoutSpace = values.filter((value) =>
+			value.toLowerCase().startsWith(searchWithoutSpace)
+		);
+
+		/**
+		 * If there's only one match for the prefix without space, we don't
+		 * watch to match with space.
+		 */
+		if (matchesWithoutSpace.length <= 1) {
+			return getNextMatch(values, searchWithoutSpace, currentMatch);
+		}
+
+		const currentMatchLowercase = currentMatch?.toLowerCase();
+
+		/**
+		 * If the current match already starts with the search prefix and has a space afterward,
+		 * and the user has only typed up to that space, keep the current match until they
+		 * disambiguate.
+		 */
+		if (
+			currentMatchLowercase &&
+			currentMatchLowercase.startsWith(searchWithoutSpace) &&
+			currentMatchLowercase.charAt(searchWithoutSpace.length) === " " &&
+			search.trim() === searchWithoutSpace
+		) {
+			return currentMatch;
+		}
+
+		/**
+		 * With multiple matches, find items that match the full search string with space
+		 */
+		const spacedMatches = values.filter((value) => value.toLowerCase().startsWith(lowerSearch));
+
+		/**
+		 * If we found matches with the space, use the first one that's not the current match
+		 */
+		if (spacedMatches.length > 0) {
+			const currentMatchIndex = currentMatch ? values.indexOf(currentMatch) : -1;
+			let wrappedMatches = wrapArray(spacedMatches, Math.max(currentMatchIndex, 0));
+
+			// return the first match that is not the current one.
+			const nextMatch = wrappedMatches.find((match) => match !== currentMatch);
+			// fallback to current if no other is found.
+			return nextMatch || currentMatch;
+		}
+	}
+
 	const isRepeated = search.length > 1 && Array.from(search).every((char) => char === search[0]);
 	const normalizedSearch = isRepeated ? search[0]! : search;
+	const normalizedLowerSearch = normalizedSearch.toLowerCase();
+
 	const currentMatchIndex = currentMatch ? values.indexOf(currentMatch) : -1;
 	let wrappedValues = wrapArray(values, Math.max(currentMatchIndex, 0));
 	const excludeCurrentMatch = normalizedSearch.length === 1;
 	if (excludeCurrentMatch) wrappedValues = wrappedValues.filter((v) => v !== currentMatch);
+
 	const nextMatch = wrappedValues.find((value) =>
-		value?.toLowerCase().startsWith(normalizedSearch.toLowerCase())
+		value?.toLowerCase().startsWith(normalizedLowerSearch)
 	);
+
 	return nextMatch !== currentMatch ? nextMatch : undefined;
 }
 

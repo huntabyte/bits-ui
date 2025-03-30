@@ -424,6 +424,17 @@ describe("getNextMatch", () => {
 		expect(getNextMatch(prefixValues, "o")).toBe("other");
 		expect(getNextMatch(prefixValues, "o", "other")).toBe(undefined);
 	});
+
+	it("should handle search with spaces", () => {
+		const spaceValues = ["apple pie", "banana split", "banana bread", "cherry tart"];
+		expect(getNextMatch(spaceValues, "b")).toBe("banana split");
+		expect(getNextMatch(spaceValues, "banana ")).toBe("banana split");
+		expect(getNextMatch(spaceValues, "banana b")).toBe("banana bread");
+		expect(getNextMatch(spaceValues, "banana s")).toBe("banana split");
+		expect(getNextMatch(spaceValues, "banana  ")).toBe(undefined);
+		expect(getNextMatch(spaceValues, "apple")).toBe("apple pie");
+		expect(getNextMatch(spaceValues, "apple p")).toBe("apple pie");
+	});
 });
 
 describe("wrapArray", () => {
