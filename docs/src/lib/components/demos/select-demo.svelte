@@ -12,6 +12,7 @@
 		{ value: "svelte-orange", label: "Svelte Orange" },
 		{ value: "punk-pink", label: "Punk Pink" },
 		{ value: "ocean-blue", label: "Ocean Blue", disabled: true },
+		{ value: "sunset-orange", label: "Sunset Orange" },
 		{ value: "sunset-red", label: "Sunset Red" },
 		{ value: "forest-green", label: "Forest Green" },
 		{ value: "lavender-purple", label: "Lavender Purple", disabled: true },

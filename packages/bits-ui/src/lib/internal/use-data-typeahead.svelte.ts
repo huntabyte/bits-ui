@@ -1,3 +1,4 @@
+import type { Getter } from "svelte-toolbelt";
 import { getNextMatch } from "./arrays.js";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
 
@@ -6,14 +7,16 @@ export type DataTypeahead = ReturnType<typeof useDataTypeahead>;
 type UseDataTypeaheadOpts = {
 	onMatch: (value: string) => void;
 	getCurrentItem: () => string;
+	candidateValues: Getter<string[]>;
 	enabled: boolean;
 };
 
 export function useDataTypeahead(opts: UseDataTypeaheadOpts) {
 	// Reset `search` 1 second after it was last updated
 	const search = boxAutoReset("", 1000);
+	const candidateValues = $derived(opts.candidateValues());
 
-	function handleTypeaheadSearch(key: string, candidateValues: string[]) {
+	function handleTypeaheadSearch(key: string) {
 		if (!opts.enabled) return;
 		if (!candidateValues.length) return;
 

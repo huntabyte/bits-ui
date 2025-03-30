@@ -510,6 +510,7 @@ class SelectTriggerState {
 				this.root.opts.value.current = matchedItem.value;
 			},
 			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
+			candidateValues: () => (this.root.isMulti ? [] : this.root.candidateLabels),
 		});
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -528,6 +529,37 @@ class SelectTriggerState {
 		this.#handleOpen();
 	}
 
+	/**
+	 * Logic used to handle keyboard selection/deselection.
+	 *
+	 * If it returns true, it means the item was selected and whatever is calling
+	 * this function should return early
+	 *
+	 */
+	#handleKeyboardSelection() {
+		const isCurrentSelectedValue = this.root.highlightedValue === this.root.opts.value.current;
+
+		if (!this.root.opts.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
+			this.root.handleClose();
+			return true;
+		}
+
+		// "" is a valid value for a select item so we need to check for that
+		if (this.root.highlightedValue !== null) {
+			this.root.toggleItem(
+				this.root.highlightedValue,
+				this.root.highlightedLabel ?? undefined
+			);
+		}
+
+		if (!this.root.isMulti && !isCurrentSelectedValue) {
+			this.root.handleClose();
+			return true;
+		}
+
+		return false;
+	}
+
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
@@ -542,7 +574,7 @@ class SelectTriggerState {
 				e.preventDefault();
 				this.root.handleOpen();
 			} else if (!this.root.isMulti && this.root.dataTypeaheadEnabled) {
-				this.#dataTypeahead.handleTypeaheadSearch(e.key, this.root.candidateLabels);
+				this.#dataTypeahead.handleTypeaheadSearch(e.key);
 				return;
 			}
 
@@ -567,33 +599,17 @@ class SelectTriggerState {
 			return;
 		}
 
-		if ((e.key === kbd.ENTER || e.key === kbd.SPACE) && !e.isComposing) {
+		if (
+			(e.key === kbd.ENTER ||
+				// if we're currently "typing ahead", we don't want to select the item
+				// just yet as the item the user is trying to get to may have a space in it,
+				// so we defer handling the close for this case until further down
+				(e.key === kbd.SPACE && this.#domTypeahead.search.current === "")) &&
+			!e.isComposing
+		) {
 			e.preventDefault();
-
-			const isCurrentSelectedValue =
-				this.root.highlightedValue === this.root.opts.value.current;
-
-			if (
-				!this.root.opts.allowDeselect.current &&
-				isCurrentSelectedValue &&
-				!this.root.isMulti
-			) {
-				this.root.handleClose();
-				return;
-			}
-
-			//"" is a valid value for a select item so we need to check for that
-			if (this.root.highlightedValue !== null) {
-				this.root.toggleItem(
-					this.root.highlightedValue,
-					this.root.highlightedLabel ?? undefined
-				);
-			}
-
-			if (!this.root.isMulti && !isCurrentSelectedValue) {
-				this.root.handleClose();
-				return;
-			}
+			const shouldReturn = this.#handleKeyboardSelection();
+			if (shouldReturn) return;
 		}
 
 		if (e.key === kbd.ARROW_UP && e.altKey) {
@@ -630,16 +646,18 @@ class SelectTriggerState {
 		}
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
 		const isCharacterKey = e.key.length === 1;
-
-		// prevent space from being considered with typeahead
-		if (e.code === "Space") return;
+		const isSpaceKey = e.key === kbd.SPACE;
 
 		const candidateNodes = this.root.getCandidateNodes();
 
 		if (e.key === kbd.TAB) return;
 
-		if (!isModifierKey && isCharacterKey) {
-			this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
+		if (!isModifierKey && (isCharacterKey || isSpaceKey)) {
+			const matchedNode = this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
+			if (!matchedNode && isSpaceKey) {
+				e.preventDefault();
+				this.#handleKeyboardSelection();
+			}
 			return;
 		}
 
