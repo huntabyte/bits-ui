@@ -63,6 +63,8 @@ type CommandRootStateProps = WithRefProps<
 
 class CommandRootState {
 	#updateScheduled = false;
+	sortAfterTick = false;
+	sortAndFilterAfterTick = false;
 	allItems = new Set<string>();
 	allGroups = new Map<string, Set<string>>();
 	allIds = new Map<string, { value: string; keywords?: string[] }>();
@@ -477,7 +479,14 @@ class CommandRootState {
 		this.allIds.set(id, { value, keywords });
 		this._commandState.filtered.items.set(id, this.#score(value, keywords));
 
-		this.#sort();
+		// Schedule sorting to run after this tick when all items are added not each time an item is added
+		if (!this.sortAfterTick) {
+			this.sortAfterTick = true;
+			afterTick(() => {
+				this.#sort();
+				this.sortAfterTick = false;
+			});
+		}
 
 		return () => {
 			this.allIds.delete(id);
@@ -504,8 +513,15 @@ class CommandRootState {
 			}
 		}
 
-		this.#filterItems();
-		this.#sort();
+		// Schedule sorting and filtering to run after this tick when all items are added not each time an item is added
+		if (!this.sortAndFilterAfterTick) {
+			this.sortAndFilterAfterTick = true;
+			afterTick(() => {
+				this.#filterItems();
+				this.#sort();
+				this.sortAndFilterAfterTick = false;
+			});
+		}
 
 		this.#scheduleUpdate();
 		return () => {
