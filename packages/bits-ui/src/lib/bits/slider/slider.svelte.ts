@@ -12,7 +12,7 @@ import {
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
-import { getRangeStyles, getThumbStyles, getTickStyles } from "./helpers.js";
+import { getRangeStyles, getThumbScale, getThumbStyles, getTickStyles } from "./helpers.js";
 import {
 	getAriaDisabled,
 	getAriaOrientation,
@@ -25,7 +25,7 @@ import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
-import { snapValueToStep } from "$lib/internal/math.js";
+import { linearScale, snapValueToStep } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
 const SLIDER_THUMB_ATTR = "data-slider-thumb";
@@ -240,9 +240,19 @@ class SliderSingleRootState extends SliderBaseRootState {
 	thumbsPropsArr = $derived.by(() => {
 		const currValue = this.opts.value.current;
 		return Array.from({ length: 1 }, () => {
+			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
+			const thumbWidth = this.getAllThumbs()[0]?.offsetWidth ?? 10;
+			const trackWidth = this.opts.ref.current?.offsetWidth ?? 100;
+
+			const scale = linearScale(
+				[this.opts.min.current, this.opts.max.current],
+				getThumbScale(trackWidth, thumbWidth)
+			);
+
 			const thumbValue = currValue;
 			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
-			const style = getThumbStyles(this.direction, thumbPosition);
+
+			const style = getThumbStyles(this.direction, scale(thumbPosition));
 
 			return {
 				role: "slider",
@@ -559,9 +569,19 @@ class SliderMultiRootState extends SliderBaseRootState {
 				});
 			}
 
+			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
+			const thumbWidth = this.getAllThumbs()[0]?.offsetWidth ?? 10;
+			const trackWidth = this.opts.ref.current?.offsetWidth ?? 100;
+
+			const scale = linearScale(
+				[this.opts.min.current, this.opts.max.current],
+				getThumbScale(trackWidth, thumbWidth)
+			);
+
 			const thumbValue = currValue[i];
 			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
-			const style = getThumbStyles(this.direction, thumbPosition);
+
+			const style = getThumbStyles(this.direction, scale(thumbPosition));
 
 			return {
 				role: "slider",

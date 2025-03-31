@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { snapValueToStep } from "./math.js";
+import { linearScale, snapValueToStep } from "./math.js";
 
 describe("snapValueToStep", () => {
 	it("should snap value to nearest step", () => {
@@ -46,3 +46,11 @@ describe("snapValueToStep", () => {
 		expect(snapValueToStep(3.14159, 0, 10, 0.001)).toBe(3.142);
 	});
 });
+
+describe('linearScale', () => {
+	it('Correctly scales the value', () => {
+		expect(linearScale([0, 1], [0, 100])(0.5)).toBe(50);
+		expect(linearScale([0, 1], [10, 90])(0.5)).toBe(50);
+		expect(linearScale([0, 1], [0, 100])(0.33)).toBe(33);
+	});
+})
