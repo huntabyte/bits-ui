@@ -47,10 +47,10 @@ describe("snapValueToStep", () => {
 	});
 });
 
-describe('linearScale', () => {
-	it('Correctly scales the value', () => {
+describe("linearScale", () => {
+	it("Correctly scales the value", () => {
 		expect(linearScale([0, 1], [0, 100])(0.5)).toBe(50);
 		expect(linearScale([0, 1], [10, 90])(0.5)).toBe(50);
 		expect(linearScale([0, 1], [0, 100])(0.33)).toBe(33);
 	});
-})
+});
