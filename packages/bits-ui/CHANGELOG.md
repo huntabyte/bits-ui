@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.3.15
+
+### Patch Changes
+
+-   fix(Select): enable space support in typeahead logic ([#1335](https://github.com/huntabyte/bits-ui/pull/1335))
+
+-   fix(Command): command sort only once per tick ([#1321](https://github.com/huntabyte/bits-ui/pull/1321))
+
 ## 1.3.14
 
 ### Patch Changes
