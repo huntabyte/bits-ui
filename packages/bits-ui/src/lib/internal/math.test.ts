@@ -52,5 +52,11 @@ describe("linearScale", () => {
 		expect(linearScale([0, 1], [0, 100])(0.5)).toBe(50);
 		expect(linearScale([0, 1], [10, 90])(0.5)).toBe(50);
 		expect(linearScale([0, 1], [0, 100])(0.33)).toBe(33);
+		expect(linearScale([0, 1], [0, 100])(0)).toBe(0);
 	});
+
+	it("Is minimum when below minimum", () => {
+		expect(linearScale([0, 1], [0, 100])(2)).toBe(100);
+		expect(linearScale([0, 1], [0, 100])(-5)).toBe(0);
+	})
 });

@@ -37,6 +37,9 @@ export function snapValueToStep(value: number, min: number, max: number, step: n
  */
 export function linearScale([min1, max1]: [number, number], [min2, max2]: [number, number]) {
 	return function (value: number) {
+		if (value > max1) return max2;
+		if (value < min1) return min2;
+
 		const distance1 = max1 - min1;
 
 		const percentDistance = value / distance1;
