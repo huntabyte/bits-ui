@@ -75,12 +75,12 @@ class SliderBaseRootState {
 		// this assumes all thumbs are the same width
 		const activeThumb = this.getAllThumbs()[0];
 
-		// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
 		const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
 		const trackSize = isVertical
 			? this.opts.ref.current?.offsetHeight
 			: this.opts.ref.current?.offsetWidth;
 
+		// if either size is unknown fallback to a 0-100 scale
 		if (
 			isNaN(thumbSize ?? NaN) ||
 			isNaN(trackSize ?? NaN) ||
@@ -91,6 +91,7 @@ class SliderBaseRootState {
 		}
 
 		// the padding on either side
+		// half the width of the thumb
 		const percentPadding = (thumbSize! / 2 / trackSize!) * 100;
 
 		const min = percentPadding;
