@@ -30,17 +30,21 @@ export function snapValueToStep(value: number, min: number, max: number, step: n
 	return snappedValue;
 }
 
-// https://github.com/tmcw-up-for-adoption/simple-linear-scale/blob/master/index.js
-export function linearScale(domain: [number, number], range: [number, number], clamp = true) {
-	return function (value: number) {
-		if (domain[0] === domain[1] || range[0] === range[1]) {
-			return range[0];
-		}
+export function linearScale(
+	domain: [number, number],
+	range: [number, number],
+	clamp: boolean = true
+): (x: number) => number {
+	const [d0, d1] = domain;
+	const [r0, r1] = range;
 
-		const ratio = (range[1] - range[0]) / (domain[1] - domain[0]);
+	const slope = (r1 - r0) / (d1 - d0);
 
-		const result = range[0] + ratio * (value - domain[0]);
-
-		return clamp ? Math.min(range[1], Math.max(range[0], result)) : result;
+	return (x: number) => {
+		const result = r0 + slope * (x - d0);
+		if (!clamp) return result;
+		if (result > Math.max(r0, r1)) return Math.max(r0, r1);
+		if (result < Math.min(r0, r1)) return Math.min(r0, r1);
+		return result;
 	};
 }

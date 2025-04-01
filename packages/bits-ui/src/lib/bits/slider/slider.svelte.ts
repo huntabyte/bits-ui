@@ -76,23 +76,19 @@ class SliderBaseRootState {
 		const activeThumb = this.getAllThumbs()[0];
 
 		const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
+		// if thumb size is undefined or 0, fallback to a 0-100 scale
+		if (thumbSize === undefined || Number.isNaN(thumbSize) || thumbSize === 0) return [0, 100];
+
 		const trackSize = isVertical
 			? this.opts.ref.current?.offsetHeight
 			: this.opts.ref.current?.offsetWidth;
 
-		// if either size is unknown fallback to a 0-100 scale
-		if (
-			isNaN(thumbSize ?? NaN) ||
-			isNaN(trackSize ?? NaN) ||
-			thumbSize === 0 ||
-			trackSize === 0
-		) {
-			return [0, 100];
-		}
+		// if track size is undefined or 0, fallback to a 0-100 scale
+		if (trackSize === undefined || Number.isNaN(trackSize) || trackSize === 0) return [0, 100];
 
 		// the padding on either side
 		// half the width of the thumb
-		const percentPadding = (thumbSize! / 2 / trackSize!) * 100;
+		const percentPadding = (thumbSize / 2 / trackSize) * 100;
 
 		const min = percentPadding;
 		const max = 100 - percentPadding;

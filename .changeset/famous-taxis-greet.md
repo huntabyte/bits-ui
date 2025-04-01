@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix: Prevent Thumb overrun on `<Slider/>`
+fix(Slider): Prevent Thumb from exceeding track bounds
