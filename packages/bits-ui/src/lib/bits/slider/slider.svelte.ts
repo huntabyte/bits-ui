@@ -70,7 +70,7 @@ class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
-		const isVertical = ["tb", "bt"].includes(this.direction);
+		const isVertical = this.opts.orientation.current === "vertical";
 
 		// this assumes all thumbs are the same width
 		const activeThumb = this.getAllThumbs()[0];
