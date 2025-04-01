@@ -65,13 +65,3 @@ export function getTickStyles(
 
 	return style;
 }
-
-export function getThumbScale(trackWidth: number, thumbWidth: number): [number, number] {
-	// the padding on either side
-	const percentPadding = (thumbWidth / 2 / trackWidth) * 100;
-
-	const min = percentPadding;
-	const max = 100 - percentPadding;
-
-	return [min, max];
-}

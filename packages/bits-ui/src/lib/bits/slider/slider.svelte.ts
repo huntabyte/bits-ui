@@ -12,7 +12,7 @@ import {
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
-import { getRangeStyles, getThumbScale, getThumbStyles, getTickStyles } from "./helpers.js";
+import { getRangeStyles, getThumbStyles, getTickStyles } from "./helpers.js";
 import {
 	getAriaDisabled,
 	getAriaOrientation,
@@ -69,7 +69,7 @@ class SliderBaseRootState {
 		return Array.from(node.querySelectorAll<HTMLElement>(`[${SLIDER_THUMB_ATTR}]`));
 	};
 
-	getPositionFromValue = (thumbValue: number) => {
+	getThumbScale = (): [number, number] => {
 		const isVertical = ["tb", "bt"].includes(this.direction);
 
 		// this assumes all thumbs are the same width
@@ -81,16 +81,26 @@ class SliderBaseRootState {
 			? this.opts.ref.current?.offsetHeight
 			: this.opts.ref.current?.offsetWidth;
 
-		let thumbScale: [number, number] = [0, 100];
-
 		if (
-			!isNaN(thumbSize ?? NaN) &&
-			!isNaN(trackSize ?? NaN) &&
-			thumbSize !== 0 &&
-			trackSize !== 0
+			isNaN(thumbSize ?? NaN) ||
+			isNaN(trackSize ?? NaN) ||
+			thumbSize === 0 ||
+			trackSize === 0
 		) {
-			thumbScale = getThumbScale(trackSize!, thumbSize!);
+			return [0, 100];
 		}
+
+		// the padding on either side
+		const percentPadding = (thumbSize! / 2 / trackSize!) * 100;
+
+		const min = percentPadding;
+		const max = 100 - percentPadding;
+
+		return [min, max];
+	};
+
+	getPositionFromValue = (thumbValue: number) => {
+		const thumbScale = this.getThumbScale();
 
 		const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
 
