@@ -246,26 +246,26 @@ class SliderSingleRootState extends SliderBaseRootState {
 
 			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
 			const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
-			const trackSize = isVertical ? this.opts.ref.current?.offsetHeight : this.opts.ref.current?.offsetWidth;
+			const trackSize = isVertical
+				? this.opts.ref.current?.offsetHeight
+				: this.opts.ref.current?.offsetWidth;
 
-			const originalScale: [number, number] = [this.opts.min.current, this.opts.max.current];
-			let thumbScale: [number, number];
+			let thumbScale: [number, number] = [0, 100];
 
-			if (isNaN(thumbSize ?? NaN) || isNaN(trackSize ?? NaN)) {
-				thumbScale = originalScale;
-			} else {
-				thumbScale = getThumbScale(trackSize!, thumbSize!)
+			if (
+				!isNaN(thumbSize ?? NaN) &&
+				!isNaN(trackSize ?? NaN) &&
+				thumbSize !== 0 &&
+				trackSize !== 0
+			) {
+				thumbScale = getThumbScale(trackSize!, thumbSize!);
 			}
 
-			const scale = linearScale(
-				[this.opts.min.current, this.opts.max.current],
-				thumbScale
-			);
+			const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
 
 			const thumbValue = currValue;
-			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
 
-			const style = getThumbStyles(this.direction, scale(thumbPosition));
+			const style = getThumbStyles(this.direction, scale(thumbValue ?? 0));
 
 			return {
 				role: "slider",
@@ -588,26 +588,26 @@ class SliderMultiRootState extends SliderBaseRootState {
 
 			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
 			const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
-			const trackSize = isVertical ? this.opts.ref.current?.offsetHeight : this.opts.ref.current?.offsetWidth;
+			const trackSize = isVertical
+				? this.opts.ref.current?.offsetHeight
+				: this.opts.ref.current?.offsetWidth;
 
-			const originalScale: [number, number] = [this.opts.min.current, this.opts.max.current];
-			let thumbScale: [number, number];
+			let thumbScale: [number, number] = [0, 100];
 
-			if (isNaN(thumbSize ?? NaN) || isNaN(trackSize ?? NaN) || thumbSize === 0 || trackSize === 0) {
-				thumbScale = originalScale;
-			} else {
-				thumbScale = getThumbScale(trackSize!, thumbSize!)
+			if (
+				!isNaN(thumbSize ?? NaN) &&
+				!isNaN(trackSize ?? NaN) &&
+				thumbSize !== 0 &&
+				trackSize !== 0
+			) {
+				thumbScale = getThumbScale(trackSize!, thumbSize!);
 			}
 
-			const scale = linearScale(
-				[this.opts.min.current, this.opts.max.current],
-				thumbScale
-			);
+			const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
 
 			const thumbValue = currValue[i];
-			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
 
-			const style = getThumbStyles(this.direction, scale(thumbPosition));
+			const style = getThumbStyles(this.direction, scale(thumbValue ?? 0));
 
 			return {
 				role: "slider",

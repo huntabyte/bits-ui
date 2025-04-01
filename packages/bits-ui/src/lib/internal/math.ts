@@ -30,24 +30,17 @@ export function snapValueToStep(value: number, min: number, max: number, step: n
 	return snappedValue;
 }
 
-/** Returns a function that allows you to get a point on the second range relative to the first range
- *
- * @param param0
- * @param param1
- */
-export function linearScale([min1, max1]: [number, number], [min2, max2]: [number, number]) {
+// https://github.com/tmcw-up-for-adoption/simple-linear-scale/blob/master/index.js
+export function linearScale(domain: [number, number], range: [number, number], clamp = true) {
 	return function (value: number) {
-		if (value > max1) return max2;
-		if (value < min1) return min2;
+		if (domain[0] === domain[1] || range[0] === range[1]) {
+			return range[0];
+		}
 
-		const distance1 = max1 - min1;
+		const ratio = (range[1] - range[0]) / (domain[1] - domain[0]);
 
-		const percentDistance = value / distance1;
+		const result = range[0] + ratio * (value - domain[0]);
 
-		const distance2 = max2 - min2;
-
-		const newDistance = distance2 * percentDistance + min2;
-
-		return newDistance;
+		return clamp ? Math.min(range[1], Math.max(range[0], result)) : result;
 	};
 }

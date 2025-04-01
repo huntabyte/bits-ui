@@ -59,4 +59,8 @@ describe("linearScale", () => {
 		expect(linearScale([0, 1], [0, 100])(2)).toBe(100);
 		expect(linearScale([0, 1], [0, 100])(-5)).toBe(0);
 	});
+
+	it("Correctly handles negative scales", () => {
+		expect(linearScale([-1, 1], [0, 100])(0)).toBe(50);
+	});
 });
