@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.16
+
+### Patch Changes
+
+-   fix(Slider): Prevent Thumb from exceeding track bounds ([#1338](https://github.com/huntabyte/bits-ui/pull/1338))
+
 ## 1.3.15
 
 ### Patch Changes
