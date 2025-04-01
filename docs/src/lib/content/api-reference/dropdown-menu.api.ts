@@ -139,7 +139,7 @@ export const subContentStatic = createApiSchema<DropdownMenuSubContentStaticProp
 export const group = createApiSchema<DropdownMenuGroupPropsWithoutHTML>({
 	title: "Group",
 	description:
-		"A group of menu items. It should be passed an `aria-label` or have a child `Menu.GroupHeading` component to provide a label for a group of menu items.",
+		"A group of menu items. It should be passed an `aria-label` or have a child `DropdownMenu.GroupHeading` component to provide a label for a group of menu items.",
 	...menu.group,
 });
 
