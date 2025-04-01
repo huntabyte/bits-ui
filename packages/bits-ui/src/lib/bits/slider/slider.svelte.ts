@@ -69,6 +69,34 @@ class SliderBaseRootState {
 		return Array.from(node.querySelectorAll<HTMLElement>(`[${SLIDER_THUMB_ATTR}]`));
 	};
 
+	getPositionFromValue = (thumbValue: number) => {
+		const isVertical = ["tb", "bt"].includes(this.direction);
+
+		// this assumes all thumbs are the same width
+		const activeThumb = this.getAllThumbs()[0];
+
+		// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
+		const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
+		const trackSize = isVertical
+			? this.opts.ref.current?.offsetHeight
+			: this.opts.ref.current?.offsetWidth;
+
+		let thumbScale: [number, number] = [0, 100];
+
+		if (
+			!isNaN(thumbSize ?? NaN) &&
+			!isNaN(trackSize ?? NaN) &&
+			thumbSize !== 0 &&
+			trackSize !== 0
+		) {
+			thumbScale = getThumbScale(trackSize!, thumbSize!);
+		}
+
+		const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
+
+		return scale(thumbValue);
+	};
+
 	props = $derived.by(
 		() =>
 			({
@@ -230,42 +258,13 @@ class SliderSingleRootState extends SliderBaseRootState {
 		this.isActive = false;
 	};
 
-	getPositionFromValue = (thumbValue: number) => {
-		const min = this.opts.min.current;
-		const max = this.opts.max.current;
-
-		return ((thumbValue - min) / (max - min)) * 100;
-	};
-
 	thumbsPropsArr = $derived.by(() => {
 		const currValue = this.opts.value.current;
 		return Array.from({ length: 1 }, () => {
-			const isVertical = ["tb", "bt"].includes(this.direction);
-
-			const activeThumb = this.getAllThumbs()[0];
-
-			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
-			const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
-			const trackSize = isVertical
-				? this.opts.ref.current?.offsetHeight
-				: this.opts.ref.current?.offsetWidth;
-
-			let thumbScale: [number, number] = [0, 100];
-
-			if (
-				!isNaN(thumbSize ?? NaN) &&
-				!isNaN(trackSize ?? NaN) &&
-				thumbSize !== 0 &&
-				trackSize !== 0
-			) {
-				thumbScale = getThumbScale(trackSize!, thumbSize!);
-			}
-
-			const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
-
 			const thumbValue = currValue;
+			const thumbPosition = this.getPositionFromValue(thumbValue);
 
-			const style = getThumbStyles(this.direction, scale(thumbValue ?? 0));
+			const style = getThumbStyles(this.direction, thumbPosition);
 
 			return {
 				role: "slider",
@@ -514,13 +513,6 @@ class SliderMultiRootState extends SliderBaseRootState {
 		this.isActive = false;
 	};
 
-	getPositionFromValue = (thumbValue: number) => {
-		const min = this.opts.min.current;
-		const max = this.opts.max.current;
-
-		return ((thumbValue - min) / (max - min)) * 100;
-	};
-
 	getAllThumbs = () => {
 		const node = this.opts.ref.current;
 		if (!node) return [];
@@ -582,32 +574,10 @@ class SliderMultiRootState extends SliderBaseRootState {
 				});
 			}
 
-			const isVertical = ["tb", "bt"].includes(this.direction);
-
-			const activeThumb = this.getAllThumbs()[i];
-
-			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
-			const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
-			const trackSize = isVertical
-				? this.opts.ref.current?.offsetHeight
-				: this.opts.ref.current?.offsetWidth;
-
-			let thumbScale: [number, number] = [0, 100];
-
-			if (
-				!isNaN(thumbSize ?? NaN) &&
-				!isNaN(trackSize ?? NaN) &&
-				thumbSize !== 0 &&
-				trackSize !== 0
-			) {
-				thumbScale = getThumbScale(trackSize!, thumbSize!);
-			}
-
-			const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
-
 			const thumbValue = currValue[i];
+			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
 
-			const style = getThumbStyles(this.direction, scale(thumbValue ?? 0));
+			const style = getThumbStyles(this.direction, thumbPosition);
 
 			return {
 				role: "slider",
