@@ -240,13 +240,26 @@ class SliderSingleRootState extends SliderBaseRootState {
 	thumbsPropsArr = $derived.by(() => {
 		const currValue = this.opts.value.current;
 		return Array.from({ length: 1 }, () => {
+			const isVertical = ["tb", "bt"].includes(this.direction);
+
+			const activeThumb = this.getAllThumbs()[0];
+
 			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
-			const thumbWidth = this.getAllThumbs()[0]?.offsetWidth ?? 10;
-			const trackWidth = this.opts.ref.current?.offsetWidth ?? 100;
+			const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
+			const trackSize = isVertical ? this.opts.ref.current?.offsetHeight : this.opts.ref.current?.offsetWidth;
+
+			const originalScale: [number, number] = [this.opts.min.current, this.opts.max.current];
+			let thumbScale: [number, number];
+
+			if (isNaN(thumbSize ?? NaN) || isNaN(trackSize ?? NaN)) {
+				thumbScale = originalScale;
+			} else {
+				thumbScale = getThumbScale(trackSize!, thumbSize!)
+			}
 
 			const scale = linearScale(
 				[this.opts.min.current, this.opts.max.current],
-				getThumbScale(trackWidth, thumbWidth)
+				thumbScale
 			);
 
 			const thumbValue = currValue;
@@ -569,13 +582,26 @@ class SliderMultiRootState extends SliderBaseRootState {
 				});
 			}
 
+			const isVertical = ["tb", "bt"].includes(this.direction);
+
+			const activeThumb = this.getAllThumbs()[i];
+
 			// the fallback values here don't really matter just placeholders to prevent divide by 0 errors
-			const thumbWidth = this.getAllThumbs()[0]?.offsetWidth ?? 10;
-			const trackWidth = this.opts.ref.current?.offsetWidth ?? 100;
+			const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
+			const trackSize = isVertical ? this.opts.ref.current?.offsetHeight : this.opts.ref.current?.offsetWidth;
+
+			const originalScale: [number, number] = [this.opts.min.current, this.opts.max.current];
+			let thumbScale: [number, number];
+
+			if (isNaN(thumbSize ?? NaN) || isNaN(trackSize ?? NaN) || thumbSize === 0 || trackSize === 0) {
+				thumbScale = originalScale;
+			} else {
+				thumbScale = getThumbScale(trackSize!, thumbSize!)
+			}
 
 			const scale = linearScale(
 				[this.opts.min.current, this.opts.max.current],
-				getThumbScale(trackWidth, thumbWidth)
+				thumbScale
 			);
 
 			const thumbValue = currValue[i];
