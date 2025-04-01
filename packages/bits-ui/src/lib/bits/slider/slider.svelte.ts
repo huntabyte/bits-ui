@@ -25,7 +25,7 @@ import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import type { Direction, Orientation } from "$lib/shared/index.js";
-import { snapValueToStep } from "$lib/internal/math.js";
+import { linearScale, snapValueToStep } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
 const SLIDER_THUMB_ATTR = "data-slider-thumb";
@@ -67,6 +67,41 @@ class SliderBaseRootState {
 		const node = this.opts.ref.current;
 		if (!node) return [];
 		return Array.from(node.querySelectorAll<HTMLElement>(`[${SLIDER_THUMB_ATTR}]`));
+	};
+
+	getThumbScale = (): [number, number] => {
+		const isVertical = this.opts.orientation.current === "vertical";
+
+		// this assumes all thumbs are the same width
+		const activeThumb = this.getAllThumbs()[0];
+
+		const thumbSize = isVertical ? activeThumb?.offsetHeight : activeThumb?.offsetWidth;
+		// if thumb size is undefined or 0, fallback to a 0-100 scale
+		if (thumbSize === undefined || Number.isNaN(thumbSize) || thumbSize === 0) return [0, 100];
+
+		const trackSize = isVertical
+			? this.opts.ref.current?.offsetHeight
+			: this.opts.ref.current?.offsetWidth;
+
+		// if track size is undefined or 0, fallback to a 0-100 scale
+		if (trackSize === undefined || Number.isNaN(trackSize) || trackSize === 0) return [0, 100];
+
+		// the padding on either side
+		// half the width of the thumb
+		const percentPadding = (thumbSize / 2 / trackSize) * 100;
+
+		const min = percentPadding;
+		const max = 100 - percentPadding;
+
+		return [min, max];
+	};
+
+	getPositionFromValue = (thumbValue: number) => {
+		const thumbScale = this.getThumbScale();
+
+		const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
+
+		return scale(thumbValue);
 	};
 
 	props = $derived.by(
@@ -230,18 +265,11 @@ class SliderSingleRootState extends SliderBaseRootState {
 		this.isActive = false;
 	};
 
-	getPositionFromValue = (thumbValue: number) => {
-		const min = this.opts.min.current;
-		const max = this.opts.max.current;
-
-		return ((thumbValue - min) / (max - min)) * 100;
-	};
-
 	thumbsPropsArr = $derived.by(() => {
 		const currValue = this.opts.value.current;
 		return Array.from({ length: 1 }, () => {
 			const thumbValue = currValue;
-			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
+			const thumbPosition = this.getPositionFromValue(thumbValue);
 			const style = getThumbStyles(this.direction, thumbPosition);
 
 			return {
@@ -279,10 +307,16 @@ class SliderSingleRootState extends SliderBaseRootState {
 		return Array.from({ length: count }, (_, i) => {
 			const tickPosition = i * (step / difference) * 100;
 
+			const scale = linearScale(
+				[this.opts.min.current, this.opts.max.current],
+				this.getThumbScale()
+			);
+
 			const isFirst = i === 0;
 			const isLast = i === count - 1;
 			const offsetPercentage = isFirst ? 0 : isLast ? -100 : -50;
-			const style = getTickStyles(this.direction, tickPosition, offsetPercentage);
+
+			const style = getTickStyles(this.direction, scale(tickPosition), offsetPercentage);
 			const tickValue = min + i * step;
 			const bounded = tickValue <= currValue;
 
@@ -489,13 +523,6 @@ class SliderMultiRootState extends SliderBaseRootState {
 			this.opts.onValueCommit.current(untrack(() => this.opts.value.current));
 		}
 		this.isActive = false;
-	};
-
-	getPositionFromValue = (thumbValue: number) => {
-		const min = this.opts.min.current;
-		const max = this.opts.max.current;
-
-		return ((thumbValue - min) / (max - min)) * 100;
 	};
 
 	getAllThumbs = () => {
