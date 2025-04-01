@@ -273,7 +273,6 @@ class SliderSingleRootState extends SliderBaseRootState {
 		return Array.from({ length: 1 }, () => {
 			const thumbValue = currValue;
 			const thumbPosition = this.getPositionFromValue(thumbValue);
-
 			const style = getThumbStyles(this.direction, thumbPosition);
 
 			return {
@@ -586,7 +585,6 @@ class SliderMultiRootState extends SliderBaseRootState {
 
 			const thumbValue = currValue[i];
 			const thumbPosition = this.getPositionFromValue(thumbValue ?? 0);
-
 			const style = getThumbStyles(this.direction, thumbPosition);
 
 			return {
