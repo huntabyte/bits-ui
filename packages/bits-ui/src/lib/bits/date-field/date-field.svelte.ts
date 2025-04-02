@@ -662,7 +662,7 @@ export class DateFieldInputState {
 class DateFieldHiddenInputState {
 	shouldRender = $derived.by(() => this.root.name !== "");
 	isoValue = $derived.by(() =>
-		this.root.value.current ? this.root.value.current.toString() : ""
+		this.root.value.current ? this.root.value.current.toAbsoluteString() : ""
 	);
 
 	constructor(readonly root: DateFieldRootState) {}

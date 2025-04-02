@@ -646,7 +646,7 @@ export class RangeCalendarCellState {
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
-				"data-value": this.opts.date.current.toString(),
+				"data-value": this.opts.date.current.toAbsoluteString(),
 				"data-disabled": getDataDisabled(
 					this.isDisabled ||
 						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)

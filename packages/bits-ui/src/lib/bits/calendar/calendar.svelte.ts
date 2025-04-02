@@ -549,7 +549,7 @@ class CalendarCellState {
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
 				"data-focused": this.isFocusedDate ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
-				"data-value": this.opts.date.current.toString(),
+				"data-value": this.opts.date.current.toAbsoluteString(),
 				"data-disabled": getDataDisabled(
 					this.isDisabled ||
 						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
