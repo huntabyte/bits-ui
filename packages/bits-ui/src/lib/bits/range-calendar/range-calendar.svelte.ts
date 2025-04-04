@@ -44,6 +44,7 @@ import {
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
 import {
 	areAllDaysBetweenValid,
+	getDateValueType,
 	isAfter,
 	isBefore,
 	isBetweenInclusive,
@@ -646,7 +647,8 @@ export class RangeCalendarCellState {
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
-				"data-value": this.opts.date.current.toAbsoluteString(),
+				"data-value": this.opts.date.current.toString(),
+				"data-type": getDateValueType(this.opts.date.current),
 				"data-disabled": getDataDisabled(
 					this.isDisabled ||
 						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
