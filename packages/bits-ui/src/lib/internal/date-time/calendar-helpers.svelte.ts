@@ -15,6 +15,7 @@ import {
 	getNextLastDayOfWeek,
 	isAfter,
 	isBefore,
+	parseAnyDateValue,
 	parseStringToDateValue,
 	toDate,
 } from "./utils.js";
@@ -731,15 +732,17 @@ export function pickerOpenFocus(e: Event) {
 	}
 }
 
-export function getFirstNonDisabledDateInView(calendarRef: HTMLElement): CalendarDate | undefined {
+export function getFirstNonDisabledDateInView(calendarRef: HTMLElement): DateValue | undefined {
 	if (!isBrowser) return;
 	const daysInView = Array.from(
 		calendarRef.querySelectorAll<HTMLElement>("[data-bits-day]:not([aria-disabled=true])")
 	);
 	if (daysInView.length === 0) return;
-	const value = daysInView[0]?.getAttribute("data-value");
-	if (!value) return;
-	return parseDate(value);
+	const element = daysInView[0];
+	const value = element?.getAttribute("data-value");
+	const type = element?.getAttribute("data-type");
+	if (!value || !type) return;
+	return parseAnyDateValue(value, type);
 }
 
 /**

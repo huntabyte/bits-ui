@@ -43,7 +43,7 @@ import {
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
-import { isBefore, toDate } from "$lib/internal/date-time/utils.js";
+import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 
 type CalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -550,6 +550,7 @@ class CalendarCellState {
 				"data-focused": this.isFocusedDate ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
 				"data-value": this.opts.date.current.toString(),
+				"data-type": getDateValueType(this.opts.date.current),
 				"data-disabled": getDataDisabled(
 					this.isDisabled ||
 						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
