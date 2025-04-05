@@ -128,9 +128,9 @@ class AvatarFallbackState {
 		useRefById(opts);
 	}
 
-	style = $derived.by(() => {
-		return this.root.opts.loadingStatus.current === "loaded" ? { display: "none" } : undefined;
-	});
+	style = $derived.by(() =>
+		this.root.opts.loadingStatus.current === "loaded" ? { display: "none" } : undefined
+	);
 
 	props = $derived.by(
 		() =>
