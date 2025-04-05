@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.3.17
+
+### Patch Changes
+
+-   fix(Pagination): ensure `range.start` starts at 1 instead of 0 ([#1354](https://github.com/huntabyte/bits-ui/pull/1354))
+
+-   fix(Avatar): fix invalid display style being applied to fallback ([#1352](https://github.com/huntabyte/bits-ui/pull/1352))
+
 ## 1.3.16
 
 ### Patch Changes
