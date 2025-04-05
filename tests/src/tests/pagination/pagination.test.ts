@@ -40,30 +40,36 @@ it("should have no  accessibility violations", async () => {
 });
 
 it("should navigate previous and Next button accordingly", async () => {
-	const { root, prev, next, user } = setup();
+	const t = setup();
 
-	expect(getValue(root)).toBe("1");
-	await user.click(prev);
-	expect(getValue(root)).toBe("1");
-	await user.click(next);
-	expect(getValue(root)).toBe("2");
-	await user.click(next);
-	expect(getValue(root)).toBe("3");
-	await user.click(prev);
-	expect(getValue(root)).toBe("2");
+	expect(getValue(t.root)).toBe("1");
+	await t.user.click(t.prev);
+	expect(getValue(t.root)).toBe("1");
+	await t.user.click(t.next);
+	expect(getValue(t.root)).toBe("2");
+	await t.user.click(t.next);
+	expect(getValue(t.root)).toBe("3");
+	await t.user.click(t.prev);
+	expect(getValue(t.root)).toBe("2");
 });
 
 it("should change on clicked button", async () => {
-	const { getByTestId, user } = setup();
+	const t = setup();
+	const page2 = getPageButton(t.root, 2);
+	expect(getValue(t.root)).toBe("1");
+	await t.user.click(page2);
+	expect(getValue(t.root)).toBe("2");
 
-	const root = getByTestId("root");
-	const page2 = getPageButton(root, 2);
+	const page10 = getPageButton(t.root, 10);
+	await t.user.click(page10);
+	expect(getValue(t.root)).toBe("10");
+});
 
-	expect(getValue(root)).toBe("1");
-	await user.click(page2);
-	expect(getValue(root)).toBe("2");
-
-	const page10 = getPageButton(root, 10);
-	await user.click(page10);
-	expect(getValue(root)).toBe("10");
+it("should display the correct range of items being displayed", async () => {
+	const t = setup();
+	expect(t.getByTestId("range-start")).toHaveTextContent("1");
+	expect(t.getByTestId("range-end")).toHaveTextContent("10");
+	await t.user.click(t.next);
+	expect(t.getByTestId("range-start")).toHaveTextContent("11");
+	expect(t.getByTestId("range-end")).toHaveTextContent("20");
 });

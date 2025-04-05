@@ -35,7 +35,7 @@ class PaginationRootState {
 	range = $derived.by(() => {
 		const start = (this.opts.page.current - 1) * this.opts.perPage.current;
 		const end = Math.min(start + this.opts.perPage.current, this.opts.count.current);
-		return { start, end };
+		return { start: start + 1, end };
 	});
 	pages = $derived.by(() =>
 		getPageItems({
