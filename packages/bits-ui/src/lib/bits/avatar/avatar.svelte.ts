@@ -128,12 +128,14 @@ class AvatarFallbackState {
 		useRefById(opts);
 	}
 
+	style = $derived.by(() => {
+		this.root.opts.loadingStatus.current === "loaded" ? { display: "none" } : undefined;
+	});
+
 	props = $derived.by(
 		() =>
 			({
-				style: {
-					display: this.root.opts.loadingStatus.current === "loaded" ? "none" : undefined,
-				},
+				style: this.style,
 				"data-status": this.root.opts.loadingStatus.current,
 				[AVATAR_FALLBACK_ATTR]: "",
 			}) as const

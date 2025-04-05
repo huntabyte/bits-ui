@@ -57,4 +57,10 @@ describe("Rendering Behavior", () => {
 		expect(avatar).not.toBeVisible();
 		expect(t.getByText("HJ")).toBeVisible();
 	});
+
+	it("should not have invalid style on the fallback if the image is not loaded", async () => {
+		const t = setup({ src: "invalid" });
+		const fallback = t.getByText("HJ");
+		expect(fallback).not.toHaveStyle({ display: "undefined" });
+	});
 });
