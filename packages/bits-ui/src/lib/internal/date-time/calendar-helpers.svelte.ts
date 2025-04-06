@@ -1,10 +1,8 @@
 import {
-	CalendarDate,
 	type DateValue,
 	endOfMonth,
 	isSameDay,
 	isSameMonth,
-	parseDate,
 	startOfMonth,
 } from "@internationalized/date";
 import { type ReadableBox, type WritableBox, afterTick, styleToString } from "svelte-toolbelt";
