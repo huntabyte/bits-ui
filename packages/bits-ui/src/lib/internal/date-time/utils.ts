@@ -93,6 +93,26 @@ export function toDate(dateValue: DateValue, tz: string = getLocalTimeZone()) {
 	}
 }
 
+export function getDateValueType(date: DateValue): string {
+	if (date instanceof CalendarDate) return "date";
+	if (date instanceof CalendarDateTime) return "datetime";
+	if (date instanceof ZonedDateTime) return "zoneddatetime";
+	throw new Error("Unknown date type");
+}
+
+export function parseAnyDateValue(value: string, type: string): DateValue {
+	switch (type) {
+		case "date":
+			return parseDate(value);
+		case "datetime":
+			return parseDateTime(value);
+		case "zoneddatetime":
+			return parseZonedDateTime(value);
+		default:
+			throw new Error(`Unknown date type: ${type}`);
+	}
+}
+
 function isCalendarDateTime(dateValue: DateValue): dateValue is CalendarDateTime {
 	return dateValue instanceof CalendarDateTime;
 }
