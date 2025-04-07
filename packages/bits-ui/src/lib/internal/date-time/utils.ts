@@ -102,10 +102,14 @@ export function getDateValueType(date: DateValue): string {
 
 export function parseAnyDateValue(value: string, type: string): DateValue {
 	switch (type) {
-		case "date": return parseDate(value);
-		case "datetime": return parseDateTime(value);
-		case "zoneddatetime": return parseZonedDateTime(value);
-		default: throw new Error(`Unknown date type: ${type}`);
+		case "date":
+			return parseDate(value);
+		case "datetime":
+			return parseDateTime(value);
+		case "zoneddatetime":
+			return parseZonedDateTime(value);
+		default:
+			throw new Error(`Unknown date type: ${type}`);
 	}
 }
 
