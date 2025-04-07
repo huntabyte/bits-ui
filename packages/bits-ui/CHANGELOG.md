@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.3.18
+
+### Patch Changes
+
+-   fix: bug with date formatting in date-value attribute ([#1347](https://github.com/huntabyte/bits-ui/pull/1347))
+
 ## 1.3.17
 
 ### Patch Changes
