@@ -45,7 +45,7 @@
 	}
 
 	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
+		const defaultValue = type === "single" ? undefined : [];
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		value = defaultValue as any;
 	}
