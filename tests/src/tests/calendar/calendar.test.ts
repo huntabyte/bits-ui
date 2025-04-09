@@ -118,6 +118,42 @@ describe("type='single'", () => {
 			expect(getSelectedDay(t.calendar)).toHaveTextContent("21");
 			expect(getSelectedDays(t.calendar).length).toBe(1);
 		});
+
+		it("should persist time when selecting a date (CalendarDateTime)", async () => {
+			const t = setup({ value: calendarDateTime });
+			const value = t.getByTestId("value");
+			expect(value).toHaveTextContent(calendarDateTime.toString());
+			await t.user.click(t.getByTestId("set-time"));
+			expect(value).toHaveTextContent(
+				calendarDateTime
+					.set({ hour: 15, minute: 15, second: 15, millisecond: 15 })
+					.toString()
+			);
+			const firstDayInMonth = t.getByTestId("date-1-1");
+			await t.user.click(firstDayInMonth);
+			expect(value).toHaveTextContent(
+				calendarDateTime
+					.set({ day: 1, hour: 15, minute: 15, second: 15, millisecond: 15 })
+					.toString()
+			);
+		});
+
+		it("should persist time when selecting a date (ZonedDateTime)", async () => {
+			const t = setup({ value: zonedDateTime });
+			const value = t.getByTestId("value");
+			expect(value).toHaveTextContent(zonedDateTime.toString());
+			await t.user.click(t.getByTestId("set-time"));
+			expect(value).toHaveTextContent(
+				zonedDateTime.set({ hour: 15, minute: 15, second: 15, millisecond: 15 }).toString()
+			);
+			const firstDayInMonth = t.getByTestId("date-1-1");
+			await t.user.click(firstDayInMonth);
+			expect(value).toHaveTextContent(
+				zonedDateTime
+					.set({ day: 1, hour: 15, minute: 15, second: 15, millisecond: 15 })
+					.toString()
+			);
+		});
 	});
 
 	describe("Navigation", () => {

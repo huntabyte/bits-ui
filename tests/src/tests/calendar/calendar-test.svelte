@@ -1,4 +1,5 @@
 <script lang="ts" module>
+	import { CalendarDateTime, ZonedDateTime } from "@internationalized/date";
 	import { Calendar, type CalendarSingleRootProps } from "bits-ui";
 	export type CalendarSingleTestProps = CalendarSingleRootProps;
 </script>
@@ -70,4 +71,14 @@
 	<button onclick={() => changeValue("day")} data-testid="add-day"> Add Day </button>
 	<button onclick={() => changeValue("month")} data-testid="add-month">Add Month</button>
 	<button onclick={() => changeValue("year")} data-testid="add-year">Add Year</button>
+	<button
+		data-testid="set-time"
+		onclick={() => {
+			if (value instanceof CalendarDateTime || value instanceof ZonedDateTime) {
+				value = value.set({ hour: 15, minute: 15, second: 15, millisecond: 15 });
+			}
+		}}
+	>
+		Set time
+	</button>
 </main>

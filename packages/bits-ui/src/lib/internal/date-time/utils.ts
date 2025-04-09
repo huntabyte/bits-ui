@@ -121,7 +121,7 @@ export function isZonedDateTime(dateValue: DateValue): dateValue is ZonedDateTim
 	return dateValue instanceof ZonedDateTime;
 }
 
-export function hasTime(dateValue: DateValue) {
+export function hasTime(dateValue: DateValue): dateValue is CalendarDateTime | ZonedDateTime {
 	return isCalendarDateTime(dateValue) || isZonedDateTime(dateValue);
 }
 

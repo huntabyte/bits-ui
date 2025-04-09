@@ -32,6 +32,7 @@ import {
 	createMonths,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
+	getDateWithPreviousTime,
 	getIsNextButtonDisabled,
 	getIsPrevButtonDisabled,
 	getWeekdays,
@@ -343,9 +344,8 @@ export class CalendarRootState {
 			return value.some((d) => isSameDay(d, date));
 		} else if (!value) {
 			return false;
-		} else {
-			return isSameDay(value, date);
 		}
+		return isSameDay(value, date);
 	}
 
 	shiftFocus(node: HTMLElement, add: number) {
@@ -362,11 +362,13 @@ export class CalendarRootState {
 	}
 
 	handleCellClick(_: Event, date: DateValue) {
-		const readonly = this.opts.readonly.current;
-		if (readonly) return;
-		const isDateDisabled = this.opts.isDateDisabled.current;
-		const isDateUnavailable = this.opts.isDateUnavailable.current;
-		if (isDateDisabled?.(date) || isDateUnavailable?.(date)) return;
+		if (this.opts.readonly.current) return;
+		if (
+			this.opts.isDateDisabled.current?.(date) ||
+			this.opts.isDateUnavailable.current?.(date)
+		) {
+			return;
+		}
 
 		const prev = this.opts.value.current;
 		const multiple = this.opts.type.current === "multiple";
@@ -374,21 +376,19 @@ export class CalendarRootState {
 			if (Array.isArray(prev) || prev === undefined) {
 				this.opts.value.current = this.handleMultipleUpdate(prev, date);
 			}
-		} else {
-			if (!Array.isArray(prev)) {
-				const next = this.handleSingleUpdate(prev, date);
-				if (!next) {
-					this.announcer.announce("Selected date is now empty.", "polite", 5000);
-				} else {
-					this.announcer.announce(
-						`Selected Date: ${this.formatter.selectedDate(next, false)}`,
-						"polite"
-					);
-				}
-				this.opts.value.current = next;
-				if (next !== undefined) {
-					this.opts.onDateSelect?.current?.();
-				}
+		} else if (!Array.isArray(prev)) {
+			const next = this.handleSingleUpdate(prev, date);
+			if (!next) {
+				this.announcer.announce("Selected date is now empty.", "polite", 5000);
+			} else {
+				this.announcer.announce(
+					`Selected Date: ${this.formatter.selectedDate(next, false)}`,
+					"polite"
+				);
+			}
+			this.opts.value.current = getDateWithPreviousTime(next, prev);
+			if (next !== undefined) {
+				this.opts.onDateSelect?.current?.();
 			}
 		}
 	}
