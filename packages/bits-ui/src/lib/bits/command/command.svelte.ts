@@ -61,6 +61,21 @@ type CommandRootStateProps = WithRefProps<
 		}>
 >;
 
+const defaultState = {
+	/** Value of the search query */
+	search: "",
+	/** Currently selected item value */
+	value: "",
+	filtered: {
+		/** The count of all visible items. */
+		count: 0,
+		/** Map from visible item id to its search store. */
+		items: new Map<string, number>(),
+		/** Set of groups with at least one visible item. */
+		groups: new Set<string>(),
+	},
+};
+
 class CommandRootState {
 	#updateScheduled = false;
 	sortAfterTick = false;
@@ -74,9 +89,9 @@ class CommandRootState {
 	inputNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	// published state that the components and other things can react to
-	commandState = $state.raw<CommandState>(null!);
+	commandState = $state.raw<CommandState>(defaultState);
 	// internal state that we mutate in batches and publish to the `state` at once
-	_commandState = $state<CommandState>(null!);
+	_commandState = $state<CommandState>(defaultState);
 	// whether the search has had a value other than ""
 	searchHasHadValue = $state(false);
 
@@ -126,23 +141,10 @@ class CommandRootState {
 	}
 
 	constructor(readonly opts: CommandRootStateProps) {
-		const defaultState = {
-			/** Value of the search query */
-			search: "",
-			/** Currently selected item value */
-			value: this.opts.value.current ?? "",
-			filtered: {
-				/** The count of all visible items. */
-				count: 0,
-				/** Map from visible item id to its search store. */
-				items: new Map<string, number>(),
-				/** Set of groups with at least one visible item. */
-				groups: new Set<string>(),
-			},
-		};
+		const defaults = { ...this._commandState, value: this.opts.value.current ?? "" };
 
-		this._commandState = defaultState;
-		this.commandState = defaultState;
+		this._commandState = defaults;
+		this.commandState = defaults;
 
 		useRefById(opts);
 
