@@ -31,11 +31,14 @@ import {
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
 import type { APISchema } from "$lib/types/index.js";
+import { TooltipStateDataAttr } from "./extended-types/tooltip/index.js";
 
 const openClosedDataAttr = createEnumDataAttr({
 	name: "state",
-	description: "Whether the tooltip is open or closed.",
-	options: ["open", "closed"],
+	description:
+		"Whether/how the tooltip is open or closed. When open, if there is a delay, the value will be 'delayed-open', otherwise it will be 'instant-open'. When closed, the value will be 'closed'.",
+	options: ["delayed-open", "instant-open", "closed"],
+	definition: TooltipStateDataAttr,
 });
 
 const delayDuration = createNumberProp({
