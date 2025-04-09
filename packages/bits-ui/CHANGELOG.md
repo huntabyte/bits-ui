@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.3.19
+
+### Patch Changes
+
+-   fix(Calendar): ensure time set outside persists when new day is selected ([#1359](https://github.com/huntabyte/bits-ui/pull/1359))
+
+-   fix(Command): ensure filtered is always defined, even if not filtering ([#1363](https://github.com/huntabyte/bits-ui/pull/1363))
+
+-   fix(Calendar): ensure default value is not a string ([#1362](https://github.com/huntabyte/bits-ui/pull/1362))
+
 ## 1.3.18
 
 ### Patch Changes
