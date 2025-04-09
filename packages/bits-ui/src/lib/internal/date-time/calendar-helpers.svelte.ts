@@ -11,6 +11,7 @@ import {
 	getDaysInMonth,
 	getLastFirstDayOfWeek,
 	getNextLastDayOfWeek,
+	hasTime,
 	isAfter,
 	isBefore,
 	parseAnyDateValue,
@@ -796,4 +797,19 @@ export function useEnsureNonDisabledPlaceholder({
 			}
 		}
 	);
+}
+
+export function getDateWithPreviousTime(date: DateValue | undefined, prev: DateValue | undefined) {
+	if (!date || !prev) return date;
+
+	if (hasTime(date) && hasTime(prev)) {
+		return date.set({
+			hour: prev.hour,
+			minute: prev.minute,
+			millisecond: prev.millisecond,
+			second: prev.second,
+		});
+	}
+
+	return date;
 }
