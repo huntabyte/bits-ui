@@ -196,7 +196,7 @@ export function useFocusScope({
 
 	function handleClose(prevFocusedElement: HTMLElement | null) {
 		const destroyEvent = AutoFocusOnDestroyEvent.createEvent();
-		onCloseAutoFocus.current(destroyEvent);
+		onCloseAutoFocus.current?.(destroyEvent);
 
 		const shouldIgnore = ctx.ignoreCloseAutoFocus;
 		afterSleep(0, () => {
