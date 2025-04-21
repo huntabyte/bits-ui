@@ -305,10 +305,10 @@ class SliderSingleRootState extends SliderBaseRootState {
 		const currValue = this.opts.value.current;
 
 		return Array.from({ length: count }, (_, i) => {
-			const tickPosition = i * (step / difference) * 100;
+			const tickPosition = i * step;
 
 			const scale = linearScale(
-				[this.opts.min.current, this.opts.max.current],
+				[0, (count - 1) * step],
 				this.getThumbScale()
 			);
 
@@ -623,12 +623,18 @@ class SliderMultiRootState extends SliderBaseRootState {
 		const currValue = this.opts.value.current;
 
 		return Array.from({ length: count }, (_, i) => {
-			const tickPosition = i * (step / difference) * 100;
+			const tickPosition = i * step;
+
+			const scale = linearScale(
+				[0, (count - 1) * step],
+				this.getThumbScale()
+			);
 
 			const isFirst = i === 0;
 			const isLast = i === count - 1;
 			const offsetPercentage = isFirst ? 0 : isLast ? -100 : -50;
-			const style = getTickStyles(this.direction, tickPosition, offsetPercentage);
+
+			const style = getTickStyles(this.direction, scale(tickPosition), offsetPercentage);
 			const tickValue = min + i * step;
 			const bounded =
 				currValue.length === 1
