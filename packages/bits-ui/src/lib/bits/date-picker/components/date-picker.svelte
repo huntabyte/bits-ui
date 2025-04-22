@@ -11,6 +11,7 @@
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import type { Month } from "$lib/shared/index.js";
 
 	let {
 		open = $bindable(false),
@@ -48,7 +49,10 @@
 		children,
 		monthFormat = "long",
 		yearFormat = "numeric",
+		onVisibleMonthsChange = noop,
 	}: DatePickerRootProps = $props();
+
+	let months = $state<Month<DateValue>[]>([]);
 
 	const defaultPlaceholder = getDefaultDate({
 		granularity,
@@ -127,6 +131,13 @@
 		numberOfMonths: boxWith(() => numberOfMonths),
 		initialFocus: boxWith(() => initialFocus),
 		onDateSelect: boxWith(() => onDateSelect),
+		months: boxWith(
+			() => months,
+			(v) => {
+				months = v;
+				onVisibleMonthsChange(v);
+			}
+		),
 		defaultPlaceholder,
 		monthFormat: boxWith(() => monthFormat),
 		yearFormat: boxWith(() => yearFormat),
