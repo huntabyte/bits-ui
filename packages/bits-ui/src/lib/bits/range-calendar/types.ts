@@ -198,6 +198,11 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * only part of the value is changed/completed.
 		 */
 		onEndValueChange?: OnChangeFn<DateValue | undefined>;
+
+		/**
+		 * A callback function called when the currently displayed month(s) changes.
+		 */
+		onVisibleMonthsChange?: OnChangeFn<Month<DateValue>[]>;
 	},
 	RangeCalendarRootSnippetProps
 >;
