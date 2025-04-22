@@ -8,7 +8,7 @@
 	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
-	import type { DateRange } from "$lib/shared/index.js";
+	import type { DateRange, Month } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
 
@@ -45,6 +45,7 @@
 		closeOnRangeSelect = true,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
+		onVisibleMonthsChange = noop,
 		validate = noop,
 		errorMessageId,
 		child,
@@ -54,6 +55,7 @@
 
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
+	let months = $state.raw<Month<DateValue>[]>([]);
 
 	function handleDefaultValue() {
 		if (value !== undefined) return;
@@ -149,6 +151,13 @@
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
 		onRangeSelect: box.with(() => onRangeSelect),
+		months: box.with(
+			() => months,
+			(v) => {
+				months = v;
+				onVisibleMonthsChange(v);
+			}
+		),
 		startValue: box.with(
 			() => startValue,
 			(v) => {

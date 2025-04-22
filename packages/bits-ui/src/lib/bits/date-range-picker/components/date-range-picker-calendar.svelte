@@ -39,6 +39,7 @@
 		placeholder: dateRangePickerRootState.opts.placeholder,
 		value: dateRangePickerRootState.opts.value,
 		onRangeSelect: dateRangePickerRootState.opts.onRangeSelect,
+		months: dateRangePickerRootState.opts.months,
 		startValue: dateRangePickerRootState.opts.startValue,
 		endValue: dateRangePickerRootState.opts.endValue,
 		defaultPlaceholder: dateRangePickerRootState.opts.defaultPlaceholder,

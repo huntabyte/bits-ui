@@ -1,11 +1,12 @@
 import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
-import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
+import { describe, it, vi } from "vitest";
+import { CalendarDate, CalendarDateTime, DateValue, toZoned } from "@internationalized/date";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 import CalendarTest, { type CalendarSingleTestProps } from "./calendar-test.svelte";
 import CalendarMultiTest, { type CalendarMultiTestProps } from "./calendar-multi-test.svelte";
+import { Month } from "bits-ui";
 
 const kbd = getTestKbd();
 
@@ -300,6 +301,21 @@ describe("type='single'", () => {
 			await t.user.click(addMonthBtn);
 			await t.user.click(addMonthBtn);
 			expect(heading).toHaveTextContent("May 1981");
+		});
+
+		it("should call onVisibleMonthsChange when next clicked", async () => {
+			const onVisibleMonthsChange = vi.fn();
+			const t = setup({ value: calendarDate, onVisibleMonthsChange });
+			const heading = t.getByTestId("heading");
+			const nextBtn = t.getByTestId("next-button");
+			for (const month of months) {
+				expect(onVisibleMonthsChange).toHaveBeenCalled();
+				onVisibleMonthsChange.mockReset();
+				expect(heading).toHaveTextContent(`${month} 1980`);
+				await t.user.click(nextBtn);
+			}
+			expect(onVisibleMonthsChange).toHaveBeenCalled();
+			expect(heading).toHaveTextContent("January 1981");
 		});
 	});
 

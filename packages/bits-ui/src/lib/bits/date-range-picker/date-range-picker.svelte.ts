@@ -2,12 +2,13 @@ import type { DateValue } from "@internationalized/date";
 import { Context } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { DateMatcher, DateRange, SegmentPart } from "$lib/shared/index.js";
-import type { Granularity, HourCycle, WeekStartsOn } from "$lib/shared/date/types.js";
+import type { Granularity, HourCycle, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 
 type DateRangePickerRootStateProps = WritableBoxedValues<{
 	value: DateRange;
 	startValue: DateValue | undefined;
 	endValue: DateValue | undefined;
+	months: Month<DateValue>[];
 	open: boolean;
 	placeholder: DateValue;
 }> &
