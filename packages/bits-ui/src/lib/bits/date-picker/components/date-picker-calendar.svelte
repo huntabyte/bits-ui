@@ -41,6 +41,7 @@
 		minValue: datePickerRootState.opts.minValue,
 		placeholder: datePickerRootState.opts.placeholder,
 		value: datePickerRootState.opts.value,
+		months: datePickerRootState.opts.months,
 		onDateSelect: datePickerRootState.opts.onDateSelect,
 		initialFocus: datePickerRootState.opts.initialFocus,
 		defaultPlaceholder: datePickerRootState.opts.defaultPlaceholder,
