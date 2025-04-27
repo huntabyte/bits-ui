@@ -87,7 +87,7 @@ class SelectBaseRootState {
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
 		if (node && (this.isUsingKeyboard || initial)) {
-			node.scrollIntoView({ block: "nearest" });
+			node.scrollIntoView({ block: this.opts.scrollAlignment.current });
 		}
 	}
 
@@ -1227,7 +1227,7 @@ class SelectScrollDownButtonState {
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
 					const activeItem = this.root.highlightedNode;
-					activeItem?.scrollIntoView({ block: "nearest" });
+					activeItem?.scrollIntoView({ block: this.root.opts.scrollAlignment.current });
 				});
 			}
 		);
