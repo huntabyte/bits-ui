@@ -214,7 +214,7 @@ You can use the `orientation` prop to change the orientation of the slider, whic
 </Slider.Root>
 ```
 
-## RTL
+## RTL Support
 
 You can use the `dir` prop to change the reading direction of the slider, which defaults to `"ltr"`.
 
