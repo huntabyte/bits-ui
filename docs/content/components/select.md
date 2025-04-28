@@ -4,7 +4,7 @@ description: Enables users to choose from a list of options presented in a dropd
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -316,6 +316,17 @@ If you wish to set a minimum/maximum height for the select content, you should a
 The `Select.ScrollUpButton` and `Select.ScrollDownButton` components are used to render the scroll up and down buttons when the select content is larger than the viewport.
 
 You must use the `Select.Viewport` component when using the scroll buttons.
+
+The initial and subsequent scroll delays can be controlled using the `delay` prop on the buttons. For example, we can use the `cubicOut` easing function from Svelte to
+create a smooth scrolling effect that speeds up over time.
+
+<ComponentPreviewV2 name="select-demo-auto-scroll-delay" componentName="Select">
+
+{#snippet preview()}
+<SelectDemoAutoScrollDelay />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Native Scrolling/Overflow
 

@@ -35,6 +35,7 @@ export { default as LabelDemo } from "./label-demo.svelte";
 export { default as LinkPreviewDemo } from "./link-preview-demo.svelte";
 export { default as LinkPreviewDemoTransition } from "./link-preview-demo-transition.svelte";
 export { default as SelectDemo } from "./select-demo.svelte";
+export { default as SelectDemoAutoScrollDelay } from "./select-demo-auto-scroll-delay.svelte";
 export { default as SelectDemoCustom } from "./select-demo-custom.svelte";
 export { default as SelectDemoCustomAnchor } from "./select-demo-custom-anchor.svelte";
 export { default as SelectDemoMultiple } from "./select-demo-multiple.svelte";
