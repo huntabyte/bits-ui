@@ -1111,9 +1111,10 @@ class SelectViewportState {
 	);
 }
 
-type SelectScrollButtonImplStateProps = WithRefProps & ReadableBoxedValues<{
-	delay: (tick: number) => number;
-}>;
+type SelectScrollButtonImplStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		delay: (tick: number) => number;
+	}>;
 
 class SelectScrollButtonImplState {
 	root: SelectBaseRootState;
@@ -1170,8 +1171,11 @@ class SelectScrollButtonImplState {
 		if (this.autoScrollTimer !== null) return;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
-			this.autoScrollTimer = window.setTimeout(() => autoScroll(tick + 1), this.opts.delay.current(tick));
-		}
+			this.autoScrollTimer = window.setTimeout(
+				() => autoScroll(tick + 1),
+				this.opts.delay.current(tick)
+			);
+		};
 		this.autoScrollTimer = window.setTimeout(() => autoScroll(1), this.opts.delay.current(0));
 	}
 

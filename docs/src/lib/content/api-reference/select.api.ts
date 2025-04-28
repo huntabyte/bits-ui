@@ -311,12 +311,13 @@ export const viewport = createApiSchema<SelectViewportPropsWithoutHTML>({
 const scrollButtonProps = {
 	delay: createFunctionProp({
 		definition: DelayProp,
-		description: "Controls the initial delay (tick 0) and delay between auto-scrolls in milliseconds.",
+		description:
+			"Controls the initial delay (tick 0) and delay between auto-scrolls in milliseconds.",
 		stringDefinition: "(tick: number) => number",
 		default: "() => 50",
 	}),
-	...withChildProps({ elType: "HTMLDivElement" })
-}
+	...withChildProps({ elType: "HTMLDivElement" }),
+};
 
 export const scrollUpButton = createApiSchema<SelectScrollUpButtonPropsWithoutHTML>({
 	title: "ScrollUpButton",

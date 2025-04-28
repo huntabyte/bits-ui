@@ -270,7 +270,7 @@ export type SelectScrollButtonPropsWithoutHTML = WithChild<{
 	 * @param tick current tick number
 	 */
 	delay?: (tick: number) => number;
-}>
+}>;
 
 export type SelectScrollUpButtonPropsWithoutHTML = SelectScrollButtonPropsWithoutHTML;
 
