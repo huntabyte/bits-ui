@@ -48,7 +48,7 @@ Use `bind:page` for simple, automatic state synchronization:
 
 <button onclick={() => (myPage = 2)}> Go to page 2 </button>
 
-<Pagination.Root bind:pressed={myPage}>
+<Pagination.Root bind:page={myPage}>
 	<!-- ...-->
 </Pagination.Root>
 ```
