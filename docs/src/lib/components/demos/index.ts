@@ -57,6 +57,7 @@ export { default as ScrollAreaDemoCustom } from "./scroll-area-demo-custom.svelt
 export { default as SeparatorDemo } from "./separator-demo.svelte";
 export { default as SliderDemo } from "./slider-demo.svelte";
 export { default as SliderDemoMultiple } from "./slider-demo-multiple.svelte";
+export { default as SliderDemoTicks } from "./slider-demo-ticks.svelte";
 export { default as SwitchDemo } from "./switch-demo.svelte";
 export { default as SwitchDemoCustom } from "./switch-demo-custom.svelte";
 export { default as TabsDemo } from "./tabs-demo.svelte";
