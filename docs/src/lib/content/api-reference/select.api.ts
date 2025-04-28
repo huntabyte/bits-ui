@@ -37,7 +37,7 @@ import type {
 } from "bits-ui";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
 import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
-import { ItemsProp } from "./extended-types/select/index.js";
+import { DelayProp, ItemsProp } from "./extended-types/select/index.js";
 import {
 	NoopProp,
 	OnChangeStringOrArrayProp,
@@ -308,11 +308,21 @@ export const viewport = createApiSchema<SelectViewportPropsWithoutHTML>({
 	],
 });
 
+const scrollButtonProps = {
+	delay: createFunctionProp({
+		definition: DelayProp,
+		description: "Controls the initial delay (tick 0) and delay between auto-scrolls in milliseconds.",
+		stringDefinition: "(tick: number) => number",
+		default: "() => 50",
+	}),
+	...withChildProps({ elType: "HTMLDivElement" })
+}
+
 export const scrollUpButton = createApiSchema<SelectScrollUpButtonPropsWithoutHTML>({
 	title: "ScrollUpButton",
 	description:
 		"An optional scroll up button element to improve the scroll experience within the select. Should be used in conjunction with the `select.Viewport` component.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
+	props: scrollButtonProps,
 	dataAttributes: [
 		createDataAttrSchema({
 			name: "select-scroll-up-button",
@@ -325,7 +335,7 @@ export const scrollDownButton = createApiSchema<SelectScrollDownButtonPropsWitho
 	title: "ScrollDownButton",
 	description:
 		"An optional scroll down button element to improve the scroll experience within the select. Should be used in conjunction with the `select.Viewport` component.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
+	props: scrollButtonProps,
 	dataAttributes: [
 		createDataAttrSchema({
 			name: "select-scroll-down-button",
