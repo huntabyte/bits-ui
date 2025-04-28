@@ -253,8 +253,8 @@ You can opt-out of this behavior by instead using the `Combobox.ContentStatic` c
 					<Combobox.GroupHeading />
 					<Combobox.Item />
 				</Combobox.Group>
-				<Combobox.ScrollDownButton />
 			</Combobox.Viewport>
+			<Combobox.ScrollDownButton />
 		</Combobox.ContentStatic>
 	</Combobox.Portal>
 </Combobox.Root>
