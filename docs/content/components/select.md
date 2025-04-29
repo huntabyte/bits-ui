@@ -42,6 +42,9 @@ The Select component is composed of several sub-components, each with a specific
 -   **Separator**: A visual separator between items.
 -   **Content**: The dropdown container that displays the items. It uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger.
 -   **ContentStatic** (Optional): An alternative to the Content component, that enables you to opt-out of Floating UI and position the content yourself.
+-   **Viewport**: The visible area of the dropdown content, used to determine the size and scroll behavior.
+-   **ScrollUpButton**: A button that scrolls the content up when the content is larger than the viewport.
+-   **ScrollDownButton**: A button that scrolls the content down when the content is larger than the viewport.
 -   **Arrow**: An arrow element that points to the trigger when using the `Combobox.Content` component.
 
 ## Structure
@@ -317,8 +320,11 @@ The `Select.ScrollUpButton` and `Select.ScrollDownButton` components are used to
 
 You must use the `Select.Viewport` component when using the scroll buttons.
 
-The initial and subsequent scroll delays can be controlled using the `delay` prop on the buttons. For example, we can use the `cubicOut` easing function from Svelte to
-create a smooth scrolling effect that speeds up over time.
+### Custom Scroll Delay
+
+The initial and subsequent scroll delays can be controlled using the `delay` prop on the buttons.
+
+For example, we can use the [`cubicOut`](https://svelte.dev/docs/svelte/svelte-easing#cubicOut) easing function from Svelte to create a smooth scrolling effect that speeds up over time.
 
 <ComponentPreviewV2 name="select-demo-auto-scroll-delay" componentName="Select">
 
@@ -330,7 +336,7 @@ create a smooth scrolling effect that speeds up over time.
 
 ## Native Scrolling/Overflow
 
-If you don't want to use the scroll buttons and prefer to use the standard scrollbar/overflow behavior, you can omit the `Select.Scroll[Up|Down]Button` components and the `Select.Viewport` component.
+If you don't want to use the [scroll buttons](#scroll-updown-buttons) and prefer to use the standard scrollbar/overflow behavior, you can omit the `Select.Scroll[Up|Down]Button` components and the `Select.Viewport` component.
 
 You'll need to set a height on the `Select.Content` component and appropriate `overflow` styles to enable scrolling.
 

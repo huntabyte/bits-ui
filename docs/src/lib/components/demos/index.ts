@@ -17,6 +17,7 @@ export { default as CheckboxDemoGroup } from "./checkbox-demo-group.svelte";
 export { default as CollapsibleDemo } from "./collapsible-demo.svelte";
 export { default as CollapsibleDemoTransitions } from "./collapsible-demo-transitions.svelte";
 export { default as ComboboxDemo } from "./combobox-demo.svelte";
+export { default as ComboboxDemoAutoScrollDelay } from "./combobox-demo-auto-scroll-delay.svelte";
 export { default as ComboboxDemoTransition } from "./combobox-demo-transition.svelte";
 export { default as CommandDemo } from "./command-demo.svelte";
 export { default as CommandDemoDialog } from "./command-demo-dialog.svelte";
