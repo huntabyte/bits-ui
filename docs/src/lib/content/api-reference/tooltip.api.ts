@@ -2,6 +2,7 @@ import type {
 	TooltipArrowPropsWithoutHTML,
 	TooltipContentPropsWithoutHTML,
 	TooltipContentStaticPropsWithoutHTML,
+	TooltipPortalPropsWithoutHTML,
 	TooltipProviderPropsWithoutHTML,
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
@@ -27,6 +28,7 @@ import {
 	escapeLayerProps,
 	floatingProps,
 	forceMountProp,
+	portalProps,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -221,4 +223,11 @@ export const arrow = createApiSchema<TooltipArrowPropsWithoutHTML>({
 	],
 });
 
-export const tooltip = [provider, root, trigger, content, contentStatic, arrow];
+const portal = createApiSchema<TooltipPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"When used, will render the tooltip content into the body or custom `to` element when open",
+	props: portalProps,
+});
+
+export const tooltip = [provider, root, trigger, content, contentStatic, arrow, portal];

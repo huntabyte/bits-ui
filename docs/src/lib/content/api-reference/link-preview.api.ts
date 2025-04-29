@@ -2,6 +2,7 @@ import type {
 	LinkPreviewArrowPropsWithoutHTML,
 	LinkPreviewContentPropsWithoutHTML,
 	LinkPreviewContentStaticPropsWithoutHTML,
+	LinkPreviewPortalPropsWithoutHTML,
 	LinkPreviewRootPropsWithoutHTML,
 	LinkPreviewTriggerPropsWithoutHTML,
 } from "bits-ui";
@@ -22,6 +23,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	portalProps,
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
@@ -159,4 +161,11 @@ export const arrow = createApiSchema<LinkPreviewArrowPropsWithoutHTML>({
 	],
 });
 
-export const linkPreview = [root, trigger, content, contentStatic, arrow];
+const portal = createApiSchema<LinkPreviewPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"When used, will render the link preview content into the body or custom `to` element when open",
+	props: portalProps,
+});
+
+export const linkPreview = [root, trigger, content, contentStatic, arrow, portal];

@@ -3,6 +3,7 @@ import type {
 	PopoverClosePropsWithoutHTML,
 	PopoverContentPropsWithoutHTML,
 	PopoverContentStaticPropsWithoutHTML,
+	PopoverPortalPropsWithoutHTML,
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
@@ -23,6 +24,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -170,4 +172,11 @@ export const arrow = createApiSchema<PopoverArrowPropsWithoutHTML>({
 	],
 });
 
-export const popover = [root, trigger, content, contentStatic, close, arrow];
+export const portal = createApiSchema<PopoverPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"When used, will render the popover content into the body or custom `to` element when open",
+	props: portalProps,
+});
+
+export const popover = [root, trigger, content, contentStatic, close, arrow, portal];

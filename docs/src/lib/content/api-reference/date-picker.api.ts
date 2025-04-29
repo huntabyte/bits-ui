@@ -32,7 +32,7 @@ import {
 	createPropSchema,
 	withChildProps,
 } from "./helpers.js";
-import { content, trigger } from "./popover.api.js";
+import { content, portal, trigger } from "./popover.api.js";
 import { OnOpenChangeProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 
@@ -158,6 +158,7 @@ export const datePicker = [
 	segment,
 	trigger,
 	content,
+	portal,
 	calendar,
 	header,
 	prevButton,

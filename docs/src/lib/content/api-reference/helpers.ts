@@ -240,7 +240,7 @@ export const portalProps = {
 	to: createUnionProp({
 		definition: PortalToProp,
 		options: ["string", "HTMLElement", "null", "undefined"],
-		description: `Where to render the content when it is open. Defaults to the body. Can be disabled by passing \`null\``,
+		description: `Where to render the content when it is open. Defaults to the body. Can be disabled by passing \`null\`.`,
 		default: "body",
 	}),
 	disabled: createBooleanProp({
