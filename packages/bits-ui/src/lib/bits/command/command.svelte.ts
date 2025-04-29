@@ -468,7 +468,8 @@ class CommandRootState {
 	 * @param keywords - Optional search boost terms
 	 * @returns Cleanup function
 	 */
-	registerValue(id: string, value: string, keywords?: string[]): () => void {
+	registerValue(value: string, keywords?: string[]): () => void {
+		console.log("registering value", value);
 		if (!(value && value === this.allIds.get(value)?.value)) {
 			this.allIds.set(value, { value, keywords });
 		}
@@ -686,6 +687,10 @@ class CommandEmptyState {
 		readonly opts: CommandEmptyStateProps,
 		readonly root: CommandRootState
 	) {
+		$effect(() => {
+			console.log(this.root._commandState.filtered.items);
+		});
+
 		$effect.pre(() => {
 			this.#isInitialRender = false;
 		});
@@ -745,13 +750,13 @@ class CommandGroupContainerState {
 		$effect(() => {
 			if (this.opts.value.current) {
 				this.trueValue = this.opts.value.current;
-				return this.root.registerValue(this.trueValue, this.opts.value.current);
+				return this.root.registerValue(this.opts.value.current);
 			} else if (this.headingNode && this.headingNode.textContent) {
 				this.trueValue = this.headingNode.textContent.trim().toLowerCase();
-				return this.root.registerValue(this.trueValue, this.trueValue);
+				return this.root.registerValue(this.trueValue);
 			} else if (this.opts.ref.current?.textContent) {
 				this.trueValue = this.opts.ref.current.textContent.trim().toLowerCase();
-				return this.root.registerValue(this.trueValue, this.trueValue);
+				return this.root.registerValue(this.trueValue);
 			}
 		});
 	}
@@ -942,17 +947,15 @@ class CommandItemState {
 		);
 
 		watch([() => this.opts.value.current, () => this.opts.ref.current], () => {
-			if (!this.opts.ref.current) return;
-			if (!this.opts.value.current && this.opts.ref.current.textContent) {
+			if (!this.opts.value.current && this.opts.ref.current?.textContent) {
 				this.trueValue = this.opts.ref.current.textContent.trim();
 			}
 
 			this.root.registerValue(
-				this.opts.id.current,
 				this.trueValue,
 				opts.keywords.current.map((kw) => kw.trim())
 			);
-			this.opts.ref.current.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
+			this.opts.ref.current?.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
 		});
 
 		// bindings
