@@ -55,7 +55,7 @@ Here's an overview of how the Command component is structured in code:
 </script>
 
 <Command.Root>
-	<Combobox.Input />
+	<Command.Input />
 	<Command.List>
 		<Command.Viewport>
 			<Command.Empty />
