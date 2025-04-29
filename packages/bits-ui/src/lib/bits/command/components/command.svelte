@@ -36,8 +36,10 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				value = v;
-				onValueChange(v);
+				if (value !== v) {
+					value = v;
+					onValueChange(v);
+				}
 			}
 		),
 		vimBindings: box.with(() => vimBindings),
