@@ -469,7 +469,6 @@ class CommandRootState {
 	 * @returns Cleanup function
 	 */
 	registerValue(value: string, keywords?: string[]): () => void {
-		console.log("registering value", value);
 		if (!(value && value === this.allIds.get(value)?.value)) {
 			this.allIds.set(value, { value, keywords });
 		}
@@ -687,10 +686,6 @@ class CommandEmptyState {
 		readonly opts: CommandEmptyStateProps,
 		readonly root: CommandRootState
 	) {
-		$effect(() => {
-			console.log(this.root._commandState.filtered.items);
-		});
-
 		$effect.pre(() => {
 			this.#isInitialRender = false;
 		});
