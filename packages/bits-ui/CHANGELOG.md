@@ -1,5 +1,17 @@
 # bits-ui
 
+## 1.4.1
+
+### Patch Changes
+
+-   fix(Multiple Components): ensure default values are set if entire spread props object is reassigned outside the component ([#1401](https://github.com/huntabyte/bits-ui/pull/1401))
+
+-   fix(Command): ensure `onValueChange` only fires when the value changes ([#1403](https://github.com/huntabyte/bits-ui/pull/1403))
+
+-   fix(Select): ensure typeahead ignores leading and trailing spaces ([#1399](https://github.com/huntabyte/bits-ui/pull/1399))
+
+-   fix(Select): disabled items should not be highlighted ([#1399](https://github.com/huntabyte/bits-ui/pull/1399))
+
 ## 1.4.0
 
 ### Minor Changes
