@@ -40,17 +40,17 @@
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
+	const defaultPlaceholder = getDefaultDate({
+		defaultValue: value?.start,
+	});
+
 	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return placeholder;
-		const defaultPlaceholder = getDefaultDate({
-			defaultValue: value?.start,
-		});
+		if (placeholder !== undefined) return;
 		placeholder = defaultPlaceholder;
-		return defaultPlaceholder;
 	}
 
 	// SSR
-	const defaultPlaceholder = handleDefaultPlaceholder();
+	handleDefaultPlaceholder();
 
 	watch.pre(
 		() => placeholder,

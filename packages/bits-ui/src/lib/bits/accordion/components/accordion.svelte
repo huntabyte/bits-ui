@@ -20,13 +20,18 @@
 		...restProps
 	}: AccordionRootProps = $props();
 
-	value === undefined && (value = type === "single" ? "" : []);
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? "" : [];
+	}
+
+	// SSR
+	handleDefaultValue();
 
 	watch.pre(
 		() => value,
 		() => {
-			if (value !== undefined) return;
-			value = type === "single" ? "" : [];
+			handleDefaultValue();
 		}
 	);
 

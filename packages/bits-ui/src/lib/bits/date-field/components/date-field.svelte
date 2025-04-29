@@ -30,6 +30,7 @@
 
 	function handleDefaultPlaceholder() {
 		if (placeholder !== undefined) return;
+
 		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultValue: value,

@@ -75,19 +75,18 @@
 		}
 	);
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return placeholder;
-		const defaultPlaceholder = getDefaultDate({
-			granularity,
-			defaultValue: value?.start,
-		});
+	const defaultPlaceholder = getDefaultDate({
+		granularity,
+		defaultValue: value?.start,
+	});
 
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
 		placeholder = defaultPlaceholder;
-		return defaultPlaceholder;
 	}
 
 	// SSR
-	const defaultPlaceholder = handleDefaultPlaceholder();
+	handleDefaultPlaceholder();
 
 	/**
 	 * Covers an edge case where when a spread props object is reassigned,

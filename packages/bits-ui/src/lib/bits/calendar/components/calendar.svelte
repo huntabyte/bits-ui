@@ -6,6 +6,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { watch } from "runed";
 
 	let {
 		child,
@@ -40,29 +41,35 @@
 		defaultValue: value,
 	});
 
-	if (placeholder === undefined) {
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
 		placeholder = defaultPlaceholder;
 	}
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? undefined : [];
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		value = defaultValue as any;
+	// SSR
+	handleDefaultPlaceholder();
+
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
+
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? undefined : [];
 	}
 
-	$effect.pre(() => {
-		if (placeholder === undefined) {
-			placeholder = defaultPlaceholder;
-		}
-	});
+	// SSR
+	handleDefaultValue();
 
-	$effect.pre(() => {
-		if (value === undefined) {
-			const defaultValue = type === "single" ? undefined : [];
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			value = defaultValue as any;
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
 		}
-	});
+	);
 
 	const rootState = useCalendarRoot({
 		id: box.with(() => id),
