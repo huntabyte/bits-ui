@@ -15,7 +15,7 @@ export type CommandState = {
 	filtered: {
 		/** The count of all visible items. */
 		count: number;
-		/** Map from visible item id to its search store. */
+		/** Map from visible item value to its search store. */
 		items: Map<string, number>;
 		/** Set of groups with at least one visible item. */
 		groups: Set<string>;
