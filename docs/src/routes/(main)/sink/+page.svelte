@@ -1,12 +1,6 @@
 <script lang="ts">
 	import DemoContainer from "$lib/components/demo-container.svelte";
 	import { Command } from "bits-ui";
-	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
-	import CodeBlock from "phosphor-svelte/lib/CodeBlock";
-	import Palette from "phosphor-svelte/lib/Palette";
-	import RadioButton from "phosphor-svelte/lib/RadioButton";
-	import Sticker from "phosphor-svelte/lib/Sticker";
-	import Textbox from "phosphor-svelte/lib/Textbox";
 
 	type Option = {
 		value: number;
