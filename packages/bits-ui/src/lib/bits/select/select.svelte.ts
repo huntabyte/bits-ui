@@ -977,7 +977,10 @@ class SelectItemState {
 				"data-value": this.opts.value.current,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-highlighted":
-					this.root.highlightedValue === this.opts.value.current ? "" : undefined,
+					this.root.highlightedValue === this.opts.value.current &&
+					!this.opts.disabled.current
+						? ""
+						: undefined,
 				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
 				"data-label": this.opts.label.current,
 				[this.root.bitsAttrs.item]: "",
