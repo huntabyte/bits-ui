@@ -118,15 +118,50 @@ export function useFocusScope({
 		}
 	}
 
-	// When the focused element gets removed from the DOM, browsers move focus
-	// back to the document.body. In this case, we move focus to the container
-	// to keep focus trapped correctly.
-	// instead of leaning on document.activeElement, we use lastFocusedElement to check
-	// if the element still exists inside the container,
-	// if not then we focus to the container
-	function handleMutations(_: MutationRecord[]) {
-		const lastFocusedElementExists = ref.current?.contains(lastFocusedElement);
-		if (!lastFocusedElementExists && ref.current) {
+	/**
+	 * Handles DOM mutations within the container. Specifically checks if the
+	 * last known focused element inside the container has been removed. If so,
+	 * and focus has escaped the container (likely moved to document.body),
+	 * it refocuses the container itself to maintain the trap.
+	 */
+	function handleMutations(mutations: MutationRecord[]) {
+		// if there's no record of a last focused el, or container isn't mounted, bail
+		if (!lastFocusedElement || !ref.current) return;
+
+		// track if the last focused element was removed
+		let elementWasRemoved = false;
+
+		for (const mutation of mutations) {
+			// we only care about mutations where nodes were removed
+			if (mutation.type === "childList" && mutation.removedNodes.length > 0) {
+				// check if any removed nodes are the last focused element or contain it
+				for (const removedNode of mutation.removedNodes) {
+					if (removedNode === lastFocusedElement) {
+						elementWasRemoved = true;
+						// found it directly
+						break;
+					}
+					// contains() only works on elements, so we need to check nodeType
+					if (
+						removedNode.nodeType === Node.ELEMENT_NODE &&
+						(removedNode as Element).contains(lastFocusedElement)
+					) {
+						elementWasRemoved = true;
+						// descendant found,
+						break;
+					}
+				}
+			}
+
+			// if we've confirmed removal in any mutation, bail
+			if (elementWasRemoved) break;
+		}
+
+		/**
+		 * If the element was removed and focus is now outside the container,
+		 * (e.g., browser moved it to body), refocus the container.
+		 */
+		if (elementWasRemoved && ref.current && !ref.current.contains(document.activeElement)) {
 			focus(ref.current);
 		}
 	}
@@ -184,11 +219,11 @@ export function useFocusScope({
 			if (!mountEvent.defaultPrevented) {
 				afterTick(() => {
 					if (!container) return;
-					focusFirst(removeLinks(getTabbableCandidates(container)), { select: true });
+					const result = focusFirst(removeLinks(getTabbableCandidates(container)), {
+						select: true,
+					});
 
-					if (document.activeElement === prevFocusedElement) {
-						focus(container);
-					}
+					if (!result) focus(container);
 				});
 			}
 		}

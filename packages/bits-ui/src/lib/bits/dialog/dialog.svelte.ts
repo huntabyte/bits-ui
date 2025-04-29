@@ -29,7 +29,6 @@ type DialogRootStateProps = WritableBoxedValues<{
 
 class DialogRootState {
 	triggerNode = $state<HTMLElement | null>(null);
-	titleNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	contentId = $state<string | undefined>(undefined);
@@ -195,7 +194,6 @@ class DialogTitleState {
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
-				this.root.titleNode = node;
 				this.root.titleId = node?.id;
 			},
 			deps: () => this.root.opts.open.current,
@@ -206,7 +204,7 @@ class DialogTitleState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "heading",
+				// role: "heading",
 				"aria-level": this.opts.level.current,
 				[this.root.attrs.title]: "",
 				...this.root.sharedProps,
@@ -267,7 +265,7 @@ class DialogContentState {
 				role: this.root.opts.variant.current === "alert-dialog" ? "alertdialog" : "dialog",
 				"aria-modal": "true",
 				"aria-describedby": this.root.descriptionId,
-				"aria-labelledby": this.root.titleId,
+				// "aria-labelledby": this.root.titleId,
 				[this.root.attrs.content]: "",
 				style: {
 					pointerEvents: "auto",
