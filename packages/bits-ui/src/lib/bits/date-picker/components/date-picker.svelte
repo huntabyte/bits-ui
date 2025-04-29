@@ -9,6 +9,7 @@
 	import { useDateFieldRoot } from "$lib/bits/date-field/date-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { watch } from "runed";
 
 	let {
 		open = $bindable(false),
@@ -45,14 +46,31 @@
 		children,
 	}: DatePickerRootProps = $props();
 
-	const defaultPlaceholder = getDefaultDate({
-		granularity,
-		defaultValue: value,
-	});
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return placeholder;
+		const defaultPlaceholder = getDefaultDate({
+			granularity,
+			defaultValue: value,
+		});
 
-	if (placeholder === undefined) {
 		placeholder = defaultPlaceholder;
+		return defaultPlaceholder;
 	}
+
+	// SSR
+	const defaultPlaceholder = handleDefaultPlaceholder();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make placeholder
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
 
 	function onDateSelect() {
 		if (closeOnDateSelect) {

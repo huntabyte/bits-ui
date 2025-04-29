@@ -4,6 +4,7 @@
 	import type { AccordionRootProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { watch } from "runed";
 
 	let {
 		disabled = false,
@@ -20,6 +21,14 @@
 	}: AccordionRootProps = $props();
 
 	value === undefined && (value = type === "single" ? "" : []);
+
+	watch.pre(
+		() => value,
+		() => {
+			if (value !== undefined) return;
+			value = type === "single" ? "" : [];
+		}
+	);
 
 	const rootState = useAccordionRoot({
 		type,

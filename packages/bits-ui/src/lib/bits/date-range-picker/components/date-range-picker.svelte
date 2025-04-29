@@ -10,6 +10,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { watch } from "runed";
 
 	let {
 		open = $bindable(false),
@@ -54,17 +55,51 @@
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
-	if (value === undefined) {
+	function handleDefaultValue() {
+		if (value !== undefined) return;
 		value = { start: undefined, end: undefined };
 	}
-	const defaultPlaceholder = getDefaultDate({
-		granularity,
-		defaultValue: value?.start,
-	});
 
-	if (placeholder === undefined) {
+	// SSR
+	handleDefaultValue();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make value
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return placeholder;
+		const defaultPlaceholder = getDefaultDate({
+			granularity,
+			defaultValue: value?.start,
+		});
+
 		placeholder = defaultPlaceholder;
+		return defaultPlaceholder;
 	}
+
+	// SSR
+	const defaultPlaceholder = handleDefaultPlaceholder();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make placeholder
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
 
 	function onRangeSelect() {
 		if (closeOnRangeSelect) {

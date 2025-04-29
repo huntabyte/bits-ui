@@ -5,6 +5,7 @@
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useSelectRoot } from "$lib/bits/select/select.svelte.js";
 	import ListboxHiddenInput from "$lib/bits/select/components/select-hidden-input.svelte";
+	import { watch } from "runed";
 
 	let {
 		value = $bindable(),
@@ -26,6 +27,14 @@
 		const defaultValue = type === "single" ? "" : [];
 		value = defaultValue;
 	}
+
+	watch.pre(
+		() => value,
+		() => {
+			if (value !== undefined) return;
+			value = type === "single" ? "" : [];
+		}
+	);
 
 	const rootState = useSelectRoot({
 		type,

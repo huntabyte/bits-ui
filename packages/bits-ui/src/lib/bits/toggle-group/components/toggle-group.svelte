@@ -5,6 +5,7 @@
 	import { useToggleGroupRoot } from "../toggle-group.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { watch } from "runed";
 
 	let {
 		id = useId(),
@@ -21,11 +22,20 @@
 		...restProps
 	}: ToggleGroupRootProps = $props();
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
-
-		value = defaultValue;
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? "" : [];
 	}
+
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
 
 	const rootState = useToggleGroupRoot({
 		id: box.with(() => id),

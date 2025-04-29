@@ -5,6 +5,7 @@
 	import { useSelectRoot } from "../select.svelte.js";
 	import type { SelectRootProps } from "../types.js";
 	import SelectHiddenInput from "./select-hidden-input.svelte";
+	import { watch } from "runed";
 
 	let {
 		value = $bindable(),
@@ -22,11 +23,20 @@
 		children,
 	}: SelectRootProps = $props();
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
-
-		value = defaultValue;
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? "" : [];
 	}
+
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
 
 	const rootState = useSelectRoot({
 		type,
