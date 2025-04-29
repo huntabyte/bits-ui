@@ -56,7 +56,7 @@
 			<Select.Viewport class="p-1">
 				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="rounded-button data-highlighted:bg-muted outline-hidden data-disabled:opacity-50 flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm  capitalize"
+						class="rounded-button data-highlighted:bg-muted outline-hidden data-disabled:opacity-50 flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
 						value={theme.value}
 						label={theme.label}
 						disabled={theme.disabled}
@@ -65,7 +65,7 @@
 							{theme.label}
 							{#if selected}
 								<div class="ml-auto">
-									<Check />
+									<Check aria-label="check" />
 								</div>
 							{/if}
 						{/snippet}
