@@ -6,6 +6,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import type { Month } from "$lib/shared/index.js";
 
 	let {
 		child,
@@ -33,8 +34,11 @@
 		type,
 		disableDaysOutsideMonth = true,
 		initialFocus = false,
+		onVisibleMonthsChange = noop,
 		...restProps
 	}: CalendarRootProps = $props();
+
+	let months = $state<Month<DateValue>[]>([]);
 
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value,
@@ -89,6 +93,13 @@
 		),
 		type: box.with(() => type),
 		defaultPlaceholder,
+		months: box.with(
+			() => months,
+			(v) => {
+				months = v;
+				onVisibleMonthsChange(v);
+			}
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

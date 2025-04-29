@@ -9,6 +9,7 @@
 	import { useDateFieldRoot } from "$lib/bits/date-field/date-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import type { Month } from "$lib/shared/index.js";
 
 	let {
 		open = $bindable(false),
@@ -43,7 +44,10 @@
 		initialFocus = false,
 		errorMessageId,
 		children,
+		onVisibleMonthsChange = noop,
 	}: DatePickerRootProps = $props();
+
+	let months = $state<Month<DateValue>[]>([]);
 
 	const defaultPlaceholder = getDefaultDate({
 		granularity,
@@ -104,6 +108,13 @@
 		numberOfMonths: box.with(() => numberOfMonths),
 		initialFocus: box.with(() => initialFocus),
 		onDateSelect: box.with(() => onDateSelect),
+		months: box.with(
+			() => months,
+			(v) => {
+				months = v;
+				onVisibleMonthsChange(v);
+			}
+		),
 		defaultPlaceholder,
 	});
 
