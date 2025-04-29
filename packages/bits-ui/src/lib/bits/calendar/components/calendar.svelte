@@ -50,6 +50,20 @@
 		value = defaultValue as any;
 	}
 
+	$effect.pre(() => {
+		if (placeholder === undefined) {
+			placeholder = defaultPlaceholder;
+		}
+	});
+
+	$effect.pre(() => {
+		if (value === undefined) {
+			const defaultValue = type === "single" ? undefined : [];
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			value = defaultValue as any;
+		}
+	});
+
 	const rootState = useCalendarRoot({
 		id: box.with(() => id),
 		ref: box.with(
