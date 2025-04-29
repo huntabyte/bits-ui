@@ -8,6 +8,7 @@
 	let {
 		id = useId(),
 		ref = $bindable(null),
+		delay = () => 50,
 		child,
 		children,
 		...restProps
@@ -19,6 +20,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		delay: box.with(() => delay),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, scrollButtonState.props));

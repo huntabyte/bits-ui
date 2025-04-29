@@ -262,12 +262,22 @@ export type SelectViewportPropsWithoutHTML = WithChild;
 export type SelectViewportProps = SelectViewportPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
 
-export type SelectScrollUpButtonPropsWithoutHTML = WithChild;
+export type SelectScrollButtonPropsWithoutHTML = WithChild<{
+	/**
+	 * Controls the initial delay (tick 0) and delay between auto-scrolls in milliseconds.
+	 * The default function always returns 50ms.
+	 *
+	 * @param tick current tick number
+	 */
+	delay?: (tick: number) => number;
+}>;
+
+export type SelectScrollUpButtonPropsWithoutHTML = SelectScrollButtonPropsWithoutHTML;
 
 export type SelectScrollUpButtonProps = SelectScrollUpButtonPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectScrollUpButtonPropsWithoutHTML>;
 
-export type SelectScrollDownButtonPropsWithoutHTML = WithChild;
+export type SelectScrollDownButtonPropsWithoutHTML = SelectScrollButtonPropsWithoutHTML;
 
 export type SelectScrollDownButtonProps = SelectScrollDownButtonPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectScrollDownButtonPropsWithoutHTML>;

@@ -1111,11 +1111,14 @@ class SelectViewportState {
 	);
 }
 
-type SelectScrollButtonImplStateProps = WithRefProps;
+type SelectScrollButtonImplStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		delay: (tick: number) => number;
+	}>;
 
 class SelectScrollButtonImplState {
 	root: SelectBaseRootState;
-	autoScrollInterval: number | null = null;
+	autoScrollTimer: number | null = null;
 	userScrollTimer = -1;
 	isUserScrolling = false;
 	onAutoScroll: () => void = noop;
@@ -1159,23 +1162,25 @@ class SelectScrollButtonImplState {
 	}
 
 	clearAutoScrollInterval() {
-		if (this.autoScrollInterval === null) return;
-		window.clearInterval(this.autoScrollInterval);
-		this.autoScrollInterval = null;
+		if (this.autoScrollTimer === null) return;
+		window.clearTimeout(this.autoScrollTimer);
+		this.autoScrollTimer = null;
 	}
 
 	onpointerdown(_: BitsPointerEvent) {
-		if (this.autoScrollInterval !== null) return;
-		this.autoScrollInterval = window.setInterval(() => {
+		if (this.autoScrollTimer !== null) return;
+		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
-		}, 50);
+			this.autoScrollTimer = window.setTimeout(
+				() => autoScroll(tick + 1),
+				this.opts.delay.current(tick)
+			);
+		};
+		this.autoScrollTimer = window.setTimeout(() => autoScroll(1), this.opts.delay.current(0));
 	}
 
-	onpointermove(_: BitsPointerEvent) {
-		if (this.autoScrollInterval !== null) return;
-		this.autoScrollInterval = window.setInterval(() => {
-			this.onAutoScroll();
-		}, 50);
+	onpointermove(e: BitsPointerEvent) {
+		this.onpointerdown(e);
 	}
 
 	onpointerleave(_: BitsPointerEvent) {
