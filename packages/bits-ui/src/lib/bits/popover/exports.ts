@@ -13,6 +13,5 @@ export type {
 	PopoverContentStaticProps as ContentStaticProps,
 	PopoverTriggerProps as TriggerProps,
 	PopoverCloseProps as CloseProps,
+	PopoverPortalProps as PortalProps,
 } from "./types.js";
-
-export type { PortalProps } from "$lib/bits/utilities/portal/types.js";

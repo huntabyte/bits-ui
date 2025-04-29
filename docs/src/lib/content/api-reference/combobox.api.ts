@@ -6,6 +6,7 @@ import type {
 	ComboboxGroupPropsWithoutHTML,
 	ComboboxInputPropsWithoutHTML,
 	ComboboxItemPropsWithoutHTML,
+	ComboboxPortalPropsWithoutHTML,
 	ComboboxRootPropsWithoutHTML,
 	ComboboxTriggerPropsWithoutHTML,
 } from "bits-ui";
@@ -41,6 +42,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -357,11 +359,19 @@ export const arrow = createApiSchema<ComboboxArrowPropsWithoutHTML>({
 	],
 });
 
+export const portal = createApiSchema<ComboboxPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"When used, will render the combobox content into the body or custom `to` element when open",
+	props: portalProps,
+});
+
 export const combobox = [
 	root,
 	trigger,
 	content,
 	contentStatic,
+	portal,
 	item,
 	input,
 	group,

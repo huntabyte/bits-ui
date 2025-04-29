@@ -17,6 +17,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
@@ -29,6 +30,7 @@ import type {
 	SelectGroupHeadingPropsWithoutHTML,
 	SelectGroupPropsWithoutHTML,
 	SelectItemPropsWithoutHTML,
+	SelectPortalPropsWithoutHTML,
 	SelectRootPropsWithoutHTML,
 	SelectScrollDownButtonPropsWithoutHTML,
 	SelectScrollUpButtonPropsWithoutHTML,
@@ -382,11 +384,19 @@ export const arrow = createApiSchema<SelectArrowPropsWithoutHTML>({
 	],
 });
 
+export const portal = createApiSchema<SelectPortalPropsWithoutHTML>({
+	title: "Portal",
+	description:
+		"When used, will render the select content into the body or custom `to` element when open",
+	props: portalProps,
+});
+
 export const select = [
 	root,
 	trigger,
 	content,
 	contentStatic,
+	portal,
 	item,
 	viewport,
 	scrollUpButton,

@@ -11,7 +11,7 @@ import {
 	createEnumProp,
 	withChildProps,
 } from "./helpers.js";
-import { content, trigger } from "./popover.api.js";
+import { content, portal, trigger } from "./popover.api.js";
 import {
 	root as calendarRoot,
 	cell,
@@ -155,6 +155,7 @@ export const dateRangePicker = [
 	segment,
 	trigger,
 	content,
+	portal,
 	calendar,
 	header,
 	prevButton,

@@ -4,7 +4,7 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -151,11 +151,11 @@ If the `value` prop has more than one value, the slider will render multiple thu
 	{#snippet children({ ticks, thumbs })}
 		<Slider.Range />
 
-		{#each thumbs as index}
+		{#each thumbs as index (index)}
 			<Slider.Thumb {index} />
 		{/each}
 
-		{#each ticks as index}
+		{#each ticks as index (index)}
 			<Slider.Tick {index} />
 		{/each}
 	{/snippet}
@@ -163,6 +163,14 @@ If the `value` prop has more than one value, the slider will render multiple thu
 ```
 
 To determine the number of ticks that will be rendered, you can simply divide the `max` value by the `step` value.
+
+<ComponentPreviewV2 name="slider-demo-ticks" componentName="Slider">
+
+{#snippet preview()}
+<SliderDemoTicks />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Single Type
 
