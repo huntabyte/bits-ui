@@ -19,7 +19,6 @@ import {
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
-import { noop } from "$lib/internal/noop.js";
 
 // attributes
 const COMMAND_ROOT_ATTR = "data-command-root";
@@ -92,8 +91,6 @@ class CommandRootState {
 	commandState = $state.raw<CommandState>(defaultState);
 	// internal state that we mutate in batches and publish to the `state` at once
 	_commandState = $state<CommandState>(defaultState);
-	// whether the search has had a value other than ""
-	searchHasHadValue = $state(false);
 
 	#snapshot() {
 		return $state.snapshot(this._commandState);
@@ -125,10 +122,6 @@ class CommandRootState {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
 			this.#sort();
-			this.#selectFirstItem();
-			afterTick(() => {
-				this.#selectFirstItem();
-			});
 		} else if (key === "value") {
 			// opts is a boolean referring to whether it should NOT be scrolled into view
 			if (!opts) {
@@ -149,12 +142,6 @@ class CommandRootState {
 		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
-
-		$effect(() => {
-			if (this._commandState.search !== "") {
-				this.searchHasHadValue = true;
-			}
-		});
 	}
 
 	/**
@@ -179,7 +166,10 @@ class CommandRootState {
 	#sort(): void {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
 			// If no search and no selection yet, select first item
-			if (!this.commandState.value) this.#selectFirstItem();
+			this.#selectFirstItem();
+			// if (!this.commandState.value) {
+			// this.#selectFirstItem();
+			// }
 			return;
 		}
 
@@ -209,8 +199,8 @@ class CommandRootState {
 		const listInsertionElement = this.viewportNode;
 
 		const sorted = this.getValidItems().sort((a, b) => {
-			const valueA = a.getAttribute("id");
-			const valueB = b.getAttribute("id");
+			const valueA = a.getAttribute("data-value");
+			const valueB = b.getAttribute("data-value");
 			const scoresA = scores.get(valueA!) ?? 0;
 			const scoresB = scores.get(valueB!) ?? 0;
 			return scoresB - scoresA;
@@ -248,6 +238,8 @@ class CommandRootState {
 			);
 			element?.parentElement?.appendChild(element);
 		}
+
+		this.#selectFirstItem();
 	}
 
 	/**
@@ -476,10 +468,11 @@ class CommandRootState {
 	 * @param keywords - Optional search boost terms
 	 * @returns Cleanup function
 	 */
-	registerValue(id: string, value: string, keywords?: string[]): () => void {
-		if (value === this.allIds.get(id)?.value) return noop;
-		this.allIds.set(id, { value, keywords });
-		this._commandState.filtered.items.set(id, this.#score(value, keywords));
+	registerValue(value: string, keywords?: string[]): () => void {
+		if (!(value && value === this.allIds.get(value)?.value)) {
+			this.allIds.set(value, { value, keywords });
+		}
+		this._commandState.filtered.items.set(value, this.#score(value, keywords));
 
 		// Schedule sorting to run after this tick when all items are added not each time an item is added
 		if (!this.sortAfterTick) {
@@ -491,7 +484,7 @@ class CommandRootState {
 		}
 
 		return () => {
-			this.allIds.delete(id);
+			this.allIds.delete(value);
 		};
 	}
 
@@ -684,9 +677,7 @@ class CommandEmptyState {
 	#isInitialRender = true;
 	shouldRender = $derived.by(() => {
 		return (
-			(this.root._commandState.filtered.count === 0 &&
-				this.#isInitialRender === false &&
-				this.root.searchHasHadValue) ||
+			(this.root._commandState.filtered.count === 0 && this.#isInitialRender === false) ||
 			this.opts.forceMount.current
 		);
 	});
@@ -725,13 +716,13 @@ type CommandGroupContainerStateProps = WithRefProps<
 class CommandGroupContainerState {
 	headingNode = $state<HTMLElement | null>(null);
 
+	trueValue = $state("");
 	shouldRender = $derived.by(() => {
 		if (this.opts.forceMount.current) return true;
 		if (this.root.opts.shouldFilter.current === false) return true;
 		if (!this.root.commandState.search) return true;
-		return this.root.commandState.filtered.groups.has(this.opts.id.current);
+		return this.root._commandState.filtered.groups.has(this.trueValue);
 	});
-	trueValue = $state("");
 
 	constructor(
 		readonly opts: CommandGroupContainerStateProps,
@@ -745,22 +736,22 @@ class CommandGroupContainerState {
 		});
 
 		watch(
-			() => this.opts.id.current,
+			() => this.trueValue,
 			() => {
-				return this.root.registerGroup(this.opts.id.current);
+				return this.root.registerGroup(this.trueValue);
 			}
 		);
 
 		$effect(() => {
 			if (this.opts.value.current) {
 				this.trueValue = this.opts.value.current;
-				return this.root.registerValue(this.opts.id.current, this.opts.value.current);
+				return this.root.registerValue(this.opts.value.current);
 			} else if (this.headingNode && this.headingNode.textContent) {
 				this.trueValue = this.headingNode.textContent.trim().toLowerCase();
-				return this.root.registerValue(this.opts.id.current, this.trueValue);
+				return this.root.registerValue(this.trueValue);
 			} else if (this.opts.ref.current?.textContent) {
 				this.trueValue = this.opts.ref.current.textContent.trim().toLowerCase();
-				return this.root.registerValue(this.opts.id.current, this.trueValue);
+				return this.root.registerValue(this.trueValue);
 			}
 		});
 	}
@@ -917,7 +908,7 @@ class CommandItemState {
 		) {
 			return true;
 		}
-		const currentScore = this.root.commandState.filtered.items.get(this.opts.id.current);
+		const currentScore = this.root.commandState.filtered.items.get(this.trueValue);
 		if (currentScore === undefined) return false;
 		return currentScore > 0;
 	});
@@ -940,29 +931,26 @@ class CommandItemState {
 
 		watch(
 			[
-				() => this.opts.id.current,
-				() => this.#group?.opts.id.current,
+				() => this.trueValue,
+				() => this.#group?.trueValue,
 				() => this.opts.forceMount.current,
-				() => this.opts.ref.current,
 			],
 			() => {
 				if (this.opts.forceMount.current) return;
-				return this.root.registerItem(this.opts.id.current, this.#group?.opts.id.current);
+				return this.root.registerItem(this.trueValue, this.#group?.trueValue);
 			}
 		);
 
 		watch([() => this.opts.value.current, () => this.opts.ref.current], () => {
-			if (!this.opts.ref.current) return;
-			if (!this.opts.value.current && this.opts.ref.current.textContent) {
+			if (!this.opts.value.current && this.opts.ref.current?.textContent) {
 				this.trueValue = this.opts.ref.current.textContent.trim();
 			}
 
 			this.root.registerValue(
-				this.opts.id.current,
 				this.trueValue,
 				opts.keywords.current.map((kw) => kw.trim())
 			);
-			this.opts.ref.current.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
+			this.opts.ref.current?.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
 		});
 
 		// bindings
