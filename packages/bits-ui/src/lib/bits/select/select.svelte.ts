@@ -94,10 +94,9 @@ class SelectBaseRootState {
 	getCandidateNodes(): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
-		const nodes = Array.from(
+		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${this.bitsAttrs.item}]:not([data-disabled])`)
 		);
-		return nodes;
 	}
 
 	setHighlightedToFirstCandidate() {

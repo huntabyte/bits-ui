@@ -62,12 +62,12 @@
 						disabled={theme.disabled}
 					>
 						{#snippet children({ selected })}
-							{theme.label}
 							{#if selected}
 								<div class="ml-auto">
-									<Check />
+									<Check aria-label="check" />
 								</div>
 							{/if}
+							{theme.label}
 						{/snippet}
 					</Select.Item>
 				{/each}

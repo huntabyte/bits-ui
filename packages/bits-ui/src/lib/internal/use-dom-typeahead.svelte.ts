@@ -22,13 +22,13 @@ export function useDOMTypeahead(opts?: UseDOMTypeaheadOpts) {
 		search.current = search.current + key;
 		const currentItem = getCurrentItem();
 
-		const currentMatch = candidates.find((item) => item === currentItem)?.textContent ?? "";
-		const values = candidates.map((item) => item.textContent ?? "");
+		const currentMatch =
+			candidates.find((item) => item === currentItem)?.textContent?.trim() ?? "";
+
+		const values = candidates.map((item) => item.textContent?.trim() ?? "");
 		const nextMatch = getNextMatch(values, search.current, currentMatch);
-		const newItem = candidates.find((item) => item.textContent === nextMatch);
-		if (newItem) {
-			onMatch(newItem);
-		}
+		const newItem = candidates.find((item) => item.textContent?.trim() === nextMatch);
+		if (newItem) onMatch(newItem);
 		return newItem;
 	}
 
