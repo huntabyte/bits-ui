@@ -1,5 +1,23 @@
 # bits-ui
 
+## 1.4.0
+
+### Minor Changes
+
+-   feat(Combobox): add `delay` prop to scroll buttons for custom scroll delay ([#1395](https://github.com/huntabyte/bits-ui/pull/1395))
+
+-   feat(Select): add `delay` prop to scroll buttons for custom scroll delay ([#1395](https://github.com/huntabyte/bits-ui/pull/1395))
+
+### Patch Changes
+
+-   fix(Slider): update tick position calculation for consistent scaling ([#1375](https://github.com/huntabyte/bits-ui/pull/1375))
+
+-   chore(Popover): export `PopoverPortalPropsWithoutHTML` from Popover types ([#1397](https://github.com/huntabyte/bits-ui/pull/1397))
+
+-   fix(FocusScope): safely call onCloseAutoFocus handler if defined ([#1366](https://github.com/huntabyte/bits-ui/pull/1366))
+
+-   fix(Select): ensure `scrollAlignment` prop is used (if provided) when scrolling ([#1390](https://github.com/huntabyte/bits-ui/pull/1390))
+
 ## 1.3.19
 
 ### Patch Changes
