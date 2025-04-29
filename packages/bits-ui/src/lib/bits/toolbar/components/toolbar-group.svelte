@@ -5,6 +5,7 @@
 	import { useToolbarGroup } from "../toolbar.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { watch } from "runed";
 
 	let {
 		id = useId(),
@@ -18,10 +19,20 @@
 		...restProps
 	}: ToolbarGroupProps = $props();
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
-		value = defaultValue;
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? "" : [];
 	}
+
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
 
 	const groupState = useToolbarGroup({
 		id: box.with(() => id),

@@ -5,6 +5,7 @@
 	import type { DateFieldRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { watch } from "runed";
 
 	let {
 		disabled = false,
@@ -27,7 +28,9 @@
 		children,
 	}: DateFieldRootProps = $props();
 
-	if (placeholder === undefined) {
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
+
 		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultValue: value,
@@ -35,6 +38,21 @@
 
 		placeholder = defaultPlaceholder;
 	}
+
+	// SSR
+	handleDefaultPlaceholder();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make placeholder
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
 
 	useDateFieldRoot({
 		value: box.with(

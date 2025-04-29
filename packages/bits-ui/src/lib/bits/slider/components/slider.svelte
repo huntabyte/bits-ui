@@ -4,6 +4,7 @@
 	import { useSliderRoot } from "../slider.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { watch } from "runed";
 
 	let {
 		children,
@@ -24,9 +25,20 @@
 		...restProps
 	}: SliderRootProps = $props();
 
-	if (value === undefined) {
+	function handleDefaultValue() {
+		if (value !== undefined) return;
 		value = type === "single" ? 0 : [];
 	}
+
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
 
 	const rootState = useSliderRoot({
 		id: box.with(() => id),

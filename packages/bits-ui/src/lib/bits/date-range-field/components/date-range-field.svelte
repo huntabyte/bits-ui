@@ -7,6 +7,7 @@
 	import { noop } from "$lib/internal/noop.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { watch } from "runed";
 
 	let {
 		id = useId(),
@@ -38,20 +39,42 @@
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
-	if (placeholder === undefined) {
-		const defaultPlaceholder = getDefaultDate({
-			granularity,
-			defaultValue: value?.start,
-		});
-
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
+		const defaultPlaceholder = getDefaultDate({ granularity, defaultValue: value?.start });
 		placeholder = defaultPlaceholder;
 	}
 
-	if (value === undefined) {
-		const defaultValue = { start: undefined, end: undefined };
+	// SSR
+	handleDefaultPlaceholder();
 
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
+
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		const defaultValue = { start: undefined, end: undefined };
 		value = defaultValue;
 	}
+
+	// SSR
+	handleDefaultValue();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make value
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
 
 	const rootState = useDateRangeFieldRoot({
 		id: box.with(() => id),
