@@ -265,7 +265,7 @@ class DialogContentState {
 				role: this.root.opts.variant.current === "alert-dialog" ? "alertdialog" : "dialog",
 				"aria-modal": "true",
 				"aria-describedby": this.root.descriptionId,
-				// "aria-labelledby": this.root.titleId,
+				"aria-labelledby": this.root.titleId,
 				[this.root.attrs.content]: "",
 				style: {
 					pointerEvents: "auto",

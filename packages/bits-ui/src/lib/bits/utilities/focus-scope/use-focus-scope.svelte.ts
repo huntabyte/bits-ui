@@ -174,7 +174,11 @@ export function useFocusScope({
 			on(document, "focusout", manageFocus)
 		);
 		const mutationObserver = new MutationObserver(handleMutations);
-		mutationObserver.observe(container, { childList: true, subtree: true });
+		mutationObserver.observe(container, {
+			childList: true,
+			subtree: true,
+			attributes: false,
+		});
 		return () => {
 			removeEvents();
 			mutationObserver.disconnect();

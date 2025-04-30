@@ -19,6 +19,7 @@
 		ref = $bindable(null),
 		forceMount = false,
 		onCloseAutoFocus = noop,
+		onOpenAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
 		trapFocus = true,
@@ -52,7 +53,8 @@
 				trapFocus,
 				open: contentState.root.opts.open.current,
 			})}
-			{...mergedProps}
+			{onOpenAutoFocus}
+			{id}
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);
 				if (e.defaultPrevented) return;

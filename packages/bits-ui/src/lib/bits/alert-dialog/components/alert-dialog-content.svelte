@@ -54,7 +54,7 @@
 				trapFocus,
 				open: contentState.root.opts.open.current,
 			})}
-			{...mergedProps}
+			{id}
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);
 				if (e.defaultPrevented) return;
