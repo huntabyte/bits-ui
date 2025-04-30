@@ -1,61 +1,45 @@
 <script lang="ts">
-	import DemoContainer from "$lib/components/demo-container.svelte";
-	import { Command } from "bits-ui";
+	import PopoverDemo from "$lib/components/demos/popover-demo.svelte";
+	import { Dialog } from "bits-ui";
 
-	type Option = {
-		value: number;
-		label: string;
-	};
-
-	let items = $state<Option[]>([]);
-	let searchTerm = $state("");
-	let debounceTimer: number;
-
-	async function fetchOptions(): Promise<Option[]> {
-		return [
-			{ label: "test1", value: 1 },
-			{ label: "test2", value: 2 },
-			{ label: "test3", value: 3 },
-		];
-	}
-
-	async function handleSearch(value: string) {
-		searchTerm = value;
-
-		window.clearTimeout(debounceTimer);
-
-		debounceTimer = window.setTimeout(async () => {
-			items = await fetchOptions();
-		}, 300);
-	}
+	let promise = $state<Promise<unknown> | null>(null);
 </script>
 
-<div class="w-full max-w-[756px]">
-	<DemoContainer>
-		<Command.Root
-			class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
+<Dialog.Root
+	onOpenChange={() => {
+		promise = new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(true);
+			}, 1000);
+		});
+	}}
+>
+	<Dialog.Trigger
+		class="rounded-input bg-dark text-background
+	  shadow-mini hover:bg-dark/95 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden
+	  inline-flex h-12 items-center justify-center whitespace-nowrap px-[21px] text-[15px] font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]"
+	>
+		New API key
+	</Dialog.Trigger>
+	<Dialog.Portal>
+		<Dialog.Overlay
+			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 bg-black/80"
+		/>
+		<Dialog.Content
+			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 outline-hidden fixed left-[50%] top-[50%] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border p-5 sm:max-w-[490px] md:w-full"
 		>
-			<Command.Input
-				class="focus-override h-input placeholder:text-foreground-alt/50 focus:outline-hidden bg-background inline-flex truncate rounded-tl-xl rounded-tr-xl px-4 text-sm transition-colors focus:ring-0"
-				placeholder="Search for something..."
-				oninput={(e) => {
-					handleSearch(e.currentTarget.value.length > 0 ? e.currentTarget.value : "");
-				}}
-				value={searchTerm}
-			/>
-			<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
-				<Command.Viewport>
-					<Command.Empty
-						class="text-muted-foreground flex w-full items-center justify-center pb-6 pt-8 text-sm"
+			{#if promise}
+				{#await promise}
+					<div>loading...</div>
+				{:then _data}
+					<Dialog.Title
+						class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
 					>
-						No results found.
-					</Command.Empty>
-					{JSON.stringify(items)}
-					{#each items as item (item.value)}
-						<Command.Item value={item.label}>{item.label}</Command.Item>
-					{/each}
-				</Command.Viewport>
-			</Command.List>
-		</Command.Root>
-	</DemoContainer>
-</div>
+						Create API key
+					</Dialog.Title>
+					<PopoverDemo />
+				{/await}
+			{/if}
+		</Dialog.Content>
+	</Dialog.Portal>
+</Dialog.Root>

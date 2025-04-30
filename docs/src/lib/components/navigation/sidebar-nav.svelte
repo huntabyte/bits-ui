@@ -9,7 +9,7 @@
 
 {#if items.length}
 	<aside
-		class="border-border fixed top-10 z-30 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 border-r md:sticky md:block"
+		class="border-border fixed top-10 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 border-r md:sticky md:block"
 	>
 		<ScrollArea.Root>
 			<ScrollArea.Viewport class="h-full max-h-[calc(100vh-3.5rem)] w-full shrink-0 ">
