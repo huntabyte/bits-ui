@@ -174,7 +174,7 @@ To determine the number of ticks that will be rendered, you can simply divide th
 
 ## Single Type
 
-Set the `type` prop to `"single"` to allow only one accordion item to be open at a time.
+Set the `type` prop to `"single"` to allow only one slider handle.
 
 ```svelte /type="single"/
 <Slider.Root type="single" />
@@ -190,7 +190,7 @@ Set the `type` prop to `"single"` to allow only one accordion item to be open at
 
 ## Multiple Type
 
-Set the `type` prop to `"multiple"` to allow multiple accordion items to be open at the same time.
+Set the `type` prop to `"multiple"` to allow multiple slider handles.
 
 ```svelte /type="multiple"/
 <Slider.Root type="multiple" />
