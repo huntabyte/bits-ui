@@ -1,5 +1,15 @@
 # bits-ui
 
+## 1.4.2
+
+### Patch Changes
+
+-   fix(Dialog): ensure conditional content doesn't break nested focus ([#1410](https://github.com/huntabyte/bits-ui/pull/1410))
+
+-   fix(Command): ensure asynchronously loaded items register properly ([#1405](https://github.com/huntabyte/bits-ui/pull/1405))
+
+-   fix(Command): list restoration after empty state ([#1405](https://github.com/huntabyte/bits-ui/pull/1405))
+
 ## 1.4.1
 
 ### Patch Changes
