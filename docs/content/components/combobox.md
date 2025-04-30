@@ -78,20 +78,18 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 <script lang="ts">
 	import { Combobox, type WithoutChildrenOrChild, mergeProps } from "bits-ui";
 
-	type Item = { value: string; label: string };
-
 	type Props = Combobox.RootProps & {
-		items: Item[];
 		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
 		contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
 	};
 
 	let {
-		items,
+		items = [],
 		value = $bindable(),
 		open = $bindable(false),
 		inputProps,
 		contentProps,
+		type,
 		...restProps
 	}: Props = $props();
 
@@ -114,13 +112,18 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 	const mergedInputProps = $derived(mergeProps(inputProps, { oninput: handleInput }));
 </script>
 
-<Combobox.Root bind:value bind:open {...mergedRootProps}>
+<!--
+Destructuring (required for bindable) and discriminated unions don't play well together,
+so we cast the value to `never` to avoid type errors here. However, on the consumer
+side, the component will still be type-checked correctly.
+-->
+<Combobox.Root {type} {items} bind:value={value as never} bind:open {...mergedRootProps}>
 	<Combobox.Input {...mergedInputProps} />
 	<Combobox.Trigger>Open</Combobox.Trigger>
 	<Combobox.Portal>
 		<Combobox.Content {...contentProps}>
 			{#each filteredItems as item, i (i + item.value)}
-				<Combobox.Item value={item.value} label={item.label}>
+				<Combobox.Item {...item}>
 					{#snippet children({ selected })}
 						{item.label}
 						{selected ? "✅" : ""}
@@ -146,7 +149,7 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 	];
 </script>
 
-<CustomCombobox {items} />
+<CustomCombobox type="single" {items} />
 ```
 
 ## Managing Value State
