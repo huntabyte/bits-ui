@@ -126,18 +126,10 @@ export class DateRangeFieldRootState {
 						if (prev.start === startValue && prev.end === endValue) {
 							return prev;
 						}
-						if (isBefore(endValue, startValue)) {
-							const start = startValue;
-							const end = endValue;
-							this.#setStartValue(end);
-							this.#setEndValue(start);
-							return { start: endValue, end: startValue };
-						} else {
-							return {
-								start: startValue,
-								end: endValue,
-							};
-						}
+						return {
+							start: startValue,
+							end: endValue,
+						};
 					});
 				} else if (
 					this.opts.value.current &&
@@ -198,14 +190,6 @@ export class DateRangeFieldRootState {
 		const value = this.opts.value.current;
 		const newValue = cb(value);
 		this.opts.value.current = newValue;
-	}
-
-	#setStartValue(value: DateValue | undefined) {
-		this.opts.startValue.current = value;
-	}
-
-	#setEndValue(value: DateValue | undefined) {
-		this.opts.endValue.current = value;
 	}
 
 	props = $derived.by(
