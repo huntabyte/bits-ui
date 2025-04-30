@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.4.3
+
+### Patch Changes
+
+-   fix(DateRangeField): do not update start date automatically ([#1406](https://github.com/huntabyte/bits-ui/pull/1406))
+
+-   fix(DateRangePicker): do not update start date automatically ([#1406](https://github.com/huntabyte/bits-ui/pull/1406))
+
 ## 1.4.2
 
 ### Patch Changes
