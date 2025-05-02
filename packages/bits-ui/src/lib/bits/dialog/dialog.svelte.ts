@@ -204,7 +204,7 @@ class DialogTitleState {
 		() =>
 			({
 				id: this.opts.id.current,
-				// role: "heading",
+				role: "heading",
 				"aria-level": this.opts.level.current,
 				[this.root.attrs.title]: "",
 				...this.root.sharedProps,
