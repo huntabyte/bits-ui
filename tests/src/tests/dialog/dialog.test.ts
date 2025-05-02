@@ -203,6 +203,13 @@ it("should apply the correct `aria-describedby` attribute to the `Dialog.Content
 	expect(content).toHaveAttribute("aria-describedby", description.id);
 });
 
+it("should have role='heading'", async () => {
+	const { getByTestId } = await open();
+
+	const title = getByTestId("title");
+	expect(title).toHaveAttribute("role", "heading");
+});
+
 it("should apply a default `aria-level` attribute to the `Dialog.Title` element", async () => {
 	const { getByTestId } = await open();
 
