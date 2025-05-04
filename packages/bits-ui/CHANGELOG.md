@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.4.4
+
+### Patch Changes
+
+-   fix(Dialog): ensure `role="heading"` exists on title ([#1420](https://github.com/huntabyte/bits-ui/pull/1420))
+
 ## 1.4.3
 
 ### Patch Changes
