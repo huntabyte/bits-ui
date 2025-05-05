@@ -728,7 +728,7 @@ class CommandGroupContainerState {
 		readonly opts: CommandGroupContainerStateProps,
 		readonly root: CommandRootState
 	) {
-		this.trueValue = opts.value.current;
+		this.trueValue = opts.value.current ?? opts.id.current;
 
 		useRefById({
 			...opts,
