@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.4.6
+
+### Patch Changes
+
+-   fix(Command): fallback to id when no group value ([#1428](https://github.com/huntabyte/bits-ui/pull/1428))
+
 ## 1.4.5
 
 ### Patch Changes
