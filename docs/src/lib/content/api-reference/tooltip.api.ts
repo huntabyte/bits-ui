@@ -12,7 +12,10 @@ import {
 	OpenChildSnippetProps,
 	OpenChildrenSnippetProps,
 } from "./extended-types/shared/index.js";
-import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
+import {
+	FloatingContentChildSnippetProps,
+	FloatingSideProp,
+} from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -219,6 +222,12 @@ export const arrow = createApiSchema<TooltipArrowPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "tooltip-arrow",
 			description: "Present on the arrow element.",
+		}),
+		createDataAttrSchema({
+			name: "side",
+			description: "The side of the tooltip that the arrow is on.",
+			definition: FloatingSideProp,
+			isEnum: true,
 		}),
 	],
 });
