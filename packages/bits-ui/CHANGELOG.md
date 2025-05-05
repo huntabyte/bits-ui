@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.4.5
+
+### Patch Changes
+
+-   fix(Command): ensure groups without headings have a fallback ([#1425](https://github.com/huntabyte/bits-ui/pull/1425))
+
 ## 1.4.4
 
 ### Patch Changes
