@@ -749,8 +749,8 @@ class CommandGroupContainerState {
 			} else if (this.headingNode && this.headingNode.textContent) {
 				this.trueValue = this.headingNode.textContent.trim().toLowerCase();
 				return this.root.registerValue(this.trueValue);
-			} else if (this.opts.ref.current?.textContent) {
-				this.trueValue = this.opts.ref.current.textContent.trim().toLowerCase();
+			} else {
+				this.trueValue = `-----${this.opts.id.current}`;
 				return this.root.registerValue(this.trueValue);
 			}
 		});
