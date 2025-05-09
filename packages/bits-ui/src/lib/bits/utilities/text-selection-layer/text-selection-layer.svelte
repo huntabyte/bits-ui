@@ -15,10 +15,9 @@
 
 	useTextSelectionLayer({
 		id: box.with(() => id),
-		preventOverflowTextSelection: box.with(() => preventOverflowTextSelection),
 		onPointerDown: box.with(() => onPointerDown),
 		onPointerUp: box.with(() => onPointerUp),
-		enabled: box.with(() => enabled),
+		enabled: box.with(() => enabled && preventOverflowTextSelection),
 	});
 </script>
 
