@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.4.7
+
+### Patch Changes
+
+-   fix(Multiple): ensure `preventOverflowTextSelection` prop is applied ([#1435](https://github.com/huntabyte/bits-ui/pull/1435))
+
 ## 1.4.6
 
 ### Patch Changes
