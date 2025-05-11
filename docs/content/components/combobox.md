@@ -326,10 +326,10 @@ You'll need to set a height on the `Combobox.Content` component and appropriate 
 
 ## Scroll Lock
 
-By default, when a user opens the Combobox, scrolling outside the content will be disabled. You can override this behavior by setting the `preventScroll` prop to `false`.
+To prevent the user from scrolling outside of the `Combobox.Content` component when open, you can set the `preventScroll` prop to `true`.
 
-```svelte /preventScroll={false}/
-<Combobox.Content preventScroll={false}>
+```svelte /preventScroll={true}/
+<Combobox.Content preventScroll={true}>
 	<!-- ... -->
 </Combobox.Content>
 ```
