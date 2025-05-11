@@ -4,6 +4,7 @@
 	import { CheckboxGroupContext, useCheckboxRoot } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { useId } from "$lib/internal/use-id.js";
+	import { watch } from "runed";
 
 	let {
 		checked = $bindable(false),
@@ -31,6 +32,19 @@
 			checked = false;
 		}
 	}
+
+	watch.pre(
+		() => value,
+		() => {
+			if (group && value) {
+				if (group.opts.value.current.includes(value)) {
+					checked = true;
+				} else {
+					checked = false;
+				}
+			}
+		}
+	);
 
 	const rootState = useCheckboxRoot(
 		{

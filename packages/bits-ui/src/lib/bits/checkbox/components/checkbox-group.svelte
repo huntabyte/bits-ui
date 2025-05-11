@@ -28,9 +28,9 @@
 		required: box.with(() => Boolean(required)),
 		name: box.with(() => name),
 		value: box.with(
-			() => value,
+			() => $state.snapshot(value),
 			(v) => {
-				value = v;
+				value = $state.snapshot(v);
 				onValueChange(v);
 			}
 		),

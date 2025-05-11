@@ -2,10 +2,12 @@
 	import { Checkbox } from "bits-ui";
 
 	let {
-		value = $bindable([]),
+		value: valueProp = $bindable([]),
 		items = [],
 		disabledItems = [],
 		onFormSubmit,
+		getValue: getValueProp,
+		setValue: setValueProp,
 		...restProps
 	}: Checkbox.GroupProps & {
 		/**
@@ -14,7 +16,11 @@
 		items?: string[];
 		disabledItems?: string[];
 		onFormSubmit?: (fd: FormData) => void;
+		setValue?: (value: string[]) => void;
+		getValue?: () => string[];
 	} = $props();
+
+	let myValue = $state(valueProp);
 </script>
 
 {#snippet MyCheckbox({ itemValue }: { itemValue: string })}
@@ -44,8 +50,21 @@
 			onFormSubmit?.(formData);
 		}}
 	>
-		<p data-testid="binding">{value}</p>
-		<Checkbox.Group data-testid="group" bind:value {...restProps}>
+		<p data-testid="binding">{myValue}</p>
+		<Checkbox.Group
+			data-testid="group"
+			bind:value={
+				() => {
+					getValueProp?.();
+					return myValue;
+				},
+				(v) => {
+					setValueProp?.(v);
+					myValue = v;
+				}
+			}
+			{...restProps}
+		>
 			<Checkbox.GroupLabel data-testid="group-label">My Group</Checkbox.GroupLabel>
 			{#each items as itemValue}
 				{@render MyCheckbox({ itemValue })}
@@ -53,5 +72,7 @@
 		</Checkbox.Group>
 		<button type="submit" data-testid="submit"> Submit </button>
 	</form>
-	<button data-testid="update" onclick={() => (value = ["c", "d"])}> Programmatic update </button>
+	<button data-testid="update" onclick={() => (myValue = ["c", "d"])}>
+		Programmatic update
+	</button>
 </main>

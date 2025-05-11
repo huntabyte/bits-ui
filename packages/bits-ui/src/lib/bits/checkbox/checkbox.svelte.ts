@@ -37,8 +37,9 @@ class CheckboxGroupState {
 	addValue(checkboxValue: string | undefined) {
 		if (!checkboxValue) return;
 		if (!this.opts.value.current.includes(checkboxValue)) {
-			this.opts.value.current.push(checkboxValue);
-			this.opts.onValueChange.current(this.opts.value.current);
+			const newValue = [...$state.snapshot(this.opts.value.current), checkboxValue];
+			this.opts.value.current = newValue;
+			this.opts.onValueChange.current(newValue);
 		}
 	}
 
@@ -46,8 +47,9 @@ class CheckboxGroupState {
 		if (!checkboxValue) return;
 		const index = this.opts.value.current.indexOf(checkboxValue);
 		if (index === -1) return;
-		this.opts.value.current.splice(index, 1);
-		this.opts.onValueChange.current(this.opts.value.current);
+		const newValue = this.opts.value.current.filter((v) => v !== checkboxValue);
+		this.opts.value.current = newValue;
+		this.opts.onValueChange.current(newValue);
 	}
 
 	props = $derived.by(
