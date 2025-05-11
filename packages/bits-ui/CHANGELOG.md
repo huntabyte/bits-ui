@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.4.8
+
+### Patch Changes
+
+-   fix(Checkbox): ensure Checkbox.Group value setter is called ([#1440](https://github.com/huntabyte/bits-ui/pull/1440))
+
 ## 1.4.7
 
 ### Patch Changes
