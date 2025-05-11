@@ -256,9 +256,28 @@ describe("Checkbox Group", () => {
 			expect(t.binding).toHaveTextContent("b,d");
 		});
 
+		it("should handle function binding", async () => {
+			const setMock = vi.fn();
+			const getMock = vi.fn();
+			const t = setupGroup({ getValue: getMock, setValue: setMock, value: [] });
+			const [a, b, _, d] = t.checkboxes;
+			await t.user.click(a);
+			expect(setMock).toHaveBeenCalledWith(["a"]);
+			setMock.mockClear();
+			await t.user.click(b);
+			expect(setMock).toHaveBeenCalledWith(["a", "b"]);
+			setMock.mockClear();
+			await t.user.click(d);
+			expect(setMock).toHaveBeenCalledWith(["a", "b", "d"]);
+			setMock.mockClear();
+			await t.user.click(a);
+			expect(setMock).toHaveBeenCalledWith(["b", "d"]);
+		});
+
 		it("should handle programmatic value changes", async () => {
 			const t = setupGroup({ value: ["a", "b"] });
 			const [a, b, c, d] = t.checkboxes;
+			await tick();
 			expectChecked(a, b);
 			await t.user.click(t.updateBtn);
 			expectUnchecked(a, b);
