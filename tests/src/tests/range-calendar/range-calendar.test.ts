@@ -1,7 +1,7 @@
 import { fireEvent, render } from "@testing-library/svelte/svelte5";
 import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
+import { describe, it, vi } from "vitest";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
@@ -121,37 +121,6 @@ it("should reset range on select when a range is already selected", async () => 
 	expect(getSelectedDays(calendar)).toHaveLength(3);
 });
 
-it("should navigate the months forward using the next button", async () => {
-	const { getByTestId, user } = setup({ value: calendarDateTimeRange });
-
-	const heading = getByTestId("heading");
-	const nextBtn = getByTestId("next-button");
-
-	for (const month of months) {
-		expect(heading).toHaveTextContent(`${month} 1980`);
-		await user.click(nextBtn);
-	}
-	expect(heading).toHaveTextContent("January 1981");
-});
-
-it("should navigate the months backwards using the prev button", async () => {
-	const { getByTestId, user } = setup({ value: calendarDateTimeRange });
-
-	const heading = getByTestId("heading");
-	const prevBtn = getByTestId("prev-button");
-	const newMonths = [...months].reverse();
-	newMonths.pop();
-
-	expect(heading).toHaveTextContent("January 1980");
-	await user.click(prevBtn);
-
-	for (const month of newMonths) {
-		expect(heading).toHaveTextContent(`${month} 1979`);
-		await user.click(prevBtn);
-	}
-	expect(heading).toHaveTextContent("January 1979");
-});
-
 it("should renders six weeks when `fixedWeeks` is `true`", async () => {
 	const { getByTestId, calendar, user } = setup({
 		value: calendarDateTimeRange,
@@ -175,127 +144,178 @@ it("should renders six weeks when `fixedWeeks` is `true`", async () => {
 	}
 });
 
-it("should not allow navigation before the `minValue` (prev button)", async () => {
-	const { getByTestId, user } = setup({
-		value: calendarDateRange,
-		minValue: new CalendarDate(1979, 11, 25),
+describe("Navigation", () => {
+	it("should navigate the months forward using the next button", async () => {
+		const { getByTestId, user } = setup({ value: calendarDateTimeRange });
+
+		const heading = getByTestId("heading");
+		const nextBtn = getByTestId("next-button");
+
+		for (const month of months) {
+			expect(heading).toHaveTextContent(`${month} 1980`);
+			await user.click(nextBtn);
+		}
+		expect(heading).toHaveTextContent("January 1981");
 	});
 
-	const prevBtn = getByTestId("prev-button");
-	await user.click(prevBtn);
-	const heading = getByTestId("heading");
-	expect(heading).toHaveTextContent("December 1979");
-	expect(prevBtn).not.toHaveAttribute("aria-disabled", "true");
-	expect(prevBtn).not.toHaveAttribute("data-disabled");
+	it("should navigate the months backwards using the prev button", async () => {
+		const { getByTestId, user } = setup({ value: calendarDateTimeRange });
 
-	await user.click(prevBtn);
-	expect(heading).toHaveTextContent("November 1979");
-	expect(prevBtn).toHaveAttribute("aria-disabled", "true");
-	expect(prevBtn).toHaveAttribute("data-disabled");
+		const heading = getByTestId("heading");
+		const prevBtn = getByTestId("prev-button");
+		const newMonths = [...months].reverse();
+		newMonths.pop();
 
-	await user.click(prevBtn);
-	expect(heading).toHaveTextContent("November 1979");
-});
+		expect(heading).toHaveTextContent("January 1980");
+		await user.click(prevBtn);
 
-it("should not allow navigation after the `maxValue` (next button)", async () => {
-	const { getByTestId, user } = setup({
-		value: calendarDateRange,
-		maxValue: new CalendarDate(1980, 3, 25),
+		for (const month of newMonths) {
+			expect(heading).toHaveTextContent(`${month} 1979`);
+			await user.click(prevBtn);
+		}
+		expect(heading).toHaveTextContent("January 1979");
 	});
 
-	const nextBtn = getByTestId("next-button");
-	await user.click(nextBtn);
-	const heading = getByTestId("heading");
-	expect(heading).toHaveTextContent("February 1980");
-	expect(nextBtn).not.toHaveAttribute("aria-disabled", "true");
-	expect(nextBtn).not.toHaveAttribute("data-disabled");
+	it("should not allow navigation before the `minValue` (prev button)", async () => {
+		const { getByTestId, user } = setup({
+			value: calendarDateRange,
+			minValue: new CalendarDate(1979, 11, 25),
+		});
 
-	await user.click(nextBtn);
-	expect(heading).toHaveTextContent("March 1980");
-	expect(nextBtn).toHaveAttribute("aria-disabled", "true");
-	expect(nextBtn).toHaveAttribute("data-disabled");
+		const prevBtn = getByTestId("prev-button");
+		await user.click(prevBtn);
+		const heading = getByTestId("heading");
+		expect(heading).toHaveTextContent("December 1979");
+		expect(prevBtn).not.toHaveAttribute("aria-disabled", "true");
+		expect(prevBtn).not.toHaveAttribute("data-disabled");
 
-	await user.click(nextBtn);
-	expect(heading).toHaveTextContent("March 1980");
-});
+		await user.click(prevBtn);
+		expect(heading).toHaveTextContent("November 1979");
+		expect(prevBtn).toHaveAttribute("aria-disabled", "true");
+		expect(prevBtn).toHaveAttribute("data-disabled");
 
-it("should not navigate after `maxValue` (with keyboard)", async () => {
-	const { getByTestId, user } = setup({
-		value: calendarDateRange,
-		maxValue: new CalendarDate(1980, 3, 31),
+		await user.click(prevBtn);
+		expect(heading).toHaveTextContent("November 1979");
 	});
 
-	const firstDayInMonth = getByTestId("date-1-1");
-	firstDayInMonth.focus();
-	expect(firstDayInMonth).toHaveFocus();
+	it("should not allow navigation after the `maxValue` (next button)", async () => {
+		const { getByTestId, user } = setup({
+			value: calendarDateRange,
+			maxValue: new CalendarDate(1980, 3, 25),
+		});
 
-	const heading = getByTestId("heading");
-	expect(heading).toHaveTextContent("January 1980");
+		const nextBtn = getByTestId("next-button");
+		await user.click(nextBtn);
+		const heading = getByTestId("heading");
+		expect(heading).toHaveTextContent("February 1980");
+		expect(nextBtn).not.toHaveAttribute("aria-disabled", "true");
+		expect(nextBtn).not.toHaveAttribute("data-disabled");
 
-	// five keypresses to February 1980
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-1-8")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-1-15")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-1-22")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-1-29")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-2-5")).toHaveFocus();
-	expect(heading).toHaveTextContent("February 1980");
+		await user.click(nextBtn);
+		expect(heading).toHaveTextContent("March 1980");
+		expect(nextBtn).toHaveAttribute("aria-disabled", "true");
+		expect(nextBtn).toHaveAttribute("data-disabled");
 
-	// four keypresses to March 1980
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-2-12")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-2-19")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-2-26")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-3-4")).toHaveFocus();
-	expect(heading).toHaveTextContent("March 1980");
-
-	// four keypresses to April 1980
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-3-11")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-3-18")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-3-25")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_DOWN);
-	expect(getByTestId("date-3-25")).toHaveFocus();
-	expect(heading).toHaveTextContent("March 1980");
-});
-
-it("should not navigate before `minValue` (with keyboard)", async () => {
-	const { getByTestId, user } = setup({
-		value: calendarDateRange,
-		minValue: new CalendarDate(1979, 12, 1),
+		await user.click(nextBtn);
+		expect(heading).toHaveTextContent("March 1980");
 	});
 
-	const firstDayInMonth = getByTestId("date-1-1");
-	firstDayInMonth.focus();
-	expect(firstDayInMonth).toHaveFocus();
+	it("should not navigate after `maxValue` (with keyboard)", async () => {
+		const { getByTestId, user } = setup({
+			value: calendarDateRange,
+			maxValue: new CalendarDate(1980, 3, 31),
+		});
 
-	const heading = getByTestId("heading");
-	expect(heading).toHaveTextContent("January 1980");
+		const firstDayInMonth = getByTestId("date-1-1");
+		firstDayInMonth.focus();
+		expect(firstDayInMonth).toHaveFocus();
 
-	// one keypress to get to December 1979
-	await user.keyboard(kbd.ARROW_UP);
-	expect(getByTestId("date-12-25")).toHaveFocus();
-	expect(heading).toHaveTextContent("December 1979");
+		const heading = getByTestId("heading");
+		expect(heading).toHaveTextContent("January 1980");
 
-	// four keypresses to November 1979
-	await user.keyboard(kbd.ARROW_UP);
-	expect(getByTestId("date-12-18")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_UP);
-	expect(getByTestId("date-12-11")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_UP);
-	expect(getByTestId("date-12-4")).toHaveFocus();
-	await user.keyboard(kbd.ARROW_UP);
-	expect(getByTestId("date-12-4")).toHaveFocus();
-	expect(heading).toHaveTextContent("December 1979");
+		// five keypresses to February 1980
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-1-8")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-1-15")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-1-22")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-1-29")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-2-5")).toHaveFocus();
+		expect(heading).toHaveTextContent("February 1980");
+
+		// four keypresses to March 1980
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-2-12")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-2-19")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-2-26")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-3-4")).toHaveFocus();
+		expect(heading).toHaveTextContent("March 1980");
+
+		// four keypresses to April 1980
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-3-11")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-3-18")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-3-25")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_DOWN);
+		expect(getByTestId("date-3-25")).toHaveFocus();
+		expect(heading).toHaveTextContent("March 1980");
+	});
+
+	it("should not navigate before `minValue` (with keyboard)", async () => {
+		const { getByTestId, user } = setup({
+			value: calendarDateRange,
+			minValue: new CalendarDate(1979, 12, 1),
+		});
+
+		const firstDayInMonth = getByTestId("date-1-1");
+		firstDayInMonth.focus();
+		expect(firstDayInMonth).toHaveFocus();
+
+		const heading = getByTestId("heading");
+		expect(heading).toHaveTextContent("January 1980");
+
+		// one keypress to get to December 1979
+		await user.keyboard(kbd.ARROW_UP);
+		expect(getByTestId("date-12-25")).toHaveFocus();
+		expect(heading).toHaveTextContent("December 1979");
+
+		// four keypresses to November 1979
+		await user.keyboard(kbd.ARROW_UP);
+		expect(getByTestId("date-12-18")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_UP);
+		expect(getByTestId("date-12-11")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_UP);
+		expect(getByTestId("date-12-4")).toHaveFocus();
+		await user.keyboard(kbd.ARROW_UP);
+		expect(getByTestId("date-12-4")).toHaveFocus();
+		expect(heading).toHaveTextContent("December 1979");
+	});
+
+	it("should call onVisibleMonthsChange when next clicked", async () => {
+		const onVisibleMonthsChange = vi.fn();
+		const { getByTestId, user } = setup({
+			value: calendarDateTimeRange,
+			onVisibleMonthsChange,
+		});
+		const heading = getByTestId("heading");
+		const nextBtn = getByTestId("next-button");
+		for (const month of months) {
+			expect(onVisibleMonthsChange).toHaveBeenCalled();
+			onVisibleMonthsChange.mockReset();
+			expect(heading).toHaveTextContent(`${month} 1980`);
+			await user.click(nextBtn);
+		}
+		expect(onVisibleMonthsChange).toHaveBeenCalled();
+		expect(heading).toHaveTextContent("January 1981");
+	});
 });
 
 it("should handle unavailable dates appropriately", async () => {

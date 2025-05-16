@@ -7,6 +7,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
+	import type { Month } from "$lib/shared/index.js";
 
 	let {
 		children,
@@ -34,11 +35,13 @@
 		disableDaysOutsideMonth = true,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
+		onVisibleMonthsChange = noop,
 		...restProps
 	}: RangeCalendarRootProps = $props();
 
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
+	let months = $state.raw<Month<DateValue>[]>([]);
 
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value?.start,
@@ -109,6 +112,13 @@
 		calendarLabel: box.with(() => calendarLabel),
 		fixedWeeks: box.with(() => fixedWeeks),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
+		months: box.with(
+			() => months,
+			(v) => {
+				months = v;
+				onVisibleMonthsChange(v);
+			}
+		),
 		startValue: box.with(
 			() => startValue,
 			(v) => {
