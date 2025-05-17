@@ -19,6 +19,7 @@ export { default as NextButton } from "$lib/bits/calendar/components/calendar-ne
 export { default as PrevButton } from "$lib/bits/calendar/components/calendar-prev-button.svelte";
 export { default as Cell } from "$lib/bits/calendar/components/calendar-cell.svelte";
 export { default as Day } from "$lib/bits/calendar/components/calendar-day.svelte";
+export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 
 export type {
 	DatePickerRootProps as RootProps,
@@ -42,4 +43,5 @@ export type {
 	DatePickerHeadingProps as HeadingProps,
 	DatePickerNextButtonProps as NextButtonProps,
 	DatePickerPrevButtonProps as PrevButtonProps,
+	DatePickerPortalProps as PortalProps,
 } from "./types.js";
