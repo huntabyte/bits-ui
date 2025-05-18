@@ -1,16 +1,18 @@
 <script lang="ts" module>
 	import { Menubar } from "bits-ui";
 	export type MenubarMenuProps = Menubar.MenuProps & {
+		id: string;
 		checked?: boolean;
 		subChecked?: boolean;
 		radio?: string;
 		subRadio?: string;
 		open?: boolean;
+		subTriggerProps?: Omit<Menubar.SubTriggerProps, "children" | "child" | "asChild">;
 	};
 </script>
 
 <script lang="ts">
-	let { id, ...restProps }: { id: string } = $props();
+	let { id, subTriggerProps, ...restProps }: MenubarMenuProps = $props();
 </script>
 
 <Menubar.Menu {...restProps}>
@@ -25,7 +27,7 @@
 		</Menubar.Group>
 
 		<Menubar.Sub>
-			<Menubar.SubTrigger data-testid="{id}-sub-trigger">
+			<Menubar.SubTrigger data-testid="{id}-sub-trigger" {...subTriggerProps}>
 				<span>subtrigger</span>
 			</Menubar.SubTrigger>
 			<Menubar.SubContent data-testid="{id}-sub-content">

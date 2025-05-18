@@ -4,17 +4,20 @@
 	import { useMenuSubTrigger } from "../menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
+	import { noop } from "$lib/internal/noop.js";
 	let {
 		id = useId(),
 		disabled = false,
 		ref = $bindable(null),
 		children,
 		child,
+		onSelect = noop,
 		...restProps
 	}: MenuItemProps = $props();
 
 	const subTriggerState = useMenuSubTrigger({
 		disabled: box.with(() => disabled),
+		onSelect: box.with(() => onSelect),
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

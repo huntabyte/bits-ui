@@ -137,3 +137,28 @@ it("should call the menus `onOpenChange` callback when the menu is opened or clo
 		expect(callback).toHaveBeenCalledTimes(2);
 	}
 });
+
+it("should respect the `onSelect` prop on SubTrigger", async () => {
+	const onSelect = vi.fn();
+	const { user, getTrigger, getSubTrigger } = setup({
+		one: {
+			subTriggerProps: {
+				onSelect,
+			},
+		},
+	});
+
+	const trigger = getTrigger("1");
+	await user.click(trigger);
+	const subTrigger = getSubTrigger("1");
+
+	expect(subTrigger).not.toBeNull();
+	await user.click(subTrigger!);
+	expect(onSelect).toHaveBeenCalled();
+
+	await user.keyboard(kbd.ENTER);
+	expect(onSelect).toHaveBeenCalledTimes(2);
+
+	await user.keyboard(kbd.ARROW_RIGHT);
+	expect(onSelect).toHaveBeenCalledTimes(3);
+});
