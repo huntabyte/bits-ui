@@ -326,6 +326,9 @@ class ScrollAreaScrollbarVisibleState {
 	});
 	thumbRatio = $derived.by(() => getThumbRatio(this.sizes.viewport, this.sizes.content));
 	hasThumb = $derived.by(() => Boolean(this.thumbRatio > 0 && this.thumbRatio < 1));
+	// this needs to be a $state to properly restore the transform style when the scrollbar
+	// goes from a hidden to visible state, otherwise it will start at the beginning of the
+	// scrollbar and flicker to the correct position after
 	prevTransformStyle = $state("");
 
 	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
