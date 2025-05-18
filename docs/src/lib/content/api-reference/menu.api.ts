@@ -245,7 +245,7 @@ const subTriggerProps = {
 		default: C.FALSE,
 		description: "Whether or not the submenu trigger is disabled.",
 	}),
-	...sharedItemProps,
+	...omit(sharedItemProps, "closeOnSelect"),
 } satisfies PropObj<DropdownMenuSubTriggerPropsWithoutHTML>;
 
 const triggerProps = {
