@@ -5,17 +5,22 @@ import { kbd } from "./kbd.js";
 import { isBrowser } from "./is.js";
 import type { Orientation } from "$lib/shared/index.js";
 
-type UseRovingFocusProps = {
-	/**
-	 * The selector used to find the focusable candidates.
-	 */
-	candidateAttr: string;
-
-	/**
-	 * Custom candidate selector
-	 */
-	candidateSelector?: string;
-
+type UseRovingFocusProps = (
+	| {
+			/**
+			 * The selector used to find the focusable candidates.
+			 */
+			candidateAttr: string;
+			candidateSelector?: undefined;
+	  }
+	| {
+			/**
+			 * Custom candidate selector
+			 */
+			candidateSelector: string;
+			candidateAttr?: undefined;
+	  }
+) & {
 	/**
 	 * The id of the root node
 	 */
@@ -53,12 +58,14 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 				node.querySelectorAll<HTMLElement>(props.candidateSelector)
 			);
 			return candidates;
-		} else {
+		} else if (props.candidateAttr) {
 			const candidates = Array.from(
 				node.querySelectorAll<HTMLElement>(`[${props.candidateAttr}]:not([data-disabled])`)
 			);
 			return candidates;
 		}
+
+		return [];
 	}
 
 	function focusFirstCandidate() {
