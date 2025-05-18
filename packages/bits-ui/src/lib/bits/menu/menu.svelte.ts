@@ -541,6 +541,7 @@ class MenuSubTriggerState {
 	#openTimer: number | null = null;
 
 	constructor(
+		readonly opts: MenuItemSharedStateProps & Pick<MenuItemStateProps, "onSelect">,
 		readonly item: MenuItemSharedState,
 		readonly content: MenuContentState,
 		readonly submenu: MenuMenuState
@@ -594,12 +595,7 @@ class MenuSubTriggerState {
 		if (this.item.opts.disabled.current || (isTypingAhead && e.key === kbd.SPACE)) return;
 
 		if (SUB_OPEN_KEYS[this.submenu.root.opts.dir.current].includes(e.key)) {
-			this.submenu.onOpen();
-			afterTick(() => {
-				const contentNode = this.submenu.contentNode;
-				if (!contentNode) return;
-				MenuOpenEvent.dispatch(contentNode);
-			});
+			e.currentTarget.click();
 			e.preventDefault();
 		}
 	}
@@ -613,8 +609,18 @@ class MenuSubTriggerState {
 		 */
 		if (!isHTMLElement(e.currentTarget)) return;
 		e.currentTarget.focus();
+		const selectEvent = new CustomEvent("menusubtriggerselect", {
+			bubbles: true,
+			cancelable: true,
+		});
+		this.opts.onSelect.current(selectEvent);
 		if (!this.submenu.opts.open.current) {
 			this.submenu.onOpen();
+			afterTick(() => {
+				const contentNode = this.submenu.contentNode;
+				if (!contentNode) return;
+				MenuOpenEvent.dispatch(contentNode);
+			});
 		}
 	}
 
@@ -1036,11 +1042,13 @@ export function useMenuSubmenu(props: MenuMenuStateProps) {
 	return MenuMenuContext.set(new MenuMenuState(props, menu.root, menu));
 }
 
-export function useMenuSubTrigger(props: MenuItemSharedStateProps) {
+export function useMenuSubTrigger(
+	props: MenuItemSharedStateProps & Pick<MenuItemStateProps, "onSelect">
+) {
 	const content = MenuContentContext.get();
 	const item = new MenuItemSharedState(props, content);
 	const submenu = MenuMenuContext.get();
-	return new MenuSubTriggerState(item, content, submenu);
+	return new MenuSubTriggerState(props, item, content, submenu);
 }
 
 export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {

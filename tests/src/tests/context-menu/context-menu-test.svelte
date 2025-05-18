@@ -8,6 +8,7 @@
 		open?: boolean;
 		contentProps?: Omit<ContextMenu.ContentProps, "asChild" | "children" | "child">;
 		portalProps?: Omit<ContextMenu.PortalProps, "asChild" | "children" | "child">;
+		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "asChild" | "children" | "child">;
 	};
 </script>
 
@@ -20,6 +21,7 @@
 		open = false,
 		contentProps = {},
 		portalProps = {},
+		subTriggerProps = {},
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
@@ -50,7 +52,7 @@
 					</ContextMenu.Group>
 
 					<ContextMenu.Sub>
-						<ContextMenu.SubTrigger data-testid="sub-trigger">
+						<ContextMenu.SubTrigger data-testid="sub-trigger" {...subTriggerProps}>
 							<span>subtrigger</span>
 						</ContextMenu.SubTrigger>
 						<ContextMenu.SubContent data-testid="sub-content">
