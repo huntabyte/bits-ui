@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
+import { describe, it, vi } from "vitest";
 import { tick } from "svelte";
 import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
@@ -392,4 +392,22 @@ describe("dropdown menu", () => {
 			expect(queryByTestId("content")).toBeNull();
 		}
 	);
+
+	it("should respect the `onSelect` prop on SubTrigger", async () => {
+		const onSelect = vi.fn();
+		const { getByTestId, user } = await openWithPointer({
+			subTriggerProps: {
+				onSelect,
+			},
+		});
+
+		await user.click(getByTestId("sub-trigger"));
+		expect(onSelect).toHaveBeenCalled();
+
+		await user.keyboard(kbd.ENTER);
+		expect(onSelect).toHaveBeenCalledTimes(2);
+
+		await user.keyboard(kbd.ARROW_RIGHT);
+		expect(onSelect).toHaveBeenCalledTimes(3);
+	});
 });

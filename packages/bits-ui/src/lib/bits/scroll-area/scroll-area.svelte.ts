@@ -326,7 +326,10 @@ class ScrollAreaScrollbarVisibleState {
 	});
 	thumbRatio = $derived.by(() => getThumbRatio(this.sizes.viewport, this.sizes.content));
 	hasThumb = $derived.by(() => Boolean(this.thumbRatio > 0 && this.thumbRatio < 1));
-	prevTransformStyle = "";
+	// this needs to be a $state to properly restore the transform style when the scrollbar
+	// goes from a hidden to visible state, otherwise it will start at the beginning of the
+	// scrollbar and flicker to the correct position after
+	prevTransformStyle = $state("");
 
 	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
 		this.root = scrollbar.root;
@@ -373,6 +376,7 @@ class ScrollAreaScrollbarVisibleState {
 		});
 		const transformStyle = `translate3d(${offset}px, 0, 0)`;
 		this.thumbNode.style.transform = transformStyle;
+		this.prevTransformStyle = transformStyle;
 	}
 
 	xOnWheelScroll(scrollPos: number) {
@@ -394,6 +398,7 @@ class ScrollAreaScrollbarVisibleState {
 		const offset = getThumbOffsetFromScroll({ scrollPos, sizes: this.sizes });
 		const transformStyle = `translate3d(0, ${offset}px, 0)`;
 		this.thumbNode.style.transform = transformStyle;
+		this.prevTransformStyle = transformStyle;
 	}
 
 	yOnWheelScroll(scrollPos: number) {
@@ -672,13 +677,13 @@ class ScrollAreaScrollbarSharedState {
 			return unsubListener;
 		});
 
-		$effect(() => {
+		$effect.pre(() => {
 			// react to changes to this:
 			this.scrollbarVis.sizes;
 			untrack(() => this.handleThumbPositionChange());
 		});
 
-		$effect(() => {
+		$effect.pre(() => {
 			this.handleThumbPositionChange();
 		});
 

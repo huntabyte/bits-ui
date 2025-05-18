@@ -9,6 +9,7 @@
 		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child" | "asChild">;
 		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child" | "asChild">;
 		portalProps?: DropdownMenu.PortalProps;
+		subTriggerProps?: Omit<DropdownMenu.SubTriggerProps, "children" | "child" | "asChild">;
 	};
 </script>
 
@@ -22,6 +23,7 @@
 		contentProps = {},
 		subContentProps = {},
 		portalProps = {},
+		subTriggerProps = {},
 		...restProps
 	}: DropdownMenuTestProps = $props();
 </script>
@@ -45,7 +47,7 @@
 					</DropdownMenu.Group>
 
 					<DropdownMenu.Sub>
-						<DropdownMenu.SubTrigger data-testid="sub-trigger">
+						<DropdownMenu.SubTrigger data-testid="sub-trigger" {...subTriggerProps}>
 							<span>subtrigger</span>
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.SubContent data-testid="sub-content" {...subContentProps}>

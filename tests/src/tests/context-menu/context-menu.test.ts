@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { it } from "vitest";
+import { it, vi } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import ContextMenuTest from "./context-menu-test.svelte";
 import type { ContextMenuTestProps } from "./context-menu-test.svelte";
@@ -375,4 +375,22 @@ it("should respect the `onCloseAutoFocus` prop", async () => {
 
 	await user.keyboard(kbd.ESCAPE);
 	expect(getByTestId("on-focus-override")).toHaveFocus();
+});
+
+it("should respect the `onSelect` prop on SubTrigger", async () => {
+	const onSelect = vi.fn();
+	const { getByTestId, user } = await open({
+		subTriggerProps: {
+			onSelect,
+		},
+	});
+
+	await user.click(getByTestId("sub-trigger"));
+	expect(onSelect).toHaveBeenCalled();
+
+	await user.keyboard(kbd.ENTER);
+	expect(onSelect).toHaveBeenCalledTimes(2);
+
+	await user.keyboard(kbd.ARROW_RIGHT);
+	expect(onSelect).toHaveBeenCalledTimes(3);
 });
