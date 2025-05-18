@@ -191,8 +191,8 @@ export type MenuSubContentStaticPropsWithoutHTML = Expand<
 export type MenuSubContentStaticProps = MenuSubContentStaticPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenuSubContentStaticPropsWithoutHTML>;
 
-export type MenuSubTriggerPropsWithoutHTML = MenuItemPropsWithoutHTML;
-export type MenuSubTriggerProps = MenuItemProps;
+export type MenuSubTriggerPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "closeOnSelect">;
+export type MenuSubTriggerProps = Omit<MenuItemProps, "closeOnSelect">;
 
 export type MenuSeparatorPropsWithoutHTML = WithChild;
 export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
