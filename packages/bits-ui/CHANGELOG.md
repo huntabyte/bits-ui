@@ -1,5 +1,19 @@
 # bits-ui
 
+## 1.5.0
+
+### Minor Changes
+
+-   feat(Menu): add `onSelect` for SubTrigger ([#1454](https://github.com/huntabyte/bits-ui/pull/1454))
+
+### Patch Changes
+
+-   fix(ScrollArea): ensure thumb properly restores previous position ([#1455](https://github.com/huntabyte/bits-ui/pull/1455))
+
+-   fix(DatePicker): export `Portal` parts ([#1451](https://github.com/huntabyte/bits-ui/pull/1451))
+
+-   fix(Menu): remove unused `closeOnSelect` prop from SubTrigger components ([#1453](https://github.com/huntabyte/bits-ui/pull/1453))
+
 ## 1.4.8
 
 ### Patch Changes
