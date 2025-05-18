@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.5.1
+
+### Patch Changes
+
+-   fix(NavigationMenu): allow roving focus to link items ([#1457](https://github.com/huntabyte/bits-ui/pull/1457))
+
 ## 1.5.0
 
 ### Minor Changes
