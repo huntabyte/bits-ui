@@ -27,11 +27,13 @@ type TooltipProviderStateProps = ReadableBoxedValues<{
 }>;
 
 class TooltipProviderState {
+	readonly opts: TooltipProviderStateProps;
 	isOpenDelayed = $state<boolean>(true);
 	isPointerInTransit = box(false);
 	#timerFn: ReturnType<typeof useTimeoutFn>;
 
-	constructor(readonly opts: TooltipProviderStateProps) {
+	constructor(opts: TooltipProviderStateProps) {
+		this.opts = opts;
 		this.#timerFn = useTimeoutFn(
 			() => {
 				this.isOpenDelayed = true;
@@ -71,6 +73,8 @@ type TooltipRootStateProps = ReadableBoxedValues<{
 	}>;
 
 class TooltipRootState {
+	readonly opts: TooltipRootStateProps;
+	readonly provider: TooltipProviderState;
 	delayDuration = $derived.by(
 		() => this.opts.delayDuration.current ?? this.provider.opts.delayDuration.current
 	);
@@ -99,10 +103,9 @@ class TooltipRootState {
 		return this.#wasOpenDelayed ? "delayed-open" : "instant-open";
 	});
 
-	constructor(
-		readonly opts: TooltipRootStateProps,
-		readonly provider: TooltipProviderState
-	) {
+	constructor(opts: TooltipRootStateProps, provider: TooltipProviderState) {
+		this.opts = opts;
+		this.provider = provider;
 		this.#timerFn = useTimeoutFn(
 			() => {
 				this.#wasOpenDelayed = true;
@@ -176,14 +179,16 @@ type TooltipTriggerStateProps = WithRefProps<
 >;
 
 class TooltipTriggerState {
+	readonly opts: TooltipTriggerStateProps;
+	readonly root: TooltipRootState;
 	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
 
-	constructor(
-		readonly opts: TooltipTriggerStateProps,
-		readonly root: TooltipRootState
-	) {
+	constructor(opts: TooltipTriggerStateProps, root: TooltipRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -270,10 +275,12 @@ type TooltipContentStateProps = WithRefProps &
 	}>;
 
 class TooltipContentState {
-	constructor(
-		readonly opts: TooltipContentStateProps,
-		readonly root: TooltipRootState
-	) {
+	readonly opts: TooltipContentStateProps;
+	readonly root: TooltipRootState;
+	constructor(opts: TooltipContentStateProps, root: TooltipRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
