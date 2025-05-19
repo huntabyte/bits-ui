@@ -43,6 +43,7 @@ type ScrollAreaRootStateProps = WithRefProps<
 >;
 
 class ScrollAreaRootState {
+	readonly opts: ScrollAreaRootStateProps;
 	scrollAreaNode = $state<HTMLElement | null>(null);
 	viewportNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -53,7 +54,9 @@ class ScrollAreaRootState {
 	scrollbarXEnabled = $state(false);
 	scrollbarYEnabled = $state(false);
 
-	constructor(readonly opts: ScrollAreaRootStateProps) {
+	constructor(opts: ScrollAreaRootStateProps) {
+		this.opts = opts;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -80,13 +83,15 @@ class ScrollAreaRootState {
 type ScrollAreaViewportStateProps = WithRefProps;
 
 class ScrollAreaViewportState {
+	readonly opts: ScrollAreaViewportStateProps;
+	readonly root: ScrollAreaRootState;
 	#contentId = box(useId());
 	#contentRef = box<HTMLElement | null>(null);
 
-	constructor(
-		readonly opts: ScrollAreaViewportStateProps,
-		readonly root: ScrollAreaRootState
-	) {
+	constructor(opts: ScrollAreaViewportStateProps, root: ScrollAreaRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -139,13 +144,15 @@ type ScrollAreaScrollbarStateProps = WithRefProps<
 >;
 
 class ScrollAreaScrollbarState {
+	readonly opts: ScrollAreaScrollbarStateProps;
+	readonly root: ScrollAreaRootState;
 	isHorizontal = $derived.by(() => this.opts.orientation.current === "horizontal");
 	hasThumb = $state(false);
 
-	constructor(
-		readonly opts: ScrollAreaScrollbarStateProps,
-		readonly root: ScrollAreaRootState
-	) {
+	constructor(opts: ScrollAreaScrollbarStateProps, root: ScrollAreaRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		$effect(() => {
 			this.isHorizontal
 				? (this.root.scrollbarXEnabled = true)
@@ -161,10 +168,12 @@ class ScrollAreaScrollbarState {
 }
 
 class ScrollAreaScrollbarHoverState {
+	readonly scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
 	isVisible = $state(false);
 
-	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
+	constructor(scrollbar: ScrollAreaScrollbarState) {
+		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
 
 		$effect(() => {
@@ -208,6 +217,7 @@ class ScrollAreaScrollbarHoverState {
 }
 
 class ScrollAreaScrollbarScrollState {
+	readonly scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
 	machine = useStateMachine("hidden", {
 		hidden: {
@@ -229,7 +239,8 @@ class ScrollAreaScrollbarScrollState {
 	});
 	isHidden = $derived.by(() => this.machine.state.current === "hidden");
 
-	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
+	constructor(scrollbar: ScrollAreaScrollbarState) {
+		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
 
 		const debounceScrollend = useDebounce(() => this.machine.dispatch("SCROLL_END"), 100);
@@ -289,10 +300,12 @@ class ScrollAreaScrollbarScrollState {
 }
 
 class ScrollAreaScrollbarAutoState {
+	readonly scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
 	isVisible = $state(false);
 
-	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
+	constructor(scrollbar: ScrollAreaScrollbarState) {
+		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
 
 		const handleResize = useDebounce(() => {
@@ -316,6 +329,7 @@ class ScrollAreaScrollbarAutoState {
 }
 
 class ScrollAreaScrollbarVisibleState {
+	readonly scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
 	thumbNode = $state<HTMLElement | null>(null);
 	pointerOffset = $state(0);
@@ -331,7 +345,8 @@ class ScrollAreaScrollbarVisibleState {
 	// scrollbar and flicker to the correct position after
 	prevTransformStyle = $state("");
 
-	constructor(readonly scrollbar: ScrollAreaScrollbarState) {
+	constructor(scrollbar: ScrollAreaScrollbarState) {
+		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
 
 		$effect(() => {
@@ -432,14 +447,14 @@ type ScrollbarAxisState = {
 };
 
 class ScrollAreaScrollbarXState implements ScrollbarAxisState {
+	readonly opts: ScrollbarAxisStateProps;
+	readonly scrollbarVis: ScrollAreaScrollbarVisibleState;
 	root: ScrollAreaRootState;
 	computedStyle = $state<CSSStyleDeclaration>();
 	scrollbar: ScrollAreaScrollbarState;
 
-	constructor(
-		readonly opts: ScrollbarAxisStateProps,
-		readonly scrollbarVis: ScrollAreaScrollbarVisibleState
-	) {
+	constructor(opts: ScrollbarAxisStateProps, scrollbarVis: ScrollAreaScrollbarVisibleState) {
+		this.opts = opts;
 		this.scrollbarVis = scrollbarVis;
 		this.root = scrollbarVis.root;
 		this.scrollbar = scrollbarVis.scrollbar;
@@ -532,14 +547,15 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 }
 
 class ScrollAreaScrollbarYState implements ScrollbarAxisState {
+	readonly opts: ScrollbarAxisStateProps;
+	readonly scrollbarVis: ScrollAreaScrollbarVisibleState;
 	root: ScrollAreaRootState;
 	scrollbar: ScrollAreaScrollbarState;
 	computedStyle = $state<CSSStyleDeclaration>();
 
-	constructor(
-		readonly opts: ScrollbarAxisStateProps,
-		readonly scrollbarVis: ScrollAreaScrollbarVisibleState
-	) {
+	constructor(opts: ScrollbarAxisStateProps, scrollbarVis: ScrollAreaScrollbarVisibleState) {
+		this.opts = opts;
+		this.scrollbarVis = scrollbarVis;
 		this.root = scrollbarVis.root;
 		this.scrollbar = scrollbarVis.scrollbar;
 
@@ -635,6 +651,7 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 type ScrollbarAxis = ScrollAreaScrollbarXState | ScrollAreaScrollbarYState;
 
 class ScrollAreaScrollbarSharedState {
+	readonly scrollbarState: ScrollbarAxis;
 	root: ScrollAreaRootState;
 	scrollbarVis: ScrollAreaScrollbarVisibleState;
 	scrollbar: ScrollAreaScrollbarState;
@@ -649,7 +666,8 @@ class ScrollAreaScrollbarSharedState {
 		() => this.scrollbarVis.sizes.content - this.scrollbarVis.sizes.viewport
 	);
 
-	constructor(readonly scrollbarState: ScrollbarAxis) {
+	constructor(scrollbarState: ScrollbarAxis) {
+		this.scrollbarState = scrollbarState;
 		this.root = scrollbarState.root;
 		this.scrollbarVis = scrollbarState.scrollbarVis;
 		this.scrollbar = scrollbarState.scrollbarVis.scrollbar;
@@ -749,6 +767,8 @@ type ScrollAreaThumbImplStateProps = WithRefProps &
 		mounted: boolean;
 	}>;
 class ScrollAreaThumbImplState {
+	readonly opts: ScrollAreaThumbImplStateProps;
+	readonly scrollbarState: ScrollAreaScrollbarSharedState;
 	#root: ScrollAreaRootState;
 	#removeUnlinkedScrollListener = $state<() => void>();
 	#debounceScrollEnd = useDebounce(() => {
@@ -759,9 +779,11 @@ class ScrollAreaThumbImplState {
 	}, 100);
 
 	constructor(
-		readonly opts: ScrollAreaThumbImplStateProps,
-		readonly scrollbarState: ScrollAreaScrollbarSharedState
+		opts: ScrollAreaThumbImplStateProps,
+		scrollbarState: ScrollAreaScrollbarSharedState
 	) {
+		this.opts = opts;
+		this.scrollbarState = scrollbarState;
 		this.#root = scrollbarState.root;
 
 		useRefById({
@@ -828,14 +850,16 @@ class ScrollAreaThumbImplState {
 type ScrollAreaCornerImplStateProps = WithRefProps;
 
 class ScrollAreaCornerImplState {
+	readonly opts: ScrollAreaCornerImplStateProps;
+	readonly root: ScrollAreaRootState;
 	#width = $state(0);
 	#height = $state(0);
 	hasSize = $derived(Boolean(this.#width && this.#height));
 
-	constructor(
-		readonly opts: ScrollAreaCornerImplStateProps,
-		readonly root: ScrollAreaRootState
-	) {
+	constructor(opts: ScrollAreaCornerImplStateProps, root: ScrollAreaRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useResizeObserver(
 			() => this.root.scrollbarXNode,
 			() => {

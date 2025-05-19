@@ -24,8 +24,12 @@ type AvatarRootStateProps = WithRefProps<{
 type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
-	constructor(readonly opts: AvatarRootStateProps) {
+	readonly opts: AvatarRootStateProps;
+
+	constructor(opts: AvatarRootStateProps) {
+		this.opts = opts;
 		this.loadImage = this.loadImage.bind(this);
+
 		useRefById(opts);
 	}
 
@@ -75,10 +79,13 @@ type AvatarImageStateProps = WithRefProps<
 >;
 
 class AvatarImageState {
-	constructor(
-		readonly opts: AvatarImageStateProps,
-		readonly root: AvatarRootState
-	) {
+	readonly opts: AvatarImageStateProps;
+	readonly root: AvatarRootState;
+
+	constructor(opts: AvatarImageStateProps, root: AvatarRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		$effect.pre(() => {
@@ -121,10 +128,13 @@ class AvatarImageState {
 type AvatarFallbackStateProps = WithRefProps;
 
 class AvatarFallbackState {
-	constructor(
-		readonly opts: AvatarFallbackStateProps,
-		readonly root: AvatarRootState
-	) {
+	readonly opts: AvatarFallbackStateProps;
+	readonly root: AvatarRootState;
+
+	constructor(opts: AvatarFallbackStateProps, root: AvatarRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 

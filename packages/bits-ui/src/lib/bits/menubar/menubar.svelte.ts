@@ -37,12 +37,14 @@ type MenubarRootStateProps = WithRefProps<
 >;
 
 class MenubarRootState {
+	readonly opts: MenubarRootStateProps;
 	rovingFocusGroup: UseRovingFocusReturn;
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
 	valueToChangeHandler = new Map<string, ReadableBox<OnChangeFn<boolean>>>();
 
-	constructor(readonly opts: MenubarRootStateProps) {
+	constructor(opts: MenubarRootStateProps) {
+		this.opts = opts;
 		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
@@ -131,15 +133,17 @@ type MenubarMenuStateProps = ReadableBoxedValues<{
 }>;
 
 class MenubarMenuState {
+	readonly opts: MenubarMenuStateProps;
+	readonly root: MenubarRootState;
 	open = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	wasOpenedByKeyboard = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 
-	constructor(
-		readonly opts: MenubarMenuStateProps,
-		readonly root: MenubarRootState
-	) {
+	constructor(opts: MenubarMenuStateProps, root: MenubarRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		watch(
 			() => this.open,
 			() => {
@@ -170,14 +174,15 @@ type MenubarTriggerStateProps = WithRefProps<
 >;
 
 class MenubarTriggerState {
+	readonly opts: MenubarTriggerStateProps;
+	readonly menu: MenubarMenuState;
 	root: MenubarRootState;
 	isFocused = $state(false);
 	#tabIndex = $state(0);
 
-	constructor(
-		readonly opts: MenubarTriggerStateProps,
-		readonly menu: MenubarMenuState
-	) {
+	constructor(opts: MenubarTriggerStateProps, menu: MenubarMenuState) {
+		this.opts = opts;
+		this.menu = menu;
 		this.root = menu.root;
 
 		this.onpointerdown = this.onpointerdown.bind(this);
@@ -287,13 +292,14 @@ type MenubarContentStateProps = WithRefProps<
 >;
 
 class MenubarContentState {
+	readonly opts: MenubarContentStateProps;
+	readonly menu: MenubarMenuState;
 	root: MenubarRootState;
 	focusScopeContext: FocusScopeContextValue;
 
-	constructor(
-		readonly opts: MenubarContentStateProps,
-		readonly menu: MenubarMenuState
-	) {
+	constructor(opts: MenubarContentStateProps, menu: MenubarMenuState) {
+		this.opts = opts;
+		this.menu = menu;
 		this.root = menu.root;
 		this.focusScopeContext = FocusScopeContext.get();
 

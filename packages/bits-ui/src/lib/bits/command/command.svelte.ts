@@ -76,6 +76,7 @@ const defaultState = {
 };
 
 class CommandRootState {
+	readonly opts: CommandRootStateProps;
 	#updateScheduled = false;
 	sortAfterTick = false;
 	sortAndFilterAfterTick = false;
@@ -133,7 +134,9 @@ class CommandRootState {
 		this.#scheduleUpdate();
 	}
 
-	constructor(readonly opts: CommandRootStateProps) {
+	constructor(opts: CommandRootStateProps) {
+		this.opts = opts;
+
 		const defaults = { ...this._commandState, value: this.opts.value.current ?? "" };
 
 		this._commandState = defaults;
@@ -674,6 +677,8 @@ type CommandEmptyStateProps = WithRefProps &
 	}>;
 
 class CommandEmptyState {
+	readonly opts: CommandEmptyStateProps;
+	readonly root: CommandRootState;
 	#isInitialRender = true;
 	shouldRender = $derived.by(() => {
 		return (
@@ -682,10 +687,10 @@ class CommandEmptyState {
 		);
 	});
 
-	constructor(
-		readonly opts: CommandEmptyStateProps,
-		readonly root: CommandRootState
-	) {
+	constructor(opts: CommandEmptyStateProps, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		$effect.pre(() => {
 			this.#isInitialRender = false;
 		});
@@ -714,6 +719,8 @@ type CommandGroupContainerStateProps = WithRefProps<
 >;
 
 class CommandGroupContainerState {
+	readonly opts: CommandGroupContainerStateProps;
+	readonly root: CommandRootState;
 	headingNode = $state<HTMLElement | null>(null);
 
 	trueValue = $state("");
@@ -724,10 +731,9 @@ class CommandGroupContainerState {
 		return this.root._commandState.filtered.groups.has(this.trueValue);
 	});
 
-	constructor(
-		readonly opts: CommandGroupContainerStateProps,
-		readonly root: CommandRootState
-	) {
+	constructor(opts: CommandGroupContainerStateProps, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.trueValue = opts.value.current ?? opts.id.current;
 
 		useRefById({
@@ -771,10 +777,13 @@ class CommandGroupContainerState {
 type CommandGroupHeadingStateProps = WithRefProps;
 
 class CommandGroupHeadingState {
-	constructor(
-		readonly opts: CommandGroupHeadingStateProps,
-		readonly group: CommandGroupContainerState
-	) {
+	readonly opts: CommandGroupHeadingStateProps;
+	readonly group: CommandGroupContainerState;
+
+	constructor(opts: CommandGroupHeadingStateProps, group: CommandGroupContainerState) {
+		this.opts = opts;
+		this.group = group;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -795,10 +804,13 @@ class CommandGroupHeadingState {
 type CommandGroupItemsStateProps = WithRefProps;
 
 class CommandGroupItemsState {
-	constructor(
-		readonly opts: CommandGroupItemsStateProps,
-		readonly group: CommandGroupContainerState
-	) {
+	readonly opts: CommandGroupItemsStateProps;
+	readonly group: CommandGroupContainerState;
+
+	constructor(opts: CommandGroupItemsStateProps, group: CommandGroupContainerState) {
+		this.opts = opts;
+		this.group = group;
+
 		useRefById(opts);
 	}
 
@@ -823,6 +835,8 @@ type CommandInputStateProps = WithRefProps<
 >;
 
 class CommandInputState {
+	readonly opts: CommandInputStateProps;
+	readonly root: CommandRootState;
 	#selectedItemId = $derived.by(() => {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
 			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(this.root.opts.value.current)}"]`
@@ -831,10 +845,10 @@ class CommandInputState {
 		return item?.getAttribute("id") ?? undefined;
 	});
 
-	constructor(
-		readonly opts: CommandInputStateProps,
-		readonly root: CommandRootState
-	) {
+	constructor(opts: CommandInputStateProps, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -894,6 +908,8 @@ type CommandItemStateProps = WithRefProps<
 >;
 
 class CommandItemState {
+	readonly opts: CommandItemStateProps;
+	readonly root: CommandRootState;
 	#group: CommandGroupContainerState | null = null;
 	#trueForceMount = $derived.by(() => {
 		return this.opts.forceMount.current || this.#group?.opts.forceMount.current === true;
@@ -917,10 +933,9 @@ class CommandItemState {
 		() => this.root.opts.value.current === this.trueValue && this.trueValue !== ""
 	);
 
-	constructor(
-		readonly opts: CommandItemStateProps,
-		readonly root: CommandRootState
-	) {
+	constructor(opts: CommandItemStateProps, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#group = CommandGroupContainerContext.getOr(null);
 		this.trueValue = opts.value.current;
 
@@ -1003,7 +1018,11 @@ type CommandLoadingStateProps = WithRefProps<
 >;
 
 class CommandLoadingState {
-	constructor(readonly opts: CommandLoadingStateProps) {
+	readonly opts: CommandLoadingStateProps;
+
+	constructor(opts: CommandLoadingStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 	}
 
@@ -1027,14 +1046,16 @@ type CommandSeparatorStateProps = WithRefProps &
 	}>;
 
 class CommandSeparatorState {
+	readonly opts: CommandSeparatorStateProps;
+	readonly root: CommandRootState;
 	shouldRender = $derived.by(
 		() => !this.root._commandState.search || this.opts.forceMount.current
 	);
 
-	constructor(
-		readonly opts: CommandSeparatorStateProps,
-		readonly root: CommandRootState
-	) {
+	constructor(opts: CommandSeparatorStateProps, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			deps: () => this.shouldRender,
@@ -1058,10 +1079,13 @@ type CommandListStateProps = WithRefProps &
 	}>;
 
 class CommandListState {
-	constructor(
-		readonly opts: CommandListStateProps,
-		readonly root: CommandRootState
-	) {
+	readonly opts: CommandListStateProps;
+	readonly root: CommandRootState;
+
+	constructor(opts: CommandListStateProps, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 
@@ -1079,10 +1103,13 @@ class CommandListState {
 type CommandLabelStateProps = WithRefProps<ReadableBoxedValues<{ for?: string }>>;
 
 class CommandLabelState {
-	constructor(
-		readonly opts: CommandLabelStateProps,
-		readonly root: CommandRootState
-	) {
+	readonly opts: CommandLabelStateProps;
+	readonly root: CommandRootState;
+
+	constructor(opts: CommandLabelStateProps, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -1105,10 +1132,13 @@ class CommandLabelState {
 type CommandViewportStateProps = WithRefProps;
 
 class CommandViewportState {
-	constructor(
-		readonly opts: CommandViewportStateProps,
-		readonly list: CommandListState
-	) {
+	readonly opts: CommandViewportStateProps;
+	readonly list: CommandListState;
+
+	constructor(opts: CommandViewportStateProps, list: CommandListState) {
+		this.opts = opts;
+		this.list = list;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {

@@ -57,10 +57,16 @@ export function addEventListener(
  * @param options - CustomEvent options (bubbles, cancelable, etc.)
  */
 export class CustomEventDispatcher<T = unknown> {
+	readonly eventName: string;
+	readonly options: Omit<CustomEventInit<T>, "detail">;
+
 	constructor(
-		readonly eventName: string,
-		readonly options: Omit<CustomEventInit<T>, "detail"> = { bubbles: true, cancelable: true }
-	) {}
+		eventName: string,
+		options: Omit<CustomEventInit<T>, "detail"> = { bubbles: true, cancelable: true }
+	) {
+		this.eventName = eventName;
+		this.options = options;
+	}
 
 	createEvent(detail?: T): CustomEvent<T> {
 		return new CustomEvent<T>(this.eventName, {

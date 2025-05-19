@@ -18,9 +18,11 @@ type CollapsibleRootStateProps = WithRefProps &
 	}>;
 
 class CollapsibleRootState {
+	readonly opts: CollapsibleRootStateProps;
 	contentNode = $state<HTMLElement | null>(null);
 
-	constructor(readonly opts: CollapsibleRootStateProps) {
+	constructor(opts: CollapsibleRootStateProps) {
+		this.opts = opts;
 		this.toggleOpen = this.toggleOpen.bind(this);
 
 		useRefById(opts);
@@ -46,16 +48,17 @@ type CollapsibleContentStateProps = WithRefProps &
 		forceMount: boolean;
 	}>;
 class CollapsibleContentState {
+	readonly opts: CollapsibleContentStateProps;
+	readonly root: CollapsibleRootState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
 	present = $derived.by(() => this.opts.forceMount.current || this.root.opts.open.current);
 
-	constructor(
-		readonly opts: CollapsibleContentStateProps,
-		readonly root: CollapsibleRootState
-	) {
+	constructor(opts: CollapsibleContentStateProps, root: CollapsibleRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
 
 		useRefById({
@@ -133,12 +136,13 @@ type CollapsibleTriggerStateProps = WithRefProps &
 	}>;
 
 class CollapsibleTriggerState {
+	readonly opts: CollapsibleTriggerStateProps;
+	readonly root: CollapsibleRootState;
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 
-	constructor(
-		readonly opts: CollapsibleTriggerStateProps,
-		readonly root: CollapsibleRootState
-	) {
+	constructor(opts: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 

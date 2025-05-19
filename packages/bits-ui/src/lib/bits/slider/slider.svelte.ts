@@ -45,6 +45,7 @@ type SliderBaseRootStateProps = WithRefProps<
 >;
 
 class SliderBaseRootState {
+	readonly opts: SliderBaseRootStateProps;
 	isActive = $state(false);
 	direction: "rl" | "lr" | "tb" | "bt" = $derived.by(() => {
 		if (this.opts.orientation.current === "horizontal") {
@@ -54,7 +55,9 @@ class SliderBaseRootState {
 		}
 	});
 
-	constructor(readonly opts: SliderBaseRootStateProps) {
+	constructor(opts: SliderBaseRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 	}
 
@@ -127,10 +130,13 @@ type SliderSingleRootStateProps = SliderBaseRootStateProps &
 	}>;
 
 class SliderSingleRootState extends SliderBaseRootState {
+	readonly opts: SliderSingleRootStateProps;
 	isMulti = false as const;
 
-	constructor(readonly opts: SliderSingleRootStateProps) {
+	constructor(opts: SliderSingleRootStateProps) {
 		super(opts);
+
+		this.opts = opts;
 
 		onMountEffect(() => {
 			return executeCallbacks(
@@ -350,12 +356,15 @@ type SliderMultiRootStateProps = SliderBaseRootStateProps &
 	}>;
 
 class SliderMultiRootState extends SliderBaseRootState {
+	readonly opts: SliderMultiRootStateProps;
 	isMulti = true as const;
 	activeThumb = $state<{ node: HTMLElement; idx: number } | null>(null);
 	currentThumbIdx = $state(0);
 
-	constructor(readonly opts: SliderMultiRootStateProps) {
+	constructor(opts: SliderMultiRootStateProps) {
 		super(opts);
+
+		this.opts = opts;
 
 		onMountEffect(() => {
 			return executeCallbacks(
@@ -671,10 +680,13 @@ const VALID_SLIDER_KEYS = [
 type SliderRangeStateProps = WithRefProps;
 
 class SliderRangeState {
-	constructor(
-		readonly opts: SliderRangeStateProps,
-		readonly root: SliderRootState
-	) {
+	readonly opts: SliderRangeStateProps;
+	readonly root: SliderRootState;
+
+	constructor(opts: SliderRangeStateProps, root: SliderRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 
@@ -712,12 +724,14 @@ type SliderThumbStateProps = WithRefProps &
 	}>;
 
 class SliderThumbState {
+	readonly opts: SliderThumbStateProps;
+	readonly root: SliderRootState;
 	#isDisabled = $derived.by(() => this.root.opts.disabled.current || this.opts.disabled.current);
 
-	constructor(
-		readonly opts: SliderThumbStateProps,
-		readonly root: SliderRootState
-	) {
+	constructor(opts: SliderThumbStateProps, root: SliderRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -825,10 +839,13 @@ type SliderTickStateProps = WithRefProps &
 	}>;
 
 class SliderTickState {
-	constructor(
-		readonly opts: SliderTickStateProps,
-		readonly root: SliderRootState
-	) {
+	readonly opts: SliderTickStateProps;
+	readonly root: SliderRootState;
+
+	constructor(opts: SliderTickStateProps, root: SliderRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 

@@ -13,7 +13,11 @@ type ProgressRootStateProps = WithRefProps<
 >;
 
 class ProgressRootState {
-	constructor(readonly opts: ProgressRootStateProps) {
+	readonly opts: ProgressRootStateProps;
+
+	constructor(opts: ProgressRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 	}
 

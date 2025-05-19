@@ -63,11 +63,14 @@ export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 });
 
 class MenuRootState {
+	readonly opts: MenuRootStateProps;
 	isUsingKeyboard = new IsUsingKeyboard();
 	ignoreCloseAutoFocus = $state(false);
 	isPointerInTransit = $state(false);
 
-	constructor(readonly opts: MenuRootStateProps) {}
+	constructor(opts: MenuRootStateProps) {
+		this.opts = opts;
+	}
 
 	getAttr(name: string) {
 		return `data-${this.opts.variant.current}-${name}`;
@@ -79,15 +82,18 @@ type MenuMenuStateProps = WritableBoxedValues<{
 }>;
 
 class MenuMenuState {
+	readonly opts: MenuMenuStateProps;
+	readonly root: MenuRootState;
+	readonly parentMenu: MenuMenuState | null;
 	contentId = box.with<string>(() => "");
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 
-	constructor(
-		readonly opts: MenuMenuStateProps,
-		readonly root: MenuRootState,
-		readonly parentMenu: MenuMenuState | null
-	) {
+	constructor(opts: MenuMenuStateProps, root: MenuRootState, parentMenu: MenuMenuState | null) {
+		this.opts = opts;
+		this.root = root;
+		this.parentMenu = parentMenu;
+
 		if (parentMenu) {
 			watch(
 				() => parentMenu.opts.open.current,
@@ -121,6 +127,8 @@ type MenuContentStateProps = WithRefProps &
 	};
 
 class MenuContentState {
+	readonly opts: MenuContentStateProps;
+	readonly parentMenu: MenuMenuState;
 	search = $state("");
 	#timer = 0;
 	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
@@ -128,10 +136,10 @@ class MenuContentState {
 	mounted = $state(false);
 	#isSub: boolean;
 
-	constructor(
-		readonly opts: MenuContentStateProps,
-		readonly parentMenu: MenuMenuState
-	) {
+	constructor(opts: MenuContentStateProps, parentMenu: MenuMenuState) {
+		this.opts = opts;
+		this.parentMenu = parentMenu;
+
 		parentMenu.contentId = opts.id;
 
 		this.#isSub = opts.isSub ?? false;
@@ -387,12 +395,13 @@ type MenuItemSharedStateProps = WithRefProps &
 	}>;
 
 class MenuItemSharedState {
+	readonly opts: MenuItemSharedStateProps;
+	readonly content: MenuContentState;
 	#isFocused = $state(false);
 
-	constructor(
-		readonly opts: MenuItemSharedStateProps,
-		readonly content: MenuContentState
-	) {
+	constructor(opts: MenuItemSharedStateProps, content: MenuContentState) {
+		this.opts = opts;
+		this.content = content;
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
@@ -464,13 +473,14 @@ type MenuItemStateProps = ReadableBoxedValues<{
 }>;
 
 class MenuItemState {
+	readonly opts: MenuItemStateProps;
+	readonly item: MenuItemSharedState;
 	#isPointerDown = false;
 	root: MenuRootState;
 
-	constructor(
-		readonly opts: MenuItemStateProps,
-		readonly item: MenuItemSharedState
-	) {
+	constructor(opts: MenuItemStateProps, item: MenuItemSharedState) {
+		this.opts = opts;
+		this.item = item;
 		this.root = item.content.parentMenu.root;
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -538,14 +548,22 @@ class MenuItemState {
 }
 
 class MenuSubTriggerState {
+	readonly opts: MenuItemSharedStateProps & Pick<MenuItemStateProps, "onSelect">;
+	readonly item: MenuItemSharedState;
+	readonly content: MenuContentState;
+	readonly submenu: MenuMenuState;
 	#openTimer: number | null = null;
 
 	constructor(
-		readonly opts: MenuItemSharedStateProps & Pick<MenuItemStateProps, "onSelect">,
-		readonly item: MenuItemSharedState,
-		readonly content: MenuContentState,
-		readonly submenu: MenuMenuState
+		opts: MenuItemSharedStateProps & Pick<MenuItemStateProps, "onSelect">,
+		item: MenuItemSharedState,
+		content: MenuContentState,
+		submenu: MenuMenuState
 	) {
+		this.opts = opts;
+		this.item = item;
+		this.content = content;
+		this.submenu = submenu;
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -650,10 +668,13 @@ type MenuCheckboxItemStateProps = WritableBoxedValues<{
 }>;
 
 class MenuCheckboxItemState {
-	constructor(
-		readonly opts: MenuCheckboxItemStateProps,
-		readonly item: MenuItemState
-	) {}
+	readonly opts: MenuCheckboxItemStateProps;
+	readonly item: MenuItemState;
+
+	constructor(opts: MenuCheckboxItemStateProps, item: MenuItemState) {
+		this.opts = opts;
+		this.item = item;
+	}
 
 	toggleChecked() {
 		if (this.opts.indeterminate.current) {
@@ -687,12 +708,14 @@ class MenuCheckboxItemState {
 type MenuGroupStateProps = WithRefProps;
 
 class MenuGroupState {
+	readonly opts: MenuGroupStateProps;
+	readonly root: MenuRootState;
 	groupHeadingId = $state<string | undefined>(undefined);
 
-	constructor(
-		readonly opts: MenuGroupStateProps,
-		readonly root: MenuRootState
-	) {
+	constructor(opts: MenuGroupStateProps, root: MenuRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(this.opts);
 	}
 
@@ -709,10 +732,13 @@ class MenuGroupState {
 
 type MenuGroupHeadingStateProps = WithRefProps;
 class MenuGroupHeadingState {
-	constructor(
-		readonly opts: MenuGroupHeadingStateProps,
-		readonly group: MenuGroupState | MenuRadioGroupState
-	) {
+	readonly opts: MenuGroupHeadingStateProps;
+	readonly group: MenuGroupState | MenuRadioGroupState;
+
+	constructor(opts: MenuGroupHeadingStateProps, group: MenuGroupState | MenuRadioGroupState) {
+		this.opts = opts;
+		this.group = group;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -734,10 +760,13 @@ class MenuGroupHeadingState {
 type MenuSeparatorStateProps = WithRefProps;
 
 class MenuSeparatorState {
-	constructor(
-		readonly opts: MenuSeparatorStateProps,
-		readonly root: MenuRootState
-	) {
+	readonly opts: MenuSeparatorStateProps;
+	readonly root: MenuRootState;
+
+	constructor(opts: MenuSeparatorStateProps, root: MenuRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 
@@ -752,7 +781,11 @@ class MenuSeparatorState {
 }
 
 class MenuArrowState {
-	constructor(readonly root: MenuRootState) {}
+	readonly root: MenuRootState;
+
+	constructor(root: MenuRootState) {
+		this.root = root;
+	}
 
 	props = $derived.by(
 		() =>
@@ -768,13 +801,13 @@ type MenuRadioGroupStateProps = WithRefProps &
 	}>;
 
 class MenuRadioGroupState {
+	readonly opts: MenuRadioGroupStateProps;
+	readonly content: MenuContentState;
 	groupHeadingId = $state<string | null>(null);
 	root: MenuRootState;
 
-	constructor(
-		readonly opts: MenuRadioGroupStateProps,
-		readonly content: MenuContentState
-	) {
+	constructor(opts: MenuRadioGroupStateProps, content: MenuContentState) {
+		this.opts = opts;
 		this.content = content;
 		this.root = content.parentMenu.root;
 
@@ -803,13 +836,16 @@ type MenuRadioItemStateProps = WithRefProps &
 	}>;
 
 class MenuRadioItemState {
+	readonly opts: MenuRadioItemStateProps;
+	readonly item: MenuItemState;
+	readonly group: MenuRadioGroupState;
 	isChecked = $derived.by(() => this.group.opts.value.current === this.opts.value.current);
 
-	constructor(
-		readonly opts: MenuRadioItemStateProps,
-		readonly item: MenuItemState,
-		readonly group: MenuRadioGroupState
-	) {
+	constructor(opts: MenuRadioItemStateProps, item: MenuItemState, group: MenuRadioGroupState) {
+		this.opts = opts;
+		this.item = item;
+		this.group = group;
+
 		useRefById(opts);
 	}
 
@@ -839,10 +875,12 @@ type DropdownMenuTriggerStateProps = WithRefProps &
 	}>;
 
 class DropdownMenuTriggerState {
-	constructor(
-		readonly opts: DropdownMenuTriggerStateProps,
-		readonly parentMenu: MenuMenuState
-	) {
+	readonly opts: DropdownMenuTriggerStateProps;
+	readonly parentMenu: MenuMenuState;
+
+	constructor(opts: DropdownMenuTriggerStateProps, parentMenu: MenuMenuState) {
+		this.opts = opts;
+		this.parentMenu = parentMenu;
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -919,6 +957,8 @@ type ContextMenuTriggerStateProps = WithRefProps &
 	}>;
 
 class ContextMenuTriggerState {
+	readonly opts: ContextMenuTriggerStateProps;
+	readonly parentMenu: MenuMenuState;
 	#point = $state({ x: 0, y: 0 });
 
 	virtualElement = box({
@@ -926,10 +966,9 @@ class ContextMenuTriggerState {
 	});
 	#longPressTimer: number | null = null;
 
-	constructor(
-		readonly opts: ContextMenuTriggerStateProps,
-		readonly parentMenu: MenuMenuState
-	) {
+	constructor(opts: ContextMenuTriggerStateProps, parentMenu: MenuMenuState) {
+		this.opts = opts;
+		this.parentMenu = parentMenu;
 		this.oncontextmenu = this.oncontextmenu.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);

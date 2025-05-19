@@ -27,7 +27,11 @@ type SwitchRootStateProps = WithRefProps<
 		}>
 >;
 class SwitchRootState {
-	constructor(readonly opts: SwitchRootStateProps) {
+	readonly opts: SwitchRootStateProps;
+
+	constructor(opts: SwitchRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -77,9 +81,12 @@ class SwitchRootState {
 }
 
 class SwitchInputState {
+	readonly root: SwitchRootState;
 	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 
-	constructor(readonly root: SwitchRootState) {}
+	constructor(root: SwitchRootState) {
+		this.root = root;
+	}
 
 	props = $derived.by(
 		() =>
@@ -97,10 +104,13 @@ class SwitchInputState {
 type SwitchThumbStateProps = WithRefProps;
 
 class SwitchThumbState {
-	constructor(
-		readonly opts: SwitchThumbStateProps,
-		readonly root: SwitchRootState
-	) {
+	readonly opts: SwitchThumbStateProps;
+	readonly root: SwitchRootState;
+
+	constructor(opts: SwitchThumbStateProps, root: SwitchRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 

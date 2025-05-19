@@ -14,7 +14,7 @@ export function createSharedHook<T extends AnyFn>(factory: T): T {
 		}
 	}
 
-	return <T>((...args) => {
+	return ((...args) => {
 		subscribers += 1;
 		if (state === undefined) {
 			scope = $effect.root(() => {
@@ -29,5 +29,5 @@ export function createSharedHook<T extends AnyFn>(factory: T): T {
 		});
 
 		return state;
-	});
+	}) as T;
 }

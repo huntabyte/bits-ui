@@ -20,6 +20,7 @@ type LinkPreviewRootStateProps = WritableBoxedValues<{
 	}>;
 
 class LinkPreviewRootState {
+	readonly opts: LinkPreviewRootStateProps;
 	hasSelection = $state(false);
 	isPointerDownOnContent = $state(false);
 	containsSelection = $state(false);
@@ -29,7 +30,9 @@ class LinkPreviewRootState {
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
 
-	constructor(readonly opts: LinkPreviewRootStateProps) {
+	constructor(opts: LinkPreviewRootStateProps) {
+		this.opts = opts;
+
 		watch(
 			() => this.opts.open.current,
 			(isOpen) => {
@@ -111,10 +114,12 @@ class LinkPreviewRootState {
 type LinkPreviewTriggerStateProps = WithRefProps;
 
 class LinkPreviewTriggerState {
-	constructor(
-		readonly opts: LinkPreviewTriggerStateProps,
-		readonly root: LinkPreviewRootState
-	) {
+	readonly opts: LinkPreviewTriggerStateProps;
+	readonly root: LinkPreviewRootState;
+
+	constructor(opts: LinkPreviewTriggerStateProps, root: LinkPreviewRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
@@ -174,10 +179,12 @@ type LinkPreviewContentStateProps = WithRefProps &
 	}>;
 
 class LinkPreviewContentState {
-	constructor(
-		readonly opts: LinkPreviewContentStateProps,
-		readonly root: LinkPreviewRootState
-	) {
+	readonly opts: LinkPreviewContentStateProps;
+	readonly root: LinkPreviewRootState;
+
+	constructor(opts: LinkPreviewContentStateProps, root: LinkPreviewRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);

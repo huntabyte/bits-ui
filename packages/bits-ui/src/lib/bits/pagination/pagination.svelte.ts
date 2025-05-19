@@ -28,6 +28,7 @@ type PaginationRootStateProps = WithRefProps<
 >;
 
 class PaginationRootState {
+	readonly opts: PaginationRootStateProps;
 	totalPages = $derived.by(() => {
 		if (this.opts.count.current === 0) return 1;
 		return Math.ceil(this.opts.count.current / this.opts.perPage.current);
@@ -45,7 +46,9 @@ class PaginationRootState {
 		})
 	);
 
-	constructor(readonly opts: PaginationRootStateProps) {
+	constructor(opts: PaginationRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 	}
 
@@ -104,12 +107,14 @@ type PaginationPageStateProps = WithRefProps<
 >;
 
 class PaginationPageState {
+	readonly opts: PaginationPageStateProps;
+	readonly root: PaginationRootState;
 	#isSelected = $derived.by(() => this.opts.page.current.value === this.root.opts.page.current);
 
-	constructor(
-		readonly opts: PaginationPageStateProps,
-		readonly root: PaginationRootState
-	) {
+	constructor(opts: PaginationPageStateProps, root: PaginationRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
@@ -158,10 +163,13 @@ type PaginationButtonStateProps = WithRefProps<{
 	}>;
 
 class PaginationButtonState {
-	constructor(
-		readonly opts: PaginationButtonStateProps,
-		readonly root: PaginationRootState
-	) {
+	readonly opts: PaginationButtonStateProps;
+	readonly root: PaginationRootState;
+
+	constructor(opts: PaginationButtonStateProps, root: PaginationRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);

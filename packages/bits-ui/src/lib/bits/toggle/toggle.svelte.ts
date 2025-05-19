@@ -15,7 +15,11 @@ type ToggleRootStateProps = WithRefProps<
 >;
 
 class ToggleRootState {
-	constructor(readonly opts: ToggleRootStateProps) {
+	readonly opts: ToggleRootStateProps;
+
+	constructor(opts: ToggleRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);

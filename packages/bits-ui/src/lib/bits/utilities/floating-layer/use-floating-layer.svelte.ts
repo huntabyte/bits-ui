@@ -78,6 +78,9 @@ export type FloatingContentStateProps = ReadableBoxedValues<{
 }>;
 
 class FloatingContentState {
+	readonly opts: FloatingContentStateProps;
+	readonly root: FloatingRootState;
+
 	// nodes
 	contentRef = box<HTMLElement | null>(null);
 	wrapperRef = box<HTMLElement | null>(null);
@@ -224,10 +227,10 @@ class FloatingContentState {
 		visibility: this.cannotCenterArrow ? "hidden" : undefined,
 	});
 
-	constructor(
-		readonly opts: FloatingContentStateProps,
-		readonly root: FloatingRootState
-	) {
+	constructor(opts: FloatingContentStateProps, root: FloatingRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		if (opts.customAnchor) {
 			this.root.customAnchorNode.current = opts.customAnchor.current;
 		}
@@ -287,10 +290,13 @@ class FloatingContentState {
 type FloatingArrowStateProps = WithRefProps;
 
 class FloatingArrowState {
-	constructor(
-		readonly opts: FloatingArrowStateProps,
-		readonly content: FloatingContentState
-	) {
+	readonly opts: FloatingArrowStateProps;
+	readonly content: FloatingContentState;
+
+	constructor(opts: FloatingArrowStateProps, content: FloatingContentState) {
+		this.opts = opts;
+		this.content = content;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -316,12 +322,14 @@ type FloatingAnchorStateProps = ReadableBoxedValues<{
 }>;
 
 class FloatingAnchorState {
+	readonly opts: FloatingAnchorStateProps;
+	readonly root: FloatingRootState;
 	ref = box<HTMLElement | null>(null);
 
-	constructor(
-		readonly opts: FloatingAnchorStateProps,
-		readonly root: FloatingRootState
-	) {
+	constructor(opts: FloatingAnchorStateProps, root: FloatingRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		if (opts.virtualEl && opts.virtualEl.current) {
 			root.triggerNode = box.from(opts.virtualEl.current);
 		} else {
