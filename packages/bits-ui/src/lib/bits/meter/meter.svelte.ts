@@ -13,7 +13,11 @@ type MeterRootStateProps = WithRefProps<
 >;
 
 class MeterRootState {
-	constructor(readonly opts: MeterRootStateProps) {
+	readonly opts: MeterRootStateProps;
+
+	constructor(opts: MeterRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 	}
 
