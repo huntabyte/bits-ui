@@ -42,6 +42,7 @@ type TabsRootStateProps = WithRefProps<
 >;
 
 class TabsRootState {
+	readonly opts: TabsRootStateProps;
 	rovingFocusGroup: UseRovingFocusReturn;
 	triggerIds = $state<string[]>([]);
 	// holds the trigger ID for each value to associate it with the content
@@ -49,7 +50,9 @@ class TabsRootState {
 	// holds the content ID for each value to associate it with the trigger
 	valueToContentId = new SvelteMap<string, string>();
 
-	constructor(readonly opts: TabsRootStateProps) {
+	constructor(opts: TabsRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
@@ -101,12 +104,14 @@ class TabsRootState {
 type TabsListStateProps = WithRefProps;
 
 class TabsListState {
+	readonly opts: TabsListStateProps;
+	readonly root: TabsRootState;
 	#isDisabled = $derived.by(() => this.root.opts.disabled.current);
 
-	constructor(
-		readonly opts: TabsListStateProps,
-		readonly root: TabsRootState
-	) {
+	constructor(opts: TabsListStateProps, root: TabsRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 
@@ -135,15 +140,17 @@ type TabsTriggerStateProps = WithRefProps<
 >;
 
 class TabsTriggerState {
+	readonly opts: TabsTriggerStateProps;
+	readonly root: TabsRootState;
 	#isActive = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 	#tabIndex = $state(0);
 	#ariaControls = $derived.by(() => this.root.valueToContentId.get(this.opts.value.current));
 
-	constructor(
-		readonly opts: TabsTriggerStateProps,
-		readonly root: TabsRootState
-	) {
+	constructor(opts: TabsTriggerStateProps, root: TabsRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
@@ -220,13 +227,15 @@ type TabsContentStateProps = WithRefProps<
 >;
 
 class TabsContentState {
+	readonly opts: TabsContentStateProps;
+	readonly root: TabsRootState;
 	#isActive = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	#ariaLabelledBy = $derived.by(() => this.root.valueToTriggerId.get(this.opts.value.current));
 
-	constructor(
-		readonly opts: TabsContentStateProps,
-		readonly root: TabsRootState
-	) {
+	constructor(opts: TabsContentStateProps, root: TabsRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
