@@ -16,10 +16,13 @@ type PopoverRootStateProps = WritableBoxedValues<{
 }>;
 
 class PopoverRootState {
+	readonly opts: PopoverRootStateProps;
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 
-	constructor(readonly opts: PopoverRootStateProps) {}
+	constructor(opts: PopoverRootStateProps) {
+		this.opts = opts;
+	}
 
 	toggleOpen() {
 		this.opts.open.current = !this.opts.open.current;
@@ -34,10 +37,13 @@ class PopoverRootState {
 type PopoverTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
 
 class PopoverTriggerState {
-	constructor(
-		readonly opts: PopoverTriggerStateProps,
-		readonly root: PopoverRootState
-	) {
+	readonly opts: PopoverTriggerStateProps;
+	readonly root: PopoverRootState;
+
+	constructor(opts: PopoverTriggerStateProps, root: PopoverRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -93,10 +99,13 @@ type PopoverContentStateProps = WithRefProps &
 		onCloseAutoFocus: (e: Event) => void;
 	}>;
 class PopoverContentState {
-	constructor(
-		readonly opts: PopoverContentStateProps,
-		readonly root: PopoverRootState
-	) {
+	readonly opts: PopoverContentStateProps;
+	readonly root: PopoverRootState;
+
+	constructor(opts: PopoverContentStateProps, root: PopoverRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			deps: () => this.root.opts.open.current,
@@ -154,10 +163,13 @@ class PopoverContentState {
 type PopoverCloseStateProps = WithRefProps;
 
 class PopoverCloseState {
-	constructor(
-		readonly opts: PopoverCloseStateProps,
-		readonly root: PopoverRootState
-	) {
+	readonly opts: PopoverCloseStateProps;
+	readonly root: PopoverRootState;
+
+	constructor(opts: PopoverCloseStateProps, root: PopoverRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			deps: () => this.root.opts.open.current,
