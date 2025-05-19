@@ -12,6 +12,7 @@
 		"moduleResolution": "NodeNext",
 		"module": "NodeNext",
 		"verbatimModuleSyntax": true,
-		"noUncheckedIndexedAccess": true
+		"noUncheckedIndexedAccess": true,
+		"erasableSyntaxOnly": true
 	}
 }
