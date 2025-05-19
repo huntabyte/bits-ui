@@ -28,6 +28,7 @@ type DialogRootStateProps = WritableBoxedValues<{
 	}>;
 
 class DialogRootState {
+	readonly opts: DialogRootStateProps;
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
@@ -38,7 +39,8 @@ class DialogRootState {
 	cancelNode = $state<HTMLElement | null>(null);
 	attrs = $derived.by(() => createAttrs(this.opts.variant.current));
 
-	constructor(readonly opts: DialogRootStateProps) {
+	constructor(opts: DialogRootStateProps) {
+		this.opts = opts;
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 	}
@@ -64,10 +66,13 @@ class DialogRootState {
 type DialogTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
 
 class DialogTriggerState {
-	constructor(
-		readonly opts: DialogTriggerStateProps,
-		readonly root: DialogRootState
-	) {
+	readonly opts: DialogTriggerStateProps;
+	readonly root: DialogRootState;
+
+	constructor(opts: DialogTriggerStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -116,12 +121,13 @@ type DialogCloseStateProps = WithRefProps &
 		disabled: boolean;
 	}>;
 class DialogCloseState {
+	readonly opts: DialogCloseStateProps;
+	readonly root: DialogRootState;
 	#attr = $derived.by(() => this.root.attrs[this.opts.variant.current]);
 
-	constructor(
-		readonly opts: DialogCloseStateProps,
-		readonly root: DialogRootState
-	) {
+	constructor(opts: DialogCloseStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
@@ -162,12 +168,14 @@ class DialogCloseState {
 type DialogActionStateProps = WithRefProps;
 
 class DialogActionState {
+	readonly opts: DialogActionStateProps;
+	readonly root: DialogRootState;
 	#attr = $derived.by(() => this.root.attrs.action);
 
-	constructor(
-		readonly opts: DialogActionStateProps,
-		readonly root: DialogRootState
-	) {
+	constructor(opts: DialogActionStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 
@@ -187,10 +195,13 @@ type DialogTitleStateProps = WithRefProps<
 	}>
 >;
 class DialogTitleState {
-	constructor(
-		readonly opts: DialogTitleStateProps,
-		readonly root: DialogRootState
-	) {
+	readonly opts: DialogTitleStateProps;
+	readonly root: DialogRootState;
+
+	constructor(opts: DialogTitleStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -215,10 +226,13 @@ class DialogTitleState {
 type DialogDescriptionStateProps = WithRefProps;
 
 class DialogDescriptionState {
-	constructor(
-		readonly opts: DialogDescriptionStateProps,
-		readonly root: DialogRootState
-	) {
+	readonly opts: DialogDescriptionStateProps;
+	readonly root: DialogRootState;
+
+	constructor(opts: DialogDescriptionStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			deps: () => this.root.opts.open.current,
@@ -242,10 +256,13 @@ class DialogDescriptionState {
 type DialogContentStateProps = WithRefProps;
 
 class DialogContentState {
-	constructor(
-		readonly opts: DialogContentStateProps,
-		readonly root: DialogRootState
-	) {
+	readonly opts: DialogContentStateProps;
+	readonly root: DialogRootState;
+
+	constructor(opts: DialogContentStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			deps: () => this.root.opts.open.current,
@@ -280,10 +297,13 @@ class DialogContentState {
 type DialogOverlayStateProps = WithRefProps;
 
 class DialogOverlayState {
-	constructor(
-		readonly opts: DialogOverlayStateProps,
-		readonly root: DialogRootState
-	) {
+	readonly opts: DialogOverlayStateProps;
+	readonly root: DialogRootState;
+
+	constructor(opts: DialogOverlayStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById({
 			...opts,
 			deps: () => this.root.opts.open.current,
@@ -311,10 +331,12 @@ type AlertDialogCancelStateProps = WithRefProps &
 	}>;
 
 class AlertDialogCancelState {
-	constructor(
-		readonly opts: AlertDialogCancelStateProps,
-		readonly root: DialogRootState
-	) {
+	readonly opts: AlertDialogCancelStateProps;
+	readonly root: DialogRootState;
+
+	constructor(opts: AlertDialogCancelStateProps, root: DialogRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 
