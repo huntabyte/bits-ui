@@ -1,5 +1,21 @@
 # bits-ui
 
+## 1.5.2
+
+### Patch Changes
+
+-   fix(RangeCalendar): ensure `weekStartsOn` is absolute and fallback to locale if not provided ([#1462](https://github.com/huntabyte/bits-ui/pull/1462))
+
+-   fix(DateRangePicker): use current field to determine max days in month ([#1460](https://github.com/huntabyte/bits-ui/pull/1460))
+
+-   fix(DateRangePicker): ensure `weekStartsOn` is absolute and fallback to locale if not provided ([#1462](https://github.com/huntabyte/bits-ui/pull/1462))
+
+-   fix(DatePicker): ensure `weekStartsOn` is absolute and fallback to locale if not provided ([#1462](https://github.com/huntabyte/bits-ui/pull/1462))
+
+-   fix(Calendar): ensure `weekStartsOn` is absolute and fallback to locale if not provided ([#1462](https://github.com/huntabyte/bits-ui/pull/1462))
+
+-   fix(DateRangeField): use current field to determine max days in month ([#1460](https://github.com/huntabyte/bits-ui/pull/1460))
+
 ## 1.5.1
 
 ### Patch Changes
