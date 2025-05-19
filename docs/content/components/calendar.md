@@ -319,7 +319,9 @@ The calendar will automatically format the content of the calendar according to 
 
 ### Week Starts On
 
-The calendar will automatically format the content of the calendar according to the `weekStartsOn` prop, which defaults to `0`, but can be changed to any day of the week, where `0` is Sunday and `6` is Saturday.
+The calendar will automatically format the content of the calendar according to the `locale`, which will determine what day of the week is the first day of the week.
+
+You can also override this by setting the `weekStartsOn` prop, where `0` is Sunday and `6` is Saturday to force a consistent first day of the week across all locales.
 
 ```svelte
 <Calendar.Root weekStartsOn={1}>
