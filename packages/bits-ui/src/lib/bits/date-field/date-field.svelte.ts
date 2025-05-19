@@ -623,10 +623,13 @@ type DateFieldInputStateProps = WithRefProps &
 	}>;
 
 export class DateFieldInputState {
-	constructor(
-		readonly opts: DateFieldInputStateProps,
-		readonly root: DateFieldRootState
-	) {
+	readonly opts: DateFieldInputStateProps;
+	readonly root: DateFieldRootState;
+
+	constructor(opts: DateFieldInputStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		$effect(() => {
 			this.root.setName(this.opts.name.current);
 		});
@@ -662,12 +665,15 @@ export class DateFieldInputState {
 }
 
 class DateFieldHiddenInputState {
+	readonly root: DateFieldRootState;
 	shouldRender = $derived.by(() => this.root.name !== "");
 	isoValue = $derived.by(() =>
 		this.root.value.current ? this.root.value.current.toString() : ""
 	);
 
-	constructor(readonly root: DateFieldRootState) {}
+	constructor(root: DateFieldRootState) {
+		this.root = root;
+	}
 
 	props = $derived.by(() => {
 		return {
@@ -681,10 +687,12 @@ class DateFieldHiddenInputState {
 type DateFieldLabelStateProps = WithRefProps;
 
 class DateFieldLabelState {
-	constructor(
-		readonly opts: DateFieldLabelStateProps,
-		readonly root: DateFieldRootState
-	) {
+	readonly opts: DateFieldLabelStateProps;
+	readonly root: DateFieldRootState;
+
+	constructor(opts: DateFieldLabelStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onclick = this.onclick.bind(this);
 
 		useRefById({
@@ -717,12 +725,13 @@ class DateFieldLabelState {
 type DateFieldDaySegmentStateProps = WithRefProps;
 
 class DateFieldDaySegmentState {
+	readonly opts: DateFieldDaySegmentStateProps;
+	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
-	constructor(
-		readonly opts: DateFieldDaySegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldDaySegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
@@ -955,12 +964,13 @@ class DateFieldDaySegmentState {
 type DateFieldMonthSegmentStateProps = WithRefProps;
 
 class DateFieldMonthSegmentState {
+	readonly opts: DateFieldMonthSegmentStateProps;
+	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
-	constructor(
-		readonly opts: DateFieldMonthSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldMonthSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -1218,6 +1228,8 @@ class DateFieldMonthSegmentState {
 type DateFieldYearSegmentStateProps = WithRefProps;
 
 class DateFieldYearSegmentState {
+	readonly opts: DateFieldYearSegmentStateProps;
+	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
 	/**
@@ -1248,10 +1260,9 @@ class DateFieldYearSegmentState {
 	 */
 	#backspaceCount = 0;
 
-	constructor(
-		readonly opts: DateFieldYearSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldYearSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
@@ -1446,12 +1457,13 @@ class DateFieldYearSegmentState {
 type DateFieldHourSegmentStateProps = WithRefProps;
 
 class DateFieldHourSegmentState {
+	readonly opts: DateFieldHourSegmentStateProps;
+	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
-	constructor(
-		readonly opts: DateFieldHourSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldHourSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
@@ -1730,12 +1742,13 @@ class DateFieldHourSegmentState {
 type DateFieldMinuteSegmentStateProps = WithRefProps;
 
 class DateFieldMinuteSegmentState {
+	readonly opts: DateFieldMinuteSegmentStateProps;
+	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
-	constructor(
-		readonly opts: DateFieldMinuteSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldMinuteSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
@@ -1969,12 +1982,13 @@ class DateFieldMinuteSegmentState {
 type DateFieldSecondSegmentStateProps = WithRefProps;
 
 class DateFieldSecondSegmentState {
+	readonly opts: DateFieldSecondSegmentStateProps;
+	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
-	constructor(
-		readonly opts: DateFieldSecondSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldSecondSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -2206,12 +2220,13 @@ class DateFieldSecondSegmentState {
 type DateFieldDayPeriodSegmentStateProps = WithRefProps;
 
 class DateFieldDayPeriodSegmentState {
+	readonly opts: DateFieldDayPeriodSegmentStateProps;
+	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
-	constructor(
-		readonly opts: DateFieldDayPeriodSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldDayPeriodSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 
@@ -2293,10 +2308,13 @@ class DateFieldDayPeriodSegmentState {
 type DateFieldLiteralSegmentStateProps = WithRefProps;
 
 class DateFieldDayLiteralSegmentState {
-	constructor(
-		readonly opts: DateFieldLiteralSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	readonly opts: DateFieldLiteralSegmentStateProps;
+	readonly root: DateFieldRootState;
+
+	constructor(opts: DateFieldLiteralSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 
@@ -2311,10 +2329,12 @@ class DateFieldDayLiteralSegmentState {
 }
 
 class DateFieldTimeZoneSegmentState {
-	constructor(
-		readonly opts: DateFieldMinuteSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	readonly opts: DateFieldMinuteSegmentStateProps;
+	readonly root: DateFieldRootState;
+
+	constructor(opts: DateFieldMinuteSegmentStateProps, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onkeydown = this.onkeydown.bind(this);
 
 		useRefById(opts);
