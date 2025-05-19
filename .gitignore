@@ -77,3 +77,5 @@ web_modules/
 docs/.velite
 docs/static/docs/**/*.txt
 docs/static/llms.txt
+docs/src/routes/api/demos.json/stackblitz-files.json
+docs/src/routes/api/demos.json/demos.json
