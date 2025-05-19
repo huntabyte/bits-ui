@@ -29,6 +29,7 @@ type DismissibleLayerStateProps = ReadableBoxedValues<
 >;
 
 export class DismissibleLayerState {
+	readonly opts: DismissibleLayerStateProps;
 	#interactOutsideProp: ReadableBox<EventCallback<PointerEvent>>;
 	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
 	#interceptedEvents: Record<string, boolean> = {
@@ -42,7 +43,9 @@ export class DismissibleLayerState {
 	currNode = $state<HTMLElement | null>(null);
 	#unsubClickListener = noop;
 
-	constructor(readonly opts: DismissibleLayerStateProps) {
+	constructor(opts: DismissibleLayerStateProps) {
+		this.opts = opts;
+
 		useRefById({
 			id: opts.id,
 			ref: this.node,

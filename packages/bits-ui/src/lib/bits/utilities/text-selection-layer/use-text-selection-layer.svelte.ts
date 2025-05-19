@@ -20,10 +20,13 @@ type TextSelectionLayerStateProps = ReadableBoxedValues<
 globalThis.bitsTextSelectionLayers ??= new Map<TextSelectionLayerState, ReadableBox<boolean>>();
 
 export class TextSelectionLayerState {
+	readonly opts: TextSelectionLayerStateProps;
 	#unsubSelectionLock = noop;
 	#ref = box<HTMLElement | null>(null);
 
-	constructor(readonly opts: TextSelectionLayerStateProps) {
+	constructor(opts: TextSelectionLayerStateProps) {
+		this.opts = opts;
+
 		useRefById({
 			id: opts.id,
 			ref: this.#ref,

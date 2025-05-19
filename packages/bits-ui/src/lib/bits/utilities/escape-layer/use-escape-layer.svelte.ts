@@ -11,7 +11,11 @@ globalThis.bitsEscapeLayers ??= new Map<EscapeLayerState, ReadableBox<EscapeBeha
 type EscapeLayerStateProps = ReadableBoxedValues<Required<Omit<EscapeLayerImplProps, "children">>>;
 
 export class EscapeLayerState {
-	constructor(readonly opts: EscapeLayerStateProps) {
+	readonly opts: EscapeLayerStateProps;
+
+	constructor(opts: EscapeLayerStateProps) {
+		this.opts = opts;
+
 		let unsubEvents = noop;
 		watch(
 			() => opts.enabled.current,
