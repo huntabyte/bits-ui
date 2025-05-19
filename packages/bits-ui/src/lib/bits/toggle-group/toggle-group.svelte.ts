@@ -29,9 +29,11 @@ type ToggleGroupBaseStateProps = WithRefProps<
 >;
 
 class ToggleGroupBaseState {
+	readonly opts: ToggleGroupBaseStateProps;
 	rovingFocusGroup: UseRovingFocusReturn;
 
-	constructor(readonly opts: ToggleGroupBaseStateProps) {
+	constructor(opts: ToggleGroupBaseStateProps) {
+		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
 			candidateAttr: TOGGLE_GROUP_ITEM_ATTR,
 			rootNodeId: opts.id,
@@ -64,11 +66,13 @@ type ToggleGroupSingleStateProps = ToggleGroupBaseStateProps &
 	}>;
 
 class ToggleGroupSingleState extends ToggleGroupBaseState {
+	readonly opts: ToggleGroupSingleStateProps;
 	isMulti = false;
 	anyPressed = $derived.by(() => this.opts.value.current !== "");
 
-	constructor(readonly opts: ToggleGroupSingleStateProps) {
+	constructor(opts: ToggleGroupSingleStateProps) {
 		super(opts);
+		this.opts = opts;
 	}
 
 	includesItem(item: string) {
@@ -95,11 +99,14 @@ type ToggleGroupMultipleStateProps = ToggleGroupBaseStateProps &
 	}>;
 
 class ToggleGroupMultipleState extends ToggleGroupBaseState {
+	readonly opts: ToggleGroupMultipleStateProps;
 	isMulti = true;
 	anyPressed = $derived.by(() => this.opts.value.current.length > 0);
 
-	constructor(readonly opts: ToggleGroupMultipleStateProps) {
+	constructor(opts: ToggleGroupMultipleStateProps) {
 		super(opts);
+
+		this.opts = opts;
 	}
 
 	includesItem(item: string) {
@@ -130,12 +137,14 @@ type ToggleGroupItemStateProps = WithRefProps<
 >;
 
 class ToggleGroupItemState {
+	readonly opts: ToggleGroupItemStateProps;
+	readonly root: ToggleGroupState;
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 
-	constructor(
-		readonly opts: ToggleGroupItemStateProps,
-		readonly root: ToggleGroupState
-	) {
+	constructor(opts: ToggleGroupItemStateProps, root: ToggleGroupState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		$effect(() => {
