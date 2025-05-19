@@ -1,5 +1,11 @@
 # bits-ui
 
+## 1.5.3
+
+### Patch Changes
+
+-   chore: remove internal uses of parameter properties ([#1466](https://github.com/huntabyte/bits-ui/pull/1466))
+
 ## 1.5.2
 
 ### Patch Changes
