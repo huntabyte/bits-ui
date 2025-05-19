@@ -35,9 +35,12 @@ type AccordionBaseStateProps = WithRefProps<
 >;
 
 class AccordionBaseState {
+	readonly opts: AccordionBaseStateProps;
 	rovingFocusGroup: UseRovingFocusReturn;
 
-	constructor(readonly opts: AccordionBaseStateProps) {
+	constructor(opts: AccordionBaseStateProps) {
+		this.opts = opts;
+
 		useRefById(this.opts);
 
 		this.rovingFocusGroup = useRovingFocus({
@@ -66,10 +69,12 @@ class AccordionBaseState {
 type AccordionSingleStateProps = AccordionBaseStateProps & WritableBoxedValues<{ value: string }>;
 
 export class AccordionSingleState extends AccordionBaseState {
+	readonly opts: AccordionSingleStateProps;
 	isMulti = false as const;
 
-	constructor(readonly opts: AccordionSingleStateProps) {
+	constructor(opts: AccordionSingleStateProps) {
 		super(opts);
+		this.opts = opts;
 		this.includesItem = this.includesItem.bind(this);
 		this.toggleItem = this.toggleItem.bind(this);
 	}
@@ -128,11 +133,13 @@ type AccordionItemStateProps = WithRefProps<
 >;
 
 export class AccordionItemState {
+	readonly opts: AccordionItemStateProps;
 	root: AccordionState;
 	isActive = $derived.by(() => this.root.includesItem(this.opts.value.current));
 	isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 
-	constructor(readonly opts: AccordionItemStateProps) {
+	constructor(opts: AccordionItemStateProps) {
+		this.opts = opts;
 		this.root = opts.rootState;
 
 		this.updateValue = this.updateValue.bind(this);
@@ -170,6 +177,8 @@ type AccordionTriggerStateProps = WithRefProps<
 >;
 
 class AccordionTriggerState {
+	readonly opts: AccordionTriggerStateProps;
+	readonly itemState: AccordionItemState;
 	#root: AccordionState;
 	#isDisabled = $derived.by(
 		() =>
@@ -178,10 +187,9 @@ class AccordionTriggerState {
 			this.#root.opts.disabled.current
 	);
 
-	constructor(
-		readonly opts: AccordionTriggerStateProps,
-		readonly itemState: AccordionItemState
-	) {
+	constructor(opts: AccordionTriggerStateProps, itemState: AccordionItemState) {
+		this.opts = opts;
+		this.itemState = itemState;
 		this.#root = itemState.root;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
@@ -235,6 +243,8 @@ type AccordionContentStateProps = WithRefProps<
 	}>
 >;
 class AccordionContentState {
+	readonly opts: AccordionContentStateProps;
+	readonly item: AccordionItemState;
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#width = $state(0);
@@ -242,10 +252,8 @@ class AccordionContentState {
 
 	present = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
 
-	constructor(
-		readonly opts: AccordionContentStateProps,
-		readonly item: AccordionItemState
-	) {
+	constructor(opts: AccordionContentStateProps, item: AccordionItemState) {
+		this.opts = opts;
 		this.item = item;
 		this.#isMountAnimationPrevented = this.item.isActive;
 
@@ -316,10 +324,13 @@ type AccordionHeaderStateProps = WithRefProps<
 >;
 
 class AccordionHeaderState {
-	constructor(
-		readonly opts: AccordionHeaderStateProps,
-		readonly item: AccordionItemState
-	) {
+	readonly opts: AccordionHeaderStateProps;
+	readonly item: AccordionItemState;
+
+	constructor(opts: AccordionHeaderStateProps, item: AccordionItemState) {
+		this.opts = opts;
+		this.item = item;
+
 		useRefById(opts);
 	}
 
