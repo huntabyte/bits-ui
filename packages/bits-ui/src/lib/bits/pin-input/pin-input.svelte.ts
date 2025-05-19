@@ -68,6 +68,7 @@ const KEYS_TO_IGNORE = [
 ];
 
 class PinInputRootState {
+	readonly opts: PinInputRootStateProps;
 	#inputRef = box<HTMLInputElement | null>(null);
 	#isHoveringInput = $state(false);
 	#isFocused = box(false);
@@ -90,7 +91,9 @@ class PinInputRootState {
 	#pwmb: ReturnType<typeof usePasswordManagerBadge>;
 	#initialLoad: InitialLoad;
 
-	constructor(readonly opts: PinInputRootStateProps) {
+	constructor(opts: PinInputRootStateProps) {
+		this.opts = opts;
+
 		this.#initialLoad = {
 			value: this.opts.value,
 			isIOS:
@@ -510,7 +513,11 @@ type PinInputCellStateProps = WithRefProps &
 	}>;
 
 class PinInputCellState {
-	constructor(readonly opts: PinInputCellStateProps) {
+	readonly opts: PinInputCellStateProps;
+
+	constructor(opts: PinInputCellStateProps) {
+		this.opts = opts;
+
 		useRefById({
 			id: this.opts.id,
 			ref: this.opts.ref,
