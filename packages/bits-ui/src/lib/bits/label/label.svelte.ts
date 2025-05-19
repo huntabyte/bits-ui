@@ -5,7 +5,10 @@ const ROOT_ATTR = "data-label-root";
 
 type LabelRootStateProps = WithRefProps;
 class LabelRootState {
-	constructor(readonly opts: LabelRootStateProps) {
+	readonly opts: LabelRootStateProps;
+
+	constructor(opts: LabelRootStateProps) {
+		this.opts = opts;
 		this.onmousedown = this.onmousedown.bind(this);
 
 		useRefById(opts);
