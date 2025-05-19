@@ -418,13 +418,15 @@ export class DateFieldRootState {
 		return inferred;
 	});
 
+	dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
+
 	allSegmentContent = $derived.by(() =>
 		createContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
 			locale: this.locale.current,
 			granularity: this.inferredGranularity,
-			dateRef: this.placeholder.current,
+			dateRef: this.dateRef,
 			hideTimeZone: this.hideTimeZone.current,
 			hourCycle: this.hourCycle.current,
 		})

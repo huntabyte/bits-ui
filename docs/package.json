@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently \"pnpm:dev:content\" \"pnpm:dev:svelte\"",
+		"dev": "pnpm --reporter append-only --color \"/dev:/\"",
 		"dev:content": "velite dev --watch",
 		"dev:svelte": "vite dev",
 		"build": "pnpm build:content && pnpm build:search && pnpm build:demos && vite build && pnpm build:llms && vite build",
@@ -34,7 +34,6 @@
 		"@types/unist": "^3.0.3",
 		"autoprefixer": "^10.4.20",
 		"clsx": "^2.1.0",
-		"concurrently": "^8.2.2",
 		"consola": "^3.4.0",
 		"eruda": "^3.4.1",
 		"jsdom": "^24.1.3",

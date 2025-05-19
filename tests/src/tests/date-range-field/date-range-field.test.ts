@@ -215,3 +215,21 @@ it("should populate calendar date with keyboard", async () => {
 	expect(start.value).toHaveTextContent("2020-02-14");
 	expect(end.value).toHaveTextContent("2020-02-15");
 });
+
+it("should allow valid days in end month regardless of start month", async () => {
+	const t = setup();
+
+	await t.user.click(t.start.month);
+	await t.user.keyboard("2");
+	await t.user.keyboard("02");
+	await t.user.keyboard("2025");
+	await t.user.keyboard("12");
+	await t.user.keyboard("31");
+	await t.user.keyboard("2025");
+
+	const seg = t.getByTestId(`end-day`);
+	expect(seg).toHaveTextContent("31");
+
+	expect(t.start.value).toHaveTextContent("2025-02-02");
+	expect(t.end.value).toHaveTextContent("2025-12-31");
+});
