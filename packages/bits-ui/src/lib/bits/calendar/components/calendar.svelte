@@ -18,7 +18,7 @@
 		placeholder = $bindable(),
 		onPlaceholderChange = noop,
 		weekdayFormat = "narrow",
-		weekStartsOn = 0,
+		weekStartsOn,
 		pagedNavigation = false,
 		isDateDisabled = () => false,
 		isDateUnavailable = () => false,

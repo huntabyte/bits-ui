@@ -457,6 +457,30 @@ describe("type='single'", () => {
 				expect(weekdayEl).toHaveTextContent(weekday);
 			}
 		});
+
+		it("should respect the `weekStartsOn` prop", async () => {
+			const t = setup({ placeholder: calendarDate, weekStartsOn: 2, weekdayFormat: "short" });
+			expect(t.getByTestId("weekday-1-0").textContent).toBe("Tue");
+		});
+
+		it("should respect the `weekStartsOn` prop regardless of locale", async () => {
+			const t = setup({
+				placeholder: calendarDate,
+				weekStartsOn: 2,
+				weekdayFormat: "short",
+				locale: "fr",
+			});
+			expect(t.getByTestId("weekday-1-0").textContent).toBe("mar.");
+		});
+
+		it("should default the first day of the week to the locale's first day of the week if `weekStartsOn` is not provided", async () => {
+			const t = setup({
+				placeholder: calendarDate,
+				weekdayFormat: "short",
+				locale: "fr",
+			});
+			expect(t.getByTestId("weekday-1-0").textContent).toBe("lun.");
+		});
 	});
 
 	describe("Availability and Interaction", () => {

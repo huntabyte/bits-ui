@@ -363,3 +363,22 @@ it("should not allow focusing on disabled dates, even if they are the only selec
 	await user.keyboard(kbd.TAB);
 	expect(getByTestId("date-1-1")).toHaveFocus();
 });
+
+it("should respect the `weekStartsOn` prop regardless of locale", async () => {
+	const t = setup({
+		placeholder: new CalendarDate(1980, 1, 1),
+		weekStartsOn: 2,
+		weekdayFormat: "short",
+		locale: "fr",
+	});
+	expect(t.getByTestId("weekday-1-0").textContent).toBe("mar.");
+});
+
+it("should default the first day of the week to the locale's first day of the week if `weekStartsOn` is not provided", async () => {
+	const t = setup({
+		placeholder: new CalendarDate(1980, 1, 1),
+		weekdayFormat: "short",
+		locale: "fr",
+	});
+	expect(t.getByTestId("weekday-1-0").textContent).toBe("lun.");
+});
