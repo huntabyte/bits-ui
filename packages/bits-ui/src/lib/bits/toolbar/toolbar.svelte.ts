@@ -32,9 +32,12 @@ type ToolbarRootStateProps = WithRefProps<
 >;
 
 class ToolbarRootState {
+	readonly opts: ToolbarRootStateProps;
 	rovingFocusGroup: UseRovingFocusReturn;
 
-	constructor(readonly opts: ToolbarRootStateProps) {
+	constructor(opts: ToolbarRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
@@ -63,10 +66,13 @@ type ToolbarGroupBaseStateProps = WithRefProps<
 >;
 
 class ToolbarGroupBaseState {
-	constructor(
-		readonly opts: ToolbarGroupBaseStateProps,
-		readonly root: ToolbarRootState
-	) {
+	readonly opts: ToolbarGroupBaseStateProps;
+	readonly root: ToolbarRootState;
+
+	constructor(opts: ToolbarGroupBaseStateProps, root: ToolbarRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 	}
 
@@ -92,14 +98,16 @@ type ToolbarGroupSingleStateProps = ToolbarGroupBaseStateProps &
 	}>;
 
 class ToolbarGroupSingleState extends ToolbarGroupBaseState {
+	readonly opts: ToolbarGroupSingleStateProps;
+	readonly root: ToolbarRootState;
 	isMulti = false;
 	anyPressed = $derived.by(() => this.opts.value.current !== "");
 
-	constructor(
-		readonly opts: ToolbarGroupSingleStateProps,
-		readonly root: ToolbarRootState
-	) {
+	constructor(opts: ToolbarGroupSingleStateProps, root: ToolbarRootState) {
 		super(opts, root);
+
+		this.opts = opts;
+		this.root = root;
 	}
 
 	includesItem(item: string) {
@@ -125,14 +133,16 @@ type ToolbarGroupMultipleStateProps = ToolbarGroupBaseStateProps &
 	}>;
 
 class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
+	readonly opts: ToolbarGroupMultipleStateProps;
+	readonly root: ToolbarRootState;
 	isMulti = true;
 	anyPressed = $derived.by(() => this.opts.value.current.length > 0);
 
-	constructor(
-		readonly opts: ToolbarGroupMultipleStateProps,
-		readonly root: ToolbarRootState
-	) {
+	constructor(opts: ToolbarGroupMultipleStateProps, root: ToolbarRootState) {
 		super(opts, root);
+
+		this.opts = opts;
+		this.root = root;
 	}
 
 	includesItem(item: string) {
@@ -162,13 +172,20 @@ type ToolbarGroupItemStateProps = WithRefProps<
 >;
 
 class ToolbarGroupItemState {
+	readonly opts: ToolbarGroupItemStateProps;
+	readonly group: ToolbarGroupState;
+	readonly root: ToolbarRootState;
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.group.opts.disabled.current);
 
 	constructor(
-		readonly opts: ToolbarGroupItemStateProps,
-		readonly group: ToolbarGroupState,
-		readonly root: ToolbarRootState
+		opts: ToolbarGroupItemStateProps,
+		group: ToolbarGroupState,
+		root: ToolbarRootState
 	) {
+		this.opts = opts;
+		this.group = group;
+		this.root = root;
+
 		useRefById(opts);
 
 		$effect(() => {
@@ -237,10 +254,13 @@ class ToolbarGroupItemState {
 type ToolbarLinkStateProps = WithRefProps;
 
 class ToolbarLinkState {
-	constructor(
-		readonly opts: ToolbarLinkStateProps,
-		readonly root: ToolbarRootState
-	) {
+	readonly opts: ToolbarLinkStateProps;
+	readonly root: ToolbarRootState;
+
+	constructor(opts: ToolbarLinkStateProps, root: ToolbarRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		$effect(() => {
@@ -285,10 +305,13 @@ type ToolbarButtonStateProps = WithRefProps<
 >;
 
 class ToolbarButtonState {
-	constructor(
-		readonly opts: ToolbarButtonStateProps,
-		readonly root: ToolbarRootState
-	) {
+	readonly opts: ToolbarButtonStateProps;
+	readonly root: ToolbarRootState;
+
+	constructor(opts: ToolbarButtonStateProps, root: ToolbarRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		$effect(() => {
