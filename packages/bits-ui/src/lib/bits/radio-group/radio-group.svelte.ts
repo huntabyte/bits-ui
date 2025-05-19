@@ -29,10 +29,12 @@ type RadioGroupRootStateProps = WithRefProps<
 		WritableBoxedValues<{ value: string }>
 >;
 class RadioGroupRootState {
+	readonly opts: RadioGroupRootStateProps;
 	rovingFocusGroup: UseRovingFocusReturn;
 	hasValue = $derived.by(() => this.opts.value.current !== "");
 
-	constructor(readonly opts: RadioGroupRootStateProps) {
+	constructor(opts: RadioGroupRootStateProps) {
+		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.opts.id,
 			candidateAttr: RADIO_GROUP_ITEM_ATTR,
@@ -79,15 +81,17 @@ type RadioGroupItemStateProps = WithRefProps<
 >;
 
 class RadioGroupItemState {
+	readonly opts: RadioGroupItemStateProps;
+	readonly root: RadioGroupRootState;
 	checked = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 	#isChecked = $derived.by(() => this.root.isChecked(this.opts.value.current));
 	#tabIndex = $state(-1);
 
-	constructor(
-		readonly opts: RadioGroupItemStateProps,
-		readonly root: RadioGroupRootState
-	) {
+	constructor(opts: RadioGroupItemStateProps, root: RadioGroupRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		useRefById(opts);
 
 		if (this.opts.value.current === this.root.opts.value.current) {
@@ -162,6 +166,7 @@ class RadioGroupItemState {
 //
 
 class RadioGroupInputState {
+	readonly root: RadioGroupRootState;
 	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 	props = $derived.by(
 		() =>
@@ -173,7 +178,9 @@ class RadioGroupInputState {
 			}) as const
 	);
 
-	constructor(readonly root: RadioGroupRootState) {}
+	constructor(root: RadioGroupRootState) {
+		this.root = root;
+	}
 }
 
 const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
