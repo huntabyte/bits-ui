@@ -70,6 +70,7 @@ type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 	};
 
 class NavigationMenuProviderState {
+	readonly opts: NavigationMenuProviderStateProps;
 	indicatorTrackRef = box<HTMLElement | null>(null);
 	viewportRef = box<HTMLElement | null>(null);
 	viewportContent = new SvelteMap<string, NavigationMenuItemState>();
@@ -80,7 +81,8 @@ class NavigationMenuProviderState {
 	onItemSelect: NavigationMenuProviderStateProps["onItemSelect"];
 	onItemDismiss: NavigationMenuProviderStateProps["onItemDismiss"];
 
-	constructor(readonly opts: NavigationMenuProviderStateProps) {
+	constructor(opts: NavigationMenuProviderStateProps) {
+		this.opts = opts;
 		this.onTriggerEnter = opts.onTriggerEnter;
 		this.onTriggerLeave = opts.onTriggerLeave ?? noop;
 		this.onContentEnter = opts.onContentEnter ?? noop;
@@ -103,6 +105,7 @@ type NavigationMenuRootStateProps = WithRefProps<
 >;
 
 class NavigationMenuRootState {
+	readonly opts: NavigationMenuRootStateProps;
 	provider: NavigationMenuProviderState;
 	previousValue = box("");
 	isDelaySkipped: WritableBox<boolean>;
@@ -116,7 +119,8 @@ class NavigationMenuRootState {
 		}
 	});
 
-	constructor(readonly opts: NavigationMenuRootStateProps) {
+	constructor(opts: NavigationMenuRootStateProps) {
+		this.opts = opts;
 		this.isDelaySkipped = boxAutoReset(false, this.opts.skipDelayDuration.current);
 		useRefById(opts);
 
@@ -200,12 +204,14 @@ type NavigationMenuSubStateProps = WithRefProps<
 >;
 
 class NavigationMenuSubState {
+	readonly opts: NavigationMenuSubStateProps;
+	readonly context: NavigationMenuProviderState;
 	previousValue = box("");
 
-	constructor(
-		readonly opts: NavigationMenuSubStateProps,
-		readonly context: NavigationMenuProviderState
-	) {
+	constructor(opts: NavigationMenuSubStateProps, context: NavigationMenuProviderState) {
+		this.opts = opts;
+		this.context = context;
+
 		useRefById(opts);
 
 		useNavigationMenuProvider({
@@ -239,16 +245,18 @@ class NavigationMenuSubState {
 type NavigationMenuListStateProps = WithRefProps;
 
 class NavigationMenuListState {
+	readonly opts: NavigationMenuListStateProps;
+	readonly context: NavigationMenuProviderState;
 	wrapperId = box(useId());
 	wrapperRef = box<HTMLElement | null>(null);
 	listTriggers = $state.raw<HTMLElement[]>([]);
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	wrapperMounted = $state(false);
 
-	constructor(
-		readonly opts: NavigationMenuListStateProps,
-		readonly context: NavigationMenuProviderState
-	) {
+	constructor(opts: NavigationMenuListStateProps, context: NavigationMenuProviderState) {
+		this.opts = opts;
+		this.context = context;
+
 		useRefById(opts);
 
 		useRefById({
@@ -299,6 +307,8 @@ type NavigationMenuItemStateProps = WithRefProps<
 >;
 
 export class NavigationMenuItemState {
+	readonly opts: NavigationMenuItemStateProps;
+	readonly listContext: NavigationMenuListState;
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	focusProxyNode = $state<HTMLElement | null>(null);
@@ -311,10 +321,10 @@ export class NavigationMenuItemState {
 		box(undefined);
 	contentProps: ReadableBox<Record<string, unknown>> = box({});
 
-	constructor(
-		readonly opts: NavigationMenuItemStateProps,
-		readonly listContext: NavigationMenuListState
-	) {}
+	constructor(opts: NavigationMenuItemStateProps, listContext: NavigationMenuListState) {
+		this.opts = opts;
+		this.listContext = listContext;
+	}
 
 	#handleContentEntry = (side: "start" | "end" = "start") => {
 		if (!this.contentNode) return;
@@ -349,6 +359,7 @@ type NavigationMenuTriggerStateProps = WithRefProps &
 	}>;
 
 class NavigationMenuTriggerState {
+	readonly opts: NavigationMenuTriggerStateProps;
 	focusProxyId = box(useId());
 	focusProxyRef = box<HTMLElement | null>(null);
 	context: NavigationMenuProviderState;
@@ -362,13 +373,14 @@ class NavigationMenuTriggerState {
 	focusProxyMounted = $state(false);
 
 	constructor(
-		readonly opts: NavigationMenuTriggerStateProps,
+		opts: NavigationMenuTriggerStateProps,
 		context: {
 			provider: NavigationMenuProviderState;
 			item: NavigationMenuItemState;
 			list: NavigationMenuListState;
 		}
 	) {
+		this.opts = opts;
 		this.hasPointerMoveOpened = boxAutoReset(false, 300);
 		this.context = context.provider;
 		this.itemContext = context.item;
@@ -515,14 +527,17 @@ const ROOT_CONTENT_DISMISS_EVENT = new CustomEventDispatcher("bitsRootContentDis
 });
 
 class NavigationMenuLinkState {
+	readonly opts: NavigationMenuLinkStateProps;
+	readonly context: { provider: NavigationMenuProviderState; item: NavigationMenuItemState };
 	isFocused = $state(false);
+
 	constructor(
-		readonly opts: NavigationMenuLinkStateProps,
-		readonly context: {
-			provider: NavigationMenuProviderState;
-			item: NavigationMenuItemState;
-		}
+		opts: NavigationMenuLinkStateProps,
+		context: { provider: NavigationMenuProviderState; item: NavigationMenuItemState }
 	) {
+		this.opts = opts;
+		this.context = context;
+
 		useRefById(opts);
 	}
 
@@ -578,6 +593,7 @@ class NavigationMenuIndicatorState {
 }
 
 class NavigationMenuIndicatorImplState {
+	readonly opts: NavigationMenuIndicatorStateProps;
 	context: NavigationMenuProviderState;
 	listContext: NavigationMenuListState;
 	position = $state.raw<{ size: number; offset: number } | null>(null);
@@ -593,12 +609,13 @@ class NavigationMenuIndicatorImplState {
 	shouldRender = $derived.by(() => this.position !== null);
 
 	constructor(
-		readonly opts: NavigationMenuIndicatorStateProps,
+		opts: NavigationMenuIndicatorStateProps,
 		context: {
 			provider: NavigationMenuProviderState;
 			list: NavigationMenuListState;
 		}
 	) {
+		this.opts = opts;
 		this.context = context.provider;
 		this.listContext = context.list;
 
@@ -651,6 +668,7 @@ class NavigationMenuIndicatorImplState {
 type NavigationMenuContentStateProps = WithRefProps;
 
 class NavigationMenuContentState {
+	readonly opts: NavigationMenuContentStateProps;
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
 	listContext: NavigationMenuListState;
@@ -673,13 +691,14 @@ class NavigationMenuContentState {
 	});
 
 	constructor(
-		readonly opts: NavigationMenuContentStateProps,
+		opts: NavigationMenuContentStateProps,
 		context: {
 			provider: NavigationMenuProviderState;
 			item: NavigationMenuItemState;
 			list: NavigationMenuListState;
 		}
 	) {
+		this.opts = opts;
 		this.context = context.provider;
 		this.itemContext = context.item;
 		this.listContext = context.list;
@@ -715,6 +734,8 @@ type MotionAttribute = "to-start" | "to-end" | "from-start" | "from-end";
 type NavigationMenuContentImplStateProps = WithRefProps;
 
 class NavigationMenuContentImplState {
+	readonly opts: NavigationMenuContentImplStateProps;
+	readonly itemContext: NavigationMenuItemState;
 	context: NavigationMenuProviderState;
 	listContext: NavigationMenuListState;
 	prevMotionAttribute: MotionAttribute | null = $state(null);
@@ -749,10 +770,9 @@ class NavigationMenuContentImplState {
 		return attribute;
 	});
 
-	constructor(
-		readonly opts: NavigationMenuContentImplStateProps,
-		readonly itemContext: NavigationMenuItemState
-	) {
+	constructor(opts: NavigationMenuContentImplStateProps, itemContext: NavigationMenuItemState) {
+		this.opts = opts;
+		this.itemContext = itemContext;
 		this.listContext = itemContext.listContext;
 		this.context = itemContext.listContext.context;
 
@@ -886,6 +906,8 @@ class NavigationMenuContentImplState {
 }
 
 class NavigationMenuViewportState {
+	readonly opts: NavigationMenuViewportImplStateProps;
+	readonly context: NavigationMenuProviderState;
 	open = $derived.by(() => !!this.context.opts.value.current);
 	size = $state<{ width: number; height: number } | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -893,10 +915,10 @@ class NavigationMenuViewportState {
 	viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
 	activeContentValue = $derived.by(() => this.context.opts.value.current);
 
-	constructor(
-		readonly opts: NavigationMenuViewportImplStateProps,
-		readonly context: NavigationMenuProviderState
-	) {
+	constructor(opts: NavigationMenuViewportImplStateProps, context: NavigationMenuProviderState) {
+		this.opts = opts;
+		this.context = context;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
