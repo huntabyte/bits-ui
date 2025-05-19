@@ -14,7 +14,11 @@ type SeparatorRootStateProps = WithRefProps<
 >;
 
 class SeparatorRootState {
-	constructor(readonly opts: SeparatorRootStateProps) {
+	readonly opts: SeparatorRootStateProps;
+
+	constructor(opts: SeparatorRootStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 	}
 
