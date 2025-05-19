@@ -36,6 +36,8 @@
 								</NavigationMenu.Content>
 							</NavigationMenu.Item>
 						</NavigationMenu.List>
+						<NavigationMenu.Viewport data-testid="group-item-sub-viewport"
+						></NavigationMenu.Viewport>
 					</NavigationMenu.Sub>
 				</NavigationMenu.Content>
 			</NavigationMenu.Item>
