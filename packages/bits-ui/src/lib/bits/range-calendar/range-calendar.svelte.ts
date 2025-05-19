@@ -50,6 +50,7 @@ import {
 	isBetweenInclusive,
 	toDate,
 } from "$lib/internal/date-time/utils.js";
+import type { WeekStartsOn } from "$lib/shared/date/types.js";
 
 type RangeCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -64,7 +65,7 @@ type RangeCalendarRootStateProps = WithRefProps<
 			maxValue: DateValue | undefined;
 			disabled: boolean;
 			pagedNavigation: boolean;
-			weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+			weekStartsOn: WeekStartsOn | undefined;
 			weekdayFormat: Intl.DateTimeFormatOptions["weekday"];
 			isDateDisabled: (date: DateValue) => boolean;
 			isDateUnavailable: (date: DateValue) => boolean;

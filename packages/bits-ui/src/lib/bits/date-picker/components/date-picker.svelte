@@ -35,7 +35,7 @@
 		disableDaysOutsideMonth = true,
 		preventDeselect = false,
 		pagedNavigation = false,
-		weekStartsOn = 0,
+		weekStartsOn,
 		weekdayFormat = "narrow",
 		isDateDisabled = () => false,
 		fixedWeeks = false,

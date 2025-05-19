@@ -61,7 +61,7 @@ export type CreateMonthProps = {
 	/**
 	 * The day of the week to start the calendar on (0 for Sunday, 1 for Monday, etc.).
 	 */
-	weekStartsOn: number;
+	weekStartsOn: number | undefined;
 
 	/**
 	 * Whether to always render 6 weeks in the calendar, even if the month doesn't
@@ -97,8 +97,14 @@ function createMonth(props: CreateMonthProps): Month<DateValue> {
 	const firstDayOfMonth = startOfMonth(dateObj);
 	const lastDayOfMonth = endOfMonth(dateObj);
 
-	const lastSunday = getLastFirstDayOfWeek(firstDayOfMonth, weekStartsOn, locale);
-	const nextSaturday = getNextLastDayOfWeek(lastDayOfMonth, weekStartsOn, locale);
+	const lastSunday =
+		weekStartsOn !== undefined
+			? getLastFirstDayOfWeek(firstDayOfMonth, weekStartsOn, "en-US")
+			: getLastFirstDayOfWeek(firstDayOfMonth, 0, locale);
+	const nextSaturday =
+		weekStartsOn !== undefined
+			? getNextLastDayOfWeek(lastDayOfMonth, weekStartsOn, "en-US")
+			: getNextLastDayOfWeek(lastDayOfMonth, 0, locale);
 
 	const lastMonthDays = getDaysBetween(lastSunday.subtract({ days: 1 }), firstDayOfMonth);
 	const nextMonthDays = getDaysBetween(lastDayOfMonth, nextSaturday.add({ days: 1 }));
@@ -402,7 +408,7 @@ type HandleCalendarPageProps = {
 	setMonths: (months: Month<DateValue>[]) => void;
 	numberOfMonths: number;
 	pagedNavigation: boolean;
-	weekStartsOn: number;
+	weekStartsOn: number | undefined;
 	locale: string;
 	fixedWeeks: boolean;
 	setPlaceholder: (date: DateValue) => void;
@@ -483,7 +489,7 @@ export function getWeekdays({ months, formatter, weekdayFormat }: GetWeekdaysPro
 }
 
 type UseMonthViewSyncProps = {
-	weekStartsOn: ReadableBox<number>;
+	weekStartsOn: ReadableBox<number | undefined>;
 	locale: ReadableBox<string>;
 	fixedWeeks: ReadableBox<boolean>;
 	numberOfMonths: ReadableBox<number>;
@@ -562,7 +568,7 @@ export function createAccessibleHeading({
 type UseMonthViewPlaceholderSyncProps = {
 	placeholder: WritableBox<DateValue>;
 	getVisibleMonths: () => DateValue[];
-	weekStartsOn: ReadableBox<number>;
+	weekStartsOn: ReadableBox<number | undefined>;
 	locale: ReadableBox<string>;
 	fixedWeeks: ReadableBox<boolean>;
 	numberOfMonths: ReadableBox<number>;

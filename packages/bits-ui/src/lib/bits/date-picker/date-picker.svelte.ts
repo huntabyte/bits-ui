@@ -24,7 +24,7 @@ type DatePickerRootStateProps = WritableBoxedValues<{
 		required: boolean;
 		preventDeselect: boolean;
 		pagedNavigation: boolean;
-		weekStartsOn: WeekStartsOn;
+		weekStartsOn: WeekStartsOn | undefined;
 		weekdayFormat: Intl.DateTimeFormatOptions["weekday"];
 		fixedWeeks: boolean;
 		numberOfMonths: number;

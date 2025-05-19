@@ -4,16 +4,11 @@
 	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { getLocalTimeZone, today } from "@internationalized/date";
 
-	const isDateUnavailable: Calendar.RootProps["isDateUnavailable"] = (date) => {
-		return date.day === 17 || date.day === 18;
-	};
-
 	let value = $state(today(getLocalTimeZone()));
 </script>
 
 <Calendar.Root
 	class="border-dark-10 bg-background-alt shadow-card mt-6 rounded-[15px] border p-[22px]"
-	{isDateUnavailable}
 	weekdayFormat="short"
 	fixedWeeks={true}
 	type="single"

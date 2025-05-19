@@ -114,8 +114,7 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 		}),
 		weekStartsOn: createNumberProp({
 			description:
-				"The day of the week to start the calendar on. 0 is Sunday, 1 is Monday, etc.",
-			default: "0",
+				"An absolute day of the week to start the calendar on, regardless of locale. `0` is Sunday, `1` is Monday, etc. If not provided, the calendar will default to the locale's first day of the week.",
 		}),
 		weekdayFormat: createEnumProp({
 			options: ["narrow", "short", "long"],
