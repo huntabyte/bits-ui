@@ -28,9 +28,12 @@ type CheckboxGroupStateProps = WithRefProps<
 >;
 
 class CheckboxGroupState {
+	readonly opts: CheckboxGroupStateProps;
 	labelId = $state<string | undefined>(undefined);
 
-	constructor(readonly opts: CheckboxGroupStateProps) {
+	constructor(opts: CheckboxGroupStateProps) {
+		this.opts = opts;
+
 		useRefById(opts);
 	}
 
@@ -67,10 +70,13 @@ class CheckboxGroupState {
 type CheckboxGroupLabelStateProps = WithRefProps;
 
 class CheckboxGroupLabelState {
-	constructor(
-		readonly opts: CheckboxGroupLabelStateProps,
-		readonly group: CheckboxGroupState
-	) {
+	readonly opts: CheckboxGroupLabelStateProps;
+	readonly group: CheckboxGroupState;
+
+	constructor(opts: CheckboxGroupLabelStateProps, group: CheckboxGroupState) {
+		this.opts = opts;
+		this.group = group;
+
 		useRefById({
 			...opts,
 			onRefChange: (node) => {
@@ -108,6 +114,8 @@ type CheckboxRootStateProps = WithRefProps<
 >;
 
 class CheckboxRootState {
+	readonly opts: CheckboxRootStateProps;
+	readonly group: CheckboxGroupState | null;
 	trueName = $derived.by(() => {
 		if (this.group && this.group.opts.name.current) {
 			return this.group.opts.name.current;
@@ -128,10 +136,9 @@ class CheckboxRootState {
 		return this.opts.disabled.current;
 	});
 
-	constructor(
-		readonly opts: CheckboxRootStateProps,
-		readonly group: CheckboxGroupState | null = null
-	) {
+	constructor(opts: CheckboxRootStateProps, group: CheckboxGroupState | null = null) {
+		this.opts = opts;
+		this.group = group;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
 		useRefById(opts);
@@ -215,6 +222,7 @@ class CheckboxRootState {
 //
 
 class CheckboxInputState {
+	readonly root: CheckboxRootState;
 	trueChecked = $derived.by(() => {
 		if (this.root.group) {
 			if (
@@ -230,7 +238,9 @@ class CheckboxInputState {
 
 	shouldRender = $derived.by(() => Boolean(this.root.trueName));
 
-	constructor(readonly root: CheckboxRootState) {}
+	constructor(root: CheckboxRootState) {
+		this.root = root;
+	}
 
 	props = $derived.by(
 		() =>
