@@ -2,11 +2,13 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxGroupLabelProps } from "../types.js";
 	import { useCheckboxGroupLabel } from "../checkbox.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		child,
 		children,
 		...restProps
