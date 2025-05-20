@@ -224,7 +224,8 @@ describe("combobox - single", () => {
 		await sleep(100);
 		mockBoundingClientRect();
 		await t.user.click(t.outside);
-		expect(t.getContent()).toBeNull();
+		await tick();
+		await waitFor(() => expect(t.getContent()).toBeNull());
 	});
 
 	it("should portal to the body by default", async () => {
@@ -550,8 +551,8 @@ describe("combobox - multiple", () => {
 		const t = await openMultiple();
 		await sleep(100);
 		await t.user.click(t.outside);
-		await sleep(100);
-		expect(t.getContent()).toBeNull();
+		await tick();
+		await waitFor(() => expect(t.getContent()).toBeNull());
 	});
 
 	it("should portal to the body by default", async () => {

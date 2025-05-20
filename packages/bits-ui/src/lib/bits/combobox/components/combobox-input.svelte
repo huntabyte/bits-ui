@@ -28,16 +28,17 @@
 	if (defaultValue) {
 		inputState.root.inputValue = defaultValue;
 	}
-
-	const mergedProps = $derived(
-		mergeProps(restProps, inputState.props, { value: inputState.root.inputValue })
-	);
 </script>
 
 <FloatingLayer.Anchor {id}>
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
-		<input {...mergedProps} />
-	{/if}
+	{#snippet anchor({ props: anchorProps })}
+		{@const mergedProps = mergeProps(restProps, inputState.props, anchorProps, {
+			value: inputState.root.inputValue,
+		})}
+		{#if child}
+			{@render child({ props: mergedProps })}
+		{:else}
+			<input {...mergedProps} />
+		{/if}
+	{/snippet}
 </FloatingLayer.Anchor>

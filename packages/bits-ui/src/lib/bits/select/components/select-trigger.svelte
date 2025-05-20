@@ -23,16 +23,17 @@
 			(v) => (ref = v)
 		),
 	});
-
-	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
 <FloatingLayer.Anchor {id}>
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
-		<button {...mergedProps}>
-			{@render children?.()}
-		</button>
-	{/if}
+	{#snippet anchor({ props: anchorProps })}
+		{@const mergedProps = mergeProps(restProps, triggerState.props, anchorProps, { type })}
+		{#if child}
+			{@render child({ props: mergedProps })}
+		{:else}
+			<button {...mergedProps}>
+				{@render children?.()}
+			</button>
+		{/if}
+	{/snippet}
 </FloatingLayer.Anchor>

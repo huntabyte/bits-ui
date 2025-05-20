@@ -258,7 +258,7 @@ class FloatingContentState {
 			open: () => this.opts.enabled.current,
 		});
 
-		$effect.pre(() => {
+		$effect(() => {
 			if (!this.floating.isPositioned) return;
 			this.opts.onPlaced?.current();
 		});
@@ -271,7 +271,7 @@ class FloatingContentState {
 			}
 		);
 
-		$effect.pre(() => {
+		$effect(() => {
 			this.floating.floating.current = this.wrapperRef.current;
 		});
 	}

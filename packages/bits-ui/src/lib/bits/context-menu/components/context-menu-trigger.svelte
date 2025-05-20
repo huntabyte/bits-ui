@@ -24,18 +24,19 @@
 			(v) => (ref = v)
 		),
 	});
-
-	const mergedProps = $derived(
-		mergeProps(restProps, triggerState.props, { style: { pointerEvents: "auto" } })
-	);
 </script>
 
 <FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement}>
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
-		<div {...mergedProps}>
-			{@render children?.()}
-		</div>
-	{/if}
+	{#snippet anchor({ props: anchorProps })}
+		{@const mergedProps = mergeProps(restProps, triggerState.props, anchorProps, {
+			style: { pointerEvents: "auto" },
+		})}
+		{#if child}
+			{@render child({ props: mergedProps })}
+		{:else}
+			<div {...mergedProps}>
+				{@render children?.()}
+			</div>
+		{/if}
+	{/snippet}
 </FloatingLayer.Anchor>

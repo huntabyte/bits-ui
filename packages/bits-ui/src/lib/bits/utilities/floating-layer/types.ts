@@ -128,6 +128,6 @@ export type FloatingLayerContentImplProps = {
 
 export type FloatingLayerAnchorProps = {
 	id: string;
-	children?: Snippet;
+	anchor?: Snippet<[{ props: Record<string, unknown> }]>;
 	virtualEl?: ReadableBox<Measurable | null>;
 };

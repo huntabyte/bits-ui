@@ -104,20 +104,23 @@
 								{onPointerUp}
 								{enabled}
 							>
-								{@render popper?.({
-									props: mergeProps(
-										restProps,
-										floatingProps,
-										dismissibleProps,
-										focusScopeProps,
-										{
-											style: {
-												pointerEvents: "auto",
-											},
-										}
-									),
-									wrapperProps,
-								})}
+								{#snippet textSelectionLayer({ props: textSelectionLayerProps })}
+									{@render popper?.({
+										props: mergeProps(
+											restProps,
+											floatingProps,
+											dismissibleProps,
+											focusScopeProps,
+											textSelectionLayerProps,
+											{
+												style: {
+													pointerEvents: "auto",
+												},
+											}
+										),
+										wrapperProps,
+									})}
+								{/snippet}
 							</TextSelectionLayer>
 						{/snippet}
 					</DismissibleLayer>

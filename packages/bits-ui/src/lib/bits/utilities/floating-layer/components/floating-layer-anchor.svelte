@@ -4,12 +4,12 @@
 	import type { AnchorProps } from "./index.js";
 	import type { Measurable } from "$lib/internal/floating-svelte/types.js";
 
-	let { id, children, virtualEl }: AnchorProps = $props();
+	let { id, anchor, virtualEl }: AnchorProps = $props();
 
-	useFloatingAnchorState({
+	const floatingAnchorState = useFloatingAnchorState({
 		id: box.with(() => id),
 		virtualEl: box.with(() => virtualEl as unknown as Measurable | null),
 	});
 </script>
 
-{@render children?.()}
+{@render anchor?.({ props: floatingAnchorState.props })}
