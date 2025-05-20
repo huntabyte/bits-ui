@@ -2,13 +2,15 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SwitchThumbProps } from "../types.js";
 	import { useSwitchThumb } from "../switch.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		children,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		...restProps
 	}: SwitchThumbProps = $props();
 

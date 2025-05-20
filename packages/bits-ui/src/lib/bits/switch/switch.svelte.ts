@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import {
 	getAriaChecked,
@@ -31,8 +31,6 @@ class SwitchRootState {
 
 	constructor(opts: SwitchRootStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
@@ -76,6 +74,7 @@ class SwitchRootState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -110,8 +109,6 @@ class SwitchThumbState {
 	constructor(opts: SwitchThumbStateProps, root: SwitchRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -124,6 +121,7 @@ class SwitchThumbState {
 				...this.root.sharedProps,
 				id: this.opts.id.current,
 				[SWITCH_THUMB_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
