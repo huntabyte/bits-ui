@@ -4,15 +4,17 @@
 	import { usePopoverContent } from "../popover.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		children,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		forceMount = false,
 		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
@@ -40,6 +42,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		isStatic
 		enabled={contentState.root.opts.open.current}
 		{id}
@@ -65,6 +68,7 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		isStatic
 		present={contentState.root.opts.open.current}
 		{id}
