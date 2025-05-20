@@ -7,7 +7,7 @@ import {
 } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
@@ -109,8 +109,6 @@ export class CalendarRootState {
 		this.handleSingleUpdate = this.handleSingleUpdate.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.getBitsAttr = this.getBitsAttr.bind(this);
-
-		useRefById(opts);
 
 		this.months = createMonths({
 			dateObj: this.opts.placeholder.current,
@@ -462,6 +460,7 @@ export class CalendarRootState {
 				[this.getBitsAttr("root")]: "",
 				//
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -475,8 +474,6 @@ export class CalendarHeadingState {
 	constructor(opts: CalendarHeadingStateProps, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -487,6 +484,7 @@ export class CalendarHeadingState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("heading")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -529,8 +527,6 @@ class CalendarCellState {
 	constructor(opts: CalendarCellStateProps, root: CalendarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -574,6 +570,7 @@ class CalendarCellState {
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -588,8 +585,6 @@ class CalendarDayState {
 		this.opts = opts;
 		this.cell = cell;
 		this.onclick = this.onclick.bind(this);
-
-		useRefById(opts);
 	}
 
 	#tabindex = $derived.by(() =>
@@ -627,6 +622,7 @@ class CalendarDayState {
 				"data-bits-day": "",
 				//
 				onclick: this.onclick,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -645,8 +641,6 @@ export class CalendarNextButtonState {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
-
-		useRefById(opts);
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -667,6 +661,7 @@ export class CalendarNextButtonState {
 				[this.root.getBitsAttr("next-button")]: "",
 				//
 				onclick: this.onclick,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -685,8 +680,6 @@ export class CalendarPrevButtonState {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
-
-		useRefById(opts);
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -707,6 +700,7 @@ export class CalendarPrevButtonState {
 				[this.root.getBitsAttr("prev-button")]: "",
 				//
 				onclick: this.onclick,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -720,8 +714,6 @@ export class CalendarGridState {
 	constructor(opts: CalendarGridStateProps, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -735,6 +727,7 @@ export class CalendarGridState {
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("grid")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -751,8 +744,6 @@ export class CalendarGridBodyState {
 	) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -762,6 +753,7 @@ export class CalendarGridBodyState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-body")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -778,8 +770,6 @@ export class CalendarGridHeadState {
 	) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -789,6 +779,7 @@ export class CalendarGridHeadState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-head")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -802,8 +793,6 @@ export class CalendarGridRowState {
 	constructor(opts: CalendarGridRowStateProps, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -813,6 +802,7 @@ export class CalendarGridRowState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-row")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -829,8 +819,6 @@ export class CalendarHeadCellState {
 	) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -840,6 +828,7 @@ export class CalendarHeadCellState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("head-cell")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -853,8 +842,6 @@ export class CalendarHeaderState {
 	constructor(opts: CalendarHeaderStateProps, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -864,6 +851,7 @@ export class CalendarHeaderState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("header")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
