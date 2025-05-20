@@ -6,7 +6,7 @@ import { untrack } from "svelte";
 import {
 	executeCallbacks,
 	onMountEffect,
-	useRefById,
+	attachRef,
 	type Box,
 	type ReadableBox,
 } from "svelte-toolbelt";
@@ -57,8 +57,6 @@ class SliderBaseRootState {
 
 	constructor(opts: SliderBaseRootStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 	}
 
 	#touchAction = $derived.by(() => {
@@ -117,6 +115,7 @@ class SliderBaseRootState {
 					touchAction: this.#touchAction,
 				},
 				[SLIDER_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -686,8 +685,6 @@ class SliderRangeState {
 	constructor(opts: SliderRangeStateProps, root: SliderRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	rangeStyles = $derived.by(() => {
@@ -713,6 +710,7 @@ class SliderRangeState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				style: this.rangeStyles,
 				[SLIDER_RANGE_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -731,8 +729,6 @@ class SliderThumbState {
 	constructor(opts: SliderThumbStateProps, root: SliderRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -829,6 +825,7 @@ class SliderThumbState {
 				...this.root.thumbsPropsArr[this.opts.index.current]!,
 				id: this.opts.id.current,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -845,8 +842,6 @@ class SliderTickState {
 	constructor(opts: SliderTickStateProps, root: SliderRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -854,6 +849,7 @@ class SliderTickState {
 			({
 				...this.root.ticksPropsArr[this.opts.index.current]!,
 				id: this.opts.id.current,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

@@ -2,14 +2,16 @@
 	import { box, mergeProps, type WritableBox } from "svelte-toolbelt";
 	import type { SliderRootProps } from "../types.js";
 	import { useSliderRoot } from "../slider.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(),
 		type,
