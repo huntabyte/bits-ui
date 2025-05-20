@@ -7,13 +7,15 @@
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
 	import { shouldTrapFocus } from "$lib/internal/should-trap-focus.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		ref = $bindable(null),
@@ -73,6 +75,7 @@
 				>
 					<DismissibleLayer
 						{...mergedProps}
+						ref={contentState.opts.ref}
 						enabled={contentState.root.opts.open.current}
 						onInteractOutside={(e) => {
 							onInteractOutside(e);

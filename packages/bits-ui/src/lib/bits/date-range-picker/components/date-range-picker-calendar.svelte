@@ -2,13 +2,15 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateRangePickerCalendarProps } from "../types.js";
 	import { DateRangePickerRootContext } from "../date-range-picker.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { useRangeCalendarRoot } from "$lib/bits/range-calendar/range-calendar.svelte.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		...restProps
 	}: DateRangePickerCalendarProps = $props();

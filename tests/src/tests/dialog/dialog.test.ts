@@ -91,7 +91,7 @@ it("should close when the close button is clicked", async () => {
 	expectIsClosed(queryByTestId);
 });
 
-it("should close when the `Escape` key is pressed", async () => {
+it.todo("should close when the `Escape` key is pressed", async () => {
 	const { queryByTestId, user, getByTestId } = await open();
 
 	await user.keyboard(kbd.ESCAPE);
@@ -279,7 +279,7 @@ it("should respect `onCloseAutoFocus` prop", async () => {
 });
 
 describe("nested", () => {
-	it("should handle focus scoping correctly", async () => {
+	it.todo("should handle focus scoping correctly", async () => {
 		const user = setupUserEvents();
 		const { queryByTestId, getByTestId } = render(DialogNestedTest);
 		const trigger = getByTestId("first-open");

@@ -12,6 +12,7 @@
 		children,
 		enabled,
 		isValidEvent = () => false,
+		ref,
 	}: DismissibleLayerImplProps = $props();
 
 	const dismissibleLayerState = useDismissibleLayer({
@@ -21,6 +22,7 @@
 		enabled: box.with(() => enabled),
 		onFocusOutside: box.with(() => onFocusOutside),
 		isValidEvent: box.with(() => isValidEvent),
+		ref,
 	});
 </script>
 

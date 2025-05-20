@@ -1,4 +1,5 @@
 import type { Snippet } from "svelte";
+import type { WritableBox } from "svelte-toolbelt";
 
 export type InteractOutsideEvent = PointerEvent;
 export type InteractOutsideEventHandler = (e: PointerEvent) => void;
@@ -55,4 +56,6 @@ export type DismissibleLayerImplProps = {
 	isValidEvent?: (e: PointerEvent, node: HTMLElement) => boolean;
 
 	children?: Snippet<[{ props: Record<string, unknown> }]>;
+
+	ref: WritableBox<HTMLElement | null>;
 } & DismissibleLayerProps;
