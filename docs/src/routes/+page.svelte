@@ -23,6 +23,10 @@
 		}
 	}}
 />
+<svelte:head>
+    <title>Bits UI – Headless components for Svelte</title> 
+	<meta name="description" content="Headless components for Svelte - flexible, unstyled, and accessible primitives that provide the foundation for building your own high-quality component library." />
+</svelte:head>
 
 <div class="border-b border-solid border-black/10 bg-white dark:border-white/20 dark:bg-[#171717]">
 	<header class="flex items-center justify-between px-3 py-[17px] lg:grid lg:grid-cols-3 lg:px-5">
