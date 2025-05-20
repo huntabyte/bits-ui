@@ -371,9 +371,7 @@ class MenuContentState {
 					pointerEvents: "auto",
 				},
 				...attachRef(this.opts.ref, (v) => {
-					if (this.parentMenu.contentNode !== v) {
-						this.parentMenu.contentNode = v;
-					}
+					this.parentMenu.contentNode = v;
 				}),
 			}) as const
 	);
@@ -643,9 +641,7 @@ class MenuSubTriggerState {
 			this.item.props,
 			{
 				...attachRef(this.opts.ref, (v) => {
-					if (this.submenu.triggerNode !== v) {
-						this.submenu.triggerNode = v;
-					}
+					this.submenu.triggerNode = v;
 				}),
 			}
 		)
