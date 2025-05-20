@@ -2,9 +2,11 @@
 	import { type WritableBox, box, mergeProps } from "svelte-toolbelt";
 	import { useAccordionRoot } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		disabled = false,
@@ -13,7 +15,7 @@
 		type,
 		value = $bindable(),
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		onValueChange = noop,
 		loop = true,
 		orientation = "vertical",
