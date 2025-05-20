@@ -2,7 +2,9 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { useFloatingContentState } from "../use-floating-layer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		content,
@@ -22,7 +24,7 @@
 		strategy = "fixed",
 		dir = "ltr",
 		style = {},
-		wrapperId = useId(),
+		wrapperId = createId(uid),
 		customAnchor = null,
 		enabled,
 	}: ContentImplProps = $props();

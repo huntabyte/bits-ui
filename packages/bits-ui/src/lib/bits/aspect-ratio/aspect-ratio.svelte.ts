@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
@@ -11,8 +11,6 @@ class AspectRatioRootState {
 
 	constructor(opts: AspectRatioRootStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 	}
 
 	wrapperProps = $derived.by(() => ({
@@ -35,6 +33,7 @@ class AspectRatioRootState {
 					left: 0,
 				},
 				[ASPECT_RATIO_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

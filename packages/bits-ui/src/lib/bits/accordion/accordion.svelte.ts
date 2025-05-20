@@ -1,4 +1,4 @@
-import { afterTick, useRefById } from "svelte-toolbelt";
+import { afterTick, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
@@ -41,8 +41,6 @@ class AccordionBaseState {
 	constructor(opts: AccordionBaseStateProps) {
 		this.opts = opts;
 
-		useRefById(this.opts);
-
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.opts.id,
 			candidateAttr: ACCORDION_TRIGGER_ATTR,
@@ -58,6 +56,7 @@ class AccordionBaseState {
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[ACCORDION_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -143,11 +142,6 @@ export class AccordionItemState {
 		this.root = opts.rootState;
 
 		this.updateValue = this.updateValue.bind(this);
-
-		useRefById({
-			...opts,
-			deps: () => this.isActive,
-		});
 	}
 
 	updateValue() {
@@ -162,6 +156,7 @@ export class AccordionItemState {
 				"data-disabled": getDataDisabled(this.isDisabled),
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				[ACCORDION_ITEM_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -193,8 +188,6 @@ class AccordionTriggerState {
 		this.#root = itemState.root;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
-
-		useRefById(opts);
 	}
 
 	onclick(e: BitsMouseEvent) {
@@ -229,6 +222,7 @@ class AccordionTriggerState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -256,8 +250,6 @@ class AccordionContentState {
 		this.opts = opts;
 		this.item = item;
 		this.#isMountAnimationPrevented = this.item.isActive;
-
-		useRefById(opts);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -313,6 +305,7 @@ class AccordionContentState {
 					"--bits-accordion-content-height": `${this.#height}px`,
 					"--bits-accordion-content-width": `${this.#width}px`,
 				},
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -330,8 +323,6 @@ class AccordionHeaderState {
 	constructor(opts: AccordionHeaderStateProps, item: AccordionItemState) {
 		this.opts = opts;
 		this.item = item;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -344,6 +335,7 @@ class AccordionHeaderState {
 				"data-state": getDataOpenClosed(this.item.isActive),
 				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
 				[ACCORDION_HEADER_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

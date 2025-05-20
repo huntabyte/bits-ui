@@ -3,8 +3,10 @@
 	import type { RadioGroupRootProps } from "../types.js";
 	import { useRadioGroupRoot } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		disabled = false,
@@ -16,7 +18,7 @@
 		loop = true,
 		name = undefined,
 		required = false,
-		id = useId(),
+		id = createId(uid),
 		onValueChange = noop,
 		...restProps
 	}: RadioGroupRootProps = $props();

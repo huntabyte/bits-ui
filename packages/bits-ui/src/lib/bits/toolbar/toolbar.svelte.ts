@@ -1,4 +1,4 @@
-import { type WritableBox, useRefById } from "svelte-toolbelt";
+import { type WritableBox, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import {
 	getAriaChecked,
@@ -38,8 +38,6 @@ class ToolbarRootState {
 	constructor(opts: ToolbarRootStateProps) {
 		this.opts = opts;
 
-		useRefById(opts);
-
 		this.rovingFocusGroup = useRovingFocus({
 			orientation: this.opts.orientation,
 			loop: this.opts.loop,
@@ -55,6 +53,7 @@ class ToolbarRootState {
 				role: "toolbar",
 				"data-orientation": this.opts.orientation.current,
 				[TOOLBAR_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -72,8 +71,6 @@ class ToolbarGroupBaseState {
 	constructor(opts: ToolbarGroupBaseStateProps, root: ToolbarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -84,6 +81,7 @@ class ToolbarGroupBaseState {
 				role: "group",
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -186,8 +184,6 @@ class ToolbarGroupItemState {
 		this.group = group;
 		this.root = root;
 
-		useRefById(opts);
-
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
 		});
@@ -247,6 +243,7 @@ class ToolbarGroupItemState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -260,8 +257,6 @@ class ToolbarLinkState {
 	constructor(opts: ToolbarLinkStateProps, root: ToolbarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
@@ -294,6 +289,7 @@ class ToolbarLinkState {
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				//
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -311,8 +307,6 @@ class ToolbarButtonState {
 	constructor(opts: ToolbarButtonStateProps, root: ToolbarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
@@ -347,6 +341,7 @@ class ToolbarButtonState {
 				disabled: getDisabled(this.opts.disabled.current),
 				//
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

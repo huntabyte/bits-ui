@@ -23,7 +23,7 @@ export type TextSelectionLayerImplProps = {
 	 */
 	id: string;
 
-	children?: Snippet;
+	textSelectionLayer?: Snippet<[{ props: Record<string, unknown> }]>;
 
 	/**
 	 * Callback fired when pointerdown event triggers. Call `preventDefault()`

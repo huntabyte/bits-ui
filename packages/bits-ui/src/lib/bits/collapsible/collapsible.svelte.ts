@@ -1,4 +1,4 @@
-import { afterTick, useRefById, type WithRefProps } from "svelte-toolbelt";
+import { afterTick, attachRef, type WithRefProps } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -24,8 +24,6 @@ class CollapsibleRootState {
 	constructor(opts: CollapsibleRootStateProps) {
 		this.opts = opts;
 		this.toggleOpen = this.toggleOpen.bind(this);
-
-		useRefById(opts);
 	}
 
 	toggleOpen() {
@@ -39,6 +37,7 @@ class CollapsibleRootState {
 				"data-state": getDataOpenClosed(this.opts.open.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[COLLAPSIBLE_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -60,14 +59,6 @@ class CollapsibleContentState {
 		this.opts = opts;
 		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
-
-		useRefById({
-			...opts,
-			deps: () => this.present,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-			},
-		});
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -126,6 +117,7 @@ class CollapsibleContentState {
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[COLLAPSIBLE_CONTENT_ATTR]: "",
+				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
 			}) as const
 	);
 }
@@ -145,8 +137,6 @@ class CollapsibleTriggerState {
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById(opts);
 	}
 
 	onclick(e: BitsMouseEvent) {
@@ -178,6 +168,7 @@ class CollapsibleTriggerState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

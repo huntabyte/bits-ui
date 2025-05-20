@@ -2,11 +2,12 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuListProps } from "../types.js";
 	import { useNavigationMenuList } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		ref = $bindable(null),
@@ -27,12 +28,10 @@
 
 {#if child}
 	{@render child({ props: mergedProps, wrapperProps })}
-	<Mounted bind:mounted={listState.wrapperMounted} />
 {:else}
 	<div {...wrapperProps}>
 		<ul {...mergedProps}>
 			{@render children?.()}
 		</ul>
 	</div>
-	<Mounted bind:mounted={listState.wrapperMounted} />
 {/if}

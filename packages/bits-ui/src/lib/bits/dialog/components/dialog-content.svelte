@@ -7,13 +7,15 @@
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
 	import { shouldTrapFocus } from "$lib/internal/should-trap-focus.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		ref = $bindable(null),
@@ -84,20 +86,32 @@
 							{...mergedProps}
 							enabled={contentState.root.opts.open.current}
 						>
-							{#if child}
-								{#if contentState.root.opts.open.current}
-									<ScrollLock {preventScroll} {restoreScrollDelay} />
+							{#snippet textSelectionLayer({ props: textSelectionLayerProps })}
+								{#if child}
+									{#if contentState.root.opts.open.current}
+										<ScrollLock {preventScroll} {restoreScrollDelay} />
+									{/if}
+									{@render child({
+										props: mergeProps(
+											mergedProps,
+											focusScopeProps,
+											textSelectionLayerProps
+										),
+										...contentState.snippetProps,
+									})}
+								{:else}
+									<ScrollLock {preventScroll} />
+									<div
+										{...mergeProps(
+											mergedProps,
+											focusScopeProps,
+											textSelectionLayerProps
+										)}
+									>
+										{@render children?.()}
+									</div>
 								{/if}
-								{@render child({
-									props: mergeProps(mergedProps, focusScopeProps),
-									...contentState.snippetProps,
-								})}
-							{:else}
-								<ScrollLock {preventScroll} />
-								<div {...mergeProps(mergedProps, focusScopeProps)}>
-									{@render children?.()}
-								</div>
-							{/if}
+							{/snippet}
 						</TextSelectionLayer>
 					</DismissibleLayer>
 				</EscapeLayer>

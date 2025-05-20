@@ -2,7 +2,9 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupItemProps } from "../types.js";
 	import { useToggleGroupItem } from "../toggle-group.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
@@ -10,7 +12,7 @@
 		ref = $bindable(null),
 		value,
 		disabled = false,
-		id = useId(),
+		id = createId(uid),
 		type = "button",
 		...restProps
 	}: ToggleGroupItemProps = $props();

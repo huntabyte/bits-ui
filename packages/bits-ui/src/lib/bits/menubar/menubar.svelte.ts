@@ -1,4 +1,4 @@
-import { type ReadableBox, afterTick, box, useRefById } from "svelte-toolbelt";
+import { type ReadableBox, afterTick, box, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -45,7 +45,6 @@ class MenubarRootState {
 
 	constructor(opts: MenubarRootStateProps) {
 		this.opts = opts;
-		useRefById(opts);
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: this.opts.id,
@@ -123,6 +122,7 @@ class MenubarRootState {
 				id: this.opts.id.current,
 				role: "menubar",
 				[MENUBAR_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -190,13 +190,6 @@ class MenubarTriggerState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocus = this.onfocus.bind(this);
 		this.onblur = this.onblur.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.menu.triggerNode = node;
-			},
-		});
 
 		onMount(() => {
 			return this.root.registerTrigger(opts.id.current);
@@ -277,6 +270,7 @@ class MenubarTriggerState {
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				...attachRef(this.opts.ref, (v) => (this.menu.triggerNode = v)),
 			}) as const
 	);
 }
@@ -304,14 +298,6 @@ class MenubarContentState {
 		this.focusScopeContext = FocusScopeContext.get();
 
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.menu.contentNode = node;
-			},
-			deps: () => this.menu.open,
-		});
 	}
 
 	onCloseAutoFocus = (e: Event) => {
@@ -388,6 +374,7 @@ class MenubarContentState {
 				},
 				onkeydown: this.onkeydown,
 				"data-menu-content": "",
+				...attachRef(this.opts.ref, (v) => (this.menu.contentNode = v)),
 			}) as const
 	);
 

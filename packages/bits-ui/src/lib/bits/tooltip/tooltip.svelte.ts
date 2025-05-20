@@ -1,4 +1,4 @@
-import { box, executeCallbacks, onMountEffect, useRefById } from "svelte-toolbelt";
+import { box, executeCallbacks, onMountEffect, attachRef } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -188,13 +188,6 @@ class TooltipTriggerState {
 	constructor(opts: TooltipTriggerStateProps, root: TooltipRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.triggerNode = node;
-			},
-		});
 	}
 
 	handlePointerUp = () => {
@@ -249,23 +242,29 @@ class TooltipTriggerState {
 		this.root.handleClose();
 	};
 
-	props = $derived.by(() => ({
-		id: this.opts.id.current,
-		"aria-describedby": this.root.opts.open.current ? this.root.contentNode?.id : undefined,
-		"data-state": this.root.stateAttr,
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-delay-duration": `${this.root.delayDuration}`,
-		[TOOLTIP_TRIGGER_ATTR]: "",
-		tabindex: this.#isDisabled ? undefined : 0,
-		disabled: this.opts.disabled.current,
-		onpointerup: this.#onpointerup,
-		onpointerdown: this.#onpointerdown,
-		onpointermove: this.#onpointermove,
-		onpointerleave: this.#onpointerleave,
-		onfocus: this.#onfocus,
-		onblur: this.#onblur,
-		onclick: this.#onclick,
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				"aria-describedby": this.root.opts.open.current
+					? this.root.contentNode?.id
+					: undefined,
+				"data-state": this.root.stateAttr,
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-delay-duration": `${this.root.delayDuration}`,
+				[TOOLTIP_TRIGGER_ATTR]: "",
+				tabindex: this.#isDisabled ? undefined : 0,
+				disabled: this.opts.disabled.current,
+				onpointerup: this.#onpointerup,
+				onpointerdown: this.#onpointerdown,
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+				onfocus: this.#onfocus,
+				onblur: this.#onblur,
+				onclick: this.#onclick,
+				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
+			}) as const
+	);
 }
 
 type TooltipContentStateProps = WithRefProps &
@@ -280,14 +279,6 @@ class TooltipContentState {
 	constructor(opts: TooltipContentStateProps, root: TooltipRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-			},
-			deps: () => this.root.opts.open.current,
-		});
 
 		useGraceArea({
 			triggerNode: () => this.root.triggerNode,
@@ -356,6 +347,7 @@ class TooltipContentState {
 					outline: "none",
 				},
 				[TOOLTIP_CONTENT_ATTR]: "",
+				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
 			}) as const
 	);
 

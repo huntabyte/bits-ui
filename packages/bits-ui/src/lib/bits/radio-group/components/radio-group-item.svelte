@@ -2,10 +2,12 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { RadioGroupItemProps } from "../types.js";
 	import { useRadioGroupItem } from "../radio-group.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		value,

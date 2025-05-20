@@ -3,10 +3,12 @@
 	import type { CommandItemProps } from "../types.js";
 	import { useCommandItem } from "../command.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = "",
 		disabled = false,

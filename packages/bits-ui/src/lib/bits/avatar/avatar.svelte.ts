@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import { type ReadableBox, type WritableBox, useRefById } from "svelte-toolbelt";
+import { type ReadableBox, type WritableBox, attachRef } from "svelte-toolbelt";
 import type { HTMLImgAttributes } from "svelte/elements";
 import { Context } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
@@ -29,8 +29,6 @@ class AvatarRootState {
 	constructor(opts: AvatarRootStateProps) {
 		this.opts = opts;
 		this.loadImage = this.loadImage.bind(this);
-
-		useRefById(opts);
 	}
 
 	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
@@ -62,6 +60,7 @@ class AvatarRootState {
 				id: this.opts.id.current,
 				[AVATAR_ROOT_ATTR]: "",
 				"data-status": this.opts.loadingStatus.current,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -85,8 +84,6 @@ class AvatarImageState {
 	constructor(opts: AvatarImageStateProps, root: AvatarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		$effect.pre(() => {
 			if (!this.opts.src.current) {
@@ -117,6 +114,7 @@ class AvatarImageState {
 				src: this.opts.src.current,
 				crossorigin: this.opts.crossOrigin.current,
 				referrerpolicy: this.opts.referrerPolicy.current,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -134,8 +132,6 @@ class AvatarFallbackState {
 	constructor(opts: AvatarFallbackStateProps, root: AvatarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	style = $derived.by(() =>
@@ -148,6 +144,7 @@ class AvatarFallbackState {
 				style: this.style,
 				"data-status": this.root.opts.loadingStatus.current,
 				[AVATAR_FALLBACK_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

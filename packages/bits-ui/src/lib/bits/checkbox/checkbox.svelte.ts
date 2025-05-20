@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -33,8 +33,6 @@ class CheckboxGroupState {
 
 	constructor(opts: CheckboxGroupStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 	}
 
 	addValue(checkboxValue: string | undefined) {
@@ -63,6 +61,7 @@ class CheckboxGroupState {
 				"aria-labelledby": this.labelId,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[CHECKBOX_GROUP_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -76,17 +75,6 @@ class CheckboxGroupLabelState {
 	constructor(opts: CheckboxGroupLabelStateProps, group: CheckboxGroupState) {
 		this.opts = opts;
 		this.group = group;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				if (node) {
-					group.labelId = node.id;
-				} else {
-					group.labelId = undefined;
-				}
-			},
-		});
 	}
 
 	props = $derived.by(
@@ -95,6 +83,7 @@ class CheckboxGroupLabelState {
 				id: this.opts.id.current,
 				"data-disabled": getDataDisabled(this.group.opts.disabled.current),
 				[CHECKBOX_GROUP_LABEL_ATTR]: "",
+				...attachRef(this.opts.ref, (v) => (this.group.labelId = v?.id)),
 			}) as const
 	);
 }
@@ -141,7 +130,6 @@ class CheckboxRootState {
 		this.group = group;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
-		useRefById(opts);
 
 		watch.pre(
 			[() => $state.snapshot(this.group?.opts.value.current), () => this.opts.value.current],
@@ -213,6 +201,7 @@ class CheckboxRootState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

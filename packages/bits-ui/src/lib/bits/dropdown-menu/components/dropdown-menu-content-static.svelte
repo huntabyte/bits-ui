@@ -2,15 +2,17 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DropdownMenuContentStaticProps } from "../types.js";
 	import { useMenuContent } from "$lib/bits/menu/menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		child,
 		children,
 		ref = $bindable(null),

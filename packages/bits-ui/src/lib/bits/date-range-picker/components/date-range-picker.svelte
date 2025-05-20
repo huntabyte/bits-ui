@@ -7,16 +7,20 @@
 	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
 	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
+
+	const uid = $props.id();
+	const rootId = createId("root", uid);
+	const descriptionId = createId("description", uid);
 
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
 		value = $bindable(),
-		id = useId(),
+		id = rootId,
 		ref = $bindable(null),
 		onValueChange = noop,
 		placeholder = $bindable(),
@@ -193,6 +197,7 @@
 		endValue: pickerRootState.opts.endValue,
 		onInvalid: box.with(() => onInvalid),
 		errorMessageId: box.with(() => errorMessageId),
+		descriptionId: box.with(() => descriptionId),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, fieldRootState.props));

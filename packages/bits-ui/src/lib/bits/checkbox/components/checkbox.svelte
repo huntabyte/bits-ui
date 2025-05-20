@@ -3,8 +3,10 @@
 	import type { CheckboxRootProps } from "../types.js";
 	import { CheckboxGroupContext, useCheckboxRoot } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
 		checked = $bindable(false),
@@ -15,7 +17,7 @@
 		required = false,
 		name = undefined,
 		value = "on",
-		id = useId(),
+		id = createId(uid),
 		indeterminate = $bindable(false),
 		onIndeterminateChange,
 		child,

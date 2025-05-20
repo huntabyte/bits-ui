@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
@@ -17,8 +17,6 @@ class MeterRootState {
 
 	constructor(opts: MeterRootStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -33,6 +31,7 @@ class MeterRootState {
 				"data-max": this.opts.max.current,
 				"data-min": this.opts.min.current,
 				[METER_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

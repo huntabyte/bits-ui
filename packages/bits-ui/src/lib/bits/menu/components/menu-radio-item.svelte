@@ -2,8 +2,10 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuRadioItemProps } from "../types.js";
 	import { useMenuRadioItem } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
@@ -11,7 +13,7 @@
 		ref = $bindable(null),
 		value,
 		onSelect = noop,
-		id = useId(),
+		id = createId(uid),
 		disabled = false,
 		closeOnSelect = true,
 		...restProps

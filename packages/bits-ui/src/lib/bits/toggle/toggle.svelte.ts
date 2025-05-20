@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { getAriaPressed, getDataDisabled, getDisabled } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
@@ -19,8 +19,6 @@ class ToggleRootState {
 
 	constructor(opts: ToggleRootStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
 	}
@@ -50,6 +48,7 @@ class ToggleRootState {
 				"data-state": getToggleDataState(this.opts.pressed.current),
 				disabled: getDisabled(this.opts.disabled.current),
 				onclick: this.onclick,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

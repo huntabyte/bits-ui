@@ -2,11 +2,13 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuTriggerProps } from "../types.js";
 	import { useMenuContextTrigger } from "$lib/bits/menu/menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		child,
 		children,

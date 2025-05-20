@@ -1,10 +1,9 @@
 import type { DateValue } from "@internationalized/date";
-import { box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { box, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useId } from "$lib/internal/use-id.js";
 import type {
 	DateOnInvalid,
 	DateRange,
@@ -43,6 +42,7 @@ type DateRangeFieldRootStateProps = WithRefProps<
 			hideTimeZone: boolean;
 			required: boolean;
 			errorMessageId: string | undefined;
+			descriptionId: string;
 		}>
 >;
 
@@ -50,7 +50,6 @@ export class DateRangeFieldRootState {
 	readonly opts: DateRangeFieldRootStateProps;
 	startFieldState: DateFieldRootState | undefined = undefined;
 	endFieldState: DateFieldRootState | undefined = undefined;
-	descriptionId = useId();
 	formatter: Formatter;
 	fieldNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
@@ -63,15 +62,8 @@ export class DateRangeFieldRootState {
 		this.opts = opts;
 		this.formatter = createFormatter(this.opts.locale.current);
 
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.fieldNode = node;
-			},
-		});
-
 		onDestroyEffect(() => {
-			removeDescriptionElement(this.descriptionId);
+			removeDescriptionElement(this.opts.descriptionId.current);
 		});
 
 		$effect(() => {
@@ -201,6 +193,7 @@ export class DateRangeFieldRootState {
 				role: "group",
 				[DATE_RANGE_FIELD_ROOT_ATTR]: "",
 				"data-invalid": getDataInvalid(this.isInvalid),
+				...attachRef(this.opts.ref, (v) => (this.fieldNode = v)),
 			}) as const
 	);
 }
@@ -214,13 +207,6 @@ class DateRangeFieldLabelState {
 	constructor(opts: DateRangeFieldLabelStateProps, root: DateRangeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				root.labelNode = node;
-			},
-		});
 	}
 
 	#onclick = () => {
@@ -239,6 +225,7 @@ class DateRangeFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[DATE_RANGE_FIELD_LABEL_ATTR]: "",
 				onclick: this.#onclick,
+				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
 			}) as const
 	);
 }

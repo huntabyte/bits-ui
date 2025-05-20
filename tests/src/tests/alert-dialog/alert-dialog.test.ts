@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
-import type { Component } from "svelte";
+import { type Component } from "svelte";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
@@ -84,7 +84,7 @@ describe("Open/Close Behavior", () => {
 		const t = await open();
 		await t.user.keyboard(kbd.ESCAPE);
 		expectIsClosed();
-		expect(t.getByTestId("trigger")).toHaveFocus();
+		await waitFor(() => expect(t.getByTestId("trigger")).toHaveFocus());
 	});
 
 	it("should not close when the overlay is clicked", async () => {

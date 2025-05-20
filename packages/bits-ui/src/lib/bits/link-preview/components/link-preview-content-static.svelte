@@ -2,16 +2,18 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { LinkPreviewContentStaticProps } from "../types.js";
 	import { useLinkPreviewContent } from "../link-preview.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
+	const uid = $props.id();
+
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,

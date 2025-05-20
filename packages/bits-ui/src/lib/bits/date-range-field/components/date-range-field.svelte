@@ -3,14 +3,18 @@
 	import type { DateValue } from "@internationalized/date";
 	import { useDateRangeFieldRoot } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldRootProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
 
+	const uid = $props.id();
+	const rootId = createId("root", uid);
+	const descriptionId = createId("description", uid);
+
 	let {
-		id = useId(),
+		id = rootId,
 		ref = $bindable(null),
 		value = $bindable(),
 		onValueChange = noop,
@@ -123,6 +127,7 @@
 		),
 		onInvalid: box.with(() => onInvalid),
 		errorMessageId: box.with(() => errorMessageId),
+		descriptionId: box.with(() => descriptionId),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

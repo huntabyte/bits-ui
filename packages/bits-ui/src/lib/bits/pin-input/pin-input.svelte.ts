@@ -1,6 +1,6 @@
 import { Previous, watch } from "runed";
 import { onMount } from "svelte";
-import { type WritableBox, box, useRefById } from "svelte-toolbelt";
+import { type WritableBox, box, attachRef } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -106,13 +106,6 @@ class PinInputRootState {
 			inputRef: this.#inputRef,
 			isFocused: this.#isFocused,
 			pushPasswordManagerStrategy: this.opts.pushPasswordManagerStrategy,
-		});
-
-		useRefById(opts);
-
-		useRefById({
-			id: this.opts.inputId,
-			ref: this.#inputRef,
 		});
 
 		onMount(() => {
@@ -221,6 +214,7 @@ class PinInputRootState {
 				id: this.opts.id.current,
 				[ROOT_ATTR]: "",
 				style: this.#rootStyles,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 
@@ -477,6 +471,7 @@ class PinInputRootState {
 		onmouseleave: this.onmouseleave,
 		onfocus: this.onfocus,
 		onblur: this.onblur,
+		...attachRef(this.#inputRef),
 	}));
 
 	#cells = $derived.by(() =>
@@ -517,11 +512,6 @@ class PinInputCellState {
 
 	constructor(opts: PinInputCellStateProps) {
 		this.opts = opts;
-
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
 	}
 
 	props = $derived.by(
@@ -531,6 +521,7 @@ class PinInputCellState {
 				[CELL_ATTR]: "",
 				"data-active": this.opts.cell.current.isActive ? "" : undefined,
 				"data-inactive": !this.opts.cell.current.isActive ? "" : undefined,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

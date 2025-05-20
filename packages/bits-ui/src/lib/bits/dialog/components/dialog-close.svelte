@@ -2,12 +2,14 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { useDialogClose } from "../dialog.svelte.js";
 	import type { DialogCloseProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		disabled = false,
 		...restProps

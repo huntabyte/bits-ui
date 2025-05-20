@@ -1,4 +1,4 @@
-import { afterSleep, afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
+import { afterSleep, afterTick, attachRef, box, executeCallbacks } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import {
@@ -85,14 +85,9 @@ export function useFocusScope({
 	const ctx = FocusScopeContext.getOr({ ignoreCloseAutoFocus: false });
 	let lastFocusedElement: HTMLElement | null = null;
 
-	useRefById({
-		id,
-		ref,
-		deps: () => enabled.current,
-	});
-
 	function manageFocus(event: FocusEvent) {
-		if (focusScope.paused || !ref.current || focusScope.isHandlingFocus) return;
+		if (focusScope.paused || !ref.current || focusScope.isHandlingFocus || !enabled.current)
+			return;
 		focusScope.isHandlingFocus = true;
 
 		try {
@@ -199,7 +194,7 @@ export function useFocusScope({
 	watch(
 		[() => forceMount.current, () => ref.current, () => enabled.current],
 		([forceMount, container]) => {
-			if (!forceMount) return;
+			if (!forceMount || !enabled.current) return;
 			const prevFocusedElement = document.activeElement as HTMLElement | null;
 			handleOpen(container, prevFocusedElement);
 
@@ -284,6 +279,7 @@ export function useFocusScope({
 				id: id.current,
 				tabindex: -1,
 				onkeydown: handleKeydown,
+				...attachRef(ref),
 			}) as const
 	);
 

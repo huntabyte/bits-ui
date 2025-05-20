@@ -9,11 +9,11 @@
 		onPointerDown = noop,
 		onPointerUp = noop,
 		id,
-		children,
+		textSelectionLayer,
 		enabled,
 	}: TextSelectionLayerImplProps = $props();
 
-	useTextSelectionLayer({
+	const textSelectionLayerState = useTextSelectionLayer({
 		id: box.with(() => id),
 		onPointerDown: box.with(() => onPointerDown),
 		onPointerUp: box.with(() => onPointerUp),
@@ -21,4 +21,4 @@
 	});
 </script>
 
-{@render children?.()}
+{@render textSelectionLayer?.({ props: textSelectionLayerState.props })}

@@ -1,9 +1,9 @@
 import {
 	type ReadableBox,
+	attachRef,
 	box,
 	composeHandlers,
 	executeCallbacks,
-	useRefById,
 } from "svelte-toolbelt";
 import { watch } from "runed";
 import { on } from "svelte/events";
@@ -14,7 +14,9 @@ import { isHTMLElement } from "$lib/internal/is.js";
 import { isOrContainsTarget } from "$lib/internal/elements.js";
 
 type TextSelectionLayerStateProps = ReadableBoxedValues<
-	Required<Omit<TextSelectionLayerImplProps, "children" | "preventOverflowTextSelection">>
+	Required<
+		Omit<TextSelectionLayerImplProps, "textSelectionLayer" | "preventOverflowTextSelection">
+	>
 >;
 
 globalThis.bitsTextSelectionLayers ??= new Map<TextSelectionLayerState, ReadableBox<boolean>>();
@@ -26,12 +28,6 @@ export class TextSelectionLayerState {
 
 	constructor(opts: TextSelectionLayerStateProps) {
 		this.opts = opts;
-
-		useRefById({
-			id: opts.id,
-			ref: this.#ref,
-			deps: () => this.opts.enabled.current,
-		});
 
 		let unsubEvents = noop;
 
@@ -82,6 +78,13 @@ export class TextSelectionLayerState {
 		this.#unsubSelectionLock();
 		this.#unsubSelectionLock = noop;
 	};
+
+	props = $derived.by(
+		() =>
+			({
+				...attachRef(this.#ref),
+			}) as const
+	);
 }
 
 export function useTextSelectionLayer(props: TextSelectionLayerStateProps) {

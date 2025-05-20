@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -30,13 +30,10 @@ type DialogRootStateProps = WritableBoxedValues<{
 class DialogRootState {
 	readonly opts: DialogRootStateProps;
 	triggerNode = $state<HTMLElement | null>(null);
-	contentNode = $state<HTMLElement | null>(null);
-	descriptionNode = $state<HTMLElement | null>(null);
 	contentId = $state<string | undefined>(undefined);
 	titleId = $state<string | undefined>(undefined);
 	triggerId = $state<string | undefined>(undefined);
 	descriptionId = $state<string | undefined>(undefined);
-	cancelNode = $state<HTMLElement | null>(null);
 	attrs = $derived.by(() => createAttrs(this.opts.variant.current));
 
 	constructor(opts: DialogRootStateProps) {
@@ -73,14 +70,6 @@ class DialogTriggerState {
 		this.opts = opts;
 		this.root = root;
 
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.triggerNode = node;
-				this.root.triggerId = node?.id;
-			},
-		});
-
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -111,6 +100,10 @@ class DialogTriggerState {
 				onclick: this.onclick,
 				disabled: this.opts.disabled.current ? true : undefined,
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref, (v) => {
+					this.root.triggerNode = v;
+					this.root.triggerId = v?.id;
+				}),
 			}) as const
 	);
 }
@@ -130,11 +123,6 @@ class DialogCloseState {
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			deps: () => this.root.opts.open.current,
-		});
 	}
 
 	onclick(e: BitsMouseEvent) {
@@ -161,6 +149,7 @@ class DialogCloseState {
 				disabled: this.opts.disabled.current ? true : undefined,
 				tabindex: 0,
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -175,8 +164,6 @@ class DialogActionState {
 	constructor(opts: DialogActionStateProps, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -185,6 +172,7 @@ class DialogActionState {
 				id: this.opts.id.current,
 				[this.#attr]: "",
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -201,14 +189,6 @@ class DialogTitleState {
 	constructor(opts: DialogTitleStateProps, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.titleId = node?.id;
-			},
-			deps: () => this.root.opts.open.current,
-		});
 	}
 
 	props = $derived.by(
@@ -219,6 +199,7 @@ class DialogTitleState {
 				"aria-level": this.opts.level.current,
 				[this.root.attrs.title]: "",
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref, (v) => (this.root.titleId = v?.id)),
 			}) as const
 	);
 }
@@ -232,15 +213,6 @@ class DialogDescriptionState {
 	constructor(opts: DialogDescriptionStateProps, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			deps: () => this.root.opts.open.current,
-			onRefChange: (node) => {
-				this.root.descriptionNode = node;
-				this.root.descriptionId = node?.id;
-			},
-		});
 	}
 
 	props = $derived.by(
@@ -249,6 +221,7 @@ class DialogDescriptionState {
 				id: this.opts.id.current,
 				[this.root.attrs.description]: "",
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref, (v) => (this.root.descriptionId = v?.id)),
 			}) as const
 	);
 }
@@ -262,15 +235,6 @@ class DialogContentState {
 	constructor(opts: DialogContentStateProps, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			deps: () => this.root.opts.open.current,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-				this.root.contentId = node?.id;
-			},
-		});
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
@@ -290,6 +254,7 @@ class DialogContentState {
 				},
 				tabindex: this.root.opts.variant.current === "alert-dialog" ? -1 : undefined,
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref, (v) => (this.root.contentId = v?.id)),
 			}) as const
 	);
 }
@@ -303,11 +268,6 @@ class DialogOverlayState {
 	constructor(opts: DialogOverlayStateProps, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			deps: () => this.root.opts.open.current,
-		});
 	}
 
 	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
@@ -321,6 +281,7 @@ class DialogOverlayState {
 					pointerEvents: "auto",
 				},
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -339,14 +300,6 @@ class AlertDialogCancelState {
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			deps: () => this.root.opts.open.current,
-			onRefChange: (node) => {
-				this.root.cancelNode = node;
-			},
-		});
 	}
 
 	onclick(e: BitsMouseEvent) {
@@ -372,6 +325,7 @@ class AlertDialogCancelState {
 				onkeydown: this.onkeydown,
 				tabindex: 0,
 				...this.root.sharedProps,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

@@ -2,10 +2,12 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PinInputCellProps } from "../types.js";
 	import { usePinInputCell } from "../pin-input.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		cell,
 		child,

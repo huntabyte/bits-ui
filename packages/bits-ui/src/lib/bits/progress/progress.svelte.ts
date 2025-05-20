@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
@@ -17,8 +17,6 @@ class ProgressRootState {
 
 	constructor(opts: ProgressRootStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -37,6 +35,7 @@ class ProgressRootState {
 				"data-min": this.opts.min.current,
 				"data-indeterminate": this.opts.value.current === null ? "" : undefined,
 				[ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

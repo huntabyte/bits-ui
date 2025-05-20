@@ -10,7 +10,7 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { box, cssToStyleObj, styleToString, useRefById } from "svelte-toolbelt";
+import { attachRef, box, cssToStyleObj, styleToString } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
@@ -191,6 +191,7 @@ class FloatingContentState {
 				},
 				// Floating UI calculates logical alignment based the `dir` attribute
 				dir: this.opts.dir.current,
+				...attachRef(this.wrapperRef),
 			}) as const
 	);
 	props = $derived.by(
@@ -204,6 +205,7 @@ class FloatingContentState {
 					// we prevent animations so that users's animation don't kick in too early referring wrong sides
 					// animation: !this.floating.isPositioned ? "none" : undefined,
 				}),
+				...attachRef(this.contentRef),
 			}) as const
 	);
 
@@ -235,24 +237,12 @@ class FloatingContentState {
 			this.root.customAnchorNode.current = opts.customAnchor.current;
 		}
 
-		watch(
+		watch.pre(
 			() => opts.customAnchor.current,
 			(customAnchor) => {
 				this.root.customAnchorNode.current = customAnchor;
 			}
 		);
-
-		useRefById({
-			id: this.opts.wrapperId,
-			ref: this.wrapperRef,
-			deps: () => this.opts.enabled.current,
-		});
-
-		useRefById({
-			id: this.opts.id,
-			ref: this.contentRef,
-			deps: () => this.opts.enabled.current,
-		});
 
 		this.floating = useFloating({
 			strategy: () => this.opts.strategy.current,
@@ -268,7 +258,7 @@ class FloatingContentState {
 			open: () => this.opts.enabled.current,
 		});
 
-		$effect(() => {
+		$effect.pre(() => {
 			if (!this.floating.isPositioned) return;
 			this.opts.onPlaced?.current();
 		});
@@ -281,7 +271,7 @@ class FloatingContentState {
 			}
 		);
 
-		$effect(() => {
+		$effect.pre(() => {
 			this.floating.floating.current = this.wrapperRef.current;
 		});
 	}
@@ -296,14 +286,6 @@ class FloatingArrowState {
 	constructor(opts: FloatingArrowStateProps, content: FloatingContentState) {
 		this.opts = opts;
 		this.content = content;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.content.arrowRef.current = node;
-			},
-			deps: () => this.content.opts.enabled.current,
-		});
 	}
 
 	props = $derived.by(
@@ -312,6 +294,7 @@ class FloatingArrowState {
 				id: this.opts.id.current,
 				style: this.content.arrowStyle,
 				"data-side": this.content.placedSide,
+				...attachRef(this.content.arrowRef),
 			}) as const
 	);
 }
@@ -332,16 +315,15 @@ class FloatingAnchorState {
 
 		if (opts.virtualEl && opts.virtualEl.current) {
 			root.triggerNode = box.from(opts.virtualEl.current);
-		} else {
-			useRefById({
-				id: opts.id,
-				ref: this.ref,
-				onRefChange: (node) => {
-					root.triggerNode.current = node;
-				},
-			});
 		}
 	}
+
+	props = $derived.by(
+		() =>
+			({
+				...attachRef(this.ref, (v) => (this.root.triggerNode.current = v)),
+			}) as const
+	);
 }
 
 const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");

@@ -3,10 +3,10 @@ import {
 	type WritableBox,
 	afterSleep,
 	afterTick,
+	attachRef,
 	box,
 	executeCallbacks,
 	onDestroyEffect,
-	useRefById,
 } from "svelte-toolbelt";
 import { watch } from "runed";
 import { on } from "svelte/events";
@@ -40,27 +40,17 @@ export class DismissibleLayerState {
 	node: WritableBox<HTMLElement | null> = box(null);
 	#documentObj = undefined as unknown as Document;
 	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
-	currNode = $state<HTMLElement | null>(null);
 	#unsubClickListener = noop;
 
 	constructor(opts: DismissibleLayerStateProps) {
 		this.opts = opts;
 
-		useRefById({
-			id: opts.id,
-			ref: this.node,
-			deps: () => opts.enabled.current,
-			onRefChange: (node) => {
-				this.currNode = node;
-			},
-		});
-
 		this.#behaviorType = opts.interactOutsideBehavior;
 		this.#interactOutsideProp = opts.onInteractOutside;
 		this.#onFocusOutside = opts.onFocusOutside;
 
-		$effect(() => {
-			this.#documentObj = getOwnerDocument(this.currNode);
+		$effect.pre(() => {
+			this.#documentObj = getOwnerDocument(this.node.current);
 		});
 
 		let unsubEvents = noop;
@@ -72,10 +62,10 @@ export class DismissibleLayerState {
 			unsubEvents();
 		};
 
-		watch([() => this.opts.enabled.current, () => this.currNode], ([enabled, currNode]) => {
-			if (!enabled || !currNode) return;
+		watch([() => this.opts.enabled.current, () => this.node.current], ([enabled, node]) => {
+			if (!enabled || !node) return;
 			afterSleep(1, () => {
-				if (!this.currNode) return;
+				if (!this.node.current) return;
 				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
 
 				unsubEvents();
@@ -95,9 +85,10 @@ export class DismissibleLayerState {
 
 	#handleFocus = (event: FocusEvent) => {
 		if (event.defaultPrevented) return;
-		if (!this.currNode) return;
+		if (!this.node.current) return;
 		afterTick(() => {
-			if (!this.currNode || this.#isTargetWithinLayer(event.target as HTMLElement)) return;
+			if (!this.node.current || this.#isTargetWithinLayer(event.target as HTMLElement))
+				return;
 
 			if (event.target && !this.#isFocusInsideDOMTree) {
 				this.#onFocusOutside.current?.(event);
@@ -148,12 +139,13 @@ export class DismissibleLayerState {
 	};
 
 	#handleInteractOutside = debounce((e: PointerEvent) => {
-		if (!this.currNode) {
+		if (!this.node.current) {
 			this.#unsubClickListener();
 			return;
 		}
 		const isEventValid =
-			this.opts.isValidEvent.current(e, this.currNode) || isValidEvent(e, this.currNode);
+			this.opts.isValidEvent.current(e, this.node.current) ||
+			isValidEvent(e, this.node.current);
 
 		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			this.#unsubClickListener();
@@ -229,6 +221,7 @@ export class DismissibleLayerState {
 	props = {
 		onfocuscapture: this.#onfocuscapture,
 		onblurcapture: this.#onblurcapture,
+		...attachRef(this.node),
 	};
 }
 
