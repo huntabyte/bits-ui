@@ -2,12 +2,14 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { useSelectItem } from "../select.svelte.js";
 	import type { SelectItemProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value,
 		label = value,

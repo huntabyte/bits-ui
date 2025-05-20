@@ -1,5 +1,5 @@
 import { Context, Previous, watch } from "runed";
-import { afterSleep, afterTick, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { afterSleep, afterTick, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -285,13 +285,6 @@ class SelectInputState {
 		this.opts = opts;
 		this.root = root;
 
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.inputNode = node;
-			},
-		});
-
 		this.onkeydown = this.onkeydown.bind(this);
 		this.oninput = this.oninput.bind(this);
 
@@ -426,6 +419,7 @@ class SelectInputState {
 				onkeydown: this.onkeydown,
 				oninput: this.oninput,
 				[this.root.bitsAttrs.input]: "",
+				...attachRef(this.opts.ref, (v) => (this.root.inputNode = v)),
 			}) as const
 	);
 }
@@ -439,8 +433,6 @@ class SelectComboTriggerState {
 	constructor(opts: SelectComboTriggerStateProps, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
@@ -480,6 +472,7 @@ class SelectComboTriggerState {
 				[this.root.bitsAttrs.trigger]: "",
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -495,13 +488,6 @@ class SelectTriggerState {
 	constructor(opts: SelectTriggerStateProps, root: SelectRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.triggerNode = node;
-			},
-		});
 
 		this.#domTypeahead = useDOMTypeahead({
 			getCurrentItem: () => this.root.highlightedNode,
@@ -740,6 +726,7 @@ class SelectTriggerState {
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
 				onpointerup: this.onpointerup,
+				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
 			}) as const
 	);
 }
@@ -759,14 +746,6 @@ class SelectContentState {
 	constructor(opts: SelectContentStateProps, root: SelectRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-			},
-			deps: () => this.root.opts.open.current,
-		});
 
 		onDestroyEffect(() => {
 			this.root.contentNode = null;
@@ -842,6 +821,7 @@ class SelectContentState {
 					...this.#styles,
 				},
 				onpointermove: this.onpointermove,
+				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
 			}) as const
 	);
 
@@ -879,11 +859,6 @@ class SelectItemState {
 	constructor(opts: SelectItemStateProps, root: SelectRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			deps: () => this.mounted,
-		});
 
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
@@ -1007,6 +982,7 @@ class SelectItemState {
 				onpointermove: this.onpointermove,
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -1021,8 +997,6 @@ class SelectGroupState {
 	constructor(opts: SelectGroupStateProps, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -1032,6 +1006,7 @@ class SelectGroupState {
 				role: "group",
 				[this.root.bitsAttrs.group]: "",
 				"aria-labelledby": this.labelNode?.id ?? undefined,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -1045,13 +1020,6 @@ class SelectGroupHeadingState {
 	constructor(opts: SelectGroupHeadingStateProps, group: SelectGroupState) {
 		this.opts = opts;
 		this.group = group;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				group.labelNode = node;
-			},
-		});
 	}
 
 	props = $derived.by(
@@ -1059,6 +1027,7 @@ class SelectGroupHeadingState {
 			({
 				id: this.opts.id.current,
 				[this.group.root.bitsAttrs["group-label"]]: "",
+				...attachRef(this.opts.ref, (v) => (this.group.labelNode = v)),
 			}) as const
 	);
 }
@@ -1112,14 +1081,6 @@ class SelectViewportState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.content.viewportNode = node;
-			},
-			deps: () => this.root.opts.open.current,
-		});
 	}
 
 	props = $derived.by(
@@ -1136,6 +1097,7 @@ class SelectViewportState {
 					flex: 1,
 					overflow: "auto",
 				},
+				...attachRef(this.opts.ref, (v) => (this.content.viewportNode = v)),
 			}) as const
 	);
 }
@@ -1159,11 +1121,6 @@ class SelectScrollButtonImplState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
-
-		useRefById({
-			...opts,
-			deps: () => this.mounted,
-		});
 
 		watch([() => this.mounted], () => {
 			if (!this.mounted) {
@@ -1228,6 +1185,7 @@ class SelectScrollButtonImplState {
 				onpointerdown: this.onpointerdown,
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
