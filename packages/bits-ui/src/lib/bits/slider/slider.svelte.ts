@@ -61,6 +61,10 @@ class SliderBaseRootState {
 		useRefById(opts);
 	}
 
+	isThumbActive(_index: number) {
+		return this.isActive;
+	}
+
 	#touchAction = $derived.by(() => {
 		if (this.opts.disabled.current) return undefined;
 		return this.opts.orientation.current === "horizontal" ? "pan-y" : "pan-x";
@@ -397,6 +401,10 @@ class SliderMultiRootState extends SliderBaseRootState {
 				}
 			}
 		);
+	}
+
+	isThumbActive(index: number): boolean {
+		return this.isActive && this.activeThumb?.idx === index;
 	}
 
 	applyPosition({
@@ -829,6 +837,7 @@ class SliderThumbState {
 				...this.root.thumbsPropsArr[this.opts.index.current]!,
 				id: this.opts.id.current,
 				onkeydown: this.onkeydown,
+				"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
 			}) as const
 	);
 }

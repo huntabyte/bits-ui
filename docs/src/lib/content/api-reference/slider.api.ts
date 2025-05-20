@@ -112,6 +112,10 @@ const thumb = createApiSchema<SliderThumbPropsWithoutHTML>({
 			name: "slider-thumb",
 			description: "Present on the thumb elements.",
 		}),
+		createDataAttrSchema({
+			name: "active",
+			description: "Present when the thumb is active/grabbed.",
+		}),
 	],
 });
 

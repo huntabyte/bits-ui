@@ -28,9 +28,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps })}
+	{@render child({ active: thumbState.root.isActive, props: mergedProps })}
 {:else}
 	<span {...mergedProps}>
-		{@render children?.()}
+		{@render children?.({ active: thumbState.root.isActive })}
 	</span>
 {/if}
