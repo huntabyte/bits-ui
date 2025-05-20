@@ -3,14 +3,16 @@
 	import { useCollapsibleContent } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		ref = $bindable(null),
 		forceMount = false,
 		children,
-		id = useId(),
+		id = createId(uid),
 		...restProps
 	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
 
