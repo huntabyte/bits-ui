@@ -3,12 +3,14 @@
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupProps } from "../types.js";
 	import { useToolbarGroup } from "../toolbar.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(),
 		onValueChange = noop,
