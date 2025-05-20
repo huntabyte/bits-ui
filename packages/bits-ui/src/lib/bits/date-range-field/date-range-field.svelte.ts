@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import { box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { box, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
@@ -62,13 +62,6 @@ export class DateRangeFieldRootState {
 	constructor(opts: DateRangeFieldRootStateProps) {
 		this.opts = opts;
 		this.formatter = createFormatter(this.opts.locale.current);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.fieldNode = node;
-			},
-		});
 
 		onDestroyEffect(() => {
 			removeDescriptionElement(this.descriptionId);
@@ -201,6 +194,7 @@ export class DateRangeFieldRootState {
 				role: "group",
 				[DATE_RANGE_FIELD_ROOT_ATTR]: "",
 				"data-invalid": getDataInvalid(this.isInvalid),
+				...attachRef(this.opts.ref, (v) => (this.fieldNode = v)),
 			}) as const
 	);
 }
@@ -214,13 +208,6 @@ class DateRangeFieldLabelState {
 	constructor(opts: DateRangeFieldLabelStateProps, root: DateRangeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				root.labelNode = node;
-			},
-		});
 	}
 
 	#onclick = () => {
@@ -239,6 +226,7 @@ class DateRangeFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[DATE_RANGE_FIELD_LABEL_ATTR]: "",
 				onclick: this.#onclick,
+				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
 			}) as const
 	);
 }
