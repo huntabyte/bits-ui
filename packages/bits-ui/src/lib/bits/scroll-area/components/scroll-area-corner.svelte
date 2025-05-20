@@ -2,9 +2,14 @@
 	import type { ScrollAreaCornerProps } from "../types.js";
 	import { ScrollAreaRootContext } from "../scroll-area.svelte.js";
 	import ScrollAreaCornerImpl from "./scroll-area-corner-impl.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+	const uid = $props.id();
 
-	let { ref = $bindable(null), id = useId(), ...restProps }: ScrollAreaCornerProps = $props();
+	let {
+		ref = $bindable(null),
+		id = createId(uid),
+		...restProps
+	}: ScrollAreaCornerProps = $props();
 
 	const scrollAreaState = ScrollAreaRootContext.get();
 

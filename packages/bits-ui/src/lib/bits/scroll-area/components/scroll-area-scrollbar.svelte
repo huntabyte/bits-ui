@@ -6,11 +6,13 @@
 	import ScrollAreaScrollbarScroll from "./scroll-area-scrollbar-scroll.svelte";
 	import ScrollAreaScrollbarHover from "./scroll-area-scrollbar-hover.svelte";
 	import ScrollAreaScrollbarVisible from "./scroll-area-scrollbar-visible.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		orientation,
 		...restProps
 	}: ScrollAreaScrollbarProps = $props();

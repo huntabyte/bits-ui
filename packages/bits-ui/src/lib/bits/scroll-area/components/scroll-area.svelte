@@ -2,11 +2,13 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ScrollAreaRootProps } from "../types.js";
 	import { useScrollAreaRoot } from "../scroll-area.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		type = "hover",
 		dir = "ltr",
 		scrollHideDelay = 600,
