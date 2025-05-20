@@ -2,11 +2,13 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CommandLoadingProps } from "../types.js";
 	import { useCommandLoading } from "../command.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		progress = 0,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		children,
 		child,
