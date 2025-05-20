@@ -7,7 +7,6 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { isHTMLElement } from "$lib/internal/is.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
@@ -140,7 +139,6 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
@@ -176,7 +174,6 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

@@ -133,7 +133,6 @@ class MenuContentState {
 	#timer = 0;
 	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
-	mounted = $state(false);
 	#isSub: boolean;
 
 	constructor(opts: MenuContentStateProps, parentMenu: MenuMenuState) {

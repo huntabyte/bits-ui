@@ -235,8 +235,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.4
       runed:
-        specifier: ^0.23.2
-        version: 0.23.2(svelte@5.30.2)
+        specifier: ^0.28.0
+        version: 0.28.0(svelte@5.30.2)
       svelte-toolbelt:
         specifier: ^0.8.1
         version: 0.8.1(svelte@5.30.2)
@@ -3664,11 +3664,6 @@ packages:
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
-
-  runed@0.23.2:
-    resolution: {integrity: sha512-AhHCb5/B+YQW6ar1pzhGQOQy+byfjCH63ofuhrexSWwQKhC0EbQ60Z/wMYwETLo3ZubhwlNryxBt0seOMOrVFQ==}
-    peerDependencies:
-      svelte: ^5.7.0
 
   runed@0.23.4:
     resolution: {integrity: sha512-9q8oUiBYeXIDLWNK5DfCWlkL0EW3oGbk845VdKlPeia28l751VpfesaB/+7pI6rnbx1I6rqoZ2fZxptOJLxILA==}
@@ -7944,11 +7939,6 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
-
-  runed@0.23.2(svelte@5.30.2):
-    dependencies:
-      esm-env: 1.2.2
-      svelte: 5.30.2
 
   runed@0.23.4(svelte@5.30.2):
     dependencies:
