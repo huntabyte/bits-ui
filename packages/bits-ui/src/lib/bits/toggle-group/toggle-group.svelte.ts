@@ -1,4 +1,4 @@
-import { type WritableBox, useRefById } from "svelte-toolbelt";
+import { type WritableBox, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import {
 	getAriaChecked,
@@ -40,8 +40,6 @@ class ToggleGroupBaseState {
 			loop: opts.loop,
 			orientation: opts.orientation,
 		});
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -52,6 +50,7 @@ class ToggleGroupBaseState {
 				role: "group",
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -145,8 +144,6 @@ class ToggleGroupItemState {
 		this.opts = opts;
 		this.root = root;
 
-		useRefById(opts);
-
 		$effect(() => {
 			if (!this.root.opts.rovingFocus.current) {
 				this.#tabIndex = 0;
@@ -214,6 +211,7 @@ class ToggleGroupItemState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
