@@ -22,6 +22,7 @@
 		dir = "ltr",
 		autoSort = true,
 		orientation = "horizontal",
+		thumbPositioning = "contain",
 		...restProps
 	}: SliderRootProps = $props();
 
@@ -63,6 +64,7 @@
 		dir: box.with(() => dir),
 		autoSort: box.with(() => autoSort),
 		orientation: box.with(() => orientation),
+		thumbPositioning: box.with(() => thumbPositioning),
 		type,
 	});
 

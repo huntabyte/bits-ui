@@ -24,7 +24,7 @@ import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
-import type { Direction, Orientation } from "$lib/shared/index.js";
+import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 import { linearScale, snapValueToStep } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
@@ -41,6 +41,7 @@ type SliderBaseRootStateProps = WithRefProps<
 		step: number;
 		dir: Direction;
 		autoSort: boolean;
+		thumbPositioning: SliderThumbPositioning;
 	}>
 >;
 
@@ -73,6 +74,11 @@ class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
+		if (this.opts.thumbPositioning.current === "exact") {
+			// User opted out of containment
+			return [0, 100];
+		}
+
 		const isVertical = this.opts.orientation.current === "vertical";
 
 		// this assumes all thumbs are the same width
