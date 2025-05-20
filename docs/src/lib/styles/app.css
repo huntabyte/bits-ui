@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
-	font-family: "Cal Sans";
+	font-family: "Cal Sans", "sans-serif";
 	font-style: normal;
 	font-weight: 600;
 	font-display: swap;
