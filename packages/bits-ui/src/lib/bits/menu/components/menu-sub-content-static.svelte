@@ -3,7 +3,7 @@
 	import type { MenuSubContentStaticProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { isHTMLElement } from "$lib/internal/is.js";
@@ -11,8 +11,10 @@
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		children,
 		child,
@@ -107,6 +109,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
+		ref={subContentState.opts.ref}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
 		onOpenAutoFocus={handleOpenAutoFocus}
@@ -136,6 +139,7 @@
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
+		ref={subContentState.opts.ref}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
 		onCloseAutoFocus={handleCloseAutoFocus}

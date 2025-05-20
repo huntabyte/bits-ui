@@ -44,6 +44,7 @@
 		customAnchor = null,
 		isStatic = false,
 		enabled,
+		ref,
 		...restProps
 	}: Omit<PopperLayerImplProps, "present" | "children"> & {
 		enabled: boolean;
@@ -95,6 +96,7 @@
 						{interactOutsideBehavior}
 						{isValidEvent}
 						{enabled}
+						{ref}
 					>
 						{#snippet children({ props: dismissibleProps })}
 							<TextSelectionLayer

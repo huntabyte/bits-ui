@@ -2,15 +2,17 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuContentProps } from "../types.js";
 	import { useMenuContent } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		child,
 		children,
 		ref = $bindable(null),
@@ -55,6 +57,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		enabled={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
@@ -86,6 +89,7 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		present={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}

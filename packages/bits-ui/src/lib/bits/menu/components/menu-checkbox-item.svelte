@@ -2,15 +2,17 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuCheckboxItemProps } from "../types.js";
 	import { useMenuCheckboxItem } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		children,
 		ref = $bindable(null),
 		checked = $bindable(false),
-		id = useId(),
+		id = createId(uid),
 		onCheckedChange = noop,
 		disabled = false,
 		onSelect = noop,
