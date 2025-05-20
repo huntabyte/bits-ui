@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
-import { type WritableBox, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { type WritableBox, box, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
@@ -633,13 +633,6 @@ export class DateFieldInputState {
 		$effect(() => {
 			this.root.setName(this.opts.name.current);
 		});
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.setFieldNode(node);
-			},
-		});
 	}
 
 	#ariaDescribedBy = $derived.by(() => {
@@ -660,6 +653,7 @@ export class DateFieldInputState {
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[DATE_FIELD_INPUT_ATTR]: "",
+				...attachRef(this.opts.ref, (v) => this.root.setFieldNode(v)),
 			}) as const
 	);
 }
@@ -694,13 +688,6 @@ class DateFieldLabelState {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.setLabelNode(node);
-			},
-		});
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -718,6 +705,7 @@ class DateFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[DATE_FIELD_LABEL_ATTR]: "",
 				onclick: this.onclick,
+				...attachRef(this.opts.ref, (v) => this.root.setLabelNode(v)),
 			}) as const
 	);
 }
@@ -735,8 +723,6 @@ class DateFieldDaySegmentState {
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -957,6 +943,7 @@ class DateFieldDaySegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("day", this.opts.id.current),
+			...attachRef(this.opts.ref),
 		};
 	});
 }
@@ -975,8 +962,6 @@ class DateFieldMonthSegmentState {
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
 	}
 
 	#getAnnouncement(month: number) {
@@ -1221,6 +1206,7 @@ class DateFieldMonthSegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("month", this.opts.id.current),
+			...attachRef(this.opts.ref),
 		} as const;
 	});
 }
@@ -1266,8 +1252,6 @@ class DateFieldYearSegmentState {
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
 	}
 
 	#resetBackspaceCount() {
@@ -1450,6 +1434,7 @@ class DateFieldYearSegmentState {
 			onclick: this.root.handleSegmentClick,
 			onfocusout: this.onfocusout,
 			...this.root.getBaseSegmentAttrs("year", this.opts.id.current),
+			...attachRef(this.opts.ref),
 		};
 	});
 }
@@ -1467,8 +1452,6 @@ class DateFieldHourSegmentState {
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -1735,6 +1718,7 @@ class DateFieldHourSegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("hour", this.opts.id.current),
+			...attachRef(this.opts.ref),
 		};
 	});
 }
@@ -1752,8 +1736,6 @@ class DateFieldMinuteSegmentState {
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -1975,6 +1957,7 @@ class DateFieldMinuteSegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("minute", this.opts.id.current),
+			...attachRef(this.opts.ref),
 		};
 	});
 }
@@ -1993,8 +1976,6 @@ class DateFieldSecondSegmentState {
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -2213,6 +2194,7 @@ class DateFieldSecondSegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("second", this.opts.id.current),
+			...attachRef(this.opts.ref),
 		};
 	});
 }
@@ -2229,13 +2211,6 @@ class DateFieldDayPeriodSegmentState {
 		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.dayPeriodNode = node;
-			},
-		});
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -2301,6 +2276,7 @@ class DateFieldDayPeriodSegmentState {
 			onkeydown: this.onkeydown,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("dayPeriod", this.opts.id.current),
+			...attachRef(this.opts.ref, (v) => (this.root.dayPeriodNode = v)),
 		};
 	});
 }
@@ -2314,8 +2290,6 @@ class DateFieldDayLiteralSegmentState {
 	constructor(opts: DateFieldLiteralSegmentStateProps, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -2324,6 +2298,7 @@ class DateFieldDayLiteralSegmentState {
 				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
 				...this.root.getBaseSegmentAttrs("literal", this.opts.id.current),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -2336,8 +2311,6 @@ class DateFieldTimeZoneSegmentState {
 		this.opts = opts;
 		this.root = root;
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById(opts);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -2361,6 +2334,7 @@ class DateFieldTimeZoneSegmentState {
 				tabindex: 0,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
 				"data-readonly": getDataReadonly(true),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
