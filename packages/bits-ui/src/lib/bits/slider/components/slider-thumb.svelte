@@ -28,9 +28,14 @@
 </script>
 
 {#if child}
-	{@render child({ active: thumbState.root.isThumbActive(thumbState.opts.index.current), props: mergedProps })}
+	{@render child({
+		active: thumbState.root.isThumbActive(thumbState.opts.index.current),
+		props: mergedProps,
+	})}
 {:else}
 	<span {...mergedProps}>
-		{@render children?.({ active: thumbState.root.isThumbActive(thumbState.opts.index.current) })}
+		{@render children?.({
+			active: thumbState.root.isThumbActive(thumbState.opts.index.current),
+		})}
 	</span>
 {/if}
