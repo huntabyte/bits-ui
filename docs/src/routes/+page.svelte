@@ -43,14 +43,14 @@
 					<a
 						data-active
 						href="/"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class=" data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
 						>Home</a
 					>
 				</li>
 				<li class="inline-block">
 					<a
 						href="/docs"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class="hover:bg-black/5 dark:hover:bg-white/10 transition data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
 						>Docs</a
 					>
 				</li>
@@ -58,7 +58,7 @@
 					<a
 						href="https://github.com/huntabyte/bits-ui"
 						target="_blank"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class="hover:bg-black/5 dark:hover:bg-white/10 transition data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
 						>GitHub</a
 					>
 				</li>
