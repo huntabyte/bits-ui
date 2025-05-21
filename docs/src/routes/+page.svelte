@@ -24,8 +24,11 @@
 	}}
 />
 <svelte:head>
-    <title>Bits UI – Headless components for Svelte</title> 
-	<meta name="description" content="Headless components for Svelte - flexible, unstyled, and accessible primitives that provide the foundation for building your own high-quality component library." />
+	<title>Bits UI – Headless components for Svelte</title>
+	<meta
+		name="description"
+		content="Headless components for Svelte - flexible, unstyled, and accessible primitives that provide the foundation for building your own high-quality component library."
+	/>
 </svelte:head>
 
 <div class="border-b border-solid border-black/10 bg-white dark:border-white/20 dark:bg-[#171717]">
@@ -50,7 +53,7 @@
 				<li class="inline-block">
 					<a
 						href="/docs"
-						class="hover:bg-black/5 dark:hover:bg-white/10 transition data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] transition hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/10"
 						>Docs</a
 					>
 				</li>
@@ -58,7 +61,7 @@
 					<a
 						href="https://github.com/huntabyte/bits-ui"
 						target="_blank"
-						class="hover:bg-black/5 dark:hover:bg-white/10 transition data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] transition hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/10"
 						>GitHub</a
 					>
 				</li>
