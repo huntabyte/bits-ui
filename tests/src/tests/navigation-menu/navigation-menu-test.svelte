@@ -68,8 +68,7 @@
 							</NavigationMenu.Item>
 						</NavigationMenu.List>
 						{#if !noSubViewport}
-							<NavigationMenu.Viewport
-								data-testid="sub-group-item-sub-viewport"
+							<NavigationMenu.Viewport data-testid="sub-group-item-sub-viewport"
 							></NavigationMenu.Viewport>
 						{/if}
 					</NavigationMenu.Sub>
