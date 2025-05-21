@@ -1,11 +1,14 @@
 <script lang="ts" module>
-	export type NavigationMenuTestProps = NavigationMenu.RootProps & {};
+	export type NavigationMenuTestProps = NavigationMenu.RootProps & {
+		noViewport?: boolean;
+		noSubViewport?: boolean;
+	};
 </script>
 
 <script lang="ts">
 	import { NavigationMenu } from "bits-ui";
 
-	let { ...restProps }: NavigationMenuTestProps = $props();
+	let { noViewport, noSubViewport, ...restProps }: NavigationMenuTestProps = $props();
 </script>
 
 <main>
@@ -64,8 +67,11 @@
 								</NavigationMenu.Content>
 							</NavigationMenu.Item>
 						</NavigationMenu.List>
-						<NavigationMenu.Viewport data-testid="sub-group-item-sub-viewport"
-						></NavigationMenu.Viewport>
+						{#if !noSubViewport}
+							<NavigationMenu.Viewport
+								data-testid="sub-group-item-sub-viewport"
+							></NavigationMenu.Viewport>
+						{/if}
 					</NavigationMenu.Sub>
 				</NavigationMenu.Content>
 			</NavigationMenu.Item>
@@ -79,7 +85,9 @@
 			<NavigationMenu.Indicator data-testid="indicator"></NavigationMenu.Indicator>
 		</NavigationMenu.List>
 
-		<NavigationMenu.Viewport data-testid="viewport"></NavigationMenu.Viewport>
+		{#if !noViewport}
+			<NavigationMenu.Viewport data-testid="viewport"></NavigationMenu.Viewport>
+		{/if}
 	</NavigationMenu.Root>
 	<button data-testid="next-button">next button</button>
 </main>
