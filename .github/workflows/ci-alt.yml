@@ -40,4 +40,4 @@ jobs:
               run: pnpm lint
 
             - name: "Test"
-              run: pnpm build:packages && pnpm test
+              run: pnpm test
