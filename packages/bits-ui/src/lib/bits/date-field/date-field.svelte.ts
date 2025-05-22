@@ -740,7 +740,7 @@ class DateFieldDaySegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		const placeholder = this.root.placeholder.current;
+		const placeholder = this.root.value.current ?? this.root.placeholder.current;
 		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;

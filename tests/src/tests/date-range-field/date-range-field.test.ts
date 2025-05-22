@@ -233,3 +233,19 @@ it("should allow valid days in end month regardless of start month", async () =>
 	expect(t.start.value).toHaveTextContent("2025-02-02");
 	expect(t.end.value).toHaveTextContent("2025-12-31");
 });
+
+it("should allow valid days in end month when a value is prepopulated", async () => {
+	const t = setup({
+		value: {
+			start: new CalendarDate(2025, 2, 1),
+			end: new CalendarDate(2025, 5, 31),
+		},
+	});
+
+	const seg = t.getByTestId("end-day");
+	expect(seg).toHaveTextContent("31");
+
+	seg.focus();
+	await t.user.keyboard(kbd.ARROW_DOWN);
+	expect(seg).toHaveTextContent("30");
+});
