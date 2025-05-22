@@ -237,7 +237,7 @@ class CommandRootState {
 
 		for (const group of sortedGroups) {
 			const element = listInsertionElement?.querySelector(
-				`${COMMAND_GROUP_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(group[0])}"]`
+				`${COMMAND_GROUP_SELECTOR}[${COMMAND_VALUE_ATTR}="${CSS.escape(group[0])}"]`
 			);
 			element?.parentElement?.appendChild(element);
 		}
@@ -839,7 +839,7 @@ class CommandInputState {
 	readonly root: CommandRootState;
 	#selectedItemId = $derived.by(() => {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
-			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(this.root.opts.value.current)}"]`
+			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${CSS.escape(this.root.opts.value.current)}"]`
 		);
 		if (!item) return;
 		return item?.getAttribute("id") ?? undefined;
