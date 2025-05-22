@@ -439,12 +439,13 @@ class NavigationMenuTriggerState {
 	onclick = (_: BitsMouseEvent<HTMLButtonElement>) => {
 		// if opened via pointer move, we prevent the click event
 		if (this.hasPointerMoveOpened.current) return;
-		if (this.open) {
+		const shouldClose = this.open && this.context.opts.isRootMenu;
+		if (shouldClose) {
 			this.context.onItemSelect("");
-		} else {
+		} else if (!this.open) {
 			this.context.onItemSelect(this.itemContext.opts.value.current);
 		}
-		this.wasClickClose = this.open;
+		this.wasClickClose = shouldClose;
 	};
 
 	onkeydown = (e: BitsKeyboardEvent<HTMLButtonElement>) => {

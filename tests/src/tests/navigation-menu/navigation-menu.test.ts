@@ -65,6 +65,9 @@ it("should show submenu items on subtrigger hover", async () => {
 	expect(queryByTestId("sub-group-item-sub-viewport")).toContainElement(
 		queryByTestId("sub-group-item-sub-item2-content")
 	);
+	// does not hide when clicking open subtrigger
+	await user.click(getByTestId("sub-group-item-sub-item2-trigger"));
+	expect(queryByTestId("sub-group-item-sub-item2-content")).not.toBeNull();
 });
 
 it("should open submenu viewport when pressing enter on focused subtrigger", async () => {
@@ -78,6 +81,9 @@ it("should open submenu viewport when pressing enter on focused subtrigger", asy
 	expect(getByTestId("sub-group-item-sub-viewport")).toContainElement(
 		getByTestId("sub-group-item-sub-item2-content")
 	);
+	// does not hide when re-pressing enter
+	await user.keyboard(kbd.ENTER);
+	expect(queryByTestId("sub-group-item-sub-item2-content")).not.toBeNull();
 });
 
 it("should show indicator when hovering trigger", async () => {
