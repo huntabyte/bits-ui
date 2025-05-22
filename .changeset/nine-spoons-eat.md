@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix(Command): use `CSS.escape` instead of `encodeURIComponent` for attribute values
+fix(Command): replace `encodeURIComponent` with `css.escape` for attribute values
