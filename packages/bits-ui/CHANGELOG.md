@@ -1,5 +1,13 @@
 # bits-ui
 
+## 1.6.1
+
+### Patch Changes
+
+-   fix(Tooltip): ensure only one tooltip within a Provider can be open at a time ([#1481](https://github.com/huntabyte/bits-ui/pull/1481))
+
+-   fix(Command): replace `encodeURIComponent` with `css.escape` for attribute values ([#1482](https://github.com/huntabyte/bits-ui/pull/1482))
+
 ## 1.6.0
 
 ### Minor Changes
