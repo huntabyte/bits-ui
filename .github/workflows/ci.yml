@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - main
-            - next
         paths-ignore:
             - ".changeset/**"
             - README.md
@@ -22,53 +21,26 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    Check:
-        name: Run svelte-check
+    quality:
+        name: ${{ matrix.task_name }}
         runs-on: macos-latest
+
+        strategy:
+            matrix:
+                task:
+                    - { name: "Svelte Check", cmd: "pnpm check" }
+                    - { name: "Lint", cmd: "pnpm lint" }
+                    - { name: "Test", cmd: "pnpm build:packages && pnpm test" }
         steps:
             - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
             - uses: actions/setup-node@v4
               with:
                   node-version: 20
                   cache: pnpm
-
-            - name: Install dependencies
-              run: pnpm install
-
-            - name: Run svelte-check
-              run: pnpm check
-
-    Lint:
-        runs-on: macos-latest
-        name: Lint
-        steps:
-            - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
               with:
-                  node-version: 20
-                  cache: pnpm
+                  run_install: |
+                      - args: [--frozen-lockfile, --prefer-offline]
 
-            - name: Install dependencies
-              run: pnpm install
-
-            - run: pnpm lint
-
-    Test:
-        runs-on: macos-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: pnpm
-
-            - name: Install dependencies
-              run: pnpm install
-
-            - name: Build packages
-              run: pnpm build:packages
-
-            - run: pnpm test
+            - name: Run ${{ matrix.task.name }}
+              run: ${{ matrix.task.cmd }}
