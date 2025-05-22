@@ -5,6 +5,7 @@ import type {
 	NavigationMenuLinkPropsWithoutHTML,
 	NavigationMenuListPropsWithoutHTML,
 	NavigationMenuRootPropsWithoutHTML,
+	NavigationMenuSubPropsWithoutHTML,
 	NavigationMenuTriggerPropsWithoutHTML,
 	NavigationMenuViewportPropsWithoutHTML,
 } from "bits-ui";
@@ -35,7 +36,8 @@ export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 		}),
 		onValueChange: createFunctionProp({
 			definition: OnStringValueChangeProp,
-			description: "A callback function called when the active menu value changes.",
+			description:
+				"A callback function called when the active menu value changes. Called with an empty string when the menu closes.",
 			stringDefinition: "(value: string) => void",
 		}),
 		dir: dirProp,
@@ -48,6 +50,30 @@ export const root = createApiSchema<NavigationMenuRootPropsWithoutHTML>({
 			default: "200",
 			description:
 				"The duration from when the mouse enters a trigger until the content opens.",
+		}),
+		orientation: createEnumProp({
+			options: ["horizontal", "vertical"],
+			default: "horizontal",
+			description: "The orientation of the menu.",
+			definition: OrientationProp,
+		}),
+		...withChildProps({ elType: "HTMLNavElement" }),
+	},
+});
+
+export const sub = createApiSchema<NavigationMenuSubPropsWithoutHTML>({
+	title: "Sub",
+	description:
+		"A sub navigation menu component which manages & scopes the state of a submenu, inside the content of a Root menu.",
+	props: {
+		value: createStringProp({
+			description: "The value of the currently active submenu.",
+			bindable: true,
+		}),
+		onValueChange: createFunctionProp({
+			definition: OnStringValueChangeProp,
+			description: "A callback function called when the active menu value changes.",
+			stringDefinition: "(value: string) => void",
 		}),
 		orientation: createEnumProp({
 			options: ["horizontal", "vertical"],
@@ -129,11 +155,11 @@ export const indicator = createApiSchema<NavigationMenuIndicatorPropsWithoutHTML
 export const viewport = createApiSchema<NavigationMenuViewportPropsWithoutHTML>({
 	title: "Viewport",
 	description:
-		"The viewport element for the navigation menu, which is used to contain the menu items.",
+		"An optional viewport element for the navigation menu, which renders the content of the menu items if it is present. The content is rendered in place without it.",
 	props: {
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 });
 
-export const navigationMenu = [root, list, item, trigger, content, link, viewport, indicator];
+export const navigationMenu = [root, sub, list, item, trigger, content, link, viewport, indicator];

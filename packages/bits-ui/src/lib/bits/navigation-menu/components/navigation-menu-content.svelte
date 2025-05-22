@@ -28,16 +28,14 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-{#if contentState.context.viewportRef.current}
-	<Portal to={contentState.context.viewportRef.current}>
-		<PresenceLayer
-			{id}
-			present={forceMount || contentState.open || contentState.isLastActiveValue}
-		>
-			{#snippet presence()}
-				<NavigationMenuContentImpl {...mergedProps} {children} {child} />
-				<Mounted bind:mounted={contentState.mounted} />
-			{/snippet}
-		</PresenceLayer>
-	</Portal>
-{/if}
+<Portal
+	to={contentState.context.viewportRef.current || undefined}
+	disabled={!contentState.context.viewportRef.current}
+>
+	<PresenceLayer {id} present={forceMount || contentState.open || contentState.isLastActiveValue}>
+		{#snippet presence()}
+			<NavigationMenuContentImpl {...mergedProps} {children} {child} />
+			<Mounted bind:mounted={contentState.mounted} />
+		{/snippet}
+	</PresenceLayer>
+</Portal>

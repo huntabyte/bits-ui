@@ -166,3 +166,28 @@ it("should focus next on content with down arrow when opened", async () => {
 	await user.keyboard(kbd.ARROW_DOWN);
 	expect(getByTestId("group-item-content-button1")).toHaveFocus();
 });
+
+it("should render content without viewport", async () => {
+	const { user, getByTestId, queryByTestId } = setup({ noViewport: true });
+	const trigger = getByTestId("group-item-trigger");
+	expect(queryByTestId("viewport")).toBeNull();
+	expect(queryByTestId("group-item-content")).toBeNull();
+	await user.hover(trigger);
+	await waitFor(() => expect(queryByTestId("group-item-content")).not.toBeNull());
+	expect(queryByTestId("viewport")).toBeNull();
+	expect(queryByTestId("group-item")).toContainElement(queryByTestId("group-item-content"));
+});
+
+it("should render subcontent without subviewport", async () => {
+	const { user, getByTestId, queryByTestId } = setup({ noSubViewport: true });
+	const trigger = getByTestId("sub-group-item-trigger");
+	await user.hover(trigger);
+	await waitFor(() => expect(queryByTestId("viewport")).not.toBeNull());
+	const subTrigger = getByTestId("sub-group-item-sub-item2-trigger");
+	await user.hover(subTrigger);
+	await waitFor(() => expect(queryByTestId("sub-group-item-sub-item2-content")).not.toBeNull());
+	expect(queryByTestId("sub-group-item-sub-item2")).toContainElement(
+		queryByTestId("sub-group-item-sub-item2-content")
+	);
+	expect(queryByTestId("sub-group-item-sub-viewport")).toBeNull();
+});
