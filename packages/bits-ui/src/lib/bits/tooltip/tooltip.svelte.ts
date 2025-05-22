@@ -1,4 +1,4 @@
-import { box, executeCallbacks, onMountEffect, useRefById } from "svelte-toolbelt";
+import { box, onMountEffect, useRefById } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -7,15 +7,10 @@ import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { CustomEventDispatcher } from "$lib/internal/events.js";
+import type { PointerEventHandler } from "svelte/elements";
 
 const TOOLTIP_CONTENT_ATTR = "data-tooltip-content";
 const TOOLTIP_TRIGGER_ATTR = "data-tooltip-trigger";
-
-export const TooltipOpenEvent = new CustomEventDispatcher("bits.tooltip.open", {
-	bubbles: false,
-	cancelable: false,
-});
 
 type TooltipProviderStateProps = ReadableBoxedValues<{
 	delayDuration: number;
@@ -25,12 +20,12 @@ type TooltipProviderStateProps = ReadableBoxedValues<{
 	ignoreNonKeyboardFocus: boolean;
 	skipDelayDuration: number;
 }>;
-
 class TooltipProviderState {
 	readonly opts: TooltipProviderStateProps;
 	isOpenDelayed = $state<boolean>(true);
 	isPointerInTransit = box(false);
 	#timerFn: ReturnType<typeof useTimeoutFn>;
+	#openTooltip = $state<TooltipRootState | null>(null);
 
 	constructor(opts: TooltipProviderStateProps) {
 		this.opts = opts;
@@ -44,20 +39,38 @@ class TooltipProviderState {
 	}
 
 	#startTimer = () => {
-		this.#timerFn.start();
+		const skipDuration = this.opts.skipDelayDuration.current;
+
+		if (skipDuration === 0) {
+			return;
+		} else {
+			this.#timerFn.start();
+		}
 	};
 
 	#clearTimer = () => {
 		this.#timerFn.stop();
 	};
 
-	onOpen = () => {
+	onOpen = (tooltip: TooltipRootState) => {
+		if (this.#openTooltip && this.#openTooltip !== tooltip) {
+			this.#openTooltip.handleClose();
+		}
+
 		this.#clearTimer();
 		this.isOpenDelayed = false;
+		this.#openTooltip = tooltip;
 	};
 
-	onClose = () => {
+	onClose = (tooltip: TooltipRootState) => {
+		if (this.#openTooltip === tooltip) {
+			this.#openTooltip = null;
+		}
 		this.#startTimer();
+	};
+
+	isTooltipOpen = (tooltip: TooltipRootState) => {
+		return this.#openTooltip === tooltip;
 	};
 }
 
@@ -133,12 +146,10 @@ class TooltipRootState {
 		watch(
 			() => this.opts.open.current,
 			(isOpen) => {
-				if (!this.provider.onClose) return;
 				if (isOpen) {
-					this.provider.onOpen();
-					TooltipOpenEvent.dispatch(document);
+					this.provider.onOpen(this);
 				} else {
-					this.provider.onClose();
+					this.provider.onClose(this);
 				}
 			}
 		);
@@ -156,7 +167,20 @@ class TooltipRootState {
 	};
 
 	#handleDelayedOpen = () => {
-		this.#timerFn.start();
+		this.#timerFn.stop();
+
+		const shouldSkipDelay = !this.provider.isOpenDelayed;
+		const delayDuration = this.delayDuration ?? 0;
+
+		// if no delay needed (either skip delay active or delay is 0), open immediately
+		if (shouldSkipDelay || delayDuration === 0) {
+			// set wasOpenDelayed based on whether we actually had a delay
+			this.#wasOpenDelayed = delayDuration > 0 && shouldSkipDelay;
+			this.opts.open.current = true;
+		} else {
+			// use timer for actual delays
+			this.#timerFn.start();
+		}
 	};
 
 	onTriggerEnter = () => {
@@ -218,10 +242,13 @@ class TooltipTriggerState {
 		);
 	};
 
-	#onpointermove = (e: PointerEvent) => {
+	#onpointermove: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled) return;
 		if (e.pointerType === "touch") return;
-		if (this.#hasPointerMoveOpened || this.root.provider.isPointerInTransit.current) return;
+		if (this.#hasPointerMoveOpened) return;
+
+		if (this.root.provider.isPointerInTransit.current) return;
+
 		this.root.onTriggerEnter();
 		this.#hasPointerMoveOpened = true;
 	};
@@ -294,24 +321,24 @@ class TooltipContentState {
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
 			onPointerExit: () => {
-				this.root.handleClose();
+				if (this.root.provider.isTooltipOpen(this.root)) {
+					this.root.handleClose();
+				}
 			},
 			setIsPointerInTransit: (value) => {
 				this.root.provider.isPointerInTransit.current = value;
 			},
+			transitTimeout: this.root.provider.opts.skipDelayDuration.current,
 		});
 
 		onMountEffect(() =>
-			executeCallbacks(
-				on(window, "scroll", (e) => {
-					const target = e.target as HTMLElement | null;
-					if (!target) return;
-					if (target.contains(this.root.triggerNode)) {
-						this.root.handleClose();
-					}
-				}),
-				TooltipOpenEvent.listen(window, this.root.handleClose)
-			)
+			on(window, "scroll", (e) => {
+				const target = e.target as HTMLElement | null;
+				if (!target) return;
+				if (target.contains(this.root.triggerNode)) {
+					this.root.handleClose();
+				}
+			})
 		);
 	}
 

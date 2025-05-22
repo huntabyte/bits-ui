@@ -10,15 +10,20 @@ interface UseGraceAreaOpts {
 	contentNode: Getter<HTMLElement | null>;
 	onPointerExit: () => void;
 	setIsPointerInTransit?: (value: boolean) => void;
+	transitTimeout?: number;
 }
 export function useGraceArea(opts: UseGraceAreaOpts) {
 	const enabled = $derived(opts.enabled());
 
-	const isPointerInTransit = boxAutoReset(false as boolean, 300, (value) => {
-		if (enabled) {
-			opts.setIsPointerInTransit?.(value);
+	const isPointerInTransit = boxAutoReset(
+		false as boolean,
+		opts.transitTimeout ?? 300,
+		(value) => {
+			if (enabled) {
+				opts.setIsPointerInTransit?.(value);
+			}
 		}
-	});
+	);
 
 	let pointerGraceArea = $state<Polygon | null>(null);
 
