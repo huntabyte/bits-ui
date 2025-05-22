@@ -21,7 +21,7 @@ import {
 	FocusScopeContext,
 	type FocusScopeContextValue,
 } from "../utilities/focus-scope/use-focus-scope.svelte.js";
-import { onMount } from "svelte";
+import { onMount, untrack } from "svelte";
 
 const MENUBAR_ROOT_ATTR = "data-menubar-root";
 const MENUBAR_TRIGGER_ATTR = "data-menubar-trigger";
@@ -136,7 +136,7 @@ class MenubarMenuState {
 	readonly opts: MenubarMenuStateProps;
 	readonly root: MenubarRootState;
 	open = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
-	wasOpenedByKeyboard = $state(false);
+	wasOpenedByKeyboard = false;
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 
@@ -270,7 +270,7 @@ class MenubarTriggerState {
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
-				...attachRef(this.opts.ref, (v) => (this.menu.triggerNode = v)),
+				...attachRef(this.opts.ref, (v) => untrack(() => (this.menu.triggerNode = v))),
 			}) as const
 	);
 }
@@ -374,7 +374,7 @@ class MenubarContentState {
 				},
 				onkeydown: this.onkeydown,
 				"data-menu-content": "",
-				...attachRef(this.opts.ref, (v) => (this.menu.contentNode = v)),
+				// ...attachRef(this.opts.ref, (v) => untrack(() => (this.menu.contentNode = v))),
 			}) as const
 	);
 

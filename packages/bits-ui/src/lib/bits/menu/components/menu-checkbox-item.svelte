@@ -57,9 +57,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, ...checkboxItemState.snippetProps })}
+	{@render child({})}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.(checkboxItemState.snippetProps)}
+		{@render children?.({})}
 	</div>
 {/if}

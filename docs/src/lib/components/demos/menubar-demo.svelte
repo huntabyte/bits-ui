@@ -78,7 +78,7 @@
 				align="start"
 				sideOffset={3}
 			>
-				{#each grids as grid}
+				{#each grids as grid (grid.label)}
 					<Menubar.CheckboxItem
 						class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-3 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 						bind:checked={grid.checked}
