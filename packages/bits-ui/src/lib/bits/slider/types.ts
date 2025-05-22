@@ -140,20 +140,25 @@ export type SliderRangePropsWithoutHTML = WithChild;
 export type SliderRangeProps = SliderRangePropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderRangePropsWithoutHTML>;
 
-export type SliderThumbPropsWithoutHTML = WithChild<{
-	/**
-	 * Whether the thumb is disabled or not.
-	 *
-	 * @defaultValue false
-	 */
-	disabled?: boolean;
+export type SliderThumbSnippetProps = { active: boolean };
 
-	/**
-	 * The index of the thumb in the array of thumbs provided by the `children` snippet prop of the
-	 * `Slider.Root` component.
-	 */
-	index: number;
-}>;
+export type SliderThumbPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * Whether the thumb is disabled or not.
+		 *
+		 * @defaultValue false
+		 */
+		disabled?: boolean;
+
+		/**
+		 * The index of the thumb in the array of thumbs provided by the `children` snippet prop of the
+		 * `Slider.Root` component.
+		 */
+		index: number;
+	},
+	SliderThumbSnippetProps
+>;
 
 export type SliderThumbProps = SliderThumbPropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderThumbPropsWithoutHTML>;
