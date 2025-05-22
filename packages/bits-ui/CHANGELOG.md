@@ -1,5 +1,21 @@
 # bits-ui
 
+## 1.6.0
+
+### Minor Changes
+
+-   feat(Slider): expose thumb `active` state ([#1471](https://github.com/huntabyte/bits-ui/pull/1471))
+
+### Patch Changes
+
+-   fix(DateRangeField): ensure prepopulated value takes priority over placeholder for validation ([#1479](https://github.com/huntabyte/bits-ui/pull/1479))
+
+-   fix(NavigationMenu): do not close `Sub` content when clicking the trigger ([#1473](https://github.com/huntabyte/bits-ui/pull/1473))
+
+-   fix(NavigationMenu): render `Content` without `Viewport` ([#1474](https://github.com/huntabyte/bits-ui/pull/1474))
+
+-   fix(DateField): ensure prepopulated value takes priority over placeholder for validation ([#1479](https://github.com/huntabyte/bits-ui/pull/1479))
+
 ## 1.5.3
 
 ### Patch Changes
