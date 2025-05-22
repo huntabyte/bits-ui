@@ -3,7 +3,8 @@ import { defineSiteConfig } from "$lib/utils/use-site-config.svelte.js";
 export const siteConfig = defineSiteConfig({
 	name: "Bits UI",
 	url: "https://www.bits-ui.com",
-	description: "The headless components for Svelte.",
+	description:
+		"Headless components for Svelte - flexible, unstyled, and accessible primitives that provide the foundation for building your own high-quality component library.",
 	ogImage: {
 		url: "https://www.bits-ui.com/og.png",
 		height: "630",

@@ -38,12 +38,12 @@
 			>
 				<Tabs.Trigger
 					value="follow"
-					class="text-xxs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:shadow-mini h-[23px] w-full rounded-[7px] font-medium data-[state=active]:bg-white lg:h-8 lg:text-sm dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
+					class="text-xxs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:shadow-mini h-[23px] w-full cursor-pointer rounded-[7px] font-medium data-[state=active]:bg-white lg:h-8 lg:text-sm dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
 					>Follow</Tabs.Trigger
 				>
 				<Tabs.Trigger
 					value="other"
-					class="text-xxs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:shadow-mini h-[23px] w-full rounded-[7px] font-medium data-[state=active]:bg-white lg:h-8 lg:text-sm dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
+					class="text-xxs text-foreground/70 data-[state=active]:text-foreground data-[state=active]:shadow-mini h-[23px] w-full cursor-pointer rounded-[7px] font-medium data-[state=active]:bg-white lg:h-8 lg:text-sm dark:text-[#171717]/70 dark:data-[state=active]:text-[#171717] dark:data-[state=active]:shadow-[0px_1px_0px_1px_rgba(0,_0,_0,_0.04);]"
 					>Other</Tabs.Trigger
 				>
 			</Tabs.List>
@@ -125,7 +125,7 @@
 		</div>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger
-				class="focus-visible text-a-foreground border-border-input shadow-mini hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex size-6 select-none items-center justify-center rounded-[7px] border bg-white text-sm font-medium focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] lg:size-8 dark:border-[#D8D8D8] dark:shadow-[0px_0.8px_0px_0.8px_rgba(0,_0,_0,_0.04)] dark:hover:bg-white"
+				class="focus-visible  text-a-foreground border-border-input shadow-mini hover:bg-muted focus-visible:ring-foreground focus-visible:ring-offset-background inline-flex size-6 cursor-pointer select-none items-center justify-center rounded-[7px] border bg-white text-sm font-medium focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98] lg:size-8 dark:border-[#D8D8D8] dark:shadow-[0px_0.8px_0px_0.8px_rgba(0,_0,_0,_0.04)] dark:hover:bg-white"
 			>
 				<DotsThreeVertical class="text-foreground size-4 lg:size-5 dark:text-[#171717]" />
 			</DropdownMenu.Trigger>

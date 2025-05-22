@@ -30,12 +30,12 @@
 				<Tabs.List class="ml-1 flex flex-col gap-[4px] text-[11px] lg:gap-2 lg:text-[14px]">
 					<Tabs.Trigger
 						value="c"
-						class="text-indigo-950/30 data-[state=active]:text-indigo-950"
+						class="cursor-pointer text-indigo-950/30 transition data-[state=active]:text-indigo-950 data-[state=inactive]:hover:text-indigo-950"
 						>°C</Tabs.Trigger
 					>
 					<Tabs.Trigger
 						value="f"
-						class="text-indigo-950/30 data-[state=active]:text-indigo-950"
+						class="cursor-pointer text-indigo-950/30 transition data-[state=active]:text-indigo-950 data-[state=inactive]:hover:text-indigo-950"
 						>°F</Tabs.Trigger
 					>
 				</Tabs.List>
