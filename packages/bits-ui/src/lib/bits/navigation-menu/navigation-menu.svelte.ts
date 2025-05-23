@@ -39,6 +39,12 @@ import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { isElement } from "$lib/internal/is.js";
+import type {
+	FocusEventHandler,
+	KeyboardEventHandler,
+	MouseEventHandler,
+	PointerEventHandler,
+} from "svelte/elements";
 
 const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
 const NAVIGATION_MENU_ATTR = "data-navigation-menu";
@@ -180,6 +186,10 @@ class NavigationMenuRootState {
 	setValue = (newValue: string) => {
 		this.previousValue.current = this.opts.value.current;
 		this.opts.value.current = newValue;
+
+		// When all menus are closed, we want to reset previousValue to prevent
+		// weird transitions from old positions when opening fresh
+		if (newValue === "") this.previousValue.current = "";
 	};
 
 	props = $derived.by(
@@ -378,6 +388,7 @@ class NavigationMenuTriggerState {
 			provider: NavigationMenuProviderState;
 			item: NavigationMenuItemState;
 			list: NavigationMenuListState;
+			sub: NavigationMenuSubState | null;
 		}
 	) {
 		this.opts = opts;
@@ -436,7 +447,7 @@ class NavigationMenuTriggerState {
 		this.hasPointerMoveOpened.current = false;
 	});
 
-	onclick = (_: BitsMouseEvent<HTMLButtonElement>) => {
+	onclick: MouseEventHandler<HTMLButtonElement> = () => {
 		// if opened via pointer move, we prevent the click event
 		if (this.hasPointerMoveOpened.current) return;
 		const shouldClose = this.open && this.context.opts.isRootMenu;
@@ -448,7 +459,7 @@ class NavigationMenuTriggerState {
 		this.wasClickClose = shouldClose;
 	};
 
-	onkeydown = (e: BitsKeyboardEvent<HTMLButtonElement>) => {
+	onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		const verticalEntryKey =
 			this.context.opts.dir.current === "rtl" ? kbd.ARROW_LEFT : kbd.ARROW_RIGHT;
 		const entryKey = { horizontal: kbd.ARROW_DOWN, vertical: verticalEntryKey }[
@@ -463,7 +474,7 @@ class NavigationMenuTriggerState {
 		this.itemContext.listContext.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
 	};
 
-	focusProxyOnFocus = (e: BitsFocusEvent) => {
+	focusProxyOnFocus: FocusEventHandler<HTMLElement> = (e) => {
 		const content = this.itemContext.contentNode;
 		const prevFocusedElement = e.relatedTarget as HTMLElement | null;
 		const wasTriggerFocused =
@@ -566,6 +577,26 @@ class NavigationMenuLinkState {
 		this.isFocused = false;
 	};
 
+	onpointerenter: PointerEventHandler<HTMLAnchorElement> = () => {
+		// only close submenu if this link is not inside the currently open submenu content
+		const currentlyOpenValue = this.context.provider.opts.value.current;
+		const isInsideOpenSubmenu = this.context.item.opts.value.current === currentlyOpenValue;
+
+		if (!isInsideOpenSubmenu && currentlyOpenValue) {
+			this.context.provider.onItemDismiss();
+		}
+	};
+
+	onpointermove = whenMouse(() => {
+		// Only close submenu if this link is not inside the currently open submenu content
+		const currentlyOpenValue = this.context.provider.opts.value.current;
+		const isInsideOpenSubmenu = this.context.item.opts.value.current === currentlyOpenValue;
+
+		if (!isInsideOpenSubmenu && currentlyOpenValue) {
+			this.context.provider.onItemDismiss();
+		}
+	});
+
 	props = $derived.by(
 		() =>
 			({
@@ -577,6 +608,8 @@ class NavigationMenuLinkState {
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				onpointerenter: this.onpointerenter,
+				onpointermove: this.onpointermove,
 				[NAVIGATION_MENU_LINK_ATTR]: "",
 			}) as const
 	);
@@ -749,6 +782,12 @@ class NavigationMenuContentImplState {
 		const isSelected = this.itemContext.opts.value.current === this.context.opts.value.current;
 		const wasSelected = prevIndex === values.indexOf(this.itemContext.opts.value.current);
 
+		// When all menus are closed, we want to reset motion state to prevent residual animations
+		if (!this.context.opts.value.current && !this.context.opts.previousValue.current) {
+			untrack(() => (this.prevMotionAttribute = null));
+			return null;
+		}
+
 		// We only want to update selected and the last selected content
 		// this avoids animations being interrupted outside of that range
 		if (!isSelected && !wasSelected) return untrack(() => this.prevMotionAttribute);
@@ -915,6 +954,7 @@ class NavigationMenuViewportState {
 	viewportWidth = $derived.by(() => (this.size ? `${this.size.width}px` : undefined));
 	viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
 	activeContentValue = $derived.by(() => this.context.opts.value.current);
+	mounted = $state(false);
 
 	constructor(opts: NavigationMenuViewportImplStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
@@ -957,6 +997,16 @@ class NavigationMenuViewportState {
 				}
 			}
 		);
+
+		// reset size when viewport closes to prevent residual size animations
+		watch(
+			() => this.mounted,
+			() => {
+				if (!this.mounted && this.size) {
+					this.size = null;
+				}
+			}
+		);
 	}
 
 	props = $derived.by(
@@ -992,6 +1042,8 @@ const NavigationMenuListContext = new Context<NavigationMenuListState>("Navigati
 const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
 	"NavigationMenu.Content"
 );
+
+const NavigationMenuSubContext = new Context<NavigationMenuSubState>("NavigationMenu.Sub");
 
 export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 	return new NavigationMenuRootState(props);
@@ -1029,6 +1081,7 @@ export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps)
 		provider: NavigationMenuProviderContext.get(),
 		item: NavigationMenuItemContext.get(),
 		list: NavigationMenuListContext.get(),
+		sub: NavigationMenuSubContext.getOr(null),
 	});
 }
 

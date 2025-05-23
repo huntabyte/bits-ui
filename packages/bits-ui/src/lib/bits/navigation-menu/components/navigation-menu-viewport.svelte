@@ -4,6 +4,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import { box, mergeProps } from "svelte-toolbelt";
+	import { Mounted } from "$lib/bits/utilities/index.js";
 
 	let {
 		id = useId(),
@@ -34,5 +35,6 @@
 				{@render children?.()}
 			</div>
 		{/if}
+		<Mounted bind:mounted={viewportState.mounted} />
 	{/snippet}
 </PresenceLayer>

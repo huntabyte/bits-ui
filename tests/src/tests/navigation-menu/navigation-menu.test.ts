@@ -191,3 +191,24 @@ it("should render subcontent without subviewport", async () => {
 	);
 	expect(queryByTestId("sub-group-item-sub-viewport")).toBeNull();
 });
+
+it("should switch between submenu items on pointer hover", async () => {
+	const { user, getByTestId, queryByTestId } = setup();
+
+	// First open the main submenu
+	const trigger = getByTestId("sub-group-item-trigger");
+	await user.hover(trigger);
+	await waitFor(() => expect(queryByTestId("viewport")).not.toBeNull());
+
+	// Hover over first sub-trigger to open its content
+	const subTrigger1 = getByTestId("sub-group-item-sub-item1-trigger");
+	await user.hover(subTrigger1);
+	await waitFor(() => expect(queryByTestId("sub-group-item-sub-item1-content")).not.toBeNull());
+	expect(queryByTestId("sub-group-item-sub-item2-content")).toBeNull();
+
+	// Hover over second sub-trigger - should close first and open second
+	const subTrigger2 = getByTestId("sub-group-item-sub-item2-trigger");
+	await user.hover(subTrigger2);
+	await waitFor(() => expect(queryByTestId("sub-group-item-sub-item2-content")).not.toBeNull());
+	expect(queryByTestId("sub-group-item-sub-item1-content")).toBeNull();
+});

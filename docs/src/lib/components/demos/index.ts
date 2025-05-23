@@ -46,6 +46,8 @@ export { default as MeterDemo } from "./meter-demo.svelte";
 export { default as MeterDemoCustom } from "./meter-demo-custom.svelte";
 export { default as NavigationMenuDemo } from "./navigation-menu-demo.svelte";
 export { default as NavigationMenuDemoForceMount } from "./navigation-menu-demo-force-mount.svelte";
+export { default as NavigationMenuDemoSubmenu } from "./navigation-menu-submenu-demo.svelte";
+export { default as NavigationMenuDemoNoViewport } from "./navigation-menu-no-viewport-demo.svelte";
 export { default as PaginationDemo } from "./pagination-demo.svelte";
 export { default as PinInputDemo } from "./pin-input-demo.svelte";
 export { default as PopoverDemo } from "./popover-demo.svelte";
