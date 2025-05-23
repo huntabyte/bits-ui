@@ -39,6 +39,7 @@ import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { isElement } from "$lib/internal/is.js";
+import type { PointerEventHandler } from "svelte/elements";
 
 const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
 const NAVIGATION_MENU_ATTR = "data-navigation-menu";
@@ -570,6 +571,26 @@ class NavigationMenuLinkState {
 		this.isFocused = false;
 	};
 
+	onpointerenter: PointerEventHandler<HTMLAnchorElement> = () => {
+		// only close submenu if this link is not inside the currently open submenu content
+		const currentlyOpenValue = this.context.provider.opts.value.current;
+		const isInsideOpenSubmenu = this.context.item.opts.value.current === currentlyOpenValue;
+
+		if (!isInsideOpenSubmenu && currentlyOpenValue) {
+			this.context.provider.onItemDismiss();
+		}
+	};
+
+	onpointermove = whenMouse(() => {
+		// Only close submenu if this link is not inside the currently open submenu content
+		const currentlyOpenValue = this.context.provider.opts.value.current;
+		const isInsideOpenSubmenu = this.context.item.opts.value.current === currentlyOpenValue;
+
+		if (!isInsideOpenSubmenu && currentlyOpenValue) {
+			this.context.provider.onItemDismiss();
+		}
+	});
+
 	props = $derived.by(
 		() =>
 			({
@@ -581,6 +602,8 @@ class NavigationMenuLinkState {
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				onpointerenter: this.onpointerenter,
+				onpointermove: this.onpointermove,
 				[NAVIGATION_MENU_LINK_ATTR]: "",
 			}) as const
 	);
