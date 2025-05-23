@@ -45,7 +45,6 @@ import type {
 	MouseEventHandler,
 	PointerEventHandler,
 } from "svelte/elements";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 
 const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
 const NAVIGATION_MENU_ATTR = "data-navigation-menu";
@@ -218,7 +217,6 @@ class NavigationMenuSubState {
 	readonly opts: NavigationMenuSubStateProps;
 	readonly context: NavigationMenuProviderState;
 	previousValue = box("");
-	isPointerInTransit = $state(false);
 
 	constructor(opts: NavigationMenuSubStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
