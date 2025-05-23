@@ -180,6 +180,10 @@ class NavigationMenuRootState {
 	setValue = (newValue: string) => {
 		this.previousValue.current = this.opts.value.current;
 		this.opts.value.current = newValue;
+
+		// When all menus are closed, we want to reset previousValue to prevent
+		// weird transitions from old positions when opening fresh
+		if (newValue === "") this.previousValue.current = "";
 	};
 
 	props = $derived.by(
@@ -749,6 +753,12 @@ class NavigationMenuContentImplState {
 		const isSelected = this.itemContext.opts.value.current === this.context.opts.value.current;
 		const wasSelected = prevIndex === values.indexOf(this.itemContext.opts.value.current);
 
+		// When all menus are closed, we want to reset motion state to prevent residual animations
+		if (!this.context.opts.value.current && !this.context.opts.previousValue.current) {
+			untrack(() => (this.prevMotionAttribute = null));
+			return null;
+		}
+
 		// We only want to update selected and the last selected content
 		// this avoids animations being interrupted outside of that range
 		if (!isSelected && !wasSelected) return untrack(() => this.prevMotionAttribute);
@@ -915,6 +925,7 @@ class NavigationMenuViewportState {
 	viewportWidth = $derived.by(() => (this.size ? `${this.size.width}px` : undefined));
 	viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
 	activeContentValue = $derived.by(() => this.context.opts.value.current);
+	mounted = $state(false);
 
 	constructor(opts: NavigationMenuViewportImplStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
@@ -954,6 +965,16 @@ class NavigationMenuViewportState {
 						width: this.contentNode.offsetWidth,
 						height: this.contentNode.offsetHeight,
 					};
+				}
+			}
+		);
+
+		// reset size when viewport closes to prevent residual size animations
+		watch(
+			() => this.mounted,
+			() => {
+				if (!this.mounted && this.size) {
+					this.size = null;
 				}
 			}
 		);

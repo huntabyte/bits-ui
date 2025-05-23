@@ -4,7 +4,7 @@ description: A list of links that allow users to navigate between pages of a web
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoSubmenu, NavigationMenuDemoNoViewport } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -115,33 +115,25 @@ You can use the optional `Indicator` component to highlight the currently active
 You can create a submenu by nesting your navigation menu and using the `Navigation.Sub` component in place of `NavigationMenu.Root`.
 Submenus work differently than the `Root` menus and are more similar to [Tabs](/docs/components/tabs) in that one item should always be active, so be sure to assign and pass a `value` prop.
 
-```svelte
-<NavigationMenu.Root>
-	<NavigationMenu.List>
-		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>Item one</NavigationMenu.Trigger>
-			<NavigationMenu.Content>Item one content</NavigationMenu.Content>
-		</NavigationMenu.Item>
-		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>Item two</NavigationMenu.Trigger>
-			<NavigationMenu.Content>
-				<NavigationMenu.Sub value="sub1">
-					<NavigationMenu.List>
-						<NavigationMenu.Item value="sub1">
-							<NavigationMenu.Trigger>Sub item one</NavigationMenu.Trigger>
-							<NavigationMenu.Content>Sub item one content</NavigationMenu.Content>
-						</NavigationMenu.Item>
-						<NavigationMenu.Item value="sub2">
-							<NavigationMenu.Trigger>Sub item two</NavigationMenu.Trigger>
-							<NavigationMenu.Content>Sub item two content</NavigationMenu.Content>
-						</NavigationMenu.Item>
-					</NavigationMenu.List>
-				</NavigationMenu.Sub>
-			</NavigationMenu.Content>
-		</NavigationMenu.Item>
-	</NavigationMenu.List>
-</NavigationMenu.Root>
-```
+<ComponentPreviewV2 name="navigation-menu-submenu-demo" componentName="Navigation Menu">
+
+{#snippet preview()}
+<NavigationMenuDemoSubmenu />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### No Viewport
+
+The `NavigationMenu.Viewport` component provides a way to transition between `NavigationMenu.Content` without the need for a full close/open animation between them, however, this is completely optional and you don't need to use it.
+
+<ComponentPreviewV2 name="navigation-menu-no-viewport-demo" componentName="Navigation Menu">
+
+{#snippet preview()}
+<NavigationMenuDemoNoViewport />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ### Advanced Animation
 
