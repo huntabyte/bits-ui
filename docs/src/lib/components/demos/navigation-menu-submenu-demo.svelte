@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { NavigationMenu } from "bits-ui";
 	import CaretDown from "phosphor-svelte/lib/CaretDown";
-	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { cn } from "$lib/utils/styles.js";
 
 	const components: { title: string; href: string; description: string }[] = [
@@ -91,21 +90,21 @@
 {/snippet}
 
 {#snippet SubmenuItem({ className, title, value, items }: SubmenuItemProps)}
-	<NavigationMenu.Item {value} class="relative">
+	<NavigationMenu.Item {value} class="relative w-full">
 		<NavigationMenu.Trigger
 			class={cn(
-				"hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground outline-hidden group flex w-full select-none items-center justify-between space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
+				"hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground outline-hidden data-[state=open]:bg-muted group flex w-full select-none items-center justify-between space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
 				className
 			)}
 		>
 			<div class="text-sm font-medium leading-none">{title}</div>
-			<CaretRight
-				class="ml-auto size-4 transition-transform duration-200 group-data-[state=open]:rotate-90"
+			<CaretDown
+				class="ml-auto size-4 transition-transform duration-200 group-data-[state=open]:rotate-180"
 				aria-hidden="true"
 			/>
 		</NavigationMenu.Trigger>
 		<NavigationMenu.Content
-			class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-right-1 data-[state=open]:slide-in-from-right-1 absolute left-full top-0 z-50 ml-2 min-w-[300px] rounded-md border shadow-lg transition-all duration-200 ease-out"
+			class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-right-1 data-[state=open]:slide-in-from-right-1 absolute left-0 top-full z-50 mt-2 w-full min-w-[300px] rounded-md border shadow-lg transition-all duration-200 ease-out"
 		>
 			<ul class="grid gap-1 p-2">
 				{#each items as item (item.title)}
@@ -200,18 +199,19 @@
 									})}
 								</NavigationMenu.Item>
 							{/each}
+							<div class="flex items-center justify-between">
+								{@render SubmenuItem({
+									title: "Utilities",
+									value: "utilities",
+									items: utilities,
+								})}
 
-							{@render SubmenuItem({
-								title: "Utilities",
-								value: "utilities",
-								items: utilities,
-							})}
-
-							{@render SubmenuItem({
-								title: "Type Helpers",
-								value: "type-helpers",
-								items: typeHelpers,
-							})}
+								{@render SubmenuItem({
+									title: "Type Helpers",
+									value: "type-helpers",
+									items: typeHelpers,
+								})}
+							</div>
 						</NavigationMenu.List>
 					</NavigationMenu.Sub>
 				</div>

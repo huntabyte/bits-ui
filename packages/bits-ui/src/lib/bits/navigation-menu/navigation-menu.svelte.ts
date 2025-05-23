@@ -39,7 +39,13 @@ import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { isElement } from "$lib/internal/is.js";
-import type { PointerEventHandler } from "svelte/elements";
+import type {
+	FocusEventHandler,
+	KeyboardEventHandler,
+	MouseEventHandler,
+	PointerEventHandler,
+} from "svelte/elements";
+import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 
 const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
 const NAVIGATION_MENU_ATTR = "data-navigation-menu";
@@ -212,6 +218,7 @@ class NavigationMenuSubState {
 	readonly opts: NavigationMenuSubStateProps;
 	readonly context: NavigationMenuProviderState;
 	previousValue = box("");
+	isPointerInTransit = $state(false);
 
 	constructor(opts: NavigationMenuSubStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
@@ -383,6 +390,7 @@ class NavigationMenuTriggerState {
 			provider: NavigationMenuProviderState;
 			item: NavigationMenuItemState;
 			list: NavigationMenuListState;
+			sub: NavigationMenuSubState | null;
 		}
 	) {
 		this.opts = opts;
@@ -441,7 +449,7 @@ class NavigationMenuTriggerState {
 		this.hasPointerMoveOpened.current = false;
 	});
 
-	onclick = (_: BitsMouseEvent<HTMLButtonElement>) => {
+	onclick: MouseEventHandler<HTMLButtonElement> = () => {
 		// if opened via pointer move, we prevent the click event
 		if (this.hasPointerMoveOpened.current) return;
 		const shouldClose = this.open && this.context.opts.isRootMenu;
@@ -453,7 +461,7 @@ class NavigationMenuTriggerState {
 		this.wasClickClose = shouldClose;
 	};
 
-	onkeydown = (e: BitsKeyboardEvent<HTMLButtonElement>) => {
+	onkeydown: KeyboardEventHandler<HTMLButtonElement> = (e) => {
 		const verticalEntryKey =
 			this.context.opts.dir.current === "rtl" ? kbd.ARROW_LEFT : kbd.ARROW_RIGHT;
 		const entryKey = { horizontal: kbd.ARROW_DOWN, vertical: verticalEntryKey }[
@@ -468,7 +476,7 @@ class NavigationMenuTriggerState {
 		this.itemContext.listContext.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
 	};
 
-	focusProxyOnFocus = (e: BitsFocusEvent) => {
+	focusProxyOnFocus: FocusEventHandler<HTMLButtonElement> = (e) => {
 		const content = this.itemContext.contentNode;
 		const prevFocusedElement = e.relatedTarget as HTMLElement | null;
 		const wasTriggerFocused =
@@ -1037,6 +1045,8 @@ const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
 	"NavigationMenu.Content"
 );
 
+const NavigationMenuSubContext = new Context<NavigationMenuSubState>("NavigationMenu.Sub");
+
 export function useNavigationMenuRoot(props: NavigationMenuRootStateProps) {
 	return new NavigationMenuRootState(props);
 }
@@ -1073,6 +1083,7 @@ export function useNavigationMenuTrigger(props: NavigationMenuTriggerStateProps)
 		provider: NavigationMenuProviderContext.get(),
 		item: NavigationMenuItemContext.get(),
 		list: NavigationMenuListContext.get(),
+		sub: NavigationMenuSubContext.getOr(null),
 	});
 }
 
