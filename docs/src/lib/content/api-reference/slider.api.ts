@@ -5,7 +5,11 @@ import type {
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
 import { SliderRootOnValueChangeProp } from "./extended-types/slider/index.js";
-import { OrientationProp, SingleOrMultipleProp } from "./extended-types/shared/index.js";
+import {
+	OrientationProp,
+	SingleOrMultipleProp,
+	SliderThumbPositioningProp,
+} from "./extended-types/shared/index.js";
 import {
 	createApiSchema,
 	createBooleanProp,
@@ -75,6 +79,12 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			default: C.TRUE,
 			description:
 				"Whether to automatically sort the values in the array when moving thumbs past one another. This is only applicable to the `'multiple'` type.",
+		}),
+		thumbPositioning: createEnumProp({
+			options: ["exact", "contain"],
+			default: "'contain'",
+			description: "The positioning of the slider thumb.",
+			definition: SliderThumbPositioningProp,
 		}),
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
