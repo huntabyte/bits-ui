@@ -199,31 +199,6 @@ The `DropdownMenu.GroupHeading` component must be a child of either a `DropdownM
 </DropdownMenu.RadioGroup>
 ```
 
-## Checkbox Items
-
-You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
-
-```svelte
-<script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-
-	let notifications = $state(true);
-</script>
-
-<DropdownMenu.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked, indeterminate })}
-		{#if indeterminate}
-			-
-		{:else if checked}
-			✅
-		{/if}
-		Notifications
-	{/snippet}
-</DropdownMenu.CheckboxItem>
-```
-
-The `checked` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `checked` prop.
-
 ## Radio Groups
 
 You can combine the `DropdownMenu.RadioGroup` and `DropdownMenu.RadioItem` components to create a radio group within a menu.
@@ -249,6 +224,73 @@ You can combine the `DropdownMenu.RadioGroup` and `DropdownMenu.RadioItem` compo
 		</DropdownMenu.RadioItem>
 	{/each}
 </DropdownMenu.RadioGroup>
+```
+
+The `value` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `value` prop.
+
+## Checkbox Items
+
+You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+
+	let notifications = $state(true);
+</script>
+
+<DropdownMenu.CheckboxItem bind:checked={notifications}>
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
+			✅
+		{/if}
+		Notifications
+	{/snippet}
+</DropdownMenu.CheckboxItem>
+```
+
+The `checked` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `checked` prop.
+
+## Checkbox Groups
+
+You can use the `DropdownMenu.CheckboxGroup` component around a set of `DropdownMenu.CheckboxItem` components to create a checkbox group within a menu, where the `value` prop is an array of the selected values.
+
+```svelte
+<script lang="ts">
+	import { DropdownMenu } from "bits-ui";
+
+	let colors = $state<string[]>([]);
+</script>
+
+<DropdownMenu.CheckboxGroup bind:value={colors}>
+	<DropdownMenu.GroupHeading>Favorite color</DropdownMenu.GroupHeading>
+	<DropdownMenu.CheckboxItem value="red">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Red
+		{/snippet}
+	</DropdownMenu.CheckboxItem>
+	<DropdownMenu.CheckboxItem value="blue">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Blue
+		{/snippet}
+	</DropdownMenu.CheckboxItem>
+	<DropdownMenu.CheckboxItem value="green">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Green
+		{/snippet}
+	</DropdownMenu.CheckboxItem>
+</DropdownMenu.CheckboxGroup>
 ```
 
 The `value` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `value` prop.

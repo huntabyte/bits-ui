@@ -10,6 +10,7 @@
 		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child" | "asChild">;
 		portalProps?: DropdownMenu.PortalProps;
 		subTriggerProps?: Omit<DropdownMenu.SubTriggerProps, "children" | "child" | "asChild">;
+		group?: string[];
 	};
 </script>
 
@@ -18,6 +19,7 @@
 		checked = false,
 		subChecked = false,
 		radio = "",
+		group = [],
 		subRadio = "",
 		open = false,
 		contentProps = {},
@@ -96,6 +98,20 @@
 							{/snippet}
 						</DropdownMenu.RadioItem>
 					</DropdownMenu.RadioGroup>
+					<DropdownMenu.CheckboxGroup bind:value={group} data-testid="checkbox-group">
+						<DropdownMenu.CheckboxItem value="1" data-testid="checkbox-group-item-1">
+							{#snippet children({ checked })}
+								<span data-testid="checkbox-indicator-1"> {checked} </span>
+								<span>Checkbox Item 1</span>
+							{/snippet}
+						</DropdownMenu.CheckboxItem>
+						<DropdownMenu.CheckboxItem value="2" data-testid="checkbox-group-item-2">
+							{#snippet children({ checked })}
+								<span data-testid="checkbox-indicator-2"> {checked} </span>
+								<span>Checkbox Item 2</span>
+							{/snippet}
+						</DropdownMenu.CheckboxItem>
+					</DropdownMenu.CheckboxGroup>
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>
 		</DropdownMenu.Root>
@@ -113,6 +129,11 @@
 	>
 	<button aria-label="radio-sub" data-testid="sub-radio-binding" onclick={() => (subRadio = "")}
 		>{subRadio}</button
+	>
+	<button
+		aria-label="checkbox-group-binding"
+		data-testid="checkbox-group-binding"
+		onclick={() => (group = [])}>{group}</button
 	>
 	<div id="portal-target" data-testid="portal-target"></div>
 </main>

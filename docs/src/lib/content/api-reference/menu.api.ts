@@ -1,4 +1,5 @@
 import type {
+	DropdownMenuCheckboxGroupPropsWithoutHTML,
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
 	DropdownMenuContentStaticPropsWithoutHTML,
@@ -21,6 +22,7 @@ import {
 	createBooleanProp,
 	createDataAttrSchema,
 	createFunctionProp,
+	createPropSchema,
 	createStringProp,
 	dirProp,
 	dismissibleLayerProps,
@@ -46,6 +48,7 @@ import {
 import { MenuCheckedStateAttr } from "./extended-types/menu/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
 import {
+	CheckboxGroupOnValueChangeProp,
 	CheckboxRootChildSnippetProps,
 	CheckboxRootChildrenSnippetProps,
 	CheckboxRootOnCheckedChangeProp,
@@ -192,6 +195,10 @@ const checkboxItemProps = {
 		description: "A callback that is fired when the indeterminate state changes.",
 		stringDefinition: "(indeterminate: boolean) => void",
 	}),
+	value: createStringProp({
+		description: "The value of the checkbox item when used in a `*Menu.CheckboxGroup`.",
+		default: "",
+	}),
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
 		elType: "HTMLDivElement",
@@ -199,6 +206,22 @@ const checkboxItemProps = {
 		childDef: CheckboxRootChildSnippetProps,
 	}),
 } satisfies PropObj<DropdownMenuCheckboxItemPropsWithoutHTML>;
+
+const checkboxGroupProps = {
+	value: createPropSchema({
+		description:
+			"The value of the group. This is an array of the values of the checked checkboxes within the group.",
+		bindable: true,
+		default: "[]",
+		type: "string[]",
+	}),
+	onValueChange: createFunctionProp({
+		definition: CheckboxGroupOnValueChangeProp,
+		description: "A callback that is fired when the checkbox group's value state changes.",
+		stringDefinition: "(value: string[]) => void",
+	}),
+	...withChildProps({ elType: "HTMLDivElement" }),
+} satisfies PropObj<DropdownMenuCheckboxGroupPropsWithoutHTML>;
 
 const radioGroupProps = {
 	value: createStringProp({
@@ -336,6 +359,13 @@ const labelAttrs: DataAttrs = [
 	createDataAttrSchema({
 		name: "menu-group-heading",
 		description: "Present on the group heading element.",
+	}),
+];
+
+const checkboxGroupAttrs: DataAttrs = [
+	createDataAttrSchema({
+		name: "menu-checkbox-group",
+		description: "Present on the checkbox group element.",
 	}),
 ];
 
@@ -485,12 +515,18 @@ const portal = {
 	props: portalProps,
 };
 
+const checkboxGroup = {
+	props: checkboxGroupProps,
+	dataAttributes: checkboxGroupAttrs,
+};
+
 export const menu = {
 	root,
 	trigger,
 	content,
 	contentStatic,
 	item,
+	checkboxGroup,
 	checkboxItem,
 	radioGroup,
 	radioItem,

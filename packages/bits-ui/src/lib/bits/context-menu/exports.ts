@@ -15,6 +15,7 @@ export { default as SubContentStatic } from "$lib/bits/menu/components/menu-sub-
 export { default as SubTrigger } from "$lib/bits/menu/components/menu-sub-trigger.svelte";
 export { default as CheckboxItem } from "$lib/bits/menu/components/menu-checkbox-item.svelte";
 export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
+export { default as CheckboxGroup } from "$lib/bits/menu/components/menu-checkbox-group.svelte";
 
 export type {
 	ContextMenuArrowProps as ArrowProps,
@@ -34,4 +35,5 @@ export type {
 	ContextMenuContentStaticProps as ContentStaticProps,
 	ContextMenuTriggerProps as TriggerProps,
 	ContextMenuPortalProps as PortalProps,
+	ContextMenuCheckboxGroupProps as CheckboxGroupProps,
 } from "./types.js";

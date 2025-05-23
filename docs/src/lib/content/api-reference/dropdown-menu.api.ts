@@ -1,5 +1,6 @@
 import type {
 	DropdownMenuArrowPropsWithoutHTML,
+	DropdownMenuCheckboxGroupPropsWithoutHTML,
 	DropdownMenuCheckboxItemPropsWithoutHTML,
 	DropdownMenuContentPropsWithoutHTML,
 	DropdownMenuContentStaticPropsWithoutHTML,
@@ -91,6 +92,12 @@ export const arrow = createApiSchema<DropdownMenuArrowPropsWithoutHTML>({
 	...menu.arrow,
 });
 
+export const checkboxGroup = createApiSchema<DropdownMenuCheckboxGroupPropsWithoutHTML>({
+	title: "CheckboxGroup",
+	description: "A group of checkbox menu items, where multiple can be checked at a time.",
+	...menu.checkboxGroup,
+});
+
 export const checkboxItem = createApiSchema<DropdownMenuCheckboxItemPropsWithoutHTML>({
 	title: "CheckboxItem",
 	description: "A menu item that can be controlled and toggled like a checkbox.",
@@ -157,6 +164,7 @@ export const dropdownMenu = [
 	content,
 	contentStatic,
 	item,
+	checkboxGroup,
 	checkboxItem,
 	radioGroup,
 	radioItem,
