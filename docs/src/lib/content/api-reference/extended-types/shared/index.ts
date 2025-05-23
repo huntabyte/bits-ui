@@ -33,6 +33,7 @@ export { default as RadioItemChildSnippetProps } from "./radio-item-child-snippe
 export { default as RadioItemChildrenSnippetProps } from "./radio-item-children-snippet-props.md";
 export { default as SegmentPartProp } from "./segment-part-prop.md";
 export { default as SingleOrMultipleProp } from "./single-or-multiple-prop.md";
+export { default as SliderThumbPositioningProp } from "./slider-thumb-positioning-prop.md";
 export { default as StringOrArrayStringProp } from "./string-or-array-string-prop.md";
 export { default as WeekdayFormatProp } from "./weekday-format-prop.md";
 export { default as OnDateValueChangeProp } from "./on-date-value-change-prop.md";
