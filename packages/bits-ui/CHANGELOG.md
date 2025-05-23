@@ -1,5 +1,17 @@
 # bits-ui
 
+## 1.8.0
+
+### Minor Changes
+
+-   feat(Slider): `thumbPositioning` for more granular control of thumb positioning ([#1470](https://github.com/huntabyte/bits-ui/pull/1470))
+
+### Patch Changes
+
+-   fix(NavigationMenu): moving from submenu trigger to menu item in the same menu should close the submenu ([#1489](https://github.com/huntabyte/bits-ui/pull/1489))
+
+-   fix(NavigationMenu): issues with non-viewport transitions ([#1489](https://github.com/huntabyte/bits-ui/pull/1489))
+
 ## 1.7.0
 
 ### Minor Changes
