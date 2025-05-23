@@ -185,31 +185,6 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 </ContextMenu.Root>
 ```
 
-## Checkbox Items
-
-You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
-
-```svelte
-<script lang="ts">
-	import { ContextMenu } from "bits-ui";
-
-	let notifications = $state(true);
-</script>
-
-<ContextMenu.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked, indeterminate })}
-		{#if indeterminate}
-			-
-		{:else if checked}
-			✅
-		{/if}
-		Notifications
-	{/snippet}
-</ContextMenu.CheckboxItem>
-```
-
-See the [CheckboxItem API](#checkboxitem) for more information.
-
 ## Radio Groups
 
 You can combine the `ContextMenu.RadioGroup` and `ContextMenu.RadioItem` components to create a radio group within a menu.
@@ -237,6 +212,73 @@ You can combine the `ContextMenu.RadioGroup` and `ContextMenu.RadioItem` compone
 ```
 
 See the [RadioGroup](#radiogroup) and [RadioItem](#radioitem) APIs for more information.
+
+## Checkbox Items
+
+You can use the `ContextMenu.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
+
+```svelte
+<script lang="ts">
+	import { ContextMenu } from "bits-ui";
+
+	let notifications = $state(true);
+</script>
+
+<ContextMenu.CheckboxItem bind:checked={notifications}>
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
+			✅
+		{/if}
+		Notifications
+	{/snippet}
+</ContextMenu.CheckboxItem>
+```
+
+See the [CheckboxItem API](#checkboxitem) for more information.
+
+## Checkbox Groups
+
+You can use the `ContextMenu.CheckboxGroup` component around a set of `ContextMenu.CheckboxItem` components to create a checkbox group within a menu, where the `value` prop is an array of the selected values.
+
+```svelte
+<script lang="ts">
+	import { ContextMenu } from "bits-ui";
+
+	let colors = $state<string[]>([]);
+</script>
+
+<ContextMenu.CheckboxGroup bind:value={colors}>
+	<ContextMenu.GroupHeading>Favorite color</ContextMenu.GroupHeading>
+	<ContextMenu.CheckboxItem value="red">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Red
+		{/snippet}
+	</ContextMenu.CheckboxItem>
+	<ContextMenu.CheckboxItem value="blue">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Blue
+		{/snippet}
+	</ContextMenu.CheckboxItem>
+	<ContextMenu.CheckboxItem value="green">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Green
+		{/snippet}
+	</ContextMenu.CheckboxItem>
+</ContextMenu.CheckboxGroup>
+```
+
+The `value` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `value` prop.
 
 ## Nested Menus
 

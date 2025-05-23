@@ -140,10 +140,32 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 * @defaultValue true
 		 */
 		closeOnSelect?: boolean;
+
+		/**
+		 * The value of the checkbox item when used in a checkbox group.
+		 */
+		value?: string;
 	};
 
 export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
+
+export type MenuCheckboxGroupPropsWithoutHTML = WithChild<{
+	/**
+	 * The values of the selected checkbox items.
+	 *
+	 * Supports two-way binding with `bind:value`.
+	 */
+	value?: string[];
+
+	/**
+	 * A callback that is fired when the selected checkbox items change.
+	 */
+	onValueChange?: OnChangeFn<string[]>;
+}>;
+
+export type MenuCheckboxGroupProps = MenuCheckboxGroupPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuCheckboxGroupPropsWithoutHTML>;
 
 export type MenuTriggerPropsWithoutHTML = WithChild<{
 	/**

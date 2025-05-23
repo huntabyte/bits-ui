@@ -88,6 +88,8 @@ export type {
 	MenuSubPropsWithoutHTML as MenubarSubPropsWithoutHTML,
 	MenuPortalPropsWithoutHTML as MenubarPortalPropsWithoutHTML,
 	MenuPortalProps as MenubarPortalProps,
+	MenuCheckboxGroupPropsWithoutHTML as MenubarCheckboxGroupPropsWithoutHTML,
+	MenuCheckboxGroupProps as MenubarCheckboxGroupProps,
 } from "../menu/types.js";
 
 export type MenubarArrowPropsWithoutHTML = ArrowPropsWithoutHTML;

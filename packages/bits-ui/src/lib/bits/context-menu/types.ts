@@ -36,6 +36,7 @@ export type {
 	MenuSubProps as ContextMenuSubProps,
 	MenuSubTriggerProps as ContextMenuSubTriggerProps,
 	MenuPortalProps as ContextMenuPortalProps,
+	MenuCheckboxGroupProps as ContextMenuCheckboxGroupProps,
 } from "$lib/bits/menu/types.js";
 
 export type {
@@ -54,4 +55,5 @@ export type {
 	MenuSubContentPropsWithoutHTML as ContextMenuSubContentPropsWithoutHTML,
 	MenuSubContentStaticPropsWithoutHTML as ContextMenuSubContentStaticPropsWithoutHTML,
 	MenuPortalPropsWithoutHTML as ContextMenuPortalPropsWithoutHTML,
+	MenuCheckboxGroupPropsWithoutHTML as ContextMenuCheckboxGroupPropsWithoutHTML,
 } from "$lib/bits/menu/types.js";

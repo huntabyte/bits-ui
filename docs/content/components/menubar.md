@@ -195,29 +195,6 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 </Menubar.Root>
 ```
 
-## Checkbox Items
-
-You can use the `Menubar.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
-
-```svelte
-<script lang="ts">
-	import { Menubar } from "bits-ui";
-
-	let notifications = $state(true);
-</script>
-
-<Menubar.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked, indeterminate })}
-		{#if indeterminate}
-			-
-		{:else if checked}
-			✅
-		{/if}
-		Notifications
-	{/snippet}
-</Menubar.CheckboxItem>
-```
-
 ## Radio Groups
 
 You can combine the `Menubar.RadioGroup` and `Menubar.RadioItem` components to create a radio group within a menu.
@@ -243,6 +220,71 @@ You can combine the `Menubar.RadioGroup` and `Menubar.RadioItem` components to c
 	{/each}
 </Menubar.RadioGroup>
 ```
+
+## Checkbox Items
+
+You can use the `Menubar.CheckboxItem` component to create a `menuitemcheckbox` element to add checkbox functionality to menu items.
+
+```svelte
+<script lang="ts">
+	import { Menubar } from "bits-ui";
+
+	let notifications = $state(true);
+</script>
+
+<Menubar.CheckboxItem bind:checked={notifications}>
+	{#snippet children({ checked, indeterminate })}
+		{#if indeterminate}
+			-
+		{:else if checked}
+			✅
+		{/if}
+		Notifications
+	{/snippet}
+</Menubar.CheckboxItem>
+```
+
+## Checkbox Groups
+
+You can use the `Menubar.CheckboxGroup` component around a set of `Menubar.CheckboxItem` components to create a checkbox group within a menu, where the `value` prop is an array of the selected values.
+
+```svelte
+<script lang="ts">
+	import { Menubar } from "bits-ui";
+
+	let colors = $state<string[]>([]);
+</script>
+
+<Menubar.CheckboxGroup bind:value={colors}>
+	<Menubar.GroupHeading>Favorite color</Menubar.GroupHeading>
+	<Menubar.CheckboxItem value="red">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Red
+		{/snippet}
+	</Menubar.CheckboxItem>
+	<Menubar.CheckboxItem value="blue">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Blue
+		{/snippet}
+	</Menubar.CheckboxItem>
+	<Menubar.CheckboxItem value="green">
+		{#snippet children({ checked })}
+			{#if checked}
+				✅
+			{/if}
+			Green
+		{/snippet}
+	</Menubar.CheckboxItem>
+</Menubar.CheckboxGroup>
+```
+
+The `value` state does not persist between menu open/close cycles. To persist the state, you must store it in a `$state` variable and pass it to the `value` prop.
 
 ## Nested Menus
 

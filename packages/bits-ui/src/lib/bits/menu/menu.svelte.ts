@@ -47,6 +47,7 @@ const MenuGroupContext = new Context<MenuGroupState | MenuRadioGroupState>(
 	"Menu.Group | Menu.RadioGroup"
 );
 const MenuRadioGroupContext = new Context<MenuRadioGroupState>("Menu.RadioGroup");
+export const MenuCheckboxGroupContext = new Context<MenuCheckboxGroupState>("Menu.CheckboxGroup");
 
 type MenuVariant = "context-menu" | "dropdown-menu" | "menubar";
 
@@ -665,15 +666,46 @@ class MenuSubTriggerState {
 type MenuCheckboxItemStateProps = WritableBoxedValues<{
 	checked: boolean;
 	indeterminate: boolean;
-}>;
+}> &
+	ReadableBoxedValues<{
+		value: string;
+	}>;
 
 class MenuCheckboxItemState {
 	readonly opts: MenuCheckboxItemStateProps;
 	readonly item: MenuItemState;
+	readonly group: MenuCheckboxGroupState | null;
 
-	constructor(opts: MenuCheckboxItemStateProps, item: MenuItemState) {
+	constructor(
+		opts: MenuCheckboxItemStateProps,
+		item: MenuItemState,
+		group: MenuCheckboxGroupState | null = null
+	) {
 		this.opts = opts;
 		this.item = item;
+		this.group = group;
+
+		// Watch for value changes in the group if we're part of one
+		if (this.group) {
+			watch(
+				() => this.group!.opts.value.current,
+				(groupValues) => {
+					this.opts.checked.current = groupValues.includes(this.opts.value.current);
+				}
+			);
+
+			// Watch for checked state changes and sync with group
+			watch(
+				() => this.opts.checked.current,
+				(checked) => {
+					if (checked) {
+						this.group!.addValue(this.opts.value.current);
+					} else {
+						this.group!.removeValue(this.opts.value.current);
+					}
+				}
+			);
+		}
 	}
 
 	toggleChecked() {
@@ -733,9 +765,12 @@ class MenuGroupState {
 type MenuGroupHeadingStateProps = WithRefProps;
 class MenuGroupHeadingState {
 	readonly opts: MenuGroupHeadingStateProps;
-	readonly group: MenuGroupState | MenuRadioGroupState;
+	readonly group: MenuGroupState | MenuRadioGroupState | MenuCheckboxGroupState;
 
-	constructor(opts: MenuGroupHeadingStateProps, group: MenuGroupState | MenuRadioGroupState) {
+	constructor(
+		opts: MenuGroupHeadingStateProps,
+		group: MenuGroupState | MenuRadioGroupState | MenuCheckboxGroupState
+	) {
 		this.opts = opts;
 		this.group = group;
 
@@ -1060,6 +1095,57 @@ class ContextMenuTriggerState {
 	);
 }
 
+type MenuCheckboxGroupStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		onValueChange: (value: string[]) => void;
+	}> &
+	WritableBoxedValues<{
+		value: string[];
+	}>;
+
+class MenuCheckboxGroupState {
+	readonly opts: MenuCheckboxGroupStateProps;
+	readonly content: MenuContentState;
+	groupHeadingId = $state<string | null>(null);
+	root: MenuRootState;
+
+	constructor(opts: MenuCheckboxGroupStateProps, content: MenuContentState) {
+		this.opts = opts;
+		this.content = content;
+		this.root = content.parentMenu.root;
+
+		useRefById(opts);
+	}
+
+	addValue(checkboxValue: string | undefined) {
+		if (!checkboxValue) return;
+		if (!this.opts.value.current.includes(checkboxValue)) {
+			const newValue = [...$state.snapshot(this.opts.value.current), checkboxValue];
+			this.opts.value.current = newValue;
+			this.opts.onValueChange.current(newValue);
+		}
+	}
+
+	removeValue(checkboxValue: string | undefined) {
+		if (!checkboxValue) return;
+		const index = this.opts.value.current.indexOf(checkboxValue);
+		if (index === -1) return;
+		const newValue = this.opts.value.current.filter((v) => v !== checkboxValue);
+		this.opts.value.current = newValue;
+		this.opts.onValueChange.current(newValue);
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				[this.root.getAttr("checkbox-group")]: "",
+				role: "group",
+				"aria-labelledby": this.groupHeadingId,
+			}) as const
+	);
+}
+
 type MenuItemCombinedProps = MenuItemSharedStateProps & MenuItemStateProps;
 
 export function useMenuRoot(props: MenuRootStateProps) {
@@ -1107,9 +1193,12 @@ export function useMenuItem(props: MenuItemCombinedProps) {
 	return new MenuItemState(props, item);
 }
 
-export function useMenuCheckboxItem(props: MenuItemCombinedProps & MenuCheckboxItemStateProps) {
+export function useMenuCheckboxItem(
+	props: MenuItemCombinedProps & MenuCheckboxItemStateProps,
+	checkboxGroup: MenuCheckboxGroupState | null
+) {
 	const item = new MenuItemState(props, new MenuItemSharedState(props, MenuContentContext.get()));
-	return new MenuCheckboxItemState(props, item);
+	return new MenuCheckboxItemState(props, item, checkboxGroup);
 }
 
 export function useMenuRadioGroup(props: MenuRadioGroupStateProps) {
@@ -1130,6 +1219,13 @@ export function useMenuGroup(props: MenuGroupStateProps) {
 }
 
 export function useMenuGroupHeading(props: MenuGroupHeadingStateProps) {
+	// Try to get checkbox group first, then radio group, then regular group
+	const checkboxGroup = MenuCheckboxGroupContext.getOr(null);
+	if (checkboxGroup) return new MenuGroupHeadingState(props, checkboxGroup);
+
+	const radioGroup = MenuRadioGroupContext.getOr(null);
+	if (radioGroup) return new MenuGroupHeadingState(props, radioGroup);
+
 	return new MenuGroupHeadingState(props, MenuGroupContext.get());
 }
 
@@ -1139,4 +1235,10 @@ export function useMenuSeparator(props: MenuSeparatorStateProps) {
 
 export function useMenuArrow() {
 	return new MenuArrowState(MenuRootContext.get());
+}
+
+export function useMenuCheckboxGroup(props: MenuCheckboxGroupStateProps) {
+	return MenuCheckboxGroupContext.set(
+		new MenuCheckboxGroupState(props, MenuContentContext.get())
+	);
 }
