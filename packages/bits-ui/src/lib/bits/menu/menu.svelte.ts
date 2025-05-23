@@ -1154,6 +1154,7 @@ export function useMenuCheckboxItem(
 	props: MenuItemCombinedProps & MenuCheckboxItemStateProps,
 	checkboxGroup: MenuCheckboxGroupState | null
 ) {
+	console.log("useMenuCheckboxItem", props);
 	const item = new MenuItemState(props, new MenuItemSharedState(props, MenuContentContext.get()));
 	return new MenuCheckboxItemState(props, item, checkboxGroup);
 }
