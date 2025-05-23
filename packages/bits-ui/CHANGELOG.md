@@ -1,5 +1,21 @@
 # bits-ui
 
+## 1.7.0
+
+### Minor Changes
+
+-   feat(DropdownMenu): new `DropdownMenu.CheckboxGroup` component ([#1486](https://github.com/huntabyte/bits-ui/pull/1486))
+
+-   feat(ContextMenu): new `ContextMenu.CheckboxGroup` component ([#1486](https://github.com/huntabyte/bits-ui/pull/1486))
+
+-   feat(Menubar): new `Menubar.CheckboxGroup` component ([#1486](https://github.com/huntabyte/bits-ui/pull/1486))
+
+### Patch Changes
+
+-   fix(Select): ensure scroll buttons render on subsequent mounts ([#1484](https://github.com/huntabyte/bits-ui/pull/1484))
+
+-   fix(Combobox): ensure scroll buttons render on subsequent mounts ([#1484](https://github.com/huntabyte/bits-ui/pull/1484))
+
 ## 1.6.1
 
 ### Patch Changes
