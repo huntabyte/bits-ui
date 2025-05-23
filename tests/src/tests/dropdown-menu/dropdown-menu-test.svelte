@@ -6,10 +6,11 @@
 		radio?: string;
 		subRadio?: string;
 		open?: boolean;
-		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child" | "asChild">;
-		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child" | "asChild">;
+		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child">;
+		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child">;
 		portalProps?: DropdownMenu.PortalProps;
-		subTriggerProps?: Omit<DropdownMenu.SubTriggerProps, "children" | "child" | "asChild">;
+		subTriggerProps?: Omit<DropdownMenu.SubTriggerProps, "children" | "child">;
+		checkboxGroupProps?: Omit<DropdownMenu.CheckboxGroupProps, "children" | "child" | "value">;
 		group?: string[];
 	};
 </script>
@@ -26,6 +27,7 @@
 		subContentProps = {},
 		portalProps = {},
 		subTriggerProps = {},
+		checkboxGroupProps = {},
 		...restProps
 	}: DropdownMenuTestProps = $props();
 </script>
@@ -98,7 +100,11 @@
 							{/snippet}
 						</DropdownMenu.RadioItem>
 					</DropdownMenu.RadioGroup>
-					<DropdownMenu.CheckboxGroup bind:value={group} data-testid="checkbox-group">
+					<DropdownMenu.CheckboxGroup
+						bind:value={group}
+						data-testid="checkbox-group"
+						{...checkboxGroupProps}
+					>
 						<DropdownMenu.CheckboxItem value="1" data-testid="checkbox-group-item-1">
 							{#snippet children({ checked })}
 								<span data-testid="checkbox-indicator-1"> {checked} </span>

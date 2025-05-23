@@ -21,12 +21,17 @@ function setup(props: ContextMenuSetupProps = {}) {
 	const user = setupUserEvents();
 	const returned = render(component, { ...rest });
 	const trigger = returned.getByTestId("trigger");
+
+	const open = async () =>
+		await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
+
 	return {
 		...returned,
 		getContent: () => returned.queryByTestId("content"),
 		getSubContent: () => returned.queryByTestId("sub-content"),
 		user,
 		trigger,
+		open,
 	};
 }
 
@@ -416,13 +421,13 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	expect(t.queryByTestId("checkbox-indicator-2")).toHaveTextContent("false");
 
 	await t.user.click(checkboxGroupItem1);
-	await t.user.pointer([{ target: t.trigger }, { keys: "[MouseRight]", target: t.trigger }]);
+	await t.open();
 
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
 
 	await t.user.click(t.getByTestId("checkbox-group-item-2"));
-	await t.user.pointer([{ target: t.trigger }, { keys: "[MouseRight]", target: t.trigger }]);
+	await t.open();
 
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
@@ -430,4 +435,21 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	await t.user.click(t.getByTestId("checkbox-group-binding"));
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+});
+
+it("calls `onValueChange` when the value of the checkbox group changes", async () => {
+	const onValueChange = vi.fn();
+	const t = await open({
+		checkboxGroupProps: {
+			onValueChange,
+		},
+	});
+	await t.user.click(t.getByTestId("checkbox-group-item-1"));
+	expect(onValueChange).toHaveBeenCalledWith(["1"]);
+	await t.open();
+	await t.user.click(t.getByTestId("checkbox-group-item-2"));
+	expect(onValueChange).toHaveBeenCalledWith(["1", "2"]);
+	await t.open();
+	await t.user.click(t.getByTestId("checkbox-group-item-1"));
+	expect(onValueChange).toHaveBeenCalledWith(["2"]);
 });

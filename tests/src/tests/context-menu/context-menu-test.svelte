@@ -7,9 +7,10 @@
 		subRadio?: string;
 		open?: boolean;
 		group?: string[];
-		contentProps?: Omit<ContextMenu.ContentProps, "asChild" | "children" | "child">;
-		portalProps?: Omit<ContextMenu.PortalProps, "asChild" | "children" | "child">;
-		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "asChild" | "children" | "child">;
+		contentProps?: Omit<ContextMenu.ContentProps, "children" | "child">;
+		portalProps?: Omit<ContextMenu.PortalProps, "children" | "child">;
+		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "children" | "child">;
+		checkboxGroupProps?: Omit<ContextMenu.CheckboxGroupProps, "children" | "child" | "value">;
 	};
 </script>
 
@@ -24,6 +25,7 @@
 		contentProps = {},
 		portalProps = {},
 		subTriggerProps = {},
+		checkboxGroupProps = {},
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
@@ -105,7 +107,11 @@
 							{/snippet}
 						</ContextMenu.RadioItem>
 					</ContextMenu.RadioGroup>
-					<ContextMenu.CheckboxGroup bind:value={group} data-testid="checkbox-group">
+					<ContextMenu.CheckboxGroup
+						bind:value={group}
+						data-testid="checkbox-group"
+						{...checkboxGroupProps}
+					>
 						<ContextMenu.CheckboxItem value="1" data-testid="checkbox-group-item-1">
 							{#snippet children({ checked })}
 								<span data-testid="checkbox-indicator-1"> {checked} </span>

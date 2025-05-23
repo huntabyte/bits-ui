@@ -442,3 +442,20 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
 });
+
+it("calls `onValueChange` when the value of the checkbox group changes", async () => {
+	const onValueChange = vi.fn();
+	const t = await openWithPointer({
+		checkboxGroupProps: {
+			onValueChange,
+		},
+	});
+	await t.user.click(t.getByTestId("checkbox-group-item-1"));
+	expect(onValueChange).toHaveBeenCalledWith(["1"]);
+	await t.user.click(t.trigger);
+	await t.user.click(t.getByTestId("checkbox-group-item-2"));
+	expect(onValueChange).toHaveBeenCalledWith(["1", "2"]);
+	await t.user.click(t.trigger);
+	await t.user.click(t.getByTestId("checkbox-group-item-1"));
+	expect(onValueChange).toHaveBeenCalledWith(["2"]);
+});
