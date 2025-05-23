@@ -34,6 +34,14 @@ export type StyleProperties = CSS.Properties & {
 export type Orientation = "horizontal" | "vertical";
 export type Direction = "ltr" | "rtl";
 
+/**
+ * Controls positioning of the slider thumb.
+ *
+ * - `exact`: The thumb is centered exactly at the value of the slider.
+ * - `contain`: The thumb is centered exactly at the value of the slider, but will be contained within the slider track at the ends.
+ */
+export type SliderThumbPositioning = "exact" | "contain";
+
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;

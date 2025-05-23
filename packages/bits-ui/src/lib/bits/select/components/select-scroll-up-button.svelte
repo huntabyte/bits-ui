@@ -29,7 +29,7 @@
 </script>
 
 {#if scrollButtonState.canScrollUp}
-	<Mounted bind:mounted={scrollButtonState.state.mounted} />
+	<Mounted bind:mounted={scrollButtonState.scrollButtonState.mounted} />
 	{#if child}
 		{@render child({ props: restProps })}
 	{:else}

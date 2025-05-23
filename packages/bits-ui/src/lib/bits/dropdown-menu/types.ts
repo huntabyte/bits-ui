@@ -16,6 +16,7 @@ export type {
 	MenuSubTriggerProps as DropdownMenuSubTriggerProps,
 	MenuTriggerProps as DropdownMenuTriggerProps,
 	MenuPortalProps as DropdownMenuPortalProps,
+	MenuCheckboxGroupProps as DropdownMenuCheckboxGroupProps,
 } from "$lib/bits/menu/types.js";
 
 export type {
@@ -36,4 +37,5 @@ export type {
 	MenuSubContentStaticPropsWithoutHTML as DropdownMenuSubContentStaticPropsWithoutHTML,
 	MenuTriggerPropsWithoutHTML as DropdownMenuTriggerPropsWithoutHTML,
 	MenuPortalPropsWithoutHTML as DropdownMenuPortalPropsWithoutHTML,
+	MenuCheckboxGroupPropsWithoutHTML as DropdownMenuCheckboxGroupPropsWithoutHTML,
 } from "$lib/bits/menu/types.js";

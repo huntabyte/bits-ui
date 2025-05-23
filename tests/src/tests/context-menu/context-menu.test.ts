@@ -21,12 +21,17 @@ function setup(props: ContextMenuSetupProps = {}) {
 	const user = setupUserEvents();
 	const returned = render(component, { ...rest });
 	const trigger = returned.getByTestId("trigger");
+
+	const open = async () =>
+		await user.pointer([{ target: trigger }, { keys: "[MouseRight]", target: trigger }]);
+
 	return {
 		...returned,
 		getContent: () => returned.queryByTestId("content"),
 		getSubContent: () => returned.queryByTestId("sub-content"),
 		user,
 		trigger,
+		open,
 	};
 }
 
@@ -79,6 +84,7 @@ it("should have bits data attrs", async () => {
 		"checkbox-item",
 		"radio-group",
 		"radio-item",
+		"checkbox-group",
 	];
 
 	for (const part of parts) {
@@ -218,6 +224,10 @@ it("should not loop through the menu items when the `loop` prop is set to false"
 	await user.keyboard(kbd.ARROW_DOWN);
 	await waitFor(() => expect(queryByTestId("radio-item-2")).toHaveFocus());
 	await user.keyboard(kbd.ARROW_DOWN);
+	await waitFor(() => expect(queryByTestId("checkbox-group-item-1")).toHaveFocus());
+	await user.keyboard(kbd.ARROW_DOWN);
+	await waitFor(() => expect(queryByTestId("checkbox-group-item-2")).toHaveFocus());
+	await user.keyboard(kbd.ARROW_DOWN);
 	await waitFor(() => expect(queryByTestId("item")).not.toHaveFocus());
 });
 
@@ -239,6 +249,10 @@ it("should loop through the menu items when the `loop` prop is set to true", asy
 	await waitFor(() => expect(getByTestId("radio-item")).toHaveFocus());
 	await user.keyboard(kbd.ARROW_DOWN);
 	await waitFor(() => expect(getByTestId("radio-item-2")).toHaveFocus());
+	await user.keyboard(kbd.ARROW_DOWN);
+	await waitFor(() => expect(getByTestId("checkbox-group-item-1")).toHaveFocus());
+	await user.keyboard(kbd.ARROW_DOWN);
+	await waitFor(() => expect(getByTestId("checkbox-group-item-2")).toHaveFocus());
 	await user.keyboard(kbd.ARROW_DOWN);
 	await waitFor(() => expect(getByTestId("item")).toHaveFocus());
 });
@@ -393,4 +407,49 @@ it("should respect the `onSelect` prop on SubTrigger", async () => {
 
 	await user.keyboard(kbd.ARROW_RIGHT);
 	expect(onSelect).toHaveBeenCalledTimes(3);
+});
+
+it("should respect the `value` prop on CheckboxGroup", async () => {
+	const t = await open({
+		group: ["1"],
+	});
+
+	const checkboxGroupItem1 = t.getByTestId("checkbox-group-item-1");
+	expect(checkboxGroupItem1).toHaveAttribute("aria-checked", "true");
+
+	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("true");
+	expect(t.queryByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+
+	await t.user.click(checkboxGroupItem1);
+	await t.open();
+
+	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
+	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+
+	await t.user.click(t.getByTestId("checkbox-group-item-2"));
+	await t.open();
+
+	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
+	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
+
+	await t.user.click(t.getByTestId("checkbox-group-binding"));
+	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
+	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+});
+
+it("calls `onValueChange` when the value of the checkbox group changes", async () => {
+	const onValueChange = vi.fn();
+	const t = await open({
+		checkboxGroupProps: {
+			onValueChange,
+		},
+	});
+	await t.user.click(t.getByTestId("checkbox-group-item-1"));
+	expect(onValueChange).toHaveBeenCalledWith(["1"]);
+	await t.open();
+	await t.user.click(t.getByTestId("checkbox-group-item-2"));
+	expect(onValueChange).toHaveBeenCalledWith(["1", "2"]);
+	await t.open();
+	await t.user.click(t.getByTestId("checkbox-group-item-1"));
+	expect(onValueChange).toHaveBeenCalledWith(["2"]);
 });

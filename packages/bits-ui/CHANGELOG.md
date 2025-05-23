@@ -1,5 +1,45 @@
 # bits-ui
 
+## 1.7.0
+
+### Minor Changes
+
+-   feat(DropdownMenu): new `DropdownMenu.CheckboxGroup` component ([#1486](https://github.com/huntabyte/bits-ui/pull/1486))
+
+-   feat(ContextMenu): new `ContextMenu.CheckboxGroup` component ([#1486](https://github.com/huntabyte/bits-ui/pull/1486))
+
+-   feat(Menubar): new `Menubar.CheckboxGroup` component ([#1486](https://github.com/huntabyte/bits-ui/pull/1486))
+
+### Patch Changes
+
+-   fix(Select): ensure scroll buttons render on subsequent mounts ([#1484](https://github.com/huntabyte/bits-ui/pull/1484))
+
+-   fix(Combobox): ensure scroll buttons render on subsequent mounts ([#1484](https://github.com/huntabyte/bits-ui/pull/1484))
+
+## 1.6.1
+
+### Patch Changes
+
+-   fix(Tooltip): ensure only one tooltip within a Provider can be open at a time ([#1481](https://github.com/huntabyte/bits-ui/pull/1481))
+
+-   fix(Command): replace `encodeURIComponent` with `css.escape` for attribute values ([#1482](https://github.com/huntabyte/bits-ui/pull/1482))
+
+## 1.6.0
+
+### Minor Changes
+
+-   feat(Slider): expose thumb `active` state ([#1471](https://github.com/huntabyte/bits-ui/pull/1471))
+
+### Patch Changes
+
+-   fix(DateRangeField): ensure prepopulated value takes priority over placeholder for validation ([#1479](https://github.com/huntabyte/bits-ui/pull/1479))
+
+-   fix(NavigationMenu): do not close `Sub` content when clicking the trigger ([#1473](https://github.com/huntabyte/bits-ui/pull/1473))
+
+-   fix(NavigationMenu): render `Content` without `Viewport` ([#1474](https://github.com/huntabyte/bits-ui/pull/1474))
+
+-   fix(DateField): ensure prepopulated value takes priority over placeholder for validation ([#1479](https://github.com/huntabyte/bits-ui/pull/1479))
+
 ## 1.5.3
 
 ### Patch Changes

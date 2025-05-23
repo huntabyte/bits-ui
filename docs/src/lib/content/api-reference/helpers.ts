@@ -42,6 +42,7 @@ type ElementKind =
 	| "HTMLInputElement"
 	| "HTMLUListElement"
 	| "HTMLLiElement"
+	| "HTMLNavElement"
 	| "HTMLElement";
 
 type SharedPropOptions = {

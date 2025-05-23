@@ -1,5 +1,6 @@
 import type {
 	MenubarArrowPropsWithoutHTML,
+	MenubarCheckboxGroupPropsWithoutHTML,
 	MenubarCheckboxItemPropsWithoutHTML,
 	MenubarContentPropsWithoutHTML,
 	MenubarContentStaticPropsWithoutHTML,
@@ -144,6 +145,12 @@ export const checkboxItem = createApiSchema<MenubarCheckboxItemPropsWithoutHTML>
 	...m.checkboxItem,
 });
 
+export const checkboxGroup = createApiSchema<MenubarCheckboxGroupPropsWithoutHTML>({
+	title: "CheckboxGroup",
+	description: "A group of checkbox menu items, where multiple can be checked at a time.",
+	...m.checkboxGroup,
+});
+
 export const radioGroup = createApiSchema<MenubarRadioGroupPropsWithoutHTML>({
 	title: "RadioGroup",
 	description: "A group of radio menu items, where only one can be checked at a time.",
@@ -204,6 +211,7 @@ export const menubar = [
 	portal,
 	content,
 	item,
+	checkboxGroup,
 	checkboxItem,
 	radioGroup,
 	radioItem,

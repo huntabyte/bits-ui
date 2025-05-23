@@ -24,7 +24,7 @@ import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
-import type { Direction, Orientation } from "$lib/shared/index.js";
+import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 import { linearScale, snapValueToStep } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
@@ -41,6 +41,7 @@ type SliderBaseRootStateProps = WithRefProps<
 		step: number;
 		dir: Direction;
 		autoSort: boolean;
+		thumbPositioning: SliderThumbPositioning;
 	}>
 >;
 
@@ -59,6 +60,10 @@ class SliderBaseRootState {
 		this.opts = opts;
 	}
 
+	isThumbActive(_index: number) {
+		return this.isActive;
+	}
+
 	#touchAction = $derived.by(() => {
 		if (this.opts.disabled.current) return undefined;
 		return this.opts.orientation.current === "horizontal" ? "pan-y" : "pan-x";
@@ -71,6 +76,11 @@ class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
+		if (this.opts.thumbPositioning.current === "exact") {
+			// User opted out of containment
+			return [0, 100];
+		}
+
 		const isVertical = this.opts.orientation.current === "vertical";
 
 		// this assumes all thumbs are the same width
@@ -396,6 +406,10 @@ class SliderMultiRootState extends SliderBaseRootState {
 				}
 			}
 		);
+	}
+
+	isThumbActive(index: number): boolean {
+		return this.isActive && this.activeThumb?.idx === index;
 	}
 
 	applyPosition({
@@ -825,7 +839,7 @@ class SliderThumbState {
 				...this.root.thumbsPropsArr[this.opts.index.current]!,
 				id: this.opts.id.current,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
 			}) as const
 	);
 }

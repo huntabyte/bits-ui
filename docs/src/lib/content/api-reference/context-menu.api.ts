@@ -1,5 +1,6 @@
 import type {
 	ContextMenuArrowPropsWithoutHTML,
+	ContextMenuCheckboxGroupPropsWithoutHTML,
 	ContextMenuCheckboxItemPropsWithoutHTML,
 	ContextMenuContentPropsWithoutHTML,
 	ContextMenuContentStaticPropsWithoutHTML,
@@ -148,6 +149,12 @@ export const checkboxItem = createApiSchema<ContextMenuCheckboxItemPropsWithoutH
 	...menu.checkboxItem,
 });
 
+export const checkboxGroup = createApiSchema<ContextMenuCheckboxGroupPropsWithoutHTML>({
+	title: "CheckboxGroup",
+	description: "A group of checkbox menu items, where multiple can be checked at a time.",
+	...menu.checkboxGroup,
+});
+
 export const radioGroup = createApiSchema<ContextMenuRadioGroupPropsWithoutHTML>({
 	title: "RadioGroup",
 	description: "A group of radio menu items, where only one can be checked at a time.",
@@ -208,6 +215,7 @@ export const contextMenu = [
 	content,
 	contentStatic,
 	item,
+	checkboxGroup,
 	checkboxItem,
 	radioGroup,
 	radioItem,

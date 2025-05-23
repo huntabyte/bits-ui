@@ -231,6 +231,9 @@ importers:
       '@internationalized/date':
         specifier: ^3.5.6
         version: 3.5.6
+      css.escape:
+        specifier: ^1.5.1
+        version: 1.5.1
       esm-env:
         specifier: ^1.1.2
         version: 1.1.4
@@ -253,6 +256,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: 4.0.0
         version: 4.0.0(svelte@5.30.2)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0))
+      '@types/css.escape':
+        specifier: ^1.5.2
+        version: 1.5.2
       '@types/node':
         specifier: ^20.17.6
         version: 20.17.6
@@ -1706,6 +1712,9 @@ packages:
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
+
+  '@types/css.escape@1.5.2':
+    resolution: {integrity: sha512-sq0h0y8i83T20MB434AZWgK3byezbBG48jllitFpVXlPOjHc5RNs3bg6rUen/EtMUjM4ZJjD4x+0aik9AXqLdQ==}
 
   '@types/debug@4.1.12':
     resolution: {integrity: sha512-vIChWdVG3LG1SMxEvI/AK+FWJthlrqlTu7fbrlywTkkaONwk/UAGaULXRlf8vkzFBLVm0zkMdCquhL5aOjhXPQ==}
@@ -5304,7 +5313,7 @@ snapshots:
   '@sveltejs/vite-plugin-svelte-inspector@3.0.0-next.3(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.30.2)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0)))(svelte@5.30.2)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0))':
     dependencies:
       '@sveltejs/vite-plugin-svelte': 4.0.0(svelte@5.30.2)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0))
-      debug: 4.3.7
+      debug: 4.4.0
       svelte: 5.30.2
       vite: 5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0)
     transitivePeerDependencies:
@@ -5322,10 +5331,10 @@ snapshots:
   '@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.30.2)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0))':
     dependencies:
       '@sveltejs/vite-plugin-svelte-inspector': 3.0.0-next.3(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.30.2)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0)))(svelte@5.30.2)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0))
-      debug: 4.3.7
+      debug: 4.4.0
       deepmerge: 4.3.1
       kleur: 4.1.5
-      magic-string: 0.30.12
+      magic-string: 0.30.17
       svelte: 5.30.2
       vite: 5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0)
       vitefu: 1.0.4(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0))
@@ -5465,6 +5474,8 @@ snapshots:
   '@types/aria-query@5.0.4': {}
 
   '@types/cookie@0.6.0': {}
+
+  '@types/css.escape@1.5.2': {}
 
   '@types/debug@4.1.12':
     dependencies:
