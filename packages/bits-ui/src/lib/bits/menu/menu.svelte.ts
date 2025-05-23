@@ -37,7 +37,6 @@ import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
-import { untrack } from "svelte";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -135,6 +134,7 @@ class MenuContentState {
 	#timer = 0;
 	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	mounted = $state(false);
 	#isSub: boolean;
 
 	constructor(opts: MenuContentStateProps, parentMenu: MenuMenuState) {
@@ -372,9 +372,7 @@ class MenuContentState {
 				style: {
 					pointerEvents: "auto",
 				},
-				...attachRef(this.opts.ref, (v) => {
-					untrack(() => (this.parentMenu.contentNode = v));
-				}),
+				...attachRef(this.opts.ref, (v) => (this.parentMenu.contentNode = v)),
 			}) as const
 	);
 
@@ -639,13 +637,9 @@ class MenuSubTriggerState {
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref, (v) => (this.submenu.triggerNode = v)),
 			},
-			this.item.props,
-			{
-				...attachRef(this.opts.ref, (v) => {
-					untrack(() => (this.submenu.triggerNode = v));
-				}),
-			}
+			this.item.props
 		)
 	);
 }
@@ -767,9 +761,7 @@ class MenuGroupHeadingState {
 				id: this.opts.id.current,
 				role: "group",
 				[this.group.root.getAttr("group-heading")]: "",
-				...attachRef(this.opts.ref, (v) => {
-					untrack(() => (this.group.groupHeadingId = v?.id));
-				}),
+				...attachRef(this.opts.ref, (v) => (this.group.groupHeadingId = v?.id)),
 			}) as const
 	);
 }
@@ -874,6 +866,7 @@ class MenuRadioItemState {
 				role: "menuitemradio",
 				"aria-checked": getAriaChecked(this.isChecked, false),
 				"data-state": getCheckedState(this.isChecked),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -953,9 +946,7 @@ class DropdownMenuTriggerState {
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref, (v) => {
-					untrack(() => (this.parentMenu.triggerNode = v));
-				}),
+				...attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v)),
 			}) as const
 	);
 }
@@ -1057,9 +1048,7 @@ class ContextMenuTriggerState {
 				onpointercancel: this.onpointercancel,
 				onpointerup: this.onpointerup,
 				oncontextmenu: this.oncontextmenu,
-				...attachRef(this.opts.ref, (v) =>
-					untrack(() => (this.parentMenu.triggerNode = v))
-				),
+				...attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v)),
 			}) as const
 	);
 }
@@ -1082,8 +1071,6 @@ class MenuCheckboxGroupState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.parentMenu.root;
-
-		useRefById(opts);
 	}
 
 	addValue(checkboxValue: string | undefined) {
@@ -1111,6 +1098,7 @@ class MenuCheckboxGroupState {
 				[this.root.getAttr("checkbox-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

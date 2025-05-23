@@ -12,7 +12,7 @@ import {
 	afterSleep,
 	afterTick,
 	box,
-	useRefById,
+	attachRef,
 } from "svelte-toolbelt";
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
@@ -128,7 +128,6 @@ class NavigationMenuRootState {
 	constructor(opts: NavigationMenuRootStateProps) {
 		this.opts = opts;
 		this.isDelaySkipped = boxAutoReset(false, this.opts.skipDelayDuration.current);
-		useRefById(opts);
 
 		this.provider = useNavigationMenuProvider({
 			value: this.opts.value,
@@ -200,6 +199,7 @@ class NavigationMenuRootState {
 				dir: this.opts.dir.current,
 				[NAVIGATION_MENU_ROOT_ATTR]: "",
 				[NAVIGATION_MENU_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -221,8 +221,6 @@ class NavigationMenuSubState {
 	constructor(opts: NavigationMenuSubStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
 		this.context = context;
-
-		useRefById(opts);
 
 		useNavigationMenuProvider({
 			isRootMenu: false,
@@ -248,6 +246,7 @@ class NavigationMenuSubState {
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[NAVIGATION_MENU_SUB_ATTR]: "",
 				[NAVIGATION_MENU_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -266,17 +265,6 @@ class NavigationMenuListState {
 	constructor(opts: NavigationMenuListStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
 		this.context = context;
-
-		useRefById(opts);
-
-		useRefById({
-			id: this.wrapperId,
-			ref: this.wrapperRef,
-			onRefChange: (node) => {
-				this.context.indicatorTrackRef.current = node;
-			},
-			deps: () => this.wrapperMounted,
-		});
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNodeId: opts.id,
@@ -297,6 +285,7 @@ class NavigationMenuListState {
 		() =>
 			({
 				id: this.wrapperId.current,
+				...attachRef(this.wrapperRef, (v) => (this.context.indicatorTrackRef.current = v)),
 			}) as const
 	);
 
@@ -306,6 +295,7 @@ class NavigationMenuListState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
 				[NAVIGATION_MENU_LIST_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -397,22 +387,6 @@ class NavigationMenuTriggerState {
 		this.itemContext = context.item;
 		this.listContext = context.list;
 
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.itemContext.triggerNode = node;
-			},
-		});
-
-		useRefById({
-			id: this.focusProxyId,
-			ref: this.focusProxyRef,
-			onRefChange: (node) => {
-				this.itemContext.focusProxyNode = node;
-			},
-			deps: () => this.focusProxyMounted,
-		});
-
 		watch(
 			() => this.opts.ref.current,
 			() => {
@@ -502,6 +476,7 @@ class NavigationMenuTriggerState {
 				onpointerenter: this.onpointerenter,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref, (v) => (this.itemContext.triggerNode = v)),
 			}) as const
 	);
 
@@ -511,6 +486,7 @@ class NavigationMenuTriggerState {
 				id: this.focusProxyId.current,
 				tabindex: 0,
 				onfocus: this.focusProxyOnFocus,
+				...attachRef(this.focusProxyRef, (v) => (this.itemContext.focusProxyNode = v)),
 			}) as const
 	);
 
@@ -549,8 +525,6 @@ class NavigationMenuLinkState {
 	) {
 		this.opts = opts;
 		this.context = context;
-
-		useRefById(opts);
 	}
 
 	onclick = (e: BitsMouseEvent<HTMLAnchorElement>) => {
@@ -611,6 +585,7 @@ class NavigationMenuLinkState {
 				onpointerenter: this.onpointerenter,
 				onpointermove: this.onpointermove,
 				[NAVIGATION_MENU_LINK_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -655,11 +630,6 @@ class NavigationMenuIndicatorImplState {
 
 		useResizeObserver(() => this.activeTrigger, this.handlePositionChange);
 		useResizeObserver(() => this.context.indicatorTrackRef.current, this.handlePositionChange);
-
-		useRefById({
-			...opts,
-			deps: () => this.context.opts.value.current,
-		});
 	}
 
 	handlePositionChange = () => {
@@ -695,6 +665,7 @@ class NavigationMenuIndicatorImplState {
 							}),
 				},
 				[NAVIGATION_MENU_INDICATOR_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -736,14 +707,6 @@ class NavigationMenuContentState {
 		this.context = context.provider;
 		this.itemContext = context.item;
 		this.listContext = context.list;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.itemContext.contentNode = node;
-			},
-			deps: () => this.mounted,
-		});
 	}
 
 	onpointerenter = (_: BitsPointerEvent) => {
@@ -760,6 +723,7 @@ class NavigationMenuContentState {
 				id: this.opts.id.current,
 				onpointerenter: this.onpointerenter,
 				onpointerleave: this.onpointerleave,
+				...attachRef(this.opts.ref, (v) => (this.itemContext.contentNode = v)),
 			}) as const
 	);
 }
@@ -815,11 +779,6 @@ class NavigationMenuContentImplState {
 		this.itemContext = itemContext;
 		this.listContext = itemContext.listContext;
 		this.context = itemContext.listContext.context;
-
-		useRefById({
-			...opts,
-			deps: () => this.context.opts.value.current,
-		});
 
 		watch(
 			[
@@ -941,6 +900,7 @@ class NavigationMenuContentImplState {
 				),
 				onkeydown: this.onkeydown,
 				[NAVIGATION_MENU_CONTENT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -959,14 +919,6 @@ class NavigationMenuViewportState {
 	constructor(opts: NavigationMenuViewportImplStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
 		this.context = context;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.context.viewportRef.current = node;
-			},
-			deps: () => this.open,
-		});
 
 		watch([() => this.activeContentValue, () => this.open], () => {
 			afterTick(() => {
@@ -1023,6 +975,7 @@ class NavigationMenuViewportState {
 				[NAVIGATION_MENU_VIEWPORT_ATTR]: "",
 				onpointerenter: this.context.onContentEnter,
 				onpointerleave: this.context.onContentLeave,
+				...attachRef(this.opts.ref, (v) => (this.context.viewportRef.current = v)),
 			}) as const
 	);
 }

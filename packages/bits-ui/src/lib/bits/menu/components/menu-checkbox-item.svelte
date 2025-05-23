@@ -2,7 +2,7 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuCheckboxItemProps } from "../types.js";
 	import { MenuCheckboxGroupContext, useMenuCheckboxItem } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
 
@@ -85,10 +85,12 @@
 	const mergedProps = $derived(mergeProps(restProps, checkboxItemState.props));
 </script>
 
+{@render children?.()}
+<!--
 {#if child}
-	{@render child({})}
+	{@render child()}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.({})}
+		{@render children?.()}
 	</div>
-{/if}
+{/if} -->

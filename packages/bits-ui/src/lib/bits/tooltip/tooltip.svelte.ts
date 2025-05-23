@@ -1,4 +1,4 @@
-import { box, onMountEffect, useRefById } from "svelte-toolbelt";
+import { box, onMountEffect, attachRef } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";

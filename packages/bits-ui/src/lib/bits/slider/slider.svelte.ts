@@ -840,6 +840,7 @@ class SliderThumbState {
 				id: this.opts.id.current,
 				onkeydown: this.onkeydown,
 				"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

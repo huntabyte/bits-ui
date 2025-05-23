@@ -1,13 +1,15 @@
 <script lang="ts">
 	import type { NavigationMenuViewportProps } from "../types.js";
 	import { useNavigationMenuViewport } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { Mounted } from "$lib/bits/utilities/index.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		forceMount = false,
 		child,

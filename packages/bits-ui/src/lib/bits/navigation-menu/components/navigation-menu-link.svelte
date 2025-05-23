@@ -2,11 +2,13 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuLinkProps } from "../types.js";
 	import { useNavigationMenuLink } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		child,
 		children,
