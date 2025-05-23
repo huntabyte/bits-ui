@@ -2,4 +2,4 @@
 "bits-ui": minor
 ---
 
-feat(ContextMenu): new `DropdownMenu.CheckboxGroup` component
+feat(ContextMenu): new `ContextMenu.CheckboxGroup` component
