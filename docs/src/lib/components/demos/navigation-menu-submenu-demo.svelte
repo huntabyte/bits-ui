@@ -24,39 +24,39 @@
 		},
 	];
 
-	const designComponents = [
+	const typeHelpers = [
 		{
-			title: "Colors",
-			href: "/docs/design-system/colors",
-			description: "Curated color palettes and tokens",
+			title: "WithElementRef",
+			href: "/docs/type-helpers/with-element-ref",
+			description: "Expose a ref to the element.",
 		},
 		{
-			title: "Typography",
-			href: "/docs/design-system/typography",
-			description: "Font scales and text styling",
+			title: "WithoutChild",
+			href: "/docs/type-helpers/without-child",
+			description: "Remove the child snippet prop from a props type.",
 		},
 		{
-			title: "Spacing",
-			href: "/docs/design-system/spacing",
-			description: "Consistent spacing patterns",
+			title: "WithoutChildrenOrChild",
+			href: "/docs/type-helpers/without-children-or-child",
+			description: "Remove the children and child snippet props from a props type.",
 		},
 	];
 
-	const advancedComponents = [
+	const utilities = [
 		{
-			title: "Data Table",
-			href: "/docs/components/data-table",
-			description: "Complex data display with sorting and filtering",
+			title: "mergeProps",
+			href: "/docs/utilities/merge-props",
+			description: "Merge multiple objects into a single object",
 		},
 		{
-			title: "Command Palette",
-			href: "/docs/components/command-palette",
-			description: "Fast, accessible command interface",
+			title: "Portal",
+			href: "/docs/utilities/portal",
+			description: "Render a component in a different part of the DOM",
 		},
 		{
-			title: "Calendar",
-			href: "/docs/components/calendar",
-			description: "Date selection and scheduling",
+			title: "IsUsingKeyboard",
+			href: "/docs/utilities/is-using-keyboard",
+			description: "Check if the user is using a keyboard",
 		},
 	];
 
@@ -76,20 +76,18 @@
 </script>
 
 {#snippet ListItem({ className, title, content, href }: ListItemProps)}
-	<li>
-		<NavigationMenu.Link
-			class={cn(
-				"hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground outline-hidden block select-none space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
-				className
-			)}
-			{href}
-		>
-			<div class="text-sm font-medium leading-none">{title}</div>
-			<p class="text-muted-foreground line-clamp-2 text-sm leading-snug">
-				{content}
-			</p>
-		</NavigationMenu.Link>
-	</li>
+	<NavigationMenu.Link
+		class={cn(
+			"hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground outline-hidden block select-none space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
+			className
+		)}
+		{href}
+	>
+		<div class="text-sm font-medium leading-none">{title}</div>
+		<p class="text-muted-foreground line-clamp-2 text-sm leading-snug">
+			{content}
+		</p>
+	</NavigationMenu.Link>
 {/snippet}
 
 {#snippet SubmenuItem({ className, title, value, items }: SubmenuItemProps)}
@@ -171,11 +169,11 @@
 				</ul>
 			</NavigationMenu.Content>
 		</NavigationMenu.Item>
-		<NavigationMenu.Item value="components">
+		<NavigationMenu.Item value="features">
 			<NavigationMenu.Trigger
 				class="hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted focus:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white"
 			>
-				Components
+				Features
 				<CaretDown
 					class="relative top-[1px] ml-1 size-3 transition-transform duration-200 group-data-[state=open]:rotate-180"
 					aria-hidden="true"
@@ -189,29 +187,30 @@
 						<NavigationMenu.List class="flex flex-col space-y-1">
 							<li>
 								<div class="text-muted-foreground px-3 py-2 text-sm font-medium">
-									Basic Components
+									Components
 								</div>
-								<ul class="space-y-1">
-									{#each components as component (component.title)}
-										{@render ListItem({
-											href: component.href,
-											title: component.title,
-											content: component.description,
-										})}
-									{/each}
-								</ul>
 							</li>
 
+							{#each components as component (component.title)}
+								<NavigationMenu.Item>
+									{@render ListItem({
+										href: component.href,
+										title: component.title,
+										content: component.description,
+									})}
+								</NavigationMenu.Item>
+							{/each}
+
 							{@render SubmenuItem({
-								title: "Advanced Components",
-								value: "advanced-components",
-								items: advancedComponents,
+								title: "Utilities",
+								value: "utilities",
+								items: utilities,
 							})}
 
 							{@render SubmenuItem({
-								title: "Design System",
-								value: "design-system",
-								items: designComponents,
+								title: "Type Helpers",
+								value: "type-helpers",
+								items: typeHelpers,
 							})}
 						</NavigationMenu.List>
 					</NavigationMenu.Sub>
