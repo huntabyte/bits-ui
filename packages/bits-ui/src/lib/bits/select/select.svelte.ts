@@ -853,7 +853,11 @@ class SelectContentState {
 		trapFocus: false,
 		loop: false,
 		onPlaced: () => {
-			this.isPositioned = true;
+			// onPlaced is also called when the menu is closed, so we need to check if the menu
+			// is actually open to avoid setting positioning to true when the menu is closed
+			if (this.root.opts.open.current) {
+				this.isPositioned = true;
+			}
 		},
 	};
 }
@@ -1233,32 +1237,29 @@ class SelectScrollButtonImplState {
 }
 
 class SelectScrollDownButtonState {
-	readonly state: SelectScrollButtonImplState;
+	readonly scrollButtonState: SelectScrollButtonImplState;
 	content: SelectContentState;
 	root: SelectBaseRootState;
 	canScrollDown = $state(false);
 	scrollIntoViewTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
-	constructor(state: SelectScrollButtonImplState) {
-		this.state = state;
-		this.content = state.content;
-		this.root = state.root;
-		this.state.onAutoScroll = this.handleAutoScroll;
+	constructor(scrollButtonState: SelectScrollButtonImplState) {
+		this.scrollButtonState = scrollButtonState;
+		this.content = scrollButtonState.content;
+		this.root = scrollButtonState.root;
+		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
 		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.content.viewportNode || !this.content.isPositioned) {
-				return;
-			}
-
+			if (!this.content.viewportNode || !this.content.isPositioned) return;
 			this.handleScroll(true);
 
 			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
 		});
 
 		watch(
-			() => this.state.mounted,
+			() => this.scrollButtonState.mounted,
 			() => {
-				if (!this.state.mounted) return;
+				if (!this.scrollButtonState.mounted) return;
 				if (this.scrollIntoViewTimer) {
 					clearTimeout(this.scrollIntoViewTimer);
 				}
@@ -1275,7 +1276,7 @@ class SelectScrollDownButtonState {
 	 */
 	handleScroll = (manual = false) => {
 		if (!manual) {
-			this.state.handleUserScroll();
+			this.scrollButtonState.handleUserScroll();
 		}
 		if (!this.content.viewportNode) return;
 		const maxScroll =
@@ -1297,21 +1298,25 @@ class SelectScrollDownButtonState {
 	};
 
 	props = $derived.by(
-		() => ({ ...this.state.props, [this.root.bitsAttrs["scroll-down-button"]]: "" }) as const
+		() =>
+			({
+				...this.scrollButtonState.props,
+				[this.root.bitsAttrs["scroll-down-button"]]: "",
+			}) as const
 	);
 }
 
 class SelectScrollUpButtonState {
-	readonly state: SelectScrollButtonImplState;
+	readonly scrollButtonState: SelectScrollButtonImplState;
 	content: SelectContentState;
 	root: SelectBaseRootState;
 	canScrollUp = $state(false);
 
-	constructor(state: SelectScrollButtonImplState) {
-		this.state = state;
-		this.content = state.content;
-		this.root = state.root;
-		this.state.onAutoScroll = this.handleAutoScroll;
+	constructor(scrollButtonState: SelectScrollButtonImplState) {
+		this.scrollButtonState = scrollButtonState;
+		this.content = scrollButtonState.content;
+		this.root = scrollButtonState.root;
+		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
 		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
 			if (!this.content.viewportNode || !this.content.isPositioned) return;
@@ -1327,7 +1332,7 @@ class SelectScrollUpButtonState {
 	 */
 	handleScroll = (manual = false) => {
 		if (!manual) {
-			this.state.handleUserScroll();
+			this.scrollButtonState.handleUserScroll();
 		}
 		if (!this.content.viewportNode) return;
 		const paddingTop = Number.parseInt(
@@ -1344,7 +1349,11 @@ class SelectScrollUpButtonState {
 	};
 
 	props = $derived.by(
-		() => ({ ...this.state.props, [this.root.bitsAttrs["scroll-up-button"]]: "" }) as const
+		() =>
+			({
+				...this.scrollButtonState.props,
+				[this.root.bitsAttrs["scroll-up-button"]]: "",
+			}) as const
 	);
 }
 
