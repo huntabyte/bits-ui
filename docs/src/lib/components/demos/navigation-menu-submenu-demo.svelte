@@ -105,7 +105,7 @@
 			/>
 		</NavigationMenu.Trigger>
 		<NavigationMenu.Content
-			class="data-[motion=from-end]:animate-enter-from-right data-[motion=from-start]:animate-enter-from-left data-[motion=to-end]:animate-exit-to-right data-[motion=to-start]:animate-exit-to-left bg-background absolute left-full top-0 z-50 -ml-1 min-w-[300px] rounded-md border shadow-lg"
+			class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-right-1 data-[state=open]:slide-in-from-right-1 absolute left-full top-0 z-50 ml-2 min-w-[300px] rounded-md border shadow-lg transition-all duration-200 ease-out"
 		>
 			<ul class="grid gap-1 p-2">
 				{#each items as item (item.title)}
