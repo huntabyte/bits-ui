@@ -474,7 +474,7 @@ class NavigationMenuTriggerState {
 		this.itemContext.listContext.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
 	};
 
-	focusProxyOnFocus: FocusEventHandler<HTMLButtonElement> = (e) => {
+	focusProxyOnFocus: FocusEventHandler<HTMLElement> = (e) => {
 		const content = this.itemContext.contentNode;
 		const prevFocusedElement = e.relatedTarget as HTMLElement | null;
 		const wasTriggerFocused =
