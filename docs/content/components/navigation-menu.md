@@ -4,7 +4,7 @@ description: A list of links that allow users to navigate between pages of a web
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoSubmenu, NavigationMenuDemoNoViewport, NavigationMenuDemoNoHover } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoNoViewport, NavigationMenuDemoNoHover } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -114,13 +114,34 @@ You can use the optional `Indicator` component to highlight the currently active
 
 You can create a submenu by nesting your navigation menu and using the `Navigation.Sub` component in place of `NavigationMenu.Root`.
 
+```svelte
+<NavigationMenu.Root>
+	<NavigationMenu.List>
+		<NavigationMenu.Item>
+			<NavigationMenu.Trigger>Item one</NavigationMenu.Trigger>
+			<NavigationMenu.Content>
+				<NavigationMenu.Sub>
+					<NavigationMenu.List>
+						<NavigationMenu.Item>
+							<NavigationMenu.Trigger>Subitem one</NavigationMenu.Trigger>
+							<NavigationMenu.Content>Subitem one content</NavigationMenu.Content>
+						</NavigationMenu.Item>
+					</NavigationMenu.List>
+				</NavigationMenu.Sub>
+			</NavigationMenu.Content>
+		</NavigationMenu.Item>
+	</NavigationMenu.List>
+</NavigationMenu.Root>
+```
+
+<!--
 <ComponentPreviewV2 name="navigation-menu-submenu-demo" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemoSubmenu />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreviewV2> -->
 
 ### Submenus with Viewport
 
