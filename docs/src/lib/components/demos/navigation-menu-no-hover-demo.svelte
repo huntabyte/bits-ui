@@ -67,7 +67,7 @@
 
 <NavigationMenu.Root class="relative z-10 flex w-full justify-center">
 	<NavigationMenu.List class="group flex list-none items-center justify-center p-1">
-		<NavigationMenu.Item value="getting-started">
+		<NavigationMenu.Item value="getting-started" openOnHover={false}>
 			<NavigationMenu.Trigger
 				class="hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted focus-visible:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white"
 			>
@@ -114,7 +114,7 @@
 				</ul>
 			</NavigationMenu.Content>
 		</NavigationMenu.Item>
-		<NavigationMenu.Item>
+		<NavigationMenu.Item openOnHover={false}>
 			<NavigationMenu.Trigger
 				class="hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted focus-visible:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white"
 			>
@@ -142,7 +142,7 @@
 		</NavigationMenu.Item>
 		<NavigationMenu.Item>
 			<NavigationMenu.Link
-				class="hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted focus:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white"
+				class="hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground dark:hover:bg-muted focus-visible:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50"
 				href="/docs"
 			>
 				<span class="hidden sm:inline"> Documentation </span>
@@ -159,7 +159,7 @@
 	</NavigationMenu.List>
 	<div class="perspective-[2000px] absolute left-0 top-full flex w-full justify-center">
 		<NavigationMenu.Viewport
-			class="text-popover-foreground bg-background data-[state=closed]:animate-scale-out data-[state=open]:animate-scale-in relative mt-2.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border shadow-lg transition-[width,_height] duration-200 sm:w-[var(--bits-navigation-menu-viewport-width)] "
+			class="text-popover-foreground bg-background data-[state=closed]:animate-scale-out data-[state=open]:animate-scale-in relative mt-2.5 h-[var(--bits-navigation-menu-viewport-height)] w-full origin-[top_center] overflow-hidden rounded-md border shadow-lg transition-[width,_height] duration-200 sm:w-[var(--bits-navigation-menu-viewport-width)]"
 		/>
 	</div>
 </NavigationMenu.Root>
