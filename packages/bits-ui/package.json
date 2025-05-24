@@ -27,6 +27,7 @@
 		"!dist/**/*.spec.*"
 	],
 	"devDependencies": {
+		"@internationalized/date": "^3.5.6",
 		"@sveltejs/kit": "^2.21.1",
 		"@sveltejs/package": "^2.3.11",
 		"@sveltejs/vite-plugin-svelte": "4.0.0",
@@ -50,7 +51,6 @@
 	"dependencies": {
 		"@floating-ui/core": "^1.6.4",
 		"@floating-ui/dom": "^1.6.7",
-		"@internationalized/date": "^3.5.6",
 		"css.escape": "^1.5.1",
 		"esm-env": "^1.1.2",
 		"runed": "^0.28.0",
@@ -58,6 +58,7 @@
 		"tabbable": "^6.2.0"
 	},
 	"peerDependencies": {
+		"@internationalized/date": "^3.5.6",
 		"svelte": "^5.11.0"
 	},
 	"engines": {

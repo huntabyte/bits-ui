@@ -228,9 +228,6 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.6.7
         version: 1.6.7
-      '@internationalized/date':
-        specifier: ^3.5.6
-        version: 3.5.6
       css.escape:
         specifier: ^1.5.1
         version: 1.5.1
@@ -247,6 +244,9 @@ importers:
         specifier: ^6.2.0
         version: 6.2.0
     devDependencies:
+      '@internationalized/date':
+        specifier: ^3.5.6
+        version: 3.5.6
       '@sveltejs/kit':
         specifier: ^2.21.1
         version: 2.21.1(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.33.1)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0)))(svelte@5.33.1)(vite@5.4.11(@types/node@20.17.6)(lightningcss@1.29.1)(terser@5.36.0))
