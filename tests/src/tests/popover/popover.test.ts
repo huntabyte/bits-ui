@@ -83,6 +83,8 @@ it("should close on outside click", async () => {
 	const outside = getByTestId("outside");
 
 	await testOutsideClick(getContent, outside, user, mockFn);
+
+	vi.resetAllMocks();
 });
 
 it("should not close when clicking within bounds", async () => {
