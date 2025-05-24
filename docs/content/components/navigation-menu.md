@@ -4,7 +4,7 @@ description: A list of links that allow users to navigate between pages of a web
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoSubmenu, NavigationMenuDemoNoViewport } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoSubmenu, NavigationMenuDemoNoViewport, NavigationMenuDemoNoHover } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -113,7 +113,6 @@ You can use the optional `Indicator` component to highlight the currently active
 ### Submenus
 
 You can create a submenu by nesting your navigation menu and using the `Navigation.Sub` component in place of `NavigationMenu.Root`.
-Submenus work differently than the `Root` menus and are more similar to [Tabs](/docs/components/tabs) in that one item should always be active, so be sure to assign and pass a `value` prop.
 
 <ComponentPreviewV2 name="navigation-menu-submenu-demo" componentName="Navigation Menu">
 
@@ -122,6 +121,30 @@ Submenus work differently than the `Root` menus and are more similar to [Tabs](/
 {/snippet}
 
 </ComponentPreviewV2>
+
+### Submenus with Viewport
+
+You can use the `NavigationMenu.Viewport` component inside of a `NavigationMenu.Sub` to create a viewport dedicated to that submenu.
+
+```svelte
+<NavigationMenu.Sub>
+	<NavigationMenu.List>
+		<NavigationMenu.Item>
+			<NavigationMenu.Trigger>Item one</NavigationMenu.Trigger>
+			<NavigationMenu.Content>
+				<NavigationMenu.Link>Item one content</NavigationMenu.Link>
+			</NavigationMenu.Content>
+		</NavigationMenu.Item>
+		<NavigationMenu.Item>
+			<NavigationMenu.Trigger>Item two</NavigationMenu.Trigger>
+			<NavigationMenu.Content>
+				<NavigationMenu.Link>Item two content</NavigationMenu.Link>
+			</NavigationMenu.Content>
+		</NavigationMenu.Item>
+	</NavigationMenu.List>
+	<NavigationMenu.Viewport />
+</NavigationMenu.Sub>
+```
 
 ### No Viewport
 
@@ -258,6 +281,31 @@ You may wish for the links in the Navigation Menu to persist in the DOM, regardl
 
 {#snippet preview()}
 <NavigationMenuDemoForceMount />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Open on Hover
+
+By default, the `NavigationMenu.Item` will open its `NavigationMenu.Content` when the `NavigationMenu.Trigger` is hovered. You can disable this by passing `openOnHover={false}` to the `NavigationMenu.Item`.
+
+<Callout type="note">
+
+Unlike the default behavior, when `openOnHover` is `false`, the menu will not close when the pointer moves outside of the `NavigationMenu.Content` and will instead require the user to interact outside of the menu or press escape to close it.
+
+</Callout>
+
+```svelte /openOnHover={false}/
+<NavigationMenu.Item openOnHover={false}>
+	<NavigationMenu.Trigger>Item one</NavigationMenu.Trigger>
+	<NavigationMenu.Content>Item one content</NavigationMenu.Content>
+</NavigationMenu.Item>
+```
+
+<ComponentPreviewV2 name="navigation-menu-no-hover-demo" componentName="Navigation Menu">
+
+{#snippet preview()}
+<NavigationMenuDemoNoHover />
 {/snippet}
 
 </ComponentPreviewV2>
