@@ -13,6 +13,7 @@
 		ref = $bindable(null),
 		child,
 		children,
+		openOnHover = true,
 		...restProps
 	}: NavigationMenuItemProps = $props();
 
@@ -23,6 +24,7 @@
 			(v) => (ref = v)
 		),
 		value: box.with(() => value),
+		openOnHover: box.with(() => openOnHover),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
