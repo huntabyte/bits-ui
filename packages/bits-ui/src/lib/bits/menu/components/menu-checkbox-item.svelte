@@ -85,12 +85,10 @@
 	const mergedProps = $derived(mergeProps(restProps, checkboxItemState.props));
 </script>
 
-{@render children?.()}
-<!--
 {#if child}
-	{@render child()}
+	{@render child({ checked, indeterminate, props: mergedProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.()}
+		{@render children?.({ checked, indeterminate })}
 	</div>
-{/if} -->
+{/if}

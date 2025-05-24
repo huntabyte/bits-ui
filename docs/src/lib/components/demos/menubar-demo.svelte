@@ -83,14 +83,14 @@
 						class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-3 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 						bind:checked={grid.checked}
 					>
-						{#snippet children()}
+						{#snippet children({ checked })}
 							{grid.label} grid
 							<div class="ml-auto flex items-center">
-								<!-- {#if checked} -->
-								<SwitchOn />
-								<!-- {:else} -->
-								<SwitchOff />
-								<!-- {/if} -->
+								{#if checked}
+									{@render SwitchOn()}
+								{:else}
+									{@render SwitchOff()}
+								{/if}
 							</div>
 						{/snippet}
 					</Menubar.CheckboxItem>
