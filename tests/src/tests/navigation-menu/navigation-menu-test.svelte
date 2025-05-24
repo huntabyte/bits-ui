@@ -2,20 +2,32 @@
 	export type NavigationMenuTestProps = NavigationMenu.RootProps & {
 		noViewport?: boolean;
 		noSubViewport?: boolean;
+		groupItemProps?: NavigationMenu.ItemProps;
+		subGroupItemProps?: NavigationMenu.ItemProps;
+		subGroupItem1Props?: NavigationMenu.ItemProps;
+		subGroupItem2Props?: NavigationMenu.ItemProps;
 	};
 </script>
 
 <script lang="ts">
 	import { NavigationMenu } from "bits-ui";
 
-	let { noViewport, noSubViewport, ...restProps }: NavigationMenuTestProps = $props();
+	let {
+		noViewport,
+		noSubViewport,
+		groupItemProps,
+		subGroupItemProps,
+		subGroupItem1Props,
+		subGroupItem2Props,
+		...restProps
+	}: NavigationMenuTestProps = $props();
 </script>
 
 <main>
 	<button data-testid="previous-button">previous button</button>
 	<NavigationMenu.Root {...restProps} data-testid="root">
 		<NavigationMenu.List data-testid="list">
-			<NavigationMenu.Item value="group" data-testid="group-item">
+			<NavigationMenu.Item value="group" data-testid="group-item" {...groupItemProps}>
 				<NavigationMenu.Trigger data-testid="group-item-trigger">
 					trigger
 				</NavigationMenu.Trigger>
@@ -25,7 +37,11 @@
 				</NavigationMenu.Content>
 			</NavigationMenu.Item>
 
-			<NavigationMenu.Item value="sub-group" data-testid="sub-group-item">
+			<NavigationMenu.Item
+				value="sub-group"
+				data-testid="sub-group-item"
+				{...subGroupItemProps}
+			>
 				<NavigationMenu.Trigger data-testid="sub-group-item-trigger">
 					sub
 				</NavigationMenu.Trigger>
@@ -35,6 +51,7 @@
 							<NavigationMenu.Item
 								value="sub1"
 								data-testid="sub-group-item-sub-item1"
+								{...subGroupItem1Props}
 							>
 								<NavigationMenu.Trigger
 									data-testid="sub-group-item-sub-item1-trigger"
@@ -52,6 +69,7 @@
 							<NavigationMenu.Item
 								value="sub2"
 								data-testid="sub-group-item-sub-item2"
+								{...subGroupItem2Props}
 							>
 								<NavigationMenu.Trigger
 									data-testid="sub-group-item-sub-item2-trigger"

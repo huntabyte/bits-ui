@@ -98,6 +98,11 @@ export const item = createApiSchema<NavigationMenuItemPropsWithoutHTML>({
 		value: createStringProp({
 			description: "The value of the item.",
 		}),
+		openOnHover: createBooleanProp({
+			default: C.TRUE,
+			description:
+				"Whether or not the item should open its content when the trigger is hovered. Note: When `false`, the menu will not close when the pointer moves outside of the content and will instead require the user to interact outside of the menu or press escape to close it.",
+		}),
 		...withChildProps({ elType: "HTMLLiElement" }),
 	},
 });

@@ -67,11 +67,11 @@ type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 		previousValue: string;
 	}> & {
 		isRootMenu: boolean;
-		onTriggerEnter: (itemValue: string) => void;
+		onTriggerEnter: (itemValue: string, itemState: NavigationMenuItemState | null) => void;
 		onTriggerLeave?: () => void;
 		onContentEnter?: () => void;
 		onContentLeave?: () => void;
-		onItemSelect: (itemValue: string) => void;
+		onItemSelect: (itemValue: string, itemState: NavigationMenuItemState | null) => void;
 		onItemDismiss: () => void;
 	};
 
@@ -86,6 +86,8 @@ class NavigationMenuProviderState {
 	onContentLeave: () => void = noop;
 	onItemSelect: NavigationMenuProviderStateProps["onItemSelect"];
 	onItemDismiss: NavigationMenuProviderStateProps["onItemDismiss"];
+	activeItem: NavigationMenuItemState | null = null;
+	prevActiveItem: NavigationMenuItemState | null = null;
 
 	constructor(opts: NavigationMenuProviderStateProps) {
 		this.opts = opts;
@@ -96,6 +98,11 @@ class NavigationMenuProviderState {
 		this.onItemDismiss = opts.onItemDismiss;
 		this.onItemSelect = opts.onItemSelect;
 	}
+
+	setActiveItem = (item: NavigationMenuItemState | null) => {
+		this.prevActiveItem = this.activeItem;
+		this.activeItem = item;
+	};
 }
 
 type NavigationMenuRootStateProps = WithRefProps<
@@ -137,8 +144,8 @@ class NavigationMenuRootState {
 			orientation: this.opts.orientation,
 			rootNavigationMenuRef: this.opts.ref,
 			isRootMenu: true,
-			onTriggerEnter: (itemValue) => {
-				this.#onTriggerEnter(itemValue);
+			onTriggerEnter: (itemValue, itemState) => {
+				this.#onTriggerEnter(itemValue, itemState);
 			},
 			onTriggerLeave: this.#onTriggerLeave,
 			onContentEnter: this.#onContentEnter,
@@ -149,47 +156,56 @@ class NavigationMenuRootState {
 	}
 
 	#debouncedFn = useDebounce(
-		(val?: string) => {
+		(val: string | undefined, itemState: NavigationMenuItemState | null) => {
 			// passing `undefined` meant to reset the debounce timer
 			if (typeof val === "string") {
-				this.setValue(val);
+				this.setValue(val, itemState);
 			}
 		},
 		() => this.#derivedDelay
 	);
 
-	#onTriggerEnter = (itemValue: string) => {
-		this.#debouncedFn(itemValue);
+	#onTriggerEnter = (itemValue: string, itemState: NavigationMenuItemState | null) => {
+		this.#debouncedFn(itemValue, itemState);
 	};
 
 	#onTriggerLeave = () => {
 		this.isDelaySkipped.current = false;
-		this.#debouncedFn("");
+		this.#debouncedFn("", null);
 	};
 
 	#onContentEnter = () => {
-		this.#debouncedFn();
+		this.#debouncedFn(undefined, null);
 	};
 
 	#onContentLeave = () => {
-		this.#debouncedFn("");
+		if (
+			this.provider.activeItem &&
+			this.provider.activeItem.opts.openOnHover.current === false
+		) {
+			return;
+		}
+		this.#debouncedFn("", null);
 	};
 
-	#onItemSelect = (itemValue: string) => {
-		this.setValue(itemValue);
+	#onItemSelect = (itemValue: string, itemState: NavigationMenuItemState | null) => {
+		this.setValue(itemValue, itemState);
 	};
 
 	#onItemDismiss = () => {
-		this.setValue("");
+		this.setValue("", null);
 	};
 
-	setValue = (newValue: string) => {
+	setValue = (newValue: string, itemState: NavigationMenuItemState | null) => {
 		this.previousValue.current = this.opts.value.current;
 		this.opts.value.current = newValue;
+		this.provider.setActiveItem(itemState);
 
 		// When all menus are closed, we want to reset previousValue to prevent
 		// weird transitions from old positions when opening fresh
-		if (newValue === "") this.previousValue.current = "";
+		if (newValue === "") {
+			this.previousValue.current = "";
+		}
 	};
 
 	props = $derived.by(
@@ -217,6 +233,7 @@ class NavigationMenuSubState {
 	readonly opts: NavigationMenuSubStateProps;
 	readonly context: NavigationMenuProviderState;
 	previousValue = box("");
+	subProvider: NavigationMenuProviderState;
 
 	constructor(opts: NavigationMenuSubStateProps, context: NavigationMenuProviderState) {
 		this.opts = opts;
@@ -224,7 +241,7 @@ class NavigationMenuSubState {
 
 		useRefById(opts);
 
-		useNavigationMenuProvider({
+		this.subProvider = useNavigationMenuProvider({
 			isRootMenu: false,
 			value: this.opts.value,
 			dir: this.context.opts.dir,
@@ -232,13 +249,21 @@ class NavigationMenuSubState {
 			rootNavigationMenuRef: this.opts.ref,
 			onTriggerEnter: this.setValue,
 			onItemSelect: this.setValue,
-			onItemDismiss: () => this.setValue(""),
+			onItemDismiss: () => this.setValue("", null),
 			previousValue: this.previousValue,
 		});
 	}
 
-	setValue = (newValue: string) => {
+	setValue = (newValue: string, itemState: NavigationMenuItemState | null) => {
+		this.previousValue.current = this.opts.value.current;
 		this.opts.value.current = newValue;
+		this.subProvider.setActiveItem(itemState);
+
+		// When all menus are closed, we want to reset previousValue to prevent
+		// weird transitions from old positions when opening fresh
+		if (newValue === "") {
+			this.previousValue.current = "";
+		}
 	};
 
 	props = $derived.by(
@@ -313,6 +338,7 @@ class NavigationMenuListState {
 type NavigationMenuItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		value: string;
+		openOnHover: boolean;
 	}>
 >;
 
@@ -433,16 +459,17 @@ class NavigationMenuTriggerState {
 			this.opts.disabled.current ||
 			this.wasClickClose ||
 			this.itemContext.wasEscapeClose ||
-			this.hasPointerMoveOpened.current
+			this.hasPointerMoveOpened.current ||
+			!this.itemContext.opts.openOnHover.current
 		) {
 			return;
 		}
-		this.context.onTriggerEnter(this.itemContext.opts.value.current);
+		this.context.onTriggerEnter(this.itemContext.opts.value.current, this.itemContext);
 		this.hasPointerMoveOpened.current = true;
 	});
 
 	onpointerleave = whenMouse(() => {
-		if (this.opts.disabled.current) return;
+		if (this.opts.disabled.current || !this.itemContext.opts.openOnHover.current) return;
 		this.context.onTriggerLeave();
 		this.hasPointerMoveOpened.current = false;
 	});
@@ -450,11 +477,13 @@ class NavigationMenuTriggerState {
 	onclick: MouseEventHandler<HTMLButtonElement> = () => {
 		// if opened via pointer move, we prevent the click event
 		if (this.hasPointerMoveOpened.current) return;
-		const shouldClose = this.open && this.context.opts.isRootMenu;
+		const shouldClose =
+			this.open &&
+			(!this.itemContext.opts.openOnHover.current || this.context.opts.isRootMenu);
 		if (shouldClose) {
-			this.context.onItemSelect("");
+			this.context.onItemSelect("", null);
 		} else if (!this.open) {
-			this.context.onItemSelect(this.itemContext.opts.value.current);
+			this.context.onItemSelect(this.itemContext.opts.value.current, this.itemContext);
 		}
 		this.wasClickClose = shouldClose;
 	};
@@ -577,24 +606,23 @@ class NavigationMenuLinkState {
 		this.isFocused = false;
 	};
 
-	onpointerenter: PointerEventHandler<HTMLAnchorElement> = () => {
+	#handlePointerDismiss = () => {
 		// only close submenu if this link is not inside the currently open submenu content
 		const currentlyOpenValue = this.context.provider.opts.value.current;
 		const isInsideOpenSubmenu = this.context.item.opts.value.current === currentlyOpenValue;
-
-		if (!isInsideOpenSubmenu && currentlyOpenValue) {
+		const activeItem = this.context.item.listContext.context.activeItem;
+		if (activeItem && !activeItem.opts.openOnHover.current) return;
+		if (currentlyOpenValue && !isInsideOpenSubmenu) {
 			this.context.provider.onItemDismiss();
 		}
 	};
 
-	onpointermove = whenMouse(() => {
-		// Only close submenu if this link is not inside the currently open submenu content
-		const currentlyOpenValue = this.context.provider.opts.value.current;
-		const isInsideOpenSubmenu = this.context.item.opts.value.current === currentlyOpenValue;
+	onpointerenter: PointerEventHandler<HTMLAnchorElement> = () => {
+		this.#handlePointerDismiss();
+	};
 
-		if (!isInsideOpenSubmenu && currentlyOpenValue) {
-			this.context.provider.onItemDismiss();
-		}
+	onpointermove = whenMouse(() => {
+		this.#handlePointerDismiss();
 	});
 
 	props = $derived.by(
@@ -751,6 +779,7 @@ class NavigationMenuContentState {
 	};
 
 	onpointerleave = whenMouse(() => {
+		if (!this.itemContext.opts.openOnHover.current) return;
 		this.context.onContentLeave();
 	});
 
@@ -863,7 +892,17 @@ class NavigationMenuContentImplState {
 		const isTrigger = this.listContext.listTriggers.some((trigger) => trigger.contains(target));
 		const isRootViewport =
 			this.context.opts.isRootMenu && this.context.viewportRef.current?.contains(target);
-		if (isTrigger || isRootViewport || !this.context.opts.isRootMenu) e.preventDefault();
+		if (!this.context.opts.isRootMenu && !isTrigger) {
+			this.context.onItemDismiss();
+			return;
+		}
+		if (isTrigger || isRootViewport) {
+			e.preventDefault();
+			return;
+		}
+		if (!this.itemContext.opts.openOnHover.current) {
+			this.context.onItemSelect("", null);
+		}
 	};
 
 	onkeydown = (e: BitsKeyboardEvent) => {
@@ -1142,13 +1181,9 @@ function removeFromTabOrder(candidates: HTMLElement[]) {
 	};
 }
 
-type BitsPointerEventHandler<T extends HTMLElement = HTMLElement> = (
-	e: BitsPointerEvent<T>
-) => void;
-
 function whenMouse<T extends HTMLElement = HTMLElement>(
-	handler: BitsPointerEventHandler<T>
-): BitsPointerEventHandler<T> {
+	handler: PointerEventHandler<T>
+): PointerEventHandler<T> {
 	return (e) => (e.pointerType === "mouse" ? handler(e) : undefined);
 }
 
