@@ -36,7 +36,7 @@ class RadioGroupRootState {
 	constructor(opts: RadioGroupRootStateProps) {
 		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.opts.id,
+			rootNode: this.opts.ref,
 			candidateAttr: RADIO_GROUP_ITEM_ATTR,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,

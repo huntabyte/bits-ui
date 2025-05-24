@@ -1,21 +1,13 @@
-import { type ReadableBox, afterTick, executeCallbacks } from "svelte-toolbelt";
+import { type ReadableBox, executeCallbacks } from "svelte-toolbelt";
 import { Previous, watch } from "runed";
 import { on } from "svelte/events";
 import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 
-export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<string>) {
+export function usePresence(present: ReadableBox<boolean>, ref: ReadableBox<HTMLElement | null>) {
 	let styles = $state({}) as CSSStyleDeclaration;
 	let prevAnimationNameState = $state("none");
 	const initialState = present.current ? "mounted" : "unmounted";
-	let node = $state<HTMLElement | null>(null);
 	const prevPresent = new Previous(() => present.current);
-
-	watch([() => id.current, () => present.current], ([id, present]) => {
-		if (!id || !present) return;
-		afterTick(() => {
-			node = document.getElementById(id);
-		});
-	});
 
 	const { state, dispatch } = useStateMachine(initialState, {
 		mounted: {
@@ -33,18 +25,15 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 
 	watch(
 		() => present.current,
-		(currPresent) => {
-			if (!node) {
-				node = document.getElementById(id.current);
-			}
-			if (!node) return;
-			const hasPresentChanged = currPresent !== prevPresent.current;
+		() => {
+			if (!ref.current) return;
+			const hasPresentChanged = present.current !== prevPresent.current;
 			if (!hasPresentChanged) return;
 
 			const prevAnimationName = prevAnimationNameState;
-			const currAnimationName = getAnimationName(node);
+			const currAnimationName = getAnimationName(ref.current);
 
-			if (currPresent) {
+			if (present.current) {
 				dispatch("MOUNT");
 			} else if (currAnimationName === "none" || styles.display === "none") {
 				// If there is no exit animation or the element is hidden, animations won't run
@@ -75,45 +64,42 @@ export function usePresence(present: ReadableBox<boolean>, id: ReadableBox<strin
 	 */
 
 	function handleAnimationEnd(event: AnimationEvent) {
-		if (!node) node = document.getElementById(id.current);
-		if (!node) return;
-		const currAnimationName = getAnimationName(node);
+		if (!ref.current) return;
+		const currAnimationName = getAnimationName(ref.current);
 		const isCurrentAnimation =
 			currAnimationName.includes(event.animationName) || currAnimationName === "none";
 
-		if (event.target === node && isCurrentAnimation) {
+		if (event.target === ref.current && isCurrentAnimation) {
 			dispatch("ANIMATION_END");
 		}
 	}
 
 	function handleAnimationStart(event: AnimationEvent) {
-		if (!node) node = document.getElementById(id.current);
-		if (!node) return;
-		if (event.target === node) {
-			prevAnimationNameState = getAnimationName(node);
+		if (!ref.current) return;
+		if (event.target === ref.current) {
+			prevAnimationNameState = getAnimationName(ref.current);
 		}
 	}
 
 	watch(
 		() => state.current,
 		() => {
-			if (!node) node = document.getElementById(id.current);
-			if (!node) return;
-			const currAnimationName = getAnimationName(node);
+			if (!ref.current) return;
+			const currAnimationName = getAnimationName(ref.current);
 			prevAnimationNameState = state.current === "mounted" ? currAnimationName : "none";
 		}
 	);
 
 	watch(
-		() => node,
-		(node) => {
-			if (!node) return;
-			styles = getComputedStyle(node);
+		() => ref.current,
+		() => {
+			if (!ref.current) return;
+			styles = getComputedStyle(ref.current);
 
 			return executeCallbacks(
-				on(node, "animationstart", handleAnimationStart),
-				on(node, "animationcancel", handleAnimationEnd),
-				on(node, "animationend", handleAnimationEnd)
+				on(ref.current, "animationstart", handleAnimationStart),
+				on(ref.current, "animationcancel", handleAnimationEnd),
+				on(ref.current, "animationend", handleAnimationEnd)
 			);
 		}
 	);

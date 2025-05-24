@@ -23,7 +23,7 @@
 	);
 </script>
 
-<PresenceLayer {...mergedProps} {present}>
+<PresenceLayer {present} ref={scrollbarAutoState.scrollbar.opts.ref}>
 	{#snippet presence()}
 		<ScrollAreaScrollbarVisible {...mergedProps} />
 	{/snippet}

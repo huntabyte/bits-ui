@@ -36,7 +36,7 @@ class ToggleGroupBaseState {
 		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
 			candidateAttr: TOGGLE_GROUP_ITEM_ATTR,
-			rootNodeId: opts.id,
+			rootNode: opts.ref,
 			loop: opts.loop,
 			orientation: opts.orientation,
 		});

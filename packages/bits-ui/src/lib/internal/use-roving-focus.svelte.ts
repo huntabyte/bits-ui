@@ -1,4 +1,4 @@
-import { type ReadableBox, box } from "svelte-toolbelt";
+import { type Box, type ReadableBox, box } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./get-directional-keys.js";
 import { kbd } from "./kbd.js";
@@ -24,7 +24,7 @@ type UseRovingFocusProps = (
 	/**
 	 * The id of the root node
 	 */
-	rootNodeId: ReadableBox<string>;
+	rootNode: Box<HTMLElement | null>;
 
 	/**
 	 * Whether to loop through the candidates when reaching the end.
@@ -45,22 +45,23 @@ type UseRovingFocusProps = (
 
 export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
 
-export function useRovingFocus(props: UseRovingFocusProps) {
+export function useRovingFocus(opts: UseRovingFocusProps) {
 	const currentTabStopId = box<string | null>(null);
 
 	function getCandidateNodes() {
 		if (!isBrowser) return [];
-		const node = document.getElementById(props.rootNodeId.current);
-		if (!node) return [];
+		if (!opts.rootNode.current) return [];
 
-		if (props.candidateSelector) {
+		if (opts.candidateSelector) {
 			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(props.candidateSelector)
+				opts.rootNode.current.querySelectorAll<HTMLElement>(opts.candidateSelector)
 			);
 			return candidates;
-		} else if (props.candidateAttr) {
+		} else if (opts.candidateAttr) {
 			const candidates = Array.from(
-				node.querySelectorAll<HTMLElement>(`[${props.candidateAttr}]:not([data-disabled])`)
+				opts.rootNode.current.querySelectorAll<HTMLElement>(
+					`[${opts.candidateAttr}]:not([data-disabled])`
+				)
 			);
 			return candidates;
 		}
@@ -79,7 +80,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		e: KeyboardEvent,
 		both: boolean = false
 	) {
-		const rootNode = document.getElementById(props.rootNodeId.current);
+		const rootNode = opts.rootNode.current;
 		if (!rootNode || !node) return;
 
 		const items = getCandidateNodes();
@@ -87,8 +88,8 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 
 		const currentIndex = items.indexOf(node);
 		const dir = getElemDirection(rootNode);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, props.orientation.current);
-		const loop = props.loop.current;
+		const { nextKey, prevKey } = getDirectionalKeys(dir, opts.orientation.current);
+		const loop = opts.loop.current;
 
 		const keyToIndex = {
 			[nextKey]: currentIndex + 1,
@@ -118,7 +119,7 @@ export function useRovingFocus(props: UseRovingFocusProps) {
 		if (!itemToFocus) return;
 		itemToFocus.focus();
 		currentTabStopId.current = itemToFocus.id;
-		props.onCandidateFocus?.(itemToFocus);
+		opts.onCandidateFocus?.(itemToFocus);
 		return itemToFocus;
 	}
 

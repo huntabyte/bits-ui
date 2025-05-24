@@ -171,7 +171,7 @@ class MenuContentState {
 
 		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.parentMenu.contentId,
+			rootNode: box.with(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getAttr("item"),
 			loop: this.opts.loop,
 			orientation: box.with(() => "vertical"),

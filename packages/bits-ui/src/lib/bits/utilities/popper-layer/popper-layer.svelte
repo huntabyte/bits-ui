@@ -39,11 +39,12 @@
 		isValidEvent = () => false,
 		customAnchor = null,
 		isStatic = false,
+		ref,
 		...restProps
 	}: PopperLayerImplProps = $props();
 </script>
 
-<PresenceLayer {id} {present} {...restProps}>
+<PresenceLayer {present} {ref}>
 	{#snippet presence()}
 		<PopperLayerInner
 			{popper}
@@ -82,6 +83,7 @@
 			{isValidEvent}
 			{onFocusOutside}
 			forceMount={false}
+			{ref}
 			{...restProps}
 		/>
 	{/snippet}

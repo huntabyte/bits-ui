@@ -45,6 +45,7 @@
 	{...mergedProps}
 	{forceMount}
 	present={contentState.root.opts.open.current || forceMount}
+	ref={contentState.opts.ref}
 >
 	{#snippet presence()}
 		<FocusScope

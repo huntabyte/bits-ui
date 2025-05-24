@@ -27,7 +27,10 @@
 	const mergedProps = $derived(mergeProps(restProps, overlayState.props));
 </script>
 
-<PresenceLayer {id} present={overlayState.root.opts.open.current || forceMount}>
+<PresenceLayer
+	present={overlayState.root.opts.open.current || forceMount}
+	ref={overlayState.opts.ref}
+>
 	{#snippet presence()}
 		{#if child}
 			{@render child({ props: mergeProps(mergedProps), ...overlayState.snippetProps })}

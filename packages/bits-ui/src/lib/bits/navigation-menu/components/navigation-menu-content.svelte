@@ -34,7 +34,10 @@
 	to={contentState.context.viewportRef.current || undefined}
 	disabled={!contentState.context.viewportRef.current}
 >
-	<PresenceLayer {id} present={forceMount || contentState.open || contentState.isLastActiveValue}>
+	<PresenceLayer
+		present={forceMount || contentState.open || contentState.isLastActiveValue}
+		ref={contentState.opts.ref}
+	>
 		{#snippet presence()}
 			<NavigationMenuContentImpl {...mergedProps} {children} {child} />
 			<Mounted bind:mounted={contentState.mounted} />

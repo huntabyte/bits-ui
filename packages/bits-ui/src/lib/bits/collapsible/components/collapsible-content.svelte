@@ -26,7 +26,7 @@
 	});
 </script>
 
-<PresenceLayer forceMount={true} present={contentState.present} {id}>
+<PresenceLayer forceMount={true} present={contentState.present} ref={contentState.opts.ref}>
 	{#snippet presence({ present })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
 			hidden: forceMount ? undefined : !present.current,

@@ -118,32 +118,9 @@ export class CalendarRootState {
 			numberOfMonths: this.opts.numberOfMonths.current,
 		});
 
-		$effect(() => {
-			const initialFocus = untrack(() => this.opts.initialFocus.current);
-			if (initialFocus) {
-				// focus the first `data-focused` day node
-				const firstFocusedDay =
-					this.opts.ref.current?.querySelector<HTMLElement>(`[data-focused]`);
-				if (firstFocusedDay) {
-					firstFocusedDay.focus();
-				}
-			}
-		});
-
-		$effect(() => {
-			if (!this.opts.ref.current) return;
-			const removeHeading = createAccessibleHeading({
-				calendarNode: this.opts.ref.current,
-				label: this.fullCalendarLabel,
-				accessibleHeadingId: this.accessibleHeadingId,
-			});
-			return removeHeading;
-		});
-
-		$effect(() => {
-			if (this.formatter.getLocale() === this.opts.locale.current) return;
-			this.formatter.setLocale(this.opts.locale.current);
-		});
+		this.#setupInitialFocusEffect();
+		this.#setupAccessibleHeadingEffect();
+		this.#setupFormatterEffect();
 
 		/**
 		 * Updates the displayed months based on changes in the placeholder value.
@@ -231,6 +208,39 @@ export class CalendarRootState {
 			weekdayFormat: this.opts.weekdayFormat.current,
 		});
 	});
+
+	#setupInitialFocusEffect() {
+		$effect(() => {
+			const initialFocus = untrack(() => this.opts.initialFocus.current);
+			if (initialFocus) {
+				// focus the first `data-focused` day node
+				const firstFocusedDay =
+					this.opts.ref.current?.querySelector<HTMLElement>(`[data-focused]`);
+				if (firstFocusedDay) {
+					firstFocusedDay.focus();
+				}
+			}
+		});
+	}
+
+	#setupAccessibleHeadingEffect() {
+		$effect(() => {
+			if (!this.opts.ref.current) return;
+			const removeHeading = createAccessibleHeading({
+				calendarNode: this.opts.ref.current,
+				label: this.fullCalendarLabel,
+				accessibleHeadingId: this.accessibleHeadingId,
+			});
+			return removeHeading;
+		});
+	}
+
+	#setupFormatterEffect() {
+		$effect(() => {
+			if (this.formatter.getLocale() === this.opts.locale.current) return;
+			this.formatter.setLocale(this.opts.locale.current);
+		});
+	}
 
 	/**
 	 * Navigates to the next page of the calendar.
