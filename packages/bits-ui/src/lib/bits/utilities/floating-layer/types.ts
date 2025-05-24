@@ -130,4 +130,5 @@ export type FloatingLayerAnchorProps = {
 	id: string;
 	children?: Snippet;
 	virtualEl?: ReadableBox<Measurable | null>;
+	ref: ReadableBox<HTMLElement | null>;
 };

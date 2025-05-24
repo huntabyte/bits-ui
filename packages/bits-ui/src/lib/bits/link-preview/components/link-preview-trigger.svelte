@@ -26,7 +26,7 @@
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
 </script>
 
-<FloatingLayer.Anchor {id}>
+<FloatingLayer.Anchor {id} ref={triggerState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

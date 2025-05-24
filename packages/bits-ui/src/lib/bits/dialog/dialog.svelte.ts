@@ -4,6 +4,7 @@ import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { untrack } from "svelte";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -103,10 +104,12 @@ class DialogTriggerState {
 				onclick: this.onclick,
 				disabled: this.opts.disabled.current ? true : undefined,
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref, (v) => {
-					this.root.triggerNode = v;
-					this.root.triggerId = v?.id;
-				}),
+				...attachRef(this.opts.ref, (v) =>
+					untrack(() => {
+						this.root.triggerNode = v;
+						this.root.triggerId = v?.id;
+					})
+				),
 			}) as const
 	);
 }

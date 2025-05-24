@@ -31,7 +31,7 @@
 	const mergedProps = $derived(mergeProps(restProps, subTriggerState.props));
 </script>
 
-<FloatingLayerAnchor {id}>
+<FloatingLayerAnchor {id} ref={subTriggerState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

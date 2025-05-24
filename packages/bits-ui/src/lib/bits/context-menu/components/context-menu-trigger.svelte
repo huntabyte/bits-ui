@@ -28,7 +28,7 @@
 	);
 </script>
 
-<FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement}>
+<FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement} ref={triggerState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

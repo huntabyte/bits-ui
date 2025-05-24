@@ -1,10 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it } from "vitest";
+import { describe, it, vi } from "vitest";
 import type { Component } from "svelte";
 import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
+import { testOutsideClick } from "../outside-click";
 
 const kbd = getTestKbd();
 
@@ -168,6 +169,16 @@ describe("Props and Rendering", () => {
 		});
 		await t.user.click(t.getByTestId("overlay"));
 		await expectIsOpen();
+	});
+
+	it("should respect the `interactOutsideBehavior: 'close'` prop", async () => {
+		const mockFn = vi.fn();
+		const t = await open({
+			contentProps: { onInteractOutside: mockFn, interactOutsideBehavior: "close" },
+		});
+
+		const outside = t.getByTestId("outside");
+		await testOutsideClick(() => t.queryByTestId("content"), outside, t.user, mockFn);
 	});
 
 	it("should respect the `escapeKeydownBehavior: 'ignore'` prop", async () => {

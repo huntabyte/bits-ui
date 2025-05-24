@@ -37,6 +37,8 @@ import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
+import { untrack } from "svelte";
+import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -372,7 +374,13 @@ class MenuContentState {
 				style: {
 					pointerEvents: "auto",
 				},
-				...attachRef(this.opts.ref, (v) => (this.parentMenu.contentNode = v)),
+				...attachRef(this.opts.ref, (v) => {
+					untrack(() => {
+						if (this.parentMenu.contentNode !== v) {
+							this.parentMenu.contentNode = v;
+						}
+					});
+				}),
 			}) as const
 	);
 
@@ -887,12 +895,9 @@ class DropdownMenuTriggerState {
 	constructor(opts: DropdownMenuTriggerStateProps, parentMenu: MenuMenuState) {
 		this.opts = opts;
 		this.parentMenu = parentMenu;
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -902,17 +907,17 @@ class DropdownMenuTriggerState {
 			// the content to be given focus without competition
 			if (!this.parentMenu.opts.open.current) e.preventDefault();
 		}
-	}
+	};
 
-	onpointerup(e: BitsPointerEvent) {
+	onpointerup: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.parentMenu.toggleOpen();
 		}
-	}
+	};
 
-	onkeydown(e: BitsKeyboardEvent) {
+	onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			this.parentMenu.toggleOpen();
@@ -923,7 +928,7 @@ class DropdownMenuTriggerState {
 			this.parentMenu.onOpen();
 			e.preventDefault();
 		}
-	}
+	};
 
 	#ariaControls = $derived.by(() => {
 		if (this.parentMenu.opts.open.current && this.parentMenu.contentId.current)

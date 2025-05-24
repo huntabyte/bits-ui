@@ -49,6 +49,7 @@
 >
 	{#snippet presence()}
 		<FocusScope
+			ref={contentState.opts.ref}
 			loop
 			trapFocus={shouldTrapFocus({
 				forceMount,
@@ -94,6 +95,7 @@
 					>
 						<TextSelectionLayer
 							{...mergedProps}
+							ref={contentState.opts.ref}
 							enabled={contentState.root.opts.open.current}
 						>
 							{#if child}

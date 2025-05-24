@@ -86,6 +86,7 @@
 			{loop}
 			trapFocus={enabled && trapFocus}
 			forceMount={restProps.forceMount}
+			{ref}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
 				<EscapeLayer {onEscapeKeydown} {escapeKeydownBehavior} {enabled}>
@@ -105,6 +106,7 @@
 								{onPointerDown}
 								{onPointerUp}
 								{enabled}
+								{ref}
 							>
 								{@render popper?.({
 									props: mergeProps(

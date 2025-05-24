@@ -1,4 +1,5 @@
 import type { Snippet } from "svelte";
+import type { ReadableBox } from "svelte-toolbelt";
 
 export type PointerHandler = (e: PointerEvent) => void;
 
@@ -35,4 +36,6 @@ export type TextSelectionLayerImplProps = {
 	 * Callback fired when pointerup event triggers.
 	 */
 	onPointerUp?: PointerHandler;
+
+	ref: ReadableBox<HTMLElement | null>;
 } & TextSelectionLayerProps;

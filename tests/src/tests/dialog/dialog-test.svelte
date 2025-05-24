@@ -59,5 +59,6 @@
 	<button data-testid="close-focus-override" id="close-focus-override"
 		>close focus override</button
 	>
+	<div data-testid="outside">outside content</div>
 	<div id="portalTarget" data-testid="portalTarget"></div>
 </main>

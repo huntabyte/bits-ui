@@ -10,7 +10,7 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { box, cssToStyleObj, styleToString, useRefById } from "svelte-toolbelt";
+import { attachRef, box, cssToStyleObj, styleToString, type ReadableBox } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
@@ -38,7 +38,7 @@ export type Boundary = Element | null;
 class FloatingRootState {
 	anchorNode = box<Measurable | HTMLElement | null>(null);
 	customAnchorNode = box<Measurable | HTMLElement | null | string>(null);
-	triggerNode = box<Measurable | HTMLElement | null>(null);
+	triggerNode: ReadableBox<Measurable | HTMLElement | null> = box(null);
 
 	constructor() {
 		$effect(() => {
@@ -191,6 +191,7 @@ class FloatingContentState {
 				},
 				// Floating UI calculates logical alignment based the `dir` attribute
 				dir: this.opts.dir.current,
+				...attachRef(this.wrapperRef),
 			}) as const
 	);
 	props = $derived.by(
@@ -204,6 +205,7 @@ class FloatingContentState {
 					// we prevent animations so that users's animation don't kick in too early referring wrong sides
 					// animation: !this.floating.isPositioned ? "none" : undefined,
 				}),
+				...attachRef(this.contentRef),
 			}) as const
 	);
 
@@ -241,18 +243,6 @@ class FloatingContentState {
 				this.root.customAnchorNode.current = customAnchor;
 			}
 		);
-
-		useRefById({
-			id: this.opts.wrapperId,
-			ref: this.wrapperRef,
-			deps: () => this.opts.enabled.current,
-		});
-
-		useRefById({
-			id: this.opts.id,
-			ref: this.contentRef,
-			deps: () => this.opts.enabled.current,
-		});
 
 		this.floating = useFloating({
 			strategy: () => this.opts.strategy.current,
@@ -296,14 +286,6 @@ class FloatingArrowState {
 	constructor(opts: FloatingArrowStateProps, content: FloatingContentState) {
 		this.opts = opts;
 		this.content = content;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.content.arrowRef.current = node;
-			},
-			deps: () => this.content.opts.enabled.current,
-		});
 	}
 
 	props = $derived.by(
@@ -312,6 +294,7 @@ class FloatingArrowState {
 				id: this.opts.id.current,
 				style: this.content.arrowStyle,
 				"data-side": this.content.placedSide,
+				...attachRef(this.content.arrowRef),
 			}) as const
 	);
 }
@@ -319,12 +302,12 @@ class FloatingArrowState {
 type FloatingAnchorStateProps = ReadableBoxedValues<{
 	id: string;
 	virtualEl?: Measurable | null;
+	ref: Measurable | HTMLElement | null;
 }>;
 
 class FloatingAnchorState {
 	readonly opts: FloatingAnchorStateProps;
 	readonly root: FloatingRootState;
-	ref = box<HTMLElement | null>(null);
 
 	constructor(opts: FloatingAnchorStateProps, root: FloatingRootState) {
 		this.opts = opts;
@@ -333,13 +316,7 @@ class FloatingAnchorState {
 		if (opts.virtualEl && opts.virtualEl.current) {
 			root.triggerNode = box.from(opts.virtualEl.current);
 		} else {
-			useRefById({
-				id: opts.id,
-				ref: this.ref,
-				onRefChange: (node) => {
-					root.triggerNode.current = node;
-				},
-			});
+			root.triggerNode = opts.ref;
 		}
 	}
 }

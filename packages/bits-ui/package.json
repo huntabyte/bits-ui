@@ -27,8 +27,8 @@
 		"!dist/**/*.spec.*"
 	],
 	"devDependencies": {
-		"@sveltejs/kit": "^2.16.1",
-		"@sveltejs/package": "^2.3.9",
+		"@sveltejs/kit": "^2.21.1",
+		"@sveltejs/package": "^2.3.11",
 		"@sveltejs/vite-plugin-svelte": "4.0.0",
 		"@types/css.escape": "^1.5.2",
 		"@types/node": "^20.17.6",
@@ -54,7 +54,7 @@
 		"css.escape": "^1.5.1",
 		"esm-env": "^1.1.2",
 		"runed": "^0.28.0",
-		"svelte-toolbelt": "^0.8.1",
+		"svelte-toolbelt": "^0.8.2",
 		"tabbable": "^6.2.0"
 	},
 	"peerDependencies": {

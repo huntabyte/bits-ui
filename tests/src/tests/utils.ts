@@ -75,7 +75,7 @@ export type queryByTestId = (
 	options?: MatcherOptions | undefined
 ) => HTMLElement | null;
 
-type CustomUserEvents = typeof userEvent & {
+export type CustomUserEvents = typeof userEvent & {
 	pointerDownUp: (target: HTMLElement | null) => Promise<void>;
 };
 

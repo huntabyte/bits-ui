@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { attachRef, box, mergeProps } from "svelte-toolbelt";
 	import type { MenubarTriggerProps } from "../types.js";
 	import { useMenubarTrigger } from "../menubar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -26,12 +26,18 @@
 		),
 	});
 
-	useMenuDropdownTrigger(triggerState.opts);
+	const dropdownTriggerState = useMenuDropdownTrigger(triggerState.opts);
 
-	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, triggerState.props, {
+			...attachRef(
+				(v: HTMLElement | null) => (dropdownTriggerState.parentMenu.triggerNode = v)
+			),
+		})
+	);
 </script>
 
-<FloatingLayerAnchor {id}>
+<FloatingLayerAnchor {id} ref={triggerState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
