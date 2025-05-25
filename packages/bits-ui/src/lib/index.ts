@@ -33,6 +33,7 @@ export {
 	Slider,
 	Switch,
 	Tabs,
+	TimeField,
 	Toggle,
 	ToggleGroup,
 	Toolbar,

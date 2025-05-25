@@ -17,7 +17,7 @@ import {
 	ALL_SEGMENT_PARTS,
 	DATE_SEGMENT_PARTS,
 	EDITABLE_SEGMENT_PARTS,
-	TIME_SEGMENT_PARTS,
+	EDITABLE_TIME_SEGMENT_PARTS,
 } from "./parts.js";
 import { getSegments } from "./segments.js";
 import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
@@ -350,7 +350,7 @@ export function isDateAndTimeSegmentObj(obj: unknown): obj is DateAndTimeSegment
 	}
 	return Object.entries(obj).every(([key, value]) => {
 		const validKey =
-			TIME_SEGMENT_PARTS.includes(key as TimeSegmentPart) ||
+			EDITABLE_TIME_SEGMENT_PARTS.includes(key as TimeSegmentPart) ||
 			DATE_SEGMENT_PARTS.includes(key as DateSegmentPart);
 
 		const validValue =

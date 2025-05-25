@@ -34,7 +34,7 @@ import type {
 	SegmentPart,
 	SegmentValueObj,
 	TimeSegmentObj,
-	TimeSegmentPart,
+	EditableTimeSegmentPart,
 } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
@@ -52,7 +52,10 @@ import {
 	removeDescriptionElement,
 	setDescription,
 } from "$lib/internal/date-time/field/helpers.js";
-import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/internal/date-time/field/parts.js";
+import {
+	DATE_SEGMENT_PARTS,
+	EDITABLE_TIME_SEGMENT_PARTS,
+} from "$lib/internal/date-time/field/parts.js";
 import { getDaysInMonth, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import {
 	getFirstSegment,
@@ -397,7 +400,7 @@ export class DateFieldRootState {
 			return [part, `${partValue}`];
 		});
 		if ("hour" in value) {
-			const timeValues = TIME_SEGMENT_PARTS.map((part) => {
+			const timeValues = EDITABLE_TIME_SEGMENT_PARTS.map((part) => {
 				if (part === "dayPeriod") {
 					if (this.states.dayPeriod.updating) {
 						return [part, this.states.dayPeriod.updating];
@@ -529,7 +532,7 @@ export class DateFieldRootState {
 		part: T,
 		cb: T extends DateSegmentPart
 			? Updater<DateSegmentObj[T]>
-			: T extends TimeSegmentPart
+			: T extends EditableTimeSegmentPart
 				? Updater<TimeSegmentObj[T]>
 				: Updater<DateAndTimeSegmentObj[T]>
 	) {
@@ -1366,7 +1369,7 @@ class DateFieldDayPeriodSegmentState {
 
 		const valueMin = 0;
 		const valueMax = 12;
-		const valueNow = segmentValues.dayPeriod ?? 0;
+		const valueNow = segmentValues.dayPeriod === "AM" ? 0 : 12;
 		const valueText = segmentValues.dayPeriod ?? "AM";
 
 		return {

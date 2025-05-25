@@ -67,6 +67,7 @@ export { default as SliderDemoTicks } from "./slider-demo-ticks.svelte";
 export { default as SwitchDemo } from "./switch-demo.svelte";
 export { default as SwitchDemoCustom } from "./switch-demo-custom.svelte";
 export { default as TabsDemo } from "./tabs-demo.svelte";
+export { default as TimeFieldDemo } from "./time-field-demo.svelte";
 export { default as ToggleDemo } from "./toggle-demo.svelte";
 export { default as ToggleGroupDemo } from "./toggle-group-demo.svelte";
 export { default as ToolbarDemo } from "./toolbar-demo.svelte";
