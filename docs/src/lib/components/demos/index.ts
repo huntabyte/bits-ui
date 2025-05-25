@@ -78,3 +78,4 @@ export { default as TooltipDemoDelayDuration } from "./tooltip-demo-delay-durati
 export { default as TooltipDemoTransition } from "./tooltip-demo-transition.svelte";
 export { default as TooltipDemoGroup } from "./tooltip-demo-group.svelte";
 export { default as DateFieldDemoCustom } from "./date-field-demo-custom.svelte";
+export { default as TimeFieldDemoCustom } from "./time-field-demo-custom.svelte";

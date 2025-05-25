@@ -2,7 +2,7 @@
 	import { DateField } from "bits-ui";
 </script>
 
-<DateField.Root>
+<DateField.Root granularity="second" locale="de">
 	<div class="flex w-full max-w-[280px] flex-col gap-1.5">
 		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>
 		<DateField.Input

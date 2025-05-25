@@ -887,6 +887,15 @@ it("should respect readonlySegments prop", async () => {
 	expect(t.getSecond()).toHaveTextContent("01");
 });
 
+it("should default to a 24 hour clock for locales that use it", async () => {
+	const t = setup({
+		locale: "en-UK",
+		value: new Time(13, 30, 0),
+	});
+
+	expect(t.getHour()).toHaveTextContent("13");
+});
+
 function thisTimeZone(date: string): string {
 	const timezone =
 		Intl.DateTimeFormat(undefined, { timeZoneName: "short" })

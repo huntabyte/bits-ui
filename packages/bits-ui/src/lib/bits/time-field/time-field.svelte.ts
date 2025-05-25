@@ -56,7 +56,11 @@ import {
 	moveToNextTimeSegment,
 	moveToPrevTimeSegment,
 } from "$lib/internal/date-time/field/segments.js";
-import { isAcceptableSegmentKey } from "$lib/internal/date-time/field/helpers.js";
+import {
+	getDefaultHourCycle,
+	isAcceptableSegmentKey,
+} from "$lib/internal/date-time/field/helpers.js";
+import { getDefaultAutoSelectFamily } from "net";
 
 export const TIME_FIELD_INPUT_ATTR = "data-time-field-input";
 const TIME_FIELD_LABEL_ATTR = "data-time-field-label";
@@ -147,6 +151,10 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	valueTime = $derived.by(() => {
 		if (!this.opts.value.current) return undefined;
 		return convertTimeValueToTime(this.opts.value.current);
+	});
+	hourCycle = $derived.by(() => {
+		if (this.opts.hourCycle.current) return this.opts.hourCycle.current;
+		return getDefaultHourCycle(this.opts.locale.current);
 	});
 
 	constructor(opts: TimeFieldRootStateProps<T>) {
