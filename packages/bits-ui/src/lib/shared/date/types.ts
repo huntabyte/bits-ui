@@ -32,6 +32,11 @@ export type DateRangeValidator = (range: {
 	end: DateValue;
 }) => string[] | string | void;
 
+export type TimeRangeValidator<T extends TimeValue = Time> = (range: {
+	start: T;
+	end: T;
+}) => string[] | string | void;
+
 /**
  * A callback fired when the date field's value is invalid. Use this to display an error
  * message to the user.
@@ -47,6 +52,11 @@ export type TimeOnInvalid = (reason: "min" | "max" | "custom", msg?: string | st
 export type DateRange = {
 	start: DateValue | undefined;
 	end: DateValue | undefined;
+};
+
+export type TimeRange<T extends TimeValue = Time> = {
+	start: T | undefined;
+	end: T | undefined;
 };
 
 export type Month<T> = {
