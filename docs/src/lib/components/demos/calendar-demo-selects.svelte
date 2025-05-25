@@ -41,7 +41,7 @@
 					placeholder = placeholder.set({ month });
 				}}
 			>
-				{#each monthList as month}
+				{#each monthList as month, i (month.label + i)}
 					<option value={month.value}>{month.label}</option>
 				{/each}
 			</select>
@@ -53,7 +53,7 @@
 					placeholder = placeholder.set({ year });
 				}}
 			>
-				{#each yearList as year}
+				{#each yearList as year, i (year + i)}
 					<option value={year}>{year}</option>
 				{/each}
 			</select>
@@ -63,7 +63,7 @@
 				<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 					<Calendar.GridHead>
 						<Calendar.GridRow class="mb-1 flex w-full justify-between">
-							{#each weekdays as day}
+							{#each weekdays as day, i (i)}
 								<Calendar.HeadCell
 									class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
 								>
@@ -73,9 +73,9 @@
 						</Calendar.GridRow>
 					</Calendar.GridHead>
 					<Calendar.GridBody>
-						{#each month.weeks as weekDates}
+						{#each month.weeks as weekDates, i (i)}
 							<Calendar.GridRow class="flex w-full">
-								{#each weekDates as date}
+								{#each weekDates as date, i (i)}
 									<Calendar.Cell
 										{date}
 										month={month.value}
