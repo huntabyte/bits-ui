@@ -60,12 +60,10 @@ import {
 	getDefaultHourCycle,
 	isAcceptableSegmentKey,
 } from "$lib/internal/date-time/field/helpers.js";
-import { getDefaultAutoSelectFamily } from "net";
 
 export const TIME_FIELD_INPUT_ATTR = "data-time-field-input";
 const TIME_FIELD_LABEL_ATTR = "data-time-field-label";
 
-// Segment configuration for time segments
 type SegmentConfig = {
 	min: number | ((root: TimeFieldRootState) => number);
 	max: number | ((root: TimeFieldRootState) => number);
@@ -76,9 +74,9 @@ type SegmentConfig = {
 
 const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 	hour: {
-		min: (root) => (root.opts.hourCycle.current === 12 ? 1 : 0),
+		min: (root) => (root.hourCycle === 12 ? 1 : 0),
 		max: (root) => {
-			if (root.opts.hourCycle.current === 24) return 23;
+			if (root.hourCycle === 24) return 23;
 			if ("dayPeriod" in root.segmentValues && root.segmentValues.dayPeriod !== null)
 				return 12;
 			return 23;
@@ -251,7 +249,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			segments.second = null;
 		}
 
-		if (this.opts.hourCycle.current === 12) {
+		if (this.hourCycle === 12) {
 			segments.dayPeriod = null;
 		}
 
@@ -453,7 +451,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			if (next !== null && prev.dayPeriod !== null) {
 				const dayPeriod = this.formatter.dayPeriod(
 					toDate(this.#toDateValue(this.timeRef.set({ hour: Number.parseInt(next) }))),
-					this.opts.hourCycle.current
+					this.hourCycle
 				);
 				if (dayPeriod === "AM" || dayPeriod === "PM") {
 					prev.dayPeriod = dayPeriod;
@@ -786,7 +784,7 @@ abstract class BaseTimeSegmentState {
 					return `0${num}`;
 				}
 
-				if (this.part === "hour" && num === 0 && this.root.opts.hourCycle.current === 24) {
+				if (this.part === "hour" && num === 0 && this.root.hourCycle === 24) {
 					moveToNext = true;
 					this.root.states[stateKey].lastKeyZero = false;
 					return `00`;
@@ -936,7 +934,7 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 					if (
 						hourValue === "0" &&
 						this.root.dayPeriodNode &&
-						this.root.opts.hourCycle.current !== 24
+						this.root.hourCycle !== 24
 					) {
 						this.root.segmentValues.hour = "12";
 					}

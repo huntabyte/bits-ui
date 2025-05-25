@@ -141,8 +141,6 @@ If we're collecting a time from the user where we want the timezone to be displa
 	<TimeFieldDemoCustom placeholder={now("America/New_York")} />
 </DemoContainer>
 
-<APISection {schemas} />
-
 ## Managing Placeholder State
 
 This section covers how to manage the `placeholder` state of the Time Field.
@@ -391,9 +389,13 @@ You can use the `locale` prop to set the locale of the date field. This will aff
 	import MyTimeField from "$lib/components/MyTimeField.svelte";
 </script>
 
-<MyTimeField locale="de" />
+<MyTimeField locale="de" value={new Time(13, 30, 0)} />
 ```
 
 <DemoContainer size="xs" wrapperClass="rounded-bl-card rounded-br-card">
-	<TimeFieldDemoCustom locale="en-UK" />
+	<TimeFieldDemoCustom locale="de" value={new Time(13, 30, 0)} />
 </DemoContainer>
+
+Notice how in the example above, the hour is displayed as `13` (in 24-hour format) and the day period is not displayed, since the locale is set to `de` (German).
+
+<APISection {schemas} />
