@@ -328,8 +328,21 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		this.#fieldNode = node;
 	}
 
+	/**
+	 * Gets the correct field node for the time field regardless of whether it's being
+	 * used in a standalone context or within a `TimeRangeField` component.
+	 */
 	getFieldNode() {
-		return this.#fieldNode;
+		/** If we're not within a TimeRangeField, we return this field. */
+		if (!this.rangeRoot) {
+			return this.#fieldNode;
+		} else {
+			/**
+			 * Otherwise, we return the rangeRoot's field node which
+			 * contains both start and end fields.
+			 */
+			return this.rangeRoot.fieldNode;
+		}
 	}
 
 	setLabelNode(node: HTMLElement | null) {

@@ -23,14 +23,6 @@ export type SegmentPart =
 	| "timeZoneName"
 	| "literal";
 
-export type TimeSegmentPart =
-	| "hour"
-	| "minute"
-	| "second"
-	| "dayPeriod"
-	| "timeZoneName"
-	| "literal";
-
 export type FocusTarget = string | HTMLElement | SVGElement | null;
 export type FocusProp = FocusTarget | ((defaultEl?: HTMLElement | null) => FocusTarget);
 
@@ -63,6 +55,11 @@ export type {
 	DateValidator,
 	DateRange,
 	TimeValue,
+	TimeSegmentPart,
+	TimeRange,
+	TimeValidator,
+	TimeRangeValidator,
+	TimeOnInvalid,
 } from "./date/types.js";
 export type { WithChild, Without, WithChildren } from "$lib/internal/types.js";
 export { mergeProps } from "svelte-toolbelt";

@@ -16,10 +16,10 @@
 	<div
 		class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover flex w-full select-none items-center border px-2 py-3 text-sm tracking-[0.01em]"
 	>
-		{#each ["start", "end"] as const as type}
+		{#each ["start", "end"] as const as type (type)}
 			<DateRangePicker.Input {type}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }}
+					{#each segments as { part, value }, i (part + i)}
 						<div class="inline-block select-none">
 							{#if part === "literal"}
 								<DateRangePicker.Segment {part} class="text-muted-foreground p-1">
@@ -67,11 +67,11 @@
 					</DateRangePicker.NextButton>
 				</DateRangePicker.Header>
 				<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-					{#each months as month}
+					{#each months as month (month.value)}
 						<DateRangePicker.Grid class="w-full border-collapse select-none space-y-1">
 							<DateRangePicker.GridHead>
 								<DateRangePicker.GridRow class="mb-1 flex w-full justify-between">
-									{#each weekdays as day}
+									{#each weekdays as day (day)}
 										<DateRangePicker.HeadCell
 											class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
 										>
@@ -81,9 +81,9 @@
 								</DateRangePicker.GridRow>
 							</DateRangePicker.GridHead>
 							<DateRangePicker.GridBody>
-								{#each month.weeks as weekDates}
+								{#each month.weeks as weekDates (weekDates)}
 									<DateRangePicker.GridRow class="flex w-full">
-										{#each weekDates as date}
+										{#each weekDates as date (date)}
 											<DateRangePicker.Cell
 												{date}
 												month={month.value}
