@@ -2,7 +2,7 @@ import type { Updater } from "svelte/store";
 import { CalendarDateTime, Time, ZonedDateTime } from "@internationalized/date";
 import { onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsFocusEvent,
@@ -203,17 +203,17 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			}
 		});
 
-		$effect(() => {
-			this.validationStatus;
-			untrack(() => {
+		watch(
+			() => this.validationStatus,
+			() => {
 				if (this.validationStatus !== false) {
 					this.opts.onInvalid.current?.(
 						this.validationStatus.reason,
 						this.validationStatus.message
 					);
 				}
-			});
-		});
+			}
+		);
 	}
 
 	#initializeTimeSegmentValues(): TimeSegmentObj {
