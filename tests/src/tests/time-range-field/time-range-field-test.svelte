@@ -33,7 +33,7 @@
 			{@const inputProps = type === "start" ? startProps : endProps}
 			<TimeRangeField.Input data-testid="{type}-input" {type} {...inputProps}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }, i (part + i)}
+					{#each segments as { part, value }, i (i)}
 						<TimeRangeField.Segment
 							{part}
 							data-testid={part === "literal" ? undefined : `${type}-${part}`}

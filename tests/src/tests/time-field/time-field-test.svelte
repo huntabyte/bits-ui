@@ -25,7 +25,7 @@
 			<TimeField.Label data-testid="label">Label</TimeField.Label>
 			<TimeField.Input data-testid="input" {name}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }, i (part + value + i)}
+					{#each segments as { part, value }, i (i)}
 						<TimeField.Segment
 							{part}
 							data-testid={part === "literal" ? undefined : part}

@@ -109,7 +109,7 @@
 	</Calendar.Root>
 	<Separator.Root class="bg-dark-10 h-px w-full" />
 	<div class="flex w-full flex-row flex-wrap items-center gap-2">
-		{#each presets as preset, i (preset.label + i)}
+		{#each presets as preset (preset.label)}
 			<Button.Root
 				class="border-dark-10 text-foreground shadow-mini hover:bg-foreground/5 inline-flex h-8 flex-1 select-none items-center justify-center whitespace-nowrap rounded-md border px-[17px] text-xs font-medium transition-all active:scale-[0.98]"
 				onclick={preset.onclick}

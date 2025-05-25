@@ -41,7 +41,7 @@
 					placeholder = placeholder.set({ month });
 				}}
 			>
-				{#each monthList as month, i (month.label + i)}
+				{#each monthList as month (month.value)}
 					<option value={month.value}>{month.label}</option>
 				{/each}
 			</select>
@@ -53,7 +53,7 @@
 					placeholder = placeholder.set({ year });
 				}}
 			>
-				{#each yearList as year, i (year + i)}
+				{#each yearList as year (year)}
 					<option value={year}>{year}</option>
 				{/each}
 			</select>

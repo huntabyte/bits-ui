@@ -32,7 +32,7 @@
 				<Calendar.NextButton data-testid="next-button">Next</Calendar.NextButton>
 			</Calendar.Header>
 			<div>
-				{#each months as month (month.value.month)}
+				{#each months as month, i (i)}
 					{@const m = month.value.month}
 					<Calendar.Grid data-testid="grid-{m}">
 						<Calendar.GridHead data-testid="grid-head-{m}">

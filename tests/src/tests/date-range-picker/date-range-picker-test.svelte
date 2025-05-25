@@ -41,7 +41,7 @@
 			{@const inputProps = type === "start" ? startProps : endProps}
 			<DateRangePicker.Input {type} data-testid="{type}-input" {...inputProps}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }, i (part + value + i)}
+					{#each segments as { part, value }, i (i)}
 						<DateRangePicker.Segment
 							{part}
 							data-testid={part === "literal" ? undefined : `${type}-${part}`}
@@ -67,12 +67,12 @@
 						>
 					</DateRangePicker.Header>
 					<div>
-						{#each months as month (month.value.month)}
+						{#each months as month, i (i)}
 							{@const m = month.value.month}
 							<DateRangePicker.Grid data-testid="grid-{m}">
 								<DateRangePicker.GridHead data-testid="grid-head-{m}">
 									<DateRangePicker.GridRow data-testid="grid-row-{m}">
-										{#each weekdays as day, i (day + i)}
+										{#each weekdays as day, i (i)}
 											<DateRangePicker.HeadCell data-testid="weekday-{m}-{i}">
 												{day}
 											</DateRangePicker.HeadCell>

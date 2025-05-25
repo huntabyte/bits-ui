@@ -29,12 +29,12 @@
 				<Calendar.NextButton data-testid="next-button">Next</Calendar.NextButton>
 			</Calendar.Header>
 			<div>
-				{#each months as month (month.value.month)}
+				{#each months as month, i (i)}
 					{@const m = month.value.month}
 					<Calendar.Grid data-testid="grid-{m}">
 						<Calendar.GridHead data-testid="grid-head-{m}">
 							<Calendar.GridRow data-testid="grid-row-{m}">
-								{#each weekdays as day, i (day)}
+								{#each weekdays as day, i (i)}
 									<Calendar.HeadCell data-testid="weekday-{m}-{i}">
 										{day}
 									</Calendar.HeadCell>

@@ -26,7 +26,7 @@
 			{@const inputProps = type === "start" ? startProps : endProps}
 			<DateRangeField.Input data-testid="{type}-input" {type} {...inputProps}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }, i (part + value + i)}
+					{#each segments as { part, value }, i (i)}
 						<DateRangeField.Segment
 							{part}
 							data-testid={part === "literal" ? undefined : `${type}-${part}`}
