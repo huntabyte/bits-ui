@@ -70,7 +70,7 @@
 
 {#if Array.isArray(rootState.opts.value.current)}
 	{#if rootState.opts.value.current.length}
-		{#each rootState.opts.value.current as item}
+		{#each rootState.opts.value.current as item (item)}
 			<ListboxHiddenInput value={item} />
 		{/each}
 	{/if}

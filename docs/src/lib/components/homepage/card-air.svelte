@@ -56,7 +56,7 @@
 
 		<div class="">
 			<div class="relative my-5 flex justify-between">
-				{#each temps as temp}
+				{#each temps as temp (temp)}
 					<div
 						class="outer relative h-12 w-3 rounded-[35px] bg-[#000231]/10 lg:h-16 lg:w-4"
 					>

@@ -1,11 +1,8 @@
 <script lang="ts">
-	import { CalendarDateTime, toZoned } from "@internationalized/date";
 	import { TimeField } from "bits-ui";
-	const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
-	const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 </script>
 
-<TimeField.Root granularity="second" value={zonedDateTime}>
+<TimeField.Root>
 	<div class="flex w-full max-w-[280px] flex-col gap-1.5">
 		<TimeField.Label class="block select-none text-sm font-medium"
 			>Appointment Time</TimeField.Label
@@ -15,7 +12,7 @@
 			class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover data-invalid:border-destructive flex w-full select-none items-center border px-2 py-3 text-sm tracking-[0.01em] "
 		>
 			{#snippet children({ segments })}
-				{#each segments as { part, value }}
+				{#each segments as { part, value }, i (part + i)}
 					<div class="inline-block select-none">
 						{#if part === "literal"}
 							<TimeField.Segment {part} class="text-muted-foreground p-1">

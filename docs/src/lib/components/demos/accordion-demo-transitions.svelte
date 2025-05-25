@@ -24,7 +24,7 @@
 </script>
 
 <Accordion.Root class="w-full sm:max-w-[70%]" type="multiple" bind:value>
-	{#each items as item, i}
+	{#each items as item, i (item.title)}
 		<Accordion.Item value={`${i}`} class="border-dark-10 group border-b px-1.5">
 			<Accordion.Header>
 				<Accordion.Trigger

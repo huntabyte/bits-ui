@@ -896,6 +896,26 @@ it("should default to a 24 hour clock for locales that use it", async () => {
 	expect(t.getHour()).toHaveTextContent("13");
 });
 
+it("should allow changing the day period even if no value is populated yet", async () => {
+	const t = setup();
+
+	expect(t.getDayPeriod()).toHaveTextContent("AM");
+	await t.user.click(t.getDayPeriod());
+
+	await t.user.keyboard(kbd.p);
+	expect(t.getDayPeriod()).toHaveTextContent("PM");
+});
+
+it("should not adjust the hour when the day period is changed", async () => {
+	const t = setup();
+
+	await t.user.click(t.getDayPeriod());
+	await t.user.keyboard(kbd.ARROW_UP);
+	await t.user.keyboard(kbd.ARROW_UP);
+	expect(t.getDayPeriod()).toHaveTextContent("AM");
+	expect(t.getHour()).toHaveTextContent(TIME_PLACEHOLDER);
+});
+
 function thisTimeZone(date: string): string {
 	const timezone =
 		Intl.DateTimeFormat(undefined, { timeZoneName: "short" })

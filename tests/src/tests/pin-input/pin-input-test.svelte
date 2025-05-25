@@ -28,7 +28,7 @@
 	>
 		{#snippet children({ cells, isFocused: _isFocused, isHovering: _isHovering })}
 			<div class="flex">
-				{#each cells.slice(0, 3) as cell, idx}
+				{#each cells.slice(0, 3) as cell, idx (idx)}
 					{@render Cell(cell, idx)}
 				{/each}
 			</div>
@@ -38,7 +38,7 @@
 			</div>
 
 			<div class="flex">
-				{#each cells.slice(3, 6) as cell, idx}
+				{#each cells.slice(3, 6) as cell, idx (idx)}
 					{@render Cell(cell, idx + 3)}
 				{/each}
 			</div>

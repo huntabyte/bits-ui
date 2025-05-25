@@ -37,11 +37,11 @@
 	<button onclick={() => (open = !open)}>toggle open</button>
 	<DateRangePicker.Root bind:value bind:placeholder bind:open {...restProps}>
 		<DateRangePicker.Label data-testid="label">Rental Days</DateRangePicker.Label>
-		{#each ["start", "end"] as const as type}
+		{#each ["start", "end"] as const as type (type)}
 			{@const inputProps = type === "start" ? startProps : endProps}
 			<DateRangePicker.Input {type} data-testid="{type}-input" {...inputProps}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }}
+					{#each segments as { part, value }, i (i)}
 						<DateRangePicker.Segment
 							{part}
 							data-testid={part === "literal" ? undefined : `${type}-${part}`}
@@ -67,12 +67,12 @@
 						>
 					</DateRangePicker.Header>
 					<div>
-						{#each months as month}
+						{#each months as month, i (i)}
 							{@const m = month.value.month}
 							<DateRangePicker.Grid data-testid="grid-{m}">
 								<DateRangePicker.GridHead data-testid="grid-head-{m}">
 									<DateRangePicker.GridRow data-testid="grid-row-{m}">
-										{#each weekdays as day, i}
+										{#each weekdays as day, i (i)}
 											<DateRangePicker.HeadCell data-testid="weekday-{m}-{i}">
 												{day}
 											</DateRangePicker.HeadCell>
@@ -80,12 +80,12 @@
 									</DateRangePicker.GridRow>
 								</DateRangePicker.GridHead>
 								<DateRangePicker.GridBody data-testid="grid-body-{m}">
-									{#each month.weeks as weekDates, i}
+									{#each month.weeks as weekDates, i (i)}
 										<DateRangePicker.GridRow
 											data-testid="grid-row-{m}-{i}"
 											data-week
 										>
-											{#each weekDates as date, d}
+											{#each weekDates as date, d (d)}
 												<DateRangePicker.Cell
 													{date}
 													month={month.value}

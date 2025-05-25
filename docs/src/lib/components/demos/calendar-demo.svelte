@@ -33,7 +33,7 @@
 				<Calendar.Grid class="w-full border-collapse select-none space-y-1">
 					<Calendar.GridHead>
 						<Calendar.GridRow class="mb-1 flex w-full justify-between">
-							{#each weekdays as day}
+							{#each weekdays as day, i (i)}
 								<Calendar.HeadCell
 									class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
 								>
@@ -43,9 +43,9 @@
 						</Calendar.GridRow>
 					</Calendar.GridHead>
 					<Calendar.GridBody>
-						{#each month.weeks as weekDates}
+						{#each month.weeks as weekDates, i (i)}
 							<Calendar.GridRow class="flex w-full">
-								{#each weekDates as date}
+								{#each weekDates as date, i (i)}
 									<Calendar.Cell
 										{date}
 										month={month.value}

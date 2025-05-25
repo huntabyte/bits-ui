@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import { CalendarDateTime, Time, ZonedDateTime } from "@internationalized/date";
-import { onDestroyEffect, attachRef } from "svelte-toolbelt";
+import { onDestroyEffect, attachRef, type WritableBox, box } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -60,6 +60,7 @@ import {
 	getDefaultHourCycle,
 	isAcceptableSegmentKey,
 } from "$lib/internal/date-time/field/helpers.js";
+import type { TimeRangeFieldRootState } from "../time-range-field/time-range-field.svelte.js";
 
 export const TIME_FIELD_INPUT_ATTR = "data-time-field-input";
 const TIME_FIELD_LABEL_ATTR = "data-time-field-label";
@@ -123,13 +124,28 @@ export type TimeFieldRootStateProps<T extends TimeValue = Time> = WritableBoxedV
 	}>;
 
 export class TimeFieldRootState<T extends TimeValue = Time> {
-	readonly opts: TimeFieldRootStateProps<T>;
+	value: TimeFieldRootStateProps<T>["value"];
+	placeholder: WritableBox<TimeValue>;
+	validate: TimeFieldRootStateProps<T>["validate"];
+	minValue: TimeFieldRootStateProps<T>["minValue"];
+	maxValue: TimeFieldRootStateProps<T>["maxValue"];
+	disabled: TimeFieldRootStateProps<T>["disabled"];
+	readonly: TimeFieldRootStateProps<T>["readonly"];
+	granularity: TimeFieldRootStateProps<T>["granularity"];
+	readonlySegments: TimeFieldRootStateProps<T>["readonlySegments"];
+	hourCycleProp: TimeFieldRootStateProps<T>["hourCycle"];
+	locale: TimeFieldRootStateProps<T>["locale"];
+	hideTimeZone: TimeFieldRootStateProps<T>["hideTimeZone"];
+	required: TimeFieldRootStateProps<T>["required"];
+	onInvalid: TimeFieldRootStateProps<T>["onInvalid"];
+	errorMessageId: TimeFieldRootStateProps<T>["errorMessageId"];
+	isInvalidProp: TimeFieldRootStateProps<T>["isInvalidProp"];
 	descriptionId = useId();
 	formatter: TimeFormatter;
 	initialSegments: TimeSegmentObj;
 	segmentValues = $state() as TimeSegmentObj;
 	announcer: Announcer;
-	readonlySegmentsSet = $derived.by(() => new Set(this.opts.readonlySegments.current));
+	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.current));
 	segmentStates = initTimeSegmentStates();
 	#fieldNode = $state<HTMLElement | null>(null);
 	#labelNode = $state<HTMLElement | null>(null);
@@ -139,25 +155,49 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	name = $state("");
 	maxValueTime = $derived.by(() => {
-		if (!this.opts.maxValue.current) return undefined;
-		return convertTimeValueToTime(this.opts.maxValue.current);
+		if (!this.maxValue.current) return undefined;
+		return convertTimeValueToTime(this.maxValue.current);
 	});
 	minValueTime = $derived.by(() => {
-		if (!this.opts.minValue.current) return undefined;
-		return convertTimeValueToTime(this.opts.minValue.current);
+		if (!this.minValue.current) return undefined;
+		return convertTimeValueToTime(this.minValue.current);
 	});
 	valueTime = $derived.by(() => {
-		if (!this.opts.value.current) return undefined;
-		return convertTimeValueToTime(this.opts.value.current);
+		if (!this.value.current) return undefined;
+		return convertTimeValueToTime(this.value.current);
 	});
 	hourCycle = $derived.by(() => {
-		if (this.opts.hourCycle.current) return this.opts.hourCycle.current;
-		return getDefaultHourCycle(this.opts.locale.current);
+		if (this.hourCycleProp.current) return this.hourCycleProp.current;
+		return getDefaultHourCycle(this.locale.current);
 	});
+	rangeRoot: TimeRangeFieldRootState<T> | undefined = undefined;
 
-	constructor(opts: TimeFieldRootStateProps<T>) {
-		this.opts = opts;
-		this.formatter = createTimeFormatter(this.opts.locale.current);
+	constructor(props: TimeFieldRootStateProps<T>, rangeRoot?: TimeRangeFieldRootState<T>) {
+		this.rangeRoot = rangeRoot;
+		/**
+		 * Since the `TimeFieldRootState` can be used in two contexts, as a standalone
+		 * field or as a field within a `TimeRangeField` component, we handle assigning
+		 * the props based on that context.
+		 */
+		this.value = props.value;
+		this.placeholder = rangeRoot ? rangeRoot.opts.placeholder : props.placeholder;
+		this.validate = rangeRoot ? box(undefined) : props.validate;
+		this.minValue = rangeRoot ? rangeRoot.opts.minValue : props.minValue;
+		this.maxValue = rangeRoot ? rangeRoot.opts.maxValue : props.maxValue;
+		this.disabled = rangeRoot ? rangeRoot.opts.disabled : props.disabled;
+		this.readonly = rangeRoot ? rangeRoot.opts.readonly : props.readonly;
+		this.granularity = rangeRoot ? rangeRoot.opts.granularity : props.granularity;
+		this.readonlySegments = rangeRoot
+			? rangeRoot.opts.readonlySegments
+			: props.readonlySegments;
+		this.hourCycleProp = rangeRoot ? rangeRoot.opts.hourCycle : props.hourCycle;
+		this.locale = rangeRoot ? rangeRoot.opts.locale : props.locale;
+		this.hideTimeZone = rangeRoot ? rangeRoot.opts.hideTimeZone : props.hideTimeZone;
+		this.required = rangeRoot ? rangeRoot.opts.required : props.required;
+		this.onInvalid = rangeRoot ? rangeRoot.opts.onInvalid : props.onInvalid;
+		this.errorMessageId = rangeRoot ? rangeRoot.opts.errorMessageId : props.errorMessageId;
+		this.isInvalidProp = props.isInvalidProp;
+		this.formatter = createTimeFormatter(this.locale.current);
 		this.initialSegments = this.#initializeTimeSegmentValues();
 		this.segmentValues = this.initialSegments;
 		this.announcer = getAnnouncer();
@@ -182,43 +222,43 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		});
 
 		$effect(() => {
-			if (this.formatter.getLocale() === this.opts.locale.current) return;
-			this.formatter.setLocale(this.opts.locale.current);
+			if (this.formatter.getLocale() === this.locale.current) return;
+			this.formatter.setLocale(this.locale.current);
 		});
 
 		$effect(() => {
-			if (this.opts.value.current) {
+			if (this.value.current) {
 				const descriptionId = untrack(() => this.descriptionId);
 				setTimeDescription(
 					descriptionId,
 					this.formatter,
-					this.#toDateValue(this.opts.value.current)
+					this.#toDateValue(this.value.current)
 				);
 			}
-			const placeholder = untrack(() => this.opts.placeholder.current);
-			if (this.opts.value.current && placeholder !== this.opts.value.current) {
+			const placeholder = untrack(() => this.placeholder.current);
+			if (this.value.current && placeholder !== this.value.current) {
 				untrack(() => {
-					if (this.opts.value.current) {
-						this.opts.placeholder.current = this.opts.value.current;
+					if (this.value.current) {
+						this.placeholder.current = this.value.current;
 					}
 				});
 			}
 		});
 
-		if (this.opts.value.current) {
-			this.syncSegmentValues(this.opts.value.current);
+		if (this.value.current) {
+			this.syncSegmentValues(this.value.current);
 		}
 
 		$effect(() => {
-			this.opts.locale.current;
-			if (this.opts.value.current) {
-				this.syncSegmentValues(this.opts.value.current);
+			this.locale.current;
+			if (this.value.current) {
+				this.syncSegmentValues(this.value.current);
 			}
 			this.#clearUpdating();
 		});
 
 		$effect(() => {
-			if (this.opts.value.current === undefined) {
+			if (this.value.current === undefined) {
 				this.segmentValues = this.#initializeTimeSegmentValues();
 			}
 		});
@@ -227,7 +267,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			() => this.validationStatus,
 			() => {
 				if (this.validationStatus !== false) {
-					this.opts.onInvalid.current?.(
+					this.onInvalid.current?.(
 						this.validationStatus.reason,
 						this.validationStatus.message
 					);
@@ -249,7 +289,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			segments.second = null;
 		}
 
-		if (this.hourCycle === 12) {
+		if (this.hourCycle === 24) {
 			segments.dayPeriod = null;
 		}
 
@@ -288,8 +328,21 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		this.#fieldNode = node;
 	}
 
+	/**
+	 * Gets the correct field node for the time field regardless of whether it's being
+	 * used in a standalone context or within a `TimeRangeField` component.
+	 */
 	getFieldNode() {
-		return this.#fieldNode;
+		/** If we're not within a TimeRangeField, we return this field. */
+		if (!this.rangeRoot) {
+			return this.#fieldNode;
+		} else {
+			/**
+			 * Otherwise, we return the rangeRoot's field node which
+			 * contains both start and end fields.
+			 */
+			return this.rangeRoot.fieldNode;
+		}
 	}
 
 	setLabelNode(node: HTMLElement | null) {
@@ -301,7 +354,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	}
 
 	setValue(value: T | undefined) {
-		this.opts.value.current = value;
+		this.value.current = value;
 	}
 
 	syncSegmentValues(value: TimeValue) {
@@ -349,10 +402,10 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	}
 
 	validationStatus = $derived.by(() => {
-		const value = this.opts.value.current;
+		const value = this.value.current;
 		if (!value) return false as const;
 
-		const msg = this.opts.validate.current?.(value);
+		const msg = this.validate.current?.(value);
 		if (msg) {
 			return {
 				reason: "custom",
@@ -378,24 +431,24 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 
 	isInvalid = $derived.by(() => {
 		if (this.validationStatus === false) return false;
-		if (this.opts.isInvalidProp.current) return true;
+		if (this.isInvalidProp.current) return true;
 		return true;
 	});
 
 	inferredGranularity = $derived.by(() => {
-		return this.opts.granularity.current ?? "minute";
+		return this.granularity.current ?? "minute";
 	});
 
-	timeRef = $derived.by(() => this.opts.value.current ?? this.opts.placeholder.current) as T;
+	timeRef = $derived.by(() => this.value.current ?? this.placeholder.current) as T;
 
 	allSegmentContent = $derived.by(() =>
 		createTimeContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
-			locale: this.opts.locale.current,
+			locale: this.locale.current,
 			granularity: this.inferredGranularity,
 			timeRef: this.timeRef,
-			hideTimeZone: this.opts.hideTimeZone.current,
+			hideTimeZone: this.hideTimeZone.current,
 			hourCycle: this.hourCycle,
 		})
 	);
@@ -420,8 +473,8 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	}
 
 	updateSegment<T extends EditableTimeSegmentPart>(part: T, cb: Updater<TimeSegmentObj[T]>) {
-		const disabled = this.opts.disabled.current;
-		const readonly = this.opts.readonly.current;
+		const disabled = this.disabled.current;
+		const readonly = this.readonly.current;
 		const readonlySegmentsSet = this.readonlySegmentsSet;
 		if (disabled || readonly || readonlySegmentsSet.has(part)) return;
 
@@ -431,7 +484,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		if (part === "dayPeriod") {
 			const next = cb(prev[part]) as TimeSegmentObj["dayPeriod"];
 			this.states.dayPeriod.updating = next;
-			const value = this.opts.value.current;
+			const value = this.value.current;
 			if (value && "hour" in value) {
 				const trueHour = value.hour;
 				if (next === "AM") {
@@ -484,7 +537,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	}
 
 	handleSegmentClick(e: BitsMouseEvent) {
-		if (this.opts.disabled.current) {
+		if (this.disabled.current) {
 			e.preventDefault();
 		}
 	}
@@ -493,11 +546,11 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		const inReadonlySegments = this.readonlySegmentsSet.has(part);
 		const defaultAttrs = {
 			"aria-invalid": getAriaInvalid(this.isInvalid),
-			"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-			"aria-readonly": getAriaReadonly(this.opts.readonly.current || inReadonlySegments),
+			"aria-disabled": getAriaDisabled(this.disabled.current),
+			"aria-readonly": getAriaReadonly(this.readonly.current || inReadonlySegments),
 			"data-invalid": getDataInvalid(this.isInvalid),
-			"data-disabled": getDataDisabled(this.opts.disabled.current),
-			"data-readonly": getDataReadonly(this.opts.readonly.current || inReadonlySegments),
+			"data-disabled": getDataDisabled(this.disabled.current),
+			"data-readonly": getDataReadonly(this.readonly.current || inReadonlySegments),
 			"data-segment": `${part}`,
 		};
 
@@ -505,16 +558,16 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 
 		const descriptionId = this.descriptionNode?.id;
 		const hasDescription = isFirstTimeSegment(segmentId, this.#fieldNode) && descriptionId;
-		const errorMsgId = this.opts.errorMessageId?.current;
+		const errorMsgId = this.errorMessageId?.current;
 
 		const describedBy = hasDescription
 			? `${descriptionId} ${this.isInvalid && errorMsgId ? errorMsgId : ""}`
 			: undefined;
 
 		const contenteditable = !(
-			this.opts.readonly.current ||
+			this.readonly.current ||
 			inReadonlySegments ||
-			this.opts.disabled.current
+			this.disabled.current
 		);
 
 		return {
@@ -522,7 +575,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			"aria-labelledby": this.#getLabelledBy(segmentId),
 			contenteditable: contenteditable ? "true" : undefined,
 			"aria-describedby": describedBy,
-			tabindex: this.opts.disabled.current ? undefined : 0,
+			tabindex: this.disabled.current ? undefined : 0,
 		};
 	}
 }
@@ -560,9 +613,9 @@ export class TimeFieldInputState {
 				role: "group",
 				"aria-labelledby": this.root.getLabelNode()?.id ?? undefined,
 				"aria-describedby": this.#ariaDescribedBy,
-				"aria-disabled": getAriaDisabled(this.root.opts.disabled.current),
+				"aria-disabled": getAriaDisabled(this.root.disabled.current),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[TIME_FIELD_INPUT_ATTR]: "",
 				...attachRef(this.opts.ref, (v) => this.root.setFieldNode(v)),
 			}) as const
@@ -573,7 +626,7 @@ class TimeFieldHiddenInputState {
 	readonly root: TimeFieldRootState;
 	shouldRender = $derived.by(() => this.root.name !== "");
 	isoValue = $derived.by(() =>
-		this.root.opts.value.current ? getISOTimeValue(this.root.opts.value.current) : undefined
+		this.root.value.current ? getISOTimeValue(this.root.value.current) : undefined
 	);
 
 	constructor(root: TimeFieldRootState) {
@@ -585,7 +638,7 @@ class TimeFieldHiddenInputState {
 			({
 				name: this.root.name,
 				value: this.isoValue,
-				required: this.root.opts.required.current,
+				required: this.root.required.current,
 			}) as const
 	);
 }
@@ -603,7 +656,7 @@ class TimeFieldLabelState {
 	}
 
 	onclick(_: BitsMouseEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.disabled.current) return;
 		const firstSegment = getFirstTimeSegment(this.root.getFieldNode());
 		if (!firstSegment) return;
 		firstSegment.focus();
@@ -614,7 +667,7 @@ class TimeFieldLabelState {
 			({
 				id: this.opts.id.current,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[TIME_FIELD_LABEL_ATTR]: "",
 				onclick: this.onclick,
 				...attachRef(this.opts.ref, (v) => this.root.setLabelNode(v)),
@@ -657,8 +710,8 @@ abstract class BaseTimeSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		const placeholder = this.root.opts.value.current ?? this.root.opts.placeholder.current;
-		if (e.ctrlKey || e.metaKey || this.root.opts.disabled.current) return;
+		const placeholder = this.root.value.current ?? this.root.placeholder.current;
+		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
 
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;
@@ -871,7 +924,7 @@ abstract class BaseTimeSegmentState {
 
 	getSegmentProps() {
 		const segmentValues = this.root.segmentValues;
-		const placeholder = this.root.opts.placeholder.current;
+		const placeholder = this.root.placeholder.current;
 		const isEmpty = segmentValues[this.part as keyof TimeSegmentValueObj] === null;
 
 		let value = placeholder;
@@ -977,7 +1030,7 @@ class TimeFieldDayPeriodSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (e.ctrlKey || e.metaKey || this.root.opts.disabled.current) return;
+		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
 
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableDayPeriodKey(e.key)) return;
@@ -1005,7 +1058,7 @@ class TimeFieldDayPeriodSegmentState {
 			});
 		}
 
-		if (e.key === kbd.A || e.key === kbd.P || kbd.a || kbd.p) {
+		if (e.key === kbd.A || e.key === kbd.P || e.key === kbd.a || e.key === kbd.p) {
 			this.root.updateSegment("dayPeriod", () => {
 				const next = e.key === kbd.A || e.key === kbd.a ? "AM" : "PM";
 				this.#announcer.announce(next);
@@ -1079,7 +1132,7 @@ class TimeFieldTimeZoneSegmentState {
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (e.key !== kbd.TAB) e.preventDefault();
-		if (this.root.opts.disabled.current) return;
+		if (this.root.disabled.current) return;
 		if (isSegmentNavigationKey(e.key)) {
 			handleTimeSegmentNavigation(e, this.root.getFieldNode());
 		}
@@ -1128,8 +1181,13 @@ function isBackspace(key: string) {
 
 const TimeFieldRootContext = new Context<TimeFieldRootState>("TimeField.Root");
 
-export function useTimeFieldRoot<T extends TimeValue = Time>(props: TimeFieldRootStateProps<T>) {
-	return TimeFieldRootContext.set(new TimeFieldRootState(props) as unknown as TimeFieldRootState);
+export function useTimeFieldRoot<T extends TimeValue = Time>(
+	props: TimeFieldRootStateProps<T>,
+	rangeRoot?: TimeRangeFieldRootState<T>
+) {
+	return TimeFieldRootContext.set(
+		new TimeFieldRootState(props, rangeRoot) as unknown as TimeFieldRootState
+	);
 }
 
 export function useTimeFieldInput(props: TimeFieldInputStateProps) {

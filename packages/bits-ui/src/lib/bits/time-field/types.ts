@@ -113,14 +113,14 @@ export type TimeFieldRootPropsWithoutHTML<T extends TimeValue = Time> = WithChil
 	 * between multiple time fields with different granularities and they
 	 * will all contain the same value.
 	 *
-	 * @defaultValue 'minute'
+	 * @default 'minute'
 	 */
 	granularity?: TimeGranularity;
 
 	/**
 	 * Whether or not to hide the timeZoneName segment from the time field.
 	 *
-	 * @defaultValue false;
+	 * @default false;
 	 */
 	hideTimeZone?: boolean;
 

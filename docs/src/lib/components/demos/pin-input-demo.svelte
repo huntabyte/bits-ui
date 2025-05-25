@@ -22,7 +22,7 @@
 >
 	{#snippet children({ cells })}
 		<div class="flex">
-			{#each cells.slice(0, 3) as cell}
+			{#each cells.slice(0, 3) as cell, i (i)}
 				{@render Cell(cell)}
 			{/each}
 		</div>
@@ -32,7 +32,7 @@
 		</div>
 
 		<div class="flex">
-			{#each cells.slice(3, 6) as cell}
+			{#each cells.slice(3, 6) as cell, i (i)}
 				{@render Cell(cell)}
 			{/each}
 		</div>

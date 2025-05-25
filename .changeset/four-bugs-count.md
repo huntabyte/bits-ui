@@ -2,4 +2,4 @@
 "bits-ui": minor
 ---
 
-feat: TimeField component
+feat: `TimeField` component

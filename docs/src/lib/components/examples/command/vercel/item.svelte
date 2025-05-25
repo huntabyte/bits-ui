@@ -19,7 +19,7 @@
 	{@render children?.()}
 	{#if shortcut}
 		<div data-command-vercel-shortcuts="">
-			{#each shortcut.split(" ") as key}
+			{#each shortcut.split(" ") as key (key)}
 				<kbd>{key}</kbd>
 			{/each}
 		</div>

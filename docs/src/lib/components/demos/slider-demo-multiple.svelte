@@ -17,7 +17,7 @@
 			>
 				<Slider.Range class="bg-foreground absolute h-full" />
 			</span>
-			{#each thumbs as index}
+			{#each thumbs as index (index)}
 				<Slider.Thumb
 					{index}
 					class={cn(

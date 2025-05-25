@@ -134,7 +134,7 @@ function createTimeContentArr(props: CreateTimeContentArrProps) {
 	const parts = formatter.toParts(timeRef, getOptsByGranularity(granularity, hourCycle));
 	const timeSegmentContentArr = parts
 		.map((part) => {
-			const defaultParts = ["literal", "dayPeriod", "timeZoneName", null];
+			const defaultParts = ["literal", "timeZoneName", null];
 
 			if (defaultParts.includes(part.type) || !isEditableTimeSegmentPart(part.type)) {
 				return {
