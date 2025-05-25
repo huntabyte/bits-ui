@@ -49,3 +49,6 @@ export { default as TimeFieldInputChildrenSnippetProps } from "./time-field-inpu
 export { default as OnTimePlaceholderChangeProp } from "./on-time-placeholder-change-prop.md";
 export { default as TimeSegmentPartProp } from "./time-segment-part-prop.md";
 export { default as TimeGranularityProp } from "./time-granularity-prop.md";
+export { default as TimeOnRangeChangeProp } from "./time-on-range-change-prop.md";
+export { default as TimeRangeProp } from "./time-range-prop.md";
+export { default as OnTimeStartEndValueChangeProp } from "./on-time-start-end-value-change-prop.md";

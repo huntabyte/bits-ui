@@ -34,6 +34,7 @@ export type * from "$lib/bits/slider/types.js";
 export type * from "$lib/bits/switch/types.js";
 export type * from "$lib/bits/tabs/types.js";
 export type * from "$lib/bits/time-field/types.js";
+export type * from "$lib/bits/time-range-field/types.js";
 export type * from "$lib/bits/toggle/types.js";
 export type * from "$lib/bits/toggle-group/types.js";
 export type * from "$lib/bits/toolbar/types.js";

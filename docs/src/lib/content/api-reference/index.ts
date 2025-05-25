@@ -38,6 +38,7 @@ import { menubar } from "./menubar.api.js";
 import { meter } from "./meter.api.js";
 import { timeField } from "./time-field.api.js";
 import type { APISchema } from "$lib/types/index.js";
+import { timeRangeField } from "./time-range-field.api.js";
 
 export const bits = [
 	"accordion",
@@ -75,6 +76,7 @@ export const bits = [
 	"switch",
 	"tabs",
 	"time-field",
+	"time-range-field",
 	"toggle",
 	"toggle-group",
 	"toolbar",
@@ -125,6 +127,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	switch: switchData,
 	tabs,
 	"time-field": timeField,
+	"time-range-field": timeRangeField,
 	toggle,
 	"toggle-group": toggleGroup,
 	toolbar,

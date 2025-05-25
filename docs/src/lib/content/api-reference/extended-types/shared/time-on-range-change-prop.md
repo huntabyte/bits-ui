@@ -1,0 +1,3 @@
+```ts
+(time: TimeRange) => void
+```
