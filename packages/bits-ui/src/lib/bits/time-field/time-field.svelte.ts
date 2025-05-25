@@ -289,7 +289,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			segments.second = null;
 		}
 
-		if (this.hourCycle === 12) {
+		if (this.hourCycle === 24) {
 			segments.dayPeriod = null;
 		}
 
@@ -1058,7 +1058,7 @@ class TimeFieldDayPeriodSegmentState {
 			});
 		}
 
-		if (e.key === kbd.A || e.key === kbd.P || kbd.a || kbd.p) {
+		if (e.key === kbd.A || e.key === kbd.P || e.key === kbd.a || e.key === kbd.p) {
 			this.root.updateSegment("dayPeriod", () => {
 				const next = e.key === kbd.A || e.key === kbd.a ? "AM" : "PM";
 				this.#announcer.announce(next);
