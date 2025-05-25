@@ -1,3 +1,4 @@
+// @ts-check
 import eslint from "@eslint/js";
 import prettier from "eslint-config-prettier";
 import svelte from "eslint-plugin-svelte";
@@ -7,9 +8,9 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
 	eslint.configs.recommended,
 	...tseslint.configs.recommended,
-	...svelte.configs["flat/recommended"],
+	...svelte.configs.recommended,
 	prettier,
-	...svelte.configs["flat/prettier"],
+	...svelte.configs.prettier,
 	{
 		languageOptions: {
 			globals: {
@@ -19,11 +20,15 @@ export default tseslint.config(
 		},
 	},
 	{
-		files: ["**/*.svelte"],
+		files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],
 		languageOptions: {
 			parserOptions: {
+				extraFileExtensions: [".svelte"], // Add support for additional file extensions, such as .svelte
 				parser: tseslint.parser,
 			},
+		},
+		rules: {
+			"svelte/require-each-key": "warn",
 		},
 	},
 	{

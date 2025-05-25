@@ -12,7 +12,8 @@
 		"moduleResolution": "NodeNext",
 		"module": "NodeNext",
 		"verbatimModuleSyntax": true,
-		"allowSyntheticDefaultImports": true
+		"allowSyntheticDefaultImports": true,
+		"noEmit": true
 	},
 	"include": [
 		"./svelte-kit/ambient.d.ts",
