@@ -42,7 +42,7 @@
 	/* Shadows */
 	--shadow-mini: 0px 1px 0px 1px rgba(0, 0, 0, 0.04);
 	--shadow-mini-inset: 0px 1px 0px 0px rgba(0, 0, 0, 0.04) inset;
-	--shadow-popover: 0px 7px 12px 3px var(--dark-10);
+	--shadow-popover: 0px 7px 12px 3px var(--dark-10); 
 	--shadow-kbd: 0px 2px 0px 0px rgba(0, 0, 0, 0.07);
 	--shadow-btn: 0px 1px 0px 1px rgba(0, 0, 0, 0.03);
 	--shadow-card: 0px 2px 0px 1px rgba(0, 0, 0, 0.04);
@@ -142,10 +142,10 @@
 	--animate-exit-to-left: exit-to-left 0.2s ease;
 	--animate-exit-to-right: exit-to-right 0.2s ease;
 
-	--font-sans: "Inter", "sans-serif";
-	--font-mono: "Source Code Pro", "monospace";
-	--font-alt: "Courier", "sans-serif";
-	--font-display: "Cal Sans", "sans-serif";
+	--font-sans: "Inter", sans-serif;
+	--font-mono: "Source Code Pro", monospace;
+	--font-alt: "Courier", sans-serif;
+	--font-display: "Cal Sans", sans-serif;
 
 	@keyframes accordion-down {
 		from {
