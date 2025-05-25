@@ -398,7 +398,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			granularity: this.inferredGranularity,
 			timeRef: this.timeRef,
 			hideTimeZone: this.opts.hideTimeZone.current,
-			hourCycle: this.opts.hourCycle.current,
+			hourCycle: this.hourCycle,
 		})
 	);
 
