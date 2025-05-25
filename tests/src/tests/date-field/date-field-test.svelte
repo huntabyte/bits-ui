@@ -17,7 +17,7 @@
 			<DateField.Label data-testid="label">Label</DateField.Label>
 			<DateField.Input data-testid="input" {name}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }}
+					{#each segments as { part, value }, i (part + value + i)}
 						<DateField.Segment
 							{part}
 							data-testid={part === "literal" ? undefined : part}

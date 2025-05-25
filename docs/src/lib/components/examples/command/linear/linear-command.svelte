@@ -64,13 +64,13 @@
 		<Command.List>
 			<Command.Viewport>
 				<Command.Empty>No results found.</Command.Empty>
-				{#each items as { label, shortcut, icon }}
+				{#each items as { label, shortcut, icon } (label + shortcut)}
 					{@const Icon = icon}
 					<Command.Item value={label}>
 						<Icon />
 						{label}
 						<div data-command-linear-shortcuts="">
-							{#each shortcut as key}
+							{#each shortcut as key (key)}
 								<kbd>{key}</kbd>
 							{/each}
 						</div>

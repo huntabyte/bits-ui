@@ -1,6 +1,5 @@
 <script lang="ts" module>
 	import type { TimeValue } from "$lib/shared/date/types.js";
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	import type { Time } from "@internationalized/date";
 	type T = unknown;
 </script>

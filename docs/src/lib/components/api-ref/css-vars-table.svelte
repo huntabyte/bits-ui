@@ -16,7 +16,7 @@
 	</Table.Header>
 	<Table.Body>
 		{#if cssVars.length}
-			{#each cssVars as attr}
+			{#each cssVars as attr (attr.name)}
 				<Table.Row>
 					<Table.Cell class="align-baseline">
 						<Code class="text-foreground font-semibold">{attr.name}</Code>

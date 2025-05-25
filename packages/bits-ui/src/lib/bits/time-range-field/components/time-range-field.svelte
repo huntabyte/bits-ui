@@ -7,13 +7,11 @@
 
 <script lang="ts" generics="T extends TimeValue = Time">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import type { DateValue } from "@internationalized/date";
 	import { useTimeRangeFieldRoot } from "../time-range-field.svelte.js";
 	import type { TimeRangeFieldRootProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
-	import type { DateRange } from "$lib/shared/index.js";
-	import { getDefaultDate, getDefaultTime } from "$lib/internal/date-time/utils.js";
+	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
 
 	const uid = $props.id();

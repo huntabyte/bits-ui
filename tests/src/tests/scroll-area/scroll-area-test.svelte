@@ -41,7 +41,7 @@
 	data-testid="root"
 >
 	<ScrollArea.Viewport class="h-full w-full" data-testid="viewport">
-		{#each Array(numParagraphs) as _}
+		{#each Array(numParagraphs) as _, i (i)}
 			<p style:text-wrap={wrapText ? "wrap" : "nowrap"}>
 				Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos impedit rem,
 				repellat deserunt ducimus quasi nisi voluptatem cumque aliquid esse ea deleniti

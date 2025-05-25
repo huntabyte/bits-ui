@@ -22,11 +22,11 @@
 	<div data-testid="end-value">{value?.end}</div>
 	<DateRangeField.Root bind:value bind:placeholder {...restProps} data-testid="root">
 		<DateRangeField.Label data-testid="label">Label</DateRangeField.Label>
-		{#each ["start", "end"] as const as type}
+		{#each ["start", "end"] as const as type (type)}
 			{@const inputProps = type === "start" ? startProps : endProps}
 			<DateRangeField.Input data-testid="{type}-input" {type} {...inputProps}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }}
+					{#each segments as { part, value }, i (part + value + i)}
 						<DateRangeField.Segment
 							{part}
 							data-testid={part === "literal" ? undefined : `${type}-${part}`}

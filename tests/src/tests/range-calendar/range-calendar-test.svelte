@@ -27,12 +27,12 @@
 				<RangeCalendar.NextButton data-testid="next-button">Next</RangeCalendar.NextButton>
 			</RangeCalendar.Header>
 			<div>
-				{#each months as month}
+				{#each months as month (month.value.month)}
 					{@const m = month.value.month}
 					<RangeCalendar.Grid data-testid="grid-{m}">
 						<RangeCalendar.GridHead data-testid="grid-head-{m}">
 							<RangeCalendar.GridRow data-testid="grid-row-{m}">
-								{#each weekdays as day, i}
+								{#each weekdays as day, i (day + i)}
 									<RangeCalendar.HeadCell data-testid="weekday-{m}-{i}">
 										{day}
 									</RangeCalendar.HeadCell>
@@ -40,9 +40,9 @@
 							</RangeCalendar.GridRow>
 						</RangeCalendar.GridHead>
 						<RangeCalendar.GridBody data-testid="grid-body-{m}">
-							{#each month.weeks as weekDates, i}
+							{#each month.weeks as weekDates, i (i)}
 								<RangeCalendar.GridRow data-testid="grid-row-{m}-{i}" data-week>
-									{#each weekDates as date, d}
+									{#each weekDates as date, d (d)}
 										<RangeCalendar.Cell
 											{date}
 											month={month.value}

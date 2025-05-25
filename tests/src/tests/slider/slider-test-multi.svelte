@@ -43,7 +43,7 @@
 			<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
 				<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
 			</span>
-			{#each thumbs as thumb}
+			{#each thumbs as thumb, i (thumb + i)}
 				<Slider.Thumb
 					index={thumb}
 					aria-label="age"
@@ -52,7 +52,7 @@
 				/>
 			{/each}
 
-			{#each ticks as tick}
+			{#each ticks as tick, i (tick + i)}
 				<Slider.Tick data-testid="tick" index={tick} />
 			{/each}
 		{/snippet}

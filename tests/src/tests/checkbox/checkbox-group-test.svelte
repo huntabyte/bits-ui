@@ -66,7 +66,7 @@
 			{...restProps}
 		>
 			<Checkbox.GroupLabel data-testid="group-label">My Group</Checkbox.GroupLabel>
-			{#each items as itemValue}
+			{#each items as itemValue (itemValue)}
 				{@render MyCheckbox({ itemValue })}
 			{/each}
 		</Checkbox.Group>

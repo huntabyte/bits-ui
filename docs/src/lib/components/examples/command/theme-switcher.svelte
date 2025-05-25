@@ -82,7 +82,7 @@
 	<span class="arrow" style:left="100px" style:transform="translateX(-24px) translateZ(0px)">
 		←
 	</span>
-	{#each themes as { key, icon }}
+	{#each themes as { key, icon } (key)}
 		{@const isActive = theme === key}
 		{@const Icon = icon}
 		<button data-selected={isActive} onclick={() => handleButtonClick(key)}>
