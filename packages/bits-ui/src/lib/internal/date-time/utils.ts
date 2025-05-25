@@ -2,6 +2,7 @@ import {
 	CalendarDate,
 	CalendarDateTime,
 	type DateValue,
+	Time,
 	ZonedDateTime,
 	getDayOfWeek,
 	getLocalTimeZone,
@@ -10,16 +11,31 @@ import {
 	parseZonedDateTime,
 	toCalendar,
 } from "@internationalized/date";
-import type { DateMatcher, Granularity } from "$lib/shared/date/types.js";
+import type {
+	DateMatcher,
+	Granularity,
+	TimeGranularity,
+	TimeValue,
+} from "$lib/shared/date/types.js";
 
 type GetDefaultDateProps = {
 	defaultValue?: DateValue | DateValue[] | undefined;
 	granularity?: Granularity;
 };
 
+type GetDefaultTimeProps = {
+	defaultValue?: TimeValue | undefined;
+	granularity?: TimeGranularity;
+};
+
 const defaultDateDefaults = {
 	defaultValue: undefined,
 	granularity: "day",
+};
+
+const defaultTimeDefaults = {
+	defaultValue: undefined,
+	granularity: "minute",
 };
 
 /**
@@ -54,6 +70,17 @@ export function getDefaultDate(opts: GetDefaultDateProps): DateValue {
 		}
 
 		return new CalendarDate(year, month, day);
+	}
+}
+
+export function getDefaultTime(opts: GetDefaultTimeProps): TimeValue {
+	const withDefaults = { ...defaultTimeDefaults, ...opts };
+	const { defaultValue } = withDefaults;
+
+	if (defaultValue) {
+		return defaultValue;
+	} else {
+		return new Time(0, 0, 0);
 	}
 }
 
@@ -117,7 +144,7 @@ function isCalendarDateTime(dateValue: DateValue): dateValue is CalendarDateTime
 	return dateValue instanceof CalendarDateTime;
 }
 
-export function isZonedDateTime(dateValue: DateValue): dateValue is ZonedDateTime {
+export function isZonedDateTime(dateValue: DateValue | TimeValue): dateValue is ZonedDateTime {
 	return dateValue instanceof ZonedDateTime;
 }
 

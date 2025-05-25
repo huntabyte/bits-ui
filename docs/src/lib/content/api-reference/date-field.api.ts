@@ -20,6 +20,7 @@ import { dateValueProp } from "./extended-types/index.js";
 import {
 	DateFieldInputChildSnippetProps,
 	DateFieldInputChildrenSnippetProps,
+	DateFieldSegmentDataAttr,
 	DateOnInvalidProp,
 	DateValidateProp,
 	GranularityProp,
@@ -68,8 +69,8 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 		}),
 		onInvalid: createFunctionProp({
 			definition: DateOnInvalidProp,
-			description: "A callback fired when the date field's value is invalid.",
-			stringDefinition: "(value: DateValue) => void",
+			description: "A callback fired when the field's value is invalid.",
+			stringDefinition: "(reason: 'min' | 'max' | 'custom', msg?: string | string[]) => void",
 		}),
 		errorMessageId: createStringProp({
 			description:
@@ -105,7 +106,7 @@ export const root = createApiSchema<DateFieldRootPropsWithoutHTML>({
 		}),
 		disabled: createBooleanProp({
 			default: C.FALSE,
-			description: "Whether or not the accordion is disabled.",
+			description: "Whether or not the field is disabled.",
 		}),
 		readonly: createBooleanProp({
 			description: "Whether or not the field is readonly.",
@@ -184,7 +185,8 @@ export const segment = createApiSchema<DateFieldSegmentPropsWithoutHTML>({
 		}),
 		createEnumDataAttr({
 			name: "segment",
-			description: "The part of the date to render.",
+			description: "The part of the date being rendered.",
+			definition: DateFieldSegmentDataAttr,
 			options: [
 				"day",
 				"month",

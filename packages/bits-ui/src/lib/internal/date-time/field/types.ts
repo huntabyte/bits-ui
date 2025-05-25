@@ -2,11 +2,11 @@ import type {
 	DATE_SEGMENT_PARTS,
 	EDITABLE_SEGMENT_PARTS,
 	NON_EDITABLE_SEGMENT_PARTS,
-	TIME_SEGMENT_PARTS,
+	EDITABLE_TIME_SEGMENT_PARTS,
 } from "./parts.js";
 
 export type DateSegmentPart = (typeof DATE_SEGMENT_PARTS)[number];
-export type TimeSegmentPart = (typeof TIME_SEGMENT_PARTS)[number];
+export type TimeSegmentPart = (typeof EDITABLE_TIME_SEGMENT_PARTS)[number];
 export type EditableSegmentPart = (typeof EDITABLE_SEGMENT_PARTS)[number];
 export type NonEditableSegmentPart = (typeof NON_EDITABLE_SEGMENT_PARTS)[number];
 export type SegmentPart = EditableSegmentPart | NonEditableSegmentPart;

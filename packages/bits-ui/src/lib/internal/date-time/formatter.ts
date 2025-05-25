@@ -1,8 +1,10 @@
 import { DateFormatter, type DateValue } from "@internationalized/date";
 import { hasTime, isZonedDateTime, toDate } from "./utils.js";
-import type { HourCycle } from "$lib/shared/date/types.js";
+import type { HourCycle, TimeValue } from "$lib/shared/date/types.js";
+import { convertTimeValueToDateValue } from "./field/time-helpers.js";
 
 export type Formatter = ReturnType<typeof createFormatter>;
+export type TimeFormatter = ReturnType<typeof createTimeFormatter>;
 
 const defaultPartOptions: Intl.DateTimeFormatOptions = {
 	year: "numeric",
@@ -112,5 +114,72 @@ export function createFormatter(initialLocale: string) {
 		dayPeriod,
 		selectedDate,
 		dayOfWeek,
+	};
+}
+
+export function createTimeFormatter(initialLocale: string) {
+	let locale = initialLocale;
+
+	function setLocale(newLocale: string) {
+		locale = newLocale;
+	}
+
+	function getLocale() {
+		return locale;
+	}
+
+	function custom(date: Date, options: Intl.DateTimeFormatOptions) {
+		return new DateFormatter(locale, options).format(date);
+	}
+
+	function selectedTime(date: TimeValue) {
+		return custom(toDate(convertTimeValueToDateValue(date)), {
+			timeStyle: "long",
+		});
+	}
+
+	function toParts(timeValue: TimeValue, options?: Intl.DateTimeFormatOptions) {
+		const dateValue = convertTimeValueToDateValue(timeValue);
+
+		if (isZonedDateTime(dateValue)) {
+			return new DateFormatter(locale, {
+				...options,
+				timeZone: dateValue.timeZone,
+			}).formatToParts(toDate(dateValue));
+		} else {
+			return new DateFormatter(locale, options).formatToParts(toDate(dateValue));
+		}
+	}
+
+	function dayPeriod(date: Date, hourCycle: HourCycle | undefined = undefined) {
+		const parts = new DateFormatter(locale, {
+			hour: "numeric",
+			minute: "numeric",
+			hourCycle: hourCycle === 24 ? "h23" : undefined,
+		}).formatToParts(date);
+		const value = parts.find((p) => p.type === "dayPeriod")?.value;
+		if (value === "PM") return "PM";
+		return "AM";
+	}
+
+	function part(
+		dateObj: TimeValue,
+		type: Intl.DateTimeFormatPartTypes,
+		options: Intl.DateTimeFormatOptions = {}
+	) {
+		const opts = { ...defaultPartOptions, ...options };
+		const parts = toParts(dateObj, opts);
+		const part = parts.find((p) => p.type === type);
+		return part ? part.value : "";
+	}
+
+	return {
+		setLocale,
+		getLocale,
+		toParts,
+		custom,
+		part,
+		dayPeriod,
+		selectedTime,
 	};
 }

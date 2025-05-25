@@ -1,4 +1,4 @@
-import { DateValueProp } from "./shared/index.js";
+import { DateValueProp, TimeValueProp } from "./shared/index.js";
 import type { PropType } from "$lib/types/index.js";
 import { PaginationPageItemProp } from "./pagination/index.js";
 
@@ -8,6 +8,14 @@ export const dateValueProp: PropType = {
 	stringDefinition: `import type { CalendarDate, CalendarDateTime, ZonedDateTime } from "@internationalized/date";
 
 type DateValue = CalendarDate | CalendarDateTime | ZonedDateTime`,
+};
+
+export const timeValueProp: PropType = {
+	type: "TimeValue",
+	definition: TimeValueProp,
+	stringDefinition: `import type { Time, CalendarDateTime, ZonedDateTime } from "@internationalized/date";
+
+	type TimeValue = Time | CalendarDateTime | ZonedDateTime`,
 };
 
 export const pageItemProp: PropType = {

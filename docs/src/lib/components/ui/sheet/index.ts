@@ -6,9 +6,9 @@ import Header from "./sheet-header.svelte";
 import Overlay from "./sheet-overlay.svelte";
 import Title from "./sheet-title.svelte";
 
-const Root = SheetPrimitive.Root as typeof SheetPrimitive.Root;
-const Close = SheetPrimitive.Close as typeof SheetPrimitive.Close;
-const Trigger = SheetPrimitive.Trigger as typeof SheetPrimitive.Trigger;
-const Portal = SheetPrimitive.Portal as typeof SheetPrimitive.Portal;
+const Root = SheetPrimitive.Root;
+const Close = SheetPrimitive.Close;
+const Trigger = SheetPrimitive.Trigger;
+const Portal = SheetPrimitive.Portal;
 
 export { Close, Content, Description, Footer, Header, Overlay, Portal, Root, Title, Trigger };

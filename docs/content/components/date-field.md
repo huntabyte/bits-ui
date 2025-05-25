@@ -1,6 +1,6 @@
 ---
 title: Date Field
-description: Enables users to input specific dates within a designated field.
+description: Enables users to input a date within a designated field.
 ---
 
 <script>
@@ -31,7 +31,7 @@ The `DateField` component is an alternative to the native `<input type="date">` 
 
 ```svelte
 <script lang="ts">
-	import { DateField } from "$lib";
+	import { DateField } from "bits-ui";
 </script>
 
 <DateField.Root>
@@ -58,15 +58,19 @@ The following example shows how you might create a reusable `MyDateField` compon
 <script lang="ts">
 	import { DateField, type WithoutChildrenOrChild } from "bits-ui";
 
-	type Props = WithoutChildrenOrChild<DateField.RootProps> & {
+	let {
+		value = $bindable(),
+		placeholder = $bindable(),
+		name,
+		...restProps
+	}: WithoutChildrenOrChild<DateField.RootProps> & {
 		labelText: string;
-	};
-
-	let { value, placeholder, name, ...restProps }: Props = $props();
+		name?: string;
+	} = $props();
 </script>
 
-<DateField.Root bind:value bind:placeholder {name} {...restProps}>
-	<DateField.Label>{labelText}</DateField.Label>
+<DateField.Root bind:value bind:placeholder {...restProps}>
+	<DateField.Label {name}>{labelText}</DateField.Label>
 	<DateField.Input>
 		{#snippet children({ segments })}
 			{#each segments as { part, value }}
@@ -218,7 +222,7 @@ For complete control over the component's state, use a [Function Binding](https:
 		return myValue;
 	}
 
-	function setValue(newValue: DateValue) {
+	function setValue(newValue: DateValue | undefined) {
 		myValue = newValue;
 	}
 </script>
@@ -365,7 +369,7 @@ The strings are then passed to the `onInvalid` callback, which you can use to di
 	}} />
 </DemoContainer>
 
-In the example above, we're setting the `isDateUnavailable` prop to a function that returns `true` for the first day of the month. Try selecting a date that is the first day of the month to see the date field marked as invalid.
+Try selecting a date that is the first day of the month to see the date field marked as invalid.
 
 ## Granularity
 
