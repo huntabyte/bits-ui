@@ -39,11 +39,13 @@ import { toDate } from "$lib/internal/date-time/utils.js";
 import type { TimeValue } from "$lib/shared/date/types.js";
 import {
 	areAllTimeSegmentsFilled,
+	convertTimeValueToTime,
 	createTimeContent,
 	getISOTimeValue,
 	getTimeValueFromSegments,
 	initTimeSegmentStates,
 	isFirstTimeSegment,
+	isTimeBefore,
 	removeTimeDescriptionElement,
 	setTimeDescription,
 } from "$lib/internal/date-time/field/time-helpers.js";
@@ -134,6 +136,18 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	states = initTimeSegmentStates();
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	name = $state("");
+	maxValueTime = $derived.by(() => {
+		if (!this.opts.maxValue.current) return undefined;
+		return convertTimeValueToTime(this.opts.maxValue.current);
+	});
+	minValueTime = $derived.by(() => {
+		if (!this.opts.minValue.current) return undefined;
+		return convertTimeValueToTime(this.opts.minValue.current);
+	});
+	valueTime = $derived.by(() => {
+		if (!this.opts.value.current) return undefined;
+		return convertTimeValueToTime(this.opts.value.current);
+	});
 
 	constructor(opts: TimeFieldRootStateProps<T>) {
 		this.opts = opts;
@@ -340,7 +354,19 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			} as const;
 		}
 
-		// Add min/max validation for time values if needed
+		if (!this.valueTime) return false as const;
+
+		if (this.minValueTime && isTimeBefore(this.valueTime, this.minValueTime)) {
+			return {
+				reason: "min",
+			} as const;
+		}
+		if (this.maxValueTime && isTimeBefore(this.maxValueTime, this.valueTime)) {
+			return {
+				reason: "max",
+			} as const;
+		}
+
 		return false;
 	});
 

@@ -36,6 +36,7 @@ import { toolbar } from "./toolbar.api.js";
 import { tooltip } from "./tooltip.api.js";
 import { menubar } from "./menubar.api.js";
 import { meter } from "./meter.api.js";
+import { timeField } from "./time-field.api.js";
 import type { APISchema } from "$lib/types/index.js";
 
 export const bits = [
@@ -123,7 +124,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	slider,
 	switch: switchData,
 	tabs,
-	"time-field": dateField,
+	"time-field": timeField,
 	toggle,
 	"toggle-group": toggleGroup,
 	toolbar,

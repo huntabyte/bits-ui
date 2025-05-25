@@ -1,6 +1,6 @@
 ---
 title: Time Field
-description: Enables users to input time within a designated field.
+description: Enables users to input a time within a designated field.
 ---
 
 <script>
@@ -22,3 +22,5 @@ description: Enables users to input time within a designated field.
 Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
 
 </Callout>
+
+<APISection {schemas} />

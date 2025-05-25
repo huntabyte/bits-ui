@@ -1,6 +1,6 @@
 import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { it } from "vitest";
+import { it, vi } from "vitest";
 import {
 	Time,
 	CalendarDateTime,
@@ -827,6 +827,64 @@ it("should type the onValueChange callback with the type of the provided value (
 		expect(changedValue.timeZone).toBeDefined();
 		expect(changedValue).toBeInstanceOf(ZonedDateTime);
 	}
+});
+
+it("should respect the minValue prop", async () => {
+	const mockOnInvalid = vi.fn();
+
+	const t = setup({
+		minValue: new Time(12, 30, 0),
+		value: new Time(12, 30, 0),
+		onInvalid: mockOnInvalid,
+	});
+
+	await t.user.click(t.getHour());
+	await t.user.keyboard(kbd.ARROW_DOWN);
+	expect(t.getHour()).toHaveTextContent("11");
+	expect(mockOnInvalid).toHaveBeenCalledWith("min", undefined);
+
+	expect(t.getHour()).toHaveAttribute("aria-invalid", "true");
+	expect(t.input).toHaveAttribute("data-invalid");
+	expect(t.label).toHaveAttribute("data-invalid");
+});
+
+it("should respect the maxValue prop", async () => {
+	const mockOnInvalid = vi.fn();
+
+	const t = setup({
+		maxValue: new Time(12, 30, 0),
+		value: new Time(12, 30, 0),
+		onInvalid: mockOnInvalid,
+	});
+
+	await t.user.click(t.getHour());
+	await t.user.keyboard(kbd.ARROW_UP);
+	expect(t.getHour()).toHaveTextContent("01");
+	expect(mockOnInvalid).toHaveBeenCalledWith("max", undefined);
+
+	expect(t.getHour()).toHaveAttribute("aria-invalid", "true");
+	expect(t.input).toHaveAttribute("data-invalid");
+	expect(t.label).toHaveAttribute("data-invalid");
+});
+
+it("should respect readonlySegments prop", async () => {
+	const t = setup({
+		value: new Time(12, 30, 0),
+		readonlySegments: ["hour", "minute"],
+		granularity: "second",
+	});
+
+	await t.user.click(t.getHour());
+	await t.user.keyboard(kbd.ARROW_UP);
+	expect(t.getHour()).toHaveTextContent("12");
+
+	await t.user.click(t.getMinute());
+	await t.user.keyboard(kbd.ARROW_UP);
+	expect(t.getMinute()).toHaveTextContent("30");
+
+	await t.user.click(t.getSecond());
+	await t.user.keyboard(kbd.ARROW_UP);
+	expect(t.getSecond()).toHaveTextContent("01");
 });
 
 function thisTimeZone(date: string): string {

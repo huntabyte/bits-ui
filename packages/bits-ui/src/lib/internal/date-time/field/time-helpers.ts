@@ -349,6 +349,19 @@ export function convertTimeValueToDateValue(time: TimeValue): CalendarDateTime |
 	return time;
 }
 
+export function convertTimeValueToTime(time: TimeValue): Time {
+	if (time instanceof Time) return time;
+	return new Time(time.hour, time.minute, time.second, time.millisecond);
+}
+
+export function isTimeBefore(timeToCompare: Time, referenceTime: Time) {
+	return timeToCompare.compare(referenceTime) < 0;
+}
+
+export function isTimeAfter(timeToCompare: Time, referenceTime: Time) {
+	return timeToCompare.compare(referenceTime) > 0;
+}
+
 export function getISOTimeValue(time: TimeValue): string {
 	if (time instanceof Time) {
 		return Time.toString();

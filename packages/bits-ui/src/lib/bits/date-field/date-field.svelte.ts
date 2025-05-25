@@ -2,7 +2,7 @@ import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import { type WritableBox, box, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
@@ -287,17 +287,17 @@ export class DateFieldRootState {
 			}
 		});
 
-		$effect(() => {
-			this.validationStatus;
-			untrack(() => {
+		watch(
+			() => this.validationStatus,
+			() => {
 				if (this.validationStatus !== false) {
 					this.onInvalid.current?.(
 						this.validationStatus.reason,
 						this.validationStatus.message
 					);
 				}
-			});
-		});
+			}
+		);
 	}
 
 	setName(name: string) {
