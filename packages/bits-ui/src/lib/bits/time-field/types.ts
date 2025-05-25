@@ -15,66 +15,66 @@ import type {
 
 export type TimeFieldRootPropsWithoutHTML<T extends TimeValue = Time> = WithChildren<{
 	/**
-	 * The value of the date field.
+	 * The value of the time field.
 	 *
 	 * @bindable
 	 */
 	value?: T;
 
 	/**
-	 * A callback that is called when the date field value changes.
+	 * A callback that is called when the time field value changes.
 	 *
 	 */
 	onValueChange?: OnChangeFn<T | undefined>;
 
 	/**
-	 * The placeholder value of the date field. This determines the format
-	 * and what date the field starts at when it is empty.
+	 * The placeholder value of the time field. This determines the format
+	 * and what time the field starts at when it is empty.
 	 *
 	 * @bindable
 	 */
 	placeholder?: TimeValue;
 
 	/**
-	 * A callback that is called when the date field's placeholder value changes.
+	 * A callback that is called when the time field's placeholder value changes.
 	 */
 	onPlaceholderChange?: OnChangeFn<TimeValue | undefined>;
 
 	/**
-	 * A function that returns a string or array of strings as validation errors if the date is
-	 * invalid, or nothing if the date is valid
+	 * A function that returns a string or array of strings as validation errors if the time is
+	 * invalid, or nothing if the time is valid
 	 */
 	validate?: TimeValidator<T>;
 
 	/**
-	 * A callback fired when the date field's value is invalid. Use this to display an error
+	 * A callback fired when the time field's value is invalid. Use this to display an error
 	 * message to the user.
 	 */
 	onInvalid?: TimeOnInvalid;
 
 	/**
-	 * The minimum acceptable date. When provided, the date field
-	 * will be marked as invalid if the user enters a date before this date.
+	 * The minimum acceptable time. When provided, the time field
+	 * will be marked as invalid if the user enters a time before this time.
 	 */
 	minValue?: TimeValue;
 
 	/**
-	 * The maximum acceptable date. When provided, the date field
-	 * will be marked as invalid if the user enters a date after this date.
+	 * The maximum acceptable time. When provided, the time field
+	 * will be marked as invalid if the user enters a time after this time.
 	 */
 	maxValue?: TimeValue;
 
 	/**
-	 * If true, the date field will be disabled and users will not be able
+	 * If true, the time field will be disabled and users will not be able
 	 * to interact with it. This also disables the hidden input element if
-	 * the date field is used in a form.
+	 * the time field is used in a form.
 	 *
 	 * @defaultValue false
 	 */
 	disabled?: boolean;
 
 	/**
-	 * If true, the date field will be readonly, and users will not be able to
+	 * If true, the time field will be readonly, and users will not be able to
 	 * edit the values of any of the individual segments.
 	 *
 	 * @defaultValue false
@@ -97,7 +97,7 @@ export type TimeFieldRootPropsWithoutHTML<T extends TimeValue = Time> = WithChil
 	hourCycle?: 12 | 24;
 
 	/**
-	 * The locale to use for formatting the date field.
+	 * The locale to use for formatting the time field.
 	 *
 	 * @defaultValue 'en'
 	 */
@@ -106,7 +106,7 @@ export type TimeFieldRootPropsWithoutHTML<T extends TimeValue = Time> = WithChil
 	/**
 	 * The granularity of the time field. This determines which
 	 * segments will be includes in the segments array used to
-	 * build the date field.
+	 * build the time field.
 	 *
 	 * Granularity is only used for visual purposes, and does not impact
 	 * the value of the time field. You can have the same value synced
@@ -118,14 +118,14 @@ export type TimeFieldRootPropsWithoutHTML<T extends TimeValue = Time> = WithChil
 	granularity?: TimeGranularity;
 
 	/**
-	 * Whether or not to hide the timeZoneName segment from the date field.
+	 * Whether or not to hide the timeZoneName segment from the time field.
 	 *
 	 * @defaultValue false;
 	 */
 	hideTimeZone?: boolean;
 
 	/**
-	 * Whether or not the hidden input of the date field requires a value
+	 * Whether or not the hidden input of the time field requires a value
 	 * to be submitted.
 	 *
 	 * @defaultValue false
@@ -133,8 +133,8 @@ export type TimeFieldRootPropsWithoutHTML<T extends TimeValue = Time> = WithChil
 	required?: boolean;
 
 	/**
-	 * The `id` of the element which contains the error messages for the date field when the
-	 * date is invalid.
+	 * The `id` of the element which contains the error messages for the time field when the
+	 * time is invalid.
 	 */
 	errorMessageId?: string;
 }>;
@@ -148,8 +148,8 @@ export type TimeFieldInputSnippetProps = {
 export type TimeFieldInputPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * The name to use for the hidden input element of the date field,
-		 * which is used to submit the ISO string value of the date field
+		 * The name to use for the hidden input element of the time field,
+		 * which is used to submit the ISO string value of the time field
 		 * to a server. If not provided, the hidden input element will not
 		 * be rendered.
 		 */
