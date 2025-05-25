@@ -18,35 +18,35 @@ description: Allows users to input a range of times within a designated field.
 
 <Callout type="tip" title="Heads up!">
 
-Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates](/docs/dates) documentation to learn more!
+Before diving into this component, it's important to understand how dates/times work in Bits UI. Please read the [Dates/Times](/docs/dates) documentation to learn more!
 
 </Callout>
 
 ## Overview
 
-The `DateRangeField` component combines two [Date Field](/docs/components/date-field) components to create a date range field. Check out the [Date Field](/docs/components/date-field) component documentation for information on how to customize this component.
+The `TimeRangeField` component combines two [Time Field](/docs/components/time-field) components to create a time range field. Check out the [Time Field](/docs/components/time-field) component documentation for information on how to customize this component.
 
 ## Structure
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "$lib";
+	import { TimeRangeField } from "bits-ui";
 </script>
 
-<DateRangeField.Root>
-	<DateRangeField.Label>Check-in date</DateRangeField.Label>
+<TimeRangeField.Root>
+	<TimeRangeField.Label>Working Hours</TimeRangeField.Label>
 	{#each ["start", "end"] as const as type}
-		<DateRangeField.Input {type}>
+		<TimeRangeField.Input {type}>
 			{#snippet children({ segments })}
 				{#each segments as { part, value }}
-					<DateRangeField.Segment {part}>
+					<TimeRangeField.Segment {part}>
 						{value}
-					</DateRangeField.Segment>
+					</TimeRangeField.Segment>
 				{/each}
 			{/snippet}
-		</DateRangeField.Input>
+		</TimeRangeField.Input>
 	{/each}
-</DateRangeField.Root>
+</TimeRangeField.Root>
 ```
 
 ## Managing Placeholder State
@@ -59,14 +59,14 @@ Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+	import { TimeRangeField } from "bits-ui";
+	import { Time } from "@internationalized/date";
+	let myPlaceholder = $state(new Time(12, 30));
 </script>
 
-<DateRangeField.Root bind:placeholder={myPlaceholder}>
+<TimeRangeField.Root bind:placeholder={myPlaceholder}>
 	<!-- ... -->
-</DateRangeField.Root>
+</TimeRangeField.Root>
 ```
 
 ### Fully Controlled
@@ -75,22 +75,22 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+	import { TimeRangeField, type TimeValue } from "bits-ui";
+	import { Time } from "@internationalized/date";
+	let myPlaceholder = $state(new Time(12, 30));
 
 	function getPlaceholder() {
 		return myPlaceholder;
 	}
 
-	function setPlaceholder(newPlaceholder: CalendarDateTime) {
+	function setPlaceholder(newPlaceholder: TimeValue) {
 		myPlaceholder = newPlaceholder;
 	}
 </script>
 
-<DateRangeField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
+<TimeRangeField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
 	<!-- ... -->
-</DateRangeField.Root>
+</TimeRangeField.Root>
 ```
 
 ## Managing Value State
@@ -103,27 +103,27 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { DateRangeField, type DateRange } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state<DateRange>({
-		start: new CalendarDateTime(2024, 8, 3, 12, 30),
-		end: new CalendarDateTime(2024, 8, 4, 12, 30),
+	import { TimeRangeField, type TimeRange } from "bits-ui";
+	import { Time } from "@internationalized/date";
+	let myValue = $state<TimeRange>({
+		start: new Time(12, 30),
+		end: new Time(12, 30),
 	});
 </script>
 
 <button
 	onclick={() => {
-		value = {
-			start: value.start.add({ days: 1 }),
-			end: value.end.add({ days: 1 }),
+		myValue = {
+			start: myValue.start.add({ hours: 1 }),
+			end: myValue.end.add({ hours: 1 }),
 		};
 	}}
 >
-	Add 1 day
+	Add 1 hour
 </button>
-<DateRangeField.Root bind:value={myValue}>
+<TimeRangeField.Root bind:value={myValue}>
 	<!-- ... -->
-</DateRangeField.Root>
+</TimeRangeField.Root>
 ```
 
 ### Fully Controlled
@@ -132,8 +132,9 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	let myValue = $state<DateRange>({
+	import { TimeRangeField, type TimeRange } from "bits-ui";
+
+	let myValue = $state<TimeRange | undefined>({
 		start: undefined,
 		end: undefined,
 	});
@@ -142,7 +143,7 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 		return myValue;
 	}
 
-	function setValue(newValue: DateRange) {
+	function setValue(newValue: TimeRange | undefined) {
 		myValue = newValue;
 	}
 </script>

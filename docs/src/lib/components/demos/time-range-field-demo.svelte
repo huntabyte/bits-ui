@@ -1,23 +1,8 @@
 <script lang="ts">
-	import { Time } from "@internationalized/date";
 	import { TimeRangeField } from "bits-ui";
-
-	let value = $state({
-		start: new Time(12, 30),
-		end: new Time(17, 30),
-	});
 </script>
 
-<div>
-	{value.start.toString()}
-	{value.end.toString()}
-</div>
-
-<TimeRangeField.Root
-	bind:value
-	granularity="second"
-	class="group flex w-full max-w-[320px] flex-col gap-1.5"
->
+<TimeRangeField.Root class="group flex w-full max-w-[320px] flex-col gap-1.5">
 	<TimeRangeField.Label class="block select-none text-sm font-medium">
 		Hotel dates
 	</TimeRangeField.Label>
@@ -46,7 +31,7 @@
 				{/snippet}
 			</TimeRangeField.Input>
 			{#if type === "start"}
-				<div aria-hidden="true" class="text-muted-foreground px-1">–⁠⁠⁠⁠⁠</div>
+				<div aria-hidden="true" class="text-muted-foreground pl-1 pr-2">to</div>
 			{/if}
 		{/each}
 	</div>
