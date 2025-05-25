@@ -15,6 +15,7 @@
 		"test": "vitest",
 		"watch": "svelte-package --watch"
 	},
+	"main": "./dist/index.js",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
