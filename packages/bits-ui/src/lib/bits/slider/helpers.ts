@@ -65,3 +65,70 @@ export function getTickStyles(
 
 	return style;
 }
+
+/**
+ * Normalizes step to always be a sorted array of valid values within min/max range
+ */
+export function normalizeSteps(step: number | number[], min: number, max: number): number[] {
+	if (typeof step === "number") {
+		// generate regular steps - match original behavior exactly
+		const difference = max - min;
+		let count = Math.ceil(difference / step);
+
+		if (difference % step === 0) {
+			count++;
+		}
+
+		const steps: number[] = [];
+		for (let i = 0; i < count; i++) {
+			const value = min + i * step;
+			steps.push(value);
+		}
+		return steps;
+	}
+
+	return [...new Set(step)].filter((value) => value >= min && value <= max).sort((a, b) => a - b);
+}
+
+/**
+ * Snaps a value to the nearest step in a custom steps array
+ */
+export function snapValueToCustomSteps(value: number, steps: number[]): number {
+	if (steps.length === 0) return value;
+
+	// Find the closest step
+	let closest = steps[0]!;
+	let minDistance = Math.abs(value - closest);
+
+	for (const step of steps) {
+		const distance = Math.abs(value - step);
+		if (distance < minDistance) {
+			minDistance = distance;
+			closest = step;
+		}
+	}
+
+	return closest;
+}
+
+/**
+ * Gets the next/previous step value for keyboard navigation
+ */
+export function getAdjacentStepValue(
+	currentValue: number,
+	steps: number[],
+	direction: "next" | "prev"
+): number {
+	const currentIndex = steps.indexOf(currentValue);
+
+	if (currentIndex === -1) {
+		// current value is not in steps, snap to nearest
+		return snapValueToCustomSteps(currentValue, steps);
+	}
+
+	if (direction === "next") {
+		return currentIndex < steps.length - 1 ? steps[currentIndex + 1]! : currentValue;
+	} else {
+		return currentIndex > 0 ? steps[currentIndex - 1]! : currentValue;
+	}
+}

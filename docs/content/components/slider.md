@@ -4,7 +4,7 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -261,5 +261,15 @@ Here's an example of how you might do that:
 	<button type="submit">Submit</button>
 </form>
 ```
+
+## Custom Steps
+
+<ComponentPreviewV2 name="slider-demo-custom-steps" componentName="Slider">
+
+{#snippet preview()}
+<SliderDemoCustomSteps />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

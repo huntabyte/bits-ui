@@ -30,11 +30,16 @@ export type BaseSliderRootPropsWithoutHTML = {
 	max?: number;
 
 	/**
-	 * The amount to increment the value by when the user presses the arrow keys.
+	 * The amount to increment the value by when the user presses the arrow keys,
+	 * or an array of specific values that the slider can snap to.
+	 *
+	 * When an array is provided, the slider will only allow values that exist in the array,
+	 * creating discrete tick points. The array values should be within the min/max range
+	 * and will be automatically sorted.
 	 *
 	 * @defaultValue 1
 	 */
-	step?: number;
+	step?: number | number[];
 
 	/**
 	 * The direction of the slider.

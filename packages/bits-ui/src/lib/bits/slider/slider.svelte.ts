@@ -12,7 +12,14 @@ import {
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
-import { getRangeStyles, getThumbStyles, getTickStyles } from "./helpers.js";
+import {
+	getRangeStyles,
+	getThumbStyles,
+	getTickStyles,
+	normalizeSteps,
+	snapValueToCustomSteps,
+	getAdjacentStepValue,
+} from "./helpers.js";
 import {
 	getAriaDisabled,
 	getAriaOrientation,
@@ -25,7 +32,7 @@ import { isValidIndex } from "$lib/internal/arrays.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
-import { linearScale, snapValueToStep } from "$lib/internal/math.js";
+import { linearScale } from "$lib/internal/math.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
 const SLIDER_THUMB_ATTR = "data-slider-thumb";
@@ -38,7 +45,7 @@ type SliderBaseRootStateProps = WithRefProps<
 		orientation: Orientation;
 		min: number;
 		max: number;
-		step: number;
+		step: number | number[];
 		dir: Direction;
 		autoSort: boolean;
 		thumbPositioning: SliderThumbPositioning;
@@ -54,6 +61,11 @@ class SliderBaseRootState {
 		} else {
 			return this.opts.dir.current === "rtl" ? "tb" : "bt";
 		}
+	});
+
+	// Normalized steps array for consistent handling
+	normalizedSteps = $derived.by(() => {
+		return normalizeSteps(this.opts.step.current, this.opts.min.current, this.opts.max.current);
 	});
 
 	constructor(opts: SliderBaseRootStateProps) {
@@ -164,13 +176,14 @@ class SliderSingleRootState extends SliderBaseRootState {
 				() => this.opts.value.current,
 			],
 			([step, min, max, value]) => {
+				const steps = normalizeSteps(step, min, max);
+
 				const isValidValue = (v: number) => {
-					const snappedValue = snapValueToStep(v, min, max, step);
-					return snappedValue === v;
+					return steps.includes(v);
 				};
 
 				const gcv = (v: number) => {
-					return snapValueToStep(v, min, max, step);
+					return snapValueToCustomSteps(v, steps);
 				};
 
 				if (!isValidValue(value)) {
@@ -191,29 +204,14 @@ class SliderSingleRootState extends SliderBaseRootState {
 		} else if (val > max) {
 			this.updateValue(max);
 		} else {
-			const step = this.opts.step.current;
-
-			const currStep = Math.floor((val - min) / step);
-			const midpointOfCurrStep = min + currStep * step + step / 2;
-			const midpointOfNextStep = min + (currStep + 1) * step + step / 2;
-			const newValue =
-				val >= midpointOfCurrStep && val < midpointOfNextStep
-					? (currStep + 1) * step + min
-					: currStep * step + min;
-
-			if (newValue <= max) {
-				this.updateValue(newValue);
-			}
+			const steps = this.normalizedSteps;
+			const newValue = snapValueToCustomSteps(val, steps);
+			this.updateValue(newValue);
 		}
 	}
 
 	updateValue = (newValue: number) => {
-		this.opts.value.current = snapValueToStep(
-			newValue,
-			this.opts.min.current,
-			this.opts.max.current,
-			this.opts.step.current
-		);
+		this.opts.value.current = snapValueToCustomSteps(newValue, this.normalizedSteps);
 	};
 
 	handlePointerMove = (e: PointerEvent) => {
@@ -307,29 +305,20 @@ class SliderSingleRootState extends SliderBaseRootState {
 	});
 
 	ticksPropsArr = $derived.by(() => {
-		const max = this.opts.max.current;
 		const min = this.opts.min.current;
-		const step = this.opts.step.current;
-		const difference = max - min;
-
-		let count = Math.ceil(difference / step);
-
-		if (difference % step == 0) {
-			count++;
-		}
+		const max = this.opts.max.current;
+		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 
-		return Array.from({ length: count }, (_, i) => {
-			const tickPosition = i * step;
-
-			const scale = linearScale([0, (count - 1) * step], this.getThumbScale());
+		return steps.map((tickValue, i) => {
+			// Calculate position relative to the range
+			const tickPosition = ((tickValue - min) / (max - min)) * 100;
 
 			const isFirst = i === 0;
-			const isLast = i === count - 1;
+			const isLast = i === steps.length - 1;
 			const offsetPercentage = isFirst ? 0 : isLast ? -100 : -50;
 
-			const style = getTickStyles(this.direction, scale(tickPosition), offsetPercentage);
-			const tickValue = min + i * step;
+			const style = getTickStyles(this.direction, tickPosition, offsetPercentage);
 			const bounded = tickValue <= currValue;
 
 			return {
@@ -392,13 +381,14 @@ class SliderMultiRootState extends SliderBaseRootState {
 				() => this.opts.value.current,
 			],
 			([step, min, max, value]) => {
+				const steps = normalizeSteps(step, min, max);
+
 				const isValidValue = (v: number) => {
-					const snappedValue = snapValueToStep(v, min, max, step);
-					return snappedValue === v;
+					return steps.includes(v);
 				};
 
 				const gcv = (v: number) => {
-					return snapValueToStep(v, min, max, step);
+					return snapValueToCustomSteps(v, steps);
 				};
 
 				if (value.some((v) => !isValidValue(v))) {
@@ -433,19 +423,9 @@ class SliderMultiRootState extends SliderBaseRootState {
 		} else if (val > max) {
 			this.updateValue(max, activeThumbIdx);
 		} else {
-			const step = this.opts.step.current;
-
-			const currStep = Math.floor((val - min) / step);
-			const midpointOfCurrStep = min + currStep * step + step / 2;
-			const midpointOfNextStep = min + (currStep + 1) * step + step / 2;
-			const newValue =
-				val >= midpointOfCurrStep && val < midpointOfNextStep
-					? (currStep + 1) * step + min
-					: currStep * step + min;
-
-			if (newValue <= max) {
-				this.updateValue(newValue, activeThumbIdx);
-			}
+			const steps = this.normalizedSteps;
+			const newValue = snapValueToCustomSteps(val, steps);
+			this.updateValue(newValue, activeThumbIdx);
 		}
 	}
 
@@ -586,10 +566,8 @@ class SliderMultiRootState extends SliderBaseRootState {
 			return;
 		}
 
-		const min = this.opts.min.current;
-		const max = this.opts.max.current;
-		const step = this.opts.step.current;
-		newValue[idx] = snapValueToStep(thumbValue, min, max, step);
+		const steps = this.normalizedSteps;
+		newValue[idx] = snapValueToCustomSteps(thumbValue, steps);
 
 		this.opts.value.current = newValue;
 	};
@@ -629,29 +607,20 @@ class SliderMultiRootState extends SliderBaseRootState {
 	});
 
 	ticksPropsArr = $derived.by(() => {
-		const max = this.opts.max.current;
 		const min = this.opts.min.current;
-		const step = this.opts.step.current;
-		const difference = max - min;
-
-		let count = Math.ceil(difference / step);
-
-		if (difference % step == 0) {
-			count++;
-		}
+		const max = this.opts.max.current;
+		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 
-		return Array.from({ length: count }, (_, i) => {
-			const tickPosition = i * step;
-
-			const scale = linearScale([0, (count - 1) * step], this.getThumbScale());
+		return steps.map((tickValue, i) => {
+			// Calculate position relative to the range
+			const tickPosition = ((tickValue - min) / (max - min)) * 100;
 
 			const isFirst = i === 0;
-			const isLast = i === count - 1;
+			const isLast = i === steps.length - 1;
 			const offsetPercentage = isFirst ? 0 : isLast ? -100 : -50;
 
-			const style = getTickStyles(this.direction, scale(tickPosition), offsetPercentage);
-			const tickValue = min + i * step;
+			const style = getTickStyles(this.direction, tickPosition, offsetPercentage);
 			const bounded =
 				currValue.length === 1
 					? tickValue <= currValue[0]!
@@ -777,7 +746,7 @@ class SliderThumbState {
 		const thumbValue = Array.isArray(value) ? value[idx]! : value;
 		const orientation = this.root.opts.orientation.current;
 		const direction = this.root.direction;
-		const step = this.root.opts.step.current;
+		const steps = this.root.normalizedSteps;
 
 		switch (e.key) {
 			case kbd.HOME:
@@ -791,10 +760,10 @@ class SliderThumbState {
 				if (e.metaKey) {
 					const newValue = direction === "rl" ? max : min;
 					this.#updateValue(newValue);
-				} else if (direction === "rl" && thumbValue < max) {
-					this.#updateValue(thumbValue + step);
-				} else if (direction === "lr" && thumbValue > min) {
-					this.#updateValue(thumbValue - step);
+				} else {
+					const stepDirection = direction === "rl" ? "next" : "prev";
+					const newValue = getAdjacentStepValue(thumbValue, steps, stepDirection);
+					this.#updateValue(newValue);
 				}
 				break;
 			case kbd.ARROW_RIGHT:
@@ -802,30 +771,30 @@ class SliderThumbState {
 				if (e.metaKey) {
 					const newValue = direction === "rl" ? min : max;
 					this.#updateValue(newValue);
-				} else if (direction === "rl" && thumbValue > min) {
-					this.#updateValue(thumbValue - step);
-				} else if (direction === "lr" && thumbValue < max) {
-					this.#updateValue(thumbValue + step);
+				} else {
+					const stepDirection = direction === "rl" ? "prev" : "next";
+					const newValue = getAdjacentStepValue(thumbValue, steps, stepDirection);
+					this.#updateValue(newValue);
 				}
 				break;
 			case kbd.ARROW_UP:
 				if (e.metaKey) {
 					const newValue = direction === "tb" ? min : max;
 					this.#updateValue(newValue);
-				} else if (direction === "tb" && thumbValue > min) {
-					this.#updateValue(thumbValue - step);
-				} else if (direction !== "tb" && thumbValue < max) {
-					this.#updateValue(thumbValue + step);
+				} else {
+					const stepDirection = direction === "tb" ? "prev" : "next";
+					const newValue = getAdjacentStepValue(thumbValue, steps, stepDirection);
+					this.#updateValue(newValue);
 				}
 				break;
 			case kbd.ARROW_DOWN:
 				if (e.metaKey) {
 					const newValue = direction === "tb" ? max : min;
 					this.#updateValue(newValue);
-				} else if (direction === "tb" && thumbValue < max) {
-					this.#updateValue(thumbValue + step);
-				} else if (direction !== "tb" && thumbValue > min) {
-					this.#updateValue(thumbValue - step);
+				} else {
+					const stepDirection = direction === "tb" ? "next" : "prev";
+					const newValue = getAdjacentStepValue(thumbValue, steps, stepDirection);
+					this.#updateValue(newValue);
 				}
 				break;
 		}
