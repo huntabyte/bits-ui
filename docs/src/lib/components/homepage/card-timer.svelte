@@ -80,7 +80,7 @@
 					</div>
 				</div>
 				<div class="labels mb-2 mt-[9px] flex gap-[3px] px-1 font-medium">
-					{#each chips as chip, i (chip + i)}
+					{#each chips as chip, i (i)}
 						<div
 							data-active={i === 0 ? "" : undefined}
 							class="data-active:text-foreground data-active:bg-white dark:data-active:text-[#171717] group flex select-none items-center rounded-[25px] bg-[#31343e] px-1 text-[8px] text-white/70 lg:px-2 lg:text-[11px]"
