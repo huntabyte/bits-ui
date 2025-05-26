@@ -1,6 +1,8 @@
 # bits-ui
 
-## 2.0.0
+## 2.1.0
+
+(Had to publish 2.1.0 instead of 2.0.0 as someone published 2.0.x to NPM many years ago)
 
 ### Major Changes
 
