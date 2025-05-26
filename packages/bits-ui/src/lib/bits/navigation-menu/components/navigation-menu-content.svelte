@@ -2,15 +2,17 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { useNavigationMenuContent } from "../navigation-menu.svelte.js";
 	import NavigationMenuContentImpl from "./navigation-menu-content-impl.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import type { NavigationMenuContentProps } from "$lib/types.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
+	const uid = $props.id();
+
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		forceMount = false,
@@ -32,7 +34,10 @@
 	to={contentState.context.viewportRef.current || undefined}
 	disabled={!contentState.context.viewportRef.current}
 >
-	<PresenceLayer {id} present={forceMount || contentState.open || contentState.isLastActiveValue}>
+	<PresenceLayer
+		present={forceMount || contentState.open || contentState.isLastActiveValue}
+		ref={contentState.opts.ref}
+	>
 		{#snippet presence()}
 			<NavigationMenuContentImpl {...mergedProps} {children} {child} />
 			<Mounted bind:mounted={contentState.mounted} />

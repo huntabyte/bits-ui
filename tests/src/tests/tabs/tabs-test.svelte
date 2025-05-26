@@ -17,13 +17,13 @@
 <main>
 	<Tabs.Root aria-label="airplane mode" data-testid="root" bind:value {...restProps}>
 		<Tabs.List data-testid="list">
-			{#each items as { value, disabled }}
+			{#each items as { value, disabled } (value)}
 				<Tabs.Trigger {value} {disabled} data-testid="trigger-{value}">
 					{value}
 				</Tabs.Trigger>
 			{/each}
 		</Tabs.List>
-		{#each items as { value }}
+		{#each items as { value } (value)}
 			<Tabs.Content {value} data-testid="content-{value}">
 				{value}
 			</Tabs.Content>

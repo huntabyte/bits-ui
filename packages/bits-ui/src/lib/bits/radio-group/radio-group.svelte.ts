@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
@@ -36,15 +36,10 @@ class RadioGroupRootState {
 	constructor(opts: RadioGroupRootStateProps) {
 		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.opts.id,
+			rootNode: this.opts.ref,
 			candidateAttr: RADIO_GROUP_ITEM_ATTR,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
-		});
-
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
 		});
 	}
 
@@ -65,6 +60,7 @@ class RadioGroupRootState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-orientation": this.opts.orientation.current,
 				[RADIO_GROUP_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -91,8 +87,6 @@ class RadioGroupItemState {
 	constructor(opts: RadioGroupItemStateProps, root: RadioGroupRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		if (this.opts.value.current === this.root.opts.value.current) {
 			this.root.rovingFocusGroup.setCurrentTabStopId(this.opts.id.current);
@@ -157,6 +151,7 @@ class RadioGroupItemState {
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onclick: this.onclick,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

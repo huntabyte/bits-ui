@@ -3,12 +3,14 @@
 	import { useAccordionContent } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		forceMount = false,
 		children,
 		...restProps
@@ -24,7 +26,7 @@
 	});
 </script>
 
-<PresenceLayer forceMount={true} present={contentState.present} {id}>
+<PresenceLayer forceMount={true} present={contentState.present} ref={contentState.opts.ref}>
 	{#snippet presence({ present })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
 			hidden: forceMount ? undefined : !present.current,

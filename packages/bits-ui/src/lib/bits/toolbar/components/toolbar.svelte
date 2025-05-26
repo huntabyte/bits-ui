@@ -2,11 +2,13 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToolbarRootProps } from "../types.js";
 	import { useToolbarRoot } from "../toolbar.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		orientation = "horizontal",
 		loop = true,
 		child,

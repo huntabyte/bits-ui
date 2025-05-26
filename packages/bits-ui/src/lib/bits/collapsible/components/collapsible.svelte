@@ -2,13 +2,15 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CollapsibleRootProps } from "../types.js";
 	import { useCollapsibleRoot } from "../collapsible.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		open = $bindable(false),
 		disabled = false,

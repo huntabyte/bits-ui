@@ -16,10 +16,10 @@
 	<div
 		class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover flex w-full select-none items-center border px-2 py-3 text-sm tracking-[0.01em]"
 	>
-		{#each ["start", "end"] as const as type}
+		{#each ["start", "end"] as const as type (type)}
 			<DateRangePicker.Input {type}>
 				{#snippet children({ segments })}
-					{#each segments as { part, value }}
+					{#each segments as { part, value }, i (part + i)}
 						<div class="inline-block select-none">
 							{#if part === "literal"}
 								<DateRangePicker.Segment {part} class="text-muted-foreground p-1">
@@ -67,11 +67,11 @@
 					</DateRangePicker.NextButton>
 				</DateRangePicker.Header>
 				<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-					{#each months as month}
+					{#each months as month (month.value)}
 						<DateRangePicker.Grid class="w-full border-collapse select-none space-y-1">
 							<DateRangePicker.GridHead>
 								<DateRangePicker.GridRow class="mb-1 flex w-full justify-between">
-									{#each weekdays as day}
+									{#each weekdays as day (day)}
 										<DateRangePicker.HeadCell
 											class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
 										>
@@ -81,16 +81,16 @@
 								</DateRangePicker.GridRow>
 							</DateRangePicker.GridHead>
 							<DateRangePicker.GridBody>
-								{#each month.weeks as weekDates}
+								{#each month.weeks as weekDates (weekDates)}
 									<DateRangePicker.GridRow class="flex w-full">
-										{#each weekDates as date}
+										{#each weekDates as date (date)}
 											<DateRangePicker.Cell
 												{date}
 												month={month.value}
 												class="p-0! relative m-0 size-10 overflow-visible text-center text-sm focus-within:relative focus-within:z-20"
 											>
 												<DateRangePicker.Day
-													class={"rounded-9px text-foreground hover:border-foreground focus-visible:ring-foreground! data-selection-end:rounded-9px data-selection-start:rounded-9px data-highlighted:bg-muted data-selected:bg-muted data-selection-end:bg-foreground data-selection-start:bg-foreground data-disabled:text-foreground/30 data-selected:text-foreground data-selection-end:text-background data-selection-start:text-background data-unavailable:text-muted-foreground data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:border-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none  data-highlighted:rounded-none data-selected:font-medium data-selection-end:font-medium data-selection-start:font-medium data-unavailable:line-through data-selection-start:focus-visible:ring-2 data-selection-start:focus-visible:ring-offset-2! data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:rounded-none data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:ring-0! data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:ring-offset-0! group relative inline-flex size-10 items-center justify-center overflow-visible whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal transition-all"}
+													class="rounded-9px text-foreground hover:border-foreground focus-visible:ring-foreground! data-selection-end:rounded-9px data-selection-start:rounded-9px data-highlighted:bg-muted data-selected:bg-muted data-selection-end:bg-foreground data-selection-start:bg-foreground data-disabled:text-foreground/30 data-selected:text-foreground data-selection-end:text-background data-selection-start:text-background data-unavailable:text-muted-foreground data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:border-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none  data-highlighted:rounded-none data-selected:font-medium data-selection-end:font-medium data-selection-start:font-medium data-unavailable:line-through data-selection-start:focus-visible:ring-2 data-selection-start:focus-visible:ring-offset-2! data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:rounded-none data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:ring-0! data-selected:[&:not([data-selection-start])]:[&:not([data-selection-end])]:focus-visible:ring-offset-0! group relative inline-flex size-10 items-center justify-center overflow-visible whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal transition-all"
 												>
 													<div
 														class="bg-foreground group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full transition-all"

@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
@@ -48,8 +48,6 @@ class PaginationRootState {
 
 	constructor(opts: PaginationRootStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 	}
 
 	setPage(page: number) {
@@ -91,6 +89,7 @@ class PaginationRootState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[PAGINATION_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -114,8 +113,6 @@ class PaginationPageState {
 	constructor(opts: PaginationPageStateProps, root: PaginationRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -147,6 +144,7 @@ class PaginationPageState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -169,8 +167,6 @@ class PaginationButtonState {
 	constructor(opts: PaginationButtonStateProps, root: PaginationRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -212,6 +208,7 @@ class PaginationButtonState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

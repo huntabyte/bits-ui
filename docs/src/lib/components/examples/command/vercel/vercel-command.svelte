@@ -49,7 +49,7 @@
 <div class="vercel">
 	<Command.Root onkeydown={handleKeydown}>
 		<div>
-			{#each pages as page}
+			{#each pages as page (page)}
 				<div data-command-vercel-badge="">
 					{page}
 				</div>

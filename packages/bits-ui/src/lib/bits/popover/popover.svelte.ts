@@ -1,4 +1,4 @@
-import { type ReadableBoxedValues, useRefById } from "svelte-toolbelt";
+import { type ReadableBoxedValues, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -44,13 +44,6 @@ class PopoverTriggerState {
 		this.opts = opts;
 		this.root = root;
 
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.triggerNode = node;
-			},
-		});
-
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -88,6 +81,7 @@ class PopoverTriggerState {
 				//
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
+				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
 			}) as const
 	);
 }
@@ -105,14 +99,6 @@ class PopoverContentState {
 	constructor(opts: PopoverContentStateProps, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			deps: () => this.root.opts.open.current,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-			},
-		});
 	}
 
 	onInteractOutside = (e: PointerEvent) => {
@@ -150,6 +136,7 @@ class PopoverContentState {
 				style: {
 					pointerEvents: "auto",
 				},
+				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
 			}) as const
 	);
 
@@ -170,10 +157,6 @@ class PopoverCloseState {
 		this.opts = opts;
 		this.root = root;
 
-		useRefById({
-			...opts,
-			deps: () => this.root.opts.open.current,
-		});
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -196,6 +179,7 @@ class PopoverCloseState {
 				onkeydown: this.onkeydown,
 				type: "button",
 				"data-popover-close": "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

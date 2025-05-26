@@ -62,7 +62,7 @@
 			<Combobox.Content data-testid="content" {...contentProps}>
 				<Combobox.Group data-testid="group">
 					<Combobox.GroupHeading data-testid="group-label">Options</Combobox.GroupHeading>
-					{#each filteredItems as { value, label, disabled }}
+					{#each filteredItems as { value, label, disabled } (value)}
 						<Combobox.Item data-testid={value} {disabled} {value} {label}>
 							{#snippet children({ selected, highlighted: _highlighted })}
 								{#if selected}

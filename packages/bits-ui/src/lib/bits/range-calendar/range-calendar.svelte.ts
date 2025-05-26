@@ -5,7 +5,7 @@ import {
 	isSameMonth,
 	isToday,
 } from "@internationalized/date";
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
@@ -99,8 +99,6 @@ export class RangeCalendarRootState {
 		this.opts = opts;
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.opts.locale.current);
-
-		useRefById(opts);
 
 		this.months = createMonths({
 			dateObj: this.opts.placeholder.current,
@@ -568,6 +566,7 @@ export class RangeCalendarRootState {
 				[this.getBitsAttr("root")]: "",
 				//
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -622,8 +621,6 @@ export class RangeCalendarCellState {
 	constructor(opts: RangeCalendarCellStateProps, root: RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -670,6 +667,7 @@ export class RangeCalendarCellState {
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -683,8 +681,6 @@ class RangeCalendarDayState {
 	constructor(opts: RangeCalendarDayStateProps, cell: RangeCalendarCellState) {
 		this.opts = opts;
 		this.cell = cell;
-
-		useRefById(opts);
 
 		this.onclick = this.onclick.bind(this);
 		this.onmouseenter = this.onmouseenter.bind(this);
@@ -738,6 +734,7 @@ class RangeCalendarDayState {
 				onclick: this.onclick,
 				onmouseenter: this.onmouseenter,
 				onfocusin: this.onfocusin,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

@@ -72,7 +72,7 @@
 
 {#if Array.isArray(rootState.opts.value.current)}
 	{#if rootState.opts.value.current.length}
-		{#each rootState.opts.value.current as item}
+		{#each rootState.opts.value.current as item (item)}
 			<SelectHiddenInput value={item} />
 		{/each}
 	{/if}

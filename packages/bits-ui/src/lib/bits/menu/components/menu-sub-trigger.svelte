@@ -2,11 +2,14 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubTriggerProps } from "../types.js";
 	import { useMenuSubTrigger } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		disabled = false,
 		ref = $bindable(null),
 		children,
@@ -28,7 +31,7 @@
 	const mergedProps = $derived(mergeProps(restProps, subTriggerState.props));
 </script>
 
-<FloatingLayerAnchor {id}>
+<FloatingLayerAnchor {id} ref={subTriggerState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

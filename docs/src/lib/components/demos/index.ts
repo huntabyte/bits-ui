@@ -67,6 +67,7 @@ export { default as SliderDemoTicks } from "./slider-demo-ticks.svelte";
 export { default as SwitchDemo } from "./switch-demo.svelte";
 export { default as SwitchDemoCustom } from "./switch-demo-custom.svelte";
 export { default as TabsDemo } from "./tabs-demo.svelte";
+export { default as TimeFieldDemo } from "./time-field-demo.svelte";
 export { default as ToggleDemo } from "./toggle-demo.svelte";
 export { default as ToggleGroupDemo } from "./toggle-group-demo.svelte";
 export { default as ToolbarDemo } from "./toolbar-demo.svelte";
@@ -77,3 +78,9 @@ export { default as TooltipDemoDelayDuration } from "./tooltip-demo-delay-durati
 export { default as TooltipDemoTransition } from "./tooltip-demo-transition.svelte";
 export { default as TooltipDemoGroup } from "./tooltip-demo-group.svelte";
 export { default as DateFieldDemoCustom } from "./date-field-demo-custom.svelte";
+export { default as TimeFieldDemoCustom } from "./time-field-demo-custom.svelte";
+export { default as TimeRangeFieldDemo } from "./time-range-field-demo.svelte";
+export { default as SliderDemoCustomSteps } from "./slider-demo-custom-steps.svelte";
+export { default as SliderDemoTickLabels } from "./slider-demo-tick-labels.svelte";
+export { default as SliderDemoThumbLabels } from "./slider-demo-thumb-labels.svelte";
+export { default as SliderDemoVertical } from "./slider-demo-vertical.svelte";

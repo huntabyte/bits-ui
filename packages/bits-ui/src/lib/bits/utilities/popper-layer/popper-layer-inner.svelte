@@ -44,6 +44,7 @@
 		customAnchor = null,
 		isStatic = false,
 		enabled,
+		ref,
 		...restProps
 	}: Omit<PopperLayerImplProps, "present" | "children"> & {
 		enabled: boolean;
@@ -85,6 +86,7 @@
 			{loop}
 			trapFocus={enabled && trapFocus}
 			forceMount={restProps.forceMount}
+			{ref}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
 				<EscapeLayer {onEscapeKeydown} {escapeKeydownBehavior} {enabled}>
@@ -95,6 +97,7 @@
 						{interactOutsideBehavior}
 						{isValidEvent}
 						{enabled}
+						{ref}
 					>
 						{#snippet children({ props: dismissibleProps })}
 							<TextSelectionLayer
@@ -103,6 +106,7 @@
 								{onPointerDown}
 								{onPointerUp}
 								{enabled}
+								{ref}
 							>
 								{@render popper?.({
 									props: mergeProps(

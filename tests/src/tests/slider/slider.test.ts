@@ -5,6 +5,9 @@ import { describe, it, vi } from "vitest";
 import { getTestKbd, setupUserEvents } from "../utils.js";
 import SliderMultiTest, { type SliderMultiTestProps } from "./slider-test-multi.svelte";
 import SliderRangeTest, { type SliderMultiRangeTestProps } from "./slider-range-test.svelte";
+import SliderWithLabelsTest, {
+	type SliderWithLabelsTestProps,
+} from "./slider-test-with-labels.svelte";
 
 const kbd = getTestKbd();
 
@@ -14,15 +17,23 @@ function renderSlider(props: SliderMultiTestProps = {}) {
 function renderSliderRange(props: SliderMultiRangeTestProps = {}) {
 	return render(SliderRangeTest, { ...props });
 }
+function renderSliderWithLabels(props: SliderWithLabelsTestProps = {}) {
+	return render(SliderWithLabelsTest, { ...props });
+}
 
-function setup(props: SliderMultiTestProps = {}, kind: "default" | "range" = "default") {
+function setup(
+	props: SliderMultiTestProps | SliderWithLabelsTestProps = {},
+	kind: "default" | "range" | "labels" = "default"
+) {
 	const user = setupUserEvents();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let returned: any;
 	if (kind === "default") {
-		returned = renderSlider(props);
+		returned = renderSlider(props as SliderMultiTestProps);
+	} else if (kind === "range") {
+		returned = renderSliderRange(props as SliderMultiRangeTestProps);
 	} else {
-		returned = renderSliderRange(props);
+		returned = renderSliderWithLabels(props as SliderWithLabelsTestProps);
 	}
 	const { getByTestId } = returned;
 	const root = getByTestId("root");
@@ -640,3 +651,359 @@ function expectPercentages({
 	expect(isCloseEnough(lesserPercentage, range.style.left)).toBeTruthy();
 	expect(isCloseEnough(100 - higherPercentage, range.style.right)).toBeTruthy();
 }
+
+describe("labels", () => {
+	describe("tick labels", () => {
+		it("should have no accessibility violations", async () => {
+			const { container } = setup({ value: [50], min: 0, max: 100, step: 25 }, "labels");
+			expect(await axe(container)).toHaveNoViolations();
+		});
+
+		it("should render tick labels with correct data attributes", async () => {
+			const { getAllByTestId } = setup({ value: [50], min: 0, max: 100, step: 25 }, "labels");
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			expect(tickLabels).toHaveLength(5);
+
+			const firstTickLabel = getAllByTestId("tick-label-0")[0];
+			expect(firstTickLabel).toHaveAttribute("data-value", "0");
+			expect(firstTickLabel).toHaveAttribute("data-orientation", "horizontal");
+			expect(firstTickLabel).toHaveAttribute("data-bounded");
+			expect(firstTickLabel).toHaveAttribute("data-slider-tick-label");
+			expect(firstTickLabel).toHaveAttribute("data-position", "top");
+
+			const selectedTickLabel = getAllByTestId("tick-label-2")[0];
+			expect(selectedTickLabel).toHaveAttribute("data-value", "50");
+			expect(selectedTickLabel).toHaveAttribute("data-selected");
+			expect(selectedTickLabel).toHaveAttribute("data-bounded");
+
+			const unboundedTickLabel = getAllByTestId("tick-label-3")[0];
+			expect(unboundedTickLabel).toHaveAttribute("data-value", "75");
+			expect(unboundedTickLabel).not.toHaveAttribute("data-bounded");
+			expect(unboundedTickLabel).not.toHaveAttribute("data-selected");
+		});
+
+		it("should render tick labels with correct content", async () => {
+			const { getAllByTestId } = setup({ value: [50], min: 0, max: 100, step: 25 }, "labels");
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			const expectedValues = ["0", "25", "50", "75", "100"];
+
+			tickLabels.forEach((label: HTMLElement, index: number) => {
+				expect(label.textContent).toBe(expectedValues[index]);
+			});
+		});
+
+		it("should position tick labels correctly with different positions", async () => {
+			const { getAllByTestId } = setup(
+				{
+					value: [50],
+					min: 0,
+					max: 100,
+					step: 50,
+					tickLabelPosition: "bottom",
+				},
+				"labels"
+			);
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			tickLabels.forEach((label: HTMLElement) => {
+				expect(label).toHaveAttribute("data-position", "bottom");
+				expect(label.style.top).toBe("100%");
+			});
+		});
+
+		it("should handle disabled state correctly", async () => {
+			const { getAllByTestId } = setup(
+				{
+					value: [50],
+					min: 0,
+					max: 100,
+					step: 50,
+					disabled: true,
+				},
+				"labels"
+			);
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			tickLabels.forEach((label: HTMLElement) => {
+				expect(label).toHaveAttribute("data-disabled");
+			});
+		});
+
+		it("should handle vertical orientation correctly", async () => {
+			const { getAllByTestId } = setup(
+				{
+					value: [50],
+					min: 0,
+					max: 100,
+					step: 50,
+					orientation: "vertical",
+				},
+				"labels"
+			);
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			tickLabels.forEach((label: HTMLElement) => {
+				expect(label).toHaveAttribute("data-orientation", "vertical");
+				expect(label).toHaveAttribute("data-position", "left");
+			});
+		});
+
+		it("should update bounded state when value changes", async () => {
+			const { getAllByTestId, rerender } = setup(
+				{
+					value: [25],
+					min: 0,
+					max: 100,
+					step: 25,
+				},
+				"labels"
+			);
+
+			// initially, ticks 0 and 1 should be bounded
+			let tickLabels = getAllByTestId(/^tick-label-/);
+			expect(tickLabels[0]).toHaveAttribute("data-bounded");
+			expect(tickLabels[1]).toHaveAttribute("data-bounded");
+			expect(tickLabels[2]).not.toHaveAttribute("data-bounded");
+
+			// change value to 75
+			await rerender({ value: [75], min: 0, max: 100, step: 25 });
+
+			tickLabels = getAllByTestId(/^tick-label-/);
+			expect(tickLabels[0]).toHaveAttribute("data-bounded");
+			expect(tickLabels[1]).toHaveAttribute("data-bounded");
+			expect(tickLabels[2]).toHaveAttribute("data-bounded");
+			expect(tickLabels[3]).toHaveAttribute("data-bounded");
+			expect(tickLabels[4]).not.toHaveAttribute("data-bounded");
+		});
+	});
+
+	describe("thumb labels", () => {
+		it("should have no accessibility violations", async () => {
+			const { container } = setup({ value: [50] }, "labels");
+			expect(await axe(container)).toHaveNoViolations();
+		});
+
+		it("should render thumb labels with correct data attributes", async () => {
+			const { getByTestId } = setup({ value: [50] }, "labels");
+
+			const thumbLabel = getByTestId("thumb-label-0");
+			expect(thumbLabel).toHaveAttribute("data-value", "50");
+			expect(thumbLabel).toHaveAttribute("data-orientation", "horizontal");
+			expect(thumbLabel).toHaveAttribute("data-slider-thumb-label");
+			expect(thumbLabel).toHaveAttribute("data-position", "top");
+			expect(thumbLabel).not.toHaveAttribute("data-disabled");
+			expect(thumbLabel).not.toHaveAttribute("data-active");
+		});
+
+		it("should render thumb labels with correct content", async () => {
+			const { getByTestId } = setup({ value: [75] }, "labels");
+
+			const thumbLabel = getByTestId("thumb-label-0");
+			expect(thumbLabel.textContent).toBe("75");
+		});
+
+		it("should show active state when thumb is being dragged", async () => {
+			const { getByTestId, user } = setup({ value: [50] }, "labels");
+
+			const thumb = getByTestId("thumb-0");
+			const thumbLabel = getByTestId("thumb-label-0");
+
+			expect(thumbLabel).not.toHaveAttribute("data-active");
+
+			await user.pointer({ target: thumb, keys: "[MouseLeft>]" });
+
+			expect(thumbLabel).toHaveAttribute("data-active");
+		});
+
+		it("should handle disabled state correctly", async () => {
+			const { getByTestId } = setup(
+				{
+					value: [50],
+					disabled: true,
+				},
+				"labels"
+			);
+
+			const thumbLabel = getByTestId("thumb-label-0");
+			expect(thumbLabel).toHaveAttribute("data-disabled");
+		});
+
+		it("should position thumb labels correctly with different positions", async () => {
+			const { getByTestId } = setup(
+				{
+					value: [50],
+					thumbLabelPosition: "bottom",
+				},
+				"labels"
+			);
+
+			const thumbLabel = getByTestId("thumb-label-0");
+			expect(thumbLabel).toHaveAttribute("data-position", "bottom");
+			expect(thumbLabel.style.top).toBe("100%");
+		});
+
+		it("should handle vertical orientation correctly", async () => {
+			const { getByTestId } = setup(
+				{
+					value: [50],
+					orientation: "vertical",
+				},
+				"labels"
+			);
+
+			const thumbLabel = getByTestId("thumb-label-0");
+			expect(thumbLabel).toHaveAttribute("data-orientation", "vertical");
+			expect(thumbLabel).toHaveAttribute("data-position", "left");
+		});
+
+		it("should update value when thumb moves", async () => {
+			const { getByTestId, user } = setup({ value: [50] }, "labels");
+
+			const thumb = getByTestId("thumb-0");
+			const thumbLabel = getByTestId("thumb-label-0");
+
+			thumb.focus();
+			await user.keyboard(kbd.ARROW_RIGHT);
+
+			expect(thumbLabel).toHaveAttribute("data-value", "51");
+			expect(thumbLabel.textContent).toBe("51");
+		});
+
+		it("should handle multiple thumb labels correctly", async () => {
+			const { getByTestId, getAllByTestId } = setup(
+				{
+					value: [20, 80],
+				},
+				"labels"
+			);
+
+			const thumbLabels = getAllByTestId(/^thumb-label-/);
+			expect(thumbLabels).toHaveLength(2);
+
+			const thumbLabel0 = getByTestId("thumb-label-0");
+			const thumbLabel1 = getByTestId("thumb-label-1");
+
+			expect(thumbLabel0).toHaveAttribute("data-value", "20");
+			expect(thumbLabel0.textContent).toBe("20");
+
+			expect(thumbLabel1).toHaveAttribute("data-value", "80");
+			expect(thumbLabel1.textContent).toBe("80");
+		});
+
+		it("should maintain correct labels when thumbs swap positions (autoSort=true)", async () => {
+			const { getByTestId, user } = setup(
+				{
+					value: [49, 51],
+				},
+				"labels"
+			);
+
+			const thumb0 = getByTestId("thumb-0");
+			const thumbLabel0 = getByTestId("thumb-label-0");
+			const thumbLabel1 = getByTestId("thumb-label-1");
+
+			thumb0.focus();
+			await user.keyboard(kbd.ARROW_RIGHT);
+			await user.keyboard(kbd.ARROW_RIGHT);
+			await user.keyboard(kbd.ARROW_RIGHT);
+
+			expect(thumbLabel0).toHaveAttribute("data-value", "51");
+			expect(thumbLabel1).toHaveAttribute("data-value", "52");
+		});
+
+		it("should maintain correct labels when thumbs swap positions (autoSort=false)", async () => {
+			const { getByTestId, user } = setup(
+				{
+					value: [49, 51],
+					autoSort: false,
+				},
+				"labels"
+			);
+
+			const thumb0 = getByTestId("thumb-0");
+			const thumbLabel0 = getByTestId("thumb-label-0");
+			const thumbLabel1 = getByTestId("thumb-label-1");
+
+			thumb0.focus();
+			await user.keyboard(kbd.ARROW_RIGHT);
+			await user.keyboard(kbd.ARROW_RIGHT);
+			await user.keyboard(kbd.ARROW_RIGHT);
+
+			expect(thumbLabel0).toHaveAttribute("data-value", "52");
+			expect(thumbLabel1).toHaveAttribute("data-value", "51");
+		});
+	});
+
+	describe("labels with custom steps", () => {
+		it("should render correct tick labels for custom step values", async () => {
+			const { getAllByTestId } = setup(
+				{
+					value: [6],
+					min: 0,
+					max: 9,
+					step: 3,
+				},
+				"labels"
+			);
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			expect(tickLabels).toHaveLength(4); // 0, 3, 6, 9
+
+			const expectedValues = ["0", "3", "6", "9"];
+			tickLabels.forEach((label: HTMLElement, index: number) => {
+				expect(label.textContent).toBe(expectedValues[index]);
+			});
+
+			// Check bounded state
+			expect(tickLabels[0]).toHaveAttribute("data-bounded");
+			expect(tickLabels[1]).toHaveAttribute("data-bounded");
+			expect(tickLabels[2]).toHaveAttribute("data-bounded");
+			expect(tickLabels[2]).toHaveAttribute("data-selected");
+			expect(tickLabels[3]).not.toHaveAttribute("data-bounded");
+		});
+
+		it("should handle fractional step values correctly", async () => {
+			const { getAllByTestId } = setup(
+				{
+					value: [0.5],
+					min: 0,
+					max: 1,
+					step: 0.25,
+				},
+				"labels"
+			);
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			expect(tickLabels).toHaveLength(5); // 0, 0.25, 0.5, 0.75, 1
+
+			const expectedValues = ["0", "0.25", "0.5", "0.75", "1"];
+			tickLabels.forEach((label: HTMLElement, index: number) => {
+				expect(label.textContent).toBe(expectedValues[index]);
+			});
+		});
+	});
+
+	describe("labels visibility", () => {
+		it("should render both types of labels when both are enabled", async () => {
+			const { getAllByTestId } = setup(
+				{
+					value: [50],
+					min: 0,
+					max: 100,
+					step: 50,
+					showTickLabels: true,
+					showThumbLabels: true,
+				},
+				"labels"
+			);
+
+			const tickLabels = getAllByTestId(/^tick-label-/);
+			const thumbLabels = getAllByTestId(/^thumb-label-/);
+
+			expect(tickLabels.length).toBeGreaterThan(0);
+			expect(thumbLabels.length).toBeGreaterThan(0);
+		});
+	});
+});

@@ -1,4 +1,4 @@
-import { afterSleep, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { afterSleep, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -124,13 +124,6 @@ class LinkPreviewTriggerState {
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
 		this.onblur = this.onblur.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.triggerNode = node;
-			},
-		});
 	}
 
 	onpointerenter(e: BitsPointerEvent) {
@@ -168,6 +161,7 @@ class LinkPreviewTriggerState {
 				onfocus: this.onfocus,
 				onblur: this.onblur,
 				onpointerleave: this.onpointerleave,
+				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
 			}) as const
 	);
 }
@@ -188,14 +182,6 @@ class LinkPreviewContentState {
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-			},
-			deps: () => this.root.opts.open.current,
-		});
 
 		useGraceArea({
 			triggerNode: () => this.root.triggerNode,
@@ -263,6 +249,7 @@ class LinkPreviewContentState {
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onfocusout: this.onfocusout,
+				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
 			}) as const
 	);
 

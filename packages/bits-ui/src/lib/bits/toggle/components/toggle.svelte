@@ -2,12 +2,14 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToggleRootProps } from "../types.js";
 	import { useToggleRoot } from "../toggle.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		pressed = $bindable(false),
 		onPressedChange = noop,
 		disabled = false,

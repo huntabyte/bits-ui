@@ -23,6 +23,21 @@ export function handleSegmentNavigation(e: KeyboardEvent, fieldNode: HTMLElement
 	}
 }
 
+export function handleTimeSegmentNavigation(e: KeyboardEvent, fieldNode: HTMLElement | null) {
+	const currentTarget = e.currentTarget;
+	if (!isHTMLElement(currentTarget)) return;
+
+	const { prev, next } = getPrevNextTimeSegments(currentTarget, fieldNode);
+
+	if (e.key === kbd.ARROW_LEFT) {
+		if (!prev) return;
+		prev.focus();
+	} else if (e.key === kbd.ARROW_RIGHT) {
+		if (!next) return;
+		next.focus();
+	}
+}
+
 /**
  * Retrieves the next segment in the list of segments relative to the provided node.
  *
@@ -71,6 +86,20 @@ export function getPrevNextSegments(startingNode: HTMLElement, fieldNode: HTMLEl
 	};
 }
 
+export function getPrevNextTimeSegments(startingNode: HTMLElement, fieldNode: HTMLElement | null) {
+	const segments = getTimeSegments(fieldNode);
+	if (!segments.length) {
+		return {
+			next: null,
+			prev: null,
+		};
+	}
+	return {
+		next: getNextSegment(startingNode, segments),
+		prev: getPrevSegment(startingNode, segments),
+	};
+}
+
 /**
  * Shifts the focus to the next segment in the list of segments
  * within the field identified by the provided ID.
@@ -81,6 +110,22 @@ export function moveToNextSegment(e: KeyboardEvent, fieldNode: HTMLElement | nul
 	const { next } = getPrevNextSegments(node, fieldNode);
 	if (!next) return;
 	next.focus();
+}
+
+export function moveToNextTimeSegment(e: KeyboardEvent, fieldNode: HTMLElement | null) {
+	const node = e.currentTarget;
+	if (!isHTMLElement(node)) return;
+	const { next } = getPrevNextTimeSegments(node, fieldNode);
+	if (!next) return;
+	next.focus();
+}
+
+export function moveToPrevTimeSegment(e: KeyboardEvent, fieldNode: HTMLElement | null) {
+	const node = e.currentTarget;
+	if (!isHTMLElement(node)) return;
+	const { prev } = getPrevNextTimeSegments(node, fieldNode);
+	if (!prev) return;
+	prev.focus();
 }
 
 /**
@@ -116,6 +161,24 @@ export function getSegments(fieldNode: HTMLElement | null) {
 		}
 	);
 	return segments;
+}
+
+export function getTimeSegments(fieldNode: HTMLElement | null) {
+	if (!fieldNode) return [];
+	const segments = Array.from(fieldNode.querySelectorAll("[data-segment]")).filter(
+		(el): el is HTMLElement => {
+			if (!isHTMLElement(el)) return false;
+			const segment = el.dataset.segment;
+			if (segment === "trigger") return true;
+			if (segment === "literal") return false;
+			return true;
+		}
+	);
+	return segments;
+}
+
+export function getFirstTimeSegment(fieldNode: HTMLElement | null) {
+	return getTimeSegments(fieldNode)[0];
 }
 
 /**

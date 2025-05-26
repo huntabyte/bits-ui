@@ -1,4 +1,4 @@
-import { afterTick, box, mergeProps, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { afterTick, box, mergeProps, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,
@@ -37,6 +37,8 @@ import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
+import { untrack } from "svelte";
+import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -149,16 +151,6 @@ class MenuContentState {
 		this.onfocus = this.onfocus.bind(this);
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 
-		useRefById({
-			...opts,
-			deps: () => this.parentMenu.opts.open.current,
-			onRefChange: (node) => {
-				if (this.parentMenu.contentNode !== node) {
-					this.parentMenu.contentNode = node;
-				}
-			},
-		});
-
 		useGraceArea({
 			contentNode: () => this.parentMenu.contentNode,
 			triggerNode: () => this.parentMenu.triggerNode,
@@ -179,7 +171,7 @@ class MenuContentState {
 
 		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.parentMenu.contentId,
+			rootNode: box.with(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getAttr("item"),
 			loop: this.opts.loop,
 			orientation: box.with(() => "vertical"),
@@ -382,6 +374,13 @@ class MenuContentState {
 				style: {
 					pointerEvents: "auto",
 				},
+				...attachRef(this.opts.ref, (v) => {
+					untrack(() => {
+						if (this.parentMenu.contentNode !== v) {
+							this.parentMenu.contentNode = v;
+						}
+					});
+				}),
 			}) as const
 	);
 
@@ -407,11 +406,6 @@ class MenuItemSharedState {
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
 		this.onblur = this.onblur.bind(this);
-
-		useRefById({
-			...opts,
-			deps: () => this.content.mounted,
-		});
 	}
 
 	onpointermove(e: BitsPointerEvent) {
@@ -464,6 +458,7 @@ class MenuItemSharedState {
 				onpointerleave: this.onpointerleave,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -573,13 +568,6 @@ class MenuSubTriggerState {
 		onDestroyEffect(() => {
 			this.#clearOpenTimer();
 		});
-
-		useRefById({
-			...item.opts,
-			onRefChange: (node) => {
-				this.submenu.triggerNode = node;
-			},
-		});
 	}
 
 	#clearOpenTimer() {
@@ -657,6 +645,7 @@ class MenuSubTriggerState {
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref, (v) => (this.submenu.triggerNode = v)),
 			},
 			this.item.props
 		)
@@ -747,8 +736,6 @@ class MenuGroupState {
 	constructor(opts: MenuGroupStateProps, root: MenuRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(this.opts);
 	}
 
 	props = $derived.by(
@@ -758,6 +745,7 @@ class MenuGroupState {
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
 				[this.root.getAttr("group")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -773,13 +761,6 @@ class MenuGroupHeadingState {
 	) {
 		this.opts = opts;
 		this.group = group;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.group.groupHeadingId = node?.id;
-			},
-		});
 	}
 
 	props = $derived.by(
@@ -788,6 +769,7 @@ class MenuGroupHeadingState {
 				id: this.opts.id.current,
 				role: "group",
 				[this.group.root.getAttr("group-heading")]: "",
+				...attachRef(this.opts.ref, (v) => (this.group.groupHeadingId = v?.id)),
 			}) as const
 	);
 }
@@ -801,8 +783,6 @@ class MenuSeparatorState {
 	constructor(opts: MenuSeparatorStateProps, root: MenuRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -811,6 +791,7 @@ class MenuSeparatorState {
 				id: this.opts.id.current,
 				role: "group",
 				[this.root.getAttr("separator")]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -845,8 +826,6 @@ class MenuRadioGroupState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.parentMenu.root;
-
-		useRefById(opts);
 	}
 
 	setValue(v: string) {
@@ -860,6 +839,7 @@ class MenuRadioGroupState {
 				[this.root.getAttr("radio-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -880,8 +860,6 @@ class MenuRadioItemState {
 		this.opts = opts;
 		this.item = item;
 		this.group = group;
-
-		useRefById(opts);
 	}
 
 	selectValue() {
@@ -896,6 +874,7 @@ class MenuRadioItemState {
 				role: "menuitemradio",
 				"aria-checked": getAriaChecked(this.isChecked, false),
 				"data-state": getCheckedState(this.isChecked),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -916,19 +895,9 @@ class DropdownMenuTriggerState {
 	constructor(opts: DropdownMenuTriggerStateProps, parentMenu: MenuMenuState) {
 		this.opts = opts;
 		this.parentMenu = parentMenu;
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (ref) => {
-				this.parentMenu.triggerNode = ref;
-			},
-		});
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -938,17 +907,17 @@ class DropdownMenuTriggerState {
 			// the content to be given focus without competition
 			if (!this.parentMenu.opts.open.current) e.preventDefault();
 		}
-	}
+	};
 
-	onpointerup(e: BitsPointerEvent) {
+	onpointerup: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.parentMenu.toggleOpen();
 		}
-	}
+	};
 
-	onkeydown(e: BitsKeyboardEvent) {
+	onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			this.parentMenu.toggleOpen();
@@ -959,7 +928,7 @@ class DropdownMenuTriggerState {
 			this.parentMenu.onOpen();
 			e.preventDefault();
 		}
-	}
+	};
 
 	#ariaControls = $derived.by(() => {
 		if (this.parentMenu.opts.open.current && this.parentMenu.contentId.current)
@@ -982,6 +951,7 @@ class DropdownMenuTriggerState {
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v)),
 			}) as const
 	);
 }
@@ -1009,14 +979,6 @@ class ContextMenuTriggerState {
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onpointercancel = this.onpointercancel.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.parentMenu.triggerNode = node;
-			},
-			deps: () => this.parentMenu.opts.open.current,
-		});
 
 		watch(
 			() => this.#point,
@@ -1091,6 +1053,7 @@ class ContextMenuTriggerState {
 				onpointercancel: this.onpointercancel,
 				onpointerup: this.onpointerup,
 				oncontextmenu: this.oncontextmenu,
+				...attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v)),
 			}) as const
 	);
 }
@@ -1113,8 +1076,6 @@ class MenuCheckboxGroupState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.parentMenu.root;
-
-		useRefById(opts);
 	}
 
 	addValue(checkboxValue: string | undefined) {
@@ -1142,6 +1103,7 @@ class MenuCheckboxGroupState {
 				[this.root.getAttr("checkbox-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

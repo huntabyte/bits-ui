@@ -3,10 +3,8 @@ import {
 	type WritableBox,
 	afterSleep,
 	afterTick,
-	box,
 	executeCallbacks,
 	onDestroyEffect,
-	useRefById,
 } from "svelte-toolbelt";
 import { watch } from "runed";
 import { on } from "svelte/events";
@@ -25,8 +23,8 @@ globalThis.bitsDismissableLayers ??= new Map<
 >();
 
 type DismissibleLayerStateProps = ReadableBoxedValues<
-	Required<Omit<DismissibleLayerImplProps, "children">>
->;
+	Required<Omit<DismissibleLayerImplProps, "children" | "ref">>
+> & { ref: WritableBox<HTMLElement | null> };
 
 export class DismissibleLayerState {
 	readonly opts: DismissibleLayerStateProps;
@@ -37,30 +35,19 @@ export class DismissibleLayerState {
 	};
 	#isResponsibleLayer = false;
 	#isFocusInsideDOMTree = false;
-	node: WritableBox<HTMLElement | null> = box(null);
 	#documentObj = undefined as unknown as Document;
 	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
-	currNode = $state<HTMLElement | null>(null);
 	#unsubClickListener = noop;
 
 	constructor(opts: DismissibleLayerStateProps) {
 		this.opts = opts;
-
-		useRefById({
-			id: opts.id,
-			ref: this.node,
-			deps: () => opts.enabled.current,
-			onRefChange: (node) => {
-				this.currNode = node;
-			},
-		});
 
 		this.#behaviorType = opts.interactOutsideBehavior;
 		this.#interactOutsideProp = opts.onInteractOutside;
 		this.#onFocusOutside = opts.onFocusOutside;
 
 		$effect(() => {
-			this.#documentObj = getOwnerDocument(this.currNode);
+			this.#documentObj = getOwnerDocument(this.opts.ref.current);
 		});
 
 		let unsubEvents = noop;
@@ -72,10 +59,10 @@ export class DismissibleLayerState {
 			unsubEvents();
 		};
 
-		watch([() => this.opts.enabled.current, () => this.currNode], ([enabled, currNode]) => {
-			if (!enabled || !currNode) return;
+		watch([() => this.opts.enabled.current, () => this.opts.ref.current], () => {
+			if (!this.opts.enabled.current || !this.opts.ref.current) return;
 			afterSleep(1, () => {
-				if (!this.currNode) return;
+				if (!this.opts.ref.current) return;
 				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
 
 				unsubEvents();
@@ -95,9 +82,10 @@ export class DismissibleLayerState {
 
 	#handleFocus = (event: FocusEvent) => {
 		if (event.defaultPrevented) return;
-		if (!this.currNode) return;
+		if (!this.opts.ref.current) return;
 		afterTick(() => {
-			if (!this.currNode || this.#isTargetWithinLayer(event.target as HTMLElement)) return;
+			if (!this.opts.ref.current || this.#isTargetWithinLayer(event.target as HTMLElement))
+				return;
 
 			if (event.target && !this.#isFocusInsideDOMTree) {
 				this.#onFocusOutside.current?.(event);
@@ -148,12 +136,13 @@ export class DismissibleLayerState {
 	};
 
 	#handleInteractOutside = debounce((e: PointerEvent) => {
-		if (!this.currNode) {
+		if (!this.opts.ref.current) {
 			this.#unsubClickListener();
 			return;
 		}
 		const isEventValid =
-			this.opts.isValidEvent.current(e, this.currNode) || isValidEvent(e, this.currNode);
+			this.opts.isValidEvent.current(e, this.opts.ref.current) ||
+			isValidEvent(e, this.opts.ref.current);
 
 		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			this.#unsubClickListener();
@@ -197,13 +186,13 @@ export class DismissibleLayerState {
 	};
 
 	#markResponsibleLayer = () => {
-		if (!this.node.current) return;
-		this.#isResponsibleLayer = isResponsibleLayer(this.node.current);
+		if (!this.opts.ref.current) return;
+		this.#isResponsibleLayer = isResponsibleLayer(this.opts.ref.current);
 	};
 
 	#isTargetWithinLayer = (target: HTMLElement) => {
-		if (!this.node.current) return false;
-		return isOrContainsTarget(this.node.current, target);
+		if (!this.opts.ref.current) return false;
+		return isOrContainsTarget(this.opts.ref.current, target);
 	};
 
 	#resetState = debounce(() => {
@@ -253,9 +242,9 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 	 * the first layer is the responsible one.
 	 */
 	const topMostLayer = getTopMostLayer(layersArr);
-	if (topMostLayer) return topMostLayer[0].node.current === node;
+	if (topMostLayer) return topMostLayer[0].opts.ref.current === node;
 	const [firstLayerNode] = layersArr[0]!;
-	return firstLayerNode.node.current === node;
+	return firstLayerNode.opts.ref.current === node;
 }
 
 function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {

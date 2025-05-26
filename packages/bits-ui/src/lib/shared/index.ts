@@ -46,7 +46,7 @@ export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
-export type { EditableSegmentPart } from "./date/types.js";
+export type { EditableSegmentPart, EditableTimeSegmentPart } from "./date/types.js";
 export type {
 	Month,
 	DateMatcher,
@@ -54,6 +54,12 @@ export type {
 	DateRangeValidator,
 	DateValidator,
 	DateRange,
+	TimeValue,
+	TimeSegmentPart,
+	TimeRange,
+	TimeValidator,
+	TimeRangeValidator,
+	TimeOnInvalid,
 } from "./date/types.js";
 export type { WithChild, Without, WithChildren } from "$lib/internal/types.js";
 export { mergeProps } from "svelte-toolbelt";

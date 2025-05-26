@@ -1,4 +1,4 @@
-import { afterSleep, afterTick, box, executeCallbacks, useRefById } from "svelte-toolbelt";
+import { afterSleep, afterTick, executeCallbacks } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import {
@@ -63,6 +63,8 @@ type UseFocusScopeProps = ReadableBoxedValues<{
 	 * Whether force mount is enabled or not
 	 */
 	forceMount: boolean;
+
+	ref: HTMLElement | null;
 }>;
 
 export type FocusScopeContainerProps = {
@@ -78,18 +80,12 @@ export function useFocusScope({
 	onOpenAutoFocus,
 	onCloseAutoFocus,
 	forceMount,
+	ref,
 }: UseFocusScopeProps) {
 	const focusScopeStack = createFocusScopeStack();
 	const focusScope = createFocusScopeAPI();
-	const ref = box<HTMLElement | null>(null);
 	const ctx = FocusScopeContext.getOr({ ignoreCloseAutoFocus: false });
 	let lastFocusedElement: HTMLElement | null = null;
-
-	useRefById({
-		id,
-		ref,
-		deps: () => enabled.current,
-	});
 
 	function manageFocus(event: FocusEvent) {
 		if (focusScope.paused || !ref.current || focusScope.isHandlingFocus) return;

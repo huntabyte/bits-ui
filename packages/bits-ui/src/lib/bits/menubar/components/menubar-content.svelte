@@ -3,13 +3,15 @@
 	import type { MenubarContentProps } from "../types.js";
 	import { useMenubarContent } from "../menubar.svelte.js";
 	import MenuContent from "$lib/bits/menu/components/menu-content.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		ref = $bindable(null),
 		interactOutsideBehavior = "close",
-		id = useId(),
+		id = createId(uid),
 		onInteractOutside = noop,
 		onFocusOutside = noop,
 		onCloseAutoFocus = noop,

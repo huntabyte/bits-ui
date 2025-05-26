@@ -78,7 +78,7 @@
 				align="start"
 				sideOffset={3}
 			>
-				{#each grids as grid}
+				{#each grids as grid (grid.label)}
 					<Menubar.CheckboxItem
 						class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-3 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 						bind:checked={grid.checked}
@@ -87,9 +87,9 @@
 							{grid.label} grid
 							<div class="ml-auto flex items-center">
 								{#if checked}
-									<SwitchOn />
+									{@render SwitchOn()}
 								{:else}
-									<SwitchOff />
+									{@render SwitchOff()}
 								{/if}
 							</div>
 						{/snippet}
@@ -97,7 +97,7 @@
 				{/each}
 				<Menubar.Separator class="bg-muted my-1 -ml-1 -mr-1 block h-px" />
 				<Menubar.RadioGroup bind:value={selectedView}>
-					{#each views as view}
+					{#each views as view, i (view.label + i)}
 						<Menubar.RadioItem
 							value={view.value}
 							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-2 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
@@ -206,7 +206,7 @@
 				align="start"
 				sideOffset={3}
 			>
-				{#each showConfigs as config}
+				{#each showConfigs as config, i (config.label + i)}
 					<Menubar.CheckboxItem
 						class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-3 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 						bind:checked={config.checked}
@@ -262,7 +262,7 @@
 				sideOffset={3}
 			>
 				<Menubar.RadioGroup bind:value={selectedProfile}>
-					{#each profiles as profile}
+					{#each profiles as profile, i (profile.label + i)}
 						<Menubar.RadioItem
 							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
 							value={profile.value}

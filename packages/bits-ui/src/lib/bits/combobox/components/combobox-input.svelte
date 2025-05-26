@@ -32,7 +32,7 @@
 	);
 </script>
 
-<FloatingLayer.Anchor {id}>
+<FloatingLayer.Anchor {id} ref={inputState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

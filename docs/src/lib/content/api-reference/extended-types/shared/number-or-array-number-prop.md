@@ -1,0 +1,3 @@
+```ts
+number | number[]
+```

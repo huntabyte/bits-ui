@@ -1,4 +1,4 @@
-import { afterSleep, afterTick, srOnlyStyles, useRefById } from "svelte-toolbelt";
+import { afterSleep, afterTick, srOnlyStyles, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import type { CommandState } from "./types.js";
@@ -142,8 +142,6 @@ class CommandRootState {
 
 		this._commandState = defaults;
 		this.commandState = defaults;
-
-		useRefById(opts);
 
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -668,6 +666,7 @@ class CommandRootState {
 				[COMMAND_ROOT_ATTR]: "",
 				tabindex: -1,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -695,11 +694,6 @@ class CommandEmptyState {
 		$effect.pre(() => {
 			this.#isInitialRender = false;
 		});
-
-		useRefById({
-			...opts,
-			deps: () => this.shouldRender,
-		});
 	}
 
 	props = $derived.by(
@@ -708,6 +702,7 @@ class CommandEmptyState {
 				id: this.opts.id.current,
 				role: "presentation",
 				[COMMAND_EMPTY_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -736,11 +731,6 @@ class CommandGroupContainerState {
 		this.opts = opts;
 		this.root = root;
 		this.trueValue = opts.value.current ?? opts.id.current;
-
-		useRefById({
-			...opts,
-			deps: () => this.shouldRender,
-		});
 
 		watch(
 			() => this.trueValue,
@@ -771,6 +761,7 @@ class CommandGroupContainerState {
 				hidden: this.shouldRender ? undefined : true,
 				"data-value": this.trueValue,
 				[COMMAND_GROUP_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -784,13 +775,6 @@ class CommandGroupHeadingState {
 	constructor(opts: CommandGroupHeadingStateProps, group: CommandGroupContainerState) {
 		this.opts = opts;
 		this.group = group;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.group.headingNode = node;
-			},
-		});
 	}
 
 	props = $derived.by(
@@ -798,6 +782,7 @@ class CommandGroupHeadingState {
 			({
 				id: this.opts.id.current,
 				[COMMAND_GROUP_HEADING_ATTR]: "",
+				...attachRef(this.opts.ref, (v) => (this.group.headingNode = v)),
 			}) as const
 	);
 }
@@ -811,8 +796,6 @@ class CommandGroupItemsState {
 	constructor(opts: CommandGroupItemsStateProps, group: CommandGroupContainerState) {
 		this.opts = opts;
 		this.group = group;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -822,6 +805,7 @@ class CommandGroupItemsState {
 				role: "group",
 				[COMMAND_GROUP_ITEMS_ATTR]: "",
 				"aria-labelledby": this.group.headingNode?.id ?? undefined,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -849,13 +833,6 @@ class CommandInputState {
 	constructor(opts: CommandInputStateProps, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.inputNode = node;
-			},
-		});
 
 		watch(
 			() => this.opts.ref.current,
@@ -892,6 +869,7 @@ class CommandInputState {
 				"aria-controls": this.root.viewportNode?.id ?? undefined,
 				"aria-labelledby": this.root.labelNode?.id ?? undefined,
 				"aria-activedescendant": this.#selectedItemId,
+				...attachRef(this.opts.ref, (v) => (this.root.inputNode = v)),
 			}) as const
 	);
 }
@@ -939,11 +917,6 @@ class CommandItemState {
 		this.root = root;
 		this.#group = CommandGroupContainerContext.getOr(null);
 		this.trueValue = opts.value.current;
-
-		useRefById({
-			...opts,
-			deps: () => Boolean(this.root.commandState.search),
-		});
 
 		watch(
 			[
@@ -1008,6 +981,7 @@ class CommandItemState {
 				role: "option",
 				onpointermove: this.onpointermove,
 				onclick: this.onclick,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -1023,8 +997,6 @@ class CommandLoadingState {
 
 	constructor(opts: CommandLoadingStateProps) {
 		this.opts = opts;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -1037,6 +1009,7 @@ class CommandLoadingState {
 				"aria-valuemax": 100,
 				"aria-label": "Loading...",
 				[COMMAND_LOADING_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -1056,11 +1029,6 @@ class CommandSeparatorState {
 	constructor(opts: CommandSeparatorStateProps, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			deps: () => this.shouldRender,
-		});
 	}
 
 	props = $derived.by(
@@ -1070,6 +1038,7 @@ class CommandSeparatorState {
 				// role="separator" cannot belong to a role="listbox"
 				"aria-hidden": "true",
 				[COMMAND_SEPARATOR_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -1086,8 +1055,6 @@ class CommandListState {
 	constructor(opts: CommandListStateProps, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -1097,6 +1064,7 @@ class CommandListState {
 				role: "listbox",
 				"aria-label": this.opts.ariaLabel.current,
 				[COMMAND_LIST_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -1110,13 +1078,6 @@ class CommandLabelState {
 	constructor(opts: CommandLabelStateProps, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.labelNode = node;
-			},
-		});
 	}
 
 	props = $derived.by(
@@ -1126,6 +1087,7 @@ class CommandLabelState {
 				[COMMAND_INPUT_LABEL_ATTR]: "",
 				for: this.opts.for?.current,
 				style: srOnlyStyles,
+				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
 			}) as const
 	);
 }
@@ -1139,13 +1101,6 @@ class CommandViewportState {
 	constructor(opts: CommandViewportStateProps, list: CommandListState) {
 		this.opts = opts;
 		this.list = list;
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.list.root.viewportNode = node;
-			},
-		});
 
 		$effect(() => {
 			const node = this.opts.ref.current;
@@ -1177,6 +1132,7 @@ class CommandViewportState {
 			({
 				id: this.opts.id.current,
 				[COMMAND_VIEWPORT_ATTR]: "",
+				...attachRef(this.opts.ref, (v) => (this.list.root.viewportNode = v)),
 			}) as const
 	);
 }

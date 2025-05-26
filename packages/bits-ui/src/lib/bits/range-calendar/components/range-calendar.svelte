@@ -4,14 +4,16 @@
 	import type { RangeCalendarRootProps } from "../types.js";
 	import { useRangeCalendarRoot } from "../range-calendar.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(),
 		onValueChange = noop,

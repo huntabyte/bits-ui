@@ -5,7 +5,6 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
@@ -68,6 +67,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		side="right"
 		sideOffset={2}
 		align="start"
@@ -94,13 +94,13 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		side="right"
 		sideOffset={2}
 		align="start"
@@ -127,7 +127,6 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

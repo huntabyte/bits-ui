@@ -3,12 +3,14 @@
 	import type { SelectContentProps } from "../types.js";
 	import { useSelectContent } from "../select.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		forceMount = false,
 		side = "bottom",
@@ -37,6 +39,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		{side}
 		enabled={contentState.root.opts.open.current}
 		{id}
@@ -60,6 +63,7 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		{side}
 		present={contentState.root.opts.open.current}
 		{id}

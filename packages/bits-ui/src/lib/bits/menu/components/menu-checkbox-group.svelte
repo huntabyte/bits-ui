@@ -3,10 +3,12 @@
 	import type { MenuCheckboxGroupProps } from "../types.js";
 	import { useMenuCheckboxGroup } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		ref = $bindable(null),

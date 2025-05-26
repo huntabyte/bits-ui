@@ -3,14 +3,16 @@
 	import type { SwitchRootProps } from "../types.js";
 	import { useSwitchRoot } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		children,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		disabled = false,
 		required = false,
 		checked = $bindable(false),

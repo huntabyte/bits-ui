@@ -2,11 +2,13 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenubarRootProps } from "../types.js";
 	import { useMenubarRoot } from "../menubar.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		ref = $bindable(null),

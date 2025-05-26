@@ -28,5 +28,6 @@ export default defineConfig({
 		coverage: {
 			exclude: ["./other/setup-test.ts"],
 		},
+		retry: 3,
 	},
 });

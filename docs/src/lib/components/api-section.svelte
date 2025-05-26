@@ -13,7 +13,7 @@
 <H2 id="api-reference">API Reference</H2>
 
 <div class="flex flex-col gap-12 pt-8">
-	{#each schemas as schema}
+	{#each schemas as schema (schema.title)}
 		<div>
 			<div
 				class="rounded-button bg-accent inline-flex h-[29px] items-center justify-center px-3 font-mono text-[17px] font-medium leading-tight tracking-tight dark:text-neutral-900"

@@ -30,7 +30,7 @@
 <Tabs.Root {value} {onValueChange}>
 	<div class="flex items-center justify-between border-x-2 pb-2 pt-1">
 		<Tabs.List class="flex items-center" data-llm-ignore>
-			{#each items as item}
+			{#each items as item (item.value)}
 				<Tabs.Trigger
 					value={item.value}
 					class="text-foreground-alt data-[state=active]:border-foreground-alt data-[state=active]:text-foreground flex select-none border-b-2 border-b-transparent  text-sm"

@@ -3,50 +3,53 @@ title: Introduction
 description: The headless components for Svelte.
 ---
 
-Bits UI is a collection of headless component primitives for Svelte that prioritizes developer experience, accessibility, and flexibility. Our vision is to empower developers to build high-quality, accessible user interfaces without sacrificing creative control or performance.
+Bits UI is a headless component library for Svelte focused on developer experience, accessibility, and full creative control. Use it to build high-quality, accessible UIs without giving up styling freedom or performance.
 
 ## Why Bits UI?
 
 ### Bring Your Own Styles
 
-Most components ship with zero styling. Minimal styles are included only when absolutely necessary for core functionality. You maintain complete control over the visual design, applying your own styles through standard Svelte class props or targeting components via data attributes. See our [styling guide](/docs/styling) for implementation details.
+Most components ship completely unstyled, with the exception of those required for core functionality. No CSS resets, no design system assumptions. You bring the styles using standard `class` props or `data-*` attributes. [See the styling guide](/docs/styling).
 
-### Empowering DX
+### Building for Developer Experience
 
-Every component is designed with developer experience in mind:
+Everything is designed to stay out of your way:
 
--   Extensive TypeScript support
--   Predictable behavior and consistent APIs
+-   Full TypeScript coverage
+-   Stable, predictable APIs
+-   Flexible event override system
+-   Great defaults, easily overridden
 -   Comprehensive documentation and examples
--   Flexible event override system for custom behavior
--   Sensible defaults
 
-### Built for Production
+### Production-Ready Accessibility
 
--   Strives to follow [W3C ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/)
--   Built-in keyboard navigation
--   Screen reader optimization
--   Focus management
+Accessibility isn't just an afterthought - it's baked in:
 
-### Composable Architecture
+-   WAI-ARIA compliance
+-   Keyboard navigation by default
+-   Focus management handled for you
+-   Screen reader support built-in
 
-Components are designed to work independently or together, featuring:
+### Composable by Design
 
--   [Render Delegation](/docs/child-snippet) for maximum flexibility
+Components are primitives, not black boxes. They compose cleanly and play well together:
+
+-   [Render Delegation](/docs/child-snippet) for total flexibility
 -   Chainable events and callbacks
 -   Override-friendly defaults
 -   Minimal dependencies
 
 ## Community
 
-Bits UI is an open-source project built and maintained by [Hunter Johnston](https://x.com/huntabyte) with design support from [Pavel Stianko](https://x.com/pavel_stianko) and his team at [Bitworks Studio](https://bitworks.cz). We always welcome contributions and feedback from the community.
+Bits UI was built and is maintained by [Hunter Johnston](https://x.com/huntabyte) with design support from [Pavel Stianko](https://x.com/pavel_stianko) and his team at [Bitworks Studio](https://bitworks.cz) and tooling support from [Adrian Gonz](https://github.com/AdrianGonz97). Contributions, issues, and feedback are always welcome.
 
-Found an accessibility issue or have a suggestion? [Open an issue](https://github.com/huntabyte/bits-ui/issues/new).
+Found an issue? [Open one](https://github.com/huntabyte/bits-ui/issues/new).
+Have a feature request? [Let's discuss](https://github.com/huntabyte/bits-ui/discussions/new?category=feature-requests-ideas)
 
 ## Acknowledgments
 
 Built on the shoulders of giants:
 
--   [Melt UI](https://melt-ui.com) - Inspired our internal architecture and powered the first version of Bits UI
--   [Radix UI](https://radix-ui.com) - Reference for component API design
--   [React Spectrum](https://react-spectrum.adobe.com) - Inspiration for date/time components
+-   [Melt UI](https://melt-ui.com) - inspired the internal architecture
+-   [Radix UI](https://radix-ui.com) - API design inspiration
+-   [React Spectrum](https://react-spectrum.adobe.com) - inspiration for the date/time components and excellence in accessibility

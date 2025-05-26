@@ -1,8 +1,8 @@
 import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
-import { type WritableBox, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import { type WritableBox, box, onDestroyEffect, attachRef } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
@@ -34,7 +34,7 @@ import type {
 	SegmentPart,
 	SegmentValueObj,
 	TimeSegmentObj,
-	TimeSegmentPart,
+	EditableTimeSegmentPart,
 } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
@@ -52,7 +52,10 @@ import {
 	removeDescriptionElement,
 	setDescription,
 } from "$lib/internal/date-time/field/helpers.js";
-import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/internal/date-time/field/parts.js";
+import {
+	DATE_SEGMENT_PARTS,
+	EDITABLE_TIME_SEGMENT_PARTS,
+} from "$lib/internal/date-time/field/parts.js";
 import { getDaysInMonth, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import {
 	getFirstSegment,
@@ -284,17 +287,17 @@ export class DateFieldRootState {
 			}
 		});
 
-		$effect(() => {
-			this.validationStatus;
-			untrack(() => {
+		watch(
+			() => this.validationStatus,
+			() => {
 				if (this.validationStatus !== false) {
 					this.onInvalid.current?.(
 						this.validationStatus.reason,
 						this.validationStatus.message
 					);
 				}
-			});
-		});
+			}
+		);
 	}
 
 	setName(name: string) {
@@ -397,7 +400,7 @@ export class DateFieldRootState {
 			return [part, `${partValue}`];
 		});
 		if ("hour" in value) {
-			const timeValues = TIME_SEGMENT_PARTS.map((part) => {
+			const timeValues = EDITABLE_TIME_SEGMENT_PARTS.map((part) => {
 				if (part === "dayPeriod") {
 					if (this.states.dayPeriod.updating) {
 						return [part, this.states.dayPeriod.updating];
@@ -529,7 +532,7 @@ export class DateFieldRootState {
 		part: T,
 		cb: T extends DateSegmentPart
 			? Updater<DateSegmentObj[T]>
-			: T extends TimeSegmentPart
+			: T extends EditableTimeSegmentPart
 				? Updater<TimeSegmentObj[T]>
 				: Updater<DateAndTimeSegmentObj[T]>
 	) {
@@ -707,13 +710,6 @@ export class DateFieldInputState {
 		$effect(() => {
 			this.root.setName(this.opts.name.current);
 		});
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.setFieldNode(node);
-			},
-		});
 	}
 
 	#ariaDescribedBy = $derived.by(() => {
@@ -734,6 +730,7 @@ export class DateFieldInputState {
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[DATE_FIELD_INPUT_ATTR]: "",
+				...attachRef(this.opts.ref, (v) => this.root.setFieldNode(v)),
 			}) as const
 	);
 }
@@ -767,13 +764,6 @@ class DateFieldLabelState {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.setLabelNode(node);
-			},
-		});
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -791,6 +781,7 @@ class DateFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[DATE_FIELD_LABEL_ATTR]: "",
 				onclick: this.onclick,
+				...attachRef(this.opts.ref, (v) => this.root.setLabelNode(v)),
 			}) as const
 	);
 }
@@ -811,8 +802,6 @@ abstract class BaseNumericSegmentState {
 		this.announcer = root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
 	}
 
 	#getMax(): number {
@@ -1105,6 +1094,7 @@ abstract class BaseNumericSegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs(this.part as SegmentPart, this.opts.id.current),
+			...attachRef(this.opts.ref),
 		};
 	});
 }
@@ -1329,13 +1319,6 @@ class DateFieldDayPeriodSegmentState {
 		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.dayPeriodNode = node;
-			},
-		});
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -1386,7 +1369,7 @@ class DateFieldDayPeriodSegmentState {
 
 		const valueMin = 0;
 		const valueMax = 12;
-		const valueNow = segmentValues.dayPeriod ?? 0;
+		const valueNow = segmentValues.dayPeriod === "AM" ? 0 : 12;
 		const valueText = segmentValues.dayPeriod ?? "AM";
 
 		return {
@@ -1401,6 +1384,7 @@ class DateFieldDayPeriodSegmentState {
 			onkeydown: this.onkeydown,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("dayPeriod", this.opts.id.current),
+			...attachRef(this.opts.ref, (v) => (this.root.dayPeriodNode = v)),
 		};
 	});
 }
@@ -1414,8 +1398,6 @@ class DateFieldDayLiteralSegmentState {
 	constructor(opts: DateFieldLiteralSegmentStateProps, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -1424,6 +1406,7 @@ class DateFieldDayLiteralSegmentState {
 				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
 				...this.root.getBaseSegmentAttrs("literal", this.opts.id.current),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -1436,8 +1419,6 @@ class DateFieldTimeZoneSegmentState {
 		this.opts = opts;
 		this.root = root;
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById(opts);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -1461,6 +1442,7 @@ class DateFieldTimeZoneSegmentState {
 				tabindex: 0,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
 				"data-readonly": getDataReadonly(true),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

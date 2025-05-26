@@ -2,16 +2,18 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { TooltipContentProps } from "../types.js";
 	import { useTooltipContent } from "../tooltip.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
+	const uid = $props.id();
+
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		side = "top",
 		sideOffset = 0,
@@ -61,6 +63,7 @@
 		loop={false}
 		preventScroll={false}
 		forceMount={true}
+		ref={contentState.opts.ref}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {
@@ -87,6 +90,7 @@
 		loop={false}
 		preventScroll={false}
 		forceMount={false}
+		ref={contentState.opts.ref}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {

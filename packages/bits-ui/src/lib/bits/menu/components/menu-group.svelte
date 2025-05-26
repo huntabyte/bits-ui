@@ -2,13 +2,15 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuGroupProps } from "../types.js";
 	import { useMenuGroup } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		...restProps
 	}: MenuGroupProps = $props();
 

@@ -12,6 +12,7 @@
 		onOpenAutoFocus = noop,
 		focusScope,
 		forceMount = false,
+		ref,
 	}: FocusScopeImplProps = $props();
 
 	const focusScopeState = useFocusScope({
@@ -21,6 +22,7 @@
 		onOpenAutoFocus: box.with(() => onOpenAutoFocus),
 		id: box.with(() => id),
 		forceMount: box.with(() => forceMount),
+		ref,
 	});
 </script>
 

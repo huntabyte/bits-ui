@@ -4,11 +4,13 @@
 	import type { CommandRootProps } from "../types.js";
 	import CommandLabel from "./_command-label.svelte";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { computeCommandScore } from "../index.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,

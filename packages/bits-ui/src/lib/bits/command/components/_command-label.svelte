@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useCommandLabel } from "../command.svelte.js";
-	import {
-		type BitsPrimitiveLabelAttributes,
-		type WithElementRef,
-		mergeProps,
-		useId,
-	} from "$lib/shared/index.js";
-	import type { WithChildren } from "$lib/internal/types.js";
 
+	import type { WithChildren } from "$lib/internal/types.js";
+	import { createId } from "$lib/internal/create-id.js";
+	import { mergeProps } from "svelte-toolbelt";
+	import type { BitsPrimitiveLabelAttributes, WithElementRef } from "$lib/shared/index.js";
+
+	const uid = $props.id();
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		children,
 		...restProps

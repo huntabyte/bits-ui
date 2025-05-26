@@ -1,5 +1,5 @@
 import { SvelteMap } from "svelte/reactivity";
-import { useRefById } from "svelte-toolbelt";
+import { attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
@@ -53,11 +53,9 @@ class TabsRootState {
 	constructor(opts: TabsRootStateProps) {
 		this.opts = opts;
 
-		useRefById(opts);
-
 		this.rovingFocusGroup = useRovingFocus({
 			candidateAttr: TABS_TRIGGER_ATTR,
-			rootNodeId: this.opts.id,
+			rootNode: this.opts.ref,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});
@@ -93,6 +91,7 @@ class TabsRootState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[TABS_ROOT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -111,8 +110,6 @@ class TabsListState {
 	constructor(opts: TabsListStateProps, root: TabsRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 	}
 
 	props = $derived.by(
@@ -124,6 +121,7 @@ class TabsListState {
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				[TABS_LIST_ATTR]: "",
 				"data-disabled": getDataDisabled(this.#isDisabled),
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -150,8 +148,6 @@ class TabsTriggerState {
 	constructor(opts: TabsTriggerStateProps, root: TabsRootState) {
 		this.opts = opts;
 		this.root = root;
-
-		useRefById(opts);
 
 		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
 			return this.root.registerTrigger(id, value);
@@ -213,6 +209,7 @@ class TabsTriggerState {
 				onclick: this.onclick,
 				onfocus: this.onfocus,
 				onkeydown: this.onkeydown,
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
@@ -236,8 +233,6 @@ class TabsContentState {
 		this.opts = opts;
 		this.root = root;
 
-		useRefById(opts);
-
 		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
 			return this.root.registerContent(id, value);
 		});
@@ -254,6 +249,7 @@ class TabsContentState {
 				"data-state": getTabDataState(this.#isActive),
 				"aria-labelledby": this.#ariaLabelledBy,
 				[TABS_CONTENT_ATTR]: "",
+				...attachRef(this.opts.ref),
 			}) as const
 	);
 }

@@ -2,16 +2,18 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuCheckboxItemProps } from "../types.js";
 	import { MenuCheckboxGroupContext, useMenuCheckboxItem } from "../menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		children,
 		ref = $bindable(null),
 		checked = $bindable(false),
-		id = useId(),
+		id = createId(uid),
 		onCheckedChange = noop,
 		disabled = false,
 		onSelect = noop,
@@ -84,9 +86,9 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, ...checkboxItemState.snippetProps })}
+	{@render child({ checked, indeterminate, props: mergedProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.(checkboxItemState.snippetProps)}
+		{@render children?.({ checked, indeterminate })}
 	</div>
 {/if}

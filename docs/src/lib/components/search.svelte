@@ -8,6 +8,8 @@
 		searchContentIndex,
 	} from "$lib/utils/search.js";
 
+	let { showTrigger = true }: { showTrigger?: boolean } = $props();
+
 	let searchState = $state<"loading" | "ready">("loading");
 	let searchQuery = $state("");
 	let results = $state<SearchContent[]>([]);
@@ -50,25 +52,27 @@
 		<MagnifyingGlass class="size-5" />
 	</Button.Root>
 
-	<Dialog.Trigger
-		class="bg-muted text-muted-foreground ring-offset-background hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative hidden h-10 items-center justify-between gap-3 whitespace-nowrap rounded-[9px] px-3 text-sm font-normal transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:inline-flex sm:w-72"
-	>
-		<span class="flex items-center gap-2">
-			<MagnifyingGlass class="size-5" />Search Docs ...
-		</span>
-		<span class="flex items-center gap-[1px]">
-			<kbd
-				class="bg-background-alt shadow-kbd dark:bg-dark-10 pointer-events-none hidden h-5 select-none items-center gap-1 rounded-sm border px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)]"
-			>
-				<span class="text-xs">⌘</span>
-			</kbd>
-			<kbd
-				class="bg-background-alt shadow-kbd dark:bg-dark-10 pointer-events-none hidden h-5 select-none items-center gap-1 rounded-sm border px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)]"
-			>
-				K
-			</kbd>
-		</span>
-	</Dialog.Trigger>
+	{#if showTrigger}
+		<Dialog.Trigger
+			class="bg-muted text-muted-foreground ring-offset-background hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative hidden h-10 items-center justify-between gap-3 whitespace-nowrap rounded-[9px] px-3 text-sm font-normal transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:inline-flex sm:w-72"
+		>
+			<span class="flex items-center gap-2">
+				<MagnifyingGlass class="size-5" />Search Docs ...
+			</span>
+			<span class="flex items-center gap-[1px]">
+				<kbd
+					class="bg-background-alt shadow-kbd dark:bg-dark-10 pointer-events-none hidden h-5 select-none items-center gap-1 rounded-sm border px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)]"
+				>
+					<span class="text-xs">⌘</span>
+				</kbd>
+				<kbd
+					class="bg-background-alt shadow-kbd dark:bg-dark-10 pointer-events-none hidden h-5 select-none items-center gap-1 rounded-sm border px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex dark:shadow-[0px_2px_0px_0px_rgba(0,0,0,0.07)]"
+				>
+					K
+				</kbd>
+			</span>
+		</Dialog.Trigger>
+	{/if}
 	<Dialog.Portal>
 		<Dialog.Overlay
 			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
@@ -110,7 +114,7 @@
 								<Command.Loading>Loading...</Command.Loading>
 							{/if}
 
-							{#each results as { title, href }}
+							{#each results as { title, href } (title + href)}
 								<Command.LinkItem
 									{href}
 									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"

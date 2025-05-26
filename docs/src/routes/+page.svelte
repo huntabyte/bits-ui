@@ -14,6 +14,7 @@
 	import AccessibleDark from "$lib/components/homepage/svg-accessible-dark.svelte";
 	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
 	import { goto } from "$app/navigation";
+	import Search from "$lib/components/search.svelte";
 </script>
 
 <svelte:window
@@ -23,6 +24,7 @@
 		}
 	}}
 />
+
 <svelte:head>
 	<title>Bits UI – Headless components for Svelte</title>
 	<meta
@@ -39,6 +41,7 @@
 		>
 			<Logo />
 		</a>
+		<Search showTrigger={false} />
 
 		<nav class="mt-2 flex items-center text-center lg:block">
 			<ul>

@@ -32,7 +32,7 @@
 					<div class="flex flex-col space-y-3 pt-6">
 						<h4 class="font-medium">{navItem.title}</h4>
 						{#if navItem?.items?.length}
-							{#each navItem.items as item}
+							{#each navItem.items as item (item.title + item.href)}
 								{#if !item.disabled && item.href}
 									<MobileLink href={item.href} onClose={() => (open = false)}>
 										{item.title}
