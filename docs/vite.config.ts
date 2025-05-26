@@ -13,7 +13,5 @@ export default defineConfig({
 	optimizeDeps: {
 		exclude: ["bits-ui"],
 	},
-	resolve: {
-		noExternal: true,
-	},
+	resolve: { noExternal: true },
 });
