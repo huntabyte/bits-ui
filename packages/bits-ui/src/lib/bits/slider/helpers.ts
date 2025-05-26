@@ -65,3 +65,148 @@ export function getTickStyles(
 
 	return style;
 }
+
+export function getTickLabelStyles(
+	direction: "lr" | "rl" | "tb" | "bt",
+	tickPosition: number,
+	labelPosition: "top" | "bottom" | "left" | "right" = "top"
+) {
+	const style: StyleProperties = {
+		position: "absolute",
+	};
+
+	if (direction === "lr" || direction === "rl") {
+		// Horizontal slider
+		style.left = direction === "lr" ? `${tickPosition}%` : undefined;
+		style.right = direction === "rl" ? `${tickPosition}%` : undefined;
+		style.translate = "-50% 0";
+
+		if (labelPosition === "top") {
+			style.bottom = "100%";
+		} else if (labelPosition === "bottom") {
+			style.top = "100%";
+		}
+	} else {
+		// Vertical slider - use same positioning as ticks
+		if (direction === "tb") {
+			style.top = `${tickPosition}%`;
+		} else {
+			style.bottom = `${tickPosition}%`;
+		}
+		style.translate = "0 50%";
+
+		if (labelPosition === "left") {
+			style.right = "100%";
+		} else if (labelPosition === "right") {
+			style.left = "100%";
+		}
+	}
+
+	return style;
+}
+
+export function getThumbLabelStyles(
+	direction: "lr" | "rl" | "tb" | "bt",
+	thumbPosition: number,
+	labelPosition: "top" | "bottom" | "left" | "right" = "top"
+) {
+	const style: StyleProperties = {
+		position: "absolute",
+	};
+
+	if (direction === "lr" || direction === "rl") {
+		// Horizontal slider
+		style.left = direction === "lr" ? `${thumbPosition}%` : undefined;
+		style.right = direction === "rl" ? `${thumbPosition}%` : undefined;
+		style.translate = "-50% 0";
+
+		if (labelPosition === "top") {
+			style.bottom = "100%";
+		} else if (labelPosition === "bottom") {
+			style.top = "100%";
+		}
+	} else {
+		// Vertical slider
+		if (direction === "tb") {
+			style.top = `${thumbPosition}%`;
+		} else {
+			style.bottom = `${thumbPosition}%`;
+		}
+		style.translate = "0 -50%";
+
+		if (labelPosition === "left") {
+			style.right = "100%";
+		} else if (labelPosition === "right") {
+			style.left = "100%";
+		}
+	}
+
+	return style;
+}
+
+/**
+ * Normalizes step to always be a sorted array of valid values within min/max range
+ */
+export function normalizeSteps(step: number | number[], min: number, max: number): number[] {
+	if (typeof step === "number") {
+		// generate regular steps - match original behavior exactly
+		const difference = max - min;
+		let count = Math.ceil(difference / step);
+
+		if (difference % step === 0) {
+			count++;
+		}
+
+		const steps: number[] = [];
+		for (let i = 0; i < count; i++) {
+			const value = min + i * step;
+			steps.push(value);
+		}
+		return steps;
+	}
+
+	return [...new Set(step)].filter((value) => value >= min && value <= max).sort((a, b) => a - b);
+}
+
+/**
+ * Snaps a value to the nearest step in a custom steps array
+ */
+export function snapValueToCustomSteps(value: number, steps: number[]): number {
+	if (steps.length === 0) return value;
+
+	// Find the closest step
+	let closest = steps[0]!;
+	let minDistance = Math.abs(value - closest);
+
+	for (const step of steps) {
+		const distance = Math.abs(value - step);
+		if (distance < minDistance) {
+			minDistance = distance;
+			closest = step;
+		}
+	}
+
+	return closest;
+}
+
+/**
+ * Gets the next/previous step value for keyboard navigation
+ */
+export function getAdjacentStepValue(
+	currentValue: number,
+	steps: number[],
+	direction: "next" | "prev"
+): number {
+	const currentIndex = steps.indexOf(currentValue);
+
+	if (currentIndex === -1) {
+		// current value is not in steps, snap to nearest
+		return snapValueToCustomSteps(currentValue, steps);
+	}
+
+	if (direction === "next") {
+		return currentIndex < steps.length - 1 ? steps[currentIndex + 1]! : currentValue;
+	} else {
+		return currentIndex > 0 ? steps[currentIndex - 1]! : currentValue;
+	}
+}

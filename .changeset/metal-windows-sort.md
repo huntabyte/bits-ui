@@ -2,4 +2,4 @@
 "bits-ui": minor
 ---
 
-feat: `TimeRangeField` component
+feat: add `TimeRangeField` component for selecting a start and end time.

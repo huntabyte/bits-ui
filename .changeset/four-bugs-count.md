@@ -2,4 +2,4 @@
 "bits-ui": minor
 ---
 
-feat: `TimeField` component
+feat: add `TimeField` component for time input with segmented control and full keyboard support.

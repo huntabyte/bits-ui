@@ -2,4 +2,4 @@
 "bits-ui": major
 ---
 
-breaking: update minimum Svelte peer dependency version to support attachments and `$props.id()`
+breaking: bump minimum Svelte peer dependency to `^5.33.0` to support [Attachments](https://svelte.dev/docs/svelte/svelte-attachments) and ][$props.id()](https://svelte.dev/docs/svelte/$props#$props.id()).

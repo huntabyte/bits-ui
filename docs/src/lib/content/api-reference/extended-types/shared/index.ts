@@ -52,3 +52,4 @@ export { default as TimeGranularityProp } from "./time-granularity-prop.md";
 export { default as TimeOnRangeChangeProp } from "./time-on-range-change-prop.md";
 export { default as TimeRangeProp } from "./time-range-prop.md";
 export { default as OnTimeStartEndValueChangeProp } from "./on-time-start-end-value-change-prop.md";
+export { default as NumberOrArrayNumberProp } from "./number-or-array-number-prop.md";

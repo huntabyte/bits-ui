@@ -18,19 +18,35 @@
 		onValueChange = noop,
 		onValueCommit = noop,
 		disabled = false,
-		min = 0,
-		max = 100,
+		min: minProp,
+		max: maxProp,
 		step = 1,
 		dir = "ltr",
 		autoSort = true,
 		orientation = "horizontal",
 		thumbPositioning = "contain",
+		trackPadding,
 		...restProps
 	}: SliderRootProps = $props();
 
+	const min = $derived.by(() => {
+		if (minProp !== undefined) return minProp;
+		if (Array.isArray(step)) return Math.min(...step);
+		return 0;
+	});
+
+	const max = $derived.by(() => {
+		if (maxProp !== undefined) return maxProp;
+		if (Array.isArray(step)) return Math.max(...step);
+		return 100;
+	});
+
 	function handleDefaultValue() {
 		if (value !== undefined) return;
-		value = type === "single" ? 0 : [];
+		if (type === "single") {
+			return min;
+		}
+		return [];
 	}
 
 	// SSR
@@ -68,6 +84,7 @@
 		orientation: box.with(() => orientation),
 		thumbPositioning: box.with(() => thumbPositioning),
 		type,
+		trackPadding: box.with(() => trackPadding),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
