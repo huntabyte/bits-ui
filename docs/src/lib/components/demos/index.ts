@@ -83,3 +83,4 @@ export { default as TimeRangeFieldDemo } from "./time-range-field-demo.svelte";
 export { default as SliderDemoCustomSteps } from "./slider-demo-custom-steps.svelte";
 export { default as SliderDemoTickLabels } from "./slider-demo-tick-labels.svelte";
 export { default as SliderDemoThumbLabels } from "./slider-demo-thumb-labels.svelte";
+export { default as SliderDemoVertical } from "./slider-demo-vertical.svelte";
