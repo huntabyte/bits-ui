@@ -20,6 +20,7 @@ import {
 	snapValueToCustomSteps,
 	getAdjacentStepValue,
 	getTickLabelStyles,
+	getThumbLabelStyles,
 } from "./helpers.js";
 import {
 	getAriaDisabled,
@@ -40,6 +41,7 @@ const SLIDER_THUMB_ATTR = "data-slider-thumb";
 const SLIDER_RANGE_ATTR = "data-slider-range";
 const SLIDER_TICK_ATTR = "data-slider-tick";
 const SLIDER_TICK_LABEL_ATTR = "data-slider-tick-label";
+const SLIDER_THUMB_LABEL_ATTR = "data-slider-thumb-label";
 
 type SliderBaseRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -355,12 +357,23 @@ class SliderSingleRootState extends SliderBaseRootState {
 		}));
 	});
 
+	thumbItemsArr = $derived.by(() => {
+		const currValue = this.opts.value.current;
+		return [
+			{
+				value: currValue,
+				index: 0,
+			},
+		];
+	});
+
 	snippetProps = $derived.by(
 		() =>
 			({
 				ticks: this.ticksRenderArr,
 				thumbs: this.thumbsRenderArr,
 				tickItems: this.tickItemsArr,
+				thumbItems: this.thumbItemsArr,
 			}) as const
 	);
 }
@@ -670,12 +683,21 @@ class SliderMultiRootState extends SliderBaseRootState {
 		}));
 	});
 
+	thumbItemsArr = $derived.by(() => {
+		const currValue = this.opts.value.current;
+		return currValue.map((value, index) => ({
+			value,
+			index,
+		}));
+	});
+
 	snippetProps = $derived.by(
 		() =>
 			({
 				ticks: this.ticksRenderArr,
 				thumbs: this.thumbsRenderArr,
 				tickItems: this.tickItemsArr,
+				thumbItems: this.thumbItemsArr,
 			}) as const
 	);
 }
@@ -930,6 +952,43 @@ class SliderTickLabelState {
 	});
 }
 
+type SliderThumbLabelStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		index: number;
+		position?: "top" | "bottom" | "left" | "right";
+	}>;
+
+class SliderThumbLabelState {
+	readonly opts: SliderThumbLabelStateProps;
+	readonly root: SliderRootState;
+
+	constructor(opts: SliderThumbLabelStateProps, root: SliderRootState) {
+		this.opts = opts;
+		this.root = root;
+	}
+
+	props = $derived.by(() => {
+		const value = this.root.opts.value.current;
+		const thumbValue = Array.isArray(value) ? value[this.opts.index.current]! : value;
+		const thumbPosition = this.root.getPositionFromValue(thumbValue);
+
+		const labelPosition = this.opts.position?.current ?? "top";
+		const style = getThumbLabelStyles(this.root.direction, thumbPosition, labelPosition);
+
+		return {
+			id: this.opts.id.current,
+			"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+			"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+			"data-value": thumbValue,
+			"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
+			"data-position": labelPosition,
+			style,
+			[SLIDER_THUMB_LABEL_ATTR]: "",
+			...attachRef(this.opts.ref),
+		} as const;
+	});
+}
+
 type SliderRootState = SliderSingleRootState | SliderMultiRootState;
 
 type InitSliderRootStateProps = {
@@ -963,4 +1022,8 @@ export function useSliderTick(props: SliderTickStateProps) {
 
 export function useSliderTickLabel(props: SliderTickLabelStateProps) {
 	return new SliderTickLabelState(props, SliderRootContext.get());
+}
+
+export function useSliderThumbLabel(props: SliderThumbLabelStateProps) {
+	return new SliderThumbLabelState(props, SliderRootContext.get());
 }

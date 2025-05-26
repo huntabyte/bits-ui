@@ -4,7 +4,7 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps, SliderDemoTickLabels } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps, SliderDemoTickLabels, SliderDemoThumbLabels } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -301,6 +301,16 @@ Instead of passing a single value to the `step` prop, you can pass an array of v
 
 {#snippet preview()}
 <SliderDemoCustomSteps />
+{/snippet}
+
+</ComponentPreviewV2>
+
+## Thumb Labels
+
+<ComponentPreviewV2 name="slider-demo-thumb-labels" componentName="Slider">
+
+{#snippet preview()}
+<SliderDemoThumbLabels />
 {/snippet}
 
 </ComponentPreviewV2>

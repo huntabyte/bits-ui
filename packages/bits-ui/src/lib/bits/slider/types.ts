@@ -7,6 +7,11 @@ export type TickItem = {
 	index: number;
 };
 
+export type ThumbItem = {
+	value: number;
+	index: number;
+};
+
 export type SliderRootSnippetProps = {
 	/**
 	 * The indices of the ticks.
@@ -17,6 +22,8 @@ export type SliderRootSnippetProps = {
 
 	/**
 	 * The indices of the thumbs.
+	 *
+	 * @deprecated Use `thumbItems` instead
 	 */
 	thumbs: number[];
 
@@ -25,6 +32,12 @@ export type SliderRootSnippetProps = {
 	 * rendering ticks along with labels for each tick.
 	 */
 	tickItems: TickItem[];
+
+	/**
+	 * An array of objects containing the value and index of each thumb, useful for
+	 * rendering thumbs along with labels for each thumb.
+	 */
+	thumbItems: ThumbItem[];
 };
 
 export type BaseSliderRootPropsWithoutHTML = {
@@ -236,3 +249,23 @@ export type SliderTickLabelPropsWithoutHTML = WithChild<{
 
 export type SliderTickLabelProps = SliderTickLabelPropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderTickLabelPropsWithoutHTML>;
+
+export type SliderThumbLabelPropsWithoutHTML = WithChild<{
+	/**
+	 * The index of the thumb the label represents in the array of thumbs
+	 * provided by the `children` snippet prop of the `Slider.Root` component.
+	 */
+	index: number;
+
+	/**
+	 * The position of the label relative to the thumb.
+	 * For horizontal sliders: "top" | "bottom"
+	 * For vertical sliders: "left" | "right"
+	 *
+	 * @default for horizontal sliders = "top" and for vertical sliders = "left"
+	 */
+	position?: "top" | "bottom" | "left" | "right";
+}>;
+
+export type SliderThumbLabelProps = SliderThumbLabelPropsWithoutHTML &
+	Without<BitsPrimitiveSpanAttributes, SliderThumbLabelPropsWithoutHTML>;

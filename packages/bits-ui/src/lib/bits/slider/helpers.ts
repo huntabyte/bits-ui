@@ -105,6 +105,45 @@ export function getTickLabelStyles(
 	return style;
 }
 
+export function getThumbLabelStyles(
+	direction: "lr" | "rl" | "tb" | "bt",
+	thumbPosition: number,
+	labelPosition: "top" | "bottom" | "left" | "right" = "top"
+) {
+	const style: StyleProperties = {
+		position: "absolute",
+	};
+
+	if (direction === "lr" || direction === "rl") {
+		// Horizontal slider
+		style.left = direction === "lr" ? `${thumbPosition}%` : undefined;
+		style.right = direction === "rl" ? `${thumbPosition}%` : undefined;
+		style.translate = "-50% 0";
+
+		if (labelPosition === "top") {
+			style.bottom = "100%";
+		} else if (labelPosition === "bottom") {
+			style.top = "100%";
+		}
+	} else {
+		// Vertical slider
+		if (direction === "tb") {
+			style.top = `${thumbPosition}%`;
+		} else {
+			style.bottom = `${thumbPosition}%`;
+		}
+		style.translate = "0 -50%";
+
+		if (labelPosition === "left") {
+			style.right = "100%";
+		} else if (labelPosition === "right") {
+			style.left = "100%";
+		}
+	}
+
+	return style;
+}
+
 /**
  * Normalizes step to always be a sorted array of valid values within min/max range
  */
