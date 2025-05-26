@@ -66,6 +66,45 @@ export function getTickStyles(
 	return style;
 }
 
+export function getTickLabelStyles(
+	direction: "lr" | "rl" | "tb" | "bt",
+	tickPosition: number,
+	labelPosition: "top" | "bottom" | "left" | "right" = "top"
+) {
+	const style: StyleProperties = {
+		position: "absolute",
+	};
+
+	if (direction === "lr" || direction === "rl") {
+		// Horizontal slider
+		style.left = direction === "lr" ? `${tickPosition}%` : undefined;
+		style.right = direction === "rl" ? `${tickPosition}%` : undefined;
+		style.translate = "-50% 0";
+
+		if (labelPosition === "top") {
+			style.bottom = "100%";
+		} else if (labelPosition === "bottom") {
+			style.top = "100%";
+		}
+	} else {
+		// Vertical slider - use same positioning as ticks
+		if (direction === "tb") {
+			style.top = `${tickPosition}%`;
+		} else {
+			style.bottom = `${tickPosition}%`;
+		}
+		style.translate = "0 -50%";
+
+		if (labelPosition === "left") {
+			style.right = "100%";
+		} else if (labelPosition === "right") {
+			style.left = "100%";
+		}
+	}
+
+	return style;
+}
+
 /**
  * Normalizes step to always be a sorted array of valid values within min/max range
  */

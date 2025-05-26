@@ -19,6 +19,7 @@ import {
 	normalizeSteps,
 	snapValueToCustomSteps,
 	getAdjacentStepValue,
+	getTickLabelStyles,
 } from "./helpers.js";
 import {
 	getAriaDisabled,
@@ -38,6 +39,7 @@ const SLIDER_ROOT_ATTR = "data-slider-root";
 const SLIDER_THUMB_ATTR = "data-slider-thumb";
 const SLIDER_RANGE_ATTR = "data-slider-range";
 const SLIDER_TICK_ATTR = "data-slider-tick";
+const SLIDER_TICK_LABEL_ATTR = "data-slider-tick-label";
 
 type SliderBaseRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -49,6 +51,7 @@ type SliderBaseRootStateProps = WithRefProps<
 		dir: Direction;
 		autoSort: boolean;
 		thumbPositioning: SliderThumbPositioning;
+		trackPadding?: number;
 	}>
 >;
 
@@ -88,6 +91,12 @@ class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
+		// If trackPadding is explicitly set, use it directly instead of calculating from thumb size
+		const trackPadding = this.opts.trackPadding?.current;
+		if (trackPadding !== undefined && trackPadding > 0) {
+			return [trackPadding, 100 - trackPadding];
+		}
+
 		if (this.opts.thumbPositioning.current === "exact") {
 			// User opted out of containment
 			return [0, 100];
@@ -305,14 +314,12 @@ class SliderSingleRootState extends SliderBaseRootState {
 	});
 
 	ticksPropsArr = $derived.by(() => {
-		const min = this.opts.min.current;
-		const max = this.opts.max.current;
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = ((tickValue - min) / (max - min)) * 100;
+			const tickPosition = this.getPositionFromValue(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
@@ -336,11 +343,19 @@ class SliderSingleRootState extends SliderBaseRootState {
 		return this.ticksPropsArr.map((_, i) => i);
 	});
 
+	tickItemsArr = $derived.by(() => {
+		return this.ticksPropsArr.map((tick, i) => ({
+			value: tick["data-value"],
+			index: i,
+		}));
+	});
+
 	snippetProps = $derived.by(
 		() =>
 			({
 				ticks: this.ticksRenderArr,
 				thumbs: this.thumbsRenderArr,
+				tickItems: this.tickItemsArr,
 			}) as const
 	);
 }
@@ -641,11 +656,19 @@ class SliderMultiRootState extends SliderBaseRootState {
 		return this.ticksPropsArr.map((_, i) => i);
 	});
 
+	tickItemsArr = $derived.by(() => {
+		return this.ticksPropsArr.map((tick, i) => ({
+			value: tick["data-value"],
+			index: i,
+		}));
+	});
+
 	snippetProps = $derived.by(
 		() =>
 			({
 				ticks: this.ticksRenderArr,
 				thumbs: this.thumbsRenderArr,
+				tickItems: this.tickItemsArr,
 			}) as const
 	);
 }
@@ -671,18 +694,41 @@ class SliderRangeState {
 	}
 
 	rangeStyles = $derived.by(() => {
-		const min = Array.isArray(this.root.opts.value.current)
-			? this.root.opts.value.current.length > 1
-				? this.root.getPositionFromValue(Math.min(...this.root.opts.value.current) ?? 0)
-				: 0
-			: 0;
-		const max = Array.isArray(this.root.opts.value.current)
-			? 100 - this.root.getPositionFromValue(Math.max(...this.root.opts.value.current) ?? 0)
-			: 100 - this.root.getPositionFromValue(this.root.opts.value.current);
-		return {
-			position: "absolute",
-			...getRangeStyles(this.root.direction, min, max),
-		};
+		if (Array.isArray(this.root.opts.value.current)) {
+			// Multi-slider: range between min and max thumbs
+			const min =
+				this.root.opts.value.current.length > 1
+					? this.root.getPositionFromValue(Math.min(...this.root.opts.value.current) ?? 0)
+					: 0;
+			const max =
+				100 -
+				this.root.getPositionFromValue(Math.max(...this.root.opts.value.current) ?? 0);
+
+			return {
+				position: "absolute",
+				...getRangeStyles(this.root.direction, min, max),
+			};
+		} else {
+			// Single slider: range from start to current value
+			const trackPadding = this.root.opts.trackPadding?.current;
+			const currentValue = this.root.opts.value.current;
+			const maxValue = this.root.opts.max.current;
+
+			// Always start from 0% (beginning of track container)
+			const min = 0;
+
+			// If trackPadding is set and we're at max value, extend to fill the container
+			// Otherwise use the thumb position
+			const max =
+				trackPadding !== undefined && trackPadding > 0 && currentValue === maxValue
+					? 0 // 100% - 0% = full width
+					: 100 - this.root.getPositionFromValue(currentValue);
+
+			return {
+				position: "absolute",
+				...getRangeStyles(this.root.direction, min, max),
+			};
+		}
 	});
 
 	props = $derived.by(
@@ -838,6 +884,43 @@ class SliderTickState {
 	);
 }
 
+type SliderTickLabelStateProps = WithRefProps &
+	ReadableBoxedValues<{
+		index: number;
+		position?: "top" | "bottom" | "left" | "right";
+	}>;
+
+class SliderTickLabelState {
+	readonly opts: SliderTickLabelStateProps;
+	readonly root: SliderRootState;
+
+	constructor(opts: SliderTickLabelStateProps, root: SliderRootState) {
+		this.opts = opts;
+		this.root = root;
+	}
+
+	props = $derived.by(() => {
+		const tickProps = this.root.ticksPropsArr[this.opts.index.current]!;
+		const steps = this.root.normalizedSteps;
+		const tickValue = steps[this.opts.index.current]!;
+		const tickPosition = this.root.getPositionFromValue(tickValue);
+
+		const labelPosition = this.opts.position?.current ?? "top";
+		const style = getTickLabelStyles(this.root.direction, tickPosition, labelPosition);
+
+		return {
+			id: this.opts.id.current,
+			"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+			"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+			"data-bounded": tickProps["data-bounded"],
+			"data-value": tickValue,
+			style,
+			[SLIDER_TICK_LABEL_ATTR]: "",
+			...attachRef(this.opts.ref),
+		} as const;
+	});
+}
+
 type SliderRootState = SliderSingleRootState | SliderMultiRootState;
 
 type InitSliderRootStateProps = {
@@ -867,4 +950,8 @@ export function useSliderThumb(props: SliderThumbStateProps) {
 
 export function useSliderTick(props: SliderTickStateProps) {
 	return new SliderTickState(props, SliderRootContext.get());
+}
+
+export function useSliderTickLabel(props: SliderTickLabelStateProps) {
+	return new SliderTickLabelState(props, SliderRootContext.get());
 }

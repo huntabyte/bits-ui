@@ -2,9 +2,27 @@ import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { BitsPrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 
+export type TickItem = {
+	value: number;
+	index: number;
+};
+
 export type SliderRootSnippetProps = {
+	/**
+	 * The indices of the ticks.
+	 */
 	ticks: number[];
+
+	/**
+	 * The indices of the thumbs.
+	 */
 	thumbs: number[];
+
+	/**
+	 * An array of objects containing the value and index of each tick, useful for
+	 * rendering ticks along with labels for each tick.
+	 */
+	tickItems: TickItem[];
 };
 
 export type BaseSliderRootPropsWithoutHTML = {
@@ -12,20 +30,20 @@ export type BaseSliderRootPropsWithoutHTML = {
 	 * Whether to automatically sort the values in the array when moving thumbs past
 	 * one another.
 	 *
-	 * @defaultValue true
+	 * @default true
 	 */
 	autoSort?: boolean;
 	/**
 	 * The minimum value of the slider.
 	 *
-	 * @defaultValue 0
+	 * @default 0
 	 */
 	min?: number;
 
 	/**
 	 * The maximum value of the slider.
 	 *
-	 * @defaultValue 100
+	 * @default 100
 	 */
 	max?: number;
 
@@ -37,7 +55,7 @@ export type BaseSliderRootPropsWithoutHTML = {
 	 * creating discrete tick points. The array values should be within the min/max range
 	 * and will be automatically sorted.
 	 *
-	 * @defaultValue 1
+	 * @default 1
 	 */
 	step?: number | number[];
 
@@ -48,30 +66,36 @@ export type BaseSliderRootPropsWithoutHTML = {
 	 * from the top and move downwards. For horizontal sliders, setting `dir` to `'rtl'`
 	 * will cause the slider to start from the left and move rightwards.
 	 *
-	 * @defaultValue 'ltr'
+	 * @default 'ltr'
 	 */
 	dir?: Direction;
 
 	/**
 	 * The orientation of the slider.
 	 *
-	 * @defaultValue "horizontal"
+	 * @default "horizontal"
 	 */
 	orientation?: Orientation;
 
 	/**
 	 * Whether the slider is disabled or not.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
 
 	/**
 	 * The positioning of the slider thumb.
 	 *
-	 * @defaultValue "contain"
+	 * @default "contain"
 	 */
 	thumbPositioning?: SliderThumbPositioning;
+
+	/**
+	 * Padding percentage for the track. Creates space before the first
+	 * and after the last tick/thumb positions.
+	 */
+	trackPadding?: number;
 };
 
 export type SliderSingleRootPropsWithoutHTML = BaseSliderRootPropsWithoutHTML & {
@@ -159,7 +183,7 @@ export type SliderThumbPropsWithoutHTML = WithChild<
 		/**
 		 * Whether the thumb is disabled or not.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		disabled?: boolean;
 
@@ -185,3 +209,23 @@ export type SliderTickPropsWithoutHTML = WithChild<{
 
 export type SliderTickProps = SliderTickPropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderTickPropsWithoutHTML>;
+
+export type SliderTickLabelPropsWithoutHTML = WithChild<{
+	/**
+	 * The index of the tick the label represents in the array of ticks
+	 * provided by the  `children` snippet prop of the `Slider.Root` component.
+	 */
+	index: number;
+
+	/**
+	 * The position of the label relative to the tick.
+	 * For horizontal sliders: "top" | "bottom"
+	 * For vertical sliders: "left" | "right"
+	 *
+	 * @default "top"
+	 */
+	position?: "top" | "bottom" | "left" | "right";
+}>;
+
+export type SliderTickLabelProps = SliderTickLabelPropsWithoutHTML &
+	Without<BitsPrimitiveSpanAttributes, SliderTickLabelPropsWithoutHTML>;

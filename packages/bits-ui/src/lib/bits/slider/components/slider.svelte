@@ -25,6 +25,7 @@
 		autoSort = true,
 		orientation = "horizontal",
 		thumbPositioning = "contain",
+		trackPadding,
 		...restProps
 	}: SliderRootProps = $props();
 
@@ -68,6 +69,7 @@
 		orientation: box.with(() => orientation),
 		thumbPositioning: box.with(() => thumbPositioning),
 		type,
+		trackPadding: box.with(() => trackPadding),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

@@ -264,6 +264,14 @@ Here's an example of how you might do that:
 
 ## Custom Steps
 
+Instead of passing a single value to the `step` prop, you can pass an array of values that the slider will snap to.
+
+```svelte
+<Slider.Root type="single" step={[0, 4, 8, 16, 24]} min={0} max={24}>
+	<!-- ... -->
+</Slider.Root>
+```
+
 <ComponentPreviewV2 name="slider-demo-custom-steps" componentName="Slider">
 
 {#snippet preview()}
