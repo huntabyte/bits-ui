@@ -2,10 +2,17 @@ import type {
 	SliderRangePropsWithoutHTML,
 	SliderRootPropsWithoutHTML,
 	SliderThumbPropsWithoutHTML,
+	SliderTickLabelPropsWithoutHTML,
 	SliderTickPropsWithoutHTML,
 } from "bits-ui";
-import { SliderRootOnValueChangeProp } from "./extended-types/slider/index.js";
 import {
+	SliderRootChildrenSnippetProps,
+	SliderRootChildSnippetProps,
+	SliderRootOnValueChangeProp,
+	SliderTickLabelPositionProp,
+} from "./extended-types/slider/index.js";
+import {
+	NumberOrArrayNumberProp,
 	OrientationProp,
 	SingleOrMultipleProp,
 	SliderThumbPositioningProp,
@@ -22,6 +29,19 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/helpers.js";
 import * as C from "$lib/content/constants.js";
+
+const sharedDataAttrs = [
+	createDataAttrSchema({
+		name: "orientation",
+		definition: OrientationProp,
+		description: "The orientation of the slider.",
+		isEnum: true,
+	}),
+	createDataAttrSchema({
+		name: "disabled",
+		description: "Present when the slider is disabled.",
+	}),
+];
 
 const root = createApiSchema<SliderRootPropsWithoutHTML>({
 	title: "Root",
@@ -70,9 +90,12 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			description: "The orientation of the slider.",
 			definition: OrientationProp,
 		}),
-		step: createNumberProp({
-			default: "1",
-			description: "The step value of the slider.",
+		step: createUnionProp({
+			options: ["number[]", "number"],
+			definition: NumberOrArrayNumberProp,
+			description:
+				"The step value of the slider. If a single number is provided, the slider will step by that number and use that number to generate the ticks (e.g. `step={1}` will generate ticks at `0, 1, 2, 3, ...`). If an array of numbers is provided, the slider will snap to those values (e.g. `step={[0, 4, 8, 16, 24]}`) and ticks will be generated at those values.",
+			bindable: true,
 		}),
 		dir: dirProp,
 		autoSort: createBooleanProp({
@@ -83,18 +106,22 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 		thumbPositioning: createEnumProp({
 			options: ["exact", "contain"],
 			default: "'contain'",
-			description: "The positioning of the slider thumb.",
+			description:
+				"The positioning of the slider thumb. `'contain'` will ensure that the thumb is always visible within the track, while `'exact'` will ensure that the thumb is always at the same position relative to the track. For an SSR-friendly alternative to `thumbPositioning='contain'`, use the `trackPadding` prop to set the padding between the thumbs/first ticks and the edges of the track.",
 			definition: SliderThumbPositioningProp,
 		}),
-		...withChildProps({ elType: "HTMLSpanElement" }),
+		trackPadding: createNumberProp({
+			description:
+				"A percentage of the full track length to pad the start and end of the track. This is useful for creating a visual buffer between the thumbs or beginning/end ticks and the edges of the track. This is an SSR-friendly alternative to `thumbPositioning='contain'`.",
+		}),
+		...withChildProps({
+			elType: "HTMLSpanElement",
+			childDef: SliderRootChildSnippetProps,
+			childrenDef: SliderRootChildrenSnippetProps,
+		}),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
-			name: "orientation",
-			definition: OrientationProp,
-			description: "The orientation of the slider.",
-			isEnum: true,
-		}),
+		...sharedDataAttrs,
 		createDataAttrSchema({
 			name: "slider-root",
 			description: "Present on the root element.",
@@ -118,13 +145,14 @@ const thumb = createApiSchema<SliderThumbPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
-			name: "slider-thumb",
-			description: "Present on the thumb elements.",
-		}),
+		...sharedDataAttrs,
 		createDataAttrSchema({
 			name: "active",
 			description: "Present when the thumb is active/grabbed.",
+		}),
+		createDataAttrSchema({
+			name: "slider-thumb",
+			description: "Present on the thumb elements.",
 		}),
 	],
 });
@@ -134,6 +162,15 @@ const range = createApiSchema<SliderRangePropsWithoutHTML>({
 	description: "The range of the slider.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
+		createDataAttrSchema({
+			name: "orientation",
+			definition: OrientationProp,
+			description: "The orientation of the slider.",
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the slider is disabled.",
+		}),
 		createDataAttrSchema({
 			name: "slider-range",
 			description: "Present on the range elements.",
@@ -155,7 +192,21 @@ const tick = createApiSchema<SliderTickPropsWithoutHTML>({
 	dataAttributes: [
 		createDataAttrSchema({
 			name: "bounded",
-			description: "Present when the tick is bounded.",
+			description:
+				"Present when the tick is bounded (i.e. the tick is less than or equal to the current value).",
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the slider is disabled.",
+		}),
+		createDataAttrSchema({
+			name: "orientation",
+			definition: OrientationProp,
+			description: "The orientation of the slider.",
+		}),
+		createDataAttrSchema({
+			name: "value",
+			description: "The value the tick represents.",
 		}),
 		createDataAttrSchema({
 			name: "slider-tick",
@@ -164,4 +215,47 @@ const tick = createApiSchema<SliderTickPropsWithoutHTML>({
 	],
 });
 
-export const slider = [root, range, thumb, tick];
+const tickLabel = createApiSchema<SliderTickLabelPropsWithoutHTML>({
+	title: "TickLabel",
+	description: "A label for a tick on the slider.",
+	props: {
+		index: createNumberProp({
+			description:
+				"The index of the tick in the array of ticks provided by the `ticks` `children` snippet prop.",
+			required: true,
+		}),
+		position: createEnumProp({
+			options: ["top", "bottom", "left", "right"],
+			description: "The position of the tick label.",
+			definition: SliderTickLabelPositionProp,
+		}),
+		...withChildProps({ elType: "HTMLSpanElement" }),
+	},
+	dataAttributes: [
+		...sharedDataAttrs,
+		createDataAttrSchema({
+			name: "position",
+			definition: SliderTickLabelPositionProp,
+			description: "The position of the tick label.",
+		}),
+		createDataAttrSchema({
+			name: "selected",
+			description: "Present when the tick this label represents is a selected value.",
+		}),
+		createDataAttrSchema({
+			name: "value",
+			description: "The value of the tick this label represents.",
+		}),
+		createDataAttrSchema({
+			name: "bounded",
+			description:
+				"Present when the tick this label represents is bounded (i.e. the tick is less than or equal to the current value).",
+		}),
+		createDataAttrSchema({
+			name: "slider-tick-label",
+			description: "Present on the tick label elements.",
+		}),
+	],
+});
+
+export const slider = [root, range, thumb, tick, tickLabel];

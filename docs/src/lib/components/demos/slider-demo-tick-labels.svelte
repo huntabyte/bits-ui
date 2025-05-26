@@ -31,7 +31,7 @@
 				<Slider.Tick {index} class="dark:bg-background/20 bg-background z-1 h-2 w-[1px]" />
 				<Slider.TickLabel
 					{index}
-					class="text-muted-foreground data-selected:text-foreground mb-5 text-sm font-medium leading-none"
+					class="text-muted-foreground data-bounded:text-foreground mb-5 text-sm font-medium leading-none"
 					position="top"
 				>
 					{value}
