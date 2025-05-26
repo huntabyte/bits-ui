@@ -297,9 +297,9 @@ You can use the `tickItems` snippet prop in combination with the `Slider.TickLab
 
 </ComponentPreviewV2>
 
-### Custom Steps
+### Discrete Steps
 
-Instead of passing a single value to the `step` prop, you can pass an array of values that the slider will snap to.
+Instead of passing a single value to the `step` prop, you can pass an array of discrete values that the slider will snap to.
 
 ```svelte
 <Slider.Root type="single" step={[0, 4, 8, 16, 24]}>
