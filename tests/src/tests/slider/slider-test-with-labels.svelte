@@ -37,23 +37,17 @@
 		{step}
 	>
 		{#snippet children({ thumbItems, tickItems })}
-			<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
-				<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
+			<span>
+				<Slider.Range data-testid="range" />
 			</span>
 
 			{#each thumbItems as { index, value: thumbValue } (index)}
-				<Slider.Thumb
-					{index}
-					aria-label="slider thumb"
-					data-testid="thumb-{index}"
-					class="border-primary/50 focus-visible:ring-ring bg-background block h-4 w-4 rounded-full border shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
-				/>
+				<Slider.Thumb {index} aria-label="slider thumb" data-testid="thumb-{index}" />
 				{#if showThumbLabels}
 					<Slider.ThumbLabel
 						{index}
 						data-testid="thumb-label-{index}"
 						position={thumbLabelPosition}
-						class="text-sm font-medium"
 					>
 						{thumbValue}
 					</Slider.ThumbLabel>
@@ -67,7 +61,6 @@
 						{index}
 						data-testid="tick-label-{index}"
 						position={tickLabelPosition}
-						class="text-xs"
 					>
 						{tickValue}
 					</Slider.TickLabel>
