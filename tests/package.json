@@ -4,8 +4,8 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"check": "pnpm sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "pnpm sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"sync": "svelte-kit sync",
 		"test": "pnpm sync && vitest",
 		"test:ui": "pnpm sync && vitest --ui"
