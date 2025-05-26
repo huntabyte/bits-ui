@@ -27,9 +27,6 @@ export default tseslint.config(
 				parser: tseslint.parser,
 			},
 		},
-		rules: {
-			"svelte/require-each-key": "warn",
-		},
 	},
 	{
 		rules: {
