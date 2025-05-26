@@ -35,6 +35,7 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
 import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 import { linearScale } from "$lib/internal/math.js";
+import type { SliderLabelPosition } from "./types.js";
 
 const SLIDER_ROOT_ATTR = "data-slider-root";
 const SLIDER_THUMB_ATTR = "data-slider-thumb";
@@ -309,7 +310,6 @@ class SliderSingleRootState extends SliderBaseRootState {
 				"aria-orientation": getAriaOrientation(this.opts.orientation.current),
 				"data-value": thumbValue,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				tabindex: this.opts.disabled.current ? -1 : 0,
 				style,
 				[SLIDER_THUMB_ATTR]: "",
 			} as const;
@@ -340,6 +340,7 @@ class SliderSingleRootState extends SliderBaseRootState {
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				"data-bounded": bounded ? "" : undefined,
 				"data-value": tickValue,
+				"data-selected": this.isTickValueSelected(tickValue) ? "" : undefined,
 				style,
 				[SLIDER_TICK_ATTR]: "",
 			} as const;
@@ -632,7 +633,7 @@ class SliderMultiRootState extends SliderBaseRootState {
 				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
 				"aria-orientation": getAriaOrientation(this.opts.orientation.current),
 				"data-value": thumbValue,
-				tabindex: this.opts.disabled.current ? -1 : 0,
+				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				style,
 				[SLIDER_THUMB_ATTR]: "",
 			} as const;
@@ -884,6 +885,10 @@ class SliderThumbState {
 				id: this.opts.id.current,
 				onkeydown: this.onkeydown,
 				"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
+				"data-disabled": getDataDisabled(
+					this.opts.disabled.current || this.root.opts.disabled.current
+				),
+				tabindex: this.opts.disabled.current || this.root.opts.disabled.current ? -1 : 0,
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -916,7 +921,7 @@ class SliderTickState {
 type SliderTickLabelStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		index: number;
-		position?: "top" | "bottom" | "left" | "right";
+		position?: SliderLabelPosition;
 	}>;
 
 class SliderTickLabelState {
@@ -955,7 +960,7 @@ class SliderTickLabelState {
 type SliderThumbLabelStateProps = WithRefProps &
 	ReadableBoxedValues<{
 		index: number;
-		position?: "top" | "bottom" | "left" | "right";
+		position?: SliderLabelPosition;
 	}>;
 
 class SliderThumbLabelState {

@@ -12,6 +12,8 @@ export type ThumbItem = {
 	index: number;
 };
 
+export type SliderLabelPosition = "top" | "bottom" | "left" | "right";
+
 export type SliderRootSnippetProps = {
 	/**
 	 * The indices of the ticks.
@@ -244,7 +246,7 @@ export type SliderTickLabelPropsWithoutHTML = WithChild<{
 	 *
 	 * @default for horizontal sliders = "top" and for vertical sliders = "left"
 	 */
-	position?: "top" | "bottom" | "left" | "right";
+	position?: SliderLabelPosition;
 }>;
 
 export type SliderTickLabelProps = SliderTickLabelPropsWithoutHTML &
@@ -264,7 +266,7 @@ export type SliderThumbLabelPropsWithoutHTML = WithChild<{
 	 *
 	 * @default for horizontal sliders = "top" and for vertical sliders = "left"
 	 */
-	position?: "top" | "bottom" | "left" | "right";
+	position?: SliderLabelPosition;
 }>;
 
 export type SliderThumbLabelProps = SliderThumbLabelPropsWithoutHTML &

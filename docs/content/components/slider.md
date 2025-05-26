@@ -317,6 +317,36 @@ Instead of passing a single value to the `step` prop, you can pass an array of v
 
 ### Thumb Labels
 
+Use the `Slider.ThumbLabel` component to render a label that is positioned relative to the thumb.
+
+You can manually specify the index like so:
+
+```svelte
+<Slider.Root type="multiple" autoSort={false} step={10} value={[10, 50]}>
+	<Slider.Range />
+	<Slider.Thumb index={0} />
+	<Slider.ThumbLabel index={0} position="top">Min</Slider.ThumbLabel>
+	<Slider.Thumb index={1} />
+	<Slider.ThumbLabel index={1} position="top">Max</Slider.ThumbLabel>
+</Slider.Root>
+```
+
+or use the `thumbItems` snippet prop to render a label for each thumb:
+
+```svelte
+<Slider.Root type="multiple" autoSort={false} step={10} value={[10, 50]}>
+	<Slider.Range />
+	{#snippet children({ thumbItems })}
+		{#each thumbItems as { index, value } (index)}
+			<Slider.Thumb {index} />
+			<Slider.ThumbLabel {index} position="top">
+				{index === 0 ? "Min" : "Max"}:{value}
+			</Slider.ThumbLabel>
+		{/each}
+	{/snippet}
+</Slider.Root>
+```
+
 <ComponentPreviewV2 name="slider-demo-thumb-labels" componentName="Slider">
 
 {#snippet preview()}
