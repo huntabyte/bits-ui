@@ -5,7 +5,7 @@
 	"scripts": {
 		"build": "pnpm -r build",
 		"build:packages": "pnpm -F \"./packages/**\" --parallel build",
-		"check": "pnpm build:packages && pnpm -r check",
+		"check": "pnpm build:packages && pnpm --parallel check",
 		"ci:publish": "pnpm build:packages && changeset publish",
 		"dev": "pnpm -F \"./packages/**\" svelte-kit sync && pnpm -r --parallel --reporter append-only --color dev",
 		"format": "prettier --write .",
@@ -33,7 +33,7 @@
 		"svelte-eslint-parser": "^1.2.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.32.1",
-		"wrangler": "^3.87.0"
+		"wrangler": "^4.16.1"
 	},
 	"type": "module",
 	"engines": {
