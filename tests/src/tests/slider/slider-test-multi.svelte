@@ -39,21 +39,21 @@
 
 <main>
 	<Slider.Root type="multiple" data-testid="root" bind:value {...restProps} {min} {max} {step}>
-		{#snippet children({ thumbs, ticks })}
+		{#snippet children({ thumbItems, tickItems })}
 			<span class="bg-primary/20 relative h-1.5 w-full grow overflow-hidden rounded-full">
 				<Slider.Range data-testid="range" class="bg-primary absolute h-full" />
 			</span>
-			{#each thumbs as thumb, i (thumb + i)}
+			{#each thumbItems as { index } (index)}
 				<Slider.Thumb
-					index={thumb}
+					{index}
 					aria-label="age"
 					data-testid="thumb"
 					class="border-primary/50 focus-visible:ring-ring bg-background block h-4 w-4 rounded-full border shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50"
 				/>
 			{/each}
 
-			{#each ticks as tick, i (tick + i)}
-				<Slider.Tick data-testid="tick" index={tick} />
+			{#each tickItems as { index } (index)}
+				<Slider.Tick data-testid="tick" {index} />
 			{/each}
 		{/snippet}
 	</Slider.Root>

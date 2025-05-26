@@ -11,13 +11,13 @@
 		bind:value
 		class="relative flex w-full touch-none select-none items-center"
 	>
-		{#snippet children({ thumbs })}
+		{#snippet children({ thumbItems })}
 			<span
 				class="bg-dark-10 relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full"
 			>
 				<Slider.Range class="bg-foreground absolute h-full" />
 			</span>
-			{#each thumbs as index (index)}
+			{#each thumbItems as { index } (index)}
 				<Slider.Thumb
 					{index}
 					class={cn(

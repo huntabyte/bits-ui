@@ -12,13 +12,13 @@
 		onValueCommit={(v) => (value = v)}
 		class="shadow-mini-inset relative flex w-full touch-none select-none items-center rounded-full dark:bg-[#F4F4F51A] dark:shadow-[0px_0.7px_0px_0px_rgba(0,_0,_0,_0.04)_inset]"
 	>
-		{#snippet children({ thumbs })}
+		{#snippet children({ thumbItems })}
 			<span
 				class="bg-dark/10 relative h-[6px] w-full grow overflow-hidden rounded-full lg:h-2"
 			>
 				<Slider.Range class="bg-dark absolute h-full dark:bg-[#18181B]" />
 			</span>
-			{#each thumbs as index (index)}
+			{#each thumbItems as { index } (index)}
 				<Slider.Thumb
 					{index}
 					class={cn(

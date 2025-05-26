@@ -3,12 +3,28 @@ import type { BitsPrimitiveSpanAttributes } from "$lib/shared/attributes.js";
 import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 
 export type TickItem = {
+	/**
+	 * The value this tick represents
+	 */
 	value: number;
+
+	/**
+	 * The index of this tick in the array of ticks provided by the `children`
+	 * or `child` snippet prop of the `Slider.Root` component.
+	 */
 	index: number;
 };
 
 export type ThumbItem = {
+	/**
+	 * The value this thumb represents
+	 */
 	value: number;
+
+	/**
+	 * The index of this thumb in the array of thumbs provided by the `children`
+	 * or `child` snippet prop of the `Slider.Root` component.
+	 */
 	index: number;
 };
 
@@ -16,6 +32,8 @@ export type SliderLabelPosition = "top" | "bottom" | "left" | "right";
 
 export type SliderRootSnippetProps = {
 	/**
+	 * Use `tickItems` instead. Will be removed in Bits UI v3.
+	 *
 	 * The indices of the ticks.
 	 *
 	 * @deprecated Use `tickItems` instead.
@@ -23,6 +41,8 @@ export type SliderRootSnippetProps = {
 	ticks: number[];
 
 	/**
+	 * Use `thumbItems` instead. Will be removed in Bits UI v3.
+	 *
 	 * The indices of the thumbs.
 	 *
 	 * @deprecated Use `thumbItems` instead
@@ -111,9 +131,10 @@ export type BaseSliderRootPropsWithoutHTML = {
 
 	/**
 	 * Padding percentage for the track. Creates space before the first
-	 * and after the last tick/thumb positions.
+	 * and after the last tick positions.
 	 *
-	 * This can also be used as an SSR-friendly alternative to `thumbPositioning="contain"`.
+	 * This can also be used as an SSR-friendly alternative to `thumbPositioning="contain"`,
+	 * which requires client-side measurement.
 	 */
 	trackPadding?: number;
 };
