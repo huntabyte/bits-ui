@@ -2,4 +2,4 @@
 "bits-ui": major
 ---
 
-breaking: add `@internationalized/date` as a peer dependency
+breaking: `@internationalized/date` is now a required peer dependency.
