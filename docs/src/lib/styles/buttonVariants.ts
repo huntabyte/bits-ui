@@ -1,11 +1,5 @@
 import { tv } from "tailwind-variants";
 
-/**
- * hover:button-gradient inline-flex h-12 items-center justify-center rounded-input
-		bg-dark px-[21px] text-[15px] font-semibold text-background
-		shadow-mini outline-hidden ring-dark ring-offset-4 ring-offset-background transition-all focus:ring-1
- */
-
 export const buttonVariants = tv({
 	base: "ring-offset-background focus-visible:outline-hidden inline-flex items-center justify-center whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
 	variants: {

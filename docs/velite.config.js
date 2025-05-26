@@ -19,6 +19,23 @@ const sharedSchema = s
 		};
 	});
 
+const blogSchema = s
+	.object({
+		title: s.string(),
+		description: s.string(),
+		path: s.path(),
+		content: s.markdown(),
+		raw: s.raw(),
+		toc: s.toc(),
+	})
+	.transform((data) => {
+		return {
+			...data,
+			slug: data.path.split("/").slice(1).join("/"),
+			slugFull: `/${data.path}`,
+		};
+	});
+
 export default defineConfig({
 	collections: {
 		docs: {
@@ -48,6 +65,11 @@ export default defineConfig({
 			name: "PolicyDoc",
 			pattern: "./policies/**/*.md",
 			schema: sharedSchema,
+		},
+		posts: {
+			name: "Post",
+			pattern: "./blog/**/*.md",
+			schema: blogSchema,
 		},
 	},
 });
