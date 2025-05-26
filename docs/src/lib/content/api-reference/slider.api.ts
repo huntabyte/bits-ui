@@ -237,6 +237,7 @@ const tickLabel = createApiSchema<SliderTickLabelPropsWithoutHTML>({
 			name: "position",
 			definition: SliderTickLabelPositionProp,
 			description: "The position of the tick label.",
+			isEnum: true,
 		}),
 		createDataAttrSchema({
 			name: "selected",
@@ -249,7 +250,7 @@ const tickLabel = createApiSchema<SliderTickLabelPropsWithoutHTML>({
 		createDataAttrSchema({
 			name: "bounded",
 			description:
-				"Present when the tick this label represents is bounded (i.e. the tick is less than or equal to the current value).",
+				"Present when the tick this label represents is bounded (i.e. the tick is less than or equal to the current value or within the range of a multiple slider).",
 		}),
 		createDataAttrSchema({
 			name: "slider-tick-label",
