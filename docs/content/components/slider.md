@@ -4,7 +4,7 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps, SliderDemoTickLabels } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -261,6 +261,31 @@ Here's an example of how you might do that:
 	<button type="submit">Submit</button>
 </form>
 ```
+
+## Tick Labels
+
+You can use the `tickItems` snippet prop in combination with the `Slider.TickLabel` to render labels at specific intervals.
+
+```svelte
+<Slider.Root type="single" step={[0, 4, 8, 16, 24]} min={0} max={24}>
+	{#snippet children({ tickItems })}
+		{#each tickItems as { value, index } (index)}
+			<Slider.Tick {index} />
+			<Slider.TickLabel {index} position="top">
+				{value}
+			</Slider.TickLabel>
+		{/each}
+	{/snippet}
+</Slider.Root>
+```
+
+<ComponentPreviewV2 name="slider-demo-tick-labels" componentName="Slider">
+
+{#snippet preview()}
+<SliderDemoTickLabels />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Custom Steps
 

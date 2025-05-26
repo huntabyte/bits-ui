@@ -93,7 +93,7 @@ export function getTickLabelStyles(
 		} else {
 			style.bottom = `${tickPosition}%`;
 		}
-		style.translate = "0 -50%";
+		style.translate = "0 50%";
 
 		if (labelPosition === "left") {
 			style.right = "100%";
