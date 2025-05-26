@@ -37,7 +37,7 @@
 				<CaretDoubleUp class="size-3" />
 			</Select.ScrollUpButton>
 			<Select.Viewport class="p-1">
-				{#each themes as theme, i (i + theme.value)}
+				{#each themes as theme (theme.value)}
 					<Select.Item
 						class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize duration-75"
 						value={theme.value}
