@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SliderTickLabelProps } from "../types.js";
-	import { useSliderTickLabel } from "../slider.svelte.js";
+	import { SliderRootContext, useSliderTickLabel } from "../slider.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -12,9 +12,23 @@
 		ref = $bindable(null),
 		id = createId(uid),
 		index,
-		position = "top",
+		position: positionProp,
 		...restProps
 	}: SliderTickLabelProps = $props();
+
+	const root = SliderRootContext.get();
+
+	const position = $derived.by(() => {
+		if (positionProp !== undefined) return positionProp;
+		switch (root.direction) {
+			case "lr":
+			case "rl":
+				return "top";
+			case "tb":
+			case "bt":
+				return "left";
+		}
+	});
 
 	const tickLabelState = useSliderTickLabel({
 		id: box.with(() => id),

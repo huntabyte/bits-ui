@@ -10,6 +10,8 @@ export type TickItem = {
 export type SliderRootSnippetProps = {
 	/**
 	 * The indices of the ticks.
+	 *
+	 * @deprecated Use `tickItems` instead.
 	 */
 	ticks: number[];
 
@@ -33,17 +35,18 @@ export type BaseSliderRootPropsWithoutHTML = {
 	 * @default true
 	 */
 	autoSort?: boolean;
+
 	/**
 	 * The minimum value of the slider.
 	 *
-	 * @default 0
+	 * @default 0 (for number step) or the min value of the step array (for array step)
 	 */
 	min?: number;
 
 	/**
 	 * The maximum value of the slider.
 	 *
-	 * @default 100
+	 * @default 100 (for number step) or the max value of the step array (for array step)
 	 */
 	max?: number;
 
@@ -94,6 +97,8 @@ export type BaseSliderRootPropsWithoutHTML = {
 	/**
 	 * Padding percentage for the track. Creates space before the first
 	 * and after the last tick/thumb positions.
+	 *
+	 * This can also be used as an SSR-friendly alternative to `thumbPositioning="contain"`.
 	 */
 	trackPadding?: number;
 };
@@ -110,6 +115,8 @@ export type SliderSingleRootPropsWithoutHTML = BaseSliderRootPropsWithoutHTML & 
 	/**
 	 * The value of the slider.
 	 * @bindable
+	 *
+	 * @default min
 	 */
 	value?: number;
 
@@ -222,7 +229,7 @@ export type SliderTickLabelPropsWithoutHTML = WithChild<{
 	 * For horizontal sliders: "top" | "bottom"
 	 * For vertical sliders: "left" | "right"
 	 *
-	 * @default "top"
+	 * @default for horizontal sliders = "top" and for vertical sliders = "left"
 	 */
 	position?: "top" | "bottom" | "left" | "right";
 }>;

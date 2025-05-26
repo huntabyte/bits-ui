@@ -202,6 +202,10 @@ class SliderSingleRootState extends SliderBaseRootState {
 		);
 	}
 
+	isTickValueSelected = (tickValue: number) => {
+		return this.opts.value.current === tickValue;
+	};
+
 	applyPosition({ clientXY, start, end }: { clientXY: number; start: number; end: number }) {
 		const min = this.opts.min.current;
 		const max = this.opts.max.current;
@@ -413,6 +417,10 @@ class SliderMultiRootState extends SliderBaseRootState {
 		);
 	}
 
+	isTickValueSelected = (tickValue: number) => {
+		return this.opts.value.current.includes(tickValue);
+	};
+
 	isThumbActive(index: number): boolean {
 		return this.isActive && this.activeThumb?.idx === index;
 	}
@@ -622,14 +630,12 @@ class SliderMultiRootState extends SliderBaseRootState {
 	});
 
 	ticksPropsArr = $derived.by(() => {
-		const min = this.opts.min.current;
-		const max = this.opts.max.current;
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = ((tickValue - min) / (max - min)) * 100;
+			const tickPosition = this.getPositionFromValue(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
@@ -914,6 +920,7 @@ class SliderTickLabelState {
 			"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 			"data-bounded": tickProps["data-bounded"],
 			"data-value": tickValue,
+			"data-selected": this.root.isTickValueSelected(tickValue) ? "" : undefined,
 			style,
 			[SLIDER_TICK_LABEL_ATTR]: "",
 			...attachRef(this.opts.ref),
@@ -929,7 +936,7 @@ type InitSliderRootStateProps = {
 	onValueCommit: ReadableBox<OnChangeFn<number>> | ReadableBox<OnChangeFn<number[]>>;
 } & Omit<SliderBaseRootStateProps, "type">;
 
-const SliderRootContext = new Context<SliderRootState>("Slider.Root");
+export const SliderRootContext = new Context<SliderRootState>("Slider.Root");
 
 export function useSliderRoot(props: InitSliderRootStateProps) {
 	const { type, ...rest } = props;
