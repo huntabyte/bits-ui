@@ -5,7 +5,7 @@ import {
 	isSameMonth,
 	isToday,
 } from "@internationalized/date";
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
@@ -94,9 +94,11 @@ export class RangeCalendarRootState {
 	accessibleHeadingId = useId();
 	focusedValue = $state<DateValue | undefined>(undefined);
 	lastPressedDateValue: DateValue | undefined = undefined;
+	domContext: DOMContext;
 
 	constructor(opts: RangeCalendarRootStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.opts.locale.current);
 
@@ -145,7 +147,7 @@ export class RangeCalendarRootState {
 		 * changes.
 		 */
 		$effect(() => {
-			const node = document.getElementById(this.accessibleHeadingId);
+			const node = this.domContext.getElementById(this.accessibleHeadingId);
 			if (!node) return;
 			node.textContent = this.fullCalendarLabel;
 		});

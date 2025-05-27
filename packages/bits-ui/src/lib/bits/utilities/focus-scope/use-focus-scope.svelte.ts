@@ -1,4 +1,4 @@
-import { afterSleep, afterTick, executeCallbacks } from "svelte-toolbelt";
+import { afterSleep, afterTick, DOMContext, executeCallbacks } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import {
@@ -86,6 +86,7 @@ export function useFocusScope({
 	const focusScope = createFocusScopeAPI();
 	const ctx = FocusScopeContext.getOr({ ignoreCloseAutoFocus: false });
 	let lastFocusedElement: HTMLElement | null = null;
+	const domContext = new DOMContext(ref);
 
 	function manageFocus(event: FocusEvent) {
 		if (focusScope.paused || !ref.current || focusScope.isHandlingFocus) return;
@@ -157,7 +158,11 @@ export function useFocusScope({
 		 * If the element was removed and focus is now outside the container,
 		 * (e.g., browser moved it to body), refocus the container.
 		 */
-		if (elementWasRemoved && ref.current && !ref.current.contains(document.activeElement)) {
+		if (
+			elementWasRemoved &&
+			ref.current &&
+			!ref.current.contains(domContext.getActiveElement())
+		) {
 			focus(ref.current);
 		}
 	}
@@ -166,8 +171,8 @@ export function useFocusScope({
 		if (!container || !enabled) return;
 
 		const removeEvents = executeCallbacks(
-			on(document, "focusin", manageFocus),
-			on(document, "focusout", manageFocus)
+			on(domContext.getDocument(), "focusin", manageFocus),
+			on(domContext.getDocument(), "focusout", manageFocus)
 		);
 		const mutationObserver = new MutationObserver(handleMutations);
 		mutationObserver.observe(container, {
@@ -183,7 +188,7 @@ export function useFocusScope({
 
 	watch([() => forceMount.current, () => ref.current], ([forceMount, container]) => {
 		if (forceMount) return;
-		const prevFocusedElement = document.activeElement as HTMLElement | null;
+		const prevFocusedElement = domContext.getActiveElement() as HTMLElement | null;
 		handleOpen(container, prevFocusedElement);
 
 		return () => {
@@ -196,7 +201,7 @@ export function useFocusScope({
 		[() => forceMount.current, () => ref.current, () => enabled.current],
 		([forceMount, container]) => {
 			if (!forceMount) return;
-			const prevFocusedElement = document.activeElement as HTMLElement | null;
+			const prevFocusedElement = domContext.getActiveElement() as HTMLElement | null;
 			handleOpen(container, prevFocusedElement);
 
 			return () => {
@@ -207,7 +212,7 @@ export function useFocusScope({
 	);
 
 	function handleOpen(container: HTMLElement | null, prevFocusedElement: HTMLElement | null) {
-		if (!container) container = document.getElementById(id.current);
+		if (!container) container = domContext.getElementById(id.current);
 		if (!container || !enabled.current) return;
 		focusScopeStack.add(focusScope);
 		const hasFocusedCandidate = container.contains(prevFocusedElement);
@@ -219,9 +224,13 @@ export function useFocusScope({
 			if (!mountEvent.defaultPrevented) {
 				afterTick(() => {
 					if (!container) return;
-					const result = focusFirst(removeLinks(getTabbableCandidates(container)), {
-						select: true,
-					});
+					const result = focusFirst(
+						removeLinks(getTabbableCandidates(container)),
+						{
+							select: true,
+						},
+						() => domContext.getActiveElement()
+					);
 
 					if (!result) focus(container);
 				});
@@ -236,9 +245,14 @@ export function useFocusScope({
 		const shouldIgnore = ctx.ignoreCloseAutoFocus;
 		afterSleep(0, () => {
 			if (!destroyEvent.defaultPrevented && prevFocusedElement && !shouldIgnore) {
-				focus(isTabbable(prevFocusedElement) ? prevFocusedElement : document.body, {
-					select: true,
-				});
+				focus(
+					isTabbable(prevFocusedElement)
+						? prevFocusedElement
+						: domContext.getDocument().body,
+					{
+						select: true,
+					}
+				);
 			}
 			focusScopeStack.remove(focusScope);
 		});
@@ -250,7 +264,7 @@ export function useFocusScope({
 		if (focusScope.paused) return;
 
 		const isTabKey = e.key === kbd.TAB && !e.ctrlKey && !e.altKey && !e.metaKey;
-		const focusedElement = document.activeElement as HTMLElement | null;
+		const focusedElement = domContext.getActiveElement() as HTMLElement | null;
 
 		if (!(isTabKey && focusedElement)) return;
 		const container = ref.current;

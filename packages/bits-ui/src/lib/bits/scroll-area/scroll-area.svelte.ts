@@ -7,7 +7,7 @@
 
 import { Context, useDebounce } from "runed";
 import { untrack } from "svelte";
-import { box, executeCallbacks, attachRef } from "svelte-toolbelt";
+import { box, executeCallbacks, attachRef, DOMContext } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
@@ -53,9 +53,11 @@ class ScrollAreaRootState {
 	cornerHeight = $state<number>(0);
 	scrollbarXEnabled = $state(false);
 	scrollbarYEnabled = $state(false);
+	domContext: DOMContext;
 
 	constructor(opts: ScrollAreaRootStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(opts.ref);
 	}
 
 	props = $derived.by(
@@ -694,8 +696,8 @@ class ScrollAreaScrollbarSharedState {
 		this.rect = this.scrollbar.opts.ref.current?.getBoundingClientRect() ?? null;
 		// pointer capture doesn't prevent text selection in Safari
 		// so we remove text selection manually when scrolling
-		this.prevWebkitUserSelect = document.body.style.webkitUserSelect;
-		document.body.style.webkitUserSelect = "none";
+		this.prevWebkitUserSelect = this.root.domContext.getDocument().body.style.webkitUserSelect;
+		this.root.domContext.getDocument().body.style.webkitUserSelect = "none";
 		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "auto";
 		this.handleDragScroll(e);
 	}
@@ -709,7 +711,7 @@ class ScrollAreaScrollbarSharedState {
 		if (target.hasPointerCapture(e.pointerId)) {
 			target.releasePointerCapture(e.pointerId);
 		}
-		document.body.style.webkitUserSelect = this.prevWebkitUserSelect;
+		this.root.domContext.getDocument().body.style.webkitUserSelect = this.prevWebkitUserSelect;
 		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "";
 		this.rect = null;
 	}
