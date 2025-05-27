@@ -46,6 +46,7 @@ type SelectBaseRootStateProps = ReadableBoxedValues<{
 }> &
 	WritableBoxedValues<{
 		open: boolean;
+		inputValue: string;
 	}> & {
 		isCombobox: boolean;
 	};
@@ -53,7 +54,6 @@ type SelectBaseRootStateProps = ReadableBoxedValues<{
 class SelectBaseRootState {
 	readonly opts: SelectBaseRootStateProps;
 	touchedInput = $state(false);
-	inputValue = $state<string>("");
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
@@ -189,7 +189,7 @@ class SelectSingleRootState extends SelectBaseRootState {
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
 		this.opts.value.current = this.includesItem(itemValue) ? "" : itemValue;
-		this.inputValue = itemLabel;
+		this.opts.inputValue.current = itemLabel;
 	}
 
 	setInitialHighlightedNode() {
@@ -254,7 +254,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		} else {
 			this.opts.value.current = [...this.opts.value.current, itemValue];
 		}
-		this.inputValue = itemLabel;
+		this.opts.inputValue.current = itemLabel;
 	}
 
 	setInitialHighlightedNode() {
@@ -305,10 +305,10 @@ class SelectInputState {
 				if (!clearOnDeselect) return;
 				if (Array.isArray(value) && Array.isArray(prevValue)) {
 					if (value.length === 0 && prevValue.length !== 0) {
-						this.root.inputValue = "";
+						this.root.opts.inputValue.current = "";
 					}
 				} else if (value === "" && prevValue !== "") {
-					this.root.inputValue = "";
+					this.root.opts.inputValue.current = "";
 				}
 			}
 		);
@@ -323,7 +323,7 @@ class SelectInputState {
 		if (!this.root.opts.open.current) {
 			if (INTERACTION_KEYS.includes(e.key)) return;
 			if (e.key === kbd.TAB) return;
-			if (e.key === kbd.BACKSPACE && this.root.inputValue === "") return;
+			if (e.key === kbd.BACKSPACE && this.root.opts.inputValue.current === "") return;
 			this.root.handleOpen();
 			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
 			// set correctly.
@@ -412,7 +412,7 @@ class SelectInputState {
 	}
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
-		this.root.inputValue = e.currentTarget.value;
+		this.root.opts.inputValue.current = e.currentTarget.value;
 		this.root.setHighlightedToFirstCandidate();
 	}
 
@@ -1354,6 +1354,7 @@ type InitSelectProps = {
 }> &
 	WritableBoxedValues<{
 		open: boolean;
+		inputValue: string;
 	}> & {
 		isCombobox: boolean;
 	};

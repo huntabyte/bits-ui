@@ -24,11 +24,11 @@
 	});
 
 	if (defaultValue) {
-		inputState.root.inputValue = defaultValue;
+		inputState.root.opts.inputValue.current = defaultValue;
 	}
 
 	const mergedProps = $derived(
-		mergeProps(restProps, inputState.props, { value: inputState.root.inputValue })
+		mergeProps(restProps, inputState.props, { value: inputState.root.opts.inputValue.current })
 	);
 </script>
 

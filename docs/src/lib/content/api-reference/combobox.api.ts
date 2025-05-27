@@ -120,7 +120,6 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"Whether or not the user can deselect the selected item by pressing it in a single select.",
 		}),
-
 		items: createPropSchema({
 			type: {
 				type: "array",
@@ -129,6 +128,10 @@ export const root = createApiSchema<ComboboxRootPropsWithoutHTML>({
 			},
 			description:
 				"Optionally provide an array of objects representing the items in the select for autofill capabilities. Only applicable to combobox's with type `single`",
+		}),
+		inputValue: createStringProp({
+			description:
+				"A read-only value that controls the text displayed in the combobox input. Use this to programmatically update the input value when the selection changes outside the component, ensuring the displayed text stays in sync with the actual value.",
 		}),
 		children: childrenSnippet(),
 	},
