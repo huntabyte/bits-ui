@@ -28,13 +28,8 @@ jobs:
             - name: Build site
               run: pnpm build
 
-            - name: Deploy to Cloudflare Pages
-              uses: AdrianGonz97/refined-cf-pages-action@v1
-              with:
-                  apiToken: ${{ secrets.CF_API_TOKEN }}
-                  accountId: ${{ secrets.CF_ACCOUNT_ID }}
-                  githubToken: ${{ secrets.GITHUB_TOKEN }}
-                  projectName: bits-ui
-                  directory: ./.svelte-kit/cloudflare
-                  workingDirectory: docs
-                  deploymentName: Production
+            - name: Deploy to Cloudflare
+              run: pnpm wrangler deploy
+              env:
+                  CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+                  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
