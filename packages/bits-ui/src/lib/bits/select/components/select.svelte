@@ -38,6 +38,8 @@
 		}
 	);
 
+	let inputValue = $state("");
+
 	const rootState = useSelectRoot({
 		type,
 		value: box.with(
@@ -63,6 +65,10 @@
 		isCombobox: false,
 		items: box.with(() => items),
 		allowDeselect: box.with(() => allowDeselect),
+		inputValue: box.with(
+			() => inputValue,
+			(v) => (inputValue = v)
+		),
 	});
 </script>
 

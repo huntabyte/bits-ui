@@ -473,6 +473,13 @@ describe("combobox - single", () => {
 		expect(t.input).toHaveValue("");
 		expect(t.input).not.toHaveValue("A");
 	});
+
+	it("should allow programmatic updates to the value alongside `inputValue`", async () => {
+		const t = setupSingle();
+		const setter = t.getByTestId("value-binding-3");
+		await t.user.click(setter);
+		expect(t.input).toHaveValue("C");
+	});
 });
 
 ////////////////////////////////////

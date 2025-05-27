@@ -20,6 +20,7 @@
 		required = false,
 		items = [],
 		allowDeselect = true,
+		inputValue = "",
 		children,
 	}: ComboboxRootProps = $props();
 
@@ -61,6 +62,10 @@
 		isCombobox: true,
 		items: box.with(() => items),
 		allowDeselect: box.with(() => allowDeselect),
+		inputValue: box.with(
+			() => inputValue,
+			(v) => (inputValue = v)
+		),
 	});
 </script>
 

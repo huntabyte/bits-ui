@@ -1,8 +1,37 @@
 import type { BitsPrimitiveInputAttributes } from "$lib/shared/attributes.js";
+import type {
+	SelectBaseRootPropsWithoutHTML,
+	SelectMultipleRootPropsWithoutHTML,
+	SelectSingleRootPropsWithoutHTML,
+} from "$lib/bits/select/types.js";
 import type { WithChild, Without } from "$lib/internal/types.js";
 
+export type ComboboxBaseRootPropsWithoutHTML = SelectBaseRootPropsWithoutHTML & {
+	/**
+	 * A read-only value that can be used to programmatically
+	 * update the input value.
+	 *
+	 * This is useful for updating the displayed label/input
+	 * when the value changes outside of Bits UI.
+	 */
+	inputValue?: string;
+};
+
+export type ComboboxSingleRootPropsWithoutHTML = ComboboxBaseRootPropsWithoutHTML &
+	SelectSingleRootPropsWithoutHTML;
+
+export type ComboboxSingleRootProps = ComboboxSingleRootPropsWithoutHTML;
+
+export type ComboboxMultipleRootPropsWithoutHTML = ComboboxBaseRootPropsWithoutHTML &
+	SelectMultipleRootPropsWithoutHTML;
+export type ComboboxMultipleRootProps = ComboboxMultipleRootPropsWithoutHTML;
+
+export type ComboboxRootPropsWithoutHTML = ComboboxBaseRootPropsWithoutHTML &
+	(ComboboxSingleRootPropsWithoutHTML | ComboboxMultipleRootPropsWithoutHTML);
+
+export type ComboboxRootProps = ComboboxRootPropsWithoutHTML;
+
 export type {
-	SelectBaseRootPropsWithoutHTML as ComboboxBaseRootPropsWithoutHTML,
 	SelectContentProps as ComboboxContentProps,
 	SelectContentPropsWithoutHTML as ComboboxContentPropsWithoutHTML,
 	SelectContentStaticProps as ComboboxContentStaticProps,
@@ -10,12 +39,6 @@ export type {
 	SelectItemProps as ComboboxItemProps,
 	SelectItemPropsWithoutHTML as ComboboxItemPropsWithoutHTML,
 	SelectItemSnippetProps as ComboboxItemSnippetProps,
-	SelectMultipleRootProps as ComboboxMultipleRootProps,
-	SelectMultipleRootPropsWithoutHTML as ComboboxMultipleRootPropsWithoutHTML,
-	SelectRootProps as ComboboxRootProps,
-	SelectRootPropsWithoutHTML as ComboboxRootPropsWithoutHTML,
-	SelectSingleRootProps as ComboboxSingleRootProps,
-	SelectSingleRootPropsWithoutHTML as ComboboxSingleRootPropsWithoutHTML,
 	SelectTriggerProps as ComboboxTriggerProps,
 	SelectTriggerPropsWithoutHTML as ComboboxTriggerPropsWithoutHTML,
 	SelectGroupPropsWithoutHTML as ComboboxGroupPropsWithoutHTML,

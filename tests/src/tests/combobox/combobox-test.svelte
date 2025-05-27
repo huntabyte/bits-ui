@@ -24,7 +24,7 @@
 	let {
 		contentProps,
 		portalProps,
-		items,
+		items = [],
 		value = "",
 		open = false,
 		searchValue = "",
@@ -38,11 +38,16 @@
 			? items
 			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
 	);
+
+	const inputValue = $derived.by(() => {
+		return items.find((item) => item.value === value)?.label;
+	});
 </script>
 
 <main data-testid="main">
 	<Combobox.Root
 		type="single"
+		{inputValue}
 		bind:value
 		bind:open
 		{...restProps}
@@ -94,5 +99,6 @@
 			{value}
 		{/if}
 	</button>
+	<button data-testid="value-binding-3" onclick={() => (value = "3")}> set 3 </button>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>
