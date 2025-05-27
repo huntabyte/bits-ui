@@ -14,6 +14,7 @@ import {
 	box,
 	attachRef,
 	DOMContext,
+	getWindow,
 } from "svelte-toolbelt";
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
@@ -135,7 +136,10 @@ class NavigationMenuRootState {
 
 	constructor(opts: NavigationMenuRootStateProps) {
 		this.opts = opts;
-		this.isDelaySkipped = boxAutoReset(false, this.opts.skipDelayDuration.current);
+		this.isDelaySkipped = boxAutoReset(false, {
+			afterMs: this.opts.skipDelayDuration.current,
+			getWindow: () => getWindow(opts.ref.current),
+		});
 
 		this.provider = useNavigationMenuProvider({
 			value: this.opts.value,
@@ -413,7 +417,10 @@ class NavigationMenuTriggerState {
 		}
 	) {
 		this.opts = opts;
-		this.hasPointerMoveOpened = boxAutoReset(false, 300);
+		this.hasPointerMoveOpened = boxAutoReset(false, {
+			afterMs: 300,
+			getWindow: () => getWindow(opts.ref.current),
+		});
 		this.context = context.provider;
 		this.itemContext = context.item;
 		this.listContext = context.list;

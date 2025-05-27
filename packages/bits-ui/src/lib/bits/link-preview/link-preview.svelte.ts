@@ -29,7 +29,7 @@ class LinkPreviewRootState {
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
-	domContext: DOMContext | null = null;
+	domContext: DOMContext = new DOMContext(() => null);
 
 	constructor(opts: LinkPreviewRootStateProps) {
 		this.opts = opts;
@@ -49,7 +49,7 @@ class LinkPreviewRootState {
 
 					afterSleep(1, () => {
 						const isSelection =
-							this.domContext?.getDocument()?.getSelection()?.toString() !== "";
+							this.domContext.getDocument().getSelection()?.toString() !== "";
 
 						if (isSelection) {
 							this.hasSelection = true;
@@ -83,7 +83,7 @@ class LinkPreviewRootState {
 
 	clearTimeout() {
 		if (this.timeout) {
-			window.clearTimeout(this.timeout);
+			this.domContext.clearTimeout(this.timeout);
 			this.timeout = null;
 		}
 	}
@@ -92,7 +92,7 @@ class LinkPreviewRootState {
 		this.clearTimeout();
 		if (this.opts.open.current) return;
 		this.isOpening = true;
-		this.timeout = window.setTimeout(() => {
+		this.timeout = this.domContext.setTimeout(() => {
 			if (this.isOpening) {
 				this.opts.open.current = true;
 				this.isOpening = false;
@@ -111,7 +111,7 @@ class LinkPreviewRootState {
 		this.clearTimeout();
 
 		if (!this.isPointerDownOnContent && !this.hasSelection) {
-			this.timeout = window.setTimeout(() => {
+			this.timeout = this.domContext.setTimeout(() => {
 				this.opts.open.current = false;
 			}, this.opts.closeDelay.current);
 		}

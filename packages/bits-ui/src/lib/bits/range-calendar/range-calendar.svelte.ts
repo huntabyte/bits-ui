@@ -51,6 +51,7 @@ import {
 	toDate,
 } from "$lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
+import { onMount } from "svelte";
 
 type RangeCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -99,7 +100,7 @@ export class RangeCalendarRootState {
 	constructor(opts: RangeCalendarRootStateProps) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
-		this.announcer = getAnnouncer(this.domContext.getDocument());
+		this.announcer = getAnnouncer(null);
 		this.formatter = createFormatter(this.opts.locale.current);
 
 		this.months = createMonths({
@@ -113,6 +114,10 @@ export class RangeCalendarRootState {
 		$effect(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
 			this.formatter.setLocale(this.opts.locale.current);
+		});
+
+		onMount(() => {
+			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
 
 		/**

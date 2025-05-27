@@ -10,7 +10,14 @@ import {
 	shift,
 	size,
 } from "@floating-ui/dom";
-import { attachRef, box, cssToStyleObj, styleToString, type ReadableBox } from "svelte-toolbelt";
+import {
+	attachRef,
+	box,
+	cssToStyleObj,
+	getWindow,
+	styleToString,
+	type ReadableBox,
+} from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
@@ -267,7 +274,8 @@ class FloatingContentState {
 			() => this.contentRef.current,
 			(contentNode) => {
 				if (!contentNode) return;
-				this.contentZIndex = window.getComputedStyle(contentNode).zIndex;
+				const win = getWindow(contentNode);
+				this.contentZIndex = win.getComputedStyle(contentNode).zIndex;
 			}
 		);
 

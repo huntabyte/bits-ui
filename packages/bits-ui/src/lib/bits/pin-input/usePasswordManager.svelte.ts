@@ -1,4 +1,4 @@
-import type { DOMContext, ReadableBox, WritableBox } from "svelte-toolbelt";
+import { getWindow, type DOMContext, type ReadableBox, type WritableBox } from "svelte-toolbelt";
 import type { PinInputRootPropsWithoutHTML } from "./types.js";
 
 const PWM_BADGE_MARGIN_RIGHT = 18;
@@ -81,7 +81,7 @@ export function usePasswordManagerBadge({
 
 		// check if the pwm area is fully visible
 		function checkHasSpace() {
-			const viewportWidth = window.innerWidth;
+			const viewportWidth = getWindow(container).innerWidth;
 			const distanceToRightEdge = viewportWidth - container!.getBoundingClientRect().right;
 			hasPwmBadgeSpace = distanceToRightEdge >= PWM_BADGE_SPACE_WIDTH_PX;
 		}

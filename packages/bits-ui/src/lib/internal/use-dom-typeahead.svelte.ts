@@ -7,11 +7,15 @@ type UseDOMTypeaheadOpts = {
 	onMatch?: (item: HTMLElement) => void;
 	getCurrentItem?: () => HTMLElement | null;
 	getActiveElement: () => HTMLElement | null;
+	getWindow: () => Window & typeof globalThis;
 };
 
-export function useDOMTypeahead(opts?: UseDOMTypeaheadOpts) {
+export function useDOMTypeahead(opts: UseDOMTypeaheadOpts) {
 	// Reset `search` 1 second after it was last updated
-	const search = boxAutoReset("", 1000);
+	const search = boxAutoReset("", {
+		afterMs: 1000,
+		getWindow: opts.getWindow,
+	});
 
 	const onMatch = opts?.onMatch ?? ((node) => node.focus());
 	const getCurrentItem = opts?.getCurrentItem ?? (() => opts?.getActiveElement());

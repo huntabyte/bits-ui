@@ -55,7 +55,7 @@
 		"css.escape": "^1.5.1",
 		"esm-env": "^1.1.2",
 		"runed": "^0.28.0",
-		"svelte-toolbelt": "^0.9.0",
+		"svelte-toolbelt": "^0.9.1",
 		"tabbable": "^6.2.0"
 	},
 	"peerDependencies": {

@@ -74,7 +74,7 @@ class SelectBaseRootState {
 	isUsingKeyboard = false;
 	isCombobox = false;
 	bitsAttrs: SelectBitsAttrs;
-	domContext: DOMContext | null = null;
+	domContext = new DOMContext(() => null);
 
 	constructor(opts: SelectBaseRootStateProps) {
 		this.opts = opts;
@@ -194,10 +194,9 @@ class SelectSingleRootState extends SelectBaseRootState {
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
-			if (!this.domContext) return;
 			if (
 				this.highlightedNode &&
-				this.domContext?.getDocument().contains(this.highlightedNode)
+				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
 			if (this.opts.value.current !== "") {
@@ -508,7 +507,8 @@ class SelectTriggerState {
 			onMatch: (node) => {
 				this.root.setHighlightedNode(node);
 			},
-			getActiveElement: () => this.root.domContext?.getActiveElement() ?? null,
+			getActiveElement: () => this.root.domContext.getActiveElement(),
+			getWindow: () => this.root.domContext.getWindow(),
 		});
 
 		this.#dataTypeahead = useDataTypeahead({
@@ -527,6 +527,7 @@ class SelectTriggerState {
 			},
 			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
 			candidateValues: () => (this.root.isMulti ? [] : this.root.candidateLabels),
+			getWindow: () => this.root.domContext.getWindow(),
 		});
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -757,13 +758,15 @@ class SelectContentState {
 	readonly root: SelectRootState;
 	viewportNode = $state<HTMLElement | null>(null);
 	isPositioned = $state(false);
+	domContext: DOMContext;
 
 	constructor(opts: SelectContentStateProps, root: SelectRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.domContext = new DOMContext(this.opts.ref);
 
 		if (this.root.domContext === null) {
-			this.root.domContext = new DOMContext(opts.ref);
+			this.root.domContext = this.domContext;
 		}
 
 		onDestroyEffect(() => {
@@ -1164,16 +1167,16 @@ class SelectScrollButtonImplState {
 	}
 
 	handleUserScroll() {
-		window.clearTimeout(this.userScrollTimer);
+		this.content.domContext.clearTimeout(this.userScrollTimer);
 		this.isUserScrolling = true;
-		this.userScrollTimer = window.setTimeout(() => {
+		this.userScrollTimer = this.content.domContext.setTimeout(() => {
 			this.isUserScrolling = false;
 		}, 200);
 	}
 
 	clearAutoScrollInterval() {
 		if (this.autoScrollTimer === null) return;
-		window.clearTimeout(this.autoScrollTimer);
+		this.content.domContext.clearTimeout(this.autoScrollTimer);
 		this.autoScrollTimer = null;
 	}
 
@@ -1181,12 +1184,15 @@ class SelectScrollButtonImplState {
 		if (this.autoScrollTimer !== null) return;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
-			this.autoScrollTimer = window.setTimeout(
+			this.autoScrollTimer = this.content.domContext.setTimeout(
 				() => autoScroll(tick + 1),
 				this.opts.delay.current(tick)
 			);
 		};
-		this.autoScrollTimer = window.setTimeout(() => autoScroll(1), this.opts.delay.current(0));
+		this.autoScrollTimer = this.content.domContext.setTimeout(
+			() => autoScroll(1),
+			this.opts.delay.current(0)
+		);
 	}
 
 	onpointermove(e: BitsPointerEvent) {

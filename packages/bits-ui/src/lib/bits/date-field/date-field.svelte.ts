@@ -195,7 +195,7 @@ export class DateFieldRootState {
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
-	domContext: DOMContext | null = null;
+	domContext: DOMContext = new DOMContext(() => null);
 
 	constructor(props: DateFieldRootStateProps, rangeRoot?: DateRangeFieldRootState) {
 		this.rangeRoot = rangeRoot;
@@ -225,7 +225,7 @@ export class DateFieldRootState {
 		this.formatter = createFormatter(this.locale.current);
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
-		this.announcer = getAnnouncer(this.domContext?.getDocument() ?? document);
+		this.announcer = getAnnouncer(null);
 
 		this.getFieldNode = this.getFieldNode.bind(this);
 		this.updateSegment = this.updateSegment.bind(this);
@@ -239,15 +239,12 @@ export class DateFieldRootState {
 		});
 
 		onMount(() => {
-			this.announcer = getAnnouncer(this.domContext?.getDocument() ?? document);
+			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
 
 		onDestroyEffect(() => {
 			if (rangeRoot) return;
-			removeDescriptionElement(
-				this.descriptionId,
-				this.domContext?.getDocument() ?? document
-			);
+			removeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
 
 		$effect(() => {
@@ -264,7 +261,7 @@ export class DateFieldRootState {
 					id: descriptionId,
 					formatter: this.formatter,
 					value: this.value.current,
-					doc: this.domContext?.getDocument() ?? document,
+					doc: this.domContext.getDocument(),
 				});
 			}
 			const placeholder = untrack(() => this.placeholder.current);

@@ -1,4 +1,4 @@
-import { type Getter, executeCallbacks } from "svelte-toolbelt";
+import { type Getter, executeCallbacks, getWindow } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { watch } from "runed";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
@@ -15,15 +15,15 @@ interface UseGraceAreaOpts {
 export function useGraceArea(opts: UseGraceAreaOpts) {
 	const enabled = $derived(opts.enabled());
 
-	const isPointerInTransit = boxAutoReset(
-		false as boolean,
-		opts.transitTimeout ?? 300,
-		(value) => {
+	const isPointerInTransit = boxAutoReset(false as boolean, {
+		afterMs: opts.transitTimeout ?? 300,
+		onChange: (value) => {
 			if (enabled) {
 				opts.setIsPointerInTransit?.(value);
 			}
-		}
-	);
+		},
+		getWindow: () => getWindow(opts.triggerNode()),
+	});
 
 	let pointerGraceArea = $state<Polygon | null>(null);
 

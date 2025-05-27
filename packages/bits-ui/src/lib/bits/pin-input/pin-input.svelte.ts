@@ -180,7 +180,7 @@ class PinInputRootState {
 					this.#mirrorSelectionEnd = end;
 					this.#prevInputMetadata.prev = [start, end, dir];
 				}
-			});
+			}, this.domContext);
 		});
 
 		$effect(() => {
@@ -536,10 +536,10 @@ class PinInputCellState {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function syncTimeouts(cb: (...args: any[]) => unknown): number[] {
-	const t1 = setTimeout(cb, 0); // For faster machines
-	const t2 = setTimeout(cb, 1_0);
-	const t3 = setTimeout(cb, 5_0);
+export function syncTimeouts(cb: (...args: any[]) => unknown, domContext: DOMContext): number[] {
+	const t1 = domContext.setTimeout(cb, 0); // For faster machines
+	const t2 = domContext.setTimeout(cb, 1_0);
+	const t3 = domContext.setTimeout(cb, 5_0);
 	return [t1, t2, t3];
 }
 

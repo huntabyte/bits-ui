@@ -9,11 +9,15 @@ type UseDataTypeaheadOpts = {
 	getCurrentItem: () => string;
 	candidateValues: Getter<string[]>;
 	enabled: boolean;
+	getWindow: () => Window & typeof globalThis;
 };
 
 export function useDataTypeahead(opts: UseDataTypeaheadOpts) {
 	// Reset `search` 1 second after it was last updated
-	const search = boxAutoReset("", 1000);
+	const search = boxAutoReset("", {
+		afterMs: 1000,
+		getWindow: opts.getWindow,
+	});
 	const candidateValues = $derived(opts.candidateValues());
 
 	function handleTypeaheadSearch(key: string) {

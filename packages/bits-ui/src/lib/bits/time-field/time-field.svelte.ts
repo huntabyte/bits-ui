@@ -171,7 +171,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		return getDefaultHourCycle(this.locale.current);
 	});
 	rangeRoot: TimeRangeFieldRootState<T> | undefined = undefined;
-	domContext: DOMContext | null = null;
+	domContext = new DOMContext(() => null);
 
 	constructor(props: TimeFieldRootStateProps<T>, rangeRoot?: TimeRangeFieldRootState<T>) {
 		this.rangeRoot = rangeRoot;
@@ -201,7 +201,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		this.formatter = createTimeFormatter(this.locale.current);
 		this.initialSegments = this.#initializeTimeSegmentValues();
 		this.segmentValues = this.initialSegments;
-		this.announcer = getAnnouncer(this.domContext?.getDocument() ?? document);
+		this.announcer = getAnnouncer(null);
 
 		this.getFieldNode = this.getFieldNode.bind(this);
 		this.updateSegment = this.updateSegment.bind(this);
@@ -215,14 +215,11 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		});
 
 		onMount(() => {
-			this.announcer = getAnnouncer(this.domContext?.getDocument() ?? document);
+			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
 
 		onDestroyEffect(() => {
-			removeTimeDescriptionElement(
-				this.descriptionId,
-				this.domContext?.getDocument() ?? document
-			);
+			removeTimeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
 
 		$effect(() => {
@@ -237,7 +234,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 					id: descriptionId,
 					formatter: this.formatter,
 					value: this.#toDateValue(this.value.current),
-					doc: this.domContext?.getDocument() ?? document,
+					doc: this.domContext.getDocument(),
 				});
 			}
 			const placeholder = untrack(() => this.placeholder.current);

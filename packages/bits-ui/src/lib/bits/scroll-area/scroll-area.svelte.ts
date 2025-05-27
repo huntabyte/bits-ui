@@ -7,7 +7,7 @@
 
 import { Context, useDebounce } from "runed";
 import { untrack } from "svelte";
-import { box, executeCallbacks, attachRef, DOMContext } from "svelte-toolbelt";
+import { box, executeCallbacks, attachRef, DOMContext, getWindow } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
@@ -165,13 +165,13 @@ class ScrollAreaScrollbarHoverState {
 			let hideTimer = 0;
 			if (!scrollAreaNode) return;
 			const handlePointerEnter = () => {
-				window.clearTimeout(hideTimer);
+				this.root.domContext.clearTimeout(hideTimer);
 				untrack(() => (this.isVisible = true));
 			};
 
 			const handlePointerLeave = () => {
-				if (hideTimer) window.clearTimeout(hideTimer);
-				hideTimer = window.setTimeout(() => {
+				if (hideTimer) this.root.domContext.clearTimeout(hideTimer);
+				hideTimer = this.root.domContext.setTimeout(() => {
 					untrack(() => {
 						this.scrollbar.hasThumb = false;
 						this.isVisible = false;
@@ -185,7 +185,7 @@ class ScrollAreaScrollbarHoverState {
 			);
 
 			return () => {
-				window.clearTimeout(hideTimer);
+				this.root.domContext.getWindow().clearTimeout(hideTimer);
 				unsubListeners();
 			};
 		});
@@ -232,11 +232,11 @@ class ScrollAreaScrollbarScrollState {
 			const _state = this.machine.state.current;
 			const scrollHideDelay = this.root.opts.scrollHideDelay.current;
 			if (_state === "idle") {
-				const hideTimer = window.setTimeout(
+				const hideTimer = this.root.domContext.setTimeout(
 					() => this.machine.dispatch("HIDE"),
 					scrollHideDelay
 				);
-				return () => window.clearTimeout(hideTimer);
+				return () => this.root.domContext.clearTimeout(hideTimer);
 			}
 		});
 
@@ -1013,14 +1013,16 @@ function isScrollingWithinScrollbarBounds(scrollPos: number, maxScrollPos: numbe
 function addUnlinkedScrollListener(node: HTMLElement, handler: () => void) {
 	let prevPosition = { left: node.scrollLeft, top: node.scrollTop };
 	let rAF = 0;
+	const win = getWindow(node);
+
 	(function loop() {
 		const position = { left: node.scrollLeft, top: node.scrollTop };
 		const isHorizontalScroll = prevPosition.left !== position.left;
 		const isVerticalScroll = prevPosition.top !== position.top;
 		if (isHorizontalScroll || isVerticalScroll) handler();
 		prevPosition = position;
-		rAF = window.requestAnimationFrame(loop);
+		rAF = win.requestAnimationFrame(loop);
 	})();
 
-	return () => window.cancelAnimationFrame(rAF);
+	return () => win.cancelAnimationFrame(rAF);
 }
