@@ -44,15 +44,14 @@
 		searchQuery = "";
 	}}
 >
-	<Button.Root
-		onclick={() => (dialogOpen = true)}
-		aria-label="Search Docs"
-		class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center px-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:hidden"
-	>
-		<MagnifyingGlass class="size-5" />
-	</Button.Root>
-
 	{#if showTrigger}
+		<Button.Root
+			onclick={() => (dialogOpen = true)}
+			aria-label="Search Docs"
+			class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center px-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:hidden"
+		>
+			<MagnifyingGlass class="size-5" />
+		</Button.Root>
 		<Dialog.Trigger
 			class="bg-muted text-muted-foreground ring-offset-background hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative hidden h-10 items-center justify-between gap-3 whitespace-nowrap rounded-[9px] px-3 text-sm font-normal transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:inline-flex sm:w-72"
 		>
