@@ -7,7 +7,7 @@
 	import { navigation } from "$lib/config/index.js";
 	import "$lib/styles/app.css";
 	import { onMount } from "svelte";
-	import { page } from "$app/state"
+	import { page } from "$app/state";
 
 	onMount(async () => {
 		if (dev || page.url.searchParams.get("test")) {
