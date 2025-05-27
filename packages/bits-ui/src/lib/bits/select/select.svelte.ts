@@ -508,6 +508,7 @@ class SelectTriggerState {
 			onMatch: (node) => {
 				this.root.setHighlightedNode(node);
 			},
+			getActiveElement: () => this.root.domContext?.getActiveElement() ?? null,
 		});
 
 		this.#dataTypeahead = useDataTypeahead({

@@ -49,30 +49,20 @@ export function getTabbableFrom(currentNode: HTMLElement, direction: "next" | "p
 }
 
 export function getTabbableFromFocusable(currentNode: HTMLElement, direction: "next" | "prev") {
-	if (!isFocusable(currentNode, getTabbableOptions())) return document.body;
+	const doc = getDocument(currentNode);
+	if (!isFocusable(currentNode, getTabbableOptions())) return doc.body;
 
 	// find all focusable nodes, since some elements may be focusable but not tabbable
 	// such as context menu triggers
-	const allFocusable = focusable(getDocument(currentNode).body, getTabbableOptions());
+	const allFocusable = focusable(doc.body, getTabbableOptions());
 
 	// find index of current node among focusable siblings
 	if (direction === "prev") allFocusable.reverse();
 	const activeIndex = allFocusable.indexOf(currentNode);
-	if (activeIndex === -1) return document.body;
+	if (activeIndex === -1) return doc.body;
 
 	const nextFocusableElements = allFocusable.slice(activeIndex + 1);
 
 	// find the next focusable node that is also tabbable
-	return (
-		nextFocusableElements.find((node) => isTabbable(node, getTabbableOptions())) ??
-		document.body
-	);
-}
-
-export function getNextTabbable() {
-	return getTabbableIn(document.body, "next");
-}
-
-export function getPreviousTabbable() {
-	return getTabbableIn(document.body, "prev");
+	return nextFocusableElements.find((node) => isTabbable(node, getTabbableOptions())) ?? doc.body;
 }

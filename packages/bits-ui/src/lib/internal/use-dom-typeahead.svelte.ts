@@ -6,6 +6,7 @@ export type DOMTypeahead = ReturnType<typeof useDOMTypeahead>;
 type UseDOMTypeaheadOpts = {
 	onMatch?: (item: HTMLElement) => void;
 	getCurrentItem?: () => HTMLElement | null;
+	getActiveElement: () => HTMLElement | null;
 };
 
 export function useDOMTypeahead(opts?: UseDOMTypeaheadOpts) {
@@ -13,8 +14,7 @@ export function useDOMTypeahead(opts?: UseDOMTypeaheadOpts) {
 	const search = boxAutoReset("", 1000);
 
 	const onMatch = opts?.onMatch ?? ((node) => node.focus());
-	const getCurrentItem =
-		opts?.getCurrentItem ?? (() => document.activeElement as HTMLElement | null);
+	const getCurrentItem = opts?.getCurrentItem ?? (() => opts?.getActiveElement());
 
 	function handleTypeaheadSearch(key: string, candidates: HTMLElement[]) {
 		if (!candidates.length) return;

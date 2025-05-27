@@ -92,7 +92,7 @@ export class CalendarRootState {
 	constructor(opts: CalendarRootStateProps) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
-		this.announcer = getAnnouncer();
+		this.announcer = getAnnouncer(this.domContext.getDocument());
 		this.formatter = createFormatter(this.opts.locale.current);
 
 		this.setMonths = this.setMonths.bind(this);

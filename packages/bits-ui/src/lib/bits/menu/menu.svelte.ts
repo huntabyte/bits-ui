@@ -178,7 +178,9 @@ class MenuContentState {
 			},
 		});
 
-		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
+		this.#handleTypeaheadSearch = useDOMTypeahead({
+			getActiveElement: () => this.domContext.getActiveElement(),
+		}).handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNode: box.with(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getAttr("item"),

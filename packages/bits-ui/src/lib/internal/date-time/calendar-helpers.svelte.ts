@@ -5,7 +5,13 @@ import {
 	isSameMonth,
 	startOfMonth,
 } from "@internationalized/date";
-import { type ReadableBox, type WritableBox, afterTick, styleToString } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	type WritableBox,
+	afterTick,
+	getDocument,
+	styleToString,
+} from "svelte-toolbelt";
 import { untrack } from "svelte";
 import {
 	getDaysInMonth,
@@ -536,7 +542,8 @@ export function createAccessibleHeading({
 	label,
 	accessibleHeadingId,
 }: CreateAccessibleHeadingProps) {
-	const div = document.createElement("div");
+	const doc = getDocument(calendarNode);
+	const div = doc.createElement("div");
 	div.style.cssText = styleToString({
 		border: "0px",
 		clip: "rect(0px, 0px, 0px, 0px)",
@@ -549,7 +556,7 @@ export function createAccessibleHeading({
 		whiteSpace: "nowrap",
 		width: "1px",
 	});
-	const h2 = document.createElement("div");
+	const h2 = doc.createElement("div");
 	h2.textContent = label;
 	h2.id = accessibleHeadingId;
 	h2.role = "heading";
@@ -558,7 +565,7 @@ export function createAccessibleHeading({
 	div.appendChild(h2);
 
 	return () => {
-		const h2 = document.getElementById(accessibleHeadingId);
+		const h2 = doc.getElementById(accessibleHeadingId);
 		if (!h2) return;
 		div.parentElement?.removeChild(div);
 		h2.remove();
@@ -730,7 +737,8 @@ export type CalendarParts =
 	| "heading";
 
 export function pickerOpenFocus(e: Event) {
-	const nodeToFocus = document.querySelector<HTMLElement>("[data-bits-day][data-focused]");
+	const doc = getDocument(e.target as HTMLElement);
+	const nodeToFocus = doc.querySelector<HTMLElement>("[data-bits-day][data-focused]");
 	if (nodeToFocus) {
 		e.preventDefault();
 		nodeToFocus?.focus();

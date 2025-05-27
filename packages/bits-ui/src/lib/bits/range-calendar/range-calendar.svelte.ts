@@ -99,7 +99,7 @@ export class RangeCalendarRootState {
 	constructor(opts: RangeCalendarRootStateProps) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
-		this.announcer = getAnnouncer();
+		this.announcer = getAnnouncer(this.domContext.getDocument());
 		this.formatter = createFormatter(this.opts.locale.current);
 
 		this.months = createMonths({
