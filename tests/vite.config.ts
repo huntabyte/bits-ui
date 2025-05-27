@@ -1,7 +1,8 @@
 import process from "node:process";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
-import { defineConfig, Plugin } from "vitest/config";
+import { defineConfig } from "vitest/config";
+import type { Plugin } from "vite";
 
 const vitestBrowserConditionPlugin: Plugin = {
 	name: "vite-plugin-vitest-browser-condition",
