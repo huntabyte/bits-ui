@@ -15,8 +15,7 @@
 		"preview": "vite preview",
 		"build:search": "node ./other/build-search-data.js",
 		"build:demos": "pnpx tsx ./other/build-demo-files.ts",
-		"check": "pnpm build:content && pnpm build:demos && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"deploy": "wrangler deploy"
+		"check": "pnpm build:content && pnpm build:demos && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
 		"@internationalized/date": "^3.5.6",
