@@ -1,5 +1,39 @@
 # bits-ui
 
+## 2.1.0
+
+(Had to publish 2.1.0 instead of 2.0.0 as someone published 2.0.x to NPM many years ago)
+
+### Major Changes
+
+-   breaking: bump minimum Svelte peer dependency to `^5.33.0` to support [Attachments](https://svelte.dev/docs/svelte/svelte-attachments) and ][$props.id()](<https://svelte.dev/docs/svelte/$props#$props.id()>). ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   breaking: `@internationalized/date` is now a required peer dependency. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+### Minor Changes
+
+-   feat(Slider): add `Slider.ThumbLabel` for rendering a label positioned relative to a `Slider.Thumb`. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat(Slider): add `Slider.TickLabel` for rendering a label positioned relative to a `Slider.Tick`. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat(Slider): introduce `tickItems` snippet prop to `Slider.Root` as a replacement for `ticks` which is now deprecated. Prefer `tickItems` going forward. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat(Slider): support discrete step values via `steps`: `number[] | number` on `Slider.Root`. If an array is passed, it defines the selectable values directly, and `min`/`max` default to the array's bounds. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat: add `TimeField` component for time input with segmented control and full keyboard support. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat(Slider): introduce the `tickItems` snippet prop on `Slider.Root` as a replacement for the now-deprecated `ticks`, enabling a more flexible API that better supports rendering `TickLabels`. Prefer `tickItems` going forward. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat: add `TimeRangeField` component for selecting a start and end time. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat(Slider): introduce the `thumbItems` snippet prop on `Slider.Root` as a replacement for the now-deprecated `thumbs`, enabling a more flexible API that better supports rendering `ThumbLabels`. Prefer `thumbItems` going forward. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+-   feat(Slider): add `trackPadding` prop to `Slider.Root` as an SSR-friendly alternative to `thumbPositioning="contain"`, which requires client-side measurement. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
+### Patch Changes
+
+-   fix(Button): add missing fallback to `null` for `ref` prop to align with other components. ([#1494](https://github.com/huntabyte/bits-ui/pull/1494))
+
 ## 1.8.0
 
 ### Minor Changes
