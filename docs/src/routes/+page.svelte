@@ -100,7 +100,7 @@
 				<Sparkle class="mt-[2px] size-3 lg:size-4" aria-label="Stars" />
 				<span
 					class="border-l-border-input text-foreground inline-block border-l pl-3 text-[11px] font-medium lg:text-[13px]"
-					>New Stable 1.0 Release</span
+					>Bits UI v2 Now Available</span
 				>
 			</a>
 			<h1
