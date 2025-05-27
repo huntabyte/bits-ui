@@ -7,7 +7,7 @@
 
 import { Context, useDebounce } from "runed";
 import { untrack } from "svelte";
-import { box, executeCallbacks, attachRef } from "svelte-toolbelt";
+import { box, executeCallbacks, attachRef, DOMContext, getWindow } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
@@ -53,9 +53,11 @@ class ScrollAreaRootState {
 	cornerHeight = $state<number>(0);
 	scrollbarXEnabled = $state(false);
 	scrollbarYEnabled = $state(false);
+	domContext: DOMContext;
 
 	constructor(opts: ScrollAreaRootStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(opts.ref);
 	}
 
 	props = $derived.by(
@@ -163,13 +165,13 @@ class ScrollAreaScrollbarHoverState {
 			let hideTimer = 0;
 			if (!scrollAreaNode) return;
 			const handlePointerEnter = () => {
-				window.clearTimeout(hideTimer);
+				this.root.domContext.clearTimeout(hideTimer);
 				untrack(() => (this.isVisible = true));
 			};
 
 			const handlePointerLeave = () => {
-				if (hideTimer) window.clearTimeout(hideTimer);
-				hideTimer = window.setTimeout(() => {
+				if (hideTimer) this.root.domContext.clearTimeout(hideTimer);
+				hideTimer = this.root.domContext.setTimeout(() => {
 					untrack(() => {
 						this.scrollbar.hasThumb = false;
 						this.isVisible = false;
@@ -183,7 +185,7 @@ class ScrollAreaScrollbarHoverState {
 			);
 
 			return () => {
-				window.clearTimeout(hideTimer);
+				this.root.domContext.getWindow().clearTimeout(hideTimer);
 				unsubListeners();
 			};
 		});
@@ -230,11 +232,11 @@ class ScrollAreaScrollbarScrollState {
 			const _state = this.machine.state.current;
 			const scrollHideDelay = this.root.opts.scrollHideDelay.current;
 			if (_state === "idle") {
-				const hideTimer = window.setTimeout(
+				const hideTimer = this.root.domContext.setTimeout(
 					() => this.machine.dispatch("HIDE"),
 					scrollHideDelay
 				);
-				return () => window.clearTimeout(hideTimer);
+				return () => this.root.domContext.clearTimeout(hideTimer);
 			}
 		});
 
@@ -694,8 +696,8 @@ class ScrollAreaScrollbarSharedState {
 		this.rect = this.scrollbar.opts.ref.current?.getBoundingClientRect() ?? null;
 		// pointer capture doesn't prevent text selection in Safari
 		// so we remove text selection manually when scrolling
-		this.prevWebkitUserSelect = document.body.style.webkitUserSelect;
-		document.body.style.webkitUserSelect = "none";
+		this.prevWebkitUserSelect = this.root.domContext.getDocument().body.style.webkitUserSelect;
+		this.root.domContext.getDocument().body.style.webkitUserSelect = "none";
 		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "auto";
 		this.handleDragScroll(e);
 	}
@@ -709,7 +711,7 @@ class ScrollAreaScrollbarSharedState {
 		if (target.hasPointerCapture(e.pointerId)) {
 			target.releasePointerCapture(e.pointerId);
 		}
-		document.body.style.webkitUserSelect = this.prevWebkitUserSelect;
+		this.root.domContext.getDocument().body.style.webkitUserSelect = this.prevWebkitUserSelect;
 		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "";
 		this.rect = null;
 	}
@@ -1011,14 +1013,16 @@ function isScrollingWithinScrollbarBounds(scrollPos: number, maxScrollPos: numbe
 function addUnlinkedScrollListener(node: HTMLElement, handler: () => void) {
 	let prevPosition = { left: node.scrollLeft, top: node.scrollTop };
 	let rAF = 0;
+	const win = getWindow(node);
+
 	(function loop() {
 		const position = { left: node.scrollLeft, top: node.scrollTop };
 		const isHorizontalScroll = prevPosition.left !== position.left;
 		const isVerticalScroll = prevPosition.top !== position.top;
 		if (isHorizontalScroll || isVerticalScroll) handler();
 		prevPosition = position;
-		rAF = window.requestAnimationFrame(loop);
+		rAF = win.requestAnimationFrame(loop);
 	})();
 
-	return () => window.cancelAnimationFrame(rAF);
+	return () => win.cancelAnimationFrame(rAF);
 }

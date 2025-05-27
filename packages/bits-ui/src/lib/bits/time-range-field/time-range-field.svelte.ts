@@ -1,5 +1,5 @@
 import type { Time } from "@internationalized/date";
-import { box, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import { box, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { TimeFieldRootState } from "../time-field/time-field.svelte.js";
 import { TimeFieldInputState, useTimeFieldRoot } from "../time-field/time-field.svelte.js";
@@ -82,13 +82,15 @@ export class TimeRangeFieldRootState<T extends TimeValue = Time> {
 		if (!this.opts.maxValue.current) return undefined;
 		return convertTimeValueToTime(this.opts.maxValue.current);
 	});
+	domContext: DOMContext;
 
 	constructor(opts: TimeRangeFieldRootStateProps<T>) {
 		this.opts = opts;
 		this.formatter = createTimeFormatter(this.opts.locale.current);
+		this.domContext = new DOMContext(this.opts.ref);
 
 		onDestroyEffect(() => {
-			removeDescriptionElement(this.descriptionId);
+			removeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
 
 		$effect(() => {

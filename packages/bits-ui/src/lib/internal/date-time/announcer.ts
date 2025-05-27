@@ -6,39 +6,40 @@ import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
  * Within the date components, we use this to announce when the values of the individual segments
  * change, as without it we get inconsistent behavior across screen readers.
  */
-function initAnnouncer() {
-	if (!isBrowser) return null;
-	let el = document.querySelector("[data-bits-announcer]");
+function initAnnouncer(doc: Document | null) {
+	if (!isBrowser || !doc) return null;
+	let el = doc.querySelector("[data-bits-announcer]");
+
+	/**
+	 * Creates a log element for assertive or polite announcements.
+	 */
+	const createLog = (kind: "assertive" | "polite") => {
+		const log = doc.createElement("div");
+		log.role = "log";
+		log.ariaLive = kind;
+		log.setAttribute("aria-relevant", "additions");
+		return log;
+	};
+
 	if (!isHTMLElement(el)) {
-		const div = document.createElement("div");
+		const div = doc.createElement("div");
 		div.style.cssText = srOnlyStylesString;
 		div.setAttribute("data-bits-announcer", "");
 		div.appendChild(createLog("assertive"));
 		div.appendChild(createLog("polite"));
 		el = div;
-		document.body.insertBefore(el, document.body.firstChild);
-	}
-
-	/**
-	 * Creates a log element for assertive or polite announcements.
-	 */
-	function createLog(kind: "assertive" | "polite") {
-		const log = document.createElement("div");
-		log.role = "log";
-		log.ariaLive = kind;
-		log.setAttribute("aria-relevant", "additions");
-		return log;
+		doc.body.insertBefore(el, doc.body.firstChild);
 	}
 
 	/**
 	 * Retrieves the log element for assertive or polite announcements.
 	 */
-	function getLog(kind: "assertive" | "polite") {
+	const getLog = (kind: "assertive" | "polite") => {
 		if (!isHTMLElement(el)) return null;
 		const log = el.querySelector(`[aria-live="${kind}"]`);
 		if (!isHTMLElement(log)) return null;
 		return log;
-	}
+	};
 
 	return {
 		getLog,
@@ -50,8 +51,8 @@ export type Announcer = ReturnType<typeof getAnnouncer>;
 /**
  * Creates an announcer object that can be used to make `aria-live` announcements to screen readers.
  */
-export function getAnnouncer() {
-	const announcer = initAnnouncer();
+export function getAnnouncer(doc: Document | null) {
+	const announcer = initAnnouncer(doc);
 
 	/**
 	 * Announces a message to screen readers using the specified kind of announcement.
@@ -61,9 +62,9 @@ export function getAnnouncer() {
 		kind: "assertive" | "polite" = "assertive",
 		timeout = 7500
 	) {
-		if (!announcer || !isBrowser) return;
+		if (!announcer || !isBrowser || !doc) return;
 		const log = announcer.getLog(kind);
-		const content = document.createElement("div");
+		const content = doc.createElement("div");
 		if (typeof value === "number") {
 			value = value.toString();
 		} else if (value === null) {

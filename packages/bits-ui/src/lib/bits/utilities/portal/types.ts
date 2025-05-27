@@ -4,7 +4,7 @@ export type PortalProps = {
 	/**
 	 * Where to portal the content to.
 	 *
-	 * @defaultValue document.body
+	 * @default document.body
 	 */
 	to?: HTMLElement | string | DocumentFragment;
 

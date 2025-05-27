@@ -297,6 +297,13 @@ export function isFirstTimeSegment(id: string, fieldNode: HTMLElement | null) {
 	return segments.length ? segments[0]!.id === id : false;
 }
 
+type SetTimeDescriptionProps = {
+	id: string;
+	formatter: TimeFormatter;
+	value: TimeValue;
+	doc: Document;
+};
+
 /**
  * Creates or updates a description element for a date field
  * which enables screen readers to read the date field's value.
@@ -305,18 +312,18 @@ export function isFirstTimeSegment(id: string, fieldNode: HTMLElement | null) {
  * so it can be associated via `aria-describedby` and read by
  * screen readers as the user interacts with the date field.
  */
-export function setTimeDescription(id: string, formatter: TimeFormatter, value: TimeValue) {
+export function setTimeDescription(props: SetTimeDescriptionProps) {
 	if (!isBrowser) return;
-	const valueString = formatter.selectedTime(value);
-	const el = document.getElementById(id);
+	const valueString = props.formatter.selectedTime(props.value);
+	const el = props.doc.getElementById(props.id);
 	if (!el) {
-		const div = document.createElement("div");
+		const div = props.doc.createElement("div");
 		div.style.cssText = styleToString({
 			display: "none",
 		});
-		div.id = id;
+		div.id = props.id;
 		div.innerText = `Selected Time: ${valueString}`;
-		document.body.appendChild(div);
+		props.doc.body.appendChild(div);
 	} else {
 		el.innerText = `Selected Time: ${valueString}`;
 	}
@@ -327,11 +334,11 @@ export function setTimeDescription(id: string, formatter: TimeFormatter, value: 
  * the provided ID. This function should be called when the
  * date field is unmounted.
  */
-export function removeTimeDescriptionElement(id: string) {
+export function removeTimeDescriptionElement(id: string, doc: Document) {
 	if (!isBrowser) return;
-	const el = document.getElementById(id);
+	const el = doc.getElementById(id);
 	if (!el) return;
-	document.body.removeChild(el);
+	doc.body.removeChild(el);
 }
 
 export function convertTimeValueToDateValue(time: TimeValue): CalendarDateTime | ZonedDateTime {

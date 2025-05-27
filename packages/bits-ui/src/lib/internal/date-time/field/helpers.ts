@@ -403,6 +403,12 @@ export function isFirstSegment(id: string, fieldNode: HTMLElement | null) {
 	return segments.length ? segments[0]!.id === id : false;
 }
 
+type SetDescriptionProps = {
+	id: string;
+	formatter: Formatter;
+	value: DateValue;
+	doc: Document;
+};
 /**
  * Creates or updates a description element for a date field
  * which enables screen readers to read the date field's value.
@@ -411,18 +417,19 @@ export function isFirstSegment(id: string, fieldNode: HTMLElement | null) {
  * so it can be associated via `aria-describedby` and read by
  * screen readers as the user interacts with the date field.
  */
-export function setDescription(id: string, formatter: Formatter, value: DateValue) {
+export function setDescription(props: SetDescriptionProps) {
+	const { id, formatter, value, doc } = props;
 	if (!isBrowser) return;
 	const valueString = formatter.selectedDate(value);
-	const el = document.getElementById(id);
+	const el = doc.getElementById(id);
 	if (!el) {
-		const div = document.createElement("div");
+		const div = doc.createElement("div");
 		div.style.cssText = styleToString({
 			display: "none",
 		});
 		div.id = id;
 		div.innerText = `Selected Date: ${valueString}`;
-		document.body.appendChild(div);
+		doc.body.appendChild(div);
 	} else {
 		el.innerText = `Selected Date: ${valueString}`;
 	}
@@ -433,11 +440,11 @@ export function setDescription(id: string, formatter: Formatter, value: DateValu
  * the provided ID. This function should be called when the
  * date field is unmounted.
  */
-export function removeDescriptionElement(id: string) {
+export function removeDescriptionElement(id: string, doc: Document) {
 	if (!isBrowser) return;
-	const el = document.getElementById(id);
+	const el = doc.getElementById(id);
 	if (!el) return;
-	document.body.removeChild(el);
+	doc.body.removeChild(el);
 }
 
 export function getDefaultHourCycle(locale: string): 12 | 24 {

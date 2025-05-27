@@ -6,8 +6,8 @@ import {
 	isToday,
 } from "@internationalized/date";
 import { DEV } from "esm-env";
-import { untrack } from "svelte";
-import { attachRef } from "svelte-toolbelt";
+import { onMount, untrack } from "svelte";
+import { attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
@@ -87,10 +87,12 @@ export class CalendarRootState {
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
+	domContext: DOMContext;
 
 	constructor(opts: CalendarRootStateProps) {
 		this.opts = opts;
-		this.announcer = getAnnouncer();
+		this.domContext = new DOMContext(opts.ref);
+		this.announcer = getAnnouncer(null);
 		this.formatter = createFormatter(this.opts.locale.current);
 
 		this.setMonths = this.setMonths.bind(this);
@@ -109,6 +111,10 @@ export class CalendarRootState {
 		this.handleSingleUpdate = this.handleSingleUpdate.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.getBitsAttr = this.getBitsAttr.bind(this);
+
+		onMount(() => {
+			this.announcer = getAnnouncer(this.domContext.getDocument());
+		});
 
 		this.months = createMonths({
 			dateObj: this.opts.placeholder.current,
@@ -153,7 +159,7 @@ export class CalendarRootState {
 		 * changes.
 		 */
 		$effect(() => {
-			const node = document.getElementById(this.accessibleHeadingId);
+			const node = this.domContext.getElementById(this.accessibleHeadingId);
 			if (!node) return;
 			node.textContent = this.fullCalendarLabel;
 		});

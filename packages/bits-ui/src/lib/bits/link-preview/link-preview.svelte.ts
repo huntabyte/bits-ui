@@ -1,4 +1,4 @@
-import { afterSleep, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import { afterSleep, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -29,6 +29,7 @@ class LinkPreviewRootState {
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
+	domContext: DOMContext = new DOMContext(() => null);
 
 	constructor(opts: LinkPreviewRootStateProps) {
 		this.opts = opts;
@@ -40,13 +41,15 @@ class LinkPreviewRootState {
 					this.hasSelection = false;
 					return;
 				}
+				if (!this.domContext) return;
 
 				const handlePointerUp = () => {
 					this.containsSelection = false;
 					this.isPointerDownOnContent = false;
 
 					afterSleep(1, () => {
-						const isSelection = document.getSelection()?.toString() !== "";
+						const isSelection =
+							this.domContext.getDocument().getSelection()?.toString() !== "";
 
 						if (isSelection) {
 							this.hasSelection = true;
@@ -56,7 +59,11 @@ class LinkPreviewRootState {
 					});
 				};
 
-				const unsubListener = on(document, "pointerup", handlePointerUp);
+				const unsubListener = on(
+					this.domContext.getDocument(),
+					"pointerup",
+					handlePointerUp
+				);
 
 				if (!this.contentNode) return;
 				const tabCandidates = getTabbableCandidates(this.contentNode);
@@ -76,7 +83,7 @@ class LinkPreviewRootState {
 
 	clearTimeout() {
 		if (this.timeout) {
-			window.clearTimeout(this.timeout);
+			this.domContext.clearTimeout(this.timeout);
 			this.timeout = null;
 		}
 	}
@@ -85,7 +92,7 @@ class LinkPreviewRootState {
 		this.clearTimeout();
 		if (this.opts.open.current) return;
 		this.isOpening = true;
-		this.timeout = window.setTimeout(() => {
+		this.timeout = this.domContext.setTimeout(() => {
 			if (this.isOpening) {
 				this.opts.open.current = true;
 				this.isOpening = false;
@@ -104,7 +111,7 @@ class LinkPreviewRootState {
 		this.clearTimeout();
 
 		if (!this.isPointerDownOnContent && !this.hasSelection) {
-			this.timeout = window.setTimeout(() => {
+			this.timeout = this.domContext.setTimeout(() => {
 				this.opts.open.current = false;
 			}, this.opts.closeDelay.current);
 		}
@@ -120,6 +127,7 @@ class LinkPreviewTriggerState {
 	constructor(opts: LinkPreviewTriggerStateProps, root: LinkPreviewRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.root.domContext = new DOMContext(opts.ref);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
@@ -179,6 +187,7 @@ class LinkPreviewContentState {
 	constructor(opts: LinkPreviewContentStateProps, root: LinkPreviewRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.root.domContext = new DOMContext(opts.ref);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);

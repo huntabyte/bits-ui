@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import { CalendarDateTime, Time, ZonedDateTime } from "@internationalized/date";
-import { onDestroyEffect, attachRef, type WritableBox, box } from "svelte-toolbelt";
+import { onDestroyEffect, attachRef, type WritableBox, box, DOMContext } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -171,6 +171,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		return getDefaultHourCycle(this.locale.current);
 	});
 	rangeRoot: TimeRangeFieldRootState<T> | undefined = undefined;
+	domContext = new DOMContext(() => null);
 
 	constructor(props: TimeFieldRootStateProps<T>, rangeRoot?: TimeRangeFieldRootState<T>) {
 		this.rangeRoot = rangeRoot;
@@ -200,7 +201,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		this.formatter = createTimeFormatter(this.locale.current);
 		this.initialSegments = this.#initializeTimeSegmentValues();
 		this.segmentValues = this.initialSegments;
-		this.announcer = getAnnouncer();
+		this.announcer = getAnnouncer(null);
 
 		this.getFieldNode = this.getFieldNode.bind(this);
 		this.updateSegment = this.updateSegment.bind(this);
@@ -214,11 +215,11 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		});
 
 		onMount(() => {
-			this.announcer = getAnnouncer();
+			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
 
 		onDestroyEffect(() => {
-			removeTimeDescriptionElement(this.descriptionId);
+			removeTimeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
 
 		$effect(() => {
@@ -229,11 +230,12 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		$effect(() => {
 			if (this.value.current) {
 				const descriptionId = untrack(() => this.descriptionId);
-				setTimeDescription(
-					descriptionId,
-					this.formatter,
-					this.#toDateValue(this.value.current)
-				);
+				setTimeDescription({
+					id: descriptionId,
+					formatter: this.formatter,
+					value: this.#toDateValue(this.value.current),
+					doc: this.domContext.getDocument(),
+				});
 			}
 			const placeholder = untrack(() => this.placeholder.current);
 			if (this.value.current && placeholder !== this.value.current) {
@@ -589,10 +591,13 @@ type TimeFieldInputStateProps = WithRefProps &
 export class TimeFieldInputState {
 	readonly opts: TimeFieldInputStateProps;
 	readonly root: TimeFieldRootState;
+	domContext: DOMContext;
 
 	constructor(opts: TimeFieldInputStateProps, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.domContext = new DOMContext(opts.ref);
+		this.root.setName(this.opts.name.current);
 
 		$effect(() => {
 			this.root.setName(this.opts.name.current);
@@ -601,7 +606,7 @@ export class TimeFieldInputState {
 
 	#ariaDescribedBy = $derived.by(() => {
 		if (!isBrowser) return undefined;
-		const doesDescriptionExist = document.getElementById(this.root.descriptionId);
+		const doesDescriptionExist = this.domContext.getElementById(this.root.descriptionId);
 		if (!doesDescriptionExist) return undefined;
 		return this.root.descriptionId;
 	});

@@ -1,4 +1,12 @@
-import { afterTick, box, mergeProps, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import {
+	afterTick,
+	box,
+	mergeProps,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+	getWindow,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,
@@ -138,10 +146,12 @@ class MenuContentState {
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
 	#isSub: boolean;
+	domContext: DOMContext;
 
 	constructor(opts: MenuContentStateProps, parentMenu: MenuMenuState) {
 		this.opts = opts;
 		this.parentMenu = parentMenu;
+		this.domContext = new DOMContext(opts.ref);
 
 		parentMenu.contentId = opts.id;
 
@@ -169,7 +179,10 @@ class MenuContentState {
 			},
 		});
 
-		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
+		this.#handleTypeaheadSearch = useDOMTypeahead({
+			getActiveElement: () => this.domContext.getActiveElement(),
+			getWindow: () => this.domContext.getWindow(),
+		}).handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNode: box.with(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getAttr("item"),
@@ -193,7 +206,7 @@ class MenuContentState {
 
 		$effect(() => {
 			if (!this.parentMenu.opts.open.current) {
-				window.clearTimeout(this.#timer);
+				this.domContext.getWindow().clearTimeout(this.#timer);
 			}
 		});
 	}
@@ -257,7 +270,7 @@ class MenuContentState {
 				});
 			});
 		} else {
-			document.body.focus();
+			this.domContext.getDocument().body.focus();
 		}
 	}
 
@@ -302,7 +315,7 @@ class MenuContentState {
 		if (LAST_KEYS.includes(e.key)) {
 			candidateNodes.reverse();
 		}
-		focusFirst(candidateNodes);
+		focusFirst(candidateNodes, { select: false }, () => this.domContext.getActiveElement());
 	}
 
 	onblur(e: BitsFocusEvent) {
@@ -310,7 +323,7 @@ class MenuContentState {
 		if (!isElement(e.target)) return;
 		// clear search buffer when leaving the menu
 		if (!e.currentTarget.contains?.(e.target)) {
-			window.clearTimeout(this.#timer);
+			this.domContext.getWindow().clearTimeout(this.#timer);
 			this.search = "";
 		}
 	}
@@ -549,7 +562,6 @@ class MenuSubTriggerState {
 	readonly content: MenuContentState;
 	readonly submenu: MenuMenuState;
 	#openTimer: number | null = null;
-
 	constructor(
 		opts: MenuItemSharedStateProps & Pick<MenuItemStateProps, "onSelect">,
 		item: MenuItemSharedState,
@@ -572,7 +584,7 @@ class MenuSubTriggerState {
 
 	#clearOpenTimer() {
 		if (this.#openTimer === null) return;
-		window.clearTimeout(this.#openTimer);
+		this.content.domContext.getWindow().clearTimeout(this.#openTimer);
 		this.#openTimer = null;
 	}
 
@@ -585,7 +597,7 @@ class MenuSubTriggerState {
 			!this.#openTimer &&
 			!this.content.parentMenu.root.isPointerInTransit
 		) {
-			this.#openTimer = window.setTimeout(() => {
+			this.#openTimer = this.content.domContext.setTimeout(() => {
 				this.submenu.onOpen();
 				this.#clearOpenTimer();
 			}, 100);
@@ -1001,7 +1013,7 @@ class ContextMenuTriggerState {
 
 	#clearLongPressTimer() {
 		if (this.#longPressTimer === null) return;
-		window.clearTimeout(this.#longPressTimer);
+		getWindow(this.opts.ref.current).clearTimeout(this.#longPressTimer);
 	}
 
 	#handleOpen(e: BitsMouseEvent | BitsPointerEvent) {
@@ -1020,7 +1032,10 @@ class ContextMenuTriggerState {
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.opts.disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
-		this.#longPressTimer = window.setTimeout(() => this.#handleOpen(e), 700);
+		this.#longPressTimer = getWindow(this.opts.ref.current).setTimeout(
+			() => this.#handleOpen(e),
+			700
+		);
 	}
 
 	onpointermove(e: BitsPointerEvent) {

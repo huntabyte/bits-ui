@@ -5,7 +5,7 @@ import {
 	isSameMonth,
 	isToday,
 } from "@internationalized/date";
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
@@ -51,6 +51,7 @@ import {
 	toDate,
 } from "$lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
+import { onMount } from "svelte";
 
 type RangeCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -94,10 +95,12 @@ export class RangeCalendarRootState {
 	accessibleHeadingId = useId();
 	focusedValue = $state<DateValue | undefined>(undefined);
 	lastPressedDateValue: DateValue | undefined = undefined;
+	domContext: DOMContext;
 
 	constructor(opts: RangeCalendarRootStateProps) {
 		this.opts = opts;
-		this.announcer = getAnnouncer();
+		this.domContext = new DOMContext(opts.ref);
+		this.announcer = getAnnouncer(null);
 		this.formatter = createFormatter(this.opts.locale.current);
 
 		this.months = createMonths({
@@ -111,6 +114,10 @@ export class RangeCalendarRootState {
 		$effect(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
 			this.formatter.setLocale(this.opts.locale.current);
+		});
+
+		onMount(() => {
+			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
 
 		/**
@@ -145,7 +152,7 @@ export class RangeCalendarRootState {
 		 * changes.
 		 */
 		$effect(() => {
-			const node = document.getElementById(this.accessibleHeadingId);
+			const node = this.domContext.getElementById(this.accessibleHeadingId);
 			if (!node) return;
 			node.textContent = this.fullCalendarLabel;
 		});

@@ -1,4 +1,4 @@
-import { box, onMountEffect, attachRef } from "svelte-toolbelt";
+import { box, onMountEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -208,10 +208,12 @@ class TooltipTriggerState {
 	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
+	domContext: DOMContext;
 
 	constructor(opts: TooltipTriggerStateProps, root: TooltipRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.domContext = new DOMContext(opts.ref);
 	}
 
 	handlePointerUp = () => {
@@ -226,7 +228,8 @@ class TooltipTriggerState {
 	#onpointerdown = () => {
 		if (this.#isDisabled) return;
 		this.#isPointerDown.current = true;
-		document.addEventListener(
+
+		this.domContext.getDocument().addEventListener(
 			"pointerup",
 			() => {
 				this.handlePointerUp();

@@ -1,6 +1,6 @@
 import { Previous, watch } from "runed";
 import { onMount } from "svelte";
-import { type WritableBox, box, attachRef } from "svelte-toolbelt";
+import { type WritableBox, box, attachRef, DOMContext } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -90,9 +90,11 @@ class PinInputRootState {
 	});
 	#pwmb: ReturnType<typeof usePasswordManagerBadge>;
 	#initialLoad: InitialLoad;
+	domContext: DOMContext;
 
 	constructor(opts: PinInputRootStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(opts.ref);
 
 		this.#initialLoad = {
 			value: this.opts.value,
@@ -106,6 +108,7 @@ class PinInputRootState {
 			inputRef: this.#inputRef,
 			isFocused: this.#isFocused,
 			pushPasswordManagerStrategy: this.opts.pushPasswordManagerStrategy,
+			domContext: this.domContext,
 		});
 
 		onMount(() => {
@@ -124,16 +127,21 @@ class PinInputRootState {
 				input.selectionDirection ?? "none",
 			];
 
-			const unsub = on(document, "selectionchange", this.#onDocumentSelectionChange, {
-				capture: true,
-			});
+			const unsub = on(
+				this.domContext.getDocument(),
+				"selectionchange",
+				this.#onDocumentSelectionChange,
+				{
+					capture: true,
+				}
+			);
 
 			this.#onDocumentSelectionChange();
-			if (document.activeElement === input) {
+			if (this.domContext.getActiveElement() === input) {
 				this.#isFocused.current = true;
 			}
 
-			if (!document.getElementById("pin-input-style")) {
+			if (!this.domContext.getElementById("pin-input-style")) {
 				this.#applyStyles();
 			}
 
@@ -172,7 +180,7 @@ class PinInputRootState {
 					this.#mirrorSelectionEnd = end;
 					this.#prevInputMetadata.prev = [start, end, dir];
 				}
-			});
+			}, this.domContext);
 		});
 
 		$effect(() => {
@@ -257,9 +265,10 @@ class PinInputRootState {
 	}));
 
 	#applyStyles() {
-		const styleEl = document.createElement("style");
+		const doc = this.domContext.getDocument();
+		const styleEl = doc.createElement("style");
 		styleEl.id = "pin-input-style";
-		document.head.appendChild(styleEl);
+		doc.head.appendChild(styleEl);
 
 		if (styleEl.sheet) {
 			const autoFillStyles =
@@ -292,7 +301,7 @@ class PinInputRootState {
 		const container = this.opts.ref.current;
 		if (!input || !container) return;
 
-		if (document.activeElement !== input) {
+		if (this.domContext.getActiveElement() !== input) {
 			this.#mirrorSelectionStart = null;
 			this.#mirrorSelectionEnd = null;
 			return;
@@ -367,7 +376,7 @@ class PinInputRootState {
 			// selectionchange event, we'll have to dispatch it manually.
 			// NOTE: The following line also triggers when cmd+A then pasting
 			// a value with smaller length, which is not ideal for performance.
-			document.dispatchEvent(new Event("selectionchange"));
+			this.domContext.getDocument().dispatchEvent(new Event("selectionchange"));
 		}
 		this.opts.value.current = newValue;
 	};
@@ -527,10 +536,10 @@ class PinInputCellState {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function syncTimeouts(cb: (...args: any[]) => unknown): number[] {
-	const t1 = setTimeout(cb, 0); // For faster machines
-	const t2 = setTimeout(cb, 1_0);
-	const t3 = setTimeout(cb, 5_0);
+export function syncTimeouts(cb: (...args: any[]) => unknown, domContext: DOMContext): number[] {
+	const t1 = domContext.setTimeout(cb, 0); // For faster machines
+	const t2 = domContext.setTimeout(cb, 1_0);
+	const t3 = domContext.setTimeout(cb, 5_0);
 	return [t1, t2, t3];
 }
 

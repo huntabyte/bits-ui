@@ -1,5 +1,5 @@
 import { Context, Previous, watch } from "runed";
-import { afterSleep, afterTick, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import { afterSleep, afterTick, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -74,6 +74,7 @@ class SelectBaseRootState {
 	isUsingKeyboard = false;
 	isCombobox = false;
 	bitsAttrs: SelectBitsAttrs;
+	domContext = new DOMContext(() => null);
 
 	constructor(opts: SelectBaseRootStateProps) {
 		this.opts = opts;
@@ -193,7 +194,11 @@ class SelectSingleRootState extends SelectBaseRootState {
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
-			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
+			if (
+				this.highlightedNode &&
+				this.domContext.getDocument().contains(this.highlightedNode)
+			)
+				return;
 			if (this.opts.value.current !== "") {
 				const node = this.getNodeByValue(this.opts.value.current);
 				if (node) {
@@ -254,7 +259,12 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
-			if (this.highlightedNode && document.contains(this.highlightedNode)) return;
+			if (!this.domContext) return;
+			if (
+				this.highlightedNode &&
+				this.domContext.getDocument().contains(this.highlightedNode)
+			)
+				return;
 			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
 				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
@@ -284,6 +294,7 @@ class SelectInputState {
 	constructor(opts: SelectInputStateProps, root: SelectRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.root.domContext = new DOMContext(opts.ref);
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.oninput = this.oninput.bind(this);
@@ -439,9 +450,10 @@ class SelectComboTriggerState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		if (!this.root.domContext) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			if (document.activeElement !== this.root.inputNode) {
+			if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
 				this.root.inputNode?.focus();
 			}
 			this.root.toggleMenu();
@@ -453,9 +465,9 @@ class SelectComboTriggerState {
 	 * behavior of focusing the button and keep focus on the input.
 	 */
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.opts.disabled.current || !this.root.domContext) return;
 		e.preventDefault();
-		if (document.activeElement !== this.root.inputNode) {
+		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
 			this.root.inputNode?.focus();
 		}
 		this.root.toggleMenu();
@@ -488,12 +500,15 @@ class SelectTriggerState {
 	constructor(opts: SelectTriggerStateProps, root: SelectRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.root.domContext = new DOMContext(opts.ref);
 
 		this.#domTypeahead = useDOMTypeahead({
 			getCurrentItem: () => this.root.highlightedNode,
 			onMatch: (node) => {
 				this.root.setHighlightedNode(node);
 			},
+			getActiveElement: () => this.root.domContext.getActiveElement(),
+			getWindow: () => this.root.domContext.getWindow(),
 		});
 
 		this.#dataTypeahead = useDataTypeahead({
@@ -512,6 +527,7 @@ class SelectTriggerState {
 			},
 			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
 			candidateValues: () => (this.root.isMulti ? [] : this.root.candidateLabels),
+			getWindow: () => this.root.domContext.getWindow(),
 		});
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -742,10 +758,16 @@ class SelectContentState {
 	readonly root: SelectRootState;
 	viewportNode = $state<HTMLElement | null>(null);
 	isPositioned = $state(false);
+	domContext: DOMContext;
 
 	constructor(opts: SelectContentStateProps, root: SelectRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.domContext = new DOMContext(this.opts.ref);
+
+		if (this.root.domContext === null) {
+			this.root.domContext = this.domContext;
+		}
 
 		onDestroyEffect(() => {
 			this.root.contentNode = null;
@@ -1145,16 +1167,16 @@ class SelectScrollButtonImplState {
 	}
 
 	handleUserScroll() {
-		window.clearTimeout(this.userScrollTimer);
+		this.content.domContext.clearTimeout(this.userScrollTimer);
 		this.isUserScrolling = true;
-		this.userScrollTimer = window.setTimeout(() => {
+		this.userScrollTimer = this.content.domContext.setTimeout(() => {
 			this.isUserScrolling = false;
 		}, 200);
 	}
 
 	clearAutoScrollInterval() {
 		if (this.autoScrollTimer === null) return;
-		window.clearTimeout(this.autoScrollTimer);
+		this.content.domContext.clearTimeout(this.autoScrollTimer);
 		this.autoScrollTimer = null;
 	}
 
@@ -1162,12 +1184,15 @@ class SelectScrollButtonImplState {
 		if (this.autoScrollTimer !== null) return;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
-			this.autoScrollTimer = window.setTimeout(
+			this.autoScrollTimer = this.content.domContext.setTimeout(
 				() => autoScroll(tick + 1),
 				this.opts.delay.current(tick)
 			);
 		};
-		this.autoScrollTimer = window.setTimeout(() => autoScroll(1), this.opts.delay.current(0));
+		this.autoScrollTimer = this.content.domContext.setTimeout(
+			() => autoScroll(1),
+			this.opts.delay.current(0)
+		);
 	}
 
 	onpointermove(e: BitsPointerEvent) {

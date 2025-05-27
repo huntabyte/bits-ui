@@ -1,5 +1,5 @@
 import type { DateValue } from "@internationalized/date";
-import { box, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import { box, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
@@ -58,13 +58,15 @@ export class DateRangeFieldRootState {
 	startValueComplete = $derived.by(() => this.opts.startValue.current !== undefined);
 	endValueComplete = $derived.by(() => this.opts.endValue.current !== undefined);
 	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
+	domContext: DOMContext;
 
 	constructor(opts: DateRangeFieldRootStateProps) {
 		this.opts = opts;
 		this.formatter = createFormatter(this.opts.locale.current);
+		this.domContext = new DOMContext(this.opts.ref);
 
 		onDestroyEffect(() => {
-			removeDescriptionElement(this.descriptionId);
+			removeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
 
 		$effect(() => {

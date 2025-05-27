@@ -228,8 +228,8 @@ importers:
         specifier: ^0.28.0
         version: 0.28.0(svelte@5.33.2)
       svelte-toolbelt:
-        specifier: ^0.8.2
-        version: 0.8.2(svelte@5.33.2)
+        specifier: ^0.9.1
+        version: 0.9.1(svelte@5.33.2)
       tabbable:
         specifier: ^6.2.0
         version: 6.2.0
@@ -3270,8 +3270,8 @@ packages:
     peerDependencies:
       svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
 
-  svelte-toolbelt@0.8.2:
-    resolution: {integrity: sha512-qoQYJYkLlz/31EcpbZFk+2vp4qKJn9aM7iO2JvBnzaJD/fTmMtbrP9gwzgnvn/Y8miJFCnsF6CZ5zsHC2d/p/A==}
+  svelte-toolbelt@0.9.1:
+    resolution: {integrity: sha512-wBX6MtYw/kpht80j5zLpxJyR9soLizXPIAIWEVd9llAi17SR44ZdG291bldjB7r/K5duC0opDFcuhk2cA1hb8g==}
     engines: {node: '>=18', pnpm: '>=8.7.0'}
     peerDependencies:
       svelte: ^5.30.2
@@ -6993,7 +6993,7 @@ snapshots:
     dependencies:
       svelte: 5.33.2
 
-  svelte-toolbelt@0.8.2(svelte@5.33.2):
+  svelte-toolbelt@0.9.1(svelte@5.33.2):
     dependencies:
       clsx: 2.1.1
       runed: 0.28.0(svelte@5.33.2)

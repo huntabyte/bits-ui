@@ -1,7 +1,3 @@
-export function getDocument(element?: Element | null) {
-	return element?.ownerDocument ?? document;
-}
-
 export function activeElement(doc: Document) {
 	let activeElement = doc.activeElement;
 

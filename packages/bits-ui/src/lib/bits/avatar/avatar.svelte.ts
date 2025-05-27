@@ -1,5 +1,5 @@
 import { untrack } from "svelte";
-import { type ReadableBox, type WritableBox, attachRef } from "svelte-toolbelt";
+import { DOMContext, type ReadableBox, type WritableBox, attachRef } from "svelte-toolbelt";
 import type { HTMLImgAttributes } from "svelte/elements";
 import { Context } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
@@ -25,9 +25,11 @@ type AvatarImageSrc = string | null | undefined;
 
 class AvatarRootState {
 	readonly opts: AvatarRootStateProps;
+	readonly domContext: DOMContext;
 
 	constructor(opts: AvatarRootStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(this.opts.ref);
 		this.loadImage = this.loadImage.bind(this);
 	}
 
@@ -42,7 +44,7 @@ class AvatarRootState {
 
 		this.opts.loadingStatus.current = "loading";
 		image.onload = () => {
-			imageTimerId = window.setTimeout(() => {
+			imageTimerId = this.domContext.setTimeout(() => {
 				this.opts.loadingStatus.current = "loaded";
 			}, this.opts.delayMs.current);
 		};
@@ -50,7 +52,7 @@ class AvatarRootState {
 			this.opts.loadingStatus.current = "error";
 		};
 		return () => {
-			window.clearTimeout(imageTimerId);
+			this.domContext.clearTimeout(imageTimerId);
 		};
 	}
 

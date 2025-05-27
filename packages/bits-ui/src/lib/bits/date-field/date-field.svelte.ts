@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
-import { type WritableBox, box, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import { type WritableBox, box, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
@@ -195,6 +195,7 @@ export class DateFieldRootState {
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
+	domContext: DOMContext = new DOMContext(() => null);
 
 	constructor(props: DateFieldRootStateProps, rangeRoot?: DateRangeFieldRootState) {
 		this.rangeRoot = rangeRoot;
@@ -224,7 +225,7 @@ export class DateFieldRootState {
 		this.formatter = createFormatter(this.locale.current);
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
-		this.announcer = getAnnouncer();
+		this.announcer = getAnnouncer(null);
 
 		this.getFieldNode = this.getFieldNode.bind(this);
 		this.updateSegment = this.updateSegment.bind(this);
@@ -238,12 +239,12 @@ export class DateFieldRootState {
 		});
 
 		onMount(() => {
-			this.announcer = getAnnouncer();
+			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
 
 		onDestroyEffect(() => {
 			if (rangeRoot) return;
-			removeDescriptionElement(this.descriptionId);
+			removeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
 
 		$effect(() => {
@@ -256,7 +257,12 @@ export class DateFieldRootState {
 			if (rangeRoot) return;
 			if (this.value.current) {
 				const descriptionId = untrack(() => this.descriptionId);
-				setDescription(descriptionId, this.formatter, this.value.current);
+				setDescription({
+					id: descriptionId,
+					formatter: this.formatter,
+					value: this.value.current,
+					doc: this.domContext.getDocument(),
+				});
 			}
 			const placeholder = untrack(() => this.placeholder.current);
 			if (this.value.current && placeholder !== this.value.current) {
@@ -702,10 +708,13 @@ type DateFieldInputStateProps = WithRefProps &
 export class DateFieldInputState {
 	readonly opts: DateFieldInputStateProps;
 	readonly root: DateFieldRootState;
+	readonly domContext: DOMContext;
 
 	constructor(opts: DateFieldInputStateProps, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.domContext = new DOMContext(opts.ref);
+		this.root.domContext = this.domContext;
 
 		$effect(() => {
 			this.root.setName(this.opts.name.current);
@@ -714,7 +723,7 @@ export class DateFieldInputState {
 
 	#ariaDescribedBy = $derived.by(() => {
 		if (!isBrowser) return undefined;
-		const doesDescriptionExist = document.getElementById(this.root.descriptionId);
+		const doesDescriptionExist = this.domContext.getElementById(this.root.descriptionId);
 		if (!doesDescriptionExist) return undefined;
 		return this.root.descriptionId;
 	});
