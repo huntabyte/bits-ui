@@ -23,6 +23,20 @@ const config = {
 				throw new Error(message);
 			},
 		},
+		typescript: {
+			config: (config) => ({
+				...config,
+				include: [
+					...config.include,
+					"../src/**/*.md",
+					"../.velite/**/*",
+					"../mdsx.config.js",
+					"../svelte.config.js",
+					"../other/**/*.js",
+					"../other/**/*.ts",
+				],
+			}),
+		},
 	},
 };
 
