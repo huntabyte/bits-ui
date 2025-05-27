@@ -7,9 +7,10 @@
 	import { navigation } from "$lib/config/index.js";
 	import "$lib/styles/app.css";
 	import { onMount } from "svelte";
+	import { page } from "$app/state"
 
 	onMount(async () => {
-		if (dev) {
+		if (dev || page.url.searchParams.get("test")) {
 			const eruda = (await import("eruda")).default;
 			eruda.init();
 		}
