@@ -1,6 +1,6 @@
 import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
-import { type WritableBox, box, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import { type WritableBox, box, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
@@ -702,10 +702,12 @@ type DateFieldInputStateProps = WithRefProps &
 export class DateFieldInputState {
 	readonly opts: DateFieldInputStateProps;
 	readonly root: DateFieldRootState;
+	readonly domContext: DOMContext;
 
 	constructor(opts: DateFieldInputStateProps, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.domContext = new DOMContext(opts.ref);
 
 		$effect(() => {
 			this.root.setName(this.opts.name.current);
@@ -714,7 +716,7 @@ export class DateFieldInputState {
 
 	#ariaDescribedBy = $derived.by(() => {
 		if (!isBrowser) return undefined;
-		const doesDescriptionExist = document.getElementById(this.root.descriptionId);
+		const doesDescriptionExist = this.domContext.getElementById(this.root.descriptionId);
 		if (!doesDescriptionExist) return undefined;
 		return this.root.descriptionId;
 	});

@@ -1,4 +1,11 @@
-import { afterTick, box, mergeProps, onDestroyEffect, attachRef } from "svelte-toolbelt";
+import {
+	afterTick,
+	box,
+	mergeProps,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,
@@ -138,10 +145,12 @@ class MenuContentState {
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
 	#isSub: boolean;
+	domContext: DOMContext;
 
 	constructor(opts: MenuContentStateProps, parentMenu: MenuMenuState) {
 		this.opts = opts;
 		this.parentMenu = parentMenu;
+		this.domContext = new DOMContext(opts.ref);
 
 		parentMenu.contentId = opts.id;
 
@@ -257,7 +266,7 @@ class MenuContentState {
 				});
 			});
 		} else {
-			document.body.focus();
+			this.domContext.getDocument().body.focus();
 		}
 	}
 

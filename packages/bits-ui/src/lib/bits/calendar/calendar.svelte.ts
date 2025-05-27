@@ -7,7 +7,7 @@ import {
 } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { untrack } from "svelte";
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
@@ -87,9 +87,11 @@ export class CalendarRootState {
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
+	domContext: DOMContext;
 
 	constructor(opts: CalendarRootStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer();
 		this.formatter = createFormatter(this.opts.locale.current);
 
@@ -153,7 +155,7 @@ export class CalendarRootState {
 		 * changes.
 		 */
 		$effect(() => {
-			const node = document.getElementById(this.accessibleHeadingId);
+			const node = this.domContext.getElementById(this.accessibleHeadingId);
 			if (!node) return;
 			node.textContent = this.fullCalendarLabel;
 		});

@@ -13,6 +13,7 @@ import {
 	afterTick,
 	box,
 	attachRef,
+	DOMContext,
 } from "svelte-toolbelt";
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
@@ -346,17 +347,21 @@ export class NavigationMenuItemState {
 	contentChild: ReadableBox<Snippet<[{ props: Record<string, unknown> }]> | undefined> =
 		box(undefined);
 	contentProps: ReadableBox<Record<string, unknown>> = box({});
-
+	domContext: DOMContext;
 	constructor(opts: NavigationMenuItemStateProps, listContext: NavigationMenuListState) {
 		this.opts = opts;
 		this.listContext = listContext;
+		this.domContext = new DOMContext(opts.ref);
 	}
 
 	#handleContentEntry = (side: "start" | "end" = "start") => {
 		if (!this.contentNode) return;
 		this.restoreContentTabOrder();
 		const candidates = getTabbableCandidates(this.contentNode);
-		if (candidates.length) focusFirst(side === "start" ? candidates : candidates.reverse());
+		if (candidates.length)
+			focusFirst(side === "start" ? candidates : candidates.reverse(), () =>
+				this.domContext.getActiveElement()
+			);
 	};
 
 	#handleContentExit = () => {
@@ -802,12 +807,14 @@ class NavigationMenuContentImplState {
 		untrack(() => (this.prevMotionAttribute = attribute));
 		return attribute;
 	});
+	domContext: DOMContext;
 
 	constructor(opts: NavigationMenuContentImplStateProps, itemContext: NavigationMenuItemState) {
 		this.opts = opts;
 		this.itemContext = itemContext;
 		this.listContext = itemContext.listContext;
 		this.context = itemContext.listContext.context;
+		this.domContext = new DOMContext(opts.ref);
 
 		watch(
 			[
@@ -822,7 +829,7 @@ class NavigationMenuContentImplState {
 				const handleClose = () => {
 					this.context.onItemDismiss();
 					this.itemContext.onRootContentClose();
-					if (content.contains(document.activeElement)) {
+					if (content.contains(this.domContext.getActiveElement())) {
 						this.itemContext.triggerNode?.focus();
 					}
 				};
@@ -879,13 +886,13 @@ class NavigationMenuContentImplState {
 		const candidates = getTabbableCandidates(e.currentTarget);
 
 		if (isTabKey) {
-			const focusedElement = document.activeElement;
+			const focusedElement = this.domContext.getActiveElement();
 			const index = candidates.findIndex((candidate) => candidate === focusedElement);
 			const isMovingBackwards = e.shiftKey;
 			const nextCandidates = isMovingBackwards
 				? candidates.slice(0, index).reverse()
 				: candidates.slice(index + 1, candidates.length);
-			if (focusFirst(nextCandidates)) {
+			if (focusFirst(nextCandidates, () => this.domContext.getActiveElement())) {
 				// prevent browser tab keydown because we've handled focus
 				e.preventDefault();
 				return;
@@ -898,7 +905,7 @@ class NavigationMenuContentImplState {
 			}
 		}
 
-		let activeEl: HTMLElement = document.activeElement as HTMLElement;
+		let activeEl: HTMLElement = this.domContext.getActiveElement() as HTMLElement;
 
 		if (this.itemContext.contentNode) {
 			const focusedNode =
@@ -1111,13 +1118,13 @@ export function useNavigationMenuIndicator() {
 
 //
 
-function focusFirst(candidates: HTMLElement[]) {
-	const previouslyFocusedElement = document.activeElement;
+function focusFirst(candidates: HTMLElement[], getActiveElement: () => HTMLElement | null) {
+	const previouslyFocusedElement = getActiveElement();
 	return candidates.some((candidate) => {
 		// if focus is already where we want to go, we don't want to keep going through the candidates
 		if (candidate === previouslyFocusedElement) return true;
 		candidate.focus();
-		return document.activeElement !== previouslyFocusedElement;
+		return getActiveElement() !== previouslyFocusedElement;
 	});
 }
 

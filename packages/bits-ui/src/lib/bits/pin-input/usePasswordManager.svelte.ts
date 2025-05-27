@@ -1,4 +1,4 @@
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import type { DOMContext, ReadableBox, WritableBox } from "svelte-toolbelt";
 import type { PinInputRootPropsWithoutHTML } from "./types.js";
 
 const PWM_BADGE_MARGIN_RIGHT = 18;
@@ -19,6 +19,7 @@ type UsePasswordManagerBadgeProps = {
 		PinInputRootPropsWithoutHTML["pushPasswordManagerStrategy"]
 	>;
 	isFocused: ReadableBox<boolean>;
+	domContext: DOMContext;
 };
 
 export function usePasswordManagerBadge({
@@ -26,6 +27,7 @@ export function usePasswordManagerBadge({
 	inputRef,
 	pushPasswordManagerStrategy,
 	isFocused,
+	domContext,
 }: UsePasswordManagerBadgeProps) {
 	let hasPwmBadge = $state(false);
 	let hasPwmBadgeSpace = $state(false);
@@ -57,12 +59,12 @@ export function usePasswordManagerBadge({
 		const y = centeredY;
 
 		// do an extra search to check for all the password manager badges
-		const passwordManagerStrategy = document.querySelectorAll(PASSWORD_MANAGER_SELECTORS);
+		const passwordManagerStrategy = domContext.querySelectorAll(PASSWORD_MANAGER_SELECTORS);
 
 		// if no password manager is detected, dispatch document.elementFromPoint to
 		// identify the badges
 		if (passwordManagerStrategy.length === 0) {
-			const maybeBadgeEl = document.elementFromPoint(x, y);
+			const maybeBadgeEl = domContext.getDocument().elementFromPoint(x, y);
 
 			// if the found element is the container,
 			// then it is not a badge, most times there is no badge in this case
@@ -93,7 +95,7 @@ export function usePasswordManagerBadge({
 	});
 
 	$effect(() => {
-		const focused = isFocused.current || document.activeElement === inputRef.current;
+		const focused = isFocused.current || domContext.getActiveElement() === inputRef.current;
 
 		if (pushPasswordManagerStrategy.current === "none" || !focused) return;
 
