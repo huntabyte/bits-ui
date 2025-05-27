@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.2.0
+
+### Minor Changes
+
+-   feat(Combobox): expose `inputValue` prop on `Combobox.Root` to synchronize input value with programmatic updates to the value from outside Bits UI ([#1517](https://github.com/huntabyte/bits-ui/pull/1517))
+
+### Patch Changes
+
+-   fix: Support Shadow DOM ([#1515](https://github.com/huntabyte/bits-ui/pull/1515))
+
 ## 2.1.0
 
 (Had to publish 2.1.0 instead of 2.0.0 as someone published 2.0.x to NPM many years ago)
