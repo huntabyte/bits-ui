@@ -3,7 +3,7 @@
 	import type { NavigationMenuListProps } from "../types.js";
 	import { useNavigationMenuList } from "../navigation-menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { Mounted } from "$lib/bits/utilities/mounted/index.js";
 
 	const uid = $props.id();
 

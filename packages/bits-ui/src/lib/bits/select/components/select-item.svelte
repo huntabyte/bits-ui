@@ -4,7 +4,7 @@
 	import type { SelectItemProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { Mounted } from "$lib/bits/utilities/mounted/index.js";
 
 	const uid = $props.id();
 

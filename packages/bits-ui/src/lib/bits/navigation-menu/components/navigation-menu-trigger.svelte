@@ -4,7 +4,7 @@
 	import { useNavigationMenuTrigger } from "../navigation-menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { Mounted } from "$lib/bits/utilities/mounted/index.js";
 
 	const uid = $props.id();
 

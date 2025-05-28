@@ -5,7 +5,7 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { Mounted } from "$lib/bits/utilities/mounted/index.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
 

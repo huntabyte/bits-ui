@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import { useSelectHiddenInput } from "../select.svelte.js";
-	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
+	import { HiddenInput } from "$lib/bits/utilities/hidden-input/index.js";
 
 	let { value = $bindable("") }: { value?: string } = $props();
 

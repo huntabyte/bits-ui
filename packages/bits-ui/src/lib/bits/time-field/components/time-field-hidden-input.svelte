@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { useTimeFieldHiddenInput } from "../time-field.svelte.js";
-	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
+	import HiddenInput from "$lib/bits/utilities/hidden-input/hidden-input.svelte";
 
 	const hiddenInputState = useTimeFieldHiddenInput();
 </script>
