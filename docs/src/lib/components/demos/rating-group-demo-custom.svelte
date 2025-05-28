@@ -31,9 +31,9 @@
 			class="flex gap-1"
 		>
 			{#snippet children({ items })}
-				{#each items as item (item.value)}
+				{#each items as item (item.index)}
 					<RatingGroup.Item
-						value={item.value}
+						index={item.index}
 						class="text-muted-foreground hover:text-foreground focus-visible:ring-foreground size-8 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[readonly]:cursor-default data-[state=active]:text-yellow-500 data-[state=partial]:text-yellow-500"
 					>
 						<div class="relative size-full">
@@ -62,9 +62,9 @@
 			<span class="text-muted-foreground text-xs">Small</span>
 			<RatingGroup.Root value={4} max={5} readonly class="flex gap-0.5">
 				{#snippet children({ items })}
-					{#each items as item (item.value)}
+					{#each items as item (item.index)}
 						<RatingGroup.Item
-							value={item.value}
+							index={item.index}
 							class="text-muted-foreground size-4 data-[state=active]:text-yellow-500"
 						>
 							{#if item.state === "active"}
@@ -82,9 +82,9 @@
 			<span class="text-muted-foreground text-xs">Large</span>
 			<RatingGroup.Root value={2} max={5} readonly class="flex gap-2">
 				{#snippet children({ items })}
-					{#each items as item (item.value)}
+					{#each items as item (item.index)}
 						<RatingGroup.Item
-							value={item.value}
+							index={item.index}
 							class="text-muted-foreground size-10 data-[state=active]:text-yellow-500"
 						>
 							{#if item.state === "active"}

@@ -19,6 +19,7 @@ type RatingGroupRootStateProps = WithRefProps<
 		required: boolean;
 		orientation: Orientation;
 		name: string | undefined;
+		min: number;
 		max: number;
 		allowHalf: boolean;
 		readonly: boolean;
@@ -84,7 +85,11 @@ class RatingGroupRootState {
 
 	setValue(value: number) {
 		if (this.opts.readonly.current || this.opts.disabled.current) return;
-		const clampedValue = Math.max(0, Math.min(this.opts.max.current, value));
+		// Clamp value between min and max
+		const clampedValue = Math.max(
+			this.opts.min.current,
+			Math.min(this.opts.max.current, value)
+		);
 		this.opts.value.current = clampedValue;
 	}
 
@@ -108,7 +113,7 @@ class RatingGroupRootState {
 
 		if (e.key === kbd.HOME) {
 			e.preventDefault();
-			this.setValue(0);
+			this.setValue(this.opts.min.current);
 			return;
 		}
 
@@ -132,7 +137,7 @@ class RatingGroupRootState {
 
 		// handle number keys for direct rating
 		const numKey = parseInt(e.key);
-		if (!isNaN(numKey) && numKey >= 0 && numKey <= this.opts.max.current) {
+		if (!isNaN(numKey) && numKey >= this.opts.min.current && numKey <= this.opts.max.current) {
 			e.preventDefault();
 			this.setValue(numKey);
 			return;
@@ -151,7 +156,7 @@ class RatingGroupRootState {
 				id: this.opts.id.current,
 				role: "slider",
 				"aria-valuenow": this.opts.value.current,
-				"aria-valuemin": 0,
+				"aria-valuemin": this.opts.min.current,
 				"aria-valuemax": this.opts.max.current,
 				"aria-valuetext": this.ariaValuetext,
 				"aria-orientation": this.opts.orientation.current,

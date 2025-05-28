@@ -17,6 +17,7 @@
 		orientation = "horizontal",
 		name = undefined,
 		required = false,
+		min = 0,
 		max = 5,
 		allowHalf = false,
 		readonly = false,
@@ -26,6 +27,10 @@
 		"aria-valuetext": ariaValuetextProp,
 		...restProps
 	}: RatingGroupRootProps = $props();
+
+	if (value < min || value > max) {
+		value = Math.max(min, Math.min(max, value));
+	}
 
 	const ariaValuetext: NonNullable<RatingGroupRootProps["aria-valuetext"]> = $derived.by(() => {
 		if (ariaValuetextProp) return ariaValuetextProp;
@@ -37,6 +42,7 @@
 		disabled: box.with(() => disabled),
 		name: box.with(() => name),
 		required: box.with(() => required),
+		min: box.with(() => min),
 		max: box.with(() => max),
 		allowHalf: box.with(() => allowHalf),
 		readonly: box.with(() => readonly),

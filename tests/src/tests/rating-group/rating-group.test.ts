@@ -297,7 +297,7 @@ describe("Keyboard Navigation", () => {
 	});
 
 	it("should clamp values to min/max bounds", async () => {
-		const t = setup({ value: 0, max: 3 });
+		const t = setup({ value: 1, min: 0, max: 3 });
 		const valueDisplay = t.getByTestId("value-display");
 
 		t.root.focus();
@@ -428,5 +428,64 @@ describe("Value Display", () => {
 		expect(t.getByTestId("state-2")).toHaveTextContent("partial");
 		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
 		expect(t.getByTestId("state-4")).toHaveTextContent("inactive");
+	});
+});
+
+describe("Min Value", () => {
+	it("should use min value for aria-valuemin", async () => {
+		const t = setup({ min: 1, max: 5 });
+
+		expect(t.root).toHaveAttribute("aria-valuemin", "1");
+		expect(t.root).toHaveAttribute("aria-valuemax", "5");
+	});
+
+	it("should clamp values to min bound", async () => {
+		const t = setup({ min: 1, max: 5, value: 0 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		// value should be clamped to min
+		expect(valueDisplay).toHaveTextContent("1");
+	});
+
+	it("should go to minimum with Home key", async () => {
+		const t = setup({ min: 1, max: 5, value: 3 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		t.root.focus();
+		expect(valueDisplay).toHaveTextContent("3");
+
+		await t.user.keyboard(kbd.HOME);
+		expect(valueDisplay).toHaveTextContent("1");
+	});
+
+	it("should not allow values below min with keyboard", async () => {
+		const t = setup({ min: 1, max: 5, value: 1 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		t.root.focus();
+		expect(valueDisplay).toHaveTextContent("1");
+
+		// try to go below minimum
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(valueDisplay).toHaveTextContent("1");
+	});
+
+	it("should only accept number keys within min-max range", async () => {
+		const t = setup({ min: 2, max: 4 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		t.root.focus();
+
+		// try number below min (should be ignored)
+		await t.user.keyboard("1");
+		expect(valueDisplay).toHaveTextContent("2");
+
+		// try number within range
+		await t.user.keyboard("3");
+		expect(valueDisplay).toHaveTextContent("3");
+
+		// try number above max (should be ignored)
+		await t.user.keyboard("5");
+		expect(valueDisplay).toHaveTextContent("3");
 	});
 });

@@ -67,6 +67,13 @@ export type RatingGroupRootPropsWithoutHTML = WithChild<
 		required?: boolean;
 
 		/**
+		 * The minimum rating value.
+		 *
+		 * @default 0
+		 */
+		min?: number;
+
+		/**
 		 * The maximum rating value (number of items).
 		 *
 		 * @default 5
