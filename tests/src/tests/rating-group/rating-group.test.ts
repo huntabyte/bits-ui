@@ -1,6 +1,6 @@
 import { render } from "@testing-library/svelte/svelte5";
 import { axe } from "jest-axe";
-import { describe, it, vi } from "vitest";
+import { describe, it, vi, beforeEach, afterEach } from "vitest";
 import { getTestKbd } from "../utils.js";
 import RatingGroupTest from "./rating-group-test.svelte";
 import type { RatingGroupTestProps } from "./rating-group-test.svelte";
@@ -132,6 +132,16 @@ describe("Value Changes", () => {
 		expect(t.getByTestId("state-2")).toHaveTextContent("partial");
 		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
 		expect(t.getByTestId("state-4")).toHaveTextContent("inactive");
+	});
+
+	it("should handle typing a number to set a value", async () => {
+		const t = setup();
+		const valueDisplay = t.getByTestId("value-display");
+
+		t.root.focus();
+		await t.user.keyboard("5");
+
+		expect(valueDisplay).toHaveTextContent("5");
 	});
 
 	it("should not change value when disabled", async () => {
@@ -624,5 +634,30 @@ describe("Hover Preview", () => {
 		expect(t.getByTestId("state-1")).toHaveTextContent("active");
 		expect(t.getByTestId("state-2")).toHaveTextContent("active");
 		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+	});
+});
+
+describe("Decimal Input Sequences", () => {
+	beforeEach(() => {
+		vi.useFakeTimers();
+	});
+
+	afterEach(() => {
+		vi.clearAllTimers();
+		vi.useRealTimers();
+	});
+
+	it("should handle typing '2.5' sequence for half ratings", async () => {
+		const t = setup({ allowHalf: true, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		t.root.focus();
+		expect(valueDisplay).toHaveTextContent("0");
+
+		// type "2.5" sequence
+		await t.user.type(t.root, "2.5");
+		vi.runAllTimers();
+
+		expect(valueDisplay).toHaveTextContent("2.5");
 	});
 });

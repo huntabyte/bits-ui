@@ -36,15 +36,41 @@ type RatingGroupRootStateProps = WithRefProps<
 
 class RatingGroupRootState {
 	readonly opts: RatingGroupRootStateProps;
-	hasValue = $derived.by(() => this.opts.value.current > 0);
+
+	// State
 	#hoverValue = $state<number | null>(null);
-	readonly ariaValuetext = $derived.by(() => {
-		if (typeof this.opts.ariaValuetext.current === "function") {
-			return this.opts.ariaValuetext.current(this.opts.value.current, this.opts.max.current);
-		}
-		return this.opts.ariaValuetext.current;
-	});
+	#keySequence = $state<string>("");
+	#keySequenceTimeout: ReturnType<typeof setTimeout> | null = $state(null);
+
+	// Derived values
+	hasValue = $derived.by(() => this.opts.value.current > 0);
 	valueToUse = $derived.by(() => this.#hoverValue ?? this.opts.value.current);
+
+	readonly ariaValuetext = $derived.by(() => {
+		const { ariaValuetext, value, max } = this.opts;
+		return typeof ariaValuetext.current === "function"
+			? ariaValuetext.current(value.current, max.current)
+			: ariaValuetext.current;
+	});
+
+	items = $derived.by(() => {
+		const { max, allowHalf } = this.opts;
+		const value = this.valueToUse;
+
+		return Array.from({ length: max.current }, (_, i) => {
+			const itemValue = i + 1;
+			const halfValue = itemValue - 0.5;
+
+			const state: RatingGroupItemStateType =
+				value >= itemValue
+					? "active"
+					: allowHalf.current && value >= halfValue
+						? "partial"
+						: "inactive";
+
+			return { index: i, state };
+		});
+	});
 
 	constructor(opts: RatingGroupRootStateProps) {
 		this.opts = opts;
@@ -52,149 +78,138 @@ class RatingGroupRootState {
 		this.onpointerleave = this.onpointerleave.bind(this);
 	}
 
-	items = $derived.by(() => {
-		const items: Array<{
-			index: number;
-			state: RatingGroupItemStateType;
-		}> = [];
-		const valueToUse = this.#hoverValue ?? this.opts.value.current;
-
-		for (let i = 0; i < this.opts.max.current; i++) {
-			const itemValue = i + 1;
-			const isActive = valueToUse >= itemValue;
-			const isPartial =
-				this.opts.allowHalf.current &&
-				valueToUse >= itemValue - 0.5 &&
-				valueToUse < itemValue;
-
-			const state: RatingGroupItemStateType = isActive
-				? "active"
-				: isPartial
-					? "partial"
-					: "inactive";
-
-			items.push({
-				index: i,
-				state,
-			});
-		}
-		return items;
-	});
-
-	isActive(itemIndex: number) {
-		const itemValue = this.#getRatingValue(itemIndex);
-		return this.valueToUse >= itemValue;
+	isActive(itemIndex: number): boolean {
+		return this.valueToUse >= itemIndex + 1;
 	}
 
-	isPartial(itemIndex: number) {
+	isPartial(itemIndex: number): boolean {
 		if (!this.opts.allowHalf.current) return false;
-		const itemValue = this.#getRatingValue(itemIndex);
+		const itemValue = itemIndex + 1;
 		return this.valueToUse >= itemValue - 0.5 && this.valueToUse < itemValue;
 	}
 
-	setHoverValue(value: number | null) {
-		if (
-			this.opts.readonly.current ||
-			this.opts.disabled.current ||
-			!this.opts.hoverPreview.current
-		)
-			return;
+	setHoverValue(value: number | null): void {
+		const { readonly, disabled, hoverPreview } = this.opts;
+		if (readonly.current || disabled.current || !hoverPreview.current) return;
 		this.#hoverValue = value;
 	}
 
-	/**
-	 * Convert 0-based index to 1-based rating value
-	 * @param index - The index of the item
-	 * @returns The rating value
-	 */
-	#getRatingValue(index: number) {
-		return index + 1;
+	setValue(value: number): void {
+		const { readonly, disabled, min, max } = this.opts;
+		if (readonly.current || disabled.current) return;
+		this.opts.value.current = Math.max(min.current, Math.min(max.current, value));
 	}
 
 	calculateRatingFromPointer(
 		itemIndex: number,
 		event: { clientX: number; clientY: number; currentTarget: HTMLElement }
 	): number {
-		let ratingValue = this.#getRatingValue(itemIndex);
+		const ratingValue = itemIndex + 1;
 		if (!this.opts.allowHalf.current) return ratingValue;
 
 		const rect = event.currentTarget.getBoundingClientRect();
-		const isRtl = getComputedStyle(event.currentTarget).direction === "rtl";
-		const pointerPosition =
-			this.opts.orientation.current === "horizontal"
-				? (event.clientX - rect.left) / rect.width
-				: (event.clientY - rect.top) / rect.height;
+		const style = getComputedStyle(event.currentTarget);
+		const isHorizontal = this.opts.orientation.current === "horizontal";
 
-		const normalizedPosition = isRtl ? 1 - pointerPosition : pointerPosition;
+		const position = isHorizontal
+			? (event.clientX - rect.left) / rect.width
+			: (event.clientY - rect.top) / rect.height;
 
-		if (normalizedPosition < 0.5) {
-			ratingValue = this.#getRatingValue(itemIndex) - 0.5;
-		}
+		const normalizedPosition = style.direction === "rtl" ? 1 - position : position;
 
-		return ratingValue;
+		return normalizedPosition < 0.5 ? ratingValue - 0.5 : ratingValue;
 	}
 
-	onpointerleave() {
+	onpointerleave(): void {
 		this.setHoverValue(null);
 	}
 
-	setValue(value: number) {
-		if (this.opts.readonly.current || this.opts.disabled.current) return;
-		const clampedValue = Math.max(
-			this.opts.min.current,
-			Math.min(this.opts.max.current, value)
-		);
-		this.opts.value.current = clampedValue;
-	}
+	handlers: Record<string, () => void> = {
+		[kbd.ARROW_UP]: () => this.#adjustValue(this.opts.allowHalf.current ? 0.5 : 1),
+		[kbd.ARROW_RIGHT]: () => this.#adjustValue(this.opts.allowHalf.current ? 0.5 : 1),
+		[kbd.ARROW_DOWN]: () => this.#adjustValue(this.opts.allowHalf.current ? -0.5 : -1),
+		[kbd.ARROW_LEFT]: () => this.#adjustValue(this.opts.allowHalf.current ? -0.5 : -1),
+		[kbd.HOME]: () => this.setValue(this.opts.min.current),
+		[kbd.END]: () => this.setValue(this.opts.max.current),
+		[kbd.PAGE_UP]: () => this.#adjustValue(1),
+		[kbd.PAGE_DOWN]: () => this.#adjustValue(-1),
+	};
 
-	onkeydown(e: BitsKeyboardEvent) {
+	// Keyboard handling
+	onkeydown(e: BitsKeyboardEvent): void {
 		if (this.opts.disabled.current || this.opts.readonly.current) return;
 
-		const step = this.opts.allowHalf.current ? 0.5 : 1;
-		const currentValue = this.opts.value.current;
-
-		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_RIGHT) {
+		if (this.handlers[e.key]) {
 			e.preventDefault();
-			this.setValue(currentValue + step);
+			this.#clearKeySequence();
+			this.handlers[e.key]?.();
 			return;
 		}
 
-		if (e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_LEFT) {
+		if (this.opts.allowHalf.current && this.#handleDecimalInput(e)) return;
+
+		// handle direct number input
+		const num = parseInt(e.key || "");
+		if (!isNaN(num) && e.key) {
 			e.preventDefault();
-			this.setValue(currentValue - step);
+			if (num >= this.opts.min.current && num <= this.opts.max.current) {
+				this.setValue(num);
+				if (this.opts.allowHalf.current) {
+					this.#startDecimalListening(num);
+				}
+			}
 			return;
 		}
 
-		if (e.key === kbd.HOME) {
+		this.#clearKeySequence();
+	}
+
+	#adjustValue(delta: number): void {
+		this.setValue(this.opts.value.current + delta);
+	}
+
+	#handleDecimalInput(e: BitsKeyboardEvent): boolean {
+		if (!e.key) return false;
+
+		if (e.key === ".") {
 			e.preventDefault();
-			this.setValue(this.opts.min.current);
-			return;
+			this.#keySequence += e.key;
+			return true;
 		}
 
-		if (e.key === kbd.END) {
+		if (e.key === "5" && this.#keySequence.match(/^\d+\.$/)) {
 			e.preventDefault();
-			this.setValue(this.opts.max.current);
-			return;
+			this.#keySequence += e.key;
+
+			const match = this.#keySequence.match(/^(\d+)\.5$/);
+			if (match?.[1]) {
+				const value = parseFloat(this.#keySequence);
+				if (value >= this.opts.min.current && value <= this.opts.max.current) {
+					this.setValue(value);
+					this.#clearKeySequence();
+				}
+			}
+			return true;
 		}
 
-		if (e.key === kbd.PAGE_UP) {
-			e.preventDefault();
-			this.setValue(currentValue + 1);
-			return;
+		return false;
+	}
+
+	#startDecimalListening(baseValue: number): void {
+		this.#keySequence = baseValue.toString();
+
+		if (this.#keySequenceTimeout) {
+			clearTimeout(this.#keySequenceTimeout);
 		}
 
-		if (e.key === kbd.PAGE_DOWN) {
-			e.preventDefault();
-			this.setValue(currentValue - 1);
-			return;
-		}
+		this.#keySequenceTimeout = setTimeout(() => this.#clearKeySequence(), 1000);
+	}
 
-		// handle number keys for direct rating
-		const numKey = parseInt(e.key);
-		if (!isNaN(numKey) && numKey >= this.opts.min.current && numKey <= this.opts.max.current) {
-			e.preventDefault();
-			this.setValue(numKey);
-			return;
+	#clearKeySequence(): void {
+		this.#keySequence = "";
+		if (this.#keySequenceTimeout) {
+			clearTimeout(this.#keySequenceTimeout);
+			this.#keySequenceTimeout = null;
 		}
 	}
 
@@ -204,36 +219,31 @@ class RatingGroupRootState {
 		max: this.opts.max.current,
 	}));
 
-	props = $derived.by(
-		() =>
-			({
-				id: this.opts.id.current,
-				role: "slider",
-				"aria-valuenow": this.opts.value.current,
-				"aria-valuemin": this.opts.min.current,
-				"aria-valuemax": this.opts.max.current,
-				"aria-valuetext": this.ariaValuetext,
-				"aria-orientation": this.opts.orientation.current,
-				"aria-required": getAriaRequired(this.opts.required.current),
-				"aria-disabled": this.opts.disabled.current ? "true" : undefined,
-				"aria-label": "Rating",
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-readonly": this.opts.readonly.current ? "" : undefined,
-				"data-orientation": this.opts.orientation.current,
-				"data-max": this.opts.max.current,
-				"data-value": this.opts.value.current,
-				tabindex: this.opts.disabled.current ? -1 : 0,
-				[RATING_GROUP_ROOT_ATTR]: "",
-				onkeydown: this.onkeydown,
-				onpointerleave: this.onpointerleave,
-				...attachRef(this.opts.ref),
-			}) as const
-	);
+	props = $derived.by(() => {
+		return {
+			id: this.opts.id.current,
+			role: "slider",
+			"aria-valuenow": this.opts.value.current,
+			"aria-valuemin": this.opts.min.current,
+			"aria-valuemax": this.opts.max.current,
+			"aria-valuetext": this.ariaValuetext,
+			"aria-orientation": this.opts.orientation.current,
+			"aria-required": getAriaRequired(this.opts.required.current),
+			"aria-disabled": this.opts.disabled.current ? "true" : undefined,
+			"aria-label": "Rating",
+			"data-disabled": getDataDisabled(this.opts.disabled.current),
+			"data-readonly": this.opts.readonly.current ? "" : undefined,
+			"data-orientation": this.opts.orientation.current,
+			"data-max": this.opts.max.current,
+			"data-value": this.opts.value.current,
+			tabindex: this.opts.disabled.current ? -1 : 0,
+			[RATING_GROUP_ROOT_ATTR]: "",
+			onkeydown: this.onkeydown,
+			onpointerleave: this.onpointerleave,
+			...attachRef(this.opts.ref),
+		} as const;
+	});
 }
-
-//
-// RATING GROUP ITEM
-//
 
 type RatingGroupItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
