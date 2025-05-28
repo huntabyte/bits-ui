@@ -40,9 +40,9 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
-import { IsUsingKeyboard } from "$lib/index.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
+import { IsUsingKeyboard } from "$lib/bits/utilities/is-using-keyboard/index.js";
 import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
 import { untrack } from "svelte";

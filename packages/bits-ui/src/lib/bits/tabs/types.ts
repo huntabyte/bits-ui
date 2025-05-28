@@ -1,9 +1,9 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { Orientation } from "$lib/index.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
 } from "$lib/shared/attributes.js";
+import type { Orientation } from "$lib/shared/index.js";
 
 export type TabsActivationMode = "manual" | "automatic";
 
