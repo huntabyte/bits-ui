@@ -25,6 +25,7 @@
 		onValueChange = noop,
 		"aria-label": ariaLabel,
 		"aria-valuetext": ariaValuetextProp,
+		hoverPreview = true,
 		...restProps
 	}: RatingGroupRootProps = $props();
 
@@ -60,6 +61,7 @@
 			(v) => (ref = v)
 		),
 		ariaValuetext: box.with(() => ariaValuetext),
+		hoverPreview: box.with(() => hoverPreview),
 	});
 
 	const mergedProps = $derived(

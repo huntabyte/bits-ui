@@ -28,6 +28,7 @@ type RatingGroupRootStateProps = WithRefProps<
 		max: number;
 		allowHalf: boolean;
 		readonly: boolean;
+		hoverPreview: boolean;
 		ariaValuetext: NonNullable<RatingGroupAriaValuetext>;
 	}> &
 		WritableBoxedValues<{ value: number }>
@@ -92,7 +93,12 @@ class RatingGroupRootState {
 	}
 
 	setHoverValue(value: number | null) {
-		if (this.opts.readonly.current || this.opts.disabled.current) return;
+		if (
+			this.opts.readonly.current ||
+			this.opts.disabled.current ||
+			!this.opts.hoverPreview.current
+		)
+			return;
 		this.#hoverValue = value;
 	}
 
@@ -268,7 +274,12 @@ class RatingGroupItemState {
 	}
 
 	onpointermove(e: BitsPointerEvent) {
-		if (this.#isDisabled || this.root.opts.readonly.current) return;
+		if (
+			this.#isDisabled ||
+			this.root.opts.readonly.current ||
+			!this.root.opts.hoverPreview.current
+		)
+			return;
 
 		// skip hover preview for touch devices
 		if (e.pointerType === "touch") return;

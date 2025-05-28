@@ -34,7 +34,7 @@
 				{#each items as item (item.index)}
 					<RatingGroup.Item
 						index={item.index}
-						class="text-muted-foreground hover:text-foreground focus-visible:ring-foreground size-8 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[readonly]:cursor-default data-[state=active]:text-yellow-500 data-[state=partial]:text-yellow-500"
+						class="text-muted-foreground focus-visible:ring-foreground size-8 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[readonly]:cursor-default data-[state=active]:text-yellow-500 data-[state=partial]:text-yellow-500"
 					>
 						<div class="relative size-full">
 							{#if item.state === "inactive"}
