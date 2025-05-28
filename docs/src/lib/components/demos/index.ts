@@ -84,3 +84,5 @@ export { default as SliderDemoCustomSteps } from "./slider-demo-custom-steps.sve
 export { default as SliderDemoTickLabels } from "./slider-demo-tick-labels.svelte";
 export { default as SliderDemoThumbLabels } from "./slider-demo-thumb-labels.svelte";
 export { default as SliderDemoVertical } from "./slider-demo-vertical.svelte";
+export { default as RatingGroupDemo } from "./rating-group-demo.svelte";
+export { default as RatingGroupDemoCustom } from "./rating-group-demo-custom.svelte";

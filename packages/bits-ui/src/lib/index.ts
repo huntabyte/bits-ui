@@ -27,6 +27,7 @@ export {
 	Progress,
 	RadioGroup,
 	RangeCalendar,
+	RatingGroup,
 	ScrollArea,
 	Select,
 	Separator,
