@@ -71,21 +71,20 @@ class RatingGroupRootState {
 	});
 
 	isActive(itemIndex: number) {
-		const itemValue = itemIndex + 1; // Convert 0-based index to 1-based rating value
+		const itemValue = itemIndex + 1; // convert 0-based index to 1-based rating value
 		const currentValue = this.opts.value.current;
 		return currentValue >= itemValue;
 	}
 
 	isPartial(itemIndex: number) {
 		if (!this.opts.allowHalf.current) return false;
-		const itemValue = itemIndex + 1; // Convert 0-based index to 1-based rating value
+		const itemValue = itemIndex + 1; // convert 0-based index to 1-based rating value
 		const currentValue = this.opts.value.current;
 		return currentValue >= itemValue - 0.5 && currentValue < itemValue;
 	}
 
 	setValue(value: number) {
 		if (this.opts.readonly.current || this.opts.disabled.current) return;
-		// Clamp value between min and max
 		const clampedValue = Math.max(
 			this.opts.min.current,
 			Math.min(this.opts.max.current, value)
@@ -223,7 +222,7 @@ class RatingGroupItemState {
 			const normalizedPosition = isRtl ? 1 - clickPosition : clickPosition;
 
 			if (normalizedPosition < 0.5) {
-				newValue = this.opts.index.current + 1 - 0.5; // Convert to rating value then subtract 0.5
+				newValue = this.opts.index.current + 1 - 0.5; // convert to rating value then subtract 0.5
 			}
 		}
 
@@ -241,7 +240,7 @@ class RatingGroupItemState {
 
 	snippetProps = $derived.by(() => {
 		return {
-			index: this.opts.index.current, // This is the item's position (1, 2, 3, etc.)
+			index: this.opts.index.current,
 			state: this.#state,
 		} as const;
 	});
