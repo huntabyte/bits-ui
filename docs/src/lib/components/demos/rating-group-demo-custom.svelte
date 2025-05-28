@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RatingGroup } from "bits-ui";
+	import { experimental_RatingGroup as RatingGroup } from "bits-ui";
 	import Star from "phosphor-svelte/lib/Star";
 	import StarHalf from "phosphor-svelte/lib/StarHalf";
 

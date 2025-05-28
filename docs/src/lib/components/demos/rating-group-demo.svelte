@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RatingGroup } from "bits-ui";
+	import { experimental_RatingGroup as RatingGroup } from "bits-ui";
 	import Star from "phosphor-svelte/lib/Star";
 	let value = $state(3);
 </script>
@@ -12,7 +12,7 @@
 					index={item.index}
 					class="text-muted-foreground hover:text-foreground focus-visible:ring-foreground group size-6 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 data-[state=active]:text-yellow-500"
 				>
-					<Star class="size-full group-data-[state=active]:fill-current" />
+					<Star class="size-full group-data-[state=active]:fill-current" weight="fill" />
 				</RatingGroup.Item>
 			{/each}
 		{/snippet}
