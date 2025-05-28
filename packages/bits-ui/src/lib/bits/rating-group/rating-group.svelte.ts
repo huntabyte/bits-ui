@@ -234,8 +234,6 @@ class RatingGroupRootState {
 			"data-disabled": getDataDisabled(this.opts.disabled.current),
 			"data-readonly": this.opts.readonly.current ? "" : undefined,
 			"data-orientation": this.opts.orientation.current,
-			"data-max": this.opts.max.current,
-			"data-value": this.opts.value.current,
 			tabindex: this.opts.disabled.current ? -1 : 0,
 			[RATING_GROUP_ROOT_ATTR]: "",
 			onkeydown: this.onkeydown,
@@ -300,7 +298,6 @@ class RatingGroupItemState {
 
 	snippetProps = $derived.by(() => {
 		return {
-			index: this.opts.index.current,
 			state: this.#state,
 		} as const;
 	});

@@ -4,13 +4,13 @@ import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
 export type RatingGroupItemState = "active" | "partial" | "inactive";
 
-export type RatingGroupItem = {
+export type RatingGroupItemData = {
 	index: number;
 	state: RatingGroupItemState;
 };
 
 export type RatingGroupRootSnippetProps = {
-	items: RatingGroupItem[];
+	items: RatingGroupItemData[];
 	value: number;
 	max: number;
 };
@@ -118,7 +118,6 @@ export type RatingGroupRootProps = RatingGroupRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, RatingGroupRootPropsWithoutHTML>;
 
 export type RatingGroupItemSnippetProps = {
-	index: number;
 	state: RatingGroupItemState;
 };
 

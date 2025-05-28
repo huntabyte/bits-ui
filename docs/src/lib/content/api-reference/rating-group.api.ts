@@ -13,7 +13,13 @@ import {
 import { OnNumberValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
 import * as C from "$lib/content/constants.js";
-import { RatingGroupAriaValuetext } from "./extended-types/rating-group/index.js";
+import {
+	RatingGroupAriaValuetext,
+	RatingGroupItemChildrenSnippetProps,
+	RatingGroupItemChildSnippetProps,
+	RatingGroupRootChildrenSnippetProps,
+	RatingGroupRootChildSnippetProps,
+} from "./extended-types/rating-group/index.js";
 
 export const root = createApiSchema<RatingGroupRootPropsWithoutHTML>({
 	title: "Root",
@@ -77,7 +83,11 @@ export const root = createApiSchema<RatingGroupRootPropsWithoutHTML>({
 			default: "(value: number, max: number) => `${value} out of ${max}`",
 			definition: RatingGroupAriaValuetext,
 		}),
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childDef: RatingGroupRootChildSnippetProps,
+			childrenDef: RatingGroupRootChildrenSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		createDataAttrSchema({
@@ -85,6 +95,14 @@ export const root = createApiSchema<RatingGroupRootPropsWithoutHTML>({
 			definition: OrientationProp,
 			description: "The orientation of the rating group.",
 			isEnum: true,
+		}),
+		createDataAttrSchema({
+			name: "disabled",
+			description: "Present when the rating group is disabled.",
+		}),
+		createDataAttrSchema({
+			name: "readonly",
+			description: "Present when the rating group is readonly.",
 		}),
 		createDataAttrSchema({
 			name: "rating-group-root",
@@ -105,12 +123,20 @@ export const item = createApiSchema<RatingGroupItemPropsWithoutHTML>({
 			default: C.FALSE,
 			description: "Whether the rating item is disabled.",
 		}),
-		...withChildProps({ elType: "HTMLButtonElement" }),
+		...withChildProps({
+			elType: "HTMLButtonElement",
+			childDef: RatingGroupItemChildSnippetProps,
+			childrenDef: RatingGroupItemChildrenSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		createDataAttrSchema({
 			name: "disabled",
 			description: "Present when the rating item is disabled.",
+		}),
+		createDataAttrSchema({
+			name: "readonly",
+			description: "Present when the rating item is readonly.",
 		}),
 		createDataAttrSchema({
 			name: "value",
@@ -135,4 +161,4 @@ export const item = createApiSchema<RatingGroupItemPropsWithoutHTML>({
 	],
 });
 
-export const radioGroup = [root, item];
+export const ratingGroup = [root, item];
