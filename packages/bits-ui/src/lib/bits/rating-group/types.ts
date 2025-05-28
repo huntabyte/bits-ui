@@ -95,6 +95,14 @@ export type RatingGroupRootPropsWithoutHTML = WithChild<
 		readonly?: boolean;
 
 		/**
+		 * Whether to show a preview when hovering over rating items.
+		 * Touch events are ignored to prevent accidental previews.
+		 *
+		 * @default true
+		 */
+		hoverPreview?: boolean;
+
+		/**
 		 * An extended `aria-valuetext` property to use for the rating group.
 		 * Can either be a string, or a function that receives the current value
 		 * and max value and returns a string.

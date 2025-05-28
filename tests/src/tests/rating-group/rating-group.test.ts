@@ -489,3 +489,140 @@ describe("Min Value", () => {
 		expect(valueDisplay).toHaveTextContent("3");
 	});
 });
+
+describe("Hover Preview", () => {
+	it("should show preview on hover when hoverPreview is enabled", async () => {
+		const t = setup({ value: 1, max: 5, hoverPreview: true });
+		const valueDisplay = t.getByTestId("value-display");
+
+		// initial state - only first item should be active
+		expect(valueDisplay).toHaveTextContent("1");
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-2")).toHaveTextContent("inactive");
+
+		// hover over third item
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// value should remain the same, but states should show preview
+		expect(valueDisplay).toHaveTextContent("1");
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("active");
+		expect(t.getByTestId("state-2")).toHaveTextContent("active");
+		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+	});
+
+	it("should reset preview on pointer leave", async () => {
+		const t = setup({ value: 1, max: 5, hoverPreview: true });
+
+		// hover over third item
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// preview should be active
+		expect(t.getByTestId("state-2")).toHaveTextContent("active");
+
+		// leave the root element
+		await t.user.unhover(t.root);
+
+		// should return to original state
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-2")).toHaveTextContent("inactive");
+	});
+
+	it("should not show preview when hoverPreview is disabled", async () => {
+		const t = setup({ value: 1, max: 5, hoverPreview: false });
+
+		// initial state
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("inactive");
+
+		// hover over third item
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// states should remain unchanged
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-2")).toHaveTextContent("inactive");
+	});
+
+	it("should not show preview when disabled", async () => {
+		const t = setup({ value: 1, max: 5, disabled: true });
+
+		// hover over third item
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// states should remain unchanged due to disabled state
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-2")).toHaveTextContent("inactive");
+	});
+
+	it("should not show preview when readonly", async () => {
+		const t = setup({ value: 1, max: 5, readonly: true });
+
+		// hover over third item
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// states should remain unchanged due to readonly state
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-2")).toHaveTextContent("inactive");
+	});
+
+	it("should show preview with half ratings when allowHalf is enabled", async () => {
+		const t = setup({ value: 1, max: 5, allowHalf: true });
+
+		// use simple hover which should work more reliably
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// should show preview up to at least the hovered item (exact half behavior depends on pointer position)
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("active");
+		expect(t.getByTestId("state-2")).toHaveTextContent("active");
+		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+	});
+
+	it("should ignore touch events for hover preview", async () => {
+		const t = setup({ value: 1, max: 5, hoverPreview: true });
+
+		const item3 = t.getByTestId("item-2");
+
+		// simulate touch by directly dispatching a touch pointer event
+		const touchEvent = new PointerEvent("pointermove", {
+			pointerType: "touch",
+		});
+
+		Object.defineProperty(touchEvent, "currentTarget", {
+			value: item3,
+			writable: false,
+		});
+
+		item3.dispatchEvent(touchEvent);
+
+		// states should remain unchanged for touch events
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-2")).toHaveTextContent("inactive");
+	});
+
+	it("should work with mouse pointer events for hover preview", async () => {
+		const t = setup({ value: 1, max: 5 });
+
+		// use simple hover which simulates mouse interaction
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// should show preview for mouse events
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("active");
+		expect(t.getByTestId("state-2")).toHaveTextContent("active");
+		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+	});
+});
