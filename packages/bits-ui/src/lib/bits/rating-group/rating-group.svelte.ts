@@ -1,18 +1,13 @@
 import { attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type {
-	BitsFocusEvent,
-	BitsKeyboardEvent,
-	BitsMouseEvent,
-	WithRefProps,
-} from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
+import type {
+	RatingGroupAriaValuetext,
+	RatingGroupItemState as RatingGroupItemStateType,
+} from "./types.js";
 import type { Orientation } from "$lib/shared/index.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 
 const RATING_GROUP_ROOT_ATTR = "data-rating-group-root";
@@ -22,38 +17,35 @@ type RatingGroupRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		required: boolean;
-		loop: boolean;
 		orientation: Orientation;
 		name: string | undefined;
 		max: number;
 		allowHalf: boolean;
 		readonly: boolean;
+		ariaValuetext: NonNullable<RatingGroupAriaValuetext>;
 	}> &
 		WritableBoxedValues<{ value: number }>
 >;
 
 class RatingGroupRootState {
 	readonly opts: RatingGroupRootStateProps;
-	rovingFocusGroup: UseRovingFocusReturn;
 	hasValue = $derived.by(() => this.opts.value.current > 0);
+	readonly ariaValuetext = $derived.by(() => {
+		if (typeof this.opts.ariaValuetext.current === "function") {
+			return this.opts.ariaValuetext.current(this.opts.value.current, this.opts.max.current);
+		}
+		return this.opts.ariaValuetext.current;
+	});
 
 	constructor(opts: RatingGroupRootStateProps) {
 		this.opts = opts;
-		this.rovingFocusGroup = useRovingFocus({
-			rootNode: this.opts.ref,
-			candidateAttr: RATING_GROUP_ITEM_ATTR,
-			loop: this.opts.loop,
-			orientation: this.opts.orientation,
-		});
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	// Generate items for snippet
 	items = $derived.by(() => {
 		const items: Array<{
-			value: number;
-			active: boolean;
-			partial: boolean;
-			state: "active" | "partial" | "inactive";
+			index: number;
+			state: RatingGroupItemStateType;
 		}> = [];
 		for (let i = 1; i <= this.opts.max.current; i++) {
 			const isActive = this.opts.value.current >= i;
@@ -62,16 +54,14 @@ class RatingGroupRootState {
 				this.opts.value.current >= i - 0.5 &&
 				this.opts.value.current < i;
 
-			const state: "active" | "partial" | "inactive" = isActive
+			const state: RatingGroupItemStateType = isActive
 				? "active"
 				: isPartial
 					? "partial"
 					: "inactive";
 
 			items.push({
-				value: i,
-				active: isActive,
-				partial: isPartial,
+				index: i,
 				state,
 			});
 		}
@@ -80,9 +70,7 @@ class RatingGroupRootState {
 
 	isActive(itemValue: number) {
 		const currentValue = this.opts.value.current;
-		if (this.opts.allowHalf.current) {
-			return currentValue >= itemValue;
-		}
+		if (this.opts.allowHalf.current) return currentValue >= itemValue;
 		return currentValue >= itemValue;
 	}
 
@@ -93,10 +81,60 @@ class RatingGroupRootState {
 	}
 
 	setValue(value: number) {
-		if (this.opts.readonly.current) return;
-		// Clamp value between 0 and max
+		if (this.opts.readonly.current || this.opts.disabled.current) return;
 		const clampedValue = Math.max(0, Math.min(this.opts.max.current, value));
 		this.opts.value.current = clampedValue;
+	}
+
+	onkeydown(e: BitsKeyboardEvent) {
+		if (this.opts.disabled.current || this.opts.readonly.current) return;
+
+		const step = this.opts.allowHalf.current ? 0.5 : 1;
+		const currentValue = this.opts.value.current;
+
+		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_RIGHT) {
+			e.preventDefault();
+			this.setValue(currentValue + step);
+			return;
+		}
+
+		if (e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_LEFT) {
+			e.preventDefault();
+			this.setValue(currentValue - step);
+			return;
+		}
+
+		if (e.key === kbd.HOME) {
+			e.preventDefault();
+			this.setValue(0);
+			return;
+		}
+
+		if (e.key === kbd.END) {
+			e.preventDefault();
+			this.setValue(this.opts.max.current);
+			return;
+		}
+
+		if (e.key === kbd.PAGE_UP) {
+			e.preventDefault();
+			this.setValue(currentValue + 1);
+			return;
+		}
+
+		if (e.key === kbd.PAGE_DOWN) {
+			e.preventDefault();
+			this.setValue(currentValue - 1);
+			return;
+		}
+
+		// handle number keys for direct rating
+		const numKey = parseInt(e.key);
+		if (!isNaN(numKey) && numKey >= 0 && numKey <= this.opts.max.current) {
+			e.preventDefault();
+			this.setValue(numKey);
+			return;
+		}
 	}
 
 	snippetProps = $derived.by(() => ({
@@ -109,15 +147,23 @@ class RatingGroupRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "radiogroup",
+				role: "slider",
+				"aria-valuenow": this.opts.value.current,
+				"aria-valuemin": 0,
+				"aria-valuemax": this.opts.max.current,
+				"aria-valuetext": this.ariaValuetext,
+				"aria-orientation": this.opts.orientation.current,
 				"aria-required": getAriaRequired(this.opts.required.current),
+				"aria-disabled": this.opts.disabled.current ? "true" : undefined,
+				"aria-label": "Rating",
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-readonly": this.opts.readonly.current ? "" : undefined,
 				"data-orientation": this.opts.orientation.current,
 				"data-max": this.opts.max.current,
 				"data-value": this.opts.value.current,
-				"aria-label": `Rating ${this.opts.value.current} out of ${this.opts.max.current}`,
+				tabindex: this.opts.disabled.current ? -1 : 0,
 				[RATING_GROUP_ROOT_ATTR]: "",
+				onkeydown: this.onkeydown,
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -130,7 +176,7 @@ class RatingGroupRootState {
 type RatingGroupItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		disabled: boolean;
-		value: number;
+		index: number;
 	}>
 >;
 
@@ -138,33 +184,26 @@ class RatingGroupItemState {
 	readonly opts: RatingGroupItemStateProps;
 	readonly root: RatingGroupRootState;
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
-	#isActive = $derived.by(() => this.root.isActive(this.opts.value.current));
-	#isPartial = $derived.by(() => this.root.isPartial(this.opts.value.current));
-	#tabIndex = $state(-1);
+	#isActive = $derived.by(() => this.root.isActive(this.opts.index.current));
+	#isPartial = $derived.by(() => this.root.isPartial(this.opts.index.current));
+	#state: RatingGroupItemStateType = $derived.by(() => {
+		if (this.#isActive) return "active";
+		if (this.#isPartial) return "partial";
+		return "inactive";
+	});
 
 	constructor(opts: RatingGroupItemStateProps, root: RatingGroupRootState) {
 		this.opts = opts;
 		this.root = root;
 
-		// Set initial tab index
-		if (this.opts.value.current === 1) {
-			this.#tabIndex = 0;
-		}
-
-		$effect(() => {
-			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
-		});
-
 		this.onclick = this.onclick.bind(this);
-		this.onmouseenter = this.onmouseenter.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onfocus = this.onfocus.bind(this);
+		this.onpointerenter = this.onpointerenter.bind(this);
 	}
 
 	onclick(e: BitsMouseEvent) {
 		if (this.#isDisabled || this.root.opts.readonly.current) return;
 
-		let newValue = this.opts.value.current;
+		let newValue = this.opts.index.current;
 
 		if (this.root.opts.allowHalf.current && e.currentTarget instanceof HTMLElement) {
 			const rect = e.currentTarget.getBoundingClientRect();
@@ -174,119 +213,61 @@ class RatingGroupItemState {
 					? (e.clientX - rect.left) / rect.width
 					: (e.clientY - rect.top) / rect.height;
 
-			// Adjust for RTL
 			const normalizedPosition = isRtl ? 1 - clickPosition : clickPosition;
 
 			if (normalizedPosition < 0.5) {
-				newValue = this.opts.value.current - 0.5;
+				newValue = this.opts.index.current - 0.5;
 			}
 		}
 
 		this.root.setValue(newValue);
+
+		if (this.root.opts.ref.current) {
+			this.root.opts.ref.current.focus();
+		}
 	}
 
-	onmouseenter(_: BitsMouseEvent) {
+	onpointerenter(_: BitsMouseEvent) {
 		if (this.#isDisabled || this.root.opts.readonly.current) return;
-		// Optional: could implement hover preview here
+		// todo: implement hover preview
 	}
 
-	onfocus(_: BitsFocusEvent) {
-		// Focus handling for keyboard navigation
-	}
-
-	onkeydown(e: BitsKeyboardEvent) {
-		if (this.#isDisabled || this.root.opts.readonly.current) return;
-
-		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
-			e.preventDefault();
-			this.root.setValue(this.opts.value.current);
-			return;
-		}
-
-		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_RIGHT) {
-			e.preventDefault();
-			const increment = this.root.opts.allowHalf.current ? 0.5 : 1;
-			this.root.setValue(this.root.opts.value.current + increment);
-			return;
-		}
-
-		if (e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_LEFT) {
-			e.preventDefault();
-			const decrement = this.root.opts.allowHalf.current ? 0.5 : 1;
-			this.root.setValue(this.root.opts.value.current - decrement);
-			return;
-		}
-
-		if (e.key === kbd.HOME) {
-			e.preventDefault();
-			this.root.setValue(0);
-			return;
-		}
-
-		if (e.key === kbd.END) {
-			e.preventDefault();
-			this.root.setValue(this.root.opts.max.current);
-			return;
-		}
-
-		// Handle number keys for direct rating
-		const numKey = parseInt(e.key);
-		if (!isNaN(numKey) && numKey >= 0 && numKey <= this.root.opts.max.current) {
-			e.preventDefault();
-			this.root.setValue(numKey);
-			return;
-		}
-
-		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
-	}
-
-	snippetProps = $derived.by(() => ({
-		active: this.#isActive,
-		partial: this.#isPartial,
-		value: this.opts.value.current,
-		rootValue: this.root.opts.value.current,
-	}));
+	snippetProps = $derived.by(() => {
+		return {
+			index: this.opts.index.current, // This is the item's position (1, 2, 3, etc.)
+			state: this.#state,
+		} as const;
+	});
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				disabled: this.#isDisabled ? true : undefined,
-				"data-value": this.opts.value.current,
+				role: "presentation",
+				"data-value": this.opts.index.current,
 				"data-orientation": this.root.opts.orientation.current,
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-readonly": this.root.opts.readonly.current ? "" : undefined,
-				"data-state": this.#isActive ? "active" : this.#isPartial ? "partial" : "inactive",
-				"aria-label": `Rate ${this.opts.value.current} out of ${this.root.opts.max.current}`,
+				"data-state": this.#state,
 				[RATING_GROUP_ITEM_ATTR]: "",
-				type: "button",
-				role: "radio",
-				tabindex: this.#tabIndex,
 				//
-				onkeydown: this.onkeydown,
-				onfocus: this.onfocus,
 				onclick: this.onclick,
-				onmouseenter: this.onmouseenter,
+				onpointerenter: this.onpointerenter,
 				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
 
-//
-// INPUT
-//
-
-class RatingGroupInputState {
+class RatingGroupHiddenInputState {
 	readonly root: RatingGroupRootState;
 	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 	props = $derived.by(
 		() =>
 			({
 				name: this.root.opts.name.current,
-				value: this.root.opts.value.current.toString(),
+				value: this.root.opts.value.current,
 				required: this.root.opts.required.current,
 				disabled: this.root.opts.disabled.current,
-				type: "hidden",
 			}) as const
 	);
 
@@ -305,6 +286,6 @@ export function useRatingGroupItem(props: RatingGroupItemStateProps) {
 	return new RatingGroupItemState(props, RatingGroupRootContext.get());
 }
 
-export function useRatingGroupInput() {
-	return new RatingGroupInputState(RatingGroupRootContext.get());
+export function useRatingGroupHiddenInput() {
+	return new RatingGroupHiddenInputState(RatingGroupRootContext.get());
 }

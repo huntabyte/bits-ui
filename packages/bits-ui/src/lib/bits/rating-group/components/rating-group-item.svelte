@@ -8,7 +8,7 @@
 
 	let {
 		disabled = false,
-		value,
+		index,
 		children,
 		child,
 		ref = $bindable(null),
@@ -18,7 +18,7 @@
 
 	const itemState = useRatingGroupItem({
 		disabled: box.with(() => Boolean(disabled)),
-		value: box.with(() => value),
+		index: box.with(() => index),
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -32,7 +32,7 @@
 {#if child}
 	{@render child({ props: mergedProps, ...itemState.snippetProps })}
 {:else}
-	<button {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.(itemState.snippetProps)}
-	</button>
+	</div>
 {/if}

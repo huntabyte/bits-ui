@@ -1,15 +1,12 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/index.js";
-import type {
-	BitsPrimitiveButtonAttributes,
-	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
+import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
+
+export type RatingGroupItemState = "active" | "partial" | "inactive";
 
 export type RatingGroupItem = {
-	value: number;
-	active: boolean;
-	partial: boolean;
-	state: "active" | "partial" | "inactive";
+	index: number;
+	state: RatingGroupItemState;
 };
 
 export type RatingGroupRootSnippetProps = {
@@ -18,23 +15,19 @@ export type RatingGroupRootSnippetProps = {
 	max: number;
 };
 
+export type RatingGroupAriaValuetext =
+	| BitsPrimitiveDivAttributes["aria-valuetext"]
+	| ((value: number, max: number) => string);
+
 export type RatingGroupRootPropsWithoutHTML = WithChild<
 	{
 		/**
 		 * The orientation of the rating group. Used to determine
-		 * how keyboard navigation should work.
+		 * how keyboard interactions work.
 		 *
 		 * @default "horizontal"
 		 */
 		orientation?: Orientation;
-
-		/**
-		 * Whether to loop around the rating items when navigating
-		 * with the keyboard.
-		 *
-		 * @default false
-		 */
-		loop?: boolean;
 
 		/**
 		 * The current rating value.
@@ -93,6 +86,15 @@ export type RatingGroupRootPropsWithoutHTML = WithChild<
 		 * @default false
 		 */
 		readonly?: boolean;
+
+		/**
+		 * An extended `aria-valuetext` property to use for the rating group.
+		 * Can either be a string, or a function that receives the current value
+		 * and max value and returns a string.
+		 *
+		 * @default ((value: number, max: number) => `${value} out of ${max}`)
+		 */
+		"aria-valuetext"?: RatingGroupAriaValuetext;
 	},
 	RatingGroupRootSnippetProps
 >;
@@ -101,18 +103,16 @@ export type RatingGroupRootProps = RatingGroupRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, RatingGroupRootPropsWithoutHTML>;
 
 export type RatingGroupItemSnippetProps = {
-	active: boolean;
-	partial: boolean;
-	value: number;
-	rootValue: number;
+	index: number;
+	state: RatingGroupItemState;
 };
 
 export type RatingGroupItemPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * The value of the rating item (1-based index).
+		 * The index of the rating item (1-based index).
 		 */
-		value: number;
+		index: number;
 
 		/**
 		 * Whether the rating item is disabled.
@@ -125,4 +125,4 @@ export type RatingGroupItemPropsWithoutHTML = WithChild<
 >;
 
 export type RatingGroupItemProps = RatingGroupItemPropsWithoutHTML &
-	Without<BitsPrimitiveButtonAttributes, RatingGroupItemPropsWithoutHTML>;
+	Without<BitsPrimitiveDivAttributes, RatingGroupItemPropsWithoutHTML>;

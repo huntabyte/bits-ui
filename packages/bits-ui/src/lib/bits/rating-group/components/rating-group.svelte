@@ -15,7 +15,6 @@
 		value = $bindable(0),
 		ref = $bindable(null),
 		orientation = "horizontal",
-		loop = false,
 		name = undefined,
 		required = false,
 		max = 5,
@@ -23,13 +22,19 @@
 		readonly = false,
 		id = createId(uid),
 		onValueChange = noop,
+		"aria-label": ariaLabel,
+		"aria-valuetext": ariaValuetextProp,
 		...restProps
 	}: RatingGroupRootProps = $props();
+
+	const ariaValuetext: NonNullable<RatingGroupRootProps["aria-valuetext"]> = $derived.by(() => {
+		if (ariaValuetextProp) return ariaValuetextProp;
+		return (value: number, max: number) => `${value} out of ${max}`;
+	});
 
 	const rootState = useRatingGroupRoot({
 		orientation: box.with(() => orientation),
 		disabled: box.with(() => disabled),
-		loop: box.with(() => loop),
 		name: box.with(() => name),
 		required: box.with(() => required),
 		max: box.with(() => max),
@@ -48,9 +53,12 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		ariaValuetext: box.with(() => ariaValuetext),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, rootState.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, rootState.props, { "aria-label": ariaLabel })
+	);
 </script>
 
 {#if child}
