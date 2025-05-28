@@ -45,6 +45,12 @@ class RatingGroupRootState {
 	// Derived values
 	hasValue = $derived.by(() => this.opts.value.current > 0);
 	valueToUse = $derived.by(() => this.#hoverValue ?? this.opts.value.current);
+	isRTL = $derived.by(() => {
+		const element = this.opts.ref.current;
+		if (!element) return false;
+		const style = getComputedStyle(element);
+		return style.direction === "rtl";
+	});
 
 	readonly ariaValuetext = $derived.by(() => {
 		const { ariaValuetext, value, max } = this.opts;
@@ -126,9 +132,17 @@ class RatingGroupRootState {
 
 	handlers: Record<string, () => void> = {
 		[kbd.ARROW_UP]: () => this.#adjustValue(this.opts.allowHalf.current ? 0.5 : 1),
-		[kbd.ARROW_RIGHT]: () => this.#adjustValue(this.opts.allowHalf.current ? 0.5 : 1),
+		[kbd.ARROW_RIGHT]: () => {
+			const increment = this.opts.allowHalf.current ? 0.5 : 1;
+			// in RTL mode, right arrow should decrement
+			this.#adjustValue(this.isRTL ? -increment : increment);
+		},
 		[kbd.ARROW_DOWN]: () => this.#adjustValue(this.opts.allowHalf.current ? -0.5 : -1),
-		[kbd.ARROW_LEFT]: () => this.#adjustValue(this.opts.allowHalf.current ? -0.5 : -1),
+		[kbd.ARROW_LEFT]: () => {
+			const increment = this.opts.allowHalf.current ? 0.5 : 1;
+			// in RTL mode, left arrow should increment
+			this.#adjustValue(this.isRTL ? increment : -increment);
+		},
 		[kbd.HOME]: () => this.setValue(this.opts.min.current),
 		[kbd.END]: () => this.setValue(this.opts.max.current),
 		[kbd.PAGE_UP]: () => this.#adjustValue(1),

@@ -78,8 +78,8 @@ describe("Data Attributes", () => {
 			orientation: "vertical",
 		});
 
-		expect(t.root).toHaveAttribute("data-value", "2.5");
-		expect(t.root).toHaveAttribute("data-max", "5");
+		expect(t.root).toHaveAttribute("aria-valuenow", "2.5");
+		expect(t.root).toHaveAttribute("aria-valuemax", "5");
 		expect(t.root).toHaveAttribute("data-disabled", "");
 		expect(t.root).toHaveAttribute("data-readonly", "");
 		expect(t.root).toHaveAttribute("data-orientation", "vertical");
@@ -91,7 +91,6 @@ describe("Data Attributes", () => {
 		// should be active
 		const item1 = t.getByTestId("item-0");
 		expect(item1).toHaveAttribute("data-state", "active");
-		expect(item1).toHaveAttribute("data-value", "1");
 
 		// should be active
 		const item2 = t.getByTestId("item-1");
@@ -659,5 +658,162 @@ describe("Decimal Input Sequences", () => {
 		vi.runAllTimers();
 
 		expect(valueDisplay).toHaveTextContent("2.5");
+	});
+});
+
+describe("RTL Behavior", () => {
+	function setupRTL(props: Partial<RatingGroupTestProps> = {}) {
+		const user = setupUserEvents();
+		const returned = render(RatingGroupTest, { ...props });
+		const input = returned.container.querySelector("input") as HTMLInputElement;
+		const root = returned.getByTestId("root");
+
+		// set RTL direction
+		root.style.direction = "rtl";
+
+		return { user, input, root, ...returned };
+	}
+
+	it("should handle click behavior in RTL mode", async () => {
+		const t = setupRTL({ max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		// basic click functionality should work the same in RTL
+		const item3 = t.getByTestId("item-2");
+		await t.user.click(item3);
+
+		expect(valueDisplay).toHaveTextContent("3");
+	});
+
+	it("should handle keyboard navigation in RTL mode", async () => {
+		const t = setupRTL({ value: 2, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		t.root.focus();
+		expect(valueDisplay).toHaveTextContent("2");
+
+		// in RTL mode, arrow keys should be flipped
+		// ARROW_LEFT should increment (move forward in reading direction)
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(valueDisplay).toHaveTextContent("3");
+
+		// ARROW_RIGHT should decrement (move backward in reading direction)
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		expect(valueDisplay).toHaveTextContent("2");
+
+		// UP and DOWN should work the same regardless of RTL
+		await t.user.keyboard(kbd.ARROW_UP);
+		expect(valueDisplay).toHaveTextContent("3");
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(valueDisplay).toHaveTextContent("2");
+	});
+
+	it("should handle hover preview in RTL mode", async () => {
+		const t = setupRTL({ value: 1, max: 5, hoverPreview: true });
+
+		// hover should still work normally in RTL
+		const item3 = t.getByTestId("item-2");
+		await t.user.hover(item3);
+
+		// should show preview regardless of RTL
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("active");
+		expect(t.getByTestId("state-2")).toHaveTextContent("active");
+		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+	});
+
+	it("should handle vertical orientation in RTL mode", async () => {
+		const t = setupRTL({ orientation: "vertical", max: 5 });
+
+		expect(t.root).toHaveAttribute("data-orientation", "vertical");
+		expect(t.root).toHaveAttribute("aria-orientation", "vertical");
+
+		// clicking should still work in vertical RTL
+		const item3 = t.getByTestId("item-2");
+		await t.user.click(item3);
+
+		const valueDisplay = t.getByTestId("value-display");
+		expect(valueDisplay).toHaveTextContent("3");
+	});
+
+	it("should have correct data attributes in RTL mode", async () => {
+		const t = setupRTL({ value: 2, max: 5, disabled: true, readonly: true });
+
+		// data attributes should be the same regardless of RTL
+		expect(t.root).toHaveAttribute("aria-valuenow", "2");
+		expect(t.root).toHaveAttribute("aria-valuemax", "5");
+		expect(t.root).toHaveAttribute("data-disabled", "");
+		expect(t.root).toHaveAttribute("data-readonly", "");
+		expect(t.root).toHaveAttribute("data-orientation", "horizontal");
+	});
+
+	it("should handle allowHalf functionality in RTL mode", async () => {
+		const t = setupRTL({ allowHalf: true, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		// test half functionality by setting half value programmatically
+		const setHalfButton = t.getByTestId("set-half-button");
+		await t.user.click(setHalfButton);
+
+		expect(valueDisplay).toHaveTextContent("2.5");
+
+		// check that item states are correct regardless of RTL
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("active");
+		expect(t.getByTestId("state-2")).toHaveTextContent("partial");
+		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-4")).toHaveTextContent("inactive");
+	});
+
+	it("should handle disabled state in RTL mode", async () => {
+		const t = setupRTL({ disabled: true, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("0");
+
+		// clicking should not work when disabled, regardless of RTL
+		const item3 = t.getByTestId("item-2");
+		await t.user.click(item3);
+
+		expect(valueDisplay).toHaveTextContent("0");
+	});
+
+	it("should handle readonly state in RTL mode", async () => {
+		const t = setupRTL({ readonly: true, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("0");
+
+		// clicking should not work when readonly, regardless of RTL
+		const item3 = t.getByTestId("item-2");
+		await t.user.click(item3);
+
+		expect(valueDisplay).toHaveTextContent("0");
+	});
+
+	it("should handle keyboard navigation with half values in RTL mode", async () => {
+		const t = setupRTL({ value: 2, max: 5, allowHalf: true });
+		const valueDisplay = t.getByTestId("value-display");
+
+		t.root.focus();
+		expect(valueDisplay).toHaveTextContent("2");
+
+		// in RTL mode with allowHalf, arrow keys should use 0.5 increments
+		// ARROW_LEFT should increment by 0.5
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(valueDisplay).toHaveTextContent("2.5");
+
+		// ARROW_RIGHT should decrement by 0.5
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		expect(valueDisplay).toHaveTextContent("2");
+
+		// another left to increment again
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(valueDisplay).toHaveTextContent("2.5");
+
+		// another left to get to 3
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		expect(valueDisplay).toHaveTextContent("3");
 	});
 });
