@@ -71,6 +71,9 @@ importers:
       '@sveltejs/adapter-cloudflare':
         specifier: ^7.0.0
         version: 7.0.3(@sveltejs/kit@2.21.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)))(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)))(wrangler@4.16.1(@cloudflare/workers-types@4.20250525.0))
+      '@sveltejs/enhanced-img':
+        specifier: ^0.6.0
+        version: 0.6.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)))(rollup@4.41.1)(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5))
       '@sveltejs/kit':
         specifier: ^2.21.1
         version: 2.21.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)))(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5))
@@ -1010,6 +1013,15 @@ packages:
     peerDependencies:
       prettier: ^3.0.0
 
+  '@rollup/pluginutils@5.1.4':
+    resolution: {integrity: sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+
   '@rollup/rollup-android-arm-eabi@4.41.1':
     resolution: {integrity: sha512-NELNvyEWZ6R9QMkiytB4/L4zSEaBC03KIXEghptLGLZWJ6VPrL63ooZQCOnlx36aQPGhzuOMwDerC1Eb2VmrLw==}
     cpu: [arm]
@@ -1146,6 +1158,13 @@ packages:
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
       wrangler: ^4.0.0
+
+  '@sveltejs/enhanced-img@0.6.0':
+    resolution: {integrity: sha512-B9rHh6zHnFex6fWxD8rkmUsMvkAG+cZiv+5/NfXyLcDvDFqUQbcADACeioVFuUxNXDXAe3y+Ui3JVmekk8R/zg==}
+    peerDependencies:
+      '@sveltejs/vite-plugin-svelte': ^5.0.0
+      svelte: ^5.0.0
+      vite: '>= 5.0.0'
 
   '@sveltejs/kit@2.21.1':
     resolution: {integrity: sha512-vLbtVwtDcK8LhJKnFkFYwM0uCdFmzioQnif0bjEYH1I24Arz22JPr/hLUiXGVYAwhu8INKx5qrdvr4tHgPwX6w==}
@@ -1946,6 +1965,9 @@ packages:
   estree-util-visit@2.0.0:
     resolution: {integrity: sha512-m5KgiH85xAhhW8Wta0vShLcUvOsh3LLPI2YVwcbio1l7E09NTLL1EyMZFM1OyWowoH0skScNbhOPl4kcBgzTww==}
 
+  estree-walker@2.0.2:
+    resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
+
   estree-walker@3.0.3:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
 
@@ -2194,6 +2216,10 @@ packages:
   ignore@7.0.4:
     resolution: {integrity: sha512-gJzzk+PQNznz8ysRrC0aOkBNVRBDtE1n53IqyqEf3PXrYwomFs5q4pGMizBMJF+ykh03insJ27hB8gSrD2Hn8A==}
     engines: {node: '>= 4'}
+
+  imagetools-core@7.1.0:
+    resolution: {integrity: sha512-8Aa4NecBBGmTkaAUjcuRYgTPKHCsBEWYmCnvKCL6/bxedehtVVFyZPdXe8DD0Nevd6UWBq85ifUaJ8498lgqNQ==}
+    engines: {node: '>=18.0.0'}
 
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
@@ -3265,6 +3291,11 @@ packages:
       svelte:
         optional: true
 
+  svelte-parse-markup@0.1.5:
+    resolution: {integrity: sha512-T6mqZrySltPCDwfKXWQ6zehipVLk4GWfH1zCMGgRtLlOIFPuw58ZxVYxVvotMJgJaurKi1i14viB2GIRKXeJTQ==}
+    peerDependencies:
+      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0-next.1
+
   svelte-sonner@0.3.28:
     resolution: {integrity: sha512-K3AmlySeFifF/cKgsYNv5uXqMVNln0NBAacOYgmkQStLa/UoU0LhfAACU6Gr+YYC8bOCHdVmFNoKuDbMEsppJg==}
     peerDependencies:
@@ -3478,6 +3509,10 @@ packages:
 
   vfile@6.0.1:
     resolution: {integrity: sha512-1bYqc7pt6NIADBJ98UiG0Bn/CHIVOoZ/IyEkqIruLg0mE1BKzkOXY2D6CSqQIcKqgadppE5lrxgWXJmXd7zZJw==}
+
+  vite-imagetools@7.1.0:
+    resolution: {integrity: sha512-Mqh1uUY2DEMuBOogFz5Rd7cAs70VP6wsdQh2IShrJ+qGk5f7yQa4pN8w0YMLlGIKYW1JfM8oXrznUwVkhG+qxg==}
+    engines: {node: '>=18.0.0'}
 
   vite-node@3.1.4:
     resolution: {integrity: sha512-6enNwYnpyDo4hEgytbmc6mYWHXDHYEn0D1/rw4Q+tnHUGtKTJsn8T1YkX6Q18wI5LCrS8CTYlBaiCqxOy2kvUA==}
@@ -4300,6 +4335,14 @@ snapshots:
     dependencies:
       prettier: 3.3.3
 
+  '@rollup/pluginutils@5.1.4(rollup@4.41.1)':
+    dependencies:
+      '@types/estree': 1.0.7
+      estree-walker: 2.0.2
+      picomatch: 4.0.2
+    optionalDependencies:
+      rollup: 4.41.1
+
   '@rollup/rollup-android-arm-eabi@4.41.1':
     optional: true
 
@@ -4406,6 +4449,19 @@ snapshots:
       '@sveltejs/kit': 2.21.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)))(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5))
       worktop: 0.8.0-next.18
       wrangler: 4.16.1(@cloudflare/workers-types@4.20250525.0)
+
+  '@sveltejs/enhanced-img@0.6.0(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)))(rollup@4.41.1)(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5))':
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5))
+      magic-string: 0.30.17
+      sharp: 0.34.2
+      svelte: 5.33.2
+      svelte-parse-markup: 0.1.5(svelte@5.33.2)
+      vite: 6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)
+      vite-imagetools: 7.1.0(rollup@4.41.1)
+      zimmerframe: 1.1.2
+    transitivePeerDependencies:
+      - rollup
 
   '@sveltejs/kit@2.21.1(@sveltejs/vite-plugin-svelte@5.0.3(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5)))(svelte@5.33.2)(vite@6.3.5(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5))':
     dependencies:
@@ -5261,6 +5317,8 @@ snapshots:
       '@types/estree-jsx': 1.0.5
       '@types/unist': 3.0.3
 
+  estree-walker@2.0.2: {}
+
   estree-walker@3.0.3:
     dependencies:
       '@types/estree': 1.0.7
@@ -5606,6 +5664,8 @@ snapshots:
   ignore@5.3.1: {}
 
   ignore@7.0.4: {}
+
+  imagetools-core@7.1.0: {}
 
   import-fresh@3.3.0:
     dependencies:
@@ -6989,6 +7049,10 @@ snapshots:
     optionalDependencies:
       svelte: 5.33.2
 
+  svelte-parse-markup@0.1.5(svelte@5.33.2):
+    dependencies:
+      svelte: 5.33.2
+
   svelte-sonner@0.3.28(svelte@5.33.2):
     dependencies:
       svelte: 5.33.2
@@ -7228,6 +7292,14 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
+
+  vite-imagetools@7.1.0(rollup@4.41.1):
+    dependencies:
+      '@rollup/pluginutils': 5.1.4(rollup@4.41.1)
+      imagetools-core: 7.1.0
+      sharp: 0.34.2
+    transitivePeerDependencies:
+      - rollup
 
   vite-node@3.1.4(@types/node@20.17.6)(jiti@2.4.2)(lightningcss@1.29.1)(terser@5.39.2)(yaml@2.4.5):
     dependencies:

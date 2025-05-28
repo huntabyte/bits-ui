@@ -3,7 +3,13 @@ title: Introduction
 description: The headless components for Svelte.
 ---
 
+<script lang="ts">
+	import IntroImage from '$lib/img/learn.png?enhanced';
+</script>
+
 Bits UI is a headless component library for Svelte focused on developer experience, accessibility, and full creative control. Use it to build high-quality, accessible UIs without giving up styling freedom or performance.
+
+<a href="/docs/getting-started"><enhanced:img src={IntroImage} alt="Introduction visaual image block" class="h-full w-full mt-6 rounded-xl md:rounded-2xl border" /></a>
 
 ## Why Bits UI?
 
