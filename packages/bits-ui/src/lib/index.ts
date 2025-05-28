@@ -42,7 +42,7 @@ export {
 	Portal,
 	IsUsingKeyboard,
 	computeCommandScore,
-} from "./bits/export.js";
+} from "./bits/exports.js";
 
 export * from "./shared/index.js";
 export * from "./types.js";
