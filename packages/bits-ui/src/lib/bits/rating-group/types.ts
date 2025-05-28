@@ -110,7 +110,7 @@ export type RatingGroupItemSnippetProps = {
 export type RatingGroupItemPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * The index of the rating item (1-based index).
+		 * The index of the rating item (0-based index).
 		 */
 		index: number;
 

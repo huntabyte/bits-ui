@@ -47,12 +47,13 @@ class RatingGroupRootState {
 			index: number;
 			state: RatingGroupItemStateType;
 		}> = [];
-		for (let i = 1; i <= this.opts.max.current; i++) {
-			const isActive = this.opts.value.current >= i;
+		for (let i = 0; i < this.opts.max.current; i++) {
+			const itemValue = i + 1;
+			const isActive = this.opts.value.current >= itemValue;
 			const isPartial =
 				this.opts.allowHalf.current &&
-				this.opts.value.current >= i - 0.5 &&
-				this.opts.value.current < i;
+				this.opts.value.current >= itemValue - 0.5 &&
+				this.opts.value.current < itemValue;
 
 			const state: RatingGroupItemStateType = isActive
 				? "active"
@@ -68,14 +69,15 @@ class RatingGroupRootState {
 		return items;
 	});
 
-	isActive(itemValue: number) {
+	isActive(itemIndex: number) {
+		const itemValue = itemIndex + 1; // Convert 0-based index to 1-based rating value
 		const currentValue = this.opts.value.current;
-		if (this.opts.allowHalf.current) return currentValue >= itemValue;
 		return currentValue >= itemValue;
 	}
 
-	isPartial(itemValue: number) {
+	isPartial(itemIndex: number) {
 		if (!this.opts.allowHalf.current) return false;
+		const itemValue = itemIndex + 1; // Convert 0-based index to 1-based rating value
 		const currentValue = this.opts.value.current;
 		return currentValue >= itemValue - 0.5 && currentValue < itemValue;
 	}
@@ -203,7 +205,7 @@ class RatingGroupItemState {
 	onclick(e: BitsMouseEvent) {
 		if (this.#isDisabled || this.root.opts.readonly.current) return;
 
-		let newValue = this.opts.index.current;
+		let newValue = this.opts.index.current + 1; // Convert 0-based index to 1-based rating value
 
 		if (this.root.opts.allowHalf.current && e.currentTarget instanceof HTMLElement) {
 			const rect = e.currentTarget.getBoundingClientRect();
@@ -216,7 +218,7 @@ class RatingGroupItemState {
 			const normalizedPosition = isRtl ? 1 - clickPosition : clickPosition;
 
 			if (normalizedPosition < 0.5) {
-				newValue = this.opts.index.current - 0.5;
+				newValue = this.opts.index.current + 1 - 0.5; // Convert to rating value then subtract 0.5
 			}
 		}
 
@@ -244,7 +246,7 @@ class RatingGroupItemState {
 			({
 				id: this.opts.id.current,
 				role: "presentation",
-				"data-value": this.opts.index.current,
+				"data-value": this.opts.index.current + 1,
 				"data-orientation": this.root.opts.orientation.current,
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-readonly": this.root.opts.readonly.current ? "" : undefined,

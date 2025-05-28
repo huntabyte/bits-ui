@@ -53,7 +53,7 @@ describe("Accessibility", () => {
 	it("should have items with presentation role", async () => {
 		const { getByTestId } = setup({ max: 3 });
 
-		for (let i = 1; i <= 3; i++) {
+		for (let i = 0; i <= 2; i++) {
 			const item = getByTestId(`item-${i}`);
 			expect(item).toHaveAttribute("role", "presentation");
 			expect(item).not.toHaveAttribute("aria-label");
@@ -93,16 +93,16 @@ describe("Data Attributes", () => {
 		const { getByTestId } = setup({ value: 2.5, max: 3, allowHalf: true });
 
 		// should be active
-		const item1 = getByTestId("item-1");
+		const item1 = getByTestId("item-0");
 		expect(item1).toHaveAttribute("data-state", "active");
 		expect(item1).toHaveAttribute("data-value", "1");
 
 		// should be active
-		const item2 = getByTestId("item-2");
+		const item2 = getByTestId("item-1");
 		expect(item2).toHaveAttribute("data-state", "active");
 
 		// should be partial
-		const item3 = getByTestId("item-3");
+		const item3 = getByTestId("item-2");
 		expect(item3).toHaveAttribute("data-state", "partial");
 	});
 });
@@ -114,7 +114,7 @@ describe("Value Changes", () => {
 
 		expect(valueDisplay).toHaveTextContent("0");
 
-		const item3 = getByTestId("item-3");
+		const item3 = getByTestId("item-2");
 		await user.click(item3);
 
 		expect(valueDisplay).toHaveTextContent("3");
@@ -131,11 +131,11 @@ describe("Value Changes", () => {
 		expect(valueDisplay).toHaveTextContent("2.5");
 
 		// check that item states are correct
+		expect(getByTestId("state-0")).toHaveTextContent("active");
 		expect(getByTestId("state-1")).toHaveTextContent("active");
-		expect(getByTestId("state-2")).toHaveTextContent("active");
-		expect(getByTestId("state-3")).toHaveTextContent("partial");
+		expect(getByTestId("state-2")).toHaveTextContent("partial");
+		expect(getByTestId("state-3")).toHaveTextContent("inactive");
 		expect(getByTestId("state-4")).toHaveTextContent("inactive");
-		expect(getByTestId("state-5")).toHaveTextContent("inactive");
 	});
 
 	it("should not change value when disabled", async () => {
@@ -144,7 +144,7 @@ describe("Value Changes", () => {
 
 		expect(valueDisplay).toHaveTextContent("0");
 
-		const item3 = getByTestId("item-3");
+		const item3 = getByTestId("item-3"); // Index 2, rating value 3
 		await user.click(item3);
 
 		expect(valueDisplay).toHaveTextContent("0");
@@ -156,7 +156,7 @@ describe("Value Changes", () => {
 
 		expect(valueDisplay).toHaveTextContent("0");
 
-		const item3 = getByTestId("item-3");
+		const item3 = getByTestId("item-3"); // Index 2, rating value 3
 		await user.click(item3);
 
 		expect(valueDisplay).toHaveTextContent("0");
@@ -166,8 +166,8 @@ describe("Value Changes", () => {
 		const onValueChange = vi.fn();
 		const { getByTestId, user } = setup({ onValueChange });
 
-		const item3 = getByTestId("item-3");
-		await user.click(item3);
+		const item2 = getByTestId("item-2");
+		await user.click(item2);
 
 		expect(onValueChange).toHaveBeenCalledWith(3);
 	});
@@ -175,7 +175,7 @@ describe("Value Changes", () => {
 	it("should focus the root after clicking an item", async () => {
 		const { getByTestId, user } = setup();
 		const root = getByTestId("root");
-		const item3 = getByTestId("item-3");
+		const item3 = getByTestId("item-3"); // Index 2, rating value 3
 
 		await user.click(item3);
 
@@ -345,8 +345,8 @@ describe("Input Behavior", () => {
 	it("should sync the input's value with the rating group value", async () => {
 		const { getByTestId, user, input } = setup({ name: "rating" });
 
-		const item3 = getByTestId("item-3");
-		await user.click(item3);
+		const item2 = getByTestId("item-2");
+		await user.click(item2);
 
 		expect(input).toHaveValue("3");
 	});
@@ -393,10 +393,10 @@ describe("Max Value", () => {
 	it("should render correct number of items based on max", async () => {
 		const { getByTestId } = setup({ max: 3 });
 
+		expect(getByTestId("item-0")).toBeInTheDocument();
 		expect(getByTestId("item-1")).toBeInTheDocument();
 		expect(getByTestId("item-2")).toBeInTheDocument();
-		expect(getByTestId("item-3")).toBeInTheDocument();
-		expect(() => getByTestId("item-4")).toThrow();
+		expect(() => getByTestId("item-3")).toThrow();
 	});
 
 	it("should update aria-valuemax when max changes", async () => {
@@ -418,8 +418,8 @@ describe("Value Display", () => {
 		expect(root).toHaveAttribute("aria-valuenow", "0");
 		expect(root).toHaveAttribute("aria-valuetext", "0 out of 5");
 
-		const item3 = getByTestId("item-3");
-		await user.click(item3);
+		const item2 = getByTestId("item-2");
+		await user.click(item2);
 
 		expect(root).toHaveAttribute("aria-valuenow", "3");
 		expect(root).toHaveAttribute("aria-valuetext", "3 out of 5");
@@ -443,10 +443,10 @@ describe("Value Display", () => {
 		const setHalfButton = getByTestId("set-half-button");
 		await user.click(setHalfButton);
 
+		expect(getByTestId("state-0")).toHaveTextContent("active");
 		expect(getByTestId("state-1")).toHaveTextContent("active");
-		expect(getByTestId("state-2")).toHaveTextContent("active");
-		expect(getByTestId("state-3")).toHaveTextContent("partial");
+		expect(getByTestId("state-2")).toHaveTextContent("partial");
+		expect(getByTestId("state-3")).toHaveTextContent("inactive");
 		expect(getByTestId("state-4")).toHaveTextContent("inactive");
-		expect(getByTestId("state-5")).toHaveTextContent("inactive");
 	});
 });
