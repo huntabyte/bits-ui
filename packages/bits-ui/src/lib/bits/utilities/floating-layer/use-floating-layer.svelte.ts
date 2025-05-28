@@ -208,9 +208,6 @@ class FloatingContentState {
 				"data-align": this.placedAlign,
 				style: styleToString({
 					...this.#transformedStyle,
-					// if the FloatingContent hasn't been placed yet (not all measurements done)
-					// we prevent animations so that users's animation don't kick in too early referring wrong sides
-					// animation: !this.floating.isPositioned ? "none" : undefined,
 				}),
 				...attachRef(this.contentRef),
 			}) as const
@@ -331,21 +328,36 @@ class FloatingAnchorState {
 
 const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");
 const FloatingContentContext = new Context<FloatingContentState>("Floating.Content");
+const FloatingTooltipRootContext = new Context<FloatingRootState>("Floating.Root");
 
-export function useFloatingRootState() {
-	return FloatingRootContext.set(new FloatingRootState());
+export function useFloatingRootState(tooltip: boolean = false) {
+	return tooltip
+		? FloatingTooltipRootContext.set(new FloatingRootState())
+		: FloatingRootContext.set(new FloatingRootState());
 }
 
-export function useFloatingContentState(props: FloatingContentStateProps): FloatingContentState {
-	return FloatingContentContext.set(new FloatingContentState(props, FloatingRootContext.get()));
+export function useFloatingContentState(
+	props: FloatingContentStateProps,
+	tooltip: boolean = false
+): FloatingContentState {
+	return tooltip
+		? FloatingContentContext.set(
+				new FloatingContentState(props, FloatingTooltipRootContext.get())
+			)
+		: FloatingContentContext.set(new FloatingContentState(props, FloatingRootContext.get()));
 }
 
 export function useFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
 	return new FloatingArrowState(props, FloatingContentContext.get());
 }
 
-export function useFloatingAnchorState(props: FloatingAnchorStateProps): FloatingAnchorState {
-	return new FloatingAnchorState(props, FloatingRootContext.get());
+export function useFloatingAnchorState(
+	props: FloatingAnchorStateProps,
+	tooltip = false
+): FloatingAnchorState {
+	return tooltip
+		? new FloatingAnchorState(props, FloatingTooltipRootContext.get())
+		: new FloatingAnchorState(props, FloatingRootContext.get());
 }
 
 //

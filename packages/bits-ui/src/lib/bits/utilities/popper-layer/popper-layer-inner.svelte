@@ -45,6 +45,7 @@
 		isStatic = false,
 		enabled,
 		ref,
+		tooltip = false,
 		...restProps
 	}: Omit<PopperLayerImplProps, "present" | "children"> & {
 		enabled: boolean;
@@ -72,6 +73,7 @@
 	{onPlaced}
 	{customAnchor}
 	{enabled}
+	{tooltip}
 >
 	{#snippet content({ props: floatingProps, wrapperProps })}
 		{#if restProps.forceMount && enabled}

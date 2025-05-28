@@ -29,7 +29,7 @@
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
 </script>
 
-<FloatingLayerAnchor {id} ref={triggerState.opts.ref}>
+<FloatingLayerAnchor {id} ref={triggerState.opts.ref} tooltip={true}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
