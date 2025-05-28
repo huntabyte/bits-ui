@@ -7,7 +7,7 @@ import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import type { PointerEventHandler } from "svelte/elements";
+import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 
 const TOOLTIP_CONTENT_ATTR = "data-tooltip-content";
 const TOOLTIP_TRIGGER_ATTR = "data-tooltip-trigger";
@@ -220,12 +220,12 @@ class TooltipTriggerState {
 		this.#isPointerDown.current = false;
 	};
 
-	#onpointerup = () => {
+	#onpointerup: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.#isPointerDown.current = false;
 	};
 
-	#onpointerdown = () => {
+	#onpointerdown: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.#isPointerDown.current = true;
 
@@ -249,47 +249,52 @@ class TooltipTriggerState {
 		this.#hasPointerMoveOpened = true;
 	};
 
-	#onpointerleave = () => {
+	#onpointerleave: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.root.onTriggerLeave();
 		this.#hasPointerMoveOpened = false;
 	};
 
-	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
+	#onfocus: FocusEventHandler<HTMLElement> = (e) => {
 		if (this.#isPointerDown.current || this.#isDisabled) return;
 
 		if (this.root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) return;
 		this.root.handleOpen();
 	};
 
-	#onblur = () => {
+	#onblur: FocusEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.root.handleClose();
 	};
 
-	#onclick = () => {
+	#onclick: MouseEventHandler<HTMLElement> = () => {
 		if (this.root.disableCloseOnTriggerClick || this.#isDisabled) return;
 		this.root.handleClose();
 	};
 
-	props = $derived.by(() => ({
-		id: this.opts.id.current,
-		"aria-describedby": this.root.opts.open.current ? this.root.contentNode?.id : undefined,
-		"data-state": this.root.stateAttr,
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-delay-duration": `${this.root.delayDuration}`,
-		[TOOLTIP_TRIGGER_ATTR]: "",
-		tabindex: this.#isDisabled ? undefined : 0,
-		disabled: this.opts.disabled.current,
-		onpointerup: this.#onpointerup,
-		onpointerdown: this.#onpointerdown,
-		onpointermove: this.#onpointermove,
-		onpointerleave: this.#onpointerleave,
-		onfocus: this.#onfocus,
-		onblur: this.#onblur,
-		onclick: this.#onclick,
-		...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
-	}));
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				"aria-describedby": this.root.opts.open.current
+					? this.root.contentNode?.id
+					: undefined,
+				"data-state": this.root.stateAttr,
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-delay-duration": `${this.root.delayDuration}`,
+				[TOOLTIP_TRIGGER_ATTR]: "",
+				tabindex: this.#isDisabled ? undefined : 0,
+				disabled: this.opts.disabled.current,
+				onpointerup: this.#onpointerup,
+				onpointerdown: this.#onpointerdown,
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+				onfocus: this.#onfocus,
+				onblur: this.#onblur,
+				onclick: this.#onclick,
+				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
+			}) as const
+	);
 }
 
 type TooltipContentStateProps = WithRefProps &

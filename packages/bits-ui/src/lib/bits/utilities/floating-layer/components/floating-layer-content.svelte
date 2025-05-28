@@ -25,29 +25,33 @@
 		wrapperId = useId(),
 		customAnchor = null,
 		enabled,
+		tooltip = false,
 	}: ContentImplProps = $props();
 
-	const contentState = useFloatingContentState({
-		side: box.with(() => side),
-		sideOffset: box.with(() => sideOffset),
-		align: box.with(() => align),
-		alignOffset: box.with(() => alignOffset),
-		id: box.with(() => id),
-		arrowPadding: box.with(() => arrowPadding),
-		avoidCollisions: box.with(() => avoidCollisions),
-		collisionBoundary: box.with(() => collisionBoundary),
-		collisionPadding: box.with(() => collisionPadding),
-		hideWhenDetached: box.with(() => hideWhenDetached),
-		onPlaced: box.with(() => onPlaced),
-		sticky: box.with(() => sticky),
-		updatePositionStrategy: box.with(() => updatePositionStrategy),
-		strategy: box.with(() => strategy),
-		dir: box.with(() => dir),
-		style: box.with(() => style),
-		enabled: box.with(() => enabled),
-		wrapperId: box.with(() => wrapperId),
-		customAnchor: box.with(() => customAnchor),
-	});
+	const contentState = useFloatingContentState(
+		{
+			side: box.with(() => side),
+			sideOffset: box.with(() => sideOffset),
+			align: box.with(() => align),
+			alignOffset: box.with(() => alignOffset),
+			id: box.with(() => id),
+			arrowPadding: box.with(() => arrowPadding),
+			avoidCollisions: box.with(() => avoidCollisions),
+			collisionBoundary: box.with(() => collisionBoundary),
+			collisionPadding: box.with(() => collisionPadding),
+			hideWhenDetached: box.with(() => hideWhenDetached),
+			onPlaced: box.with(() => onPlaced),
+			sticky: box.with(() => sticky),
+			updatePositionStrategy: box.with(() => updatePositionStrategy),
+			strategy: box.with(() => strategy),
+			dir: box.with(() => dir),
+			style: box.with(() => style),
+			enabled: box.with(() => enabled),
+			wrapperId: box.with(() => wrapperId),
+			customAnchor: box.with(() => customAnchor),
+		},
+		tooltip
+	);
 
 	const mergedProps = $derived(
 		mergeProps(contentState.wrapperProps, {

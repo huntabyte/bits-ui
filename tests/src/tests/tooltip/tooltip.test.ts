@@ -6,6 +6,7 @@ import { getTestKbd, setupUserEvents, sleep } from "../utils.js";
 import TooltipTest, { type TooltipTestProps } from "./tooltip-test.svelte";
 import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svelte";
 import TooltipForceMountTest from "./tooltip-force-mount-test.svelte";
+import TooltipPopoverTest from "./tooltip-popover-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -160,4 +161,14 @@ it("should use the custom anchor element when `customAnchor` is provided", async
 	const { trigger, user, queryByTestId } = setup();
 	await user.hover(trigger);
 	await waitFor(() => expect(queryByTestId("content")).not.toBeNull());
+});
+
+it("should open when composed with another floating trigger", async () => {
+	const user = setupUserEvents();
+	const t = render(TooltipPopoverTest);
+	await user.hover(t.getByTestId("trigger"));
+	await waitFor(() => expect(t.queryByTestId("tooltip-content")).not.toBeNull());
+	await user.click(t.getByTestId("trigger"));
+	await waitFor(() => expect(t.queryByTestId("popover-content")).not.toBeNull());
+	await waitFor(() => expect(t.queryByTestId("tooltip-content")).toBeNull());
 });
