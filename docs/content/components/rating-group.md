@@ -1,6 +1,7 @@
 ---
 title: Rating Group
 description: Allows users to provide ratings using customizable items (like stars).
+navLabel: Preview
 ---
 
 <script>
@@ -15,6 +16,12 @@ description: Allows users to provide ratings using customizable items (like star
 {/snippet}
 
 </ComponentPreviewV2>
+
+<Callout type="warning">
+
+This component is currently in preview. The API may change before it is considered stable. You will know when it is stable because the component will be exported as `RatingGroup` instead of `unstable_RatingGroup`. Your feedback will be invaluable in shaping the final API.
+
+</Callout>
 
 ## Structure
 

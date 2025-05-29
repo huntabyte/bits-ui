@@ -30,6 +30,7 @@ export const root = createApiSchema<RatingGroupRootPropsWithoutHTML>({
 			description:
 				"The value of the rating group. You can bind to this value to control the rating group's value from outside the component.",
 			bindable: true,
+			default: "0",
 		}),
 		onValueChange: createFunctionProp({
 			definition: OnNumberValueChangeProp,
@@ -80,7 +81,7 @@ export const root = createApiSchema<RatingGroupRootPropsWithoutHTML>({
 		"aria-valuetext": createUnionProp({
 			description: "The text that describes the rating group's value.",
 			options: ["string", "(value: number, max: number) => string"],
-			default: "(value: number, max: number) => `${value} out of ${max}`",
+			default: "`${value} out of ${max}`",
 			definition: RatingGroupAriaValuetext,
 		}),
 		...withChildProps({
@@ -124,7 +125,7 @@ export const item = createApiSchema<RatingGroupItemPropsWithoutHTML>({
 			description: "Whether the rating item is disabled.",
 		}),
 		...withChildProps({
-			elType: "HTMLButtonElement",
+			elType: "HTMLDivElement",
 			childDef: RatingGroupItemChildSnippetProps,
 			childrenDef: RatingGroupItemChildrenSnippetProps,
 		}),
@@ -132,11 +133,11 @@ export const item = createApiSchema<RatingGroupItemPropsWithoutHTML>({
 	dataAttributes: [
 		createDataAttrSchema({
 			name: "disabled",
-			description: "Present when the rating item is disabled.",
+			description: "Present when the rating group is disabled.",
 		}),
 		createDataAttrSchema({
 			name: "readonly",
-			description: "Present when the rating item is readonly.",
+			description: "Present when the rating group is readonly.",
 		}),
 		createDataAttrSchema({
 			name: "value",
