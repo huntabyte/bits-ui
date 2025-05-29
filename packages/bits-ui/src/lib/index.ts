@@ -43,6 +43,7 @@ export {
 	Portal,
 	IsUsingKeyboard,
 	computeCommandScore,
+	getBitsConfig,
 } from "./bits/index.js";
 
 export * from "./shared/index.js";

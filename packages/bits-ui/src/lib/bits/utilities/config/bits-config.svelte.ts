@@ -67,6 +67,7 @@ export class BitsConfigState {
 		const fallback = fallbackFactory(parent, opts);
 		this.opts = {
 			defaultPortalTo: fallback.of((config) => config.defaultPortalTo),
+			defaultLocale: fallback.of((config) => config.defaultLocale),
 		};
 	}
 }

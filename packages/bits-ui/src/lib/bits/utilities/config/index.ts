@@ -1,2 +1,1 @@
-export { default as BitsConfig } from "./components/bits-config.svelte";
-export { getBitsConfig, BitsConfigState } from "./bits-config.svelte.js";
+export * from "./exports.js";
