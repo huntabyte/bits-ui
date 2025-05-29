@@ -634,6 +634,23 @@ describe("Hover Preview", () => {
 		expect(t.getByTestId("state-2")).toHaveTextContent("active");
 		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
 	});
+
+	it("should not show preview below min value", async () => {
+		const t = setup({ value: 3, min: 2, max: 5, hoverPreview: true });
+
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("active");
+		expect(t.getByTestId("state-2")).toHaveTextContent("active");
+		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+
+		const item1 = t.getByTestId("item-0");
+		await t.user.hover(item1);
+
+		expect(t.getByTestId("state-0")).toHaveTextContent("active");
+		expect(t.getByTestId("state-1")).toHaveTextContent("active");
+		expect(t.getByTestId("state-2")).toHaveTextContent("inactive");
+		expect(t.getByTestId("state-3")).toHaveTextContent("inactive");
+	});
 });
 
 describe("Decimal Input Sequences", () => {

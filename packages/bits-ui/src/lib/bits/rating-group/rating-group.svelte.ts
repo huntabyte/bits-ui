@@ -1,4 +1,4 @@
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, DOMContext } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
@@ -37,15 +37,14 @@ type RatingGroupRootStateProps = WithRefProps<
 class RatingGroupRootState {
 	readonly opts: RatingGroupRootStateProps;
 
-	// State
 	#hoverValue = $state<number | null>(null);
 	#keySequence = $state<string>("");
-	#keySequenceTimeout: ReturnType<typeof setTimeout> | null = $state(null);
+	#keySequenceTimeout: number | null = null;
+	domContext: DOMContext;
 
-	// Derived values
-	hasValue = $derived.by(() => this.opts.value.current > 0);
-	valueToUse = $derived.by(() => this.#hoverValue ?? this.opts.value.current);
-	isRTL = $derived.by(() => {
+	readonly hasValue = $derived.by(() => this.opts.value.current > 0);
+	readonly valueToUse = $derived.by(() => this.#hoverValue ?? this.opts.value.current);
+	readonly isRTL = $derived.by(() => {
 		const element = this.opts.ref.current;
 		if (!element) return false;
 		const style = getComputedStyle(element);
@@ -53,13 +52,12 @@ class RatingGroupRootState {
 	});
 
 	readonly ariaValuetext = $derived.by(() => {
-		const { ariaValuetext, value, max } = this.opts;
-		return typeof ariaValuetext.current === "function"
-			? ariaValuetext.current(value.current, max.current)
-			: ariaValuetext.current;
+		return typeof this.opts.ariaValuetext.current === "function"
+			? this.opts.ariaValuetext.current(this.opts.value.current, this.opts.max.current)
+			: this.opts.ariaValuetext.current;
 	});
 
-	items = $derived.by(() => {
+	readonly items = $derived.by(() => {
 		const { max, allowHalf } = this.opts;
 		const value = this.valueToUse;
 
@@ -82,6 +80,7 @@ class RatingGroupRootState {
 		this.opts = opts;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
+		this.domContext = new DOMContext(this.opts.ref);
 	}
 
 	isActive(itemIndex: number): boolean {
@@ -95,15 +94,25 @@ class RatingGroupRootState {
 	}
 
 	setHoverValue(value: number | null): void {
-		const { readonly, disabled, hoverPreview } = this.opts;
-		if (readonly.current || disabled.current || !hoverPreview.current) return;
-		this.#hoverValue = value;
+		if (
+			this.opts.readonly.current ||
+			this.opts.disabled.current ||
+			!this.opts.hoverPreview.current
+		)
+			return;
+
+		this.#hoverValue =
+			value === null
+				? null
+				: Math.max(this.opts.min.current, Math.min(this.opts.max.current, value));
 	}
 
 	setValue(value: number): void {
-		const { readonly, disabled, min, max } = this.opts;
-		if (readonly.current || disabled.current) return;
-		this.opts.value.current = Math.max(min.current, Math.min(max.current, value));
+		if (this.opts.readonly.current || this.opts.disabled.current) return;
+		this.opts.value.current = Math.max(
+			this.opts.min.current,
+			Math.min(this.opts.max.current, value)
+		);
 	}
 
 	calculateRatingFromPointer(
@@ -130,7 +139,7 @@ class RatingGroupRootState {
 		this.setHoverValue(null);
 	}
 
-	handlers: Record<string, () => void> = {
+	readonly handlers: Record<string, () => void> = {
 		[kbd.ARROW_UP]: () => this.#adjustValue(this.opts.allowHalf.current ? 0.5 : 1),
 		[kbd.ARROW_RIGHT]: () => {
 			const increment = this.opts.allowHalf.current ? 0.5 : 1;
@@ -149,7 +158,6 @@ class RatingGroupRootState {
 		[kbd.PAGE_DOWN]: () => this.#adjustValue(-1),
 	};
 
-	// Keyboard handling
 	onkeydown(e: BitsKeyboardEvent): void {
 		if (this.opts.disabled.current || this.opts.readonly.current) return;
 
@@ -213,27 +221,27 @@ class RatingGroupRootState {
 		this.#keySequence = baseValue.toString();
 
 		if (this.#keySequenceTimeout) {
-			clearTimeout(this.#keySequenceTimeout);
+			this.domContext.clearTimeout(this.#keySequenceTimeout);
 		}
 
-		this.#keySequenceTimeout = setTimeout(() => this.#clearKeySequence(), 1000);
+		this.#keySequenceTimeout = this.domContext.setTimeout(() => this.#clearKeySequence(), 1000);
 	}
 
 	#clearKeySequence(): void {
 		this.#keySequence = "";
 		if (this.#keySequenceTimeout) {
-			clearTimeout(this.#keySequenceTimeout);
+			this.domContext.clearTimeout(this.#keySequenceTimeout);
 			this.#keySequenceTimeout = null;
 		}
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		items: this.items,
 		value: this.opts.value.current,
 		max: this.opts.max.current,
 	}));
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		return {
 			id: this.opts.id.current,
 			role: "slider",
@@ -267,10 +275,12 @@ type RatingGroupItemStateProps = WithRefProps<
 class RatingGroupItemState {
 	readonly opts: RatingGroupItemStateProps;
 	readonly root: RatingGroupRootState;
-	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
-	#isActive = $derived.by(() => this.root.isActive(this.opts.index.current));
-	#isPartial = $derived.by(() => this.root.isPartial(this.opts.index.current));
-	#state: RatingGroupItemStateType = $derived.by(() => {
+	readonly #isDisabled = $derived.by(
+		() => this.opts.disabled.current || this.root.opts.disabled.current
+	);
+	readonly #isActive = $derived.by(() => this.root.isActive(this.opts.index.current));
+	readonly #isPartial = $derived.by(() => this.root.isPartial(this.opts.index.current));
+	readonly #state: RatingGroupItemStateType = $derived.by(() => {
 		if (this.#isActive) return "active";
 		if (this.#isPartial) return "partial";
 		return "inactive";
@@ -310,13 +320,13 @@ class RatingGroupItemState {
 		this.root.setHoverValue(hoverValue);
 	}
 
-	snippetProps = $derived.by(() => {
+	readonly snippetProps = $derived.by(() => {
 		return {
 			state: this.#state,
 		} as const;
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -337,8 +347,8 @@ class RatingGroupItemState {
 
 class RatingGroupHiddenInputState {
 	readonly root: RatingGroupRootState;
-	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
-	props = $derived.by(
+	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
+	readonly props = $derived.by(
 		() =>
 			({
 				name: this.root.opts.name.current,
