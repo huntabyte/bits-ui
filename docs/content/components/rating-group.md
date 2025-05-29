@@ -27,7 +27,7 @@ This component is currently in preview. The API may change before it is consider
 
 ```svelte
 <script lang="ts">
-	import { experimental_RatingGroup as RatingGroup } from "bits-ui";
+	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
 </script>
 
 <RatingGroup.Root max={5}>
@@ -53,7 +53,7 @@ In the example below, we're creating a custom `MyRatingGroup` component that ren
 
 ```svelte title="MyRatingGroup.svelte"
 <script lang="ts">
-	import { experimental_RatingGroup as RatingGroup, type WithoutChildrenOrChild } from "bits-ui";
+	import { unstable_RatingGroup as RatingGroup, type WithoutChildrenOrChild } from "bits-ui";
 	import Star from "phosphor-svelte/lib/Star";
 	import StarHalf from "phosphor-svelte/lib/StarHalf";
 
@@ -114,7 +114,7 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { experimental_RatingGroup as RatingGroup } from "bits-ui";
+	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
 	let myRating = $state(3);
 </script>
 
@@ -137,7 +137,7 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { experimental_RatingGroup as RatingGroup } from "bits-ui";
+	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
 	let myRating = $state(0);
 
 	function getValue() {
