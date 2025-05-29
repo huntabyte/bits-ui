@@ -5,18 +5,13 @@ description: A global context provider for configuring default props across all 
 
 ## Overview
 
-The `BitsConfig` component is a context provider that lets you set default values for common props across all Bits UI components within its scope. It's particularly useful for:
-
--   Setting consistent portal targets across your app
--   Configuring default locales for internationalization
--   Avoiding repetitive prop passing to multiple components
+`BitsConfig` is a global context provider that simplifies managing default prop values across all Bits UI components within its scope. Use it to set defaults like portal targets or locales centrally, and avoid the need to pass the same props to every component.
 
 ## Key Features
 
--   **Inheritance**: Child `BitsConfig` components inherit parent settings and can override specific values
--   **Scoped defaults**: Only affects components within the config scope
--   **Fallback chain**: Resolves values through the entire inheritance chain
--   **Type-safe**: Full TypeScript support for all configuration options
+-   **Scoped defaults**: Applies defaults only to components within its scope.
+-   **Inheritance**: Child `BitsConfig` instances inherit parent values and can selectively override them.
+-   **Fallback resolution**: Automatically resolves values through the hierarchy of configs.
 
 ## Props
 
@@ -27,9 +22,11 @@ The `BitsConfig` component is a context provider that lets you set default value
 
 ## Basic Usage
 
+Configure default props at the top level:
+
 ```svelte
 <script lang="ts">
-	import { BitsConfig, Dialog } from "bits-ui";
+	import { BitsConfig, Dialog, DateField } from "bits-ui";
 </script>
 
 <!-- All components inside will use these defaults -->
@@ -41,6 +38,10 @@ The `BitsConfig` component is a context provider that lets you set default value
 			<Dialog.Content>
 				<Dialog.Title>Dialog Title</Dialog.Title>
 				<Dialog.Description>Dialog content here</Dialog.Description>
+				<!-- DateField will use the default locale -->
+				<DateField.Root>
+					<!-- ... -->
+				</DateField.Root>
 			</Dialog.Content>
 		</Dialog.Portal>
 	</Dialog.Root>
@@ -49,7 +50,7 @@ The `BitsConfig` component is a context provider that lets you set default value
 
 ## Inheritance & Overrides
 
-`BitsConfig` components can be nested, creating an inheritance chain where child configs can override parent settings:
+Child instances inherit and override parent values:
 
 ```svelte
 <script lang="ts">
@@ -60,7 +61,7 @@ The `BitsConfig` component is a context provider that lets you set default value
 <div id="tooltip-portal"></div>
 
 <!-- Root level config -->
-<BitsConfig defaultPortalTo="#main-portal" defaultLocale="en">
+<BitsConfig defaultPortalTo="#main-portal" defaultLocale="de">
 	<!-- This dialog will portal to #main-portal -->
 	<Dialog.Root>
 		<Dialog.Portal>
@@ -81,7 +82,13 @@ The `BitsConfig` component is a context provider that lets you set default value
 		<!-- This dialog will also portal to #tooltip-portal -->
 		<Dialog.Root>
 			<Dialog.Portal>
-				<Dialog.Content>Nested dialog</Dialog.Content>
+				<Dialog.Content>
+					Nested dialog
+					<!-- This date field will use the "de" locale -->
+					<DateField.Root>
+						<!-- ... -->
+					</DateField.Root>
+				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog.Root>
 	</BitsConfig>
@@ -90,9 +97,9 @@ The `BitsConfig` component is a context provider that lets you set default value
 
 ## Real-world Examples
 
-### App-wide Configuration
+### Global Defaults
 
-Set up consistent defaults at your app root:
+Set app-wide defaults at the root layout:
 
 ```svelte title="+layout.svelte"
 <script lang="ts">
@@ -107,14 +114,14 @@ Set up consistent defaults at your app root:
 </BitsConfig>
 ```
 
-### Theme-specific Portal Targets
+### Theme-specific Configuration
 
-Different portal containers for different UI sections:
+Different portal targets for distinct UI regions:
 
 ```svelte
 <script lang="ts">
-	import { BitsConfig, Dialog, Popover, Menubar } from "bits-ui";
-	import { MyHeader, MySidebar, MyContent } from "$lib/components/index.js";
+	import { BitsConfig } from "bits-ui";
+	import { MyHeader, MySidebar, MyContent } from "$lib/components";
 </script>
 
 <div id="header-portals"></div>
@@ -123,29 +130,26 @@ Different portal containers for different UI sections:
 
 <header>
 	<BitsConfig defaultPortalTo="#header-portals">
-		<!-- Any header portals will default to the header container -->
 		<MyHeader />
 	</BitsConfig>
 </header>
 
 <aside>
 	<BitsConfig defaultPortalTo="#sidebar-portals">
-		<!-- Sidebar tooltips would portal to sidebar container -->
 		<MySidebar />
 	</BitsConfig>
 </aside>
 
 <main>
 	<BitsConfig defaultPortalTo="#main-portals">
-		<!-- Main content modals portal to main container -->
 		<MyContent />
 	</BitsConfig>
 </main>
 ```
 
-### Per-route Locale Configuration
+### Route-specific Locales
 
-Override locale for specific routes:
+Apply specific locales for certain routes:
 
 ```svelte title="routes/(admin)/+layout.svelte"
 <script lang="ts">
@@ -153,15 +157,14 @@ Override locale for specific routes:
 	let { children } = $props();
 </script>
 
-<!-- Admin section always uses English -->
 <BitsConfig defaultLocale="en">
 	{@render children()}
 </BitsConfig>
 ```
 
-## Component Override
+## Component-level Overrides
 
-Individual components can still override the config defaults:
+Individual components can override global defaults:
 
 ```svelte
 <script lang="ts">
@@ -185,11 +188,11 @@ Individual components can still override the config defaults:
 </BitsConfig>
 ```
 
-## Resolution Priority
+## Value Resolution Order
 
-Values are resolved in this order:
+Bits UI resolves default values in this priority:
 
-1. **Component prop** - Direct prop on the component
-2. **Nearest BitsConfig** - Closest parent config value
-3. **Inherited config** - Value from parent configs up the chain
-4. **Default fallback** - Built-in component default (`"body"` for portals, `"en"` for locale)
+1. **Direct Component prop**
+2. **Nearest parent BitsConfig**
+3. **Inherited from parent BitsConfig(s)**
+4. **Built-in component default** (e.g., portals default to `"body"`, locales default to `"en"`)
