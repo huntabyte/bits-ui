@@ -396,7 +396,7 @@ You can enhance the accessibility experience with custom `aria-valuetext`:
 
 ```svelte
 <RatingGroup.Root
-	ariaValuetext={(value, max) => {
+	"aria-valuetext"={(value, max) => {
 		if (value === 0) return "No rating selected";
 		return `${value} out of ${max} stars. ${value >= 4 ? "Excellent" : value >= 3 ? "Good" : "Fair"} rating.`;
 	}}
