@@ -7,7 +7,7 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import type {
 	RatingGroupAriaValuetext,
 	RatingGroupItemState as RatingGroupItemStateType,
@@ -15,8 +15,10 @@ import type {
 import type { Orientation } from "$lib/shared/index.js";
 import { kbd } from "$lib/internal/kbd.js";
 
-const RATING_GROUP_ROOT_ATTR = "data-rating-group-root";
-const RATING_GROUP_ITEM_ATTR = "data-rating-group-item";
+const ratingGroupAttrs = createBitsAttrs({
+	component: "rating-group",
+	parts: ["root", "item"],
+});
 
 type RatingGroupRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -277,7 +279,7 @@ class RatingGroupRootState {
 			"data-readonly": this.opts.readonly.current ? "" : undefined,
 			"data-orientation": this.opts.orientation.current,
 			tabindex: this.opts.disabled.current ? -1 : 0,
-			[RATING_GROUP_ROOT_ATTR]: "",
+			[ratingGroupAttrs.root]: "",
 			onkeydown: this.onkeydown,
 			onpointerleave: this.onpointerleave,
 			...attachRef(this.opts.ref),
@@ -376,7 +378,7 @@ class RatingGroupItemState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-readonly": this.root.opts.readonly.current ? "" : undefined,
 				"data-state": this.#state,
-				[RATING_GROUP_ITEM_ATTR]: "",
+				[ratingGroupAttrs.item]: "",
 				//
 				onclick: this.onclick,
 				onpointermove: this.onpointermove,

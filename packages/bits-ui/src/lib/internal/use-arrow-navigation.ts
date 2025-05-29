@@ -11,9 +11,9 @@ interface ArrowNavigationOptions {
 	arrowKeyOptions?: ArrowKeyOptions;
 
 	/**
-	 * The attribute name to find the collection items in the parent element.
+	 * The selector to find the collection items in the parent element.
 	 */
-	attributeName: string;
+	candidateSelector: string;
 
 	/**
 	 * The parent element where contains all the collection items, this will collect every item to be used when nav
@@ -85,7 +85,7 @@ export function useArrowNavigation(
 
 	const {
 		arrowKeyOptions = "both",
-		attributeName,
+		candidateSelector: attributeName,
 		itemsArray = [],
 		loop = true,
 		dir = "ltr",

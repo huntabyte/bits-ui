@@ -2,7 +2,7 @@ import { type ReadableBoxedValues, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -10,6 +10,11 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 import { isElement } from "$lib/internal/is.js";
+
+const popoverAttrs = createBitsAttrs({
+	component: "popover",
+	parts: ["root", "trigger", "content", "close"],
+});
 
 type PopoverRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -76,7 +81,7 @@ class PopoverTriggerState {
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"aria-controls": this.#getAriaControls(),
-				"data-popover-trigger": "",
+				[popoverAttrs.trigger]: "",
 				disabled: this.opts.disabled.current,
 				//
 				onkeydown: this.onkeydown,
@@ -106,7 +111,7 @@ class PopoverContentState {
 		if (e.defaultPrevented) return;
 		if (!isElement(e.target)) return;
 
-		const closestTrigger = e.target.closest(`[data-popover-trigger]`);
+		const closestTrigger = e.target.closest(popoverAttrs.selector("trigger"));
 		if (closestTrigger === this.root.triggerNode) return;
 		this.root.handleClose();
 	};
@@ -132,7 +137,7 @@ class PopoverContentState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-popover-content": "",
+				[popoverAttrs.content]: "",
 				style: {
 					pointerEvents: "auto",
 				},
@@ -178,7 +183,7 @@ class PopoverCloseState {
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				type: "button",
-				"data-popover-close": "",
+				[popoverAttrs.close]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

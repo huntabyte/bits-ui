@@ -7,7 +7,12 @@ import type {
 	BitsMouseEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getAriaChecked,
+	getAriaRequired,
+	getDataDisabled,
+} from "$lib/internal/attrs.js";
 import type { Orientation } from "$lib/shared/index.js";
 import {
 	type UseRovingFocusReturn,
@@ -15,8 +20,10 @@ import {
 } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 
-const RADIO_GROUP_ROOT_ATTR = "data-radio-group-root";
-const RADIO_GROUP_ITEM_ATTR = "data-radio-group-item";
+const radioGroupAttrs = createBitsAttrs({
+	component: "radio-group",
+	parts: ["root", "item"],
+});
 
 type RadioGroupRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -30,14 +37,14 @@ type RadioGroupRootStateProps = WithRefProps<
 >;
 class RadioGroupRootState {
 	readonly opts: RadioGroupRootStateProps;
+	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
 	rovingFocusGroup: UseRovingFocusReturn;
-	hasValue = $derived.by(() => this.opts.value.current !== "");
 
 	constructor(opts: RadioGroupRootStateProps) {
 		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNode: this.opts.ref,
-			candidateAttr: RADIO_GROUP_ITEM_ATTR,
+			candidateAttr: radioGroupAttrs.item,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});
@@ -51,7 +58,7 @@ class RadioGroupRootState {
 		this.opts.value.current = value;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -59,15 +66,11 @@ class RadioGroupRootState {
 				"aria-required": getAriaRequired(this.opts.required.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-orientation": this.opts.orientation.current,
-				[RADIO_GROUP_ROOT_ATTR]: "",
+				[radioGroupAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
 }
-
-//
-// RADIO GROUP ITEM
-//
 
 type RadioGroupItemStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -79,9 +82,11 @@ type RadioGroupItemStateProps = WithRefProps<
 class RadioGroupItemState {
 	readonly opts: RadioGroupItemStateProps;
 	readonly root: RadioGroupRootState;
-	checked = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
-	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
-	#isChecked = $derived.by(() => this.root.isChecked(this.opts.value.current));
+	readonly checked = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
+	readonly #isDisabled = $derived.by(
+		() => this.opts.disabled.current || this.root.opts.disabled.current
+	);
+	readonly #isChecked = $derived.by(() => this.root.isChecked(this.opts.value.current));
 	#tabIndex = $state(-1);
 
 	constructor(opts: RadioGroupItemStateProps, root: RadioGroupRootState) {
@@ -131,9 +136,9 @@ class RadioGroupItemState {
 		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
 	}
 
-	snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
+	readonly snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -143,7 +148,7 @@ class RadioGroupItemState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": this.#isChecked ? "checked" : "unchecked",
 				"aria-checked": getAriaChecked(this.#isChecked, false),
-				[RADIO_GROUP_ITEM_ATTR]: "",
+				[radioGroupAttrs.item]: "",
 				type: "button",
 				role: "radio",
 				tabindex: this.#tabIndex,
@@ -156,14 +161,10 @@ class RadioGroupItemState {
 	);
 }
 
-//
-// INPUT
-//
-
 class RadioGroupInputState {
 	readonly root: RadioGroupRootState;
-	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
-	props = $derived.by(
+	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
+	readonly props = $derived.by(
 		() =>
 			({
 				name: this.root.opts.name.current,

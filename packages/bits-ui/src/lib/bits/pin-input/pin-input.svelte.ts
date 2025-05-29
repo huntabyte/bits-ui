@@ -11,15 +11,17 @@ import type {
 	BitsMouseEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { getDisabled } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getDisabled } from "$lib/internal/attrs.js";
 import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
 export const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
 export const REGEXP_ONLY_DIGITS_AND_CHARS = "^[a-zA-Z0-9]+$";
 
-const ROOT_ATTR = "data-pin-input-root";
-const CELL_ATTR = "data-pin-input-cell";
+const pinInputAttrs = createBitsAttrs({
+	component: "pin-input",
+	parts: ["root", "cell"],
+});
 
 type PinInputRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -220,7 +222,7 @@ class PinInputRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[ROOT_ATTR]: "",
+				[pinInputAttrs.root]: "",
 				style: this.#rootStyles,
 				...attachRef(this.opts.ref),
 			}) as const
@@ -527,7 +529,7 @@ class PinInputCellState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[CELL_ATTR]: "",
+				[pinInputAttrs.cell]: "",
 				"data-active": this.opts.cell.current.isActive ? "" : undefined,
 				"data-inactive": !this.opts.cell.current.isActive ? "" : undefined,
 				...attachRef(this.opts.ref),

@@ -1,6 +1,6 @@
 import { attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
-import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -8,18 +8,10 @@ import { untrack } from "svelte";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
-function createAttrs(variant: DialogVariant) {
-	return {
-		content: `data-${variant}-content`,
-		trigger: `data-${variant}-trigger`,
-		overlay: `data-${variant}-overlay`,
-		title: `data-${variant}-title`,
-		description: `data-${variant}-description`,
-		close: `data-${variant}-close`,
-		cancel: `data-${variant}-cancel`,
-		action: `data-${variant}-action`,
-	} as const;
-}
+const dialogAttrs = createBitsAttrs({
+	component: "dialog",
+	parts: ["content", "trigger", "overlay", "title", "description", "close", "cancel", "action"],
+});
 
 type DialogRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -38,7 +30,6 @@ class DialogRootState {
 	triggerId = $state<string | undefined>(undefined);
 	descriptionId = $state<string | undefined>(undefined);
 	cancelNode = $state<HTMLElement | null>(null);
-	attrs = $derived.by(() => createAttrs(this.opts.variant.current));
 
 	constructor(opts: DialogRootStateProps) {
 		this.opts = opts;
@@ -55,6 +46,10 @@ class DialogRootState {
 		if (!this.opts.open.current) return;
 		this.opts.open.current = false;
 	}
+
+	getBitsAttr: typeof dialogAttrs.getAttr = (part) => {
+		return dialogAttrs.getAttr(part, this.opts.variant.current);
+	};
 
 	sharedProps = $derived.by(
 		() =>
@@ -99,7 +94,7 @@ class DialogTriggerState {
 				"aria-haspopup": "dialog",
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"aria-controls": this.root.contentId,
-				[this.root.attrs.trigger]: "",
+				[this.root.getBitsAttr("trigger")]: "",
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
 				disabled: this.opts.disabled.current ? true : undefined,
@@ -122,7 +117,6 @@ type DialogCloseStateProps = WithRefProps &
 class DialogCloseState {
 	readonly opts: DialogCloseStateProps;
 	readonly root: DialogRootState;
-	#attr = $derived.by(() => this.root.attrs[this.opts.variant.current]);
 
 	constructor(opts: DialogCloseStateProps, root: DialogRootState) {
 		this.opts = opts;
@@ -149,7 +143,7 @@ class DialogCloseState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.#attr]: "",
+				[this.root.getBitsAttr(this.opts.variant.current)]: "",
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				disabled: this.opts.disabled.current ? true : undefined,
@@ -165,7 +159,6 @@ type DialogActionStateProps = WithRefProps;
 class DialogActionState {
 	readonly opts: DialogActionStateProps;
 	readonly root: DialogRootState;
-	#attr = $derived.by(() => this.root.attrs.action);
 
 	constructor(opts: DialogActionStateProps, root: DialogRootState) {
 		this.opts = opts;
@@ -176,7 +169,7 @@ class DialogActionState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.#attr]: "",
+				[this.root.getBitsAttr("action")]: "",
 				...this.root.sharedProps,
 				...attachRef(this.opts.ref),
 			}) as const
@@ -203,7 +196,7 @@ class DialogTitleState {
 				id: this.opts.id.current,
 				role: "heading",
 				"aria-level": this.opts.level.current,
-				[this.root.attrs.title]: "",
+				[this.root.getBitsAttr("title")]: "",
 				...this.root.sharedProps,
 				...attachRef(this.opts.ref, (v) => (this.root.titleId = v?.id)),
 			}) as const
@@ -225,7 +218,7 @@ class DialogDescriptionState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.root.attrs.description]: "",
+				[this.root.getBitsAttr("description")]: "",
 				...this.root.sharedProps,
 				...attachRef(this.opts.ref, (v) => {
 					this.root.descriptionNode = v;
@@ -256,7 +249,7 @@ class DialogContentState {
 				"aria-modal": "true",
 				"aria-describedby": this.root.descriptionId,
 				"aria-labelledby": this.root.titleId,
-				[this.root.attrs.content]: "",
+				[this.root.getBitsAttr("content")]: "",
 				style: {
 					pointerEvents: "auto",
 					outline: this.root.opts.variant.current === "alert-dialog" ? "none" : undefined,
@@ -288,7 +281,7 @@ class DialogOverlayState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.root.attrs.overlay]: "",
+				[this.root.getBitsAttr("overlay")]: "",
 				style: {
 					pointerEvents: "auto",
 				},
@@ -332,7 +325,7 @@ class AlertDialogCancelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.root.attrs.cancel]: "",
+				[this.root.getBitsAttr("cancel")]: "",
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				tabindex: 0,

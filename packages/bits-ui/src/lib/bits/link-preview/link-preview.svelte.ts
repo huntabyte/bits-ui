@@ -1,15 +1,17 @@
 import { afterSleep, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
-import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 
-const LINK_PREVIEW_CONTENT_ATTR = "data-link-preview-content";
-const LINK_PREVIEW_TRIGGER_ATTR = "data-link-preview-trigger";
+const linkPreviewAttrs = createBitsAttrs({
+	component: "link-preview",
+	parts: ["content", "trigger"],
+});
 
 type LinkPreviewRootStateProps = WritableBoxedValues<{
 	open: boolean;
@@ -164,7 +166,7 @@ class LinkPreviewTriggerState {
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"aria-controls": this.root.contentNode?.id,
 				role: "button",
-				[LINK_PREVIEW_TRIGGER_ATTR]: "",
+				[linkPreviewAttrs.trigger]: "",
 				onpointerenter: this.onpointerenter,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
@@ -254,7 +256,7 @@ class LinkPreviewContentState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				[LINK_PREVIEW_CONTENT_ATTR]: "",
+				[linkPreviewAttrs.content]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onfocusout: this.onfocusout,
