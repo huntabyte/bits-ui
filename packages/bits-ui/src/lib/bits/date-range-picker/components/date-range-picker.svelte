@@ -11,6 +11,7 @@
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/bits-config.svelte.js";
 
 	let {
 		open = $bindable(false),
@@ -30,7 +31,7 @@
 		granularity,
 		readonlySegments = [],
 		hourCycle,
-		locale = "en",
+		locale,
 		hideTimeZone = false,
 		required = false,
 		calendarLabel = "Event",
@@ -136,7 +137,7 @@
 		granularity: box.with(() => granularity),
 		readonlySegments: box.with(() => readonlySegments),
 		hourCycle: box.with(() => hourCycle),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		required: box.with(() => required),
 		calendarLabel: box.with(() => calendarLabel),

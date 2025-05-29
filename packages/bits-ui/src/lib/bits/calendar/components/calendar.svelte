@@ -7,6 +7,7 @@
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/bits-config.svelte.js";
 
 	let {
 		child,
@@ -24,7 +25,7 @@
 		isDateUnavailable = () => false,
 		fixedWeeks = false,
 		numberOfMonths = 1,
-		locale = "en",
+		locale: localeProp,
 		calendarLabel = "Event",
 		disabled = false,
 		readonly = false,
@@ -84,7 +85,7 @@
 		isDateUnavailable: box.with(() => isDateUnavailable),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => localeProp),
 		calendarLabel: box.with(() => calendarLabel),
 		readonly: box.with(() => readonly),
 		disabled: box.with(() => disabled),

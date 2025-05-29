@@ -1,20 +1,8 @@
-/**
- * Hierarchical configuration system that provides inheritance and fallback behavior
- * for nested BitsConfig components.
- *
- * @example
- * ```svelte
- * <BitsConfig defaultPortalTo="#some-element">
- *   <BitsConfig someOtherProp="value">
- *     <SomeComponent /> <!-- inherits defaultPortalTo="#some-element" -->
- *   </BitsConfig>
- * </BitsConfig>
- */
-
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsConfigPropsWithoutChildren } from "$lib/bits/utilities/config/types.js";
 import { Context } from "runed";
-import { box, type ReadableBox } from "svelte-toolbelt";
+import { box, type Getter, type ReadableBox } from "svelte-toolbelt";
+import type { PortalProps } from "$lib/types.js";
 
 type BitsConfigStateProps = ReadableBoxedValues<BitsConfigPropsWithoutChildren>;
 
@@ -61,7 +49,7 @@ export function useBitsConfig(opts: BitsConfigStateProps) {
  * ```
  */
 export class BitsConfigState {
-	readonly opts: BitsConfigStateProps;
+	readonly opts: Required<BitsConfigStateProps>;
 
 	constructor(parent: BitsConfigState | null, opts: BitsConfigStateProps) {
 		const fallback = fallbackFactory(parent, opts);
@@ -122,4 +110,34 @@ function fallbackFactory(
 			});
 		},
 	};
+}
+
+/**
+ * Resolves a locale value using this priority:
+ * 1. The getter prop value (if defined)
+ * 2. The default locale from the configuration (if no getter prop value is defined)
+ * 3. "en" (if no value found in chain)
+ */
+export function resolveLocaleProp(getLocaleProp: Getter<string | undefined>) {
+	const config = getBitsConfig();
+	return box.with(() => {
+		const localeProp = getLocaleProp();
+		if (localeProp !== undefined) return localeProp;
+		return config.defaultLocale.current ?? "en";
+	});
+}
+
+/**
+ * Resolves a portal to value using this priority:
+ * 1. The getter prop value (if defined)
+ * 2. The default portal to from the configuration (if no getter prop value is defined)
+ * 3. "body" (if no value found in chain)
+ */
+export function resolvePortalToProp(getPortalToProp: Getter<PortalProps["to"]>) {
+	const config = getBitsConfig();
+	return box.with(() => {
+		const portalToProp = getPortalToProp();
+		if (portalToProp !== undefined) return portalToProp;
+		return config.defaultPortalTo.current ?? "body";
+	});
 }

@@ -7,6 +7,7 @@
 	import { createId } from "$lib/internal/create-id.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/bits-config.svelte.js";
 
 	const uid = $props.id();
 
@@ -26,7 +27,7 @@
 		isDateUnavailable = () => false,
 		fixedWeeks = false,
 		numberOfMonths = 1,
-		locale = "en",
+		locale,
 		calendarLabel = "Event",
 		disabled = false,
 		readonly = false,
@@ -107,7 +108,7 @@
 		weekStartsOn: box.with(() => weekStartsOn),
 		weekdayFormat: box.with(() => weekdayFormat),
 		numberOfMonths: box.with(() => numberOfMonths),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		calendarLabel: box.with(() => calendarLabel),
 		fixedWeeks: box.with(() => fixedWeeks),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),

@@ -11,13 +11,14 @@
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/bits-config.svelte.js";
 
 	let {
 		disabled = false,
 		granularity,
 		hideTimeZone = false,
 		hourCycle,
-		locale = "en",
+		locale,
 		maxValue,
 		minValue,
 		onPlaceholderChange = noop,
@@ -78,7 +79,7 @@
 		granularity: box.with(() => granularity),
 		hideTimeZone: box.with(() => hideTimeZone),
 		hourCycle: box.with(() => hourCycle),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		maxValue: box.with(() => maxValue),
 		minValue: box.with(() => minValue),
 		validate: box.with(() => validate),
