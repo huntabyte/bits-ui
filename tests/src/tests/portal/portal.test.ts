@@ -3,7 +3,7 @@ import { it, expect } from "vitest";
 import { tick } from "svelte";
 import PortalTest from "./portal-test.svelte";
 
-type PortalTarget = HTMLElement | string | DocumentFragment;
+type PortalTarget = Element | string;
 
 it("should portal content to document.body by default", async () => {
 	render(PortalTest);

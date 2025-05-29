@@ -30,8 +30,9 @@
 		}
 
 		if (DEV && !(localTarget instanceof Element)) {
+			const type = localTarget === null ? "null" : typeof localTarget;
 			throw new TypeError(
-				`Unknown portal target type: ${typeof localTarget}. Allowed types: string (query selector) or Element.`
+				`Unknown portal target type: ${type}. Allowed types: string (query selector) or Element.`
 			);
 		}
 
