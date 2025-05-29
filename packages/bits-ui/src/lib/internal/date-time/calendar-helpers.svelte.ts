@@ -25,7 +25,12 @@ import {
 	toDate,
 } from "./utils.js";
 import type { Formatter } from "./formatter.js";
-import { getDataDisabled, getDataInvalid, getDataReadonly } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getDataDisabled,
+	getDataInvalid,
+	getDataReadonly,
+} from "$lib/internal/attrs.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -827,3 +832,21 @@ export function getDateWithPreviousTime(date: DateValue | undefined, prev: DateV
 
 	return date;
 }
+
+export const calendarAttrs = createBitsAttrs({
+	component: "calendar",
+	parts: [
+		"root",
+		"grid",
+		"cell",
+		"next-button",
+		"prev-button",
+		"day",
+		"grid-body",
+		"grid-head",
+		"grid-row",
+		"head-cell",
+		"header",
+		"heading",
+	],
+});

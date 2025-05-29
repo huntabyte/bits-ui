@@ -27,7 +27,7 @@ import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
-	type CalendarParts,
+	calendarAttrs,
 	createAccessibleHeading,
 	createMonths,
 	getCalendarElementProps,
@@ -459,9 +459,9 @@ export class CalendarRootState {
 		weekdays: this.weekdays,
 	}));
 
-	getBitsAttr(part: CalendarParts) {
-		return `data-bits-calendar-${part}`;
-	}
+	getBitsAttr: (typeof calendarAttrs)["getAttr"] = (part) => {
+		return calendarAttrs.getAttr(part);
+	};
 
 	props = $derived.by(
 		() =>

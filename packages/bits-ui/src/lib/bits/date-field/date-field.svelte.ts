@@ -12,6 +12,7 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 import {
+	createBitsAttrs,
 	getAriaDisabled,
 	getAriaHidden,
 	getAriaInvalid,
@@ -65,8 +66,10 @@ import {
 	moveToPrevSegment,
 } from "$lib/internal/date-time/field/segments.js";
 
-export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
-const DATE_FIELD_LABEL_ATTR = "data-date-field-label";
+export const dateFieldAttrs = createBitsAttrs({
+	component: "date-field",
+	parts: ["input", "label", "segment"],
+});
 
 // Common segment configuration
 type SegmentConfig = {
@@ -672,6 +675,7 @@ export class DateFieldRootState {
 			"data-disabled": getDataDisabled(this.disabled.current),
 			"data-readonly": getDataReadonly(this.readonly.current || inReadonlySegments),
 			"data-segment": `${part}`,
+			[dateFieldAttrs.segment]: "",
 		};
 
 		if (part === "literal") return defaultAttrs;
@@ -738,7 +742,7 @@ export class DateFieldInputState {
 				"aria-disabled": getAriaDisabled(this.root.disabled.current),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				[DATE_FIELD_INPUT_ATTR]: "",
+				[dateFieldAttrs.input]: "",
 				...attachRef(this.opts.ref, (v) => this.root.setFieldNode(v)),
 			}) as const
 	);
@@ -788,7 +792,7 @@ class DateFieldLabelState {
 				id: this.opts.id.current,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				[DATE_FIELD_LABEL_ATTR]: "",
+				[dateFieldAttrs.label]: "",
 				onclick: this.onclick,
 				...attachRef(this.opts.ref, (v) => this.root.setLabelNode(v)),
 			}) as const
@@ -1448,7 +1452,6 @@ class DateFieldTimeZoneSegmentState {
 					caretColor: "transparent",
 				},
 				onkeydown: this.onkeydown,
-				tabindex: 0,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
 				"data-readonly": getDataReadonly(true),
 				...attachRef(this.opts.ref),

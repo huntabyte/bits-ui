@@ -5,10 +5,12 @@ import { Context } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-const AVATAR_ROOT_ATTR = "data-avatar-root";
-const AVATAR_IMAGE_ATTR = "data-avatar-image";
-const AVATAR_FALLBACK_ATTR = "data-avatar-fallback";
+const avatarAttrs = createBitsAttrs({
+	component: "avatar",
+	parts: ["root", "image", "fallback"],
+});
 
 type CrossOrigin = HTMLImgAttributes["crossorigin"];
 type ReferrerPolicy = HTMLImgAttributes["referrerpolicy"];
@@ -60,7 +62,7 @@ class AvatarRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[AVATAR_ROOT_ATTR]: "",
+				[avatarAttrs.root]: "",
 				"data-status": this.opts.loadingStatus.current,
 				...attachRef(this.opts.ref),
 			}) as const
@@ -112,7 +114,7 @@ class AvatarImageState {
 					display: this.root.opts.loadingStatus.current === "loaded" ? "block" : "none",
 				},
 				"data-status": this.root.opts.loadingStatus.current,
-				[AVATAR_IMAGE_ATTR]: "",
+				[avatarAttrs.image]: "",
 				src: this.opts.src.current,
 				crossorigin: this.opts.crossOrigin.current,
 				referrerpolicy: this.opts.referrerPolicy.current,
@@ -145,7 +147,7 @@ class AvatarFallbackState {
 			({
 				style: this.style,
 				"data-status": this.root.opts.loadingStatus.current,
-				[AVATAR_FALLBACK_ATTR]: "",
+				[avatarAttrs.fallback]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

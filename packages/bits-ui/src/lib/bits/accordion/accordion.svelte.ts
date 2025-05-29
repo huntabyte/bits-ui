@@ -17,15 +17,11 @@ import {
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-// Constants
-const accordionParts = ["root", "trigger", "content", "item", "header"] as const;
-
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
-	parts: accordionParts,
+	parts: ["root", "trigger", "content", "item", "header"],
 });
 
-// Types
 type AccordionBaseStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		disabled: boolean;

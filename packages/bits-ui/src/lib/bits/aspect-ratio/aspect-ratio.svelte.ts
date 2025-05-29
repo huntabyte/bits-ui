@@ -1,8 +1,12 @@
 import { attachRef } from "svelte-toolbelt";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-const ASPECT_RATIO_ROOT_ATTR = "data-aspect-ratio-root";
+const aspectRatioAttrs = createBitsAttrs({
+	component: "aspect-ratio",
+	parts: ["root"],
+});
 
 type AspectRatioRootStateProps = WithRefProps<ReadableBoxedValues<{ ratio: number }>>;
 
@@ -32,7 +36,7 @@ class AspectRatioRootState {
 					bottom: 0,
 					left: 0,
 				},
-				[ASPECT_RATIO_ROOT_ATTR]: "",
+				[aspectRatioAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

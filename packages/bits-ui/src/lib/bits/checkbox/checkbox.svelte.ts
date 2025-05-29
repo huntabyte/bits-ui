@@ -8,12 +8,18 @@ import type {
 	OnChangeFn,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { getAriaChecked, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getAriaChecked,
+	getAriaRequired,
+	getDataDisabled,
+} from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 
-const CHECKBOX_ROOT_ATTR = "data-checkbox-root";
-const CHECKBOX_GROUP_ATTR = "data-checkbox-group";
-const CHECKBOX_GROUP_LABEL_ATTR = "data-checkbox-group-label";
+const checkboxAttrs = createBitsAttrs({
+	component: "checkbox",
+	parts: ["root", "group", "group-label", "input"],
+});
 
 type CheckboxGroupStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -60,7 +66,7 @@ class CheckboxGroupState {
 				role: "group",
 				"aria-labelledby": this.labelId,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				[CHECKBOX_GROUP_ATTR]: "",
+				[checkboxAttrs.group]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -82,7 +88,7 @@ class CheckboxGroupLabelState {
 			({
 				id: this.opts.id.current,
 				"data-disabled": getDataDisabled(this.group.opts.disabled.current),
-				[CHECKBOX_GROUP_LABEL_ATTR]: "",
+				[checkboxAttrs["group-label"]]: "",
 				...attachRef(this.opts.ref, (v) => (this.group.labelId = v?.id)),
 			}) as const
 	);
@@ -197,7 +203,7 @@ class CheckboxRootState {
 					this.opts.checked.current,
 					this.opts.indeterminate.current
 				),
-				[CHECKBOX_ROOT_ATTR]: "",
+				[checkboxAttrs.root]: "",
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
@@ -213,16 +219,14 @@ class CheckboxRootState {
 class CheckboxInputState {
 	readonly root: CheckboxRootState;
 	trueChecked = $derived.by(() => {
-		if (this.root.group) {
-			if (
-				this.root.opts.value.current !== undefined &&
-				this.root.group.opts.value.current.includes(this.root.opts.value.current)
-			) {
-				return true;
-			}
-			return false;
+		if (!this.root.group) return this.root.opts.checked.current;
+		if (
+			this.root.opts.value.current !== undefined &&
+			this.root.group.opts.value.current.includes(this.root.opts.value.current)
+		) {
+			return true;
 		}
-		return this.root.opts.checked.current;
+		return false;
 	});
 
 	shouldRender = $derived.by(() => Boolean(this.root.trueName));

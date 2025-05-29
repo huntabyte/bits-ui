@@ -27,7 +27,7 @@ import {
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
-	type CalendarParts,
+	calendarAttrs,
 	createMonths,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
@@ -551,9 +551,9 @@ export class RangeCalendarRootState {
 		this.opts.placeholder.current = this.opts.placeholder.current.set({ month });
 	}
 
-	getBitsAttr(part: CalendarParts) {
-		return `data-range-calendar-${part}`;
-	}
+	getBitsAttr: (typeof calendarAttrs)["getAttr"] = (part) => {
+		return calendarAttrs.getAttr(part, "range-calendar");
+	};
 
 	snippetProps = $derived.by(() => ({
 		months: this.months,
