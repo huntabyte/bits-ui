@@ -54,6 +54,7 @@ export { default as PaginationDemo } from "./pagination-demo.svelte";
 export { default as PinInputDemo } from "./pin-input-demo.svelte";
 export { default as PopoverDemo } from "./popover-demo.svelte";
 export { default as PopoverDemoTransition } from "./popover-demo-transition.svelte";
+export { default as PortalDemo } from "./portal-demo.svelte";
 export { default as ProgressDemo } from "./progress-demo.svelte";
 export { default as ProgressDemoCustom } from "./progress-demo-custom.svelte";
 export { default as RadioGroupDemo } from "./radio-group-demo.svelte";

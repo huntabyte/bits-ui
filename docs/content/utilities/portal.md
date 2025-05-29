@@ -3,6 +3,10 @@ title: Portal
 description: A component that renders its children in a portal, preventing layout issues in complex UI structures.
 ---
 
+<script>
+    import { ComponentPreviewV2, PortalDemo } from '$lib/components'
+</script>
+
 ## Overview
 
 The Portal component is a utility component that renders its children in a portal, preventing layout issues in complex UI structures. This component is used for the various Bits UI component that have a `Portal` sub-component.
@@ -22,6 +26,16 @@ By default, the `Portal` component will render its children in the `body` elemen
 	<div>This content will be portalled to the body</div>
 </Portal>
 ```
+
+### Overriding the default target
+
+<ComponentPreviewV2 name="portal-demo" componentName="Portal">
+
+{#snippet preview()}
+<PortalDemo />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ### Custom target
 

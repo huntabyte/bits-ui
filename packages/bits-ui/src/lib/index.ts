@@ -3,6 +3,7 @@ export {
 	AlertDialog,
 	AspectRatio,
 	Avatar,
+	BitsConfig,
 	Button,
 	Calendar,
 	Checkbox,

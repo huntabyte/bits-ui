@@ -1,12 +1,14 @@
 import type { Snippet } from "svelte";
 
+export type PortalTarget = HTMLElement | string | DocumentFragment;
+
 export type PortalProps = {
 	/**
 	 * Where to portal the content to.
 	 *
 	 * @default document.body
 	 */
-	to?: HTMLElement | string | DocumentFragment;
+	to?: PortalTarget;
 
 	/**
 	 * Disable portalling and render the component inline
