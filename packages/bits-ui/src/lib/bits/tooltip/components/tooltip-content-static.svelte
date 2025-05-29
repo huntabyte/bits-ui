@@ -46,6 +46,7 @@
 		preventScroll={false}
 		forceMount={true}
 		ref={contentState.opts.ref}
+		tooltip={true}
 	>
 		{#snippet popper({ props })}
 			{@const mergedProps = mergeProps(props, {
@@ -64,6 +65,7 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
+		tooltip={true}
 		isStatic
 		present={contentState.root.opts.open.current}
 		{id}

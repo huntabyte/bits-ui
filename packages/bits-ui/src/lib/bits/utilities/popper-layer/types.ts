@@ -46,6 +46,15 @@ export type PopperLayerImplProps = Omit<
 				[{ props: Record<string, unknown>; wrapperProps: Record<string, unknown> }]
 			>;
 			isStatic?: boolean;
+			/**
+			 * Tooltips are special in that they are commonly composed
+			 * with other floating components, where the same trigger is
+			 * used for both the tooltip and the popover.
+			 *
+			 * For situations like this, we need to use a different context
+			 * symbol so that conflicts don't occur.
+			 */
+			tooltip?: boolean;
 		},
 	"enabled"
 >;

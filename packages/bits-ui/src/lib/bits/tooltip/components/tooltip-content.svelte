@@ -64,6 +64,7 @@
 		preventScroll={false}
 		forceMount={true}
 		ref={contentState.opts.ref}
+		tooltip={true}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {
@@ -91,6 +92,7 @@
 		preventScroll={false}
 		forceMount={false}
 		ref={contentState.opts.ref}
+		tooltip={true}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {

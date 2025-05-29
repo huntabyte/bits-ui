@@ -32,6 +32,6 @@
 	});
 </script>
 
-<FloatingLayer>
+<FloatingLayer tooltip>
 	{@render children?.()}
 </FloatingLayer>

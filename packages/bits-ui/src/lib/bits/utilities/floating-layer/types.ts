@@ -124,6 +124,15 @@ export type FloatingLayerContentImplProps = {
 	 */
 	onPlaced?: () => void;
 	enabled: boolean;
+	/**
+	 * Tooltips are special in that they are commonly composed
+	 * with other floating components, where the same trigger is
+	 * used for both the tooltip and the popover.
+	 *
+	 * For situations like this, we need to use a different context
+	 * symbol so that conflicts don't occur.
+	 */
+	tooltip?: boolean;
 } & FloatingLayerContentProps;
 
 export type FloatingLayerAnchorProps = {
@@ -131,4 +140,13 @@ export type FloatingLayerAnchorProps = {
 	children?: Snippet;
 	virtualEl?: ReadableBox<Measurable | null>;
 	ref: ReadableBox<HTMLElement | null>;
+	/**
+	 * Tooltips are special in that they are commonly composed
+	 * with other floating components, where the same trigger is
+	 * used for both the tooltip and the popover.
+	 *
+	 * For situations like this, we need to use a different context
+	 * symbol so that conflicts don't occur.
+	 */
+	tooltip?: boolean;
 };
