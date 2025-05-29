@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { BitsConfig, getBitsConfig } from "bits-ui";
 
-	function ConfigDisplay(label: string) {
+	function ConfigDisplay() {
 		const config = getBitsConfig();
 		const portalTo = config.defaultPortalTo?.current;
 		const locale = config.defaultLocale?.current;
 
 		return {
-			label,
 			portalTo: portalTo ?? "undefined",
 			locale: locale ?? "undefined",
 		};
@@ -24,7 +23,7 @@
 
 <!-- root config -->
 <BitsConfig defaultPortalTo="#root-portal" defaultLocale="en">
-	{@const result = ConfigDisplay({ label: "root-config" })}
+	{@const result = ConfigDisplay()}
 	<div data-testid="root-config">
 		<span data-testid="root-config-portal">{result.portalTo}</span>
 		<span data-testid="root-config-locale">{result.locale}</span>
@@ -34,7 +33,7 @@
 <!-- child inherits parent -->
 <BitsConfig defaultPortalTo="#parent-portal" defaultLocale="en">
 	<BitsConfig>
-		{@const result = ConfigDisplay({ label: "child-inherits" })}
+		{@const result = ConfigDisplay()}
 		<div data-testid="child-inherits">
 			<span data-testid="child-inherits-portal">{result.portalTo}</span>
 			<span data-testid="child-inherits-locale">{result.locale}</span>
@@ -45,7 +44,7 @@
 <!-- child overrides parent -->
 <BitsConfig defaultPortalTo="#parent-portal" defaultLocale="en">
 	<BitsConfig defaultPortalTo="#child-portal">
-		{@const result = ConfigDisplay({ label: "child-overrides" })}
+		{@const result = ConfigDisplay()}
 		<div data-testid="child-overrides">
 			<span data-testid="child-overrides-portal">{result.portalTo}</span>
 			<span data-testid="child-overrides-locale">{result.locale}</span>
@@ -57,7 +56,7 @@
 <BitsConfig defaultPortalTo="#level1" defaultLocale="en">
 	<BitsConfig defaultLocale="es">
 		<BitsConfig>
-			{@const result = ConfigDisplay({ label: "deep-nesting" })}
+			{@const result = ConfigDisplay()}
 			<div data-testid="deep-nesting">
 				<span data-testid="deep-nesting-portal">{result.portalTo}</span>
 				<span data-testid="deep-nesting-locale">{result.locale}</span>
@@ -70,7 +69,7 @@
 <BitsConfig defaultPortalTo="#base" defaultLocale="en">
 	<BitsConfig defaultLocale="fr">
 		<BitsConfig defaultPortalTo="#override">
-			{@const result = ConfigDisplay({ label: "partial-override" })}
+			{@const result = ConfigDisplay()}
 			<div data-testid="partial-override">
 				<span data-testid="partial-override-portal">{result.portalTo}</span>
 				<span data-testid="partial-override-locale">{result.locale}</span>
