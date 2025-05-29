@@ -12,7 +12,7 @@
 		};
 	}
 
-	const noConfigResult = ConfigDisplay("no-config");
+	const noConfigResult = ConfigDisplay();
 </script>
 
 <!-- no config (baseline) -->
