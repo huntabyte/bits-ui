@@ -297,6 +297,30 @@ class RatingGroupItemState {
 	onclick(e: BitsMouseEvent) {
 		if (this.#isDisabled || this.root.opts.readonly.current) return;
 
+		// handle clearing when clicking on first item (index 0) that's already
+		// active and min is 0
+		if (
+			this.opts.index.current === 0 &&
+			this.root.opts.min.current === 0 &&
+			this.root.opts.value.current > 0
+		) {
+			const newValue = this.root.calculateRatingFromPointer(this.opts.index.current, e);
+			const currentValue = this.root.opts.value.current;
+
+			// if the calculated rating matches current value, or if we have a
+			// half value on this item, clear it
+			const shouldClear =
+				newValue === currentValue || (currentValue <= 1 && currentValue > 0);
+
+			if (shouldClear) {
+				this.root.setValue(0);
+				if (this.root.opts.ref.current) {
+					this.root.opts.ref.current.focus();
+				}
+				return;
+			}
+		}
+
 		const newValue = this.root.calculateRatingFromPointer(this.opts.index.current, e);
 		this.root.setValue(newValue);
 

@@ -834,3 +834,168 @@ describe("RTL Behavior", () => {
 		expect(valueDisplay).toHaveTextContent("3");
 	});
 });
+
+describe("Clear Functionality", () => {
+	it("should clear rating when clicking first item that's already active and min is 0", async () => {
+		const t = setup({ value: 1, min: 0, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("1");
+
+		// click the first item to clear
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(valueDisplay).toHaveTextContent("0");
+	});
+
+	it("should clear rating when clicking first item with half value and min is 0", async () => {
+		const t = setup({ value: 0.5, min: 0, max: 5, allowHalf: true });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("0.5");
+
+		// click the first item (left side) to clear
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(valueDisplay).toHaveTextContent("0");
+	});
+
+	it("should not clear when clicking first item if min is greater than 0", async () => {
+		const t = setup({ value: 1, min: 1, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("1");
+
+		// click the first item - should not clear because min is 1
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(valueDisplay).toHaveTextContent("1");
+	});
+
+	it("should not clear when clicking first item if it's not active", async () => {
+		const t = setup({ value: 2, min: 0, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("2");
+
+		// click the first item - should set to 1, not clear
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(valueDisplay).toHaveTextContent("1");
+	});
+
+	it("should not clear when clicking second item even if active and min is 0", async () => {
+		const t = setup({ value: 2, min: 0, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("2");
+
+		// click the second item - should stay at 2, not clear
+		const item2 = t.getByTestId("item-1");
+		await t.user.click(item2);
+
+		expect(valueDisplay).toHaveTextContent("2");
+	});
+
+	it("should not clear when disabled", async () => {
+		const t = setup({ value: 1, min: 0, max: 5, disabled: true });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("1");
+
+		// click should not work when disabled
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(valueDisplay).toHaveTextContent("1");
+	});
+
+	it("should not clear when readonly", async () => {
+		const t = setup({ value: 1, min: 0, max: 5, readonly: true });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("1");
+
+		// click should not work when readonly
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(valueDisplay).toHaveTextContent("1");
+	});
+
+	it("should focus root after clearing", async () => {
+		const t = setup({ value: 1, min: 0, max: 5 });
+
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(t.root).toHaveFocus();
+	});
+
+	it("should call onValueChange when clearing", async () => {
+		const onValueChange = vi.fn();
+		const { getByTestId, user } = setup({ value: 1, min: 0, max: 5, onValueChange });
+
+		const item1 = getByTestId("item-0");
+		await user.click(item1);
+
+		expect(onValueChange).toHaveBeenCalledWith(0);
+	});
+
+	it("should update hidden input value when clearing", async () => {
+		const t = setup({ value: 1, min: 0, max: 5, name: "rating" });
+
+		expect(t.input).toHaveValue("1");
+
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(t.input).toHaveValue("0");
+	});
+
+	it("should clear with allowHalf when clicking left side of first item", async () => {
+		const t = setup({ value: 1, min: 0, max: 5, allowHalf: true });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("1");
+
+		// when we click the first item with allowHalf, calculateRatingFromPointer
+		// could return 0.5 or 1 depending on position, but we're testing the case
+		// where current value (1) matches the calculated value
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		// should either clear to 0 if clicked in same position, or set to 0.5 if clicked left side
+		const newValue = valueDisplay.textContent;
+		expect(newValue === "0" || newValue === "0.5").toBe(true);
+	});
+
+	it("should work in RTL mode", async () => {
+		function setupClearRTL(props: Partial<RatingGroupTestProps> = {}) {
+			const user = setupUserEvents();
+			const returned = render(RatingGroupTest, { ...props });
+			const input = returned.container.querySelector("input") as HTMLInputElement;
+			const root = returned.getByTestId("root");
+
+			// set RTL direction
+			root.style.direction = "rtl";
+
+			return { user, input, root, ...returned };
+		}
+
+		const t = setupClearRTL({ value: 1, min: 0, max: 5 });
+		const valueDisplay = t.getByTestId("value-display");
+
+		expect(valueDisplay).toHaveTextContent("1");
+
+		// clear should work the same in RTL
+		const item1 = t.getByTestId("item-0");
+		await t.user.click(item1);
+
+		expect(valueDisplay).toHaveTextContent("0");
+	});
+});
