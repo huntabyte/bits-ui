@@ -145,6 +145,29 @@ export function getThumbLabelStyles(
 }
 
 /**
+ * Gets the number of decimal places in a number
+ */
+function getDecimalPlaces(num: number): number {
+	if (Math.floor(num) === num) return 0;
+	const str = num.toString();
+	if (str.indexOf(".") !== -1 && str.indexOf("e-") === -1) {
+		return str.split(".")[1]!.length;
+	} else if (str.indexOf("e-") !== -1) {
+		const parts = str.split("e-");
+		return parseInt(parts[1]!, 10);
+	}
+	return 0;
+}
+
+/**
+ * Rounds a number to the specified number of decimal places
+ */
+function roundToPrecision(num: number, precision: number): number {
+	const factor = Math.pow(10, precision);
+	return Math.round(num * factor) / factor;
+}
+
+/**
  * Normalizes step to always be a sorted array of valid values within min/max range
  */
 export function normalizeSteps(step: number | number[], min: number, max: number): number[] {
@@ -153,14 +176,24 @@ export function normalizeSteps(step: number | number[], min: number, max: number
 		const difference = max - min;
 		let count = Math.ceil(difference / step);
 
-		if (difference % step === 0) {
+		// Get precision from step to avoid floating point errors
+		const precision = getDecimalPlaces(step);
+
+		// Check if difference is divisible by step using integer arithmetic to avoid floating point errors
+		const factor = Math.pow(10, precision);
+		const intDifference = Math.round(difference * factor);
+		const intStep = Math.round(step * factor);
+
+		if (intDifference % intStep === 0) {
 			count++;
 		}
 
 		const steps: number[] = [];
 		for (let i = 0; i < count; i++) {
 			const value = min + i * step;
-			steps.push(value);
+			// Round to the precision of the step to avoid floating point errors
+			const roundedValue = roundToPrecision(value, precision);
+			steps.push(roundedValue);
 		}
 		return steps;
 	}
