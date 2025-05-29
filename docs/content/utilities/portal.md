@@ -29,6 +29,9 @@ By default, the `Portal` component will render its children in the `body` elemen
 
 ### Overriding the default target
 
+The default target can modified using the `defaultPortalTo` prop of the `BitsConfig` component.
+This will change the default target for all `Portal` components within its scope.
+
 <ComponentPreviewV2 name="portal-demo" componentName="Portal">
 
 {#snippet preview()}
