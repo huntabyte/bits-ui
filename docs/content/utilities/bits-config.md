@@ -3,6 +3,11 @@ title: BitsConfig
 description: A global context provider for configuring default props across all Bits UI components.
 ---
 
+<script>
+	import { APISection } from '$lib/components/index.js'
+	let { schemas } = $props()
+</script>
+
 ## Overview
 
 `BitsConfig` is a global context provider that simplifies managing default prop values across all Bits UI components within its scope. Use it to set defaults like portal targets or locales centrally, and avoid the need to pass the same props to every component.
@@ -196,3 +201,5 @@ Bits UI resolves default values in this priority:
 2. **Nearest parent BitsConfig**
 3. **Inherited from parent BitsConfig(s)**
 4. **Built-in component default** (e.g., portals default to `"body"`, locales default to `"en"`)
+
+<APISection {schemas} />

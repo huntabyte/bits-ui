@@ -4,7 +4,9 @@ description: A component that renders its children in a portal, preventing layou
 ---
 
 <script>
-    import { ComponentPreviewV2, PortalDemo } from '$lib/components'
+    import { ComponentPreviewV2, PortalDemo, APISection } from '$lib/components'
+
+	let { schemas } = $props()
 </script>
 
 ## Overview
@@ -26,19 +28,6 @@ By default, the `Portal` component will render its children in the `body` elemen
 	<div>This content will be portalled to the body</div>
 </Portal>
 ```
-
-### Overriding the default target
-
-The default target can modified using the `defaultPortalTo` prop of the `BitsConfig` component.
-This will change the default target for all `Portal` components within its scope.
-
-<ComponentPreviewV2 name="portal-demo" componentName="Portal">
-
-{#snippet preview()}
-<PortalDemo />
-{/snippet}
-
-</ComponentPreviewV2>
 
 ### Custom target
 
@@ -71,3 +60,19 @@ You can use the `disabled` prop to disable the portal behavior.
 	<div>This content will not be portalled</div>
 </Portal>
 ```
+
+### Overriding the default target
+
+The default target can modified using the `defaultPortalTo` prop of the [`BitsConfig`](/docs/utilities/bits-config) component.
+
+This will change the default target for all `Portal` components within its scope.
+
+<ComponentPreviewV2 size="xs" name="portal-demo" componentName="Portal">
+
+{#snippet preview()}
+<PortalDemo />
+{/snippet}
+
+</ComponentPreviewV2>
+
+<APISection {schemas} />

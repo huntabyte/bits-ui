@@ -2,6 +2,7 @@ export type * from "$lib/bits/accordion/types.js";
 export type * from "$lib/bits/alert-dialog/types.js";
 export type * from "$lib/bits/aspect-ratio/types.js";
 export type * from "$lib/bits/avatar/types.js";
+export type * from "$lib/bits/utilities/config/types.js";
 export type * from "$lib/bits/button/types.js";
 export type * from "$lib/bits/calendar/types.js";
 export type * from "$lib/bits/checkbox/types.js";
