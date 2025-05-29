@@ -53,3 +53,4 @@ export { default as TimeOnRangeChangeProp } from "./time-on-range-change-prop.md
 export { default as TimeRangeProp } from "./time-range-prop.md";
 export { default as OnTimeStartEndValueChangeProp } from "./on-time-start-end-value-change-prop.md";
 export { default as NumberOrArrayNumberProp } from "./number-or-array-number-prop.md";
+export { default as OnNumberValueChangeProp } from "./on-number-value-change-prop.md";

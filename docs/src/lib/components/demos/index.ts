@@ -84,3 +84,8 @@ export { default as SliderDemoCustomSteps } from "./slider-demo-custom-steps.sve
 export { default as SliderDemoTickLabels } from "./slider-demo-tick-labels.svelte";
 export { default as SliderDemoThumbLabels } from "./slider-demo-thumb-labels.svelte";
 export { default as SliderDemoVertical } from "./slider-demo-vertical.svelte";
+export { default as RatingGroupDemo } from "./rating-group-demo.svelte";
+export { default as RatingGroupDemoCustom } from "./rating-group-demo-custom.svelte";
+export { default as RatingGroupDemoNoHover } from "./rating-group-demo-no-hover.svelte";
+export { default as RatingGroupDemoRtl } from "./rating-group-demo-rtl.svelte";
+export { default as RatingGroupDemoHalfStars } from "./rating-group-demo-half-stars.svelte";
