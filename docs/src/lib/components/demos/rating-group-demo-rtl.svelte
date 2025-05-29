@@ -16,7 +16,7 @@
 			{#each items as item (item.index)}
 				<RatingGroup.Item
 					index={item.index}
-					class="text-muted-foreground data-[state=active]:text-foreground data-[state=partial]:text-foreground md:size-6 size-8 cursor-pointer transition-colors"
+					class="text-muted-foreground data-[state=active]:text-foreground data-[state=partial]:text-foreground size-8 cursor-pointer transition-colors md:size-6"
 				>
 					{#if item.state === "partial"}
 						<StarHalf class="size-full fill-current rtl:scale-x-[-1]" weight="fill" />
