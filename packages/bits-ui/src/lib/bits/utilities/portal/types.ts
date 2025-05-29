@@ -1,6 +1,6 @@
 import type { Snippet } from "svelte";
 
-export type PortalTarget = HTMLElement | string | DocumentFragment;
+export type PortalTarget = Element | string;
 
 export type PortalProps = {
 	/**
