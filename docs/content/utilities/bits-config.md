@@ -18,13 +18,6 @@ description: A global context provider for configuring default props across all 
 -   **Inheritance**: Child `BitsConfig` instances inherit parent values and can selectively override them.
 -   **Fallback resolution**: Automatically resolves values through the hierarchy of configs.
 
-## Props
-
-| Prop              | Type                        | Description                                                           |
-| ----------------- | --------------------------- | --------------------------------------------------------------------- |
-| `defaultPortalTo` | `string \| Element \| null` | Default portal target for overlay components (modals, tooltips, etc.) |
-| `defaultLocale`   | `string`                    | Default locale for internationalization                               |
-
 ## Basic Usage
 
 Configure default props at the top level:
