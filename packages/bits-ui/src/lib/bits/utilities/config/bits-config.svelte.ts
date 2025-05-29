@@ -25,7 +25,7 @@ export const BitsConfigContext = new Context<BitsConfigState>("BitsConfig");
  * Returns a default configuration (where all values are undefined) if no configuration is found.
  */
 export function getBitsConfig() {
-	return BitsConfigContext.getOr(new BitsConfigState(null, {}));
+	return BitsConfigContext.getOr(new BitsConfigState(null, {})).opts;
 }
 
 /**
@@ -60,7 +60,7 @@ export function useBitsConfig(opts: BitsConfigStateProps) {
  * Level 3: { theme: "light" }                // inherits defaultPortalTo="#some-element", spacing="large", overrides theme="light"
  * ```
  */
-class BitsConfigState {
+export class BitsConfigState {
 	readonly opts: BitsConfigStateProps;
 
 	constructor(parent: BitsConfigState | null, opts: BitsConfigStateProps) {

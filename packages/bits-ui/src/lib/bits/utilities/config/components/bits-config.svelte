@@ -3,10 +3,11 @@
 	import { useBitsConfig } from "../bits-config.svelte.js";
 	import { box } from "svelte-toolbelt";
 
-	let { children, defaultPortalTo }: BitsConfigProps = $props();
+	let { children, defaultPortalTo, defaultLocale }: BitsConfigProps = $props();
 
 	useBitsConfig({
 		defaultPortalTo: box.with(() => defaultPortalTo),
+		defaultLocale: box.with(() => defaultLocale),
 	});
 </script>
 
