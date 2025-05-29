@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { type DateValue } from "@internationalized/date";
 	import type { RangeCalendarRootProps } from "../types.js";
@@ -6,7 +7,6 @@
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { watch } from "runed";
 	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	const uid = $props.id();
