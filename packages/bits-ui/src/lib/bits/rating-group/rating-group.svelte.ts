@@ -140,22 +140,42 @@ class RatingGroupRootState {
 	}
 
 	readonly handlers: Record<string, () => void> = {
-		[kbd.ARROW_UP]: () => this.#adjustValue(this.opts.allowHalf.current ? 0.5 : 1),
+		[kbd.ARROW_UP]: () => {
+			this.setHoverValue(null);
+			this.#adjustValue(this.opts.allowHalf.current ? 0.5 : 1);
+		},
 		[kbd.ARROW_RIGHT]: () => {
+			this.setHoverValue(null);
 			const increment = this.opts.allowHalf.current ? 0.5 : 1;
 			// in RTL mode, right arrow should decrement
 			this.#adjustValue(this.isRTL ? -increment : increment);
 		},
-		[kbd.ARROW_DOWN]: () => this.#adjustValue(this.opts.allowHalf.current ? -0.5 : -1),
+		[kbd.ARROW_DOWN]: () => {
+			this.setHoverValue(null);
+			this.#adjustValue(this.opts.allowHalf.current ? -0.5 : -1);
+		},
 		[kbd.ARROW_LEFT]: () => {
+			this.setHoverValue(null);
 			const increment = this.opts.allowHalf.current ? 0.5 : 1;
 			// in RTL mode, left arrow should increment
 			this.#adjustValue(this.isRTL ? increment : -increment);
 		},
-		[kbd.HOME]: () => this.setValue(this.opts.min.current),
-		[kbd.END]: () => this.setValue(this.opts.max.current),
-		[kbd.PAGE_UP]: () => this.#adjustValue(1),
-		[kbd.PAGE_DOWN]: () => this.#adjustValue(-1),
+		[kbd.HOME]: () => {
+			this.setHoverValue(null);
+			this.setValue(this.opts.min.current);
+		},
+		[kbd.END]: () => {
+			this.setHoverValue(null);
+			this.setValue(this.opts.max.current);
+		},
+		[kbd.PAGE_UP]: () => {
+			this.setHoverValue(null);
+			this.#adjustValue(1);
+		},
+		[kbd.PAGE_DOWN]: () => {
+			this.setHoverValue(null);
+			this.#adjustValue(-1);
+		},
 	};
 
 	onkeydown(e: BitsKeyboardEvent): void {
