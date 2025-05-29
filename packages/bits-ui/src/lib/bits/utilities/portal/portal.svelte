@@ -16,31 +16,29 @@
 
 	function getTarget() {
 		if (!isBrowser || disabled) return null;
-		let localTarget: HTMLElement | null | DocumentFragment | Element = null;
+
+		let localTarget: Element | null = null;
+
 		if (typeof to.current === "string") {
-			localTarget = document.querySelector(to.current);
-			if (localTarget === null) {
-				if (DEV) {
-					throw new Error(`Target element "${to.current}" not found.`);
-				}
+			const target = document.querySelector(to.current);
+			if (DEV && target === null) {
+				throw new Error(`Target element "${to.current}" not found.`);
 			}
-		} else if (to.current instanceof HTMLElement || to.current instanceof DocumentFragment) {
-			localTarget = to.current;
+			localTarget = target;
 		} else {
-			if (DEV) {
-				throw new TypeError(
-					`Unknown portal target type: ${
-						to.current === null ? "null" : typeof to.current
-					}. Allowed types: string (query selector), HTMLElement, or DocumentFragment.`
-				);
-			}
+			localTarget = to.current;
+		}
+
+		if (DEV && !(localTarget instanceof Element)) {
+			throw new TypeError(
+				`Unknown portal target type: ${typeof localTarget}. Allowed types: string (query selector) or Element.`
+			);
 		}
 
 		return localTarget;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let instance: any;
+	let instance: ReturnType<typeof mount> | null;
 
 	function unmountInstance() {
 		if (instance) {
@@ -55,8 +53,7 @@
 			return;
 		}
 		instance = mount(PortalConsumer, {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			target: target as any,
+			target: target,
 			props: { children },
 			context,
 		});
