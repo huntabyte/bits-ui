@@ -24,6 +24,7 @@ import { noop } from "$lib/internal/noop.js";
 import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
 import { isIOS } from "$lib/internal/is.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -34,6 +35,25 @@ export const FIRST_LAST_KEYS = [...FIRST_KEYS, ...LAST_KEYS];
 export const SELECTION_KEYS = [kbd.ENTER, kbd.SPACE];
 
 export const CONTENT_MARGIN = 10;
+
+const selectParts = [
+	"trigger",
+	"content",
+	"item",
+	"viewport",
+	"scroll-up-button",
+	"scroll-down-button",
+	"group",
+	"group-label",
+	"separator",
+	"arrow",
+	"input",
+	"content-wrapper",
+	"item-text",
+	"value",
+] as const;
+
+type SelectBitsAttrs = Record<(typeof selectParts)[number], string>;
 
 type SelectBaseRootStateProps = ReadableBoxedValues<{
 	disabled: boolean;
@@ -79,7 +99,11 @@ class SelectBaseRootState {
 	constructor(opts: SelectBaseRootStateProps) {
 		this.opts = opts;
 		this.isCombobox = opts.isCombobox;
-		this.bitsAttrs = getSelectBitsAttrs(this);
+		this.bitsAttrs = createBitsAttrs({
+			component: "select",
+			parts: selectParts,
+			getVariant: () => (opts.isCombobox ? "combobox" : null),
+		});
 		$effect.pre(() => {
 			if (!this.opts.open.current) {
 				this.setHighlightedNode(null);
@@ -1420,36 +1444,4 @@ export function useSelectGroupHeading(props: SelectGroupHeadingStateProps) {
 
 export function useSelectHiddenInput(props: SelectHiddenInputStateProps) {
 	return new SelectHiddenInputState(props, SelectRootContext.get());
-}
-
-////////////////////////////////////
-// Helpers
-////////////////////////////////////
-
-const selectParts = [
-	"trigger",
-	"content",
-	"item",
-	"viewport",
-	"scroll-up-button",
-	"scroll-down-button",
-	"group",
-	"group-label",
-	"separator",
-	"arrow",
-	"input",
-	"content-wrapper",
-	"item-text",
-	"value",
-] as const;
-
-type SelectBitsAttrs = Record<(typeof selectParts)[number], string>;
-
-export function getSelectBitsAttrs(root: SelectBaseRootState): SelectBitsAttrs {
-	const isCombobox = root.isCombobox;
-	const attrObj = {} as SelectBitsAttrs;
-	for (const part of selectParts) {
-		attrObj[part] = isCombobox ? `data-combobox-${part}` : `data-select-${part}`;
-	}
-	return attrObj;
 }

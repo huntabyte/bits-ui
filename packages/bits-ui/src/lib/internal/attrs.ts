@@ -95,3 +95,41 @@ export function getAriaPressed(condition: boolean): "true" | "false" {
 export function getRequired(condition: boolean): true | undefined {
 	return condition ? true : undefined;
 }
+
+export type BitsAttrsConfig<T extends readonly string[]> = {
+	component: string;
+	parts: T;
+	getVariant?: () => string | null;
+};
+
+export type BitsAttrs<T extends readonly string[]> = {
+	[K in T[number]]: string;
+} & {
+	selector: (part: T[number]) => string;
+	getAttr: (part: T[number]) => string;
+};
+
+export function createBitsAttrs<T extends readonly string[]>(
+	config: BitsAttrsConfig<T>
+): BitsAttrs<T> {
+	function getAttr(part: T[number]): string {
+		const variant = config.getVariant?.();
+		const prefix = variant ? `data-${variant}-` : `data-${config.component}-`;
+		return `${prefix}${part}`;
+	}
+
+	function selector(part: T[number]): string {
+		return `[${getAttr(part)}]`;
+	}
+
+	const attrs = Object.fromEntries(config.parts.map((part) => [part, getAttr(part)])) as Record<
+		T[number],
+		string
+	>;
+
+	return {
+		...attrs,
+		selector,
+		getAttr,
+	} as BitsAttrs<T>;
+}
