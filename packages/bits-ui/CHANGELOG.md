@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.2.1
+
+### Patch Changes
+
+-   fix(Tooltip): ensure `Tooltip.Trigger`s can be composed with other floating component triggers ([#1527](https://github.com/huntabyte/bits-ui/pull/1527))
+
+-   fix(Slider): ensure floating point precision aligns with step ([#1529](https://github.com/huntabyte/bits-ui/pull/1529))
+
 ## 2.2.0
 
 ### Minor Changes
