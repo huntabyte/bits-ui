@@ -3,7 +3,7 @@
 	import { DEV } from "esm-env";
 	import { watch } from "runed";
 	import PortalConsumer from "./portal-consumer.svelte";
-	import type { PortalProps, PortalTarget } from "./types.js";
+	import type { PortalProps } from "./types.js";
 	import { isBrowser } from "$lib/internal/is.js";
 	import { resolvePortalToProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
@@ -16,25 +16,21 @@
 
 	function getTarget() {
 		if (!isBrowser || disabled) return null;
-		let localTo: PortalTarget | null = to;
-		if (to.current !== undefined) {
-			localTo = to.current;
-		}
 		let localTarget: HTMLElement | null | DocumentFragment | Element = null;
-		if (typeof localTo === "string") {
-			localTarget = document.querySelector(localTo);
+		if (typeof to.current === "string") {
+			localTarget = document.querySelector(to.current);
 			if (localTarget === null) {
 				if (DEV) {
-					throw new Error(`Target element "${localTo}" not found.`);
+					throw new Error(`Target element "${to.current}" not found.`);
 				}
 			}
-		} else if (localTo instanceof HTMLElement || localTo instanceof DocumentFragment) {
-			localTarget = localTo;
+		} else if (to.current instanceof HTMLElement || to.current instanceof DocumentFragment) {
+			localTarget = to.current;
 		} else {
 			if (DEV) {
 				throw new TypeError(
 					`Unknown portal target type: ${
-						localTo === null ? "null" : typeof localTo
+						to.current === null ? "null" : typeof to.current
 					}. Allowed types: string (query selector), HTMLElement, or DocumentFragment.`
 				);
 			}
