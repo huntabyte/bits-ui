@@ -9,7 +9,7 @@
 		{#each items as item (item.index)}
 			<RatingGroup.Item
 				index={item.index}
-				class="text-foreground hover:text-foreground focus-visible:ring-foreground data-[state=inactive]:text-muted-foreground group size-8 cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+				class="text-foreground hover:text-foreground data-[state=inactive]:text-muted-foreground group size-10 cursor-pointer transition-colors md:size-8"
 			>
 				<Star class="size-full" weight="fill" />
 			</RatingGroup.Item>
