@@ -62,6 +62,6 @@ export type ScrollAreaCornerPropsWithoutHTML = WithChild;
 export type ScrollAreaCornerProps = ScrollAreaCornerPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, ScrollAreaCornerPropsWithoutHTML>;
 
-export type _ScrollbarStubProps = Omit<ScrollAreaScrollbarProps, "orientation" | "ref" | "id"> & {
+export type ScrollbarStubProps = Omit<ScrollAreaScrollbarProps, "orientation" | "ref" | "id"> & {
 	id: string;
 };

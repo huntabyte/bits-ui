@@ -228,13 +228,13 @@ export type CalendarMultipleRootPropsWithoutHTML = {
 	onValueChange?: OnChangeFn<DateValue[]>;
 };
 
-export type _CalendarSingleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
+type _CalendarSingleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
 	CalendarSingleRootPropsWithoutHTML;
 
 export type CalendarSingleRootProps = _CalendarSingleRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, _CalendarSingleRootPropsWithoutHTML>;
 
-export type _CalendarMultipleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
+type _CalendarMultipleRootPropsWithoutHTML = CalendarBaseRootPropsWithoutHTML &
 	CalendarMultipleRootPropsWithoutHTML;
 
 export type CalendarMultipleRootProps = _CalendarMultipleRootPropsWithoutHTML &

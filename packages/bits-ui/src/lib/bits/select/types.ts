@@ -151,7 +151,7 @@ export type SelectRootPropsWithoutHTML = SelectBaseRootPropsWithoutHTML &
 
 export type SelectRootProps = SelectRootPropsWithoutHTML;
 
-export type _SharedSelectContentProps = {
+type _SharedSelectContentProps = {
 	/**
 	 * Whether or not to loop through the items when navigating with the keyboard.
 	 *

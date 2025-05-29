@@ -3,7 +3,7 @@
 	import type { SelectScrollDownButtonProps } from "../types.js";
 	import { useSelectScrollDownButton } from "../select.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
-	import { Mounted } from "$lib/bits/utilities/index.js";
+	import { Mounted } from "$lib/bits/utilities/mounted/index.js";
 
 	const uid = $props.id();
 

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
 	import { useScrollAreaScrollbarShared } from "../scroll-area.svelte.js";
-	import type { _ScrollbarStubProps } from "../types.js";
+	import type { ScrollbarStubProps } from "../types.js";
 
-	let { child, children, ...restProps }: _ScrollbarStubProps = $props();
+	let { child, children, ...restProps }: ScrollbarStubProps = $props();
 
 	const scrollbarSharedState = useScrollAreaScrollbarShared();
 

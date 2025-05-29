@@ -3,7 +3,7 @@ import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
 } from "$lib/shared/attributes.js";
-import type { Orientation } from "$lib/index.js";
+import type { Orientation } from "$lib/shared/index.js";
 
 export type BaseToggleGroupRootProps = {
 	/**

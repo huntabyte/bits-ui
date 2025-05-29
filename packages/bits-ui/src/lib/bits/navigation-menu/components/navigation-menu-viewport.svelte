@@ -4,7 +4,7 @@
 	import { createId } from "$lib/internal/create-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { Mounted } from "$lib/bits/utilities/index.js";
+	import { Mounted } from "$lib/bits/utilities/mounted/index.js";
 
 	const uid = $props.id();
 
