@@ -307,12 +307,8 @@ class RatingGroupItemState {
 			const newValue = this.root.calculateRatingFromPointer(this.opts.index.current, e);
 			const currentValue = this.root.opts.value.current;
 
-			// if the calculated rating matches current value, or if we have a
-			// half value on this item, clear it
-			const shouldClear =
-				newValue === currentValue || (currentValue <= 1 && currentValue > 0);
-
-			if (shouldClear) {
+			// only clear if the calculated rating exactly matches current value
+			if (newValue === currentValue) {
 				this.root.setValue(0);
 				if (this.root.opts.ref.current) {
 					this.root.opts.ref.current.focus();
