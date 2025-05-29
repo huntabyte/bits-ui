@@ -313,7 +313,7 @@ The `max` prop determines the maximum rating value and the number of rating item
 The `min` prop sets a minimum required rating value. When set, users cannot select a rating below this value, and the rating will not go below the minimum when cleared. (defaults to `0`)
 
 ```svelte /min={1}/
-<RatingGroup.Root min={1}>
+<RatingGroup.Root min={3} value={3}>
 	{#snippet children({ items })}
 		{#each items as item (item.index)}
 			<RatingGroup.Item index={item.index}>
@@ -325,37 +325,77 @@ The `min` prop sets a minimum required rating value. When set, users cannot sele
 ```
 
 <DemoContainer size="xs" wrapperClass="rounded-bl-card rounded-br-card">
-	<RatingGroupDemoCustom min={1} />
+	<RatingGroupDemoCustom min={3} value={3} />
 </DemoContainer>
 
 This is useful for scenarios where you require at least a certain rating, such as feedback forms that must have a minimum 1-star rating.
 
 ## Accessibility
 
-The `RatingGroup` component is designed to be accessible and follows best practices for keyboard navigation and screen reader support.
+The `RatingGroup` component implements comprehensive accessibility features following WAI-ARIA best practices for rating interfaces.
 
-### Keyboard Interactions
+### ARIA Implementation
 
-The `RatingGroup` supports rich keyboard interactions for accessibility and ease of use:
+The component uses the **slider pattern** rather than a radiogroup pattern, which provides better screen reader support for rating interfaces:
 
-#### Number Input
+-   **Root element**: `role="slider"` with complete ARIA slider attributes
+-   **Rating items**: `role="presentation"` to avoid redundant announcements
+-   **Value communication**: `aria-valuenow`, `aria-valuemin`, `aria-valuemax` for current state
+-   **Custom descriptions**: `aria-valuetext` for contextual rating descriptions
+-   **State indicators**: `aria-disabled`, `aria-required`, `aria-orientation`
 
-You can type numbers to directly set the rating value:
+When users navigate with arrow keys, screen readers announce the new rating value immediately, providing real-time feedback.
 
--   Type `3` to set rating to 3
--   Type `2.5` to set rating to 2.5 (when `allowHalf` is enabled)
--   Type `0` to clear the rating (if no minimum is set or `min` is `0`)
+### Keyboard Navigation Strategy
+
+The keyboard implementation follows platform conventions while adding rating-specific enhancements:
+
+#### Direct Number Input
+
+The most efficient way to set ratings - users can type the exact rating they want:
+
+-   **Integer ratings**: Type `3` to set rating to 3 stars
+-   **Half ratings**: Type `2.5` to set 2.5 stars (when `allowHalf` is enabled)
+-   **Clear rating**: Type `0` to remove rating (respects minimum constraints)
+-   **Input validation**: Invalid numbers are ignored, values are clamped to min/max range
 
 #### Arrow Key Navigation
 
--   `ArrowUp` / `ArrowRight` - Increase rating by 1. When `allowHalf` is enabled, by 0.5. (Reversed for RTL)
--   `ArrowDown` / `ArrowLeft` - Decrease rating by 1. When `allowHalf` is enabled, by 0.5. (Reversed for RTL)
+Navigation adapts to both rating precision and text direction:
 
-#### Other Keys
+-   **Standard mode**: Arrow keys increment/decrement by 1
+-   **Half rating mode**: Arrow keys increment/decrement by 0.5 for finer control
+-   **RTL support**: Left/right arrows automatically reverse in right-to-left layouts
+-   **Bounds respect**: Navigation stops at min/max values
 
--   `Home` - Set to minimum rating (or 1 if no minimum)
--   `End` - Set to maximum rating
--   `Space` / `Enter` - Activate the currently focused rating
--   `Escape` - Clear focus and reset to original value
+#### Quick Navigation
+
+-   **`Home`**: Jump to minimum rating (or 1 if no minimum set)
+-   **`End`**: Jump to maximum rating
+-   **`PageUp`/`PageDown`**: Increment/decrement by 1 (alternative to arrows)
+
+### Focus Management
+
+The component handles focus intelligently:
+
+-   **Mouse interactions**: Clicking a rating item automatically focuses the root slider
+-   **Keyboard focus**: Single tab stop - the entire rating group acts as one focusable unit
+-   **Visual feedback**: Focus styling applied to the root container
+-   **Disabled state**: Component becomes non-focusable when disabled
+
+### Customizing Accessibility
+
+You can enhance the accessibility experience with custom `aria-valuetext`:
+
+```svelte
+<RatingGroup.Root
+	ariaValuetext={(value, max) => {
+		if (value === 0) return "No rating selected";
+		return `${value} out of ${max} stars. ${value >= 4 ? "Excellent" : value >= 3 ? "Good" : "Fair"} rating.`;
+	}}
+>
+	<!-- ... -->
+</RatingGroup.Root>
+```
 
 <APISection {schemas} />
