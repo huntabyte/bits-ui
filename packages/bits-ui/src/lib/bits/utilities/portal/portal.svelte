@@ -5,7 +5,7 @@
 	import PortalConsumer from "./portal-consumer.svelte";
 	import type { PortalProps, PortalTarget } from "./types.js";
 	import { isBrowser } from "$lib/internal/is.js";
-	import { resolvePortalToProp } from "$lib/bits/utilities/config/bits-config.svelte.js";
+	import { resolvePortalToProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	let { to: toProp, children, disabled }: PortalProps = $props();
 

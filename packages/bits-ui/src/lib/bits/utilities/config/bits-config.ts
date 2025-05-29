@@ -1,8 +1,7 @@
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsConfigPropsWithoutChildren } from "$lib/bits/utilities/config/types.js";
 import { Context } from "runed";
-import { box, type Getter, type ReadableBox } from "svelte-toolbelt";
-import type { PortalProps } from "$lib/types.js";
+import { box, type ReadableBox } from "svelte-toolbelt";
 
 type BitsConfigStateProps = ReadableBoxedValues<BitsConfigPropsWithoutChildren>;
 
@@ -110,34 +109,4 @@ function fallbackFactory(
 			});
 		},
 	};
-}
-
-/**
- * Resolves a locale value using this priority:
- * 1. The getter prop value (if defined)
- * 2. The default locale from the configuration (if no getter prop value is defined)
- * 3. "en" (if no value found in chain)
- */
-export function resolveLocaleProp(getLocaleProp: Getter<string | undefined>) {
-	const config = getBitsConfig();
-	return box.with(() => {
-		const localeProp = getLocaleProp();
-		if (localeProp !== undefined) return localeProp;
-		return config.defaultLocale.current ?? "en";
-	});
-}
-
-/**
- * Resolves a portal to value using this priority:
- * 1. The getter prop value (if defined)
- * 2. The default portal to from the configuration (if no getter prop value is defined)
- * 3. "body" (if no value found in chain)
- */
-export function resolvePortalToProp(getPortalToProp: Getter<PortalProps["to"]>) {
-	const config = getBitsConfig();
-	return box.with(() => {
-		const portalToProp = getPortalToProp();
-		if (portalToProp !== undefined) return portalToProp;
-		return config.defaultPortalTo.current ?? "body";
-	});
 }

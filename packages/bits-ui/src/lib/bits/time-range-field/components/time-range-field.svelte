@@ -13,7 +13,7 @@
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/bits-config.svelte.js";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	const uid = $props.id();
 

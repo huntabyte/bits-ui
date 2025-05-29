@@ -1,5 +1,5 @@
 import { box, type Getter, type ReadableBox } from "svelte-toolbelt";
-import { BitsConfigState, getBitsConfig } from "./bits-config.svelte.js";
+import { BitsConfigState, getBitsConfig } from "./bits-config.js";
 
 /**
  * Creates a generic prop resolver that follows the standard priority chain:

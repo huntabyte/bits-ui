@@ -11,7 +11,7 @@
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { watch } from "runed";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/bits-config.svelte.js";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		open = $bindable(false),
