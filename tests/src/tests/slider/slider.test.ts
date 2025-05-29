@@ -601,6 +601,74 @@ describe("slider changing options after building", () => {
 	});
 });
 
+describe("floating point precision", () => {
+	it("should handle decimal steps without floating point precision errors", async () => {
+		const mock = vi.fn();
+		const { getByTestId, user } = setup({
+			value: [1.1],
+			min: 0,
+			max: 2,
+			step: 0.1,
+			onValueChange: mock,
+		});
+
+		const thumb = getByTestId("thumb");
+		thumb.focus();
+
+		// move right by one step (from 1.1 to 1.2)
+		await user.keyboard(kbd.ARROW_RIGHT);
+
+		// check that the value is exactly 1.2, not 1.2000000000000002
+		expect(mock).toHaveBeenCalledWith([1.2]);
+
+		// check the aria-valuenow attribute for precision
+		expect(thumb).toHaveAttribute("aria-valuenow", "1.2");
+		expect(thumb).toHaveAttribute("data-value", "1.2");
+	});
+
+	it("should handle smaller decimal steps (0.01) without precision errors", async () => {
+		const mock = vi.fn();
+		const { getByTestId, user } = setup({
+			value: [0.11],
+			min: 0,
+			max: 1,
+			step: 0.01,
+			onValueChange: mock,
+		});
+
+		const thumb = getByTestId("thumb");
+		thumb.focus();
+
+		// move right by one step (from 0.11 to 0.12)
+		await user.keyboard(kbd.ARROW_RIGHT);
+
+		// check that the value is exactly 0.12
+		expect(mock).toHaveBeenCalledWith([0.12]);
+		expect(thumb).toHaveAttribute("aria-valuenow", "0.12");
+		expect(thumb).toHaveAttribute("data-value", "0.12");
+	});
+
+	it("should generate correct step values for decimal steps", async () => {
+		const { getAllByTestId } = setup({
+			value: [1.2],
+			min: 1,
+			max: 1.5,
+			step: 0.1,
+		});
+
+		const ticks = getAllByTestId("tick");
+		expect(ticks).toHaveLength(6); // 1.0, 1.1, 1.2, 1.3, 1.4, 1.5
+
+		// check that tick values are precise
+		expect(ticks[0]).toHaveAttribute("data-value", "1");
+		expect(ticks[1]).toHaveAttribute("data-value", "1.1");
+		expect(ticks[2]).toHaveAttribute("data-value", "1.2");
+		expect(ticks[3]).toHaveAttribute("data-value", "1.3");
+		expect(ticks[4]).toHaveAttribute("data-value", "1.4");
+		expect(ticks[5]).toHaveAttribute("data-value", "1.5");
+	});
+});
+
 const IS_ENOUGH_CLOSE = 0.0001;
 
 /**
