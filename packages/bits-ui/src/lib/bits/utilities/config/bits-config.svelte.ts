@@ -16,8 +16,9 @@ export function getBitsConfig() {
 }
 
 export function useBitsConfig(opts: BitsConfigStateProps) {
-	const parent = BitsConfigContext.getOr(null);
-	return new BitsConfigState(parent, opts);
+	const state = new BitsConfigState(BitsConfigContext.getOr(null), opts);
+	BitsConfigContext.set(state.opts);
+	return state;
 }
 
 class BitsConfigState {
@@ -32,7 +33,6 @@ class BitsConfigState {
 				defaultPortalTo: fallback.of((config) => config.defaultPortalTo),
 			};
 		}
-		BitsConfigContext.set(this.opts);
 	}
 }
 
