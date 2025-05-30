@@ -42,7 +42,13 @@
 			<div class="space-y-3">
 				<div>
 					<h4 class="text-muted-foreground mb-1 text-sm font-medium">Type</h4>
-					<PropTypeContent {type} {linked} {href} {tooltipContent} />
+					<PropTypeContent
+						{type}
+						{linked}
+						{href}
+						{tooltipContent}
+						disablePopover={true}
+					/>
 				</div>
 
 				<div>

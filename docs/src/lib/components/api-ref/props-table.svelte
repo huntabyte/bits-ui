@@ -35,7 +35,7 @@
 	<Table.Root>
 		<Table.Header>
 			<Table.Row class="w-1/4">
-				<Table.Head class="w-full whitespace-nowrap pr-1"
+				<Table.Head class="w-full whitespace-nowrap pr-1 sm:w-[38%]"
 					>{slotted ? "Slot" : ""} Property</Table.Head
 				>
 				<Table.Head class="hidden w-[22%] whitespace-nowrap pr-1 sm:table-cell"
@@ -65,7 +65,7 @@
 							</Badge>
 						{/if}
 					</Table.Cell>
-					<Table.Cell class="pr-1 align-baseline">
+					<Table.Cell class="hidden pr-1 align-baseline sm:table-cell">
 						<PropTypeContent
 							type={p?.type}
 							linked={p?.linked}
