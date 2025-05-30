@@ -550,7 +550,7 @@ class SelectTriggerState {
 				if (!matchedItem) return;
 				this.root.opts.value.current = matchedItem.value;
 			},
-			enabled: !this.root.isMulti && this.root.dataTypeaheadEnabled,
+			enabled: () => !this.root.isMulti && this.root.dataTypeaheadEnabled,
 			candidateValues: () => (this.root.isMulti ? [] : this.root.candidateLabels),
 			getWindow: () => this.root.domContext.getWindow(),
 		});
