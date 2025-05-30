@@ -7,7 +7,12 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
-import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getAriaExpanded,
+	getDataDisabled,
+	getDataOpenClosed,
+} from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/arrays.js";
 import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
@@ -17,9 +22,12 @@ import {
 } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
+import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte";
 
-const MENUBAR_ROOT_ATTR = "data-menubar-root";
-const MENUBAR_TRIGGER_ATTR = "data-menubar-trigger";
+const menubarAttrs = createBitsAttrs({
+	component: "menubar",
+	parts: ["root", "trigger", "content"],
+});
 
 type MenubarRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -43,7 +51,7 @@ class MenubarRootState {
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNode: this.opts.ref,
-			candidateAttr: MENUBAR_TRIGGER_ATTR,
+			candidateAttr: menubarAttrs.trigger,
 			loop: this.opts.loop,
 			orientation: box.with(() => "horizontal"),
 		});
@@ -90,7 +98,9 @@ class MenubarRootState {
 	getTriggers = () => {
 		const node = this.opts.ref.current;
 		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${MENUBAR_TRIGGER_ATTR}]`));
+		return Array.from(
+			node.querySelectorAll<HTMLButtonElement>(menubarAttrs.selector("trigger"))
+		);
 	};
 
 	onMenuOpen = (id: string, triggerId: string) => {
@@ -111,7 +121,7 @@ class MenubarRootState {
 			({
 				id: this.opts.id.current,
 				role: "menubar",
-				[MENUBAR_ROOT_ATTR]: "",
+				[menubarAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -254,7 +264,7 @@ class MenubarTriggerState {
 				"data-menu-value": this.menu.opts.value.current,
 				disabled: this.opts.disabled.current ? true : undefined,
 				tabindex: this.#tabIndex,
-				[MENUBAR_TRIGGER_ATTR]: "",
+				[menubarAttrs.trigger]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onkeydown: this.onkeydown,
@@ -350,18 +360,10 @@ class MenubarContentState {
 			({
 				id: this.opts.id.current,
 				"aria-labelledby": this.menu.triggerId,
-				style: {
-					"--bits-menubar-content-transform-origin":
-						"var(--bits-floating-transform-origin)",
-					"--bits-menubar-content-available-width":
-						"var(--bits-floating-available-width)",
-					"--bits-menubar-content-available-height":
-						"var(--bits-floating-available-height)",
-					"--bits-menubar-anchor-width": "var(--bits-floating-anchor-width)",
-					"--bits-menubar-anchor-height": "var(--bits-floating-anchor-height)",
-				},
+				style: getFloatingContentCSSVars("menubar"),
 				onkeydown: this.onkeydown,
 				"data-menu-content": "",
+				[menubarAttrs.content]: "",
 				...attachRef(this.opts.ref, (v) => (this.menu.contentNode = v)),
 			}) as const
 	);

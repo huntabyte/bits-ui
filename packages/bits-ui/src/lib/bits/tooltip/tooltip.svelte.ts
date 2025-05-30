@@ -5,12 +5,14 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import { useTimeoutFn } from "$lib/internal/use-timeout-fn.svelte.js";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
-import { getDataDisabled } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 
-const TOOLTIP_CONTENT_ATTR = "data-tooltip-content";
-const TOOLTIP_TRIGGER_ATTR = "data-tooltip-trigger";
+export const tooltipAttrs = createBitsAttrs({
+	component: "tooltip",
+	parts: ["content", "trigger"],
+});
 
 type TooltipProviderStateProps = ReadableBoxedValues<{
 	delayDuration: number;
@@ -88,21 +90,23 @@ type TooltipRootStateProps = ReadableBoxedValues<{
 class TooltipRootState {
 	readonly opts: TooltipRootStateProps;
 	readonly provider: TooltipProviderState;
-	delayDuration = $derived.by(
+	readonly delayDuration = $derived.by(
 		() => this.opts.delayDuration.current ?? this.provider.opts.delayDuration.current
 	);
-	disableHoverableContent = $derived.by(
+	readonly disableHoverableContent = $derived.by(
 		() =>
 			this.opts.disableHoverableContent.current ??
 			this.provider.opts.disableHoverableContent.current
 	);
-	disableCloseOnTriggerClick = $derived.by(
+	readonly disableCloseOnTriggerClick = $derived.by(
 		() =>
 			this.opts.disableCloseOnTriggerClick.current ??
 			this.provider.opts.disableCloseOnTriggerClick.current
 	);
-	disabled = $derived.by(() => this.opts.disabled.current ?? this.provider.opts.disabled.current);
-	ignoreNonKeyboardFocus = $derived.by(
+	readonly disabled = $derived.by(
+		() => this.opts.disabled.current ?? this.provider.opts.disabled.current
+	);
+	readonly ignoreNonKeyboardFocus = $derived.by(
 		() =>
 			this.opts.ignoreNonKeyboardFocus.current ??
 			this.provider.opts.ignoreNonKeyboardFocus.current
@@ -111,7 +115,7 @@ class TooltipRootState {
 	triggerNode = $state<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
 	#timerFn: ReturnType<typeof useTimeoutFn>;
-	stateAttr = $derived.by(() => {
+	readonly stateAttr = $derived.by(() => {
 		if (!this.opts.open.current) return "closed";
 		return this.#wasOpenDelayed ? "delayed-open" : "instant-open";
 	});
@@ -207,7 +211,7 @@ class TooltipTriggerState {
 	readonly root: TooltipRootState;
 	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
-	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
+	readonly #isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
 	domContext: DOMContext;
 
 	constructor(opts: TooltipTriggerStateProps, root: TooltipRootState) {
@@ -272,7 +276,7 @@ class TooltipTriggerState {
 		this.root.handleClose();
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -282,7 +286,7 @@ class TooltipTriggerState {
 				"data-state": this.root.stateAttr,
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-delay-duration": `${this.root.delayDuration}`,
-				[TOOLTIP_TRIGGER_ATTR]: "",
+				[tooltipAttrs.trigger]: "",
 				tabindex: this.#isDisabled ? undefined : 0,
 				disabled: this.opts.disabled.current,
 				onpointerup: this.#onpointerup,
@@ -364,9 +368,9 @@ class TooltipContentState {
 		e.preventDefault();
 	};
 
-	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
+	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -376,12 +380,12 @@ class TooltipContentState {
 					pointerEvents: "auto",
 					outline: "none",
 				},
-				[TOOLTIP_CONTENT_ATTR]: "",
+				[tooltipAttrs.content]: "",
 				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
 			}) as const
 	);
 
-	popperProps = {
+	readonly popperProps = {
 		onInteractOutside: this.onInteractOutside,
 		onEscapeKeydown: this.onEscapeKeydown,
 		onOpenAutoFocus: this.onOpenAutoFocus,

@@ -15,17 +15,13 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-// Constants
-const ACCORDION_ATTRS = {
-	ROOT: "data-accordion-root",
-	TRIGGER: "data-accordion-trigger",
-	CONTENT: "data-accordion-content",
-	ITEM: "data-accordion-item",
-	HEADER: "data-accordion-header",
-} as const;
+const accordionAttrs = createBitsAttrs({
+	component: "accordion",
+	parts: ["root", "trigger", "content", "item", "header"],
+});
 
-// Types
 type AccordionBaseStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		disabled: boolean;
@@ -86,7 +82,7 @@ abstract class AccordionBaseState {
 		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNode: this.opts.ref,
-			candidateAttr: ACCORDION_ATTRS.TRIGGER,
+			candidateAttr: accordionAttrs.trigger,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});
@@ -101,7 +97,7 @@ abstract class AccordionBaseState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				[ACCORDION_ATTRS.ROOT]: "",
+				[accordionAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -168,7 +164,7 @@ export class AccordionItemState {
 				"data-state": getDataOpenClosed(this.isActive),
 				"data-disabled": getDataDisabled(this.isDisabled),
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
-				[ACCORDION_ATTRS.ITEM]: "",
+				[accordionAttrs.item]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -222,7 +218,7 @@ class AccordionTriggerState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": getDataOpenClosed(this.itemState.isActive),
 				"data-orientation": getDataOrientation(this.#root.opts.orientation.current),
-				[ACCORDION_ATTRS.TRIGGER]: "",
+				[accordionAttrs.trigger]: "",
 				tabindex: 0,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
@@ -296,7 +292,7 @@ class AccordionContentState {
 				"data-state": getDataOpenClosed(this.item.isActive),
 				"data-disabled": getDataDisabled(this.item.isDisabled),
 				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
-				[ACCORDION_ATTRS.CONTENT]: "",
+				[accordionAttrs.content]: "",
 				style: {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
 					"--bits-accordion-content-width": `${this.#dimensions.width}px`,
@@ -325,7 +321,7 @@ class AccordionHeaderState {
 				"data-heading-level": this.opts.level.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
 				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
-				[ACCORDION_ATTRS.HEADER]: "",
+				[accordionAttrs.header]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

@@ -2,7 +2,7 @@
 	import { mergeProps } from "svelte-toolbelt";
 	import type { DatePickerTriggerProps } from "../types.js";
 	import PopoverTrigger from "$lib/bits/popover/components/popover-trigger.svelte";
-	import { DATE_FIELD_INPUT_ATTR } from "$lib/bits/date-field/date-field.svelte.js";
+	import { dateFieldAttrs } from "$lib/bits/date-field/date-field.svelte.js";
 	import {
 		handleSegmentNavigation,
 		isSegmentNavigationKey,
@@ -14,7 +14,7 @@
 		if (isSegmentNavigationKey(e.key)) {
 			const currNode = e.currentTarget as HTMLElement;
 			const dateFieldInputNode = currNode.closest(
-				`[${DATE_FIELD_INPUT_ATTR}]`
+				dateFieldAttrs.selector("input")
 			) as HTMLElement;
 			if (!dateFieldInputNode) return;
 			handleSegmentNavigation(e, dateFieldInputNode);

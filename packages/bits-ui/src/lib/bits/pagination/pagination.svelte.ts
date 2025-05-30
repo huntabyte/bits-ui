@@ -3,16 +3,16 @@ import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { getDataOrientation } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { type Orientation, useId } from "$lib/shared/index.js";
 
-const PAGINATION_ROOT_ATTR = "data-pagination-root";
-const PAGINATION_PAGE_ATTR = "data-pagination-page";
-const PAGINATION_PREV_ATTR = "data-pagination-prev";
-const PAGINATION_NEXT_ATTR = "data-pagination-next";
+const paginationAttrs = createBitsAttrs({
+	component: "pagination",
+	parts: ["root", "page", "prev", "next"],
+});
 
 type PaginationRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -63,7 +63,7 @@ class PaginationRootState {
 	getButtonNode(type: "prev" | "next") {
 		const node = this.opts.ref.current;
 		if (!node) return;
-		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
+		return node.querySelector<HTMLElement>(paginationAttrs.selector(type));
 	}
 
 	hasPrevPage = $derived.by(() => this.opts.page.current > 1);
@@ -88,7 +88,7 @@ class PaginationRootState {
 			({
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				[PAGINATION_ROOT_ATTR]: "",
+				[paginationAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -140,7 +140,7 @@ class PaginationPageState {
 				"aria-label": `Page ${this.opts.page.current.value}`,
 				"data-value": `${this.opts.page.current.value}`,
 				"data-selected": this.#isSelected ? "" : undefined,
-				[PAGINATION_PAGE_ATTR]: "",
+				[paginationAttrs.page]: "",
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
@@ -202,8 +202,7 @@ class PaginationButtonState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[PAGINATION_PREV_ATTR]: this.opts.type === "prev" ? "" : undefined,
-				[PAGINATION_NEXT_ATTR]: this.opts.type === "next" ? "" : undefined,
+				[paginationAttrs[this.opts.type]]: "",
 				disabled: this.#isDisabled,
 				//
 				onclick: this.onclick,

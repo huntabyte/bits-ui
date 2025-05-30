@@ -1,7 +1,11 @@
 import { attachRef } from "svelte-toolbelt";
 import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-const ROOT_ATTR = "data-label-root";
+const labelAttrs = createBitsAttrs({
+	component: "label",
+	parts: ["root"],
+});
 
 type LabelRootStateProps = WithRefProps;
 class LabelRootState {
@@ -20,7 +24,7 @@ class LabelRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[ROOT_ATTR]: "",
+				[labelAttrs.root]: "",
 				onmousedown: this.onmousedown,
 				...attachRef(this.opts.ref),
 			}) as const

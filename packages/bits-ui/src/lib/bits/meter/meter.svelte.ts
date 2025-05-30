@@ -1,8 +1,12 @@
 import { attachRef } from "svelte-toolbelt";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-const METER_ROOT_ATTR = "data-meter-root";
+const meterAttrs = createBitsAttrs({
+	component: "meter",
+	parts: ["root"],
+});
 
 type MeterRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -30,7 +34,7 @@ class MeterRootState {
 				"data-value": this.opts.value.current,
 				"data-max": this.opts.max.current,
 				"data-min": this.opts.min.current,
-				[METER_ROOT_ATTR]: "",
+				[meterAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

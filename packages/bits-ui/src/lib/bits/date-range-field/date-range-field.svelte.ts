@@ -12,15 +12,17 @@ import type {
 	SegmentPart,
 } from "$lib/shared/index.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import { removeDescriptionElement } from "$lib/internal/date-time/field/helpers.js";
 import { isBefore } from "$lib/internal/date-time/utils.js";
 import { getFirstSegment } from "$lib/internal/date-time/field/segments.js";
 
-export const DATE_RANGE_FIELD_ROOT_ATTR = "data-date-range-field-root";
-const DATE_RANGE_FIELD_LABEL_ATTR = "data-date-range-field-label";
+export const dateRangeFieldAttrs = createBitsAttrs({
+	component: "date-range-field",
+	parts: ["root", "label"],
+});
 
 type DateRangeFieldRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -194,7 +196,7 @@ export class DateRangeFieldRootState {
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[DATE_RANGE_FIELD_ROOT_ATTR]: "",
+				[dateRangeFieldAttrs.root]: "",
 				"data-invalid": getDataInvalid(this.isInvalid),
 				...attachRef(this.opts.ref, (v) => (this.fieldNode = v)),
 			}) as const
@@ -226,7 +228,7 @@ class DateRangeFieldLabelState {
 				// TODO: invalid state for field
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				[DATE_RANGE_FIELD_LABEL_ATTR]: "",
+				[dateRangeFieldAttrs.label]: "",
 				onclick: this.#onclick,
 				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
 			}) as const

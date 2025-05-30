@@ -23,6 +23,7 @@ import {
 	getThumbLabelStyles,
 } from "./helpers.js";
 import {
+	createBitsAttrs,
 	getAriaDisabled,
 	getAriaOrientation,
 	getDataDisabled,
@@ -37,12 +38,10 @@ import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared
 import { linearScale } from "$lib/internal/math.js";
 import type { SliderLabelPosition } from "./types.js";
 
-const SLIDER_ROOT_ATTR = "data-slider-root";
-const SLIDER_THUMB_ATTR = "data-slider-thumb";
-const SLIDER_RANGE_ATTR = "data-slider-range";
-const SLIDER_TICK_ATTR = "data-slider-tick";
-const SLIDER_TICK_LABEL_ATTR = "data-slider-tick-label";
-const SLIDER_THUMB_LABEL_ATTR = "data-slider-thumb-label";
+const sliderAttrs = createBitsAttrs({
+	component: "slider",
+	parts: ["root", "thumb", "range", "tick", "tick-label", "thumb-label"],
+});
 
 type SliderBaseRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -90,7 +89,7 @@ class SliderBaseRootState {
 	getAllThumbs = () => {
 		const node = this.opts.ref.current;
 		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLElement>(`[${SLIDER_THUMB_ATTR}]`));
+		return Array.from(node.querySelectorAll<HTMLElement>(sliderAttrs.selector("thumb")));
 	};
 
 	getThumbScale = (): [number, number] => {
@@ -148,7 +147,7 @@ class SliderBaseRootState {
 				style: {
 					touchAction: this.#touchAction,
 				},
-				[SLIDER_ROOT_ATTR]: "",
+				[sliderAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -311,7 +310,7 @@ class SliderSingleRootState extends SliderBaseRootState {
 				"data-value": thumbValue,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				style,
-				[SLIDER_THUMB_ATTR]: "",
+				[sliderAttrs.thumb]: "",
 			} as const;
 		});
 	});
@@ -342,7 +341,7 @@ class SliderSingleRootState extends SliderBaseRootState {
 				"data-value": tickValue,
 				"data-selected": this.isTickValueSelected(tickValue) ? "" : undefined,
 				style,
-				[SLIDER_TICK_ATTR]: "",
+				[sliderAttrs.tick]: "",
 			} as const;
 		});
 	});
@@ -565,7 +564,9 @@ class SliderMultiRootState extends SliderBaseRootState {
 	getAllThumbs = () => {
 		const node = this.opts.ref.current;
 		if (!node) return [];
-		const thumbs = Array.from(node.querySelectorAll<HTMLElement>(`[${SLIDER_THUMB_ATTR}]`));
+		const thumbs = Array.from(
+			node.querySelectorAll<HTMLElement>(sliderAttrs.selector("thumb"))
+		);
 		return thumbs;
 	};
 
@@ -610,7 +611,7 @@ class SliderMultiRootState extends SliderBaseRootState {
 		this.opts.value.current = newValue;
 	};
 
-	thumbsPropsArr = $derived.by(() => {
+	readonly thumbsPropsArr = $derived.by(() => {
 		const currValue = this.opts.value.current;
 		return Array.from({ length: currValue.length || 1 }, (_, i) => {
 			const currThumb = untrack(() => this.currentThumbIdx);
@@ -635,16 +636,16 @@ class SliderMultiRootState extends SliderBaseRootState {
 				"data-value": thumbValue,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				style,
-				[SLIDER_THUMB_ATTR]: "",
+				[sliderAttrs.thumb]: "",
 			} as const;
 		});
 	});
 
-	thumbsRenderArr = $derived.by(() => {
+	readonly thumbsRenderArr = $derived.by(() => {
 		return this.thumbsPropsArr.map((_, i) => i);
 	});
 
-	ticksPropsArr = $derived.by(() => {
+	readonly ticksPropsArr = $derived.by(() => {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 
@@ -668,23 +669,23 @@ class SliderMultiRootState extends SliderBaseRootState {
 				"data-bounded": bounded ? "" : undefined,
 				"data-value": tickValue,
 				style,
-				[SLIDER_TICK_ATTR]: "",
+				[sliderAttrs.tick]: "",
 			} as const;
 		});
 	});
 
-	ticksRenderArr = $derived.by(() => {
+	readonly ticksRenderArr = $derived.by(() => {
 		return this.ticksPropsArr.map((_, i) => i);
 	});
 
-	tickItemsArr = $derived.by(() => {
+	readonly tickItemsArr = $derived.by(() => {
 		return this.ticksPropsArr.map((tick, i) => ({
 			value: tick["data-value"],
 			index: i,
 		}));
 	});
 
-	thumbItemsArr = $derived.by(() => {
+	readonly thumbItemsArr = $derived.by(() => {
 		const currValue = this.opts.value.current;
 		return currValue.map((value, index) => ({
 			value,
@@ -692,7 +693,7 @@ class SliderMultiRootState extends SliderBaseRootState {
 		}));
 	});
 
-	snippetProps = $derived.by(
+	readonly snippetProps = $derived.by(
 		() =>
 			({
 				ticks: this.ticksRenderArr,
@@ -723,7 +724,7 @@ class SliderRangeState {
 		this.root = root;
 	}
 
-	rangeStyles = $derived.by(() => {
+	readonly rangeStyles = $derived.by(() => {
 		if (Array.isArray(this.root.opts.value.current)) {
 			// Multi-slider: range between min and max thumbs
 			const min =
@@ -761,14 +762,14 @@ class SliderRangeState {
 		}
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				style: this.rangeStyles,
-				[SLIDER_RANGE_ATTR]: "",
+				[sliderAttrs.range]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -783,7 +784,9 @@ type SliderThumbStateProps = WithRefProps &
 class SliderThumbState {
 	readonly opts: SliderThumbStateProps;
 	readonly root: SliderRootState;
-	#isDisabled = $derived.by(() => this.root.opts.disabled.current || this.opts.disabled.current);
+	readonly #isDisabled = $derived.by(
+		() => this.root.opts.disabled.current || this.opts.disabled.current
+	);
 
 	constructor(opts: SliderThumbStateProps, root: SliderRootState) {
 		this.opts = opts;
@@ -878,7 +881,7 @@ class SliderThumbState {
 		this.root.opts.onValueCommit.current(this.root.opts.value.current);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...this.root.thumbsPropsArr[this.opts.index.current]!,
@@ -908,7 +911,7 @@ class SliderTickState {
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...this.root.ticksPropsArr[this.opts.index.current]!,
@@ -933,7 +936,7 @@ class SliderTickLabelState {
 		this.root = root;
 	}
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		const tickProps = this.root.ticksPropsArr[this.opts.index.current]!;
 		const steps = this.root.normalizedSteps;
 		const tickValue = steps[this.opts.index.current]!;
@@ -951,7 +954,7 @@ class SliderTickLabelState {
 			"data-selected": this.root.isTickValueSelected(tickValue) ? "" : undefined,
 			"data-position": labelPosition,
 			style,
-			[SLIDER_TICK_LABEL_ATTR]: "",
+			[sliderAttrs["tick-label"]]: "",
 			...attachRef(this.opts.ref),
 		} as const;
 	});
@@ -988,7 +991,7 @@ class SliderThumbLabelState {
 			"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
 			"data-position": labelPosition,
 			style,
-			[SLIDER_THUMB_LABEL_ATTR]: "",
+			[sliderAttrs["thumb-label"]]: "",
 			...attachRef(this.opts.ref),
 		} as const;
 	});

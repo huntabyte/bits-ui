@@ -1,10 +1,18 @@
 import { attachRef } from "svelte-toolbelt";
-import { getAriaHidden, getAriaOrientation, getDataOrientation } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getAriaHidden,
+	getAriaOrientation,
+	getDataOrientation,
+} from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 
-const SEPARATOR_ROOT_ATTR = "data-separator-root";
+const separatorAttrs = createBitsAttrs({
+	component: "separator",
+	parts: ["root"],
+});
 
 type SeparatorRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -20,7 +28,7 @@ class SeparatorRootState {
 		this.opts = opts;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -28,7 +36,7 @@ class SeparatorRootState {
 				"aria-orientation": getAriaOrientation(this.opts.orientation.current),
 				"aria-hidden": getAriaHidden(this.opts.decorative.current),
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				[SEPARATOR_ROOT_ATTR]: "",
+				[separatorAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

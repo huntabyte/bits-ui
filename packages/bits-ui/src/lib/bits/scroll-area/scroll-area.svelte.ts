@@ -17,12 +17,12 @@ import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { on } from "svelte/events";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-const SCROLL_AREA_ROOT_ATTR = "data-scroll-area-root";
-const SCROLL_AREA_VIEWPORT_ATTR = "data-scroll-area-viewport";
-const SCROLL_AREA_CORNER_ATTR = "data-scroll-area-corner";
-const SCROLL_AREA_THUMB_ATTR = "data-scroll-area-thumb";
-const SCROLL_AREA_SCROLLBAR_ATTR = "data-scroll-area-scrollbar";
+const scrollAreaAttrs = createBitsAttrs({
+	component: "scroll-area",
+	parts: ["root", "viewport", "corner", "thumb", "scrollbar"],
+});
 
 type Sizes = {
 	content: number;
@@ -70,7 +70,7 @@ class ScrollAreaRootState {
 					"--bits-scroll-area-corner-height": `${this.cornerHeight}px`,
 					"--bits-scroll-area-corner-width": `${this.cornerWidth}px`,
 				},
-				[SCROLL_AREA_ROOT_ATTR]: "",
+				[scrollAreaAttrs.root]: "",
 				...attachRef(this.opts.ref, (v) => (this.scrollAreaNode = v)),
 			}) as const
 	);
@@ -97,7 +97,7 @@ class ScrollAreaViewportState {
 					overflowX: this.root.scrollbarXEnabled ? "scroll" : "hidden",
 					overflowY: this.root.scrollbarYEnabled ? "scroll" : "hidden",
 				},
-				[SCROLL_AREA_VIEWPORT_ATTR]: "",
+				[scrollAreaAttrs.viewport]: "",
 				...attachRef(this.opts.ref, (v) => (this.root.viewportNode = v)),
 			}) as const
 	);
@@ -129,7 +129,7 @@ type ScrollAreaScrollbarStateProps = WithRefProps<
 class ScrollAreaScrollbarState {
 	readonly opts: ScrollAreaScrollbarStateProps;
 	readonly root: ScrollAreaRootState;
-	isHorizontal = $derived.by(() => this.opts.orientation.current === "horizontal");
+	readonly isHorizontal = $derived.by(() => this.opts.orientation.current === "horizontal");
 	hasThumb = $state(false);
 
 	constructor(opts: ScrollAreaScrollbarStateProps, root: ScrollAreaRootState) {
@@ -191,7 +191,7 @@ class ScrollAreaScrollbarHoverState {
 		});
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				"data-state": this.isVisible ? "visible" : "hidden",
@@ -220,7 +220,7 @@ class ScrollAreaScrollbarScrollState {
 			POINTER_ENTER: "interacting",
 		},
 	});
-	isHidden = $derived.by(() => this.machine.state.current === "hidden");
+	readonly isHidden = $derived.by(() => this.machine.state.current === "hidden");
 
 	constructor(scrollbar: ScrollAreaScrollbarState) {
 		this.scrollbar = scrollbar;
@@ -272,7 +272,7 @@ class ScrollAreaScrollbarScrollState {
 		this.machine.dispatch("POINTER_LEAVE");
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				"data-state": this.machine.state.current === "hidden" ? "hidden" : "visible",
@@ -303,7 +303,7 @@ class ScrollAreaScrollbarAutoState {
 		useResizeObserver(() => this.root.contentNode, handleResize);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				"data-state": this.isVisible ? "visible" : "hidden",
@@ -321,8 +321,8 @@ class ScrollAreaScrollbarVisibleState {
 		viewport: 0,
 		scrollbar: { size: 0, paddingStart: 0, paddingEnd: 0 },
 	});
-	thumbRatio = $derived.by(() => getThumbRatio(this.sizes.viewport, this.sizes.content));
-	hasThumb = $derived.by(() => Boolean(this.thumbRatio > 0 && this.thumbRatio < 1));
+	readonly thumbRatio = $derived.by(() => getThumbRatio(this.sizes.viewport, this.sizes.content));
+	readonly hasThumb = $derived.by(() => Boolean(this.thumbRatio > 0 && this.thumbRatio < 1));
 	// this needs to be a $state to properly restore the transform style when the scrollbar
 	// goes from a hidden to visible state, otherwise it will start at the beginning of the
 	// scrollbar and flicker to the correct position after
@@ -496,11 +496,11 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 		});
 	};
 
-	thumbSize = $derived.by(() => {
+	readonly thumbSize = $derived.by(() => {
 		return getThumbSize(this.scrollbarVis.sizes);
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.scrollbar.opts.id.current,
@@ -596,11 +596,11 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 		});
 	}
 
-	thumbSize = $derived.by(() => {
+	readonly thumbSize = $derived.by(() => {
 		return getThumbSize(this.scrollbarVis.sizes);
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.scrollbar.opts.id.current,
@@ -631,7 +631,7 @@ class ScrollAreaScrollbarSharedState {
 	handleWheelScroll: (e: WheelEvent, maxScrollPos: number) => void;
 	handleThumbPointerDown: (pointerPos: { x: number; y: number }) => void;
 	handleThumbPointerUp: () => void;
-	maxScrollPos = $derived.by(
+	readonly maxScrollPos = $derived.by(
 		() => this.scrollbarVis.sizes.content - this.scrollbarVis.sizes.viewport
 	);
 
@@ -723,7 +723,7 @@ class ScrollAreaScrollbarSharedState {
 				position: "absolute",
 				...this.scrollbarState.props.style,
 			},
-			[SCROLL_AREA_SCROLLBAR_ATTR]: "",
+			[scrollAreaAttrs.scrollbar]: "",
 			onpointerdown: this.onpointerdown,
 			onpointermove: this.onpointermove,
 			onpointerup: this.onpointerup,
@@ -740,7 +740,7 @@ class ScrollAreaThumbImplState {
 	readonly scrollbarState: ScrollAreaScrollbarSharedState;
 	#root: ScrollAreaRootState;
 	#removeUnlinkedScrollListener = $state<() => void>();
-	#debounceScrollEnd = useDebounce(() => {
+	readonly #debounceScrollEnd = useDebounce(() => {
 		if (this.#removeUnlinkedScrollListener) {
 			this.#removeUnlinkedScrollListener();
 			this.#removeUnlinkedScrollListener = undefined;
@@ -791,7 +791,7 @@ class ScrollAreaThumbImplState {
 		this.scrollbarState.handleThumbPointerUp();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -803,7 +803,7 @@ class ScrollAreaThumbImplState {
 				},
 				onpointerdowncapture: this.onpointerdowncapture,
 				onpointerup: this.onpointerup,
-				[SCROLL_AREA_THUMB_ATTR]: "",
+				[scrollAreaAttrs.thumb]: "",
 				...attachRef(
 					this.opts.ref,
 					(v) => (this.scrollbarState.scrollbarVis.thumbNode = v)
@@ -819,7 +819,7 @@ class ScrollAreaCornerImplState {
 	readonly root: ScrollAreaRootState;
 	#width = $state(0);
 	#height = $state(0);
-	hasSize = $derived(Boolean(this.#width && this.#height));
+	readonly hasSize = $derived(Boolean(this.#width && this.#height));
 
 	constructor(opts: ScrollAreaCornerImplStateProps, root: ScrollAreaRootState) {
 		this.opts = opts;
@@ -844,7 +844,7 @@ class ScrollAreaCornerImplState {
 		);
 	}
 
-	props = $derived.by(() => ({
+	readonly props = $derived.by(() => ({
 		id: this.opts.id.current,
 		style: {
 			width: this.#width,
@@ -854,7 +854,7 @@ class ScrollAreaCornerImplState {
 			left: this.root.opts.dir.current === "rtl" ? 0 : undefined,
 			bottom: 0,
 		},
-		[SCROLL_AREA_CORNER_ATTR]: "",
+		[scrollAreaAttrs.corner]: "",
 		...attachRef(this.opts.ref),
 	}));
 }

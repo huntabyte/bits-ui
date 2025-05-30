@@ -32,6 +32,7 @@ import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/i
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
+	createBitsAttrs,
 	getAriaChecked,
 	getAriaDisabled,
 	getAriaExpanded,
@@ -73,6 +74,25 @@ export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 	cancelable: true,
 });
 
+export const menuAttrs = createBitsAttrs({
+	component: "menu",
+	parts: [
+		"trigger",
+		"content",
+		"sub-trigger",
+		"item",
+		"group",
+		"group-heading",
+		"checkbox-group",
+		"checkbox-item",
+		"radio-group",
+		"radio-item",
+		"separator",
+		"sub-content",
+		"arrow",
+	],
+});
+
 class MenuRootState {
 	readonly opts: MenuRootStateProps;
 	isUsingKeyboard = new IsUsingKeyboard();
@@ -83,9 +103,9 @@ class MenuRootState {
 		this.opts = opts;
 	}
 
-	getAttr(name: string) {
-		return `data-${this.opts.variant.current}-${name}`;
-	}
+	getBitsAttr: typeof menuAttrs.getAttr = (part) => {
+		return menuAttrs.getAttr(part, this.opts.variant.current);
+	};
 }
 
 type MenuMenuStateProps = WritableBoxedValues<{
@@ -168,7 +188,7 @@ class MenuContentState {
 				this.parentMenu.opts.open.current &&
 				Boolean(
 					this.parentMenu.triggerNode?.hasAttribute(
-						this.parentMenu.root.getAttr("sub-trigger")
+						this.parentMenu.root.getBitsAttr("sub-trigger")
 					)
 				),
 			onPointerExit: () => {
@@ -185,7 +205,7 @@ class MenuContentState {
 		}).handleTypeaheadSearch;
 		this.rovingFocusGroup = useRovingFocus({
 			rootNode: box.with(() => this.parentMenu.contentNode),
-			candidateAttr: this.parentMenu.root.getAttr("item"),
+			candidateAttr: this.parentMenu.root.getBitsAttr("item"),
 			loop: this.opts.loop,
 			orientation: box.with(() => "vertical"),
 		});
@@ -216,7 +236,7 @@ class MenuContentState {
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(
-				`[${this.parentMenu.root.getAttr("item")}]:not([data-disabled])`
+				`[${this.parentMenu.root.getBitsAttr("item")}]:not([data-disabled])`
 			)
 		);
 		return candidates;
@@ -286,7 +306,7 @@ class MenuContentState {
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
 		const isKeydownInside =
-			target.closest(`[${this.parentMenu.root.getAttr("content")}]`)?.id ===
+			target.closest(`[${this.parentMenu.root.getBitsAttr("content")}]`)?.id ===
 			this.parentMenu.contentId.current;
 
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
@@ -338,7 +358,7 @@ class MenuContentState {
 	}
 
 	onItemLeave(e: BitsPointerEvent) {
-		if (e.currentTarget.hasAttribute(this.parentMenu.root.getAttr("sub-trigger"))) return;
+		if (e.currentTarget.hasAttribute(this.parentMenu.root.getBitsAttr("sub-trigger"))) return;
 		if (this.#isPointerMovingToSubmenu() || this.parentMenu.root.isUsingKeyboard.current)
 			return;
 		const contentNode = this.parentMenu.contentNode;
@@ -378,7 +398,7 @@ class MenuContentState {
 				id: this.opts.id.current,
 				role: "menu",
 				"aria-orientation": getAriaOrientation("vertical"),
-				[this.parentMenu.root.getAttr("content")]: "",
+				[this.parentMenu.root.getBitsAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
@@ -465,7 +485,7 @@ class MenuItemSharedState {
 				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-highlighted": this.#isFocused ? "" : undefined,
-				[this.content.parentMenu.root.getAttr("item")]: "",
+				[this.content.parentMenu.root.getBitsAttr("item")]: "",
 				//
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
@@ -652,7 +672,7 @@ class MenuSubTriggerState {
 				"aria-controls": this.submenu.opts.open.current
 					? this.submenu.contentId.current
 					: undefined,
-				[this.submenu.root.getAttr("sub-trigger")]: "",
+				[this.submenu.root.getBitsAttr("sub-trigger")]: "",
 				onclick: this.onclick,
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
@@ -733,7 +753,7 @@ class MenuCheckboxItemState {
 					this.opts.indeterminate.current
 				),
 				"data-state": getCheckedState(this.opts.checked.current),
-				[this.item.root.getAttr("checkbox-item")]: "",
+				[this.item.root.getBitsAttr("checkbox-item")]: "",
 			}) as const
 	);
 }
@@ -756,7 +776,7 @@ class MenuGroupState {
 				id: this.opts.id.current,
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
-				[this.root.getAttr("group")]: "",
+				[this.root.getBitsAttr("group")]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -780,7 +800,7 @@ class MenuGroupHeadingState {
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[this.group.root.getAttr("group-heading")]: "",
+				[this.group.root.getBitsAttr("group-heading")]: "",
 				...attachRef(this.opts.ref, (v) => (this.group.groupHeadingId = v?.id)),
 			}) as const
 	);
@@ -802,7 +822,7 @@ class MenuSeparatorState {
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[this.root.getAttr("separator")]: "",
+				[this.root.getBitsAttr("separator")]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -818,7 +838,7 @@ class MenuArrowState {
 	props = $derived.by(
 		() =>
 			({
-				[this.root.getAttr("arrow")]: "",
+				[this.root.getBitsAttr("arrow")]: "",
 			}) as const
 	);
 }
@@ -848,7 +868,7 @@ class MenuRadioGroupState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.root.getAttr("radio-group")]: "",
+				[this.root.getBitsAttr("radio-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
 				...attachRef(this.opts.ref),
@@ -881,7 +901,7 @@ class MenuRadioItemState {
 	props = $derived.by(
 		() =>
 			({
-				[this.group.root.getAttr("radio-item")]: "",
+				[this.group.root.getBitsAttr("radio-item")]: "",
 				...this.item.props,
 				role: "menuitemradio",
 				"aria-checked": getAriaChecked(this.isChecked, false),
@@ -958,7 +978,7 @@ class DropdownMenuTriggerState {
 				"aria-controls": this.#ariaControls,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
-				[this.parentMenu.root.getAttr("trigger")]: "",
+				[this.parentMenu.root.getBitsAttr("trigger")]: "",
 				//
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
@@ -1115,7 +1135,7 @@ class MenuCheckboxGroupState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.root.getAttr("checkbox-group")]: "",
+				[this.root.getBitsAttr("checkbox-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
 				...attachRef(this.opts.ref),

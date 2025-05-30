@@ -1,13 +1,19 @@
 import { afterTick, attachRef, type WithRefProps } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getAriaExpanded,
+	getDataDisabled,
+	getDataOpenClosed,
+} from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { BitsKeyboardEvent, BitsMouseEvent } from "$lib/internal/types.js";
 
-const COLLAPSIBLE_ROOT_ATTR = "data-collapsible-root";
-const COLLAPSIBLE_CONTENT_ATTR = "data-collapsible-content";
-const COLLAPSIBLE_TRIGGER_ATTR = "data-collapsible-trigger";
+const collapsibleAttrs = createBitsAttrs({
+	component: "collapsible",
+	parts: ["root", "content", "trigger"],
+});
 
 type CollapsibleRootStateProps = WithRefProps &
 	WritableBoxedValues<{
@@ -36,7 +42,7 @@ class CollapsibleRootState {
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.opts.open.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				[COLLAPSIBLE_ROOT_ATTR]: "",
+				[collapsibleAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -116,7 +122,7 @@ class CollapsibleContentState {
 				},
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				[COLLAPSIBLE_CONTENT_ATTR]: "",
+				[collapsibleAttrs.content]: "",
 				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
 			}) as const
 	);
@@ -164,7 +170,7 @@ class CollapsibleTriggerState {
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
-				[COLLAPSIBLE_TRIGGER_ATTR]: "",
+				[collapsibleAttrs.trigger]: "",
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,

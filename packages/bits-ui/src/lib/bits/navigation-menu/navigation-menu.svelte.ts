@@ -21,6 +21,7 @@ import { untrack, type Snippet } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
 import {
+	createBitsAttrs,
 	getAriaExpanded,
 	getDataDisabled,
 	getDataOpenClosed,
@@ -48,16 +49,21 @@ import type {
 	PointerEventHandler,
 } from "svelte/elements";
 
-const NAVIGATION_MENU_ROOT_ATTR = "data-navigation-menu-root";
-const NAVIGATION_MENU_ATTR = "data-navigation-menu";
-const NAVIGATION_MENU_SUB_ATTR = "data-navigation-menu-sub";
-const NAVIGATION_MENU_ITEM_ATTR = "data-navigation-menu-item";
-const NAVIGATION_MENU_INDICATOR_ATTR = "data-navigation-menu-indicator";
-const NAVIGATION_MENU_LIST_ATTR = "data-navigation-menu-list";
-const NAVIGATION_MENU_TRIGGER_ATTR = "data-navigation-menu-trigger";
-const NAVIGATION_MENU_CONTENT_ATTR = "data-navigation-menu-content";
-const NAVIGATION_MENU_LINK_ATTR = "data-navigation-menu-link";
-const NAVIGATION_MENU_VIEWPORT_ATTR = "data-navigation-menu-viewport";
+const navigationMenuAttrs = createBitsAttrs({
+	component: "navigation-menu",
+	parts: [
+		"root",
+		"sub",
+		"item",
+		"list",
+		"trigger",
+		"content",
+		"link",
+		"viewport",
+		"menu",
+		"indicator",
+	],
+});
 
 type NavigationMenuProviderStateProps = ReadableBoxedValues<{
 	dir: Direction;
@@ -218,8 +224,8 @@ class NavigationMenuRootState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				dir: this.opts.dir.current,
-				[NAVIGATION_MENU_ROOT_ATTR]: "",
-				[NAVIGATION_MENU_ATTR]: "",
+				[navigationMenuAttrs.root]: "",
+				[navigationMenuAttrs.menu]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -274,8 +280,8 @@ class NavigationMenuSubState {
 			({
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				[NAVIGATION_MENU_SUB_ATTR]: "",
-				[NAVIGATION_MENU_ATTR]: "",
+				[navigationMenuAttrs.sub]: "",
+				[navigationMenuAttrs.menu]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -298,7 +304,7 @@ class NavigationMenuListState {
 
 		this.rovingFocusGroup = useRovingFocus({
 			rootNode: opts.ref,
-			candidateSelector: `[${NAVIGATION_MENU_TRIGGER_ATTR}]:not([data-disabled]), [${NAVIGATION_MENU_LINK_ATTR}]:not([data-disabled])`,
+			candidateSelector: `${navigationMenuAttrs.selector("trigger")}:not([data-disabled]), ${navigationMenuAttrs.selector("link")}:not([data-disabled])`,
 			loop: box.with(() => false),
 			orientation: this.context.opts.orientation,
 		});
@@ -324,7 +330,7 @@ class NavigationMenuListState {
 			({
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
-				[NAVIGATION_MENU_LIST_ATTR]: "",
+				[navigationMenuAttrs.list]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -383,7 +389,7 @@ export class NavigationMenuItemState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[NAVIGATION_MENU_ITEM_ATTR]: "",
+				[navigationMenuAttrs.item]: "",
 			}) as const
 	);
 }
@@ -511,7 +517,7 @@ class NavigationMenuTriggerState {
 				"data-value": this.itemContext.opts.value.current,
 				"aria-expanded": getAriaExpanded(this.open),
 				"aria-controls": this.itemContext.contentId,
-				[NAVIGATION_MENU_TRIGGER_ATTR]: "",
+				[navigationMenuAttrs.trigger]: "",
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
 				onpointerenter: this.onpointerenter,
@@ -624,7 +630,7 @@ class NavigationMenuLinkState {
 				onblur: this.onblur,
 				onpointerenter: this.onpointerenter,
 				onpointermove: this.onpointermove,
-				[NAVIGATION_MENU_LINK_ATTR]: "",
+				[navigationMenuAttrs.link]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -704,7 +710,7 @@ class NavigationMenuIndicatorImplState {
 								transform: `translateY(${this.position?.offset}px)`,
 							}),
 				},
-				[NAVIGATION_MENU_INDICATOR_ATTR]: "",
+				[navigationMenuAttrs.indicator]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -883,7 +889,7 @@ class NavigationMenuContentImplState {
 		const target = e.target;
 		if (!isElement(target)) return;
 		if (
-			target.closest(`[${NAVIGATION_MENU_ATTR}]`) !==
+			target.closest(navigationMenuAttrs.selector("menu")) !==
 			this.context.opts.rootNavigationMenuRef.current
 		)
 			return;
@@ -926,7 +932,7 @@ class NavigationMenuContentImplState {
 
 		const newSelectedElement = useArrowNavigation(e, activeEl, undefined, {
 			itemsArray: candidates,
-			attributeName: `[${NAVIGATION_MENU_LINK_ATTR}]`,
+			candidateSelector: navigationMenuAttrs.selector("link"),
 			loop: false,
 			enableIgnoredElement: true,
 		});
@@ -952,7 +958,7 @@ class NavigationMenuContentImplState {
 					this.context.opts.value.current === this.itemContext.opts.value.current
 				),
 				onkeydown: this.onkeydown,
-				[NAVIGATION_MENU_CONTENT_ATTR]: "",
+				[navigationMenuAttrs.content]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -1025,7 +1031,7 @@ class NavigationMenuViewportState {
 					"--bits-navigation-menu-viewport-width": this.viewportWidth,
 					"--bits-navigation-menu-viewport-height": this.viewportHeight,
 				},
-				[NAVIGATION_MENU_VIEWPORT_ATTR]: "",
+				[navigationMenuAttrs.viewport]: "",
 				onpointerenter: this.context.onContentEnter,
 				onpointerleave: this.context.onContentLeave,
 				...attachRef(this.opts.ref, (v) => (this.context.viewportRef.current = v)),

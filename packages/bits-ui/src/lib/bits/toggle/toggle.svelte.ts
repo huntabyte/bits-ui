@@ -1,9 +1,17 @@
 import { attachRef } from "svelte-toolbelt";
-import { getAriaPressed, getDataDisabled, getDisabled } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getAriaPressed,
+	getDataDisabled,
+	getDisabled,
+} from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
-const TOGGLE_ROOT_ATTR = "data-toggle-root";
+export const toggleAttrs = createBitsAttrs({
+	component: "toggle",
+	parts: ["root"],
+});
 
 type ToggleRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -34,14 +42,14 @@ class ToggleRootState {
 		this.#togglePressed();
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		pressed: this.opts.pressed.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
-				[TOGGLE_ROOT_ATTR]: "",
+				[toggleAttrs.root]: "",
 				id: this.opts.id.current,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"aria-pressed": getAriaPressed(this.opts.pressed.current),

@@ -11,6 +11,7 @@ import type {
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
+	createBitsAttrs,
 	getAriaDisabled,
 	getAriaExpanded,
 	getAriaSelected,
@@ -21,27 +22,32 @@ import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
 import cssesc from "css.escape";
 
-// attributes
-const COMMAND_ROOT_ATTR = "data-command-root";
-const COMMAND_LIST_ATTR = "data-command-list";
-const COMMAND_INPUT_ATTR = "data-command-input";
-const COMMAND_SEPARATOR_ATTR = "data-command-separator";
-const COMMAND_LOADING_ATTR = "data-command-loading";
-const COMMAND_EMPTY_ATTR = "data-command-empty";
-const COMMAND_GROUP_ATTR = "data-command-group";
-const COMMAND_GROUP_ITEMS_ATTR = "data-command-group-items";
-const COMMAND_GROUP_HEADING_ATTR = "data-command-group-heading";
-const COMMAND_ITEM_ATTR = "data-command-item";
-const COMMAND_VIEWPORT_ATTR = "data-command-viewport";
-const COMMAND_INPUT_LABEL_ATTR = "data-command-input-label";
 const COMMAND_VALUE_ATTR = "data-value";
 
+const commandAttrs = createBitsAttrs({
+	component: "command",
+	parts: [
+		"root",
+		"list",
+		"input",
+		"separator",
+		"loading",
+		"empty",
+		"group",
+		"group-items",
+		"group-heading",
+		"item",
+		"viewport",
+		"input-label",
+	],
+});
+
 // selectors
-const COMMAND_GROUP_SELECTOR = `[${COMMAND_GROUP_ATTR}]`;
-const COMMAND_GROUP_ITEMS_SELECTOR = `[${COMMAND_GROUP_ITEMS_ATTR}]`;
-const COMMAND_GROUP_HEADING_SELECTOR = `[${COMMAND_GROUP_HEADING_ATTR}]`;
-const COMMAND_ITEM_SELECTOR = `[${COMMAND_ITEM_ATTR}]`;
-const COMMAND_VALID_ITEM_SELECTOR = `${COMMAND_ITEM_SELECTOR}:not([aria-disabled="true"])`;
+const COMMAND_GROUP_SELECTOR = commandAttrs.selector("group");
+const COMMAND_GROUP_ITEMS_SELECTOR = commandAttrs.selector("group-items");
+const COMMAND_GROUP_HEADING_SELECTOR = commandAttrs.selector("group-heading");
+const COMMAND_ITEM_SELECTOR = commandAttrs.selector("item");
+const COMMAND_VALID_ITEM_SELECTOR = `${commandAttrs.selector("item")}:not([aria-disabled="true"])`;
 
 const CommandRootContext = new Context<CommandRootState>("Command.Root");
 const CommandListContext = new Context<CommandListState>("Command.List");
@@ -663,7 +669,7 @@ class CommandRootState {
 			({
 				id: this.opts.id.current,
 				role: "application",
-				[COMMAND_ROOT_ATTR]: "",
+				[commandAttrs.root]: "",
 				tabindex: -1,
 				onkeydown: this.onkeydown,
 				...attachRef(this.opts.ref),
@@ -701,7 +707,7 @@ class CommandEmptyState {
 			({
 				id: this.opts.id.current,
 				role: "presentation",
-				[COMMAND_EMPTY_ATTR]: "",
+				[commandAttrs.empty]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -760,7 +766,7 @@ class CommandGroupContainerState {
 				role: "presentation",
 				hidden: this.shouldRender ? undefined : true,
 				"data-value": this.trueValue,
-				[COMMAND_GROUP_ATTR]: "",
+				[commandAttrs.group]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -781,7 +787,7 @@ class CommandGroupHeadingState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[COMMAND_GROUP_HEADING_ATTR]: "",
+				[commandAttrs["group-heading"]]: "",
 				...attachRef(this.opts.ref, (v) => (this.group.headingNode = v)),
 			}) as const
 	);
@@ -803,7 +809,7 @@ class CommandGroupItemsState {
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[COMMAND_GROUP_ITEMS_ATTR]: "",
+				[commandAttrs["group-items"]]: "",
 				"aria-labelledby": this.group.headingNode?.id ?? undefined,
 				...attachRef(this.opts.ref),
 			}) as const
@@ -859,7 +865,7 @@ class CommandInputState {
 			({
 				id: this.opts.id.current,
 				type: "text",
-				[COMMAND_INPUT_ATTR]: "",
+				[commandAttrs.input]: "",
 				autocomplete: "off",
 				autocorrect: "off",
 				spellcheck: false,
@@ -977,7 +983,7 @@ class CommandItemState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-selected": getDataSelected(this.isSelected),
 				"data-value": this.trueValue,
-				[COMMAND_ITEM_ATTR]: "",
+				[commandAttrs.item]: "",
 				role: "option",
 				onpointermove: this.onpointermove,
 				onclick: this.onclick,
@@ -1008,7 +1014,7 @@ class CommandLoadingState {
 				"aria-valuemin": 0,
 				"aria-valuemax": 100,
 				"aria-label": "Loading...",
-				[COMMAND_LOADING_ATTR]: "",
+				[commandAttrs.loading]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -1037,7 +1043,7 @@ class CommandSeparatorState {
 				id: this.opts.id.current,
 				// role="separator" cannot belong to a role="listbox"
 				"aria-hidden": "true",
-				[COMMAND_SEPARATOR_ATTR]: "",
+				[commandAttrs.separator]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -1063,7 +1069,7 @@ class CommandListState {
 				id: this.opts.id.current,
 				role: "listbox",
 				"aria-label": this.opts.ariaLabel.current,
-				[COMMAND_LIST_ATTR]: "",
+				[commandAttrs.list]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -1084,7 +1090,7 @@ class CommandLabelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[COMMAND_INPUT_LABEL_ATTR]: "",
+				[commandAttrs["input-label"]]: "",
 				for: this.opts.for?.current,
 				style: srOnlyStyles,
 				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
@@ -1131,7 +1137,7 @@ class CommandViewportState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[COMMAND_VIEWPORT_ATTR]: "",
+				[commandAttrs.viewport]: "",
 				...attachRef(this.opts.ref, (v) => (this.list.root.viewportNode = v)),
 			}) as const
 	);

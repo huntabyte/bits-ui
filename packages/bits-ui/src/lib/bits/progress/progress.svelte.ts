@@ -1,8 +1,12 @@
 import { attachRef } from "svelte-toolbelt";
 import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 
-const ROOT_ATTR = "data-progress-root";
+const progressAttrs = createBitsAttrs({
+	component: "progress",
+	parts: ["root"],
+});
 
 type ProgressRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -34,7 +38,7 @@ class ProgressRootState {
 				"data-max": this.opts.max.current,
 				"data-min": this.opts.min.current,
 				"data-indeterminate": this.opts.value.current === null ? "" : undefined,
-				[ROOT_ATTR]: "",
+				[progressAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

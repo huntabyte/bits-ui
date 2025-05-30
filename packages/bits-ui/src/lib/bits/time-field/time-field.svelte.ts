@@ -11,6 +11,7 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 import {
+	createBitsAttrs,
 	getAriaDisabled,
 	getAriaHidden,
 	getAriaInvalid,
@@ -62,8 +63,10 @@ import {
 } from "$lib/internal/date-time/field/helpers.js";
 import type { TimeRangeFieldRootState } from "../time-range-field/time-range-field.svelte.js";
 
-export const TIME_FIELD_INPUT_ATTR = "data-time-field-input";
-const TIME_FIELD_LABEL_ATTR = "data-time-field-label";
+export const timeFieldAttrs = createBitsAttrs({
+	component: "time-field",
+	parts: ["input", "label"],
+});
 
 type SegmentConfig = {
 	min: number | ((root: TimeFieldRootState) => number);
@@ -621,7 +624,7 @@ export class TimeFieldInputState {
 				"aria-disabled": getAriaDisabled(this.root.disabled.current),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				[TIME_FIELD_INPUT_ATTR]: "",
+				[timeFieldAttrs.input]: "",
 				...attachRef(this.opts.ref, (v) => this.root.setFieldNode(v)),
 			}) as const
 	);
@@ -673,7 +676,7 @@ class TimeFieldLabelState {
 				id: this.opts.id.current,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				[TIME_FIELD_LABEL_ATTR]: "",
+				[timeFieldAttrs.label]: "",
 				onclick: this.onclick,
 				...attachRef(this.opts.ref, (v) => this.root.setLabelNode(v)),
 			}) as const
