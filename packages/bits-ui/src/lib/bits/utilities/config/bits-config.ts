@@ -1,22 +1,24 @@
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { BitsConfigPropsWithoutChildren } from "$lib/bits/utilities/config/types.js";
 import { Context } from "runed";
 import { box, type ReadableBox } from "svelte-toolbelt";
+import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import type { BitsConfigPropsWithoutChildren } from "$lib/bits/utilities/config/types.js";
 
 type BitsConfigStateProps = ReadableBoxedValues<BitsConfigPropsWithoutChildren>;
 
 export const BitsConfigContext = new Context<BitsConfigState>("BitsConfig");
 
 /**
- * Gets the current Bits UI configuration from context.
- * Returns a default configuration (where all values are undefined) if no configuration is found.
+ * Gets the current Bits UI configuration state from the context.
+ *
+ * Returns a default configuration (where all values are `undefined`) if no configuration is found.
  */
 export function getBitsConfig() {
-	return BitsConfigContext.getOr(new BitsConfigState(null, {})).opts;
+	const fallback = new BitsConfigState(null, {});
+	return BitsConfigContext.getOr(fallback).opts;
 }
 
 /**
- * Creates and sets a new bits configuration state with inheritance from parent configs.
+ * Creates and sets a new Bits UI configuration state that inherits from parent configs.
  *
  * @param opts - Configuration options for this level
  * @returns The configuration state instance
@@ -36,44 +38,41 @@ export function useBitsConfig(opts: BitsConfigStateProps) {
 }
 
 /**
- * Configuration state that handles inheritance from parent configurations.
- * Each property uses a fallback factory to resolve values from the inheritance chain.
+ * Configuration state that inherits from parent configurations.
  *
  * @example
- * Inheritance chain resolution:
+ * Config resolution:
  * ```
  * Level 1: { defaultPortalTo: "#some-element", theme: "dark" }
- * Level 2: { spacing: "large" }              // inherits defaultPortalTo="#some-element", theme="dark"
- * Level 3: { theme: "light" }                // inherits defaultPortalTo="#some-element", spacing="large", overrides theme="light"
+ * Level 2: { spacing: "large" } // inherits defaultPortalTo="#some-element", theme="dark"
+ * Level 3: { theme: "light" }   // inherits defaultPortalTo="#some-element", spacing="large", overrides theme="light"
  * ```
  */
 export class BitsConfigState {
 	readonly opts: Required<BitsConfigStateProps>;
 
 	constructor(parent: BitsConfigState | null, opts: BitsConfigStateProps) {
-		const fallback = fallbackFactory(parent, opts);
+		const resolveConfigOption = createConfigResolver(parent, opts);
 		this.opts = {
-			defaultPortalTo: fallback.of((config) => config.defaultPortalTo),
-			defaultLocale: fallback.of((config) => config.defaultLocale),
+			defaultPortalTo: resolveConfigOption((config) => config.defaultPortalTo),
+			defaultLocale: resolveConfigOption((config) => config.defaultLocale),
 		};
 	}
 }
 
-type FallbackFactory = {
-	of<T>(
-		getter: (config: BitsConfigStateProps) => ReadableBox<T> | undefined
-	): ReadableBox<T | undefined>;
-};
+type ConfigOptionGetter<T> = (config: BitsConfigStateProps) => ReadableBox<T> | undefined;
+type ConfigOptionResolver = <T>(getter: ConfigOptionGetter<T>) => ReadableBox<T | undefined>;
 
 /**
- * Creates a fallback factory that handles configuration inheritance.
- * The factory creates reactive boxes that resolve values using this priority:
+ * Returns a config resolver that resolves a given config option's value.
+ *
+ * The resolver creates reactive boxes that resolve config option values using this priority:
  * 1. Current level's value (if defined)
  * 2. Parent level's value (if defined and current is undefined)
- * 3. undefined (if no value found in chain)
+ * 3. `undefined` (if no value is found in either parent or child)
  *
  * @param parent - Parent configuration state (null if this is root level)
- * @param opts - Current level's configuration options
+ * @param currentOpts - Current level's configuration options
  *
  * @example
  * ```typescript
@@ -81,32 +80,27 @@ type FallbackFactory = {
  * // Root: { defaultPortalTo: "#some-element" }
  * // Child: { someOtherProp: "value" } // no defaultPortalTo specified
  *
- * const fallback = fallbackFactory(parent, opts);
- * const portalTo = fallback.of(config => config.defaultPortalTo);
+ * const resolveConfigOption = createConfigResolver(parent, opts);
+ * const portalTo = resolveConfigOption(config => config.defaultPortalTo);
  *
  * // portalTo.current === "#some-element" (inherited from parent)
- * // even though child didn't specify defaultPortalTo
+ * // even when child didn't specify `defaultPortalTo`
  * ```
  */
-function fallbackFactory(
+function createConfigResolver(
 	parent: BitsConfigState | null,
-	opts: BitsConfigStateProps
-): FallbackFactory {
-	return {
-		of<T>(
-			getter: (config: BitsConfigStateProps) => ReadableBox<T> | undefined
-		): ReadableBox<T | undefined> {
-			return box.with(() => {
-				// try current opts first
-				const value = getter(opts)?.current;
-				if (value !== undefined) return value;
-
-				// if no parent, return undefined
-				if (parent === null) return undefined;
-
-				// get value from parent (which already has its own fallback chain resolved)
-				return getter(parent.opts)?.current;
-			});
-		},
+	currentOpts: BitsConfigStateProps
+): ConfigOptionResolver {
+	return <T>(getter: ConfigOptionGetter<T>) => {
+		const configOption = box.with(() => {
+			// try current opts first
+			const value = getter(currentOpts)?.current;
+			if (value !== undefined) return value;
+			// if no parent, return undefined
+			if (parent === null) return undefined;
+			// get value from parent (which already has its own chain resolved)
+			return getter(parent.opts)?.current;
+		});
+		return configOption;
 	};
 }
