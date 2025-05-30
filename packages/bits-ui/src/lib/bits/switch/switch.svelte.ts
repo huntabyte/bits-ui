@@ -7,13 +7,16 @@ import {
 	getDataDisabled,
 	getDataRequired,
 	getDisabled,
+	createBitsAttrs,
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 
-const SWITCH_ROOT_ATTR = "data-switch-root";
-const SWITCH_THUMB_ATTR = "data-switch-thumb";
+const switchAttrs = createBitsAttrs({
+	component: "switch",
+	parts: ["root", "thumb"],
+});
 
 type SwitchRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -51,17 +54,17 @@ class SwitchRootState {
 		this.#toggle();
 	}
 
-	sharedProps = $derived.by(() => ({
+	readonly sharedProps = $derived.by(() => ({
 		"data-disabled": getDataDisabled(this.opts.disabled.current),
 		"data-state": getDataChecked(this.opts.checked.current),
 		"data-required": getDataRequired(this.opts.required.current),
 	}));
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		checked: this.opts.checked.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...this.sharedProps,
@@ -70,7 +73,7 @@ class SwitchRootState {
 				disabled: getDisabled(this.opts.disabled.current),
 				"aria-checked": getAriaChecked(this.opts.checked.current, false),
 				"aria-required": getAriaRequired(this.opts.required.current),
-				[SWITCH_ROOT_ATTR]: "",
+				[switchAttrs.root]: "",
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
@@ -81,7 +84,7 @@ class SwitchRootState {
 
 class SwitchInputState {
 	readonly root: SwitchRootState;
-	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
+	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 
 	constructor(root: SwitchRootState) {
 		this.root = root;
@@ -111,16 +114,16 @@ class SwitchThumbState {
 		this.root = root;
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		checked: this.root.opts.checked.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...this.root.sharedProps,
 				id: this.opts.id.current,
-				[SWITCH_THUMB_ATTR]: "",
+				[switchAttrs.thumb]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);

@@ -1,6 +1,7 @@
 import { type WritableBox, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import {
+	createBitsAttrs,
 	getAriaChecked,
 	getAriaPressed,
 	getDataDisabled,
@@ -16,13 +17,10 @@ import {
 import type { Orientation } from "$lib/shared/index.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
-const TOOLBAR_ROOT_ATTR = "data-toolbar-root";
-// all links, buttons, and items must have the ITEM_ATTR for roving focus
-const TOOLBAR_ITEM_ATTR = "data-toolbar-item";
-const TOOLBAR_GROUP_ATTR = "data-toolbar-group";
-const TOOLBAR_GROUP_ITEM_ATTR = "data-toolbar-group-item";
-const TOOLBAR_LINK_ATTR = "data-toolbar-link";
-const TOOLBAR_BUTTON_ATTR = "data-toolbar-button";
+export const toolbarAttrs = createBitsAttrs({
+	component: "toolbar",
+	parts: ["root", "item", "group", "group-item", "link", "button"],
+});
 
 type ToolbarRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -42,17 +40,17 @@ class ToolbarRootState {
 			orientation: this.opts.orientation,
 			loop: this.opts.loop,
 			rootNode: this.opts.ref,
-			candidateAttr: TOOLBAR_ITEM_ATTR,
+			candidateAttr: toolbarAttrs.item,
 		});
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "toolbar",
 				"data-orientation": this.opts.orientation.current,
-				[TOOLBAR_ROOT_ATTR]: "",
+				[toolbarAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -73,11 +71,11 @@ class ToolbarGroupBaseState {
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[TOOLBAR_GROUP_ATTR]: "",
+				[toolbarAttrs.group]: "",
 				role: "group",
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
@@ -98,8 +96,8 @@ type ToolbarGroupSingleStateProps = ToolbarGroupBaseStateProps &
 class ToolbarGroupSingleState extends ToolbarGroupBaseState {
 	readonly opts: ToolbarGroupSingleStateProps;
 	readonly root: ToolbarRootState;
-	isMulti = false;
-	anyPressed = $derived.by(() => this.opts.value.current !== "");
+	readonly isMulti = false as const;
+	readonly anyPressed = $derived.by(() => this.opts.value.current !== "");
 
 	constructor(opts: ToolbarGroupSingleStateProps, root: ToolbarRootState) {
 		super(opts, root);
@@ -133,8 +131,8 @@ type ToolbarGroupMultipleStateProps = ToolbarGroupBaseStateProps &
 class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
 	readonly opts: ToolbarGroupMultipleStateProps;
 	readonly root: ToolbarRootState;
-	isMulti = true;
-	anyPressed = $derived.by(() => this.opts.value.current.length > 0);
+	readonly isMulti = true as const;
+	readonly anyPressed = $derived.by(() => this.opts.value.current.length > 0);
 
 	constructor(opts: ToolbarGroupMultipleStateProps, root: ToolbarRootState) {
 		super(opts, root);
@@ -173,7 +171,9 @@ class ToolbarGroupItemState {
 	readonly opts: ToolbarGroupItemStateProps;
 	readonly group: ToolbarGroupState;
 	readonly root: ToolbarRootState;
-	#isDisabled = $derived.by(() => this.opts.disabled.current || this.group.opts.disabled.current);
+	readonly #isDisabled = $derived.by(
+		() => this.opts.disabled.current || this.group.opts.disabled.current
+	);
 
 	constructor(
 		opts: ToolbarGroupItemStateProps,
@@ -213,19 +213,19 @@ class ToolbarGroupItemState {
 		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
 	}
 
-	isPressed = $derived.by(() => this.group.includesItem(this.opts.value.current));
+	readonly isPressed = $derived.by(() => this.group.includesItem(this.opts.value.current));
 
-	#ariaChecked = $derived.by(() => {
+	readonly #ariaChecked = $derived.by(() => {
 		return this.group.isMulti ? undefined : getAriaChecked(this.isPressed, false);
 	});
 
-	#ariaPressed = $derived.by(() => {
+	readonly #ariaPressed = $derived.by(() => {
 		return this.group.isMulti ? getAriaPressed(this.isPressed) : undefined;
 	});
 
 	#tabIndex = $state(0);
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -237,8 +237,8 @@ class ToolbarGroupItemState {
 				"data-value": this.opts.value.current,
 				"aria-pressed": this.#ariaPressed,
 				"aria-checked": this.#ariaChecked,
-				[TOOLBAR_ITEM_ATTR]: "",
-				[TOOLBAR_GROUP_ITEM_ATTR]: "",
+				[toolbarAttrs.item]: "",
+				[toolbarAttrs["group-item"]]: "",
 				disabled: getDisabled(this.#isDisabled),
 				//
 				onclick: this.onclick,
@@ -269,7 +269,7 @@ class ToolbarLinkState {
 		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
 	}
 
-	#role = $derived.by(() => {
+	readonly #role = $derived.by(() => {
 		if (!this.opts.ref.current) return undefined;
 		const tagName = this.opts.ref.current.tagName;
 		if (tagName !== "A") return "link" as const;
@@ -278,12 +278,12 @@ class ToolbarLinkState {
 
 	#tabIndex = $state(0);
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[TOOLBAR_LINK_ATTR]: "",
-				[TOOLBAR_ITEM_ATTR]: "",
+				[toolbarAttrs.link]: "",
+				[toolbarAttrs.item]: "",
 				role: this.#role,
 				tabindex: this.#tabIndex,
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
@@ -321,19 +321,19 @@ class ToolbarButtonState {
 
 	#tabIndex = $state(0);
 
-	#role = $derived.by(() => {
+	readonly #role = $derived.by(() => {
 		if (!this.opts.ref.current) return undefined;
 		const tagName = this.opts.ref.current.tagName;
 		if (tagName !== "BUTTON") return "button" as const;
 		return undefined;
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[TOOLBAR_ITEM_ATTR]: "",
-				[TOOLBAR_BUTTON_ATTR]: "",
+				[toolbarAttrs.item]: "",
+				[toolbarAttrs.button]: "",
 				role: this.#role,
 				tabindex: this.#tabIndex,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),

@@ -1,6 +1,7 @@
 import { type WritableBox, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import {
+	createBitsAttrs,
 	getAriaChecked,
 	getAriaPressed,
 	getDataDisabled,
@@ -16,8 +17,10 @@ import {
 } from "$lib/internal/use-roving-focus.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
-const TOGGLE_GROUP_ROOT_ATTR = "data-toggle-group-root";
-const TOGGLE_GROUP_ITEM_ATTR = "data-toggle-group-item";
+export const toggleGroupAttrs = createBitsAttrs({
+	component: "toggle-group",
+	parts: ["root", "item"],
+});
 
 type ToggleGroupBaseStateProps = WithRefProps<
 	ReadableBoxedValues<{
@@ -35,7 +38,7 @@ class ToggleGroupBaseState {
 	constructor(opts: ToggleGroupBaseStateProps) {
 		this.opts = opts;
 		this.rovingFocusGroup = useRovingFocus({
-			candidateAttr: TOGGLE_GROUP_ITEM_ATTR,
+			candidateAttr: toggleGroupAttrs.item,
 			rootNode: opts.ref,
 			loop: opts.loop,
 			orientation: opts.orientation,
@@ -46,7 +49,7 @@ class ToggleGroupBaseState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[TOGGLE_GROUP_ROOT_ATTR]: "",
+				[toggleGroupAttrs.root]: "",
 				role: "group",
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
@@ -207,7 +210,7 @@ class ToggleGroupItemState {
 				"aria-pressed": this.#ariaPressed,
 				"aria-checked": this.#ariaChecked,
 				disabled: getDisabled(this.#isDisabled),
-				[TOGGLE_GROUP_ITEM_ATTR]: "",
+				[toggleGroupAttrs.item]: "",
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,

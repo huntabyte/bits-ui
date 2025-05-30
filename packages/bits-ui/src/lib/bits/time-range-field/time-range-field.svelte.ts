@@ -7,7 +7,7 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import { useId } from "$lib/internal/use-id.js";
 import type { TimeSegmentPart } from "$lib/shared/index.js";
 import type { WithRefProps } from "$lib/internal/types.js";
-import { getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import type {
 	TimeGranularity,
 	TimeOnInvalid,
@@ -23,8 +23,10 @@ import {
 	isTimeBefore,
 } from "$lib/internal/date-time/field/time-helpers.js";
 
-export const TIME_RANGE_FIELD_ROOT_ATTR = "data-time-range-field-root";
-const TIME_RANGE_FIELD_LABEL_ATTR = "data-time-range-field-label";
+export const timeRangeFieldAttrs = createBitsAttrs({
+	component: "time-range-field",
+	parts: ["root", "label"],
+});
 
 type TimeRangeFieldRootStateProps<T extends TimeValue = Time> = WithRefProps<
 	WritableBoxedValues<{
@@ -220,7 +222,7 @@ export class TimeRangeFieldRootState<T extends TimeValue = Time> {
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[TIME_RANGE_FIELD_ROOT_ATTR]: "",
+				[timeRangeFieldAttrs.root]: "",
 				"data-invalid": getDataInvalid(this.isInvalid),
 				...attachRef(this.opts.ref, (v) => (this.fieldNode = v)),
 			}) as const
@@ -252,7 +254,7 @@ class TimeRangeFieldLabelState {
 				// TODO: invalid state for field
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				[TIME_RANGE_FIELD_LABEL_ATTR]: "",
+				[timeRangeFieldAttrs.label]: "",
 				onclick: this.#onclick,
 				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
 			}) as const

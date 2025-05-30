@@ -63,7 +63,7 @@ class PaginationRootState {
 	getButtonNode(type: "prev" | "next") {
 		const node = this.opts.ref.current;
 		if (!node) return;
-		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
+		return node.querySelector<HTMLElement>(paginationAttrs.selector(type));
 	}
 
 	hasPrevPage = $derived.by(() => this.opts.page.current > 1);

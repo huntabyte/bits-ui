@@ -3,6 +3,7 @@ import { attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
+	createBitsAttrs,
 	getAriaOrientation,
 	getAriaSelected,
 	getDataDisabled,
@@ -24,11 +25,10 @@ import {
 	useRovingFocus,
 } from "$lib/internal/use-roving-focus.svelte.js";
 
-const TABS_ROOT_ATTR = "data-tabs-root";
-const TABS_LIST_ATTR = "data-tabs-list";
-const TABS_TRIGGER_ATTR = "data-tabs-trigger";
-const TABS_CONTENT_ATTR = "data-tabs-content";
-
+const tabsAttrs = createBitsAttrs({
+	component: "tabs",
+	parts: ["root", "list", "trigger", "content"],
+});
 type TabsRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		orientation: Orientation;
@@ -46,15 +46,15 @@ class TabsRootState {
 	rovingFocusGroup: UseRovingFocusReturn;
 	triggerIds = $state<string[]>([]);
 	// holds the trigger ID for each value to associate it with the content
-	valueToTriggerId = new SvelteMap<string, string>();
+	readonly valueToTriggerId = new SvelteMap<string, string>();
 	// holds the content ID for each value to associate it with the trigger
-	valueToContentId = new SvelteMap<string, string>();
+	readonly valueToContentId = new SvelteMap<string, string>();
 
 	constructor(opts: TabsRootStateProps) {
 		this.opts = opts;
 
 		this.rovingFocusGroup = useRovingFocus({
-			candidateAttr: TABS_TRIGGER_ATTR,
+			candidateAttr: tabsAttrs.trigger,
 			rootNode: this.opts.ref,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
@@ -85,12 +85,12 @@ class TabsRootState {
 		this.opts.value.current = v;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				[TABS_ROOT_ATTR]: "",
+				[tabsAttrs.root]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
@@ -112,14 +112,14 @@ class TabsListState {
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "tablist",
 				"aria-orientation": getAriaOrientation(this.root.opts.orientation.current),
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
-				[TABS_LIST_ATTR]: "",
+				[tabsAttrs.list]: "",
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				...attachRef(this.opts.ref),
 			}) as const
@@ -140,10 +140,16 @@ type TabsTriggerStateProps = WithRefProps<
 class TabsTriggerState {
 	readonly opts: TabsTriggerStateProps;
 	readonly root: TabsRootState;
-	#isActive = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
-	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 	#tabIndex = $state(0);
-	#ariaControls = $derived.by(() => this.root.valueToContentId.get(this.opts.value.current));
+	readonly #isActive = $derived.by(
+		() => this.root.opts.value.current === this.opts.value.current
+	);
+	readonly #isDisabled = $derived.by(
+		() => this.opts.disabled.current || this.root.opts.disabled.current
+	);
+	readonly #ariaControls = $derived.by(() =>
+		this.root.valueToContentId.get(this.opts.value.current)
+	);
 
 	constructor(opts: TabsTriggerStateProps, root: TabsRootState) {
 		this.opts = opts;
@@ -191,7 +197,7 @@ class TabsTriggerState {
 		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -202,7 +208,7 @@ class TabsTriggerState {
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"aria-selected": getAriaSelected(this.#isActive),
 				"aria-controls": this.#ariaControls,
-				[TABS_TRIGGER_ATTR]: "",
+				[tabsAttrs.trigger]: "",
 				disabled: getDisabled(this.#isDisabled),
 				tabindex: this.#tabIndex,
 				//
@@ -226,8 +232,12 @@ type TabsContentStateProps = WithRefProps<
 class TabsContentState {
 	readonly opts: TabsContentStateProps;
 	readonly root: TabsRootState;
-	#isActive = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
-	#ariaLabelledBy = $derived.by(() => this.root.valueToTriggerId.get(this.opts.value.current));
+	readonly #isActive = $derived.by(
+		() => this.root.opts.value.current === this.opts.value.current
+	);
+	readonly #ariaLabelledBy = $derived.by(() =>
+		this.root.valueToTriggerId.get(this.opts.value.current)
+	);
 
 	constructor(opts: TabsContentStateProps, root: TabsRootState) {
 		this.opts = opts;
@@ -248,7 +258,7 @@ class TabsContentState {
 				"data-value": this.opts.value.current,
 				"data-state": getTabDataState(this.#isActive),
 				"aria-labelledby": this.#ariaLabelledBy,
-				[TABS_CONTENT_ATTR]: "",
+				[tabsAttrs.content]: "",
 				...attachRef(this.opts.ref),
 			}) as const
 	);
