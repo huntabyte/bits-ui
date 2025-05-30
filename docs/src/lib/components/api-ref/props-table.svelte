@@ -2,6 +2,7 @@
 	import { Tooltip } from "bits-ui";
 	import Badge from "../ui/badge.svelte";
 	import PropTypeContent from "./prop-type-content.svelte";
+	import PropMobilePopover from "./prop-mobile-popover.svelte";
 	import Code from "$lib/components/markdown/code.svelte";
 	import * as Table from "$lib/components/ui/table/index.js";
 	import type { PropObj } from "$lib/types/index.js";
@@ -34,11 +35,16 @@
 	<Table.Root>
 		<Table.Header>
 			<Table.Row class="w-1/4">
-				<Table.Head class="w-[38%] whitespace-nowrap pr-1"
+				<Table.Head class="w-full whitespace-nowrap pr-1"
 					>{slotted ? "Slot" : ""} Property</Table.Head
 				>
-				<Table.Head class="w-[22%] whitespace-nowrap pr-1">Type</Table.Head>
-				<Table.Head class="w-[40%] whitespace-nowrap">Description</Table.Head>
+				<Table.Head class="hidden w-[22%] whitespace-nowrap pr-1 sm:table-cell"
+					>Type</Table.Head
+				>
+				<Table.Head class="hidden w-[40%] whitespace-nowrap sm:table-cell"
+					>Description</Table.Head
+				>
+				<Table.Head class="w-8 sm:hidden">Details</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
@@ -67,7 +73,7 @@
 							tooltipContent={p?.tooltipContent}
 						/>
 					</Table.Cell>
-					<Table.Cell class="align-baseline">
+					<Table.Cell class="hidden align-baseline sm:table-cell">
 						<p class="text-sm leading-[1.5rem]">
 							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 							{@html parseMarkdown(p.description)}
@@ -85,6 +91,17 @@
 								</Code>
 							</div>
 						{/if}
+					</Table.Cell>
+					<Table.Cell class="text-center align-middle sm:hidden">
+						<PropMobilePopover
+							type={p?.type}
+							description={p?.description}
+							defaultValue={p?.default}
+							linked={p?.linked}
+							href={p?.href}
+							tooltipContent={p?.tooltipContent}
+							{slotted}
+						/>
 					</Table.Cell>
 				</Table.Row>
 			{/each}
