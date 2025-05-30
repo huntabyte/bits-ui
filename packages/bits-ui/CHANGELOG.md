@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.3.1
+
+### Patch Changes
+
+-   fix(rating-group): Ensure `data-state` reflects value when showing preview ([#1533](https://github.com/huntabyte/bits-ui/pull/1533))
+
 ## 2.3.0
 
 ### Minor Changes
