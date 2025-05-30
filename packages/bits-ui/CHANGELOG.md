@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.4.0
+
+### Minor Changes
+
+-   feat: introduce `BitsConfig` provider component for globally configuring default component props via context. ([#1530](https://github.com/huntabyte/bits-ui/pull/1530))
+
+### Patch Changes
+
+-   fix(Select): ensure typeahead enabled state is reactive to item updates ([#1540](https://github.com/huntabyte/bits-ui/pull/1540))
+
 ## 2.3.1
 
 ### Patch Changes
