@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useDateRangeFieldRoot } from "../date-range-field.svelte.js";
@@ -7,7 +8,7 @@
 	import { noop } from "$lib/internal/noop.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	const uid = $props.id();
 
@@ -23,7 +24,7 @@
 		required = false,
 		hourCycle,
 		granularity,
-		locale = "en-US",
+		locale,
 		hideTimeZone = false,
 		validate = noop,
 		onInvalid = noop,
@@ -89,7 +90,7 @@
 		required: box.with(() => required),
 		hourCycle: box.with(() => hourCycle),
 		granularity: box.with(() => granularity),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		validate: box.with(() => validate),
 		maxValue: box.with(() => maxValue),

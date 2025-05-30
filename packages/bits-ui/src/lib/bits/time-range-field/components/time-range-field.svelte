@@ -6,13 +6,14 @@
 </script>
 
 <script lang="ts" generics="T extends TimeValue = Time">
+	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { useTimeRangeFieldRoot } from "../time-range-field.svelte.js";
 	import type { TimeRangeFieldRootProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
-	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	const uid = $props.id();
 
@@ -28,7 +29,7 @@
 		required = false,
 		hourCycle,
 		granularity,
-		locale = "en-US",
+		locale,
 		hideTimeZone = false,
 		validate = noop,
 		onInvalid = noop,
@@ -94,7 +95,7 @@
 		required: box.with(() => required),
 		hourCycle: box.with(() => hourCycle),
 		granularity: box.with(() => granularity),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		validate: box.with(() => validate),
 		maxValue: box.with(() => maxValue),

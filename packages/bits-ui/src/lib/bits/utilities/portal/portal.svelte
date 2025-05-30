@@ -5,40 +5,41 @@
 	import PortalConsumer from "./portal-consumer.svelte";
 	import type { PortalProps } from "./types.js";
 	import { isBrowser } from "$lib/internal/is.js";
+	import { resolvePortalToProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
-	let { to = "body", children, disabled }: PortalProps = $props();
+	let { to: toProp, children, disabled }: PortalProps = $props();
 
+	const to = resolvePortalToProp(() => toProp);
 	const context = getAllContexts();
 
 	let target = $derived(getTarget());
 
 	function getTarget() {
 		if (!isBrowser || disabled) return null;
-		let localTarget: HTMLElement | null | DocumentFragment | Element = null;
-		if (typeof to === "string") {
-			localTarget = document.querySelector(to);
-			if (localTarget === null) {
-				if (DEV) {
-					throw new Error(`Target element "${to}" not found.`);
-				}
+
+		let localTarget: Element | null = null;
+
+		if (typeof to.current === "string") {
+			const target = document.querySelector(to.current);
+			if (DEV && target === null) {
+				throw new Error(`Target element "${to.current}" not found.`);
 			}
-		} else if (to instanceof HTMLElement || to instanceof DocumentFragment) {
-			localTarget = to;
+			localTarget = target;
 		} else {
-			if (DEV) {
-				throw new TypeError(
-					`Unknown portal target type: ${
-						to === null ? "null" : typeof to
-					}. Allowed types: string (query selector), HTMLElement, or DocumentFragment.`
-				);
-			}
+			localTarget = to.current;
+		}
+
+		if (DEV && !(localTarget instanceof Element)) {
+			const type = localTarget === null ? "null" : typeof localTarget;
+			throw new TypeError(
+				`Unknown portal target type: ${type}. Allowed types: string (query selector) or Element.`
+			);
 		}
 
 		return localTarget;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let instance: any;
+	let instance: ReturnType<typeof mount> | null;
 
 	function unmountInstance() {
 		if (instance) {
@@ -53,8 +54,7 @@
 			return;
 		}
 		instance = mount(PortalConsumer, {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			target: target as any,
+			target: target,
 			props: { children },
 			context,
 		});
