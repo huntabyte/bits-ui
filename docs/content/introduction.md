@@ -9,9 +9,13 @@ Bits UI is a headless component library for Svelte focused on developer experien
 
 ## Why Bits UI?
 
+<img src="/img/bring-own-style.png" alt="Switch customization UI: Edit toggle style, color, and theme using Tailwind or CSS tools." class="h-full w-full mt-6 -mb-6 rounded-xl md:rounded-2xl" />
+
 ### Bring Your Own Styles
 
 Most components ship completely unstyled, with the exception of those required for core functionality. No CSS resets, no design system assumptions. You bring the styles using standard `class` props or `data-*` attributes. [See the styling guide](/docs/styling).
+
+<img src="/img/developer-exp.png" alt="Accordion builder UI: Easily compose accessible accordion components with Bits UI." class="h-full w-full mt-14 -mb-6 rounded-xl md:rounded-2xl border" />
 
 ### Building for Developer Experience
 
