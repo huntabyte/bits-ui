@@ -57,6 +57,20 @@ export type UseFloatingOptions = {
 		floating: FloatingElement,
 		update: () => void
 	) => () => void;
+
+	/**
+	 * The offset from the reference element along the side axis.
+	 * Used to detect bad coordinates during transitions.
+	 * @default undefined
+	 */
+	sideOffset?: ValueOrGetValue<number | undefined>;
+
+	/**
+	 * The offset from the reference element along the alignment axis.
+	 * Used to detect bad coordinates during transitions.
+	 * @default undefined
+	 */
+	alignOffset?: ValueOrGetValue<number | undefined>;
 };
 
 export type UseFloatingReturn = {
