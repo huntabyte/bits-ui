@@ -68,7 +68,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 				const maxExpectedOffset = Math.max(
 					Math.abs(sideOffsetOption),
 					Math.abs(alignOffsetOption),
-					50
+					15
 				);
 				if (position.x <= maxExpectedOffset && position.y <= maxExpectedOffset) return;
 			}
