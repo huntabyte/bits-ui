@@ -76,6 +76,7 @@
 				<EscapeLayer
 					{...mergedProps}
 					enabled={contentState.root.opts.open.current}
+					ref={contentState.opts.ref}
 					onEscapeKeydown={(e) => {
 						onEscapeKeydown(e);
 						if (e.defaultPrevented) return;

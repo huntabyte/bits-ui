@@ -657,9 +657,14 @@ class ScrollAreaScrollbarSharedState {
 				if (isScrollbarWheel) this.handleWheelScroll(e, maxScrollPos);
 			};
 
-			const unsubListener = addEventListener(document, "wheel", handleWheel, {
-				passive: false,
-			});
+			const unsubListener = addEventListener(
+				this.root.domContext.getDocument(),
+				"wheel",
+				handleWheel,
+				{
+					passive: false,
+				}
+			);
 
 			return unsubListener;
 		});

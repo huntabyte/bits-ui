@@ -91,7 +91,7 @@
 			{ref}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
-				<EscapeLayer {onEscapeKeydown} {escapeKeydownBehavior} {enabled}>
+				<EscapeLayer {onEscapeKeydown} {escapeKeydownBehavior} {enabled} {ref}>
 					<DismissibleLayer
 						{id}
 						{onInteractOutside}
