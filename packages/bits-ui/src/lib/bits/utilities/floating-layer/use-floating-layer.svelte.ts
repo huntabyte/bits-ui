@@ -260,6 +260,8 @@ class FloatingContentState {
 				return cleanup;
 			},
 			open: () => this.opts.enabled.current,
+			sideOffset: () => this.opts.sideOffset.current,
+			alignOffset: () => this.opts.alignOffset.current,
 		});
 
 		$effect(() => {
