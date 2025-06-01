@@ -73,6 +73,7 @@
 	{#snippet children({ props: dismissibleProps })}
 		<EscapeLayer
 			enabled={true}
+			ref={contentImplState.opts.ref}
 			onEscapeKeydown={(e) => {
 				onEscapeKeydown(e);
 				if (e.defaultPrevented) return;

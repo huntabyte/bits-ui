@@ -1,4 +1,4 @@
-import type { ReadableBox } from "svelte-toolbelt";
+import { DOMContext, type Box, type ReadableBox } from "svelte-toolbelt";
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { EscapeBehaviorType, EscapeLayerImplProps } from "./types.js";
@@ -8,13 +8,19 @@ import { noop } from "$lib/internal/noop.js";
 
 globalThis.bitsEscapeLayers ??= new Map<EscapeLayerState, ReadableBox<EscapeBehaviorType>>();
 
-type EscapeLayerStateProps = ReadableBoxedValues<Required<Omit<EscapeLayerImplProps, "children">>>;
+type EscapeLayerStateProps = ReadableBoxedValues<
+	Required<Omit<EscapeLayerImplProps, "children" | "ref">>
+> & {
+	ref: Box<HTMLElement | null>;
+};
 
 export class EscapeLayerState {
 	readonly opts: EscapeLayerStateProps;
+	readonly domContext: DOMContext;
 
 	constructor(opts: EscapeLayerStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(this.opts.ref);
 
 		let unsubEvents = noop;
 		watch(
@@ -34,7 +40,7 @@ export class EscapeLayerState {
 	}
 
 	#addEventListener = () => {
-		return on(document, "keydown", this.#onkeydown, { passive: false });
+		return on(this.domContext.getDocument(), "keydown", this.#onkeydown, { passive: false });
 	};
 
 	#onkeydown = (e: KeyboardEvent) => {

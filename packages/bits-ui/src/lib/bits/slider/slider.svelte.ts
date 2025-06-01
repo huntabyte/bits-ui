@@ -9,6 +9,7 @@ import {
 	attachRef,
 	type Box,
 	type ReadableBox,
+	DOMContext,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
@@ -72,9 +73,11 @@ class SliderBaseRootState {
 	normalizedSteps = $derived.by(() => {
 		return normalizeSteps(this.opts.step.current, this.opts.min.current, this.opts.max.current);
 	});
+	domContext: DOMContext;
 
 	constructor(opts: SliderBaseRootStateProps) {
 		this.opts = opts;
+		this.domContext = new DOMContext(this.opts.ref);
 	}
 
 	isThumbActive(_index: number) {
@@ -167,15 +170,14 @@ class SliderSingleRootState extends SliderBaseRootState {
 
 	constructor(opts: SliderSingleRootStateProps) {
 		super(opts);
-
 		this.opts = opts;
 
 		onMountEffect(() => {
 			return executeCallbacks(
-				on(document, "pointerdown", this.handlePointerDown),
-				on(document, "pointerup", this.handlePointerUp),
-				on(document, "pointermove", this.handlePointerMove),
-				on(document, "pointerleave", this.handlePointerUp)
+				on(this.domContext.getDocument(), "pointerdown", this.handlePointerDown),
+				on(this.domContext.getDocument(), "pointerup", this.handlePointerUp),
+				on(this.domContext.getDocument(), "pointermove", this.handlePointerMove),
+				on(this.domContext.getDocument(), "pointerleave", this.handlePointerUp)
 			);
 		});
 
@@ -394,15 +396,14 @@ class SliderMultiRootState extends SliderBaseRootState {
 
 	constructor(opts: SliderMultiRootStateProps) {
 		super(opts);
-
 		this.opts = opts;
 
 		onMountEffect(() => {
 			return executeCallbacks(
-				on(document, "pointerdown", this.handlePointerDown),
-				on(document, "pointerup", this.handlePointerUp),
-				on(document, "pointermove", this.handlePointerMove),
-				on(document, "pointerleave", this.handlePointerUp)
+				on(this.domContext.getDocument(), "pointerdown", this.handlePointerDown),
+				on(this.domContext.getDocument(), "pointerup", this.handlePointerUp),
+				on(this.domContext.getDocument(), "pointermove", this.handlePointerMove),
+				on(this.domContext.getDocument(), "pointerleave", this.handlePointerUp)
 			);
 		});
 
