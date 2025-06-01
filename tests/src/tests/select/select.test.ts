@@ -545,7 +545,6 @@ describe("select - single", () => {
 	it("should forward the `autocomplete` prop to the hidden input", async () => {
 		const { getHiddenInput } = await openSingle({
 			autocomplete: "one-time-code",
-			name: "hello",
 		});
 		expect(getHiddenInput()).toHaveAttribute("autocomplete", "one-time-code");
 	});
