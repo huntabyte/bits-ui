@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.4.1
+
+### Patch Changes
+
+-   fix(FloatingComponents): ensure bad coordinates aren't used when anchor becomes hidden/removed ([#1546](https://github.com/huntabyte/bits-ui/pull/1546))
+
+-   fix(Slider): shadow DOM support ([#1544](https://github.com/huntabyte/bits-ui/pull/1544))
+
 ## 2.4.0
 
 ### Minor Changes
