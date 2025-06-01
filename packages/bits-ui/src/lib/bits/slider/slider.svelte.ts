@@ -277,7 +277,7 @@ class SliderSingleRootState extends SliderBaseRootState {
 		const closestThumb = this.getAllThumbs()[0];
 		if (!closestThumb || !sliderNode) return;
 
-		const target = e.target;
+		const target = e.composedPath()[0] ?? e.target;
 		if (!isElementOrSVGElement(target) || !sliderNode.contains(target)) return;
 		e.preventDefault();
 
@@ -543,7 +543,7 @@ class SliderMultiRootState extends SliderBaseRootState {
 		const closestThumb = this.#getClosestThumb(e);
 		if (!closestThumb || !sliderNode) return;
 
-		const target = e.target;
+		const target = e.composedPath()[0] ?? e.target;
 		if (!isElementOrSVGElement(target) || !sliderNode.contains(target)) return;
 		e.preventDefault();
 
