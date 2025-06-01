@@ -14,6 +14,7 @@ import type {
 	Without,
 } from "$lib/internal/types.js";
 import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+import type { HTMLInputAttributes } from "svelte/elements";
 
 export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -88,6 +89,11 @@ export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	 * This is only applicable to `type="single"` selects/comboboxes.
 	 */
 	allowDeselect?: boolean;
+
+	/**
+	 * The autocomplete attribute to forward to the hidden input element.
+	 */
+	autocomplete?: HTMLInputAttributes["autocomplete"];
 }>;
 
 export type SelectSingleRootPropsWithoutHTML = {
