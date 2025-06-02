@@ -59,6 +59,7 @@ type CommandRootStateProps = WithRefProps<
 		shouldFilter: boolean;
 		loop: boolean;
 		vimBindings: boolean;
+		columns: number | null;
 		disablePointerSelection: boolean;
 		onStateChange?: (state: Readonly<CommandState>) => void;
 	}> &
@@ -413,7 +414,7 @@ class CommandRootState {
 	 * // get all valid items
 	 * const items = getValidItems()
 	 */
-	updateSelectedByItem(change: 1 | -1): void {
+	updateSelectedByItem(change: number): void {
 		const selected = this.#getSelectedItem();
 		const items = this.getValidItems();
 		const index = items.findIndex((item) => item === selected);
@@ -562,6 +563,10 @@ class CommandRootState {
 		};
 	}
 
+	get isGrid() {
+		return this.opts.columns.current !== null;
+	}
+
 	/**
 	 * Selects last valid item.
 	 */
@@ -587,6 +592,143 @@ class CommandRootState {
 		} else {
 			this.updateSelectedByItem(1);
 		}
+	}
+
+	#down(e: BitsKeyboardEvent) {
+		if (this.opts.columns.current === null) return;
+
+		e.preventDefault();
+
+		const offset = this.#nextRowColumnOffset();
+
+		if (!offset) return;
+
+		this.updateSelectedByItem(offset);
+	}
+
+	#getSelectedColumn() {
+		const selected = this.#getSelectedItem();
+		const group = selected?.closest(COMMAND_GROUP_SELECTOR);
+		const groupValue = group?.getAttribute("data-value");
+		const items = this.getValidItems();
+		const index = items.findIndex((item) => item === selected);
+
+		if (!group || !groupValue) {
+			return columnFromIndex(index + 1, this.opts.columns.current);
+		}
+
+		let i = 1;
+
+		// get the first item in the current group
+
+		let groupItem = items[index - i];
+
+		while (groupItem && groupItem.getAttribute("data-group") === groupValue) {
+			i++;
+			groupItem = items[index - i];
+		}
+
+		return columnFromIndex(i, this.opts.columns.current);
+	}
+
+	#nextRowColumnOffset() {
+		const column = this.#getSelectedColumn();
+
+		const columns = this.opts.columns.current ?? 1;
+
+		const selected = this.#getSelectedItem();
+		const group = selected?.closest(COMMAND_GROUP_SELECTOR);
+		const items = this.getValidItems();
+		const index = items.findIndex((item) => item === selected);
+
+		let currentColumn = column;
+		let currentGroup = group?.getAttribute("data-value");
+
+		for (let i = index + 1; i < items.length; i++) {
+			const item = items[i];
+
+			const itemGroup = item?.getAttribute("data-group");
+
+			if (itemGroup !== currentGroup) {
+				currentColumn = 1;
+				currentGroup = itemGroup;
+
+				if (currentColumn === column) {
+					return i - index;
+				}
+			} else {
+				currentColumn++;
+
+				if (currentColumn > columns) {
+					currentColumn = 1;
+				}
+
+				if (currentColumn === column) {
+					return i - index;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	// DOES NOT WORK
+	#previousRowColumnOffset() {
+		const column = this.#getSelectedColumn();
+
+		const columns = this.opts.columns.current ?? 1;
+
+		const selected = this.#getSelectedItem();
+		const group = selected?.closest(COMMAND_GROUP_SELECTOR);
+		const items = this.getValidItems();
+		const index = items.findIndex((item) => item === selected);
+
+		let groupEnd: number | null;
+		let currentColumn: number | null = column;
+		let currentGroup = group?.getAttribute("data-value");
+
+		for (let i = index - 1; i > 0; i--) {
+			const item = items[i];
+
+			const itemGroup = item?.getAttribute("data-group");
+
+			if (itemGroup !== currentGroup) {
+				if (currentGroup === null) {
+					// we need to figure out if there's a column in this group that works
+				}
+				currentColumn = null;
+				currentGroup = itemGroup;
+				groupEnd = i;
+
+				if (currentColumn === column) {
+					return i - index;
+				}
+			} else {
+				currentColumn++;
+
+				if (currentColumn > columns) {
+					currentColumn = 1;
+				}
+
+				if (currentColumn === column) {
+					return i - index;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	#up(e: BitsKeyboardEvent) {
+		if (this.opts.columns.current === null) return;
+
+		e.preventDefault();
+
+		const offset = this.#previousRowColumnOffset();
+
+		if (!offset) return;
+
+		this.updateSelectedByItem(offset);
 	}
 
 	/**
@@ -618,23 +760,51 @@ class CommandRootState {
 			case kbd.j: {
 				// vim down
 				if (this.opts.vimBindings.current && e.ctrlKey) {
-					this.#next(e);
+					if (this.isGrid) {
+						this.#down(e);
+					} else {
+						this.#next(e);
+					}
 				}
 				break;
 			}
 			case kbd.ARROW_DOWN:
+				if (this.isGrid) {
+					this.#down(e);
+				} else {
+					this.#next(e);
+				}
+				break;
+			case kbd.ARROW_RIGHT:
+				if (!this.isGrid) break;
+
 				this.#next(e);
+
 				break;
 			case kbd.p:
 			case kbd.k: {
 				// vim up
 				if (this.opts.vimBindings.current && e.ctrlKey) {
-					this.#prev(e);
+					if (this.isGrid) {
+						this.#up(e);
+					} else {
+						this.#prev(e);
+					}
 				}
 				break;
 			}
 			case kbd.ARROW_UP:
+				if (this.isGrid) {
+					this.#up(e);
+				} else {
+					this.#prev(e);
+				}
+				break;
+			case kbd.ARROW_LEFT:
+				if (!this.isGrid) break;
+
 				this.#prev(e);
+
 				break;
 			case kbd.HOME:
 				// first item
@@ -675,6 +845,24 @@ class CommandRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
+}
+
+/** Figures out what column the provided 1 BASED index belongs to.
+ *
+ * @param index 1 based index
+ * @param columns Columns in the grid
+ * @returns
+ */
+function columnFromIndex(index: number, columns: number | null) {
+	const c = columns ?? 1;
+
+	if (index <= c) return index;
+
+	const r = index % c;
+
+	if (r === 0) return c;
+
+	return r;
 }
 
 type CommandEmptyStateProps = WithRefProps &
@@ -983,6 +1171,7 @@ class CommandItemState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-selected": getDataSelected(this.isSelected),
 				"data-value": this.trueValue,
+				"data-group": this.#group?.trueValue,
 				[commandAttrs.item]: "",
 				role: "option",
 				onpointermove: this.onpointermove,

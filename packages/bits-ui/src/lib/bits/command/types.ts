@@ -80,6 +80,13 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	 * @defaultValue true
 	 */
 	vimBindings?: boolean;
+
+	/**
+	 * The number of columns in a grid layout.
+	 * 
+	 * @default null
+	 */
+	columns?: number | null;
 }>;
 
 export type CommandRootProps = CommandRootPropsWithoutHTML &

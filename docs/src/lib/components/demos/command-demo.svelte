@@ -6,9 +6,11 @@
 	import RadioButton from "phosphor-svelte/lib/RadioButton";
 	import Sticker from "phosphor-svelte/lib/Sticker";
 	import Textbox from "phosphor-svelte/lib/Textbox";
+	import Acorn from "phosphor-svelte/lib/Acorn";
 </script>
 
 <Command.Root
+	columns={3}
 	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 >
 	<Command.Input
@@ -26,27 +28,48 @@
 				<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
 					Suggestions
 				</Command.GroupHeading>
-				<Command.GroupItems>
+				<Command.GroupItems class="grid grid-cols-3">
 					<Command.Item
-						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+						class="size-full rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["getting started", "tutorial"]}
 					>
 						<Sticker class="size-4" />
 						Introduction
 					</Command.Item>
 					<Command.Item
-						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+						class="size-full rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["child", "custom element", "snippets"]}
 					>
 						<CodeBlock class="size-4 " />
 						Delegation
 					</Command.Item>
 					<Command.Item
-						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+						class="size-full rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["css", "theme", "colors", "fonts", "tailwind"]}
 					>
 						<Palette class="size-4" />
 						Styling
+					</Command.Item>
+					<Command.Item
+						class="size-full rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+						keywords={["acorn"]}
+					>
+						<Acorn class="size-4" />
+						Acorn
+					</Command.Item>
+					<Command.Item
+						class="size-full rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+						keywords={["another1"]}
+					>
+						<Acorn class="size-4" />
+						Another1
+					</Command.Item>
+					<Command.Item
+						class="size-full rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+						keywords={["another2"]}
+					>
+						<Acorn class="size-4" />
+						Another2
 					</Command.Item>
 				</Command.GroupItems>
 			</Command.Group>
@@ -55,7 +78,7 @@
 				<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
 					Components
 				</Command.GroupHeading>
-				<Command.GroupItems>
+				<Command.GroupItems  class="grid grid-cols-3">
 					<Command.Item
 						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["dates", "times"]}

@@ -21,6 +21,7 @@
 		label = "",
 		vimBindings = true,
 		disablePointerSelection = false,
+		columns = null,
 		children,
 		child,
 		...restProps
@@ -47,6 +48,7 @@
 		vimBindings: box.with(() => vimBindings),
 		disablePointerSelection: box.with(() => disablePointerSelection),
 		onStateChange: box.with(() => onStateChange),
+		columns: box.with(() => columns)
 	});
 
 	// Imperative APIs - DO NOT REMOVE OR RENAME
