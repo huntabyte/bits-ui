@@ -698,7 +698,7 @@ class CommandRootState {
 				}
 
 				if (rows >= 2) {
-					return i - 1 - index
+					return i - 1 - index;
 				}
 			} else {
 				currentColumn++;
@@ -713,7 +713,7 @@ class CommandRootState {
 				}
 
 				if (rows >= 2) {
-					return i - 1 - index
+					return i - 1 - index;
 				}
 			}
 		}
