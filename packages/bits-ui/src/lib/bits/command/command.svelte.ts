@@ -681,6 +681,7 @@ class CommandRootState {
 
 		let currentColumn = column;
 		let currentGroup = group?.getAttribute("data-value");
+		let rows = 0;
 
 		for (let i = index + 1; i < items.length; i++) {
 			const item = items[i];
@@ -688,21 +689,31 @@ class CommandRootState {
 			const itemGroup = item?.getAttribute("data-group");
 
 			if (itemGroup !== currentGroup) {
+				rows++;
 				currentColumn = 1;
 				currentGroup = itemGroup;
 
 				if (currentColumn === column) {
 					return i - index;
 				}
+
+				if (rows >= 2) {
+					return i - 1 - index
+				}
 			} else {
 				currentColumn++;
 
 				if (currentColumn > columns) {
 					currentColumn = 1;
+					rows++;
 				}
 
 				if (currentColumn === column) {
 					return i - index;
+				}
+
+				if (rows >= 2) {
+					return i - 1 - index
 				}
 			}
 		}
@@ -741,7 +752,7 @@ class CommandRootState {
 				}
 			}
 
-			return mostRecentMatch !== null ? mostRecentMatch - index : null;
+			return mostRecentMatch !== null ? mostRecentMatch - index : end - index;
 		}
 
 		for (let i = index - 1; i >= 0; i--) {
