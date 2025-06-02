@@ -718,6 +718,21 @@ class CommandRootState {
 			}
 		}
 
+		if (!this.opts.loop.current) return null;
+
+		currentGroup = items[0]?.getAttribute("data-group");
+		for (let i = 0; i < items.length; i++) {
+			const groupItem = items[i];
+
+			if (groupItem?.getAttribute("data-group") !== currentGroup) {
+				return i - 1 - index;
+			} else {
+				if (i + 1 === column) {
+					return i - index;
+				}
+			}
+		}
+
 		return null;
 	}
 
@@ -735,26 +750,6 @@ class CommandRootState {
 		let currentColumn: number | null = column;
 		let currentGroup = group?.getAttribute("data-value");
 
-		function forwardSearchForColumn(start: number, end: number) {
-			// now we need to go forwards and find the last matching column
-			let currentColumn = 0;
-			let mostRecentMatch: number | null = null;
-			for (let i = start; i <= end; i++) {
-				currentColumn++;
-
-				if (currentColumn > columns) {
-					currentColumn = 1;
-				}
-
-				if (currentColumn === column) {
-					mostRecentMatch = i;
-					continue;
-				}
-			}
-
-			return mostRecentMatch !== null ? mostRecentMatch - index : end - index;
-		}
-
 		for (let i = index - 1; i >= 0; i--) {
 			const item = items[i];
 
@@ -762,7 +757,13 @@ class CommandRootState {
 
 			if (itemGroup !== currentGroup) {
 				if (groupEnd !== null) {
-					return forwardSearchForColumn(i + 1, groupEnd);
+					return forwardSearchForColumn({
+						start: i + 1,
+						end: groupEnd,
+						index,
+						column,
+						columns,
+					});
 				}
 
 				currentColumn = null; // we don't know the current column anymore
@@ -786,7 +787,24 @@ class CommandRootState {
 		}
 
 		if (groupEnd !== null) {
-			return forwardSearchForColumn(0, groupEnd);
+			return forwardSearchForColumn({ start: 0, end: groupEnd, index, column, columns });
+		}
+
+		if (!this.opts.loop.current) return null;
+
+		currentGroup = items[items.length - 1]?.getAttribute("data-group");
+		for (let i = items.length - 1; i >= index; i--) {
+			const groupItem = items[i];
+
+			if (groupItem?.getAttribute("data-group") !== currentGroup) {
+				return forwardSearchForColumn({
+					start: i + 1,
+					end: items.length - 1,
+					index,
+					column,
+					columns,
+				});
+			}
 		}
 
 		return null;
@@ -954,6 +972,38 @@ function columnFromIndex(index: number, columns: number | null) {
 	if (r === 0) return c;
 
 	return r;
+}
+
+function forwardSearchForColumn({
+	start,
+	end,
+	column,
+	index,
+	columns,
+}: {
+	start: number;
+	end: number;
+	columns: number;
+	index: number;
+	column: number;
+}) {
+	// now we need to go forwards and find the last matching column
+	let currentColumn = 0;
+	let mostRecentMatch: number | null = null;
+	for (let i = start; i <= end; i++) {
+		currentColumn++;
+
+		if (currentColumn > columns) {
+			currentColumn = 1;
+		}
+
+		if (currentColumn === column) {
+			mostRecentMatch = i;
+			continue;
+		}
+	}
+
+	return mostRecentMatch !== null ? mostRecentMatch - index : end - index;
 }
 
 type CommandEmptyStateProps = WithRefProps &
