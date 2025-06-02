@@ -792,6 +792,15 @@ class CommandRootState {
 				}
 				break;
 			}
+			case kbd.l: {
+				// vim right
+				if (this.opts.vimBindings.current && e.ctrlKey) {
+					if (this.isGrid) {
+						this.#next(e);
+					}
+				}
+				break;
+			}
 			case kbd.ARROW_DOWN:
 				if (this.isGrid) {
 					this.#down(e);
@@ -812,6 +821,15 @@ class CommandRootState {
 					if (this.isGrid) {
 						this.#up(e);
 					} else {
+						this.#prev(e);
+					}
+				}
+				break;
+			}
+			case kbd.h: {
+				// vim left
+				if (this.opts.vimBindings.current && e.ctrlKey) {
+					if (this.isGrid) {
 						this.#prev(e);
 					}
 				}
