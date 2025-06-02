@@ -83,7 +83,7 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 
 	/**
 	 * The number of columns in a grid layout.
-	 * 
+	 *
 	 * @default null
 	 */
 	columns?: number | null;

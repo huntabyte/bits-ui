@@ -102,13 +102,13 @@
 			>
 				No emojis or symbols found.
 			</Command.Empty>
-			{#each emojiGroups as group}
+			{#each emojiGroups as group (group)}
 				<Command.Group>
 					<Command.GroupHeading class="text-muted-foreground px-2 pb-2 pt-4 text-xs">
 						{group.name}
 					</Command.GroupHeading>
 					<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
-						{#each group.emojis as emoji}
+						{#each group.emojis as emoji (emoji)}
 							<Command.Item
 								class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
 								keywords={emoji.keywords}
