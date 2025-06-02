@@ -601,7 +601,7 @@ class CommandRootState {
 
 		const offset = this.#nextRowColumnOffset();
 
-		if (!offset) return;
+		if (offset === null) return;
 
 		this.updateSelectedByItem(offset);
 	}
@@ -672,7 +672,6 @@ class CommandRootState {
 		return null;
 	}
 
-	// DOES NOT WORK
 	#previousRowColumnOffset() {
 		const column = this.#getSelectedColumn();
 
@@ -683,27 +682,15 @@ class CommandRootState {
 		const items = this.getValidItems();
 		const index = items.findIndex((item) => item === selected);
 
-		let groupEnd: number | null;
+		let groupEnd: number | null = null;
 		let currentColumn: number | null = column;
 		let currentGroup = group?.getAttribute("data-value");
 
-		for (let i = index - 1; i > 0; i--) {
-			const item = items[i];
-
-			const itemGroup = item?.getAttribute("data-group");
-
-			if (itemGroup !== currentGroup) {
-				if (currentGroup === null) {
-					// we need to figure out if there's a column in this group that works
-				}
-				currentColumn = null;
-				currentGroup = itemGroup;
-				groupEnd = i;
-
-				if (currentColumn === column) {
-					return i - index;
-				}
-			} else {
+		function forwardSearchForColumn(start: number, end: number) {
+			// now we need to go forwards and find the last matching column
+			let currentColumn = 0;
+			let mostRecentMatch: number | null = null;
+			for (let i = start; i <= end; i++) {
 				currentColumn++;
 
 				if (currentColumn > columns) {
@@ -711,9 +698,46 @@ class CommandRootState {
 				}
 
 				if (currentColumn === column) {
+					mostRecentMatch = i + start;
+					continue;
+				}
+			}
+
+			return mostRecentMatch !== null ? mostRecentMatch - index : null;
+		}
+
+		for (let i = index - 1; i >= 0; i--) {
+			const item = items[i];
+
+			const itemGroup = item?.getAttribute("data-group");
+
+			if (itemGroup !== currentGroup) {
+				if (groupEnd !== null) {
+					return forwardSearchForColumn(i, groupEnd);
+				}
+
+				currentColumn = null; // we don't know the current column anymore
+				currentGroup = itemGroup;
+				groupEnd = i;
+			} else {
+				if (currentColumn === null) {
+					continue;
+				}
+
+				currentColumn--;
+
+				if (currentColumn <= 0) {
+					currentColumn = columns;
+				}
+
+				if (currentColumn === column) {
 					return i - index;
 				}
 			}
+		}
+
+		if (groupEnd !== null) {
+			return forwardSearchForColumn(0, groupEnd);
 		}
 
 		return null;
@@ -726,7 +750,7 @@ class CommandRootState {
 
 		const offset = this.#previousRowColumnOffset();
 
-		if (!offset) return;
+		if (offset === null) return;
 
 		this.updateSelectedByItem(offset);
 	}
