@@ -718,6 +718,10 @@ class CommandRootState {
 			}
 		}
 
+		if (rows === 1) {
+			return items.length - 1 - index;
+		}
+
 		if (!this.opts.loop.current) return null;
 
 		currentGroup = items[0]?.getAttribute("data-group");
