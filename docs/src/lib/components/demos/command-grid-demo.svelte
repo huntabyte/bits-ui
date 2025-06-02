@@ -1,5 +1,90 @@
 <script lang="ts">
 	import { Command } from "bits-ui";
+
+	type Emoji = {
+		char: string;
+		keywords: string[];
+	};
+
+	type EmojiGroup = {
+		name: string;
+		emojis: Emoji[];
+	};
+
+	const emojiGroups: EmojiGroup[] = [
+		{
+			name: "Pinned",
+			emojis: [
+				{ char: "🤷‍♂️", keywords: ["shrug"] },
+				{ char: "✅", keywords: ["check", "mark"] },
+				{ char: "🎉", keywords: ["party"] },
+			],
+		},
+		{
+			name: "Frequently Used",
+			emojis: [
+				{ char: "¢", keywords: ["cent", "currency"] },
+				{ char: "📦", keywords: ["box", "cardboard", "shipping"] },
+				{ char: "🛜", keywords: ["wifi"] },
+				{ char: "🔥", keywords: ["fire", "hot"] },
+				{ char: "⭐", keywords: ["star", "favorite"] },
+				{ char: "👍", keywords: ["thumbs up", "like", "approve"] },
+				{ char: "🚀", keywords: ["rocket", "launch"] },
+				{ char: "👏", keywords: ["clap", "applause"] },
+			],
+		},
+		{
+			name: "All Emojis",
+			emojis: [
+				{ char: "😊", keywords: ["smile", "happy", "face"] },
+				{ char: "❤️", keywords: ["heart", "love"] },
+				{ char: "👀", keywords: ["eyes", "look", "see"] },
+				{ char: "💡", keywords: ["lightbulb", "idea"] },
+				{ char: "☕", keywords: ["coffee", "drink", "break"] },
+				{ char: "💻", keywords: ["computer", "laptop", "work"] },
+				{ char: "✏️", keywords: ["pencil", "edit", "write"] },
+				{ char: "📅", keywords: ["calendar", "date", "schedule"] },
+				{ char: "📱", keywords: ["phone", "call", "mobile"] },
+				{ char: "🎵", keywords: ["music", "note", "song"] },
+				{ char: "📷", keywords: ["camera", "photo", "picture"] },
+				{ char: "🎁", keywords: ["gift", "present", "surprise"] },
+				{ char: "🌙", keywords: ["moon", "night", "sleep"] },
+				{ char: "☀️", keywords: ["sun", "day", "weather"] },
+				{ char: "🌈", keywords: ["rainbow", "color", "pride"] },
+				{ char: "🌍", keywords: ["earth", "world", "globe"] },
+				{ char: "🌳", keywords: ["tree", "nature", "plant"] },
+				{ char: "🌸", keywords: ["flower", "nature", "spring"] },
+				{ char: "🎆", keywords: ["fireworks", "celebration", "festival"] },
+				{ char: "🎈", keywords: ["balloon", "party", "birthday"] },
+				{ char: "🍪", keywords: ["cookie", "snack", "dessert"] },
+				{ char: "🍕", keywords: ["pizza", "food", "slice"] },
+				{ char: "🍦", keywords: ["ice cream", "dessert", "sweet"] },
+				{ char: "🍎", keywords: ["apple", "fruit", "food"] },
+				{ char: "🍌", keywords: ["banana", "fruit", "yellow"] },
+				{ char: "🚗", keywords: ["car", "vehicle", "drive"] },
+				{ char: "🚲", keywords: ["bicycle", "bike", "ride"] },
+				{ char: "🚆", keywords: ["train", "travel", "transport"] },
+				{ char: "✈️", keywords: ["airplane", "flight", "travel"] },
+				{ char: "⚓", keywords: ["anchor", "boat", "sea"] },
+				{ char: "🏅", keywords: ["medal", "award", "winner"] },
+				{ char: "⚽", keywords: ["soccer", "football", "sport"] },
+				{ char: "🏀", keywords: ["basketball", "sport", "game"] },
+				{ char: "🏆", keywords: ["trophy", "award", "win"] },
+				{ char: "📚", keywords: ["book", "read", "study"] },
+				{ char: "✉️", keywords: ["mail", "envelope", "letter"] },
+				{ char: "🤩", keywords: ["star eyes", "excited", "wow"] },
+				{ char: "🤔", keywords: ["thinking", "hmm", "question"] },
+				{ char: "😴", keywords: ["sleepy", "tired", "zzz"] },
+				{ char: "😢", keywords: ["cry", "sad", "tears"] },
+				{ char: "😂", keywords: ["laugh", "joy", "funny"] },
+				{ char: "😉", keywords: ["wink", "flirt", "smile"] },
+				{ char: "🤓", keywords: ["nerd", "geek", "glasses"] },
+				{ char: "🤖", keywords: ["robot", "ai", "machine"] },
+				{ char: "👻", keywords: ["ghost", "spooky", "halloween"] },
+				{ char: "👽", keywords: ["alien", "space", "ufo"] },
+			],
+		},
+	];
 </script>
 
 <Command.Root
@@ -17,370 +102,23 @@
 			>
 				No results found.
 			</Command.Empty>
-			<Command.Group>
-				<Command.GroupHeading class="text-muted-foreground px-2 pb-2 pt-4 text-xs">
-					Pinned
-				</Command.GroupHeading>
-				<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["shrug"]}
-					>
-						🤷‍♂️
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["check", "mark"]}
-					>
-						✅
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["party"]}
-					>
-						🎉
-					</Command.Item>
-				</Command.GroupItems>
-			</Command.Group>
-			<Command.Group>
-				<Command.GroupHeading class="text-muted-foreground px-2 pb-2 pt-4 text-xs">
-					Frequently Used
-				</Command.GroupHeading>
-				<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["cent", "currency"]}
-					>
-						¢
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["box", "cardboard", "shipping"]}
-					>
-						📦
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["wifi"]}
-					>
-						🛜
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["fire", "hot"]}
-					>
-						🔥
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["star", "favorite"]}
-					>
-						⭐
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["thumbs up", "like", "approve"]}
-					>
-						👍
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["rocket", "launch"]}
-					>
-						🚀
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["clap", "applause"]}
-					>
-						👏
-					</Command.Item>
-				</Command.GroupItems>
-			</Command.Group>
-			<Command.Group>
-				<Command.GroupHeading class="text-muted-foreground px-2 pb-2 pt-4 text-xs">
-					All Emojis
-				</Command.GroupHeading>
-				<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["smile", "happy", "face"]}
-					>
-						😊
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["heart", "love"]}
-					>
-						❤️
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["eyes", "look", "see"]}
-					>
-						👀
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["lightbulb", "idea"]}
-					>
-						💡
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["coffee", "drink", "break"]}
-					>
-						☕
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["computer", "laptop", "work"]}
-					>
-						💻
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["pencil", "edit", "write"]}
-					>
-						✏️
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["calendar", "date", "schedule"]}
-					>
-						📅
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["phone", "call", "mobile"]}
-					>
-						📱
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["music", "note", "song"]}
-					>
-						🎵
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["camera", "photo", "picture"]}
-					>
-						📷
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["gift", "present", "surprise"]}
-					>
-						🎁
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["moon", "night", "sleep"]}
-					>
-						🌙
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["sun", "day", "weather"]}
-					>
-						☀️
-					</Command.Item>
-					<!-- More rows below -->
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["rainbow", "color", "pride"]}
-					>
-						🌈
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["earth", "world", "globe"]}
-					>
-						🌍
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["tree", "nature", "plant"]}
-					>
-						🌳
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["flower", "nature", "spring"]}
-					>
-						🌸
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["fireworks", "celebration", "festival"]}
-					>
-						🎆
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["balloon", "party", "birthday"]}
-					>
-						🎈
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["cookie", "snack", "dessert"]}
-					>
-						🍪
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["pizza", "food", "slice"]}
-					>
-						🍕
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["ice cream", "dessert", "sweet"]}
-					>
-						🍦
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["apple", "fruit", "food"]}
-					>
-						🍎
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["banana", "fruit", "yellow"]}
-					>
-						🍌
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["car", "vehicle", "drive"]}
-					>
-						🚗
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["bicycle", "bike", "ride"]}
-					>
-						🚲
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["train", "travel", "transport"]}
-					>
-						🚆
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["airplane", "flight", "travel"]}
-					>
-						✈️
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["anchor", "boat", "sea"]}
-					>
-						⚓
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["medal", "award", "winner"]}
-					>
-						🏅
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["soccer", "football", "sport"]}
-					>
-						⚽
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["basketball", "sport", "game"]}
-					>
-						🏀
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["trophy", "award", "win"]}
-					>
-						🏆
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["book", "read", "study"]}
-					>
-						📚
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["mail", "envelope", "letter"]}
-					>
-						✉️
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["star eyes", "excited", "wow"]}
-					>
-						🤩
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["thinking", "hmm", "question"]}
-					>
-						🤔
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["sleepy", "tired", "zzz"]}
-					>
-						😴
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["cry", "sad", "tears"]}
-					>
-						😢
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["laugh", "joy", "funny"]}
-					>
-						😂
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["wink", "flirt", "smile"]}
-					>
-						😉
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["nerd", "geek", "glasses"]}
-					>
-						🤓
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["robot", "ai", "machine"]}
-					>
-						🤖
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["ghost", "spooky", "halloween"]}
-					>
-						👻
-					</Command.Item>
-					<Command.Item
-						class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
-						keywords={["alien", "space", "ufo"]}
-					>
-						👽
-					</Command.Item>
-				</Command.GroupItems>
-			</Command.Group>
+			{#each emojiGroups as group}
+				<Command.Group>
+					<Command.GroupHeading class="text-muted-foreground px-2 pb-2 pt-4 text-xs">
+						{group.name}
+					</Command.GroupHeading>
+					<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
+						{#each group.emojis as emoji}
+							<Command.Item
+								class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent"
+								keywords={emoji.keywords}
+							>
+								{emoji.char}
+							</Command.Item>
+						{/each}
+					</Command.GroupItems>
+				</Command.Group>
+			{/each}
 		</Command.Viewport>
 	</Command.List>
 </Command.Root>
