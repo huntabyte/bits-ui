@@ -57,7 +57,7 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 				"Whether or not the command menu should filter items. This is useful when you want to apply custom filtering logic outside of the Command component.",
 		}),
 		columns: createNumberProp({
-			description: 'The number of columns in a grid layout.'
+			description: "The number of columns in a grid layout.",
 		}),
 		onStateChange: createFunctionProp({
 			definition: CommandOnStateChangeProp,

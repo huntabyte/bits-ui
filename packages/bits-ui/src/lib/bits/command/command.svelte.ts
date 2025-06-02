@@ -357,17 +357,55 @@ class CommandRootState {
 			if (!item) return;
 			const grandparent = item.parentElement?.parentElement;
 			if (!grandparent) return;
-			const firstChildOfParent = getFirstNonCommentChild(grandparent) as HTMLElement | null;
-			if (firstChildOfParent && firstChildOfParent.dataset?.value === item.dataset?.value) {
-				const closestGroupHeader = item
-					?.closest(COMMAND_GROUP_SELECTOR)
-					?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
-				closestGroupHeader?.scrollIntoView({ block: "nearest" });
 
-				return;
+			if (this.isGrid) {
+				const isFirstRowOfGroup = this.#itemIsFirstRowOfGroup(item);
+
+				if (isFirstRowOfGroup) {
+					const closestGroupHeader = item
+						?.closest(COMMAND_GROUP_SELECTOR)
+						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
+					closestGroupHeader?.scrollIntoView({ block: "nearest" });
+
+					return;
+				}
+			} else {
+				const firstChildOfParent = getFirstNonCommentChild(
+					grandparent
+				) as HTMLElement | null;
+
+				if (
+					firstChildOfParent &&
+					firstChildOfParent.dataset?.value === item.dataset?.value
+				) {
+					const closestGroupHeader = item
+						?.closest(COMMAND_GROUP_SELECTOR)
+						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
+					closestGroupHeader?.scrollIntoView({ block: "nearest" });
+
+					return;
+				}
 			}
+
 			item.scrollIntoView({ block: "nearest" });
 		});
+	}
+
+	#itemIsFirstRowOfGroup(item: HTMLElement) {
+		const columns = this.opts.columns.current ?? 1;
+		const items = this.getValidItems();
+		const index = items.findIndex((i) => i === item);
+		const group = item.getAttribute("data-group");
+
+		for (let i = index; i >= 0; i--) {
+			const groupItem = items[i];
+
+			if (groupItem?.getAttribute("data-group") !== group) {
+				return index - i + 1 < columns;
+			}
+		}
+
+		return index + 1 < columns;
 	}
 
 	/**
