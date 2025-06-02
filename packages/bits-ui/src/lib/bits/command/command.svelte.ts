@@ -698,7 +698,7 @@ class CommandRootState {
 				}
 
 				if (currentColumn === column) {
-					mostRecentMatch = i + start;
+					mostRecentMatch = i;
 					continue;
 				}
 			}
@@ -713,7 +713,7 @@ class CommandRootState {
 
 			if (itemGroup !== currentGroup) {
 				if (groupEnd !== null) {
-					return forwardSearchForColumn(i, groupEnd);
+					return forwardSearchForColumn(i + 1, groupEnd);
 				}
 
 				currentColumn = null; // we don't know the current column anymore
