@@ -658,7 +658,6 @@ class CommandRootState {
 		let i = 1;
 
 		// get the first item in the current group
-
 		let groupItem = items[index - i];
 
 		while (groupItem && groupItem.getAttribute("data-group") === groupValue) {
@@ -718,6 +717,7 @@ class CommandRootState {
 			}
 		}
 
+		// if we reached the end go to the last column of the last row
 		if (rows === 1) {
 			return items.length - 1 - index;
 		}
@@ -790,6 +790,7 @@ class CommandRootState {
 			}
 		}
 
+		// if we reached the beginning then go to the correct column or default to the next highest column
 		if (groupEnd !== null) {
 			return forwardSearchForColumn({ start: 0, end: groupEnd, index, column, columns });
 		}
