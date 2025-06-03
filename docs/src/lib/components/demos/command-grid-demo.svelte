@@ -1,166 +1,193 @@
 <script lang="ts">
 	import { Command } from "bits-ui";
 	import Sticker from "phosphor-svelte/lib/Sticker";
-	import CodeBlock from "phosphor-svelte/lib/CodeBlock";
-	import Palette from "phosphor-svelte/lib/Palette";
-	import CalendarBlank from "phosphor-svelte/lib/CalendarBlank";
-	import RadioButton from "phosphor-svelte/lib/RadioButton";
-	import Textbox from "phosphor-svelte/lib/Textbox";
-	import { onMount, onDestroy } from "svelte";
+	import Smiley from "phosphor-svelte/lib/Smiley";
+	import ArrowLeft from "phosphor-svelte/lib/ArrowLeft";
+	import { Button } from "../ui/button/index.js";
+	import { cn } from "$lib/utils/index.js";
 
-	type Emoji = {
-		char: string;
+	type Item = {
+		icon?: typeof Sticker;
+		content: string;
 		keywords: string[];
 		disabled?: boolean;
+		action?: () => void;
 	};
 
-	type EmojiGroup = {
+	type Group = {
 		name: string;
-		emojis: Emoji[];
+		items: Item[];
 	};
 
-	const emojiGroups: EmojiGroup[] = [
-		{
-			name: "Pinned",
-			emojis: [
-				{ char: "🤷‍♂️", keywords: ["shrug"] },
-				{ char: "✅", keywords: ["check", "mark"] },
-				{ char: "🎉", keywords: ["party"] },
-			],
-		},
-		{
-			name: "Frequently Used",
-			emojis: [
-				{ char: "¢", keywords: ["cent", "currency"] },
-				{ char: "📦", keywords: ["box", "cardboard", "shipping"] },
-				{ char: "🛜", keywords: ["wifi"] },
-				{ char: "🔥", keywords: ["fire", "hot"] },
-				{ char: "⭐", keywords: ["star", "favorite"] },
-				{ char: "👍", keywords: ["thumbs up", "like", "approve"] },
-				{ char: "🚀", keywords: ["rocket", "launch"] },
-				{ char: "👏", keywords: ["clap", "applause"] },
-			],
-		},
-		{
-			name: "All Emojis",
-			emojis: [
-				{ char: "😊", keywords: ["smile", "happy", "face"] },
-				{ char: "❤️", keywords: ["heart", "love"] },
-				{ char: "👀", keywords: ["eyes", "look", "see"] },
-				{ char: "💡", keywords: ["lightbulb", "idea"] },
-				{ char: "☕", keywords: ["coffee", "drink", "break"] },
-				{ char: "💻", keywords: ["computer", "laptop", "work"] },
-				{ char: "✏️", keywords: ["pencil", "edit", "write"] },
-				{ char: "📅", keywords: ["calendar", "date", "schedule"] },
-				{ char: "📱", keywords: ["phone", "call", "mobile"] },
-				{ char: "🎵", keywords: ["music", "note", "song"] },
-				{ char: "📷", keywords: ["camera", "photo", "picture"] },
-				{ char: "🎁", keywords: ["gift", "present", "surprise"] },
-				{ char: "🌙", keywords: ["moon", "night", "sleep"] },
-				{ char: "☀️", keywords: ["sun", "day", "weather"] },
-				{ char: "🌈", keywords: ["rainbow", "color", "pride"] },
-				{ char: "🌍", keywords: ["earth", "world", "globe"] },
-				{ char: "🌳", keywords: ["tree", "nature", "plant"] },
-				{ char: "🌸", keywords: ["flower", "nature", "spring"] },
-				{ char: "🎆", keywords: ["fireworks", "celebration", "festival"] },
-				{ char: "🎈", keywords: ["balloon", "party", "birthday"] },
-				{ char: "🍪", keywords: ["cookie", "snack", "dessert"] },
-				{ char: "🍕", keywords: ["pizza", "food", "slice"] },
-				{ char: "🍦", keywords: ["ice cream", "dessert", "sweet"] },
-				{ char: "🍎", keywords: ["apple", "fruit", "food"] },
-				{ char: "🍌", keywords: ["banana", "fruit", "yellow"] },
-				{ char: "🚗", keywords: ["car", "vehicle", "drive"] },
-				{ char: "🚲", keywords: ["bicycle", "bike", "ride"] },
-				{ char: "🚆", keywords: ["train", "travel", "transport"] },
-				{ char: "✈️", keywords: ["airplane", "flight", "travel"] },
-				{ char: "⚓", keywords: ["anchor", "boat", "sea"] },
-				{ char: "🏅", keywords: ["medal", "award", "winner"] },
-				{ char: "⚽", keywords: ["soccer", "football", "sport"] },
-				{ char: "🏀", keywords: ["basketball", "sport", "game"] },
-				{ char: "🏆", keywords: ["trophy", "award", "win"] },
-				{ char: "📚", keywords: ["book", "read", "study"] },
-				{ char: "✉️", keywords: ["mail", "envelope", "letter"] },
-				{ char: "🤩", keywords: ["star eyes", "excited", "wow"] },
-				{ char: "🤔", keywords: ["thinking", "hmm", "question"] },
-				{ char: "😴", keywords: ["sleepy", "tired", "zzz"] },
-				{ char: "😢", keywords: ["cry", "sad", "tears"] },
-				{ char: "😂", keywords: ["laugh", "joy", "funny"] },
-				{ char: "😉", keywords: ["wink", "flirt", "smile"] },
-				{ char: "🤓", keywords: ["nerd", "geek", "glasses"] },
-				{ char: "🤖", keywords: ["robot", "ai", "machine"] },
-				{ char: "👻", keywords: ["ghost", "spooky", "halloween"] },
-				{ char: "👽", keywords: ["alien", "space", "ufo"] },
-			],
-		},
-	];
+	type View = {
+		columns: number | undefined;
+		empty: string;
+		placeholder: string;
+		groups: Group[];
+	};
 
-	let view: "list" | "emoji" = $state("list");
+	const defaultView: View = {
+		columns: undefined,
+		placeholder: "Search for something...",
+		empty: "No results found.",
+		groups: [
+			{
+				name: "Suggestions",
+				items: [
+					{
+						content: "Search Emojis and Symbols",
+						keywords: ["emoji", "symbols"],
+						icon: Smiley,
+						action: () => views.push(emojiView),
+					},
+				],
+			},
+		],
+	};
 
-	function handleCommandSelect(key: string) {
-		if (key === "emoji") {
-			view = "emoji";
+	const emojiView: View = {
+		columns: 8,
+		placeholder: "Search Emoji and Symbols...",
+		empty: "No emojis or symbols found.",
+		groups: [
+			{
+				name: "Pinned",
+				items: [
+					{ content: "🤷‍♂️", keywords: ["shrug"] },
+					{ content: "✅", keywords: ["check", "mark"] },
+					{ content: "🎉", keywords: ["party"] },
+				],
+			},
+			{
+				name: "Frequently Used",
+				items: [
+					{ content: "¢", keywords: ["cent", "currency"] },
+					{ content: "📦", keywords: ["box", "cardboard", "shipping"] },
+					{ content: "🛜", keywords: ["wifi"] },
+					{ content: "🔥", keywords: ["fire", "hot"] },
+					{ content: "⭐", keywords: ["star", "favorite"] },
+					{ content: "👍", keywords: ["thumbs up", "like", "approve"] },
+					{ content: "🚀", keywords: ["rocket", "launch"] },
+					{ content: "👏", keywords: ["clap", "applause"] },
+				],
+			},
+			{
+				name: "All Emojis",
+				items: [
+					{ content: "😊", keywords: ["smile", "happy", "face"] },
+					{ content: "❤️", keywords: ["heart", "love"] },
+					{ content: "👀", keywords: ["eyes", "look", "see"] },
+					{ content: "💡", keywords: ["lightbulb", "idea"] },
+					{ content: "☕", keywords: ["coffee", "drink", "break"] },
+					{ content: "💻", keywords: ["computer", "laptop", "work"] },
+					{ content: "✏️", keywords: ["pencil", "edit", "write"] },
+					{ content: "📅", keywords: ["calendar", "date", "schedule"] },
+					{ content: "📱", keywords: ["phone", "call", "mobile"] },
+					{ content: "🎵", keywords: ["music", "note", "song"] },
+					{ content: "📷", keywords: ["camera", "photo", "picture"] },
+					{ content: "🎁", keywords: ["gift", "present", "surprise"] },
+					{ content: "🌙", keywords: ["moon", "night", "sleep"] },
+					{ content: "☀️", keywords: ["sun", "day", "weather"] },
+					{ content: "🌈", keywords: ["rainbow", "color", "pride"] },
+					{ content: "🌍", keywords: ["earth", "world", "globe"] },
+					{ content: "🌳", keywords: ["tree", "nature", "plant"] },
+					{ content: "🌸", keywords: ["flower", "nature", "spring"] },
+					{ content: "🎆", keywords: ["fireworks", "celebration", "festival"] },
+					{ content: "🎈", keywords: ["balloon", "party", "birthday"] },
+					{ content: "🍪", keywords: ["cookie", "snack", "dessert"] },
+					{ content: "🍕", keywords: ["pizza", "food", "slice"] },
+					{ content: "🍦", keywords: ["ice cream", "dessert", "sweet"] },
+					{ content: "🍎", keywords: ["apple", "fruit", "food"] },
+					{ content: "🍌", keywords: ["banana", "fruit", "yellow"] },
+					{ content: "🚗", keywords: ["car", "vehicle", "drive"] },
+					{ content: "🚲", keywords: ["bicycle", "bike", "ride"] },
+					{ content: "🚆", keywords: ["train", "travel", "transport"] },
+					{ content: "✈️", keywords: ["airplane", "flight", "travel"] },
+					{ content: "⚓", keywords: ["anchor", "boat", "sea"] },
+					{ content: "🏅", keywords: ["medal", "award", "winner"] },
+					{ content: "⚽", keywords: ["soccer", "football", "sport"] },
+					{ content: "🏀", keywords: ["basketball", "sport", "game"] },
+					{ content: "🏆", keywords: ["trophy", "award", "win"] },
+					{ content: "📚", keywords: ["book", "read", "study"] },
+					{ content: "✉️", keywords: ["mail", "envelope", "letter"] },
+					{ content: "🤩", keywords: ["star eyes", "excited", "wow"] },
+					{ content: "🤔", keywords: ["thinking", "hmm", "question"] },
+					{ content: "😴", keywords: ["sleepy", "tired", "zzz"] },
+					{ content: "😢", keywords: ["cry", "sad", "tears"] },
+					{ content: "😂", keywords: ["laugh", "joy", "funny"] },
+					{ content: "😉", keywords: ["wink", "flirt", "smile"] },
+					{ content: "🤓", keywords: ["nerd", "geek", "glasses"] },
+					{ content: "🤖", keywords: ["robot", "ai", "machine"] },
+					{ content: "👻", keywords: ["ghost", "spooky", "halloween"] },
+					{ content: "👽", keywords: ["alien", "space", "ufo"] },
+				],
+			},
+		],
+	};
+
+	const views: View[] = $state([defaultView, emojiView]);
+
+	const currentView = $derived(views[views.length - 1]);
+
+	let search = $state("");
+
+	function popView() {
+		if (views.length > 1) {
+			views.pop();
 		}
 	}
-
-	function handleBackToList() {
-		view = "list";
-	}
-
-	// Handle Esc key to go back to list layout when in emoji view
-	function handleKeydown(event: KeyboardEvent) {
-		if (view === "emoji" && event.key === "Escape") {
-			event.preventDefault();
-			handleBackToList();
-		}
-	}
-
-	onMount(() => {
-		window.addEventListener("keydown", handleKeydown);
-		return () => {
-			window.removeEventListener("keydown", handleKeydown);
-		};
-	});
 </script>
 
 <Command.Root
-	columns={view === "emoji" ? 8 : undefined}
+	columns={currentView.columns}
 	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 >
-	<Command.Input
-		class="focus-override h-input placeholder:text-foreground-alt/50 focus:outline-hidden bg-background inline-flex truncate rounded-tl-xl rounded-tr-xl px-4 text-sm transition-colors focus:ring-0"
-		placeholder={view === "emoji" ? "Search Emoji and Symbols..." : "Search for something..."}
-	/>
-	{#if view === "emoji"}
+	<div class="flex items-center">
+		{#if views.length > 1}
+			<Button variant="ghost" onclick={() => views.pop()}>
+				<ArrowLeft />
+			</Button>
+		{/if}
+		<Command.Input
+			class={cn(
+				"focus-override h-input placeholder:text-foreground-alt/50 focus:outline-hidden bg-background inline-flex flex-1 truncate rounded-tl-xl rounded-tr-xl pr-4 text-sm transition-colors focus:ring-0",
+				{ "pl-4": views.length === 1 }
+			)}
+			bind:value={search}
+			onkeydown={(e) => {
+				if (e.key === "Backspace" && search.length === 0) {
+					e.preventDefault();
+					popView();
+				}
+			}}
+			placeholder={currentView.placeholder}
+		/>
+	</div>
+	{#if currentView.columns !== undefined}
 		<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
 			<Command.Viewport>
-				<div class="flex items-center gap-2 px-2 pb-1 pt-2">
-					<button
-						class="text-muted-foreground hover:bg-muted rounded px-2 py-1 text-xs"
-						onclick={handleBackToList}
-						type="button"
-					>
-						← Back / Esc
-					</button>
-					<span class="text-muted-foreground text-xs">Emoji & Symbols</span>
-				</div>
 				<Command.Empty
 					class="text-muted-foreground flex w-full items-center justify-center pb-6 pt-8 text-sm"
 				>
-					No emojis or symbols found.
+					{currentView.empty}
 				</Command.Empty>
-				{#each emojiGroups as group (group)}
+				{#each currentView.groups as group (group)}
 					<Command.Group>
 						<Command.GroupHeading class="text-muted-foreground px-2 pb-2 pt-4 text-xs">
 							{group.name}
 						</Command.GroupHeading>
 						<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
-							{#each group.emojis as emoji (emoji)}
+							{#each group.items as groupItem (groupItem)}
 								<Command.Item
 									class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
-									keywords={emoji.keywords}
-									disabled={emoji.disabled}
+									keywords={groupItem.keywords}
+									disabled={groupItem.disabled}
 								>
-									{emoji.char}
+									{#if groupItem.icon}
+										<groupItem.icon class="size-4" />
+									{:else}
+										{groupItem.content}
+									{/if}
 								</Command.Item>
 							{/each}
 						</Command.GroupItems>
@@ -174,73 +201,30 @@
 				<Command.Empty
 					class="text-muted-foreground flex w-full items-center justify-center pb-6 pt-8 text-sm"
 				>
-					No results found.
+					{currentView.empty}
 				</Command.Empty>
-				<Command.Group>
-					<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
-						Suggestions
-					</Command.GroupHeading>
-					<Command.GroupItems>
-						<Command.Item
-							class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-							keywords={["getting started", "tutorial"]}
-						>
-							<Sticker class="size-4" />
-							Introduction
-						</Command.Item>
-						<Command.Item
-							class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-							keywords={["child", "custom element", "snippets"]}
-						>
-							<CodeBlock class="size-4 " />
-							Delegation
-						</Command.Item>
-						<Command.Item
-							class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-							keywords={["css", "theme", "colors", "fonts", "tailwind"]}
-						>
-							<Palette class="size-4" />
-							Styling
-						</Command.Item>
-						<Command.Item
-							class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-							keywords={["emoji", "symbols", "smileys"]}
-							onSelect={() => handleCommandSelect("emoji")}
-						>
-							<span class="flex size-4 items-center justify-center text-lg">😊</span>
-							Emoji & Symbols
-						</Command.Item>
-					</Command.GroupItems>
-				</Command.Group>
-				<Command.Separator class="bg-foreground/5 h-px w-full" />
-				<Command.Group>
-					<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
-						Components
-					</Command.GroupHeading>
-					<Command.GroupItems>
-						<Command.Item
-							class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-							keywords={["dates", "times"]}
-						>
-							<CalendarBlank class="size-4" />
-							Calendar
-						</Command.Item>
-						<Command.Item
-							class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-							keywords={["buttons", "forms"]}
-						>
-							<RadioButton class="size-4" />
-							Radio Group
-						</Command.Item>
-						<Command.Item
-							class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-							keywords={["inputs", "text", "autocomplete"]}
-						>
-							<Textbox class="size-4" />
-							Combobox
-						</Command.Item>
-					</Command.GroupItems>
-				</Command.Group>
+				{#each currentView.groups as group (group)}
+					<Command.Group>
+						<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
+							{group.name}
+						</Command.GroupHeading>
+						<Command.GroupItems>
+							{#each group.items as groupItem (groupItem)}
+								<Command.Item
+									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									keywords={groupItem.keywords}
+									disabled={groupItem.disabled}
+									onSelect={groupItem.action}
+								>
+									{#if groupItem.icon}
+										<groupItem.icon class="size-4" />
+									{/if}
+									{groupItem.content}
+								</Command.Item>
+							{/each}
+						</Command.GroupItems>
+					</Command.Group>
+				{/each}
 			</Command.Viewport>
 		</Command.List>
 	{/if}
