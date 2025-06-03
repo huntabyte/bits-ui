@@ -333,6 +333,69 @@ class CommandRootState {
 	}
 
 	/**
+	 * Gets all visible command items.
+	 *
+	 * @returns Array of valid item elements
+	 * @remarks Exposed for direct item access and bound checking
+	 */
+	getVisibleItems(): HTMLElement[] {
+		const node = this.opts.ref.current;
+		if (!node) return [];
+		const visibleItems = Array.from(
+			node.querySelectorAll<HTMLElement>(COMMAND_ITEM_SELECTOR)
+		).filter((el): el is HTMLElement => !!el);
+		return visibleItems;
+	}
+
+	/** Returns all visible items in a matrix structure
+	 *
+	 * @remarks Returns empty if the command isn't configured as a grid
+	 *
+	 * @returns
+	 */
+	get itemsGrid(): { index: number; firstRowOfGroup: boolean; ref: HTMLElement }[][] {
+		if (!this.isGrid) return [];
+
+		const columns = this.opts.columns.current ?? 1;
+
+		const items = this.getVisibleItems();
+
+		const grid: { index: number; firstRowOfGroup: boolean; ref: HTMLElement }[][] = [[]];
+
+		let currentGroup = items[0]?.getAttribute("data-group");
+		let column = 1;
+		let row = 0;
+
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
+			const itemGroup = item?.getAttribute("data-group");
+
+			if (currentGroup !== itemGroup) {
+				currentGroup = itemGroup;
+				column = 1;
+				row++;
+				grid.push([{ index: i, firstRowOfGroup: true, ref: item! }]);
+			} else {
+				column++;
+
+				if (column > columns) {
+					row++;
+					column = 1;
+					grid.push([]);
+				}
+
+				grid[row]?.push({
+					index: i,
+					firstRowOfGroup: grid[row]?.[0]?.firstRowOfGroup ?? i === 0,
+					ref: item!,
+				});
+			}
+		}
+
+		return grid;
+	}
+
+	/**
 	 * Gets currently selected command item.
 	 *
 	 * @returns Selected element or undefined
@@ -392,20 +455,23 @@ class CommandRootState {
 	}
 
 	#itemIsFirstRowOfGroup(item: HTMLElement) {
-		const columns = this.opts.columns.current ?? 1;
-		const items = this.getValidItems();
-		const index = items.findIndex((i) => i === item);
-		const group = item.getAttribute("data-group");
+		const grid = this.itemsGrid;
 
-		for (let i = index; i >= 0; i--) {
-			const groupItem = items[i];
+		if (grid.length === 0) return false;
 
-			if (groupItem?.getAttribute("data-group") !== group) {
-				return index - i + 1 < columns;
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r]!;
+
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c]!;
+
+				if (column.ref !== item) continue;
+
+				return column.firstRowOfGroup;
 			}
 		}
 
-		return index + 1 < columns;
+		return false;
 	}
 
 	/**
@@ -637,6 +703,10 @@ class CommandRootState {
 
 		e.preventDefault();
 
+		const grid = this.itemsGrid;
+
+		console.log(grid);
+
 		const offset = this.#nextRowColumnOffset();
 
 		if (offset === null) return;
@@ -644,28 +714,28 @@ class CommandRootState {
 		this.updateSelectedByItem(offset);
 	}
 
-	#getSelectedColumn() {
+	#getSelectedColumn(): number | null {
 		const selected = this.#getSelectedItem();
-		const group = selected?.closest(COMMAND_GROUP_SELECTOR);
-		const groupValue = group?.getAttribute("data-value");
-		const items = this.getValidItems();
-		const index = items.findIndex((item) => item === selected);
 
-		if (!group || !groupValue) {
-			return columnFromIndex(index + 1, this.opts.columns.current);
+		if (!selected) return null;
+
+		const grid = this.itemsGrid;
+
+		if (grid.length === 0) return null;
+
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r]!;
+
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c]!;
+
+				if (column.ref !== selected) continue;
+
+				return c + 1;
+			}
 		}
 
-		let i = 1;
-
-		// get the first item in the current group
-		let groupItem = items[index - i];
-
-		while (groupItem && groupItem.getAttribute("data-group") === groupValue) {
-			i++;
-			groupItem = items[index - i];
-		}
-
-		return columnFromIndex(i, this.opts.columns.current);
+		return null;
 	}
 
 	#nextRowColumnOffset() {
