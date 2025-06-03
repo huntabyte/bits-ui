@@ -766,7 +766,7 @@ class CommandRootState {
 				grid,
 			});
 
-			// this most likely happens if there were no non-disabled columns below the current column
+			// this happens if there were no non-disabled columns below the current column
 			// we can now try starting from the beginning to find the right column
 			if (newItem === null && this.opts.loop.current) {
 				newItem = this.#findNextNonDisabledItem({
@@ -887,7 +887,7 @@ class CommandRootState {
 				grid,
 			});
 
-			// this most likely happens if there were no non-disabled columns below the current column
+			// this happens if there were no non-disabled columns below the current column
 			// we can now try starting from the beginning to find the right column
 			if (newItem === null && this.opts.loop.current) {
 				newItem = this.#findNextNonDisabledItemDesc({
