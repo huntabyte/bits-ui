@@ -782,13 +782,13 @@ class CommandRootState {
 	}
 
 	/** Attempts to find the next non-disabled column that matches the expected column.
-	 * 
-	 * @remarks 
+	 *
+	 * @remarks
 	 * - Skips over disabled columns
 	 * - When a row is shorter than the expected column it defaults to the last item in the row
-	 * 
-	 * @param param0 
-	 * @returns 
+	 *
+	 * @param param0
+	 * @returns
 	 */
 	#findNextNonDisabledItem({
 		start,
@@ -811,7 +811,7 @@ class CommandRootState {
 
 			// skip over disabled items
 			if (newItem !== null && itemIsDisabled(newItem)) {
-				newItem = null
+				newItem = null;
 				continue;
 			}
 
@@ -827,11 +827,11 @@ class CommandRootState {
 
 					newItem = item.ref;
 
-					break
+					break;
 				}
 			}
 
-			break
+			break;
 		}
 
 		return newItem;
@@ -903,13 +903,13 @@ class CommandRootState {
 	}
 
 	/** Attempts to find the next non-disabled column that matches the expected column.
-	 * 
-	 * @remarks 
+	 *
+	 * @remarks
 	 * - Skips over disabled columns
 	 * - When a row is shorter than the expected column it defaults to the last item in the row
-	 * 
-	 * @param param0 
-	 * @returns 
+	 *
+	 * @param param0
+	 * @returns
 	 */
 	#findNextNonDisabledItemDesc({
 		start,
@@ -932,7 +932,7 @@ class CommandRootState {
 
 			// skip over disabled items
 			if (newItem !== null && itemIsDisabled(newItem)) {
-				newItem = null
+				newItem = null;
 				continue;
 			}
 
@@ -948,11 +948,11 @@ class CommandRootState {
 
 					newItem = item.ref;
 
-					break
+					break;
 				}
 			}
 
-			break
+			break;
 		}
 
 		return newItem;
@@ -1093,7 +1093,7 @@ class CommandRootState {
 }
 
 function itemIsDisabled(item: HTMLElement) {
-	return item.getAttribute('aria-disabled') === 'true'
+	return item.getAttribute("aria-disabled") === "true";
 }
 
 type CommandEmptyStateProps = WithRefProps &
