@@ -125,6 +125,9 @@ export const root = createApiSchema<SelectRootPropsWithoutHTML>({
 				"Optionally provide an array of `value` and `label` pairs that will be used to match and trigger selection when the trigger is focused and a key is pressed while the content is closed. Additionally, this will be used for form autofill when the type is single.",
 			stringDefinition: `{ value: string; label: string; disabled?: boolean}[]`,
 		}),
+		autocomplete: createStringProp({
+			description: "The autocomplete attribute to forward to the hidden input element.",
+		}),
 		children: childrenSnippet(),
 	},
 });
