@@ -20,6 +20,7 @@
 		required = false,
 		items = [],
 		allowDeselect = false,
+		autocomplete,
 		children,
 	}: SelectRootProps = $props();
 
@@ -79,9 +80,9 @@
 {#if Array.isArray(rootState.opts.value.current)}
 	{#if rootState.opts.value.current.length}
 		{#each rootState.opts.value.current as item (item)}
-			<SelectHiddenInput value={item} />
+			<SelectHiddenInput value={item} {autocomplete} />
 		{/each}
 	{/if}
 {:else}
-	<SelectHiddenInput bind:value={rootState.opts.value.current as string} />
+	<SelectHiddenInput bind:value={rootState.opts.value.current as string} {autocomplete} />
 {/if}
