@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.5.0
+
+### Minor Changes
+
+-   feat(Select): expose `autocomplete` prop on `Select.Root` for passing `autocomplete` attribute to the hidden input ([#1547](https://github.com/huntabyte/bits-ui/pull/1547))
+
 ## 2.4.1
 
 ### Patch Changes
