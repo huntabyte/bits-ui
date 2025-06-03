@@ -53,6 +53,14 @@ const CommandRootContext = new Context<CommandRootState>("Command.Root");
 const CommandListContext = new Context<CommandListState>("Command.List");
 const CommandGroupContainerContext = new Context<CommandGroupContainerState>("Command.Group");
 
+type GridItem = {
+	index: number;
+	firstRowOfGroup: boolean;
+	ref: HTMLElement;
+};
+
+type ItemsGrid = GridItem[][];
+
 type CommandRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		filter: (value: string, search: string, keywords?: string[]) => number;
@@ -333,6 +341,69 @@ class CommandRootState {
 	}
 
 	/**
+	 * Gets all visible command items.
+	 *
+	 * @returns Array of valid item elements
+	 * @remarks Exposed for direct item access and bound checking
+	 */
+	getVisibleItems(): HTMLElement[] {
+		const node = this.opts.ref.current;
+		if (!node) return [];
+		const visibleItems = Array.from(
+			node.querySelectorAll<HTMLElement>(COMMAND_ITEM_SELECTOR)
+		).filter((el): el is HTMLElement => !!el);
+		return visibleItems;
+	}
+
+	/** Returns all visible items in a matrix structure
+	 *
+	 * @remarks Returns empty if the command isn't configured as a grid
+	 *
+	 * @returns
+	 */
+	get itemsGrid(): ItemsGrid {
+		if (!this.isGrid) return [];
+
+		const columns = this.opts.columns.current ?? 1;
+
+		const items = this.getVisibleItems();
+
+		const grid: ItemsGrid = [[]];
+
+		let currentGroup = items[0]?.getAttribute("data-group");
+		let column = 0;
+		let row = 0;
+
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
+			const itemGroup = item?.getAttribute("data-group");
+
+			if (currentGroup !== itemGroup) {
+				currentGroup = itemGroup;
+				column = 1;
+				row++;
+				grid.push([{ index: i, firstRowOfGroup: true, ref: item! }]);
+			} else {
+				column++;
+
+				if (column > columns) {
+					row++;
+					column = 1;
+					grid.push([]);
+				}
+
+				grid[row]?.push({
+					index: i,
+					firstRowOfGroup: grid[row]?.[0]?.firstRowOfGroup ?? i === 0,
+					ref: item!,
+				});
+			}
+		}
+
+		return grid;
+	}
+
+	/**
 	 * Gets currently selected command item.
 	 *
 	 * @returns Selected element or undefined
@@ -392,20 +463,23 @@ class CommandRootState {
 	}
 
 	#itemIsFirstRowOfGroup(item: HTMLElement) {
-		const columns = this.opts.columns.current ?? 1;
-		const items = this.getValidItems();
-		const index = items.findIndex((i) => i === item);
-		const group = item.getAttribute("data-group");
+		const grid = this.itemsGrid;
 
-		for (let i = index; i >= 0; i--) {
-			const groupItem = items[i];
+		if (grid.length === 0) return false;
 
-			if (groupItem?.getAttribute("data-group") !== group) {
-				return index - i + 1 < columns;
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r]!;
+
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c]!;
+
+				if (column.ref !== item) continue;
+
+				return column.firstRowOfGroup;
 			}
 		}
 
-		return index + 1 < columns;
+		return false;
 	}
 
 	/**
@@ -644,175 +718,134 @@ class CommandRootState {
 		this.updateSelectedByItem(offset);
 	}
 
-	#getSelectedColumn() {
-		const selected = this.#getSelectedItem();
-		const group = selected?.closest(COMMAND_GROUP_SELECTOR);
-		const groupValue = group?.getAttribute("data-value");
-		const items = this.getValidItems();
-		const index = items.findIndex((item) => item === selected);
+	#getColumn(
+		item: HTMLElement,
+		grid: ItemsGrid
+	): { columnIndex: number; rowIndex: number } | null {
+		if (grid.length === 0) return null;
 
-		if (!group || !groupValue) {
-			return columnFromIndex(index + 1, this.opts.columns.current);
-		}
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r]!;
 
-		let i = 1;
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c]!;
 
-		// get the first item in the current group
-		let groupItem = items[index - i];
+				if (column.ref !== item) continue;
 
-		while (groupItem && groupItem.getAttribute("data-group") === groupValue) {
-			i++;
-			groupItem = items[index - i];
-		}
-
-		return columnFromIndex(i, this.opts.columns.current);
-	}
-
-	#nextRowColumnOffset() {
-		const column = this.#getSelectedColumn();
-
-		const columns = this.opts.columns.current ?? 1;
-
-		const selected = this.#getSelectedItem();
-		const group = selected?.closest(COMMAND_GROUP_SELECTOR);
-		const items = this.getValidItems();
-		const index = items.findIndex((item) => item === selected);
-
-		let currentColumn = column;
-		let currentGroup = group?.getAttribute("data-value");
-		let rows = 0;
-
-		for (let i = index + 1; i < items.length; i++) {
-			const item = items[i];
-
-			const itemGroup = item?.getAttribute("data-group");
-
-			if (itemGroup !== currentGroup) {
-				rows++;
-				currentColumn = 1;
-				currentGroup = itemGroup;
-
-				if (currentColumn === column) {
-					return i - index;
-				}
-
-				if (rows >= 2) {
-					return i - 1 - index;
-				}
-			} else {
-				currentColumn++;
-
-				if (currentColumn > columns) {
-					currentColumn = 1;
-					rows++;
-				}
-
-				if (currentColumn === column) {
-					return i - index;
-				}
-
-				if (rows >= 2) {
-					return i - 1 - index;
-				}
-			}
-		}
-
-		// if we reached the end go to the last column of the last row
-		if (rows === 1) {
-			return items.length - 1 - index;
-		}
-
-		if (!this.opts.loop.current) return null;
-
-		currentGroup = items[0]?.getAttribute("data-group");
-		for (let i = 0; i < items.length; i++) {
-			const groupItem = items[i];
-
-			if (groupItem?.getAttribute("data-group") !== currentGroup) {
-				return i - 1 - index;
-			} else {
-				if (i + 1 === column) {
-					return i - index;
-				}
+				return { columnIndex: c, rowIndex: r };
 			}
 		}
 
 		return null;
 	}
 
-	#previousRowColumnOffset() {
-		const column = this.#getSelectedColumn();
-
-		const columns = this.opts.columns.current ?? 1;
-
+	#nextRowColumnOffset(): number {
+		const grid = this.itemsGrid;
 		const selected = this.#getSelectedItem();
-		const group = selected?.closest(COMMAND_GROUP_SELECTOR);
-		const items = this.getValidItems();
-		const index = items.findIndex((item) => item === selected);
+		if (!selected) return 0;
+		const column = this.#getColumn(selected, grid);
+		if (!column) return 0;
 
-		let groupEnd: number | null = null;
-		let currentColumn: number | null = column;
-		let currentGroup = group?.getAttribute("data-value");
+		let newItem: HTMLElement | null = null;
 
-		for (let i = index - 1; i >= 0; i--) {
-			const item = items[i];
+		// if this is the last row we apply the loop logic
+		if (column.rowIndex === grid.length - 1) {
+			if (!this.opts.loop.current) return 0;
 
-			const itemGroup = item?.getAttribute("data-group");
+			newItem = this.#findNextNonDisabledItem({
+				start: 0,
+				end: column.rowIndex,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else {
+			newItem = this.#findNextNonDisabledItem({
+				start: column.rowIndex + 1,
+				end: grid.length,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
 
-			if (itemGroup !== currentGroup) {
-				if (groupEnd !== null) {
-					return forwardSearchForColumn({
-						start: i + 1,
-						end: groupEnd,
-						index,
-						column,
-						columns,
-					});
-				}
-
-				currentColumn = null; // we don't know the current column anymore
-				currentGroup = itemGroup;
-				groupEnd = i;
-			} else {
-				if (currentColumn === null) {
-					continue;
-				}
-
-				currentColumn--;
-
-				if (currentColumn <= 0) {
-					currentColumn = columns;
-				}
-
-				if (currentColumn === column) {
-					return i - index;
-				}
-			}
-		}
-
-		// if we reached the beginning then go to the correct column or default to the next highest column
-		if (groupEnd !== null) {
-			return forwardSearchForColumn({ start: 0, end: groupEnd, index, column, columns });
-		}
-
-		if (!this.opts.loop.current) return null;
-
-		currentGroup = items[items.length - 1]?.getAttribute("data-group");
-		for (let i = items.length - 1; i >= index; i--) {
-			const groupItem = items[i];
-
-			if (groupItem?.getAttribute("data-group") !== currentGroup) {
-				return forwardSearchForColumn({
-					start: i + 1,
-					end: items.length - 1,
-					index,
-					column,
-					columns,
+			// this most likely happens if there were no non-disabled columns below the current column
+			// we can now try starting from the beginning to find the right column
+			if (newItem === null && this.opts.loop.current) {
+				newItem = this.#findNextNonDisabledItem({
+					start: 0,
+					end: column.rowIndex,
+					expectedColumnIndex: column.columnIndex,
+					grid,
 				});
 			}
 		}
 
-		return null;
+		return this.#calculateOffset(selected, newItem);
+	}
+
+	/** Attempts to find the next non-disabled column that matches the expected column.
+	 * 
+	 * @remarks 
+	 * - Skips over disabled columns
+	 * - When a row is shorter than the expected column it defaults to the last item in the row
+	 * 
+	 * @param param0 
+	 * @returns 
+	 */
+	#findNextNonDisabledItem({
+		start,
+		end,
+		grid,
+		expectedColumnIndex,
+	}: {
+		start: number;
+		end: number;
+		grid: ItemsGrid;
+		expectedColumnIndex: number;
+	}) {
+		let newItem: HTMLElement | null = null;
+
+		for (let r = start; r < end; r++) {
+			const row = grid[r]!;
+
+			// try to get the next column
+			newItem = row[expectedColumnIndex]?.ref ?? null;
+
+			// skip over disabled items
+			if (newItem !== null && itemIsDisabled(newItem)) {
+				newItem = null
+				continue;
+			}
+
+			// if that column doesn't exist default to the next highest column
+			if (newItem === null) {
+				// try and find the next highest non-disabled item in the row
+				// if there aren't any non-disabled items we just give up and return null
+				for (let i = row.length - 1; i >= 0; i--) {
+					const item = row[row.length - 1]!;
+
+					// skip disabled items
+					if (itemIsDisabled(item.ref)) continue;
+
+					newItem = item.ref;
+
+					break
+				}
+			}
+
+			break
+		}
+
+		return newItem;
+	}
+
+	#calculateOffset(selected: HTMLElement, newSelected: HTMLElement | null): number {
+		if (newSelected === null) return 0;
+
+		const items = this.getValidItems();
+
+		const ogIndex = items.findIndex((item) => item === selected);
+		const newIndex = items.findIndex((item) => item === newSelected);
+
+		return newIndex - ogIndex;
 	}
 
 	#up(e: BitsKeyboardEvent) {
@@ -825,6 +858,104 @@ class CommandRootState {
 		if (offset === null) return;
 
 		this.updateSelectedByItem(offset);
+	}
+
+	#previousRowColumnOffset() {
+		const grid = this.itemsGrid;
+		const selected = this.#getSelectedItem();
+		if (!selected) return 0;
+		const column = this.#getColumn(selected, grid);
+		if (!column) return 0;
+
+		let newItem: HTMLElement | null = null;
+
+		// if this is the last row we apply the loop logic
+		if (column.rowIndex === 0) {
+			if (!this.opts.loop.current) return 0;
+
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: grid.length - 1,
+				end: column.rowIndex + 1,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else {
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: column.rowIndex - 1,
+				end: 0,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+
+			// this most likely happens if there were no non-disabled columns below the current column
+			// we can now try starting from the beginning to find the right column
+			if (newItem === null && this.opts.loop.current) {
+				newItem = this.#findNextNonDisabledItemDesc({
+					start: grid.length - 1,
+					end: column.rowIndex + 1,
+					expectedColumnIndex: column.columnIndex,
+					grid,
+				});
+			}
+		}
+
+		return this.#calculateOffset(selected, newItem);
+	}
+
+	/** Attempts to find the next non-disabled column that matches the expected column.
+	 * 
+	 * @remarks 
+	 * - Skips over disabled columns
+	 * - When a row is shorter than the expected column it defaults to the last item in the row
+	 * 
+	 * @param param0 
+	 * @returns 
+	 */
+	#findNextNonDisabledItemDesc({
+		start,
+		end,
+		grid,
+		expectedColumnIndex,
+	}: {
+		start: number;
+		end: number;
+		grid: ItemsGrid;
+		expectedColumnIndex: number;
+	}) {
+		let newItem: HTMLElement | null = null;
+
+		for (let r = start; r >= end; r--) {
+			const row = grid[r]!;
+
+			// try to get the next column
+			newItem = row[expectedColumnIndex]?.ref ?? null;
+
+			// skip over disabled items
+			if (newItem !== null && itemIsDisabled(newItem)) {
+				newItem = null
+				continue;
+			}
+
+			// if that column doesn't exist default to the next highest column
+			if (newItem === null) {
+				// try and find the next highest non-disabled item in the row
+				// if there aren't any non-disabled items we just give up and return null
+				for (let i = row.length - 1; i >= 0; i--) {
+					const item = row[row.length - 1]!;
+
+					// skip disabled items
+					if (itemIsDisabled(item.ref)) continue;
+
+					newItem = item.ref;
+
+					break
+				}
+			}
+
+			break
+		}
+
+		return newItem;
 	}
 
 	/**
@@ -961,54 +1092,8 @@ class CommandRootState {
 	);
 }
 
-/** Figures out what column the provided 1 BASED index belongs to.
- *
- * @param index 1 based index
- * @param columns Columns in the grid
- * @returns
- */
-function columnFromIndex(index: number, columns: number | null) {
-	const c = columns ?? 1;
-
-	if (index <= c) return index;
-
-	const r = index % c;
-
-	if (r === 0) return c;
-
-	return r;
-}
-
-function forwardSearchForColumn({
-	start,
-	end,
-	column,
-	index,
-	columns,
-}: {
-	start: number;
-	end: number;
-	columns: number;
-	index: number;
-	column: number;
-}) {
-	// now we need to go forwards and find the last matching column
-	let currentColumn = 0;
-	let mostRecentMatch: number | null = null;
-	for (let i = start; i <= end; i++) {
-		currentColumn++;
-
-		if (currentColumn > columns) {
-			currentColumn = 1;
-		}
-
-		if (currentColumn === column) {
-			mostRecentMatch = i;
-			continue;
-		}
-	}
-
-	return mostRecentMatch !== null ? mostRecentMatch - index : end - index;
+function itemIsDisabled(item: HTMLElement) {
+	return item.getAttribute('aria-disabled') === 'true'
 }
 
 type CommandEmptyStateProps = WithRefProps &
