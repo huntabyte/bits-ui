@@ -371,7 +371,7 @@ class CommandRootState {
 		const grid: ItemsGrid = [[]];
 
 		let currentGroup = items[0]?.getAttribute("data-group");
-		let column = 1;
+		let column = 0;
 		let row = 0;
 
 		for (let i = 0; i < items.length; i++) {
