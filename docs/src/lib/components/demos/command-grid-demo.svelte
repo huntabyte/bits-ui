@@ -133,15 +133,15 @@
 	{#if view === "emoji"}
 		<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
 			<Command.Viewport>
-				<div class="flex items-center gap-2 px-2 pt-2 pb-1">
+				<div class="flex items-center gap-2 px-2 pb-1 pt-2">
 					<button
-						class="rounded px-2 py-1 text-xs text-muted-foreground hover:bg-muted"
+						class="text-muted-foreground hover:bg-muted rounded px-2 py-1 text-xs"
 						onclick={handleBackToList}
 						type="button"
 					>
 						← Back / Esc
 					</button>
-					<span class="text-xs text-muted-foreground">Emoji & Symbols</span>
+					<span class="text-muted-foreground text-xs">Emoji & Symbols</span>
 				</div>
 				<Command.Empty
 					class="text-muted-foreground flex w-full items-center justify-center pb-6 pt-8 text-sm"
@@ -207,7 +207,7 @@
 							keywords={["emoji", "symbols", "smileys"]}
 							onSelect={() => handleCommandSelect("emoji")}
 						>
-							<span class="size-4 flex items-center justify-center text-lg">😊</span>
+							<span class="flex size-4 items-center justify-center text-lg">😊</span>
 							Emoji & Symbols
 						</Command.Item>
 					</Command.GroupItems>
