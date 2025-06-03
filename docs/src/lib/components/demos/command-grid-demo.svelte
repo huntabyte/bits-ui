@@ -38,7 +38,10 @@
 						content: "Search Emojis and Symbols",
 						keywords: ["emoji", "symbols"],
 						icon: Smiley,
-						action: () => views.push(emojiView),
+						action: () => {
+							search = "";
+							views.push(emojiView);
+						},
 					},
 				],
 			},
