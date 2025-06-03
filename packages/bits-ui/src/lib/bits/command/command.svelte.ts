@@ -711,11 +711,7 @@ class CommandRootState {
 
 		e.preventDefault();
 
-		const offset = this.#nextRowColumnOffset();
-
-		if (offset === null) return;
-
-		this.updateSelectedByItem(offset);
+		this.updateSelectedByItem(this.#nextRowColumnOffset());
 	}
 
 	#getColumn(
@@ -853,11 +849,7 @@ class CommandRootState {
 
 		e.preventDefault();
 
-		const offset = this.#previousRowColumnOffset();
-
-		if (offset === null) return;
-
-		this.updateSelectedByItem(offset);
+		this.updateSelectedByItem(this.#previousRowColumnOffset());
 	}
 
 	#previousRowColumnOffset() {
