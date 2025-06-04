@@ -9,7 +9,6 @@ import {
 	getDataDisabled,
 	getDataOrientation,
 	getDisabled,
-	getHidden,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
@@ -253,7 +252,7 @@ class TabsContentState {
 			({
 				id: this.opts.id.current,
 				role: "tabpanel",
-				hidden: getHidden(!this.#isActive),
+				hidden: this.#isActive ? undefined : true,
 				tabindex: 0,
 				"data-value": this.opts.value.current,
 				"data-state": getTabDataState(this.#isActive),
