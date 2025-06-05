@@ -12,6 +12,7 @@
 		id = createId(uid),
 		ref = $bindable(null),
 		disabled = false,
+		type = "button",
 		...restProps
 	}: DialogCloseProps = $props();
 
@@ -31,7 +32,7 @@
 {#if child}
 	{@render child({ props: mergedProps })}
 {:else}
-	<button {...mergedProps}>
+	<button {type} {...mergedProps}>
 		{@render children?.()}
 	</button>
 {/if}
