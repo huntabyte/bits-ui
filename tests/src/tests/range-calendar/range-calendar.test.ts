@@ -113,8 +113,8 @@ it("should reset range on select when a range is already selected", async () => 
 
 	const selectedDays = getSelectedDays(calendar);
 	expect(selectedDays).toHaveLength(1);
-	expect(startValue).toHaveTextContent(String(undefined));
-	expect(endValue).toHaveTextContent(String(undefined));
+	expect(startValue).toHaveTextContent("1980-01-05");
+	expect(endValue).toHaveTextContent("undefined");
 	const seventhDayInMonth = getByTestId("date-1-7");
 	await user.click(seventhDayInMonth);
 	await tick();
@@ -381,4 +381,161 @@ it("should default the first day of the week to the locale's first day of the we
 		locale: "fr",
 	});
 	expect(t.getByTestId("weekday-1-0").textContent).toBe("lun.");
+});
+
+describe("minDays and maxDays constraints", () => {
+	it("should reset range when selection violates minDays constraint", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+			minDays: 5,
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// select end date only 2 days later (Jan 7) - violates minDays of 5
+		const endDay = getByTestId("date-1-7");
+		await user.click(endDay);
+
+		// should reset to just the end date since it was selected most recently
+		expect(startValue).toHaveTextContent("1980-01-07");
+		expect(endValue).toHaveTextContent("undefined");
+	});
+
+	it("should reset range when selection violates maxDays constraint", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+			maxDays: 3,
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// select end date 5 days later (Jan 10) - violates maxDays of 3 (6 days total)
+		const endDay = getByTestId("date-1-10");
+		await user.click(endDay);
+
+		// should reset to just the end date since it was selected most recently
+		expect(startValue).toHaveTextContent("1980-01-10");
+		expect(endValue).toHaveTextContent("undefined");
+	});
+
+	it("should allow valid ranges within minDays constraint", async () => {
+		const { getByTestId, user, getSelectedDays } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+			minDays: 3,
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+
+		// select end date 3 days later (Jan 8) - exactly meets minDays of 3 (4 days total)
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// should keep the valid range
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("1980-01-08");
+		expect(getSelectedDays()).toHaveLength(4); // Jan 5, 6, 7, 8
+	});
+
+	it("should allow valid ranges within maxDays constraint", async () => {
+		const { getByTestId, user, getSelectedDays } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+			maxDays: 5,
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+
+		// select end date 4 days later (Jan 9) - exactly meets maxDays of 5 (5 days total)
+		const endDay = getByTestId("date-1-9");
+		await user.click(endDay);
+
+		// should keep the valid range
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("1980-01-09");
+		expect(getSelectedDays()).toHaveLength(5); // Jan 5, 6, 7, 8, 9
+	});
+
+	it("should handle constraints when selecting dates in reverse order", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+			maxDays: 3,
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select "end" date first (Jan 10)
+		const endDay = getByTestId("date-1-10");
+		await user.click(endDay);
+		expect(startValue).toHaveTextContent("1980-01-10");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// select "start" date 5 days earlier (Jan 5) - violates maxDays of 3 (6 days total)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+
+		// should reset to just the start date since it was selected most recently
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("undefined");
+	});
+
+	it("should work with both minDays and maxDays constraints together", async () => {
+		const { getByTestId, user, getSelectedDays } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+			minDays: 3,
+			maxDays: 5,
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+
+		// try selecting too close (Jan 6) - violates minDays
+		const tooCloseDay = getByTestId("date-1-6");
+		await user.click(tooCloseDay);
+		expect(startValue).toHaveTextContent("1980-01-06");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// select valid range (Jan 8) - 3 days total, meets minDays
+		const validDay = getByTestId("date-1-8");
+		await user.click(validDay);
+		expect(startValue).toHaveTextContent("1980-01-06");
+		expect(endValue).toHaveTextContent("1980-01-08");
+		expect(getSelectedDays()).toHaveLength(3);
+
+		// try extending beyond maxDays by selecting a new start
+		const tooFarDay = getByTestId("date-1-1");
+		await user.click(tooFarDay);
+		expect(startValue).toHaveTextContent("1980-01-01");
+		expect(endValue).toHaveTextContent("undefined");
+	});
 });

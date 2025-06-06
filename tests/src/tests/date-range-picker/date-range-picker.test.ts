@@ -357,8 +357,8 @@ it("should reset range on select when a range is already selected", async () => 
 
 	const selectedDays = getSelectedDays(calendar);
 	expect(selectedDays).toHaveLength(1);
-	expect(startValue).toHaveTextContent(String(undefined));
-	expect(endValue).toHaveTextContent(String(undefined));
+	expect(startValue).toHaveTextContent("1980-01-05");
+	expect(endValue).toHaveTextContent("undefined");
 	const seventhDayInMonth = getByTestId("date-1-7");
 	await user.click(seventhDayInMonth);
 	await tick();

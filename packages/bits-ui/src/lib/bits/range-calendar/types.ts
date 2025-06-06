@@ -36,6 +36,20 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		onPlaceholderChange?: OnChangeFn<DateValue>;
 
 		/**
+		 * The minimum number of days that can be selected in a range.
+		 *
+		 * @defaultValue undefined
+		 */
+		minDays?: number;
+
+		/**
+		 * The maximum number of days that can be selected in a range.
+		 *
+		 * @defaultValue undefined
+		 */
+		maxDays?: number;
+
+		/**
 		 * Whether or not users can deselect a date once selected
 		 * without selecting another date.
 		 *

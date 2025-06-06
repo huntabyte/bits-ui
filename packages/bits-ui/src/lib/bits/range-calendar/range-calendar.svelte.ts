@@ -76,6 +76,8 @@ type RangeCalendarRootStateProps = WithRefProps<
 			calendarLabel: string;
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
+			minDays: number | undefined;
+			maxDays: number | undefined;
 			/**
 			 * This is strictly used by the `DateRangePicker` component to close the popover when a date range
 			 * is selected. It is not intended to be used by the user.
@@ -307,8 +309,18 @@ export class RangeCalendarRootState {
 							const end = endValue;
 							this.#setStartValue(end);
 							this.#setEndValue(start);
+							if (!this.#isRangeValid(endValue, startValue)) {
+								this.#setStartValue(startValue);
+								this.#setEndValue(undefined);
+								return { start: startValue, end: undefined };
+							}
 							return { start: endValue, end: startValue };
 						} else {
+							if (!this.#isRangeValid(startValue, endValue)) {
+								this.#setStartValue(endValue);
+								this.#setEndValue(undefined);
+								return { start: endValue, end: undefined };
+							}
 							return {
 								start: startValue,
 								end: endValue,
@@ -361,10 +373,20 @@ export class RangeCalendarRootState {
 
 	#setStartValue(value: DateValue | undefined) {
 		this.opts.startValue.current = value;
+		// update the main value prop immediately for external consumers
+		this.#updateValue((prev) => ({
+			...prev,
+			start: value,
+		}));
 	}
 
 	#setEndValue(value: DateValue | undefined) {
 		this.opts.endValue.current = value;
+		// update the main value prop immediately for external consumers
+		this.#updateValue((prev) => ({
+			...prev,
+			end: value,
+		}));
 	}
 
 	setMonths = (months: Month<DateValue>[]) => {
@@ -411,6 +433,25 @@ export class RangeCalendarRootState {
 			);
 		}
 		return false;
+	}
+
+	#isRangeValid(start: DateValue, end: DateValue): boolean {
+		const startDate = start.toDate(getLocalTimeZone());
+		const endDate = end.toDate(getLocalTimeZone());
+
+		const timeDifference = endDate.getTime() - startDate.getTime();
+		const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+		const daysInRange = daysDifference + 1; // +1 to include both start and end days
+
+		if (this.opts.minDays.current && daysInRange < this.opts.minDays.current) {
+			return false;
+		}
+
+		if (this.opts.maxDays.current && daysInRange > this.opts.maxDays.current) {
+			return false;
+		}
+
+		return true;
 	}
 
 	shiftFocus(node: HTMLElement, add: number) {
@@ -485,8 +526,22 @@ export class RangeCalendarRootState {
 			this.#announceSelectedDate(date);
 			this.#setStartValue(date);
 		} else if (!this.opts.endValue.current) {
-			this.#announceSelectedRange(this.opts.startValue.current, date);
-			this.#setEndValue(date);
+			// determine the start and end dates for validation
+			const startDate = this.opts.startValue.current;
+			const endDate = date;
+			const orderedStart = isBefore(endDate, startDate) ? endDate : startDate;
+			const orderedEnd = isBefore(endDate, startDate) ? startDate : endDate;
+
+			// check if the range violates constraints
+			if (!this.#isRangeValid(orderedStart, orderedEnd)) {
+				// reset to just the clicked date
+				this.#setStartValue(date);
+				this.#setEndValue(undefined);
+				this.#announceSelectedDate(date);
+			} else {
+				this.#announceSelectedRange(this.opts.startValue.current, date);
+				this.#setEndValue(date);
+			}
 		} else if (this.opts.endValue.current && this.opts.startValue.current) {
 			this.#setEndValue(undefined);
 			this.#announceSelectedDate(date);

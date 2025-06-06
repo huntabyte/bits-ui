@@ -35,6 +35,8 @@
 		maxValue = undefined,
 		preventDeselect = false,
 		disableDaysOutsideMonth = true,
+		minDays,
+		maxDays,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
 		...restProps
@@ -112,6 +114,8 @@
 		calendarLabel: box.with(() => calendarLabel),
 		fixedWeeks: box.with(() => fixedWeeks),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
+		minDays: box.with(() => minDays),
+		maxDays: box.with(() => maxDays),
 		startValue: box.with(
 			() => startValue,
 			(v) => {

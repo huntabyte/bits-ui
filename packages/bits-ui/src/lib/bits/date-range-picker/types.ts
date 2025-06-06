@@ -271,6 +271,20 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * date is invalid.
 	 */
 	errorMessageId?: string;
+
+	/**
+	 * The minimum number of days that can be selected in a range.
+	 *
+	 * @default undefined
+	 */
+	minDays?: number;
+
+	/**
+	 * The maximum number of days that can be selected in a range.
+	 *
+	 * @default undefined
+	 */
+	maxDays?: number;
 }>;
 
 export type DateRangePickerRootProps = DateRangePickerRootPropsWithoutHTML &
