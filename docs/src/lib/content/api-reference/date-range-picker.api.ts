@@ -70,6 +70,8 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		onOpenChange: datePickerRoot.props!.onOpenChange,
 		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
 		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
+		minDays: rangeCalendarRoot.props!.minDays,
+		maxDays: rangeCalendarRoot.props!.maxDays,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
