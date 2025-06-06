@@ -3,10 +3,12 @@ import { userEvent } from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { describe, it } from "vitest";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
+import type { DateRange } from "bits-ui";
 import { tick } from "svelte";
 import { getTestKbd } from "../utils.js";
 import { getSelectedDays } from "../helpers/calendar.js";
 import RangeCalendarTest, { type RangeCalendarTestProps } from "./range-calendar-test.svelte";
+import RangeCalendarSelectsTest from "./range-calendar-selects-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -1014,5 +1016,227 @@ describe("excludeDisabled functionality", () => {
 		expect(startValue).toHaveTextContent("1980-01-05");
 		expect(endValue).toHaveTextContent("1980-01-09");
 		expect(getSelectedDays()).toHaveLength(5); // includes disabled dates
+	});
+});
+
+describe("RangeCalendar Select Components", () => {
+	function setupWithSelects(
+		props: {
+			placeholder?: CalendarDate;
+			value?: DateRange;
+			months?: number[];
+			years?: number[];
+			monthFormat?: Intl.DateTimeFormatOptions["month"];
+			disabled?: boolean;
+			readonly?: boolean;
+		} = {}
+	) {
+		const user = userEvent.setup();
+		const returned = render(RangeCalendarSelectsTest, props);
+		const calendar = returned.getByTestId("calendar");
+		const monthSelect = returned.getByTestId("month-select");
+		const yearSelect = returned.getByTestId("year-select");
+		expect(calendar).toBeVisible();
+		return { ...returned, user, calendar, monthSelect, yearSelect };
+	}
+
+	describe("RangeCalendar.MonthSelect", () => {
+		it("should render month select with default months", async () => {
+			const t = setupWithSelects({ placeholder: calendarDateRange.start });
+			const monthSelect = t.monthSelect;
+			const options = monthSelect.querySelectorAll("option");
+
+			// should have 12 months
+			expect(options).toHaveLength(12);
+			expect(options[0]).toHaveTextContent("January");
+			expect(options[11]).toHaveTextContent("December");
+		});
+
+		it("should respect custom months prop", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				months: [1, 2, 3], // Q1 months
+			});
+			const monthSelect = t.monthSelect;
+			const options = monthSelect.querySelectorAll("option");
+
+			expect(options).toHaveLength(3);
+			expect(options[0]).toHaveTextContent("January");
+			expect(options[1]).toHaveTextContent("February");
+			expect(options[2]).toHaveTextContent("March");
+		});
+
+		it("should respect monthFormat prop - short", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				monthFormat: "short",
+			});
+			const monthSelect = t.monthSelect;
+			const options = monthSelect.querySelectorAll("option");
+
+			expect(options[0]).toHaveTextContent("Jan");
+			expect(options[1]).toHaveTextContent("Feb");
+		});
+
+		it("should have correct selected option for current month", async () => {
+			const t = setupWithSelects({ placeholder: calendarDateRange.start }); // January 1980
+			const monthSelect = t.monthSelect;
+			const selectedOption = monthSelect.querySelector("option[selected]");
+
+			expect(selectedOption).toHaveTextContent("January");
+			expect(selectedOption).toHaveValue("1");
+		});
+
+		it("should update calendar when month is changed", async () => {
+			const t = setupWithSelects({ placeholder: calendarDateRange.start }); // January 1980
+			const monthSelect = t.monthSelect;
+
+			// Change to March (value="3")
+			await t.user.selectOptions(monthSelect, "3");
+
+			// Calendar should show March 1980
+			const grid = t.getByTestId("grid-3");
+			expect(grid).toBeVisible();
+		});
+
+		it("should be disabled when calendar is disabled", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				disabled: true,
+			});
+			const monthSelect = t.monthSelect;
+
+			expect(monthSelect).toHaveAttribute("disabled");
+		});
+	});
+
+	describe("RangeCalendar.YearSelect", () => {
+		it("should render year select with default years", async () => {
+			const t = setupWithSelects({ placeholder: calendarDateRange.start });
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			expect(options).toHaveLength(101);
+		});
+
+		it("should respect custom years prop", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				years: [2020, 2021, 2022],
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			expect(options).toHaveLength(3);
+			expect(options[0]).toHaveTextContent("2020");
+			expect(options[1]).toHaveTextContent("2021");
+			expect(options[2]).toHaveTextContent("2022");
+		});
+
+		it("should have correct selected option for current year", async () => {
+			const t = setupWithSelects({ placeholder: calendarDateRange.start }); // 1980
+			const yearSelect = t.yearSelect;
+			const selectedOption = yearSelect.querySelector("option[selected]");
+
+			expect(selectedOption).toHaveTextContent("1980");
+			expect(selectedOption).toHaveValue("1980");
+		});
+
+		it("should update calendar when year is changed", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				years: [1979, 1980, 1981],
+			});
+			const yearSelect = t.yearSelect;
+
+			// Change to 1981
+			await t.user.selectOptions(yearSelect, "1981");
+
+			// Should still show January but now 1981
+			const grid = t.getByTestId("grid-1");
+			expect(grid).toBeVisible();
+		});
+
+		it("should be disabled when calendar is disabled", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				disabled: true,
+			});
+			const yearSelect = t.yearSelect;
+
+			expect(yearSelect).toHaveAttribute("disabled");
+		});
+	});
+
+	describe("Integration with Range Selection", () => {
+		it("should work together to navigate to specific month/year", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start, // January 1980
+				years: [1979, 1980, 1981],
+			});
+
+			// Change to March 1981
+			await t.user.selectOptions(t.monthSelect, "3");
+			await t.user.selectOptions(t.yearSelect, "1981");
+
+			// Should show March 1981
+			const grid = t.getByTestId("grid-3");
+			expect(grid).toBeVisible();
+		});
+
+		it("should maintain range selection when navigating months", async () => {
+			const t = setupWithSelects({
+				value: calendarDateRange, // January 20-25, 1980
+			});
+
+			// Should have a range selected initially
+			expect(t.getByTestId("date-1-20")).toHaveAttribute("data-selected");
+			expect(t.getByTestId("date-1-25")).toHaveAttribute("data-selected");
+
+			// Change to February
+			await t.user.selectOptions(t.monthSelect, "2");
+
+			// Range should still be selected (though not visible in February)
+			// Navigate back to January to verify
+			await t.user.selectOptions(t.monthSelect, "1");
+			expect(t.getByTestId("date-1-20")).toHaveAttribute("data-selected");
+			expect(t.getByTestId("date-1-25")).toHaveAttribute("data-selected");
+		});
+
+		it("should allow selecting new ranges after navigation", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+			});
+
+			// Navigate to March
+			await t.user.selectOptions(t.monthSelect, "3");
+
+			// Select a new range in March
+			const startDay = t.getByTestId("date-3-5");
+			const endDay = t.getByTestId("date-3-10");
+
+			await t.user.click(startDay);
+			await t.user.click(endDay);
+
+			// should have selected range in March
+			expect(startDay).toHaveAttribute("data-selected");
+			expect(endDay).toHaveAttribute("data-selected");
+		});
+
+		it("should handle edge cases with limited month/year arrays", async () => {
+			const t = setupWithSelects({
+				placeholder: new CalendarDate(2020, 6, 15),
+				months: [6],
+				years: [2020],
+			});
+
+			const monthOptions = t.monthSelect.querySelectorAll("option");
+			const yearOptions = t.yearSelect.querySelectorAll("option");
+
+			expect(monthOptions).toHaveLength(1);
+			expect(yearOptions).toHaveLength(1);
+			expect(monthOptions[0]).toHaveAttribute("selected");
+			expect(yearOptions[0]).toHaveAttribute("selected");
+		});
 	});
 });

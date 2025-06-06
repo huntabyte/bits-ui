@@ -513,22 +513,24 @@ type UseMonthViewSyncProps = {
  * which determines the month to show in the calendar.
  */
 export function useMonthViewOptionsSync(props: UseMonthViewSyncProps) {
-	const weekStartsOn = props.weekStartsOn.current;
-	const locale = props.locale.current;
-	const fixedWeeks = props.fixedWeeks.current;
-	const numberOfMonths = props.numberOfMonths.current;
+	$effect(() => {
+		const weekStartsOn = props.weekStartsOn.current;
+		const locale = props.locale.current;
+		const fixedWeeks = props.fixedWeeks.current;
+		const numberOfMonths = props.numberOfMonths.current;
 
-	untrack(() => {
-		const placeholder = props.placeholder.current;
-		if (!placeholder) return;
-		const defaultMonthProps = {
-			weekStartsOn,
-			locale,
-			fixedWeeks,
-			numberOfMonths,
-		};
+		untrack(() => {
+			const placeholder = props.placeholder.current;
+			if (!placeholder) return;
+			const defaultMonthProps = {
+				weekStartsOn,
+				locale,
+				fixedWeeks,
+				numberOfMonths,
+			};
 
-		props.setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder }));
+			props.setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder }));
+		});
 	});
 }
 
@@ -739,7 +741,9 @@ export type CalendarParts =
 	| "grid-row"
 	| "head-cell"
 	| "header"
-	| "heading";
+	| "heading"
+	| "month-select"
+	| "year-select";
 
 export function pickerOpenFocus(e: Event) {
 	const doc = getDocument(e.target as HTMLElement);
@@ -848,5 +852,7 @@ export const calendarAttrs = createBitsAttrs({
 		"head-cell",
 		"header",
 		"heading",
+		"month-select",
+		"year-select",
 	],
 });

@@ -210,7 +210,7 @@ export class RangeCalendarRootState {
 			numberOfMonths: this.opts.numberOfMonths.current,
 		});
 
-		$effect(() => {
+		$effect.pre(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
 			this.formatter.setLocale(this.opts.locale.current);
 		});

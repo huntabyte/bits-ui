@@ -243,7 +243,7 @@ export class CalendarRootState {
 	}
 
 	#setupFormatterEffect() {
-		$effect(() => {
+		$effect.pre(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
 			this.formatter.setLocale(this.opts.locale.current);
 		});
@@ -892,6 +892,122 @@ export class CalendarHeaderState {
 	);
 }
 
+export type CalendarMonthSelectStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		months: number[];
+		monthFormat: Intl.DateTimeFormatOptions["month"];
+		disabled: boolean;
+	}>
+>;
+
+export class CalendarMonthSelectState {
+	readonly opts: CalendarMonthSelectStateProps;
+	readonly root: CalendarRootState | RangeCalendarRootState;
+
+	constructor(
+		opts: CalendarMonthSelectStateProps,
+		root: CalendarRootState | RangeCalendarRootState
+	) {
+		this.opts = opts;
+		this.root = root;
+		this.onchange = this.onchange.bind(this);
+	}
+
+	months = $derived.by(() => {
+		this.root.opts.locale.current;
+		const monthNumbers = this.opts.months.current;
+		const monthFormat = this.opts.monthFormat.current;
+		const months = [];
+
+		for (const month of monthNumbers) {
+			// create a date with the current year and the month to get localized name
+			const date = this.root.opts.placeholder.current.set({ month });
+			const label = this.root.formatter.custom(toDate(date), { month: monthFormat });
+			months.push({
+				value: month,
+				label,
+			});
+		}
+
+		return months;
+	});
+
+	currentMonth = $derived.by(() => this.root.opts.placeholder.current.month);
+
+	isDisabled = $derived.by(() => this.root.opts.disabled.current || this.opts.disabled.current);
+
+	onchange(event: Event) {
+		if (this.isDisabled) return;
+		const target = event.target as HTMLSelectElement;
+		const month = parseInt(target.value, 10);
+		if (!isNaN(month)) {
+			this.root.opts.placeholder.current = this.root.opts.placeholder.current.set({ month });
+		}
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				value: this.currentMonth,
+				disabled: this.isDisabled,
+				"data-disabled": getDataDisabled(this.isDisabled),
+				[this.root.getBitsAttr("month-select")]: "",
+				//
+				onchange: this.onchange,
+				...attachRef(this.opts.ref),
+			}) as const
+	);
+}
+
+export type CalendarYearSelectStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		years: number[];
+		disabled: boolean;
+	}>
+>;
+
+export class CalendarYearSelectState {
+	readonly opts: CalendarYearSelectStateProps;
+	readonly root: CalendarRootState | RangeCalendarRootState;
+
+	constructor(
+		opts: CalendarYearSelectStateProps,
+		root: CalendarRootState | RangeCalendarRootState
+	) {
+		this.opts = opts;
+		this.root = root;
+		this.onchange = this.onchange.bind(this);
+	}
+
+	currentYear = $derived.by(() => this.root.opts.placeholder.current.year);
+
+	isDisabled = $derived.by(() => this.root.opts.disabled.current || this.opts.disabled.current);
+
+	onchange(event: Event) {
+		if (this.isDisabled) return;
+		const target = event.target as HTMLSelectElement;
+		const year = parseInt(target.value, 10);
+		if (!isNaN(year)) {
+			this.root.opts.placeholder.current = this.root.opts.placeholder.current.set({ year });
+		}
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				value: this.currentYear,
+				disabled: this.isDisabled,
+				"data-disabled": getDataDisabled(this.isDisabled),
+				[this.root.getBitsAttr("year-select")]: "",
+				//
+				onchange: this.onchange,
+				...attachRef(this.opts.ref),
+			}) as const
+	);
+}
+
 export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
 	"Calendar.Root | RangeCalender.Root"
 );
@@ -946,4 +1062,12 @@ export function useCalendarHeader(props: CalendarHeaderStateProps) {
 
 export function useCalendarHeading(props: CalendarHeadingStateProps) {
 	return new CalendarHeadingState(props, CalendarRootContext.get());
+}
+
+export function useCalendarMonthSelect(props: CalendarMonthSelectStateProps) {
+	return new CalendarMonthSelectState(props, CalendarRootContext.get());
+}
+
+export function useCalendarYearSelect(props: CalendarYearSelectStateProps) {
+	return new CalendarYearSelectState(props, CalendarRootContext.get());
 }

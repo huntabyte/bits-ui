@@ -319,4 +319,8 @@ export type {
 	CalendarNextButtonProps as DatePickerNextButtonProps,
 	CalendarPrevButtonPropsWithoutHTML as DatePickerPrevButtonPropsWithoutHTML,
 	CalendarPrevButtonProps as DatePickerPrevButtonProps,
+	CalendarMonthSelectProps as DatePickerMonthSelectProps,
+	CalendarMonthSelectPropsWithoutHTML as DatePickerMonthSelectPropsWithoutHTML,
+	CalendarYearSelectProps as DatePickerYearSelectProps,
+	CalendarYearSelectPropsWithoutHTML as DatePickerYearSelectPropsWithoutHTML,
 } from "$lib/bits/calendar/types.js";

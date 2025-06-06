@@ -347,4 +347,8 @@ export type {
 	RangeCalendarNextButtonProps as DateRangePickerNextButtonProps,
 	RangeCalendarPrevButtonPropsWithoutHTML as DateRangePickerPrevButtonPropsWithoutHTML,
 	RangeCalendarPrevButtonProps as DateRangePickerPrevButtonProps,
+	RangeCalendarMonthSelectProps as DateRangePickerMonthSelectProps,
+	RangeCalendarMonthSelectPropsWithoutHTML as DateRangePickerMonthSelectPropsWithoutHTML,
+	RangeCalendarYearSelectProps as DateRangePickerYearSelectProps,
+	RangeCalendarYearSelectPropsWithoutHTML as DateRangePickerYearSelectPropsWithoutHTML,
 } from "$lib/bits/range-calendar/types.js";

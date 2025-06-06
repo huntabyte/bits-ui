@@ -4,6 +4,7 @@ import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
 	BitsPrimitiveHeaderAttributes,
+	BitsPrimitiveSelectAttributes,
 	BitsPrimitiveTableAttributes,
 	BitsPrimitiveTbodyAttributes,
 	BitsPrimitiveTdAttributes,
@@ -343,3 +344,58 @@ export type CalendarPrevButtonPropsWithoutHTML = WithChild;
 
 export type CalendarPrevButtonProps = CalendarPrevButtonPropsWithoutHTML &
 	Without<BitsPrimitiveButtonAttributes, CalendarPrevButtonPropsWithoutHTML>;
+
+export type CalendarMonthSelectSnippetProps = {
+	months: Array<{ value: number; label: string }>;
+};
+
+export type CalendarMonthSelectPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * An array of month numbers (1-12) to display in the select.
+		 * This allows for flexible month selection, such as showing only
+		 * specific months or seasons.
+		 *
+		 * @default [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] (all months)
+		 */
+		months?: number[];
+
+		/**
+		 * How the month names should be formatted in the select options.
+		 *
+		 * - "long": "January", "February", etc.
+		 * - "short": "Jan", "Feb", etc.
+		 * - "narrow": "J", "F", etc.
+		 * - "numeric": "1", "2", etc.
+		 * - "2-digit": "01", "02", etc.
+		 *
+		 * @default "long"
+		 */
+		monthFormat?: Intl.DateTimeFormatOptions["month"];
+	},
+	CalendarMonthSelectSnippetProps
+>;
+
+export type CalendarMonthSelectProps = CalendarMonthSelectPropsWithoutHTML &
+	Without<BitsPrimitiveSelectAttributes, CalendarMonthSelectPropsWithoutHTML>;
+
+export type CalendarYearSelectSnippetProps = {
+	years: number[];
+};
+
+export type CalendarYearSelectPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * An array of years to display in the select.
+		 * This allows for complete control over which years appear,
+		 * such as showing only years with data or excluding certain periods.
+		 *
+		 * @default Array from currentYear - 100 to currentYear
+		 */
+		years?: number[];
+	},
+	CalendarYearSelectSnippetProps
+>;
+
+export type CalendarYearSelectProps = CalendarYearSelectPropsWithoutHTML &
+	Without<BitsPrimitiveSelectAttributes, CalendarYearSelectPropsWithoutHTML>;

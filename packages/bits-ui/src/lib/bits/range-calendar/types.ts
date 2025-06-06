@@ -251,4 +251,8 @@ export type {
 	CalendarHeadCellPropsWithoutHTML as RangeCalendarHeadCellPropsWithoutHTML,
 	CalendarHeaderProps as RangeCalendarHeaderProps,
 	CalendarHeaderPropsWithoutHTML as RangeCalendarHeaderPropsWithoutHTML,
+	CalendarMonthSelectProps as RangeCalendarMonthSelectProps,
+	CalendarMonthSelectPropsWithoutHTML as RangeCalendarMonthSelectPropsWithoutHTML,
+	CalendarYearSelectProps as RangeCalendarYearSelectProps,
+	CalendarYearSelectPropsWithoutHTML as RangeCalendarYearSelectPropsWithoutHTML,
 } from "../calendar/types.js";
