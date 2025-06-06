@@ -174,6 +174,10 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			description: "Whether or not to disable days outside the current month.",
 			default: C.FALSE,
 		}),
+		maxDays: createNumberProp({
+			description:
+				"The maximum number of days that can be selected when the calendar is `'multiple'` type.",
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [

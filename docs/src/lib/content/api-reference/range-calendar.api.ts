@@ -6,6 +6,7 @@ import type {
 import {
 	createApiSchema,
 	createDataAttrSchema,
+	createNumberProp,
 	valueDateRangeChangeFn,
 	valueDateRangeProp,
 	withChildProps,
@@ -51,6 +52,12 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 		disableDaysOutsideMonth: calendarRoot.props!.disableDaysOutsideMonth,
 		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
 		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
+		minDays: createNumberProp({
+			description: "The minimum number of days that can be selected in a range.",
+		}),
+		maxDays: createNumberProp({
+			description: "The maximum number of days that can be selected in a range.",
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
