@@ -38,3 +38,5 @@ export const p = "p";
 export const n = "n";
 export const j = "j";
 export const k = "k";
+export const h = "h";
+export const l = "l";

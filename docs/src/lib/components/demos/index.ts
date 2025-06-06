@@ -20,6 +20,7 @@ export { default as ComboboxDemo } from "./combobox-demo.svelte";
 export { default as ComboboxDemoAutoScrollDelay } from "./combobox-demo-auto-scroll-delay.svelte";
 export { default as ComboboxDemoTransition } from "./combobox-demo-transition.svelte";
 export { default as CommandDemo } from "./command-demo.svelte";
+export { default as CommandDemoGrid } from "./command-grid-demo.svelte";
 export { default as CommandDemoDialog } from "./command-demo-dialog.svelte";
 export { default as ContextMenuDemo } from "./context-menu-demo.svelte";
 export { default as ContextMenuDemoTransition } from "./context-menu-demo-transition.svelte";

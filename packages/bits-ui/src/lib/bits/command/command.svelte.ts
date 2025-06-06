@@ -53,12 +53,21 @@ const CommandRootContext = new Context<CommandRootState>("Command.Root");
 const CommandListContext = new Context<CommandListState>("Command.List");
 const CommandGroupContainerContext = new Context<CommandGroupContainerState>("Command.Group");
 
+type GridItem = {
+	index: number;
+	firstRowOfGroup: boolean;
+	ref: HTMLElement;
+};
+
+type ItemsGrid = GridItem[][];
+
 type CommandRootStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		filter: (value: string, search: string, keywords?: string[]) => number;
 		shouldFilter: boolean;
 		loop: boolean;
 		vimBindings: boolean;
+		columns: number | null;
 		disablePointerSelection: boolean;
 		onStateChange?: (state: Readonly<CommandState>) => void;
 	}> &
@@ -332,6 +341,69 @@ class CommandRootState {
 	}
 
 	/**
+	 * Gets all visible command items.
+	 *
+	 * @returns Array of valid item elements
+	 * @remarks Exposed for direct item access and bound checking
+	 */
+	getVisibleItems(): HTMLElement[] {
+		const node = this.opts.ref.current;
+		if (!node) return [];
+		const visibleItems = Array.from(
+			node.querySelectorAll<HTMLElement>(COMMAND_ITEM_SELECTOR)
+		).filter((el): el is HTMLElement => !!el);
+		return visibleItems;
+	}
+
+	/** Returns all visible items in a matrix structure
+	 *
+	 * @remarks Returns empty if the command isn't configured as a grid
+	 *
+	 * @returns
+	 */
+	get itemsGrid(): ItemsGrid {
+		if (!this.isGrid) return [];
+
+		const columns = this.opts.columns.current ?? 1;
+
+		const items = this.getVisibleItems();
+
+		const grid: ItemsGrid = [[]];
+
+		let currentGroup = items[0]?.getAttribute("data-group");
+		let column = 0;
+		let row = 0;
+
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
+			const itemGroup = item?.getAttribute("data-group");
+
+			if (currentGroup !== itemGroup) {
+				currentGroup = itemGroup;
+				column = 1;
+				row++;
+				grid.push([{ index: i, firstRowOfGroup: true, ref: item! }]);
+			} else {
+				column++;
+
+				if (column > columns) {
+					row++;
+					column = 1;
+					grid.push([]);
+				}
+
+				grid[row]?.push({
+					index: i,
+					firstRowOfGroup: grid[row]?.[0]?.firstRowOfGroup ?? i === 0,
+					ref: item!,
+				});
+			}
+		}
+
+		return grid;
+	}
+
+	/**
 	 * Gets currently selected command item.
 	 *
 	 * @returns Selected element or undefined
@@ -356,17 +428,58 @@ class CommandRootState {
 			if (!item) return;
 			const grandparent = item.parentElement?.parentElement;
 			if (!grandparent) return;
-			const firstChildOfParent = getFirstNonCommentChild(grandparent) as HTMLElement | null;
-			if (firstChildOfParent && firstChildOfParent.dataset?.value === item.dataset?.value) {
-				const closestGroupHeader = item
-					?.closest(COMMAND_GROUP_SELECTOR)
-					?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
-				closestGroupHeader?.scrollIntoView({ block: "nearest" });
 
-				return;
+			if (this.isGrid) {
+				const isFirstRowOfGroup = this.#itemIsFirstRowOfGroup(item);
+
+				if (isFirstRowOfGroup) {
+					const closestGroupHeader = item
+						?.closest(COMMAND_GROUP_SELECTOR)
+						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
+					closestGroupHeader?.scrollIntoView({ block: "nearest" });
+
+					return;
+				}
+			} else {
+				const firstChildOfParent = getFirstNonCommentChild(
+					grandparent
+				) as HTMLElement | null;
+
+				if (
+					firstChildOfParent &&
+					firstChildOfParent.dataset?.value === item.dataset?.value
+				) {
+					const closestGroupHeader = item
+						?.closest(COMMAND_GROUP_SELECTOR)
+						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
+					closestGroupHeader?.scrollIntoView({ block: "nearest" });
+
+					return;
+				}
 			}
+
 			item.scrollIntoView({ block: "nearest" });
 		});
+	}
+
+	#itemIsFirstRowOfGroup(item: HTMLElement) {
+		const grid = this.itemsGrid;
+
+		if (grid.length === 0) return false;
+
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r]!;
+
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c]!;
+
+				if (column.ref !== item) continue;
+
+				return column.firstRowOfGroup;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -413,7 +526,7 @@ class CommandRootState {
 	 * // get all valid items
 	 * const items = getValidItems()
 	 */
-	updateSelectedByItem(change: 1 | -1): void {
+	updateSelectedByItem(change: number): void {
 		const selected = this.#getSelectedItem();
 		const items = this.getValidItems();
 		const index = items.findIndex((item) => item === selected);
@@ -562,6 +675,10 @@ class CommandRootState {
 		};
 	}
 
+	get isGrid() {
+		return this.opts.columns.current !== null;
+	}
+
 	/**
 	 * Selects last valid item.
 	 */
@@ -587,6 +704,262 @@ class CommandRootState {
 		} else {
 			this.updateSelectedByItem(1);
 		}
+	}
+
+	#down(e: BitsKeyboardEvent) {
+		if (this.opts.columns.current === null) return;
+
+		e.preventDefault();
+
+		if (e.metaKey) {
+			this.updateSelectedByGroup(1);
+		} else if (e.altKey) {
+			this.updateSelectedByItem(this.#nextRowColumnOffset(1));
+		} else {
+			this.updateSelectedByItem(this.#nextRowColumnOffset());
+		}
+	}
+
+	#getColumn(
+		item: HTMLElement,
+		grid: ItemsGrid
+	): { columnIndex: number; rowIndex: number } | null {
+		if (grid.length === 0) return null;
+
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r]!;
+
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c]!;
+
+				if (column.ref !== item) continue;
+
+				return { columnIndex: c, rowIndex: r };
+			}
+		}
+
+		return null;
+	}
+
+	#nextRowColumnOffset(skipRows = 0): number {
+		const grid = this.itemsGrid;
+		const selected = this.#getSelectedItem();
+		if (!selected) return 0;
+		const column = this.#getColumn(selected, grid);
+		if (!column) return 0;
+
+		let newItem: HTMLElement | null = null;
+
+		// if this is the last row we apply the loop logic
+		if (column.rowIndex === grid.length - 1) {
+			if (!this.opts.loop.current) return 0;
+
+			newItem = this.#findNextNonDisabledItem({
+				start: 0 + skipRows,
+				end: column.rowIndex,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else {
+			newItem = this.#findNextNonDisabledItem({
+				start: column.rowIndex + 1 + skipRows,
+				end: grid.length,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+
+			// this happens if there were no non-disabled columns below the current column
+			// we can now try starting from the beginning to find the right column
+			if (newItem === null && this.opts.loop.current) {
+				newItem = this.#findNextNonDisabledItem({
+					start: 0,
+					end: column.rowIndex,
+					expectedColumnIndex: column.columnIndex,
+					grid,
+				});
+			}
+		}
+
+		return this.#calculateOffset(selected, newItem);
+	}
+
+	/** Attempts to find the next non-disabled column that matches the expected column.
+	 *
+	 * @remarks
+	 * - Skips over disabled columns
+	 * - When a row is shorter than the expected column it defaults to the last item in the row
+	 *
+	 * @param param0
+	 * @returns
+	 */
+	#findNextNonDisabledItem({
+		start,
+		end,
+		grid,
+		expectedColumnIndex,
+	}: {
+		start: number;
+		end: number;
+		grid: ItemsGrid;
+		expectedColumnIndex: number;
+	}) {
+		let newItem: HTMLElement | null = null;
+
+		for (let r = start; r < end; r++) {
+			const row = grid[r]!;
+
+			// try to get the next column
+			newItem = row[expectedColumnIndex]?.ref ?? null;
+
+			// skip over disabled items
+			if (newItem !== null && itemIsDisabled(newItem)) {
+				newItem = null;
+				continue;
+			}
+
+			// if that column doesn't exist default to the next highest column
+			if (newItem === null) {
+				// try and find the next highest non-disabled item in the row
+				// if there aren't any non-disabled items we just give up and return null
+				for (let i = row.length - 1; i >= 0; i--) {
+					const item = row[row.length - 1]!;
+
+					// skip disabled items
+					if (itemIsDisabled(item.ref)) continue;
+
+					newItem = item.ref;
+
+					break;
+				}
+			}
+
+			break;
+		}
+
+		return newItem;
+	}
+
+	#calculateOffset(selected: HTMLElement, newSelected: HTMLElement | null): number {
+		if (newSelected === null) return 0;
+
+		const items = this.getValidItems();
+
+		const ogIndex = items.findIndex((item) => item === selected);
+		const newIndex = items.findIndex((item) => item === newSelected);
+
+		return newIndex - ogIndex;
+	}
+
+	#up(e: BitsKeyboardEvent) {
+		if (this.opts.columns.current === null) return;
+
+		e.preventDefault();
+
+		if (e.metaKey) {
+			this.updateSelectedByGroup(-1);
+		} else if (e.altKey) {
+			this.updateSelectedByItem(this.#previousRowColumnOffset(1));
+		} else {
+			this.updateSelectedByItem(this.#previousRowColumnOffset());
+		}
+	}
+
+	#previousRowColumnOffset(skipRows = 0) {
+		const grid = this.itemsGrid;
+		const selected = this.#getSelectedItem();
+		if (!selected) return 0;
+		const column = this.#getColumn(selected, grid);
+		if (!column) return 0;
+
+		let newItem: HTMLElement | null = null;
+
+		// if this is the last row we apply the loop logic
+		if (column.rowIndex === 0) {
+			if (!this.opts.loop.current) return 0;
+
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: grid.length - 1 - skipRows,
+				end: column.rowIndex + 1,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else {
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: column.rowIndex - 1 - skipRows,
+				end: 0,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+
+			// this happens if there were no non-disabled columns below the current column
+			// we can now try starting from the beginning to find the right column
+			if (newItem === null && this.opts.loop.current) {
+				newItem = this.#findNextNonDisabledItemDesc({
+					start: grid.length - 1,
+					end: column.rowIndex + 1,
+					expectedColumnIndex: column.columnIndex,
+					grid,
+				});
+			}
+		}
+
+		return this.#calculateOffset(selected, newItem);
+	}
+
+	/** Attempts to find the next non-disabled column that matches the expected column.
+	 *
+	 * @remarks
+	 * - Skips over disabled columns
+	 * - When a row is shorter than the expected column it defaults to the last item in the row
+	 *
+	 * @param param0
+	 * @returns
+	 */
+	#findNextNonDisabledItemDesc({
+		start,
+		end,
+		grid,
+		expectedColumnIndex,
+	}: {
+		start: number;
+		end: number;
+		grid: ItemsGrid;
+		expectedColumnIndex: number;
+	}) {
+		let newItem: HTMLElement | null = null;
+
+		for (let r = start; r >= end; r--) {
+			const row = grid[r]!;
+
+			// try to get the next column
+			newItem = row[expectedColumnIndex]?.ref ?? null;
+
+			// skip over disabled items
+			if (newItem !== null && itemIsDisabled(newItem)) {
+				newItem = null;
+				continue;
+			}
+
+			// if that column doesn't exist default to the next highest column
+			if (newItem === null) {
+				// try and find the next highest non-disabled item in the row
+				// if there aren't any non-disabled items we just give up and return null
+				for (let i = row.length - 1; i >= 0; i--) {
+					const item = row[row.length - 1]!;
+
+					// skip disabled items
+					if (itemIsDisabled(item.ref)) continue;
+
+					newItem = item.ref;
+
+					break;
+				}
+			}
+
+			break;
+		}
+
+		return newItem;
 	}
 
 	/**
@@ -618,23 +991,69 @@ class CommandRootState {
 			case kbd.j: {
 				// vim down
 				if (this.opts.vimBindings.current && e.ctrlKey) {
-					this.#next(e);
+					if (this.isGrid) {
+						this.#down(e);
+					} else {
+						this.#next(e);
+					}
+				}
+				break;
+			}
+			case kbd.l: {
+				// vim right
+				if (this.opts.vimBindings.current && e.ctrlKey) {
+					if (this.isGrid) {
+						this.#next(e);
+					}
 				}
 				break;
 			}
 			case kbd.ARROW_DOWN:
+				if (this.isGrid) {
+					this.#down(e);
+				} else {
+					this.#next(e);
+				}
+				break;
+			case kbd.ARROW_RIGHT:
+				if (!this.isGrid) break;
+
 				this.#next(e);
+
 				break;
 			case kbd.p:
 			case kbd.k: {
 				// vim up
 				if (this.opts.vimBindings.current && e.ctrlKey) {
-					this.#prev(e);
+					if (this.isGrid) {
+						this.#up(e);
+					} else {
+						this.#prev(e);
+					}
+				}
+				break;
+			}
+			case kbd.h: {
+				// vim left
+				if (this.opts.vimBindings.current && e.ctrlKey) {
+					if (this.isGrid) {
+						this.#prev(e);
+					}
 				}
 				break;
 			}
 			case kbd.ARROW_UP:
+				if (this.isGrid) {
+					this.#up(e);
+				} else {
+					this.#prev(e);
+				}
+				break;
+			case kbd.ARROW_LEFT:
+				if (!this.isGrid) break;
+
 				this.#prev(e);
+
 				break;
 			case kbd.HOME:
 				// first item
@@ -675,6 +1094,10 @@ class CommandRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
+}
+
+function itemIsDisabled(item: HTMLElement) {
+	return item.getAttribute("aria-disabled") === "true";
 }
 
 type CommandEmptyStateProps = WithRefProps &
@@ -983,6 +1406,7 @@ class CommandItemState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-selected": getDataSelected(this.isSelected),
 				"data-value": this.trueValue,
+				"data-group": this.#group?.trueValue,
 				[commandAttrs.item]: "",
 				role: "option",
 				onpointermove: this.onpointermove,
