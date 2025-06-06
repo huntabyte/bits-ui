@@ -3,11 +3,7 @@
 	import { getLocalTimeZone, today } from "@internationalized/date";
 
 	let value = $state(today(getLocalTimeZone()));
-
-	let locale = $state("en-US");
 </script>
-
-<button onclick={() => (locale = "de")}> Set locale to de </button>
 
 <Calendar.Root
 	class="border-dark-10 bg-background-alt shadow-card mt-6 rounded-[15px] border p-[22px]"
@@ -15,7 +11,6 @@
 	fixedWeeks={true}
 	type="single"
 	bind:value
-	{locale}
 >
 	{#snippet children({ months, weekdays })}
 		<Calendar.Header class="flex items-center justify-between gap-3">
