@@ -539,3 +539,206 @@ describe("minDays and maxDays constraints", () => {
 		expect(endValue).toHaveTextContent("undefined");
 	});
 });
+
+describe("range selection data attributes", () => {
+	it("should set correct data attributes for selected range", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+		});
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startDay).toHaveAttribute("data-selected", "");
+		expect(startDay).toHaveAttribute("data-selection-start", "");
+		expect(startDay).not.toHaveAttribute("data-selection-end");
+
+		// select end date (Jan 8)
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// verify start day attributes
+		expect(startDay).toHaveAttribute("data-selected", "");
+		expect(startDay).toHaveAttribute("data-selection-start", "");
+		expect(startDay).not.toHaveAttribute("data-selection-end");
+
+		// verify end day attributes
+		expect(endDay).toHaveAttribute("data-selected", "");
+		expect(endDay).toHaveAttribute("data-selection-end", "");
+		expect(endDay).not.toHaveAttribute("data-selection-start");
+
+		// verify middle days have data-selected
+		const middleDay1 = getByTestId("date-1-6");
+		const middleDay2 = getByTestId("date-1-7");
+		expect(middleDay1).toHaveAttribute("data-selected", "");
+		expect(middleDay2).toHaveAttribute("data-selected", "");
+		expect(middleDay1).not.toHaveAttribute("data-selection-start");
+		expect(middleDay1).not.toHaveAttribute("data-selection-end");
+		expect(middleDay2).not.toHaveAttribute("data-selection-start");
+		expect(middleDay2).not.toHaveAttribute("data-selection-end");
+
+		// verify days outside range don't have selection attributes
+		const beforeRange = getByTestId("date-1-4");
+		const afterRange = getByTestId("date-1-9");
+		expect(beforeRange).not.toHaveAttribute("data-selected");
+		expect(beforeRange).not.toHaveAttribute("data-selection-start");
+		expect(beforeRange).not.toHaveAttribute("data-selection-end");
+		expect(afterRange).not.toHaveAttribute("data-selected");
+		expect(afterRange).not.toHaveAttribute("data-selection-start");
+		expect(afterRange).not.toHaveAttribute("data-selection-end");
+	});
+
+	it("should set correct data attributes for backward selection", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+		});
+
+		// select "end" date first (Jan 8)
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+		expect(endDay).toHaveAttribute("data-selected", "");
+		expect(endDay).toHaveAttribute("data-selection-start", "");
+
+		// select "start" date (Jan 5) - should become the actual start
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+
+		// verify the range is properly ordered
+		expect(startDay).toHaveAttribute("data-selected", "");
+		expect(startDay).toHaveAttribute("data-selection-start", "");
+		expect(startDay).not.toHaveAttribute("data-selection-end");
+
+		expect(endDay).toHaveAttribute("data-selected", "");
+		expect(endDay).toHaveAttribute("data-selection-end", "");
+		expect(endDay).not.toHaveAttribute("data-selection-start");
+
+		// verify middle days
+		const middleDay1 = getByTestId("date-1-6");
+		const middleDay2 = getByTestId("date-1-7");
+		expect(middleDay1).toHaveAttribute("data-selected", "");
+		expect(middleDay2).toHaveAttribute("data-selected", "");
+	});
+
+	it("should handle single day selection correctly", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+		});
+
+		// select single date
+		const singleDay = getByTestId("date-1-5");
+		await user.click(singleDay);
+
+		expect(singleDay).toHaveAttribute("data-selected", "");
+		expect(singleDay).toHaveAttribute("data-selection-start", "");
+		expect(singleDay).not.toHaveAttribute("data-selection-end");
+
+		// verify other days don't have selection attributes
+		const otherDay = getByTestId("date-1-6");
+		expect(otherDay).not.toHaveAttribute("data-selected");
+		expect(otherDay).not.toHaveAttribute("data-selection-start");
+		expect(otherDay).not.toHaveAttribute("data-selection-end");
+	});
+
+	it("should clear data attributes when range is cleared", async () => {
+		const { getByTestId, getByText, user } = setup({
+			value: {
+				start: new CalendarDate(1980, 1, 5),
+				end: new CalendarDate(1980, 1, 8),
+			},
+		});
+
+		// verify initial selected range has attributes
+		const startDay = getByTestId("date-1-5");
+		const endDay = getByTestId("date-1-8");
+		const middleDay = getByTestId("date-1-6");
+
+		expect(startDay).toHaveAttribute("data-selected", "");
+		expect(endDay).toHaveAttribute("data-selected", "");
+		expect(middleDay).toHaveAttribute("data-selected", "");
+
+		// clear the range
+		const clearButton = getByText("clear");
+		await user.click(clearButton);
+
+		// verify attributes are cleared
+		expect(startDay).not.toHaveAttribute("data-selected");
+		expect(startDay).not.toHaveAttribute("data-selection-start");
+		expect(startDay).not.toHaveAttribute("data-selection-end");
+		expect(endDay).not.toHaveAttribute("data-selected");
+		expect(endDay).not.toHaveAttribute("data-selection-start");
+		expect(endDay).not.toHaveAttribute("data-selection-end");
+		expect(middleDay).not.toHaveAttribute("data-selected");
+	});
+
+	it("should handle range reset correctly when selecting new dates", async () => {
+		const { getByTestId, user } = setup({
+			value: {
+				start: new CalendarDate(1980, 1, 5),
+				end: new CalendarDate(1980, 1, 8),
+			},
+		});
+
+		// verify initial range
+		const initialStart = getByTestId("date-1-5");
+		const initialEnd = getByTestId("date-1-8");
+		expect(initialStart).toHaveAttribute("data-selected", "");
+		expect(initialEnd).toHaveAttribute("data-selected", "");
+
+		// select a new date to reset range
+		const newStart = getByTestId("date-1-12");
+		await user.click(newStart);
+
+		// verify old range is cleared
+		expect(initialStart).not.toHaveAttribute("data-selected");
+		expect(initialEnd).not.toHaveAttribute("data-selected");
+
+		// verify new selection
+		expect(newStart).toHaveAttribute("data-selected", "");
+		expect(newStart).toHaveAttribute("data-selection-start", "");
+		expect(newStart).not.toHaveAttribute("data-selection-end");
+	});
+
+	it("should set data-highlighted for preview range on hover", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+		});
+
+		// select start date
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+
+		// hover over potential end date
+		const endDay = getByTestId("date-1-8");
+		await user.hover(endDay);
+
+		// verify highlighted range (should include start through hovered day)
+		expect(startDay).toHaveAttribute("data-highlighted", "");
+		expect(getByTestId("date-1-6")).toHaveAttribute("data-highlighted", "");
+		expect(getByTestId("date-1-7")).toHaveAttribute("data-highlighted", "");
+		expect(endDay).toHaveAttribute("data-highlighted", "");
+
+		// verify days outside preview range don't have data-highlighted
+		expect(getByTestId("date-1-4")).not.toHaveAttribute("data-highlighted");
+		expect(getByTestId("date-1-9")).not.toHaveAttribute("data-highlighted");
+	});
+
+	it("should handle highlighted range for backward hover selection", async () => {
+		const { getByTestId, user } = setup({
+			placeholder: new CalendarDate(1980, 1, 1),
+		});
+
+		// select "end" date first
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// hover over earlier date (backward selection)
+		const startDay = getByTestId("date-1-5");
+		await user.hover(startDay);
+
+		// verify highlighted range is properly ordered
+		expect(startDay).toHaveAttribute("data-highlighted", "");
+		expect(getByTestId("date-1-6")).toHaveAttribute("data-highlighted", "");
+		expect(getByTestId("date-1-7")).toHaveAttribute("data-highlighted", "");
+		expect(endDay).toHaveAttribute("data-highlighted", "");
+	});
+});

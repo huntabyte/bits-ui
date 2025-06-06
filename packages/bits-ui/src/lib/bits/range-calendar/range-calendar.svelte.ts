@@ -436,8 +436,12 @@ export class RangeCalendarRootState {
 	}
 
 	#isRangeValid(start: DateValue, end: DateValue): boolean {
-		const startDate = start.toDate(getLocalTimeZone());
-		const endDate = end.toDate(getLocalTimeZone());
+		// ensure we always use the correct order for calculation
+		const orderedStart = isBefore(end, start) ? end : start;
+		const orderedEnd = isBefore(end, start) ? start : end;
+
+		const startDate = orderedStart.toDate(getLocalTimeZone());
+		const endDate = orderedEnd.toDate(getLocalTimeZone());
 
 		const timeDifference = endDate.getTime() - startDate.getTime();
 		const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
@@ -534,8 +538,17 @@ export class RangeCalendarRootState {
 				this.#setEndValue(undefined);
 				this.#announceSelectedDate(date);
 			} else {
-				this.#announceSelectedRange(this.opts.startValue.current, date);
-				this.#setEndValue(date);
+				// ensure start and end are properly ordered
+				if (isBefore(endDate, startDate)) {
+					// backward selection - reorder the values
+					this.#setStartValue(endDate);
+					this.#setEndValue(startDate);
+					this.#announceSelectedRange(endDate, startDate);
+				} else {
+					// forward selection - keep original order
+					this.#setEndValue(date);
+					this.#announceSelectedRange(this.opts.startValue.current, date);
+				}
 			}
 		} else if (this.opts.endValue.current && this.opts.startValue.current) {
 			this.#setEndValue(undefined);
