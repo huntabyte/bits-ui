@@ -631,4 +631,109 @@ describe("type='multiple'", () => {
 			expect(t.getByTestId("date-1-1")).toHaveFocus();
 		});
 	});
+
+	describe("maxDays constraints in multiple mode", () => {
+		it("should reset selection when adding a date violates maxDays constraint", async () => {
+			const d1 = new CalendarDate(1980, 1, 2);
+			const d2 = new CalendarDate(1980, 1, 5);
+			const t = setupMulti({ value: [d1, d2], maxDays: 2 });
+
+			// initially should have 2 selected dates
+			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+
+			// clicking a third date should reset selection to just that date
+			const thirdDate = t.getByTestId("date-1-8");
+			await t.user.click(thirdDate);
+
+			const selectedDays = getSelectedDays(t.calendar);
+			expect(selectedDays).toHaveLength(1);
+			expect(selectedDays[0]).toHaveTextContent("8");
+		});
+
+		it("should allow valid selections within maxDays constraint", async () => {
+			const d1 = new CalendarDate(1980, 1, 2);
+			const t = setupMulti({ value: [d1], maxDays: 3 });
+
+			// initially should have 1 selected date
+			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+
+			// adding a second date should work
+			const secondDate = t.getByTestId("date-1-5");
+			await t.user.click(secondDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+
+			// adding a third date should work (exactly at maxDays)
+			const thirdDate = t.getByTestId("date-1-8");
+			await t.user.click(thirdDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(3);
+		});
+
+		it("should work with maxDays constraint", async () => {
+			const t = setupMulti({ maxDays: 3, placeholder: calendarDate });
+
+			// select first date
+			const firstDate = t.getByTestId("date-1-5");
+			await t.user.click(firstDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+
+			// select second date (should work)
+			const secondDate = t.getByTestId("date-1-8");
+			await t.user.click(secondDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+
+			// select third date (should work - exactly at maxDays)
+			const thirdDate = t.getByTestId("date-1-12");
+			await t.user.click(thirdDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(3);
+
+			// select fourth date (violates maxDays, should reset to just that date)
+			const fourthDate = t.getByTestId("date-1-15");
+			await t.user.click(fourthDate);
+
+			const selectedDays = getSelectedDays(t.calendar);
+			expect(selectedDays).toHaveLength(1);
+			expect(selectedDays[0]).toHaveTextContent("15");
+		});
+
+		it("should allow deselection even with constraints", async () => {
+			const d1 = new CalendarDate(1980, 1, 2);
+			const d2 = new CalendarDate(1980, 1, 5);
+			const d3 = new CalendarDate(1980, 1, 8);
+			const t = setupMulti({ value: [d1, d2, d3], maxDays: 5 });
+
+			expect(getSelectedDays(t.calendar)).toHaveLength(3);
+
+			// deselecting a date should work normally
+			const firstDate = t.getByTestId("date-1-2");
+			await t.user.click(firstDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+
+			// deselecting another date should work
+			const secondDate = t.getByTestId("date-1-5");
+			await t.user.click(secondDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+		});
+
+		it("should handle constraints when no initial value is provided", async () => {
+			const t = setupMulti({ maxDays: 2, placeholder: calendarDate });
+
+			// select first date
+			const firstDate = t.getByTestId("date-1-5");
+			await t.user.click(firstDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+
+			// select second date (should work)
+			const secondDate = t.getByTestId("date-1-8");
+			await t.user.click(secondDate);
+			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+
+			// select third date (violates maxDays, should reset to just that date)
+			const thirdDate = t.getByTestId("date-1-12");
+			await t.user.click(thirdDate);
+
+			const selectedDays = getSelectedDays(t.calendar);
+			expect(selectedDays).toHaveLength(1);
+			expect(selectedDays[0]).toHaveTextContent("12");
+		});
+	});
 });

@@ -25,7 +25,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * The placeholder date, used to control the view of the
 		 * calendar when no value is present.
 		 *
-		 * @defaultValue the current date
+		 * @default the current date
 		 */
 		placeholder?: DateValue;
 
@@ -38,14 +38,14 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		/**
 		 * The minimum number of days that can be selected in a range.
 		 *
-		 * @defaultValue undefined
+		 * @default undefined
 		 */
 		minDays?: number;
 
 		/**
 		 * The maximum number of days that can be selected in a range.
 		 *
-		 * @defaultValue undefined
+		 * @default undefined
 		 */
 		maxDays?: number;
 
@@ -53,7 +53,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * Whether or not users can deselect a date once selected
 		 * without selecting another date.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		preventDeselect?: boolean;
 
@@ -70,7 +70,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		/**
 		 * Whether or not the calendar is disabled.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		disabled?: boolean;
 
@@ -85,7 +85,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * February), clicking the next button changes the view to March and April. If `pagedNavigation`
 		 * is `false`, the view shifts to February and March.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		pagedNavigation?: boolean;
 
@@ -94,7 +94,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * be a number between 0 and 6, where 0 is Sunday and 6 is
 		 * Saturday.
 		 *
-		 * @defaultValue 0 (Sunday)
+		 * @default 0 (Sunday)
 		 */
 		weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -108,7 +108,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * - "narrow": "S", "M", "T", etc.
 		 *```
 		 *
-		 * @defaultValue "narrow"
+		 * @default "narrow"
 		 *
 		 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#weekday
 		 */
@@ -149,7 +149,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * To display 6 weeks per month, you will need to render out the previous
 		 * and next month's dates in the calendar as well.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		fixedWeeks?: boolean;
 
@@ -157,7 +157,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * Determines the number of months to display on the calendar simultaneously.
 		 * For navigation between months, refer to the `pagedNavigation` prop.
 		 *
-		 * @defaultValue 1
+		 * @default 1
 		 */
 		numberOfMonths?: number;
 
@@ -176,7 +176,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		/**
 		 * The default locale setting.
 		 *
-		 * @defaultValue 'en'
+		 * @default 'en'
 		 */
 		locale?: string;
 
@@ -186,7 +186,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * dates. @see disabled for a similar prop that prevents focusing
 		 * and selecting dates.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		readonly?: boolean;
 
@@ -195,7 +195,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * days outside the current month are rendered to fill the calendar grid, but they
 		 * are not selectable. Setting this prop to `true` will disable this behavior.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		disableDaysOutsideMonth?: boolean;
 

@@ -23,7 +23,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * The placeholder date, used to control the view of the
 	 * calendar when no value is present.
 	 *
-	 * @defaultValue the current date
+	 * @default the current date
 	 */
 	placeholder?: DateValue;
 
@@ -37,7 +37,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * Whether or not users can deselect a date once selected
 	 * without selecting another date.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	preventDeselect?: boolean;
 
@@ -54,7 +54,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	/**
 	 * Whether or not the calendar is disabled.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
 
@@ -69,7 +69,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * February), clicking the next button changes the view to March and April. If `pagedNavigation`
 	 * is `false`, the view shifts to February and March.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	pagedNavigation?: boolean;
 
@@ -78,7 +78,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * be a number between 0 and 6, where 0 is Sunday and 6 is
 	 * Saturday.
 	 *
-	 * @defaultValue 0 (Sunday)
+	 * @default 0 (Sunday)
 	 */
 	weekStartsOn?: WeekStartsOn;
 
@@ -92,7 +92,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * - "narrow": "S", "M", "T", etc.
 	 *```
 	 *
-	 * @defaultValue "narrow"
+	 * @default "narrow"
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#weekday
 	 */
@@ -133,7 +133,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * To display 6 weeks per month, you will need to render out the previous
 	 * and next month's dates in the calendar as well.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	fixedWeeks?: boolean;
 
@@ -141,7 +141,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * Determines the number of months to display on the calendar simultaneously.
 	 * For navigation between months, refer to the `pagedNavigation` prop.
 	 *
-	 * @defaultValue 1
+	 * @default 1
 	 */
 	numberOfMonths?: number;
 
@@ -160,7 +160,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	/**
 	 * The default locale setting.
 	 *
-	 * @defaultValue 'en'
+	 * @default 'en'
 	 */
 	locale?: string;
 
@@ -170,7 +170,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * dates. @see disabled for a similar prop that prevents focusing
 	 * and selecting dates.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	readonly?: boolean;
 
@@ -185,9 +185,17 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * days outside the current month are rendered to fill the calendar grid, but they
 	 * are not selectable. Setting this prop to `true` will disable this behavior.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disableDaysOutsideMonth?: boolean;
+
+	/**
+	 * The maximum number of days that can be selected in multiple mode.
+	 * When set, users cannot select more dates than this number.
+	 *
+	 * @default undefined
+	 */
+	maxDays?: number;
 };
 
 export type CalendarSingleRootPropsWithoutHTML = {

@@ -70,6 +70,7 @@ type CalendarRootStateProps = WithRefProps<
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
 			initialFocus: boolean;
+			maxDays: number | undefined;
 			/**
 			 * This is strictly used by the `DatePicker` component to close the popover when a date
 			 * is selected. It is not intended to be used by the user.
@@ -378,9 +379,18 @@ export class CalendarRootState {
 		});
 	}
 
+	#isMultipleSelectionValid(selectedDates: DateValue[]): boolean {
+		// only validate for multiple type and when maxDays is set
+		if (this.opts.type.current !== "multiple") return true;
+		if (!this.opts.maxDays.current) return true;
+		const selectedCount = selectedDates.length;
+		if (this.opts.maxDays.current && selectedCount > this.opts.maxDays.current) return false;
+		return true;
+	}
+
 	handleCellClick(_: Event, date: DateValue) {
-		if (this.opts.readonly.current) return;
 		if (
+			this.opts.readonly.current ||
 			this.opts.isDateDisabled.current?.(date) ||
 			this.opts.isDateUnavailable.current?.(date)
 		) {
@@ -411,7 +421,10 @@ export class CalendarRootState {
 	}
 
 	handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
-		if (!prev) return [date];
+		if (!prev) {
+			const newSelection = [date];
+			return this.#isMultipleSelectionValid(newSelection) ? newSelection : [date];
+		}
 		if (!Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for multiple prop.");
 			return;
@@ -419,7 +432,14 @@ export class CalendarRootState {
 		const index = prev.findIndex((d) => isSameDay(d, date));
 		const preventDeselect = this.opts.preventDeselect.current;
 		if (index === -1) {
-			return [...prev, date];
+			// adding a new date - check if it would be valid
+			const newSelection = [...prev, date];
+			if (this.#isMultipleSelectionValid(newSelection)) {
+				return newSelection;
+			} else {
+				// reset to just the newly selected date when constraints are violated
+				return [date];
+			}
 		} else if (preventDeselect) {
 			return prev;
 		} else {

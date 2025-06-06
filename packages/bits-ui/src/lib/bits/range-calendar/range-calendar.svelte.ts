@@ -443,13 +443,8 @@ export class RangeCalendarRootState {
 		const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 		const daysInRange = daysDifference + 1; // +1 to include both start and end days
 
-		if (this.opts.minDays.current && daysInRange < this.opts.minDays.current) {
-			return false;
-		}
-
-		if (this.opts.maxDays.current && daysInRange > this.opts.maxDays.current) {
-			return false;
-		}
+		if (this.opts.minDays.current && daysInRange < this.opts.minDays.current) return false;
+		if (this.opts.maxDays.current && daysInRange > this.opts.maxDays.current) return false;
 
 		return true;
 	}
