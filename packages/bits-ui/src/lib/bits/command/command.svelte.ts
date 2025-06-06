@@ -711,7 +711,13 @@ class CommandRootState {
 
 		e.preventDefault();
 
-		this.updateSelectedByItem(this.#nextRowColumnOffset());
+		if (e.metaKey) {
+			this.updateSelectedByGroup(1);
+		} else if (e.altKey) {
+			this.updateSelectedByItem(this.#nextRowColumnOffset(1));
+		} else {
+			this.updateSelectedByItem(this.#nextRowColumnOffset());
+		}
 	}
 
 	#getColumn(
@@ -735,7 +741,7 @@ class CommandRootState {
 		return null;
 	}
 
-	#nextRowColumnOffset(): number {
+	#nextRowColumnOffset(skipRows = 0): number {
 		const grid = this.itemsGrid;
 		const selected = this.#getSelectedItem();
 		if (!selected) return 0;
@@ -749,14 +755,14 @@ class CommandRootState {
 			if (!this.opts.loop.current) return 0;
 
 			newItem = this.#findNextNonDisabledItem({
-				start: 0,
+				start: 0 + skipRows,
 				end: column.rowIndex,
 				expectedColumnIndex: column.columnIndex,
 				grid,
 			});
 		} else {
 			newItem = this.#findNextNonDisabledItem({
-				start: column.rowIndex + 1,
+				start: column.rowIndex + 1 + skipRows,
 				end: grid.length,
 				expectedColumnIndex: column.columnIndex,
 				grid,
@@ -849,10 +855,16 @@ class CommandRootState {
 
 		e.preventDefault();
 
-		this.updateSelectedByItem(this.#previousRowColumnOffset());
+		if (e.metaKey) {
+			this.updateSelectedByGroup(-1);
+		} else if (e.altKey) {
+			this.updateSelectedByItem(this.#previousRowColumnOffset(1));
+		} else {
+			this.updateSelectedByItem(this.#previousRowColumnOffset());
+		}
 	}
 
-	#previousRowColumnOffset() {
+	#previousRowColumnOffset(skipRows = 0) {
 		const grid = this.itemsGrid;
 		const selected = this.#getSelectedItem();
 		if (!selected) return 0;
@@ -866,14 +878,14 @@ class CommandRootState {
 			if (!this.opts.loop.current) return 0;
 
 			newItem = this.#findNextNonDisabledItemDesc({
-				start: grid.length - 1,
+				start: grid.length - 1 - skipRows,
 				end: column.rowIndex + 1,
 				expectedColumnIndex: column.columnIndex,
 				grid,
 			});
 		} else {
 			newItem = this.#findNextNonDisabledItemDesc({
-				start: column.rowIndex - 1,
+				start: column.rowIndex - 1 - skipRows,
 				end: 0,
 				expectedColumnIndex: column.columnIndex,
 				grid,
