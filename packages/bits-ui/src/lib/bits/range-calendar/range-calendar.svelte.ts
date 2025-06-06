@@ -76,6 +76,7 @@ type RangeCalendarRootStateProps = WithRefProps<
 			calendarLabel: string;
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
+			excludeDisabled: boolean;
 			minDays: number | undefined;
 			maxDays: number | undefined;
 			/**
@@ -288,6 +289,26 @@ export class RangeCalendarRootState {
 			}
 		);
 
+		/**
+		 * Check for disabled dates in the selected range when excludeDisabled is enabled
+		 */
+		watch(
+			[
+				() => this.opts.startValue.current,
+				() => this.opts.endValue.current,
+				() => this.opts.excludeDisabled.current,
+			],
+			([startValue, endValue, excludeDisabled]) => {
+				if (!excludeDisabled || !startValue || !endValue) return;
+
+				if (this.#hasDisabledDatesInRange(startValue, endValue)) {
+					this.#setStartValue(undefined);
+					this.#setEndValue(undefined);
+					this.#announceEmpty();
+				}
+			}
+		);
+
 		watch(
 			[() => this.opts.startValue.current, () => this.opts.endValue.current],
 			([startValue, endValue]) => {
@@ -449,6 +470,14 @@ export class RangeCalendarRootState {
 
 		if (this.opts.minDays.current && daysInRange < this.opts.minDays.current) return false;
 		if (this.opts.maxDays.current && daysInRange > this.opts.maxDays.current) return false;
+
+		// check for disabled dates in range if excludeDisabled is enabled
+		if (
+			this.opts.excludeDisabled.current &&
+			this.#hasDisabledDatesInRange(orderedStart, orderedEnd)
+		) {
+			return false;
+		}
 
 		return true;
 	}
@@ -639,6 +668,17 @@ export class RangeCalendarRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
+
+	#hasDisabledDatesInRange(start: DateValue, end: DateValue): boolean {
+		for (
+			let date = start;
+			isBefore(date, end) || isSameDay(date, end);
+			date = date.add({ days: 1 })
+		) {
+			if (this.isDateDisabled(date)) return true;
+		}
+		return false;
+	}
 }
 
 type RangeCalendarCellStateProps = WithRefProps<

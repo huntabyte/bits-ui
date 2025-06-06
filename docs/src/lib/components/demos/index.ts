@@ -94,3 +94,4 @@ export { default as RangeCalendarDemoMin } from "./range-calendar-demo-min.svelt
 export { default as RangeCalendarDemoMax } from "./range-calendar-demo-max.svelte";
 export { default as RangeCalendarDemoMinMax } from "./range-calendar-demo-min-max.svelte";
 export { default as CalendarDemoMax } from "./calendar-demo-max.svelte";
+export { default as RangeCalendarDemoExcludeDisabled } from "./range-calendar-demo-exclude-disabled.svelte";

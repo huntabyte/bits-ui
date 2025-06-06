@@ -4,7 +4,7 @@ description: Presents a calendar view tailored for selecting date ranges.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -116,6 +116,24 @@ You can set both `minDays` and `maxDays` to limit the number of days that can be
 
 {#snippet preview()}
 <RangeCalendarDemoMinMax />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Exclude Disabled
+
+You can set the `excludeDisabled` prop to automatically reset the range if any date within the selected range becomes disabled.
+
+```svelte
+<RangeCalendar.Root excludeDisabled isDateDisabled={(date) => isWeekend(date, "en-US")}>
+	<!-- ... -->
+</RangeCalendar.Root>
+```
+
+<ComponentPreviewV2 name="range-calendar-demo-exclude-disabled" componentName="Range Calendar">
+
+{#snippet preview()}
+<RangeCalendarDemoExcludeDisabled />
 {/snippet}
 
 </ComponentPreviewV2>

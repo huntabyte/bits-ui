@@ -50,6 +50,7 @@
 		errorMessageId,
 		minDays,
 		maxDays,
+		excludeDisabled = false,
 		child,
 		children,
 		...restProps
@@ -153,6 +154,7 @@
 		isDateDisabled: box.with(() => isDateDisabled),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
+		excludeDisabled: box.with(() => excludeDisabled),
 		onRangeSelect: box.with(() => onRangeSelect),
 		startValue: box.with(
 			() => startValue,

@@ -10,6 +10,7 @@ import {
 	valueDateRangeChangeFn,
 	valueDateRangeProp,
 	withChildProps,
+	createBooleanProp,
 } from "./helpers.js";
 import {
 	cell as calendarCell,
@@ -57,6 +58,11 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 		}),
 		maxDays: createNumberProp({
 			description: "The maximum number of days that can be selected in a range.",
+		}),
+		excludeDisabled: createBooleanProp({
+			description:
+				"Whether to automatically reset the range if any date within the selected range becomes disabled.",
+			default: "false",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},

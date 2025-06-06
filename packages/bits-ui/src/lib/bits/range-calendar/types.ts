@@ -200,6 +200,15 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		disableDaysOutsideMonth?: boolean;
 
 		/**
+		 * Whether to automatically reset the range if any date within the selected range
+		 * becomes disabled. When true, the entire range will be cleared if a disabled
+		 * date is found between the start and end dates.
+		 *
+		 * @default false
+		 */
+		excludeDisabled?: boolean;
+
+		/**
 		 * A callback function called when the start value changes. This doesn't necessarily mean
 		 * the `value` has updated and should be used to apply cosmetic changes to the calendar when
 		 * only part of the value is changed/completed.

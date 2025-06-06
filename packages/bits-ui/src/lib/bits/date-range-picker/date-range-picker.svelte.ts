@@ -34,6 +34,7 @@ type DateRangePickerRootStateProps = WritableBoxedValues<{
 		numberOfMonths: number;
 		calendarLabel: string;
 		disableDaysOutsideMonth: boolean;
+		excludeDisabled: boolean;
 		onRangeSelect?: () => void;
 	}> & {
 		defaultPlaceholder: DateValue;

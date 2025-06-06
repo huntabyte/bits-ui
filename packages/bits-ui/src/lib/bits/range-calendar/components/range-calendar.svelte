@@ -39,6 +39,7 @@
 		maxDays,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
+		excludeDisabled = false,
 		...restProps
 	}: RangeCalendarRootProps = $props();
 
@@ -116,6 +117,7 @@
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		minDays: box.with(() => minDays),
 		maxDays: box.with(() => maxDays),
+		excludeDisabled: box.with(() => excludeDisabled),
 		startValue: box.with(
 			() => startValue,
 			(v) => {

@@ -285,6 +285,15 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * @default undefined
 	 */
 	maxDays?: number;
+
+	/**
+	 * Whether to automatically reset the range if any date within the selected range
+	 * becomes disabled. When true, the entire range will be cleared if a disabled
+	 * date is found between the start and end dates.
+	 *
+	 * @default false
+	 */
+	excludeDisabled?: boolean;
 }>;
 
 export type DateRangePickerRootProps = DateRangePickerRootPropsWithoutHTML &
