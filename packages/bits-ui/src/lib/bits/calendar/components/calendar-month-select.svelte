@@ -14,6 +14,7 @@
 		months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
 		monthFormat = "long",
 		disabled = false,
+		"aria-label": ariaLabel = "Select a month",
 		...restProps
 	}: CalendarMonthSelectProps = $props();
 
@@ -28,7 +29,9 @@
 		disabled: box.with(() => Boolean(disabled)),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, monthSelectState.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, monthSelectState.props, { "aria-label": ariaLabel })
+	);
 </script>
 
 {#if child}

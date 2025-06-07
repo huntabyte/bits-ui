@@ -14,6 +14,7 @@
 		years: yearsProp,
 		yearFormat = "numeric",
 		disabled = false,
+		"aria-label": ariaLabel = "Select a year",
 		...restProps
 	}: CalendarYearSelectProps = $props();
 
@@ -34,7 +35,9 @@
 		disabled: box.with(() => Boolean(disabled)),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, yearSelectState.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, yearSelectState.props, { "aria-label": ariaLabel })
+	);
 </script>
 
 {#if child}
