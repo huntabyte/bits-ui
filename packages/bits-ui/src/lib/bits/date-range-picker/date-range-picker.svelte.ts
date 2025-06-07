@@ -36,6 +36,8 @@ type DateRangePickerRootStateProps = WritableBoxedValues<{
 		disableDaysOutsideMonth: boolean;
 		excludeDisabled: boolean;
 		onRangeSelect?: () => void;
+		monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+		yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 	}> & {
 		defaultPlaceholder: DateValue;
 	};

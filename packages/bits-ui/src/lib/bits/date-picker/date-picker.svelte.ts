@@ -32,6 +32,8 @@ type DatePickerRootStateProps = WritableBoxedValues<{
 		disableDaysOutsideMonth: boolean;
 		initialFocus: boolean;
 		onDateSelect?: () => void;
+		monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+		yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 	}> & { defaultPlaceholder: DateValue };
 
 class DatePickerRootState {

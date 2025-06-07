@@ -47,6 +47,8 @@
 		defaultPlaceholder: dateRangePickerRootState.opts.defaultPlaceholder,
 		minDays: dateRangePickerRootState.opts.minDays,
 		maxDays: dateRangePickerRootState.opts.maxDays,
+		monthFormat: dateRangePickerRootState.opts.monthFormat,
+		yearFormat: dateRangePickerRootState.opts.yearFormat,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rangeCalendarState.props));

@@ -221,6 +221,20 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * only part of the value is changed/completed.
 		 */
 		onEndValueChange?: OnChangeFn<DateValue | undefined>;
+
+		/**
+		 * The format of the month names in the calendar.
+		 *
+		 * @default "long"
+		 */
+		monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+
+		/**
+		 * The format of the year names in the calendar.
+		 *
+		 * @default "numeric"
+		 */
+		yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 	},
 	RangeCalendarRootSnippetProps
 >;

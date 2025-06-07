@@ -62,3 +62,5 @@ export { default as CalendarYearSelectChildSnippetProps } from "./calendar-year-
 export { default as CalendarYearSelectChildrenSnippetProps } from "./calendar-year-select-children-snippet-prop.md";
 export { default as CalendarMonthSelectFormatProp } from "./calendar-month-select-format-prop.md";
 export { default as CalendarYearSelectFormatProp } from "./calendar-year-select-format-prop.md";
+export { default as CalendarMonthFormatProp } from "./calendar-month-format-prop.md";
+export { default as CalendarYearFormatProp } from "./calendar-year-format-prop.md";

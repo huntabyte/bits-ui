@@ -15,6 +15,7 @@ import type {
 	CalendarYearSelectPropsWithoutHTML,
 } from "bits-ui";
 import {
+	CalendarMonthFormatProp,
 	CalendarMonthSelectChildrenSnippetProps,
 	CalendarMonthSelectChildSnippetProps,
 	CalendarMonthSelectFormatProp,
@@ -22,6 +23,7 @@ import {
 	CalendarRootChildrenSnippetProps,
 	CalendarRootChildSnippetProps,
 	CalendarValueProp,
+	CalendarYearFormatProp,
 	CalendarYearSelectChildrenSnippetProps,
 	CalendarYearSelectChildSnippetProps,
 	CalendarYearSelectFormatProp,
@@ -187,6 +189,20 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 		maxDays: createNumberProp({
 			description:
 				"The maximum number of days that can be selected when the calendar is `'multiple'` type.",
+		}),
+		monthFormat: createUnionProp({
+			options: ["short", "long", "narrow", "numeric", "2-digit", "(month: number) => string"],
+			definition: CalendarMonthFormatProp,
+			description:
+				"The format to use for the month strings provided via the `months` slot prop.",
+			default: "'long'",
+		}),
+		yearFormat: createUnionProp({
+			options: ["numeric", "2-digit", "(year: number) => string"],
+			definition: CalendarYearFormatProp,
+			description:
+				"The format to use for the year strings provided via the `years` slot prop.",
+			default: "'numeric'",
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",

@@ -53,6 +53,8 @@
 		excludeDisabled = false,
 		child,
 		children,
+		monthFormat = "long",
+		yearFormat = "numeric",
 		...restProps
 	}: DateRangePickerRootProps = $props();
 
@@ -170,6 +172,8 @@
 				onEndValueChange(v);
 			}
 		),
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 		defaultPlaceholder,
 	});
 

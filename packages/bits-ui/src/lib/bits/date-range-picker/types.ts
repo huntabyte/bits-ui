@@ -294,6 +294,20 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * @default false
 	 */
 	excludeDisabled?: boolean;
+
+	/**
+	 * The format of the month names in the calendar.
+	 *
+	 * @default "long"
+	 */
+	monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+
+	/**
+	 * The format of the year names in the calendar.
+	 *
+	 * @default "numeric"
+	 */
+	yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 }>;
 
 export type DateRangePickerRootProps = DateRangePickerRootPropsWithoutHTML &

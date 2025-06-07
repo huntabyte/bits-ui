@@ -85,6 +85,8 @@ type RangeCalendarRootStateProps = WithRefProps<
 			 * is selected. It is not intended to be used by the user.
 			 */
 			onRangeSelect?: () => void;
+			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 		}> & {
 			defaultPlaceholder: DateValue;
 		}
@@ -162,6 +164,8 @@ export class RangeCalendarRootState {
 	});
 
 	readonly headingValue = $derived.by(() => {
+		this.opts.monthFormat.current;
+		this.opts.yearFormat.current;
 		return getCalendarHeadingValue({
 			months: this.months,
 			formatter: this.formatter,
@@ -213,7 +217,11 @@ export class RangeCalendarRootState {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer(null);
-		this.formatter = createFormatter(this.opts.locale.current);
+		this.formatter = createFormatter({
+			initialLocale: this.opts.locale.current,
+			monthFormat: this.opts.monthFormat,
+			yearFormat: this.opts.yearFormat,
+		});
 
 		this.months = createMonths({
 			dateObj: this.opts.placeholder.current,

@@ -66,6 +66,8 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 				"Whether to automatically reset the range if any date within the selected range becomes disabled.",
 			default: "false",
 		}),
+		monthFormat: calendarRoot.props!.monthFormat,
+		yearFormat: calendarRoot.props!.yearFormat,
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childDef: CalendarRootChildSnippetProps,

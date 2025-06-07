@@ -40,6 +40,8 @@
 		onStartValueChange = noop,
 		onEndValueChange = noop,
 		excludeDisabled = false,
+		monthFormat = "long",
+		yearFormat = "numeric",
 		...restProps
 	}: RangeCalendarRootProps = $props();
 
@@ -132,6 +134,8 @@
 				onEndValueChange(v);
 			}
 		),
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 		defaultPlaceholder,
 	});
 
