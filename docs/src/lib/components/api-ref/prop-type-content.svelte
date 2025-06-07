@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Popover, Tooltip } from "bits-ui";
+	import { Popover, ScrollArea, Tooltip } from "bits-ui";
 	import Info from "phosphor-svelte/lib/Info";
 	import type { Component } from "svelte";
 	import Code from "$lib/components/markdown/code.svelte";
@@ -54,14 +54,29 @@
 			preventScroll={false}
 			side="top"
 			sideOffset={10}
-			class="focus-override rounded-card border-border bg-background shadow-popover outline-hidden z-50 border p-4"
+			class="focus-override rounded-card border-border bg-background shadow-popover outline-hidden z-50 border"
 		>
-			<div class="max-h-[400px] max-w-[700px] overflow-auto">
-				<Code class="text-foreground h-auto bg-transparent px-0 tracking-tight">
-					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html parseTypeDef(typeDef)}
-				</Code>
-			</div>
+			<ScrollArea.Root>
+				<ScrollArea.Viewport class="max-h-[400px] max-w-[800px] p-4">
+					<Code class="text-foreground h-auto bg-transparent px-0 tracking-tight">
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+						{@html parseTypeDef(typeDef)}
+					</Code>
+				</ScrollArea.Viewport>
+				<ScrollArea.Scrollbar
+					orientation="vertical"
+					class="hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 flex w-2.5 touch-none select-none rounded-full border-l border-l-transparent bg-transparent p-px transition-all duration-200 hover:w-3"
+				>
+					<ScrollArea.Thumb class="bg-muted-foreground flex-1 rounded-full" />
+				</ScrollArea.Scrollbar>
+				<ScrollArea.Scrollbar
+					orientation="horizontal"
+					class="hover:bg-dark-10 flex h-2.5 touch-none select-none rounded-full border-t border-t-transparent bg-transparent p-px transition-all duration-200 hover:h-3 "
+				>
+					<ScrollArea.Thumb class="bg-muted-foreground rounded-full" />
+				</ScrollArea.Scrollbar>
+				<ScrollArea.Corner />
+			</ScrollArea.Root>
 		</Popover.Content>
 		<span aria-hidden="true" class="hidden">
 			- {typeDef}
@@ -71,14 +86,31 @@
 			preventScroll={false}
 			side="top"
 			sideOffset={10}
-			class="rounded-card border-border bg-background shadow-popover z-50 max-h-[400px] max-w-[600px] overflow-auto border-2 py-4 pl-1.5 pr-4"
+			class="rounded-card border-border bg-background shadow-popover z-50 border-2 py-1.5 pl-1.5 pr-0.5"
 		>
-			{@const TypeDef = typeDef}
-			<div
-				class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pb-0! [&_pre]:pt-0! [&_pre]:outline-hidden! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
-			>
-				<TypeDef />
-			</div>
+			<ScrollArea.Root>
+				<ScrollArea.Viewport class="max-h-[400px] max-w-[800px] py-3.5 pr-3.5">
+					{@const TypeDef = typeDef}
+					<div
+						class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pb-0! [&_pre]:pt-0! [&_pre]:outline-hidden! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
+					>
+						<TypeDef />
+					</div>
+				</ScrollArea.Viewport>
+				<ScrollArea.Scrollbar
+					orientation="vertical"
+					class="hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 flex w-2.5 touch-none select-none rounded-full border-l border-l-transparent bg-transparent p-px transition-all duration-200 hover:w-3"
+				>
+					<ScrollArea.Thumb class="bg-muted-foreground flex-1 rounded-full" />
+				</ScrollArea.Scrollbar>
+				<ScrollArea.Scrollbar
+					orientation="horizontal"
+					class="hover:bg-dark-10 flex h-2.5 touch-none select-none rounded-full border-t border-t-transparent bg-transparent p-px transition-all duration-200 hover:h-3 "
+				>
+					<ScrollArea.Thumb class="bg-muted-foreground rounded-full" />
+				</ScrollArea.Scrollbar>
+				<ScrollArea.Corner />
+			</ScrollArea.Root>
 		</Popover.Content>
 		<span aria-hidden="true" class="hidden">
 			- {typeString}

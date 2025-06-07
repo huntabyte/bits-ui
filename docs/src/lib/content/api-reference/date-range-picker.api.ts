@@ -25,7 +25,9 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-} from "./calendar.api.js";
+	monthSelect,
+	yearSelect,
+} from "./range-calendar.api.js";
 import { root as rangeCalendarRoot } from "./range-calendar.api.js";
 import { root as datePickerRoot } from "./date-picker.api.js";
 import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
@@ -171,4 +173,6 @@ export const dateRangePicker = [
 	gridBody,
 	cell,
 	day,
+	monthSelect,
+	yearSelect,
 ];

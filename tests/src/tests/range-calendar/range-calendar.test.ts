@@ -1027,6 +1027,7 @@ describe("RangeCalendar Select Components", () => {
 			months?: number[];
 			years?: number[];
 			monthFormat?: Intl.DateTimeFormatOptions["month"];
+			yearFormat?: Intl.DateTimeFormatOptions["year"];
 			disabled?: boolean;
 			readonly?: boolean;
 		} = {}
@@ -1165,6 +1166,34 @@ describe("RangeCalendar Select Components", () => {
 			const yearSelect = t.yearSelect;
 
 			expect(yearSelect).toHaveAttribute("disabled");
+		});
+
+		it("should respect yearFormat prop - 2-digit", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				yearFormat: "2-digit",
+				years: [1980, 1981, 1982],
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			expect(options[0]).toHaveTextContent("80");
+			expect(options[1]).toHaveTextContent("81");
+			expect(options[2]).toHaveTextContent("82");
+		});
+
+		it("should respect yearFormat prop - numeric (default)", async () => {
+			const t = setupWithSelects({
+				placeholder: calendarDateRange.start,
+				yearFormat: "numeric",
+				years: [1980, 1981, 1982],
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			expect(options[0]).toHaveTextContent("1980");
+			expect(options[1]).toHaveTextContent("1981");
+			expect(options[2]).toHaveTextContent("1982");
 		});
 	});
 

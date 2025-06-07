@@ -1,8 +1,4 @@
-import type {
-	RangeCalendarCellPropsWithoutHTML,
-	RangeCalendarDayPropsWithoutHTML,
-	RangeCalendarRootPropsWithoutHTML,
-} from "bits-ui";
+import type { RangeCalendarRootPropsWithoutHTML } from "bits-ui";
 import {
 	createApiSchema,
 	createDataAttrSchema,
@@ -13,20 +9,26 @@ import {
 	createBooleanProp,
 } from "./helpers.js";
 import {
-	cell as calendarCell,
-	day as calendarDay,
 	root as calendarRoot,
-	grid,
-	gridBody,
-	gridHead,
-	gridRow,
-	headCell,
-	header,
-	heading,
-	nextButton,
-	prevButton,
+	createCalendarCellSchema,
+	createCalendarDaySchema,
+	createCalendarGridBodySchema,
+	createCalendarGridHeadSchema,
+	createCalendarGridRowSchema,
+	createCalendarGridSchema,
+	createCalendarHeadCellSchema,
+	createCalendarHeaderSchema,
+	createCalendarHeadingSchema,
+	createCalendarMonthSelectSchema,
+	createCalendarNextButtonSchema,
+	createCalendarPrevButtonSchema,
+	createCalendarYearSelectSchema,
 } from "./calendar.api.js";
 import { root as rangeFieldRoot } from "./date-range-field.api.js";
+import {
+	CalendarRootChildrenSnippetProps,
+	CalendarRootChildSnippetProps,
+} from "./extended-types/shared/index.js";
 
 export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 	title: "Root",
@@ -64,7 +66,11 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 				"Whether to automatically reset the range if any date within the selected range becomes disabled.",
 			default: "false",
 		}),
-		...withChildProps({ elType: "HTMLDivElement" }),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childDef: CalendarRootChildSnippetProps,
+			childrenDef: CalendarRootChildrenSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		createDataAttrSchema({
@@ -80,14 +86,14 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 			description: "Present on the root element when the calendar is readonly.",
 		}),
 		createDataAttrSchema({
-			name: "calendar-root",
+			name: "range-calendar-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
 const dayCellAttrs = [
-	...(calendarCell.dataAttributes ?? []),
+	...(createCalendarCellSchema(true).dataAttributes ?? []),
 	createDataAttrSchema({
 		name: "selection-start",
 		description: "Present when the cell is the start of a selection.",
@@ -102,15 +108,28 @@ const dayCellAttrs = [
 	}),
 ];
 
-export const cell = createApiSchema<RangeCalendarCellPropsWithoutHTML>({
-	...calendarCell,
+export const cell: ReturnType<typeof createCalendarCellSchema> = {
+	...createCalendarCellSchema(true),
 	dataAttributes: dayCellAttrs,
-});
+};
 
-export const day = createApiSchema<RangeCalendarDayPropsWithoutHTML>({
-	...calendarDay,
+export const day: ReturnType<typeof createCalendarDaySchema> = {
+	...createCalendarDaySchema(true),
 	dataAttributes: dayCellAttrs,
-});
+};
+
+export const grid = createCalendarGridSchema(true);
+export const gridBody = createCalendarGridBodySchema(true);
+export const gridHead = createCalendarGridHeadSchema(true);
+export const gridRow = createCalendarGridRowSchema(true);
+export const headCell = createCalendarHeadCellSchema(true);
+export const header = createCalendarHeaderSchema(true);
+export const heading = createCalendarHeadingSchema(true);
+export const nextButton = createCalendarNextButtonSchema(true);
+export const prevButton = createCalendarPrevButtonSchema(true);
+export const monthSelect = createCalendarMonthSelectSchema(true);
+export const yearSelect = createCalendarYearSelectSchema(true);
+
 export const rangeCalendar = [
 	root,
 	header,
@@ -124,4 +143,6 @@ export const rangeCalendar = [
 	gridHead,
 	gridRow,
 	headCell,
+	monthSelect,
+	yearSelect,
 ];

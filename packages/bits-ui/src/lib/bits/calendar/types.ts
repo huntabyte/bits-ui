@@ -380,7 +380,7 @@ export type CalendarMonthSelectProps = CalendarMonthSelectPropsWithoutHTML &
 	Without<BitsPrimitiveSelectAttributes, CalendarMonthSelectPropsWithoutHTML>;
 
 export type CalendarYearSelectSnippetProps = {
-	years: number[];
+	years: Array<{ value: number; label: string }>;
 };
 
 export type CalendarYearSelectPropsWithoutHTML = WithChild<
@@ -393,6 +393,16 @@ export type CalendarYearSelectPropsWithoutHTML = WithChild<
 		 * @default Array from currentYear - 100 to currentYear
 		 */
 		years?: number[];
+
+		/**
+		 * How the year should be formatted in the select options.
+		 *
+		 * - "numeric": "2024", "2023", etc.
+		 * - "2-digit": "24", "23", etc.
+		 *
+		 * @default "numeric"
+		 */
+		yearFormat?: Intl.DateTimeFormatOptions["year"];
 	},
 	CalendarYearSelectSnippetProps
 >;

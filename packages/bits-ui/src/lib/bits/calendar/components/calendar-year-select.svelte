@@ -12,6 +12,7 @@
 		ref = $bindable(null),
 		id = createId(uid),
 		years: yearsProp,
+		yearFormat = "numeric",
 		disabled = false,
 		...restProps
 	}: CalendarYearSelectProps = $props();
@@ -29,6 +30,7 @@
 			(v) => (ref = v)
 		),
 		years: box.with(() => years),
+		yearFormat: box.with(() => yearFormat),
 		disabled: box.with(() => Boolean(disabled)),
 	});
 
@@ -36,15 +38,15 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, years: yearSelectState.opts.years.current })}
+	{@render child({ props: mergedProps, years: yearSelectState.years })}
 {:else}
 	<select {...mergedProps}>
 		{#if children}
-			{@render children?.({ years: yearSelectState.opts.years.current })}
+			{@render children?.({ years: yearSelectState.years })}
 		{:else}
-			{#each yearSelectState.opts.years.current as year (year)}
-				<option value={year} selected={year === yearSelectState.currentYear}>
-					{year}
+			{#each yearSelectState.years as year (year.value)}
+				<option value={year.value} selected={year.value === yearSelectState.currentYear}>
+					{year.label}
 				</option>
 			{/each}
 		{/if}

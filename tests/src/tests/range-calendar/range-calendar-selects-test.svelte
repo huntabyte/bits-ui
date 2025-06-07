@@ -9,6 +9,7 @@
 		months,
 		years,
 		monthFormat,
+		yearFormat,
 		disabled = false,
 		readonly = false,
 	}: {
@@ -17,6 +18,7 @@
 		months?: number[];
 		years?: number[];
 		monthFormat?: Intl.DateTimeFormatOptions["month"];
+		yearFormat?: Intl.DateTimeFormatOptions["year"];
 		disabled?: boolean;
 		readonly?: boolean;
 	} = $props();
@@ -26,7 +28,7 @@
 	{#snippet children({ months: calendarMonths })}
 		<div data-testid="header">
 			<RangeCalendar.MonthSelect data-testid="month-select" {months} {monthFormat} />
-			<RangeCalendar.YearSelect data-testid="year-select" {years} />
+			<RangeCalendar.YearSelect data-testid="year-select" {years} {yearFormat} />
 		</div>
 		<div data-testid="calendar-grid">
 			{#each calendarMonths as month (month.value.toString())}

@@ -16,6 +16,8 @@ import {
 	heading,
 	nextButton,
 	prevButton,
+	monthSelect,
+	yearSelect,
 } from "./calendar.api.js";
 import {
 	input as dateFieldInput,
@@ -171,4 +173,6 @@ export const datePicker = [
 	gridBody,
 	cell,
 	day,
+	monthSelect,
+	yearSelect,
 ];

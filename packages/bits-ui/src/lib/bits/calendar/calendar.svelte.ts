@@ -963,6 +963,7 @@ export class CalendarMonthSelectState {
 export type CalendarYearSelectStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		years: number[];
+		yearFormat: Intl.DateTimeFormatOptions["year"];
 		disabled: boolean;
 	}>
 >;
@@ -979,6 +980,25 @@ export class CalendarYearSelectState {
 		this.root = root;
 		this.onchange = this.onchange.bind(this);
 	}
+
+	years = $derived.by(() => {
+		this.root.opts.locale.current;
+		const yearNumbers = this.opts.years.current;
+		const yearFormat = this.opts.yearFormat.current;
+		const years = [];
+
+		for (const year of yearNumbers) {
+			// create a date with the year to get localized formatting
+			const date = this.root.opts.placeholder.current.set({ year });
+			const label = this.root.formatter.custom(toDate(date), { year: yearFormat });
+			years.push({
+				value: year,
+				label,
+			});
+		}
+
+		return years;
+	});
 
 	currentYear = $derived.by(() => this.root.opts.placeholder.current.year);
 
