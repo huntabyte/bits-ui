@@ -2,6 +2,7 @@ import { DateFormatter, type DateValue } from "@internationalized/date";
 import { hasTime, isZonedDateTime, toDate } from "./utils.js";
 import type { HourCycle, TimeValue } from "$lib/shared/date/types.js";
 import { convertTimeValueToDateValue } from "./field/time-helpers.js";
+import type { ReadableBox } from "svelte-toolbelt";
 
 export type Formatter = ReturnType<typeof createFormatter>;
 export type TimeFormatter = ReturnType<typeof createTimeFormatter>;
@@ -15,6 +16,12 @@ const defaultPartOptions: Intl.DateTimeFormatOptions = {
 	second: "numeric",
 };
 
+type CreateFormatterOptions = {
+	initialLocale: string;
+	monthFormat: ReadableBox<Intl.DateTimeFormatOptions["month"] | ((month: number) => string)>;
+	yearFormat: ReadableBox<Intl.DateTimeFormatOptions["year"] | ((year: number) => string)>;
+};
+
 /**
  * Creates a wrapper around the `DateFormatter`, which is
  * an improved version of the {@link Intl.DateTimeFormat} API,
@@ -23,8 +30,8 @@ const defaultPartOptions: Intl.DateTimeFormatOptions = {
  *
  * @see [DateFormatter](https://react-spectrum.adobe.com/internationalized/date/DateFormatter.html)
  */
-export function createFormatter(initialLocale: string) {
-	let locale = initialLocale;
+export function createFormatter(opts: CreateFormatterOptions) {
+	let locale = opts.initialLocale;
 
 	function setLocale(newLocale: string) {
 		locale = newLocale;
@@ -52,7 +59,25 @@ export function createFormatter(initialLocale: string) {
 	}
 
 	function fullMonthAndYear(date: Date) {
-		return new DateFormatter(locale, { month: "long", year: "numeric" }).format(date);
+		if (
+			typeof opts.monthFormat.current !== "function" &&
+			typeof opts.yearFormat.current !== "function"
+		) {
+			return new DateFormatter(locale, {
+				month: opts.monthFormat.current,
+				year: opts.yearFormat.current,
+			}).format(date);
+		}
+		const formattedMonth =
+			typeof opts.monthFormat.current === "function"
+				? opts.monthFormat.current(date.getMonth() + 1)
+				: new DateFormatter(locale, { month: opts.monthFormat.current }).format(date);
+		const formattedYear =
+			typeof opts.yearFormat.current === "function"
+				? opts.yearFormat.current(date.getFullYear())
+				: new DateFormatter(locale, { year: opts.yearFormat.current }).format(date);
+
+		return `${formattedMonth} ${formattedYear}`;
 	}
 
 	function fullMonth(date: Date) {

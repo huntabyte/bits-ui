@@ -43,7 +43,8 @@ type ElementKind =
 	| "HTMLUListElement"
 	| "HTMLLiElement"
 	| "HTMLNavElement"
-	| "HTMLElement";
+	| "HTMLElement"
+	| "HTMLSelectElement";
 
 type SharedPropOptions = {
 	description: string;

@@ -35,6 +35,9 @@
 		type,
 		disableDaysOutsideMonth = true,
 		initialFocus = false,
+		maxDays,
+		monthFormat = "long",
+		yearFormat = "numeric",
 		...restProps
 	}: CalendarRootProps = $props();
 
@@ -93,6 +96,7 @@
 		maxValue: box.with(() => maxValue),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		initialFocus: box.with(() => initialFocus),
+		maxDays: box.with(() => maxDays),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
@@ -110,6 +114,8 @@
 			}
 		),
 		type: box.with(() => type),
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 		defaultPlaceholder,
 	});
 

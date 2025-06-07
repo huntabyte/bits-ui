@@ -35,8 +35,13 @@
 		maxValue = undefined,
 		preventDeselect = false,
 		disableDaysOutsideMonth = true,
+		minDays,
+		maxDays,
 		onStartValueChange = noop,
 		onEndValueChange = noop,
+		excludeDisabled = false,
+		monthFormat = "long",
+		yearFormat = "numeric",
 		...restProps
 	}: RangeCalendarRootProps = $props();
 
@@ -112,6 +117,9 @@
 		calendarLabel: box.with(() => calendarLabel),
 		fixedWeeks: box.with(() => fixedWeeks),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
+		minDays: box.with(() => minDays),
+		maxDays: box.with(() => maxDays),
+		excludeDisabled: box.with(() => excludeDisabled),
 		startValue: box.with(
 			() => startValue,
 			(v) => {
@@ -126,6 +134,8 @@
 				onEndValueChange(v);
 			}
 		),
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 		defaultPlaceholder,
 	});
 

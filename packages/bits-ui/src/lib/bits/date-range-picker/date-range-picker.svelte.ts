@@ -17,6 +17,8 @@ type DateRangePickerRootStateProps = WritableBoxedValues<{
 		isDateDisabled: DateMatcher;
 		minValue: DateValue | undefined;
 		maxValue: DateValue | undefined;
+		minDays: number | undefined;
+		maxDays: number | undefined;
 		disabled: boolean;
 		readonly: boolean;
 		granularity: Granularity | undefined;
@@ -32,7 +34,10 @@ type DateRangePickerRootStateProps = WritableBoxedValues<{
 		numberOfMonths: number;
 		calendarLabel: string;
 		disableDaysOutsideMonth: boolean;
+		excludeDisabled: boolean;
 		onRangeSelect?: () => void;
+		monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+		yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 	}> & {
 		defaultPlaceholder: DateValue;
 	};

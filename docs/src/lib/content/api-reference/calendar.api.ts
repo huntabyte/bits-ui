@@ -8,13 +8,25 @@ import type {
 	CalendarHeadCellPropsWithoutHTML,
 	CalendarHeaderPropsWithoutHTML,
 	CalendarHeadingPropsWithoutHTML,
+	CalendarMonthSelectPropsWithoutHTML,
 	CalendarNextButtonPropsWithoutHTML,
 	CalendarPrevButtonPropsWithoutHTML,
 	CalendarRootPropsWithoutHTML,
+	CalendarYearSelectPropsWithoutHTML,
 } from "bits-ui";
 import {
+	CalendarMonthFormatProp,
+	CalendarMonthSelectChildrenSnippetProps,
+	CalendarMonthSelectChildSnippetProps,
+	CalendarMonthSelectFormatProp,
 	CalendarOnValueChangeProp,
+	CalendarRootChildrenSnippetProps,
+	CalendarRootChildSnippetProps,
 	CalendarValueProp,
+	CalendarYearFormatProp,
+	CalendarYearSelectChildrenSnippetProps,
+	CalendarYearSelectChildSnippetProps,
+	CalendarYearSelectFormatProp,
 	DateMatcherProp,
 	OnPlaceholderChangeProp,
 	SingleOrMultipleProp,
@@ -27,10 +39,10 @@ import {
 	createEnumProp,
 	createFunctionProp,
 	createNumberProp,
-	createPropSchema,
 	createStringProp,
 	createUnionProp,
 	withChildProps,
+	createPropSchema,
 } from "./helpers.js";
 import { dateValueProp } from "./extended-types/index.js";
 import * as C from "$lib/content/constants.js";
@@ -174,7 +186,29 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 			description: "Whether or not to disable days outside the current month.",
 			default: C.FALSE,
 		}),
-		...withChildProps({ elType: "HTMLDivElement" }),
+		maxDays: createNumberProp({
+			description:
+				"The maximum number of days that can be selected when the calendar is `'multiple'` type.",
+		}),
+		monthFormat: createUnionProp({
+			options: ["short", "long", "narrow", "numeric", "2-digit", "(month: number) => string"],
+			definition: CalendarMonthFormatProp,
+			description:
+				"The format to use for the month strings provided via the `months` slot prop.",
+			default: "'long'",
+		}),
+		yearFormat: createUnionProp({
+			options: ["numeric", "2-digit", "(year: number) => string"],
+			definition: CalendarYearFormatProp,
+			description:
+				"The format to use for the year strings provided via the `years` slot prop.",
+			default: "'numeric'",
+		}),
+		...withChildProps({
+			elType: "HTMLDivElement",
+			childDef: CalendarRootChildSnippetProps,
+			childrenDef: CalendarRootChildrenSnippetProps,
+		}),
 	},
 	dataAttributes: [
 		createDataAttrSchema({
@@ -196,215 +230,344 @@ export const root = createApiSchema<CalendarRootPropsWithoutHTML>({
 	],
 });
 
-export const cell = createApiSchema<CalendarCellPropsWithoutHTML>({
-	title: "Cell",
-	description: "A cell in the calendar grid.",
-	props: {
-		date: createPropSchema({
-			type: dateValueProp,
-			description: "The date for the cell.",
-		}),
-		month: createPropSchema({
-			type: dateValueProp,
-			description: "The current month the date is being displayed in.",
-		}),
-		...withChildProps({ elType: "HTMLTableCellElement" }),
-	},
-	dataAttributes: [
-		...sharedCellDayAttrs,
-		createDataAttrSchema({
-			name: "calendar-cell",
-			description: "Present on the cell element.",
-		}),
-	],
-});
+export function createCalendarCellSchema(isRange: boolean) {
+	return createApiSchema<CalendarCellPropsWithoutHTML>({
+		title: "Cell",
+		description: "A cell in the calendar grid.",
+		props: {
+			date: createPropSchema({
+				type: dateValueProp,
+				description: "The date for the cell.",
+			}),
+			month: createPropSchema({
+				type: dateValueProp,
+				description: "The current month the date is being displayed in.",
+			}),
+			...withChildProps({ elType: "HTMLTableCellElement" }),
+		},
+		dataAttributes: [
+			...sharedCellDayAttrs,
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-cell" : "calendar-cell",
+				description: "Present on the cell element.",
+			}),
+		],
+	});
+}
 
-export const day = createApiSchema<CalendarDayPropsWithoutHTML>({
-	title: "Day",
-	description: "A day in the calendar grid.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
-	dataAttributes: [
-		...sharedCellDayAttrs,
-		createDataAttrSchema({
-			name: "calendar-day",
-			description: "Present on the day element.",
-		}),
-	],
-});
+export const cell = createCalendarCellSchema(false);
 
-export const grid = createApiSchema<CalendarGridPropsWithoutHTML>({
-	title: "Grid",
-	description: "The grid of dates in the calendar, typically representing a month.",
-	props: withChildProps({ elType: "HTMLTableElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present on the grid element when the calendar is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "readonly",
-			description: "Present on the grid element when the calendar is readonly.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-grid",
-			description: "Present on the grid element.",
-		}),
-	],
-});
+export function createCalendarDaySchema(isRange: boolean) {
+	return createApiSchema<CalendarDayPropsWithoutHTML>({
+		title: "Day",
+		description: "A day in the calendar grid.",
+		props: withChildProps({ elType: "HTMLDivElement" }),
+		dataAttributes: [
+			...sharedCellDayAttrs,
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-day" : "calendar-day",
+				description: "Present on the day element.",
+			}),
+		],
+	});
+}
 
-export const gridBody = createApiSchema<CalendarGridBodyPropsWithoutHTML>({
-	title: "GridBody",
-	description: "The body of the grid of dates in the calendar.",
-	props: withChildProps({ elType: "HTMLTableSectionElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present on the grid element when the calendar is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "readonly",
-			description: "Present on the grid element when the calendar is readonly.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-grid-body",
-			description: "Present on the grid body element.",
-		}),
-	],
-});
+export const day = createCalendarDaySchema(false);
 
-export const gridHead = createApiSchema<CalendarGridHeadPropsWithoutHTML>({
-	title: "GridHead",
-	description: "The head of the grid of dates in the calendar.",
-	props: withChildProps({ elType: "HTMLTableSectionElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present on the grid head element when the calendar is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "readonly",
-			description: "Present on the grid head element when the calendar is readonly.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-grid-head",
-			description: "Present on the grid head element.",
-		}),
-	],
-});
+export function createCalendarGridSchema(isRange: boolean) {
+	return createApiSchema<CalendarGridPropsWithoutHTML>({
+		title: "Grid",
+		description: "The grid of dates in the calendar, typically representing a month.",
+		props: withChildProps({ elType: "HTMLTableElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the grid element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: "readonly",
+				description: "Present on the grid element when the calendar is readonly.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-grid" : "calendar-grid",
+				description: "Present on the grid element.",
+			}),
+		],
+	});
+}
 
-export const gridRow = createApiSchema<CalendarGridRowPropsWithoutHTML>({
-	title: "GridRow",
-	description: "A row in the grid of dates in the calendar.",
-	props: withChildProps({ elType: "HTMLTableRowElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present on the grid row element when the calendar is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "readonly",
-			description: "Present on the grid row element when the calendar is readonly.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-grid-row",
-			description: "Present on the grid row element.",
-		}),
-	],
-});
+export const grid = createCalendarGridSchema(false);
 
-export const headCell = createApiSchema<CalendarHeadCellPropsWithoutHTML>({
-	title: "HeadCell",
-	description: "A cell in the head of the grid of dates in the calendar.",
-	props: withChildProps({ elType: "HTMLTableCellElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present on the head cell element when the calendar is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "readonly",
-			description: "Present on the head cell element when the calendar is readonly.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-head-cell",
-			description: "Present on the head cell element.",
-		}),
-	],
-});
+export function createCalendarGridBodySchema(isRange: boolean) {
+	return createApiSchema<CalendarGridBodyPropsWithoutHTML>({
+		title: "GridBody",
+		description: "The body of the grid of dates in the calendar.",
+		props: withChildProps({ elType: "HTMLTableSectionElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the grid element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: "readonly",
+				description: "Present on the grid element when the calendar is readonly.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-grid-body" : "calendar-grid-body",
+				description: "Present on the grid body element.",
+			}),
+		],
+	});
+}
 
-export const header = createApiSchema<CalendarHeaderPropsWithoutHTML>({
-	title: "Header",
-	description: "The header of the calendar.",
-	props: withChildProps({ elType: "HTMLElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present on the header element when the calendar is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "readonly",
-			description: "Present on the header element when the calendar is readonly.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-header",
-			description: "Present on the header element.",
-		}),
-	],
-});
+export const gridBody = createCalendarGridBodySchema(false);
 
-export const heading = createApiSchema<CalendarHeadingPropsWithoutHTML>({
-	title: "Heading",
-	description: "The heading of the calendar.",
-	props: withChildProps({ elType: "HTMLDivElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description: "Present on the heading element when the calendar is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "readonly",
-			description: "Present on the heading element when the calendar is readonly.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-heading",
-			description: "Present on the heading element.",
-		}),
-	],
-});
+export function createCalendarGridHeadSchema(isRange: boolean) {
+	return createApiSchema<CalendarGridHeadPropsWithoutHTML>({
+		title: "GridHead",
+		description: "The head of the grid of dates in the calendar.",
+		props: withChildProps({ elType: "HTMLTableSectionElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the grid head element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: "readonly",
+				description: "Present on the grid head element when the calendar is readonly.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-grid-head" : "calendar-grid-head",
+				description: "Present on the grid head element.",
+			}),
+		],
+	});
+}
 
-export const nextButton = createApiSchema<CalendarNextButtonPropsWithoutHTML>({
-	title: "NextButton",
-	description: "The next button of the calendar.",
-	props: withChildProps({ elType: "HTMLButtonElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description:
-				"Present on the next button element when the calendar or this button is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-next-button",
-			description: "Present on the next button element.",
-		}),
-	],
-});
+export const gridHead = createCalendarGridHeadSchema(false);
 
-export const prevButton = createApiSchema<CalendarPrevButtonPropsWithoutHTML>({
-	title: "PrevButton",
-	description: "The previous button of the calendar.",
-	props: withChildProps({ elType: "HTMLButtonElement" }),
-	dataAttributes: [
-		createDataAttrSchema({
-			name: "disabled",
-			description:
-				"Present on the prev button element when the calendar or this button is disabled.",
-		}),
-		createDataAttrSchema({
-			name: "calendar-prev-button",
-			description: "Present on the prev button element.",
-		}),
-	],
-});
+export function createCalendarGridRowSchema(isRange: boolean) {
+	return createApiSchema<CalendarGridRowPropsWithoutHTML>({
+		title: "GridRow",
+		description: "A row in the grid of dates in the calendar.",
+		props: withChildProps({ elType: "HTMLTableRowElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the grid row element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: "readonly",
+				description: "Present on the grid row element when the calendar is readonly.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-grid-row" : "calendar-grid-row",
+				description: "Present on the grid row element.",
+			}),
+		],
+	});
+}
+
+export const gridRow = createCalendarGridRowSchema(false);
+
+export function createCalendarHeadCellSchema(isRange: boolean) {
+	return createApiSchema<CalendarHeadCellPropsWithoutHTML>({
+		title: "HeadCell",
+		description: "A cell in the head of the grid of dates in the calendar.",
+		props: withChildProps({ elType: "HTMLTableCellElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the head cell element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: "readonly",
+				description: "Present on the head cell element when the calendar is readonly.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-head-cell" : "calendar-head-cell",
+				description: "Present on the head cell element.",
+			}),
+		],
+	});
+}
+
+export const headCell = createCalendarHeadCellSchema(false);
+
+export function createCalendarHeaderSchema(isRange: boolean) {
+	return createApiSchema<CalendarHeaderPropsWithoutHTML>({
+		title: "Header",
+		description: "The header of the calendar.",
+		props: withChildProps({ elType: "HTMLElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the header element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: "readonly",
+				description: "Present on the header element when the calendar is readonly.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-header" : "calendar-header",
+				description: "Present on the header element.",
+			}),
+		],
+	});
+}
+
+export const header = createCalendarHeaderSchema(false);
+
+export function createCalendarHeadingSchema(isRange: boolean) {
+	return createApiSchema<CalendarHeadingPropsWithoutHTML>({
+		title: "Heading",
+		description: "The heading of the calendar.",
+		props: withChildProps({ elType: "HTMLDivElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the heading element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: "readonly",
+				description: "Present on the heading element when the calendar is readonly.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-heading" : "calendar-heading",
+				description: "Present on the heading element.",
+			}),
+		],
+	});
+}
+
+export const heading = createCalendarHeadingSchema(false);
+
+export function createCalendarNextButtonSchema(isRange: boolean) {
+	return createApiSchema<CalendarNextButtonPropsWithoutHTML>({
+		title: "NextButton",
+		description: "The next button of the calendar.",
+		props: withChildProps({ elType: "HTMLButtonElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description:
+					"Present on the next button element when the calendar or this button is disabled.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-next-button" : "calendar-next-button",
+				description: "Present on the next button element.",
+			}),
+		],
+	});
+}
+
+export const nextButton = createCalendarNextButtonSchema(false);
+
+export function createCalendarPrevButtonSchema(isRange: boolean) {
+	return createApiSchema<CalendarPrevButtonPropsWithoutHTML>({
+		title: "PrevButton",
+		description: "The previous button of the calendar.",
+		props: withChildProps({ elType: "HTMLButtonElement" }),
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description:
+					"Present on the prev button element when the calendar or this button is disabled.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-prev-button" : "calendar-prev-button",
+				description: "Present on the prev button element.",
+			}),
+		],
+	});
+}
+
+export const prevButton = createCalendarPrevButtonSchema(false);
+
+export function createCalendarMonthSelectSchema(isRange: boolean) {
+	return createApiSchema<CalendarMonthSelectPropsWithoutHTML>({
+		title: "MonthSelect",
+		description: "A select you can use to navigate to a specific month in the calendar view.",
+		props: {
+			months: createPropSchema({
+				type: "number[]",
+				description: "The month values to render in the select.",
+				default: "[1-12]",
+			}),
+
+			monthFormat: createEnumProp({
+				options: [
+					"narrow",
+					"short",
+					"long",
+					"numeric",
+					"2-digit",
+					"(month: number) => string",
+				],
+				description:
+					"The format to use for the month strings provided via the `months` slot prop. If a function is provided, it will be called with the month number as an argument and should return a string.",
+				default: "'narrow'",
+				definition: CalendarMonthSelectFormatProp,
+			}),
+			...withChildProps({
+				elType: "HTMLSelectElement",
+				childDef: CalendarMonthSelectChildSnippetProps,
+				childrenDef: CalendarMonthSelectChildrenSnippetProps,
+			}),
+		},
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the month select element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-month-select" : "calendar-month-select",
+				description: "Present on the month select element.",
+			}),
+		],
+	});
+}
+
+export const monthSelect = createCalendarMonthSelectSchema(false);
+
+export function createCalendarYearSelectSchema(isRange: boolean) {
+	return createApiSchema<CalendarYearSelectPropsWithoutHTML>({
+		title: "YearSelect",
+		description: "A select you can use to navigate to a specific year in the calendar view.",
+		props: {
+			years: createPropSchema({
+				type: "number[]",
+				description: "The year values to render in the select.",
+				default:
+					"The current year or placeholder year (whichever is higher) + 10 and minus 100 years. When a `minValue`/`maxValue` is provided to `Calendar.Root`, those will be used to constrain the range.",
+			}),
+			yearFormat: createEnumProp({
+				options: ["numeric", "2-digit", "(year: number) => string"],
+				description:
+					"The format to use for the year strings provided via the `years` slot prop. If a function is provided, it will be called with the year as an argument and should return a string.",
+				default: "'numeric'",
+				definition: CalendarYearSelectFormatProp,
+			}),
+			...withChildProps({
+				elType: "HTMLSelectElement",
+				childDef: CalendarYearSelectChildSnippetProps,
+				childrenDef: CalendarYearSelectChildrenSnippetProps,
+			}),
+		},
+		dataAttributes: [
+			createDataAttrSchema({
+				name: "disabled",
+				description: "Present on the year select element when the calendar is disabled.",
+			}),
+			createDataAttrSchema({
+				name: isRange ? "range-calendar-year-select" : "calendar-year-select",
+				description: "Present on the year select element.",
+			}),
+		],
+	});
+}
+
+export const yearSelect = createCalendarYearSelectSchema(false);
 
 export const calendar = [
 	root,
@@ -419,4 +582,6 @@ export const calendar = [
 	gridHead,
 	gridRow,
 	headCell,
+	monthSelect,
+	yearSelect,
 ];
