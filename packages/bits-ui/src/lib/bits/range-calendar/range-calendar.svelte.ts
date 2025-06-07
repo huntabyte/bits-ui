@@ -795,7 +795,6 @@ export class RangeCalendarCellState {
 				"data-focused": this.isFocusedDate ? "" : undefined,
 				"data-selection-start": this.isSelectionStart ? "" : undefined,
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
-				"data-selection-middle": this.isSelectionMiddle ? "" : undefined,
 				"data-range-start": this.isRangeStart ? "" : undefined,
 				"data-range-end": this.isRangeEnd ? "" : undefined,
 				"data-range-middle": this.isRangeMiddle ? "" : undefined,
