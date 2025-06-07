@@ -41,7 +41,7 @@
 		{#if children}
 			{@render children?.(monthSelectState.snippetProps)}
 		{:else}
-			{#each monthSelectState.months as month (month.value)}
+			{#each monthSelectState.monthItems as month (month.value)}
 				<option
 					value={month.value}
 					selected={month.value === monthSelectState.currentMonth}

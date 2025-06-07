@@ -11,18 +11,12 @@
 		child,
 		ref = $bindable(null),
 		id = createId(uid),
-		years: yearsProp,
+		years,
 		yearFormat = "numeric",
 		disabled = false,
 		"aria-label": ariaLabel = "Select a year",
 		...restProps
 	}: CalendarYearSelectProps = $props();
-
-	const years = $derived.by(() => {
-		if (yearsProp) return yearsProp;
-		const currentYear = new Date().getFullYear();
-		return Array.from({ length: 101 }, (_, i) => currentYear - 100 + i);
-	});
 
 	const yearSelectState = useCalendarYearSelect({
 		id: box.with(() => id),
@@ -47,7 +41,7 @@
 		{#if children}
 			{@render children?.(yearSelectState.snippetProps)}
 		{:else}
-			{#each yearSelectState.years as year (year.value)}
+			{#each yearSelectState.yearItems as year (year.value)}
 				<option value={year.value} selected={year.value === yearSelectState.currentYear}>
 					{year.label}
 				</option>

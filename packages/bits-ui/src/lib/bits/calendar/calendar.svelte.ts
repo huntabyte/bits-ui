@@ -208,12 +208,19 @@ export class CalendarRootState {
 	 * calendar's days of the week is strongly recommended, as it guarantees that
 	 * the days are correctly formatted for the current locale and calendar view.
 	 */
-	weekdays = $derived.by(() => {
+	readonly weekdays = $derived.by(() => {
 		return getWeekdays({
 			months: this.months,
 			formatter: this.formatter,
 			weekdayFormat: this.opts.weekdayFormat.current,
 		});
+	});
+
+	readonly defaultYears = $derived.by(() => {
+		const placeholderYear = untrack(() => this.opts.placeholder.current.year);
+		const currentYear = new Date().getFullYear();
+		const latestYear = Math.max(placeholderYear, currentYear);
+		return Array.from({ length: 101 }, (_, i) => latestYear - 100 + i);
 	});
 
 	#setupInitialFocusEffect() {
@@ -895,7 +902,7 @@ export class CalendarHeaderState {
 export type CalendarMonthSelectStateProps = WithRefProps<
 	ReadableBoxedValues<{
 		months: number[];
-		monthFormat: Intl.DateTimeFormatOptions["month"];
+		monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
 		disabled: boolean;
 	}>
 >;
@@ -913,7 +920,7 @@ export class CalendarMonthSelectState {
 		this.onchange = this.onchange.bind(this);
 	}
 
-	readonly months = $derived.by(() => {
+	readonly monthItems = $derived.by(() => {
 		this.root.opts.locale.current;
 		const monthNumbers = this.opts.months.current;
 		const monthFormat = this.opts.monthFormat.current;
@@ -922,7 +929,12 @@ export class CalendarMonthSelectState {
 		for (const month of monthNumbers) {
 			// create a date with the current year and the month to get localized name
 			const date = this.root.opts.placeholder.current.set({ month });
-			const label = this.root.formatter.custom(toDate(date), { month: monthFormat });
+			let label: string;
+			if (typeof monthFormat === "function") {
+				label = monthFormat(month);
+			} else {
+				label = this.root.formatter.custom(toDate(date), { month: monthFormat });
+			}
 			months.push({
 				value: month,
 				label,
@@ -940,8 +952,10 @@ export class CalendarMonthSelectState {
 
 	readonly snippetProps = $derived.by(() => {
 		return {
-			months: this.months,
-			selectedMonth: this.months.find((month) => month.value === this.currentMonth) as {
+			monthItems: this.monthItems,
+			selectedMonthItem: this.monthItems.find(
+				(month) => month.value === this.currentMonth
+			) as {
 				value: number;
 				label: string;
 			},
@@ -974,8 +988,8 @@ export class CalendarMonthSelectState {
 
 export type CalendarYearSelectStateProps = WithRefProps<
 	ReadableBoxedValues<{
-		years: number[];
-		yearFormat: Intl.DateTimeFormatOptions["year"];
+		years: number[] | undefined;
+		yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 		disabled: boolean;
 	}>
 >;
@@ -994,22 +1008,31 @@ export class CalendarYearSelectState {
 	}
 
 	readonly years = $derived.by(() => {
-		this.root.opts.locale.current;
-		const yearNumbers = this.opts.years.current;
-		const yearFormat = this.opts.yearFormat.current;
-		const years = [];
+		if (this.opts.years.current && this.opts.years.current.length)
+			return this.opts.years.current;
+		return this.root.defaultYears;
+	});
 
-		for (const year of yearNumbers) {
+	readonly yearItems = $derived.by(() => {
+		this.root.opts.locale.current;
+		const yearFormat = this.opts.yearFormat.current;
+		const localYears = [];
+		for (const year of this.years) {
 			// create a date with the year to get localized formatting
 			const date = this.root.opts.placeholder.current.set({ year });
-			const label = this.root.formatter.custom(toDate(date), { year: yearFormat });
-			years.push({
+			let label: string;
+			if (typeof yearFormat === "function") {
+				label = yearFormat(year);
+			} else {
+				label = this.root.formatter.custom(toDate(date), { year: yearFormat });
+			}
+			localYears.push({
 				value: year,
 				label,
 			});
 		}
 
-		return years;
+		return localYears;
 	});
 
 	readonly currentYear = $derived.by(() => this.root.opts.placeholder.current.year);
@@ -1020,8 +1043,8 @@ export class CalendarYearSelectState {
 
 	readonly snippetProps = $derived.by(() => {
 		return {
-			years: this.years,
-			selectedYear: this.years.find((year) => year.value === this.currentYear) as {
+			yearItems: this.yearItems,
+			selectedYearItem: this.yearItems.find((year) => year.value === this.currentYear) as {
 				value: number;
 				label: string;
 			},

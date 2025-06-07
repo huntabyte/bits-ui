@@ -1,6 +1,6 @@
 ```ts
 type ChildrenSnippetProps = {
-	months: Array<{ value: number; label: string }>;
-	selectedMonth: { value: number; label: string };
+	monthItems: Array<{ value: number; label: string }>;
+	selectedMonthItem: { value: number; label: string };
 };
 ```

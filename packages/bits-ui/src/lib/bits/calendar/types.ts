@@ -346,8 +346,8 @@ export type CalendarPrevButtonProps = CalendarPrevButtonPropsWithoutHTML &
 	Without<BitsPrimitiveButtonAttributes, CalendarPrevButtonPropsWithoutHTML>;
 
 export type CalendarMonthSelectSnippetProps = {
-	months: Array<{ value: number; label: string }>;
-	selectedMonth: { value: number; label: string };
+	monthItems: Array<{ value: number; label: string }>;
+	selectedMonthItem: { value: number; label: string };
 };
 
 export type CalendarMonthSelectPropsWithoutHTML = WithChild<
@@ -372,7 +372,7 @@ export type CalendarMonthSelectPropsWithoutHTML = WithChild<
 		 *
 		 * @default "long"
 		 */
-		monthFormat?: Intl.DateTimeFormatOptions["month"];
+		monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
 	},
 	CalendarMonthSelectSnippetProps
 >;
@@ -381,8 +381,8 @@ export type CalendarMonthSelectProps = CalendarMonthSelectPropsWithoutHTML &
 	Without<BitsPrimitiveSelectAttributes, CalendarMonthSelectPropsWithoutHTML>;
 
 export type CalendarYearSelectSnippetProps = {
-	years: Array<{ value: number; label: string }>;
-	selectedYear: { value: number; label: string };
+	yearItems: Array<{ value: number; label: string }>;
+	selectedYearItem: { value: number; label: string };
 };
 
 export type CalendarYearSelectPropsWithoutHTML = WithChild<
@@ -404,7 +404,7 @@ export type CalendarYearSelectPropsWithoutHTML = WithChild<
 		 *
 		 * @default "numeric"
 		 */
-		yearFormat?: Intl.DateTimeFormatOptions["year"];
+		yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 	},
 	CalendarYearSelectSnippetProps
 >;

@@ -51,7 +51,7 @@ import {
 	toDate,
 } from "$lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
-import { onMount } from "svelte";
+import { onMount, untrack } from "svelte";
 
 type RangeCalendarRootStateProps = WithRefProps<
 	WritableBoxedValues<{
@@ -194,6 +194,13 @@ export class RangeCalendarRootState {
 
 		if (isValid) return range;
 		return null;
+	});
+
+	readonly defaultYears = $derived.by(() => {
+		const placeholderYear = untrack(() => this.opts.placeholder.current.year);
+		const currentYear = new Date().getFullYear();
+		const latestYear = Math.max(placeholderYear, currentYear);
+		return Array.from({ length: 101 }, (_, i) => latestYear - 100 + i);
 	});
 
 	constructor(opts: RangeCalendarRootStateProps) {
