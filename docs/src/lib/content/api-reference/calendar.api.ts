@@ -480,9 +480,16 @@ export function createCalendarMonthSelectSchema(isRange: boolean) {
 			}),
 
 			monthFormat: createEnumProp({
-				options: ["narrow", "short", "long", "numeric", "2-digit"],
+				options: [
+					"narrow",
+					"short",
+					"long",
+					"numeric",
+					"2-digit",
+					"(month: number) => string",
+				],
 				description:
-					"The format to use for the month strings provided via the `months` slot prop.",
+					"The format to use for the month strings provided via the `months` slot prop. If a function is provided, it will be called with the month number as an argument and should return a string.",
 				default: "'narrow'",
 				definition: CalendarMonthSelectFormatProp,
 			}),
@@ -515,12 +522,13 @@ export function createCalendarYearSelectSchema(isRange: boolean) {
 			years: createPropSchema({
 				type: "number[]",
 				description: "The year values to render in the select.",
-				default: "The current year and past 100 years",
+				default:
+					"The current year or placeholder year (whichever is higher) + 10 and minus 100 years. When a `minValue`/`maxValue` is provided to `Calendar.Root`, those will be used to constrain the range.",
 			}),
 			yearFormat: createEnumProp({
-				options: ["numeric", "2-digit"],
+				options: ["numeric", "2-digit", "(year: number) => string"],
 				description:
-					"The format to use for the year strings provided via the `years` slot prop.",
+					"The format to use for the year strings provided via the `years` slot prop. If a function is provided, it will be called with the year as an argument and should return a string.",
 				default: "'numeric'",
 				definition: CalendarYearSelectFormatProp,
 			}),
