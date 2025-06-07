@@ -1030,6 +1030,8 @@ describe("RangeCalendar Select Components", () => {
 			yearFormat?: Intl.DateTimeFormatOptions["year"];
 			disabled?: boolean;
 			readonly?: boolean;
+			minValue?: CalendarDate;
+			maxValue?: CalendarDate;
 		} = {}
 	) {
 		const user = userEvent.setup();
@@ -1117,7 +1119,109 @@ describe("RangeCalendar Select Components", () => {
 			const yearSelect = t.yearSelect;
 			const options = yearSelect.querySelectorAll("option");
 
-			expect(options).toHaveLength(101);
+			// default range is 111 years when placeholder is within normal bounds
+			expect(options.length).toBeGreaterThanOrEqual(111);
+		});
+
+		it("should use minValue year as exact starting boundary", async () => {
+			const currentYear = new Date().getFullYear();
+			const t = setupWithSelects({
+				placeholder: new CalendarDate(2000, 6, 15),
+				minValue: new CalendarDate(2020, 1, 1),
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			// should start exactly at minValue year (2020)
+			const firstYear = parseInt(options[0].getAttribute("value") || "0");
+			expect(firstYear).toBe(2020);
+
+			// should end at current year + 10 (since no maxValue specified)
+			const lastYear = parseInt(options[options.length - 1].getAttribute("value") || "0");
+			expect(lastYear).toBe(Math.max(2000, currentYear) + 10);
+
+			// verify range is exactly from 2020 to expected end
+			const expectedLength = Math.max(2000, currentYear) + 10 - 2020 + 1;
+			expect(options).toHaveLength(expectedLength);
+		});
+
+		it("should use maxValue year as exact ending boundary", async () => {
+			const currentYear = new Date().getFullYear();
+			const t = setupWithSelects({
+				placeholder: new CalendarDate(currentYear, 6, 15),
+				maxValue: new CalendarDate(2025, 12, 31),
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			// should end exactly at maxValue year (2025)
+			const lastYear = parseInt(options[options.length - 1].getAttribute("value") || "0");
+			expect(lastYear).toBe(2025);
+
+			// should start at default minimum (since no minValue specified)
+			const latestYear = Math.max(currentYear, currentYear);
+			const expectedStartYear = latestYear - 100;
+			const firstYear = parseInt(options[0].getAttribute("value") || "0");
+			expect(firstYear).toBe(expectedStartYear);
+
+			// verify range is exactly from expected start to 2025
+			const expectedLength = 2025 - expectedStartYear + 1;
+			expect(options).toHaveLength(expectedLength);
+		});
+
+		it("should use exact range defined by both minValue and maxValue", async () => {
+			const t = setupWithSelects({
+				placeholder: new CalendarDate(2000, 6, 15),
+				minValue: new CalendarDate(2020, 1, 1),
+				maxValue: new CalendarDate(2025, 12, 31),
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			// should have exactly years 2020-2025 (6 years)
+			expect(options).toHaveLength(6);
+			expect(options[0]).toHaveValue("2020");
+			expect(options[5]).toHaveValue("2025");
+
+			// verify the complete sequence 2020, 2021, 2022, 2023, 2024, 2025
+			const allYears = Array.from(options).map((option) =>
+				parseInt(option.getAttribute("value") || "0")
+			);
+			expect(allYears).toEqual([2020, 2021, 2022, 2023, 2024, 2025]);
+		});
+
+		it("should handle edge case when minValue year equals maxValue year", async () => {
+			const t = setupWithSelects({
+				placeholder: new CalendarDate(2000, 6, 15),
+				minValue: new CalendarDate(2023, 1, 1),
+				maxValue: new CalendarDate(2023, 12, 31),
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			// should only have one year
+			expect(options).toHaveLength(1);
+			expect(options[0]).toHaveValue("2023");
+		});
+
+		it("should use default range when no minValue/maxValue provided", async () => {
+			const currentYear = new Date().getFullYear();
+			const placeholderYear = 2010;
+			const t = setupWithSelects({
+				placeholder: new CalendarDate(placeholderYear, 6, 15),
+			});
+			const yearSelect = t.yearSelect;
+			const options = yearSelect.querySelectorAll("option");
+
+			// should use default logic: latestYear - 100 to latestYear + 10
+			const latestYear = Math.max(placeholderYear, currentYear);
+			const expectedStartYear = latestYear - 100;
+			const expectedEndYear = latestYear + 10;
+			const expectedLength = expectedEndYear - expectedStartYear + 1;
+
+			expect(options).toHaveLength(expectedLength);
+			expect(options[0]).toHaveValue(String(expectedStartYear));
+			expect(options[options.length - 1]).toHaveValue(String(expectedEndYear));
 		});
 
 		it("should respect custom years prop", async () => {

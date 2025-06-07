@@ -856,3 +856,41 @@ export const calendarAttrs = createBitsAttrs({
 		"year-select",
 	],
 });
+
+type GetDefaultYearsProps = {
+	placeholderYear: number;
+	minValue: DateValue | undefined;
+	maxValue: DateValue | undefined;
+};
+
+export function getDefaultYears(opts: GetDefaultYearsProps) {
+	const currentYear = new Date().getFullYear();
+	const latestYear = Math.max(opts.placeholderYear, currentYear);
+
+	// use minValue/maxValue as boundaries if provided, otherwise calculate default range
+	let minYear: number;
+	let maxYear: number;
+
+	if (opts.minValue) {
+		minYear = opts.minValue.year;
+	} else {
+		// (111 years: latestYear - 100 to latestYear + 10)
+		const initialMinYear = latestYear - 100;
+		minYear =
+			opts.placeholderYear < initialMinYear ? opts.placeholderYear - 10 : initialMinYear;
+	}
+
+	if (opts.maxValue) {
+		maxYear = opts.maxValue.year;
+	} else {
+		maxYear = latestYear + 10;
+	}
+
+	// ensure we have at least one year and minYear <= maxYear
+	if (minYear > maxYear) {
+		minYear = maxYear;
+	}
+
+	const totalYears = maxYear - minYear + 1;
+	return Array.from({ length: totalYears }, (_, i) => minYear + i);
+}

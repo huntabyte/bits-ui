@@ -12,6 +12,8 @@
 		yearFormat,
 		disabled = false,
 		readonly = false,
+		minValue,
+		maxValue,
 	}: {
 		placeholder?: CalendarDate;
 		value?: DateRange;
@@ -21,10 +23,20 @@
 		yearFormat?: Intl.DateTimeFormatOptions["year"];
 		disabled?: boolean;
 		readonly?: boolean;
+		minValue?: CalendarDate;
+		maxValue?: CalendarDate;
 	} = $props();
 </script>
 
-<RangeCalendar.Root {placeholder} bind:value {disabled} {readonly} data-testid="calendar">
+<RangeCalendar.Root
+	{placeholder}
+	bind:value
+	{disabled}
+	{readonly}
+	{minValue}
+	{maxValue}
+	data-testid="calendar"
+>
 	{#snippet children({ months: calendarMonths })}
 		<div data-testid="header">
 			<RangeCalendar.MonthSelect data-testid="month-select" {months} {monthFormat} />

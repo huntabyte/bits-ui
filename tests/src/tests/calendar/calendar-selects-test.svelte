@@ -10,6 +10,8 @@
 		yearFormat,
 		disabled = false,
 		readonly = false,
+		minValue,
+		maxValue,
 	}: {
 		placeholder?: CalendarDate;
 		months?: number[];
@@ -18,10 +20,20 @@
 		yearFormat?: Intl.DateTimeFormatOptions["year"];
 		disabled?: boolean;
 		readonly?: boolean;
+		minValue?: CalendarDate;
+		maxValue?: CalendarDate;
 	} = $props();
 </script>
 
-<Calendar.Root type="single" {placeholder} {disabled} {readonly} data-testid="calendar">
+<Calendar.Root
+	type="single"
+	{placeholder}
+	{disabled}
+	{readonly}
+	{minValue}
+	{maxValue}
+	data-testid="calendar"
+>
 	{#snippet children({ months: calendarMonths })}
 		<div data-testid="header">
 			<Calendar.MonthSelect data-testid="month-select" {months} {monthFormat} />

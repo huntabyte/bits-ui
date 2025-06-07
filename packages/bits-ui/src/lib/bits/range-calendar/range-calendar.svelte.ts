@@ -31,6 +31,7 @@ import {
 	createMonths,
 	getCalendarElementProps,
 	getCalendarHeadingValue,
+	getDefaultYears,
 	getIsNextButtonDisabled,
 	getIsPrevButtonDisabled,
 	getWeekdays,
@@ -196,11 +197,16 @@ export class RangeCalendarRootState {
 		return null;
 	});
 
+	readonly initialPlaceholderYear = $derived.by(() =>
+		untrack(() => this.opts.placeholder.current.year)
+	);
+
 	readonly defaultYears = $derived.by(() => {
-		const placeholderYear = untrack(() => this.opts.placeholder.current.year);
-		const currentYear = new Date().getFullYear();
-		const latestYear = Math.max(placeholderYear, currentYear);
-		return Array.from({ length: 101 }, (_, i) => latestYear - 100 + i);
+		return getDefaultYears({
+			minValue: this.opts.minValue.current,
+			maxValue: this.opts.maxValue.current,
+			placeholderYear: this.initialPlaceholderYear,
+		});
 	});
 
 	constructor(opts: RangeCalendarRootStateProps) {
