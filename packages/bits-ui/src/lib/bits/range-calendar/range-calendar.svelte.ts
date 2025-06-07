@@ -771,7 +771,7 @@ export class RangeCalendarCellState {
 	});
 
 	readonly isSelectionMiddle = $derived.by(() => {
-		return this.isHighlighted && !this.isSelectionStart && !this.isSelectionEnd;
+		return this.isSelectedDate && !this.isSelectionStart && !this.isSelectionEnd;
 	});
 
 	readonly sharedDataAttrs = $derived.by(
