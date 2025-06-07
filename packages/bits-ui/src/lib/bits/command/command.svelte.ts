@@ -713,10 +713,8 @@ class CommandRootState {
 
 		if (e.metaKey) {
 			this.updateSelectedByGroup(1);
-		} else if (e.altKey) {
-			this.updateSelectedByItem(this.#nextRowColumnOffset(1));
 		} else {
-			this.updateSelectedByItem(this.#nextRowColumnOffset());
+			this.updateSelectedByItem(this.#nextRowColumnOffset(e));
 		}
 	}
 
@@ -741,7 +739,7 @@ class CommandRootState {
 		return null;
 	}
 
-	#nextRowColumnOffset(skipRows = 0): number {
+	#nextRowColumnOffset(e: BitsKeyboardEvent): number {
 		const grid = this.itemsGrid;
 		const selected = this.#getSelectedItem();
 		if (!selected) return 0;
@@ -750,8 +748,18 @@ class CommandRootState {
 
 		let newItem: HTMLElement | null = null;
 
-		// if this is the last row we apply the loop logic
-		if (column.rowIndex === grid.length - 1) {
+		const skipRows = e.altKey ? 1 : 0;
+
+		// if this is the second to last row then we need to go to the last row when skipping and not in loop mode
+		if (e.altKey && column.rowIndex === grid.length - 2 && !this.opts.loop.current) {
+			newItem = this.#findNextNonDisabledItem({
+				start: grid.length - 1,
+				end: grid.length,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else if (column.rowIndex === grid.length - 1) {
+			// if this is the last row we apply the loop logic
 			if (!this.opts.loop.current) return 0;
 
 			newItem = this.#findNextNonDisabledItem({
@@ -857,14 +865,12 @@ class CommandRootState {
 
 		if (e.metaKey) {
 			this.updateSelectedByGroup(-1);
-		} else if (e.altKey) {
-			this.updateSelectedByItem(this.#previousRowColumnOffset(1));
 		} else {
-			this.updateSelectedByItem(this.#previousRowColumnOffset());
+			this.updateSelectedByItem(this.#previousRowColumnOffset(e));
 		}
 	}
 
-	#previousRowColumnOffset(skipRows = 0) {
+	#previousRowColumnOffset(e: BitsKeyboardEvent) {
 		const grid = this.itemsGrid;
 		const selected = this.#getSelectedItem();
 		if (!selected) return 0;
@@ -873,8 +879,18 @@ class CommandRootState {
 
 		let newItem: HTMLElement | null = null;
 
-		// if this is the last row we apply the loop logic
-		if (column.rowIndex === 0) {
+		const skipRows = e.altKey ? 1 : 0;
+
+		// if this is the second row then we need to go to the top when skipping and not in loop mode
+		if (e.altKey && column.rowIndex === 1 && !this.opts.loop.current) {
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: 0,
+				end: 0,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else if (column.rowIndex === 0) {
+			// if this is the last row we apply the loop logic
 			if (!this.opts.loop.current) return 0;
 
 			newItem = this.#findNextNonDisabledItemDesc({
