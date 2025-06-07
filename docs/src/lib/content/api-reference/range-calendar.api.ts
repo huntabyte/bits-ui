@@ -96,15 +96,20 @@ const dayCellAttrs = [
 	...(createCalendarCellSchema(true).dataAttributes ?? []),
 	createDataAttrSchema({
 		name: "selection-start",
-		description: "Present when the cell is the start of a selection.",
+		description: "Present when the cell is the start of a selection range.",
 	}),
 	createDataAttrSchema({
 		name: "selection-end",
-		description: "Present when the cell is the end of a selection.",
+		description: "Present when the cell is the end of a selection range.",
+	}),
+	createDataAttrSchema({
+		name: "selection-middle",
+		description:
+			"Present when the cell is in the middle of a selection range, but not the start or end of the selection.",
 	}),
 	createDataAttrSchema({
 		name: "highlighted",
-		description: "Present when the cell is highlighted within a range.",
+		description: "Present when the cell is highlighted within a selection range.",
 	}),
 ];
 

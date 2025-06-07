@@ -749,6 +749,10 @@ export class RangeCalendarCellState {
 		);
 	});
 
+	readonly isSelectionMiddle = $derived.by(() => {
+		return this.isHighlighted && !this.isSelectionStart && !this.isSelectionEnd;
+	});
+
 	readonly sharedDataAttrs = $derived.by(
 		() =>
 			({
@@ -759,6 +763,7 @@ export class RangeCalendarCellState {
 				"data-focused": this.isFocusedDate ? "" : undefined,
 				"data-selection-start": this.isSelectionStart ? "" : undefined,
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
+				"data-selection-middle": this.isSelectionMiddle ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
 				"data-value": this.opts.date.current.toString(),
