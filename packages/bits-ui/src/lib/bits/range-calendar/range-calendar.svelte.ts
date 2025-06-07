@@ -76,6 +76,9 @@ type RangeCalendarRootStateProps = WithRefProps<
 			calendarLabel: string;
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
+			excludeDisabled: boolean;
+			minDays: number | undefined;
+			maxDays: number | undefined;
 			/**
 			 * This is strictly used by the `DateRangePicker` component to close the popover when a date range
 			 * is selected. It is not intended to be used by the user.
@@ -207,7 +210,7 @@ export class RangeCalendarRootState {
 			numberOfMonths: this.opts.numberOfMonths.current,
 		});
 
-		$effect(() => {
+		$effect.pre(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
 			this.formatter.setLocale(this.opts.locale.current);
 		});
@@ -286,6 +289,26 @@ export class RangeCalendarRootState {
 			}
 		);
 
+		/**
+		 * Check for disabled dates in the selected range when excludeDisabled is enabled
+		 */
+		watch(
+			[
+				() => this.opts.startValue.current,
+				() => this.opts.endValue.current,
+				() => this.opts.excludeDisabled.current,
+			],
+			([startValue, endValue, excludeDisabled]) => {
+				if (!excludeDisabled || !startValue || !endValue) return;
+
+				if (this.#hasDisabledDatesInRange(startValue, endValue)) {
+					this.#setStartValue(undefined);
+					this.#setEndValue(undefined);
+					this.#announceEmpty();
+				}
+			}
+		);
+
 		watch(
 			[() => this.opts.startValue.current, () => this.opts.endValue.current],
 			([startValue, endValue]) => {
@@ -307,8 +330,18 @@ export class RangeCalendarRootState {
 							const end = endValue;
 							this.#setStartValue(end);
 							this.#setEndValue(start);
+							if (!this.#isRangeValid(endValue, startValue)) {
+								this.#setStartValue(startValue);
+								this.#setEndValue(undefined);
+								return { start: startValue, end: undefined };
+							}
 							return { start: endValue, end: startValue };
 						} else {
+							if (!this.#isRangeValid(startValue, endValue)) {
+								this.#setStartValue(endValue);
+								this.#setEndValue(undefined);
+								return { start: endValue, end: undefined };
+							}
 							return {
 								start: startValue,
 								end: endValue,
@@ -361,10 +394,20 @@ export class RangeCalendarRootState {
 
 	#setStartValue(value: DateValue | undefined) {
 		this.opts.startValue.current = value;
+		// update the main value prop immediately for external consumers
+		this.#updateValue((prev) => ({
+			...prev,
+			start: value,
+		}));
 	}
 
 	#setEndValue(value: DateValue | undefined) {
 		this.opts.endValue.current = value;
+		// update the main value prop immediately for external consumers
+		this.#updateValue((prev) => ({
+			...prev,
+			end: value,
+		}));
 	}
 
 	setMonths = (months: Month<DateValue>[]) => {
@@ -411,6 +454,32 @@ export class RangeCalendarRootState {
 			);
 		}
 		return false;
+	}
+
+	#isRangeValid(start: DateValue, end: DateValue): boolean {
+		// ensure we always use the correct order for calculation
+		const orderedStart = isBefore(end, start) ? end : start;
+		const orderedEnd = isBefore(end, start) ? start : end;
+
+		const startDate = orderedStart.toDate(getLocalTimeZone());
+		const endDate = orderedEnd.toDate(getLocalTimeZone());
+
+		const timeDifference = endDate.getTime() - startDate.getTime();
+		const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+		const daysInRange = daysDifference + 1; // +1 to include both start and end days
+
+		if (this.opts.minDays.current && daysInRange < this.opts.minDays.current) return false;
+		if (this.opts.maxDays.current && daysInRange > this.opts.maxDays.current) return false;
+
+		// check for disabled dates in range if excludeDisabled is enabled
+		if (
+			this.opts.excludeDisabled.current &&
+			this.#hasDisabledDatesInRange(orderedStart, orderedEnd)
+		) {
+			return false;
+		}
+
+		return true;
 	}
 
 	shiftFocus(node: HTMLElement, add: number) {
@@ -485,8 +554,31 @@ export class RangeCalendarRootState {
 			this.#announceSelectedDate(date);
 			this.#setStartValue(date);
 		} else if (!this.opts.endValue.current) {
-			this.#announceSelectedRange(this.opts.startValue.current, date);
-			this.#setEndValue(date);
+			// determine the start and end dates for validation
+			const startDate = this.opts.startValue.current;
+			const endDate = date;
+			const orderedStart = isBefore(endDate, startDate) ? endDate : startDate;
+			const orderedEnd = isBefore(endDate, startDate) ? startDate : endDate;
+
+			// check if the range violates constraints
+			if (!this.#isRangeValid(orderedStart, orderedEnd)) {
+				// reset to just the clicked date
+				this.#setStartValue(date);
+				this.#setEndValue(undefined);
+				this.#announceSelectedDate(date);
+			} else {
+				// ensure start and end are properly ordered
+				if (isBefore(endDate, startDate)) {
+					// backward selection - reorder the values
+					this.#setStartValue(endDate);
+					this.#setEndValue(startDate);
+					this.#announceSelectedRange(endDate, startDate);
+				} else {
+					// forward selection - keep original order
+					this.#setEndValue(date);
+					this.#announceSelectedRange(this.opts.startValue.current, date);
+				}
+			}
 		} else if (this.opts.endValue.current && this.opts.startValue.current) {
 			this.#setEndValue(undefined);
 			this.#announceSelectedDate(date);
@@ -576,6 +668,17 @@ export class RangeCalendarRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
+
+	#hasDisabledDatesInRange(start: DateValue, end: DateValue): boolean {
+		for (
+			let date = start;
+			isBefore(date, end) || isSameDay(date, end);
+			date = date.add({ days: 1 })
+		) {
+			if (this.isDateDisabled(date)) return true;
+		}
+		return false;
+	}
 }
 
 type RangeCalendarCellStateProps = WithRefProps<
@@ -646,6 +749,10 @@ export class RangeCalendarCellState {
 		);
 	});
 
+	readonly isSelectionMiddle = $derived.by(() => {
+		return this.isHighlighted && !this.isSelectionStart && !this.isSelectionEnd;
+	});
+
 	readonly sharedDataAttrs = $derived.by(
 		() =>
 			({
@@ -656,6 +763,7 @@ export class RangeCalendarCellState {
 				"data-focused": this.isFocusedDate ? "" : undefined,
 				"data-selection-start": this.isSelectionStart ? "" : undefined,
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
+				"data-selection-middle": this.isSelectionMiddle ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
 				"data-value": this.opts.date.current.toString(),

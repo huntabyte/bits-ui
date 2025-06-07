@@ -1,21 +1,33 @@
 <script lang="ts">
 	import { Calendar } from "bits-ui";
+	import CaretLeft from "phosphor-svelte/lib/CaretLeft";
+	import CaretRight from "phosphor-svelte/lib/CaretRight";
 	import { getLocalTimeZone, today } from "@internationalized/date";
 
-	let value = $state(today(getLocalTimeZone()));
+	let value = $state([today(getLocalTimeZone())]);
 </script>
 
 <Calendar.Root
 	class="border-dark-10 bg-background-alt shadow-card mt-6 rounded-[15px] border p-[22px]"
 	weekdayFormat="short"
 	fixedWeeks={true}
-	type="single"
+	type="multiple"
 	bind:value
+	maxDays={3}
 >
 	{#snippet children({ months, weekdays })}
-		<Calendar.Header class="flex items-center justify-between gap-3">
-			<Calendar.MonthSelect aria-label="Select month" class="w-full" />
-			<Calendar.YearSelect aria-label="Select year" />
+		<Calendar.Header class="flex items-center justify-between">
+			<Calendar.PrevButton
+				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98] active:transition-all"
+			>
+				<CaretLeft class="size-6" />
+			</Calendar.PrevButton>
+			<Calendar.Heading class="text-[15px] font-medium" />
+			<Calendar.NextButton
+				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98] active:transition-all"
+			>
+				<CaretRight class="size-6" />
+			</Calendar.NextButton>
 		</Calendar.Header>
 		<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 			{#each months as month, i (i)}

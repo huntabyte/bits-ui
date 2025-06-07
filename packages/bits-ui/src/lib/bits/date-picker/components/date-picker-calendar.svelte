@@ -44,6 +44,7 @@
 		onDateSelect: datePickerRootState.opts.onDateSelect,
 		initialFocus: datePickerRootState.opts.initialFocus,
 		defaultPlaceholder: datePickerRootState.opts.defaultPlaceholder,
+		maxDays: box.with(() => undefined),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, calendarState.props));

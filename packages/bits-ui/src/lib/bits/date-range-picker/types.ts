@@ -271,6 +271,29 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * date is invalid.
 	 */
 	errorMessageId?: string;
+
+	/**
+	 * The minimum number of days that can be selected in a range.
+	 *
+	 * @default undefined
+	 */
+	minDays?: number;
+
+	/**
+	 * The maximum number of days that can be selected in a range.
+	 *
+	 * @default undefined
+	 */
+	maxDays?: number;
+
+	/**
+	 * Whether to automatically reset the range if any date within the selected range
+	 * becomes disabled. When true, the entire range will be cleared if a disabled
+	 * date is found between the start and end dates.
+	 *
+	 * @default false
+	 */
+	excludeDisabled?: boolean;
 }>;
 
 export type DateRangePickerRootProps = DateRangePickerRootPropsWithoutHTML &
@@ -324,4 +347,8 @@ export type {
 	RangeCalendarNextButtonProps as DateRangePickerNextButtonProps,
 	RangeCalendarPrevButtonPropsWithoutHTML as DateRangePickerPrevButtonPropsWithoutHTML,
 	RangeCalendarPrevButtonProps as DateRangePickerPrevButtonProps,
+	RangeCalendarMonthSelectProps as DateRangePickerMonthSelectProps,
+	RangeCalendarMonthSelectPropsWithoutHTML as DateRangePickerMonthSelectPropsWithoutHTML,
+	RangeCalendarYearSelectProps as DateRangePickerYearSelectProps,
+	RangeCalendarYearSelectPropsWithoutHTML as DateRangePickerYearSelectPropsWithoutHTML,
 } from "$lib/bits/range-calendar/types.js";

@@ -8,8 +8,10 @@ export { default as HeadCell } from "./components/calendar-head-cell.svelte";
 export { default as GridRow } from "./components/calendar-grid-row.svelte";
 export { default as Header } from "./components/calendar-header.svelte";
 export { default as Heading } from "./components/calendar-heading.svelte";
+export { default as MonthSelect } from "./components/calendar-month-select.svelte";
 export { default as NextButton } from "./components/calendar-next-button.svelte";
 export { default as PrevButton } from "./components/calendar-prev-button.svelte";
+export { default as YearSelect } from "./components/calendar-year-select.svelte";
 
 export type {
 	CalendarRootProps as RootProps,
@@ -24,4 +26,6 @@ export type {
 	CalendarGridRowProps as GridRowProps,
 	CalendarCellProps as CellProps,
 	CalendarDayProps as DayProps,
+	CalendarMonthSelectProps as MonthSelectProps,
+	CalendarYearSelectProps as YearSelectProps,
 } from "./types.js";

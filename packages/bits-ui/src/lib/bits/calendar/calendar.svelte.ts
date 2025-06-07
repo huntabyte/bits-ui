@@ -70,6 +70,7 @@ type CalendarRootStateProps = WithRefProps<
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
 			initialFocus: boolean;
+			maxDays: number | undefined;
 			/**
 			 * This is strictly used by the `DatePicker` component to close the popover when a date
 			 * is selected. It is not intended to be used by the user.
@@ -242,7 +243,7 @@ export class CalendarRootState {
 	}
 
 	#setupFormatterEffect() {
-		$effect(() => {
+		$effect.pre(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
 			this.formatter.setLocale(this.opts.locale.current);
 		});
@@ -378,9 +379,18 @@ export class CalendarRootState {
 		});
 	}
 
+	#isMultipleSelectionValid(selectedDates: DateValue[]): boolean {
+		// only validate for multiple type and when maxDays is set
+		if (this.opts.type.current !== "multiple") return true;
+		if (!this.opts.maxDays.current) return true;
+		const selectedCount = selectedDates.length;
+		if (this.opts.maxDays.current && selectedCount > this.opts.maxDays.current) return false;
+		return true;
+	}
+
 	handleCellClick(_: Event, date: DateValue) {
-		if (this.opts.readonly.current) return;
 		if (
+			this.opts.readonly.current ||
 			this.opts.isDateDisabled.current?.(date) ||
 			this.opts.isDateUnavailable.current?.(date)
 		) {
@@ -411,7 +421,10 @@ export class CalendarRootState {
 	}
 
 	handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
-		if (!prev) return [date];
+		if (!prev) {
+			const newSelection = [date];
+			return this.#isMultipleSelectionValid(newSelection) ? newSelection : [date];
+		}
 		if (!Array.isArray(prev)) {
 			if (DEV) throw new Error("Invalid value for multiple prop.");
 			return;
@@ -419,7 +432,14 @@ export class CalendarRootState {
 		const index = prev.findIndex((d) => isSameDay(d, date));
 		const preventDeselect = this.opts.preventDeselect.current;
 		if (index === -1) {
-			return [...prev, date];
+			// adding a new date - check if it would be valid
+			const newSelection = [...prev, date];
+			if (this.#isMultipleSelectionValid(newSelection)) {
+				return newSelection;
+			} else {
+				// reset to just the newly selected date when constraints are violated
+				return [date];
+			}
 		} else if (preventDeselect) {
 			return prev;
 		} else {
@@ -872,6 +892,166 @@ export class CalendarHeaderState {
 	);
 }
 
+export type CalendarMonthSelectStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		months: number[];
+		monthFormat: Intl.DateTimeFormatOptions["month"];
+		disabled: boolean;
+	}>
+>;
+
+export class CalendarMonthSelectState {
+	readonly opts: CalendarMonthSelectStateProps;
+	readonly root: CalendarRootState | RangeCalendarRootState;
+
+	constructor(
+		opts: CalendarMonthSelectStateProps,
+		root: CalendarRootState | RangeCalendarRootState
+	) {
+		this.opts = opts;
+		this.root = root;
+		this.onchange = this.onchange.bind(this);
+	}
+
+	readonly months = $derived.by(() => {
+		this.root.opts.locale.current;
+		const monthNumbers = this.opts.months.current;
+		const monthFormat = this.opts.monthFormat.current;
+		const months = [];
+
+		for (const month of monthNumbers) {
+			// create a date with the current year and the month to get localized name
+			const date = this.root.opts.placeholder.current.set({ month });
+			const label = this.root.formatter.custom(toDate(date), { month: monthFormat });
+			months.push({
+				value: month,
+				label,
+			});
+		}
+
+		return months;
+	});
+
+	readonly currentMonth = $derived.by(() => this.root.opts.placeholder.current.month);
+
+	readonly isDisabled = $derived.by(
+		() => this.root.opts.disabled.current || this.opts.disabled.current
+	);
+
+	readonly snippetProps = $derived.by(() => {
+		return {
+			months: this.months,
+			selectedMonth: this.months.find((month) => month.value === this.currentMonth) as {
+				value: number;
+				label: string;
+			},
+		};
+	});
+
+	onchange(event: Event) {
+		if (this.isDisabled) return;
+		const target = event.target as HTMLSelectElement;
+		const month = parseInt(target.value, 10);
+		if (!isNaN(month)) {
+			this.root.opts.placeholder.current = this.root.opts.placeholder.current.set({ month });
+		}
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				value: this.currentMonth,
+				disabled: this.isDisabled,
+				"data-disabled": getDataDisabled(this.isDisabled),
+				[this.root.getBitsAttr("month-select")]: "",
+				//
+				onchange: this.onchange,
+				...attachRef(this.opts.ref),
+			}) as const
+	);
+}
+
+export type CalendarYearSelectStateProps = WithRefProps<
+	ReadableBoxedValues<{
+		years: number[];
+		yearFormat: Intl.DateTimeFormatOptions["year"];
+		disabled: boolean;
+	}>
+>;
+
+export class CalendarYearSelectState {
+	readonly opts: CalendarYearSelectStateProps;
+	readonly root: CalendarRootState | RangeCalendarRootState;
+
+	constructor(
+		opts: CalendarYearSelectStateProps,
+		root: CalendarRootState | RangeCalendarRootState
+	) {
+		this.opts = opts;
+		this.root = root;
+		this.onchange = this.onchange.bind(this);
+	}
+
+	readonly years = $derived.by(() => {
+		this.root.opts.locale.current;
+		const yearNumbers = this.opts.years.current;
+		const yearFormat = this.opts.yearFormat.current;
+		const years = [];
+
+		for (const year of yearNumbers) {
+			// create a date with the year to get localized formatting
+			const date = this.root.opts.placeholder.current.set({ year });
+			const label = this.root.formatter.custom(toDate(date), { year: yearFormat });
+			years.push({
+				value: year,
+				label,
+			});
+		}
+
+		return years;
+	});
+
+	readonly currentYear = $derived.by(() => this.root.opts.placeholder.current.year);
+
+	readonly isDisabled = $derived.by(
+		() => this.root.opts.disabled.current || this.opts.disabled.current
+	);
+
+	readonly snippetProps = $derived.by(() => {
+		return {
+			years: this.years,
+			selectedYear: this.years.find((year) => year.value === this.currentYear) as {
+				value: number;
+				label: string;
+			},
+		};
+	});
+
+	onchange(event: Event) {
+		if (this.isDisabled) return;
+		const target = event.target as HTMLSelectElement;
+		const year = parseInt(target.value, 10);
+		if (!isNaN(year)) {
+			this.root.opts.placeholder.current = this.root.opts.placeholder.current.set({ year });
+		}
+	}
+
+	props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				value: this.currentYear,
+				disabled: this.isDisabled,
+				"data-disabled": getDataDisabled(this.isDisabled),
+				[this.root.getBitsAttr("year-select")]: "",
+				//
+				onchange: this.onchange,
+				...attachRef(this.opts.ref),
+			}) as const
+	);
+}
+
 export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
 	"Calendar.Root | RangeCalender.Root"
 );
@@ -926,4 +1106,12 @@ export function useCalendarHeader(props: CalendarHeaderStateProps) {
 
 export function useCalendarHeading(props: CalendarHeadingStateProps) {
 	return new CalendarHeadingState(props, CalendarRootContext.get());
+}
+
+export function useCalendarMonthSelect(props: CalendarMonthSelectStateProps) {
+	return new CalendarMonthSelectState(props, CalendarRootContext.get());
+}
+
+export function useCalendarYearSelect(props: CalendarYearSelectStateProps) {
+	return new CalendarYearSelectState(props, CalendarRootContext.get());
 }

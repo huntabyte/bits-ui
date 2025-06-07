@@ -48,6 +48,9 @@
 		onEndValueChange = noop,
 		validate = noop,
 		errorMessageId,
+		minDays,
+		maxDays,
+		excludeDisabled = false,
 		child,
 		children,
 		...restProps
@@ -132,6 +135,8 @@
 		isDateUnavailable: box.with(() => isDateUnavailable),
 		minValue: box.with(() => minValue),
 		maxValue: box.with(() => maxValue),
+		minDays: box.with(() => minDays),
+		maxDays: box.with(() => maxDays),
 		disabled: box.with(() => disabled),
 		readonly: box.with(() => readonly),
 		granularity: box.with(() => granularity),
@@ -149,6 +154,7 @@
 		isDateDisabled: box.with(() => isDateDisabled),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
+		excludeDisabled: box.with(() => excludeDisabled),
 		onRangeSelect: box.with(() => onRangeSelect),
 		startValue: box.with(
 			() => startValue,

@@ -4,7 +4,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, Callout } from '$lib/components'
+	import { APISection, ComponentPreviewV2, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, Callout, CalendarDemoMax } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -274,6 +274,24 @@ You can specify specific dates that are disabled for selection by using the `isD
 	<!-- ...-->
 </Calendar.Root>
 ```
+
+### Max Days
+
+You can set the `maxDays` prop to limit the maximum number of days that can be selected when the calendar is `'multiple'` type.
+
+```svelte
+<Calendar.Root type="multiple" maxDays={3}>
+	<!-- ...-->
+</Calendar.Root>
+```
+
+<ComponentPreviewV2 name="calendar-demo-max" componentName="Calendar">
+
+{#snippet preview()}
+<CalendarDemoMax />
+{/snippet}
+
+</ComponentPreviewV2>
 
 ## Appearance & Behavior
 
