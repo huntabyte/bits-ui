@@ -731,6 +731,21 @@ export class RangeCalendarCellState {
 	readonly isSelectionStart = $derived.by(() =>
 		this.root.isSelectionStart(this.opts.date.current)
 	);
+
+	readonly isRangeStart = $derived.by(() => this.root.isSelectionStart(this.opts.date.current));
+
+	readonly isRangeEnd = $derived.by(() => {
+		if (!this.root.opts.endValue.current)
+			return this.root.isSelectionStart(this.opts.date.current);
+		return this.root.isSelectionEnd(this.opts.date.current);
+	});
+
+	readonly isRangeMiddle = $derived.by(() => this.isSelectionMiddle);
+
+	readonly isSelectionMiddle = $derived.by(() => {
+		return this.isSelectedDate && !this.isSelectionStart && !this.isSelectionEnd;
+	});
+
 	readonly isSelectionEnd = $derived.by(() => this.root.isSelectionEnd(this.opts.date.current));
 	readonly isHighlighted = $derived.by(() =>
 		this.root.highlightedRange
@@ -770,10 +785,6 @@ export class RangeCalendarCellState {
 		);
 	});
 
-	readonly isSelectionMiddle = $derived.by(() => {
-		return this.isSelectedDate && !this.isSelectionStart && !this.isSelectionEnd;
-	});
-
 	readonly sharedDataAttrs = $derived.by(
 		() =>
 			({
@@ -785,6 +796,9 @@ export class RangeCalendarCellState {
 				"data-selection-start": this.isSelectionStart ? "" : undefined,
 				"data-selection-end": this.isSelectionEnd ? "" : undefined,
 				"data-selection-middle": this.isSelectionMiddle ? "" : undefined,
+				"data-range-start": this.isRangeStart ? "" : undefined,
+				"data-range-end": this.isRangeEnd ? "" : undefined,
+				"data-range-middle": this.isRangeMiddle ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
 				"data-selected": getDataSelected(this.isSelectedDate),
 				"data-value": this.opts.date.current.toString(),

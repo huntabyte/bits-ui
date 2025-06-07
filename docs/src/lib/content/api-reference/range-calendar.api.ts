@@ -96,15 +96,15 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 
 const sharedDayCellAttrs = [
 	createDataAttrSchema({
-		name: "selection-start",
+		name: "range-start",
 		description: "Present when the cell is the start of a selection range.",
 	}),
 	createDataAttrSchema({
-		name: "selection-end",
+		name: "range-end",
 		description: "Present when the cell is the end of a selection range.",
 	}),
 	createDataAttrSchema({
-		name: "selection-middle",
+		name: "range-middle",
 		description:
 			"Present when the cell is in the middle of a selection range, but not the start or end of the selection.",
 	}),
