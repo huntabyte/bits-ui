@@ -92,8 +92,7 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 	],
 });
 
-const dayCellAttrs = [
-	...(createCalendarCellSchema(true).dataAttributes ?? []),
+const sharedDayCellAttrs = [
 	createDataAttrSchema({
 		name: "selection-start",
 		description: "Present when the cell is the start of a selection range.",
@@ -113,14 +112,18 @@ const dayCellAttrs = [
 	}),
 ];
 
+const cellSchema = createCalendarCellSchema(true);
+
 export const cell: ReturnType<typeof createCalendarCellSchema> = {
-	...createCalendarCellSchema(true),
-	dataAttributes: dayCellAttrs,
+	...cellSchema,
+	dataAttributes: [...(cellSchema.dataAttributes ?? []), ...sharedDayCellAttrs],
 };
 
+const daySchema = createCalendarDaySchema(true);
+
 export const day: ReturnType<typeof createCalendarDaySchema> = {
-	...createCalendarDaySchema(true),
-	dataAttributes: dayCellAttrs,
+	...daySchema,
+	dataAttributes: [...(daySchema.dataAttributes ?? []), ...sharedDayCellAttrs],
 };
 
 export const grid = createCalendarGridSchema(true);
