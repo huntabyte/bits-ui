@@ -913,7 +913,7 @@ export class CalendarMonthSelectState {
 		this.onchange = this.onchange.bind(this);
 	}
 
-	months = $derived.by(() => {
+	readonly months = $derived.by(() => {
 		this.root.opts.locale.current;
 		const monthNumbers = this.opts.months.current;
 		const monthFormat = this.opts.monthFormat.current;
@@ -932,9 +932,21 @@ export class CalendarMonthSelectState {
 		return months;
 	});
 
-	currentMonth = $derived.by(() => this.root.opts.placeholder.current.month);
+	readonly currentMonth = $derived.by(() => this.root.opts.placeholder.current.month);
 
-	isDisabled = $derived.by(() => this.root.opts.disabled.current || this.opts.disabled.current);
+	readonly isDisabled = $derived.by(
+		() => this.root.opts.disabled.current || this.opts.disabled.current
+	);
+
+	readonly snippetProps = $derived.by(() => {
+		return {
+			months: this.months,
+			selectedMonth: this.months.find((month) => month.value === this.currentMonth) as {
+				value: number;
+				label: string;
+			},
+		};
+	});
 
 	onchange(event: Event) {
 		if (this.isDisabled) return;
@@ -981,7 +993,7 @@ export class CalendarYearSelectState {
 		this.onchange = this.onchange.bind(this);
 	}
 
-	years = $derived.by(() => {
+	readonly years = $derived.by(() => {
 		this.root.opts.locale.current;
 		const yearNumbers = this.opts.years.current;
 		const yearFormat = this.opts.yearFormat.current;
@@ -1000,9 +1012,21 @@ export class CalendarYearSelectState {
 		return years;
 	});
 
-	currentYear = $derived.by(() => this.root.opts.placeholder.current.year);
+	readonly currentYear = $derived.by(() => this.root.opts.placeholder.current.year);
 
-	isDisabled = $derived.by(() => this.root.opts.disabled.current || this.opts.disabled.current);
+	readonly isDisabled = $derived.by(
+		() => this.root.opts.disabled.current || this.opts.disabled.current
+	);
+
+	readonly snippetProps = $derived.by(() => {
+		return {
+			years: this.years,
+			selectedYear: this.years.find((year) => year.value === this.currentYear) as {
+				value: number;
+				label: string;
+			},
+		};
+	});
 
 	onchange(event: Event) {
 		if (this.isDisabled) return;

@@ -41,11 +41,11 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, years: yearSelectState.years })}
+	{@render child({ props: mergedProps, ...yearSelectState.snippetProps })}
 {:else}
 	<select {...mergedProps}>
 		{#if children}
-			{@render children?.({ years: yearSelectState.years })}
+			{@render children?.(yearSelectState.snippetProps)}
 		{:else}
 			{#each yearSelectState.years as year (year.value)}
 				<option value={year.value} selected={year.value === yearSelectState.currentYear}>

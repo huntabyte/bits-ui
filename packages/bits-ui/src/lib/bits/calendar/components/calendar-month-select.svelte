@@ -35,11 +35,11 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, months: monthSelectState.months })}
+	{@render child({ props: mergedProps, ...monthSelectState.snippetProps })}
 {:else}
 	<select {...mergedProps}>
 		{#if children}
-			{@render children?.({ months: monthSelectState.months })}
+			{@render children?.(monthSelectState.snippetProps)}
 		{:else}
 			{#each monthSelectState.months as month (month.value)}
 				<option

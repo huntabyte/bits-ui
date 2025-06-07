@@ -347,6 +347,7 @@ export type CalendarPrevButtonProps = CalendarPrevButtonPropsWithoutHTML &
 
 export type CalendarMonthSelectSnippetProps = {
 	months: Array<{ value: number; label: string }>;
+	selectedMonth: { value: number; label: string };
 };
 
 export type CalendarMonthSelectPropsWithoutHTML = WithChild<
@@ -381,6 +382,7 @@ export type CalendarMonthSelectProps = CalendarMonthSelectPropsWithoutHTML &
 
 export type CalendarYearSelectSnippetProps = {
 	years: Array<{ value: number; label: string }>;
+	selectedYear: { value: number; label: string };
 };
 
 export type CalendarYearSelectPropsWithoutHTML = WithChild<
