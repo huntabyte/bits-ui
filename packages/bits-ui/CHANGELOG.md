@@ -1,5 +1,25 @@
 # bits-ui
 
+## 2.5.0
+
+### Minor Changes
+
+-   feat(RangeCalendar): add `minDays` and `maxDays` props to require min/max number days in a range ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(RangeCalendar): add `excludeDisabled` prop that when `true`, will reset the range if it includes a disabled date ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(Calendar): add `maxDays` prop to limit the number of days that can be selected when `type="multiple"` ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(RangeCalendar): add `data-range-middle` attribute to `Day` and `Cell` components to indicate items within the selected range, but not the start or end. Useful for conditional styling. ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(Select): expose `autocomplete` prop on `Select.Root` for passing `autocomplete` attribute to the hidden input ([#1547](https://github.com/huntabyte/bits-ui/pull/1547))
+
+### Patch Changes
+
+-   fix(RangeCalendar): ensure props are synced with months ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   fix(Calendar): issue where props weren't being synced with the months ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
 ## 2.4.1
 
 ### Patch Changes
