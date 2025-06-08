@@ -46,6 +46,7 @@
 	{forceMount}
 	present={contentState.root.opts.open.current || forceMount}
 	ref={contentState.opts.ref}
+	onOpenChangeComplete={contentState.root.opts.onOpenChangeComplete.current}
 >
 	{#snippet presence()}
 		<FocusScope

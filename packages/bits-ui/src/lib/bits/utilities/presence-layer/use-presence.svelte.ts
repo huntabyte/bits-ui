@@ -3,7 +3,13 @@ import { Previous, watch } from "runed";
 import { on } from "svelte/events";
 import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 
-export function usePresence(present: ReadableBox<boolean>, ref: ReadableBox<HTMLElement | null>) {
+type UsePresenceOpts = {
+	present: ReadableBox<boolean>;
+	ref: ReadableBox<HTMLElement | null>;
+	onOpenChangeComplete: ReadableBox<(open: boolean) => void>;
+};
+
+export function usePresence({ present, ref, onOpenChangeComplete }: UsePresenceOpts) {
 	let styles = $state({}) as CSSStyleDeclaration;
 	let prevAnimationNameState = $state("none");
 	const initialState = present.current ? "mounted" : "unmounted";
@@ -105,6 +111,13 @@ export function usePresence(present: ReadableBox<boolean>, ref: ReadableBox<HTML
 	);
 
 	const isPresentDerived = $derived(["mounted", "unmountSuspended"].includes(state.current));
+
+	watch(
+		() => isPresentDerived,
+		() => {
+			onOpenChangeComplete.current(isPresentDerived);
+		}
+	);
 
 	return {
 		get current() {

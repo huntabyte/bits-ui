@@ -1,3 +1,4 @@
+import type { OnChangeFn } from "$lib/internal/types.js";
 import type { Snippet } from "svelte";
 import type { ReadableBox } from "svelte-toolbelt";
 
@@ -17,4 +18,6 @@ export type PresenceLayerImplProps = PresenceLayerProps & {
 	presence?: Snippet<[{ present: { current: boolean } }]>;
 
 	ref: ReadableBox<HTMLElement | null>;
+
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 };

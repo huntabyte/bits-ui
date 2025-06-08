@@ -2,7 +2,12 @@ import { attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	OnChangeFn,
+	WithRefProps,
+} from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { untrack } from "svelte";
 
@@ -18,6 +23,7 @@ type DialogRootStateProps = WritableBoxedValues<{
 }> &
 	ReadableBoxedValues<{
 		variant: DialogVariant;
+		onOpenChangeComplete: OnChangeFn<boolean>;
 	}>;
 
 class DialogRootState {
