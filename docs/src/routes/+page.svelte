@@ -38,6 +38,7 @@
 		<a
 			href="/"
 			class="focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden ml-2 mt-2 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2"
+			aria-label="Home"
 		>
 			<Logo />
 		</a>
@@ -109,7 +110,7 @@
 				The headless components for Svelte
 			</h1>
 			<p
-				class="text-muted-foreground mx-auto mb-[2em] max-w-sm text-[0.9rem] font-medium leading-[144%] sm:max-w-2xl md:w-9/12 md:max-w-2xl md:text-[1.125rem]"
+				class="text-foreground/60 dark:text-foreground/50 mx-auto mb-[2em] max-w-sm text-[0.9rem] font-medium leading-[144%] sm:max-w-2xl md:w-9/12 md:max-w-2xl md:text-[1.125rem]"
 			>
 				Flexible, unstyled, and accessible primitives that provide the foundation for
 				building your own high-quality component library.
