@@ -40,10 +40,15 @@
 		minValue: dateRangePickerRootState.opts.minValue,
 		placeholder: dateRangePickerRootState.opts.placeholder,
 		value: dateRangePickerRootState.opts.value,
+		excludeDisabled: dateRangePickerRootState.opts.excludeDisabled,
 		onRangeSelect: dateRangePickerRootState.opts.onRangeSelect,
 		startValue: dateRangePickerRootState.opts.startValue,
 		endValue: dateRangePickerRootState.opts.endValue,
 		defaultPlaceholder: dateRangePickerRootState.opts.defaultPlaceholder,
+		minDays: dateRangePickerRootState.opts.minDays,
+		maxDays: dateRangePickerRootState.opts.maxDays,
+		monthFormat: dateRangePickerRootState.opts.monthFormat,
+		yearFormat: dateRangePickerRootState.opts.yearFormat,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rangeCalendarState.props));

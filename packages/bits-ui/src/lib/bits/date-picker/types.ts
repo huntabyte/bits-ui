@@ -262,6 +262,20 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	 * date is invalid.
 	 */
 	errorMessageId?: string;
+
+	/**
+	 * The format of the month names in the calendar.
+	 *
+	 * @default "long"
+	 */
+	monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+
+	/**
+	 * The format of the year names in the calendar.
+	 *
+	 * @default "numeric"
+	 */
+	yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 }>;
 
 export type DatePickerRootProps = DatePickerRootPropsWithoutHTML;
@@ -319,4 +333,8 @@ export type {
 	CalendarNextButtonProps as DatePickerNextButtonProps,
 	CalendarPrevButtonPropsWithoutHTML as DatePickerPrevButtonPropsWithoutHTML,
 	CalendarPrevButtonProps as DatePickerPrevButtonProps,
+	CalendarMonthSelectProps as DatePickerMonthSelectProps,
+	CalendarMonthSelectPropsWithoutHTML as DatePickerMonthSelectPropsWithoutHTML,
+	CalendarYearSelectProps as DatePickerYearSelectProps,
+	CalendarYearSelectPropsWithoutHTML as DatePickerYearSelectPropsWithoutHTML,
 } from "$lib/bits/calendar/types.js";

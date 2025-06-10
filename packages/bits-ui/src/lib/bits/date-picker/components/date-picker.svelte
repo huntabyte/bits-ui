@@ -45,6 +45,8 @@
 		initialFocus = false,
 		errorMessageId,
 		children,
+		monthFormat = "long",
+		yearFormat = "numeric",
 	}: DatePickerRootProps = $props();
 
 	const defaultPlaceholder = getDefaultDate({
@@ -123,6 +125,8 @@
 		initialFocus: box.with(() => initialFocus),
 		onDateSelect: box.with(() => onDateSelect),
 		defaultPlaceholder,
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 	});
 
 	usePopoverRoot({

@@ -225,7 +225,11 @@ export class DateFieldRootState {
 		this.onInvalid = rangeRoot ? rangeRoot.opts.onInvalid : props.onInvalid;
 		this.errorMessageId = rangeRoot ? rangeRoot.opts.errorMessageId : props.errorMessageId;
 		this.isInvalidProp = props.isInvalidProp;
-		this.formatter = createFormatter(this.locale.current);
+		this.formatter = createFormatter({
+			initialLocale: this.locale.current,
+			monthFormat: box.with(() => "long"),
+			yearFormat: box.with(() => "numeric"),
+		});
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
 		this.announcer = getAnnouncer(null);

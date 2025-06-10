@@ -4,7 +4,7 @@ description: Presents a calendar view tailored for selecting date ranges.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, RangeCalendarDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreviewV2, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -63,5 +63,79 @@ Before diving into this component, it's important to understand how dates/times 
 	{/snippet}
 </RangeCalendar.Root>
 ```
+
+## Examples
+
+### Min Days
+
+You can set the `minDays` prop to limit the minimum number of days that must be selected for a range.
+
+```svelte
+<RangeCalendar.Root minDays={3}>
+	<!-- ... -->
+</RangeCalendar.Root>
+```
+
+<ComponentPreviewV2 name="range-calendar-demo-min" componentName="Range Calendar">
+
+{#snippet preview()}
+<RangeCalendarDemoMin />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Max Days
+
+You can set the `maxDays` prop to limit the maximum number of days that can be selected for a range.
+
+```svelte
+<RangeCalendar.Root maxDays={7}>
+	<!-- ... -->
+</RangeCalendar.Root>
+```
+
+<ComponentPreviewV2 name="range-calendar-demo-max" componentName="Range Calendar">
+
+{#snippet preview()}
+<RangeCalendarDemoMax />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Min and Max Days
+
+You can set both `minDays` and `maxDays` to limit the number of days that can be selected for a range.
+
+```svelte
+<RangeCalendar.Root minDays={3} maxDays={10}>
+	<!-- ... -->
+</RangeCalendar.Root>
+```
+
+<ComponentPreviewV2 name="range-calendar-demo-min-max" componentName="Range Calendar">
+
+{#snippet preview()}
+<RangeCalendarDemoMinMax />
+{/snippet}
+
+</ComponentPreviewV2>
+
+### Exclude Disabled
+
+You can set the `excludeDisabled` prop to automatically reset the range if any date within the selected range becomes disabled.
+
+```svelte
+<RangeCalendar.Root excludeDisabled isDateDisabled={(date) => isWeekend(date, "en-US")}>
+	<!-- ... -->
+</RangeCalendar.Root>
+```
+
+<ComponentPreviewV2 name="range-calendar-demo-exclude-disabled" componentName="Range Calendar">
+
+{#snippet preview()}
+<RangeCalendarDemoExcludeDisabled />
+{/snippet}
+
+</ComponentPreviewV2>
 
 <APISection {schemas} />

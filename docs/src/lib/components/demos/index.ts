@@ -91,3 +91,8 @@ export { default as RatingGroupDemoCustom } from "./rating-group-demo-custom.sve
 export { default as RatingGroupDemoNoHover } from "./rating-group-demo-no-hover.svelte";
 export { default as RatingGroupDemoRtl } from "./rating-group-demo-rtl.svelte";
 export { default as RatingGroupDemoHalfStars } from "./rating-group-demo-half-stars.svelte";
+export { default as RangeCalendarDemoMin } from "./range-calendar-demo-min.svelte";
+export { default as RangeCalendarDemoMax } from "./range-calendar-demo-max.svelte";
+export { default as RangeCalendarDemoMinMax } from "./range-calendar-demo-min-max.svelte";
+export { default as CalendarDemoMax } from "./calendar-demo-max.svelte";
+export { default as RangeCalendarDemoExcludeDisabled } from "./range-calendar-demo-exclude-disabled.svelte";

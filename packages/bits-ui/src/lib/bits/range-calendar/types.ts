@@ -25,7 +25,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * The placeholder date, used to control the view of the
 		 * calendar when no value is present.
 		 *
-		 * @defaultValue the current date
+		 * @default the current date
 		 */
 		placeholder?: DateValue;
 
@@ -36,10 +36,24 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		onPlaceholderChange?: OnChangeFn<DateValue>;
 
 		/**
+		 * The minimum number of days that can be selected in a range.
+		 *
+		 * @default undefined
+		 */
+		minDays?: number;
+
+		/**
+		 * The maximum number of days that can be selected in a range.
+		 *
+		 * @default undefined
+		 */
+		maxDays?: number;
+
+		/**
 		 * Whether or not users can deselect a date once selected
 		 * without selecting another date.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		preventDeselect?: boolean;
 
@@ -56,7 +70,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		/**
 		 * Whether or not the calendar is disabled.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		disabled?: boolean;
 
@@ -71,7 +85,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * February), clicking the next button changes the view to March and April. If `pagedNavigation`
 		 * is `false`, the view shifts to February and March.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		pagedNavigation?: boolean;
 
@@ -80,7 +94,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * be a number between 0 and 6, where 0 is Sunday and 6 is
 		 * Saturday.
 		 *
-		 * @defaultValue 0 (Sunday)
+		 * @default 0 (Sunday)
 		 */
 		weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -94,7 +108,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * - "narrow": "S", "M", "T", etc.
 		 *```
 		 *
-		 * @defaultValue "narrow"
+		 * @default "narrow"
 		 *
 		 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#weekday
 		 */
@@ -135,7 +149,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * To display 6 weeks per month, you will need to render out the previous
 		 * and next month's dates in the calendar as well.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		fixedWeeks?: boolean;
 
@@ -143,7 +157,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * Determines the number of months to display on the calendar simultaneously.
 		 * For navigation between months, refer to the `pagedNavigation` prop.
 		 *
-		 * @defaultValue 1
+		 * @default 1
 		 */
 		numberOfMonths?: number;
 
@@ -162,7 +176,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		/**
 		 * The default locale setting.
 		 *
-		 * @defaultValue 'en'
+		 * @default 'en'
 		 */
 		locale?: string;
 
@@ -172,7 +186,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * dates. @see disabled for a similar prop that prevents focusing
 		 * and selecting dates.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		readonly?: boolean;
 
@@ -181,9 +195,18 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * days outside the current month are rendered to fill the calendar grid, but they
 		 * are not selectable. Setting this prop to `true` will disable this behavior.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		disableDaysOutsideMonth?: boolean;
+
+		/**
+		 * Whether to automatically reset the range if any date within the selected range
+		 * becomes disabled. When true, the entire range will be cleared if a disabled
+		 * date is found between the start and end dates.
+		 *
+		 * @default false
+		 */
+		excludeDisabled?: boolean;
 
 		/**
 		 * A callback function called when the start value changes. This doesn't necessarily mean
@@ -198,6 +221,20 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * only part of the value is changed/completed.
 		 */
 		onEndValueChange?: OnChangeFn<DateValue | undefined>;
+
+		/**
+		 * The format of the month names in the calendar.
+		 *
+		 * @default "long"
+		 */
+		monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+
+		/**
+		 * The format of the year names in the calendar.
+		 *
+		 * @default "numeric"
+		 */
+		yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 	},
 	RangeCalendarRootSnippetProps
 >;
@@ -228,4 +265,8 @@ export type {
 	CalendarHeadCellPropsWithoutHTML as RangeCalendarHeadCellPropsWithoutHTML,
 	CalendarHeaderProps as RangeCalendarHeaderProps,
 	CalendarHeaderPropsWithoutHTML as RangeCalendarHeaderPropsWithoutHTML,
+	CalendarMonthSelectProps as RangeCalendarMonthSelectProps,
+	CalendarMonthSelectPropsWithoutHTML as RangeCalendarMonthSelectPropsWithoutHTML,
+	CalendarYearSelectProps as RangeCalendarYearSelectProps,
+	CalendarYearSelectPropsWithoutHTML as RangeCalendarYearSelectPropsWithoutHTML,
 } from "../calendar/types.js";
