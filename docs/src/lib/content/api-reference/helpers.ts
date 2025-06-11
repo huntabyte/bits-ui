@@ -24,7 +24,14 @@ import {
 } from "./extended-types/floating/index.js";
 import { PortalToProp } from "./extended-types/portal/index.js";
 
-import type { APISchema, CSSVarSchema, DataAttrSchema, PropSchema } from "$lib/types/api.js";
+import type {
+	APISchema,
+	CSSVarSchema,
+	DataAttrEnumSchema,
+	DataAttrSchema,
+	DataAttrStringSchema,
+	PropSchema,
+} from "$lib/types/api.js";
 import * as C from "$lib/content/constants.js";
 
 type ElementKind =
@@ -74,19 +81,20 @@ export function createUnionProp({
 	definition,
 }: {
 	options: string[];
-	definition?: Component;
+	definition: Component;
 } & SharedPropOptions): PropSchema {
-	return {
+	return createPropSchema({
 		type: {
-			type: C.UNION,
-			definition: definition ?? union(...options),
+			_type: "component",
+			definition: definition,
 			stringDefinition: union(...options),
+			type: C.UNION,
 		},
-		description,
 		required,
 		bindable,
+		description,
 		default: defaultProp,
-	};
+	});
 }
 
 export function createEnumProp({
@@ -96,18 +104,19 @@ export function createEnumProp({
 	bindable = false,
 	default: defaultProp,
 	definition,
-}: { options: string[]; definition?: Component } & SharedPropOptions): PropSchema {
-	return {
+}: { options: string[]; definition: Component } & SharedPropOptions): PropSchema {
+	return createPropSchema({
 		type: {
+			_type: "component",
 			type: C.ENUM,
-			definition: definition ?? enums(...options),
+			definition: definition,
 			stringDefinition: enums(...options),
 		},
 		description,
 		required,
 		bindable,
 		default: defaultProp,
-	};
+	});
 }
 
 export function createObjectProp({
@@ -117,9 +126,10 @@ export function createObjectProp({
 	bindable = false,
 	default: defaultProp,
 	stringDefinition,
-}: { definition: string; stringDefinition: string } & SharedPropOptions): PropSchema {
-	return {
+}: { definition: Component; stringDefinition: string } & SharedPropOptions): PropSchema {
+	return createPropSchema({
 		type: {
+			_type: "component",
 			type: C.OBJECT,
 			definition,
 			stringDefinition,
@@ -128,7 +138,7 @@ export function createObjectProp({
 		required,
 		bindable,
 		default: defaultProp,
-	};
+	});
 }
 
 export function createFunctionProp({
@@ -138,9 +148,10 @@ export function createFunctionProp({
 	bindable = false,
 	default: defaultProp,
 	stringDefinition,
-}: { definition: string | Component; stringDefinition: string } & SharedPropOptions): PropSchema {
-	return {
+}: { definition: Component; stringDefinition: string } & SharedPropOptions): PropSchema {
+	return createPropSchema({
 		type: {
+			_type: "component",
 			type: C.FUNCTION,
 			definition,
 			stringDefinition,
@@ -149,7 +160,7 @@ export function createFunctionProp({
 		required,
 		bindable,
 		default: defaultProp,
-	};
+	});
 }
 
 export function createBooleanProp({
@@ -158,13 +169,16 @@ export function createBooleanProp({
 	description,
 	default: defaultProp,
 }: SharedPropOptions): PropSchema {
-	return {
-		type: C.BOOLEAN,
+	return createPropSchema({
+		type: {
+			_type: "string",
+			type: C.BOOLEAN,
+		},
 		required,
 		bindable,
 		default: defaultProp,
 		description,
-	};
+	});
 }
 
 export function createStringProp({
@@ -173,13 +187,16 @@ export function createStringProp({
 	description,
 	default: defaultProp,
 }: SharedPropOptions): PropSchema {
-	return {
-		type: C.STRING,
+	return createPropSchema({
+		type: {
+			_type: "string",
+			type: C.STRING,
+		},
 		required,
 		bindable,
 		default: defaultProp,
 		description,
-	};
+	});
 }
 
 export function createNumberProp({
@@ -188,42 +205,46 @@ export function createNumberProp({
 	description,
 	default: defaultProp,
 }: SharedPropOptions): PropSchema {
-	return {
-		type: C.NUMBER,
+	return createPropSchema({
+		type: {
+			_type: "string",
+			type: C.NUMBER,
+		},
 		required,
 		bindable,
 		default: defaultProp,
 		description,
-	};
+	});
 }
 
-type EnumDataAttrOptions = {
-	name: string;
-	description: string;
-	options: string[];
-	definition?: Component;
-};
-
-export function createEnumDataAttr(options: EnumDataAttrOptions): DataAttrSchema {
-	return {
-		name: options.name,
-		value: enums(...options.options),
+export function createEnumDataAttr(
+	options: Pick<DataAttrEnumSchema, "name" | "description" | "value"> & {
+		options: string[];
+	}
+) {
+	return createDataAttrSchema({
+		_type: "enum",
+		value: options.value,
+		stringValue: enums(...options.options),
 		description: options.description,
-		definition: options.definition,
-		isEnum: true,
-	};
+		name: options.name,
+	});
 }
 
-type CSSVarOptions = {
-	name: string;
-	description: string;
-};
-
-export function createCSSVarSchema(options: CSSVarOptions): CSSVarSchema {
-	return {
-		name: options.name,
+export function createStringDataAttr(
+	options: Pick<DataAttrStringSchema, "name" | "description" | "value">
+) {
+	return createDataAttrSchema({
+		_type: "string",
+		value: options.value,
+		stringValue: options.value,
 		description: options.description,
-	};
+		name: options.name,
+	});
+}
+
+export function createCSSVarSchema(options: CSSVarSchema): CSSVarSchema {
+	return options;
 }
 
 export const arrowProps = {
@@ -462,13 +483,13 @@ export const restoreScrollDelayProp = createNumberProp({
 });
 
 export function floatingProps(props?: {
-	side?: "top" | "right" | "bottom" | "left";
-	align?: "start" | "center" | "end";
+	defaultSide?: "top" | "right" | "bottom" | "left";
+	defaultAlign?: "start" | "center" | "end";
 }) {
 	return {
-		side: floatingSideProp(props?.side),
+		side: floatingSideProp(props?.defaultSide),
 		sideOffset: floatingSideOffsetProp,
-		align: floatingAlignProp(props?.align),
+		align: floatingAlignProp(props?.defaultAlign),
 		alignOffset: floatingAlignOffsetProp,
 		arrowPadding: floatingArrowPaddingProp,
 		avoidCollisions: floatingAvoidCollisionsProp,

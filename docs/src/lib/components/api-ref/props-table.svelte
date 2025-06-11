@@ -23,9 +23,6 @@
 				default: prop?.default,
 				required: prop?.required,
 				bindable: prop?.bindable,
-				linked: prop?.linked,
-				href: prop?.href,
-				tooltipContent: prop?.tooltipContent,
 			};
 		});
 	});
@@ -66,12 +63,7 @@
 						{/if}
 					</Table.Cell>
 					<Table.Cell class="hidden pr-1 align-baseline sm:table-cell">
-						<PropTypeContent
-							type={p?.type}
-							linked={p?.linked}
-							href={p?.href}
-							tooltipContent={p?.tooltipContent}
-						/>
+						<PropTypeContent type={p?.type} />
 					</Table.Cell>
 					<Table.Cell class="hidden align-baseline sm:table-cell">
 						<p class="text-sm leading-[1.5rem]">
@@ -97,9 +89,6 @@
 							type={p?.type}
 							description={p?.description}
 							defaultValue={p?.default}
-							linked={p?.linked}
-							href={p?.href}
-							tooltipContent={p?.tooltipContent}
 							{slotted}
 						/>
 					</Table.Cell>

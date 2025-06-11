@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Popover, ScrollArea, Tooltip } from "bits-ui";
+	import { Popover, ScrollArea } from "bits-ui";
 	import Info from "phosphor-svelte/lib/Info";
 	import type { Component } from "svelte";
 	import Code from "$lib/components/markdown/code.svelte";
@@ -8,46 +8,15 @@
 
 	let {
 		type,
-		linked = false,
-		href = "",
-		tooltipContent = "",
 		disablePopover = false,
 	}: {
 		type: PropType | string;
-		linked?: boolean;
-		href?: string;
-		tooltipContent?: string;
 		disablePopover?: boolean;
 	} = $props();
 </script>
 
 {#snippet StringType()}
-	{#if tooltipContent && linked && href}
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				{#snippet child({ props })}
-					<a {href} {...props}>
-						<Code class="bg-transparent px-0">{type}</Code>
-					</a>
-				{/snippet}
-			</Tooltip.Trigger>
-			<Tooltip.Portal>
-				<Tooltip.Content side="top" sideOffset={8}>
-					<div
-						class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden flex items-center justify-center border p-3 text-sm font-medium"
-					>
-						{tooltipContent}
-					</div>
-				</Tooltip.Content>
-			</Tooltip.Portal>
-		</Tooltip.Root>
-	{:else if linked && href}
-		<a {href}>
-			<Code class="bg-transparent px-0">{type}</Code>
-		</a>
-	{:else}
-		<Code class="bg-transparent px-0">{type}</Code>
-	{/if}
+	<Code class="bg-transparent px-0">{type}</Code>
 {/snippet}
 
 {#snippet TypeContent({ typeDef, typeString }: { typeDef: string | Component; typeString: string })}
@@ -124,7 +93,7 @@
 	{#if typeof type === "string"}
 		{@render StringType()}
 	{:else if disablePopover}
-		<div class="space-y-2">
+		<div class="flex flex-col gap-2">
 			<Code class="bg-transparent px-0">{type.type}</Code>
 			{#if typeof type.definition === "string"}
 				<div class="max-h-[200px] overflow-auto">

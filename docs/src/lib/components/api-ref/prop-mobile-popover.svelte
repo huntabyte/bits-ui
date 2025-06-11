@@ -5,12 +5,12 @@
 	import PropTypeContent from "./prop-type-content.svelte";
 	import type { PropType } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
+	import MobileTypeContent from "./mobile-type-content.svelte";
 
 	let {
 		type,
 		description,
 		defaultValue,
-		linked = false,
 		href = "",
 		tooltipContent = "",
 		slotted = false,
@@ -18,7 +18,6 @@
 		type: PropType | string;
 		description: string;
 		defaultValue?: string;
-		linked?: boolean;
 		href?: string;
 		tooltipContent?: string;
 		slotted?: boolean;
@@ -37,18 +36,13 @@
 			side="top"
 			align="end"
 			sideOffset={8}
-			class="rounded-input border-border bg-background shadow-popover outline-hidden z-50 max-w-[320px] border p-4"
+			class="rounded-input border-border bg-background shadow-popover outline-hidden z-50 max-w-[90vw] border p-4"
 		>
-			<div class="space-y-3">
+			<div class="flex flex-col gap-3">
 				<div>
 					<h4 class="text-muted-foreground mb-1 text-sm font-medium">Type</h4>
-					<PropTypeContent
-						{type}
-						{linked}
-						{href}
-						{tooltipContent}
-						disablePopover={true}
-					/>
+					<MobileTypeContent {type} />
+					<PropTypeContent {type} disablePopover={true} />
 				</div>
 
 				<div>
