@@ -25,7 +25,9 @@ import {
 	heading,
 	nextButton,
 	prevButton,
-} from "./calendar.api.js";
+	monthSelect,
+	yearSelect,
+} from "./range-calendar.api.js";
 import { root as rangeCalendarRoot } from "./range-calendar.api.js";
 import { root as datePickerRoot } from "./date-picker.api.js";
 import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
@@ -70,6 +72,11 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		onOpenChange: datePickerRoot.props!.onOpenChange,
 		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
 		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
+		minDays: rangeCalendarRoot.props!.minDays,
+		maxDays: rangeCalendarRoot.props!.maxDays,
+		excludeDisabled: rangeCalendarRoot.props!.excludeDisabled,
+		monthFormat: rangeCalendarRoot.props!.monthFormat,
+		yearFormat: rangeCalendarRoot.props!.yearFormat,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -168,4 +175,6 @@ export const dateRangePicker = [
 	gridBody,
 	cell,
 	day,
+	monthSelect,
+	yearSelect,
 ];

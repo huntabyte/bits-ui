@@ -10,6 +10,8 @@ export { default as Header } from "$lib/bits/calendar/components/calendar-header
 export { default as Heading } from "$lib/bits/calendar/components/calendar-heading.svelte";
 export { default as NextButton } from "$lib/bits/calendar/components/calendar-next-button.svelte";
 export { default as PrevButton } from "$lib/bits/calendar/components/calendar-prev-button.svelte";
+export { default as MonthSelect } from "$lib/bits/calendar/components/calendar-month-select.svelte";
+export { default as YearSelect } from "$lib/bits/calendar/components/calendar-year-select.svelte";
 
 export type {
 	RangeCalendarRootProps as RootProps,
@@ -24,4 +26,6 @@ export type {
 	RangeCalendarCellProps as CellProps,
 	RangeCalendarGridRowProps as GridRowProps,
 	RangeCalendarDayProps as DayProps,
+	RangeCalendarMonthSelectProps as MonthSelectProps,
+	RangeCalendarYearSelectProps as YearSelectProps,
 } from "./types.js";

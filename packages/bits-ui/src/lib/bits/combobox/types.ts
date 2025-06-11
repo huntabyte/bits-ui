@@ -6,7 +6,10 @@ import type {
 } from "$lib/bits/select/types.js";
 import type { WithChild, Without } from "$lib/internal/types.js";
 
-export type ComboboxBaseRootPropsWithoutHTML = SelectBaseRootPropsWithoutHTML & {
+export type ComboboxBaseRootPropsWithoutHTML = Omit<
+	SelectBaseRootPropsWithoutHTML,
+	"autocomplete"
+> & {
 	/**
 	 * A read-only value that can be used to programmatically
 	 * update the input value.

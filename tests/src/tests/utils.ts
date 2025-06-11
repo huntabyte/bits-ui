@@ -51,8 +51,10 @@ export const kbd = {
 	A: "A",
 	p: "p",
 	n: "n",
+	h: "h",
 	j: "j",
 	k: "k",
+	l: "l",
 };
 
 export function getTestKbd() {

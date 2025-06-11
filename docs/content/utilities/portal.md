@@ -3,6 +3,12 @@ title: Portal
 description: A component that renders its children in a portal, preventing layout issues in complex UI structures.
 ---
 
+<script>
+    import { ComponentPreviewV2, PortalDemo, APISection } from '$lib/components'
+
+	let { schemas } = $props()
+</script>
+
 ## Overview
 
 The Portal component is a utility component that renders its children in a portal, preventing layout issues in complex UI structures. This component is used for the various Bits UI component that have a `Portal` sub-component.
@@ -54,3 +60,19 @@ You can use the `disabled` prop to disable the portal behavior.
 	<div>This content will not be portalled</div>
 </Portal>
 ```
+
+### Overriding the default target
+
+The default target can modified using the `defaultPortalTo` prop of the [`BitsConfig`](/docs/utilities/bits-config) component.
+
+This will change the default target for all `Portal` components within its scope.
+
+<ComponentPreviewV2 size="xs" name="portal-demo" componentName="Portal">
+
+{#snippet preview()}
+<PortalDemo />
+{/snippet}
+
+</ComponentPreviewV2>
+
+<APISection {schemas} />

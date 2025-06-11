@@ -513,22 +513,24 @@ type UseMonthViewSyncProps = {
  * which determines the month to show in the calendar.
  */
 export function useMonthViewOptionsSync(props: UseMonthViewSyncProps) {
-	const weekStartsOn = props.weekStartsOn.current;
-	const locale = props.locale.current;
-	const fixedWeeks = props.fixedWeeks.current;
-	const numberOfMonths = props.numberOfMonths.current;
+	$effect(() => {
+		const weekStartsOn = props.weekStartsOn.current;
+		const locale = props.locale.current;
+		const fixedWeeks = props.fixedWeeks.current;
+		const numberOfMonths = props.numberOfMonths.current;
 
-	untrack(() => {
-		const placeholder = props.placeholder.current;
-		if (!placeholder) return;
-		const defaultMonthProps = {
-			weekStartsOn,
-			locale,
-			fixedWeeks,
-			numberOfMonths,
-		};
+		untrack(() => {
+			const placeholder = props.placeholder.current;
+			if (!placeholder) return;
+			const defaultMonthProps = {
+				weekStartsOn,
+				locale,
+				fixedWeeks,
+				numberOfMonths,
+			};
 
-		props.setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder }));
+			props.setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder }));
+		});
 	});
 }
 
@@ -739,7 +741,9 @@ export type CalendarParts =
 	| "grid-row"
 	| "head-cell"
 	| "header"
-	| "heading";
+	| "heading"
+	| "month-select"
+	| "year-select";
 
 export function pickerOpenFocus(e: Event) {
 	const doc = getDocument(e.target as HTMLElement);
@@ -848,5 +852,45 @@ export const calendarAttrs = createBitsAttrs({
 		"head-cell",
 		"header",
 		"heading",
+		"month-select",
+		"year-select",
 	],
 });
+
+type GetDefaultYearsProps = {
+	placeholderYear: number;
+	minValue: DateValue | undefined;
+	maxValue: DateValue | undefined;
+};
+
+export function getDefaultYears(opts: GetDefaultYearsProps) {
+	const currentYear = new Date().getFullYear();
+	const latestYear = Math.max(opts.placeholderYear, currentYear);
+
+	// use minValue/maxValue as boundaries if provided, otherwise calculate default range
+	let minYear: number;
+	let maxYear: number;
+
+	if (opts.minValue) {
+		minYear = opts.minValue.year;
+	} else {
+		// (111 years: latestYear - 100 to latestYear + 10)
+		const initialMinYear = latestYear - 100;
+		minYear =
+			opts.placeholderYear < initialMinYear ? opts.placeholderYear - 10 : initialMinYear;
+	}
+
+	if (opts.maxValue) {
+		maxYear = opts.maxValue.year;
+	} else {
+		maxYear = latestYear + 10;
+	}
+
+	// ensure we have at least one year and minYear <= maxYear
+	if (minYear > maxYear) {
+		minYear = maxYear;
+	}
+
+	const totalYears = maxYear - minYear + 1;
+	return Array.from({ length: totalYears }, (_, i) => minYear + i);
+}

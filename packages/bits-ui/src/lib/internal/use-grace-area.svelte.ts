@@ -1,4 +1,4 @@
-import { type Getter, executeCallbacks, getWindow } from "svelte-toolbelt";
+import { type Getter, executeCallbacks, getDocument, getWindow } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { watch } from "runed";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
@@ -85,8 +85,10 @@ export function useGraceArea(opts: UseGraceAreaOpts) {
 					opts.onPointerExit();
 				}
 			};
+			const doc = getDocument(opts.triggerNode() ?? opts.contentNode());
+			if (!doc) return;
 
-			return on(document, "pointermove", handleTrackPointerGrace);
+			return on(doc, "pointermove", handleTrackPointerGrace);
 		}
 	);
 

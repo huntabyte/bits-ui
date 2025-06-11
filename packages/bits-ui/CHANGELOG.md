@@ -1,5 +1,57 @@
 # bits-ui
 
+## 2.6.0
+
+### Minor Changes
+
+-   feat(Command): add `disableInitialScroll` prop to `Command.Root` to prevent undesired scrolling on initial mount ([#1548](https://github.com/huntabyte/bits-ui/pull/1548))
+
+-   feat(command): Add `columns` prop for grid functionality ([#1548](https://github.com/huntabyte/bits-ui/pull/1548))
+
+## 2.5.0
+
+### Minor Changes
+
+-   feat(RangeCalendar): add `minDays` and `maxDays` props to require min/max number days in a range ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(RangeCalendar): add `excludeDisabled` prop that when `true`, will reset the range if it includes a disabled date ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(Calendar): add `maxDays` prop to limit the number of days that can be selected when `type="multiple"` ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(RangeCalendar): add `data-range-middle` attribute to `Day` and `Cell` components to indicate items within the selected range, but not the start or end. Useful for conditional styling. ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   feat(Select): expose `autocomplete` prop on `Select.Root` for passing `autocomplete` attribute to the hidden input ([#1547](https://github.com/huntabyte/bits-ui/pull/1547))
+
+### Patch Changes
+
+-   fix(RangeCalendar): ensure props are synced with months ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+-   fix(Calendar): issue where props weren't being synced with the months ([#1558](https://github.com/huntabyte/bits-ui/pull/1558))
+
+## 2.4.1
+
+### Patch Changes
+
+-   fix(FloatingComponents): ensure bad coordinates aren't used when anchor becomes hidden/removed ([#1546](https://github.com/huntabyte/bits-ui/pull/1546))
+
+-   fix(Slider): shadow DOM support ([#1544](https://github.com/huntabyte/bits-ui/pull/1544))
+
+## 2.4.0
+
+### Minor Changes
+
+-   feat: introduce `BitsConfig` provider component for globally configuring default component props via context. ([#1530](https://github.com/huntabyte/bits-ui/pull/1530))
+
+### Patch Changes
+
+-   fix(Select): ensure typeahead enabled state is reactive to item updates ([#1540](https://github.com/huntabyte/bits-ui/pull/1540))
+
+## 2.3.1
+
+### Patch Changes
+
+-   fix(rating-group): Ensure `data-state` reflects value when showing preview ([#1533](https://github.com/huntabyte/bits-ui/pull/1533))
+
 ## 2.3.0
 
 ### Minor Changes

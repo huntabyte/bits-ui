@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { type DateValue } from "@internationalized/date";
 	import { useCalendarRoot } from "../calendar.svelte.js";
@@ -6,7 +7,7 @@
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		child,
@@ -24,7 +25,7 @@
 		isDateUnavailable = () => false,
 		fixedWeeks = false,
 		numberOfMonths = 1,
-		locale = "en",
+		locale,
 		calendarLabel = "Event",
 		disabled = false,
 		readonly = false,
@@ -34,6 +35,9 @@
 		type,
 		disableDaysOutsideMonth = true,
 		initialFocus = false,
+		maxDays,
+		monthFormat = "long",
+		yearFormat = "numeric",
 		...restProps
 	}: CalendarRootProps = $props();
 
@@ -84,7 +88,7 @@
 		isDateUnavailable: box.with(() => isDateUnavailable),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		calendarLabel: box.with(() => calendarLabel),
 		readonly: box.with(() => readonly),
 		disabled: box.with(() => disabled),
@@ -92,6 +96,7 @@
 		maxValue: box.with(() => maxValue),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		initialFocus: box.with(() => initialFocus),
+		maxDays: box.with(() => maxDays),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
@@ -109,6 +114,8 @@
 			}
 		),
 		type: box.with(() => type),
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 		defaultPlaceholder,
 	});
 

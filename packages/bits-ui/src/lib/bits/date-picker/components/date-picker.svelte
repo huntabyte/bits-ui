@@ -1,5 +1,6 @@
 <script lang="ts">
 	// Date Picker composes the DateField, Popover, and Calendar components
+	import { watch } from "runed";
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { useDatePickerRoot } from "../date-picker.svelte.js";
@@ -9,7 +10,7 @@
 	import { useDateFieldRoot } from "$lib/bits/date-field/date-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { watch } from "runed";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		open = $bindable(false),
@@ -28,7 +29,7 @@
 		granularity,
 		readonlySegments = [],
 		hourCycle,
-		locale = "en",
+		locale,
 		hideTimeZone = false,
 		required = false,
 		calendarLabel = "Event",
@@ -44,6 +45,8 @@
 		initialFocus = false,
 		errorMessageId,
 		children,
+		monthFormat = "long",
+		yearFormat = "numeric",
 	}: DatePickerRootProps = $props();
 
 	const defaultPlaceholder = getDefaultDate({
@@ -107,7 +110,7 @@
 		granularity: box.with(() => granularity),
 		readonlySegments: box.with(() => readonlySegments),
 		hourCycle: box.with(() => hourCycle),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		required: box.with(() => required),
 		calendarLabel: box.with(() => calendarLabel),
@@ -122,6 +125,8 @@
 		initialFocus: box.with(() => initialFocus),
 		onDateSelect: box.with(() => onDateSelect),
 		defaultPlaceholder,
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 	});
 
 	usePopoverRoot({

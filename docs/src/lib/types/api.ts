@@ -37,6 +37,7 @@ export type CSSVarSchema = {
 export type APISchema<T = Record<string, unknown>> = {
 	title: string;
 	description: string;
+	type?: "component" | "utility";
 	props?: PropObj<Omit<T, "style">>;
 	dataAttributes?: DataAttrSchema[];
 	cssVars?: CSSVarSchema[];

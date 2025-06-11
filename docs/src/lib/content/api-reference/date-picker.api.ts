@@ -16,6 +16,8 @@ import {
 	heading,
 	nextButton,
 	prevButton,
+	monthSelect,
+	yearSelect,
 } from "./calendar.api.js";
 import {
 	input as dateFieldInput,
@@ -83,6 +85,8 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		granularity: dateFieldRoot.props!.granularity,
 		hideTimeZone: dateFieldRoot.props!.hideTimeZone,
 		initialFocus: calendarRoot.props!.initialFocus,
+		monthFormat: calendarRoot.props!.monthFormat,
+		yearFormat: calendarRoot.props!.yearFormat,
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
@@ -171,4 +175,6 @@ export const datePicker = [
 	gridBody,
 	cell,
 	day,
+	monthSelect,
+	yearSelect,
 ];

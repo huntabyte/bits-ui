@@ -64,7 +64,11 @@ export class DateRangeFieldRootState {
 
 	constructor(opts: DateRangeFieldRootStateProps) {
 		this.opts = opts;
-		this.formatter = createFormatter(this.opts.locale.current);
+		this.formatter = createFormatter({
+			initialLocale: this.opts.locale.current,
+			monthFormat: box.with(() => "long"),
+			yearFormat: box.with(() => "numeric"),
+		});
 		this.domContext = new DOMContext(this.opts.ref);
 
 		onDestroyEffect(() => {

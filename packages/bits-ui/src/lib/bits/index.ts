@@ -2,6 +2,7 @@ export { Accordion } from "./accordion/index.js";
 export { AlertDialog } from "./alert-dialog/index.js";
 export { AspectRatio } from "./aspect-ratio/index.js";
 export { Avatar } from "./avatar/index.js";
+export { BitsConfig, getBitsConfig } from "./utilities/config/index.js";
 export { Button } from "./button/index.js";
 export { Calendar } from "./calendar/index.js";
 export { Checkbox } from "./checkbox/index.js";

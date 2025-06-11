@@ -40,6 +40,8 @@ import { meter } from "./meter.api.js";
 import { timeField } from "./time-field.api.js";
 import type { APISchema } from "$lib/types/index.js";
 import { timeRangeField } from "./time-range-field.api.js";
+import { bitsConfig } from "./bits-config.api.js";
+import { portal } from "./portal.api.js";
 
 export const bits = [
 	"accordion",
@@ -136,6 +138,28 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	toolbar,
 	tooltip,
 };
+
+export const utilities = ["bits-config", "is-using-keyboard", "merge-props", "portal", "use-id"];
+
+export const utilitiesSet = new Set(utilities);
+
+export type Utility = (typeof utilities)[number];
+
+export const utilitiesSchemas: Record<Utility, APISchema[]> = {
+	"bits-config": [bitsConfig],
+	"is-using-keyboard": [],
+	"merge-props": [],
+	portal: [portal],
+	"use-id": [],
+};
+
+export function isUtility(value: string): value is Utility {
+	return utilitiesSet.has(value as (typeof utilities)[number]);
+}
+
+export function getUtilityAPISchemas(utility: Utility): APISchema[] {
+	return utilitiesSchemas[utility];
+}
 
 export function getAPISchemas(bit: Bit): APISchema[] {
 	return apiSchemas[bit];

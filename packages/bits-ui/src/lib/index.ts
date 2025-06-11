@@ -3,6 +3,7 @@ export {
 	AlertDialog,
 	AspectRatio,
 	Avatar,
+	BitsConfig,
 	Button,
 	Calendar,
 	Checkbox,
@@ -43,6 +44,7 @@ export {
 	Portal,
 	IsUsingKeyboard,
 	computeCommandScore,
+	getBitsConfig,
 } from "./bits/index.js";
 
 export * from "./shared/index.js";

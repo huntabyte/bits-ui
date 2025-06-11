@@ -1,62 +1,21 @@
 <script lang="ts">
 	import { Calendar } from "bits-ui";
-	import { DateFormatter, getLocalTimeZone, today } from "@internationalized/date";
+	import { getLocalTimeZone, today } from "@internationalized/date";
 
-	const currentDate = today(getLocalTimeZone());
 	let value = $state(today(getLocalTimeZone()));
-
-	const formatter = new DateFormatter("en-US", {
-		month: "long",
-	});
-
-	const monthList = Array.from({ length: 12 }, (_, i) => {
-		const month = currentDate.set({ month: i + 1 });
-		return {
-			value: month.month,
-			label: formatter.format(month.toDate(getLocalTimeZone())),
-		};
-	});
-
-	const currentYear = new Date().getFullYear();
-	const yearList = Array.from({ length: 30 }, (_, i) => currentYear - i);
-	let placeholder = $state(currentDate);
 </script>
 
 <Calendar.Root
 	class="border-dark-10 bg-background-alt shadow-card mt-6 rounded-[15px] border p-[22px]"
 	weekdayFormat="short"
 	fixedWeeks={true}
-	bind:placeholder
 	type="single"
 	bind:value
 >
 	{#snippet children({ months, weekdays })}
 		<Calendar.Header class="flex items-center justify-between gap-3">
-			<select
-				aria-label="Select month"
-				value={placeholder.month}
-				class="w-full"
-				onchange={(e) => {
-					const month = parseInt(e.currentTarget.value);
-					placeholder = placeholder.set({ month });
-				}}
-			>
-				{#each monthList as month (month.value)}
-					<option value={month.value}>{month.label}</option>
-				{/each}
-			</select>
-			<select
-				aria-label="Select year"
-				value={placeholder.year}
-				onchange={(e) => {
-					const year = parseInt(e.currentTarget.value);
-					placeholder = placeholder.set({ year });
-				}}
-			>
-				{#each yearList as year (year)}
-					<option value={year}>{year}</option>
-				{/each}
-			</select>
+			<Calendar.MonthSelect aria-label="Select month" class="w-full" />
+			<Calendar.YearSelect aria-label="Select year" />
 		</Calendar.Header>
 		<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 			{#each months as month, i (i)}

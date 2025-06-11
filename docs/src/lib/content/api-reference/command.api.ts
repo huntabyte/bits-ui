@@ -56,6 +56,9 @@ const root = createApiSchema<CommandRootPropsWithoutHTML>({
 			description:
 				"Whether or not the command menu should filter items. This is useful when you want to apply custom filtering logic outside of the Command component.",
 		}),
+		columns: createNumberProp({
+			description: "The number of columns in the grid layout if ",
+		}),
 		onStateChange: createFunctionProp({
 			definition: CommandOnStateChangeProp,
 			description: `A callback that fires when the command's internal state changes. This callback receives a readonly snapshot of the current state.
@@ -92,6 +95,11 @@ type onStateChange = (state: Readonly<CommandState>) => void;`,
 			default: C.TRUE,
 			description:
 				"Whether VIM bindings should be enabled or not, which allow the user to navigate using ctrl+n/j/p/k",
+		}),
+		disableInitialScroll: createBooleanProp({
+			default: C.FALSE,
+			description:
+				"Whether to disable scrolling the selected item into view on initial mount. When `true`, prevents automatic scrolling when the command menu first renders and selects its first item, but still allows scrolling on subsequent selections.",
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",

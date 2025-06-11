@@ -9,12 +9,14 @@
 		onEscapeKeydown = noop,
 		children,
 		enabled,
+		ref,
 	}: EscapeLayerImplProps = $props();
 
 	useEscapeLayer({
 		escapeKeydownBehavior: box.with(() => escapeKeydownBehavior),
 		onEscapeKeydown: box.with(() => onEscapeKeydown),
 		enabled: box.with(() => enabled),
+		ref,
 	});
 </script>
 

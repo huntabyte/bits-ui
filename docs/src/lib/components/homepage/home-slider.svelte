@@ -10,7 +10,7 @@
 		type="single"
 		{value}
 		onValueCommit={(v) => (value = v)}
-		class="shadow-mini-inset relative flex w-full touch-none select-none items-center rounded-full dark:bg-[#F4F4F51A] dark:shadow-[0px_0.7px_0px_0px_rgba(0,_0,_0,_0.04)_inset]"
+		class="shadow-mini-inset relative flex w-full touch-none select-none items-center rounded-full dark:bg-[rgba(244,244,245,0.1)] dark:shadow-[0px_0.7px_0px_0px_rgba(0,_0,_0,_0.04)_inset]"
 	>
 		{#snippet children({ thumbItems })}
 			<span
@@ -24,6 +24,7 @@
 					class={cn(
 						"bg-background shadow-mini hover:border-dark-40 dark:bg-foreground focus-visible:outline-hidden block size-[18px] cursor-pointer rounded-full transition-colors  active:scale-[0.98] lg:size-[25px] dark:shadow-[0px_0.7px_0px_0.7px_rgba(0,_0,_0,_0.04);]"
 					)}
+					aria-label="Speed"
 				/>
 			{/each}
 		{/snippet}

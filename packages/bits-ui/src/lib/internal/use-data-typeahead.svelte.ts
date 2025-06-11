@@ -8,7 +8,7 @@ type UseDataTypeaheadOpts = {
 	onMatch: (value: string) => void;
 	getCurrentItem: () => string;
 	candidateValues: Getter<string[]>;
-	enabled: boolean;
+	enabled: Getter<boolean>;
 	getWindow: () => Window & typeof globalThis;
 };
 
@@ -21,7 +21,7 @@ export function useDataTypeahead(opts: UseDataTypeaheadOpts) {
 	const candidateValues = $derived(opts.candidateValues());
 
 	function handleTypeaheadSearch(key: string) {
-		if (!opts.enabled) return;
+		if (!opts.enabled()) return;
 		if (!candidateValues.length) return;
 
 		search.current = search.current + key;

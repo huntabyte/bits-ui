@@ -43,7 +43,8 @@ type ElementKind =
 	| "HTMLUListElement"
 	| "HTMLLiElement"
 	| "HTMLNavElement"
-	| "HTMLElement";
+	| "HTMLElement"
+	| "HTMLSelectElement";
 
 type SharedPropOptions = {
 	description: string;
@@ -240,8 +241,8 @@ export const arrowProps = {
 export const portalProps = {
 	to: createUnionProp({
 		definition: PortalToProp,
-		options: ["string", "HTMLElement", "null", "undefined"],
-		description: `Where to render the content when it is open. Defaults to the body. Can be disabled by passing \`null\`.`,
+		options: ["string", "Element", "undefined"],
+		description: `Where to render the content when it is open. Defaults to the body.`,
 		default: "body",
 	}),
 	disabled: createBooleanProp({
