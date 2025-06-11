@@ -6,7 +6,7 @@ import {
 	createFunctionProp,
 	createStringProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import {
 	SwitchCheckedDataAttr,
 	SwitchRootChildSnippetProps,

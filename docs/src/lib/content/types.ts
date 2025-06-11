@@ -13,6 +13,7 @@ export type PropTypeComponent = {
 };
 
 export type PropType = PropTypeString | PropTypeComponent;
+
 export type PropDefault =
 	| {
 			_type: "string";
@@ -20,13 +21,22 @@ export type PropDefault =
 	  }
 	| { _type: "component"; value: Component; stringValue: string };
 
-export type PropSchema = {
-	default?: PropDefault;
-	type: PropType;
+type PropSchemaBase = {
 	description: string;
 	required?: boolean;
 	bindable?: boolean;
+	default?: PropDefault;
 };
+
+export type PropSchemaString = PropSchemaBase & {
+	type: PropTypeString;
+};
+
+export type PropSchemaComponent = PropSchemaBase & {
+	type: PropTypeComponent;
+};
+
+export type PropSchema = PropSchemaString | PropSchemaComponent;
 
 export type PropObj<T, U = Omit<T, "style">> = {
 	[K in keyof U]-?: PropSchema;
@@ -36,7 +46,6 @@ export type DataAttrStringSchema = {
 	_type: "string";
 	value: string;
 	description: string;
-	stringValue: string;
 	name: string;
 };
 

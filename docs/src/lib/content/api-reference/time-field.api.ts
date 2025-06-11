@@ -15,7 +15,7 @@ import {
 	createPropSchema,
 	createStringProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { timeValueProp } from "./extended-types/index.js";
 import {
 	TimeGranularityProp,

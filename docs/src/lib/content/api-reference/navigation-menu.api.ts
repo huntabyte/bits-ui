@@ -21,7 +21,7 @@ import {
 	escapeLayerProps,
 	forceMountProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { OnStringValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";
 

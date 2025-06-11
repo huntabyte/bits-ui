@@ -32,7 +32,7 @@ import {
 	preventScrollProp,
 	refProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { menu } from "./menu.api.js";
 import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import * as C from "$lib/content/constants.js";

@@ -5,7 +5,7 @@ import {
 	createNumberProp,
 	createPropSchema,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 
 export const root = createApiSchema<MeterRootPropsWithoutHTML>({
 	title: "Root",

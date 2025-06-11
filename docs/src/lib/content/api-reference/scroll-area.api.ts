@@ -20,7 +20,7 @@ import {
 	forceMountProp,
 	refProp,
 	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+} from "$lib/content/api-reference/shared.js";
 
 export const root = createApiSchema<ScrollAreaRootPropsWithoutHTML>({
 	title: "Root",

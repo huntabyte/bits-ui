@@ -9,85 +9,75 @@ import type {
 	AlertDialogTitlePropsWithoutHTML,
 	AlertDialogTriggerPropsWithoutHTML,
 } from "bits-ui";
-import {
-	HeaderLevelProp,
-	OnOpenChangeProp,
-	OpenClosedProp,
-} from "./extended-types/shared/index.js";
+import { HeaderLevelProp, OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	DialogContentChildSnippetProps,
 	DialogOverlayChildSnippetProps,
 } from "./extended-types/dialog/index.js";
 import {
 	childrenSnippet,
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createFunctionProp,
-	createUnionProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeProp,
+	openProp,
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
 	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
+} from "$lib/content/api-reference/shared.js";
+import {
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineStringDataAttr,
+	defineUnionProp,
+} from "../utils.js";
 
-const stateDataAttr = createDataAttrSchema({
+const stateDataAttr = defineEnumDataAttr({
 	name: "state",
-	definition: OpenClosedProp,
+	options: ["open", "closed"],
+	value: OpenClosedProp,
 	description: "The state of the alert dialog.",
-	isEnum: true,
 });
 
-const root = createApiSchema<AlertDialogRootPropsWithoutHTML>({
+const root = defineComponentApiSchema<AlertDialogRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the alert dialog.",
 	props: {
-		open: createBooleanProp({
-			default: C.FALSE,
-			description: "Whether or not the alert dialog is open.",
-			bindable: true,
-		}),
-		onOpenChange: createFunctionProp({
-			definition: OnOpenChangeProp,
-			description: "A callback function called when the open state changes.",
-			stringDefinition: "(open: boolean) => void",
-		}),
+		open: openProp,
+		onOpenChange: onOpenChangeProp,
 		children: childrenSnippet(),
 	},
 });
 
-const action = createApiSchema<AlertDialogActionPropsWithoutHTML>({
+const action = defineComponentApiSchema<AlertDialogActionPropsWithoutHTML>({
 	title: "Action",
 	description:
 		"The button responsible for taking an action within the alert dialog. This button does not close the dialog out of the box. See the [Form Submission](#form-submission) documentation for more information.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "alert-dialog-action",
 			description: "Present on the action element.",
 		}),
 	],
 });
 
-const cancel = createApiSchema<AlertDialogCancelPropsWithoutHTML>({
+const cancel = defineComponentApiSchema<AlertDialogCancelPropsWithoutHTML>({
 	title: "Cancel",
 	description: "A button used to close the alert dialog without taking an action.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "alert-dialog-cancel",
 			description: "Present on the cancel element.",
 		}),
 	],
 });
 
-const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
+const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed within the alert dialog modal.",
 	props: {
@@ -105,18 +95,18 @@ const content = createApiSchema<AlertDialogContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "alert-dialog-content",
 			description: "Present on the content element.",
 		}),
 	],
 });
 
-const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
+const title = defineComponentApiSchema<AlertDialogTitlePropsWithoutHTML>({
 	title: "Title",
 	description: "An accessible title for the alert dialog.",
 	props: {
-		level: createUnionProp({
+		level: defineUnionProp({
 			definition: HeaderLevelProp,
 			options: ["1", "2", "3", "4", "5", "6"],
 			description:
@@ -126,39 +116,39 @@ const title = createApiSchema<AlertDialogTitlePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "alert-dialog-title",
 			description: "Present on the title element.",
 		}),
 	],
 });
 
-const description = createApiSchema<AlertDialogDescriptionPropsWithoutHTML>({
+const description = defineComponentApiSchema<AlertDialogDescriptionPropsWithoutHTML>({
 	title: "Description",
 	description: "An accessible description for the alert dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "alert-dialog-description",
 			description: "Present on the description element.",
 		}),
 	],
 });
 
-const trigger = createApiSchema<AlertDialogTriggerPropsWithoutHTML>({
+const trigger = defineComponentApiSchema<AlertDialogTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The element which opens the alert dialog on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "alert-dialog-trigger",
 			description: "Present on the trigger element.",
 		}),
 	],
 });
 
-const overlay = createApiSchema<AlertDialogOverlayPropsWithoutHTML>({
+const overlay = defineComponentApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 	title: "Overlay",
 	description: "An overlay which covers the body when the alert dialog is open.",
 	props: {
@@ -170,14 +160,14 @@ const overlay = createApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "alert-dialog-overlay",
 			description: "Present on the overlay element.",
 		}),
 	],
 });
 
-const portal = createApiSchema<AlertDialogPortalPropsWithoutHTML>({
+const portal = defineComponentApiSchema<AlertDialogPortalPropsWithoutHTML>({
 	title: "Portal",
 	description: "A portal which renders the alert dialog into the body when it is open.",
 	props: portalProps,

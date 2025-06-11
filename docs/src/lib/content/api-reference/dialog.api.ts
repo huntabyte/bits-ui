@@ -24,7 +24,7 @@ import {
 	preventScrollProp,
 	restoreScrollDelayProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import {
 	DialogContentChildSnippetProps,
 	DialogOverlayChildSnippetProps,

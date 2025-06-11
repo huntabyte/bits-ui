@@ -1,34 +1,37 @@
 import type { ButtonRootPropsWithoutHTML } from "bits-ui";
-import { childrenSnippet, createApiSchema, createPropSchema, refProp } from "./helpers.js";
-import * as C from "$lib/content/constants.js";
+import { childrenSnippet, refProp } from "./shared.js";
 import type { HTMLButtonAttributes } from "svelte/elements";
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineStringDataAttr,
+	defineStringProp,
+} from "../utils.js";
 
-export const root = createApiSchema<
+export const root = defineComponentApiSchema<
 	ButtonRootPropsWithoutHTML & { href: string; disabled: HTMLButtonAttributes["disabled"] }
 >({
 	title: "Root",
 	description:
 		"A component that can switch between a button and an anchor tag based on the `href`/`type` props.",
 	props: {
-		href: createPropSchema({
-			type: C.STRING,
+		href: defineStringProp({
 			description:
 				"An optional prop that when passed converts the button into an anchor tag.",
 		}),
-		disabled: createPropSchema({
-			type: C.BOOLEAN,
+		disabled: defineBooleanProp({
 			description:
 				"Whether or not the button is disabled. When disabled, the button cannot be interacted with.",
-			default: "false",
+			default: false,
 		}),
 		ref: refProp({ elType: "HTMLButtonElement" }),
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
-		{
+		defineStringDataAttr({
 			name: "button-root",
 			description: "Present on the button element.",
-		},
+		}),
 	],
 });
 

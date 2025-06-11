@@ -33,7 +33,7 @@ import {
 	createFunctionProp,
 	createPropSchema,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { content, portal, trigger } from "./popover.api.js";
 import { OnOpenChangeProp } from "./extended-types/shared/index.js";
 import * as C from "$lib/content/constants.js";

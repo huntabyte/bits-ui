@@ -3,77 +3,76 @@ import type {
 	AvatarImagePropsWithoutHTML,
 	AvatarRootPropsWithoutHTML,
 } from "bits-ui";
-import {
-	createApiSchema,
-	createDataAttrSchema,
-	createEnumDataAttr,
-	createEnumProp,
-	createFunctionProp,
-	createNumberProp,
-	withChildProps,
-} from "./helpers.js";
+import { withChildProps } from "./shared.js";
 import { LoadingStatusProp, OnLoadingStatusChangeProp } from "./extended-types/avatar/index.js";
+import {
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineEnumProp,
+	defineFunctionProp,
+	defineNumberProp,
+	defineStringDataAttr,
+} from "../utils.js";
 
-const statusDataAttr = createEnumDataAttr({
+const statusDataAttr = defineEnumDataAttr({
 	name: "status",
 	description: "The loading status of the image.",
 	options: ["loading", "loaded", "error"],
-	definition: LoadingStatusProp,
+	value: LoadingStatusProp,
 });
 
-export const root = createApiSchema<AvatarRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<AvatarRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the avatar.",
 	props: {
-		loadingStatus: createEnumProp({
+		loadingStatus: defineEnumProp({
 			options: ["loading", "loaded", "error"],
 			description:
 				"The loading status of the avatars source image. You can bind a variable to track the status outside of the component and use it to show a loading indicator or error message.",
 			bindable: true,
 			definition: LoadingStatusProp,
 		}),
-		onLoadingStatusChange: createFunctionProp({
+		onLoadingStatusChange: defineFunctionProp({
 			definition: OnLoadingStatusChangeProp,
 			description: "A callback function called when the loading status of the image changes.",
 			stringDefinition: "(status: LoadingStatus) => void",
 		}),
-		delayMs: createNumberProp({
-			default: "0",
+		delayMs: defineNumberProp({
+			default: 0,
 			description:
 				"How long to wait before showing the image after it has loaded. This can be useful to prevent a harsh flickering effect when the image loads quickly.",
 		}),
-
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
 		statusDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "avatar-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-export const image = createApiSchema<AvatarImagePropsWithoutHTML>({
+export const image = defineComponentApiSchema<AvatarImagePropsWithoutHTML>({
 	title: "Image",
 	description: "The avatar image displayed once it has loaded.",
 	props: withChildProps({ elType: "HTMLImageElement" }),
 	dataAttributes: [
 		statusDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "avatar-image",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-export const fallback = createApiSchema<AvatarFallbackPropsWithoutHTML>({
+export const fallback = defineComponentApiSchema<AvatarFallbackPropsWithoutHTML>({
 	title: "Fallback",
 	description: "The fallback displayed while the avatar image is loading or if it fails to load",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
 		statusDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "avatar-fallback",
 			description: "Present on the fallback element.",
 		}),

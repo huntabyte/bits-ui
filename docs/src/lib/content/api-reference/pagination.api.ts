@@ -13,7 +13,7 @@ import {
 	createFunctionProp,
 	createNumberProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import {
 	PaginationChildSnippetProps,
 	PaginationChildrenSnippetProps,

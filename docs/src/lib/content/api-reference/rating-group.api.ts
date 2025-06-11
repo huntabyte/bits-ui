@@ -9,7 +9,7 @@ import {
 	createStringProp,
 	createUnionProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { OnNumberValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
 import * as C from "$lib/content/constants.js";

@@ -8,7 +8,7 @@ import {
 	isUtility,
 } from "$lib/content/api-reference/index.js";
 import { utilityDocs, componentDocs, docs, typeHelperDocs, policyDocs } from "$content/index.js";
-import type { APISchema } from "$lib/types/api.js";
+import type { APISchema } from "$lib/content/types.js";
 
 const allDocs = [...docs, ...componentDocs, ...utilityDocs, ...typeHelperDocs, ...policyDocs];
 

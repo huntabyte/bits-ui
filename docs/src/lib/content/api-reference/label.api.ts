@@ -3,7 +3,7 @@ import {
 	createApiSchema,
 	createDataAttrSchema,
 	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+} from "$lib/content/api-reference/shared.js";
 
 export const root = createApiSchema<LabelRootPropsWithoutHTML>({
 	title: "Root",

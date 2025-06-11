@@ -5,7 +5,7 @@ import {
 	createNumberProp,
 	createPropSchema,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { ProgressStateAttr } from "./extended-types/progress/index.js";
 
 export const root = createApiSchema<ProgressRootPropsWithoutHTML>({

@@ -11,7 +11,7 @@ import {
 	createFunctionProp,
 	createPropSchema,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { input as dateFieldInput, root as dateFieldRoot } from "./date-field.api.js";
 import {
 	DateOnRangeChangeProp,

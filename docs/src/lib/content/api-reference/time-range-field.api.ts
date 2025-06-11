@@ -11,7 +11,7 @@ import {
 	createFunctionProp,
 	createPropSchema,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import { input as timeFieldInput, root as timeFieldRoot } from "./time-field.api.js";
 import {
 	OnTimeStartEndValueChangeProp,

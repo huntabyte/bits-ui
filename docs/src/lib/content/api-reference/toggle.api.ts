@@ -9,7 +9,7 @@ import {
 	createDataAttrSchema,
 	createFunctionProp,
 	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
+} from "$lib/content/api-reference/shared.js";
 import * as C from "$lib/content/constants.js";
 
 const root = createApiSchema<ToggleRootPropsWithoutHTML>({

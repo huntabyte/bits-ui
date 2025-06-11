@@ -1,4 +1,4 @@
-import { createApiSchema, portalProps } from "./helpers.js";
+import { createApiSchema, portalProps } from "./shared.js";
 import type { PortalProps } from "bits-ui";
 
 export const portal = createApiSchema<PortalProps>({

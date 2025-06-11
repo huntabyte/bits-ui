@@ -34,7 +34,7 @@ import {
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
 import {
 	NoopProp,
 	OnOpenChangeProp,
@@ -57,7 +57,7 @@ import {
 import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import type { APISchema, DataAttrSchema, PropObj } from "$lib/types/index.js";
 import * as C from "$lib/content/constants.js";
-import { enums } from "$lib/content/api-reference/helpers.js";
+import { enums } from "$lib/content/api-reference/shared.js";
 import { omit } from "$lib/utils/omit.js";
 
 const sharedItemProps = {
