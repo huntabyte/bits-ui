@@ -25,6 +25,7 @@ import { DateFieldEditableSegmentPartProp } from "./extended-types/date-field/in
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
+	defineComponentPropSchema,
 	defineEnumDataAttr,
 	defineEnumProp,
 	definePropSchema,
@@ -95,13 +96,10 @@ export const root = defineComponentApiSchema<DateFieldRootPropsWithoutHTML>({
 			description: "Whether or not the field is readonly.",
 			default: false,
 		}),
-		readonlySegments: definePropSchema({
-			type: {
-				_type: "component",
-				type: "EditableSegmentPart[]",
-				definition: DateFieldEditableSegmentPartProp,
-				stringDefinition: `"day" | "month" | "year" | "hour" | "minute" | "second" | "dayPeriod"`,
-			},
+		readonlySegments: defineComponentPropSchema({
+			type: "EditableSegmentPart[]",
+			definition: DateFieldEditableSegmentPartProp,
+			stringDefinition: `"day" | "month" | "year" | "hour" | "minute" | "second" | "dayPeriod"`,
 			description:
 				"An array of segments that should be readonly, which prevent user input on them.",
 		}),
@@ -143,13 +141,10 @@ export const segment = defineComponentApiSchema<DateFieldSegmentPropsWithoutHTML
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
-		part: definePropSchema({
-			type: {
-				_type: "component",
-				type: "SegmentPart",
-				definition: SegmentPartProp,
-				stringDefinition: `"month" | "day" | "year" | "hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal";`,
-			},
+		part: defineComponentPropSchema({
+			type: "SegmentPart",
+			definition: SegmentPartProp,
+			stringDefinition: `"month" | "day" | "year" | "hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal";`,
 			description: "The part of the date to render.",
 			required: true,
 		}),

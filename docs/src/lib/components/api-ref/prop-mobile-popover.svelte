@@ -11,16 +11,10 @@
 		type,
 		description,
 		defaultValue,
-		href = "",
-		tooltipContent = "",
-		slotted = false,
 	}: {
 		type: PropType | string;
 		description: string;
 		defaultValue?: string;
-		href?: string;
-		tooltipContent?: string;
-		slotted?: boolean;
 	} = $props();
 </script>
 
@@ -53,7 +47,7 @@
 					</div>
 				</div>
 
-				{#if !slotted && defaultValue !== undefined}
+				{#if defaultValue !== undefined}
 					<div>
 						<h4 class="text-muted-foreground mb-1 text-sm font-medium">Default</h4>
 						<Code class="bg-background px-2 py-1 text-xs">

@@ -8,21 +8,18 @@
 	import type { PropObj } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
 
-	let {
-		props: _props,
-		slotted = false,
-	}: { props: PropObj<Record<string, unknown>>; slotted?: boolean } = $props();
+	let { props: _props }: { props: PropObj<Record<string, unknown>> } = $props();
 
 	const propData = $derived.by(() => {
 		if (!_props) return [];
 		return Object.entries(_props).map(([name, prop]) => {
 			return {
 				name,
-				type: prop?.type,
-				description: prop?.description,
-				default: prop?.default,
-				required: prop?.required,
-				bindable: prop?.bindable,
+				type: prop.type,
+				description: prop.description,
+				default: prop.default,
+				required: prop.required,
+				bindable: prop.bindable,
 			};
 		});
 	});
@@ -32,15 +29,13 @@
 	<Table.Root>
 		<Table.Header>
 			<Table.Row class="w-1/4">
-				<Table.Head class="w-full whitespace-nowrap pr-1 sm:w-[38%]"
-					>{slotted ? "Slot" : ""} Property</Table.Head
-				>
-				<Table.Head class="hidden w-[22%] whitespace-nowrap pr-1 sm:table-cell"
-					>Type</Table.Head
-				>
-				<Table.Head class="hidden w-[40%] whitespace-nowrap sm:table-cell"
-					>Description</Table.Head
-				>
+				<Table.Head class="w-full whitespace-nowrap pr-1 sm:w-[38%]">Property</Table.Head>
+				<Table.Head class="hidden w-[22%] whitespace-nowrap pr-1 sm:table-cell">
+					Type
+				</Table.Head>
+				<Table.Head class="hidden w-[40%] whitespace-nowrap sm:table-cell">
+					Description
+				</Table.Head>
 				<Table.Head class="w-8 sm:hidden">Details</Table.Head>
 			</Table.Row>
 		</Table.Header>
@@ -70,26 +65,23 @@
 							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 							{@html parseMarkdown(p.description)}
 						</p>
-						{#if !slotted}
-							<div class="mt-2">
-								<Code class="bg-background h-auto px-0">
-									Default:
-									{#if p.default}
-										{` ${p.default}`}
-									{:else}
-										<span aria-hidden="true"> &nbsp;—— </span>
-										<span class="sr-only"> undefined </span>
-									{/if}
-								</Code>
-							</div>
-						{/if}
+						<div class="mt-2">
+							<Code class="bg-background h-auto px-0">
+								Default:
+								{#if p.default}
+									{` ${p.default}`}
+								{:else}
+									<span aria-hidden="true"> &nbsp;—— </span>
+									<span class="sr-only"> undefined </span>
+								{/if}
+							</Code>
+						</div>
 					</Table.Cell>
 					<Table.Cell class="text-center align-middle sm:hidden">
 						<PropMobilePopover
 							type={p?.type}
 							description={p?.description}
 							defaultValue={p?.default}
-							{slotted}
 						/>
 					</Table.Cell>
 				</Table.Row>

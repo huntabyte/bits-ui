@@ -1,6 +1,7 @@
 import type { ProgressRootPropsWithoutHTML } from "bits-ui";
 import { withChildProps } from "./shared.js";
 import { ProgressStateAttr } from "./extended-types/progress/index.js";
+import { defineNumberProp } from "../utils";
 import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
@@ -21,7 +22,7 @@ export const root = defineComponentApiSchema<ProgressRootPropsWithoutHTML>({
 			default: 0,
 			description: "The minimum value of the progress bar.",
 		}),
-		value: defineStringPropSchema({
+		value: defineNumberProp({
 			default: 0,
 			description:
 				"The current value of the progress bar. If set to `null` the progress bar will be indeterminate.",
