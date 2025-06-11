@@ -69,6 +69,7 @@ type CommandRootStateProps = WithRefProps<
 		vimBindings: boolean;
 		columns: number | null;
 		disablePointerSelection: boolean;
+		disableInitialScroll: boolean;
 		onStateChange?: (state: Readonly<CommandState>) => void;
 	}> &
 		WritableBoxedValues<{
@@ -94,6 +95,7 @@ const defaultState = {
 class CommandRootState {
 	readonly opts: CommandRootStateProps;
 	#updateScheduled = false;
+	#isInitialMount = true;
 	sortAfterTick = false;
 	sortAndFilterAfterTick = false;
 	allItems = new Set<string>();
@@ -130,7 +132,11 @@ class CommandRootState {
 		});
 	}
 
-	setState<K extends keyof CommandState>(key: K, value: CommandState[K], opts?: boolean) {
+	setState<K extends keyof CommandState>(
+		key: K,
+		value: CommandState[K],
+		preventScroll?: boolean
+	) {
 		if (Object.is(this._commandState[key], value)) return;
 
 		this._commandState[key] = value;
@@ -140,11 +146,7 @@ class CommandRootState {
 			this.#filterItems();
 			this.#sort();
 		} else if (key === "value") {
-			// opts is a boolean referring to whether it should NOT be scrolled into view
-			if (!opts) {
-				// Scroll the selected item into view
-				this.#scrollSelectedIntoView();
-			}
+			if (!preventScroll) this.#scrollSelectedIntoView();
 		}
 
 		this.#scheduleUpdate();
@@ -184,9 +186,6 @@ class CommandRootState {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
 			// If no search and no selection yet, select first item
 			this.#selectFirstItem();
-			// if (!this.commandState.value) {
-			// this.#selectFirstItem();
-			// }
 			return;
 		}
 
@@ -283,7 +282,10 @@ class CommandRootState {
 				(item) => item.getAttribute("aria-disabled") !== "true"
 			);
 			const value = item?.getAttribute(COMMAND_VALUE_ATTR);
-			this.setValue(value || "");
+			const shouldPreventScroll =
+				this.#isInitialMount && this.opts.disableInitialScroll.current;
+			this.setValue(value ?? "", shouldPreventScroll);
+			this.#isInitialMount = false;
 		});
 	}
 
@@ -468,12 +470,12 @@ class CommandRootState {
 		if (grid.length === 0) return false;
 
 		for (let r = 0; r < grid.length; r++) {
-			const row = grid[r]!;
+			const row = grid[r];
+			if (row === undefined) continue;
 
 			for (let c = 0; c < row.length; c++) {
-				const column = row[c]!;
-
-				if (column.ref !== item) continue;
+				const column = row[c];
+				if (column === undefined || column.ref !== item) continue;
 
 				return column.firstRowOfGroup;
 			}
@@ -499,11 +501,9 @@ class CommandRootState {
 	 * }
 	 */
 	updateSelectedToIndex(index: number) {
-		const items = this.getValidItems();
-		const item = items[index];
-		if (item) {
-			this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
-		}
+		const item = this.getValidItems()[index];
+		if (!item) return;
+		this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
 	}
 
 	/**
@@ -725,12 +725,12 @@ class CommandRootState {
 		if (grid.length === 0) return null;
 
 		for (let r = 0; r < grid.length; r++) {
-			const row = grid[r]!;
+			const row = grid[r];
+			if (row === undefined) continue;
 
 			for (let c = 0; c < row.length; c++) {
-				const column = row[c]!;
-
-				if (column.ref !== item) continue;
+				const column = row[c];
+				if (column === undefined || column.ref !== item) continue;
 
 				return { columnIndex: c, rowIndex: r };
 			}
@@ -830,17 +830,13 @@ class CommandRootState {
 				// try and find the next highest non-disabled item in the row
 				// if there aren't any non-disabled items we just give up and return null
 				for (let i = row.length - 1; i >= 0; i--) {
-					const item = row[row.length - 1]!;
-
-					// skip disabled items
-					if (itemIsDisabled(item.ref)) continue;
+					const item = row[row.length - 1];
+					if (item === undefined || itemIsDisabled(item.ref)) continue;
 
 					newItem = item.ref;
-
 					break;
 				}
 			}
-
 			break;
 		}
 
@@ -873,16 +869,16 @@ class CommandRootState {
 	#previousRowColumnOffset(e: BitsKeyboardEvent) {
 		const grid = this.itemsGrid;
 		const selected = this.#getSelectedItem();
-		if (!selected) return 0;
+		if (selected === undefined) return 0;
 		const column = this.#getColumn(selected, grid);
-		if (!column) return 0;
+		if (column === null) return 0;
 
 		let newItem: HTMLElement | null = null;
 
 		const skipRows = e.altKey ? 1 : 0;
 
 		// if this is the second row then we need to go to the top when skipping and not in loop mode
-		if (e.altKey && column.rowIndex === 1 && !this.opts.loop.current) {
+		if (e.altKey && column.rowIndex === 1 && this.opts.loop.current === false) {
 			newItem = this.#findNextNonDisabledItemDesc({
 				start: 0,
 				end: 0,
@@ -891,7 +887,7 @@ class CommandRootState {
 			});
 		} else if (column.rowIndex === 0) {
 			// if this is the last row we apply the loop logic
-			if (!this.opts.loop.current) return 0;
+			if (this.opts.loop.current === false) return 0;
 
 			newItem = this.#findNextNonDisabledItemDesc({
 				start: grid.length - 1 - skipRows,
@@ -943,7 +939,8 @@ class CommandRootState {
 		let newItem: HTMLElement | null = null;
 
 		for (let r = start; r >= end; r--) {
-			const row = grid[r]!;
+			const row = grid[r];
+			if (row === undefined) continue;
 
 			// try to get the next column
 			newItem = row[expectedColumnIndex]?.ref ?? null;
@@ -959,17 +956,13 @@ class CommandRootState {
 				// try and find the next highest non-disabled item in the row
 				// if there aren't any non-disabled items we just give up and return null
 				for (let i = row.length - 1; i >= 0; i--) {
-					const item = row[row.length - 1]!;
-
-					// skip disabled items
-					if (itemIsDisabled(item.ref)) continue;
+					const item = row[row.length - 1];
+					if (item === undefined || itemIsDisabled(item.ref)) continue;
 
 					newItem = item.ref;
-
 					break;
 				}
 			}
-
 			break;
 		}
 
@@ -1266,8 +1259,8 @@ class CommandInputState {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
 			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${cssesc(this.root.opts.value.current)}"]`
 		);
-		if (!item) return;
-		return item?.getAttribute("id") ?? undefined;
+		if (item === undefined || item === null) return;
+		return item.getAttribute("id") ?? undefined;
 	});
 
 	constructor(opts: CommandInputStateProps, root: CommandRootState) {
@@ -1546,7 +1539,7 @@ class CommandViewportState {
 		$effect(() => {
 			const node = this.opts.ref.current;
 			const listNode = this.list.opts.ref.current;
-			if (!node || !listNode) return;
+			if (node === null || listNode === null) return;
 			let aF: number;
 
 			const observer = new ResizeObserver(() => {

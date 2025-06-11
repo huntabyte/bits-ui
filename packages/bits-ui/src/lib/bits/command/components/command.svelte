@@ -21,6 +21,7 @@
 		label = "",
 		vimBindings = true,
 		disablePointerSelection = false,
+		disableInitialScroll = false,
 		columns = null,
 		children,
 		child,
@@ -47,6 +48,7 @@
 		),
 		vimBindings: box.with(() => vimBindings),
 		disablePointerSelection: box.with(() => disablePointerSelection),
+		disableInitialScroll: box.with(() => disableInitialScroll),
 		onStateChange: box.with(() => onStateChange),
 		columns: box.with(() => columns),
 	});

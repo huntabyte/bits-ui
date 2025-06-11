@@ -142,6 +142,7 @@
 </script>
 
 <Command.Root
+	disableInitialScroll={true}
 	columns={currentView.columns}
 	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 >
