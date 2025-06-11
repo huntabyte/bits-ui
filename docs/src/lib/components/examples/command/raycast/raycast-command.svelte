@@ -91,7 +91,7 @@
 		</Command.List>
 
 		<div data-command-raycast-footer="">
-			{#if $mode === "dark"}
+			{#if mode.current === "dark"}
 				<RaycastDarkIcon />
 			{:else}
 				<RaycastLightIcon />
