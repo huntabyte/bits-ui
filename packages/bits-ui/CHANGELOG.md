@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.6.0
+
+### Minor Changes
+
+-   feat(Command): add `disableInitialScroll` prop to `Command.Root` to prevent undesired scrolling on initial mount ([#1548](https://github.com/huntabyte/bits-ui/pull/1548))
+
+-   feat(command): Add `columns` prop for grid functionality ([#1548](https://github.com/huntabyte/bits-ui/pull/1548))
+
 ## 2.5.0
 
 ### Minor Changes
