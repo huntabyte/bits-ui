@@ -7,69 +7,63 @@ import type {
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
+import { OpenClosedProp } from "./extended-types/shared/index.js";
 import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
-	createApiSchema,
-	createBooleanProp,
-	createCSSVarSchema,
-	createDataAttrSchema,
-	createEnumDataAttr,
-	createFunctionProp,
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeProp,
+	openProp,
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
-import * as C from "$lib/content/constants.js";
+import {
+	defineComponentApiSchema,
+	defineCSSVarSchema,
+	defineEnumDataAttr,
+	definePropSchema,
+	defineStringDataAttr,
+} from "../utils.js";
 
-const openClosedDataAttr = createEnumDataAttr({
+const openClosedDataAttr = defineEnumDataAttr({
 	name: "state",
 	description: "Whether the popover is open or closed.",
 	options: ["open", "closed"],
-	definition: OpenClosedProp,
+	value: OpenClosedProp,
 });
 
-export const root = createApiSchema<PopoverRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<PopoverRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to manage the state of the state of the popover.",
 	props: {
-		open: createBooleanProp({
-			default: C.FALSE,
-			description: "The open state of the link popover component.",
-			bindable: true,
-		}),
-		onOpenChange: createFunctionProp({
-			definition: OnOpenChangeProp,
-			description: "A callback that fires when the open state changes.",
-			stringDefinition: "(open: boolean) => void",
-		}),
+		open: openProp,
+		onOpenChange: onOpenChangeProp,
 		children: childrenSnippet(),
 	},
 });
 
-export const trigger = createApiSchema<PopoverTriggerPropsWithoutHTML>({
+export const trigger = defineComponentApiSchema<PopoverTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		openClosedDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "popover-trigger",
 			description: "Present on the trigger element.",
 		}),
 	],
 });
 
-export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
+export const content = defineComponentApiSchema<PopoverContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The contents of the popover which are displayed when the popover is open.",
 	props: {
@@ -78,46 +72,49 @@ export const content = createApiSchema<PopoverContentPropsWithoutHTML>({
 		...escapeLayerProps,
 		...focusScopeProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
-		preventScroll: {
+		preventScroll: definePropSchema({
 			...preventScrollProp,
-			default: C.FALSE,
-		},
+			default: {
+				_type: "string",
+				value: "false",
+			},
+		}),
 		forceMount: forceMountProp,
 		dir: dirProp,
 		...withChildProps({ elType: "HTMLDivElement", childDef: FloatingContentChildSnippetProps }),
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "popover-content",
 			description: "Present on the content element.",
 		}),
 	],
 	cssVars: [
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-popover-content-transform-origin",
 			description: "The transform origin of the popover content element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-popover-content-available-width",
 			description: "The available width of the popover content element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-popover-content-available-height",
 			description: "The available height of the popover content element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-popover-anchor-width",
 			description: "The width of the popover trigger element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-popover-anchor-height",
 			description: "The height of the popover trigger element.",
 		}),
 	],
 });
 
-export const contentStatic = createApiSchema<PopoverContentStaticPropsWithoutHTML>({
+export const contentStatic = defineComponentApiSchema<PopoverContentStaticPropsWithoutHTML>({
 	title: "ContentStatic",
 	description:
 		"The contents of the popover which are displayed when the popover is open. (Static/No Floating UI)",
@@ -128,7 +125,10 @@ export const contentStatic = createApiSchema<PopoverContentStaticPropsWithoutHTM
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: {
 			...preventScrollProp,
-			default: C.FALSE,
+			default: {
+				_type: "string",
+				value: "false",
+			},
 		},
 		forceMount: forceMountProp,
 		dir: dirProp,
@@ -136,43 +136,43 @@ export const contentStatic = createApiSchema<PopoverContentStaticPropsWithoutHTM
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "popover-content",
 			description: "Present on the content element.",
 		}),
 	],
 });
 
-export const close = createApiSchema<PopoverClosePropsWithoutHTML>({
+export const close = defineComponentApiSchema<PopoverClosePropsWithoutHTML>({
 	title: "Close",
 	description:
 		"A button which closes the popover when pressed and is typically placed in the content.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "popover-close",
 			description: "Present on the close button.",
 		}),
 	],
 });
 
-export const arrow = createApiSchema<PopoverArrowPropsWithoutHTML>({
+export const arrow = defineComponentApiSchema<PopoverArrowPropsWithoutHTML>({
 	title: "Arrow",
 	description: "An optional arrow element which points to the trigger when the popover is open.",
 	props: arrowProps,
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "arrow",
 			description: "Present on the arrow element.",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "popover-arrow",
 			description: "Present on the arrow element.",
 		}),
 	],
 });
 
-export const portal = createApiSchema<PopoverPortalPropsWithoutHTML>({
+export const portal = defineComponentApiSchema<PopoverPortalPropsWithoutHTML>({
 	title: "Portal",
 	description:
 		"When used, will render the popover content into the body or custom `to` element when open",

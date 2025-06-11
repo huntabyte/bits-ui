@@ -40,14 +40,16 @@ import {
 	preventScrollProp,
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
-import * as C from "$lib/content/constants.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
 	defineComponentPropSchema,
+	defineCSSVarSchema,
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
+	definePropSchema,
+	defineStringDataAttr,
 	defineStringProp,
 	defineUnionProp,
 } from "../utils.js";
@@ -165,29 +167,29 @@ export const content = defineComponentApiSchema<ComboboxContentPropsWithoutHTML>
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-content",
 			description: "Present on the content element.",
 		}),
 	],
 	cssVars: [
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-combobox-content-transform-origin",
 			description: "The transform origin of the combobox content element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-combobox-content-available-width",
 			description: "The available width of the combobox content element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-combobox-content-available-height",
 			description: "The available height of the combobox content element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-combobox-anchor-width",
 			description: "The width of the combobox trigger element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-combobox-anchor-height",
 			description: "The height of the combobox trigger element.",
 		}),
@@ -204,8 +206,8 @@ export const contentStatic = defineComponentApiSchema<ComboboxContentStaticProps
 		preventScroll: preventScrollProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		dir: dirProp,
-		loop: createBooleanProp({
-			default: C.FALSE,
+		loop: defineBooleanProp({
+			default: false,
 			description:
 				"Whether or not the combobox should loop through items when reaching the end.",
 		}),
@@ -218,7 +220,7 @@ export const contentStatic = defineComponentApiSchema<ComboboxContentStaticProps
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-content",
 			description: "Present on the content element.",
 		}),
@@ -229,24 +231,24 @@ export const item = defineComponentApiSchema<ComboboxItemPropsWithoutHTML>({
 	title: "Item",
 	description: "A combobox item, which must be a child of the `Combobox.Content` component.",
 	props: {
-		value: createStringProp({
+		value: defineStringProp({
 			description: "The value of the item.",
 			required: true,
 		}),
-		label: createStringProp({
+		label: defineStringProp({
 			description: "The label of the item, which is what the list will be filtered by.",
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description:
 				"Whether or not the combobox item is disabled. This will prevent interaction/selection.",
 		}),
-		onHighlight: createFunctionProp({
+		onHighlight: defineFunctionProp({
 			definition: NoopProp,
 			description: "A callback that is fired when the item is highlighted.",
 			stringDefinition: "() => void",
 		}),
-		onUnhighlight: createFunctionProp({
+		onUnhighlight: defineFunctionProp({
 			definition: NoopProp,
 			description: "A callback that is fired when the item is unhighlighted.",
 			stringDefinition: "() => void",
@@ -254,30 +256,30 @@ export const item = defineComponentApiSchema<ComboboxItemPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "value",
 			description: "The value of the combobox item.",
 			value: "string",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "label",
 			description: "The label of the combobox item.",
 			value: "string",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "disabled",
 			description: "Present when the item is disabled.",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "highlighted",
 			description:
 				"Present when the item is highlighted, which is either via keyboard navigation of the menu or hover.",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "selected",
 			description: "Present when the item is selected.",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-item",
 			description: "Present on the item element.",
 		}),
@@ -289,23 +291,23 @@ export const input = defineComponentApiSchema<ComboboxInputPropsWithoutHTML>({
 	description:
 		"A representation of the combobox input element, which is typically displayed in the content.",
 	props: {
-		defaultValue: createStringProp({
+		defaultValue: defineStringProp({
 			description:
 				"The default value of the input. This is not a reactive prop and is only used to populate the input when the combobox is first mounted if there is already a value set.",
 		}),
-		clearOnDeselect: createBooleanProp({
+		clearOnDeselect: defineBooleanProp({
 			description: "Whether to clear the input when the last item is deselected.",
-			default: C.FALSE,
+			default: false,
 		}),
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "disabled",
 			description: "Present when the combobox is disabled.",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-input",
 			description: "Present on the input element.",
 		}),
@@ -318,11 +320,11 @@ export const trigger = defineComponentApiSchema<ComboboxTriggerPropsWithoutHTML>
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "disabled",
 			description: "Present when the combobox is disabled.",
 		}),
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-trigger",
 			description: "Present on the trigger element.",
 		}),
@@ -334,7 +336,7 @@ export const group = defineComponentApiSchema<ComboboxGroupPropsWithoutHTML>({
 	description: "A group of related combobox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-group",
 			description: "Present on the group element.",
 		}),
@@ -347,7 +349,7 @@ export const groupHeading = defineComponentApiSchema<ComboboxGroupHeadingPropsWi
 		"A heading for the parent combobox group. This is used to describe a group of related combobox items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-group-heading",
 			description: "Present on the group heading element.",
 		}),
@@ -359,7 +361,7 @@ export const arrow = defineComponentApiSchema<ComboboxArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the content when open.",
 	props: arrowProps,
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "arrow",
 			description: "Present on the arrow element.",
 		}),
@@ -374,12 +376,17 @@ export const portal = defineComponentApiSchema<ComboboxPortalPropsWithoutHTML>({
 });
 
 const scrollButtonProps = {
-	delay: createFunctionProp({
-		definition: DelayProp,
-		description:
-			"Controls the initial delay (tick 0) and delay between auto-scrolls in milliseconds.",
-		stringDefinition: "(tick: number) => number",
-		default: "() => 50",
+	delay: definePropSchema({
+		...defineFunctionProp({
+			definition: DelayProp,
+			description:
+				"Controls the initial delay (tick 0) and delay between auto-scrolls in milliseconds.",
+			stringDefinition: "(tick: number) => number",
+		}),
+		default: {
+			_type: "string",
+			value: "() => 50",
+		},
 	}),
 	...withChildProps({ elType: "HTMLDivElement" }),
 };
@@ -390,7 +397,7 @@ export const scrollUpButton = defineComponentApiSchema<SelectScrollUpButtonProps
 		"An optional scroll up button element to improve the scroll experience within the combobox. Should be used in conjunction with the `Combobox.Viewport` component.",
 	props: scrollButtonProps,
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-scroll-up-button",
 			description: "Present on the scroll up button element.",
 		}),
@@ -403,7 +410,7 @@ export const scrollDownButton = defineComponentApiSchema<SelectScrollDownButtonP
 		"An optional scroll down button element to improve the scroll experience within the combobox. Should be used in conjunction with the `Combobox.Viewport` component.",
 	props: scrollButtonProps,
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-scroll-down-button",
 			description: "Present on the scroll down button element.",
 		}),
@@ -416,7 +423,7 @@ export const viewport = defineComponentApiSchema<ComboboxViewportPropsWithoutHTM
 		"An optional element to track the scroll position of the combobox for rendering the scroll up/down buttons.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "combobox-viewport",
 			description: "Present on the viewport element.",
 		}),

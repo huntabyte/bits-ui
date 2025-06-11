@@ -64,3 +64,4 @@ export { default as CalendarMonthSelectFormatProp } from "./calendar-month-selec
 export { default as CalendarYearSelectFormatProp } from "./calendar-year-select-format-prop.md";
 export { default as CalendarMonthFormatProp } from "./calendar-month-format-prop.md";
 export { default as CalendarYearFormatProp } from "./calendar-year-format-prop.md";
+export { default as TimeSegmentDataAttr } from "./time-segment-data-attr.md";

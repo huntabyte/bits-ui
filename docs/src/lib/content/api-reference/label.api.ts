@@ -1,16 +1,13 @@
 import type { LabelRootPropsWithoutHTML } from "bits-ui";
-import {
-	createApiSchema,
-	createDataAttrSchema,
-	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+import { withChildProps } from "$lib/content/api-reference/shared.js";
+import { defineComponentApiSchema, defineStringDataAttr } from "../utils.js";
 
-export const root = createApiSchema<LabelRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<LabelRootPropsWithoutHTML>({
 	title: "Root",
 	description: "An enhanced label component that can be used with any input.",
 	props: withChildProps({ elType: "HTMLLabelElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineStringDataAttr({
 			name: "label-root",
 			description: "Present on the root element.",
 		}),

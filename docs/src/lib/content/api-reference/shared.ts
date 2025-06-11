@@ -1,12 +1,15 @@
 import {
 	ChildDefaultSnippetProps,
+	DateOnInvalidProp,
 	DateOnRangeChangeProp,
 	DateRangeProp,
+	DateValidateProp,
 	DateValueProp,
 	DirProp,
 	EscapeKeydownBehaviorProp,
 	InteractOutsideBehaviorProp,
 	OnAutoFocusProp,
+	OnDateValueChangeProp,
 	OnEscapeKeydownProp,
 	OnFocusOutsideProp,
 	OnInteractOutsideProp,
@@ -42,6 +45,10 @@ import {
 	defineUnionProp,
 } from "../utils.js";
 import { PaginationPageItemProp } from "./extended-types/pagination/index.js";
+import {
+	CheckboxRootOnCheckedChangeProp,
+	CheckboxRootOnIndeterminateChangeProp,
+} from "./extended-types/checkbox/index.js";
 
 type ElementKind =
 	| "HTMLDivElement"
@@ -459,4 +466,46 @@ export const onPlaceholderChangeProp = defineFunctionProp({
 	definition: OnPlaceholderChangeProp,
 	description: "A function that is called when the placeholder date changes.",
 	stringDefinition: "(date: DateValue) => void",
+});
+
+export const onDateValueChangeProp = defineFunctionProp({
+	definition: OnDateValueChangeProp,
+	description: "A function that is called when the date value changes.",
+	stringDefinition: "(date: DateValue) => void",
+});
+
+export const dateValidateProp = defineFunctionProp({
+	definition: DateValidateProp,
+	description: "A function that returns whether or not a date is valid.",
+	stringDefinition: "(date: DateValue) => string[] | string | void",
+});
+
+export const dateOnInvalidProp = defineFunctionProp({
+	definition: DateOnInvalidProp,
+	description: "A callback fired when the value is invalid.",
+	stringDefinition: "(reason: 'min' | 'max' | 'custom', msg?: string | string[]) => void",
+});
+
+export const onCheckedChangeProp = defineFunctionProp({
+	definition: CheckboxRootOnCheckedChangeProp,
+	description: "A callback that is fired when the checked state changes.",
+	stringDefinition: "(checked: boolean) => void",
+});
+
+export const onIndeterminateChangeProp = defineFunctionProp({
+	definition: CheckboxRootOnIndeterminateChangeProp,
+	description: "A callback that is fired when the indeterminate state changes.",
+	stringDefinition: "(indeterminate: boolean) => void",
+});
+
+export const checkedProp = defineBooleanProp({
+	description: "The checked state of the checkbox.",
+	bindable: true,
+	default: false,
+});
+
+export const indeterminateProp = defineBooleanProp({
+	description: "The indeterminate state of the checkbox.",
+	bindable: true,
+	default: false,
 });

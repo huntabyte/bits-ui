@@ -56,13 +56,13 @@ export function defineComponentApiSchema<T>(
 		cssVars?: CSSVarSchema[];
 		dataAttributes?: DataAttrSchema[];
 	}
-) {
+): ComponentAPISchema<T> {
 	return defineApiSchema({
 		...schema,
 		type: "component",
 		cssVars: schema.cssVars ?? [],
 		dataAttributes: schema.dataAttributes ?? [],
-	});
+	}) as ComponentAPISchema<T>;
 }
 
 export function defineUtilityApiSchema<T>(schema: Omit<UtilityAPISchema<T>, "type">) {
