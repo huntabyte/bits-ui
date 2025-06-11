@@ -13,7 +13,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -60,7 +60,7 @@ const root = defineComponentApiSchema<TabsRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tabs-root",
 			description: "Present on the root element.",
 		}),
@@ -78,7 +78,7 @@ const list = defineComponentApiSchema<TabsListPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tabs-list",
 			description: "Present on the list element.",
 		}),
@@ -106,7 +106,7 @@ const trigger = defineComponentApiSchema<TabsTriggerPropsWithoutHTML>({
 			options: ["active", "inactive"],
 			value: TabsTriggerStateProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the tab this trigger represents.",
 		}),
@@ -116,11 +116,11 @@ const trigger = defineComponentApiSchema<TabsTriggerPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the tab trigger is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tabs-trigger",
 			description: "Present on the trigger elements.",
 		}),
@@ -138,7 +138,7 @@ const content = defineComponentApiSchema<TabsContentPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tabs-content",
 			description: "Present on the content elements.",
 		}),

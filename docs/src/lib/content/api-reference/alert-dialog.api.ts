@@ -31,7 +31,7 @@ import {
 import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineUnionProp,
 } from "../utils.js";
 
@@ -58,7 +58,7 @@ const action = defineComponentApiSchema<AlertDialogActionPropsWithoutHTML>({
 		"The button responsible for taking an action within the alert dialog. This button does not close the dialog out of the box. See the [Form Submission](#form-submission) documentation for more information.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "alert-dialog-action",
 			description: "Present on the action element.",
 		}),
@@ -70,7 +70,7 @@ const cancel = defineComponentApiSchema<AlertDialogCancelPropsWithoutHTML>({
 	description: "A button used to close the alert dialog without taking an action.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "alert-dialog-cancel",
 			description: "Present on the cancel element.",
 		}),
@@ -95,7 +95,7 @@ const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "alert-dialog-content",
 			description: "Present on the content element.",
 		}),
@@ -116,7 +116,7 @@ const title = defineComponentApiSchema<AlertDialogTitlePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "alert-dialog-title",
 			description: "Present on the title element.",
 		}),
@@ -128,7 +128,7 @@ const description = defineComponentApiSchema<AlertDialogDescriptionPropsWithoutH
 	description: "An accessible description for the alert dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "alert-dialog-description",
 			description: "Present on the description element.",
 		}),
@@ -141,7 +141,7 @@ const trigger = defineComponentApiSchema<AlertDialogTriggerPropsWithoutHTML>({
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "alert-dialog-trigger",
 			description: "Present on the trigger element.",
 		}),
@@ -160,7 +160,7 @@ const overlay = defineComponentApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "alert-dialog-overlay",
 			description: "Present on the overlay element.",
 		}),

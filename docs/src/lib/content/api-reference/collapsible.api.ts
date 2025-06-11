@@ -15,7 +15,7 @@ import {
 	defineCSSVarSchema,
 	defineEnumDataAttr,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<CollapsibleRootPropsWithoutHTML>({
@@ -48,11 +48,11 @@ export const root = defineComponentApiSchema<CollapsibleRootPropsWithoutHTML>({
 			description: "The collapsible's open state.",
 			value: OpenClosedProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the collapsible is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "collapsible-root",
 			description: "Present on the root element.",
 		}),
@@ -70,11 +70,11 @@ export const trigger = defineComponentApiSchema<CollapsibleTriggerPropsWithoutHT
 			description: "The collapsible's open state.",
 			value: OpenClosedProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the collapsible or this trigger is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "collapsible-trigger",
 			description: "Present on the trigger element.",
 		}),
@@ -99,11 +99,11 @@ export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHT
 			description: "The collapsible's open state.",
 			value: OpenClosedProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the collapsible is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "collapsible-content",
 			description: "Present on the content element.",
 		}),

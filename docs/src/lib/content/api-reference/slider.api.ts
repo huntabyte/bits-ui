@@ -29,7 +29,7 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineUnionProp,
 } from "../utils.js";
 
@@ -42,7 +42,7 @@ const orientationDataAttr = defineEnumDataAttr({
 
 const sharedDataAttrs = [
 	orientationDataAttr,
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "disabled",
 		description: "Present when the slider is disabled.",
 	}),
@@ -124,7 +124,7 @@ const root = defineComponentApiSchema<SliderRootPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		...sharedDataAttrs,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "slider-root",
 			description: "Present on the root element.",
 		}),
@@ -147,15 +147,15 @@ const thumb = defineComponentApiSchema<SliderThumbPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		orientationDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when either the thumb or the slider is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "active",
 			description: "Present when the thumb is active/grabbed.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "slider-thumb",
 			description: "Present on the thumb elements.",
 		}),
@@ -168,7 +168,7 @@ const range = defineComponentApiSchema<SliderRangePropsWithoutHTML>({
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
 		...sharedDataAttrs,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "slider-range",
 			description: "Present on the range elements.",
 		}),
@@ -188,20 +188,20 @@ const tick = defineComponentApiSchema<SliderTickPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		...sharedDataAttrs,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "bounded",
 			description:
 				"Present when the tick is bounded (i.e. the tick is less than or equal to the current value).",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value the tick represents.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "selected",
 			description: "Present when the tick is the same value as one of the thumbs.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "slider-tick",
 			description: "Present on the tick elements.",
 		}),
@@ -232,21 +232,21 @@ const tickLabel = defineComponentApiSchema<SliderTickLabelPropsWithoutHTML>({
 			options: ["top", "bottom", "left", "right"],
 			value: SliderTickLabelPositionProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "selected",
 			description:
 				"Present when the tick this label represents is the same value as one of the thumbs.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the tick this label represents.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "bounded",
 			description:
 				"Present when the tick this label represents is bounded (i.e. the tick is less than or equal to the current value or within the range of a multiple slider).",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "slider-tick-label",
 			description: "Present on the tick label elements.",
 		}),
@@ -271,7 +271,7 @@ const thumbLabel = defineComponentApiSchema<SliderThumbLabelPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		orientationDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description:
 				"Present when either the thumb this label represents or the slider is disabled.",
@@ -282,15 +282,15 @@ const thumbLabel = defineComponentApiSchema<SliderThumbLabelPropsWithoutHTML>({
 			options: ["top", "bottom", "left", "right"],
 			value: SliderTickLabelPositionProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "active",
 			description: "Present when the thumb this label represents is active.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the thumb this label represents.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "slider-thumb-label",
 			description: "Present on the thumb label elements.",
 		}),

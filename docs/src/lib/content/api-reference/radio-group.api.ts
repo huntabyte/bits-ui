@@ -8,7 +8,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -61,7 +61,7 @@ export const root = defineComponentApiSchema<RadioGroupRootPropsWithoutHTML>({
 			options: ["vertical", "horizontal"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "radio-group-root",
 			description: "Present on the root element.",
 		}),
@@ -84,11 +84,11 @@ export const item = defineComponentApiSchema<RadioGroupItemPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the radio item is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the radio item.",
 		}),
@@ -98,11 +98,11 @@ export const item = defineComponentApiSchema<RadioGroupItemPropsWithoutHTML>({
 			options: ["checked", "unchecked"],
 			value: RadioGroupStateAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "orientation",
 			description: "The orientation of the parent radio group.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "radio-group-item",
 			description: "Present on the radio item element.",
 		}),

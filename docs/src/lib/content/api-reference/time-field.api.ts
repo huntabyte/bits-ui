@@ -27,7 +27,7 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	definePropSchema,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -139,15 +139,15 @@ export const input = defineComponentApiSchema<TimeFieldInputPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "time-field-input",
 			description: "Present on the element.",
 		}),
@@ -168,15 +168,15 @@ export const segment = defineComponentApiSchema<TimeFieldSegmentPropsWithoutHTML
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the element when the field or segment is readonly",
 		}),
@@ -186,7 +186,7 @@ export const segment = defineComponentApiSchema<TimeFieldSegmentPropsWithoutHTML
 			options: ["hour", "minute", "second", "dayPeriod", "timeZoneName", "literal"],
 			value: TimeSegmentDataAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "time-field-segment",
 			description: "Present on the element.",
 		}),
@@ -198,15 +198,15 @@ export const label = defineComponentApiSchema<TimeFieldLabelPropsWithoutHTML>({
 	description: "The label for the time field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "time-field-label",
 			description: "Present on the element.",
 		}),

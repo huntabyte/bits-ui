@@ -29,7 +29,7 @@ import {
 	defineBooleanProp,
 	defineComponentApiSchema,
 	defineEnumProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -80,19 +80,19 @@ const root = defineComponentApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "calendar-root",
 			description: "Present on the root element.",
 		}),
@@ -103,19 +103,19 @@ const calendar = defineComponentApiSchema<DateRangePickerCalendarPropsWithoutHTM
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "calendar-root",
 			description: "Present on the root element.",
 		}),
@@ -139,15 +139,15 @@ const input = defineComponentApiSchema<DateRangePickerInputPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "date-field-input",
 			description: "Present on the element.",
 		}),

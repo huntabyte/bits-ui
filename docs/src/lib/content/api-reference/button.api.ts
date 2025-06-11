@@ -4,7 +4,7 @@ import type { HTMLButtonAttributes } from "svelte/elements";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -28,7 +28,7 @@ export const root = defineComponentApiSchema<
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "button-root",
 			description: "Present on the button element.",
 		}),

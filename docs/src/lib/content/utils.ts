@@ -1,15 +1,17 @@
 import type { Component } from "svelte";
+import type { PropDefault } from "./types.js";
 import type {
 	APISchema,
 	ComponentAPISchema,
 	CSSVarSchema,
 	DataAttrEnumSchema,
 	DataAttrSchema,
-	DataAttrStringSchema,
+	DataAttrSimpleSchema,
+	PropDefaultComplex,
 	PropSchema,
-	PropSchemaComponent,
-	PropSchemaString,
-	PropTypeComponent,
+	PropSchemaComplex,
+	PropSchemaSimple,
+	PropTypeComplex,
 	UtilityAPISchema,
 } from "./types.js";
 
@@ -87,9 +89,9 @@ type SharedPropOpts = Pick<PropSchema, "description"> & {
 	bindable?: boolean;
 };
 
-function componentType(opts: Omit<PropTypeComponent, "_type">): PropTypeComponent {
+function componentType(opts: Omit<PropTypeComplex, "variant">): PropTypeComplex {
 	return {
-		_type: "component",
+		variant: "complex",
 		type: opts.type,
 		definition: opts.definition,
 		stringDefinition: escape(opts.stringDefinition),
@@ -102,7 +104,7 @@ type DefineUnionPropOpts = SharedPropOpts & {
 	default?: string;
 };
 
-type DefineComponentPropOpts = Omit<PropSchemaComponent, "type" | "required" | "bindable"> & {
+type DefineComponentPropOpts = Omit<PropSchemaComplex, "type" | "required" | "bindable"> & {
 	type: string;
 	definition: Component;
 	stringDefinition: string;
@@ -122,8 +124,8 @@ export function defineComponentPropSchema(_opts: DefineComponentPropOpts) {
 	});
 }
 
-type DefineStringPropSchemaOpts = Omit<
-	PropSchemaString,
+type DefineSimplePropSchemaOpts = Omit<
+	PropSchemaSimple,
 	"type" | "default" | "required" | "bindable"
 > & {
 	type: string;
@@ -134,18 +136,18 @@ type DefineStringPropSchemaOpts = Omit<
 
 const defaults = { required: false, bindable: false };
 
-export function defineStringPropSchema(_opts: DefineStringPropSchemaOpts) {
+export function defineSimplePropSchema(_opts: DefineSimplePropSchemaOpts) {
 	const opts = { ...defaults, ..._opts };
 	return definePropSchema({
 		...opts,
 		default: opts.default
 			? {
-					_type: "string",
+					variant: "simple",
 					value: `${opts.default}`,
 				}
 			: undefined,
 		type: {
-			_type: "string",
+			variant: "simple",
 			type: opts.type,
 		},
 	});
@@ -160,7 +162,7 @@ export function defineUnionProp(_opts: DefineUnionPropOpts): PropSchema {
 		stringDefinition: union(...opts.options),
 		default: opts.default
 			? {
-					_type: "string",
+					variant: "simple",
 					value: opts.default,
 				}
 			: undefined,
@@ -177,18 +179,34 @@ export function defineEnumProp(opts: DefineEnumPropOpts) {
 		stringDefinition: enums(...opts.options),
 		default: opts.default
 			? {
-					_type: "string",
+					variant: "simple",
 					value: opts.default,
 				}
 			: undefined,
 	});
 }
 
-type OptionalComponentDefault = { default?: never } | { default: Component; stringDefault: string };
+type StringOrComplexDefault = string | PropDefaultComplex;
+
+function getPropDefault(defaultProp?: StringOrComplexDefault): PropDefault | undefined {
+	if (defaultProp === undefined) return undefined;
+	if (typeof defaultProp === "string") {
+		return {
+			variant: "simple",
+			value: defaultProp,
+		};
+	}
+	return {
+		variant: "complex" as const,
+		value: defaultProp.value,
+		stringValue: escape(defaultProp.stringValue),
+	};
+}
 
 type DefineObjectPropOpts = SharedPropOpts &
-	Pick<PropTypeComponent, "definition" | "stringDefinition"> &
-	OptionalComponentDefault;
+	Pick<PropTypeComplex, "definition" | "stringDefinition"> & {
+		default?: StringOrComplexDefault;
+	};
 
 export function defineObjectProp(opts: DefineObjectPropOpts) {
 	return defineComponentPropSchema({
@@ -196,17 +214,14 @@ export function defineObjectProp(opts: DefineObjectPropOpts) {
 		type: "object",
 		definition: opts.definition,
 		stringDefinition: opts.stringDefinition,
-		default: opts.default
-			? {
-					_type: "component",
-					value: opts.default,
-					stringValue: escape(opts.stringDefault),
-				}
-			: undefined,
+		default: getPropDefault(opts.default),
 	});
 }
 
-type DefineFunctionPropOpts = DefineObjectPropOpts;
+type DefineFunctionPropOpts = SharedPropOpts &
+	Pick<PropTypeComplex, "definition" | "stringDefinition"> & {
+		default?: StringOrComplexDefault;
+	};
 
 export function defineFunctionProp(opts: DefineFunctionPropOpts) {
 	return defineComponentPropSchema({
@@ -214,13 +229,7 @@ export function defineFunctionProp(opts: DefineFunctionPropOpts) {
 		type: "function",
 		definition: opts.definition,
 		stringDefinition: opts.stringDefinition,
-		default: opts.default
-			? {
-					_type: "component",
-					value: opts.default,
-					stringValue: escape(opts.stringDefault),
-				}
-			: undefined,
+		default: getPropDefault(opts.default),
 	});
 }
 
@@ -230,7 +239,7 @@ export type DefineBooleanPropOpts = SharedPropOpts & {
 
 export function defineBooleanProp(_opts: DefineBooleanPropOpts) {
 	const opts = { ...defaults, ..._opts };
-	return defineStringPropSchema({
+	return defineSimplePropSchema({
 		type: "boolean",
 		...opts,
 		default: opts.default,
@@ -243,7 +252,7 @@ export type DefineStringPropOpts = SharedPropOpts & {
 
 export function defineStringProp(_opts: DefineStringPropOpts) {
 	const opts = { ...defaults, ..._opts };
-	return defineStringPropSchema({
+	return defineSimplePropSchema({
 		type: "string",
 		...opts,
 		default: opts.default,
@@ -256,31 +265,31 @@ export type DefineNumberPropOpts = SharedPropOpts & {
 
 export function defineNumberProp(_opts: DefineNumberPropOpts) {
 	const opts = { ...defaults, ..._opts };
-	return defineStringPropSchema({
+	return defineSimplePropSchema({
 		type: "number",
 		...opts,
 		default: opts.default,
 	});
 }
 
-type DefineEnumDataAttrOpts = Omit<DataAttrEnumSchema, "_type" | "stringValue"> & {
+type DefineEnumDataAttrOpts = Omit<DataAttrEnumSchema, "variant" | "stringValue"> & {
 	options: string[];
 };
 
 export function defineEnumDataAttr(opts: DefineEnumDataAttrOpts) {
 	const { options: enumOptions, ...rest } = opts;
 	return defineDataAttrSchema({
-		_type: "enum",
+		variant: "enum",
 		stringValue: enums(...enumOptions),
 		...rest,
 	});
 }
 
-export function defineStringDataAttr(
-	opts: Omit<DataAttrStringSchema, "_type" | "value"> & { value?: string }
+export function defineSimpleDataAttr(
+	opts: Omit<DataAttrSimpleSchema, "variant" | "value"> & { value?: string }
 ) {
 	return defineDataAttrSchema({
-		_type: "string",
+		variant: "simple",
 		value: opts.value ?? "''",
 		...opts,
 	});

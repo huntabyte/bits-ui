@@ -6,7 +6,7 @@ import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
 	defineEnumProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<SeparatorRootPropsWithoutHTML>({
@@ -33,7 +33,7 @@ export const root = defineComponentApiSchema<SeparatorRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "separator-root",
 			description: "Present on the root element.",
 		}),

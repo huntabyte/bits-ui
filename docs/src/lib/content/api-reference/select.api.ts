@@ -4,6 +4,7 @@ import {
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentCSSVars,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
@@ -43,13 +44,12 @@ import {
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
-	defineCSSVarSchema,
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
 	defineObjectProp,
 	definePropSchema,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
 } from "../utils.js";
@@ -137,13 +137,13 @@ export const content = defineComponentApiSchema<SelectContentPropsWithoutHTML>({
 				"Whether or not the select should loop through items when reaching the end.",
 		}),
 		forceMount: forceMountProp,
-		preventScroll: {
+		preventScroll: definePropSchema({
 			...preventScrollProp,
 			default: {
-				_type: "string",
+				variant: "simple",
 				value: "false",
 			},
-		},
+		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
 			childrenDef: OpenChildrenSnippetProps,
@@ -152,33 +152,12 @@ export const content = defineComponentApiSchema<SelectContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-content",
 			description: "Present on the content element.",
 		}),
 	],
-	cssVars: [
-		defineCSSVarSchema({
-			name: "--bits-select-content-transform-origin",
-			description: "The transform origin of the select content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-select-content-available-width",
-			description: "The available width of the select content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-select-content-available-height",
-			description: "The available height of the select content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-select-anchor-width",
-			description: "The width of the select trigger element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-select-anchor-height",
-			description: "The height of the select trigger element.",
-		}),
-	],
+	cssVars: floatingContentCSSVars("select"),
 });
 
 export const contentStatic = defineComponentApiSchema<SelectContentStaticPropsWithoutHTML>({
@@ -205,7 +184,7 @@ export const contentStatic = defineComponentApiSchema<SelectContentStaticPropsWi
 	},
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-content",
 			description: "Present on the content element.",
 		}),
@@ -242,30 +221,30 @@ export const item = defineComponentApiSchema<SelectItemPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the select item.",
 			value: "string",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "label",
 			description: "The label of the select item.",
 			value: "string",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the item is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "highlighted",
 			description:
 				"Present when the item is highlighted, which is either via keyboard navigation of the menu or hover.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "selected",
 			description: "Present when the item is selected.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-item",
 			description: "Present on the item element.",
 		}),
@@ -278,15 +257,15 @@ export const trigger = defineComponentApiSchema<SelectTriggerPropsWithoutHTML>({
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "placeholder",
 			description: "Present when the select does not have a value.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the select is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-trigger",
 			description: "Present on the trigger element.",
 		}),
@@ -299,7 +278,7 @@ export const viewport = defineComponentApiSchema<SelectViewportPropsWithoutHTML>
 		"An optional element to track the scroll position of the select for rendering the scroll up/down buttons.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-viewport",
 			description: "Present on the viewport element.",
 		}),
@@ -315,7 +294,7 @@ const scrollButtonProps = {
 			stringDefinition: "(tick: number) => number",
 		}),
 		default: {
-			_type: "string",
+			variant: "simple",
 			value: "() => 50",
 		},
 	}),
@@ -328,7 +307,7 @@ export const scrollUpButton = defineComponentApiSchema<SelectScrollUpButtonProps
 		"An optional scroll up button element to improve the scroll experience within the select. Should be used in conjunction with the `select.Viewport` component.",
 	props: scrollButtonProps,
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-scroll-up-button",
 			description: "Present on the scroll up button element.",
 		}),
@@ -341,7 +320,7 @@ export const scrollDownButton = defineComponentApiSchema<SelectScrollDownButtonP
 		"An optional scroll down button element to improve the scroll experience within the select. Should be used in conjunction with the `select.Viewport` component.",
 	props: scrollButtonProps,
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-scroll-down-button",
 			description: "Present on the scroll down button element.",
 		}),
@@ -353,7 +332,7 @@ export const group = defineComponentApiSchema<SelectGroupPropsWithoutHTML>({
 	description: "A group of related select items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-group",
 			description: "Present on the group element.",
 		}),
@@ -366,7 +345,7 @@ export const groupHeading = defineComponentApiSchema<SelectGroupHeadingPropsWith
 		"A heading for the parent select group. This is used to describe a group of related select items.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "select-group-heading",
 			description: "Present on the group heading element.",
 		}),
@@ -378,7 +357,7 @@ export const arrow = defineComponentApiSchema<SelectArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the content when open.",
 	props: arrowProps,
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "arrow",
 			description: "Present on the arrow element.",
 		}),

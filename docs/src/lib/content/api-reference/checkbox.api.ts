@@ -17,9 +17,9 @@ import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
-	defineStringPropSchema,
+	defineSimplePropSchema,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<CheckboxRootPropsWithoutHTML>({
@@ -77,11 +77,11 @@ export const root = defineComponentApiSchema<CheckboxRootPropsWithoutHTML>({
 			description: "The checkbox's state of checked, unchecked, or indeterminate.",
 			value: CheckboxRootStateDataAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the checkbox is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "checkbox-root",
 			description: "Present on the root element.",
 		}),
@@ -92,7 +92,7 @@ export const group = defineComponentApiSchema<CheckboxGroupPropsWithoutHTML>({
 	title: "Group",
 	description: "A group that synchronizes its value state with its descendant checkboxes.",
 	props: {
-		value: defineStringPropSchema({
+		value: defineSimplePropSchema({
 			description:
 				"The value of the group. This is an array of the values of the checked checkboxes within the group.",
 			bindable: true,
@@ -122,11 +122,11 @@ export const group = defineComponentApiSchema<CheckboxGroupPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the checkbox group is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "checkbox-group",
 			description: "Present on the group element.",
 		}),
@@ -140,11 +140,11 @@ export const groupLabel = defineComponentApiSchema<CheckboxGroupLabelPropsWithou
 		elType: "HTMLLabelElement",
 	}),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the checkbox group is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "checkbox-group-label",
 			description: "Present on the label element.",
 		}),

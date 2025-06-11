@@ -3,7 +3,7 @@
 	import type { PropType } from "$lib/types/index.js";
 	import { parseTypeDef } from "$lib/utils/markdown.js";
 
-	let { type }: { type: PropType } = $props();
+	let { type }: { type: PropType | string } = $props();
 </script>
 
 <div class="flex flex-col gap-2">

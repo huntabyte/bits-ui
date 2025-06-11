@@ -19,7 +19,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -67,7 +67,7 @@ export const root = defineComponentApiSchema<DateRangeFieldRootPropsWithoutHTML>
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "date-range-field-root",
 			description: "Present on the root element.",
 		}),
@@ -93,15 +93,15 @@ export const input = defineComponentApiSchema<DateRangeFieldInputPropsWithoutHTM
 		child: dateFieldInput.props!.child,
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "date-field-input",
 			description: "Present on the element.",
 		}),
@@ -122,11 +122,11 @@ export const segment = defineComponentApiSchema<DateRangeFieldSegmentPropsWithou
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
 		}),
@@ -146,7 +146,7 @@ export const segment = defineComponentApiSchema<DateRangeFieldSegmentPropsWithou
 				"literal",
 			],
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "date-field-segment",
 			description: "Present on the element.",
 		}),
@@ -158,11 +158,11 @@ export const label = defineComponentApiSchema<DateRangeFieldLabelPropsWithoutHTM
 	description: "The label for the date field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "date-field-label",
 			description: "Present on the element.",
 		}),

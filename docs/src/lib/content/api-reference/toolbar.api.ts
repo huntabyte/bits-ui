@@ -22,7 +22,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
 } from "../utils.js";
@@ -45,7 +45,7 @@ const root = defineComponentApiSchema<ToolbarRootPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		orientationDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toolbar-root",
 			description: "Present on the root element.",
 		}),
@@ -63,7 +63,7 @@ const button = defineComponentApiSchema<ToolbarButtonPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toolbar-button",
 			description: "Present on the button element.",
 		}),
@@ -75,7 +75,7 @@ const link = defineComponentApiSchema<ToolbarLinkPropsWithoutHTML>({
 	description: "A link in the toolbar.",
 	props: withChildProps({ elType: "HTMLAnchorElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toolbar-link",
 			description: "Present on the link element.",
 		}),
@@ -106,7 +106,7 @@ const group = defineComponentApiSchema<ToolbarGroupPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toolbar-group",
 			description: "Present on the group element.",
 		}),
@@ -135,15 +135,15 @@ const groupItem = defineComponentApiSchema<ToolbarGroupItemPropsWithoutHTML>({
 			options: ["on", "off"],
 			value: ToggleRootStateDataAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the toolbar toggle item.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the toolbar toggle item is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toolbar-item",
 			description: "Present on the toolbar toggle item.",
 		}),

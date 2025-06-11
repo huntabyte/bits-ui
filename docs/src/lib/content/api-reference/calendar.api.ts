@@ -42,42 +42,42 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
-	defineStringPropSchema,
+	defineSimplePropSchema,
 	defineUnionProp,
 } from "../utils.js";
 
 const sharedCellDayAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "disabled",
 		description: "Present when the day is disabled.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "unavailable",
 		description: "Present when the day is unavailable.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "today",
 		description: "Present when the day is today.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "outside-month",
 		description: "Present when the day is outside the current month.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "outside-visible-months",
 		description: "Present when the day is outside the visible months.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "focused",
 		description: "Present when the day is focused.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "selected",
 		description: "Present when the day is selected.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "value",
 		description: 'The date in the format "YYYY-MM-DD".',
 	}),
@@ -202,19 +202,19 @@ export const root = defineComponentApiSchema<CalendarRootPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "calendar-root",
 			description: "Present on the root element.",
 		}),
@@ -238,7 +238,7 @@ export function createCalendarCellSchema(isRange: boolean) {
 		},
 		dataAttributes: [
 			...sharedCellDayAttrs,
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-cell" : "calendar-cell",
 				description: "Present on the cell element.",
 			}),
@@ -255,7 +255,7 @@ export function createCalendarDaySchema(isRange: boolean) {
 		props: withChildProps({ elType: "HTMLDivElement" }),
 		dataAttributes: [
 			...sharedCellDayAttrs,
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-day" : "calendar-day",
 				description: "Present on the day element.",
 			}),
@@ -271,15 +271,15 @@ export function createCalendarGridSchema(isRange: boolean) {
 		description: "The grid of dates in the calendar, typically representing a month.",
 		props: withChildProps({ elType: "HTMLTableElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the grid element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "readonly",
 				description: "Present on the grid element when the calendar is readonly.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-grid" : "calendar-grid",
 				description: "Present on the grid element.",
 			}),
@@ -295,15 +295,15 @@ export function createCalendarGridBodySchema(isRange: boolean) {
 		description: "The body of the grid of dates in the calendar.",
 		props: withChildProps({ elType: "HTMLTableSectionElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the grid element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "readonly",
 				description: "Present on the grid element when the calendar is readonly.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-grid-body" : "calendar-grid-body",
 				description: "Present on the grid body element.",
 			}),
@@ -319,15 +319,15 @@ export function createCalendarGridHeadSchema(isRange: boolean) {
 		description: "The head of the grid of dates in the calendar.",
 		props: withChildProps({ elType: "HTMLTableSectionElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the grid head element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "readonly",
 				description: "Present on the grid head element when the calendar is readonly.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-grid-head" : "calendar-grid-head",
 				description: "Present on the grid head element.",
 			}),
@@ -343,15 +343,15 @@ export function createCalendarGridRowSchema(isRange: boolean) {
 		description: "A row in the grid of dates in the calendar.",
 		props: withChildProps({ elType: "HTMLTableRowElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the grid row element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "readonly",
 				description: "Present on the grid row element when the calendar is readonly.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-grid-row" : "calendar-grid-row",
 				description: "Present on the grid row element.",
 			}),
@@ -367,15 +367,15 @@ export function createCalendarHeadCellSchema(isRange: boolean) {
 		description: "A cell in the head of the grid of dates in the calendar.",
 		props: withChildProps({ elType: "HTMLTableCellElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the head cell element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "readonly",
 				description: "Present on the head cell element when the calendar is readonly.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-head-cell" : "calendar-head-cell",
 				description: "Present on the head cell element.",
 			}),
@@ -391,15 +391,15 @@ export function createCalendarHeaderSchema(isRange: boolean) {
 		description: "The header of the calendar.",
 		props: withChildProps({ elType: "HTMLElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the header element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "readonly",
 				description: "Present on the header element when the calendar is readonly.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-header" : "calendar-header",
 				description: "Present on the header element.",
 			}),
@@ -415,15 +415,15 @@ export function createCalendarHeadingSchema(isRange: boolean) {
 		description: "The heading of the calendar.",
 		props: withChildProps({ elType: "HTMLDivElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the heading element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "readonly",
 				description: "Present on the heading element when the calendar is readonly.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-heading" : "calendar-heading",
 				description: "Present on the heading element.",
 			}),
@@ -439,12 +439,12 @@ export function createCalendarNextButtonSchema(isRange: boolean) {
 		description: "The next button of the calendar.",
 		props: withChildProps({ elType: "HTMLButtonElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description:
 					"Present on the next button element when the calendar or this button is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-next-button" : "calendar-next-button",
 				description: "Present on the next button element.",
 			}),
@@ -460,12 +460,12 @@ export function createCalendarPrevButtonSchema(isRange: boolean) {
 		description: "The previous button of the calendar.",
 		props: withChildProps({ elType: "HTMLButtonElement" }),
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description:
 					"Present on the prev button element when the calendar or this button is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-prev-button" : "calendar-prev-button",
 				description: "Present on the prev button element.",
 			}),
@@ -480,7 +480,7 @@ export function createCalendarMonthSelectSchema(isRange: boolean) {
 		title: "MonthSelect",
 		description: "A select you can use to navigate to a specific month in the calendar view.",
 		props: {
-			months: defineStringPropSchema({
+			months: defineSimplePropSchema({
 				type: "number[]",
 				description: "The month values to render in the select.",
 				default: "[1-12]",
@@ -506,11 +506,11 @@ export function createCalendarMonthSelectSchema(isRange: boolean) {
 			}),
 		},
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the month select element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-month-select" : "calendar-month-select",
 				description: "Present on the month select element.",
 			}),
@@ -525,7 +525,7 @@ export function createCalendarYearSelectSchema(isRange: boolean) {
 		title: "YearSelect",
 		description: "A select you can use to navigate to a specific year in the calendar view.",
 		props: {
-			years: defineStringPropSchema({
+			years: defineSimplePropSchema({
 				type: "number[]",
 				description: "The year values to render in the select.",
 				default:
@@ -545,11 +545,11 @@ export function createCalendarYearSelectSchema(isRange: boolean) {
 			}),
 		},
 		dataAttributes: [
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: "disabled",
 				description: "Present on the year select element when the calendar is disabled.",
 			}),
-			defineStringDataAttr({
+			defineSimpleDataAttr({
 				name: isRange ? "range-calendar-year-select" : "calendar-year-select",
 				description: "Present on the year select element.",
 			}),

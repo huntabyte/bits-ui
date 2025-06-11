@@ -9,7 +9,7 @@ import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 const root = defineComponentApiSchema<ToggleRootPropsWithoutHTML>({
@@ -39,11 +39,11 @@ const root = defineComponentApiSchema<ToggleRootPropsWithoutHTML>({
 			options: ["on", "off"],
 			value: ToggleRootStateDataAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the toggle is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toggle-root",
 			description: "Present on the root element.",
 		}),

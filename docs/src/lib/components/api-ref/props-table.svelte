@@ -44,12 +44,12 @@
 				<Table.Row>
 					<Table.Cell class="flex items-center gap-1 pr-1 align-baseline">
 						<Code class="text-foreground font-semibold">{p?.name}</Code>
-						{#if p?.required}
+						{#if p.required}
 							<Badge class="border-destructive bg-background text-destructive border">
 								required
 							</Badge>
 						{/if}
-						{#if p?.bindable}
+						{#if p.bindable}
 							<Badge
 								class="bg-background border border-[#2A266B] text-[#2A266B] dark:border-[#FCDAFE] dark:text-[#FCDAFE]"
 							>

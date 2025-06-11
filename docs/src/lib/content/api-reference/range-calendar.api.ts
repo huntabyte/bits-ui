@@ -25,7 +25,7 @@ import {
 	defineBooleanProp,
 	defineComponentApiSchema,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<RangeCalendarRootPropsWithoutHTML>({
@@ -73,19 +73,19 @@ export const root = defineComponentApiSchema<RangeCalendarRootPropsWithoutHTML>(
 		}),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "range-calendar-root",
 			description: "Present on the root element.",
 		}),
@@ -93,20 +93,20 @@ export const root = defineComponentApiSchema<RangeCalendarRootPropsWithoutHTML>(
 });
 
 const sharedDayCellAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "range-start",
 		description: "Present when the cell is the start of a selection range.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "range-end",
 		description: "Present when the cell is the end of a selection range.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "range-middle",
 		description:
 			"Present when the cell is in the middle of a selection range, but not the start or end of the selection.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "highlighted",
 		description: "Present when the cell is highlighted within a selection range.",
 	}),

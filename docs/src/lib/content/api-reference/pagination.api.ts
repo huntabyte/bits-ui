@@ -17,7 +17,7 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<PaginationRootPropsWithoutHTML>({
@@ -77,11 +77,11 @@ export const page = defineComponentApiSchema<PaginationPagePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "selected",
 			description: "Present on the current page element.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "pagination-page",
 			description: "Present on the page trigger element.",
 		}),
@@ -93,7 +93,7 @@ export const prevButton = defineComponentApiSchema<PaginationPrevButtonPropsWith
 	description: "The previous button of the pagination.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "pagination-prev-button",
 			description: "Present on the previous button element.",
 		}),
@@ -105,7 +105,7 @@ export const nextButton = defineComponentApiSchema<PaginationNextButtonPropsWith
 	description: "The next button of the pagination.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "pagination-next-button",
 			description: "Present on the next button element.",
 		}),

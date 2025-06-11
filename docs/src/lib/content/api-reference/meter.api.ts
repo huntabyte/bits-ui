@@ -1,6 +1,6 @@
 import type { MeterRootPropsWithoutHTML } from "bits-ui";
 import { withChildProps } from "./shared.js";
-import { defineComponentApiSchema, defineNumberProp, defineStringDataAttr } from "../utils.js";
+import { defineComponentApiSchema, defineNumberProp, defineSimpleDataAttr } from "../utils.js";
 
 export const root = defineComponentApiSchema<MeterRootPropsWithoutHTML>({
 	title: "Root",
@@ -21,19 +21,19 @@ export const root = defineComponentApiSchema<MeterRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The current value of the meter.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "min",
 			description: "The minimum value of the meter.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "max",
 			description: "The maximum value of the meter.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "meter-root",
 			description: "Present on the root element.",
 		}),

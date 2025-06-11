@@ -31,7 +31,7 @@ import {
 } from "./extended-types/floating/index.js";
 import { PortalToProp } from "./extended-types/portal/index.js";
 
-import type { PropSchema, PropTypeComponent } from "$lib/content/types.js";
+import type { PropSchema, PropTypeComplex } from "$lib/content/types.js";
 import * as C from "$lib/content/constants.js";
 import {
 	defineBooleanProp,
@@ -40,9 +40,10 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	defineNumberProp,
-	defineStringDataAttr,
-	defineStringPropSchema,
+	defineSimpleDataAttr,
+	defineSimplePropSchema,
 	defineUnionProp,
+	defineCSSVarSchema,
 } from "../utils.js";
 import { PaginationPageItemProp } from "./extended-types/pagination/index.js";
 import {
@@ -98,7 +99,7 @@ export const portalProps = {
 	children: childrenSnippet(),
 } as const;
 
-export function childSnippet(opts?: PropTypeComponent): PropSchema {
+export function childSnippet(opts?: PropTypeComplex): PropSchema {
 	return defineComponentPropSchema({
 		type: C.SNIPPET,
 		definition: opts?.definition || ChildDefaultSnippetProps,
@@ -112,7 +113,7 @@ export function childSnippet(opts?: PropTypeComponent): PropSchema {
 	});
 }
 
-export function childrenSnippet(opts?: PropTypeComponent): PropSchema {
+export function childrenSnippet(opts?: PropTypeComplex): PropSchema {
 	if (opts) {
 		return defineComponentPropSchema({
 			type: C.SNIPPET,
@@ -122,14 +123,14 @@ export function childrenSnippet(opts?: PropTypeComponent): PropSchema {
 		});
 	}
 
-	return defineStringPropSchema({
+	return defineSimplePropSchema({
 		type: C.SNIPPET,
 		description: "The children content to render.",
 	});
 }
 
 export function refProp({ elType = "HTMLElement" }: { elType?: ElementKind }): PropSchema {
-	return defineStringPropSchema({
+	return defineSimplePropSchema({
 		type: elType,
 		description:
 			"The underlying DOM element being rendered. You can bind to this to get a reference to the element.",
@@ -143,8 +144,8 @@ export function withChildProps({
 	childDef = ChildDefaultSnippetProps,
 }: {
 	elType: ElementKind;
-	childrenDef?: PropTypeComponent;
-	childDef?: PropTypeComponent;
+	childrenDef?: PropTypeComplex;
+	childDef?: PropTypeComplex;
 }) {
 	return {
 		ref: refProp({ elType }),
@@ -380,7 +381,7 @@ export const orientationDataAttr = defineEnumDataAttr({
 	value: OrientationProp,
 });
 
-export const disabledDataAttr = defineStringDataAttr({
+export const disabledDataAttr = defineSimpleDataAttr({
 	name: "disabled",
 	value: "''",
 	description: "Present when the component is disabled.",
@@ -509,3 +510,28 @@ export const indeterminateProp = defineBooleanProp({
 	bindable: true,
 	default: false,
 });
+
+export function floatingContentCSSVars(componentName: string) {
+	return [
+		defineCSSVarSchema({
+			name: `--bits-${componentName}-content-transform-origin`,
+			description: `The transform origin of the content element.`,
+		}),
+		defineCSSVarSchema({
+			name: `--bits-${componentName}-content-available-width`,
+			description: `The available width of the content element.`,
+		}),
+		defineCSSVarSchema({
+			name: `--bits-${componentName}-content-available-height`,
+			description: `The available height of the content element.`,
+		}),
+		defineCSSVarSchema({
+			name: `--bits-${componentName}-anchor-width`,
+			description: `The width of the anchor element.`,
+		}),
+		defineCSSVarSchema({
+			name: `--bits-${componentName}-anchor-height`,
+			description: `The height of the anchor element.`,
+		}),
+	];
+}

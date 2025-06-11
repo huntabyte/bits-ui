@@ -17,7 +17,7 @@ import {
 	defineFunctionProp,
 	defineNumberProp,
 	defineObjectProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -76,7 +76,7 @@ const root = defineComponentApiSchema<PinInputRootPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "pin-input-root",
 			description: "Present on the root element.",
 		}),
@@ -103,15 +103,15 @@ const cell = defineComponentApiSchema<PinInputCellPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "active",
 			description: "Present when the cell is active.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "inactive",
 			description: "Present when the cell is inactive.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "pin-input-cell",
 			description: "Present on the cell element.",
 		}),

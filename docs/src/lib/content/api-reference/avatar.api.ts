@@ -11,7 +11,7 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 const statusDataAttr = defineEnumDataAttr({
@@ -46,7 +46,7 @@ export const root = defineComponentApiSchema<AvatarRootPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		statusDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "avatar-root",
 			description: "Present on the root element.",
 		}),
@@ -59,7 +59,7 @@ export const image = defineComponentApiSchema<AvatarImagePropsWithoutHTML>({
 	props: withChildProps({ elType: "HTMLImageElement" }),
 	dataAttributes: [
 		statusDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "avatar-image",
 			description: "Present on the root element.",
 		}),
@@ -72,7 +72,7 @@ export const fallback = defineComponentApiSchema<AvatarFallbackPropsWithoutHTML>
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
 		statusDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "avatar-fallback",
 			description: "Present on the fallback element.",
 		}),

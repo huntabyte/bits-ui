@@ -5,7 +5,7 @@
 	import Metadata from "./metadata.svelte";
 	import type { TocItem } from "$lib/utils/use-toc.svelte.js";
 	import Toc from "./toc/toc.svelte";
-	import type { APISchema } from "$lib/types/api.js";
+	import type { APISchema } from "$lib/content/types.js";
 	import type { DocMetadata } from "$lib/utils/docs.js";
 	import DocPageHeader from "./doc-page-header.svelte";
 	import SidebarSponsor from "./sidebar-sponsor.svelte";

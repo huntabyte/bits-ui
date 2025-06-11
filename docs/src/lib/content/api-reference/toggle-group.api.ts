@@ -12,7 +12,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
 } from "../utils.js";
@@ -62,7 +62,7 @@ const root = defineComponentApiSchema<ToggleGroupRootPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toggle-group-root",
 			description: "Present on the root element.",
 		}),
@@ -89,7 +89,7 @@ const item = defineComponentApiSchema<ToggleGroupItemPropsWithoutHTML>({
 			options: ["on", "off"],
 			value: ToggleRootStateDataAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the toggle item.",
 		}),
@@ -99,11 +99,11 @@ const item = defineComponentApiSchema<ToggleGroupItemPropsWithoutHTML>({
 			options: ["horizontal", "vertical"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the toggle item is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "toggle-group-item",
 			description: "Present on the toggle group item.",
 		}),

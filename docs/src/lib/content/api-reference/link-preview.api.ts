@@ -13,6 +13,7 @@ import {
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentCSSVars,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
@@ -23,10 +24,9 @@ import {
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
-	defineCSSVarSchema,
 	defineEnumDataAttr,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 const openClosedDataAttr = defineEnumDataAttr({
@@ -75,7 +75,7 @@ export const trigger = defineComponentApiSchema<LinkPreviewTriggerPropsWithoutHT
 	props: withChildProps({ elType: "HTMLAnchorElement" }),
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "link-preview-trigger",
 			description: "Present on the trigger element.",
 		}),
@@ -96,33 +96,12 @@ export const content = defineComponentApiSchema<LinkPreviewContentPropsWithoutHT
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "link-preview-content",
 			description: "Present on the content element.",
 		}),
 	],
-	cssVars: [
-		defineCSSVarSchema({
-			name: "--bits-link-preview-content-transform-origin",
-			description: "The transform origin of the link preview content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-link-preview-content-available-width",
-			description: "The available width of the link preview content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-link-preview-content-available-height",
-			description: "The available height of the link preview content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-link-preview-anchor-width",
-			description: "The width of the link preview trigger element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-link-preview-anchor-height",
-			description: "The height of the link preview trigger element.",
-		}),
-	],
+	cssVars: floatingContentCSSVars("link-preview"),
 });
 
 export const contentStatic = defineComponentApiSchema<LinkPreviewContentStaticPropsWithoutHTML>({
@@ -139,7 +118,7 @@ export const contentStatic = defineComponentApiSchema<LinkPreviewContentStaticPr
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "link-preview-content",
 			description: "Present on the content element.",
 		}),
@@ -151,7 +130,7 @@ export const arrow = defineComponentApiSchema<LinkPreviewArrowPropsWithoutHTML>(
 	description: "An optional arrow element which points to the trigger when the preview is open.",
 	props: arrowProps,
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "link-preview-arrow",
 			description: "Present on the arrow element.",
 		}),

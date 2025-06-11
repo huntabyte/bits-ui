@@ -9,6 +9,7 @@ import type {
 } from "bits-ui";
 import { OpenClosedProp } from "./extended-types/shared/index.js";
 import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
+import { floatingContentCSSVars } from "./shared.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -27,10 +28,9 @@ import {
 } from "$lib/content/api-reference/shared.js";
 import {
 	defineComponentApiSchema,
-	defineCSSVarSchema,
 	defineEnumDataAttr,
 	definePropSchema,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 const openClosedDataAttr = defineEnumDataAttr({
@@ -56,7 +56,7 @@ export const trigger = defineComponentApiSchema<PopoverTriggerPropsWithoutHTML>(
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "popover-trigger",
 			description: "Present on the trigger element.",
 		}),
@@ -75,7 +75,7 @@ export const content = defineComponentApiSchema<PopoverContentPropsWithoutHTML>(
 		preventScroll: definePropSchema({
 			...preventScrollProp,
 			default: {
-				_type: "string",
+				variant: "simple",
 				value: "false",
 			},
 		}),
@@ -85,33 +85,12 @@ export const content = defineComponentApiSchema<PopoverContentPropsWithoutHTML>(
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "popover-content",
 			description: "Present on the content element.",
 		}),
 	],
-	cssVars: [
-		defineCSSVarSchema({
-			name: "--bits-popover-content-transform-origin",
-			description: "The transform origin of the popover content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-popover-content-available-width",
-			description: "The available width of the popover content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-popover-content-available-height",
-			description: "The available height of the popover content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-popover-anchor-width",
-			description: "The width of the popover trigger element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-popover-anchor-height",
-			description: "The height of the popover trigger element.",
-		}),
-	],
+	cssVars: floatingContentCSSVars("popover"),
 });
 
 export const contentStatic = defineComponentApiSchema<PopoverContentStaticPropsWithoutHTML>({
@@ -126,7 +105,7 @@ export const contentStatic = defineComponentApiSchema<PopoverContentStaticPropsW
 		preventScroll: {
 			...preventScrollProp,
 			default: {
-				_type: "string",
+				variant: "simple",
 				value: "false",
 			},
 		},
@@ -136,7 +115,7 @@ export const contentStatic = defineComponentApiSchema<PopoverContentStaticPropsW
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "popover-content",
 			description: "Present on the content element.",
 		}),
@@ -149,7 +128,7 @@ export const close = defineComponentApiSchema<PopoverClosePropsWithoutHTML>({
 		"A button which closes the popover when pressed and is typically placed in the content.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "popover-close",
 			description: "Present on the close button.",
 		}),
@@ -161,11 +140,11 @@ export const arrow = defineComponentApiSchema<PopoverArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the trigger when the popover is open.",
 	props: arrowProps,
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "arrow",
 			description: "Present on the arrow element.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "popover-arrow",
 			description: "Present on the arrow element.",
 		}),

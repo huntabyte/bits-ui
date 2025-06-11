@@ -22,7 +22,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<ScrollAreaRootPropsWithoutHTML>({
@@ -45,7 +45,7 @@ export const root = defineComponentApiSchema<ScrollAreaRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "scroll-area-root",
 			description: "Present on the root element.",
 		}),
@@ -61,7 +61,7 @@ export const viewport = defineComponentApiSchema<ScrollAreaViewportPropsWithoutH
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "scroll-area-viewport",
 			description: "Present on the viewport element.",
 		}),
@@ -88,11 +88,11 @@ export const scrollbar = defineComponentApiSchema<ScrollAreaScrollbarPropsWithou
 			options: ["visible", "hidden"],
 			value: ScrollAreaVisibleHiddenProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "scroll-area-scrollbar-x",
 			description: "Present on the `'horizontal'` scrollbar element.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "scroll-area-scrollbar-y",
 			description: "Present on the `'vertical'` scrollbar element.",
 		}),
@@ -113,11 +113,11 @@ export const thumb = defineComponentApiSchema<ScrollAreaThumbPropsWithoutHTML>({
 			options: ["visible", "hidden"],
 			value: ScrollAreaVisibleHiddenProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "scroll-area-thumb-x",
 			description: "Present on the `'horizontal'` thumb element.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "scroll-area-thumb-y",
 			description: "Present on the `'vertical'` thumb element.",
 		}),
@@ -129,7 +129,7 @@ export const corner = defineComponentApiSchema<ScrollAreaCornerPropsWithoutHTML>
 	description: "The corner element between the X and Y scrollbars.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "scroll-area-corner",
 			description: "Present on the corner element.",
 		}),

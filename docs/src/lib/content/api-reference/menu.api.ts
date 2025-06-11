@@ -58,9 +58,9 @@ import {
 	defineBooleanProp,
 	defineEnumDataAttr,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
-	defineStringPropSchema,
+	defineSimplePropSchema,
 } from "../utils.js";
 
 const sharedItemProps = {
@@ -185,7 +185,7 @@ const checkboxItemProps = {
 } satisfies PropObj<DropdownMenuCheckboxItemPropsWithoutHTML>;
 
 const checkboxGroupProps = {
-	value: defineStringPropSchema({
+	value: defineSimplePropSchema({
 		description:
 			"The value of the group. This is an array of the values of the checked checkboxes within the group.",
 		bindable: true,
@@ -279,7 +279,7 @@ type DataAttrs = ComponentAPISchema["dataAttributes"];
 
 const triggerAttrs: DataAttrs = [
 	STATE,
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-trigger",
 		description: "Present on the trigger element.",
 	}),
@@ -287,7 +287,7 @@ const triggerAttrs: DataAttrs = [
 
 const contentAttrs: DataAttrs = [
 	STATE,
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-content",
 		description: "Present on the content element.",
 	}),
@@ -295,23 +295,23 @@ const contentAttrs: DataAttrs = [
 
 const arrowAttrs: DataAttrs = [
 	STATE,
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-arrow",
 		description: "Present on the arrow element.",
 	}),
 ];
 
 const sharedItemAttrs: DataAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "orientation",
 		value: "vertical",
 		description: "The orientation of the menu.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "highlighted",
 		description: "Present when the menu item is highlighted.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "disabled",
 		description: "Present when the menu item is disabled.",
 	}),
@@ -319,28 +319,28 @@ const sharedItemAttrs: DataAttrs = [
 
 const itemAttrs: DataAttrs = [
 	...sharedItemAttrs,
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-item",
 		description: "Present on the item element.",
 	}),
 ];
 
 const groupAttrs: DataAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-group",
 		description: "Present on the group element.",
 	}),
 ];
 
 const labelAttrs: DataAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-group-heading",
 		description: "Present on the group heading element.",
 	}),
 ];
 
 const checkboxGroupAttrs: DataAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-checkbox-group",
 		description: "Present on the checkbox group element.",
 	}),
@@ -357,7 +357,7 @@ const checkboxItemAttrs: DataAttrs = [
 ];
 
 const radioGroupAttrs: DataAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-radio-group",
 		description: "Present on the radio group element.",
 	}),
@@ -371,23 +371,23 @@ const radioItemAttrs: DataAttrs = [
 		options: ["checked", "unchecked"],
 		description: "The radio menu item's checked state.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "value",
 		description: "The value of the radio item.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-radio-item",
 		description: "Present on the radio item element.",
 	}),
 ];
 
 const separatorAttrs: DataAttrs = [
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "orientation",
 		value: "vertical",
 		description: "The orientation of the separator.",
 	}),
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-separator",
 		description: "Present on the separator element.",
 	}),
@@ -395,7 +395,7 @@ const separatorAttrs: DataAttrs = [
 
 const subContentAttrs: DataAttrs = [
 	STATE,
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-sub-content",
 		description: "Present on the submenu content element.",
 	}),
@@ -404,7 +404,7 @@ const subContentAttrs: DataAttrs = [
 const subTriggerAttrs: DataAttrs = [
 	...sharedItemAttrs,
 	STATE,
-	defineStringDataAttr({
+	defineSimpleDataAttr({
 		name: "menu-sub-trigger",
 		description: "Present on the submenu trigger element.",
 	}),

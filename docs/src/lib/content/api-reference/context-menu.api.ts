@@ -22,6 +22,7 @@ import {
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentCSSVars,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
@@ -33,7 +34,7 @@ import {
 import { menu } from "./menu.api.js";
 import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import { omit } from "$lib/utils/omit.js";
-import { defineBooleanProp, defineComponentApiSchema, defineCSSVarSchema } from "../utils.js";
+import { defineBooleanProp, defineComponentApiSchema } from "../utils.js";
 
 export const root = defineComponentApiSchema<ContextMenuRootPropsWithoutHTML>({
 	title: "Root",
@@ -77,28 +78,7 @@ export const content = defineComponentApiSchema<ContextMenuContentPropsWithoutHT
 		...withChildProps({ elType: "HTMLDivElement", childDef: FloatingContentChildSnippetProps }),
 	},
 	dataAttributes: menu.content.dataAttributes,
-	cssVars: [
-		defineCSSVarSchema({
-			name: "--bits-context-menu-content-transform-origin",
-			description: "The transform origin of the context menu content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-context-menu-content-available-width",
-			description: "The available width of the context menu content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-context-menu-content-available-height",
-			description: "The available height of the context menu content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-context-menu-anchor-width",
-			description: "The width of the context menu trigger element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-context-menu-anchor-height",
-			description: "The height of the context menu trigger element.",
-		}),
-	],
+	cssVars: floatingContentCSSVars("context-menu"),
 });
 
 export const contentStatic = defineComponentApiSchema<ContextMenuContentStaticPropsWithoutHTML>({

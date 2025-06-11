@@ -20,7 +20,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -68,7 +68,7 @@ export const root = defineComponentApiSchema<TimeRangeFieldRootPropsWithoutHTML>
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "time-range-field-root",
 			description: "Present on the root element.",
 		}),
@@ -94,15 +94,15 @@ export const input = defineComponentApiSchema<TimeRangeFieldInputPropsWithoutHTM
 		child: timeFieldInput.props!.child,
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "time-field-input",
 			description: "Present on the element.",
 		}),
@@ -123,11 +123,11 @@ export const segment = defineComponentApiSchema<TimeRangeFieldSegmentPropsWithou
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
 		}),
@@ -137,7 +137,7 @@ export const segment = defineComponentApiSchema<TimeRangeFieldSegmentPropsWithou
 			options: ["hour", "minute", "second", "dayPeriod", "timeZoneName", "literal"],
 			value: TimeSegmentDataAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "time-field-segment",
 			description: "Present on the element.",
 		}),
@@ -149,11 +149,11 @@ export const label = defineComponentApiSchema<TimeRangeFieldLabelPropsWithoutHTM
 	description: "The label for the time field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "time-field-label",
 			description: "Present on the element.",
 		}),

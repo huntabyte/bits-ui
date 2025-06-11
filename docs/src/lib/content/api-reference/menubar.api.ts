@@ -19,13 +19,18 @@ import type {
 	MenubarSubTriggerPropsWithoutHTML,
 	MenubarTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { childrenSnippet, dirProp, onOpenChangeProp, withChildProps } from "./shared.js";
+import {
+	childrenSnippet,
+	dirProp,
+	floatingContentCSSVars,
+	onOpenChangeProp,
+	withChildProps,
+} from "./shared.js";
 import { menu as m } from "./menu.api.js";
 import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
-	defineCSSVarSchema,
 	defineFunctionProp,
 	defineStringProp,
 } from "../utils.js";
@@ -84,28 +89,7 @@ export const content = defineComponentApiSchema<MenubarContentPropsWithoutHTML>(
 	title: "Content",
 	description: "The content displayed when the dropdown menu is open.",
 	...m.content,
-	cssVars: [
-		defineCSSVarSchema({
-			name: "--bits-menubar-menu-content-transform-origin",
-			description: "The transform origin of the dropdown menu content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-menubar-menu-content-available-width",
-			description: "The available width of the dropdown menu content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-menubar-menu-content-available-height",
-			description: "The available height of the dropdown menu content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-menubar-menu-anchor-width",
-			description: "The width of the dropdown menu trigger element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-menubar-menu-anchor-height",
-			description: "The height of the dropdown menu trigger element.",
-		}),
-	],
+	cssVars: floatingContentCSSVars("menubar-menu"),
 });
 
 export const contentStatic = defineComponentApiSchema<MenubarContentStaticPropsWithoutHTML>({

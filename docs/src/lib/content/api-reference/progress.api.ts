@@ -1,13 +1,12 @@
 import type { ProgressRootPropsWithoutHTML } from "bits-ui";
 import { withChildProps } from "./shared.js";
 import { ProgressStateAttr } from "./extended-types/progress/index.js";
-import { defineNumberProp } from "../utils";
 import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
 	defineNumberProp,
-	defineStringDataAttr,
-	defineStringPropSchema,
+	defineSimpleDataAttr,
+	defineSimplePropSchema,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<ProgressRootPropsWithoutHTML>({
@@ -22,8 +21,8 @@ export const root = defineComponentApiSchema<ProgressRootPropsWithoutHTML>({
 			default: 0,
 			description: "The minimum value of the progress bar.",
 		}),
-		value: defineNumberProp({
-			default: 0,
+		value: defineSimplePropSchema({
+			default: "0",
 			description:
 				"The current value of the progress bar. If set to `null` the progress bar will be indeterminate.",
 			type: "number | null",
@@ -31,7 +30,7 @@ export const root = defineComponentApiSchema<ProgressRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The current value of the progress bar.",
 		}),
@@ -41,19 +40,19 @@ export const root = defineComponentApiSchema<ProgressRootPropsWithoutHTML>({
 			options: ["indeterminate", "determinate"],
 			value: ProgressStateAttr,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "min",
 			description: "The minimum value of the progress bar.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "max",
 			description: "The maximum value of the progress bar.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "indeterminate",
 			description: "Present when the value is `null`.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "progress-root",
 			description: "Present on the root element.",
 		}),

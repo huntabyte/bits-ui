@@ -1,63 +1,69 @@
 import type { Component } from "svelte";
 
-export type PropTypeString = {
-	_type: "string";
+export type PropTypeSimple = {
+	variant: "simple";
 	type: string;
 };
 
-export type PropTypeComponent = {
-	_type: "component";
+export type PropTypeComplex = {
+	variant: "complex";
 	type: string;
 	definition: Component;
 	stringDefinition: string;
 };
 
-export type PropType = PropTypeString | PropTypeComponent;
+export type PropType = PropTypeSimple | PropTypeComplex;
 
-export type PropDefault =
-	| {
-			_type: "string";
-			value: string;
-	  }
-	| { _type: "component"; value: Component; stringValue: string };
+export type PropDefaultSimple = {
+	variant: "simple";
+	value: string;
+};
+
+export type PropDefaultComplex = {
+	variant: "complex";
+	value: Component;
+	stringValue: string;
+};
+
+export type PropDefault = PropDefaultSimple | PropDefaultComplex;
 
 type PropSchemaBase = {
 	description: string;
-	required?: boolean;
-	bindable?: boolean;
+	required: boolean;
+	bindable: boolean;
 	default?: PropDefault;
 };
 
-export type PropSchemaString = PropSchemaBase & {
-	type: PropTypeString;
+export type PropSchemaSimple = PropSchemaBase & {
+	type: PropTypeSimple;
 };
 
-export type PropSchemaComponent = PropSchemaBase & {
-	type: PropTypeComponent;
+export type PropSchemaComplex = PropSchemaBase & {
+	type: PropTypeComplex;
 };
 
-export type PropSchema = PropSchemaString | PropSchemaComponent;
+export type PropSchema = PropSchemaSimple | PropSchemaComplex;
 
 export type PropObj<T, U = Omit<T, "style">> = {
 	[K in keyof U]-?: PropSchema;
 };
 
-export type DataAttrStringSchema = {
-	_type: "string";
+export type DataAttrSimpleSchema = {
+	variant: "simple";
 	value: string;
 	description: string;
 	name: string;
 };
 
 export type DataAttrEnumSchema = {
-	_type: "enum";
+	variant: "enum";
 	value: Component;
 	stringValue: string;
 	description: string;
 	name: string;
 };
 
-export type DataAttrSchema = DataAttrStringSchema | DataAttrEnumSchema;
+export type DataAttrSchema = DataAttrSimpleSchema | DataAttrEnumSchema;
 
 export type CSSVarSchema = {
 	name: string;

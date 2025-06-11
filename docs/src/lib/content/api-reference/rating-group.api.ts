@@ -16,7 +16,7 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
 } from "../utils.js";
@@ -97,15 +97,15 @@ export const root = defineComponentApiSchema<RatingGroupRootPropsWithoutHTML>({
 			options: ["vertical", "horizontal"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the rating group is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present when the rating group is readonly.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "rating-group-root",
 			description: "Present on the root element.",
 		}),
@@ -131,15 +131,15 @@ export const item = defineComponentApiSchema<RatingGroupItemPropsWithoutHTML>({
 		}),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the rating group is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present when the rating group is readonly.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the rating item.",
 		}),
@@ -155,7 +155,7 @@ export const item = defineComponentApiSchema<RatingGroupItemPropsWithoutHTML>({
 			options: ["vertical", "horizontal"],
 			value: OrientationProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "rating-group-item",
 			description: "Present on the rating item element.",
 		}),

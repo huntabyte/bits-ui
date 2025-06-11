@@ -9,7 +9,7 @@ import {
 	defineBooleanProp,
 	defineComponentApiSchema,
 	defineEnumDataAttr,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -50,15 +50,15 @@ const root = defineComponentApiSchema<SwitchRootPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "checked",
 			description: "Present when the switch is checked.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the switch is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "switch-root",
 			description: "Present on the root element.",
 		}),
@@ -75,11 +75,11 @@ const thumb = defineComponentApiSchema<SwitchThumbPropsWithoutHTML>({
 	}),
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "checked",
 			description: "Present when the switch is checked.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "switch-thumb",
 			description: "Present on the thumb element.",
 		}),

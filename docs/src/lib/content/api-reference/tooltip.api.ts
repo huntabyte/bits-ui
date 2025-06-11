@@ -18,6 +18,7 @@ import {
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentCSSVars,
 	floatingProps,
 	forceMountProp,
 	onOpenChangeProp,
@@ -29,10 +30,9 @@ import { TooltipStateDataAttr } from "./extended-types/tooltip/index.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
-	defineCSSVarSchema,
 	defineEnumDataAttr,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 } from "../utils.js";
 
 const openClosedDataAttr = defineEnumDataAttr({
@@ -122,7 +122,7 @@ export const trigger = defineComponentApiSchema<TooltipTriggerPropsWithoutHTML>(
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tooltip-trigger",
 			description: "Present on the tooltip trigger element.",
 		}),
@@ -146,33 +146,12 @@ export const content = defineComponentApiSchema<TooltipContentPropsWithoutHTML>(
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tooltip-content",
 			description: "Present on the tooltip content element.",
 		}),
 	],
-	cssVars: [
-		defineCSSVarSchema({
-			name: "--bits-tooltip-content-transform-origin",
-			description: "The transform origin of the tooltip content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-tooltip-content-available-width",
-			description: "The available width of the tooltip content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-tooltip-content-available-height",
-			description: "The available height of the tooltip content element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-tooltip-anchor-width",
-			description: "The width of the tooltip trigger element.",
-		}),
-		defineCSSVarSchema({
-			name: "--bits-tooltip-anchor-height",
-			description: "The height of the tooltip trigger element.",
-		}),
-	],
+	cssVars: floatingContentCSSVars("tooltip"),
 });
 
 export const contentStatic = defineComponentApiSchema<TooltipContentStaticPropsWithoutHTML>({
@@ -192,7 +171,7 @@ export const contentStatic = defineComponentApiSchema<TooltipContentStaticPropsW
 	},
 	dataAttributes: [
 		openClosedDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tooltip-content",
 			description: "Present on the tooltip content element.",
 		}),
@@ -204,11 +183,11 @@ export const arrow = defineComponentApiSchema<TooltipArrowPropsWithoutHTML>({
 	description: "An optional arrow element which points to the trigger when the tooltip is open.",
 	props: arrowProps,
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "arrow",
 			description: "Present on the arrow element.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "tooltip-arrow",
 			description: "Present on the arrow element.",
 		}),

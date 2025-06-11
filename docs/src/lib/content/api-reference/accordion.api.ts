@@ -25,7 +25,7 @@ import {
 	defineEnumDataAttr,
 	defineEnumProp,
 	defineFunctionProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
 } from "../utils.js";
@@ -82,7 +82,7 @@ const root = defineComponentApiSchema<AccordionRootPropsWithoutHTML>({
 	dataAttributes: [
 		orientationDataAttr,
 		disabledDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "accordion-root",
 			description: "Present on the root element.",
 		}),
@@ -108,7 +108,7 @@ const item = defineComponentApiSchema<AccordionItemPropsWithoutHTML>({
 		stateDataAttr,
 		disabledDataAttr,
 		orientationDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "accordion-item",
 			description: "Present on the item element.",
 		}),
@@ -122,7 +122,7 @@ const trigger = defineComponentApiSchema<AccordionTriggerPropsWithoutHTML>({
 	dataAttributes: [
 		orientationDataAttr,
 		disabledDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "accordion-trigger",
 			description: "Present on the trigger element.",
 		}),
@@ -143,7 +143,7 @@ const content = defineComponentApiSchema<AccordionContentPropsWithoutHTML>({
 	dataAttributes: [
 		orientationDataAttr,
 		disabledDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "accordion-content",
 			description: "Present on the content element.",
 		}),
@@ -182,7 +182,7 @@ const header = defineComponentApiSchema<AccordionHeaderPropsWithoutHTML>({
 			options: ["1", "2", "3", "4", "5", "6"],
 			value: HeaderLevelProp,
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "accordion-header",
 			description: "Present on the header element.",
 		}),

@@ -30,7 +30,7 @@ import {
 	defineBooleanProp,
 	defineComponentApiSchema,
 	defineEnumDataAttr,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineUnionProp,
 } from "../utils.js";
 
@@ -60,7 +60,7 @@ export const close = defineComponentApiSchema<DialogClosePropsWithoutHTML>({
 	description: "A button used to close the dialog.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "dialog-close",
 			description: "Present on the close button.",
 		}),
@@ -85,7 +85,7 @@ export const content = defineComponentApiSchema<DialogContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "dialog-content",
 			description: "Present on the content.",
 		}),
@@ -105,7 +105,7 @@ export const title = defineComponentApiSchema<DialogTitlePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "dialog-title",
 			description: "Present on the title.",
 		}),
@@ -117,7 +117,7 @@ export const description = defineComponentApiSchema<DialogDescriptionPropsWithou
 	description: "An accessible description for the dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "dialog-description",
 			description: "Present on the description.",
 		}),
@@ -129,7 +129,7 @@ export const trigger = defineComponentApiSchema<DialogTriggerPropsWithoutHTML>({
 	description: "The element which opens the dialog on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "dialog-trigger",
 			description: "Present on the trigger.",
 		}),
@@ -148,7 +148,7 @@ export const overlay = defineComponentApiSchema<DialogOverlayPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "dialog-overlay",
 			description: "Present on the overlay.",
 		}),

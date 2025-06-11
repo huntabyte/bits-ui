@@ -21,9 +21,9 @@ import {
 	defineCSSVarSchema,
 	defineFunctionProp,
 	defineNumberProp,
-	defineStringDataAttr,
+	defineSimpleDataAttr,
 	defineStringProp,
-	defineStringPropSchema,
+	defineSimplePropSchema,
 } from "../utils.js";
 
 const root = defineComponentApiSchema<CommandRootPropsWithoutHTML>({
@@ -105,7 +105,7 @@ type onStateChange = (state: Readonly<CommandState>) => void;`,
 		}),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-root",
 			description: "Present on the root element.",
 		}),
@@ -124,7 +124,7 @@ const input = defineComponentApiSchema<CommandInputPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-input",
 			description: "Present on the input element.",
 		}),
@@ -138,7 +138,7 @@ const list = defineComponentApiSchema<CommandListPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-list",
 			description: "Present on the list element.",
 		}),
@@ -160,7 +160,7 @@ const viewport = defineComponentApiSchema<CommandViewportPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-viewport",
 			description: "Present on the viewport element.",
 		}),
@@ -183,7 +183,7 @@ const group = defineComponentApiSchema<CommandGroupPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-group",
 			description: "Present on the group element.",
 		}),
@@ -197,7 +197,7 @@ const groupHeading = defineComponentApiSchema<CommandGroupHeadingPropsWithoutHTM
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-group-heading",
 			description: "Present on the group heading element.",
 		}),
@@ -211,7 +211,7 @@ const groupItems = defineComponentApiSchema<CommandGroupItemsPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-group-items",
 			description: "Present on the group items element.",
 		}),
@@ -227,7 +227,7 @@ const item = defineComponentApiSchema<CommandItemPropsWithoutHTML>({
 			description: "The value of the item.",
 			required: true,
 		}),
-		keywords: defineStringPropSchema({
+		keywords: defineSimplePropSchema({
 			type: "string[]",
 			description:
 				"An array of additional keywords or aliases that will be used to filter the item.",
@@ -250,15 +250,15 @@ const item = defineComponentApiSchema<CommandItemPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the item is disabled.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "selected",
 			description: "Present when the item is selected.",
 		}),
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-item",
 			description: "Present on the item element.",
 		}),
@@ -284,7 +284,7 @@ const empty = defineComponentApiSchema<CommandEmptyPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-empty",
 			description: "Present on the empty element.",
 		}),
@@ -302,7 +302,7 @@ const loading = defineComponentApiSchema<CommandLoadingPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-loading",
 			description: "Present on the loading element.",
 		}),
@@ -322,7 +322,7 @@ const separator = defineComponentApiSchema<CommandSeparatorPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		defineStringDataAttr({
+		defineSimpleDataAttr({
 			name: "command-separator",
 			description: "Present on the separator element.",
 		}),
