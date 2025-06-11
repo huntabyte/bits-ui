@@ -21,7 +21,9 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 
 	const floating = box<HTMLElement | null>(null);
 
+	// svelte-ignore state_referenced_locally
 	let strategy = $state(strategyOption);
+	// svelte-ignore state_referenced_locally
 	let placement = $state(placementOption);
 	let middlewareData = $state({});
 	let isPositioned = $state(false);
