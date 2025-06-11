@@ -922,14 +922,12 @@ class CommandRootState {
 		return this.#calculateOffset(selected, newItem);
 	}
 
-	/** Attempts to find the next non-disabled column that matches the expected column.
+	/**
+	 * Attempts to find the next non-disabled column that matches the expected column.
 	 *
 	 * @remarks
 	 * - Skips over disabled columns
 	 * - When a row is shorter than the expected column it defaults to the last item in the row
-	 *
-	 * @param param0
-	 * @returns
 	 */
 	#findNextNonDisabledItemDesc({
 		start,
@@ -1002,11 +1000,12 @@ class CommandRootState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		const isVim = this.opts.vimBindings.current && e.ctrlKey;
 		switch (e.key) {
 			case kbd.n:
 			case kbd.j: {
 				// vim down
-				if (this.opts.vimBindings.current && e.ctrlKey) {
+				if (isVim) {
 					if (this.isGrid) {
 						this.#down(e);
 					} else {
@@ -1017,7 +1016,7 @@ class CommandRootState {
 			}
 			case kbd.l: {
 				// vim right
-				if (this.opts.vimBindings.current && e.ctrlKey) {
+				if (isVim) {
 					if (this.isGrid) {
 						this.#next(e);
 					}
@@ -1040,7 +1039,7 @@ class CommandRootState {
 			case kbd.p:
 			case kbd.k: {
 				// vim up
-				if (this.opts.vimBindings.current && e.ctrlKey) {
+				if (isVim) {
 					if (this.isGrid) {
 						this.#up(e);
 					} else {
@@ -1051,10 +1050,8 @@ class CommandRootState {
 			}
 			case kbd.h: {
 				// vim left
-				if (this.opts.vimBindings.current && e.ctrlKey) {
-					if (this.isGrid) {
-						this.#prev(e);
-					}
+				if (isVim && this.isGrid) {
+					this.#prev(e);
 				}
 				break;
 			}
@@ -1067,9 +1064,7 @@ class CommandRootState {
 				break;
 			case kbd.ARROW_LEFT:
 				if (!this.isGrid) break;
-
 				this.#prev(e);
-
 				break;
 			case kbd.HOME:
 				// first item
