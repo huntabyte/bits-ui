@@ -1,6 +1,6 @@
 ```ts
 type ChildrenSnippetProps = {
-	checked: boolean;
-	indeterminate: boolean;
-};
+	checked: boolean
+	indeterminate: boolean
+}
 ```

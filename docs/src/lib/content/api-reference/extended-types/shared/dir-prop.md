@@ -1,3 +1,3 @@
 ```ts
-"ltr" | "rtl";
+"ltr" | "rtl"
 ```

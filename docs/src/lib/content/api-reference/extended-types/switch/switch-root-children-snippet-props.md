@@ -1,5 +1,5 @@
 ```ts
 type SnippetProps = {
-	checked: boolean;
-};
+	checked: boolean
+}
 ```

@@ -23,7 +23,7 @@
 				preventScroll={false}
 				side="top"
 				sideOffset={10}
-				class="rounded-card border-border bg-background shadow-popover z-50 border-2 py-1.5 pl-1.5 pr-0.5"
+				class="rounded-card border-border shadow-popover z-50 border-2 bg-zinc-50 py-1.5 pl-1.5 pr-0.5 dark:bg-[#121212]"
 			>
 				<ScrollArea>
 					<div

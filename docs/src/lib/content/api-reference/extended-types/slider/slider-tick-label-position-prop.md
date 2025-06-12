@@ -1,3 +1,3 @@
 ```ts
-"top" | "bottom" | "left" | "right";
+;"top" | "bottom" | "left" | "right"
 ```

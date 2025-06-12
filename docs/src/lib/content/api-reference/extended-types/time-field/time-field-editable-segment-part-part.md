@@ -1,3 +1,3 @@
 ```ts
-"hour" | "minute" | "second" | "dayPeriod";
+;"hour" | "minute" | "second" | "dayPeriod"
 ```

@@ -1,1 +1,1 @@
-export { default as PortalToProp } from "./to-prop.md";
+export { default as PortalToProp } from "./to-prop.md"

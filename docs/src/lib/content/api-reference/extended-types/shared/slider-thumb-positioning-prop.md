@@ -1,3 +1,3 @@
 ```ts
-"exact" | "contain";
+"exact" | "contain"
 ```

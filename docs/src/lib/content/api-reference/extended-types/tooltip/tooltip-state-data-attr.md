@@ -1,3 +1,3 @@
 ```ts
-"delayed-open" | "instant-open" | "closed";
+;"delayed-open" | "instant-open" | "closed"
 ```

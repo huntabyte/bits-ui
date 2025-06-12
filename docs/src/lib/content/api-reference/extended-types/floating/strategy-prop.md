@@ -1,3 +1,3 @@
 ```ts
-"fixed" | "absolute";
+"fixed" | "absolute"
 ```

@@ -1,3 +1,3 @@
 ```ts
-string | ((value: number, max: number) => string) | null;
+;string | ((value: number, max: number) => string) | null
 ```

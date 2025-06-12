@@ -6,7 +6,7 @@ type Month<T> = {
 	 * calendar grid, we need a source of truth for the value
 	 * the grid is representing.
 	 */
-	value: DateValue;
+	value: DateValue
 
 	/**
 	 * An array of arrays representing the weeks in the calendar.
@@ -15,7 +15,7 @@ type Month<T> = {
 	 * grid using a table, where each row represents a week and each cell
 	 * represents a day.
 	 */
-	weeks: T[][];
+	weeks: T[][]
 
 	/**
 	 * An array of all the dates in the current month, including dates from
@@ -24,11 +24,11 @@ type Month<T> = {
 	 * as it provides all the dates that should be displayed in the grid in a flat
 	 * array.
 	 */
-	dates: T[];
-};
+	dates: T[]
+}
 
 type ChildrenSnippetProps = {
-	months: Month<DateValue>[];
-	weekdays: string[];
-};
+	months: Month<DateValue>[]
+	weekdays: string[]
+}
 ```

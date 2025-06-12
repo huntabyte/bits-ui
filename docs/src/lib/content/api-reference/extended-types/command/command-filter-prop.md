@@ -1,3 +1,3 @@
 ```ts
-(value: string, search: string, keywords?: string[]) => number;
+;(value: string, search: string, keywords?: string[]) => number
 ```

@@ -1,3 +1,3 @@
 ```ts
-(pastedText: string) => string;
+;(pastedText: string) => string
 ```

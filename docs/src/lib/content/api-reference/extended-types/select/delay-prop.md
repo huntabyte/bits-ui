@@ -1,3 +1,3 @@
 ```ts
-(tick: number) => number;
+;(tick: number) => number
 ```
