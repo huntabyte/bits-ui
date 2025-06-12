@@ -118,8 +118,40 @@ const root = defineComponentApiSchema<SliderRootPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLSpanElement",
-			childDef: SliderRootChildSnippetProps,
-			childrenDef: SliderRootChildrenSnippetProps,
+			child: {
+				definition: SliderRootChildSnippetProps,
+				stringDefinition: `type TickItem = {
+	/** The value this tick represents */
+	value: number;
+	/** The index of this tick */
+	index: number;
+};
+
+type ChildSnippetProps = {
+	/** The tick items to iterate over and render */
+	tickItems: TickItem[];
+	/** The currently active thumb */
+	thumbs: number[];
+	/** Props to apply to the root element */
+	props: Record<string, unknown>;
+};`,
+			},
+			children: {
+				definition: SliderRootChildrenSnippetProps,
+				stringDefinition: `type TickItem = {
+	/** The value this tick represents */
+	value: number;
+	/** The index of this tick */
+	index: number;
+};
+
+type ChildrenSnippetProps = {
+	/** The tick items to iterate over and render */
+	tickItems: TickItem[];
+	/** The currently active thumb */
+	thumbs: number[];
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

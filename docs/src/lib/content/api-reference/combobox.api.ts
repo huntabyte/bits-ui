@@ -17,25 +17,24 @@ import {
 	NoopProp,
 	OnChangeStringOrArrayProp,
 	OnOpenChangeProp,
-	OpenChildSnippetProps,
-	OpenChildrenSnippetProps,
 	OpenClosedProp,
 	SingleOrMultipleProp,
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
 import { DelayProp, ItemsProp } from "./extended-types/select/index.js";
-import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentChildDefinition,
 	floatingContentCSSVars,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	openChildDefinition,
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
@@ -161,8 +160,7 @@ export const content = defineComponentApiSchema<ComboboxContentPropsWithoutHTML>
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: OpenChildrenSnippetProps,
-			childDef: FloatingContentChildSnippetProps,
+			child: floatingContentChildDefinition,
 		}),
 	},
 	dataAttributes: [
@@ -193,8 +191,7 @@ export const contentStatic = defineComponentApiSchema<ComboboxContentStaticProps
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			child: openChildDefinition,
 		}),
 	},
 	dataAttributes: [

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Code from "$lib/components/markdown/code.svelte";
 	import * as Table from "$lib/components/ui/table/index.js";
-	import type { DataAttrSchema } from "$lib/types/index.js";
+	import type { CSSVarSchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
 
-	let { cssVars = [] }: { cssVars: DataAttrSchema[] } = $props();
+	let { cssVars = [] }: { cssVars: CSSVarSchema[] } = $props();
 </script>
 
 <Table.Root>
@@ -24,7 +24,6 @@
 					<Table.Cell class="align-baseline">
 						{#if attr.description}
 							<p class="my-2 text-sm leading-7">
-								<!--  eslint-disable-next-line svelte/no-at-html-tags -->
 								{@html parseMarkdown(attr.description)}
 							</p>
 						{/if}

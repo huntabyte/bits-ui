@@ -86,8 +86,37 @@ export const root = defineComponentApiSchema<RatingGroupRootPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: RatingGroupRootChildSnippetProps,
-			childrenDef: RatingGroupRootChildrenSnippetProps,
+			child: {
+				definition: RatingGroupRootChildSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type RatingGroupItemData = {
+	index: number;
+	state: RatingGroupItemState;
+};
+
+type ChildSnippetProps = {
+	items: RatingGroupItemData[];
+	value: number;
+	max: number;
+	props: Record<string, unknown>;
+};`,
+			},
+			children: {
+				definition: RatingGroupRootChildrenSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type RatingGroupItemData = {
+	index: number;
+	state: RatingGroupItemState;
+};
+
+type ChildrenSnippetProps = {
+	items: RatingGroupItemData[];
+	value: number;
+	max: number;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
@@ -126,8 +155,23 @@ export const item = defineComponentApiSchema<RatingGroupItemPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: RatingGroupItemChildSnippetProps,
-			childrenDef: RatingGroupItemChildrenSnippetProps,
+			child: {
+				definition: RatingGroupItemChildSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type ChildSnippetProps = {
+	state: RatingGroupItemState;
+	props: Record<string, unknown>;
+};`,
+			},
+			children: {
+				definition: RatingGroupItemChildrenSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type ChildrenSnippetProps = {
+	state: RatingGroupItemState;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

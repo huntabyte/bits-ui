@@ -90,7 +90,13 @@ const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 		restoreScrollDelay: restoreScrollDelayProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: DialogContentChildSnippetProps,
+			child: {
+				definition: DialogContentChildSnippetProps,
+				stringDefinition: `type SnippetProps = {
+	props: Record<string, unknown>;
+	open: boolean;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
@@ -155,7 +161,13 @@ const overlay = defineComponentApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: DialogOverlayChildSnippetProps,
+			child: {
+				definition: DialogOverlayChildSnippetProps,
+				stringDefinition: `type SnippetProps = {
+	props: Record<string, unknown>;
+	open: boolean;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

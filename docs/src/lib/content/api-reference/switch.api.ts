@@ -44,8 +44,19 @@ const root = defineComponentApiSchema<SwitchRootPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLButtonElement",
-			childrenDef: SwitchRootChildrenSnippetProps,
-			childDef: SwitchRootChildSnippetProps,
+			children: {
+				definition: SwitchRootChildrenSnippetProps,
+				stringDefinition: `type ChildrenSnippetProps = {
+	checked: boolean;
+};`,
+			},
+			child: {
+				definition: SwitchRootChildSnippetProps,
+				stringDefinition: `type ChildSnippetProps = {
+	checked: boolean;
+	props: Record<string, unknown>;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
@@ -70,8 +81,19 @@ const thumb = defineComponentApiSchema<SwitchThumbPropsWithoutHTML>({
 	description: "The thumb on the switch used to indicate the switch's state.",
 	props: withChildProps({
 		elType: "HTMLSpanElement",
-		childrenDef: SwitchRootChildrenSnippetProps,
-		childDef: SwitchRootChildSnippetProps,
+		children: {
+			definition: SwitchRootChildrenSnippetProps,
+			stringDefinition: `type ChildrenSnippetProps = {
+	checked: boolean;
+};`,
+		},
+		child: {
+			definition: SwitchRootChildSnippetProps,
+			stringDefinition: `type ChildSnippetProps = {
+	checked: boolean;
+	props: Record<string, unknown>;
+};`,
+		},
 	}),
 	dataAttributes: [
 		stateDataAttr,

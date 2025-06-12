@@ -117,8 +117,21 @@ export const input = defineComponentApiSchema<DateFieldInputPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: DateFieldInputChildrenSnippetProps,
-			childDef: DateFieldInputChildSnippetProps,
+			children: {
+				definition: DateFieldInputChildrenSnippetProps,
+				stringDefinition: `import type { SegmentPart } from "bits-ui";
+type ChildrenSnippetProps = {
+	segments: Array<{ part: SegmentPart; value: string }>;
+};`,
+			},
+			child: {
+				definition: DateFieldInputChildSnippetProps,
+				stringDefinition: `import type { SegmentPart } from "bits-ui";
+type ChildSnippetProps = {
+	props: Record<string, unknown>;
+	segments: Array<{ part: SegmentPart; value: string }>;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

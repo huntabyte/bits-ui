@@ -7,21 +7,19 @@ import type {
 	TooltipRootPropsWithoutHTML,
 	TooltipTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { OpenChildSnippetProps, OpenChildrenSnippetProps } from "./extended-types/shared/index.js";
-import {
-	FloatingContentChildSnippetProps,
-	FloatingSideProp,
-} from "./extended-types/floating/index.js";
+import { FloatingSideProp } from "./extended-types/floating/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentChildDefinition,
 	floatingContentCSSVars,
 	floatingProps,
 	forceMountProp,
 	onOpenChangeProp,
+	openChildDefinition,
 	openProp,
 	portalProps,
 	withChildProps,
@@ -140,8 +138,7 @@ export const content = defineComponentApiSchema<TooltipContentPropsWithoutHTML>(
 		dir: dirProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: OpenChildrenSnippetProps,
-			childDef: FloatingContentChildSnippetProps,
+			child: floatingContentChildDefinition,
 		}),
 	},
 	dataAttributes: [
@@ -165,8 +162,7 @@ export const contentStatic = defineComponentApiSchema<TooltipContentStaticPropsW
 		dir: dirProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			child: openChildDefinition,
 		}),
 	},
 	dataAttributes: [

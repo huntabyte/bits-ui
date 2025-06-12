@@ -134,8 +134,23 @@ export const input = defineComponentApiSchema<TimeFieldInputPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: TimeFieldInputChildrenSnippetProps,
-			childDef: TimeFieldInputChildSnippetProps,
+			children: {
+				definition: TimeFieldInputChildrenSnippetProps,
+				stringDefinition: `import type { TimeSegmentPart } from "bits-ui";
+
+type ChildrenSnippetProps = {
+	segments: Array<{ part: TimeSegmentPart; value: string }>;
+};`,
+			},
+			child: {
+				definition: TimeFieldInputChildSnippetProps,
+				stringDefinition: `import type { TimeSegmentPart } from "bits-ui";
+
+type ChildSnippetProps = {
+	props: Record<string, unknown>;
+	segments: Array<{ part: TimeSegmentPart; value: string }>;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

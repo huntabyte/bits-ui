@@ -14,10 +14,7 @@ import {
 	SingleOrMultipleProp,
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
-import {
-	ContentChildSnippetProps,
-	ContentChildrenSnippetProps,
-} from "./extended-types/accordion/index.js";
+import { ContentChildSnippetProps } from "./extended-types/accordion/index.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -136,8 +133,13 @@ const content = defineComponentApiSchema<AccordionContentPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: ContentChildrenSnippetProps,
-			childDef: ContentChildSnippetProps,
+			child: {
+				definition: ContentChildSnippetProps,
+				stringDefinition: `type SnippetProps = {
+	open: boolean;
+	props: Record<string, unknown>;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

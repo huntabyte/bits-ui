@@ -15,6 +15,7 @@ import {
 	OnInteractOutsideProp,
 	OnOpenChangeProp,
 	OnPlaceholderChangeProp,
+	OpenChildSnippetProps,
 	OrientationProp,
 	SingleOrMultipleProp,
 	TimeValueProp,
@@ -23,6 +24,7 @@ import {
 	FloatingAlignProp,
 	FloatingCollisionBoundaryProp,
 	FloatingCollisionPaddingProp,
+	FloatingContentChildSnippetProps,
 	FloatingCustomAnchorProp,
 	FloatingSideProp,
 	FloatingStickyProp,
@@ -47,9 +49,15 @@ import {
 } from "../utils.js";
 import { PaginationPageItemProp } from "./extended-types/pagination/index.js";
 import {
+	CheckboxRootChildrenSnippetProps,
+	CheckboxRootChildSnippetProps,
 	CheckboxRootOnCheckedChangeProp,
 	CheckboxRootOnIndeterminateChangeProp,
 } from "./extended-types/checkbox/index.js";
+import {
+	RadioGroupItemChildrenSnippetProps,
+	RadioGroupItemChildSnippetProps,
+} from "./extended-types/radio-group/index.js";
 
 type ElementKind =
 	| "HTMLDivElement"
@@ -102,9 +110,9 @@ export const portalProps = {
 export function childSnippet(opts?: PropTypeComplex): PropSchema {
 	return defineComponentPropSchema({
 		type: C.SNIPPET,
-		definition: opts?.definition || ChildDefaultSnippetProps,
+		definition: opts?.definition ?? ChildDefaultSnippetProps,
 		stringDefinition:
-			opts?.stringDefinition ||
+			opts?.stringDefinition ??
 			`type SnippetProps = {
 	props: Record<string, unknown>;
 };`,
@@ -135,22 +143,31 @@ export function refProp({ elType = "HTMLElement" }: { elType?: ElementKind }): P
 		description:
 			"The underlying DOM element being rendered. You can bind to this to get a reference to the element.",
 		bindable: true,
+		default: "null",
 	});
 }
 
-export function withChildProps({
-	elType = "HTMLElement",
-	childrenDef,
-	childDef = ChildDefaultSnippetProps,
-}: {
+type WithChildPropOpts = {
 	elType: ElementKind;
-	childrenDef?: PropTypeComplex;
-	childDef?: PropTypeComplex;
-}) {
+	children?: Pick<PropTypeComplex, "definition" | "stringDefinition">;
+	child?: Pick<PropTypeComplex, "definition" | "stringDefinition">;
+};
+
+export function withChildProps({ elType = "HTMLElement", children, child }: WithChildPropOpts) {
+	const childDefinition = child ?? {
+		definition: ChildDefaultSnippetProps,
+		stringDefinition: `type SnippetProps = {
+		props: Record<string, unknown>;
+	};`,
+	};
 	return {
 		ref: refProp({ elType }),
-		children: childrenSnippet(childrenDef),
-		child: childSnippet(childDef),
+		children: childrenSnippet(
+			children ? { ...children, variant: "complex", type: "Snippet" } : undefined
+		),
+		child: childSnippet(
+			child ? { ...childDefinition, variant: "complex", type: "Snippet" } : undefined
+		),
 	} as const;
 }
 
@@ -214,7 +231,7 @@ export const floatingStickyProp = defineEnumProp({
 	options: ["partial", "always"],
 	description:
 		"The sticky behavior on the align axis. `'partial'` will keep the content in the boundary as long as the trigger is at least partially in the boundary whilst `'always'` will keep the content in the boundary regardless.",
-	default: "partial",
+	default: `partial`,
 	definition: FloatingStickyProp,
 });
 
@@ -228,7 +245,7 @@ export const floatingUpdatePositionStrategyProp = defineEnumProp({
 	options: ["optimized", "always"],
 	description:
 		"The strategy to use when updating the position of the content. When `'optimized'` the content will only be repositioned when the trigger is in the viewport. When `'always'` the content will be repositioned whenever the position changes.",
-	default: "optimized",
+	default: `optimized`,
 	definition: FloatingUpdatePositionStrategyProp,
 });
 
@@ -236,7 +253,7 @@ export const floatingStrategyProp = defineEnumProp({
 	options: ["fixed", "absolute"],
 	description:
 		"The positioning strategy to use for the floating element. When `'fixed'` the element will be positioned relative to the viewport. When `'absolute'` the element will be positioned relative to the nearest positioned ancestor.",
-	default: "fixed",
+	default: `fixed`,
 	definition: FloatingStrategyProp,
 });
 
@@ -371,7 +388,7 @@ export const dirProp = defineEnumProp({
 	definition: DirProp,
 	options: ["ltr", "rtl"],
 	description: "The reading direction of the app.",
-	default: "'ltr'",
+	default: "ltr",
 });
 
 export const orientationDataAttr = defineEnumDataAttr({
@@ -535,3 +552,68 @@ export function floatingContentCSSVars(componentName: string) {
 		}),
 	];
 }
+
+export const floatingContentChildDefinition = {
+	definition: FloatingContentChildSnippetProps,
+	stringDefinition: `type ChildSnippetProps = {
+	/**
+	 * Props for the positioning wrapper
+	 * Do not style this element -
+	 * styling should be applied to the content element
+	 */
+	wrapperProps: Record<string, unknown>;
+
+	/**
+	 * Props for your content element
+	 * Apply your custom styles here
+	 */
+	props: Record<string, unknown>;
+
+	/**
+	 * Content visibility state
+	 * Use this for conditional rendering with
+	 * Svelte transitions
+	 */
+	open: boolean;
+};`,
+};
+
+export const openChildDefinition = {
+	definition: OpenChildSnippetProps,
+	stringDefinition: `type ChildSnippetProps = {
+	open: boolean;
+	props: Record<string, unknown>;
+};`,
+};
+
+export const checkboxChildrenDefinition = {
+	definition: CheckboxRootChildrenSnippetProps,
+	stringDefinition: `type ChildrenSnippetProps = {
+	checked: boolean;
+	indeterminate: boolean;
+};`,
+};
+
+export const checkboxChildDefinition = {
+	definition: CheckboxRootChildSnippetProps,
+	stringDefinition: `type ChildSnippetProps = {
+	props: Record<string, unknown>;
+	checked: boolean;
+	indeterminate: boolean;
+};`,
+};
+
+export const radioGroupItemChildrenDefinition = {
+	definition: RadioGroupItemChildrenSnippetProps,
+	stringDefinition: `type ChildrenSnippetProps = {
+	checked: boolean;
+};`,
+};
+
+export const radioGroupItemChildDefinition = {
+	definition: RadioGroupItemChildSnippetProps,
+	stringDefinition: `type ChildSnippetProps = {
+	props: Record<string, unknown>;
+	checked: boolean;
+};`,
+};

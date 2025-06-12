@@ -71,8 +71,37 @@ const root = defineComponentApiSchema<PinInputRootPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: PinInputRootChildSnippetProps,
-			childrenDef: PinInputRootChildrenSnippetProps,
+			child: {
+				definition: PinInputRootChildSnippetProps,
+				stringDefinition: `type PinInputCell = {
+	/** The character displayed in the cell. */
+	char: string | null | undefined;
+	/** Whether the cell is active. */
+	isActive: boolean;
+	/** Whether the cell has a fake caret. */
+	hasFakeCaret: boolean;
+};
+
+type SnippetProps = {
+	cells: PinInputCell[];
+	props: Record<string, unknown>;
+};`,
+			},
+			children: {
+				definition: PinInputRootChildrenSnippetProps,
+				stringDefinition: `type PinInputCell = {
+	/** The character displayed in the cell. */
+	char: string | null | undefined;
+	/** Whether the cell is active. */
+	isActive: boolean;
+	/** Whether the cell has a fake caret. */
+	hasFakeCaret: boolean;
+};
+
+type SnippetProps = {
+	cells: PinInputCell[];
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

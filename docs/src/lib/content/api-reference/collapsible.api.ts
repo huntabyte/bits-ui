@@ -4,10 +4,7 @@ import type {
 	CollapsibleTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { forceMountProp, withChildProps } from "./shared.js";
-import {
-	CollapsibleContentChildSnippetProps,
-	CollapsibleContentChildrenSnippetProps,
-} from "./extended-types/collapsible/index.js";
+import { CollapsibleContentChildSnippetProps } from "./extended-types/collapsible/index.js";
 import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	defineBooleanProp,
@@ -88,8 +85,13 @@ export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHT
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: CollapsibleContentChildrenSnippetProps,
-			childDef: CollapsibleContentChildSnippetProps,
+			child: {
+				definition: CollapsibleContentChildSnippetProps,
+				stringDefinition: `type SnippetProps = {
+	open: boolean;
+	props: Record<string, unknown>;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [

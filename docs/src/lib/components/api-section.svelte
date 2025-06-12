@@ -2,7 +2,7 @@
 	import { page } from "$app/state";
 	import CSSVarsTable from "$lib/components/api-ref/css-vars-table.svelte";
 	import DataAttrsTable from "$lib/components/api-ref/data-attrs-table.svelte";
-	import PropsTable from "$lib/components/api-ref/props-table.svelte";
+	import PropsTable from "$lib/components/api-ref/props/props-table.svelte";
 	import { h2 as H2, p as P } from "$lib/components/markdown/index.js";
 	import type { APISchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
@@ -33,12 +33,14 @@
 				{#if schema.props}
 					<PropsTable props={schema.props} />
 				{/if}
-				{#if schema.dataAttributes && schema.dataAttributes.length}
-					<DataAttrsTable dataAttrs={schema.dataAttributes} />
-				{/if}
-				{#if schema.cssVars && schema.cssVars.length}
-					<CSSVarsTable cssVars={schema.cssVars} />
-				{/if}
+				<!-- {#if schema.type === "component"}
+					{#if schema.dataAttributes && schema.dataAttributes.length}
+						<DataAttrsTable dataAttrs={schema.dataAttributes} />
+					{/if}
+					{#if schema.cssVars && schema.cssVars.length}
+						<CSSVarsTable cssVars={schema.cssVars} />
+					{/if}
+				{/if} -->
 			</div>
 		</div>
 	{/each}

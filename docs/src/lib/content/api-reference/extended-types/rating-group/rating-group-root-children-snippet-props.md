@@ -6,7 +6,7 @@ type RatingGroupItemData = {
 	state: RatingGroupItemState;
 };
 
-type RatingGroupRootChildrenSnippetProps = {
+type ChildrenSnippetProps = {
 	items: RatingGroupItemData[];
 	value: number;
 	max: number;

@@ -22,6 +22,7 @@ import {
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentChildDefinition,
 	floatingContentCSSVars,
 	floatingProps,
 	focusScopeProps,
@@ -32,7 +33,6 @@ import {
 	withChildProps,
 } from "./shared.js";
 import { menu } from "./menu.api.js";
-import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import { omit } from "$lib/utils/omit.js";
 import { defineBooleanProp, defineComponentApiSchema } from "../utils.js";
 
@@ -75,7 +75,7 @@ export const content = defineComponentApiSchema<ContextMenuContentPropsWithoutHT
 			description:
 				"Whether or not the context menu should loop through items when reaching the end.",
 		}),
-		...withChildProps({ elType: "HTMLDivElement", childDef: FloatingContentChildSnippetProps }),
+		...withChildProps({ elType: "HTMLDivElement", child: floatingContentChildDefinition }),
 	},
 	dataAttributes: menu.content.dataAttributes,
 	cssVars: floatingContentCSSVars("context-menu"),

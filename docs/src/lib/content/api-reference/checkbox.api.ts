@@ -3,11 +3,9 @@ import type {
 	CheckboxGroupPropsWithoutHTML,
 	CheckboxRootPropsWithoutHTML,
 } from "bits-ui";
-import { withChildProps } from "./shared.js";
+import { checkboxChildDefinition, checkboxChildrenDefinition, withChildProps } from "./shared.js";
 import {
 	CheckboxGroupOnValueChangeProp,
-	CheckboxRootChildSnippetProps,
-	CheckboxRootChildrenSnippetProps,
 	CheckboxRootOnCheckedChangeProp,
 	CheckboxRootOnIndeterminateChangeProp,
 	CheckboxRootStateDataAttr,
@@ -66,8 +64,8 @@ export const root = defineComponentApiSchema<CheckboxRootPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLButtonElement",
-			childDef: CheckboxRootChildSnippetProps,
-			childrenDef: CheckboxRootChildrenSnippetProps,
+			child: checkboxChildDefinition,
+			children: checkboxChildrenDefinition,
 		}),
 	},
 	dataAttributes: [

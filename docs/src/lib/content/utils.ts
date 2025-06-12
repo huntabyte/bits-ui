@@ -180,7 +180,7 @@ export function defineEnumProp(opts: DefineEnumPropOpts) {
 		default: opts.default
 			? {
 					variant: "simple",
-					value: opts.default,
+					value: `'${opts.default}'`,
 				}
 			: undefined,
 	});

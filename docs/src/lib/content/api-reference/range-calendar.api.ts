@@ -1,5 +1,5 @@
 import type { RangeCalendarRootPropsWithoutHTML } from "bits-ui";
-import { valueDateRangeChangeFn, valueDateRangeProp, withChildProps } from "./shared.js";
+import { valueDateRangeChangeFn, valueDateRangeProp } from "./shared.js";
 import {
 	root as calendarRoot,
 	createCalendarCellSchema,
@@ -17,10 +17,7 @@ import {
 	createCalendarYearSelectSchema,
 } from "./calendar.api.js";
 import { root as rangeFieldRoot } from "./date-range-field.api.js";
-import {
-	CalendarRootChildrenSnippetProps,
-	CalendarRootChildSnippetProps,
-} from "./extended-types/shared/index.js";
+
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -66,11 +63,9 @@ export const root = defineComponentApiSchema<RangeCalendarRootPropsWithoutHTML>(
 		}),
 		monthFormat: calendarRoot.props!.monthFormat,
 		yearFormat: calendarRoot.props!.yearFormat,
-		...withChildProps({
-			elType: "HTMLDivElement",
-			childDef: CalendarRootChildSnippetProps,
-			childrenDef: CalendarRootChildrenSnippetProps,
-		}),
+		child: calendarRoot.props!.child,
+		children: calendarRoot.props!.children,
+		ref: calendarRoot.props!.ref,
 	},
 	dataAttributes: [
 		defineSimpleDataAttr({

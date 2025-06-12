@@ -18,11 +18,14 @@ import type {
 } from "bits-ui";
 import {
 	arrowProps,
+	checkboxChildDefinition,
+	checkboxChildrenDefinition,
 	checkedProp,
 	childrenSnippet,
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentChildDefinition,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
@@ -30,28 +33,22 @@ import {
 	onCheckedChangeProp,
 	onIndeterminateChangeProp,
 	onOpenChangeProp,
+	openChildDefinition,
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
+	radioGroupItemChildDefinition,
+	radioGroupItemChildrenDefinition,
 	withChildProps,
 } from "./shared.js";
 import {
 	NoopProp,
 	OnStringValueChangeProp,
-	OpenChildSnippetProps,
-	OpenChildrenSnippetProps,
 	OpenClosedProp,
-	RadioItemChildSnippetProps,
-	RadioItemChildrenSnippetProps,
 } from "./extended-types/shared/index.js";
 import { MenuCheckedStateAttr } from "./extended-types/menu/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
-import {
-	CheckboxGroupOnValueChangeProp,
-	CheckboxRootChildSnippetProps,
-	CheckboxRootChildrenSnippetProps,
-} from "./extended-types/checkbox/index.js";
-import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
+import { CheckboxGroupOnValueChangeProp } from "./extended-types/checkbox/index.js";
 import type { ComponentAPISchema, PropObj } from "$lib/types/index.js";
 import { omit } from "$lib/utils/omit.js";
 import {
@@ -115,8 +112,7 @@ const contentProps = {
 	}),
 	...withChildProps({
 		elType: "HTMLDivElement",
-		childrenDef: OpenChildrenSnippetProps,
-		childDef: FloatingContentChildSnippetProps,
+		child: floatingContentChildDefinition,
 	}),
 } satisfies PropObj<DropdownMenuContentPropsWithoutHTML>;
 
@@ -135,8 +131,7 @@ const contentStaticProps = {
 	}),
 	...withChildProps({
 		elType: "HTMLDivElement",
-		childrenDef: OpenChildrenSnippetProps,
-		childDef: OpenChildSnippetProps,
+		child: openChildDefinition,
 	}),
 } satisfies PropObj<DropdownMenuContentStaticPropsWithoutHTML>;
 
@@ -158,8 +153,7 @@ const subContentStaticProps = {
 	}),
 	...withChildProps({
 		elType: "HTMLDivElement",
-		childrenDef: OpenChildrenSnippetProps,
-		childDef: OpenChildSnippetProps,
+		child: openChildDefinition,
 	}),
 } satisfies PropObj<DropdownMenuSubContentStaticPropsWithoutHTML>;
 
@@ -179,8 +173,8 @@ const checkboxItemProps = {
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
 		elType: "HTMLDivElement",
-		childrenDef: CheckboxRootChildrenSnippetProps,
-		childDef: CheckboxRootChildSnippetProps,
+		children: checkboxChildrenDefinition,
+		child: checkboxChildDefinition,
 	}),
 } satisfies PropObj<DropdownMenuCheckboxItemPropsWithoutHTML>;
 
@@ -227,8 +221,8 @@ const radioItemProps = {
 	...omit(sharedItemProps, "child", "children"),
 	...withChildProps({
 		elType: "HTMLDivElement",
-		childrenDef: RadioItemChildrenSnippetProps,
-		childDef: RadioItemChildSnippetProps,
+		children: radioGroupItemChildrenDefinition,
+		child: radioGroupItemChildDefinition,
 	}),
 } satisfies PropObj<DropdownMenuRadioItemPropsWithoutHTML>;
 

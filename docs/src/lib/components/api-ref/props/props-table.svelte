@@ -5,6 +5,7 @@
 	import PropsRequiredBadge from "./props-required-badge.svelte";
 	import PropsBindableBadge from "./props-bindable-badge.svelte";
 	import { parseMarkdown } from "$lib/utils/markdown.js";
+	import PropsTypeContent from "./props-type-content.svelte";
 
 	let { props: _props }: { props: PropObj<Record<string, unknown>> } = $props();
 
@@ -45,7 +46,7 @@
 					{/if}
 				</Table.Cell>
 				<Table.Cell class="hidden pr-1 align-baseline sm:table-cell">
-					<PropTypeContent type={p?.type} />
+					<PropsTypeContent type={p?.type} />
 				</Table.Cell>
 				<Table.Cell class="hidden align-baseline sm:table-cell">
 					<p class="text-sm leading-[1.5rem]">
@@ -55,7 +56,7 @@
 						<Code class="bg-background h-auto px-0">
 							Default:
 							{#if p.default}
-								{` ${p.default}`}
+								{` ${p.default.value}`}
 							{:else}
 								<span aria-hidden="true"> &nbsp;—— </span>
 								<span class="sr-only"> undefined </span>
@@ -64,11 +65,11 @@
 					</div>
 				</Table.Cell>
 				<Table.Cell class="text-center align-middle sm:hidden">
-					<PropMobilePopover
+					<!-- <PropMobilePopover
 						type={p?.type}
 						description={p?.description}
 						defaultValue={p?.default}
-					/>
+					/> -->
 				</Table.Cell>
 			</Table.Row>
 		{/each}

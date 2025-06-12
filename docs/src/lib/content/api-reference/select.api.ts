@@ -4,11 +4,13 @@ import {
 	dirProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
+	floatingContentChildDefinition,
 	floatingContentCSSVars,
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
 	onOpenChangeProp,
+	openChildDefinition,
 	openProp,
 	portalProps,
 	preventOverflowTextSelectionProp,
@@ -31,13 +33,10 @@ import type {
 	SelectViewportPropsWithoutHTML,
 } from "bits-ui";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
-import { FloatingContentChildSnippetProps } from "./extended-types/floating/index.js";
 import { DelayProp, ItemsProp } from "./extended-types/select/index.js";
 import {
 	NoopProp,
 	OnChangeStringOrArrayProp,
-	OpenChildSnippetProps,
-	OpenChildrenSnippetProps,
 	OpenClosedProp,
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
@@ -146,8 +145,7 @@ export const content = defineComponentApiSchema<SelectContentPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: OpenChildrenSnippetProps,
-			childDef: FloatingContentChildSnippetProps,
+			child: floatingContentChildDefinition,
 		}),
 	},
 	dataAttributes: [
@@ -178,8 +176,7 @@ export const contentStatic = defineComponentApiSchema<SelectContentStaticPropsWi
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: OpenChildrenSnippetProps,
-			childDef: OpenChildSnippetProps,
+			child: openChildDefinition,
 		}),
 	},
 	dataAttributes: [

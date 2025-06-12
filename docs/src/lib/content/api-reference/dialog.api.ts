@@ -15,16 +15,13 @@ import {
 	focusScopeProps,
 	forceMountProp,
 	onOpenChangeProp,
+	openChildDefinition,
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
 	withChildProps,
 } from "./shared.js";
-import {
-	DialogContentChildSnippetProps,
-	DialogOverlayChildSnippetProps,
-} from "./extended-types/dialog/index.js";
 import { HeaderLevelProp, OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	defineBooleanProp,
@@ -80,7 +77,7 @@ export const content = defineComponentApiSchema<DialogContentPropsWithoutHTML>({
 		restoreScrollDelay: restoreScrollDelayProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: DialogContentChildSnippetProps,
+			child: openChildDefinition,
 		}),
 	},
 	dataAttributes: [
@@ -143,7 +140,7 @@ export const overlay = defineComponentApiSchema<DialogOverlayPropsWithoutHTML>({
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: DialogOverlayChildSnippetProps,
+			child: openChildDefinition,
 		}),
 	},
 	dataAttributes: [
