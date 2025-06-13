@@ -548,6 +548,30 @@ describe("select - single", () => {
 		});
 		expect(getHiddenInput()).toHaveAttribute("autocomplete", "one-time-code");
 	});
+
+	it("should not open when disabled on touch devices", async () => {
+		const { trigger, queryByTestId } = setupSingle({ disabled: true });
+
+		// simulate touch pointerup event (which is what touch devices use)
+		const touchEvent = new PointerEvent("pointerup", {
+			pointerType: "touch",
+		});
+		trigger.dispatchEvent(touchEvent);
+
+		expect(queryByTestId("content")).toBeNull();
+	});
+
+	it("should not open when disabled on mouse/pointer devices", async () => {
+		const { trigger, queryByTestId } = setupSingle({ disabled: true });
+
+		// simulate mouse pointerdown event
+		const mouseEvent = new PointerEvent("pointerdown", {
+			pointerType: "mouse",
+		});
+		trigger.dispatchEvent(mouseEvent);
+
+		expect(queryByTestId("content")).toBeNull();
+	});
 });
 
 ////////////////////////////////////
@@ -838,6 +862,30 @@ describe("select - multiple", () => {
 
 		await user.click(submit);
 		expect(submittedValues).toHaveLength(0);
+	});
+
+	it("should not open when disabled on touch devices", async () => {
+		const { trigger, queryByTestId } = setupMultiple({ disabled: true });
+
+		// simulate touch pointerup event (which is what touch devices use)
+		const touchEvent = new PointerEvent("pointerup", {
+			pointerType: "touch",
+		});
+		trigger.dispatchEvent(touchEvent);
+
+		expect(queryByTestId("content")).toBeNull();
+	});
+
+	it("should not open when disabled on mouse/pointer devices", async () => {
+		const { trigger, queryByTestId } = setupMultiple({ disabled: true });
+
+		// simulate mouse pointerdown event
+		const mouseEvent = new PointerEvent("pointerdown", {
+			pointerType: "mouse",
+		});
+		trigger.dispatchEvent(mouseEvent);
+
+		expect(queryByTestId("content")).toBeNull();
 	});
 });
 

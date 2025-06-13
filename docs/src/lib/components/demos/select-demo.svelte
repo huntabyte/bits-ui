@@ -38,7 +38,7 @@
 
 <Select.Root type="single" onValueChange={(v) => (value = v)} items={themes}>
 	<Select.Trigger
-		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
+		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] touch-none select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />

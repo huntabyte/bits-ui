@@ -741,6 +741,7 @@ class SelectTriggerState {
 	}
 
 	onpointerup(e: BitsPointerEvent) {
+		if (this.root.opts.disabled.current) return;
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			if (this.root.opts.open.current === false) {
