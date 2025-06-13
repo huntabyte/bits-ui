@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.6.1
+
+### Patch Changes
+
+-   fix: Expose `data-orientation` on `Tabs.Content` ([#1571](https://github.com/huntabyte/bits-ui/pull/1571))
+
 ## 2.6.0
 
 ### Minor Changes
