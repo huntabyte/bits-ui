@@ -140,12 +140,13 @@ export function defineSimplePropSchema(_opts: DefineSimplePropSchemaOpts) {
 	const opts = { ...defaults, ..._opts };
 	return definePropSchema({
 		...opts,
-		default: opts.default
-			? {
-					variant: "simple",
-					value: `${opts.default}`,
-				}
-			: undefined,
+		default:
+			opts.default !== undefined
+				? {
+						variant: "simple",
+						value: `${opts.default}`,
+					}
+				: undefined,
 		type: {
 			variant: "simple",
 			type: opts.type,
