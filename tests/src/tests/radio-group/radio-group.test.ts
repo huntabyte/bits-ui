@@ -220,6 +220,121 @@ describe("Input Behavior", () => {
 	});
 });
 
+describe("Readonly Behavior", () => {
+	it("should not have accessibility violations", async () => {
+		const t = setup({ readonly: true });
+		expect(await axe(t.container)).toHaveNoViolations();
+	});
+
+	it("should have readonly data attribute when readonly prop is true", async () => {
+		const t = setup({ readonly: true });
+		const item = t.getByTestId("a-item");
+		expect(item).toHaveAttribute("data-readonly");
+	});
+
+	it("should not have readonly data attribute when readonly prop is false", async () => {
+		const t = setup({ readonly: false });
+		const item = t.getByTestId("a-item");
+		expect(item).not.toHaveAttribute("data-readonly");
+	});
+
+	it("should have aria-readonly on root when readonly prop is true", async () => {
+		const t = setup({ readonly: true });
+		const root = t.getByTestId("root");
+		expect(root).toHaveAttribute("aria-readonly", "true");
+	});
+
+	it("should not have aria-readonly on root when readonly prop is false", async () => {
+		const t = setup({ readonly: false });
+		const root = t.getByTestId("root");
+		expect(root).not.toHaveAttribute("aria-readonly");
+	});
+
+	it("should not change value when readonly and item is clicked", async () => {
+		const t = setup({ readonly: true, value: "b" });
+
+		// verify initial state
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+
+		// click on different item
+		await t.user.click(t.getByTestId("a-item"));
+
+		// value should not change
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+	});
+
+	it("should not change value when readonly and space key is pressed", async () => {
+		const t = setup({ readonly: true, value: "b" });
+
+		// verify initial state
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+
+		// focus and press space on different item
+		const aItem = t.getByTestId("a-item");
+		aItem.focus();
+		await t.user.keyboard(kbd.SPACE);
+
+		// value should not change
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+	});
+
+	it("should not change value when readonly and focus moves to different item", async () => {
+		const t = setup({ readonly: true, value: "b" });
+
+		// verify initial state
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+
+		// focus on different item
+		const aItem = t.getByTestId("a-item");
+		aItem.focus();
+
+		// value should not change
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+	});
+
+	it("should allow keyboard navigation when readonly", async () => {
+		const t = setup({ readonly: true, value: "b" });
+		const [item0, item1, item2] = ITEM_IDS.map((id) => t.getByTestId(id as string));
+
+		item0.focus();
+		expect(item0).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(item1).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		expect(item2).toHaveFocus();
+		await t.user.keyboard(kbd.ARROW_UP);
+		expect(item1).toHaveFocus();
+	});
+
+	it("should allow focus when readonly", async () => {
+		const t = setup({ readonly: true, value: "b" });
+
+		await t.user.keyboard(kbd.TAB);
+		await waitFor(() => expect(t.getByTestId("b-item")).toHaveFocus());
+	});
+
+	it("should not change value when readonly and label is clicked", async () => {
+		const t = setup({ readonly: true, value: "b" });
+
+		// verify initial state
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+
+		// click on label of different item
+		await t.user.click(t.getByTestId("a-label"));
+
+		// value should not change
+		expect(t.getByTestId("b-indicator")).toHaveTextContent("true");
+		expect(t.getByTestId("a-indicator")).toHaveTextContent("false");
+	});
+});
+
 describe("Focus Management", () => {
 	it("should focus the first item when no value is set and focus enters the group", async () => {
 		const t = setup();

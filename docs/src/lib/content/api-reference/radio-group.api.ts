@@ -52,6 +52,11 @@ export const root = defineComponentApiSchema<RadioGroupRootPropsWithoutHTML>({
 				"The orientation of the radio group. This will determine how keyboard navigation will work within the component.",
 			definition: OrientationProp,
 		}),
+		readonly: defineBooleanProp({
+			default: false,
+			description:
+				"Whether or not the radio group is readonly. When readonly, users can focus and navigate through items but cannot change the value.",
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
@@ -60,6 +65,14 @@ export const root = defineComponentApiSchema<RadioGroupRootPropsWithoutHTML>({
 			description: "The orientation of the radio group.",
 			options: ["vertical", "horizontal"],
 			value: OrientationProp,
+		}),
+		defineSimpleDataAttr({
+			name: "disabled",
+			description: "Present when the radio group is disabled.",
+		}),
+		defineSimpleDataAttr({
+			name: "readonly",
+			description: "Present when the radio group is readonly.",
 		}),
 		defineSimpleDataAttr({
 			name: "radio-group-root",
@@ -87,6 +100,10 @@ export const item = defineComponentApiSchema<RadioGroupItemPropsWithoutHTML>({
 		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the radio item is disabled.",
+		}),
+		defineSimpleDataAttr({
+			name: "readonly",
+			description: "Present when the radio group is readonly.",
 		}),
 		defineSimpleDataAttr({
 			name: "value",

@@ -10,7 +10,7 @@ export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	 * The orientation of the radio group. Used to determine
 	 * how keyboard navigation should work.
 	 *
-	 * @defaultValue "vertical"
+	 * @default "vertical"
 	 */
 	orientation?: Orientation;
 
@@ -18,14 +18,14 @@ export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	 * Whether to loop around the radio items when navigating
 	 * with the keyboard.
 	 *
-	 * @defaultValue true
+	 * @default true
 	 */
 	loop?: boolean;
 
 	/**
 	 * The value of the selected radio item.
 	 *
-	 * @defaultValue ""
+	 * @default ""
 	 */
 	value?: string;
 
@@ -39,14 +39,14 @@ export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	 * form submission. If not provided, a hidden input will not
 	 * be rendered and the radio group will not be part of a form.
 	 *
-	 * @defaultValue undefined
+	 * @default undefined
 	 */
 	name?: string;
 
 	/**
 	 * Whether the radio group is disabled.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
 
@@ -56,6 +56,14 @@ export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	 * input is rendered.
 	 */
 	required?: boolean;
+
+	/**
+	 * Whether the radio group is readonly. When readonly, users can
+	 * focus and navigate through items but cannot change the value.
+	 *
+	 * @default false
+	 */
+	readonly?: boolean;
 }>;
 
 export type RadioGroupRootProps = RadioGroupRootPropsWithoutHTML &
@@ -73,7 +81,7 @@ export type RadioGroupItemPropsWithoutHTML = WithChild<
 		/**
 		 * Whether the radio item is disabled.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		disabled?: boolean | null | undefined;
 	},
