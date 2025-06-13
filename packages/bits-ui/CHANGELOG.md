@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.6.2
+
+### Patch Changes
+
+-   fix: ensure body styles aren't touched when `preventScroll={false}` ([#1577](https://github.com/huntabyte/bits-ui/pull/1577))
+
 ## 2.6.1
 
 ### Patch Changes
