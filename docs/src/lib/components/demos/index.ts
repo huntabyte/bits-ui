@@ -59,6 +59,8 @@ export { default as PortalDemo } from "./portal-demo.svelte";
 export { default as ProgressDemo } from "./progress-demo.svelte";
 export { default as ProgressDemoCustom } from "./progress-demo-custom.svelte";
 export { default as RadioGroupDemo } from "./radio-group-demo.svelte";
+export { default as RadioGroupDemoReadonly } from "./radio-group-demo-readonly.svelte";
+export { default as RadioGroupDemoDisabled } from "./radio-group-demo-disabled.svelte";
 export { default as RangeCalendarDemo } from "./range-calendar-demo.svelte";
 export { default as ScrollAreaDemo } from "./scroll-area-demo.svelte";
 export { default as ScrollAreaDemoCustom } from "./scroll-area-demo-custom.svelte";

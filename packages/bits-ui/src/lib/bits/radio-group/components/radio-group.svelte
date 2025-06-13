@@ -18,6 +18,7 @@
 		loop = true,
 		name = undefined,
 		required = false,
+		readonly = false,
 		id = createId(uid),
 		onValueChange = noop,
 		...restProps
@@ -29,6 +30,7 @@
 		loop: box.with(() => loop),
 		name: box.with(() => name),
 		required: box.with(() => required),
+		readonly: box.with(() => readonly),
 		id: box.with(() => id),
 		value: box.with(
 			() => value,

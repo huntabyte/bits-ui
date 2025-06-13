@@ -12,6 +12,8 @@ import {
 	getAriaChecked,
 	getAriaRequired,
 	getDataDisabled,
+	getDataReadonly,
+	getAriaDisabled,
 } from "$lib/internal/attrs.js";
 import type { Orientation } from "$lib/shared/index.js";
 import {
@@ -32,6 +34,7 @@ type RadioGroupRootStateProps = WithRefProps<
 		loop: boolean;
 		orientation: Orientation;
 		name: string | undefined;
+		readonly: boolean;
 	}> &
 		WritableBoxedValues<{ value: string }>
 >;
@@ -64,7 +67,10 @@ class RadioGroupRootState {
 				id: this.opts.id.current,
 				role: "radiogroup",
 				"aria-required": getAriaRequired(this.opts.required.current),
+				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
+				"aria-readonly": this.opts.readonly.current ? "true" : undefined,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-readonly": getDataReadonly(this.opts.readonly.current),
 				"data-orientation": this.opts.orientation.current,
 				[radioGroupAttrs.root]: "",
 				...attachRef(this.opts.ref),
@@ -86,6 +92,7 @@ class RadioGroupItemState {
 	readonly #isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.root.opts.disabled.current
 	);
+	readonly #isReadonly = $derived.by(() => this.root.opts.readonly.current);
 	readonly #isChecked = $derived.by(() => this.root.isChecked(this.opts.value.current));
 	#tabIndex = $state(-1);
 
@@ -117,12 +124,12 @@ class RadioGroupItemState {
 	}
 
 	onclick(_: BitsMouseEvent) {
-		if (this.opts.disabled.current) return;
+		if (this.opts.disabled.current || this.#isReadonly) return;
 		this.root.setValue(this.opts.value.current);
 	}
 
 	onfocus(_: BitsFocusEvent) {
-		if (!this.root.hasValue) return;
+		if (!this.root.hasValue || this.#isReadonly) return;
 		this.root.setValue(this.opts.value.current);
 	}
 
@@ -130,7 +137,9 @@ class RadioGroupItemState {
 		if (this.#isDisabled) return;
 		if (e.key === kbd.SPACE) {
 			e.preventDefault();
-			this.root.setValue(this.opts.value.current);
+			if (!this.#isReadonly) {
+				this.root.setValue(this.opts.value.current);
+			}
 			return;
 		}
 		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
@@ -146,6 +155,7 @@ class RadioGroupItemState {
 				"data-value": this.opts.value.current,
 				"data-orientation": this.root.opts.orientation.current,
 				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-readonly": getDataReadonly(this.#isReadonly),
 				"data-state": this.#isChecked ? "checked" : "unchecked",
 				"aria-checked": getAriaChecked(this.#isChecked, false),
 				[radioGroupAttrs.item]: "",
