@@ -245,7 +245,7 @@ export const floatingUpdatePositionStrategyProp = defineEnumProp({
 	options: ["optimized", "always"],
 	description:
 		"The strategy to use when updating the position of the content. When `'optimized'` the content will only be repositioned when the trigger is in the viewport. When `'always'` the content will be repositioned whenever the position changes.",
-	default: `optimized`,
+	default: "optimized",
 	definition: FloatingUpdatePositionStrategyProp,
 });
 

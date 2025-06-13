@@ -7,6 +7,7 @@
 	import PropsBindableBadge from "./props-bindable-badge.svelte";
 	import Code from "$lib/components/markdown/code.svelte";
 	import { parseMarkdown } from "$lib/utils/markdown.js";
+	import PopoverContent from "$lib/components/ui/popover/popover-content.svelte";
 
 	let { prop }: { prop: PropSchema & { name: string } } = $props();
 </script>
@@ -19,14 +20,14 @@
 		<Info class="size-4" weight="bold" />
 		<span class="sr-only">See type definition</span>
 	</Popover.Trigger>
-	<Popover.Content
+	<PopoverContent
 		preventScroll={false}
 		side="left"
 		sideOffset={8}
 		align="center"
-		class="rounded-card border-border shadow-popover z-50 flex max-h-[80vh] w-[85vw] max-w-[85vw] flex-col items-start gap-4 border-2 bg-zinc-50 p-4 dark:bg-[#121212]"
+		class="flex max-h-[80vh] w-[85vw] max-w-[85vw] flex-col gap-4"
 		avoidCollisions={true}
-		collisionPadding={70}
+		collisionPadding={{ top: 70 }}
 		onCloseAutoFocus={(e) => e.preventDefault()}
 		trapFocus={false}
 	>
@@ -51,7 +52,7 @@
 		{:else}
 			<ScrollArea
 				type="scroll"
-				class="bg-muted rounded-button max-h-[200px] w-[304px] max-w-[304px] p-2"
+				class="bg-muted rounded-button flex max-h-[200px] min-w-full p-2"
 				scrollbarXProps={{ class: "h-1.5" }}
 				scrollbarYProps={{ class: "w-1.5" }}
 			>
@@ -64,20 +65,20 @@
 		{/if}
 		<Separator.Root class="dark:bg-dark-10 bg-border !h-px w-full " />
 
-		<div class="flex flex-col gap-2">
+		<div class="flex w-full flex-col gap-2">
 			<span class="text-foreground text-left font-semibold">Description</span>
 			<ScrollArea
 				type="scroll"
-				class="text-foreground/85 max-h-[140px] w-[304px] max-w-[304px] p-0 text-left text-sm leading-relaxed"
+				class="text-foreground/85 max-h-[200px] min-w-full p-0 text-left text-sm leading-relaxed"
 				scrollbarXProps={{ class: "h-1.5" }}
 				scrollbarYProps={{ class: "w-1.5 -mr-2" }}
 			>
-				<div class="pr-[2.5px]">
+				<div class="w-full pr-[2.5px] leading-7">
 					{@html parseMarkdown(prop.description)}
 				</div>
 			</ScrollArea>
 		</div>
-	</Popover.Content>
+	</PopoverContent>
 	<span aria-hidden="true" class="hidden">
 		<!-- - {type.stringDefinition} -->
 	</span>
