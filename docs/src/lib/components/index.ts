@@ -1,6 +1,5 @@
 export * from "./icons/index.js";
 export * from "./page-header/index.js";
-export * from "./api-ref/index.js";
 export * from "./demos/index.js";
 export { default as SiteHeader } from "./site-header.svelte";
 export { default as TailwindIndicator } from "./tailwind-indicator.svelte";

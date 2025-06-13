@@ -1,15 +1,13 @@
 <script lang="ts">
 	import { Popover, Separator } from "bits-ui";
 	import ScrollArea from "$lib/components/scroll-area.svelte";
-	import type { PropSchema } from "$lib/types/index.js";
+	import type { DataAttrSchema } from "$lib/types/index.js";
 	import Info from "phosphor-svelte/lib/Info";
-	import PropsRequiredBadge from "./props-required-badge.svelte";
-	import PropsBindableBadge from "./props-bindable-badge.svelte";
 	import Code from "$lib/components/markdown/code.svelte";
 	import { parseMarkdown } from "$lib/utils/markdown.js";
 	import PopoverContent from "$lib/components/ui/popover/popover-content.svelte";
 
-	let { prop }: { prop: PropSchema & { name: string } } = $props();
+	let { attr }: { attr: DataAttrSchema } = $props();
 </script>
 
 <Popover.Root>
@@ -23,7 +21,7 @@
 	<PopoverContent
 		preventScroll={false}
 		side="left"
-		sideOffset={0}
+		sideOffset={-6}
 		align="center"
 		class="flex max-h-[80vh] w-[85vw] max-w-[85vw] flex-col gap-4"
 		avoidCollisions={true}
@@ -31,23 +29,15 @@
 		onCloseAutoFocus={(e) => e.preventDefault()}
 		trapFocus={false}
 	>
-		<div class="flex w-full items-center justify-between gap-2">
+		<div class="flex w-full">
 			<span class="font-semibold">
-				{prop.name}
+				data-{attr.name}
 			</span>
-			<div class="flex items-center gap-1.5">
-				{#if prop.required}
-					<PropsRequiredBadge />
-				{/if}
-				{#if prop.bindable}
-					<PropsBindableBadge />
-				{/if}
-			</div>
 		</div>
 
-		{#if prop.type.variant === "simple"}
+		{#if attr.variant === "simple"}
 			<Code class="h-auto w-full justify-start px-2 py-2 text-start text-sm">
-				{prop.type.type}
+				{attr.value}
 			</Code>
 		{:else}
 			<ScrollArea
@@ -59,7 +49,7 @@
 				<div
 					class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pb-0! [&_pre]:pt-0! [&_pre]:outline-hidden! [&_pre]:ring-0! [&_pre]:ring-offset-0! w-full !text-xs [&_[data-line]]:!pl-0 [&_[data-line]]:!text-xs [&_code]:text-start [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
 				>
-					<prop.type.definition />
+					<attr.value />
 				</div>
 			</ScrollArea>
 		{/if}
@@ -74,7 +64,7 @@
 				scrollbarYProps={{ class: "w-1.5 -mr-2" }}
 			>
 				<div class="w-full pr-[2.5px] leading-7">
-					{@html parseMarkdown(prop.description)}
+					{@html parseMarkdown(attr.description)}
 				</div>
 			</ScrollArea>
 		</div>

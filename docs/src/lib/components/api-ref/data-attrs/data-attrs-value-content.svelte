@@ -2,22 +2,22 @@
 	import Code from "$lib/components/markdown/code.svelte";
 	import { Popover } from "bits-ui";
 	import ScrollArea from "$lib/components/scroll-area.svelte";
-	import type { PropSchema } from "$lib/types/index.js";
+	import type { DataAttrSchema } from "$lib/types/index.js";
 	import Info from "phosphor-svelte/lib/Info";
 
-	let { prop }: { prop: PropSchema } = $props();
+	let { attr }: { attr: DataAttrSchema } = $props();
 </script>
 
 <div class="flex items-center gap-1.5">
-	<Code class="bg-transparent px-0">{prop.type.type}</Code>
-	{#if prop.type.variant === "complex"}
+	<Code class="bg-transparent px-0">{attr.variant === "enum" ? "enum" : attr.value}</Code>
+	{#if attr.variant === "enum"}
 		<Popover.Root>
 			<Popover.Trigger
 				data-llm-ignore
 				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 			>
 				<Info class="size-4" weight="bold" />
-				<span class="sr-only">See type definition</span>
+				<span class="sr-only">See enum options</span>
 			</Popover.Trigger>
 			<Popover.Content
 				preventScroll={false}
@@ -29,12 +29,12 @@
 					<div
 						class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pb-0! [&_pre]:pt-0! [&_pre]:outline-hidden! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
 					>
-						<prop.type.definition />
+						<attr.value />
 					</div>
 				</ScrollArea>
 			</Popover.Content>
 			<span aria-hidden="true" class="hidden">
-				- {prop.type.stringDefinition}
+				- {attr.stringValue}
 			</span>
 		</Popover.Root>
 	{/if}

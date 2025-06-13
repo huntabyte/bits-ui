@@ -42,7 +42,7 @@
 
 <div
 	class={cn(
-		"relative flex flex-row-reverse pb-6 pl-4 pr-4 pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
+		"relative flex flex-row-reverse pb-6 pl-4 pr-4 pt-8 sm:pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
 		page.error ?? "xl:grid"
 	)}
 >
