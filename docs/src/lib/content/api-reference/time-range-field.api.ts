@@ -4,38 +4,38 @@ import type {
 	TimeRangeFieldRootPropsWithoutHTML,
 	TimeRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import {
-	createApiSchema,
-	createDataAttrSchema,
-	createEnumProp,
-	createFunctionProp,
-	createPropSchema,
-	withChildProps,
-} from "./helpers.js";
+import { withChildProps } from "./shared.js";
 import { input as timeFieldInput, root as timeFieldRoot } from "./time-field.api.js";
 import {
 	OnTimeStartEndValueChangeProp,
 	TimeOnRangeChangeProp,
 	TimeRangeProp,
+	TimeSegmentDataAttr,
 	TimeSegmentPartProp,
 } from "./extended-types/shared/index.js";
 import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
-import * as C from "$lib/content/constants.js";
+import {
+	defineComponentApiSchema,
+	defineComponentPropSchema,
+	defineEnumDataAttr,
+	defineEnumProp,
+	defineFunctionProp,
+	defineSimpleDataAttr,
+	defineStringProp,
+} from "../utils.js";
 
-export const root = createApiSchema<TimeRangeFieldRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<TimeRangeFieldRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root time field component.",
 	props: {
-		value: {
-			type: {
-				type: "TimeRange",
-				definition: TimeRangeProp,
-				stringDefinition: "{ start: TimeValue | undefined; end: TimeValue | undefined }",
-			},
+		value: defineComponentPropSchema({
+			type: "TimeRange",
+			definition: TimeRangeProp,
+			stringDefinition: "{ start: TimeValue | undefined; end: TimeValue | undefined }",
 			description: "The selected time range.",
 			bindable: true,
-		},
-		onValueChange: createFunctionProp({
+		}),
+		onValueChange: defineFunctionProp({
 			definition: TimeOnRangeChangeProp,
 			description: "A function that is called when the selected time range changes.",
 			stringDefinition: "(value: TimeRange) => void",
@@ -55,12 +55,12 @@ export const root = createApiSchema<TimeRangeFieldRootPropsWithoutHTML>({
 		readonly: timeFieldRoot.props!.readonly,
 		readonlySegments: timeFieldRoot.props!.readonlySegments,
 		required: timeFieldRoot.props!.required,
-		onStartValueChange: createFunctionProp({
+		onStartValueChange: defineFunctionProp({
 			definition: OnTimeStartEndValueChangeProp,
 			description: "A function that is called when the start time changes.",
 			stringDefinition: "(value: TimeValue | undefined) => void",
 		}),
-		onEndValueChange: createFunctionProp({
+		onEndValueChange: defineFunctionProp({
 			definition: OnTimeStartEndValueChangeProp,
 			description: "A function that is called when the end time changes.",
 			stringDefinition: "(value: TimeValue | undefined) => void",
@@ -68,95 +68,92 @@ export const root = createApiSchema<TimeRangeFieldRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "time-range-field-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-export const input = createApiSchema<TimeRangeFieldInputPropsWithoutHTML>({
+export const input = defineComponentApiSchema<TimeRangeFieldInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The container for the segments of the time field.",
 	props: {
-		type: createEnumProp({
+		type: defineEnumProp({
 			options: ["start", "end"],
 			description: "The type of field to render (start or end).",
 			required: true,
 			definition: DateRangeFieldInputTypeProp,
 		}),
-		name: {
-			type: C.STRING,
+		name: defineStringProp({
 			description:
 				"The name of the time field used for form submission. If provided, a hidden input element will be rendered alongside the time field.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 		children: timeFieldInput.props!.children,
 		child: timeFieldInput.props!.child,
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "time-field-input",
 			description: "Present on the element.",
 		}),
 	],
 });
 
-export const segment = createApiSchema<TimeRangeFieldSegmentPropsWithoutHTML>({
+export const segment = defineComponentApiSchema<TimeRangeFieldSegmentPropsWithoutHTML>({
 	title: "Segment",
 	description: "A segment of the time field.",
 	props: {
-		part: createPropSchema({
-			type: {
-				type: "TimeSegmentPart",
-				definition: TimeSegmentPartProp,
-				stringDefinition: `"hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal"`,
-			},
+		part: defineComponentPropSchema({
+			type: "TimeSegmentPart",
+			definition: TimeSegmentPartProp,
+			stringDefinition: `"hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal"`,
 			description: "The part of the time to render.",
 			required: true,
 		}),
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
 		}),
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "segment",
 			description: "The type of segment the element represents.",
-			definition: TimeSegmentPartProp,
-			isEnum: true,
+			options: ["hour", "minute", "second", "dayPeriod", "timeZoneName", "literal"],
+			value: TimeSegmentDataAttr,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "time-field-segment",
 			description: "Present on the element.",
 		}),
 	],
 });
 
-export const label = createApiSchema<TimeRangeFieldLabelPropsWithoutHTML>({
+export const label = defineComponentApiSchema<TimeRangeFieldLabelPropsWithoutHTML>({
 	title: "Label",
 	description: "The label for the time field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "time-field-label",
 			description: "Present on the element.",
 		}),

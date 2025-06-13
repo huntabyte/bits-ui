@@ -1,3 +1,3 @@
 ```ts
-"hour" | "minute" | "second";
+;"hour" | "minute" | "second"
 ```

@@ -9,7 +9,7 @@
 	}: PortalProps & { includeTargets?: boolean; content?: string } = $props();
 
 	let customElement = $state<HTMLElement | null>(null);
-	let documentFragment = $state<DocumentFragment | null>(null);
+	let documentFragment: DocumentFragment | null = null;
 
 	if (typeof document !== "undefined") {
 		documentFragment = document.createDocumentFragment();

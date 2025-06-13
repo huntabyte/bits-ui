@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import CSSVarsTable from "$lib/components/api-ref/css-vars-table.svelte";
-	import DataAttrsTable from "$lib/components/api-ref/data-attrs-table.svelte";
-	import PropsTable from "$lib/components/api-ref/props-table.svelte";
+	import CSSVarsTable from "$lib/components/api-ref/css-vars/css-vars-table.svelte";
+	import DataAttrsTable from "$lib/components/api-ref/data-attrs/data-attrs-table.svelte";
+	import PropsTable from "$lib/components/api-ref/props/props-table.svelte";
 	import { h2 as H2, p as P } from "$lib/components/markdown/index.js";
 	import type { APISchema } from "$lib/types/index.js";
 	import { parseMarkdown } from "$lib/utils/index.js";
@@ -22,9 +22,7 @@
 					{#if schema.type !== "utility"}
 						<span class="text-foreground/80 font-normal dark:text-neutral-900/80"
 							>{page.data.metadata.title.replaceAll(" ", "")}.</span
-						>
-					{/if}
-					{schema.title}
+						>{/if}{schema.title}
 				</h3>
 			</div>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
@@ -33,12 +31,18 @@
 				{#if schema.props}
 					<PropsTable props={schema.props} />
 				{/if}
-				{#if schema.dataAttributes && schema.dataAttributes.length}
+				{#if schema.type === "component"}
 					<DataAttrsTable dataAttrs={schema.dataAttributes} />
-				{/if}
-				{#if schema.cssVars && schema.cssVars.length}
 					<CSSVarsTable cssVars={schema.cssVars} />
 				{/if}
+				<!-- {#if schema.type === "component"}
+					{#if schema.dataAttributes && schema.dataAttributes.length}
+						<DataAttrsTable dataAttrs={schema.dataAttributes} />
+					{/if}
+					{#if schema.cssVars && schema.cssVars.length}
+						<CSSVarsTable cssVars={schema.cssVars} />
+					{/if}
+				{/if} -->
 			</div>
 		</div>
 	{/each}

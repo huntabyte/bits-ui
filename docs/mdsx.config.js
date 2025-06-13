@@ -107,7 +107,8 @@ function remarkRemovePrettierIgnore() {
 		visit(tree, "code", (node) => {
 			node.value = node.value
 				.replaceAll("<!-- prettier-ignore -->\n", "")
-				.replaceAll("// prettier-ignore\n", "");
+				.replaceAll("// prettier-ignore\n", "")
+				.replace(/^;/, ""); // remove leading semicolon
 		});
 	};
 }

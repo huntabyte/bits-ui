@@ -1,3 +1,3 @@
 ```ts
-"left" | "center" | "right";
+;"left" | "center" | "right"
 ```

@@ -1,3 +1,3 @@
 ```ts
-"nearest" | "center";
+"nearest" | "center"
 ```

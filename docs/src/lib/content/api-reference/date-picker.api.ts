@@ -25,35 +25,22 @@ import {
 	label,
 	segment,
 } from "./date-field.api.js";
-import {
-	childrenSnippet,
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createFunctionProp,
-	createPropSchema,
-	withChildProps,
-} from "./helpers.js";
+import { childrenSnippet, onOpenChangeProp, withChildProps } from "./shared.js";
 import { content, portal, trigger } from "./popover.api.js";
-import { OnOpenChangeProp } from "./extended-types/shared/index.js";
-import * as C from "$lib/content/constants.js";
+import { defineBooleanProp, defineComponentApiSchema, defineSimpleDataAttr } from "../utils.js";
 
-export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
 		value: calendarRoot.props!.value,
 		onValueChange: calendarRoot.props!.onValueChange,
-		open: createBooleanProp({
-			default: C.FALSE,
+		open: defineBooleanProp({
+			default: false,
 			description: "The open state of the popover content.",
 			bindable: true,
 		}),
-		onOpenChange: createFunctionProp({
-			definition: OnOpenChangeProp,
-			description: "A callback that fires when the open state changes.",
-			stringDefinition: "(open: boolean) => void",
-		}),
+		onOpenChange: onOpenChangeProp,
 		placeholder: calendarRoot.props!.placeholder,
 		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
 		isDateUnavailable: calendarRoot.props!.isDateUnavailable,
@@ -64,9 +51,8 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		errorMessageId: dateFieldRoot.props!.errorMessageId,
 		readonlySegments: dateFieldRoot.props!.readonlySegments,
 		disableDaysOutsideMonth: calendarRoot.props!.disableDaysOutsideMonth,
-		closeOnDateSelect: createPropSchema({
-			type: C.BOOLEAN,
-			default: C.TRUE,
+		closeOnDateSelect: defineBooleanProp({
+			default: true,
 			description: "Whether or not to close the popover when a date is selected.",
 		}),
 		pagedNavigation: calendarRoot.props!.pagedNavigation,
@@ -90,49 +76,49 @@ export const root = createApiSchema<DatePickerRootPropsWithoutHTML>({
 		children: childrenSnippet(),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "date-picker-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-const calendar = createApiSchema<DatePickerCalendarPropsWithoutHTML>({
+const calendar = defineComponentApiSchema<DatePickerCalendarPropsWithoutHTML>({
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the calendar element when the calendar is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the calendar element when the calendar is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the calendar element when the calendar is readonly.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "calendar-root",
 			description: "Present on the calendar element.",
 		}),
 	],
 });
 
-const input = createApiSchema<DatePickerInputPropsWithoutHTML>({
+const input = defineComponentApiSchema<DatePickerInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
 	props: {
@@ -140,15 +126,15 @@ const input = createApiSchema<DatePickerInputPropsWithoutHTML>({
 		name: dateFieldInput.props!.name,
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "date-field-input",
 			description: "Present on the element.",
 		}),

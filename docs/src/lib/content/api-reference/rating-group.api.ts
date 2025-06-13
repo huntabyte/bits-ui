@@ -1,18 +1,7 @@
 import type { RatingGroupItemPropsWithoutHTML, RatingGroupRootPropsWithoutHTML } from "bits-ui";
-import {
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createEnumProp,
-	createFunctionProp,
-	createNumberProp,
-	createStringProp,
-	createUnionProp,
-	withChildProps,
-} from "./helpers.js";
+import { withChildProps } from "./shared.js";
 import { OnNumberValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
-import * as C from "$lib/content/constants.js";
 import {
 	RatingGroupAriaValuetext,
 	RatingGroupItemChildrenSnippetProps,
@@ -20,65 +9,76 @@ import {
 	RatingGroupRootChildrenSnippetProps,
 	RatingGroupRootChildSnippetProps,
 } from "./extended-types/rating-group/index.js";
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineEnumProp,
+	defineFunctionProp,
+	defineNumberProp,
+	defineSimpleDataAttr,
+	defineStringProp,
+	defineUnionProp,
+} from "../utils.js";
 
-export const root = createApiSchema<RatingGroupRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<RatingGroupRootPropsWithoutHTML>({
 	title: "Root",
 	description:
 		"The rating group component used to group rating items under a common name for form submission.",
 	props: {
-		value: createNumberProp({
+		value: defineNumberProp({
 			description:
 				"The value of the rating group. You can bind to this value to control the rating group's value from outside the component.",
 			bindable: true,
-			default: "0",
+			default: 0,
 		}),
-		onValueChange: createFunctionProp({
+		onValueChange: defineFunctionProp({
 			definition: OnNumberValueChangeProp,
 			description: "A callback that is fired when the rating group's value changes.",
 			stringDefinition: "(value: number) => void",
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description:
 				"Whether or not the radio group is disabled. This prevents the user from interacting with it.",
 		}),
-		required: createBooleanProp({
-			default: C.FALSE,
+		required: defineBooleanProp({
+			default: false,
 			description: "Whether or not the radio group is required.",
 		}),
-		name: createStringProp({
+		name: defineStringProp({
 			description:
 				"The name of the rating group used in form submission. If provided, a hidden input element will be rendered to submit the value of the rating group.",
 		}),
-		min: createNumberProp({
+		min: defineNumberProp({
 			description: "The minimum value of the rating group.",
-			default: "0",
+			default: 0,
 		}),
-		max: createNumberProp({
+		max: defineNumberProp({
 			description: "The maximum value of the rating group.",
-			default: "5",
+			default: 5,
 		}),
-		allowHalf: createBooleanProp({
-			default: C.FALSE,
+		allowHalf: defineBooleanProp({
+			default: false,
 			description: "Whether or not the rating group allows half values.",
 		}),
-		readonly: createBooleanProp({
-			default: C.FALSE,
+		readonly: defineBooleanProp({
+			default: false,
 			description: "Whether or not the rating group is readonly.",
 		}),
-		orientation: createEnumProp({
+		orientation: defineEnumProp({
 			options: ["vertical", "horizontal"],
-			default: "'horizontal'",
+			default: "horizontal",
 			description:
 				"The orientation of the rating group. This will determine how keyboard navigation will work within the component.",
 			definition: OrientationProp,
 		}),
-		hoverPreview: createBooleanProp({
-			default: C.FALSE,
+		hoverPreview: defineBooleanProp({
+			default: false,
 			description:
 				"Whether or not the rating group shows a preview of the rating when hovering over the items.",
 		}),
-		"aria-valuetext": createUnionProp({
+		"aria-valuetext": defineUnionProp({
 			description: "The text that describes the rating group's value.",
 			options: ["string", "(value: number, max: number) => string"],
 			default: "`${value} out of ${max}`",
@@ -86,76 +86,120 @@ export const root = createApiSchema<RatingGroupRootPropsWithoutHTML>({
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: RatingGroupRootChildSnippetProps,
-			childrenDef: RatingGroupRootChildrenSnippetProps,
+			child: {
+				definition: RatingGroupRootChildSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type RatingGroupItemData = {
+	index: number;
+	state: RatingGroupItemState;
+};
+
+type ChildSnippetProps = {
+	items: RatingGroupItemData[];
+	value: number;
+	max: number;
+	props: Record<string, unknown>;
+};`,
+			},
+			children: {
+				definition: RatingGroupRootChildrenSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type RatingGroupItemData = {
+	index: number;
+	state: RatingGroupItemState;
+};
+
+type ChildrenSnippetProps = {
+	items: RatingGroupItemData[];
+	value: number;
+	max: number;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "orientation",
-			definition: OrientationProp,
 			description: "The orientation of the rating group.",
-			isEnum: true,
+			options: ["vertical", "horizontal"],
+			value: OrientationProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the rating group is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present when the rating group is readonly.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "rating-group-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-export const item = createApiSchema<RatingGroupItemPropsWithoutHTML>({
+export const item = defineComponentApiSchema<RatingGroupItemPropsWithoutHTML>({
 	title: "Item",
 	description: "An rating item, which must be a child of the `RatingGroup.Root` component.",
 	props: {
-		index: createNumberProp({
+		index: defineNumberProp({
 			description: "The index of the rating item.",
 			required: true,
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether the rating item is disabled.",
 		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: RatingGroupItemChildSnippetProps,
-			childrenDef: RatingGroupItemChildrenSnippetProps,
+			child: {
+				definition: RatingGroupItemChildSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type ChildSnippetProps = {
+	state: RatingGroupItemState;
+	props: Record<string, unknown>;
+};`,
+			},
+			children: {
+				definition: RatingGroupItemChildrenSnippetProps,
+				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
+
+type ChildrenSnippetProps = {
+	state: RatingGroupItemState;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the rating group is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present when the rating group is readonly.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the rating item.",
 		}),
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "state",
-			definition: RadioGroupStateAttr,
 			description: "The rating item's checked state.",
-			isEnum: true,
+			options: ["checked", "unchecked"],
+			value: RadioGroupStateAttr,
 		}),
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "orientation",
-			definition: OrientationProp,
 			description: "The orientation of the parent rating group.",
-			isEnum: true,
+			options: ["vertical", "horizontal"],
+			value: OrientationProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "rating-group-item",
 			description: "Present on the rating item element.",
 		}),

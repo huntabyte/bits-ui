@@ -1,5 +1,5 @@
 ```ts
-import type { Time, CalendarDateTime, ZonedDateTime } from "@internationalized/date";
+import type { Time, CalendarDateTime, ZonedDateTime } from "@internationalized/date"
 
-type TimeValue = Time | CalendarDateTime | ZonedDateTime;
+type TimeValue = Time | CalendarDateTime | ZonedDateTime
 ```

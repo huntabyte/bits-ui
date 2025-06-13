@@ -15,85 +15,84 @@ import {
 import {
 	NumberOrArrayNumberProp,
 	OrientationProp,
-	SingleOrMultipleProp,
 	SliderThumbPositioningProp,
 } from "./extended-types/shared/index.js";
 import {
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createEnumProp,
-	createFunctionProp,
-	createNumberProp,
-	createUnionProp,
 	dirProp,
+	typeSingleOrMultipleProp,
 	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
+} from "$lib/content/api-reference/shared.js";
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineEnumProp,
+	defineFunctionProp,
+	defineNumberProp,
+	defineSimpleDataAttr,
+	defineUnionProp,
+} from "../utils.js";
 
-const orientationDataAttr = createDataAttrSchema({
+const orientationDataAttr = defineEnumDataAttr({
 	name: "orientation",
-	definition: OrientationProp,
 	description: "The orientation of the slider.",
-	isEnum: true,
+	options: ["horizontal", "vertical"],
+	value: OrientationProp,
 });
 
 const sharedDataAttrs = [
 	orientationDataAttr,
-	createDataAttrSchema({
+	defineSimpleDataAttr({
 		name: "disabled",
 		description: "Present when the slider is disabled.",
 	}),
 ];
 
-const root = createApiSchema<SliderRootPropsWithoutHTML>({
+const root = defineComponentApiSchema<SliderRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root slider component which contains the remaining slider components.",
 	props: {
-		type: createUnionProp({
-			options: ["'single'", "'multiple'"],
+		type: {
+			...typeSingleOrMultipleProp,
 			description:
 				"The type of the slider. If set to `'multiple'`, the slider will allow multiple thumbs and the `value` will be an array of numbers.",
-			required: true,
-			definition: SingleOrMultipleProp,
-		}),
-		value: {
-			default: "0",
-			type: "number",
+		},
+		value: defineNumberProp({
+			default: 0,
 			description:
 				"The current value of the slider. If the `type` is set to `'multiple'`, this should be an array of numbers and will default to an empty array.",
 			bindable: true,
-		},
-		onValueChange: createFunctionProp({
+		}),
+		onValueChange: defineFunctionProp({
 			definition: SliderRootOnValueChangeProp,
 			description: "A callback function called when the value state of the slider changes.",
 			stringDefinition: "(value: number) => void | (value: number[]) => void",
 		}),
-		onValueCommit: createFunctionProp({
+		onValueCommit: defineFunctionProp({
 			definition: SliderRootOnValueChangeProp,
 			description:
 				"A callback function called when the user finishes dragging the thumb and the value changes. This is different than the `onValueChange` callback because it waits until the user stops dragging before calling the callback, where the `onValueChange` callback is called immediately after the user starts dragging.",
 			stringDefinition: "(value: number) => void | (value: number[]) => void",
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the switch is disabled.",
 		}),
-		max: createNumberProp({
-			default: "100",
+		max: defineNumberProp({
+			default: 100,
 			description: "The maximum value of the slider.",
 		}),
-		min: createNumberProp({
-			default: "0",
+		min: defineNumberProp({
+			default: 0,
 			description: "The minimum value of the slider.",
 		}),
-		orientation: createEnumProp({
+		orientation: defineEnumProp({
 			options: ["horizontal", "vertical"],
-			default: "'horizontal'",
+			default: "horizontal",
 			description: "The orientation of the slider.",
 			definition: OrientationProp,
 		}),
-		step: createUnionProp({
+		step: defineUnionProp({
 			options: ["number[]", "number"],
 			definition: NumberOrArrayNumberProp,
 			description:
@@ -101,86 +100,118 @@ const root = createApiSchema<SliderRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		dir: dirProp,
-		autoSort: createBooleanProp({
-			default: C.TRUE,
+		autoSort: defineBooleanProp({
+			default: true,
 			description:
 				"Whether to automatically sort the values in the array when moving thumbs past one another. This is only applicable to the `'multiple'` type.",
 		}),
-		thumbPositioning: createEnumProp({
+		thumbPositioning: defineEnumProp({
 			options: ["exact", "contain"],
-			default: "'contain'",
+			default: "contain",
 			description:
 				"The positioning of the slider thumb. `'contain'` will ensure that the thumb is always visible within the track, while `'exact'` will ensure that the thumb is always at the same position relative to the track. For an SSR-friendly alternative to `thumbPositioning='contain'`, use the `trackPadding` prop to set the padding between the thumbs/first ticks and the edges of the track.",
 			definition: SliderThumbPositioningProp,
 		}),
-		trackPadding: createNumberProp({
+		trackPadding: defineNumberProp({
 			description:
 				"A percentage of the full track length to pad the start and end of the track. This is useful for creating a visual buffer between the thumbs or beginning/end ticks and the edges of the track. This is an SSR-friendly alternative to `thumbPositioning='contain'`.",
 		}),
 		...withChildProps({
 			elType: "HTMLSpanElement",
-			childDef: SliderRootChildSnippetProps,
-			childrenDef: SliderRootChildrenSnippetProps,
+			child: {
+				definition: SliderRootChildSnippetProps,
+				stringDefinition: `type TickItem = {
+	/** The value this tick represents */
+	value: number;
+	/** The index of this tick */
+	index: number;
+};
+
+type ChildSnippetProps = {
+	/** The tick items to iterate over and render */
+	tickItems: TickItem[];
+	/** The currently active thumb */
+	thumbs: number[];
+	/** Props to apply to the root element */
+	props: Record<string, unknown>;
+};`,
+			},
+			children: {
+				definition: SliderRootChildrenSnippetProps,
+				stringDefinition: `type TickItem = {
+	/** The value this tick represents */
+	value: number;
+	/** The index of this tick */
+	index: number;
+};
+
+type ChildrenSnippetProps = {
+	/** The tick items to iterate over and render */
+	tickItems: TickItem[];
+	/** The currently active thumb */
+	thumbs: number[];
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
 		...sharedDataAttrs,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "slider-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-const thumb = createApiSchema<SliderThumbPropsWithoutHTML>({
+const thumb = defineComponentApiSchema<SliderThumbPropsWithoutHTML>({
 	title: "Thumb",
 	description: "A thumb on the slider.",
 	props: {
-		index: createNumberProp({
+		index: defineNumberProp({
 			description: "The index of the value this thumb represents.",
 			required: true,
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the thumb is disabled.",
 		}),
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
 		orientationDataAttr,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when either the thumb or the slider is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "active",
 			description: "Present when the thumb is active/grabbed.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "slider-thumb",
 			description: "Present on the thumb elements.",
 		}),
 	],
 });
 
-const range = createApiSchema<SliderRangePropsWithoutHTML>({
+const range = defineComponentApiSchema<SliderRangePropsWithoutHTML>({
 	title: "Range",
 	description: "The range of the slider.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
 		...sharedDataAttrs,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "slider-range",
 			description: "Present on the range elements.",
 		}),
 	],
 });
 
-const tick = createApiSchema<SliderTickPropsWithoutHTML>({
+const tick = defineComponentApiSchema<SliderTickPropsWithoutHTML>({
 	title: "Tick",
 	description: "A tick mark on the slider.",
 	props: {
-		index: createNumberProp({
+		index: defineNumberProp({
 			description:
 				"The index of the tick in the array of ticks provided by the `ticks` `children` snippet prop.",
 			required: true,
@@ -189,36 +220,36 @@ const tick = createApiSchema<SliderTickPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		...sharedDataAttrs,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "bounded",
 			description:
 				"Present when the tick is bounded (i.e. the tick is less than or equal to the current value).",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value the tick represents.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "selected",
 			description: "Present when the tick is the same value as one of the thumbs.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "slider-tick",
 			description: "Present on the tick elements.",
 		}),
 	],
 });
 
-const tickLabel = createApiSchema<SliderTickLabelPropsWithoutHTML>({
+const tickLabel = defineComponentApiSchema<SliderTickLabelPropsWithoutHTML>({
 	title: "TickLabel",
 	description: "A label for a tick on the slider.",
 	props: {
-		index: createNumberProp({
+		index: defineNumberProp({
 			description:
 				"The index of the tick in the array of ticks provided by the `ticks` `children` snippet prop.",
 			required: true,
 		}),
-		position: createEnumProp({
+		position: defineEnumProp({
 			options: ["top", "bottom", "left", "right"],
 			description: "The position of the tick label.",
 			definition: SliderTickLabelPositionProp,
@@ -227,42 +258,42 @@ const tickLabel = createApiSchema<SliderTickLabelPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		...sharedDataAttrs,
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "position",
-			definition: SliderTickLabelPositionProp,
 			description: "The position of the tick label.",
-			isEnum: true,
+			options: ["top", "bottom", "left", "right"],
+			value: SliderTickLabelPositionProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "selected",
 			description:
 				"Present when the tick this label represents is the same value as one of the thumbs.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the tick this label represents.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "bounded",
 			description:
 				"Present when the tick this label represents is bounded (i.e. the tick is less than or equal to the current value or within the range of a multiple slider).",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "slider-tick-label",
 			description: "Present on the tick label elements.",
 		}),
 	],
 });
 
-const thumbLabel = createApiSchema<SliderThumbLabelPropsWithoutHTML>({
+const thumbLabel = defineComponentApiSchema<SliderThumbLabelPropsWithoutHTML>({
 	title: "ThumbLabel",
 	description: "A label for a thumb on the slider.",
 	props: {
-		index: createNumberProp({
+		index: defineNumberProp({
 			description: "The index of the thumb this label represents.",
 			required: true,
 		}),
-		position: createEnumProp({
+		position: defineEnumProp({
 			options: ["top", "bottom", "left", "right"],
 			description: "The position of the label relative to the thumb.",
 			definition: SliderTickLabelPositionProp,
@@ -272,26 +303,26 @@ const thumbLabel = createApiSchema<SliderThumbLabelPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		orientationDataAttr,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description:
 				"Present when either the thumb this label represents or the slider is disabled.",
 		}),
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "position",
-			definition: SliderTickLabelPositionProp,
 			description: "The position of the label relative to the thumb.",
-			isEnum: true,
+			options: ["top", "bottom", "left", "right"],
+			value: SliderTickLabelPositionProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "active",
 			description: "Present when the thumb this label represents is active.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the thumb this label represents.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "slider-thumb-label",
 			description: "Present on the thumb label elements.",
 		}),

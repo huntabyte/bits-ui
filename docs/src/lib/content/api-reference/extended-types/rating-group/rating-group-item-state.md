@@ -1,3 +1,3 @@
 ```ts
-"active" | "partial" | "inactive";
+;"active" | "partial" | "inactive"
 ```

@@ -1,23 +1,19 @@
 import type { AspectRatioRootPropsWithoutHTML } from "bits-ui";
-import {
-	createApiSchema,
-	createDataAttrSchema,
-	createNumberProp,
-	withChildProps,
-} from "./helpers.js";
+import { withChildProps } from "./shared.js";
+import { defineComponentApiSchema, defineNumberProp, defineSimpleDataAttr } from "../utils.js";
 
-const root = createApiSchema<AspectRatioRootPropsWithoutHTML>({
+const root = defineComponentApiSchema<AspectRatioRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The aspect ratio component.",
 	props: {
-		ratio: createNumberProp({
+		ratio: defineNumberProp({
 			description: "The desired aspect ratio.",
-			default: "1",
+			default: 1,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "aspect-ratio-root",
 			description: "Present on the root element.",
 		}),

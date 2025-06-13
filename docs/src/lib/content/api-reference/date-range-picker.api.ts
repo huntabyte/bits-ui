@@ -4,13 +4,7 @@ import type {
 	DateRangePickerRootPropsWithoutHTML,
 } from "bits-ui";
 import { label, root as rangeFieldRoot, segment } from "./date-range-field.api.js";
-import {
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createEnumProp,
-	withChildProps,
-} from "./helpers.js";
+import { withChildProps } from "./shared.js";
 import { content, portal, trigger } from "./popover.api.js";
 import {
 	root as calendarRoot,
@@ -31,9 +25,15 @@ import {
 import { root as rangeCalendarRoot } from "./range-calendar.api.js";
 import { root as datePickerRoot } from "./date-picker.api.js";
 import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
-import * as C from "$lib/content/constants.js";
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineEnumProp,
+	defineSimpleDataAttr,
+	defineStringProp,
+} from "../utils.js";
 
-const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
+const root = defineComponentApiSchema<DateRangePickerRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
@@ -55,8 +55,8 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		disabled: rangeFieldRoot.props!.disabled,
 		readonly: rangeFieldRoot.props!.readonly,
 		required: rangeFieldRoot.props!.required,
-		closeOnRangeSelect: createBooleanProp({
-			default: C.TRUE,
+		closeOnRangeSelect: defineBooleanProp({
+			default: true,
 			description: "Whether or not to close the popover when a date range is selected.",
 		}),
 		disableDaysOutsideMonth: rangeCalendarRoot.props!.disableDaysOutsideMonth,
@@ -80,58 +80,57 @@ const root = createApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "calendar-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-const calendar = createApiSchema<DateRangePickerCalendarPropsWithoutHTML>({
+const calendar = defineComponentApiSchema<DateRangePickerCalendarPropsWithoutHTML>({
 	title: "Calendar",
 	description: "The calendar component containing the grids of dates.",
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "calendar-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-const input = createApiSchema<DateRangePickerInputPropsWithoutHTML>({
+const input = defineComponentApiSchema<DateRangePickerInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The field input component which contains the segments of the date field.",
 	props: {
-		name: {
-			type: C.STRING,
+		name: defineStringProp({
 			description:
 				"The name of the input field used for form submission. If provided a hidden input will be rendered alongside the field.",
-		},
-		type: createEnumProp({
+		}),
+		type: defineEnumProp({
 			options: ["start", "end"],
 			description: "The type of field to render (start or end).",
 			required: true,
@@ -140,15 +139,15 @@ const input = createApiSchema<DateRangePickerInputPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "date-field-input",
 			description: "Present on the element.",
 		}),

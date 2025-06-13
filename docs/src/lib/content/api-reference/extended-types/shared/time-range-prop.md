@@ -1,8 +1,8 @@
 ```ts
-import type { TimeValue } from "bits-ui";
+import type { TimeValue } from "bits-ui"
 
 type TimeRange = {
-	start: TimeValue | undefined;
-	end: TimeValue | undefined;
-};
+	start: TimeValue | undefined
+	end: TimeValue | undefined
+}
 ```

@@ -1,3 +1,3 @@
 ```ts
-"automatic" | "manual";
+"automatic" | "manual"
 ```

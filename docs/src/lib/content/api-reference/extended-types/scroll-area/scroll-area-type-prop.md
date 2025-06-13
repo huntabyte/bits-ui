@@ -1,3 +1,3 @@
 ```ts
-"hover" | "scroll" | "auto" | "always";
+;"hover" | "scroll" | "auto" | "always"
 ```

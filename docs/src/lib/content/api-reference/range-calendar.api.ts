@@ -1,13 +1,5 @@
 import type { RangeCalendarRootPropsWithoutHTML } from "bits-ui";
-import {
-	createApiSchema,
-	createDataAttrSchema,
-	createNumberProp,
-	valueDateRangeChangeFn,
-	valueDateRangeProp,
-	withChildProps,
-	createBooleanProp,
-} from "./helpers.js";
+import { valueDateRangeChangeFn, valueDateRangeProp } from "./shared.js";
 import {
 	root as calendarRoot,
 	createCalendarCellSchema,
@@ -25,12 +17,15 @@ import {
 	createCalendarYearSelectSchema,
 } from "./calendar.api.js";
 import { root as rangeFieldRoot } from "./date-range-field.api.js";
-import {
-	CalendarRootChildrenSnippetProps,
-	CalendarRootChildSnippetProps,
-} from "./extended-types/shared/index.js";
 
-export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineNumberProp,
+	defineSimpleDataAttr,
+} from "../utils.js";
+
+export const root = defineComponentApiSchema<RangeCalendarRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root range calendar component which contains all other calendar components.",
 	props: {
@@ -55,39 +50,37 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 		disableDaysOutsideMonth: calendarRoot.props!.disableDaysOutsideMonth,
 		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
 		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
-		minDays: createNumberProp({
+		minDays: defineNumberProp({
 			description: "The minimum number of days that can be selected in a range.",
 		}),
-		maxDays: createNumberProp({
+		maxDays: defineNumberProp({
 			description: "The maximum number of days that can be selected in a range.",
 		}),
-		excludeDisabled: createBooleanProp({
+		excludeDisabled: defineBooleanProp({
 			description:
 				"Whether to automatically reset the range if any date within the selected range becomes disabled.",
-			default: "false",
+			default: false,
 		}),
 		monthFormat: calendarRoot.props!.monthFormat,
 		yearFormat: calendarRoot.props!.yearFormat,
-		...withChildProps({
-			elType: "HTMLDivElement",
-			childDef: CalendarRootChildSnippetProps,
-			childrenDef: CalendarRootChildrenSnippetProps,
-		}),
+		child: calendarRoot.props!.child,
+		children: calendarRoot.props!.children,
+		ref: calendarRoot.props!.ref,
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the root element when the calendar is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the root element when the calendar is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "readonly",
 			description: "Present on the root element when the calendar is readonly.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "range-calendar-root",
 			description: "Present on the root element.",
 		}),
@@ -95,20 +88,20 @@ export const root = createApiSchema<RangeCalendarRootPropsWithoutHTML>({
 });
 
 const sharedDayCellAttrs = [
-	createDataAttrSchema({
+	defineSimpleDataAttr({
 		name: "range-start",
 		description: "Present when the cell is the start of a selection range.",
 	}),
-	createDataAttrSchema({
+	defineSimpleDataAttr({
 		name: "range-end",
 		description: "Present when the cell is the end of a selection range.",
 	}),
-	createDataAttrSchema({
+	defineSimpleDataAttr({
 		name: "range-middle",
 		description:
 			"Present when the cell is in the middle of a selection range, but not the start or end of the selection.",
 	}),
-	createDataAttrSchema({
+	defineSimpleDataAttr({
 		name: "highlighted",
 		description: "Present when the cell is highlighted within a selection range.",
 	}),

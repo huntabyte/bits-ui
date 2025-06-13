@@ -165,4 +165,4 @@ export function getAPISchemas(bit: Bit): APISchema[] {
 	return apiSchemas[bit];
 }
 
-export * from "./helpers.js";
+export * from "./shared.js";

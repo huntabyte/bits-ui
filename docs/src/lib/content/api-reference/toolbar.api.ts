@@ -7,145 +7,143 @@ import type {
 } from "bits-ui";
 import {
 	OnChangeStringOrArrayProp,
-	SingleOrMultipleProp,
+	OrientationProp,
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ToggleRootStateDataAttr } from "./extended-types/toggle/index.js";
 import {
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createEnumProp,
-	createFunctionProp,
-	createStringProp,
-	createUnionProp,
 	orientationDataAttr,
+	typeSingleOrMultipleProp,
 	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
+} from "$lib/content/api-reference/shared.js";
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineEnumProp,
+	defineFunctionProp,
+	defineSimpleDataAttr,
+	defineStringProp,
+	defineUnionProp,
+} from "../utils.js";
 
-const root = createApiSchema<ToolbarRootPropsWithoutHTML>({
+const root = defineComponentApiSchema<ToolbarRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component which contains the toolbar.",
 	props: {
-		loop: createBooleanProp({
-			default: C.TRUE,
+		loop: defineBooleanProp({
+			default: true,
 			description: "Whether or not the toolbar should loop when navigating.",
 		}),
-		orientation: createEnumProp({
-			options: [C.HORIZONTAL, C.VERTICAL],
-			default: C.HORIZONTAL,
+		orientation: defineEnumProp({
+			options: ["horizontal", "vertical"],
+			definition: OrientationProp,
+			default: "horizontal",
 			description: "The orientation of the toolbar.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
 		orientationDataAttr,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "toolbar-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-const button = createApiSchema<ToolbarButtonPropsWithoutHTML>({
+const button = defineComponentApiSchema<ToolbarButtonPropsWithoutHTML>({
 	title: "Button",
 	description: "A button in the toolbar.",
 	props: {
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the button is disabled.",
 		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "toolbar-button",
 			description: "Present on the button element.",
 		}),
 	],
 });
 
-const link = createApiSchema<ToolbarLinkPropsWithoutHTML>({
+const link = defineComponentApiSchema<ToolbarLinkPropsWithoutHTML>({
 	title: "Link",
 	description: "A link in the toolbar.",
 	props: withChildProps({ elType: "HTMLAnchorElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "toolbar-link",
 			description: "Present on the link element.",
 		}),
 	],
 });
 
-const group = createApiSchema<ToolbarGroupPropsWithoutHTML>({
+const group = defineComponentApiSchema<ToolbarGroupPropsWithoutHTML>({
 	title: "Group",
 	description: "A group of toggle items in the toolbar.",
 	props: {
-		type: createEnumProp({
-			options: ["single", "multiple"],
-			default: "'single'",
-			description: "The type of toggle group.",
-			definition: SingleOrMultipleProp,
-			required: true,
-		}),
-		value: createUnionProp({
+		type: typeSingleOrMultipleProp,
+		value: defineUnionProp({
 			options: ["string", "string[]"],
 			description:
 				"The value of the toggle group. If the type is multiple, this will be an array of strings, otherwise it will be a string.",
 			definition: StringOrArrayStringProp,
 			bindable: true,
 		}),
-		onValueChange: createFunctionProp({
+		onValueChange: defineFunctionProp({
 			definition: OnChangeStringOrArrayProp,
 			description: "A callback function called when the value changes.",
 			stringDefinition: "(value: string) => void | (value: string[]) => void",
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the switch is disabled.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "toolbar-group",
 			description: "Present on the group element.",
 		}),
 	],
 });
 
-const groupItem = createApiSchema<ToolbarGroupItemPropsWithoutHTML>({
+const groupItem = defineComponentApiSchema<ToolbarGroupItemPropsWithoutHTML>({
 	title: "GroupItem",
 	description: "A toggle item in the toolbar toggle group.",
 	props: {
-		value: createStringProp({
+		value: defineStringProp({
 			description:
 				"The value of the toolbar toggle group item. When the toolbar toggle group item is selected, toolbar the toggle group's value will be set to this value if in single mode, or this value will be pushed to the toggle group's array value if in multiple mode.",
 			required: true,
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the item is disabled.",
 		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "state",
 			description: "Whether the toolbar toggle item is in the on or off state.",
-			definition: ToggleRootStateDataAttr,
-			isEnum: true,
+			options: ["on", "off"],
+			value: ToggleRootStateDataAttr,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the toolbar toggle item.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the toolbar toggle item is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "toolbar-item",
 			description: "Present on the toolbar toggle item.",
 		}),

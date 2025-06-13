@@ -1,22 +1,22 @@
 ```ts
 type TickItem = {
 	/** The value this tick represents */
-	value: number;
+	value: number
 	/** The index of this tick */
-	index: number;
-};
+	index: number
+}
 
 type ChildSnippetProps = {
 	/** The tick items to iterate over and render */
-	tickItems: TickItem[];
+	tickItems: TickItem[]
 	/** The currently active thumb */
-	thumbs: number[];
+	thumbs: number[]
 	/**
 	 * An array of ticks to render
 	 * @deprecated Use `tickItems` instead
 	 */
-	ticks: number[];
+	ticks: number[]
 	/** Props to apply to the root element */
-	props: Record<string, unknown>;
-};
+	props: Record<string, unknown>
+}
 ```

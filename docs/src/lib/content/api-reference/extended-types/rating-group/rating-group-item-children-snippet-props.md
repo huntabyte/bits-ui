@@ -1,7 +1,7 @@
 ```ts
-type RatingGroupItemState = "active" | "partial" | "inactive";
+type RatingGroupItemState = "active" | "partial" | "inactive"
 
-type RatingGroupItemChildSnippetProps = {
-	state: RatingGroupItemState;
-};
+type ChildrenSnippetProps = {
+	state: RatingGroupItemState
+}
 ```

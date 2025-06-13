@@ -3,40 +3,35 @@ import type {
 	CollapsibleRootPropsWithoutHTML,
 	CollapsibleTriggerPropsWithoutHTML,
 } from "bits-ui";
-import {
-	createApiSchema,
-	createBooleanProp,
-	createCSSVarSchema,
-	createDataAttrSchema,
-	createEnumDataAttr,
-	createFunctionProp,
-	forceMountProp,
-	withChildProps,
-} from "./helpers.js";
-import {
-	CollapsibleContentChildSnippetProps,
-	CollapsibleContentChildrenSnippetProps,
-} from "./extended-types/collapsible/index.js";
+import { forceMountProp, withChildProps } from "./shared.js";
+import { CollapsibleContentChildSnippetProps } from "./extended-types/collapsible/index.js";
 import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
-import * as C from "$lib/content/constants.js";
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineCSSVarSchema,
+	defineEnumDataAttr,
+	defineFunctionProp,
+	defineSimpleDataAttr,
+} from "../utils.js";
 
-export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<CollapsibleRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root collapsible container which manages the state of the collapsible.",
 	props: {
-		open: createBooleanProp({
-			default: C.FALSE,
+		open: defineBooleanProp({
+			default: false,
 			description:
 				"The open state of the collapsible. The content will be visible when this is true, and hidden when it's false.",
 			bindable: true,
 		}),
-		onOpenChange: createFunctionProp({
+		onOpenChange: defineFunctionProp({
 			definition: OnOpenChangeProp,
 			description: "A callback that is fired when the collapsible's open state changes.",
 			stringDefinition: "(open: boolean) => void",
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description:
 				"Whether or not the collapsible is disabled. This prevents the user from interacting with it.",
 		}),
@@ -44,78 +39,83 @@ export const root = createApiSchema<CollapsibleRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createEnumDataAttr({
+		defineEnumDataAttr({
 			name: "state",
 			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			definition: OpenClosedProp,
+			value: OpenClosedProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the collapsible is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "collapsible-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-export const trigger = createApiSchema<CollapsibleTriggerPropsWithoutHTML>({
+export const trigger = defineComponentApiSchema<CollapsibleTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The button responsible for toggling the collapsible's open state.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createEnumDataAttr({
+		defineEnumDataAttr({
 			name: "state",
 			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			definition: OpenClosedProp,
+			value: OpenClosedProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the collapsible or this trigger is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "collapsible-trigger",
 			description: "Present on the trigger element.",
 		}),
 	],
 });
 
-export const content = createApiSchema<CollapsibleContentPropsWithoutHTML>({
+export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed when the collapsible is open.",
 	props: {
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childrenDef: CollapsibleContentChildrenSnippetProps,
-			childDef: CollapsibleContentChildSnippetProps,
+			child: {
+				definition: CollapsibleContentChildSnippetProps,
+				stringDefinition: `type SnippetProps = {
+	open: boolean;
+	props: Record<string, unknown>;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
-		createEnumDataAttr({
+		defineEnumDataAttr({
 			name: "state",
 			options: ["open", "closed"],
 			description: "The collapsible's open state.",
-			definition: OpenClosedProp,
+			value: OpenClosedProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the collapsible is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "collapsible-content",
 			description: "Present on the content element.",
 		}),
 	],
 	cssVars: [
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-collapsible-content-height",
 			description: "The height of the collapsible content element.",
 		}),
-		createCSSVarSchema({
+		defineCSSVarSchema({
 			name: "--bits-collapsible-content-width",
 			description: "The width of the collapsible content element.",
 		}),

@@ -1,1 +1,1 @@
-export * from "./api.js";
+export * from "../content/types.js";
