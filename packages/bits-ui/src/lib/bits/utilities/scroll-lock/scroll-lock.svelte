@@ -4,5 +4,7 @@
 
 	let { preventScroll = true, restoreScrollDelay = null }: ScrollLockProps = $props();
 
-	useBodyScrollLock(preventScroll, () => restoreScrollDelay);
+	if (preventScroll) {
+		useBodyScrollLock(preventScroll, () => restoreScrollDelay);
+	}
 </script>
