@@ -13,7 +13,7 @@
 <Popover.Root>
 	<Popover.Trigger
 		data-llm-ignore
-		class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex h-full w-full items-center justify-end px-2 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
+		class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden extend-touch-target inline-flex h-full w-full items-center justify-end px-2 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 	>
 		<Info class="size-4" weight="bold" />
 		<span class="sr-only">See type definition</span>
