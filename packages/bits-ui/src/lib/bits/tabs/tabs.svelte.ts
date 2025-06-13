@@ -258,6 +258,7 @@ class TabsContentState {
 				"data-value": this.opts.value.current,
 				"data-state": getTabDataState(this.#isActive),
 				"aria-labelledby": this.#ariaLabelledBy,
+				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				[tabsAttrs.content]: "",
 				...attachRef(this.opts.ref),
 			}) as const
