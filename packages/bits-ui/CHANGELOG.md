@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.7.0
+
+### Minor Changes
+
+-   feat(RadioGroup): add `readonly` prop to make the `RadioGroup` readonly ([#1579](https://github.com/huntabyte/bits-ui/pull/1579))
+
+### Patch Changes
+
+-   fix(Select): ensure the disabled prop is respect for touch events ([#1582](https://github.com/huntabyte/bits-ui/pull/1582))
+
 ## 2.6.2
 
 ### Patch Changes
