@@ -17,11 +17,8 @@
 	const scrollbarState = ScrollAreaScrollbarVisibleContext.get();
 </script>
 
-<PresenceLayer
-	present={forceMount || scrollbarState.hasThumb}
-	ref={scrollbarState.scrollbar.opts.ref}
->
+<PresenceLayer open={forceMount || scrollbarState.hasThumb} ref={scrollbarState.scrollbar.opts.ref}>
 	{#snippet presence({ present })}
-		<ScrollAreaThumbImpl {...restProps} {id} bind:ref present={present.current} />
+		<ScrollAreaThumbImpl {...restProps} {id} bind:ref {present} />
 	{/snippet}
 </PresenceLayer>

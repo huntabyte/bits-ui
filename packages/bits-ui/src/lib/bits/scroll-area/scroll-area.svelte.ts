@@ -7,17 +7,23 @@
 
 import { Context, useDebounce } from "runed";
 import { untrack } from "svelte";
-import { box, executeCallbacks, attachRef, DOMContext, getWindow } from "svelte-toolbelt";
+import {
+	box,
+	executeCallbacks,
+	attachRef,
+	DOMContext,
+	getWindow,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
-import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 import { clamp } from "$lib/internal/clamp.js";
-import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { on } from "svelte/events";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
+import { StateMachine } from "$lib/internal/state-machine.svelte.js";
+import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
 
 const scrollAreaAttrs = createBitsAttrs({
 	component: "scroll-area",
@@ -202,7 +208,7 @@ class ScrollAreaScrollbarHoverState {
 class ScrollAreaScrollbarScrollState {
 	readonly scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
-	machine = useStateMachine("hidden", {
+	machine = new StateMachine("hidden", {
 		hidden: {
 			SCROLL: "scrolling",
 		},
@@ -299,8 +305,8 @@ class ScrollAreaScrollbarAutoState {
 			this.isVisible = this.scrollbar.isHorizontal ? isOverflowX : isOverflowY;
 		}, 10);
 
-		useResizeObserver(() => this.root.viewportNode, handleResize);
-		useResizeObserver(() => this.root.contentNode, handleResize);
+		new SvelteResizeObserver(() => this.root.viewportNode, handleResize);
+		new SvelteResizeObserver(() => this.root.contentNode, handleResize);
 	}
 
 	readonly props = $derived.by(
@@ -679,8 +685,8 @@ class ScrollAreaScrollbarSharedState {
 		// 	this.handleThumbPositionChange();
 		// });
 
-		useResizeObserver(() => this.scrollbar.opts.ref.current, this.handleResize);
-		useResizeObserver(() => this.root.contentNode, this.handleResize);
+		new SvelteResizeObserver(() => this.scrollbar.opts.ref.current, this.handleResize);
+		new SvelteResizeObserver(() => this.root.contentNode, this.handleResize);
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -830,7 +836,7 @@ class ScrollAreaCornerImplState {
 		this.opts = opts;
 		this.root = root;
 
-		useResizeObserver(
+		new SvelteResizeObserver(
 			() => this.root.scrollbarXNode,
 			() => {
 				const height = this.root.scrollbarXNode?.offsetHeight || 0;
@@ -839,7 +845,7 @@ class ScrollAreaCornerImplState {
 			}
 		);
 
-		useResizeObserver(
+		new SvelteResizeObserver(
 			() => this.root.scrollbarYNode,
 			() => {
 				const width = this.root.scrollbarYNode?.offsetWidth || 0;

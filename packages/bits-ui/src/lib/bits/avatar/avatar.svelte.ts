@@ -1,9 +1,14 @@
 import { untrack } from "svelte";
-import { DOMContext, type ReadableBox, type WritableBox, attachRef } from "svelte-toolbelt";
+import {
+	DOMContext,
+	type ReadableBox,
+	type WritableBox,
+	attachRef,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import type { HTMLImgAttributes } from "svelte/elements";
 import { Context } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 

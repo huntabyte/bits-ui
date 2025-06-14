@@ -142,7 +142,7 @@
 		{escapeKeydownBehavior}
 		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		present={subContentState.parentMenu.opts.open.current}
+		open={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}

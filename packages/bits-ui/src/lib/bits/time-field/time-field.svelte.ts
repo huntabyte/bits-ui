@@ -1,9 +1,16 @@
 import type { Updater } from "svelte/store";
 import { CalendarDateTime, Time, ZonedDateTime } from "@internationalized/date";
-import { onDestroyEffect, attachRef, type WritableBox, box, DOMContext } from "svelte-toolbelt";
+import {
+	onDestroyEffect,
+	attachRef,
+	type WritableBox,
+	box,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,

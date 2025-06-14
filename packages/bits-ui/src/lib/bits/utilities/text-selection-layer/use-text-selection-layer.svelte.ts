@@ -1,6 +1,7 @@
 import {
 	DOMContext,
 	type ReadableBox,
+	type ReadableBoxedValues,
 	composeHandlers,
 	contains,
 	executeCallbacks,
@@ -8,7 +9,6 @@ import {
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { TextSelectionLayerImplProps } from "./types.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { noop } from "$lib/internal/noop.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 

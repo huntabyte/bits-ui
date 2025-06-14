@@ -6,6 +6,8 @@ import {
 	attachRef,
 	DOMContext,
 	getWindow,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
@@ -17,7 +19,6 @@ import {
 	isMouseEvent,
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { CustomEventDispatcher } from "$lib/internal/events.js";
 import type {
 	AnyFn,
@@ -27,9 +28,7 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
-import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
@@ -42,12 +41,14 @@ import {
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
 import { untrack } from "svelte";
 import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
+import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -162,8 +163,8 @@ class MenuContentState {
 	readonly parentMenu: MenuMenuState;
 	search = $state("");
 	#timer = 0;
-	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
-	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	#handleTypeaheadSearch: DOMTypeahead["handleTypeaheadSearch"];
+	rovingFocusGroup: RovingFocusGroup;
 	mounted = $state(false);
 	#isSub: boolean;
 	domContext: DOMContext;
@@ -181,7 +182,7 @@ class MenuContentState {
 		this.onfocus = this.onfocus.bind(this);
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 
-		useGraceArea({
+		new GraceArea({
 			contentNode: () => this.parentMenu.contentNode,
 			triggerNode: () => this.parentMenu.triggerNode,
 			enabled: () =>
@@ -199,11 +200,11 @@ class MenuContentState {
 			},
 		});
 
-		this.#handleTypeaheadSearch = useDOMTypeahead({
+		this.#handleTypeaheadSearch = new DOMTypeahead({
 			getActiveElement: () => this.domContext.getActiveElement(),
 			getWindow: () => this.domContext.getWindow(),
 		}).handleTypeaheadSearch;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: box.with(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getBitsAttr("item"),
 			loop: this.opts.loop,

@@ -5,12 +5,12 @@ import {
 	afterTick,
 	executeCallbacks,
 	onDestroyEffect,
+	type ReadableBoxedValues,
 } from "svelte-toolbelt";
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { debounce } from "$lib/internal/debounce.js";
 import { noop } from "$lib/internal/noop.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";

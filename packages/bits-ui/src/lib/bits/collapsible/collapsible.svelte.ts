@@ -1,6 +1,11 @@
-import { afterTick, attachRef, type WithRefProps } from "svelte-toolbelt";
+import {
+	afterTick,
+	attachRef,
+	type WithRefProps,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import {
 	createBitsAttrs,
 	getAriaExpanded,

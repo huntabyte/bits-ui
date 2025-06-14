@@ -9,8 +9,6 @@ export function shouldTrapFocus({
 	trapFocus: boolean;
 	open: boolean;
 }): boolean {
-	if (forceMount) {
-		return open && trapFocus;
-	}
+	if (forceMount) return open && trapFocus;
 	return present && trapFocus && open;
 }

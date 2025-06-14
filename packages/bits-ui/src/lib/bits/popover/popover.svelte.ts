@@ -1,6 +1,5 @@
-import { type ReadableBoxedValues, attachRef } from "svelte-toolbelt";
+import { type ReadableBoxedValues, type WritableBoxedValues, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
-import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {

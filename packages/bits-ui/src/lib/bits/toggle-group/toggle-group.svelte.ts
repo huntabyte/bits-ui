@@ -1,4 +1,9 @@
-import { type WritableBox, attachRef } from "svelte-toolbelt";
+import {
+	type WritableBox,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+	attachRef,
+} from "svelte-toolbelt";
 import { Context } from "runed";
 import {
 	createBitsAttrs,
@@ -8,14 +13,10 @@ import {
 	getDataOrientation,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 export const toggleGroupAttrs = createBitsAttrs({
 	component: "toggle-group",
@@ -33,11 +34,11 @@ type ToggleGroupBaseStateProps = WithRefProps<
 
 class ToggleGroupBaseState {
 	readonly opts: ToggleGroupBaseStateProps;
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 
 	constructor(opts: ToggleGroupBaseStateProps) {
 		this.opts = opts;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: toggleGroupAttrs.item,
 			rootNode: opts.ref,
 			loop: opts.loop,

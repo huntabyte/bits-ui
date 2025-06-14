@@ -1,4 +1,10 @@
-import { afterSleep, afterTick, DOMContext, executeCallbacks } from "svelte-toolbelt";
+import {
+	afterSleep,
+	afterTick,
+	DOMContext,
+	executeCallbacks,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import {
@@ -7,7 +13,6 @@ import {
 	removeLinks,
 } from "./focus-scope-stack.svelte.js";
 import { focus, focusFirst, getTabbableCandidates, getTabbableEdges } from "$lib/internal/focus.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { CustomEventDispatcher, type EventCallback } from "$lib/internal/events.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";

@@ -1,6 +1,6 @@
 import type { DateValue } from "@internationalized/date";
+import { type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { DateMatcher, DateRange, SegmentPart } from "$lib/shared/index.js";
 import type { Granularity, HourCycle, WeekStartsOn } from "$lib/shared/date/types.js";
 

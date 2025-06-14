@@ -12,7 +12,7 @@
 </script>
 
 <PresenceLayer
-	present={forceMount || scrollbarAutoState.isVisible}
+	open={forceMount || scrollbarAutoState.isVisible}
 	ref={scrollbarAutoState.scrollbar.opts.ref}
 >
 	{#snippet presence()}

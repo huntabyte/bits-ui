@@ -1,6 +1,11 @@
-import { afterTick, attachRef } from "svelte-toolbelt";
+import {
+	afterTick,
+	attachRef,
+	type Box,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import {
 	getAriaDisabled,
@@ -10,12 +15,9 @@ import {
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
@@ -75,12 +77,12 @@ type InitAccordionProps = WithRefProps<
 // Base class
 abstract class AccordionBaseState {
 	readonly opts: AccordionBaseStateProps;
-	readonly rovingFocusGroup: UseRovingFocusReturn;
+	readonly rovingFocusGroup: RovingFocusGroup;
 	abstract readonly isMulti: boolean;
 
 	constructor(opts: AccordionBaseStateProps) {
 		this.opts = opts;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: accordionAttrs.trigger,
 			loop: this.opts.loop,
@@ -236,7 +238,7 @@ class AccordionContentState {
 	#isMountAnimationPrevented = false;
 	#dimensions = $state({ width: 0, height: 0 });
 
-	readonly present = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
+	readonly open = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
 
 	constructor(opts: AccordionContentStateProps, item: AccordionItemState) {
 		this.opts = opts;
@@ -252,7 +254,7 @@ class AccordionContentState {
 		});
 
 		// Handle dimension updates
-		watch([() => this.present, () => this.opts.ref.current], this.#updateDimensions);
+		watch([() => this.open, () => this.opts.ref.current], this.#updateDimensions);
 	}
 
 	#updateDimensions = ([_, node]: [boolean, HTMLElement | null]): void => {

@@ -35,7 +35,7 @@
 	disabled={!contentState.context.viewportRef.current}
 >
 	<PresenceLayer
-		present={forceMount || contentState.open || contentState.isLastActiveValue}
+		open={forceMount || contentState.open || contentState.isLastActiveValue}
 		ref={contentState.opts.ref}
 	>
 		{#snippet presence()}

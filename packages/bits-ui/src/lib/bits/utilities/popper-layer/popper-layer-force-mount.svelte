@@ -39,7 +39,7 @@
 		isStatic = false,
 		enabled,
 		...restProps
-	}: Omit<PopperLayerImplProps, "present"> & {
+	}: Omit<PopperLayerImplProps, "open"> & {
 		enabled: boolean;
 	} = $props();
 </script>

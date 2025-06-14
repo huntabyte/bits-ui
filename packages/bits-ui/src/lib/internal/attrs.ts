@@ -102,36 +102,48 @@ export type BitsAttrsConfig<T extends readonly string[]> = {
 	getVariant?: () => string | null;
 };
 
-export type BitsAttrs<T extends readonly string[]> = {
+export type CreateBitsAttrsReturn<T extends readonly string[]> = {
 	[K in T[number]]: string;
 } & {
 	selector: (part: T[number]) => string;
 	getAttr: (part: T[number], variant?: string) => string;
 };
 
+export class BitsAttrs<T extends readonly string[]> {
+	readonly #variant: string | null;
+	readonly #prefix: string;
+	attrs: Record<T[number], string>;
+
+	constructor(config: BitsAttrsConfig<T>) {
+		this.#variant = config.getVariant ? config.getVariant() : null;
+		this.#prefix = this.#variant ? `data-${this.#variant}-` : `data-${config.component}-`;
+
+		this.getAttr = this.getAttr.bind(this);
+		this.selector = this.selector.bind(this);
+
+		this.attrs = Object.fromEntries(
+			config.parts.map((part) => [part, this.getAttr(part)])
+		) as Record<T[number], string>;
+	}
+
+	getAttr(part: T[number], variantOverride?: string): string {
+		if (variantOverride) return `data-${variantOverride}-${part}`;
+		return `${this.#prefix}${part}`;
+	}
+
+	selector(part: T[number], variantOverride?: string): string {
+		return `[${this.getAttr(part, variantOverride)}]`;
+	}
+}
+
 export function createBitsAttrs<const T extends readonly string[]>(
 	config: Omit<BitsAttrsConfig<T>, "parts"> & { parts: T }
-): BitsAttrs<T> {
-	const variant = config.getVariant?.();
-	const prefix = variant ? `data-${variant}-` : `data-${config.component}-`;
-
-	function getAttr(part: T[number], variantOverride?: string): string {
-		if (variantOverride) return `data-${variantOverride}-${part}`;
-		return `${prefix}${part}`;
-	}
-
-	function selector(part: T[number], variantOverride?: string): string {
-		return `[${getAttr(part, variantOverride)}]`;
-	}
-
-	const attrs = Object.fromEntries(config.parts.map((part) => [part, getAttr(part)])) as Record<
-		T[number],
-		string
-	>;
+): CreateBitsAttrsReturn<T> {
+	const bitsAttrs = new BitsAttrs(config);
 
 	return {
-		...attrs,
-		selector,
-		getAttr,
-	} as BitsAttrs<T>;
+		...bitsAttrs.attrs,
+		selector: bitsAttrs.selector,
+		getAttr: bitsAttrs.getAttr,
+	} as CreateBitsAttrsReturn<T>;
 }

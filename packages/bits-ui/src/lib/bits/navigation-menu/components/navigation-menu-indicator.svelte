@@ -24,7 +24,7 @@
 
 {#if indicatorState.context.indicatorTrackRef.current}
 	<Portal to={indicatorState.context.indicatorTrackRef.current}>
-		<PresenceLayer present={forceMount || indicatorState.isVisible} ref={box.with(() => ref)}>
+		<PresenceLayer open={forceMount || indicatorState.isVisible} ref={box.with(() => ref)}>
 			{#snippet presence()}
 				<NavigationMenuIndicatorImpl {...mergedProps} {children} {child} {id} bind:ref />
 			{/snippet}

@@ -1,9 +1,15 @@
 import type { DateValue } from "@internationalized/date";
-import { box, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	box,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useId } from "$lib/internal/use-id.js";
 import type {
 	DateOnInvalid,

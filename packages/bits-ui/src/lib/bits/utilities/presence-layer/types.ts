@@ -10,11 +10,11 @@ export type PresenceLayerProps = {
 
 export type PresenceLayerImplProps = PresenceLayerProps & {
 	/**
-	 * The presence status.
+	 * The open state of the component.
 	 */
-	present: boolean;
+	open: boolean;
 
-	presence?: Snippet<[{ present: { current: boolean } }]>;
+	presence?: Snippet<[{ present: boolean }]>;
 
 	ref: ReadableBox<HTMLElement | null>;
 };
