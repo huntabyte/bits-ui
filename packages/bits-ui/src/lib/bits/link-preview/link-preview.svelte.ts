@@ -6,7 +6,7 @@ import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
+import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 
 const linkPreviewAttrs = createBitsAttrs({
 	component: "link-preview",
@@ -194,7 +194,7 @@ class LinkPreviewContentState {
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
 
-		useGraceArea({
+		new GraceArea({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.opts.ref.current,
 			enabled: () => this.root.opts.open.current,

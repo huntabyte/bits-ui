@@ -3,11 +3,11 @@ import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
+import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 
 export const tooltipAttrs = createBitsAttrs({
 	component: "tooltip",
@@ -314,7 +314,7 @@ class TooltipContentState {
 		this.opts = opts;
 		this.root = root;
 
-		useGraceArea({
+		new GraceArea({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
