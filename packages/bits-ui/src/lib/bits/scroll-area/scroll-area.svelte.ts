@@ -5,7 +5,7 @@
  * Incredible thought must have went into solving all the intricacies of this component.
  */
 
-import { Context, useDebounce } from "runed";
+import { Context, useDebounce, watch } from "runed";
 import { untrack } from "svelte";
 import {
 	box,
@@ -30,7 +30,21 @@ const scrollAreaAttrs = createBitsAttrs({
 	parts: ["root", "viewport", "corner", "thumb", "scrollbar"],
 });
 
-type Sizes = {
+export const ScrollAreaRootContext = new Context<ScrollAreaRootState>("ScrollArea.Root");
+export const ScrollAreaScrollbarContext = new Context<ScrollAreaScrollbarState>(
+	"ScrollArea.Scrollbar"
+);
+export const ScrollAreaScrollbarVisibleContext = new Context<ScrollAreaScrollbarVisibleState>(
+	"ScrollArea.ScrollbarVisible"
+);
+export const ScrollAreaScrollbarAxisContext = new Context<ScrollbarAxis>(
+	"ScrollArea.ScrollbarAxis"
+);
+export const ScrollAreaScrollbarSharedContext = new Context<ScrollAreaScrollbarSharedState>(
+	"ScrollArea.ScrollbarShared"
+);
+
+interface Sizes {
 	content: number;
 	viewport: number;
 	scrollbar: {
@@ -38,18 +52,22 @@ type Sizes = {
 		paddingStart: number;
 		paddingEnd: number;
 	};
-};
+}
 
-type ScrollAreaRootStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		dir: Direction;
-		type: ScrollAreaType;
-		scrollHideDelay: number;
-	}>
->;
+interface ScrollAreaRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			dir: Direction;
+			type: ScrollAreaType;
+			scrollHideDelay: number;
+		}> {}
 
-class ScrollAreaRootState {
-	readonly opts: ScrollAreaRootStateProps;
+export class ScrollAreaRootState {
+	static create(opts: ScrollAreaRootStateOpts) {
+		return ScrollAreaRootContext.set(new ScrollAreaRootState(opts));
+	}
+
+	readonly opts: ScrollAreaRootStateOpts;
 	scrollAreaNode = $state<HTMLElement | null>(null);
 	viewportNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -61,12 +79,12 @@ class ScrollAreaRootState {
 	scrollbarYEnabled = $state(false);
 	domContext: DOMContext;
 
-	constructor(opts: ScrollAreaRootStateProps) {
+	constructor(opts: ScrollAreaRootStateOpts) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -82,20 +100,24 @@ class ScrollAreaRootState {
 	);
 }
 
-type ScrollAreaViewportStateProps = WithRefOpts;
+interface ScrollAreaViewportStateOpts extends WithRefOpts {}
 
-class ScrollAreaViewportState {
-	readonly opts: ScrollAreaViewportStateProps;
+export class ScrollAreaViewportState {
+	static create(opts: ScrollAreaViewportStateOpts) {
+		return new ScrollAreaViewportState(opts, ScrollAreaRootContext.get());
+	}
+
+	readonly opts: ScrollAreaViewportStateOpts;
 	readonly root: ScrollAreaRootState;
 	#contentId = box(useId());
 	#contentRef = box<HTMLElement | null>(null);
 
-	constructor(opts: ScrollAreaViewportStateProps, root: ScrollAreaRootState) {
+	constructor(opts: ScrollAreaViewportStateOpts, root: ScrollAreaRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -108,7 +130,7 @@ class ScrollAreaViewportState {
 			}) as const
 	);
 
-	contentProps = $derived.by(
+	readonly contentProps = $derived.by(
 		() =>
 			({
 				id: this.#contentId.current,
@@ -126,37 +148,50 @@ class ScrollAreaViewportState {
 	);
 }
 
-type ScrollAreaScrollbarStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		orientation: Orientation;
-	}>
->;
+interface ScrollAreaScrollbarStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			orientation: Orientation;
+		}> {}
 
-class ScrollAreaScrollbarState {
-	readonly opts: ScrollAreaScrollbarStateProps;
+export class ScrollAreaScrollbarState {
+	static create(opts: ScrollAreaScrollbarStateOpts) {
+		return ScrollAreaScrollbarContext.set(
+			new ScrollAreaScrollbarState(opts, ScrollAreaRootContext.get())
+		);
+	}
+	readonly opts: ScrollAreaScrollbarStateOpts;
 	readonly root: ScrollAreaRootState;
 	readonly isHorizontal = $derived.by(() => this.opts.orientation.current === "horizontal");
 	hasThumb = $state(false);
 
-	constructor(opts: ScrollAreaScrollbarStateProps, root: ScrollAreaRootState) {
+	constructor(opts: ScrollAreaScrollbarStateOpts, root: ScrollAreaRootState) {
 		this.opts = opts;
 		this.root = root;
 
-		$effect(() => {
-			this.isHorizontal
-				? (this.root.scrollbarXEnabled = true)
-				: (this.root.scrollbarYEnabled = true);
-
-			return () => {
-				this.isHorizontal
-					? (this.root.scrollbarXEnabled = false)
-					: (this.root.scrollbarYEnabled = false);
-			};
-		});
+		watch(
+			() => this.isHorizontal,
+			(isHorizontal) => {
+				if (isHorizontal) {
+					this.root.scrollbarXEnabled = true;
+					return () => {
+						this.root.scrollbarXEnabled = false;
+					};
+				} else {
+					this.root.scrollbarYEnabled = true;
+					return () => {
+						this.root.scrollbarYEnabled = false;
+					};
+				}
+			}
+		);
 	}
 }
 
-class ScrollAreaScrollbarHoverState {
+export class ScrollAreaScrollbarHoverState {
+	static create() {
+		return new ScrollAreaScrollbarHoverState(ScrollAreaScrollbarContext.get());
+	}
 	readonly scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
 	isVisible = $state(false);
@@ -205,10 +240,13 @@ class ScrollAreaScrollbarHoverState {
 	);
 }
 
-class ScrollAreaScrollbarScrollState {
+export class ScrollAreaScrollbarScrollState {
+	static create() {
+		return new ScrollAreaScrollbarScrollState(ScrollAreaScrollbarContext.get());
+	}
 	readonly scrollbar: ScrollAreaScrollbarState;
-	root: ScrollAreaRootState;
-	machine = new StateMachine("hidden", {
+	readonly root: ScrollAreaRootState;
+	readonly machine = new StateMachine("hidden", {
 		hidden: {
 			SCROLL: "scrolling",
 		},
@@ -288,9 +326,12 @@ class ScrollAreaScrollbarScrollState {
 	);
 }
 
-class ScrollAreaScrollbarAutoState {
+export class ScrollAreaScrollbarAutoState {
+	static create() {
+		return new ScrollAreaScrollbarAutoState(ScrollAreaScrollbarContext.get());
+	}
 	readonly scrollbar: ScrollAreaScrollbarState;
-	root: ScrollAreaRootState;
+	readonly root: ScrollAreaRootState;
 	isVisible = $state(false);
 
 	constructor(scrollbar: ScrollAreaScrollbarState) {
@@ -317,9 +358,14 @@ class ScrollAreaScrollbarAutoState {
 	);
 }
 
-class ScrollAreaScrollbarVisibleState {
+export class ScrollAreaScrollbarVisibleState {
+	static create() {
+		return ScrollAreaScrollbarVisibleContext.set(
+			new ScrollAreaScrollbarVisibleState(ScrollAreaScrollbarContext.get())
+		);
+	}
 	readonly scrollbar: ScrollAreaScrollbarState;
-	root: ScrollAreaRootState;
+	readonly root: ScrollAreaRootState;
 	thumbNode = $state<HTMLElement | null>(null);
 	pointerOffset = $state(0);
 	sizes = $state.raw<Sizes>({
@@ -419,9 +465,9 @@ class ScrollAreaScrollbarVisibleState {
 	}
 }
 
-type ScrollbarAxisStateProps = ReadableBoxedValues<{ mounted: boolean }>;
+interface ScrollbarAxisStateOpts extends ReadableBoxedValues<{ mounted: boolean }> {}
 
-type ScrollbarAxisState = {
+interface ScrollbarAxisState {
 	onThumbPointerDown: (pointerPos: { x: number; y: number }) => void;
 	onDragScroll: (pointerPos: { x: number; y: number }) => void;
 	onWheelScroll: (e: WheelEvent, maxScrollPos: number) => void;
@@ -433,16 +479,21 @@ type ScrollbarAxisState = {
 		"data-orientation": "horizontal" | "vertical";
 		style: Record<string, string | number | undefined>;
 	};
-};
+}
 
-class ScrollAreaScrollbarXState implements ScrollbarAxisState {
-	readonly opts: ScrollbarAxisStateProps;
+export class ScrollAreaScrollbarXState implements ScrollbarAxisState {
+	static create(opts: ScrollbarAxisStateOpts) {
+		return ScrollAreaScrollbarAxisContext.set(
+			new ScrollAreaScrollbarXState(opts, ScrollAreaScrollbarVisibleContext.get())
+		);
+	}
+	readonly opts: ScrollbarAxisStateOpts;
 	readonly scrollbarVis: ScrollAreaScrollbarVisibleState;
-	root: ScrollAreaRootState;
+	readonly root: ScrollAreaRootState;
+	readonly scrollbar: ScrollAreaScrollbarState;
 	computedStyle = $state<CSSStyleDeclaration>();
-	scrollbar: ScrollAreaScrollbarState;
 
-	constructor(opts: ScrollbarAxisStateProps, scrollbarVis: ScrollAreaScrollbarVisibleState) {
+	constructor(opts: ScrollbarAxisStateOpts, scrollbarVis: ScrollAreaScrollbarVisibleState) {
 		this.opts = opts;
 		this.scrollbarVis = scrollbarVis;
 		this.root = scrollbarVis.root;
@@ -528,14 +579,19 @@ class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 	);
 }
 
-class ScrollAreaScrollbarYState implements ScrollbarAxisState {
-	readonly opts: ScrollbarAxisStateProps;
+export class ScrollAreaScrollbarYState implements ScrollbarAxisState {
+	static create(opts: ScrollbarAxisStateOpts) {
+		return ScrollAreaScrollbarAxisContext.set(
+			new ScrollAreaScrollbarYState(opts, ScrollAreaScrollbarVisibleContext.get())
+		);
+	}
+	readonly opts: ScrollbarAxisStateOpts;
 	readonly scrollbarVis: ScrollAreaScrollbarVisibleState;
-	root: ScrollAreaRootState;
-	scrollbar: ScrollAreaScrollbarState;
+	readonly root: ScrollAreaRootState;
+	readonly scrollbar: ScrollAreaScrollbarState;
 	computedStyle = $state<CSSStyleDeclaration>();
 
-	constructor(opts: ScrollbarAxisStateProps, scrollbarVis: ScrollAreaScrollbarVisibleState) {
+	constructor(opts: ScrollbarAxisStateOpts, scrollbarVis: ScrollAreaScrollbarVisibleState) {
 		this.opts = opts;
 		this.scrollbarVis = scrollbarVis;
 		this.root = scrollbarVis.root;
@@ -625,11 +681,16 @@ class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 
 type ScrollbarAxis = ScrollAreaScrollbarXState | ScrollAreaScrollbarYState;
 
-class ScrollAreaScrollbarSharedState {
+export class ScrollAreaScrollbarSharedState {
+	static create() {
+		return ScrollAreaScrollbarSharedContext.set(
+			new ScrollAreaScrollbarSharedState(ScrollAreaScrollbarAxisContext.get())
+		);
+	}
 	readonly scrollbarState: ScrollbarAxis;
-	root: ScrollAreaRootState;
-	scrollbarVis: ScrollAreaScrollbarVisibleState;
-	scrollbar: ScrollAreaScrollbarState;
+	readonly root: ScrollAreaRootState;
+	readonly scrollbarVis: ScrollAreaScrollbarVisibleState;
+	readonly scrollbar: ScrollAreaScrollbarState;
 	rect = $state.raw<DOMRect | null>(null);
 	prevWebkitUserSelect = $state<string>("");
 	handleResize: () => void;
@@ -727,7 +788,7 @@ class ScrollAreaScrollbarSharedState {
 		this.rect = null;
 	}
 
-	props = $derived.by(() =>
+	readonly props = $derived.by(() =>
 		mergeProps({
 			...this.scrollbarState.props,
 			style: {
@@ -742,14 +803,19 @@ class ScrollAreaScrollbarSharedState {
 	);
 }
 
-type ScrollAreaThumbImplStateProps = WithRefOpts &
-	ReadableBoxedValues<{
-		mounted: boolean;
-	}>;
-class ScrollAreaThumbImplState {
-	readonly opts: ScrollAreaThumbImplStateProps;
+interface ScrollAreaThumbImplStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			mounted: boolean;
+		}> {}
+
+export class ScrollAreaThumbImplState {
+	static create(opts: ScrollAreaThumbImplStateOpts) {
+		return new ScrollAreaThumbImplState(opts, ScrollAreaScrollbarSharedContext.get());
+	}
+	readonly opts: ScrollAreaThumbImplStateOpts;
 	readonly scrollbarState: ScrollAreaScrollbarSharedState;
-	#root: ScrollAreaRootState;
+	readonly #root: ScrollAreaRootState;
 	#removeUnlinkedScrollListener = $state<() => void>();
 	readonly #debounceScrollEnd = useDebounce(() => {
 		if (this.#removeUnlinkedScrollListener) {
@@ -759,7 +825,7 @@ class ScrollAreaThumbImplState {
 	}, 100);
 
 	constructor(
-		opts: ScrollAreaThumbImplStateProps,
+		opts: ScrollAreaThumbImplStateOpts,
 		scrollbarState: ScrollAreaScrollbarSharedState
 	) {
 		this.opts = opts;
@@ -823,16 +889,20 @@ class ScrollAreaThumbImplState {
 	);
 }
 
-type ScrollAreaCornerImplStateProps = WithRefOpts;
+interface ScrollAreaCornerImplStateOpts extends WithRefOpts {}
 
-class ScrollAreaCornerImplState {
-	readonly opts: ScrollAreaCornerImplStateProps;
+export class ScrollAreaCornerImplState {
+	static create(opts: ScrollAreaCornerImplStateOpts) {
+		return new ScrollAreaCornerImplState(opts, ScrollAreaRootContext.get());
+	}
+
+	readonly opts: ScrollAreaCornerImplStateOpts;
 	readonly root: ScrollAreaRootState;
 	#width = $state(0);
 	#height = $state(0);
 	readonly hasSize = $derived(Boolean(this.#width && this.#height));
 
-	constructor(opts: ScrollAreaCornerImplStateProps, root: ScrollAreaRootState) {
+	constructor(opts: ScrollAreaCornerImplStateOpts, root: ScrollAreaRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -870,77 +940,63 @@ class ScrollAreaCornerImplState {
 	}));
 }
 
-export const ScrollAreaRootContext = new Context<ScrollAreaRootState>("ScrollArea.Root");
-export const ScrollAreaScrollbarContext = new Context<ScrollAreaScrollbarState>(
-	"ScrollArea.Scrollbar"
-);
-export const ScrollAreaScrollbarVisibleContext = new Context<ScrollAreaScrollbarVisibleState>(
-	"ScrollArea.ScrollbarVisible"
-);
-export const ScrollAreaScrollbarAxisContext = new Context<ScrollbarAxis>(
-	"ScrollArea.ScrollbarAxis"
-);
-export const ScrollAreaScrollbarSharedContext = new Context<ScrollAreaScrollbarSharedState>(
-	"ScrollArea.ScrollbarShared"
-);
+// export function useScrollAreaRoot(props: ScrollAreaRootStateOpts) {
+// 	return ScrollAreaRootContext.set(new ScrollAreaRootState(props));
+// }
 
-export function useScrollAreaRoot(props: ScrollAreaRootStateProps) {
-	return ScrollAreaRootContext.set(new ScrollAreaRootState(props));
-}
+// export function useScrollAreaViewport(props: ScrollAreaViewportStateOpts) {
+// 	return new ScrollAreaViewportState(props, ScrollAreaRootContext.get());
+// }
 
-export function useScrollAreaViewport(props: ScrollAreaViewportStateProps) {
-	return new ScrollAreaViewportState(props, ScrollAreaRootContext.get());
-}
+// export function useScrollAreaScrollbar(props: ScrollAreaScrollbarStateOpts) {
+// 	return ScrollAreaScrollbarContext.set(
+// 		new ScrollAreaScrollbarState(props, ScrollAreaRootContext.get())
+// 	);
+// }
 
-export function useScrollAreaScrollbar(props: ScrollAreaScrollbarStateProps) {
-	return ScrollAreaScrollbarContext.set(
-		new ScrollAreaScrollbarState(props, ScrollAreaRootContext.get())
-	);
-}
+// export function useScrollAreaScrollbarVisible() {
+// 	return ScrollAreaScrollbarVisibleContext.set(
+// 		new ScrollAreaScrollbarVisibleState(ScrollAreaScrollbarContext.get())
+// 	);
+// }
 
-export function useScrollAreaScrollbarVisible() {
-	return ScrollAreaScrollbarVisibleContext.set(
-		new ScrollAreaScrollbarVisibleState(ScrollAreaScrollbarContext.get())
-	);
-}
+// export function useScrollAreaScrollbarAuto() {
+// 	return new ScrollAreaScrollbarAutoState(ScrollAreaScrollbarContext.get());
+// }
 
-export function useScrollAreaScrollbarAuto() {
-	return new ScrollAreaScrollbarAutoState(ScrollAreaScrollbarContext.get());
-}
+// export function useScrollAreaScrollbarScroll() {
+// 	return new ScrollAreaScrollbarScrollState(ScrollAreaScrollbarContext.get());
+// }
 
-export function useScrollAreaScrollbarScroll() {
-	return new ScrollAreaScrollbarScrollState(ScrollAreaScrollbarContext.get());
-}
+// export function useScrollAreaScrollbarHover() {
+// 	return new ScrollAreaScrollbarHoverState(ScrollAreaScrollbarContext.get());
+// }
 
-export function useScrollAreaScrollbarHover() {
-	return new ScrollAreaScrollbarHoverState(ScrollAreaScrollbarContext.get());
-}
+// export function useScrollAreaScrollbarX(props: ScrollbarAxisStateOpts) {
+// 	return ScrollAreaScrollbarAxisContext.set(
+// 		new ScrollAreaScrollbarXState(props, ScrollAreaScrollbarVisibleContext.get())
+// 	);
+// }
 
-export function useScrollAreaScrollbarX(props: ScrollbarAxisStateProps) {
-	return ScrollAreaScrollbarAxisContext.set(
-		new ScrollAreaScrollbarXState(props, ScrollAreaScrollbarVisibleContext.get())
-	);
-}
+// export function useScrollAreaScrollbarY(props: ScrollbarAxisStateOpts) {
+// 	return ScrollAreaScrollbarAxisContext.set(
+// 		new ScrollAreaScrollbarYState(props, ScrollAreaScrollbarVisibleContext.get())
+// 	);
+// }
 
-export function useScrollAreaScrollbarY(props: ScrollbarAxisStateProps) {
-	return ScrollAreaScrollbarAxisContext.set(
-		new ScrollAreaScrollbarYState(props, ScrollAreaScrollbarVisibleContext.get())
-	);
-}
+// export function useScrollAreaScrollbarShared() {
+// 	return ScrollAreaScrollbarSharedContext.set(
+// 		new ScrollAreaScrollbarSharedState(ScrollAreaScrollbarAxisContext.get())
+// 	);
+// }
 
-export function useScrollAreaScrollbarShared() {
-	return ScrollAreaScrollbarSharedContext.set(
-		new ScrollAreaScrollbarSharedState(ScrollAreaScrollbarAxisContext.get())
-	);
-}
+// export function useScrollAreaThumb(props: ScrollAreaThumbImplStateProps) {
+// 	return new ScrollAreaThumbImplState(props, ScrollAreaScrollbarSharedContext.get());
+// }
 
-export function useScrollAreaThumb(props: ScrollAreaThumbImplStateProps) {
-	return new ScrollAreaThumbImplState(props, ScrollAreaScrollbarSharedContext.get());
-}
-
-export function useScrollAreaCorner(props: ScrollAreaCornerImplStateProps) {
-	return new ScrollAreaCornerImplState(props, ScrollAreaRootContext.get());
-}
+// export function useScrollAreaCorner(props: ScrollAreaCornerImplStateOpts) {
+// 	return new ScrollAreaCornerImplState(props, ScrollAreaRootContext.get());
+// }
 
 function toInt(value?: string) {
 	return value ? Number.parseInt(value, 10) : 0;

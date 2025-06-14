@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ScrollAreaRootProps } from "../types.js";
-	import { useScrollAreaRoot } from "../scroll-area.svelte.js";
+	import { ScrollAreaRootState } from "../scroll-area.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -17,7 +17,7 @@
 		...restProps
 	}: ScrollAreaRootProps = $props();
 
-	const rootState = useScrollAreaRoot({
+	const rootState = ScrollAreaRootState.create({
 		type: box.with(() => type),
 		dir: box.with(() => dir),
 		scrollHideDelay: box.with(() => scrollHideDelay),
