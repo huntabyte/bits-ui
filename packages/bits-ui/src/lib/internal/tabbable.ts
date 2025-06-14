@@ -1,5 +1,4 @@
 import { focusable, isFocusable, isTabbable, tabbable } from "tabbable";
-import { activeElement } from "./dom.js";
 import { getDocument } from "svelte-toolbelt";
 
 function getTabbableOptions() {
@@ -14,20 +13,6 @@ function getTabbableOptions() {
 				? "full"
 				: "none",
 	} as const;
-}
-
-export function getTabbableIn(container: HTMLElement, direction: "next" | "prev") {
-	const allTabbable = tabbable(container, getTabbableOptions());
-
-	if (direction === "prev") {
-		allTabbable.reverse();
-	}
-
-	const activeEl = activeElement(getDocument(container)) as HTMLElement;
-
-	const activeIndex = allTabbable.indexOf(activeEl);
-	const nextTabbableElements = allTabbable.slice(activeIndex + 1);
-	return nextTabbableElements[0];
 }
 
 /**
