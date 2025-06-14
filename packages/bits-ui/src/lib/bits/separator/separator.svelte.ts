@@ -13,17 +13,20 @@ const separatorAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type SeparatorRootStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		orientation: Orientation;
-		decorative: boolean;
-	}>
->;
+interface SeparatorRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			orientation: Orientation;
+			decorative: boolean;
+		}> {}
 
-class SeparatorRootState {
-	readonly opts: SeparatorRootStateProps;
+export class SeparatorRootState {
+	static create(opts: SeparatorRootStateOpts) {
+		return new SeparatorRootState(opts);
+	}
+	readonly opts: SeparatorRootStateOpts;
 
-	constructor(opts: SeparatorRootStateProps) {
+	constructor(opts: SeparatorRootStateOpts) {
 		this.opts = opts;
 	}
 
@@ -39,8 +42,4 @@ class SeparatorRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export function useSeparatorRoot(props: SeparatorRootStateProps) {
-	return new SeparatorRootState(props);
 }
