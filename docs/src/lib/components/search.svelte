@@ -27,12 +27,21 @@
 	});
 
 	let dialogOpen = $state(false);
+	let clearTimeoutId: number | undefined;
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
 			dialogOpen = true;
 		}
+	}
+
+	function clearSearchWithDelay() {
+		if (clearTimeoutId) window.clearTimeout(clearTimeoutId);
+		clearTimeoutId = window.setTimeout(() => {
+			searchQuery = "";
+			clearTimeoutId = undefined;
+		}, 300);
 	}
 </script>
 
@@ -42,7 +51,7 @@
 	bind:open={dialogOpen}
 	onOpenChange={(o) => {
 		if (o) return;
-		searchQuery = "";
+		clearSearchWithDelay();
 	}}
 >
 	{#if showTrigger}
@@ -78,7 +87,7 @@
 			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
 		/>
 		<Dialog.Content
-			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-100 outline-hidden fixed left-[50%] top-[20%] w-full max-w-[94%] translate-x-[-50%] translate-y-[0%] duration-200 sm:max-w-[490px] md:w-full"
+			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-100 outline-hidden duration-400 fixed left-[50%] top-[20%] w-full max-w-[94%] translate-x-[-50%] translate-y-[0%] ease-out sm:max-w-[490px] md:w-full"
 			onCloseAutoFocus={(e) => {
 				e.preventDefault();
 			}}
