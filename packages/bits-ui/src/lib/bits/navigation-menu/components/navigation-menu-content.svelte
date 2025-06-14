@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useNavigationMenuContent } from "../navigation-menu.svelte.js";
+	import { NavigationMenuContentState } from "../navigation-menu.svelte.js";
 	import NavigationMenuContentImpl from "./navigation-menu-content-impl.svelte";
 	import { createId } from "$lib/internal/create-id.js";
 	import type { NavigationMenuContentProps } from "$lib/types.js";
@@ -19,7 +19,7 @@
 		...restProps
 	}: NavigationMenuContentProps = $props();
 
-	const contentState = useNavigationMenuContent({
+	const contentState = NavigationMenuContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

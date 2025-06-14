@@ -13,39 +13,46 @@ const paginationAttrs = createBitsAttrs({
 	parts: ["root", "page", "prev", "next"],
 });
 
-type PaginationRootStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		count: number;
-		perPage: number;
-		siblingCount: number;
-		orientation: Orientation;
-		loop: boolean;
-	}> &
+const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
+
+interface PaginationRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			count: number;
+			perPage: number;
+			siblingCount: number;
+			orientation: Orientation;
+			loop: boolean;
+		}>,
 		WritableBoxedValues<{
 			page: number;
-		}>
->;
+		}> {}
 
-class PaginationRootState {
-	readonly opts: PaginationRootStateProps;
-	totalPages = $derived.by(() => {
+export class PaginationRootState {
+	static create(opts: PaginationRootStateOpts) {
+		return PaginationRootContext.set(new PaginationRootState(opts));
+	}
+	readonly opts: PaginationRootStateOpts;
+	readonly totalPages = $derived.by(() => {
 		if (this.opts.count.current === 0) return 1;
 		return Math.ceil(this.opts.count.current / this.opts.perPage.current);
 	});
-	range = $derived.by(() => {
+	readonly range = $derived.by(() => {
 		const start = (this.opts.page.current - 1) * this.opts.perPage.current;
 		const end = Math.min(start + this.opts.perPage.current, this.opts.count.current);
 		return { start: start + 1, end };
 	});
-	pages = $derived.by(() =>
+	readonly pages = $derived.by(() =>
 		getPageItems({
 			page: this.opts.page.current,
 			totalPages: this.totalPages,
 			siblingCount: this.opts.siblingCount.current,
 		})
 	);
+	readonly hasPrevPage = $derived.by(() => this.opts.page.current > 1);
+	readonly hasNextPage = $derived.by(() => this.opts.page.current < this.totalPages);
 
-	constructor(opts: PaginationRootStateProps) {
+	constructor(opts: PaginationRootStateOpts) {
 		this.opts = opts;
 	}
 
@@ -65,9 +72,6 @@ class PaginationRootState {
 		return node.querySelector<HTMLElement>(paginationAttrs.selector(type));
 	}
 
-	hasPrevPage = $derived.by(() => this.opts.page.current > 1);
-	hasNextPage = $derived.by(() => this.opts.page.current < this.totalPages);
-
 	prevPage() {
 		this.opts.page.current = Math.max(this.opts.page.current - 1, 1);
 	}
@@ -76,13 +80,13 @@ class PaginationRootState {
 		this.opts.page.current = Math.min(this.opts.page.current + 1, this.totalPages);
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		pages: this.pages,
 		range: this.range,
 		currentPage: this.opts.page.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -93,23 +97,24 @@ class PaginationRootState {
 	);
 }
 
-//
-// PAGE
-//
+interface PaginationPageStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			page: Page;
+			disabled: boolean;
+		}> {}
 
-type PaginationPageStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		page: Page;
-		disabled: boolean;
-	}>
->;
-
-class PaginationPageState {
-	readonly opts: PaginationPageStateProps;
+export class PaginationPageState {
+	static create(opts: PaginationPageStateOpts) {
+		return new PaginationPageState(opts, PaginationRootContext.get());
+	}
+	readonly opts: PaginationPageStateOpts;
 	readonly root: PaginationRootState;
-	#isSelected = $derived.by(() => this.opts.page.current.value === this.root.opts.page.current);
+	readonly #isSelected = $derived.by(
+		() => this.opts.page.current.value === this.root.opts.page.current
+	);
 
-	constructor(opts: PaginationPageStateProps, root: PaginationRootState) {
+	constructor(opts: PaginationPageStateOpts, root: PaginationRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -132,7 +137,7 @@ class PaginationPageState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -152,18 +157,22 @@ class PaginationPageState {
 // NEXT/PREV BUTTON
 //
 
-type PaginationButtonStateProps = WithRefOpts<{
+interface PaginationButtonStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {
 	type: "prev" | "next";
-}> &
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>;
+}
 
-class PaginationButtonState {
-	readonly opts: PaginationButtonStateProps;
+export class PaginationButtonState {
+	static create(opts: PaginationButtonStateOpts) {
+		return new PaginationButtonState(opts, PaginationRootContext.get());
+	}
+	readonly opts: PaginationButtonStateOpts;
 	readonly root: PaginationRootState;
 
-	constructor(opts: PaginationButtonStateProps, root: PaginationRootState) {
+	constructor(opts: PaginationButtonStateOpts, root: PaginationRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -175,7 +184,7 @@ class PaginationButtonState {
 		this.opts.type === "prev" ? this.root.prevPage() : this.root.nextPage();
 	}
 
-	#isDisabled = $derived.by(() => {
+	readonly #isDisabled = $derived.by(() => {
 		if (this.opts.disabled.current) return true;
 		if (this.opts.type === "prev") return !this.root.hasPrevPage;
 		if (this.opts.type === "next") return !this.root.hasNextPage;
@@ -197,7 +206,7 @@ class PaginationButtonState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -272,11 +281,11 @@ function handleTriggerKeydown(
 	itemToFocus.focus();
 }
 
-type GetPageItemsProps = {
+interface GetPageItemsProps {
 	page?: number;
 	totalPages: number;
 	siblingCount?: number;
-};
+}
 
 /**
  * Returns an array of page items used to render out the
@@ -332,18 +341,4 @@ function getPageItems({ page = 1, totalPages, siblingCount = 1 }: GetPageItemsPr
 	}
 
 	return pageItems;
-}
-
-const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
-
-export function usePaginationRoot(props: PaginationRootStateProps) {
-	return PaginationRootContext.set(new PaginationRootState(props));
-}
-
-export function usePaginationPage(props: PaginationPageStateProps) {
-	return new PaginationPageState(props, PaginationRootContext.get());
-}
-
-export function usePaginationButton(props: PaginationButtonStateProps) {
-	return new PaginationButtonState(props, PaginationRootContext.get());
 }

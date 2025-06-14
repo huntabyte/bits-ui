@@ -7,22 +7,26 @@ const meterAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type MeterRootStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		value: number;
-		max: number;
-		min: number;
-	}>
->;
+interface MeterRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: number;
+			max: number;
+			min: number;
+		}> {}
 
-class MeterRootState {
-	readonly opts: MeterRootStateProps;
+export class MeterRootState {
+	static create(opts: MeterRootStateOpts) {
+		return new MeterRootState(opts);
+	}
 
-	constructor(opts: MeterRootStateProps) {
+	readonly opts: MeterRootStateOpts;
+
+	constructor(opts: MeterRootStateOpts) {
 		this.opts = opts;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				role: "meter",
@@ -37,8 +41,4 @@ class MeterRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export function useMeterRootState(props: MeterRootStateProps) {
-	return new MeterRootState(props);
 }
