@@ -17,7 +17,7 @@ import type {
 	DateRangeValidator,
 	SegmentPart,
 } from "$lib/shared/index.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
@@ -30,7 +30,7 @@ export const dateRangeFieldAttrs = createBitsAttrs({
 	parts: ["root", "label"],
 });
 
-type DateRangeFieldRootStateProps = WithRefProps<
+type DateRangeFieldRootStateProps = WithRefOpts<
 	WritableBoxedValues<{
 		value: DateRange;
 		placeholder: DateValue;
@@ -213,7 +213,7 @@ export class DateRangeFieldRootState {
 	);
 }
 
-type DateRangeFieldLabelStateProps = WithRefProps;
+type DateRangeFieldLabelStateProps = WithRefOpts;
 
 class DateRangeFieldLabelState {
 	readonly opts: DateRangeFieldLabelStateProps;
@@ -251,7 +251,7 @@ type DateRangeFieldInputStateProps = WritableBoxedValues<{
 	ReadableBoxedValues<{
 		name: string;
 	}> &
-	WithRefProps;
+	WithRefOpts;
 
 export const DateRangeFieldRootContext = new Context<DateRangeFieldRootState>(
 	"DateRangeField.Root"

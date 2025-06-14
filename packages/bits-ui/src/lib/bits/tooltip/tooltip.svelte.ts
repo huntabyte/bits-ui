@@ -10,7 +10,7 @@ import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
@@ -206,7 +206,7 @@ class TooltipRootState {
 	};
 }
 
-type TooltipTriggerStateProps = WithRefProps<
+type TooltipTriggerStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>
@@ -307,7 +307,7 @@ class TooltipTriggerState {
 	);
 }
 
-type TooltipContentStateProps = WithRefProps &
+type TooltipContentStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		onInteractOutside: (e: PointerEvent) => void;
 		onEscapeKeydown: (e: KeyboardEvent) => void;

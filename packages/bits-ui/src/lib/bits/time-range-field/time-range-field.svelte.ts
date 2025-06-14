@@ -12,7 +12,7 @@ import type { TimeFieldRootState } from "../time-field/time-field.svelte.js";
 import { TimeFieldInputState, useTimeFieldRoot } from "../time-field/time-field.svelte.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { TimeSegmentPart } from "$lib/shared/index.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import type {
 	TimeGranularity,
@@ -34,7 +34,7 @@ export const timeRangeFieldAttrs = createBitsAttrs({
 	parts: ["root", "label"],
 });
 
-type TimeRangeFieldRootStateProps<T extends TimeValue = Time> = WithRefProps<
+type TimeRangeFieldRootStateProps<T extends TimeValue = Time> = WithRefOpts<
 	WritableBoxedValues<{
 		value: TimeRange<T>;
 		placeholder: TimeValue;
@@ -235,7 +235,7 @@ export class TimeRangeFieldRootState<T extends TimeValue = Time> {
 	);
 }
 
-type TimeRangeFieldLabelStateProps = WithRefProps;
+type TimeRangeFieldLabelStateProps = WithRefOpts;
 
 class TimeRangeFieldLabelState {
 	readonly opts: TimeRangeFieldLabelStateProps;
@@ -273,7 +273,7 @@ type TimeRangeFieldInputStateProps<T extends TimeValue = Time> = WritableBoxedVa
 	ReadableBoxedValues<{
 		name: string;
 	}> &
-	WithRefProps;
+	WithRefOpts;
 
 export const TimeRangeFieldRootContext = new Context<TimeRangeFieldRootState>(
 	"TimeRangeField.Root"

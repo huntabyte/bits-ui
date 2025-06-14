@@ -4,7 +4,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
 	createBitsAttrs,
@@ -23,7 +23,7 @@ const radioGroupAttrs = createBitsAttrs({
 	parts: ["root", "item"],
 });
 
-type RadioGroupRootStateProps = WithRefProps<
+type RadioGroupRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		required: boolean;
@@ -74,7 +74,7 @@ class RadioGroupRootState {
 	);
 }
 
-type RadioGroupItemStateProps = WithRefProps<
+type RadioGroupItemStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		value: string;

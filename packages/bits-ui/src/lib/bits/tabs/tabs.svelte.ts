@@ -16,7 +16,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
@@ -25,7 +25,7 @@ const tabsAttrs = createBitsAttrs({
 	component: "tabs",
 	parts: ["root", "list", "trigger", "content"],
 });
-type TabsRootStateProps = WithRefProps<
+type TabsRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		orientation: Orientation;
 		loop: boolean;
@@ -96,7 +96,7 @@ class TabsRootState {
 // LIST
 //
 
-type TabsListStateProps = WithRefProps;
+type TabsListStateProps = WithRefOpts;
 
 class TabsListState {
 	readonly opts: TabsListStateProps;
@@ -126,7 +126,7 @@ class TabsListState {
 // TRIGGER
 //
 
-type TabsTriggerStateProps = WithRefProps<
+type TabsTriggerStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		value: string;
 		disabled: boolean;
@@ -219,7 +219,7 @@ class TabsTriggerState {
 // CONTENT
 //
 
-type TabsContentStateProps = WithRefProps<
+type TabsContentStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		value: string;
 	}>

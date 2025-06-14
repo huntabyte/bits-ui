@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useCommandGroupHeading } from "../command.svelte.js";
+	import { CommandGroupHeadingState } from "../command.svelte.js";
 	import type { CommandGroupHeadingProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: CommandGroupHeadingProps = $props();
 
-	const headingState = useCommandGroupHeading({
+	const headingState = CommandGroupHeadingState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

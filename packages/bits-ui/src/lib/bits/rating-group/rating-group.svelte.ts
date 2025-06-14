@@ -9,7 +9,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { createBitsAttrs, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import type {
@@ -24,7 +24,7 @@ const ratingGroupAttrs = createBitsAttrs({
 	parts: ["root", "item"],
 });
 
-type RatingGroupRootStateProps = WithRefProps<
+type RatingGroupRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		required: boolean;
@@ -291,7 +291,7 @@ class RatingGroupRootState {
 	});
 }
 
-type RatingGroupItemStateProps = WithRefProps<
+type RatingGroupItemStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		index: number;

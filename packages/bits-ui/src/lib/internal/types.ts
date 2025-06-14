@@ -77,7 +77,7 @@ export type Arrayable<T> = T[] | T;
 export type Fn = () => void;
 export type AnyFn = (...args: any[]) => any;
 
-export type WithRefProps<T = {}> = T &
+export type WithRefOpts<T = {}> = T &
 	ReadableBoxedValues<{ id: string }> &
 	WritableBoxedValues<{ ref: HTMLElement | null }>;
 

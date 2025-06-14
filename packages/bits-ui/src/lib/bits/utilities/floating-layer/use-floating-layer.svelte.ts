@@ -21,7 +21,7 @@ import {
 	type Box,
 } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
-import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
+import type { Arrayable, WithRefOpts } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { useId } from "$lib/internal/use-id.js";
 import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
@@ -285,7 +285,7 @@ class FloatingContentState {
 	}
 }
 
-type FloatingArrowStateProps = WithRefProps;
+type FloatingArrowStateProps = WithRefOpts;
 
 class FloatingArrowState {
 	readonly opts: FloatingArrowStateProps;

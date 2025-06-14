@@ -6,7 +6,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement } from "$lib/internal/is.js";
 
@@ -38,7 +38,7 @@ class PopoverRootState {
 	}
 }
 
-type PopoverTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
+type PopoverTriggerStateProps = WithRefOpts & ReadableBoxedValues<{ disabled: boolean }>;
 
 class PopoverTriggerState {
 	readonly opts: PopoverTriggerStateProps;
@@ -90,7 +90,7 @@ class PopoverTriggerState {
 	);
 }
 
-type PopoverContentStateProps = WithRefProps &
+type PopoverContentStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		onInteractOutside: (e: PointerEvent) => void;
 		onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -151,7 +151,7 @@ class PopoverContentState {
 	};
 }
 
-type PopoverCloseStateProps = WithRefProps;
+type PopoverCloseStateProps = WithRefOpts;
 
 class PopoverCloseState {
 	readonly opts: PopoverCloseStateProps;

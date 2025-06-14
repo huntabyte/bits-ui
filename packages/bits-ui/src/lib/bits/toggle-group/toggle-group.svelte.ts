@@ -15,7 +15,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 export const toggleGroupAttrs = createBitsAttrs({
@@ -23,7 +23,7 @@ export const toggleGroupAttrs = createBitsAttrs({
 	parts: ["root", "item"],
 });
 
-type ToggleGroupBaseStateProps = WithRefProps<
+type ToggleGroupBaseStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		rovingFocus: boolean;
@@ -132,7 +132,7 @@ type ToggleGroupState = ToggleGroupSingleState | ToggleGroupMultipleState;
 // ITEM
 //
 
-type ToggleGroupItemStateProps = WithRefProps<
+type ToggleGroupItemStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		value: string;
 		disabled: boolean;
@@ -230,7 +230,7 @@ function getToggleItemDataState(condition: boolean) {
 
 const ToggleGroupRootContext = new Context<ToggleGroupState>("ToggleGroup.Root");
 
-type InitToggleGroupProps = WithRefProps<
+type InitToggleGroupProps = WithRefOpts<
 	{
 		type: "single" | "multiple";
 		value: WritableBox<string> | WritableBox<string[]>;

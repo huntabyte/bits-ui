@@ -10,14 +10,14 @@ import {
 	createBitsAttrs,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsPointerEvent, WithRefOpts } from "$lib/internal/types.js";
 
 const switchAttrs = createBitsAttrs({
 	component: "switch",
 	parts: ["root", "thumb"],
 });
 
-type SwitchRootStateProps = WithRefProps<
+type SwitchRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		required: boolean;
@@ -102,7 +102,7 @@ class SwitchInputState {
 	);
 }
 
-type SwitchThumbStateProps = WithRefProps;
+type SwitchThumbStateProps = WithRefOpts;
 
 class SwitchThumbState {
 	readonly opts: SwitchThumbStateProps;

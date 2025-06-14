@@ -5,14 +5,14 @@ import {
 	getDataDisabled,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 
 export const toggleAttrs = createBitsAttrs({
 	component: "toggle",
 	parts: ["root"],
 });
 
-type ToggleRootStateProps = WithRefProps<
+type ToggleRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}> &

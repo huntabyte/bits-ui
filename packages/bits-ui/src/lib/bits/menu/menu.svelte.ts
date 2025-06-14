@@ -26,7 +26,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -150,7 +150,7 @@ class MenuMenuState {
 	}
 }
 
-type MenuContentStateProps = WithRefProps &
+type MenuContentStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		loop: boolean;
 		onCloseAutoFocus: (event: Event) => void;
@@ -423,7 +423,7 @@ class MenuContentState {
 	};
 }
 
-type MenuItemSharedStateProps = WithRefProps &
+type MenuItemSharedStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>;
@@ -759,7 +759,7 @@ class MenuCheckboxItemState {
 	);
 }
 
-type MenuGroupStateProps = WithRefProps;
+type MenuGroupStateProps = WithRefOpts;
 
 class MenuGroupState {
 	readonly opts: MenuGroupStateProps;
@@ -783,7 +783,7 @@ class MenuGroupState {
 	);
 }
 
-type MenuGroupHeadingStateProps = WithRefProps;
+type MenuGroupHeadingStateProps = WithRefOpts;
 class MenuGroupHeadingState {
 	readonly opts: MenuGroupHeadingStateProps;
 	readonly group: MenuGroupState | MenuRadioGroupState | MenuCheckboxGroupState;
@@ -807,7 +807,7 @@ class MenuGroupHeadingState {
 	);
 }
 
-type MenuSeparatorStateProps = WithRefProps;
+type MenuSeparatorStateProps = WithRefOpts;
 
 class MenuSeparatorState {
 	readonly opts: MenuSeparatorStateProps;
@@ -844,7 +844,7 @@ class MenuArrowState {
 	);
 }
 
-type MenuRadioGroupStateProps = WithRefProps &
+type MenuRadioGroupStateProps = WithRefOpts &
 	WritableBoxedValues<{
 		value: string;
 	}>;
@@ -877,7 +877,7 @@ class MenuRadioGroupState {
 	);
 }
 
-type MenuRadioItemStateProps = WithRefProps &
+type MenuRadioItemStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		value: string;
 		closeOnSelect: boolean;
@@ -916,7 +916,7 @@ class MenuRadioItemState {
 // DROPDOWN MENU TRIGGER
 //
 
-type DropdownMenuTriggerStateProps = WithRefProps &
+type DropdownMenuTriggerStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>;
@@ -989,7 +989,7 @@ class DropdownMenuTriggerState {
 	);
 }
 
-type ContextMenuTriggerStateProps = WithRefProps &
+type ContextMenuTriggerStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>;
@@ -1094,7 +1094,7 @@ class ContextMenuTriggerState {
 	);
 }
 
-type MenuCheckboxGroupStateProps = WithRefProps &
+type MenuCheckboxGroupStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		onValueChange: (value: string[]) => void;
 	}> &

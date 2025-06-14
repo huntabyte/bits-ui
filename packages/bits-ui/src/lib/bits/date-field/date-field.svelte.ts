@@ -16,7 +16,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
 	createBitsAttrs,
@@ -715,7 +715,7 @@ export class DateFieldRootState {
 	}
 }
 
-type DateFieldInputStateProps = WithRefProps &
+type DateFieldInputStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		name: string;
 	}>;
@@ -778,7 +778,7 @@ class DateFieldHiddenInputState {
 	});
 }
 
-type DateFieldLabelStateProps = WithRefProps;
+type DateFieldLabelStateProps = WithRefOpts;
 
 class DateFieldLabelState {
 	readonly opts: DateFieldLabelStateProps;
@@ -812,13 +812,13 @@ class DateFieldLabelState {
 
 // Base class for numeric segments
 abstract class BaseNumericSegmentState {
-	readonly opts: WithRefProps;
+	readonly opts: WithRefOpts;
 	readonly root: DateFieldRootState;
 	readonly announcer: Announcer;
 	readonly part: string;
 	readonly config: SegmentConfig;
 
-	constructor(opts: WithRefProps, root: DateFieldRootState, part: string, config: SegmentConfig) {
+	constructor(opts: WithRefOpts, root: DateFieldRootState, part: string, config: SegmentConfig) {
 		this.opts = opts;
 		this.root = root;
 		this.part = part;
@@ -1128,7 +1128,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 	#pressedKeys: string[] = [];
 	#backspaceCount = 0;
 
-	constructor(opts: WithRefProps, root: DateFieldRootState) {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
 		super(opts, root, "year", SEGMENT_CONFIGS.year);
 	}
 
@@ -1270,19 +1270,19 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 
 // Create segment states using the base class
 class DateFieldDaySegmentState extends BaseNumericSegmentState {
-	constructor(opts: WithRefProps, root: DateFieldRootState) {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
 		super(opts, root, "day", SEGMENT_CONFIGS.day);
 	}
 }
 
 class DateFieldMonthSegmentState extends BaseNumericSegmentState {
-	constructor(opts: WithRefProps, root: DateFieldRootState) {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
 		super(opts, root, "month", SEGMENT_CONFIGS.month);
 	}
 }
 
 class DateFieldHourSegmentState extends BaseNumericSegmentState {
-	constructor(opts: WithRefProps, root: DateFieldRootState) {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
 		super(opts, root, "hour", SEGMENT_CONFIGS.hour);
 	}
 
@@ -1319,19 +1319,19 @@ class DateFieldHourSegmentState extends BaseNumericSegmentState {
 }
 
 class DateFieldMinuteSegmentState extends BaseNumericSegmentState {
-	constructor(opts: WithRefProps, root: DateFieldRootState) {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
 		super(opts, root, "minute", SEGMENT_CONFIGS.minute);
 	}
 }
 
 class DateFieldSecondSegmentState extends BaseNumericSegmentState {
-	constructor(opts: WithRefProps, root: DateFieldRootState) {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
 		super(opts, root, "second", SEGMENT_CONFIGS.second);
 	}
 }
 
 // Special segments that don't extend the base class
-type DateFieldDayPeriodSegmentStateProps = WithRefProps;
+type DateFieldDayPeriodSegmentStateProps = WithRefOpts;
 
 class DateFieldDayPeriodSegmentState {
 	readonly opts: DateFieldDayPeriodSegmentStateProps;
@@ -1413,7 +1413,7 @@ class DateFieldDayPeriodSegmentState {
 	});
 }
 
-type DateFieldLiteralSegmentStateProps = WithRefProps;
+type DateFieldLiteralSegmentStateProps = WithRefOpts;
 
 class DateFieldDayLiteralSegmentState {
 	readonly opts: DateFieldLiteralSegmentStateProps;
@@ -1511,7 +1511,7 @@ export function useDateFieldHiddenInput() {
 	return new DateFieldHiddenInputState(DateFieldRootContext.get());
 }
 
-export function useDateFieldSegment(part: SegmentPart, props: WithRefProps) {
+export function useDateFieldSegment(part: SegmentPart, props: WithRefOpts) {
 	return segmentPartToInstance({
 		part,
 		segmentProps: props,
@@ -1526,7 +1526,7 @@ export function useDateFieldLabel(props: DateFieldLabelStateProps) {
 type SegmentPartToInstanceProps = {
 	part: SegmentPart;
 	root: DateFieldRootState;
-	segmentProps: WithRefProps;
+	segmentProps: WithRefOpts;
 };
 
 function segmentPartToInstance(props: SegmentPartToInstanceProps) {

@@ -10,7 +10,7 @@ import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
-import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsFocusEvent, BitsPointerEvent, WithRefOpts } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 
@@ -126,7 +126,7 @@ class LinkPreviewRootState {
 	}
 }
 
-type LinkPreviewTriggerStateProps = WithRefProps;
+type LinkPreviewTriggerStateProps = WithRefOpts;
 
 class LinkPreviewTriggerState {
 	readonly opts: LinkPreviewTriggerStateProps;
@@ -182,7 +182,7 @@ class LinkPreviewTriggerState {
 	);
 }
 
-type LinkPreviewContentStateProps = WithRefProps &
+type LinkPreviewContentStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		onInteractOutside: (e: PointerEvent) => void;
 		onEscapeKeydown: (e: KeyboardEvent) => void;

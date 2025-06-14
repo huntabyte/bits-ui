@@ -1,5 +1,5 @@
 import { attachRef } from "svelte-toolbelt";
-import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 
 const labelAttrs = createBitsAttrs({
@@ -7,7 +7,7 @@ const labelAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type LabelRootStateProps = WithRefProps;
+type LabelRootStateProps = WithRefOpts;
 class LabelRootState {
 	readonly opts: LabelRootStateProps;
 

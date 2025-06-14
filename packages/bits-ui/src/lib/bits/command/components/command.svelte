@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useCommandRoot } from "../command.svelte.js";
+	import { CommandRootState } from "../command.svelte.js";
 	import type { CommandRootProps } from "../types.js";
 	import CommandLabel from "./_command-label.svelte";
 	import { noop } from "$lib/internal/noop.js";
@@ -28,7 +28,7 @@
 		...restProps
 	}: CommandRootProps = $props();
 
-	const rootState = useCommandRoot({
+	const rootState = CommandRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

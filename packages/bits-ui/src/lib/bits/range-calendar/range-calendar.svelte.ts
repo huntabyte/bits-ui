@@ -18,7 +18,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import {
@@ -58,7 +58,7 @@ import {
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
 import { onMount, untrack } from "svelte";
 
-type RangeCalendarRootStateProps = WithRefProps<
+type RangeCalendarRootStateProps = WithRefOpts<
 	WritableBoxedValues<{
 		value: DateRange;
 		placeholder: DateValue;
@@ -706,7 +706,7 @@ export class RangeCalendarRootState {
 	}
 }
 
-type RangeCalendarCellStateProps = WithRefProps<
+type RangeCalendarCellStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		date: DateValue;
 		month: DateValue;
@@ -827,7 +827,7 @@ export class RangeCalendarCellState {
 	);
 }
 
-type RangeCalendarDayStateProps = WithRefProps;
+type RangeCalendarDayStateProps = WithRefOpts;
 
 class RangeCalendarDayState {
 	readonly opts: RangeCalendarDayStateProps;

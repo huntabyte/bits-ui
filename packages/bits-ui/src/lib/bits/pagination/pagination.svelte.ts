@@ -1,7 +1,7 @@
 import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs, getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -13,7 +13,7 @@ const paginationAttrs = createBitsAttrs({
 	parts: ["root", "page", "prev", "next"],
 });
 
-type PaginationRootStateProps = WithRefProps<
+type PaginationRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		count: number;
 		perPage: number;
@@ -97,7 +97,7 @@ class PaginationRootState {
 // PAGE
 //
 
-type PaginationPageStateProps = WithRefProps<
+type PaginationPageStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		page: Page;
 		disabled: boolean;
@@ -152,7 +152,7 @@ class PaginationPageState {
 // NEXT/PREV BUTTON
 //
 
-type PaginationButtonStateProps = WithRefProps<{
+type PaginationButtonStateProps = WithRefOpts<{
 	type: "prev" | "next";
 }> &
 	ReadableBoxedValues<{

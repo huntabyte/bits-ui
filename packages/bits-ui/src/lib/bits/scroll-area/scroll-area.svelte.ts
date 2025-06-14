@@ -17,7 +17,7 @@ import {
 } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsPointerEvent, WithRefOpts } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { on } from "svelte/events";
@@ -40,7 +40,7 @@ type Sizes = {
 	};
 };
 
-type ScrollAreaRootStateProps = WithRefProps<
+type ScrollAreaRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		dir: Direction;
 		type: ScrollAreaType;
@@ -82,7 +82,7 @@ class ScrollAreaRootState {
 	);
 }
 
-type ScrollAreaViewportStateProps = WithRefProps;
+type ScrollAreaViewportStateProps = WithRefOpts;
 
 class ScrollAreaViewportState {
 	readonly opts: ScrollAreaViewportStateProps;
@@ -126,7 +126,7 @@ class ScrollAreaViewportState {
 	);
 }
 
-type ScrollAreaScrollbarStateProps = WithRefProps<
+type ScrollAreaScrollbarStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		orientation: Orientation;
 	}>
@@ -742,7 +742,7 @@ class ScrollAreaScrollbarSharedState {
 	);
 }
 
-type ScrollAreaThumbImplStateProps = WithRefProps &
+type ScrollAreaThumbImplStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		mounted: boolean;
 	}>;
@@ -823,7 +823,7 @@ class ScrollAreaThumbImplState {
 	);
 }
 
-type ScrollAreaCornerImplStateProps = WithRefProps;
+type ScrollAreaCornerImplStateProps = WithRefOpts;
 
 class ScrollAreaCornerImplState {
 	readonly opts: ScrollAreaCornerImplStateProps;

@@ -5,7 +5,7 @@ import {
 	getAriaOrientation,
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { WithRefOpts } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 const separatorAttrs = createBitsAttrs({
@@ -13,7 +13,7 @@ const separatorAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type SeparatorRootStateProps = WithRefProps<
+type SeparatorRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		orientation: Orientation;
 		decorative: boolean;

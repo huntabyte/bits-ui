@@ -15,7 +15,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 export const toolbarAttrs = createBitsAttrs({
@@ -23,7 +23,7 @@ export const toolbarAttrs = createBitsAttrs({
 	parts: ["root", "item", "group", "group-item", "link", "button"],
 });
 
-type ToolbarRootStateProps = WithRefProps<
+type ToolbarRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		orientation: Orientation;
 		loop: boolean;
@@ -57,7 +57,7 @@ class ToolbarRootState {
 	);
 }
 
-type ToolbarGroupBaseStateProps = WithRefProps<
+type ToolbarGroupBaseStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>
@@ -161,7 +161,7 @@ type ToolbarGroupState = ToolbarGroupSingleState | ToolbarGroupMultipleState;
 // ITEM
 //
 
-type ToolbarGroupItemStateProps = WithRefProps<
+type ToolbarGroupItemStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		value: string;
 		disabled: boolean;
@@ -249,7 +249,7 @@ class ToolbarGroupItemState {
 	);
 }
 
-type ToolbarLinkStateProps = WithRefProps;
+type ToolbarLinkStateProps = WithRefOpts;
 
 class ToolbarLinkState {
 	readonly opts: ToolbarLinkStateProps;
@@ -295,7 +295,7 @@ class ToolbarLinkState {
 	);
 }
 
-type ToolbarButtonStateProps = WithRefProps<
+type ToolbarButtonStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>
@@ -362,7 +362,7 @@ export function useToolbarRoot(props: ToolbarRootStateProps) {
 	return ToolbarRootContext.set(new ToolbarRootState(props));
 }
 
-type InitToolbarGroupProps = WithRefProps<
+type InitToolbarGroupProps = WithRefOpts<
 	{
 		type: "single" | "multiple";
 		value: WritableBox<string> | WritableBox<string[]>;

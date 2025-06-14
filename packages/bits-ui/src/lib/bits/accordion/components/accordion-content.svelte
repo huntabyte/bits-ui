@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useAccordionContent } from "../accordion.svelte.js";
+	import { AccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,7 +16,7 @@
 		...restProps
 	}: AccordionContentProps = $props();
 
-	const contentState = useAccordionContent({
+	const contentState = AccordionContentState.create({
 		forceMount: box.with(() => forceMount),
 		id: box.with(() => id),
 		ref: box.with(

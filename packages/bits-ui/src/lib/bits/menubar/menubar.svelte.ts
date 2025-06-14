@@ -17,7 +17,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/arrays.js";
-import type { OnChangeFn, WithRefProps } from "$lib/internal/types.js";
+import type { OnChangeFn, WithRefOpts } from "$lib/internal/types.js";
 import {
 	FocusScopeContext,
 	type FocusScopeContextValue,
@@ -32,7 +32,7 @@ const menubarAttrs = createBitsAttrs({
 	parts: ["root", "trigger", "content"],
 });
 
-type MenubarRootStateProps = WithRefProps<
+type MenubarRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		dir: Direction;
 		loop: boolean;
@@ -176,7 +176,7 @@ class MenubarMenuState {
 	}
 }
 
-type MenubarTriggerStateProps = WithRefProps<
+type MenubarTriggerStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>
@@ -278,7 +278,7 @@ class MenubarTriggerState {
 	);
 }
 
-type MenubarContentStateProps = WithRefProps<
+type MenubarContentStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		interactOutsideBehavior: InteractOutsideBehaviorType;
 		onOpenAutoFocus: (e: Event) => void;

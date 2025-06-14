@@ -15,7 +15,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
 	createBitsAttrs,
@@ -593,7 +593,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 }
 
 // Input, Label, HiddenInput states follow the same pattern as date-field
-type TimeFieldInputStateProps = WithRefProps &
+type TimeFieldInputStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		name: string;
 	}>;
@@ -658,7 +658,7 @@ class TimeFieldHiddenInputState {
 	);
 }
 
-type TimeFieldLabelStateProps = WithRefProps;
+type TimeFieldLabelStateProps = WithRefOpts;
 
 class TimeFieldLabelState {
 	readonly opts: TimeFieldLabelStateProps;
@@ -692,13 +692,13 @@ class TimeFieldLabelState {
 
 // Base class for time segments - simplified from date-field version
 abstract class BaseTimeSegmentState {
-	readonly opts: WithRefProps;
+	readonly opts: WithRefOpts;
 	readonly root: TimeFieldRootState;
 	readonly announcer: Announcer;
 	readonly part: string;
 	readonly config: SegmentConfig;
 
-	constructor(opts: WithRefProps, root: TimeFieldRootState, part: string, config: SegmentConfig) {
+	constructor(opts: WithRefOpts, root: TimeFieldRootState, part: string, config: SegmentConfig) {
 		this.opts = opts;
 		this.root = root;
 		this.part = part;
@@ -985,7 +985,7 @@ abstract class BaseTimeSegmentState {
 }
 
 class TimeFieldHourSegmentState extends BaseTimeSegmentState {
-	constructor(opts: WithRefProps, root: TimeFieldRootState) {
+	constructor(opts: WithRefOpts, root: TimeFieldRootState) {
 		super(opts, root, "hour", SEGMENT_CONFIGS.hour);
 	}
 
@@ -1019,18 +1019,18 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 }
 
 class TimeFieldMinuteSegmentState extends BaseTimeSegmentState {
-	constructor(opts: WithRefProps, root: TimeFieldRootState) {
+	constructor(opts: WithRefOpts, root: TimeFieldRootState) {
 		super(opts, root, "minute", SEGMENT_CONFIGS.minute);
 	}
 }
 
 class TimeFieldSecondSegmentState extends BaseTimeSegmentState {
-	constructor(opts: WithRefProps, root: TimeFieldRootState) {
+	constructor(opts: WithRefOpts, root: TimeFieldRootState) {
 		super(opts, root, "second", SEGMENT_CONFIGS.second);
 	}
 }
 
-type TimeFieldDayPeriodSegmentStateProps = WithRefProps;
+type TimeFieldDayPeriodSegmentStateProps = WithRefOpts;
 
 class TimeFieldDayPeriodSegmentState {
 	readonly opts: TimeFieldDayPeriodSegmentStateProps;
@@ -1113,7 +1113,7 @@ class TimeFieldDayPeriodSegmentState {
 }
 
 // Literal segment
-type TimeFieldLiteralSegmentStateProps = WithRefProps;
+type TimeFieldLiteralSegmentStateProps = WithRefOpts;
 
 class TimeFieldLiteralSegmentState {
 	readonly opts: TimeFieldLiteralSegmentStateProps;
@@ -1213,7 +1213,7 @@ export function useTimeFieldHiddenInput() {
 	return new TimeFieldHiddenInputState(TimeFieldRootContext.get());
 }
 
-export function useTimeFieldSegment(part: SegmentPart, props: WithRefProps) {
+export function useTimeFieldSegment(part: SegmentPart, props: WithRefOpts) {
 	return segmentPartToInstance({
 		part,
 		segmentProps: props,
@@ -1228,7 +1228,7 @@ export function useTimeFieldLabel(props: TimeFieldLabelStateProps) {
 type SegmentPartToInstanceProps = {
 	part: SegmentPart;
 	root: TimeFieldRootState;
-	segmentProps: WithRefProps;
+	segmentProps: WithRefOpts;
 };
 
 function segmentPartToInstance(props: SegmentPartToInstanceProps) {

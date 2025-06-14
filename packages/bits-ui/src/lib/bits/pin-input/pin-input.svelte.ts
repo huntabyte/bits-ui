@@ -15,7 +15,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { createBitsAttrs, getDisabled } from "$lib/internal/attrs.js";
 import { on } from "svelte/events";
@@ -29,7 +29,7 @@ const pinInputAttrs = createBitsAttrs({
 	parts: ["root", "cell"],
 });
 
-type PinInputRootStateProps = WithRefProps<
+type PinInputRootStateProps = WithRefOpts<
 	WritableBoxedValues<{
 		value: string;
 	}> &
@@ -519,7 +519,7 @@ class PinInputRootState {
 	}));
 }
 
-type PinInputCellStateProps = WithRefProps &
+type PinInputCellStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		cell: PinInputCell;
 	}>;

@@ -1,7 +1,7 @@
 import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { untrack } from "svelte";
 
@@ -58,7 +58,7 @@ class DialogRootState {
 	);
 }
 
-type DialogTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
+type DialogTriggerStateProps = WithRefOpts & ReadableBoxedValues<{ disabled: boolean }>;
 
 class DialogTriggerState {
 	readonly opts: DialogTriggerStateProps;
@@ -108,7 +108,7 @@ class DialogTriggerState {
 	);
 }
 
-type DialogCloseStateProps = WithRefProps &
+type DialogCloseStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		variant: "action" | "cancel" | "close";
 		disabled: boolean;
@@ -153,7 +153,7 @@ class DialogCloseState {
 	);
 }
 
-type DialogActionStateProps = WithRefProps;
+type DialogActionStateProps = WithRefOpts;
 
 class DialogActionState {
 	readonly opts: DialogActionStateProps;
@@ -175,7 +175,7 @@ class DialogActionState {
 	);
 }
 
-type DialogTitleStateProps = WithRefProps<
+type DialogTitleStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		level: 1 | 2 | 3 | 4 | 5 | 6;
 	}>
@@ -202,7 +202,7 @@ class DialogTitleState {
 	);
 }
 
-type DialogDescriptionStateProps = WithRefProps;
+type DialogDescriptionStateProps = WithRefOpts;
 
 class DialogDescriptionState {
 	readonly opts: DialogDescriptionStateProps;
@@ -227,7 +227,7 @@ class DialogDescriptionState {
 	);
 }
 
-type DialogContentStateProps = WithRefProps;
+type DialogContentStateProps = WithRefOpts;
 
 class DialogContentState {
 	readonly opts: DialogContentStateProps;
@@ -263,7 +263,7 @@ class DialogContentState {
 	);
 }
 
-type DialogOverlayStateProps = WithRefProps;
+type DialogOverlayStateProps = WithRefOpts;
 
 class DialogOverlayState {
 	readonly opts: DialogOverlayStateProps;
@@ -290,7 +290,7 @@ class DialogOverlayState {
 	);
 }
 
-type AlertDialogCancelStateProps = WithRefProps &
+type AlertDialogCancelStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		disabled: boolean;
 	}>;

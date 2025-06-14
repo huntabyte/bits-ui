@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import { useCommandLabel } from "../command.svelte.js";
+	import { CommandLabelState } from "../command.svelte.js";
 
 	import type { WithChildren } from "$lib/internal/types.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -15,7 +15,7 @@
 		...restProps
 	}: WithChildren<WithElementRef<BitsPrimitiveLabelAttributes>> = $props();
 
-	const labelState = useCommandLabel({
+	const labelState = CommandLabelState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

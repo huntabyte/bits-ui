@@ -26,7 +26,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
 import { isIOS } from "$lib/internal/is.js";
@@ -315,7 +315,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 type SelectRootState = SelectSingleRootState | SelectMultipleRootState;
 
-type SelectInputStateProps = WithRefProps &
+type SelectInputStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		clearOnDeselect: boolean;
 	}>;
@@ -468,7 +468,7 @@ class SelectInputState {
 	);
 }
 
-type SelectComboTriggerStateProps = WithRefProps;
+type SelectComboTriggerStateProps = WithRefOpts;
 
 class SelectComboTriggerState {
 	readonly opts: SelectComboTriggerStateProps;
@@ -522,7 +522,7 @@ class SelectComboTriggerState {
 	);
 }
 
-type SelectTriggerStateProps = WithRefProps;
+type SelectTriggerStateProps = WithRefOpts;
 
 class SelectTriggerState {
 	readonly opts: SelectTriggerStateProps;
@@ -781,7 +781,7 @@ class SelectTriggerState {
 	);
 }
 
-type SelectContentStateProps = WithRefProps &
+type SelectContentStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		onInteractOutside: (e: PointerEvent) => void;
 		onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -891,7 +891,7 @@ class SelectContentState {
 	};
 }
 
-type SelectItemStateProps = WithRefProps<
+type SelectItemStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		value: string;
 		disabled: boolean;
@@ -1042,7 +1042,7 @@ class SelectItemState {
 	);
 }
 
-type SelectGroupStateProps = WithRefProps;
+type SelectGroupStateProps = WithRefOpts;
 
 class SelectGroupState {
 	readonly opts: SelectGroupStateProps;
@@ -1066,7 +1066,7 @@ class SelectGroupState {
 	);
 }
 
-type SelectGroupHeadingStateProps = WithRefProps;
+type SelectGroupHeadingStateProps = WithRefOpts;
 
 class SelectGroupHeadingState {
 	readonly opts: SelectGroupHeadingStateProps;
@@ -1124,7 +1124,7 @@ class SelectHiddenInputState {
 	);
 }
 
-type SelectViewportStateProps = WithRefProps;
+type SelectViewportStateProps = WithRefOpts;
 
 class SelectViewportState {
 	readonly opts: SelectViewportStateProps;
@@ -1157,7 +1157,7 @@ class SelectViewportState {
 	);
 }
 
-type SelectScrollButtonImplStateProps = WithRefProps &
+type SelectScrollButtonImplStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		delay: (tick: number) => number;
 	}>;

@@ -25,7 +25,7 @@ import {
 	getDataSelected,
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
@@ -52,11 +52,12 @@ import {
 import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
 
-type CalendarRootStateProps = WithRefProps<
-	WritableBoxedValues<{
-		value: DateValue | undefined | DateValue[];
-		placeholder: DateValue;
-	}> &
+interface CalendarRootStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: DateValue | undefined | DateValue[];
+			placeholder: DateValue;
+		}>,
 		ReadableBoxedValues<{
 			preventDeselect: boolean;
 			minValue: DateValue | undefined;
@@ -83,21 +84,28 @@ type CalendarRootStateProps = WithRefProps<
 			onDateSelect?: () => void;
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
-		}> & {
-			defaultPlaceholder: DateValue;
-		}
->;
+		}> {
+	defaultPlaceholder: DateValue;
+}
+
+export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
+	"Calendar.Root | RangeCalender.Root"
+);
 
 export class CalendarRootState {
-	readonly opts: CalendarRootStateProps;
-	months: Month<DateValue>[] = $state([]);
-	visibleMonths = $derived.by(() => this.months.map((month) => month.value));
-	announcer: Announcer;
-	formatter: Formatter;
-	accessibleHeadingId = useId();
-	domContext: DOMContext;
+	static create(opts: CalendarRootStateOpts) {
+		return CalendarRootContext.set(new CalendarRootState(opts));
+	}
 
-	constructor(opts: CalendarRootStateProps) {
+	readonly opts: CalendarRootStateOpts;
+	readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
+	readonly formatter: Formatter;
+	readonly accessibleHeadingId = useId();
+	readonly domContext: DOMContext;
+	months: Month<DateValue>[] = $state([]);
+	announcer: Announcer;
+
+	constructor(opts: CalendarRootStateOpts) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer(null);
@@ -170,11 +178,14 @@ export class CalendarRootState {
 		 * Update the accessible heading's text content when the `fullCalendarLabel`
 		 * changes.
 		 */
-		$effect(() => {
-			const node = this.domContext.getElementById(this.accessibleHeadingId);
-			if (!node) return;
-			node.textContent = this.fullCalendarLabel;
-		});
+		watch(
+			() => this.fullCalendarLabel,
+			(label) => {
+				const node = this.domContext.getElementById(this.accessibleHeadingId);
+				if (!node) return;
+				node.textContent = label;
+			}
+		);
 
 		/**
 		 * Synchronize the placeholder value with the current value.
@@ -227,9 +238,7 @@ export class CalendarRootState {
 		});
 	});
 
-	readonly initialPlaceholderYear = $derived.by(() =>
-		untrack(() => this.opts.placeholder.current.year)
-	);
+	readonly initialPlaceholderYear = untrack(() => this.opts.placeholder.current.year);
 
 	readonly defaultYears = $derived.by(() => {
 		return getDefaultYears({
@@ -354,7 +363,7 @@ export class CalendarRootState {
 		return false;
 	});
 
-	headingValue = $derived.by(() => {
+	readonly headingValue = $derived.by(() => {
 		this.opts.monthFormat.current;
 		this.opts.yearFormat.current;
 		return getCalendarHeadingValue({
@@ -364,7 +373,7 @@ export class CalendarRootState {
 		});
 	});
 
-	fullCalendarLabel = $derived.by(() => {
+	readonly fullCalendarLabel = $derived.by(() => {
 		return `${this.opts.calendarLabel.current} ${this.headingValue}`;
 	});
 
@@ -499,7 +508,7 @@ export class CalendarRootState {
 		});
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		months: this.months,
 		weekdays: this.weekdays,
 	}));
@@ -508,7 +517,7 @@ export class CalendarRootState {
 		return calendarAttrs.getAttr(part);
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...getCalendarElementProps({
@@ -526,18 +535,22 @@ export class CalendarRootState {
 	);
 }
 
-export type CalendarHeadingStateProps = WithRefProps;
-export class CalendarHeadingState {
-	readonly opts: CalendarHeadingStateProps;
-	readonly root: CalendarRootState | RangeCalendarRootState;
-	headingValue = $derived.by(() => this.root.headingValue);
+interface CalendarHeadingStateOpts extends WithRefOpts {}
 
-	constructor(opts: CalendarHeadingStateProps, root: CalendarRootState | RangeCalendarRootState) {
+export class CalendarHeadingState {
+	static create(opts: CalendarHeadingStateOpts) {
+		return new CalendarHeadingState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarHeadingStateOpts;
+	readonly root: CalendarRootState | RangeCalendarRootState;
+
+	constructor(opts: CalendarHeadingStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -550,33 +563,41 @@ export class CalendarHeadingState {
 	);
 }
 
-type CalendarCellStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		date: DateValue;
-		month: DateValue;
-	}>
->;
+const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
 
-class CalendarCellState {
-	readonly opts: CalendarCellStateProps;
+interface CalendarCellStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			date: DateValue;
+			month: DateValue;
+		}> {}
+
+export class CalendarCellState {
+	static create(opts: CalendarCellStateOpts) {
+		return CalendarCellContext.set(
+			new CalendarCellState(opts, CalendarRootContext.get() as CalendarRootState)
+		);
+	}
+
+	readonly opts: CalendarCellStateOpts;
 	readonly root: CalendarRootState;
-	cellDate = $derived.by(() => toDate(this.opts.date.current));
-	isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
-	isUnavailable = $derived.by(() =>
+	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
+	readonly isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
+	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
-	isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
-	isOutsideMonth = $derived.by(
+	readonly isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
+	readonly isOutsideMonth = $derived.by(
 		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
 	);
-	isOutsideVisibleMonths = $derived.by(() =>
+	readonly isOutsideVisibleMonths = $derived.by(() =>
 		this.root.isOutsideVisibleMonths(this.opts.date.current)
 	);
-	isFocusedDate = $derived.by(() =>
+	readonly isFocusedDate = $derived.by(() =>
 		isSameDay(this.opts.date.current, this.root.opts.placeholder.current)
 	);
-	isSelectedDate = $derived.by(() => this.root.isDateSelected(this.opts.date.current));
-	labelText = $derived.by(() =>
+	readonly isSelectedDate = $derived.by(() => this.root.isDateSelected(this.opts.date.current));
+	readonly labelText = $derived.by(() =>
 		this.root.formatter.custom(this.cellDate, {
 			weekday: "long",
 			month: "long",
@@ -585,18 +606,18 @@ class CalendarCellState {
 		})
 	);
 
-	constructor(opts: CalendarCellStateProps, root: CalendarRootState) {
+	constructor(opts: CalendarCellStateOpts, root: CalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		disabled: this.isDisabled,
 		unavailable: this.isUnavailable,
 		selected: this.isSelectedDate,
 	}));
 
-	ariaDisabled = $derived.by(() => {
+	readonly ariaDisabled = $derived.by(() => {
 		return (
 			this.isDisabled ||
 			(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current) ||
@@ -604,7 +625,7 @@ class CalendarCellState {
 		);
 	});
 
-	sharedDataAttrs = $derived.by(
+	readonly sharedDataAttrs = $derived.by(
 		() =>
 			({
 				"data-unavailable": getDataUnavailable(this.isUnavailable),
@@ -622,7 +643,7 @@ class CalendarCellState {
 			}) as const
 	);
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -636,19 +657,23 @@ class CalendarCellState {
 	);
 }
 
-type CalendarDayStateProps = WithRefProps;
+interface CalendarDayStateOpts extends WithRefOpts {}
 
-class CalendarDayState {
-	readonly opts: CalendarDayStateProps;
+export class CalendarDayState {
+	static create(opts: CalendarDayStateOpts) {
+		return new CalendarDayState(opts, CalendarCellContext.get());
+	}
+
+	readonly opts: CalendarDayStateOpts;
 	readonly cell: CalendarCellState;
 
-	constructor(opts: CalendarDayStateProps, cell: CalendarCellState) {
+	constructor(opts: CalendarDayStateOpts, cell: CalendarCellState) {
 		this.opts = opts;
 		this.cell = cell;
 		this.onclick = this.onclick.bind(this);
 	}
 
-	#tabindex = $derived.by(() =>
+	readonly #tabindex = $derived.by(() =>
 		(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 		this.cell.isDisabled
 			? undefined
@@ -662,14 +687,14 @@ class CalendarDayState {
 		this.cell.root.handleCellClick(e, this.cell.opts.date.current);
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
 		unavailable: this.cell.isUnavailable,
 		selected: this.cell.isSelectedDate,
 		day: `${this.cell.opts.date.current.day}`,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -688,15 +713,19 @@ class CalendarDayState {
 	);
 }
 
-export type CalendarNextButtonStateProps = WithRefProps;
+interface CalendarNextButtonStateOpts extends WithRefOpts {}
 
 export class CalendarNextButtonState {
-	readonly opts: CalendarNextButtonStateProps;
+	static create(opts: CalendarNextButtonStateOpts) {
+		return new CalendarNextButtonState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarNextButtonStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-	isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
+	readonly isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
 
 	constructor(
-		opts: CalendarNextButtonStateProps,
+		opts: CalendarNextButtonStateOpts,
 		root: CalendarRootState | RangeCalendarRootState
 	) {
 		this.opts = opts;
@@ -709,7 +738,7 @@ export class CalendarNextButtonState {
 		this.root.nextPage();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -727,15 +756,19 @@ export class CalendarNextButtonState {
 	);
 }
 
-export type CalendarPrevButtonStateProps = WithRefProps;
+interface CalendarPrevButtonStateOpts extends WithRefOpts {}
 
 export class CalendarPrevButtonState {
-	readonly opts: CalendarPrevButtonStateProps;
+	static create(opts: CalendarPrevButtonStateOpts) {
+		return new CalendarPrevButtonState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarPrevButtonStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-	isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
+	readonly isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
 
 	constructor(
-		opts: CalendarPrevButtonStateProps,
+		opts: CalendarPrevButtonStateOpts,
 		root: CalendarRootState | RangeCalendarRootState
 	) {
 		this.opts = opts;
@@ -748,7 +781,7 @@ export class CalendarPrevButtonState {
 		this.root.prevPage();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -766,18 +799,22 @@ export class CalendarPrevButtonState {
 	);
 }
 
-export type CalendarGridStateProps = WithRefProps;
+interface CalendarGridStateOpts extends WithRefOpts {}
 
 export class CalendarGridState {
-	readonly opts: CalendarGridStateProps;
+	static create(opts: CalendarGridStateOpts) {
+		return new CalendarGridState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarGridStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
-	constructor(opts: CalendarGridStateProps, root: CalendarRootState | RangeCalendarRootState) {
+	constructor(opts: CalendarGridStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -793,21 +830,22 @@ export class CalendarGridState {
 	);
 }
 
-export type CalendarGridBodyStateProps = WithRefProps;
+interface CalendarGridBodyStateOpts extends WithRefOpts {}
 
 export class CalendarGridBodyState {
-	readonly opts: CalendarGridBodyStateProps;
+	static create(opts: CalendarGridBodyStateOpts) {
+		return new CalendarGridBodyState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarGridBodyStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarGridBodyStateProps,
-		root: CalendarRootState | RangeCalendarRootState
-	) {
+	constructor(opts: CalendarGridBodyStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -819,21 +857,22 @@ export class CalendarGridBodyState {
 	);
 }
 
-export type CalendarGridHeadStateProps = WithRefProps;
+interface CalendarGridHeadStateOpts extends WithRefOpts {}
 
 export class CalendarGridHeadState {
-	readonly opts: CalendarGridHeadStateProps;
+	static create(opts: CalendarGridHeadStateOpts) {
+		return new CalendarGridHeadState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarGridHeadStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarGridHeadStateProps,
-		root: CalendarRootState | RangeCalendarRootState
-	) {
+	constructor(opts: CalendarGridHeadStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -845,18 +884,22 @@ export class CalendarGridHeadState {
 	);
 }
 
-export type CalendarGridRowStateProps = WithRefProps;
+interface CalendarGridRowStateOpts extends WithRefOpts {}
 
 export class CalendarGridRowState {
-	readonly opts: CalendarGridRowStateProps;
+	static create(opts: CalendarGridRowStateOpts) {
+		return new CalendarGridRowState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarGridRowStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
-	constructor(opts: CalendarGridRowStateProps, root: CalendarRootState | RangeCalendarRootState) {
+	constructor(opts: CalendarGridRowStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -868,21 +911,22 @@ export class CalendarGridRowState {
 	);
 }
 
-export type CalendarHeadCellStateProps = WithRefProps;
+interface CalendarHeadCellStateOpts extends WithRefOpts {}
 
 export class CalendarHeadCellState {
-	readonly opts: CalendarHeadCellStateProps;
+	static create(opts: CalendarHeadCellStateOpts) {
+		return new CalendarHeadCellState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarHeadCellStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarHeadCellStateProps,
-		root: CalendarRootState | RangeCalendarRootState
-	) {
+	constructor(opts: CalendarHeadCellStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -894,18 +938,22 @@ export class CalendarHeadCellState {
 	);
 }
 
-export type CalendarHeaderStateProps = WithRefProps;
+interface CalendarHeaderStateOpts extends WithRefOpts {}
 
 export class CalendarHeaderState {
-	readonly opts: CalendarHeaderStateProps;
+	static create(opts: CalendarHeaderStateOpts) {
+		return new CalendarHeaderState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarHeaderStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
-	constructor(opts: CalendarHeaderStateProps, root: CalendarRootState | RangeCalendarRootState) {
+	constructor(opts: CalendarHeaderStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -917,20 +965,24 @@ export class CalendarHeaderState {
 	);
 }
 
-export type CalendarMonthSelectStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		months: number[];
-		monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
-		disabled: boolean;
-	}>
->;
+interface CalendarMonthSelectStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			months: number[];
+			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+			disabled: boolean;
+		}> {}
 
 export class CalendarMonthSelectState {
-	readonly opts: CalendarMonthSelectStateProps;
+	static create(opts: CalendarMonthSelectStateOpts) {
+		return new CalendarMonthSelectState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarMonthSelectStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
 	constructor(
-		opts: CalendarMonthSelectStateProps,
+		opts: CalendarMonthSelectStateOpts,
 		root: CalendarRootState | RangeCalendarRootState
 	) {
 		this.opts = opts;
@@ -989,7 +1041,7 @@ export class CalendarMonthSelectState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1004,20 +1056,24 @@ export class CalendarMonthSelectState {
 	);
 }
 
-export type CalendarYearSelectStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		years: number[] | undefined;
-		yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
-		disabled: boolean;
-	}>
->;
+interface CalendarYearSelectStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			years: number[] | undefined;
+			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
+			disabled: boolean;
+		}> {}
 
 export class CalendarYearSelectState {
-	readonly opts: CalendarYearSelectStateProps;
+	static create(opts: CalendarYearSelectStateOpts) {
+		return new CalendarYearSelectState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarYearSelectStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 
 	constructor(
-		opts: CalendarYearSelectStateProps,
+		opts: CalendarYearSelectStateOpts,
 		root: CalendarRootState | RangeCalendarRootState
 	) {
 		this.opts = opts;
@@ -1078,7 +1134,7 @@ export class CalendarYearSelectState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1091,68 +1147,4 @@ export class CalendarYearSelectState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
-	"Calendar.Root | RangeCalender.Root"
-);
-
-const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
-
-export function useCalendarRoot(props: CalendarRootStateProps) {
-	return CalendarRootContext.set(new CalendarRootState(props));
-}
-
-export function useCalendarGrid(props: CalendarGridStateProps) {
-	return new CalendarGridState(props, CalendarRootContext.get());
-}
-
-export function useCalendarCell(props: CalendarCellStateProps) {
-	return CalendarCellContext.set(
-		new CalendarCellState(props, CalendarRootContext.get() as CalendarRootState)
-	);
-}
-
-export function useCalendarNextButton(props: CalendarNextButtonStateProps) {
-	return new CalendarNextButtonState(props, CalendarRootContext.get());
-}
-
-export function useCalendarPrevButton(props: CalendarPrevButtonStateProps) {
-	return new CalendarPrevButtonState(props, CalendarRootContext.get());
-}
-
-export function useCalendarDay(props: CalendarDayStateProps) {
-	return new CalendarDayState(props, CalendarCellContext.get());
-}
-
-export function useCalendarGridBody(props: CalendarGridBodyStateProps) {
-	return new CalendarGridBodyState(props, CalendarRootContext.get());
-}
-
-export function useCalendarGridHead(props: CalendarGridHeadStateProps) {
-	return new CalendarGridHeadState(props, CalendarRootContext.get());
-}
-
-export function useCalendarGridRow(props: CalendarGridRowStateProps) {
-	return new CalendarGridRowState(props, CalendarRootContext.get());
-}
-
-export function useCalendarHeadCell(props: CalendarHeadCellStateProps) {
-	return new CalendarHeadCellState(props, CalendarRootContext.get());
-}
-
-export function useCalendarHeader(props: CalendarHeaderStateProps) {
-	return new CalendarHeaderState(props, CalendarRootContext.get());
-}
-
-export function useCalendarHeading(props: CalendarHeadingStateProps) {
-	return new CalendarHeadingState(props, CalendarRootContext.get());
-}
-
-export function useCalendarMonthSelect(props: CalendarMonthSelectStateProps) {
-	return new CalendarMonthSelectState(props, CalendarRootContext.get());
-}
-
-export function useCalendarYearSelect(props: CalendarYearSelectStateProps) {
-	return new CalendarYearSelectState(props, CalendarRootContext.get());
 }

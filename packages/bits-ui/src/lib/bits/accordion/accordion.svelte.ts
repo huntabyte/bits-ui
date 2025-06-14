@@ -6,7 +6,7 @@ import {
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -24,7 +24,7 @@ const accordionAttrs = createBitsAttrs({
 	parts: ["root", "trigger", "content", "item", "header"],
 });
 
-type AccordionBaseStateProps = WithRefProps<
+type AccordionBaseStateOpts = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		orientation: Orientation;
@@ -32,38 +32,38 @@ type AccordionBaseStateProps = WithRefProps<
 	}>
 >;
 
-type AccordionSingleStateProps = AccordionBaseStateProps & WritableBoxedValues<{ value: string }>;
-type AccordionMultiStateProps = AccordionBaseStateProps & WritableBoxedValues<{ value: string[] }>;
-type AccordionState = AccordionSingleState | AccordionMultiState;
+type AccordionSingleStateOpts = AccordionBaseStateOpts & WritableBoxedValues<{ value: string }>;
+type AccordionMultiStateOpts = AccordionBaseStateOpts & WritableBoxedValues<{ value: string[] }>;
+type AccordionRoot = AccordionSingleState | AccordionMultiState;
 
-type AccordionItemStateProps = WithRefProps<
+type AccordionItemStateOpts = WithRefOpts<
 	ReadableBoxedValues<{
 		value: string;
 		disabled: boolean;
 	}> & {
-		rootState: AccordionState;
+		rootState: AccordionRoot;
 	}
 >;
 
-type AccordionTriggerStateProps = WithRefProps<
+type AccordionTriggerStateOpts = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean | null | undefined;
 	}>
 >;
 
-type AccordionContentStateProps = WithRefProps<
+type AccordionContentStateOpts = WithRefOpts<
 	ReadableBoxedValues<{
 		forceMount: boolean;
 	}>
 >;
 
-type AccordionHeaderStateProps = WithRefProps<
+type AccordionHeaderStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		level: 1 | 2 | 3 | 4 | 5 | 6;
 	}>
 >;
 
-type InitAccordionProps = WithRefProps<
+type AccordionRootStateOpts = WithRefOpts<
 	{
 		type: "single" | "multiple";
 		value: Box<string> | Box<string[]>;
@@ -74,13 +74,12 @@ type InitAccordionProps = WithRefProps<
 	}>
 >;
 
-// Base class
 abstract class AccordionBaseState {
-	readonly opts: AccordionBaseStateProps;
+	readonly opts: AccordionBaseStateOpts;
 	readonly rovingFocusGroup: RovingFocusGroup;
 	abstract readonly isMulti: boolean;
 
-	constructor(opts: AccordionBaseStateProps) {
+	constructor(opts: AccordionBaseStateOpts) {
 		this.opts = opts;
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
@@ -105,59 +104,86 @@ abstract class AccordionBaseState {
 	);
 }
 
-// Single accordion
-export class AccordionSingleState extends AccordionBaseState {
-	readonly opts: AccordionSingleStateProps;
+class AccordionSingleState extends AccordionBaseState {
+	readonly opts: AccordionSingleStateOpts;
 	readonly isMulti = false as const;
 
-	constructor(opts: AccordionSingleStateProps) {
+	constructor(opts: AccordionSingleStateOpts) {
 		super(opts);
 		this.opts = opts;
+		this.includesItem = this.includesItem.bind(this);
+		this.toggleItem = this.toggleItem.bind(this);
 	}
 
-	includesItem = (item: string): boolean => this.opts.value.current === item;
+	includesItem(item: string): boolean {
+		return this.opts.value.current === item;
+	}
 
-	toggleItem = (item: string): void => {
+	toggleItem(item: string): void {
 		this.opts.value.current = this.includesItem(item) ? "" : item;
-	};
+	}
 }
 
-// Multiple accordion
-export class AccordionMultiState extends AccordionBaseState {
-	readonly #value: AccordionMultiStateProps["value"];
+class AccordionMultiState extends AccordionBaseState {
+	readonly #value: AccordionMultiStateOpts["value"];
 	readonly isMulti = true as const;
 
-	constructor(props: AccordionMultiStateProps) {
+	constructor(props: AccordionMultiStateOpts) {
 		super(props);
 		this.#value = props.value;
+		this.includesItem = this.includesItem.bind(this);
+		this.toggleItem = this.toggleItem.bind(this);
 	}
 
-	includesItem = (item: string): boolean => this.#value.current.includes(item);
+	includesItem(item: string): boolean {
+		return this.#value.current.includes(item);
+	}
 
-	toggleItem = (item: string): void => {
+	toggleItem(item: string): void {
 		this.#value.current = this.includesItem(item)
 			? this.#value.current.filter((v) => v !== item)
 			: [...this.#value.current, item];
-	};
+	}
 }
 
-// Item state
+const AccordionRootContext = new Context<AccordionRoot>("Accordion.Root");
+
+export class AccordionRootState {
+	static create(props: AccordionRootStateOpts): AccordionRoot {
+		const { type, ...rest } = props;
+		const rootState =
+			type === "single"
+				? new AccordionSingleState(rest as AccordionSingleStateOpts)
+				: new AccordionMultiState(rest as AccordionMultiStateOpts);
+		return AccordionRootContext.set(rootState);
+	}
+}
+
+const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
+
 export class AccordionItemState {
-	readonly opts: AccordionItemStateProps;
-	readonly root: AccordionState;
+	static create(props: Omit<AccordionItemStateOpts, "rootState">): AccordionItemState {
+		return AccordionItemContext.set(
+			new AccordionItemState({ ...props, rootState: AccordionRootContext.get() })
+		);
+	}
+
+	readonly opts: AccordionItemStateOpts;
+	readonly root: AccordionRoot;
 	readonly isActive = $derived.by(() => this.root.includesItem(this.opts.value.current));
 	readonly isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.root.opts.disabled.current
 	);
 
-	constructor(opts: AccordionItemStateProps) {
+	constructor(opts: AccordionItemStateOpts) {
 		this.opts = opts;
 		this.root = opts.rootState;
+		this.updateValue = this.updateValue.bind(this);
 	}
 
-	updateValue = (): void => {
+	updateValue(): void {
 		this.root.toggleItem(this.opts.value.current);
-	};
+	}
 
 	readonly props = $derived.by(
 		() =>
@@ -172,11 +198,10 @@ export class AccordionItemState {
 	);
 }
 
-// Trigger state
-class AccordionTriggerState {
-	readonly opts: AccordionTriggerStateProps;
+export class AccordionTriggerState {
+	readonly opts: AccordionTriggerStateOpts;
 	readonly itemState: AccordionItemState;
-	readonly #root: AccordionState;
+	readonly #root: AccordionRoot;
 	readonly #isDisabled = $derived.by(
 		() =>
 			this.opts.disabled.current ||
@@ -184,21 +209,27 @@ class AccordionTriggerState {
 			this.#root.opts.disabled.current
 	);
 
-	constructor(opts: AccordionTriggerStateProps, itemState: AccordionItemState) {
+	constructor(opts: AccordionTriggerStateOpts, itemState: AccordionItemState) {
 		this.opts = opts;
 		this.itemState = itemState;
 		this.#root = itemState.root;
+		this.onclick = this.onclick.bind(this);
+		this.onkeydown = this.onkeydown.bind(this);
 	}
 
-	onclick = (e: BitsMouseEvent): void => {
+	static create(props: AccordionTriggerStateOpts): AccordionTriggerState {
+		return new AccordionTriggerState(props, AccordionItemContext.get());
+	}
+
+	onclick(e: BitsMouseEvent): void {
 		if (this.#isDisabled || e.button !== 0) {
 			e.preventDefault();
 			return;
 		}
 		this.itemState.updateValue();
-	};
+	}
 
-	onkeydown = (e: BitsKeyboardEvent): void => {
+	onkeydown(e: BitsKeyboardEvent): void {
 		if (this.#isDisabled) return;
 
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
@@ -208,7 +239,7 @@ class AccordionTriggerState {
 		}
 
 		this.#root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e);
-	};
+	}
 
 	readonly props = $derived.by(
 		() =>
@@ -229,9 +260,8 @@ class AccordionTriggerState {
 	);
 }
 
-// Content state with improved animation handling
-class AccordionContentState {
-	readonly opts: AccordionContentStateProps;
+export class AccordionContentState {
+	readonly opts: AccordionContentStateOpts;
 	readonly item: AccordionItemState;
 
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
@@ -240,7 +270,7 @@ class AccordionContentState {
 
 	readonly open = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
 
-	constructor(opts: AccordionContentStateProps, item: AccordionItemState) {
+	constructor(opts: AccordionContentStateOpts, item: AccordionItemState) {
 		this.opts = opts;
 		this.item = item;
 		this.#isMountAnimationPrevented = this.item.isActive;
@@ -255,6 +285,10 @@ class AccordionContentState {
 
 		// Handle dimension updates
 		watch([() => this.open, () => this.opts.ref.current], this.#updateDimensions);
+	}
+
+	static create(props: AccordionContentStateOpts): AccordionContentState {
+		return new AccordionContentState(props, AccordionItemContext.get());
 	}
 
 	#updateDimensions = ([_, node]: [boolean, HTMLElement | null]): void => {
@@ -304,14 +338,17 @@ class AccordionContentState {
 	);
 }
 
-// Header state
-class AccordionHeaderState {
+export class AccordionHeaderState {
 	readonly opts: AccordionHeaderStateProps;
 	readonly item: AccordionItemState;
 
 	constructor(opts: AccordionHeaderStateProps, item: AccordionItemState) {
 		this.opts = opts;
 		this.item = item;
+	}
+
+	static create(props: AccordionHeaderStateProps): AccordionHeaderState {
+		return new AccordionHeaderState(props, AccordionItemContext.get());
 	}
 
 	readonly props = $derived.by(
@@ -327,35 +364,4 @@ class AccordionHeaderState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-const AccordionRootContext = new Context<AccordionState>("Accordion.Root");
-const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
-
-export function useAccordionRoot(props: InitAccordionProps): AccordionState {
-	const { type, ...rest } = props;
-	const rootState =
-		type === "single"
-			? new AccordionSingleState(rest as AccordionSingleStateProps)
-			: new AccordionMultiState(rest as AccordionMultiStateProps);
-	return AccordionRootContext.set(rootState);
-}
-
-export function useAccordionItem(
-	props: Omit<AccordionItemStateProps, "rootState">
-): AccordionItemState {
-	const rootState = AccordionRootContext.get();
-	return AccordionItemContext.set(new AccordionItemState({ ...props, rootState }));
-}
-
-export function useAccordionTrigger(props: AccordionTriggerStateProps): AccordionTriggerState {
-	return new AccordionTriggerState(props, AccordionItemContext.get());
-}
-
-export function useAccordionContent(props: AccordionContentStateProps): AccordionContentState {
-	return new AccordionContentState(props, AccordionItemContext.get());
-}
-
-export function useAccordionHeader(props: AccordionHeaderStateProps): AccordionHeaderState {
-	return new AccordionHeaderState(props, AccordionItemContext.get());
 }

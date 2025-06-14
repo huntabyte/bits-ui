@@ -35,7 +35,7 @@ import {
 import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
-import type { BitsKeyboardEvent, OnChangeFn, WithRefProps } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, OnChangeFn, WithRefOpts } from "$lib/internal/types.js";
 import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 import { linearScale } from "$lib/internal/math.js";
 import type { SliderLabelPosition } from "./types.js";
@@ -45,7 +45,7 @@ const sliderAttrs = createBitsAttrs({
 	parts: ["root", "thumb", "range", "tick", "tick-label", "thumb-label"],
 });
 
-type SliderBaseRootStateProps = WithRefProps<
+type SliderBaseRootStateProps = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
 		orientation: Orientation;
@@ -715,7 +715,7 @@ const VALID_SLIDER_KEYS = [
 	kbd.END,
 ];
 
-type SliderRangeStateProps = WithRefProps;
+type SliderRangeStateProps = WithRefOpts;
 
 class SliderRangeState {
 	readonly opts: SliderRangeStateProps;
@@ -777,7 +777,7 @@ class SliderRangeState {
 	);
 }
 
-type SliderThumbStateProps = WithRefProps &
+type SliderThumbStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		index: number;
 		disabled: boolean;
@@ -899,7 +899,7 @@ class SliderThumbState {
 	);
 }
 
-type SliderTickStateProps = WithRefProps &
+type SliderTickStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		index: number;
 	}>;
@@ -923,7 +923,7 @@ class SliderTickState {
 	);
 }
 
-type SliderTickLabelStateProps = WithRefProps &
+type SliderTickLabelStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		index: number;
 		position?: SliderLabelPosition;
@@ -962,7 +962,7 @@ class SliderTickLabelState {
 	});
 }
 
-type SliderThumbLabelStateProps = WithRefProps &
+type SliderThumbLabelStateProps = WithRefOpts &
 	ReadableBoxedValues<{
 		index: number;
 		position?: SliderLabelPosition;
