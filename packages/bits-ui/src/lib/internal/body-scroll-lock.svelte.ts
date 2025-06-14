@@ -11,22 +11,20 @@ import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
 import { addEventListener } from "./events.js";
 import { useId } from "./use-id.js";
-import { createSharedHook } from "./create-shared-hook.svelte.js";
 import { watch } from "runed";
+import { SharedState } from "./shared-state.svelte.js";
 
 export interface ScrollBodyOption {
 	padding?: boolean | number;
 	margin?: boolean | number;
 }
 
-const useBodyLockStackCount = createSharedHook(() => {
+const bodyLockStackCount = new SharedState(() => {
 	const map = new SvelteMap<string, boolean>();
 
 	const locked = $derived.by(() => {
 		for (const value of map.values()) {
-			if (value) {
-				return true;
-			}
+			if (value) return true;
 		}
 		return false;
 	});
@@ -105,7 +103,7 @@ export class BodyScrollLock {
 	readonly #id = useId();
 	readonly #initialState: boolean | undefined;
 	readonly #restoreScrollDelay: Getter<number | null> = () => null;
-	readonly #countState: ReturnType<typeof useBodyLockStackCount>;
+	readonly #countState: ReturnType<typeof bodyLockStackCount.get>;
 	readonly locked: ReadableBox<boolean> | undefined;
 
 	constructor(
@@ -114,7 +112,7 @@ export class BodyScrollLock {
 	) {
 		this.#initialState = initialState;
 		this.#restoreScrollDelay = restoreScrollDelay;
-		this.#countState = useBodyLockStackCount();
+		this.#countState = bodyLockStackCount.get();
 
 		if (!this.#countState) return;
 
