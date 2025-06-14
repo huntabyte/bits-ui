@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { TooltipContentProps } from "../types.js";
-	import { useTooltipContent } from "../tooltip.svelte.js";
+	import { TooltipContentState } from "../tooltip.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
@@ -29,7 +29,7 @@
 		...restProps
 	}: TooltipContentProps = $props();
 
-	const contentState = useTooltipContent({
+	const contentState = TooltipContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

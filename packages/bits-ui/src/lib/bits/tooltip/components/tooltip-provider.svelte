@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { TooltipProviderProps } from "../types.js";
-	import { useTooltipProvider } from "../tooltip.svelte.js";
+	import { TooltipProviderState } from "../tooltip.svelte.js";
 
 	let {
 		children,
@@ -13,7 +13,7 @@
 		skipDelayDuration = 300,
 	}: TooltipProviderProps = $props();
 
-	useTooltipProvider({
+	TooltipProviderState.create({
 		delayDuration: box.with(() => delayDuration),
 		disableCloseOnTriggerClick: box.with(() => disableCloseOnTriggerClick),
 		disableHoverableContent: box.with(() => disableHoverableContent),
