@@ -1,29 +1,32 @@
-import { attachRef } from "svelte-toolbelt";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
+import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { WithRefOpts } from "$lib/internal/types.js";
 
 const progressAttrs = createBitsAttrs({
 	component: "progress",
 	parts: ["root"],
 });
 
-type ProgressRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		value: number | null;
-		max: number;
-		min: number;
-	}>
->;
+interface ProgressRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: number | null;
+			max: number;
+			min: number;
+		}> {}
 
-class ProgressRootState {
-	readonly opts: ProgressRootStateProps;
+export class ProgressRootState {
+	static create(opts: ProgressRootStateOpts) {
+		return new ProgressRootState(opts);
+	}
 
-	constructor(opts: ProgressRootStateProps) {
+	readonly opts: ProgressRootStateOpts;
+
+	constructor(opts: ProgressRootStateOpts) {
 		this.opts = opts;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				role: "progressbar",
@@ -50,8 +53,4 @@ function getProgressDataState(
 ): "indeterminate" | "loaded" | "loading" {
 	if (value === null) return "indeterminate";
 	return value === max ? "loaded" : "loading";
-}
-
-export function useProgressRootState(props: ProgressRootStateProps) {
-	return new ProgressRootState(props);
 }

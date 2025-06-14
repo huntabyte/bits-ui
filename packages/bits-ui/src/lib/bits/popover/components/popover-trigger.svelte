@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PopoverTriggerProps } from "../types.js";
-	import { usePopoverTrigger } from "../popover.svelte.js";
+	import { PopoverTriggerState } from "../popover.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 
@@ -17,7 +17,7 @@
 		...restProps
 	}: PopoverTriggerProps = $props();
 
-	const triggerState = usePopoverTrigger({
+	const triggerState = PopoverTriggerState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToolbarButtonProps } from "../types.js";
-	import { useToolbarButton } from "../toolbar.svelte.js";
+	import { ToolbarButtonState } from "../toolbar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -16,7 +16,7 @@
 		...restProps
 	}: ToolbarButtonProps = $props();
 
-	const buttonState = useToolbarButton({
+	const buttonState = ToolbarButtonState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled ?? false),
 		ref: box.with(

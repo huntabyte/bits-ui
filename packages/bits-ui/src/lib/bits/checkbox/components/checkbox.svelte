@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxRootProps } from "../types.js";
-	import { CheckboxGroupContext, useCheckboxRoot } from "../checkbox.svelte.js";
+	import { CheckboxGroupContext, CheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
 	import { createId } from "$lib/internal/create-id.js";
 	import { watch } from "runed";
@@ -48,7 +48,7 @@
 		}
 	);
 
-	const rootState = useCheckboxRoot(
+	const rootState = CheckboxRootState.create(
 		{
 			checked: box.with(
 				() => checked,

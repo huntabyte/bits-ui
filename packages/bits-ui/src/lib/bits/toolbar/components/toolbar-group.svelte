@@ -2,7 +2,7 @@
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupProps } from "../types.js";
-	import { useToolbarGroup } from "../toolbar.svelte.js";
+	import { ToolbarGroupState } from "../toolbar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
@@ -36,7 +36,7 @@
 		}
 	);
 
-	const groupState = useToolbarGroup({
+	const groupState = ToolbarGroupState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		type,

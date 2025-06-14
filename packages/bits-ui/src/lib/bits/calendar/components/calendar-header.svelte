@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useCalendarHeader } from "../calendar.svelte.js";
+	import { CalendarHeaderState } from "../calendar.svelte.js";
 	import type { CalendarHeaderProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: CalendarHeaderProps = $props();
 
-	const headerState = useCalendarHeader({
+	const headerState = CalendarHeaderState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

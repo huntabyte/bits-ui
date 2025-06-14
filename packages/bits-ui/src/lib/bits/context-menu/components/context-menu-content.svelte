@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuContentProps } from "../types.js";
-	import { CONTEXT_MENU_TRIGGER_ATTR, useMenuContent } from "$lib/bits/menu/menu.svelte.js";
+	import { CONTEXT_MENU_TRIGGER_ATTR, MenuContentState } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -26,7 +26,7 @@
 		...restProps
 	}: ContextMenuContentProps = $props();
 
-	const contentState = useMenuContent({
+	const contentState = MenuContentState.create({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 		ref: box.with(
@@ -104,7 +104,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		present={contentState.parentMenu.opts.open.current}
+		open={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}

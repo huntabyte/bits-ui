@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuTriggerProps } from "../types.js";
-	import { useNavigationMenuTrigger } from "../navigation-menu.svelte.js";
+	import { NavigationMenuTriggerState } from "../navigation-menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
@@ -17,7 +17,7 @@
 		...restProps
 	}: NavigationMenuTriggerProps = $props();
 
-	const triggerState = useNavigationMenuTrigger({
+	const triggerState = NavigationMenuTriggerState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled ?? false),
 		ref: box.with(

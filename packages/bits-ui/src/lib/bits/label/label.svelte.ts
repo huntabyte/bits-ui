@@ -1,5 +1,5 @@
 import { attachRef } from "svelte-toolbelt";
-import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 
 const labelAttrs = createBitsAttrs({
@@ -7,11 +7,16 @@ const labelAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type LabelRootStateProps = WithRefProps;
-class LabelRootState {
-	readonly opts: LabelRootStateProps;
+interface LabelRootStateOpts extends WithRefOpts {}
 
-	constructor(opts: LabelRootStateProps) {
+export class LabelRootState {
+	static create(opts: LabelRootStateOpts) {
+		return new LabelRootState(opts);
+	}
+
+	readonly opts: LabelRootStateOpts;
+
+	constructor(opts: LabelRootStateOpts) {
 		this.opts = opts;
 		this.onmousedown = this.onmousedown.bind(this);
 	}
@@ -20,7 +25,7 @@ class LabelRootState {
 		if (e.detail > 1) e.preventDefault();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -29,8 +34,4 @@ class LabelRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export function setLabelRootState(props: LabelRootStateProps) {
-	return new LabelRootState(props);
 }

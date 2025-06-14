@@ -1,4 +1,11 @@
-import { afterSleep, afterTick, srOnlyStyles, attachRef } from "svelte-toolbelt";
+import {
+	afterSleep,
+	afterTick,
+	srOnlyStyles,
+	attachRef,
+	type WritableBoxedValues,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import type { CommandState } from "./types.js";
@@ -6,9 +13,8 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
@@ -53,29 +59,29 @@ const CommandRootContext = new Context<CommandRootState>("Command.Root");
 const CommandListContext = new Context<CommandListState>("Command.List");
 const CommandGroupContainerContext = new Context<CommandGroupContainerState>("Command.Group");
 
-type GridItem = {
+interface GridItem {
 	index: number;
 	firstRowOfGroup: boolean;
 	ref: HTMLElement;
-};
+}
 
 type ItemsGrid = GridItem[][];
 
-type CommandRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		filter: (value: string, search: string, keywords?: string[]) => number;
-		shouldFilter: boolean;
-		loop: boolean;
-		vimBindings: boolean;
-		columns: number | null;
-		disablePointerSelection: boolean;
-		disableInitialScroll: boolean;
-		onStateChange?: (state: Readonly<CommandState>) => void;
-	}> &
+interface CommandRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			filter: (value: string, search: string, keywords?: string[]) => number;
+			shouldFilter: boolean;
+			loop: boolean;
+			vimBindings: boolean;
+			columns: number | null;
+			disablePointerSelection: boolean;
+			disableInitialScroll: boolean;
+			onStateChange?: (state: Readonly<CommandState>) => void;
+		}>,
 		WritableBoxedValues<{
 			value: string;
-		}>
->;
+		}> {}
 
 const defaultState = {
 	/** Value of the search query */
@@ -92,8 +98,11 @@ const defaultState = {
 	},
 };
 
-class CommandRootState {
-	readonly opts: CommandRootStateProps;
+export class CommandRootState {
+	static create(opts: CommandRootStateOpts) {
+		return CommandRootContext.set(new CommandRootState(opts));
+	}
+	readonly opts: CommandRootStateOpts;
 	#updateScheduled = false;
 	#isInitialMount = true;
 	sortAfterTick = false;
@@ -152,7 +161,7 @@ class CommandRootState {
 		this.#scheduleUpdate();
 	}
 
-	constructor(opts: CommandRootStateProps) {
+	constructor(opts: CommandRootStateOpts) {
 		this.opts = opts;
 
 		const defaults = { ...this._commandState, value: this.opts.value.current ?? "" };
@@ -1104,23 +1113,28 @@ function itemIsDisabled(item: HTMLElement) {
 	return item.getAttribute("aria-disabled") === "true";
 }
 
-type CommandEmptyStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		forceMount: boolean;
-	}>;
+interface CommandEmptyStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			forceMount: boolean;
+		}> {}
 
-class CommandEmptyState {
-	readonly opts: CommandEmptyStateProps;
+export class CommandEmptyState {
+	static create(opts: CommandEmptyStateOpts) {
+		return new CommandEmptyState(opts, CommandRootContext.get());
+	}
+
+	readonly opts: CommandEmptyStateOpts;
 	readonly root: CommandRootState;
-	#isInitialRender = true;
-	shouldRender = $derived.by(() => {
+	readonly shouldRender = $derived.by(() => {
 		return (
 			(this.root._commandState.filtered.count === 0 && this.#isInitialRender === false) ||
 			this.opts.forceMount.current
 		);
 	});
+	#isInitialRender = true;
 
-	constructor(opts: CommandEmptyStateProps, root: CommandRootState) {
+	constructor(opts: CommandEmptyStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -1129,7 +1143,7 @@ class CommandEmptyState {
 		});
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1140,27 +1154,33 @@ class CommandEmptyState {
 	);
 }
 
-type CommandGroupContainerStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		value: string;
-		forceMount: boolean;
-	}>
->;
+interface CommandGroupContainerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			forceMount: boolean;
+		}> {}
 
-class CommandGroupContainerState {
-	readonly opts: CommandGroupContainerStateProps;
+export class CommandGroupContainerState {
+	static create(opts: CommandGroupContainerStateOpts) {
+		return CommandGroupContainerContext.set(
+			new CommandGroupContainerState(opts, CommandRootContext.get())
+		);
+	}
+
+	readonly opts: CommandGroupContainerStateOpts;
 	readonly root: CommandRootState;
-	headingNode = $state<HTMLElement | null>(null);
-
-	trueValue = $state("");
-	shouldRender = $derived.by(() => {
+	readonly shouldRender = $derived.by(() => {
 		if (this.opts.forceMount.current) return true;
 		if (this.root.opts.shouldFilter.current === false) return true;
 		if (!this.root.commandState.search) return true;
 		return this.root._commandState.filtered.groups.has(this.trueValue);
 	});
 
-	constructor(opts: CommandGroupContainerStateProps, root: CommandRootState) {
+	headingNode = $state<HTMLElement | null>(null);
+	trueValue = $state("");
+
+	constructor(opts: CommandGroupContainerStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.trueValue = opts.value.current ?? opts.id.current;
@@ -1186,7 +1206,7 @@ class CommandGroupContainerState {
 		});
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1199,18 +1219,22 @@ class CommandGroupContainerState {
 	);
 }
 
-type CommandGroupHeadingStateProps = WithRefProps;
+interface CommandGroupHeadingStateOpts extends WithRefOpts {}
 
-class CommandGroupHeadingState {
-	readonly opts: CommandGroupHeadingStateProps;
+export class CommandGroupHeadingState {
+	static create(opts: CommandGroupHeadingStateOpts) {
+		return new CommandGroupHeadingState(opts, CommandGroupContainerContext.get());
+	}
+
+	readonly opts: CommandGroupHeadingStateOpts;
 	readonly group: CommandGroupContainerState;
 
-	constructor(opts: CommandGroupHeadingStateProps, group: CommandGroupContainerState) {
+	constructor(opts: CommandGroupHeadingStateOpts, group: CommandGroupContainerState) {
 		this.opts = opts;
 		this.group = group;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1220,18 +1244,22 @@ class CommandGroupHeadingState {
 	);
 }
 
-type CommandGroupItemsStateProps = WithRefProps;
+interface CommandGroupItemsStateOpts extends WithRefOpts {}
 
-class CommandGroupItemsState {
-	readonly opts: CommandGroupItemsStateProps;
+export class CommandGroupItemsState {
+	static create(opts: CommandGroupItemsStateOpts) {
+		return new CommandGroupItemsState(opts, CommandGroupContainerContext.get());
+	}
+
+	readonly opts: CommandGroupItemsStateOpts;
 	readonly group: CommandGroupContainerState;
 
-	constructor(opts: CommandGroupItemsStateProps, group: CommandGroupContainerState) {
+	constructor(opts: CommandGroupItemsStateOpts, group: CommandGroupContainerState) {
 		this.opts = opts;
 		this.group = group;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1243,19 +1271,23 @@ class CommandGroupItemsState {
 	);
 }
 
-type CommandInputStateProps = WithRefProps<
-	WritableBoxedValues<{
-		value: string;
-	}> &
+interface CommandInputStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: string;
+		}>,
 		ReadableBoxedValues<{
 			autofocus: boolean;
-		}>
->;
+		}> {}
 
-class CommandInputState {
-	readonly opts: CommandInputStateProps;
+export class CommandInputState {
+	static create(opts: CommandInputStateOpts) {
+		return new CommandInputState(opts, CommandRootContext.get());
+	}
+
+	readonly opts: CommandInputStateOpts;
 	readonly root: CommandRootState;
-	#selectedItemId = $derived.by(() => {
+	readonly #selectedItemId = $derived.by(() => {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
 			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${cssesc(this.root.opts.value.current)}"]`
 		);
@@ -1263,7 +1295,7 @@ class CommandInputState {
 		return item.getAttribute("id") ?? undefined;
 	});
 
-	constructor(opts: CommandInputStateProps, root: CommandRootState) {
+	constructor(opts: CommandInputStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -1287,7 +1319,7 @@ class CommandInputState {
 		);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1307,27 +1339,30 @@ class CommandInputState {
 	);
 }
 
-type CommandItemStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		value: string;
-		disabled: boolean;
-		onSelect: () => void;
-		forceMount: boolean;
-		keywords: string[];
-	}> & {
-		group: CommandGroupContainerState | null;
-	}
->;
+interface CommandItemStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			disabled: boolean;
+			onSelect: () => void;
+			forceMount: boolean;
+			keywords: string[];
+		}> {
+	group: CommandGroupContainerState | null;
+}
 
-class CommandItemState {
-	readonly opts: CommandItemStateProps;
+export class CommandItemState {
+	static create(opts: Omit<CommandItemStateOpts, "group">) {
+		const group = CommandGroupContainerContext.getOr(null);
+		return new CommandItemState({ ...opts, group }, CommandRootContext.get());
+	}
+	readonly opts: CommandItemStateOpts;
 	readonly root: CommandRootState;
-	#group: CommandGroupContainerState | null = null;
-	#trueForceMount = $derived.by(() => {
+	readonly #group: CommandGroupContainerState | null = null;
+	readonly #trueForceMount = $derived.by(() => {
 		return this.opts.forceMount.current || this.#group?.opts.forceMount.current === true;
 	});
-	trueValue = $state("");
-	shouldRender = $derived.by(() => {
+	readonly shouldRender = $derived.by(() => {
 		this.opts.ref.current;
 		if (
 			this.#trueForceMount ||
@@ -1341,11 +1376,12 @@ class CommandItemState {
 		return currentScore > 0;
 	});
 
-	isSelected = $derived.by(
+	readonly isSelected = $derived.by(
 		() => this.root.opts.value.current === this.trueValue && this.trueValue !== ""
 	);
+	trueValue = $state("");
 
-	constructor(opts: CommandItemStateProps, root: CommandRootState) {
+	constructor(opts: CommandItemStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.#group = CommandGroupContainerContext.getOr(null);
@@ -1401,7 +1437,7 @@ class CommandItemState {
 		this.#onSelect();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1420,20 +1456,24 @@ class CommandItemState {
 	);
 }
 
-type CommandLoadingStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		progress: number;
-	}>
->;
+interface CommandLoadingStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			progress: number;
+		}> {}
 
-class CommandLoadingState {
-	readonly opts: CommandLoadingStateProps;
+export class CommandLoadingState {
+	static create(opts: CommandLoadingStateOpts) {
+		return new CommandLoadingState(opts);
+	}
 
-	constructor(opts: CommandLoadingStateProps) {
+	readonly opts: CommandLoadingStateOpts;
+
+	constructor(opts: CommandLoadingStateOpts) {
 		this.opts = opts;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1448,24 +1488,29 @@ class CommandLoadingState {
 	);
 }
 
-type CommandSeparatorStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		forceMount: boolean;
-	}>;
+interface CommandSeparatorStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			forceMount: boolean;
+		}> {}
 
-class CommandSeparatorState {
-	readonly opts: CommandSeparatorStateProps;
+export class CommandSeparatorState {
+	static create(opts: CommandSeparatorStateOpts) {
+		return new CommandSeparatorState(opts, CommandRootContext.get());
+	}
+
+	readonly opts: CommandSeparatorStateOpts;
 	readonly root: CommandRootState;
-	shouldRender = $derived.by(
+	readonly shouldRender = $derived.by(
 		() => !this.root._commandState.search || this.opts.forceMount.current
 	);
 
-	constructor(opts: CommandSeparatorStateProps, root: CommandRootState) {
+	constructor(opts: CommandSeparatorStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1477,21 +1522,26 @@ class CommandSeparatorState {
 	);
 }
 
-type CommandListStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		ariaLabel: string;
-	}>;
+interface CommandListStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			ariaLabel: string;
+		}> {}
 
-class CommandListState {
-	readonly opts: CommandListStateProps;
+export class CommandListState {
+	static create(opts: CommandListStateOpts) {
+		return CommandListContext.set(new CommandListState(opts, CommandRootContext.get()));
+	}
+
+	readonly opts: CommandListStateOpts;
 	readonly root: CommandRootState;
 
-	constructor(opts: CommandListStateProps, root: CommandRootState) {
+	constructor(opts: CommandListStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1503,18 +1553,25 @@ class CommandListState {
 	);
 }
 
-type CommandLabelStateProps = WithRefProps<ReadableBoxedValues<{ for?: string }>>;
+interface CommandLabelStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			for?: string;
+		}> {}
 
-class CommandLabelState {
-	readonly opts: CommandLabelStateProps;
+export class CommandLabelState {
+	static create(opts: CommandLabelStateOpts) {
+		return new CommandLabelState(opts, CommandRootContext.get());
+	}
+	readonly opts: CommandLabelStateOpts;
 	readonly root: CommandRootState;
 
-	constructor(opts: CommandLabelStateProps, root: CommandRootState) {
+	constructor(opts: CommandLabelStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1526,42 +1583,47 @@ class CommandLabelState {
 	);
 }
 
-type CommandViewportStateProps = WithRefProps;
+interface CommandViewportStateOpts extends WithRefOpts {}
 
-class CommandViewportState {
-	readonly opts: CommandViewportStateProps;
+export class CommandViewportState {
+	static create(opts: CommandViewportStateOpts) {
+		return new CommandViewportState(opts, CommandListContext.get());
+	}
+
+	readonly opts: CommandViewportStateOpts;
 	readonly list: CommandListState;
 
-	constructor(opts: CommandViewportStateProps, list: CommandListState) {
+	constructor(opts: CommandViewportStateOpts, list: CommandListState) {
 		this.opts = opts;
 		this.list = list;
 
-		$effect(() => {
-			const node = this.opts.ref.current;
-			const listNode = this.list.opts.ref.current;
-			if (node === null || listNode === null) return;
-			let aF: number;
+		watch(
+			[() => this.opts.ref.current, () => this.list.opts.ref.current],
+			([node, listNode]) => {
+				if (node === null || listNode === null) return;
+				let aF: number;
 
-			const observer = new ResizeObserver(() => {
-				aF = requestAnimationFrame(() => {
-					const height = node.offsetHeight;
-					listNode.style.setProperty(
-						"--bits-command-list-height",
-						`${height.toFixed(1)}px`
-					);
+				const observer = new ResizeObserver(() => {
+					aF = requestAnimationFrame(() => {
+						const height = node.offsetHeight;
+						listNode.style.setProperty(
+							"--bits-command-list-height",
+							`${height.toFixed(1)}px`
+						);
+					});
 				});
-			});
 
-			observer.observe(node);
+				observer.observe(node);
 
-			return () => {
-				cancelAnimationFrame(aF);
-				observer.unobserve(node);
-			};
-		});
+				return () => {
+					cancelAnimationFrame(aF);
+					observer.unobserve(node);
+				};
+			}
+		);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1569,55 +1631,4 @@ class CommandViewportState {
 				...attachRef(this.opts.ref, (v) => (this.list.root.viewportNode = v)),
 			}) as const
 	);
-}
-
-export function useCommandRoot(props: CommandRootStateProps) {
-	return CommandRootContext.set(new CommandRootState(props));
-}
-
-export function useCommandEmpty(props: CommandEmptyStateProps) {
-	return new CommandEmptyState(props, CommandRootContext.get());
-}
-
-export function useCommandItem(props: Omit<CommandItemStateProps, "group">) {
-	const group = CommandGroupContainerContext.getOr(null);
-	return new CommandItemState({ ...props, group }, CommandRootContext.get());
-}
-
-export function useCommandGroupContainer(props: CommandGroupContainerStateProps) {
-	return CommandGroupContainerContext.set(
-		new CommandGroupContainerState(props, CommandRootContext.get())
-	);
-}
-
-export function useCommandGroupHeading(props: CommandGroupHeadingStateProps) {
-	return new CommandGroupHeadingState(props, CommandGroupContainerContext.get());
-}
-
-export function useCommandGroupItems(props: CommandGroupItemsStateProps) {
-	return new CommandGroupItemsState(props, CommandGroupContainerContext.get());
-}
-
-export function useCommandInput(props: CommandInputStateProps) {
-	return new CommandInputState(props, CommandRootContext.get());
-}
-
-export function useCommandLoading(props: CommandLoadingStateProps) {
-	return new CommandLoadingState(props);
-}
-
-export function useCommandSeparator(props: CommandSeparatorStateProps) {
-	return new CommandSeparatorState(props, CommandRootContext.get());
-}
-
-export function useCommandList(props: CommandListStateProps) {
-	return CommandListContext.set(new CommandListState(props, CommandRootContext.get()));
-}
-
-export function useCommandViewport(props: CommandViewportStateProps) {
-	return new CommandViewportState(props, CommandListContext.get());
-}
-
-export function useCommandLabel(props: CommandLabelStateProps) {
-	return new CommandLabelState(props, CommandRootContext.get());
 }

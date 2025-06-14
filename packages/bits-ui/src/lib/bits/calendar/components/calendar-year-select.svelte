@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CalendarYearSelectProps } from "../types.js";
-	import { useCalendarYearSelect } from "../calendar.svelte.js";
+	import { CalendarYearSelectState } from "../calendar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -18,7 +18,7 @@
 		...restProps
 	}: CalendarYearSelectProps = $props();
 
-	const yearSelectState = useCalendarYearSelect({
+	const yearSelectState = CalendarYearSelectState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

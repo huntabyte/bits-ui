@@ -9,7 +9,7 @@
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
-	import { useDialogContent } from "$lib/bits/dialog/dialog.svelte.js";
+	import { DialogContentState } from "$lib/bits/dialog/dialog.svelte.js";
 	import { shouldTrapFocus } from "$lib/internal/should-trap-focus.js";
 
 	const uid = $props.id();
@@ -31,7 +31,7 @@
 		...restProps
 	}: AlertDialogContentProps = $props();
 
-	const contentState = useDialogContent({
+	const contentState = DialogContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -44,7 +44,7 @@
 
 <PresenceLayer
 	{forceMount}
-	present={contentState.root.opts.open.current || forceMount}
+	open={contentState.root.opts.open.current || forceMount}
 	ref={contentState.opts.ref}
 >
 	{#snippet presence()}

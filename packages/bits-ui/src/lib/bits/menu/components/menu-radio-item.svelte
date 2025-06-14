@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuRadioItemProps } from "../types.js";
-	import { useMenuRadioItem } from "../menu.svelte.js";
+	import { MenuRadioItemState } from "../menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
@@ -19,7 +19,7 @@
 		...restProps
 	}: MenuRadioItemProps = $props();
 
-	const radioItemState = useMenuRadioItem({
+	const radioItemState = MenuRadioItemState.create({
 		value: box.with(() => value),
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),

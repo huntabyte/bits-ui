@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useCommandViewport } from "../command.svelte.js";
+	import { CommandViewportState } from "../command.svelte.js";
 	import type { CommandViewportProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: CommandViewportProps = $props();
 
-	const listViewportState = useCommandViewport({
+	const listViewportState = CommandViewportState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

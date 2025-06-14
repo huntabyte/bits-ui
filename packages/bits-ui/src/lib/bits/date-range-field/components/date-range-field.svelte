@@ -2,7 +2,7 @@
 	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
-	import { useDateRangeFieldRoot } from "../date-range-field.svelte.js";
+	import { DateRangeFieldRootState } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldRootProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -79,7 +79,7 @@
 		}
 	);
 
-	const rootState = useDateRangeFieldRoot({
+	const rootState = DateRangeFieldRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

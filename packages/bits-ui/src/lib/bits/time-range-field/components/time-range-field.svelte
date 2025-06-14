@@ -8,7 +8,7 @@
 <script lang="ts" generics="T extends TimeValue = Time">
 	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useTimeRangeFieldRoot } from "../time-range-field.svelte.js";
+	import { TimeRangeFieldRootState } from "../time-range-field.svelte.js";
 	import type { TimeRangeFieldRootProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -84,7 +84,7 @@
 		}
 	);
 
-	const rootState = useTimeRangeFieldRoot({
+	const rootState = TimeRangeFieldRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

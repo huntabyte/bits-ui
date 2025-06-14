@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useSeparatorRoot } from "../separator.svelte.js";
+	import { SeparatorRootState } from "../separator.svelte.js";
 	import type { SeparatorRootProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -16,7 +16,7 @@
 		...restProps
 	}: SeparatorRootProps = $props();
 
-	const rootState = useSeparatorRoot({
+	const rootState = SeparatorRootState.create({
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MeterRootProps } from "../types.js";
-	import { useMeterRootState } from "../meter.svelte.js";
+	import { MeterRootState } from "../meter.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -17,7 +17,7 @@
 		...restProps
 	}: MeterRootProps = $props();
 
-	const rootState = useMeterRootState({
+	const rootState = MeterRootState.create({
 		value: box.with(() => value),
 		max: box.with(() => max),
 		min: box.with(() => min),

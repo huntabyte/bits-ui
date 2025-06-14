@@ -2,7 +2,7 @@
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupRootProps } from "../types.js";
-	import { useToggleGroupRoot } from "../toggle-group.svelte.js";
+	import { ToggleGroupRootState } from "../toggle-group.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
@@ -39,7 +39,7 @@
 		}
 	);
 
-	const rootState = useToggleGroupRoot({
+	const rootState = ToggleGroupRootState.create({
 		id: box.with(() => id),
 		value: box.with(
 			() => value!,

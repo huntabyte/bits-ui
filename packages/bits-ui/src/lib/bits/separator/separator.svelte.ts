@@ -1,12 +1,11 @@
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
 import {
 	createBitsAttrs,
 	getAriaHidden,
 	getAriaOrientation,
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { WithRefOpts } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 const separatorAttrs = createBitsAttrs({
@@ -14,17 +13,20 @@ const separatorAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type SeparatorRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		orientation: Orientation;
-		decorative: boolean;
-	}>
->;
+interface SeparatorRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			orientation: Orientation;
+			decorative: boolean;
+		}> {}
 
-class SeparatorRootState {
-	readonly opts: SeparatorRootStateProps;
+export class SeparatorRootState {
+	static create(opts: SeparatorRootStateOpts) {
+		return new SeparatorRootState(opts);
+	}
+	readonly opts: SeparatorRootStateOpts;
 
-	constructor(opts: SeparatorRootStateProps) {
+	constructor(opts: SeparatorRootStateOpts) {
 		this.opts = opts;
 	}
 
@@ -40,8 +42,4 @@ class SeparatorRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export function useSeparatorRoot(props: SeparatorRootStateProps) {
-	return new SeparatorRootState(props);
 }

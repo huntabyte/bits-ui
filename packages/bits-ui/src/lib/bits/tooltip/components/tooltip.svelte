@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { TooltipRootProps } from "../types.js";
-	import { useTooltipRoot } from "../tooltip.svelte.js";
+	import { TooltipRootState } from "../tooltip.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
@@ -16,7 +16,7 @@
 		children,
 	}: TooltipRootProps = $props();
 
-	useTooltipRoot({
+	TooltipRootState.create({
 		open: box.with(
 			() => open,
 			(v) => {

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useCalendarGridHead } from "../calendar.svelte.js";
+	import { CalendarGridHeadState } from "../calendar.svelte.js";
 	import type { CalendarGridHeadProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: CalendarGridHeadProps = $props();
 
-	const gridHeadState = useCalendarGridHead({
+	const gridHeadState = CalendarGridHeadState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

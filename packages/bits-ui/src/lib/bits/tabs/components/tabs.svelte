@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { TabsRootProps } from "../types.js";
-	import { useTabsRoot } from "../tabs.svelte.js";
+	import { TabsRootState } from "../tabs.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
@@ -21,7 +21,7 @@
 		...restProps
 	}: TabsRootProps = $props();
 
-	const rootState = useTabsRoot({
+	const rootState = TabsRootState.create({
 		id: box.with(() => id),
 		value: box.with(
 			() => value,

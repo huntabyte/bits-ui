@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PaginationPrevButtonProps } from "../types.js";
-	import { usePaginationButton } from "../pagination.svelte.js";
+	import { PaginationButtonState } from "../pagination.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -16,7 +16,7 @@
 		...restProps
 	}: PaginationPrevButtonProps = $props();
 
-	const prevButtonState = usePaginationButton({
+	const prevButtonState = PaginationButtonState.create({
 		type: "prev",
 		id: box.with(() => id),
 		ref: box.with(

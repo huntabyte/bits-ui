@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PaginationPageProps } from "../types.js";
-	import { usePaginationPage } from "../pagination.svelte.js";
+	import { PaginationPageState } from "../pagination.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -17,7 +17,7 @@
 		...restProps
 	}: PaginationPageProps = $props();
 
-	const pageState = usePaginationPage({
+	const pageState = PaginationPageState.create({
 		id: box.with(() => id),
 		page: box.with(() => page),
 		ref: box.with(

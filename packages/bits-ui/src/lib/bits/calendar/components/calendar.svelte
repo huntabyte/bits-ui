@@ -2,7 +2,7 @@
 	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { type DateValue } from "@internationalized/date";
-	import { useCalendarRoot } from "../calendar.svelte.js";
+	import { CalendarRootState } from "../calendar.svelte.js";
 	import type { CalendarRootProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -75,7 +75,7 @@
 		}
 	);
 
-	const rootState = useCalendarRoot({
+	const rootState = CalendarRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

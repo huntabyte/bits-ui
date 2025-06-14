@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AvatarRootProps } from "../types.js";
-	import { useAvatarRoot } from "../avatar.svelte.js";
+	import { AvatarRootState } from "../avatar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -17,7 +17,7 @@
 		...restProps
 	}: AvatarRootProps = $props();
 
-	const rootState = useAvatarRoot({
+	const rootState = AvatarRootState.create({
 		delayMs: box.with(() => delayMs),
 		loadingStatus: box.with(
 			() => loadingStatus,

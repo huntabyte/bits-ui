@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps, type WritableBox } from "svelte-toolbelt";
 	import type { SliderRootProps } from "../types.js";
-	import { useSliderRoot } from "../slider.svelte.js";
+	import { SliderRootState } from "../slider.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
@@ -59,7 +59,7 @@
 		}
 	);
 
-	const rootState = useSliderRoot({
+	const rootState = SliderRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

@@ -2,7 +2,7 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { IsMounted } from "runed";
 	import type { ScrollAreaThumbProps } from "../types.js";
-	import { useScrollAreaThumb } from "../scroll-area.svelte.js";
+	import { ScrollAreaThumbImplState } from "../scroll-area.svelte.js";
 
 	let {
 		ref = $bindable(null),
@@ -18,7 +18,7 @@
 
 	const isMounted = new IsMounted();
 
-	const thumbState = useScrollAreaThumb({
+	const thumbState = ScrollAreaThumbImplState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

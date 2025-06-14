@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AvatarFallbackProps } from "../types.js";
-	import { useAvatarFallback } from "../avatar.svelte.js";
+	import { AvatarFallbackState } from "../avatar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -14,7 +14,7 @@
 		...restProps
 	}: AvatarFallbackProps = $props();
 
-	const fallbackState = useAvatarFallback({
+	const fallbackState = AvatarFallbackState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

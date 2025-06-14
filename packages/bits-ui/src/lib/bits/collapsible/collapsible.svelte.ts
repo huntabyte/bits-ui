@@ -1,6 +1,10 @@
-import { afterTick, attachRef, type WithRefProps } from "svelte-toolbelt";
+import {
+	afterTick,
+	attachRef,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import {
 	createBitsAttrs,
 	getAriaExpanded,
@@ -8,26 +12,33 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsMouseEvent } from "$lib/internal/types.js";
+import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 
 const collapsibleAttrs = createBitsAttrs({
 	component: "collapsible",
 	parts: ["root", "content", "trigger"],
 });
 
-type CollapsibleRootStateProps = WithRefProps &
-	WritableBoxedValues<{
-		open: boolean;
-	}> &
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>;
+interface CollapsibleRootStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			open: boolean;
+		}>,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {}
 
-class CollapsibleRootState {
-	readonly opts: CollapsibleRootStateProps;
+const CollapsibleRootContext = new Context<CollapsibleRootState>("Collapsible.Root");
+
+export class CollapsibleRootState {
+	static create(opts: CollapsibleRootStateOpts) {
+		return CollapsibleRootContext.set(new CollapsibleRootState(opts));
+	}
+
+	readonly opts: CollapsibleRootStateOpts;
 	contentNode = $state<HTMLElement | null>(null);
 
-	constructor(opts: CollapsibleRootStateProps) {
+	constructor(opts: CollapsibleRootStateOpts) {
 		this.opts = opts;
 		this.toggleOpen = this.toggleOpen.bind(this);
 	}
@@ -36,7 +47,7 @@ class CollapsibleRootState {
 		this.opts.open.current = !this.opts.open.current;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -48,20 +59,29 @@ class CollapsibleRootState {
 	);
 }
 
-type CollapsibleContentStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		forceMount: boolean;
-	}>;
-class CollapsibleContentState {
-	readonly opts: CollapsibleContentStateProps;
+interface CollapsibleContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			forceMount: boolean;
+		}> {}
+
+export class CollapsibleContentState {
+	static create(opts: CollapsibleContentStateOpts) {
+		return new CollapsibleContentState(opts, CollapsibleRootContext.get());
+	}
+
+	readonly opts: CollapsibleContentStateOpts;
 	readonly root: CollapsibleRootState;
+	readonly present = $derived.by(
+		() => this.opts.forceMount.current || this.root.opts.open.current
+	);
+
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
 	#isMountAnimationPrevented = $state(false);
 	#width = $state(0);
 	#height = $state(0);
-	present = $derived.by(() => this.opts.forceMount.current || this.root.opts.open.current);
 
-	constructor(opts: CollapsibleContentStateProps, root: CollapsibleRootState) {
+	constructor(opts: CollapsibleContentStateOpts, root: CollapsibleRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
@@ -104,11 +124,11 @@ class CollapsibleContentState {
 		});
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		open: this.root.opts.open.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -128,17 +148,22 @@ class CollapsibleContentState {
 	);
 }
 
-type CollapsibleTriggerStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		disabled: boolean | null | undefined;
-	}>;
+interface CollapsibleTriggerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean | null | undefined;
+		}> {}
 
-class CollapsibleTriggerState {
-	readonly opts: CollapsibleTriggerStateProps;
+export class CollapsibleTriggerState {
+	static create(opts: CollapsibleTriggerStateOpts) {
+		return new CollapsibleTriggerState(opts, CollapsibleRootContext.get());
+	}
+
+	readonly opts: CollapsibleTriggerStateOpts;
 	readonly root: CollapsibleRootState;
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 
-	constructor(opts: CollapsibleTriggerStateProps, root: CollapsibleRootState) {
+	constructor(opts: CollapsibleTriggerStateOpts, root: CollapsibleRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -160,7 +185,7 @@ class CollapsibleTriggerState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -177,22 +202,4 @@ class CollapsibleTriggerState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-const CollapsibleRootContext = new Context<CollapsibleRootState>("Collapsible.Root");
-
-export function useCollapsibleRoot(props: CollapsibleRootStateProps) {
-	return CollapsibleRootContext.set(new CollapsibleRootState(props));
-}
-
-export function useCollapsibleTrigger(
-	props: CollapsibleTriggerStateProps
-): CollapsibleTriggerState {
-	return new CollapsibleTriggerState(props, CollapsibleRootContext.get());
-}
-
-export function useCollapsibleContent(
-	props: CollapsibleContentStateProps
-): CollapsibleContentState {
-	return new CollapsibleContentState(props, CollapsibleRootContext.get());
 }

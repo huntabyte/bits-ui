@@ -2,7 +2,7 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DatePickerCalendarProps } from "../types.js";
 	import { DatePickerRootContext } from "../date-picker.svelte.js";
-	import { useCalendarRoot } from "$lib/bits/calendar/calendar.svelte.js";
+	import { CalendarRootState } from "$lib/bits/calendar/calendar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -17,7 +17,7 @@
 
 	const datePickerRootState = DatePickerRootContext.get();
 
-	const calendarState = useCalendarRoot({
+	const calendarState = CalendarRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

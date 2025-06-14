@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DropdownMenuContentProps } from "../types.js";
-	import { useMenuContent } from "$lib/bits/menu/menu.svelte.js";
+	import { MenuContentState } from "$lib/bits/menu/menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -23,7 +23,7 @@
 		...restProps
 	}: DropdownMenuContentProps = $props();
 
-	const contentState = useMenuContent({
+	const contentState = MenuContentState.create({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 		ref: box.with(
@@ -82,7 +82,7 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		present={contentState.parentMenu.opts.open.current}
+		open={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		trapFocus

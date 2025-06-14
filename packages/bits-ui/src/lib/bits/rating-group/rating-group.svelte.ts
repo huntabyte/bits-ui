@@ -1,11 +1,15 @@
-import { attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { createBitsAttrs, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
 import type {
@@ -20,24 +24,30 @@ const ratingGroupAttrs = createBitsAttrs({
 	parts: ["root", "item"],
 });
 
-type RatingGroupRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-		required: boolean;
-		orientation: Orientation;
-		name: string | undefined;
-		min: number;
-		max: number;
-		allowHalf: boolean;
-		readonly: boolean;
-		hoverPreview: boolean;
-		ariaValuetext: NonNullable<RatingGroupAriaValuetext>;
-	}> &
-		WritableBoxedValues<{ value: number }>
->;
+const RatingGroupRootContext = new Context<RatingGroupRootState>("RatingGroup.Root");
 
-class RatingGroupRootState {
-	readonly opts: RatingGroupRootStateProps;
+interface RatingGroupRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			required: boolean;
+			orientation: Orientation;
+			name: string | undefined;
+			min: number;
+			max: number;
+			allowHalf: boolean;
+			readonly: boolean;
+			hoverPreview: boolean;
+			ariaValuetext: NonNullable<RatingGroupAriaValuetext>;
+		}>,
+		WritableBoxedValues<{ value: number }> {}
+
+export class RatingGroupRootState {
+	static create(opts: RatingGroupRootStateOpts) {
+		return RatingGroupRootContext.set(new RatingGroupRootState(opts));
+	}
+
+	readonly opts: RatingGroupRootStateOpts;
 
 	#hoverValue = $state<number | null>(null);
 	#keySequence = $state<string>("");
@@ -60,17 +70,16 @@ class RatingGroupRootState {
 	});
 
 	readonly items = $derived.by(() => {
-		const { max, allowHalf } = this.opts;
 		const value = this.valueToUse;
 
-		return Array.from({ length: max.current }, (_, i) => {
+		return Array.from({ length: this.opts.max.current }, (_, i) => {
 			const itemValue = i + 1;
 			const halfValue = itemValue - 0.5;
 
 			const state: RatingGroupItemStateType =
 				value >= itemValue
 					? "active"
-					: allowHalf.current && value >= halfValue
+					: this.opts.allowHalf.current && value >= halfValue
 						? "partial"
 						: "inactive";
 
@@ -78,7 +87,7 @@ class RatingGroupRootState {
 		});
 	});
 
-	constructor(opts: RatingGroupRootStateProps) {
+	constructor(opts: RatingGroupRootStateOpts) {
 		this.opts = opts;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
@@ -287,15 +296,19 @@ class RatingGroupRootState {
 	});
 }
 
-type RatingGroupItemStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-		index: number;
-	}>
->;
+interface RatingGroupItemStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			index: number;
+		}> {}
 
-class RatingGroupItemState {
-	readonly opts: RatingGroupItemStateProps;
+export class RatingGroupItemState {
+	static create(opts: RatingGroupItemStateOpts) {
+		return new RatingGroupItemState(opts, RatingGroupRootContext.get());
+	}
+
+	readonly opts: RatingGroupItemStateOpts;
 	readonly root: RatingGroupRootState;
 	readonly #isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.root.opts.disabled.current
@@ -308,7 +321,7 @@ class RatingGroupItemState {
 		return "inactive";
 	});
 
-	constructor(opts: RatingGroupItemStateProps, root: RatingGroupRootState) {
+	constructor(opts: RatingGroupItemStateOpts, root: RatingGroupRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -387,7 +400,10 @@ class RatingGroupItemState {
 	);
 }
 
-class RatingGroupHiddenInputState {
+export class RatingGroupHiddenInputState {
+	static create() {
+		return new RatingGroupHiddenInputState(RatingGroupRootContext.get());
+	}
 	readonly root: RatingGroupRootState;
 	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 	readonly props = $derived.by(
@@ -403,18 +419,4 @@ class RatingGroupHiddenInputState {
 	constructor(root: RatingGroupRootState) {
 		this.root = root;
 	}
-}
-
-const RatingGroupRootContext = new Context<RatingGroupRootState>("RatingGroup.Root");
-
-export function useRatingGroupRoot(props: RatingGroupRootStateProps) {
-	return RatingGroupRootContext.set(new RatingGroupRootState(props));
-}
-
-export function useRatingGroupItem(props: RatingGroupItemStateProps) {
-	return new RatingGroupItemState(props, RatingGroupRootContext.get());
-}
-
-export function useRatingGroupHiddenInput() {
-	return new RatingGroupHiddenInputState(RatingGroupRootContext.get());
 }

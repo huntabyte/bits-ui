@@ -5,16 +5,20 @@ import {
 	isSameMonth,
 	isToday,
 } from "@internationalized/date";
-import { attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 import type { DateRange, Month } from "$lib/shared/index.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import {
@@ -54,13 +58,16 @@ import {
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
 import { onMount, untrack } from "svelte";
 
-type RangeCalendarRootStateProps = WithRefProps<
-	WritableBoxedValues<{
-		value: DateRange;
-		placeholder: DateValue;
-		startValue: DateValue | undefined;
-		endValue: DateValue | undefined;
-	}> &
+const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");
+
+interface RangeCalendarRootStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: DateRange;
+			placeholder: DateValue;
+			startValue: DateValue | undefined;
+			endValue: DateValue | undefined;
+		}>,
 		ReadableBoxedValues<{
 			preventDeselect: boolean;
 			minValue: DateValue | undefined;
@@ -87,13 +94,16 @@ type RangeCalendarRootStateProps = WithRefProps<
 			onRangeSelect?: () => void;
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
-		}> & {
-			defaultPlaceholder: DateValue;
-		}
->;
+		}> {
+	defaultPlaceholder: DateValue;
+}
 
 export class RangeCalendarRootState {
-	readonly opts: RangeCalendarRootStateProps;
+	static create(opts: RangeCalendarRootStateOpts) {
+		return CalendarRootContext.set(new RangeCalendarRootState(opts));
+	}
+
+	readonly opts: RangeCalendarRootStateOpts;
 	readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	months: Month<DateValue>[] = $state([]);
 	announcer: Announcer;
@@ -213,7 +223,7 @@ export class RangeCalendarRootState {
 		});
 	});
 
-	constructor(opts: RangeCalendarRootStateProps) {
+	constructor(opts: RangeCalendarRootStateOpts) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer(null);
@@ -702,15 +712,20 @@ export class RangeCalendarRootState {
 	}
 }
 
-type RangeCalendarCellStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		date: DateValue;
-		month: DateValue;
-	}>
->;
+interface RangeCalendarCellStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			date: DateValue;
+			month: DateValue;
+		}> {}
 
 export class RangeCalendarCellState {
-	readonly opts: RangeCalendarCellStateProps;
+	static create(opts: RangeCalendarCellStateOpts) {
+		return RangeCalendarCellContext.set(
+			new RangeCalendarCellState(opts, CalendarRootContext.get() as RangeCalendarRootState)
+		);
+	}
+	readonly opts: RangeCalendarCellStateOpts;
 	readonly root: RangeCalendarRootState;
 	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
 	readonly isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
@@ -766,7 +781,7 @@ export class RangeCalendarCellState {
 		})
 	);
 
-	constructor(opts: RangeCalendarCellStateProps, root: RangeCalendarRootState) {
+	constructor(opts: RangeCalendarCellStateOpts, root: RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -823,13 +838,17 @@ export class RangeCalendarCellState {
 	);
 }
 
-type RangeCalendarDayStateProps = WithRefProps;
+interface RangeCalendarDayStateOpts extends WithRefOpts {}
 
-class RangeCalendarDayState {
-	readonly opts: RangeCalendarDayStateProps;
+export class RangeCalendarDayState {
+	static create(opts: RangeCalendarDayStateOpts) {
+		return new RangeCalendarDayState(opts, RangeCalendarCellContext.get());
+	}
+
+	readonly opts: RangeCalendarDayStateOpts;
 	readonly cell: RangeCalendarCellState;
 
-	constructor(opts: RangeCalendarDayStateProps, cell: RangeCalendarCellState) {
+	constructor(opts: RangeCalendarDayStateOpts, cell: RangeCalendarCellState) {
 		this.opts = opts;
 		this.cell = cell;
 
@@ -888,20 +907,4 @@ class RangeCalendarDayState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");
-
-export function useRangeCalendarRoot(props: RangeCalendarRootStateProps) {
-	return CalendarRootContext.set(new RangeCalendarRootState(props));
-}
-
-export function useRangeCalendarCell(props: RangeCalendarCellStateProps) {
-	return RangeCalendarCellContext.set(
-		new RangeCalendarCellState(props, CalendarRootContext.get() as RangeCalendarRootState)
-	);
-}
-
-export function useRangeCalendarDay(props: RangeCalendarDayStateProps) {
-	return new RangeCalendarDayState(props, RangeCalendarCellContext.get());
 }

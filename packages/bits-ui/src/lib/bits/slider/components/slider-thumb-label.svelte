@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SliderThumbLabelProps } from "../types.js";
-	import { SliderRootContext, useSliderThumbLabel } from "../slider.svelte.js";
+	import { SliderRootContext, SliderThumbLabelState } from "../slider.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -30,7 +30,7 @@
 		}
 	});
 
-	const tickLabelState = useSliderThumbLabel({
+	const tickLabelState = SliderThumbLabelState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

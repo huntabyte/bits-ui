@@ -2,9 +2,7 @@
  * Checks if two arrays are equal by comparing their values.
  */
 export function arraysAreEqual<T extends Array<unknown>>(arr1: T, arr2: T): boolean {
-	if (arr1.length !== arr2.length) {
-		return false;
-	}
+	if (arr1.length !== arr2.length) return false;
 
 	return arr1.every((value, index) => isEqual(value, arr2[index]));
 }
@@ -13,17 +11,11 @@ export function arraysAreEqual<T extends Array<unknown>>(arr1: T, arr2: T): bool
  * A utility function that compares two values for equality.
  */
 function isEqual(a: unknown, b: unknown): boolean {
-	if (Number.isNaN(a as number) && Number.isNaN(b as number)) {
-		return true;
-	}
+	if (Number.isNaN(a as number) && Number.isNaN(b as number)) return true;
 
-	if (Array.isArray(a) && Array.isArray(b)) {
-		return arraysAreEqual(a as unknown[], b as unknown[]);
-	}
+	if (Array.isArray(a) && Array.isArray(b)) return arraysAreEqual(a as unknown[], b as unknown[]);
 
-	if (typeof a === "object" && typeof b === "object") {
-		return isDeepEqual(a, b);
-	}
+	if (typeof a === "object" && typeof b === "object") return isDeepEqual(a, b);
 
 	return Object.is(a, b);
 }
@@ -32,22 +24,15 @@ function isEqual(a: unknown, b: unknown): boolean {
  * A utility function that compares two values for deep equality.
  */
 function isDeepEqual(a: unknown, b: unknown): boolean {
-	if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) {
-		return false;
-	}
+	if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
 
 	const aKeys = Object.keys(a);
 	const bKeys = Object.keys(b);
 
-	if (aKeys.length !== bKeys.length) {
-		return false;
-	}
+	if (aKeys.length !== bKeys.length) return false;
 
 	for (const key of aKeys) {
-		if (!bKeys.includes(key)) {
-			return false;
-		}
-
+		if (!bKeys.includes(key)) return false;
 		if (!isEqual((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key])) {
 			return false;
 		}
@@ -68,9 +53,7 @@ function isDeepEqual(a: unknown, b: unknown): boolean {
  * ```
  */
 export function chunk<T>(arr: T[], size: number): T[][] {
-	if (size <= 0) {
-		return [];
-	}
+	if (size <= 0) return [];
 
 	const result = [];
 	for (let i = 0; i < arr.length; i += size) {
@@ -104,15 +87,9 @@ export function isValidIndex(index: number, arr: unknown[]) {
  * @param loop loop to the beginning of the array if the next index is out of bounds?
  */
 export function next<T>(array: T[], index: number, loop = true): T | undefined {
-	if (array.length === 0 || index < 0 || index >= array.length) {
-		return undefined;
-	}
-	if (array.length === 1 && index === 0) {
-		return array[0];
-	}
-	if (index === array.length - 1) {
-		return loop ? array[0] : undefined;
-	}
+	if (array.length === 0 || index < 0 || index >= array.length) return;
+	if (array.length === 1 && index === 0) return array[0];
+	if (index === array.length - 1) return loop ? array[0] : undefined;
 	return array[index + 1];
 }
 
@@ -124,15 +101,9 @@ export function next<T>(array: T[], index: number, loop = true): T | undefined {
  * @param loop loop to the end of the array if the previous index is out of bounds?
  */
 export function prev<T>(array: T[], index: number, loop = true): T | undefined {
-	if (array.length === 0 || index < 0 || index >= array.length) {
-		return undefined;
-	}
-	if (array.length === 1 && index === 0) {
-		return array[0];
-	}
-	if (index === 0) {
-		return loop ? array[array.length - 1] : undefined;
-	}
+	if (array.length === 0 || index < 0 || index >= array.length) return;
+	if (array.length === 1 && index === 0) return array[0];
+	if (index === 0) return loop ? array[array.length - 1] : undefined;
 	return array[index - 1];
 }
 
@@ -152,9 +123,7 @@ export function forward<T>(
 	increment: number,
 	loop = true
 ): T | undefined {
-	if (array.length === 0 || index < 0 || index >= array.length) {
-		return undefined;
-	}
+	if (array.length === 0 || index < 0 || index >= array.length) return;
 
 	let targetIndex = index + increment;
 
@@ -185,9 +154,7 @@ export function backward<T>(
 	decrement: number,
 	loop = true
 ): T | undefined {
-	if (array.length === 0 || index < 0 || index >= array.length) {
-		return undefined;
-	}
+	if (array.length === 0 || index < 0 || index >= array.length) return;
 
 	let targetIndex = index - decrement;
 

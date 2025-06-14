@@ -1,6 +1,7 @@
 import {
 	DOMContext,
 	type ReadableBox,
+	type ReadableBoxedValues,
 	composeHandlers,
 	contains,
 	executeCallbacks,
@@ -8,26 +9,29 @@ import {
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { TextSelectionLayerImplProps } from "./types.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { noop } from "$lib/internal/noop.js";
 import { isHTMLElement } from "$lib/internal/is.js";
 
-type TextSelectionLayerStateProps = ReadableBoxedValues<
-	Required<
-		Omit<TextSelectionLayerImplProps, "children" | "preventOverflowTextSelection" | "ref">
-	> & {
-		ref: HTMLElement | null;
-	}
->;
+interface TextSelectionLayerStateOpts
+	extends ReadableBoxedValues<
+		Required<
+			Omit<TextSelectionLayerImplProps, "children" | "preventOverflowTextSelection" | "ref">
+		> & {
+			ref: HTMLElement | null;
+		}
+	> {}
 
 globalThis.bitsTextSelectionLayers ??= new Map<TextSelectionLayerState, ReadableBox<boolean>>();
 
 export class TextSelectionLayerState {
-	readonly opts: TextSelectionLayerStateProps;
+	static create(opts: TextSelectionLayerStateOpts) {
+		return new TextSelectionLayerState(opts);
+	}
+	readonly opts: TextSelectionLayerStateOpts;
 	readonly domContext: DOMContext;
 	#unsubSelectionLock = noop;
 
-	constructor(opts: TextSelectionLayerStateProps) {
+	constructor(opts: TextSelectionLayerStateOpts) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
 
@@ -83,10 +87,6 @@ export class TextSelectionLayerState {
 		this.#unsubSelectionLock();
 		this.#unsubSelectionLock = noop;
 	};
-}
-
-export function useTextSelectionLayer(props: TextSelectionLayerStateProps) {
-	return new TextSelectionLayerState(props);
 }
 
 const getUserSelect = (node: HTMLElement) => node.style.userSelect || node.style.webkitUserSelect;

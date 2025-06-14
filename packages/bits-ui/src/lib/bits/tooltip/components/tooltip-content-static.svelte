@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { TooltipContentStaticProps } from "../types.js";
-	import { useTooltipContent } from "../tooltip.svelte.js";
+	import { TooltipContentState } from "../tooltip.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
@@ -21,7 +21,7 @@
 		...restProps
 	}: TooltipContentStaticProps = $props();
 
-	const contentState = useTooltipContent({
+	const contentState = TooltipContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -67,7 +67,7 @@
 		{...contentState.popperProps}
 		tooltip={true}
 		isStatic
-		present={contentState.root.opts.open.current}
+		open={contentState.root.opts.open.current}
 		{id}
 		trapFocus={false}
 		loop={false}

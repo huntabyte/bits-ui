@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CommandItemProps } from "../types.js";
-	import { useCommandItem } from "../command.svelte.js";
+	import { CommandItemState } from "../command.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -20,7 +20,7 @@
 		...restProps
 	}: CommandItemProps = $props();
 
-	const itemState = useCommandItem({
+	const itemState = CommandItemState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

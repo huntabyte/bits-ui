@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { afterTick, box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentStaticProps } from "../types.js";
-	import { useMenuContent } from "../menu.svelte.js";
+	import { MenuContentState } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -30,7 +30,7 @@
 		...restProps
 	}: MenuSubContentStaticProps = $props();
 
-	const subContentState = useMenuContent({
+	const subContentState = MenuContentState.create({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 		ref: box.with(
@@ -142,7 +142,7 @@
 		{escapeKeydownBehavior}
 		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		present={subContentState.parentMenu.opts.open.current}
+		open={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}

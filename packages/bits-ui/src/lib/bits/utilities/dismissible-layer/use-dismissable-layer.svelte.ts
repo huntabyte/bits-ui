@@ -5,12 +5,12 @@ import {
 	afterTick,
 	executeCallbacks,
 	onDestroyEffect,
+	type ReadableBoxedValues,
 } from "svelte-toolbelt";
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
 import { type EventCallback, addEventListener } from "$lib/internal/events.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { debounce } from "$lib/internal/debounce.js";
 import { noop } from "$lib/internal/noop.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
@@ -22,12 +22,16 @@ globalThis.bitsDismissableLayers ??= new Map<
 	ReadableBox<InteractOutsideBehaviorType>
 >();
 
-type DismissibleLayerStateProps = ReadableBoxedValues<
-	Required<Omit<DismissibleLayerImplProps, "children" | "ref">>
-> & { ref: WritableBox<HTMLElement | null> };
+interface DismissibleLayerStateOpts
+	extends ReadableBoxedValues<Required<Omit<DismissibleLayerImplProps, "children" | "ref">>> {
+	ref: WritableBox<HTMLElement | null>;
+}
 
 export class DismissibleLayerState {
-	readonly opts: DismissibleLayerStateProps;
+	static create(opts: DismissibleLayerStateOpts) {
+		return new DismissibleLayerState(opts);
+	}
+	readonly opts: DismissibleLayerStateOpts;
 	#interactOutsideProp: ReadableBox<EventCallback<PointerEvent>>;
 	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
 	#interceptedEvents: Record<string, boolean> = {
@@ -36,10 +40,10 @@ export class DismissibleLayerState {
 	#isResponsibleLayer = false;
 	#isFocusInsideDOMTree = false;
 	#documentObj = undefined as unknown as Document;
-	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
+	#onFocusOutside: DismissibleLayerStateOpts["onFocusOutside"];
 	#unsubClickListener = noop;
 
-	constructor(opts: DismissibleLayerStateProps) {
+	constructor(opts: DismissibleLayerStateOpts) {
 		this.opts = opts;
 
 		this.#behaviorType = opts.interactOutsideBehavior;
@@ -219,10 +223,6 @@ export class DismissibleLayerState {
 		onfocuscapture: this.#onfocuscapture,
 		onblurcapture: this.#onblurcapture,
 	};
-}
-
-export function useDismissibleLayer(props: DismissibleLayerStateProps) {
-	return new DismissibleLayerState(props);
 }
 
 function getTopMostLayer(

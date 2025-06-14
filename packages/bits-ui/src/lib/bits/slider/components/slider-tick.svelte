@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SliderTickProps } from "../types.js";
-	import { useSliderTick } from "../slider.svelte.js";
+	import { SliderTickState } from "../slider.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -15,7 +15,7 @@
 		...restProps
 	}: SliderTickProps = $props();
 
-	const tickState = useSliderTick({
+	const tickState = SliderTickState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

@@ -3,11 +3,11 @@
 	import { watch } from "runed";
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
-	import { useDatePickerRoot } from "../date-picker.svelte.js";
+	import { DatePickerRootState } from "../date-picker.svelte.js";
 	import type { DatePickerRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
-	import { useDateFieldRoot } from "$lib/bits/date-field/date-field.svelte.js";
+	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
+	import { DateFieldRootState } from "$lib/bits/date-field/date-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
@@ -80,7 +80,7 @@
 		}
 	}
 
-	const pickerRootState = useDatePickerRoot({
+	const pickerRootState = DatePickerRootState.create({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -129,11 +129,11 @@
 		yearFormat: box.with(() => yearFormat),
 	});
 
-	usePopoverRoot({
+	PopoverRootState.create({
 		open: pickerRootState.opts.open,
 	});
 
-	useDateFieldRoot({
+	DateFieldRootState.create({
 		value: pickerRootState.opts.value,
 		disabled: pickerRootState.opts.disabled,
 		readonly: pickerRootState.opts.readonly,

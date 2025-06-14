@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuListProps } from "../types.js";
-	import { useNavigationMenuList } from "../navigation-menu.svelte.js";
+	import { NavigationMenuListState } from "../navigation-menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: NavigationMenuListProps = $props();
 
-	const listState = useNavigationMenuList({
+	const listState = NavigationMenuListState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

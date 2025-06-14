@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AccordionItemProps } from "../types.js";
-	import { useAccordionItem } from "../accordion.svelte.js";
+	import { AccordionItemState } from "../accordion.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -17,7 +17,7 @@
 		...restProps
 	}: AccordionItemProps = $props();
 
-	const itemState = useAccordionItem({
+	const itemState = AccordionItemState.create({
 		value: box.with(() => value),
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),

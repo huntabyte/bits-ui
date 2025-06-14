@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { TooltipTriggerProps } from "../types.js";
-	import { useTooltipTrigger } from "../tooltip.svelte.js";
+	import { TooltipTriggerState } from "../tooltip.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 
@@ -17,7 +17,7 @@
 		...restProps
 	}: TooltipTriggerProps = $props();
 
-	const triggerState = useTooltipTrigger({
+	const triggerState = TooltipTriggerState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled ?? false),
 		ref: box.with(

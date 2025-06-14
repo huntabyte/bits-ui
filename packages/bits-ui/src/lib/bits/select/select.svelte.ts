@@ -1,5 +1,14 @@
 import { Context, Previous, watch } from "runed";
-import { afterSleep, afterTick, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	afterSleep,
+	afterTick,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+	type Box,
+} from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -10,7 +19,6 @@ import {
 	getDisabled,
 	getRequired,
 } from "$lib/internal/attrs.js";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
 	BitsEvent,
@@ -18,14 +26,14 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
-import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
 import { isIOS } from "$lib/internal/is.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
+import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
+import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -57,24 +65,29 @@ const selectAttrs = createBitsAttrs({
 	],
 });
 
-type SelectBaseRootStateProps = ReadableBoxedValues<{
-	disabled: boolean;
-	required: boolean;
-	name: string;
-	loop: boolean;
-	scrollAlignment: "nearest" | "center";
-	items: { value: string; label: string; disabled?: boolean }[];
-	allowDeselect: boolean;
-}> &
-	WritableBoxedValues<{
-		open: boolean;
-		inputValue: string;
-	}> & {
-		isCombobox: boolean;
-	};
+const SelectRootContext = new Context<SelectRoot>("Select.Root | Combobox.Root");
+const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobox.Group");
+const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
 
-class SelectBaseRootState {
-	readonly opts: SelectBaseRootStateProps;
+interface SelectBaseRootStateOpts
+	extends ReadableBoxedValues<{
+			disabled: boolean;
+			required: boolean;
+			name: string;
+			loop: boolean;
+			scrollAlignment: "nearest" | "center";
+			items: { value: string; label: string; disabled?: boolean }[];
+			allowDeselect: boolean;
+		}>,
+		WritableBoxedValues<{
+			open: boolean;
+			inputValue: string;
+		}> {
+	isCombobox: boolean;
+}
+
+abstract class SelectBaseRootState {
+	readonly opts: SelectBaseRootStateOpts;
 	touchedInput = $state(false);
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -97,7 +110,7 @@ class SelectBaseRootState {
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
 
-	constructor(opts: SelectBaseRootStateProps) {
+	constructor(opts: SelectBaseRootStateOpts) {
 		this.opts = opts;
 		this.isCombobox = opts.isCombobox;
 
@@ -161,13 +174,14 @@ class SelectBaseRootState {
 	};
 }
 
-type SelectSingleRootStateProps = SelectBaseRootStateProps &
-	WritableBoxedValues<{
-		value: string;
-	}>;
+interface SelectSingleRootStateOpts
+	extends SelectBaseRootStateOpts,
+		WritableBoxedValues<{
+			value: string;
+		}> {}
 
-class SelectSingleRootState extends SelectBaseRootState {
-	readonly opts: SelectSingleRootStateProps;
+export class SelectSingleRootState extends SelectBaseRootState {
+	readonly opts: SelectSingleRootStateOpts;
 	readonly isMulti = false as const;
 	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
 	readonly currentLabel = $derived.by(() => {
@@ -188,7 +202,7 @@ class SelectSingleRootState extends SelectBaseRootState {
 		return true;
 	});
 
-	constructor(opts: SelectSingleRootStateProps) {
+	constructor(opts: SelectSingleRootStateOpts) {
 		super(opts);
 
 		this.opts = opts;
@@ -239,17 +253,18 @@ class SelectSingleRootState extends SelectBaseRootState {
 	}
 }
 
-type SelectMultipleRootStateProps = SelectBaseRootStateProps &
-	WritableBoxedValues<{
-		value: string[];
-	}>;
+interface SelectMultipleRootStateOpts
+	extends SelectBaseRootStateOpts,
+		WritableBoxedValues<{
+			value: string[];
+		}> {}
 
 class SelectMultipleRootState extends SelectBaseRootState {
-	readonly opts: SelectMultipleRootStateProps;
+	readonly opts: SelectMultipleRootStateOpts;
 	readonly isMulti = true as const;
 	readonly hasValue = $derived.by(() => this.opts.value.current.length > 0);
 
-	constructor(opts: SelectMultipleRootStateProps) {
+	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
 
 		this.opts = opts;
@@ -305,18 +320,54 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 }
 
-type SelectRootState = SelectSingleRootState | SelectMultipleRootState;
+interface SelectRootStateOpts
+	extends ReadableBoxedValues<{
+			disabled: boolean;
+			required: boolean;
+			loop: boolean;
+			scrollAlignment: "nearest" | "center";
+			name: string;
+			items: { value: string; label: string; disabled?: boolean }[];
+			allowDeselect: boolean;
+		}>,
+		WritableBoxedValues<{
+			open: boolean;
+			inputValue: string;
+		}> {
+	isCombobox: boolean;
+	type: "single" | "multiple";
+	value: Box<string> | Box<string[]>;
+}
 
-type SelectInputStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		clearOnDeselect: boolean;
-	}>;
+export class SelectRootState {
+	static create(props: SelectRootStateOpts): SelectRoot {
+		const { type, ...rest } = props;
 
-class SelectInputState {
-	readonly opts: SelectInputStateProps;
-	readonly root: SelectRootState;
+		const rootState =
+			type === "single"
+				? new SelectSingleRootState(rest as SelectSingleRootStateOpts)
+				: new SelectMultipleRootState(rest as SelectMultipleRootStateOpts);
 
-	constructor(opts: SelectInputStateProps, root: SelectRootState) {
+		return SelectRootContext.set(rootState);
+	}
+}
+
+type SelectRoot = SelectSingleRootState | SelectMultipleRootState;
+
+interface SelectInputStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			clearOnDeselect: boolean;
+		}> {}
+
+export class SelectInputState {
+	static create(opts: SelectInputStateOpts) {
+		return new SelectInputState(opts, SelectRootContext.get());
+	}
+	readonly opts: SelectInputStateOpts;
+	readonly root: SelectRoot;
+
+	constructor(opts: SelectInputStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
 		this.root.domContext = new DOMContext(opts.ref);
@@ -460,13 +511,16 @@ class SelectInputState {
 	);
 }
 
-type SelectComboTriggerStateProps = WithRefProps;
+interface SelectComboTriggerStateOpts extends WithRefOpts {}
 
-class SelectComboTriggerState {
-	readonly opts: SelectComboTriggerStateProps;
+export class SelectComboTriggerState {
+	static create(opts: SelectComboTriggerStateOpts) {
+		return new SelectComboTriggerState(opts, SelectRootContext.get());
+	}
+	readonly opts: SelectComboTriggerStateOpts;
 	readonly root: SelectBaseRootState;
 
-	constructor(opts: SelectComboTriggerStateProps, root: SelectBaseRootState) {
+	constructor(opts: SelectComboTriggerStateOpts, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -514,20 +568,23 @@ class SelectComboTriggerState {
 	);
 }
 
-type SelectTriggerStateProps = WithRefProps;
+interface SelectTriggerStateOpts extends WithRefOpts {}
 
-class SelectTriggerState {
-	readonly opts: SelectTriggerStateProps;
-	readonly root: SelectRootState;
+export class SelectTriggerState {
+	static create(opts: SelectTriggerStateOpts) {
+		return new SelectTriggerState(opts, SelectRootContext.get());
+	}
+	readonly opts: SelectTriggerStateOpts;
+	readonly root: SelectRoot;
 	#domTypeahead: DOMTypeahead;
 	#dataTypeahead: DataTypeahead;
 
-	constructor(opts: SelectTriggerStateProps, root: SelectRootState) {
+	constructor(opts: SelectTriggerStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
 		this.root.domContext = new DOMContext(opts.ref);
 
-		this.#domTypeahead = useDOMTypeahead({
+		this.#domTypeahead = new DOMTypeahead({
 			getCurrentItem: () => this.root.highlightedNode,
 			onMatch: (node) => {
 				this.root.setHighlightedNode(node);
@@ -536,7 +593,7 @@ class SelectTriggerState {
 			getWindow: () => this.root.domContext.getWindow(),
 		});
 
-		this.#dataTypeahead = useDataTypeahead({
+		this.#dataTypeahead = new DataTypeahead({
 			getCurrentItem: () => {
 				if (this.root.isMulti) return "";
 				return this.root.currentLabel;
@@ -646,7 +703,7 @@ class SelectTriggerState {
 				// if we're currently "typing ahead", we don't want to select the item
 				// just yet as the item the user is trying to get to may have a space in it,
 				// so we defer handling the close for this case until further down
-				(e.key === kbd.SPACE && this.#domTypeahead.search.current === "")) &&
+				(e.key === kbd.SPACE && this.#domTypeahead.search === "")) &&
 			!e.isComposing
 		) {
 			e.preventDefault();
@@ -773,20 +830,24 @@ class SelectTriggerState {
 	);
 }
 
-type SelectContentStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		onInteractOutside: (e: PointerEvent) => void;
-		onEscapeKeydown: (e: KeyboardEvent) => void;
-	}>;
+interface SelectContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			onInteractOutside: (e: PointerEvent) => void;
+			onEscapeKeydown: (e: KeyboardEvent) => void;
+		}> {}
 
-class SelectContentState {
-	readonly opts: SelectContentStateProps;
-	readonly root: SelectRootState;
+export class SelectContentState {
+	static create(opts: SelectContentStateOpts) {
+		return SelectContentContext.set(new SelectContentState(opts, SelectRootContext.get()));
+	}
+	readonly opts: SelectContentStateOpts;
+	readonly root: SelectRoot;
 	viewportNode = $state<HTMLElement | null>(null);
 	isPositioned = $state(false);
 	domContext: DOMContext;
 
-	constructor(opts: SelectContentStateProps, root: SelectRootState) {
+	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
 		this.domContext = new DOMContext(this.opts.ref);
@@ -883,19 +944,22 @@ class SelectContentState {
 	};
 }
 
-type SelectItemStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		value: string;
-		disabled: boolean;
-		label: string;
-		onHighlight: () => void;
-		onUnhighlight: () => void;
-	}>
->;
+interface SelectItemStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			disabled: boolean;
+			label: string;
+			onHighlight: () => void;
+			onUnhighlight: () => void;
+		}> {}
 
-class SelectItemState {
-	readonly opts: SelectItemStateProps;
-	readonly root: SelectRootState;
+export class SelectItemState {
+	static create(opts: SelectItemStateOpts) {
+		return new SelectItemState(opts, SelectRootContext.get());
+	}
+	readonly opts: SelectItemStateOpts;
+	readonly root: SelectRoot;
 	readonly isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
@@ -903,7 +967,7 @@ class SelectItemState {
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
 
-	constructor(opts: SelectItemStateProps, root: SelectRootState) {
+	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
 
@@ -1008,7 +1072,7 @@ class SelectItemState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1034,14 +1098,17 @@ class SelectItemState {
 	);
 }
 
-type SelectGroupStateProps = WithRefProps;
+interface SelectGroupStateOpts extends WithRefOpts {}
 
-class SelectGroupState {
-	readonly opts: SelectGroupStateProps;
+export class SelectGroupState {
+	static create(opts: SelectGroupStateOpts) {
+		return SelectGroupContext.set(new SelectGroupState(opts, SelectRootContext.get()));
+	}
+	readonly opts: SelectGroupStateOpts;
 	readonly root: SelectBaseRootState;
 	labelNode = $state<HTMLElement | null>(null);
 
-	constructor(opts: SelectGroupStateProps, root: SelectBaseRootState) {
+	constructor(opts: SelectGroupStateOpts, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -1058,13 +1125,16 @@ class SelectGroupState {
 	);
 }
 
-type SelectGroupHeadingStateProps = WithRefProps;
+interface SelectGroupHeadingStateOpts extends WithRefOpts {}
 
-class SelectGroupHeadingState {
-	readonly opts: SelectGroupHeadingStateProps;
+export class SelectGroupHeadingState {
+	static create(opts: SelectGroupHeadingStateOpts) {
+		return new SelectGroupHeadingState(opts, SelectGroupContext.get());
+	}
+	readonly opts: SelectGroupHeadingStateOpts;
 	readonly group: SelectGroupState;
 
-	constructor(opts: SelectGroupHeadingStateProps, group: SelectGroupState) {
+	constructor(opts: SelectGroupHeadingStateOpts, group: SelectGroupState) {
 		this.opts = opts;
 		this.group = group;
 	}
@@ -1079,16 +1149,20 @@ class SelectGroupHeadingState {
 	);
 }
 
-type SelectHiddenInputStateProps = ReadableBoxedValues<{
-	value: string;
-}>;
+interface SelectHiddenInputStateOpts
+	extends ReadableBoxedValues<{
+		value: string;
+	}> {}
 
-class SelectHiddenInputState {
-	readonly opts: SelectHiddenInputStateProps;
+export class SelectHiddenInputState {
+	static create(opts: SelectHiddenInputStateOpts) {
+		return new SelectHiddenInputState(opts, SelectRootContext.get());
+	}
+	readonly opts: SelectHiddenInputStateOpts;
 	readonly root: SelectBaseRootState;
-	shouldRender = $derived.by(() => this.root.opts.name.current !== "");
+	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== "");
 
-	constructor(opts: SelectHiddenInputStateProps, root: SelectBaseRootState) {
+	constructor(opts: SelectHiddenInputStateOpts, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onfocus = this.onfocus.bind(this);
@@ -1116,15 +1190,18 @@ class SelectHiddenInputState {
 	);
 }
 
-type SelectViewportStateProps = WithRefProps;
+interface SelectViewportStateOpts extends WithRefOpts {}
 
-class SelectViewportState {
-	readonly opts: SelectViewportStateProps;
+export class SelectViewportState {
+	static create(opts: SelectViewportStateOpts) {
+		return new SelectViewportState(opts, SelectContentContext.get());
+	}
+	readonly opts: SelectViewportStateOpts;
 	readonly content: SelectContentState;
-	root: SelectBaseRootState;
+	readonly root: SelectBaseRootState;
 	prevScrollTop = $state(0);
 
-	constructor(opts: SelectViewportStateProps, content: SelectContentState) {
+	constructor(opts: SelectViewportStateOpts, content: SelectContentState) {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
@@ -1149,22 +1226,23 @@ class SelectViewportState {
 	);
 }
 
-type SelectScrollButtonImplStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		delay: (tick: number) => number;
-	}>;
+interface SelectScrollButtonImplStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			delay: (tick: number) => number;
+		}> {}
 
-class SelectScrollButtonImplState {
-	readonly opts: SelectScrollButtonImplStateProps;
+export class SelectScrollButtonImplState {
+	readonly opts: SelectScrollButtonImplStateOpts;
 	readonly content: SelectContentState;
-	root: SelectBaseRootState;
+	readonly root: SelectBaseRootState;
 	autoScrollTimer: number | null = null;
 	userScrollTimer = -1;
 	isUserScrolling = false;
 	onAutoScroll: () => void = noop;
 	mounted = $state(false);
 
-	constructor(opts: SelectScrollButtonImplStateProps, content: SelectContentState) {
+	constructor(opts: SelectScrollButtonImplStateOpts, content: SelectContentState) {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
@@ -1240,10 +1318,15 @@ class SelectScrollButtonImplState {
 	);
 }
 
-class SelectScrollDownButtonState {
+export class SelectScrollDownButtonState {
+	static create(opts: SelectScrollButtonImplStateOpts) {
+		return new SelectScrollDownButtonState(
+			new SelectScrollButtonImplState(opts, SelectContentContext.get())
+		);
+	}
 	readonly scrollButtonState: SelectScrollButtonImplState;
-	content: SelectContentState;
-	root: SelectBaseRootState;
+	readonly content: SelectContentState;
+	readonly root: SelectBaseRootState;
 	canScrollDown = $state(false);
 	scrollIntoViewTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
@@ -1310,10 +1393,15 @@ class SelectScrollDownButtonState {
 	);
 }
 
-class SelectScrollUpButtonState {
+export class SelectScrollUpButtonState {
+	static create(opts: SelectScrollButtonImplStateOpts) {
+		return new SelectScrollUpButtonState(
+			new SelectScrollButtonImplState(opts, SelectContentContext.get())
+		);
+	}
 	readonly scrollButtonState: SelectScrollButtonImplState;
-	content: SelectContentState;
-	root: SelectBaseRootState;
+	readonly content: SelectContentState;
+	readonly root: SelectBaseRootState;
 	canScrollUp = $state(false);
 
 	constructor(scrollButtonState: SelectScrollButtonImplState) {
@@ -1359,86 +1447,4 @@ class SelectScrollUpButtonState {
 				[this.root.getBitsAttr("scroll-up-button")]: "",
 			}) as const
 	);
-}
-
-type InitSelectProps = {
-	type: "single" | "multiple";
-	value: Box<string> | Box<string[]>;
-} & ReadableBoxedValues<{
-	disabled: boolean;
-	required: boolean;
-	loop: boolean;
-	scrollAlignment: "nearest" | "center";
-	name: string;
-	items: { value: string; label: string; disabled?: boolean }[];
-	allowDeselect: boolean;
-}> &
-	WritableBoxedValues<{
-		open: boolean;
-		inputValue: string;
-	}> & {
-		isCombobox: boolean;
-	};
-
-const SelectRootContext = new Context<SelectRootState>("Select.Root | Combobox.Root");
-const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobox.Group");
-const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
-
-export function useSelectRoot(props: InitSelectProps) {
-	const { type, ...rest } = props;
-
-	const rootState =
-		type === "single"
-			? new SelectSingleRootState(rest as SelectSingleRootStateProps)
-			: new SelectMultipleRootState(rest as SelectMultipleRootStateProps);
-
-	return SelectRootContext.set(rootState);
-}
-
-export function useSelectInput(props: SelectInputStateProps) {
-	return new SelectInputState(props, SelectRootContext.get());
-}
-
-export function useSelectContent(props: SelectContentStateProps) {
-	return SelectContentContext.set(new SelectContentState(props, SelectRootContext.get()));
-}
-
-export function useSelectTrigger(props: SelectTriggerStateProps) {
-	return new SelectTriggerState(props, SelectRootContext.get());
-}
-
-export function useSelectComboTrigger(props: SelectComboTriggerStateProps) {
-	return new SelectComboTriggerState(props, SelectRootContext.get());
-}
-
-export function useSelectItem(props: SelectItemStateProps) {
-	return new SelectItemState(props, SelectRootContext.get());
-}
-
-export function useSelectViewport(props: SelectViewportStateProps) {
-	return new SelectViewportState(props, SelectContentContext.get());
-}
-
-export function useSelectScrollUpButton(props: SelectScrollButtonImplStateProps) {
-	return new SelectScrollUpButtonState(
-		new SelectScrollButtonImplState(props, SelectContentContext.get())
-	);
-}
-
-export function useSelectScrollDownButton(props: SelectScrollButtonImplStateProps) {
-	return new SelectScrollDownButtonState(
-		new SelectScrollButtonImplState(props, SelectContentContext.get())
-	);
-}
-
-export function useSelectGroup(props: SelectGroupStateProps) {
-	return SelectGroupContext.set(new SelectGroupState(props, SelectRootContext.get()));
-}
-
-export function useSelectGroupHeading(props: SelectGroupHeadingStateProps) {
-	return new SelectGroupHeadingState(props, SelectGroupContext.get());
-}
-
-export function useSelectHiddenInput(props: SelectHiddenInputStateProps) {
-	return new SelectHiddenInputState(props, SelectRootContext.get());
 }

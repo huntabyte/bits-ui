@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { RatingGroupRootProps } from "../types.js";
-	import { useRatingGroupRoot } from "../rating-group.svelte.js";
+	import { RatingGroupRootState } from "../rating-group.svelte.js";
 	import RatingGroupInput from "./rating-group-input.svelte";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -38,7 +38,7 @@
 		return (value: number, max: number) => `${value} out of ${max}`;
 	});
 
-	const rootState = useRatingGroupRoot({
+	const rootState = RatingGroupRootState.create({
 		orientation: box.with(() => orientation),
 		disabled: box.with(() => disabled),
 		name: box.with(() => name),

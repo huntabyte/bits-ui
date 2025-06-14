@@ -1,13 +1,12 @@
-import { type ReadableBoxedValues, attachRef } from "svelte-toolbelt";
+import { type ReadableBoxedValues, type WritableBoxedValues, attachRef } from "svelte-toolbelt";
 import { Context } from "runed";
-import type { WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement } from "$lib/internal/is.js";
 
@@ -16,16 +15,23 @@ const popoverAttrs = createBitsAttrs({
 	parts: ["root", "trigger", "content", "close"],
 });
 
-type PopoverRootStateProps = WritableBoxedValues<{
-	open: boolean;
-}>;
+const PopoverRootContext = new Context<PopoverRootState>("Popover.Root");
 
-class PopoverRootState {
-	readonly opts: PopoverRootStateProps;
+interface PopoverRootStateOpts
+	extends WritableBoxedValues<{
+		open: boolean;
+	}> {}
+
+export class PopoverRootState {
+	static create(opts: PopoverRootStateOpts) {
+		return PopoverRootContext.set(new PopoverRootState(opts));
+	}
+
+	readonly opts: PopoverRootStateOpts;
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 
-	constructor(opts: PopoverRootStateProps) {
+	constructor(opts: PopoverRootStateOpts) {
 		this.opts = opts;
 	}
 
@@ -39,13 +45,17 @@ class PopoverRootState {
 	}
 }
 
-type PopoverTriggerStateProps = WithRefProps & ReadableBoxedValues<{ disabled: boolean }>;
+interface PopoverTriggerStateOpts extends WithRefOpts, ReadableBoxedValues<{ disabled: boolean }> {}
 
-class PopoverTriggerState {
-	readonly opts: PopoverTriggerStateProps;
+export class PopoverTriggerState {
+	static create(opts: PopoverTriggerStateOpts) {
+		return new PopoverTriggerState(opts, PopoverRootContext.get());
+	}
+
+	readonly opts: PopoverTriggerStateOpts;
 	readonly root: PopoverRootState;
 
-	constructor(opts: PopoverTriggerStateProps, root: PopoverRootState) {
+	constructor(opts: PopoverTriggerStateOpts, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -73,7 +83,7 @@ class PopoverTriggerState {
 		return undefined;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -91,17 +101,23 @@ class PopoverTriggerState {
 	);
 }
 
-type PopoverContentStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		onInteractOutside: (e: PointerEvent) => void;
-		onEscapeKeydown: (e: KeyboardEvent) => void;
-		onCloseAutoFocus: (e: Event) => void;
-	}>;
-class PopoverContentState {
-	readonly opts: PopoverContentStateProps;
+interface PopoverContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			onInteractOutside: (e: PointerEvent) => void;
+			onEscapeKeydown: (e: KeyboardEvent) => void;
+			onCloseAutoFocus: (e: Event) => void;
+		}> {}
+
+export class PopoverContentState {
+	static create(opts: PopoverContentStateOpts) {
+		return new PopoverContentState(opts, PopoverRootContext.get());
+	}
+
+	readonly opts: PopoverContentStateOpts;
 	readonly root: PopoverRootState;
 
-	constructor(opts: PopoverContentStateProps, root: PopoverRootState) {
+	constructor(opts: PopoverContentStateOpts, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -129,9 +145,9 @@ class PopoverContentState {
 		this.root.triggerNode?.focus();
 	};
 
-	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
+	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -145,20 +161,24 @@ class PopoverContentState {
 			}) as const
 	);
 
-	popperProps = {
+	readonly popperProps = {
 		onInteractOutside: this.onInteractOutside,
 		onEscapeKeydown: this.onEscapeKeydown,
 		onCloseAutoFocus: this.onCloseAutoFocus,
 	};
 }
 
-type PopoverCloseStateProps = WithRefProps;
+interface PopoverCloseStateOpts extends WithRefOpts {}
 
-class PopoverCloseState {
-	readonly opts: PopoverCloseStateProps;
+export class PopoverCloseState {
+	static create(opts: PopoverCloseStateOpts) {
+		return new PopoverCloseState(opts, PopoverRootContext.get());
+	}
+
+	readonly opts: PopoverCloseStateOpts;
 	readonly root: PopoverRootState;
 
-	constructor(opts: PopoverCloseStateProps, root: PopoverRootState) {
+	constructor(opts: PopoverCloseStateOpts, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -176,7 +196,7 @@ class PopoverCloseState {
 		this.root.handleClose();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -187,25 +207,4 @@ class PopoverCloseState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-//
-// CONTEXT METHODS
-//
-const PopoverRootContext = new Context<PopoverRootState>("Popover.Root");
-
-export function usePopoverRoot(props: PopoverRootStateProps) {
-	return PopoverRootContext.set(new PopoverRootState(props));
-}
-
-export function usePopoverTrigger(props: PopoverTriggerStateProps) {
-	return new PopoverTriggerState(props, PopoverRootContext.get());
-}
-
-export function usePopoverContent(props: PopoverContentStateProps) {
-	return new PopoverContentState(props, PopoverRootContext.get());
-}
-
-export function usePopoverClose(props: PopoverCloseStateProps) {
-	return new PopoverCloseState(props, PopoverRootContext.get());
 }

@@ -1,31 +1,33 @@
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import {
 	createBitsAttrs,
 	getAriaPressed,
 	getDataDisabled,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import type { BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 
 export const toggleAttrs = createBitsAttrs({
 	component: "toggle",
 	parts: ["root"],
 });
 
-type ToggleRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}> &
+interface ToggleRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}>,
 		WritableBoxedValues<{
 			pressed: boolean;
-		}>
->;
+		}> {}
 
-class ToggleRootState {
-	readonly opts: ToggleRootStateProps;
+export class ToggleRootState {
+	static create(opts: ToggleRootStateOpts) {
+		return new ToggleRootState(opts);
+	}
+	readonly opts: ToggleRootStateOpts;
 
-	constructor(opts: ToggleRootStateProps) {
+	constructor(opts: ToggleRootStateOpts) {
 		this.opts = opts;
 
 		this.onclick = this.onclick.bind(this);
@@ -59,10 +61,6 @@ class ToggleRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export function useToggleRoot(props: ToggleRootStateProps) {
-	return new ToggleRootState(props);
 }
 
 export function getToggleDataState(condition: boolean): "on" | "off" {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CalendarHeadingProps } from "../types.js";
-	import { useCalendarHeading } from "../calendar.svelte.js";
+	import { CalendarHeadingState } from "../calendar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -14,7 +14,7 @@
 		...restProps
 	}: CalendarHeadingProps = $props();
 
-	const headingState = useCalendarHeading({
+	const headingState = CalendarHeadingState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -26,13 +26,13 @@
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, headingValue: headingState.headingValue })}
+	{@render child({ props: mergedProps, headingValue: headingState.root.headingValue })}
 {:else}
 	<div {...mergedProps}>
 		{#if children}
-			{@render children?.({ headingValue: headingState.headingValue })}
+			{@render children?.({ headingValue: headingState.root.headingValue })}
 		{:else}
-			{headingState.headingValue}
+			{headingState.root.headingValue}
 		{/if}
 	</div>
 {/if}

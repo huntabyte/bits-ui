@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { RadioGroupRootProps } from "../types.js";
-	import { useRadioGroupRoot } from "../radio-group.svelte.js";
+	import { RadioGroupRootState } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -24,7 +24,7 @@
 		...restProps
 	}: RadioGroupRootProps = $props();
 
-	const rootState = useRadioGroupRoot({
+	const rootState = RadioGroupRootState.create({
 		orientation: box.with(() => orientation),
 		disabled: box.with(() => disabled),
 		loop: box.with(() => loop),

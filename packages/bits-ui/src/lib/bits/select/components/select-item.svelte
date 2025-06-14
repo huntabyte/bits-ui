@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useSelectItem } from "../select.svelte.js";
+	import { SelectItemState } from "../select.svelte.js";
 	import type { SelectItemProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -21,7 +21,7 @@
 		...restProps
 	}: SelectItemProps = $props();
 
-	const itemState = useSelectItem({
+	const itemState = SelectItemState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

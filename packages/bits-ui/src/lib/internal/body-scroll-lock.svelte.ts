@@ -1,25 +1,30 @@
 import { SvelteMap } from "svelte/reactivity";
-import { type Getter, afterSleep, afterTick, box } from "svelte-toolbelt";
-import { untrack } from "svelte";
+import {
+	type Getter,
+	type ReadableBox,
+	afterSleep,
+	afterTick,
+	box,
+	onDestroyEffect,
+} from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isBrowser, isIOS } from "./is.js";
 import { addEventListener } from "./events.js";
 import { useId } from "./use-id.js";
-import { createSharedHook } from "./create-shared-hook.svelte.js";
+import { watch } from "runed";
+import { SharedState } from "./shared-state.svelte.js";
 
-export type ScrollBodyOption = {
+export interface ScrollBodyOption {
 	padding?: boolean | number;
 	margin?: boolean | number;
-};
+}
 
-const useBodyLockStackCount = createSharedHook(() => {
+const bodyLockStackCount = new SharedState(() => {
 	const map = new SvelteMap<string, boolean>();
 
 	const locked = $derived.by(() => {
 		for (const value of map.values()) {
-			if (value) {
-				return true;
-			}
+			if (value) return true;
 		}
 		return false;
 	});
@@ -35,12 +40,10 @@ const useBodyLockStackCount = createSharedHook(() => {
 		isIOS && stopTouchMoveListener?.();
 	}
 
-	$effect(() => {
-		const curr = locked;
-		return untrack(() => {
-			if (!curr) {
-				return;
-			}
+	watch(
+		() => locked,
+		() => {
+			if (!locked) return;
 
 			initialBodyStyle = document.body.getAttribute("style");
 			const bodyStyle = getComputedStyle(document.body);
@@ -79,10 +82,10 @@ const useBodyLockStackCount = createSharedHook(() => {
 				document.body.style.pointerEvents = "none";
 				document.body.style.overflow = "hidden";
 			});
-		});
-	});
+		}
+	);
 
-	$effect(() => {
+	onDestroyEffect(() => {
 		return () => {
 			stopTouchMoveListener?.();
 		};
@@ -96,38 +99,45 @@ const useBodyLockStackCount = createSharedHook(() => {
 	};
 });
 
-export function useBodyScrollLock(
-	initialState?: boolean | undefined,
-	restoreScrollDelay: Getter<number | null> = () => null
-) {
-	const id = useId();
-	const countState = useBodyLockStackCount();
-	if (!countState) return;
-	const _restoreScrollDelay = $derived(restoreScrollDelay());
+export class BodyScrollLock {
+	readonly #id = useId();
+	readonly #initialState: boolean | undefined;
+	readonly #restoreScrollDelay: Getter<number | null> = () => null;
+	readonly #countState: ReturnType<typeof bodyLockStackCount.get>;
+	readonly locked: ReadableBox<boolean> | undefined;
 
-	countState.map.set(id, initialState ?? false);
+	constructor(
+		initialState?: boolean | undefined,
+		restoreScrollDelay: Getter<number | null> = () => null
+	) {
+		this.#initialState = initialState;
+		this.#restoreScrollDelay = restoreScrollDelay;
+		this.#countState = bodyLockStackCount.get();
 
-	const locked = box.with(
-		() => countState.map.get(id) ?? false,
-		(v) => countState.map.set(id, v)
-	);
+		if (!this.#countState) return;
 
-	$effect(() => {
-		return () => {
-			countState.map.delete(id);
+		this.#countState.map.set(this.#id, this.#initialState ?? false);
+
+		this.locked = box.with(
+			() => this.#countState.map.get(this.#id) ?? false,
+			(v) => this.#countState.map.set(this.#id, v)
+		);
+
+		onDestroyEffect(() => {
+			this.#countState.map.delete(this.#id);
 			// if any locks are still active, we don't reset the body style
-			if (isAnyLocked(countState.map)) return;
+			if (isAnyLocked(this.#countState.map)) return;
+
+			const restoreScrollDelay = this.#restoreScrollDelay();
 
 			// if no locks are active (meaning this was the last lock), we reset the body style
-			if (_restoreScrollDelay === null) {
-				requestAnimationFrame(() => countState.resetBodyStyle());
+			if (restoreScrollDelay === null) {
+				requestAnimationFrame(() => this.#countState.resetBodyStyle());
 			} else {
-				afterSleep(_restoreScrollDelay, () => countState.resetBodyStyle());
+				afterSleep(restoreScrollDelay, () => this.#countState.resetBodyStyle());
 			}
-		};
-	});
-
-	return locked;
+		});
+	}
 }
 
 function isAnyLocked(map: Map<string, boolean>) {

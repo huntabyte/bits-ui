@@ -5,7 +5,7 @@
 	import {
 		NavigationMenuItemContext,
 		NavigationMenuItemState,
-		useNavigationMenuContentImpl,
+		NavigationMenuContentImplState,
 	} from "../navigation-menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -33,7 +33,7 @@
 		child?: Snippet<[{ props: Record<string, unknown> }]>;
 	} = $props();
 
-	const contentImplState = useNavigationMenuContentImpl(
+	const contentImplState = NavigationMenuContentImplState.create(
 		{
 			id: box.with(() => id),
 			ref: box.with(

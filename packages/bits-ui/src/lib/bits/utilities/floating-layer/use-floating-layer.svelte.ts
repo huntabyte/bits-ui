@@ -16,13 +16,14 @@ import {
 	cssToStyleObj,
 	getWindow,
 	styleToString,
+	type ReadableBoxedValues,
 	type ReadableBox,
+	type Box,
 } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
-import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
+import type { Arrayable, WithRefOpts } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { useId } from "$lib/internal/use-id.js";
-import type { Box, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";
@@ -37,12 +38,21 @@ const OPPOSITE_SIDE: Record<Side, Side> = {
 	left: "right",
 };
 
+const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");
+const FloatingContentContext = new Context<FloatingContentState>("Floating.Content");
+const FloatingTooltipRootContext = new Context<FloatingRootState>("Floating.Root");
+
 export type Side = (typeof SIDE_OPTIONS)[number];
 export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
 
-class FloatingRootState {
+export class FloatingRootState {
+	static create(tooltip = false) {
+		return tooltip
+			? FloatingTooltipRootContext.set(new FloatingRootState())
+			: FloatingRootContext.set(new FloatingRootState());
+	}
 	anchorNode = box<Measurable | HTMLElement | null>(null);
 	customAnchorNode = box<Measurable | HTMLElement | null | string>(null);
 	triggerNode: ReadableBox<Measurable | HTMLElement | null> = box(null);
@@ -62,30 +72,38 @@ class FloatingRootState {
 	}
 }
 
-export type FloatingContentStateProps = ReadableBoxedValues<{
-	id: string;
-	wrapperId: string;
-	side: Side;
-	sideOffset: number;
-	align: Align;
-	alignOffset: number;
-	arrowPadding: number;
-	avoidCollisions: boolean;
-	collisionBoundary: Arrayable<Boundary>;
-	collisionPadding: number | Partial<Record<Side, number>>;
-	sticky: "partial" | "always";
-	hideWhenDetached: boolean;
-	updatePositionStrategy: "optimized" | "always";
-	strategy: "fixed" | "absolute";
-	onPlaced: () => void;
-	dir: Direction;
-	style: StyleProperties | null | undefined | string;
-	enabled: boolean;
-	customAnchor: string | HTMLElement | null | Measurable;
-}>;
+export interface FloatingContentStateOpts
+	extends ReadableBoxedValues<{
+		id: string;
+		wrapperId: string;
+		side: Side;
+		sideOffset: number;
+		align: Align;
+		alignOffset: number;
+		arrowPadding: number;
+		avoidCollisions: boolean;
+		collisionBoundary: Arrayable<Boundary>;
+		collisionPadding: number | Partial<Record<Side, number>>;
+		sticky: "partial" | "always";
+		hideWhenDetached: boolean;
+		updatePositionStrategy: "optimized" | "always";
+		strategy: "fixed" | "absolute";
+		onPlaced: () => void;
+		dir: Direction;
+		style: StyleProperties | null | undefined | string;
+		enabled: boolean;
+		customAnchor: string | HTMLElement | null | Measurable;
+	}> {}
 
-class FloatingContentState {
-	readonly opts: FloatingContentStateProps;
+export class FloatingContentState {
+	static create(opts: FloatingContentStateOpts, tooltip = false) {
+		return tooltip
+			? FloatingContentContext.set(
+					new FloatingContentState(opts, FloatingTooltipRootContext.get())
+				)
+			: FloatingContentContext.set(new FloatingContentState(opts, FloatingRootContext.get()));
+	}
+	readonly opts: FloatingContentStateOpts;
 	readonly root: FloatingRootState;
 
 	// nodes
@@ -102,7 +120,7 @@ class FloatingContentState {
 	});
 
 	#updatePositionStrategy =
-		undefined as unknown as FloatingContentStateProps["updatePositionStrategy"];
+		undefined as unknown as FloatingContentStateOpts["updatePositionStrategy"];
 	#arrowSize = new ElementSize(() => this.arrowRef.current ?? undefined);
 	#arrowWidth = $derived(this.#arrowSize?.width ?? 0);
 	#arrowHeight = $derived(this.#arrowSize?.height ?? 0);
@@ -233,7 +251,7 @@ class FloatingContentState {
 		visibility: this.cannotCenterArrow ? "hidden" : undefined,
 	});
 
-	constructor(opts: FloatingContentStateProps, root: FloatingRootState) {
+	constructor(opts: FloatingContentStateOpts, root: FloatingRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -284,18 +302,21 @@ class FloatingContentState {
 	}
 }
 
-type FloatingArrowStateProps = WithRefProps;
+interface FloatingArrowStateOpts extends WithRefOpts {}
 
-class FloatingArrowState {
-	readonly opts: FloatingArrowStateProps;
+export class FloatingArrowState {
+	static create(opts: FloatingArrowStateOpts) {
+		return new FloatingArrowState(opts, FloatingContentContext.get());
+	}
+	readonly opts: FloatingArrowStateOpts;
 	readonly content: FloatingContentState;
 
-	constructor(opts: FloatingArrowStateProps, content: FloatingContentState) {
+	constructor(opts: FloatingArrowStateOpts, content: FloatingContentState) {
 		this.opts = opts;
 		this.content = content;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -306,17 +327,23 @@ class FloatingArrowState {
 	);
 }
 
-type FloatingAnchorStateProps = ReadableBoxedValues<{
-	id: string;
-	virtualEl?: Measurable | null;
-	ref: Measurable | HTMLElement | null;
-}>;
+interface FloatingAnchorStateOpts
+	extends ReadableBoxedValues<{
+		id: string;
+		virtualEl?: Measurable | null;
+		ref: Measurable | HTMLElement | null;
+	}> {}
 
-class FloatingAnchorState {
-	readonly opts: FloatingAnchorStateProps;
+export class FloatingAnchorState {
+	static create(opts: FloatingAnchorStateOpts, tooltip = false) {
+		return tooltip
+			? new FloatingAnchorState(opts, FloatingTooltipRootContext.get())
+			: new FloatingAnchorState(opts, FloatingRootContext.get());
+	}
+	readonly opts: FloatingAnchorStateOpts;
 	readonly root: FloatingRootState;
 
-	constructor(opts: FloatingAnchorStateProps, root: FloatingRootState) {
+	constructor(opts: FloatingAnchorStateOpts, root: FloatingRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -326,40 +353,6 @@ class FloatingAnchorState {
 			root.triggerNode = opts.ref;
 		}
 	}
-}
-
-const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");
-const FloatingContentContext = new Context<FloatingContentState>("Floating.Content");
-const FloatingTooltipRootContext = new Context<FloatingRootState>("Floating.Root");
-
-export function useFloatingRootState(tooltip: boolean = false) {
-	return tooltip
-		? FloatingTooltipRootContext.set(new FloatingRootState())
-		: FloatingRootContext.set(new FloatingRootState());
-}
-
-export function useFloatingContentState(
-	props: FloatingContentStateProps,
-	tooltip: boolean = false
-): FloatingContentState {
-	return tooltip
-		? FloatingContentContext.set(
-				new FloatingContentState(props, FloatingTooltipRootContext.get())
-			)
-		: FloatingContentContext.set(new FloatingContentState(props, FloatingRootContext.get()));
-}
-
-export function useFloatingArrowState(props: FloatingArrowStateProps): FloatingArrowState {
-	return new FloatingArrowState(props, FloatingContentContext.get());
-}
-
-export function useFloatingAnchorState(
-	props: FloatingAnchorStateProps,
-	tooltip = false
-): FloatingAnchorState {
-	return tooltip
-		? new FloatingAnchorState(props, FloatingTooltipRootContext.get())
-		: new FloatingAnchorState(props, FloatingRootContext.get());
 }
 
 //

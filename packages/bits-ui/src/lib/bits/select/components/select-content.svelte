@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SelectContentProps } from "../types.js";
-	import { useSelectContent } from "../select.svelte.js";
+	import { SelectContentState } from "../select.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
@@ -22,7 +22,7 @@
 		...restProps
 	}: SelectContentProps = $props();
 
-	const contentState = useSelectContent({
+	const contentState = SelectContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -65,7 +65,7 @@
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
 		{side}
-		present={contentState.root.opts.open.current}
+		open={contentState.root.opts.open.current}
 		{id}
 		{preventScroll}
 		forceMount={false}

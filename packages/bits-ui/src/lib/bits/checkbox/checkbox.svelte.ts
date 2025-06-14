@@ -1,12 +1,11 @@
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import type { HTMLButtonAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
-	WithRefProps,
+	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
 	createBitsAttrs,
@@ -21,23 +20,29 @@ const checkboxAttrs = createBitsAttrs({
 	parts: ["root", "group", "group-label", "input"],
 });
 
-type CheckboxGroupStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		name: string | undefined;
-		disabled: boolean;
-		required: boolean;
-		onValueChange: OnChangeFn<string[]>;
-	}> &
+interface CheckboxGroupStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			name: string | undefined;
+			disabled: boolean;
+			required: boolean;
+			onValueChange: OnChangeFn<string[]>;
+		}>,
 		WritableBoxedValues<{
 			value: string[];
-		}>
->;
+		}> {}
 
-class CheckboxGroupState {
-	readonly opts: CheckboxGroupStateProps;
+export const CheckboxGroupContext = new Context<CheckboxGroupState>("Checkbox.Group");
+
+export class CheckboxGroupState {
+	static create(opts: CheckboxGroupStateOpts) {
+		return CheckboxGroupContext.set(new CheckboxGroupState(opts));
+	}
+
+	readonly opts: CheckboxGroupStateOpts;
 	labelId = $state<string | undefined>(undefined);
 
-	constructor(opts: CheckboxGroupStateProps) {
+	constructor(opts: CheckboxGroupStateOpts) {
 		this.opts = opts;
 	}
 
@@ -59,7 +64,7 @@ class CheckboxGroupState {
 		this.opts.onValueChange.current(newValue);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -72,18 +77,22 @@ class CheckboxGroupState {
 	);
 }
 
-type CheckboxGroupLabelStateProps = WithRefProps;
+interface CheckboxGroupLabelStateOpts extends WithRefOpts {}
 
-class CheckboxGroupLabelState {
-	readonly opts: CheckboxGroupLabelStateProps;
+export class CheckboxGroupLabelState {
+	static create(opts: CheckboxGroupLabelStateOpts) {
+		return new CheckboxGroupLabelState(opts, CheckboxGroupContext.get());
+	}
+
+	readonly opts: CheckboxGroupLabelStateOpts;
 	readonly group: CheckboxGroupState;
 
-	constructor(opts: CheckboxGroupLabelStateProps, group: CheckboxGroupState) {
+	constructor(opts: CheckboxGroupLabelStateOpts, group: CheckboxGroupState) {
 		this.opts = opts;
 		this.group = group;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -94,44 +103,50 @@ class CheckboxGroupLabelState {
 	);
 }
 
-type CheckboxRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-		required: boolean;
-		name: string | undefined;
-		value: string | undefined;
-		type: HTMLButtonAttributes["type"];
-	}> &
+const CheckboxRootContext = new Context<CheckboxRootState>("Checkbox.Root");
+
+interface CheckboxRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			required: boolean;
+			name: string | undefined;
+			value: string | undefined;
+			type: HTMLButtonAttributes["type"];
+		}>,
 		WritableBoxedValues<{
 			checked: boolean;
 			indeterminate: boolean;
-		}>
->;
+		}> {}
 
-class CheckboxRootState {
-	readonly opts: CheckboxRootStateProps;
+export class CheckboxRootState {
+	static create(opts: CheckboxRootStateOpts, group: CheckboxGroupState | null = null) {
+		return CheckboxRootContext.set(new CheckboxRootState(opts, group));
+	}
+
+	readonly opts: CheckboxRootStateOpts;
 	readonly group: CheckboxGroupState | null;
-	trueName = $derived.by(() => {
+	readonly trueName = $derived.by(() => {
 		if (this.group && this.group.opts.name.current) {
 			return this.group.opts.name.current;
 		} else {
 			return this.opts.name.current;
 		}
 	});
-	trueRequired = $derived.by(() => {
+	readonly trueRequired = $derived.by(() => {
 		if (this.group && this.group.opts.required.current) {
 			return true;
 		}
 		return this.opts.required.current;
 	});
-	trueDisabled = $derived.by(() => {
+	readonly trueDisabled = $derived.by(() => {
 		if (this.group && this.group.opts.disabled.current) {
 			return true;
 		}
 		return this.opts.disabled.current;
 	});
 
-	constructor(opts: CheckboxRootStateProps, group: CheckboxGroupState | null = null) {
+	constructor(opts: CheckboxRootStateOpts, group: CheckboxGroupState | null) {
 		this.opts = opts;
 		this.group = group;
 		this.onkeydown = this.onkeydown.bind(this);
@@ -181,12 +196,12 @@ class CheckboxRootState {
 		this.#toggle();
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		checked: this.opts.checked.current,
 		indeterminate: this.opts.indeterminate.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -212,13 +227,13 @@ class CheckboxRootState {
 	);
 }
 
-//
-// INPUT
-//
+export class CheckboxInputState {
+	static create() {
+		return new CheckboxInputState(CheckboxRootContext.get());
+	}
 
-class CheckboxInputState {
 	readonly root: CheckboxRootState;
-	trueChecked = $derived.by(() => {
+	readonly trueChecked = $derived.by(() => {
 		if (!this.root.group) return this.root.opts.checked.current;
 		if (
 			this.root.opts.value.current !== undefined &&
@@ -229,13 +244,13 @@ class CheckboxInputState {
 		return false;
 	});
 
-	shouldRender = $derived.by(() => Boolean(this.root.trueName));
+	readonly shouldRender = $derived.by(() => Boolean(this.root.trueName));
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				type: "checkbox",
@@ -251,24 +266,4 @@ class CheckboxInputState {
 function getCheckboxDataState(checked: boolean, indeterminate: boolean) {
 	if (indeterminate) return "indeterminate";
 	return checked ? "checked" : "unchecked";
-}
-
-export const CheckboxGroupContext = new Context<CheckboxGroupState>("Checkbox.Group");
-
-const CheckboxRootContext = new Context<CheckboxRootState>("Checkbox.Root");
-
-export function useCheckboxGroup(props: CheckboxGroupStateProps) {
-	return CheckboxGroupContext.set(new CheckboxGroupState(props));
-}
-
-export function useCheckboxRoot(props: CheckboxRootStateProps, group: CheckboxGroupState | null) {
-	return CheckboxRootContext.set(new CheckboxRootState(props, group));
-}
-
-export function useCheckboxGroupLabel(props: CheckboxGroupLabelStateProps) {
-	return new CheckboxGroupLabelState(props, CheckboxGroupContext.get());
-}
-
-export function useCheckboxInput(): CheckboxInputState {
-	return new CheckboxInputState(CheckboxRootContext.get());
 }

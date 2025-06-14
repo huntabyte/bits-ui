@@ -1,6 +1,5 @@
-import { attachRef } from "svelte-toolbelt";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
+import type { WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 
 const aspectRatioAttrs = createBitsAttrs({
@@ -8,24 +7,20 @@ const aspectRatioAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type AspectRatioRootStateProps = WithRefProps<ReadableBoxedValues<{ ratio: number }>>;
+interface AspectRatioRootStateOpts extends WithRefOpts, ReadableBoxedValues<{ ratio: number }> {}
 
-class AspectRatioRootState {
-	readonly opts: AspectRatioRootStateProps;
+export class AspectRatioRootState {
+	static create(opts: AspectRatioRootStateOpts) {
+		return new AspectRatioRootState(opts);
+	}
 
-	constructor(opts: AspectRatioRootStateProps) {
+	readonly opts: AspectRatioRootStateOpts;
+
+	constructor(opts: AspectRatioRootStateOpts) {
 		this.opts = opts;
 	}
 
-	wrapperProps = $derived.by(() => ({
-		style: {
-			position: "relative",
-			width: "100%",
-			paddingBottom: `${this.opts.ratio.current ? 100 / this.opts.ratio.current : 0}%}`,
-		},
-	}));
-
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -40,8 +35,4 @@ class AspectRatioRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export function useAspectRatioRoot(props: AspectRatioRootStateProps) {
-	return new AspectRatioRootState(props);
 }

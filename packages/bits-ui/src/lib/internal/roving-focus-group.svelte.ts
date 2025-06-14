@@ -2,10 +2,10 @@ import { type Box, type ReadableBox, box } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./get-directional-keys.js";
 import { kbd } from "./kbd.js";
-import { isBrowser } from "./is.js";
 import type { Orientation } from "$lib/shared/index.js";
+import { BROWSER } from "esm-env";
 
-type UseRovingFocusProps = (
+type RovingFocusGroupOptions = (
 	| {
 			/**
 			 * The selector used to find the focusable candidates.
@@ -43,24 +43,28 @@ type UseRovingFocusProps = (
 	onCandidateFocus?: (node: HTMLElement) => void;
 };
 
-export type UseRovingFocusReturn = ReturnType<typeof useRovingFocus>;
+export class RovingFocusGroup {
+	readonly #opts: RovingFocusGroupOptions;
+	readonly #currentTabStopId = box<string | null>(null);
 
-export function useRovingFocus(opts: UseRovingFocusProps) {
-	const currentTabStopId = box<string | null>(null);
+	constructor(opts: RovingFocusGroupOptions) {
+		this.#opts = opts;
+	}
 
-	function getCandidateNodes() {
-		if (!isBrowser) return [];
-		if (!opts.rootNode.current) return [];
+	getCandidateNodes() {
+		if (!BROWSER || !this.#opts.rootNode.current) return [];
 
-		if (opts.candidateSelector) {
+		if (this.#opts.candidateSelector) {
 			const candidates = Array.from(
-				opts.rootNode.current.querySelectorAll<HTMLElement>(opts.candidateSelector)
+				this.#opts.rootNode.current.querySelectorAll<HTMLElement>(
+					this.#opts.candidateSelector
+				)
 			);
 			return candidates;
-		} else if (opts.candidateAttr) {
+		} else if (this.#opts.candidateAttr) {
 			const candidates = Array.from(
-				opts.rootNode.current.querySelectorAll<HTMLElement>(
-					`[${opts.candidateAttr}]:not([data-disabled])`
+				this.#opts.rootNode.current.querySelectorAll<HTMLElement>(
+					`[${this.#opts.candidateAttr}]:not([data-disabled])`
 				)
 			);
 			return candidates;
@@ -69,27 +73,23 @@ export function useRovingFocus(opts: UseRovingFocusProps) {
 		return [];
 	}
 
-	function focusFirstCandidate() {
-		const items = getCandidateNodes();
+	focusFirstCandidate() {
+		const items = this.getCandidateNodes();
 		if (!items.length) return;
 		items[0]?.focus();
 	}
 
-	function handleKeydown(
-		node: HTMLElement | null | undefined,
-		e: KeyboardEvent,
-		both: boolean = false
-	) {
-		const rootNode = opts.rootNode.current;
+	handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent, both: boolean = false) {
+		const rootNode = this.#opts.rootNode.current;
 		if (!rootNode || !node) return;
 
-		const items = getCandidateNodes();
+		const items = this.getCandidateNodes();
 		if (!items.length) return;
 
 		const currentIndex = items.indexOf(node);
 		const dir = getElemDirection(rootNode);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, opts.orientation.current);
-		const loop = opts.loop.current;
+		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#opts.orientation.current);
+		const loop = this.#opts.loop.current;
 
 		const keyToIndex = {
 			[nextKey]: currentIndex + 1,
@@ -118,32 +118,26 @@ export function useRovingFocus(opts: UseRovingFocusProps) {
 		const itemToFocus = items[itemIndex];
 		if (!itemToFocus) return;
 		itemToFocus.focus();
-		currentTabStopId.current = itemToFocus.id;
-		opts.onCandidateFocus?.(itemToFocus);
+		this.#currentTabStopId.current = itemToFocus.id;
+		this.#opts.onCandidateFocus?.(itemToFocus);
 		return itemToFocus;
 	}
 
-	function getTabIndex(node: HTMLElement | null | undefined) {
-		const items = getCandidateNodes();
-		const anyActive = currentTabStopId.current !== null;
+	getTabIndex(node: HTMLElement | null | undefined) {
+		const items = this.getCandidateNodes();
+		const anyActive = this.#currentTabStopId.current !== null;
 
 		if (node && !anyActive && items[0] === node) {
-			currentTabStopId.current = node.id;
+			this.#currentTabStopId.current = node.id;
 			return 0;
-		} else if (node?.id === currentTabStopId.current) {
+		} else if (node?.id === this.#currentTabStopId.current) {
 			return 0;
 		}
 
 		return -1;
 	}
 
-	return {
-		setCurrentTabStopId(id: string) {
-			currentTabStopId.current = id;
-		},
-		getTabIndex,
-		handleKeydown,
-		focusFirstCandidate,
-		currentTabStopId,
-	};
+	setCurrentTabStopId(id: string) {
+		this.#currentTabStopId.current = id;
+	}
 }

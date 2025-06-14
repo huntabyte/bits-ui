@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { LabelRootProps } from "../types.js";
-	import { setLabelRootState } from "../label.svelte.js";
+	import { LabelRootState } from "../label.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -15,7 +15,7 @@
 		...restProps
 	}: LabelRootProps = $props();
 
-	const rootState = setLabelRootState({
+	const rootState = LabelRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubTriggerProps } from "../types.js";
-	import { useMenuSubTrigger } from "../menu.svelte.js";
+	import { MenuSubTriggerState } from "../menu.svelte.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,7 +18,7 @@
 		...restProps
 	}: MenuSubTriggerProps = $props();
 
-	const subTriggerState = useMenuSubTrigger({
+	const subTriggerState = MenuSubTriggerState.create({
 		disabled: box.with(() => disabled),
 		onSelect: box.with(() => onSelect),
 		id: box.with(() => id),

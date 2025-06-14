@@ -2,11 +2,11 @@
 	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
-	import { useDateRangePickerRoot } from "../date-range-picker.svelte.js";
+	import { DateRangePickerRootState } from "../date-range-picker.svelte.js";
 	import type { DateRangePickerRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
-	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
+	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
+	import { DateRangeFieldRootState } from "$lib/bits/date-range-field/date-range-field.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import type { DateRange } from "$lib/shared/index.js";
@@ -112,7 +112,7 @@
 		}
 	}
 
-	const pickerRootState = useDateRangePickerRoot({
+	const pickerRootState = DateRangePickerRootState.create({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -177,11 +177,11 @@
 		defaultPlaceholder,
 	});
 
-	usePopoverRoot({
+	PopoverRootState.create({
 		open: pickerRootState.opts.open,
 	});
 
-	const fieldRootState = useDateRangeFieldRoot({
+	const fieldRootState = DateRangeFieldRootState.create({
 		value: pickerRootState.opts.value,
 		disabled: pickerRootState.opts.disabled,
 		readonly: pickerRootState.opts.readonly,

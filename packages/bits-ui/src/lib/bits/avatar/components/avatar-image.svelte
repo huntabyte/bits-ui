@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AvatarImageProps } from "../types.js";
-	import { useAvatarImage } from "../avatar.svelte.js";
+	import { AvatarImageState } from "../avatar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -16,7 +16,7 @@
 		...restProps
 	}: AvatarImageProps = $props();
 
-	const imageState = useAvatarImage({
+	const imageState = AvatarImageState.create({
 		src: box.with(() => src),
 		id: box.with(() => id),
 		ref: box.with(
