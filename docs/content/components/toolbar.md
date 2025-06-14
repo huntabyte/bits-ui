@@ -20,15 +20,15 @@ description: Displays frequently used actions or tools in a compact, easily acce
 
 ```svelte
 <script lang="ts">
-	import { Toolbar } from "bits-ui";
+  import { Toolbar } from "bits-ui";
 </script>
 
 <Toolbar.Root>
-	<Toolbar.Group>
-		<Toolbar.GroupItem />
-	</Toolbar.Group>
-	<Toolbar.Link />
-	<Toolbar.Button />
+  <Toolbar.Group>
+    <Toolbar.GroupItem />
+  </Toolbar.Group>
+  <Toolbar.Link />
+  <Toolbar.Button />
 </Toolbar.Root>
 ```
 
@@ -42,16 +42,16 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Toolbar } from "bits-ui";
-	let myValue = $state("");
+  import { Toolbar } from "bits-ui";
+  let myValue = $state("");
 </script>
 
 <button onclick={() => (myValue = "item-1")}> Press item 1 </button>
 
 <Toolbar.Root>
-	<Toolbar.Group type="single" bind:value={myValue}>
-		<!-- ... -->
-	</Toolbar.Group>
+  <Toolbar.Group type="single" bind:value={myValue}>
+    <!-- ... -->
+  </Toolbar.Group>
 </Toolbar.Root>
 ```
 
@@ -61,22 +61,22 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Toolbar } from "bits-ui";
-	let myValue = $state("");
+  import { Toolbar } from "bits-ui";
+  let myValue = $state("");
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string) {
-		myValue = newValue;
-	}
+  function setValue(newValue: string) {
+    myValue = newValue;
+  }
 </script>
 
 <Toolbar.Root>
-	<Toolbar.Group type="single" bind:value={getValue, setValue}>
-		<!-- ... -->
-	</Toolbar.Group>
+  <Toolbar.Group type="single" bind:value={getValue, setValue}>
+    <!-- ... -->
+  </Toolbar.Group>
 </Toolbar.Root>
 ```
 

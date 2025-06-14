@@ -20,14 +20,14 @@ description: Organizes content into distinct sections, allowing users to switch 
 
 ```svelte
 <script lang="ts">
-	import { Tabs } from "bits-ui";
+  import { Tabs } from "bits-ui";
 </script>
 
 <Tabs.Root>
-	<Tabs.List>
-		<Tabs.Trigger />
-	</Tabs.List>
-	<Tabs.Content />
+  <Tabs.List>
+    <Tabs.Trigger />
+  </Tabs.List>
+  <Tabs.Content />
 </Tabs.Root>
 ```
 
@@ -41,14 +41,14 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Tabs } from "bits-ui";
-	let myValue = $state("");
+  import { Tabs } from "bits-ui";
+  let myValue = $state("");
 </script>
 
 <button onclick={() => (myValue = "tab-1")}> Activate tab 1 </button>
 
 <Tabs.Root bind:value={myValue}>
-	<!-- -->
+  <!-- -->
 </Tabs.Root>
 ```
 
@@ -58,20 +58,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Tabs } from "bits-ui";
-	let myValue = $state("");
+  import { Tabs } from "bits-ui";
+  let myValue = $state("");
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string) {
-		myValue = newValue;
-	}
+  function setValue(newValue: string) {
+    myValue = newValue;
+  }
 </script>
 
 <Tabs.Root bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </Tabs.Root>
 ```
 
@@ -83,11 +83,11 @@ When the `orientation` is set to `'horizontal'`, the `ArrowLeft` and `ArrowRight
 
 ```svelte
 <Tabs.Root orientation="horizontal">
-	<!-- ... -->
+  <!-- ... -->
 </Tabs.Root>
 
 <Tabs.Root orientation="vertical">
-	<!-- ... -->
+  <!-- ... -->
 </Tabs.Root>
 ```
 
@@ -99,7 +99,7 @@ When set to `'manual'`, the user will need to activate the tab by pressing the t
 
 ```svelte /activationMode="manual"/
 <Tabs.Root activationMode="manual">
-	<!-- ... -->
+  <!-- ... -->
 </Tabs.Root>
 ```
 

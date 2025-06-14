@@ -21,11 +21,11 @@ By default, the `Portal` component will render its children in the `body` elemen
 
 ```svelte
 <script lang="ts">
-	import { Portal } from "bits-ui";
+  import { Portal } from "bits-ui";
 </script>
 
 <Portal>
-	<div>This content will be portalled to the body</div>
+  <div>This content will be portalled to the body</div>
 </Portal>
 ```
 
@@ -35,15 +35,15 @@ You can use the `to` prop to specify a custom target element or selector to rend
 
 ```svelte
 <script lang="ts">
-	import { Portal } from "bits-ui";
+  import { Portal } from "bits-ui";
 </script>
 
 <div id="custom-target"></div>
 
 <div>
-	<Portal to="#custom-target">
-		<div>This content will be portalled to the #custom-target element</div>
-	</Portal>
+  <Portal to="#custom-target">
+    <div>This content will be portalled to the #custom-target element</div>
+  </Portal>
 </div>
 ```
 
@@ -53,11 +53,11 @@ You can use the `disabled` prop to disable the portal behavior.
 
 ```svelte
 <script lang="ts">
-	import { Portal } from "bits-ui";
+  import { Portal } from "bits-ui";
 </script>
 
 <Portal disabled>
-	<div>This content will not be portalled</div>
+  <div>This content will not be portalled</div>
 </Portal>
 ```
 

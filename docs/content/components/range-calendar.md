@@ -26,41 +26,41 @@ Before diving into this component, it's important to understand how dates/times 
 
 ```svelte
 <script lang="ts">
-	import { RangeCalendar } from "bits-ui";
+  import { RangeCalendar } from "bits-ui";
 </script>
 
 <RangeCalendar.Root>
-	{#snippet children({ months, weekdays })}
-		<RangeCalendar.Header>
-			<RangeCalendar.PrevButton />
-			<RangeCalendar.Heading />
-			<RangeCalendar.NextButton />
-		</RangeCalendar.Header>
-		{#each months as month}
-			<RangeCalendar.Grid>
-				<RangeCalendar.GridHead>
-					<RangeCalendar.GridRow>
-						{#each weekdays as day}
-							<RangeCalendar.HeadCell>
-								{day}
-							</RangeCalendar.HeadCell>
-						{/each}
-					</RangeCalendar.GridRow>
-				</RangeCalendar.GridHead>
-				<RangeCalendar.GridBody>
-					{#each month.weeks as weekDates}
-						<RangeCalendar.GridRow>
-							{#each weekDates as date}
-								<RangeCalendar.Cell {date} month={month.value}>
-									<RangeCalendar.Day />
-								</RangeCalendar.Cell>
-							{/each}
-						</RangeCalendar.GridRow>
-					{/each}
-				</RangeCalendar.GridBody>
-			</RangeCalendar.Grid>
-		{/each}
-	{/snippet}
+  {#snippet children({ months, weekdays })}
+    <RangeCalendar.Header>
+      <RangeCalendar.PrevButton />
+      <RangeCalendar.Heading />
+      <RangeCalendar.NextButton />
+    </RangeCalendar.Header>
+    {#each months as month}
+      <RangeCalendar.Grid>
+        <RangeCalendar.GridHead>
+          <RangeCalendar.GridRow>
+            {#each weekdays as day}
+              <RangeCalendar.HeadCell>
+                {day}
+              </RangeCalendar.HeadCell>
+            {/each}
+          </RangeCalendar.GridRow>
+        </RangeCalendar.GridHead>
+        <RangeCalendar.GridBody>
+          {#each month.weeks as weekDates}
+            <RangeCalendar.GridRow>
+              {#each weekDates as date}
+                <RangeCalendar.Cell {date} month={month.value}>
+                  <RangeCalendar.Day />
+                </RangeCalendar.Cell>
+              {/each}
+            </RangeCalendar.GridRow>
+          {/each}
+        </RangeCalendar.GridBody>
+      </RangeCalendar.Grid>
+    {/each}
+  {/snippet}
 </RangeCalendar.Root>
 ```
 
@@ -72,7 +72,7 @@ You can set the `minDays` prop to limit the minimum number of days that must be 
 
 ```svelte
 <RangeCalendar.Root minDays={3}>
-	<!-- ... -->
+  <!-- ... -->
 </RangeCalendar.Root>
 ```
 
@@ -90,7 +90,7 @@ You can set the `maxDays` prop to limit the maximum number of days that can be s
 
 ```svelte
 <RangeCalendar.Root maxDays={7}>
-	<!-- ... -->
+  <!-- ... -->
 </RangeCalendar.Root>
 ```
 
@@ -108,7 +108,7 @@ You can set both `minDays` and `maxDays` to limit the number of days that can be
 
 ```svelte
 <RangeCalendar.Root minDays={3} maxDays={10}>
-	<!-- ... -->
+  <!-- ... -->
 </RangeCalendar.Root>
 ```
 
@@ -125,8 +125,11 @@ You can set both `minDays` and `maxDays` to limit the number of days that can be
 You can set the `excludeDisabled` prop to automatically reset the range if any date within the selected range becomes disabled.
 
 ```svelte
-<RangeCalendar.Root excludeDisabled isDateDisabled={(date) => isWeekend(date, "en-US")}>
-	<!-- ... -->
+<RangeCalendar.Root
+  excludeDisabled
+  isDateDisabled={(date) => isWeekend(date, "en-US")}
+>
+  <!-- ... -->
 </RangeCalendar.Root>
 ```
 

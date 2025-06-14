@@ -105,7 +105,7 @@
 				>
 			</a>
 			<h1
-				class="selection:text-foreground dark:selection:text-background dark:text-[#EAEAEA]! font-display mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased lg:max-w-3xl lg:text-[4.25rem]"
+				class="selection:text-foreground dark:selection:text-background font-display dark:text-[#EAEAEA]! mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased lg:max-w-3xl lg:text-[4.25rem]"
 			>
 				The headless components for Svelte
 			</h1>

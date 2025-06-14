@@ -12,7 +12,7 @@
 	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 >
 	<Command.Input
-		class="focus-override h-input placeholder:text-foreground-alt/50 focus:outline-hidden bg-background inline-flex truncate rounded-tl-xl rounded-tr-xl px-4 text-sm transition-colors focus:ring-0"
+		class="focus-override h-input placeholder:text-foreground-alt/50 bg-background focus:outline-hidden inline-flex truncate rounded-tl-xl rounded-tr-xl px-4 text-sm transition-colors focus:ring-0"
 		placeholder="Search for something..."
 	/>
 	<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">

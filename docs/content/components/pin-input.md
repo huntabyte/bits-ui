@@ -28,10 +28,10 @@ This component is derived from and would not have been possible without the work
 
 ## Key Features
 
--   **Invisible Input Technique**: Utilizes an invisible input element for seamless integration with form submissions and browser autofill functionality.
--   **Customizable Appearance**: Allows for custom designs while maintaining core functionality.
--   **Accessibility**: Ensures keyboard navigation and screen reader compatibility.
--   **Flexible Configuration**: Supports various PIN lengths and input types (numeric, alphanumeric).
+- **Invisible Input Technique**: Utilizes an invisible input element for seamless integration with form submissions and browser autofill functionality.
+- **Customizable Appearance**: Allows for custom designs while maintaining core functionality.
+- **Accessibility**: Ensures keyboard navigation and screen reader compatibility.
+- **Flexible Configuration**: Supports various PIN lengths and input types (numeric, alphanumeric).
 
 ## Architecture
 
@@ -45,15 +45,15 @@ This structure allows for a seamless user experience while providing developers 
 
 ```svelte
 <script lang="ts">
-	import { PinInput } from "bits-ui";
+  import { PinInput } from "bits-ui";
 </script>
 
 <PinInput.Root maxlength={6}>
-	{#snippet children({ cells })}
-		{#each cells as cell}
-			<PinInput.Cell {cell} />
-		{/each}
-	{/snippet}
+  {#snippet children({ cells })}
+    {#each cells as cell}
+      <PinInput.Cell {cell} />
+    {/each}
+  {/snippet}
 </PinInput.Root>
 ```
 
@@ -67,14 +67,14 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { PinInput } from "bits-ui";
-	let myValue = $state("");
+  import { PinInput } from "bits-ui";
+  let myValue = $state("");
 </script>
 
 <button onclick={() => (myValue = "123456")}> Set value to 123456 </button>
 
 <PinInput.Root bind:value={myValue}>
-	<!-- -->
+  <!-- -->
 </PinInput.Root>
 ```
 
@@ -84,20 +84,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { PinInput } from "bits-ui";
-	let myValue = $state("");
+  import { PinInput } from "bits-ui";
+  let myValue = $state("");
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string) {
-		myValue = newValue;
-	}
+  function setValue(newValue: string) {
+    myValue = newValue;
+  }
 </script>
 
 <PinInput.Root bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </PinInput.Root>
 ```
 
@@ -107,11 +107,11 @@ The `pasteTransformer` prop allows you to sanitize/transform pasted text. This c
 
 ```svelte
 <script lang="ts">
-	import { PinInput } from "bits-ui";
+  import { PinInput } from "bits-ui";
 </script>
 
 <PinInput.Root pasteTransformer={(text) => text.replace(/-/g, "")}>
-	<!-- ... -->
+  <!-- ... -->
 </PinInput.Root>
 ```
 
@@ -125,14 +125,14 @@ To submit the form when the input is complete, you can use the `onComplete` prop
 
 ```svelte
 <script lang="ts">
-	import { PinInput } from "bits-ui";
-	let form = $state<HTMLFormElement>(null!);
+  import { PinInput } from "bits-ui";
+  let form = $state<HTMLFormElement>(null!);
 </script>
 
 <form method="POST" bind:this={form}>
-	<PinInput.Root name="mfaCode" onComplete={() => form.submit()}>
-		<!-- ... -->
-	</PinInput.Root>
+  <PinInput.Root name="mfaCode" onComplete={() => form.submit()}>
+    <!-- ... -->
+  </PinInput.Root>
 </form>
 ```
 
@@ -146,17 +146,17 @@ Client-side validation cannot replace server-side validation. Use this in additi
 
 Bits UI exports a few common patterns that you can import and use in your application.
 
--   `REGEXP_ONLY_DIGITS` - Only allow digits to be entered.
--   `REGEXP_ONLY_CHARS` - Only allow characters to be entered.
--   `REGEXP_ONLY_DIGITS_AND_CHARS` - Only allow digits and characters to be entered.
+- `REGEXP_ONLY_DIGITS` - Only allow digits to be entered.
+- `REGEXP_ONLY_CHARS` - Only allow characters to be entered.
+- `REGEXP_ONLY_DIGITS_AND_CHARS` - Only allow digits and characters to be entered.
 
 ```svelte
 <script lang="ts">
-	import { PinInput, REGEXP_ONLY_DIGITS } from "bits-ui";
+  import { PinInput, REGEXP_ONLY_DIGITS } from "bits-ui";
 </script>
 
 <PinInput.Root pattern={REGEXP_ONLY_DIGITS}>
-	<!-- ... -->
+  <!-- ... -->
 </PinInput.Root>
 ```
 

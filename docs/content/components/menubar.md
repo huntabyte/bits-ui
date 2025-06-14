@@ -20,46 +20,46 @@ description: Organizes and presents a collection of menu options or actions with
 
 ```svelte
 <script lang="ts">
-	import { Menubar } from "bits-ui";
+  import { Menubar } from "bits-ui";
 </script>
 
 <Menubar.Root>
-	<Menubar.Menu>
-		<Menubar.Trigger />
-		<Menubar.Portal>
-			<Menubar.Content>
-				<Menubar.Group>
-					<Menubar.GroupHeading />
-					<Menubar.Item />
-				</Menubar.Group>
+  <Menubar.Menu>
+    <Menubar.Trigger />
+    <Menubar.Portal>
+      <Menubar.Content>
+        <Menubar.Group>
+          <Menubar.GroupHeading />
+          <Menubar.Item />
+        </Menubar.Group>
 
-				<Menubar.Item />
+        <Menubar.Item />
 
-				<Menubar.CheckboxItem>
-					{#snippet children({ checked })}
-						{checked ? "✅" : ""}
-					{/snippet}
-				</Menubar.CheckboxItem>
+        <Menubar.CheckboxItem>
+          {#snippet children({ checked })}
+            {checked ? "✅" : ""}
+          {/snippet}
+        </Menubar.CheckboxItem>
 
-				<Menubar.RadioGroup>
-					<Menubar.GroupHeading />
-					<Menubar.RadioItem>
-						{#snippet children({ checked })}
-							{checked ? "✅" : ""}
-						{/snippet}
-					</Menubar.RadioItem>
-				</Menubar.RadioGroup>
+        <Menubar.RadioGroup>
+          <Menubar.GroupHeading />
+          <Menubar.RadioItem>
+            {#snippet children({ checked })}
+              {checked ? "✅" : ""}
+            {/snippet}
+          </Menubar.RadioItem>
+        </Menubar.RadioGroup>
 
-				<Menubar.Sub>
-					<Menubar.SubTrigger />
-					<Menubar.SubContent />
-				</Menubar.Sub>
+        <Menubar.Sub>
+          <Menubar.SubTrigger />
+          <Menubar.SubContent />
+        </Menubar.Sub>
 
-				<Menubar.Separator />
-				<Menubar.Arrow />
-			</Menubar.Content>
-		</Menubar.Portal>
-	</Menubar.Menu>
+        <Menubar.Separator />
+        <Menubar.Arrow />
+      </Menubar.Content>
+    </Menubar.Portal>
+  </Menubar.Menu>
 </Menubar.Root>
 ```
 
@@ -71,31 +71,31 @@ In the following example, we're creating a reusable `MyMenubarMenu` component th
 
 ```svelte title="MyMenubarMenu.svelte"
 <script lang="ts">
-	import { Menubar, type WithoutChildrenOrChild } from "bits-ui";
+  import { Menubar, type WithoutChildrenOrChild } from "bits-ui";
 
-	type Props = WithoutChildrenOrChild<Menubar.MenuProps> & {
-		triggerText: string;
-		items: { label: string; value: string; onSelect?: () => void }[];
-		contentProps?: WithoutChildrenOrChild<Menubar.ContentProps>;
-		// other component props if needed
-	};
+  type Props = WithoutChildrenOrChild<Menubar.MenuProps> & {
+    triggerText: string;
+    items: { label: string; value: string; onSelect?: () => void }[];
+    contentProps?: WithoutChildrenOrChild<Menubar.ContentProps>;
+    // other component props if needed
+  };
 
-	let { triggerText, items, contentProps, ...restProps }: Props = $props();
+  let { triggerText, items, contentProps, ...restProps }: Props = $props();
 </script>
 
 <Menubar.Menu {...restProps}>
-	<Menubar.Trigger>
-		{triggerText}
-	</Menubar.Trigger>
-	<Menubar.Content {...contentProps}>
-		<Menubar.Group aria-label={triggerText}>
-			{#each items as item}
-				<Menubar.Item textValue={item.label} onSelect={item.onSelect}>
-					{item.label}
-				</Menubar.Item>
-			{/each}
-		</Menubar.Group>
-	</Menubar.Content>
+  <Menubar.Trigger>
+    {triggerText}
+  </Menubar.Trigger>
+  <Menubar.Content {...contentProps}>
+    <Menubar.Group aria-label={triggerText}>
+      {#each items as item}
+        <Menubar.Item textValue={item.label} onSelect={item.onSelect}>
+          {item.label}
+        </Menubar.Item>
+      {/each}
+    </Menubar.Group>
+  </Menubar.Content>
 </Menubar.Menu>
 ```
 
@@ -103,42 +103,42 @@ Now, we can use the `MyMenubarMenu` component within a `Menubar.Root` component 
 
 ```svelte
 <script lang="ts">
-	import { Menubar } from "bits-ui";
-	import MyMenubarMenu from "./MyMenubarMenu.svelte";
+  import { Menubar } from "bits-ui";
+  import MyMenubarMenu from "./MyMenubarMenu.svelte";
 
-	const sales = [
-		{ label: "Michael Scott", value: "michael" },
-		{ label: "Dwight Schrute", value: "dwight" },
-		{ label: "Jim Halpert", value: "jim" },
-		{ label: "Stanley Hudson", value: "stanley" },
-		{ label: "Phyllis Vance", value: "phyllis" },
-		{ label: "Pam Beesly", value: "pam" },
-		{ label: "Andy Bernard", value: "andy" },
-	];
+  const sales = [
+    { label: "Michael Scott", value: "michael" },
+    { label: "Dwight Schrute", value: "dwight" },
+    { label: "Jim Halpert", value: "jim" },
+    { label: "Stanley Hudson", value: "stanley" },
+    { label: "Phyllis Vance", value: "phyllis" },
+    { label: "Pam Beesly", value: "pam" },
+    { label: "Andy Bernard", value: "andy" },
+  ];
 
-	const hr = [
-		{ label: "Toby Flenderson", value: "toby" },
-		{ label: "Holly Flax", value: "holly" },
-		{ label: "Jan Levinson", value: "jan" },
-	];
+  const hr = [
+    { label: "Toby Flenderson", value: "toby" },
+    { label: "Holly Flax", value: "holly" },
+    { label: "Jan Levinson", value: "jan" },
+  ];
 
-	const accounting = [
-		{ label: "Angela Martin", value: "angela" },
-		{ label: "Kevin Malone", value: "kevin" },
-		{ label: "Oscar Martinez", value: "oscar" },
-	];
+  const accounting = [
+    { label: "Angela Martin", value: "angela" },
+    { label: "Kevin Malone", value: "kevin" },
+    { label: "Oscar Martinez", value: "oscar" },
+  ];
 
-	const menubarMenus = [
-		{ title: "Sales", items: sales },
-		{ title: "HR", items: hr },
-		{ title: "Accounting", items: accounting },
-	];
+  const menubarMenus = [
+    { title: "Sales", items: sales },
+    { title: "HR", items: hr },
+    { title: "Accounting", items: accounting },
+  ];
 </script>
 
 <Menubar.Root>
-	{#each menubarMenus as { title, items }}
-		<CustomMenubar triggerText={title} {items} />
-	{/each}
+  {#each menubarMenus as { title, items }}
+    <CustomMenubar triggerText={title} {items} />
+  {/each}
 </Menubar.Root>
 ```
 
@@ -152,18 +152,18 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { Menubar } from "bits-ui";
-	let activeValue = $state("");
+  import { Menubar } from "bits-ui";
+  let activeValue = $state("");
 </script>
 
 <button onclick={() => (activeValue = "menu-1")}>Open Menubar Menu</button>
 <Menubar.Root bind:value={activeValue}>
-	<Menubar.Menu value="menu-1">
-		<!-- ... -->
-	</Menubar.Menu>
-	<Menubar.Menu value="menu-2">
-		<!-- ... -->
-	</Menubar.Menu>
+  <Menubar.Menu value="menu-1">
+    <!-- ... -->
+  </Menubar.Menu>
+  <Menubar.Menu value="menu-2">
+    <!-- ... -->
+  </Menubar.Menu>
 </Menubar.Root>
 ```
 
@@ -173,25 +173,25 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Menubar } from "bits-ui";
-	let activeValue = $state("");
+  import { Menubar } from "bits-ui";
+  let activeValue = $state("");
 
-	function getValue() {
-		return activeValue;
-	}
+  function getValue() {
+    return activeValue;
+  }
 
-	function setValue(newValue: string) {
-		activeValue = newValue;
-	}
+  function setValue(newValue: string) {
+    activeValue = newValue;
+  }
 </script>
 
 <Menubar.Root bind:value={getValue, setValue}>
-	<Menubar.Menu value="menu-1">
-		<!-- ... -->
-	</Menubar.Menu>
-	<Menubar.Menu value="menu-2">
-		<!-- ... -->
-	</Menubar.Menu>
+  <Menubar.Menu value="menu-1">
+    <!-- ... -->
+  </Menubar.Menu>
+  <Menubar.Menu value="menu-2">
+    <!-- ... -->
+  </Menubar.Menu>
 </Menubar.Root>
 ```
 
@@ -201,23 +201,23 @@ You can combine the `Menubar.RadioGroup` and `Menubar.RadioItem` components to c
 
 ```svelte
 <script lang="ts">
-	import { Menubar } from "bits-ui";
+  import { Menubar } from "bits-ui";
 
-	const values = ["one", "two", "three"];
-	let value = $state("one");
+  const values = ["one", "two", "three"];
+  let value = $state("one");
 </script>
 
 <Menubar.RadioGroup bind:value>
-	{#each values as value}
-		<Menubar.RadioItem {value}>
-			{#snippet children({ checked })}
-				{#if checked}
-					✅
-				{/if}
-				{value}
-			{/snippet}
-		</Menubar.RadioItem>
-	{/each}
+  {#each values as value}
+    <Menubar.RadioItem {value}>
+      {#snippet children({ checked })}
+        {#if checked}
+          ✅
+        {/if}
+        {value}
+      {/snippet}
+    </Menubar.RadioItem>
+  {/each}
 </Menubar.RadioGroup>
 ```
 
@@ -227,20 +227,20 @@ You can use the `Menubar.CheckboxItem` component to create a `menuitemcheckbox` 
 
 ```svelte
 <script lang="ts">
-	import { Menubar } from "bits-ui";
+  import { Menubar } from "bits-ui";
 
-	let notifications = $state(true);
+  let notifications = $state(true);
 </script>
 
 <Menubar.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked, indeterminate })}
-		{#if indeterminate}
-			-
-		{:else if checked}
-			✅
-		{/if}
-		Notifications
-	{/snippet}
+  {#snippet children({ checked, indeterminate })}
+    {#if indeterminate}
+      -
+    {:else if checked}
+      ✅
+    {/if}
+    Notifications
+  {/snippet}
 </Menubar.CheckboxItem>
 ```
 
@@ -250,37 +250,37 @@ You can use the `Menubar.CheckboxGroup` component around a set of `Menubar.Check
 
 ```svelte
 <script lang="ts">
-	import { Menubar } from "bits-ui";
+  import { Menubar } from "bits-ui";
 
-	let colors = $state<string[]>([]);
+  let colors = $state<string[]>([]);
 </script>
 
 <Menubar.CheckboxGroup bind:value={colors}>
-	<Menubar.GroupHeading>Favorite color</Menubar.GroupHeading>
-	<Menubar.CheckboxItem value="red">
-		{#snippet children({ checked })}
-			{#if checked}
-				✅
-			{/if}
-			Red
-		{/snippet}
-	</Menubar.CheckboxItem>
-	<Menubar.CheckboxItem value="blue">
-		{#snippet children({ checked })}
-			{#if checked}
-				✅
-			{/if}
-			Blue
-		{/snippet}
-	</Menubar.CheckboxItem>
-	<Menubar.CheckboxItem value="green">
-		{#snippet children({ checked })}
-			{#if checked}
-				✅
-			{/if}
-			Green
-		{/snippet}
-	</Menubar.CheckboxItem>
+  <Menubar.GroupHeading>Favorite color</Menubar.GroupHeading>
+  <Menubar.CheckboxItem value="red">
+    {#snippet children({ checked })}
+      {#if checked}
+        ✅
+      {/if}
+      Red
+    {/snippet}
+  </Menubar.CheckboxItem>
+  <Menubar.CheckboxItem value="blue">
+    {#snippet children({ checked })}
+      {#if checked}
+        ✅
+      {/if}
+      Blue
+    {/snippet}
+  </Menubar.CheckboxItem>
+  <Menubar.CheckboxItem value="green">
+    {#snippet children({ checked })}
+      {#if checked}
+        ✅
+      {/if}
+      Green
+    {/snippet}
+  </Menubar.CheckboxItem>
 </Menubar.CheckboxGroup>
 ```
 
@@ -292,19 +292,19 @@ You can create nested menus using the `Menubar.Sub` component to create complex 
 
 ```svelte /Menubar.Sub/
 <script lang="ts">
-	import { Menubar } from "bits-ui";
+  import { Menubar } from "bits-ui";
 </script>
 
 <Menubar.Content>
-	<Menubar.Item>Item 1</Menubar.Item>
-	<Menubar.Item>Item 2</Menubar.Item>
-	<Menubar.Sub>
-		<Menubar.SubTrigger>Open Sub Menu</Menubar.SubTrigger>
-		<Menubar.SubContent>
-			<Menubar.Item>Sub Item 1</Menubar.Item>
-			<Menubar.Item>Sub Item 2</Menubar.Item>
-		</Menubar.SubContent>
-	</Menubar.Sub>
+  <Menubar.Item>Item 1</Menubar.Item>
+  <Menubar.Item>Item 2</Menubar.Item>
+  <Menubar.Sub>
+    <Menubar.SubTrigger>Open Sub Menu</Menubar.SubTrigger>
+    <Menubar.SubContent>
+      <Menubar.Item>Sub Item 1</Menubar.Item>
+      <Menubar.Item>Sub Item 2</Menubar.Item>
+    </Menubar.SubContent>
+  </Menubar.Sub>
 </Menubar.Content>
 ```
 
@@ -314,21 +314,21 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 ```svelte /forceMount/ /transition:fly/
 <script lang="ts">
-	import { Menubar } from "bits-ui";
-	import { fly } from "svelte/transition";
+  import { Menubar } from "bits-ui";
+  import { fly } from "svelte/transition";
 </script>
 
 <Menubar.Content forceMount>
-	{#snippet child({ wrapperProps, props, open })}
-		{#if open}
-			<div {...wrapperProps}>
-				<div {...props} transition:fly>
-					<Menubar.Item>Item 1</Menubar.Item>
-					<Menubar.Item>Item 2</Menubar.Item>
-				</div>
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ wrapperProps, props, open })}
+    {#if open}
+      <div {...wrapperProps}>
+        <div {...props} transition:fly>
+          <Menubar.Item>Item 1</Menubar.Item>
+          <Menubar.Item>Item 2</Menubar.Item>
+        </div>
+      </div>
+    {/if}
+  {/snippet}
 </Menubar.Content>
 ```
 

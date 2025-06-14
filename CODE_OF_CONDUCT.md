@@ -6,17 +6,17 @@ We want Bits UI to be a welcoming and productive community for everyone. To that
 
 More specifically:
 
--   **Be Respectful:** Treat everyone with respect, even if you disagree. Personal attacks, harassment, and aggressive behavior are not acceptable.
--   **Be Constructive:** Focus on constructive feedback and discussions. Avoid unproductive negativity or complaining without offering solutions.
--   **Focus on Contributions**: We welcome contributions based on their merit and value to the project. All contributors will be treated fairly and respectfully, and discriminatory behavior is not allowed.
+- **Be Respectful:** Treat everyone with respect, even if you disagree. Personal attacks, harassment, and aggressive behavior are not acceptable.
+- **Be Constructive:** Focus on constructive feedback and discussions. Avoid unproductive negativity or complaining without offering solutions.
+- **Focus on Contributions**: We welcome contributions based on their merit and value to the project. All contributors will be treated fairly and respectfully, and discriminatory behavior is not allowed.
 
 **Unacceptable behavior includes (but is not limited to):**
 
--   Personal attacks, insults, or threats.
--   Harassment, bullying, or intimidation.
--   Discrimination based on any personal attribute.
--   Spamming, trolling, or deliberately disruptive behavior.
--   Sharing private information without consent.
+- Personal attacks, insults, or threats.
+- Harassment, bullying, or intimidation.
+- Discrimination based on any personal attribute.
+- Spamming, trolling, or deliberately disruptive behavior.
+- Sharing private information without consent.
 
 **Enforcement:**
 

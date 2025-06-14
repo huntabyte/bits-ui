@@ -26,42 +26,42 @@ Before diving into this component, it's important to understand how dates/times 
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
+  import { Calendar } from "bits-ui";
 </script>
 
 <Calendar.Root>
-	{#snippet children({ months, weekdays })}
-		<Calendar.Header>
-			<Calendar.PrevButton />
-			<Calendar.Heading />
-			<Calendar.NextButton />
-		</Calendar.Header>
+  {#snippet children({ months, weekdays })}
+    <Calendar.Header>
+      <Calendar.PrevButton />
+      <Calendar.Heading />
+      <Calendar.NextButton />
+    </Calendar.Header>
 
-		{#each months as month}
-			<Calendar.Grid>
-				<Calendar.GridHead>
-					<Calendar.GridRow>
-						{#each weekdays as day}
-							<Calendar.HeadCell>
-								{day}
-							</Calendar.HeadCell>
-						{/each}
-					</Calendar.GridRow>
-				</Calendar.GridHead>
-				<Calendar.GridBody>
-					{#each month.weeks as weekDates}
-						<Calendar.GridRow>
-							{#each weekDates as date}
-								<Calendar.Cell {date} month={month.value}>
-									<Calendar.Day />
-								</Calendar.Cell>
-							{/each}
-						</Calendar.GridRow>
-					{/each}
-				</Calendar.GridBody>
-			</Calendar.Grid>
-		{/each}
-	{/snippet}
+    {#each months as month}
+      <Calendar.Grid>
+        <Calendar.GridHead>
+          <Calendar.GridRow>
+            {#each weekdays as day}
+              <Calendar.HeadCell>
+                {day}
+              </Calendar.HeadCell>
+            {/each}
+          </Calendar.GridRow>
+        </Calendar.GridHead>
+        <Calendar.GridBody>
+          {#each month.weeks as weekDates}
+            <Calendar.GridRow>
+              {#each weekDates as date}
+                <Calendar.Cell {date} month={month.value}>
+                  <Calendar.Day />
+                </Calendar.Cell>
+              {/each}
+            </Calendar.GridRow>
+          {/each}
+        </Calendar.GridBody>
+      </Calendar.Grid>
+    {/each}
+  {/snippet}
 </Calendar.Root>
 ```
 
@@ -83,17 +83,17 @@ Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+  import { Calendar } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
 <button onclick={() => (myPlaceholder = new CalendarDate(2024, 8, 3))}>
-	Set placeholder to August 3rd, 2024
+  Set placeholder to August 3rd, 2024
 </button>
 
 <Calendar.Root bind:placeholder={myPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </Calendar.Root>
 ```
 
@@ -103,22 +103,22 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import type { DateValue } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import type { DateValue } from "@internationalized/date";
 
-	let myPlaceholder = $state<DateValue>();
+  let myPlaceholder = $state<DateValue>();
 
-	function getPlaceholder() {
-		return myPlaceholder;
-	}
+  function getPlaceholder() {
+    return myPlaceholder;
+  }
 
-	function setPlaceholder(newPlaceholder: DateValue) {
-		myPlaceholder = newPlaceholder;
-	}
+  function setPlaceholder(newPlaceholder: DateValue) {
+    myPlaceholder = newPlaceholder;
+  }
 </script>
 
 <Calendar.Root bind:placeholder={getPlaceholder, setPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </Calendar.Root>
 ```
 
@@ -134,14 +134,16 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+  import { Calendar } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
-<button onclick={() => (myValue = myValue.add({ days: 1 }))}> Add 1 day </button>
+<button onclick={() => (myValue = myValue.add({ days: 1 }))}>
+  Add 1 day
+</button>
 <Calendar.Root type="single" bind:value={myValue}>
-	<!-- ... -->
+  <!-- ... -->
 </Calendar.Root>
 ```
 
@@ -151,21 +153,21 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import type { DateValue } from "@internationalized/date";
-	let myValue = $state();
+  import { Calendar } from "bits-ui";
+  import type { DateValue } from "@internationalized/date";
+  let myValue = $state();
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: DateValue) {
-		myValue = newValue;
-	}
+  function setValue(newValue: DateValue) {
+    myValue = newValue;
+  }
 </script>
 
 <Calendar.Root type="single" bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </Calendar.Root>
 ```
 
@@ -179,17 +181,17 @@ You can use the `parseDate` function from the `@internationalized/date` package 
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { parseDate } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import { parseDate } from "@internationalized/date";
 
-	// this came from a database/API call
-	const date = "2024-08-03";
+  // this came from a database/API call
+  const date = "2024-08-03";
 
-	let value = $state(parseDate(date));
+  let value = $state(parseDate(date));
 </script>
 
 <Calendar.Root {value}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -201,15 +203,15 @@ You can set a minimum value for the calendar by using the `minValue` prop on `Ca
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { today, getLocalTimeZone } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import { today, getLocalTimeZone } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
-	const yesterday = todayDate.subtract({ days: 1 });
+  const todayDate = today(getLocalTimeZone());
+  const yesterday = todayDate.subtract({ days: 1 });
 </script>
 
 <Calendar.Root minValue={todayDate} value={yesterday}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -219,15 +221,15 @@ You can set a maximum value for the calendar by using the `maxValue` prop on `Ca
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { today, getLocalTimeZone } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import { today, getLocalTimeZone } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
-	const tomorrow = todayDate.add({ days: 1 });
+  const todayDate = today(getLocalTimeZone());
+  const tomorrow = todayDate.add({ days: 1 });
 </script>
 
 <Calendar.Root maxValue={todayDate} value={tomorrow}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -237,19 +239,19 @@ You can specify specific dates that are unavailable for selection by using the `
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { today, getLocalTimeZone, isNotNull } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import { today, getLocalTimeZone, isNotNull } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
-	const tomorrow = todayDate.add({ days: 1 });
+  const todayDate = today(getLocalTimeZone());
+  const tomorrow = todayDate.add({ days: 1 });
 
-	function isDateUnavailable(date: DateValue) {
-		return date.day === 1;
-	}
+  function isDateUnavailable(date: DateValue) {
+    return date.day === 1;
+  }
 </script>
 
 <Calendar.Root {isDateUnavailable} value={tomorrow}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -259,19 +261,19 @@ You can specify specific dates that are disabled for selection by using the `isD
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { today, getLocalTimeZone, isNotNull } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import { today, getLocalTimeZone, isNotNull } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
-	const tomorrow = todayDate.add({ days: 1 });
+  const todayDate = today(getLocalTimeZone());
+  const tomorrow = todayDate.add({ days: 1 });
 
-	function isDateDisabled(date: DateValue) {
-		return date.day === 1;
-	}
+  function isDateDisabled(date: DateValue) {
+    return date.day === 1;
+  }
 </script>
 
 <Calendar.Root {isDateDisabled} value={tomorrow}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -281,7 +283,7 @@ You can set the `maxDays` prop to limit the maximum number of days that can be s
 
 ```svelte
 <Calendar.Root type="multiple" maxDays={3}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -301,7 +303,7 @@ You can use the `fixedWeeks` prop to ensure that the calendar renders a fixed nu
 
 ```svelte
 <Calendar.Root fixedWeeks>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -311,7 +313,7 @@ You can use the `numberOfMonths` prop to render multiple months at once.
 
 ```svelte
 <Calendar.Root numberOfMonths={2}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -321,7 +323,7 @@ By default, when the calendar has more than one month, the previous and next but
 
 ```svelte
 <Calendar.Root pagedNavigation>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -331,7 +333,7 @@ The calendar will automatically format the content of the calendar according to 
 
 ```svelte
 <Calendar.Root locale="fr-FR">
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -343,7 +345,7 @@ You can also override this by setting the `weekStartsOn` prop, where `0` is Sund
 
 ```svelte
 <Calendar.Root weekStartsOn={1}>
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -353,7 +355,7 @@ You can set the `type` prop to `'multiple'` to allow users to select multiple da
 
 ```svelte
 <Calendar.Root type="multiple">
-	<!-- ...-->
+  <!-- ...-->
 </Calendar.Root>
 ```
 
@@ -367,23 +369,23 @@ To achieve this, you can use the `placeholder` prop to set the month of the the 
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { CalendarDate } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import { CalendarDate } from "@internationalized/date";
 
-	let placeholder = $state(new CalendarDate(2024, 8, 3));
+  let placeholder = $state(new CalendarDate(2024, 8, 3));
 </script>
 
 <!-- You can use a select, button, or whatever you wish -->
 <button
-	onclick={() => {
-		placeholder = placeholder.set({ month: 8 });
-	}}
+  onclick={() => {
+    placeholder = placeholder.set({ month: 8 });
+  }}
 >
-	Set month to August
+  Set month to August
 </button>
 
 <Calendar.Root bind:placeholder>
-	<!-- ... -->
+  <!-- ... -->
 </Calendar.Root>
 ```
 

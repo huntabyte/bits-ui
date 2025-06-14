@@ -20,15 +20,15 @@ description: Display supplementary content or information when users interact wi
 
 ```svelte
 <script lang="ts">
-	import { Popover } from "bits-ui";
+  import { Popover } from "bits-ui";
 </script>
 
 <Popover.Root>
-	<Popover.Trigger />
-	<Popover.Content>
-		<Popover.Close />
-		<Popover.Arrow />
-	</Popover.Content>
+  <Popover.Trigger />
+  <Popover.Content>
+    <Popover.Close />
+    <Popover.Arrow />
+  </Popover.Content>
 </Popover.Root>
 ```
 
@@ -42,14 +42,14 @@ Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { Popover } from "bits-ui";
-	let isOpen = $state(false);
+  import { Popover } from "bits-ui";
+  let isOpen = $state(false);
 </script>
 
 <button onclick={() => (isOpen = true)}>Open Popover</button>
 
 <Popover.Root bind:open={isOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Root>
 ```
 
@@ -59,20 +59,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Popover } from "bits-ui";
-	let myOpen = $state(false);
+  import { Popover } from "bits-ui";
+  let myOpen = $state(false);
 
-	function getOpen() {
-		return myOpen;
-	}
+  function getOpen() {
+    return myOpen;
+  }
 
-	function setOpen(newOpen: boolean) {
-		myOpen = newOpen;
-	}
+  function setOpen(newOpen: boolean) {
+    myOpen = newOpen;
+  }
 </script>
 
 <Popover.Root bind:open={getOpen, setOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Root>
 ```
 
@@ -84,7 +84,7 @@ By default, when a Popover is opened, focus will be trapped within that Popover.
 
 ```svelte /trapFocus={false}/
 <Popover.Content trapFocus={false}>
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Content>
 ```
 
@@ -98,20 +98,20 @@ You'll first need to cancel the default behavior of focusing the first focusable
 
 ```svelte {9-12}
 <script lang="ts">
-	import { Popover } from "bits-ui";
-	let nameInput = $state<HTMLInputElement>();
+  import { Popover } from "bits-ui";
+  let nameInput = $state<HTMLInputElement>();
 </script>
 
 <Popover.Root>
-	<Popover.Trigger>Open Popover</Popover.Trigger>
-	<Popover.Content
-		onOpenAutoFocus={(e) => {
-			e.preventDefault();
-			nameInput?.focus();
-		}}
-	>
-		<input type="text" bind:this={nameInput} />
-	</Popover.Content>
+  <Popover.Trigger>Open Popover</Popover.Trigger>
+  <Popover.Content
+    onOpenAutoFocus={(e) => {
+      e.preventDefault();
+      nameInput?.focus();
+    }}
+  >
+    <input type="text" bind:this={nameInput} />
+  </Popover.Content>
 </Popover.Root>
 ```
 
@@ -123,21 +123,21 @@ You'll need to cancel the default behavior of focusing the trigger element by ca
 
 ```svelte {9-12}
 <script lang="ts">
-	import { Popover } from "bits-ui";
-	let nameInput = $state<HTMLInputElement>();
+  import { Popover } from "bits-ui";
+  let nameInput = $state<HTMLInputElement>();
 </script>
 
 <input type="text" bind:this={nameInput} />
 <Popover.Root>
-	<Popover.Trigger>Open Popover</Popover.Trigger>
-	<Popover.Content
-		onCloseAutoFocus={(e) => {
-			e.preventDefault();
-			nameInput?.focus();
-		}}
-	>
-		<!-- ... -->
-	</Popover.Content>
+  <Popover.Trigger>Open Popover</Popover.Trigger>
+  <Popover.Content
+    onCloseAutoFocus={(e) => {
+      e.preventDefault();
+      nameInput?.focus();
+    }}
+  >
+    <!-- ... -->
+  </Popover.Content>
 </Popover.Root>
 ```
 
@@ -147,7 +147,7 @@ By default, when a Popover is opened, users can still scroll the body and intera
 
 ```svelte /preventScroll={true}/
 <Popover.Content preventScroll={true}>
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Content>
 ```
 
@@ -161,7 +161,7 @@ You can set the `escapeKeydownBehavior` prop to `'ignore'` on the `Popover.Conte
 
 ```svelte /escapeKeydownBehavior="ignore"/
 <Popover.Content escapeKeydownBehavior="ignore">
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Content>
 ```
 
@@ -171,7 +171,7 @@ You can also override the default behavior by cancelling the event passed to the
 
 ```svelte /onEscapeKeydown={(e) => e.preventDefault()}/
 <Popover.Content onEscapeKeydown={(e) => e.preventDefault()}>
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Content>
 ```
 
@@ -185,7 +185,7 @@ You can set the `interactOutsideBehavior` prop to `'ignore'` on the `Popover.Con
 
 ```svelte /interactOutsideBehavior="ignore"/
 <Popover.Content interactOutsideBehavior="ignore">
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Content>
 ```
 
@@ -195,7 +195,7 @@ You can also override the default behavior by cancelling the event passed to the
 
 ```svelte /onInteractOutside={(e) => e.preventDefault()}/
 <Popover.Content onInteractOutside={(e) => e.preventDefault()}>
-	<!-- ... -->
+  <!-- ... -->
 </Popover.Content>
 ```
 
@@ -207,17 +207,17 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 ```svelte
 <script lang="ts">
-	import { Popover } from "bits-ui";
-	let customAnchor = $state<HTMLElement>(null!);
+  import { Popover } from "bits-ui";
+  let customAnchor = $state<HTMLElement>(null!);
 </script>
 
 <div bind:this={customAnchor}></div>
 
 <Popover.Root>
-	<Popover.Trigger />
-	<Popover.Content {customAnchor}>
-		<!-- ... -->
-	</Popover.Content>
+  <Popover.Trigger />
+  <Popover.Content {customAnchor}>
+    <!-- ... -->
+  </Popover.Content>
 </Popover.Root>
 ```
 
@@ -227,20 +227,20 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 ```svelte /forceMount/ /transition:fly/
 <script lang="ts">
-	import { Popover } from "bits-ui";
-	import { fly } from "svelte/transition";
+  import { Popover } from "bits-ui";
+  import { fly } from "svelte/transition";
 </script>
 
 <Popover.Content forceMount>
-	{#snippet child({ wrapperProps, props, open })}
-		{#if open}
-			<div {...wrapperProps}>
-				<div {...props} transition:fly>
-					<!-- ... -->
-				</div>
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ wrapperProps, props, open })}
+    {#if open}
+      <div {...wrapperProps}>
+        <div {...props} transition:fly>
+          <!-- ... -->
+        </div>
+      </div>
+    {/if}
+  {/snippet}
 </Popover.Content>
 ```
 

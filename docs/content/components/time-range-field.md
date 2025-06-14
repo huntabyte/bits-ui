@@ -30,22 +30,22 @@ The `TimeRangeField` component combines two [Time Field](/docs/components/time-f
 
 ```svelte
 <script lang="ts">
-	import { TimeRangeField } from "bits-ui";
+  import { TimeRangeField } from "bits-ui";
 </script>
 
 <TimeRangeField.Root>
-	<TimeRangeField.Label>Working Hours</TimeRangeField.Label>
-	{#each ["start", "end"] as const as type}
-		<TimeRangeField.Input {type}>
-			{#snippet children({ segments })}
-				{#each segments as { part, value }}
-					<TimeRangeField.Segment {part}>
-						{value}
-					</TimeRangeField.Segment>
-				{/each}
-			{/snippet}
-		</TimeRangeField.Input>
-	{/each}
+  <TimeRangeField.Label>Working Hours</TimeRangeField.Label>
+  {#each ["start", "end"] as const as type}
+    <TimeRangeField.Input {type}>
+      {#snippet children({ segments })}
+        {#each segments as { part, value }}
+          <TimeRangeField.Segment {part}>
+            {value}
+          </TimeRangeField.Segment>
+        {/each}
+      {/snippet}
+    </TimeRangeField.Input>
+  {/each}
 </TimeRangeField.Root>
 ```
 
@@ -59,13 +59,13 @@ Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { TimeRangeField } from "bits-ui";
-	import { Time } from "@internationalized/date";
-	let myPlaceholder = $state(new Time(12, 30));
+  import { TimeRangeField } from "bits-ui";
+  import { Time } from "@internationalized/date";
+  let myPlaceholder = $state(new Time(12, 30));
 </script>
 
 <TimeRangeField.Root bind:placeholder={myPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </TimeRangeField.Root>
 ```
 
@@ -75,21 +75,21 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { TimeRangeField, type TimeValue } from "bits-ui";
-	import { Time } from "@internationalized/date";
-	let myPlaceholder = $state(new Time(12, 30));
+  import { TimeRangeField, type TimeValue } from "bits-ui";
+  import { Time } from "@internationalized/date";
+  let myPlaceholder = $state(new Time(12, 30));
 
-	function getPlaceholder() {
-		return myPlaceholder;
-	}
+  function getPlaceholder() {
+    return myPlaceholder;
+  }
 
-	function setPlaceholder(newPlaceholder: TimeValue) {
-		myPlaceholder = newPlaceholder;
-	}
+  function setPlaceholder(newPlaceholder: TimeValue) {
+    myPlaceholder = newPlaceholder;
+  }
 </script>
 
 <TimeRangeField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </TimeRangeField.Root>
 ```
 
@@ -103,26 +103,26 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { TimeRangeField, type TimeRange } from "bits-ui";
-	import { Time } from "@internationalized/date";
-	let myValue = $state<TimeRange>({
-		start: new Time(12, 30),
-		end: new Time(12, 30),
-	});
+  import { TimeRangeField, type TimeRange } from "bits-ui";
+  import { Time } from "@internationalized/date";
+  let myValue = $state<TimeRange>({
+    start: new Time(12, 30),
+    end: new Time(12, 30),
+  });
 </script>
 
 <button
-	onclick={() => {
-		myValue = {
-			start: myValue.start.add({ hours: 1 }),
-			end: myValue.end.add({ hours: 1 }),
-		};
-	}}
+  onclick={() => {
+    myValue = {
+      start: myValue.start.add({ hours: 1 }),
+      end: myValue.end.add({ hours: 1 }),
+    };
+  }}
 >
-	Add 1 hour
+  Add 1 hour
 </button>
 <TimeRangeField.Root bind:value={myValue}>
-	<!-- ... -->
+  <!-- ... -->
 </TimeRangeField.Root>
 ```
 
@@ -132,24 +132,24 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { TimeRangeField, type TimeRange } from "bits-ui";
+  import { TimeRangeField, type TimeRange } from "bits-ui";
 
-	let myValue = $state<TimeRange | undefined>({
-		start: undefined,
-		end: undefined,
-	});
+  let myValue = $state<TimeRange | undefined>({
+    start: undefined,
+    end: undefined,
+  });
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: TimeRange | undefined) {
-		myValue = newValue;
-	}
+  function setValue(newValue: TimeRange | undefined) {
+    myValue = newValue;
+  }
 </script>
 
 <DateRangeField.Root bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DateRangeField.Root>
 ```
 

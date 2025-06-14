@@ -26,7 +26,7 @@
 				</h3>
 			</div>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			<P class="mb-5! mt-2!">{@html parseMarkdown(schema.description)}</P>
+			<P class="mt-2! mb-5!">{@html parseMarkdown(schema.description)}</P>
 			<div class="flex flex-col gap-4">
 				{#if schema.props}
 					<PropsTable props={schema.props} />

@@ -25,41 +25,45 @@ The Accordion component is a versatile UI element designed to organize content i
 
 ```svelte
 <script lang="ts">
-	import { Accordion } from "bits-ui";
+  import { Accordion } from "bits-ui";
 </script>
 
 <Accordion.Root type="single">
-	<Accordion.Item value="item-1">
-		<Accordion.Header>
-			<Accordion.Trigger>Item 1 Title</Accordion.Trigger>
-		</Accordion.Header>
-		<Accordion.Content>This is the collapsible content for this section.</Accordion.Content>
-	</Accordion.Item>
-	<Accordion.Item value="item-2">
-		<Accordion.Header>
-			<Accordion.Trigger>Item 2 Title</Accordion.Trigger>
-		</Accordion.Header>
-		<Accordion.Content>This is the collapsible content for this section.</Accordion.Content>
-	</Accordion.Item>
+  <Accordion.Item value="item-1">
+    <Accordion.Header>
+      <Accordion.Trigger>Item 1 Title</Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content
+      >This is the collapsible content for this section.</Accordion.Content
+    >
+  </Accordion.Item>
+  <Accordion.Item value="item-2">
+    <Accordion.Header>
+      <Accordion.Trigger>Item 2 Title</Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content
+      >This is the collapsible content for this section.</Accordion.Content
+    >
+  </Accordion.Item>
 </Accordion.Root>
 ```
 
 ## Key Features
 
--   **Single or Multiple Mode**: Toggle between allowing one open section or multiple sections at once.
--   **Accessible by Default**: Built-in ARIA attributes and keyboard navigation support.
--   **Smooth Transitions**: Leverage CSS variables or Svelte transitions for animated open/close effects.
--   **Flexible State**: Use uncontrolled defaults or take full control with bound values.
+- **Single or Multiple Mode**: Toggle between allowing one open section or multiple sections at once.
+- **Accessible by Default**: Built-in ARIA attributes and keyboard navigation support.
+- **Smooth Transitions**: Leverage CSS variables or Svelte transitions for animated open/close effects.
+- **Flexible State**: Use uncontrolled defaults or take full control with bound values.
 
 ## Structure
 
 The Accordion is a compound component made up of several parts:
 
--   `Accordion.Root`: Container that manages overall state
--   `Accordion.Item`: Individual collapsible section
--   `Accordion.Header`: Contains the visible heading
--   `Accordion.Trigger`: The clickable element that toggles content visibility
--   `Accordion.Content`: The collapsible body content
+- `Accordion.Root`: Container that manages overall state
+- `Accordion.Item`: Individual collapsible section
+- `Accordion.Header`: Contains the visible heading
+- `Accordion.Trigger`: The clickable element that toggles content visibility
+- `Accordion.Content`: The collapsible body content
 
 ## Reusable Components
 
@@ -71,23 +75,23 @@ Combines `Item`, `Header`, `Trigger`, and `Content` into a single component:
 
 ```svelte title="MyAccordionItem.svelte"
 <script lang="ts">
-	import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
+  import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
 
-	type Props = WithoutChildrenOrChild<Accordion.ItemProps> & {
-		title: string;
-		content: string;
-	};
+  type Props = WithoutChildrenOrChild<Accordion.ItemProps> & {
+    title: string;
+    content: string;
+  };
 
-	let { title, content, ...restProps }: Props = $props();
+  let { title, content, ...restProps }: Props = $props();
 </script>
 
 <Accordion.Item {...restProps}>
-	<Accordion.Header>
-		<Accordion.Trigger>{item.title}</Accordion.Trigger>
-	</Accordion.Header>
-	<Accordion.Content>
-		{content}
-	</Accordion.Content>
+  <Accordion.Header>
+    <Accordion.Trigger>{item.title}</Accordion.Trigger>
+  </Accordion.Header>
+  <Accordion.Content>
+    {content}
+  </Accordion.Content>
 </Accordion.Item>
 ```
 
@@ -97,23 +101,23 @@ Wraps `Root` and renders multiple `MyAccordionItem` components:
 
 ```svelte title="MyAccordion.svelte"
 <script lang="ts">
-	import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
-	import MyAccordionItem from "$lib/components/MyAccordionItem.svelte";
+  import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
+  import MyAccordionItem from "$lib/components/MyAccordionItem.svelte";
 
-	type Item = {
-		value?: string;
-		title: string;
-		content: string;
-		disabled?: boolean;
-	};
+  type Item = {
+    value?: string;
+    title: string;
+    content: string;
+    disabled?: boolean;
+  };
 
-	let {
-		value = $bindable(),
-		ref = $bindable(null),
-		...restProps
-	}: WithoutChildrenOrChild<Accordion.RootProps> & {
-		items: Item[];
-	} = $props();
+  let {
+    value = $bindable(),
+    ref = $bindable(null),
+    ...restProps
+  }: WithoutChildrenOrChild<Accordion.RootProps> & {
+    items: Item[];
+  } = $props();
 </script>
 
 <!--
@@ -122,9 +126,9 @@ Wraps `Root` and renders multiple `MyAccordionItem` components:
  (an unfortunate consequence of having to destructure bindable values)
   -->
 <Accordion.Root bind:value bind:ref {...restProps as any}>
-	{#each items as item, i (item.title + i)}
-		<MyAccordionItem {...item} />
-	{/each}
+  {#each items as item, i (item.title + i)}
+    <MyAccordionItem {...item} />
+  {/each}
 </Accordion.Root>
 ```
 
@@ -132,11 +136,11 @@ Wraps `Root` and renders multiple `MyAccordionItem` components:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyAccordion from "$lib/components/MyAccordion.svelte";
-	const items = [
-		{ title: "Item 1", content: "Content 1" },
-		{ title: "Item 2", content: "Content 2" },
-	];
+  import MyAccordion from "$lib/components/MyAccordion.svelte";
+  const items = [
+    { title: "Item 1", content: "Content 1" },
+    { title: "Item 2", content: "Content 2" },
+  ];
 </script>
 
 <MyAccordion type="single" {items} />
@@ -158,29 +162,29 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Accordion } from "bits-ui";
-	let myValue = $state<string[]>([]);
-	const numberOfItemsOpen = $derived(myValue.length);
+  import { Accordion } from "bits-ui";
+  let myValue = $state<string[]>([]);
+  const numberOfItemsOpen = $derived(myValue.length);
 </script>
 
 <button
-	onclick={() => {
-		myValue = ["item-1", "item-2"];
-	}}
+  onclick={() => {
+    myValue = ["item-1", "item-2"];
+  }}
 >
-	Open Items 1 and 2
+  Open Items 1 and 2
 </button>
 
 <Accordion.Root type="multiple" bind:value={myValue}>
-	<Accordion.Item value="item-1">
-		<!-- ... -->
-	</Accordion.Item>
-	<Accordion.Item value="item-2">
-		<!-- ... -->
-	</Accordion.Item>
-	<Accordion.Item value="item-3">
-		<!-- ... -->
-	</Accordion.Item>
+  <Accordion.Item value="item-1">
+    <!-- ... -->
+  </Accordion.Item>
+  <Accordion.Item value="item-2">
+    <!-- ... -->
+  </Accordion.Item>
+  <Accordion.Item value="item-3">
+    <!-- ... -->
+  </Accordion.Item>
 </Accordion.Root>
 ```
 
@@ -190,20 +194,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Accordion } from "bits-ui";
-	let myValue = $state("");
+  import { Accordion } from "bits-ui";
+  let myValue = $state("");
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string) {
-		myValue = newValue;
-	}
+  function setValue(newValue: string) {
+    myValue = newValue;
+  }
 </script>
 
 <Accordion.Root type="single" bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </Accordion.Root>
 ```
 
@@ -217,12 +221,12 @@ Set the `type` prop to `"single"` to allow only one accordion item to be open at
 
 ```svelte /type="single"/
 <MyAccordion
-	type="single"
-	items={[
-		{ title: "Title A", content: "Content A" },
-		{ title: "Title B", content: "Content B" },
-		{ title: "Title C", content: "Content C" },
-	]}
+  type="single"
+  items={[
+    { title: "Title A", content: "Content A" },
+    { title: "Title B", content: "Content B" },
+    { title: "Title C", content: "Content C" },
+  ]}
 />
 ```
 
@@ -232,12 +236,12 @@ Set the `type` prop to `"multiple"` to allow multiple accordion items to be open
 
 ```svelte /type="multiple"/
 <MyAccordion
-	type="multiple"
-	items={[
-		{ title: "Title A", content: "Content A" },
-		{ title: "Title B", content: "Content B" },
-		{ title: "Title C", content: "Content C" },
-	]}
+  type="multiple"
+  items={[
+    { title: "Title A", content: "Content A" },
+    { title: "Title B", content: "Content B" },
+    { title: "Title C", content: "Content C" },
+  ]}
 />
 ```
 
@@ -259,9 +263,9 @@ Disable specific items with the `disabled` prop:
 
 ```svelte {2}
 <Accordion.Root type="single">
-	<Accordion.Item value="item-1" disabled>
-		<!-- ... -->
-	</Accordion.Item>
+  <Accordion.Item value="item-1" disabled>
+    <!-- ... -->
+  </Accordion.Item>
 </Accordion.Root>
 ```
 
@@ -275,22 +279,22 @@ To apply Svelte transitions to Accordion components, use the `forceMount` prop i
 
 ```svelte
 <Accordion.Content forceMount={true}>
-	{#snippet child({ props, open })}
-		{#if open}
-			<div {...props} transition:slide={{ duration: 1000 }}>
-				This is the accordion content that will transition in and out.
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ props, open })}
+    {#if open}
+      <div {...props} transition:slide={{ duration: 1000 }}>
+        This is the accordion content that will transition in and out.
+      </div>
+    {/if}
+  {/snippet}
 </Accordion.Content>
 ```
 
 In this example:
 
--   The `forceMount` prop ensures the components are always in the DOM.
--   The `child` snippet provides access to the open state and component props.
--   Svelte's `#if` block controls when the content is visible.
--   Transition directives (`transition:fade` and `transition:fly`) apply the animations.
+- The `forceMount` prop ensures the components are always in the DOM.
+- The `child` snippet provides access to the open state and component props.
+- Svelte's `#if` block controls when the content is visible.
+- Transition directives (`transition:fade` and `transition:fly`) apply the animations.
 
 <ComponentPreviewV2 name="accordion-demo-transitions" componentName="Accordion">
 
@@ -306,29 +310,29 @@ For cleaner code and better maintainability, consider creating custom reusable c
 
 ```svelte title="MyAccordionContent.svelte"
 <script lang="ts">
-	import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
-	import type { Snippet } from "svelte";
-	import { fade } from "svelte/transition";
+  import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
+  import type { Snippet } from "svelte";
+  import { fade } from "svelte/transition";
 
-	let {
-		ref = $bindable(null),
-		duration = 200,
-		children,
-		...restProps
-	}: WithoutChildrenOrChild<Accordion.ContentProps> & {
-		duration?: number;
-		children: Snippet;
-	} = $props();
+  let {
+    ref = $bindable(null),
+    duration = 200,
+    children,
+    ...restProps
+  }: WithoutChildrenOrChild<Accordion.ContentProps> & {
+    duration?: number;
+    children: Snippet;
+  } = $props();
 </script>
 
 <Accordion.Content forceMount bind:ref {...restProps}>
-	{#snippet child({ props, open })}
-		{#if open}
-			<div {...props} transition:fade={{ duration }}>
-				{@render children?.()}
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ props, open })}
+    {#if open}
+      <div {...props} transition:fade={{ duration }}>
+        {@render children?.()}
+      </div>
+    {/if}
+  {/snippet}
 </Accordion.Content>
 ```
 
@@ -336,14 +340,14 @@ You can then use the `MyAccordionContent` component alongside the other `Accordi
 
 ```svelte
 <Accordion.Root>
-	<Accordion.Item value="A">
-		<Accordion.Header>
-			<Accordion.Trigger>A</Accordion.Trigger>
-		</Accordion.Header>
-		<MyAccordionContent duration={300}>
-			<!-- ... -->
-		</MyAccordionContent>
-	</Accordion.Item>
+  <Accordion.Item value="A">
+    <Accordion.Header>
+      <Accordion.Trigger>A</Accordion.Trigger>
+    </Accordion.Header>
+    <MyAccordionContent duration={300}>
+      <!-- ... -->
+    </MyAccordionContent>
+  </Accordion.Item>
 </Accordion.Root>
 ```
 

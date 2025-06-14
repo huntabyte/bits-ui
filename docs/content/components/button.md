@@ -20,7 +20,7 @@ description: A component that if passed a `href` prop will render an anchor elem
 
 ```svelte
 <script lang="ts">
-	import { Button } from "bits-ui";
+  import { Button } from "bits-ui";
 </script>
 
 <Button.Root />

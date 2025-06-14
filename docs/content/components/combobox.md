@@ -22,29 +22,29 @@ The Combobox component combines the functionality of an input field with a dropd
 
 ## Key Features
 
--   **Keyboard Navigation**: Full support for keyboard interactions, allowing users to navigate and select options without using a mouse.
--   **Customizable Rendering**: Flexible architecture for rendering options, including support for grouped items.
--   **Accessibility**: Built with ARIA attributes and keyboard interactions to ensure screen reader compatibility and accessibility standards.
--   **Portal Support**: Ability to render the dropdown content in a portal, preventing layout issues in complex UI structures.
+- **Keyboard Navigation**: Full support for keyboard interactions, allowing users to navigate and select options without using a mouse.
+- **Customizable Rendering**: Flexible architecture for rendering options, including support for grouped items.
+- **Accessibility**: Built with ARIA attributes and keyboard interactions to ensure screen reader compatibility and accessibility standards.
+- **Portal Support**: Ability to render the dropdown content in a portal, preventing layout issues in complex UI structures.
 
 ## Architecture
 
 The Combobox component is composed of several sub-components, each with a specific role:
 
--   **Root**: The main container component that manages the state and context for the combobox.
--   **Input**: The input field that allows users to enter search queries.
--   **Trigger**: The button or element that opens the dropdown list.
--   **Portal**: Responsible for portalling the dropdown content to the body or a custom target.
--   **Group**: A container for grouped items, used to group related items.
--   **GroupHeading**: A heading for a group of items, providing a descriptive label for the group.
--   **Item**: An individual item within the list.
--   **Separator**: A visual separator between items.
--   **Content**: The dropdown container that displays the items. It uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger.
--   **ContentStatic**: An alternative to the Content component, that enables you to opt-out of Floating UI and position the content yourself.
--   **Viewport**: The visible area of the dropdown content, used to determine the size and scroll behavior.
--   **ScrollUpButton**: A button that scrolls the content up when the content is larger than the viewport.
--   **ScrollDownButton**: A button that scrolls the content down when the content is larger than the viewport.
--   **Arrow**: An arrow element that points to the trigger when using the `Combobox.Content` component.
+- **Root**: The main container component that manages the state and context for the combobox.
+- **Input**: The input field that allows users to enter search queries.
+- **Trigger**: The button or element that opens the dropdown list.
+- **Portal**: Responsible for portalling the dropdown content to the body or a custom target.
+- **Group**: A container for grouped items, used to group related items.
+- **GroupHeading**: A heading for a group of items, providing a descriptive label for the group.
+- **Item**: An individual item within the list.
+- **Separator**: A visual separator between items.
+- **Content**: The dropdown container that displays the items. It uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger.
+- **ContentStatic**: An alternative to the Content component, that enables you to opt-out of Floating UI and position the content yourself.
+- **Viewport**: The visible area of the dropdown content, used to determine the size and scroll behavior.
+- **ScrollUpButton**: A button that scrolls the content up when the content is larger than the viewport.
+- **ScrollDownButton**: A button that scrolls the content down when the content is larger than the viewport.
+- **Arrow**: An arrow element that points to the trigger when using the `Combobox.Content` component.
 
 ## Structure
 
@@ -52,21 +52,21 @@ Here's an overview of how the Combobox component is structured in code:
 
 ```svelte
 <script lang="ts">
-	import { Combobox } from "bits-ui";
+  import { Combobox } from "bits-ui";
 </script>
 
 <Combobox.Root>
-	<Combobox.Input />
-	<Combobox.Trigger />
-	<Combobox.Portal>
-		<Combobox.Content>
-			<Combobox.Group>
-				<Combobox.GroupHeading />
-				<Combobox.Item />
-			</Combobox.Group>
-			<Combobox.Item />
-		</Combobox.Content>
-	</Combobox.Portal>
+  <Combobox.Input />
+  <Combobox.Trigger />
+  <Combobox.Portal>
+    <Combobox.Content>
+      <Combobox.Group>
+        <Combobox.GroupHeading />
+        <Combobox.Item />
+      </Combobox.Group>
+      <Combobox.Item />
+    </Combobox.Content>
+  </Combobox.Portal>
 </Combobox.Root>
 ```
 
@@ -76,40 +76,46 @@ It's recommended to use the `Combobox` primitives to build your own custom combo
 
 ```svelte title="CustomCombobox.svelte"
 <script lang="ts">
-	import { Combobox, type WithoutChildrenOrChild, mergeProps } from "bits-ui";
+  import { Combobox, type WithoutChildrenOrChild, mergeProps } from "bits-ui";
 
-	type Props = Combobox.RootProps & {
-		inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
-		contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
-	};
+  type Props = Combobox.RootProps & {
+    inputProps?: WithoutChildrenOrChild<Combobox.InputProps>;
+    contentProps?: WithoutChildrenOrChild<Combobox.ContentProps>;
+  };
 
-	let {
-		items = [],
-		value = $bindable(),
-		open = $bindable(false),
-		inputProps,
-		contentProps,
-		type,
-		...restProps
-	}: Props = $props();
+  let {
+    items = [],
+    value = $bindable(),
+    open = $bindable(false),
+    inputProps,
+    contentProps,
+    type,
+    ...restProps
+  }: Props = $props();
 
-	let searchValue = $state("");
+  let searchValue = $state("");
 
-	const filteredItems = $derived.by(() => {
-		if (searchValue === "") return items;
-		return items.filter((item) => item.label.toLowerCase().includes(searchValue.toLowerCase()));
-	});
+  const filteredItems = $derived.by(() => {
+    if (searchValue === "") return items;
+    return items.filter((item) =>
+      item.label.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  });
 
-	function handleInput(e: Event & { currentTarget: HTMLInputElement }) {
-		searchValue = e.currentTarget.value;
-	}
+  function handleInput(e: Event & { currentTarget: HTMLInputElement }) {
+    searchValue = e.currentTarget.value;
+  }
 
-	function handleOpenChange(newOpen: boolean) {
-		if (!newOpen) searchValue = "";
-	}
+  function handleOpenChange(newOpen: boolean) {
+    if (!newOpen) searchValue = "";
+  }
 
-	const mergedRootProps = $derived(mergeProps(restProps, { onOpenChange: handleOpenChange }));
-	const mergedInputProps = $derived(mergeProps(inputProps, { oninput: handleInput }));
+  const mergedRootProps = $derived(
+    mergeProps(restProps, { onOpenChange: handleOpenChange })
+  );
+  const mergedInputProps = $derived(
+    mergeProps(inputProps, { oninput: handleInput })
+  );
 </script>
 
 <!--
@@ -117,36 +123,42 @@ Destructuring (required for bindable) and discriminated unions don't play well t
 so we cast the value to `never` to avoid type errors here. However, on the consumer
 side, the component will still be type-checked correctly.
 -->
-<Combobox.Root {type} {items} bind:value={value as never} bind:open {...mergedRootProps}>
-	<Combobox.Input {...mergedInputProps} />
-	<Combobox.Trigger>Open</Combobox.Trigger>
-	<Combobox.Portal>
-		<Combobox.Content {...contentProps}>
-			{#each filteredItems as item, i (i + item.value)}
-				<Combobox.Item {...item}>
-					{#snippet children({ selected })}
-						{item.label}
-						{selected ? "✅" : ""}
-					{/snippet}
-				</Combobox.Item>
-			{:else}
-				<span> No results found </span>
-			{/each}
-		</Combobox.Content>
-	</Combobox.Portal>
+<Combobox.Root
+  {type}
+  {items}
+  bind:value={value as never}
+  bind:open
+  {...mergedRootProps}
+>
+  <Combobox.Input {...mergedInputProps} />
+  <Combobox.Trigger>Open</Combobox.Trigger>
+  <Combobox.Portal>
+    <Combobox.Content {...contentProps}>
+      {#each filteredItems as item, i (i + item.value)}
+        <Combobox.Item {...item}>
+          {#snippet children({ selected })}
+            {item.label}
+            {selected ? "✅" : ""}
+          {/snippet}
+        </Combobox.Item>
+      {:else}
+        <span> No results found </span>
+      {/each}
+    </Combobox.Content>
+  </Combobox.Portal>
 </Combobox.Root>
 ```
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import { CustomCombobox } from "$lib/components";
+  import { CustomCombobox } from "$lib/components";
 
-	const items = [
-		{ value: "mango", label: "Mango" },
-		{ value: "watermelon", label: "Watermelon" },
-		{ value: "apple", label: "Apple" },
-		// ...
-	];
+  const items = [
+    { value: "mango", label: "Mango" },
+    { value: "watermelon", label: "Watermelon" },
+    { value: "apple", label: "Apple" },
+    // ...
+  ];
 </script>
 
 <CustomCombobox type="single" {items} />
@@ -162,14 +174,14 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Combobox } from "bits-ui";
-	let myValue = $state("");
+  import { Combobox } from "bits-ui";
+  let myValue = $state("");
 </script>
 
 <button onclick={() => (myValue = "A")}> Select A </button>
 
 <Combobox.Root type="single" bind:value={myValue}>
-	<!-- ... -->
+  <!-- ... -->
 </Combobox.Root>
 ```
 
@@ -179,20 +191,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Combobox } from "bits-ui";
-	let myValue = $state("");
+  import { Combobox } from "bits-ui";
+  let myValue = $state("");
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string) {
-		myValue = newValue;
-	}
+  function setValue(newValue: string) {
+    myValue = newValue;
+  }
 </script>
 
 <Combobox.Root type="single" bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </Combobox.Root>
 ```
 
@@ -206,14 +218,14 @@ Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Combobox } from "bits-ui";
-	let myOpen = $state(false);
+  import { Combobox } from "bits-ui";
+  let myOpen = $state(false);
 </script>
 
 <button onclick={() => (myOpen = true)}> Open </button>
 
 <Combobox.Root bind:open={myOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </Combobox.Root>
 ```
 
@@ -223,20 +235,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Combobox } from "bits-ui";
-	let myOpen = $state(false);
+  import { Combobox } from "bits-ui";
+  let myOpen = $state(false);
 
-	function getOpen() {
-		return myOpen;
-	}
+  function getOpen() {
+    return myOpen;
+  }
 
-	function setOpen(newOpen: boolean) {
-		myOpen = newOpen;
-	}
+  function setOpen(newOpen: boolean) {
+    myOpen = newOpen;
+  }
 </script>
 
 <Combobox.Root type="single" bind:open={getOpen, setOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </Combobox.Root>
 ```
 
@@ -248,21 +260,21 @@ You can opt-out of this behavior by instead using the `Combobox.ContentStatic` c
 
 ```svelte {4,14}
 <Combobox.Root>
-	<Combobox.Trigger />
-	<Combobox.Input />
-	<Combobox.Portal>
-		<Combobox.ContentStatic>
-			<Combobox.ScrollUpButton />
-			<Combobox.Viewport>
-				<Combobox.Item />
-				<Combobox.Group>
-					<Combobox.GroupHeading />
-					<Combobox.Item />
-				</Combobox.Group>
-			</Combobox.Viewport>
-			<Combobox.ScrollDownButton />
-		</Combobox.ContentStatic>
-	</Combobox.Portal>
+  <Combobox.Trigger />
+  <Combobox.Input />
+  <Combobox.Portal>
+    <Combobox.ContentStatic>
+      <Combobox.ScrollUpButton />
+      <Combobox.Viewport>
+        <Combobox.Item />
+        <Combobox.Group>
+          <Combobox.GroupHeading />
+          <Combobox.Item />
+        </Combobox.Group>
+      </Combobox.Viewport>
+      <Combobox.ScrollDownButton />
+    </Combobox.ContentStatic>
+  </Combobox.Portal>
 </Combobox.Root>
 ```
 
@@ -276,19 +288,19 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 ```svelte
 <script lang="ts">
-	import { Combobox } from "bits-ui";
+  import { Combobox } from "bits-ui";
 
-	let customAnchor = $state<HTMLElement>(null!);
+  let customAnchor = $state<HTMLElement>(null!);
 </script>
 
 <div bind:this={customAnchor}></div>
 
 <Combobox.Root>
-	<Combobox.Trigger />
-	<Combobox.Input />
-	<Combobox.Content {customAnchor}>
-		<!-- ... -->
-	</Combobox.Content>
+  <Combobox.Trigger />
+  <Combobox.Input />
+  <Combobox.Content {customAnchor}>
+    <!-- ... -->
+  </Combobox.Content>
 </Combobox.Root>
 ```
 
@@ -330,7 +342,7 @@ To prevent the user from scrolling outside of the `Combobox.Content` component w
 
 ```svelte /preventScroll={true}/
 <Combobox.Content preventScroll={true}>
-	<!-- ... -->
+  <!-- ... -->
 </Combobox.Content>
 ```
 
@@ -358,20 +370,20 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 ```svelte /forceMount/ /transition:fly/
 <script lang="ts">
-	import { Combobox } from "bits-ui";
-	import { fly } from "svelte/transition";
+  import { Combobox } from "bits-ui";
+  import { fly } from "svelte/transition";
 </script>
 
 <Combobox.Content forceMount>
-	{#snippet child({ wrapperProps, props, open })}
-		{#if open}
-			<div {...wrapperProps}>
-				<div {...props} transition:fly>
-					<!-- ... -->
-				</div>
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ wrapperProps, props, open })}
+    {#if open}
+      <div {...wrapperProps}>
+        <div {...props} transition:fly>
+          <!-- ... -->
+        </div>
+      </div>
+    {/if}
+  {/snippet}
 </Combobox.Content>
 ```
 

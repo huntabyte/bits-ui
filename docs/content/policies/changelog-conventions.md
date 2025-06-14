@@ -17,21 +17,21 @@ Each entry should follow this structure:
 
 ### Format Breakdown
 
--   **Type**: A single-word prefix that categories the change.
-    -   `fix`: Resolves a bug or issue.
-    -   `feat`: Adds a new feature or enhancement (typically for a Minor or Major release).
-    -   `improve`: Enhances existing functionality without fixing a bug.
-    -   `chore`: Internal refactors, cleanups, or tooling changes with no user-facing impact
-    -   `docs`: Changes to documentation in the codebase, such as JSdoc comments. Documentation site only changes do not require a changelog entry.
--   **Scope**: In parentheses, specifies the affected component(s) or area
-    -   Use the component name (e.g., `Select`, `Tooltip`, `Calendar`) when the change is specific to a component
-    -   Use a general term (e.g., `all` for accessibility, `SSR` for server-side rendering) if the change spans multiple components or isn't tied to one
-    -   Omit scope (e.g., `fix: ...`) only if the change is truly global and not component-specific (rare).
--   **Description**: A concise, lowercase phrase or sentence (no period at the end) describing the change.
-    -   Start with a verb (e.g., "fix", "add", "ensure", "expose") where possible.
-    -   Use backticks for inline code like prop names, types, or values (e.g., `disableOutsideDays`)
-    -   Keep it specific - avoid vague terms like "issues" unless clarified (e.g., "accessibility issues" is okay).
-    -   Aim for 10-15 words max.
+- **Type**: A single-word prefix that categories the change.
+  - `fix`: Resolves a bug or issue.
+  - `feat`: Adds a new feature or enhancement (typically for a Minor or Major release).
+  - `improve`: Enhances existing functionality without fixing a bug.
+  - `chore`: Internal refactors, cleanups, or tooling changes with no user-facing impact
+  - `docs`: Changes to documentation in the codebase, such as JSdoc comments. Documentation site only changes do not require a changelog entry.
+- **Scope**: In parentheses, specifies the affected component(s) or area
+  - Use the component name (e.g., `Select`, `Tooltip`, `Calendar`) when the change is specific to a component
+  - Use a general term (e.g., `all` for accessibility, `SSR` for server-side rendering) if the change spans multiple components or isn't tied to one
+  - Omit scope (e.g., `fix: ...`) only if the change is truly global and not component-specific (rare).
+- **Description**: A concise, lowercase phrase or sentence (no period at the end) describing the change.
+  - Start with a verb (e.g., "fix", "add", "ensure", "expose") where possible.
+  - Use backticks for inline code like prop names, types, or values (e.g., `disableOutsideDays`)
+  - Keep it specific - avoid vague terms like "issues" unless clarified (e.g., "accessibility issues" is okay).
+  - Aim for 10-15 words max.
 
 ## Examples
 
@@ -42,7 +42,7 @@ Here's hwo changelog entries should look:
 
 ### Patch Changes
 
--   fix(Select.Trigger): improve accessibility for screen readers and keyboard navigation
+- fix(Select.Trigger): improve accessibility for screen readers and keyboard navigation
 ```
 
 ```md
@@ -50,8 +50,8 @@ Here's hwo changelog entries should look:
 
 ### Patch Changes
 
--   chore(Menubar.Content): simplify internal implementation for maintainability
--   fix(Menubar): prevent multiple submenus from opening simultaneously when too close
+- chore(Menubar.Content): simplify internal implementation for maintainability
+- fix(Menubar): prevent multiple submenus from opening simultaneously when too close
 ```
 
 ```md
@@ -59,7 +59,7 @@ Here's hwo changelog entries should look:
 
 ### Patch Changes
 
--   fix(Calendar): prevent outside days from being focusable when `disableOutsideDays` is `true`
--   fix(Range Calendar): prevent outside days from being focusable when `disableOutsideDays` is `true`
--   fix(Calendar): ensure default placeholder isn't a disabled date for keyboard navigation
+- fix(Calendar): prevent outside days from being focusable when `disableOutsideDays` is `true`
+- fix(Range Calendar): prevent outside days from being focusable when `disableOutsideDays` is `true`
+- fix(Calendar): ensure default placeholder isn't a disabled date for keyboard navigation
 ```

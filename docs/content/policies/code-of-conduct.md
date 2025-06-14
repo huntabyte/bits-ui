@@ -9,18 +9,18 @@ We want Bits UI to be a welcoming and productive community for everyone. To that
 
 ## Community Guidelines
 
--   **Be Respectful** – Treat everyone with respect, even when you disagree. Personal attacks, harassment, and aggressive behavior are not tolerated.
--   **Be Constructive** – Focus on productive discussions and feedback. Avoid negativity without offering solutions.
--   **Follow Contribution Guidelines** – Feature requests should start as discussions before being considered for implementation. Issues should be limited to confirmed bugs or accepted feature requests ready for development.
--   **Keep Discussions On-Topic** – Use the appropriate channels for discussions, issues, and pull requests to keep the project organized and efficient.
+- **Be Respectful** – Treat everyone with respect, even when you disagree. Personal attacks, harassment, and aggressive behavior are not tolerated.
+- **Be Constructive** – Focus on productive discussions and feedback. Avoid negativity without offering solutions.
+- **Follow Contribution Guidelines** – Feature requests should start as discussions before being considered for implementation. Issues should be limited to confirmed bugs or accepted feature requests ready for development.
+- **Keep Discussions On-Topic** – Use the appropriate channels for discussions, issues, and pull requests to keep the project organized and efficient.
 
 ## Unacceptable Behavior Includes (but is not limited to):
 
--   Personal attacks, insults, or threats.
--   Harassment, bullying, or intimidation.
--   Discrimination based on any personal attribute.
--   Spamming, trolling, or deliberately disruptive behavior.
--   Sharing private information without consent.
+- Personal attacks, insults, or threats.
+- Harassment, bullying, or intimidation.
+- Discrimination based on any personal attribute.
+- Spamming, trolling, or deliberately disruptive behavior.
+- Sharing private information without consent.
 
 ## Enforcement
 

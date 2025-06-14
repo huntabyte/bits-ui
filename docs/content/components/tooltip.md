@@ -20,18 +20,18 @@ description: Provides additional information or context when users hover over or
 
 ```svelte
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
+  import { Tooltip } from "bits-ui";
 </script>
 
 <Tooltip.Provider>
-	<Tooltip.Root>
-		<Tooltip.Trigger />
-		<Tooltip.Portal>
-			<Tooltip.Content>
-				<Tooltip.Arrow />
-			</Tooltip.Content>
-		</Tooltip.Portal>
-	</Tooltip.Root>
+  <Tooltip.Root>
+    <Tooltip.Trigger />
+    <Tooltip.Portal>
+      <Tooltip.Content>
+        <Tooltip.Arrow />
+      </Tooltip.Content>
+    </Tooltip.Portal>
+  </Tooltip.Root>
 </Tooltip.Provider>
 ```
 
@@ -41,28 +41,28 @@ The `Tooltip.Provider` component is required to be an ancestor of the `Tooltip.R
 
 ```svelte
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
+  import { Tooltip } from "bits-ui";
 </script>
 
 <Tooltip.Provider delayDuration={0} disableHoverableContent={true}>
-	<!-- Will have a delayDuration of 0 and disableHoverableContent of true -->
-	<Tooltip.Root>
-		<Tooltip.Trigger />
-		<Tooltip.Portal>
-			<Tooltip.Content>
-				<Tooltip.Arrow />
-			</Tooltip.Content>
-		</Tooltip.Portal>
-	</Tooltip.Root>
-	<!-- Will have a delayDuration of 0 and disableHoverableContent of true -->
-	<Tooltip.Root>
-		<Tooltip.Trigger />
-		<Tooltip.Portal>
-			<Tooltip.Content>
-				<Tooltip.Arrow />
-			</Tooltip.Content>
-		</Tooltip.Portal>
-	</Tooltip.Root>
+  <!-- Will have a delayDuration of 0 and disableHoverableContent of true -->
+  <Tooltip.Root>
+    <Tooltip.Trigger />
+    <Tooltip.Portal>
+      <Tooltip.Content>
+        <Tooltip.Arrow />
+      </Tooltip.Content>
+    </Tooltip.Portal>
+  </Tooltip.Root>
+  <!-- Will have a delayDuration of 0 and disableHoverableContent of true -->
+  <Tooltip.Root>
+    <Tooltip.Trigger />
+    <Tooltip.Portal>
+      <Tooltip.Content>
+        <Tooltip.Arrow />
+      </Tooltip.Content>
+    </Tooltip.Portal>
+  </Tooltip.Root>
 </Tooltip.Provider>
 ```
 
@@ -70,12 +70,12 @@ It also ensures that only a single tooltip within the same provider can be open 
 
 ```svelte title="+layout.svelte"
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
-	let { children } = $props();
+  import { Tooltip } from "bits-ui";
+  let { children } = $props();
 </script>
 
 <Tooltip.Provider>
-	{@render children()}
+  {@render children()}
 </Tooltip.Provider>
 ```
 
@@ -89,14 +89,14 @@ Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
-	let isOpen = $state(false);
+  import { Tooltip } from "bits-ui";
+  let isOpen = $state(false);
 </script>
 
 <button onclick={() => (isOpen = true)}>Open Tooltip</button>
 
 <Tooltip.Root bind:open={isOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </Tooltip.Root>
 ```
 
@@ -106,20 +106,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
-	let myOpen = $state(false);
+  import { Tooltip } from "bits-ui";
+  let myOpen = $state(false);
 
-	function getOpen() {
-		return myOpen;
-	}
+  function getOpen() {
+    return myOpen;
+  }
 
-	function setOpen(newOpen: boolean) {
-		myOpen = newOpen;
-	}
+  function setOpen(newOpen: boolean) {
+    myOpen = newOpen;
+  }
 </script>
 
 <Tooltip.Root bind:open={getOpen, setOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </Tooltip.Root>
 ```
 
@@ -151,21 +151,21 @@ Below is an example of how you might create a reusable tooltip component that ca
 
 ```svelte title="MyTooltip.svelte"
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
-	import { type Snippet } from "svelte";
+  import { Tooltip } from "bits-ui";
+  import { type Snippet } from "svelte";
 
-	type Props = Tooltip.RootProps & {
-		trigger: Snippet;
-		triggerProps?: Tooltip.TriggerProps;
-	};
+  type Props = Tooltip.RootProps & {
+    trigger: Snippet;
+    triggerProps?: Tooltip.TriggerProps;
+  };
 
-	let {
-		open = $bindable(false),
-		children,
-		buttonText,
-		triggerProps = {},
-		...restProps
-	}: Tooltip.RootProps = $props();
+  let {
+    open = $bindable(false),
+    children,
+    buttonText,
+    triggerProps = {},
+    ...restProps
+  }: Tooltip.RootProps = $props();
 </script>
 
 <!--
@@ -173,15 +173,15 @@ Below is an example of how you might create a reusable tooltip component that ca
  your root layout content
 -->
 <Tooltip.Root bind:open {onOpenChange}>
-	<Tooltip.Trigger {...triggerProps}>
-		{@render trigger()}
-	</Tooltip.Trigger>
-	<Tooltip.Portal>
-		<Tooltip.Content>
-			<Tooltip.Arrow />
-			{@render children?.()}
-		</Tooltip.Content>
-	</Tooltip.Portal>
+  <Tooltip.Trigger {...triggerProps}>
+    {@render trigger()}
+  </Tooltip.Trigger>
+  <Tooltip.Portal>
+    <Tooltip.Content>
+      <Tooltip.Arrow />
+      {@render children?.()}
+    </Tooltip.Content>
+  </Tooltip.Portal>
 </Tooltip.Root>
 ```
 
@@ -189,15 +189,15 @@ You could then use the `MyTooltip` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyTooltip from "$lib/components/MyTooltip.svelte";
-	import BoldIcon from "..some-icon-library"; // not real
+  import MyTooltip from "$lib/components/MyTooltip.svelte";
+  import BoldIcon from "..some-icon-library"; // not real
 </script>
 
 <MyTooltip triggerProps={{ onclick: () => alert("changed to bold!") }}>
-	{#snippet trigger()}
-		<BoldIcon />
-	{/snippet}
-	Change font to bold
+  {#snippet trigger()}
+    <BoldIcon />
+  {/snippet}
+  Change font to bold
 </MyTooltip>
 ```
 
@@ -207,7 +207,7 @@ You can change how long a user needs to hover over a trigger before the tooltip 
 
 ```svelte /delayDuration={200}/
 <Tooltip.Root delayDuration={200}>
-	<!-- .... -->
+  <!-- .... -->
 </Tooltip.Root>
 ```
 
@@ -219,7 +219,7 @@ By default, the tooltip will close when the user clicks the trigger. If you want
 
 ```svelte /disableCloseOnTriggerClick/
 <Tooltip.Root disableCloseOnTriggerClick>
-	<!-- .... -->
+  <!-- .... -->
 </Tooltip.Root>
 ```
 
@@ -229,7 +229,7 @@ By default, the tooltip will remain open when the user hovers over the content. 
 
 ```svelte /disableHoverableContent/
 <Tooltip.Root disableHoverableContent>
-	<!-- .... -->
+  <!-- .... -->
 </Tooltip.Root>
 ```
 
@@ -239,7 +239,7 @@ If you want to prevent opening the tooltip when the user focuses the trigger wit
 
 ```svelte /ignoreNonKeyboardFocus/
 <Tooltip.Root ignoreNonKeyboardFocus>
-	<!-- .... -->
+  <!-- .... -->
 </Tooltip.Root>
 ```
 
@@ -287,10 +287,10 @@ You can opt-out of this behavior by instead using the `Tooltip.ContentStatic` co
 
 ```svelte /Tooltip.ContentStatic/
 <Tooltip.Root>
-	<Tooltip.Trigger>Hello</Tooltip.Trigger>
-	<Tooltip.ContentStatic>
-		<!-- ... -->
-	</Tooltip.ContentStatic>
+  <Tooltip.Trigger>Hello</Tooltip.Trigger>
+  <Tooltip.ContentStatic>
+    <!-- ... -->
+  </Tooltip.ContentStatic>
 </Tooltip.Root>
 ```
 
@@ -308,17 +308,17 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 ```svelte /customAnchor/
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
-	let customAnchor = $state<HTMLElement>(null!);
+  import { Tooltip } from "bits-ui";
+  let customAnchor = $state<HTMLElement>(null!);
 </script>
 
 <div bind:this={customAnchor}></div>
 
 <Tooltip.Root>
-	<Tooltip.Trigger />
-	<Tooltip.Content {customAnchor}>
-		<!-- ... -->
-	</Tooltip.Content>
+  <Tooltip.Trigger />
+  <Tooltip.Content {customAnchor}>
+    <!-- ... -->
+  </Tooltip.Content>
 </Tooltip.Root>
 ```
 

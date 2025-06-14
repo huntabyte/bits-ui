@@ -20,7 +20,7 @@ description: Identifies or describes associated UI elements.
 
 ```svelte
 <script lang="ts">
-	import { Label } from "bits-ui";
+  import { Label } from "bits-ui";
 </script>
 
 <Label.Root />

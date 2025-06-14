@@ -7,17 +7,21 @@ The `WithoutChildren` type helper is used to exclude the `children` snippet prop
 
 ```svelte title="CustomAccordion.svelte"
 <script lang="ts">
-	import { Accordion, type WithoutChildren } from "bits-ui";
+  import { Accordion, type WithoutChildren } from "bits-ui";
 
-	let { value, onValueChange, ...restProps }: WithoutChildren<Accordion.RootProps> = $props();
+  let {
+    value,
+    onValueChange,
+    ...restProps
+  }: WithoutChildren<Accordion.RootProps> = $props();
 </script>
 
 <Accordion.Root {...restProps}>
-	<Accordion.Item {value} {onValueChange}>
-		<Accordion.Header />
-		<Accordion.Trigger />
-		<Accordion.Content />
-	</Accordion.Item>
+  <Accordion.Item {value} {onValueChange}>
+    <Accordion.Header />
+    <Accordion.Trigger />
+    <Accordion.Content />
+  </Accordion.Item>
 </Accordion.Root>
 ```
 

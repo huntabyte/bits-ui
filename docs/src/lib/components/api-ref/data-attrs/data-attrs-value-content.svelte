@@ -27,7 +27,7 @@
 			>
 				<ScrollArea>
 					<div
-						class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pb-0! [&_pre]:pt-0! [&_pre]:outline-hidden! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
+						class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pt-0! [&_pre]:pb-0! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:outline-hidden! [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
 					>
 						<attr.value />
 					</div>

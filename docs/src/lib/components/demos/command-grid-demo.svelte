@@ -155,7 +155,7 @@
 		<Command.Input
 			autofocus={false}
 			class={cn(
-				"focus-override h-input placeholder:text-foreground-alt/50 focus:outline-hidden bg-background inline-flex flex-1 truncate rounded-tl-xl rounded-tr-xl pr-4 text-sm transition-colors focus:ring-0",
+				"focus-override h-input placeholder:text-foreground-alt/50 bg-background focus:outline-hidden inline-flex flex-1 truncate rounded-tl-xl rounded-tr-xl pr-4 text-sm transition-colors focus:ring-0",
 				{ "pl-4": views.length === 1 }
 			)}
 			bind:value={search}

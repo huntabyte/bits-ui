@@ -30,22 +30,22 @@ The `DateRangeField` component combines two [Date Field](/docs/components/date-f
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "$lib";
+  import { DateRangeField } from "$lib";
 </script>
 
 <DateRangeField.Root>
-	<DateRangeField.Label>Check-in date</DateRangeField.Label>
-	{#each ["start", "end"] as const as type}
-		<DateRangeField.Input {type}>
-			{#snippet children({ segments })}
-				{#each segments as { part, value }}
-					<DateRangeField.Segment {part}>
-						{value}
-					</DateRangeField.Segment>
-				{/each}
-			{/snippet}
-		</DateRangeField.Input>
-	{/each}
+  <DateRangeField.Label>Check-in date</DateRangeField.Label>
+  {#each ["start", "end"] as const as type}
+    <DateRangeField.Input {type}>
+      {#snippet children({ segments })}
+        {#each segments as { part, value }}
+          <DateRangeField.Segment {part}>
+            {value}
+          </DateRangeField.Segment>
+        {/each}
+      {/snippet}
+    </DateRangeField.Input>
+  {/each}
 </DateRangeField.Root>
 ```
 
@@ -59,13 +59,13 @@ Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+  import { DateRangeField } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
 <DateRangeField.Root bind:placeholder={myPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </DateRangeField.Root>
 ```
 
@@ -75,21 +75,21 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+  import { DateRangeField } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 
-	function getPlaceholder() {
-		return myPlaceholder;
-	}
+  function getPlaceholder() {
+    return myPlaceholder;
+  }
 
-	function setPlaceholder(newPlaceholder: CalendarDateTime) {
-		myPlaceholder = newPlaceholder;
-	}
+  function setPlaceholder(newPlaceholder: CalendarDateTime) {
+    myPlaceholder = newPlaceholder;
+  }
 </script>
 
 <DateRangeField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </DateRangeField.Root>
 ```
 
@@ -103,26 +103,26 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { DateRangeField, type DateRange } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state<DateRange>({
-		start: new CalendarDateTime(2024, 8, 3, 12, 30),
-		end: new CalendarDateTime(2024, 8, 4, 12, 30),
-	});
+  import { DateRangeField, type DateRange } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myValue = $state<DateRange>({
+    start: new CalendarDateTime(2024, 8, 3, 12, 30),
+    end: new CalendarDateTime(2024, 8, 4, 12, 30),
+  });
 </script>
 
 <button
-	onclick={() => {
-		value = {
-			start: value.start.add({ days: 1 }),
-			end: value.end.add({ days: 1 }),
-		};
-	}}
+  onclick={() => {
+    value = {
+      start: value.start.add({ days: 1 }),
+      end: value.end.add({ days: 1 }),
+    };
+  }}
 >
-	Add 1 day
+  Add 1 day
 </button>
 <DateRangeField.Root bind:value={myValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DateRangeField.Root>
 ```
 
@@ -132,23 +132,23 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DateRangeField } from "bits-ui";
-	let myValue = $state<DateRange>({
-		start: undefined,
-		end: undefined,
-	});
+  import { DateRangeField } from "bits-ui";
+  let myValue = $state<DateRange>({
+    start: undefined,
+    end: undefined,
+  });
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: DateRange) {
-		myValue = newValue;
-	}
+  function setValue(newValue: DateRange) {
+    myValue = newValue;
+  }
 </script>
 
 <DateRangeField.Root bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DateRangeField.Root>
 ```
 

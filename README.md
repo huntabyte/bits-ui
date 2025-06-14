@@ -19,10 +19,10 @@ Visit https://bits-ui.com/docs to view the documentation.
 
 ## Credits
 
--   [Bitworks](https://bitworks.cz) - The design team behind the Bits UI documentation and example components.
--   [Melt UI](https://melt-ui.com) - A powerful builder API that inspired the internal architecture of Bits UI.
--   [Radix UI](https://radix-ui.com) - The incredible headless component APIs that we've taken heavy inspiration from.
--   [React Spectrum](https://react-spectrum.adobe.com) - An incredible collection of headless components we've taken inspiration from.
+- [Bitworks](https://bitworks.cz) - The design team behind the Bits UI documentation and example components.
+- [Melt UI](https://melt-ui.com) - A powerful builder API that inspired the internal architecture of Bits UI.
+- [Radix UI](https://radix-ui.com) - The incredible headless component APIs that we've taken heavy inspiration from.
+- [React Spectrum](https://react-spectrum.adobe.com) - An incredible collection of headless components we've taken inspiration from.
 
 ## Sponsors
 

@@ -18,44 +18,44 @@ description: A modal window that alerts users with important information and awa
 
 ## Key Features
 
--   **Compound Component Structure**: Build flexible, customizable alert dialogs using sub-components.
--   **Accessibility**: ARIA-compliant with full keyboard navigation support.
--   **Portal Support**: Render content outside the normal DOM hierarchy for proper stacking.
--   **Managed Focus**: Automatically traps focus with customization options.
--   **Flexible State**: Supports both controlled and uncontrolled open states.
+- **Compound Component Structure**: Build flexible, customizable alert dialogs using sub-components.
+- **Accessibility**: ARIA-compliant with full keyboard navigation support.
+- **Portal Support**: Render content outside the normal DOM hierarchy for proper stacking.
+- **Managed Focus**: Automatically traps focus with customization options.
+- **Flexible State**: Supports both controlled and uncontrolled open states.
 
 ## Structure
 
 The Alert Dialog is built from sub-components, each with a specific purpose:
 
--   **Root**: Manages state and provides context to child components.
--   **Trigger**: Toggles the dialog's open/closed state.
--   **Portal**: Renders its children in a portal, outside the normal DOM hierarchy.
--   **Overlay**: Displays a backdrop behind the dialog.
--   **Content**: Holds the dialog's main content.
--   **Title**: Displays the dialog's title.
--   **Description**: Displays a description or additional context for the dialog.
--   **Cancel**: Closes the dialog without action.
--   **Action**: Confirms the dialog's action.
+- **Root**: Manages state and provides context to child components.
+- **Trigger**: Toggles the dialog's open/closed state.
+- **Portal**: Renders its children in a portal, outside the normal DOM hierarchy.
+- **Overlay**: Displays a backdrop behind the dialog.
+- **Content**: Holds the dialog's main content.
+- **Title**: Displays the dialog's title.
+- **Description**: Displays a description or additional context for the dialog.
+- **Cancel**: Closes the dialog without action.
+- **Action**: Confirms the dialog's action.
 
 Here's a simple example of an Alert Dialog:
 
 ```svelte
 <script lang="ts">
-	import { AlertDialog } from "bits-ui";
+  import { AlertDialog } from "bits-ui";
 </script>
 
 <AlertDialog.Root>
-	<AlertDialog.Trigger>Open Dialog</AlertDialog.Trigger>
-	<AlertDialog.Portal>
-		<AlertDialog.Overlay />
-		<AlertDialog.Content>
-			<AlertDialog.Title>Confirm Action</AlertDialog.Title>
-			<AlertDialog.Description>Are you sure?</AlertDialog.Description>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action>Confirm</AlertDialog.Action>
-		</AlertDialog.Content>
-	</AlertDialog.Portal>
+  <AlertDialog.Trigger>Open Dialog</AlertDialog.Trigger>
+  <AlertDialog.Portal>
+    <AlertDialog.Overlay />
+    <AlertDialog.Content>
+      <AlertDialog.Title>Confirm Action</AlertDialog.Title>
+      <AlertDialog.Description>Are you sure?</AlertDialog.Description>
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action>Confirm</AlertDialog.Action>
+    </AlertDialog.Content>
+  </AlertDialog.Portal>
 </AlertDialog.Root>
 ```
 
@@ -65,46 +65,46 @@ For consistency across your app, create a reusable Alert Dialog component. Here'
 
 ```svelte title="MyAlertDialog.svelte"
 <script lang="ts">
-	import type { Snippet } from "svelte";
-	import { AlertDialog, type WithoutChild } from "bits-ui";
+  import type { Snippet } from "svelte";
+  import { AlertDialog, type WithoutChild } from "bits-ui";
 
-	type Props = AlertDialog.RootProps & {
-		buttonText: string;
-		title: Snippet;
-		description: Snippet;
-		contentProps?: WithoutChild<AlertDialog.ContentProps>;
-		// ...other component props if you wish to pass them
-	};
+  type Props = AlertDialog.RootProps & {
+    buttonText: string;
+    title: Snippet;
+    description: Snippet;
+    contentProps?: WithoutChild<AlertDialog.ContentProps>;
+    // ...other component props if you wish to pass them
+  };
 
-	let {
-		open = $bindable(false),
-		children,
-		buttonText,
-		contentProps,
-		title,
-		description,
-		...restProps
-	}: Props = $props();
+  let {
+    open = $bindable(false),
+    children,
+    buttonText,
+    contentProps,
+    title,
+    description,
+    ...restProps
+  }: Props = $props();
 </script>
 
 <AlertDialog.Root bind:open {...restProps}>
-	<AlertDialog.Trigger>
-		{buttonText}
-	</AlertDialog.Trigger>
-	<AlertDialog.Portal>
-		<AlertDialog.Overlay />
-		<AlertDialog.Content {...contentProps}>
-			<AlertDialog.Title>
-				{@render title()}
-			</AlertDialog.Title>
-			<AlertDialog.Description>
-				{@render description()}
-			</AlertDialog.Description>
-			{@render children?.()}
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action>Confirm</AlertDialog.Action>
-		</AlertDialog.Content>
-	</AlertDialog.Portal>
+  <AlertDialog.Trigger>
+    {buttonText}
+  </AlertDialog.Trigger>
+  <AlertDialog.Portal>
+    <AlertDialog.Overlay />
+    <AlertDialog.Content {...contentProps}>
+      <AlertDialog.Title>
+        {@render title()}
+      </AlertDialog.Title>
+      <AlertDialog.Description>
+        {@render description()}
+      </AlertDialog.Description>
+      {@render children?.()}
+      <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+      <AlertDialog.Action>Confirm</AlertDialog.Action>
+    </AlertDialog.Content>
+  </AlertDialog.Portal>
 </AlertDialog.Root>
 ```
 
@@ -112,16 +112,16 @@ You can then use the `MyAlertDialog` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyAlertDialog from "$lib/components/MyAlertDialog.svelte";
+  import MyAlertDialog from "$lib/components/MyAlertDialog.svelte";
 </script>
 
 <MyAlertDialog buttonText="Open Dialog">
-	{#snippet title()}
-		Delete your account
-	{/snippet}
-	{#snippet description()}
-		This action cannot be undone.
-	{/snippet}
+  {#snippet title()}
+    Delete your account
+  {/snippet}
+  {#snippet description()}
+    This action cannot be undone.
+  {/snippet}
 </MyAlertDialog>
 ```
 
@@ -129,18 +129,18 @@ Alternatively, you can define the snippets separately and pass them as props to 
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyAlertDialog from "$lib/components/MyAlertDialog.svelte";
+  import MyAlertDialog from "$lib/components/MyAlertDialog.svelte";
 </script>
 
 {#snippet title()}
-	Delete your account
+  Delete your account
 {/snippet}
 {#snippet description()}
-	This action cannot be undone.
+  This action cannot be undone.
 {/snippet}
 
 <MyAlertDialog buttonText="Open Dialog" {title} {description}>
-	<!-- ... additional content here -->
+  <!-- ... additional content here -->
 </MyAlertDialog>
 ```
 
@@ -158,14 +158,14 @@ Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { AlertDialog } from "bits-ui";
-	let isOpen = $state(false);
+  import { AlertDialog } from "bits-ui";
+  let isOpen = $state(false);
 </script>
 
 <button onclick={() => (isOpen = true)}>Open Dialog</button>
 
 <AlertDialog.Root bind:open={isOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Root>
 ```
 
@@ -175,20 +175,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { AlertDialog } from "bits-ui";
-	let myOpen = $state(false);
+  import { AlertDialog } from "bits-ui";
+  let myOpen = $state(false);
 
-	function getOpen() {
-		return myOpen;
-	}
+  function getOpen() {
+    return myOpen;
+  }
 
-	function setOpen(newOpen: boolean) {
-		myOpen = newOpen;
-	}
+  function setOpen(newOpen: boolean) {
+    myOpen = newOpen;
+  }
 </script>
 
 <AlertDialog.Root bind:open={getOpen, setOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Root>
 ```
 
@@ -202,7 +202,7 @@ Focus is trapped within the dialog by default. To disable:
 
 ```svelte /trapFocus={false}/
 <AlertDialog.Content trapFocus={false}>
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Content>
 ```
 
@@ -220,20 +220,20 @@ You'll first need to cancel the default behavior of focusing the first focusable
 
 ```svelte {9-12}
 <script lang="ts">
-	import { AlertDialog } from "bits-ui";
-	let nameInput = $state<HTMLInputElement>();
+  import { AlertDialog } from "bits-ui";
+  let nameInput = $state<HTMLInputElement>();
 </script>
 
 <AlertDialog.Root>
-	<AlertDialog.Trigger>Open AlertDialog</AlertDialog.Trigger>
-	<AlertDialog.Content
-		onOpenAutoFocus={(e) => {
-			e.preventDefault();
-			nameInput?.focus();
-		}}
-	>
-		<input type="text" bind:this={nameInput} />
-	</AlertDialog.Content>
+  <AlertDialog.Trigger>Open AlertDialog</AlertDialog.Trigger>
+  <AlertDialog.Content
+    onOpenAutoFocus={(e) => {
+      e.preventDefault();
+      nameInput?.focus();
+    }}
+  >
+    <input type="text" bind:this={nameInput} />
+  </AlertDialog.Content>
 </AlertDialog.Root>
 ```
 
@@ -245,21 +245,21 @@ You'll need to cancel the default behavior of focusing the trigger element by ca
 
 ```svelte {9-12}
 <script lang="ts">
-	import { AlertDialog } from "bits-ui";
-	let nameInput = $state<HTMLInputElement>();
+  import { AlertDialog } from "bits-ui";
+  let nameInput = $state<HTMLInputElement>();
 </script>
 
 <input type="text" bind:this={nameInput} />
 <AlertDialog.Root>
-	<AlertDialog.Trigger>Open AlertDialog</AlertDialog.Trigger>
-	<AlertDialog.Content
-		onCloseAutoFocus={(e) => {
-			e.preventDefault();
-			nameInput?.focus();
-		}}
-	>
-		<!-- ... -->
-	</AlertDialog.Content>
+  <AlertDialog.Trigger>Open AlertDialog</AlertDialog.Trigger>
+  <AlertDialog.Content
+    onCloseAutoFocus={(e) => {
+      e.preventDefault();
+      nameInput?.focus();
+    }}
+  >
+    <!-- ... -->
+  </AlertDialog.Content>
 </AlertDialog.Root>
 ```
 
@@ -277,7 +277,7 @@ To allow body scrolling while the dialog is open, use the `preventScroll` prop o
 
 ```svelte /preventScroll={false}/
 <AlertDialog.Content preventScroll={false}>
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Content>
 ```
 
@@ -295,16 +295,16 @@ By default, pressing the `Escape` key closes an open Alert Dialog. Bits UI provi
 
 The `escapeKeydownBehavior` prop allows you to customize the behavior taken by the component when the `Escape` key is pressed. It accepts one of the following values:
 
--   `'close'` (default): Closes the Alert Dialog immediately.
--   `'ignore'`: Prevents the Alert Dialog from closing.
--   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
--   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the key press and not close.
+- `'close'` (default): Closes the Alert Dialog immediately.
+- `'ignore'`: Prevents the Alert Dialog from closing.
+- `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
+- `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the key press and not close.
 
 To always prevent the Alert Dialog from closing on Escape key press, set the `escapeKeydownBehavior` prop to `'ignore'` on `Dialog.Content`:
 
 ```svelte /escapeKeydownBehavior="ignore"/
 <AlertDialog.Content escapeKeydownBehavior="ignore">
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Content>
 ```
 
@@ -314,12 +314,12 @@ For more granular control, override the default behavior using the `onEscapeKeyd
 
 ```svelte {2-5}
 <AlertDialog.Content
-	onEscapeKeydown={(e) => {
-		e.preventDefault();
-		// do something else instead
-	}}
+  onEscapeKeydown={(e) => {
+    e.preventDefault();
+    // do something else instead
+  }}
 >
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Content>
 ```
 
@@ -333,16 +333,16 @@ By default, interacting outside the Alert Dialog content area does not close the
 
 The `interactOutsideBehavior` prop allows you to customize the behavior taken by the component when an interaction (touch, mouse, or pointer event) occurs outside the content. It accepts one of the following values:
 
--   `'ignore'` (default): Prevents the Alert Dialog from closing.
--   `'close'`: Closes the Alert Dialog immediately.
--   `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
--   `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the event and not close.
+- `'ignore'` (default): Prevents the Alert Dialog from closing.
+- `'close'`: Closes the Alert Dialog immediately.
+- `'defer-otherwise-close'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will close immediately.
+- `'defer-otherwise-ignore'`: If an ancestor Bits UI component also implements this prop, it will defer the closing decision to that component. Otherwise, the Alert Dialog will ignore the event and not close.
 
 To make the Alert Dialog close when an interaction occurs outside the content, set the `interactOutsideBehavior` prop to `'close'` on `AlertDialog.Content`:
 
 ```svelte /interactOutsideBehavior="ignore"/
 <AlertDialog.Content interactOutsideBehavior="ignore">
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Content>
 ```
 
@@ -352,12 +352,12 @@ For custom handling of outside interactions, you can override the default behavi
 
 ```svelte {2-5}
 <AlertDialog.Content
-	onInteractOutside={(e) => {
-		e.preventDefault();
-		// do something else instead
-	}}
+  onInteractOutside={(e) => {
+    e.preventDefault();
+    // do something else instead
+  }}
 >
-	<!-- ... -->
+  <!-- ... -->
 </AlertDialog.Content>
 ```
 
@@ -365,11 +365,11 @@ This approach allows you to implement specific behaviors when users interact out
 
 ### Best Practices
 
--   **Scroll Lock**: Consider your use case carefully before disabling scroll lock. It may be necessary for dialogs with scrollable content or for specific UX requirements.
--   **Escape Keydown**: Overriding the default escape key behavior should be done thoughtfully. Users often expect the escape key to close modals.
--   **Outside Interactions**: Ignoring outside interactions can be useful for important dialogs or multi-step processes, but be cautious not to trap users unintentionally.
--   **Accessibility**: Always ensure that any customizations maintain or enhance the dialog's accessibility.
--   **User Expectations**: Try to balance custom behaviors with common UX patterns to avoid confusing users.
+- **Scroll Lock**: Consider your use case carefully before disabling scroll lock. It may be necessary for dialogs with scrollable content or for specific UX requirements.
+- **Escape Keydown**: Overriding the default escape key behavior should be done thoughtfully. Users often expect the escape key to close modals.
+- **Outside Interactions**: Ignoring outside interactions can be useful for important dialogs or multi-step processes, but be cautious not to trap users unintentionally.
+- **Accessibility**: Always ensure that any customizations maintain or enhance the dialog's accessibility.
+- **User Expectations**: Try to balance custom behaviors with common UX patterns to avoid confusing users.
 
 By leveraging these advanced features, you can create highly customized dialog experiences while maintaining usability and accessibility standards.
 
@@ -391,33 +391,38 @@ This can be done by waiting for the asynchronous action to complete, then progra
 
 ```svelte
 <script lang="ts">
-	import { AlertDialog } from "bits-ui";
+  import { AlertDialog } from "bits-ui";
 
-	function wait(ms: number) {
-		return new Promise((resolve) => setTimeout(resolve, ms));
-	}
+  function wait(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
-	let open = $state(false);
+  let open = $state(false);
 </script>
 
 <AlertDialog.Root bind:open>
-	<AlertDialog.Portal>
-		<AlertDialog.Overlay />
-		<AlertDialog.Content>
-			<AlertDialog.Title>Confirm your action</AlertDialog.Title>
-			<AlertDialog.Description>Are you sure you want to do this?</AlertDialog.Description>
-			<form
-				method="POST"
-				action="?/someAction"
-				onsubmit={() => {
-					wait(1000).then(() => (open = false));
-				}}
-			>
-				<AlertDialog.Cancel type="button">No, cancel (close dialog)</AlertDialog.Cancel>
-				<AlertDialog.Action type="submit">Yes (submit form)</AlertDialog.Action>
-			</form>
-		</AlertDialog.Content>
-	</AlertDialog.Portal>
+  <AlertDialog.Portal>
+    <AlertDialog.Overlay />
+    <AlertDialog.Content>
+      <AlertDialog.Title>Confirm your action</AlertDialog.Title>
+      <AlertDialog.Description
+        >Are you sure you want to do this?</AlertDialog.Description
+      >
+      <form
+        method="POST"
+        action="?/someAction"
+        onsubmit={() => {
+          wait(1000).then(() => (open = false));
+        }}
+      >
+        <AlertDialog.Cancel type="button"
+          >No, cancel (close dialog)</AlertDialog.Cancel
+        >
+        <AlertDialog.Action type="submit">Yes (submit form)</AlertDialog.Action
+        >
+      </form>
+    </AlertDialog.Content>
+  </AlertDialog.Portal>
 </AlertDialog.Root>
 ```
 

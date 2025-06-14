@@ -20,40 +20,40 @@ description: Displays a menu of items that users can select from when triggered.
 
 ```svelte
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
+  import { DropdownMenu } from "bits-ui";
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger />
+  <DropdownMenu.Trigger />
 
-	<DropdownMenu.Content>
-		<DropdownMenu.Group>
-			<DropdownMenu.GroupHeading />
-			<DropdownMenu.Item />
-		</DropdownMenu.Group>
+  <DropdownMenu.Content>
+    <DropdownMenu.Group>
+      <DropdownMenu.GroupHeading />
+      <DropdownMenu.Item />
+    </DropdownMenu.Group>
 
-		<DropdownMenu.Group>
-			<DropdownMenu.Item />
-		</DropdownMenu.Group>
+    <DropdownMenu.Group>
+      <DropdownMenu.Item />
+    </DropdownMenu.Group>
 
-		<DropdownMenu.CheckboxItem>
-			<DropdownMenu.CheckboxIndicator />
-		</DropdownMenu.CheckboxItem>
+    <DropdownMenu.CheckboxItem>
+      <DropdownMenu.CheckboxIndicator />
+    </DropdownMenu.CheckboxItem>
 
-		<DropdownMenu.RadioGroup>
-			<DropdownMenu.RadioItem>
-				<DropdownMenu.RadioIndicator />
-			</DropdownMenu.RadioItem>
-		</DropdownMenu.RadioGroup>
+    <DropdownMenu.RadioGroup>
+      <DropdownMenu.RadioItem>
+        <DropdownMenu.RadioIndicator />
+      </DropdownMenu.RadioItem>
+    </DropdownMenu.RadioGroup>
 
-		<DropdownMenu.Sub>
-			<DropdownMenu.SubTrigger />
-			<DropdownMenu.SubContent />
-		</DropdownMenu.Sub>
+    <DropdownMenu.Sub>
+      <DropdownMenu.SubTrigger />
+      <DropdownMenu.SubContent />
+    </DropdownMenu.Sub>
 
-		<DropdownMenu.Separator />
-		<DropdownMenu.Arrow />
-	</DropdownMenu.Content>
+    <DropdownMenu.Separator />
+    <DropdownMenu.Arrow />
+  </DropdownMenu.Content>
 </DropdownMenu.Root>
 ```
 
@@ -65,41 +65,41 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
 
 ```svelte title="MyDropdownMenu.svelte"
 <script lang="ts">
-	import type { Snippet } from "svelte";
-	import { DropdownMenu, type WithoutChild } from "bits-ui";
+  import type { Snippet } from "svelte";
+  import { DropdownMenu, type WithoutChild } from "bits-ui";
 
-	type Props = DropdownMenu.Props & {
-		buttonText: string;
-		items: string[];
-		contentProps?: WithoutChild<DropdownMenu.Content.Props>;
-		// other component props if needed
-	};
+  type Props = DropdownMenu.Props & {
+    buttonText: string;
+    items: string[];
+    contentProps?: WithoutChild<DropdownMenu.Content.Props>;
+    // other component props if needed
+  };
 
-	let {
-		open = $bindable(false),
-		children,
-		buttonText,
-		items,
-		contentProps,
-		...restProps
-	}: Props = $props();
+  let {
+    open = $bindable(false),
+    children,
+    buttonText,
+    items,
+    contentProps,
+    ...restProps
+  }: Props = $props();
 </script>
 
 <DropdownMenu.Root bind:open {...restProps}>
-	<DropdownMenu.Trigger>
-		{buttonText}
-	</DropdownMenu.Trigger>
-	<DropdownMenu.Portal>
-		<DropdownMenu.Content {...contentProps}>
-			<DropdownMenu.Group aria-label={buttonText}>
-				{#each items as item}
-					<DropdownMenu.Item textValue={item}>
-						{item}
-					</DropdownMenu.Item>
-				{/each}
-			</DropdownMenu.Group>
-		</DropdownMenu.Content>
-	</DropdownMenu.Portal>
+  <DropdownMenu.Trigger>
+    {buttonText}
+  </DropdownMenu.Trigger>
+  <DropdownMenu.Portal>
+    <DropdownMenu.Content {...contentProps}>
+      <DropdownMenu.Group aria-label={buttonText}>
+        {#each items as item}
+          <DropdownMenu.Item textValue={item}>
+            {item}
+          </DropdownMenu.Item>
+        {/each}
+      </DropdownMenu.Group>
+    </DropdownMenu.Content>
+  </DropdownMenu.Portal>
 </DropdownMenu.Root>
 ```
 
@@ -107,12 +107,12 @@ You can then use the `MyDropdownMenu` component like this:
 
 ```svelte
 <script lang="ts">
-	import MyDropdownMenu from "./MyDropdownMenu.svelte";
+  import MyDropdownMenu from "./MyDropdownMenu.svelte";
 </script>
 
 <MyDropdownMenu
-	buttonText="Select a manager"
-	items={["Michael Scott", "Dwight Schrute", "Jim Halpert"]}
+  buttonText="Select a manager"
+  items={["Michael Scott", "Dwight Schrute", "Jim Halpert"]}
 />
 ```
 
@@ -126,14 +126,14 @@ Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-	let isOpen = $state(false);
+  import { DropdownMenu } from "bits-ui";
+  let isOpen = $state(false);
 </script>
 
 <button onclick={() => (isOpen = true)}>Open Context Menu</button>
 
 <DropdownMenu.Root bind:open={isOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </DropdownMenu.Root>
 ```
 
@@ -143,20 +143,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-	let myOpen = $state(false);
+  import { DropdownMenu } from "bits-ui";
+  let myOpen = $state(false);
 
-	function getOpen() {
-		return myOpen;
-	}
+  function getOpen() {
+    return myOpen;
+  }
 
-	function setOpen(newOpen: boolean) {
-		myOpen = newOpen;
-	}
+  function setOpen(newOpen: boolean) {
+    myOpen = newOpen;
+  }
 </script>
 
 <DropdownMenu.Root bind:open={getOpen, setOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </DropdownMenu.Root>
 ```
 
@@ -166,18 +166,18 @@ To group related menu items, you can use the `DropdownMenu.Group` component alon
 
 ```svelte
 <DropdownMenu.Group>
-	<DropdownMenu.GroupHeading>File</DropdownMenu.GroupHeading>
-	<DropdownMenu.Item>New</DropdownMenu.Item>
-	<DropdownMenu.Item>Open</DropdownMenu.Item>
-	<DropdownMenu.Item>Save</DropdownMenu.Item>
-	<DropdownMenu.Item>Save As</DropdownMenu.Item>
+  <DropdownMenu.GroupHeading>File</DropdownMenu.GroupHeading>
+  <DropdownMenu.Item>New</DropdownMenu.Item>
+  <DropdownMenu.Item>Open</DropdownMenu.Item>
+  <DropdownMenu.Item>Save</DropdownMenu.Item>
+  <DropdownMenu.Item>Save As</DropdownMenu.Item>
 </DropdownMenu.Group>
 <!-- or -->
 <DropdownMenu.Group aria-label="file">
-	<DropdownMenu.Item>New</DropdownMenu.Item>
-	<DropdownMenu.Item>Open</DropdownMenu.Item>
-	<DropdownMenu.Item>Save</DropdownMenu.Item>
-	<DropdownMenu.Item>Save As</DropdownMenu.Item>
+  <DropdownMenu.Item>New</DropdownMenu.Item>
+  <DropdownMenu.Item>Open</DropdownMenu.Item>
+  <DropdownMenu.Item>Save</DropdownMenu.Item>
+  <DropdownMenu.Item>Save As</DropdownMenu.Item>
 </DropdownMenu.Group>
 ```
 
@@ -187,15 +187,15 @@ The `DropdownMenu.GroupHeading` component must be a child of either a `DropdownM
 
 ```svelte
 <DropdownMenu.Group>
-	<DropdownMenu.GroupHeading>File</DropdownMenu.GroupHeading>
-	<!-- ... items here -->
+  <DropdownMenu.GroupHeading>File</DropdownMenu.GroupHeading>
+  <!-- ... items here -->
 </DropdownMenu.Group>
 
 <!-- or -->
 
 <DropdownMenu.RadioGroup>
-	<DropdownMenu.GroupHeading>Favorite color</DropdownMenu.GroupHeading>
-	<!-- ... radio items here -->
+  <DropdownMenu.GroupHeading>Favorite color</DropdownMenu.GroupHeading>
+  <!-- ... radio items here -->
 </DropdownMenu.RadioGroup>
 ```
 
@@ -205,24 +205,24 @@ You can combine the `DropdownMenu.RadioGroup` and `DropdownMenu.RadioItem` compo
 
 ```svelte
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
+  import { DropdownMenu } from "bits-ui";
 
-	const values = ["one", "two", "three"];
-	let value = $state("one");
+  const values = ["one", "two", "three"];
+  let value = $state("one");
 </script>
 
 <DropdownMenu.RadioGroup bind:value>
-	<DropdownMenu.GroupHeading>Favorite number</DropdownMenu.GroupHeading>
-	{#each values as value}
-		<DropdownMenu.RadioItem {value}>
-			{#snippet children({ checked })}
-				{#if checked}
-					✅
-				{/if}
-				{value}
-			{/snippet}
-		</DropdownMenu.RadioItem>
-	{/each}
+  <DropdownMenu.GroupHeading>Favorite number</DropdownMenu.GroupHeading>
+  {#each values as value}
+    <DropdownMenu.RadioItem {value}>
+      {#snippet children({ checked })}
+        {#if checked}
+          ✅
+        {/if}
+        {value}
+      {/snippet}
+    </DropdownMenu.RadioItem>
+  {/each}
 </DropdownMenu.RadioGroup>
 ```
 
@@ -234,20 +234,20 @@ You can use the `DropdownMenu.CheckboxItem` component to create a `menuitemcheck
 
 ```svelte
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
+  import { DropdownMenu } from "bits-ui";
 
-	let notifications = $state(true);
+  let notifications = $state(true);
 </script>
 
 <DropdownMenu.CheckboxItem bind:checked={notifications}>
-	{#snippet children({ checked, indeterminate })}
-		{#if indeterminate}
-			-
-		{:else if checked}
-			✅
-		{/if}
-		Notifications
-	{/snippet}
+  {#snippet children({ checked, indeterminate })}
+    {#if indeterminate}
+      -
+    {:else if checked}
+      ✅
+    {/if}
+    Notifications
+  {/snippet}
 </DropdownMenu.CheckboxItem>
 ```
 
@@ -259,37 +259,37 @@ You can use the `DropdownMenu.CheckboxGroup` component around a set of `Dropdown
 
 ```svelte
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
+  import { DropdownMenu } from "bits-ui";
 
-	let colors = $state<string[]>([]);
+  let colors = $state<string[]>([]);
 </script>
 
 <DropdownMenu.CheckboxGroup bind:value={colors}>
-	<DropdownMenu.GroupHeading>Favorite color</DropdownMenu.GroupHeading>
-	<DropdownMenu.CheckboxItem value="red">
-		{#snippet children({ checked })}
-			{#if checked}
-				✅
-			{/if}
-			Red
-		{/snippet}
-	</DropdownMenu.CheckboxItem>
-	<DropdownMenu.CheckboxItem value="blue">
-		{#snippet children({ checked })}
-			{#if checked}
-				✅
-			{/if}
-			Blue
-		{/snippet}
-	</DropdownMenu.CheckboxItem>
-	<DropdownMenu.CheckboxItem value="green">
-		{#snippet children({ checked })}
-			{#if checked}
-				✅
-			{/if}
-			Green
-		{/snippet}
-	</DropdownMenu.CheckboxItem>
+  <DropdownMenu.GroupHeading>Favorite color</DropdownMenu.GroupHeading>
+  <DropdownMenu.CheckboxItem value="red">
+    {#snippet children({ checked })}
+      {#if checked}
+        ✅
+      {/if}
+      Red
+    {/snippet}
+  </DropdownMenu.CheckboxItem>
+  <DropdownMenu.CheckboxItem value="blue">
+    {#snippet children({ checked })}
+      {#if checked}
+        ✅
+      {/if}
+      Blue
+    {/snippet}
+  </DropdownMenu.CheckboxItem>
+  <DropdownMenu.CheckboxItem value="green">
+    {#snippet children({ checked })}
+      {#if checked}
+        ✅
+      {/if}
+      Green
+    {/snippet}
+  </DropdownMenu.CheckboxItem>
 </DropdownMenu.CheckboxGroup>
 ```
 
@@ -301,19 +301,19 @@ You can create nested menus using the `DropdownMenu.Sub` component to create com
 
 ```svelte /DropdownMenu.Sub/
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
+  import { DropdownMenu } from "bits-ui";
 </script>
 
 <DropdownMenu.Content>
-	<DropdownMenu.Item>Item 1</DropdownMenu.Item>
-	<DropdownMenu.Item>Item 2</DropdownMenu.Item>
-	<DropdownMenu.Sub>
-		<DropdownMenu.SubTrigger>Open Sub Menu</DropdownMenu.SubTrigger>
-		<DropdownMenu.SubContent>
-			<DropdownMenu.Item>Sub Item 1</DropdownMenu.Item>
-			<DropdownMenu.Item>Sub Item 2</DropdownMenu.Item>
-		</DropdownMenu.SubContent>
-	</DropdownMenu.Sub>
+  <DropdownMenu.Item>Item 1</DropdownMenu.Item>
+  <DropdownMenu.Item>Item 2</DropdownMenu.Item>
+  <DropdownMenu.Sub>
+    <DropdownMenu.SubTrigger>Open Sub Menu</DropdownMenu.SubTrigger>
+    <DropdownMenu.SubContent>
+      <DropdownMenu.Item>Sub Item 1</DropdownMenu.Item>
+      <DropdownMenu.Item>Sub Item 2</DropdownMenu.Item>
+    </DropdownMenu.SubContent>
+  </DropdownMenu.Sub>
 </DropdownMenu.Content>
 ```
 
@@ -325,21 +325,21 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 ```svelte /forceMount/ /transition:fly/
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-	import { fly } from "svelte/transition";
+  import { DropdownMenu } from "bits-ui";
+  import { fly } from "svelte/transition";
 </script>
 
 <DropdownMenu.Content forceMount>
-	{#snippet child({ wrapperProps, props, open })}
-		{#if open}
-			<div {...wrapperProps}>
-				<div {...props} transition:fly>
-					<DropdownMenu.Item>Item 1</DropdownMenu.Item>
-					<DropdownMenu.Item>Item 2</DropdownMenu.Item>
-				</div>
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ wrapperProps, props, open })}
+    {#if open}
+      <div {...wrapperProps}>
+        <div {...props} transition:fly>
+          <DropdownMenu.Item>Item 1</DropdownMenu.Item>
+          <DropdownMenu.Item>Item 2</DropdownMenu.Item>
+        </div>
+      </div>
+    {/if}
+  {/snippet}
 </DropdownMenu.Content>
 ```
 
@@ -361,17 +361,17 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 ```svelte
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
-	let customAnchor = $state<HTMLElement>(null!);
+  import { DropdownMenu } from "bits-ui";
+  let customAnchor = $state<HTMLElement>(null!);
 </script>
 
 <div bind:this={customAnchor}></div>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger />
-	<DropdownMenu.Content {customAnchor}>
-		<!-- ... -->
-	</DropdownMenu.Content>
+  <DropdownMenu.Trigger />
+  <DropdownMenu.Content {customAnchor}>
+    <!-- ... -->
+  </DropdownMenu.Content>
 </DropdownMenu.Root>
 ```
 

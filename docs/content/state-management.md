@@ -13,9 +13,9 @@ The simplest approach is using Svelte's built-in two-way binding with `bind:`:
 
 ```svelte
 <script lang="ts">
-	import { ComponentName } from "bits-ui";
+  import { ComponentName } from "bits-ui";
 
-	let myValue = $state("default-value");
+  let myValue = $state("default-value");
 </script>
 
 <button onclick={() => (myValue = "new-value")}> Update Value </button>
@@ -25,9 +25,9 @@ The simplest approach is using Svelte's built-in two-way binding with `bind:`:
 
 ### Why Use It?
 
--   Zero-boilerplate state updates
--   External controls work automatically
--   Great for simple use cases
+- Zero-boilerplate state updates
+- External controls work automatically
+- Great for simple use cases
 
 ## Function Binding
 
@@ -35,23 +35,23 @@ For complete control, use a [Function Binding](https://svelte.dev/docs/svelte/bi
 
 ```svelte
 <script lang="ts">
-	import { ComponentName } from "bits-ui";
+  import { ComponentName } from "bits-ui";
 
-	let myValue = $state("default-value");
+  let myValue = $state("default-value");
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string) {
-		// Only update during business hours
-		const now = new Date();
-		const hour = now.getHours();
+  function setValue(newValue: string) {
+    // Only update during business hours
+    const now = new Date();
+    const hour = now.getHours();
 
-		if (hour >= 9 && hour <= 17) {
-			myValue = newValue;
-		}
-	}
+    if (hour >= 9 && hour <= 17) {
+      myValue = newValue;
+    }
+  }
 </script>
 
 <ComponentName.Root bind:value={getValue, setValue}></ComponentName.Root>
@@ -61,8 +61,8 @@ When the component wants to set the value from an internal action, it will invok
 
 ### When to Use
 
--   Complex state transformation logic
--   Conditional updates
--   Debouncing or throttling state changes
--   Maintaining additional state alongside the primary value
--   Integrating with external state systems
+- Complex state transformation logic
+- Conditional updates
+- Debouncing or throttling state changes
+- Maintaining additional state alongside the primary value
+- Integrating with external state systems

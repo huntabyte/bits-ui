@@ -20,15 +20,15 @@ description: Facilitates navigation between pages.
 
 ```svelte
 <script lang="ts">
-	import { Pagination } from "bits-ui";
+  import { Pagination } from "bits-ui";
 </script>
 
 <Pagination.Root let:pages>
-	<Pagination.PrevButton />
-	{#each pages as page (page.key)}
-		<Pagination.Page {page} />
-	{/each}
-	<Pagination.NextButton />
+  <Pagination.PrevButton />
+  {#each pages as page (page.key)}
+    <Pagination.Page {page} />
+  {/each}
+  <Pagination.NextButton />
 </Pagination.Root>
 ```
 
@@ -42,14 +42,14 @@ Use `bind:page` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Pagination } from "bits-ui";
-	let myPage = $state(1);
+  import { Pagination } from "bits-ui";
+  let myPage = $state(1);
 </script>
 
 <button onclick={() => (myPage = 2)}> Go to page 2 </button>
 
 <Pagination.Root bind:page={myPage}>
-	<!-- ...-->
+  <!-- ...-->
 </Pagination.Root>
 ```
 
@@ -59,20 +59,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Pagination } from "bits-ui";
-	let myPage = $state(1);
+  import { Pagination } from "bits-ui";
+  let myPage = $state(1);
 
-	function getPage() {
-		return myPage;
-	}
+  function getPage() {
+    return myPage;
+  }
 
-	function setPage(newPage: number) {
-		myPage = newPage;
-	}
+  function setPage(newPage: number) {
+    myPage = newPage;
+  }
 </script>
 
 <Pagination.Root bind:page={getPage, setPage}>
-	<!-- ... -->
+  <!-- ... -->
 </Pagination.Root>
 ```
 
