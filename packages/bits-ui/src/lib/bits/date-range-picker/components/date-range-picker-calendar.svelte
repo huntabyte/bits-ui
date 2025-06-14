@@ -3,7 +3,7 @@
 	import type { DateRangePickerCalendarProps } from "../types.js";
 	import { DateRangePickerRootContext } from "../date-range-picker.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
-	import { useRangeCalendarRoot } from "$lib/bits/range-calendar/range-calendar.svelte.js";
+	import { RangeCalendarRootState } from "$lib/bits/range-calendar/range-calendar.svelte.js";
 
 	const uid = $props.id();
 
@@ -17,7 +17,7 @@
 
 	const dateRangePickerRootState = DateRangePickerRootContext.get();
 
-	const rangeCalendarState = useRangeCalendarRoot({
+	const rangeCalendarState = RangeCalendarRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

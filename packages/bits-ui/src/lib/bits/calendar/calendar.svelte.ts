@@ -238,7 +238,9 @@ export class CalendarRootState {
 		});
 	});
 
-	readonly initialPlaceholderYear = untrack(() => this.opts.placeholder.current.year);
+	readonly initialPlaceholderYear = $derived.by(() =>
+		untrack(() => this.opts.placeholder.current.year)
+	);
 
 	readonly defaultYears = $derived.by(() => {
 		return getDefaultYears({

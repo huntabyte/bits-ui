@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { RangeCalendarDayProps } from "../types.js";
-	import { useRangeCalendarDay } from "../range-calendar.svelte.js";
+	import { RangeCalendarDayState } from "../range-calendar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -14,7 +14,7 @@
 		...restProps
 	}: RangeCalendarDayProps = $props();
 
-	const dayState = useRangeCalendarDay({
+	const dayState = RangeCalendarDayState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

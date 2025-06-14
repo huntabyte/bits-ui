@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { useRatingGroupHiddenInput } from "../rating-group.svelte.js";
+	import { RatingGroupHiddenInputState } from "../rating-group.svelte.js";
 	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
 
-	const inputState = useRatingGroupHiddenInput();
+	const inputState = RatingGroupHiddenInputState.create();
 </script>
 
 {#if inputState.shouldRender}

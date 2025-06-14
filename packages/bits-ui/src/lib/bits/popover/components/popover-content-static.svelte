@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PopoverContentStaticProps } from "../types.js";
-	import { usePopoverContent } from "../popover.svelte.js";
+	import { PopoverContentState } from "../popover.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -24,7 +24,7 @@
 		...restProps
 	}: PopoverContentStaticProps = $props();
 
-	const contentState = usePopoverContent({
+	const contentState = PopoverContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

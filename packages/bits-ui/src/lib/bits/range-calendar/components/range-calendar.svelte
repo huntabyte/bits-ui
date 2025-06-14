@@ -3,7 +3,7 @@
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { type DateValue } from "@internationalized/date";
 	import type { RangeCalendarRootProps } from "../types.js";
-	import { useRangeCalendarRoot } from "../range-calendar.svelte.js";
+	import { RangeCalendarRootState } from "../range-calendar.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
@@ -82,7 +82,7 @@
 		}
 	);
 
-	const rootState = useRangeCalendarRoot({
+	const rootState = RangeCalendarRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

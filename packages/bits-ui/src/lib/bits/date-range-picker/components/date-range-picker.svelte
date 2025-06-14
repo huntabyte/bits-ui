@@ -5,7 +5,7 @@
 	import { DateRangePickerRootState } from "../date-range-picker.svelte.js";
 	import type { DateRangePickerRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
+	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
 	import { DateRangeFieldRootState } from "$lib/bits/date-range-field/date-range-field.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
@@ -177,7 +177,7 @@
 		defaultPlaceholder,
 	});
 
-	usePopoverRoot({
+	PopoverRootState.create({
 		open: pickerRootState.opts.open,
 	});
 

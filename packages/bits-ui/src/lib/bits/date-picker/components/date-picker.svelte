@@ -6,7 +6,7 @@
 	import { DatePickerRootState } from "../date-picker.svelte.js";
 	import type { DatePickerRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
+	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
 	import { DateFieldRootState } from "$lib/bits/date-field/date-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
@@ -129,7 +129,7 @@
 		yearFormat: box.with(() => yearFormat),
 	});
 
-	usePopoverRoot({
+	PopoverRootState.create({
 		open: pickerRootState.opts.open,
 	});
 

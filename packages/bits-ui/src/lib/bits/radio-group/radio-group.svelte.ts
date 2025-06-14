@@ -23,23 +23,29 @@ const radioGroupAttrs = createBitsAttrs({
 	parts: ["root", "item"],
 });
 
-type RadioGroupRootStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		disabled: boolean;
-		required: boolean;
-		loop: boolean;
-		orientation: Orientation;
-		name: string | undefined;
-		readonly: boolean;
-	}> &
-		WritableBoxedValues<{ value: string }>
->;
-class RadioGroupRootState {
-	readonly opts: RadioGroupRootStateProps;
-	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
-	rovingFocusGroup: RovingFocusGroup;
+const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
 
-	constructor(opts: RadioGroupRootStateProps) {
+interface RadioGroupRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			required: boolean;
+			loop: boolean;
+			orientation: Orientation;
+			name: string | undefined;
+			readonly: boolean;
+		}>,
+		WritableBoxedValues<{ value: string }> {}
+export class RadioGroupRootState {
+	static create(opts: RadioGroupRootStateOpts) {
+		return RadioGroupRootContext.set(new RadioGroupRootState(opts));
+	}
+
+	readonly opts: RadioGroupRootStateOpts;
+	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
+	readonly rovingFocusGroup: RovingFocusGroup;
+
+	constructor(opts: RadioGroupRootStateOpts) {
 		this.opts = opts;
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
@@ -74,15 +80,19 @@ class RadioGroupRootState {
 	);
 }
 
-type RadioGroupItemStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		disabled: boolean;
-		value: string;
-	}>
->;
+interface RadioGroupItemStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			value: string;
+		}> {}
 
-class RadioGroupItemState {
-	readonly opts: RadioGroupItemStateProps;
+export class RadioGroupItemState {
+	static create(opts: RadioGroupItemStateOpts) {
+		return new RadioGroupItemState(opts, RadioGroupRootContext.get());
+	}
+
+	readonly opts: RadioGroupItemStateOpts;
 	readonly root: RadioGroupRootState;
 	readonly checked = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	readonly #isDisabled = $derived.by(
@@ -92,7 +102,7 @@ class RadioGroupItemState {
 	readonly #isChecked = $derived.by(() => this.root.isChecked(this.opts.value.current));
 	#tabIndex = $state(-1);
 
-	constructor(opts: RadioGroupItemStateProps, root: RadioGroupRootState) {
+	constructor(opts: RadioGroupItemStateOpts, root: RadioGroupRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -167,7 +177,11 @@ class RadioGroupItemState {
 	);
 }
 
-class RadioGroupInputState {
+export class RadioGroupInputState {
+	static create() {
+		return new RadioGroupInputState(RadioGroupRootContext.get());
+	}
+
 	readonly root: RadioGroupRootState;
 	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 	readonly props = $derived.by(
@@ -183,18 +197,4 @@ class RadioGroupInputState {
 	constructor(root: RadioGroupRootState) {
 		this.root = root;
 	}
-}
-
-const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
-
-export function useRadioGroupRoot(props: RadioGroupRootStateProps) {
-	return RadioGroupRootContext.set(new RadioGroupRootState(props));
-}
-
-export function useRadioGroupItem(props: RadioGroupItemStateProps) {
-	return new RadioGroupItemState(props, RadioGroupRootContext.get());
-}
-
-export function useRadioGroupInput() {
-	return new RadioGroupInputState(RadioGroupRootContext.get());
 }
