@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuTriggerProps } from "../types.js";
-	import { useMenuDropdownTrigger } from "../menu.svelte.js";
+	import { DropdownMenuTriggerState } from "../menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 
@@ -17,7 +17,7 @@
 		...restProps
 	}: MenuTriggerProps = $props();
 
-	const triggerState = useMenuDropdownTrigger({
+	const triggerState = DropdownMenuTriggerState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled ?? false),
 		ref: box.with(

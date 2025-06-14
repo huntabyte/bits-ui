@@ -8,8 +8,7 @@ import {
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { DateFieldRootState } from "../date-field/date-field.svelte.js";
-import { DateFieldInputState, useDateFieldRoot } from "../date-field/date-field.svelte.js";
+import { DateFieldInputState, DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { useId } from "$lib/internal/use-id.js";
 import type {
 	DateOnInvalid,
@@ -30,13 +29,18 @@ export const dateRangeFieldAttrs = createBitsAttrs({
 	parts: ["root", "label"],
 });
 
-type DateRangeFieldRootStateProps = WithRefOpts<
-	WritableBoxedValues<{
-		value: DateRange;
-		placeholder: DateValue;
-		startValue: DateValue | undefined;
-		endValue: DateValue | undefined;
-	}> &
+export const DateRangeFieldRootContext = new Context<DateRangeFieldRootState>(
+	"DateRangeField.Root"
+);
+
+interface DateRangeFieldRootStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: DateRange;
+			placeholder: DateValue;
+			startValue: DateValue | undefined;
+			endValue: DateValue | undefined;
+		}>,
 		ReadableBoxedValues<{
 			readonlySegments: SegmentPart[];
 			validate: DateRangeValidator | undefined;
@@ -51,11 +55,14 @@ type DateRangeFieldRootStateProps = WithRefOpts<
 			hideTimeZone: boolean;
 			required: boolean;
 			errorMessageId: string | undefined;
-		}>
->;
+		}> {}
 
 export class DateRangeFieldRootState {
-	readonly opts: DateRangeFieldRootStateProps;
+	static create(opts: DateRangeFieldRootStateOpts) {
+		return DateRangeFieldRootContext.set(new DateRangeFieldRootState(opts));
+	}
+
+	readonly opts: DateRangeFieldRootStateOpts;
 	startFieldState: DateFieldRootState | undefined = undefined;
 	endFieldState: DateFieldRootState | undefined = undefined;
 	descriptionId = useId();
@@ -63,12 +70,12 @@ export class DateRangeFieldRootState {
 	fieldNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
-	startValueComplete = $derived.by(() => this.opts.startValue.current !== undefined);
-	endValueComplete = $derived.by(() => this.opts.endValue.current !== undefined);
-	rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
+	readonly startValueComplete = $derived.by(() => this.opts.startValue.current !== undefined);
+	readonly endValueComplete = $derived.by(() => this.opts.endValue.current !== undefined);
+	readonly rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
 	domContext: DOMContext;
 
-	constructor(opts: DateRangeFieldRootStateProps) {
+	constructor(opts: DateRangeFieldRootStateOpts) {
 		this.opts = opts;
 		this.formatter = createFormatter({
 			initialLocale: this.opts.locale.current,
@@ -152,7 +159,7 @@ export class DateRangeFieldRootState {
 		);
 	}
 
-	validationStatus = $derived.by(() => {
+	readonly validationStatus = $derived.by(() => {
 		const value = this.opts.value.current;
 		if (value === undefined) return false as const;
 		if (value.start === undefined || value.end === undefined) return false as const;
@@ -190,7 +197,7 @@ export class DateRangeFieldRootState {
 		return false as const;
 	});
 
-	isInvalid = $derived.by(() => {
+	readonly isInvalid = $derived.by(() => {
 		if (this.validationStatus === false) return false;
 		return true;
 	});
@@ -201,7 +208,7 @@ export class DateRangeFieldRootState {
 		this.opts.value.current = newValue;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -213,13 +220,17 @@ export class DateRangeFieldRootState {
 	);
 }
 
-type DateRangeFieldLabelStateProps = WithRefOpts;
+interface DateRangeFieldLabelStateOpts extends WithRefOpts {}
 
-class DateRangeFieldLabelState {
-	readonly opts: DateRangeFieldLabelStateProps;
+export class DateRangeFieldLabelState {
+	static create(opts: DateRangeFieldLabelStateOpts) {
+		return new DateRangeFieldLabelState(opts, DateRangeFieldRootContext.get());
+	}
+
+	readonly opts: DateRangeFieldLabelStateOpts;
 	readonly root: DateRangeFieldRootState;
 
-	constructor(opts: DateRangeFieldLabelStateProps, root: DateRangeFieldRootState) {
+	constructor(opts: DateRangeFieldLabelStateOpts, root: DateRangeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -231,11 +242,10 @@ class DateRangeFieldLabelState {
 		firstSegment.focus();
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				// TODO: invalid state for field
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[dateRangeFieldAttrs.label]: "",
@@ -245,52 +255,39 @@ class DateRangeFieldLabelState {
 	);
 }
 
-type DateRangeFieldInputStateProps = WritableBoxedValues<{
-	value: DateValue | undefined;
-}> &
-	ReadableBoxedValues<{
-		name: string;
-	}> &
-	WithRefOpts;
+interface DateRangeFieldInputStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: DateValue | undefined;
+		}>,
+		ReadableBoxedValues<{
+			name: string;
+		}> {}
 
-export const DateRangeFieldRootContext = new Context<DateRangeFieldRootState>(
-	"DateRangeField.Root"
-);
-
-export function useDateRangeFieldRoot(props: DateRangeFieldRootStateProps) {
-	return DateRangeFieldRootContext.set(new DateRangeFieldRootState(props));
-}
-
-export function useDateRangeFieldLabel(props: DateRangeFieldLabelStateProps) {
-	return new DateRangeFieldLabelState(props, DateRangeFieldRootContext.get());
-}
-
-export function useDateRangeFieldInput(
-	props: Omit<DateRangeFieldInputStateProps, "value">,
-	type: "start" | "end"
-) {
-	const root = DateRangeFieldRootContext.get();
-	const fieldState = useDateFieldRoot(
-		{
-			value: type === "start" ? root.opts.startValue : root.opts.endValue,
-			disabled: root.opts.disabled,
-			readonly: root.opts.readonly,
-			readonlySegments: root.opts.readonlySegments,
-			validate: box.with(() => undefined),
-			minValue: root.opts.minValue,
-			maxValue: root.opts.maxValue,
-			hourCycle: root.opts.hourCycle,
-			locale: root.opts.locale,
-			hideTimeZone: root.opts.hideTimeZone,
-			required: root.opts.required,
-			granularity: root.opts.granularity,
-			placeholder: root.opts.placeholder,
-			onInvalid: root.opts.onInvalid,
-			errorMessageId: root.opts.errorMessageId,
-			isInvalidProp: box.with(() => root.isInvalid),
-		},
-		root
-	);
-
-	return new DateFieldInputState({ name: props.name, id: props.id, ref: props.ref }, fieldState);
+export class DateRangeFieldInputState {
+	static create(opts: Omit<DateRangeFieldInputStateOpts, "value">, type: "start" | "end") {
+		const root = DateRangeFieldRootContext.get();
+		const fieldState = DateFieldRootState.create(
+			{
+				value: type === "start" ? root.opts.startValue : root.opts.endValue,
+				disabled: root.opts.disabled,
+				readonly: root.opts.readonly,
+				readonlySegments: root.opts.readonlySegments,
+				validate: box.with(() => undefined),
+				minValue: root.opts.minValue,
+				maxValue: root.opts.maxValue,
+				hourCycle: root.opts.hourCycle,
+				locale: root.opts.locale,
+				hideTimeZone: root.opts.hideTimeZone,
+				required: root.opts.required,
+				granularity: root.opts.granularity,
+				placeholder: root.opts.placeholder,
+				onInvalid: root.opts.onInvalid,
+				errorMessageId: root.opts.errorMessageId,
+				isInvalidProp: box.with(() => root.isInvalid),
+			},
+			root
+		);
+		return new DateFieldInputState({ name: opts.name, id: opts.id, ref: opts.ref }, fieldState);
+	}
 }

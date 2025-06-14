@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useDialogTrigger } from "../dialog.svelte.js";
+	import { DialogTriggerState } from "../dialog.svelte.js";
 	import type { DialogTriggerProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: DialogTriggerProps = $props();
 
-	const triggerState = useDialogTrigger({
+	const triggerState = DialogTriggerState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

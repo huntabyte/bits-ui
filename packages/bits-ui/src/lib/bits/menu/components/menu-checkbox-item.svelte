@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuCheckboxItemProps } from "../types.js";
-	import { MenuCheckboxGroupContext, useMenuCheckboxItem } from "../menu.svelte.js";
+	import { MenuCheckboxGroupContext, MenuCheckboxItemState } from "../menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { watch } from "runed";
@@ -47,7 +47,7 @@
 		}
 	);
 
-	const checkboxItemState = useMenuCheckboxItem(
+	const checkboxItemState = MenuCheckboxItemState.create(
 		{
 			checked: box.with(
 				() => checked,

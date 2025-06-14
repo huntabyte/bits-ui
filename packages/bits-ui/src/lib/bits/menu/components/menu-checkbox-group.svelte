@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuCheckboxGroupProps } from "../types.js";
-	import { useMenuCheckboxGroup } from "../menu.svelte.js";
+	import { MenuCheckboxGroupState } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -17,7 +17,7 @@
 		...restProps
 	}: MenuCheckboxGroupProps = $props();
 
-	const checkboxGroupState = useMenuCheckboxGroup({
+	const checkboxGroupState = MenuCheckboxGroupState.create({
 		value: box.with(
 			() => $state.snapshot(value),
 			(v) => {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
-	import { MenuOpenEvent, useMenuContent } from "../menu.svelte.js";
+	import { MenuOpenEvent, MenuContentState } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -31,7 +31,7 @@
 		...restProps
 	}: MenuSubContentProps = $props();
 
-	const subContentState = useMenuContent({
+	const subContentState = MenuContentState.create({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 		ref: box.with(

@@ -12,15 +12,22 @@ const dialogAttrs = createBitsAttrs({
 	parts: ["content", "trigger", "overlay", "title", "description", "close", "cancel", "action"],
 });
 
-type DialogRootStateProps = WritableBoxedValues<{
-	open: boolean;
-}> &
-	ReadableBoxedValues<{
-		variant: DialogVariant;
-	}>;
+const DialogRootContext = new Context<DialogRootState>("Dialog.Root | AlertDialog.Root");
 
-class DialogRootState {
-	readonly opts: DialogRootStateProps;
+interface DialogRootStateOpts
+	extends WritableBoxedValues<{
+			open: boolean;
+		}>,
+		ReadableBoxedValues<{
+			variant: DialogVariant;
+		}> {}
+
+export class DialogRootState {
+	static create(opts: DialogRootStateOpts) {
+		return DialogRootContext.set(new DialogRootState(opts));
+	}
+
+	readonly opts: DialogRootStateOpts;
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
@@ -30,7 +37,7 @@ class DialogRootState {
 	descriptionId = $state<string | undefined>(undefined);
 	cancelNode = $state<HTMLElement | null>(null);
 
-	constructor(opts: DialogRootStateProps) {
+	constructor(opts: DialogRootStateOpts) {
 		this.opts = opts;
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
@@ -50,7 +57,7 @@ class DialogRootState {
 		return dialogAttrs.getAttr(part, this.opts.variant.current);
 	};
 
-	sharedProps = $derived.by(
+	readonly sharedProps = $derived.by(
 		() =>
 			({
 				"data-state": getDataOpenClosed(this.opts.open.current),
@@ -58,13 +65,17 @@ class DialogRootState {
 	);
 }
 
-type DialogTriggerStateProps = WithRefOpts & ReadableBoxedValues<{ disabled: boolean }>;
+interface DialogTriggerStateOpts extends WithRefOpts, ReadableBoxedValues<{ disabled: boolean }> {}
 
-class DialogTriggerState {
-	readonly opts: DialogTriggerStateProps;
+export class DialogTriggerState {
+	static create(opts: DialogTriggerStateOpts) {
+		return new DialogTriggerState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: DialogTriggerStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: DialogTriggerStateProps, root: DialogRootState) {
+	constructor(opts: DialogTriggerStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -86,7 +97,7 @@ class DialogTriggerState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -108,16 +119,19 @@ class DialogTriggerState {
 	);
 }
 
-type DialogCloseStateProps = WithRefOpts &
-	ReadableBoxedValues<{
-		variant: "action" | "cancel" | "close";
-		disabled: boolean;
-	}>;
-class DialogCloseState {
-	readonly opts: DialogCloseStateProps;
+interface DialogCloseStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{ variant: "action" | "cancel" | "close"; disabled: boolean }> {}
+
+export class DialogCloseState {
+	static create(opts: DialogCloseStateOpts) {
+		return new DialogCloseState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: DialogCloseStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: DialogCloseStateProps, root: DialogRootState) {
+	constructor(opts: DialogCloseStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -138,7 +152,7 @@ class DialogCloseState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -153,18 +167,22 @@ class DialogCloseState {
 	);
 }
 
-type DialogActionStateProps = WithRefOpts;
+interface DialogActionStateOpts extends WithRefOpts {}
 
-class DialogActionState {
-	readonly opts: DialogActionStateProps;
+export class DialogActionState {
+	static create(opts: DialogActionStateOpts) {
+		return new DialogActionState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: DialogActionStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: DialogActionStateProps, root: DialogRootState) {
+	constructor(opts: DialogActionStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -175,21 +193,24 @@ class DialogActionState {
 	);
 }
 
-type DialogTitleStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		level: 1 | 2 | 3 | 4 | 5 | 6;
-	}>
->;
-class DialogTitleState {
-	readonly opts: DialogTitleStateProps;
+interface DialogTitleStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{ level: 1 | 2 | 3 | 4 | 5 | 6 }> {}
+
+export class DialogTitleState {
+	static create(opts: DialogTitleStateOpts) {
+		return new DialogTitleState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: DialogTitleStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: DialogTitleStateProps, root: DialogRootState) {
+	constructor(opts: DialogTitleStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -202,18 +223,22 @@ class DialogTitleState {
 	);
 }
 
-type DialogDescriptionStateProps = WithRefOpts;
+interface DialogDescriptionStateOpts extends WithRefOpts {}
 
-class DialogDescriptionState {
-	readonly opts: DialogDescriptionStateProps;
+export class DialogDescriptionState {
+	static create(opts: DialogDescriptionStateOpts) {
+		return new DialogDescriptionState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: DialogDescriptionStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: DialogDescriptionStateProps, root: DialogRootState) {
+	constructor(opts: DialogDescriptionStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -227,20 +252,24 @@ class DialogDescriptionState {
 	);
 }
 
-type DialogContentStateProps = WithRefOpts;
+interface DialogContentStateOpts extends WithRefOpts {}
 
-class DialogContentState {
-	readonly opts: DialogContentStateProps;
+export class DialogContentState {
+	static create(opts: DialogContentStateOpts) {
+		return new DialogContentState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: DialogContentStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: DialogContentStateProps, root: DialogRootState) {
+	constructor(opts: DialogContentStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
+	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -263,20 +292,24 @@ class DialogContentState {
 	);
 }
 
-type DialogOverlayStateProps = WithRefOpts;
+interface DialogOverlayStateOpts extends WithRefOpts {}
 
-class DialogOverlayState {
-	readonly opts: DialogOverlayStateProps;
+export class DialogOverlayState {
+	static create(opts: DialogOverlayStateOpts) {
+		return new DialogOverlayState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: DialogOverlayStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: DialogOverlayStateProps, root: DialogRootState) {
+	constructor(opts: DialogOverlayStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
+	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -290,16 +323,19 @@ class DialogOverlayState {
 	);
 }
 
-type AlertDialogCancelStateProps = WithRefOpts &
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>;
+interface AlertDialogCancelStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{ disabled: boolean }> {}
 
-class AlertDialogCancelState {
-	readonly opts: AlertDialogCancelStateProps;
+export class AlertDialogCancelState {
+	static create(opts: AlertDialogCancelStateOpts) {
+		return new AlertDialogCancelState(opts, DialogRootContext.get());
+	}
+
+	readonly opts: AlertDialogCancelStateOpts;
 	readonly root: DialogRootState;
 
-	constructor(opts: AlertDialogCancelStateProps, root: DialogRootState) {
+	constructor(opts: AlertDialogCancelStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -320,7 +356,7 @@ class AlertDialogCancelState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -332,42 +368,4 @@ class AlertDialogCancelState {
 				...attachRef(this.opts.ref, (v) => (this.root.cancelNode = v)),
 			}) as const
 	);
-}
-
-const DialogRootContext = new Context<DialogRootState>("Dialog.Root");
-
-export function useDialogRoot(props: DialogRootStateProps) {
-	return DialogRootContext.set(new DialogRootState(props));
-}
-
-export function useDialogTrigger(props: DialogTriggerStateProps) {
-	return new DialogTriggerState(props, DialogRootContext.get());
-}
-
-export function useDialogTitle(props: DialogTitleStateProps) {
-	return new DialogTitleState(props, DialogRootContext.get());
-}
-
-export function useDialogContent(props: DialogContentStateProps) {
-	return new DialogContentState(props, DialogRootContext.get());
-}
-
-export function useDialogOverlay(props: DialogOverlayStateProps) {
-	return new DialogOverlayState(props, DialogRootContext.get());
-}
-
-export function useDialogDescription(props: DialogDescriptionStateProps) {
-	return new DialogDescriptionState(props, DialogRootContext.get());
-}
-
-export function useDialogClose(props: DialogCloseStateProps) {
-	return new DialogCloseState(props, DialogRootContext.get());
-}
-
-export function useAlertDialogCancel(props: AlertDialogCancelStateProps) {
-	return new AlertDialogCancelState(props, DialogRootContext.get());
-}
-
-export function useAlertDialogAction(props: DialogActionStateProps) {
-	return new DialogActionState(props, DialogRootContext.get());
 }

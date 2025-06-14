@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useDialogTitle } from "../dialog.svelte.js";
+	import { DialogTitleState } from "../dialog.svelte.js";
 	import type { DialogTitleProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: DialogTitleProps = $props();
 
-	const titleState = useDialogTitle({
+	const titleState = DialogTitleState.create({
 		id: box.with(() => id),
 		level: box.with(() => level),
 		ref: box.with(

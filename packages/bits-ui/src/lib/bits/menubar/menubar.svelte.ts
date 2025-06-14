@@ -32,24 +32,29 @@ const menubarAttrs = createBitsAttrs({
 	parts: ["root", "trigger", "content"],
 });
 
-type MenubarRootStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		dir: Direction;
-		loop: boolean;
-	}> &
+const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
+const MenubarMenuContext = new Context<MenubarMenuState>("Menubar.Menu");
+interface MenubarRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			dir: Direction;
+			loop: boolean;
+		}>,
 		WritableBoxedValues<{
 			value: string;
-		}>
->;
+		}> {}
 
-class MenubarRootState {
-	readonly opts: MenubarRootStateProps;
-	rovingFocusGroup: RovingFocusGroup;
+export class MenubarRootState {
+	static create(opts: MenubarRootStateOpts) {
+		return MenubarRootContext.set(new MenubarRootState(opts));
+	}
+	readonly opts: MenubarRootStateOpts;
+	readonly rovingFocusGroup: RovingFocusGroup;
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
 	valueToChangeHandler = new Map<string, ReadableBox<OnChangeFn<boolean>>>();
 
-	constructor(opts: MenubarRootStateProps) {
+	constructor(opts: MenubarRootStateOpts) {
 		this.opts = opts;
 
 		this.rovingFocusGroup = new RovingFocusGroup({
@@ -119,7 +124,7 @@ class MenubarRootState {
 		this.updateValue(this.opts.value.current ? "" : id);
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -130,13 +135,18 @@ class MenubarRootState {
 	);
 }
 
-type MenubarMenuStateProps = ReadableBoxedValues<{
-	value: string;
-	onOpenChange: OnChangeFn<boolean>;
-}>;
+interface MenubarMenuStateOpts
+	extends ReadableBoxedValues<{
+		value: string;
+		onOpenChange: OnChangeFn<boolean>;
+	}> {}
 
-class MenubarMenuState {
-	readonly opts: MenubarMenuStateProps;
+export class MenubarMenuState {
+	static create(opts: MenubarMenuStateOpts) {
+		return MenubarMenuContext.set(new MenubarMenuState(opts, MenubarRootContext.get()));
+	}
+
+	readonly opts: MenubarMenuStateOpts;
 	readonly root: MenubarRootState;
 	open = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	wasOpenedByKeyboard = false;
@@ -145,7 +155,7 @@ class MenubarMenuState {
 	contentId = $derived.by(() => this.contentNode?.id);
 	contentNode = $state<HTMLElement | null>(null);
 
-	constructor(opts: MenubarMenuStateProps, root: MenubarRootState) {
+	constructor(opts: MenubarMenuStateOpts, root: MenubarRootState) {
 		this.opts = opts;
 		this.root = root;
 
@@ -176,20 +186,24 @@ class MenubarMenuState {
 	}
 }
 
-type MenubarTriggerStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>
->;
+interface MenubarTriggerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {}
 
-class MenubarTriggerState {
-	readonly opts: MenubarTriggerStateProps;
+export class MenubarTriggerState {
+	static create(opts: MenubarTriggerStateOpts) {
+		return new MenubarTriggerState(opts, MenubarMenuContext.get());
+	}
+
+	readonly opts: MenubarTriggerStateOpts;
 	readonly menu: MenubarMenuState;
-	root: MenubarRootState;
+	readonly root: MenubarRootState;
 	isFocused = $state(false);
 	#tabIndex = $state(0);
 
-	constructor(opts: MenubarTriggerStateProps, menu: MenubarMenuState) {
+	constructor(opts: MenubarTriggerStateOpts, menu: MenubarMenuState) {
 		this.opts = opts;
 		this.menu = menu;
 		this.root = menu.root;
@@ -252,7 +266,7 @@ class MenubarTriggerState {
 		this.isFocused = false;
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				type: "button",
@@ -278,23 +292,27 @@ class MenubarTriggerState {
 	);
 }
 
-type MenubarContentStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		interactOutsideBehavior: InteractOutsideBehaviorType;
-		onOpenAutoFocus: (e: Event) => void;
-		onCloseAutoFocus: (e: Event) => void;
-		onFocusOutside: (e: FocusEvent) => void;
-		onInteractOutside: (e: PointerEvent) => void;
-	}>
->;
+interface MenubarContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			interactOutsideBehavior: InteractOutsideBehaviorType;
+			onOpenAutoFocus: (e: Event) => void;
+			onCloseAutoFocus: (e: Event) => void;
+			onFocusOutside: (e: FocusEvent) => void;
+			onInteractOutside: (e: PointerEvent) => void;
+		}> {}
 
-class MenubarContentState {
-	readonly opts: MenubarContentStateProps;
+export class MenubarContentState {
+	static create(opts: MenubarContentStateOpts) {
+		return new MenubarContentState(opts, MenubarMenuContext.get());
+	}
+
+	readonly opts: MenubarContentStateOpts;
 	readonly menu: MenubarMenuState;
-	root: MenubarRootState;
+	readonly root: MenubarRootState;
 	focusScopeContext: FocusScopeContextValue;
 
-	constructor(opts: MenubarContentStateProps, menu: MenubarMenuState) {
+	constructor(opts: MenubarContentStateOpts, menu: MenubarMenuState) {
 		this.opts = opts;
 		this.menu = menu;
 		this.root = menu.root;
@@ -377,23 +395,4 @@ class MenubarContentState {
 		onInteractOutside: this.onInteractOutside,
 		onOpenAutoFocus: this.onOpenAutoFocus,
 	};
-}
-
-const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
-const MenubarMenuContext = new Context<MenubarMenuState>("Menubar.Menu");
-
-export function useMenubarRoot(props: MenubarRootStateProps) {
-	return MenubarRootContext.set(new MenubarRootState(props));
-}
-
-export function useMenubarMenu(props: MenubarMenuStateProps) {
-	return MenubarMenuContext.set(new MenubarMenuState(props, MenubarRootContext.get()));
-}
-
-export function useMenubarTrigger(props: MenubarTriggerStateProps) {
-	return new MenubarTriggerState(props, MenubarMenuContext.get());
-}
-
-export function useMenubarContent(props: MenubarContentStateProps) {
-	return new MenubarContentState(props, MenubarMenuContext.get());
 }

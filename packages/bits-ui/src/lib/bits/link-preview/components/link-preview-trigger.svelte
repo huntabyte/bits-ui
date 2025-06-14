@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { LinkPreviewTriggerProps } from "../types.js";
-	import { useLinkPreviewTrigger } from "../link-preview.svelte.js";
+	import { LinkPreviewTriggerState } from "../link-preview.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: LinkPreviewTriggerProps = $props();
 
-	const triggerState = useLinkPreviewTrigger({
+	const triggerState = LinkPreviewTriggerState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

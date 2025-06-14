@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useDialogContent } from "../dialog.svelte.js";
+	import { DialogContentState } from "../dialog.svelte.js";
 	import type { DialogContentProps } from "../types.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
@@ -30,7 +30,7 @@
 		...restProps
 	}: DialogContentProps = $props();
 
-	const contentState = useDialogContent({
+	const contentState = DialogContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

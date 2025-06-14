@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { MenuSubProps } from "../types.js";
-	import { useMenuSubmenu } from "../menu.svelte.js";
+	import { MenuSubmenuState } from "../menu.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
 	let { open = $bindable(false), onOpenChange = noop, children }: MenuSubProps = $props();
 
-	useMenuSubmenu({
+	MenuSubmenuState.create({
 		open: box.with(
 			() => open,
 			(v) => {

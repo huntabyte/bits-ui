@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { attachRef, box, mergeProps } from "svelte-toolbelt";
 	import type { MenubarTriggerProps } from "../types.js";
-	import { useMenubarTrigger } from "../menubar.svelte.js";
+	import { MenubarTriggerState } from "../menubar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
-	import { useMenuDropdownTrigger } from "$lib/bits/menu/menu.svelte.js";
+	import { DropdownMenuTriggerState } from "$lib/bits/menu/menu.svelte.js";
 
 	const uid = $props.id();
 
@@ -17,7 +17,7 @@
 		...restProps
 	}: MenubarTriggerProps = $props();
 
-	const triggerState = useMenubarTrigger({
+	const triggerState = MenubarTriggerState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled ?? false),
 		ref: box.with(
@@ -26,7 +26,7 @@
 		),
 	});
 
-	const dropdownTriggerState = useMenuDropdownTrigger(triggerState.opts);
+	const dropdownTriggerState = DropdownMenuTriggerState.create(triggerState.opts);
 
 	const mergedProps = $derived(
 		mergeProps(restProps, triggerState.props, {

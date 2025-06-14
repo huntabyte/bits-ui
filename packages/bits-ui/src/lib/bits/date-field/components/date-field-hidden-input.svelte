@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { useDateFieldHiddenInput } from "../date-field.svelte.js";
+	import { DateFieldHiddenInputState } from "../date-field.svelte.js";
 	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
 
-	const hiddenInputState = useDateFieldHiddenInput();
+	const hiddenInputState = DateFieldHiddenInputState.create();
 </script>
 
 {#if hiddenInputState.shouldRender}

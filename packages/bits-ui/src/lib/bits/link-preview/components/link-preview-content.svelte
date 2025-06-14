@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { LinkPreviewContentProps } from "../types.js";
-	import { useLinkPreviewContent } from "../link-preview.svelte.js";
+	import { LinkPreviewContentState } from "../link-preview.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
@@ -30,7 +30,7 @@
 		...restProps
 	}: LinkPreviewContentProps = $props();
 
-	const contentState = useLinkPreviewContent({
+	const contentState = LinkPreviewContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

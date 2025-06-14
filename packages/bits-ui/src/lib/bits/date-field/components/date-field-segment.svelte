@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useDateFieldSegment } from "../date-field.svelte.js";
+	import { DateFieldSegmentState } from "../date-field.svelte.js";
 	import type { DateFieldSegmentProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: DateFieldSegmentProps = $props();
 
-	const segmentState = useDateFieldSegment(part, {
+	const segmentState = DateFieldSegmentState.create(part, {
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

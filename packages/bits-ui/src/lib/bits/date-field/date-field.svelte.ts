@@ -79,7 +79,7 @@ export const dateFieldAttrs = createBitsAttrs({
 });
 
 // Common segment configuration
-type SegmentConfig = {
+interface SegmentConfig {
 	min: number | ((root: DateFieldRootState) => number);
 	max: number | ((root: DateFieldRootState) => number);
 	cycle: number;
@@ -92,7 +92,7 @@ type SegmentConfig = {
 		num: number;
 		moveToNext: { value: boolean };
 	}) => string | null;
-};
+}
 
 const SEGMENT_CONFIGS: Record<
 	"day" | "month" | "year" | "hour" | "minute" | "second",
@@ -152,50 +152,57 @@ const SEGMENT_CONFIGS: Record<
 	},
 };
 
-export type DateFieldRootStateProps = WritableBoxedValues<{
-	value: DateValue | undefined;
-	placeholder: DateValue;
-}> &
-	ReadableBoxedValues<{
-		readonlySegments: SegmentPart[];
-		validate: DateValidator | undefined;
-		onInvalid: DateOnInvalid | undefined;
-		minValue: DateValue | undefined;
-		maxValue: DateValue | undefined;
-		disabled: boolean;
-		readonly: boolean;
-		granularity: Granularity | undefined;
-		hourCycle: HourCycle | undefined;
-		locale: string;
-		hideTimeZone: boolean;
-		required: boolean;
-		errorMessageId: string | undefined;
-		isInvalidProp: boolean | undefined;
-	}>;
+const DateFieldRootContext = new Context<DateFieldRootState>("DateField.Root");
+
+interface DateFieldRootStateOpts
+	extends WritableBoxedValues<{
+			value: DateValue | undefined;
+			placeholder: DateValue;
+		}>,
+		ReadableBoxedValues<{
+			readonlySegments: SegmentPart[];
+			validate: DateValidator | undefined;
+			onInvalid: DateOnInvalid | undefined;
+			minValue: DateValue | undefined;
+			maxValue: DateValue | undefined;
+			disabled: boolean;
+			readonly: boolean;
+			granularity: Granularity | undefined;
+			hourCycle: HourCycle | undefined;
+			locale: string;
+			hideTimeZone: boolean;
+			required: boolean;
+			errorMessageId: string | undefined;
+			isInvalidProp: boolean | undefined;
+		}> {}
 
 export class DateFieldRootState {
-	value: DateFieldRootStateProps["value"];
+	static create(opts: DateFieldRootStateOpts, rangeRoot?: DateRangeFieldRootState) {
+		return DateFieldRootContext.set(new DateFieldRootState(opts, rangeRoot));
+	}
+
+	value: DateFieldRootStateOpts["value"];
 	placeholder: WritableBox<DateValue>;
-	validate: DateFieldRootStateProps["validate"];
-	minValue: DateFieldRootStateProps["minValue"];
-	maxValue: DateFieldRootStateProps["maxValue"];
-	disabled: DateFieldRootStateProps["disabled"];
-	readonly: DateFieldRootStateProps["readonly"];
-	granularity: DateFieldRootStateProps["granularity"];
-	readonlySegments: DateFieldRootStateProps["readonlySegments"];
-	hourCycle: DateFieldRootStateProps["hourCycle"];
-	locale: DateFieldRootStateProps["locale"];
-	hideTimeZone: DateFieldRootStateProps["hideTimeZone"];
-	required: DateFieldRootStateProps["required"];
-	onInvalid: DateFieldRootStateProps["onInvalid"];
-	errorMessageId: DateFieldRootStateProps["errorMessageId"];
-	isInvalidProp: DateFieldRootStateProps["isInvalidProp"];
+	validate: DateFieldRootStateOpts["validate"];
+	minValue: DateFieldRootStateOpts["minValue"];
+	maxValue: DateFieldRootStateOpts["maxValue"];
+	disabled: DateFieldRootStateOpts["disabled"];
+	readonly: DateFieldRootStateOpts["readonly"];
+	granularity: DateFieldRootStateOpts["granularity"];
+	readonlySegments: DateFieldRootStateOpts["readonlySegments"];
+	hourCycle: DateFieldRootStateOpts["hourCycle"];
+	locale: DateFieldRootStateOpts["locale"];
+	hideTimeZone: DateFieldRootStateOpts["hideTimeZone"];
+	required: DateFieldRootStateOpts["required"];
+	onInvalid: DateFieldRootStateOpts["onInvalid"];
+	errorMessageId: DateFieldRootStateOpts["errorMessageId"];
+	isInvalidProp: DateFieldRootStateOpts["isInvalidProp"];
 	descriptionId = useId();
 	formatter: Formatter;
 	initialSegments: SegmentValueObj;
 	segmentValues = $state() as SegmentValueObj;
 	announcer: Announcer;
-	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.current));
+	readonly readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.current));
 	segmentStates = initSegmentStates();
 	#fieldNode = $state<HTMLElement | null>(null);
 	#labelNode = $state<HTMLElement | null>(null);
@@ -207,7 +214,7 @@ export class DateFieldRootState {
 	name = $state("");
 	domContext: DOMContext = new DOMContext(() => null);
 
-	constructor(props: DateFieldRootStateProps, rangeRoot?: DateRangeFieldRootState) {
+	constructor(props: DateFieldRootStateOpts, rangeRoot?: DateRangeFieldRootState) {
 		this.rangeRoot = rangeRoot;
 		/**
 		 * Since the `DateFieldRootState` can be used in two contexts, as a standalone
@@ -474,7 +481,7 @@ export class DateFieldRootState {
 		this.segmentValues = Object.fromEntries(dateValues);
 	}
 
-	validationStatus = $derived.by(() => {
+	readonly validationStatus = $derived.by(() => {
 		const value = this.value.current;
 		if (!value) return false as const;
 
@@ -502,22 +509,22 @@ export class DateFieldRootState {
 		return false;
 	});
 
-	isInvalid = $derived.by(() => {
+	readonly isInvalid = $derived.by(() => {
 		if (this.validationStatus === false) return false;
 		if (this.isInvalidProp.current) return true;
 		return true;
 	});
 
-	inferredGranularity = $derived.by(() => {
+	readonly inferredGranularity = $derived.by(() => {
 		const granularity = this.granularity.current;
 		if (granularity) return granularity;
 		const inferred = inferGranularity(this.placeholder.current, this.granularity.current);
 		return inferred;
 	});
 
-	dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
+	readonly dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
 
-	allSegmentContent = $derived.by(() =>
+	readonly allSegmentContent = $derived.by(() =>
 		createContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
@@ -529,9 +536,9 @@ export class DateFieldRootState {
 		})
 	);
 
-	segmentContents = $derived.by(() => this.allSegmentContent.arr);
+	readonly segmentContents = $derived.by(() => this.allSegmentContent.arr);
 
-	sharedSegmentAttrs = {
+	readonly sharedSegmentAttrs = {
 		role: "spinbutton",
 		contenteditable: "true",
 		tabindex: 0,
@@ -715,35 +722,43 @@ export class DateFieldRootState {
 	}
 }
 
-type DateFieldInputStateProps = WithRefOpts &
-	ReadableBoxedValues<{
-		name: string;
-	}>;
+interface DateFieldInputStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			name: string;
+		}> {}
 
 export class DateFieldInputState {
-	readonly opts: DateFieldInputStateProps;
+	static create(opts: DateFieldInputStateOpts) {
+		return new DateFieldInputState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldInputStateOpts;
 	readonly root: DateFieldRootState;
 	readonly domContext: DOMContext;
 
-	constructor(opts: DateFieldInputStateProps, root: DateFieldRootState) {
+	constructor(opts: DateFieldInputStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.domContext = new DOMContext(opts.ref);
 		this.root.domContext = this.domContext;
 
-		$effect(() => {
-			this.root.setName(this.opts.name.current);
-		});
+		watch(
+			() => this.opts.name.current,
+			(v) => {
+				this.root.setName(v);
+			}
+		);
 	}
 
-	#ariaDescribedBy = $derived.by(() => {
+	readonly #ariaDescribedBy = $derived.by(() => {
 		if (!isBrowser) return undefined;
 		const doesDescriptionExist = this.domContext.getElementById(this.root.descriptionId);
 		if (!doesDescriptionExist) return undefined;
 		return this.root.descriptionId;
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -758,10 +773,14 @@ export class DateFieldInputState {
 			}) as const
 	);
 }
-class DateFieldHiddenInputState {
+export class DateFieldHiddenInputState {
+	static create() {
+		return new DateFieldHiddenInputState(DateFieldRootContext.get());
+	}
+
 	readonly root: DateFieldRootState;
-	shouldRender = $derived.by(() => this.root.name !== "");
-	isoValue = $derived.by(() =>
+	readonly shouldRender = $derived.by(() => this.root.name !== "");
+	readonly isoValue = $derived.by(() =>
 		this.root.value.current ? this.root.value.current.toString() : ""
 	);
 
@@ -769,7 +788,7 @@ class DateFieldHiddenInputState {
 		this.root = root;
 	}
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		return {
 			name: this.root.name,
 			value: this.isoValue,
@@ -778,13 +797,17 @@ class DateFieldHiddenInputState {
 	});
 }
 
-type DateFieldLabelStateProps = WithRefOpts;
+interface DateFieldLabelStateOpts extends WithRefOpts {}
 
-class DateFieldLabelState {
-	readonly opts: DateFieldLabelStateProps;
+export class DateFieldLabelState {
+	static create(opts: DateFieldLabelStateOpts) {
+		return new DateFieldLabelState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldLabelStateOpts;
 	readonly root: DateFieldRootState;
 
-	constructor(opts: DateFieldLabelStateProps, root: DateFieldRootState) {
+	constructor(opts: DateFieldLabelStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -797,7 +820,7 @@ class DateFieldLabelState {
 		firstSegment.focus();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1123,7 +1146,6 @@ abstract class BaseNumericSegmentState {
 	});
 }
 
-// Year segment needs special handling
 class DateFieldYearSegmentState extends BaseNumericSegmentState {
 	#pressedKeys: string[] = [];
 	#backspaceCount = 0;
@@ -1268,7 +1290,6 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 	}
 }
 
-// Create segment states using the base class
 class DateFieldDaySegmentState extends BaseNumericSegmentState {
 	constructor(opts: WithRefOpts, root: DateFieldRootState) {
 		super(opts, root, "day", SEGMENT_CONFIGS.day);
@@ -1331,14 +1352,18 @@ class DateFieldSecondSegmentState extends BaseNumericSegmentState {
 }
 
 // Special segments that don't extend the base class
-type DateFieldDayPeriodSegmentStateProps = WithRefOpts;
+interface DateFieldDayPeriodSegmentStateOpts extends WithRefOpts {}
 
-class DateFieldDayPeriodSegmentState {
-	readonly opts: DateFieldDayPeriodSegmentStateProps;
+export class DateFieldDayPeriodSegmentState {
+	static create(opts: DateFieldDayPeriodSegmentStateOpts) {
+		return new DateFieldDayPeriodSegmentState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldDayPeriodSegmentStateOpts;
 	readonly root: DateFieldRootState;
 	#announcer: Announcer;
 
-	constructor(opts: DateFieldDayPeriodSegmentStateProps, root: DateFieldRootState) {
+	constructor(opts: DateFieldDayPeriodSegmentStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.#announcer = this.root.announcer;
@@ -1387,7 +1412,7 @@ class DateFieldDayPeriodSegmentState {
 		}
 	}
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		const segmentValues = this.root.segmentValues;
 		if (!("dayPeriod" in segmentValues)) return;
 
@@ -1413,18 +1438,22 @@ class DateFieldDayPeriodSegmentState {
 	});
 }
 
-type DateFieldLiteralSegmentStateProps = WithRefOpts;
+interface DateFieldLiteralSegmentStateOpts extends WithRefOpts {}
 
-class DateFieldDayLiteralSegmentState {
-	readonly opts: DateFieldLiteralSegmentStateProps;
+export class DateFieldLiteralSegmentState {
+	static create(opts: DateFieldLiteralSegmentStateOpts) {
+		return new DateFieldLiteralSegmentState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldLiteralSegmentStateOpts;
 	readonly root: DateFieldRootState;
 
-	constructor(opts: DateFieldLiteralSegmentStateProps, root: DateFieldRootState) {
+	constructor(opts: DateFieldLiteralSegmentStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1435,11 +1464,17 @@ class DateFieldDayLiteralSegmentState {
 	);
 }
 
-class DateFieldTimeZoneSegmentState {
-	readonly opts: DateFieldLiteralSegmentStateProps;
+interface DateFieldTimeZoneSegmentStateOpts extends WithRefOpts {}
+
+export class DateFieldTimeZoneSegmentState {
+	static create(opts: DateFieldTimeZoneSegmentStateOpts) {
+		return new DateFieldTimeZoneSegmentState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldTimeZoneSegmentStateOpts;
 	readonly root: DateFieldRootState;
 
-	constructor(opts: DateFieldLiteralSegmentStateProps, root: DateFieldRootState) {
+	constructor(opts: DateFieldTimeZoneSegmentStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onkeydown = this.onkeydown.bind(this);
@@ -1453,7 +1488,7 @@ class DateFieldTimeZoneSegmentState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				role: "textbox",
@@ -1470,7 +1505,31 @@ class DateFieldTimeZoneSegmentState {
 	);
 }
 
-// Utils/helpers
+export class DateFieldSegmentState {
+	static create(part: SegmentPart, opts: WithRefOpts) {
+		const root = DateFieldRootContext.get();
+		switch (part) {
+			case "day":
+				return new DateFieldDaySegmentState(opts, root);
+			case "month":
+				return new DateFieldMonthSegmentState(opts, root);
+			case "year":
+				return new DateFieldYearSegmentState(opts, root);
+			case "hour":
+				return new DateFieldHourSegmentState(opts, root);
+			case "minute":
+				return new DateFieldMinuteSegmentState(opts, root);
+			case "second":
+				return new DateFieldSecondSegmentState(opts, root);
+			case "dayPeriod":
+				return new DateFieldDayPeriodSegmentState(opts, root);
+			case "literal":
+				return new DateFieldLiteralSegmentState(opts, root);
+			case "timeZoneName":
+				return new DateFieldTimeZoneSegmentState(opts, root);
+		}
+	}
+}
 
 function isAcceptableDayPeriodKey(key: string) {
 	return (
@@ -1492,64 +1551,6 @@ function isArrowDown(key: string) {
 
 function isBackspace(key: string) {
 	return key === kbd.BACKSPACE;
-}
-
-const DateFieldRootContext = new Context<DateFieldRootState>("DateField.Root");
-
-export function useDateFieldRoot(
-	props: DateFieldRootStateProps,
-	rangeRoot?: DateRangeFieldRootState
-) {
-	return DateFieldRootContext.set(new DateFieldRootState(props, rangeRoot));
-}
-
-export function useDateFieldInput(props: DateFieldInputStateProps) {
-	return new DateFieldInputState(props, DateFieldRootContext.get());
-}
-
-export function useDateFieldHiddenInput() {
-	return new DateFieldHiddenInputState(DateFieldRootContext.get());
-}
-
-export function useDateFieldSegment(part: SegmentPart, props: WithRefOpts) {
-	return segmentPartToInstance({
-		part,
-		segmentProps: props,
-		root: DateFieldRootContext.get(),
-	});
-}
-
-export function useDateFieldLabel(props: DateFieldLabelStateProps) {
-	return new DateFieldLabelState(props, DateFieldRootContext.get());
-}
-
-type SegmentPartToInstanceProps = {
-	part: SegmentPart;
-	root: DateFieldRootState;
-	segmentProps: WithRefOpts;
-};
-
-function segmentPartToInstance(props: SegmentPartToInstanceProps) {
-	switch (props.part) {
-		case "day":
-			return new DateFieldDaySegmentState(props.segmentProps, props.root);
-		case "month":
-			return new DateFieldMonthSegmentState(props.segmentProps, props.root);
-		case "year":
-			return new DateFieldYearSegmentState(props.segmentProps, props.root);
-		case "hour":
-			return new DateFieldHourSegmentState(props.segmentProps, props.root);
-		case "minute":
-			return new DateFieldMinuteSegmentState(props.segmentProps, props.root);
-		case "second":
-			return new DateFieldSecondSegmentState(props.segmentProps, props.root);
-		case "dayPeriod":
-			return new DateFieldDayPeriodSegmentState(props.segmentProps, props.root);
-		case "literal":
-			return new DateFieldDayLiteralSegmentState(props.segmentProps, props.root);
-		case "timeZoneName":
-			return new DateFieldTimeZoneSegmentState(props.segmentProps, props.root);
-	}
 }
 
 function prependYearZeros(year: number) {

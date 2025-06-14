@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useDateRangeFieldLabel } from "../date-range-field.svelte.js";
+	import { DateRangeFieldLabelState } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldLabelProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: DateRangeFieldLabelProps = $props();
 
-	const labelState = useDateRangeFieldLabel({
+	const labelState = DateRangeFieldLabelState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
