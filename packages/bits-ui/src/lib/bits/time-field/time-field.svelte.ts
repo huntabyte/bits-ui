@@ -75,13 +75,15 @@ export const timeFieldAttrs = createBitsAttrs({
 	parts: ["input", "label"],
 });
 
-type SegmentConfig = {
+const TimeFieldRootContext = new Context<TimeFieldRootState>("TimeField.Root");
+
+interface SegmentConfig {
 	min: number | ((root: TimeFieldRootState) => number);
 	max: number | ((root: TimeFieldRootState) => number);
 	cycle: number;
 	canBeZero?: boolean;
 	padZero?: boolean;
-};
+}
 
 const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 	hour: {
@@ -112,50 +114,59 @@ const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 	},
 };
 
-export type TimeFieldRootStateProps<T extends TimeValue = Time> = WritableBoxedValues<{
-	value: T | undefined;
-	placeholder: TimeValue;
-}> &
-	ReadableBoxedValues<{
-		readonlySegments: SegmentPart[];
-		validate: TimeValidator<T> | undefined;
-		onInvalid: TimeOnInvalid | undefined;
-		minValue: TimeValue | undefined;
-		maxValue: TimeValue | undefined;
-		disabled: boolean;
-		readonly: boolean;
-		granularity: "hour" | "minute" | "second" | undefined;
-		hourCycle: HourCycle | undefined;
-		locale: string;
-		hideTimeZone: boolean;
-		required: boolean;
-		errorMessageId: string | undefined;
-		isInvalidProp: boolean | undefined;
-	}>;
+export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
+	extends WritableBoxedValues<{
+			value: T | undefined;
+			placeholder: TimeValue;
+		}>,
+		ReadableBoxedValues<{
+			readonlySegments: SegmentPart[];
+			validate: TimeValidator<T> | undefined;
+			onInvalid: TimeOnInvalid | undefined;
+			minValue: TimeValue | undefined;
+			maxValue: TimeValue | undefined;
+			disabled: boolean;
+			readonly: boolean;
+			granularity: "hour" | "minute" | "second" | undefined;
+			hourCycle: HourCycle | undefined;
+			locale: string;
+			hideTimeZone: boolean;
+			required: boolean;
+			errorMessageId: string | undefined;
+			isInvalidProp: boolean | undefined;
+		}> {}
 
 export class TimeFieldRootState<T extends TimeValue = Time> {
-	value: TimeFieldRootStateProps<T>["value"];
+	static create<T extends TimeValue = Time>(
+		opts: TimeFieldRootStateOpts<T>,
+		rangeRoot?: TimeRangeFieldRootState<T>
+	) {
+		return TimeFieldRootContext.set(
+			new TimeFieldRootState(opts, rangeRoot) as unknown as TimeFieldRootState
+		);
+	}
+	value: TimeFieldRootStateOpts<T>["value"];
 	placeholder: WritableBox<TimeValue>;
-	validate: TimeFieldRootStateProps<T>["validate"];
-	minValue: TimeFieldRootStateProps<T>["minValue"];
-	maxValue: TimeFieldRootStateProps<T>["maxValue"];
-	disabled: TimeFieldRootStateProps<T>["disabled"];
-	readonly: TimeFieldRootStateProps<T>["readonly"];
-	granularity: TimeFieldRootStateProps<T>["granularity"];
-	readonlySegments: TimeFieldRootStateProps<T>["readonlySegments"];
-	hourCycleProp: TimeFieldRootStateProps<T>["hourCycle"];
-	locale: TimeFieldRootStateProps<T>["locale"];
-	hideTimeZone: TimeFieldRootStateProps<T>["hideTimeZone"];
-	required: TimeFieldRootStateProps<T>["required"];
-	onInvalid: TimeFieldRootStateProps<T>["onInvalid"];
-	errorMessageId: TimeFieldRootStateProps<T>["errorMessageId"];
-	isInvalidProp: TimeFieldRootStateProps<T>["isInvalidProp"];
+	validate: TimeFieldRootStateOpts<T>["validate"];
+	minValue: TimeFieldRootStateOpts<T>["minValue"];
+	maxValue: TimeFieldRootStateOpts<T>["maxValue"];
+	disabled: TimeFieldRootStateOpts<T>["disabled"];
+	readonly: TimeFieldRootStateOpts<T>["readonly"];
+	granularity: TimeFieldRootStateOpts<T>["granularity"];
+	readonlySegments: TimeFieldRootStateOpts<T>["readonlySegments"];
+	hourCycleProp: TimeFieldRootStateOpts<T>["hourCycle"];
+	locale: TimeFieldRootStateOpts<T>["locale"];
+	hideTimeZone: TimeFieldRootStateOpts<T>["hideTimeZone"];
+	required: TimeFieldRootStateOpts<T>["required"];
+	onInvalid: TimeFieldRootStateOpts<T>["onInvalid"];
+	errorMessageId: TimeFieldRootStateOpts<T>["errorMessageId"];
+	isInvalidProp: TimeFieldRootStateOpts<T>["isInvalidProp"];
 	descriptionId = useId();
 	formatter: TimeFormatter;
 	initialSegments: TimeSegmentObj;
 	segmentValues = $state() as TimeSegmentObj;
 	announcer: Announcer;
-	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.current));
+	readonly readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.current));
 	segmentStates = initTimeSegmentStates();
 	#fieldNode = $state<HTMLElement | null>(null);
 	#labelNode = $state<HTMLElement | null>(null);
@@ -164,26 +175,26 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	states = initTimeSegmentStates();
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	name = $state("");
-	maxValueTime = $derived.by(() => {
+	readonly maxValueTime = $derived.by(() => {
 		if (!this.maxValue.current) return undefined;
 		return convertTimeValueToTime(this.maxValue.current);
 	});
-	minValueTime = $derived.by(() => {
+	readonly minValueTime = $derived.by(() => {
 		if (!this.minValue.current) return undefined;
 		return convertTimeValueToTime(this.minValue.current);
 	});
-	valueTime = $derived.by(() => {
+	readonly valueTime = $derived.by(() => {
 		if (!this.value.current) return undefined;
 		return convertTimeValueToTime(this.value.current);
 	});
-	hourCycle = $derived.by(() => {
+	readonly hourCycle = $derived.by(() => {
 		if (this.hourCycleProp.current) return this.hourCycleProp.current;
 		return getDefaultHourCycle(this.locale.current);
 	});
-	rangeRoot: TimeRangeFieldRootState<T> | undefined = undefined;
+	readonly rangeRoot: TimeRangeFieldRootState<T> | undefined = undefined;
 	domContext = new DOMContext(() => null);
 
-	constructor(props: TimeFieldRootStateProps<T>, rangeRoot?: TimeRangeFieldRootState<T>) {
+	constructor(props: TimeFieldRootStateOpts<T>, rangeRoot?: TimeRangeFieldRootState<T>) {
 		this.rangeRoot = rangeRoot;
 		/**
 		 * Since the `TimeFieldRootState` can be used in two contexts, as a standalone
@@ -592,18 +603,21 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	}
 }
 
-// Input, Label, HiddenInput states follow the same pattern as date-field
-type TimeFieldInputStateProps = WithRefOpts &
-	ReadableBoxedValues<{
-		name: string;
-	}>;
+interface TimeFieldInputStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			name: string;
+		}> {}
 
 export class TimeFieldInputState {
-	readonly opts: TimeFieldInputStateProps;
+	static create(opts: TimeFieldInputStateOpts) {
+		return new TimeFieldInputState(opts, TimeFieldRootContext.get());
+	}
+	readonly opts: TimeFieldInputStateOpts;
 	readonly root: TimeFieldRootState;
 	domContext: DOMContext;
 
-	constructor(opts: TimeFieldInputStateProps, root: TimeFieldRootState) {
+	constructor(opts: TimeFieldInputStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.domContext = new DOMContext(opts.ref);
@@ -614,14 +628,14 @@ export class TimeFieldInputState {
 		});
 	}
 
-	#ariaDescribedBy = $derived.by(() => {
+	readonly #ariaDescribedBy = $derived.by(() => {
 		if (!isBrowser) return undefined;
 		const doesDescriptionExist = this.domContext.getElementById(this.root.descriptionId);
 		if (!doesDescriptionExist) return undefined;
 		return this.root.descriptionId;
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -637,10 +651,13 @@ export class TimeFieldInputState {
 	);
 }
 
-class TimeFieldHiddenInputState {
+export class TimeFieldHiddenInputState {
+	static create() {
+		return new TimeFieldHiddenInputState(TimeFieldRootContext.get());
+	}
 	readonly root: TimeFieldRootState;
-	shouldRender = $derived.by(() => this.root.name !== "");
-	isoValue = $derived.by(() =>
+	readonly shouldRender = $derived.by(() => this.root.name !== "");
+	readonly isoValue = $derived.by(() =>
 		this.root.value.current ? getISOTimeValue(this.root.value.current) : undefined
 	);
 
@@ -648,7 +665,7 @@ class TimeFieldHiddenInputState {
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				name: this.root.name,
@@ -658,13 +675,16 @@ class TimeFieldHiddenInputState {
 	);
 }
 
-type TimeFieldLabelStateProps = WithRefOpts;
+interface TimeFieldLabelStateOpts extends WithRefOpts {}
 
-class TimeFieldLabelState {
-	readonly opts: TimeFieldLabelStateProps;
+export class TimeFieldLabelState {
+	static create(opts: TimeFieldLabelStateOpts) {
+		return new TimeFieldLabelState(opts, TimeFieldRootContext.get());
+	}
+	readonly opts: TimeFieldLabelStateOpts;
 	readonly root: TimeFieldRootState;
 
-	constructor(opts: TimeFieldLabelStateProps, root: TimeFieldRootState) {
+	constructor(opts: TimeFieldLabelStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -677,7 +697,7 @@ class TimeFieldLabelState {
 		firstSegment.focus();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1030,14 +1050,14 @@ class TimeFieldSecondSegmentState extends BaseTimeSegmentState {
 	}
 }
 
-type TimeFieldDayPeriodSegmentStateProps = WithRefOpts;
+interface TimeFieldDayPeriodSegmentStateOpts extends WithRefOpts {}
 
 class TimeFieldDayPeriodSegmentState {
-	readonly opts: TimeFieldDayPeriodSegmentStateProps;
+	readonly opts: TimeFieldDayPeriodSegmentStateOpts;
 	readonly root: TimeFieldRootState;
 	#announcer: Announcer;
 
-	constructor(opts: TimeFieldDayPeriodSegmentStateProps, root: TimeFieldRootState) {
+	constructor(opts: TimeFieldDayPeriodSegmentStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.#announcer = this.root.announcer;
@@ -1086,7 +1106,7 @@ class TimeFieldDayPeriodSegmentState {
 		}
 	}
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		const segmentValues = this.root.segmentValues;
 		if (!("dayPeriod" in segmentValues)) return;
 
@@ -1112,19 +1132,18 @@ class TimeFieldDayPeriodSegmentState {
 	});
 }
 
-// Literal segment
-type TimeFieldLiteralSegmentStateProps = WithRefOpts;
+interface TimeFieldLiteralSegmentStateOpts extends WithRefOpts {}
 
 class TimeFieldLiteralSegmentState {
-	readonly opts: TimeFieldLiteralSegmentStateProps;
+	readonly opts: TimeFieldLiteralSegmentStateOpts;
 	readonly root: TimeFieldRootState;
 
-	constructor(opts: TimeFieldLiteralSegmentStateProps, root: TimeFieldRootState) {
+	constructor(opts: TimeFieldLiteralSegmentStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1136,10 +1155,10 @@ class TimeFieldLiteralSegmentState {
 }
 
 class TimeFieldTimeZoneSegmentState {
-	readonly opts: TimeFieldLiteralSegmentStateProps;
+	readonly opts: TimeFieldLiteralSegmentStateOpts;
 	readonly root: TimeFieldRootState;
 
-	constructor(opts: TimeFieldLiteralSegmentStateProps, root: TimeFieldRootState) {
+	constructor(opts: TimeFieldLiteralSegmentStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onkeydown = this.onkeydown.bind(this);
@@ -1153,7 +1172,7 @@ class TimeFieldTimeZoneSegmentState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				role: "textbox",
@@ -1169,6 +1188,28 @@ class TimeFieldTimeZoneSegmentState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
+}
+
+export class DateFieldSegmentState {
+	static create(part: SegmentPart, opts: WithRefOpts) {
+		const root = TimeFieldRootContext.get();
+		switch (part) {
+			case "hour":
+				return new TimeFieldHourSegmentState(opts, root);
+			case "minute":
+				return new TimeFieldMinuteSegmentState(opts, root);
+			case "second":
+				return new TimeFieldSecondSegmentState(opts, root);
+			case "dayPeriod":
+				return new TimeFieldDayPeriodSegmentState(opts, root);
+			case "literal":
+				return new TimeFieldLiteralSegmentState(opts, root);
+			case "timeZoneName":
+				return new TimeFieldTimeZoneSegmentState(opts, root);
+			default:
+				throw new Error(`Invalid part: ${part}`);
+		}
+	}
 }
 
 // Utils/helpers
@@ -1192,61 +1233,4 @@ function isArrowDown(key: string) {
 
 function isBackspace(key: string) {
 	return key === kbd.BACKSPACE;
-}
-
-const TimeFieldRootContext = new Context<TimeFieldRootState>("TimeField.Root");
-
-export function useTimeFieldRoot<T extends TimeValue = Time>(
-	props: TimeFieldRootStateProps<T>,
-	rangeRoot?: TimeRangeFieldRootState<T>
-) {
-	return TimeFieldRootContext.set(
-		new TimeFieldRootState(props, rangeRoot) as unknown as TimeFieldRootState
-	);
-}
-
-export function useTimeFieldInput(props: TimeFieldInputStateProps) {
-	return new TimeFieldInputState(props, TimeFieldRootContext.get());
-}
-
-export function useTimeFieldHiddenInput() {
-	return new TimeFieldHiddenInputState(TimeFieldRootContext.get());
-}
-
-export function useTimeFieldSegment(part: SegmentPart, props: WithRefOpts) {
-	return segmentPartToInstance({
-		part,
-		segmentProps: props,
-		root: TimeFieldRootContext.get(),
-	});
-}
-
-export function useTimeFieldLabel(props: TimeFieldLabelStateProps) {
-	return new TimeFieldLabelState(props, TimeFieldRootContext.get());
-}
-
-type SegmentPartToInstanceProps = {
-	part: SegmentPart;
-	root: TimeFieldRootState;
-	segmentProps: WithRefOpts;
-};
-
-function segmentPartToInstance(props: SegmentPartToInstanceProps) {
-	switch (props.part) {
-		case "hour":
-			return new TimeFieldHourSegmentState(props.segmentProps, props.root);
-		case "minute":
-			return new TimeFieldMinuteSegmentState(props.segmentProps, props.root);
-		case "second":
-			return new TimeFieldSecondSegmentState(props.segmentProps, props.root);
-		case "dayPeriod":
-			return new TimeFieldDayPeriodSegmentState(props.segmentProps, props.root);
-		case "literal":
-			return new TimeFieldLiteralSegmentState(props.segmentProps, props.root);
-		case "timeZoneName":
-			return new TimeFieldTimeZoneSegmentState(props.segmentProps, props.root);
-		default:
-			// For any date-related parts that shouldn't appear in time field
-			throw new Error(`Invalid segment part for time field: ${props.part}`);
-	}
 }

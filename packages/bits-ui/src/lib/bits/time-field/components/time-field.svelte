@@ -7,7 +7,7 @@
 <script lang="ts" generics="T extends TimeValue = Time">
 	import { watch } from "runed";
 	import { box } from "svelte-toolbelt";
-	import { useTimeFieldRoot } from "../time-field.svelte.js";
+	import { TimeFieldRootState } from "../time-field.svelte.js";
 	import type { TimeFieldRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
@@ -60,7 +60,7 @@
 		}
 	);
 
-	useTimeFieldRoot({
+	TimeFieldRootState.create({
 		value: box.with(
 			() => value,
 			(v) => {
