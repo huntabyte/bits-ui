@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import { useSelectHiddenInput } from "../select.svelte.js";
+	import { SelectHiddenInputState } from "../select.svelte.js";
 	import type { HTMLInputAttributes } from "svelte/elements";
 	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
 
@@ -9,7 +9,7 @@
 		autocomplete,
 	}: { value?: string } & Omit<HTMLInputAttributes, "value"> = $props();
 
-	const hiddenInputState = useSelectHiddenInput({
+	const hiddenInputState = SelectHiddenInputState.create({
 		value: box.with(() => value),
 	});
 </script>

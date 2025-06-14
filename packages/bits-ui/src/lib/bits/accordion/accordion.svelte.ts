@@ -24,6 +24,9 @@ const accordionAttrs = createBitsAttrs({
 	parts: ["root", "trigger", "content", "item", "header"],
 });
 
+const AccordionRootContext = new Context<AccordionRoot>("Accordion.Root");
+const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
+
 type AccordionBaseStateOpts = WithRefOpts<
 	ReadableBoxedValues<{
 		disabled: boolean;
@@ -146,8 +149,6 @@ class AccordionMultiState extends AccordionBaseState {
 	}
 }
 
-const AccordionRootContext = new Context<AccordionRoot>("Accordion.Root");
-
 export class AccordionRootState {
 	static create(props: AccordionRootStateOpts): AccordionRoot {
 		const { type, ...rest } = props;
@@ -158,8 +159,6 @@ export class AccordionRootState {
 		return AccordionRootContext.set(rootState);
 	}
 }
-
-const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
 
 export class AccordionItemState {
 	static create(props: Omit<AccordionItemStateOpts, "rootState">): AccordionItemState {

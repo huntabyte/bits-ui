@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useSelectTrigger } from "../select.svelte.js";
+	import { SelectTriggerState } from "../select.svelte.js";
 	import type { SelectTriggerProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -16,7 +16,7 @@
 		...restProps
 	}: SelectTriggerProps = $props();
 
-	const triggerState = useSelectTrigger({
+	const triggerState = SelectTriggerState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
