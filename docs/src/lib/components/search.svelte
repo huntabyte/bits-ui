@@ -7,6 +7,7 @@
 		createContentIndex,
 		searchContentIndex,
 	} from "$lib/utils/search.js";
+	import ScrollArea from "./scroll-area.svelte";
 
 	let { showTrigger = true }: { showTrigger?: boolean } = $props();
 
@@ -77,7 +78,7 @@
 			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
 		/>
 		<Dialog.Content
-			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-top-[48%] z-100 outline-hidden fixed left-[50%] top-[20%] w-full max-w-[94%] translate-x-[-50%] translate-y-[0%] sm:max-w-[490px] md:w-full"
+			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 z-100 outline-hidden fixed left-[50%] top-[20%] w-full max-w-[94%] translate-x-[-50%] translate-y-[0%] duration-200 sm:max-w-[490px] md:w-full"
 			onCloseAutoFocus={(e) => {
 				e.preventDefault();
 			}}
@@ -86,14 +87,15 @@
 			<Dialog.Description class="sr-only">Search for documentation</Dialog.Description>
 			<Command.Root
 				shouldFilter={false}
-				class="divide-border bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden  rounded-xl"
+				class="bg-background flex h-full w-full flex-col self-start overflow-hidden rounded-xl"
 			>
 				<Command.Input
 					bind:value={searchQuery}
 					autocomplete="off"
 					spellcheck="false"
 					type="search"
-					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex w-full touch-manipulation truncate rounded-xl px-4 text-base transition-colors focus:ring-0"
+					data-empty={searchQuery === ""}
+					class="focus-override h-input bg-background placeholder:text-foreground-alt/50 focus:outline-hidden inline-flex w-full touch-manipulation truncate rounded-xl px-4 text-base transition-colors focus:ring-0 data-[empty=false]:rounded-b-none data-[empty=false]:border-b"
 					placeholder="Search for something..."
 				/>
 				{#if searchQuery !== "" && results.length === 0}
@@ -105,27 +107,29 @@
 				{/if}
 
 				{#if searchQuery !== "" && results.length > 0}
-					<Command.List
-						class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2 pt-2"
-					>
-						<Command.Viewport>
-							{#if searchState === "loading"}
-								<Command.Loading>Loading...</Command.Loading>
-							{/if}
+					<Command.List class="mt-1 max-h-[280px] overflow-x-hidden px-2 pb-2 pt-2">
+						{#snippet child({ props })}
+							<ScrollArea {...props} type="auto">
+								<Command.Viewport>
+									{#if searchState === "loading"}
+										<Command.Loading>Loading...</Command.Loading>
+									{/if}
 
-							{#each results as { title, href } (title + href)}
-								<Command.LinkItem
-									{href}
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
-									onSelect={() => {
-										searchQuery = "";
-										dialogOpen = false;
-									}}
-								>
-									{title}
-								</Command.LinkItem>
-							{/each}
-						</Command.Viewport>
+									{#each results as { title, href } (title + href)}
+										<Command.LinkItem
+											{href}
+											class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+											onSelect={() => {
+												searchQuery = "";
+												dialogOpen = false;
+											}}
+										>
+											{title}
+										</Command.LinkItem>
+									{/each}
+								</Command.Viewport>
+							</ScrollArea>
+						{/snippet}
 					</Command.List>
 				{/if}
 			</Command.Root>
