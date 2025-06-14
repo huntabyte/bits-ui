@@ -7,9 +7,15 @@
 
 import { Context, useDebounce } from "runed";
 import { untrack } from "svelte";
-import { box, executeCallbacks, attachRef, DOMContext, getWindow } from "svelte-toolbelt";
+import {
+	box,
+	executeCallbacks,
+	attachRef,
+	DOMContext,
+	getWindow,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";

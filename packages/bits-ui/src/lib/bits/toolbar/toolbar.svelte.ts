@@ -1,4 +1,9 @@
-import { type WritableBox, attachRef } from "svelte-toolbelt";
+import {
+	type WritableBox,
+	type WritableBoxedValues,
+	type ReadableBoxedValues,
+	attachRef,
+} from "svelte-toolbelt";
 import { Context } from "runed";
 import {
 	createBitsAttrs,
@@ -8,7 +13,6 @@ import {
 	getDataOrientation,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";

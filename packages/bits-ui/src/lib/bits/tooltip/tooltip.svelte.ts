@@ -1,7 +1,13 @@
-import { box, onMountEffect, attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	box,
+	onMountEffect,
+	attachRef,
+	DOMContext,
+	type WritableBoxedValues,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";

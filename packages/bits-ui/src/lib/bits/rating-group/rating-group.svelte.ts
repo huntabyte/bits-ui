@@ -1,6 +1,10 @@
-import { attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,

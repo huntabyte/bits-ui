@@ -1,6 +1,11 @@
-import { afterTick, attachRef } from "svelte-toolbelt";
+import {
+	afterTick,
+	attachRef,
+	type Box,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 import {
 	getAriaDisabled,

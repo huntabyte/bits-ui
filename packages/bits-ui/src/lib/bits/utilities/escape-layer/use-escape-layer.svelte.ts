@@ -1,8 +1,7 @@
-import { DOMContext, type Box, type ReadableBox } from "svelte-toolbelt";
+import { DOMContext, type Box, type ReadableBox, type ReadableBoxedValues } from "svelte-toolbelt";
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { EscapeBehaviorType, EscapeLayerImplProps } from "./types.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { noop } from "$lib/internal/noop.js";
 

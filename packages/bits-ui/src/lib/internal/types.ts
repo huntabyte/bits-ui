@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Snippet } from "svelte";
 
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "./box.svelte.js";
+import type { Box, ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export type OnChangeFn<T> = (value: T) => void;

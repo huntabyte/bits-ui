@@ -1,7 +1,13 @@
-import { type ReadableBox, afterTick, box, attachRef } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	afterTick,
+	box,
+	attachRef,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import {
 	createBitsAttrs,

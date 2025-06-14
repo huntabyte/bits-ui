@@ -1,9 +1,15 @@
 import { Previous, watch } from "runed";
 import { onMount } from "svelte";
-import { type WritableBox, box, attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	type WritableBox,
+	box,
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsEvent,
 	BitsFocusEvent,

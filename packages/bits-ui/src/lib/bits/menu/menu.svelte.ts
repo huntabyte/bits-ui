@@ -6,6 +6,8 @@ import {
 	attachRef,
 	DOMContext,
 	getWindow,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
@@ -17,7 +19,6 @@ import {
 	isMouseEvent,
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { CustomEventDispatcher } from "$lib/internal/events.js";
 import type {
 	AnyFn,

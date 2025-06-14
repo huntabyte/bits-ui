@@ -1,11 +1,10 @@
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import {
 	createBitsAttrs,
 	getAriaPressed,
 	getDataDisabled,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
 
 export const toggleAttrs = createBitsAttrs({

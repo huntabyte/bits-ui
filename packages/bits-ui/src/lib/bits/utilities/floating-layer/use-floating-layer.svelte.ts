@@ -16,13 +16,14 @@ import {
 	cssToStyleObj,
 	getWindow,
 	styleToString,
+	type ReadableBoxedValues,
 	type ReadableBox,
+	type Box,
 } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
 import type { Arrayable, WithRefProps } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { useId } from "$lib/internal/use-id.js";
-import type { Box, ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
 import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
 import type { Direction, StyleProperties } from "$lib/shared/index.js";

@@ -1,4 +1,11 @@
-import { afterSleep, afterTick, srOnlyStyles, attachRef } from "svelte-toolbelt";
+import {
+	afterSleep,
+	afterTick,
+	srOnlyStyles,
+	attachRef,
+	type WritableBoxedValues,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import type { CommandState } from "./types.js";
@@ -8,7 +15,6 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,

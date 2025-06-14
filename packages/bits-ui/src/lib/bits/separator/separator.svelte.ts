@@ -1,11 +1,10 @@
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
 import {
 	createBitsAttrs,
 	getAriaHidden,
 	getAriaOrientation,
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 

@@ -1,5 +1,14 @@
 import { Context, Previous, watch } from "runed";
-import { afterSleep, afterTick, onDestroyEffect, attachRef, DOMContext } from "svelte-toolbelt";
+import {
+	afterSleep,
+	afterTick,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+	type Box,
+} from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -10,7 +19,6 @@ import {
 	getDisabled,
 	getRequired,
 } from "$lib/internal/attrs.js";
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
 	BitsEvent,

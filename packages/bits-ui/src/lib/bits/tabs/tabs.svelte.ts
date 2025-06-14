@@ -1,5 +1,5 @@
 import { SvelteMap } from "svelte/reactivity";
-import { attachRef } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
@@ -12,7 +12,6 @@ import {
 	getHidden,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
