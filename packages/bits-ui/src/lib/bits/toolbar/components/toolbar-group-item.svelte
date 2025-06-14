@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupItemProps } from "../types.js";
-	import { useToolbarGroupItem } from "../toolbar.svelte.js";
+	import { ToolbarGroupItemState } from "../toolbar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -17,7 +17,7 @@
 		...restProps
 	}: ToolbarGroupItemProps = $props();
 
-	const groupItemState = useToolbarGroupItem({
+	const groupItemState = ToolbarGroupItemState.create({
 		id: box.with(() => id),
 		value: box.with(() => value),
 		disabled: box.with(() => disabled ?? false),

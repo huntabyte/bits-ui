@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToolbarRootProps } from "../types.js";
-	import { useToolbarRoot } from "../toolbar.svelte.js";
+	import { ToolbarRootState } from "../toolbar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -16,7 +16,7 @@
 		...restProps
 	}: ToolbarRootProps = $props();
 
-	const rootState = useToolbarRoot({
+	const rootState = ToolbarRootState.create({
 		id: box.with(() => id),
 		orientation: box.with(() => orientation),
 		loop: box.with(() => loop),

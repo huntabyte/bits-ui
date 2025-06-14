@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useToolbarLink } from "../toolbar.svelte.js";
+	import { ToolbarLinkState } from "../toolbar.svelte.js";
 	import type { ToolbarLinkProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 
@@ -15,7 +15,7 @@
 		...restProps
 	}: ToolbarLinkProps = $props();
 
-	const linkState = useToolbarLink({
+	const linkState = ToolbarLinkState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
