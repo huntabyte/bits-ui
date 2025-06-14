@@ -22,12 +22,16 @@ globalThis.bitsDismissableLayers ??= new Map<
 	ReadableBox<InteractOutsideBehaviorType>
 >();
 
-type DismissibleLayerStateProps = ReadableBoxedValues<
-	Required<Omit<DismissibleLayerImplProps, "children" | "ref">>
-> & { ref: WritableBox<HTMLElement | null> };
+interface DismissibleLayerStateOpts
+	extends ReadableBoxedValues<Required<Omit<DismissibleLayerImplProps, "children" | "ref">>> {
+	ref: WritableBox<HTMLElement | null>;
+}
 
 export class DismissibleLayerState {
-	readonly opts: DismissibleLayerStateProps;
+	static create(opts: DismissibleLayerStateOpts) {
+		return new DismissibleLayerState(opts);
+	}
+	readonly opts: DismissibleLayerStateOpts;
 	#interactOutsideProp: ReadableBox<EventCallback<PointerEvent>>;
 	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
 	#interceptedEvents: Record<string, boolean> = {
@@ -36,10 +40,10 @@ export class DismissibleLayerState {
 	#isResponsibleLayer = false;
 	#isFocusInsideDOMTree = false;
 	#documentObj = undefined as unknown as Document;
-	#onFocusOutside: DismissibleLayerStateProps["onFocusOutside"];
+	#onFocusOutside: DismissibleLayerStateOpts["onFocusOutside"];
 	#unsubClickListener = noop;
 
-	constructor(opts: DismissibleLayerStateProps) {
+	constructor(opts: DismissibleLayerStateOpts) {
 		this.opts = opts;
 
 		this.#behaviorType = opts.interactOutsideBehavior;
@@ -219,10 +223,6 @@ export class DismissibleLayerState {
 		onfocuscapture: this.#onfocuscapture,
 		onblurcapture: this.#onblurcapture,
 	};
-}
-
-export function useDismissibleLayer(props: DismissibleLayerStateProps) {
-	return new DismissibleLayerState(props);
 }
 
 function getTopMostLayer(

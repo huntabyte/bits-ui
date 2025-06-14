@@ -27,55 +27,60 @@ const accordionAttrs = createBitsAttrs({
 const AccordionRootContext = new Context<AccordionRoot>("Accordion.Root");
 const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
 
-type AccordionBaseStateOpts = WithRefOpts<
-	ReadableBoxedValues<{
-		disabled: boolean;
-		orientation: Orientation;
-		loop: boolean;
-	}>
->;
+interface AccordionBaseStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			orientation: Orientation;
+			loop: boolean;
+		}> {}
 
-type AccordionSingleStateOpts = AccordionBaseStateOpts & WritableBoxedValues<{ value: string }>;
-type AccordionMultiStateOpts = AccordionBaseStateOpts & WritableBoxedValues<{ value: string[] }>;
+interface AccordionSingleStateOpts
+	extends AccordionBaseStateOpts,
+		WritableBoxedValues<{ value: string }> {}
+interface AccordionMultiStateOpts
+	extends AccordionBaseStateOpts,
+		WritableBoxedValues<{ value: string[] }> {}
+
 type AccordionRoot = AccordionSingleState | AccordionMultiState;
 
-type AccordionItemStateOpts = WithRefOpts<
-	ReadableBoxedValues<{
-		value: string;
-		disabled: boolean;
-	}> & {
-		rootState: AccordionRoot;
-	}
->;
+interface AccordionItemStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			disabled: boolean;
+		}> {
+	rootState: AccordionRoot;
+}
 
-type AccordionTriggerStateOpts = WithRefOpts<
-	ReadableBoxedValues<{
-		disabled: boolean | null | undefined;
-	}>
->;
+interface AccordionTriggerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean | null | undefined;
+		}> {}
 
-type AccordionContentStateOpts = WithRefOpts<
-	ReadableBoxedValues<{
-		forceMount: boolean;
-	}>
->;
+interface AccordionContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			forceMount: boolean;
+		}> {}
 
-type AccordionHeaderStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		level: 1 | 2 | 3 | 4 | 5 | 6;
-	}>
->;
+interface AccordionHeaderStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			level: 1 | 2 | 3 | 4 | 5 | 6;
+		}> {}
 
-type AccordionRootStateOpts = WithRefOpts<
-	{
-		type: "single" | "multiple";
-		value: Box<string> | Box<string[]>;
-	} & ReadableBoxedValues<{
-		disabled: boolean;
-		orientation: Orientation;
-		loop: boolean;
-	}>
->;
+interface AccordionRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			orientation: Orientation;
+			loop: boolean;
+		}> {
+	type: "single" | "multiple";
+	value: Box<string> | Box<string[]>;
+}
 
 abstract class AccordionBaseState {
 	readonly opts: AccordionBaseStateOpts;
@@ -338,15 +343,15 @@ export class AccordionContentState {
 }
 
 export class AccordionHeaderState {
-	readonly opts: AccordionHeaderStateProps;
+	readonly opts: AccordionHeaderStateOpts;
 	readonly item: AccordionItemState;
 
-	constructor(opts: AccordionHeaderStateProps, item: AccordionItemState) {
+	constructor(opts: AccordionHeaderStateOpts, item: AccordionItemState) {
 		this.opts = opts;
 		this.item = item;
 	}
 
-	static create(props: AccordionHeaderStateProps): AccordionHeaderState {
+	static create(props: AccordionHeaderStateOpts): AccordionHeaderState {
 		return new AccordionHeaderState(props, AccordionItemContext.get());
 	}
 

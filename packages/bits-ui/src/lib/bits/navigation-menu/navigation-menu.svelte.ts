@@ -839,16 +839,16 @@ export class NavigationMenuContentState {
 }
 
 type MotionAttribute = "to-start" | "to-end" | "from-start" | "from-end";
-interface NavigationMenuContentImplStateProps extends WithRefProps {}
+interface NavigationMenuContentImplStateOpts extends WithRefProps {}
 
 export class NavigationMenuContentImplState {
-	static create(opts: NavigationMenuContentImplStateProps, itemState?: NavigationMenuItemState) {
+	static create(opts: NavigationMenuContentImplStateOpts, itemState?: NavigationMenuItemState) {
 		return new NavigationMenuContentImplState(
 			opts,
 			itemState ?? NavigationMenuItemContext.get()
 		);
 	}
-	readonly opts: NavigationMenuContentImplStateProps;
+	readonly opts: NavigationMenuContentImplStateOpts;
 	readonly itemContext: NavigationMenuItemState;
 	readonly context: NavigationMenuProviderState;
 	readonly listContext: NavigationMenuListState;
@@ -891,7 +891,7 @@ export class NavigationMenuContentImplState {
 	});
 	domContext: DOMContext;
 
-	constructor(opts: NavigationMenuContentImplStateProps, itemContext: NavigationMenuItemState) {
+	constructor(opts: NavigationMenuContentImplStateOpts, itemContext: NavigationMenuItemState) {
 		this.opts = opts;
 		this.itemContext = itemContext;
 		this.listContext = itemContext.listContext;
