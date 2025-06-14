@@ -12,19 +12,22 @@ export const toggleAttrs = createBitsAttrs({
 	parts: ["root"],
 });
 
-type ToggleRootStateProps = WithRefOpts<
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}> &
+interface ToggleRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}>,
 		WritableBoxedValues<{
 			pressed: boolean;
-		}>
->;
+		}> {}
 
-class ToggleRootState {
-	readonly opts: ToggleRootStateProps;
+export class ToggleRootState {
+	static create(opts: ToggleRootStateOpts) {
+		return new ToggleRootState(opts);
+	}
+	readonly opts: ToggleRootStateOpts;
 
-	constructor(opts: ToggleRootStateProps) {
+	constructor(opts: ToggleRootStateOpts) {
 		this.opts = opts;
 
 		this.onclick = this.onclick.bind(this);
@@ -58,10 +61,6 @@ class ToggleRootState {
 				...attachRef(this.opts.ref),
 			}) as const
 	);
-}
-
-export function useToggleRoot(props: ToggleRootStateProps) {
-	return new ToggleRootState(props);
 }
 
 export function getToggleDataState(condition: boolean): "on" | "off" {

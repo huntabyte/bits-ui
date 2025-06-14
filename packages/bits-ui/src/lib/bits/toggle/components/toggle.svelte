@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ToggleRootProps } from "../types.js";
-	import { useToggleRoot } from "../toggle.svelte.js";
+	import { ToggleRootState } from "../toggle.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
@@ -19,7 +19,7 @@
 		...restProps
 	}: ToggleRootProps = $props();
 
-	const toggleState = useToggleRoot({
+	const toggleState = ToggleRootState.create({
 		pressed: box.with(
 			() => pressed,
 			(v) => {
