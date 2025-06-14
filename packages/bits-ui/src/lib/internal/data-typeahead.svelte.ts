@@ -2,13 +2,13 @@ import type { Getter, WritableBox } from "svelte-toolbelt";
 import { getNextMatch } from "./arrays.js";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
 
-type DataTypeaheadOpts = {
+interface DataTypeaheadOpts {
 	onMatch: (value: string) => void;
 	getCurrentItem: () => string;
 	candidateValues: Getter<string[]>;
 	enabled: Getter<boolean>;
 	getWindow: () => Window & typeof globalThis;
-};
+}
 
 export class DataTypeahead {
 	readonly #opts: DataTypeaheadOpts;
@@ -45,39 +45,4 @@ export class DataTypeahead {
 	resetTypeahead() {
 		this.#search.current = "";
 	}
-}
-
-export function useDataTypeahead(opts: DataTypeaheadOpts) {
-	// Reset `search` 1 second after it was last updated
-	const search = boxAutoReset("", {
-		afterMs: 1000,
-		getWindow: opts.getWindow,
-	});
-	const candidateValues = $derived(opts.candidateValues());
-
-	function handleTypeaheadSearch(key: string) {
-		if (!opts.enabled()) return;
-		if (!candidateValues.length) return;
-
-		search.current = search.current + key;
-		const currentItem = opts.getCurrentItem();
-		const currentMatch = candidateValues.find((item) => item === currentItem) ?? "";
-		const values = candidateValues.map((item) => item ?? "");
-		const nextMatch = getNextMatch(values, search.current, currentMatch);
-		const newItem = candidateValues.find((item) => item === nextMatch);
-		if (newItem) {
-			opts.onMatch(newItem);
-		}
-		return newItem;
-	}
-
-	function resetTypeahead() {
-		search.current = "";
-	}
-
-	return {
-		search,
-		handleTypeaheadSearch,
-		resetTypeahead,
-	};
 }
