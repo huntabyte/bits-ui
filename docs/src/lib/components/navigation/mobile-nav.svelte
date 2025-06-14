@@ -31,9 +31,10 @@
 			alignOffset={-16}
 			sideOffset={14}
 			preventScroll
+			trapFocus={false}
 		>
 			<ScrollArea
-				class="h-(--bits-popover-content-available-height) w-(--bits-popover-content-available-width) max-h-none max-w-none"
+				class="h-(--bits-popover-content-available-height) w-(--bits-popover-content-available-width) mt-2 max-h-none max-w-none"
 			>
 				<div class="flex flex-col gap-2">
 					{#each navigation.sidebar as navItem, index (index)}
@@ -44,6 +45,16 @@
 								{navItem.title}
 							</h4>
 							<div class="flex flex-col">
+								{#if navItem.title === "Overview"}
+									<MobileLink
+										href="/"
+										data-active={page.url.pathname === "/"}
+										onClose={() => (open = false)}
+										class="text-foreground/95 dark:data-[active=true]:text-accent px-5 py-1.5 text-[22px] font-normal data-[active=true]:font-semibold dark:font-medium dark:data-[active=true]:font-medium"
+									>
+										Home
+									</MobileLink>
+								{/if}
 								{#if navItem?.items?.length}
 									{#each navItem.items as item (item.title + item.href)}
 										{#if !item.disabled && item.href}
@@ -51,7 +62,7 @@
 												href={item.href}
 												data-active={item.href === page.url.pathname}
 												onClose={() => (open = false)}
-												class="text-foreground/95 data-[active=true]:text-accent px-5 py-1.5 text-[22px] font-medium"
+												class="text-foreground/95 dark:data-[active=true]:text-accent px-5 py-1.5 text-[22px] font-normal data-[active=true]:font-semibold dark:font-medium dark:data-[active=true]:font-medium"
 											>
 												{item.title}
 											</MobileLink>

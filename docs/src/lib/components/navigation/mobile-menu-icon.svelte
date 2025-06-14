@@ -7,7 +7,7 @@
 	height="24"
 	viewBox="0 0 24 24"
 	xmlns="http://www.w3.org/2000/svg"
-	class="[&_line]:stroke-white [&_line]:stroke-2 [&_line]:transition-all [&_line]:duration-150 [&_line]:ease-[cubic-bezier(0.4,0,0.2,1)]"
+	class="[&_line]:stroke-foreground [&_line]:stroke-2 [&_line]:transition-all [&_line]:duration-150 [&_line]:ease-[cubic-bezier(0.4,0,0.2,1)]"
 	stroke-linecap="round"
 >
 	<line
