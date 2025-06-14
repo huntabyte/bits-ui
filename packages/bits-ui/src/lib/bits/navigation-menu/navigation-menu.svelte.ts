@@ -39,7 +39,6 @@ import { kbd } from "$lib/internal/kbd.js";
 import { CustomEventDispatcher } from "$lib/internal/events.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
-import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { isElement } from "$lib/internal/is.js";
 import type {
 	FocusEventHandler,
@@ -48,6 +47,7 @@ import type {
 	PointerEventHandler,
 } from "svelte/elements";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
 
 const navigationMenuAttrs = createBitsAttrs({
 	component: "navigation-menu",
@@ -674,8 +674,11 @@ class NavigationMenuIndicatorImplState {
 		this.context = context.provider;
 		this.listContext = context.list;
 
-		useResizeObserver(() => this.activeTrigger, this.handlePositionChange);
-		useResizeObserver(() => this.context.indicatorTrackRef.current, this.handlePositionChange);
+		new SvelteResizeObserver(() => this.activeTrigger, this.handlePositionChange);
+		new SvelteResizeObserver(
+			() => this.context.indicatorTrackRef.current,
+			this.handlePositionChange
+		);
 	}
 
 	handlePositionChange = () => {
@@ -997,7 +1000,7 @@ class NavigationMenuViewportState {
 		 * For example, if content animates in from `scale(0.5)` the dimensions would be anything
 		 * from `0.5` to `1` of the intended size.
 		 */
-		useResizeObserver(
+		new SvelteResizeObserver(
 			() => this.contentNode,
 			() => {
 				if (this.contentNode) {

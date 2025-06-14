@@ -19,15 +19,16 @@ export class StateMachine<M> {
 	constructor(initialState: MachineState<M>, machine: M & Machine<MachineState<M>>) {
 		this.state = box(initialState);
 		this.#machine = machine;
+		this.dispatch = this.dispatch.bind(this);
 	}
 
-	#reducer = (event: MachineEvent<M>) => {
+	#reducer(event: MachineEvent<M>) {
 		// @ts-expect-error  state.current is keyof M
 		const nextState = this.#machine[this.state.current][event];
 		return nextState ?? this.state.current;
-	};
+	}
 
-	dispatch = (event: MachineEvent<M>) => {
+	dispatch(event: MachineEvent<M>) {
 		this.state.current = this.#reducer(event);
-	};
+	}
 }
