@@ -28,7 +28,7 @@
 	const mergedProps = $derived(mergeProps(restProps, viewportState.props));
 </script>
 
-<PresenceLayer present={forceMount || viewportState.open} ref={viewportState.opts.ref}>
+<PresenceLayer open={forceMount || viewportState.open} ref={viewportState.opts.ref}>
 	{#snippet presence()}
 		{#if child}
 			{@render child({ props: mergedProps })}

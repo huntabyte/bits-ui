@@ -14,7 +14,7 @@
 
 <PresenceLayer
 	{...mergedProps}
-	present={forceMount || !scrollbarScrollState.isHidden}
+	open={forceMount || !scrollbarScrollState.isHidden}
 	ref={scrollbarScrollState.scrollbar.opts.ref}
 >
 	{#snippet presence()}

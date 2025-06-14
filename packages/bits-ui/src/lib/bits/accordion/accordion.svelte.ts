@@ -236,7 +236,7 @@ class AccordionContentState {
 	#isMountAnimationPrevented = false;
 	#dimensions = $state({ width: 0, height: 0 });
 
-	readonly present = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
+	readonly open = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
 
 	constructor(opts: AccordionContentStateProps, item: AccordionItemState) {
 		this.opts = opts;
@@ -252,7 +252,7 @@ class AccordionContentState {
 		});
 
 		// Handle dimension updates
-		watch([() => this.present, () => this.opts.ref.current], this.#updateDimensions);
+		watch([() => this.open, () => this.opts.ref.current], this.#updateDimensions);
 	}
 
 	#updateDimensions = ([_, node]: [boolean, HTMLElement | null]): void => {

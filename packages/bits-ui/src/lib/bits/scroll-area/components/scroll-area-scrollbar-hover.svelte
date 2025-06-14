@@ -18,12 +18,12 @@
 		})
 	);
 
-	const present = $derived(
+	const open = $derived(
 		forceMount || (scrollbarHoverState.isVisible && scrollbarAutoState.isVisible)
 	);
 </script>
 
-<PresenceLayer {present} ref={scrollbarAutoState.scrollbar.opts.ref}>
+<PresenceLayer {open} ref={scrollbarAutoState.scrollbar.opts.ref}>
 	{#snippet presence()}
 		<ScrollAreaScrollbarVisible {...mergedProps} />
 	{/snippet}

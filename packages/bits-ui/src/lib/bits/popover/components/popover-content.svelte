@@ -70,7 +70,7 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		present={contentState.root.opts.open.current}
+		open={contentState.root.opts.open.current}
 		{id}
 		{trapFocus}
 		{preventScroll}

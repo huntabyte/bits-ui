@@ -47,7 +47,7 @@
 		ref,
 		tooltip = false,
 		...restProps
-	}: Omit<PopperLayerImplProps, "present" | "children"> & {
+	}: Omit<PopperLayerImplProps, "open" | "children"> & {
 		enabled: boolean;
 	} = $props();
 </script>

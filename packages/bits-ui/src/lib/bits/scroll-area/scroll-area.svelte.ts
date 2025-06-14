@@ -13,11 +13,11 @@ import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
 import { addEventListener } from "$lib/internal/events.js";
 import type { BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
-import { useStateMachine } from "$lib/internal/use-state-machine.svelte.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { useResizeObserver } from "$lib/internal/use-resize-observer.svelte.js";
 import { on } from "svelte/events";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
+import { StateMachine } from "$lib/internal/state-machine.svelte.js";
 
 const scrollAreaAttrs = createBitsAttrs({
 	component: "scroll-area",
@@ -202,7 +202,7 @@ class ScrollAreaScrollbarHoverState {
 class ScrollAreaScrollbarScrollState {
 	readonly scrollbar: ScrollAreaScrollbarState;
 	root: ScrollAreaRootState;
-	machine = useStateMachine("hidden", {
+	machine = new StateMachine("hidden", {
 		hidden: {
 			SCROLL: "scrolling",
 		},

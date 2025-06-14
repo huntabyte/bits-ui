@@ -62,7 +62,7 @@
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
 		isStatic
-		present={contentState.root.opts.open.current}
+		open={contentState.root.opts.open.current}
 		{id}
 		{preventScroll}
 		forceMount={false}

@@ -85,7 +85,7 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
-		present={contentState.root.opts.open.current}
+		open={contentState.root.opts.open.current}
 		{id}
 		trapFocus={false}
 		loop={false}

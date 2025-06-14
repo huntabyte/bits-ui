@@ -104,7 +104,7 @@
 		side="right"
 		sideOffset={2}
 		align="start"
-		present={contentState.parentMenu.opts.open.current}
+		open={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}

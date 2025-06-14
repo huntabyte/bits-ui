@@ -65,7 +65,7 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		present={contentState.root.opts.open.current}
+		open={contentState.root.opts.open.current}
 		isStatic
 		{id}
 		trapFocus={false}

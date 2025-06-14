@@ -44,7 +44,7 @@
 
 <PresenceLayer
 	{forceMount}
-	present={contentState.root.opts.open.current || forceMount}
+	open={contentState.root.opts.open.current || forceMount}
 	ref={contentState.opts.ref}
 >
 	{#snippet presence()}

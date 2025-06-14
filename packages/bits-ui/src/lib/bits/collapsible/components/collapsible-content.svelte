@@ -26,10 +26,10 @@
 	});
 </script>
 
-<PresenceLayer forceMount={true} present={contentState.present} ref={contentState.opts.ref}>
+<PresenceLayer forceMount={true} open={contentState.present} ref={contentState.opts.ref}>
 	{#snippet presence({ present })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
-			hidden: forceMount ? undefined : !present.current,
+			hidden: forceMount ? undefined : !present,
 		})}
 		{#if child}
 			{@render child({
