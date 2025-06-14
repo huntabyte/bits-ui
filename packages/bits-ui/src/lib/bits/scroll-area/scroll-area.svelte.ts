@@ -940,64 +940,6 @@ export class ScrollAreaCornerImplState {
 	}));
 }
 
-// export function useScrollAreaRoot(props: ScrollAreaRootStateOpts) {
-// 	return ScrollAreaRootContext.set(new ScrollAreaRootState(props));
-// }
-
-// export function useScrollAreaViewport(props: ScrollAreaViewportStateOpts) {
-// 	return new ScrollAreaViewportState(props, ScrollAreaRootContext.get());
-// }
-
-// export function useScrollAreaScrollbar(props: ScrollAreaScrollbarStateOpts) {
-// 	return ScrollAreaScrollbarContext.set(
-// 		new ScrollAreaScrollbarState(props, ScrollAreaRootContext.get())
-// 	);
-// }
-
-// export function useScrollAreaScrollbarVisible() {
-// 	return ScrollAreaScrollbarVisibleContext.set(
-// 		new ScrollAreaScrollbarVisibleState(ScrollAreaScrollbarContext.get())
-// 	);
-// }
-
-// export function useScrollAreaScrollbarAuto() {
-// 	return new ScrollAreaScrollbarAutoState(ScrollAreaScrollbarContext.get());
-// }
-
-// export function useScrollAreaScrollbarScroll() {
-// 	return new ScrollAreaScrollbarScrollState(ScrollAreaScrollbarContext.get());
-// }
-
-// export function useScrollAreaScrollbarHover() {
-// 	return new ScrollAreaScrollbarHoverState(ScrollAreaScrollbarContext.get());
-// }
-
-// export function useScrollAreaScrollbarX(props: ScrollbarAxisStateOpts) {
-// 	return ScrollAreaScrollbarAxisContext.set(
-// 		new ScrollAreaScrollbarXState(props, ScrollAreaScrollbarVisibleContext.get())
-// 	);
-// }
-
-// export function useScrollAreaScrollbarY(props: ScrollbarAxisStateOpts) {
-// 	return ScrollAreaScrollbarAxisContext.set(
-// 		new ScrollAreaScrollbarYState(props, ScrollAreaScrollbarVisibleContext.get())
-// 	);
-// }
-
-// export function useScrollAreaScrollbarShared() {
-// 	return ScrollAreaScrollbarSharedContext.set(
-// 		new ScrollAreaScrollbarSharedState(ScrollAreaScrollbarAxisContext.get())
-// 	);
-// }
-
-// export function useScrollAreaThumb(props: ScrollAreaThumbImplStateProps) {
-// 	return new ScrollAreaThumbImplState(props, ScrollAreaScrollbarSharedContext.get());
-// }
-
-// export function useScrollAreaCorner(props: ScrollAreaCornerImplStateOpts) {
-// 	return new ScrollAreaCornerImplState(props, ScrollAreaRootContext.get());
-// }
-
 function toInt(value?: string) {
 	return value ? Number.parseInt(value, 10) : 0;
 }
