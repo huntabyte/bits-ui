@@ -151,6 +151,7 @@
 		from {
 			height: 0;
 		}
+
 		to {
 			height: var(--bits-accordion-content-height);
 		}
@@ -160,6 +161,7 @@
 		from {
 			height: var(--bits-accordion-content-height);
 		}
+
 		to {
 			height: 0;
 		}
@@ -171,6 +173,7 @@
 		100% {
 			opacity: 1;
 		}
+
 		20%,
 		50% {
 			opacity: 0;
@@ -182,6 +185,7 @@
 			opacity: 0;
 			transform: translateX(200px);
 		}
+
 		to {
 			opacity: 1;
 			transform: translateX(0);
@@ -193,6 +197,7 @@
 			opacity: 0;
 			transform: translateX(-200px);
 		}
+
 		to {
 			opacity: 1;
 			transform: translateX(0);
@@ -204,6 +209,7 @@
 			opacity: 1;
 			transform: translateX(0);
 		}
+
 		to {
 			opacity: 0;
 			transform: translateX(200px);
@@ -215,6 +221,7 @@
 			opacity: 1;
 			transform: translateX(0);
 		}
+
 		to {
 			opacity: 0;
 			transform: translateX(-200px);
@@ -226,6 +233,7 @@
 			opacity: 0;
 			transform: rotateX(-10deg) scale(0.9);
 		}
+
 		to {
 			opacity: 1;
 			transform: rotateX(0deg) scale(1);
@@ -237,6 +245,7 @@
 			opacity: 1;
 			transform: rotateX(0deg) scale(1);
 		}
+
 		to {
 			opacity: 0;
 			transform: rotateX(-10deg) scale(0.95);
@@ -247,6 +256,7 @@
 		from {
 			opacity: 0;
 		}
+
 		to {
 			opacity: 1;
 		}
@@ -256,6 +266,7 @@
 		from {
 			opacity: 1;
 		}
+
 		to {
 			opacity: 0;
 		}
@@ -274,6 +285,7 @@
 	* {
 		@apply border-border;
 	}
+
 	html {
 		-webkit-text-size-adjust: 100%;
 		font-variation-settings: normal;
@@ -296,5 +308,11 @@
 @layer components {
 	.link {
 		@apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;
+	}
+}
+
+@utility extend-touch-target {
+	@media (pointer: coarse) {
+		@apply relative touch-manipulation after:absolute after:-inset-2;
 	}
 }

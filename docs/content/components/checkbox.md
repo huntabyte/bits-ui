@@ -22,15 +22,15 @@ The Checkbox component provides a flexible and accessible way to create checkbox
 
 ## Key Features
 
--   **Tri-State Support**: Handles checked, unchecked, and indeterminate states, providing versatility in form design.
--   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
--   **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the checkbox's checked state.
+- **Tri-State Support**: Handles checked, unchecked, and indeterminate states, providing versatility in form design.
+- **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
+- **Flexible State Management**: Supports both controlled and uncontrolled state, allowing for full control over the checkbox's checked state.
 
 ## Architecture
 
 The Checkbox component is composed of the following parts:
 
--   **Root**: The main component that manages the state and behavior of the checkbox.
+- **Root**: The main component that manages the state and behavior of the checkbox.
 
 ## Structure
 
@@ -38,19 +38,19 @@ Here's an overview of how the Checkbox component is structured in code:
 
 ```svelte
 <script lang="ts">
-	import { Checkbox } from "bits-ui";
+  import { Checkbox } from "bits-ui";
 </script>
 
 <Checkbox.Root>
-	{#snippet children({ checked, indeterminate })}
-		{#if indeterminate}
-			-
-		{:else if checked}
-			✅
-		{:else}
-			❌
-		{/if}
-	{/snippet}
+  {#snippet children({ checked, indeterminate })}
+    {#if indeterminate}
+      -
+    {:else if checked}
+      ✅
+    {:else}
+      ❌
+    {/if}
+  {/snippet}
 </Checkbox.Root>
 ```
 
@@ -60,33 +60,38 @@ It's recommended to use the `Checkbox` primitive to create your own custom check
 
 ```svelte title="MyCheckbox.svelte"
 <script lang="ts">
-	import { Checkbox, Label, useId, type WithoutChildrenOrChild } from "bits-ui";
+  import {
+    Checkbox,
+    Label,
+    useId,
+    type WithoutChildrenOrChild,
+  } from "bits-ui";
 
-	let {
-		id = useId(),
-		checked = $bindable(false),
-		ref = $bindable(null),
-		labelRef = $bindable(null),
-		...restProps
-	}: WithoutChildrenOrChild<Checkbox.RootProps> & {
-		labelText: string;
-		labelRef?: HTMLLabelElement | null;
-	} = $props();
+  let {
+    id = useId(),
+    checked = $bindable(false),
+    ref = $bindable(null),
+    labelRef = $bindable(null),
+    ...restProps
+  }: WithoutChildrenOrChild<Checkbox.RootProps> & {
+    labelText: string;
+    labelRef?: HTMLLabelElement | null;
+  } = $props();
 </script>
 
 <Checkbox.Root bind:checked bind:ref {...restProps}>
-	{#snippet children({ checked, indeterminate })}
-		{#if indeterminate}
-			-
-		{:else if checked}
-			✅
-		{:else}
-			❌
-		{/if}
-	{/snippet}
+  {#snippet children({ checked, indeterminate })}
+    {#if indeterminate}
+      -
+    {:else if checked}
+      ✅
+    {:else}
+      ❌
+    {/if}
+  {/snippet}
 </Checkbox.Root>
 <Label.Root for={id} bind:ref={labelRef}>
-	{labelText}
+  {labelText}
 </Label.Root>
 ```
 
@@ -94,7 +99,7 @@ You can then use the `MyCheckbox` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyCheckbox from "$lib/components/MyCheckbox.svelte";
+  import MyCheckbox from "$lib/components/MyCheckbox.svelte";
 </script>
 
 <MyCheckbox labelText="Enable notifications" />
@@ -112,8 +117,8 @@ Use `bind:checked` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Checkbox } from "bits-ui";
-	let myChecked = $state(false);
+  import { Checkbox } from "bits-ui";
+  let myChecked = $state(false);
 </script>
 
 <button onclick={() => (myChecked = false)}> uncheck </button>
@@ -127,20 +132,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Checkbox } from "bits-ui";
-	let myChecked = $state(false);
+  import { Checkbox } from "bits-ui";
+  let myChecked = $state(false);
 
-	function getChecked() {
-		return myChecked;
-	}
+  function getChecked() {
+    return myChecked;
+  }
 
-	function setChecked(newChecked: boolean) {
-		myChecked = newChecked;
-	}
+  function setChecked(newChecked: boolean) {
+    myChecked = newChecked;
+  }
 </script>
 
 <Checkbox.Root bind:checked={getChecked, setChecked}>
-	<!-- ... -->
+  <!-- ... -->
 </Checkbox.Root>
 ```
 
@@ -154,11 +159,13 @@ Use `bind:indeterminate` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import MyCheckbox from "$lib/components/MyCheckbox.svelte";
-	let myIndeterminate = $state(true);
+  import MyCheckbox from "$lib/components/MyCheckbox.svelte";
+  let myIndeterminate = $state(true);
 </script>
 
-<button onclick={() => (myIndeterminate = false)}> clear indeterminate </button>
+<button onclick={() => (myIndeterminate = false)}>
+  clear indeterminate
+</button>
 
 <MyCheckbox bind:indeterminate={myIndeterminate} />
 ```
@@ -169,20 +176,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Checkbox } from "bits-ui";
-	let myIndeterminate = $state(true);
+  import { Checkbox } from "bits-ui";
+  let myIndeterminate = $state(true);
 
-	function getIndeterminate() {
-		return myIndeterminate;
-	}
+  function getIndeterminate() {
+    return myIndeterminate;
+  }
 
-	function setIndeterminate(newIndeterminate: boolean) {
-		myIndeterminate = newIndeterminate;
-	}
+  function setIndeterminate(newIndeterminate: boolean) {
+    myIndeterminate = newIndeterminate;
+  }
 </script>
 
 <Checkbox.Root bind:indeterminate={getIndeterminate, setIndeterminate}>
-	<!-- ... -->
+  <!-- ... -->
 </Checkbox.Root>
 ```
 
@@ -213,7 +220,11 @@ If you'd prefer to submit a different value, you can use the `value` prop to set
 For example, if you wanted to submit a string value, you could do the following:
 
 ```svelte /value="hello"/
-<MyCheckbox value="hello" name="notifications" labelText="Enable notifications" />
+<MyCheckbox
+  value="hello"
+  name="notifications"
+  labelText="Enable notifications"
+/>
 ```
 
 ### Required
@@ -222,7 +233,7 @@ If you want to make the checkbox required, you can use the `required` prop.
 
 ```svelte /required/
 <Checkbox.Root required>
-	<!-- ... -->
+  <!-- ... -->
 </Checkbox.Root>
 ```
 
@@ -234,14 +245,14 @@ You can use the `Checkbox.Group` component to create a checkbox group.
 
 ```svelte
 <script lang="ts">
-	import { Checkbox } from "bits-ui";
+  import { Checkbox } from "bits-ui";
 </script>
 
 <Checkbox.Group name="notifications">
-	<Checkbox.GroupLabel>Notifications</Checkbox.GroupLabel>
-	<Checkbox.Root value="marketing" />
-	<Checkbox.Root value="promotions" />
-	<Checkbox.Root value="news" />
+  <Checkbox.GroupLabel>Notifications</Checkbox.GroupLabel>
+  <Checkbox.Root value="marketing" />
+  <Checkbox.Root value="promotions" />
+  <Checkbox.Root value="news" />
 </Checkbox.Group>
 ```
 
@@ -263,23 +274,23 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Checkbox } from "bits-ui";
-	let myValue = $state<string[]>([]);
+  import { Checkbox } from "bits-ui";
+  let myValue = $state<string[]>([]);
 </script>
 
 <button
-	onclick={() => {
-		myValue = ["item-1", "item-2"];
-	}}
+  onclick={() => {
+    myValue = ["item-1", "item-2"];
+  }}
 >
-	Open Items 1 and 2
+  Open Items 1 and 2
 </button>
 
 <Checkbox.Group name="myItems" bind:value={myValue}>
-	<Checkbox.GroupLabel>Items</Checkbox.GroupLabel>
-	<Checkbox.Root value="item-1" />
-	<Checkbox.Root value="item-2" />
-	<Checkbox.Root value="item-3" />
+  <Checkbox.GroupLabel>Items</Checkbox.GroupLabel>
+  <Checkbox.Root value="item-1" />
+  <Checkbox.Root value="item-2" />
+  <Checkbox.Root value="item-3" />
 </Checkbox.Group>
 ```
 
@@ -289,20 +300,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Checkbox } from "bits-ui";
-	let myValue = $state<string[]>([]);
+  import { Checkbox } from "bits-ui";
+  let myValue = $state<string[]>([]);
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string[]) {
-		myValue = newValue;
-	}
+  function setValue(newValue: string[]) {
+    myValue = newValue;
+  }
 </script>
 
 <Checkbox.Group bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </Checkbox.Group>
 ```
 
@@ -312,7 +323,7 @@ To render hidden `<input />` elements for the various checkboxes within a group,
 
 ```svelte /name="notifications"/
 <Checkbox.Group name="notifications">
-	<!-- ... -->
+  <!-- ... -->
 </Checkbox.Group>
 ```
 

@@ -20,20 +20,20 @@ description: Provides a consistent scroll area across platforms.
 
 ```svelte
 <script lang="ts">
-	import { ScrollArea } from "bits-ui";
+  import { ScrollArea } from "bits-ui";
 </script>
 
 <ScrollArea.Root>
-	<ScrollArea.Viewport>
-		<!-- Scrollable content here -->
-	</ScrollArea.Viewport>
-	<ScrollArea.Scrollbar orientation="vertical">
-		<ScrollArea.Thumb />
-	</ScrollArea.Scrollbar>
-	<ScrollArea.Scrollbar orientation="horizontal">
-		<ScrollArea.Thumb />
-	</ScrollArea.Scrollbar>
-	<ScrollArea.Corner />
+  <ScrollArea.Viewport>
+    <!-- Scrollable content here -->
+  </ScrollArea.Viewport>
+  <ScrollArea.Scrollbar orientation="vertical">
+    <ScrollArea.Thumb />
+  </ScrollArea.Scrollbar>
+  <ScrollArea.Scrollbar orientation="horizontal">
+    <ScrollArea.Thumb />
+  </ScrollArea.Scrollbar>
+  <ScrollArea.Corner />
 </ScrollArea.Root>
 ```
 
@@ -45,39 +45,43 @@ This example shows you how to create a Scroll Area component that accepts a few 
 
 ```svelte title="MyScrollArea.svelte"
 <script lang="ts">
-	import { ScrollArea, type WithoutChild } from "bits-ui";
+  import { ScrollArea, type WithoutChild } from "bits-ui";
 
-	type Props = WithoutChild<ScrollArea.RootProps> & {
-		orientation: "vertical" | "horizontal" | "both";
-		viewportClasses?: string;
-	};
+  type Props = WithoutChild<ScrollArea.RootProps> & {
+    orientation: "vertical" | "horizontal" | "both";
+    viewportClasses?: string;
+  };
 
-	let {
-		ref = $bindable(null),
-		orientation = "vertical",
-		viewportClasses,
-		children,
-		...restProps
-	}: Props = $props();
+  let {
+    ref = $bindable(null),
+    orientation = "vertical",
+    viewportClasses,
+    children,
+    ...restProps
+  }: Props = $props();
 </script>
 
-{#snippet Scrollbar({ orientation }: { orientation: "vertical" | "horizontal" })}
-	<ScrollArea.Scrollbar {orientation}>
-		<ScrollArea.Thumb />
-	</ScrollArea.Scrollbar>
+{#snippet Scrollbar({
+  orientation,
+}: {
+  orientation: "vertical" | "horizontal";
+})}
+  <ScrollArea.Scrollbar {orientation}>
+    <ScrollArea.Thumb />
+  </ScrollArea.Scrollbar>
 {/snippet}
 
 <ScrollArea.Root bind:ref {...restProps}>
-	<ScrollArea.Viewport class={viewportClasses}>
-		{@render children?.()}
-	</ScrollArea.Viewport>
-	{#if orientation === "vertical" || orientation === "both"}
-		{@render Scrollbar({ orientation: "vertical" })}
-	{/if}
-	{#if orientation === "horizontal" || orientation === "both"}
-		{@render Scrollbar({ orientation: "horizontal" })}
-	{/if}
-	<ScrollArea.Corner />
+  <ScrollArea.Viewport class={viewportClasses}>
+    {@render children?.()}
+  </ScrollArea.Viewport>
+  {#if orientation === "vertical" || orientation === "both"}
+    {@render Scrollbar({ orientation: "vertical" })}
+  {/if}
+  {#if orientation === "horizontal" || orientation === "both"}
+    {@render Scrollbar({ orientation: "horizontal" })}
+  {/if}
+  <ScrollArea.Corner />
 </ScrollArea.Root>
 ```
 
@@ -91,7 +95,7 @@ The `hover` type is the default type of the scroll area, demonstrated in the fea
 
 ```svelte {1}
 <MyScrollArea type="hover">
-	<!-- ... -->
+  <!-- ... -->
 </MyScrollArea>
 ```
 
@@ -103,7 +107,7 @@ The `scroll` type displays the scrollbars when the user scrolls the content. Thi
 
 ```svelte {1}
 <MyScrollArea type="scroll">
-	<!-- ... -->
+  <!-- ... -->
 </MyScrollArea>
 ```
 
@@ -115,7 +119,7 @@ The `auto` type behaves similarly to your typical browser scrollbars. When the c
 
 ```svelte {1}
 <MyScrollArea type="auto">
-	<!-- ... -->
+  <!-- ... -->
 </MyScrollArea>
 ```
 
@@ -127,7 +131,7 @@ The `always` type behaves as if you set `overflow: scroll` on the scroll area. S
 
 ```svelte {1}
 <MyScrollArea type="always" orientation="both">
-	<!-- ... -->
+  <!-- ... -->
 </MyScrollArea>
 ```
 
@@ -139,7 +143,7 @@ You can customize the hide delay of the scrollbars using the `scrollHideDelay` p
 
 ```svelte {1}
 <MyScrollArea scrollHideDelay={10}>
-	<!-- ... -->
+  <!-- ... -->
 </MyScrollArea>
 ```
 

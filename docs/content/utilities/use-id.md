@@ -9,9 +9,9 @@ The `useId` function is a utility function that can be used to generate unique I
 
 ```svelte
 <script lang="ts">
-	import { useId } from "bits-ui";
+  import { useId } from "bits-ui";
 
-	const id = useId();
+  const id = useId();
 </script>
 
 <label for={id}>Label here</label>

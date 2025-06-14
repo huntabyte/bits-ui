@@ -37,7 +37,7 @@
 						{@html parseMarkdown(attr.description)}
 					</p>
 				</Table.Cell>
-				<Table.Cell class="py-0 sm:hidden">
+				<Table.Cell class="overflow-hidden py-0 sm:hidden">
 					<DataAttrsValueContentMobile {attr} />
 				</Table.Cell>
 			</Table.Row>

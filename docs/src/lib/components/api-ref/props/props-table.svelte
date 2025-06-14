@@ -68,7 +68,7 @@
 							</Code>
 						</div>
 					</Table.Cell>
-					<Table.Cell class="py-0 sm:hidden">
+					<Table.Cell class="overflow-hidden py-0 sm:hidden">
 						<PropsTypeContentMobile prop={p} />
 					</Table.Cell>
 				</Table.Row>

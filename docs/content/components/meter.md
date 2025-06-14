@@ -20,17 +20,17 @@ While often visually similar, meters and [Progress](/docs/components/progress) b
 
 **Meter**:
 
--   Displays a **static measurement** within a known range (0-100)
--   Value can fluctuate up/down based on real-time measurements
--   Examples: CPU usage, battery level, sound volume
--   Use when showing current state relative to capacity
+- Displays a **static measurement** within a known range (0-100)
+- Value can fluctuate up/down based on real-time measurements
+- Examples: CPU usage, battery level, sound volume
+- Use when showing current state relative to capacity
 
 **Progress bar**:
 
--   Shows **completion status** of a task
--   Value only increases as task progresses
--   Examples: File upload, installation status, form completion
--   Use when tracking advancement toward completion
+- Shows **completion status** of a task
+- Value only increases as task progresses
+- Examples: File upload, installation status, form completion
+- Use when tracking advancement toward completion
 
 If a progress bar better fits your requirements, check out the [Progress](/docs/components/progress) component.
 
@@ -38,7 +38,7 @@ If a progress bar better fits your requirements, check out the [Progress](/docs/
 
 ```svelte
 <script lang="ts">
-	import { Meter } from "bits-ui";
+  import { Meter } from "bits-ui";
 </script>
 
 <Meter.Root />
@@ -50,38 +50,44 @@ It's recommended to use the `Meter` primitive to create your own custom meter co
 
 ```svelte
 <script lang="ts">
-	import { Meter, useId } from "bits-ui";
-	import type { ComponentProps } from "svelte";
+  import { Meter, useId } from "bits-ui";
+  import type { ComponentProps } from "svelte";
 
-	let {
-		max = 100,
-		value = 0,
-		min = 0,
-		label,
-		valueLabel,
-	}: ComponentProps<typeof Meter.Root> & {
-		label: string;
-		valueLabel: string;
-	} = $props();
+  let {
+    max = 100,
+    value = 0,
+    min = 0,
+    label,
+    valueLabel,
+  }: ComponentProps<typeof Meter.Root> & {
+    label: string;
+    valueLabel: string;
+  } = $props();
 
-	const labelId = useId();
+  const labelId = useId();
 </script>
 
 <div>
-	<span id={labelId}> {label} </span>
-	<span>{valueLabel}</span>
+  <span id={labelId}> {label} </span>
+  <span>{valueLabel}</span>
 </div>
-<Meter.Root aria-labelledby={labelId} aria-valuetext={valueLabel} {value} {min} {max} />
+<Meter.Root
+  aria-labelledby={labelId}
+  aria-valuetext={valueLabel}
+  {value}
+  {min}
+  {max}
+/>
 ```
 
 You can then use the `MyMeter` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyMeter from "$lib/components/MyMeter.svelte";
+  import MyMeter from "$lib/components/MyMeter.svelte";
 
-	let value = $state(3000);
-	const max = 4000;
+  let value = $state(3000);
+  const max = 4000;
 </script>
 
 <MyMeter label="Tokens remaining" valueLabel="{value} / {max}" {value} {max} />

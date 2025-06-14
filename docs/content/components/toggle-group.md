@@ -20,12 +20,12 @@ description: Groups multiple toggle controls, allowing users to enable one or mu
 
 ```svelte
 <script lang="ts">
-	import { ToggleGroup } from "bits-ui";
+  import { ToggleGroup } from "bits-ui";
 </script>
 
 <ToggleGroup.Root>
-	<ToggleGroup.Item value="bold">bold</ToggleGroup.Item>
-	<ToggleGroup.Item value="italic">italic</ToggleGroup.Item>
+  <ToggleGroup.Item value="bold">bold</ToggleGroup.Item>
+  <ToggleGroup.Item value="italic">italic</ToggleGroup.Item>
 </ToggleGroup.Root>
 ```
 
@@ -45,14 +45,14 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { ToggleGroup } from "bits-ui";
-	let myValue = $state("");
+  import { ToggleGroup } from "bits-ui";
+  let myValue = $state("");
 </script>
 
 <button onclick={() => (myValue = "item-1")}> Press item 1 </button>
 
 <ToggleGroup.Root type="single" bind:value={myValue}>
-	<!-- -->
+  <!-- -->
 </ToggleGroup.Root>
 ```
 
@@ -62,20 +62,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { ToggleGroup } from "bits-ui";
-	let myValue = $state("");
+  import { ToggleGroup } from "bits-ui";
+  let myValue = $state("");
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: string) {
-		myValue = newValue;
-	}
+  function setValue(newValue: string) {
+    myValue = newValue;
+  }
 </script>
 
 <ToggleGroup.Root type="single" bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </ToggleGroup.Root>
 ```
 

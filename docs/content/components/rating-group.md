@@ -27,21 +27,21 @@ This component is currently in preview. The API may change before it is consider
 
 ```svelte
 <script lang="ts">
-	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+  import { unstable_RatingGroup as RatingGroup } from "bits-ui";
 </script>
 
 <RatingGroup.Root max={5}>
-	{#snippet children({ items })}
-		{#each items as item (item.index)}
-			<RatingGroup.Item index={item.index}>
-				{#if item.state === "active"}
-					⭐
-				{:else}
-					☆
-				{/if}
-			</RatingGroup.Item>
-		{/each}
-	{/snippet}
+  {#snippet children({ items })}
+    {#each items as item (item.index)}
+      <RatingGroup.Item index={item.index}>
+        {#if item.state === "active"}
+          ⭐
+        {:else}
+          ☆
+        {/if}
+      </RatingGroup.Item>
+    {/each}
+  {/snippet}
 </RatingGroup.Root>
 ```
 
@@ -53,43 +53,46 @@ In the example below, we're creating a custom `MyRatingGroup` component that ren
 
 ```svelte title="MyRatingGroup.svelte"
 <script lang="ts">
-	import { unstable_RatingGroup as RatingGroup, type WithoutChildrenOrChild } from "bits-ui";
-	import Star from "phosphor-svelte/lib/Star";
-	import StarHalf from "phosphor-svelte/lib/StarHalf";
+  import {
+    unstable_RatingGroup as RatingGroup,
+    type WithoutChildrenOrChild,
+  } from "bits-ui";
+  import Star from "phosphor-svelte/lib/Star";
+  import StarHalf from "phosphor-svelte/lib/StarHalf";
 
-	let {
-		value = $bindable(0),
-		ref = $bindable(null),
-		showLabel = true,
-		max = 5,
-		...restProps
-	}: WithoutChildrenOrChild<RatingGroup.RootProps> & {
-		showLabel?: boolean;
-	} = $props();
+  let {
+    value = $bindable(0),
+    ref = $bindable(null),
+    showLabel = true,
+    max = 5,
+    ...restProps
+  }: WithoutChildrenOrChild<RatingGroup.RootProps> & {
+    showLabel?: boolean;
+  } = $props();
 </script>
 
 <div class="flex flex-col gap-2">
-	<RatingGroup.Root bind:value bind:ref {max} {...restProps}>
-		{#snippet children({ items })}
-			{#each items as item (item.index)}
-				<RatingGroup.Item index={item.index}>
-					{#if item.state === "inactive"}
-						<Star />
-					{:else if item.state === "active"}
-						<Star weight="fill" />
-					{:else if item.state === "partial"}
-						<StarHalf weight="fill" />
-					{/if}
-				</RatingGroup.Item>
-			{/each}
-		{/snippet}
-	</RatingGroup.Root>
+  <RatingGroup.Root bind:value bind:ref {max} {...restProps}>
+    {#snippet children({ items })}
+      {#each items as item (item.index)}
+        <RatingGroup.Item index={item.index}>
+          {#if item.state === "inactive"}
+            <Star />
+          {:else if item.state === "active"}
+            <Star weight="fill" />
+          {:else if item.state === "partial"}
+            <StarHalf weight="fill" />
+          {/if}
+        </RatingGroup.Item>
+      {/each}
+    {/snippet}
+  </RatingGroup.Root>
 
-	{#if showLabel}
-		<p class="text-muted-foreground text-sm">
-			Rating: {value} out of {max} stars
-		</p>
-	{/if}
+  {#if showLabel}
+    <p class="text-muted-foreground text-sm">
+      Rating: {value} out of {max} stars
+    </p>
+  {/if}
 </div>
 ```
 
@@ -97,8 +100,8 @@ You can then use the `MyRatingGroup` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyRatingGroup from "$lib/components/MyRatingGroup.svelte";
-	let productRating = $state(4);
+  import MyRatingGroup from "$lib/components/MyRatingGroup.svelte";
+  let productRating = $state(4);
 </script>
 
 <MyRatingGroup bind:value={productRating} max={5} allowHalf />
@@ -114,20 +117,20 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
-	let myRating = $state(3);
+  import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+  let myRating = $state(3);
 </script>
 
 <button onclick={() => (myRating = 5)}> Give 5 stars </button>
 
 <RatingGroup.Root bind:value={myRating} max={5}>
-	{#snippet children({ items })}
-		{#each items as item (item.index)}
-			<RatingGroup.Item index={item.index}>
-				{#if item.state === "active"}⭐{:else}☆{/if}
-			</RatingGroup.Item>
-		{/each}
-	{/snippet}
+  {#snippet children({ items })}
+    {#each items as item (item.index)}
+      <RatingGroup.Item index={item.index}>
+        {#if item.state === "active"}⭐{:else}☆{/if}
+      </RatingGroup.Item>
+    {/each}
+  {/snippet}
 </RatingGroup.Root>
 ```
 
@@ -137,29 +140,29 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
-	let myRating = $state(0);
+  import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+  let myRating = $state(0);
 
-	function getValue() {
-		return myRating;
-	}
+  function getValue() {
+    return myRating;
+  }
 
-	function setValue(newValue: number) {
-		// Add custom logic here, like validation or analytics
-		if (newValue >= 0 && newValue <= 5) {
-			myRating = newValue;
-		}
-	}
+  function setValue(newValue: number) {
+    // Add custom logic here, like validation or analytics
+    if (newValue >= 0 && newValue <= 5) {
+      myRating = newValue;
+    }
+  }
 </script>
 
 <RatingGroup.Root bind:value={getValue, setValue} max={5}>
-	{#snippet children({ items })}
-		{#each items as item (item.index)}
-			<RatingGroup.Item index={item.index}>
-				{#if item.state === "active"}⭐{:else}☆{/if}
-			</RatingGroup.Item>
-		{/each}
-	{/snippet}
+  {#snippet children({ items })}
+    {#each items as item (item.index)}
+      <RatingGroup.Item index={item.index}>
+        {#if item.state === "active"}⭐{:else}☆{/if}
+      </RatingGroup.Item>
+    {/each}
+  {/snippet}
 </RatingGroup.Root>
 ```
 
@@ -169,7 +172,7 @@ If you set the `name` prop on the `RatingGroup.Root` component, a hidden input e
 
 ```svelte /name="productRating"/
 <RatingGroup.Root name="productRating" max={5}>
-	<!-- ... -->
+  <!-- ... -->
 </RatingGroup.Root>
 ```
 
@@ -179,7 +182,7 @@ To make the hidden input element `required` you can set the `required` prop on t
 
 ```svelte /required/
 <RatingGroup.Root required max={5}>
-	<!-- ... -->
+  <!-- ... -->
 </RatingGroup.Root>
 ```
 
@@ -189,19 +192,19 @@ The rating group supports half ratings when you set the `allowHalf` prop to `tru
 
 ```svelte /allowHalf/
 <RatingGroup.Root allowHalf>
-	{#snippet children({ items })}
-		{#each items as item (item.index)}
-			<RatingGroup.Item index={item.index}>
-				{#if item.state === "inactive"}
-					<Star class="size-full" />
-				{:else if item.state === "active"}
-					<Star class="size-full fill-current" weight="fill" />
-				{:else if item.state === "partial"}
-					<StarHalf class="size-full fill-current" weight="fill" />
-				{/if}
-			</RatingGroup.Item>
-		{/each}
-	{/snippet}
+  {#snippet children({ items })}
+    {#each items as item (item.index)}
+      <RatingGroup.Item index={item.index}>
+        {#if item.state === "inactive"}
+          <Star class="size-full" />
+        {:else if item.state === "active"}
+          <Star class="size-full fill-current" weight="fill" />
+        {:else if item.state === "partial"}
+          <StarHalf class="size-full fill-current" weight="fill" />
+        {/if}
+      </RatingGroup.Item>
+    {/each}
+  {/snippet}
 </RatingGroup.Root>
 ```
 
@@ -219,7 +222,7 @@ You can make the rating group readonly by setting the `readonly` prop to `true`.
 
 ```svelte /readonly/
 <RatingGroup.Root readonly value={4.5}>
-	<!-- ... -->
+  <!-- ... -->
 </RatingGroup.Root>
 ```
 
@@ -233,7 +236,7 @@ You can disable the entire rating group by setting the `disabled` prop to `true`
 
 ```svelte /disabled/
 <RatingGroup.Root disabled max={5}>
-	<!-- ... -->
+  <!-- ... -->
 </RatingGroup.Root>
 ```
 
@@ -247,13 +250,13 @@ By default, the rating group shows a preview of the potential rating when hoveri
 
 ```svelte /hoverPreview={false}/
 <RatingGroup.Root hoverPreview={false} max={5}>
-	{#snippet children({ items })}
-		{#each items as item (item.index)}
-			<RatingGroup.Item index={item.index}>
-				{#if item.state === "active"}⭐{:else}☆{/if}
-			</RatingGroup.Item>
-		{/each}
-	{/snippet}
+  {#snippet children({ items })}
+    {#each items as item (item.index)}
+      <RatingGroup.Item index={item.index}>
+        {#if item.state === "active"}⭐{:else}☆{/if}
+      </RatingGroup.Item>
+    {/each}
+  {/snippet}
 </RatingGroup.Root>
 ```
 
@@ -273,15 +276,15 @@ The rating group automatically adapts to right-to-left (RTL) text direction. Sim
 
 ```svelte
 <div dir="rtl">
-	<RatingGroup.Root max={5}>
-		{#snippet children({ items })}
-			{#each items as item (item.index)}
-				<RatingGroup.Item index={item.index}>
-					{#if item.state === "active"}⭐{:else}☆{/if}
-				</RatingGroup.Item>
-			{/each}
-		{/snippet}
-	</RatingGroup.Root>
+  <RatingGroup.Root max={5}>
+    {#snippet children({ items })}
+      {#each items as item (item.index)}
+        <RatingGroup.Item index={item.index}>
+          {#if item.state === "active"}⭐{:else}☆{/if}
+        </RatingGroup.Item>
+      {/each}
+    {/snippet}
+  </RatingGroup.Root>
 </div>
 ```
 
@@ -301,13 +304,13 @@ The `max` prop determines the maximum rating value and the number of rating item
 
 ```svelte /max={10}/
 <RatingGroup.Root max={3}>
-	{#snippet children({ items })}
-		{#each items as item (item.index)}
-			<RatingGroup.Item index={item.index}>
-				{item.index + 1}
-			</RatingGroup.Item>
-		{/each}
-	{/snippet}
+  {#snippet children({ items })}
+    {#each items as item (item.index)}
+      <RatingGroup.Item index={item.index}>
+        {item.index + 1}
+      </RatingGroup.Item>
+    {/each}
+  {/snippet}
 </RatingGroup.Root>
 ```
 
@@ -321,13 +324,13 @@ The `min` prop sets a minimum required rating value. When set, users cannot sele
 
 ```svelte /min={1}/
 <RatingGroup.Root min={3} value={3}>
-	{#snippet children({ items })}
-		{#each items as item (item.index)}
-			<RatingGroup.Item index={item.index}>
-				{#if item.state === "active"}⭐{:else}☆{/if}
-			</RatingGroup.Item>
-		{/each}
-	{/snippet}
+  {#snippet children({ items })}
+    {#each items as item (item.index)}
+      <RatingGroup.Item index={item.index}>
+        {#if item.state === "active"}⭐{:else}☆{/if}
+      </RatingGroup.Item>
+    {/each}
+  {/snippet}
 </RatingGroup.Root>
 ```
 
@@ -345,11 +348,11 @@ The `RatingGroup` component implements comprehensive accessibility features foll
 
 The component uses the **slider pattern** rather than a radiogroup pattern, which provides better screen reader support for rating interfaces:
 
--   **Root element**: `role="slider"` with complete ARIA slider attributes
--   **Rating items**: `role="presentation"` to avoid redundant announcements
--   **Value communication**: `aria-valuenow`, `aria-valuemin`, `aria-valuemax` for current state
--   **Custom descriptions**: `aria-valuetext` for contextual rating descriptions
--   **State indicators**: `aria-disabled`, `aria-required`, `aria-orientation`
+- **Root element**: `role="slider"` with complete ARIA slider attributes
+- **Rating items**: `role="presentation"` to avoid redundant announcements
+- **Value communication**: `aria-valuenow`, `aria-valuemin`, `aria-valuemax` for current state
+- **Custom descriptions**: `aria-valuetext` for contextual rating descriptions
+- **State indicators**: `aria-disabled`, `aria-required`, `aria-orientation`
 
 When users navigate with arrow keys, screen readers announce the new rating value immediately, providing real-time feedback.
 
@@ -361,34 +364,34 @@ The keyboard implementation follows platform conventions while adding rating-spe
 
 The most efficient way to set ratings - users can type the exact rating they want:
 
--   **Integer ratings**: Type `3` to set rating to 3 stars
--   **Half ratings**: Type `2.5` to set 2.5 stars (when `allowHalf` is enabled)
--   **Clear rating**: Type `0` to remove rating (respects minimum constraints)
--   **Input validation**: Invalid numbers are ignored, values are clamped to min/max range
+- **Integer ratings**: Type `3` to set rating to 3 stars
+- **Half ratings**: Type `2.5` to set 2.5 stars (when `allowHalf` is enabled)
+- **Clear rating**: Type `0` to remove rating (respects minimum constraints)
+- **Input validation**: Invalid numbers are ignored, values are clamped to min/max range
 
 #### Arrow Key Navigation
 
 Navigation adapts to both rating precision and text direction:
 
--   **Standard mode**: Arrow keys increment/decrement by 1
--   **Half rating mode**: Arrow keys increment/decrement by 0.5 for finer control
--   **RTL support**: Left/right arrows automatically reverse in right-to-left layouts
--   **Bounds respect**: Navigation stops at min/max values
+- **Standard mode**: Arrow keys increment/decrement by 1
+- **Half rating mode**: Arrow keys increment/decrement by 0.5 for finer control
+- **RTL support**: Left/right arrows automatically reverse in right-to-left layouts
+- **Bounds respect**: Navigation stops at min/max values
 
 #### Quick Navigation
 
--   **`Home`**: Jump to minimum rating (or 1 if no minimum set)
--   **`End`**: Jump to maximum rating
--   **`PageUp`/`PageDown`**: Increment/decrement by 1 (alternative to arrows)
+- **`Home`**: Jump to minimum rating (or 1 if no minimum set)
+- **`End`**: Jump to maximum rating
+- **`PageUp`/`PageDown`**: Increment/decrement by 1 (alternative to arrows)
 
 ### Focus Management
 
 The component handles focus intelligently:
 
--   **Mouse interactions**: Clicking a rating item automatically focuses the root slider
--   **Keyboard focus**: Single tab stop - the entire rating group acts as one focusable unit
--   **Visual feedback**: Focus styling applied to the root container
--   **Disabled state**: Component becomes non-focusable when disabled
+- **Mouse interactions**: Clicking a rating item automatically focuses the root slider
+- **Keyboard focus**: Single tab stop - the entire rating group acts as one focusable unit
+- **Visual feedback**: Focus styling applied to the root container
+- **Disabled state**: Component becomes non-focusable when disabled
 
 ### Customizing Accessibility
 

@@ -12,6 +12,14 @@
 			"options": {
 				"parser": "svelte"
 			}
+		},
+		{
+			"files": "*.md",
+			"options": {
+				"tabWidth": 2,
+				"useTabs": false,
+				"printWidth": 79
+			}
 		}
 	],
 	"tailwindFunctions": ["clsx", "cn", "tv"]

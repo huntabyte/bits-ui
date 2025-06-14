@@ -73,7 +73,7 @@
 	<NavigationMenu.Item {value} class="w-full">
 		<NavigationMenu.Trigger
 			class={cn(
-				"hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground outline-hidden data-[state=open]:bg-muted group flex w-full select-none items-center justify-between space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
+				"hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground data-[state=open]:bg-muted outline-hidden group flex w-full select-none items-center justify-between space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
 				className
 			)}
 		>

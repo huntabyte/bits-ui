@@ -20,7 +20,7 @@ description: A control element that switches between two states, providing a bin
 
 ```svelte
 <script lang="ts">
-	import { Toggle } from "bits-ui";
+  import { Toggle } from "bits-ui";
 </script>
 
 <Toggle.Root />
@@ -36,8 +36,8 @@ Use `bind:pressed` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Toggle } from "bits-ui";
-	let myPressed = $state(true);
+  import { Toggle } from "bits-ui";
+  let myPressed = $state(true);
 </script>
 
 <button onclick={() => (myPressed = false)}> un-press </button>
@@ -51,20 +51,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Toggle } from "bits-ui";
-	let myPressed = $state(false);
+  import { Toggle } from "bits-ui";
+  let myPressed = $state(false);
 
-	function getPressed() {
-		return myPressed;
-	}
+  function getPressed() {
+    return myPressed;
+  }
 
-	function setPressed(newPressed: boolean) {
-		myPressed = newPressed;
-	}
+  function setPressed(newPressed: boolean) {
+    myPressed = newPressed;
+  }
 </script>
 
 <Toggle.Root bind:pressed={getPressed, setPressed}>
-	<!-- ... -->
+  <!-- ... -->
 </Toggle.Root>
 ```
 

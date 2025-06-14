@@ -22,18 +22,18 @@ The Avatar component provides a consistent way to display user or entity images 
 
 ## Features
 
--   **Smart Image Loading**: Automatically detects and handles image loading states
--   **Fallback System**: Displays alternatives when images are unavailable or slow to load
--   **Compound Structure**: Flexible primitives that can be composed and customized
--   **Customizable**: Choose to show the image immediately without a load check when you're certain the image will load.
+- **Smart Image Loading**: Automatically detects and handles image loading states
+- **Fallback System**: Displays alternatives when images are unavailable or slow to load
+- **Compound Structure**: Flexible primitives that can be composed and customized
+- **Customizable**: Choose to show the image immediately without a load check when you're certain the image will load.
 
 ## Architecture
 
 The Avatar component follows a compound component pattern with three key parts:
 
--   **Avatar.Root**: Container that manages the state of the image and its fallback
--   **Avatar.Image**: Displays user or entity image
--   **Avatar.Fallback**: Shows when the image is loading or fails to load
+- **Avatar.Root**: Container that manages the state of the image and its fallback
+- **Avatar.Image**: Displays user or entity image
+- **Avatar.Fallback**: Shows when the image is loading or fails to load
 
 ## Quick Start
 
@@ -41,12 +41,15 @@ To get started with the Avatar component, you can use the `Avatar.Root`, `Avatar
 
 ```svelte
 <script lang="ts">
-	import { Avatar } from "bits-ui";
+  import { Avatar } from "bits-ui";
 </script>
 
 <Avatar.Root>
-	<Avatar.Image src="https://github.com/huntabyte.png" alt="Huntabyte's avatar" />
-	<Avatar.Fallback>HB</Avatar.Fallback>
+  <Avatar.Image
+    src="https://github.com/huntabyte.png"
+    alt="Huntabyte's avatar"
+  />
+  <Avatar.Fallback>HB</Avatar.Fallback>
 </Avatar.Root>
 ```
 
@@ -56,30 +59,30 @@ You can create your own reusable Avatar component to maintain consistent styling
 
 ```svelte title="UserAvatar.svelte"
 <script lang="ts">
-	import { Avatar, type WithoutChildrenOrChild } from "bits-ui";
+  import { Avatar, type WithoutChildrenOrChild } from "bits-ui";
 
-	let {
-		src,
-		alt,
-		fallback,
-		ref = $bindable(null),
-		imageRef = $bindable(null),
-		fallbackRef = $bindable(null),
-		...restProps
-	}: WithoutChildrenOrChild<Avatar.RootProps> & {
-		src: string;
-		alt: string;
-		fallback: string;
-		imageRef?: HTMLImageElement | null;
-		fallbackRef?: HTMLElement | null;
-	} = $props();
+  let {
+    src,
+    alt,
+    fallback,
+    ref = $bindable(null),
+    imageRef = $bindable(null),
+    fallbackRef = $bindable(null),
+    ...restProps
+  }: WithoutChildrenOrChild<Avatar.RootProps> & {
+    src: string;
+    alt: string;
+    fallback: string;
+    imageRef?: HTMLImageElement | null;
+    fallbackRef?: HTMLElement | null;
+  } = $props();
 </script>
 
 <Avatar.Root {...restProps} bind:ref>
-	<Avatar.Image {src} {alt} bind:ref={imageRef} />
-	<Avatar.Fallback bind:ref={fallbackRef}>
-		{fallback}
-	</Avatar.Fallback>
+  <Avatar.Image {src} {alt} bind:ref={imageRef} />
+  <Avatar.Fallback bind:ref={fallbackRef}>
+    {fallback}
+  </Avatar.Fallback>
 </Avatar.Root>
 ```
 
@@ -87,21 +90,21 @@ Then use it throughout your application:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import UserAvatar from "$lib/components/UserAvatar.svelte";
+  import UserAvatar from "$lib/components/UserAvatar.svelte";
 
-	const users = [
-		{ handle: "huntabyte", initials: "HJ" },
-		{ handle: "pavelstianko", initials: "PS" },
-		{ handle: "adriangonz97", initials: "AG" },
-	];
+  const users = [
+    { handle: "huntabyte", initials: "HJ" },
+    { handle: "pavelstianko", initials: "PS" },
+    { handle: "adriangonz97", initials: "AG" },
+  ];
 </script>
 
 {#each users as user}
-	<UserAvatar
-		src="https://github.com/{user.handle}.png"
-		alt="{user.name}'s avatar"
-		fallback={user.initials}
-	/>
+  <UserAvatar
+    src="https://github.com/{user.handle}.png"
+    alt="{user.name}'s avatar"
+    fallback={user.initials}
+  />
 {/each}
 ```
 
@@ -113,15 +116,15 @@ When you're confident that an image will load (such as local assets), you can by
 
 ```svelte /loadingStatus="loaded"/
 <script lang="ts">
-	import { Avatar } from "bits-ui";
+  import { Avatar } from "bits-ui";
 
-	// local asset that's guaranteed to be available
-	import localAvatar from "/avatar.png";
+  // local asset that's guaranteed to be available
+  import localAvatar from "/avatar.png";
 </script>
 
 <Avatar.Root loadingStatus="loaded">
-	<Avatar.Image src={localAvatar} alt="User avatar" />
-	<Avatar.Fallback>HB</Avatar.Fallback>
+  <Avatar.Image src={localAvatar} alt="User avatar" />
+  <Avatar.Fallback>HB</Avatar.Fallback>
 </Avatar.Root>
 ```
 

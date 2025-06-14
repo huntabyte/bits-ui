@@ -27,21 +27,21 @@ The `child` snippet exposes a prop that you can use to conditionally render the 
 
 ```svelte /forceMount/ /transition:fly/
 <script lang="ts">
-	import { Dialog } from "bits-ui";
-	import { fly } from "svelte/transition";
+  import { Dialog } from "bits-ui";
+  import { fly } from "svelte/transition";
 </script>
 
 <Dialog.Root>
-	<!-- ... -->
-	<Dialog.Content forceMount>
-		{#snippet child({ props, open })}
-			{#if open}
-				<div {...props} transition:fly>
-					<!-- ... -->
-				</div>
-			{/if}
-		{/snippet}
-	</Dialog.Content>
+  <!-- ... -->
+  <Dialog.Content forceMount>
+    {#snippet child({ props, open })}
+      {#if open}
+        <div {...props} transition:fly>
+          <!-- ... -->
+        </div>
+      {/if}
+    {/snippet}
+  </Dialog.Content>
 </Dialog.Root>
 ```
 
@@ -51,27 +51,27 @@ We understand this isn't the prettiest syntax, but it enables us to cover every 
 
 ```svelte title="MyDialogContent.svelte"
 <script lang="ts">
-	import type { Snippet } from "svelte";
-	import { fly } from "svelte/transition";
-	import { Dialog, type WithoutChildrenOrChild } from "bits-ui";
+  import type { Snippet } from "svelte";
+  import { fly } from "svelte/transition";
+  import { Dialog, type WithoutChildrenOrChild } from "bits-ui";
 
-	let {
-		ref = $bindable(null),
-		children,
-		...restProps
-	}: WithoutChildrenOrChild<Dialog.ContentProps> & {
-		children?: Snippet;
-	} = $props();
+  let {
+    ref = $bindable(null),
+    children,
+    ...restProps
+  }: WithoutChildrenOrChild<Dialog.ContentProps> & {
+    children?: Snippet;
+  } = $props();
 </script>
 
 <Dialog.Content bind:ref {...restProps} forceMount={true}>
-	{#snippet child({ props, open })}
-		{#if open}
-			<div {...props} transition:fly>
-				{@render children?.()}
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ props, open })}
+    {#if open}
+      <div {...props} transition:fly>
+        {@render children?.()}
+      </div>
+    {/if}
+  {/snippet}
 </Dialog.Content>
 ```
 
@@ -79,21 +79,21 @@ Which can then be used alongside the other `Dialog.*` components:
 
 ```svelte
 <script lang="ts">
-	import { Dialog } from "bits-ui";
-	import MyDialogContent from "$lib/components/MyDialogContent.svelte";
+  import { Dialog } from "bits-ui";
+  import MyDialogContent from "$lib/components/MyDialogContent.svelte";
 </script>
 
 <Dialog.Root>
-	<Dialog.Trigger>Open Dialog</Dialog.Trigger>
-	<Dialog.Portal>
-		<Dialog.Overlay />
-		<MyDialogContent>
-			<Dialog.Title>Dialog Title</Dialog.Title>
-			<Dialog.Description>Dialog Description</Dialog.Description>
-			<Dialog.Close>Close</Dialog.Close>
-			<div>Other dialog content</div>
-		</MyDialogContent>
-	</Dialog.Portal>
+  <Dialog.Trigger>Open Dialog</Dialog.Trigger>
+  <Dialog.Portal>
+    <Dialog.Overlay />
+    <MyDialogContent>
+      <Dialog.Title>Dialog Title</Dialog.Title>
+      <Dialog.Description>Dialog Description</Dialog.Description>
+      <Dialog.Close>Close</Dialog.Close>
+      <div>Other dialog content</div>
+    </MyDialogContent>
+  </Dialog.Portal>
 </Dialog.Root>
 ```
 
@@ -105,24 +105,24 @@ For example, if we were to use the `Popover.Content` component, we need to add a
 
 ```svelte {12,16} /wrapperProps,/
 <script lang="ts">
-	import { Popover } from "bits-ui";
-	import { fly } from "svelte/transition";
+  import { Popover } from "bits-ui";
+  import { fly } from "svelte/transition";
 </script>
 
 <Popover.Root>
-	<Popover.Trigger>Open Popover</Popover.Trigger>
-	<Popover.Portal>
-		<Popover.Content forceMount>
-			{#snippet child({ wrapperProps, props, open })}
-				{#if open}
-					<div {...wrapperProps}>
-						<div {...props} transition:fly>
-							<!-- ... -->
-						</div>
-					</div>
-				{/if}
-			{/snippet}
-		</Popover.Content>
-	</Popover.Portal>
+  <Popover.Trigger>Open Popover</Popover.Trigger>
+  <Popover.Portal>
+    <Popover.Content forceMount>
+      {#snippet child({ wrapperProps, props, open })}
+        {#if open}
+          <div {...wrapperProps}>
+            <div {...props} transition:fly>
+              <!-- ... -->
+            </div>
+          </div>
+        {/if}
+      {/snippet}
+    </Popover.Content>
+  </Popover.Portal>
 </Popover.Root>
 ```

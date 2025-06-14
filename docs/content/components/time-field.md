@@ -32,20 +32,20 @@ The `TimeField` component is an alternative to the native `<input type="time">` 
 
 ```svelte
 <script lang="ts">
-	import { TimeField } from "bits-ui";
+  import { TimeField } from "bits-ui";
 </script>
 
 <TimeField.Root>
-	<TimeField.Label>Check-in time</TimeField.Label>
-	<TimeField.Input>
-		{#snippet children({ segments })}
-			{#each segments as { part, value }}
-				<TimeField.Segment {part}>
-					{value}
-				</TimeField.Segment>
-			{/each}
-		{/snippet}
-	</TimeField.Input>
+  <TimeField.Label>Check-in time</TimeField.Label>
+  <TimeField.Input>
+    {#snippet children({ segments })}
+      {#each segments as { part, value }}
+        <TimeField.Segment {part}>
+          {value}
+        </TimeField.Segment>
+      {/each}
+    {/snippet}
+  </TimeField.Input>
 </TimeField.Root>
 ```
 
@@ -57,37 +57,37 @@ The following example shows how you might create a reusable `MyTimeField` compon
 
 ```svelte title="MyTimeField.svelte"
 <script lang="ts" module>
-	import type { TimeValue } from "bits-ui";
-	import type { Time } from "@internationalized/date";
+  import type { TimeValue } from "bits-ui";
+  import type { Time } from "@internationalized/date";
 
-	type T = unknown;
+  type T = unknown;
 </script>
 
 <script lang="ts" generics="T extends TimeValue = Time">
-	import { TimeField, type WithoutChildrenOrChild } from "bits-ui";
+  import { TimeField, type WithoutChildrenOrChild } from "bits-ui";
 
-	let {
-		value = $bindable(),
-		placeholder = $bindable(),
-		labelText = "Select a time",
-		...restProps
-	}: WithoutChildrenOrChild<TimeField.RootProps<T>> & {
-		name?: string;
-		labelText?: string;
-	} = $props();
+  let {
+    value = $bindable(),
+    placeholder = $bindable(),
+    labelText = "Select a time",
+    ...restProps
+  }: WithoutChildrenOrChild<TimeField.RootProps<T>> & {
+    name?: string;
+    labelText?: string;
+  } = $props();
 </script>
 
 <TimeField.Root bind:value bind:placeholder {...restProps}>
-	<TimeField.Label {name}>{labelText}</TimeField.Label>
-	<TimeField.Input>
-		{#snippet children({ segments })}
-			{#each segments as { part, value }}
-				<TimeField.Segment {part}>
-					{value}
-				</TimeField.Segment>
-			{/each}
-		{/snippet}
-	</TimeField.Input>
+  <TimeField.Label {name}>{labelText}</TimeField.Label>
+  <TimeField.Input>
+    {#snippet children({ segments })}
+      {#each segments as { part, value }}
+        <TimeField.Segment {part}>
+          {value}
+        </TimeField.Segment>
+      {/each}
+    {/snippet}
+  </TimeField.Input>
 </TimeField.Root>
 ```
 
@@ -115,8 +115,8 @@ By default, the `placeholder` will be set to `12:00 AM` or `00:00` depending on 
 
 ```svelte
 <script lang="ts">
-	import MyTimeField from "$lib/components/MyTimeField.svelte";
-	import { Time } from "@internationalized/date";
+  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import { Time } from "@internationalized/date";
 </script>
 
 <MyTimeField placeholder={new Time(12, 30)} />
@@ -130,8 +130,8 @@ If we're collecting a time from the user where we want the timezone to be displa
 
 ```svelte
 <script lang="ts">
-	import MyTimeField from "$lib/components/MyTimeField.svelte";
-	import { now, getLocalTimeZone } from "@internationalized/date";
+  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import { now, getLocalTimeZone } from "@internationalized/date";
 </script>
 
 <MyTimeField placeholder={now("America/New_York")} />
@@ -151,15 +151,17 @@ Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { TimeField } from "bits-ui";
-	import { Time } from "@internationalized/date";
-	let myPlaceholder = $state(new Time(12, 30));
+  import { TimeField } from "bits-ui";
+  import { Time } from "@internationalized/date";
+  let myPlaceholder = $state(new Time(12, 30));
 </script>
 
-<button onclick={() => (myPlaceholder = new Time(12, 30))}> Set placeholder to 12:30 PM </button>
+<button onclick={() => (myPlaceholder = new Time(12, 30))}>
+  Set placeholder to 12:30 PM
+</button>
 
 <TimeField.Root bind:placeholder={myPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </TimeField.Root>
 ```
 
@@ -169,20 +171,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { TimeField, type TimeValue } from "bits-ui";
-	let myPlaceholder = $state<TimeValue>();
+  import { TimeField, type TimeValue } from "bits-ui";
+  let myPlaceholder = $state<TimeValue>();
 
-	function getPlaceholder() {
-		return myPlaceholder;
-	}
+  function getPlaceholder() {
+    return myPlaceholder;
+  }
 
-	function setPlaceholder(newPlaceholder: TimeValue) {
-		myPlaceholder = newPlaceholder;
-	}
+  function setPlaceholder(newPlaceholder: TimeValue) {
+    myPlaceholder = newPlaceholder;
+  }
 </script>
 
 <TimeField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </TimeField.Root>
 ```
 
@@ -196,14 +198,16 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { TimeField } from "bits-ui";
-	import { Time } from "@internationalized/date";
-	let myValue = $state(new Time(12, 30));
+  import { TimeField } from "bits-ui";
+  import { Time } from "@internationalized/date";
+  let myValue = $state(new Time(12, 30));
 </script>
 
-<button onclick={() => (myValue = myValue.add({ hours: 1 }))}> Add 1 hour </button>
+<button onclick={() => (myValue = myValue.add({ hours: 1 }))}>
+  Add 1 hour
+</button>
 <TimeField.Root bind:value={myValue}>
-	<!-- ... -->
+  <!-- ... -->
 </TimeField.Root>
 ```
 
@@ -213,20 +217,20 @@ For complete control over the component's state, use a [Function Binding](https:
 
 ```svelte
 <script lang="ts">
-	import { TimeField, type TimeValue } from "bits-ui";
-	let myValue = $state<TimeValue>();
+  import { TimeField, type TimeValue } from "bits-ui";
+  let myValue = $state<TimeValue>();
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: TimeValue | undefined) {
-		myValue = newValue;
-	}
+  function setValue(newValue: TimeValue | undefined) {
+    myValue = newValue;
+  }
 </script>
 
 <DateField.Root bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DateField.Root>
 ```
 
@@ -236,17 +240,17 @@ Often, you'll want to start the `TimeField.Root` component with a default value.
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import { TimeField } from "bits-ui";
-	import { parseDateTime } from "@internationalized/date";
+  import { TimeField } from "bits-ui";
+  import { parseDateTime } from "@internationalized/date";
 
-	// this came from a database/API call
-	const date = "2024-08-03T15:15";
+  // this came from a database/API call
+  const date = "2024-08-03T15:15";
 
-	let value = $state(parseDateTime(date));
+  let value = $state(parseDateTime(date));
 </script>
 
 <TimeField.Root {value}>
-	<!-- ... -->
+  <!-- ... -->
 </TimeField.Root>
 ```
 
@@ -264,8 +268,8 @@ You can set a minimum value for the `TimeField.Root` component by using the `min
 
 ```svelte
 <script lang="ts">
-	import MyTimeField from "$lib/components/MyTimeField.svelte";
-	import { Time } from "@internationalized/date";
+  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import { Time } from "@internationalized/date";
 </script>
 
 <MyTimeField minValue={new Time(9, 0)} value={new Time(8, 0)} />
@@ -283,8 +287,8 @@ You can set a maximum value for the `TimeField.Root` component by using the `max
 
 ```svelte
 <script lang="ts">
-	import MyTimeField from "$lib/components/MyTimeField.svelte";
-	import { Time } from "@internationalized/date";
+  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import { Time } from "@internationalized/date";
 </script>
 
 <MyTimeField maxValue={new Time(17, 0)} value={new Time(18, 0)} />
@@ -304,37 +308,40 @@ The strings are then passed to the `onInvalid` callback, which you can use to di
 
 ```svelte
 <script lang="ts">
-	import MyTimeField from "$lib/components/MyTimeField.svelte";
-	import type { TimeValue } from "bits-ui";
-	import { Time } from "@internationalized/date";
-	import { toast } from "your-favorite-toast-library";
+  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import type { TimeValue } from "bits-ui";
+  import { Time } from "@internationalized/date";
+  import { toast } from "your-favorite-toast-library";
 
-	const value = new Time(12, 30);
+  const value = new Time(12, 30);
 
-	function validate(time: TimeValue) {
-		return time.hour === 12 ? "Time cannot be 12:00 PM" : undefined;
-	}
+  function validate(time: TimeValue) {
+    return time.hour === 12 ? "Time cannot be 12:00 PM" : undefined;
+  }
 
-	function onInvalid(reason: "min" | "max" | "custom", msg?: string | string[]) {
-		if (reason === "custom") {
-			if (typeof msg === "string") {
-				// do something with the error message
-				toast.error(msg);
-				return;
-			} else if (Array.isArray(msg)) {
-				// do something with the error messages
-				toast.error(msg.join(", "));
-				return;
-			}
-			toast.error("The time is invalid");
-		} else if (reason === "min") {
-			// let the user know that the date is too early.
-			toast.error("The time is too early.");
-		} else if (reason === "max") {
-			// let the user know that the date is too late.
-			toast.error("The date is too late.");
-		}
-	}
+  function onInvalid(
+    reason: "min" | "max" | "custom",
+    msg?: string | string[]
+  ) {
+    if (reason === "custom") {
+      if (typeof msg === "string") {
+        // do something with the error message
+        toast.error(msg);
+        return;
+      } else if (Array.isArray(msg)) {
+        // do something with the error messages
+        toast.error(msg.join(", "));
+        return;
+      }
+      toast.error("The time is invalid");
+    } else if (reason === "min") {
+      // let the user know that the date is too early.
+      toast.error("The time is too early.");
+    } else if (reason === "max") {
+      // let the user know that the date is too late.
+      toast.error("The date is too late.");
+    }
+  }
 </script>
 
 <MyTimeField {validate} {value} {onInvalid} />
@@ -365,10 +372,10 @@ The `granularity` prop sets the granularity of the date field, which determines 
 
 ```svelte
 <script lang="ts">
-	import MyTimeField from "$lib/components/MyTimeField.svelte";
-	import { Time } from "@internationalized/date";
+  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import { Time } from "@internationalized/date";
 
-	const value = new Time(12, 30);
+  const value = new Time(12, 30);
 </script>
 
 <MyTimeField granularity="second" {value} />
@@ -386,7 +393,7 @@ You can use the `locale` prop to set the locale of the date field. This will aff
 
 ```svelte
 <script lang="ts">
-	import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "$lib/components/MyTimeField.svelte";
 </script>
 
 <MyTimeField locale="de" value={new Time(13, 30, 0)} />

@@ -15,7 +15,7 @@
 <Popover.Root>
 	<Popover.Trigger
 		data-llm-ignore
-		class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex h-full w-full items-center justify-end px-2 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
+		class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background extend-touch-target focus-visible:outline-hidden inline-flex h-full w-full items-center justify-end px-2 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
 	>
 		<Info class="size-4" weight="bold" />
 		<span class="sr-only">See type definition</span>
@@ -57,7 +57,7 @@
 				scrollbarYProps={{ class: "w-1.5" }}
 			>
 				<div
-					class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pb-0! [&_pre]:pt-0! [&_pre]:outline-hidden! [&_pre]:ring-0! [&_pre]:ring-offset-0! w-full !text-xs [&_[data-line]]:!pl-0 [&_[data-line]]:!text-xs [&_code]:text-start [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
+					class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pt-0! [&_pre]:pb-0! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:outline-hidden! w-full !text-xs [&_[data-line]]:!pl-0 [&_[data-line]]:!text-xs [&_code]:text-start [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
 				>
 					<prop.type.definition />
 				</div>
