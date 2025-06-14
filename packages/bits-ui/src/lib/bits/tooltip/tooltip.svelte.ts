@@ -2,12 +2,12 @@ import { box, onMountEffect, attachRef, DOMContext } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useTimeoutFn } from "$lib/internal/use-timeout-fn.svelte.js";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
 import type { WithRefProps } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
+import { TimeoutFn } from "$lib/internal/timeout-fn.js";
 
 export const tooltipAttrs = createBitsAttrs({
 	component: "tooltip",
@@ -26,12 +26,12 @@ class TooltipProviderState {
 	readonly opts: TooltipProviderStateProps;
 	isOpenDelayed = $state<boolean>(true);
 	isPointerInTransit = box(false);
-	#timerFn: ReturnType<typeof useTimeoutFn>;
+	#timerFn: TimeoutFn<() => void>;
 	#openTooltip = $state<TooltipRootState | null>(null);
 
 	constructor(opts: TooltipProviderStateProps) {
 		this.opts = opts;
-		this.#timerFn = useTimeoutFn(
+		this.#timerFn = new TimeoutFn(
 			() => {
 				this.isOpenDelayed = true;
 			},
@@ -114,7 +114,7 @@ class TooltipRootState {
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
-	#timerFn: ReturnType<typeof useTimeoutFn>;
+	#timerFn: TimeoutFn<() => void>;
 	readonly stateAttr = $derived.by(() => {
 		if (!this.opts.open.current) return "closed";
 		return this.#wasOpenDelayed ? "delayed-open" : "instant-open";
@@ -123,7 +123,7 @@ class TooltipRootState {
 	constructor(opts: TooltipRootStateProps, provider: TooltipProviderState) {
 		this.opts = opts;
 		this.provider = provider;
-		this.#timerFn = useTimeoutFn(
+		this.#timerFn = new TimeoutFn(
 			() => {
 				this.#wasOpenDelayed = true;
 				this.opts.open.current = true;
@@ -136,7 +136,7 @@ class TooltipRootState {
 			() => this.delayDuration,
 			() => {
 				if (this.delayDuration === undefined) return;
-				this.#timerFn = useTimeoutFn(
+				this.#timerFn = new TimeoutFn(
 					() => {
 						this.#wasOpenDelayed = true;
 						this.opts.open.current = true;

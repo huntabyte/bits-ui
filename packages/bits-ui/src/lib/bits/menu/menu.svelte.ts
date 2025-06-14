@@ -27,7 +27,6 @@ import type {
 	BitsPointerEvent,
 	WithRefProps,
 } from "$lib/internal/types.js";
-import { useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
 import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -48,6 +47,7 @@ import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svel
 import { isTabbable } from "tabbable";
 import { untrack } from "svelte";
 import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
+import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -162,7 +162,7 @@ class MenuContentState {
 	readonly parentMenu: MenuMenuState;
 	search = $state("");
 	#timer = 0;
-	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
+	#handleTypeaheadSearch: DOMTypeahead["handleTypeaheadSearch"];
 	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
 	mounted = $state(false);
 	#isSub: boolean;
@@ -199,7 +199,7 @@ class MenuContentState {
 			},
 		});
 
-		this.#handleTypeaheadSearch = useDOMTypeahead({
+		this.#handleTypeaheadSearch = new DOMTypeahead({
 			getActiveElement: () => this.domContext.getActiveElement(),
 			getWindow: () => this.domContext.getWindow(),
 		}).handleTypeaheadSearch;

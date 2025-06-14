@@ -21,11 +21,11 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { type DOMTypeahead, useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
-import { type DataTypeahead, useDataTypeahead } from "$lib/internal/use-data-typeahead.svelte.js";
 import { isIOS } from "$lib/internal/is.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
+import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
+import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -527,7 +527,7 @@ class SelectTriggerState {
 		this.root = root;
 		this.root.domContext = new DOMContext(opts.ref);
 
-		this.#domTypeahead = useDOMTypeahead({
+		this.#domTypeahead = new DOMTypeahead({
 			getCurrentItem: () => this.root.highlightedNode,
 			onMatch: (node) => {
 				this.root.setHighlightedNode(node);
@@ -536,7 +536,7 @@ class SelectTriggerState {
 			getWindow: () => this.root.domContext.getWindow(),
 		});
 
-		this.#dataTypeahead = useDataTypeahead({
+		this.#dataTypeahead = new DataTypeahead({
 			getCurrentItem: () => {
 				if (this.root.isMulti) return "";
 				return this.root.currentLabel;
@@ -646,7 +646,7 @@ class SelectTriggerState {
 				// if we're currently "typing ahead", we don't want to select the item
 				// just yet as the item the user is trying to get to may have a space in it,
 				// so we defer handling the close for this case until further down
-				(e.key === kbd.SPACE && this.#domTypeahead.search.current === "")) &&
+				(e.key === kbd.SPACE && this.#domTypeahead.search === "")) &&
 			!e.isComposing
 		) {
 			e.preventDefault();
