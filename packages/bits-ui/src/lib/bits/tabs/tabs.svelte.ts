@@ -20,10 +20,7 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 const tabsAttrs = createBitsAttrs({
 	component: "tabs",
@@ -43,7 +40,7 @@ type TabsRootStateProps = WithRefProps<
 
 class TabsRootState {
 	readonly opts: TabsRootStateProps;
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 	triggerIds = $state<string[]>([]);
 	// holds the trigger ID for each value to associate it with the content
 	readonly valueToTriggerId = new SvelteMap<string, string>();
@@ -53,7 +50,7 @@ class TabsRootState {
 	constructor(opts: TabsRootStateProps) {
 		this.opts = opts;
 
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: tabsAttrs.trigger,
 			rootNode: this.opts.ref,
 			loop: this.opts.loop,

@@ -10,12 +10,9 @@ import {
 } from "$lib/internal/attrs.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 export const toolbarAttrs = createBitsAttrs({
 	component: "toolbar",
@@ -31,12 +28,12 @@ type ToolbarRootStateProps = WithRefProps<
 
 class ToolbarRootState {
 	readonly opts: ToolbarRootStateProps;
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 
 	constructor(opts: ToolbarRootStateProps) {
 		this.opts = opts;
 
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			orientation: this.opts.orientation,
 			loop: this.opts.loop,
 			rootNode: this.opts.ref,

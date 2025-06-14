@@ -10,12 +10,9 @@ import {
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
@@ -75,12 +72,12 @@ type InitAccordionProps = WithRefProps<
 // Base class
 abstract class AccordionBaseState {
 	readonly opts: AccordionBaseStateProps;
-	readonly rovingFocusGroup: UseRovingFocusReturn;
+	readonly rovingFocusGroup: RovingFocusGroup;
 	abstract readonly isMulti: boolean;
 
 	constructor(opts: AccordionBaseStateProps) {
 		this.opts = opts;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: accordionAttrs.trigger,
 			loop: this.opts.loop,

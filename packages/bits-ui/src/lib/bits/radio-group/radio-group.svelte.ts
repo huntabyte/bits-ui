@@ -16,11 +16,8 @@ import {
 	getAriaDisabled,
 } from "$lib/internal/attrs.js";
 import type { Orientation } from "$lib/shared/index.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 const radioGroupAttrs = createBitsAttrs({
 	component: "radio-group",
@@ -41,11 +38,11 @@ type RadioGroupRootStateProps = WithRefProps<
 class RadioGroupRootState {
 	readonly opts: RadioGroupRootStateProps;
 	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 
 	constructor(opts: RadioGroupRootStateProps) {
 		this.opts = opts;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: radioGroupAttrs.item,
 			loop: this.opts.loop,

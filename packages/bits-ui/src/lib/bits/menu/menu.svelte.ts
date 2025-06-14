@@ -28,7 +28,6 @@ import type {
 	WithRefProps,
 } from "$lib/internal/types.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
-import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
@@ -48,6 +47,7 @@ import { isTabbable } from "tabbable";
 import { untrack } from "svelte";
 import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -163,7 +163,7 @@ class MenuContentState {
 	search = $state("");
 	#timer = 0;
 	#handleTypeaheadSearch: DOMTypeahead["handleTypeaheadSearch"];
-	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	rovingFocusGroup: RovingFocusGroup;
 	mounted = $state(false);
 	#isSub: boolean;
 	domContext: DOMContext;
@@ -203,7 +203,7 @@ class MenuContentState {
 			getActiveElement: () => this.domContext.getActiveElement(),
 			getWindow: () => this.domContext.getWindow(),
 		}).handleTypeaheadSearch;
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: box.with(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getBitsAttr("item"),
 			loop: this.opts.loop,

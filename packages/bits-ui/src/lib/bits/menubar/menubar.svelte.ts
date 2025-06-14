@@ -2,10 +2,6 @@ import { type ReadableBox, afterTick, box, attachRef } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
 import {
 	createBitsAttrs,
@@ -23,6 +19,7 @@ import {
 import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
 
 const menubarAttrs = createBitsAttrs({
 	component: "menubar",
@@ -41,7 +38,7 @@ type MenubarRootStateProps = WithRefProps<
 
 class MenubarRootState {
 	readonly opts: MenubarRootStateProps;
-	rovingFocusGroup: UseRovingFocusReturn;
+	rovingFocusGroup: RovingFocusGroup;
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
 	valueToChangeHandler = new Map<string, ReadableBox<OnChangeFn<boolean>>>();
@@ -49,7 +46,7 @@ class MenubarRootState {
 	constructor(opts: MenubarRootStateProps) {
 		this.opts = opts;
 
-		this.rovingFocusGroup = useRovingFocus({
+		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: menubarAttrs.trigger,
 			loop: this.opts.loop,
