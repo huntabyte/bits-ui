@@ -1,8 +1,10 @@
 import {
+	type DateDuration,
 	type DateValue,
 	endOfMonth,
 	isSameDay,
 	isSameMonth,
+	isSameYear,
 	startOfMonth,
 } from "@internationalized/date";
 import {
@@ -36,6 +38,15 @@ import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { watch } from "runed";
+
+type SameFn = (a: DateValue, b: DateValue) => boolean;
+type CalendarUnit = "day" | "month" | "year";
+
+const SAME_FN_MAP: Record<CalendarUnit, SameFn> = {
+	day: isSameDay,
+	month: isSameMonth,
+	year: isSameYear,
+};
 
 /**
  * Checks if a given node is a calendar cell element.
@@ -621,27 +632,36 @@ export function useMonthViewPlaceholderSync({
 	});
 }
 
+type PageUnit = "day" | "month" | "week";
+const pageIncrementFields: Record<PageUnit, keyof DateDuration> = {
+	day: "months",
+	month: "years",
+	week: "months",
+};
+
 type GetIsNextButtonDisabledProps = {
 	maxValue: DateValue | undefined;
-	months: Month<DateValue>[];
+	units: Month<DateValue>[];
 	disabled: boolean;
+	unit: PageUnit;
 };
 
 export function getIsNextButtonDisabled({
 	maxValue,
-	months,
+	units,
 	disabled,
+	unit,
 }: GetIsNextButtonDisabledProps) {
-	if (!maxValue || !months.length) return false;
+	if (!maxValue || !units.length) return false;
 	if (disabled) return true;
-	const lastMonthInView = months[months.length - 1]?.value;
-	if (!lastMonthInView) return false;
-	const firstMonthOfNextPage = lastMonthInView
+	const lastUnitInView = units[units.length - 1]?.value;
+	if (!lastUnitInView) return false;
+	const firstUnitOfNextPage = lastUnitInView
 		.add({
-			months: 1,
+			[pageIncrementFields[unit]]: 1,
 		})
 		.set({ day: 1 });
-	return isAfter(firstMonthOfNextPage, maxValue);
+	return isAfter(firstUnitOfNextPage, maxValue);
 }
 
 type GetIsPrevButtonDisabledProps = {
@@ -778,17 +798,21 @@ export function useEnsureNonDisabledPlaceholder({
 	defaultPlaceholder,
 	minValue,
 	maxValue,
-	isDateDisabled,
+	isUnitDisabled,
+	unit,
 }: {
 	ref: WritableBox<HTMLElement | null>;
 	placeholder: WritableBox<DateValue | undefined>;
-	isDateDisabled: ReadableBox<DateMatcher>;
+	isUnitDisabled: ReadableBox<DateMatcher>;
 	minValue: ReadableBox<DateValue | undefined>;
 	maxValue: ReadableBox<DateValue | undefined>;
 	defaultPlaceholder: DateValue;
+	unit: CalendarUnit;
 }) {
+	const isSameUnit = SAME_FN_MAP[unit];
+
 	function isDisabled(date: DateValue) {
-		if (isDateDisabled.current(date)) return true;
+		if (isUnitDisabled.current(date)) return true;
 		if (minValue.current && isBefore(date, minValue.current)) return true;
 		if (maxValue.current && isBefore(maxValue.current, date)) return true;
 		return false;
@@ -812,7 +836,7 @@ export function useEnsureNonDisabledPlaceholder({
 			 */
 			if (
 				placeholder.current &&
-				isSameDay(placeholder.current, defaultPlaceholder) &&
+				isSameUnit(placeholder.current, defaultPlaceholder) &&
 				isDisabled(defaultPlaceholder)
 			) {
 				placeholder.current =
