@@ -46,7 +46,7 @@ import type {
 	MouseEventHandler,
 	PointerEventHandler,
 } from "svelte/elements";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
 
 const navigationMenuAttrs = createBitsAttrs({

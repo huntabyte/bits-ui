@@ -17,6 +17,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeCompleteProp,
 	onOpenChangeProp,
 	portalProps,
 	withChildProps,
@@ -46,6 +47,7 @@ export const root = defineComponentApiSchema<LinkPreviewRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		openDelay: defineNumberProp({
 			default: 700,
 			description:

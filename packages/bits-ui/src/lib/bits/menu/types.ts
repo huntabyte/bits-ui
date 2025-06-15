@@ -28,6 +28,11 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
+
+	/**
 	 * The direction of the site.
 	 *
 	 * @defaultValue "ltr"
@@ -189,6 +194,11 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * A callback that is called when the menu finishes opening/closing animations.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 }>;
 
 export type MenuSubProps = MenuSubPropsWithoutHTML;

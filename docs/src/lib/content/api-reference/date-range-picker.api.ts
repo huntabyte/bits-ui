@@ -70,6 +70,7 @@ const root = defineComponentApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		numberOfMonths: rangeCalendarRoot.props!.numberOfMonths,
 		open: datePickerRoot.props!.open,
 		onOpenChange: datePickerRoot.props!.onOpenChange,
+		onOpenChangeComplete: datePickerRoot.props!.onOpenChangeComplete,
 		onEndValueChange: rangeFieldRoot.props!.onEndValueChange,
 		onStartValueChange: rangeFieldRoot.props!.onStartValueChange,
 		minDays: rangeCalendarRoot.props!.minDays,

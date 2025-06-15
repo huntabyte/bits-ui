@@ -25,7 +25,7 @@ import {
 import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 
 const menubarAttrs = createBitsAttrs({
 	component: "menubar",

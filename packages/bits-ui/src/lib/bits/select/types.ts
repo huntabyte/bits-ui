@@ -51,6 +51,11 @@ export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
+	 * A callback function called when the open state changes and the animation is complete.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
+
+	/**
 	 * Whether or not the combobox menu should loop through the items when navigating with the keyboard.
 	 *
 	 * @defaultValue `false`

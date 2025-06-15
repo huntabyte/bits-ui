@@ -30,6 +30,11 @@ export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
+	 * A callback that will be called when the link preview finishes opening/closing animations.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
+
+	/**
 	 * The delay in milliseconds before the preview opens.
 	 *
 	 * @defaultValue 700

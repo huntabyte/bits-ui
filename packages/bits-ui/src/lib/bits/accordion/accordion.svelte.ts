@@ -17,7 +17,7 @@ import {
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",

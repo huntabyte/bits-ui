@@ -1,9 +1,20 @@
-import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
+import {
+	attachRef,
+	box,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context } from "runed";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	OnChangeFn,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { untrack } from "svelte";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -20,6 +31,7 @@ interface DialogRootStateOpts
 		}>,
 		ReadableBoxedValues<{
 			variant: DialogVariant;
+			onOpenChangeComplete: OnChangeFn<boolean>;
 		}> {}
 
 export class DialogRootState {
@@ -41,6 +53,15 @@ export class DialogRootState {
 		this.opts = opts;
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			enabled: true,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
 	}
 
 	handleOpen() {

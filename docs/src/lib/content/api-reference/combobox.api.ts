@@ -16,7 +16,6 @@ import type {
 import {
 	NoopProp,
 	OnChangeStringOrArrayProp,
-	OnOpenChangeProp,
 	OpenClosedProp,
 	SingleOrMultipleProp,
 	StringOrArrayStringProp,
@@ -34,6 +33,8 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeCompleteProp,
+	onOpenChangeProp,
 	openChildDefinition,
 	portalProps,
 	preventOverflowTextSelectionProp,
@@ -89,11 +90,8 @@ export const root = defineComponentApiSchema<ComboboxRootPropsWithoutHTML>({
 			description: "The open state of the combobox menu.",
 			bindable: true,
 		}),
-		onOpenChange: defineFunctionProp({
-			definition: OnOpenChangeProp,
-			description: "A callback that is fired when the combobox menu's open state changes.",
-			stringDefinition: "(open: boolean) => void",
-		}),
+		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		disabled: defineBooleanProp({
 			default: false,
 			description: "Whether or not the combobox component is disabled.",

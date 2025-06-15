@@ -5,12 +5,12 @@
 
 	let { open, forceMount, presence, ref }: PresenceLayerImplProps = $props();
 
-	const state = new Presence({
+	const presenceState = new Presence({
 		open: box.with(() => open),
 		ref,
 	});
 </script>
 
-{#if forceMount || open || state.isPresent}
-	{@render presence?.({ present: state.isPresent })}
+{#if forceMount || open || presenceState.isPresent}
+	{@render presence?.({ present: presenceState.isPresent })}
 {/if}

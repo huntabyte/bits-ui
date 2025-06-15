@@ -4,7 +4,12 @@
 	import type { DialogRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 
-	let { open = $bindable(false), onOpenChange = noop, children }: DialogRootProps = $props();
+	let {
+		open = $bindable(false),
+		onOpenChange = noop,
+		onOpenChangeComplete = noop,
+		children,
+	}: DialogRootProps = $props();
 
 	DialogRootState.create({
 		variant: box.with(() => "dialog"),
@@ -15,6 +20,7 @@
 				onOpenChange(v);
 			}
 		),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 

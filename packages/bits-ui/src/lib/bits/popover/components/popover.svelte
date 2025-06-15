@@ -5,7 +5,12 @@
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
-	let { open = $bindable(false), onOpenChange = noop, children }: PopoverRootProps = $props();
+	let {
+		open = $bindable(false),
+		onOpenChange = noop,
+		onOpenChangeComplete = noop,
+		children,
+	}: PopoverRootProps = $props();
 
 	PopoverRootState.create({
 		open: box.with(
@@ -15,6 +20,7 @@
 				onOpenChange(v);
 			}
 		),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 

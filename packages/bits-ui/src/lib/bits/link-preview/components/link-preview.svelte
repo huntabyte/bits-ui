@@ -8,6 +8,7 @@
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		openDelay = 700,
 		closeDelay = 300,
 		children,
@@ -23,6 +24,7 @@
 		),
 		openDelay: box.with(() => openDelay),
 		closeDelay: box.with(() => closeDelay),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 

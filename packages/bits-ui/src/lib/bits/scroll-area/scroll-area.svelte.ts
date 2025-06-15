@@ -22,7 +22,7 @@ import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared
 import { clamp } from "$lib/internal/clamp.js";
 import { on } from "svelte/events";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
-import { StateMachine } from "$lib/internal/state-machine.svelte.js";
+import { StateMachine } from "$lib/internal/state-machine.js";
 import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
 
 const scrollAreaAttrs = createBitsAttrs({

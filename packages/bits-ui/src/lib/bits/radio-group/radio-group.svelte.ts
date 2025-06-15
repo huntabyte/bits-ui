@@ -16,7 +16,7 @@ import {
 } from "$lib/internal/attrs.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 
 const radioGroupAttrs = createBitsAttrs({
 	component: "radio-group",

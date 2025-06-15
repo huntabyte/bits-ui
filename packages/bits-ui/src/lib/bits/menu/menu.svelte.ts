@@ -26,6 +26,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
+	OnChangeFn,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
@@ -47,8 +48,9 @@ import { isTabbable } from "tabbable";
 import { untrack } from "svelte";
 import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -122,8 +124,11 @@ export class MenuRootState {
 
 interface MenuMenuStateOpts
 	extends WritableBoxedValues<{
-		open: boolean;
-	}> {}
+			open: boolean;
+		}>,
+		ReadableBoxedValues<{
+			onOpenChangeComplete: OnChangeFn<boolean>;
+		}> {}
 
 export class MenuMenuState {
 	static create(opts: MenuMenuStateOpts, root: MenuRootState) {
@@ -141,6 +146,14 @@ export class MenuMenuState {
 		this.opts = opts;
 		this.root = root;
 		this.parentMenu = parentMenu;
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
 
 		if (parentMenu) {
 			watch(

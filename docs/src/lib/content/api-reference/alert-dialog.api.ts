@@ -20,6 +20,7 @@ import {
 	escapeLayerProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeCompleteProp,
 	onOpenChangeProp,
 	openProp,
 	portalProps,
@@ -48,6 +49,7 @@ const root = defineComponentApiSchema<AlertDialogRootPropsWithoutHTML>({
 	props: {
 		open: openProp,
 		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		children: childrenSnippet(),
 	},
 });

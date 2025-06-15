@@ -24,6 +24,11 @@ export type PopoverRootPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the popover's open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * A callback that is called when the popover's open state changes and the animation is complete.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 }>;
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML;

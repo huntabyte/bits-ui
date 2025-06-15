@@ -8,6 +8,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
+	box,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
@@ -26,6 +27,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
+	OnChangeFn,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
@@ -34,6 +36,7 @@ import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -78,6 +81,7 @@ interface SelectBaseRootStateOpts
 			scrollAlignment: "nearest" | "center";
 			items: { value: string; label: string; disabled?: boolean }[];
 			allowDeselect: boolean;
+			onOpenChangeComplete: OnChangeFn<boolean>;
 		}>,
 		WritableBoxedValues<{
 			open: boolean;
@@ -113,6 +117,14 @@ abstract class SelectBaseRootState {
 	constructor(opts: SelectBaseRootStateOpts) {
 		this.opts = opts;
 		this.isCombobox = opts.isCombobox;
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
 
 		$effect.pre(() => {
 			if (!this.opts.open.current) {
@@ -329,6 +341,7 @@ interface SelectRootStateOpts
 			name: string;
 			items: { value: string; label: string; disabled?: boolean }[];
 			allowDeselect: boolean;
+			onOpenChangeComplete: OnChangeFn<boolean>;
 		}>,
 		WritableBoxedValues<{
 			open: boolean;

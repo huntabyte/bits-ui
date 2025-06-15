@@ -9,6 +9,7 @@
 		open = $bindable(false),
 		dir = "ltr",
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		_internal_variant: variant = "dropdown-menu",
 		children,
 	}: MenuRootProps & {
@@ -33,6 +34,7 @@
 					onOpenChange(v);
 				}
 			),
+			onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 		},
 		root
 	);
