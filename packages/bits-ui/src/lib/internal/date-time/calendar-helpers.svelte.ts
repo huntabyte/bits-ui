@@ -171,34 +171,16 @@ type SetMonthProps = CreateMonthProps & {
 };
 
 export function createMonths(props: SetMonthProps) {
-	const { numberOfMonths, dateObj, ...monthProps } = props;
+	const { numberOfMonths = 1, dateObj, ...monthProps } = props;
 
 	const months: Month<DateValue>[] = [];
 
-	if (!numberOfMonths || numberOfMonths === 1) {
+	for (let i = 0; i < numberOfMonths; i++) {
+		const current = dateObj.add({ months: i });
 		months.push(
 			createMonth({
 				...monthProps,
-				dateObj,
-			})
-		);
-		return months;
-	}
-
-	months.push(
-		createMonth({
-			...monthProps,
-			dateObj,
-		})
-	);
-
-	// Create all the months, starting with the current month
-	for (let i = 1; i < numberOfMonths; i++) {
-		const nextMonth = dateObj.add({ months: i });
-		months.push(
-			createMonth({
-				...monthProps,
-				dateObj: nextMonth,
+				dateObj: current,
 			})
 		);
 	}
@@ -860,6 +842,7 @@ export const calendarAttrs = createBitsAttrs({
 		"next-button",
 		"prev-button",
 		"day",
+		"month",
 		"grid-body",
 		"grid-head",
 		"grid-row",
