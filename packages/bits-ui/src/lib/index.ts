@@ -21,6 +21,7 @@ export {
 	LinkPreview,
 	Menubar,
 	Meter,
+	MonthCalendar,
 	NavigationMenu,
 	Pagination,
 	PinInput,
