@@ -1,7 +1,7 @@
 import { page, userEvent } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { type Component, flushSync, tick } from "svelte";
+import { type Component, tick } from "svelte";
 import { type AnyFn, getTestKbd, sleep } from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
@@ -118,7 +118,6 @@ async function openSingle(
 		returned.input.focus();
 		await returned.user.keyboard(openWith);
 	}
-	await sleep(10);
 	expect(page.getByTestId("content").element()).toBeInTheDocument();
 	const content = page.getByTestId("content").element() as HTMLElement;
 	const group = page.getByTestId("group").element() as HTMLElement;
@@ -228,13 +227,13 @@ describe("combobox - single", () => {
 		const t = await openSingle({
 			portalProps: { to: "#portal-target" },
 		});
-		const portalTarget = t.getByTestId("portal-target");
+		const portalTarget = t.getByTestId("portal-target").element();
 		expect(t.content.parentElement?.parentElement).toBe(portalTarget);
 	});
 
 	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const t = await openSingle({ portalProps: { disabled: true } });
-		const main = t.getByTestId("main");
+		const main = t.getByTestId("main").element();
 		expect(t.content.parentElement?.parentElement).toBe(main);
 	});
 
@@ -243,12 +242,9 @@ describe("combobox - single", () => {
 		expect(t.openBinding).toHaveTextContent("true");
 		await t.user.click(t.openBinding);
 		expect(t.openBinding).toHaveTextContent("false");
-		await sleep(10);
-		expect(t.getContent()).toThrow();
+		expect(() => t.getContent()).toThrow();
 		await t.user.click(t.openBinding);
 		expect(t.openBinding).toHaveTextContent("true");
-		await sleep(10);
-		flushSync();
 		expect(t.getContent()).toBeInTheDocument();
 	});
 
@@ -271,13 +267,13 @@ describe("combobox - single", () => {
 
 	it("should select items when clicked", async () => {
 		const t = await openSingle();
-		const [item1] = getItems(t.getByTestId);
-		expect(page.getByTestId("1-indicator").element()).toThrow();
-		await t.user.click(item1!);
+		const item1 = t.getByTestId("1");
+		expect(() => page.getByTestId("1-indicator").element()).toThrow();
+		await t.user.click(item1.element());
 		expect(t.input).toHaveValue("A");
 		expect(t.getHiddenInput()).toHaveValue("1");
-		await t.user.click(t.input);
-		expectSelected(item1!);
+		await t.user.click(t.trigger);
+		expectSelected(item1.element());
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
@@ -338,8 +334,10 @@ describe("combobox - single", () => {
 
 	it("should allow items to be selected using the keyboard", async () => {
 		const t = await openSingle({}, kbd.ARROW_DOWN);
-
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const item1 = t.getByTestId("1");
+		const item2 = t.getByTestId("2");
+		const item3 = t.getByTestId("3");
+		const item4 = t.getByTestId("4");
 
 		await t.user.keyboard(kbd.ARROW_DOWN);
 		await t.user.keyboard(kbd.ARROW_DOWN);
@@ -347,9 +345,9 @@ describe("combobox - single", () => {
 		await t.user.keyboard(kbd.ENTER);
 		expect(t.input).toHaveValue("D");
 		expect(t.getHiddenInput()).toHaveValue("4");
-		await t.user.click(t.input);
-		expectNotSelected([item0!, item1!, item2!]);
-		expectSelected(item3!);
+		await t.user.click(t.trigger);
+		expectNotSelected([item1.element(), item2.element(), item3.element()]);
+		expectSelected(item4.element());
 	});
 
 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
@@ -392,25 +390,27 @@ describe("combobox - single", () => {
 
 	it("should allow navigating after navigating to the bottom, closing, and reopening the menu", async () => {
 		const t = await openSingle();
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
-		expectHighlighted(item0!);
+		const item1 = t.getByTestId("1");
+		const item2 = t.getByTestId("2");
+		const item3 = t.getByTestId("3");
+		const item4 = t.getByTestId("4");
+		expectHighlighted(item1.element());
 		await t.user.keyboard(kbd.ARROW_DOWN);
-		expectHighlighted(item1!);
+		expectHighlighted(item2.element());
 		await t.user.keyboard(kbd.ARROW_DOWN);
-		expectHighlighted(item2!);
+		expectHighlighted(item3.element());
 		await t.user.keyboard(kbd.ARROW_DOWN);
-		expectHighlighted(item3!);
+		expectHighlighted(item4.element());
 		await t.user.keyboard(kbd.ARROW_DOWN);
-		expectHighlighted(item3!);
+		expectHighlighted(item4.element());
 		await t.user.keyboard(kbd.ESCAPE);
-		expect(t.getContent()).toThrow();
+		expect(() => t.getContent()).toThrow();
 
 		await t.user.keyboard(kbd.ARROW_DOWN);
 		expect(t.getContent()).toBeInTheDocument();
-		const [i0, i1] = getItems(t.getByTestId);
-		expectHighlighted(i0!);
+		expectHighlighted(item1.element());
 		await t.user.keyboard(kbd.ARROW_DOWN);
-		expectHighlighted(i1!);
+		expectHighlighted(item2.element());
 	});
 
 	it("should forceMount the content when `forceMount` is true", async () => {
@@ -423,7 +423,7 @@ describe("combobox - single", () => {
 	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 		const t = setupSingle({ withOpenCheck: true }, [], ComboboxForceMountTest);
 
-		expect(t.queryByTestId("content")).toBeNull();
+		expect(() => t.getByTestId("content").element()).toThrow();
 
 		await t.user.click(t.trigger);
 
@@ -436,18 +436,15 @@ describe("combobox - single", () => {
 			allowDeselect: false,
 		});
 
-		const [item0] = getItems(t.getByTestId);
-		await t.user.click(item0!);
-		expectSelected(item0!);
-		await t.user.click(t.trigger);
+		const item1 = t.getByTestId("1");
 
-		const [item0v2] = getItems(t.getByTestId);
-
-		await t.user.click(item0v2!);
-		expectSelected(item0v2!);
+		await t.user.click(item1);
 		await t.user.click(t.trigger);
-		const [item0v3] = getItems(t.getByTestId);
-		expectSelected(item0v3!);
+		expectSelected(item1.element());
+
+		await t.user.click(item1);
+		await t.user.click(t.trigger);
+		expectSelected(item1.element());
 	});
 
 	it("should clear the input when the selected item is deselected when `clearOnDeselect` is `true`", async () => {
@@ -456,14 +453,14 @@ describe("combobox - single", () => {
 				clearOnDeselect: true,
 			},
 		});
+		const item1 = t.getByTestId("1");
 
-		const [item0] = getItems(t.getByTestId);
-		await t.user.click(item0!);
-		expectSelected(item0!);
+		await t.user.click(item1);
 		expect(t.input).toHaveValue("A");
 		await t.user.click(t.trigger);
-		const [item0v2] = getItems(t.getByTestId);
-		await t.user.click(item0v2!);
+		expectSelected(item1.element());
+
+		await t.user.click(item1);
 
 		expect(t.input).toHaveValue("");
 		expect(t.input).not.toHaveValue("A");
@@ -668,8 +665,10 @@ describe("combobox - multiple", () => {
 
 	it("should allow items to be selected using the keyboard", async () => {
 		const t = await openMultiple({}, kbd.ARROW_DOWN);
-
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const item1 = t.getByTestId("1");
+		const item2 = t.getByTestId("2");
+		const item3 = t.getByTestId("3");
+		const item4 = t.getByTestId("4");
 
 		await t.user.keyboard(kbd.ARROW_DOWN);
 		await t.user.keyboard(kbd.ARROW_DOWN);
@@ -680,8 +679,8 @@ describe("combobox - multiple", () => {
 		expect(hiddenInputs).toHaveLength(1);
 		expect(hiddenInputs[0]).toHaveValue("4");
 		await t.user.click(t.input);
-		expectNotSelected([item0!, item1!, item2!]);
-		expectSelected(item3!);
+		expectNotSelected([item1.element(), item2.element(), item3.element()]);
+		expectSelected(item4.element());
 	});
 
 	it("should allow multiple items to be selected using the keyboard", async () => {
@@ -789,7 +788,7 @@ function getItems(getter: AnyFn, items = testItems) {
 // HELPERS
 ////////////////////////////////////
 
-function expectSelected(node: HTMLElement | HTMLElement[]) {
+function expectSelected(node: Element | Element[]) {
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			expect(n).toHaveAttribute("data-selected");
@@ -801,7 +800,7 @@ function expectSelected(node: HTMLElement | HTMLElement[]) {
 	}
 }
 
-function expectNotSelected(node: HTMLElement | HTMLElement[]) {
+function expectNotSelected(node: Element | Element[]) {
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			expect(n).not.toHaveAttribute("data-selected");
@@ -813,7 +812,7 @@ function expectNotSelected(node: HTMLElement | HTMLElement[]) {
 	}
 }
 
-function expectHighlighted(node: HTMLElement | HTMLElement[]) {
+function expectHighlighted(node: Element | Element[]) {
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			expect(n).toHaveAttribute("data-highlighted");
