@@ -1,5 +1,4 @@
 import { type DateValue, getLocalTimeZone, isSameMonth, today } from "@internationalized/date";
-import { DEV } from "esm-env";
 import { untrack } from "svelte";
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
@@ -40,7 +39,6 @@ interface MonthCalendarRootStateOpts
 	extends CalendarBaseRootStateOpts,
 		ReadableBoxedValues<{
 			numberOfYears: number;
-			maxMonths: number | undefined;
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 		}> {}
@@ -55,7 +53,7 @@ export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarR
 	years: Year<DateValue>[] = $state([]);
 
 	constructor(opts: MonthCalendarRootStateOpts) {
-		super(opts);
+		super(opts, "month");
 		this.formatter = createFormatter({
 			initialLocale: this.opts.locale.current,
 			monthFormat: this.opts.monthFormat,
@@ -193,16 +191,6 @@ export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarR
 		});
 	});
 
-	isUnitSelected(date: DateValue) {
-		const value = this.opts.value.current;
-		if (Array.isArray(value)) {
-			return value.some((d) => isSameMonth(d, date));
-		} else if (!value) {
-			return false;
-		}
-		return isSameMonth(value, date);
-	}
-
 	shiftFocus(node: HTMLElement, add: number) {
 		return shiftCalendarFocus({
 			node,
@@ -215,61 +203,6 @@ export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarR
 			numberOfUnits: this.opts.numberOfYears.current,
 			unit: "years",
 		});
-	}
-
-	#isMultipleSelectionValid(selectedDates: DateValue[]): boolean {
-		// only validate for multiple type and when maxDays is set
-		if (this.opts.type.current !== "multiple") return true;
-		if (!this.opts.maxMonths.current) return true;
-		const selectedCount = selectedDates.length;
-		if (this.opts.maxMonths.current && selectedCount > this.opts.maxMonths.current)
-			return false;
-		return true;
-	}
-
-	handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
-		if (!prev) {
-			const newSelection = [date];
-			return this.#isMultipleSelectionValid(newSelection) ? newSelection : [date];
-		}
-		if (!Array.isArray(prev)) {
-			if (DEV) throw new Error("Invalid value for multiple prop.");
-			return;
-		}
-		const index = prev.findIndex((d) => isSameMonth(d, date));
-		const preventDeselect = this.opts.preventDeselect.current;
-		if (index === -1) {
-			// adding a new date - check if it would be valid
-			const newSelection = [...prev, date];
-			if (this.#isMultipleSelectionValid(newSelection)) {
-				return newSelection;
-			} else {
-				// reset to just the newly selected date when constraints are violated
-				return [date];
-			}
-		} else if (preventDeselect) {
-			return prev;
-		} else {
-			const next = prev.filter((d) => !isSameMonth(d, date));
-			if (!next.length) {
-				this.opts.placeholder.current = date;
-				return undefined;
-			}
-			return next;
-		}
-	}
-
-	handleSingleUpdate(prev: DateValue | undefined, date: DateValue) {
-		if (Array.isArray(prev)) {
-			if (DEV) throw new Error("Invalid value for single prop.");
-		}
-		if (!prev) return date;
-		const preventDeselect = this.opts.preventDeselect.current;
-		if (!preventDeselect && isSameMonth(prev, date)) {
-			this.opts.placeholder.current = date;
-			return undefined;
-		}
-		return date;
 	}
 
 	readonly snippetProps = $derived.by(() => ({
@@ -300,9 +233,6 @@ export class MonthCalendarCellState extends CalendarBaseCellState<
 	readonly isThisMonth = $derived.by(() =>
 		isSameMonth(today(getLocalTimeZone()), this.opts.date.current)
 	);
-	readonly isFocusedMonth = $derived.by(() =>
-		isSameMonth(this.opts.date.current, this.root.opts.placeholder.current)
-	);
 	readonly labelText = $derived.by(() =>
 		this.root.formatter.custom(this.cellDate, {
 			weekday: "long",
@@ -325,8 +255,8 @@ export class MonthCalendarCellState extends CalendarBaseCellState<
 			({
 				"data-unavailable": getDataUnavailable(this.isUnavailable),
 				"data-this-month": this.isThisMonth ? "" : undefined,
-				"data-focused": this.isFocusedMonth ? "" : undefined,
-				"data-selected": getDataSelected(this.isSelectedDate),
+				"data-focused": this.isFocusedUnit ? "" : undefined,
+				"data-selected": getDataSelected(this.isSelectedUnit),
 				"data-value": this.opts.date.current.toString(),
 				"data-type": getDateValueType(this.opts.date.current),
 				"data-disabled": getDataDisabled(this.isDisabled),
@@ -338,7 +268,7 @@ export class MonthCalendarCellState extends CalendarBaseCellState<
 			({
 				id: this.opts.id.current,
 				role: "gridcell",
-				"aria-selected": getAriaSelected(this.isSelectedDate),
+				"aria-selected": getAriaSelected(this.isSelectedUnit),
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
@@ -362,13 +292,13 @@ export class MonthCalendarMonthState extends CalendarBaseUnitState<
 	}
 
 	readonly #tabindex = $derived.by(() =>
-		this.cell.isDisabled ? undefined : this.cell.isFocusedMonth ? 0 : -1
+		this.cell.isDisabled ? undefined : this.cell.isFocusedUnit ? 0 : -1
 	);
 
 	readonly snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
 		unavailable: this.cell.isUnavailable,
-		selected: this.cell.isSelectedDate,
+		selected: this.cell.isSelectedUnit,
 		month: `${this.cell.opts.date.current.day}`,
 	}));
 

@@ -7,7 +7,6 @@ import {
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { watch } from "runed";
-import type { RangeCalendarRootState } from "../../bits/range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaHidden,
@@ -26,8 +25,13 @@ import {
 	getCalendarElementProps,
 	getDateWithPreviousTime,
 	handleCalendarKeydown,
+	SAME_FN_MAP,
+	type CalendarUnit,
+	type SameFn,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
 import { isBefore, toDate } from "$lib/internal/date-time/utils.js";
+import type { RangeCalendarBaseRootState } from "./calendar-range-base.svelte.js";
+import { DEV } from "esm-env";
 
 export interface CalendarBaseRootStateOpts
 	extends WithRefOpts,
@@ -48,6 +52,7 @@ export interface CalendarBaseRootStateOpts
 			type: "single" | "multiple";
 			readonly: boolean;
 			initialFocus: boolean;
+			maxUnits: number | undefined;
 			/**
 			 * This is strictly used by the `DatePicker` component to close the popover when a date
 			 * is selected. It is not intended to be used by the user.
@@ -64,12 +69,15 @@ export abstract class CalendarBaseRootState<
 	abstract readonly formatter: Formatter;
 	readonly accessibleHeadingId = useId();
 	readonly domContext: DOMContext;
+	readonly isSame: SameFn;
 	announcer: Announcer;
 
-	constructor(opts: T) {
+	constructor(opts: T, unit: CalendarUnit) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer(null);
+
+		this.isSame = SAME_FN_MAP[unit];
 
 		this.nextPage = this.nextPage.bind(this);
 		this.prevPage = this.prevPage.bind(this);
@@ -205,7 +213,15 @@ export abstract class CalendarBaseRootState<
 		return false;
 	}
 
-	abstract isUnitSelected(date: DateValue): boolean;
+	isUnitSelected(date: DateValue) {
+		const value = this.opts.value.current;
+		if (Array.isArray(value)) {
+			return value.some((d) => this.isSame(d, date));
+		} else if (!value) {
+			return false;
+		}
+		return this.isSame(value, date);
+	}
 
 	abstract shiftFocus(node: HTMLElement, add: number): void;
 
@@ -241,15 +257,59 @@ export abstract class CalendarBaseRootState<
 		}
 	}
 
-	abstract handleMultipleUpdate(
-		prev: DateValue[] | undefined,
-		date: DateValue
-	): DateValue[] | undefined;
+	#isMultipleSelectionValid(selectedDates: DateValue[]): boolean {
+		// only validate for multiple type and when maxDays is set
+		if (this.opts.type.current !== "multiple") return true;
+		if (!this.opts.maxUnits.current) return true;
+		const selectedCount = selectedDates.length;
+		if (this.opts.maxUnits.current && selectedCount > this.opts.maxUnits.current) return false;
+		return true;
+	}
 
-	abstract handleSingleUpdate(
-		prev: DateValue | undefined,
-		date: DateValue
-	): DateValue | undefined;
+	handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
+		if (!prev) {
+			const newSelection = [date];
+			return this.#isMultipleSelectionValid(newSelection) ? newSelection : [date];
+		}
+		if (!Array.isArray(prev)) {
+			if (DEV) throw new Error("Invalid value for multiple prop.");
+			return;
+		}
+		const index = prev.findIndex((d) => this.isSame(d, date));
+		const preventDeselect = this.opts.preventDeselect.current;
+		if (index === -1) {
+			// adding a new date - check if it would be valid
+			const newSelection = [...prev, date];
+			if (this.#isMultipleSelectionValid(newSelection)) {
+				return newSelection;
+			} else {
+				// reset to just the newly selected date when constraints are violated
+				return [date];
+			}
+		} else if (preventDeselect) {
+			return prev;
+		} else {
+			const next = prev.filter((d) => !this.isSame(d, date));
+			if (!next.length) {
+				this.opts.placeholder.current = date;
+				return undefined;
+			}
+			return next;
+		}
+	}
+
+	handleSingleUpdate(prev: DateValue | undefined, date: DateValue) {
+		if (Array.isArray(prev)) {
+			if (DEV) throw new Error("Invalid value for single prop.");
+		}
+		if (!prev) return date;
+		const preventDeselect = this.opts.preventDeselect.current;
+		if (!preventDeselect && this.isSame(prev, date)) {
+			this.opts.placeholder.current = date;
+			return undefined;
+		}
+		return date;
+	}
 
 	onkeydown(event: BitsKeyboardEvent) {
 		handleCalendarKeydown({
@@ -287,11 +347,12 @@ export interface CalendarBaseHeadingStateOpts extends WithRefOpts {}
 export abstract class CalendarBaseHeadingState<
 	T extends CalendarBaseHeadingStateOpts = CalendarBaseHeadingStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -326,7 +387,10 @@ export abstract class CalendarBaseCellState<
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isUnitUnavailable.current(this.opts.date.current)
 	);
-	readonly isSelectedDate = $derived.by(() => this.root.isUnitSelected(this.opts.date.current));
+	readonly isSelectedUnit = $derived.by(() => this.root.isUnitSelected(this.opts.date.current));
+	readonly isFocusedUnit = $derived.by(() =>
+		this.root.isSame(this.opts.date.current, this.root.opts.placeholder.current)
+	);
 	abstract readonly labelText: string;
 
 	constructor(opts: T, root: U) {
@@ -337,7 +401,7 @@ export abstract class CalendarBaseCellState<
 	readonly snippetProps = $derived.by(() => ({
 		disabled: this.isDisabled,
 		unavailable: this.isUnavailable,
-		selected: this.isSelectedDate,
+		selected: this.isSelectedUnit,
 	}));
 
 	abstract readonly ariaDisabled: boolean;
@@ -369,12 +433,13 @@ export interface CalendarBaseNextButtonStateOpts extends WithRefOpts {}
 export class CalendarBaseNextButtonState<
 	T extends CalendarBaseNextButtonStateOpts = CalendarBaseNextButtonStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 	readonly isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -408,12 +473,13 @@ export interface CalendarBasePrevButtonStateOpts extends WithRefOpts {}
 export class CalendarBasePrevButtonState<
 	T extends CalendarBasePrevButtonStateOpts = CalendarBasePrevButtonStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 	readonly isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -447,11 +513,12 @@ export interface CalendarBaseGridStateOpts extends WithRefOpts {}
 export class CalendarBaseGridState<
 	T extends CalendarBaseGridStateOpts = CalendarBaseGridStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -477,11 +544,12 @@ export interface CalendarBaseGridBodyStateOpts extends WithRefOpts {}
 export class CalendarBaseGridBodyState<
 	T extends CalendarBaseGridBodyStateOpts = CalendarBaseGridBodyStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -503,11 +571,12 @@ export interface CalendarBaseGridHeadStateOpts extends WithRefOpts {}
 export class CalendarBaseGridHeadState<
 	T extends CalendarBaseGridHeadStateOpts = CalendarBaseGridHeadStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -529,11 +598,12 @@ export interface CalendarBaseGridRowStateOpts extends WithRefOpts {}
 export class CalendarBaseGridRowState<
 	T extends CalendarBaseGridRowStateOpts = CalendarBaseGridRowStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -555,11 +625,12 @@ export interface CalendarBaseHeadCellStateOpts extends WithRefOpts {}
 export class CalendarBaseHeadCellState<
 	T extends CalendarBaseHeadCellStateOpts = CalendarBaseHeadCellStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -581,11 +652,12 @@ export interface CalendarBaseHeaderStateOpts extends WithRefOpts {}
 export class CalendarBaseHeaderState<
 	T extends CalendarBaseHeaderStateOpts = CalendarBaseHeaderStateOpts,
 	U extends CalendarBaseRootState = CalendarBaseRootState,
+	K extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
 > {
 	readonly opts: T;
-	readonly root: U | RangeCalendarRootState;
+	readonly root: U | K;
 
-	constructor(opts: T, root: U | RangeCalendarRootState) {
+	constructor(opts: T, root: U | K) {
 		this.opts = opts;
 		this.root = root;
 	}

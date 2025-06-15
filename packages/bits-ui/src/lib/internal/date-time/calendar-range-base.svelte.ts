@@ -18,6 +18,7 @@ import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.
 import { type Formatter } from "$lib/internal/date-time/formatter.js";
 import {
 	calendarAttrs,
+	CELL_UNIT_MAP,
 	getCalendarElementProps,
 	getDefaultYears,
 	handleCalendarKeydown,
@@ -34,12 +35,6 @@ import {
 } from "$lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
 import { onMount, untrack } from "svelte";
-
-const CELL_UNIT_MAP: Record<CalendarUnit, "days" | "months" | "years"> = {
-	day: "days",
-	month: "months",
-	year: "years",
-};
 
 export interface RangeCalendarRootStateOpts
 	extends WithRefOpts,

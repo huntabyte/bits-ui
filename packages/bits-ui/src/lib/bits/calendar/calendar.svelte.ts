@@ -1,11 +1,4 @@
-import {
-	type DateValue,
-	getLocalTimeZone,
-	isSameDay,
-	isSameMonth,
-	isToday,
-} from "@internationalized/date";
-import { DEV } from "esm-env";
+import { type DateValue, getLocalTimeZone, isSameMonth, isToday } from "@internationalized/date";
 import { untrack } from "svelte";
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
@@ -80,7 +73,6 @@ interface CalendarRootStateOpts
 			fixedWeeks: boolean;
 			numberOfMonths: number;
 			disableDaysOutsideMonth: boolean;
-			maxDays: number | undefined;
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 		}> {}
@@ -99,7 +91,7 @@ export class CalendarRootState extends CalendarBaseRootState<CalendarRootStateOp
 	months: Month<DateValue>[] = $state([]);
 
 	constructor(opts: CalendarRootStateOpts) {
-		super(opts);
+		super(opts, "day");
 
 		this.formatter = createFormatter({
 			initialLocale: this.opts.locale.current,
@@ -268,16 +260,6 @@ export class CalendarRootState extends CalendarBaseRootState<CalendarRootStateOp
 		return !this.visibleMonths.some((month) => isSameMonth(date, month));
 	}
 
-	isUnitSelected(date: DateValue) {
-		const value = this.opts.value.current;
-		if (Array.isArray(value)) {
-			return value.some((d) => isSameDay(d, date));
-		} else if (!value) {
-			return false;
-		}
-		return isSameDay(value, date);
-	}
-
 	shiftFocus(node: HTMLElement, add: number) {
 		return shiftCalendarFocus({
 			node,
@@ -290,60 +272,6 @@ export class CalendarRootState extends CalendarBaseRootState<CalendarRootStateOp
 			numberOfUnits: this.opts.numberOfMonths.current,
 			unit: "months",
 		});
-	}
-
-	#isMultipleSelectionValid(selectedDates: DateValue[]): boolean {
-		// only validate for multiple type and when maxDays is set
-		if (this.opts.type.current !== "multiple") return true;
-		if (!this.opts.maxDays.current) return true;
-		const selectedCount = selectedDates.length;
-		if (this.opts.maxDays.current && selectedCount > this.opts.maxDays.current) return false;
-		return true;
-	}
-
-	handleMultipleUpdate(prev: DateValue[] | undefined, date: DateValue) {
-		if (!prev) {
-			const newSelection = [date];
-			return this.#isMultipleSelectionValid(newSelection) ? newSelection : [date];
-		}
-		if (!Array.isArray(prev)) {
-			if (DEV) throw new Error("Invalid value for multiple prop.");
-			return;
-		}
-		const index = prev.findIndex((d) => isSameDay(d, date));
-		const preventDeselect = this.opts.preventDeselect.current;
-		if (index === -1) {
-			// adding a new date - check if it would be valid
-			const newSelection = [...prev, date];
-			if (this.#isMultipleSelectionValid(newSelection)) {
-				return newSelection;
-			} else {
-				// reset to just the newly selected date when constraints are violated
-				return [date];
-			}
-		} else if (preventDeselect) {
-			return prev;
-		} else {
-			const next = prev.filter((d) => !isSameDay(d, date));
-			if (!next.length) {
-				this.opts.placeholder.current = date;
-				return undefined;
-			}
-			return next;
-		}
-	}
-
-	handleSingleUpdate(prev: DateValue | undefined, date: DateValue) {
-		if (Array.isArray(prev)) {
-			if (DEV) throw new Error("Invalid value for single prop.");
-		}
-		if (!prev) return date;
-		const preventDeselect = this.opts.preventDeselect.current;
-		if (!preventDeselect && isSameDay(prev, date)) {
-			this.opts.placeholder.current = date;
-			return undefined;
-		}
-		return date;
 	}
 
 	readonly snippetProps = $derived.by(() => ({
@@ -387,9 +315,6 @@ export class CalendarCellState extends CalendarBaseCellState<
 	readonly isOutsideVisibleMonths = $derived.by(() =>
 		this.root.isOutsideVisibleMonths(this.opts.date.current)
 	);
-	readonly isFocusedDate = $derived.by(() =>
-		isSameDay(this.opts.date.current, this.root.opts.placeholder.current)
-	);
 	readonly labelText = $derived.by(() =>
 		this.root.formatter.custom(this.cellDate, {
 			weekday: "long",
@@ -418,8 +343,8 @@ export class CalendarCellState extends CalendarBaseCellState<
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
-				"data-focused": this.isFocusedDate ? "" : undefined,
-				"data-selected": getDataSelected(this.isSelectedDate),
+				"data-focused": this.isFocusedUnit ? "" : undefined,
+				"data-selected": getDataSelected(this.isSelectedUnit),
 				"data-value": this.opts.date.current.toString(),
 				"data-type": getDateValueType(this.opts.date.current),
 				"data-disabled": getDataDisabled(
@@ -434,7 +359,7 @@ export class CalendarCellState extends CalendarBaseCellState<
 			({
 				id: this.opts.id.current,
 				role: "gridcell",
-				"aria-selected": getAriaSelected(this.isSelectedDate),
+				"aria-selected": getAriaSelected(this.isSelectedUnit),
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
@@ -461,7 +386,7 @@ export class CalendarDayState extends CalendarBaseUnitState<
 		(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 		this.cell.isDisabled
 			? undefined
-			: this.cell.isFocusedDate
+			: this.cell.isFocusedUnit
 				? 0
 				: -1
 	);
@@ -469,7 +394,7 @@ export class CalendarDayState extends CalendarBaseUnitState<
 	readonly snippetProps = $derived.by(() => ({
 		disabled: this.cell.isDisabled,
 		unavailable: this.cell.isUnavailable,
-		selected: this.cell.isSelectedDate,
+		selected: this.cell.isSelectedUnit,
 		day: `${this.cell.opts.date.current.day}`,
 	}));
 

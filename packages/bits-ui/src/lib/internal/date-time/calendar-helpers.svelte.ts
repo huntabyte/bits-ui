@@ -49,6 +49,12 @@ export const SAME_FN_MAP: Record<CalendarUnit, SameFn> = {
 	year: isSameYear,
 };
 
+export const CELL_UNIT_MAP: Record<CalendarUnit, "days" | "months" | "years"> = {
+	day: "days",
+	month: "months",
+	year: "years",
+};
+
 /**
  * Checks if a given node is a calendar cell element.
  *
