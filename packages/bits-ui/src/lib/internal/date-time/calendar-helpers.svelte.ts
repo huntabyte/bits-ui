@@ -618,7 +618,7 @@ export function handleMonthCalendarPrevPage({
 		setPlaceholder(firstYear.subtract({ years: numberOfYears }));
 	} else {
 		const newYears = createYears({
-			dateObj: firstYear.subtract({ months: 1 }),
+			dateObj: firstYear.subtract({ years: 1 }),
 			locale,
 			monthFormat,
 			numberOfYears,
