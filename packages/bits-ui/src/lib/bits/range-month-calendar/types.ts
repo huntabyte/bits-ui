@@ -104,7 +104,7 @@ export type RangeMonthCalendarRootPropsWithoutHTML = WithChild<
 		 * `[data-disabled]` - applied to disabled dates
 		 *
 		 */
-		isDateDisabled?: DateMatcher;
+		isMonthDisabled?: DateMatcher;
 
 		/**
 		 * Dates matching the provided matchers are marked as "unavailable." Unlike disabled dates,
@@ -118,7 +118,7 @@ export type RangeMonthCalendarRootPropsWithoutHTML = WithChild<
 		 * `[data-unavailable]` - applied to unavailable dates
 		 *
 		 */
-		isDateUnavailable?: DateMatcher;
+		isMonthUnavailable?: DateMatcher;
 
 		/**
 		 * Determines the number of months to display on the calendar simultaneously.
