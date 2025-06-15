@@ -257,7 +257,7 @@ export function createYears(props: SetYearProps) {
 	const years: Year<DateValue>[] = [];
 
 	for (let i = 0; i < numberOfYears; i++) {
-		const current = dateObj.add({ months: i });
+		const current = dateObj.add({ years: i });
 		years.push(
 			createYear({
 				...yearProps,
