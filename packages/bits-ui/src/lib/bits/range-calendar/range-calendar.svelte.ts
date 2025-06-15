@@ -407,10 +407,11 @@ export class RangeCalendarRootState {
 		useEnsureNonDisabledPlaceholder({
 			placeholder: opts.placeholder,
 			defaultPlaceholder: opts.defaultPlaceholder,
-			isDateDisabled: opts.isDateDisabled,
+			isUnitDisabled: opts.isDateDisabled,
 			maxValue: opts.maxValue,
 			minValue: opts.minValue,
 			ref: opts.ref,
+			unit: "day",
 		});
 	}
 
