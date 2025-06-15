@@ -25,7 +25,12 @@ import {
 	label,
 	segment,
 } from "./date-field.api.js";
-import { childrenSnippet, onOpenChangeProp, withChildProps } from "./shared.js";
+import {
+	childrenSnippet,
+	onOpenChangeCompleteProp,
+	onOpenChangeProp,
+	withChildProps,
+} from "./shared.js";
 import { content, portal, trigger } from "./popover.api.js";
 import { defineBooleanProp, defineComponentApiSchema, defineSimpleDataAttr } from "../utils.js";
 
@@ -41,6 +46,7 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		placeholder: calendarRoot.props!.placeholder,
 		onPlaceholderChange: calendarRoot.props!.onPlaceholderChange,
 		isDateUnavailable: calendarRoot.props!.isDateUnavailable,

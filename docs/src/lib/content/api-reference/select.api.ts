@@ -9,6 +9,7 @@ import {
 	floatingProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeCompleteProp,
 	onOpenChangeProp,
 	openChildDefinition,
 	openProp,
@@ -81,6 +82,7 @@ export const root = defineComponentApiSchema<SelectRootPropsWithoutHTML>({
 		}),
 		open: openProp,
 		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		disabled: defineBooleanProp({
 			default: false,
 			description: "Whether or not the select component is disabled.",

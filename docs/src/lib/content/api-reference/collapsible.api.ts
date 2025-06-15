@@ -3,15 +3,19 @@ import type {
 	CollapsibleRootPropsWithoutHTML,
 	CollapsibleTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { forceMountProp, withChildProps } from "./shared.js";
+import {
+	forceMountProp,
+	onOpenChangeCompleteProp,
+	onOpenChangeProp,
+	withChildProps,
+} from "./shared.js";
 import { CollapsibleContentChildSnippetProps } from "./extended-types/collapsible/index.js";
-import { OnOpenChangeProp, OpenClosedProp } from "./extended-types/shared/index.js";
+import { OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
 	defineCSSVarSchema,
 	defineEnumDataAttr,
-	defineFunctionProp,
 	defineSimpleDataAttr,
 } from "../utils.js";
 
@@ -25,11 +29,8 @@ export const root = defineComponentApiSchema<CollapsibleRootPropsWithoutHTML>({
 				"The open state of the collapsible. The content will be visible when this is true, and hidden when it's false.",
 			bindable: true,
 		}),
-		onOpenChange: defineFunctionProp({
-			definition: OnOpenChangeProp,
-			description: "A callback that is fired when the collapsible's open state changes.",
-			stringDefinition: "(open: boolean) => void",
-		}),
+		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		disabled: defineBooleanProp({
 			default: false,
 			description:

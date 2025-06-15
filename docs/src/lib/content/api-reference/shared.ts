@@ -430,6 +430,13 @@ export const onOpenChangeProp = defineFunctionProp({
 	stringDefinition: "(open: boolean) => void",
 });
 
+export const onOpenChangeCompleteProp = defineFunctionProp({
+	definition: OnOpenChangeProp,
+	description:
+		"A callback function called after the open state changes and all animations have completed.",
+	stringDefinition: "(open: boolean) => void",
+});
+
 export const openProp = defineBooleanProp({
 	description: "The open state of the component.",
 	bindable: true,

@@ -32,6 +32,7 @@ import {
 	indeterminateProp,
 	onCheckedChangeProp,
 	onIndeterminateChangeProp,
+	onOpenChangeCompleteProp,
 	onOpenChangeProp,
 	openChildDefinition,
 	portalProps,
@@ -83,6 +84,7 @@ const props = {
 		bindable: true,
 	}),
 	onOpenChange: onOpenChangeProp,
+	onOpenChangeComplete: onOpenChangeCompleteProp,
 	dir: dirProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuRootPropsWithoutHTML>;
@@ -94,6 +96,7 @@ const subProps = {
 		bindable: true,
 	}),
 	onOpenChange: onOpenChangeProp,
+	onOpenChangeComplete: onOpenChangeCompleteProp,
 	children: childrenSnippet(),
 } satisfies PropObj<DropdownMenuSubPropsWithoutHTML>;
 

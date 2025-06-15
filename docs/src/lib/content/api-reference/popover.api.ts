@@ -8,7 +8,11 @@ import type {
 	PopoverTriggerPropsWithoutHTML,
 } from "bits-ui";
 import { OpenClosedProp } from "./extended-types/shared/index.js";
-import { floatingContentChildDefinition, floatingContentCSSVars } from "./shared.js";
+import {
+	floatingContentChildDefinition,
+	floatingContentCSSVars,
+	onOpenChangeCompleteProp,
+} from "./shared.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -45,6 +49,7 @@ export const root = defineComponentApiSchema<PopoverRootPropsWithoutHTML>({
 	props: {
 		open: openProp,
 		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		children: childrenSnippet(),
 	},
 });

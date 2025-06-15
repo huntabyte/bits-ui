@@ -18,6 +18,7 @@ import {
 	floatingContentCSSVars,
 	floatingProps,
 	forceMountProp,
+	onOpenChangeCompleteProp,
 	onOpenChangeProp,
 	openChildDefinition,
 	openProp,
@@ -98,6 +99,7 @@ export const root = defineComponentApiSchema<TooltipRootPropsWithoutHTML>({
 	props: {
 		open: openProp,
 		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		disabled,
 		delayDuration,
 		disableHoverableContent,

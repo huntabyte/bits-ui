@@ -14,6 +14,7 @@ import {
 	escapeLayerProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeCompleteProp,
 	onOpenChangeProp,
 	openChildDefinition,
 	portalProps,
@@ -48,6 +49,7 @@ export const root = defineComponentApiSchema<DialogRootPropsWithoutHTML>({
 			bindable: true,
 		}),
 		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		children: childrenSnippet(),
 	},
 });
