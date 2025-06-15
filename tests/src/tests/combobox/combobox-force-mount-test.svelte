@@ -71,7 +71,7 @@
 	</div>
 {/snippet}
 
-<main data-testid="main">
+<main data-testid="main" class="flex flex-col gap-12">
 	<Combobox.Root
 		type="single"
 		bind:value
@@ -107,7 +107,7 @@
 			{/if}
 		</Combobox.Portal>
 	</Combobox.Root>
-	<div data-testid="outside"></div>
+	<div data-testid="outside">outside</div>
 	<button data-testid="input-binding" onclick={() => (searchValue = "")}>
 		{#if searchValue === ""}
 			empty
