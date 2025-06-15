@@ -412,9 +412,9 @@ export class CalendarDayState extends CalendarBaseUnitState<
 				"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),
 				...this.cell.sharedDataAttrs,
 				tabindex: this.#tabindex,
-				[this.cell.root.getBitsAttr("day")]: "",
+				[this.cell.root.getBitsAttr("month")]: "",
 				// Shared logic for range calendar and calendar
-				"data-bits-day": "",
+				"data-bits-month": "",
 				//
 				onclick: this.onclick,
 				...attachRef(this.opts.ref),

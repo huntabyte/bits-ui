@@ -271,7 +271,8 @@ export function createYears(props: SetYearProps) {
 
 export function getSelectableCells(calendarNode: HTMLElement | null) {
 	if (!calendarNode) return [];
-	const selectableSelector = `[data-bits-day]:not([data-disabled]):not([data-outside-visible-months])`;
+	const selectableSelector = `[data-bits-day]:not([data-disabled]):not([data-outside-visible-months]), 
+	                  					[data-bits-month]:not([data-disabled])`;
 
 	return Array.from(calendarNode.querySelectorAll(selectableSelector)).filter(
 		(el): el is HTMLElement => isHTMLElement(el)
