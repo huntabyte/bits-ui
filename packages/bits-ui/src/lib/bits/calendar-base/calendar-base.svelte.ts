@@ -810,7 +810,7 @@ export class CalendarBasePrevButtonState {
 
 export interface CalendarBaseGridStateOpts extends WithRefOpts {}
 
-export class CalendarGridState {
+export class CalendarBaseGridState {
 	// static create(opts: CalendarBaseGridStateOpts) {
 	// 	return new CalendarGridState(opts, CalendarRootContext.get());
 	// }
