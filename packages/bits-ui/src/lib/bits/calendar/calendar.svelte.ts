@@ -62,6 +62,10 @@ import {
 	type CalendarBaseRootStateOpts,
 	type CalendarBaseUnitStateOpts,
 } from "../calendar-base/calendar-base.svelte.js";
+import type { MonthCalendarRootState } from "../month-calendar/month-calendar.svelte.js";
+
+type RootState = CalendarRootState | RangeCalendarRootState | MonthCalendarRootState;
+// | RangeMonthCalendarRootState;
 
 interface CalendarRootStateOpts
 	extends CalendarBaseRootStateOpts,
@@ -76,8 +80,8 @@ interface CalendarRootStateOpts
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 		}> {}
 
-export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
-	"Calendar.Root | RangeCalendar.Root"
+export const CalendarRootContext = new Context<RootState>(
+	"Calendar.Root | RangeCalendar.Root | MonthCalendar.Root | RangeMonthCalendar.Root"
 );
 
 export class CalendarRootState extends CalendarBaseRootState<CalendarRootStateOpts> {
@@ -536,9 +540,9 @@ export class CalendarHeadingState extends CalendarBaseHeadingState {
 	}
 
 	// readonly opts: CalendarHeadingStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 
-	// constructor(opts: CalendarHeadingStateOpts, root: CalendarRootState | RangeCalendarRootState) {
+	// constructor(opts: CalendarHeadingStateOpts, root: RootState) {
 	// 	this.opts = opts;
 	// 	this.root = root;
 	// }
@@ -556,7 +560,9 @@ export class CalendarHeadingState extends CalendarBaseHeadingState {
 	// );
 }
 
-const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
+const CalendarCellContext = new Context<CalendarCellState>(
+	"Calendar.Cell | RangeCalendar.Cell | MonthCalendar.Cell | RangeMonthCalendar.Cell"
+);
 
 interface CalendarCellStateOpts
 	extends CalendarBaseCellStateOpts,
@@ -719,12 +725,12 @@ export class CalendarNextButtonState extends CalendarBaseNextButtonState {
 	}
 
 	// readonly opts: CalendarNextButtonStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 	// readonly isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
 
 	// constructor(
 	// 	opts: CalendarNextButtonStateOpts,
-	// 	root: CalendarRootState | RangeCalendarRootState
+	// 	root: RootState
 	// ) {
 	// 	super(opts, root);
 	// 	// this.opts = opts;
@@ -763,12 +769,12 @@ export class CalendarPrevButtonState extends CalendarBasePrevButtonState {
 	}
 
 	// readonly opts: CalendarPrevButtonStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 	// readonly isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
 
 	// constructor(
 	// 	opts: CalendarPrevButtonStateOpts,
-	// 	root: CalendarRootState | RangeCalendarRootState
+	// 	root: RootState
 	// ) {
 	// 	this.opts = opts;
 	// 	this.root = root;
@@ -806,9 +812,9 @@ export class CalendarGridState extends CalendarBaseGridState {
 	}
 
 	// readonly opts: CalendarGridStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 
-	// constructor(opts: CalendarGridStateOpts, root: CalendarRootState | RangeCalendarRootState) {
+	// constructor(opts: CalendarGridStateOpts, root: RootState) {
 	// 	this.opts = opts;
 	// 	this.root = root;
 	// }
@@ -837,9 +843,9 @@ export class CalendarGridBodyState extends CalendarBaseGridBodyState {
 	}
 
 	// readonly opts: CalendarGridBodyStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 
-	// constructor(opts: CalendarGridBodyStateOpts, root: CalendarRootState | RangeCalendarRootState) {
+	// constructor(opts: CalendarGridBodyStateOpts, root: RootState) {
 	// 	this.opts = opts;
 	// 	this.root = root;
 	// }
@@ -864,9 +870,9 @@ export class CalendarGridHeadState extends CalendarBaseGridHeadState {
 	}
 
 	// readonly opts: CalendarGridHeadStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 
-	// constructor(opts: CalendarGridHeadStateOpts, root: CalendarRootState | RangeCalendarRootState) {
+	// constructor(opts: CalendarGridHeadStateOpts, root: RootState) {
 	// 	this.opts = opts;
 	// 	this.root = root;
 	// }
@@ -891,9 +897,9 @@ export class CalendarGridRowState extends CalendarBaseGridRowState {
 	}
 
 	// readonly opts: CalendarGridRowStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 
-	// constructor(opts: CalendarGridRowStateOpts, root: CalendarRootState | RangeCalendarRootState) {
+	// constructor(opts: CalendarGridRowStateOpts, root: RootState) {
 	// 	this.opts = opts;
 	// 	this.root = root;
 	// }
@@ -918,9 +924,9 @@ export class CalendarHeadCellState extends CalendarBaseHeadCellState {
 	}
 
 	// readonly opts: CalendarHeadCellStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 
-	// constructor(opts: CalendarHeadCellStateOpts, root: CalendarRootState | RangeCalendarRootState) {
+	// constructor(opts: CalendarHeadCellStateOpts, root: RootState) {
 	// 	this.opts = opts;
 	// 	this.root = root;
 	// }
@@ -945,9 +951,9 @@ export class CalendarHeaderState extends CalendarBaseHeaderState {
 	}
 
 	// readonly opts: CalendarHeaderStateOpts;
-	// readonly root: CalendarRootState | RangeCalendarRootState;
+	// readonly root: RootState;
 
-	// constructor(opts: CalendarHeaderStateOpts, root: CalendarRootState | RangeCalendarRootState) {
+	// constructor(opts: CalendarHeaderStateOpts, root: RootState) {
 	// 	this.opts = opts;
 	// 	this.root = root;
 	// }
@@ -978,12 +984,9 @@ export class CalendarMonthSelectState {
 	}
 
 	readonly opts: CalendarMonthSelectStateOpts;
-	readonly root: CalendarRootState | RangeCalendarRootState;
+	readonly root: RootState;
 
-	constructor(
-		opts: CalendarMonthSelectStateOpts,
-		root: CalendarRootState | RangeCalendarRootState
-	) {
+	constructor(opts: CalendarMonthSelectStateOpts, root: RootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onchange = this.onchange.bind(this);
@@ -1069,12 +1072,9 @@ export class CalendarYearSelectState {
 	}
 
 	readonly opts: CalendarYearSelectStateOpts;
-	readonly root: CalendarRootState | RangeCalendarRootState;
+	readonly root: RootState;
 
-	constructor(
-		opts: CalendarYearSelectStateOpts,
-		root: CalendarRootState | RangeCalendarRootState
-	) {
+	constructor(opts: CalendarYearSelectStateOpts, root: RootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onchange = this.onchange.bind(this);

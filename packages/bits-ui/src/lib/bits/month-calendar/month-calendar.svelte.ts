@@ -3,7 +3,6 @@ import { DEV } from "esm-env";
 import { untrack } from "svelte";
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
-import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaSelected,
@@ -11,7 +10,6 @@ import {
 	getDataSelected,
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
-import type { WithRefOpts } from "$lib/internal/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
 	createYears,
@@ -26,34 +24,17 @@ import {
 	useYearViewOptionsSync,
 	useYearViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
-import { getDateValueType, toDate } from "$lib/internal/date-time/utils.js";
+import { getDateValueType } from "$lib/internal/date-time/utils.js";
 import type { Year } from "$lib/shared/date/types.js";
 import {
 	CalendarBaseCellState,
-	CalendarBaseGridBodyState,
-	CalendarBaseGridHeadState,
-	CalendarBaseGridRowState,
-	CalendarBaseGridState,
-	CalendarBaseHeadCellState,
-	CalendarBaseHeaderState,
-	CalendarBaseHeadingState,
-	CalendarBaseNextButtonState,
-	CalendarBasePrevButtonState,
 	CalendarBaseRootState,
 	CalendarBaseUnitState,
 	type CalendarBaseCellStateOpts,
-	type CalendarBaseGridBodyStateOpts,
-	type CalendarBaseGridHeadStateOpts,
-	type CalendarBaseGridRowStateOpts,
-	type CalendarBaseGridStateOpts,
-	type CalendarBaseHeadCellStateOpts,
-	type CalendarBaseHeaderStateOpts,
-	type CalendarBaseHeadingStateOpts,
-	type CalendarBaseNextButtonStateOpts,
-	type CalendarBasePrevButtonStateOpts,
 	type CalendarBaseRootStateOpts,
 	type CalendarBaseUnitStateOpts,
 } from "../calendar-base/calendar-base.svelte.js";
+import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 
 interface MonthCalendarRootStateOpts
 	extends CalendarBaseRootStateOpts,
@@ -65,14 +46,9 @@ interface MonthCalendarRootStateOpts
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 		}> {}
 
-// TODO: MonthRangeCalendar
-export const MonthCalendarRootContext = new Context<
-	MonthCalendarRootState | RangeCalendarRootState
->("MonthCalendar.Root | MonthRangeCalendar.Root");
-
 export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarRootStateOpts> {
 	static create(opts: MonthCalendarRootStateOpts) {
-		return MonthCalendarRootContext.set(new MonthCalendarRootState(opts));
+		return CalendarRootContext.set(new MonthCalendarRootState(opts));
 	}
 
 	readonly visibleYears = $derived.by(() => this.years.map((year) => year.value));
@@ -302,15 +278,9 @@ export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarR
 	}));
 }
 
-interface CalendarHeadingStateOpts extends CalendarBaseHeadingStateOpts {}
-
-export class CalendarHeadingState extends CalendarBaseHeadingState {
-	static create(opts: CalendarHeadingStateOpts) {
-		return new CalendarHeadingState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
+const MonthCalendarCellContext = new Context<MonthCalendarCellState>(
+	"MonthCalendar.Cell | RangeMonthCalendar.Cell"
+);
 
 interface CalendarCellStateOpts
 	extends CalendarBaseCellStateOpts,
@@ -318,13 +288,13 @@ interface CalendarCellStateOpts
 			month: DateValue;
 		}> {}
 
-export class CalendarCellState extends CalendarBaseCellState<
+export class MonthCalendarCellState extends CalendarBaseCellState<
 	CalendarCellStateOpts,
 	MonthCalendarRootState
 > {
 	static create(opts: CalendarCellStateOpts) {
-		return CalendarCellContext.set(
-			new CalendarCellState(opts, MonthCalendarRootContext.get() as MonthCalendarRootState)
+		return MonthCalendarCellContext.set(
+			new MonthCalendarCellState(opts, CalendarRootContext.get() as MonthCalendarRootState)
 		);
 	}
 
@@ -378,17 +348,17 @@ export class CalendarCellState extends CalendarBaseCellState<
 	);
 }
 
-interface CalendarDayStateOpts extends CalendarBaseUnitStateOpts {}
+interface CalendarMonthStateOpts extends CalendarBaseUnitStateOpts {}
 
-export class CalendarDayState extends CalendarBaseUnitState<
-	CalendarDayStateOpts,
-	CalendarCellState
+export class MonthCalendarMonthState extends CalendarBaseUnitState<
+	CalendarMonthStateOpts,
+	MonthCalendarCellState
 > {
-	static create(opts: CalendarDayStateOpts) {
-		return new CalendarDayState(opts, CalendarCellContext.get());
+	static create(opts: CalendarMonthStateOpts) {
+		return new MonthCalendarMonthState(opts, MonthCalendarCellContext.get());
 	}
 
-	constructor(opts: CalendarDayStateOpts, cell: CalendarCellState) {
+	constructor(opts: CalendarMonthStateOpts, cell: MonthCalendarCellState) {
 		super(opts, cell);
 	}
 
@@ -413,167 +383,10 @@ export class CalendarDayState extends CalendarBaseUnitState<
 				...this.cell.sharedDataAttrs,
 				tabindex: this.#tabindex,
 				[this.cell.root.getBitsAttr("month")]: "",
-				// Shared logic for range calendar and calendar
+				// Shared logic for range month calendar and month calendar
 				"data-bits-month": "",
 				//
 				onclick: this.onclick,
-				...attachRef(this.opts.ref),
-			}) as const
-	);
-}
-
-interface CalendarNextButtonStateOpts extends CalendarBaseNextButtonStateOpts {}
-
-export class CalendarNextButtonState extends CalendarBaseNextButtonState {
-	static create(opts: CalendarNextButtonStateOpts) {
-		return new CalendarNextButtonState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarPrevButtonStateOpts extends CalendarBasePrevButtonStateOpts {}
-
-export class CalendarPrevButtonState extends CalendarBasePrevButtonState {
-	static create(opts: CalendarPrevButtonStateOpts) {
-		return new CalendarPrevButtonState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarGridStateOpts extends CalendarBaseGridStateOpts {}
-
-export class CalendarGridState extends CalendarBaseGridState {
-	static create(opts: CalendarGridStateOpts) {
-		return new CalendarGridState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarGridBodyStateOpts extends CalendarBaseGridBodyStateOpts {}
-
-export class CalendarGridBodyState extends CalendarBaseGridBodyState {
-	static create(opts: CalendarGridBodyStateOpts) {
-		return new CalendarGridBodyState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarGridHeadStateOpts extends CalendarBaseGridHeadStateOpts {}
-
-export class CalendarGridHeadState extends CalendarBaseGridHeadState {
-	static create(opts: CalendarGridHeadStateOpts) {
-		return new CalendarGridHeadState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarGridRowStateOpts extends CalendarBaseGridRowStateOpts {}
-
-export class CalendarGridRowState extends CalendarBaseGridRowState {
-	static create(opts: CalendarGridRowStateOpts) {
-		return new CalendarGridRowState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarHeadCellStateOpts extends CalendarBaseHeadCellStateOpts {}
-
-export class CalendarHeadCellState extends CalendarBaseHeadCellState {
-	static create(opts: CalendarHeadCellStateOpts) {
-		return new CalendarHeadCellState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarHeaderStateOpts extends CalendarBaseHeaderStateOpts {}
-
-export class CalendarHeaderState extends CalendarBaseHeaderState {
-	static create(opts: CalendarHeaderStateOpts) {
-		return new CalendarHeaderState(opts, MonthCalendarRootContext.get());
-	}
-}
-
-interface CalendarYearSelectStateOpts
-	extends WithRefOpts,
-		ReadableBoxedValues<{
-			years: number[] | undefined;
-			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
-			disabled: boolean;
-		}> {}
-
-export class CalendarYearSelectState {
-	static create(opts: CalendarYearSelectStateOpts) {
-		return new CalendarYearSelectState(opts, MonthCalendarRootContext.get());
-	}
-
-	readonly opts: CalendarYearSelectStateOpts;
-	readonly root: MonthCalendarRootState | RangeCalendarRootState;
-
-	constructor(
-		opts: CalendarYearSelectStateOpts,
-		root: MonthCalendarRootState | RangeCalendarRootState
-	) {
-		this.opts = opts;
-		this.root = root;
-		this.onchange = this.onchange.bind(this);
-	}
-
-	readonly years = $derived.by(() => {
-		if (this.opts.years.current && this.opts.years.current.length)
-			return this.opts.years.current;
-		return this.root.defaultYears;
-	});
-
-	readonly yearItems = $derived.by(() => {
-		this.root.opts.locale.current;
-		const yearFormat = this.opts.yearFormat.current;
-		const localYears = [];
-		for (const year of this.years) {
-			// create a date with the year to get localized formatting
-			const date = this.root.opts.placeholder.current.set({ year });
-			let label: string;
-			if (typeof yearFormat === "function") {
-				label = yearFormat(year);
-			} else {
-				label = this.root.formatter.custom(toDate(date), { year: yearFormat });
-			}
-			localYears.push({
-				value: year,
-				label,
-			});
-		}
-
-		return localYears;
-	});
-
-	readonly currentYear = $derived.by(() => this.root.opts.placeholder.current.year);
-
-	readonly isDisabled = $derived.by(
-		() => this.root.opts.disabled.current || this.opts.disabled.current
-	);
-
-	readonly snippetProps = $derived.by(() => {
-		return {
-			yearItems: this.yearItems,
-			selectedYearItem: this.yearItems.find((year) => year.value === this.currentYear) as {
-				value: number;
-				label: string;
-			},
-		};
-	});
-
-	onchange(event: Event) {
-		if (this.isDisabled) return;
-		const target = event.target as HTMLSelectElement;
-		const year = parseInt(target.value, 10);
-		if (!isNaN(year)) {
-			this.root.opts.placeholder.current = this.root.opts.placeholder.current.set({ year });
-		}
-	}
-
-	readonly props = $derived.by(
-		() =>
-			({
-				id: this.opts.id.current,
-				value: this.currentYear,
-				disabled: this.isDisabled,
-				"data-disabled": getDataDisabled(this.isDisabled),
-				[this.root.getBitsAttr("year-select")]: "",
-				//
-				onchange: this.onchange,
 				...attachRef(this.opts.ref),
 			}) as const
 	);
