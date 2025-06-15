@@ -29,7 +29,7 @@ import {
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
 import { isBefore, toDate } from "$lib/internal/date-time/utils.js";
 
-interface CalendarBaseRootStateOpts
+export interface CalendarBaseRootStateOpts
 	extends WithRefOpts,
 		WritableBoxedValues<{
 			value: DateValue | undefined | DateValue[];
@@ -532,7 +532,7 @@ export abstract class CalendarBaseRootState {
 	);
 }
 
-interface CalendarBaseHeadingStateOpts extends WithRefOpts {}
+export interface CalendarBaseHeadingStateOpts extends WithRefOpts {}
 
 export abstract class CalendarBaseHeadingState {
 	// static create(opts: CalendarBaseHeadingStateOpts) {
@@ -572,7 +572,7 @@ export abstract class CalendarBaseHeadingState {
 // 			month: DateValue;
 // 		}> {}
 
-interface CalendarCellStateOpts
+export interface CalendarBaseCellStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
@@ -585,7 +585,7 @@ export abstract class CalendarBaseCellState {
 	// 	);
 	// }
 
-	readonly opts: CalendarCellStateOpts;
+	readonly opts: CalendarBaseCellStateOpts;
 	readonly root: CalendarBaseRootState;
 	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
 	readonly isDisabled = $derived.by(() => this.root.isUnitDisabled(this.opts.date.current));
@@ -614,7 +614,7 @@ export abstract class CalendarBaseCellState {
 	// 	})
 	// );
 
-	constructor(opts: CalendarCellStateOpts, root: CalendarBaseRootState) {
+	constructor(opts: CalendarBaseCellStateOpts, root: CalendarBaseRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -666,7 +666,7 @@ export abstract class CalendarBaseCellState {
 	// );
 }
 
-interface CalendarBaseUnitStateOpts extends WithRefOpts {}
+export interface CalendarBaseUnitStateOpts extends WithRefOpts {}
 
 export class CalendarBaseUnitState {
 	// static create(opts: CalendarDayStateOpts) {
@@ -722,7 +722,7 @@ export class CalendarBaseUnitState {
 	// );
 }
 
-interface CalendarBaseNextButtonStateOpts extends WithRefOpts {}
+export interface CalendarBaseNextButtonStateOpts extends WithRefOpts {}
 
 export class CalendarBaseNextButtonState {
 	// static create(opts: CalendarBaseNextButtonStateOpts) {
@@ -765,7 +765,7 @@ export class CalendarBaseNextButtonState {
 	);
 }
 
-interface CalendarBasePrevButtonStateOpts extends WithRefOpts {}
+export interface CalendarBasePrevButtonStateOpts extends WithRefOpts {}
 
 export class CalendarBasePrevButtonState {
 	// static create(opts: CalendarPrevButtonStateOpts) {
@@ -808,7 +808,7 @@ export class CalendarBasePrevButtonState {
 	);
 }
 
-interface CalendarBaseGridStateOpts extends WithRefOpts {}
+export interface CalendarBaseGridStateOpts extends WithRefOpts {}
 
 export class CalendarGridState {
 	// static create(opts: CalendarBaseGridStateOpts) {
@@ -842,7 +842,7 @@ export class CalendarGridState {
 	);
 }
 
-interface CalendarBaseGridBodyStateOpts extends WithRefOpts {}
+export interface CalendarBaseGridBodyStateOpts extends WithRefOpts {}
 
 export class CalendarBaseGridBodyState {
 	// static create(opts: CalendarBaseGridBodyStateOpts) {
@@ -872,7 +872,7 @@ export class CalendarBaseGridBodyState {
 	);
 }
 
-interface CalendarBaseGridHeadStateOpts extends WithRefOpts {}
+export interface CalendarBaseGridHeadStateOpts extends WithRefOpts {}
 
 export class CalendarBaseGridHeadState {
 	// static create(opts: CalendarGridHeadStateOpts) {
@@ -902,7 +902,7 @@ export class CalendarBaseGridHeadState {
 	);
 }
 
-interface CalendarBaseGridRowStateOpts extends WithRefOpts {}
+export interface CalendarBaseGridRowStateOpts extends WithRefOpts {}
 
 export class CalendarBaseGridRowState {
 	// static create(opts: CalendarGridRowStateOpts) {
@@ -932,7 +932,7 @@ export class CalendarBaseGridRowState {
 	);
 }
 
-interface CalendarBaseHeadCellStateOpts extends WithRefOpts {}
+export interface CalendarBaseHeadCellStateOpts extends WithRefOpts {}
 
 export class CalendarBaseHeadCellState {
 	// static create(opts: CalendarHeadCellStateOpts) {
@@ -962,7 +962,7 @@ export class CalendarBaseHeadCellState {
 	);
 }
 
-interface CalendarBaseHeaderStateOpts extends WithRefOpts {}
+export interface CalendarBaseHeaderStateOpts extends WithRefOpts {}
 
 export class CalendarBaseHeaderState {
 	// static create(opts: CalendarHeaderStateOpts) {
