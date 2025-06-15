@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Calendar from "./calendar.svelte";
 	import Combobox from "./combobox.svelte";
+	import MonthCal from "./month-cal.svelte";
 	import RangeCal from "./range-cal.svelte";
 
 	let myValue = $state("");
@@ -20,6 +21,9 @@
 		</div>
 		<div class="flex">
 			<RangeCal></RangeCal>
+		</div>
+		<div class="flex">
+			<MonthCal></MonthCal>
 		</div>
 	</div>
 </div>

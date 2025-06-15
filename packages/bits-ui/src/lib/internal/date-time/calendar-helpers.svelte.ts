@@ -252,7 +252,8 @@ type SetYearProps = CreateYearProps & {
 };
 
 export function createYears(props: SetYearProps) {
-	const { numberOfYears = 1, dateObj, ...yearProps } = props;
+	let { numberOfYears = 1, dateObj, ...yearProps } = props;
+	dateObj = dateObj.set({ day: 1 });
 
 	const years: Year<DateValue>[] = [];
 
