@@ -9,6 +9,7 @@ interface AnimationsCompleteOpts
 export class AnimationsComplete {
 	#opts: AnimationsCompleteOpts;
 	#currentFrame: number | undefined = undefined;
+	#isRunning = false;
 
 	constructor(opts: AnimationsCompleteOpts) {
 		this.#opts = opts;
@@ -20,35 +21,51 @@ export class AnimationsComplete {
 			window.cancelAnimationFrame(this.#currentFrame);
 			this.#currentFrame = undefined;
 		}
+		this.#isRunning = false;
 	}
 
-	run(fn: () => void, signal: AbortSignal | null = null) {
+	run(fn: () => void | Promise<void>) {
+		// prevent multiple concurrent runs
+		if (this.#isRunning) return;
+
 		this.#cleanup();
+		this.#isRunning = true;
 
 		const node = this.#opts.ref.current;
-		if (!node) return;
+		if (!node) {
+			this.#isRunning = false;
+			return;
+		}
 
 		if (typeof node.getAnimations !== "function") {
-			fn();
-		} else {
-			this.#currentFrame = window.requestAnimationFrame(() => {
-				function run() {
-					if (!node) return;
+			this.#executeCallback(fn);
+			return;
+		}
 
-					Promise.allSettled(
-						node.getAnimations().map((animation) => animation.finished)
-					).then(() => {
-						if (signal != null && signal.aborted) return;
-						fn();
-					});
-				}
+		this.#currentFrame = window.requestAnimationFrame(() => {
+			const animations = node.getAnimations();
 
-				if (this.#opts.waitForNextTick) {
-					afterTick(() => run());
-				} else {
-					run();
-				}
+			if (animations.length === 0) {
+				this.#executeCallback(fn);
+				return;
+			}
+
+			Promise.allSettled(animations.map((animation) => animation.finished)).then(() => {
+				this.#executeCallback(fn);
 			});
+		});
+	}
+
+	#executeCallback(fn: () => void | Promise<void>) {
+		const execute = () => {
+			fn();
+			this.#isRunning = false;
+		};
+
+		if (this.#opts.waitForNextTick) {
+			afterTick(execute);
+		} else {
+			execute();
 		}
 	}
 }
