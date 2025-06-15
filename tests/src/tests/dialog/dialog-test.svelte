@@ -30,7 +30,9 @@
 			<Dialog.Overlay
 				data-testid="overlay"
 				class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
-			/>
+			>
+				overlay
+			</Dialog.Overlay>
 			<Dialog.Content
 				{...contentProps}
 				data-testid="content"
