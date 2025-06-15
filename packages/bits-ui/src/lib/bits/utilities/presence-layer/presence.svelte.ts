@@ -3,10 +3,11 @@ import { Previous, watch } from "runed";
 import { on } from "svelte/events";
 import { StateMachine } from "$lib/internal/state-machine.svelte.js";
 
-export type PresenceOptions = ReadableBoxedValues<{
-	open: boolean;
-	ref: HTMLElement | null;
-}>;
+export interface PresenceOptions
+	extends ReadableBoxedValues<{
+		open: boolean;
+		ref: HTMLElement | null;
+	}> {}
 
 type PresenceStatus = "unmounted" | "mounted" | "unmountSuspended";
 
@@ -46,9 +47,9 @@ export class Presence {
 		this.handleAnimationEnd = this.handleAnimationEnd.bind(this);
 		this.handleAnimationStart = this.handleAnimationStart.bind(this);
 
-		handlePresenceChange(this);
-		handleStatusChange(this);
-		handleRefChange(this);
+		watchPresenceChange(this);
+		watchStatusChange(this);
+		watchRefChange(this);
 	}
 
 	/**
@@ -79,7 +80,7 @@ export class Presence {
 	});
 }
 
-function handlePresenceChange(state: Presence) {
+function watchPresenceChange(state: Presence) {
 	watch(
 		() => state.present.current,
 		() => {
@@ -115,7 +116,7 @@ function handlePresenceChange(state: Presence) {
 	);
 }
 
-function handleStatusChange(state: Presence) {
+function watchStatusChange(state: Presence) {
 	watch(
 		() => state.machine.state.current,
 		() => {
@@ -127,7 +128,7 @@ function handleStatusChange(state: Presence) {
 	);
 }
 
-function handleRefChange(state: Presence) {
+function watchRefChange(state: Presence) {
 	watch(
 		() => state.opts.ref.current,
 		() => {
