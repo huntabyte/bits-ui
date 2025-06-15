@@ -89,7 +89,7 @@ interface CalendarRootStateOpts
 }
 
 export const CalendarRootContext = new Context<CalendarRootState | RangeCalendarRootState>(
-	"Calendar.Root | RangeCalender.Root"
+	"Calendar.Root | RangeCalendar.Root"
 );
 
 export class CalendarRootState {
