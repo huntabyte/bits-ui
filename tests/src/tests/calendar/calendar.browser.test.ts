@@ -7,6 +7,7 @@ import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 import CalendarTest, { type CalendarSingleTestProps } from "./calendar-test.svelte";
 import CalendarMultiTest, { type CalendarMultiTestProps } from "./calendar-multi-test.svelte";
 import CalendarSelectsTest from "./calendar-selects-test.svelte";
+import { expectNotClickable } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -192,7 +193,7 @@ describe("type='single'", () => {
 			expect(heading).toHaveTextContent("November 1979");
 			expect(prevBtn).toHaveAttribute("aria-disabled", "true");
 			expect(prevBtn).toHaveAttribute("data-disabled");
-			await expect(t.user.click(prevBtn, { timeout: 100 })).rejects.toThrow();
+			await expectNotClickable(prevBtn.element());
 			expect(heading).toHaveTextContent("November 1979");
 		});
 
@@ -211,7 +212,7 @@ describe("type='single'", () => {
 			expect(heading).toHaveTextContent("March 1980");
 			expect(nextBtn).toHaveAttribute("aria-disabled", "true");
 			expect(nextBtn).toHaveAttribute("data-disabled");
-			await expect(t.user.click(nextBtn, { timeout: 100 })).rejects.toThrow();
+			await expectNotClickable(nextBtn.element());
 
 			expect(heading).toHaveTextContent("March 1980");
 		});
@@ -483,7 +484,7 @@ describe("type='single'", () => {
 			expect(thirdDayInMonth).toHaveTextContent("3");
 			expect(thirdDayInMonth).toHaveAttribute("data-unavailable");
 			expect(thirdDayInMonth).toHaveAttribute("aria-disabled", "true");
-			await expect(t.user.click(thirdDayInMonth, { timeout: 100 })).rejects.toThrow();
+			await expectNotClickable(thirdDayInMonth.element());
 			expect(thirdDayInMonth).not.toHaveAttribute("data-selected");
 		});
 
@@ -497,14 +498,14 @@ describe("type='single'", () => {
 			expect(firstDayOfMonth).toHaveAttribute("data-disabled");
 
 			// clicking a disabled element should fail
-			await expect(t.user.click(firstDayOfMonth, { timeout: 100 })).rejects.toThrow();
+			await expectNotClickable(firstDayOfMonth);
 			expect(firstDayOfMonth).not.toHaveAttribute("data-selected");
 			firstDayOfMonth.focus();
 			expect(firstDayOfMonth).not.toHaveFocus();
 			const tenthDayOfMonth = t.getByTestId("date-1-10").element() as HTMLElement;
 			expect(tenthDayOfMonth).toHaveAttribute("aria-disabled", "true");
 			expect(tenthDayOfMonth).toHaveAttribute("data-disabled");
-			await expect(t.user.click(tenthDayOfMonth, { timeout: 100 })).rejects.toThrow();
+			await expectNotClickable(tenthDayOfMonth);
 			expect(tenthDayOfMonth).not.toHaveAttribute("data-selected");
 			tenthDayOfMonth.focus();
 			expect(tenthDayOfMonth).not.toHaveFocus();

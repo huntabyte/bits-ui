@@ -9,6 +9,7 @@ import AccordionMultiTestControlled from "./accordion-multi-test-controlled.svel
 import AccordionSingleForceMountTest from "./accordion-single-force-mount-test.svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
+import { expectNotClickable } from "../browser-utils";
 
 export type Item = {
 	value: string;
@@ -338,10 +339,13 @@ describe("type='single'", () => {
 		it("should disable everything when true on root", async () => {
 			const t = setupSingle({ items: ITEMS, disabled: true });
 
+			await expectNotClickable(t.triggerEls[0]);
 			expectClosed(t.triggerEls[0]);
 			expectDisabled(t.triggerEls[0]);
+			await expectNotClickable(t.triggerEls[1]);
 			expectClosed(t.triggerEls[1]);
 			expectDisabled(t.triggerEls[1]);
+			await expectNotClickable(t.triggerEls[2]);
 			expectClosed(t.triggerEls[2]);
 			expectDisabled(t.triggerEls[2]);
 		});
