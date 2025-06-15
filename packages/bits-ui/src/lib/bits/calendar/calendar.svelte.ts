@@ -86,7 +86,7 @@ export const CalendarRootContext = new Context<RootState>(
 
 export class CalendarRootState extends CalendarBaseRootState<CalendarRootStateOpts> {
 	static create(opts: CalendarRootStateOpts) {
-		return CalendarRootContext.set(new CalendarRootState(opts));
+		return CalendarRootContext.set(new CalendarRootState(opts)) as CalendarRootState;
 	}
 
 	// readonly opts: CalendarRootStateOpts;

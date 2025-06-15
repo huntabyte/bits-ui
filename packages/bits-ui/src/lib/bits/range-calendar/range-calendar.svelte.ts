@@ -100,7 +100,7 @@ interface RangeCalendarRootStateOpts
 
 export class RangeCalendarRootState {
 	static create(opts: RangeCalendarRootStateOpts) {
-		return CalendarRootContext.set(new RangeCalendarRootState(opts));
+		return CalendarRootContext.set(new RangeCalendarRootState(opts)) as RangeCalendarRootState;
 	}
 
 	readonly opts: RangeCalendarRootStateOpts;

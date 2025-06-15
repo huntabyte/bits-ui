@@ -39,7 +39,6 @@ import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 interface MonthCalendarRootStateOpts
 	extends CalendarBaseRootStateOpts,
 		ReadableBoxedValues<{
-			fixedWeeks: boolean;
 			numberOfYears: number;
 			maxMonths: number | undefined;
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
@@ -48,7 +47,7 @@ interface MonthCalendarRootStateOpts
 
 export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarRootStateOpts> {
 	static create(opts: MonthCalendarRootStateOpts) {
-		return CalendarRootContext.set(new MonthCalendarRootState(opts));
+		return CalendarRootContext.set(new MonthCalendarRootState(opts)) as MonthCalendarRootState;
 	}
 
 	readonly visibleYears = $derived.by(() => this.years.map((year) => year.value));
@@ -285,7 +284,7 @@ const MonthCalendarCellContext = new Context<MonthCalendarCellState>(
 interface CalendarCellStateOpts
 	extends CalendarBaseCellStateOpts,
 		ReadableBoxedValues<{
-			month: DateValue;
+			year: DateValue;
 		}> {}
 
 export class MonthCalendarCellState extends CalendarBaseCellState<
@@ -370,7 +369,7 @@ export class MonthCalendarMonthState extends CalendarBaseUnitState<
 		disabled: this.cell.isDisabled,
 		unavailable: this.cell.isUnavailable,
 		selected: this.cell.isSelectedDate,
-		day: `${this.cell.opts.date.current.day}`,
+		month: `${this.cell.opts.date.current.day}`,
 	}));
 
 	readonly props = $derived.by(
