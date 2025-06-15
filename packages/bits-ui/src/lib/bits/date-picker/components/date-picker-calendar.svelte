@@ -44,7 +44,7 @@
 		onDateSelect: datePickerRootState.opts.onDateSelect,
 		initialFocus: datePickerRootState.opts.initialFocus,
 		defaultPlaceholder: datePickerRootState.opts.defaultPlaceholder,
-		maxDays: box.with(() => undefined),
+		maxUnits: box.with(() => undefined),
 		monthFormat: datePickerRootState.opts.monthFormat,
 		yearFormat: datePickerRootState.opts.yearFormat,
 	});

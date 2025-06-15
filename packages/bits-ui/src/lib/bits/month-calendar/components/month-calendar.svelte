@@ -88,7 +88,7 @@
 		minValue: box.with(() => minValue),
 		maxValue: box.with(() => maxValue),
 		initialFocus: box.with(() => initialFocus),
-		maxMonths: box.with(() => maxMonths),
+		maxUnits: box.with(() => maxMonths),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
