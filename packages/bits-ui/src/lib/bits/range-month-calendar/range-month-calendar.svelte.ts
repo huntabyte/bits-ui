@@ -155,23 +155,22 @@ export class RangeMonthCalendarRootState extends RangeCalendarBaseRootState<Rang
 		this.years = years;
 	};
 
-	// TODO
 	isRangeValid(start: DateValue, end: DateValue): boolean {
-		// ensure we always use the correct order for calculation
+		// Ensure correct order
 		const orderedStart = isBefore(end, start) ? end : start;
 		const orderedEnd = isBefore(end, start) ? start : end;
 
-		const startDate = orderedStart.toDate(getLocalTimeZone());
-		const endDate = orderedEnd.toDate(getLocalTimeZone());
+		// Calculate month difference inline
+		const monthsDifference =
+			(orderedEnd.year - orderedStart.year) * 12 +
+			(orderedEnd.month - orderedStart.month) +
+			1; // +1 to include both start and end months
 
-		const timeDifference = endDate.getTime() - startDate.getTime();
-		const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-		const daysInRange = daysDifference + 1; // +1 to include both start and end days
+		if (this.opts.minUnits.current && monthsDifference < this.opts.minUnits.current)
+			return false;
+		if (this.opts.maxUnits.current && monthsDifference > this.opts.maxUnits.current)
+			return false;
 
-		if (this.opts.minUnits.current && daysInRange < this.opts.minUnits.current) return false;
-		if (this.opts.maxUnits.current && daysInRange > this.opts.maxUnits.current) return false;
-
-		// check for disabled dates in range if excludeDisabled is enabled
 		if (
 			this.opts.excludeDisabled.current &&
 			this.hasDisabledDatesInRange(orderedStart, orderedEnd)
