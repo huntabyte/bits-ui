@@ -58,7 +58,6 @@ import {
 import type { MonthCalendarRootState } from "../month-calendar/month-calendar.svelte.js";
 import { RangeMonthCalendarRootState } from "../range-month-calendar/range-month-calendar.svelte.js";
 
-// TODO: RangeMonthCalendarRootState
 type RootState =
 	| CalendarRootState
 	| RangeCalendarRootState
