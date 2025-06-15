@@ -6,7 +6,7 @@ import type {
 	BitsPrimitiveTdAttributes,
 } from "$lib/shared/attributes.js";
 import type { Year } from "$lib/shared/date/types.js";
-import type { CalendarCellSnippetProps } from "../calendar-base/types.js";
+import type { CalendarCellSnippetProps } from "$lib/types.js";
 
 export type MonthCalendarRootSnippetProps = {
 	years: Year<DateValue>[];

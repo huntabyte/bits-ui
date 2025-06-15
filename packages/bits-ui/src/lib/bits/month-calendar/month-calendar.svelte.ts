@@ -73,7 +73,7 @@ export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarR
 		});
 
 		/**
-		 * Updates the displayed months based on changes in the placeholder value.
+		 * Updates the displayed years based on changes in the placeholder value.
 		 */
 		useYearViewPlaceholderSync({
 			placeholder: this.opts.placeholder,
@@ -85,8 +85,8 @@ export class MonthCalendarRootState extends CalendarBaseRootState<MonthCalendarR
 		});
 
 		/**
-		 * Updates the displayed months based on changes in the options values,
-		 * which determines the month to show in the calendar.
+		 * Updates the displayed years based on changes in the options values,
+		 * which determines the year to show in the calendar.
 		 */
 		useYearViewOptionsSync({
 			locale: this.opts.locale,

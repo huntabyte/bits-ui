@@ -20,7 +20,6 @@ import {
 	calendarAttrs,
 	CELL_UNIT_MAP,
 	getCalendarElementProps,
-	getDefaultYears,
 	handleCalendarKeydown,
 	SAME_FN_MAP,
 	type CalendarUnit,
@@ -33,10 +32,9 @@ import {
 	isBetweenInclusive,
 	toDate,
 } from "$lib/internal/date-time/utils.js";
-import type { WeekStartsOn } from "$lib/shared/date/types.js";
-import { onMount, untrack } from "svelte";
+import { onMount } from "svelte";
 
-export interface RangeCalendarRootStateOpts
+export interface RangeCalendarBaseRootStateOpts
 	extends WithRefOpts,
 		WritableBoxedValues<{
 			value: DateRange;
@@ -50,16 +48,11 @@ export interface RangeCalendarRootStateOpts
 			maxValue: DateValue | undefined;
 			disabled: boolean;
 			pagedNavigation: boolean;
-			weekStartsOn: WeekStartsOn | undefined;
-			// weekdayFormat: Intl.DateTimeFormatOptions["weekday"];
 			isUnitDisabled: (date: DateValue) => boolean;
 			isUnitUnavailable: (date: DateValue) => boolean;
-			// fixedWeeks: boolean;
-			// numberOfMonths: number;
 			locale: string;
 			calendarLabel: string;
 			readonly: boolean;
-			// disableDaysOutsideMonth: boolean;
 			excludeDisabled: boolean;
 			minUnits: number | undefined;
 			maxUnits: number | undefined;
@@ -68,20 +61,14 @@ export interface RangeCalendarRootStateOpts
 			 * is selected. It is not intended to be used by the user.
 			 */
 			onRangeSelect?: () => void;
-			// monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
-			// yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 		}> {
 	defaultPlaceholder: DateValue;
 }
 
-export abstract class RangeCalendarBaseRootState {
-	// static create(opts: RangeCalendarRootStateOpts) {
-	// 	return CalendarRootContext.set(new RangeCalendarRootState(opts)) as RangeCalendarRootState;
-	// }
-
-	readonly opts: RangeCalendarRootStateOpts;
-	// readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
-	// months: Month<DateValue>[] = $state([]);
+export abstract class RangeCalendarBaseRootState<
+	T extends RangeCalendarBaseRootStateOpts = RangeCalendarBaseRootStateOpts,
+> {
+	readonly opts: T;
 	announcer: Announcer;
 	abstract readonly formatter: Formatter;
 	readonly accessibleHeadingId = useId();
@@ -91,21 +78,6 @@ export abstract class RangeCalendarBaseRootState {
 
 	readonly isSame: SameFn;
 	readonly cellUnit: "months" | "days" | "years";
-
-	/**
-	 * This derived state holds an array of localized day names for the current
-	 * locale and calendar view. It dynamically syncs with the 'weekStartsOn' option,
-	 * updating its content when the option changes. Using this state to render the
-	 * calendar's days of the week is strongly recommended, as it guarantees that
-	 * the days are correctly formatted for the current locale and calendar view.
-	 */
-	// readonly weekdays = $derived.by(() => {
-	// 	return getWeekdays({
-	// 		months: this.months,
-	// 		formatter: this.formatter,
-	// 		weekdayFormat: this.opts.weekdayFormat.current,
-	// 	});
-	// });
 
 	readonly isStartInvalid = $derived.by(() => {
 		if (!this.opts.startValue.current) return false;
@@ -139,39 +111,11 @@ export abstract class RangeCalendarBaseRootState {
 	abstract isNextButtonDisabled: boolean;
 	abstract isPrevButtonDisabled: boolean;
 
-	// readonly isNextButtonDisabled = $derived.by(() => {
-	// 	return getIsNextButtonDisabled({
-	// 		maxValue: this.opts.maxValue.current,
-	// 		months: this.months,
-	// 		disabled: this.opts.disabled.current,
-	// 	});
-	// });
-
-	// readonly isPrevButtonDisabled = $derived.by(() => {
-	// 	return getIsPrevButtonDisabled({
-	// 		minValue: this.opts.minValue.current,
-	// 		months: this.months,
-	// 		disabled: this.opts.disabled.current,
-	// 	});
-	// });
-
 	abstract readonly headingValue: string;
-
-	// readonly headingValue = $derived.by(() => {
-	// 	this.opts.monthFormat.current;
-	// 	this.opts.yearFormat.current;
-	// 	return getCalendarHeadingValue({
-	// 		months: this.months,
-	// 		formatter: this.formatter,
-	// 		locale: this.opts.locale.current,
-	// 	});
-	// });
 
 	readonly fullCalendarLabel = $derived.by(
 		() => `${this.opts.calendarLabel.current} ${this.headingValue}`
 	);
-
-	// abstract readonly highlightedRange: { start: DateValue; end: DateValue } | null;
 
 	readonly highlightedRange = $derived.by(() => {
 		if (this.opts.startValue.current && this.opts.endValue.current) return null;
@@ -197,38 +141,13 @@ export abstract class RangeCalendarBaseRootState {
 		return null;
 	});
 
-	readonly initialPlaceholderYear = $derived.by(() =>
-		untrack(() => this.opts.placeholder.current.year)
-	);
-
-	readonly defaultYears = $derived.by(() => {
-		return getDefaultYears({
-			minValue: this.opts.minValue.current,
-			maxValue: this.opts.maxValue.current,
-			placeholderYear: this.initialPlaceholderYear,
-		});
-	});
-
-	constructor(opts: RangeCalendarRootStateOpts, unit: CalendarUnit) {
+	constructor(opts: T, unit: CalendarUnit) {
 		this.opts = opts;
 		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer(null);
 
 		this.isSame = SAME_FN_MAP[unit];
 		this.cellUnit = CELL_UNIT_MAP[unit];
-		// this.formatter = createFormatter({
-		// 	initialLocale: this.opts.locale.current,
-		// 	monthFormat: this.opts.monthFormat,
-		// 	yearFormat: this.opts.yearFormat,
-		// });
-
-		// this.months = createMonths({
-		// 	dateObj: this.opts.placeholder.current,
-		// 	weekStartsOn: this.opts.weekStartsOn.current,
-		// 	locale: this.opts.locale.current,
-		// 	fixedWeeks: this.opts.fixedWeeks.current,
-		// 	numberOfMonths: this.opts.numberOfMonths.current,
-		// });
 
 		$effect(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
@@ -238,33 +157,6 @@ export abstract class RangeCalendarBaseRootState {
 		onMount(() => {
 			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
-
-		/**
-		 * Updates the displayed months based on changes in the placeholder values,
-		 * which determines the month to show in the calendar.
-		 */
-		// useMonthViewPlaceholderSync({
-		// 	placeholder: this.opts.placeholder,
-		// 	getVisibleMonths: () => this.visibleMonths,
-		// 	weekStartsOn: this.opts.weekStartsOn,
-		// 	locale: this.opts.locale,
-		// 	fixedWeeks: this.opts.fixedWeeks,
-		// 	numberOfMonths: this.opts.numberOfMonths,
-		// 	setMonths: this.setMonths,
-		// });
-
-		/**
-		 * Updates the displayed months based on changes in the options values,
-		 * which determines the month to show in the calendar.
-		 */
-		// useMonthViewOptionsSync({
-		// 	fixedWeeks: this.opts.fixedWeeks,
-		// 	locale: this.opts.locale,
-		// 	numberOfMonths: this.opts.numberOfMonths,
-		// 	placeholder: this.opts.placeholder,
-		// 	setMonths: this.setMonths,
-		// 	weekStartsOn: this.opts.weekStartsOn,
-		// });
 
 		/**
 		 * Update the accessible heading's text content when the `fullCalendarLabel`
@@ -324,7 +216,7 @@ export abstract class RangeCalendarBaseRootState {
 			([startValue, endValue, excludeDisabled]) => {
 				if (!excludeDisabled || !startValue || !endValue) return;
 
-				if (this.#hasDisabledDatesInRange(startValue, endValue)) {
+				if (this.hasDisabledDatesInRange(startValue, endValue)) {
 					this.#setStartValue(undefined);
 					this.#setEndValue(undefined);
 					this.#announceEmpty();
@@ -387,24 +279,9 @@ export abstract class RangeCalendarBaseRootState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.nextPage = this.nextPage.bind(this);
 		this.prevPage = this.prevPage.bind(this);
-		// this.nextYear = this.nextYear.bind(this);
-		// this.prevYear = this.prevYear.bind(this);
-		// this.setYear = this.setYear.bind(this);
-		// this.setMonth = this.setMonth.bind(this);
 		this.isUnitDisabled = this.isUnitDisabled.bind(this);
 		this.isUnitUnavailable = this.isUnitUnavailable.bind(this);
-		// this.isOutsideVisibleMonths = this.isOutsideVisibleMonths.bind(this);
 		this.isSelected = this.isSelected.bind(this);
-
-		// useEnsureNonDisabledPlaceholder({
-		// 	placeholder: opts.placeholder,
-		// 	defaultPlaceholder: opts.defaultPlaceholder,
-		// 	isUnitDisabled: opts.isDateDisabled,
-		// 	maxValue: opts.maxValue,
-		// 	minValue: opts.minValue,
-		// 	ref: opts.ref,
-		// 	unit: "day",
-		// });
 	}
 
 	#updateValue(cb: (value: DateRange) => DateRange) {
@@ -434,14 +311,6 @@ export abstract class RangeCalendarBaseRootState {
 		}));
 	}
 
-	// setMonths = (months: Month<DateValue>[]) => {
-	// 	this.months = months;
-	// };
-
-	// isOutsideVisibleMonths(date: DateValue) {
-	// 	return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	// }
-
 	isUnitDisabled(date: DateValue) {
 		if (this.opts.isUnitDisabled.current(date) || this.opts.disabled.current) return true;
 		const minValue = this.opts.minValue.current;
@@ -456,19 +325,15 @@ export abstract class RangeCalendarBaseRootState {
 		return false;
 	}
 
-	// abstract isSelectionStart(date: DateValue): boolean;
 	isSelectionStart(date: DateValue) {
 		if (!this.opts.startValue.current) return false;
 		return this.isSame(date, this.opts.startValue.current);
 	}
 
-	// abstract isSelectionEnd(date: DateValue): boolean;
 	isSelectionEnd(date: DateValue) {
 		if (!this.opts.endValue.current) return false;
 		return this.isSame(date, this.opts.endValue.current);
 	}
-
-	// abstract isSelected(date: DateValue): boolean;
 
 	isSelected(date: DateValue) {
 		if (this.opts.startValue.current && this.isSame(this.opts.startValue.current, date))
@@ -486,46 +351,8 @@ export abstract class RangeCalendarBaseRootState {
 	}
 
 	abstract isRangeValid(start: DateValue, end: DateValue): boolean;
-	// #isRangeValid(start: DateValue, end: DateValue): boolean {
-	// 	// ensure we always use the correct order for calculation
-	// 	const orderedStart = isBefore(end, start) ? end : start;
-	// 	const orderedEnd = isBefore(end, start) ? start : end;
-
-	// 	const startDate = orderedStart.toDate(getLocalTimeZone());
-	// 	const endDate = orderedEnd.toDate(getLocalTimeZone());
-
-	// 	const timeDifference = endDate.getTime() - startDate.getTime();
-	// 	const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-	// 	const daysInRange = daysDifference + 1; // +1 to include both start and end days
-
-	// 	if (this.opts.minUnits.current && daysInRange < this.opts.minUnits.current) return false;
-	// 	if (this.opts.maxUnits.current && daysInRange > this.opts.maxUnits.current) return false;
-
-	// 	// check for disabled dates in range if excludeDisabled is enabled
-	// 	if (
-	// 		this.opts.excludeDisabled.current &&
-	// 		this.#hasDisabledDatesInRange(orderedStart, orderedEnd)
-	// 	) {
-	// 		return false;
-	// 	}
-
-	// 	return true;
-	// }
 
 	abstract shiftFocus(node: HTMLElement, add: number): void;
-	// shiftFocus(node: HTMLElement, add: number) {
-	// 	return shiftCalendarFocus({
-	// 		node,
-	// 		add,
-	// 		placeholder: this.opts.placeholder,
-	// 		calendarNode: this.opts.ref.current,
-	// 		isPrevButtonDisabled: this.isPrevButtonDisabled,
-	// 		isNextButtonDisabled: this.isNextButtonDisabled,
-	// 		items: this.months,
-	// 		numberOfUnits: this.opts.numberOfMonths.current,
-	// 		unit: "months",
-	// 	});
-	// }
 
 	#announceEmpty() {
 		this.announcer.announce("Selected date is now empty.", "polite");
@@ -631,60 +458,15 @@ export abstract class RangeCalendarBaseRootState {
 	 * Navigates to the next page of the calendar.
 	 */
 	abstract nextPage(): void;
-	// nextPage() {
-	// 	handleCalendarNextPage({
-	// 		fixedWeeks: this.opts.fixedWeeks.current,
-	// 		locale: this.opts.locale.current,
-	// 		numberOfMonths: this.opts.numberOfMonths.current,
-	// 		pagedNavigation: this.opts.pagedNavigation.current,
-	// 		setMonths: this.setMonths,
-	// 		setPlaceholder: (date: DateValue) => (this.opts.placeholder.current = date),
-	// 		weekStartsOn: this.opts.weekStartsOn.current,
-	// 		months: this.months,
-	// 	});
-	// }
 
 	/**
 	 * Navigates to the previous page of the calendar.
 	 */
 	abstract prevPage(): void;
-	// prevPage() {
-	// 	handleCalendarPrevPage({
-	// 		fixedWeeks: this.opts.fixedWeeks.current,
-	// 		locale: this.opts.locale.current,
-	// 		numberOfMonths: this.opts.numberOfMonths.current,
-	// 		pagedNavigation: this.opts.pagedNavigation.current,
-	// 		setMonths: this.setMonths,
-	// 		setPlaceholder: (date: DateValue) => (this.opts.placeholder.current = date),
-	// 		weekStartsOn: this.opts.weekStartsOn.current,
-	// 		months: this.months,
-	// 	});
-	// }
-
-	// nextYear() {
-	// 	this.opts.placeholder.current = this.opts.placeholder.current.add({ years: 1 });
-	// }
-
-	// prevYear() {
-	// 	this.opts.placeholder.current = this.opts.placeholder.current.subtract({ years: 1 });
-	// }
-
-	// setYear(year: number) {
-	// 	this.opts.placeholder.current = this.opts.placeholder.current.set({ year });
-	// }
-
-	// setMonth(month: number) {
-	// 	this.opts.placeholder.current = this.opts.placeholder.current.set({ month });
-	// }
 
 	getBitsAttr: (typeof calendarAttrs)["getAttr"] = (part) => {
 		return calendarAttrs.getAttr(part, "range-calendar");
 	};
-
-	// readonly snippetProps = $derived.by(() => ({
-	// 	months: this.months,
-	// 	weekdays: this.weekdays,
-	// }));
 
 	readonly props = $derived.by(
 		() =>
@@ -703,7 +485,7 @@ export abstract class RangeCalendarBaseRootState {
 			}) as const
 	);
 
-	#hasDisabledDatesInRange(start: DateValue, end: DateValue): boolean {
+	hasDisabledDatesInRange(start: DateValue, end: DateValue): boolean {
 		for (
 			let date = start;
 			isBefore(date, end) || this.isSame(date, end);
@@ -715,34 +497,25 @@ export abstract class RangeCalendarBaseRootState {
 	}
 }
 
-export interface RangeCalendarCellStateOpts
+export interface RangeCalendarBaseCellStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
 			month: DateValue;
 		}> {}
 
-export abstract class RangeCalendarBaseCellState {
-	// static create(opts: RangeCalendarCellStateOpts) {
-	// 	return RangeCalendarCellContext.set(
-	// 		new RangeCalendarCellState(opts, CalendarRootContext.get() as RangeCalendarRootState)
-	// 	);
-	// }
-	readonly opts: RangeCalendarCellStateOpts;
-	readonly root: RangeCalendarBaseRootState;
+export abstract class RangeCalendarBaseCellState<
+	T extends RangeCalendarBaseCellStateOpts = RangeCalendarBaseCellStateOpts,
+	U extends RangeCalendarBaseRootState = RangeCalendarBaseRootState,
+> {
+	readonly opts: T;
+	readonly root: U;
 	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
 	readonly isDisabled = $derived.by(() => this.root.isUnitDisabled(this.opts.date.current));
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isUnitUnavailable.current(this.opts.date.current)
 	);
-	// readonly isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
-	// readonly isOutsideMonth = $derived.by(
-	// 	() => !isSameMonth(this.opts.date.current, this.opts.month.current)
-	// );
-	// readonly isOutsideVisibleMonths = $derived.by(() =>
-	// 	this.root.isOutsideVisibleMonths(this.opts.date.current)
-	// );
-	readonly isFocusedDate = $derived.by(() =>
+	readonly isFocusedUnit = $derived.by(() =>
 		this.root.isSame(this.opts.date.current, this.root.opts.placeholder.current)
 	);
 	readonly isSelectedDate = $derived.by(() => this.root.isSelected(this.opts.date.current));
@@ -775,16 +548,7 @@ export abstract class RangeCalendarBaseCellState {
 			: false
 	);
 
-	// readonly labelText = $derived.by(() =>
-	// 	this.root.formatter.custom(this.cellDate, {
-	// 		weekday: "long",
-	// 		month: "long",
-	// 		day: "numeric",
-	// 		year: "numeric",
-	// 	})
-	// );
-
-	constructor(opts: RangeCalendarCellStateOpts, root: RangeCalendarBaseRootState) {
+	constructor(opts: T, root: U) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -796,63 +560,18 @@ export abstract class RangeCalendarBaseCellState {
 	}));
 
 	abstract readonly ariaDisabled: boolean;
-	// readonly ariaDisabled = $derived.by(() => {
-	// 	return (
-	// 		this.isDisabled ||
-	// 		(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current) ||
-	// 		this.isUnavailable
-	// 	);
-	// });
-
-	// readonly sharedDataAttrs = $derived.by(
-	// 	() =>
-	// 		({
-	// 			"data-unavailable": getDataUnavailable(this.isUnavailable),
-	// 			"data-today": this.isDateToday ? "" : undefined,
-	// 			"data-outside-month": this.isOutsideMonth ? "" : undefined,
-	// 			"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
-	// 			"data-focused": this.isFocusedDate ? "" : undefined,
-	// 			"data-selection-start": this.isSelectionStart ? "" : undefined,
-	// 			"data-selection-end": this.isSelectionEnd ? "" : undefined,
-	// 			"data-range-start": this.isRangeStart ? "" : undefined,
-	// 			"data-range-end": this.isRangeEnd ? "" : undefined,
-	// 			"data-range-middle": this.isRangeMiddle ? "" : undefined,
-	// 			"data-highlighted": this.isHighlighted ? "" : undefined,
-	// 			"data-selected": getDataSelected(this.isSelectedDate),
-	// 			"data-value": this.opts.date.current.toString(),
-	// 			"data-type": getDateValueType(this.opts.date.current),
-	// 			"data-disabled": getDataDisabled(
-	// 				this.isDisabled ||
-	// 					(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
-	// 			),
-	// 		}) as const
-	// );
-
-	// readonly props = $derived.by(
-	// 	() =>
-	// 		({
-	// 			id: this.opts.id.current,
-	// 			role: "gridcell",
-	// 			"aria-selected": getAriaSelected(this.isSelectedDate),
-	// 			"aria-disabled": getAriaDisabled(this.ariaDisabled),
-	// 			...this.sharedDataAttrs,
-	// 			[this.root.getBitsAttr("cell")]: "",
-	// 			...attachRef(this.opts.ref),
-	// 		}) as const
-	// );
 }
 
 export interface RangeCalendarUnitStateOpts extends WithRefOpts {}
 
-export abstract class RangeCalendarBaseUnitState {
-	// static create(opts: RangeCalendarDayStateOpts) {
-	// 	return new RangeCalendarDayState(opts, RangeCalendarCellContext.get());
-	// }
+export abstract class RangeCalendarBaseUnitState<
+	T extends RangeCalendarUnitStateOpts = RangeCalendarUnitStateOpts,
+	U extends RangeCalendarBaseCellState = RangeCalendarBaseCellState,
+> {
+	readonly opts: T;
+	readonly cell: U;
 
-	readonly opts: RangeCalendarUnitStateOpts;
-	readonly cell: RangeCalendarBaseCellState;
-
-	constructor(opts: RangeCalendarUnitStateOpts, cell: RangeCalendarBaseCellState) {
+	constructor(opts: T, cell: U) {
 		this.opts = opts;
 		this.cell = cell;
 
@@ -860,15 +579,6 @@ export abstract class RangeCalendarBaseUnitState {
 		this.onmouseenter = this.onmouseenter.bind(this);
 		this.onfocusin = this.onfocusin.bind(this);
 	}
-
-	// readonly #tabindex = $derived.by(() =>
-	// 	(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
-	// 	this.cell.isDisabled
-	// 		? undefined
-	// 		: this.cell.isFocusedDate
-	// 			? 0
-	// 			: -1
-	// );
 
 	onclick(e: BitsMouseEvent) {
 		if (this.cell.isDisabled) return;
@@ -884,31 +594,4 @@ export abstract class RangeCalendarBaseUnitState {
 		if (this.cell.isDisabled) return;
 		this.cell.root.focusedValue = this.cell.opts.date.current;
 	}
-
-	// readonly snippetProps = $derived.by(() => ({
-	// 	disabled: this.cell.isDisabled,
-	// 	unavailable: this.cell.isUnavailable,
-	// 	selected: this.cell.isSelectedDate,
-	// 	day: `${this.cell.opts.date.current.day}`,
-	// }));
-
-	// readonly props = $derived.by(
-	// 	() =>
-	// 		({
-	// 			id: this.opts.id.current,
-	// 			role: "button",
-	// 			"aria-label": this.cell.labelText,
-	// 			"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),
-	// 			...this.cell.sharedDataAttrs,
-	// 			tabindex: this.#tabindex,
-	// 			[this.cell.root.getBitsAttr("day")]: "",
-	// 			// Shared logic for range calendar and calendar
-	// 			"data-bits-day": "",
-	// 			//
-	// 			onclick: this.onclick,
-	// 			onmouseenter: this.onmouseenter,
-	// 			onfocusin: this.onfocusin,
-	// 			...attachRef(this.opts.ref),
-	// 		}) as const
-	// );
 }
