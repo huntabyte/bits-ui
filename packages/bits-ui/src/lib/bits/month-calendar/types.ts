@@ -222,11 +222,11 @@ export type MonthCalendarRootProps = MonthCalendarRootPropsWithoutHTML &
 export type MonthCalendarCellPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * The date value of the cell.
+		 * The month value of the cell.
 		 *
 		 * @required
 		 */
-		date: DateValue;
+		month: DateValue;
 
 		/**
 		 * The year DateValue that this cell is being rendered in.
