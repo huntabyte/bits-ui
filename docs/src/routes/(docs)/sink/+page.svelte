@@ -1,5 +1,7 @@
 <script lang="ts">
+	import Calendar from "./calendar.svelte";
 	import Combobox from "./combobox.svelte";
+	import RangeCal from "./range-cal.svelte";
 
 	let myValue = $state("");
 	const testItems = [
@@ -11,5 +13,13 @@
 
 <div class="mt-4">
 	<button onclick={() => (myValue = "apple")}> Select Apple </button>
-	<Combobox items={testItems} type="single" bind:value={myValue} />
+	<!-- <Combobox items={testItems} type="single" bind:value={myValue} /> -->
+	<div class="flex flex-col gap-4">
+		<div class="flex">
+			<Calendar></Calendar>
+		</div>
+		<div class="flex">
+			<RangeCal></RangeCal>
+		</div>
+	</div>
 </div>

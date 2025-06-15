@@ -69,7 +69,9 @@ export interface CalendarBaseRootStateOpts
 // 	"Calendar.Root | RangeCalendar.Root"
 // );
 
-export abstract class CalendarBaseRootState<T extends CalendarBaseRootStateOpts> {
+export abstract class CalendarBaseRootState<
+	T extends CalendarBaseRootStateOpts = CalendarBaseRootStateOpts,
+> {
 	// static create(opts: BaseCalendarRootStateOpts) {
 	// 	return CalendarRootContext.set(new CalendarRootState(opts));
 	// }
@@ -254,7 +256,7 @@ export abstract class CalendarBaseRootState<T extends CalendarBaseRootStateOpts>
 	}
 
 	#setupFormatterEffect() {
-		$effect.pre(() => {
+		$effect(() => {
 			if (this.formatter.getLocale() === this.opts.locale.current) return;
 			this.formatter.setLocale(this.opts.locale.current);
 		});
@@ -534,18 +536,18 @@ export abstract class CalendarBaseRootState<T extends CalendarBaseRootStateOpts>
 
 export interface CalendarBaseHeadingStateOpts extends WithRefOpts {}
 
-export abstract class CalendarBaseHeadingState<T extends CalendarBaseRootStateOpts> {
+export abstract class CalendarBaseHeadingState<
+	T extends CalendarBaseHeadingStateOpts = CalendarBaseHeadingStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarBaseHeadingStateOpts) {
 	// 	return new CalendarBaseHeadingState(opts, CalendarRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseHeadingStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarBaseHeadingStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -578,15 +580,18 @@ export interface CalendarBaseCellStateOpts
 			date: DateValue;
 		}> {}
 
-export abstract class CalendarBaseCellState<T extends CalendarBaseRootStateOpts> {
+export abstract class CalendarBaseCellState<
+	T extends CalendarBaseCellStateOpts = CalendarBaseCellStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarCellStateOpts) {
 	// 	return CalendarBaseCellContext.set(
 	// 		new CalendarBaseCellState(opts, CalendarRootContext.get() as CalendarBaseRootState)
 	// 	);
 	// }
 
-	readonly opts: CalendarBaseCellStateOpts;
-	readonly root: CalendarBaseRootState<T>;
+	readonly opts: T;
+	readonly root: U;
 	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
 	readonly isDisabled = $derived.by(() => this.root.isUnitDisabled(this.opts.date.current));
 	readonly isUnavailable = $derived.by(() =>
@@ -614,7 +619,7 @@ export abstract class CalendarBaseCellState<T extends CalendarBaseRootStateOpts>
 	// 	})
 	// );
 
-	constructor(opts: CalendarBaseCellStateOpts, root: CalendarBaseRootState<T>) {
+	constructor(opts: T, root: U) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -668,15 +673,18 @@ export abstract class CalendarBaseCellState<T extends CalendarBaseRootStateOpts>
 
 export interface CalendarBaseUnitStateOpts extends WithRefOpts {}
 
-export class CalendarBaseUnitState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseUnitState<
+	T extends CalendarBaseUnitStateOpts = CalendarBaseUnitStateOpts,
+	U extends CalendarBaseCellState = CalendarBaseCellState,
+> {
 	// static create(opts: CalendarDayStateOpts) {
 	// 	return new CalendarDayState(opts, CalendarCellContext.get());
 	// }
 
-	readonly opts: CalendarBaseUnitStateOpts;
-	readonly cell: CalendarBaseCellState<T>;
+	readonly opts: T;
+	readonly cell: U;
 
-	constructor(opts: CalendarBaseUnitStateOpts, cell: CalendarBaseCellState<T>) {
+	constructor(opts: T, cell: U) {
 		this.opts = opts;
 		this.cell = cell;
 		this.onclick = this.onclick.bind(this);
@@ -724,19 +732,19 @@ export class CalendarBaseUnitState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBaseNextButtonStateOpts extends WithRefOpts {}
 
-export class CalendarBaseNextButtonState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseNextButtonState<
+	T extends CalendarBaseNextButtonStateOpts = CalendarBaseNextButtonStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarBaseNextButtonStateOpts) {
 	// 	return new CalendarNextButtonState(opts, CalendarRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseNextButtonStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 	readonly isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
 
-	constructor(
-		opts: CalendarBaseNextButtonStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -767,19 +775,19 @@ export class CalendarBaseNextButtonState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBasePrevButtonStateOpts extends WithRefOpts {}
 
-export class CalendarBasePrevButtonState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBasePrevButtonState<
+	T extends CalendarBasePrevButtonStateOpts = CalendarBasePrevButtonStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarPrevButtonStateOpts) {
 	// 	return new CalendarPrevButtonState(opts, CalendarRootContext.get());
 	// }
 
-	readonly opts: CalendarBasePrevButtonStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 	readonly isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
 
-	constructor(
-		opts: CalendarBasePrevButtonStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
@@ -810,18 +818,18 @@ export class CalendarBasePrevButtonState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBaseGridStateOpts extends WithRefOpts {}
 
-export class CalendarBaseGridState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseGridState<
+	T extends CalendarBaseGridStateOpts = CalendarBaseGridStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarBaseGridStateOpts) {
 	// 	return new CalendarGridState(opts, CalendarRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseGridStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarBaseGridStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -844,18 +852,18 @@ export class CalendarBaseGridState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBaseGridBodyStateOpts extends WithRefOpts {}
 
-export class CalendarBaseGridBodyState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseGridBodyState<
+	T extends CalendarBaseGridBodyStateOpts = CalendarBaseGridBodyStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarBaseGridBodyStateOpts) {
 	// 	return new CalendarGridBodyState(opts, CalendarRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseGridBodyStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarBaseGridBodyStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -874,18 +882,18 @@ export class CalendarBaseGridBodyState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBaseGridHeadStateOpts extends WithRefOpts {}
 
-export class CalendarBaseGridHeadState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseGridHeadState<
+	T extends CalendarBaseGridHeadStateOpts = CalendarBaseGridHeadStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarGridHeadStateOpts) {
 	// 	return new CalendarGridHeadState(opts, CalendarBaseRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseGridHeadStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarBaseGridHeadStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -904,18 +912,18 @@ export class CalendarBaseGridHeadState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBaseGridRowStateOpts extends WithRefOpts {}
 
-export class CalendarBaseGridRowState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseGridRowState<
+	T extends CalendarBaseGridRowStateOpts = CalendarBaseGridRowStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarGridRowStateOpts) {
 	// 	return new CalendarGridRowState(opts, CalendarRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseGridRowStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarBaseGridRowStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -934,18 +942,18 @@ export class CalendarBaseGridRowState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBaseHeadCellStateOpts extends WithRefOpts {}
 
-export class CalendarBaseHeadCellState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseHeadCellState<
+	T extends CalendarBaseHeadCellStateOpts = CalendarBaseHeadCellStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarHeadCellStateOpts) {
 	// 	return new CalendarHeadCellState(opts, CalendarRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseHeadCellStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarBaseHeadCellStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
@@ -964,18 +972,18 @@ export class CalendarBaseHeadCellState<T extends CalendarBaseRootStateOpts> {
 
 export interface CalendarBaseHeaderStateOpts extends WithRefOpts {}
 
-export class CalendarBaseHeaderState<T extends CalendarBaseRootStateOpts> {
+export class CalendarBaseHeaderState<
+	T extends CalendarBaseHeaderStateOpts = CalendarBaseHeaderStateOpts,
+	U extends CalendarBaseRootState = CalendarBaseRootState,
+> {
 	// static create(opts: CalendarHeaderStateOpts) {
 	// 	return new CalendarHeaderState(opts, CalendarBaseRootContext.get());
 	// }
 
-	readonly opts: CalendarBaseHeaderStateOpts;
-	readonly root: CalendarBaseRootState<T> | RangeCalendarRootState;
+	readonly opts: T;
+	readonly root: U | RangeCalendarRootState;
 
-	constructor(
-		opts: CalendarBaseHeaderStateOpts,
-		root: CalendarBaseRootState<T> | RangeCalendarRootState
-	) {
+	constructor(opts: T, root: U | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
 	}
