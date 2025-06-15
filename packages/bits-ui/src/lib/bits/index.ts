@@ -28,6 +28,7 @@ export { Popover } from "./popover/index.js";
 export { Progress } from "./progress/index.js";
 export { RadioGroup } from "./radio-group/index.js";
 export { RangeCalendar } from "./range-calendar/index.js";
+export { RangeMonthCalendar } from "./range-month-calendar/index.js";
 export { RatingGroup } from "./rating-group/index.js";
 export { ScrollArea } from "./scroll-area/index.js";
 export { Select } from "./select/index.js";
