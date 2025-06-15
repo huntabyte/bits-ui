@@ -59,15 +59,24 @@ export type TimeRange<T extends TimeValue = Time> = {
 	end: T | undefined;
 };
 
-export type Month<T> = {
+export interface CalendarView<T> {
 	/**
-	 * A `DateValue` used to represent the month. Since days
-	 * from the previous and next months may be included in the
-	 * calendar grid, we need a source of truth for the value
-	 * the grid is representing.
+	 * A `DateValue` representing the main reference point for the view.
+	 * For example, in a monthly calendar, this would be a date in the
+	 * month being displayed. It acts as the source of truth for the view's scope.
 	 */
 	value: DateValue;
 
+	/**
+	 * A flat array of all the dates shown in the view, including dates from
+	 * adjacent periods (e.g., previous/next months) that are displayed to fill
+	 * the grid. Useful for rendering the calendar layout consistently.
+	 */
+	dates: T[];
+}
+
+export interface Month<T> extends CalendarView<T> {
+	value: DateValue;
 	/**
 	 * An array of arrays representing the weeks in the calendar.
 	 * Each sub-array represents a week, and contains the dates for each
@@ -76,16 +85,17 @@ export type Month<T> = {
 	 * represents a day.
 	 */
 	weeks: T[][];
+}
 
+export interface Year<T> extends CalendarView<{ value: T; label: string }> {
 	/**
-	 * An array of all the dates in the current month, including dates from
-	 * the previous and next months that are used to fill out the calendar grid.
-	 * This array is useful for rendering the calendar grid in a customizable way,
-	 * as it provides all the dates that should be displayed in the grid in a flat
-	 * array.
+	 * A 2D array representing the months in the year view.
+	 * Each sub-array represents a row of months, and each entry contains
+	 * the value and label of a month. This structure supports rendering
+	 * a grid-based year view (e.g., 3x4 layout for 12 months).
 	 */
-	dates: T[];
-};
+	months: { value: T; label: string }[][];
+}
 
 export type DateSegmentPart = (typeof DATE_SEGMENT_PARTS)[number];
 export type EditableTimeSegmentPart = (typeof EDITABLE_TIME_SEGMENT_PARTS)[number];

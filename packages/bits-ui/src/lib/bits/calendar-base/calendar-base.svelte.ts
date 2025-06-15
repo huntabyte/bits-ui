@@ -604,7 +604,7 @@ export abstract class CalendarBaseCellState<
 	// readonly isOutsideVisibleMonths = $derived.by(() =>
 	// 	this.root.isOutsideVisibleMonths(this.opts.date.current)
 	// );
-	abstract readonly isFocusedDate: boolean;
+	// abstract readonly isFocusedDate: boolean;
 	// readonly isFocusedDate = $derived.by(() =>
 	// 	isSameDay(this.opts.date.current, this.root.opts.placeholder.current)
 	// );

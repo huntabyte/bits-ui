@@ -400,8 +400,9 @@ export class CalendarRootState extends CalendarBaseRootState<CalendarRootStateOp
 			calendarNode: this.opts.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,
 			isNextButtonDisabled: this.isNextButtonDisabled,
-			months: this.months,
-			numberOfMonths: this.opts.numberOfMonths.current,
+			items: this.months,
+			numberOfUnits: this.opts.numberOfMonths.current,
+			unit: "months",
 		});
 	}
 
