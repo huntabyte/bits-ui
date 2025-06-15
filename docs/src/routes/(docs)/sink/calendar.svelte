@@ -5,8 +5,6 @@
 	import { getLocalTimeZone, today } from "@internationalized/date";
 
 	let value = $state([today(getLocalTimeZone())]);
-
-	$inspect(value);
 </script>
 
 <Calendar.Root

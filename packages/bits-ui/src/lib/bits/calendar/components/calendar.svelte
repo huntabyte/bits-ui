@@ -96,7 +96,7 @@
 		maxValue: box.with(() => maxValue),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		initialFocus: box.with(() => initialFocus),
-		maxDays: box.with(() => maxDays),
+		maxUnits: box.with(() => maxDays),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
