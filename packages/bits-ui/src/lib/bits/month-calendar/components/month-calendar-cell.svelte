@@ -11,7 +11,7 @@
 		child,
 		ref = $bindable(null),
 		id = createId(uid),
-		date,
+		month,
 		year,
 		...restProps
 	}: MonthCalendarCellProps = $props();
@@ -22,7 +22,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		date: box.with(() => date),
+		date: box.with(() => month),
 		year: box.with(() => year),
 	});
 
