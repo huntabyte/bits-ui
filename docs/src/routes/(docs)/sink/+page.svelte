@@ -3,6 +3,7 @@
 	import Combobox from "./combobox.svelte";
 	import MonthCal from "./month-cal.svelte";
 	import RangeCal from "./range-cal.svelte";
+	import RangeMonthCal from "./range-month-cal.svelte";
 
 	let myValue = $state("");
 	const testItems = [
@@ -24,6 +25,9 @@
 		</div>
 		<div class="flex">
 			<MonthCal></MonthCal>
+		</div>
+		<div class="flex">
+			<RangeMonthCal></RangeMonthCal>
 		</div>
 	</div>
 </div>

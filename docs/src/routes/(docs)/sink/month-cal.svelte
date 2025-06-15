@@ -33,9 +33,9 @@
 			{#each years as year, i (i)}
 				<MonthCalendar.Grid class="w-full border-collapse select-none space-y-1">
 					<MonthCalendar.GridBody>
-						{#each year.months as weekDates, i (i)}
+						{#each year.months as months, i (i)}
 							<MonthCalendar.GridRow class="flex w-full">
-								{#each weekDates as { value, label }, i (i)}
+								{#each months as { value, label }, i (i)}
 									<MonthCalendar.Cell
 										month={value}
 										year={year.value}

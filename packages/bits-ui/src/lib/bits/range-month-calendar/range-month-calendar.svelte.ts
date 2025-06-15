@@ -247,7 +247,7 @@ interface RangeMonthCalendarCellStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
-			month: DateValue;
+			year: DateValue;
 		}> {}
 
 export class RangeMonthCalendarCellState extends RangeCalendarBaseCellState<

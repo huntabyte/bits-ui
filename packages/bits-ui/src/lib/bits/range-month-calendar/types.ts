@@ -1,8 +1,12 @@
 import type { DateValue } from "@internationalized/date";
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { DateMatcher, DateRange } from "$lib/shared/index.js";
-import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveTdAttributes,
+} from "$lib/shared/attributes.js";
 import type { Year } from "$lib/shared/date/types.js";
+import type { CalendarCellSnippetProps } from "$lib/types.js";
 
 export type RangeMonthCalendarRootSnippetProps = {
 	years: Year<DateValue>[];
@@ -196,6 +200,26 @@ export type RangeMonthCalendarRootPropsWithoutHTML = WithChild<
 export type RangeMonthCalendarRootProps = RangeMonthCalendarRootPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, RangeMonthCalendarRootPropsWithoutHTML>;
 
+export type RangeMonthCalendarCellPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The month value of the cell.
+		 *
+		 * @required
+		 */
+		month: DateValue;
+
+		/**
+		 * The year DateValue that this cell is being rendered in.
+		 */
+		year: DateValue;
+	},
+	CalendarCellSnippetProps
+>;
+
+export type RangeMonthCalendarCellProps = RangeMonthCalendarCellPropsWithoutHTML &
+	Without<BitsPrimitiveTdAttributes, RangeMonthCalendarCellPropsWithoutHTML>;
+
 export type RangeMonthCalendarDaySnippetProps = {
 	disabled: boolean;
 	unavailable: boolean;
@@ -220,8 +244,8 @@ export type {
 	CalendarHeadingPropsWithoutHTML as RangeMonthCalendarHeadingPropsWithoutHTML,
 	CalendarGridProps as RangeMonthCalendarGridProps,
 	CalendarGridPropsWithoutHTML as RangeMonthCalendarGridPropsWithoutHTML,
-	CalendarCellProps as RangeMonthCalendarCellProps,
-	CalendarCellPropsWithoutHTML as RangeMonthCalendarCellPropsWithoutHTML,
+	// CalendarCellProps as RangeMonthCalendarCellProps,
+	// CalendarCellPropsWithoutHTML as RangeMonthCalendarCellPropsWithoutHTML,
 	// CalendarDayProps as RangeMonthCalendarDayProps,
 	// CalendarDayPropsWithoutHTML as RangeMonthCalendarDayPropsWithoutHTML,
 	CalendarGridBodyProps as RangeMonthCalendarGridBodyProps,

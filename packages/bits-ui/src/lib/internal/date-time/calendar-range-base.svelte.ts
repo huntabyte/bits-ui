@@ -501,7 +501,6 @@ export interface RangeCalendarBaseCellStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
-			month: DateValue;
 		}> {}
 
 export abstract class RangeCalendarBaseCellState<

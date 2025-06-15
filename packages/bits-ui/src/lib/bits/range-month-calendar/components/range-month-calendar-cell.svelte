@@ -11,8 +11,8 @@
 		child,
 		id = createId(uid),
 		ref = $bindable(null),
-		date,
 		month,
+		year,
 		...restProps
 	}: RangeMonthCalendarCellProps = $props();
 
@@ -22,8 +22,8 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		date: box.with(() => date),
-		month: box.with(() => month),
+		date: box.with(() => month),
+		year: box.with(() => year),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, cellState.props));
