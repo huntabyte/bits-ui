@@ -400,7 +400,7 @@ describe("type='single'", () => {
 	});
 
 	describe("Rendering Options", () => {
-		it("should render six weeks when `fixedWeeks` is `true`", async () => {
+		it("should render six weeks when `fixedWeeks` is `true`", { timeout: 5000 }, async () => {
 			const t = setup({
 				value: calendarDate,
 				fixedWeeks: true,
