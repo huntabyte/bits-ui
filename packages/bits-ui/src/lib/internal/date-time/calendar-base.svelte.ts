@@ -7,7 +7,7 @@ import {
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { watch } from "runed";
-import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
+import type { RangeCalendarRootState } from "../../bits/range-calendar/range-calendar.svelte.js";
 import {
 	getAriaDisabled,
 	getAriaHidden,

@@ -33,7 +33,7 @@ import {
 	type CalendarBaseCellStateOpts,
 	type CalendarBaseRootStateOpts,
 	type CalendarBaseUnitStateOpts,
-} from "../calendar-base/calendar-base.svelte.js";
+} from "../../internal/date-time/calendar-base.svelte.js";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
 
 interface MonthCalendarRootStateOpts
