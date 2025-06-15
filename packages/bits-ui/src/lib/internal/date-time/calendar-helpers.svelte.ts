@@ -40,10 +40,10 @@ import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { watch } from "runed";
 import type { CalendarView, Year } from "$lib/shared/date/types.js";
 
-type SameFn = (a: DateValue, b: DateValue) => boolean;
-type CalendarUnit = "day" | "month" | "year";
+export type SameFn = (a: DateValue, b: DateValue) => boolean;
+export type CalendarUnit = "day" | "month" | "year";
 
-const SAME_FN_MAP: Record<CalendarUnit, SameFn> = {
+export const SAME_FN_MAP: Record<CalendarUnit, SameFn> = {
 	day: isSameDay,
 	month: isSameMonth,
 	year: isSameYear,
