@@ -10,10 +10,11 @@ import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { OnChangeFn, WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 export const tooltipAttrs = createBitsAttrs({
 	component: "tooltip",
@@ -96,6 +97,7 @@ interface TooltipRootStateOpts
 			disableCloseOnTriggerClick: boolean | undefined;
 			disabled: boolean | undefined;
 			ignoreNonKeyboardFocus: boolean | undefined;
+			onOpenChangeComplete: OnChangeFn<boolean>;
 		}>,
 		WritableBoxedValues<{
 			open: boolean;
@@ -148,6 +150,14 @@ export class TooltipRootState {
 			this.delayDuration ?? 0,
 			{ immediate: false }
 		);
+
+		new OpenChangeComplete({
+			open: this.opts.open,
+			ref: box.with(() => this.contentNode),
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
 
 		watch(
 			() => this.delayDuration,

@@ -19,7 +19,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 
 const tabsAttrs = createBitsAttrs({
 	component: "tabs",

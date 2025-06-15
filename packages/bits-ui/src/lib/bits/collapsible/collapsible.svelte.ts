@@ -1,6 +1,7 @@
 import {
 	afterTick,
 	attachRef,
+	box,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
@@ -12,7 +13,13 @@ import {
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	OnChangeFn,
+	WithRefOpts,
+} from "$lib/internal/types.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 const collapsibleAttrs = createBitsAttrs({
 	component: "collapsible",
@@ -26,6 +33,7 @@ interface CollapsibleRootStateOpts
 		}>,
 		ReadableBoxedValues<{
 			disabled: boolean;
+			onOpenChangeComplete: OnChangeFn<boolean>;
 		}> {}
 
 const CollapsibleRootContext = new Context<CollapsibleRootState>("Collapsible.Root");
@@ -41,6 +49,14 @@ export class CollapsibleRootState {
 	constructor(opts: CollapsibleRootStateOpts) {
 		this.opts = opts;
 		this.toggleOpen = this.toggleOpen.bind(this);
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
 	}
 
 	toggleOpen() {

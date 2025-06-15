@@ -9,6 +9,7 @@
 		open = $bindable(false),
 		dir = "ltr",
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		children,
 	}: ContextMenuRootProps = $props();
 
@@ -30,6 +31,7 @@
 					onOpenChange(v);
 				}
 			),
+			onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 		},
 		root
 	);

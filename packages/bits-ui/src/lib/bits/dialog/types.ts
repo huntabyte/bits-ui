@@ -27,6 +27,11 @@ export type DialogRootPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the popover's open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * A callback called when the dialog finishes opening/closing animations.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 }>;
 
 export type DialogRootProps = DialogRootPropsWithoutHTML;

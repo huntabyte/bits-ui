@@ -49,6 +49,11 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
+	 * A callback function called when the open state changes complete.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
+
+	/**
 	 * A function that returns true if the given date is unavailable,
 	 * where if selected, the date field will be marked as invalid.
 	 */

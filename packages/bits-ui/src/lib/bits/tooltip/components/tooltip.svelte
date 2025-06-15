@@ -8,6 +8,7 @@
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		disabled,
 		delayDuration,
 		disableCloseOnTriggerClick,
@@ -29,6 +30,7 @@
 		disableHoverableContent: box.with(() => disableHoverableContent),
 		ignoreNonKeyboardFocus: box.with(() => ignoreNonKeyboardFocus),
 		disabled: box.with(() => disabled),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 

@@ -15,6 +15,7 @@
 		open = $bindable(false),
 		disabled = false,
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		...restProps
 	}: CollapsibleRootProps = $props();
 
@@ -32,6 +33,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

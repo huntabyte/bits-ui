@@ -1,4 +1,9 @@
-import { type ReadableBoxedValues, type WritableBoxedValues, attachRef } from "svelte-toolbelt";
+import {
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+	attachRef,
+	box,
+} from "svelte-toolbelt";
 import { Context } from "runed";
 import { kbd } from "$lib/internal/kbd.js";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
@@ -6,9 +11,11 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
+	OnChangeFn,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement } from "$lib/internal/is.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 const popoverAttrs = createBitsAttrs({
 	component: "popover",
@@ -19,8 +26,11 @@ const PopoverRootContext = new Context<PopoverRootState>("Popover.Root");
 
 interface PopoverRootStateOpts
 	extends WritableBoxedValues<{
-		open: boolean;
-	}> {}
+			open: boolean;
+		}>,
+		ReadableBoxedValues<{
+			onOpenChangeComplete: OnChangeFn<boolean>;
+		}> {}
 
 export class PopoverRootState {
 	static create(opts: PopoverRootStateOpts) {
@@ -33,6 +43,14 @@ export class PopoverRootState {
 
 	constructor(opts: PopoverRootStateOpts) {
 		this.opts = opts;
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
 	}
 
 	toggleOpen() {

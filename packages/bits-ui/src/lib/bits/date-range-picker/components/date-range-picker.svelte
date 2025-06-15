@@ -16,6 +16,7 @@
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		value = $bindable(),
 		id = useId(),
 		ref = $bindable(null),
@@ -179,6 +180,7 @@
 
 	PopoverRootState.create({
 		open: pickerRootState.opts.open,
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 
 	const fieldRootState = DateRangeFieldRootState.create({

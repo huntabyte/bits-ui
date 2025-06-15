@@ -28,6 +28,11 @@ export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	 * A callback function called when the open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * A callback function called when the open state changes complete.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 }>;
 
 export type CollapsibleRootProps = CollapsibleRootPropsWithoutHTML &

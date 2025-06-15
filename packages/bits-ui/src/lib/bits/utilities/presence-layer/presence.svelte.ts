@@ -1,7 +1,7 @@
 import { type ReadableBox, type ReadableBoxedValues, executeCallbacks } from "svelte-toolbelt";
 import { Previous, watch } from "runed";
 import { on } from "svelte/events";
-import { StateMachine } from "$lib/internal/state-machine.svelte.js";
+import { StateMachine } from "$lib/internal/state-machine.js";
 
 export interface PresenceOptions
 	extends ReadableBoxedValues<{

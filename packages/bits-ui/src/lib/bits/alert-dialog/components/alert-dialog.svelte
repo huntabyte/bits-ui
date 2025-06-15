@@ -4,7 +4,12 @@
 	import { noop } from "$lib/internal/noop.js";
 	import { DialogRootState } from "$lib/bits/dialog/dialog.svelte.js";
 
-	let { open = $bindable(false), onOpenChange = noop, children }: AlertDialogRootProps = $props();
+	let {
+		open = $bindable(false),
+		onOpenChange = noop,
+		onOpenChangeComplete = noop,
+		children,
+	}: AlertDialogRootProps = $props();
 
 	DialogRootState.create({
 		variant: box.with(() => "alert-dialog"),
@@ -15,6 +20,7 @@
 				onOpenChange(v);
 			}
 		),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 

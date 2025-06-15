@@ -5,14 +5,21 @@ import {
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	box,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
-import type { BitsFocusEvent, BitsPointerEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsPointerEvent,
+	OnChangeFn,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 const linkPreviewAttrs = createBitsAttrs({
 	component: "link-preview",
@@ -28,6 +35,7 @@ interface LinkPreviewRootStateOpts
 		ReadableBoxedValues<{
 			openDelay: number;
 			closeDelay: number;
+			onOpenChangeComplete: OnChangeFn<boolean>;
 		}> {}
 
 export class LinkPreviewRootState {
@@ -48,6 +56,14 @@ export class LinkPreviewRootState {
 
 	constructor(opts: LinkPreviewRootStateOpts) {
 		this.opts = opts;
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
 
 		watch(
 			() => this.opts.open.current,

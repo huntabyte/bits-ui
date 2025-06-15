@@ -15,6 +15,7 @@
 		type,
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		loop = false,
 		scrollAlignment = "nearest",
 		required = false,
@@ -70,6 +71,7 @@
 			() => inputValue,
 			(v) => (inputValue = v)
 		),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 
