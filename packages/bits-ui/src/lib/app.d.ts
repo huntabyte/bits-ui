@@ -15,5 +15,4 @@ declare global {
 		readonly map: SvelteMap<string, boolean>;
 		resetBodyStyle: () => void;
 	};
-	var bitsAnimationsDisabled: boolean;
 }

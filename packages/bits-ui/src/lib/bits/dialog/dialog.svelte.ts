@@ -1,9 +1,15 @@
-import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
+import {
+	attachRef,
+	box,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context } from "runed";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { untrack } from "svelte";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.svelte.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -265,6 +271,15 @@ export class DialogContentState {
 	constructor(opts: DialogContentStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+
+		new OpenChangeComplete({
+			ref: this.opts.ref,
+			open: box.with(() => this.root.opts.open.current),
+			enabled: box.with(() => true),
+			onComplete: () => {
+				console.log("open change complete!");
+			},
+		});
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
