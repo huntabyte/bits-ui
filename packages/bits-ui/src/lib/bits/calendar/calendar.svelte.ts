@@ -61,12 +61,16 @@ import {
 	type CalendarBasePrevButtonStateOpts,
 	type CalendarBaseRootStateOpts,
 	type CalendarBaseUnitStateOpts,
-} from "../calendar-base/calendar-base.svelte.js";
+} from "../../internal/date-time/calendar-base.svelte.js";
 import type { MonthCalendarRootState } from "../month-calendar/month-calendar.svelte.js";
+import { RangeMonthCalendarRootState } from "../range-month-calendar/range-month-calendar.svelte.js";
 
 // TODO: RangeMonthCalendarRootState
-type RootState = CalendarRootState | RangeCalendarRootState | MonthCalendarRootState;
-// | RangeMonthCalendarRootState;
+type RootState =
+	| CalendarRootState
+	| RangeCalendarRootState
+	| MonthCalendarRootState
+	| RangeMonthCalendarRootState;
 
 interface CalendarRootStateOpts
 	extends CalendarBaseRootStateOpts,
