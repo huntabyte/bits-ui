@@ -318,21 +318,21 @@ describe("type='single'", () => {
 			}
 		});
 
-		it.skip("works properly when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		it("works properly when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 			const t = setupSingleForceMount({
 				items: ITEMS_WITH_DISABLED,
 				withOpenCheck: true,
 			});
-			const initContentEls = ITEMS.map((item) => t.getByTestId(`${item.value}-content`));
-			for (const content of initContentEls) {
-				expect(content).toBeNull();
+
+			// check that content elements don't exist initially
+			for (const item of ITEMS) {
+				expect(() => t.getByTestId(`${item.value}-content`).element()).toThrow();
 			}
 
 			await t.user.click(t.triggerEls[0]);
 			const firstContentEl = t.getByTestId(`${ITEMS[0]!.value}-content`).element();
 			expect(firstContentEl).toBeVisible();
-			const secondContentEl = t.getByTestId(`${ITEMS[1]!.value}-content`).element();
-			expect(secondContentEl).toBeNull();
+			expect(() => t.getByTestId(`${ITEMS[1]!.value}-content`).element()).toThrow();
 		});
 
 		it("should disable everything when true on root", async () => {
@@ -420,6 +420,7 @@ describe("type='multiple'", () => {
 
 			expectClosed(t.itemEls[0], t.triggerEls[0]);
 			expectNotDisabled(t.itemEls[0], t.triggerEls[0]);
+			await t.user.click(t.triggerEls[0]);
 			expectOpen(t.itemEls[0], t.triggerEls[0]);
 			expectDisabled(t.itemEls[1], t.triggerEls[1]);
 		});
