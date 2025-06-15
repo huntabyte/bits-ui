@@ -1,5 +1,4 @@
 import {
-	type DateDuration,
 	type DateValue,
 	endOfMonth,
 	isSameDay,
@@ -632,36 +631,27 @@ export function useMonthViewPlaceholderSync({
 	});
 }
 
-type PageUnit = "day" | "month" | "week";
-const pageIncrementFields: Record<PageUnit, keyof DateDuration> = {
-	day: "months",
-	month: "years",
-	week: "months",
-};
-
 type GetIsNextButtonDisabledProps = {
 	maxValue: DateValue | undefined;
-	units: Month<DateValue>[];
+	months: Month<DateValue>[];
 	disabled: boolean;
-	unit: PageUnit;
 };
 
 export function getIsNextButtonDisabled({
 	maxValue,
-	units,
+	months,
 	disabled,
-	unit,
 }: GetIsNextButtonDisabledProps) {
-	if (!maxValue || !units.length) return false;
+	if (!maxValue || !months.length) return false;
 	if (disabled) return true;
-	const lastUnitInView = units[units.length - 1]?.value;
-	if (!lastUnitInView) return false;
-	const firstUnitOfNextPage = lastUnitInView
+	const lastMonthInView = months[months.length - 1]?.value;
+	if (!lastMonthInView) return false;
+	const firstMonthOfNextPage = lastMonthInView
 		.add({
-			[pageIncrementFields[unit]]: 1,
+			months: 1,
 		})
 		.set({ day: 1 });
-	return isAfter(firstUnitOfNextPage, maxValue);
+	return isAfter(firstMonthOfNextPage, maxValue);
 }
 
 type GetIsPrevButtonDisabledProps = {
