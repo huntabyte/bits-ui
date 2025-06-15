@@ -13,6 +13,8 @@
 	class="rounded-15px border-dark-10 bg-background-alt shadow-card mt-6 border p-[22px]"
 	monthFormat="short"
 	numberOfYears={2}
+	minMonths={3}
+	maxMonths={10}
 >
 	{#snippet children({ years })}
 		<RangeMonthCalendar.Header class="flex items-center justify-between">
