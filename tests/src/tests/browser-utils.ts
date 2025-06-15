@@ -5,6 +5,14 @@ export async function expectNotClickable(node: Element | HTMLElement | Locator) 
 	await expect(userEvent.click(node, { timeout: 100 })).rejects.toThrow();
 }
 
+export function expectNotExists(loc: Locator) {
+	expect(() => loc.element()).toThrow();
+}
+
+export function expectExists(loc: Locator) {
+	expect(loc.element()).toBeInTheDocument();
+}
+
 export async function simulateOutsideClick(node: Element | HTMLElement | Locator) {
 	// simulate an outside click by dispatching the event directly
 	// this bypasses pointer event interception
