@@ -1,10 +1,10 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { REGEXP_ONLY_DIGITS } from "bits-ui";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, sleep } from "../utils.js";
 import PinInputTest from "./pin-input-test.svelte";
 import { setupBrowserUserEvents } from "../browser-utils";
-import { tick, type ComponentProps } from "svelte";
+import { type ComponentProps } from "svelte";
 
 const kbd = getTestKbd();
 
@@ -215,7 +215,7 @@ it("should allow pasting more than the max-length if transformation is provided"
 	});
 
 	await t.copyAndPaste();
-	await tick();
+	await sleep(100);
 
 	expect(mockComplete).toHaveBeenCalledTimes(1);
 	expect(mockComplete).toHaveBeenCalledWith("123456");

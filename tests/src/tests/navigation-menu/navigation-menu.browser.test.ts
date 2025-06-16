@@ -149,7 +149,7 @@ it("should focus next on content with tab when opened", async () => {
 	const trigger = t.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ENTER);
-	await t.user.keyboard(kbd.TAB);
+	await t.user.tab();
 	expect(t.getByTestId("group-item-content-button1")).toHaveFocus();
 });
 

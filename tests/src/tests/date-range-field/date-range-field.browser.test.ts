@@ -4,6 +4,7 @@ import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date
 import { getTestKbd } from "../utils.js";
 import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./date-range-field-test.svelte";
 import { setupBrowserUserEvents } from "../browser-utils";
+import { tick } from "svelte";
 
 const kbd = getTestKbd();
 
@@ -161,12 +162,14 @@ it("should navigate between the fields - right to left", async () => {
 	}
 
 	await t.user.click(t.getByTestId("end-year"));
+	expect(t.end.year).toHaveFocus();
 
 	for (const field of fields) {
 		for (const segment of segments) {
 			if (field === "end" && segment === "year") continue;
 			const seg = t.getByTestId(`${field}-${segment}`);
-			await t.user.tab({ shift: true });
+			await t.user.keyboard(kbd.SHIFT_TAB);
+			await tick();
 			expect(seg).toHaveFocus();
 		}
 	}
