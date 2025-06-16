@@ -1,4 +1,4 @@
-import { userEvent, type Locator } from "@vitest/browser/context";
+import { type Locator } from "@vitest/browser/context";
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import DateFieldTest, { type DateFieldTestProps } from "./date-field-test.svelte";
-import { expectExists, expectNotClickable, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -23,7 +23,7 @@ const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
 const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
 function setup(props: DateFieldTestProps = {}) {
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 	const returned = render(DateFieldTest, { ...props });
 	const month = returned.getByTestId("month").element() as HTMLElement;
 	const day = returned.getByTestId("day").element() as HTMLElement;
@@ -277,7 +277,7 @@ describe("date field", () => {
 		];
 
 		for (const seg of segments) {
-			expectNotClickable(seg);
+			await t.user.click(seg);
 		}
 	});
 

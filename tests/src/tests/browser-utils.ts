@@ -1,8 +1,10 @@
 import { userEvent, type Locator } from "@vitest/browser/context";
 import { expect } from "vitest";
+import { sleep } from "./utils";
 
 export async function expectNotClickable(node: Element | HTMLElement | Locator) {
-	await expect(userEvent.click(node, { timeout: 100 })).rejects.toThrow();
+	const user = setupBrowserUserEvents();
+	await expect(user.click(node, { timeout: 100 })).rejects.toThrow();
 }
 
 export function expectNotExists(loc: Locator) {
@@ -22,4 +24,28 @@ export async function simulateOutsideClick(node: Element | HTMLElement | Locator
 	element.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
 	element.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
 	element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+}
+
+const defaultClickOpts = {
+	force: true,
+};
+
+export function setupBrowserUserEvents() {
+	const user = userEvent.setup();
+	const originalClick = user.click;
+	const originalKeyboard = user.keyboard;
+
+	const click: typeof user.click = async (element, opts) => {
+		await originalClick(element, { ...defaultClickOpts, ...opts });
+		await sleep(20);
+	};
+
+	const keyboard: typeof user.keyboard = async (text) => {
+		await originalKeyboard(text);
+		await sleep(20);
+	};
+
+	Object.assign(user, { click, keyboard });
+
+	return user;
 }

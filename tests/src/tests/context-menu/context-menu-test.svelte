@@ -125,6 +125,9 @@
 							{/snippet}
 						</ContextMenu.CheckboxItem>
 					</ContextMenu.CheckboxGroup>
+					<button data-testid="on-open-focus-override" id="on-open-focus-override"
+						>on-open-focus-override</button
+					>
 				</ContextMenu.Content>
 			</ContextMenu.Portal>
 		</ContextMenu.Root>
@@ -143,7 +146,9 @@
 	<button aria-label="radio-sub" data-testid="sub-radio-binding" onclick={() => (subRadio = "")}
 		>{subRadio}</button
 	>
-	<button data-testid="on-focus-override" id="on-focus-override">on-focus-override</button>
+	<button data-testid="on-close-focus-override" id="on-close-focus-override"
+		>on-close-focus-override</button
+	>
 	<button
 		aria-label="checkbox-group-binding"
 		data-testid="checkbox-group-binding"

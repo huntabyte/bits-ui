@@ -1,12 +1,12 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { page } from "@vitest/browser/context";
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, sleep } from "../utils.js";
 import ContextMenuTest from "./context-menu-test.svelte";
 import type { ContextMenuTestProps } from "./context-menu-test.svelte";
 import type { ContextMenuForceMountTestProps } from "./context-menu-force-mount-test.svelte";
 import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists, simulateOutsideClick } from "../browser-utils";
+import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -17,13 +17,17 @@ type ContextMenuSetupProps = (ContextMenuTestProps | ContextMenuForceMountTestPr
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(props: ContextMenuSetupProps = {}) {
+async function setup(props: ContextMenuSetupProps = {}) {
 	const { component = ContextMenuTest, ...rest } = props;
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 	const returned = render(component, { ...rest });
 	const trigger = returned.getByTestId("trigger").element() as HTMLElement;
 
-	const open = async () => await user.click(trigger, { button: "right" });
+	const open = async () => {
+		await user.click(trigger, { button: "right" });
+		await sleep(10);
+	};
+	await sleep(15);
 
 	return {
 		...returned,
@@ -36,10 +40,11 @@ function setup(props: ContextMenuSetupProps = {}) {
 }
 
 async function open(props: ContextMenuSetupProps = {}) {
-	const t = setup(props);
+	const t = await setup(props);
 	expectNotExists(t.getContent());
 	await t.user.click(t.trigger, { button: "right" });
 	expectExists(t.getContent());
+	await sleep(10);
 	return { ...t };
 }
 
@@ -60,7 +65,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 }
 
 it("should have bits data attrs", async () => {
-	const t = setup();
+	const t = await setup();
 	await t.user.click(t.trigger, { button: "right" });
 
 	const parts = [
@@ -89,7 +94,7 @@ it("should have bits data attrs", async () => {
 });
 
 it("should open when right-clicked & respects binding", async () => {
-	const t = setup();
+	const t = await setup();
 	const binding = t.getByTestId("binding");
 	expect(binding).toHaveTextContent("false");
 	await t.user.click(t.trigger, { button: "right" });
@@ -267,7 +272,8 @@ it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
 			interactOutsideBehavior: "ignore",
 		},
 	});
-	await simulateOutsideClick(t.getByTestId("outside"));
+	await t.user.click(page.getByTestId("outside"));
+
 	expectExists(t.getContent());
 });
 
@@ -304,13 +310,13 @@ it("should not portal if portal is disabled", async () => {
 });
 
 it("should forceMount the content when `forceMount` is true", async () => {
-	const t = setup({ component: ContextMenuForceMountTest });
+	const t = await setup({ component: ContextMenuForceMountTest });
 
 	expectExists(t.getByTestId("content"));
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-	const t = setup({
+	const t = await setup({
 		withOpenCheck: true,
 		component: ContextMenuForceMountTest,
 	});
@@ -329,9 +335,11 @@ it.each([ContextMenuTest, ContextMenuForceMountTest])(
 			withOpenCheck: true,
 		});
 		const nextButton = t.getByTestId("next-button");
-		await t.user.keyboard(kbd.TAB);
-		expect(nextButton).toHaveFocus();
+		await t.user.tab();
+		await sleep(10);
+
 		expectNotExists(t.getContent());
+		expect(nextButton).toHaveFocus();
 	}
 );
 
@@ -354,13 +362,13 @@ it("should respect the `onOpenAutoFocus` prop", async () => {
 		contentProps: {
 			onOpenAutoFocus: (e) => {
 				e.preventDefault();
-				document.getElementById("on-focus-override")?.focus();
+				document.getElementById("on-open-focus-override")?.focus();
 			},
 		},
 	});
 
 	expect(t.getContent()).not.toHaveFocus();
-	expect(t.getByTestId("on-focus-override")).toHaveFocus();
+	expect(t.getByTestId("on-open-focus-override")).toHaveFocus();
 });
 
 it("should respect the `onCloseAutoFocus` prop", async () => {
@@ -368,13 +376,13 @@ it("should respect the `onCloseAutoFocus` prop", async () => {
 		contentProps: {
 			onCloseAutoFocus: (e) => {
 				e.preventDefault();
-				document.getElementById("on-focus-override")?.focus();
+				document.getElementById("on-close-focus-override")?.focus();
 			},
 		},
 	});
 
 	await t.user.keyboard(kbd.ESCAPE);
-	expect(t.getByTestId("on-focus-override")).toHaveFocus();
+	expect(t.getByTestId("on-close-focus-override")).toHaveFocus();
 });
 
 it("should respect the `onSelect` prop on SubTrigger", async () => {
@@ -418,7 +426,12 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
 
-	await simulateOutsideClick(t.getByTestId("checkbox-group-binding"));
+	await t.user.click(t.getByTestId("checkbox-group-binding"));
+	expectNotExists(page.getByTestId("content"));
+	// we click twice, once to close the menu and once again to clear it
+	await t.user.click(t.getByTestId("checkbox-group-binding"));
+	await t.user.click(t.getByTestId("trigger"), { button: "right" });
+	expectExists(page.getByTestId("content"));
 
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");

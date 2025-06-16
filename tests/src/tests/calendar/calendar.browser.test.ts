@@ -7,7 +7,7 @@ import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 import CalendarTest, { type CalendarSingleTestProps } from "./calendar-test.svelte";
 import CalendarMultiTest, { type CalendarMultiTestProps } from "./calendar-multi-test.svelte";
 import CalendarSelectsTest from "./calendar-selects-test.svelte";
-import { expectNotClickable } from "../browser-utils";
+import { setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -22,7 +22,7 @@ const longWeekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "F
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 function setup(props: Partial<CalendarSingleTestProps> = {}) {
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 	const returned = render(CalendarTest, { ...props, type: "single" });
 	const calendar = returned.getByTestId("calendar").element() as HTMLElement;
 	const prevButton = returned.getByTestId("prev-button").element() as HTMLElement;
@@ -32,7 +32,7 @@ function setup(props: Partial<CalendarSingleTestProps> = {}) {
 }
 
 function setupMulti(props: Partial<CalendarMultiTestProps> = {}) {
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 	const returned = render(CalendarMultiTest, { ...props, type: "multiple" });
 	const calendar = returned.getByTestId("calendar").element() as HTMLElement;
 	const prevButton = returned.getByTestId("prev-button").element() as HTMLElement;
@@ -193,7 +193,7 @@ describe("type='single'", () => {
 			expect(heading).toHaveTextContent("November 1979");
 			expect(prevBtn).toHaveAttribute("aria-disabled", "true");
 			expect(prevBtn).toHaveAttribute("data-disabled");
-			await expectNotClickable(prevBtn.element());
+			await t.user.click(prevBtn);
 			expect(heading).toHaveTextContent("November 1979");
 		});
 
@@ -212,7 +212,7 @@ describe("type='single'", () => {
 			expect(heading).toHaveTextContent("March 1980");
 			expect(nextBtn).toHaveAttribute("aria-disabled", "true");
 			expect(nextBtn).toHaveAttribute("data-disabled");
-			await expectNotClickable(nextBtn.element());
+			await t.user.click(nextBtn);
 
 			expect(heading).toHaveTextContent("March 1980");
 		});
@@ -484,7 +484,7 @@ describe("type='single'", () => {
 			expect(thirdDayInMonth).toHaveTextContent("3");
 			expect(thirdDayInMonth).toHaveAttribute("data-unavailable");
 			expect(thirdDayInMonth).toHaveAttribute("aria-disabled", "true");
-			await expectNotClickable(thirdDayInMonth.element());
+			await t.user.click(thirdDayInMonth);
 			expect(thirdDayInMonth).not.toHaveAttribute("data-selected");
 		});
 
@@ -497,15 +497,14 @@ describe("type='single'", () => {
 			expect(firstDayOfMonth).toHaveAttribute("aria-disabled", "true");
 			expect(firstDayOfMonth).toHaveAttribute("data-disabled");
 
-			// clicking a disabled element should fail
-			await expectNotClickable(firstDayOfMonth);
+			await t.user.click(firstDayOfMonth);
 			expect(firstDayOfMonth).not.toHaveAttribute("data-selected");
 			firstDayOfMonth.focus();
 			expect(firstDayOfMonth).not.toHaveFocus();
 			const tenthDayOfMonth = t.getByTestId("date-1-10").element() as HTMLElement;
 			expect(tenthDayOfMonth).toHaveAttribute("aria-disabled", "true");
 			expect(tenthDayOfMonth).toHaveAttribute("data-disabled");
-			await expectNotClickable(tenthDayOfMonth);
+			await t.user.click(tenthDayOfMonth);
 			expect(tenthDayOfMonth).not.toHaveAttribute("data-selected");
 			tenthDayOfMonth.focus();
 			expect(tenthDayOfMonth).not.toHaveFocus();

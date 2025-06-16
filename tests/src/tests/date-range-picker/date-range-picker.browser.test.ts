@@ -1,13 +1,12 @@
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils";
-import { userEvent } from "@vitest/browser/context";
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import DateRangePickerTest, {
 	type DateRangePickerTestProps,
 } from "./date-range-picker-test.svelte";
 import { tick } from "svelte";
-import { expectExists, expectNotClickable, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -49,7 +48,7 @@ const SELECTED_DAY_SELECTOR = "[data-bits-day][data-selected]";
 const SELECTED_ATTR = "data-selected";
 
 function setup(props: Partial<DateRangePickerTestProps> = {}) {
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 	const returned = render(DateRangePickerTest, { ...props });
 	const trigger = returned.getByTestId("trigger").element() as HTMLElement;
 	const start = {
@@ -428,7 +427,7 @@ it("should not allow navigation before the `minValue` (prev button)", async () =
 	expect(prevBtn).toHaveAttribute("aria-disabled", "true");
 	expect(prevBtn).toHaveAttribute("data-disabled");
 
-	await expectNotClickable(prevBtn);
+	await t.user.click(prevBtn);
 	expect(heading).toHaveTextContent("November 1979");
 });
 
@@ -450,7 +449,7 @@ it("should not allow navigation after the `maxValue` (next button)", async () =>
 	expect(nextBtn).toHaveAttribute("aria-disabled", "true");
 	expect(nextBtn).toHaveAttribute("data-disabled");
 
-	await expectNotClickable(nextBtn);
+	await t.user.click(nextBtn);
 	expect(heading).toHaveTextContent("March 1980");
 });
 
@@ -545,7 +544,7 @@ it("should handle unavailable dates appropriately", async () => {
 	expect(thirdDayInMonth).toHaveTextContent("3");
 	expect(thirdDayInMonth).toHaveAttribute("data-unavailable");
 	expect(thirdDayInMonth).toHaveAttribute("aria-disabled", "true");
-	await expectNotClickable(thirdDayInMonth);
+	await t.user.click(thirdDayInMonth);
 	expect(thirdDayInMonth).not.toHaveAttribute(SELECTED_ATTR);
 });
 
@@ -757,7 +756,7 @@ describe("excludeDisabled functionality", () => {
 
 		// try to select disabled date - should be prevented by base calendar logic
 		const disabledDay = t.getByTestId("date-1-5");
-		await expectNotClickable(disabledDay);
+		await t.user.click(disabledDay);
 		expect(startValue).toHaveTextContent("undefined");
 		expect(endValue).toHaveTextContent("undefined");
 

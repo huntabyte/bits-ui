@@ -5,18 +5,9 @@ import type { Component } from "svelte";
 import { getTestKbd, sleep } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
+import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
-
-function expectIsClosed() {
-	const content = page.getByTestId("content");
-	expect(() => content.element()).toThrow();
-}
-
-async function expectIsOpen() {
-	const content = page.getByTestId("content");
-	expect(content).toBeVisible();
-}
 
 function setup(props: AlertDialogTestProps = {}, component: Component = AlertDialogTest) {
 	const user = userEvent;
@@ -65,13 +56,13 @@ describe("Open/Close Behavior", () => {
 		const t = await open();
 		const cancel = t.getByTestId("cancel").element();
 		await t.user.click(cancel);
-		expectIsClosed();
+		expectNotExists(t.getByTestId("content"));
 	});
 
 	it.todo("should close when the `Escape` key is pressed", async () => {
 		const t = await open();
 		await t.user.keyboard(kbd.ESCAPE);
-		expectIsClosed();
+		expectNotExists(t.getByTestId("content"));
 		expect(t.getByTestId("trigger").element()).toHaveFocus();
 	});
 
@@ -87,7 +78,7 @@ describe("Open/Close Behavior", () => {
 	it("should not close when content is clicked", async () => {
 		const t = await open();
 		await t.user.click(t.getByTestId("content").element());
-		await expectIsOpen();
+		expectExists(t.getByTestId("content"));
 	});
 });
 
@@ -147,9 +138,9 @@ describe("Props and Rendering", () => {
 		expect(binding).toHaveTextContent("true");
 		await t.user.keyboard(kbd.ESCAPE);
 		expect(binding).toHaveTextContent("false");
-		expectIsClosed();
+		expectNotExists(t.getByTestId("content"));
 		await t.user.click(t.getByTestId("toggle"));
-		await expectIsOpen();
+		expectExists(t.getByTestId("content"));
 	});
 
 	it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
@@ -157,7 +148,7 @@ describe("Props and Rendering", () => {
 			contentProps: { interactOutsideBehavior: "ignore" },
 		});
 		await t.user.click(t.getByTestId("overlay"));
-		await expectIsOpen();
+		expectExists(t.getByTestId("content"));
 	});
 
 	it("should respect the `interactOutsideBehavior: 'close'` prop", async () => {
@@ -178,7 +169,7 @@ describe("Props and Rendering", () => {
 		});
 		await t.user.keyboard(kbd.ESCAPE);
 		await sleep(1);
-		await expectIsOpen();
+		expectExists(t.getByTestId("content"));
 		expect(t.getByTestId("trigger")).not.toHaveFocus();
 	});
 });

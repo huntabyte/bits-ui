@@ -73,9 +73,7 @@ type UseFocusScopeProps = ReadableBoxedValues<{
 }>;
 
 export type FocusScopeContainerProps = {
-	id: string;
 	tabindex: number;
-	onkeydown: EventCallback<KeyboardEvent>;
 };
 
 export function useFocusScope({

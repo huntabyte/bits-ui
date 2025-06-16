@@ -1,29 +1,35 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { FocusScopeImplProps } from "./types.js";
-	import { useFocusScope } from "./use-focus-scope.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { FocusScope } from "../focus-scope-2/focus-scope.svelte.js";
 
 	let {
-		id,
 		trapFocus = false,
 		loop = false,
 		onCloseAutoFocus = noop,
 		onOpenAutoFocus = noop,
 		focusScope,
-		forceMount = false,
 		ref,
 	}: FocusScopeImplProps = $props();
 
-	const focusScopeState = useFocusScope({
+	const focusScopeState = FocusScope.use({
 		enabled: box.with(() => trapFocus),
-		loop: box.with(() => loop),
+		loop: loop,
 		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 		onOpenAutoFocus: box.with(() => onOpenAutoFocus),
-		id: box.with(() => id),
-		forceMount: box.with(() => forceMount),
 		ref,
 	});
+
+	// const focusScopeState = useFocusScope({
+	// 	enabled: box.with(() => trapFocus),
+	// 	loop: box.with(() => loop),
+	// 	onCloseAutoFocus: box.with(() => onCloseAutoFocus),
+	// 	onOpenAutoFocus: box.with(() => onOpenAutoFocus),
+	// 	id: box.with(() => id),
+	// 	forceMount: box.with(() => forceMount),
+	// 	ref,
+	// });
 </script>
 
 {@render focusScope?.({ props: focusScopeState.props })}

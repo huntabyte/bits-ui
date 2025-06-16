@@ -1,4 +1,4 @@
-import { userEvent, page } from "@vitest/browser/context";
+import { page } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { type ComponentProps, tick } from "svelte";
@@ -6,14 +6,14 @@ import type { Checkbox } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import CheckboxTest from "./checkbox-test.svelte";
 import CheckboxGroupTest from "./checkbox-group-test.svelte";
-import { expectNotClickable } from "../browser-utils";
+import { setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
 const groupItems = ["a", "b", "c", "d"];
 
 function setup(props?: Checkbox.RootProps) {
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 	const returned = render(CheckboxTest, props);
 	const root = page.getByTestId("root").element() as HTMLElement;
 	return { ...returned, root, user };
@@ -21,7 +21,7 @@ function setup(props?: Checkbox.RootProps) {
 
 function setupGroup(props: ComponentProps<typeof CheckboxGroupTest> = {}) {
 	const items = props.items ?? groupItems;
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 	const returned = render(CheckboxGroupTest, { ...props, items });
 	const group = page.getByTestId("group").element() as HTMLElement;
 	const groupLabel = page.getByTestId("group-label").element() as HTMLElement;
@@ -158,7 +158,7 @@ describe("Single Checkbox", () => {
 			const t = setup({ disabled: true });
 			expectUnchecked(t.root);
 			expect(page.getByRole("checkbox").element()).toBeDisabled();
-			await expectNotClickable(t.root);
+			await t.user.click(t.root);
 			expectUnchecked(t.root);
 			expect(t.root).toBeDisabled();
 			expect(page.getByRole("checkbox").element()).toBeDisabled();
