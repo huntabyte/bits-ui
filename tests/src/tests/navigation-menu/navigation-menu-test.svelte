@@ -25,7 +25,7 @@
 
 <main>
 	<button data-testid="previous-button">previous button</button>
-	<NavigationMenu.Root {...restProps} data-testid="root">
+	<NavigationMenu.Root {...restProps} data-testid="root" delayDuration={0} skipDelayDuration={0}>
 		<NavigationMenu.List data-testid="list">
 			<NavigationMenu.Item value="group" data-testid="group-item" {...groupItemProps}>
 				<NavigationMenu.Trigger data-testid="group-item-trigger">

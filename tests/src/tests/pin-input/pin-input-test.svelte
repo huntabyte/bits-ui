@@ -5,8 +5,11 @@
 		onComplete = () => {},
 		maxlength = 6,
 		value = "",
+		toCopy,
 		...restProps
-	}: Omit<PinInput.RootProps, "children"> = $props();
+	}: Omit<PinInput.RootProps, "children"> & {
+		toCopy?: string;
+	} = $props();
 
 	type CellProps = PinInputRootSnippetProps["cells"][0];
 </script>
@@ -44,6 +47,9 @@
 			</div>
 		{/snippet}
 	</PinInput.Root>
+	<div data-testid="to-copy">
+		{toCopy}
+	</div>
 </main>
 
 {#snippet Cell(props: CellProps, idx: number)}
