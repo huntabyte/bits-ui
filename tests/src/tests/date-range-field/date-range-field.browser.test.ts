@@ -1,10 +1,9 @@
-import { expect, it } from "vitest";
+import { expect, it, onTestFinished } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./date-range-field-test.svelte";
 import { setupBrowserUserEvents } from "../browser-utils";
-import { tick } from "svelte";
 
 const kbd = getTestKbd();
 
@@ -24,6 +23,8 @@ const zonedDateTime = {
 
 function setup(props: DateRangeFieldTestProps = {}) {
 	const user = setupBrowserUserEvents();
+	onTestFinished(async () => await user.cleanup());
+
 	const returned = render(DateRangeFieldTest, { ...props });
 
 	const start = {
@@ -112,9 +113,7 @@ it("should populate segment with value - `ZonedDateTime`", async () => {
 });
 
 it("should navigate between the fields", async () => {
-	const t = setup({
-		value: calendarDate,
-	});
+	const t = setup({ value: calendarDate });
 
 	const fields = ["start", "end"] as const;
 	const segments = ["month", "day", "year"] as const;
@@ -143,9 +142,7 @@ it("should navigate between the fields", async () => {
 });
 
 it("should navigate between the fields - right to left", async () => {
-	const t = setup({
-		value: calendarDate,
-	});
+	const t = setup({ value: calendarDate });
 
 	const fields = ["end", "start"] as const;
 	const segments = ["year", "day", "month"] as const;
@@ -169,16 +166,13 @@ it("should navigate between the fields - right to left", async () => {
 			if (field === "end" && segment === "year") continue;
 			const seg = t.getByTestId(`${field}-${segment}`);
 			await t.user.keyboard(kbd.SHIFT_TAB);
-			await tick();
 			expect(seg).toHaveFocus();
 		}
 	}
 });
 
 it("should respect `bind:value` to the value", async () => {
-	const t = setup({
-		value: calendarDate,
-	});
+	const t = setup({ value: calendarDate });
 	expect(t.start.value).toHaveTextContent(calendarDate.start.toString());
 	expect(t.end.value).toHaveTextContent(calendarDate.end.toString());
 
