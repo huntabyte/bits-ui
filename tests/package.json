@@ -7,7 +7,7 @@
 		"check": "pnpm sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "pnpm sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"sync": "svelte-kit sync",
-		"test": "pnpm sync && vitest",
+		"test": "pnpm sync && pnpm test:browser",
 		"test:jsdom": "pnpm sync && vitest --project=jsdom",
 		"test:browser": "pnpm sync && vitest --project=browser"
 	},

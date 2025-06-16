@@ -16,9 +16,7 @@
 		"test:components": "pnpm -F tests test",
 		"test:utils": "pnpm -F bits-ui test"
 	},
-	"keywords": [
-
-	],
+	"keywords": [],
 	"author": "Hunter Johnston <https://github.com/huntabyte>",
 	"license": "MIT",
 	"devDependencies": {

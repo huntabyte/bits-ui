@@ -33,7 +33,6 @@ async function open(props: AlertDialogTestProps = {}) {
 describe("Data Attributes", () => {
 	it("should have bits data attrs", async () => {
 		const t = await open();
-		await sleep(10);
 		const parts = ["trigger", "overlay", "cancel", "title", "description", "content"];
 		for (const part of parts) {
 			const el = t.getByTestId(part);
@@ -43,7 +42,6 @@ describe("Data Attributes", () => {
 
 	it("should have expected data attributes", async () => {
 		const t = await open();
-		await sleep(10);
 		const overlay = t.getByTestId("overlay");
 		expect(overlay).toHaveAttribute("data-state", "open");
 		const content = t.getByTestId("content");
@@ -143,7 +141,6 @@ describe("Focus Management", () => {
 			);
 			await t.user.click(t.trigger);
 			expectExists(t.getByTestId("content"));
-			await sleep(10);
 			expect(t.getByTestId("open-focus-override")).toHaveFocus();
 		}
 	);
@@ -205,7 +202,6 @@ describe("Props and Rendering", () => {
 		const binding = t.getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
 		await t.user.click(t.getByTestId("trigger"));
-		await sleep(20);
 		expect(binding).toHaveTextContent("true");
 		await t.user.keyboard(kbd.ESCAPE);
 		expect(binding).toHaveTextContent("false");
@@ -229,7 +225,6 @@ describe("Props and Rendering", () => {
 		});
 
 		await t.user.click(t.getByTestId("overlay").element());
-		await sleep(1);
 		expect(mockFn).toHaveBeenCalled();
 		expect(() => t.getByTestId("content").element()).toThrow();
 	});
@@ -239,7 +234,6 @@ describe("Props and Rendering", () => {
 			contentProps: { escapeKeydownBehavior: "ignore" },
 		});
 		await t.user.keyboard(kbd.ESCAPE);
-		await sleep(1);
 		expectExists(t.getByTestId("content"));
 		expect(t.getByTestId("trigger")).not.toHaveFocus();
 	});
