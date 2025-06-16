@@ -5,6 +5,7 @@
 		portalProps?: Dialog.PortalProps;
 		titleProps?: WithoutChildrenOrChild<Dialog.TitleProps>;
 		descriptionProps?: WithoutChildrenOrChild<Dialog.DescriptionProps>;
+		withOpenCheck?: boolean;
 	};
 </script>
 

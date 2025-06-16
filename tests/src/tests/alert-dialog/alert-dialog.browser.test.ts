@@ -88,6 +88,28 @@ describe("Focus Management", () => {
 		expect(t.content).toHaveFocus();
 	});
 
+	it.each([true, false])(
+		"should focus the alert dialog content when opened to ensure screen readers announce the 'alert' (force mount)",
+		async (withOpenCheck) => {
+			const t = setup({ withOpenCheck }, AlertDialogForceMountTest);
+			await t.user.click(t.trigger);
+			expectExists(t.getByTestId("content"));
+			expect(t.getByTestId("content")).toHaveFocus();
+		}
+	);
+
+	it.each([true, false])(
+		"should focus the trigger when the dialog is closed (force mount: %s)",
+		async (withOpenCheck) => {
+			const t = setup({ withOpenCheck }, AlertDialogForceMountTest);
+			await t.user.click(t.trigger);
+			expectExists(t.getByTestId("content"));
+			expect(t.getByTestId("content")).toHaveFocus();
+			await t.user.keyboard(kbd.ESCAPE);
+			expect(t.trigger).toHaveFocus();
+		}
+	);
+
 	it("should respect `onOpenAutoFocus` prop", async () => {
 		const t = await open({
 			contentProps: {
@@ -99,6 +121,50 @@ describe("Focus Management", () => {
 		});
 		expect(t.getByTestId("open-focus-override")).toHaveFocus();
 	});
+
+	it.each([true, false])(
+		"should respect `onOpenAutoFocus` prop (force mount: %s)",
+		async (withOpenCheck) => {
+			const t = setup(
+				{
+					withOpenCheck,
+					contentProps: {
+						onOpenAutoFocus: (e) => {
+							e.preventDefault();
+							document.getElementById("open-focus-override")?.focus();
+						},
+					},
+				},
+				AlertDialogForceMountTest
+			);
+			await t.user.click(t.trigger);
+			expectExists(t.getByTestId("content"));
+			await sleep(10);
+			expect(t.getByTestId("open-focus-override")).toHaveFocus();
+		}
+	);
+
+	it.each([true, false])(
+		"should respect `onCloseAutoFocus` prop (force mount: %s)",
+		async (withOpenCheck) => {
+			const t = setup(
+				{
+					withOpenCheck,
+					contentProps: {
+						onCloseAutoFocus: (e) => {
+							e.preventDefault();
+							document.getElementById("close-focus-override")?.focus();
+						},
+					},
+				},
+				AlertDialogForceMountTest
+			);
+			await t.user.click(t.trigger);
+			expectExists(t.getByTestId("content"));
+			await t.user.keyboard(kbd.ESCAPE);
+			expect(t.getByTestId("close-focus-override")).toHaveFocus();
+		}
+	);
 
 	it("should respect `onCloseAutoFocus` prop", async () => {
 		const t = await open({

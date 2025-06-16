@@ -26,11 +26,6 @@ export type FocusScopeProps = {
 
 export type FocusScopeImplProps = {
 	/**
-	 * The ID of the focus scope container node.
-	 */
-	id: string;
-
-	/**
 	 * The snippet to render the focus scope container with its props.
 	 */
 	focusScope?: Snippet<[{ props: FocusScopeContainerProps }]>;
@@ -44,6 +39,8 @@ export type FocusScopeImplProps = {
 	 * Whether the content within the focus trap is being force mounted or not.
 	 */
 	forceMount?: boolean;
+
+	enabled: boolean;
 
 	ref: ReadableBox<HTMLElement | null>;
 } & FocusScopeProps;

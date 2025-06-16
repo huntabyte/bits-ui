@@ -5,6 +5,7 @@
 	import { FocusScope } from "../focus-scope-2/focus-scope.svelte.js";
 
 	let {
+		enabled = false,
 		trapFocus = false,
 		loop = false,
 		onCloseAutoFocus = noop,
@@ -14,7 +15,8 @@
 	}: FocusScopeImplProps = $props();
 
 	const focusScopeState = FocusScope.use({
-		enabled: box.with(() => trapFocus),
+		enabled: box.with(() => enabled),
+		trap: box.with(() => trapFocus),
 		loop: loop,
 		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 		onOpenAutoFocus: box.with(() => onOpenAutoFocus),

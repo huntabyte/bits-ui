@@ -8,6 +8,7 @@ interface FocusScopeOpts
 	extends ReadableBoxedValues<{
 		onOpenAutoFocus: (event: Event) => void;
 		onCloseAutoFocus: (event: Event) => void;
+		trap: boolean;
 	}> {
 	loop: boolean;
 }
@@ -80,7 +81,6 @@ export class FocusScope {
 			bubbles: false,
 			cancelable: true,
 		});
-
 		this.#opts.onOpenAutoFocus.current(event);
 
 		if (!event.defaultPrevented) {
@@ -116,7 +116,7 @@ export class FocusScope {
 	}
 
 	#setupEventListeners() {
-		if (!this.#container) return;
+		if (!this.#container || !this.#opts.trap.current) return;
 
 		const container = this.#container;
 		const doc = container.ownerDocument;
@@ -233,6 +233,7 @@ export class FocusScope {
 				scope.mount(ref);
 			} else if (scope) {
 				scope.unmount();
+				scope = null;
 			}
 		});
 

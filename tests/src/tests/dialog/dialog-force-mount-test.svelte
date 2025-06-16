@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { AlertDialog } from "bits-ui";
-	import type { AlertDialogTestProps } from "./alert-dialog-test.svelte";
+	import { Dialog } from "bits-ui";
+	import type { DialogTestProps } from "../dialog/dialog-test.svelte";
 
 	let {
 		open = false,
@@ -10,15 +10,15 @@
 		descriptionProps = {},
 		withOpenCheck = false,
 		...restProps
-	}: AlertDialogTestProps = $props();
+	}: DialogTestProps = $props();
 </script>
 
 <main>
-	<AlertDialog.Root bind:open {...restProps}>
-		<AlertDialog.Trigger data-testid="trigger">open</AlertDialog.Trigger>
-		<AlertDialog.Portal {...portalProps}>
+	<Dialog.Root bind:open {...restProps}>
+		<Dialog.Trigger data-testid="trigger">open</Dialog.Trigger>
+		<Dialog.Portal {...portalProps}>
 			{#if withOpenCheck}
-				<AlertDialog.Overlay
+				<Dialog.Overlay
 					forceMount
 					data-testid="overlay"
 					class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
@@ -28,9 +28,9 @@
 							<div {...props}></div>
 						{/if}
 					{/snippet}
-				</AlertDialog.Overlay>
+				</Dialog.Overlay>
 			{:else}
-				<AlertDialog.Overlay
+				<Dialog.Overlay
 					forceMount
 					data-testid="overlay"
 					class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
@@ -38,10 +38,10 @@
 					{#snippet child({ props, open: _open })}
 						<div {...props}></div>
 					{/snippet}
-				</AlertDialog.Overlay>
+				</Dialog.Overlay>
 			{/if}
 			{#if withOpenCheck}
-				<AlertDialog.Content
+				<Dialog.Content
 					forceMount
 					{...contentProps}
 					data-testid="content"
@@ -50,26 +50,22 @@
 					{#snippet child({ props, open })}
 						{#if open}
 							<div {...props}>
-								<AlertDialog.Title {...titleProps} data-testid="title"
-									>title</AlertDialog.Title
+								<Dialog.Title {...titleProps} data-testid="title"
+									>title</Dialog.Title
 								>
-								<AlertDialog.Description
-									{...descriptionProps}
-									data-testid="description"
-								>
+								<Dialog.Description {...descriptionProps} data-testid="description">
 									description
-								</AlertDialog.Description>
-								<AlertDialog.Cancel data-testid="cancel">cancel</AlertDialog.Cancel>
-								<AlertDialog.Action data-testid="action">action</AlertDialog.Action>
+								</Dialog.Description>
+								<Dialog.Close data-testid="close">close</Dialog.Close>
 								<button id="open-focus-override" data-testid="open-focus-override">
 									open focus override
 								</button>
 							</div>
 						{/if}
 					{/snippet}
-				</AlertDialog.Content>
+				</Dialog.Content>
 			{:else}
-				<AlertDialog.Content
+				<Dialog.Content
 					forceMount
 					{...contentProps}
 					data-testid="content"
@@ -77,26 +73,20 @@
 				>
 					{#snippet child({ props, open: _open })}
 						<div {...props}>
-							<AlertDialog.Title {...titleProps} data-testid="title"
-								>title</AlertDialog.Title
-							>
-							<AlertDialog.Description
-								{...descriptionProps}
-								data-testid="description"
-							>
+							<Dialog.Title {...titleProps} data-testid="title">title</Dialog.Title>
+							<Dialog.Description {...descriptionProps} data-testid="description">
 								description
-							</AlertDialog.Description>
-							<AlertDialog.Cancel data-testid="cancel">cancel</AlertDialog.Cancel>
-							<AlertDialog.Action data-testid="action">action</AlertDialog.Action>
+							</Dialog.Description>
+							<Dialog.Close data-testid="close">close</Dialog.Close>
 							<button id="open-focus-override" data-testid="open-focus-override">
 								open focus override
 							</button>
 						</div>
 					{/snippet}
-				</AlertDialog.Content>
+				</Dialog.Content>
 			{/if}
-		</AlertDialog.Portal>
-	</AlertDialog.Root>
+		</Dialog.Portal>
+	</Dialog.Root>
 	<p data-testid="binding">{open}</p>
 	<button data-testid="toggle" onclick={() => (open = !open)}>toggle</button>
 	<button id="close-focus-override" data-testid="close-focus-override">
