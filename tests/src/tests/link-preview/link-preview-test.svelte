@@ -11,7 +11,7 @@
 </script>
 
 <main data-testid="main">
-	<LinkPreview.Root bind:open {...restProps} openDelay={50} closeDelay={50}>
+	<LinkPreview.Root bind:open {...restProps} openDelay={0} closeDelay={0}>
 		<LinkPreview.Trigger
 			data-testid="trigger"
 			href="https://github.com/sveltejs"

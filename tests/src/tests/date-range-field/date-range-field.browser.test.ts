@@ -166,7 +166,7 @@ it("should navigate between the fields - right to left", async () => {
 		for (const segment of segments) {
 			if (field === "end" && segment === "year") continue;
 			const seg = t.getByTestId(`${field}-${segment}`);
-			await t.user.keyboard(kbd.SHIFT_TAB);
+			await t.user.tab({ shift: true });
 			expect(seg).toHaveFocus();
 		}
 	}
