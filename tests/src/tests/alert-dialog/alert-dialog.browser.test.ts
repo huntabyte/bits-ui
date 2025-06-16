@@ -1,16 +1,14 @@
-import { page, userEvent } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
 import { getTestKbd, sleep } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
-function setup(props: AlertDialogTestProps = {}, component: Component = AlertDialogTest) {
-	const user = userEvent;
+function setup(props: AlertDialogTestProps = {}, component = AlertDialogTest) {
+	const user = setupBrowserUserEvents();
 	const t = render(component, { ...props });
 	const trigger = t.getByTestId("trigger");
 	return { ...t, trigger, user };
@@ -18,13 +16,17 @@ function setup(props: AlertDialogTestProps = {}, component: Component = AlertDia
 
 async function open(props: AlertDialogTestProps = {}) {
 	const t = setup(props);
-	const content = page.getByTestId("content");
+	const content = t.getByTestId("content");
 	expect(() => content.element()).toThrow();
-	await t.user.click(t.trigger.element());
-	const contentAfter = page.getByTestId("content").element();
+
+	await t.user.click(t.trigger);
+
+	const contentAfter = t.getByTestId("content").element();
 	expect(contentAfter).toBeVisible();
+
 	const cancel = t.getByTestId("cancel").element();
 	const action = t.getByTestId("action").element();
+
 	return { ...t, action, cancel, content: contentAfter };
 }
 
@@ -69,10 +71,10 @@ describe("Open/Close Behavior", () => {
 	it("should not close when the overlay is clicked", async () => {
 		const t = await open();
 
-		expect(page.getByTestId("overlay")).toBeInTheDocument();
+		expect(t.getByTestId("overlay")).toBeInTheDocument();
 
-		await t.user.click(page.getByTestId("overlay").element());
-		expect(page.getByTestId("content")).toBeVisible();
+		await t.user.click(t.getByTestId("overlay").element());
+		expect(t.getByTestId("content")).toBeVisible();
 	});
 
 	it("should not close when content is clicked", async () => {
@@ -223,10 +225,10 @@ describe("Props and Rendering", () => {
 			contentProps: { interactOutsideBehavior: "close", onInteractOutside: mockFn },
 		});
 
-		await t.user.click(page.getByTestId("overlay").element());
+		await t.user.click(t.getByTestId("overlay").element());
 		await sleep(1);
 		expect(mockFn).toHaveBeenCalled();
-		expect(() => page.getByTestId("content").element()).toThrow();
+		expect(() => t.getByTestId("content").element()).toThrow();
 	});
 
 	it("should respect the `escapeKeydownBehavior: 'ignore'` prop", async () => {

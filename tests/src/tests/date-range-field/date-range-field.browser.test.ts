@@ -49,9 +49,7 @@ function setup(props: DateRangeFieldTestProps = {}) {
 }
 
 it("should populate segment with value - `CalendarDate`", async () => {
-	const t = setup({
-		value: calendarDate,
-	});
+	const t = setup({ value: calendarDate });
 
 	expect(t.start.month).toHaveTextContent(String(calendarDate.start.month));
 	expect(t.start.day).toHaveTextContent(String(calendarDate.start.day));
