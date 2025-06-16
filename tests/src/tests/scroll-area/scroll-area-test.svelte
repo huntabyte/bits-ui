@@ -3,19 +3,19 @@
 
 	export type ScrollAreaTestProps = WithoutChildrenOrChild<ScrollArea.RootProps> & {
 		numParagraphs?: number;
-		width?: number;
-		height?: number;
 		wrapText?: boolean;
+		height?: number;
+		width?: number;
 	};
 </script>
 
 <script lang="ts">
 	let {
 		type = "hover",
-		height = 200,
-		width = 250,
 		wrapText = true,
 		numParagraphs = 3,
+		height = 200,
+		width = 250,
 		...restProps
 	}: ScrollAreaTestProps = $props();
 </script>
@@ -37,12 +37,15 @@
 	{...restProps}
 	class="border-dark-10 bg-background-alt shadow-card relative overflow-hidden rounded-[10px] border px-4 py-4"
 	{type}
-	style={{ height: `${height}px`, width: `${width}px` }}
 	data-testid="root"
 >
-	<ScrollArea.Viewport class="h-full w-full" data-testid="viewport">
+	<ScrollArea.Viewport
+		class="h-full w-full"
+		data-testid="viewport"
+		style="width: {width}px; height: {height}px;"
+	>
 		{#each Array(numParagraphs) as _, i (i)}
-			<p style:text-wrap={wrapText ? "wrap" : "nowrap"}>
+			<p style:text-wrap={wrapText ? "wrap" : "nowrap"} class="w-full">
 				Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dignissimos impedit rem,
 				repellat deserunt ducimus quasi nisi voluptatem cumque aliquid esse ea deleniti
 				eveniet incidunt! Deserunt minus laborum accusamus iusto dolorum. Lorem ipsum dolor
@@ -52,11 +55,21 @@
 			</p>
 		{/each}
 	</ScrollArea.Viewport>
-	<ScrollArea.Scrollbar orientation="vertical" data-testid="scrollbar-y">
-		<ScrollArea.Thumb data-testid="thumb-y" />
+	<ScrollArea.Scrollbar
+		orientation="vertical"
+		data-testid="scrollbar-y"
+		class="h-full w-2 bg-blue-500"
+	>
+		<ScrollArea.Thumb data-testid="thumb-y" class="h-full w-full bg-blue-200" />
 	</ScrollArea.Scrollbar>
-	<ScrollArea.Scrollbar orientation="horizontal" data-testid="scrollbar-x">
-		<ScrollArea.Thumb data-testid="thumb-x" />
+	<ScrollArea.Scrollbar
+		orientation="horizontal"
+		data-testid="scrollbar-x"
+		class="h-2 w-full bg-red-500"
+	>
+		<ScrollArea.Thumb data-testid="thumb-x" class="h-full w-full bg-red-200" />
 	</ScrollArea.Scrollbar>
 	<ScrollArea.Corner data-testid="corner" />
 </ScrollArea.Root>
+
+<div data-testid="outside">outside</div>
