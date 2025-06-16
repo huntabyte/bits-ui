@@ -7,15 +7,16 @@ import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browse
 
 const kbd = getTestKbd();
 
-function setup(props: AlertDialogTestProps = {}, component = AlertDialogTest) {
+async function setup(props: AlertDialogTestProps = {}, component = AlertDialogTest) {
 	const user = setupBrowserUserEvents();
 	const t = render(component, { ...props });
+	await sleep(10);
 	const trigger = t.getByTestId("trigger");
 	return { ...t, trigger, user };
 }
 
 async function open(props: AlertDialogTestProps = {}) {
-	const t = setup(props);
+	const t = await setup(props);
 	const content = t.getByTestId("content");
 	expectNotExists(content);
 
@@ -32,6 +33,7 @@ async function open(props: AlertDialogTestProps = {}) {
 describe("Data Attributes", () => {
 	it("should have bits data attrs", async () => {
 		const t = await open();
+		await sleep(10);
 		const parts = ["trigger", "overlay", "cancel", "title", "description", "content"];
 		for (const part of parts) {
 			const el = t.getByTestId(part);
@@ -41,6 +43,7 @@ describe("Data Attributes", () => {
 
 	it("should have expected data attributes", async () => {
 		const t = await open();
+		await sleep(10);
 		const overlay = t.getByTestId("overlay");
 		expect(overlay).toHaveAttribute("data-state", "open");
 		const content = t.getByTestId("content");
@@ -92,7 +95,7 @@ describe("Focus Management", () => {
 	it.each([true, false])(
 		"should focus the alert dialog content when opened to ensure screen readers announce the 'alert' (force mount)",
 		async (withOpenCheck) => {
-			const t = setup({ withOpenCheck }, AlertDialogForceMountTest);
+			const t = await setup({ withOpenCheck }, AlertDialogForceMountTest);
 			await t.user.click(t.trigger);
 			expectExists(t.getByTestId("content"));
 			expect(t.getByTestId("content")).toHaveFocus();
@@ -102,7 +105,7 @@ describe("Focus Management", () => {
 	it.each([true, false])(
 		"should focus the trigger when the dialog is closed (force mount: %s)",
 		async (withOpenCheck) => {
-			const t = setup({ withOpenCheck }, AlertDialogForceMountTest);
+			const t = await setup({ withOpenCheck }, AlertDialogForceMountTest);
 			await t.user.click(t.trigger);
 			expectExists(t.getByTestId("content"));
 			expect(t.getByTestId("content")).toHaveFocus();
@@ -126,7 +129,7 @@ describe("Focus Management", () => {
 	it.each([true, false])(
 		"should respect `onOpenAutoFocus` prop (force mount: %s)",
 		async (withOpenCheck) => {
-			const t = setup(
+			const t = await setup(
 				{
 					withOpenCheck,
 					contentProps: {
@@ -148,7 +151,7 @@ describe("Focus Management", () => {
 	it.each([true, false])(
 		"should respect `onCloseAutoFocus` prop (force mount: %s)",
 		async (withOpenCheck) => {
-			const t = setup(
+			const t = await setup(
 				{
 					withOpenCheck,
 					contentProps: {
@@ -183,13 +186,13 @@ describe("Focus Management", () => {
 
 describe("Props and Rendering", () => {
 	it("should forceMount the content and overlay when their `forceMount` prop is true", async () => {
-		const t = setup({}, AlertDialogForceMountTest);
+		const t = await setup({}, AlertDialogForceMountTest);
 		expect(t.getByTestId("overlay")).toBeInTheDocument();
 		expect(t.getByTestId("content")).toBeInTheDocument();
 	});
 
 	it("should forceMount the content and overlay when their `forceMount` prop is true and the `open` snippet prop is used", async () => {
-		const t = setup({ withOpenCheck: true }, AlertDialogForceMountTest);
+		const t = await setup({ withOpenCheck: true }, AlertDialogForceMountTest);
 		expect(() => t.getByTestId("overlay").element()).toThrow();
 		expect(() => t.getByTestId("content").element()).toThrow();
 		await t.user.click(t.getByTestId("trigger"));
@@ -198,10 +201,11 @@ describe("Props and Rendering", () => {
 	});
 
 	it("should respect binding to the `open` prop", async () => {
-		const t = setup();
+		const t = await setup();
 		const binding = t.getByTestId("binding");
 		expect(binding).toHaveTextContent("false");
 		await t.user.click(t.getByTestId("trigger"));
+		await sleep(20);
 		expect(binding).toHaveTextContent("true");
 		await t.user.keyboard(kbd.ESCAPE);
 		expect(binding).toHaveTextContent("false");

@@ -12,11 +12,12 @@
 		"lint": "prettier --check . && eslint .",
 		"lint:fix": "eslint --fix .",
 		"test": "pnpm -F \"./{packages,tests}/**\" --parallel --reporter append-only --color test",
+		"test:browser": "pnpm -F tests test:browser",
 		"test:components": "pnpm -F tests test",
 		"test:utils": "pnpm -F bits-ui test"
 	},
 	"keywords": [
-		
+
 	],
 	"author": "Hunter Johnston <https://github.com/huntabyte>",
 	"license": "MIT",
