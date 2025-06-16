@@ -35,17 +35,15 @@ export function setupBrowserUserEvents() {
 	const originalClick = user.click;
 	const originalKeyboard = user.keyboard;
 
-	const click: typeof user.click = async (element, opts) => {
+	user.click = async (element, opts) => {
 		await originalClick(element, { ...defaultClickOpts, ...opts });
 		await sleep(20);
 	};
 
-	const keyboard: typeof user.keyboard = async (text) => {
+	user.keyboard = async (text) => {
 		await originalKeyboard(text);
 		await sleep(20);
 	};
-
-	Object.assign(user, { click, keyboard });
 
 	return user;
 }
