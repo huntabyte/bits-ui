@@ -82,11 +82,11 @@
 			<ScrollLock {preventScroll} />
 		{/if}
 		<FocusScope
-			{id}
 			{onOpenAutoFocus}
 			{onCloseAutoFocus}
 			{loop}
-			trapFocus={enabled && trapFocus}
+			{enabled}
+			{trapFocus}
 			forceMount={restProps.forceMount}
 			{ref}
 		>
