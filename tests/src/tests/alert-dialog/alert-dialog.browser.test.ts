@@ -17,17 +17,16 @@ function setup(props: AlertDialogTestProps = {}, component = AlertDialogTest) {
 async function open(props: AlertDialogTestProps = {}) {
 	const t = setup(props);
 	const content = t.getByTestId("content");
-	expect(() => content.element()).toThrow();
+	expectNotExists(content);
 
 	await t.user.click(t.trigger);
 
-	const contentAfter = t.getByTestId("content").element();
-	expect(contentAfter).toBeVisible();
+	expectExists(content);
 
 	const cancel = t.getByTestId("cancel").element();
 	const action = t.getByTestId("action").element();
 
-	return { ...t, action, cancel, content: contentAfter };
+	return { ...t, action, cancel, content };
 }
 
 describe("Data Attributes", () => {
