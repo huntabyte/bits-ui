@@ -361,34 +361,6 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 	expectExists(t.getByTestId("content"));
 });
 
-// it("should close the menu and focus the next tabbable element when `TAB` is pressed while the menu is open", async () => {
-// 	const t = await openWithKbd({
-// 		component: DropdownMenuTest,
-// 		withOpenCheck: true,
-// 	});
-// 	const nextButton = t.getByTestId("next-button");
-// 	expect(nextButton).not.toHaveFocus();
-// 	await t.user.keyboard(kbd.TAB);
-// 	expect(nextButton).toHaveFocus();
-// 	expectNotExists(t.getByTestId("content"));
-// 	await t.user.click(t.getByTestId("trigger"));
-// 	expectExists(t.getByTestId("content"));
-// });
-
-// it.only("should close the menu and focus the next tabbable element when `TAB` is pressed while the menu is open", async () => {
-// 	const t = await openWithKbd({
-// 		component: DropdownMenuForceMountTest,
-// 		withOpenCheck: true,
-// 	});
-// 	const nextButton = t.getByTestId("next-button");
-// 	expect(nextButton).not.toHaveFocus();
-// 	await t.user.keyboard(kbd.TAB);
-// 	expect(nextButton).toHaveFocus();
-// 	expectNotExists(t.getByTestId("content"));
-// 	await t.user.click(t.getByTestId("trigger"));
-// 	expectExists(t.getByTestId("content"));
-// });
-
 it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
 	"should close the menu and focus the next tabbable element when `TAB` is pressed while the menu is open",
 	async (component) => {
