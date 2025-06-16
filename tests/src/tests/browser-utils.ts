@@ -1,5 +1,5 @@
 import { userEvent, type Locator } from "@vitest/browser/context";
-import { expect } from "vitest";
+import { expect, onTestFinished } from "vitest";
 import { sleep } from "./utils";
 
 export async function expectNotClickable(node: Element | HTMLElement | Locator) {
@@ -32,6 +32,8 @@ const defaultClickOpts = {
 
 export function setupBrowserUserEvents() {
 	const user = userEvent.setup();
+	onTestFinished(async () => await user.cleanup());
+
 	const originalClick = user.click;
 	const originalKeyboard = user.keyboard;
 

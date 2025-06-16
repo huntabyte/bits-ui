@@ -1,4 +1,4 @@
-import { expect, it, onTestFinished } from "vitest";
+import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
@@ -23,8 +23,6 @@ const zonedDateTime = {
 
 function setup(props: DateRangeFieldTestProps = {}) {
 	const user = setupBrowserUserEvents();
-	onTestFinished(async () => await user.cleanup());
-
 	const returned = render(DateRangeFieldTest, { ...props });
 
 	const start = {
