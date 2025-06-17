@@ -62,8 +62,8 @@ it.skip("closes when pointer moves outside the trigger and content", async () =>
 	const t = await open();
 	const outside = page.getByTestId("outside");
 	await t.user.hover(outside);
-	await t.user.hover(outside);
-	expectNotExists(page.getByTestId("content"));
+	await sleep(100);
+	await vi.waitFor(() => expectNotExists(page.getByTestId("content")));
 });
 
 it("should portal to the body by default", async () => {

@@ -427,10 +427,9 @@ describe("select - single", () => {
 		expectNotHighlighted(item1!);
 	});
 
-	it.skip("should start keyboard navigation at the highlighted item even if hovered with mouse", async () => {
+	it("should start keyboard navigation at the highlighted item even if hovered with mouse", async () => {
 		const t = await openSingle({}, kbd.ARROW_DOWN);
 		const [item1, item2, item3] = getItems(t.getByTestId);
-		await t.user.click(t.trigger);
 		await t.user.hover(item1!);
 		expectHighlighted(item1!);
 		await t.user.hover(item2!);

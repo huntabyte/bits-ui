@@ -27,6 +27,6 @@
 		</LinkPreview.Portal>
 	</LinkPreview.Root>
 	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>
-	<div data-testid="outside">outside</div>
+	<div data-testid="outside" class="ml-48">outside</div>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>
