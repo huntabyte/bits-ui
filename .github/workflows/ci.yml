@@ -86,7 +86,7 @@ jobs:
                   cache: pnpm
 
             - name: Install dependencies
-              run: pnpm install --frozen-lockfile --prefer-offline && pnpm exec playwright install ${{ matrix.browser }}
+              run: pnpm install --frozen-lockfile --prefer-offline && pnpm dlx playwright install ${{ matrix.browser }}
 
             - name: Build packages
               run: pnpm build:packages
