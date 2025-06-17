@@ -72,40 +72,38 @@ it("should set the appropriate `isActive` prop on each cell", async () => {
 	});
 
 	await t.user.click(t.hiddenInput);
-	expect(t.cells[0]).toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[0]).toHaveAttribute("data-active"));
 	await t.user.keyboard("1");
-	expect(t.cells[0]).not.toHaveAttribute("data-active");
-	expect(t.cells[1]).toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[0]).not.toHaveAttribute("data-active"));
+	await vi.waitFor(() => expect(t.cells[1]).toHaveAttribute("data-active"));
 	await t.user.keyboard("2");
-	expect(t.cells[1]).not.toHaveAttribute("data-active");
-	expect(t.cells[2]).toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[1]).not.toHaveAttribute("data-active"));
+	await vi.waitFor(() => expect(t.cells[2]).toHaveAttribute("data-active"));
 	await t.user.keyboard("3");
-	expect(t.cells[2]).not.toHaveAttribute("data-active");
-	expect(t.cells[3]).toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[2]).not.toHaveAttribute("data-active"));
+	await vi.waitFor(() => expect(t.cells[3]).toHaveAttribute("data-active"));
 	await t.user.keyboard("4");
-	expect(t.cells[3]).not.toHaveAttribute("data-active");
-	expect(t.cells[4]).toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[3]).not.toHaveAttribute("data-active"));
+	await vi.waitFor(() => expect(t.cells[4]).toHaveAttribute("data-active"));
 	await t.user.keyboard("5");
-	expect(t.cells[4]).not.toHaveAttribute("data-active");
-	expect(t.cells[5]).toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[4]).not.toHaveAttribute("data-active"));
+	await vi.waitFor(() => expect(t.cells[5]).toHaveAttribute("data-active"));
 	await t.user.keyboard("6");
-	expect(mocked).toHaveBeenCalledTimes(1);
+	await vi.waitFor(() => expect(mocked).toHaveBeenCalledTimes(1));
 });
 
 it("should handle backspace appropriately", async () => {
 	const t = setup();
 
 	await t.user.click(t.hiddenInput);
-	await t.user.keyboard("1");
-	await t.user.keyboard("2");
-	await t.user.keyboard("3");
+	await t.user.fill(t.hiddenInput, "123");
 	await t.user.keyboard(kbd.BACKSPACE);
-	expect(t.cells[2]).toHaveTextContent("");
-	expect(t.cells[2]).toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[2]).toHaveTextContent(""));
+	await vi.waitFor(() => expect(t.cells[2]).toHaveAttribute("data-active"));
 	await t.user.keyboard(kbd.BACKSPACE);
-	expect(t.cells[1]).toHaveTextContent("");
-	expect(t.cells[1]).toHaveAttribute("data-active");
-	expect(t.cells[2]).not.toHaveAttribute("data-active");
+	await vi.waitFor(() => expect(t.cells[1]).toHaveTextContent(""));
+	await vi.waitFor(() => expect(t.cells[1]).toHaveAttribute("data-active"));
+	await vi.waitFor(() => expect(t.cells[2]).not.toHaveAttribute("data-active"));
 });
 
 it("should fire the `onComplete` callback when the input is complete", async () => {

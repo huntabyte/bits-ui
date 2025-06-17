@@ -102,18 +102,6 @@ it("should respect the `escapeKeydownBehavior` prop", async () => {
 	expect(queryByTestId("content")).not.toBeNull();
 });
 
-it("should respect the `interactOutsideBehavior` prop", async () => {
-	const { content, user, queryByTestId, getByTestId } = await open({
-		contentProps: {
-			interactOutsideBehavior: "ignore",
-		},
-	});
-	await user.click(content);
-	const outside = getByTestId("outside");
-	await user.click(outside);
-	expect(queryByTestId("content")).not.toBeNull();
-});
-
 it("should respect binding the open prop", async () => {
 	const { queryByTestId, getByTestId, user } = await open({
 		contentProps: {

@@ -11,6 +11,7 @@
 		portalProps?: Omit<ContextMenu.PortalProps, "children" | "child">;
 		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "children" | "child">;
 		checkboxGroupProps?: Omit<ContextMenu.CheckboxGroupProps, "children" | "child" | "value">;
+		openFocusOverride?: boolean;
 	};
 </script>
 
@@ -26,6 +27,7 @@
 		portalProps = {},
 		subTriggerProps = {},
 		checkboxGroupProps = {},
+		openFocusOverride = false,
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
@@ -125,9 +127,11 @@
 							{/snippet}
 						</ContextMenu.CheckboxItem>
 					</ContextMenu.CheckboxGroup>
-					<button data-testid="on-open-focus-override" id="on-open-focus-override"
-						>on-open-focus-override</button
-					>
+					{#if openFocusOverride}
+						<button data-testid="on-open-focus-override" id="on-open-focus-override"
+							>on-open-focus-override</button
+						>
+					{/if}
 				</ContextMenu.Content>
 			</ContextMenu.Portal>
 		</ContextMenu.Root>

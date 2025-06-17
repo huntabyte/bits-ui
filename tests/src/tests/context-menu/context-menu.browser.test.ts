@@ -363,6 +363,7 @@ it.each([ContextMenuTest, ContextMenuForceMountTest])(
 
 it("should respect the `onOpenAutoFocus` prop", async () => {
 	const t = await open({
+		openFocusOverride: true,
 		contentProps: {
 			onOpenAutoFocus: (e) => {
 				e.preventDefault();

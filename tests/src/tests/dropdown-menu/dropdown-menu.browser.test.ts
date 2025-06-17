@@ -60,7 +60,6 @@ async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd
 async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	const t = props;
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	await t.user.keyboard(kbd.ARROW_DOWN);
 	expect(t.getByTestId("sub-trigger")).toHaveFocus();
 
 	await expectNotExists(t.getSubContent());
@@ -108,6 +107,7 @@ it("should have bits data attrs", async () => {
 
 it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (key) => {
 	await openWithKbd({}, key);
+	expect(page.getByTestId("item")).toHaveFocus();
 });
 
 it("should open when clicked & respects binding", async () => {
@@ -227,6 +227,7 @@ it("should check the radio item when clicked & respects binding", async () => {
 
 it("should skip over disabled items when navigating with the keyboard", async () => {
 	const t = await openWithKbd();
+	expect(page.getByTestId("item")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	expect(page.getByTestId("sub-trigger")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
@@ -349,6 +350,7 @@ it("should not portal if `disabled` is passed to the portal", async () => {
 
 it("should allow preventing autofocusing first item with `onOpenAutoFocus`  prop", async () => {
 	await openWithKbd({
+		openFocusOverride: true,
 		contentProps: {
 			onOpenAutoFocus: (e) => {
 				e.preventDefault();
