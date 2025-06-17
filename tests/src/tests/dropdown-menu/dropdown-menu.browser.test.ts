@@ -123,7 +123,7 @@ it("should manage focus correctly when opened with keyboard", async () => {
 	(t.trigger.element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ENTER);
 
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	const item = t.getByTestId("item");
 	expect(item).toHaveFocus();
 });
@@ -136,7 +136,7 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	expect(subtrigger).toHaveFocus();
 	expectNotExists(t.getByTestId("sub-content"));
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	expectExists(t.getByTestId("sub-content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("sub-content")));
 	expect(t.getByTestId("sub-item")).toHaveFocus();
 });
 
@@ -277,7 +277,7 @@ it("should respect the `escapeKeydownBehavior` prop", async () => {
 		},
 	});
 	await t.user.keyboard(kbd.ESCAPE);
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 });
 
 it("should respect the `interactOutsideBehavior` prop - ignore", async () => {

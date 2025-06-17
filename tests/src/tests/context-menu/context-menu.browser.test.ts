@@ -25,7 +25,7 @@ async function setup(props: ContextMenuSetupProps = {}) {
 
 	const open = async () => {
 		await user.click(trigger, { button: "right" });
-		await sleep(10);
+		await vi.waitFor(() => expectExists(returned.getByTestId("content")));
 	};
 	await sleep(15);
 
@@ -155,18 +155,20 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 	await t.user.click(subCheckbox);
 	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
 	await t.user.click(t.trigger, { button: "right" });
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	await openSubmenu(t);
-	expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
+	await vi.waitFor(() =>
+		expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true")
+	);
 	await t.user.click(t.getByTestId("sub-checkbox-item"));
 	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("false"));
 
 	await t.user.click(subCheckedBinding);
-	expect(subCheckedBinding).toHaveTextContent("true");
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
 	await t.user.click(t.trigger, { button: "right" });
 	await openSubmenu(t);
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
-	expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
+	await vi.waitFor(() =>
+		expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true")
+	);
 });
 
 it("should check the radio item when clicked & respects binding", async () => {
@@ -316,7 +318,7 @@ it("should not portal if portal is disabled", async () => {
 it("should forceMount the content when `forceMount` is true", async () => {
 	const t = await setup({ component: ContextMenuForceMountTest });
 
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
@@ -328,7 +330,7 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 
 	await t.user.click(t.trigger, { button: "right" });
 
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 });
 
 it.each([ContextMenuTest, ContextMenuForceMountTest])(
@@ -342,7 +344,7 @@ it.each([ContextMenuTest, ContextMenuForceMountTest])(
 		await t.user.tab();
 		await sleep(10);
 
-		expectNotExists(t.getContent());
+		await vi.waitFor(() => expectNotExists(t.getContent()));
 		expect(nextButton).toHaveFocus();
 	}
 );
@@ -357,7 +359,7 @@ it.each([ContextMenuTest, ContextMenuForceMountTest])(
 		const previousButton = t.getByTestId("previous-button");
 		await t.user.keyboard(kbd.SHIFT_TAB);
 		expect(previousButton).toHaveFocus();
-		expectNotExists(t.getContent());
+		await vi.waitFor(() => expectNotExists(t.getContent()));
 	}
 );
 
@@ -431,7 +433,7 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
 
 	await t.user.click(t.getByTestId("checkbox-group-binding"));
-	expectNotExists(page.getByTestId("content"));
+	await vi.waitFor(() => expectNotExists(page.getByTestId("content")));
 	// we click twice, once to close the menu and once again to clear it
 	await t.user.click(t.getByTestId("checkbox-group-binding"));
 	await t.user.click(t.getByTestId("trigger"), { button: "right" });
