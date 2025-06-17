@@ -43,7 +43,8 @@ async function open(props: ContextMenuSetupProps = {}) {
 	const t = await setup(props);
 	expectNotExists(t.getContent());
 	await t.user.click(t.trigger, { button: "right" });
-	expectExists(t.getContent());
+
+	await vi.waitFor(() => expectExists(t.getContent()));
 	await sleep(10);
 	return { ...t };
 }
@@ -56,7 +57,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 
 	expectNotExists(t.getSubContent());
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	expectExists(t.getSubContent());
+	await vi.waitFor(() => expectExists(t.getSubContent()));
 	expect(t.getByTestId("sub-item")).toHaveFocus();
 
 	return {
@@ -130,7 +131,7 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	expect(checkedBinding).toHaveTextContent("false");
 	const checkbox = t.getByTestId("checkbox-item");
 	await t.user.click(checkbox);
-	expect(checkedBinding).toHaveTextContent("true");
+	await vi.waitFor(() => expect(checkedBinding).toHaveTextContent("true"));
 	await t.user.click(t.trigger, { button: "right" });
 	expect(indicator).toHaveTextContent("true");
 	await t.user.click(t.getByTestId("checkbox-item"));
@@ -139,6 +140,7 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	await t.user.click(checkedBinding);
 	expect(checkedBinding).toHaveTextContent("true");
 	await t.user.click(t.trigger, { button: "right" });
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	expect(t.getByTestId("checkbox-indicator")).toHaveTextContent("true");
 });
 
@@ -151,17 +153,19 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 	expect(indicator).not.toHaveTextContent("true");
 	const subCheckbox = t.getByTestId("sub-checkbox-item");
 	await t.user.click(subCheckbox);
-	expect(subCheckedBinding).toHaveTextContent("true");
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
 	await t.user.click(t.trigger, { button: "right" });
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	await openSubmenu(t);
 	expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 	await t.user.click(t.getByTestId("sub-checkbox-item"));
-	expect(subCheckedBinding).toHaveTextContent("false");
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("false"));
 
 	await t.user.click(subCheckedBinding);
 	expect(subCheckedBinding).toHaveTextContent("true");
 	await t.user.click(t.trigger, { button: "right" });
 	await openSubmenu(t);
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 });
 
@@ -431,7 +435,7 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	// we click twice, once to close the menu and once again to clear it
 	await t.user.click(t.getByTestId("checkbox-group-binding"));
 	await t.user.click(t.getByTestId("trigger"), { button: "right" });
-	expectExists(page.getByTestId("content"));
+	await vi.waitFor(() => expectExists(page.getByTestId("content")));
 
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
