@@ -415,16 +415,22 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	});
 
 	const checkboxGroupItem1 = t.getByTestId("checkbox-group-item-1");
-	expect(checkboxGroupItem1).toHaveAttribute("aria-checked", "true");
+	await vi.waitFor(() => expect(checkboxGroupItem1).toHaveAttribute("aria-checked", "true"));
 
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("true");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await vi.waitFor(() => expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("true"));
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
+	);
 
 	await t.user.click(checkboxGroupItem1);
 	await t.open();
 
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false")
+	);
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
+	);
 
 	await t.user.click(t.getByTestId("checkbox-group-item-2"));
 	await t.open();
@@ -436,11 +442,14 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	await vi.waitFor(() => expectNotExists(page.getByTestId("content")));
 	// we click twice, once to close the menu and once again to clear it
 	await t.user.click(t.getByTestId("checkbox-group-binding"));
-	await t.user.click(t.getByTestId("trigger"), { button: "right" });
-	await vi.waitFor(() => expectExists(page.getByTestId("content")));
+	await t.open();
 
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false")
+	);
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
+	);
 });
 
 it("calls `onValueChange` when the value of the checkbox group changes", async () => {
