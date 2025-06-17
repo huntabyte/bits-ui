@@ -178,24 +178,30 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 it("should toggle checkbox items within submenus when clicked & respects binding", async () => {
 	const props = await openWithKbd();
 	const t = await openSubmenu(props);
+
 	const subCheckedBinding = page.getByTestId("sub-checked-binding");
 	expect(subCheckedBinding).toHaveTextContent("false");
 	const indicator = page.getByTestId("sub-checkbox-indicator");
 	expect(indicator).not.toHaveTextContent("true");
 	const subCheckbox = page.getByTestId("sub-checkbox-item");
 	await t.user.click(subCheckbox);
-	expect(subCheckedBinding).toHaveTextContent("true");
+	await expectNotExists(page.getByTestId("content"));
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
 	t.trigger.focus();
+	expect(t.trigger).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
+	await expectExists(page.getByTestId("content"));
 	await openSubmenu(props);
 	expect(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 	await t.user.click(page.getByTestId("sub-checkbox-item"));
-	expect(subCheckedBinding).toHaveTextContent("false");
+	await expectNotExists(page.getByTestId("content"));
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("false"));
 
 	await t.user.click(subCheckedBinding);
-	expect(subCheckedBinding).toHaveTextContent("true");
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
 	t.trigger.focus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
+	await expectExists(page.getByTestId("content"));
 	await openSubmenu(props);
 	expect(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 });
@@ -206,22 +212,26 @@ it("should check the radio item when clicked & respects binding", async () => {
 	expect(radioBinding).toHaveTextContent("");
 	const radioItem1 = page.getByTestId("radio-item");
 	await t.user.click(radioItem1);
-	expect(radioBinding).toHaveTextContent("1");
+	await vi.waitFor(() => expect(radioBinding).toHaveTextContent("1"));
+	await expectNotExists(page.getByTestId("content"));
 	await t.user.click(t.trigger);
+	await expectExists(page.getByTestId("content"));
 	const radioIndicator1 = page.getByTestId("radio-indicator-1");
-	expect(radioIndicator1).not.toBeNull();
+	await expectExists(radioIndicator1);
 	expect(radioIndicator1).toHaveTextContent("true");
 	const radioItem2 = page.getByTestId("radio-item-2");
 	await t.user.click(radioItem2);
-	expect(radioBinding).toHaveTextContent("2");
+	await expectNotExists(page.getByTestId("content"));
+	await vi.waitFor(() => expect(radioBinding).toHaveTextContent("2"));
 	await t.user.click(t.trigger);
+	await expectExists(page.getByTestId("content"));
 	expect(page.getByTestId("radio-indicator-1")).toHaveTextContent("false");
 	expect(page.getByTestId("radio-indicator-2")).toHaveTextContent("true");
 
 	await t.user.keyboard(kbd.ESCAPE);
 	await expectNotExists(page.getByTestId("content"));
 	await t.user.click(radioBinding);
-	expect(radioBinding).toHaveTextContent("");
+	await vi.waitFor(() => expect(radioBinding).toHaveTextContent(""));
 	await t.user.click(t.trigger);
 });
 
