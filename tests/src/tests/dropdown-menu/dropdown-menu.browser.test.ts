@@ -174,16 +174,20 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 	(t.trigger.element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	await openSubmenu(props);
-	expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
+	await vi.waitFor(() =>
+		expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true")
+	);
 	await t.user.click(t.getByTestId("sub-checkbox-item"));
-	expect(subCheckedBinding).toHaveTextContent("false");
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("false"));
 
 	await t.user.click(subCheckedBinding);
-	expect(subCheckedBinding).toHaveTextContent("true");
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
 	(t.trigger.element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	await openSubmenu(props);
-	expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
+	await vi.waitFor(() =>
+		expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true")
+	);
 });
 
 it("should check the radio item when clicked & respects binding", async () => {
