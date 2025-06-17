@@ -89,7 +89,7 @@
 				</Select.Content>
 			</Select.Portal>
 		</Select.Root>
-		<div data-testid="outside"></div>
+		<div data-testid="outside">outside</div>
 		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
 			{open}
 		</button>
