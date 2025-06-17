@@ -36,7 +36,7 @@ async function openWithPointer(props: DropdownMenuSetupProps = {}) {
 	expectNotExists(t.getByTestId("content"));
 	await t.user.click(t.trigger);
 
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	return t;
 }
 
@@ -148,7 +148,7 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	expect(checkedBinding).toHaveTextContent("false");
 	const checkbox = t.getByTestId("checkbox-item");
 	await t.user.click(checkbox);
-	expect(checkedBinding).toHaveTextContent("true");
+	await vi.waitFor(() => expect(checkedBinding).toHaveTextContent("true"));
 	await t.user.click(t.trigger);
 	expect(indicator).toHaveTextContent("true");
 	await t.user.click(t.getByTestId("checkbox-item"));
@@ -169,7 +169,7 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 	expect(indicator).not.toHaveTextContent("true");
 	const subCheckbox = t.getByTestId("sub-checkbox-item");
 	await t.user.click(subCheckbox);
-	expect(subCheckedBinding).toHaveTextContent("true");
+	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
 	(t.trigger.element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	await openSubmenu(props);
