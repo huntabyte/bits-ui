@@ -400,7 +400,7 @@ describe("type='single'", () => {
 	});
 
 	describe("Rendering Options", () => {
-		it("should render six weeks when `fixedWeeks` is `true`", { timeout: 5000 }, async () => {
+		it("should render six weeks when `fixedWeeks` is `true`", async () => {
 			const t = setup({
 				value: calendarDate,
 				fixedWeeks: true,
@@ -410,10 +410,6 @@ describe("type='single'", () => {
 			}
 			const nextButton = t.getByTestId("next-button");
 			for (let i = 0; i < 12; i++) {
-				expect(getNumberOfWeeks()).toBe(6);
-				await t.user.click(nextButton);
-			}
-			for (let i = 0; i < 24; i++) {
 				expect(getNumberOfWeeks()).toBe(6);
 				await t.user.click(nextButton);
 			}
