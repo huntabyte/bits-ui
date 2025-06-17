@@ -360,9 +360,12 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 		withOpenCheck: true,
 		component: DropdownMenuForceMountTest,
 	});
+	await sleep(10);
+
 	expectNotExists(t.getByTestId("content"));
 
 	await t.user.click(t.trigger);
+	await sleep(10);
 
 	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 });
@@ -406,13 +409,13 @@ it("should respect the `onSelect` prop on SubTrigger", async () => {
 	});
 
 	await t.user.click(t.getByTestId("sub-trigger"));
-	expect(onSelect).toHaveBeenCalled();
+	await vi.waitFor(() => expect(onSelect).toHaveBeenCalled());
 
 	await t.user.keyboard(kbd.ENTER);
-	expect(onSelect).toHaveBeenCalledTimes(2);
+	await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(2));
 
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	expect(onSelect).toHaveBeenCalledTimes(3);
+	await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(3));
 });
 
 it("should respect the `value` prop on CheckboxGroup", async () => {
