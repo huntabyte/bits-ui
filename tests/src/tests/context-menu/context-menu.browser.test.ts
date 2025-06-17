@@ -437,7 +437,8 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
 
-	await t.user.click(t.getByTestId("checkbox-group-binding"));
+	await t.user.keyboard(kbd.ESCAPE);
+
 	await expectNotExists(page.getByTestId("content"));
 	// we click twice, once to close the menu and once again to clear it
 	await t.user.click(t.getByTestId("checkbox-group-binding"));

@@ -14,21 +14,17 @@ export class FocusScopeManager {
 	}
 
 	register(scope: FocusScope) {
-		// pause current active scope
 		const current = this.getActive();
 		if (current && current !== scope) {
 			current.pause();
 		}
 
-		// remove from stack if already exists
 		this.#scopeStack.current = this.#scopeStack.current.filter((s) => s !== scope);
-		// add to top
 		this.#scopeStack.current.unshift(scope);
 	}
 
 	unregister(scope: FocusScope) {
 		this.#scopeStack.current = this.#scopeStack.current.filter((s) => s !== scope);
-		// resume the next scope
 		const next = this.getActive();
 		if (next) {
 			next.resume();

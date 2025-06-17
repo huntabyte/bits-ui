@@ -32,7 +32,7 @@
 	}: ContextMenuTestProps = $props();
 </script>
 
-<main>
+<main class="flex flex-col gap-4">
 	<div data-testid="outside">outside</div>
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
@@ -156,7 +156,7 @@
 	<button
 		aria-label="checkbox-group-binding"
 		data-testid="checkbox-group-binding"
-		onclick={() => (group = [])}>{group}</button
+		onclick={() => (group = [])}>Group value: {group}</button
 	>
 	<div id="portal-target" data-testid="portal-target"></div>
 </main>

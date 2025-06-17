@@ -84,7 +84,6 @@ export class FocusScope {
 		this.#opts.onOpenAutoFocus.current(event);
 
 		if (!event.defaultPrevented) {
-			// use requestAnimationFrame for predictable timing
 			requestAnimationFrame(() => {
 				if (!this.#container) return;
 				const firstTabbable = this.#getFirstTabbable();
@@ -130,16 +129,16 @@ export class FocusScope {
 			const isInside = container.contains(target);
 
 			if (isInside) {
-				// Store last focused element
+				// store last focused element
 				this.#manager.setFocusMemory(this, target);
 			} else {
-				// Focus escaped - bring it back
+				// focus escaped - bring it back
 				const lastFocused = this.#manager.getFocusMemory(this);
 				if (lastFocused && container.contains(lastFocused) && isFocusable(lastFocused)) {
 					e.preventDefault();
 					lastFocused.focus();
 				} else {
-					// Fallback to first tabbable or first focusable or container
+					// fallback to first tabbable or first focusable or container
 					const firstTabbable = this.#getFirstTabbable();
 					const firstFocusable = this.#getAllFocusables()[0];
 					(firstTabbable || firstFocusable || container).focus();
@@ -147,7 +146,6 @@ export class FocusScope {
 			}
 		};
 
-		// Keyboard handler for loop
 		const handleKeydown = (e: KeyboardEvent) => {
 			if (!this.#opts.loop || this.#paused || e.key !== "Tab") return;
 			if (!this.#manager.isActiveScope(this)) return;
@@ -215,7 +213,6 @@ export class FocusScope {
 	#getAllFocusables(): HTMLElement[] {
 		if (!this.#container) return [];
 
-		// Get all focusable elements (including tabindex="-1")
 		return focusable(this.#container, {
 			includeContainer: false,
 			getShadowRoot: true,

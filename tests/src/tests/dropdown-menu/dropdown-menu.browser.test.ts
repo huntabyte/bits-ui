@@ -439,6 +439,36 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	await vi.waitFor(() =>
 		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
 	);
+
+	await t.user.click(checkboxGroupItem1);
+	await t.open();
+
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false")
+	);
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
+	);
+
+	await t.user.click(t.getByTestId("checkbox-group-item-2"));
+	await t.open();
+
+	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
+	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
+
+	await t.user.keyboard(kbd.ESCAPE);
+
+	await expectNotExists(page.getByTestId("content"));
+	// we click twice, once to close the menu and once again to clear it
+	await t.user.click(t.getByTestId("checkbox-group-binding"));
+	await t.open();
+
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false")
+	);
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
+	);
 });
 
 it("calls `onValueChange` when the value of the checkbox group changes", async () => {
