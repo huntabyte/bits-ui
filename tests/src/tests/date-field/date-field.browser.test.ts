@@ -24,15 +24,15 @@ const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
 function setup(props: DateFieldTestProps = {}) {
 	const user = setupBrowserUserEvents();
-	const returned = render(DateFieldTest, { ...props });
-	const month = returned.getByTestId("month").element() as HTMLElement;
-	const day = returned.getByTestId("day").element() as HTMLElement;
-	const year = returned.getByTestId("year").element() as HTMLElement;
-	const value = returned.getByTestId("value").element() as HTMLElement;
-	const input = returned.getByTestId("input").element() as HTMLElement;
-	const label = returned.getByTestId("label").element() as HTMLElement;
+	const t = render(DateFieldTest, { ...props });
+	const month = t.getByTestId("month").element() as HTMLElement;
+	const day = t.getByTestId("day").element() as HTMLElement;
+	const year = t.getByTestId("year").element() as HTMLElement;
+	const value = t.getByTestId("value").element() as HTMLElement;
+	const input = t.getByTestId("input").element() as HTMLElement;
+	const label = t.getByTestId("label").element() as HTMLElement;
 
-	return { ...returned, user, month, day, year, value, input, label };
+	return { ...t, user, month, day, year, value, input, label };
 }
 
 describe("date field", () => {
@@ -103,14 +103,14 @@ describe("date field", () => {
 			locale: "en-UK",
 			value: calendarDateTime,
 		});
-		expectNotExists(t.getByTestId("dayPeriod"));
+		await expectNotExists(t.getByTestId("dayPeriod"));
 	});
 
 	it("should show the day period for locales that do use them", async () => {
 		const t = setup({
 			value: calendarDateTime,
 		});
-		expectExists(t.getByTestId("dayPeriod"));
+		await expectExists(t.getByTestId("dayPeriod"));
 	});
 
 	it("should focus first segment on label click", async () => {
@@ -360,7 +360,7 @@ describe("date field", () => {
 			value: zonedDateTime,
 			hourCycle: 24,
 		});
-		expectNotExists(t.getByTestId("dayPeriod"));
+		await expectNotExists(t.getByTestId("dayPeriod"));
 
 		const hour = t.getByTestId("hour");
 		expect(hour).toHaveTextContent("12");
@@ -379,7 +379,7 @@ describe("date field", () => {
 		const nonDisplayedSegments = ["hour", "minute", "second", "dayPeriod"];
 		const displayedSegments = [t.month, t.day, t.year];
 		for (const seg of nonDisplayedSegments) {
-			expectNotExists(t.getByTestId(seg));
+			await expectNotExists(t.getByTestId(seg));
 		}
 
 		for (const seg of displayedSegments) {
@@ -402,7 +402,7 @@ describe("date field", () => {
 			t.getByTestId("dayPeriod").element() as HTMLElement,
 		];
 
-		expectNotExists(t.getByTestId("second"));
+		await expectNotExists(t.getByTestId("second"));
 
 		for (const seg of displayedSegments) {
 			expect(seg).toBeVisible();

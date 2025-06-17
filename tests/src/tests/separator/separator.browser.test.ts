@@ -4,15 +4,14 @@ import type { Separator } from "bits-ui";
 import SeparatorTest from "./separator-test.svelte";
 
 function setup(props: Separator.RootProps = {}) {
-	const returned = render(SeparatorTest, { ...props });
-	const { getByTestId } = returned;
-	const root = getByTestId("root");
-	return { root, ...returned };
+	const t = render(SeparatorTest, { ...props });
+	const root = t.getByTestId("root").element() as HTMLElement;
+	return { root, ...t };
 }
 
 describe("Separator", () => {
 	it("should have bits data attrs", async () => {
-		const { root } = setup();
-		expect(root).toHaveAttribute("data-separator-root");
+		const t = setup();
+		expect(t.root).toHaveAttribute("data-separator-root");
 	});
 });

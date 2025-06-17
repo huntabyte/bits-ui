@@ -53,9 +53,9 @@ export default defineConfig({
 						provider: "playwright",
 						isolate: true,
 						instances: [
-							{ browser: "chromium", clearMocks: true },
-							{ browser: "firefox", clearMocks: true },
-							{ browser: "webkit", clearMocks: true },
+							{ browser: "chromium" },
+							{ browser: "firefox" },
+							{ browser: "webkit" },
 						],
 					},
 				},

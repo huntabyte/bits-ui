@@ -9,16 +9,16 @@ const kbd = getTestKbd();
 
 function setup(props: Switch.RootProps = {}) {
 	const user = setupBrowserUserEvents();
-	const returned = render(SwitchTest, { name: "switch-input", ...props });
-	const root = returned.getByTestId("root").element() as HTMLElement;
-	const thumb = returned.getByTestId("thumb").element() as HTMLElement;
-	const input = returned.container.querySelector("input") as HTMLInputElement;
+	const t = render(SwitchTest, { name: "switch-input", ...props });
+	const root = t.getByTestId("root").element() as HTMLElement;
+	const thumb = t.getByTestId("thumb").element() as HTMLElement;
+	const input = t.container.querySelector("input") as HTMLInputElement;
 	return {
 		root,
 		thumb,
 		user,
 		input,
-		...returned,
+		...t,
 	};
 }
 

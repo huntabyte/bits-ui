@@ -21,9 +21,9 @@ const INDICATOR_IDS = TEST_ITEMS.map((item) => `${item.value}-indicator`);
 
 function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = TEST_ITEMS) {
 	const user = setupBrowserUserEvents();
-	const returned = render(RadioGroupTest, { ...props, items });
+	const t = render(RadioGroupTest, { ...props, items });
 	const input = document.querySelector("input") as HTMLInputElement;
-	return { user, input, ...returned };
+	return { user, input, ...t };
 }
 
 function getRandomItemIndex(length = TEST_ITEMS.length) {
@@ -355,7 +355,7 @@ describe("Focus Management", () => {
 		});
 
 		await user.click(t.getByTestId("trigger"));
-		await vi.waitFor(() => expectExists(t.getByTestId("content")));
+		await expectExists(t.getByTestId("content"));
 
 		expect(t.getByTestId("value")).toHaveTextContent("b");
 

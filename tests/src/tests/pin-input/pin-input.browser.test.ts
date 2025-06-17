@@ -1,4 +1,4 @@
-import { expect, it, vi } from "vitest";
+import { expect, it, vi, afterEach } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { REGEXP_ONLY_DIGITS } from "bits-ui";
 import { getTestKbd, sleep } from "../utils.js";
@@ -32,6 +32,10 @@ function setup(props: Partial<ComponentProps<typeof PinInputTest>> = {}) {
 		...returned,
 	};
 }
+
+afterEach(() => {
+	vi.resetAllMocks();
+});
 
 it("should sync the `name` prop to the hidden input", async () => {
 	const { hiddenInput } = setup({ name: "test" });

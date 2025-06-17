@@ -225,7 +225,7 @@ export class FocusScope {
 	static use(opts: FocusScopeUseOpts) {
 		let scope: FocusScope | null = null;
 
-		watch.pre([() => opts.ref.current, () => opts.enabled.current], ([ref, enabled]) => {
+		watch([() => opts.ref.current, () => opts.enabled.current], ([ref, enabled]) => {
 			if (ref && enabled) {
 				if (!scope) {
 					scope = new FocusScope(opts);

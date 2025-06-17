@@ -1,5 +1,5 @@
 import { userEvent, type Locator } from "@vitest/browser/context";
-import { expect, onTestFinished } from "vitest";
+import { expect, onTestFinished, vi } from "vitest";
 import { sleep } from "./utils";
 
 export async function expectNotClickable(node: Element | HTMLElement | Locator) {
@@ -7,12 +7,12 @@ export async function expectNotClickable(node: Element | HTMLElement | Locator) 
 	await expect(user.click(node, { timeout: 100 })).rejects.toThrow();
 }
 
-export function expectNotExists(loc: Locator) {
-	expect(() => loc.element()).toThrow();
+export async function expectNotExists(loc: Locator) {
+	await vi.waitFor(() => expect(() => loc.element()).toThrow());
 }
 
-export function expectExists(loc: Locator) {
-	expect(loc.element()).toBeInTheDocument();
+export async function expectExists(loc: Locator) {
+	await vi.waitFor(() => expect(loc.element()).toBeInTheDocument());
 }
 
 export async function simulateOutsideClick(node: Element | HTMLElement | Locator) {

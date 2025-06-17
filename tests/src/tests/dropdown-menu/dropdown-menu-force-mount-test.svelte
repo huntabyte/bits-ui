@@ -6,9 +6,8 @@
 		radio?: string;
 		subRadio?: string;
 		open?: boolean;
-		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child" | "asChild">;
-		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child" | "asChild">;
-		portalProps?: DropdownMenu.PortalProps;
+		contentProps?: Omit<DropdownMenu.ContentProps, "asChild" | "children" | "child">;
+		portalProps?: Omit<DropdownMenu.PortalProps, "asChild" | "children" | "child">;
 		withOpenCheck?: boolean;
 	};
 </script>
@@ -21,7 +20,6 @@
 		subRadio = "",
 		open = false,
 		contentProps = {},
-		subContentProps = {},
 		portalProps = {},
 		withOpenCheck = false,
 		...restProps
@@ -39,9 +37,9 @@
 		<div {...props}>
 			<DropdownMenu.Separator data-testid="separator" />
 			<DropdownMenu.Group data-testid="group">
-				<DropdownMenu.GroupHeading data-testid="group-heading"
-					>Stuff</DropdownMenu.GroupHeading
-				>
+				<DropdownMenu.GroupHeading data-testid="group-heading">
+					Stuff
+				</DropdownMenu.GroupHeading>
 				<DropdownMenu.Item data-testid="item">
 					<span>item</span>
 				</DropdownMenu.Item>
@@ -51,7 +49,7 @@
 				<DropdownMenu.SubTrigger data-testid="sub-trigger">
 					<span>subtrigger</span>
 				</DropdownMenu.SubTrigger>
-				<DropdownMenu.SubContent data-testid="sub-content" {...subContentProps}>
+				<DropdownMenu.SubContent data-testid="sub-content">
 					<DropdownMenu.Item data-testid="sub-item">
 						<span>Email</span>
 					</DropdownMenu.Item>
@@ -109,10 +107,17 @@
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<DropdownMenu.Root bind:open {...restProps}>
-			<DropdownMenu.Trigger data-testid="trigger">open</DropdownMenu.Trigger>
+			<DropdownMenu.Trigger
+				data-testid="trigger"
+				class="h-[500px] w-[500px]"
+				aria-expanded={undefined}
+				aria-controls={undefined}
+			>
+				open
+			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal {...portalProps}>
 				{#if withOpenCheck}
-					<DropdownMenu.Content data-testid="content" {...contentProps} forceMount>
+					<DropdownMenu.Content {...contentProps} data-testid="content" forceMount>
 						{#snippet child(props)}
 							{#if props.open}
 								{@render Content(props)}
@@ -120,7 +125,7 @@
 						{/snippet}
 					</DropdownMenu.Content>
 				{:else}
-					<DropdownMenu.Content data-testid="content" {...contentProps} forceMount>
+					<DropdownMenu.Content {...contentProps} data-testid="content" forceMount>
 						{#snippet child(props)}
 							{@render Content(props)}
 						{/snippet}
@@ -130,7 +135,6 @@
 		</DropdownMenu.Root>
 	</div>
 	<button data-testid="next-button">next button</button>
-
 	<!-- Buttons to test binding -->
 	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>
 	<button data-testid="checked-binding" onclick={() => (checked = !checked)}>{checked}</button>

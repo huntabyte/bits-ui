@@ -10,7 +10,7 @@ import ComboboxMultiTest from "./combobox-multi-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
-import { simulateOutsideClick } from "../browser-utils";
+import { expectExists, expectNotExists, simulateOutsideClick } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -48,7 +48,7 @@ function setupSingle(
 	const outside = page.getByTestId("outside").element() as HTMLElement;
 
 	function getContent() {
-		return page.getByTestId("content").element() as HTMLElement;
+		return page.getByTestId("content");
 	}
 
 	function getHiddenInput(name = "test") {
@@ -109,7 +109,7 @@ async function openSingle(
 ) {
 	const returned = setupSingle(props);
 
-	expect(() => page.getByTestId("content").element()).toThrow();
+	await expectNotExists(page.getByTestId("content"));
 	if (openWith === "click") {
 		await returned.user.click(returned.trigger);
 	} else if (openWith === "type" && searchValue) {
@@ -118,7 +118,7 @@ async function openSingle(
 		returned.input.focus();
 		await returned.user.keyboard(openWith);
 	}
-	expect(page.getByTestId("content").element()).toBeInTheDocument();
+	await expectExists(page.getByTestId("content"));
 	const content = page.getByTestId("content").element() as HTMLElement;
 	const group = page.getByTestId("group").element() as HTMLElement;
 	const groupHeading = page.getByTestId("group-label").element() as HTMLElement;
@@ -136,7 +136,7 @@ async function openMultiple(
 	searchValue?: string
 ) {
 	const returned = setupMultiple(props);
-	expect(() => page.getByTestId("content").element()).toThrow();
+	await expectNotExists(page.getByTestId("content"));
 
 	if (openWith === "click") {
 		await returned.user.click(returned.trigger);
@@ -146,7 +146,7 @@ async function openMultiple(
 		returned.input.focus();
 		await returned.user.keyboard(openWith);
 	}
-	expect(page.getByTestId("content").element()).toBeInTheDocument();
+	await expectExists(page.getByTestId("content"));
 	const content = page.getByTestId("content").element() as HTMLElement;
 	return {
 		...returned,
@@ -207,7 +207,7 @@ describe("combobox - single", () => {
 	it("should close on escape keydown", async () => {
 		const t = await openSingle();
 		await t.user.keyboard(kbd.ESCAPE);
-		expect(() => t.getContent()).toThrow();
+		await expectNotExists(t.getContent());
 	});
 
 	it("should close on outside click", async () => {
@@ -215,7 +215,7 @@ describe("combobox - single", () => {
 		await sleep(10);
 		await simulateOutsideClick(t.outside);
 		await sleep(10);
-		expect(() => t.getContent()).toThrow();
+		await expectNotExists(t.getContent());
 	});
 
 	it("should portal to the body by default", async () => {
@@ -242,10 +242,10 @@ describe("combobox - single", () => {
 		expect(t.openBinding).toHaveTextContent("true");
 		await t.user.click(t.openBinding);
 		expect(t.openBinding).toHaveTextContent("false");
-		expect(() => t.getContent()).toThrow();
+		await expectNotExists(t.getContent());
 		await t.user.click(t.openBinding);
 		expect(t.openBinding).toHaveTextContent("true");
-		expect(t.getContent()).toBeInTheDocument();
+		await expectExists(t.getContent());
 	});
 
 	it("should respect binding the `value` prop", async () => {
@@ -268,7 +268,7 @@ describe("combobox - single", () => {
 	it("should select items when clicked", async () => {
 		const t = await openSingle();
 		const item1 = t.getByTestId("1");
-		expect(() => page.getByTestId("1-indicator").element()).toThrow();
+		await expectNotExists(page.getByTestId("1-indicator"));
 		await t.user.click(item1.element());
 		expect(t.input).toHaveValue("A");
 		expect(t.getHiddenInput()).toHaveValue("1");
@@ -404,10 +404,10 @@ describe("combobox - single", () => {
 		await t.user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item4.element());
 		await t.user.keyboard(kbd.ESCAPE);
-		expect(() => t.getContent()).toThrow();
+		await expectNotExists(t.getContent());
 
 		await t.user.keyboard(kbd.ARROW_DOWN);
-		expect(t.getContent()).toBeInTheDocument();
+		await expectExists(t.getContent());
 		expectHighlighted(item1.element());
 		await t.user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item2.element());
@@ -423,12 +423,11 @@ describe("combobox - single", () => {
 	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 		const t = setupSingle({ withOpenCheck: true }, [], ComboboxForceMountTest);
 
-		expect(() => t.getByTestId("content").element()).toThrow();
+		await expectNotExists(t.getByTestId("content"));
 
 		await t.user.click(t.trigger);
 
-		const content = t.getByTestId("content");
-		expect(content).toBeVisible();
+		await expectExists(t.getByTestId("content"));
 	});
 
 	it("should not allow deselecting an item when `allowDeselect` is false", async () => {
@@ -596,7 +595,7 @@ describe("combobox - multiple", () => {
 	it("should select items when clicked", async () => {
 		const t = await openMultiple();
 		const [item] = getItems(t.getByTestId);
-		expect(() => page.getByTestId("1-indicator").element()).toThrow();
+		await expectNotExists(page.getByTestId("1-indicator"));
 		await t.user.click(item!);
 		expect(t.input).toHaveValue("A");
 		expect(t.getHiddenInputs()).toHaveLength(1);
@@ -604,7 +603,7 @@ describe("combobox - multiple", () => {
 		await t.user.click(t.input);
 
 		expectSelected(item!);
-		expect(page.getByTestId("1-indicator").element()).toBeInTheDocument();
+		await expectExists(page.getByTestId("1-indicator"));
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
@@ -722,7 +721,7 @@ describe("combobox - multiple", () => {
 				defaultValue: "B",
 			},
 		});
-		expect(page.getByTestId("2-indicator").element()).toBeInTheDocument();
+		await expectExists(page.getByTestId("2-indicator"));
 		expect(t.input).toHaveValue("B");
 
 		expect(t.getHiddenInputs()[0]).toHaveValue("2");
@@ -750,7 +749,7 @@ describe("combobox - multiple", () => {
 			},
 		});
 		const [item, item2, item3] = getItems(t.getByTestId);
-		expect(() => page.getByTestId("1-indicator").element()).toThrow();
+		await expectNotExists(page.getByTestId("1-indicator"));
 		await t.user.click(item!);
 		expect(t.input).toHaveValue("A");
 		expect(t.getHiddenInputs()).toHaveLength(1);
@@ -758,7 +757,7 @@ describe("combobox - multiple", () => {
 		await t.user.click(t.input);
 
 		expectSelected(item!);
-		expect(page.getByTestId("1-indicator").element()).toBeInTheDocument();
+		await expectExists(page.getByTestId("1-indicator"));
 		await t.user.click(item);
 		expect(t.input).toHaveValue("");
 		expect(t.input).not.toHaveValue("A");

@@ -6,12 +6,11 @@
 		radio?: string;
 		subRadio?: string;
 		open?: boolean;
+		group?: string[];
 		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child">;
-		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child">;
-		portalProps?: DropdownMenu.PortalProps;
+		portalProps?: Omit<DropdownMenu.PortalProps, "children" | "child">;
 		subTriggerProps?: Omit<DropdownMenu.SubTriggerProps, "children" | "child">;
 		checkboxGroupProps?: Omit<DropdownMenu.CheckboxGroupProps, "children" | "child" | "value">;
-		group?: string[];
 	};
 </script>
 
@@ -24,7 +23,6 @@
 		subRadio = "",
 		open = false,
 		contentProps = {},
-		subContentProps = {},
 		portalProps = {},
 		subTriggerProps = {},
 		checkboxGroupProps = {},
@@ -37,14 +35,21 @@
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<DropdownMenu.Root bind:open {...restProps}>
-			<DropdownMenu.Trigger data-testid="trigger">open</DropdownMenu.Trigger>
+			<DropdownMenu.Trigger
+				data-testid="trigger"
+				class="h-[500px] w-[500px]"
+				aria-expanded={undefined}
+				aria-controls={undefined}
+			>
+				open
+			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal {...portalProps}>
-				<DropdownMenu.Content data-testid="content" {...contentProps}>
+				<DropdownMenu.Content {...contentProps} data-testid="content">
 					<DropdownMenu.Separator data-testid="separator" />
 					<DropdownMenu.Group data-testid="group">
-						<DropdownMenu.GroupHeading data-testid="group-heading"
-							>Stuff</DropdownMenu.GroupHeading
-						>
+						<DropdownMenu.GroupHeading data-testid="group-heading">
+							Stuff
+						</DropdownMenu.GroupHeading>
 						<DropdownMenu.Item data-testid="item">
 							<span>item</span>
 						</DropdownMenu.Item>
@@ -54,7 +59,7 @@
 						<DropdownMenu.SubTrigger data-testid="sub-trigger" {...subTriggerProps}>
 							<span>subtrigger</span>
 						</DropdownMenu.SubTrigger>
-						<DropdownMenu.SubContent data-testid="sub-content" {...subContentProps}>
+						<DropdownMenu.SubContent data-testid="sub-content">
 							<DropdownMenu.Item data-testid="sub-item">
 								<span>Email</span>
 							</DropdownMenu.Item>
@@ -89,7 +94,9 @@
 					<DropdownMenu.RadioGroup bind:value={radio} data-testid="radio-group">
 						<DropdownMenu.RadioItem value="1" data-testid="radio-item">
 							{#snippet children({ checked })}
-								<span data-testid="radio-indicator-1"> {checked} </span>
+								<span data-testid="radio-indicator-1">
+									{checked}
+								</span>
 								<span>Radio Item 1</span>
 							{/snippet}
 						</DropdownMenu.RadioItem>
@@ -118,6 +125,9 @@
 							{/snippet}
 						</DropdownMenu.CheckboxItem>
 					</DropdownMenu.CheckboxGroup>
+					<button data-testid="on-open-focus-override" id="on-open-focus-override"
+						>on-open-focus-override</button
+					>
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>
 		</DropdownMenu.Root>
@@ -135,6 +145,9 @@
 	>
 	<button aria-label="radio-sub" data-testid="sub-radio-binding" onclick={() => (subRadio = "")}
 		>{subRadio}</button
+	>
+	<button data-testid="on-close-focus-override" id="on-close-focus-override"
+		>on-close-focus-override</button
 	>
 	<button
 		aria-label="checkbox-group-binding"

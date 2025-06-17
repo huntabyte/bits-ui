@@ -4,12 +4,12 @@ import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd, sleep } from "../utils.js";
 import CommandTest from "./command-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
 function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const returned = render(CommandTest, props as any);
@@ -43,9 +43,9 @@ it("should allow forcing the selected value", async () => {
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
 	const t = setup();
 
-	expect(page.getByTestId("separator")).toBeInTheDocument();
+	await expectExists(page.getByTestId("separator"));
 	await userEvent.type(t.input, "a");
-	expectNotExists(page.getByTestId("separator"));
+	await expectNotExists(page.getByTestId("separator"));
 });
 
 it("should always render the separator when forceMount", async () => {
@@ -55,19 +55,19 @@ it("should always render the separator when forceMount", async () => {
 		},
 	});
 
-	expectExists(page.getByTestId("separator"));
+	await expectExists(page.getByTestId("separator"));
 	await userEvent.type(t.input, "a");
-	expectExists(page.getByTestId("separator"));
+	await expectExists(page.getByTestId("separator"));
 });
 
 it("should show empty state when no items are found", async () => {
 	const t = setup();
 
-	expectNotExists(page.getByTestId("empty"));
+	await expectNotExists(page.getByTestId("empty"));
 
 	t.input.focus();
 	await userEvent.type(t.input, "zzzzzzzz");
-	expectExists(page.getByTestId("empty"));
+	await expectExists(page.getByTestId("empty"));
 });
 
 it("should restore original order when search is cleared", async () => {

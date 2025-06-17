@@ -6,10 +6,9 @@ import { setupBrowserUserEvents } from "../browser-utils.js";
 
 function setup(props: Progress.RootProps = {}) {
 	const user = setupBrowserUserEvents();
-	const returned = render(ProgressTest, { ...props });
-	const { getByTestId } = returned;
-	const root = getByTestId("root").element();
-	return { root, user, ...returned };
+	const t = render(ProgressTest, { ...props });
+	const root = t.getByTestId("root").element() as HTMLElement;
+	return { root, user, ...t };
 }
 
 it("should have bits data attrs", async () => {

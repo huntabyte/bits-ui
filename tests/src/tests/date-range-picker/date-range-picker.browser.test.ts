@@ -95,14 +95,14 @@ async function open(
 	openWith: "click" | (string & {}) = "click"
 ) {
 	const t = setup(props);
-	expectNotExists(t.getContent());
+	await expectNotExists(t.getContent());
 	if (openWith === "click") {
 		await t.user.click(t.trigger);
 	} else {
 		t.trigger.focus();
 		await t.user.keyboard(openWith);
 	}
-	expectExists(t.getContent());
+	await expectExists(t.getContent());
 	const content = t.getByTestId("content").element() as HTMLElement;
 	const calendar = t.getByTestId("calendar").element() as HTMLElement;
 
@@ -560,7 +560,7 @@ it("should sync the calendar with the input when input is changed", async () => 
 	expect(t.start.value).toHaveTextContent("2022-02-01");
 	expect(t.end.value).toHaveTextContent(calendarDate.end.toString());
 	await t.user.click(t.trigger);
-	expectExists(t.getContent());
+	await expectExists(t.getContent());
 
 	const heading = t.getByTestId("heading");
 	expect(heading).toHaveTextContent("February 2022");
@@ -848,21 +848,21 @@ describe("excludeDisabled functionality", () => {
 			isDateDisabled: (date) => date.day === 10, // Jan 10 is disabled, outside our range
 		});
 
-		expect(t.getContent()).not.toBeNull();
+		await expectExists(t.getContent());
 
 		// select start date (Jan 5)
 		const startDay = t.getByTestId("date-1-5");
 		await t.user.click(startDay);
 
 		// picker should still be open
-		expect(t.getContent()).not.toBeNull();
+		await expectExists(t.getContent());
 
 		// select end date (Jan 8) - valid range, no disabled dates
 		const endDay = t.getByTestId("date-1-8");
 		await t.user.click(endDay);
 
 		// picker should close after valid range selection
-		expectNotExists(t.getContent());
+		await expectNotExists(t.getContent());
 	});
 
 	it("should not close picker when range is reset due to excludeDisabled", async () => {
@@ -873,21 +873,21 @@ describe("excludeDisabled functionality", () => {
 			isDateDisabled: (date) => date.day === 6, // Jan 6 is disabled
 		});
 
-		expect(t.getContent()).not.toBeNull();
+		await expectExists(t.getContent());
 
 		// select start date (Jan 5)
 		const startDay = t.getByTestId("date-1-5");
 		await t.user.click(startDay);
 
 		// picker should still be open
-		expect(t.getContent()).not.toBeNull();
+		await expectExists(t.getContent());
 
 		// select end date (Jan 8) - would include disabled Jan 6, range will be reset
 		const endDay = t.getByTestId("date-1-8");
 		await t.user.click(endDay);
 
 		// picker should remain open since no complete range was selected
-		expect(t.getContent()).not.toBeNull();
+		await expectExists(t.getContent());
 	});
 
 	it("should not affect range when excludeDisabled is false even with disabled dates", async () => {

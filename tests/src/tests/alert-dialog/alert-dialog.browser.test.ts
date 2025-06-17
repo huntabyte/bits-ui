@@ -18,11 +18,11 @@ async function setup(props: AlertDialogTestProps = {}, component = AlertDialogTe
 async function open(props: AlertDialogTestProps = {}) {
 	const t = await setup(props);
 	const content = t.getByTestId("content");
-	expectNotExists(content);
+	await expectNotExists(content);
 
 	await t.user.click(t.trigger);
 
-	expectExists(content);
+	await expectExists(content);
 
 	const cancel = t.getByTestId("cancel").element();
 	const action = t.getByTestId("action").element();
@@ -58,13 +58,13 @@ describe("Open/Close Behavior", () => {
 		const t = await open();
 		const cancel = t.getByTestId("cancel").element();
 		await t.user.click(cancel);
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 	});
 
 	it.todo("should close when the `Escape` key is pressed", async () => {
 		const t = await open();
 		await t.user.keyboard(kbd.ESCAPE);
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 		expect(t.getByTestId("trigger").element()).toHaveFocus();
 	});
 
@@ -80,7 +80,7 @@ describe("Open/Close Behavior", () => {
 	it("should not close when content is clicked", async () => {
 		const t = await open();
 		await t.user.click(t.getByTestId("content").element());
-		expectExists(t.getByTestId("content"));
+		await expectExists(t.getByTestId("content"));
 	});
 });
 
@@ -95,7 +95,7 @@ describe("Focus Management", () => {
 		async (withOpenCheck) => {
 			const t = await setup({ withOpenCheck }, AlertDialogForceMountTest);
 			await t.user.click(t.trigger);
-			expectExists(t.getByTestId("content"));
+			await expectExists(t.getByTestId("content"));
 			expect(t.getByTestId("content")).toHaveFocus();
 		}
 	);
@@ -105,7 +105,7 @@ describe("Focus Management", () => {
 		async (withOpenCheck) => {
 			const t = await setup({ withOpenCheck }, AlertDialogForceMountTest);
 			await t.user.click(t.trigger);
-			expectExists(t.getByTestId("content"));
+			await expectExists(t.getByTestId("content"));
 			expect(t.getByTestId("content")).toHaveFocus();
 			await t.user.keyboard(kbd.ESCAPE);
 			expect(t.trigger).toHaveFocus();
@@ -140,7 +140,7 @@ describe("Focus Management", () => {
 				AlertDialogForceMountTest
 			);
 			await t.user.click(t.trigger);
-			expectExists(t.getByTestId("content"));
+			await expectExists(t.getByTestId("content"));
 			expect(t.getByTestId("open-focus-override")).toHaveFocus();
 		}
 	);
@@ -161,7 +161,7 @@ describe("Focus Management", () => {
 				AlertDialogForceMountTest
 			);
 			await t.user.click(t.trigger);
-			expectExists(t.getByTestId("content"));
+			await expectExists(t.getByTestId("content"));
 			await t.user.keyboard(kbd.ESCAPE);
 			expect(t.getByTestId("close-focus-override")).toHaveFocus();
 		}
@@ -190,11 +190,11 @@ describe("Props and Rendering", () => {
 
 	it("should forceMount the content and overlay when their `forceMount` prop is true and the `open` snippet prop is used", async () => {
 		const t = await setup({ withOpenCheck: true }, AlertDialogForceMountTest);
-		expect(() => t.getByTestId("overlay").element()).toThrow();
-		expect(() => t.getByTestId("content").element()).toThrow();
+		await expectNotExists(t.getByTestId("overlay"));
+		await expectNotExists(t.getByTestId("content"));
 		await t.user.click(t.getByTestId("trigger"));
-		expect(t.getByTestId("overlay")).toBeInTheDocument();
-		expect(t.getByTestId("content")).toBeInTheDocument();
+		await expectExists(t.getByTestId("overlay"));
+		await expectExists(t.getByTestId("content"));
 	});
 
 	it("should respect binding to the `open` prop", async () => {
@@ -205,9 +205,9 @@ describe("Props and Rendering", () => {
 		expect(binding).toHaveTextContent("true");
 		await t.user.keyboard(kbd.ESCAPE);
 		expect(binding).toHaveTextContent("false");
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 		await t.user.click(t.getByTestId("toggle"));
-		expectExists(t.getByTestId("content"));
+		await expectExists(t.getByTestId("content"));
 	});
 
 	it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
@@ -215,7 +215,7 @@ describe("Props and Rendering", () => {
 			contentProps: { interactOutsideBehavior: "ignore" },
 		});
 		await t.user.click(t.getByTestId("overlay"));
-		expectExists(t.getByTestId("content"));
+		await expectExists(t.getByTestId("content"));
 	});
 
 	it("should respect the `interactOutsideBehavior: 'close'` prop", async () => {
@@ -226,7 +226,7 @@ describe("Props and Rendering", () => {
 
 		await t.user.click(t.getByTestId("overlay").element());
 		expect(mockFn).toHaveBeenCalled();
-		expect(() => t.getByTestId("content").element()).toThrow();
+		await expectNotExists(t.getByTestId("content"));
 	});
 
 	it("should respect the `escapeKeydownBehavior: 'ignore'` prop", async () => {
@@ -234,7 +234,7 @@ describe("Props and Rendering", () => {
 			contentProps: { escapeKeydownBehavior: "ignore" },
 		});
 		await t.user.keyboard(kbd.ESCAPE);
-		expectExists(t.getByTestId("content"));
+		await expectExists(t.getByTestId("content"));
 		expect(t.getByTestId("trigger")).not.toHaveFocus();
 	});
 });

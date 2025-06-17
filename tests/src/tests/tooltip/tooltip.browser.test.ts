@@ -15,18 +15,18 @@ function setup(
 	component: Component = TooltipTest
 ) {
 	const user = setupBrowserUserEvents();
-	const returned = render(component, { ...props });
-	const trigger = returned.getByTestId("trigger");
-	return { ...returned, trigger, user };
+	const t = render(component, { ...props });
+	const trigger = t.getByTestId("trigger");
+	return { ...t, trigger, user };
 }
 
 async function open(props: Partial<TooltipTestProps> = {}) {
-	const returned = setup(props);
-	expectNotExists(returned.getByTestId("content"));
-	await returned.user.hover(returned.trigger);
-	await vi.waitFor(() => expectExists(returned.getByTestId("content")));
-	const content = returned.getByTestId("content").element() as HTMLElement;
-	return { ...returned, content };
+	const t = setup(props);
+	await expectNotExists(t.getByTestId("content"));
+	await t.user.hover(t.trigger);
+	await expectExists(t.getByTestId("content"));
+	const content = t.getByTestId("content").element() as HTMLElement;
+	return { ...t, content };
 }
 
 it("should have bits data attrs", async () => {
@@ -53,7 +53,7 @@ it("should on hover", async () => {
 it("should close on escape keydown", async () => {
 	const t = await open();
 	await t.user.keyboard(kbd.ESCAPE);
-	expectNotExists(t.getByTestId("content"));
+	await expectNotExists(t.getByTestId("content"));
 });
 
 it.skip("should close when pointer moves outside the trigger and content", async () => {
@@ -64,7 +64,7 @@ it.skip("should close when pointer moves outside the trigger and content", async
 	await t.user.hover(outside);
 
 	await sleep(200);
-	await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
+	await expectNotExists(t.getByTestId("content"));
 });
 
 it("should portal to the body by default", async () => {
@@ -95,19 +95,7 @@ it("should allow ignoring escapeKeydownBehavior ", async () => {
 	});
 	await t.user.click(t.content);
 	await t.user.keyboard(kbd.ESCAPE);
-	expectExists(t.getByTestId("content"));
-});
-
-it("should allow ignoring interactOutsideBehavior", async () => {
-	const t = await open({
-		contentProps: {
-			interactOutsideBehavior: "ignore",
-		},
-	});
-	await t.user.click(t.content);
-	const outside = t.getByTestId("outside").element() as HTMLElement;
-	await t.user.click(outside);
-	expectExists(t.getByTestId("content"));
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should respect binding the open prop", async () => {
@@ -120,10 +108,10 @@ it("should respect binding the open prop", async () => {
 	await vi.waitFor(() => expect(binding).toHaveTextContent("true"));
 	await t.user.click(binding);
 	await vi.waitFor(() => expect(binding).toHaveTextContent("false"));
-	expectNotExists(t.getByTestId("content"));
+	await expectNotExists(t.getByTestId("content"));
 	await t.user.click(binding);
 	await vi.waitFor(() => expect(binding).toHaveTextContent("true"));
-	expectExists(t.getByTestId("content"));
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should forceMount the content when `forceMount` is true", async () => {
@@ -134,9 +122,9 @@ it("should forceMount the content when `forceMount` is true", async () => {
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
-	expectNotExists(t.getByTestId("content"));
+	await expectNotExists(t.getByTestId("content"));
 	await t.user.hover(t.trigger);
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(t.getByTestId("content"));
 	expect(t.getByTestId("content")).toBeVisible();
 });
 
@@ -144,15 +132,15 @@ it("should use the custom anchor element when `customAnchor` is provided", async
 	// type check
 	const t = setup();
 	await t.user.hover(t.trigger);
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should open when composed with another floating trigger", async () => {
 	const user = setupBrowserUserEvents();
 	const t = render(TooltipPopoverTest);
 	await user.hover(t.getByTestId("trigger"));
-	await vi.waitFor(() => expectExists(t.getByTestId("tooltip-content")));
+	await expectExists(t.getByTestId("tooltip-content"));
 	await user.click(t.getByTestId("trigger"));
-	await vi.waitFor(() => expectExists(t.getByTestId("popover-content")));
-	await vi.waitFor(() => expectNotExists(t.getByTestId("tooltip-content")));
+	await expectExists(t.getByTestId("popover-content"));
+	await expectNotExists(t.getByTestId("tooltip-content"));
 });

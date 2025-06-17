@@ -20,17 +20,17 @@ type ContextMenuSetupProps = (ContextMenuTestProps | ContextMenuForceMountTestPr
 async function setup(props: ContextMenuSetupProps = {}) {
 	const { component = ContextMenuTest, ...rest } = props;
 	const user = setupBrowserUserEvents();
-	const returned = render(component, { ...rest });
-	const trigger = returned.getByTestId("trigger").element() as HTMLElement;
+	const t = render(component, { ...rest });
+	const trigger = t.getByTestId("trigger").element() as HTMLElement;
 
 	const open = async () => {
 		await user.click(trigger, { button: "right" });
-		await vi.waitFor(() => expectExists(returned.getByTestId("content")));
+		await expectExists(t.getByTestId("content"));
 	};
 	await sleep(15);
 
 	return {
-		...returned,
+		...t,
 		getContent: () => page.getByTestId("content"),
 		getSubContent: () => page.getByTestId("sub-content"),
 		user,
@@ -41,11 +41,9 @@ async function setup(props: ContextMenuSetupProps = {}) {
 
 async function open(props: ContextMenuSetupProps = {}) {
 	const t = await setup(props);
-	expectNotExists(t.getContent());
+	await expectNotExists(t.getContent());
 	await t.user.click(t.trigger, { button: "right" });
-
-	await vi.waitFor(() => expectExists(t.getContent()));
-	await sleep(10);
+	await expectExists(t.getContent());
 	return { ...t };
 }
 
@@ -55,9 +53,9 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	expect(t.getByTestId("sub-trigger")).toHaveFocus();
 
-	expectNotExists(t.getSubContent());
+	await expectNotExists(t.getSubContent());
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	await vi.waitFor(() => expectExists(t.getSubContent()));
+	await expectExists(t.getSubContent());
 	expect(t.getByTestId("sub-item")).toHaveFocus();
 
 	return {
@@ -99,7 +97,7 @@ it("should open when right-clicked & respects binding", async () => {
 	const binding = t.getByTestId("binding");
 	expect(binding).toHaveTextContent("false");
 	await t.user.click(t.trigger, { button: "right" });
-	expectExists(t.getContent());
+	await expectExists(t.getContent());
 	expect(binding).toHaveTextContent("true");
 });
 
@@ -117,9 +115,9 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	const subtrigger = t.getByTestId("sub-trigger");
 	expect(subtrigger).toHaveFocus();
-	expectNotExists(t.getSubContent());
+	await expectNotExists(t.getSubContent());
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	expectExists(t.getSubContent());
+	await expectExists(t.getSubContent());
 	expect(t.getByTestId("sub-item")).toHaveFocus();
 });
 
@@ -140,7 +138,7 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	await t.user.click(checkedBinding);
 	expect(checkedBinding).toHaveTextContent("true");
 	await t.user.click(t.trigger, { button: "right" });
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(t.getByTestId("content"));
 	expect(t.getByTestId("checkbox-indicator")).toHaveTextContent("true");
 });
 
@@ -188,7 +186,7 @@ it("should check the radio item when clicked & respects binding", async () => {
 	expect(t.getByTestId("radio-indicator-2")).toHaveTextContent("true");
 
 	await t.user.keyboard(kbd.ESCAPE);
-	expectNotExists(t.getContent());
+	await expectNotExists(t.getContent());
 	await t.user.click(radioBinding);
 	expect(radioBinding).toHaveTextContent("");
 	await t.user.click(t.trigger, { button: "right" });
@@ -259,7 +257,7 @@ it("should loop through the menu items when the `loop` prop is set to true", asy
 it("should close the menu on escape", async () => {
 	const t = await open();
 	await t.user.keyboard(kbd.ESCAPE);
-	expectNotExists(t.getContent());
+	await expectNotExists(t.getContent());
 });
 
 it("should respect the `escapeKeydownBehavior: 'ignore'` prop", async () => {
@@ -269,7 +267,7 @@ it("should respect the `escapeKeydownBehavior: 'ignore'` prop", async () => {
 		},
 	});
 	await t.user.keyboard(kbd.ESCAPE);
-	expectExists(t.getContent());
+	await expectExists(t.getContent());
 });
 
 it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
@@ -280,7 +278,7 @@ it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
 	});
 	await t.user.click(page.getByTestId("outside"));
 
-	expectExists(t.getContent());
+	await expectExists(t.getContent());
 });
 
 it("should portal to the body if a `to` prop is not passed to the Portal", async () => {
@@ -318,7 +316,7 @@ it("should not portal if portal is disabled", async () => {
 it("should forceMount the content when `forceMount` is true", async () => {
 	const t = await setup({ component: ContextMenuForceMountTest });
 
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
@@ -326,11 +324,11 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 		withOpenCheck: true,
 		component: ContextMenuForceMountTest,
 	});
-	expectNotExists(t.getByTestId("content"));
+	await expectNotExists(t.getByTestId("content"));
 
 	await t.user.click(t.trigger, { button: "right" });
 
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(t.getByTestId("content"));
 });
 
 it.each([ContextMenuTest, ContextMenuForceMountTest])(
@@ -344,7 +342,7 @@ it.each([ContextMenuTest, ContextMenuForceMountTest])(
 		await t.user.tab();
 		await sleep(10);
 
-		await vi.waitFor(() => expectNotExists(t.getContent()));
+		await expectNotExists(t.getContent());
 		expect(nextButton).toHaveFocus();
 	}
 );
@@ -359,7 +357,7 @@ it.each([ContextMenuTest, ContextMenuForceMountTest])(
 		const previousButton = t.getByTestId("previous-button");
 		await t.user.keyboard(kbd.SHIFT_TAB);
 		expect(previousButton).toHaveFocus();
-		await vi.waitFor(() => expectNotExists(t.getContent()));
+		await expectNotExists(t.getContent());
 	}
 );
 
@@ -439,7 +437,7 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
 
 	await t.user.click(t.getByTestId("checkbox-group-binding"));
-	await vi.waitFor(() => expectNotExists(page.getByTestId("content")));
+	await expectNotExists(page.getByTestId("content"));
 	// we click twice, once to close the menu and once again to clear it
 	await t.user.click(t.getByTestId("checkbox-group-binding"));
 	await t.open();

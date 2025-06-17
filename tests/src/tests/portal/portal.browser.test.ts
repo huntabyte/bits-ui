@@ -116,7 +116,7 @@ it("should clean up portal content when component unmounts", async () => {
 	unmount();
 	await tick();
 
-	expectNotExists(page.getByTestId("portal-content"));
+	await expectNotExists(page.getByTestId("portal-content"));
 });
 
 it("should handle multiple portals to different targets", async () => {

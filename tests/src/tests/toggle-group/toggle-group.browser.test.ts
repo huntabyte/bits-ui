@@ -32,28 +32,28 @@ const items: Item[] = [
 function setupMultiple(props: Partial<MultipleToggleGroupTestProps> = {}) {
 	const user = setupBrowserUserEvents();
 	// @ts-expect-error - shh
-	const returned = render(ToggleGroupMultipleTest, { ...props, items });
-	const root = returned.getByTestId("root").element() as HTMLElement;
-	const binding = returned.getByTestId("binding").element() as HTMLElement;
+	const t = render(ToggleGroupMultipleTest, { ...props, items });
+	const root = t.getByTestId("root").element() as HTMLElement;
+	const binding = t.getByTestId("binding").element() as HTMLElement;
 	return {
 		root,
 		user,
 		binding,
-		...returned,
+		...t,
 	};
 }
 
 function setup(props: Partial<SingleToggleGroupTestProps> = {}) {
 	const user = setupBrowserUserEvents();
 	// @ts-expect-error - shh
-	const returned = render(ToggleGroupTest, { ...props, items });
-	const root = returned.getByTestId("root").element() as HTMLElement;
-	const binding = returned.getByTestId("binding");
+	const t = render(ToggleGroupTest, { ...props, items });
+	const root = t.getByTestId("root").element() as HTMLElement;
+	const binding = t.getByTestId("binding");
 	return {
 		root,
 		user,
 		binding,
-		...returned,
+		...t,
 	};
 }
 

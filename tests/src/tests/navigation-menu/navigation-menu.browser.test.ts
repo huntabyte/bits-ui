@@ -19,10 +19,10 @@ function setup(props: NavigationMenuTestProps = {}) {
 it("should open viewport when hovering trigger", async () => {
 	const t = setup();
 	const trigger = t.getByTestId("group-item-trigger");
-	expectNotExists(t.getByTestId("viewport"));
+	await expectNotExists(t.getByTestId("viewport"));
 	await t.user.hover(trigger);
 
-	expectExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("viewport"));
 	expect(t.getByTestId("viewport").element()).toContainElement(
 		t.getByTestId("group-item-content").element() as HTMLElement
 	);
@@ -31,21 +31,21 @@ it("should open viewport when hovering trigger", async () => {
 it("should toggle viewport when pressing enter on focused trigger", async () => {
 	const t = setup();
 	(t.getByTestId("sub-group-item-trigger").element() as HTMLElement).focus();
-	expectNotExists(t.getByTestId("viewport"));
+	await expectNotExists(t.getByTestId("viewport"));
 	await t.user.keyboard(kbd.ENTER);
-	expectExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("viewport"));
 	expect(t.getByTestId("viewport").element()).toContainElement(
 		t.getByTestId("sub-group-item-content").element() as HTMLElement
 	);
 	await t.user.keyboard(kbd.ENTER);
-	expectNotExists(t.getByTestId("viewport"));
+	await expectNotExists(t.getByTestId("viewport"));
 });
 
 it("should show initial submenu items on trigger hover", async () => {
 	const t = setup();
 	const trigger = t.getByTestId("sub-group-item-trigger");
 	await t.user.hover(trigger);
-	expectExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("viewport"));
 	expect(t.getByTestId("viewport").element()).toContainElement(
 		t.getByTestId("sub-group-item-content").element() as HTMLElement
 	);
@@ -55,37 +55,37 @@ it("should show submenu items on subtrigger hover", async () => {
 	const t = setup();
 	const trigger = t.getByTestId("sub-group-item-trigger");
 	await t.user.hover(trigger);
-	expectExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("viewport"));
 	const subTrigger = t.getByTestId("sub-group-item-sub-item2-trigger");
 	await t.user.hover(subTrigger);
-	expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
-	expectNotExists(t.getByTestId("sub-group-item-sub-item1-content"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
+	await expectNotExists(t.getByTestId("sub-group-item-sub-item1-content"));
 	expect(t.getByTestId("viewport").element()).toContainElement(
 		t.getByTestId("sub-group-item-sub-item2-content").element() as HTMLElement
 	);
 	// does not hide when clicking open subtrigger
 	await t.user.click(t.getByTestId("sub-group-item-sub-item2-trigger"));
-	expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
 });
 
 it("should open submenu viewport when pressing enter on focused subtrigger", async () => {
 	const t = setup();
 	(t.getByTestId("sub-group-item-trigger").element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ENTER);
-	expectExists(t.getByTestId("sub-group-item-sub-item2-trigger"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item2-trigger"));
 	(t.getByTestId("sub-group-item-sub-item2-trigger").element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ENTER);
-	expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
 	// does not hide when re-pressing enter
 	await t.user.keyboard(kbd.ENTER);
-	expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
 });
 
 it("should show indicator when hovering trigger", async () => {
 	const t = setup();
 	const trigger = t.getByTestId("group-item-trigger");
 	await t.user.hover(trigger);
-	expectExists(t.getByTestId("indicator"));
+	await expectExists(t.getByTestId("indicator"));
 });
 
 it("should receive focus on the first item", async () => {
@@ -119,7 +119,7 @@ it("should focus next sub-item with right arrow, and previous with left", async 
 	const t = setup();
 	const trigger = t.getByTestId("sub-group-item-trigger");
 	await t.user.hover(trigger);
-	expectExists(t.getByTestId("sub-group-item-sub-viewport"));
+	await expectExists(t.getByTestId("sub-group-item-sub-viewport"));
 	const subTrigger = t.getByTestId("sub-group-item-sub-item1-trigger");
 	(subTrigger.element() as HTMLElement).focus();
 	await t.user.keyboard(kbd.ARROW_RIGHT);
@@ -165,11 +165,11 @@ it("should focus next on content with down arrow when opened", async () => {
 it("should render content without viewport", async () => {
 	const t = setup({ noViewport: true });
 	const trigger = t.getByTestId("group-item-trigger");
-	expectNotExists(t.getByTestId("viewport"));
-	expectNotExists(t.getByTestId("group-item-content"));
+	await expectNotExists(t.getByTestId("viewport"));
+	await expectNotExists(t.getByTestId("group-item-content"));
 	await t.user.hover(trigger);
-	expectExists(t.getByTestId("group-item-content"));
-	expectNotExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("group-item-content"));
+	await expectNotExists(t.getByTestId("viewport"));
 	expect(t.getByTestId("group-item").element()).toContainElement(
 		t.getByTestId("group-item-content").element() as HTMLElement
 	);
@@ -179,14 +179,14 @@ it("should render subcontent without subviewport", async () => {
 	const t = setup({ noSubViewport: true });
 	const trigger = t.getByTestId("sub-group-item-trigger");
 	await t.user.hover(trigger);
-	expectExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("viewport"));
 	const subTrigger = t.getByTestId("sub-group-item-sub-item2-trigger");
 	await t.user.hover(subTrigger);
-	expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
 	expect(t.getByTestId("sub-group-item-sub-item2").element()).toContainElement(
 		t.getByTestId("sub-group-item-sub-item2-content").element() as HTMLElement
 	);
-	expectNotExists(t.getByTestId("sub-group-item-sub-viewport"));
+	await expectNotExists(t.getByTestId("sub-group-item-sub-viewport"));
 });
 
 it("should switch between submenu items on pointer hover", async () => {
@@ -195,36 +195,36 @@ it("should switch between submenu items on pointer hover", async () => {
 	// First open the main submenu
 	const trigger = t.getByTestId("sub-group-item-trigger");
 	await t.user.hover(trigger);
-	expectExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("viewport"));
 
 	// Hover over first sub-trigger to open its content
 	const subTrigger1 = t.getByTestId("sub-group-item-sub-item1-trigger");
 	await t.user.hover(subTrigger1);
-	expectExists(t.getByTestId("sub-group-item-sub-item1-content"));
-	expectNotExists(t.getByTestId("sub-group-item-sub-item2-content"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item1-content"));
+	await expectNotExists(t.getByTestId("sub-group-item-sub-item2-content"));
 
 	// Hover over second sub-trigger - should close first and open second
 	const subTrigger2 = t.getByTestId("sub-group-item-sub-item2-trigger");
 	await t.user.hover(subTrigger2);
-	expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
-	expectNotExists(t.getByTestId("sub-group-item-sub-item1-content"));
+	await expectExists(t.getByTestId("sub-group-item-sub-item2-content"));
+	await expectNotExists(t.getByTestId("sub-group-item-sub-item1-content"));
 });
 
 it("should not open menu on hover when `openOnHover` is false", async () => {
 	const t = setup({ groupItemProps: { openOnHover: false } });
 	const trigger = t.getByTestId("group-item-trigger");
 	await t.user.hover(trigger);
-	expectNotExists(t.getByTestId("viewport"));
-	expectNotExists(t.getByTestId("group-item-content"));
+	await expectNotExists(t.getByTestId("viewport"));
+	await expectNotExists(t.getByTestId("group-item-content"));
 });
 
 it("should toggle on trigger click when `openOnHover` is false", async () => {
 	const t = setup({ groupItemProps: { openOnHover: false } });
 	const trigger = t.getByTestId("group-item-trigger");
 	await t.user.click(trigger);
-	expectExists(t.getByTestId("viewport"));
-	expectExists(t.getByTestId("group-item-content"));
+	await expectExists(t.getByTestId("viewport"));
+	await expectExists(t.getByTestId("group-item-content"));
 	await t.user.click(trigger);
-	expectNotExists(t.getByTestId("viewport"));
-	expectNotExists(t.getByTestId("group-item-content"));
+	await expectNotExists(t.getByTestId("viewport"));
+	await expectNotExists(t.getByTestId("group-item-content"));
 });

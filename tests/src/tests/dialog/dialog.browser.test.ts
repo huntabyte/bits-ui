@@ -1,28 +1,23 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { userEvent } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { tick, type Component } from "svelte";
 import { getTestKbd, sleep } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
-import {
-	expectExists,
-	expectNotExists,
-	setupBrowserUserEvents,
-	simulateOutsideClick,
-} from "../browser-utils";
+import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 
 const kbd = getTestKbd();
 
 async function setup(props: DialogTestProps = {}, component: Component = DialogTest) {
 	const user = setupBrowserUserEvents();
-	const returned = render(component, { ...props });
-	const trigger = page.getByTestId("trigger");
+	const t = render(component, { ...props });
+	const trigger = t.getByTestId("trigger").element() as HTMLElement;
 	await sleep(15);
 
 	return {
-		...returned,
+		...t,
 		trigger,
 		user,
 	};
@@ -30,11 +25,9 @@ async function setup(props: DialogTestProps = {}, component: Component = DialogT
 
 async function open(props: DialogTestProps = {}, component: Component = DialogTest) {
 	const t = await setup(props, component);
-	expectNotExists(page.getByTestId("content"));
-	await sleep(50);
+	await expectNotExists(t.getByTestId("content"));
 	await t.user.click(t.trigger);
-	await sleep(50);
-	expectExists(page.getByTestId("content"));
+	await expectExists(t.getByTestId("content"));
 	return t;
 }
 
@@ -66,27 +59,27 @@ describe("Open/Close Behavior", () => {
 		const t = await open();
 		const close = t.getByTestId("close").element();
 		await t.user.click(close);
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 	});
 
 	it.todo("should close when the `Escape` key is pressed", async () => {
 		const t = await open();
 		await t.user.keyboard(kbd.ESCAPE);
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 		expect(t.getByTestId("trigger").element()).toHaveFocus();
 	});
 
 	it("should close when the overlay is clicked", async () => {
 		const t = await open();
-		expectExists(page.getByTestId("overlay"));
-		await t.user.click(page.getByTestId("overlay"));
-		expectNotExists(page.getByTestId("content"));
+		await expectExists(t.getByTestId("overlay"));
+		await t.user.click(t.getByTestId("overlay"));
+		await expectNotExists(t.getByTestId("content"));
 	});
 
 	it("should not close when content is clicked", async () => {
 		const t = await open();
 		await t.user.click(t.getByTestId("content").element());
-		expectExists(t.getByTestId("content"));
+		await expectExists(t.getByTestId("content"));
 	});
 });
 
@@ -96,7 +89,7 @@ describe("Focus Management", () => {
 		async (withOpenCheck) => {
 			const t = await setup({ withOpenCheck }, DialogForceMountTest);
 			await t.user.click(t.trigger);
-			expectExists(t.getByTestId("content"));
+			await expectExists(t.getByTestId("content"));
 			await t.user.keyboard(kbd.ESCAPE);
 			expect(t.trigger).toHaveFocus();
 		}
@@ -130,8 +123,7 @@ describe("Focus Management", () => {
 				DialogForceMountTest
 			);
 			await t.user.click(t.trigger);
-			expectExists(t.getByTestId("content"));
-			await sleep(10);
+			await expectExists(t.getByTestId("content"));
 			expect(t.getByTestId("open-focus-override")).toHaveFocus();
 		}
 	);
@@ -152,7 +144,7 @@ describe("Focus Management", () => {
 				DialogForceMountTest
 			);
 			await t.user.click(t.trigger);
-			expectExists(t.getByTestId("content"));
+			await expectExists(t.getByTestId("content"));
 			await t.user.keyboard(kbd.ESCAPE);
 			expect(t.getByTestId("close-focus-override")).toHaveFocus();
 		}
@@ -180,19 +172,19 @@ describe("Focus Management", () => {
 
 describe("Portal Behavior", () => {
 	it("should portal to body when using portal element", async () => {
-		await open();
+		const t = await open();
 
-		const content = page.getByTestId("content").element();
+		const content = t.getByTestId("content").element();
 		expect(content.parentElement).toEqual(document.body);
 	});
 
 	it("should not portal to body when portal is disabled", async () => {
-		await open({
+		const t = await open({
 			portalProps: {
 				disabled: true,
 			},
 		});
-		const content = page.getByTestId("content").element();
+		const content = t.getByTestId("content").element();
 		expect(content.parentElement).not.toEqual(document.body);
 	});
 
@@ -203,32 +195,32 @@ describe("Portal Behavior", () => {
 			},
 		});
 		const portalTarget = t.getByTestId("portalTarget").element();
-		const content = page.getByTestId("content").element();
+		const content = t.getByTestId("content").element();
 		expect(content.parentElement).toEqual(portalTarget);
 	});
 });
 
 it("should not close when content is clicked", async () => {
 	const t = await open();
-	const content = page.getByTestId("content").element();
+	const content = t.getByTestId("content").element();
 	await t.user.click(content);
-	expectExists(page.getByTestId("content"));
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should respect binding to the `open` prop", async () => {
 	const t = await setup();
-	const trigger = page.getByTestId("trigger");
-	const binding = page.getByTestId("binding");
+	const trigger = t.getByTestId("trigger");
+	const binding = t.getByTestId("binding");
 	expect(binding).toHaveTextContent("false");
 	await t.user.click(trigger);
-	expect(page.getByTestId("binding")).toHaveTextContent("true");
+	expect(t.getByTestId("binding")).toHaveTextContent("true");
 	await t.user.keyboard(kbd.ESCAPE);
-	expect(page.getByTestId("binding")).toHaveTextContent("false");
+	expect(t.getByTestId("binding")).toHaveTextContent("false");
 
 	const toggle = t.getByTestId("toggle");
-	expectNotExists(page.getByTestId("content"));
+	await expectNotExists(t.getByTestId("content"));
 	await t.user.click(toggle);
-	expectExists(page.getByTestId("content"));
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should close on outside click", async () => {
@@ -238,10 +230,8 @@ it("should close on outside click", async () => {
 			onInteractOutside: mockFn,
 		},
 	});
-	await sleep(10);
-	await simulateOutsideClick(t.getByTestId("overlay"));
-	await sleep(10);
-	expect(mockFn).toHaveBeenCalled();
+	await t.user.click(t.getByTestId("overlay"));
+	await vi.waitFor(() => expect(mockFn).toHaveBeenCalled());
 });
 
 it("should not close when clicking within bounds", async () => {
@@ -250,8 +240,8 @@ it("should not close when clicking within bounds", async () => {
 		contentProps: { onInteractOutside: mockFn },
 	});
 
-	await t.user.click(page.getByTestId("content").element());
-	expectExists(page.getByTestId("content"));
+	await t.user.click(t.getByTestId("content").element());
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
@@ -263,7 +253,7 @@ it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
 	await sleep(100);
 
 	await t.user.click(t.getByTestId("overlay"));
-	expectExists(page.getByTestId("content"));
+	await expectExists(t.getByTestId("content"));
 });
 
 it("should respect the the `escapeKeydownBehavior: 'ignore'` prop", async () => {
@@ -274,7 +264,7 @@ it("should respect the the `escapeKeydownBehavior: 'ignore'` prop", async () => 
 	});
 
 	await t.user.keyboard(kbd.ESCAPE);
-	expectExists(page.getByTestId("content"));
+	await expectExists(t.getByTestId("content"));
 	expect(t.trigger).not.toHaveFocus();
 });
 
@@ -295,9 +285,9 @@ describe("ARIA Attributes", () => {
 	});
 
 	it("should apply a default `aria-level` attribute to the `Dialog.Title` element", async () => {
-		const { getByTestId } = await open();
+		const t = await open();
 
-		const title = getByTestId("title");
+		const title = t.getByTestId("title");
 		expect(title).toHaveAttribute("aria-level", "2");
 	});
 
@@ -342,7 +332,7 @@ describe("Nested Dialogs", () => {
 		const trigger = t.getByTestId("first-open");
 		await user.click(trigger);
 		await tick();
-		expectExists(t.getByTestId("first-close"));
+		await expectExists(t.getByTestId("first-close"));
 		expect(t.getByTestId("first-close")).toHaveFocus();
 		await user.keyboard(kbd.TAB);
 		expect(t.getByTestId("second-open")).toHaveFocus();

@@ -9,10 +9,10 @@ const kbd = getTestKbd();
 
 function setup(props: Partial<RatingGroupTestProps> = {}) {
 	const user = setupBrowserUserEvents();
-	const returned = render(RatingGroupTest, { ...props });
-	const input = returned.container.querySelector("input") as HTMLInputElement;
-	const root = returned.getByTestId("root").element() as HTMLElement;
-	return { user, input, root, ...returned };
+	const t = render(RatingGroupTest, { ...props });
+	const input = t.container.querySelector("input") as HTMLInputElement;
+	const root = t.getByTestId("root").element() as HTMLElement;
+	return { user, input, root, ...t };
 }
 
 describe("Accessibility", () => {
@@ -382,7 +382,7 @@ describe("Max Value", () => {
 		expect(t.getByTestId("item-0")).toBeInTheDocument();
 		expect(t.getByTestId("item-1")).toBeInTheDocument();
 		expect(t.getByTestId("item-2")).toBeInTheDocument();
-		expectNotExists(t.getByTestId("item-3"));
+		await expectNotExists(t.getByTestId("item-3"));
 	});
 
 	it("should update aria-valuemax when max changes", async () => {
@@ -506,7 +506,7 @@ describe("Hover Preview", () => {
 
 		// hover over third item
 		const item3 = t.getByTestId("item-2");
-		await t.user.hover(item3);
+		await t.user.hover(item3, { position: { x: 5, y: 5 } });
 
 		// value should remain the same, but states should show preview
 		expect(valueDisplay).toHaveTextContent("1");

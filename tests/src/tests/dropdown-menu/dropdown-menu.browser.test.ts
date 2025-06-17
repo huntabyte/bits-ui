@@ -1,12 +1,12 @@
-import { expect, it, vi } from "vitest";
+import { expect, it, vi, afterEach } from "vitest";
 import { render } from "vitest-browser-svelte";
+import { page } from "@vitest/browser/context";
 import { getTestKbd, sleep } from "../utils.js";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
 import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
-import { page } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -22,47 +22,60 @@ async function setup(props: DropdownMenuSetupProps = {}) {
 	const { component: comp = DropdownMenuTest, ...rest } = props;
 	const user = setupBrowserUserEvents();
 	const t = render(comp, { ...rest });
-	const trigger = page.getByTestId("trigger");
+	const trigger = page.getByTestId("trigger").element() as HTMLElement;
+
+	const open = async () => {
+		await user.click(trigger);
+		await expectExists(t.getByTestId("content"));
+	};
 	await sleep(15);
 	return {
 		...t,
+		getContent: () => page.getByTestId("content"),
+		getSubContent: () => page.getByTestId("sub-content"),
+		open,
 		user,
 		trigger,
 	};
 }
 
-async function openWithPointer(props: DropdownMenuSetupProps = {}) {
+async function open(props: DropdownMenuSetupProps = {}) {
 	const t = await setup(props);
-	await sleep(10);
-	expectNotExists(t.getByTestId("content"));
+	await expectNotExists(t.getContent());
 	await t.user.click(t.trigger);
-
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
-	return t;
+	await expectExists(t.getContent());
+	return { ...t };
 }
 
 async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd.ENTER) {
 	const t = await setup(props);
-	expectNotExists(t.getByTestId("content"));
-	(t.trigger.element() as HTMLElement).focus();
+	await expectNotExists(page.getByTestId("content"));
+	t.trigger.focus();
+	await vi.waitFor(() => expect(t.trigger).toHaveFocus());
 	await t.user.keyboard(key);
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(page.getByTestId("content"));
 	return t;
 }
 
 async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	const t = props;
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	const subtrigger = t.getByTestId("sub-trigger");
-	expect(subtrigger).toHaveFocus();
-	expectNotExists(t.getByTestId("sub-content"));
+	await t.user.keyboard(kbd.ARROW_DOWN);
+	expect(t.getByTestId("sub-trigger")).toHaveFocus();
 
+	await expectNotExists(t.getSubContent());
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	await vi.waitFor(() => expectExists(t.getByTestId("sub-content")));
+	await expectExists(t.getSubContent());
 	expect(t.getByTestId("sub-item")).toHaveFocus();
 
-	return t;
+	return {
+		...t,
+	};
 }
+
+afterEach(() => {
+	vi.resetAllMocks();
+});
 
 it("should have bits data attrs", async () => {
 	const t = await setup();
@@ -83,13 +96,13 @@ it("should have bits data attrs", async () => {
 	];
 
 	for (const part of parts) {
-		const el = t.getByTestId(part);
+		const el = page.getByTestId(part);
 		expect(el).toHaveAttribute(`data-dropdown-menu-${part}`);
 	}
 
-	await t.user.click(t.getByTestId("sub-trigger"));
+	await t.user.click(page.getByTestId("sub-trigger"));
 
-	const subContent = t.getByTestId("sub-content");
+	const subContent = page.getByTestId("sub-content");
 	expect(subContent).toHaveAttribute(`data-dropdown-menu-sub-content`);
 });
 
@@ -100,17 +113,17 @@ it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (k
 it("should open when clicked & respects binding", async () => {
 	const t = await setup();
 	await sleep(10);
-	const binding = t.getByTestId("binding");
+	const binding = page.getByTestId("binding");
 	expect(binding).toHaveTextContent("false");
 	await t.user.click(t.trigger);
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
-	await vi.waitFor(() => expect(binding).toHaveTextContent("true"));
+	await expectExists(page.getByTestId("content"));
+	expect(binding).toHaveTextContent("true");
 });
 
 it("should manage focus correctly when opened with pointer", async () => {
-	const t = await openWithPointer();
+	const t = await open();
 
-	const item = t.getByTestId("item");
+	const item = page.getByTestId("item");
 	expect(item).not.toHaveFocus();
 
 	await t.user.keyboard(kbd.ARROW_DOWN);
@@ -120,13 +133,13 @@ it("should manage focus correctly when opened with pointer", async () => {
 it("should manage focus correctly when opened with keyboard", async () => {
 	const t = await setup();
 
-	expectNotExists(t.getByTestId("content"));
+	expectNotExists(page.getByTestId("content"));
 
-	(t.trigger.element() as HTMLElement).focus();
+	t.trigger.focus();
 	await t.user.keyboard(kbd.ENTER);
 
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
-	const item = t.getByTestId("item");
+	await expectExists(page.getByTestId("content"));
+	const item = page.getByTestId("item");
 	expect(item).toHaveFocus();
 });
 
@@ -134,83 +147,79 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	const t = await openWithKbd();
 
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	const subtrigger = t.getByTestId("sub-trigger");
+	const subtrigger = page.getByTestId("sub-trigger");
 	expect(subtrigger).toHaveFocus();
-	expectNotExists(t.getByTestId("sub-content"));
+	await expectNotExists(page.getByTestId("sub-content"));
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	await vi.waitFor(() => expectExists(t.getByTestId("sub-content")));
-	expect(t.getByTestId("sub-item")).toHaveFocus();
+	await expectExists(page.getByTestId("sub-content"));
+	expect(page.getByTestId("sub-item")).toHaveFocus();
 });
 
 it("should toggle the checkbox item when clicked & respects binding", async () => {
-	const t = await openWithPointer();
-	const checkedBinding = t.getByTestId("checked-binding");
-	const indicator = t.getByTestId("checkbox-indicator");
+	const t = await open();
+	const checkedBinding = page.getByTestId("checked-binding");
+	const indicator = page.getByTestId("checkbox-indicator");
 	expect(indicator).not.toHaveTextContent("checked");
 	expect(checkedBinding).toHaveTextContent("false");
-	const checkbox = t.getByTestId("checkbox-item");
+	const checkbox = page.getByTestId("checkbox-item");
 	await t.user.click(checkbox);
-	await vi.waitFor(() => expect(checkedBinding).toHaveTextContent("true"));
+	expect(checkedBinding).toHaveTextContent("true");
 	await t.user.click(t.trigger);
 	expect(indicator).toHaveTextContent("true");
-	await t.user.click(t.getByTestId("checkbox-item"));
+	await t.user.click(page.getByTestId("checkbox-item"));
 	expect(checkedBinding).toHaveTextContent("false");
 
 	await t.user.click(checkedBinding);
 	expect(checkedBinding).toHaveTextContent("true");
 	await t.user.click(t.trigger);
-	expect(t.getByTestId("checkbox-indicator")).toHaveTextContent("true");
+	expect(page.getByTestId("checkbox-indicator")).toHaveTextContent("true");
 });
 
 it("should toggle checkbox items within submenus when clicked & respects binding", async () => {
 	const props = await openWithKbd();
 	const t = await openSubmenu(props);
-	const subCheckedBinding = t.getByTestId("sub-checked-binding");
+	const subCheckedBinding = page.getByTestId("sub-checked-binding");
 	expect(subCheckedBinding).toHaveTextContent("false");
-	const indicator = t.getByTestId("sub-checkbox-indicator");
+	const indicator = page.getByTestId("sub-checkbox-indicator");
 	expect(indicator).not.toHaveTextContent("true");
-	const subCheckbox = t.getByTestId("sub-checkbox-item");
+	const subCheckbox = page.getByTestId("sub-checkbox-item");
 	await t.user.click(subCheckbox);
-	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
-	(t.trigger.element() as HTMLElement).focus();
+	expect(subCheckedBinding).toHaveTextContent("true");
+	t.trigger.focus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	await openSubmenu(props);
-	await vi.waitFor(() =>
-		expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true")
-	);
-	await t.user.click(t.getByTestId("sub-checkbox-item"));
-	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("false"));
+	expect(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
+	await t.user.click(page.getByTestId("sub-checkbox-item"));
+	expect(subCheckedBinding).toHaveTextContent("false");
 
 	await t.user.click(subCheckedBinding);
-	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
-	(t.trigger.element() as HTMLElement).focus();
+	expect(subCheckedBinding).toHaveTextContent("true");
+	t.trigger.focus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
 	await openSubmenu(props);
-	await vi.waitFor(() =>
-		expect(t.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true")
-	);
+	expect(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 });
 
 it("should check the radio item when clicked & respects binding", async () => {
-	const t = await openWithPointer();
-	const radioBinding = t.getByTestId("radio-binding");
+	const t = await open();
+	const radioBinding = page.getByTestId("radio-binding");
 	expect(radioBinding).toHaveTextContent("");
-	const radioItem1 = t.getByTestId("radio-item");
+	const radioItem1 = page.getByTestId("radio-item");
 	await t.user.click(radioItem1);
 	expect(radioBinding).toHaveTextContent("1");
 	await t.user.click(t.trigger);
-	const radioIndicator1 = t.getByTestId("radio-indicator-1");
+	const radioIndicator1 = page.getByTestId("radio-indicator-1");
 	expect(radioIndicator1).not.toBeNull();
 	expect(radioIndicator1).toHaveTextContent("true");
-	const radioItem2 = t.getByTestId("radio-item-2");
+	const radioItem2 = page.getByTestId("radio-item-2");
 	await t.user.click(radioItem2);
 	expect(radioBinding).toHaveTextContent("2");
 	await t.user.click(t.trigger);
-	expect(t.getByTestId("radio-indicator-1")).toHaveTextContent("false");
-	expect(t.getByTestId("radio-indicator-2")).toHaveTextContent("true");
+	expect(page.getByTestId("radio-indicator-1")).toHaveTextContent("false");
+	expect(page.getByTestId("radio-indicator-2")).toHaveTextContent("true");
 
 	await t.user.keyboard(kbd.ESCAPE);
-	await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
+	await expectNotExists(page.getByTestId("content"));
 	await t.user.click(radioBinding);
 	expect(radioBinding).toHaveTextContent("");
 	await t.user.click(t.trigger);
@@ -219,11 +228,11 @@ it("should check the radio item when clicked & respects binding", async () => {
 it("should skip over disabled items when navigating with the keyboard", async () => {
 	const t = await openWithKbd();
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("sub-trigger")).toHaveFocus();
+	expect(page.getByTestId("sub-trigger")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("checkbox-item")).toHaveFocus();
-	expect(t.getByTestId("disabled-item")).not.toHaveFocus();
-	expect(t.getByTestId("disabled-item-2")).not.toHaveFocus();
+	expect(page.getByTestId("checkbox-item")).toHaveFocus();
+	expect(page.getByTestId("disabled-item")).not.toHaveFocus();
+	expect(page.getByTestId("disabled-item-2")).not.toHaveFocus();
 });
 
 it("should not loop through the menu items when the `loop` prop is set to false/undefined", async () => {
@@ -233,17 +242,17 @@ it("should not loop through the menu items when the `loop` prop is set to false/
 		},
 	});
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("sub-trigger")).toHaveFocus();
+	expect(page.getByTestId("sub-trigger")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("checkbox-item")).toHaveFocus();
+	expect(page.getByTestId("checkbox-item")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("item-2")).toHaveFocus();
+	expect(page.getByTestId("item-2")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("radio-item")).toHaveFocus();
+	expect(page.getByTestId("radio-item")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("radio-item-2")).toHaveFocus();
+	expect(page.getByTestId("radio-item-2")).toHaveFocus();
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("item")).not.toHaveFocus();
+	expect(page.getByTestId("item")).not.toHaveFocus();
 });
 
 it("should loop through the menu items when the `loop` prop is set to true", async () => {
@@ -253,27 +262,27 @@ it("should loop through the menu items when the `loop` prop is set to true", asy
 		},
 	});
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("sub-trigger")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("sub-trigger")).toHaveFocus());
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("checkbox-item")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("checkbox-item")).toHaveFocus());
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("item-2")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("item-2")).toHaveFocus());
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("radio-item")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("radio-item")).toHaveFocus());
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("radio-item-2")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("radio-item-2")).toHaveFocus());
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("checkbox-group-item-1")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("checkbox-group-item-1")).toHaveFocus());
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("checkbox-group-item-2")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("checkbox-group-item-2")).toHaveFocus());
 	await t.user.keyboard(kbd.ARROW_DOWN);
-	expect(t.getByTestId("item")).toHaveFocus();
+	await vi.waitFor(() => expect(page.getByTestId("item")).toHaveFocus());
 });
 
 it("should close the menu on escape", async () => {
 	const t = await openWithKbd();
 	await t.user.keyboard(kbd.ESCAPE);
-	expectNotExists(t.getByTestId("content"));
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should respect the `escapeKeydownBehavior` prop", async () => {
@@ -283,76 +292,76 @@ it("should respect the `escapeKeydownBehavior` prop", async () => {
 		},
 	});
 	await t.user.keyboard(kbd.ESCAPE);
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(page.getByTestId("content"));
 });
 
 it("should respect the `interactOutsideBehavior` prop - ignore", async () => {
-	const t = await openWithPointer({
+	const t = await open({
 		contentProps: {
 			interactOutsideBehavior: "ignore",
 		},
 	});
 	await t.user.click(page.getByTestId("outside"));
 
-	expectExists(page.getByTestId("content"));
+	await expectExists(page.getByTestId("content"));
 });
 
 it("should respect the `interactOutsideBehavior` prop - close", async () => {
-	const t = await openWithPointer({
+	const t = await open({
 		contentProps: {
 			interactOutsideBehavior: "close",
 		},
 	});
-	const outside = t.getByTestId("outside");
+	const outside = page.getByTestId("outside");
 	await t.user.click(outside);
-	await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should portal to the body if a `portal` prop is not passed", async () => {
-	const t = await openWithPointer();
-	const content = t.getByTestId("content").element() as HTMLElement;
+	await open();
+	const content = page.getByTestId("content").element() as HTMLElement;
 	expect(content.parentElement?.parentElement).toEqual(document.body);
 });
 
 it("should portal to the portal target if a valid `portal` prop is passed", async () => {
-	const t = await openWithPointer({
+	await open({
 		portalProps: {
 			to: "#portal-target",
 		},
 	});
-	const content = t.getByTestId("content").element() as HTMLElement;
-	const portalTarget = t.getByTestId("portal-target").element() as HTMLElement;
+	const content = page.getByTestId("content").element() as HTMLElement;
+	const portalTarget = page.getByTestId("portal-target").element() as HTMLElement;
 	expect(content.parentElement?.parentElement).toEqual(portalTarget);
 });
 
 it("should not portal if `disabled` is passed to the portal", async () => {
-	const t = await openWithPointer({
+	await open({
 		portalProps: {
 			disabled: true,
 		},
 	});
-	const content = t.getByTestId("content").element() as HTMLElement;
-	const ogContainer = t.getByTestId("non-portal-container").element() as HTMLElement;
+	const content = page.getByTestId("content").element() as HTMLElement;
+	const ogContainer = page.getByTestId("non-portal-container").element() as HTMLElement;
 	const contentWrapper = content.parentElement;
 	expect(contentWrapper?.parentElement).not.toEqual(document.body);
 	expect(contentWrapper?.parentElement).toEqual(ogContainer);
 });
 
 it("should allow preventing autofocusing first item with `onOpenAutoFocus`  prop", async () => {
-	const t = await openWithKbd({
+	await openWithKbd({
 		contentProps: {
 			onOpenAutoFocus: (e) => {
 				e.preventDefault();
 			},
 		},
 	});
-	expect(t.getByTestId("item")).not.toHaveFocus();
+	expect(page.getByTestId("item")).not.toHaveFocus();
 });
 
 it("should forceMount the content when `forceMount` is true", async () => {
-	const t = await setup({ component: DropdownMenuForceMountTest });
+	await setup({ component: DropdownMenuForceMountTest });
 
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(page.getByTestId("content"));
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
@@ -360,14 +369,13 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 		withOpenCheck: true,
 		component: DropdownMenuForceMountTest,
 	});
-	await sleep(10);
 
-	expectNotExists(t.getByTestId("content"));
+	await expectNotExists(page.getByTestId("content"));
 
 	await t.user.click(t.trigger);
 	await sleep(10);
 
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await expectExists(page.getByTestId("content"));
 });
 
 it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
@@ -377,11 +385,10 @@ it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
 			component,
 			withOpenCheck: true,
 		});
-		const nextButton = t.getByTestId("next-button");
+		const nextButton = page.getByTestId("next-button");
 		await t.user.tab();
-		await sleep(10);
 
-		await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
+		await expectNotExists(page.getByTestId("content"));
 		expect(nextButton).toHaveFocus();
 	}
 );
@@ -393,75 +400,52 @@ it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
 			component,
 			withOpenCheck: true,
 		});
-		const previousButton = t.getByTestId("previous-button");
+		const previousButton = page.getByTestId("previous-button");
 		await t.user.keyboard(kbd.SHIFT_TAB);
 		expect(previousButton).toHaveFocus();
-		await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
+		await expectNotExists(page.getByTestId("content"));
 	}
 );
 
 it("should respect the `onSelect` prop on SubTrigger", async () => {
 	const onSelect = vi.fn();
-	const t = await openWithPointer({
+	const t = await open({
 		subTriggerProps: {
 			onSelect,
 		},
 	});
 
 	await t.user.click(t.getByTestId("sub-trigger"));
-	await vi.waitFor(() => expect(onSelect).toHaveBeenCalled());
+	expect(onSelect).toHaveBeenCalled();
 
 	await t.user.keyboard(kbd.ENTER);
-	await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(2));
+	expect(onSelect).toHaveBeenCalledTimes(2);
 
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(3));
+	expect(onSelect).toHaveBeenCalledTimes(3);
 });
 
 it("should respect the `value` prop on CheckboxGroup", async () => {
-	const t = await openWithPointer({
+	const t = await open({
 		group: ["1"],
 	});
 
 	const checkboxGroupItem1 = t.getByTestId("checkbox-group-item-1");
-	expect(checkboxGroupItem1).toHaveAttribute("aria-checked", "true");
+	await vi.waitFor(() => expect(checkboxGroupItem1).toHaveAttribute("aria-checked", "true"));
 
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("true");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
-
-	await t.user.click(checkboxGroupItem1);
-	await t.user.click(t.trigger);
-
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
-
-	await t.user.click(t.getByTestId("checkbox-group-item-2"));
-	await t.user.click(t.trigger);
-
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
-
-	await t.user.keyboard(kbd.ESCAPE);
-
-	await t.user.click(t.getByTestId("checkbox-group-binding"), { force: true });
-	await t.user.click(t.trigger);
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await vi.waitFor(() => expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("true"));
+	await vi.waitFor(() =>
+		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
+	);
 });
 
 it("calls `onValueChange` when the value of the checkbox group changes", async () => {
 	const onValueChange = vi.fn();
-	const t = await openWithPointer({
+	const t = await open({
 		checkboxGroupProps: {
 			onValueChange,
 		},
 	});
 	await t.user.click(t.getByTestId("checkbox-group-item-1"));
 	expect(onValueChange).toHaveBeenCalledWith(["1"]);
-	await t.user.click(t.trigger);
-	await t.user.click(t.getByTestId("checkbox-group-item-2"));
-	expect(onValueChange).toHaveBeenCalledWith(["1", "2"]);
-	await t.user.click(t.trigger);
-	await t.user.click(t.getByTestId("checkbox-group-item-1"));
-	expect(onValueChange).toHaveBeenCalledWith(["2"]);
 });

@@ -23,29 +23,29 @@ const zonedDateTime = {
 
 function setup(props: DateRangeFieldTestProps = {}) {
 	const user = setupBrowserUserEvents();
-	const returned = render(DateRangeFieldTest, { ...props });
+	const t = render(DateRangeFieldTest, { ...props });
 
 	const start = {
-		month: returned.getByTestId("start-month").element() as HTMLElement,
-		day: returned.getByTestId("start-day").element() as HTMLElement,
-		year: returned.getByTestId("start-year").element() as HTMLElement,
-		value: returned.getByTestId("start-value").element() as HTMLElement,
+		month: t.getByTestId("start-month").element() as HTMLElement,
+		day: t.getByTestId("start-day").element() as HTMLElement,
+		year: t.getByTestId("start-year").element() as HTMLElement,
+		value: t.getByTestId("start-value").element() as HTMLElement,
 	};
 
 	const end = {
-		month: returned.getByTestId("end-month").element() as HTMLElement,
-		day: returned.getByTestId("end-day").element() as HTMLElement,
-		year: returned.getByTestId("end-year").element() as HTMLElement,
-		value: returned.getByTestId("end-value").element() as HTMLElement,
+		month: t.getByTestId("end-month").element() as HTMLElement,
+		day: t.getByTestId("end-day").element() as HTMLElement,
+		year: t.getByTestId("end-year").element() as HTMLElement,
+		value: t.getByTestId("end-value").element() as HTMLElement,
 	};
 
-	const root = returned.getByTestId("root").element() as HTMLElement;
-	const startInput = returned.getByTestId("start-input").element() as HTMLElement;
-	const endInput = returned.getByTestId("end-input").element() as HTMLElement;
+	const root = t.getByTestId("root").element() as HTMLElement;
+	const startInput = t.getByTestId("start-input").element() as HTMLElement;
+	const endInput = t.getByTestId("end-input").element() as HTMLElement;
 
-	const label = returned.getByTestId("label").element() as HTMLElement;
+	const label = t.getByTestId("label").element() as HTMLElement;
 
-	return { ...returned, user, start, end, root, startInput, endInput, label };
+	return { ...t, user, start, end, root, startInput, endInput, label };
 }
 
 it("should populate segment with value - `CalendarDate`", async () => {

@@ -20,6 +20,7 @@
 		onEscapeKeydown = noop,
 		onCloseAutoFocus = noop,
 		forceMount = false,
+		trapFocus = false,
 		...restProps
 	}: DropdownMenuContentProps = $props();
 
@@ -57,7 +58,7 @@
 		enabled={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
-		trapFocus
+		{trapFocus}
 		{loop}
 		forceMount={true}
 		{id}
@@ -85,7 +86,7 @@
 		open={contentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
-		trapFocus
+		{trapFocus}
 		{loop}
 		forceMount={false}
 		{id}

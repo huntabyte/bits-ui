@@ -9,31 +9,23 @@ const kbd = getTestKbd();
 
 function setup(props: Partial<ToolbarTestProps> = {}) {
 	const user = setupBrowserUserEvents();
-	const returned = render(ToolbarTest, { ...props });
-	const root = returned.getByTestId("root").element() as HTMLElement;
-	const groupMultiple = returned.getByTestId("group-multiple").element() as HTMLElement;
-	const groupMultipleItemBold = returned
-		.getByTestId("group-multiple-bold")
-		.element() as HTMLElement;
-	const groupMultipleItemItalic = returned
-		.getByTestId("group-multiple-italic")
-		.element() as HTMLElement;
-	const groupMultipleItemStrikethrough = returned
+	const t = render(ToolbarTest, { ...props });
+	const root = t.getByTestId("root").element() as HTMLElement;
+	const groupMultiple = t.getByTestId("group-multiple").element() as HTMLElement;
+	const groupMultipleItemBold = t.getByTestId("group-multiple-bold").element() as HTMLElement;
+	const groupMultipleItemItalic = t.getByTestId("group-multiple-italic").element() as HTMLElement;
+	const groupMultipleItemStrikethrough = t
 		.getByTestId("group-multiple-strikethrough")
 		.element() as HTMLElement;
-	const groupSingle = returned.getByTestId("group-single").element() as HTMLElement;
-	const groupSingleItemLeft = returned.getByTestId("group-single-left").element() as HTMLElement;
-	const groupSingleItemCenter = returned
-		.getByTestId("group-single-center")
-		.element() as HTMLElement;
-	const groupSingleItemRight = returned
-		.getByTestId("group-single-right")
-		.element() as HTMLElement;
-	const link = returned.getByTestId("link").element() as HTMLElement;
-	const button = returned.getByTestId("button").element() as HTMLElement;
-	const styleBinding = returned.getByTestId("style-binding").element() as HTMLElement;
-	const alignBinding = returned.getByTestId("align-binding").element() as HTMLElement;
-	const clickedBinding = returned.getByTestId("clicked-binding").element() as HTMLElement;
+	const groupSingle = t.getByTestId("group-single").element() as HTMLElement;
+	const groupSingleItemLeft = t.getByTestId("group-single-left").element() as HTMLElement;
+	const groupSingleItemCenter = t.getByTestId("group-single-center").element() as HTMLElement;
+	const groupSingleItemRight = t.getByTestId("group-single-right").element() as HTMLElement;
+	const link = t.getByTestId("link").element() as HTMLElement;
+	const button = t.getByTestId("button").element() as HTMLElement;
+	const styleBinding = t.getByTestId("style-binding").element() as HTMLElement;
+	const alignBinding = t.getByTestId("align-binding").element() as HTMLElement;
+	const clickedBinding = t.getByTestId("clicked-binding").element() as HTMLElement;
 	return {
 		user,
 		root,
@@ -50,7 +42,7 @@ function setup(props: Partial<ToolbarTestProps> = {}) {
 		styleBinding,
 		alignBinding,
 		clickedBinding,
-		...returned,
+		...t,
 	};
 }
 

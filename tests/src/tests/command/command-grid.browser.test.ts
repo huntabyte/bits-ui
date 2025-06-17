@@ -1,15 +1,15 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { page } from "@vitest/browser/context";
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd, sleep } from "../utils.js";
 import CommandGridTest from "./command-grid-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 
 const kbd = getTestKbd();
 
 function setup(props: Partial<ComponentProps<typeof CommandGridTest>> = {}) {
-	const user = userEvent;
+	const user = setupBrowserUserEvents();
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const returned = render(CommandGridTest, props as any);
@@ -43,9 +43,9 @@ it("should allow forcing the selected value", async () => {
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
 	const t = setup();
 
-	expectExists(t.getByTestId("separator"));
+	await expectExists(t.getByTestId("separator"));
 	await t.user.type(t.input, "a");
-	expectNotExists(t.getByTestId("separator"));
+	await expectNotExists(t.getByTestId("separator"));
 });
 
 it("should always render the separator when forceMount", async () => {
@@ -55,19 +55,19 @@ it("should always render the separator when forceMount", async () => {
 		},
 	});
 
-	expectExists(t.getByTestId("separator"));
+	await expectExists(t.getByTestId("separator"));
 	await t.user.type(t.input, "a");
-	expectExists(t.getByTestId("separator"));
+	await expectExists(t.getByTestId("separator"));
 });
 
 it("should show empty state when no items are found", async () => {
 	const t = setup();
 
-	expectNotExists(t.getByTestId("empty"));
+	await expectNotExists(t.getByTestId("empty"));
 
 	t.input.focus();
 	await t.user.type(t.input, "zzzzzzzz");
-	expectExists(t.getByTestId("empty"));
+	await expectExists(t.getByTestId("empty"));
 });
 
 it("should restore original order when search is cleared", async () => {

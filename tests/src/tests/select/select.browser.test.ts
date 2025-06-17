@@ -109,7 +109,7 @@ async function openSingle(
 ) {
 	const t = setupSingle(props);
 
-	expectNotExists(t.getContent());
+	await expectNotExists(t.getContent());
 
 	if (openWith === "click") {
 		await t.user.click(t.trigger);
@@ -117,7 +117,7 @@ async function openSingle(
 		t.trigger.focus();
 		await t.user.keyboard(openWith);
 	}
-	await vi.waitFor(() => expectExists(t.getContent()));
+	await expectExists(t.getContent());
 	const content = t.getContent().element() as HTMLElement;
 	const group = t.getByTestId("group").element() as HTMLElement;
 	const groupHeading = t.getByTestId("group-label").element() as HTMLElement;
@@ -136,14 +136,14 @@ async function openMultiple(
 	_searchValue?: string
 ) {
 	const t = setupMultiple(props);
-	expectNotExists(t.getContent());
+	await expectNotExists(t.getContent());
 	if (openWith === "click") {
 		await t.user.click(t.trigger);
 	} else {
 		t.trigger.focus();
 		await t.user.keyboard(openWith);
 	}
-	await vi.waitFor(() => expectExists(t.getContent()));
+	await expectExists(t.getContent());
 	const content = t.getContent().element() as HTMLElement;
 	return {
 		...t,
@@ -214,7 +214,7 @@ describe("select - single", () => {
 	it("should close on escape keydown", async () => {
 		const t = await openSingle();
 		await t.user.keyboard(kbd.ESCAPE);
-		expectNotExists(t.getContent());
+		await expectNotExists(t.getContent());
 	});
 
 	it("should close on outside click", async () => {
@@ -223,7 +223,7 @@ describe("select - single", () => {
 
 		await t.user.click(t.outside);
 		await sleep(100);
-		expectNotExists(t.getContent());
+		await expectNotExists(t.getContent());
 	});
 
 	it("should portal to the body by default", async () => {
@@ -266,13 +266,13 @@ describe("select - single", () => {
 	it("should select items when clicked", async () => {
 		const t = await openSingle();
 		const [_, item1] = getItems(t.getByTestId);
-		expectNotExists(t.getByTestId("1-indicator"));
+		await expectNotExists(t.getByTestId("1-indicator"));
 		await t.user.click(item1!);
 		expect(t.trigger).toHaveTextContent("A");
 		expect(t.getHiddenInput()).toHaveValue("1");
 		await t.user.click(t.trigger);
 		expectSelected(item1!);
-		expectExists(t.getByTestId("1-indicator"));
+		await expectExists(t.getByTestId("1-indicator"));
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
@@ -468,10 +468,10 @@ describe("select - single", () => {
 		await t.user.keyboard(kbd.ARROW_DOWN);
 		expectHighlighted(item4!);
 		await t.user.keyboard(kbd.ESCAPE);
-		await vi.waitFor(() => expectNotExists(t.getContent()));
+		await expectNotExists(t.getContent());
 
 		await t.user.keyboard(kbd.ARROW_DOWN);
-		await vi.waitFor(() => expectExists(t.getContent()));
+		await expectExists(t.getContent());
 		const [i0, i1] = getItems(t.getByTestId);
 		expectHighlighted(i0!);
 		await t.user.keyboard(kbd.ARROW_DOWN);
@@ -488,11 +488,11 @@ describe("select - single", () => {
 	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 		const t = setupSingle({ withOpenCheck: true }, [], SelectForceMountTest);
 
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 
 		await t.user.click(t.trigger);
 
-		expectExists(t.getByTestId("content"));
+		await expectExists(t.getByTestId("content"));
 	});
 
 	it("should not deselect the selected item when the user clicks on the selected item", async () => {
@@ -543,7 +543,7 @@ describe("select - single", () => {
 		});
 		t.trigger.dispatchEvent(touchEvent);
 
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 	});
 
 	it("should not open when disabled on mouse/pointer devices", async () => {
@@ -555,7 +555,7 @@ describe("select - single", () => {
 		});
 		t.trigger.dispatchEvent(mouseEvent);
 
-		expectNotExists(t.getByTestId("content"));
+		await expectNotExists(t.getByTestId("content"));
 	});
 });
 
@@ -639,14 +639,14 @@ describe("select - multiple", () => {
 	it("should close on escape keydown", async () => {
 		const t = await openMultiple();
 		await t.user.keyboard(kbd.ESCAPE);
-		expectNotExists(t.getContent());
+		await expectNotExists(t.getContent());
 	});
 
 	it("should close on outside click", async () => {
 		const t = await openMultiple();
 		await sleep(100);
 		await t.user.click(t.outside);
-		expectNotExists(t.getContent());
+		await expectNotExists(t.getContent());
 	});
 
 	it("should portal to the body by default", async () => {
@@ -689,14 +689,14 @@ describe("select - multiple", () => {
 	it("should select items when clicked", async () => {
 		const t = await openMultiple();
 		const [_, item] = getItems(t.getByTestId);
-		await vi.waitFor(() => expectNotExists(t.getByTestId("1-indicator")));
+		await expectNotExists(t.getByTestId("1-indicator"));
 		await t.user.click(item!);
 		expect(t.trigger).toHaveTextContent("A");
 		expect(t.getHiddenInputs()).toHaveLength(1);
 		expect(t.getHiddenInputs()[0]).toHaveValue("1");
 
 		expectSelected(item!);
-		await vi.waitFor(() => expectExists(t.getByTestId("1-indicator")));
+		await expectExists(t.getByTestId("1-indicator"));
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
@@ -849,7 +849,7 @@ describe("select - multiple", () => {
 		});
 		t.trigger.dispatchEvent(touchEvent);
 
-		expectNotExists(t.getContent());
+		await expectNotExists(t.getContent());
 	});
 
 	it("should not open when disabled on mouse/pointer devices", async () => {
@@ -861,7 +861,7 @@ describe("select - multiple", () => {
 		});
 		t.trigger.dispatchEvent(mouseEvent);
 
-		expectNotExists(t.getContent());
+		await expectNotExists(t.getContent());
 	});
 });
 
