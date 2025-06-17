@@ -22,16 +22,6 @@
 		onOpenAutoFocus: box.with(() => onOpenAutoFocus),
 		ref,
 	});
-
-	// const focusScopeState = useFocusScope({
-	// 	enabled: box.with(() => trapFocus),
-	// 	loop: box.with(() => loop),
-	// 	onCloseAutoFocus: box.with(() => onCloseAutoFocus),
-	// 	onOpenAutoFocus: box.with(() => onOpenAutoFocus),
-	// 	id: box.with(() => id),
-	// 	forceMount: box.with(() => forceMount),
-	// 	ref,
-	// });
 </script>
 
 {@render focusScope?.({ props: focusScopeState.props })}
