@@ -14,6 +14,7 @@
 		children,
 		child,
 		ref = $bindable(null),
+		tabindex = 0,
 		...restProps
 	}: NavigationMenuTriggerProps = $props();
 
@@ -26,7 +27,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, triggerState.props));
+	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { tabindex }));
 </script>
 
 {#if child}
