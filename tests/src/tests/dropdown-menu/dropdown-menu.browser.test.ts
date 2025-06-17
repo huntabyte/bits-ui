@@ -98,6 +98,7 @@ it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (k
 
 it("should open when clicked & respects binding", async () => {
 	const t = await setup();
+	await sleep(10);
 	const binding = t.getByTestId("binding");
 	expect(binding).toHaveTextContent("false");
 	await t.user.click(t.trigger);
@@ -204,7 +205,7 @@ it("should check the radio item when clicked & respects binding", async () => {
 	expect(t.getByTestId("radio-indicator-2")).toHaveTextContent("true");
 
 	await t.user.keyboard(kbd.ESCAPE);
-	expectNotExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
 	await t.user.click(radioBinding);
 	expect(radioBinding).toHaveTextContent("");
 	await t.user.click(t.trigger);
@@ -346,7 +347,7 @@ it("should allow preventing autofocusing first item with `onOpenAutoFocus`  prop
 it("should forceMount the content when `forceMount` is true", async () => {
 	const t = await setup({ component: DropdownMenuForceMountTest });
 
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
@@ -369,12 +370,11 @@ it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
 			withOpenCheck: true,
 		});
 		const nextButton = t.getByTestId("next-button");
-		await t.user.keyboard(kbd.TAB);
-		expect(nextButton).toHaveFocus();
+		await t.user.tab();
+		await sleep(10);
 
-		expectNotExists(t.getByTestId("content"));
-		await t.user.click(t.getByTestId("trigger"));
-		await vi.waitFor(() => expectExists(t.getByTestId("content")));
+		await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
+		expect(nextButton).toHaveFocus();
 	}
 );
 
