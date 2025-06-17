@@ -15,7 +15,7 @@
 				<RatingGroup.Item
 					index={item.index}
 					data-testid="item-{item.index}"
-					class="rating-item"
+					class="rating-item h-10 w-10"
 				>
 					<span data-testid="star-{item.index}"> ★ </span>
 					<span data-testid="state-{item.index}">{item.state}</span>

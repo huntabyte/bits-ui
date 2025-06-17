@@ -583,7 +583,7 @@ describe("Hover Preview", () => {
 
 		// use simple hover which should work more reliably
 		const item3 = t.getByTestId("item-2");
-		await t.user.hover(item3);
+		await t.user.hover(item3, { position: { x: 5, y: 5 } });
 
 		// should show preview up to at least the hovered item (exact half behavior depends on pointer position)
 		expect(t.getByTestId("state-0")).toHaveTextContent("active");
@@ -852,7 +852,7 @@ describe("Clear Functionality", () => {
 		// click the first item - since testing-library clicks center/right, it likely calculates to 1
 		// so it won't clear (1 !== 0.5), it will change to 1
 		const item1 = t.getByTestId("item-0");
-		await t.user.click(item1);
+		await t.user.click(item1, { position: { x: 0, y: 0 } });
 
 		expect(valueDisplay).toHaveTextContent("0");
 	});

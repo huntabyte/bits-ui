@@ -1,6 +1,6 @@
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { getTestKbd } from "../utils.js";
+import { getTestKbd, sleep } from "../utils.js";
 import ToggleGroupTest from "./toggle-group-test.svelte";
 import type { Item, SingleToggleGroupTestProps } from "./toggle-group-test.svelte";
 import ToggleGroupMultipleTest, {
@@ -167,6 +167,7 @@ describe("Toggle Group", () => {
 
 	it("should allow multiple items to be selected when `kind` is `'multiple'`", async () => {
 		const t = setupMultiple();
+		await sleep(10);
 		const item1 = t.getByTestId("item-1");
 		const item2 = t.getByTestId("item-2");
 		const item3 = t.getByTestId("item-3");

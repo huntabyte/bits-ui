@@ -34,6 +34,7 @@
 	<button
 		aria-label="binding"
 		data-testid="binding"
+		tabindex={0}
 		onclick={() => (value = items[0]?.value ?? "")}
 	>
 		{value}
