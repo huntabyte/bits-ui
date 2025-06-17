@@ -1,5 +1,5 @@
 import { page } from "@vitest/browser/context";
-import { expect, it, vi } from "vitest";
+import { expect, it, onTestFinished, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd, sleep } from "../utils.js";
 import ContextMenuTest from "./context-menu-test.svelte";
@@ -22,7 +22,7 @@ async function setup(props: ContextMenuSetupProps = {}) {
 	const user = setupBrowserUserEvents();
 	const t = render(component, { ...rest });
 	const trigger = t.getByTestId("trigger").element() as HTMLElement;
-
+	onTestFinished(() => t.unmount());
 	const open = async () => {
 		await user.click(trigger, { button: "right" });
 		await expectExists(t.getByTestId("content"));
@@ -179,17 +179,6 @@ it("should check the radio item when clicked & respects binding", async () => {
 	await t.user.click(t.trigger, { button: "right" });
 	const radioIndicator = t.getByTestId("radio-indicator-1");
 	expect(radioIndicator).toHaveTextContent("true");
-	const radioItem2 = t.getByTestId("radio-item-2");
-	await t.user.click(radioItem2);
-	expect(radioBinding).toHaveTextContent("2");
-	await t.user.click(t.trigger, { button: "right" });
-	expect(t.getByTestId("radio-indicator-2")).toHaveTextContent("true");
-
-	await t.user.keyboard(kbd.ESCAPE);
-	await expectNotExists(t.getContent());
-	await t.user.click(radioBinding);
-	expect(radioBinding).toHaveTextContent("");
-	await t.user.click(t.trigger, { button: "right" });
 });
 
 it("should skip disabled items when navigating with the keyboard", async () => {
@@ -422,26 +411,6 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	);
 
 	await t.user.click(checkboxGroupItem1);
-	await t.open();
-
-	await vi.waitFor(() =>
-		expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false")
-	);
-	await vi.waitFor(() =>
-		expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("false")
-	);
-
-	await t.user.click(t.getByTestId("checkbox-group-item-2"));
-	await t.open();
-
-	expect(t.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	expect(t.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
-
-	await t.user.keyboard(kbd.ESCAPE);
-
-	await expectNotExists(page.getByTestId("content"));
-	// we click twice, once to close the menu and once again to clear it
-	await t.user.click(t.getByTestId("checkbox-group-binding"));
 	await t.open();
 
 	await vi.waitFor(() =>

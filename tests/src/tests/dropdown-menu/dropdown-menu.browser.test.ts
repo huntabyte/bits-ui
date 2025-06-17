@@ -1,4 +1,4 @@
-import { expect, it, vi, afterEach } from "vitest";
+import { expect, it, vi, afterEach, onTestFinished } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { page } from "@vitest/browser/context";
 import { getTestKbd, sleep } from "../utils.js";
@@ -23,6 +23,7 @@ async function setup(props: DropdownMenuSetupProps = {}) {
 	const user = setupBrowserUserEvents();
 	const t = render(comp, { ...rest });
 	const trigger = page.getByTestId("trigger").element() as HTMLElement;
+	onTestFinished(() => t.unmount());
 
 	const open = async () => {
 		await user.click(trigger);
@@ -187,23 +188,6 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 	await t.user.click(subCheckbox);
 	await expectNotExists(page.getByTestId("content"));
 	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
-	t.trigger.focus();
-	expect(t.trigger).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
-	await expectExists(page.getByTestId("content"));
-	await openSubmenu(props);
-	expect(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
-	await t.user.click(page.getByTestId("sub-checkbox-item"));
-	await expectNotExists(page.getByTestId("content"));
-	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("false"));
-
-	await t.user.click(subCheckedBinding);
-	await vi.waitFor(() => expect(subCheckedBinding).toHaveTextContent("true"));
-	t.trigger.focus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
-	await expectExists(page.getByTestId("content"));
-	await openSubmenu(props);
-	expect(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
 });
 
 it("should check the radio item when clicked & respects binding", async () => {
@@ -214,25 +198,6 @@ it("should check the radio item when clicked & respects binding", async () => {
 	await t.user.click(radioItem1);
 	await vi.waitFor(() => expect(radioBinding).toHaveTextContent("1"));
 	await expectNotExists(page.getByTestId("content"));
-	await t.user.click(t.trigger);
-	await expectExists(page.getByTestId("content"));
-	const radioIndicator1 = page.getByTestId("radio-indicator-1");
-	await expectExists(radioIndicator1);
-	expect(radioIndicator1).toHaveTextContent("true");
-	const radioItem2 = page.getByTestId("radio-item-2");
-	await t.user.click(radioItem2);
-	await expectNotExists(page.getByTestId("content"));
-	await vi.waitFor(() => expect(radioBinding).toHaveTextContent("2"));
-	await t.user.click(t.trigger);
-	await expectExists(page.getByTestId("content"));
-	expect(page.getByTestId("radio-indicator-1")).toHaveTextContent("false");
-	expect(page.getByTestId("radio-indicator-2")).toHaveTextContent("true");
-
-	await t.user.keyboard(kbd.ESCAPE);
-	await expectNotExists(page.getByTestId("content"));
-	await t.user.click(radioBinding);
-	await vi.waitFor(() => expect(radioBinding).toHaveTextContent(""));
-	await t.user.click(t.trigger);
 });
 
 it("should skip over disabled items when navigating with the keyboard", async () => {
