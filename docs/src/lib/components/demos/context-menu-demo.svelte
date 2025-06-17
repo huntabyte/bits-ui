@@ -5,8 +5,6 @@
 	import PencilSimpleLine from "phosphor-svelte/lib/PencilSimpleLine";
 	import PlusCircle from "phosphor-svelte/lib/PlusCircle";
 	import Trash from "phosphor-svelte/lib/Trash";
-
-	let group = $state<string[]>(["1"]);
 </script>
 
 <ContextMenu.Root>
@@ -123,22 +121,6 @@
 					Delete
 				</div>
 			</ContextMenu.Item>
-			<ContextMenu.CheckboxGroup bind:value={group} data-testid="checkbox-group">
-				<ContextMenu.CheckboxItem value="1" data-testid="checkbox-group-item-1">
-					{#snippet children({ checked })}
-						<span data-testid="checkbox-indicator-1"> {checked} </span>
-						<span>Checkbox Item 1</span>
-					{/snippet}
-				</ContextMenu.CheckboxItem>
-				<ContextMenu.CheckboxItem value="2" data-testid="checkbox-group-item-2">
-					{#snippet children({ checked })}
-						<span data-testid="checkbox-indicator-2"> {checked} </span>
-						<span>Checkbox Item 2</span>
-					{/snippet}
-				</ContextMenu.CheckboxItem>
-			</ContextMenu.CheckboxGroup>
 		</ContextMenu.Content>
 	</ContextMenu.Portal>
 </ContextMenu.Root>
-
-<button onclick={() => (group = [])}> clear group </button>
