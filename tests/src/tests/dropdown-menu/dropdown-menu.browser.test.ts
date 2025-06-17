@@ -33,6 +33,7 @@ async function setup(props: DropdownMenuSetupProps = {}) {
 
 async function openWithPointer(props: DropdownMenuSetupProps = {}) {
 	const t = await setup(props);
+	await sleep(10);
 	expectNotExists(t.getByTestId("content"));
 	await t.user.click(t.trigger);
 
