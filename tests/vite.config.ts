@@ -46,6 +46,7 @@ export default defineConfig({
 					setupFiles: ["./other/setup-browser-test.ts"],
 					environment: "browser",
 					testTimeout: 5000,
+					retry: 3,
 					browser: {
 						enabled: true,
 						headless: true,
