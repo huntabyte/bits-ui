@@ -287,9 +287,9 @@ it("should respect the `interactOutsideBehavior` prop - ignore", async () => {
 			interactOutsideBehavior: "ignore",
 		},
 	});
-	const outside = t.getByTestId("outside");
-	await t.user.click(outside);
-	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await t.user.click(page.getByTestId("outside"));
+
+	expectExists(page.getByTestId("content"));
 });
 
 it("should respect the `interactOutsideBehavior` prop - close", async () => {
