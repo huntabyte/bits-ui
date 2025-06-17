@@ -43,7 +43,6 @@ import {
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
-import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
 import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
@@ -99,11 +98,6 @@ export const menuAttrs = createBitsAttrs({
 export class MenuRootState {
 	static create(opts: MenuRootStateOpts) {
 		const root = new MenuRootState(opts);
-		FocusScopeContext.set({
-			get ignoreCloseAutoFocus() {
-				return root.ignoreCloseAutoFocus;
-			},
-		});
 		return MenuRootContext.set(root);
 	}
 

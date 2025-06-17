@@ -1,5 +1,4 @@
 import type { Snippet } from "svelte";
-import type { FocusScopeContainerProps } from "./use-focus-scope.svelte.js";
 import type { EventCallback } from "$lib/internal/events.js";
 import type { ReadableBox } from "svelte-toolbelt";
 
@@ -28,7 +27,7 @@ export type FocusScopeImplProps = {
 	/**
 	 * The snippet to render the focus scope container with its props.
 	 */
-	focusScope?: Snippet<[{ props: FocusScopeContainerProps }]>;
+	focusScope?: Snippet<[{ props: Record<string, unknown> }]>;
 
 	/**
 	 * When `true` will loop through the tabbable elements in the focus scope.
