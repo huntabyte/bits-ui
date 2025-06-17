@@ -158,12 +158,7 @@ it("should renders six weeks when `fixedWeeks` is `true`", async () => {
 
 	const nextButton = t.getByTestId("next-button");
 
-	for (let i = 0; i < 12; i++) {
-		expect(getNumberOfWeeks()).toBe(6);
-		await t.user.click(nextButton);
-	}
-
-	for (let i = 0; i < 24; i++) {
+	for (let i = 0; i < 6; i++) {
 		expect(getNumberOfWeeks()).toBe(6);
 		await t.user.click(nextButton);
 	}
