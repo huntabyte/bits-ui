@@ -45,7 +45,7 @@ async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd
 	expectNotExists(t.getByTestId("content"));
 	(t.trigger.element() as HTMLElement).focus();
 	await t.user.keyboard(key);
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	return t;
 }
 
@@ -57,7 +57,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	expectNotExists(t.getByTestId("sub-content"));
 
 	await t.user.keyboard(kbd.ARROW_RIGHT);
-	expectExists(t.getByTestId("sub-content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("sub-content")));
 	expect(t.getByTestId("sub-item")).toHaveFocus();
 
 	return t;
@@ -101,8 +101,8 @@ it("should open when clicked & respects binding", async () => {
 	const binding = t.getByTestId("binding");
 	expect(binding).toHaveTextContent("false");
 	await t.user.click(t.trigger);
-	expectExists(t.getByTestId("content"));
-	expect(binding).toHaveTextContent("true");
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
+	await vi.waitFor(() => expect(binding).toHaveTextContent("true"));
 });
 
 it("should manage focus correctly when opened with pointer", async () => {
@@ -287,8 +287,8 @@ it("should respect the `interactOutsideBehavior` prop - ignore", async () => {
 		},
 	});
 	const outside = t.getByTestId("outside");
-	await t.user.click(outside, { force: true });
-	expectExists(t.getByTestId("content"));
+	await t.user.click(outside);
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 });
 
 it("should respect the `interactOutsideBehavior` prop - close", async () => {
@@ -298,8 +298,8 @@ it("should respect the `interactOutsideBehavior` prop - close", async () => {
 		},
 	});
 	const outside = t.getByTestId("outside");
-	await t.user.click(outside, { force: true });
-	expectNotExists(t.getByTestId("content"));
+	await t.user.click(outside);
+	await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
 });
 
 it("should portal to the body if a `portal` prop is not passed", async () => {
@@ -358,7 +358,7 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 
 	await t.user.click(t.trigger);
 
-	expectExists(t.getByTestId("content"));
+	await vi.waitFor(() => expectExists(t.getByTestId("content")));
 });
 
 it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
@@ -374,7 +374,7 @@ it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
 
 		expectNotExists(t.getByTestId("content"));
 		await t.user.click(t.getByTestId("trigger"));
-		expectExists(t.getByTestId("content"));
+		await vi.waitFor(() => expectExists(t.getByTestId("content")));
 	}
 );
 
@@ -388,7 +388,7 @@ it.each([DropdownMenuTest, DropdownMenuForceMountTest])(
 		const previousButton = t.getByTestId("previous-button");
 		await t.user.keyboard(kbd.SHIFT_TAB);
 		expect(previousButton).toHaveFocus();
-		expectNotExists(t.getByTestId("content"));
+		await vi.waitFor(() => expectNotExists(t.getByTestId("content")));
 	}
 );
 
