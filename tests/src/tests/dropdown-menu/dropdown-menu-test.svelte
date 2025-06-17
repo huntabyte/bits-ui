@@ -68,26 +68,28 @@
 						<DropdownMenu.SubTrigger data-testid="sub-trigger" {...subTriggerProps}>
 							<span>subtrigger</span>
 						</DropdownMenu.SubTrigger>
-						<DropdownMenu.SubContent data-testid="sub-content">
-							<DropdownMenu.Item
-								data-testid="sub-item"
-								class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-							>
-								<span>Email</span>
-							</DropdownMenu.Item>
-							<DropdownMenu.CheckboxItem
-								bind:checked={subChecked}
-								data-testid="sub-checkbox-item"
-								class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-							>
-								{#snippet children({ checked, indeterminate: _indeterminate })}
-									<span data-testid="sub-checkbox-indicator">
-										{checked}
-									</span>
-									sub checkbox
-								{/snippet}
-							</DropdownMenu.CheckboxItem>
-						</DropdownMenu.SubContent>
+						<DropdownMenu.Portal>
+							<DropdownMenu.SubContent data-testid="sub-content">
+								<DropdownMenu.Item
+									data-testid="sub-item"
+									class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+								>
+									<span>Email</span>
+								</DropdownMenu.Item>
+								<DropdownMenu.CheckboxItem
+									bind:checked={subChecked}
+									data-testid="sub-checkbox-item"
+									class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+								>
+									{#snippet children({ checked, indeterminate: _indeterminate })}
+										<span data-testid="sub-checkbox-indicator">
+											{checked}
+										</span>
+										sub checkbox
+									{/snippet}
+								</DropdownMenu.CheckboxItem>
+							</DropdownMenu.SubContent>
+						</DropdownMenu.Portal>
 					</DropdownMenu.Sub>
 					<DropdownMenu.Item
 						disabled
