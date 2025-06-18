@@ -15,7 +15,7 @@ Bits UI is a headless component library for Svelte focused on developer experien
 
 Most components ship completely unstyled, with the exception of those required for core functionality. No CSS resets, no design system assumptions. You bring the styles using standard `class` props or `data-*` attributes. [See the styling guide](/docs/styling).
 
-<img src="/img/developer-exp.png" alt="Accordion builder UI: Easily compose accessible accordion components with Bits UI." class="h-full w-full mt-14 -mb-6 rounded-xl md:rounded-2xl border" />
+<img src="/img/developer-exp.png" alt="Accordion builder UI: Easily compose accessible accordion components with Bits UI." class="h-full w-full mt-16 -mb-6 rounded-xl md:rounded-2xl border" />
 
 ### Building for Developer Experience
 
@@ -27,6 +27,8 @@ Everything is designed to stay out of your way:
 - Great defaults, easily overridden
 - Comprehensive documentation and examples
 
+<img src="/img/accessibility.png" alt="Production-Ready Accessibility" class="h-full w-full mt-16 -mb-6 rounded-xl md:rounded-2xl border" />
+
 ### Production-Ready Accessibility
 
 Accessibility isn't just an afterthought - it's baked in:
@@ -35,6 +37,8 @@ Accessibility isn't just an afterthought - it's baked in:
 - Keyboard navigation by default
 - Focus management handled for you
 - Screen reader support built-in
+
+<img src="/img/composable2.png" alt="Composable by Design" class="h-full w-full mt-16 -mb-6 rounded-xl md:rounded-2xl border" />
 
 ### Composable by Design
 
