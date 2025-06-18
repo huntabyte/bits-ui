@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.2
+
+### Patch Changes
+
+- perf: stable attachments ([#1599](https://github.com/huntabyte/bits-ui/pull/1599))
+
 ## 2.8.1
 
 ### Patch Changes
