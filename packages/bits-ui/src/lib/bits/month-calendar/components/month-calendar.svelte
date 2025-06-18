@@ -2,8 +2,8 @@
 	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { type DateValue } from "@internationalized/date";
-	import { CalendarRootState } from "../calendar.svelte.js";
-	import type { CalendarRootProps } from "../types.js";
+	import { MonthCalendarRootState } from "../month-calendar.svelte.js";
+	import type { MonthCalendarRootProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
@@ -18,13 +18,10 @@
 		onValueChange = noop,
 		placeholder = $bindable(),
 		onPlaceholderChange = noop,
-		weekdayFormat = "narrow",
-		weekStartsOn,
 		pagedNavigation = false,
-		isDateDisabled = () => false,
-		isDateUnavailable = () => false,
-		fixedWeeks = false,
-		numberOfMonths = 1,
+		isMonthDisabled = () => false,
+		isMonthUnavailable = () => false,
+		numberOfYears = 1,
 		locale,
 		calendarLabel = "Event",
 		disabled = false,
@@ -33,13 +30,12 @@
 		maxValue = undefined,
 		preventDeselect = false,
 		type,
-		disableDaysOutsideMonth = true,
 		initialFocus = false,
-		maxDays,
+		maxMonths,
 		monthFormat = "long",
 		yearFormat = "numeric",
 		...restProps
-	}: CalendarRootProps = $props();
+	}: MonthCalendarRootProps = $props();
 
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value,
@@ -75,28 +71,24 @@
 		}
 	);
 
-	const rootState = CalendarRootState.create({
+	const rootState = MonthCalendarRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
 			(v) => (ref = v)
 		),
-		weekdayFormat: box.with(() => weekdayFormat),
-		weekStartsOn: box.with(() => weekStartsOn),
 		pagedNavigation: box.with(() => pagedNavigation),
-		isUnitDisabled: box.with(() => isDateDisabled),
-		isUnitUnavailable: box.with(() => isDateUnavailable),
-		fixedWeeks: box.with(() => fixedWeeks),
-		numberOfMonths: box.with(() => numberOfMonths),
+		isUnitDisabled: box.with(() => isMonthDisabled),
+		isUnitUnavailable: box.with(() => isMonthUnavailable),
+		numberOfYears: box.with(() => numberOfYears),
 		locale: resolveLocaleProp(() => locale),
 		calendarLabel: box.with(() => calendarLabel),
 		readonly: box.with(() => readonly),
 		disabled: box.with(() => disabled),
 		minValue: box.with(() => minValue),
 		maxValue: box.with(() => maxValue),
-		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		initialFocus: box.with(() => initialFocus),
-		maxUnits: box.with(() => maxDays),
+		maxUnits: box.with(() => maxMonths),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {

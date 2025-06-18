@@ -1,8 +1,10 @@
 import {
+	DateFormatter,
 	type DateValue,
 	endOfMonth,
 	isSameDay,
 	isSameMonth,
+	isSameYear,
 	startOfMonth,
 } from "@internationalized/date";
 import {
@@ -36,6 +38,22 @@ import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { watch } from "runed";
+import type { CalendarView, Year } from "$lib/shared/date/types.js";
+
+export type SameFn = (a: DateValue, b: DateValue) => boolean;
+export type CalendarUnit = "day" | "month" | "year";
+
+export const SAME_FN_MAP: Record<CalendarUnit, SameFn> = {
+	day: isSameDay,
+	month: isSameMonth,
+	year: isSameYear,
+};
+
+export const CELL_UNIT_MAP: Record<CalendarUnit, "days" | "months" | "years"> = {
+	day: "days",
+	month: "months",
+	year: "years",
+};
 
 /**
  * Checks if a given node is a calendar cell element.
@@ -155,40 +173,78 @@ function createMonth(props: CreateMonthProps): Month<DateValue> {
 	};
 }
 
+export type CreateYearProps = {
+	/**
+	 * The date object representing the year's date (usually the first day of the year).
+	 */
+	dateObj: DateValue;
+
+	/**
+	 * The format to use for displaying month names.
+	 */
+	monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+
+	/**
+	 * The locale to use when creating the calendar month.
+	 */
+	locale: string;
+};
+
+/**
+ * Creates a calendar year object for the month calendar view.
+ *
+ * @remarks
+ * Given a date, this function returns an object containing
+ * the necessary values to render a year in the month calendar,
+ * including the year's date (the first day of that year), an array
+ * of all months in that year (with their formatted names), and an
+ * array of month groups (e.g., for rendering in a grid).
+ *
+ * Each month entry contains the date and its formatted name.
+ */
+function createYear(props: CreateYearProps): Year<DateValue> {
+	const { monthFormat, locale, dateObj } = props;
+	const monthsInYear = 12;
+
+	const datesArray = Array.from({ length: monthsInYear }, (_, i) => {
+		const date = dateObj.set({ month: i + 1 });
+
+		const formattedMonth =
+			typeof monthFormat === "function"
+				? monthFormat(toDate(date).getMonth() + 1)
+				: new DateFormatter(locale, { month: monthFormat }).format(toDate(date));
+
+		return {
+			value: date,
+			label: formattedMonth,
+		};
+	});
+
+	const months = chunk(datesArray, 4);
+
+	return {
+		value: dateObj,
+		dates: datesArray,
+		months,
+	};
+}
+
 type SetMonthProps = CreateMonthProps & {
 	numberOfMonths: number | undefined;
 	currentMonths?: Month<DateValue>[];
 };
 
 export function createMonths(props: SetMonthProps) {
-	const { numberOfMonths, dateObj, ...monthProps } = props;
+	const { numberOfMonths = 1, dateObj, ...monthProps } = props;
 
 	const months: Month<DateValue>[] = [];
 
-	if (!numberOfMonths || numberOfMonths === 1) {
+	for (let i = 0; i < numberOfMonths; i++) {
+		const current = dateObj.add({ months: i });
 		months.push(
 			createMonth({
 				...monthProps,
-				dateObj,
-			})
-		);
-		return months;
-	}
-
-	months.push(
-		createMonth({
-			...monthProps,
-			dateObj,
-		})
-	);
-
-	// Create all the months, starting with the current month
-	for (let i = 1; i < numberOfMonths; i++) {
-		const nextMonth = dateObj.add({ months: i });
-		months.push(
-			createMonth({
-				...monthProps,
-				dateObj: nextMonth,
+				dateObj: current,
 			})
 		);
 	}
@@ -196,9 +252,34 @@ export function createMonths(props: SetMonthProps) {
 	return months;
 }
 
+type SetYearProps = CreateYearProps & {
+	numberOfYears: number | undefined;
+	currentYears?: Year<DateValue>[];
+};
+
+export function createYears(props: SetYearProps) {
+	let { numberOfYears = 1, dateObj, ...yearProps } = props;
+	dateObj = dateObj.set({ day: 1 });
+
+	const years: Year<DateValue>[] = [];
+
+	for (let i = 0; i < numberOfYears; i++) {
+		const current = dateObj.add({ years: i });
+		years.push(
+			createYear({
+				...yearProps,
+				dateObj: current,
+			})
+		);
+	}
+
+	return years;
+}
+
 export function getSelectableCells(calendarNode: HTMLElement | null) {
 	if (!calendarNode) return [];
-	const selectableSelector = `[data-bits-day]:not([data-disabled]):not([data-outside-visible-months])`;
+	const selectableSelector = `[data-bits-day]:not([data-disabled]):not([data-outside-visible-months]), 
+	                  					[data-bits-month]:not([data-disabled])`;
 
 	return Array.from(calendarNode.querySelectorAll(selectableSelector)).filter(
 		(el): el is HTMLElement => isHTMLElement(el)
@@ -227,7 +308,7 @@ type ShiftCalendarFocusProps = {
 	node: HTMLElement;
 
 	/**
-	 * The number of days to shift the focus by.
+	 * The number of units to shift the focus by.
 	 */
 	add: number;
 
@@ -252,14 +333,19 @@ type ShiftCalendarFocusProps = {
 	isNextButtonDisabled: boolean;
 
 	/**
-	 * The months array of the calendar.
+	 * The items array of the calendar.
 	 */
-	months: Month<DateValue>[];
+	items: CalendarView<unknown>[];
 
 	/**
-	 * The number of months being displayed in the calendar.
+	 * The number of units being displayed in the calendar.
 	 */
-	numberOfMonths: number;
+	numberOfUnits: number;
+
+	/**
+	 * The unit type.
+	 * */
+	unit: "years" | "months";
 };
 
 /**
@@ -273,8 +359,9 @@ export function shiftCalendarFocus({
 	calendarNode,
 	isPrevButtonDisabled,
 	isNextButtonDisabled,
-	months,
-	numberOfMonths,
+	items,
+	numberOfUnits,
+	unit,
 }: ShiftCalendarFocusProps) {
 	const candidateCells = getSelectableCells(calendarNode);
 	if (!candidateCells.length) return;
@@ -309,9 +396,9 @@ export function shiftCalendarFocus({
 		// shift the calendar back a month unless prev month is disabled
 		if (isPrevButtonDisabled) return;
 
-		const firstMonth = months[0]?.value;
-		if (!firstMonth) return;
-		placeholder.current = firstMonth.subtract({ months: numberOfMonths });
+		const firstValue = items[0]?.value;
+		if (!firstValue) return;
+		placeholder.current = firstValue.subtract({ [unit]: numberOfUnits });
 
 		// Without a tick here, it seems to be too quick for the DOM to update
 
@@ -344,9 +431,9 @@ export function shiftCalendarFocus({
 		// shift the calendar forward a month unless next month is disabled
 		if (isNextButtonDisabled) return;
 
-		const firstMonth = months[0]?.value;
-		if (!firstMonth) return;
-		placeholder.current = firstMonth.add({ months: numberOfMonths });
+		const firstValue = items[0]?.value;
+		if (!firstValue) return;
+		placeholder.current = firstValue.add({ [unit]: numberOfUnits });
 
 		afterTick(() => {
 			const newCandidateCells = getSelectableCells(calendarNode);
@@ -455,6 +542,44 @@ export function handleCalendarNextPage({
 	}
 }
 
+type HandleMonthCalendarPageProps = {
+	years: Year<DateValue>[];
+	setYears: (years: Year<DateValue>[]) => void;
+	numberOfYears: number;
+	pagedNavigation: boolean;
+	locale: string;
+	monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+	setPlaceholder: (date: DateValue) => void;
+};
+
+export function handleMonthCalendarNextPage({
+	years,
+	setYears,
+	numberOfYears,
+	pagedNavigation,
+	locale,
+	monthFormat,
+	setPlaceholder,
+}: HandleMonthCalendarPageProps) {
+	const firstYear = years[0]?.value;
+	if (!firstYear) return;
+	if (pagedNavigation) {
+		setPlaceholder(firstYear.add({ years: numberOfYears }));
+	} else {
+		const newYears = createYears({
+			dateObj: firstYear.add({ years: 1 }),
+			locale,
+			monthFormat,
+			numberOfYears,
+		});
+		setYears(newYears);
+
+		const firstNewMonth = newYears[0];
+		if (!firstNewMonth) return;
+		setPlaceholder(firstNewMonth.value.set({ day: 1, month: 0 }));
+	}
+}
+
 export function handleCalendarPrevPage({
 	months,
 	setMonths,
@@ -482,6 +607,34 @@ export function handleCalendarPrevPage({
 		const firstNewMonth = newMonths[0];
 		if (!firstNewMonth) return;
 		setPlaceholder(firstNewMonth.value.set({ day: 1 }));
+	}
+}
+
+export function handleMonthCalendarPrevPage({
+	years,
+	setYears,
+	numberOfYears,
+	pagedNavigation,
+	locale,
+	monthFormat,
+	setPlaceholder,
+}: HandleMonthCalendarPageProps) {
+	const firstYear = years[0]?.value;
+	if (!firstYear) return;
+	if (pagedNavigation) {
+		setPlaceholder(firstYear.subtract({ years: numberOfYears }));
+	} else {
+		const newYears = createYears({
+			dateObj: firstYear.subtract({ years: 1 }),
+			locale,
+			monthFormat,
+			numberOfYears,
+		});
+
+		setYears(newYears);
+		const firstNewYear = newYears[0];
+		if (!firstNewYear) return;
+		setPlaceholder(firstNewYear.value.set({ day: 1, month: 0 }));
 	}
 }
 
@@ -530,6 +683,38 @@ export function useMonthViewOptionsSync(props: UseMonthViewSyncProps) {
 			};
 
 			props.setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder }));
+		});
+	});
+}
+
+type UseYearViewSyncProps = {
+	locale: ReadableBox<string>;
+	numberOfYears: ReadableBox<number>;
+	placeholder: WritableBox<DateValue>;
+	monthFormat: ReadableBox<Intl.DateTimeFormatOptions["month"] | ((month: number) => string)>;
+	setYears: (months: Year<DateValue>[]) => void;
+};
+
+/**
+ * Updates the displayed months based on changes in the options values,
+ * which determines the year to show in the calendar.
+ */
+export function useYearViewOptionsSync(props: UseYearViewSyncProps) {
+	$effect(() => {
+		const locale = props.locale.current;
+		const numberOfYears = props.numberOfYears.current;
+		const monthFormat = props.monthFormat.current;
+
+		untrack(() => {
+			const placeholder = props.placeholder.current;
+			if (!placeholder) return;
+			const defaultMonthProps = {
+				locale,
+				numberOfYears,
+				monthFormat,
+			};
+
+			props.setYears(createYears({ ...defaultMonthProps, dateObj: placeholder }));
 		});
 	});
 }
@@ -621,6 +806,45 @@ export function useMonthViewPlaceholderSync({
 	});
 }
 
+type UseYearViewPlaceholderSyncProps = {
+	placeholder: WritableBox<DateValue>;
+	getVisibleYears: () => DateValue[];
+	locale: ReadableBox<string>;
+	monthFormat: ReadableBox<Intl.DateTimeFormatOptions["month"] | ((month: number) => string)>;
+	numberOfYears: ReadableBox<number>;
+	setYears: (months: Year<DateValue>[]) => void;
+};
+
+export function useYearViewPlaceholderSync({
+	placeholder,
+	locale,
+	monthFormat,
+	getVisibleYears,
+	numberOfYears,
+	setYears,
+}: UseYearViewPlaceholderSyncProps) {
+	$effect(() => {
+		placeholder.current;
+		untrack(() => {
+			/**
+			 * If the placeholder's month is already in this visible months,
+			 * we don't need to do anything.
+			 */
+			if (getVisibleYears().some((month) => isSameYear(month, placeholder.current))) {
+				return;
+			}
+
+			const defaultMonthProps = {
+				monthFormat: monthFormat.current,
+				locale: locale.current,
+				numberOfYears: numberOfYears.current,
+			};
+
+			setYears(createYears({ ...defaultMonthProps, dateObj: placeholder.current }));
+		});
+	});
+}
+
 type GetIsNextButtonDisabledProps = {
 	maxValue: DateValue | undefined;
 	months: Month<DateValue>[];
@@ -644,6 +868,29 @@ export function getIsNextButtonDisabled({
 	return isAfter(firstMonthOfNextPage, maxValue);
 }
 
+type GetIsNextMonthCalendarButtonDisabledProps = {
+	maxValue: DateValue | undefined;
+	years: Year<DateValue>[];
+	disabled: boolean;
+};
+
+export function getIsNextMonthCalendarButtonDisabled({
+	maxValue,
+	years,
+	disabled,
+}: GetIsNextMonthCalendarButtonDisabledProps) {
+	if (!maxValue || !years.length) return false;
+	if (disabled) return true;
+	const lastYearInView = years[years.length - 1]?.value;
+	if (!lastYearInView) return false;
+	const firstYearOfNextPage = lastYearInView
+		.add({
+			years: 1,
+		})
+		.set({ day: 1, month: 0 });
+	return isAfter(firstYearOfNextPage, maxValue);
+}
+
 type GetIsPrevButtonDisabledProps = {
 	minValue: DateValue | undefined;
 	months: Month<DateValue>[];
@@ -665,6 +912,29 @@ export function getIsPrevButtonDisabled({
 		})
 		.set({ day: 35 });
 	return isBefore(lastMonthOfPrevPage, minValue);
+}
+
+type GetIsPrevMonthCalendarButtonDisabledProps = {
+	minValue: DateValue | undefined;
+	years: Year<DateValue>[];
+	disabled: boolean;
+};
+
+export function getIsPrevMonthCalendarButtonDisabled({
+	minValue,
+	years,
+	disabled,
+}: GetIsPrevMonthCalendarButtonDisabledProps) {
+	if (!minValue || !years.length) return false;
+	if (disabled) return true;
+	const firstYearInView = years[0]?.value;
+	if (!firstYearInView) return false;
+	const lastYearOfPrevPage = firstYearInView
+		.subtract({
+			years: 1,
+		})
+		.set({ day: 35, month: 12 });
+	return isBefore(lastYearOfPrevPage, minValue);
 }
 
 type GetCalendarHeadingValueProps = {
@@ -702,6 +972,35 @@ export function getCalendarHeadingValue({
 			: `${startMonthName} ${startMonthYear} - ${endMonthName} ${endMonthYear}`;
 
 	return content;
+}
+
+type GetMonthCalendarHeadingValueProps = {
+	years: Year<DateValue>[];
+	formatter: Formatter;
+	locale: string;
+};
+
+export function getMonthCalendarHeadingValue({
+	years,
+	locale,
+	formatter,
+}: GetMonthCalendarHeadingValueProps) {
+	if (!years.length) return "";
+	if (locale !== formatter.getLocale()) {
+		formatter.setLocale(locale);
+	}
+	if (years.length === 1) {
+		const year = toDate(years[0]!.value);
+		return `${formatter.fullYear(year)}`;
+	}
+
+	const startYear = toDate(years[0]!.value);
+	const endYear = toDate(years[years.length - 1]!.value);
+
+	const startYearName = formatter.fullYear(startYear);
+	const endYearName = formatter.fullYear(endYear);
+
+	return startYearName === endYearName ? `${endYearName}` : `${startYearName} - ${endYearName}`;
 }
 
 type GetCalendarElementProps = {
@@ -778,17 +1077,21 @@ export function useEnsureNonDisabledPlaceholder({
 	defaultPlaceholder,
 	minValue,
 	maxValue,
-	isDateDisabled,
+	isUnitDisabled,
+	unit,
 }: {
 	ref: WritableBox<HTMLElement | null>;
 	placeholder: WritableBox<DateValue | undefined>;
-	isDateDisabled: ReadableBox<DateMatcher>;
+	isUnitDisabled: ReadableBox<DateMatcher>;
 	minValue: ReadableBox<DateValue | undefined>;
 	maxValue: ReadableBox<DateValue | undefined>;
 	defaultPlaceholder: DateValue;
+	unit: CalendarUnit;
 }) {
+	const isSameUnit = SAME_FN_MAP[unit];
+
 	function isDisabled(date: DateValue) {
-		if (isDateDisabled.current(date)) return true;
+		if (isUnitDisabled.current(date)) return true;
 		if (minValue.current && isBefore(date, minValue.current)) return true;
 		if (maxValue.current && isBefore(maxValue.current, date)) return true;
 		return false;
@@ -812,7 +1115,7 @@ export function useEnsureNonDisabledPlaceholder({
 			 */
 			if (
 				placeholder.current &&
-				isSameDay(placeholder.current, defaultPlaceholder) &&
+				isSameUnit(placeholder.current, defaultPlaceholder) &&
 				isDisabled(defaultPlaceholder)
 			) {
 				placeholder.current =
@@ -846,6 +1149,7 @@ export const calendarAttrs = createBitsAttrs({
 		"next-button",
 		"prev-button",
 		"day",
+		"month",
 		"grid-body",
 		"grid-head",
 		"grid-row",
