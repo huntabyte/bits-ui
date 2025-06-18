@@ -97,7 +97,7 @@ jobs:
             - name: Run browser tests
               run: |
                   if [ "${{ matrix.browser }}" = "firefox" ]; then
-                    pnpm test:browser --browser ${{ matrix.browser }} --no-file-parallelism
+                    rm -r tests/node_modules/.vite && pnpm test:browser --browser ${{ matrix.browser }} --no-file-parallelism
                   else
-                    pnpm test:browser --browser ${{ matrix.browser }}
+                    rm -r tests/node_modules/.vite && pnpm test:browser --browser ${{ matrix.browser }}
                   fi
