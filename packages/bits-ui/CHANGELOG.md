@@ -1,5 +1,17 @@
 # bits-ui
 
+## 2.8.1
+
+### Patch Changes
+
+- fix(ContextMenu): support portalling `ContextMenu.SubContent` ([#1591](https://github.com/huntabyte/bits-ui/pull/1591))
+
+- fix(FocusScope): decouple `onCloseAutoFocus` and `onOpenAutoFocus` from `trapFocus` conditional ([#1591](https://github.com/huntabyte/bits-ui/pull/1591))
+
+- fix: issue where `ref` would become `null` during state transitions ([#1591](https://github.com/huntabyte/bits-ui/pull/1591))
+
+- fix(DropdownMenu): support portalling `DropdownMenu.SubContent` ([#1591](https://github.com/huntabyte/bits-ui/pull/1591))
+
 ## 2.8.0
 
 ### Minor Changes
