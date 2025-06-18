@@ -1,33 +1,65 @@
+import tailwindcss from "@tailwindcss/vite";
 import process from "node:process";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
-import { defineConfig } from "vitest/config";
+import { defineConfig } from "vite";
 import type { Plugin } from "vite";
 
 const vitestBrowserConditionPlugin: Plugin = {
 	name: "vite-plugin-vitest-browser-condition",
-	//@ts-expect-error - idk
-	config({ resolve }: { resolve: { conditions: string[] } }) {
+	// @ts-expect-error - idk
+	config({ resolve }: { resolve?: { conditions: string[] } }) {
 		if (process.env.VITEST) {
-			resolve.conditions.unshift("browser");
+			if (resolve?.conditions) {
+				resolve.conditions.unshift("browser");
+			} else {
+				// @ts-expect-error - idk
+				resolve.conditions = ["browser"];
+			}
 		}
 	},
 };
 
 export default defineConfig({
-	plugins: [vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
+	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
 	test: {
-		include: ["src/**/*.{test,spec}.{js,ts}"],
-		// jest like globals
-		globals: true,
-		environment: "jsdom",
-		// in-source testing
-		includeSource: ["src/**/*.{js,ts,svelte}"],
-		// Add @testing-library/jest-dom's matchers & mocks of SvelteKit modules
-		setupFiles: ["./other/setup-test.ts"],
-		coverage: {
-			exclude: ["./other/setup-test.ts"],
-		},
-		retry: 3,
+		projects: [
+			{
+				extends: "./vite.config.ts",
+				test: {
+					name: "jsdom",
+					include: ["src/tests/**/*.{test,spec}.{js,ts}"],
+					globals: true,
+					environment: "jsdom",
+					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
+					setupFiles: ["./other/setup-test.ts"],
+					exclude: ["./other/setup-test.ts"],
+					retry: 3,
+				},
+			},
+			{
+				extends: "./vite.config.ts",
+				test: {
+					name: "browser",
+					include: ["src/tests/**/*.browser.test.ts"],
+					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
+					setupFiles: ["./other/setup-browser-test.ts"],
+					environment: "browser",
+					testTimeout: 5000,
+					retry: 3,
+					browser: {
+						enabled: true,
+						headless: true,
+						provider: "playwright",
+						isolate: true,
+						instances: [
+							{ browser: "chromium" },
+							{ browser: "firefox" },
+							{ browser: "webkit" },
+						],
+					},
+				},
+			},
+		],
 	},
 });

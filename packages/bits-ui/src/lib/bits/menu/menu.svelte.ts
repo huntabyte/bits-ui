@@ -43,9 +43,7 @@ import {
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
-import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
-import { untrack } from "svelte";
 import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
@@ -100,11 +98,6 @@ export const menuAttrs = createBitsAttrs({
 export class MenuRootState {
 	static create(opts: MenuRootStateOpts) {
 		const root = new MenuRootState(opts);
-		FocusScopeContext.set({
-			get ignoreCloseAutoFocus() {
-				return root.ignoreCloseAutoFocus;
-			},
-		});
 		return MenuRootContext.set(root);
 	}
 
@@ -284,6 +277,7 @@ export class MenuContentState {
 	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current(e);
 		if (e.defaultPrevented || this.#isSub) return;
+
 		if (this.parentMenu.triggerNode && isTabbable(this.parentMenu.triggerNode)) {
 			this.parentMenu.triggerNode.focus();
 		}
@@ -300,9 +294,7 @@ export class MenuContentState {
 			rootMenu = rootMenu.parentMenu;
 		}
 		// if for some unforeseen reason the root menu has no trigger, we bail
-		if (!rootMenu.triggerNode) {
-			return;
-		}
+		if (!rootMenu.triggerNode) return;
 
 		// cancel default tab behavior
 		e.preventDefault();
@@ -443,11 +435,9 @@ export class MenuContentState {
 					pointerEvents: "auto",
 				},
 				...attachRef(this.opts.ref, (v) => {
-					untrack(() => {
-						if (this.parentMenu.contentNode !== v) {
-							this.parentMenu.contentNode = v;
-						}
-					});
+					if (this.parentMenu.contentNode !== v) {
+						this.parentMenu.contentNode = v;
+					}
 				}),
 			}) as const
 	);

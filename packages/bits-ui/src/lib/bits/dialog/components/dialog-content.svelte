@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { afterSleep, box, mergeProps } from "svelte-toolbelt";
 	import { DialogContentState } from "../dialog.svelte.js";
 	import type { DialogContentProps } from "../types.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
@@ -10,8 +10,7 @@
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
-	import { shouldTrapFocus } from "$lib/internal/should-trap-focus.js";
-
+	import { shouldEnableFocusTrap } from "$lib/internal/should-enable-focus-trap.js";
 	const uid = $props.id();
 
 	let {
@@ -51,18 +50,17 @@
 		<FocusScope
 			ref={contentState.opts.ref}
 			loop
-			trapFocus={shouldTrapFocus({
+			{trapFocus}
+			enabled={shouldEnableFocusTrap({
 				forceMount,
 				present: contentState.root.opts.open.current,
-				trapFocus,
 				open: contentState.root.opts.open.current,
 			})}
 			{onOpenAutoFocus}
-			{id}
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);
 				if (e.defaultPrevented) return;
-				contentState.root.triggerNode?.focus();
+				afterSleep(1, () => contentState.root.triggerNode?.focus());
 			}}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}

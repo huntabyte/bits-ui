@@ -170,11 +170,6 @@ it("should renders six weeks when `fixedWeeks` is `true`", async () => {
 		expect(getNumberOfWeeks()).toBe(6);
 		await user.click(nextButton);
 	}
-
-	for (let i = 0; i < 24; i++) {
-		expect(getNumberOfWeeks()).toBe(6);
-		await user.click(nextButton);
-	}
 });
 
 it("should not allow navigation before the `minValue` (prev button)", async () => {

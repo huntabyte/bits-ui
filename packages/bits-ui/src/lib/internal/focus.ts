@@ -37,7 +37,7 @@ export function focusWithoutScroll(element: HTMLElement) {
  * A utility function that focuses an element.
  */
 export function focus(element?: FocusableTarget | null, { select = false } = {}) {
-	if (!(element && element.focus)) return;
+	if (!element || !element.focus) return;
 	const doc = getDocument(element as HTMLElement);
 	if (doc.activeElement === element) return;
 	const previouslyFocusedElement = doc.activeElement;

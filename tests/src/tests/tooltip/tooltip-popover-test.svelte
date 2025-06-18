@@ -3,7 +3,7 @@
 </script>
 
 <Tooltip.Provider>
-	<Tooltip.Root>
+	<Tooltip.Root delayDuration={0}>
 		<Popover.Root>
 			<Tooltip.Trigger data-testid="trigger">
 				{#snippet child({ props })}

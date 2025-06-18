@@ -20,14 +20,16 @@
 	}: AlertDialogTestProps = $props();
 </script>
 
-<main>
+<main class="flex flex-col gap-2">
 	<AlertDialog.Root bind:open {...restProps}>
 		<AlertDialog.Trigger data-testid="trigger">open</AlertDialog.Trigger>
 		<AlertDialog.Portal {...portalProps}>
 			<AlertDialog.Overlay
 				data-testid="overlay"
 				class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
-			/>
+			>
+				Overlay
+			</AlertDialog.Overlay>
 			<AlertDialog.Content
 				{...contentProps}
 				data-testid="content"
@@ -50,6 +52,6 @@
 	<button id="close-focus-override" data-testid="close-focus-override">
 		close focus override
 	</button>
-	<div data-testid="outside">outside content</div>
 	<div id="portalTarget" data-testid="portalTarget"></div>
+	<div data-testid="outside">outside content</div>
 </main>

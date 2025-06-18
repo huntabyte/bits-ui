@@ -18,10 +18,6 @@ import {
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/arrays.js";
 import type { OnChangeFn, WithRefOpts } from "$lib/internal/types.js";
-import {
-	FocusScopeContext,
-	type FocusScopeContextValue,
-} from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte";
@@ -310,13 +306,11 @@ export class MenubarContentState {
 	readonly opts: MenubarContentStateOpts;
 	readonly menu: MenubarMenuState;
 	readonly root: MenubarRootState;
-	focusScopeContext: FocusScopeContextValue;
 
 	constructor(opts: MenubarContentStateOpts, menu: MenubarMenuState) {
 		this.opts = opts;
 		this.menu = menu;
 		this.root = menu.root;
-		this.focusScopeContext = FocusScopeContext.get();
 	}
 
 	onCloseAutoFocus = (e: Event) => {

@@ -11,6 +11,8 @@
 		child,
 		id = createId(uid),
 		ref = $bindable(null),
+		// for safari
+		tabindex = 0,
 		...restProps
 	}: CalendarPrevButtonProps = $props();
 
@@ -22,7 +24,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, prevButtonState.props));
+	const mergedProps = $derived(mergeProps(restProps, prevButtonState.props, { tabindex }));
 </script>
 
 {#if child}

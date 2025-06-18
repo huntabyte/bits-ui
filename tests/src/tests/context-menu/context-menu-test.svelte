@@ -11,6 +11,7 @@
 		portalProps?: Omit<ContextMenu.PortalProps, "children" | "child">;
 		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "children" | "child">;
 		checkboxGroupProps?: Omit<ContextMenu.CheckboxGroupProps, "children" | "child" | "value">;
+		openFocusOverride?: boolean;
 	};
 </script>
 
@@ -26,11 +27,12 @@
 		portalProps = {},
 		subTriggerProps = {},
 		checkboxGroupProps = {},
+		openFocusOverride = false,
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
 
-<main>
+<main class="flex flex-col gap-4">
 	<div data-testid="outside">outside</div>
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
@@ -125,6 +127,11 @@
 							{/snippet}
 						</ContextMenu.CheckboxItem>
 					</ContextMenu.CheckboxGroup>
+					{#if openFocusOverride}
+						<button data-testid="on-open-focus-override" id="on-open-focus-override"
+							>on-open-focus-override</button
+						>
+					{/if}
 				</ContextMenu.Content>
 			</ContextMenu.Portal>
 		</ContextMenu.Root>
@@ -143,11 +150,13 @@
 	<button aria-label="radio-sub" data-testid="sub-radio-binding" onclick={() => (subRadio = "")}
 		>{subRadio}</button
 	>
-	<button data-testid="on-focus-override" id="on-focus-override">on-focus-override</button>
+	<button data-testid="on-close-focus-override" id="on-close-focus-override"
+		>on-close-focus-override</button
+	>
 	<button
 		aria-label="checkbox-group-binding"
 		data-testid="checkbox-group-binding"
-		onclick={() => (group = [])}>{group}</button
+		onclick={() => (group = [])}>Group value: {group}</button
 	>
 	<div id="portal-target" data-testid="portal-target"></div>
 </main>

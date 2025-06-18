@@ -46,7 +46,7 @@
 	);
 </script>
 
-<main data-testid="main">
+<main data-testid="main" class="flex flex-col gap-12">
 	<form
 		data-testid="form"
 		method="POST"
@@ -93,7 +93,7 @@
 				</Combobox.Content>
 			</Combobox.Portal>
 		</Combobox.Root>
-		<div data-testid="outside"></div>
+		<div data-testid="outside">outside</div>
 		<button type="button" data-testid="input-binding" onclick={() => (searchValue = "")}>
 			{#if searchValue === ""}
 				empty

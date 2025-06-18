@@ -14,6 +14,7 @@
 		children,
 		active = false,
 		onSelect = noop,
+		tabindex = 0,
 		...restProps
 	}: NavigationMenuLinkProps = $props();
 
@@ -27,7 +28,7 @@
 		onSelect: box.with(() => onSelect),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, linkState.props));
+	const mergedProps = $derived(mergeProps(restProps, linkState.props, { tabindex }));
 </script>
 
 {#if child}
