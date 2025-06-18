@@ -191,7 +191,7 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 });
 
 // CI hates this
-it.skip("should check the radio item when clicked & respects binding", async () => {
+it("should check the radio item when clicked & respects binding", async () => {
 	const t = await open();
 	const radioBinding = page.getByTestId("radio-binding");
 	expect(radioBinding).toHaveTextContent("");
@@ -404,7 +404,7 @@ it("should respect the `onSelect` prop on SubTrigger", async () => {
 });
 
 // CI hates this
-it.skip("should respect the `value` prop on CheckboxGroup", async () => {
+it("should respect the `value` prop on CheckboxGroup", async () => {
 	const t = await open({
 		group: ["1"],
 	});
@@ -449,7 +449,7 @@ it.skip("should respect the `value` prop on CheckboxGroup", async () => {
 });
 
 // CI hates this
-it.skip("calls `onValueChange` when the value of the checkbox group changes", async () => {
+it("calls `onValueChange` when the value of the checkbox group changes", async () => {
 	const onValueChange = vi.fn();
 	const t = await open({
 		checkboxGroupProps: {
