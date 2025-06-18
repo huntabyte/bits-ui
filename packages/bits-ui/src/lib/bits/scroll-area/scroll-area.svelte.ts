@@ -17,7 +17,7 @@ import {
 } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import { addEventListener } from "$lib/internal/events.js";
-import type { BitsPointerEvent, WithRefOpts } from "$lib/internal/types.js";
+import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
 import { clamp } from "$lib/internal/clamp.js";
 import { on } from "svelte/events";
@@ -68,6 +68,7 @@ export class ScrollAreaRootState {
 	}
 
 	readonly opts: ScrollAreaRootStateOpts;
+	readonly attachment: RefAttachment;
 	scrollAreaNode = $state<HTMLElement | null>(null);
 	viewportNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
@@ -81,6 +82,7 @@ export class ScrollAreaRootState {
 
 	constructor(opts: ScrollAreaRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(opts.ref, (v) => (this.scrollAreaNode = v));
 		this.domContext = new DOMContext(opts.ref);
 	}
 
@@ -95,7 +97,7 @@ export class ScrollAreaRootState {
 					"--bits-scroll-area-corner-width": `${this.cornerWidth}px`,
 				},
 				[scrollAreaAttrs.root]: "",
-				...attachRef(this.opts.ref, (v) => (this.scrollAreaNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -109,12 +111,18 @@ export class ScrollAreaViewportState {
 
 	readonly opts: ScrollAreaViewportStateOpts;
 	readonly root: ScrollAreaRootState;
+	readonly attachment: RefAttachment;
 	#contentId = box(useId());
 	#contentRef = box<HTMLElement | null>(null);
+	readonly contentAttachment: RefAttachment = attachRef(
+		this.#contentRef,
+		(v) => (this.root.contentNode = v)
+	);
 
 	constructor(opts: ScrollAreaViewportStateOpts, root: ScrollAreaRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.viewportNode = v));
 	}
 
 	readonly props = $derived.by(
@@ -126,7 +134,7 @@ export class ScrollAreaViewportState {
 					overflowY: this.root.scrollbarYEnabled ? "scroll" : "hidden",
 				},
 				[scrollAreaAttrs.viewport]: "",
-				...attachRef(this.opts.ref, (v) => (this.root.viewportNode = v)),
+				...this.attachment,
 			}) as const
 	);
 
@@ -143,7 +151,7 @@ export class ScrollAreaViewportState {
 				 * be constrained by the parent container to enable `text-overflow: ellipsis`
 				 */
 				style: { minWidth: this.root.scrollbarXEnabled ? "fit-content" : undefined },
-				...attachRef(this.#contentRef, (v) => (this.root.contentNode = v)),
+				...this.contentAttachment,
 			}) as const
 	);
 }
@@ -491,6 +499,7 @@ export class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 	readonly scrollbarVis: ScrollAreaScrollbarVisibleState;
 	readonly root: ScrollAreaRootState;
 	readonly scrollbar: ScrollAreaScrollbarState;
+	readonly attachment: RefAttachment;
 	computedStyle = $state<CSSStyleDeclaration>();
 
 	constructor(opts: ScrollbarAxisStateOpts, scrollbarVis: ScrollAreaScrollbarVisibleState) {
@@ -498,6 +507,7 @@ export class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 		this.scrollbarVis = scrollbarVis;
 		this.root = scrollbarVis.root;
 		this.scrollbar = scrollbarVis.scrollbar;
+		this.attachment = attachRef(this.scrollbar.opts.ref, (v) => (this.root.scrollbarXNode = v));
 
 		$effect(() => {
 			if (!this.scrollbar.opts.ref.current) return;
@@ -574,7 +584,7 @@ export class ScrollAreaScrollbarXState implements ScrollbarAxisState {
 							: 0,
 					"--bits-scroll-area-thumb-width": `${this.thumbSize}px`,
 				},
-				...attachRef(this.scrollbar.opts.ref, (v) => (this.root.scrollbarXNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -589,6 +599,7 @@ export class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 	readonly scrollbarVis: ScrollAreaScrollbarVisibleState;
 	readonly root: ScrollAreaRootState;
 	readonly scrollbar: ScrollAreaScrollbarState;
+	readonly attachment: RefAttachment;
 	computedStyle = $state<CSSStyleDeclaration>();
 
 	constructor(opts: ScrollbarAxisStateOpts, scrollbarVis: ScrollAreaScrollbarVisibleState) {
@@ -596,6 +607,7 @@ export class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 		this.scrollbarVis = scrollbarVis;
 		this.root = scrollbarVis.root;
 		this.scrollbar = scrollbarVis.scrollbar;
+		this.attachment = attachRef(this.scrollbar.opts.ref, (v) => (this.root.scrollbarYNode = v));
 
 		$effect(() => {
 			if (!this.scrollbar.opts.ref.current) return;
@@ -674,7 +686,7 @@ export class ScrollAreaScrollbarYState implements ScrollbarAxisState {
 					bottom: "var(--bits-scroll-area-corner-height)",
 					"--bits-scroll-area-thumb-height": `${this.thumbSize}px`,
 				},
-				...attachRef(this.scrollbar.opts.ref, (v) => (this.root.scrollbarYNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -815,6 +827,7 @@ export class ScrollAreaThumbImplState {
 	}
 	readonly opts: ScrollAreaThumbImplStateOpts;
 	readonly scrollbarState: ScrollAreaScrollbarSharedState;
+	readonly attachment: RefAttachment;
 	readonly #root: ScrollAreaRootState;
 	#removeUnlinkedScrollListener = $state<() => void>();
 	readonly #debounceScrollEnd = useDebounce(() => {
@@ -831,6 +844,10 @@ export class ScrollAreaThumbImplState {
 		this.opts = opts;
 		this.scrollbarState = scrollbarState;
 		this.#root = scrollbarState.root;
+		this.attachment = attachRef(
+			this.scrollbarState.scrollbar.opts.ref,
+			(v) => (this.scrollbarState.scrollbarVis.thumbNode = v)
+		);
 
 		$effect(() => {
 			const viewportNode = this.#root.viewportNode;
@@ -881,10 +898,7 @@ export class ScrollAreaThumbImplState {
 				onpointerdowncapture: this.onpointerdowncapture,
 				onpointerup: this.onpointerup,
 				[scrollAreaAttrs.thumb]: "",
-				...attachRef(
-					this.opts.ref,
-					(v) => (this.scrollbarState.scrollbarVis.thumbNode = v)
-				),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -898,6 +912,7 @@ export class ScrollAreaCornerImplState {
 
 	readonly opts: ScrollAreaCornerImplStateOpts;
 	readonly root: ScrollAreaRootState;
+	readonly attachment: RefAttachment;
 	#width = $state(0);
 	#height = $state(0);
 	readonly hasSize = $derived(Boolean(this.#width && this.#height));
@@ -905,6 +920,7 @@ export class ScrollAreaCornerImplState {
 	constructor(opts: ScrollAreaCornerImplStateOpts, root: ScrollAreaRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		new SvelteResizeObserver(
 			() => this.root.scrollbarXNode,
@@ -936,7 +952,7 @@ export class ScrollAreaCornerImplState {
 			bottom: 0,
 		},
 		[scrollAreaAttrs.corner]: "",
-		...attachRef(this.opts.ref),
+		...this.attachment,
 	}));
 }
 

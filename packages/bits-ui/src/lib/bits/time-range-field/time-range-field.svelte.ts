@@ -12,7 +12,7 @@ import { TimeFieldRootState } from "../time-field/time-field.svelte.js";
 import { TimeFieldInputState } from "../time-field/time-field.svelte.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { TimeSegmentPart } from "$lib/shared/index.js";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import type {
 	TimeGranularity,
@@ -69,6 +69,7 @@ export class TimeRangeFieldRootState<T extends TimeValue = Time> {
 		);
 	}
 	readonly opts: TimeRangeFieldRootStateOpts<T>;
+	readonly attachment: RefAttachment;
 	startFieldState: TimeFieldRootState | undefined = undefined;
 	endFieldState: TimeFieldRootState | undefined = undefined;
 	descriptionId = useId();
@@ -105,7 +106,7 @@ export class TimeRangeFieldRootState<T extends TimeValue = Time> {
 		this.opts = opts;
 		this.formatter = createTimeFormatter(this.opts.locale.current);
 		this.domContext = new DOMContext(this.opts.ref);
-
+		this.attachment = attachRef(this.opts.ref, (v) => (this.fieldNode = v));
 		onDestroyEffect(() => {
 			removeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
@@ -239,7 +240,7 @@ export class TimeRangeFieldRootState<T extends TimeValue = Time> {
 				role: "group",
 				[timeRangeFieldAttrs.root]: "",
 				"data-invalid": getDataInvalid(this.isInvalid),
-				...attachRef(this.opts.ref, (v) => (this.fieldNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -252,10 +253,12 @@ export class TimeRangeFieldLabelState {
 	}
 	readonly opts: TimeRangeFieldLabelStateOpts;
 	readonly root: TimeRangeFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: TimeRangeFieldLabelStateOpts, root: TimeRangeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.labelNode = v));
 	}
 
 	#onclick = () => {
@@ -273,7 +276,7 @@ export class TimeRangeFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[timeRangeFieldAttrs.label]: "",
 				onclick: this.#onclick,
-				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }

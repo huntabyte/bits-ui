@@ -18,6 +18,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
@@ -104,6 +105,7 @@ export class RangeCalendarRootState {
 	}
 
 	readonly opts: RangeCalendarRootStateOpts;
+	readonly attachment: RefAttachment;
 	readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
 	months: Month<DateValue>[] = $state([]);
 	announcer: Announcer;
@@ -225,6 +227,7 @@ export class RangeCalendarRootState {
 
 	constructor(opts: RangeCalendarRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer(null);
 		this.formatter = createFormatter({
@@ -696,7 +699,7 @@ export class RangeCalendarRootState {
 				[this.getBitsAttr("root")]: "",
 				//
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 
@@ -727,6 +730,7 @@ export class RangeCalendarCellState {
 	}
 	readonly opts: RangeCalendarCellStateOpts;
 	readonly root: RangeCalendarRootState;
+	readonly attachment: RefAttachment;
 	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
 	readonly isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
 	readonly isUnavailable = $derived.by(() =>
@@ -784,6 +788,7 @@ export class RangeCalendarCellState {
 	constructor(opts: RangeCalendarCellStateOpts, root: RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly snippetProps = $derived.by(() => ({
@@ -833,7 +838,7 @@ export class RangeCalendarCellState {
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -847,10 +852,12 @@ export class RangeCalendarDayState {
 
 	readonly opts: RangeCalendarDayStateOpts;
 	readonly cell: RangeCalendarCellState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: RangeCalendarDayStateOpts, cell: RangeCalendarCellState) {
 		this.opts = opts;
 		this.cell = cell;
+		this.attachment = attachRef(opts.ref);
 
 		this.onclick = this.onclick.bind(this);
 		this.onmouseenter = this.onmouseenter.bind(this);
@@ -904,7 +911,7 @@ export class RangeCalendarDayState {
 				onclick: this.onclick,
 				onmouseenter: this.onmouseenter,
 				onfocusin: this.onfocusin,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

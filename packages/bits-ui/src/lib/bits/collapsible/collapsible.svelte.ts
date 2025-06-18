@@ -17,6 +17,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
@@ -44,11 +45,13 @@ export class CollapsibleRootState {
 	}
 
 	readonly opts: CollapsibleRootStateOpts;
+	readonly attachment: RefAttachment;
 	contentNode = $state<HTMLElement | null>(null);
 
 	constructor(opts: CollapsibleRootStateOpts) {
 		this.opts = opts;
 		this.toggleOpen = this.toggleOpen.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 
 		new OpenChangeComplete({
 			ref: box.with(() => this.contentNode),
@@ -70,7 +73,7 @@ export class CollapsibleRootState {
 				"data-state": getDataOpenClosed(this.opts.open.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[collapsibleAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -88,6 +91,7 @@ export class CollapsibleContentState {
 
 	readonly opts: CollapsibleContentStateOpts;
 	readonly root: CollapsibleRootState;
+	readonly attachment: RefAttachment;
 	readonly present = $derived.by(
 		() => this.opts.forceMount.current || this.root.opts.open.current
 	);
@@ -101,6 +105,7 @@ export class CollapsibleContentState {
 		this.opts = opts;
 		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -159,7 +164,7 @@ export class CollapsibleContentState {
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[collapsibleAttrs.content]: "",
-				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -177,11 +182,13 @@ export class CollapsibleTriggerState {
 
 	readonly opts: CollapsibleTriggerStateOpts;
 	readonly root: CollapsibleRootState;
+	readonly attachment: RefAttachment;
 	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.opts.disabled.current);
 
 	constructor(opts: CollapsibleTriggerStateOpts, root: CollapsibleRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -215,7 +222,7 @@ export class CollapsibleTriggerState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Snippet } from "svelte";
 
-import type { Box, ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
+import type { attachRef, Box, ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
 import type { StyleProperties } from "$lib/shared/index.js";
 
 export type OnChangeFn<T> = (value: T) => void;
@@ -89,3 +89,5 @@ export type BitsPointerEvent<T extends HTMLElement = HTMLElement> = BitsEvent<Po
 export type BitsKeyboardEvent<T extends HTMLElement = HTMLElement> = BitsEvent<KeyboardEvent, T>;
 export type BitsMouseEvent<T extends HTMLElement = HTMLElement> = BitsEvent<MouseEvent, T>;
 export type BitsFocusEvent<T extends HTMLElement = HTMLElement> = BitsEvent<FocusEvent, T>;
+
+export type RefAttachment<T extends HTMLElement = HTMLElement> = ReturnType<typeof attachRef<T>>;

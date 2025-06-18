@@ -4,6 +4,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
@@ -44,9 +45,11 @@ export class RadioGroupRootState {
 	readonly opts: RadioGroupRootStateOpts;
 	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
 	readonly rovingFocusGroup: RovingFocusGroup;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: RadioGroupRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: radioGroupAttrs.item,
@@ -75,7 +78,7 @@ export class RadioGroupRootState {
 				"data-readonly": getDataReadonly(this.opts.readonly.current),
 				"data-orientation": this.opts.orientation.current,
 				[radioGroupAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -94,6 +97,7 @@ export class RadioGroupItemState {
 
 	readonly opts: RadioGroupItemStateOpts;
 	readonly root: RadioGroupRootState;
+	readonly attachment: RefAttachment;
 	readonly checked = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
 	readonly #isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.root.opts.disabled.current
@@ -105,6 +109,7 @@ export class RadioGroupItemState {
 	constructor(opts: RadioGroupItemStateOpts, root: RadioGroupRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		if (this.opts.value.current === this.root.opts.value.current) {
 			this.root.rovingFocusGroup.setCurrentTabStopId(this.opts.id.current);
@@ -172,7 +177,7 @@ export class RadioGroupItemState {
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onclick: this.onclick,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

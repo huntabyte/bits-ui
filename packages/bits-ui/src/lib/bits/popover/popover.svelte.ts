@@ -12,6 +12,7 @@ import type {
 	BitsMouseEvent,
 	BitsPointerEvent,
 	OnChangeFn,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement } from "$lib/internal/is.js";
@@ -72,10 +73,12 @@ export class PopoverTriggerState {
 
 	readonly opts: PopoverTriggerStateOpts;
 	readonly root: PopoverRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: PopoverTriggerStateOpts, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.triggerNode = v));
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -114,7 +117,7 @@ export class PopoverTriggerState {
 				//
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
-				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -134,10 +137,12 @@ export class PopoverContentState {
 
 	readonly opts: PopoverContentStateOpts;
 	readonly root: PopoverRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: PopoverContentStateOpts, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
 	}
 
 	onInteractOutside = (e: PointerEvent) => {
@@ -175,7 +180,7 @@ export class PopoverContentState {
 				style: {
 					pointerEvents: "auto",
 				},
-				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
+				...this.attachment,
 			}) as const
 	);
 
@@ -195,11 +200,12 @@ export class PopoverCloseState {
 
 	readonly opts: PopoverCloseStateOpts;
 	readonly root: PopoverRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: PopoverCloseStateOpts, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(this.opts.ref);
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -222,7 +228,7 @@ export class PopoverCloseState {
 				onkeydown: this.onkeydown,
 				type: "button",
 				[popoverAttrs.close]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

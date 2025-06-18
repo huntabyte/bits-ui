@@ -10,7 +10,7 @@ import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
-import type { OnChangeFn, WithRefOpts } from "$lib/internal/types.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
@@ -239,6 +239,7 @@ export class TooltipTriggerState {
 	}
 	readonly opts: TooltipTriggerStateOpts;
 	readonly root: TooltipRootState;
+	readonly attachment: RefAttachment;
 	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
 	readonly #isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
@@ -248,6 +249,7 @@ export class TooltipTriggerState {
 		this.opts = opts;
 		this.root = root;
 		this.domContext = new DOMContext(opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.triggerNode = v));
 	}
 
 	handlePointerUp = () => {
@@ -326,7 +328,7 @@ export class TooltipTriggerState {
 				onfocus: this.#onfocus,
 				onblur: this.#onblur,
 				onclick: this.#onclick,
-				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -344,9 +346,12 @@ export class TooltipContentState {
 	}
 	readonly opts: TooltipContentStateOpts;
 	readonly root: TooltipRootState;
+	readonly attachment: RefAttachment;
+
 	constructor(opts: TooltipContentStateOpts, root: TooltipRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
 
 		new GraceArea({
 			triggerNode: () => this.root.triggerNode,
@@ -415,7 +420,7 @@ export class TooltipContentState {
 					outline: "none",
 				},
 				[tooltipAttrs.content]: "",
-				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
+				...this.attachment,
 			}) as const
 	);
 

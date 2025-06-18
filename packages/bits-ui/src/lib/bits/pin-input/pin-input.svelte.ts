@@ -15,6 +15,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { createBitsAttrs, getDisabled } from "$lib/internal/attrs.js";
@@ -81,8 +82,10 @@ export class PinInputRootState {
 	}
 
 	readonly opts: PinInputRootStateOpts;
+	readonly attachment: RefAttachment;
 	#inputRef = box<HTMLInputElement | null>(null);
 	#isHoveringInput = $state(false);
+	readonly inputAttachment: RefAttachment<HTMLInputElement> = attachRef(this.#inputRef);
 	#isFocused = box(false);
 	#mirrorSelectionStart = $state<number | null>(null);
 	#mirrorSelectionEnd = $state<number | null>(null);
@@ -106,6 +109,7 @@ export class PinInputRootState {
 
 	constructor(opts: PinInputRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.domContext = new DOMContext(opts.ref);
 
 		this.#initialLoad = {
@@ -234,7 +238,7 @@ export class PinInputRootState {
 				id: this.opts.id.current,
 				[pinInputAttrs.root]: "",
 				style: this.#rootStyles,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 
@@ -492,7 +496,7 @@ export class PinInputRootState {
 		onmouseleave: this.onmouseleave,
 		onfocus: this.onfocus,
 		onblur: this.onblur,
-		...attachRef(this.#inputRef),
+		...this.inputAttachment,
 	}));
 
 	readonly #cells = $derived.by(() =>
@@ -535,9 +539,11 @@ export class PinInputCellState {
 	}
 
 	readonly opts: PinInputCellStateOpts;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: PinInputCellStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -547,7 +553,7 @@ export class PinInputCellState {
 				[pinInputAttrs.cell]: "",
 				"data-active": this.opts.cell.current.isActive ? "" : undefined,
 				"data-inactive": !this.opts.cell.current.isActive ? "" : undefined,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

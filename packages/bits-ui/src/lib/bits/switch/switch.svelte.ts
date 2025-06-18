@@ -10,7 +10,12 @@ import {
 	createBitsAttrs,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsPointerEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 
 const switchAttrs = createBitsAttrs({
 	component: "switch",
@@ -35,9 +40,11 @@ export class SwitchRootState {
 		return SwitchRootContext.set(new SwitchRootState(opts));
 	}
 	readonly opts: SwitchRootStateOpts;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SwitchRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
@@ -81,7 +88,7 @@ export class SwitchRootState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -118,10 +125,12 @@ export class SwitchThumbState {
 	}
 	readonly opts: SwitchThumbStateOpts;
 	readonly root: SwitchRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SwitchThumbStateOpts, root: SwitchRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly snippetProps = $derived.by(() => ({
@@ -134,7 +143,7 @@ export class SwitchThumbState {
 				...this.root.sharedProps,
 				id: this.opts.id.current,
 				[switchAttrs.thumb]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

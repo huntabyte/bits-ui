@@ -5,6 +5,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
@@ -40,10 +41,12 @@ export class CheckboxGroupState {
 	}
 
 	readonly opts: CheckboxGroupStateOpts;
+	readonly attachment: RefAttachment;
 	labelId = $state<string | undefined>(undefined);
 
 	constructor(opts: CheckboxGroupStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	addValue(checkboxValue: string | undefined) {
@@ -72,7 +75,7 @@ export class CheckboxGroupState {
 				"aria-labelledby": this.labelId,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[checkboxAttrs.group]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -86,10 +89,12 @@ export class CheckboxGroupLabelState {
 
 	readonly opts: CheckboxGroupLabelStateOpts;
 	readonly group: CheckboxGroupState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CheckboxGroupLabelStateOpts, group: CheckboxGroupState) {
 		this.opts = opts;
 		this.group = group;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.group.labelId = v?.id));
 	}
 
 	readonly props = $derived.by(
@@ -98,7 +103,7 @@ export class CheckboxGroupLabelState {
 				id: this.opts.id.current,
 				"data-disabled": getDataDisabled(this.group.opts.disabled.current),
 				[checkboxAttrs["group-label"]]: "",
-				...attachRef(this.opts.ref, (v) => (this.group.labelId = v?.id)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -145,10 +150,12 @@ export class CheckboxRootState {
 		}
 		return this.opts.disabled.current;
 	});
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CheckboxRootStateOpts, group: CheckboxGroupState | null) {
 		this.opts = opts;
 		this.group = group;
+		this.attachment = attachRef(this.opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
 
@@ -222,7 +229,7 @@ export class CheckboxRootState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -243,7 +250,6 @@ export class CheckboxInputState {
 		}
 		return false;
 	});
-
 	readonly shouldRender = $derived.by(() => Boolean(this.root.trueName));
 
 	constructor(root: CheckboxRootState) {

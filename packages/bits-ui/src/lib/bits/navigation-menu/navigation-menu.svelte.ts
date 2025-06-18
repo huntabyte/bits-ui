@@ -34,6 +34,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
+	RefAttachment,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { CustomEventDispatcher } from "$lib/internal/events.js";
@@ -145,6 +146,7 @@ export class NavigationMenuRootState {
 		return new NavigationMenuRootState(opts);
 	}
 	readonly opts: NavigationMenuRootStateOpts;
+	readonly attachment: RefAttachment;
 	provider: NavigationMenuProviderState;
 	previousValue = box("");
 	isDelaySkipped: WritableBox<boolean>;
@@ -160,6 +162,7 @@ export class NavigationMenuRootState {
 
 	constructor(opts: NavigationMenuRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.isDelaySkipped = boxAutoReset(false, {
 			afterMs: this.opts.skipDelayDuration.current,
 			getWindow: () => getWindow(opts.ref.current),
@@ -244,7 +247,7 @@ export class NavigationMenuRootState {
 				dir: this.opts.dir.current,
 				[navigationMenuAttrs.root]: "",
 				[navigationMenuAttrs.menu]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -266,10 +269,12 @@ export class NavigationMenuSubState {
 	readonly context: NavigationMenuProviderState;
 	previousValue = box("");
 	readonly subProvider: NavigationMenuProviderState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: NavigationMenuSubStateOpts, context: NavigationMenuProviderState) {
 		this.opts = opts;
 		this.context = context;
+		this.attachment = attachRef(this.opts.ref);
 
 		this.subProvider = NavigationMenuProviderState.create({
 			isRootMenu: false,
@@ -303,7 +308,7 @@ export class NavigationMenuSubState {
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[navigationMenuAttrs.sub]: "",
 				[navigationMenuAttrs.menu]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -316,10 +321,15 @@ export class NavigationMenuListState {
 			new NavigationMenuListState(opts, NavigationMenuProviderContext.get())
 		);
 	}
-	readonly opts: NavigationMenuListStateOpts;
-	readonly context: NavigationMenuProviderState;
 	wrapperId = box(useId());
 	wrapperRef = box<HTMLElement | null>(null);
+	readonly opts: NavigationMenuListStateOpts;
+	readonly context: NavigationMenuProviderState;
+	readonly attachment: RefAttachment;
+	readonly wrapperAttachment: RefAttachment = attachRef(
+		this.wrapperRef,
+		(v) => (this.context.indicatorTrackRef.current = v)
+	);
 	listTriggers = $state.raw<HTMLElement[]>([]);
 	readonly rovingFocusGroup: RovingFocusGroup;
 	wrapperMounted = $state(false);
@@ -327,7 +337,7 @@ export class NavigationMenuListState {
 	constructor(opts: NavigationMenuListStateOpts, context: NavigationMenuProviderState) {
 		this.opts = opts;
 		this.context = context;
-
+		this.attachment = attachRef(this.opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: opts.ref,
 			candidateSelector: `${navigationMenuAttrs.selector("trigger")}:not([data-disabled]), ${navigationMenuAttrs.selector("link")}:not([data-disabled])`,
@@ -347,7 +357,7 @@ export class NavigationMenuListState {
 		() =>
 			({
 				id: this.wrapperId.current,
-				...attachRef(this.wrapperRef, (v) => (this.context.indicatorTrackRef.current = v)),
+				...this.wrapperAttachment,
 			}) as const
 	);
 
@@ -357,7 +367,7 @@ export class NavigationMenuListState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
 				[navigationMenuAttrs.list]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -441,8 +451,13 @@ export class NavigationMenuTriggerState {
 		});
 	}
 	readonly opts: NavigationMenuTriggerStateOpts;
+	readonly attachment: RefAttachment;
 	focusProxyId = box(useId());
 	focusProxyRef = box<HTMLElement | null>(null);
+	readonly focusProxyAttachment: RefAttachment = attachRef(
+		this.focusProxyRef,
+		(v) => (this.itemContext.focusProxyNode = v)
+	);
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
 	listContext: NavigationMenuListState;
@@ -463,6 +478,7 @@ export class NavigationMenuTriggerState {
 		}
 	) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.itemContext.triggerNode = v));
 		this.hasPointerMoveOpened = boxAutoReset(false, {
 			afterMs: 300,
 			getWindow: () => getWindow(opts.ref.current),
@@ -563,7 +579,7 @@ export class NavigationMenuTriggerState {
 				onpointerenter: this.onpointerenter,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref, (v) => (this.itemContext.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 
@@ -573,7 +589,7 @@ export class NavigationMenuTriggerState {
 				id: this.focusProxyId.current,
 				tabindex: 0,
 				onfocus: this.focusProxyOnFocus,
-				...attachRef(this.focusProxyRef, (v) => (this.itemContext.focusProxyNode = v)),
+				...this.focusProxyAttachment,
 			}) as const
 	);
 }
@@ -604,6 +620,7 @@ export class NavigationMenuLinkState {
 	}
 	readonly opts: NavigationMenuLinkStateOpts;
 	readonly context: { provider: NavigationMenuProviderState; item: NavigationMenuItemState };
+	readonly attachment: RefAttachment;
 	isFocused = $state(false);
 
 	constructor(
@@ -612,6 +629,7 @@ export class NavigationMenuLinkState {
 	) {
 		this.opts = opts;
 		this.context = context;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	onclick = (e: BitsMouseEvent<HTMLAnchorElement>) => {
@@ -671,7 +689,7 @@ export class NavigationMenuLinkState {
 				onpointerenter: this.onpointerenter,
 				onpointermove: this.onpointermove,
 				[navigationMenuAttrs.link]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -698,6 +716,7 @@ export class NavigationMenuIndicatorImplState {
 		});
 	}
 	readonly opts: NavigationMenuIndicatorStateOpts;
+	readonly attachment: RefAttachment;
 	context: NavigationMenuProviderState;
 	listContext: NavigationMenuListState;
 	position = $state.raw<{ size: number; offset: number } | null>(null);
@@ -724,6 +743,7 @@ export class NavigationMenuIndicatorImplState {
 		this.opts = opts;
 		this.context = context.provider;
 		this.listContext = context.list;
+		this.attachment = attachRef(this.opts.ref);
 
 		new SvelteResizeObserver(() => this.activeTrigger, this.handlePositionChange);
 		new SvelteResizeObserver(
@@ -765,7 +785,7 @@ export class NavigationMenuIndicatorImplState {
 							}),
 				},
 				[navigationMenuAttrs.indicator]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -786,6 +806,7 @@ export class NavigationMenuContentState {
 	readonly context: NavigationMenuProviderState;
 	readonly itemContext: NavigationMenuItemState;
 	readonly listContext: NavigationMenuListState;
+	readonly attachment: RefAttachment;
 	mounted = $state(false);
 	readonly open = $derived.by(
 		() => this.itemContext.opts.value.current === this.context.opts.value.current
@@ -816,6 +837,7 @@ export class NavigationMenuContentState {
 		this.context = context.provider;
 		this.itemContext = context.item;
 		this.listContext = context.list;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.itemContext.contentNode = v));
 	}
 
 	onpointerenter = (_: BitsPointerEvent) => {
@@ -833,7 +855,7 @@ export class NavigationMenuContentState {
 				id: this.opts.id.current,
 				onpointerenter: this.onpointerenter,
 				onpointerleave: this.onpointerleave,
-				...attachRef(this.opts.ref, (v) => (this.itemContext.contentNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -852,6 +874,7 @@ export class NavigationMenuContentImplState {
 	readonly itemContext: NavigationMenuItemState;
 	readonly context: NavigationMenuProviderState;
 	readonly listContext: NavigationMenuListState;
+	readonly attachment: RefAttachment;
 	prevMotionAttribute: MotionAttribute | null = $state(null);
 	readonly motionAttribute: MotionAttribute | null = $derived.by(() => {
 		const items = this.listContext.listTriggers;
@@ -893,6 +916,7 @@ export class NavigationMenuContentImplState {
 
 	constructor(opts: NavigationMenuContentImplStateOpts, itemContext: NavigationMenuItemState) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.itemContext = itemContext;
 		this.listContext = itemContext.listContext;
 		this.context = itemContext.listContext.context;
@@ -1028,7 +1052,7 @@ export class NavigationMenuContentImplState {
 				),
 				onkeydown: this.onkeydown,
 				[navigationMenuAttrs.content]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1041,6 +1065,7 @@ export class NavigationMenuViewportState {
 	}
 	readonly opts: NavigationMenuViewportStateOpts;
 	readonly context: NavigationMenuProviderState;
+	readonly attachment: RefAttachment;
 	readonly open = $derived.by(() => !!this.context.opts.value.current);
 	readonly viewportWidth = $derived.by(() => (this.size ? `${this.size.width}px` : undefined));
 	readonly viewportHeight = $derived.by(() => (this.size ? `${this.size.height}px` : undefined));
@@ -1052,6 +1077,7 @@ export class NavigationMenuViewportState {
 	constructor(opts: NavigationMenuViewportStateOpts, context: NavigationMenuProviderState) {
 		this.opts = opts;
 		this.context = context;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.context.viewportRef.current = v));
 
 		watch([() => this.activeContentValue, () => this.open], () => {
 			afterTick(() => {
@@ -1108,7 +1134,7 @@ export class NavigationMenuViewportState {
 				[navigationMenuAttrs.viewport]: "",
 				onpointerenter: this.context.onContentEnter,
 				onpointerleave: this.context.onContentLeave,
-				...attachRef(this.opts.ref, (v) => (this.context.viewportRef.current = v)),
+				...this.attachment,
 			}) as const
 	);
 }

@@ -6,7 +6,12 @@ import {
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import {
 	getAriaDisabled,
 	getAriaExpanded,
@@ -86,6 +91,7 @@ abstract class AccordionBaseState {
 	readonly opts: AccordionBaseStateOpts;
 	readonly rovingFocusGroup: RovingFocusGroup;
 	abstract readonly isMulti: boolean;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AccordionBaseStateOpts) {
 		this.opts = opts;
@@ -95,6 +101,8 @@ abstract class AccordionBaseState {
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});
+
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	abstract includesItem(item: string): boolean;
@@ -107,7 +115,7 @@ abstract class AccordionBaseState {
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[accordionAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -178,11 +186,13 @@ export class AccordionItemState {
 	readonly isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.root.opts.disabled.current
 	);
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AccordionItemStateOpts) {
 		this.opts = opts;
 		this.root = opts.rootState;
 		this.updateValue = this.updateValue.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	updateValue(): void {
@@ -197,7 +207,7 @@ export class AccordionItemState {
 				"data-disabled": getDataDisabled(this.isDisabled),
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				[accordionAttrs.item]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -212,6 +222,7 @@ export class AccordionTriggerState {
 			this.itemState.opts.disabled.current ||
 			this.#root.opts.disabled.current
 	);
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AccordionTriggerStateOpts, itemState: AccordionItemState) {
 		this.opts = opts;
@@ -219,6 +230,7 @@ export class AccordionTriggerState {
 		this.#root = itemState.root;
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	static create(props: AccordionTriggerStateOpts): AccordionTriggerState {
@@ -259,7 +271,7 @@ export class AccordionTriggerState {
 				tabindex: 0,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -267,6 +279,7 @@ export class AccordionTriggerState {
 export class AccordionContentState {
 	readonly opts: AccordionContentStateOpts;
 	readonly item: AccordionItemState;
+	readonly attachment: RefAttachment;
 
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
@@ -278,7 +291,7 @@ export class AccordionContentState {
 		this.opts = opts;
 		this.item = item;
 		this.#isMountAnimationPrevented = this.item.isActive;
-
+		this.attachment = attachRef(this.opts.ref);
 		// Prevent mount animations on initial render
 		$effect(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -337,7 +350,7 @@ export class AccordionContentState {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
 					"--bits-accordion-content-width": `${this.#dimensions.width}px`,
 				},
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -345,10 +358,12 @@ export class AccordionContentState {
 export class AccordionHeaderState {
 	readonly opts: AccordionHeaderStateOpts;
 	readonly item: AccordionItemState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AccordionHeaderStateOpts, item: AccordionItemState) {
 		this.opts = opts;
 		this.item = item;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	static create(props: AccordionHeaderStateOpts): AccordionHeaderState {
@@ -365,7 +380,7 @@ export class AccordionHeaderState {
 				"data-state": getDataOpenClosed(this.item.isActive),
 				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
 				[accordionAttrs.header]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

@@ -5,7 +5,7 @@ import {
 	getDataDisabled,
 	getDisabled,
 } from "$lib/internal/attrs.js";
-import type { BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 
 export const toggleAttrs = createBitsAttrs({
 	component: "toggle",
@@ -26,10 +26,11 @@ export class ToggleRootState {
 		return new ToggleRootState(opts);
 	}
 	readonly opts: ToggleRootStateOpts;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: ToggleRootStateOpts) {
 		this.opts = opts;
-
+		this.attachment = attachRef(this.opts.ref);
 		this.onclick = this.onclick.bind(this);
 	}
 
@@ -58,7 +59,7 @@ export class ToggleRootState {
 				"data-state": getToggleDataState(this.opts.pressed.current),
 				disabled: getDisabled(this.opts.disabled.current),
 				onclick: this.onclick,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

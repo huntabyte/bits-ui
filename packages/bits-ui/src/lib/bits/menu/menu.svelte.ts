@@ -27,6 +27,7 @@ import type {
 	BitsMouseEvent,
 	BitsPointerEvent,
 	OnChangeFn,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
@@ -190,6 +191,7 @@ export class MenuContentState {
 	readonly parentMenu: MenuMenuState;
 	readonly rovingFocusGroup: RovingFocusGroup;
 	readonly domContext: DOMContext;
+	readonly attachment: RefAttachment;
 	search = $state("");
 	#timer = 0;
 	#handleTypeaheadSearch: DOMTypeahead["handleTypeaheadSearch"];
@@ -200,6 +202,11 @@ export class MenuContentState {
 		this.opts = opts;
 		this.parentMenu = parentMenu;
 		this.domContext = new DOMContext(opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => {
+			if (this.parentMenu.contentNode !== v) {
+				this.parentMenu.contentNode = v;
+			}
+		});
 
 		parentMenu.contentId = opts.id;
 
@@ -434,11 +441,7 @@ export class MenuContentState {
 				style: {
 					pointerEvents: "auto",
 				},
-				...attachRef(this.opts.ref, (v) => {
-					if (this.parentMenu.contentNode !== v) {
-						this.parentMenu.contentNode = v;
-					}
-				}),
+				...this.attachment,
 			}) as const
 	);
 
@@ -456,11 +459,13 @@ interface MenuItemSharedStateOpts
 class MenuItemSharedState {
 	readonly opts: MenuItemSharedStateOpts;
 	readonly content: MenuContentState;
+	readonly attachment: RefAttachment;
 	#isFocused = $state(false);
 
 	constructor(opts: MenuItemSharedStateOpts, content: MenuContentState) {
 		this.opts = opts;
 		this.content = content;
+		this.attachment = attachRef(this.opts.ref);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
@@ -517,7 +522,7 @@ class MenuItemSharedState {
 				onpointerleave: this.onpointerleave,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -625,6 +630,7 @@ export class MenuSubTriggerState {
 	readonly item: MenuItemSharedState;
 	readonly content: MenuContentState;
 	readonly submenu: MenuMenuState;
+	readonly attachment: RefAttachment;
 	#openTimer: number | null = null;
 
 	constructor(
@@ -637,6 +643,7 @@ export class MenuSubTriggerState {
 		this.item = item;
 		this.content = content;
 		this.submenu = submenu;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.submenu.triggerNode = v));
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -722,7 +729,7 @@ export class MenuSubTriggerState {
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref, (v) => (this.submenu.triggerNode = v)),
+				...this.attachment,
 			},
 			this.item.props
 		)
@@ -824,11 +831,13 @@ export class MenuGroupState {
 
 	readonly opts: MenuGroupStateOpts;
 	readonly root: MenuRootState;
+	readonly attachment: RefAttachment;
 	groupHeadingId = $state<string | undefined>(undefined);
 
 	constructor(opts: MenuGroupStateOpts, root: MenuRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -838,7 +847,7 @@ export class MenuGroupState {
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
 				[this.root.getBitsAttr("group")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -858,6 +867,7 @@ export class MenuGroupHeadingState {
 	}
 	readonly opts: MenuGroupHeadingStateOpts;
 	readonly group: MenuGroupState | MenuRadioGroupState | MenuCheckboxGroupState;
+	readonly attachment: RefAttachment;
 
 	constructor(
 		opts: MenuGroupHeadingStateOpts,
@@ -865,6 +875,7 @@ export class MenuGroupHeadingState {
 	) {
 		this.opts = opts;
 		this.group = group;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.group.groupHeadingId = v?.id));
 	}
 
 	readonly props = $derived.by(
@@ -873,7 +884,7 @@ export class MenuGroupHeadingState {
 				id: this.opts.id.current,
 				role: "group",
 				[this.group.root.getBitsAttr("group-heading")]: "",
-				...attachRef(this.opts.ref, (v) => (this.group.groupHeadingId = v?.id)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -887,10 +898,12 @@ export class MenuSeparatorState {
 
 	readonly opts: MenuSeparatorStateOpts;
 	readonly root: MenuRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: MenuSeparatorStateOpts, root: MenuRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -899,7 +912,7 @@ export class MenuSeparatorState {
 				id: this.opts.id.current,
 				role: "group",
 				[this.root.getBitsAttr("separator")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -937,6 +950,7 @@ export class MenuRadioGroupState {
 	}
 	readonly opts: MenuRadioGroupStateOpts;
 	readonly content: MenuContentState;
+	readonly attachment: RefAttachment;
 	groupHeadingId = $state<string | null>(null);
 	root: MenuRootState;
 
@@ -944,6 +958,7 @@ export class MenuRadioGroupState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.parentMenu.root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	setValue(v: string) {
@@ -957,7 +972,7 @@ export class MenuRadioGroupState {
 				[this.root.getBitsAttr("radio-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -979,6 +994,7 @@ export class MenuRadioItemState {
 	readonly opts: MenuRadioItemStateOpts;
 	readonly item: MenuItemState;
 	readonly group: MenuRadioGroupState;
+	readonly attachment: RefAttachment;
 	readonly isChecked = $derived.by(
 		() => this.group.opts.value.current === this.opts.value.current
 	);
@@ -987,6 +1003,7 @@ export class MenuRadioItemState {
 		this.opts = opts;
 		this.item = item;
 		this.group = group;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	selectValue() {
@@ -1001,7 +1018,7 @@ export class MenuRadioItemState {
 				role: "menuitemradio",
 				"aria-checked": getAriaChecked(this.isChecked, false),
 				"data-state": getCheckedState(this.isChecked),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1023,10 +1040,12 @@ export class DropdownMenuTriggerState {
 
 	readonly opts: DropdownMenuTriggerStateOpts;
 	readonly parentMenu: MenuMenuState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DropdownMenuTriggerStateOpts, parentMenu: MenuMenuState) {
 		this.opts = opts;
 		this.parentMenu = parentMenu;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v));
 	}
 
 	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
@@ -1083,7 +1102,7 @@ export class DropdownMenuTriggerState {
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1101,6 +1120,7 @@ export class ContextMenuTriggerState {
 
 	readonly opts: ContextMenuTriggerStateOpts;
 	readonly parentMenu: MenuMenuState;
+	readonly attachment: RefAttachment;
 	#point = $state({ x: 0, y: 0 });
 
 	virtualElement = box({
@@ -1111,6 +1131,7 @@ export class ContextMenuTriggerState {
 	constructor(opts: ContextMenuTriggerStateOpts, parentMenu: MenuMenuState) {
 		this.opts = opts;
 		this.parentMenu = parentMenu;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v));
 		this.oncontextmenu = this.oncontextmenu.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1196,7 +1217,7 @@ export class ContextMenuTriggerState {
 				onpointercancel: this.onpointercancel,
 				onpointerup: this.onpointerup,
 				oncontextmenu: this.oncontextmenu,
-				...attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1220,12 +1241,14 @@ export class MenuCheckboxGroupState {
 	readonly opts: MenuCheckboxGroupStateOpts;
 	readonly content: MenuContentState;
 	readonly root: MenuRootState;
+	readonly attachment: RefAttachment;
 	groupHeadingId = $state<string | null>(null);
 
 	constructor(opts: MenuCheckboxGroupStateOpts, content: MenuContentState) {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.parentMenu.root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	addValue(checkboxValue: string | undefined) {
@@ -1253,7 +1276,7 @@ export class MenuCheckboxGroupState {
 				[this.root.getBitsAttr("checkbox-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

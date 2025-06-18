@@ -17,7 +17,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/arrays.js";
-import type { OnChangeFn, WithRefOpts } from "$lib/internal/types.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte";
@@ -46,13 +46,14 @@ export class MenubarRootState {
 	}
 	readonly opts: MenubarRootStateOpts;
 	readonly rovingFocusGroup: RovingFocusGroup;
+	readonly attachment: RefAttachment;
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
 	valueToChangeHandler = new Map<string, ReadableBox<OnChangeFn<boolean>>>();
 
 	constructor(opts: MenubarRootStateOpts) {
 		this.opts = opts;
-
+		this.attachment = attachRef(this.opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: menubarAttrs.trigger,
@@ -126,7 +127,7 @@ export class MenubarRootState {
 				id: this.opts.id.current,
 				role: "menubar",
 				[menubarAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -196,6 +197,7 @@ export class MenubarTriggerState {
 	readonly opts: MenubarTriggerStateOpts;
 	readonly menu: MenubarMenuState;
 	readonly root: MenubarRootState;
+	readonly attachment: RefAttachment;
 	isFocused = $state(false);
 	#tabIndex = $state(0);
 
@@ -203,6 +205,7 @@ export class MenubarTriggerState {
 		this.opts = opts;
 		this.menu = menu;
 		this.root = menu.root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.menu.triggerNode = v));
 
 		onMount(() => {
 			return this.root.registerTrigger(opts.id.current);
@@ -283,7 +286,7 @@ export class MenubarTriggerState {
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
-				...attachRef(this.opts.ref, (v) => (this.menu.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -306,11 +309,13 @@ export class MenubarContentState {
 	readonly opts: MenubarContentStateOpts;
 	readonly menu: MenubarMenuState;
 	readonly root: MenubarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: MenubarContentStateOpts, menu: MenubarMenuState) {
 		this.opts = opts;
 		this.menu = menu;
 		this.root = menu.root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.menu.contentNode = v));
 	}
 
 	onCloseAutoFocus = (e: Event) => {
@@ -379,7 +384,7 @@ export class MenubarContentState {
 				onkeydown: this.onkeydown,
 				"data-menu-content": "",
 				[menubarAttrs.content]: "",
-				...attachRef(this.opts.ref, (v) => (this.menu.contentNode = v)),
+				...this.attachment,
 			}) as const
 	);
 

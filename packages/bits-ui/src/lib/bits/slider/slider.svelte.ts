@@ -35,7 +35,12 @@ import {
 import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
-import type { BitsKeyboardEvent, OnChangeFn, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	OnChangeFn,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 import { linearScale } from "$lib/internal/math.js";
 import type { SliderLabelPosition } from "./types.js";
@@ -63,6 +68,7 @@ interface SliderBaseRootStateOpts
 
 abstract class SliderBaseRootState {
 	readonly opts: SliderBaseRootStateOpts;
+	readonly attachment: RefAttachment;
 	isActive = $state(false);
 	readonly direction: "rl" | "lr" | "tb" | "bt" = $derived.by(() => {
 		if (this.opts.orientation.current === "horizontal") {
@@ -80,6 +86,7 @@ abstract class SliderBaseRootState {
 
 	constructor(opts: SliderBaseRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 		this.domContext = new DOMContext(this.opts.ref);
 	}
 
@@ -154,7 +161,7 @@ abstract class SliderBaseRootState {
 					touchAction: this.#touchAction,
 				},
 				[sliderAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -746,10 +753,12 @@ export class SliderRangeState {
 	}
 	readonly opts: SliderRangeStateOpts;
 	readonly root: SliderRoot;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SliderRangeStateOpts, root: SliderRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly rangeStyles = $derived.by(() => {
@@ -798,7 +807,7 @@ export class SliderRangeState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				style: this.rangeStyles,
 				[sliderAttrs.range]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -816,6 +825,7 @@ export class SliderThumbState {
 	}
 	readonly opts: SliderThumbStateOpts;
 	readonly root: SliderRoot;
+	readonly attachment: RefAttachment;
 	readonly #isDisabled = $derived.by(
 		() => this.root.opts.disabled.current || this.opts.disabled.current
 	);
@@ -823,7 +833,7 @@ export class SliderThumbState {
 	constructor(opts: SliderThumbStateOpts, root: SliderRoot) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
@@ -924,7 +934,7 @@ export class SliderThumbState {
 					this.opts.disabled.current || this.root.opts.disabled.current
 				),
 				tabindex: this.opts.disabled.current || this.root.opts.disabled.current ? -1 : 0,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -941,10 +951,12 @@ export class SliderTickState {
 	}
 	readonly opts: SliderTickStateOpts;
 	readonly root: SliderRoot;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SliderTickStateOpts, root: SliderRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -952,7 +964,7 @@ export class SliderTickState {
 			({
 				...this.root.ticksPropsArr[this.opts.index.current]!,
 				id: this.opts.id.current,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -970,10 +982,12 @@ export class SliderTickLabelState {
 	}
 	readonly opts: SliderTickLabelStateOpts;
 	readonly root: SliderRoot;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SliderTickLabelStateOpts, root: SliderRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(() => {
@@ -995,7 +1009,7 @@ export class SliderTickLabelState {
 			"data-position": labelPosition,
 			style,
 			[sliderAttrs["tick-label"]]: "",
-			...attachRef(this.opts.ref),
+			...this.attachment,
 		} as const;
 	});
 }
@@ -1013,10 +1027,12 @@ export class SliderThumbLabelState {
 	}
 	readonly opts: SliderThumbLabelStateOpts;
 	readonly root: SliderRoot;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SliderThumbLabelStateOpts, root: SliderRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(() => {
@@ -1036,7 +1052,7 @@ export class SliderThumbLabelState {
 			"data-position": labelPosition,
 			style,
 			[sliderAttrs["thumb-label"]]: "",
-			...attachRef(this.opts.ref),
+			...this.attachment,
 		} as const;
 	});
 }

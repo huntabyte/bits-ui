@@ -16,7 +16,7 @@ import type {
 	DateRangeValidator,
 	SegmentPart,
 } from "$lib/shared/index.js";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
@@ -74,6 +74,7 @@ export class DateRangeFieldRootState {
 	readonly endValueComplete = $derived.by(() => this.opts.endValue.current !== undefined);
 	readonly rangeComplete = $derived(this.startValueComplete && this.endValueComplete);
 	domContext: DOMContext;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DateRangeFieldRootStateOpts) {
 		this.opts = opts;
@@ -83,6 +84,7 @@ export class DateRangeFieldRootState {
 			yearFormat: box.with(() => "numeric"),
 		});
 		this.domContext = new DOMContext(this.opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => (this.fieldNode = v));
 
 		onDestroyEffect(() => {
 			removeDescriptionElement(this.descriptionId, this.domContext.getDocument());
@@ -215,7 +217,7 @@ export class DateRangeFieldRootState {
 				role: "group",
 				[dateRangeFieldAttrs.root]: "",
 				"data-invalid": getDataInvalid(this.isInvalid),
-				...attachRef(this.opts.ref, (v) => (this.fieldNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -229,10 +231,12 @@ export class DateRangeFieldLabelState {
 
 	readonly opts: DateRangeFieldLabelStateOpts;
 	readonly root: DateRangeFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DateRangeFieldLabelStateOpts, root: DateRangeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.labelNode = v));
 	}
 
 	#onclick = () => {
@@ -250,7 +254,7 @@ export class DateRangeFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[dateRangeFieldAttrs.label]: "",
 				onclick: this.#onclick,
-				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }

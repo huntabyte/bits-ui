@@ -10,10 +10,10 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { untrack } from "svelte";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
@@ -95,11 +95,15 @@ export class DialogTriggerState {
 
 	readonly opts: DialogTriggerStateOpts;
 	readonly root: DialogRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DialogTriggerStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(this.opts.ref, (v) => {
+			this.root.triggerNode = v;
+			this.root.triggerId = v?.id;
+		});
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -130,12 +134,7 @@ export class DialogTriggerState {
 				onclick: this.onclick,
 				disabled: this.opts.disabled.current ? true : undefined,
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref, (v) =>
-					untrack(() => {
-						this.root.triggerNode = v;
-						this.root.triggerId = v?.id;
-					})
-				),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -151,10 +150,12 @@ export class DialogCloseState {
 
 	readonly opts: DialogCloseStateOpts;
 	readonly root: DialogRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DialogCloseStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -183,7 +184,7 @@ export class DialogCloseState {
 				disabled: this.opts.disabled.current ? true : undefined,
 				tabindex: 0,
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -197,10 +198,11 @@ export class DialogActionState {
 
 	readonly opts: DialogActionStateOpts;
 	readonly root: DialogRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: DialogActionStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -209,7 +211,7 @@ export class DialogActionState {
 				id: this.opts.id.current,
 				[this.root.getBitsAttr("action")]: "",
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -225,10 +227,12 @@ export class DialogTitleState {
 
 	readonly opts: DialogTitleStateOpts;
 	readonly root: DialogRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DialogTitleStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.titleId = v?.id));
 	}
 
 	readonly props = $derived.by(
@@ -239,7 +243,7 @@ export class DialogTitleState {
 				"aria-level": this.opts.level.current,
 				[this.root.getBitsAttr("title")]: "",
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref, (v) => (this.root.titleId = v?.id)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -253,10 +257,15 @@ export class DialogDescriptionState {
 
 	readonly opts: DialogDescriptionStateOpts;
 	readonly root: DialogRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DialogDescriptionStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => {
+			this.root.descriptionNode = v;
+			this.root.descriptionId = v?.id;
+		});
 	}
 
 	readonly props = $derived.by(
@@ -265,10 +274,7 @@ export class DialogDescriptionState {
 				id: this.opts.id.current,
 				[this.root.getBitsAttr("description")]: "",
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref, (v) => {
-					this.root.descriptionNode = v;
-					this.root.descriptionId = v?.id;
-				}),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -282,10 +288,15 @@ export class DialogContentState {
 
 	readonly opts: DialogContentStateOpts;
 	readonly root: DialogRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DialogContentStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => {
+			this.root.contentNode = v;
+			this.root.contentId = v?.id;
+		});
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
@@ -305,10 +316,7 @@ export class DialogContentState {
 				},
 				tabindex: this.root.opts.variant.current === "alert-dialog" ? -1 : undefined,
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref, (v) => {
-					this.root.contentNode = v;
-					this.root.contentId = v?.id;
-				}),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -322,10 +330,11 @@ export class DialogOverlayState {
 
 	readonly opts: DialogOverlayStateOpts;
 	readonly root: DialogRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: DialogOverlayStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
@@ -339,7 +348,7 @@ export class DialogOverlayState {
 					pointerEvents: "auto",
 				},
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -355,10 +364,12 @@ export class AlertDialogCancelState {
 
 	readonly opts: AlertDialogCancelStateOpts;
 	readonly root: DialogRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AlertDialogCancelStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.cancelNode = v));
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -386,7 +397,7 @@ export class AlertDialogCancelState {
 				onkeydown: this.onkeydown,
 				tabindex: 0,
 				...this.root.sharedProps,
-				...attachRef(this.opts.ref, (v) => (this.root.cancelNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }

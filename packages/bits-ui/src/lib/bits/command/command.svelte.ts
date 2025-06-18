@@ -13,6 +13,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -103,6 +104,7 @@ export class CommandRootState {
 		return CommandRootContext.set(new CommandRootState(opts));
 	}
 	readonly opts: CommandRootStateOpts;
+	readonly attachment: RefAttachment;
 	#updateScheduled = false;
 	#isInitialMount = true;
 	sortAfterTick = false;
@@ -163,6 +165,7 @@ export class CommandRootState {
 
 	constructor(opts: CommandRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 
 		const defaults = { ...this._commandState, value: this.opts.value.current ?? "" };
 
@@ -1104,7 +1107,7 @@ export class CommandRootState {
 				[commandAttrs.root]: "",
 				tabindex: -1,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1126,6 +1129,7 @@ export class CommandEmptyState {
 
 	readonly opts: CommandEmptyStateOpts;
 	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
 	readonly shouldRender = $derived.by(() => {
 		return (
 			(this.root._commandState.filtered.count === 0 && this.#isInitialRender === false) ||
@@ -1137,6 +1141,7 @@ export class CommandEmptyState {
 	constructor(opts: CommandEmptyStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		$effect.pre(() => {
 			this.#isInitialRender = false;
@@ -1149,7 +1154,7 @@ export class CommandEmptyState {
 				id: this.opts.id.current,
 				role: "presentation",
 				[commandAttrs.empty]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1170,6 +1175,7 @@ export class CommandGroupContainerState {
 
 	readonly opts: CommandGroupContainerStateOpts;
 	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
 	readonly shouldRender = $derived.by(() => {
 		if (this.opts.forceMount.current) return true;
 		if (this.root.opts.shouldFilter.current === false) return true;
@@ -1183,6 +1189,7 @@ export class CommandGroupContainerState {
 	constructor(opts: CommandGroupContainerStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 		this.trueValue = opts.value.current ?? opts.id.current;
 
 		watch(
@@ -1214,7 +1221,7 @@ export class CommandGroupContainerState {
 				hidden: this.shouldRender ? undefined : true,
 				"data-value": this.trueValue,
 				[commandAttrs.group]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1228,10 +1235,12 @@ export class CommandGroupHeadingState {
 
 	readonly opts: CommandGroupHeadingStateOpts;
 	readonly group: CommandGroupContainerState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CommandGroupHeadingStateOpts, group: CommandGroupContainerState) {
 		this.opts = opts;
 		this.group = group;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.group.headingNode = v));
 	}
 
 	readonly props = $derived.by(
@@ -1239,7 +1248,7 @@ export class CommandGroupHeadingState {
 			({
 				id: this.opts.id.current,
 				[commandAttrs["group-heading"]]: "",
-				...attachRef(this.opts.ref, (v) => (this.group.headingNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1253,10 +1262,12 @@ export class CommandGroupItemsState {
 
 	readonly opts: CommandGroupItemsStateOpts;
 	readonly group: CommandGroupContainerState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CommandGroupItemsStateOpts, group: CommandGroupContainerState) {
 		this.opts = opts;
 		this.group = group;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -1266,7 +1277,7 @@ export class CommandGroupItemsState {
 				role: "group",
 				[commandAttrs["group-items"]]: "",
 				"aria-labelledby": this.group.headingNode?.id ?? undefined,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1287,6 +1298,7 @@ export class CommandInputState {
 
 	readonly opts: CommandInputStateOpts;
 	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
 	readonly #selectedItemId = $derived.by(() => {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
 			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${cssesc(this.root.opts.value.current)}"]`
@@ -1298,7 +1310,7 @@ export class CommandInputState {
 	constructor(opts: CommandInputStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.inputNode = v));
 		watch(
 			() => this.opts.ref.current,
 			() => {
@@ -1334,7 +1346,7 @@ export class CommandInputState {
 				"aria-controls": this.root.viewportNode?.id ?? undefined,
 				"aria-labelledby": this.root.labelNode?.id ?? undefined,
 				"aria-activedescendant": this.#selectedItemId,
-				...attachRef(this.opts.ref, (v) => (this.root.inputNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1358,6 +1370,7 @@ export class CommandItemState {
 	}
 	readonly opts: CommandItemStateOpts;
 	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
 	readonly #group: CommandGroupContainerState | null = null;
 	readonly #trueForceMount = $derived.by(() => {
 		return this.opts.forceMount.current || this.#group?.opts.forceMount.current === true;
@@ -1386,6 +1399,7 @@ export class CommandItemState {
 		this.root = root;
 		this.#group = CommandGroupContainerContext.getOr(null);
 		this.trueValue = opts.value.current;
+		this.attachment = attachRef(this.opts.ref);
 
 		watch(
 			[
@@ -1451,7 +1465,7 @@ export class CommandItemState {
 				role: "option",
 				onpointermove: this.onpointermove,
 				onclick: this.onclick,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1468,9 +1482,10 @@ export class CommandLoadingState {
 	}
 
 	readonly opts: CommandLoadingStateOpts;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: CommandLoadingStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -1483,7 +1498,7 @@ export class CommandLoadingState {
 				"aria-valuemax": 100,
 				"aria-label": "Loading...",
 				[commandAttrs.loading]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1501,6 +1516,7 @@ export class CommandSeparatorState {
 
 	readonly opts: CommandSeparatorStateOpts;
 	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
 	readonly shouldRender = $derived.by(
 		() => !this.root._commandState.search || this.opts.forceMount.current
 	);
@@ -1508,6 +1524,7 @@ export class CommandSeparatorState {
 	constructor(opts: CommandSeparatorStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -1517,7 +1534,7 @@ export class CommandSeparatorState {
 				// role="separator" cannot belong to a role="listbox"
 				"aria-hidden": "true",
 				[commandAttrs.separator]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1535,10 +1552,12 @@ export class CommandListState {
 
 	readonly opts: CommandListStateOpts;
 	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CommandListStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -1548,7 +1567,7 @@ export class CommandListState {
 				role: "listbox",
 				"aria-label": this.opts.ariaLabel.current,
 				[commandAttrs.list]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1565,10 +1584,11 @@ export class CommandLabelState {
 	}
 	readonly opts: CommandLabelStateOpts;
 	readonly root: CommandRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: CommandLabelStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.labelNode = v));
 	}
 
 	readonly props = $derived.by(
@@ -1578,7 +1598,7 @@ export class CommandLabelState {
 				[commandAttrs["input-label"]]: "",
 				for: this.opts.for?.current,
 				style: srOnlyStyles,
-				...attachRef(this.opts.ref, (v) => (this.root.labelNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1592,11 +1612,11 @@ export class CommandViewportState {
 
 	readonly opts: CommandViewportStateOpts;
 	readonly list: CommandListState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: CommandViewportStateOpts, list: CommandListState) {
 		this.opts = opts;
 		this.list = list;
-
+		this.attachment = attachRef(this.opts.ref, (v) => (this.list.root.viewportNode = v));
 		watch(
 			[() => this.opts.ref.current, () => this.list.opts.ref.current],
 			([node, listNode]) => {
@@ -1628,7 +1648,7 @@ export class CommandViewportState {
 			({
 				id: this.opts.id.current,
 				[commandAttrs.viewport]: "",
-				...attachRef(this.opts.ref, (v) => (this.list.root.viewportNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }

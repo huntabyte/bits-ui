@@ -25,7 +25,12 @@ import {
 	getDataSelected,
 	getDataUnavailable,
 } from "$lib/internal/attrs.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { DateMatcher, Month } from "$lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
@@ -102,11 +107,13 @@ export class CalendarRootState {
 	readonly formatter: Formatter;
 	readonly accessibleHeadingId = useId();
 	readonly domContext: DOMContext;
+	readonly attachment: RefAttachment;
 	months: Month<DateValue>[] = $state([]);
 	announcer: Announcer;
 
 	constructor(opts: CalendarRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.domContext = new DOMContext(opts.ref);
 		this.announcer = getAnnouncer(null);
 		this.formatter = createFormatter({
@@ -532,7 +539,7 @@ export class CalendarRootState {
 				[this.getBitsAttr("root")]: "",
 				//
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -546,10 +553,12 @@ export class CalendarHeadingState {
 
 	readonly opts: CalendarHeadingStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CalendarHeadingStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -560,7 +569,7 @@ export class CalendarHeadingState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("heading")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -607,10 +616,12 @@ export class CalendarCellState {
 			year: "numeric",
 		})
 	);
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CalendarCellStateOpts, root: CalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly snippetProps = $derived.by(() => ({
@@ -654,7 +665,7 @@ export class CalendarCellState {
 				"aria-disabled": getAriaDisabled(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -668,11 +679,13 @@ export class CalendarDayState {
 
 	readonly opts: CalendarDayStateOpts;
 	readonly cell: CalendarCellState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CalendarDayStateOpts, cell: CalendarCellState) {
 		this.opts = opts;
 		this.cell = cell;
 		this.onclick = this.onclick.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly #tabindex = $derived.by(() =>
@@ -710,7 +723,7 @@ export class CalendarDayState {
 				"data-bits-day": "",
 				//
 				onclick: this.onclick,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -725,6 +738,7 @@ export class CalendarNextButtonState {
 	readonly opts: CalendarNextButtonStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 	readonly isDisabled = $derived.by(() => this.root.isNextButtonDisabled);
+	readonly attachment: RefAttachment;
 
 	constructor(
 		opts: CalendarNextButtonStateOpts,
@@ -733,6 +747,7 @@ export class CalendarNextButtonState {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -753,7 +768,7 @@ export class CalendarNextButtonState {
 				[this.root.getBitsAttr("next-button")]: "",
 				//
 				onclick: this.onclick,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -768,6 +783,7 @@ export class CalendarPrevButtonState {
 	readonly opts: CalendarPrevButtonStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
 	readonly isDisabled = $derived.by(() => this.root.isPrevButtonDisabled);
+	readonly attachment: RefAttachment;
 
 	constructor(
 		opts: CalendarPrevButtonStateOpts,
@@ -776,6 +792,7 @@ export class CalendarPrevButtonState {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -796,7 +813,7 @@ export class CalendarPrevButtonState {
 				[this.root.getBitsAttr("prev-button")]: "",
 				//
 				onclick: this.onclick,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -810,10 +827,12 @@ export class CalendarGridState {
 
 	readonly opts: CalendarGridStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CalendarGridStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -827,7 +846,7 @@ export class CalendarGridState {
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("grid")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -841,10 +860,12 @@ export class CalendarGridBodyState {
 
 	readonly opts: CalendarGridBodyStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: CalendarGridBodyStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -854,7 +875,7 @@ export class CalendarGridBodyState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-body")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -868,10 +889,11 @@ export class CalendarGridHeadState {
 
 	readonly opts: CalendarGridHeadStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: CalendarGridHeadStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -881,7 +903,7 @@ export class CalendarGridHeadState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-head")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -895,10 +917,11 @@ export class CalendarGridRowState {
 
 	readonly opts: CalendarGridRowStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: CalendarGridRowStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -908,7 +931,7 @@ export class CalendarGridRowState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-row")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -922,10 +945,11 @@ export class CalendarHeadCellState {
 
 	readonly opts: CalendarHeadCellStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: CalendarHeadCellStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -935,7 +959,7 @@ export class CalendarHeadCellState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("head-cell")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -949,10 +973,11 @@ export class CalendarHeaderState {
 
 	readonly opts: CalendarHeaderStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: CalendarHeaderStateOpts, root: CalendarRootState | RangeCalendarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -962,7 +987,7 @@ export class CalendarHeaderState {
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("header")]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -982,7 +1007,7 @@ export class CalendarMonthSelectState {
 
 	readonly opts: CalendarMonthSelectStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(
 		opts: CalendarMonthSelectStateOpts,
 		root: CalendarRootState | RangeCalendarRootState
@@ -990,6 +1015,7 @@ export class CalendarMonthSelectState {
 		this.opts = opts;
 		this.root = root;
 		this.onchange = this.onchange.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly monthItems = $derived.by(() => {
@@ -1053,7 +1079,7 @@ export class CalendarMonthSelectState {
 				[this.root.getBitsAttr("month-select")]: "",
 				//
 				onchange: this.onchange,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1073,7 +1099,7 @@ export class CalendarYearSelectState {
 
 	readonly opts: CalendarYearSelectStateOpts;
 	readonly root: CalendarRootState | RangeCalendarRootState;
-
+	readonly attachment: RefAttachment;
 	constructor(
 		opts: CalendarYearSelectStateOpts,
 		root: CalendarRootState | RangeCalendarRootState
@@ -1081,6 +1107,7 @@ export class CalendarYearSelectState {
 		this.opts = opts;
 		this.root = root;
 		this.onchange = this.onchange.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly years = $derived.by(() => {
@@ -1146,7 +1173,7 @@ export class CalendarYearSelectState {
 				[this.root.getBitsAttr("year-select")]: "",
 				//
 				onchange: this.onchange,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

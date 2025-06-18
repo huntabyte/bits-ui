@@ -5,7 +5,7 @@ import {
 	getAriaOrientation,
 	getDataOrientation,
 } from "$lib/internal/attrs.js";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 
 const separatorAttrs = createBitsAttrs({
@@ -25,9 +25,11 @@ export class SeparatorRootState {
 		return new SeparatorRootState(opts);
 	}
 	readonly opts: SeparatorRootStateOpts;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SeparatorRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -39,7 +41,7 @@ export class SeparatorRootState {
 				"aria-hidden": getAriaHidden(this.opts.decorative.current),
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[separatorAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

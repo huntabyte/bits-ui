@@ -15,6 +15,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
@@ -615,11 +616,13 @@ export class TimeFieldInputState {
 	}
 	readonly opts: TimeFieldInputStateOpts;
 	readonly root: TimeFieldRootState;
+	readonly attachment: RefAttachment;
 	domContext: DOMContext;
 
 	constructor(opts: TimeFieldInputStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => this.root.setFieldNode(v));
 		this.domContext = new DOMContext(opts.ref);
 		this.root.setName(this.opts.name.current);
 
@@ -646,7 +649,7 @@ export class TimeFieldInputState {
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[timeFieldAttrs.input]: "",
-				...attachRef(this.opts.ref, (v) => this.root.setFieldNode(v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -683,10 +686,12 @@ export class TimeFieldLabelState {
 	}
 	readonly opts: TimeFieldLabelStateOpts;
 	readonly root: TimeFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: TimeFieldLabelStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => this.root.setLabelNode(v));
 		this.onclick = this.onclick.bind(this);
 	}
 
@@ -705,7 +710,7 @@ export class TimeFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[timeFieldAttrs.label]: "",
 				onclick: this.onclick,
-				...attachRef(this.opts.ref, (v) => this.root.setLabelNode(v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -717,6 +722,7 @@ abstract class BaseTimeSegmentState {
 	readonly announcer: Announcer;
 	readonly part: string;
 	readonly config: SegmentConfig;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: WithRefOpts, root: TimeFieldRootState, part: string, config: SegmentConfig) {
 		this.opts = opts;
@@ -724,6 +730,7 @@ abstract class BaseTimeSegmentState {
 		this.part = part;
 		this.config = config;
 		this.announcer = root.announcer;
+		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
 	}
@@ -999,7 +1006,7 @@ abstract class BaseTimeSegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs(this.part as SegmentPart, this.opts.id.current),
-			...attachRef(this.opts.ref),
+			...this.attachment,
 		};
 	});
 }
@@ -1055,12 +1062,14 @@ interface TimeFieldDayPeriodSegmentStateOpts extends WithRefOpts {}
 class TimeFieldDayPeriodSegmentState {
 	readonly opts: TimeFieldDayPeriodSegmentStateOpts;
 	readonly root: TimeFieldRootState;
+	readonly attachment: RefAttachment;
 	#announcer: Announcer;
 
 	constructor(opts: TimeFieldDayPeriodSegmentStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.#announcer = this.root.announcer;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.dayPeriodNode = v));
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
@@ -1127,7 +1136,7 @@ class TimeFieldDayPeriodSegmentState {
 			onkeydown: this.onkeydown,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("dayPeriod", this.opts.id.current),
-			...attachRef(this.opts.ref, (v) => (this.root.dayPeriodNode = v)),
+			...this.attachment,
 		};
 	});
 }
@@ -1137,10 +1146,12 @@ interface TimeFieldLiteralSegmentStateOpts extends WithRefOpts {}
 class TimeFieldLiteralSegmentState {
 	readonly opts: TimeFieldLiteralSegmentStateOpts;
 	readonly root: TimeFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: TimeFieldLiteralSegmentStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -1149,7 +1160,7 @@ class TimeFieldLiteralSegmentState {
 				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
 				...this.root.getBaseSegmentAttrs("literal", this.opts.id.current),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1157,10 +1168,12 @@ class TimeFieldLiteralSegmentState {
 class TimeFieldTimeZoneSegmentState {
 	readonly opts: TimeFieldLiteralSegmentStateOpts;
 	readonly root: TimeFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: TimeFieldLiteralSegmentStateOpts, root: TimeFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
 
@@ -1185,7 +1198,7 @@ class TimeFieldTimeZoneSegmentState {
 				tabindex: 0,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
 				"data-readonly": getDataReadonly(true),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

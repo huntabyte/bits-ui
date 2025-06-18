@@ -15,7 +15,12 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 
 export const toggleGroupAttrs = createBitsAttrs({
@@ -37,9 +42,11 @@ interface ToggleGroupBaseStateOpts
 abstract class ToggleGroupBaseState {
 	readonly opts: ToggleGroupBaseStateOpts;
 	readonly rovingFocusGroup: RovingFocusGroup;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: ToggleGroupBaseStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: toggleGroupAttrs.item,
 			rootNode: opts.ref,
@@ -56,7 +63,7 @@ abstract class ToggleGroupBaseState {
 				role: "group",
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -164,6 +171,7 @@ export class ToggleGroupItemState {
 	}
 	readonly opts: ToggleGroupItemStateOpts;
 	readonly root: ToggleGroup;
+	readonly attachment: RefAttachment;
 	readonly #isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.root.opts.disabled.current
 	);
@@ -180,7 +188,7 @@ export class ToggleGroupItemState {
 	constructor(opts: ToggleGroupItemStateOpts, root: ToggleGroup) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(this.opts.ref);
 		$effect(() => {
 			if (!this.root.opts.rovingFocus.current) {
 				this.#tabIndex = 0;
@@ -238,7 +246,7 @@ export class ToggleGroupItemState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
