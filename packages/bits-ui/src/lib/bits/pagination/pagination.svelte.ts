@@ -1,7 +1,12 @@
 import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import { createBitsAttrs, getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -33,6 +38,7 @@ export class PaginationRootState {
 		return PaginationRootContext.set(new PaginationRootState(opts));
 	}
 	readonly opts: PaginationRootStateOpts;
+	readonly attachment: RefAttachment;
 	readonly totalPages = $derived.by(() => {
 		if (this.opts.count.current === 0) return 1;
 		return Math.ceil(this.opts.count.current / this.opts.perPage.current);
@@ -54,6 +60,7 @@ export class PaginationRootState {
 
 	constructor(opts: PaginationRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	setPage(page: number) {
@@ -92,7 +99,7 @@ export class PaginationRootState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[paginationAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -110,6 +117,7 @@ export class PaginationPageState {
 	}
 	readonly opts: PaginationPageStateOpts;
 	readonly root: PaginationRootState;
+	readonly attachment: RefAttachment;
 	readonly #isSelected = $derived.by(
 		() => this.opts.page.current.value === this.root.opts.page.current
 	);
@@ -117,6 +125,7 @@ export class PaginationPageState {
 	constructor(opts: PaginationPageStateOpts, root: PaginationRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -148,7 +157,7 @@ export class PaginationPageState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -171,10 +180,12 @@ export class PaginationButtonState {
 	}
 	readonly opts: PaginationButtonStateOpts;
 	readonly root: PaginationRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: PaginationButtonStateOpts, root: PaginationRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -215,7 +226,7 @@ export class PaginationButtonState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

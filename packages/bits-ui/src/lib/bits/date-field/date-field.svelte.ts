@@ -17,6 +17,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	WithRefOpts,
+	RefAttachment,
 } from "$lib/internal/types.js";
 import {
 	createBitsAttrs,
@@ -247,7 +248,6 @@ export class DateFieldRootState {
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
 		this.announcer = getAnnouncer(null);
-
 		this.getFieldNode = this.getFieldNode.bind(this);
 		this.updateSegment = this.updateSegment.bind(this);
 		this.handleSegmentClick = this.handleSegmentClick.bind(this);
@@ -736,12 +736,14 @@ export class DateFieldInputState {
 	readonly opts: DateFieldInputStateOpts;
 	readonly root: DateFieldRootState;
 	readonly domContext: DOMContext;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DateFieldInputStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.domContext = new DOMContext(opts.ref);
 		this.root.domContext = this.domContext;
+		this.attachment = attachRef(opts.ref, (v) => this.root.setFieldNode(v));
 
 		watch(
 			() => this.opts.name.current,
@@ -769,7 +771,7 @@ export class DateFieldInputState {
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[dateFieldAttrs.input]: "",
-				...attachRef(this.opts.ref, (v) => this.root.setFieldNode(v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -806,11 +808,13 @@ export class DateFieldLabelState {
 
 	readonly opts: DateFieldLabelStateOpts;
 	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DateFieldLabelStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onclick = this.onclick.bind(this);
+		this.attachment = attachRef(opts.ref, (v) => this.root.setLabelNode(v));
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -828,7 +832,7 @@ export class DateFieldLabelState {
 				"data-disabled": getDataDisabled(this.root.disabled.current),
 				[dateFieldAttrs.label]: "",
 				onclick: this.onclick,
-				...attachRef(this.opts.ref, (v) => this.root.setLabelNode(v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -840,7 +844,7 @@ abstract class BaseNumericSegmentState {
 	readonly announcer: Announcer;
 	readonly part: string;
 	readonly config: SegmentConfig;
-
+	readonly attachment: RefAttachment;
 	constructor(opts: WithRefOpts, root: DateFieldRootState, part: string, config: SegmentConfig) {
 		this.opts = opts;
 		this.root = root;
@@ -849,6 +853,7 @@ abstract class BaseNumericSegmentState {
 		this.announcer = root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
+		this.attachment = attachRef(opts.ref);
 	}
 
 	#getMax(): number {
@@ -1132,7 +1137,7 @@ abstract class BaseNumericSegmentState {
 		};
 	}
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		return {
 			...this.root.sharedSegmentAttrs,
 			id: this.opts.id.current,
@@ -1141,7 +1146,7 @@ abstract class BaseNumericSegmentState {
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs(this.part as SegmentPart, this.opts.id.current),
-			...attachRef(this.opts.ref),
+			...this.attachment,
 		};
 	});
 }
@@ -1361,6 +1366,7 @@ export class DateFieldDayPeriodSegmentState {
 
 	readonly opts: DateFieldDayPeriodSegmentStateOpts;
 	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
 	#announcer: Announcer;
 
 	constructor(opts: DateFieldDayPeriodSegmentStateOpts, root: DateFieldRootState) {
@@ -1368,6 +1374,7 @@ export class DateFieldDayPeriodSegmentState {
 		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
+		this.attachment = attachRef(opts.ref, (v) => (this.root.dayPeriodNode = v));
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -1433,7 +1440,7 @@ export class DateFieldDayPeriodSegmentState {
 			onkeydown: this.onkeydown,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("dayPeriod", this.opts.id.current),
-			...attachRef(this.opts.ref, (v) => (this.root.dayPeriodNode = v)),
+			...this.attachment,
 		};
 	});
 }
@@ -1447,10 +1454,12 @@ export class DateFieldLiteralSegmentState {
 
 	readonly opts: DateFieldLiteralSegmentStateOpts;
 	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DateFieldLiteralSegmentStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -1459,7 +1468,7 @@ export class DateFieldLiteralSegmentState {
 				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
 				...this.root.getBaseSegmentAttrs("literal", this.opts.id.current),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1473,11 +1482,13 @@ export class DateFieldTimeZoneSegmentState {
 
 	readonly opts: DateFieldTimeZoneSegmentStateOpts;
 	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: DateFieldTimeZoneSegmentStateOpts, root: DateFieldRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.onkeydown = this.onkeydown.bind(this);
+		this.attachment = attachRef(opts.ref);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -1500,7 +1511,7 @@ export class DateFieldTimeZoneSegmentState {
 				onkeydown: this.onkeydown,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
 				"data-readonly": getDataReadonly(true),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

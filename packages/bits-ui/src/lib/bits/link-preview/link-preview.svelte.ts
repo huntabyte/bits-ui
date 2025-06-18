@@ -15,6 +15,7 @@ import type {
 	BitsFocusEvent,
 	BitsPointerEvent,
 	OnChangeFn,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
@@ -44,6 +45,7 @@ export class LinkPreviewRootState {
 	}
 
 	readonly opts: LinkPreviewRootStateOpts;
+
 	hasSelection = $state(false);
 	isPointerDownOnContent = $state(false);
 	containsSelection = $state(false);
@@ -158,10 +160,12 @@ export class LinkPreviewTriggerState {
 
 	readonly opts: LinkPreviewTriggerStateOpts;
 	readonly root: LinkPreviewRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: LinkPreviewTriggerStateOpts, root: LinkPreviewRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.triggerNode = v));
 		this.root.domContext = new DOMContext(opts.ref);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
@@ -204,7 +208,7 @@ export class LinkPreviewTriggerState {
 				onfocus: this.onfocus,
 				onblur: this.onblur,
 				onpointerleave: this.onpointerleave,
-				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -223,10 +227,12 @@ export class LinkPreviewContentState {
 
 	readonly opts: LinkPreviewContentStateOpts;
 	readonly root: LinkPreviewRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: LinkPreviewContentStateOpts, root: LinkPreviewRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
 		this.root.domContext = new DOMContext(opts.ref);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerenter = this.onpointerenter.bind(this);
@@ -298,7 +304,7 @@ export class LinkPreviewContentState {
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onfocusout: this.onfocusout,
-				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
+				...this.attachment,
 			}) as const
 	);
 

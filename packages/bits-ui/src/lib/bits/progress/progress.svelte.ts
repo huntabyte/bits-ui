@@ -1,6 +1,6 @@
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 
 const progressAttrs = createBitsAttrs({
 	component: "progress",
@@ -21,9 +21,11 @@ export class ProgressRootState {
 	}
 
 	readonly opts: ProgressRootStateOpts;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: ProgressRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -42,7 +44,7 @@ export class ProgressRootState {
 				"data-min": this.opts.min.current,
 				"data-indeterminate": this.opts.value.current === null ? "" : undefined,
 				[progressAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

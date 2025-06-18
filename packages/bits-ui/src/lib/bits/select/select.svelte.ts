@@ -29,6 +29,7 @@ import type {
 	BitsPointerEvent,
 	OnChangeFn,
 	WithRefOpts,
+	RefAttachment,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
 import { isIOS } from "$lib/internal/is.js";
@@ -379,10 +380,12 @@ export class SelectInputState {
 	}
 	readonly opts: SelectInputStateOpts;
 	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SelectInputStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.inputNode = v));
 		this.root.domContext = new DOMContext(opts.ref);
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -519,7 +522,7 @@ export class SelectInputState {
 				onkeydown: this.onkeydown,
 				oninput: this.oninput,
 				[this.root.getBitsAttr("input")]: "",
-				...attachRef(this.opts.ref, (v) => (this.root.inputNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -532,11 +535,12 @@ export class SelectComboTriggerState {
 	}
 	readonly opts: SelectComboTriggerStateOpts;
 	readonly root: SelectBaseRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SelectComboTriggerStateOpts, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 	}
@@ -576,7 +580,7 @@ export class SelectComboTriggerState {
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -589,12 +593,14 @@ export class SelectTriggerState {
 	}
 	readonly opts: SelectTriggerStateOpts;
 	readonly root: SelectRoot;
-	#domTypeahead: DOMTypeahead;
-	#dataTypeahead: DataTypeahead;
+	readonly attachment: RefAttachment;
+	readonly #domTypeahead: DOMTypeahead;
+	readonly #dataTypeahead: DataTypeahead;
 
 	constructor(opts: SelectTriggerStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.triggerNode = v));
 		this.root.domContext = new DOMContext(opts.ref);
 
 		this.#domTypeahead = new DOMTypeahead({
@@ -838,7 +844,7 @@ export class SelectTriggerState {
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
 				onpointerup: this.onpointerup,
-				...attachRef(this.opts.ref, (v) => (this.root.triggerNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -856,6 +862,7 @@ export class SelectContentState {
 	}
 	readonly opts: SelectContentStateOpts;
 	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
 	viewportNode = $state<HTMLElement | null>(null);
 	isPositioned = $state(false);
 	domContext: DOMContext;
@@ -863,6 +870,7 @@ export class SelectContentState {
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.contentNode = v));
 		this.domContext = new DOMContext(this.opts.ref);
 
 		if (this.root.domContext === null) {
@@ -936,7 +944,7 @@ export class SelectContentState {
 					...this.#styles,
 				},
 				onpointermove: this.onpointermove,
-				...attachRef(this.opts.ref, (v) => (this.root.contentNode = v)),
+				...this.attachment,
 			}) as const
 	);
 
@@ -973,6 +981,7 @@ export class SelectItemState {
 	}
 	readonly opts: SelectItemStateOpts;
 	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
 	readonly isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
@@ -983,6 +992,7 @@ export class SelectItemState {
 	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
@@ -1106,7 +1116,7 @@ export class SelectItemState {
 				onpointermove: this.onpointermove,
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1120,10 +1130,12 @@ export class SelectGroupState {
 	readonly opts: SelectGroupStateOpts;
 	readonly root: SelectBaseRootState;
 	labelNode = $state<HTMLElement | null>(null);
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SelectGroupStateOpts, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -1133,7 +1145,7 @@ export class SelectGroupState {
 				role: "group",
 				[this.root.getBitsAttr("group")]: "",
 				"aria-labelledby": this.labelNode?.id ?? undefined,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1146,10 +1158,12 @@ export class SelectGroupHeadingState {
 	}
 	readonly opts: SelectGroupHeadingStateOpts;
 	readonly group: SelectGroupState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: SelectGroupHeadingStateOpts, group: SelectGroupState) {
 		this.opts = opts;
 		this.group = group;
+		this.attachment = attachRef(opts.ref, (v) => (this.group.labelNode = v));
 	}
 
 	readonly props = $derived.by(
@@ -1157,7 +1171,7 @@ export class SelectGroupHeadingState {
 			({
 				id: this.opts.id.current,
 				[this.group.root.getBitsAttr("group-label")]: "",
-				...attachRef(this.opts.ref, (v) => (this.group.labelNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1212,12 +1226,14 @@ export class SelectViewportState {
 	readonly opts: SelectViewportStateOpts;
 	readonly content: SelectContentState;
 	readonly root: SelectBaseRootState;
+	readonly attachment: RefAttachment;
 	prevScrollTop = $state(0);
 
 	constructor(opts: SelectViewportStateOpts, content: SelectContentState) {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
+		this.attachment = attachRef(opts.ref, (v) => (this.content.viewportNode = v));
 	}
 
 	readonly props = $derived.by(
@@ -1234,7 +1250,7 @@ export class SelectViewportState {
 					flex: 1,
 					overflow: "auto",
 				},
-				...attachRef(this.opts.ref, (v) => (this.content.viewportNode = v)),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -1249,6 +1265,7 @@ export class SelectScrollButtonImplState {
 	readonly opts: SelectScrollButtonImplStateOpts;
 	readonly content: SelectContentState;
 	readonly root: SelectBaseRootState;
+	readonly attachment: RefAttachment;
 	autoScrollTimer: number | null = null;
 	userScrollTimer = -1;
 	isUserScrolling = false;
@@ -1259,6 +1276,7 @@ export class SelectScrollButtonImplState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
+		this.attachment = attachRef(opts.ref);
 
 		watch([() => this.mounted], () => {
 			if (!this.mounted) {
@@ -1326,7 +1344,7 @@ export class SelectScrollButtonImplState {
 				onpointerdown: this.onpointerdown,
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

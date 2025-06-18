@@ -110,6 +110,9 @@ export class FloatingContentState {
 	contentRef = box<HTMLElement | null>(null);
 	wrapperRef = box<HTMLElement | null>(null);
 	arrowRef = box<HTMLElement | null>(null);
+	readonly contentAttachment = attachRef(this.contentRef);
+	readonly wrapperAttachment = attachRef(this.wrapperRef);
+	readonly arrowAttachment = attachRef(this.arrowRef);
 
 	// ids
 	arrowId: Box<string> = box(useId());
@@ -216,7 +219,7 @@ export class FloatingContentState {
 				},
 				// Floating UI calculates logical alignment based the `dir` attribute
 				dir: this.opts.dir.current,
-				...attachRef(this.wrapperRef),
+				...this.wrapperAttachment,
 			}) as const
 	);
 	props = $derived.by(
@@ -227,7 +230,7 @@ export class FloatingContentState {
 				style: styleToString({
 					...this.#transformedStyle,
 				}),
-				...attachRef(this.contentRef),
+				...this.contentAttachment,
 			}) as const
 	);
 
@@ -322,7 +325,7 @@ export class FloatingArrowState {
 				id: this.opts.id.current,
 				style: this.content.arrowStyle,
 				"data-side": this.content.placedSide,
-				...attachRef(this.content.arrowRef),
+				...this.content.arrowAttachment,
 			}) as const
 	);
 }

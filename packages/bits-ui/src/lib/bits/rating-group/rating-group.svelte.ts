@@ -9,6 +9,7 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { createBitsAttrs, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
@@ -48,6 +49,7 @@ export class RatingGroupRootState {
 	}
 
 	readonly opts: RatingGroupRootStateOpts;
+	readonly attachment: RefAttachment;
 
 	#hoverValue = $state<number | null>(null);
 	#keySequence = $state<string>("");
@@ -89,6 +91,7 @@ export class RatingGroupRootState {
 
 	constructor(opts: RatingGroupRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.domContext = new DOMContext(this.opts.ref);
@@ -291,7 +294,7 @@ export class RatingGroupRootState {
 			[ratingGroupAttrs.root]: "",
 			onkeydown: this.onkeydown,
 			onpointerleave: this.onpointerleave,
-			...attachRef(this.opts.ref),
+			...this.attachment,
 		} as const;
 	});
 }
@@ -310,6 +313,7 @@ export class RatingGroupItemState {
 
 	readonly opts: RatingGroupItemStateOpts;
 	readonly root: RatingGroupRootState;
+	readonly attachment: RefAttachment;
 	readonly #isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.root.opts.disabled.current
 	);
@@ -324,6 +328,7 @@ export class RatingGroupItemState {
 	constructor(opts: RatingGroupItemStateOpts, root: RatingGroupRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 
 		this.onclick = this.onclick.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -395,7 +400,7 @@ export class RatingGroupItemState {
 				//
 				onclick: this.onclick,
 				onpointermove: this.onpointermove,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

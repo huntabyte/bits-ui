@@ -15,7 +15,12 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefOpts } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 
 export const toolbarAttrs = createBitsAttrs({
@@ -38,9 +43,11 @@ export class ToolbarRootState {
 	}
 	readonly opts: ToolbarRootStateOpts;
 	readonly rovingFocusGroup: RovingFocusGroup;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: ToolbarRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 
 		this.rovingFocusGroup = new RovingFocusGroup({
 			orientation: this.opts.orientation,
@@ -57,7 +64,7 @@ export class ToolbarRootState {
 				role: "toolbar",
 				"data-orientation": this.opts.orientation.current,
 				[toolbarAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -71,10 +78,12 @@ interface ToolbarGroupBaseStateOpts
 abstract class ToolbarGroupBaseState {
 	readonly opts: ToolbarGroupBaseStateOpts;
 	readonly root: ToolbarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: ToolbarGroupBaseStateOpts, root: ToolbarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -85,7 +94,7 @@ abstract class ToolbarGroupBaseState {
 				role: "group",
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -197,6 +206,7 @@ export class ToolbarGroupItemState {
 	readonly opts: ToolbarGroupItemStateOpts;
 	readonly group: ToolbarGroup;
 	readonly root: ToolbarRootState;
+	readonly attachment: RefAttachment;
 	readonly #isDisabled = $derived.by(
 		() => this.opts.disabled.current || this.group.opts.disabled.current
 	);
@@ -205,6 +215,7 @@ export class ToolbarGroupItemState {
 		this.opts = opts;
 		this.group = group;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
@@ -265,7 +276,7 @@ export class ToolbarGroupItemState {
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -278,10 +289,12 @@ export class ToolbarLinkState {
 	}
 	readonly opts: ToolbarLinkStateOpts;
 	readonly root: ToolbarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: ToolbarLinkStateOpts, root: ToolbarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
@@ -314,7 +327,7 @@ export class ToolbarLinkState {
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				//
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -331,11 +344,12 @@ export class ToolbarButtonState {
 	}
 	readonly opts: ToolbarButtonStateOpts;
 	readonly root: ToolbarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: ToolbarButtonStateOpts, root: ToolbarRootState) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(this.opts.ref);
 		$effect(() => {
 			this.#tabIndex = this.root.rovingFocusGroup.getTabIndex(this.opts.ref.current);
 		});
@@ -369,7 +383,7 @@ export class ToolbarButtonState {
 				disabled: getDisabled(this.opts.disabled.current),
 				//
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

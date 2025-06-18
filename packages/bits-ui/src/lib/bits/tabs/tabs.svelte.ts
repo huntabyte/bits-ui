@@ -16,6 +16,7 @@ import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
+	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
@@ -45,6 +46,7 @@ export class TabsRootState {
 		return TabsRootContext.set(new TabsRootState(opts));
 	}
 	readonly opts: TabsRootStateOpts;
+	readonly attachment: RefAttachment;
 	readonly rovingFocusGroup: RovingFocusGroup;
 	triggerIds = $state<string[]>([]);
 	// holds the trigger ID for each value to associate it with the content
@@ -54,7 +56,7 @@ export class TabsRootState {
 
 	constructor(opts: TabsRootStateOpts) {
 		this.opts = opts;
-
+		this.attachment = attachRef(opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: tabsAttrs.trigger,
 			rootNode: this.opts.ref,
@@ -93,7 +95,7 @@ export class TabsRootState {
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
 				[tabsAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -106,11 +108,13 @@ export class TabsListState {
 	}
 	readonly opts: TabsListStateOpts;
 	readonly root: TabsRootState;
+	readonly attachment: RefAttachment;
 	readonly #isDisabled = $derived.by(() => this.root.opts.disabled.current);
 
 	constructor(opts: TabsListStateOpts, root: TabsRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -122,7 +126,7 @@ export class TabsListState {
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				[tabsAttrs.list]: "",
 				"data-disabled": getDataDisabled(this.#isDisabled),
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -140,6 +144,7 @@ export class TabsTriggerState {
 	}
 	readonly opts: TabsTriggerStateOpts;
 	readonly root: TabsRootState;
+	readonly attachment: RefAttachment;
 	#tabIndex = $state(0);
 	readonly #isActive = $derived.by(
 		() => this.root.opts.value.current === this.opts.value.current
@@ -154,7 +159,7 @@ export class TabsTriggerState {
 	constructor(opts: TabsTriggerStateOpts, root: TabsRootState) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(opts.ref);
 		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
 			return this.root.registerTrigger(id, value);
 		});
@@ -215,7 +220,7 @@ export class TabsTriggerState {
 				onclick: this.onclick,
 				onfocus: this.onfocus,
 				onkeydown: this.onkeydown,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -232,6 +237,7 @@ export class TabsContentState {
 	}
 	readonly opts: TabsContentStateOpts;
 	readonly root: TabsRootState;
+	readonly attachment: RefAttachment;
 	readonly #isActive = $derived.by(
 		() => this.root.opts.value.current === this.opts.value.current
 	);
@@ -242,7 +248,7 @@ export class TabsContentState {
 	constructor(opts: TabsContentStateOpts, root: TabsRootState) {
 		this.opts = opts;
 		this.root = root;
-
+		this.attachment = attachRef(opts.ref);
 		watch([() => this.opts.id.current, () => this.opts.value.current], ([id, value]) => {
 			return this.root.registerContent(id, value);
 		});
@@ -260,7 +266,7 @@ export class TabsContentState {
 				"aria-labelledby": this.#ariaLabelledBy,
 				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
 				[tabsAttrs.content]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

@@ -27,12 +27,13 @@
 	});
 
 	const dropdownTriggerState = DropdownMenuTriggerState.create(triggerState.opts);
+	const triggerAttachment = attachRef(
+		(v: HTMLElement | null) => (dropdownTriggerState.parentMenu.triggerNode = v)
+	);
 
 	const mergedProps = $derived(
 		mergeProps(restProps, triggerState.props, {
-			...attachRef(
-				(v: HTMLElement | null) => (dropdownTriggerState.parentMenu.triggerNode = v)
-			),
+			...triggerAttachment,
 		})
 	);
 </script>

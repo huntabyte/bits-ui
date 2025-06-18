@@ -1,5 +1,5 @@
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 
 const aspectRatioAttrs = createBitsAttrs({
@@ -15,9 +15,11 @@ export class AspectRatioRootState {
 	}
 
 	readonly opts: AspectRatioRootStateOpts;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AspectRatioRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -32,7 +34,7 @@ export class AspectRatioRootState {
 					left: 0,
 				},
 				[aspectRatioAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

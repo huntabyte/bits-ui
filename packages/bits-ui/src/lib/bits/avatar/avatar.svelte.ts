@@ -8,7 +8,7 @@ import {
 import type { HTMLImgAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 
 const avatarAttrs = createBitsAttrs({
@@ -34,11 +34,13 @@ export class AvatarRootState {
 
 	readonly opts: AvatarRootStateOpts;
 	readonly domContext: DOMContext;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AvatarRootStateOpts) {
 		this.opts = opts;
 		this.domContext = new DOMContext(this.opts.ref);
 		this.loadImage = this.loadImage.bind(this);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
@@ -71,7 +73,7 @@ export class AvatarRootState {
 				id: this.opts.id.current,
 				[avatarAttrs.root]: "",
 				"data-status": this.opts.loadingStatus.current,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -90,10 +92,12 @@ export class AvatarImageState {
 	}
 	readonly opts: AvatarImageStateOpts;
 	readonly root: AvatarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AvatarImageStateOpts, root: AvatarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		watch.pre(
 			[() => this.opts.src.current, () => this.opts.crossOrigin.current],
@@ -119,7 +123,7 @@ export class AvatarImageState {
 				src: this.opts.src.current,
 				crossorigin: this.opts.crossOrigin.current,
 				referrerpolicy: this.opts.referrerPolicy.current,
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -132,10 +136,12 @@ export class AvatarFallbackState {
 
 	readonly opts: AvatarFallbackStateOpts;
 	readonly root: AvatarRootState;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: AvatarFallbackStateOpts, root: AvatarRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly style = $derived.by(() =>
@@ -148,7 +154,7 @@ export class AvatarFallbackState {
 				style: this.style,
 				"data-status": this.root.opts.loadingStatus.current,
 				[avatarAttrs.fallback]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }

@@ -1,5 +1,5 @@
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
-import type { WithRefOpts } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 
 const meterAttrs = createBitsAttrs({
@@ -21,9 +21,11 @@ export class MeterRootState {
 	}
 
 	readonly opts: MeterRootStateOpts;
+	readonly attachment: RefAttachment;
 
 	constructor(opts: MeterRootStateOpts) {
 		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	readonly props = $derived.by(
@@ -38,7 +40,7 @@ export class MeterRootState {
 				"data-max": this.opts.max.current,
 				"data-min": this.opts.min.current,
 				[meterAttrs.root]: "",
-				...attachRef(this.opts.ref),
+				...this.attachment,
 			}) as const
 	);
 }
