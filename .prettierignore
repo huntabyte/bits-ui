@@ -19,6 +19,7 @@ package.json
 **/dist
 
 CHANGELOG.md
+pnpm-workspace.yaml
 
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
