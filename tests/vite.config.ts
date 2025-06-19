@@ -1,27 +1,10 @@
 import tailwindcss from "@tailwindcss/vite";
-import process from "node:process";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
 import { defineConfig } from "vite";
-import type { Plugin } from "vite";
-
-const vitestBrowserConditionPlugin: Plugin = {
-	name: "vite-plugin-vitest-browser-condition",
-	// @ts-expect-error - idk
-	config({ resolve }: { resolve?: { conditions: string[] } }) {
-		if (process.env.VITEST) {
-			if (resolve?.conditions) {
-				resolve.conditions.unshift("browser");
-			} else {
-				// @ts-expect-error - idk
-				resolve.conditions = ["browser"];
-			}
-		}
-	},
-};
 
 export default defineConfig({
-	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
+	plugins: [tailwindcss(), sveltekit(), svelteTesting()],
 	test: {
 		projects: [
 			{
