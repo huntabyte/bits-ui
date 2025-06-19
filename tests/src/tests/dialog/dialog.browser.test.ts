@@ -1,4 +1,4 @@
-import { userEvent } from "@vitest/browser/context";
+import { userEvent, page } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { tick, type Component } from "svelte";
@@ -303,21 +303,19 @@ describe("ARIA Attributes", () => {
 	});
 
 	it("should keep the `aria-describedby` attribute in sync with the `Dialog.Description` id", async () => {
-		const t = await open({
+		await open({
 			descriptionProps: {
 				id: "description-id",
 			},
 		});
 
-		const content = t.getByTestId("content");
-		const description = t.getByTestId("description").element() as HTMLElement;
+		const content = page.getByTestId("content");
+		const description = page.getByTestId("description").element() as HTMLElement;
 		expect(description).toHaveAttribute("id", "description-id");
 		expect(content).toHaveAttribute("aria-describedby", description.id);
 
-		const updateIdButton = t.getByTestId("update-id");
-		await t.user.click(updateIdButton);
-		await t.user.click(updateIdButton);
-		await tick();
+		const updateIdButton = page.getByTestId("update-id");
+		await updateIdButton.click();
 
 		expect(description.id).not.toBe("description-id");
 		expect(description.id).toBe("new-id");

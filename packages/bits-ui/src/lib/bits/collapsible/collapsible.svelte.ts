@@ -47,6 +47,7 @@ export class CollapsibleRootState {
 	readonly opts: CollapsibleRootStateOpts;
 	readonly attachment: RefAttachment;
 	contentNode = $state<HTMLElement | null>(null);
+	contentId = $state<string | undefined>(undefined);
 
 	constructor(opts: CollapsibleRootStateOpts) {
 		this.opts = opts;
@@ -105,7 +106,15 @@ export class CollapsibleContentState {
 		this.opts = opts;
 		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
+		this.root.contentId = this.opts.id.current;
 		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
+
+		watch.pre(
+			() => this.opts.id.current,
+			(id) => {
+				this.root.contentId = id;
+			}
+		);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -214,7 +223,7 @@ export class CollapsibleTriggerState {
 				id: this.opts.id.current,
 				type: "button",
 				disabled: this.#isDisabled,
-				"aria-controls": this.root.contentNode?.id,
+				"aria-controls": this.root.contentId,
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),

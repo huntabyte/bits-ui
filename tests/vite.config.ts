@@ -1,5 +1,5 @@
-import tailwindcss from "@tailwindcss/vite";
 import process from "node:process";
+import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
 import { defineConfig } from "vite";

@@ -104,7 +104,8 @@
 		animation-iteration-count: infinite;
 	}
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, var(--line) 50%),
+		background:
+			linear-gradient(to right, transparent 50%, var(--line) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
