@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.3
+
+### Patch Changes
+
+- fix: ensure node ids are updated properly ([#1605](https://github.com/huntabyte/bits-ui/pull/1605))
+
 ## 2.8.2
 
 ### Patch Changes
