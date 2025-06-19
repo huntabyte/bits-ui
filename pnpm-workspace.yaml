@@ -2,3 +2,5 @@ packages:
     - "packages/*"
     - "docs"
     - "tests"
+catalog:
+  svelte: 5.34.3

@@ -30,7 +30,7 @@
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.6.12",
-		"svelte": "^5.34.7",
+		"svelte": "catalog:",
 		"svelte-eslint-parser": "^1.2.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.34.1",
