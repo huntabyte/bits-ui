@@ -94,7 +94,15 @@ export class CheckboxGroupLabelState {
 	constructor(opts: CheckboxGroupLabelStateOpts, group: CheckboxGroupState) {
 		this.opts = opts;
 		this.group = group;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.group.labelId = v?.id));
+		this.group.labelId = this.opts.id.current;
+		this.attachment = attachRef(this.opts.ref);
+
+		watch.pre(
+			() => this.opts.id.current,
+			(id) => {
+				this.group.labelId = id;
+			}
+		);
 	}
 
 	readonly props = $derived.by(

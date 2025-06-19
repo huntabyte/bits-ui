@@ -4,7 +4,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
@@ -232,7 +232,15 @@ export class DialogTitleState {
 	constructor(opts: DialogTitleStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.root.titleId = v?.id));
+		this.root.titleId = this.opts.id.current;
+		this.attachment = attachRef(this.opts.ref);
+
+		watch.pre(
+			() => this.opts.id.current,
+			(id) => {
+				this.root.titleId = id;
+			}
+		);
 	}
 
 	readonly props = $derived.by(
@@ -262,10 +270,16 @@ export class DialogDescriptionState {
 	constructor(opts: DialogDescriptionStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.root.descriptionId = this.opts.id.current;
 		this.attachment = attachRef(this.opts.ref, (v) => {
 			this.root.descriptionNode = v;
-			this.root.descriptionId = v?.id;
 		});
+		watch.pre(
+			() => this.opts.id.current,
+			(id) => {
+				this.root.descriptionId = id;
+			}
+		);
 	}
 
 	readonly props = $derived.by(
