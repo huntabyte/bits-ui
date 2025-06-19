@@ -9,7 +9,7 @@
 		"sync": "svelte-kit sync",
 		"test": "pnpm sync && pnpm test:browser",
 		"test:jsdom": "pnpm sync && vitest --project=jsdom",
-		"test:browser": "pnpm sync && vitest --project=browser"
+		"test:browser": "pnpm sync && vitest --project=browser-*"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.3.1",
@@ -42,10 +42,5 @@
 		"bits-ui": "workspace:*"
 	},
 	"type": "module",
-	"engines": {
-		"pnpm": ">=8.7.0",
-		"node": ">=18"
-	},
-	"sideEffects": false,
-	"packageManager": "pnpm@9.6.0"
+	"sideEffects": false
 }

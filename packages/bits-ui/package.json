@@ -63,9 +63,7 @@
 		"svelte": "^5.33.0"
 	},
 	"engines": {
-		"pnpm": ">=8.7.0",
 		"node": ">=20"
 	},
-	"sideEffects": false,
-	"packageManager": "pnpm@9.6.0"
+	"sideEffects": false
 }
