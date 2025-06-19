@@ -8,11 +8,11 @@ export async function expectNotClickable(node: Element | HTMLElement | Locator) 
 }
 
 export async function expectNotExists(loc: Locator) {
-	expect(loc.element()).toThrow();
+	await vi.waitFor(() => expect(() => loc.element()).toThrow());
 }
 
 export async function expectExists(loc: Locator) {
-	expect(loc.element()).toBeInTheDocument();
+	await vi.waitFor(() => expect(loc.element()).toBeInTheDocument());
 }
 
 export async function simulateOutsideClick(node: Element | HTMLElement | Locator) {
