@@ -3,4 +3,4 @@ packages:
     - "docs"
     - "tests"
 catalog:
-  svelte: 5.34.3
+    svelte: 5.34.3
