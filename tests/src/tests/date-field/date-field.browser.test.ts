@@ -1,4 +1,3 @@
-import { type Locator } from "@vitest/browser/context";
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import {
@@ -10,6 +9,7 @@ import {
 	parseAbsoluteToLocal,
 	toZoned,
 } from "@internationalized/date";
+import type { Locator } from "@vitest/browser/context";
 import { getTestKbd } from "../utils.js";
 import DateFieldTest, { type DateFieldTestProps } from "./date-field-test.svelte";
 import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
@@ -876,16 +876,16 @@ describe("date field", () => {
 		const t = setup({
 			name: "date-field",
 		});
-		const input = t.container.querySelector("input");
-		expect(input).not.toBeNull();
-		expect(input).toHaveAttribute("name", "date-field");
-		expect(input).toHaveAttribute("aria-hidden", "true"); // TODO: this is not working
+		const hiddenInput = t.container.querySelector("input");
+		expect(hiddenInput).not.toBeNull();
+		expect(hiddenInput).toHaveAttribute("name", "date-field");
+		expect(hiddenInput).toHaveAttribute("aria-hidden", "true"); // TODO: this is not working
 	});
 
 	it("should not render a hidden input if the name prop isn't passed", async () => {
 		const t = setup();
-		const input = t.container.querySelector("input");
-		expect(input).toBeNull();
+		const hiddenInput = t.container.querySelector("input");
+		expect(hiddenInput).toBeNull();
 	});
 
 	it("should keep the value of the hidden input in sync with the fields value", async () => {
@@ -894,12 +894,13 @@ describe("date field", () => {
 			name: "hello",
 			value,
 		});
-		const input = t.container.querySelector("input");
-		expect(input).toHaveValue(value.toString());
+
+		const hiddenInput = t.container.querySelector("input");
+		expect(hiddenInput).toHaveValue(value.toString());
 
 		await t.user.click(t.year);
 		await t.user.keyboard(kbd.ARROW_UP);
-		expect(input).toHaveValue(value.add({ years: 1 }).toString());
+		expect(hiddenInput).toHaveValue(value.add({ years: 1 }).toString());
 	});
 
 	it("should handle 24 hour time appropriately", async () => {
