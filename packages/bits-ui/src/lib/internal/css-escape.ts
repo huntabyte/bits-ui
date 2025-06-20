@@ -4,23 +4,22 @@
  * @param value - The value to escape for use as a CSS identifier
  * @returns The escaped CSS identifier string
  */
-export function cssEscape(value: unknown): string {
-	const str = `${value}`;
+export function cssEscape(value: string): string {
 	if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
-		return CSS.escape(str);
+		return CSS.escape(value);
 	}
-	const length = str.length;
+	const length = value.length;
 	let index = -1;
 	let codeUnit: number;
 	let result = "";
-	const firstCodeUnit = str.charCodeAt(0);
+	const firstCodeUnit = value.charCodeAt(0);
 
 	// If the character is the first character and is a `-` (U+002D), and
 	// there is no second character, escape it
-	if (length === 1 && firstCodeUnit === 0x002d) return "\\" + str;
+	if (length === 1 && firstCodeUnit === 0x002d) return "\\" + value;
 
 	while (++index < length) {
-		codeUnit = str.charCodeAt(index);
+		codeUnit = value.charCodeAt(index);
 
 		// If the character is NULL (U+0000), then the REPLACEMENT CHARACTER (U+FFFD)
 		if (codeUnit === 0x0000) {
@@ -56,13 +55,13 @@ export function cssEscape(value: unknown): string {
 			(codeUnit >= 0x0061 && codeUnit <= 0x007a)
 		) {
 			// Use the character itself
-			result += str.charAt(index);
+			result += value.charAt(index);
 			continue;
 		}
 
 		// Otherwise, escape the character
 		// https://drafts.csswg.org/cssom/#escape-a-character
-		result += "\\" + str.charAt(index);
+		result += "\\" + value.charAt(index);
 	}
 
 	return result;

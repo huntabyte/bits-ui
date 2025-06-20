@@ -16,14 +16,6 @@ describe("cssEscape", () => {
 		expect(cssEscape("a\uFFFDb")).toBe("a\uFFFDb");
 	});
 
-	it("should handle type coercion", () => {
-		expect(cssEscape(undefined)).toBe("undefined");
-		expect(cssEscape(true)).toBe("true");
-		expect(cssEscape(false)).toBe("false");
-		expect(cssEscape(null)).toBe("null");
-		expect(cssEscape("")).toBe("");
-	});
-
 	it("should escape control characters", () => {
 		expect(cssEscape("\x01\x02\x1E\x1F")).toBe("\\1 \\2 \\1e \\1f ");
 	});
