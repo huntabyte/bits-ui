@@ -446,6 +446,9 @@ export class CommandRootState {
 			if (this.isGrid) {
 				const isFirstRowOfGroup = this.#itemIsFirstRowOfGroup(item);
 
+				// ensure item is visible
+				item.scrollIntoView({ block: "nearest" });
+
 				if (isFirstRowOfGroup) {
 					const closestGroupHeader = item
 						?.closest(COMMAND_GROUP_SELECTOR)
