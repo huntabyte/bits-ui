@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.5
+
+### Patch Changes
+
+- fix(Command): Ensure selected item is visible when command is in grid mode ([#1610](https://github.com/huntabyte/bits-ui/pull/1610))
+
 ## 2.8.4
 
 ### Patch Changes
