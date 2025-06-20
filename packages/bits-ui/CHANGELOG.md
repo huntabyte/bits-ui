@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.4
+
+### Patch Changes
+
+- fix: replace `css.escape` to prevent `this` issue ([#1608](https://github.com/huntabyte/bits-ui/pull/1608))
+
 ## 2.8.3
 
 ### Patch Changes
