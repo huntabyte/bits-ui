@@ -6,6 +6,9 @@
  */
 export function cssEscape(value: unknown): string {
 	const str = `${value}`;
+	if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+		return CSS.escape(str);
+	}
 	const length = str.length;
 	let index = -1;
 	let codeUnit: number;
