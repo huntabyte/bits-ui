@@ -103,7 +103,7 @@
 {/snippet}
 
 <main>
-	<div data-testid="outside">outside</div>
+	<div data-testid="outside" style="position: absolute; bottom: 0px; right: 10px;">outside</div>
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<DropdownMenu.Root bind:open {...restProps}>
