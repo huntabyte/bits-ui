@@ -4,6 +4,7 @@
 	import { CheckboxGroupState } from "../checkbox.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { createId } from "$lib/internal/create-id.js";
+	import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 	const uid = $props.id();
 
@@ -32,6 +33,7 @@
 		value: box.with(
 			() => $state.snapshot(value),
 			(v) => {
+				if (arraysAreEqual(value, v)) return;
 				value = $state.snapshot(v);
 				onValueChange(v);
 			}
