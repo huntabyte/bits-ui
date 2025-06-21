@@ -15,6 +15,7 @@ import {
 	getDataDisabled,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 const checkboxAttrs = createBitsAttrs({
 	component: "checkbox",
@@ -54,6 +55,7 @@ export class CheckboxGroupState {
 		if (!this.opts.value.current.includes(checkboxValue)) {
 			const newValue = [...$state.snapshot(this.opts.value.current), checkboxValue];
 			this.opts.value.current = newValue;
+			if (arraysAreEqual(this.opts.value.current, newValue)) return;
 			this.opts.onValueChange.current(newValue);
 		}
 	}
