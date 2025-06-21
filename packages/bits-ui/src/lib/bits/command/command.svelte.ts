@@ -1279,7 +1279,7 @@ export class CommandGroupItemsState {
 				id: this.opts.id.current,
 				role: "group",
 				[commandAttrs["group-items"]]: "",
-				"aria-labelledby": this.group.headingNode?.id ?? undefined,
+				"aria-labelledby": this.group.headingNode?.id,
 				...this.attachment,
 			}) as const
 	);
@@ -1346,8 +1346,8 @@ export class CommandInputState {
 				"aria-autocomplete": "list",
 				role: "combobox",
 				"aria-expanded": getAriaExpanded(true),
-				"aria-controls": this.root.viewportNode?.id ?? undefined,
-				"aria-labelledby": this.root.labelNode?.id ?? undefined,
+				"aria-controls": this.root.viewportNode?.id,
+				"aria-labelledby": this.root.labelNode?.id,
 				"aria-activedescendant": this.#selectedItemId,
 				...this.attachment,
 			}) as const

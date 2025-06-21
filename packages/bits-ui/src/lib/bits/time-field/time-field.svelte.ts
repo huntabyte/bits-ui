@@ -643,7 +643,7 @@ export class TimeFieldInputState {
 			({
 				id: this.opts.id.current,
 				role: "group",
-				"aria-labelledby": this.root.getLabelNode()?.id ?? undefined,
+				"aria-labelledby": this.root.getLabelNode()?.id,
 				"aria-describedby": this.#ariaDescribedBy,
 				"aria-disabled": getAriaDisabled(this.root.disabled.current),
 				"data-invalid": this.root.isInvalid ? "" : undefined,

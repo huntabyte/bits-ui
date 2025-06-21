@@ -128,7 +128,7 @@ export class DialogTriggerState {
 				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
-				"aria-controls": this.root.contentId,
+				"aria-controls": this.root.contentNode ? this.root.contentId : undefined,
 				[this.root.getBitsAttr("trigger")]: "",
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
@@ -307,9 +307,16 @@ export class DialogContentState {
 	constructor(opts: DialogContentStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.root.contentId = this.opts.id.current;
+		watch.pre(
+			() => this.opts.id.current,
+			(id) => {
+				this.root.contentId = id;
+			}
+		);
+
 		this.attachment = attachRef(this.opts.ref, (v) => {
 			this.root.contentNode = v;
-			this.root.contentId = v?.id;
 		});
 	}
 

@@ -1144,7 +1144,7 @@ export class SelectGroupState {
 				id: this.opts.id.current,
 				role: "group",
 				[this.root.getBitsAttr("group")]: "",
-				"aria-labelledby": this.labelNode?.id ?? undefined,
+				"aria-labelledby": this.labelNode?.id,
 				...this.attachment,
 			}) as const
 	);

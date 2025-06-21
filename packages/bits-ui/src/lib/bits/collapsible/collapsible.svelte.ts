@@ -21,6 +21,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { ElementIdBridge } from "$lib/internal/element-id-bridge.svelte.js";
 
 const collapsibleAttrs = createBitsAttrs({
 	component: "collapsible",
@@ -46,8 +47,7 @@ export class CollapsibleRootState {
 
 	readonly opts: CollapsibleRootStateOpts;
 	readonly attachment: RefAttachment;
-	contentNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
+	readonly contentData = new ElementIdBridge();
 
 	constructor(opts: CollapsibleRootStateOpts) {
 		this.opts = opts;
@@ -55,7 +55,7 @@ export class CollapsibleRootState {
 		this.attachment = attachRef(this.opts.ref);
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: box.with(() => this.contentData.node),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -106,15 +106,8 @@ export class CollapsibleContentState {
 		this.opts = opts;
 		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
-		this.root.contentId = this.opts.id.current;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
-
-		watch.pre(
-			() => this.opts.id.current,
-			(id) => {
-				this.root.contentId = id;
-			}
-		);
+		this.root.contentData.link(this.opts.ref, this.opts.id);
+		this.attachment = attachRef(this.opts.ref);
 
 		$effect.pre(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -223,7 +216,7 @@ export class CollapsibleTriggerState {
 				id: this.opts.id.current,
 				type: "button",
 				disabled: this.#isDisabled,
-				"aria-controls": this.root.contentId,
+				"aria-controls": this.root.contentData.id,
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
