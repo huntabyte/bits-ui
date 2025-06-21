@@ -292,7 +292,7 @@ describe("Checkbox Group", () => {
 			expect(mock).toHaveBeenCalledWith([]);
 		});
 
-		it.only("should only call the `onValueChange` callback once when the value changes", async () => {
+		it("should only call the `onValueChange` callback once when the value changes", async () => {
 			const mock = vi.fn();
 			const t = setupGroup({ onValueChange: mock });
 			const [a, b] = t.checkboxes;
