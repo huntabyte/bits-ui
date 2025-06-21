@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.8
+
+### Patch Changes
+
+- fix(Checkbox): only call onValueChange once per change to CheckboxGroup value ([#1620](https://github.com/huntabyte/bits-ui/pull/1620))
+
 ## 2.8.7
 
 ### Patch Changes
