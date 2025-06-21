@@ -845,7 +845,7 @@ export class ScrollAreaThumbImplState {
 		this.scrollbarState = scrollbarState;
 		this.#root = scrollbarState.root;
 		this.attachment = attachRef(
-			this.scrollbarState.scrollbar.opts.ref,
+			this.opts.ref,
 			(v) => (this.scrollbarState.scrollbarVis.thumbNode = v)
 		);
 
