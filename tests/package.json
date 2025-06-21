@@ -4,16 +4,13 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"check": "pnpm sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "pnpm sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"sync": "svelte-kit sync",
-		"test": "pnpm sync && pnpm test:browser",
-		"test:jsdom": "pnpm sync && vitest --project=jsdom",
-		"test:browser": "pnpm sync && vitest --project=browser"
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"test": "pnpm test:browser",
+		"test:jsdom": "vitest --project=jsdom",
+		"test:browser": "vitest --project=browser"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.3.1",
-		"@sveltejs/kit": "^2.21.5",
 		"@sveltejs/vite-plugin-svelte": "^5.1.0",
 		"@tailwindcss/vite": "^4.1.10",
 		"@testing-library/dom": "^10.4.0",
