@@ -66,6 +66,7 @@ export class CheckboxGroupState {
 		if (index === -1) return;
 		const newValue = this.opts.value.current.filter((v) => v !== checkboxValue);
 		this.opts.value.current = newValue;
+		if (arraysAreEqual(this.opts.value.current, newValue)) return;
 		this.opts.onValueChange.current(newValue);
 	}
 
