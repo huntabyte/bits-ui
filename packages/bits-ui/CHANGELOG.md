@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.8.7
+
+### Patch Changes
+
+- fix(Calendar): ensure days are disabled when outside month and `disableDaysOutsideMonth` ([#1619](https://github.com/huntabyte/bits-ui/pull/1619))
+
+- fix(Checkbox): ensure `Checkbox.Group` `onValueChange` isn't called more than once per change ([#1617](https://github.com/huntabyte/bits-ui/pull/1617))
+
 ## 2.8.6
 
 ### Patch Changes
