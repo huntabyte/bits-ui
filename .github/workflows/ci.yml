@@ -94,7 +94,7 @@ jobs:
               run: pnpm build:packages
 
             - name: Run browser tests
-              run: pnpm test:browser --browser ${{ matrix.browser }} select.browser combobox.browser dropdown-menu.browser
+              run: pnpm test:browser --browser ${{ matrix.browser }} select.browser combobox.browser dropdown-menu.browser dialog.browser
 
             # - name: Run browser tests
             #   run: |
