@@ -1,7 +1,6 @@
 /// <reference types="@vitest/browser/providers/playwright" />
 
 import process from "node:process";
-import tailwindcss from "@tailwindcss/vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { svelteTesting } from "@testing-library/svelte/vite";
 import { defineConfig } from "vite";
@@ -23,6 +22,7 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
+	plugins: [vitestBrowserConditionPlugin, svelte(), svelteTesting()],
 	test: {
 		projects: [
 			{
@@ -39,7 +39,6 @@ export default defineConfig({
 				},
 			},
 			{
-				plugins: [tailwindcss(), vitestBrowserConditionPlugin, svelte(), svelteTesting()],
 				test: {
 					name: "browser",
 					include: ["src/tests/**/*.browser.{svelte.test,test}.ts"],
