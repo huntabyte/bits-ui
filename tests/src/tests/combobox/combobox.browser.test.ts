@@ -2,7 +2,7 @@ import { page, userEvent, type Locator } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Component } from "svelte";
-import { type AnyFn, getTestKbd, sleep } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
 import type { ComboboxMultipleTestProps } from "./combobox-multi-test.svelte";
@@ -10,7 +10,7 @@ import ComboboxMultiTest from "./combobox-multi-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
-import { expectExists, expectNotExists, simulateOutsideClick } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -41,11 +41,6 @@ function setupSingle(
 ) {
 	const user = userEvent;
 	render(component, { name: "test", ...props, items });
-	const input = page.getByTestId("input").element() as HTMLInputElement;
-	const trigger = page.getByTestId("trigger").element() as HTMLButtonElement;
-	const openBinding = page.getByTestId("open-binding").element() as HTMLParagraphElement;
-	const valueBinding = page.getByTestId("value-binding").element() as HTMLParagraphElement;
-	const outside = page.getByTestId("outside").element() as HTMLElement;
 
 	return {
 		user,
@@ -62,12 +57,6 @@ function setupSingle(
 function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = userEvent;
 	render(ComboboxMultiTest, { name: "test", ...props, items });
-	const input = page.getByTestId("input").element() as HTMLInputElement;
-	const trigger = page.getByTestId("trigger").element() as HTMLButtonElement;
-	const openBinding = page.getByTestId("open-binding").element() as HTMLParagraphElement;
-	const valueBinding = page.getByTestId("value-binding").element() as HTMLParagraphElement;
-	const outside = page.getByTestId("outside").element() as HTMLElement;
-	const submit = page.getByTestId("submit").element() as HTMLButtonElement;
 
 	return {
 		user,
