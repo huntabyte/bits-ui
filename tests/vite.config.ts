@@ -22,7 +22,6 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
-	plugins: [vitestBrowserConditionPlugin, svelte(), svelteTesting()],
 	test: {
 		projects: [
 			{
@@ -39,6 +38,7 @@ export default defineConfig({
 				},
 			},
 			{
+				plugins: [vitestBrowserConditionPlugin, svelte(), svelteTesting()],
 				test: {
 					name: "browser",
 					include: ["src/tests/**/*.browser.{svelte.test,test}.ts"],
