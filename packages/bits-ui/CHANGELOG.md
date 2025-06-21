@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.6
+
+### Patch Changes
+
+- fix(ScrollArea): use correct ref for thumbs ([#1615](https://github.com/huntabyte/bits-ui/pull/1615))
+
 ## 2.8.5
 
 ### Patch Changes
