@@ -291,6 +291,20 @@ describe("Checkbox Group", () => {
 			await t.user.click(b);
 			expect(mock).toHaveBeenCalledWith([]);
 		});
+
+		it("should only call the `onValueChange` callback once when the value changes", async () => {
+			const mock = vi.fn();
+			const t = setupGroup({ onValueChange: mock });
+			const [a, b] = t.checkboxes;
+			await t.user.click(a);
+			expect(mock).toHaveBeenCalledExactlyOnceWith(["a"]);
+			mock.mockClear();
+			await t.user.click(b);
+			expect(mock).toHaveBeenCalledExactlyOnceWith(["a", "b"]);
+			mock.mockClear();
+			await t.user.click(a);
+			expect(mock).toHaveBeenCalledExactlyOnceWith(["b"]);
+		});
 	});
 
 	describe("Props and State Propagation", () => {
