@@ -593,7 +593,6 @@ export class CalendarCellState {
 	readonly opts: CalendarCellStateOpts;
 	readonly root: CalendarRootState;
 	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
-	readonly isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
@@ -603,6 +602,11 @@ export class CalendarCellState {
 	);
 	readonly isOutsideVisibleMonths = $derived.by(() =>
 		this.root.isOutsideVisibleMonths(this.opts.date.current)
+	);
+	readonly isDisabled = $derived.by(
+		() =>
+			this.root.isDateDisabled(this.opts.date.current) ||
+			(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
 	);
 	readonly isFocusedDate = $derived.by(() =>
 		isSameDay(this.opts.date.current, this.root.opts.placeholder.current)
@@ -628,6 +632,7 @@ export class CalendarCellState {
 		disabled: this.isDisabled,
 		unavailable: this.isUnavailable,
 		selected: this.isSelectedDate,
+		day: `${this.opts.date.current.day}`,
 	}));
 
 	readonly ariaDisabled = $derived.by(() => {
