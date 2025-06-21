@@ -4,8 +4,9 @@ import * as matchers from "@testing-library/jest-dom/matchers";
 import { expect, vi } from "vitest";
 import { toHaveNoViolations } from "jest-axe";
 import { configure } from "@testing-library/dom";
-import type * as environment from "$app/environment";
-import type * as navigation from "$app/navigation";
+
+// import type * as environment from "$app/environment";
+// import type * as navigation from "$app/navigation";
 
 expect.extend(matchers);
 
@@ -16,7 +17,7 @@ configure({
 });
 
 // Mock SvelteKit runtime module $app/environment
-vi.mock("$app/environment", (): typeof environment => ({
+vi.mock("$app/environment", () => ({
 	browser: false,
 	dev: true,
 	building: false,
@@ -24,7 +25,7 @@ vi.mock("$app/environment", (): typeof environment => ({
 }));
 
 // Mock SvelteKit runtime module $app/navigation
-vi.mock("$app/navigation", (): typeof navigation => ({
+vi.mock("$app/navigation", () => ({
 	afterNavigate: () => {},
 	beforeNavigate: () => {},
 	disableScrollHandling: () => {},

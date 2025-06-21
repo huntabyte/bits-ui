@@ -32,8 +32,7 @@ export default defineConfig({
 					globals: true,
 					environment: "jsdom",
 					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
-					setupFiles: ["./other/setup-test.ts"],
-					exclude: ["./other/setup-test.ts"],
+					setupFiles: ["./src/setups/jsdom.ts"],
 					retry: 3,
 				},
 			},
@@ -42,7 +41,7 @@ export default defineConfig({
 				test: {
 					name: "browser",
 					include: ["src/tests/**/*.browser.{svelte.test,test}.ts"],
-					setupFiles: ["./other/setup-browser-test.ts"],
+					setupFiles: ["./src/setups/browser.ts"],
 					environment: "browser",
 					retry: 3,
 					browser: {
