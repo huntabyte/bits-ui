@@ -28,6 +28,7 @@ import {
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
 import { cssEscape } from "$lib/internal/css-escape.js";
+import { ElementIdBridge } from "$lib/internal/element-id-bridge.svelte.js";
 
 const COMMAND_VALUE_ATTR = "data-value";
 
@@ -114,9 +115,10 @@ export class CommandRootState {
 	allIds = new Map<string, { value: string; keywords?: string[] }>();
 	// attempt to prevent the harsh delay when user is typing fast
 	key = $state(0);
-	viewportNode = $state<HTMLElement | null>(null);
-	inputNode = $state<HTMLElement | null>(null);
-	labelNode = $state<HTMLElement | null>(null);
+	readonly viewportBridge = new ElementIdBridge();
+	readonly inputBridge = new ElementIdBridge();
+	readonly labelBridge = new ElementIdBridge();
+
 	// published state that the components and other things can react to
 	commandState = $state.raw<CommandState>(defaultState);
 	// internal state that we mutate in batches and publish to the `state` at once
@@ -224,7 +226,7 @@ export class CommandRootState {
 		// Sort items within groups to bottom
 		// Sort items outside of groups
 		// Sort groups to bottom (pushes all non-grouped items to the top)
-		const listInsertionElement = this.viewportNode;
+		const listInsertionElement = this.viewportBridge.element;
 
 		const sorted = this.getValidItems().sort((a, b) => {
 			const valueA = a.getAttribute("data-value");
@@ -1303,7 +1305,7 @@ export class CommandInputState {
 	readonly root: CommandRootState;
 	readonly attachment: RefAttachment;
 	readonly #selectedItemId = $derived.by(() => {
-		const item = this.root.viewportNode?.querySelector<HTMLElement>(
+		const item = this.root.viewportBridge.element?.querySelector<HTMLElement>(
 			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${cssEscape(this.root.opts.value.current)}"]`
 		);
 		if (item === undefined || item === null) return;
@@ -1313,7 +1315,8 @@ export class CommandInputState {
 	constructor(opts: CommandInputStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.root.inputNode = v));
+		this.attachment = attachRef(this.opts.ref);
+		this.root.inputBridge.connect(this.opts);
 		watch(
 			() => this.opts.ref.current,
 			() => {
@@ -1346,8 +1349,8 @@ export class CommandInputState {
 				"aria-autocomplete": "list",
 				role: "combobox",
 				"aria-expanded": getAriaExpanded(true),
-				"aria-controls": this.root.viewportNode?.id,
-				"aria-labelledby": this.root.labelNode?.id,
+				"aria-controls": this.root.viewportBridge.id,
+				"aria-labelledby": this.root.labelBridge.id,
 				"aria-activedescendant": this.#selectedItemId,
 				...this.attachment,
 			}) as const
@@ -1591,7 +1594,8 @@ export class CommandLabelState {
 	constructor(opts: CommandLabelStateOpts, root: CommandRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.root.labelNode = v));
+		this.attachment = attachRef(this.opts.ref);
+		this.root.labelBridge.connect(this.opts);
 	}
 
 	readonly props = $derived.by(
@@ -1619,7 +1623,8 @@ export class CommandViewportState {
 	constructor(opts: CommandViewportStateOpts, list: CommandListState) {
 		this.opts = opts;
 		this.list = list;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.list.root.viewportNode = v));
+		this.attachment = attachRef(this.opts.ref);
+		this.list.root.viewportBridge.connect(this.opts);
 		watch(
 			[() => this.opts.ref.current, () => this.list.opts.ref.current],
 			([node, listNode]) => {

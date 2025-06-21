@@ -21,6 +21,7 @@ import type {
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { ElementIdBridge } from "$lib/internal/element-id-bridge.svelte.js";
 
 const linkPreviewAttrs = createBitsAttrs({
 	component: "link-preview",
@@ -50,7 +51,8 @@ export class LinkPreviewRootState {
 	isPointerDownOnContent = $state(false);
 	containsSelection = $state(false);
 	timeout: number | null = null;
-	contentNode = $state<HTMLElement | null>(null);
+	readonly contentBridge = new ElementIdBridge();
+	// contentNode = $state<HTMLElement | null>(null);
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
@@ -60,7 +62,7 @@ export class LinkPreviewRootState {
 		this.opts = opts;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: box.with(() => this.contentBridge.element),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -98,8 +100,8 @@ export class LinkPreviewRootState {
 					handlePointerUp
 				);
 
-				if (!this.contentNode) return;
-				const tabCandidates = getTabbableCandidates(this.contentNode);
+				if (!this.contentBridge.element) return;
+				const tabCandidates = getTabbableCandidates(this.contentBridge.element);
 
 				for (const candidate of tabCandidates) {
 					candidate.setAttribute("tabindex", "-1");
@@ -201,7 +203,7 @@ export class LinkPreviewTriggerState {
 				"aria-haspopup": "dialog",
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"aria-controls": this.root.contentNode?.id,
+				"aria-controls": this.root.contentBridge.id,
 				role: "button",
 				[linkPreviewAttrs.trigger]: "",
 				onpointerenter: this.onpointerenter,
@@ -232,7 +234,8 @@ export class LinkPreviewContentState {
 	constructor(opts: LinkPreviewContentStateOpts, root: LinkPreviewRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
+		this.attachment = attachRef(this.opts.ref);
+		this.root.contentBridge.connect(this.opts);
 		this.root.domContext = new DOMContext(opts.ref);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerenter = this.onpointerenter.bind(this);

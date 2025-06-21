@@ -4,7 +4,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
-import { Context, watch } from "runed";
+import { Context } from "runed";
 import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
@@ -15,6 +15,7 @@ import type {
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { ElementIdBridge } from "$lib/internal/element-id-bridge.svelte.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -40,14 +41,11 @@ export class DialogRootState {
 	}
 
 	readonly opts: DialogRootStateOpts;
-	triggerNode = $state<HTMLElement | null>(null);
-	contentNode = $state<HTMLElement | null>(null);
-	descriptionNode = $state<HTMLElement | null>(null);
-	contentId = $state<string | undefined>(undefined);
-	titleId = $state<string | undefined>(undefined);
-	triggerId = $state<string | undefined>(undefined);
-	descriptionId = $state<string | undefined>(undefined);
-	cancelNode = $state<HTMLElement | null>(null);
+	readonly triggerBridge = new ElementIdBridge();
+	readonly contentBridge = new ElementIdBridge();
+	readonly descriptionBridge = new ElementIdBridge();
+	readonly titleBridge = new ElementIdBridge();
+	readonly cancelBridge = new ElementIdBridge();
 
 	constructor(opts: DialogRootStateOpts) {
 		this.opts = opts;
@@ -55,7 +53,7 @@ export class DialogRootState {
 		this.handleClose = this.handleClose.bind(this);
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: box.with(() => this.contentBridge.element),
 			open: this.opts.open,
 			enabled: true,
 			onComplete: () => {
@@ -100,10 +98,8 @@ export class DialogTriggerState {
 	constructor(opts: DialogTriggerStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref, (v) => {
-			this.root.triggerNode = v;
-			this.root.triggerId = v?.id;
-		});
+		this.attachment = attachRef(this.opts.ref);
+		this.root.triggerBridge.connect(this.opts);
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -128,7 +124,7 @@ export class DialogTriggerState {
 				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
-				"aria-controls": this.root.contentNode ? this.root.contentId : undefined,
+				"aria-controls": this.root.contentBridge.id,
 				[this.root.getBitsAttr("trigger")]: "",
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
@@ -232,15 +228,8 @@ export class DialogTitleState {
 	constructor(opts: DialogTitleStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.root.titleId = this.opts.id.current;
 		this.attachment = attachRef(this.opts.ref);
-
-		watch.pre(
-			() => this.opts.id.current,
-			(id) => {
-				this.root.titleId = id;
-			}
-		);
+		this.root.titleBridge.connect(this.opts);
 	}
 
 	readonly props = $derived.by(
@@ -270,16 +259,8 @@ export class DialogDescriptionState {
 	constructor(opts: DialogDescriptionStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.root.descriptionId = this.opts.id.current;
-		this.attachment = attachRef(this.opts.ref, (v) => {
-			this.root.descriptionNode = v;
-		});
-		watch.pre(
-			() => this.opts.id.current,
-			(id) => {
-				this.root.descriptionId = id;
-			}
-		);
+		this.attachment = attachRef(this.opts.ref);
+		this.root.descriptionBridge.connect(this.opts);
 	}
 
 	readonly props = $derived.by(
@@ -307,17 +288,8 @@ export class DialogContentState {
 	constructor(opts: DialogContentStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.root.contentId = this.opts.id.current;
-		watch.pre(
-			() => this.opts.id.current,
-			(id) => {
-				this.root.contentId = id;
-			}
-		);
-
-		this.attachment = attachRef(this.opts.ref, (v) => {
-			this.root.contentNode = v;
-		});
+		this.attachment = attachRef(this.opts.ref);
+		this.root.contentBridge.connect(this.opts);
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
@@ -328,8 +300,8 @@ export class DialogContentState {
 				id: this.opts.id.current,
 				role: this.root.opts.variant.current === "alert-dialog" ? "alertdialog" : "dialog",
 				"aria-modal": "true",
-				"aria-describedby": this.root.descriptionId,
-				"aria-labelledby": this.root.titleId,
+				"aria-describedby": this.root.descriptionBridge.id,
+				"aria-labelledby": this.root.titleBridge.id,
 				[this.root.getBitsAttr("content")]: "",
 				style: {
 					pointerEvents: "auto",
@@ -390,7 +362,8 @@ export class AlertDialogCancelState {
 	constructor(opts: AlertDialogCancelStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.root.cancelNode = v));
+		this.attachment = attachRef(this.opts.ref);
+		this.root.cancelBridge.connect(this.opts);
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
 	}

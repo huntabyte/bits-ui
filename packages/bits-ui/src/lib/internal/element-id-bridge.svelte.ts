@@ -1,29 +1,41 @@
 import { watch } from "runed";
-import type { ReadableBox, WritableBox } from "svelte-toolbelt";
+import { type ReadableBox, type WritableBox } from "svelte-toolbelt";
 
+interface ElementIdBridgeConnectOpts {
+	ref: WritableBox<HTMLElement | null>;
+	id: ReadableBox<string | undefined>;
+}
+
+/**
+ * Coordinates an element reference with its ID for accessibility attributes.
+ *
+ * Ensures both the DOM element and its ID are available before exposing the ID,
+ * preventing race conditions where ARIA attributes reference non-existent elements.
+ * Updates reactively when either the source ID or element changes.
+ */
 export class ElementIdBridge {
 	#id = $state<string | undefined>(undefined);
-	node = $state<HTMLElement | null>(null);
+	element = $state<HTMLElement | null>(null);
 	id = $derived.by(() => {
-		if (this.node && this.#id) return this.#id;
+		if (this.element && this.#id) return this.#id;
 		return undefined;
 	});
 
-	link(ref: WritableBox<HTMLElement | null>, id: ReadableBox<string | undefined>) {
-		this.#id = id.current;
-		this.node = ref.current;
+	connect(opts: ElementIdBridgeConnectOpts) {
+		this.#id = opts.id.current;
+		this.element = opts.ref.current;
 
 		watch.pre(
-			() => id.current,
+			() => opts.id.current,
 			(currId) => {
 				this.#id = currId;
 			}
 		);
 
 		watch.pre(
-			() => ref.current,
+			() => opts.ref.current,
 			(currNode) => {
-				this.node = currNode;
+				this.element = currNode;
 			}
 		);
 	}

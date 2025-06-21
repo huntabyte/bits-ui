@@ -47,7 +47,7 @@ export class CollapsibleRootState {
 
 	readonly opts: CollapsibleRootStateOpts;
 	readonly attachment: RefAttachment;
-	readonly contentData = new ElementIdBridge();
+	readonly contentBridge = new ElementIdBridge();
 
 	constructor(opts: CollapsibleRootStateOpts) {
 		this.opts = opts;
@@ -55,7 +55,7 @@ export class CollapsibleRootState {
 		this.attachment = attachRef(this.opts.ref);
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentData.node),
+			ref: box.with(() => this.contentBridge.element),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -106,7 +106,7 @@ export class CollapsibleContentState {
 		this.opts = opts;
 		this.root = root;
 		this.#isMountAnimationPrevented = root.opts.open.current;
-		this.root.contentData.link(this.opts.ref, this.opts.id);
+		this.root.contentBridge.connect(this.opts);
 		this.attachment = attachRef(this.opts.ref);
 
 		$effect.pre(() => {
@@ -216,7 +216,7 @@ export class CollapsibleTriggerState {
 				id: this.opts.id.current,
 				type: "button",
 				disabled: this.#isDisabled,
-				"aria-controls": this.root.contentData.id,
+				"aria-controls": this.root.contentBridge.id,
 				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),

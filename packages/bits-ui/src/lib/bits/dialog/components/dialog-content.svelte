@@ -60,7 +60,7 @@
 			onCloseAutoFocus={(e) => {
 				onCloseAutoFocus(e);
 				if (e.defaultPrevented) return;
-				afterSleep(1, () => contentState.root.triggerNode?.focus());
+				afterSleep(1, () => contentState.root.triggerBridge.element?.focus());
 			}}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
