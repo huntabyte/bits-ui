@@ -732,14 +732,19 @@ export class RangeCalendarCellState {
 	readonly root: RangeCalendarRootState;
 	readonly attachment: RefAttachment;
 	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
-	readonly isDisabled = $derived.by(() => this.root.isDateDisabled(this.opts.date.current));
+	readonly isOutsideMonth = $derived.by(
+		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
+	);
+	readonly isDisabled = $derived.by(
+		() =>
+			this.root.isDateDisabled(this.opts.date.current) ||
+			(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
+	);
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
 	readonly isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
-	readonly isOutsideMonth = $derived.by(
-		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
-	);
+
 	readonly isOutsideVisibleMonths = $derived.by(() =>
 		this.root.isOutsideVisibleMonths(this.opts.date.current)
 	);
