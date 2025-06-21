@@ -161,8 +161,8 @@ describe("Focus Management", () => {
 
 	it("should focus first focusable item upon opening", async () => {
 		const _ = await open();
-		const closeButton = page.getByTestId("close").element();
-		await expect.element(page.elementLocator(document.activeElement!)).toBe(closeButton);
+		const closeButton = page.getByTestId("close");
+		await expect.element(closeButton).toHaveFocus();
 	});
 });
 
