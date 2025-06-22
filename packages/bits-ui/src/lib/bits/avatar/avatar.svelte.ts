@@ -1,32 +1,46 @@
-import { untrack } from "svelte";
-import { type ReadableBox, type WritableBox, useRefById } from "svelte-toolbelt";
+import {
+	DOMContext,
+	type ReadableBox,
+	type WritableBox,
+	attachRef,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import type { HTMLImgAttributes } from "svelte/elements";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-const AVATAR_ROOT_ATTR = "data-avatar-root";
-const AVATAR_IMAGE_ATTR = "data-avatar-image";
-const AVATAR_FALLBACK_ATTR = "data-avatar-fallback";
+const avatarAttrs = createBitsAttrs({
+	component: "avatar",
+	parts: ["root", "image", "fallback"],
+});
 
 type CrossOrigin = HTMLImgAttributes["crossorigin"];
 type ReferrerPolicy = HTMLImgAttributes["referrerpolicy"];
-
-/**
- * ROOT
- */
-type AvatarRootStateProps = WithRefProps<{
-	delayMs: ReadableBox<number>;
-	loadingStatus: WritableBox<AvatarImageLoadingStatus>;
-}>;
-
 type AvatarImageSrc = string | null | undefined;
 
-class AvatarRootState {
-	constructor(readonly opts: AvatarRootStateProps) {
+interface AvatarRootStateOpts extends WithRefOpts {
+	delayMs: ReadableBox<number>;
+	loadingStatus: WritableBox<AvatarImageLoadingStatus>;
+}
+
+const AvatarRootContext = new Context<AvatarRootState>("Avatar.Root");
+
+export class AvatarRootState {
+	static create(opts: AvatarRootStateOpts) {
+		return AvatarRootContext.set(new AvatarRootState(opts));
+	}
+
+	readonly opts: AvatarRootStateOpts;
+	readonly domContext: DOMContext;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: AvatarRootStateOpts) {
+		this.opts = opts;
+		this.domContext = new DOMContext(this.opts.ref);
 		this.loadImage = this.loadImage.bind(this);
-		useRefById(opts);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	loadImage(src: string, crossorigin?: CrossOrigin, referrerPolicy?: ReferrerPolicy) {
@@ -40,7 +54,7 @@ class AvatarRootState {
 
 		this.opts.loadingStatus.current = "loading";
 		image.onload = () => {
-			imageTimerId = window.setTimeout(() => {
+			imageTimerId = this.domContext.setTimeout(() => {
 				this.opts.loadingStatus.current = "loaded";
 			}, this.opts.delayMs.current);
 		};
@@ -48,7 +62,8 @@ class AvatarRootState {
 			this.opts.loadingStatus.current = "error";
 		};
 		return () => {
-			window.clearTimeout(imageTimerId);
+			if (!imageTimerId) return;
+			this.domContext.clearTimeout(imageTimerId);
 		};
 	}
 
@@ -56,49 +71,47 @@ class AvatarRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[AVATAR_ROOT_ATTR]: "",
+				[avatarAttrs.root]: "",
 				"data-status": this.opts.loadingStatus.current,
+				...this.attachment,
 			}) as const
 	);
 }
 
-/**
- * IMAGE
- */
+interface AvatarImageStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			src: AvatarImageSrc;
+			crossOrigin: CrossOrigin;
+			referrerPolicy: ReferrerPolicy;
+		}> {}
 
-type AvatarImageStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		src: AvatarImageSrc;
-		crossOrigin: CrossOrigin;
-		referrerPolicy: ReferrerPolicy;
-	}>
->;
+export class AvatarImageState {
+	static create(opts: AvatarImageStateOpts) {
+		return new AvatarImageState(opts, AvatarRootContext.get());
+	}
+	readonly opts: AvatarImageStateOpts;
+	readonly root: AvatarRootState;
+	readonly attachment: RefAttachment;
 
-class AvatarImageState {
-	constructor(
-		readonly opts: AvatarImageStateProps,
-		readonly root: AvatarRootState
-	) {
-		useRefById(opts);
+	constructor(opts: AvatarImageStateOpts, root: AvatarRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
-		$effect.pre(() => {
-			if (!this.opts.src.current) {
-				this.root.opts.loadingStatus.current = "error";
-				return;
+		watch.pre(
+			[() => this.opts.src.current, () => this.opts.crossOrigin.current],
+			([src, crossOrigin]) => {
+				if (!src) {
+					this.root.opts.loadingStatus.current = "error";
+					return;
+				}
+				this.root.loadImage(src, crossOrigin, this.opts.referrerPolicy.current);
 			}
-			// dependency on crossorigin
-			this.opts.crossOrigin.current;
-			untrack(() =>
-				this.root.loadImage(
-					this.opts.src.current ?? "",
-					this.opts.crossOrigin.current,
-					this.opts.referrerPolicy.current
-				)
-			);
-		});
+		);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -106,50 +119,42 @@ class AvatarImageState {
 					display: this.root.opts.loadingStatus.current === "loaded" ? "block" : "none",
 				},
 				"data-status": this.root.opts.loadingStatus.current,
-				[AVATAR_IMAGE_ATTR]: "",
+				[avatarAttrs.image]: "",
 				src: this.opts.src.current,
 				crossorigin: this.opts.crossOrigin.current,
 				referrerpolicy: this.opts.referrerPolicy.current,
+				...this.attachment,
 			}) as const
 	);
 }
 
-/**
- * FALLBACK
- */
-
-type AvatarFallbackStateProps = WithRefProps;
-
-class AvatarFallbackState {
-	constructor(
-		readonly opts: AvatarFallbackStateProps,
-		readonly root: AvatarRootState
-	) {
-		useRefById(opts);
+interface AvatarFallbackStateOpts extends WithRefOpts {}
+export class AvatarFallbackState {
+	static create(opts: AvatarFallbackStateOpts) {
+		return new AvatarFallbackState(opts, AvatarRootContext.get());
 	}
 
-	props = $derived.by(
+	readonly opts: AvatarFallbackStateOpts;
+	readonly root: AvatarRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: AvatarFallbackStateOpts, root: AvatarRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly style = $derived.by(() =>
+		this.root.opts.loadingStatus.current === "loaded" ? { display: "none" } : undefined
+	);
+
+	readonly props = $derived.by(
 		() =>
 			({
-				style: {
-					display: this.root.opts.loadingStatus.current === "loaded" ? "none" : undefined,
-				},
+				style: this.style,
 				"data-status": this.root.opts.loadingStatus.current,
-				[AVATAR_FALLBACK_ATTR]: "",
+				[avatarAttrs.fallback]: "",
+				...this.attachment,
 			}) as const
 	);
-}
-
-const AvatarRootContext = new Context<AvatarRootState>("Avatar.Root");
-
-export function useAvatarRoot(props: AvatarRootStateProps) {
-	return AvatarRootContext.set(new AvatarRootState(props));
-}
-
-export function useAvatarImage(props: AvatarImageStateProps) {
-	return new AvatarImageState(props, AvatarRootContext.get());
-}
-
-export function useAvatarFallback(props: AvatarFallbackStateProps) {
-	return new AvatarFallbackState(props, AvatarRootContext.get());
 }

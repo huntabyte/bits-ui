@@ -11,6 +11,8 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	const transformOption = $derived(get(options.transform) ?? true);
 	const placementOption = $derived(get(options.placement) ?? "bottom");
 	const strategyOption = $derived(get(options.strategy) ?? "absolute");
+	const sideOffsetOption = $derived(get(options.sideOffset) ?? 0);
+	const alignOffsetOption = $derived(get(options.alignOffset) ?? 0);
 	const reference = options.reference;
 
 	/** State */
@@ -19,31 +21,27 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 
 	const floating = box<HTMLElement | null>(null);
 
+	// svelte-ignore state_referenced_locally
 	let strategy = $state(strategyOption);
+	// svelte-ignore state_referenced_locally
 	let placement = $state(placementOption);
 	let middlewareData = $state({});
 	let isPositioned = $state(false);
 	const floatingStyles = $derived.by(() => {
-		const initialStyles = {
-			position: strategy,
-			left: "0",
-			top: "0",
-		};
-
-		if (!floating.current) {
-			return initialStyles;
-		}
-
-		const xVal = roundByDPR(floating.current, x);
-		const yVal = roundByDPR(floating.current, y);
+		// preserve last known position when floating ref is null (during transitions)
+		const xVal = floating.current ? roundByDPR(floating.current, x) : x;
+		const yVal = floating.current ? roundByDPR(floating.current, y) : y;
 
 		if (transformOption) {
 			return {
-				...initialStyles,
+				position: strategy,
+				left: "0",
+				top: "0",
 				transform: `translate(${xVal}px, ${yVal}px)`,
-				...(getDPR(floating.current) >= 1.5 && {
-					willChange: "transform",
-				}),
+				...(floating.current &&
+					getDPR(floating.current) >= 1.5 && {
+						willChange: "transform",
+					}),
 			};
 		}
 
@@ -59,11 +57,24 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 
 	function update() {
 		if (reference.current === null || floating.current === null) return;
+
 		computePosition(reference.current, floating.current, {
 			middleware: middlewareOption,
 			placement: placementOption,
 			strategy: strategyOption,
 		}).then((position) => {
+			// ignore bad coordinates that cause jumping during close transitions
+			if (!openOption && x !== 0 && y !== 0) {
+				// if we had a good position and now getting coordinates near
+				// the expected offset bounds during close, ignore it
+				const maxExpectedOffset = Math.max(
+					Math.abs(sideOffsetOption),
+					Math.abs(alignOffsetOption),
+					15
+				);
+				if (position.x <= maxExpectedOffset && position.y <= maxExpectedOffset) return;
+			}
+
 			x = position.x;
 			y = position.y;
 			strategy = position.strategy;

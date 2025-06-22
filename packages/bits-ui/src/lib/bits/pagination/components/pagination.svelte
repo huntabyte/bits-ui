@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PaginationRootProps } from "../types.js";
-	import { usePaginationRoot } from "../pagination.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { PaginationRootState } from "../pagination.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		count,
 		perPage = 1,
 		page = $bindable(1),
@@ -20,7 +22,7 @@
 		...restProps
 	}: PaginationRootProps = $props();
 
-	const rootState = usePaginationRoot({
+	const rootState = PaginationRootState.create({
 		id: box.with(() => id),
 		count: box.with(() => count),
 		perPage: box.with(() => perPage),

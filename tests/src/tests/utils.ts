@@ -51,8 +51,10 @@ export const kbd = {
 	A: "A",
 	p: "p",
 	n: "n",
+	h: "h",
 	j: "j",
 	k: "k",
+	l: "l",
 };
 
 export function getTestKbd() {
@@ -75,7 +77,7 @@ export type queryByTestId = (
 	options?: MatcherOptions | undefined
 ) => HTMLElement | null;
 
-type CustomUserEvents = typeof userEvent & {
+export type CustomUserEvents = typeof userEvent & {
 	pointerDownUp: (target: HTMLElement | null) => Promise<void>;
 };
 

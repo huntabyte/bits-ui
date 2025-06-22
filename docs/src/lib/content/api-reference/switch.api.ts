@@ -1,94 +1,107 @@
 import type { SwitchRootPropsWithoutHTML, SwitchThumbPropsWithoutHTML } from "bits-ui";
-import {
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createFunctionProp,
-	createStringProp,
-	withChildProps,
-} from "./helpers.js";
+import { checkedProp, onCheckedChangeProp, withChildProps } from "./shared.js";
 import {
 	SwitchCheckedDataAttr,
 	SwitchRootChildSnippetProps,
 	SwitchRootChildrenSnippetProps,
-	SwitchRootOnCheckedChangeProp,
 } from "./extended-types/switch/index.js";
-import * as C from "$lib/content/constants.js";
+import {
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineSimpleDataAttr,
+	defineStringProp,
+} from "../utils.js";
 
-const stateDataAttr = createDataAttrSchema({
+const stateDataAttr = defineEnumDataAttr({
 	name: "state",
 	description: "The switch's checked state.",
-	definition: SwitchCheckedDataAttr,
+	options: ["checked", "unchecked"],
+	value: SwitchCheckedDataAttr,
 });
 
-const root = createApiSchema<SwitchRootPropsWithoutHTML>({
+const root = defineComponentApiSchema<SwitchRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root switch component used to set and manage the state of the switch.",
 	props: {
-		checked: createBooleanProp({
-			default: C.FALSE,
-			description: "Whether or not the switch is checked.",
-			bindable: true,
-		}),
-		onCheckedChange: createFunctionProp({
-			definition: SwitchRootOnCheckedChangeProp,
-			description: "A callback function called when the checked state of the switch changes.",
-			stringDefinition: "(checked: boolean) => void",
-		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		checked: checkedProp,
+		onCheckedChange: onCheckedChangeProp,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the switch is disabled.",
 		}),
-		name: createStringProp({
+		name: defineStringProp({
 			description:
 				"The name of the hidden input element, used to identify the input in form submissions.",
 		}),
-		required: createBooleanProp({
-			default: C.FALSE,
+		required: defineBooleanProp({
+			default: false,
 			description: "Whether or not the switch is required to be checked.",
 		}),
-		value: createStringProp({
+		value: defineStringProp({
 			description:
 				"The value of the hidden input element to be used in form submissions when the switch is checked.",
 		}),
 		...withChildProps({
 			elType: "HTMLButtonElement",
-			childrenDef: SwitchRootChildrenSnippetProps,
-			childDef: SwitchRootChildSnippetProps,
+			children: {
+				definition: SwitchRootChildrenSnippetProps,
+				stringDefinition: `type ChildrenSnippetProps = {
+	checked: boolean;
+};`,
+			},
+			child: {
+				definition: SwitchRootChildSnippetProps,
+				stringDefinition: `type ChildSnippetProps = {
+	checked: boolean;
+	props: Record<string, unknown>;
+};`,
+			},
 		}),
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "checked",
 			description: "Present when the switch is checked.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the switch is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "switch-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-const thumb = createApiSchema<SwitchThumbPropsWithoutHTML>({
+const thumb = defineComponentApiSchema<SwitchThumbPropsWithoutHTML>({
 	title: "Thumb",
 	description: "The thumb on the switch used to indicate the switch's state.",
 	props: withChildProps({
 		elType: "HTMLSpanElement",
-		childrenDef: SwitchRootChildrenSnippetProps,
-		childDef: SwitchRootChildSnippetProps,
+		children: {
+			definition: SwitchRootChildrenSnippetProps,
+			stringDefinition: `type ChildrenSnippetProps = {
+	checked: boolean;
+};`,
+		},
+		child: {
+			definition: SwitchRootChildSnippetProps,
+			stringDefinition: `type ChildSnippetProps = {
+	checked: boolean;
+	props: Record<string, unknown>;
+};`,
+		},
 	}),
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "checked",
 			description: "Present when the switch is checked.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "switch-thumb",
 			description: "Present on the thumb element.",
 		}),

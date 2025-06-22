@@ -1,3 +1,3 @@
 ```ts
-string | HTMLElement | null | undefined;
+;string | HTMLElement | null | undefined
 ```

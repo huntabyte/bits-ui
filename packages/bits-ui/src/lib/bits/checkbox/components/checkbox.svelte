@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxRootProps } from "../types.js";
-	import { CheckboxGroupContext, useCheckboxRoot } from "../checkbox.svelte.js";
+	import { CheckboxGroupContext, CheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
 		checked = $bindable(false),
@@ -14,7 +17,7 @@
 		required = false,
 		name = undefined,
 		value = "on",
-		id = useId(),
+		id = createId(uid),
 		indeterminate = $bindable(false),
 		onIndeterminateChange,
 		child,
@@ -32,7 +35,20 @@
 		}
 	}
 
-	const rootState = useCheckboxRoot(
+	watch.pre(
+		() => value,
+		() => {
+			if (group && value) {
+				if (group.opts.value.current.includes(value)) {
+					checked = true;
+				} else {
+					checked = false;
+				}
+			}
+		}
+	);
+
+	const rootState = CheckboxRootState.create(
 		{
 			checked: box.with(
 				() => checked,

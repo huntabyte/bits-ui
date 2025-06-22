@@ -4,17 +4,17 @@ First off, thank you for considering contributing to Bits UI! We appreciate all 
 
 ## Table of Contents
 
--   [Contributing to Bits UI](#contributing-to-bits-ui)
-    -   [Table of Contents](#table-of-contents)
-    -   [1. Code of Conduct](#1-code-of-conduct)
-    -   [2. Ways to Contribute](#2-ways-to-contribute)
-    -   [3. Reporting Bugs](#3-reporting-bugs)
-    -   [4. Suggesting Features](#4-suggesting-features)
-    -   [5. Submitting Code (Pull Requests)](#5-submitting-code-pull-requests)
-    -   [6. Development Setup](#6-development-setup)
-    -   [7. Coding Style](#7-coding-style)
-    -   [8. Pull Request Title Guidelines](#8-pull-request-title-guidelines)
-    -   [9. Issue and Feature Request Policy](#9-issue-and-feature-request-policy)
+- [Contributing to Bits UI](#contributing-to-bits-ui)
+  - [Table of Contents](#table-of-contents)
+  - [1. Code of Conduct](#1-code-of-conduct)
+  - [2. Ways to Contribute](#2-ways-to-contribute)
+  - [3. Reporting Bugs](#3-reporting-bugs)
+  - [4. Suggesting Features](#4-suggesting-features)
+  - [5. Submitting Code (Pull Requests)](#5-submitting-code-pull-requests)
+  - [6. Development Setup](#6-development-setup)
+  - [7. Coding Style](#7-coding-style)
+  - [8. Pull Request Title Guidelines](#8-pull-request-title-guidelines)
+  - [9. Issue and Feature Request Policy](#9-issue-and-feature-request-policy)
 
 ## 1. Code of Conduct
 
@@ -24,12 +24,12 @@ Please review our [Code of Conduct](./CODE_OF_CONDUCT.md) before contributing. W
 
 There are many ways to contribute to Bits UI:
 
--   **Reporting Bugs:** If you find a bug, please report it! See [Reporting Bugs](#reporting-bugs) below.
--   **Suggesting Features:** Have an idea for a new feature or improvement? Share it with us! See [Suggesting Features](#suggesting-features) below.
--   **Submitting Code:** Contribute code by fixing bugs, implementing features, or improving documentation. See [Submitting Code (Pull Requests)](#submitting-code-pull-requests) below.
--   **Improving Documentation:** Help us make the documentation clearer, more comprehensive, and easier to understand.
--   **Answering Questions:** Help other users in the community by answering questions in GitHub Discussions.
--   **Testing:** Help test new features and releases to ensure quality.
+- **Reporting Bugs:** If you find a bug, please report it! See [Reporting Bugs](#reporting-bugs) below.
+- **Suggesting Features:** Have an idea for a new feature or improvement? Share it with us! See [Suggesting Features](#suggesting-features) below.
+- **Submitting Code:** Contribute code by fixing bugs, implementing features, or improving documentation. See [Submitting Code (Pull Requests)](#submitting-code-pull-requests) below.
+- **Improving Documentation:** Help us make the documentation clearer, more comprehensive, and easier to understand.
+- **Answering Questions:** Help other users in the community by answering questions in GitHub Discussions.
+- **Testing:** Help test new features and releases to ensure quality.
 
 ## 3. Reporting Bugs
 
@@ -40,11 +40,11 @@ Before reporting a bug, please:
 
 If the bug hasn't been reported and you're using the latest version, please open a new issue. Follow these guidelines:
 
--   **Use a Clear and Descriptive Title:** Summarize the problem concisely.
--   **Provide Detailed Steps to Reproduce:** Explain exactly how to reproduce the bug. Include code snippets, screenshots, or animated GIFs if possible.
--   **Include Environment Information:** Specify your operating system, browser (if applicable), and the version of Bits UI you're using.
--   **Describe Expected vs. Actual Behavior:** Clearly state what you expected to happen and what actually happened.
--   **Include Error Messages:** If there are any error messages, include the full text.
+- **Use a Clear and Descriptive Title:** Summarize the problem concisely.
+- **Provide Detailed Steps to Reproduce:** Explain exactly how to reproduce the bug. Include code snippets, screenshots, or animated GIFs if possible.
+- **Include Environment Information:** Specify your operating system, browser (if applicable), and the version of Bits UI you're using.
+- **Describe Expected vs. Actual Behavior:** Clearly state what you expected to happen and what actually happened.
+- **Include Error Messages:** If there are any error messages, include the full text.
 
 **Important:** Follow our [Issue and Feature Request Policy](#issue-and-feature-request-policy) - Issues are for _bugs only_.
 
@@ -77,10 +77,10 @@ We encourage contributions via pull requests (PRs)! Here's the process:
 
 **Important Considerations:**
 
--   **Small, Focused PRs:** Keep your PRs small and focused on a single feature or bug fix. Large, sprawling PRs are difficult to review.
--   **Discuss Before Coding (for large changes):** For significant changes, it's best to discuss the design and implementation details in a GitHub Discussion (or issue if a significant change is required to fix a bug) _before_ starting to code.
--   **One Branch Per Feature:** Do not submit multiple features or bug fixes within a single branch/PR.
--   **Do Not Use `main` Branch:** Never submit a PR from your `main` branch. This allows maintainers to make adjustments to your PR if needed.
+- **Small, Focused PRs:** Keep your PRs small and focused on a single feature or bug fix. Large, sprawling PRs are difficult to review.
+- **Discuss Before Coding (for large changes):** For significant changes, it's best to discuss the design and implementation details in a GitHub Discussion (or issue if a significant change is required to fix a bug) _before_ starting to code.
+- **One Branch Per Feature:** Do not submit multiple features or bug fixes within a single branch/PR.
+- **Do Not Use `main` Branch:** Never submit a PR from your `main` branch. This allows maintainers to make adjustments to your PR if needed.
 
 ## 6. Development Setup
 
@@ -94,25 +94,25 @@ To get started with development:
 
 We use [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) to enforce a consistent coding style. Please ensure your code adheres to these guidelines. You can run `pnpm lint` to check for linting errors and `pnpm format` to automatically format your code.
 
--   Follow existing naming conventions (e.g., camelCase for variables and functions, PascalCase for components).
--   Write clear and concise code.
--   Add comments where necessary to explain non-obvious logic.
+- Follow existing naming conventions (e.g., camelCase for variables and functions, PascalCase for components).
+- Write clear and concise code.
+- Add comments where necessary to explain non-obvious logic.
 
 ## 8. Pull Request Title Guidelines
 
 The title of your pull request should be prefixed with one of the following, indicating the type of change:
 
--   `feat:`: For a new feature.
--   `fix:`: For a bug fix.
--   `docs:`: For changes to documentation.
--   `chore:`: For changes that don't modify source code or tests (e.g., build process, tooling).
+- `feat:`: For a new feature.
+- `fix:`: For a bug fix.
+- `docs:`: For changes to documentation.
+- `chore:`: For changes that don't modify source code or tests (e.g., build process, tooling).
 
 **Examples:**
 
--   `feat: Add support for dark mode`
--   `fix: Resolve issue with button alignment`
--   `docs: Update contributing guidelines`
--   `chore: Upgrade dependencies`
+- `feat: Add support for dark mode`
+- `fix: Resolve issue with button alignment`
+- `docs: Update contributing guidelines`
+- `chore: Upgrade dependencies`
 
 ## 9. Issue and Feature Request Policy
 

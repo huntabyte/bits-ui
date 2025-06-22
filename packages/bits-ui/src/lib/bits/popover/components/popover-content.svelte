@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PopoverContentProps } from "../types.js";
-	import { usePopoverContent } from "../popover.svelte.js";
+	import { PopoverContentState } from "../popover.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		children,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		forceMount = false,
 		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
@@ -22,7 +24,7 @@
 		...restProps
 	}: PopoverContentProps = $props();
 
-	const contentState = usePopoverContent({
+	const contentState = PopoverContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -40,6 +42,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		enabled={contentState.root.opts.open.current}
 		{id}
 		{trapFocus}
@@ -66,7 +69,8 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
-		present={contentState.root.opts.open.current}
+		ref={contentState.opts.ref}
+		open={contentState.root.opts.open.current}
 		{id}
 		{trapFocus}
 		{preventScroll}

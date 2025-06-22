@@ -34,11 +34,19 @@ export type StyleProperties = CSS.Properties & {
 export type Orientation = "horizontal" | "vertical";
 export type Direction = "ltr" | "rtl";
 
+/**
+ * Controls positioning of the slider thumb.
+ *
+ * - `exact`: The thumb is centered exactly at the value of the slider.
+ * - `contain`: The thumb is centered exactly at the value of the slider, but will be contained within the slider track at the ends.
+ */
+export type SliderThumbPositioning = "exact" | "contain";
+
 export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
 export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
-export type { EditableSegmentPart } from "./date/types.js";
+export type { EditableSegmentPart, EditableTimeSegmentPart } from "./date/types.js";
 export type {
 	Month,
 	DateMatcher,
@@ -46,6 +54,12 @@ export type {
 	DateRangeValidator,
 	DateValidator,
 	DateRange,
+	TimeValue,
+	TimeSegmentPart,
+	TimeRange,
+	TimeValidator,
+	TimeRangeValidator,
+	TimeOnInvalid,
 } from "./date/types.js";
 export type { WithChild, Without, WithChildren } from "$lib/internal/types.js";
 export { mergeProps } from "svelte-toolbelt";

@@ -1,1 +1,1 @@
-export { default as ProgressStateAttr } from "./progress-state-attr.md";
+export { default as ProgressStateAttr } from "./progress-state-attr.md"

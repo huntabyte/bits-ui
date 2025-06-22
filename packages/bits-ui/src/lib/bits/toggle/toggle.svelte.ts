@@ -1,23 +1,36 @@
-import { useRefById } from "svelte-toolbelt";
-import { getAriaPressed, getDataDisabled, getDisabled } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
+import {
+	createBitsAttrs,
+	getAriaPressed,
+	getDataDisabled,
+	getDisabled,
+} from "$lib/internal/attrs.js";
+import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 
-const TOGGLE_ROOT_ATTR = "data-toggle-root";
+export const toggleAttrs = createBitsAttrs({
+	component: "toggle",
+	parts: ["root"],
+});
 
-type ToggleRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}> &
+interface ToggleRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}>,
 		WritableBoxedValues<{
 			pressed: boolean;
-		}>
->;
+		}> {}
 
-class ToggleRootState {
-	constructor(readonly opts: ToggleRootStateProps) {
-		useRefById(opts);
+export class ToggleRootState {
+	static create(opts: ToggleRootStateOpts) {
+		return new ToggleRootState(opts);
+	}
+	readonly opts: ToggleRootStateOpts;
+	readonly attachment: RefAttachment;
 
+	constructor(opts: ToggleRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.onclick = this.onclick.bind(this);
 	}
 
@@ -32,26 +45,23 @@ class ToggleRootState {
 		this.#togglePressed();
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		pressed: this.opts.pressed.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
-				[TOGGLE_ROOT_ATTR]: "",
+				[toggleAttrs.root]: "",
 				id: this.opts.id.current,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"aria-pressed": getAriaPressed(this.opts.pressed.current),
 				"data-state": getToggleDataState(this.opts.pressed.current),
 				disabled: getDisabled(this.opts.disabled.current),
 				onclick: this.onclick,
+				...this.attachment,
 			}) as const
 	);
-}
-
-export function useToggleRoot(props: ToggleRootStateProps) {
-	return new ToggleRootState(props);
 }
 
 export function getToggleDataState(condition: boolean): "on" | "off" {

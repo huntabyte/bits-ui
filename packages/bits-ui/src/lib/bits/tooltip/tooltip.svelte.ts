@@ -1,38 +1,51 @@
-import { box, executeCallbacks, onMountEffect, useRefById } from "svelte-toolbelt";
+import {
+	box,
+	onMountEffect,
+	attachRef,
+	DOMContext,
+	type WritableBoxedValues,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { useTimeoutFn } from "$lib/internal/use-timeout-fn.svelte.js";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
-import { getDataDisabled } from "$lib/internal/attrs.js";
-import type { WithRefProps } from "$lib/internal/types.js";
-import { CustomEventDispatcher } from "$lib/internal/events.js";
+import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
+import { TimeoutFn } from "$lib/internal/timeout-fn.js";
+import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
-const TOOLTIP_CONTENT_ATTR = "data-tooltip-content";
-const TOOLTIP_TRIGGER_ATTR = "data-tooltip-trigger";
-
-export const TooltipOpenEvent = new CustomEventDispatcher("bits.tooltip.open", {
-	bubbles: false,
-	cancelable: false,
+export const tooltipAttrs = createBitsAttrs({
+	component: "tooltip",
+	parts: ["content", "trigger"],
 });
+const TooltipProviderContext = new Context<TooltipProviderState>("Tooltip.Provider");
+const TooltipRootContext = new Context<TooltipRootState>("Tooltip.Root");
 
-type TooltipProviderStateProps = ReadableBoxedValues<{
-	delayDuration: number;
-	disableHoverableContent: boolean;
-	disableCloseOnTriggerClick: boolean;
-	disabled: boolean;
-	ignoreNonKeyboardFocus: boolean;
-	skipDelayDuration: number;
-}>;
+interface TooltipProviderStateOpts
+	extends ReadableBoxedValues<{
+		delayDuration: number;
+		disableHoverableContent: boolean;
+		disableCloseOnTriggerClick: boolean;
+		disabled: boolean;
+		ignoreNonKeyboardFocus: boolean;
+		skipDelayDuration: number;
+	}> {}
 
-class TooltipProviderState {
+export class TooltipProviderState {
+	static create(opts: TooltipProviderStateOpts) {
+		return TooltipProviderContext.set(new TooltipProviderState(opts));
+	}
+	readonly opts: TooltipProviderStateOpts;
 	isOpenDelayed = $state<boolean>(true);
 	isPointerInTransit = box(false);
-	#timerFn: ReturnType<typeof useTimeoutFn>;
+	#timerFn: TimeoutFn<() => void>;
+	#openTooltip = $state<TooltipRootState | null>(null);
 
-	constructor(readonly opts: TooltipProviderStateProps) {
-		this.#timerFn = useTimeoutFn(
+	constructor(opts: TooltipProviderStateOpts) {
+		this.opts = opts;
+		this.#timerFn = new TimeoutFn(
 			() => {
 				this.isOpenDelayed = true;
 			},
@@ -42,50 +55,77 @@ class TooltipProviderState {
 	}
 
 	#startTimer = () => {
-		this.#timerFn.start();
+		const skipDuration = this.opts.skipDelayDuration.current;
+
+		if (skipDuration === 0) {
+			return;
+		} else {
+			this.#timerFn.start();
+		}
 	};
 
 	#clearTimer = () => {
 		this.#timerFn.stop();
 	};
 
-	onOpen = () => {
+	onOpen = (tooltip: TooltipRootState) => {
+		if (this.#openTooltip && this.#openTooltip !== tooltip) {
+			this.#openTooltip.handleClose();
+		}
+
 		this.#clearTimer();
 		this.isOpenDelayed = false;
+		this.#openTooltip = tooltip;
 	};
 
-	onClose = () => {
+	onClose = (tooltip: TooltipRootState) => {
+		if (this.#openTooltip === tooltip) {
+			this.#openTooltip = null;
+		}
 		this.#startTimer();
+	};
+
+	isTooltipOpen = (tooltip: TooltipRootState) => {
+		return this.#openTooltip === tooltip;
 	};
 }
 
-type TooltipRootStateProps = ReadableBoxedValues<{
-	delayDuration: number | undefined;
-	disableHoverableContent: boolean | undefined;
-	disableCloseOnTriggerClick: boolean | undefined;
-	disabled: boolean | undefined;
-	ignoreNonKeyboardFocus: boolean | undefined;
-}> &
-	WritableBoxedValues<{
-		open: boolean;
-	}>;
+interface TooltipRootStateOpts
+	extends ReadableBoxedValues<{
+			delayDuration: number | undefined;
+			disableHoverableContent: boolean | undefined;
+			disableCloseOnTriggerClick: boolean | undefined;
+			disabled: boolean | undefined;
+			ignoreNonKeyboardFocus: boolean | undefined;
+			onOpenChangeComplete: OnChangeFn<boolean>;
+		}>,
+		WritableBoxedValues<{
+			open: boolean;
+		}> {}
 
-class TooltipRootState {
-	delayDuration = $derived.by(
+export class TooltipRootState {
+	static create(opts: TooltipRootStateOpts) {
+		return TooltipRootContext.set(new TooltipRootState(opts, TooltipProviderContext.get()));
+	}
+	readonly opts: TooltipRootStateOpts;
+	readonly provider: TooltipProviderState;
+	readonly delayDuration = $derived.by(
 		() => this.opts.delayDuration.current ?? this.provider.opts.delayDuration.current
 	);
-	disableHoverableContent = $derived.by(
+	readonly disableHoverableContent = $derived.by(
 		() =>
 			this.opts.disableHoverableContent.current ??
 			this.provider.opts.disableHoverableContent.current
 	);
-	disableCloseOnTriggerClick = $derived.by(
+	readonly disableCloseOnTriggerClick = $derived.by(
 		() =>
 			this.opts.disableCloseOnTriggerClick.current ??
 			this.provider.opts.disableCloseOnTriggerClick.current
 	);
-	disabled = $derived.by(() => this.opts.disabled.current ?? this.provider.opts.disabled.current);
-	ignoreNonKeyboardFocus = $derived.by(
+	readonly disabled = $derived.by(
+		() => this.opts.disabled.current ?? this.provider.opts.disabled.current
+	);
+	readonly ignoreNonKeyboardFocus = $derived.by(
 		() =>
 			this.opts.ignoreNonKeyboardFocus.current ??
 			this.provider.opts.ignoreNonKeyboardFocus.current
@@ -93,17 +133,16 @@ class TooltipRootState {
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
-	#timerFn: ReturnType<typeof useTimeoutFn>;
-	stateAttr = $derived.by(() => {
+	#timerFn: TimeoutFn<() => void>;
+	readonly stateAttr = $derived.by(() => {
 		if (!this.opts.open.current) return "closed";
 		return this.#wasOpenDelayed ? "delayed-open" : "instant-open";
 	});
 
-	constructor(
-		readonly opts: TooltipRootStateProps,
-		readonly provider: TooltipProviderState
-	) {
-		this.#timerFn = useTimeoutFn(
+	constructor(opts: TooltipRootStateOpts, provider: TooltipProviderState) {
+		this.opts = opts;
+		this.provider = provider;
+		this.#timerFn = new TimeoutFn(
 			() => {
 				this.#wasOpenDelayed = true;
 				this.opts.open.current = true;
@@ -112,11 +151,19 @@ class TooltipRootState {
 			{ immediate: false }
 		);
 
+		new OpenChangeComplete({
+			open: this.opts.open,
+			ref: box.with(() => this.contentNode),
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
+
 		watch(
 			() => this.delayDuration,
 			() => {
 				if (this.delayDuration === undefined) return;
-				this.#timerFn = useTimeoutFn(
+				this.#timerFn = new TimeoutFn(
 					() => {
 						this.#wasOpenDelayed = true;
 						this.opts.open.current = true;
@@ -130,12 +177,10 @@ class TooltipRootState {
 		watch(
 			() => this.opts.open.current,
 			(isOpen) => {
-				if (!this.provider.onClose) return;
 				if (isOpen) {
-					this.provider.onOpen();
-					TooltipOpenEvent.dispatch(document);
+					this.provider.onOpen(this);
 				} else {
-					this.provider.onClose();
+					this.provider.onClose(this);
 				}
 			}
 		);
@@ -153,7 +198,20 @@ class TooltipRootState {
 	};
 
 	#handleDelayedOpen = () => {
-		this.#timerFn.start();
+		this.#timerFn.stop();
+
+		const shouldSkipDelay = !this.provider.isOpenDelayed;
+		const delayDuration = this.delayDuration ?? 0;
+
+		// if no delay needed (either skip delay active or delay is 0), open immediately
+		if (shouldSkipDelay || delayDuration === 0) {
+			// set wasOpenDelayed based on whether we actually had a delay
+			this.#wasOpenDelayed = delayDuration > 0 && shouldSkipDelay;
+			this.opts.open.current = true;
+		} else {
+			// use timer for actual delays
+			this.#timerFn.start();
+		}
 	};
 
 	onTriggerEnter = () => {
@@ -169,42 +227,45 @@ class TooltipRootState {
 	};
 }
 
-type TooltipTriggerStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>
->;
+interface TooltipTriggerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {}
 
-class TooltipTriggerState {
+export class TooltipTriggerState {
+	static create(opts: TooltipTriggerStateOpts) {
+		return new TooltipTriggerState(opts, TooltipRootContext.get());
+	}
+	readonly opts: TooltipTriggerStateOpts;
+	readonly root: TooltipRootState;
+	readonly attachment: RefAttachment;
 	#isPointerDown = box(false);
 	#hasPointerMoveOpened = $state(false);
-	#isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
+	readonly #isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
+	domContext: DOMContext;
 
-	constructor(
-		readonly opts: TooltipTriggerStateProps,
-		readonly root: TooltipRootState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.triggerNode = node;
-			},
-		});
+	constructor(opts: TooltipTriggerStateOpts, root: TooltipRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.domContext = new DOMContext(opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.triggerNode = v));
 	}
 
 	handlePointerUp = () => {
 		this.#isPointerDown.current = false;
 	};
 
-	#onpointerup = () => {
+	#onpointerup: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.#isPointerDown.current = false;
 	};
 
-	#onpointerdown = () => {
+	#onpointerdown: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.#isPointerDown.current = true;
-		document.addEventListener(
+
+		this.domContext.getDocument().addEventListener(
 			"pointerup",
 			() => {
 				this.handlePointerUp();
@@ -213,98 +274,108 @@ class TooltipTriggerState {
 		);
 	};
 
-	#onpointermove = (e: PointerEvent) => {
+	#onpointermove: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled) return;
 		if (e.pointerType === "touch") return;
-		if (this.#hasPointerMoveOpened || this.root.provider.isPointerInTransit.current) return;
+		if (this.#hasPointerMoveOpened) return;
+
+		if (this.root.provider.isPointerInTransit.current) return;
+
 		this.root.onTriggerEnter();
 		this.#hasPointerMoveOpened = true;
 	};
 
-	#onpointerleave = () => {
+	#onpointerleave: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.root.onTriggerLeave();
 		this.#hasPointerMoveOpened = false;
 	};
 
-	#onfocus = (e: FocusEvent & { currentTarget: HTMLElement }) => {
+	#onfocus: FocusEventHandler<HTMLElement> = (e) => {
 		if (this.#isPointerDown.current || this.#isDisabled) return;
 
 		if (this.root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) return;
 		this.root.handleOpen();
 	};
 
-	#onblur = () => {
+	#onblur: FocusEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
 		this.root.handleClose();
 	};
 
-	#onclick = () => {
+	#onclick: MouseEventHandler<HTMLElement> = () => {
 		if (this.root.disableCloseOnTriggerClick || this.#isDisabled) return;
 		this.root.handleClose();
 	};
 
-	props = $derived.by(() => ({
-		id: this.opts.id.current,
-		"aria-describedby": this.root.opts.open.current ? this.root.contentNode?.id : undefined,
-		"data-state": this.root.stateAttr,
-		"data-disabled": getDataDisabled(this.#isDisabled),
-		"data-delay-duration": `${this.root.delayDuration}`,
-		[TOOLTIP_TRIGGER_ATTR]: "",
-		tabindex: this.#isDisabled ? undefined : 0,
-		disabled: this.opts.disabled.current,
-		onpointerup: this.#onpointerup,
-		onpointerdown: this.#onpointerdown,
-		onpointermove: this.#onpointermove,
-		onpointerleave: this.#onpointerleave,
-		onfocus: this.#onfocus,
-		onblur: this.#onblur,
-		onclick: this.#onclick,
-	}));
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				"aria-describedby": this.root.opts.open.current
+					? this.root.contentNode?.id
+					: undefined,
+				"data-state": this.root.stateAttr,
+				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-delay-duration": `${this.root.delayDuration}`,
+				[tooltipAttrs.trigger]: "",
+				tabindex: this.#isDisabled ? undefined : 0,
+				disabled: this.opts.disabled.current,
+				onpointerup: this.#onpointerup,
+				onpointerdown: this.#onpointerdown,
+				onpointermove: this.#onpointermove,
+				onpointerleave: this.#onpointerleave,
+				onfocus: this.#onfocus,
+				onblur: this.#onblur,
+				onclick: this.#onclick,
+				...this.attachment,
+			}) as const
+	);
 }
 
-type TooltipContentStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		onInteractOutside: (e: PointerEvent) => void;
-		onEscapeKeydown: (e: KeyboardEvent) => void;
-	}>;
+interface TooltipContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			onInteractOutside: (e: PointerEvent) => void;
+			onEscapeKeydown: (e: KeyboardEvent) => void;
+		}> {}
 
-class TooltipContentState {
-	constructor(
-		readonly opts: TooltipContentStateProps,
-		readonly root: TooltipRootState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-			},
-			deps: () => this.root.opts.open.current,
-		});
+export class TooltipContentState {
+	static create(opts: TooltipContentStateOpts) {
+		return new TooltipContentState(opts, TooltipRootContext.get());
+	}
+	readonly opts: TooltipContentStateOpts;
+	readonly root: TooltipRootState;
+	readonly attachment: RefAttachment;
 
-		useGraceArea({
+	constructor(opts: TooltipContentStateOpts, root: TooltipRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
+
+		new GraceArea({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
 			onPointerExit: () => {
-				this.root.handleClose();
+				if (this.root.provider.isTooltipOpen(this.root)) {
+					this.root.handleClose();
+				}
 			},
 			setIsPointerInTransit: (value) => {
 				this.root.provider.isPointerInTransit.current = value;
 			},
+			transitTimeout: this.root.provider.opts.skipDelayDuration.current,
 		});
 
 		onMountEffect(() =>
-			executeCallbacks(
-				on(window, "scroll", (e) => {
-					const target = e.target as HTMLElement | null;
-					if (!target) return;
-					if (target.contains(this.root.triggerNode)) {
-						this.root.handleClose();
-					}
-				}),
-				TooltipOpenEvent.listen(window, this.root.handleClose)
-			)
+			on(window, "scroll", (e) => {
+				const target = e.target as HTMLElement | null;
+				if (!target) return;
+				if (target.contains(this.root.triggerNode)) {
+					this.root.handleClose();
+				}
+			})
 		);
 	}
 
@@ -336,9 +407,9 @@ class TooltipContentState {
 		e.preventDefault();
 	};
 
-	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
+	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -348,37 +419,15 @@ class TooltipContentState {
 					pointerEvents: "auto",
 					outline: "none",
 				},
-				[TOOLTIP_CONTENT_ATTR]: "",
+				[tooltipAttrs.content]: "",
+				...this.attachment,
 			}) as const
 	);
 
-	popperProps = {
+	readonly popperProps = {
 		onInteractOutside: this.onInteractOutside,
 		onEscapeKeydown: this.onEscapeKeydown,
 		onOpenAutoFocus: this.onOpenAutoFocus,
 		onCloseAutoFocus: this.onCloseAutoFocus,
 	};
-}
-
-//
-// CONTEXT METHODS
-//
-
-const TooltipProviderContext = new Context<TooltipProviderState>("Tooltip.Provider");
-const TooltipRootContext = new Context<TooltipRootState>("Tooltip.Root");
-
-export function useTooltipProvider(props: TooltipProviderStateProps) {
-	return TooltipProviderContext.set(new TooltipProviderState(props));
-}
-
-export function useTooltipRoot(props: TooltipRootStateProps) {
-	return TooltipRootContext.set(new TooltipRootState(props, TooltipProviderContext.get()));
-}
-
-export function useTooltipTrigger(props: TooltipTriggerStateProps) {
-	return new TooltipTriggerState(props, TooltipRootContext.get());
-}
-
-export function useTooltipContent(props: TooltipContentStateProps) {
-	return new TooltipContentState(props, TooltipRootContext.get());
 }

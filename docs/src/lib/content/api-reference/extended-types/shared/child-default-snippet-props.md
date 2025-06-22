@@ -1,5 +1,5 @@
 ```ts
 type SnippetProps = {
-	props: Record<string, unknown>;
-};
+	props: Record<string, unknown>
+}
 ```

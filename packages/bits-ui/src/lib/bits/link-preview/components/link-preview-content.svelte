@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { LinkPreviewContentProps } from "../types.js";
-	import { useLinkPreviewContent } from "../link-preview.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { LinkPreviewContentState } from "../link-preview.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		side = "top",
 		sideOffset = 0,
@@ -28,7 +30,7 @@
 		...restProps
 	}: LinkPreviewContentProps = $props();
 
-	const contentState = useLinkPreviewContent({
+	const contentState = LinkPreviewContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -56,6 +58,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		enabled={contentState.root.opts.open.current}
 		{id}
 		trapFocus={false}
@@ -82,7 +85,8 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
-		present={contentState.root.opts.open.current}
+		ref={contentState.opts.ref}
+		open={contentState.root.opts.open.current}
 		{id}
 		trapFocus={false}
 		loop={false}

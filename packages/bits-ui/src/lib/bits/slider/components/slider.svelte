@@ -1,34 +1,65 @@
 <script lang="ts">
 	import { box, mergeProps, type WritableBox } from "svelte-toolbelt";
 	import type { SliderRootProps } from "../types.js";
-	import { useSliderRoot } from "../slider.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { SliderRootState } from "../slider.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(),
 		type,
 		onValueChange = noop,
 		onValueCommit = noop,
 		disabled = false,
-		min = 0,
-		max = 100,
+		min: minProp,
+		max: maxProp,
 		step = 1,
 		dir = "ltr",
 		autoSort = true,
 		orientation = "horizontal",
+		thumbPositioning = "contain",
+		trackPadding,
 		...restProps
 	}: SliderRootProps = $props();
 
-	if (value === undefined) {
-		value = type === "single" ? 0 : [];
+	const min = $derived.by(() => {
+		if (minProp !== undefined) return minProp;
+		if (Array.isArray(step)) return Math.min(...step);
+		return 0;
+	});
+
+	const max = $derived.by(() => {
+		if (maxProp !== undefined) return maxProp;
+		if (Array.isArray(step)) return Math.max(...step);
+		return 100;
+	});
+
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		if (type === "single") {
+			return min;
+		}
+		return [];
 	}
 
-	const rootState = useSliderRoot({
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
+	const rootState = SliderRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -51,7 +82,9 @@
 		dir: box.with(() => dir),
 		autoSort: box.with(() => autoSort),
 		orientation: box.with(() => orientation),
+		thumbPositioning: box.with(() => thumbPositioning),
 		type,
+		trackPadding: box.with(() => trackPadding),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

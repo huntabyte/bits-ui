@@ -40,7 +40,7 @@
 					<p class="text-muted-foreground text-sm font-medium">06:05</p>
 				</div>
 				<div class="relative col-span-3">
-					<hr class="border-1 border-border-input relative top-4 h-px border-dashed" />
+					<hr class="border-border-input border-1 relative top-4 h-px border-dashed" />
 
 					<div class="bg-background-alt absolute left-1/2 -translate-x-1/2 p-1">
 						<Airplane class="text-muted-foreground size-6 rotate-90" />
@@ -66,7 +66,7 @@
 					<p class="text-muted-foreground text-sm font-medium">10:45</p>
 				</div>
 				<div class="relative col-span-3">
-					<hr class="border-1 border-border-input relative top-4 h-px border-dashed" />
+					<hr class="border-border-input border-1 relative top-4 h-px border-dashed" />
 
 					<div class="bg-background-alt absolute left-1/2 -translate-x-1/2 p-1">
 						<Airplane class="text-muted-foreground size-6 rotate-90" />

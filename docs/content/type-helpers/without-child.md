@@ -9,14 +9,14 @@ To learn more about the `child` snippet prop, check out the [delegation](/docs/c
 
 ```svelte title="CustomAccordionHeader.svelte"
 <script lang="ts">
-	import { Accordion, type WithoutChild } from "bits-ui";
+  import { Accordion, type WithoutChild } from "bits-ui";
 
-	let { children, ...restProps }: WithoutChild<Accordion.ItemProps> = $props();
+  let { children, ...restProps }: WithoutChild<Accordion.ItemProps> = $props();
 </script>
 
 <Accordion.Header {...restProps}>
-	<Accordion.Trigger>
-		{@render children?.()}
-	</Accordion.Trigger>
+  <Accordion.Trigger>
+    {@render children?.()}
+  </Accordion.Trigger>
 </Accordion.Header>
 ```

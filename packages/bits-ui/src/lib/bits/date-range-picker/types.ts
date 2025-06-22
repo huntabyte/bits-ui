@@ -49,6 +49,11 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
+	 * A callback function called when the open state changes complete.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
+
+	/**
 	 * A function that returns true if the given date is unavailable,
 	 * where if selected, the date field will be marked as invalid.
 	 */
@@ -271,6 +276,43 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * date is invalid.
 	 */
 	errorMessageId?: string;
+
+	/**
+	 * The minimum number of days that can be selected in a range.
+	 *
+	 * @default undefined
+	 */
+	minDays?: number;
+
+	/**
+	 * The maximum number of days that can be selected in a range.
+	 *
+	 * @default undefined
+	 */
+	maxDays?: number;
+
+	/**
+	 * Whether to automatically reset the range if any date within the selected range
+	 * becomes disabled. When true, the entire range will be cleared if a disabled
+	 * date is found between the start and end dates.
+	 *
+	 * @default false
+	 */
+	excludeDisabled?: boolean;
+
+	/**
+	 * The format of the month names in the calendar.
+	 *
+	 * @default "long"
+	 */
+	monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+
+	/**
+	 * The format of the year names in the calendar.
+	 *
+	 * @default "numeric"
+	 */
+	yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 }>;
 
 export type DateRangePickerRootProps = DateRangePickerRootPropsWithoutHTML &
@@ -324,4 +366,8 @@ export type {
 	RangeCalendarNextButtonProps as DateRangePickerNextButtonProps,
 	RangeCalendarPrevButtonPropsWithoutHTML as DateRangePickerPrevButtonPropsWithoutHTML,
 	RangeCalendarPrevButtonProps as DateRangePickerPrevButtonProps,
+	RangeCalendarMonthSelectProps as DateRangePickerMonthSelectProps,
+	RangeCalendarMonthSelectPropsWithoutHTML as DateRangePickerMonthSelectPropsWithoutHTML,
+	RangeCalendarYearSelectProps as DateRangePickerYearSelectProps,
+	RangeCalendarYearSelectPropsWithoutHTML as DateRangePickerYearSelectPropsWithoutHTML,
 } from "$lib/bits/range-calendar/types.js";

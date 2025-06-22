@@ -1,7 +1,7 @@
 ```ts
-import type { SegmentPart } from "bits-ui";
+import type { SegmentPart } from "bits-ui"
 
 type ChildrenSnippetProps = {
-	segments: Array<{ part: SegmentPart; value: string }>;
-};
+	segments: Array<{ part: SegmentPart; value: string }>
+}
 ```

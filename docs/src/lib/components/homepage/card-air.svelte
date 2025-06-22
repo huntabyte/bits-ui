@@ -30,12 +30,12 @@
 				<Tabs.List class="ml-1 flex flex-col gap-[4px] text-[11px] lg:gap-2 lg:text-[14px]">
 					<Tabs.Trigger
 						value="c"
-						class="text-indigo-950/30 data-[state=active]:text-indigo-950"
+						class="cursor-pointer text-indigo-950/30 transition data-[state=active]:text-indigo-950 data-[state=inactive]:hover:text-indigo-950"
 						>°C</Tabs.Trigger
 					>
 					<Tabs.Trigger
 						value="f"
-						class="text-indigo-950/30 data-[state=active]:text-indigo-950"
+						class="cursor-pointer text-indigo-950/30 transition data-[state=active]:text-indigo-950 data-[state=inactive]:hover:text-indigo-950"
 						>°F</Tabs.Trigger
 					>
 				</Tabs.List>
@@ -56,7 +56,7 @@
 
 		<div class="">
 			<div class="relative my-5 flex justify-between">
-				{#each temps as temp}
+				{#each temps as temp, index (index)}
 					<div
 						class="outer relative h-12 w-3 rounded-[35px] bg-[#000231]/10 lg:h-16 lg:w-4"
 					>
@@ -104,7 +104,8 @@
 		animation-iteration-count: infinite;
 	}
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, var(--line) 50%),
+		background:
+			linear-gradient(to right, transparent 50%, var(--line) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,

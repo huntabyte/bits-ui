@@ -6,8 +6,12 @@
 		radio?: string;
 		subRadio?: string;
 		open?: boolean;
-		contentProps?: Omit<ContextMenu.ContentProps, "asChild" | "children" | "child">;
-		portalProps?: Omit<ContextMenu.PortalProps, "asChild" | "children" | "child">;
+		group?: string[];
+		contentProps?: Omit<ContextMenu.ContentProps, "children" | "child">;
+		portalProps?: Omit<ContextMenu.PortalProps, "children" | "child">;
+		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "children" | "child">;
+		checkboxGroupProps?: Omit<ContextMenu.CheckboxGroupProps, "children" | "child" | "value">;
+		openFocusOverride?: boolean;
 	};
 </script>
 
@@ -18,13 +22,17 @@
 		radio = "",
 		subRadio = "",
 		open = false,
+		group = [],
 		contentProps = {},
 		portalProps = {},
+		subTriggerProps = {},
+		checkboxGroupProps = {},
+		openFocusOverride = false,
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
 
-<main>
+<main class="flex flex-col gap-4">
 	<div data-testid="outside">outside</div>
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
@@ -50,7 +58,7 @@
 					</ContextMenu.Group>
 
 					<ContextMenu.Sub>
-						<ContextMenu.SubTrigger data-testid="sub-trigger">
+						<ContextMenu.SubTrigger data-testid="sub-trigger" {...subTriggerProps}>
 							<span>subtrigger</span>
 						</ContextMenu.SubTrigger>
 						<ContextMenu.SubContent data-testid="sub-content">
@@ -101,6 +109,29 @@
 							{/snippet}
 						</ContextMenu.RadioItem>
 					</ContextMenu.RadioGroup>
+					<ContextMenu.CheckboxGroup
+						bind:value={group}
+						data-testid="checkbox-group"
+						{...checkboxGroupProps}
+					>
+						<ContextMenu.CheckboxItem value="1" data-testid="checkbox-group-item-1">
+							{#snippet children({ checked })}
+								<span data-testid="checkbox-indicator-1"> {checked} </span>
+								<span>Checkbox Item 1</span>
+							{/snippet}
+						</ContextMenu.CheckboxItem>
+						<ContextMenu.CheckboxItem value="2" data-testid="checkbox-group-item-2">
+							{#snippet children({ checked })}
+								<span data-testid="checkbox-indicator-2"> {checked} </span>
+								<span>Checkbox Item 2</span>
+							{/snippet}
+						</ContextMenu.CheckboxItem>
+					</ContextMenu.CheckboxGroup>
+					{#if openFocusOverride}
+						<button data-testid="on-open-focus-override" id="on-open-focus-override"
+							>on-open-focus-override</button
+						>
+					{/if}
 				</ContextMenu.Content>
 			</ContextMenu.Portal>
 		</ContextMenu.Root>
@@ -118,6 +149,14 @@
 	>
 	<button aria-label="radio-sub" data-testid="sub-radio-binding" onclick={() => (subRadio = "")}
 		>{subRadio}</button
+	>
+	<button data-testid="on-close-focus-override" id="on-close-focus-override"
+		>on-close-focus-override</button
+	>
+	<button
+		aria-label="checkbox-group-binding"
+		data-testid="checkbox-group-binding"
+		onclick={() => (group = [])}>Group value: {group}</button
 	>
 	<div id="portal-target" data-testid="portal-target"></div>
 </main>

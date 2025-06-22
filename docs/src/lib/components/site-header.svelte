@@ -13,7 +13,7 @@
 >
 	<div class="px-4">
 		<div class="flex h-[70px] items-center justify-between gap-3">
-			<div class="flex items-center gap-1.5">
+			<div class="flex w-full items-center gap-1.5 md:w-auto">
 				<MobileNav />
 
 				<a

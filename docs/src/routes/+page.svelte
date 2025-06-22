@@ -14,6 +14,7 @@
 	import AccessibleDark from "$lib/components/homepage/svg-accessible-dark.svelte";
 	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
 	import { goto } from "$app/navigation";
+	import Search from "$lib/components/search.svelte";
 </script>
 
 <svelte:window
@@ -24,14 +25,24 @@
 	}}
 />
 
+<svelte:head>
+	<title>Bits UI – Headless components for Svelte</title>
+	<meta
+		name="description"
+		content="Headless components for Svelte - flexible, unstyled, and accessible primitives that provide the foundation for building your own high-quality component library."
+	/>
+</svelte:head>
+
 <div class="border-b border-solid border-black/10 bg-white dark:border-white/20 dark:bg-[#171717]">
 	<header class="flex items-center justify-between px-3 py-[17px] lg:grid lg:grid-cols-3 lg:px-5">
 		<a
 			href="/"
 			class="focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden ml-2 mt-2 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2"
+			aria-label="Home"
 		>
 			<Logo />
 		</a>
+		<Search showTrigger={false} />
 
 		<nav class="mt-2 flex items-center text-center lg:block">
 			<ul>
@@ -39,14 +50,14 @@
 					<a
 						data-active
 						href="/"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class=" data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
 						>Home</a
 					>
 				</li>
 				<li class="inline-block">
 					<a
 						href="/docs"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] transition hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/10"
 						>Docs</a
 					>
 				</li>
@@ -54,7 +65,7 @@
 					<a
 						href="https://github.com/huntabyte/bits-ui"
 						target="_blank"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] transition hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/10"
 						>GitHub</a
 					>
 				</li>
@@ -90,16 +101,16 @@
 				<Sparkle class="mt-[2px] size-3 lg:size-4" aria-label="Stars" />
 				<span
 					class="border-l-border-input text-foreground inline-block border-l pl-3 text-[11px] font-medium lg:text-[13px]"
-					>New Stable 1.0 Release</span
+					>Bits UI v2 Now Available</span
 				>
 			</a>
 			<h1
-				class="selection:text-foreground dark:selection:text-background dark:text-[#EAEAEA]! font-display mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased lg:max-w-3xl lg:text-[4.25rem]"
+				class="selection:text-foreground dark:selection:text-background font-display dark:text-[#EAEAEA]! mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased lg:max-w-3xl lg:text-[4.25rem]"
 			>
 				The headless components for Svelte
 			</h1>
 			<p
-				class="text-muted-foreground mx-auto mb-[2em] max-w-sm text-[0.9rem] font-medium leading-[144%] sm:max-w-2xl md:w-9/12 md:max-w-2xl md:text-[1.125rem]"
+				class="text-foreground/60 dark:text-foreground/50 mx-auto mb-[2em] max-w-sm text-[0.9rem] font-medium leading-[144%] sm:max-w-2xl md:w-9/12 md:max-w-2xl md:text-[1.125rem]"
 			>
 				Flexible, unstyled, and accessible primitives that provide the foundation for
 				building your own high-quality component library.
@@ -281,11 +292,8 @@
 
 <style>
 	h1 {
-		background: linear-gradient(
-				180deg,
-				rgba(255, 255, 255, 0.1) 0%,
-				rgba(255, 255, 255, 0) 41.43%
-			),
+		background:
+			linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 41.43%),
 			#272727;
 		background-clip: text;
 	}

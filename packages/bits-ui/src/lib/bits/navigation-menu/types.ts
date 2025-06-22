@@ -30,23 +30,24 @@ export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 	onValueChange?: OnChangeFn<string>;
 
 	/**
-	 * The duration from when the mouse enters a trigger until the content opens.
+	 * The amount of time in ms from when the mouse enters a trigger until the content opens.
 	 *
-	 * @defaultValue 200
+	 * @default 200
 	 */
 	delayDuration?: number;
 
 	/**
-	 * How much time a user has to enter another trigger without incurring a delay again.
+	 * The amount of time in ms that a user has to enter another trigger without
+	 * incurring a delay again.
 	 *
-	 * @defaultValue 300
+	 * @default 300
 	 */
 	skipDelayDuration?: number;
 
 	/**
 	 * The reading direction of the content.
 	 *
-	 * @defaultValue "ltr"
+	 * @default "ltr"
 	 */
 	dir?: Direction;
 
@@ -100,6 +101,14 @@ export type NavigationMenuItemPropsWithoutHTML = WithChild<{
 	 * The value of the menu item.
 	 */
 	value?: string;
+
+	/**
+	 * Whether to open the menu associated with the item when the item's trigger
+	 * is hovered.
+	 *
+	 * @default true
+	 */
+	openOnHover?: boolean;
 }>;
 
 export type NavigationMenuItemProps = NavigationMenuItemPropsWithoutHTML &
@@ -120,7 +129,6 @@ export type NavigationMenuContentPropsWithoutHTML = WithChild<{
 	/**
 	 * Callback fired when an interaction occurs outside the content.
 	 * Default behavior can be prevented with `event.preventDefault()`
-	 *
 	 */
 	onInteractOutside?: (event: PointerEvent) => void;
 
@@ -151,7 +159,7 @@ export type NavigationMenuContentPropsWithoutHTML = WithChild<{
 	 * This is useful when wanting to use more custom transition and animation
 	 * libraries.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	forceMount?: boolean;
 }>;

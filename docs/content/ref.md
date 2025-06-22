@@ -11,13 +11,13 @@ Every Bits UI component that renders an HTML element exposes a `ref` prop that y
 
 ```svelte
 <script lang="ts">
-	import { Accordion } from "bits-ui";
+  import { Accordion } from "bits-ui";
 
-	let triggerRef = $state<HTMLButtonElement | null>(null);
+  let triggerRef = $state<HTMLButtonElement | null>(null);
 
-	function focusTrigger() {
-		triggerRef?.focus();
-	}
+  function focusTrigger() {
+    triggerRef?.focus();
+  }
 </script>
 
 <button onclick={focusTrigger}>Focus trigger</button>
@@ -35,20 +35,20 @@ The `ref` binding will automatically work with delegated child elements/componen
 
 ```svelte
 <script lang="ts">
-	import CustomButton from "./CustomButton.svelte";
-	import { Accordion } from "bits-ui";
+  import CustomButton from "./CustomButton.svelte";
+  import { Accordion } from "bits-ui";
 
-	let triggerRef = $state<HTMLButtonElement | null>(null);
+  let triggerRef = $state<HTMLButtonElement | null>(null);
 
-	function focusTrigger() {
-		triggerRef?.focus();
-	}
+  function focusTrigger() {
+    triggerRef?.focus();
+  }
 </script>
 
 <Accordion.Trigger bind:ref={triggerRef}>
-	{#snippet child({ props })}
-		<CustomButton {...props} />
-	{/snippet}
+  {#snippet child({ props })}
+    <CustomButton {...props} />
+  {/snippet}
 </Accordion.Trigger>
 ```
 
@@ -58,18 +58,18 @@ When you need to use a custom `id` on the element, pass it to the parent compone
 
 ```svelte
 <script lang="ts">
-	import CustomButton from "./CustomButton.svelte";
-	import { Accordion } from "bits-ui";
+  import CustomButton from "./CustomButton.svelte";
+  import { Accordion } from "bits-ui";
 
-	let triggerRef = $state<HTMLButtonElement | null>(null);
-	const myCustomId = "my-custom-id";
+  let triggerRef = $state<HTMLButtonElement | null>(null);
+  const myCustomId = "my-custom-id";
 </script>
 
 <Accordion.Trigger bind:ref={triggerRef} id={myCustomId}>
-	{#snippet child({ props })}
-		<!-- The custom ID will be included in props -->
-		<CustomButton {...props} />
-	{/snippet}
+  {#snippet child({ props })}
+    <!-- The custom ID will be included in props -->
+    <CustomButton {...props} />
+  {/snippet}
 </Accordion.Trigger>
 ```
 
@@ -80,9 +80,9 @@ Avoid setting the `id` directly on the child component/element, as this breaks t
 ```svelte
 <!-- ❌ This won't work correctly -->
 <Accordion.Trigger bind:ref={triggerRef}>
-	{#snippet child({ props })}
-		<CustomButton {...props} id="my-custom-id" />
-	{/snippet}
+  {#snippet child({ props })}
+    <CustomButton {...props} id="my-custom-id" />
+  {/snippet}
 </Accordion.Trigger>
 ```
 
@@ -98,24 +98,24 @@ To implement the same ref pattern in your custom components, Bits UI provides a 
 
 ```svelte
 <script lang="ts">
-	import { WithElementRef } from "bits-ui";
-	import type { HTMLButtonAttributes } from "svelte/elements";
+  import { WithElementRef } from "bits-ui";
+  import type { HTMLButtonAttributes } from "svelte/elements";
 
-	// Define props with the ref type
-	let {
-		ref = $bindable(null),
-		children,
-		...rest
-	}: WithElementRef<
-		HTMLButtonAttributes & {
-			yourPropA: string;
-			yourPropB: number;
-		},
-		HTMLButtonElement
-	> = $props();
+  // Define props with the ref type
+  let {
+    ref = $bindable(null),
+    children,
+    ...rest
+  }: WithElementRef<
+    HTMLButtonAttributes & {
+      yourPropA: string;
+      yourPropB: number;
+    },
+    HTMLButtonElement
+  > = $props();
 </script>
 
 <button bind:this={ref} {...rest}>
-	{@render children?.()}
+  {@render children?.()}
 </button>
 ```

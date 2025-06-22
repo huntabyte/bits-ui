@@ -10,70 +10,63 @@ import type {
 } from "bits-ui";
 import {
 	childrenSnippet,
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createFunctionProp,
-	createUnionProp,
 	dismissibleLayerProps,
 	escapeLayerProps,
 	focusScopeProps,
 	forceMountProp,
+	onOpenChangeCompleteProp,
+	onOpenChangeProp,
+	openChildDefinition,
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
 	withChildProps,
-} from "./helpers.js";
+} from "./shared.js";
+import { HeaderLevelProp, OpenClosedProp } from "./extended-types/shared/index.js";
 import {
-	DialogContentChildSnippetProps,
-	DialogOverlayChildSnippetProps,
-} from "./extended-types/dialog/index.js";
-import {
-	HeaderLevelProp,
-	OnOpenChangeProp,
-	OpenClosedProp,
-} from "./extended-types/shared/index.js";
-import * as C from "$lib/content/constants.js";
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineSimpleDataAttr,
+	defineUnionProp,
+} from "../utils.js";
 
-const stateDataAttr = createDataAttrSchema({
+const stateDataAttr = defineEnumDataAttr({
 	name: "state",
-	definition: OpenClosedProp,
+	value: OpenClosedProp,
 	description: "The state of the dialog.",
-	isEnum: true,
+	options: ["open", "closed"],
 });
 
-export const root = createApiSchema<DialogRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<DialogRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the dialog.",
 	props: {
-		open: createBooleanProp({
-			default: C.FALSE,
+		open: defineBooleanProp({
+			default: false,
 			description: "Whether or not the dialog is open.",
 			bindable: true,
 		}),
-		onOpenChange: createFunctionProp({
-			definition: OnOpenChangeProp,
-			description: "A callback function called when the open state changes.",
-			stringDefinition: "(open: boolean) => void",
-		}),
+		onOpenChange: onOpenChangeProp,
+		onOpenChangeComplete: onOpenChangeCompleteProp,
 		children: childrenSnippet(),
 	},
 });
 
-export const close = createApiSchema<DialogClosePropsWithoutHTML>({
+export const close = defineComponentApiSchema<DialogClosePropsWithoutHTML>({
 	title: "Close",
 	description: "A button used to close the dialog.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "dialog-close",
 			description: "Present on the close button.",
 		}),
 	],
 });
 
-export const content = createApiSchema<DialogContentPropsWithoutHTML>({
+export const content = defineComponentApiSchema<DialogContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The content displayed within the dialog modal.",
 	props: {
@@ -86,23 +79,23 @@ export const content = createApiSchema<DialogContentPropsWithoutHTML>({
 		restoreScrollDelay: restoreScrollDelayProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: DialogContentChildSnippetProps,
+			child: openChildDefinition,
 		}),
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "dialog-content",
 			description: "Present on the content.",
 		}),
 	],
 });
 
-export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
+export const title = defineComponentApiSchema<DialogTitlePropsWithoutHTML>({
 	title: "Title",
 	description: "An accessible title for the dialog.",
 	props: {
-		level: createUnionProp({
+		level: defineUnionProp({
 			options: ["1", "2", "3", "4", "5", "6"],
 			description: "The heading level of the title.",
 			default: "3",
@@ -111,57 +104,57 @@ export const title = createApiSchema<DialogTitlePropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "dialog-title",
 			description: "Present on the title.",
 		}),
 	],
 });
 
-export const description = createApiSchema<DialogDescriptionPropsWithoutHTML>({
+export const description = defineComponentApiSchema<DialogDescriptionPropsWithoutHTML>({
 	title: "Description",
 	description: "An accessible description for the dialog.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "dialog-description",
 			description: "Present on the description.",
 		}),
 	],
 });
 
-export const trigger = createApiSchema<DialogTriggerPropsWithoutHTML>({
+export const trigger = defineComponentApiSchema<DialogTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The element which opens the dialog on press.",
 	props: withChildProps({ elType: "HTMLButtonElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "dialog-trigger",
 			description: "Present on the trigger.",
 		}),
 	],
 });
 
-export const overlay = createApiSchema<DialogOverlayPropsWithoutHTML>({
+export const overlay = defineComponentApiSchema<DialogOverlayPropsWithoutHTML>({
 	title: "Overlay",
 	description: "An overlay which covers the body when the dialog is open.",
 	props: {
 		forceMount: forceMountProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
-			childDef: DialogOverlayChildSnippetProps,
+			child: openChildDefinition,
 		}),
 	},
 	dataAttributes: [
 		stateDataAttr,
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "dialog-overlay",
 			description: "Present on the overlay.",
 		}),
 	],
 });
 
-export const portal = createApiSchema<DialogPortalPropsWithoutHTML>({
+export const portal = defineComponentApiSchema<DialogPortalPropsWithoutHTML>({
 	title: "Portal",
 	description: "A portal which renders the dialog into the body when it is open.",
 	props: portalProps,

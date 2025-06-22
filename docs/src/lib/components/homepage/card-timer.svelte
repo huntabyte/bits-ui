@@ -80,7 +80,7 @@
 					</div>
 				</div>
 				<div class="labels mb-2 mt-[9px] flex gap-[3px] px-1 font-medium">
-					{#each chips as chip, i}
+					{#each chips as chip, i (i)}
 						<div
 							data-active={i === 0 ? "" : undefined}
 							class="data-active:text-foreground data-active:bg-white dark:data-active:text-[#171717] group flex select-none items-center rounded-[25px] bg-[#31343e] px-1 text-[8px] text-white/70 lg:px-2 lg:text-[11px]"
@@ -115,14 +115,16 @@
 
 <style>
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, var(--line) 50%),
+		background:
+			linear-gradient(to right, transparent 50%, var(--line) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
 			100% 1px;
 	}
 	.line_right_gradient {
-		background: linear-gradient(to top, transparent 50%, var(--line) 50%),
+		background:
+			linear-gradient(to top, transparent 50%, var(--line) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,

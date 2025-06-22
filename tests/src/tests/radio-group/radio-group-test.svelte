@@ -19,7 +19,7 @@
 
 <main>
 	<RadioGroup.Root data-testid="root" bind:value {...restProps}>
-		{#each items as { value, disabled }}
+		{#each items as { value, disabled } (value)}
 			<RadioGroup.Item id={value} {value} {disabled} data-testid="{value}-item">
 				{#snippet children({ checked })}
 					<span data-testid="{value}-indicator"> {checked} </span>
@@ -34,6 +34,7 @@
 	<button
 		aria-label="binding"
 		data-testid="binding"
+		tabindex={0}
 		onclick={() => (value = items[0]?.value ?? "")}
 	>
 		{value}

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { useFloatingRootState } from "../use-floating-layer.svelte.js";
+	import { FloatingRootState } from "../use-floating-layer.svelte.js";
 
-	let { children }: { children?: Snippet } = $props();
+	let { children, tooltip = false }: { children?: Snippet; tooltip?: boolean } = $props();
 
-	useFloatingRootState();
+	FloatingRootState.create(tooltip);
 </script>
 
 {@render children?.()}

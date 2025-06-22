@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { DismissibleLayerImplProps } from "./types.js";
-	import { useDismissibleLayer } from "./use-dismissable-layer.svelte.js";
+	import { DismissibleLayerState } from "./use-dismissable-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {
@@ -12,15 +12,17 @@
 		children,
 		enabled,
 		isValidEvent = () => false,
+		ref,
 	}: DismissibleLayerImplProps = $props();
 
-	const dismissibleLayerState = useDismissibleLayer({
+	const dismissibleLayerState = DismissibleLayerState.create({
 		id: box.with(() => id),
 		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
 		onInteractOutside: box.with(() => onInteractOutside),
 		enabled: box.with(() => enabled),
 		onFocusOutside: box.with(() => onFocusOutside),
 		isValidEvent: box.with(() => isValidEvent),
+		ref,
 	});
 </script>
 

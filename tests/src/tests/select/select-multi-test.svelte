@@ -74,7 +74,7 @@
 				<Select.Content data-testid="content" {...contentProps}>
 					<Select.Group data-testid="group">
 						<Select.GroupHeading data-testid="group-label">Options</Select.GroupHeading>
-						{#each filteredItems as { value, label, disabled }}
+						{#each filteredItems as { value, label, disabled } (value)}
 							{@const testId = generateTestId(value)}
 							<Select.Item data-testid={testId} {disabled} {value} {label}>
 								{#snippet children({ selected, highlighted: _highlighted })}
@@ -89,7 +89,7 @@
 				</Select.Content>
 			</Select.Portal>
 		</Select.Root>
-		<div data-testid="outside"></div>
+		<div data-testid="outside">outside</div>
 		<button type="button" data-testid="open-binding" onclick={() => (open = !open)}>
 			{open}
 		</button>

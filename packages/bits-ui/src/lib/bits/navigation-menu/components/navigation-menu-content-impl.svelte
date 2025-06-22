@@ -5,16 +5,18 @@
 	import {
 		NavigationMenuItemContext,
 		NavigationMenuItemState,
-		useNavigationMenuContentImpl,
+		NavigationMenuContentImplState,
 	} from "../navigation-menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
 
+	const uid = $props.id();
+
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		child: childProp,
 		children: childrenProp,
 		onInteractOutside = noop,
@@ -31,7 +33,7 @@
 		child?: Snippet<[{ props: Record<string, unknown> }]>;
 	} = $props();
 
-	const contentImplState = useNavigationMenuContentImpl(
+	const contentImplState = NavigationMenuContentImplState.create(
 		{
 			id: box.with(() => id),
 			ref: box.with(
@@ -54,6 +56,7 @@
 
 <DismissibleLayer
 	{id}
+	ref={contentImplState.opts.ref}
 	enabled={true}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
@@ -70,6 +73,7 @@
 	{#snippet children({ props: dismissibleProps })}
 		<EscapeLayer
 			enabled={true}
+			ref={contentImplState.opts.ref}
 			onEscapeKeydown={(e) => {
 				onEscapeKeydown(e);
 				if (e.defaultPrevented) return;

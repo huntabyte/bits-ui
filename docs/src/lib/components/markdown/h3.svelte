@@ -6,7 +6,7 @@
 </script>
 
 <h3
-	class={cn("mt-8 scroll-m-[70px] text-xl font-semibold tracking-tight", className)}
+	class={cn("mt-12 scroll-m-[70px] text-xl font-semibold tracking-tight", className)}
 	{...restProps}
 >
 	{@render children?.()}

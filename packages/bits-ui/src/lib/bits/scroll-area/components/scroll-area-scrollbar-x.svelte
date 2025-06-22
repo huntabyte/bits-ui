@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { IsMounted } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useScrollAreaScrollbarX } from "../scroll-area.svelte.js";
+	import { ScrollAreaScrollbarXState } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
 	import ScrollAreaScrollbarShared from "./scroll-area-scrollbar-shared.svelte";
 
@@ -9,7 +9,7 @@
 
 	const isMounted = new IsMounted();
 
-	const scrollbarXState = useScrollAreaScrollbarX({
+	const scrollbarXState = ScrollAreaScrollbarXState.create({
 		mounted: box.with(() => isMounted.current),
 	});
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

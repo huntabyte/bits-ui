@@ -1,19 +1,21 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AspectRatioRootProps } from "../types.js";
-	import { useAspectRatioRoot } from "../aspect-ratio.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { AspectRatioRootState } from "../aspect-ratio.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		ratio = 1,
 		children,
 		child,
 		...restProps
 	}: AspectRatioRootProps = $props();
 
-	const rootState = useAspectRatioRoot({
+	const rootState = AspectRatioRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

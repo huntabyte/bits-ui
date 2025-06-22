@@ -27,7 +27,7 @@
 <button data-testid="update-value" onclick={() => (value = "item-1")}> Update Value </button>
 
 <Accordion.Root type="single" bind:value={value as string} {disabled} data-testid="root">
-	{#each items as { value, title, disabled, content, level }}
+	{#each items as { value, title, disabled, content, level } (value)}
 		<Accordion.Item {value} {disabled} data-testid="{value}-item">
 			<Accordion.Header {level} data-testid="{value}-header">
 				<Accordion.Trigger {disabled} data-testid="{value}-trigger">

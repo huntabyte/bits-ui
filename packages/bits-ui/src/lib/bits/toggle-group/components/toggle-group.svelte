@@ -2,12 +2,15 @@
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupRootProps } from "../types.js";
-	import { useToggleGroupRoot } from "../toggle-group.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { ToggleGroupRootState } from "../toggle-group.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(),
 		onValueChange = noop,
@@ -21,13 +24,22 @@
 		...restProps
 	}: ToggleGroupRootProps = $props();
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
-
-		value = defaultValue;
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? "" : [];
 	}
 
-	const rootState = useToggleGroupRoot({
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
+	const rootState = ToggleGroupRootState.create({
 		id: box.with(() => id),
 		value: box.with(
 			() => value!,

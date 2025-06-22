@@ -1,4 +1,4 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
 import {
 	getAriaChecked,
@@ -7,28 +7,44 @@ import {
 	getDataDisabled,
 	getDataRequired,
 	getDisabled,
+	createBitsAttrs,
 } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
-import type { BitsKeyboardEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsKeyboardEvent,
+	BitsPointerEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 
-const SWITCH_ROOT_ATTR = "data-switch-root";
-const SWITCH_THUMB_ATTR = "data-switch-thumb";
+const switchAttrs = createBitsAttrs({
+	component: "switch",
+	parts: ["root", "thumb"],
+});
 
-type SwitchRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-		required: boolean;
-		name: string | undefined;
-		value: string;
-	}> &
+const SwitchRootContext = new Context<SwitchRootState>("Switch.Root");
+
+interface SwitchRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+			required: boolean;
+			name: string | undefined;
+			value: string;
+		}>,
 		WritableBoxedValues<{
 			checked: boolean;
-		}>
->;
-class SwitchRootState {
-	constructor(readonly opts: SwitchRootStateProps) {
-		useRefById(opts);
+		}> {}
+export class SwitchRootState {
+	static create(opts: SwitchRootStateOpts) {
+		return SwitchRootContext.set(new SwitchRootState(opts));
+	}
+	readonly opts: SwitchRootStateOpts;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SwitchRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onclick = this.onclick.bind(this);
@@ -49,17 +65,17 @@ class SwitchRootState {
 		this.#toggle();
 	}
 
-	sharedProps = $derived.by(() => ({
+	readonly sharedProps = $derived.by(() => ({
 		"data-disabled": getDataDisabled(this.opts.disabled.current),
 		"data-state": getDataChecked(this.opts.checked.current),
 		"data-required": getDataRequired(this.opts.required.current),
 	}));
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		checked: this.opts.checked.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...this.sharedProps,
@@ -68,20 +84,27 @@ class SwitchRootState {
 				disabled: getDisabled(this.opts.disabled.current),
 				"aria-checked": getAriaChecked(this.opts.checked.current, false),
 				"aria-required": getAriaRequired(this.opts.required.current),
-				[SWITCH_ROOT_ATTR]: "",
+				[switchAttrs.root]: "",
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...this.attachment,
 			}) as const
 	);
 }
 
-class SwitchInputState {
-	shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
+export class SwitchInputState {
+	static create() {
+		return new SwitchInputState(SwitchRootContext.get());
+	}
+	readonly root: SwitchRootState;
+	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
 
-	constructor(readonly root: SwitchRootState) {}
+	constructor(root: SwitchRootState) {
+		this.root = root;
+	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				type: "checkbox",
@@ -94,40 +117,33 @@ class SwitchInputState {
 	);
 }
 
-type SwitchThumbStateProps = WithRefProps;
+interface SwitchThumbStateOpts extends WithRefOpts {}
 
-class SwitchThumbState {
-	constructor(
-		readonly opts: SwitchThumbStateProps,
-		readonly root: SwitchRootState
-	) {
-		useRefById(opts);
+export class SwitchThumbState {
+	static create(opts: SwitchThumbStateOpts) {
+		return new SwitchThumbState(opts, SwitchRootContext.get());
+	}
+	readonly opts: SwitchThumbStateOpts;
+	readonly root: SwitchRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SwitchThumbStateOpts, root: SwitchRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		checked: this.root.opts.checked.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...this.root.sharedProps,
 				id: this.opts.id.current,
-				[SWITCH_THUMB_ATTR]: "",
+				[switchAttrs.thumb]: "",
+				...this.attachment,
 			}) as const
 	);
-}
-
-const SwitchRootContext = new Context<SwitchRootState>("Switch.Root");
-
-export function useSwitchRoot(props: SwitchRootStateProps) {
-	return SwitchRootContext.set(new SwitchRootState(props));
-}
-
-export function useSwitchInput(): SwitchInputState {
-	return new SwitchInputState(SwitchRootContext.get());
-}
-
-export function useSwitchThumb(props: SwitchThumbStateProps): SwitchThumbState {
-	return new SwitchThumbState(props, SwitchRootContext.get());
 }

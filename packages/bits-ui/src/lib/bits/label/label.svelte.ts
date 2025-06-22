@@ -1,30 +1,39 @@
-import { useRefById } from "svelte-toolbelt";
-import type { BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
+import { attachRef } from "svelte-toolbelt";
+import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 
-const ROOT_ATTR = "data-label-root";
+const labelAttrs = createBitsAttrs({
+	component: "label",
+	parts: ["root"],
+});
 
-type LabelRootStateProps = WithRefProps;
-class LabelRootState {
-	constructor(readonly opts: LabelRootStateProps) {
+interface LabelRootStateOpts extends WithRefOpts {}
+
+export class LabelRootState {
+	static create(opts: LabelRootStateOpts) {
+		return new LabelRootState(opts);
+	}
+
+	readonly opts: LabelRootStateOpts;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: LabelRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 		this.onmousedown = this.onmousedown.bind(this);
-
-		useRefById(opts);
 	}
 
 	onmousedown(e: BitsMouseEvent) {
 		if (e.detail > 1) e.preventDefault();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[ROOT_ATTR]: "",
+				[labelAttrs.root]: "",
 				onmousedown: this.onmousedown,
+				...this.attachment,
 			}) as const
 	);
-}
-
-export function setLabelRootState(props: LabelRootStateProps) {
-	return new LabelRootState(props);
 }

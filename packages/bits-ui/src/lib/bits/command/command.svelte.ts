@@ -1,4 +1,11 @@
-import { afterSleep, afterTick, srOnlyStyles, useRefById } from "svelte-toolbelt";
+import {
+	afterSleep,
+	afterTick,
+	srOnlyStyles,
+	attachRef,
+	type WritableBoxedValues,
+	type ReadableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { findNextSibling, findPreviousSibling } from "./utils.js";
 import type { CommandState } from "./types.js";
@@ -6,11 +13,12 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	RefAttachment,
+	WithRefOpts,
 } from "$lib/internal/types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
+	createBitsAttrs,
 	getAriaDisabled,
 	getAriaExpanded,
 	getAriaSelected,
@@ -19,50 +27,88 @@ import {
 } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
-import { noop } from "$lib/internal/noop.js";
+import { cssEscape } from "$lib/internal/css-escape.js";
 
-// attributes
-const COMMAND_ROOT_ATTR = "data-command-root";
-const COMMAND_LIST_ATTR = "data-command-list";
-const COMMAND_INPUT_ATTR = "data-command-input";
-const COMMAND_SEPARATOR_ATTR = "data-command-separator";
-const COMMAND_LOADING_ATTR = "data-command-loading";
-const COMMAND_EMPTY_ATTR = "data-command-empty";
-const COMMAND_GROUP_ATTR = "data-command-group";
-const COMMAND_GROUP_ITEMS_ATTR = "data-command-group-items";
-const COMMAND_GROUP_HEADING_ATTR = "data-command-group-heading";
-const COMMAND_ITEM_ATTR = "data-command-item";
-const COMMAND_VIEWPORT_ATTR = "data-command-viewport";
-const COMMAND_INPUT_LABEL_ATTR = "data-command-input-label";
 const COMMAND_VALUE_ATTR = "data-value";
 
+const commandAttrs = createBitsAttrs({
+	component: "command",
+	parts: [
+		"root",
+		"list",
+		"input",
+		"separator",
+		"loading",
+		"empty",
+		"group",
+		"group-items",
+		"group-heading",
+		"item",
+		"viewport",
+		"input-label",
+	],
+});
+
 // selectors
-const COMMAND_GROUP_SELECTOR = `[${COMMAND_GROUP_ATTR}]`;
-const COMMAND_GROUP_ITEMS_SELECTOR = `[${COMMAND_GROUP_ITEMS_ATTR}]`;
-const COMMAND_GROUP_HEADING_SELECTOR = `[${COMMAND_GROUP_HEADING_ATTR}]`;
-const COMMAND_ITEM_SELECTOR = `[${COMMAND_ITEM_ATTR}]`;
-const COMMAND_VALID_ITEM_SELECTOR = `${COMMAND_ITEM_SELECTOR}:not([aria-disabled="true"])`;
+const COMMAND_GROUP_SELECTOR = commandAttrs.selector("group");
+const COMMAND_GROUP_ITEMS_SELECTOR = commandAttrs.selector("group-items");
+const COMMAND_GROUP_HEADING_SELECTOR = commandAttrs.selector("group-heading");
+const COMMAND_ITEM_SELECTOR = commandAttrs.selector("item");
+const COMMAND_VALID_ITEM_SELECTOR = `${commandAttrs.selector("item")}:not([aria-disabled="true"])`;
 
 const CommandRootContext = new Context<CommandRootState>("Command.Root");
 const CommandListContext = new Context<CommandListState>("Command.List");
 const CommandGroupContainerContext = new Context<CommandGroupContainerState>("Command.Group");
 
-type CommandRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		filter: (value: string, search: string, keywords?: string[]) => number;
-		shouldFilter: boolean;
-		loop: boolean;
-		vimBindings: boolean;
-		disablePointerSelection: boolean;
-		onStateChange?: (state: Readonly<CommandState>) => void;
-	}> &
+interface GridItem {
+	index: number;
+	firstRowOfGroup: boolean;
+	ref: HTMLElement;
+}
+
+type ItemsGrid = GridItem[][];
+
+interface CommandRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			filter: (value: string, search: string, keywords?: string[]) => number;
+			shouldFilter: boolean;
+			loop: boolean;
+			vimBindings: boolean;
+			columns: number | null;
+			disablePointerSelection: boolean;
+			disableInitialScroll: boolean;
+			onStateChange?: (state: Readonly<CommandState>) => void;
+		}>,
 		WritableBoxedValues<{
 			value: string;
-		}>
->;
+		}> {}
 
-class CommandRootState {
+const defaultState = {
+	/** Value of the search query */
+	search: "",
+	/** Currently selected item value */
+	value: "",
+	filtered: {
+		/** The count of all visible items. */
+		count: 0,
+		/** Map from visible item id to its search store. */
+		items: new Map<string, number>(),
+		/** Set of groups with at least one visible item. */
+		groups: new Set<string>(),
+	},
+};
+
+export class CommandRootState {
+	static create(opts: CommandRootStateOpts) {
+		return CommandRootContext.set(new CommandRootState(opts));
+	}
+	readonly opts: CommandRootStateOpts;
+	readonly attachment: RefAttachment;
 	#updateScheduled = false;
+	#isInitialMount = true;
+	sortAfterTick = false;
+	sortAndFilterAfterTick = false;
 	allItems = new Set<string>();
 	allGroups = new Map<string, Set<string>>();
 	allIds = new Map<string, { value: string; keywords?: string[] }>();
@@ -72,9 +118,9 @@ class CommandRootState {
 	inputNode = $state<HTMLElement | null>(null);
 	labelNode = $state<HTMLElement | null>(null);
 	// published state that the components and other things can react to
-	commandState = $state.raw<CommandState>(null!);
+	commandState = $state.raw<CommandState>(defaultState);
 	// internal state that we mutate in batches and publish to the `state` at once
-	_commandState = $state<CommandState>(null!);
+	_commandState = $state<CommandState>(defaultState);
 
 	#snapshot() {
 		return $state.snapshot(this._commandState);
@@ -97,7 +143,11 @@ class CommandRootState {
 		});
 	}
 
-	setState<K extends keyof CommandState>(key: K, value: CommandState[K], opts?: boolean) {
+	setState<K extends keyof CommandState>(
+		key: K,
+		value: CommandState[K],
+		preventScroll?: boolean
+	) {
 		if (Object.is(this._commandState[key], value)) return;
 
 		this._commandState[key] = value;
@@ -106,38 +156,21 @@ class CommandRootState {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
 			this.#sort();
-			this.#selectFirstItem();
 		} else if (key === "value") {
-			// opts is a boolean referring to whether it should NOT be scrolled into view
-			if (!opts) {
-				// Scroll the selected item into view
-				this.#scrollSelectedIntoView();
-			}
+			if (!preventScroll) this.#scrollSelectedIntoView();
 		}
 
 		this.#scheduleUpdate();
 	}
 
-	constructor(readonly opts: CommandRootStateProps) {
-		const defaultState = {
-			/** Value of the search query */
-			search: "",
-			/** Currently selected item value */
-			value: this.opts.value.current ?? "",
-			filtered: {
-				/** The count of all visible items. */
-				count: 0,
-				/** Map from visible item id to its search store. */
-				items: new Map<string, number>(),
-				/** Set of groups with at least one visible item. */
-				groups: new Set<string>(),
-			},
-		};
+	constructor(opts: CommandRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 
-		this._commandState = defaultState;
-		this.commandState = defaultState;
+		const defaults = { ...this._commandState, value: this.opts.value.current ?? "" };
 
-		useRefById(opts);
+		this._commandState = defaults;
+		this.commandState = defaults;
 
 		this.onkeydown = this.onkeydown.bind(this);
 	}
@@ -164,7 +197,7 @@ class CommandRootState {
 	#sort(): void {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
 			// If no search and no selection yet, select first item
-			if (!this.commandState.value) this.#selectFirstItem();
+			this.#selectFirstItem();
 			return;
 		}
 
@@ -194,8 +227,8 @@ class CommandRootState {
 		const listInsertionElement = this.viewportNode;
 
 		const sorted = this.getValidItems().sort((a, b) => {
-			const valueA = a.getAttribute("id");
-			const valueB = b.getAttribute("id");
+			const valueA = a.getAttribute("data-value");
+			const valueB = b.getAttribute("data-value");
 			const scoresA = scores.get(valueA!) ?? 0;
 			const scoresB = scores.get(valueB!) ?? 0;
 			return scoresB - scoresA;
@@ -229,10 +262,12 @@ class CommandRootState {
 
 		for (const group of sortedGroups) {
 			const element = listInsertionElement?.querySelector(
-				`${COMMAND_GROUP_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(group[0])}"]`
+				`${COMMAND_GROUP_SELECTOR}[${COMMAND_VALUE_ATTR}="${cssEscape(group[0])}"]`
 			);
 			element?.parentElement?.appendChild(element);
 		}
+
+		this.#selectFirstItem();
 	}
 
 	/**
@@ -259,7 +294,10 @@ class CommandRootState {
 				(item) => item.getAttribute("aria-disabled") !== "true"
 			);
 			const value = item?.getAttribute(COMMAND_VALUE_ATTR);
-			this.setValue(value || "");
+			const shouldPreventScroll =
+				this.#isInitialMount && this.opts.disableInitialScroll.current;
+			this.setValue(value ?? "", shouldPreventScroll);
+			this.#isInitialMount = false;
 		});
 	}
 
@@ -317,6 +355,69 @@ class CommandRootState {
 	}
 
 	/**
+	 * Gets all visible command items.
+	 *
+	 * @returns Array of valid item elements
+	 * @remarks Exposed for direct item access and bound checking
+	 */
+	getVisibleItems(): HTMLElement[] {
+		const node = this.opts.ref.current;
+		if (!node) return [];
+		const visibleItems = Array.from(
+			node.querySelectorAll<HTMLElement>(COMMAND_ITEM_SELECTOR)
+		).filter((el): el is HTMLElement => !!el);
+		return visibleItems;
+	}
+
+	/** Returns all visible items in a matrix structure
+	 *
+	 * @remarks Returns empty if the command isn't configured as a grid
+	 *
+	 * @returns
+	 */
+	get itemsGrid(): ItemsGrid {
+		if (!this.isGrid) return [];
+
+		const columns = this.opts.columns.current ?? 1;
+
+		const items = this.getVisibleItems();
+
+		const grid: ItemsGrid = [[]];
+
+		let currentGroup = items[0]?.getAttribute("data-group");
+		let column = 0;
+		let row = 0;
+
+		for (let i = 0; i < items.length; i++) {
+			const item = items[i];
+			const itemGroup = item?.getAttribute("data-group");
+
+			if (currentGroup !== itemGroup) {
+				currentGroup = itemGroup;
+				column = 1;
+				row++;
+				grid.push([{ index: i, firstRowOfGroup: true, ref: item! }]);
+			} else {
+				column++;
+
+				if (column > columns) {
+					row++;
+					column = 1;
+					grid.push([]);
+				}
+
+				grid[row]?.push({
+					index: i,
+					firstRowOfGroup: grid[row]?.[0]?.firstRowOfGroup ?? i === 0,
+					ref: item!,
+				});
+			}
+		}
+
+		return grid;
+	}
+
+	/**
 	 * Gets currently selected command item.
 	 *
 	 * @returns Selected element or undefined
@@ -325,7 +426,7 @@ class CommandRootState {
 		const node = this.opts.ref.current;
 		if (!node) return;
 		const selectedNode = node.querySelector<HTMLElement>(
-			`${COMMAND_VALID_ITEM_SELECTOR}[aria-selected="true"]`
+			`${COMMAND_VALID_ITEM_SELECTOR}[data-selected]`
 		);
 		if (!selectedNode) return;
 		return selectedNode;
@@ -336,21 +437,66 @@ class CommandRootState {
 	 * Special handling for first items in groups.
 	 */
 	#scrollSelectedIntoView(): void {
-		afterSleep(1, () => {
+		afterTick(() => {
 			const item = this.#getSelectedItem();
 			if (!item) return;
 			const grandparent = item.parentElement?.parentElement;
 			if (!grandparent) return;
-			const firstChildOfParent = getFirstNonCommentChild(grandparent) as HTMLElement | null;
-			if (firstChildOfParent && firstChildOfParent.dataset?.value === item.dataset?.value) {
-				item
-					?.closest(COMMAND_GROUP_SELECTOR)
-					?.querySelector(COMMAND_GROUP_HEADING_SELECTOR)
-					?.scrollIntoView({ block: "nearest" });
-				return;
+
+			if (this.isGrid) {
+				const isFirstRowOfGroup = this.#itemIsFirstRowOfGroup(item);
+
+				// ensure item is visible
+				item.scrollIntoView({ block: "nearest" });
+
+				if (isFirstRowOfGroup) {
+					const closestGroupHeader = item
+						?.closest(COMMAND_GROUP_SELECTOR)
+						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
+					closestGroupHeader?.scrollIntoView({ block: "nearest" });
+
+					return;
+				}
+			} else {
+				const firstChildOfParent = getFirstNonCommentChild(
+					grandparent
+				) as HTMLElement | null;
+
+				if (
+					firstChildOfParent &&
+					firstChildOfParent.dataset?.value === item.dataset?.value
+				) {
+					const closestGroupHeader = item
+						?.closest(COMMAND_GROUP_SELECTOR)
+						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
+					closestGroupHeader?.scrollIntoView({ block: "nearest" });
+
+					return;
+				}
 			}
+
 			item.scrollIntoView({ block: "nearest" });
 		});
+	}
+
+	#itemIsFirstRowOfGroup(item: HTMLElement) {
+		const grid = this.itemsGrid;
+
+		if (grid.length === 0) return false;
+
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r];
+			if (row === undefined) continue;
+
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c];
+				if (column === undefined || column.ref !== item) continue;
+
+				return column.firstRowOfGroup;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -370,11 +516,9 @@ class CommandRootState {
 	 * }
 	 */
 	updateSelectedToIndex(index: number) {
-		const items = this.getValidItems();
-		const item = items[index];
-		if (item) {
-			this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
-		}
+		const item = this.getValidItems()[index];
+		if (!item) return;
+		this.setValue(item.getAttribute(COMMAND_VALUE_ATTR) ?? "");
 	}
 
 	/**
@@ -397,7 +541,7 @@ class CommandRootState {
 	 * // get all valid items
 	 * const items = getValidItems()
 	 */
-	updateSelectedByItem(change: 1 | -1): void {
+	updateSelectedByItem(change: number): void {
 		const selected = this.#getSelectedItem();
 		const items = this.getValidItems();
 		const index = items.findIndex((item) => item === selected);
@@ -460,15 +604,23 @@ class CommandRootState {
 	 * @param keywords - Optional search boost terms
 	 * @returns Cleanup function
 	 */
-	registerValue(id: string, value: string, keywords?: string[]): () => void {
-		if (value === this.allIds.get(id)?.value) return noop;
-		this.allIds.set(id, { value, keywords });
-		this._commandState.filtered.items.set(id, this.#score(value, keywords));
+	registerValue(value: string, keywords?: string[]): () => void {
+		if (!(value && value === this.allIds.get(value)?.value)) {
+			this.allIds.set(value, { value, keywords });
+		}
+		this._commandState.filtered.items.set(value, this.#score(value, keywords));
 
-		this.#sort();
+		// Schedule sorting to run after this tick when all items are added not each time an item is added
+		if (!this.sortAfterTick) {
+			this.sortAfterTick = true;
+			afterTick(() => {
+				this.#sort();
+				this.sortAfterTick = false;
+			});
+		}
 
 		return () => {
-			this.allIds.delete(id);
+			this.allIds.delete(value);
 		};
 	}
 
@@ -492,21 +644,30 @@ class CommandRootState {
 			}
 		}
 
-		this.#filterItems();
-		this.#sort();
+		// Schedule sorting and filtering to run after this tick when all items are added not each time an item is added
+		if (!this.sortAndFilterAfterTick) {
+			this.sortAndFilterAfterTick = true;
+			afterTick(() => {
+				this.#filterItems();
+				this.#sort();
+				this.sortAndFilterAfterTick = false;
+			});
+		}
 
 		this.#scheduleUpdate();
 		return () => {
+			const selectedItem = this.#getSelectedItem();
 			this.allIds.delete(id);
 			this.allItems.delete(id);
 			this.commandState.filtered.items.delete(id);
-			const selectedItem = this.#getSelectedItem();
 
 			this.#filterItems();
 
 			// The item removed have been the selected one,
 			// so selection should be moved to the first
-			if (selectedItem?.getAttribute("id") === id) this.#selectFirstItem();
+			if (selectedItem?.getAttribute("id") === id) {
+				this.#selectFirstItem();
+			}
 
 			this.#scheduleUpdate();
 		};
@@ -527,6 +688,10 @@ class CommandRootState {
 			this.allIds.delete(id);
 			this.allGroups.delete(id);
 		};
+	}
+
+	get isGrid() {
+		return this.opts.columns.current !== null;
 	}
 
 	/**
@@ -556,6 +721,269 @@ class CommandRootState {
 		}
 	}
 
+	#down(e: BitsKeyboardEvent) {
+		if (this.opts.columns.current === null) return;
+
+		e.preventDefault();
+
+		if (e.metaKey) {
+			this.updateSelectedByGroup(1);
+		} else {
+			this.updateSelectedByItem(this.#nextRowColumnOffset(e));
+		}
+	}
+
+	#getColumn(
+		item: HTMLElement,
+		grid: ItemsGrid
+	): { columnIndex: number; rowIndex: number } | null {
+		if (grid.length === 0) return null;
+
+		for (let r = 0; r < grid.length; r++) {
+			const row = grid[r];
+			if (row === undefined) continue;
+
+			for (let c = 0; c < row.length; c++) {
+				const column = row[c];
+				if (column === undefined || column.ref !== item) continue;
+
+				return { columnIndex: c, rowIndex: r };
+			}
+		}
+
+		return null;
+	}
+
+	#nextRowColumnOffset(e: BitsKeyboardEvent): number {
+		const grid = this.itemsGrid;
+		const selected = this.#getSelectedItem();
+		if (!selected) return 0;
+		const column = this.#getColumn(selected, grid);
+		if (!column) return 0;
+
+		let newItem: HTMLElement | null = null;
+
+		const skipRows = e.altKey ? 1 : 0;
+
+		// if this is the second to last row then we need to go to the last row when skipping and not in loop mode
+		if (e.altKey && column.rowIndex === grid.length - 2 && !this.opts.loop.current) {
+			newItem = this.#findNextNonDisabledItem({
+				start: grid.length - 1,
+				end: grid.length,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else if (column.rowIndex === grid.length - 1) {
+			// if this is the last row we apply the loop logic
+			if (!this.opts.loop.current) return 0;
+
+			newItem = this.#findNextNonDisabledItem({
+				start: 0 + skipRows,
+				end: column.rowIndex,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else {
+			newItem = this.#findNextNonDisabledItem({
+				start: column.rowIndex + 1 + skipRows,
+				end: grid.length,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+
+			// this happens if there were no non-disabled columns below the current column
+			// we can now try starting from the beginning to find the right column
+			if (newItem === null && this.opts.loop.current) {
+				newItem = this.#findNextNonDisabledItem({
+					start: 0,
+					end: column.rowIndex,
+					expectedColumnIndex: column.columnIndex,
+					grid,
+				});
+			}
+		}
+
+		return this.#calculateOffset(selected, newItem);
+	}
+
+	/** Attempts to find the next non-disabled column that matches the expected column.
+	 *
+	 * @remarks
+	 * - Skips over disabled columns
+	 * - When a row is shorter than the expected column it defaults to the last item in the row
+	 *
+	 * @param param0
+	 * @returns
+	 */
+	#findNextNonDisabledItem({
+		start,
+		end,
+		grid,
+		expectedColumnIndex,
+	}: {
+		start: number;
+		end: number;
+		grid: ItemsGrid;
+		expectedColumnIndex: number;
+	}) {
+		let newItem: HTMLElement | null = null;
+
+		for (let r = start; r < end; r++) {
+			const row = grid[r]!;
+
+			// try to get the next column
+			newItem = row[expectedColumnIndex]?.ref ?? null;
+
+			// skip over disabled items
+			if (newItem !== null && itemIsDisabled(newItem)) {
+				newItem = null;
+				continue;
+			}
+
+			// if that column doesn't exist default to the next highest column
+			if (newItem === null) {
+				// try and find the next highest non-disabled item in the row
+				// if there aren't any non-disabled items we just give up and return null
+				for (let i = row.length - 1; i >= 0; i--) {
+					const item = row[row.length - 1];
+					if (item === undefined || itemIsDisabled(item.ref)) continue;
+
+					newItem = item.ref;
+					break;
+				}
+			}
+			break;
+		}
+
+		return newItem;
+	}
+
+	#calculateOffset(selected: HTMLElement, newSelected: HTMLElement | null): number {
+		if (newSelected === null) return 0;
+
+		const items = this.getValidItems();
+
+		const ogIndex = items.findIndex((item) => item === selected);
+		const newIndex = items.findIndex((item) => item === newSelected);
+
+		return newIndex - ogIndex;
+	}
+
+	#up(e: BitsKeyboardEvent) {
+		if (this.opts.columns.current === null) return;
+
+		e.preventDefault();
+
+		if (e.metaKey) {
+			this.updateSelectedByGroup(-1);
+		} else {
+			this.updateSelectedByItem(this.#previousRowColumnOffset(e));
+		}
+	}
+
+	#previousRowColumnOffset(e: BitsKeyboardEvent) {
+		const grid = this.itemsGrid;
+		const selected = this.#getSelectedItem();
+		if (selected === undefined) return 0;
+		const column = this.#getColumn(selected, grid);
+		if (column === null) return 0;
+
+		let newItem: HTMLElement | null = null;
+
+		const skipRows = e.altKey ? 1 : 0;
+
+		// if this is the second row then we need to go to the top when skipping and not in loop mode
+		if (e.altKey && column.rowIndex === 1 && this.opts.loop.current === false) {
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: 0,
+				end: 0,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else if (column.rowIndex === 0) {
+			// if this is the last row we apply the loop logic
+			if (this.opts.loop.current === false) return 0;
+
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: grid.length - 1 - skipRows,
+				end: column.rowIndex + 1,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+		} else {
+			newItem = this.#findNextNonDisabledItemDesc({
+				start: column.rowIndex - 1 - skipRows,
+				end: 0,
+				expectedColumnIndex: column.columnIndex,
+				grid,
+			});
+
+			// this happens if there were no non-disabled columns below the current column
+			// we can now try starting from the beginning to find the right column
+			if (newItem === null && this.opts.loop.current) {
+				newItem = this.#findNextNonDisabledItemDesc({
+					start: grid.length - 1,
+					end: column.rowIndex + 1,
+					expectedColumnIndex: column.columnIndex,
+					grid,
+				});
+			}
+		}
+
+		return this.#calculateOffset(selected, newItem);
+	}
+
+	/**
+	 * Attempts to find the next non-disabled column that matches the expected column.
+	 *
+	 * @remarks
+	 * - Skips over disabled columns
+	 * - When a row is shorter than the expected column it defaults to the last item in the row
+	 */
+	#findNextNonDisabledItemDesc({
+		start,
+		end,
+		grid,
+		expectedColumnIndex,
+	}: {
+		start: number;
+		end: number;
+		grid: ItemsGrid;
+		expectedColumnIndex: number;
+	}) {
+		let newItem: HTMLElement | null = null;
+
+		for (let r = start; r >= end; r--) {
+			const row = grid[r];
+			if (row === undefined) continue;
+
+			// try to get the next column
+			newItem = row[expectedColumnIndex]?.ref ?? null;
+
+			// skip over disabled items
+			if (newItem !== null && itemIsDisabled(newItem)) {
+				newItem = null;
+				continue;
+			}
+
+			// if that column doesn't exist default to the next highest column
+			if (newItem === null) {
+				// try and find the next highest non-disabled item in the row
+				// if there aren't any non-disabled items we just give up and return null
+				for (let i = row.length - 1; i >= 0; i--) {
+					const item = row[row.length - 1];
+					if (item === undefined || itemIsDisabled(item.ref)) continue;
+
+					newItem = item.ref;
+					break;
+				}
+			}
+			break;
+		}
+
+		return newItem;
+	}
+
 	/**
 	 * Handles previous item selection:
 	 * - Meta: Jump to first
@@ -580,27 +1008,70 @@ class CommandRootState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		const isVim = this.opts.vimBindings.current && e.ctrlKey;
 		switch (e.key) {
 			case kbd.n:
 			case kbd.j: {
 				// vim down
-				if (this.opts.vimBindings.current && e.ctrlKey) {
-					this.#next(e);
+				if (isVim) {
+					if (this.isGrid) {
+						this.#down(e);
+					} else {
+						this.#next(e);
+					}
+				}
+				break;
+			}
+			case kbd.l: {
+				// vim right
+				if (isVim) {
+					if (this.isGrid) {
+						this.#next(e);
+					}
 				}
 				break;
 			}
 			case kbd.ARROW_DOWN:
+				if (this.isGrid) {
+					this.#down(e);
+				} else {
+					this.#next(e);
+				}
+				break;
+			case kbd.ARROW_RIGHT:
+				if (!this.isGrid) break;
+
 				this.#next(e);
+
 				break;
 			case kbd.p:
 			case kbd.k: {
 				// vim up
-				if (this.opts.vimBindings.current && e.ctrlKey) {
+				if (isVim) {
+					if (this.isGrid) {
+						this.#up(e);
+					} else {
+						this.#prev(e);
+					}
+				}
+				break;
+			}
+			case kbd.h: {
+				// vim left
+				if (isVim && this.isGrid) {
 					this.#prev(e);
 				}
 				break;
 			}
 			case kbd.ARROW_UP:
+				if (this.isGrid) {
+					this.#up(e);
+				} else {
+					this.#prev(e);
+				}
+				break;
+			case kbd.ARROW_LEFT:
+				if (!this.isGrid) break;
 				this.#prev(e);
 				break;
 			case kbd.HOME:
@@ -636,184 +1107,213 @@ class CommandRootState {
 			({
 				id: this.opts.id.current,
 				role: "application",
-				[COMMAND_ROOT_ATTR]: "",
+				[commandAttrs.root]: "",
 				tabindex: -1,
 				onkeydown: this.onkeydown,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandEmptyStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		forceMount: boolean;
-	}>;
+function itemIsDisabled(item: HTMLElement) {
+	return item.getAttribute("aria-disabled") === "true";
+}
 
-class CommandEmptyState {
-	#isInitialRender = true;
+interface CommandEmptyStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			forceMount: boolean;
+		}> {}
 
-	shouldRender = $derived.by(
-		() =>
+export class CommandEmptyState {
+	static create(opts: CommandEmptyStateOpts) {
+		return new CommandEmptyState(opts, CommandRootContext.get());
+	}
+
+	readonly opts: CommandEmptyStateOpts;
+	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
+	readonly shouldRender = $derived.by(() => {
+		return (
 			(this.root._commandState.filtered.count === 0 && this.#isInitialRender === false) ||
 			this.opts.forceMount.current
-	);
+		);
+	});
+	#isInitialRender = true;
 
-	constructor(
-		readonly opts: CommandEmptyStateProps,
-		readonly root: CommandRootState
-	) {
-		$effect(() => {
+	constructor(opts: CommandEmptyStateOpts, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+
+		$effect.pre(() => {
 			this.#isInitialRender = false;
-		});
-
-		useRefById({
-			...opts,
-			deps: () => this.shouldRender,
 		});
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "presentation",
-				[COMMAND_EMPTY_ATTR]: "",
+				[commandAttrs.empty]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandGroupContainerStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		value: string;
-		forceMount: boolean;
-	}>
->;
+interface CommandGroupContainerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			forceMount: boolean;
+		}> {}
 
-class CommandGroupContainerState {
-	headingNode = $state<HTMLElement | null>(null);
+export class CommandGroupContainerState {
+	static create(opts: CommandGroupContainerStateOpts) {
+		return CommandGroupContainerContext.set(
+			new CommandGroupContainerState(opts, CommandRootContext.get())
+		);
+	}
 
-	shouldRender = $derived.by(() => {
+	readonly opts: CommandGroupContainerStateOpts;
+	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
+	readonly shouldRender = $derived.by(() => {
 		if (this.opts.forceMount.current) return true;
 		if (this.root.opts.shouldFilter.current === false) return true;
 		if (!this.root.commandState.search) return true;
-		return this.root.commandState.filtered.groups.has(this.opts.id.current);
+		return this.root._commandState.filtered.groups.has(this.trueValue);
 	});
+
+	headingNode = $state<HTMLElement | null>(null);
 	trueValue = $state("");
 
-	constructor(
-		readonly opts: CommandGroupContainerStateProps,
-		readonly root: CommandRootState
-	) {
-		this.trueValue = opts.value.current;
+	constructor(opts: CommandGroupContainerStateOpts, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+		this.trueValue = opts.value.current ?? opts.id.current;
 
-		useRefById({
-			...opts,
-			deps: () => this.shouldRender,
-		});
-
-		$effect(() => {
-			return this.root.registerGroup(this.opts.id.current);
-		});
+		watch(
+			() => this.trueValue,
+			() => {
+				return this.root.registerGroup(this.trueValue);
+			}
+		);
 
 		$effect(() => {
 			if (this.opts.value.current) {
 				this.trueValue = this.opts.value.current;
-				return this.root.registerValue(this.opts.id.current, this.opts.value.current);
+				return this.root.registerValue(this.opts.value.current);
 			} else if (this.headingNode && this.headingNode.textContent) {
 				this.trueValue = this.headingNode.textContent.trim().toLowerCase();
-				return this.root.registerValue(this.opts.id.current, this.trueValue);
-			} else if (this.opts.ref.current?.textContent) {
-				this.trueValue = this.opts.ref.current.textContent.trim().toLowerCase();
-				return this.root.registerValue(this.opts.id.current, this.trueValue);
+				return this.root.registerValue(this.trueValue);
+			} else {
+				this.trueValue = `-----${this.opts.id.current}`;
+				return this.root.registerValue(this.trueValue);
 			}
 		});
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "presentation",
 				hidden: this.shouldRender ? undefined : true,
 				"data-value": this.trueValue,
-				[COMMAND_GROUP_ATTR]: "",
+				[commandAttrs.group]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandGroupHeadingStateProps = WithRefProps;
+interface CommandGroupHeadingStateOpts extends WithRefOpts {}
 
-class CommandGroupHeadingState {
-	constructor(
-		readonly opts: CommandGroupHeadingStateProps,
-		readonly group: CommandGroupContainerState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.group.headingNode = node;
-			},
-		});
+export class CommandGroupHeadingState {
+	static create(opts: CommandGroupHeadingStateOpts) {
+		return new CommandGroupHeadingState(opts, CommandGroupContainerContext.get());
 	}
 
-	props = $derived.by(
+	readonly opts: CommandGroupHeadingStateOpts;
+	readonly group: CommandGroupContainerState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: CommandGroupHeadingStateOpts, group: CommandGroupContainerState) {
+		this.opts = opts;
+		this.group = group;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.group.headingNode = v));
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[COMMAND_GROUP_HEADING_ATTR]: "",
+				[commandAttrs["group-heading"]]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandGroupItemsStateProps = WithRefProps;
+interface CommandGroupItemsStateOpts extends WithRefOpts {}
 
-class CommandGroupItemsState {
-	constructor(
-		readonly opts: CommandGroupItemsStateProps,
-		readonly group: CommandGroupContainerState
-	) {
-		useRefById(opts);
+export class CommandGroupItemsState {
+	static create(opts: CommandGroupItemsStateOpts) {
+		return new CommandGroupItemsState(opts, CommandGroupContainerContext.get());
 	}
 
-	props = $derived.by(
+	readonly opts: CommandGroupItemsStateOpts;
+	readonly group: CommandGroupContainerState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: CommandGroupItemsStateOpts, group: CommandGroupContainerState) {
+		this.opts = opts;
+		this.group = group;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[COMMAND_GROUP_ITEMS_ATTR]: "",
+				[commandAttrs["group-items"]]: "",
 				"aria-labelledby": this.group.headingNode?.id ?? undefined,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandInputStateProps = WithRefProps<
-	WritableBoxedValues<{
-		value: string;
-	}> &
+interface CommandInputStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: string;
+		}>,
 		ReadableBoxedValues<{
 			autofocus: boolean;
-		}>
->;
+		}> {}
 
-class CommandInputState {
-	#selectedItemId = $derived.by(() => {
+export class CommandInputState {
+	static create(opts: CommandInputStateOpts) {
+		return new CommandInputState(opts, CommandRootContext.get());
+	}
+
+	readonly opts: CommandInputStateOpts;
+	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
+	readonly #selectedItemId = $derived.by(() => {
 		const item = this.root.viewportNode?.querySelector<HTMLElement>(
-			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${encodeURIComponent(this.opts.value.current)}"]`
+			`${COMMAND_ITEM_SELECTOR}[${COMMAND_VALUE_ATTR}="${cssEscape(this.root.opts.value.current)}"]`
 		);
-		if (!item) return;
-		return item?.getAttribute("id") ?? undefined;
+		if (item === undefined || item === null) return;
+		return item.getAttribute("id") ?? undefined;
 	});
 
-	constructor(
-		readonly opts: CommandInputStateProps,
-		readonly root: CommandRootState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.inputNode = node;
-			},
-		});
-
+	constructor(opts: CommandInputStateOpts, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.inputNode = v));
 		watch(
 			() => this.opts.ref.current,
 			() => {
@@ -834,12 +1334,12 @@ class CommandInputState {
 		);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				type: "text",
-				[COMMAND_INPUT_ATTR]: "",
+				[commandAttrs.input]: "",
 				autocomplete: "off",
 				autocorrect: "off",
 				spellcheck: false,
@@ -849,29 +1349,37 @@ class CommandInputState {
 				"aria-controls": this.root.viewportNode?.id ?? undefined,
 				"aria-labelledby": this.root.labelNode?.id ?? undefined,
 				"aria-activedescendant": this.#selectedItemId,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandItemStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		value: string;
-		disabled: boolean;
-		onSelect: () => void;
-		forceMount: boolean;
-		keywords: string[];
-	}> & {
-		group: CommandGroupContainerState | null;
-	}
->;
+interface CommandItemStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			disabled: boolean;
+			onSelect: () => void;
+			forceMount: boolean;
+			keywords: string[];
+		}> {
+	group: CommandGroupContainerState | null;
+}
 
-class CommandItemState {
-	#group: CommandGroupContainerState | null = null;
-	#trueForceMount = $derived.by(() => {
+export class CommandItemState {
+	static create(opts: Omit<CommandItemStateOpts, "group">) {
+		const group = CommandGroupContainerContext.getOr(null);
+		return new CommandItemState({ ...opts, group }, CommandRootContext.get());
+	}
+	readonly opts: CommandItemStateOpts;
+	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
+	readonly #group: CommandGroupContainerState | null = null;
+	readonly #trueForceMount = $derived.by(() => {
 		return this.opts.forceMount.current || this.#group?.opts.forceMount.current === true;
 	});
-	trueValue = $state("");
-	shouldRender = $derived.by(() => {
+	readonly shouldRender = $derived.by(() => {
+		this.opts.ref.current;
 		if (
 			this.#trueForceMount ||
 			this.root.opts.shouldFilter.current === false ||
@@ -879,51 +1387,45 @@ class CommandItemState {
 		) {
 			return true;
 		}
-		const currentScore = this.root.commandState.filtered.items.get(this.opts.id.current);
+		const currentScore = this.root.commandState.filtered.items.get(this.trueValue);
 		if (currentScore === undefined) return false;
 		return currentScore > 0;
 	});
 
-	isSelected = $derived.by(
+	readonly isSelected = $derived.by(
 		() => this.root.opts.value.current === this.trueValue && this.trueValue !== ""
 	);
+	trueValue = $state("");
 
-	constructor(
-		readonly opts: CommandItemStateProps,
-		readonly root: CommandRootState
-	) {
+	constructor(opts: CommandItemStateOpts, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#group = CommandGroupContainerContext.getOr(null);
 		this.trueValue = opts.value.current;
-
-		useRefById({
-			...opts,
-			deps: () => Boolean(this.root.commandState.search),
-		});
+		this.attachment = attachRef(this.opts.ref);
 
 		watch(
 			[
-				() => this.opts.id.current,
-				() => this.#group?.opts.id.current,
+				() => this.trueValue,
+				() => this.#group?.trueValue,
 				() => this.opts.forceMount.current,
 			],
 			() => {
 				if (this.opts.forceMount.current) return;
-				return this.root.registerItem(this.opts.id.current, this.#group?.opts.id.current);
+				return this.root.registerItem(this.trueValue, this.#group?.trueValue);
 			}
 		);
 
 		watch([() => this.opts.value.current, () => this.opts.ref.current], () => {
-			if (!this.opts.ref.current) return;
-			if (!this.opts.value.current && this.opts.ref.current.textContent) {
+			if (!this.opts.value.current && this.opts.ref.current?.textContent) {
 				this.trueValue = this.opts.ref.current.textContent.trim();
 			}
 
 			this.root.registerValue(
-				this.opts.id.current,
 				this.trueValue,
 				opts.keywords.current.map((kw) => kw.trim())
 			);
-			this.opts.ref.current.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
+			this.opts.ref.current?.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
 		});
 
 		// bindings
@@ -952,7 +1454,7 @@ class CommandItemState {
 		this.#onSelect();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -961,26 +1463,35 @@ class CommandItemState {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-selected": getDataSelected(this.isSelected),
 				"data-value": this.trueValue,
-				[COMMAND_ITEM_ATTR]: "",
+				"data-group": this.#group?.trueValue,
+				[commandAttrs.item]: "",
 				role: "option",
 				onpointermove: this.onpointermove,
 				onclick: this.onclick,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandLoadingStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		progress: number;
-	}>
->;
+interface CommandLoadingStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			progress: number;
+		}> {}
 
-class CommandLoadingState {
-	constructor(readonly opts: CommandLoadingStateProps) {
-		useRefById(opts);
+export class CommandLoadingState {
+	static create(opts: CommandLoadingStateOpts) {
+		return new CommandLoadingState(opts);
 	}
 
-	props = $derived.by(
+	readonly opts: CommandLoadingStateOpts;
+	readonly attachment: RefAttachment;
+	constructor(opts: CommandLoadingStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -989,186 +1500,158 @@ class CommandLoadingState {
 				"aria-valuemin": 0,
 				"aria-valuemax": 100,
 				"aria-label": "Loading...",
-				[COMMAND_LOADING_ATTR]: "",
+				[commandAttrs.loading]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandSeparatorStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		forceMount: boolean;
-	}>;
+interface CommandSeparatorStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			forceMount: boolean;
+		}> {}
 
-class CommandSeparatorState {
-	shouldRender = $derived.by(
-		() => !this.root.commandState.search || this.opts.forceMount.current
-	);
-
-	constructor(
-		readonly opts: CommandSeparatorStateProps,
-		readonly root: CommandRootState
-	) {
-		useRefById({
-			...opts,
-			deps: () => this.shouldRender,
-		});
+export class CommandSeparatorState {
+	static create(opts: CommandSeparatorStateOpts) {
+		return new CommandSeparatorState(opts, CommandRootContext.get());
 	}
 
-	props = $derived.by(
+	readonly opts: CommandSeparatorStateOpts;
+	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
+	readonly shouldRender = $derived.by(
+		() => !this.root._commandState.search || this.opts.forceMount.current
+	);
+
+	constructor(opts: CommandSeparatorStateOpts, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "separator",
-				[COMMAND_SEPARATOR_ATTR]: "",
+				// role="separator" cannot belong to a role="listbox"
+				"aria-hidden": "true",
+				[commandAttrs.separator]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandListStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		ariaLabel: string;
-	}>;
+interface CommandListStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			ariaLabel: string;
+		}> {}
 
-class CommandListState {
-	constructor(
-		readonly opts: CommandListStateProps,
-		readonly root: CommandRootState
-	) {
-		useRefById(opts);
+export class CommandListState {
+	static create(opts: CommandListStateOpts) {
+		return CommandListContext.set(new CommandListState(opts, CommandRootContext.get()));
 	}
 
-	props = $derived.by(
+	readonly opts: CommandListStateOpts;
+	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: CommandListStateOpts, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "listbox",
 				"aria-label": this.opts.ariaLabel.current,
-				[COMMAND_LIST_ATTR]: "",
+				[commandAttrs.list]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandLabelStateProps = WithRefProps<ReadableBoxedValues<{ for?: string }>>;
+interface CommandLabelStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			for?: string;
+		}> {}
 
-class CommandLabelState {
-	constructor(
-		readonly opts: CommandLabelStateProps,
-		readonly root: CommandRootState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.labelNode = node;
-			},
-		});
+export class CommandLabelState {
+	static create(opts: CommandLabelStateOpts) {
+		return new CommandLabelState(opts, CommandRootContext.get());
+	}
+	readonly opts: CommandLabelStateOpts;
+	readonly root: CommandRootState;
+	readonly attachment: RefAttachment;
+	constructor(opts: CommandLabelStateOpts, root: CommandRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.labelNode = v));
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[COMMAND_INPUT_LABEL_ATTR]: "",
+				[commandAttrs["input-label"]]: "",
 				for: this.opts.for?.current,
 				style: srOnlyStyles,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type CommandViewportStateProps = WithRefProps;
+interface CommandViewportStateOpts extends WithRefOpts {}
 
-class CommandViewportState {
-	constructor(
-		readonly opts: CommandViewportStateProps,
-		readonly list: CommandListState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.list.root.viewportNode = node;
-			},
-		});
-
-		$effect(() => {
-			const node = this.opts.ref.current;
-			const listNode = this.list.opts.ref.current;
-			if (!node || !listNode) return;
-			let aF: number;
-
-			const observer = new ResizeObserver(() => {
-				aF = requestAnimationFrame(() => {
-					const height = node.offsetHeight;
-					listNode.style.setProperty(
-						"--bits-command-list-height",
-						`${height.toFixed(1)}px`
-					);
-				});
-			});
-
-			observer.observe(node);
-
-			return () => {
-				cancelAnimationFrame(aF);
-				observer.unobserve(node);
-			};
-		});
+export class CommandViewportState {
+	static create(opts: CommandViewportStateOpts) {
+		return new CommandViewportState(opts, CommandListContext.get());
 	}
 
-	props = $derived.by(
+	readonly opts: CommandViewportStateOpts;
+	readonly list: CommandListState;
+	readonly attachment: RefAttachment;
+	constructor(opts: CommandViewportStateOpts, list: CommandListState) {
+		this.opts = opts;
+		this.list = list;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.list.root.viewportNode = v));
+		watch(
+			[() => this.opts.ref.current, () => this.list.opts.ref.current],
+			([node, listNode]) => {
+				if (node === null || listNode === null) return;
+				let aF: number;
+
+				const observer = new ResizeObserver(() => {
+					aF = requestAnimationFrame(() => {
+						const height = node.offsetHeight;
+						listNode.style.setProperty(
+							"--bits-command-list-height",
+							`${height.toFixed(1)}px`
+						);
+					});
+				});
+
+				observer.observe(node);
+
+				return () => {
+					cancelAnimationFrame(aF);
+					observer.unobserve(node);
+				};
+			}
+		);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[COMMAND_VIEWPORT_ATTR]: "",
+				[commandAttrs.viewport]: "",
+				...this.attachment,
 			}) as const
 	);
-}
-
-export function useCommandRoot(props: CommandRootStateProps) {
-	return CommandRootContext.set(new CommandRootState(props));
-}
-
-export function useCommandEmpty(props: CommandEmptyStateProps) {
-	return new CommandEmptyState(props, CommandRootContext.get());
-}
-
-export function useCommandItem(props: Omit<CommandItemStateProps, "group">) {
-	const group = CommandGroupContainerContext.getOr(null);
-	return new CommandItemState({ ...props, group }, CommandRootContext.get());
-}
-
-export function useCommandGroupContainer(props: CommandGroupContainerStateProps) {
-	return CommandGroupContainerContext.set(
-		new CommandGroupContainerState(props, CommandRootContext.get())
-	);
-}
-
-export function useCommandGroupHeading(props: CommandGroupHeadingStateProps) {
-	return new CommandGroupHeadingState(props, CommandGroupContainerContext.get());
-}
-
-export function useCommandGroupItems(props: CommandGroupItemsStateProps) {
-	return new CommandGroupItemsState(props, CommandGroupContainerContext.get());
-}
-
-export function useCommandInput(props: CommandInputStateProps) {
-	return new CommandInputState(props, CommandRootContext.get());
-}
-
-export function useCommandLoading(props: CommandLoadingStateProps) {
-	return new CommandLoadingState(props);
-}
-
-export function useCommandSeparator(props: CommandSeparatorStateProps) {
-	return new CommandSeparatorState(props, CommandRootContext.get());
-}
-
-export function useCommandList(props: CommandListStateProps) {
-	return CommandListContext.set(new CommandListState(props, CommandRootContext.get()));
-}
-
-export function useCommandViewport(props: CommandViewportStateProps) {
-	return new CommandViewportState(props, CommandListContext.get());
-}
-
-export function useCommandLabel(props: CommandLabelStateProps) {
-	return new CommandLabelState(props, CommandRootContext.get());
 }

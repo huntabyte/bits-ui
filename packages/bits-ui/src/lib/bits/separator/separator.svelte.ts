@@ -1,24 +1,38 @@
-import { useRefById } from "svelte-toolbelt";
-import { getAriaHidden, getAriaOrientation, getDataOrientation } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues } from "$lib/internal/box.svelte.js";
-import type { WithRefProps } from "$lib/internal/types.js";
+import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
+import {
+	createBitsAttrs,
+	getAriaHidden,
+	getAriaOrientation,
+	getDataOrientation,
+} from "$lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { Orientation } from "$lib/shared/index.js";
 
-const SEPARATOR_ROOT_ATTR = "data-separator-root";
+const separatorAttrs = createBitsAttrs({
+	component: "separator",
+	parts: ["root"],
+});
 
-type SeparatorRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		orientation: Orientation;
-		decorative: boolean;
-	}>
->;
+interface SeparatorRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			orientation: Orientation;
+			decorative: boolean;
+		}> {}
 
-class SeparatorRootState {
-	constructor(readonly opts: SeparatorRootStateProps) {
-		useRefById(opts);
+export class SeparatorRootState {
+	static create(opts: SeparatorRootStateOpts) {
+		return new SeparatorRootState(opts);
+	}
+	readonly opts: SeparatorRootStateOpts;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SeparatorRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -26,11 +40,8 @@ class SeparatorRootState {
 				"aria-orientation": getAriaOrientation(this.opts.orientation.current),
 				"aria-hidden": getAriaHidden(this.opts.decorative.current),
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				[SEPARATOR_ROOT_ATTR]: "",
+				[separatorAttrs.root]: "",
+				...this.attachment,
 			}) as const
 	);
-}
-
-export function useSeparatorRoot(props: SeparatorRootStateProps) {
-	return new SeparatorRootState(props);
 }

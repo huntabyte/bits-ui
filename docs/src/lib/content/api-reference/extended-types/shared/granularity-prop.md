@@ -1,3 +1,3 @@
 ```ts
-"day" | "hour" | "minute" | "second";
+;"day" | "hour" | "minute" | "second"
 ```

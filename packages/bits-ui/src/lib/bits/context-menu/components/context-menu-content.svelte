@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuContentProps } from "../types.js";
-	import { CONTEXT_MENU_TRIGGER_ATTR, useMenuContent } from "$lib/bits/menu/menu.svelte.js";
+	import { CONTEXT_MENU_TRIGGER_ATTR, MenuContentState } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
@@ -17,15 +16,17 @@
 		loop = true,
 		onInteractOutside = noop,
 		onCloseAutoFocus = noop,
+		onOpenAutoFocus = noop,
 		preventScroll = true,
 		// we need to explicitly pass this prop to the PopperLayer to override
 		// the default menu behavior of handling outside interactions on the trigger
 		onEscapeKeydown = noop,
 		forceMount = false,
+		trapFocus = false,
 		...restProps
 	}: ContextMenuContentProps = $props();
 
-	const contentState = useMenuContent({
+	const contentState = MenuContentState.create({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 		ref: box.with(
@@ -66,6 +67,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		side="right"
 		sideOffset={2}
 		align="start"
@@ -73,8 +75,9 @@
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
+		{onOpenAutoFocus}
 		{isValidEvent}
-		trapFocus
+		{trapFocus}
 		{loop}
 		{id}
 	>
@@ -91,22 +94,23 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
+		ref={contentState.opts.ref}
 		side="right"
 		sideOffset={2}
 		align="start"
-		present={contentState.parentMenu.opts.open.current}
+		open={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
+		{onOpenAutoFocus}
 		{isValidEvent}
-		trapFocus
+		{trapFocus}
 		{loop}
 		{id}
 	>
@@ -123,7 +127,6 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

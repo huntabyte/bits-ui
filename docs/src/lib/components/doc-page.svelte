@@ -5,9 +5,10 @@
 	import Metadata from "./metadata.svelte";
 	import type { TocItem } from "$lib/utils/use-toc.svelte.js";
 	import Toc from "./toc/toc.svelte";
-	import type { APISchema } from "$lib/types/api.js";
+	import type { APISchema } from "$lib/content/types.js";
 	import type { DocMetadata } from "$lib/utils/docs.js";
 	import DocPageHeader from "./doc-page-header.svelte";
+	import SidebarSponsor from "./sidebar-sponsor.svelte";
 
 	let {
 		component,
@@ -41,13 +42,16 @@
 
 <div
 	class={cn(
-		"relative flex flex-row-reverse pb-6 pl-4 pr-4 pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
+		"relative flex flex-row-reverse pb-6 pl-4 pr-4 pt-8 sm:pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
 		page.error ?? "xl:grid"
 	)}
 >
 	{#if !page.error}
 		<aside class="order-2 hidden text-sm xl:block">
-			<div class="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] overflow-hidden pt-6">
+			<div
+				class="-mt-13 sticky top-16 flex h-[calc(100vh-3.5rem)] flex-col gap-4 overflow-hidden pt-6"
+			>
+				<SidebarSponsor />
 				{#key metadata.title}
 					<Toc toc={{ items: fullToc }} />
 				{/key}

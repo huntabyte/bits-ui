@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { MenubarMenuProps } from "../types.js";
-	import { useMenubarMenu } from "../menubar.svelte.js";
+	import { MenubarMenuState } from "../menubar.svelte.js";
 	import Menu from "$lib/bits/menu/components/menu.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "$lib/internal/create-id.js";
 
-	let { value = useId(), ...restProps }: MenubarMenuProps = $props();
+	const uid = $props.id();
 
-	const menuState = useMenubarMenu({
+	let { value = createId(uid), onOpenChange = noop, ...restProps }: MenubarMenuProps = $props();
+
+	const menuState = MenubarMenuState.create({
 		value: box.with(() => value),
+		onOpenChange: box.with(() => onOpenChange),
 	});
 </script>
 

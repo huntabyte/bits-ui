@@ -20,11 +20,13 @@
 
 <Select.Root type="single" bind:value items={themes}>
 	<Select.Trigger
-		class="border-border-input bg-background placeholder:text-foreground-alt/50 inline-flex h-[27px] w-full select-none items-center rounded-[5px] border px-2 pr-1 text-[8px] transition-colors lg:h-[37px] lg:rounded-[9px] lg:px-3 lg:pr-2 lg:text-sm dark:border-[#18181B2B] dark:bg-white dark:text-[#171717]"
+		class="border-border-input bg-background placeholder:text-foreground-alt/50 inline-flex h-[27px] w-full cursor-pointer select-none items-center rounded-[5px] border px-2 pr-1 text-[8px] transition-colors lg:h-[37px] lg:rounded-[9px] lg:px-3 lg:pr-2 lg:text-sm dark:border-[#18181B2B] dark:bg-white dark:text-[#171717]"
 		aria-label="Select task"
 	>
 		{selectedLabel}
-		<CaretUpDown class="text-muted-foreground ml-auto size-3 lg:size-6 dark:text-[#17171766]" />
+		<CaretUpDown
+			class="text-muted-foreground ml-auto mr-[-5px] size-3 lg:size-6 dark:text-[#17171766]"
+		/>
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
@@ -35,7 +37,7 @@
 				<CaretDoubleUp class="size-3" />
 			</Select.ScrollUpButton>
 			<Select.Viewport class="p-1">
-				{#each themes as theme, i (i + theme.value)}
+				{#each themes as theme (theme.value)}
 					<Select.Item
 						class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize duration-75"
 						value={theme.value}

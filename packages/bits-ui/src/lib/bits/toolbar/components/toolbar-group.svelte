@@ -2,12 +2,15 @@
 	import { type WritableBox, box } from "svelte-toolbelt";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupProps } from "../types.js";
-	import { useToolbarGroup } from "../toolbar.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { ToolbarGroupState } from "../toolbar.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+	import { watch } from "runed";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(),
 		onValueChange = noop,
@@ -18,12 +21,22 @@
 		...restProps
 	}: ToolbarGroupProps = $props();
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
-		value = defaultValue;
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? "" : [];
 	}
 
-	const groupState = useToolbarGroup({
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
+	const groupState = ToolbarGroupState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		type,

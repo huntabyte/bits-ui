@@ -17,12 +17,12 @@
 		class="dark:border:[rgba(254,_254,_254,_0.15)] rounded-card-lg bg-foreground m-1.5 aspect-square overflow-hidden px-[14px] py-2.5 lg:m-2.5 lg:py-3 dark:border dark:bg-[#2A2B2E]"
 	>
 		<div class="flex items-start justify-between">
-			<h3
+			<span
 				class="text-background ml-1.5 text-sm font-medium lg:mt-[7px] lg:text-xl dark:text-white"
 			>
 				<span class="">Sound</span>
 				<small class="block text-[10px] leading-none opacity-50 lg:text-xs">control</small>
-			</h3>
+			</span>
 			<HomeToolbar />
 		</div>
 
@@ -53,21 +53,24 @@
 <style>
 	/* lines */
 	.line_top_gradient {
-		background: linear-gradient(to right, transparent 50%, var(--line) 50%),
+		background:
+			linear-gradient(to right, transparent 50%, var(--line) 50%),
 			linear-gradient(to right, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			10px 1px,
 			100% 1px;
 	}
 	.line_left_gradient {
-		background: linear-gradient(to top, transparent 50%, var(--line) 50%),
+		background:
+			linear-gradient(to top, transparent 50%, var(--line) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,
 			100% 100%;
 	}
 	.line_right_gradient {
-		background: linear-gradient(to top, transparent 50%, var(--line) 50%),
+		background:
+			linear-gradient(to top, transparent 50%, var(--line) 50%),
 			linear-gradient(to top, rgba(186, 186, 186, 0), rgba(186, 186, 186, 1));
 		background-size:
 			1px 10px,

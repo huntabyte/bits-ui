@@ -5,8 +5,11 @@
 		onComplete = () => {},
 		maxlength = 6,
 		value = "",
+		toCopy,
 		...restProps
-	}: Omit<PinInput.RootProps, "children"> = $props();
+	}: Omit<PinInput.RootProps, "children"> & {
+		toCopy?: string;
+	} = $props();
 
 	type CellProps = PinInputRootSnippetProps["cells"][0];
 </script>
@@ -28,7 +31,7 @@
 	>
 		{#snippet children({ cells, isFocused: _isFocused, isHovering: _isHovering })}
 			<div class="flex">
-				{#each cells.slice(0, 3) as cell, idx}
+				{#each cells.slice(0, 3) as cell, idx (idx)}
 					{@render Cell(cell, idx)}
 				{/each}
 			</div>
@@ -38,12 +41,15 @@
 			</div>
 
 			<div class="flex">
-				{#each cells.slice(3, 6) as cell, idx}
+				{#each cells.slice(3, 6) as cell, idx (idx)}
 					{@render Cell(cell, idx + 3)}
 				{/each}
 			</div>
 		{/snippet}
 	</PinInput.Root>
+	<div data-testid="to-copy">
+		{toCopy}
+	</div>
 </main>
 
 {#snippet Cell(props: CellProps, idx: number)}

@@ -1,30 +1,40 @@
 import { Previous, watch } from "runed";
 import { onMount } from "svelte";
-import { type WritableBox, box, useRefById } from "svelte-toolbelt";
+import {
+	type WritableBox,
+	box,
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsEvent,
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	RefAttachment,
+	WithRefOpts,
 } from "$lib/internal/types.js";
-import { getDisabled } from "$lib/internal/attrs.js";
+import { createBitsAttrs, getDisabled } from "$lib/internal/attrs.js";
 import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
 export const REGEXP_ONLY_CHARS = "^[a-zA-Z]+$";
 export const REGEXP_ONLY_DIGITS_AND_CHARS = "^[a-zA-Z0-9]+$";
 
-const ROOT_ATTR = "data-pin-input-root";
-const CELL_ATTR = "data-pin-input-cell";
+const pinInputAttrs = createBitsAttrs({
+	component: "pin-input",
+	parts: ["root", "cell"],
+});
 
-type PinInputRootStateProps = WithRefProps<
-	WritableBoxedValues<{
-		value: string;
-	}> &
+interface PinInputRootStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: string;
+		}>,
 		ReadableBoxedValues<{
 			inputId: string;
 			disabled: boolean;
@@ -38,17 +48,16 @@ type PinInputRootStateProps = WithRefProps<
 			textAlign: RootComponentProps["textalign"];
 			autocomplete: RootComponentProps["autocomplete"];
 			inputmode: RootComponentProps["inputmode"];
-		}>
->;
+		}> {}
 
-type PrevInputMetadata = {
+interface PrevInputMetadata {
 	prev: [number | null, number | null, "none" | "forward" | "backward"];
 	willSyntheticBlur: boolean;
-};
-type InitialLoad = {
+}
+interface InitialLoad {
 	value: WritableBox<string>;
 	isIOS: boolean;
-};
+}
 
 const KEYS_TO_IGNORE = [
 	"Backspace",
@@ -67,16 +76,23 @@ const KEYS_TO_IGNORE = [
 	"Meta",
 ];
 
-class PinInputRootState {
+export class PinInputRootState {
+	static create(opts: PinInputRootStateOpts) {
+		return new PinInputRootState(opts);
+	}
+
+	readonly opts: PinInputRootStateOpts;
+	readonly attachment: RefAttachment;
 	#inputRef = box<HTMLInputElement | null>(null);
 	#isHoveringInput = $state(false);
+	readonly inputAttachment: RefAttachment<HTMLInputElement> = attachRef(this.#inputRef);
 	#isFocused = box(false);
 	#mirrorSelectionStart = $state<number | null>(null);
 	#mirrorSelectionEnd = $state<number | null>(null);
 
 	#previousValue = new Previous(() => this.opts.value.current ?? "");
 
-	#regexPattern = $derived.by(() => {
+	readonly #regexPattern = $derived.by(() => {
 		if (typeof this.opts.pattern.current === "string") {
 			return new RegExp(this.opts.pattern.current);
 		} else {
@@ -89,8 +105,13 @@ class PinInputRootState {
 	});
 	#pwmb: ReturnType<typeof usePasswordManagerBadge>;
 	#initialLoad: InitialLoad;
+	domContext: DOMContext;
 
-	constructor(readonly opts: PinInputRootStateProps) {
+	constructor(opts: PinInputRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
+		this.domContext = new DOMContext(opts.ref);
+
 		this.#initialLoad = {
 			value: this.opts.value,
 			isIOS:
@@ -103,13 +124,7 @@ class PinInputRootState {
 			inputRef: this.#inputRef,
 			isFocused: this.#isFocused,
 			pushPasswordManagerStrategy: this.opts.pushPasswordManagerStrategy,
-		});
-
-		useRefById(opts);
-
-		useRefById({
-			id: this.opts.inputId,
-			ref: this.#inputRef,
+			domContext: this.domContext,
 		});
 
 		onMount(() => {
@@ -128,16 +143,21 @@ class PinInputRootState {
 				input.selectionDirection ?? "none",
 			];
 
-			const unsub = on(document, "selectionchange", this.#onDocumentSelectionChange, {
-				capture: true,
-			});
+			const unsub = on(
+				this.domContext.getDocument(),
+				"selectionchange",
+				this.#onDocumentSelectionChange,
+				{
+					capture: true,
+				}
+			);
 
 			this.#onDocumentSelectionChange();
-			if (document.activeElement === input) {
+			if (this.domContext.getActiveElement() === input) {
 				this.#isFocused.current = true;
 			}
 
-			if (!document.getElementById("pin-input-style")) {
+			if (!this.domContext.getElementById("pin-input-style")) {
 				this.#applyStyles();
 			}
 
@@ -176,7 +196,7 @@ class PinInputRootState {
 					this.#mirrorSelectionEnd = end;
 					this.#prevInputMetadata.prev = [start, end, dir];
 				}
-			});
+			}, this.domContext);
 		});
 
 		$effect(() => {
@@ -204,7 +224,7 @@ class PinInputRootState {
 		}
 	};
 
-	#rootStyles = $derived.by(() => ({
+	readonly #rootStyles = $derived.by(() => ({
 		position: "relative",
 		cursor: this.opts.disabled.current ? "default" : "text",
 		userSelect: "none",
@@ -212,16 +232,17 @@ class PinInputRootState {
 		pointerEvents: "none",
 	}));
 
-	rootProps = $derived.by(
+	readonly rootProps = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[ROOT_ATTR]: "",
+				[pinInputAttrs.root]: "",
 				style: this.#rootStyles,
+				...this.attachment,
 			}) as const
 	);
 
-	inputWrapperProps = $derived.by(
+	readonly inputWrapperProps = $derived.by(
 		() =>
 			({
 				style: {
@@ -232,7 +253,7 @@ class PinInputRootState {
 			}) as const
 	);
 
-	#inputStyle = $derived.by(() => ({
+	readonly #inputStyle = $derived.by(() => ({
 		position: "absolute",
 		inset: 0,
 		width: this.#pwmb.willPushPwmBadge
@@ -260,9 +281,10 @@ class PinInputRootState {
 	}));
 
 	#applyStyles() {
-		const styleEl = document.createElement("style");
+		const doc = this.domContext.getDocument();
+		const styleEl = doc.createElement("style");
 		styleEl.id = "pin-input-style";
-		document.head.appendChild(styleEl);
+		doc.head.appendChild(styleEl);
 
 		if (styleEl.sheet) {
 			const autoFillStyles =
@@ -295,7 +317,7 @@ class PinInputRootState {
 		const container = this.opts.ref.current;
 		if (!input || !container) return;
 
-		if (document.activeElement !== input) {
+		if (this.domContext.getActiveElement() !== input) {
 			this.#mirrorSelectionStart = null;
 			this.#mirrorSelectionEnd = null;
 			return;
@@ -370,7 +392,7 @@ class PinInputRootState {
 			// selectionchange event, we'll have to dispatch it manually.
 			// NOTE: The following line also triggers when cmd+A then pasting
 			// a value with smaller length, which is not ideal for performance.
-			document.dispatchEvent(new Event("selectionchange"));
+			this.domContext.getDocument().dispatchEvent(new Event("selectionchange"));
 		}
 		this.opts.value.current = newValue;
 	};
@@ -454,7 +476,7 @@ class PinInputRootState {
 		this.#isFocused.current = false;
 	};
 
-	inputProps = $derived.by(() => ({
+	readonly inputProps = $derived.by(() => ({
 		id: this.opts.inputId.current,
 		style: this.#inputStyle,
 		autocomplete: this.opts.autocomplete.current || "one-time-code",
@@ -474,9 +496,10 @@ class PinInputRootState {
 		onmouseleave: this.onmouseleave,
 		onfocus: this.onfocus,
 		onblur: this.onblur,
+		...this.inputAttachment,
 	}));
 
-	#cells = $derived.by(() =>
+	readonly #cells = $derived.by(() =>
 		Array.from({ length: this.opts.maxLength.current }).map((_, idx) => {
 			const isActive =
 				this.#isFocused.current &&
@@ -497,42 +520,49 @@ class PinInputRootState {
 		})
 	);
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		cells: this.#cells,
 		isFocused: this.#isFocused.current,
 		isHovering: this.#isHoveringInput,
 	}));
 }
 
-type PinInputCellStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		cell: PinInputCell;
-	}>;
+interface PinInputCellStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			cell: PinInputCell;
+		}> {}
 
-class PinInputCellState {
-	constructor(readonly opts: PinInputCellStateProps) {
-		useRefById({
-			id: this.opts.id,
-			ref: this.opts.ref,
-		});
+export class PinInputCellState {
+	static create(opts: PinInputCellStateOpts) {
+		return new PinInputCellState(opts);
 	}
 
-	props = $derived.by(
+	readonly opts: PinInputCellStateOpts;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: PinInputCellStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[CELL_ATTR]: "",
+				[pinInputAttrs.cell]: "",
 				"data-active": this.opts.cell.current.isActive ? "" : undefined,
 				"data-inactive": !this.opts.cell.current.isActive ? "" : undefined,
+				...this.attachment,
 			}) as const
 	);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function syncTimeouts(cb: (...args: any[]) => unknown): number[] {
-	const t1 = setTimeout(cb, 0); // For faster machines
-	const t2 = setTimeout(cb, 1_0);
-	const t3 = setTimeout(cb, 5_0);
+export function syncTimeouts(cb: (...args: any[]) => unknown, domContext: DOMContext): number[] {
+	const t1 = domContext.setTimeout(cb, 0); // For faster machines
+	const t2 = domContext.setTimeout(cb, 1_0);
+	const t3 = domContext.setTimeout(cb, 5_0);
 	return [t1, t2, t3];
 }
 
@@ -542,12 +572,4 @@ function safeInsertRule(sheet: CSSStyleSheet, rule: string) {
 	} catch {
 		console.error("pin input could not insert CSS rule:", rule);
 	}
-}
-
-export function usePinInput(props: PinInputRootStateProps) {
-	return new PinInputRootState(props);
-}
-
-export function usePinInputCell(props: PinInputCellStateProps) {
-	return new PinInputCellState(props);
 }

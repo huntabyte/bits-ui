@@ -24,7 +24,7 @@
 	let {
 		contentProps,
 		portalProps,
-		items,
+		items = [],
 		value = "",
 		open = false,
 		searchValue = "",
@@ -38,11 +38,16 @@
 			? items
 			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
 	);
+
+	const inputValue = $derived.by(() => {
+		return items.find((item) => item.value === value)?.label;
+	});
 </script>
 
-<main data-testid="main">
+<main data-testid="main" class="flex flex-col gap-12">
 	<Combobox.Root
 		type="single"
+		{inputValue}
 		bind:value
 		bind:open
 		{...restProps}
@@ -62,7 +67,7 @@
 			<Combobox.Content data-testid="content" {...contentProps}>
 				<Combobox.Group data-testid="group">
 					<Combobox.GroupHeading data-testid="group-label">Options</Combobox.GroupHeading>
-					{#each filteredItems as { value, label, disabled }}
+					{#each filteredItems as { value, label, disabled } (value)}
 						<Combobox.Item data-testid={value} {disabled} {value} {label}>
 							{#snippet children({ selected, highlighted: _highlighted })}
 								{#if selected}
@@ -76,7 +81,7 @@
 			</Combobox.Content>
 		</Combobox.Portal>
 	</Combobox.Root>
-	<div data-testid="outside"></div>
+	<div data-testid="outside">outside</div>
 	<button data-testid="input-binding" onclick={() => (searchValue = "")}>
 		{#if searchValue === ""}
 			empty
@@ -94,5 +99,6 @@
 			{value}
 		{/if}
 	</button>
+	<button data-testid="value-binding-3" onclick={() => (value = "3")}> set 3 </button>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>

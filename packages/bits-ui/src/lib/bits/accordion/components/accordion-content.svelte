@@ -1,20 +1,22 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useAccordionContent } from "../accordion.svelte.js";
+	import { AccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		forceMount = false,
 		children,
 		...restProps
 	}: AccordionContentProps = $props();
 
-	const contentState = useAccordionContent({
+	const contentState = AccordionContentState.create({
 		forceMount: box.with(() => forceMount),
 		id: box.with(() => id),
 		ref: box.with(
@@ -24,10 +26,10 @@
 	});
 </script>
 
-<PresenceLayer forceMount={true} present={contentState.present} {id}>
+<PresenceLayer forceMount={true} open={contentState.open} ref={contentState.opts.ref}>
 	{#snippet presence({ present })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
-			hidden: forceMount ? undefined : !present.current,
+			hidden: forceMount ? undefined : !present,
 		})}
 		{#if child}
 			{@render child({

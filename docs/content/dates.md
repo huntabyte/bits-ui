@@ -35,7 +35,12 @@ Represents a date without a time component.
 
 ```ts
 // Creating a CalendarDate
-import { CalendarDate, parseDate, today, getLocalTimeZone } from "@internationalized/date";
+import {
+  CalendarDate,
+  parseDate,
+  today,
+  getLocalTimeZone,
+} from "@internationalized/date";
 
 // From year, month, day parameters
 const date = new CalendarDate(2024, 7, 10);
@@ -76,21 +81,21 @@ Represents a specific date and time in a specific timezone - crucial for events 
 ```ts
 // Creating a ZonedDateTime
 import {
-	ZonedDateTime,
-	parseZonedDateTime,
-	parseAbsolute,
-	parseAbsoluteToLocal,
+  ZonedDateTime,
+  parseZonedDateTime,
+  parseAbsolute,
+  parseAbsoluteToLocal,
 } from "@internationalized/date";
 
 const date = new ZonedDateTime(
-	2022,
-	2,
-	3, // Date (year, month, day)
-	"America/Los_Angeles", // Timezone
-	-28800000, // UTC offset in milliseconds
-	9,
-	15,
-	0 // Time (hour, minute, second)
+  2022,
+  2,
+  3, // Date (year, month, day)
+  "America/Los_Angeles", // Timezone
+  -28800000, // UTC offset in milliseconds
+  9,
+  15,
+  0 // Time (hour, minute, second)
 );
 
 // From ISO 8601 strings using different parsing functions
@@ -107,16 +112,16 @@ For components that require date ranges, Bits UI provides a `DateRange` type:
 
 ```ts
 type DateRange = {
-	start: DateValue;
-	end: DateValue;
+  start: DateValue;
+  end: DateValue;
 };
 ```
 
 This type is used in components such as:
 
--   [Date Range Field](/docs/components/date-range-field)
--   [Date Range Picker](/docs/components/date-range-picker)
--   [Range Calendar](/docs/components/range-calendar)
+- [Date Range Field](/docs/components/date-range-field)
+- [Date Range Picker](/docs/components/date-range-picker)
+- [Range Calendar](/docs/components/range-calendar)
 
 ## Using the Placeholder
 
@@ -130,28 +135,32 @@ Each date/time component in Bits UI has a _bindable_ `placeholder` prop that ser
 
 ```svelte
 <script lang="ts">
-	import { Calendar } from "bits-ui";
-	import { today, getLocalTimeZone, type DateValue } from "@internationalized/date";
+  import { Calendar } from "bits-ui";
+  import {
+    today,
+    getLocalTimeZone,
+    type DateValue,
+  } from "@internationalized/date";
 
-	// Initialize placeholder with today's date
-	let placeholder: DateValue = $state(today(getLocalTimeZone()));
-	let selectedMonth: number = $state(placeholder.month);
+  // Initialize placeholder with today's date
+  let placeholder: DateValue = $state(today(getLocalTimeZone()));
+  let selectedMonth: number = $state(placeholder.month);
 </script>
 
 <!-- Month selector to control calendar view -->
 <select
-	onchange={() => {
-		placeholder = placeholder.set({ month: selectedMonth });
-	}}
-	bind:value={selectedMonth}
+  onchange={() => {
+    placeholder = placeholder.set({ month: selectedMonth });
+  }}
+  bind:value={selectedMonth}
 >
-	<option value={1}>January</option>
-	<option value={2}>February</option>
-	<!-- Additional months... -->
+  <option value={1}>January</option>
+  <option value={2}>February</option>
+  <!-- Additional months... -->
 </select>
 
 <Calendar.Root bind:placeholder>
-	<!-- Calendar components... -->
+  <!-- Calendar components... -->
 </Calendar.Root>
 ```
 
@@ -191,8 +200,8 @@ import { DateFormatter } from "@internationalized/date";
 
 // Create a formatter for the current locale
 const formatter = new DateFormatter("en-US", {
-	dateStyle: "full",
-	timeStyle: "short",
+  dateStyle: "full",
+  timeStyle: "short",
 });
 
 // Format a DateValue
@@ -208,11 +217,11 @@ When working with date strings from APIs or databases, use the appropriate parsi
 
 ```ts
 import {
-	parseDate, // For CalendarDate
-	parseDateTime, // For CalendarDateTime
-	parseZonedDateTime, // For ZonedDateTime with timezone name
-	parseAbsolute, // For ZonedDateTime from UTC string + timezone
-	parseAbsoluteToLocal, // For ZonedDateTime in local timezone
+  parseDate, // For CalendarDate
+  parseDateTime, // For CalendarDateTime
+  parseZonedDateTime, // For ZonedDateTime with timezone name
+  parseAbsolute, // For ZonedDateTime from UTC string + timezone
+  parseAbsoluteToLocal, // For ZonedDateTime in local timezone
 } from "@internationalized/date";
 
 // Examples
@@ -225,18 +234,18 @@ const localDate = parseAbsoluteToLocal("2024-07-12T07:45:00Z"); // ZonedDateTime
 
 ## Common Gotchas and Tips
 
--   **Month Indexing**: Unlike JavaScript's Date object (which is 0-indexed), `@internationalized/date` uses 1-indexed months (January = 1).
--   **Immutability**: Always reassign when modifying date objects: `date = date.add({ days: 1 })`.
--   **Timezone Handling**: Use `ZonedDateTime` for schedule-critical events like meetings or appointments.
--   **Type Consistency**: Match `placeholder` types to your needs - if you need time selection, use `CalendarDateTime` not `CalendarDate`.
--   **Performance**: Create `DateFormatter` instances once and reuse them rather than creating new instances on each render.
+- **Month Indexing**: Unlike JavaScript's Date object (which is 0-indexed), `@internationalized/date` uses 1-indexed months (January = 1).
+- **Immutability**: Always reassign when modifying date objects: `date = date.add({ days: 1 })`.
+- **Timezone Handling**: Use `ZonedDateTime` for schedule-critical events like meetings or appointments.
+- **Type Consistency**: Match `placeholder` types to your needs - if you need time selection, use `CalendarDateTime` not `CalendarDate`.
+- **Performance**: Create `DateFormatter` instances once and reuse them rather than creating new instances on each render.
 
 ## Related Resources
 
--   [Date Field](/docs/components/date-field)
--   [Date Range Field](/docs/components/date-range-field)
--   [Date Picker](/docs/components/date-picker)
--   [Date Range Picker](/docs/components/date-range-picker)
--   [Calendar](/docs/components/calendar)
--   [Range Calendar](/docs/components/range-calendar)
--   [@internationalized/date documentation](https://react-spectrum.adobe.com/internationalized/date/index.html)
+- [Date Field](/docs/components/date-field)
+- [Date Range Field](/docs/components/date-range-field)
+- [Date Picker](/docs/components/date-picker)
+- [Date Range Picker](/docs/components/date-range-picker)
+- [Calendar](/docs/components/calendar)
+- [Range Calendar](/docs/components/range-calendar)
+- [@internationalized/date documentation](https://react-spectrum.adobe.com/internationalized/date/index.html)

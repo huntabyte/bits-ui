@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { PinInputRootProps } from "../types.js";
-	import { usePinInput } from "../pin-input.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { PinInputRootState } from "../pin-input.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
-		inputId = useId(),
+		id = createId(uid),
+		inputId = `${createId(uid)}-input`,
 		ref = $bindable(null),
 		maxlength = 6,
 		textalign = "left",
@@ -25,7 +27,7 @@
 		...restProps
 	}: PinInputRootProps = $props();
 
-	const rootState = usePinInput({
+	const rootState = PinInputRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

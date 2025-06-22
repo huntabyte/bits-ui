@@ -4,6 +4,7 @@ import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
 	BitsPrimitiveHeaderAttributes,
+	BitsPrimitiveSelectAttributes,
 	BitsPrimitiveTableAttributes,
 	BitsPrimitiveTbodyAttributes,
 	BitsPrimitiveTdAttributes,
@@ -23,7 +24,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * The placeholder date, used to control the view of the
 	 * calendar when no value is present.
 	 *
-	 * @defaultValue the current date
+	 * @default the current date
 	 */
 	placeholder?: DateValue;
 
@@ -37,7 +38,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * Whether or not users can deselect a date once selected
 	 * without selecting another date.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	preventDeselect?: boolean;
 
@@ -54,7 +55,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	/**
 	 * Whether or not the calendar is disabled.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
 
@@ -69,7 +70,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * February), clicking the next button changes the view to March and April. If `pagedNavigation`
 	 * is `false`, the view shifts to February and March.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	pagedNavigation?: boolean;
 
@@ -78,7 +79,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * be a number between 0 and 6, where 0 is Sunday and 6 is
 	 * Saturday.
 	 *
-	 * @defaultValue 0 (Sunday)
+	 * @default 0 (Sunday)
 	 */
 	weekStartsOn?: WeekStartsOn;
 
@@ -92,7 +93,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * - "narrow": "S", "M", "T", etc.
 	 *```
 	 *
-	 * @defaultValue "narrow"
+	 * @default "narrow"
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat#weekday
 	 */
@@ -133,7 +134,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * To display 6 weeks per month, you will need to render out the previous
 	 * and next month's dates in the calendar as well.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	fixedWeeks?: boolean;
 
@@ -141,7 +142,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * Determines the number of months to display on the calendar simultaneously.
 	 * For navigation between months, refer to the `pagedNavigation` prop.
 	 *
-	 * @defaultValue 1
+	 * @default 1
 	 */
 	numberOfMonths?: number;
 
@@ -160,7 +161,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	/**
 	 * The default locale setting.
 	 *
-	 * @defaultValue 'en'
+	 * @default 'en'
 	 */
 	locale?: string;
 
@@ -170,7 +171,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * dates. @see disabled for a similar prop that prevents focusing
 	 * and selecting dates.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	readonly?: boolean;
 
@@ -185,9 +186,31 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 * days outside the current month are rendered to fill the calendar grid, but they
 	 * are not selectable. Setting this prop to `true` will disable this behavior.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disableDaysOutsideMonth?: boolean;
+
+	/**
+	 * The maximum number of days that can be selected in multiple mode.
+	 * When set, users cannot select more dates than this number.
+	 *
+	 * @default undefined
+	 */
+	maxDays?: number;
+
+	/**
+	 * The format of the month names in the calendar.
+	 *
+	 * @default "long"
+	 */
+	monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+
+	/**
+	 * The format of the year names in the calendar.
+	 *
+	 * @default "numeric"
+	 */
+	yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
 };
 
 export type CalendarSingleRootPropsWithoutHTML = {
@@ -335,3 +358,70 @@ export type CalendarPrevButtonPropsWithoutHTML = WithChild;
 
 export type CalendarPrevButtonProps = CalendarPrevButtonPropsWithoutHTML &
 	Without<BitsPrimitiveButtonAttributes, CalendarPrevButtonPropsWithoutHTML>;
+
+export type CalendarMonthSelectSnippetProps = {
+	monthItems: Array<{ value: number; label: string }>;
+	selectedMonthItem: { value: number; label: string };
+};
+
+export type CalendarMonthSelectPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * An array of month numbers (1-12) to display in the select.
+		 * This allows for flexible month selection, such as showing only
+		 * specific months or seasons.
+		 *
+		 * @default [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] (all months)
+		 */
+		months?: number[];
+
+		/**
+		 * How the month names should be formatted in the select options.
+		 *
+		 * - "long": "January", "February", etc.
+		 * - "short": "Jan", "Feb", etc.
+		 * - "narrow": "J", "F", etc.
+		 * - "numeric": "1", "2", etc.
+		 * - "2-digit": "01", "02", etc.
+		 *
+		 * @default "long"
+		 */
+		monthFormat?: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
+	},
+	CalendarMonthSelectSnippetProps
+>;
+
+export type CalendarMonthSelectProps = CalendarMonthSelectPropsWithoutHTML &
+	Without<BitsPrimitiveSelectAttributes, CalendarMonthSelectPropsWithoutHTML>;
+
+export type CalendarYearSelectSnippetProps = {
+	yearItems: Array<{ value: number; label: string }>;
+	selectedYearItem: { value: number; label: string };
+};
+
+export type CalendarYearSelectPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * An array of years to display in the select.
+		 * This allows for complete control over which years appear,
+		 * such as showing only years with data or excluding certain periods.
+		 *
+		 * @default Array from currentYear - 100 to currentYear
+		 */
+		years?: number[];
+
+		/**
+		 * How the year should be formatted in the select options.
+		 *
+		 * - "numeric": "2024", "2023", etc.
+		 * - "2-digit": "24", "23", etc.
+		 *
+		 * @default "numeric"
+		 */
+		yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
+	},
+	CalendarYearSelectSnippetProps
+>;
+
+export type CalendarYearSelectProps = CalendarYearSelectPropsWithoutHTML &
+	Without<BitsPrimitiveSelectAttributes, CalendarYearSelectPropsWithoutHTML>;

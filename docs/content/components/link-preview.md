@@ -30,12 +30,12 @@ This component is only intended to be used with a mouse or other pointing device
 
 ```svelte
 <script lang="ts">
-	import { LinkPreview } from "bits-ui";
+  import { LinkPreview } from "bits-ui";
 </script>
 
 <LinkPreview.Root>
-	<LinkPreview.Trigger />
-	<LinkPreview.Content />
+  <LinkPreview.Trigger />
+  <LinkPreview.Content />
 </LinkPreview.Root>
 ```
 
@@ -49,14 +49,14 @@ Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-	import { LinkPreview } from "bits-ui";
-	let isOpen = $state(false);
+  import { LinkPreview } from "bits-ui";
+  let isOpen = $state(false);
 </script>
 
 <button onclick={() => (isOpen = true)}>Open Link Preview</button>
 
 <LinkPreview.Root bind:open={isOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </LinkPreview.Root>
 ```
 
@@ -66,20 +66,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { LinkPreview } from "bits-ui";
-	let myOpen = $state(false);
+  import { LinkPreview } from "bits-ui";
+  let myOpen = $state(false);
 
-	function getOpen() {
-		return myOpen;
-	}
+  function getOpen() {
+    return myOpen;
+  }
 
-	function setOpen(newOpen: boolean) {
-		myOpen = newOpen;
-	}
+  function setOpen(newOpen: boolean) {
+    myOpen = newOpen;
+  }
 </script>
 
 <LinkPreview.Root bind:open={getOpen, setOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </LinkPreview.Root>
 ```
 
@@ -91,10 +91,10 @@ You can opt-out of this behavior by instead using the `LinkPreview.ContentStatic
 
 ```svelte /LinkPreview.ContentStatic/
 <LinkPreview.Root>
-	<LinkPreview.Trigger />
-	<LinkPreview.ContentStatic>
-		<!-- ... -->
-	</LinkPreview.ContentStatic>
+  <LinkPreview.Trigger />
+  <LinkPreview.ContentStatic>
+    <!-- ... -->
+  </LinkPreview.ContentStatic>
 </LinkPreview.Root>
 ```
 
@@ -112,17 +112,17 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 ```svelte
 <script lang="ts">
-	import { LinkPreview } from "bits-ui";
-	let customAnchor = $state<HTMLElement>(null!);
+  import { LinkPreview } from "bits-ui";
+  let customAnchor = $state<HTMLElement>(null!);
 </script>
 
 <div bind:this={customAnchor}></div>
 
 <LinkPreview.Root>
-	<LinkPreview.Trigger />
-	<LinkPreview.Content {customAnchor}>
-		<!-- ... -->
-	</LinkPreview.Content>
+  <LinkPreview.Trigger />
+  <LinkPreview.Content {customAnchor}>
+    <!-- ... -->
+  </LinkPreview.Content>
 </LinkPreview.Root>
 ```
 
@@ -132,20 +132,20 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 ```svelte /forceMount/ /transition:fly/
 <script lang="ts">
-	import { LinkPreview } from "bits-ui";
-	import { fly } from "svelte/transition";
+  import { LinkPreview } from "bits-ui";
+  import { fly } from "svelte/transition";
 </script>
 
 <LinkPreview.Content forceMount>
-	{#snippet child({ wrapperProps, props, open })}
-		{#if open}
-			<div {...wrapperProps}>
-				<div {...props} transition:fly>
-					<!-- ... -->
-				</div>
-			</div>
-		{/if}
-	{/snippet}
+  {#snippet child({ wrapperProps, props, open })}
+    {#if open}
+      <div {...wrapperProps}>
+        <div {...props} transition:fly>
+          <!-- ... -->
+        </div>
+      </div>
+    {/if}
+  {/snippet}
 </LinkPreview.Content>
 ```
 

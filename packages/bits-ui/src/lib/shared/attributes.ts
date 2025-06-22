@@ -6,6 +6,7 @@ import type {
 	HTMLInputAttributes,
 	HTMLLabelAttributes,
 	HTMLLiAttributes,
+	HTMLSelectAttributes,
 	HTMLTableAttributes,
 	HTMLTdAttributes,
 	HTMLThAttributes,
@@ -20,6 +21,7 @@ export type BitsElementAttributes = HTMLAttributes<HTMLElement>;
 export type BitsTableSectionAttributes = HTMLAttributes<HTMLTableSectionElement>;
 export type BitsTableRowAttributes = HTMLAttributes<HTMLTableRowElement>;
 export type BitsSVGElementAttributes = SVGAttributes<SVGElement>;
+export type BitsSelectAttributes = HTMLSelectAttributes;
 
 /**
  * We override the `id` prop type to not allow it to be `null`. We rely on the
@@ -48,3 +50,4 @@ export type BitsPrimitiveTbodyAttributes = BitsPrimitive<BitsTableSectionAttribu
 export type BitsPrimitiveTrAttributes = BitsPrimitive<BitsTableRowAttributes>;
 export type BitsPrimitiveTheadAttributes = BitsPrimitive<BitsTableSectionAttributes>;
 export type BitsPrimitiveHeaderAttributes = BitsPrimitive<BitsElementAttributes>;
+export type BitsPrimitiveSelectAttributes = BitsPrimitive<BitsSelectAttributes>;

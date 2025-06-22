@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuRootProps } from "../types.js";
-	import { useNavigationMenuRoot } from "../navigation-menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { NavigationMenuRootState } from "../navigation-menu.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		children,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
@@ -19,7 +21,7 @@
 		...restProps
 	}: NavigationMenuRootProps = $props();
 
-	const rootState = useNavigationMenuRoot({
+	const rootState = NavigationMenuRootState.create({
 		id: box.with(() => id),
 		value: box.with(
 			() => value,

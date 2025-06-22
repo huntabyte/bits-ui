@@ -2,9 +2,10 @@
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { type WritableBox, box } from "svelte-toolbelt";
-	import { useSelectRoot } from "../select.svelte.js";
+	import { SelectRootState } from "../select.svelte.js";
 	import type { SelectRootProps } from "../types.js";
 	import SelectHiddenInput from "./select-hidden-input.svelte";
+	import { watch } from "runed";
 
 	let {
 		value = $bindable(),
@@ -14,21 +15,34 @@
 		type,
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		loop = false,
 		scrollAlignment = "nearest",
 		required = false,
 		items = [],
 		allowDeselect = false,
+		autocomplete,
 		children,
 	}: SelectRootProps = $props();
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
-
-		value = defaultValue;
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? "" : [];
 	}
 
-	const rootState = useSelectRoot({
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
+	let inputValue = $state("");
+
+	const rootState = SelectRootState.create({
 		type,
 		value: box.with(
 			() => value!,
@@ -53,6 +67,11 @@
 		isCombobox: false,
 		items: box.with(() => items),
 		allowDeselect: box.with(() => allowDeselect),
+		inputValue: box.with(
+			() => inputValue,
+			(v) => (inputValue = v)
+		),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 
@@ -62,10 +81,10 @@
 
 {#if Array.isArray(rootState.opts.value.current)}
 	{#if rootState.opts.value.current.length}
-		{#each rootState.opts.value.current as item}
-			<SelectHiddenInput value={item} />
+		{#each rootState.opts.value.current as item (item)}
+			<SelectHiddenInput value={item} {autocomplete} />
 		{/each}
 	{/if}
 {:else}
-	<SelectHiddenInput bind:value={rootState.opts.value.current as string} />
+	<SelectHiddenInput bind:value={rootState.opts.value.current as string} {autocomplete} />
 {/if}

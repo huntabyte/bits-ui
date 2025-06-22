@@ -272,6 +272,18 @@ it("should respect `bind:value` to the value", async () => {
 	expect(end.value).toHaveTextContent(calendarDate.end.toString());
 });
 
+it("should populate calendar date with keyboard", async () => {
+	const { start, end, user } = setup({ value: calendarDate });
+
+	await user.click(start.month);
+
+	await user.keyboard("2142020");
+	await user.keyboard("2152020");
+
+	expect(start.value).toHaveTextContent("2020-02-14");
+	expect(end.value).toHaveTextContent("2020-02-15");
+});
+
 it("should render an input for the start and end", async () => {
 	const { container } = setup({
 		startProps: {
@@ -345,8 +357,8 @@ it("should reset range on select when a range is already selected", async () => 
 
 	const selectedDays = getSelectedDays(calendar);
 	expect(selectedDays).toHaveLength(1);
-	expect(startValue).toHaveTextContent(String(undefined));
-	expect(endValue).toHaveTextContent(String(undefined));
+	expect(startValue).toHaveTextContent("1980-01-05");
+	expect(endValue).toHaveTextContent("undefined");
 	const seventhDayInMonth = getByTestId("date-1-7");
 	await user.click(seventhDayInMonth);
 	await tick();
@@ -597,5 +609,317 @@ describe("correct weekday label formatting", () => {
 			const weekdayEl = getByTestId(`weekday-1-${i}`);
 			expect(weekdayEl).toHaveTextContent(weekday);
 		}
+	});
+});
+
+it("should respect the `weekStartsOn` prop regardless of locale", async () => {
+	const t = await open({
+		placeholder: new CalendarDate(1980, 1, 1),
+		weekStartsOn: 2,
+		weekdayFormat: "short",
+		locale: "fr",
+	});
+	expect(t.getByTestId("weekday-1-0").textContent).toBe("mar.");
+});
+
+it("should default the first day of the week to the locale's first day of the week if `weekStartsOn` is not provided", async () => {
+	const t = await open({
+		placeholder: new CalendarDate(1980, 1, 1),
+		weekdayFormat: "short",
+		locale: "fr",
+	});
+	expect(t.getByTestId("weekday-1-0").textContent).toBe("lun.");
+});
+
+describe("excludeDisabled functionality", () => {
+	it("should default to false and allow ranges with disabled dates", async () => {
+		const { getByTestId, user, getSelectedDays } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			isDateDisabled: (date) => date.day === 6, // Jan 6 is disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+
+		// select end date (Jan 8) - should include disabled Jan 6
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// should keep the range even though it contains a disabled date
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("1980-01-08");
+		expect(getSelectedDays()).toHaveLength(4); // Jan 5, 6, 7, 8 (including disabled 6)
+	});
+
+	it("should reset range when excludeDisabled is true and range contains disabled dates", async () => {
+		const { getByTestId, user } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			isDateDisabled: (date) => date.day === 6, // Jan 6 is disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// select end date (Jan 8) - would include disabled Jan 6
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// should reset to just the end date since range contained disabled date
+		expect(startValue).toHaveTextContent("1980-01-08");
+		expect(endValue).toHaveTextContent("undefined");
+	});
+
+	it("should allow valid ranges when excludeDisabled is true and no disabled dates in range", async () => {
+		const { getByTestId, user, getSelectedDays } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			isDateDisabled: (date) => date.day === 10, // Jan 10 is disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+
+		// select end date (Jan 8) - no disabled dates in range
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// should keep the valid range
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("1980-01-08");
+		expect(getSelectedDays()).toHaveLength(4); // Jan 5, 6, 7, 8
+	});
+
+	it("should reset range when selecting in reverse order with excludeDisabled true", async () => {
+		const { getByTestId, user } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			isDateDisabled: (date) => date.day === 6, // Jan 6 is disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select "end" date first (Jan 8)
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+		expect(startValue).toHaveTextContent("1980-01-08");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// select "start" date (Jan 5) - would include disabled Jan 6
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+
+		// should reset to just the start date since range would contain disabled date
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("undefined");
+	});
+
+	it("should handle multiple disabled dates in range", async () => {
+		const { getByTestId, user } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			isDateDisabled: (date) => date.day === 6 || date.day === 8, // Jan 6 and 8 disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+
+		// select end date (Jan 10) - would include disabled Jan 6 and 8
+		const endDay = getByTestId("date-1-10");
+		await user.click(endDay);
+
+		// should reset to just the end date
+		expect(startValue).toHaveTextContent("1980-01-10");
+		expect(endValue).toHaveTextContent("undefined");
+	});
+
+	it("should handle disabled start or end dates correctly", async () => {
+		const { getByTestId, user, getSelectedDays } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			isDateDisabled: (date) => date.day === 5, // Jan 5 is disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// try to select disabled date - should be prevented by base calendar logic
+		const disabledDay = getByTestId("date-1-5");
+		await user.click(disabledDay);
+		expect(startValue).toHaveTextContent("undefined");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// select valid start date (Jan 6)
+		const startDay = getByTestId("date-1-6");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-06");
+
+		// select valid end date (Jan 8) - no disabled dates in range
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// should keep the valid range
+		expect(startValue).toHaveTextContent("1980-01-06");
+		expect(endValue).toHaveTextContent("1980-01-08");
+		expect(getSelectedDays()).toHaveLength(3); // Jan 6, 7, 8
+	});
+
+	it("should work with minDays and maxDays constraints together", async () => {
+		const { getByTestId, user } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			minDays: 3,
+			maxDays: 5,
+			isDateDisabled: (date) => date.day === 7, // Jan 7 is disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		expect(startValue).toHaveTextContent("1980-01-05");
+
+		// select end date (Jan 9) - would include disabled Jan 7, also meets minDays
+		const endDay = getByTestId("date-1-9");
+		await user.click(endDay);
+
+		// should reset due to disabled date in range
+		expect(startValue).toHaveTextContent("1980-01-09");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// now select a valid range without disabled dates
+		const validStartDay = getByTestId("date-1-10");
+		await user.click(validStartDay);
+		expect(startValue).toHaveTextContent("1980-01-10");
+
+		const validEndDay = getByTestId("date-1-13");
+		await user.click(validEndDay);
+		expect(startValue).toHaveTextContent("1980-01-10");
+		expect(endValue).toHaveTextContent("1980-01-13");
+	});
+
+	it("should handle range that includes disabled dates and updates field segments", async () => {
+		const { getByTestId, user, start, end } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			isDateDisabled: (date) => date.day === 6, // Jan 6 is disabled
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select range that includes disabled date (Jan 5 to Jan 8, with Jan 6 disabled)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// should reset due to disabled Jan 6 in the range
+		expect(startValue).toHaveTextContent("1980-01-08");
+		expect(endValue).toHaveTextContent("undefined");
+
+		// check that the field segments also update correctly
+		expect(start.month).toHaveTextContent("1");
+		expect(start.day).toHaveTextContent("8");
+		expect(start.year).toHaveTextContent("1980");
+		expect(end.month).toHaveTextContent("mm");
+		expect(end.day).toHaveTextContent("dd");
+		expect(end.year).toHaveTextContent("yyyy");
+	});
+
+	it("should close picker when valid range is selected and closeOnRangeSelect is true", async () => {
+		const { getByTestId, user, getContent } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			closeOnRangeSelect: true,
+			isDateDisabled: (date) => date.day === 10, // Jan 10 is disabled, outside our range
+		});
+
+		expect(getContent()).not.toBeNull();
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+
+		// picker should still be open
+		expect(getContent()).not.toBeNull();
+
+		// select end date (Jan 8) - valid range, no disabled dates
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// picker should close after valid range selection
+		await waitFor(() => expect(getContent()).toBeNull());
+	});
+
+	it("should not close picker when range is reset due to excludeDisabled", async () => {
+		const { getByTestId, user, getContent } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: true,
+			closeOnRangeSelect: true,
+			isDateDisabled: (date) => date.day === 6, // Jan 6 is disabled
+		});
+
+		expect(getContent()).not.toBeNull();
+
+		// select start date (Jan 5)
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+
+		// picker should still be open
+		expect(getContent()).not.toBeNull();
+
+		// select end date (Jan 8) - would include disabled Jan 6, range will be reset
+		const endDay = getByTestId("date-1-8");
+		await user.click(endDay);
+
+		// picker should remain open since no complete range was selected
+		expect(getContent()).not.toBeNull();
+	});
+
+	it("should not affect range when excludeDisabled is false even with disabled dates", async () => {
+		const { getByTestId, user, getSelectedDays } = await open({
+			placeholder: new CalendarDate(1980, 1, 1),
+			excludeDisabled: false, // explicitly set to false
+			isDateDisabled: (date) => date.day === 6 || date.day === 7,
+		});
+
+		const startValue = getByTestId("start-value");
+		const endValue = getByTestId("end-value");
+
+		// select range that includes multiple disabled dates
+		const startDay = getByTestId("date-1-5");
+		await user.click(startDay);
+		const endDay = getByTestId("date-1-9");
+		await user.click(endDay);
+
+		// should keep the range despite disabled dates
+		expect(startValue).toHaveTextContent("1980-01-05");
+		expect(endValue).toHaveTextContent("1980-01-09");
+		expect(getSelectedDays()).toHaveLength(5); // includes disabled dates
 	});
 });

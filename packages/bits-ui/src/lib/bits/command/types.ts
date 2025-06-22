@@ -15,7 +15,7 @@ export type CommandState = {
 	filtered: {
 		/** The count of all visible items. */
 		count: number;
-		/** Map from visible item id to its search store. */
+		/** Map from visible item value to its search store. */
 		items: Map<string, number>;
 		/** Set of groups with at least one visible item. */
 		groups: Set<string>;
@@ -77,9 +77,25 @@ export type CommandRootPropsWithoutHTML = WithChild<{
 	/**
 	 * Set this prop to `false` to disable the option to use ctrl+n/j/p/k (vim style) navigation.
 	 *
-	 * @defaultValue true
+	 * @default true
 	 */
 	vimBindings?: boolean;
+
+	/**
+	 * The number of columns in a grid layout.
+	 *
+	 * @default null
+	 */
+	columns?: number | null;
+
+	/**
+	 * Whether to disable scrolling the selected item into view on initial mount.
+	 * When `true`, prevents automatic scrolling when the command menu first renders
+	 * and selects its first item, but still allows scrolling on subsequent selections.
+	 *
+	 * @default false
+	 */
+	disableInitialScroll?: boolean;
 }>;
 
 export type CommandRootProps = CommandRootPropsWithoutHTML &
@@ -126,7 +142,7 @@ export type CommandItemPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the item is disabled.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
 

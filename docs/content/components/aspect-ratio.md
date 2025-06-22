@@ -18,7 +18,7 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 
 ## Architecture
 
--   **Root**: The root component which contains the aspect ratio logic
+- **Root**: The root component which contains the aspect ratio logic
 
 ## Structure
 
@@ -26,7 +26,7 @@ Here's an overview of how the Aspect Ratio component is structured in code:
 
 ```svelte
 <script lang="ts">
-	import { AspectRatio } from "bits-ui";
+  import { AspectRatio } from "bits-ui";
 </script>
 
 <AspectRatio.Root />
@@ -38,23 +38,23 @@ If you plan on using a lot of `AspectRatio` components throughout your applicati
 
 ```svelte title="MyAspectRatio.svelte"
 <script lang="ts">
-	import { AspectRatio, type WithoutChildrenOrChild } from "bits-ui";
+  import { AspectRatio, type WithoutChildrenOrChild } from "bits-ui";
 
-	let {
-		src,
-		alt,
-		ref = $bindable(null),
-		imageRef = $bindable(null),
-		...restProps
-	}: WithoutChildrenOrChild<AspectRatio.RootProps> & {
-		src: string;
-		alt: string;
-		imageRef?: HTMLImageElement | null;
-	} = $props();
+  let {
+    src,
+    alt,
+    ref = $bindable(null),
+    imageRef = $bindable(null),
+    ...restProps
+  }: WithoutChildrenOrChild<AspectRatio.RootProps> & {
+    src: string;
+    alt: string;
+    imageRef?: HTMLImageElement | null;
+  } = $props();
 </script>
 
 <AspectRatio.Root {...restProps} bind:ref>
-	<img {src} {alt} bind:this={imageRef} />
+  <img {src} {alt} bind:this={imageRef} />
 </AspectRatio.Root>
 ```
 
@@ -62,10 +62,14 @@ You can then use the `MyAspectRatio` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyAspectRatio from "$lib/components/MyAspectRatio.svelte";
+  import MyAspectRatio from "$lib/components/MyAspectRatio.svelte";
 </script>
 
-<MyAspectRatio src="https://example.com/image.jpg" alt="an abstract painting" ratio={4 / 3} />
+<MyAspectRatio
+  src="https://example.com/image.jpg"
+  alt="an abstract painting"
+  ratio={4 / 3}
+/>
 ```
 
 ## Custom Ratio
@@ -74,7 +78,7 @@ Use the `ratio` prop to set a custom aspect ratio for the image.
 
 ```svelte /ratio/
 <AspectRatio.Root ratio={16 / 9}>
-	<!-- ... -->
+  <!-- ... -->
 </AspectRatio.Root>
 ```
 

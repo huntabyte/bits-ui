@@ -7,10 +7,7 @@ export type ContextMenuContentPropsWithoutHTML = Omit<
 	"align" | "side" | "sideOffset"
 >;
 
-export type ContextMenuContentProps = Omit<
-	MenuContentProps,
-	"side" | "onOpenAutoFocus" | "sideOffset" | "align"
->;
+export type ContextMenuContentProps = Omit<MenuContentProps, "side" | "sideOffset" | "align">;
 
 export type ContextMenuTriggerPropsWithoutHTML = WithChild<{
 	/**
@@ -39,6 +36,7 @@ export type {
 	MenuSubProps as ContextMenuSubProps,
 	MenuSubTriggerProps as ContextMenuSubTriggerProps,
 	MenuPortalProps as ContextMenuPortalProps,
+	MenuCheckboxGroupProps as ContextMenuCheckboxGroupProps,
 } from "$lib/bits/menu/types.js";
 
 export type {
@@ -57,4 +55,5 @@ export type {
 	MenuSubContentPropsWithoutHTML as ContextMenuSubContentPropsWithoutHTML,
 	MenuSubContentStaticPropsWithoutHTML as ContextMenuSubContentStaticPropsWithoutHTML,
 	MenuPortalPropsWithoutHTML as ContextMenuPortalPropsWithoutHTML,
+	MenuCheckboxGroupPropsWithoutHTML as ContextMenuCheckboxGroupPropsWithoutHTML,
 } from "$lib/bits/menu/types.js";

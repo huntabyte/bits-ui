@@ -1,56 +1,58 @@
 import type { ProgressRootPropsWithoutHTML } from "bits-ui";
-import {
-	createApiSchema,
-	createDataAttrSchema,
-	createNumberProp,
-	createPropSchema,
-	withChildProps,
-} from "./helpers.js";
+import { withChildProps } from "./shared.js";
 import { ProgressStateAttr } from "./extended-types/progress/index.js";
+import {
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineNumberProp,
+	defineSimpleDataAttr,
+	defineSimplePropSchema,
+} from "../utils.js";
 
-export const root = createApiSchema<ProgressRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<ProgressRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The progress bar component.",
 	props: {
-		max: createNumberProp({
-			default: "100",
+		max: defineNumberProp({
+			default: 100,
 			description: "The maximum value of the progress bar.",
 		}),
-		min: createNumberProp({
-			default: "0",
+		min: defineNumberProp({
+			default: 0,
 			description: "The minimum value of the progress bar.",
 		}),
-		value: createPropSchema({
+		value: defineSimplePropSchema({
 			default: "0",
-			description: "The current value of the progress bar. If set to `null` ",
+			description:
+				"The current value of the progress bar. If set to `null` the progress bar will be indeterminate.",
 			type: "number | null",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The current value of the progress bar.",
 		}),
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "state",
-			definition: ProgressStateAttr,
 			description: "The current state of the progress bar.",
-			isEnum: true,
+			options: ["indeterminate", "determinate"],
+			value: ProgressStateAttr,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "min",
 			description: "The minimum value of the progress bar.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "max",
 			description: "The maximum value of the progress bar.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "indeterminate",
 			description: "Present when the value is `null`.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "progress-root",
 			description: "Present on the root element.",
 		}),

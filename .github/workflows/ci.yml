@@ -34,7 +34,7 @@ jobs:
                   cache: pnpm
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
             - name: Run svelte-check
               run: pnpm check
@@ -51,12 +51,13 @@ jobs:
                   cache: pnpm
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
 
             - run: pnpm lint
 
-    Test:
+    Test-Utils:
         runs-on: macos-latest
+        name: Test Utils
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
@@ -66,9 +67,36 @@ jobs:
                   cache: pnpm
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile
+
+            - run: pnpm test:utils
+
+    Test:
+        name: Test - ${{ matrix.browser }}
+        runs-on: macos-latest
+        strategy:
+            matrix:
+                browser: [chromium, firefox, webkit]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Install Playwright browser
+              run: pnpm dlx playwright install ${{ matrix.browser }}
 
             - name: Build packages
               run: pnpm build:packages
 
-            - run: pnpm test
+            - name: Run browser tests
+              run: |
+                  if [ "${{ matrix.browser }}" = "firefox" ]; then
+                    rm -rf tests/node_modules/.vite && pnpm test:browser --browser ${{ matrix.browser }} --no-file-parallelism
+                  else
+                    rm -rf tests/node_modules/.vite && pnpm test:browser --browser ${{ matrix.browser }}
+                  fi

@@ -2,11 +2,13 @@
 	import type { ScrollAreaThumbProps } from "../types.js";
 	import { ScrollAreaScrollbarVisibleContext } from "../scroll-area.svelte.js";
 	import ScrollAreaThumbImpl from "./scroll-area-thumb-impl.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		forceMount = false,
 		...restProps
@@ -15,8 +17,8 @@
 	const scrollbarState = ScrollAreaScrollbarVisibleContext.get();
 </script>
 
-<PresenceLayer present={forceMount || scrollbarState.hasThumb} {...restProps} {id}>
+<PresenceLayer open={forceMount || scrollbarState.hasThumb} ref={scrollbarState.scrollbar.opts.ref}>
 	{#snippet presence({ present })}
-		<ScrollAreaThumbImpl {...restProps} {id} bind:ref present={present.current} />
+		<ScrollAreaThumbImpl {...restProps} {id} bind:ref {present} />
 	{/snippet}
 </PresenceLayer>

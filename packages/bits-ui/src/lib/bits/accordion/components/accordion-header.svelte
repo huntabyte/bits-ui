@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AccordionHeaderProps } from "../types.js";
-	import { useAccordionHeader } from "../accordion.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { AccordionHeaderState } from "../accordion.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		level = 2,
 		children,
 		child,
@@ -13,7 +15,7 @@
 		...restProps
 	}: AccordionHeaderProps = $props();
 
-	const headerState = useAccordionHeader({
+	const headerState = AccordionHeaderState.create({
 		id: box.with(() => id),
 		level: box.with(() => level),
 		ref: box.with(

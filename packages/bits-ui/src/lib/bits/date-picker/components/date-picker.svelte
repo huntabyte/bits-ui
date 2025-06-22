@@ -1,18 +1,21 @@
 <script lang="ts">
 	// Date Picker composes the DateField, Popover, and Calendar components
+	import { watch } from "runed";
 	import { box } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
-	import { useDatePickerRoot } from "../date-picker.svelte.js";
+	import { DatePickerRootState } from "../date-picker.svelte.js";
 	import type { DatePickerRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
-	import { useDateFieldRoot } from "$lib/bits/date-field/date-field.svelte.js";
+	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
+	import { DateFieldRootState } from "$lib/bits/date-field/date-field.svelte.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		value = $bindable(),
 		onValueChange = noop,
 		placeholder = $bindable(),
@@ -27,14 +30,14 @@
 		granularity,
 		readonlySegments = [],
 		hourCycle,
-		locale = "en",
+		locale,
 		hideTimeZone = false,
 		required = false,
 		calendarLabel = "Event",
 		disableDaysOutsideMonth = true,
 		preventDeselect = false,
 		pagedNavigation = false,
-		weekStartsOn = 0,
+		weekStartsOn,
 		weekdayFormat = "narrow",
 		isDateDisabled = () => false,
 		fixedWeeks = false,
@@ -43,6 +46,8 @@
 		initialFocus = false,
 		errorMessageId,
 		children,
+		monthFormat = "long",
+		yearFormat = "numeric",
 	}: DatePickerRootProps = $props();
 
 	const defaultPlaceholder = getDefaultDate({
@@ -50,9 +55,25 @@
 		defaultValue: value,
 	});
 
-	if (placeholder === undefined) {
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
 		placeholder = defaultPlaceholder;
 	}
+
+	// SSR
+	handleDefaultPlaceholder();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make placeholder
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
 
 	function onDateSelect() {
 		if (closeOnDateSelect) {
@@ -60,7 +81,7 @@
 		}
 	}
 
-	const pickerRootState = useDatePickerRoot({
+	const pickerRootState = DatePickerRootState.create({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -90,7 +111,7 @@
 		granularity: box.with(() => granularity),
 		readonlySegments: box.with(() => readonlySegments),
 		hourCycle: box.with(() => hourCycle),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		required: box.with(() => required),
 		calendarLabel: box.with(() => calendarLabel),
@@ -105,13 +126,16 @@
 		initialFocus: box.with(() => initialFocus),
 		onDateSelect: box.with(() => onDateSelect),
 		defaultPlaceholder,
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 	});
 
-	usePopoverRoot({
+	PopoverRootState.create({
 		open: pickerRootState.opts.open,
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 
-	useDateFieldRoot({
+	DateFieldRootState.create({
 		value: pickerRootState.opts.value,
 		disabled: pickerRootState.opts.disabled,
 		readonly: pickerRootState.opts.readonly,

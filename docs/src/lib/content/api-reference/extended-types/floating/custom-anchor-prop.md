@@ -1,3 +1,3 @@
 ```ts
-string | HTMLElement | { getBoundingClientRect: () => DOMRect } | null;
+;string | HTMLElement | { getBoundingClientRect: () => DOMRect } | null
 ```

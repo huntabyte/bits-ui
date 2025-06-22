@@ -12,6 +12,7 @@ import type {
 	BitsPrimitiveDivAttributes,
 } from "$lib/shared/attributes.js";
 import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+import type { PortalProps } from "$lib/types.js";
 
 export type PopoverRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -23,6 +24,11 @@ export type PopoverRootPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the popover's open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * A callback that is called when the popover's open state changes and the animation is complete.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 }>;
 
 export type PopoverRootProps = PopoverRootPropsWithoutHTML;
@@ -56,3 +62,6 @@ export type PopoverCloseProps = PopoverClosePropsWithoutHTML &
 export type PopoverArrowPropsWithoutHTML = ArrowPropsWithoutHTML;
 
 export type PopoverArrowProps = ArrowProps;
+
+export type PopoverPortalPropsWithoutHTML = PortalProps;
+export type PopoverPortalProps = PortalProps;

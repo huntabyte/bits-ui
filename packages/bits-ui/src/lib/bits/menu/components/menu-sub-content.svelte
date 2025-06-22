@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
-	import { MenuOpenEvent, useMenuContent } from "../menu.svelte.js";
+	import { MenuOpenEvent, MenuContentState } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 	import { isHTMLElement } from "$lib/internal/is.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		children,
 		child,
@@ -26,10 +27,11 @@
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		onFocusOutside = noop,
 		side = "right",
+		trapFocus = false,
 		...restProps
 	}: MenuSubContentProps = $props();
 
-	const subContentState = useMenuContent({
+	const subContentState = MenuContentState.create({
 		id: box.with(() => id),
 		loop: box.with(() => loop),
 		ref: box.with(
@@ -53,7 +55,7 @@
 		}
 	}
 
-	const dataAttr = $derived(subContentState.parentMenu.root.getAttr("sub-content"));
+	const dataAttr = $derived(subContentState.parentMenu.root.getBitsAttr("sub-content"));
 
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
@@ -108,6 +110,7 @@
 {#if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
+		ref={subContentState.opts.ref}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
 		onOpenAutoFocus={handleOpenAutoFocus}
@@ -117,7 +120,7 @@
 		onFocusOutside={handleOnFocusOutside}
 		preventScroll={false}
 		{loop}
-		trapFocus={false}
+		{trapFocus}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
@@ -136,23 +139,23 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
 	<PopperLayer
 		{...mergedProps}
+		ref={subContentState.opts.ref}
 		{interactOutsideBehavior}
 		{escapeKeydownBehavior}
 		onCloseAutoFocus={handleCloseAutoFocus}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		present={subContentState.parentMenu.opts.open.current}
+		open={subContentState.parentMenu.opts.open.current}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
 		onFocusOutside={handleOnFocusOutside}
 		preventScroll={false}
 		{loop}
-		trapFocus={false}
+		{trapFocus}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
@@ -171,7 +174,6 @@
 					</div>
 				</div>
 			{/if}
-			<Mounted bind:mounted={subContentState.mounted} />
 		{/snippet}
 	</PopperLayer>
 {/if}

@@ -1,20 +1,22 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useCollapsibleContent } from "../collapsible.svelte.js";
+	import { CollapsibleContentState } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		child,
 		ref = $bindable(null),
 		forceMount = false,
 		children,
-		id = useId(),
+		id = createId(uid),
 		...restProps
-	}: CollapsibleContentProps & { forceMount?: boolean } = $props();
+	}: CollapsibleContentProps = $props();
 
-	const contentState = useCollapsibleContent({
+	const contentState = CollapsibleContentState.create({
 		id: box.with(() => id),
 		forceMount: box.with(() => forceMount),
 		ref: box.with(
@@ -24,10 +26,10 @@
 	});
 </script>
 
-<PresenceLayer forceMount={true} present={contentState.present} {id}>
+<PresenceLayer forceMount={true} open={contentState.present} ref={contentState.opts.ref}>
 	{#snippet presence({ present })}
 		{@const mergedProps = mergeProps(restProps, contentState.props, {
-			hidden: forceMount ? undefined : !present.current,
+			hidden: forceMount ? undefined : !present,
 		})}
 		{#if child}
 			{@render child({

@@ -1,6 +1,6 @@
 ```ts
 type ChildSnippetProps = {
-	props: Record<string, unknown>;
-	open: boolean;
-};
+	props: Record<string, unknown>
+	open: boolean
+}
 ```

@@ -1,19 +1,22 @@
 <script lang="ts">
+	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
-	import { useDateRangePickerRoot } from "../date-range-picker.svelte.js";
+	import { DateRangePickerRootState } from "../date-range-picker.svelte.js";
 	import type { DateRangePickerRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { usePopoverRoot } from "$lib/bits/popover/popover.svelte.js";
-	import { useDateRangeFieldRoot } from "$lib/bits/date-range-field/date-range-field.svelte.js";
+	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
+	import { DateRangeFieldRootState } from "$lib/bits/date-range-field/date-range-field.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { useId } from "$lib/internal/use-id.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		value = $bindable(),
 		id = useId(),
 		ref = $bindable(null),
@@ -29,14 +32,14 @@
 		granularity,
 		readonlySegments = [],
 		hourCycle,
-		locale = "en",
+		locale,
 		hideTimeZone = false,
 		required = false,
 		calendarLabel = "Event",
 		disableDaysOutsideMonth = true,
 		preventDeselect = false,
 		pagedNavigation = false,
-		weekStartsOn = 0,
+		weekStartsOn,
 		weekdayFormat = "narrow",
 		isDateDisabled = () => false,
 		fixedWeeks = false,
@@ -46,25 +49,63 @@
 		onEndValueChange = noop,
 		validate = noop,
 		errorMessageId,
+		minDays,
+		maxDays,
+		excludeDisabled = false,
 		child,
 		children,
+		monthFormat = "long",
+		yearFormat = "numeric",
 		...restProps
 	}: DateRangePickerRootProps = $props();
 
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
-	if (value === undefined) {
+	function handleDefaultValue() {
+		if (value !== undefined) return;
 		value = { start: undefined, end: undefined };
 	}
+
+	// SSR
+	handleDefaultValue();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make value
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
 	const defaultPlaceholder = getDefaultDate({
 		granularity,
 		defaultValue: value?.start,
 	});
 
-	if (placeholder === undefined) {
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
 		placeholder = defaultPlaceholder;
 	}
+
+	// SSR
+	handleDefaultPlaceholder();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make placeholder
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
 
 	function onRangeSelect() {
 		if (closeOnRangeSelect) {
@@ -72,7 +113,7 @@
 		}
 	}
 
-	const pickerRootState = useDateRangePickerRoot({
+	const pickerRootState = DateRangePickerRootState.create({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -97,12 +138,14 @@
 		isDateUnavailable: box.with(() => isDateUnavailable),
 		minValue: box.with(() => minValue),
 		maxValue: box.with(() => maxValue),
+		minDays: box.with(() => minDays),
+		maxDays: box.with(() => maxDays),
 		disabled: box.with(() => disabled),
 		readonly: box.with(() => readonly),
 		granularity: box.with(() => granularity),
 		readonlySegments: box.with(() => readonlySegments),
 		hourCycle: box.with(() => hourCycle),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		required: box.with(() => required),
 		calendarLabel: box.with(() => calendarLabel),
@@ -114,6 +157,7 @@
 		isDateDisabled: box.with(() => isDateDisabled),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
+		excludeDisabled: box.with(() => excludeDisabled),
 		onRangeSelect: box.with(() => onRangeSelect),
 		startValue: box.with(
 			() => startValue,
@@ -129,14 +173,17 @@
 				onEndValueChange(v);
 			}
 		),
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 		defaultPlaceholder,
 	});
 
-	usePopoverRoot({
+	PopoverRootState.create({
 		open: pickerRootState.opts.open,
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 
-	const fieldRootState = useDateRangeFieldRoot({
+	const fieldRootState = DateRangeFieldRootState.create({
 		value: pickerRootState.opts.value,
 		disabled: pickerRootState.opts.disabled,
 		readonly: pickerRootState.opts.readonly,

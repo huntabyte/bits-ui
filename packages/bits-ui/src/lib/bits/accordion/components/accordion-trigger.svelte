@@ -1,19 +1,21 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { AccordionTriggerProps } from "../types.js";
-	import { useAccordionTrigger } from "../accordion.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { AccordionTriggerState } from "../accordion.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		disabled = false,
 		ref = $bindable(null),
-		id = useId(),
+		id = createId(uid),
 		children,
 		child,
 		...restProps
 	}: AccordionTriggerProps = $props();
 
-	const triggerState = useAccordionTrigger({
+	const triggerState = AccordionTriggerState.create({
 		disabled: box.with(() => disabled),
 		id: box.with(() => id),
 		ref: box.with(

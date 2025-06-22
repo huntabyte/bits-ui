@@ -1,3 +1,4 @@
+import { getDocument, getWindow } from "svelte-toolbelt";
 import { isBrowser, isElementHidden, isSelectableInput } from "./is.js";
 
 export type FocusableTarget = HTMLElement | { focus: () => void };
@@ -22,21 +23,24 @@ export function handleCalendarInitialFocus(calendar: HTMLElement) {
  * A utility function that focuses an element without scrolling.
  */
 export function focusWithoutScroll(element: HTMLElement) {
+	const doc = getDocument(element);
+	const win = getWindow(element);
 	const scrollPosition = {
-		x: window.pageXOffset || document.documentElement.scrollLeft,
-		y: window.pageYOffset || document.documentElement.scrollTop,
+		x: win.pageXOffset || doc.documentElement.scrollLeft,
+		y: win.pageYOffset || doc.documentElement.scrollTop,
 	};
 	element.focus();
-	window.scrollTo(scrollPosition.x, scrollPosition.y);
+	win.scrollTo(scrollPosition.x, scrollPosition.y);
 }
 
 /**
  * A utility function that focuses an element.
  */
 export function focus(element?: FocusableTarget | null, { select = false } = {}) {
-	if (!(element && element.focus)) return;
-	if (document.activeElement === element) return;
-	const previouslyFocusedElement = document.activeElement;
+	if (!element || !element.focus) return;
+	const doc = getDocument(element as HTMLElement);
+	if (doc.activeElement === element) return;
+	const previouslyFocusedElement = doc.activeElement;
 	// prevent scroll on focus
 	element.focus({ preventScroll: true });
 	// only elect if its not the same element, it supports selection, and we need to select it
@@ -49,13 +53,15 @@ export function focus(element?: FocusableTarget | null, { select = false } = {})
  * Attempts to focus the first element in a list of candidates.
  * Stops when focus is successful.
  */
-export function focusFirst(candidates: HTMLElement[], { select = false } = {}) {
-	const previouslyFocusedElement = document.activeElement;
+export function focusFirst(
+	candidates: HTMLElement[],
+	{ select = false } = {},
+	getActiveElement: () => HTMLElement | null
+) {
+	const previouslyFocusedElement = getActiveElement();
 	for (const candidate of candidates) {
 		focus(candidate, { select });
-		if (document.activeElement !== previouslyFocusedElement) {
-			return true;
-		}
+		if (getActiveElement() !== previouslyFocusedElement) return true;
 	}
 }
 
@@ -82,7 +88,8 @@ export function findVisible(elements: HTMLElement[], container: HTMLElement) {
  */
 export function getTabbableCandidates(container: HTMLElement) {
 	const nodes: HTMLElement[] = [];
-	const walker = document.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
+	const doc = getDocument(container);
+	const walker = doc.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		acceptNode: (node: any) => {
 			const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";

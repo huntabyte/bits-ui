@@ -73,7 +73,7 @@
 						<Command.Group>
 							<Command.GroupHeading>Components</Command.GroupHeading>
 							<Command.GroupItems>
-								{#each components as { value, subtitle, icon }}
+								{#each components as { value, subtitle, icon } (value)}
 									{@const Icon = icon}
 									<Command.Item {value}>
 										<div data-command-framer-icon-wrapper="">

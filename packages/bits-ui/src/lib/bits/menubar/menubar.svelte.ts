@@ -1,130 +1,161 @@
-import { type ReadableBox, afterTick, box, useRefById } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	afterTick,
+	box,
+	attachRef,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import {
-	type UseRovingFocusReturn,
-	useRovingFocus,
-} from "$lib/internal/use-roving-focus.svelte.js";
 import type { Direction } from "$lib/shared/index.js";
-import { getAriaExpanded, getDataDisabled, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getAriaExpanded,
+	getDataDisabled,
+	getDataOpenClosed,
+} from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { wrapArray } from "$lib/internal/arrays.js";
-import type {
-	BitsFocusEvent,
-	BitsKeyboardEvent,
-	BitsPointerEvent,
-	WithRefProps,
-} from "$lib/internal/types.js";
-import {
-	FocusScopeContext,
-	type FocusScopeContextValue,
-} from "../utilities/focus-scope/use-focus-scope.svelte.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { onMount } from "svelte";
+import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
+import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 
-const MENUBAR_ROOT_ATTR = "data-menubar-root";
-const MENUBAR_TRIGGER_ATTR = "data-menubar-trigger";
+const menubarAttrs = createBitsAttrs({
+	component: "menubar",
+	parts: ["root", "trigger", "content"],
+});
 
-type MenubarRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		dir: Direction;
-		loop: boolean;
-	}> &
+const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
+const MenubarMenuContext = new Context<MenubarMenuState>("Menubar.Menu");
+interface MenubarRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			dir: Direction;
+			loop: boolean;
+		}>,
 		WritableBoxedValues<{
 			value: string;
-		}>
->;
+		}> {}
 
-class MenubarRootState {
-	rovingFocusGroup: UseRovingFocusReturn;
+export class MenubarRootState {
+	static create(opts: MenubarRootStateOpts) {
+		return MenubarRootContext.set(new MenubarRootState(opts));
+	}
+	readonly opts: MenubarRootStateOpts;
+	readonly rovingFocusGroup: RovingFocusGroup;
+	readonly attachment: RefAttachment;
 	wasOpenedByKeyboard = $state(false);
 	triggerIds = $state<string[]>([]);
-	valueToContentId = new Map<string, ReadableBox<string>>();
+	valueToChangeHandler = new Map<string, ReadableBox<OnChangeFn<boolean>>>();
 
-	constructor(readonly opts: MenubarRootStateProps) {
-		useRefById(opts);
-
-		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.opts.id,
-			candidateAttr: MENUBAR_TRIGGER_ATTR,
+	constructor(opts: MenubarRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
+		this.rovingFocusGroup = new RovingFocusGroup({
+			rootNode: this.opts.ref,
+			candidateAttr: menubarAttrs.trigger,
 			loop: this.opts.loop,
 			orientation: box.with(() => "horizontal"),
 		});
-
-		this.onMenuClose = this.onMenuClose.bind(this);
-		this.onMenuOpen = this.onMenuOpen.bind(this);
-		this.onMenuToggle = this.onMenuToggle.bind(this);
-		this.registerTrigger = this.registerTrigger.bind(this);
 	}
 
 	/**
 	 * @param id - the id of the trigger to register
 	 * @returns - a function to de-register the trigger
 	 */
-	registerTrigger(id: string) {
+	registerTrigger = (id: string) => {
 		this.triggerIds.push(id);
 
 		return () => {
 			this.triggerIds = this.triggerIds.filter((triggerId) => triggerId !== id);
 		};
-	}
+	};
 
 	/**
 	 * @param value - the value of the menu to register
 	 * @param contentId - the content id to associate with the value
 	 * @returns - a function to de-register the menu
 	 */
-	registerMenu(value: string, contentId: ReadableBox<string>) {
-		this.valueToContentId.set(value, contentId);
+	registerMenu = (value: string, onOpenChange: ReadableBox<OnChangeFn<boolean>>) => {
+		this.valueToChangeHandler.set(value, onOpenChange);
 
 		return () => {
-			this.valueToContentId.delete(value);
+			this.valueToChangeHandler.delete(value);
 		};
-	}
+	};
 
-	getTriggers() {
+	updateValue = (value: string) => {
+		const currValue = this.opts.value.current;
+		const currHandler = this.valueToChangeHandler.get(currValue)?.current;
+		const nextHandler = this.valueToChangeHandler.get(value)?.current;
+		this.opts.value.current = value;
+		if (currHandler && currValue !== value) {
+			currHandler(false);
+		}
+		if (nextHandler) {
+			nextHandler(true);
+		}
+	};
+
+	getTriggers = () => {
 		const node = this.opts.ref.current;
 		if (!node) return [];
-		return Array.from(node.querySelectorAll<HTMLButtonElement>(`[${MENUBAR_TRIGGER_ATTR}]`));
-	}
+		return Array.from(
+			node.querySelectorAll<HTMLButtonElement>(menubarAttrs.selector("trigger"))
+		);
+	};
 
-	onMenuOpen(id: string, triggerId: string) {
-		this.opts.value.current = id;
+	onMenuOpen = (id: string, triggerId: string) => {
+		this.updateValue(id);
 		this.rovingFocusGroup.setCurrentTabStopId(triggerId);
-	}
+	};
 
-	onMenuClose() {
-		this.opts.value.current = "";
-	}
+	onMenuClose = () => {
+		this.updateValue("");
+	};
 
-	onMenuToggle(id: string) {
-		this.opts.value.current = this.opts.value.current ? "" : id;
-	}
+	onMenuToggle = (id: string) => {
+		this.updateValue(this.opts.value.current ? "" : id);
+	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "menubar",
-				[MENUBAR_ROOT_ATTR]: "",
+				[menubarAttrs.root]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type MenubarMenuStateProps = ReadableBoxedValues<{
-	value: string;
-}>;
+interface MenubarMenuStateOpts
+	extends ReadableBoxedValues<{
+		value: string;
+		onOpenChange: OnChangeFn<boolean>;
+	}> {}
 
-class MenubarMenuState {
+export class MenubarMenuState {
+	static create(opts: MenubarMenuStateOpts) {
+		return MenubarMenuContext.set(new MenubarMenuState(opts, MenubarRootContext.get()));
+	}
+
+	readonly opts: MenubarMenuStateOpts;
+	readonly root: MenubarRootState;
 	open = $derived.by(() => this.root.opts.value.current === this.opts.value.current);
-	wasOpenedByKeyboard = $state(false);
+	wasOpenedByKeyboard = false;
 	triggerNode = $state<HTMLElement | null>(null);
+	triggerId = $derived.by(() => this.triggerNode?.id);
+	contentId = $derived.by(() => this.contentNode?.id);
 	contentNode = $state<HTMLElement | null>(null);
 
-	constructor(
-		readonly opts: MenubarMenuStateProps,
-		readonly root: MenubarRootState
-	) {
+	constructor(opts: MenubarMenuStateOpts, root: MenubarRootState) {
+		this.opts = opts;
+		this.root = root;
+
 		watch(
 			() => this.open,
 			() => {
@@ -135,10 +166,7 @@ class MenubarMenuState {
 		);
 
 		onMount(() => {
-			return this.root.registerMenu(
-				this.opts.value.current,
-				box.with(() => this.contentNode?.id ?? "")
-			);
+			return this.root.registerMenu(this.opts.value.current, opts.onOpenChange);
 		});
 	}
 
@@ -146,40 +174,38 @@ class MenubarMenuState {
 		return this.triggerNode;
 	}
 
+	toggleMenu() {
+		this.root.onMenuToggle(this.opts.value.current);
+	}
+
 	openMenu() {
 		this.root.onMenuOpen(this.opts.value.current, this.triggerNode?.id ?? "");
 	}
 }
 
-type MenubarTriggerStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>
->;
+interface MenubarTriggerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {}
 
-class MenubarTriggerState {
-	root: MenubarRootState;
+export class MenubarTriggerState {
+	static create(opts: MenubarTriggerStateOpts) {
+		return new MenubarTriggerState(opts, MenubarMenuContext.get());
+	}
+
+	readonly opts: MenubarTriggerStateOpts;
+	readonly menu: MenubarMenuState;
+	readonly root: MenubarRootState;
+	readonly attachment: RefAttachment;
 	isFocused = $state(false);
 	#tabIndex = $state(0);
 
-	constructor(
-		readonly opts: MenubarTriggerStateProps,
-		readonly menu: MenubarMenuState
-	) {
+	constructor(opts: MenubarTriggerStateOpts, menu: MenubarMenuState) {
+		this.opts = opts;
+		this.menu = menu;
 		this.root = menu.root;
-
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerenter = this.onpointerenter.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onfocus = this.onfocus.bind(this);
-		this.onblur = this.onblur.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.menu.triggerNode = node;
-			},
-		});
+		this.attachment = attachRef(this.opts.ref, (v) => (this.menu.triggerNode = v));
 
 		onMount(() => {
 			return this.root.registerTrigger(opts.id.current);
@@ -192,7 +218,7 @@ class MenubarTriggerState {
 		});
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		// only call if the left button but not when the CTRL key is pressed
 		if (!this.opts.disabled.current && e.button === 0 && e.ctrlKey === false) {
 			// prevent trigger from focusing when opening
@@ -200,19 +226,19 @@ class MenubarTriggerState {
 			if (!this.menu.open) {
 				e.preventDefault();
 			}
-			this.menu.openMenu();
+			this.menu.toggleMenu();
 		}
-	}
+	};
 
-	onpointerenter(_: BitsPointerEvent) {
+	onpointerenter: PointerEventHandler<HTMLElement> = () => {
 		const isMenubarOpen = Boolean(this.root.opts.value.current);
 		if (isMenubarOpen && !this.menu.open) {
 			this.menu.openMenu();
 			this.menu.getTriggerNode()?.focus();
 		}
-	}
+	};
 
-	onkeydown(e: BitsKeyboardEvent) {
+	onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.key === kbd.TAB) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
@@ -229,17 +255,17 @@ class MenubarTriggerState {
 		}
 
 		this.root.rovingFocusGroup.handleKeydown(this.menu.getTriggerNode(), e);
-	}
+	};
 
-	onfocus(_: BitsFocusEvent) {
+	onfocus: FocusEventHandler<HTMLElement> = () => {
 		this.isFocused = true;
-	}
+	};
 
-	onblur(_: BitsFocusEvent) {
+	onblur: FocusEventHandler<HTMLElement> = () => {
 		this.isFocused = false;
-	}
+	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				type: "button",
@@ -247,53 +273,49 @@ class MenubarTriggerState {
 				id: this.opts.id.current,
 				"aria-haspopup": "menu",
 				"aria-expanded": getAriaExpanded(this.menu.open),
-				"aria-controls": this.menu.open ? this.menu.contentNode?.id : undefined,
+				"aria-controls": this.menu.open ? this.menu.contentId : undefined,
 				"data-highlighted": this.isFocused ? "" : undefined,
 				"data-state": getDataOpenClosed(this.menu.open),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-menu-value": this.menu.opts.value.current,
 				disabled: this.opts.disabled.current ? true : undefined,
 				tabindex: this.#tabIndex,
-				[MENUBAR_TRIGGER_ATTR]: "",
+				[menubarAttrs.trigger]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onkeydown: this.onkeydown,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type MenubarContentStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		interactOutsideBehavior: InteractOutsideBehaviorType;
-		onOpenAutoFocus: (e: Event) => void;
-		onCloseAutoFocus: (e: Event) => void;
-		onFocusOutside: (e: FocusEvent) => void;
-		onInteractOutside: (e: PointerEvent) => void;
-	}>
->;
+interface MenubarContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			interactOutsideBehavior: InteractOutsideBehaviorType;
+			onOpenAutoFocus: (e: Event) => void;
+			onCloseAutoFocus: (e: Event) => void;
+			onFocusOutside: (e: FocusEvent) => void;
+			onInteractOutside: (e: PointerEvent) => void;
+		}> {}
 
-class MenubarContentState {
-	root: MenubarRootState;
-	focusScopeContext: FocusScopeContextValue;
+export class MenubarContentState {
+	static create(opts: MenubarContentStateOpts) {
+		return new MenubarContentState(opts, MenubarMenuContext.get());
+	}
 
-	constructor(
-		readonly opts: MenubarContentStateProps,
-		readonly menu: MenubarMenuState
-	) {
+	readonly opts: MenubarContentStateOpts;
+	readonly menu: MenubarMenuState;
+	readonly root: MenubarRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: MenubarContentStateOpts, menu: MenubarMenuState) {
+		this.opts = opts;
+		this.menu = menu;
 		this.root = menu.root;
-		this.focusScopeContext = FocusScopeContext.get();
-
-		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.menu.contentNode = node;
-			},
-			deps: () => this.menu.open,
-		});
+		this.attachment = attachRef(this.opts.ref, (v) => (this.menu.contentNode = v));
 	}
 
 	onCloseAutoFocus = (e: Event) => {
@@ -320,7 +342,7 @@ class MenubarContentState {
 		afterTick(() => this.opts.ref.current?.focus());
 	};
 
-	onkeydown(e: BitsKeyboardEvent) {
+	onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
 		if (e.key !== kbd.ARROW_LEFT && e.key !== kbd.ARROW_RIGHT) return;
 
 		const target = e.target as HTMLElement;
@@ -351,25 +373,18 @@ class MenubarContentState {
 			: candidates.slice(currentIndex + 1);
 		const [nextValue] = candidates;
 		if (nextValue) this.menu.root.onMenuOpen(nextValue.value, nextValue.triggerId);
-	}
+	};
 
 	props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				"aria-labelledby": this.menu.triggerNode?.id,
-				style: {
-					"--bits-menubar-content-transform-origin":
-						"var(--bits-floating-transform-origin)",
-					"--bits-menubar-content-available-width":
-						"var(--bits-floating-available-width)",
-					"--bits-menubar-content-available-height":
-						"var(--bits-floating-available-height)",
-					"--bits-menubar-anchor-width": "var(--bits-floating-anchor-width)",
-					"--bits-menubar-anchor-height": "var(--bits-floating-anchor-height)",
-				},
+				"aria-labelledby": this.menu.triggerId,
+				style: getFloatingContentCSSVars("menubar"),
 				onkeydown: this.onkeydown,
 				"data-menu-content": "",
+				[menubarAttrs.content]: "",
+				...this.attachment,
 			}) as const
 	);
 
@@ -379,23 +394,4 @@ class MenubarContentState {
 		onInteractOutside: this.onInteractOutside,
 		onOpenAutoFocus: this.onOpenAutoFocus,
 	};
-}
-
-const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
-const MenubarMenuContext = new Context<MenubarMenuState>("Menubar.Menu");
-
-export function useMenubarRoot(props: MenubarRootStateProps) {
-	return MenubarRootContext.set(new MenubarRootState(props));
-}
-
-export function useMenubarMenu(props: MenubarMenuStateProps) {
-	return MenubarMenuContext.set(new MenubarMenuState(props, MenubarRootContext.get()));
-}
-
-export function useMenubarTrigger(props: MenubarTriggerStateProps) {
-	return new MenubarTriggerState(props, MenubarMenuContext.get());
-}
-
-export function useMenubarContent(props: MenubarContentStateProps) {
-	return new MenubarContentState(props, MenubarMenuContext.get());
 }

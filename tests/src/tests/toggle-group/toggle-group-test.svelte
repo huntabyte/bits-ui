@@ -20,7 +20,7 @@
 		{value}
 	</button>
 	<ToggleGroup.Root data-testid="root" bind:value {...restProps} type="single">
-		{#each items as { value, disabled }}
+		{#each items as { value, disabled } (value)}
 			<ToggleGroup.Item {value} {disabled} data-testid="item-{value}">
 				{value}
 			</ToggleGroup.Item>

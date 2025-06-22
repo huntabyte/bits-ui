@@ -5,7 +5,7 @@
 
 	let {
 		popper,
-		present,
+		open,
 		onEscapeKeydown,
 		escapeKeydownBehavior,
 		preventOverflowTextSelection,
@@ -39,11 +39,12 @@
 		isValidEvent = () => false,
 		customAnchor = null,
 		isStatic = false,
+		ref,
 		...restProps
 	}: PopperLayerImplProps = $props();
 </script>
 
-<PresenceLayer {id} {present} {...restProps}>
+<PresenceLayer {open} {ref}>
 	{#snippet presence()}
 		<PopperLayerInner
 			{popper}
@@ -72,7 +73,7 @@
 			{onPlaced}
 			{customAnchor}
 			{isStatic}
-			enabled={present}
+			enabled={open}
 			{onInteractOutside}
 			{onCloseAutoFocus}
 			{onOpenAutoFocus}
@@ -82,6 +83,7 @@
 			{isValidEvent}
 			{onFocusOutside}
 			forceMount={false}
+			{ref}
 			{...restProps}
 		/>
 	{/snippet}

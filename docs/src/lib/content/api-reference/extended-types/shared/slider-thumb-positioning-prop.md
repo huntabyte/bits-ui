@@ -1,0 +1,3 @@
+```ts
+"exact" | "contain"
+```

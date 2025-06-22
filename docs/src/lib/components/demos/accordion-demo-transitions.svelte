@@ -24,11 +24,11 @@
 </script>
 
 <Accordion.Root class="w-full sm:max-w-[70%]" type="multiple" bind:value>
-	{#each items as item, i}
+	{#each items as item, i (item.title)}
 		<Accordion.Item value={`${i}`} class="border-dark-10 group border-b px-1.5">
 			<Accordion.Header>
 				<Accordion.Trigger
-					class="flex w-full flex-1 items-center justify-between py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
+					class="flex w-full flex-1 items-center justify-between py-5 text-left text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
 				>
 					{item.title}
 					<span

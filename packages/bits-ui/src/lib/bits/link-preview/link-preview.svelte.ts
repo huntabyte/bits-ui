@@ -1,25 +1,51 @@
-import { afterSleep, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import {
+	afterSleep,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+	box,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
-import { getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
+import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
-import type { BitsFocusEvent, BitsPointerEvent, WithRefProps } from "$lib/internal/types.js";
+import type {
+	BitsFocusEvent,
+	BitsPointerEvent,
+	OnChangeFn,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
+import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
-const LINK_PREVIEW_CONTENT_ATTR = "data-link-preview-content";
-const LINK_PREVIEW_TRIGGER_ATTR = "data-link-preview-trigger";
+const linkPreviewAttrs = createBitsAttrs({
+	component: "link-preview",
+	parts: ["content", "trigger"],
+});
 
-type LinkPreviewRootStateProps = WritableBoxedValues<{
-	open: boolean;
-}> &
-	ReadableBoxedValues<{
-		openDelay: number;
-		closeDelay: number;
-	}>;
+const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
 
-class LinkPreviewRootState {
+interface LinkPreviewRootStateOpts
+	extends WritableBoxedValues<{
+			open: boolean;
+		}>,
+		ReadableBoxedValues<{
+			openDelay: number;
+			closeDelay: number;
+			onOpenChangeComplete: OnChangeFn<boolean>;
+		}> {}
+
+export class LinkPreviewRootState {
+	static create(opts: LinkPreviewRootStateOpts) {
+		return LinkPreviewRootContext.set(new LinkPreviewRootState(opts));
+	}
+
+	readonly opts: LinkPreviewRootStateOpts;
+
 	hasSelection = $state(false);
 	isPointerDownOnContent = $state(false);
 	containsSelection = $state(false);
@@ -28,8 +54,19 @@ class LinkPreviewRootState {
 	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
+	domContext: DOMContext = new DOMContext(() => null);
 
-	constructor(readonly opts: LinkPreviewRootStateProps) {
+	constructor(opts: LinkPreviewRootStateOpts) {
+		this.opts = opts;
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
+
 		watch(
 			() => this.opts.open.current,
 			(isOpen) => {
@@ -37,13 +74,15 @@ class LinkPreviewRootState {
 					this.hasSelection = false;
 					return;
 				}
+				if (!this.domContext) return;
 
 				const handlePointerUp = () => {
 					this.containsSelection = false;
 					this.isPointerDownOnContent = false;
 
 					afterSleep(1, () => {
-						const isSelection = document.getSelection()?.toString() !== "";
+						const isSelection =
+							this.domContext.getDocument().getSelection()?.toString() !== "";
 
 						if (isSelection) {
 							this.hasSelection = true;
@@ -53,7 +92,11 @@ class LinkPreviewRootState {
 					});
 				};
 
-				const unsubListener = on(document, "pointerup", handlePointerUp);
+				const unsubListener = on(
+					this.domContext.getDocument(),
+					"pointerup",
+					handlePointerUp
+				);
 
 				if (!this.contentNode) return;
 				const tabCandidates = getTabbableCandidates(this.contentNode);
@@ -73,7 +116,7 @@ class LinkPreviewRootState {
 
 	clearTimeout() {
 		if (this.timeout) {
-			window.clearTimeout(this.timeout);
+			this.domContext.clearTimeout(this.timeout);
 			this.timeout = null;
 		}
 	}
@@ -82,7 +125,7 @@ class LinkPreviewRootState {
 		this.clearTimeout();
 		if (this.opts.open.current) return;
 		this.isOpening = true;
-		this.timeout = window.setTimeout(() => {
+		this.timeout = this.domContext.setTimeout(() => {
 			if (this.isOpening) {
 				this.opts.open.current = true;
 				this.isOpening = false;
@@ -101,31 +144,33 @@ class LinkPreviewRootState {
 		this.clearTimeout();
 
 		if (!this.isPointerDownOnContent && !this.hasSelection) {
-			this.timeout = window.setTimeout(() => {
+			this.timeout = this.domContext.setTimeout(() => {
 				this.opts.open.current = false;
 			}, this.opts.closeDelay.current);
 		}
 	}
 }
 
-type LinkPreviewTriggerStateProps = WithRefProps;
+interface LinkPreviewTriggerStateOpts extends WithRefOpts {}
 
-class LinkPreviewTriggerState {
-	constructor(
-		readonly opts: LinkPreviewTriggerStateProps,
-		readonly root: LinkPreviewRootState
-	) {
+export class LinkPreviewTriggerState {
+	static create(opts: LinkPreviewTriggerStateOpts) {
+		return new LinkPreviewTriggerState(opts, LinkPreviewRootContext.get());
+	}
+
+	readonly opts: LinkPreviewTriggerStateOpts;
+	readonly root: LinkPreviewRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: LinkPreviewTriggerStateOpts, root: LinkPreviewRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.triggerNode = v));
+		this.root.domContext = new DOMContext(opts.ref);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
 		this.onblur = this.onblur.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.triggerNode = node;
-			},
-		});
 	}
 
 	onpointerenter(e: BitsPointerEvent) {
@@ -149,7 +194,7 @@ class LinkPreviewTriggerState {
 		this.root.handleClose();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -158,39 +203,42 @@ class LinkPreviewTriggerState {
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"aria-controls": this.root.contentNode?.id,
 				role: "button",
-				[LINK_PREVIEW_TRIGGER_ATTR]: "",
+				[linkPreviewAttrs.trigger]: "",
 				onpointerenter: this.onpointerenter,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
 				onpointerleave: this.onpointerleave,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type LinkPreviewContentStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		onInteractOutside: (e: PointerEvent) => void;
-		onEscapeKeydown: (e: KeyboardEvent) => void;
-	}>;
+interface LinkPreviewContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			onInteractOutside: (e: PointerEvent) => void;
+			onEscapeKeydown: (e: KeyboardEvent) => void;
+		}> {}
 
-class LinkPreviewContentState {
-	constructor(
-		readonly opts: LinkPreviewContentStateProps,
-		readonly root: LinkPreviewRootState
-	) {
+export class LinkPreviewContentState {
+	static create(opts: LinkPreviewContentStateOpts) {
+		return new LinkPreviewContentState(opts, LinkPreviewRootContext.get());
+	}
+
+	readonly opts: LinkPreviewContentStateOpts;
+	readonly root: LinkPreviewRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: LinkPreviewContentStateOpts, root: LinkPreviewRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
+		this.root.domContext = new DOMContext(opts.ref);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
 
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.contentNode = node;
-			},
-			deps: () => this.root.opts.open.current,
-		});
-
-		useGraceArea({
+		new GraceArea({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.opts.ref.current,
 			enabled: () => this.root.opts.open.current,
@@ -244,39 +292,26 @@ class LinkPreviewContentState {
 		e.preventDefault();
 	};
 
-	snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
+	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				tabindex: -1,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				[LINK_PREVIEW_CONTENT_ATTR]: "",
+				[linkPreviewAttrs.content]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,
 				onfocusout: this.onfocusout,
+				...this.attachment,
 			}) as const
 	);
 
-	popperProps = {
+	readonly popperProps = {
 		onInteractOutside: this.onInteractOutside,
 		onEscapeKeydown: this.onEscapeKeydown,
 		onOpenAutoFocus: this.onOpenAutoFocus,
 		onCloseAutoFocus: this.onCloseAutoFocus,
 	};
-}
-
-const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
-
-export function useLinkPreviewRoot(props: LinkPreviewRootStateProps) {
-	return LinkPreviewRootContext.set(new LinkPreviewRootState(props));
-}
-
-export function useLinkPreviewTrigger(props: LinkPreviewTriggerStateProps) {
-	return new LinkPreviewTriggerState(props, LinkPreviewRootContext.get());
-}
-
-export function useLinkPreviewContent(props: LinkPreviewContentStateProps) {
-	return new LinkPreviewContentState(props, LinkPreviewRootContext.get());
 }

@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useDateFieldInput } from "../date-field.svelte.js";
+	import { DateFieldInputState } from "../date-field.svelte.js";
 	import type { DateFieldInputProps } from "../types.js";
 	import DateFieldHiddenInput from "./date-field-hidden-input.svelte";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		name = "",
 		children,
@@ -14,7 +16,7 @@
 		...restProps
 	}: DateFieldInputProps = $props();
 
-	const inputState = useDateFieldInput({
+	const inputState = DateFieldInputState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

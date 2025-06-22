@@ -5,7 +5,7 @@
 	import PageHeaderHeading from "./page-header/page-header-heading.svelte";
 	import PageHeader from "./page-header/page-header.svelte";
 	import CopySimple from "phosphor-svelte/lib/CopySimple";
-	import ArrowSquareOut from "phosphor-svelte/lib/ArrowSquareOut";
+	import ArrowUpRight from "phosphor-svelte/lib/ArrowUpRight";
 	import { CopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
 	import { page } from "$app/state";
 	import Check from "phosphor-svelte/lib/Check";
@@ -64,7 +64,7 @@
 						{#snippet child({ props })}
 							<a {...props} target="_blank" href="{page.url.pathname}/llms.txt">
 								llms.txt
-								<ArrowSquareOut class="mb-0.5 size-3.5" />
+								<ArrowUpRight class="mb-0.5 size-3.5" />
 							</a>
 						{/snippet}
 					</Tooltip.Trigger>

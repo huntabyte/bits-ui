@@ -6,7 +6,7 @@
 		type,
 		children,
 		disabled = false,
-		ref = $bindable(),
+		ref = $bindable(null),
 		...restProps
 	}: ButtonRootProps = $props();
 </script>

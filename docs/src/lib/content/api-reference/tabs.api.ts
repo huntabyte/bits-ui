@@ -6,139 +6,139 @@ import type {
 } from "bits-ui";
 import { OnStringValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import { TabsRootActivationModeProp, TabsTriggerStateProp } from "./extended-types/tabs/index.js";
+import { withChildProps } from "$lib/content/api-reference/shared.js";
 import {
-	createApiSchema,
-	createBooleanProp,
-	createDataAttrSchema,
-	createEnumProp,
-	createFunctionProp,
-	createStringProp,
-	withChildProps,
-} from "$lib/content/api-reference/helpers.js";
-import * as C from "$lib/content/constants.js";
+	defineBooleanProp,
+	defineComponentApiSchema,
+	defineEnumDataAttr,
+	defineEnumProp,
+	defineFunctionProp,
+	defineSimpleDataAttr,
+	defineStringProp,
+} from "../utils.js";
 
-const root = createApiSchema<TabsRootPropsWithoutHTML>({
+const root = defineComponentApiSchema<TabsRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root tabs component which contains the other tab components.",
 	props: {
-		value: createStringProp({
+		value: defineStringProp({
 			description: "The active tab value.",
 			bindable: true,
 		}),
-		onValueChange: createFunctionProp({
+		onValueChange: defineFunctionProp({
 			definition: OnStringValueChangeProp,
 			description: "A callback function called when the active tab value changes.",
 			stringDefinition: "(value: string) => void",
 		}),
-		activationMode: createEnumProp({
+		activationMode: defineEnumProp({
 			options: ["automatic", "manual"],
 			description:
 				"How the activation of tabs should be handled. If set to `'automatic'`, the tab will be activated when the trigger is focused. If set to `'manual'`, the tab will be activated when the trigger is pressed.",
-			default: "'automatic'",
+			default: "automatic",
 			definition: TabsRootActivationModeProp,
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the tabs are disabled.",
 		}),
-		loop: createBooleanProp({
-			default: C.TRUE,
+		loop: defineBooleanProp({
+			default: true,
 			description: "Whether or not the tabs should loop when navigating with the keyboard.",
 		}),
-		orientation: createEnumProp({
-			options: [C.HORIZONTAL, C.VERTICAL],
-			default: C.HORIZONTAL,
+		orientation: defineEnumProp({
+			options: ["horizontal", "vertical"],
+			default: "horizontal",
 			description: "The orientation of the tabs.",
 			definition: OrientationProp,
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "orientation",
-			definition: OrientationProp,
 			description: "The orientation of the tabs.",
-			isEnum: true,
+			options: ["horizontal", "vertical"],
+			value: OrientationProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "tabs-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-const list = createApiSchema<TabsListPropsWithoutHTML>({
+const list = defineComponentApiSchema<TabsListPropsWithoutHTML>({
 	title: "List",
 	description: "The component containing the tab triggers.",
 	props: withChildProps({ elType: "HTMLDivElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "orientation",
-			definition: OrientationProp,
 			description: "The orientation of the tabs.",
-			isEnum: true,
+			options: ["horizontal", "vertical"],
+			value: OrientationProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "tabs-list",
 			description: "Present on the list element.",
 		}),
 	],
 });
 
-const trigger = createApiSchema<TabsTriggerPropsWithoutHTML>({
+const trigger = defineComponentApiSchema<TabsTriggerPropsWithoutHTML>({
 	title: "Trigger",
 	description: "The trigger for a tab.",
 	props: {
-		value: createStringProp({
+		value: defineStringProp({
 			required: true,
 			description: "The value of the tab this trigger represents.",
 		}),
-		disabled: createBooleanProp({
-			default: C.FALSE,
+		disabled: defineBooleanProp({
+			default: false,
 			description: "Whether or not the tab is disabled.",
 		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "state",
 			description: "The state of the tab trigger.",
-			definition: TabsTriggerStateProp,
-			isEnum: true,
+			options: ["active", "inactive"],
+			value: TabsTriggerStateProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "value",
 			description: "The value of the tab this trigger represents.",
 		}),
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "orientation",
-			definition: OrientationProp,
 			description: "The orientation of the tabs.",
-			isEnum: true,
+			options: ["horizontal", "vertical"],
+			value: OrientationProp,
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the tab trigger is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "tabs-trigger",
 			description: "Present on the trigger elements.",
 		}),
 	],
 });
 
-const content = createApiSchema<TabsContentPropsWithoutHTML>({
+const content = defineComponentApiSchema<TabsContentPropsWithoutHTML>({
 	title: "Content",
 	description: "The panel containing the contents of a tab.",
 	props: {
-		value: createStringProp({
+		value: defineStringProp({
 			required: true,
 			description: "The value of the tab this content represents.",
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "tabs-content",
 			description: "Present on the content elements.",
 		}),

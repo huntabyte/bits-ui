@@ -1,4 +1,5 @@
 import type { Snippet } from "svelte";
+import type { Box } from "svelte-toolbelt";
 
 export type EscapeBehaviorType =
 	| "close"
@@ -33,4 +34,5 @@ export type EscapeLayerImplProps = {
 	 */
 	enabled: boolean;
 	children?: Snippet;
+	ref: Box<HTMLElement | null>;
 } & EscapeLayerProps;

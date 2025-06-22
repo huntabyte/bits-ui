@@ -39,6 +39,11 @@ export type MenubarMenuPropsWithoutHTML = WithChildren<{
 	 * within the menubar.
 	 */
 	value?: string;
+
+	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChange?: OnChangeFn<boolean>;
 }>;
 
 export type MenubarMenuProps = MenubarMenuPropsWithoutHTML;
@@ -83,6 +88,8 @@ export type {
 	MenuSubPropsWithoutHTML as MenubarSubPropsWithoutHTML,
 	MenuPortalPropsWithoutHTML as MenubarPortalPropsWithoutHTML,
 	MenuPortalProps as MenubarPortalProps,
+	MenuCheckboxGroupPropsWithoutHTML as MenubarCheckboxGroupPropsWithoutHTML,
+	MenuCheckboxGroupProps as MenubarCheckboxGroupProps,
 } from "../menu/types.js";
 
 export type MenubarArrowPropsWithoutHTML = ArrowPropsWithoutHTML;

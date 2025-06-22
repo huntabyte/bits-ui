@@ -1,4 +1,14 @@
-import { afterTick, box, mergeProps, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import {
+	afterTick,
+	box,
+	mergeProps,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+	getWindow,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,
@@ -9,7 +19,6 @@ import {
 	isMouseEvent,
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import { CustomEventDispatcher } from "$lib/internal/events.js";
 import type {
 	AnyFn,
@@ -17,13 +26,14 @@ import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
-	WithRefProps,
+	OnChangeFn,
+	RefAttachment,
+	WithRefOpts,
 } from "$lib/internal/types.js";
-import { useDOMTypeahead } from "$lib/internal/use-dom-typeahead.svelte.js";
 import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
-import { useRovingFocus } from "$lib/internal/use-roving-focus.svelte.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
+	createBitsAttrs,
 	getAriaChecked,
 	getAriaDisabled,
 	getAriaExpanded,
@@ -33,10 +43,13 @@ import {
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
-import { useGraceArea } from "$lib/internal/use-grace-area.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
-import { FocusScopeContext } from "../utilities/focus-scope/use-focus-scope.svelte.js";
 import { isTabbable } from "tabbable";
+import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
+import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
+import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -47,47 +60,95 @@ const MenuGroupContext = new Context<MenuGroupState | MenuRadioGroupState>(
 	"Menu.Group | Menu.RadioGroup"
 );
 const MenuRadioGroupContext = new Context<MenuRadioGroupState>("Menu.RadioGroup");
+export const MenuCheckboxGroupContext = new Context<MenuCheckboxGroupState>("Menu.CheckboxGroup");
 
 type MenuVariant = "context-menu" | "dropdown-menu" | "menubar";
 
-export type MenuRootStateProps = ReadableBoxedValues<{
-	dir: Direction;
-	variant: MenuVariant;
-}> & {
+export interface MenuRootStateOpts
+	extends ReadableBoxedValues<{
+		dir: Direction;
+		variant: MenuVariant;
+	}> {
 	onClose: AnyFn;
-};
+}
 
 export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
 	bubbles: false,
 	cancelable: true,
 });
 
-class MenuRootState {
-	isUsingKeyboard = new IsUsingKeyboard();
+export const menuAttrs = createBitsAttrs({
+	component: "menu",
+	parts: [
+		"trigger",
+		"content",
+		"sub-trigger",
+		"item",
+		"group",
+		"group-heading",
+		"checkbox-group",
+		"checkbox-item",
+		"radio-group",
+		"radio-item",
+		"separator",
+		"sub-content",
+		"arrow",
+	],
+});
+
+export class MenuRootState {
+	static create(opts: MenuRootStateOpts) {
+		const root = new MenuRootState(opts);
+		return MenuRootContext.set(root);
+	}
+
+	readonly opts: MenuRootStateOpts;
+	readonly isUsingKeyboard = new IsUsingKeyboard();
 	ignoreCloseAutoFocus = $state(false);
 	isPointerInTransit = $state(false);
 
-	constructor(readonly opts: MenuRootStateProps) {}
-
-	getAttr(name: string) {
-		return `data-${this.opts.variant.current}-${name}`;
+	constructor(opts: MenuRootStateOpts) {
+		this.opts = opts;
 	}
+
+	getBitsAttr: typeof menuAttrs.getAttr = (part) => {
+		return menuAttrs.getAttr(part, this.opts.variant.current);
+	};
 }
 
-type MenuMenuStateProps = WritableBoxedValues<{
-	open: boolean;
-}>;
+interface MenuMenuStateOpts
+	extends WritableBoxedValues<{
+			open: boolean;
+		}>,
+		ReadableBoxedValues<{
+			onOpenChangeComplete: OnChangeFn<boolean>;
+		}> {}
 
-class MenuMenuState {
+export class MenuMenuState {
+	static create(opts: MenuMenuStateOpts, root: MenuRootState) {
+		return MenuMenuContext.set(new MenuMenuState(opts, root, null));
+	}
+
+	readonly opts: MenuMenuStateOpts;
+	readonly root: MenuRootState;
+	readonly parentMenu: MenuMenuState | null;
 	contentId = box.with<string>(() => "");
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 
-	constructor(
-		readonly opts: MenuMenuStateProps,
-		readonly root: MenuRootState,
-		readonly parentMenu: MenuMenuState | null
-	) {
+	constructor(opts: MenuMenuStateOpts, root: MenuRootState, parentMenu: MenuMenuState | null) {
+		this.opts = opts;
+		this.root = root;
+		this.parentMenu = parentMenu;
+
+		new OpenChangeComplete({
+			ref: box.with(() => this.contentNode),
+			open: this.opts.open,
+			onComplete: () => {
+				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
+
 		if (parentMenu) {
 			watch(
 				() => parentMenu.opts.open.current,
@@ -112,26 +173,41 @@ class MenuMenuState {
 	}
 }
 
-type MenuContentStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		loop: boolean;
-		onCloseAutoFocus: (event: Event) => void;
-	}> & {
-		isSub?: boolean;
-	};
+interface MenuContentStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			loop: boolean;
+			onCloseAutoFocus: (event: Event) => void;
+		}> {
+	isSub?: boolean;
+}
 
-class MenuContentState {
+export class MenuContentState {
+	static create(opts: MenuContentStateOpts) {
+		return MenuContentContext.set(new MenuContentState(opts, MenuMenuContext.get()));
+	}
+
+	readonly opts: MenuContentStateOpts;
+	readonly parentMenu: MenuMenuState;
+	readonly rovingFocusGroup: RovingFocusGroup;
+	readonly domContext: DOMContext;
+	readonly attachment: RefAttachment;
 	search = $state("");
 	#timer = 0;
-	#handleTypeaheadSearch: ReturnType<typeof useDOMTypeahead>["handleTypeaheadSearch"];
-	rovingFocusGroup: ReturnType<typeof useRovingFocus>;
+	#handleTypeaheadSearch: DOMTypeahead["handleTypeaheadSearch"];
 	mounted = $state(false);
 	#isSub: boolean;
 
-	constructor(
-		readonly opts: MenuContentStateProps,
-		readonly parentMenu: MenuMenuState
-	) {
+	constructor(opts: MenuContentStateOpts, parentMenu: MenuMenuState) {
+		this.opts = opts;
+		this.parentMenu = parentMenu;
+		this.domContext = new DOMContext(opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => {
+			if (this.parentMenu.contentNode !== v) {
+				this.parentMenu.contentNode = v;
+			}
+		});
+
 		parentMenu.contentId = opts.id;
 
 		this.#isSub = opts.isSub ?? false;
@@ -140,24 +216,14 @@ class MenuContentState {
 		this.onfocus = this.onfocus.bind(this);
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 
-		useRefById({
-			...opts,
-			deps: () => this.parentMenu.opts.open.current,
-			onRefChange: (node) => {
-				if (this.parentMenu.contentNode !== node) {
-					this.parentMenu.contentNode = node;
-				}
-			},
-		});
-
-		useGraceArea({
+		new GraceArea({
 			contentNode: () => this.parentMenu.contentNode,
 			triggerNode: () => this.parentMenu.triggerNode,
 			enabled: () =>
 				this.parentMenu.opts.open.current &&
 				Boolean(
 					this.parentMenu.triggerNode?.hasAttribute(
-						this.parentMenu.root.getAttr("sub-trigger")
+						this.parentMenu.root.getBitsAttr("sub-trigger")
 					)
 				),
 			onPointerExit: () => {
@@ -168,10 +234,13 @@ class MenuContentState {
 			},
 		});
 
-		this.#handleTypeaheadSearch = useDOMTypeahead().handleTypeaheadSearch;
-		this.rovingFocusGroup = useRovingFocus({
-			rootNodeId: this.parentMenu.contentId,
-			candidateAttr: this.parentMenu.root.getAttr("item"),
+		this.#handleTypeaheadSearch = new DOMTypeahead({
+			getActiveElement: () => this.domContext.getActiveElement(),
+			getWindow: () => this.domContext.getWindow(),
+		}).handleTypeaheadSearch;
+		this.rovingFocusGroup = new RovingFocusGroup({
+			rootNode: box.with(() => this.parentMenu.contentNode),
+			candidateAttr: this.parentMenu.root.getBitsAttr("item"),
 			loop: this.opts.loop,
 			orientation: box.with(() => "vertical"),
 		});
@@ -192,7 +261,7 @@ class MenuContentState {
 
 		$effect(() => {
 			if (!this.parentMenu.opts.open.current) {
-				window.clearTimeout(this.#timer);
+				this.domContext.getWindow().clearTimeout(this.#timer);
 			}
 		});
 	}
@@ -202,7 +271,7 @@ class MenuContentState {
 		if (!node) return [];
 		const candidates = Array.from(
 			node.querySelectorAll<HTMLElement>(
-				`[${this.parentMenu.root.getAttr("item")}]:not([data-disabled])`
+				`[${this.parentMenu.root.getBitsAttr("item")}]:not([data-disabled])`
 			)
 		);
 		return candidates;
@@ -215,6 +284,7 @@ class MenuContentState {
 	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current(e);
 		if (e.defaultPrevented || this.#isSub) return;
+
 		if (this.parentMenu.triggerNode && isTabbable(this.parentMenu.triggerNode)) {
 			this.parentMenu.triggerNode.focus();
 		}
@@ -231,9 +301,7 @@ class MenuContentState {
 			rootMenu = rootMenu.parentMenu;
 		}
 		// if for some unforeseen reason the root menu has no trigger, we bail
-		if (!rootMenu.triggerNode) {
-			return;
-		}
+		if (!rootMenu.triggerNode) return;
 
 		// cancel default tab behavior
 		e.preventDefault();
@@ -256,7 +324,7 @@ class MenuContentState {
 				});
 			});
 		} else {
-			document.body.focus();
+			this.domContext.getDocument().body.focus();
 		}
 	}
 
@@ -272,7 +340,7 @@ class MenuContentState {
 		if (!isHTMLElement(target) || !isHTMLElement(currentTarget)) return;
 
 		const isKeydownInside =
-			target.closest(`[${this.parentMenu.root.getAttr("content")}]`)?.id ===
+			target.closest(`[${this.parentMenu.root.getBitsAttr("content")}]`)?.id ===
 			this.parentMenu.contentId.current;
 
 		const isModifierKey = e.ctrlKey || e.altKey || e.metaKey;
@@ -301,7 +369,7 @@ class MenuContentState {
 		if (LAST_KEYS.includes(e.key)) {
 			candidateNodes.reverse();
 		}
-		focusFirst(candidateNodes);
+		focusFirst(candidateNodes, { select: false }, () => this.domContext.getActiveElement());
 	}
 
 	onblur(e: BitsFocusEvent) {
@@ -309,7 +377,7 @@ class MenuContentState {
 		if (!isElement(e.target)) return;
 		// clear search buffer when leaving the menu
 		if (!e.currentTarget.contains?.(e.target)) {
-			window.clearTimeout(this.#timer);
+			this.domContext.getWindow().clearTimeout(this.#timer);
 			this.search = "";
 		}
 	}
@@ -324,7 +392,7 @@ class MenuContentState {
 	}
 
 	onItemLeave(e: BitsPointerEvent) {
-		if (e.currentTarget.hasAttribute(this.parentMenu.root.getAttr("sub-trigger"))) return;
+		if (e.currentTarget.hasAttribute(this.parentMenu.root.getBitsAttr("sub-trigger"))) return;
 		if (this.#isPointerMovingToSubmenu() || this.parentMenu.root.isUsingKeyboard.current)
 			return;
 		const contentNode = this.parentMenu.contentNode;
@@ -356,15 +424,15 @@ class MenuContentState {
 		}
 	}
 
-	snippetProps = $derived.by(() => ({ open: this.parentMenu.opts.open.current }));
+	readonly snippetProps = $derived.by(() => ({ open: this.parentMenu.opts.open.current }));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "menu",
 				"aria-orientation": getAriaOrientation("vertical"),
-				[this.parentMenu.root.getAttr("content")]: "",
+				[this.parentMenu.root.getBitsAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
@@ -373,35 +441,35 @@ class MenuContentState {
 				style: {
 					pointerEvents: "auto",
 				},
+				...this.attachment,
 			}) as const
 	);
 
-	popperProps = {
+	readonly popperProps = {
 		onCloseAutoFocus: (e: Event) => this.onCloseAutoFocus(e),
 	};
 }
 
-type MenuItemSharedStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>;
+interface MenuItemSharedStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {}
 
 class MenuItemSharedState {
+	readonly opts: MenuItemSharedStateOpts;
+	readonly content: MenuContentState;
+	readonly attachment: RefAttachment;
 	#isFocused = $state(false);
 
-	constructor(
-		readonly opts: MenuItemSharedStateProps,
-		readonly content: MenuContentState
-	) {
+	constructor(opts: MenuItemSharedStateOpts, content: MenuContentState) {
+		this.opts = opts;
+		this.content = content;
+		this.attachment = attachRef(this.opts.ref);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onfocus = this.onfocus.bind(this);
 		this.onblur = this.onblur.bind(this);
-
-		useRefById({
-			...opts,
-			deps: () => this.content.mounted,
-		});
 	}
 
 	onpointermove(e: BitsPointerEvent) {
@@ -439,7 +507,7 @@ class MenuItemSharedState {
 		});
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -448,29 +516,39 @@ class MenuItemSharedState {
 				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-highlighted": this.#isFocused ? "" : undefined,
-				[this.content.parentMenu.root.getAttr("item")]: "",
+				[this.content.parentMenu.root.getBitsAttr("item")]: "",
 				//
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type MenuItemStateProps = ReadableBoxedValues<{
-	onSelect: AnyFn;
-	closeOnSelect: boolean;
-}>;
+type MenuItemCombinedProps = MenuItemSharedStateOpts & MenuItemStateOpts;
 
-class MenuItemState {
+interface MenuItemStateOpts
+	extends ReadableBoxedValues<{
+		onSelect: AnyFn;
+		closeOnSelect: boolean;
+	}> {}
+
+export class MenuItemState {
+	static create(opts: MenuItemCombinedProps) {
+		const item = new MenuItemSharedState(opts, MenuContentContext.get());
+		return new MenuItemState(opts, item);
+	}
+
+	readonly opts: MenuItemStateOpts;
+	readonly item: MenuItemSharedState;
+	readonly root: MenuRootState;
 	#isPointerDown = false;
-	root: MenuRootState;
 
-	constructor(
-		readonly opts: MenuItemStateProps,
-		readonly item: MenuItemSharedState
-	) {
+	constructor(opts: MenuItemStateOpts, item: MenuItemSharedState) {
+		this.opts = opts;
+		this.item = item;
 		this.root = item.content.parentMenu.root;
 
 		this.onkeydown = this.onkeydown.bind(this);
@@ -527,7 +605,7 @@ class MenuItemState {
 		this.#isPointerDown = true;
 	}
 
-	props = $derived.by(() =>
+	readonly props = $derived.by(() =>
 		mergeProps(this.item.props, {
 			onclick: this.onclick,
 			onpointerdown: this.onpointerdown,
@@ -537,14 +615,35 @@ class MenuItemState {
 	);
 }
 
-class MenuSubTriggerState {
+interface MenuSubTriggerStateOpts
+	extends MenuItemSharedStateOpts,
+		Pick<MenuItemStateOpts, "onSelect"> {}
+
+export class MenuSubTriggerState {
+	static create(opts: MenuSubTriggerStateOpts) {
+		const content = MenuContentContext.get();
+		const item = new MenuItemSharedState(opts, content);
+		const submenu = MenuMenuContext.get();
+		return new MenuSubTriggerState(opts, item, content, submenu);
+	}
+	readonly opts: MenuSubTriggerStateOpts;
+	readonly item: MenuItemSharedState;
+	readonly content: MenuContentState;
+	readonly submenu: MenuMenuState;
+	readonly attachment: RefAttachment;
 	#openTimer: number | null = null;
 
 	constructor(
-		readonly item: MenuItemSharedState,
-		readonly content: MenuContentState,
-		readonly submenu: MenuMenuState
+		opts: MenuSubTriggerStateOpts,
+		item: MenuItemSharedState,
+		content: MenuContentState,
+		submenu: MenuMenuState
 	) {
+		this.opts = opts;
+		this.item = item;
+		this.content = content;
+		this.submenu = submenu;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.submenu.triggerNode = v));
 		this.onpointerleave = this.onpointerleave.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -553,18 +652,11 @@ class MenuSubTriggerState {
 		onDestroyEffect(() => {
 			this.#clearOpenTimer();
 		});
-
-		useRefById({
-			...item.opts,
-			onRefChange: (node) => {
-				this.submenu.triggerNode = node;
-			},
-		});
 	}
 
 	#clearOpenTimer() {
 		if (this.#openTimer === null) return;
-		window.clearTimeout(this.#openTimer);
+		this.content.domContext.getWindow().clearTimeout(this.#openTimer);
 		this.#openTimer = null;
 	}
 
@@ -577,7 +669,7 @@ class MenuSubTriggerState {
 			!this.#openTimer &&
 			!this.content.parentMenu.root.isPointerInTransit
 		) {
-			this.#openTimer = window.setTimeout(() => {
+			this.#openTimer = this.content.domContext.setTimeout(() => {
 				this.submenu.onOpen();
 				this.#clearOpenTimer();
 			}, 100);
@@ -594,12 +686,7 @@ class MenuSubTriggerState {
 		if (this.item.opts.disabled.current || (isTypingAhead && e.key === kbd.SPACE)) return;
 
 		if (SUB_OPEN_KEYS[this.submenu.root.opts.dir.current].includes(e.key)) {
-			this.submenu.onOpen();
-			afterTick(() => {
-				const contentNode = this.submenu.contentNode;
-				if (!contentNode) return;
-				MenuOpenEvent.dispatch(contentNode);
-			});
+			e.currentTarget.click();
 			e.preventDefault();
 		}
 	}
@@ -613,12 +700,22 @@ class MenuSubTriggerState {
 		 */
 		if (!isHTMLElement(e.currentTarget)) return;
 		e.currentTarget.focus();
+		const selectEvent = new CustomEvent("menusubtriggerselect", {
+			bubbles: true,
+			cancelable: true,
+		});
+		this.opts.onSelect.current(selectEvent);
 		if (!this.submenu.opts.open.current) {
 			this.submenu.onOpen();
+			afterTick(() => {
+				const contentNode = this.submenu.contentNode;
+				if (!contentNode) return;
+				MenuOpenEvent.dispatch(contentNode);
+			});
 		}
 	}
 
-	props = $derived.by(() =>
+	readonly props = $derived.by(() =>
 		mergeProps(
 			{
 				"aria-haspopup": "menu",
@@ -627,27 +724,74 @@ class MenuSubTriggerState {
 				"aria-controls": this.submenu.opts.open.current
 					? this.submenu.contentId.current
 					: undefined,
-				[this.submenu.root.getAttr("sub-trigger")]: "",
+				[this.submenu.root.getBitsAttr("sub-trigger")]: "",
 				onclick: this.onclick,
 				onpointermove: this.onpointermove,
 				onpointerleave: this.onpointerleave,
 				onkeydown: this.onkeydown,
+				...this.attachment,
 			},
 			this.item.props
 		)
 	);
 }
 
-type MenuCheckboxItemStateProps = WritableBoxedValues<{
-	checked: boolean;
-	indeterminate: boolean;
-}>;
+interface MenuCheckboxItemStateOpts
+	extends WritableBoxedValues<{
+			checked: boolean;
+			indeterminate: boolean;
+		}>,
+		ReadableBoxedValues<{
+			value: string;
+		}> {}
 
-class MenuCheckboxItemState {
+export class MenuCheckboxItemState {
+	static create(
+		opts: MenuItemCombinedProps & MenuCheckboxItemStateOpts,
+		checkboxGroup: MenuCheckboxGroupState | null
+	) {
+		const item = new MenuItemState(
+			opts,
+			new MenuItemSharedState(opts, MenuContentContext.get())
+		);
+		return new MenuCheckboxItemState(opts, item, checkboxGroup);
+	}
+
+	readonly opts: MenuCheckboxItemStateOpts;
+	readonly item: MenuItemState;
+	readonly group: MenuCheckboxGroupState | null;
+
 	constructor(
-		readonly opts: MenuCheckboxItemStateProps,
-		readonly item: MenuItemState
-	) {}
+		opts: MenuCheckboxItemStateOpts,
+		item: MenuItemState,
+		group: MenuCheckboxGroupState | null = null
+	) {
+		this.opts = opts;
+		this.item = item;
+		this.group = group;
+
+		// Watch for value changes in the group if we're part of one
+		if (this.group) {
+			watch(
+				() => this.group!.opts.value.current,
+				(groupValues) => {
+					this.opts.checked.current = groupValues.includes(this.opts.value.current);
+				}
+			);
+
+			// Watch for checked state changes and sync with group
+			watch(
+				() => this.opts.checked.current,
+				(checked) => {
+					if (checked) {
+						this.group!.addValue(this.opts.value.current);
+					} else {
+						this.group!.removeValue(this.opts.value.current);
+					}
+				}
+			);
+		}
+	}
 
 	toggleChecked() {
 		if (this.opts.indeterminate.current) {
@@ -658,12 +802,12 @@ class MenuCheckboxItemState {
 		}
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		checked: this.opts.checked.current,
 		indeterminate: this.opts.indeterminate.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				...this.item.props,
@@ -673,152 +817,208 @@ class MenuCheckboxItemState {
 					this.opts.indeterminate.current
 				),
 				"data-state": getCheckedState(this.opts.checked.current),
-				[this.item.root.getAttr("checkbox-item")]: "",
+				[this.item.root.getBitsAttr("checkbox-item")]: "",
 			}) as const
 	);
 }
 
-type MenuGroupStateProps = WithRefProps;
+interface MenuGroupStateOpts extends WithRefOpts {}
 
-class MenuGroupState {
-	groupHeadingId = $state<string | undefined>(undefined);
-
-	constructor(
-		readonly opts: MenuGroupStateProps,
-		readonly root: MenuRootState
-	) {
-		useRefById(this.opts);
+export class MenuGroupState {
+	static create(opts: MenuGroupStateOpts) {
+		return MenuGroupContext.set(new MenuGroupState(opts, MenuRootContext.get()));
 	}
 
-	props = $derived.by(
+	readonly opts: MenuGroupStateOpts;
+	readonly root: MenuRootState;
+	readonly attachment: RefAttachment;
+	groupHeadingId = $state<string | undefined>(undefined);
+
+	constructor(opts: MenuGroupStateOpts, root: MenuRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
-				[this.root.getAttr("group")]: "",
+				[this.root.getBitsAttr("group")]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type MenuGroupHeadingStateProps = WithRefProps;
-class MenuGroupHeadingState {
+interface MenuGroupHeadingStateOpts extends WithRefOpts {}
+
+export class MenuGroupHeadingState {
+	static create(opts: MenuGroupHeadingStateOpts) {
+		// Try to get checkbox group first, then radio group, then regular group
+		const checkboxGroup = MenuCheckboxGroupContext.getOr(null);
+		if (checkboxGroup) return new MenuGroupHeadingState(opts, checkboxGroup);
+
+		const radioGroup = MenuRadioGroupContext.getOr(null);
+		if (radioGroup) return new MenuGroupHeadingState(opts, radioGroup);
+
+		return new MenuGroupHeadingState(opts, MenuGroupContext.get());
+	}
+	readonly opts: MenuGroupHeadingStateOpts;
+	readonly group: MenuGroupState | MenuRadioGroupState | MenuCheckboxGroupState;
+	readonly attachment: RefAttachment;
+
 	constructor(
-		readonly opts: MenuGroupHeadingStateProps,
-		readonly group: MenuGroupState | MenuRadioGroupState
+		opts: MenuGroupHeadingStateOpts,
+		group: MenuGroupState | MenuRadioGroupState | MenuCheckboxGroupState
 	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.group.groupHeadingId = node?.id;
-			},
-		});
+		this.opts = opts;
+		this.group = group;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.group.groupHeadingId = v?.id));
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[this.group.root.getAttr("group-heading")]: "",
+				[this.group.root.getBitsAttr("group-heading")]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-type MenuSeparatorStateProps = WithRefProps;
+interface MenuSeparatorStateOpts extends WithRefOpts {}
 
-class MenuSeparatorState {
-	constructor(
-		readonly opts: MenuSeparatorStateProps,
-		readonly root: MenuRootState
-	) {
-		useRefById(opts);
+export class MenuSeparatorState {
+	static create(opts: MenuSeparatorStateOpts) {
+		return new MenuSeparatorState(opts, MenuRootContext.get());
 	}
 
-	props = $derived.by(
+	readonly opts: MenuSeparatorStateOpts;
+	readonly root: MenuRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: MenuSeparatorStateOpts, root: MenuRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				role: "group",
-				[this.root.getAttr("separator")]: "",
+				[this.root.getBitsAttr("separator")]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-class MenuArrowState {
-	constructor(readonly root: MenuRootState) {}
+export class MenuArrowState {
+	static create() {
+		return new MenuArrowState(MenuRootContext.get());
+	}
 
-	props = $derived.by(
+	readonly root: MenuRootState;
+
+	constructor(root: MenuRootState) {
+		this.root = root;
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
-				[this.root.getAttr("arrow")]: "",
+				[this.root.getBitsAttr("arrow")]: "",
 			}) as const
 	);
 }
 
-type MenuRadioGroupStateProps = WithRefProps &
-	WritableBoxedValues<{
-		value: string;
-	}>;
+interface MenuRadioGroupStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: string;
+		}> {}
 
-class MenuRadioGroupState {
+export class MenuRadioGroupState {
+	static create(opts: MenuRadioGroupStateOpts) {
+		return MenuGroupContext.set(
+			MenuRadioGroupContext.set(new MenuRadioGroupState(opts, MenuContentContext.get()))
+		);
+	}
+	readonly opts: MenuRadioGroupStateOpts;
+	readonly content: MenuContentState;
+	readonly attachment: RefAttachment;
 	groupHeadingId = $state<string | null>(null);
 	root: MenuRootState;
 
-	constructor(
-		readonly opts: MenuRadioGroupStateProps,
-		readonly content: MenuContentState
-	) {
+	constructor(opts: MenuRadioGroupStateOpts, content: MenuContentState) {
+		this.opts = opts;
 		this.content = content;
 		this.root = content.parentMenu.root;
-
-		useRefById(opts);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	setValue(v: string) {
 		this.opts.value.current = v;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.root.getAttr("radio-group")]: "",
+				[this.root.getBitsAttr("radio-group")]: "",
 				role: "group",
 				"aria-labelledby": this.groupHeadingId,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type MenuRadioItemStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		value: string;
-		closeOnSelect: boolean;
-	}>;
+interface MenuRadioItemStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			closeOnSelect: boolean;
+		}> {}
 
-class MenuRadioItemState {
-	isChecked = $derived.by(() => this.group.opts.value.current === this.opts.value.current);
+export class MenuRadioItemState {
+	static create(opts: MenuRadioItemStateOpts & MenuItemCombinedProps) {
+		const radioGroup = MenuRadioGroupContext.get();
+		const sharedItem = new MenuItemSharedState(opts, radioGroup.content);
+		const item = new MenuItemState(opts, sharedItem);
+		return new MenuRadioItemState(opts, item, radioGroup);
+	}
+	readonly opts: MenuRadioItemStateOpts;
+	readonly item: MenuItemState;
+	readonly group: MenuRadioGroupState;
+	readonly attachment: RefAttachment;
+	readonly isChecked = $derived.by(
+		() => this.group.opts.value.current === this.opts.value.current
+	);
 
-	constructor(
-		readonly opts: MenuRadioItemStateProps,
-		readonly item: MenuItemState,
-		readonly group: MenuRadioGroupState
-	) {
-		useRefById(opts);
+	constructor(opts: MenuRadioItemStateOpts, item: MenuItemState, group: MenuRadioGroupState) {
+		this.opts = opts;
+		this.item = item;
+		this.group = group;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	selectValue() {
 		this.group.setValue(this.opts.value.current);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
-				[this.group.root.getAttr("radio-item")]: "",
+				[this.group.root.getBitsAttr("radio-item")]: "",
 				...this.item.props,
 				role: "menuitemradio",
 				"aria-checked": getAriaChecked(this.isChecked, false),
 				"data-state": getCheckedState(this.isChecked),
+				...this.attachment,
 			}) as const
 	);
 }
@@ -827,29 +1027,28 @@ class MenuRadioItemState {
 // DROPDOWN MENU TRIGGER
 //
 
-type DropdownMenuTriggerStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>;
+interface DropdownMenuTriggerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {}
 
-class DropdownMenuTriggerState {
-	constructor(
-		readonly opts: DropdownMenuTriggerStateProps,
-		readonly parentMenu: MenuMenuState
-	) {
-		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
-		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (ref) => {
-				this.parentMenu.triggerNode = ref;
-			},
-		});
+export class DropdownMenuTriggerState {
+	static create(opts: DropdownMenuTriggerStateOpts) {
+		return new DropdownMenuTriggerState(opts, MenuMenuContext.get());
 	}
 
-	onpointerdown(e: BitsPointerEvent) {
+	readonly opts: DropdownMenuTriggerStateOpts;
+	readonly parentMenu: MenuMenuState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: DropdownMenuTriggerStateOpts, parentMenu: MenuMenuState) {
+		this.opts = opts;
+		this.parentMenu = parentMenu;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v));
+	}
+
+	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -859,17 +1058,17 @@ class DropdownMenuTriggerState {
 			// the content to be given focus without competition
 			if (!this.parentMenu.opts.open.current) e.preventDefault();
 		}
-	}
+	};
 
-	onpointerup(e: BitsPointerEvent) {
+	onpointerup: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.parentMenu.toggleOpen();
 		}
-	}
+	};
 
-	onkeydown(e: BitsKeyboardEvent) {
+	onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			this.parentMenu.toggleOpen();
@@ -880,15 +1079,15 @@ class DropdownMenuTriggerState {
 			this.parentMenu.onOpen();
 			e.preventDefault();
 		}
-	}
+	};
 
-	#ariaControls = $derived.by(() => {
+	readonly #ariaControls = $derived.by(() => {
 		if (this.parentMenu.opts.open.current && this.parentMenu.contentId.current)
 			return this.parentMenu.contentId.current;
 		return undefined;
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -898,21 +1097,30 @@ class DropdownMenuTriggerState {
 				"aria-controls": this.#ariaControls,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
-				[this.parentMenu.root.getAttr("trigger")]: "",
+				[this.parentMenu.root.getBitsAttr("trigger")]: "",
 				//
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type ContextMenuTriggerStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>;
+interface ContextMenuTriggerStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {}
 
-class ContextMenuTriggerState {
+export class ContextMenuTriggerState {
+	static create(opts: ContextMenuTriggerStateOpts) {
+		return new ContextMenuTriggerState(opts, MenuMenuContext.get());
+	}
+
+	readonly opts: ContextMenuTriggerStateOpts;
+	readonly parentMenu: MenuMenuState;
+	readonly attachment: RefAttachment;
 	#point = $state({ x: 0, y: 0 });
 
 	virtualElement = box({
@@ -920,23 +1128,15 @@ class ContextMenuTriggerState {
 	});
 	#longPressTimer: number | null = null;
 
-	constructor(
-		readonly opts: ContextMenuTriggerStateProps,
-		readonly parentMenu: MenuMenuState
-	) {
+	constructor(opts: ContextMenuTriggerStateOpts, parentMenu: MenuMenuState) {
+		this.opts = opts;
+		this.parentMenu = parentMenu;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v));
 		this.oncontextmenu = this.oncontextmenu.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onpointercancel = this.onpointercancel.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.parentMenu.triggerNode = node;
-			},
-			deps: () => this.parentMenu.opts.open.current,
-		});
 
 		watch(
 			() => this.#point,
@@ -948,18 +1148,21 @@ class ContextMenuTriggerState {
 			}
 		);
 
-		$effect(() => {
-			if (this.opts.disabled.current) {
-				this.#clearLongPressTimer();
+		watch(
+			() => this.opts.disabled.current,
+			(isDisabled) => {
+				if (isDisabled) {
+					this.#clearLongPressTimer();
+				}
 			}
-		});
+		);
 
 		onDestroyEffect(() => this.#clearLongPressTimer());
 	}
 
 	#clearLongPressTimer() {
 		if (this.#longPressTimer === null) return;
-		window.clearTimeout(this.#longPressTimer);
+		getWindow(this.opts.ref.current).clearTimeout(this.#longPressTimer);
 	}
 
 	#handleOpen(e: BitsMouseEvent | BitsPointerEvent) {
@@ -978,7 +1181,10 @@ class ContextMenuTriggerState {
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.opts.disabled.current || isMouseEvent(e)) return;
 		this.#clearLongPressTimer();
-		this.#longPressTimer = window.setTimeout(() => this.#handleOpen(e), 700);
+		this.#longPressTimer = getWindow(this.opts.ref.current).setTimeout(
+			() => this.#handleOpen(e),
+			700
+		);
 	}
 
 	onpointermove(e: BitsPointerEvent) {
@@ -996,7 +1202,7 @@ class ContextMenuTriggerState {
 		this.#clearLongPressTimer();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -1011,85 +1217,73 @@ class ContextMenuTriggerState {
 				onpointercancel: this.onpointercancel,
 				onpointerup: this.onpointerup,
 				oncontextmenu: this.oncontextmenu,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type MenuItemCombinedProps = MenuItemSharedStateProps & MenuItemStateProps;
+interface MenuCheckboxGroupStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			onValueChange: (value: string[]) => void;
+		}>,
+		WritableBoxedValues<{
+			value: string[];
+		}> {}
 
-export function useMenuRoot(props: MenuRootStateProps) {
-	const root = new MenuRootState(props);
-	FocusScopeContext.set({
-		get ignoreCloseAutoFocus() {
-			return root.ignoreCloseAutoFocus;
-		},
-	});
-	return MenuRootContext.set(root);
-}
+export class MenuCheckboxGroupState {
+	static create(opts: MenuCheckboxGroupStateOpts) {
+		return MenuCheckboxGroupContext.set(
+			new MenuCheckboxGroupState(opts, MenuContentContext.get())
+		);
+	}
 
-export function useMenuMenu(root: MenuRootState, props: MenuMenuStateProps) {
-	return MenuMenuContext.set(new MenuMenuState(props, root, null));
-}
+	readonly opts: MenuCheckboxGroupStateOpts;
+	readonly content: MenuContentState;
+	readonly root: MenuRootState;
+	readonly attachment: RefAttachment;
+	groupHeadingId = $state<string | null>(null);
 
-export function useMenuSubmenu(props: MenuMenuStateProps) {
-	const menu = MenuMenuContext.get();
-	return MenuMenuContext.set(new MenuMenuState(props, menu.root, menu));
-}
+	constructor(opts: MenuCheckboxGroupStateOpts, content: MenuContentState) {
+		this.opts = opts;
+		this.content = content;
+		this.root = content.parentMenu.root;
+		this.attachment = attachRef(this.opts.ref);
+	}
 
-export function useMenuSubTrigger(props: MenuItemSharedStateProps) {
-	const content = MenuContentContext.get();
-	const item = new MenuItemSharedState(props, content);
-	const submenu = MenuMenuContext.get();
-	return new MenuSubTriggerState(item, content, submenu);
-}
+	addValue(checkboxValue: string | undefined) {
+		if (!checkboxValue) return;
+		if (!this.opts.value.current.includes(checkboxValue)) {
+			const newValue = [...$state.snapshot(this.opts.value.current), checkboxValue];
+			this.opts.value.current = newValue;
+			this.opts.onValueChange.current(newValue);
+		}
+	}
 
-export function useMenuDropdownTrigger(props: DropdownMenuTriggerStateProps) {
-	return new DropdownMenuTriggerState(props, MenuMenuContext.get());
-}
+	removeValue(checkboxValue: string | undefined) {
+		if (!checkboxValue) return;
+		const index = this.opts.value.current.indexOf(checkboxValue);
+		if (index === -1) return;
+		const newValue = this.opts.value.current.filter((v) => v !== checkboxValue);
+		this.opts.value.current = newValue;
+		this.opts.onValueChange.current(newValue);
+	}
 
-export function useMenuContextTrigger(props: ContextMenuTriggerStateProps) {
-	return new ContextMenuTriggerState(props, MenuMenuContext.get());
-}
-
-export function useMenuContent(props: MenuContentStateProps) {
-	return MenuContentContext.set(new MenuContentState(props, MenuMenuContext.get()));
-}
-
-export function useMenuItem(props: MenuItemCombinedProps) {
-	const item = new MenuItemSharedState(props, MenuContentContext.get());
-	return new MenuItemState(props, item);
-}
-
-export function useMenuCheckboxItem(props: MenuItemCombinedProps & MenuCheckboxItemStateProps) {
-	const item = new MenuItemState(props, new MenuItemSharedState(props, MenuContentContext.get()));
-	return new MenuCheckboxItemState(props, item);
-}
-
-export function useMenuRadioGroup(props: MenuRadioGroupStateProps) {
-	return MenuGroupContext.set(
-		MenuRadioGroupContext.set(new MenuRadioGroupState(props, MenuContentContext.get()))
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				[this.root.getBitsAttr("checkbox-group")]: "",
+				role: "group",
+				"aria-labelledby": this.groupHeadingId,
+				...this.attachment,
+			}) as const
 	);
 }
 
-export function useMenuRadioItem(props: MenuRadioItemStateProps & MenuItemCombinedProps) {
-	const radioGroup = MenuRadioGroupContext.get();
-	const sharedItem = new MenuItemSharedState(props, radioGroup.content);
-	const item = new MenuItemState(props, sharedItem);
-	return new MenuRadioItemState(props, item, radioGroup);
-}
-
-export function useMenuGroup(props: MenuGroupStateProps) {
-	return MenuGroupContext.set(new MenuGroupState(props, MenuRootContext.get()));
-}
-
-export function useMenuGroupHeading(props: MenuGroupHeadingStateProps) {
-	return new MenuGroupHeadingState(props, MenuGroupContext.get());
-}
-
-export function useMenuSeparator(props: MenuSeparatorStateProps) {
-	return new MenuSeparatorState(props, MenuRootContext.get());
-}
-
-export function useMenuArrow() {
-	return new MenuArrowState(MenuRootContext.get());
+export class MenuSubmenuState {
+	static create(opts: MenuMenuStateOpts) {
+		const menu = MenuMenuContext.get();
+		return MenuMenuContext.set(new MenuMenuState(opts, menu.root, menu));
+	}
 }

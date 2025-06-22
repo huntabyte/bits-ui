@@ -28,6 +28,11 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
+	 * A callback that is called when the menu is opened or closed.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
+
+	/**
 	 * The direction of the site.
 	 *
 	 * @defaultValue "ltr"
@@ -140,10 +145,32 @@ export type MenuCheckboxItemPropsWithoutHTML =
 		 * @defaultValue true
 		 */
 		closeOnSelect?: boolean;
+
+		/**
+		 * The value of the checkbox item when used in a checkbox group.
+		 */
+		value?: string;
 	};
 
 export type MenuCheckboxItemProps = MenuCheckboxItemPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenuCheckboxItemPropsWithoutHTML>;
+
+export type MenuCheckboxGroupPropsWithoutHTML = WithChild<{
+	/**
+	 * The values of the selected checkbox items.
+	 *
+	 * Supports two-way binding with `bind:value`.
+	 */
+	value?: string[];
+
+	/**
+	 * A callback that is fired when the selected checkbox items change.
+	 */
+	onValueChange?: OnChangeFn<string[]>;
+}>;
+
+export type MenuCheckboxGroupProps = MenuCheckboxGroupPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuCheckboxGroupPropsWithoutHTML>;
 
 export type MenuTriggerPropsWithoutHTML = WithChild<{
 	/**
@@ -167,6 +194,11 @@ export type MenuSubPropsWithoutHTML = WithChildren<{
 	 * A callback that is called when the menu is opened or closed.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * A callback that is called when the menu finishes opening/closing animations.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 }>;
 
 export type MenuSubProps = MenuSubPropsWithoutHTML;
@@ -191,8 +223,8 @@ export type MenuSubContentStaticPropsWithoutHTML = Expand<
 export type MenuSubContentStaticProps = MenuSubContentStaticPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenuSubContentStaticPropsWithoutHTML>;
 
-export type MenuSubTriggerPropsWithoutHTML = MenuItemPropsWithoutHTML;
-export type MenuSubTriggerProps = MenuItemProps;
+export type MenuSubTriggerPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "closeOnSelect">;
+export type MenuSubTriggerProps = Omit<MenuItemProps, "closeOnSelect">;
 
 export type MenuSeparatorPropsWithoutHTML = WithChild;
 export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &

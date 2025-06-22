@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useDialogOverlay } from "../dialog.svelte.js";
+	import { DialogOverlayState } from "../dialog.svelte.js";
 	import type { DialogOverlayProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		forceMount = false,
 		child,
 		children,
@@ -14,7 +16,7 @@
 		...restProps
 	}: DialogOverlayProps = $props();
 
-	const overlayState = useDialogOverlay({
+	const overlayState = DialogOverlayState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -25,7 +27,7 @@
 	const mergedProps = $derived(mergeProps(restProps, overlayState.props));
 </script>
 
-<PresenceLayer {id} present={overlayState.root.opts.open.current || forceMount}>
+<PresenceLayer open={overlayState.root.opts.open.current || forceMount} ref={overlayState.opts.ref}>
 	{#snippet presence()}
 		{#if child}
 			{@render child({ props: mergeProps(mergedProps), ...overlayState.snippetProps })}

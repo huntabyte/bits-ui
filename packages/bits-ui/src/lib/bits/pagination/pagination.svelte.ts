@@ -1,52 +1,66 @@
-import { useRefById } from "svelte-toolbelt";
+import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { Page, PageItem } from "./types.js";
-import type { BitsKeyboardEvent, BitsMouseEvent, WithRefProps } from "$lib/internal/types.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
-import { getDataOrientation } from "$lib/internal/attrs.js";
+import type {
+	BitsKeyboardEvent,
+	BitsMouseEvent,
+	RefAttachment,
+	WithRefOpts,
+} from "$lib/internal/types.js";
+import { createBitsAttrs, getDataOrientation } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
 import { type Orientation, useId } from "$lib/shared/index.js";
 
-const PAGINATION_ROOT_ATTR = "data-pagination-root";
-const PAGINATION_PAGE_ATTR = "data-pagination-page";
-const PAGINATION_PREV_ATTR = "data-pagination-prev";
-const PAGINATION_NEXT_ATTR = "data-pagination-next";
+const paginationAttrs = createBitsAttrs({
+	component: "pagination",
+	parts: ["root", "page", "prev", "next"],
+});
 
-type PaginationRootStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		count: number;
-		perPage: number;
-		siblingCount: number;
-		orientation: Orientation;
-		loop: boolean;
-	}> &
+const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
+
+interface PaginationRootStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			count: number;
+			perPage: number;
+			siblingCount: number;
+			orientation: Orientation;
+			loop: boolean;
+		}>,
 		WritableBoxedValues<{
 			page: number;
-		}>
->;
+		}> {}
 
-class PaginationRootState {
-	totalPages = $derived.by(() => {
+export class PaginationRootState {
+	static create(opts: PaginationRootStateOpts) {
+		return PaginationRootContext.set(new PaginationRootState(opts));
+	}
+	readonly opts: PaginationRootStateOpts;
+	readonly attachment: RefAttachment;
+	readonly totalPages = $derived.by(() => {
 		if (this.opts.count.current === 0) return 1;
 		return Math.ceil(this.opts.count.current / this.opts.perPage.current);
 	});
-	range = $derived.by(() => {
+	readonly range = $derived.by(() => {
 		const start = (this.opts.page.current - 1) * this.opts.perPage.current;
 		const end = Math.min(start + this.opts.perPage.current, this.opts.count.current);
-		return { start, end };
+		return { start: start + 1, end };
 	});
-	pages = $derived.by(() =>
+	readonly pages = $derived.by(() =>
 		getPageItems({
 			page: this.opts.page.current,
 			totalPages: this.totalPages,
 			siblingCount: this.opts.siblingCount.current,
 		})
 	);
+	readonly hasPrevPage = $derived.by(() => this.opts.page.current > 1);
+	readonly hasNextPage = $derived.by(() => this.opts.page.current < this.totalPages);
 
-	constructor(readonly opts: PaginationRootStateProps) {
-		useRefById(opts);
+	constructor(opts: PaginationRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	setPage(page: number) {
@@ -62,11 +76,8 @@ class PaginationRootState {
 	getButtonNode(type: "prev" | "next") {
 		const node = this.opts.ref.current;
 		if (!node) return;
-		return node.querySelector<HTMLElement>(`[data-pagination-${type}]`);
+		return node.querySelector<HTMLElement>(paginationAttrs.selector(type));
 	}
-
-	hasPrevPage = $derived.by(() => this.opts.page.current > 1);
-	hasNextPage = $derived.by(() => this.opts.page.current < this.totalPages);
 
 	prevPage() {
 		this.opts.page.current = Math.max(this.opts.page.current - 1, 1);
@@ -76,41 +87,45 @@ class PaginationRootState {
 		this.opts.page.current = Math.min(this.opts.page.current + 1, this.totalPages);
 	}
 
-	snippetProps = $derived.by(() => ({
+	readonly snippetProps = $derived.by(() => ({
 		pages: this.pages,
 		range: this.range,
 		currentPage: this.opts.page.current,
 	}));
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				[PAGINATION_ROOT_ATTR]: "",
+				[paginationAttrs.root]: "",
+				...this.attachment,
 			}) as const
 	);
 }
 
-//
-// PAGE
-//
+interface PaginationPageStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			page: Page;
+			disabled: boolean;
+		}> {}
 
-type PaginationPageStateProps = WithRefProps<
-	ReadableBoxedValues<{
-		page: Page;
-		disabled: boolean;
-	}>
->;
+export class PaginationPageState {
+	static create(opts: PaginationPageStateOpts) {
+		return new PaginationPageState(opts, PaginationRootContext.get());
+	}
+	readonly opts: PaginationPageStateOpts;
+	readonly root: PaginationRootState;
+	readonly attachment: RefAttachment;
+	readonly #isSelected = $derived.by(
+		() => this.opts.page.current.value === this.root.opts.page.current
+	);
 
-class PaginationPageState {
-	#isSelected = $derived.by(() => this.opts.page.current.value === this.root.opts.page.current);
-
-	constructor(
-		readonly opts: PaginationPageStateProps,
-		readonly root: PaginationRootState
-	) {
-		useRefById(opts);
+	constructor(opts: PaginationPageStateOpts, root: PaginationRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -131,17 +146,18 @@ class PaginationPageState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				"aria-label": `Page ${this.opts.page.current.value}`,
 				"data-value": `${this.opts.page.current.value}`,
 				"data-selected": this.#isSelected ? "" : undefined,
-				[PAGINATION_PAGE_ATTR]: "",
+				[paginationAttrs.page]: "",
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...this.attachment,
 			}) as const
 	);
 }
@@ -150,19 +166,26 @@ class PaginationPageState {
 // NEXT/PREV BUTTON
 //
 
-type PaginationButtonStateProps = WithRefProps<{
+interface PaginationButtonStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			disabled: boolean;
+		}> {
 	type: "prev" | "next";
-}> &
-	ReadableBoxedValues<{
-		disabled: boolean;
-	}>;
+}
 
-class PaginationButtonState {
-	constructor(
-		readonly opts: PaginationButtonStateProps,
-		readonly root: PaginationRootState
-	) {
-		useRefById(opts);
+export class PaginationButtonState {
+	static create(opts: PaginationButtonStateOpts) {
+		return new PaginationButtonState(opts, PaginationRootContext.get());
+	}
+	readonly opts: PaginationButtonStateOpts;
+	readonly root: PaginationRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: PaginationButtonStateOpts, root: PaginationRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
 
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
@@ -172,7 +195,7 @@ class PaginationButtonState {
 		this.opts.type === "prev" ? this.root.prevPage() : this.root.nextPage();
 	}
 
-	#isDisabled = $derived.by(() => {
+	readonly #isDisabled = $derived.by(() => {
 		if (this.opts.disabled.current) return true;
 		if (this.opts.type === "prev") return !this.root.hasPrevPage;
 		if (this.opts.type === "next") return !this.root.hasNextPage;
@@ -194,16 +217,16 @@ class PaginationButtonState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
-				[PAGINATION_PREV_ATTR]: this.opts.type === "prev" ? "" : undefined,
-				[PAGINATION_NEXT_ATTR]: this.opts.type === "next" ? "" : undefined,
+				[paginationAttrs[this.opts.type]]: "",
 				disabled: this.#isDisabled,
 				//
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
+				...this.attachment,
 			}) as const
 	);
 }
@@ -269,11 +292,11 @@ function handleTriggerKeydown(
 	itemToFocus.focus();
 }
 
-type GetPageItemsProps = {
+interface GetPageItemsProps {
 	page?: number;
 	totalPages: number;
 	siblingCount?: number;
-};
+}
 
 /**
  * Returns an array of page items used to render out the
@@ -329,18 +352,4 @@ function getPageItems({ page = 1, totalPages, siblingCount = 1 }: GetPageItemsPr
 	}
 
 	return pageItems;
-}
-
-const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
-
-export function usePaginationRoot(props: PaginationRootStateProps) {
-	return PaginationRootContext.set(new PaginationRootState(props));
-}
-
-export function usePaginationPage(props: PaginationPageStateProps) {
-	return new PaginationPageState(props, PaginationRootContext.get());
-}
-
-export function usePaginationButton(props: PaginationButtonStateProps) {
-	return new PaginationButtonState(props, PaginationRootContext.get());
 }

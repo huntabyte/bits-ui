@@ -2,6 +2,7 @@ import adapter from "@sveltejs/adapter-cloudflare";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { mdsx } from "mdsx";
 import { mdsxConfig } from "./mdsx.config.js";
+import { execSync } from "node:child_process";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -22,6 +23,23 @@ const config = {
 				// otherwise fail the build
 				throw new Error(message);
 			},
+		},
+		typescript: {
+			config: (config) => ({
+				...config,
+				include: [
+					...config.include,
+					"../src/**/*.md",
+					"../.velite/**/*",
+					"../mdsx.config.js",
+					"../svelte.config.js",
+					"../other/**/*.js",
+					"../other/**/*.ts",
+				],
+			}),
+		},
+		version: {
+			name: execSync("git rev-parse HEAD").toString().trim(),
 		},
 	},
 };

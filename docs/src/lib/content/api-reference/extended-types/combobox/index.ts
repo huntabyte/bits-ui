@@ -1,1 +1,1 @@
-export { default as ComboboxScrollAlignmentProp } from "./scroll-alignment-prop.md";
+export { default as ComboboxScrollAlignmentProp } from "./scroll-alignment-prop.md"

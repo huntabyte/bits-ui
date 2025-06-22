@@ -2,7 +2,7 @@ export type ScrollLockProps = {
 	/**
 	 * Whether to prevent body scrolling when the content is open.
 	 *
-	 * @defaultValue true
+	 * @default true
 	 */
 	preventScroll?: boolean;
 
@@ -13,7 +13,7 @@ export type ScrollLockProps = {
 	 * greater than the transition duration to prevent content from shifting during
 	 * the transition.
 	 *
-	 * @defaultValue null
+	 * @default null
 	 */
 	restoreScrollDelay?: number | null;
 };

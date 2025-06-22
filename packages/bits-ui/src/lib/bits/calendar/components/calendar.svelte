@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import { type DateValue } from "@internationalized/date";
-	import { useCalendarRoot } from "../calendar.svelte.js";
+	import { CalendarRootState } from "../calendar.svelte.js";
 	import type { CalendarRootProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		child,
@@ -17,13 +19,13 @@
 		placeholder = $bindable(),
 		onPlaceholderChange = noop,
 		weekdayFormat = "narrow",
-		weekStartsOn = 0,
+		weekStartsOn,
 		pagedNavigation = false,
 		isDateDisabled = () => false,
 		isDateUnavailable = () => false,
 		fixedWeeks = false,
 		numberOfMonths = 1,
-		locale = "en",
+		locale,
 		calendarLabel = "Event",
 		disabled = false,
 		readonly = false,
@@ -33,6 +35,9 @@
 		type,
 		disableDaysOutsideMonth = true,
 		initialFocus = false,
+		maxDays,
+		monthFormat = "long",
+		yearFormat = "numeric",
 		...restProps
 	}: CalendarRootProps = $props();
 
@@ -40,17 +45,37 @@
 		defaultValue: value,
 	});
 
-	if (placeholder === undefined) {
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
 		placeholder = defaultPlaceholder;
 	}
 
-	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		value = defaultValue as any;
+	// SSR
+	handleDefaultPlaceholder();
+
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
+
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		value = type === "single" ? undefined : [];
 	}
 
-	const rootState = useCalendarRoot({
+	// SSR
+	handleDefaultValue();
+
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
+	const rootState = CalendarRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -63,7 +88,7 @@
 		isDateUnavailable: box.with(() => isDateUnavailable),
 		fixedWeeks: box.with(() => fixedWeeks),
 		numberOfMonths: box.with(() => numberOfMonths),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		calendarLabel: box.with(() => calendarLabel),
 		readonly: box.with(() => readonly),
 		disabled: box.with(() => disabled),
@@ -71,6 +96,7 @@
 		maxValue: box.with(() => maxValue),
 		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
 		initialFocus: box.with(() => initialFocus),
+		maxDays: box.with(() => maxDays),
 		placeholder: box.with(
 			() => placeholder as DateValue,
 			(v) => {
@@ -88,6 +114,8 @@
 			}
 		),
 		type: box.with(() => type),
+		monthFormat: box.with(() => monthFormat),
+		yearFormat: box.with(() => yearFormat),
 		defaultPlaceholder,
 	});
 

@@ -13,9 +13,9 @@ It provides global state that is shared across all instances of the class to pre
 
 ```svelte
 <script lang="ts">
-	import { IsUsingKeyboard } from "bits-ui";
+  import { IsUsingKeyboard } from "bits-ui";
 
-	const isUsingKeyboard = new IsUsingKeyboard();
-	const shouldShowMenu = $derived(isUsingKeyboard.current);
+  const isUsingKeyboard = new IsUsingKeyboard();
+  const shouldShowMenu = $derived(isUsingKeyboard.current);
 </script>
 ```

@@ -1,18 +1,20 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useSelectGroup } from "../select.svelte.js";
+	import { SelectGroupState } from "../select.svelte.js";
 	import type { SelectGroupProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		children,
 		child,
 		...restProps
 	}: SelectGroupProps = $props();
 
-	const groupState = useSelectGroup({
+	const groupState = SelectGroupState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

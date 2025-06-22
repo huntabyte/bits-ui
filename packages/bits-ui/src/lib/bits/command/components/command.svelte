@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useCommandRoot } from "../command.svelte.js";
+	import { CommandRootState } from "../command.svelte.js";
 	import type { CommandRootProps } from "../types.js";
 	import CommandLabel from "./_command-label.svelte";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { computeCommandScore } from "../index.js";
 
+	const uid = $props.id();
+
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(""),
 		onValueChange = noop,
@@ -19,12 +21,14 @@
 		label = "",
 		vimBindings = true,
 		disablePointerSelection = false,
+		disableInitialScroll = false,
+		columns = null,
 		children,
 		child,
 		...restProps
 	}: CommandRootProps = $props();
 
-	const rootState = useCommandRoot({
+	const rootState = CommandRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -36,13 +40,17 @@
 		value: box.with(
 			() => value,
 			(v) => {
-				value = v;
-				onValueChange(v);
+				if (value !== v) {
+					value = v;
+					onValueChange(v);
+				}
 			}
 		),
 		vimBindings: box.with(() => vimBindings),
 		disablePointerSelection: box.with(() => disablePointerSelection),
+		disableInitialScroll: box.with(() => disableInitialScroll),
 		onStateChange: box.with(() => onStateChange),
+		columns: box.with(() => columns),
 	});
 
 	// Imperative APIs - DO NOT REMOVE OR RENAME

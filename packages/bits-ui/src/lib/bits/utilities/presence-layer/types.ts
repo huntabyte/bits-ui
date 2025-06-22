@@ -1,4 +1,5 @@
 import type { Snippet } from "svelte";
+import type { ReadableBox } from "svelte-toolbelt";
 
 export type PresenceLayerProps = {
 	/**
@@ -8,11 +9,12 @@ export type PresenceLayerProps = {
 };
 
 export type PresenceLayerImplProps = PresenceLayerProps & {
-	id: string;
 	/**
-	 * The presence status.
+	 * The open state of the component.
 	 */
-	present: boolean;
+	open: boolean;
 
-	presence?: Snippet<[{ present: { current: boolean } }]>;
+	presence?: Snippet<[{ present: boolean }]>;
+
+	ref: ReadableBox<HTMLElement | null>;
 };

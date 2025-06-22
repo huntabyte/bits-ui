@@ -1,3 +1,3 @@
 ```ts
-"checked" | "unchecked";
+"checked" | "unchecked"
 ```

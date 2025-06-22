@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { CommandItemProps } from "../types.js";
-	import { useCommandItem } from "../command.svelte.js";
+	import { CommandItemState } from "../command.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = "",
 		disabled = false,
@@ -18,7 +20,7 @@
 		...restProps
 	}: CommandItemProps = $props();
 
-	const itemState = useCommandItem({
+	const itemState = CommandItemState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -35,7 +37,7 @@
 </script>
 
 {#key itemState.root.key}
-	<div style="display: contents;" data-item-wrapper data-value={value}>
+	<div style="display: contents;" data-item-wrapper data-value={itemState.trueValue}>
 		{#if itemState.shouldRender}
 			{#if child}
 				{@render child({ props: mergedProps })}

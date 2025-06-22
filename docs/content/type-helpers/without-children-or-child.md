@@ -9,20 +9,20 @@ To learn more about the `child` snippet prop, check out the [delegation](/docs/c
 
 ```svelte title="CustomAccordionTrigger.svelte"
 <script lang="ts">
-	import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
+  import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
 
-	let {
-		title,
-		...restProps
-	}: WithoutChildrenOrChild<
-		Accordion.TriggerProps & {
-			title: string;
-		}
-	> = $props();
+  let {
+    title,
+    ...restProps
+  }: WithoutChildrenOrChild<
+    Accordion.TriggerProps & {
+      title: string;
+    }
+  > = $props();
 </script>
 
 <Accordion.Trigger>
-	{title}
+  {title}
 </Accordion.Trigger>
 ```
 

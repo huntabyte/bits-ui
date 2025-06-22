@@ -3,7 +3,7 @@
 	import type { ComboboxInputProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
-	import { useSelectInput } from "$lib/bits/select/select.svelte.js";
+	import { SelectInputState } from "$lib/bits/select/select.svelte.js";
 
 	let {
 		id = useId(),
@@ -14,7 +14,7 @@
 		...restProps
 	}: ComboboxInputProps = $props();
 
-	const inputState = useSelectInput({
+	const inputState = SelectInputState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -24,15 +24,15 @@
 	});
 
 	if (defaultValue) {
-		inputState.root.inputValue = defaultValue;
+		inputState.root.opts.inputValue.current = defaultValue;
 	}
 
 	const mergedProps = $derived(
-		mergeProps(restProps, inputState.props, { value: inputState.root.inputValue })
+		mergeProps(restProps, inputState.props, { value: inputState.root.opts.inputValue.current })
 	);
 </script>
 
-<FloatingLayer.Anchor {id}>
+<FloatingLayer.Anchor {id} ref={inputState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

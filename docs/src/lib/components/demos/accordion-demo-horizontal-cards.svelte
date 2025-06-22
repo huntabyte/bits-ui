@@ -30,13 +30,13 @@
 <Accordion.Root
 	type="single"
 	orientation="horizontal"
-	class="flex h-[400px] w-full flex-col gap-2 sm:flex-row"
+	class="flex h-[400px] w-full gap-2 sm:flex-row"
 	bind:value
 >
 	{#each items as item (item.id)}
 		<Accordion.Item
 			value={item.id}
-			class="ring-primary/70 relative cursor-pointer overflow-hidden rounded-lg transition-all duration-500 ease-in-out data-[state=closed]:w-[10%] data-[state=open]:w-[100%] [&:has(:focus-visible)]:ring-2"
+			class="ring-primary/70 relative cursor-pointer overflow-hidden rounded-lg transition-all duration-500 ease-in-out data-[state=closed]:w-[20%] data-[state=open]:w-[100%] md:data-[state=closed]:w-[10%] [&:has(:focus-visible)]:ring-2"
 			onclick={() => (value = item.id)}
 		>
 			<img src={item.image} alt={item.title} class="h-[400px] w-full object-cover" />
@@ -48,14 +48,14 @@
 				>
 					<Accordion.Header>
 						<Accordion.Trigger
-							class="focus-override text-left font-bold text-white transition-all duration-300 focus-visible:!outline-none data-[state=open]:mb-2 data-[state=closed]:text-sm data-[state=open]:text-xl data-[state=closed]:opacity-0 data-[state=open]:opacity-100"
+							class="focus-override text-left font-bold text-white transition-all duration-300 focus-visible:!outline-none data-[state=open]:mb-2 data-[state=closed]:text-sm data-[state=open]:text-base data-[state=closed]:opacity-0 data-[state=open]:opacity-100 md:data-[state=open]:text-xl"
 						>
 							{item.title}
 						</Accordion.Trigger>
 					</Accordion.Header>
 					<Accordion.Content
 						forceMount
-						class="max-h-0 overflow-hidden text-white/90 transition-all duration-700 data-[state=open]:max-h-[100px] data-[state=closed]:opacity-0 data-[state=open]:opacity-100"
+						class="max-h-0 overflow-hidden text-white/90 transition-all duration-700 data-[state=open]:max-h-[100px] data-[state=open]:text-xs data-[state=closed]:opacity-0 data-[state=open]:opacity-100 md:data-[state=open]:text-base"
 					>
 						{item.description}
 					</Accordion.Content>

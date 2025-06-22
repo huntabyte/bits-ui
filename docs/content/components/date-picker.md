@@ -26,56 +26,56 @@ Before diving into this component, it's important to understand how dates/times 
 
 ```svelte
 <script lang="ts">
-	import { DatePicker } from "bits-ui";
+  import { DatePicker } from "bits-ui";
 </script>
 
 <DatePicker.Root>
-	<DatePicker.Label />
-	<DatePicker.Input>
-		{#snippet children({ segments })}
-			{#each segments as { part, value }}
-				<DatePicker.Segment {part}>
-					{value}
-				</DatePicker.Segment>
-			{/each}
-			<DatePicker.Trigger />
-		{/snippet}
-	</DatePicker.Input>
-	<DatePicker.Content>
-		<DatePicker.Calendar>
-			{#snippet children({ months, weekdays })}
-				<DatePicker.Header>
-					<DatePicker.PrevButton />
-					<DatePicker.Heading />
-					<DatePicker.NextButton />
-				</DatePicker.Header>
-				{#each months as month}
-					<DatePicker.Grid>
-						<DatePicker.GridHead>
-							<DatePicker.GridRow>
-								{#each weekdays as day}
-									<DatePicker.HeadCell>
-										{day}
-									</DatePicker.HeadCell>
-								{/each}
-							</DatePicker.GridRow>
-						</DatePicker.GridHead>
-						<DatePicker.GridBody>
-							{#each month.weeks as weekDates}
-								<DatePicker.GridRow>
-									{#each weekDates as date}
-										<DatePicker.Cell {date} month={month.value}>
-											<DatePicker.Day />
-										</DatePicker.Cell>
-									{/each}
-								</DatePicker.GridRow>
-							{/each}
-						</DatePicker.GridBody>
-					</DatePicker.Grid>
-				{/each}
-			{/snippet}
-		</DatePicker.Calendar>
-	</DatePicker.Content>
+  <DatePicker.Label />
+  <DatePicker.Input>
+    {#snippet children({ segments })}
+      {#each segments as { part, value }}
+        <DatePicker.Segment {part}>
+          {value}
+        </DatePicker.Segment>
+      {/each}
+      <DatePicker.Trigger />
+    {/snippet}
+  </DatePicker.Input>
+  <DatePicker.Content>
+    <DatePicker.Calendar>
+      {#snippet children({ months, weekdays })}
+        <DatePicker.Header>
+          <DatePicker.PrevButton />
+          <DatePicker.Heading />
+          <DatePicker.NextButton />
+        </DatePicker.Header>
+        {#each months as month}
+          <DatePicker.Grid>
+            <DatePicker.GridHead>
+              <DatePicker.GridRow>
+                {#each weekdays as day}
+                  <DatePicker.HeadCell>
+                    {day}
+                  </DatePicker.HeadCell>
+                {/each}
+              </DatePicker.GridRow>
+            </DatePicker.GridHead>
+            <DatePicker.GridBody>
+              {#each month.weeks as weekDates}
+                <DatePicker.GridRow>
+                  {#each weekDates as date}
+                    <DatePicker.Cell {date} month={month.value}>
+                      <DatePicker.Day />
+                    </DatePicker.Cell>
+                  {/each}
+                </DatePicker.GridRow>
+              {/each}
+            </DatePicker.GridBody>
+          </DatePicker.Grid>
+        {/each}
+      {/snippet}
+    </DatePicker.Calendar>
+  </DatePicker.Content>
 </DatePicker.Root>
 ```
 
@@ -89,21 +89,21 @@ Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { DatePicker } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state();
+  import { DatePicker } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myPlaceholder = $state();
 </script>
 
 <button
-	onclick={() => {
-		myPlaceholder = new CalendarDateTime(2024, 8, 3, 12, 30);
-	}}
+  onclick={() => {
+    myPlaceholder = new CalendarDateTime(2024, 8, 3, 12, 30);
+  }}
 >
-	Set placeholder to August 3rd, 2024
+  Set placeholder to August 3rd, 2024
 </button>
 
 <DatePicker.Root bind:placeholder={myPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </DatePicker.Root>
 ```
 
@@ -113,21 +113,21 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DatePicker } from "bits-ui";
-	import type { DateValue } from "@internationalized/date";
-	let myPlaceholder = $state<DateValue>();
+  import { DatePicker } from "bits-ui";
+  import type { DateValue } from "@internationalized/date";
+  let myPlaceholder = $state<DateValue>();
 
-	function getPlaceholder() {
-		return myPlaceholder;
-	}
+  function getPlaceholder() {
+    return myPlaceholder;
+  }
 
-	function setPlaceholder(newPlaceholder: DateValue) {
-		myPlaceholder = newPlaceholder;
-	}
+  function setPlaceholder(newPlaceholder: DateValue) {
+    myPlaceholder = newPlaceholder;
+  }
 </script>
 
 <DatePicker.Root bind:placeholder={getPlaceholder, setPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </DatePicker.Root>
 ```
 
@@ -141,14 +141,16 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { DatePicker } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+  import { DatePicker } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
-<button onclick={() => (myValue = myValue.add({ days: 1 }))}> Add 1 day </button>
+<button onclick={() => (myValue = myValue.add({ days: 1 }))}>
+  Add 1 day
+</button>
 <DatePicker.Root bind:value={myValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DatePicker.Root>
 ```
 
@@ -158,21 +160,21 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DatePicker } from "bits-ui";
-	import type { DateValue } from "@internationalized/date";
-	let myValue = $state<DateValue>();
+  import { DatePicker } from "bits-ui";
+  import type { DateValue } from "@internationalized/date";
+  let myValue = $state<DateValue>();
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: DateValue) {
-		myValue = newValue;
-	}
+  function setValue(newValue: DateValue) {
+    myValue = newValue;
+  }
 </script>
 
 <DatePicker.Root bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DatePicker.Root>
 ```
 
@@ -186,14 +188,14 @@ Use `bind:open` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { DatePicker } from "bits-ui";
-	let isOpen = $state(false);
+  import { DatePicker } from "bits-ui";
+  let isOpen = $state(false);
 </script>
 
 <button onclick={() => (isOpen = true)}>Open DatePicker</button>
 
 <DatePicker.Root bind:open={isOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </DatePicker.Root>
 ```
 
@@ -203,20 +205,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DatePicker } from "bits-ui";
-	let myOpen = $state(false);
+  import { DatePicker } from "bits-ui";
+  let myOpen = $state(false);
 
-	function getOpen() {
-		return myOpen;
-	}
+  function getOpen() {
+    return myOpen;
+  }
 
-	function setOpen(newOpen: boolean) {
-		myOpen = newOpen;
-	}
+  function setOpen(newOpen: boolean) {
+    myOpen = newOpen;
+  }
 </script>
 
 <DatePicker.Root bind:open={getOpen, setOpen}>
-	<!-- ... -->
+  <!-- ... -->
 </DatePicker.Root>
 ```
 

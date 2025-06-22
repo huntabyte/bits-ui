@@ -7,22 +7,22 @@ This document explains how we use GitHub Issues and Discussions in this reposito
 
 TL;DR:
 
--   **Issues**: For confirmed bugs and tracking accepted feature requests that are ready for implementation.
--   **Discussions**: For proposing new features, asking questions, and discussing broader changes _before_ any code is written.
+- **Issues**: For confirmed bugs and tracking accepted feature requests that are ready for implementation.
+- **Discussions**: For proposing new features, asking questions, and discussing broader changes _before_ any code is written.
 
 ## Issues: For Bugs and Accepted Feature Requests
 
 We use GitHub Issues for:
 
--   **Reproducible Bugs**: Clearly describe steps to reproduce the problem. Include error messages, screenshots, and expected vs. actual behavior. Vague reports will likely be closed.
--   **Confirmed Problems**: Issues should relate to existing functionality in the project, not requests for new features.
--   **Accepted Feature Requests**: Only feature requests that have been discussed, refined, and approved for implementation will have an issue created to track progress.
+- **Reproducible Bugs**: Clearly describe steps to reproduce the problem. Include error messages, screenshots, and expected vs. actual behavior. Vague reports will likely be closed.
+- **Confirmed Problems**: Issues should relate to existing functionality in the project, not requests for new features.
+- **Accepted Feature Requests**: Only feature requests that have been discussed, refined, and approved for implementation will have an issue created to track progress.
 
 ### Why This Approach?
 
--   **Keeps the Issue Tracker Focused**: By only adding feature requests that are actually planned for implementation, we avoid clutter.
--   **Clear Prioritization**: Maintainers and contributors can focus on resolving real bugs and implementing agreed-upon features.
--   **Better Project Health**: The backlog remains clean, making it easier to track progress and manage the project effectively.
+- **Keeps the Issue Tracker Focused**: By only adding feature requests that are actually planned for implementation, we avoid clutter.
+- **Clear Prioritization**: Maintainers and contributors can focus on resolving real bugs and implementing agreed-upon features.
+- **Better Project Health**: The backlog remains clean, making it easier to track progress and manage the project effectively.
 
 ## Discussions: Where Feature Requests Start
 
@@ -30,11 +30,11 @@ Feature requests should always start as a **Discussion**. This ensures that idea
 
 Use Discussions for:
 
--   **Feature Requests**: Propose and refine new features.
--   **Design Discussion**: Before writing code, ensure the implementation is well thought out.
--   **Questions and Support**: Get help from the community.
--   **Brainstorming**: Share ideas and explore alternatives.
--   **RFCs (Request for Comments)**: Gather structured feedback before making significant changes.
+- **Feature Requests**: Propose and refine new features.
+- **Design Discussion**: Before writing code, ensure the implementation is well thought out.
+- **Questions and Support**: Get help from the community.
+- **Brainstorming**: Share ideas and explore alternatives.
+- **RFCs (Request for Comments)**: Gather structured feedback before making significant changes.
 
 ### When Does a Feature Request Become an Issue?
 
@@ -59,7 +59,7 @@ This isn't to reject your idea - it's about ensuring every feature request is th
 
 ## Summary
 
--   **Discussions are for feature requests** until they are accepted and planned for implementation.
--   **Issues are for confirmed bugs** and tracking accepted feature requests in development.
+- **Discussions are for feature requests** until they are accepted and planned for implementation.
+- **Issues are for confirmed bugs** and tracking accepted feature requests in development.
 
 This keeps our backlog focused, helps us prioritize effectively, and leads to a more efficient and organized development process. Thanks for helping us keep things structured and effective!

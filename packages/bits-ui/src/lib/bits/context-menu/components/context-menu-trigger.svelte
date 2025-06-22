@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuTriggerProps } from "../types.js";
-	import { useMenuContextTrigger } from "$lib/bits/menu/menu.svelte.js";
+	import { ContextMenuTriggerState } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
@@ -14,7 +14,7 @@
 		...restProps
 	}: ContextMenuTriggerProps = $props();
 
-	const triggerState = useMenuContextTrigger({
+	const triggerState = ContextMenuTriggerState.create({
 		id: box.with(() => id),
 		disabled: box.with(() => disabled),
 		ref: box.with(
@@ -28,7 +28,7 @@
 	);
 </script>
 
-<FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement}>
+<FloatingLayer.Anchor {id} virtualEl={triggerState.virtualElement} ref={triggerState.opts.ref}>
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}

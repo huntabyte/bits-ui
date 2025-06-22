@@ -4,14 +4,7 @@ import type {
 	DateRangeFieldRootPropsWithoutHTML,
 	DateRangeFieldSegmentPropsWithoutHTML,
 } from "bits-ui";
-import {
-	createApiSchema,
-	createDataAttrSchema,
-	createEnumProp,
-	createFunctionProp,
-	createPropSchema,
-	withChildProps,
-} from "./helpers.js";
+import { withChildProps } from "./shared.js";
 import { input as dateFieldInput, root as dateFieldRoot } from "./date-field.api.js";
 import {
 	DateOnRangeChangeProp,
@@ -20,22 +13,28 @@ import {
 } from "./extended-types/shared/index.js";
 import { DateRangeFieldInputTypeProp } from "./extended-types/date-range-field/index.js";
 import { DateFieldSegmentPartProp } from "./extended-types/date-field/index.js";
-import * as C from "$lib/content/constants.js";
+import {
+	defineComponentApiSchema,
+	defineComponentPropSchema,
+	defineEnumDataAttr,
+	defineEnumProp,
+	defineFunctionProp,
+	defineSimpleDataAttr,
+	defineStringProp,
+} from "../utils.js";
 
-export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
+export const root = defineComponentApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date field component.",
 	props: {
-		value: {
-			type: {
-				type: "DateRange",
-				definition: DateRangeProp,
-				stringDefinition: "{ start: DateValue; end: DateValue }",
-			},
+		value: defineComponentPropSchema({
+			type: "DateRange",
+			definition: DateRangeProp,
+			stringDefinition: "{ start: DateValue; end: DateValue }",
 			description: "The selected date range.",
 			bindable: true,
-		},
-		onValueChange: createFunctionProp({
+		}),
+		onValueChange: defineFunctionProp({
 			definition: DateOnRangeChangeProp,
 			description: "A function that is called when the selected date changes.",
 			stringDefinition: "(value: DateRange) => void",
@@ -55,12 +54,12 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		readonly: dateFieldRoot.props!.readonly,
 		readonlySegments: dateFieldRoot.props!.readonlySegments,
 		required: dateFieldRoot.props!.required,
-		onStartValueChange: createFunctionProp({
+		onStartValueChange: defineFunctionProp({
 			definition: OnStartEndValueChangeProp,
 			description: "A function that is called when the start date changes.",
 			stringDefinition: "(value: DateValue) => void",
 		}),
-		onEndValueChange: createFunctionProp({
+		onEndValueChange: defineFunctionProp({
 			definition: OnStartEndValueChangeProp,
 			description: "A function that is called when the end date changes.",
 			stringDefinition: "(value: DateValue) => void",
@@ -68,95 +67,102 @@ export const root = createApiSchema<DateRangeFieldRootPropsWithoutHTML>({
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "date-range-field-root",
 			description: "Present on the root element.",
 		}),
 	],
 });
 
-export const input = createApiSchema<DateRangeFieldInputPropsWithoutHTML>({
+export const input = defineComponentApiSchema<DateRangeFieldInputPropsWithoutHTML>({
 	title: "Input",
 	description: "The container for the segments of the date field.",
 	props: {
-		type: createEnumProp({
+		type: defineEnumProp({
 			options: ["start", "end"],
 			description: "The type of field to render (start or end).",
 			required: true,
 			definition: DateRangeFieldInputTypeProp,
 		}),
-		name: {
-			type: C.STRING,
+		name: defineStringProp({
 			description:
 				"The name of the date field used for form submission. If provided, a hidden input element will be rendered alongside the date field.",
-		},
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 		children: dateFieldInput.props!.children,
 		child: dateFieldInput.props!.child,
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled.",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "date-field-input",
 			description: "Present on the element.",
 		}),
 	],
 });
 
-export const segment = createApiSchema<DateRangeFieldSegmentPropsWithoutHTML>({
+export const segment = defineComponentApiSchema<DateRangeFieldSegmentPropsWithoutHTML>({
 	title: "Segment",
 	description: "A segment of the date field.",
 	props: {
-		part: createPropSchema({
-			type: {
-				type: "SegmentPart",
-				definition: DateFieldSegmentPartProp,
-				stringDefinition: `"month" | "day" | "year" | "hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal"`,
-			},
+		part: defineComponentPropSchema({
+			type: "SegmentPart",
+			definition: DateFieldSegmentPartProp,
+			stringDefinition: `"month" | "day" | "year" | "hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal"`,
 			description: "The part of the date to render.",
 			required: true,
 		}),
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present on the element when the field is disabled",
 		}),
-		createDataAttrSchema({
+		defineEnumDataAttr({
 			name: "segment",
 			description: "The type of segment the element represents.",
-			definition: DateFieldSegmentPartProp,
-			isEnum: true,
+			value: DateFieldSegmentPartProp,
+			options: [
+				"month",
+				"day",
+				"year",
+				"hour",
+				"minute",
+				"second",
+				"dayPeriod",
+				"timeZoneName",
+				"literal",
+			],
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "date-field-segment",
 			description: "Present on the element.",
 		}),
 	],
 });
 
-export const label = createApiSchema<DateRangeFieldLabelPropsWithoutHTML>({
+export const label = defineComponentApiSchema<DateRangeFieldLabelPropsWithoutHTML>({
 	title: "Label",
 	description: "The label for the date field.",
 	props: withChildProps({ elType: "HTMLSpanElement" }),
 	dataAttributes: [
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "invalid",
 			description: "Present on the element when the field is invalid",
 		}),
-		createDataAttrSchema({
+		defineSimpleDataAttr({
 			name: "date-field-label",
 			description: "Present on the element.",
 		}),

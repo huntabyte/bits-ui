@@ -1,13 +1,18 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { PopoverRootProps } from "../types.js";
-	import { usePopoverRoot } from "../popover.svelte.js";
+	import { PopoverRootState } from "../popover.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
-	let { open = $bindable(false), onOpenChange = noop, children }: PopoverRootProps = $props();
+	let {
+		open = $bindable(false),
+		onOpenChange = noop,
+		onOpenChangeComplete = noop,
+		children,
+	}: PopoverRootProps = $props();
 
-	usePopoverRoot({
+	PopoverRootState.create({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -15,6 +20,7 @@
 				onOpenChange(v);
 			}
 		),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 

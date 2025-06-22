@@ -1,10 +1,65 @@
 import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
 import type { BitsPrimitiveSpanAttributes } from "$lib/shared/attributes.js";
-import type { Direction, Orientation } from "$lib/shared/index.js";
+import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
+
+export type TickItem = {
+	/**
+	 * The value this tick represents
+	 */
+	value: number;
+
+	/**
+	 * The index of this tick in the array of ticks provided by the `children`
+	 * or `child` snippet prop of the `Slider.Root` component.
+	 */
+	index: number;
+};
+
+export type ThumbItem = {
+	/**
+	 * The value this thumb represents
+	 */
+	value: number;
+
+	/**
+	 * The index of this thumb in the array of thumbs provided by the `children`
+	 * or `child` snippet prop of the `Slider.Root` component.
+	 */
+	index: number;
+};
+
+export type SliderLabelPosition = "top" | "bottom" | "left" | "right";
 
 export type SliderRootSnippetProps = {
+	/**
+	 * Use `tickItems` instead. Will be removed in Bits UI v3.
+	 *
+	 * The indices of the ticks.
+	 *
+	 * @deprecated Use `tickItems` instead.
+	 */
 	ticks: number[];
+
+	/**
+	 * Use `thumbItems` instead. Will be removed in Bits UI v3.
+	 *
+	 * The indices of the thumbs.
+	 *
+	 * @deprecated Use `thumbItems` instead
+	 */
 	thumbs: number[];
+
+	/**
+	 * An array of objects containing the value and index of each tick, useful for
+	 * rendering ticks along with labels for each tick.
+	 */
+	tickItems: TickItem[];
+
+	/**
+	 * An array of objects containing the value and index of each thumb, useful for
+	 * rendering thumbs along with labels for each thumb.
+	 */
+	thumbItems: ThumbItem[];
 };
 
 export type BaseSliderRootPropsWithoutHTML = {
@@ -12,29 +67,35 @@ export type BaseSliderRootPropsWithoutHTML = {
 	 * Whether to automatically sort the values in the array when moving thumbs past
 	 * one another.
 	 *
-	 * @defaultValue true
+	 * @default true
 	 */
 	autoSort?: boolean;
+
 	/**
 	 * The minimum value of the slider.
 	 *
-	 * @defaultValue 0
+	 * @default 0 (for number step) or the min value of the step array (for array step)
 	 */
 	min?: number;
 
 	/**
 	 * The maximum value of the slider.
 	 *
-	 * @defaultValue 100
+	 * @default 100 (for number step) or the max value of the step array (for array step)
 	 */
 	max?: number;
 
 	/**
-	 * The amount to increment the value by when the user presses the arrow keys.
+	 * The amount to increment the value by when the user presses the arrow keys,
+	 * or an array of specific values that the slider can snap to.
 	 *
-	 * @defaultValue 1
+	 * When an array is provided, the slider will only allow values that exist in the array,
+	 * creating discrete tick points. The array values should be within the min/max range
+	 * and will be automatically sorted.
+	 *
+	 * @default 1
 	 */
-	step?: number;
+	step?: number | number[];
 
 	/**
 	 * The direction of the slider.
@@ -43,23 +104,39 @@ export type BaseSliderRootPropsWithoutHTML = {
 	 * from the top and move downwards. For horizontal sliders, setting `dir` to `'rtl'`
 	 * will cause the slider to start from the left and move rightwards.
 	 *
-	 * @defaultValue 'ltr'
+	 * @default 'ltr'
 	 */
 	dir?: Direction;
 
 	/**
 	 * The orientation of the slider.
 	 *
-	 * @defaultValue "horizontal"
+	 * @default "horizontal"
 	 */
 	orientation?: Orientation;
 
 	/**
 	 * Whether the slider is disabled or not.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
+
+	/**
+	 * The positioning of the slider thumb.
+	 *
+	 * @default "contain"
+	 */
+	thumbPositioning?: SliderThumbPositioning;
+
+	/**
+	 * Padding percentage for the track. Creates space before the first
+	 * and after the last tick positions.
+	 *
+	 * This can also be used as an SSR-friendly alternative to `thumbPositioning="contain"`,
+	 * which requires client-side measurement.
+	 */
+	trackPadding?: number;
 };
 
 export type SliderSingleRootPropsWithoutHTML = BaseSliderRootPropsWithoutHTML & {
@@ -74,6 +151,8 @@ export type SliderSingleRootPropsWithoutHTML = BaseSliderRootPropsWithoutHTML & 
 	/**
 	 * The value of the slider.
 	 * @bindable
+	 *
+	 * @default min
 	 */
 	value?: number;
 
@@ -140,20 +219,25 @@ export type SliderRangePropsWithoutHTML = WithChild;
 export type SliderRangeProps = SliderRangePropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderRangePropsWithoutHTML>;
 
-export type SliderThumbPropsWithoutHTML = WithChild<{
-	/**
-	 * Whether the thumb is disabled or not.
-	 *
-	 * @defaultValue false
-	 */
-	disabled?: boolean;
+export type SliderThumbSnippetProps = { active: boolean };
 
-	/**
-	 * The index of the thumb in the array of thumbs provided by the `children` snippet prop of the
-	 * `Slider.Root` component.
-	 */
-	index: number;
-}>;
+export type SliderThumbPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * Whether the thumb is disabled or not.
+		 *
+		 * @default false
+		 */
+		disabled?: boolean;
+
+		/**
+		 * The index of the thumb in the array of thumbs provided by the `children` snippet prop of the
+		 * `Slider.Root` component.
+		 */
+		index: number;
+	},
+	SliderThumbSnippetProps
+>;
 
 export type SliderThumbProps = SliderThumbPropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderThumbPropsWithoutHTML>;
@@ -168,3 +252,43 @@ export type SliderTickPropsWithoutHTML = WithChild<{
 
 export type SliderTickProps = SliderTickPropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SliderTickPropsWithoutHTML>;
+
+export type SliderTickLabelPropsWithoutHTML = WithChild<{
+	/**
+	 * The index of the tick the label represents in the array of ticks
+	 * provided by the  `children` snippet prop of the `Slider.Root` component.
+	 */
+	index: number;
+
+	/**
+	 * The position of the label relative to the tick.
+	 * For horizontal sliders: "top" | "bottom"
+	 * For vertical sliders: "left" | "right"
+	 *
+	 * @default for horizontal sliders = "top" and for vertical sliders = "left"
+	 */
+	position?: SliderLabelPosition;
+}>;
+
+export type SliderTickLabelProps = SliderTickLabelPropsWithoutHTML &
+	Without<BitsPrimitiveSpanAttributes, SliderTickLabelPropsWithoutHTML>;
+
+export type SliderThumbLabelPropsWithoutHTML = WithChild<{
+	/**
+	 * The index of the thumb the label represents in the array of thumbs
+	 * provided by the `children` snippet prop of the `Slider.Root` component.
+	 */
+	index: number;
+
+	/**
+	 * The position of the label relative to the thumb.
+	 * For horizontal sliders: "top" | "bottom"
+	 * For vertical sliders: "left" | "right"
+	 *
+	 * @default for horizontal sliders = "top" and for vertical sliders = "left"
+	 */
+	position?: SliderLabelPosition;
+}>;
+
+export type SliderThumbLabelProps = SliderThumbLabelPropsWithoutHTML &
+	Without<BitsPrimitiveSpanAttributes, SliderThumbLabelPropsWithoutHTML>;

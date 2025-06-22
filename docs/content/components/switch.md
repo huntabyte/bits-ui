@@ -22,17 +22,17 @@ The Switch component provides an intuitive and accessible toggle control, allowi
 
 ## Key Features
 
--   **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
--   **State Management**: Internally manages the on/off state, with options for controlled and uncontrolled usage.
--   **Style-able**: Data attributes allow for smooth transitions between states and custom styles.
--   **HTML Forms**: Can render a hidden input element for form submissions.
+- **Accessibility**: Built with WAI-ARIA guidelines in mind, ensuring keyboard navigation and screen reader support.
+- **State Management**: Internally manages the on/off state, with options for controlled and uncontrolled usage.
+- **Style-able**: Data attributes allow for smooth transitions between states and custom styles.
+- **HTML Forms**: Can render a hidden input element for form submissions.
 
 ## Architecture
 
 The Switch component is composed of two main parts:
 
--   **Root**: The main container component that manages the state and behavior of the switch.
--   **Thumb**: The "movable" part of the switch that indicates the current state.
+- **Root**: The main container component that manages the state and behavior of the switch.
+- **Thumb**: The "movable" part of the switch that indicates the current state.
 
 ## Structure
 
@@ -40,11 +40,11 @@ Here's an overview of how the Switch component is structured in code:
 
 ```svelte
 <script lang="ts">
-	import { Switch } from "bits-ui";
+  import { Switch } from "bits-ui";
 </script>
 
 <Switch.Root>
-	<Switch.Thumb />
+  <Switch.Thumb />
 </Switch.Root>
 ```
 
@@ -56,20 +56,20 @@ In the example below, we're using the `Checkbox` and [`Label`](/docs/components/
 
 ```svelte title="MySwitch.svelte"
 <script lang="ts">
-	import { Switch, Label, useId, type WithoutChildrenOrChild } from "bits-ui";
+  import { Switch, Label, useId, type WithoutChildrenOrChild } from "bits-ui";
 
-	let {
-		id = useId(),
-		checked = $bindable(false),
-		ref = $bindable(null),
-		...restProps
-	}: WithoutChildrenOrChild<Switch.RootProps> & {
-		labelText: string;
-	} = $props();
+  let {
+    id = useId(),
+    checked = $bindable(false),
+    ref = $bindable(null),
+    ...restProps
+  }: WithoutChildrenOrChild<Switch.RootProps> & {
+    labelText: string;
+  } = $props();
 </script>
 
 <Switch.Root bind:checked bind:ref {id} {...restProps}>
-	<Switch.Thumb />
+  <Switch.Thumb />
 </Switch.Root>
 <Label.Root for={id}>{labelText}</Label.Root>
 ```
@@ -78,9 +78,9 @@ You can then use the `MySwitch` component in your application like so:
 
 ```svelte
 <script lang="ts">
-	import MySwitch from "$lib/components/MySwitch.svelte";
+  import MySwitch from "$lib/components/MySwitch.svelte";
 
-	let notifications = $state(true);
+  let notifications = $state(true);
 </script>
 
 <MySwitch bind:checked={notifications} labelText="Enable notifications" />
@@ -96,8 +96,8 @@ Use `bind:checked` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { Switch } from "bits-ui";
-	let myChecked = $state(true);
+  import { Switch } from "bits-ui";
+  let myChecked = $state(true);
 </script>
 
 <button onclick={() => (myChecked = false)}> uncheck </button>
@@ -111,20 +111,20 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { Switch } from "bits-ui";
-	let myChecked = $state(false);
+  import { Switch } from "bits-ui";
+  let myChecked = $state(false);
 
-	function getChecked() {
-		return myChecked;
-	}
+  function getChecked() {
+    return myChecked;
+  }
 
-	function setChecked(newChecked: boolean) {
-		myChecked = newChecked;
-	}
+  function setChecked(newChecked: boolean) {
+    myChecked = newChecked;
+  }
 </script>
 
 <Switch.Root bind:checked={getChecked, setChecked}>
-	<!-- ... -->
+  <!-- ... -->
 </Switch.Root>
 ```
 
@@ -134,7 +134,7 @@ You can disable the switch by setting the `disabled` prop to `true`.
 
 ```svelte /disabled/
 <Switch.Root disabled>
-	<!-- ...-->
+  <!-- ...-->
 </Switch.Root>
 ```
 
@@ -148,7 +148,7 @@ By default, the input will be submitted with the default checkbox value of `'on'
 
 ```svelte /name="dnd"/
 <Switch.Root name="dnd">
-	<!-- ... -->
+  <!-- ... -->
 </Switch.Root>
 ```
 
@@ -160,8 +160,8 @@ For example, if you wanted to submit a string value, you could do the following:
 
 ```svelte /value="hello"/
 <Switch.Root name="dnd" value="hello">
-	<!-- ... -->
-	<Switch.Thumb />
+  <!-- ... -->
+  <Switch.Thumb />
 </Switch.Root>
 ```
 
@@ -171,7 +171,7 @@ If you want to make the switch required, you can use the `required` prop.
 
 ```svelte /required/
 <Switch.Root required>
-	<!-- ... -->
+  <!-- ... -->
 </Switch.Root>
 ```
 

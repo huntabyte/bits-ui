@@ -24,6 +24,7 @@ import { popover } from "./popover.api.js";
 import { progress } from "./progress.api.js";
 import { radioGroup } from "./radio-group.api.js";
 import { rangeCalendar } from "./range-calendar.api.js";
+import { ratingGroup } from "./rating-group.api.js";
 import { scrollArea } from "./scroll-area.api.js";
 import { select } from "./select.api.js";
 import { separator } from "./separator.api.js";
@@ -36,7 +37,11 @@ import { toolbar } from "./toolbar.api.js";
 import { tooltip } from "./tooltip.api.js";
 import { menubar } from "./menubar.api.js";
 import { meter } from "./meter.api.js";
+import { timeField } from "./time-field.api.js";
 import type { APISchema } from "$lib/types/index.js";
+import { timeRangeField } from "./time-range-field.api.js";
+import { bitsConfig } from "./bits-config.api.js";
+import { portal } from "./portal.api.js";
 
 export const bits = [
 	"accordion",
@@ -67,12 +72,15 @@ export const bits = [
 	"progress",
 	"radio-group",
 	"range-calendar",
+	"rating-group",
 	"scroll-area",
 	"select",
 	"separator",
 	"slider",
 	"switch",
 	"tabs",
+	"time-field",
+	"time-range-field",
 	"toggle",
 	"toggle-group",
 	"toolbar",
@@ -116,20 +124,45 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	progress,
 	"radio-group": radioGroup,
 	"range-calendar": rangeCalendar,
+	"rating-group": ratingGroup,
 	"scroll-area": scrollArea,
 	select,
 	separator,
 	slider,
 	switch: switchData,
 	tabs,
+	"time-field": timeField,
+	"time-range-field": timeRangeField,
 	toggle,
 	"toggle-group": toggleGroup,
 	toolbar,
 	tooltip,
 };
 
+export const utilities = ["bits-config", "is-using-keyboard", "merge-props", "portal", "use-id"];
+
+export const utilitiesSet = new Set(utilities);
+
+export type Utility = (typeof utilities)[number];
+
+export const utilitiesSchemas: Record<Utility, APISchema[]> = {
+	"bits-config": [bitsConfig],
+	"is-using-keyboard": [],
+	"merge-props": [],
+	portal: [portal],
+	"use-id": [],
+};
+
+export function isUtility(value: string): value is Utility {
+	return utilitiesSet.has(value as (typeof utilities)[number]);
+}
+
+export function getUtilityAPISchemas(utility: Utility): APISchema[] {
+	return utilitiesSchemas[utility];
+}
+
 export function getAPISchemas(bit: Bit): APISchema[] {
 	return apiSchemas[bit];
 }
 
-export * from "./helpers.js";
+export * from "./shared.js";

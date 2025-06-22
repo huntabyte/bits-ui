@@ -14,6 +14,7 @@ import type {
 	Without,
 } from "$lib/internal/types.js";
 import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+import type { HTMLInputAttributes } from "svelte/elements";
 
 export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -48,6 +49,11 @@ export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	 * A callback function called when the open state changes.
 	 */
 	onOpenChange?: OnChangeFn<boolean>;
+
+	/**
+	 * A callback function called when the open state changes and the animation is complete.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
 
 	/**
 	 * Whether or not the combobox menu should loop through the items when navigating with the keyboard.
@@ -88,6 +94,11 @@ export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	 * This is only applicable to `type="single"` selects/comboboxes.
 	 */
 	allowDeselect?: boolean;
+
+	/**
+	 * The autocomplete attribute to forward to the hidden input element.
+	 */
+	autocomplete?: HTMLInputAttributes["autocomplete"];
 }>;
 
 export type SelectSingleRootPropsWithoutHTML = {
@@ -262,12 +273,22 @@ export type SelectViewportPropsWithoutHTML = WithChild;
 export type SelectViewportProps = SelectViewportPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectViewportPropsWithoutHTML>;
 
-export type SelectScrollUpButtonPropsWithoutHTML = WithChild;
+export type SelectScrollButtonPropsWithoutHTML = WithChild<{
+	/**
+	 * Controls the initial delay (tick 0) and delay between auto-scrolls in milliseconds.
+	 * The default function always returns 50ms.
+	 *
+	 * @param tick current tick number
+	 */
+	delay?: (tick: number) => number;
+}>;
+
+export type SelectScrollUpButtonPropsWithoutHTML = SelectScrollButtonPropsWithoutHTML;
 
 export type SelectScrollUpButtonProps = SelectScrollUpButtonPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectScrollUpButtonPropsWithoutHTML>;
 
-export type SelectScrollDownButtonPropsWithoutHTML = WithChild;
+export type SelectScrollDownButtonPropsWithoutHTML = SelectScrollButtonPropsWithoutHTML;
 
 export type SelectScrollDownButtonProps = SelectScrollDownButtonPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectScrollDownButtonPropsWithoutHTML>;

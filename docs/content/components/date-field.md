@@ -1,6 +1,6 @@
 ---
 title: Date Field
-description: Enables users to input specific dates within a designated field.
+description: Enables users to input a date within a designated field.
 ---
 
 <script>
@@ -31,20 +31,20 @@ The `DateField` component is an alternative to the native `<input type="date">` 
 
 ```svelte
 <script lang="ts">
-	import { DateField } from "$lib";
+  import { DateField } from "bits-ui";
 </script>
 
 <DateField.Root>
-	<DateField.Label>Check-in date</DateField.Label>
-	<DateField.Input>
-		{#snippet children({ segments })}
-			{#each segments as { part, value }}
-				<DateField.Segment {part}>
-					{value}
-				</DateField.Segment>
-			{/each}
-		{/snippet}
-	</DateField.Input>
+  <DateField.Label>Check-in date</DateField.Label>
+  <DateField.Input>
+    {#snippet children({ segments })}
+      {#each segments as { part, value }}
+        <DateField.Segment {part}>
+          {value}
+        </DateField.Segment>
+      {/each}
+    {/snippet}
+  </DateField.Input>
 </DateField.Root>
 ```
 
@@ -56,26 +56,30 @@ The following example shows how you might create a reusable `MyDateField` compon
 
 ```svelte title="MyDateField.svelte"
 <script lang="ts">
-	import { DateField, type WithoutChildrenOrChild } from "bits-ui";
+  import { DateField, type WithoutChildrenOrChild } from "bits-ui";
 
-	type Props = WithoutChildrenOrChild<DateField.RootProps> & {
-		labelText: string;
-	};
-
-	let { value, placeholder, name, ...restProps }: Props = $props();
+  let {
+    value = $bindable(),
+    placeholder = $bindable(),
+    name,
+    ...restProps
+  }: WithoutChildrenOrChild<DateField.RootProps> & {
+    labelText: string;
+    name?: string;
+  } = $props();
 </script>
 
-<DateField.Root bind:value bind:placeholder {name} {...restProps}>
-	<DateField.Label>{labelText}</DateField.Label>
-	<DateField.Input>
-		{#snippet children({ segments })}
-			{#each segments as { part, value }}
-				<DateField.Segment {part}>
-					{value}
-				</DateField.Segment>
-			{/each}
-		{/snippet}
-	</DateField.Input>
+<DateField.Root bind:value bind:placeholder {...restProps}>
+  <DateField.Label {name}>{labelText}</DateField.Label>
+  <DateField.Input>
+    {#snippet children({ segments })}
+      {#each segments as { part, value }}
+        <DateField.Segment {part}>
+          {value}
+        </DateField.Segment>
+      {/each}
+    {/snippet}
+  </DateField.Input>
 </DateField.Root>
 ```
 
@@ -103,8 +107,8 @@ By default, the `placeholder` will be set to the current date, and be of type `C
 
 ```svelte
 <script lang="ts">
-	import MyDateField from "$lib/components/MyDateField.svelte";
-	import { CalendarDateTime } from "@internationalized/date";
+  import MyDateField from "$lib/components/MyDateField.svelte";
+  import { CalendarDateTime } from "@internationalized/date";
 </script>
 
 <MyDateField placeholder={new CalendarDateTime(2024, 8, 3, 12, 30)} />
@@ -118,8 +122,8 @@ If we're collecting a date from the user where we want the timezone as well, we 
 
 ```svelte
 <script lang="ts">
-	import MyDateField from "$lib/components/MyDateField.svelte";
-	import { now, getLocalTimeZone } from "@internationalized/date";
+  import MyDateField from "$lib/components/MyDateField.svelte";
+  import { now, getLocalTimeZone } from "@internationalized/date";
 </script>
 
 <MyDateField placeholder={now("America/New_York")} />
@@ -145,17 +149,17 @@ Use `bind:placeholder` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { DateField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+  import { DateField } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myPlaceholder = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
 <button onclick={() => (myPlaceholder = new CalendarDate(2024, 8, 3))}>
-	Set placeholder to August 3rd, 2024
+  Set placeholder to August 3rd, 2024
 </button>
 
 <DateField.Root bind:placeholder={myPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </DateField.Root>
 ```
 
@@ -165,21 +169,21 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-	import { DateField } from "bits-ui";
-	import type { DateValue } from "@internationalized/date";
-	let myPlaceholder = $state<DateValue>();
+  import { DateField } from "bits-ui";
+  import type { DateValue } from "@internationalized/date";
+  let myPlaceholder = $state<DateValue>();
 
-	function getPlaceholder() {
-		return myPlaceholder;
-	}
+  function getPlaceholder() {
+    return myPlaceholder;
+  }
 
-	function setPlaceholder(newPlaceholder: DateValue) {
-		myPlaceholder = newPlaceholder;
-	}
+  function setPlaceholder(newPlaceholder: DateValue) {
+    myPlaceholder = newPlaceholder;
+  }
 </script>
 
 <DateField.Root bind:placeholder={getPlaceholder, setPlaceholder}>
-	<!-- ... -->
+  <!-- ... -->
 </DateField.Root>
 ```
 
@@ -193,14 +197,16 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-	import { DateField } from "bits-ui";
-	import { CalendarDateTime } from "@internationalized/date";
-	let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
+  import { DateField } from "bits-ui";
+  import { CalendarDateTime } from "@internationalized/date";
+  let myValue = $state(new CalendarDateTime(2024, 8, 3, 12, 30));
 </script>
 
-<button onclick={() => (myValue = myValue.add({ days: 1 }))}> Add 1 day </button>
+<button onclick={() => (myValue = myValue.add({ days: 1 }))}>
+  Add 1 day
+</button>
 <DateField.Root bind:value={myValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DateField.Root>
 ```
 
@@ -210,21 +216,21 @@ For complete control over the component's state, use a [Function Binding](https:
 
 ```svelte
 <script lang="ts">
-	import { DateField } from "bits-ui";
-	import type { DateValue } from "@internationalized/date";
-	let myValue = $state<DateValue>();
+  import { DateField } from "bits-ui";
+  import type { DateValue } from "@internationalized/date";
+  let myValue = $state<DateValue>();
 
-	function getValue() {
-		return myValue;
-	}
+  function getValue() {
+    return myValue;
+  }
 
-	function setValue(newValue: DateValue) {
-		myValue = newValue;
-	}
+  function setValue(newValue: DateValue | undefined) {
+    myValue = newValue;
+  }
 </script>
 
 <DateField.Root bind:value={getValue, setValue}>
-	<!-- ... -->
+  <!-- ... -->
 </DateField.Root>
 ```
 
@@ -234,17 +240,17 @@ Often, you'll want to start the `DateField.Root` component with a default value.
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import { DateField } from "bits-ui";
-	import { parseDate } from "@internationalized/date";
+  import { DateField } from "bits-ui";
+  import { parseDate } from "@internationalized/date";
 
-	// this came from a database/API call
-	const date = "2024-08-03";
+  // this came from a database/API call
+  const date = "2024-08-03";
 
-	let value = $state(parseDate(date));
+  let value = $state(parseDate(date));
 </script>
 
 <DateField.Root {value}>
-	<!-- ... -->
+  <!-- ... -->
 </DateField.Root>
 ```
 
@@ -262,11 +268,11 @@ You can set a minimum value for the `DateField.Root` component by using the `min
 
 ```svelte
 <script lang="ts">
-	import MyDateField from "$lib/components/MyDateField.svelte";
-	import { today, getLocalTimeZone } from "@internationalized/date";
+  import MyDateField from "$lib/components/MyDateField.svelte";
+  import { today, getLocalTimeZone } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
-	const yesterday = todayDate.subtract({ days: 1 });
+  const todayDate = today(getLocalTimeZone());
+  const yesterday = todayDate.subtract({ days: 1 });
 </script>
 
 <MyDateField minValue={todayDate} value={yesterday} />
@@ -284,11 +290,11 @@ You can set a maximum value for the `DateField.Root` component by using the `max
 
 ```svelte
 <script lang="ts">
-	import MyDateField from "$lib/components/MyDateField.svelte";
-	import { today, getLocalTimeZone } from "@internationalized/date";
+  import MyDateField from "$lib/components/MyDateField.svelte";
+  import { today, getLocalTimeZone } from "@internationalized/date";
 
-	const todayDate = today(getLocalTimeZone());
-	const tomorrow = todayDate.add({ days: 1 });
+  const todayDate = today(getLocalTimeZone());
+  const tomorrow = todayDate.add({ days: 1 });
 </script>
 
 <MyDateField maxValue={todayDate} value={tomorrow} />
@@ -308,35 +314,40 @@ The strings are then passed to the `onInvalid` callback, which you can use to di
 
 ```svelte
 <script lang="ts">
-	import MyDateField from "$lib/components/MyDateField.svelte";
-	import { CalendarDate, type DateValue } from "@internationalized/date";
+  import MyDateField from "$lib/components/MyDateField.svelte";
+  import { CalendarDate, type DateValue } from "@internationalized/date";
 
-	const value = new CalendarDate(2024, 8, 2);
+  const value = new CalendarDate(2024, 8, 2);
 
-	function validate(date: DateValue) {
-		return date.day === 1 ? "Date cannot be the first day of the month" : undefined;
-	}
+  function validate(date: DateValue) {
+    return date.day === 1
+      ? "Date cannot be the first day of the month"
+      : undefined;
+  }
 
-	function onInvalid(reason: "min" | "max" | "custom", msg?: string | string[]) {
-		if (reason === "custom") {
-			if (typeof msg === "string") {
-				// do something with the error message
-				console.log(msg);
-				return;
-			} else if (Array.isArray(msg)) {
-				// do something with the error messages
-				console.log(msg);
-				return;
-			}
-			console.log("The date is invalid");
-		} else if (reason === "min") {
-			// let the user know that the date is too early.
-			console.log("The date is too early.");
-		} else if (reason === "max") {
-			// let the user know that the date is too late.
-			console.log("The date is too late.");
-		}
-	}
+  function onInvalid(
+    reason: "min" | "max" | "custom",
+    msg?: string | string[]
+  ) {
+    if (reason === "custom") {
+      if (typeof msg === "string") {
+        // do something with the error message
+        console.log(msg);
+        return;
+      } else if (Array.isArray(msg)) {
+        // do something with the error messages
+        console.log(msg);
+        return;
+      }
+      console.log("The date is invalid");
+    } else if (reason === "min") {
+      // let the user know that the date is too early.
+      console.log("The date is too early.");
+    } else if (reason === "max") {
+      // let the user know that the date is too late.
+      console.log("The date is too late.");
+    }
+  }
 </script>
 
 <MyDateField {validate} {value} {onInvalid} />
@@ -365,7 +376,7 @@ The strings are then passed to the `onInvalid` callback, which you can use to di
 	}} />
 </DemoContainer>
 
-In the example above, we're setting the `isDateUnavailable` prop to a function that returns `true` for the first day of the month. Try selecting a date that is the first day of the month to see the date field marked as invalid.
+Try selecting a date that is the first day of the month to see the date field marked as invalid.
 
 ## Granularity
 
@@ -373,10 +384,10 @@ The `granularity` prop sets the granularity of the date field, which determines 
 
 ```svelte
 <script lang="ts">
-	import MyDateField from "$lib/components/MyDateField.svelte";
-	import { CalendarDateTime } from "@internationalized/date";
+  import MyDateField from "$lib/components/MyDateField.svelte";
+  import { CalendarDateTime } from "@internationalized/date";
 
-	const value = new CalendarDateTime(2024, 8, 2, 12, 30);
+  const value = new CalendarDateTime(2024, 8, 2, 12, 30);
 </script>
 
 <MyDateField granularity="second" {value} />
@@ -394,7 +405,7 @@ You can use the `locale` prop to set the locale of the date field. This will aff
 
 ```svelte
 <script lang="ts">
-	import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "$lib/components/MyDateField.svelte";
 </script>
 
 <MyDateField locale="de" />

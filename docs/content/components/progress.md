@@ -20,17 +20,17 @@ While often visually similar, progress bars and [Meters](/docs/components/meter)
 
 **Progress**:
 
--   Shows **completion status** of a task
--   Value only increases as task progresses
--   Examples: File upload, installation status, form completion
--   Use when tracking advancement toward completion
+- Shows **completion status** of a task
+- Value only increases as task progresses
+- Examples: File upload, installation status, form completion
+- Use when tracking advancement toward completion
 
 **Meter**:
 
--   Displays a **static measurement** within a known range (0-100)
--   Value can fluctuate up/down based on real-time measurements
--   Examples: CPU usage, battery level, sound volume
--   Use when showing current state relative to capacity
+- Displays a **static measurement** within a known range (0-100)
+- Value can fluctuate up/down based on real-time measurements
+- Examples: CPU usage, battery level, sound volume
+- Use when showing current state relative to capacity
 
 If a meter better fits your requirements, check out the [Meter](/docs/components/meter) component.
 
@@ -38,7 +38,7 @@ If a meter better fits your requirements, check out the [Meter](/docs/components
 
 ```svelte
 <script lang="ts">
-	import { Progress } from "bits-ui";
+  import { Progress } from "bits-ui";
 </script>
 
 <Progress.Root />
@@ -50,37 +50,43 @@ It's recommended to use the `Progress` primitive to create your own custom meter
 
 ```svelte
 <script lang="ts">
-	import { Progress, useId } from "bits-ui";
-	import type { ComponentProps } from "svelte";
+  import { Progress, useId } from "bits-ui";
+  import type { ComponentProps } from "svelte";
 
-	let {
-		max = 100,
-		value = 0,
-		min = 0,
-		label,
-		valueLabel,
-	}: ComponentProps<typeof Progress.Root> & {
-		label: string;
-		valueLabel: string;
-	} = $props();
+  let {
+    max = 100,
+    value = 0,
+    min = 0,
+    label,
+    valueLabel,
+  }: ComponentProps<typeof Progress.Root> & {
+    label: string;
+    valueLabel: string;
+  } = $props();
 
-	const labelId = useId();
+  const labelId = useId();
 </script>
 
 <div>
-	<span id={labelId}> {label} </span>
-	<span>{valueLabel}</span>
+  <span id={labelId}> {label} </span>
+  <span>{valueLabel}</span>
 </div>
-<Progress.Root aria-labelledby={labelId} aria-valuetext={valueLabel} {value} {min} {max} />
+<Progress.Root
+  aria-labelledby={labelId}
+  aria-valuetext={valueLabel}
+  {value}
+  {min}
+  {max}
+/>
 ```
 
 You can then use the `MyProgress` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-	import MyProgress from "$lib/components/MyProgress.svelte";
+  import MyProgress from "$lib/components/MyProgress.svelte";
 
-	let value = $state(50);
+  let value = $state(50);
 </script>
 
 <MyProgress label="Loading images..." valueLabel="{value}%" {value} />

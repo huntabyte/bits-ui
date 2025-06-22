@@ -1,5 +1,6 @@
 export { default as Root } from "./components/menu.svelte";
 export { default as Arrow } from "./components/menu-arrow.svelte";
+export { default as CheckboxGroup } from "./components/menu-checkbox-group.svelte";
 export { default as CheckboxItem } from "./components/menu-checkbox-item.svelte";
 export { default as Content } from "./components/menu-content.svelte";
 export { default as ContentStatic } from "./components/menu-content-static.svelte";
@@ -27,6 +28,7 @@ export type {
 	MenuSubContentStaticProps as SubContentStaticProps,
 	MenuSeparatorProps as SeparatorProps,
 	MenuArrowProps as ArrowProps,
+	MenuCheckboxGroupProps as CheckboxGroupProps,
 	MenuCheckboxItemProps as CheckboxItemProps,
 	MenuGroupHeadingProps as GroupHeadingProps,
 	MenuGroupProps as GroupProps,

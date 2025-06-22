@@ -1,19 +1,21 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { TabsContentProps } from "../types.js";
-	import { useTabsContent } from "../tabs.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { TabsContentState } from "../tabs.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
+
+	const uid = $props.id();
 
 	let {
 		children,
 		child,
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value,
 		...restProps
 	}: TabsContentProps = $props();
 
-	const contentState = useTabsContent({
+	const contentState = TabsContentState.create({
 		value: box.with(() => value),
 		id: box.with(() => id),
 		ref: box.with(

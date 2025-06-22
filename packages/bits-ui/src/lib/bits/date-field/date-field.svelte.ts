@@ -1,17 +1,26 @@
 import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
-import { type WritableBox, box, onDestroyEffect, useRefById } from "svelte-toolbelt";
+import {
+	type WritableBox,
+	box,
+	onDestroyEffect,
+	attachRef,
+	DOMContext,
+	type ReadableBoxedValues,
+	type WritableBoxedValues,
+} from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
-import type { ReadableBoxedValues, WritableBoxedValues } from "$lib/internal/box.svelte.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
-	WithRefProps,
+	WithRefOpts,
+	RefAttachment,
 } from "$lib/internal/types.js";
 import {
+	createBitsAttrs,
 	getAriaDisabled,
 	getAriaHidden,
 	getAriaInvalid,
@@ -34,7 +43,7 @@ import type {
 	SegmentPart,
 	SegmentValueObj,
 	TimeSegmentObj,
-	TimeSegmentPart,
+	EditableTimeSegmentPart,
 } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
@@ -52,7 +61,10 @@ import {
 	removeDescriptionElement,
 	setDescription,
 } from "$lib/internal/date-time/field/helpers.js";
-import { DATE_SEGMENT_PARTS, TIME_SEGMENT_PARTS } from "$lib/internal/date-time/field/parts.js";
+import {
+	DATE_SEGMENT_PARTS,
+	EDITABLE_TIME_SEGMENT_PARTS,
+} from "$lib/internal/date-time/field/parts.js";
 import { getDaysInMonth, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import {
 	getFirstSegment,
@@ -62,53 +74,136 @@ import {
 	moveToPrevSegment,
 } from "$lib/internal/date-time/field/segments.js";
 
-export const DATE_FIELD_INPUT_ATTR = "data-date-field-input";
-const DATE_FIELD_LABEL_ATTR = "data-date-field-label";
+export const dateFieldAttrs = createBitsAttrs({
+	component: "date-field",
+	parts: ["input", "label", "segment"],
+});
 
-export type DateFieldRootStateProps = WritableBoxedValues<{
-	value: DateValue | undefined;
-	placeholder: DateValue;
-}> &
-	ReadableBoxedValues<{
-		readonlySegments: SegmentPart[];
-		validate: DateValidator | undefined;
-		onInvalid: DateOnInvalid | undefined;
-		minValue: DateValue | undefined;
-		maxValue: DateValue | undefined;
-		disabled: boolean;
-		readonly: boolean;
-		granularity: Granularity | undefined;
-		hourCycle: HourCycle | undefined;
-		locale: string;
-		hideTimeZone: boolean;
-		required: boolean;
-		errorMessageId: string | undefined;
-		isInvalidProp: boolean | undefined;
-	}>;
+// Common segment configuration
+interface SegmentConfig {
+	min: number | ((root: DateFieldRootState) => number);
+	max: number | ((root: DateFieldRootState) => number);
+	cycle: number;
+	canBeZero?: boolean;
+	padZero?: boolean;
+	getAnnouncement?: (value: number, root: DateFieldRootState) => string | number;
+	updateLogic?: (props: {
+		root: DateFieldRootState;
+		prev: string | null;
+		num: number;
+		moveToNext: { value: boolean };
+	}) => string | null;
+}
+
+const SEGMENT_CONFIGS: Record<
+	"day" | "month" | "year" | "hour" | "minute" | "second",
+	SegmentConfig
+> = {
+	day: {
+		min: 1,
+		max: (root) => {
+			const segmentMonthValue = root.segmentValues.month;
+			const placeholder = root.value.current ?? root.placeholder.current;
+			return segmentMonthValue
+				? getDaysInMonth(placeholder.set({ month: Number.parseInt(segmentMonthValue) }))
+				: getDaysInMonth(placeholder);
+		},
+		cycle: 1,
+		padZero: true,
+	},
+	month: {
+		min: 1,
+		max: 12,
+		cycle: 1,
+		padZero: true,
+		getAnnouncement: (month, root) =>
+			`${month} - ${root.formatter.fullMonth(toDate(root.placeholder.current.set({ month })))}`,
+	},
+	year: {
+		min: 1,
+		max: 9999,
+		cycle: 1,
+		padZero: false,
+	},
+	hour: {
+		min: (root) => (root.hourCycle.current === 12 ? 1 : 0),
+		max: (root) => {
+			if (root.hourCycle.current === 24) return 23;
+			if ("dayPeriod" in root.segmentValues && root.segmentValues.dayPeriod !== null)
+				return 12;
+			return 23;
+		},
+		cycle: 1,
+		canBeZero: true,
+		padZero: true,
+	},
+	minute: {
+		min: 0,
+		max: 59,
+		cycle: 1,
+		canBeZero: true,
+		padZero: true,
+	},
+	second: {
+		min: 0,
+		max: 59,
+		cycle: 1,
+		canBeZero: true,
+		padZero: true,
+	},
+};
+
+const DateFieldRootContext = new Context<DateFieldRootState>("DateField.Root");
+
+interface DateFieldRootStateOpts
+	extends WritableBoxedValues<{
+			value: DateValue | undefined;
+			placeholder: DateValue;
+		}>,
+		ReadableBoxedValues<{
+			readonlySegments: SegmentPart[];
+			validate: DateValidator | undefined;
+			onInvalid: DateOnInvalid | undefined;
+			minValue: DateValue | undefined;
+			maxValue: DateValue | undefined;
+			disabled: boolean;
+			readonly: boolean;
+			granularity: Granularity | undefined;
+			hourCycle: HourCycle | undefined;
+			locale: string;
+			hideTimeZone: boolean;
+			required: boolean;
+			errorMessageId: string | undefined;
+			isInvalidProp: boolean | undefined;
+		}> {}
 
 export class DateFieldRootState {
-	value: DateFieldRootStateProps["value"];
+	static create(opts: DateFieldRootStateOpts, rangeRoot?: DateRangeFieldRootState) {
+		return DateFieldRootContext.set(new DateFieldRootState(opts, rangeRoot));
+	}
+
+	value: DateFieldRootStateOpts["value"];
 	placeholder: WritableBox<DateValue>;
-	validate: DateFieldRootStateProps["validate"];
-	minValue: DateFieldRootStateProps["minValue"];
-	maxValue: DateFieldRootStateProps["maxValue"];
-	disabled: DateFieldRootStateProps["disabled"];
-	readonly: DateFieldRootStateProps["readonly"];
-	granularity: DateFieldRootStateProps["granularity"];
-	readonlySegments: DateFieldRootStateProps["readonlySegments"];
-	hourCycle: DateFieldRootStateProps["hourCycle"];
-	locale: DateFieldRootStateProps["locale"];
-	hideTimeZone: DateFieldRootStateProps["hideTimeZone"];
-	required: DateFieldRootStateProps["required"];
-	onInvalid: DateFieldRootStateProps["onInvalid"];
-	errorMessageId: DateFieldRootStateProps["errorMessageId"];
-	isInvalidProp: DateFieldRootStateProps["isInvalidProp"];
+	validate: DateFieldRootStateOpts["validate"];
+	minValue: DateFieldRootStateOpts["minValue"];
+	maxValue: DateFieldRootStateOpts["maxValue"];
+	disabled: DateFieldRootStateOpts["disabled"];
+	readonly: DateFieldRootStateOpts["readonly"];
+	granularity: DateFieldRootStateOpts["granularity"];
+	readonlySegments: DateFieldRootStateOpts["readonlySegments"];
+	hourCycle: DateFieldRootStateOpts["hourCycle"];
+	locale: DateFieldRootStateOpts["locale"];
+	hideTimeZone: DateFieldRootStateOpts["hideTimeZone"];
+	required: DateFieldRootStateOpts["required"];
+	onInvalid: DateFieldRootStateOpts["onInvalid"];
+	errorMessageId: DateFieldRootStateOpts["errorMessageId"];
+	isInvalidProp: DateFieldRootStateOpts["isInvalidProp"];
 	descriptionId = useId();
 	formatter: Formatter;
 	initialSegments: SegmentValueObj;
 	segmentValues = $state() as SegmentValueObj;
 	announcer: Announcer;
-	readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.current));
+	readonly readonlySegmentsSet = $derived.by(() => new Set(this.readonlySegments.current));
 	segmentStates = initSegmentStates();
 	#fieldNode = $state<HTMLElement | null>(null);
 	#labelNode = $state<HTMLElement | null>(null);
@@ -118,8 +213,9 @@ export class DateFieldRootState {
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
+	domContext: DOMContext = new DOMContext(() => null);
 
-	constructor(props: DateFieldRootStateProps, rangeRoot?: DateRangeFieldRootState) {
+	constructor(props: DateFieldRootStateOpts, rangeRoot?: DateRangeFieldRootState) {
 		this.rangeRoot = rangeRoot;
 		/**
 		 * Since the `DateFieldRootState` can be used in two contexts, as a standalone
@@ -144,11 +240,14 @@ export class DateFieldRootState {
 		this.onInvalid = rangeRoot ? rangeRoot.opts.onInvalid : props.onInvalid;
 		this.errorMessageId = rangeRoot ? rangeRoot.opts.errorMessageId : props.errorMessageId;
 		this.isInvalidProp = props.isInvalidProp;
-		this.formatter = createFormatter(this.locale.current);
+		this.formatter = createFormatter({
+			initialLocale: this.locale.current,
+			monthFormat: box.with(() => "long"),
+			yearFormat: box.with(() => "numeric"),
+		});
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
-		this.announcer = getAnnouncer();
-
+		this.announcer = getAnnouncer(null);
 		this.getFieldNode = this.getFieldNode.bind(this);
 		this.updateSegment = this.updateSegment.bind(this);
 		this.handleSegmentClick = this.handleSegmentClick.bind(this);
@@ -161,12 +260,12 @@ export class DateFieldRootState {
 		});
 
 		onMount(() => {
-			this.announcer = getAnnouncer();
+			this.announcer = getAnnouncer(this.domContext.getDocument());
 		});
 
 		onDestroyEffect(() => {
 			if (rangeRoot) return;
-			removeDescriptionElement(this.descriptionId);
+			removeDescriptionElement(this.descriptionId, this.domContext.getDocument());
 		});
 
 		$effect(() => {
@@ -179,7 +278,12 @@ export class DateFieldRootState {
 			if (rangeRoot) return;
 			if (this.value.current) {
 				const descriptionId = untrack(() => this.descriptionId);
-				setDescription(descriptionId, this.formatter, this.value.current);
+				setDescription({
+					id: descriptionId,
+					formatter: this.formatter,
+					value: this.value.current,
+					doc: this.domContext.getDocument(),
+				});
 			}
 			const placeholder = untrack(() => this.placeholder.current);
 			if (this.value.current && placeholder !== this.value.current) {
@@ -210,17 +314,17 @@ export class DateFieldRootState {
 			}
 		});
 
-		$effect(() => {
-			this.validationStatus;
-			untrack(() => {
+		watch(
+			() => this.validationStatus,
+			() => {
 				if (this.validationStatus !== false) {
 					this.onInvalid.current?.(
 						this.validationStatus.reason,
 						this.validationStatus.message
 					);
 				}
-			});
-		});
+			}
+		);
 	}
 
 	setName(name: string) {
@@ -323,7 +427,7 @@ export class DateFieldRootState {
 			return [part, `${partValue}`];
 		});
 		if ("hour" in value) {
-			const timeValues = TIME_SEGMENT_PARTS.map((part) => {
+			const timeValues = EDITABLE_TIME_SEGMENT_PARTS.map((part) => {
 				if (part === "dayPeriod") {
 					if (this.states.dayPeriod.updating) {
 						return [part, this.states.dayPeriod.updating];
@@ -377,7 +481,7 @@ export class DateFieldRootState {
 		this.segmentValues = Object.fromEntries(dateValues);
 	}
 
-	validationStatus = $derived.by(() => {
+	readonly validationStatus = $derived.by(() => {
 		const value = this.value.current;
 		if (!value) return false as const;
 
@@ -405,34 +509,36 @@ export class DateFieldRootState {
 		return false;
 	});
 
-	isInvalid = $derived.by(() => {
+	readonly isInvalid = $derived.by(() => {
 		if (this.validationStatus === false) return false;
 		if (this.isInvalidProp.current) return true;
 		return true;
 	});
 
-	inferredGranularity = $derived.by(() => {
+	readonly inferredGranularity = $derived.by(() => {
 		const granularity = this.granularity.current;
 		if (granularity) return granularity;
 		const inferred = inferGranularity(this.placeholder.current, this.granularity.current);
 		return inferred;
 	});
 
-	allSegmentContent = $derived.by(() =>
+	readonly dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
+
+	readonly allSegmentContent = $derived.by(() =>
 		createContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
 			locale: this.locale.current,
 			granularity: this.inferredGranularity,
-			dateRef: this.placeholder.current,
+			dateRef: this.dateRef,
 			hideTimeZone: this.hideTimeZone.current,
 			hourCycle: this.hourCycle.current,
 		})
 	);
 
-	segmentContents = $derived.by(() => this.allSegmentContent.arr);
+	readonly segmentContents = $derived.by(() => this.allSegmentContent.arr);
 
-	sharedSegmentAttrs = {
+	readonly sharedSegmentAttrs = {
 		role: "spinbutton",
 		contenteditable: "true",
 		tabindex: 0,
@@ -453,7 +559,7 @@ export class DateFieldRootState {
 		part: T,
 		cb: T extends DateSegmentPart
 			? Updater<DateSegmentObj[T]>
-			: T extends TimeSegmentPart
+			: T extends EditableTimeSegmentPart
 				? Updater<TimeSegmentObj[T]>
 				: Updater<DateAndTimeSegmentObj[T]>
 	) {
@@ -587,6 +693,7 @@ export class DateFieldRootState {
 			"data-disabled": getDataDisabled(this.disabled.current),
 			"data-readonly": getDataReadonly(this.readonly.current || inReadonlySegments),
 			"data-segment": `${part}`,
+			[dateFieldAttrs.segment]: "",
 		};
 
 		if (part === "literal") return defaultAttrs;
@@ -615,36 +722,45 @@ export class DateFieldRootState {
 	}
 }
 
-type DateFieldInputStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		name: string;
-	}>;
+interface DateFieldInputStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			name: string;
+		}> {}
 
 export class DateFieldInputState {
-	constructor(
-		readonly opts: DateFieldInputStateProps,
-		readonly root: DateFieldRootState
-	) {
-		$effect(() => {
-			this.root.setName(this.opts.name.current);
-		});
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.setFieldNode(node);
-			},
-		});
+	static create(opts: DateFieldInputStateOpts) {
+		return new DateFieldInputState(opts, DateFieldRootContext.get());
 	}
 
-	#ariaDescribedBy = $derived.by(() => {
+	readonly opts: DateFieldInputStateOpts;
+	readonly root: DateFieldRootState;
+	readonly domContext: DOMContext;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: DateFieldInputStateOpts, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.domContext = new DOMContext(opts.ref);
+		this.root.domContext = this.domContext;
+		this.attachment = attachRef(opts.ref, (v) => this.root.setFieldNode(v));
+
+		watch(
+			() => this.opts.name.current,
+			(v) => {
+				this.root.setName(v);
+			}
+		);
+	}
+
+	readonly #ariaDescribedBy = $derived.by(() => {
 		if (!isBrowser) return undefined;
-		const doesDescriptionExist = document.getElementById(this.root.descriptionId);
+		const doesDescriptionExist = this.domContext.getElementById(this.root.descriptionId);
 		if (!doesDescriptionExist) return undefined;
 		return this.root.descriptionId;
 	});
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -654,20 +770,27 @@ export class DateFieldInputState {
 				"aria-disabled": getAriaDisabled(this.root.disabled.current),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				[DATE_FIELD_INPUT_ATTR]: "",
+				[dateFieldAttrs.input]: "",
+				...this.attachment,
 			}) as const
 	);
 }
+export class DateFieldHiddenInputState {
+	static create() {
+		return new DateFieldHiddenInputState(DateFieldRootContext.get());
+	}
 
-class DateFieldHiddenInputState {
-	shouldRender = $derived.by(() => this.root.name !== "");
-	isoValue = $derived.by(() =>
+	readonly root: DateFieldRootState;
+	readonly shouldRender = $derived.by(() => this.root.name !== "");
+	readonly isoValue = $derived.by(() =>
 		this.root.value.current ? this.root.value.current.toString() : ""
 	);
 
-	constructor(readonly root: DateFieldRootState) {}
+	constructor(root: DateFieldRootState) {
+		this.root = root;
+	}
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		return {
 			name: this.root.name,
 			value: this.isoValue,
@@ -676,21 +799,22 @@ class DateFieldHiddenInputState {
 	});
 }
 
-type DateFieldLabelStateProps = WithRefProps;
+interface DateFieldLabelStateOpts extends WithRefOpts {}
 
-class DateFieldLabelState {
-	constructor(
-		readonly opts: DateFieldLabelStateProps,
-		readonly root: DateFieldRootState
-	) {
+export class DateFieldLabelState {
+	static create(opts: DateFieldLabelStateOpts) {
+		return new DateFieldLabelState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldLabelStateOpts;
+	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: DateFieldLabelStateOpts, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.onclick = this.onclick.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.setLabelNode(node);
-			},
-		});
+		this.attachment = attachRef(opts.ref, (v) => this.root.setLabelNode(v));
 	}
 
 	onclick(_: BitsMouseEvent) {
@@ -700,475 +824,93 @@ class DateFieldLabelState {
 		firstSegment.focus();
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				"data-disabled": getDataDisabled(this.root.disabled.current),
-				[DATE_FIELD_LABEL_ATTR]: "",
+				[dateFieldAttrs.label]: "",
 				onclick: this.onclick,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type DateFieldDaySegmentStateProps = WithRefProps;
-
-class DateFieldDaySegmentState {
-	#announcer: Announcer;
-
-	constructor(
-		readonly opts: DateFieldDaySegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		this.#announcer = this.root.announcer;
+// Base class for numeric segments
+abstract class BaseNumericSegmentState {
+	readonly opts: WithRefOpts;
+	readonly root: DateFieldRootState;
+	readonly announcer: Announcer;
+	readonly part: string;
+	readonly config: SegmentConfig;
+	readonly attachment: RefAttachment;
+	constructor(opts: WithRefOpts, root: DateFieldRootState, part: string, config: SegmentConfig) {
+		this.opts = opts;
+		this.root = root;
+		this.part = part;
+		this.config = config;
+		this.announcer = root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
+		this.attachment = attachRef(opts.ref);
+	}
 
-		useRefById(opts);
+	#getMax(): number {
+		return typeof this.config.max === "function" ? this.config.max(this.root) : this.config.max;
+	}
+
+	#getMin(): number {
+		return typeof this.config.min === "function" ? this.config.min(this.root) : this.config.min;
+	}
+
+	#getAnnouncement(value: number): string | number {
+		if (this.config.getAnnouncement) {
+			return this.config.getAnnouncement(value, this.root);
+		}
+		return value;
+	}
+
+	#formatValue(value: number, forDisplay = true): string {
+		const str = String(value);
+		if (forDisplay && this.config.padZero && str.length === 1) {
+			return `0${value}`;
+		}
+		return str;
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		const placeholder = this.root.placeholder.current;
+		const placeholder = this.root.value.current ?? this.root.placeholder.current;
 		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
+
+		// Special check for time segments
+		if (
+			(this.part === "hour" || this.part === "minute" || this.part === "second") &&
+			!(this.part in placeholder)
+		)
+			return;
+
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;
 
-		const segmentMonthValue = this.root.segmentValues.month;
-
-		const daysInMonth = segmentMonthValue
-			? getDaysInMonth(placeholder.set({ month: Number.parseInt(segmentMonthValue) }))
-			: getDaysInMonth(placeholder);
-
 		if (isArrowUp(e.key)) {
-			this.root.updateSegment("day", (prev) => {
-				if (prev === null) {
-					const next = placeholder.day;
-					this.#announcer.announce(next);
-					if (next < 10) return `0${next}`;
-					return `${next}`;
-				}
-				const next = placeholder.set({ day: Number.parseInt(prev) }).cycle("day", 1).day;
-				this.#announcer.announce(next);
-				if (next < 10) return `0${next}`;
-				return `${next}`;
-			});
-			return;
-		}
-		if (isArrowDown(e.key)) {
-			this.root.updateSegment("day", (prev) => {
-				if (prev === null) {
-					const next = placeholder.day;
-					this.#announcer.announce(next);
-					if (next < 10) return `0${next}`;
-					return `${next}`;
-				}
-				const next = placeholder.set({ day: Number.parseInt(prev) }).cycle("day", -1).day;
-
-				this.#announcer.announce(next);
-				if (next < 10) return `0${next}`;
-				return `${next}`;
-			});
-			return;
-		}
-
-		const fieldNode = this.root.getFieldNode();
-
-		if (isNumberString(e.key)) {
-			const num = Number.parseInt(e.key);
-			let moveToNext = false;
-			this.root.updateSegment("day", (prev) => {
-				const max = daysInMonth;
-				const maxStart = Math.floor(max / 10);
-				const numIsZero = num === 0;
-
-				/**
-				 * If the user has left the segment, we want to reset the
-				 * `prev` value so that we can start the segment over again
-				 * when the user types a number.
-				 */
-				if (this.root.states.day.hasLeftFocus) {
-					prev = null;
-					this.root.states.day.hasLeftFocus = false;
-				}
-
-				/**
-				 * We are starting over in the segment if prev is null, which could
-				 * happen in one of two scenarios:
-				 * - the user has left the segment and then comes back to it
-				 * - the segment was empty and the user begins typing a number
-				 */
-				if (prev === null) {
-					/**
-					 * If the user types a 0 as the first number, we want
-					 * to keep track of that so that when they type the next
-					 * number, we can move to the next segment.
-					 */
-					if (numIsZero) {
-						this.root.states.day.lastKeyZero = true;
-						this.#announcer.announce("0");
-						return "0";
-					}
-
-					///////////////////////////
-
-					/**
-					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit (0-3 in most cases), then
-					 * we want to move to the next segment, since it's not possible
-					 * to continue typing a valid number in this segment.
-					 */
-					if (this.root.states.day.lastKeyZero || num > maxStart) {
-						moveToNext = true;
-					}
-
-					this.root.states.day.lastKeyZero = false;
-
-					/**
-					 * If we're moving to the next segment and the number is less than
-					 * two digits, we want to announce the number and return it with a
-					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
-					 */
-					if (moveToNext && String(num).length === 1) {
-						this.#announcer.announce(num);
-						return `0${num}`;
-					}
-
-					/**
-					 * If none of the above conditions are met, then we can just
-					 * return the number as the segment value and continue typing
-					 * in this segment.
-					 */
-					return `${num}`;
-				}
-
-				/**
-				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value for this
-				 * month, then we will reset the segment as if the user had pressed the
-				 * backspace key and then typed the number.
-				 */
-				const total = Number.parseInt(prev + num.toString());
-
-				if (this.root.states.day.lastKeyZero) {
-					/**
-					 * If the new number is not 0, then we reset the lastKeyZero state and
-					 * move to the next segment, returning the new number with a leading 0.
-					 */
-					if (num !== 0) {
-						moveToNext = true;
-						this.root.states.day.lastKeyZero = false;
-						return `0${num}`;
-					}
-
-					/**
-					 * If the new number is 0, then we simply return the previous value, since
-					 * they didn't actually type a new number.
-					 */
-					return prev;
-				}
-
-				/**
-				 * If the total is greater than the max day value possible for this month, then
-				 * we want to move to the next segment, trimming the first digit from the total,
-				 * replacing it with a 0.
-				 */
-				if (total > max) {
-					moveToNext = true;
-					return `0${num}`;
-				}
-
-				/**
-				 * If the total has two digits and is less than or equal to the max day value,
-				 * we will move to the next segment and return the total as the segment value.
-				 */
-				moveToNext = true;
-				return `${total}`;
-			});
-
-			if (moveToNext) {
-				moveToNextSegment(e, fieldNode);
-			}
-		}
-
-		if (isBackspace(e.key)) {
-			let moveToPrev = false;
-			this.root.updateSegment("day", (prev) => {
-				this.root.states.day.hasLeftFocus = false;
-				if (prev === null) {
-					moveToPrev = true;
-					return null;
-				}
-				if (prev.length === 2 && prev.startsWith("0")) {
-					return null;
-				}
-				const str = prev.toString();
-				if (str.length === 1) return null;
-				return str.slice(0, -1);
-			});
-
-			if (moveToPrev) {
-				moveToPrevSegment(e, fieldNode);
-			}
-		}
-
-		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, fieldNode);
-		}
-	}
-
-	onfocusout(_: BitsFocusEvent) {
-		this.root.states.day.hasLeftFocus = true;
-		this.root.updateSegment("month", (prev) => {
-			if (prev && prev.length === 1) {
-				return `0${prev}`;
-			}
-			return prev;
-		});
-	}
-
-	props = $derived.by(() => {
-		const date = this.root.segmentValues.day
-			? this.root.placeholder.current.set({
-					day: Number.parseInt(this.root.segmentValues.day),
-				})
-			: this.root.placeholder.current;
-
-		return {
-			...this.root.sharedSegmentAttrs,
-			id: this.opts.id.current,
-			"aria-label": "day,",
-			"aria-valuemin": 1,
-			"aria-valuemax": getDaysInMonth(toDate(date)),
-			"aria-valuenow": date.day,
-			"aria-valuetext": this.root.segmentValues.day === null ? "Empty" : `${date.day}`,
-			onkeydown: this.onkeydown,
-			onfocusout: this.onfocusout,
-			onclick: this.root.handleSegmentClick,
-			...this.root.getBaseSegmentAttrs("day", this.opts.id.current),
-		};
-	});
-}
-
-type DateFieldMonthSegmentStateProps = WithRefProps;
-
-class DateFieldMonthSegmentState {
-	#announcer: Announcer;
-
-	constructor(
-		readonly opts: DateFieldMonthSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		this.#announcer = this.root.announcer;
-
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
-	}
-
-	#getAnnouncement(month: number) {
-		return `${month} - ${this.root.formatter.fullMonth(toDate(this.root.placeholder.current.set({ month })))}`;
-	}
-
-	onkeydown(e: BitsKeyboardEvent) {
-		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
-		if (e.key !== kbd.TAB) e.preventDefault();
-		if (!isAcceptableSegmentKey(e.key)) return;
-
-		const max = 12;
-
-		if (isArrowUp(e.key)) {
-			this.root.updateSegment("month", (prev) => {
-				if (prev === null) {
-					const next = this.root.placeholder.current.month;
-					this.#announcer.announce(this.#getAnnouncement(next));
-
-					if (String(next).length === 1) {
-						return `0${next}`;
-					}
-
-					return `${next}`;
-				}
-				const next = this.root.placeholder.current
-					.set({ month: Number.parseInt(prev) })
-					.cycle("month", 1).month;
-				this.#announcer.announce(this.#getAnnouncement(next));
-				if (String(next).length === 1) {
-					return `0${next}`;
-				}
-				return `${next}`;
-			});
+			this.#handleArrowUp(placeholder);
 			return;
 		}
 
 		if (isArrowDown(e.key)) {
-			this.root.updateSegment("month", (prev) => {
-				if (prev === null) {
-					const next = this.root.placeholder.current.month;
-					this.#announcer.announce(this.#getAnnouncement(next));
-					if (String(next).length === 1) {
-						return `0${next}`;
-					}
-					return `${next}`;
-				}
-				const next = this.root.placeholder.current
-					.set({ month: Number.parseInt(prev) })
-					.cycle("month", -1).month;
-				this.#announcer.announce(this.#getAnnouncement(next));
-				if (String(next).length === 1) {
-					return `0${next}`;
-				}
-				return `${next}`;
-			});
+			this.#handleArrowDown(placeholder);
 			return;
 		}
 
 		if (isNumberString(e.key)) {
-			const num = Number.parseInt(e.key);
-			let moveToNext = false;
-
-			this.root.updateSegment("month", (prev) => {
-				const maxStart = Math.floor(max / 10);
-				const numIsZero = num === 0;
-
-				/**
-				 * If the user has left the segment, we want to reset the
-				 * `prev` value so that we can start the segment over again
-				 * when the user types a number.
-				 */
-				if (this.root.states.month.hasLeftFocus) {
-					prev = null;
-					this.root.states.month.hasLeftFocus = false;
-				}
-
-				/**
-				 * We are starting over in the segment if prev is null, which could
-				 * happen in one of two scenarios:
-				 * - the user has left the segment and then comes back to it
-				 * - the segment was empty and the user begins typing a number
-				 */
-				if (prev === null) {
-					/**
-					 * If the user types a 0 as the first number, we want
-					 * to keep track of that so that when they type the next
-					 * number, we can move to the next segment.
-					 */
-					if (numIsZero) {
-						this.root.states.month.lastKeyZero = true;
-						this.#announcer.announce("0");
-						return "0";
-					}
-
-					///////////////////////////
-
-					/**
-					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit (0-3 in most cases), then
-					 * we want to move to the next segment, since it's not possible
-					 * to continue typing a valid number in this segment.
-					 */
-					if (this.root.states.month.lastKeyZero || num > maxStart) {
-						moveToNext = true;
-					}
-
-					this.root.states.month.lastKeyZero = false;
-
-					/**
-					 * If we're moving to the next segment and the number is less than
-					 * two digits, we want to announce the number and return it with a
-					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
-					 */
-					if (moveToNext && String(num).length === 1) {
-						this.#announcer.announce(num);
-						return `0${num}`;
-					}
-
-					/**
-					 * If none of the above conditions are met, then we can just
-					 * return the number as the segment value and continue typing
-					 * in this segment.
-					 */
-					return `${num}`;
-				}
-
-				/**
-				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value for this
-				 * month, then we will reset the segment as if the user had pressed the
-				 * backspace key and then typed the number.
-				 */
-				const total = Number.parseInt(prev + num.toString());
-
-				if (this.root.states.month.lastKeyZero) {
-					/**
-					 * If the new number is not 0, then we reset the lastKeyZero state and
-					 * move to the next segment, returning the new number with a leading 0.
-					 */
-					if (num !== 0) {
-						moveToNext = true;
-						this.root.states.month.lastKeyZero = false;
-						return `0${num}`;
-					}
-
-					/**
-					 * If the new number is 0, then we simply return the previous value, since
-					 * they didn't actually type a new number.
-					 */
-					return prev;
-				}
-
-				/**
-				 * If the total is greater than the max day value possible for this month, then
-				 * we want to move to the next segment, trimming the first digit from the total,
-				 * replacing it with a 0.
-				 */
-				if (total > max) {
-					moveToNext = true;
-					return `0${num}`;
-				}
-
-				/**
-				 * If the total has two digits and is less than or equal to the max day value,
-				 * we will move to the next segment and return the total as the segment value.
-				 */
-				moveToNext = true;
-				return `${total}`;
-			});
-
-			if (moveToNext) {
-				moveToNextSegment(e, this.root.getFieldNode());
-			}
+			this.#handleNumberKey(e);
+			return;
 		}
 
 		if (isBackspace(e.key)) {
-			this.root.states.month.hasLeftFocus = false;
-			let moveToPrev = false;
-			this.root.updateSegment("month", (prev) => {
-				if (prev === null) {
-					this.#announcer.announce(null);
-					moveToPrev = true;
-					return null;
-				}
-
-				if (prev.length === 2 && prev.startsWith("0")) {
-					this.#announcer.announce(null);
-					return null;
-				}
-
-				const str = prev.toString();
-				if (str.length === 1) {
-					this.#announcer.announce(null);
-					return null;
-				}
-				const next = Number.parseInt(str.slice(0, -1));
-				this.#announcer.announce(this.#getAnnouncement(next));
-				return `${next}`;
-			});
-
-			if (moveToPrev) {
-				moveToPrevSegment(e, this.root.getFieldNode());
-			}
+			this.#handleBackspace(e);
+			return;
 		}
 
 		if (isSegmentNavigationKey(e.key)) {
@@ -1176,85 +918,277 @@ class DateFieldMonthSegmentState {
 		}
 	}
 
-	onfocusout(_: BitsFocusEvent) {
-		this.root.states.month.hasLeftFocus = true;
-		this.root.updateSegment("month", (prev) => {
-			if (prev && prev.length === 1) {
-				return `0${prev}`;
+	#handleArrowUp(placeholder: DateValue) {
+		const stateKey = this.part as keyof typeof this.root.states;
+		if (stateKey in this.root.states) {
+			this.root.states[stateKey].hasLeftFocus = false;
+		}
+
+		// @ts-expect-error this is a part
+		this.root.updateSegment(this.part, (prev: string | null) => {
+			if (prev === null) {
+				const next = placeholder[this.part as keyof DateValue];
+				this.announcer.announce(this.#getAnnouncement(next as number));
+				return this.#formatValue(next as number);
 			}
-			return prev;
+			const current = placeholder.set({
+				[this.part]: Number.parseInt(prev),
+			});
+			// @ts-expect-error this is a part
+			const next = current.cycle(this.part, this.config.cycle)[this.part as keyof DateValue];
+			this.announcer.announce(this.#getAnnouncement(next as number));
+			return this.#formatValue(next as number);
 		});
 	}
 
-	props = $derived.by(() => {
-		const date = this.root.segmentValues.month
-			? this.root.placeholder.current.set({
-					month: Number.parseInt(this.root.segmentValues.month),
-				})
-			: this.root.placeholder.current;
+	#handleArrowDown(placeholder: DateValue) {
+		const stateKey = this.part as keyof typeof this.root.states;
+		if (stateKey in this.root.states) {
+			this.root.states[stateKey].hasLeftFocus = false;
+		}
 
+		// @ts-expect-error this is a part
+		this.root.updateSegment(this.part, (prev: string | null) => {
+			if (prev === null) {
+				const next = placeholder[this.part as keyof DateValue];
+				this.announcer.announce(this.#getAnnouncement(next as number));
+				return this.#formatValue(next as number);
+			}
+			const current = placeholder.set({
+				[this.part]: Number.parseInt(prev),
+			});
+			// @ts-expect-error this is a part
+			const next = current.cycle(this.part, -this.config.cycle)[this.part as keyof DateValue];
+			this.announcer.announce(this.#getAnnouncement(next as number));
+			return this.#formatValue(next as number);
+		});
+	}
+
+	#handleNumberKey(e: BitsKeyboardEvent) {
+		const num = Number.parseInt(e.key);
+		let moveToNext = false;
+		const max = this.#getMax();
+		const maxStart = Math.floor(max / 10);
+		const numIsZero = num === 0;
+		const stateKey = this.part as keyof typeof this.root.states;
+
+		// @ts-expect-error this is a part
+		this.root.updateSegment(this.part, (prev: string | null) => {
+			// Check if user has left focus
+			if (stateKey in this.root.states && this.root.states[stateKey].hasLeftFocus) {
+				prev = null;
+				this.root.states[stateKey].hasLeftFocus = false;
+			}
+
+			// Starting fresh
+			if (prev === null) {
+				if (numIsZero) {
+					if (stateKey in this.root.states) {
+						this.root.states[stateKey].lastKeyZero = true;
+					}
+					this.announcer.announce("0");
+					return "0";
+				}
+
+				if (
+					stateKey in this.root.states &&
+					(this.root.states[stateKey].lastKeyZero || num > maxStart)
+				) {
+					moveToNext = true;
+				}
+
+				if (stateKey in this.root.states) {
+					this.root.states[stateKey].lastKeyZero = false;
+				}
+
+				if (moveToNext && String(num).length === 1) {
+					this.announcer.announce(num);
+					return `0${num}`;
+				}
+
+				return `${num}`;
+			}
+
+			// Handle special cases for segments with lastKeyZero tracking
+			if (stateKey in this.root.states && this.root.states[stateKey].lastKeyZero) {
+				if (num !== 0) {
+					moveToNext = true;
+					this.root.states[stateKey].lastKeyZero = false;
+					return `0${num}`;
+				}
+
+				// Special handling for hour segment with 24-hour cycle
+				if (this.part === "hour" && num === 0 && this.root.hourCycle.current === 24) {
+					moveToNext = true;
+					this.root.states[stateKey].lastKeyZero = false;
+					return `00`;
+				}
+
+				// Special handling for minute/second segments
+				if ((this.part === "minute" || this.part === "second") && num === 0) {
+					moveToNext = true;
+					this.root.states[stateKey].lastKeyZero = false;
+					return "00";
+				}
+
+				return prev;
+			}
+
+			const total = Number.parseInt(prev + num.toString());
+
+			if (total > max) {
+				moveToNext = true;
+				return `0${num}`;
+			}
+
+			moveToNext = true;
+			return `${total}`;
+		});
+
+		if (moveToNext) {
+			moveToNextSegment(e, this.root.getFieldNode());
+		}
+	}
+
+	#handleBackspace(e: BitsKeyboardEvent) {
+		const stateKey = this.part as keyof typeof this.root.states;
+		if (stateKey in this.root.states) {
+			this.root.states[stateKey].hasLeftFocus = false;
+		}
+
+		let moveToPrev = false;
+		// @ts-expect-error this is a part
+		this.root.updateSegment(this.part, (prev: string | null) => {
+			if (prev === null) {
+				moveToPrev = true;
+				this.announcer.announce(null);
+				return null;
+			}
+
+			if (prev.length === 2 && prev.startsWith("0")) {
+				this.announcer.announce(null);
+				return null;
+			}
+
+			const str = prev.toString();
+			if (str.length === 1) {
+				this.announcer.announce(null);
+				return null;
+			}
+
+			const next = Number.parseInt(str.slice(0, -1));
+			this.announcer.announce(this.#getAnnouncement(next));
+			return `${next}`;
+		});
+
+		if (moveToPrev) {
+			moveToPrevSegment(e, this.root.getFieldNode());
+		}
+	}
+
+	onfocusout(_: BitsFocusEvent) {
+		const stateKey = this.part as keyof typeof this.root.states;
+		if (stateKey in this.root.states) {
+			this.root.states[stateKey].hasLeftFocus = true;
+		}
+
+		// Pad with zero if needed
+		if (this.config.padZero) {
+			// @ts-expect-error this is a part
+			this.root.updateSegment(this.part, (prev: string | null) => {
+				if (prev && prev.length === 1) {
+					return `0${prev}`;
+				}
+				return prev;
+			});
+		}
+	}
+
+	getSegmentProps() {
+		const segmentValues = this.root.segmentValues;
+		const placeholder = this.root.placeholder.current;
+		const isEmpty = segmentValues[this.part as keyof SegmentValueObj] === null;
+
+		let date = placeholder;
+		if (segmentValues[this.part as keyof SegmentValueObj]) {
+			date = placeholder.set({
+				[this.part]: Number.parseInt(
+					segmentValues[this.part as keyof SegmentValueObj] as string
+				),
+			});
+		}
+
+		const valueNow = date[this.part as keyof DateValue] as number;
+		const valueMin = this.#getMin();
+		const valueMax = this.#getMax();
+		let valueText = isEmpty ? "Empty" : `${valueNow}`;
+
+		// Special handling for hour segment with dayPeriod
+		if (this.part === "hour" && "dayPeriod" in segmentValues && segmentValues.dayPeriod) {
+			valueText = isEmpty ? "Empty" : `${valueNow} ${segmentValues.dayPeriod}`;
+		}
+
+		return {
+			"aria-label": `${this.part}, `,
+			"aria-valuemin": valueMin,
+			"aria-valuemax": valueMax,
+			"aria-valuenow": valueNow,
+			"aria-valuetext": valueText,
+		};
+	}
+
+	readonly props = $derived.by(() => {
 		return {
 			...this.root.sharedSegmentAttrs,
 			id: this.opts.id.current,
-			"aria-label": "month, ",
-			contenteditable: "true",
-			"aria-valuemin": 1,
-			"aria-valuemax": 12,
-			"aria-valuenow": date.month,
-			"aria-valuetext":
-				this.root.segmentValues.month === null
-					? "Empty"
-					: `${date.month} - ${this.root.formatter.fullMonth(toDate(date))}`,
+			...this.getSegmentProps(),
 			onkeydown: this.onkeydown,
 			onfocusout: this.onfocusout,
 			onclick: this.root.handleSegmentClick,
-			...this.root.getBaseSegmentAttrs("month", this.opts.id.current),
-		} as const;
+			...this.root.getBaseSegmentAttrs(this.part as SegmentPart, this.opts.id.current),
+			...this.attachment,
+		};
 	});
 }
 
-type DateFieldYearSegmentStateProps = WithRefProps;
-
-class DateFieldYearSegmentState {
-	#announcer: Announcer;
-
-	/**
-	 * When typing a year, a user may want to type `0090` to represent `90`.
-	 * So we track the keys they've pressed in this specific interaction to
-	 * determine once they've pressed four to move to the next segment.
-	 *
-	 * On `focusout` this is reset to an empty array.
-	 */
+class DateFieldYearSegmentState extends BaseNumericSegmentState {
 	#pressedKeys: string[] = [];
-
-	/**
-	 * When a user re-enters a completed segment and backspaces, if they have
-	 * leading zeroes on the year, they won't automatically be sent to the next
-	 * segment even if they complete all 4 digits. This is because the leading zeroes
-	 * get stripped out for the digit count.
-	 *
-	 * This lets us keep track of how many times the user has backspaced in a row
-	 * to determine how many additional key presses should move them to the next segment.
-	 *
-	 * For example, if the user has `0098` in the year segment and backspaces once,
-	 * the segment will contain `009` and if the user types `7`, the segment should
-	 * contain `0097` and move to the next segment.
-	 *
-	 * If the segment contains `0100` and the user backspaces twice, the segment will
-	 * contain `01` and if the user types `2`, the segment should contain `012` and
-	 * it should _not_ move to the next segment until the user types another digit.
-	 */
 	#backspaceCount = 0;
 
-	constructor(
-		readonly opts: DateFieldYearSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		this.#announcer = this.root.announcer;
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onfocusout = this.onfocusout.bind(this);
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
+		super(opts, root, "year", SEGMENT_CONFIGS.year);
+	}
 
-		useRefById(opts);
+	onkeydown(e: BitsKeyboardEvent) {
+		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
+		if (e.key !== kbd.TAB) e.preventDefault();
+		if (!isAcceptableSegmentKey(e.key)) return;
+
+		if (isArrowUp(e.key)) {
+			this.#resetBackspaceCount();
+			super.onkeydown(e);
+			return;
+		}
+
+		if (isArrowDown(e.key)) {
+			this.#resetBackspaceCount();
+			super.onkeydown(e);
+			return;
+		}
+
+		if (isNumberString(e.key)) {
+			this.#handleYearNumberKey(e);
+			return;
+		}
+
+		if (isBackspace(e.key)) {
+			this.#handleYearBackspace(e);
+			return;
+		}
+
+		if (isSegmentNavigationKey(e.key)) {
+			handleSegmentNavigation(e, this.root.getFieldNode());
+		}
 	}
 
 	#resetBackspaceCount() {
@@ -1265,139 +1199,86 @@ class DateFieldYearSegmentState {
 		this.#backspaceCount++;
 	}
 
-	onkeydown(e: BitsKeyboardEvent) {
-		const placeholder = this.root.placeholder.current;
-		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
-		if (e.key !== kbd.TAB) e.preventDefault();
-		if (!isAcceptableSegmentKey(e.key)) return;
+	#handleYearNumberKey(e: BitsKeyboardEvent) {
+		this.#pressedKeys.push(e.key);
+		let moveToNext = false;
+		const num = Number.parseInt(e.key);
 
-		if (isArrowUp(e.key)) {
-			this.#resetBackspaceCount();
-			this.root.updateSegment("year", (prev) => {
-				if (prev === null) {
-					const next = placeholder.year;
-					this.#announcer.announce(next);
-					return `${next}`;
-				}
-				const next = placeholder.set({ year: Number.parseInt(prev) }).cycle("year", 1).year;
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-		if (isArrowDown(e.key)) {
-			this.#resetBackspaceCount();
-			this.root.updateSegment("year", (prev) => {
-				if (prev === null) {
-					const next = placeholder.year;
-					this.#announcer.announce(next);
-					return `${next}`;
-				}
-				const next = placeholder
-					.set({ year: Number.parseInt(prev) })
-					.cycle("year", -1).year;
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-
-		if (isNumberString(e.key)) {
-			this.#pressedKeys.push(e.key);
-			let moveToNext = false;
-			const num = Number.parseInt(e.key);
-			this.root.updateSegment("year", (prev) => {
-				if (this.root.states.year.hasLeftFocus) {
-					prev = null;
-					this.root.states.year.hasLeftFocus = false;
-				}
-
-				if (prev === null) {
-					this.#announcer.announce(num);
-					return `000${num}`;
-				}
-
-				const str = prev.toString() + num.toString();
-				const mergedInt = Number.parseInt(str);
-				const mergedIntDigits = String(mergedInt).length;
-
-				if (mergedIntDigits < 4) {
-					/**
-					 * If the user has backspaced and hasn't typed enough digits to make up
-					 * for the amount of backspaces, then we want to keep them in the segment
-					 * and not prepend any zeroes to the number.
-					 */
-					if (
-						this.#backspaceCount > 0 &&
-						this.#pressedKeys.length <= this.#backspaceCount &&
-						str.length <= 4
-					) {
-						this.#announcer.announce(mergedInt);
-						return str;
-					}
-
-					/**
-					 * If the mergedInt is less than 4 digits and we haven't backspaced,
-					 * then we want to prepend zeroes to the number to keep the format
-					 * of `YYYY`
-					 */
-					this.#announcer.announce(mergedInt);
-					return prependYearZeros(mergedInt);
-				}
-
-				this.#announcer.announce(mergedInt);
-				moveToNext = true;
-
-				const mergedIntStr = `${mergedInt}`;
-
-				if (mergedIntStr.length > 4) {
-					return mergedIntStr.slice(0, 4);
-				}
-
-				return mergedIntStr;
-			});
-
-			if (
-				this.#pressedKeys.length === 4 ||
-				this.#pressedKeys.length === this.#backspaceCount
-			) {
-				moveToNext = true;
-			}
-
-			if (moveToNext) {
-				moveToNextSegment(e, this.root.getFieldNode());
-			}
-		}
-
-		if (isBackspace(e.key)) {
-			this.#pressedKeys = [];
-			this.#incrementBackspaceCount();
-			let moveToPrev = false;
-			this.root.updateSegment("year", (prev) => {
+		this.root.updateSegment("year", (prev) => {
+			if (this.root.states.year.hasLeftFocus) {
+				prev = null;
 				this.root.states.year.hasLeftFocus = false;
-				if (prev === null) {
-					moveToPrev = true;
-					this.#announcer.announce(null);
-					return null;
-				}
-				const str = prev.toString();
-				if (str.length === 1) {
-					this.#announcer.announce(null);
-					return null;
-				}
-				const next = str.slice(0, -1);
-				this.#announcer.announce(next);
-
-				return `${next}`;
-			});
-
-			if (moveToPrev) {
-				moveToPrevSegment(e, this.root.getFieldNode());
 			}
+
+			if (prev === null) {
+				this.announcer.announce(num);
+				return `000${num}`;
+			}
+
+			const str = prev.toString() + num.toString();
+			const mergedInt = Number.parseInt(str);
+			const mergedIntDigits = String(mergedInt).length;
+
+			if (mergedIntDigits < 4) {
+				if (
+					this.#backspaceCount > 0 &&
+					this.#pressedKeys.length <= this.#backspaceCount &&
+					str.length <= 4
+				) {
+					this.announcer.announce(mergedInt);
+					return str;
+				}
+
+				this.announcer.announce(mergedInt);
+				return prependYearZeros(mergedInt);
+			}
+
+			this.announcer.announce(mergedInt);
+			moveToNext = true;
+
+			const mergedIntStr = `${mergedInt}`;
+
+			if (mergedIntStr.length > 4) {
+				return mergedIntStr.slice(0, 4);
+			}
+
+			return mergedIntStr;
+		});
+
+		if (this.#pressedKeys.length === 4 || this.#pressedKeys.length === this.#backspaceCount) {
+			moveToNext = true;
 		}
 
-		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.root.getFieldNode());
+		if (moveToNext) {
+			moveToNextSegment(e, this.root.getFieldNode());
+		}
+	}
+
+	#handleYearBackspace(e: BitsKeyboardEvent) {
+		this.#pressedKeys = [];
+		this.#incrementBackspaceCount();
+		let moveToPrev = false;
+
+		this.root.updateSegment("year", (prev) => {
+			this.root.states.year.hasLeftFocus = false;
+			if (prev === null) {
+				moveToPrev = true;
+				this.announcer.announce(null);
+				return null;
+			}
+			const str = prev.toString();
+			if (str.length === 1) {
+				this.announcer.announce(null);
+				return null;
+			}
+			const next = str.slice(0, -1);
+			this.announcer.announce(next);
+
+			return `${next}`;
+		});
+
+		if (moveToPrev) {
+			moveToPrevSegment(e, this.root.getFieldNode());
 		}
 	}
 
@@ -1412,813 +1293,88 @@ class DateFieldYearSegmentState {
 			return prev;
 		});
 	}
-
-	props = $derived.by(() => {
-		const segmentValues = this.root.segmentValues;
-		const placeholder = this.root.placeholder.current;
-		const isEmpty = segmentValues.year === null;
-		const date = segmentValues.year
-			? placeholder.set({ year: Number.parseInt(segmentValues.year) })
-			: placeholder;
-		const valueMin = 1;
-		const valueMax = 9999;
-		const valueNow = date.year;
-		const valueText = isEmpty ? "Empty" : `${valueNow}`;
-
-		return {
-			...this.root.sharedSegmentAttrs,
-			id: this.opts.id.current,
-			"aria-label": "year, ",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
-			onkeydown: this.onkeydown,
-			onclick: this.root.handleSegmentClick,
-			onfocusout: this.onfocusout,
-			...this.root.getBaseSegmentAttrs("year", this.opts.id.current),
-		};
-	});
 }
 
-type DateFieldHourSegmentStateProps = WithRefProps;
+class DateFieldDaySegmentState extends BaseNumericSegmentState {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
+		super(opts, root, "day", SEGMENT_CONFIGS.day);
+	}
+}
 
-class DateFieldHourSegmentState {
-	#announcer: Announcer;
+class DateFieldMonthSegmentState extends BaseNumericSegmentState {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
+		super(opts, root, "month", SEGMENT_CONFIGS.month);
+	}
+}
 
-	constructor(
-		readonly opts: DateFieldHourSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		this.#announcer = this.root.announcer;
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
+class DateFieldHourSegmentState extends BaseNumericSegmentState {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
+		super(opts, root, "hour", SEGMENT_CONFIGS.hour);
 	}
 
+	// Override to handle special hour logic
 	onkeydown(e: BitsKeyboardEvent) {
-		const placeholder = this.root.placeholder.current;
-		if (e.ctrlKey || e.metaKey || this.root.disabled.current || !("hour" in placeholder))
-			return;
-		if (e.key !== kbd.TAB) e.preventDefault();
-		if (!isAcceptableSegmentKey(e.key)) return;
-
-		const hourCycle = this.root.hourCycle.current;
-
-		if (isArrowUp(e.key)) {
-			this.root.updateSegment("hour", (prev) => {
-				if (prev === null) {
-					const next = placeholder.cycle("hour", 1, { hourCycle }).hour;
-					this.#announcer.announce(next);
-					return `${next}`;
-				}
-				const next = placeholder
-					.set({ hour: Number.parseInt(prev) })
-					.cycle("hour", 1, { hourCycle }).hour;
-
-				if (
-					next === 0 &&
-					"dayPeriod" in this.root.segmentValues &&
-					this.root.segmentValues.dayPeriod !== null &&
-					this.root.hourCycle.current !== 24
-				) {
-					this.#announcer.announce("12");
-					return "12";
-				}
-
-				if (next === 0 && this.root.hourCycle.current === 24) {
-					this.#announcer.announce("00");
-					return "00";
-				}
-
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-
-		if (isArrowDown(e.key)) {
-			this.root.updateSegment("hour", (prev) => {
-				if (prev === null) {
-					const next = placeholder.cycle("hour", -1, { hourCycle }).hour;
-					this.#announcer.announce(next);
-					return `${next}`;
-				}
-				const next = placeholder
-					.set({ hour: Number.parseInt(prev) })
-					.cycle("hour", -1, { hourCycle }).hour;
-
-				if (
-					next === 0 &&
-					"dayPeriod" in this.root.segmentValues &&
-					this.root.segmentValues.dayPeriod !== null &&
-					this.root.hourCycle.current !== 24
-				) {
-					this.#announcer.announce("12");
-					return "12";
-				}
-
-				if (next === 0 && this.root.hourCycle.current === 24) {
-					this.#announcer.announce("00");
-					return "00";
-				}
-
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-
+		// Add special handling for hour display with dayPeriod
 		if (isNumberString(e.key)) {
-			const num = Number.parseInt(e.key);
-			const max =
-				this.root.hourCycle.current === 24
-					? 23
-					: "dayPeriod" in this.root.segmentValues &&
-						  this.root.segmentValues.dayPeriod !== null
-						? 12
-						: 23;
-			const maxStart = Math.floor(max / 10);
-			let moveToNext = false;
-			const numIsZero = num === 0;
-			this.root.updateSegment("hour", (prev) => {
-				/**
-				 * If the user has left the segment, we want to reset the
-				 * `prev` value so that we can start the segment over again
-				 * when the user types a number.
-				 */
-				if (this.root.states.hour.hasLeftFocus) {
-					prev = null;
-					this.root.states.hour.hasLeftFocus = false;
+			const oldUpdateSegment = this.root.updateSegment.bind(this.root);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			this.root.updateSegment = (part: any, cb: any) => {
+				const result = oldUpdateSegment(part, cb);
+
+				// After updating hour, check if we need to display "12" instead of "0"
+				if (part === "hour" && "hour" in this.root.segmentValues) {
+					const hourValue = this.root.segmentValues.hour;
+					if (
+						hourValue === "0" &&
+						this.root.dayPeriodNode &&
+						this.root.hourCycle.current !== 24
+					) {
+						this.root.segmentValues.hour = "12";
+					}
 				}
 
-				/**
-				 * We are starting over in the segment if prev is null, which could
-				 * happen in one of two scenarios:
-				 * - the user has left the segment and then comes back to it
-				 * - the segment was empty and the user begins typing a number
-				 */
-				if (prev === null) {
-					/**
-					 * If the user types a 0 as the first number, we want
-					 * to keep track of that so that when they type the next
-					 * number, we can move to the next segment.
-					 */
-					if (numIsZero) {
-						this.root.states.hour.lastKeyZero = true;
-						this.#announcer.announce("0");
-						return "0";
-					}
-
-					///////////////////////////
-
-					/**
-					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit (0-3 in most cases), then
-					 * we want to move to the next segment, since it's not possible
-					 * to continue typing a valid number in this segment.
-					 */
-					if (this.root.states.hour.lastKeyZero || num > maxStart) {
-						moveToNext = true;
-					}
-
-					this.root.states.hour.lastKeyZero = false;
-
-					/**
-					 * If we're moving to the next segment and the number is less than
-					 * two digits, we want to announce the number and return it with a
-					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
-					 */
-					if (moveToNext && String(num).length === 1) {
-						this.#announcer.announce(num);
-						return `0${num}`;
-					}
-
-					/**
-					 * If none of the above conditions are met, then we can just
-					 * return the number as the segment value and continue typing
-					 * in this segment.
-					 */
-					return `${num}`;
-				}
-
-				/**
-				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value for this
-				 * hour, then we will reset the segment as if the user had pressed the
-				 * backspace key and then typed the number.
-				 */
-				const total = Number.parseInt(prev + num.toString());
-
-				if (this.root.states.hour.lastKeyZero) {
-					/**
-					 * If the new number is not 0, then we reset the lastKeyZero state and
-					 * move to the next segment, returning the new number with a leading 0.
-					 */
-					if (num !== 0) {
-						moveToNext = true;
-						this.root.states.hour.lastKeyZero = false;
-						return `0${num}`;
-					}
-
-					/**
-					 * If the new number is 0 and the hour cycle is set to 24, then we move
-					 * to the next segment, returning the new number with a leading 0.
-					 */
-					if (num === 0 && this.root.hourCycle.current === 24) {
-						moveToNext = true;
-						this.root.states.hour.lastKeyZero = false;
-						return `0${num}`;
-					}
-
-					/**
-					 * If the new number is 0, then we simply return the previous value, since
-					 * they didn't actually type a new number.
-					 */
-					return prev;
-				}
-
-				/**
-				 * If the total is greater than the max day value possible for this month, then
-				 * we want to move to the next segment, trimming the first digit from the total,
-				 * replacing it with a 0.
-				 */
-				if (total > max) {
-					moveToNext = true;
-					return `0${num}`;
-				}
-
-				/**
-				 * If the total has two digits and is less than or equal to the max day value,
-				 * we will move to the next segment and return the total as the segment value.
-				 */
-				moveToNext = true;
-				return `${total}`;
-			});
-
-			if (moveToNext) {
-				moveToNextSegment(e, this.root.getFieldNode());
-			}
+				return result;
+			};
 		}
 
-		if (isBackspace(e.key)) {
-			this.root.states.hour.hasLeftFocus = false;
-			let moveToPrev = false;
-			this.root.updateSegment("hour", (prev) => {
-				if (prev === null) {
-					this.#announcer.announce(null);
-					moveToPrev = true;
-					return null;
-				}
-				const str = prev.toString();
-				if (str.length === 1) {
-					this.#announcer.announce(null);
-					return null;
-				}
-				const next = Number.parseInt(str.slice(0, -1));
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
+		super.onkeydown(e);
 
-			if (moveToPrev) {
-				moveToPrevSegment(e, this.root.getFieldNode());
-			}
-		}
-
-		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.root.getFieldNode());
-		}
+		// Restore original updateSegment
+		this.root.updateSegment = this.root.updateSegment.bind(this.root);
 	}
-
-	onfocusout(_: BitsFocusEvent) {
-		this.root.states.hour.hasLeftFocus = true;
-	}
-
-	props = $derived.by(() => {
-		const segmentValues = this.root.segmentValues;
-		const hourCycle = this.root.hourCycle.current;
-		const placeholder = this.root.placeholder.current;
-		if (!("hour" in segmentValues) || !("hour" in placeholder)) return {};
-		const isEmpty = segmentValues.hour === null;
-		const date = segmentValues.hour
-			? placeholder.set({ hour: Number.parseInt(segmentValues.hour) })
-			: placeholder;
-		const valueMin = hourCycle === 12 ? 1 : 0;
-		const valueMax = hourCycle === 12 ? 12 : 23;
-		const valueNow = date.hour;
-		const valueText = isEmpty ? "Empty" : `${valueNow} ${segmentValues.dayPeriod ?? ""}`;
-
-		return {
-			...this.root.sharedSegmentAttrs,
-			id: this.opts.id.current,
-			"aria-label": "hour, ",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
-			onkeydown: this.onkeydown,
-			onfocusout: this.onfocusout,
-			onclick: this.root.handleSegmentClick,
-			...this.root.getBaseSegmentAttrs("hour", this.opts.id.current),
-		};
-	});
 }
 
-type DateFieldMinuteSegmentStateProps = WithRefProps;
-
-class DateFieldMinuteSegmentState {
-	#announcer: Announcer;
-
-	constructor(
-		readonly opts: DateFieldMinuteSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		this.#announcer = this.root.announcer;
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
+class DateFieldMinuteSegmentState extends BaseNumericSegmentState {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
+		super(opts, root, "minute", SEGMENT_CONFIGS.minute);
 	}
-
-	onkeydown(e: BitsKeyboardEvent) {
-		const placeholder = this.root.placeholder.current;
-		if (e.ctrlKey || e.metaKey || this.root.disabled.current || !("minute" in placeholder))
-			return;
-		if (e.key !== kbd.TAB) e.preventDefault();
-		if (!isAcceptableSegmentKey(e.key)) return;
-
-		const min = 0;
-		const max = 59;
-
-		if (isArrowUp(e.key)) {
-			this.root.updateSegment("minute", (prev) => {
-				if (prev === null) {
-					this.#announcer.announce(min);
-					return `${min}`;
-				}
-				const next = placeholder
-					.set({ minute: Number.parseInt(prev) })
-					.cycle("minute", 1).minute;
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-
-		if (isArrowDown(e.key)) {
-			this.root.updateSegment("minute", (prev) => {
-				if (prev === null) {
-					this.#announcer.announce(max);
-					return `${max}`;
-				}
-				const next = placeholder
-					.set({ minute: Number.parseInt(prev) })
-					.cycle("minute", -1).minute;
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-
-		if (isNumberString(e.key)) {
-			const num = Number.parseInt(e.key);
-			let moveToNext = false;
-			const numIsZero = num === 0;
-			this.root.updateSegment("minute", (prev) => {
-				const maxStart = Math.floor(max / 10);
-
-				/**
-				 * If the user has left the segment, we want to reset the
-				 * `prev` value so that we can start the segment over again
-				 * when the user types a number.
-				 */
-				if (this.root.states.minute.hasLeftFocus) {
-					prev = null;
-					this.root.states.minute.hasLeftFocus = false;
-				}
-
-				/**
-				 * We are starting over in the segment if prev is null, which could
-				 * happen in one of two scenarios:
-				 * - the user has left the segment and then comes back to it
-				 * - the segment was empty and the user begins typing a number
-				 */
-				if (prev === null) {
-					/**
-					 * If the user types a 0 as the first number, we want
-					 * to keep track of that so that when they type the next
-					 * number, we can move to the next segment.
-					 */
-					if (numIsZero) {
-						this.root.states.minute.lastKeyZero = true;
-						this.#announcer.announce("0");
-						return "0";
-					}
-
-					///////////////////////////
-
-					/**
-					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit (0-3 in most cases), then
-					 * we want to move to the next segment, since it's not possible
-					 * to continue typing a valid number in this segment.
-					 */
-					if (this.root.states.minute.lastKeyZero || num > maxStart) {
-						moveToNext = true;
-					}
-
-					this.root.states.minute.lastKeyZero = false;
-
-					/**
-					 * If we're moving to the next segment and the number is less than
-					 * two digits, we want to announce the number and return it with a
-					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
-					 */
-					if (moveToNext && String(num).length === 1) {
-						this.#announcer.announce(num);
-						return `0${num}`;
-					}
-
-					/**
-					 * If none of the above conditions are met, then we can just
-					 * return the number as the segment value and continue typing
-					 * in this segment.
-					 */
-					return `${num}`;
-				}
-
-				/**
-				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value for this
-				 * minute, then we will reset the segment as if the user had pressed the
-				 * backspace key and then typed the number.
-				 */
-				const total = Number.parseInt(prev + num.toString());
-
-				if (this.root.states.minute.lastKeyZero) {
-					/**
-					 * If the new number is not 0, then we reset the lastKeyZero state and
-					 * move to the next segment, returning the new number with a leading 0.
-					 */
-					if (num !== 0) {
-						moveToNext = true;
-						this.root.states.minute.lastKeyZero = false;
-						return `0${num}`;
-					}
-
-					/**
-					 * If the new number is 0, then we simply return `00` since that is
-					 * an acceptable minute value.
-					 */
-					moveToNext = true;
-					this.root.states.minute.lastKeyZero = false;
-					return "00";
-				}
-
-				/**
-				 * If the total is greater than the max day value possible for this month, then
-				 * we want to move to the next segment, trimming the first digit from the total,
-				 * replacing it with a 0.
-				 */
-				if (total > max) {
-					moveToNext = true;
-					return `0${num}`;
-				}
-
-				/**
-				 * If the total has two digits and is less than or equal to the max day value,
-				 * we will move to the next segment and return the total as the segment value.
-				 */
-				moveToNext = true;
-				return `${total}`;
-			});
-
-			if (moveToNext) {
-				moveToNextSegment(e, this.root.getFieldNode());
-			}
-			return;
-		}
-
-		if (isBackspace(e.key)) {
-			this.root.states.minute.hasLeftFocus = false;
-			let moveToPrev = false;
-			this.root.updateSegment("minute", (prev) => {
-				if (prev === null) {
-					moveToPrev = true;
-					this.#announcer.announce("Empty");
-					return null;
-				}
-				const str = prev.toString();
-				if (str.length === 1) {
-					this.#announcer.announce("Empty");
-					return null;
-				}
-				const next = Number.parseInt(str.slice(0, -1));
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-
-			if (moveToPrev) {
-				moveToPrevSegment(e, this.root.getFieldNode());
-			}
-			return;
-		}
-
-		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.root.getFieldNode());
-		}
-	}
-
-	onfocusout(_: BitsFocusEvent) {
-		this.root.states.minute.hasLeftFocus = true;
-	}
-
-	props = $derived.by(() => {
-		const segmentValues = this.root.segmentValues;
-		const placeholder = this.root.placeholder.current;
-
-		if (!("minute" in segmentValues) || !("minute" in placeholder)) return {};
-		const isEmpty = segmentValues.minute === null;
-		const date = segmentValues.minute
-			? placeholder.set({ minute: Number.parseInt(segmentValues.minute) })
-			: placeholder;
-		const valueNow = date.minute;
-		const valueMin = 0;
-		const valueMax = 59;
-		const valueText = isEmpty ? "Empty" : `${valueNow}`;
-
-		return {
-			...this.root.sharedSegmentAttrs,
-			id: this.opts.id.current,
-			"aria-label": "minute, ",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
-			onkeydown: this.onkeydown,
-			onfocusout: this.onfocusout,
-			onclick: this.root.handleSegmentClick,
-			...this.root.getBaseSegmentAttrs("minute", this.opts.id.current),
-		};
-	});
 }
 
-type DateFieldSecondSegmentStateProps = WithRefProps;
-
-class DateFieldSecondSegmentState {
-	#announcer: Announcer;
-
-	constructor(
-		readonly opts: DateFieldSecondSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		this.#announcer = this.root.announcer;
-
-		this.onkeydown = this.onkeydown.bind(this);
-		this.onfocusout = this.onfocusout.bind(this);
-
-		useRefById(opts);
+class DateFieldSecondSegmentState extends BaseNumericSegmentState {
+	constructor(opts: WithRefOpts, root: DateFieldRootState) {
+		super(opts, root, "second", SEGMENT_CONFIGS.second);
 	}
-
-	onkeydown(e: BitsKeyboardEvent) {
-		const placeholder = this.root.placeholder.current;
-		if (e.ctrlKey || e.metaKey || this.root.disabled.current || !("second" in placeholder))
-			return;
-		if (e.key !== kbd.TAB) e.preventDefault();
-		if (!isAcceptableSegmentKey(e.key)) return;
-
-		const min = 0;
-		const max = 59;
-
-		if (isArrowUp(e.key)) {
-			this.root.updateSegment("second", (prev) => {
-				if (prev === null) {
-					this.#announcer.announce(min);
-					return `${min}`;
-				}
-				const next = placeholder
-					.set({ second: Number.parseInt(prev) })
-					.cycle("second", 1).second;
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-
-		if (isArrowDown(e.key)) {
-			this.root.updateSegment("second", (prev) => {
-				if (prev === null) {
-					this.#announcer.announce(max);
-					return `${max}`;
-				}
-				const next = placeholder
-					.set({ second: Number.parseInt(prev) })
-					.cycle("second", -1).second;
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-			return;
-		}
-
-		if (isNumberString(e.key)) {
-			const num = Number.parseInt(e.key);
-			const numIsZero = num === 0;
-			let moveToNext = false;
-			this.root.updateSegment("second", (prev) => {
-				const maxStart = Math.floor(max / 10);
-
-				/**
-				 * If the user has left the segment, we want to reset the
-				 * `prev` value so that we can start the segment over again
-				 * when the user types a number.
-				 */
-				if (this.root.states.second.hasLeftFocus) {
-					prev = null;
-					this.root.states.second.hasLeftFocus = false;
-				}
-
-				/**
-				 * We are starting over in the segment if prev is null, which could
-				 * happen in one of two scenarios:
-				 * - the user has left the segment and then comes back to it
-				 * - the segment was empty and the user begins typing a number
-				 */
-				if (prev === null) {
-					/**
-					 * If the user types a 0 as the first number, we want
-					 * to keep track of that so that when they type the next
-					 * number, we can move to the next segment.
-					 */
-					if (numIsZero) {
-						this.root.states.second.lastKeyZero = true;
-						this.#announcer.announce("0");
-						return "0";
-					}
-
-					///////////////////////////
-
-					/**
-					 * If the last key was a 0, or if the first number is
-					 * greater than the max start digit (0-3 in most cases), then
-					 * we want to move to the next segment, since it's not possible
-					 * to continue typing a valid number in this segment.
-					 */
-					if (this.root.states.second.lastKeyZero || num > maxStart) {
-						moveToNext = true;
-					}
-
-					this.root.states.second.lastKeyZero = false;
-
-					/**
-					 * If we're moving to the next segment and the number is less than
-					 * two digits, we want to announce the number and return it with a
-					 * leading zero to follow the placeholder format of `MM/DD/YYYY`.
-					 */
-					if (moveToNext && String(num).length === 1) {
-						this.#announcer.announce(num);
-						return `0${num}`;
-					}
-
-					/**
-					 * If none of the above conditions are met, then we can just
-					 * return the number as the segment value and continue typing
-					 * in this segment.
-					 */
-					return `${num}`;
-				}
-
-				/**
-				 * If the number of digits is 2, or if the total with the existing digit
-				 * and the pressed digit is greater than the maximum value for this
-				 * second, then we will reset the segment as if the user had pressed the
-				 * backspace key and then typed the number.
-				 */
-				const total = Number.parseInt(prev + num.toString());
-
-				if (this.root.states.second.lastKeyZero) {
-					/**
-					 * If the new number is not 0, then we reset the lastKeyZero state and
-					 * move to the next segment, returning the new number with a leading 0.
-					 */
-					if (num !== 0) {
-						moveToNext = true;
-						this.root.states.second.lastKeyZero = false;
-						return `0${num}`;
-					}
-
-					/**
-					 * If the new number is 0, then we simply return `00` since that is
-					 * an acceptable second value.
-					 */
-					moveToNext = true;
-					this.root.states.second.lastKeyZero = false;
-					return "00";
-				}
-
-				/**
-				 * If the total is greater than the max day value possible for this month, then
-				 * we want to move to the next segment, trimming the first digit from the total,
-				 * replacing it with a 0.
-				 */
-				if (total > max) {
-					moveToNext = true;
-					return `0${num}`;
-				}
-
-				/**
-				 * If the total has two digits and is less than or equal to the max day value,
-				 * we will move to the next segment and return the total as the segment value.
-				 */
-				moveToNext = true;
-				return `${total}`;
-			});
-
-			if (moveToNext) {
-				moveToNextSegment(e, this.root.getFieldNode());
-			}
-		}
-
-		if (isBackspace(e.key)) {
-			this.root.states.second.hasLeftFocus = false;
-			let moveToPrev = false;
-			this.root.updateSegment("second", (prev) => {
-				if (prev === null) {
-					moveToPrev = true;
-					this.#announcer.announce(null);
-					return null;
-				}
-				const str = prev.toString();
-				if (str.length === 1) {
-					this.#announcer.announce(null);
-					return null;
-				}
-				const next = Number.parseInt(str.slice(0, -1));
-				this.#announcer.announce(next);
-				return `${next}`;
-			});
-
-			if (moveToPrev) {
-				moveToPrevSegment(e, this.root.getFieldNode());
-			}
-		}
-
-		if (isSegmentNavigationKey(e.key)) {
-			handleSegmentNavigation(e, this.root.getFieldNode());
-		}
-	}
-
-	onfocusout(_: BitsFocusEvent) {
-		this.root.states.second.hasLeftFocus = true;
-	}
-
-	props = $derived.by(() => {
-		const segmentValues = this.root.segmentValues;
-		const placeholder = this.root.placeholder.current;
-		if (!("second" in segmentValues) || !("second" in placeholder)) return {};
-		const isEmpty = segmentValues.second === null;
-		const date = segmentValues.second
-			? placeholder.set({ second: Number.parseInt(segmentValues.second) })
-			: placeholder;
-		const valueNow = date.second;
-		const valueMin = 0;
-		const valueMax = 59;
-		const valueText = isEmpty ? "Empty" : `${valueNow}`;
-
-		return {
-			...this.root.sharedSegmentAttrs,
-			id: this.opts.id.current,
-			"aria-label": "second, ",
-			"aria-valuemin": valueMin,
-			"aria-valuemax": valueMax,
-			"aria-valuenow": valueNow,
-			"aria-valuetext": valueText,
-			onkeydown: this.onkeydown,
-			onfocusout: this.onfocusout,
-			onclick: this.root.handleSegmentClick,
-			...this.root.getBaseSegmentAttrs("second", this.opts.id.current),
-		};
-	});
 }
 
-type DateFieldDayPeriodSegmentStateProps = WithRefProps;
+// Special segments that don't extend the base class
+interface DateFieldDayPeriodSegmentStateOpts extends WithRefOpts {}
 
-class DateFieldDayPeriodSegmentState {
+export class DateFieldDayPeriodSegmentState {
+	static create(opts: DateFieldDayPeriodSegmentStateOpts) {
+		return new DateFieldDayPeriodSegmentState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldDayPeriodSegmentStateOpts;
+	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
 	#announcer: Announcer;
 
-	constructor(
-		readonly opts: DateFieldDayPeriodSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
+	constructor(opts: DateFieldDayPeriodSegmentStateOpts, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
 		this.#announcer = this.root.announcer;
 		this.onkeydown = this.onkeydown.bind(this);
-
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.dayPeriodNode = node;
-			},
-		});
+		this.attachment = attachRef(opts.ref, (v) => (this.root.dayPeriodNode = v));
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -2263,13 +1419,13 @@ class DateFieldDayPeriodSegmentState {
 		}
 	}
 
-	props = $derived.by(() => {
+	readonly props = $derived.by(() => {
 		const segmentValues = this.root.segmentValues;
 		if (!("dayPeriod" in segmentValues)) return;
 
 		const valueMin = 0;
 		const valueMax = 12;
-		const valueNow = segmentValues.dayPeriod ?? 0;
+		const valueNow = segmentValues.dayPeriod === "AM" ? 0 : 12;
 		const valueText = segmentValues.dayPeriod ?? "AM";
 
 		return {
@@ -2284,38 +1440,55 @@ class DateFieldDayPeriodSegmentState {
 			onkeydown: this.onkeydown,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("dayPeriod", this.opts.id.current),
+			...this.attachment,
 		};
 	});
 }
 
-type DateFieldLiteralSegmentStateProps = WithRefProps;
+interface DateFieldLiteralSegmentStateOpts extends WithRefOpts {}
 
-class DateFieldDayLiteralSegmentState {
-	constructor(
-		readonly opts: DateFieldLiteralSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		useRefById(opts);
+export class DateFieldLiteralSegmentState {
+	static create(opts: DateFieldLiteralSegmentStateOpts) {
+		return new DateFieldLiteralSegmentState(opts, DateFieldRootContext.get());
 	}
 
-	props = $derived.by(
+	readonly opts: DateFieldLiteralSegmentStateOpts;
+	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: DateFieldLiteralSegmentStateOpts, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
+	}
+
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
 				"aria-hidden": getAriaHidden(true),
 				...this.root.getBaseSegmentAttrs("literal", this.opts.id.current),
+				...this.attachment,
 			}) as const
 	);
 }
 
-class DateFieldTimeZoneSegmentState {
-	constructor(
-		readonly opts: DateFieldMinuteSegmentStateProps,
-		readonly root: DateFieldRootState
-	) {
-		this.onkeydown = this.onkeydown.bind(this);
+interface DateFieldTimeZoneSegmentStateOpts extends WithRefOpts {}
 
-		useRefById(opts);
+export class DateFieldTimeZoneSegmentState {
+	static create(opts: DateFieldTimeZoneSegmentStateOpts) {
+		return new DateFieldTimeZoneSegmentState(opts, DateFieldRootContext.get());
+	}
+
+	readonly opts: DateFieldTimeZoneSegmentStateOpts;
+	readonly root: DateFieldRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: DateFieldTimeZoneSegmentStateOpts, root: DateFieldRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.onkeydown = this.onkeydown.bind(this);
+		this.attachment = attachRef(opts.ref);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -2326,7 +1499,7 @@ class DateFieldTimeZoneSegmentState {
 		}
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				role: "textbox",
@@ -2336,14 +1509,38 @@ class DateFieldTimeZoneSegmentState {
 					caretColor: "transparent",
 				},
 				onkeydown: this.onkeydown,
-				tabindex: 0,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
 				"data-readonly": getDataReadonly(true),
+				...this.attachment,
 			}) as const
 	);
 }
 
-// Utils/helpers
+export class DateFieldSegmentState {
+	static create(part: SegmentPart, opts: WithRefOpts) {
+		const root = DateFieldRootContext.get();
+		switch (part) {
+			case "day":
+				return new DateFieldDaySegmentState(opts, root);
+			case "month":
+				return new DateFieldMonthSegmentState(opts, root);
+			case "year":
+				return new DateFieldYearSegmentState(opts, root);
+			case "hour":
+				return new DateFieldHourSegmentState(opts, root);
+			case "minute":
+				return new DateFieldMinuteSegmentState(opts, root);
+			case "second":
+				return new DateFieldSecondSegmentState(opts, root);
+			case "dayPeriod":
+				return new DateFieldDayPeriodSegmentState(opts, root);
+			case "literal":
+				return new DateFieldLiteralSegmentState(opts, root);
+			case "timeZoneName":
+				return new DateFieldTimeZoneSegmentState(opts, root);
+		}
+	}
+}
 
 function isAcceptableDayPeriodKey(key: string) {
 	return (
@@ -2365,64 +1562,6 @@ function isArrowDown(key: string) {
 
 function isBackspace(key: string) {
 	return key === kbd.BACKSPACE;
-}
-
-const DateFieldRootContext = new Context<DateFieldRootState>("DateField.Root");
-
-export function useDateFieldRoot(
-	props: DateFieldRootStateProps,
-	rangeRoot?: DateRangeFieldRootState
-) {
-	return DateFieldRootContext.set(new DateFieldRootState(props, rangeRoot));
-}
-
-export function useDateFieldInput(props: DateFieldInputStateProps) {
-	return new DateFieldInputState(props, DateFieldRootContext.get());
-}
-
-export function useDateFieldHiddenInput() {
-	return new DateFieldHiddenInputState(DateFieldRootContext.get());
-}
-
-export function useDateFieldSegment(part: SegmentPart, props: WithRefProps) {
-	return segmentPartToInstance({
-		part,
-		segmentProps: props,
-		root: DateFieldRootContext.get(),
-	});
-}
-
-export function useDateFieldLabel(props: DateFieldLabelStateProps) {
-	return new DateFieldLabelState(props, DateFieldRootContext.get());
-}
-
-type SegmentPartToInstanceProps = {
-	part: SegmentPart;
-	root: DateFieldRootState;
-	segmentProps: WithRefProps;
-};
-
-function segmentPartToInstance(props: SegmentPartToInstanceProps) {
-	switch (props.part) {
-		case "day":
-			return new DateFieldDaySegmentState(props.segmentProps, props.root);
-		case "month":
-			return new DateFieldMonthSegmentState(props.segmentProps, props.root);
-		case "year":
-			return new DateFieldYearSegmentState(props.segmentProps, props.root);
-		case "hour":
-			return new DateFieldHourSegmentState(props.segmentProps, props.root);
-		case "minute":
-			return new DateFieldMinuteSegmentState(props.segmentProps, props.root);
-		case "second":
-			return new DateFieldSecondSegmentState(props.segmentProps, props.root);
-		case "dayPeriod":
-			return new DateFieldDayPeriodSegmentState(props.segmentProps, props.root);
-		case "literal":
-			return new DateFieldDayLiteralSegmentState(props.segmentProps, props.root);
-		case "timeZoneName":
-			return new DateFieldTimeZoneSegmentState(props.segmentProps, props.root);
-	}
 }
 
 function prependYearZeros(year: number) {

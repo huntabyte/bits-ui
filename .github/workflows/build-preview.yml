@@ -21,7 +21,7 @@ jobs:
                   cache: pnpm
 
             - name: Install dependencies
-              run: pnpm install
+              run: pnpm install --frozen-lockfile --prefer-offline
 
             - name: Build site
               run: pnpm build
@@ -30,4 +30,5 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: preview-build
-                  path: docs/.svelte-kit/cloudflare
+                  path: docs/.svelte-kit
+                  include-hidden-files: true

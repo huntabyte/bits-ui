@@ -77,6 +77,11 @@ export type TooltipRootPropsWithoutHTML = WithChildren<{
 	onOpenChange?: OnChangeFn<boolean>;
 
 	/**
+	 * A callback that will be called when the tooltip is opened or closed.
+	 */
+	onOpenChangeComplete?: OnChangeFn<boolean>;
+
+	/**
 	 * The delay in milliseconds before the tooltip opens.
 	 *
 	 * @defaultValue 700

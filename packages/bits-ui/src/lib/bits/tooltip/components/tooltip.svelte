@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
 	import type { TooltipRootProps } from "../types.js";
-	import { useTooltipRoot } from "../tooltip.svelte.js";
+	import { TooltipRootState } from "../tooltip.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
 	let {
 		open = $bindable(false),
 		onOpenChange = noop,
+		onOpenChangeComplete = noop,
 		disabled,
 		delayDuration,
 		disableCloseOnTriggerClick,
@@ -16,7 +17,7 @@
 		children,
 	}: TooltipRootProps = $props();
 
-	useTooltipRoot({
+	TooltipRootState.create({
 		open: box.with(
 			() => open,
 			(v) => {
@@ -29,9 +30,10 @@
 		disableHoverableContent: box.with(() => disableHoverableContent),
 		ignoreNonKeyboardFocus: box.with(() => ignoreNonKeyboardFocus),
 		disabled: box.with(() => disabled),
+		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
 	});
 </script>
 
-<FloatingLayer>
+<FloatingLayer tooltip>
 	{@render children?.()}
 </FloatingLayer>

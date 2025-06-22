@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { SelectGroupHeadingProps } from "../types.js";
-	import { useSelectGroupHeading } from "../select.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { SelectGroupHeadingState } from "../select.svelte.js";
+	import { createId } from "$lib/internal/create-id.js";
 
+	const uid = $props.id();
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		child,
 		children,
 		...restProps
 	}: SelectGroupHeadingProps = $props();
 
-	const groupHeadingState = useSelectGroupHeading({
+	const groupHeadingState = SelectGroupHeadingState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

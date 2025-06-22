@@ -1,25 +1,36 @@
 import {
-	CalendarDate,
 	type DateValue,
 	endOfMonth,
 	isSameDay,
 	isSameMonth,
-	parseDate,
 	startOfMonth,
 } from "@internationalized/date";
-import { type ReadableBox, type WritableBox, afterTick, styleToString } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	type WritableBox,
+	afterTick,
+	getDocument,
+	styleToString,
+} from "svelte-toolbelt";
 import { untrack } from "svelte";
 import {
 	getDaysInMonth,
 	getLastFirstDayOfWeek,
 	getNextLastDayOfWeek,
+	hasTime,
 	isAfter,
 	isBefore,
+	parseAnyDateValue,
 	parseStringToDateValue,
 	toDate,
 } from "./utils.js";
 import type { Formatter } from "./formatter.js";
-import { getDataDisabled, getDataInvalid, getDataReadonly } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	getDataDisabled,
+	getDataInvalid,
+	getDataReadonly,
+} from "$lib/internal/attrs.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -61,7 +72,7 @@ export type CreateMonthProps = {
 	/**
 	 * The day of the week to start the calendar on (0 for Sunday, 1 for Monday, etc.).
 	 */
-	weekStartsOn: number;
+	weekStartsOn: number | undefined;
 
 	/**
 	 * Whether to always render 6 weeks in the calendar, even if the month doesn't
@@ -97,8 +108,14 @@ function createMonth(props: CreateMonthProps): Month<DateValue> {
 	const firstDayOfMonth = startOfMonth(dateObj);
 	const lastDayOfMonth = endOfMonth(dateObj);
 
-	const lastSunday = getLastFirstDayOfWeek(firstDayOfMonth, weekStartsOn, locale);
-	const nextSaturday = getNextLastDayOfWeek(lastDayOfMonth, weekStartsOn, locale);
+	const lastSunday =
+		weekStartsOn !== undefined
+			? getLastFirstDayOfWeek(firstDayOfMonth, weekStartsOn, "en-US")
+			: getLastFirstDayOfWeek(firstDayOfMonth, 0, locale);
+	const nextSaturday =
+		weekStartsOn !== undefined
+			? getNextLastDayOfWeek(lastDayOfMonth, weekStartsOn, "en-US")
+			: getNextLastDayOfWeek(lastDayOfMonth, 0, locale);
 
 	const lastMonthDays = getDaysBetween(lastSunday.subtract({ days: 1 }), firstDayOfMonth);
 	const nextMonthDays = getDaysBetween(lastDayOfMonth, nextSaturday.add({ days: 1 }));
@@ -402,7 +419,7 @@ type HandleCalendarPageProps = {
 	setMonths: (months: Month<DateValue>[]) => void;
 	numberOfMonths: number;
 	pagedNavigation: boolean;
-	weekStartsOn: number;
+	weekStartsOn: number | undefined;
 	locale: string;
 	fixedWeeks: boolean;
 	setPlaceholder: (date: DateValue) => void;
@@ -483,7 +500,7 @@ export function getWeekdays({ months, formatter, weekdayFormat }: GetWeekdaysPro
 }
 
 type UseMonthViewSyncProps = {
-	weekStartsOn: ReadableBox<number>;
+	weekStartsOn: ReadableBox<number | undefined>;
 	locale: ReadableBox<string>;
 	fixedWeeks: ReadableBox<boolean>;
 	numberOfMonths: ReadableBox<number>;
@@ -496,22 +513,24 @@ type UseMonthViewSyncProps = {
  * which determines the month to show in the calendar.
  */
 export function useMonthViewOptionsSync(props: UseMonthViewSyncProps) {
-	const weekStartsOn = props.weekStartsOn.current;
-	const locale = props.locale.current;
-	const fixedWeeks = props.fixedWeeks.current;
-	const numberOfMonths = props.numberOfMonths.current;
+	$effect(() => {
+		const weekStartsOn = props.weekStartsOn.current;
+		const locale = props.locale.current;
+		const fixedWeeks = props.fixedWeeks.current;
+		const numberOfMonths = props.numberOfMonths.current;
 
-	untrack(() => {
-		const placeholder = props.placeholder.current;
-		if (!placeholder) return;
-		const defaultMonthProps = {
-			weekStartsOn,
-			locale,
-			fixedWeeks,
-			numberOfMonths,
-		};
+		untrack(() => {
+			const placeholder = props.placeholder.current;
+			if (!placeholder) return;
+			const defaultMonthProps = {
+				weekStartsOn,
+				locale,
+				fixedWeeks,
+				numberOfMonths,
+			};
 
-		props.setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder }));
+			props.setMonths(createMonths({ ...defaultMonthProps, dateObj: placeholder }));
+		});
 	});
 }
 
@@ -530,7 +549,8 @@ export function createAccessibleHeading({
 	label,
 	accessibleHeadingId,
 }: CreateAccessibleHeadingProps) {
-	const div = document.createElement("div");
+	const doc = getDocument(calendarNode);
+	const div = doc.createElement("div");
 	div.style.cssText = styleToString({
 		border: "0px",
 		clip: "rect(0px, 0px, 0px, 0px)",
@@ -543,7 +563,7 @@ export function createAccessibleHeading({
 		whiteSpace: "nowrap",
 		width: "1px",
 	});
-	const h2 = document.createElement("div");
+	const h2 = doc.createElement("div");
 	h2.textContent = label;
 	h2.id = accessibleHeadingId;
 	h2.role = "heading";
@@ -552,7 +572,7 @@ export function createAccessibleHeading({
 	div.appendChild(h2);
 
 	return () => {
-		const h2 = document.getElementById(accessibleHeadingId);
+		const h2 = doc.getElementById(accessibleHeadingId);
 		if (!h2) return;
 		div.parentElement?.removeChild(div);
 		h2.remove();
@@ -562,7 +582,7 @@ export function createAccessibleHeading({
 type UseMonthViewPlaceholderSyncProps = {
 	placeholder: WritableBox<DateValue>;
 	getVisibleMonths: () => DateValue[];
-	weekStartsOn: ReadableBox<number>;
+	weekStartsOn: ReadableBox<number | undefined>;
 	locale: ReadableBox<string>;
 	fixedWeeks: ReadableBox<boolean>;
 	numberOfMonths: ReadableBox<number>;
@@ -721,25 +741,30 @@ export type CalendarParts =
 	| "grid-row"
 	| "head-cell"
 	| "header"
-	| "heading";
+	| "heading"
+	| "month-select"
+	| "year-select";
 
 export function pickerOpenFocus(e: Event) {
-	const nodeToFocus = document.querySelector<HTMLElement>("[data-bits-day][data-focused]");
+	const doc = getDocument(e.target as HTMLElement);
+	const nodeToFocus = doc.querySelector<HTMLElement>("[data-bits-day][data-focused]");
 	if (nodeToFocus) {
 		e.preventDefault();
 		nodeToFocus?.focus();
 	}
 }
 
-export function getFirstNonDisabledDateInView(calendarRef: HTMLElement): CalendarDate | undefined {
+export function getFirstNonDisabledDateInView(calendarRef: HTMLElement): DateValue | undefined {
 	if (!isBrowser) return;
 	const daysInView = Array.from(
 		calendarRef.querySelectorAll<HTMLElement>("[data-bits-day]:not([aria-disabled=true])")
 	);
 	if (daysInView.length === 0) return;
-	const value = daysInView[0]?.getAttribute("data-value");
-	if (!value) return;
-	return parseDate(value);
+	const element = daysInView[0];
+	const value = element?.getAttribute("data-value");
+	const type = element?.getAttribute("data-type");
+	if (!value || !type) return;
+	return parseAnyDateValue(value, type);
 }
 
 /**
@@ -795,4 +820,77 @@ export function useEnsureNonDisabledPlaceholder({
 			}
 		}
 	);
+}
+
+export function getDateWithPreviousTime(date: DateValue | undefined, prev: DateValue | undefined) {
+	if (!date || !prev) return date;
+
+	if (hasTime(date) && hasTime(prev)) {
+		return date.set({
+			hour: prev.hour,
+			minute: prev.minute,
+			millisecond: prev.millisecond,
+			second: prev.second,
+		});
+	}
+
+	return date;
+}
+
+export const calendarAttrs = createBitsAttrs({
+	component: "calendar",
+	parts: [
+		"root",
+		"grid",
+		"cell",
+		"next-button",
+		"prev-button",
+		"day",
+		"grid-body",
+		"grid-head",
+		"grid-row",
+		"head-cell",
+		"header",
+		"heading",
+		"month-select",
+		"year-select",
+	],
+});
+
+type GetDefaultYearsProps = {
+	placeholderYear: number;
+	minValue: DateValue | undefined;
+	maxValue: DateValue | undefined;
+};
+
+export function getDefaultYears(opts: GetDefaultYearsProps) {
+	const currentYear = new Date().getFullYear();
+	const latestYear = Math.max(opts.placeholderYear, currentYear);
+
+	// use minValue/maxValue as boundaries if provided, otherwise calculate default range
+	let minYear: number;
+	let maxYear: number;
+
+	if (opts.minValue) {
+		minYear = opts.minValue.year;
+	} else {
+		// (111 years: latestYear - 100 to latestYear + 10)
+		const initialMinYear = latestYear - 100;
+		minYear =
+			opts.placeholderYear < initialMinYear ? opts.placeholderYear - 10 : initialMinYear;
+	}
+
+	if (opts.maxValue) {
+		maxYear = opts.maxValue.year;
+	} else {
+		maxYear = latestYear + 10;
+	}
+
+	// ensure we have at least one year and minYear <= maxYear
+	if (minYear > maxYear) {
+		minYear = maxYear;
+	}
+
+	const totalYears = maxYear - minYear + 1;
+	return Array.from({ length: totalYears }, (_, i) => minYear + i);
 }

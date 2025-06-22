@@ -490,7 +490,7 @@
 	animation-duration: 0.2s;
 	animation-timing-function: ease;
 	animation-fill-mode: forwards;
-	transform-origin: var(--radix-popover-content-transform-origin);
+	transform-origin: var(--bits-popover-content-transform-origin);
 
 	&[data-state="open"] {
 		animation-name: slideIn;

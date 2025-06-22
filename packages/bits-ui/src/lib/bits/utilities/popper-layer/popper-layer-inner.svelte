@@ -44,8 +44,10 @@
 		customAnchor = null,
 		isStatic = false,
 		enabled,
+		ref,
+		tooltip = false,
 		...restProps
-	}: Omit<PopperLayerImplProps, "present" | "children"> & {
+	}: Omit<PopperLayerImplProps, "open" | "children"> & {
 		enabled: boolean;
 	} = $props();
 </script>
@@ -71,6 +73,7 @@
 	{onPlaced}
 	{customAnchor}
 	{enabled}
+	{tooltip}
 >
 	{#snippet content({ props: floatingProps, wrapperProps })}
 		{#if restProps.forceMount && enabled}
@@ -79,15 +82,16 @@
 			<ScrollLock {preventScroll} />
 		{/if}
 		<FocusScope
-			{id}
 			{onOpenAutoFocus}
 			{onCloseAutoFocus}
 			{loop}
-			trapFocus={enabled && trapFocus}
+			{enabled}
+			{trapFocus}
 			forceMount={restProps.forceMount}
+			{ref}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
-				<EscapeLayer {onEscapeKeydown} {escapeKeydownBehavior} {enabled}>
+				<EscapeLayer {onEscapeKeydown} {escapeKeydownBehavior} {enabled} {ref}>
 					<DismissibleLayer
 						{id}
 						{onInteractOutside}
@@ -95,6 +99,7 @@
 						{interactOutsideBehavior}
 						{isValidEvent}
 						{enabled}
+						{ref}
 					>
 						{#snippet children({ props: dismissibleProps })}
 							<TextSelectionLayer
@@ -103,6 +108,7 @@
 								{onPointerDown}
 								{onPointerUp}
 								{enabled}
+								{ref}
 							>
 								{@render popper?.({
 									props: mergeProps(

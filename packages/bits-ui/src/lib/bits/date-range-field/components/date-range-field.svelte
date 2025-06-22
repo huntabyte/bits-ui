@@ -1,15 +1,19 @@
 <script lang="ts">
+	import { watch } from "runed";
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
-	import { useDateRangeFieldRoot } from "../date-range-field.svelte.js";
+	import { DateRangeFieldRootState } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldRootProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import type { DateRange } from "$lib/shared/index.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+
+	const uid = $props.id();
 
 	let {
-		id = useId(),
+		id = createId(uid),
 		ref = $bindable(null),
 		value = $bindable(),
 		onValueChange = noop,
@@ -20,7 +24,7 @@
 		required = false,
 		hourCycle,
 		granularity,
-		locale = "en-US",
+		locale,
 		hideTimeZone = false,
 		validate = noop,
 		onInvalid = noop,
@@ -38,22 +42,44 @@
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
-	if (placeholder === undefined) {
-		const defaultPlaceholder = getDefaultDate({
-			granularity,
-			defaultValue: value?.start,
-		});
-
+	function handleDefaultPlaceholder() {
+		if (placeholder !== undefined) return;
+		const defaultPlaceholder = getDefaultDate({ granularity, defaultValue: value?.start });
 		placeholder = defaultPlaceholder;
 	}
 
-	if (value === undefined) {
-		const defaultValue = { start: undefined, end: undefined };
+	// SSR
+	handleDefaultPlaceholder();
 
+	watch.pre(
+		() => placeholder,
+		() => {
+			handleDefaultPlaceholder();
+		}
+	);
+
+	function handleDefaultValue() {
+		if (value !== undefined) return;
+		const defaultValue = { start: undefined, end: undefined };
 		value = defaultValue;
 	}
 
-	const rootState = useDateRangeFieldRoot({
+	// SSR
+	handleDefaultValue();
+
+	/**
+	 * Covers an edge case where when a spread props object is reassigned,
+	 * the props are reset to their default values, which would make value
+	 * undefined which causes errors to be thrown.
+	 */
+	watch.pre(
+		() => value,
+		() => {
+			handleDefaultValue();
+		}
+	);
+
+	const rootState = DateRangeFieldRootState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
@@ -64,7 +90,7 @@
 		required: box.with(() => required),
 		hourCycle: box.with(() => hourCycle),
 		granularity: box.with(() => granularity),
-		locale: box.with(() => locale),
+		locale: resolveLocaleProp(() => locale),
 		hideTimeZone: box.with(() => hideTimeZone),
 		validate: box.with(() => validate),
 		maxValue: box.with(() => maxValue),

@@ -12,6 +12,7 @@
 		{ value: "svelte-orange", label: "Svelte Orange" },
 		{ value: "punk-pink", label: "Punk Pink" },
 		{ value: "ocean-blue", label: "Ocean Blue", disabled: true },
+		{ value: "sunset-orange", label: "Sunset Orange" },
 		{ value: "sunset-red", label: "Sunset Red" },
 		{ value: "forest-green", label: "Forest Green" },
 		{ value: "lavender-purple", label: "Lavender Purple", disabled: true },
@@ -35,9 +36,9 @@
 	);
 </script>
 
-<Select.Root type="single" onValueChange={(v) => (value = v)}>
+<Select.Root type="single" onValueChange={(v) => (value = v)} items={themes}>
 	<Select.Trigger
-		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
+		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] touch-none select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />
@@ -55,7 +56,7 @@
 			<Select.Viewport class="p-1">
 				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="rounded-button data-highlighted:bg-muted outline-hidden data-disabled:opacity-50 flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm  capitalize"
+						class="rounded-button data-highlighted:bg-muted outline-hidden data-disabled:opacity-50 flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
 						value={theme.value}
 						label={theme.label}
 						disabled={theme.disabled}
@@ -64,7 +65,7 @@
 							{theme.label}
 							{#if selected}
 								<div class="ml-auto">
-									<Check />
+									<Check aria-label="check" />
 								</div>
 							{/if}
 						{/snippet}

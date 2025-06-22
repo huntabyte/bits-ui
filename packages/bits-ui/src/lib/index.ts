@@ -3,6 +3,7 @@ export {
 	AlertDialog,
 	AspectRatio,
 	Avatar,
+	BitsConfig,
 	Button,
 	Calendar,
 	Checkbox,
@@ -27,6 +28,7 @@ export {
 	Progress,
 	RadioGroup,
 	RangeCalendar,
+	RatingGroup as unstable_RatingGroup,
 	ScrollArea,
 	Select,
 	Separator,
@@ -34,6 +36,8 @@ export {
 	Switch,
 	Tabs,
 	TagsInput,
+	TimeField,
+	TimeRangeField,
 	Toggle,
 	ToggleGroup,
 	Toolbar,
@@ -41,6 +45,7 @@ export {
 	Portal,
 	IsUsingKeyboard,
 	computeCommandScore,
+	getBitsConfig,
 } from "./bits/index.js";
 
 export * from "./shared/index.js";
