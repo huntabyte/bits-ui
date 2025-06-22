@@ -11,7 +11,7 @@
 			class="rounded-card-sm border-border-input bg-background placeholder:text-foreground-alt/50 focus-within:ring-foreground focus-within:ring-offset-background hover:border-dark-40 [&:has([data-invalid])]:border-destructive flex h-auto w-[400px] flex-col gap-4 border p-4 text-sm focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2"
 		>
 			<TagsInput.List class="flex min-h-5 flex-wrap gap-1.5">
-				{#each value as tag, index}
+				{#each value as tag, index (tag)}
 					<TagsInput.Tag value={tag} {index} editMode="contenteditable">
 						<TagsInput.TagContent
 							class="flex items-center gap-3  rounded-[4px] bg-[#FCDAFE] text-[0.7rem] font-semibold leading-none text-[#2A266B] no-underline group-hover:no-underline"
