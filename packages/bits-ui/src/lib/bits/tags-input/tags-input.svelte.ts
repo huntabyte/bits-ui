@@ -182,7 +182,7 @@ export class TagsInputRootState {
 		this.#announce(message);
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -218,7 +218,7 @@ export class TagsInputListState {
 		this.root.listRovingFocusGroup = this.rovingFocusGroup;
 	}
 
-	gridWrapperProps = $derived.by(
+	readonly gridWrapperProps = $derived.by(
 		() =>
 			({
 				role: this.root.hasValue ? "grid" : undefined,
@@ -228,7 +228,7 @@ export class TagsInputListState {
 			}) as const
 	);
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -337,7 +337,7 @@ export class TagsInputTagState {
 		}
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -416,7 +416,7 @@ export class TagsInputTagTextState {
 		});
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -486,7 +486,7 @@ export class TagsInputTagEditInputState {
 		}
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -549,7 +549,7 @@ export class TagsInputTagRemoveState {
 		}
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -634,7 +634,7 @@ export class TagsInputInputState {
 		this.root.isInvalid = false;
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -669,7 +669,7 @@ export class TagsInputClearState {
 		this.root.clearValue();
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -713,7 +713,7 @@ export class TagsInputTagContentState {
 		this.tag.startEditing();
 	};
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -740,7 +740,7 @@ export class TagsInputTagHiddenInputState {
 		this.tag = tag;
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				type: "text",
@@ -774,7 +774,7 @@ export class TagsInputTagEditDescriptionState {
 
 	description = "Edit tag. Press enter to save or escape to cancel.";
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
@@ -801,7 +801,7 @@ export class TagsInputAnnouncerState {
 		this.attachment = attachRef(opts.ref);
 	}
 
-	props = $derived.by(
+	readonly props = $derived.by(
 		() =>
 			({
 				id: this.opts.id.current,
