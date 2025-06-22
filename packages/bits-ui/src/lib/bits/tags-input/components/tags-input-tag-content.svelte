@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useTagsInputContent } from "../tags-input.svelte.js";
+	import { TagsInputTagContentState } from "../tags-input.svelte.js";
 	import type { TagsInputTagContentProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 
@@ -12,7 +12,7 @@
 		...restProps
 	}: TagsInputTagContentProps = $props();
 
-	const contentState = useTagsInputContent({
+	const contentState = TagsInputTagContentState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

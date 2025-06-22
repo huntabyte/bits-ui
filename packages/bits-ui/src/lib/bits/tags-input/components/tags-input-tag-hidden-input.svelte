@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { useTagsInputTagHiddenInput } from "../tags-input.svelte.js";
+	import { TagsInputTagHiddenInputState } from "../tags-input.svelte.js";
 
-	const hiddenInputState = useTagsInputTagHiddenInput();
+	const hiddenInputState = TagsInputTagHiddenInputState.create();
 	const mergedProps = $derived(mergeProps(hiddenInputState.props, {}));
 </script>
 

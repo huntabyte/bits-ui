@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box } from "svelte-toolbelt";
-	import { useTagsInputAnnouncer } from "../tags-input.svelte.js";
+	import { TagsInputAnnouncerState } from "../tags-input.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import {
 		type BitsPrimitiveDivAttributes,
@@ -14,7 +14,7 @@
 
 	let { id = useId(), ref = $bindable(null) }: Props = $props();
 
-	const announcerState = useTagsInputAnnouncer({
+	const announcerState = TagsInputAnnouncerState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

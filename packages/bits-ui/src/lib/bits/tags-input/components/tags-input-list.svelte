@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
 	import type { TagsInputListProps } from "../types.js";
-	import { useTagsInputList } from "../tags-input.svelte.js";
+	import { TagsInputListState } from "../tags-input.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 
 	let {
@@ -12,7 +12,7 @@
 		...restProps
 	}: TagsInputListProps = $props();
 
-	const listState = useTagsInputList({
+	const listState = TagsInputListState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,

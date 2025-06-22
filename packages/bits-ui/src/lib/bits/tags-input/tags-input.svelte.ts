@@ -3,9 +3,9 @@ import {
 	type WritableBoxedValues,
 	afterSleep,
 	afterTick,
+	attachRef,
 	box,
 	srOnlyStyles,
-	useRefById,
 } from "svelte-toolbelt";
 import type {
 	ClipboardEventHandler,
@@ -19,40 +19,61 @@ import type {
 	TagsInputBlurBehavior,
 	TagsInputPasteBehavior,
 } from "./types.js";
-import type { WithRefProps } from "$lib/internal/types.js";
-import { getAriaHidden, getDataInvalid, getRequired } from "$lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+import {
+	createBitsAttrs,
+	getAriaHidden,
+	getDataInvalid,
+	getRequired,
+} from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { RovingFocusGroup } from "$lib/internal/use-roving-focus.svelte.js";
 import { isOrContainsTarget } from "$lib/internal/elements.js";
 
-const ROOT_ATTR = "data-tags-input-root";
-const LIST_ATTR = "data-tags-input-list";
-const INPUT_ATTR = "data-tags-input-input";
-const CLEAR_ATTR = "data-tags-input-clear";
-const TAG_ATTR = "data-tags-input-tag";
-const TAG_TEXT_ATTR = "data-tags-input-tag-text";
-const TAG_CONTENT_ATTR = "data-tags-input-tag-content";
-const TAG_REMOVE_ATTR = "data-tags-input-tag-remove";
-const TAG_EDIT_INPUT_ATTR = "data-tags-input-tag-edit-input";
+const tagsInputAttrs = createBitsAttrs({
+	component: "tags-input",
+	parts: [
+		"root",
+		"list",
+		"input",
+		"clear",
+		"tag",
+		"tag-text",
+		"tag-content",
+		"tag-remove",
+		"tag-edit-input",
+	],
+});
 
-type TagsInputRootStateProps = WithRefProps &
-	WritableBoxedValues<{
-		value: string[];
-	}> &
-	ReadableBoxedValues<{
-		delimiters: string[];
-		name: string;
-		required: boolean;
-		validate: (value: string) => boolean;
-		announceTransformers: TagsInputAnnounceTransformers | undefined;
-	}>;
+const TagsInputRootContext = new Context<TagsInputRootState>("TagsInput.Root");
+const TagsInputListContext = new Context<TagsInputListState>("TagsInput.List");
+const TagsInputTagContext = new Context<TagsInputTagState>("TagsInput.Tag");
+
+interface TagsInputRootStateOpts
+	extends WithRefOpts,
+		WritableBoxedValues<{
+			value: string[];
+		}>,
+		ReadableBoxedValues<{
+			delimiters: string[];
+			name: string;
+			required: boolean;
+			validate: (value: string) => boolean;
+			announceTransformers: TagsInputAnnounceTransformers | undefined;
+		}> {}
 
 // prettier-ignore
 const HORIZONTAL_NAV_KEYS = [kbd.ARROW_LEFT, kbd.ARROW_RIGHT, kbd.HOME, kbd.END];
 const VERTICAL_NAV_KEYS = [kbd.ARROW_UP, kbd.ARROW_DOWN];
 const REMOVAL_KEYS = [kbd.BACKSPACE, kbd.DELETE];
 
-class TagsInputRootState {
+export class TagsInputRootState {
+	static create(opts: TagsInputRootStateOpts) {
+		return TagsInputRootContext.set(new TagsInputRootState(opts));
+	}
+
+	readonly opts: TagsInputRootStateOpts;
+	readonly attachment: RefAttachment;
 	valueSnapshot = $derived.by(() => $state.snapshot(this.opts.value.current));
 	inputNode = $state<HTMLElement | null>(null);
 	listRovingFocusGroup: RovingFocusGroup | null = null;
@@ -67,8 +88,9 @@ class TagsInputRootState {
 	isInvalid = $state(false);
 	hasValue = $derived.by(() => this.opts.value.current.length > 0);
 
-	constructor(readonly opts: TagsInputRootStateProps) {
-		useRefById(opts);
+	constructor(opts: TagsInputRootStateOpts) {
+		this.opts = opts;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	includesValue = (value: string) => {
@@ -164,22 +186,29 @@ class TagsInputRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[ROOT_ATTR]: "",
+				[tagsInputAttrs.root]: "",
 				"data-invalid": getDataInvalid(this.isInvalid),
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputListStateProps = WithRefProps;
+interface TagsInputListStateOpts extends WithRefOpts {}
 
-class TagsInputListState {
+export class TagsInputListState {
+	static create(opts: TagsInputListStateOpts) {
+		return TagsInputListContext.set(new TagsInputListState(opts, TagsInputRootContext.get()));
+	}
+
+	readonly opts: TagsInputListStateOpts;
+	readonly root: TagsInputRootState;
+	readonly attachment: RefAttachment;
 	rovingFocusGroup: RovingFocusGroup;
 
-	constructor(
-		readonly opts: TagsInputListStateProps,
-		readonly root: TagsInputRootState
-	) {
-		useRefById(opts);
+	constructor(opts: TagsInputListStateOpts, root: TagsInputRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNodeId: this.opts.id,
 			candidateSelector: `[role=gridcell]:not([aria-hidden=true])`,
@@ -203,24 +232,33 @@ class TagsInputListState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[LIST_ATTR]: "",
+				[tagsInputAttrs.list]: "",
 				role: this.root.hasValue ? "row" : undefined,
 				"data-invalid": getDataInvalid(this.root.isInvalid),
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputTagStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		index: number;
-		removable: boolean;
-		editMode: "input" | "contenteditable" | "none";
-	}> &
-	WritableBoxedValues<{
-		value: string;
-	}>;
+interface TagsInputTagStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			index: number;
+			removable: boolean;
+			editMode: "input" | "contenteditable" | "none";
+		}>,
+		WritableBoxedValues<{
+			value: string;
+		}> {}
 
-class TagsInputTagState {
+export class TagsInputTagState {
+	static create(opts: TagsInputTagStateOpts) {
+		return TagsInputTagContext.set(new TagsInputTagState(opts, TagsInputListContext.get()));
+	}
+
+	readonly opts: TagsInputTagStateOpts;
+	readonly list: TagsInputListState;
+	readonly attachment: RefAttachment;
 	textNode = $state<HTMLElement | null>(null);
 	removeNode = $state<HTMLElement | null>(null);
 	editCell = $state<HTMLElement | null>(null);
@@ -229,14 +267,10 @@ class TagsInputTagState {
 	isEditing = $state(false);
 	#tabIndex = $state(0);
 
-	constructor(
-		readonly opts: TagsInputTagStateProps,
-		readonly list: TagsInputListState
-	) {
-		useRefById({
-			...opts,
-			deps: () => this.opts.index.current,
-		});
+	constructor(opts: TagsInputTagStateOpts, list: TagsInputListState) {
+		this.opts = opts;
+		this.list = list;
+		this.attachment = attachRef(opts.ref);
 
 		$effect(() => {
 			// we want to track the value here so when we remove the actively focused
@@ -313,24 +347,29 @@ class TagsInputTagState {
 				"data-removable": this.opts.removable.current ? "" : undefined,
 				"data-invalid": getDataInvalid(this.list.root.isInvalid),
 				tabindex: this.#tabIndex,
-				[TAG_ATTR]: "",
+				[tagsInputAttrs.tag]: "",
 				onkeydown: this.#onkeydown,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputTagTextStateProps = WithRefProps;
+interface TagsInputTagTextStateOpts extends WithRefOpts {}
 
-class TagsInputTagTextState {
-	constructor(
-		readonly opts: TagsInputTagTextStateProps,
-		readonly tag: TagsInputTagState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.tag.textNode = node;
-			},
+export class TagsInputTagTextState {
+	static create(opts: TagsInputTagTextStateOpts) {
+		return new TagsInputTagTextState(opts, TagsInputTagContext.get());
+	}
+
+	readonly opts: TagsInputTagTextStateOpts;
+	readonly tag: TagsInputTagState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: TagsInputTagTextStateOpts, tag: TagsInputTagState) {
+		this.opts = opts;
+		this.tag = tag;
+		this.attachment = attachRef(opts.ref, (v) => {
+			this.tag.textNode = v;
 		});
 	}
 
@@ -381,7 +420,7 @@ class TagsInputTagTextState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[TAG_TEXT_ATTR]: "",
+				[tagsInputAttrs["tag-text"]]: "",
 				tabindex: -1,
 				"data-editable": this.tag.isEditable ? "" : undefined,
 				"data-removable": this.tag.opts.removable.current ? "" : undefined,
@@ -392,22 +431,27 @@ class TagsInputTagTextState {
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
 				onfocus: this.#onfocus,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputTagEditInputStateProps = WithRefProps;
+interface TagsInputTagEditInputStateOpts extends WithRefOpts {}
 
-class TagsInputTagEditInputState {
-	constructor(
-		readonly opts: TagsInputTagEditInputStateProps,
-		readonly tag: TagsInputTagState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				if (node instanceof HTMLInputElement) this.tag.editInput = node;
-			},
+export class TagsInputTagEditInputState {
+	static create(opts: TagsInputTagEditInputStateOpts) {
+		return new TagsInputTagEditInputState(opts, TagsInputTagContext.get());
+	}
+
+	readonly opts: TagsInputTagEditInputStateOpts;
+	readonly tag: TagsInputTagState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: TagsInputTagEditInputStateOpts, tag: TagsInputTagState) {
+		this.opts = opts;
+		this.tag = tag;
+		this.attachment = attachRef(opts.ref, (v) => {
+			if (v instanceof HTMLInputElement) this.tag.editInput = v;
 		});
 	}
 
@@ -446,7 +490,7 @@ class TagsInputTagEditInputState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[TAG_EDIT_INPUT_ATTR]: "",
+				[tagsInputAttrs["tag-edit-input"]]: "",
 				tabindex: -1,
 				"data-editing": this.tag.isEditing ? "" : undefined,
 				"data-invalid": getDataInvalid(this.tag.list.root.isInvalid),
@@ -458,13 +502,21 @@ class TagsInputTagEditInputState {
 				onblur: this.#onblur,
 				"aria-describedby": this.tag.list.root.editDescriptionNode?.id,
 				"aria-hidden": getAriaHidden(!this.tag.isEditing),
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputTagRemoveStateProps = WithRefProps;
+interface TagsInputTagRemoveStateOpts extends WithRefOpts {}
 
-class TagsInputTagRemoveState {
+export class TagsInputTagRemoveState {
+	static create(opts: TagsInputTagRemoveStateOpts) {
+		return new TagsInputTagRemoveState(opts, TagsInputTagContext.get());
+	}
+
+	readonly opts: TagsInputTagRemoveStateOpts;
+	readonly tag: TagsInputTagState;
+	readonly attachment: RefAttachment;
 	#ariaLabelledBy = $derived.by(() => {
 		if (this.tag.textNode && this.tag.textNode.id) {
 			return `${this.opts.id.current} ${this.tag.textNode.id}`;
@@ -472,15 +524,11 @@ class TagsInputTagRemoveState {
 		return this.opts.id.current;
 	});
 
-	constructor(
-		readonly opts: TagsInputTagRemoveStateProps,
-		readonly tag: TagsInputTagState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.tag.removeNode = node;
-			},
+	constructor(opts: TagsInputTagRemoveStateOpts, tag: TagsInputTagState) {
+		this.opts = opts;
+		this.tag = tag;
+		this.attachment = attachRef(opts.ref, (v) => {
+			this.tag.removeNode = v;
 		});
 	}
 
@@ -505,7 +553,7 @@ class TagsInputTagRemoveState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[TAG_REMOVE_ATTR]: "",
+				[tagsInputAttrs["tag-remove"]]: "",
 				role: "button",
 				"aria-label": "Remove",
 				"aria-labelledby": this.#ariaLabelledBy,
@@ -515,27 +563,32 @@ class TagsInputTagRemoveState {
 				tabindex: -1,
 				onclick: this.#onclick,
 				onkeydown: this.#onkeydown,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputInputStateProps = WithRefProps &
-	ReadableBoxedValues<{
-		blurBehavior: TagsInputBlurBehavior;
-		pasteBehavior: TagsInputPasteBehavior;
-	}> &
-	WritableBoxedValues<{ value: string }>;
+interface TagsInputInputStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			blurBehavior: TagsInputBlurBehavior;
+			pasteBehavior: TagsInputPasteBehavior;
+		}>,
+		WritableBoxedValues<{ value: string }> {}
 
-class TagsInputInputState {
-	constructor(
-		readonly opts: TagsInputInputStateProps,
-		readonly root: TagsInputRootState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.inputNode = node;
-			},
+export class TagsInputInputState {
+	static create(opts: TagsInputInputStateOpts) {
+		return new TagsInputInputState(opts, TagsInputRootContext.get());
+	}
+
+	readonly opts: TagsInputInputStateOpts;
+	readonly root: TagsInputRootState;
+	readonly attachment: RefAttachment;
+	constructor(opts: TagsInputInputStateOpts, root: TagsInputRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => {
+			this.root.inputNode = v;
 		});
 	}
 
@@ -585,23 +638,31 @@ class TagsInputInputState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[INPUT_ATTR]: "",
+				[tagsInputAttrs.input]: "",
 				"data-invalid": getDataInvalid(this.root.isInvalid),
 				onkeydown: this.#onkeydown,
 				onblur: this.#onblur,
 				onpaste: this.#onpaste,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputClearStateProps = WithRefProps;
+interface TagsInputClearStateOpts extends WithRefOpts {}
 
-class TagsInputClearState {
-	constructor(
-		readonly opts: TagsInputClearStateProps,
-		readonly root: TagsInputRootState
-	) {
-		useRefById(opts);
+export class TagsInputClearState {
+	static create(opts: TagsInputClearStateOpts) {
+		return new TagsInputClearState(opts, TagsInputRootContext.get());
+	}
+
+	readonly opts: TagsInputClearStateOpts;
+	readonly root: TagsInputRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: TagsInputClearStateOpts, root: TagsInputRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	#onclick: MouseEventHandler<HTMLButtonElement> = () => {
@@ -612,22 +673,30 @@ class TagsInputClearState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[CLEAR_ATTR]: "",
+				[tagsInputAttrs.clear]: "",
 				role: "button",
 				"aria-label": "Clear",
 				onclick: this.#onclick,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputTagContentStateProps = WithRefProps;
+interface TagsInputTagContentStateOpts extends WithRefOpts {}
 
-class TagsInputTagContentState {
-	constructor(
-		readonly opts: TagsInputTagContentStateProps,
-		readonly tag: TagsInputTagState
-	) {
-		useRefById(opts);
+export class TagsInputTagContentState {
+	static create(opts: TagsInputTagContentStateOpts) {
+		return new TagsInputTagContentState(opts, TagsInputTagContext.get());
+	}
+
+	readonly opts: TagsInputTagContentStateOpts;
+	readonly tag: TagsInputTagState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: TagsInputTagContentStateOpts, tag: TagsInputTagState) {
+		this.opts = opts;
+		this.tag = tag;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	#style = $derived.by(() => {
@@ -648,19 +717,28 @@ class TagsInputTagContentState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[TAG_CONTENT_ATTR]: "",
+				[tagsInputAttrs["tag-content"]]: "",
 				style: this.#style,
 				ondblclick: this.#ondblclick,
+				...this.attachment,
 			}) as const
 	);
 }
 
-class TagsInputTagHiddenInputState {
+export class TagsInputTagHiddenInputState {
+	static create() {
+		return new TagsInputTagHiddenInputState(TagsInputTagContext.get());
+	}
+
+	readonly tag: TagsInputTagState;
+
 	shouldRender = $derived.by(
 		() => this.tag.list.root.opts.name.current !== "" && this.tag.opts.value.current !== ""
 	);
 
-	constructor(readonly tag: TagsInputTagState) {}
+	constructor(tag: TagsInputTagState) {
+		this.tag = tag;
+	}
 
 	props = $derived.by(
 		() =>
@@ -675,18 +753,22 @@ class TagsInputTagHiddenInputState {
 	);
 }
 
-type TagsInputTagEditDescriptionStateProps = WithRefProps;
+interface TagsInputTagEditDescriptionStateOpts extends WithRefOpts {}
 
-class TagsInputTagEditDescriptionState {
-	constructor(
-		readonly opts: TagsInputTagEditDescriptionStateProps,
-		readonly root: TagsInputRootState
-	) {
-		useRefById({
-			...opts,
-			onRefChange: (node) => {
-				this.root.editDescriptionNode = node;
-			},
+export class TagsInputTagEditDescriptionState {
+	static create(opts: TagsInputTagEditDescriptionStateOpts) {
+		return new TagsInputTagEditDescriptionState(opts, TagsInputRootContext.get());
+	}
+
+	readonly opts: TagsInputTagEditDescriptionStateOpts;
+	readonly root: TagsInputRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: TagsInputTagEditDescriptionStateOpts, root: TagsInputRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => {
+			this.root.editDescriptionNode = v;
 		});
 	}
 
@@ -697,18 +779,26 @@ class TagsInputTagEditDescriptionState {
 			({
 				id: this.opts.id.current,
 				style: srOnlyStyles,
+				...this.attachment,
 			}) as const
 	);
 }
 
-type TagsInputAnnouncerStateProps = WithRefProps;
+interface TagsInputAnnouncerStateOpts extends WithRefOpts {}
 
-class TagsInputAnnouncerState {
-	constructor(
-		readonly opts: TagsInputAnnouncerStateProps,
-		readonly root: TagsInputRootState
-	) {
-		useRefById(opts);
+export class TagsInputAnnouncerState {
+	static create(opts: TagsInputAnnouncerStateOpts) {
+		return new TagsInputAnnouncerState(opts, TagsInputRootContext.get());
+	}
+
+	readonly opts: TagsInputAnnouncerStateOpts;
+	readonly root: TagsInputRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: TagsInputAnnouncerStateOpts, root: TagsInputRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
 	}
 
 	props = $derived.by(
@@ -717,58 +807,7 @@ class TagsInputAnnouncerState {
 				id: this.opts.id.current,
 				"aria-live": "polite",
 				style: srOnlyStyles,
+				...this.attachment,
 			}) as const
 	);
-}
-
-const TagsInputRootContext = new Context<TagsInputRootState>("TagsInput.Root");
-const TagsInputListContext = new Context<TagsInputListState>("TagsInput.List");
-const TagsInputTagContext = new Context<TagsInputTagState>("TagsInput.Tag");
-
-export function useTagsInputRoot(props: TagsInputRootStateProps) {
-	return TagsInputRootContext.set(new TagsInputRootState(props));
-}
-
-export function useTagsInputList(props: TagsInputListStateProps) {
-	return TagsInputListContext.set(new TagsInputListState(props, TagsInputRootContext.get()));
-}
-
-export function useTagsInputTag(props: TagsInputTagStateProps) {
-	return TagsInputTagContext.set(new TagsInputTagState(props, TagsInputListContext.get()));
-}
-
-export function useTagsInputTagText(props: TagsInputTagTextStateProps) {
-	return new TagsInputTagTextState(props, TagsInputTagContext.get());
-}
-
-export function useTagsInputTagEditInput(props: TagsInputTagEditInputStateProps) {
-	return new TagsInputTagEditInputState(props, TagsInputTagContext.get());
-}
-
-export function useTagsInputTagRemove(props: TagsInputTagRemoveStateProps) {
-	return new TagsInputTagRemoveState(props, TagsInputTagContext.get());
-}
-
-export function useTagsInputTagHiddenInput() {
-	return new TagsInputTagHiddenInputState(TagsInputTagContext.get());
-}
-
-export function useTagsInputInput(props: TagsInputInputStateProps) {
-	return new TagsInputInputState(props, TagsInputRootContext.get());
-}
-
-export function useTagsInputClear(props: TagsInputClearStateProps) {
-	return new TagsInputClearState(props, TagsInputRootContext.get());
-}
-
-export function useTagsInputContent(props: TagsInputTagContentStateProps) {
-	return new TagsInputTagContentState(props, TagsInputTagContext.get());
-}
-
-export function useTagsInputTagEditDescription(props: TagsInputTagEditDescriptionStateProps) {
-	return new TagsInputTagEditDescriptionState(props, TagsInputRootContext.get());
-}
-
-export function useTagsInputAnnouncer(props: TagsInputAnnouncerStateProps) {
-	return new TagsInputAnnouncerState(props, TagsInputRootContext.get());
 }

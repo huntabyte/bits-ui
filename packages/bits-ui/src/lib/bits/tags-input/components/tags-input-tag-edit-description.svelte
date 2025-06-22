@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { box, mergeProps } from "svelte-toolbelt";
-	import { useTagsInputTagEditDescription } from "../tags-input.svelte.js";
+	import { TagsInputTagEditDescriptionState } from "../tags-input.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import type { BitsPrimitiveDivAttributes, WithChild, Without } from "$lib/shared/index.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
@@ -9,7 +9,7 @@
 
 	let { id = useId(), ref = $bindable(null) }: Props = $props();
 
-	const editDescriptionState = useTagsInputTagEditDescription({
+	const editDescriptionState = TagsInputTagEditDescriptionState.create({
 		id: box.with(() => id),
 		ref: box.with(
 			() => ref,
