@@ -26,34 +26,39 @@ description: Displays a menu of items that users can select from when triggered.
 <DropdownMenu.Root>
   <DropdownMenu.Trigger />
 
-  <DropdownMenu.Content>
-    <DropdownMenu.Group>
-      <DropdownMenu.GroupHeading />
+  <DropdownMenu.Portal>
+    <DropdownMenu.Content>
+      <DropdownMenu.Group>
+        <DropdownMenu.GroupHeading />
+        <DropdownMenu.Item />
+      </DropdownMenu.Group>
+
+      <DropdownMenu.Group>
+        <DropdownMenu.Item />
+      </DropdownMenu.Group>
+
       <DropdownMenu.Item />
-    </DropdownMenu.Group>
+      <DropdownMenu.CheckboxItem />
 
-    <DropdownMenu.Group>
-      <DropdownMenu.Item />
-    </DropdownMenu.Group>
+      <DropdownMenu.RadioGroup>
+        <DropdownMenu.RadioItem />
+      </DropdownMenu.RadioGroup>
 
-    <DropdownMenu.CheckboxItem>
-      <DropdownMenu.CheckboxIndicator />
-    </DropdownMenu.CheckboxItem>
+      <DropdownMenu.CheckboxGroup>
+        <DropdownMenu.CheckboxItem />
+      </DropdownMenu.CheckboxGroup>
 
-    <DropdownMenu.RadioGroup>
-      <DropdownMenu.RadioItem>
-        <DropdownMenu.RadioIndicator />
-      </DropdownMenu.RadioItem>
-    </DropdownMenu.RadioGroup>
+      <DropdownMenu.Sub>
+        <DropdownMenu.SubTrigger />
+        <DropdownMenu.Portal>
+          <DropdownMenu.SubContent />
+        </DropdownMenu.Portal>
+      </DropdownMenu.Sub>
 
-    <DropdownMenu.Sub>
-      <DropdownMenu.SubTrigger />
-      <DropdownMenu.SubContent />
-    </DropdownMenu.Sub>
-
-    <DropdownMenu.Separator />
-    <DropdownMenu.Arrow />
-  </DropdownMenu.Content>
+      <DropdownMenu.Separator />
+      <DropdownMenu.Arrow />
+    </DropdownMenu.Content>
+  </DropdownMenu.Portal>
 </DropdownMenu.Root>
 ```
 
