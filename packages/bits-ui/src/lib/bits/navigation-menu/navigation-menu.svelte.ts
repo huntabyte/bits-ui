@@ -386,6 +386,7 @@ export class NavigationMenuItemState {
 		);
 	}
 	readonly opts: NavigationMenuItemStateOpts;
+	readonly attachment: RefAttachment;
 	readonly listContext: NavigationMenuListState;
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
@@ -403,6 +404,7 @@ export class NavigationMenuItemState {
 		this.opts = opts;
 		this.listContext = listContext;
 		this.domContext = new DOMContext(opts.ref);
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	#handleContentEntry = (side: "start" | "end" = "start") => {
@@ -431,6 +433,7 @@ export class NavigationMenuItemState {
 			({
 				id: this.opts.id.current,
 				[navigationMenuAttrs.item]: "",
+				...this.attachment,
 			}) as const
 	);
 }
