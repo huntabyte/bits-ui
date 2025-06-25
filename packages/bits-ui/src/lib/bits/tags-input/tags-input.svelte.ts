@@ -13,7 +13,7 @@ import type {
 	KeyboardEventHandler,
 	MouseEventHandler,
 } from "svelte/elements";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import type {
 	TagsInputAnnounceTransformers,
 	TagsInputBlurBehavior,
@@ -272,20 +272,18 @@ export class TagsInputTagState {
 		this.list = list;
 		this.attachment = attachRef(opts.ref);
 
-		$effect(() => {
-			// we want to track the value here so when we remove the actively focused
-			// tag, we ensure the other ones get the correct tab index
-			this.list.root.valueSnapshot;
-			this.opts.ref.current;
-			this.#tabIndex = this.list.rovingFocusGroup.getTabIndex(this.opts.ref.current);
+		// we want to track the value here so when we remove the actively focused
+		// tag, we ensure the other ones get the correct tab index
+		watch([() => this.list.root.valueSnapshot, () => this.opts.ref.current], ([_, ref]) => {
+			this.#tabIndex = this.list.rovingFocusGroup.getTabIndex(ref);
 		});
 	}
 
-	setValue = (value: string) => {
+	setValue(value: string) {
 		this.list.root.updateValueByIndex(this.opts.index.current, value);
-	};
+	}
 
-	startEditing = () => {
+	startEditing() {
 		if (this.isEditable === false) return;
 		this.isEditing = true;
 
@@ -295,21 +293,21 @@ export class TagsInputTagState {
 		} else if (this.opts.editMode.current === "contenteditable") {
 			this.textNode?.focus();
 		}
-	};
+	}
 
-	stopEditing = (focusTag = true) => {
+	stopEditing(focusTag = true) {
 		this.isEditing = false;
 
 		if (focusTag) {
 			this.opts.ref.current?.focus();
 		}
-	};
+	}
 
-	remove = () => {
+	remove() {
 		if (this.opts.removable.current === false) return;
 		this.list.root.removeValueByIndex(this.opts.index.current, this.opts.value.current);
 		this.list.root.recomputeTabIndex();
-	};
+	}
 
 	#onkeydown: KeyboardEventHandler<HTMLElement> = (e) => {
 		if (e.target !== this.opts.ref.current) return;
