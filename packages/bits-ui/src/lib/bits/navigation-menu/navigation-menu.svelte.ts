@@ -404,7 +404,7 @@ export class NavigationMenuItemState {
 		this.opts = opts;
 		this.listContext = listContext;
 		this.domContext = new DOMContext(opts.ref);
-		this.attachment = attachRef(this.opts.ref)
+		this.attachment = attachRef(this.opts.ref);
 	}
 
 	#handleContentEntry = (side: "start" | "end" = "start") => {
@@ -433,7 +433,7 @@ export class NavigationMenuItemState {
 			({
 				id: this.opts.id.current,
 				[navigationMenuAttrs.item]: "",
-				...this.attachment
+				...this.attachment,
 			}) as const
 	);
 }
