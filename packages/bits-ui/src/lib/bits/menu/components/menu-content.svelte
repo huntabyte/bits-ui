@@ -42,6 +42,11 @@
 	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
+		// don't close if the interaction is with a submenu content or items
+		if (e.target && e.target instanceof Element) {
+			const subContentSelector = `[${contentState.parentMenu.root.getBitsAttr("sub-content")}]`;
+			if (e.target.closest(subContentSelector)) return;
+		}
 		contentState.parentMenu.onClose();
 	}
 
