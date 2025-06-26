@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.10
+
+### Patch Changes
+
+- fix(Menu): respect `closeOnSelect` for subitems ([#1636](https://github.com/huntabyte/bits-ui/pull/1636))
+
 ## 2.8.9
 
 ### Patch Changes
