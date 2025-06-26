@@ -459,3 +459,37 @@ it.skip("calls `onValueChange` when the value of the checkbox group changes", as
 	await t.user.click(t.getByTestId("checkbox-group-item-1"));
 	expect(onValueChange).toHaveBeenCalledWith(["1"]);
 });
+
+it("should call `onSelect` on the sub item when the sub item is selected", async () => {
+	const onSelect = vi.fn();
+	const t = await open({
+		subItemProps: {
+			onSelect,
+		},
+	});
+	await t.user.click(t.getByTestId("sub-trigger"));
+	await expectExists(t.getByTestId("sub-content"));
+
+	await t.user.click(t.getByTestId("sub-item"));
+	expect(onSelect).toHaveBeenCalled();
+});
+
+it.each([true, false])(
+	"should respect the `closeOnSelect=%s` prop on the sub item",
+	async (closeOnSelect) => {
+		const t = await open({
+			subItemProps: {
+				closeOnSelect,
+			},
+		});
+		await t.user.click(t.getByTestId("sub-trigger"));
+		await expectExists(t.getByTestId("sub-content"));
+
+		await t.user.click(t.getByTestId("sub-item"));
+		if (closeOnSelect) {
+			await expectNotExists(t.getByTestId("sub-content"));
+		} else {
+			await expectExists(t.getByTestId("sub-content"));
+		}
+	}
+);

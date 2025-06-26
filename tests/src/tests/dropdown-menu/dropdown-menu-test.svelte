@@ -12,6 +12,7 @@
 		subTriggerProps?: Omit<DropdownMenu.SubTriggerProps, "children" | "child">;
 		checkboxGroupProps?: Omit<DropdownMenu.CheckboxGroupProps, "children" | "child" | "value">;
 		openFocusOverride?: boolean;
+		subItemProps?: Omit<DropdownMenu.ItemProps, "children" | "child">;
 	};
 </script>
 
@@ -28,6 +29,7 @@
 		subTriggerProps = {},
 		checkboxGroupProps = {},
 		openFocusOverride = false,
+		subItemProps = {},
 		...restProps
 	}: DropdownMenuTestProps = $props();
 </script>
@@ -71,6 +73,7 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.SubContent data-testid="sub-content">
 								<DropdownMenu.Item
+									{...subItemProps}
 									data-testid="sub-item"
 									class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 								>

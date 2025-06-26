@@ -561,15 +561,13 @@ export class MenuItemState {
 		if (this.item.opts.disabled.current) return;
 		const selectEvent = new CustomEvent("menuitemselect", { bubbles: true, cancelable: true });
 		this.opts.onSelect.current(selectEvent);
-		afterTick(() => {
-			if (selectEvent.defaultPrevented) {
-				this.item.content.parentMenu.root.isUsingKeyboard.current = false;
-				return;
-			}
-			if (this.opts.closeOnSelect.current) {
-				this.item.content.parentMenu.root.opts.onClose();
-			}
-		});
+		if (selectEvent.defaultPrevented) {
+			this.item.content.parentMenu.root.isUsingKeyboard.current = false;
+			return;
+		}
+		if (this.opts.closeOnSelect.current) {
+			this.item.content.parentMenu.root.opts.onClose();
+		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
