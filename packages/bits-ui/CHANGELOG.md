@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.8.9
+
+### Patch Changes
+
+- fix(NavigationMenu): Ensure MenuItem ref is bindable ([#1629](https://github.com/huntabyte/bits-ui/pull/1629))
+
+- chore: update `runed` and `svelte-toolbelt` to resolve issues with default exports ([#1631](https://github.com/huntabyte/bits-ui/pull/1631))
+
 ## 2.8.8
 
 ### Patch Changes
