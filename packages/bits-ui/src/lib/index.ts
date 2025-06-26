@@ -35,6 +35,7 @@ export {
 	Slider,
 	Switch,
 	Tabs,
+	TagsInput,
 	TimeField,
 	TimeRangeField,
 	Toggle,

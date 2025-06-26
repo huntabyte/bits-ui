@@ -34,6 +34,7 @@ export { Separator } from "./separator/index.js";
 export { Slider } from "./slider/index.js";
 export { Switch } from "./switch/index.js";
 export { Tabs } from "./tabs/index.js";
+export { TagsInput } from "./tags-input/index.js";
 export { TimeField } from "./time-field/index.js";
 export { TimeRangeField } from "./time-range-field/index.js";
 export { Toggle } from "./toggle/index.js";

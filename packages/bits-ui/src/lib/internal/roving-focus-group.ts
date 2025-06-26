@@ -51,7 +51,7 @@ export class RovingFocusGroup {
 		this.#opts = opts;
 	}
 
-	getCandidateNodes() {
+	#getCandidateNodes() {
 		if (!BROWSER || !this.#opts.rootNode.current) return [];
 
 		if (this.#opts.candidateSelector) {
@@ -74,16 +74,40 @@ export class RovingFocusGroup {
 	}
 
 	focusFirstCandidate() {
-		const items = this.getCandidateNodes();
+		const items = this.#getCandidateNodes();
 		if (!items.length) return;
 		items[0]?.focus();
+	}
+
+	#handleFocus(node: HTMLElement) {
+		if (!node) return;
+		this.#currentTabStopId.current = node.id;
+		node?.focus();
+		this.#opts.onCandidateFocus?.(node);
+	}
+
+	navigateBackward(node: HTMLElement | null | undefined, fallback?: HTMLElement | null) {
+		const rootNode = this.#opts.rootNode.current;
+		if (!rootNode || !node) return;
+		const items = this.#getCandidateNodes();
+		if (!items.length) return;
+		const currIndex = items.indexOf(node);
+		const prevIndex = currIndex - 1;
+		const prevItem = items[prevIndex];
+		if (!prevItem) {
+			if (fallback) {
+				fallback?.focus();
+			}
+			return;
+		}
+		this.#handleFocus(prevItem);
 	}
 
 	handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent, both: boolean = false) {
 		const rootNode = this.#opts.rootNode.current;
 		if (!rootNode || !node) return;
 
-		const items = this.getCandidateNodes();
+		const items = this.#getCandidateNodes();
 		if (!items.length) return;
 
 		const currentIndex = items.indexOf(node);
@@ -124,7 +148,7 @@ export class RovingFocusGroup {
 	}
 
 	getTabIndex(node: HTMLElement | null | undefined) {
-		const items = this.getCandidateNodes();
+		const items = this.#getCandidateNodes();
 		const anyActive = this.#currentTabStopId.current !== null;
 
 		if (node && !anyActive && items[0] === node) {
