@@ -1,6 +1,7 @@
+/// <reference types="@vitest/browser/providers/playwright" />
+
 import process from "node:process";
-import tailwindcss from "@tailwindcss/vite";
-import { sveltekit } from "@sveltejs/kit/vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { svelteTesting } from "@testing-library/svelte/vite";
 import { defineConfig } from "vite";
 import type { Plugin } from "vite";
@@ -21,7 +22,6 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
-	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
 	test: {
 		projects: [
 			{
@@ -32,26 +32,24 @@ export default defineConfig({
 					globals: true,
 					environment: "jsdom",
 					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
-					setupFiles: ["./other/setup-test.ts"],
-					exclude: ["./other/setup-test.ts"],
+					setupFiles: ["./src/setups/jsdom.ts"],
 					retry: 3,
 				},
 			},
 			{
-				extends: "./vite.config.ts",
+				plugins: [vitestBrowserConditionPlugin, svelte(), svelteTesting()],
 				test: {
 					name: "browser",
-					include: ["src/tests/**/*.browser.test.ts"],
-					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
-					setupFiles: ["./other/setup-browser-test.ts"],
+					include: ["src/tests/**/*.browser.{svelte.test,test}.ts"],
+					setupFiles: ["./src/setups/browser.ts"],
 					environment: "browser",
-					testTimeout: 5000,
 					retry: 3,
 					browser: {
 						enabled: true,
 						headless: true,
 						provider: "playwright",
 						isolate: true,
+						// providerOptions: { context: { actionTimeout: 25_000 } },
 						instances: [
 							{ browser: "chromium" },
 							{ browser: "firefox" },
