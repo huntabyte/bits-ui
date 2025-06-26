@@ -22,18 +22,22 @@ After installation, you can import and use Bits UI components in your Svelte fil
   import { Accordion } from "bits-ui";
 </script>
 
-<Accordion.Root>
-  <Accordion.Item>
+<Accordion.Root type="single">
+  <Accordion.Item value="item-1">
     <Accordion.Header>
-      <Accordion.Trigger>First</Accordion.Trigger>
+      <Accordion.Trigger>Item 1 Title</Accordion.Trigger>
     </Accordion.Header>
-    <Accordion.Content>First accordion content</Accordion.Content>
+    <Accordion.Content
+      >This is the collapsible content for this section.</Accordion.Content
+    >
   </Accordion.Item>
-  <Accordion.Item>
+  <Accordion.Item value="item-2">
     <Accordion.Header>
-      <Accordion.Trigger>Second</Accordion.Trigger>
+      <Accordion.Trigger>Item 2 Title</Accordion.Trigger>
     </Accordion.Header>
-    <Accordion.Content>Second accordion content</Accordion.Content>
+    <Accordion.Content
+      >This is the collapsible content for this section.</Accordion.Content
+    >
   </Accordion.Item>
 </Accordion.Root>
 ```
