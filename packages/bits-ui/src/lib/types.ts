@@ -17,7 +17,6 @@ export type * from "$lib/bits/dialog/types.js";
 export type * from "$lib/bits/dropdown-menu/types.js";
 export type * from "$lib/bits/label/types.js";
 export type * from "$lib/bits/link-preview/types.js";
-export type * from "$lib/bits/select/types.js";
 export type * from "$lib/bits/menubar/types.js";
 export type * from "$lib/bits/meter/types.js";
 export type * from "$lib/bits/navigation-menu/types.js";
