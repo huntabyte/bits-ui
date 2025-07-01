@@ -258,7 +258,7 @@ When you use the `Combobox.Content` component, Bits UI uses [Floating UI](https:
 
 You can opt-out of this behavior by instead using the `Combobox.ContentStatic` component.
 
-```svelte {4,14}
+```svelte /Combobox.ContentStatic/
 <Combobox.Root>
   <Combobox.Trigger />
   <Combobox.Input />

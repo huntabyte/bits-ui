@@ -103,7 +103,7 @@ Which can then be used alongside the other `Dialog.*` components:
 
 For example, if we were to use the `Popover.Content` component, we need to add a wrapper element within the `child` snippet, and spread the `wrapperProps` snippet prop to it.
 
-```svelte {12,16} /wrapperProps,/
+```svelte {12,16} /wrapperProps/
 <script lang="ts">
   import { Popover } from "bits-ui";
   import { fly } from "svelte/transition";
