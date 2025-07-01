@@ -270,7 +270,7 @@ When you use the `Select.Content` component, Bits UI uses [Floating UI](https://
 
 You can opt-out of this behavior by instead using the `Select.ContentStatic` component.
 
-```svelte {4,14}
+```svelte /Select.ContentStatic/
 <Select.Root>
   <Select.Trigger />
   <Select.Portal>
