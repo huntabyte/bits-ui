@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.8.11
+
+### Patch Changes
+
+- fix(Combobox): prevent selection of last highlighted item on invalid input (#1644) ([#1646](https://github.com/huntabyte/bits-ui/pull/1646))
+
+- fix: dont handle prevented contextmenu events ([#1645](https://github.com/huntabyte/bits-ui/pull/1645))
+
 ## 2.8.10
 
 ### Patch Changes
