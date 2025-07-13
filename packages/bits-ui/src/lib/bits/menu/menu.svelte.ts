@@ -1169,7 +1169,7 @@ export class ContextMenuTriggerState {
 	}
 
 	oncontextmenu(e: BitsMouseEvent) {
-		if (this.opts.disabled.current) return;
+		if (e.defaultPrevented || this.opts.disabled.current) return;
 		this.#clearLongPressTimer();
 		this.#handleOpen(e);
 		e.preventDefault();
