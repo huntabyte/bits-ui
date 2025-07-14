@@ -62,6 +62,7 @@ In the example below, we're using the `Checkbox` and [`Label`](/docs/components/
     id = useId(),
     checked = $bindable(false),
     ref = $bindable(null),
+    labelText,
     ...restProps
   }: WithoutChildrenOrChild<Switch.RootProps> & {
     labelText: string;
