@@ -209,8 +209,9 @@ export class CheckboxRootState {
 		}
 	}
 
-	onclick(_: BitsMouseEvent) {
+	onclick(e: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
+		e.preventDefault();
 		this.#toggle();
 	}
 
