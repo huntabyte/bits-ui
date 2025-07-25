@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.8.12
+
+### Patch Changes
+
+- fix(Checkbox): prevent default onclick to support wrapping checkboxes with labels ([#1671](https://github.com/huntabyte/bits-ui/pull/1671))
+
 ## 2.8.11
 
 ### Patch Changes
