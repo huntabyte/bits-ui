@@ -162,7 +162,7 @@ export class PopoverContentState {
 	};
 
 	onCloseAutoFocus = (e: Event) => {
-		this.opts.onCloseAutoFocus.current(e);
+		this.opts.onCloseAutoFocus.current?.(e);
 		if (e.defaultPrevented) return;
 		e.preventDefault();
 		this.root.triggerNode?.focus();

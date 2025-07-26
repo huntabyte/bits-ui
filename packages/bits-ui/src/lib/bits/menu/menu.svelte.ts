@@ -282,7 +282,7 @@ export class MenuContentState {
 	}
 
 	onCloseAutoFocus = (e: Event) => {
-		this.opts.onCloseAutoFocus.current(e);
+		this.opts.onCloseAutoFocus.current?.(e);
 		if (e.defaultPrevented || this.#isSub) return;
 
 		if (this.parentMenu.triggerNode && isTabbable(this.parentMenu.triggerNode)) {
