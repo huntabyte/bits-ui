@@ -1,5 +1,14 @@
 # bits-ui
 
+## 2.8.13
+
+### Patch Changes
+
+- fix: only call onCloseAutoFocus handler if defined ([#1674](https://github.com/huntabyte/bits-ui/pull/1674))
+
+  If popovers or other elements have been removed from the DOM, then
+  onCloseAutoFocus.current may be undefined.
+
 ## 2.8.12
 
 ### Patch Changes
