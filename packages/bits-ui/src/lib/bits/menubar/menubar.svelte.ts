@@ -319,7 +319,7 @@ export class MenubarContentState {
 	}
 
 	onCloseAutoFocus = (e: Event) => {
-		this.opts.onCloseAutoFocus.current(e);
+		this.opts.onCloseAutoFocus.current?.(e);
 		if (e.defaultPrevented) return;
 	};
 
