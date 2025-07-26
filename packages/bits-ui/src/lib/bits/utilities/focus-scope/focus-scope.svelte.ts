@@ -103,7 +103,7 @@ export class FocusScope {
 			cancelable: true,
 		});
 
-		this.#opts.onCloseAutoFocus.current(event);
+		this.#opts.onCloseAutoFocus.current?.(event);
 
 		if (!event.defaultPrevented) {
 			// return focus to previously focused element
