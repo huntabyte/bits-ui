@@ -151,7 +151,7 @@ export class PopoverContentState {
 		if (!isElement(e.target)) return;
 
 		const closestTrigger = e.target.closest(popoverAttrs.selector("trigger"));
-		if (closestTrigger === this.root.triggerNode) return;
+		if (closestTrigger && closestTrigger === this.root.triggerNode) return;
 		this.root.handleClose();
 	};
 
