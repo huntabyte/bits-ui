@@ -12,22 +12,32 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		/**
 		 * Whether the checkbox is disabled.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		disabled?: boolean | null | undefined;
 
 		/**
 		 * Whether the checkbox is required (for form validation).
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		required?: boolean;
+
+		/**
+		 * Whether the checkbox is read only.
+		 *
+		 * If readonly, the checkbox will be focusable by the user,
+		 * but will not be able to be checked/unchecked.
+		 *
+		 * @default false
+		 */
+		readonly?: boolean | null | undefined;
 
 		/**
 		 * The name of the checkbox used in form submission.
 		 * If not provided, the hidden input will not be rendered.
 		 *
-		 * @defaultValue undefined
+		 * @default undefined
 		 */
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		name?: any;
@@ -37,7 +47,7 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 * the checkbox when in a `Checkbox.Group`. If not provided while in a
 		 * `Checkbox.Group`, the checkbox will use a random identifier.
 		 *
-		 * @defaultValue undefined
+		 * @default undefined
 		 */
 		value?: string;
 
@@ -46,7 +56,7 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 * - `true` for checked
 		 * - `false` for unchecked
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		checked?: boolean;
 
@@ -58,7 +68,7 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		/**
 		 * Whether the checkbox is in an indeterminate state or not.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		indeterminate?: boolean;
 
@@ -78,15 +88,25 @@ export type CheckboxGroupPropsWithoutHTML = WithChild<{
 	 * Whether the checkbox group is disabled.
 	 * This will disable all checkboxes in the group.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean | null | undefined;
+
+	/**
+	 * Whether the checkbox group is read only.
+	 *
+	 * If readonly, the group will be focusable by the user,
+	 * but the checkboxes not be able to be checked/unchecked.
+	 *
+	 * @default false
+	 */
+	readonly?: boolean | null | undefined;
 
 	/**
 	 * Whether the checkbox group is required (for form validation).
 	 * This will mark all checkboxes in the group as required.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	required?: boolean;
 
@@ -95,7 +115,7 @@ export type CheckboxGroupPropsWithoutHTML = WithChild<{
 	 * If not provided, the hidden input will not be rendered.
 	 * This will be used as the name for all checkboxes in the group.
 	 *
-	 * @defaultValue undefined
+	 * @default undefined
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	name?: any;
@@ -105,7 +125,7 @@ export type CheckboxGroupPropsWithoutHTML = WithChild<{
 	 * of the checkboxes in the group are checked.
 	 *
 	 * @bindable
-	 * @defaultValue []
+	 * @default []
 	 */
 	value?: string[];
 
