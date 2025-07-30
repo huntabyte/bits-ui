@@ -1,5 +1,17 @@
 # bits-ui
 
+## 2.8.14
+
+### Patch Changes
+
+- fix(Menubar): ensure extension exists in import ([#1684](https://github.com/huntabyte/bits-ui/pull/1684))
+
+- fix(Popover): ensure when using a `customAnchor`, outside interactions are properly handled ([#1679](https://github.com/huntabyte/bits-ui/pull/1679))
+
+- fix(TimeField): ensure input value is string ([#1681](https://github.com/huntabyte/bits-ui/pull/1681))
+
+- fix(Select): ensure required enforced when type='multiple' ([#1685](https://github.com/huntabyte/bits-ui/pull/1685))
+
 ## 2.8.13
 
 ### Patch Changes
