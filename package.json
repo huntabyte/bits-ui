@@ -13,6 +13,7 @@
 		"lint:fix": "eslint --fix .",
 		"test": "pnpm -F \"./{packages,tests}/**\" --parallel --reporter append-only --color test",
 		"test:browser": "pnpm -F tests test:browser",
+		"test:browser:chromium": "pnpm -F tests test:browser --browser chromium",
 		"test:components": "pnpm -F tests test",
 		"test:utils": "pnpm -F bits-ui test"
 	},

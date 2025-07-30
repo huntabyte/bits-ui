@@ -440,18 +440,20 @@ export function handleCalendarNextPage({
 	if (pagedNavigation) {
 		setPlaceholder(firstMonth.add({ months: numberOfMonths }));
 	} else {
+		// Calculate the target date first, then update both months and placeholder
+		// to ensure they're synchronized and prevent useMonthViewPlaceholderSync from
+		// double-triggering
+		const targetDate = firstMonth.add({ months: 1 });
 		const newMonths = createMonths({
-			dateObj: firstMonth.add({ months: 1 }),
+			dateObj: targetDate,
 			weekStartsOn,
 			locale,
 			fixedWeeks,
 			numberOfMonths,
 		});
-		setMonths(newMonths);
 
-		const firstNewMonth = newMonths[0];
-		if (!firstNewMonth) return;
-		setPlaceholder(firstNewMonth.value.set({ day: 1 }));
+		setPlaceholder(targetDate);
+		setMonths(newMonths);
 	}
 }
 
@@ -470,18 +472,20 @@ export function handleCalendarPrevPage({
 	if (pagedNavigation) {
 		setPlaceholder(firstMonth.subtract({ months: numberOfMonths }));
 	} else {
+		// Calculate the target date first, then update both months and placeholder
+		// to ensure they're synchronized and prevent useMonthViewPlaceholderSync from
+		// double-triggering
+		const targetDate = firstMonth.subtract({ months: 1 });
 		const newMonths = createMonths({
-			dateObj: firstMonth.subtract({ months: 1 }),
+			dateObj: targetDate,
 			weekStartsOn,
 			locale,
 			fixedWeeks,
 			numberOfMonths,
 		});
 
+		setPlaceholder(targetDate);
 		setMonths(newMonths);
-		const firstNewMonth = newMonths[0];
-		if (!firstNewMonth) return;
-		setPlaceholder(firstNewMonth.value.set({ day: 1 }));
 	}
 }
 
