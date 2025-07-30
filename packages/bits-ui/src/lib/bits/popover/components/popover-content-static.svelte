@@ -21,6 +21,7 @@
 		onInteractOutside = noop,
 		trapFocus = true,
 		preventScroll = false,
+
 		...restProps
 	}: PopoverContentStaticProps = $props();
 
@@ -33,6 +34,7 @@
 		onInteractOutside: box.with(() => onInteractOutside),
 		onEscapeKeydown: box.with(() => onEscapeKeydown),
 		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
+		customAnchor: box.with(() => null),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
