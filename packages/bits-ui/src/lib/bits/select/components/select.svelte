@@ -80,7 +80,9 @@
 </FloatingLayer>
 
 {#if Array.isArray(rootState.opts.value.current)}
-	{#if rootState.opts.value.current.length}
+	{#if rootState.opts.value.current.length === 0}
+		<SelectHiddenInput {autocomplete} />
+	{:else}
 		{#each rootState.opts.value.current as item (item)}
 			<SelectHiddenInput value={item} {autocomplete} />
 		{/each}
