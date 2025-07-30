@@ -17,6 +17,7 @@ import type {
 } from "$lib/internal/types.js";
 import { isElement } from "$lib/internal/is.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import type { Measurable } from "$lib/internal/floating-svelte/types.js";
 
 const popoverAttrs = createBitsAttrs({
 	component: "popover",
@@ -128,6 +129,7 @@ interface PopoverContentStateOpts
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
 			onCloseAutoFocus: (e: Event) => void;
+			customAnchor: string | HTMLElement | null | Measurable;
 		}> {}
 
 export class PopoverContentState {
@@ -152,6 +154,14 @@ export class PopoverContentState {
 
 		const closestTrigger = e.target.closest(popoverAttrs.selector("trigger"));
 		if (closestTrigger && closestTrigger === this.root.triggerNode) return;
+		if (this.opts.customAnchor.current) {
+			if (isElement(this.opts.customAnchor.current)) {
+				if (this.opts.customAnchor.current.contains(e.target)) return;
+			} else if (typeof this.opts.customAnchor.current === "string") {
+				const el = document.querySelector(this.opts.customAnchor.current);
+				if (el && el.contains(e.target)) return;
+			}
+		}
 		this.root.handleClose();
 	};
 

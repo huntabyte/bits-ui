@@ -5,17 +5,22 @@
 
 	let width = $state(1024);
 	let height = $state(768);
+	let customAnchor = $state<HTMLElement | null>(null!);
+	let open = $state(false);
 </script>
 
-<Popover.Root>
-	<Popover.Trigger
+<button bind:this={customAnchor} onclick={() => (open = !open)}> Click me </button>
+
+<Popover.Root bind:open>
+	<!-- <Popover.Trigger
 		class="rounded-input bg-dark
 	text-background shadow-mini hover:bg-dark/95 inline-flex h-10 select-none items-center justify-center whitespace-nowrap px-[21px] text-[15px] font-medium transition-all hover:cursor-pointer active:scale-[0.98]"
 	>
 		Resize
-	</Popover.Trigger>
+	</Popover.Trigger> -->
 	<Popover.Portal>
 		<Popover.Content
+			{customAnchor}
 			class="border-dark-10 bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-(--bits-popover-content-transform-origin) z-30 w-full max-w-[328px] rounded-[12px] border p-4"
 			sideOffset={8}
 		>

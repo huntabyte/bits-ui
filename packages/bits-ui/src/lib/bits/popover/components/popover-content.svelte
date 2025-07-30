@@ -21,6 +21,7 @@
 		onInteractOutside = noop,
 		trapFocus = true,
 		preventScroll = false,
+		customAnchor = null,
 		...restProps
 	}: PopoverContentProps = $props();
 
@@ -33,6 +34,7 @@
 		onInteractOutside: box.with(() => onInteractOutside),
 		onEscapeKeydown: box.with(() => onEscapeKeydown),
 		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
+		customAnchor: box.with(() => customAnchor),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
@@ -49,6 +51,7 @@
 		{preventScroll}
 		loop
 		forceMount={true}
+		{customAnchor}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
@@ -76,6 +79,7 @@
 		{preventScroll}
 		loop
 		forceMount={false}
+		{customAnchor}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
