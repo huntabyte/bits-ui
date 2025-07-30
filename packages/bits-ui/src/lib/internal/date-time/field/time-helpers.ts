@@ -370,9 +370,5 @@ export function isTimeAfter(timeToCompare: Time, referenceTime: Time) {
 }
 
 export function getISOTimeValue(time: TimeValue): string {
-	if (time instanceof Time) {
-		return Time.toString();
-	}
-
-	return new Time(time.hour, time.minute, time.second, time.millisecond).toString();
+	return convertTimeValueToTime(time).toString();
 }
