@@ -1,5 +1,17 @@
 # bits-ui
 
+## 2.9.0
+
+### Minor Changes
+
+- feat(CheckboxGroup): add `readonly` prop/functionality ([#1688](https://github.com/huntabyte/bits-ui/pull/1688))
+
+- feat(Checkbox): add `readonly` prop/functionality ([#1688](https://github.com/huntabyte/bits-ui/pull/1688))
+
+### Patch Changes
+
+- fix(Calendar): resolve race condition in month navigation ([#1686](https://github.com/huntabyte/bits-ui/pull/1686))
+
 ## 2.8.14
 
 ### Patch Changes
