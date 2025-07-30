@@ -18,6 +18,7 @@
 		disabled,
 		children,
 		child,
+		readonly,
 		...restProps
 	}: CheckboxGroupProps = $props();
 
@@ -29,6 +30,7 @@
 		),
 		disabled: box.with(() => Boolean(disabled)),
 		required: box.with(() => Boolean(required)),
+		readonly: box.with(() => Boolean(readonly)),
 		name: box.with(() => name),
 		value: box.with(
 			() => $state.snapshot(value),

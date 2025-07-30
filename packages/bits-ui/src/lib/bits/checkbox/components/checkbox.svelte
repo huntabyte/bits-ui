@@ -22,6 +22,7 @@
 		onIndeterminateChange,
 		child,
 		type = "button",
+		readonly,
 		...restProps
 	}: CheckboxRootProps = $props();
 
@@ -74,6 +75,7 @@
 				}
 			),
 			type: box.with(() => type),
+			readonly: box.with(() => Boolean(readonly)),
 		},
 		group
 	);

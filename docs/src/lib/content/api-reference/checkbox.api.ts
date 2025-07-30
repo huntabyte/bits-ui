@@ -62,6 +62,11 @@ export const root = defineComponentApiSchema<CheckboxRootPropsWithoutHTML>({
 			description:
 				"The value of the checkbox. This is what is submitted with the form when the checkbox is checked.",
 		}),
+		readonly: defineBooleanProp({
+			default: false,
+			description:
+				"Whether or not the checkbox is read only. If `true`, the checkbox will be focusable by the user, but will not be able to be checked/unchecked.",
+		}),
 		...withChildProps({
 			elType: "HTMLButtonElement",
 			child: checkboxChildDefinition,
@@ -78,6 +83,10 @@ export const root = defineComponentApiSchema<CheckboxRootPropsWithoutHTML>({
 		defineSimpleDataAttr({
 			name: "disabled",
 			description: "Present when the checkbox is disabled.",
+		}),
+		defineSimpleDataAttr({
+			name: "readonly",
+			description: "Present when the checkbox is read only.",
 		}),
 		defineSimpleDataAttr({
 			name: "checkbox-root",
@@ -115,6 +124,11 @@ export const group = defineComponentApiSchema<CheckboxGroupPropsWithoutHTML>({
 			description:
 				"The name of the checkbox group. If provided a hidden input will be rendered to use for form submission.",
 		}),
+		readonly: defineBooleanProp({
+			default: false,
+			description:
+				"Whether or not the checkbox group is read only. If `true`, the group will be focusable by the user, but the checkboxes will not be able to be checked/unchecked.",
+		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
 		}),
@@ -127,6 +141,10 @@ export const group = defineComponentApiSchema<CheckboxGroupPropsWithoutHTML>({
 		defineSimpleDataAttr({
 			name: "checkbox-group",
 			description: "Present on the group element.",
+		}),
+		defineSimpleDataAttr({
+			name: "readonly",
+			description: "Present when the checkbox group is read only.",
 		}),
 	],
 });

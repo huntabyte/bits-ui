@@ -11,8 +11,10 @@ import type {
 import {
 	createBitsAttrs,
 	getAriaChecked,
+	getAriaReadonly,
 	getAriaRequired,
 	getDataDisabled,
+	getDataReadonly,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
@@ -28,6 +30,7 @@ interface CheckboxGroupStateOpts
 			name: string | undefined;
 			disabled: boolean;
 			required: boolean;
+			readonly: boolean;
 			onValueChange: OnChangeFn<string[]>;
 		}>,
 		WritableBoxedValues<{
@@ -126,6 +129,7 @@ interface CheckboxRootStateOpts
 		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
+			readonly: boolean;
 			name: string | undefined;
 			value: string | undefined;
 			type: HTMLButtonAttributes["type"];
@@ -143,23 +147,20 @@ export class CheckboxRootState {
 	readonly opts: CheckboxRootStateOpts;
 	readonly group: CheckboxGroupState | null;
 	readonly trueName = $derived.by(() => {
-		if (this.group && this.group.opts.name.current) {
-			return this.group.opts.name.current;
-		} else {
-			return this.opts.name.current;
-		}
+		if (this.group && this.group.opts.name.current) return this.group.opts.name.current;
+		return this.opts.name.current;
 	});
 	readonly trueRequired = $derived.by(() => {
-		if (this.group && this.group.opts.required.current) {
-			return true;
-		}
+		if (this.group && this.group.opts.required.current) return true;
 		return this.opts.required.current;
 	});
 	readonly trueDisabled = $derived.by(() => {
-		if (this.group && this.group.opts.disabled.current) {
-			return true;
-		}
+		if (this.group && this.group.opts.disabled.current) return true;
 		return this.opts.disabled.current;
+	});
+	readonly trueReadonly = $derived.by(() => {
+		if (this.group && this.group.opts.readonly.current) return true;
+		return this.opts.readonly.current;
 	});
 	readonly attachment: RefAttachment;
 
@@ -192,7 +193,7 @@ export class CheckboxRootState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		if (this.opts.disabled.current) return;
+		if (this.trueDisabled || this.trueReadonly) return;
 		if (e.key === kbd.ENTER) e.preventDefault();
 		if (e.key === kbd.SPACE) {
 			e.preventDefault();
@@ -210,7 +211,7 @@ export class CheckboxRootState {
 	}
 
 	onclick(e: BitsMouseEvent) {
-		if (this.opts.disabled.current) return;
+		if (this.trueDisabled || this.trueReadonly) return;
 		e.preventDefault();
 		this.#toggle();
 	}
@@ -232,7 +233,9 @@ export class CheckboxRootState {
 					this.opts.indeterminate.current
 				),
 				"aria-required": getAriaRequired(this.trueRequired),
+				"aria-readonly": getAriaReadonly(this.trueReadonly),
 				"data-disabled": getDataDisabled(this.trueDisabled),
+				"data-readonly": getDataReadonly(this.trueReadonly),
 				"data-state": getCheckboxDataState(
 					this.opts.checked.current,
 					this.opts.indeterminate.current
@@ -277,6 +280,7 @@ export class CheckboxInputState {
 				required: this.root.trueRequired,
 				name: this.root.trueName,
 				value: this.root.opts.value.current,
+				readonly: this.root.trueReadonly,
 			}) as const
 	);
 }

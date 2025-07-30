@@ -5,6 +5,7 @@
 		value: valueProp = $bindable([]),
 		items = [],
 		disabledItems = [],
+		readonlyItems = [],
 		onFormSubmit,
 		getValue: getValueProp,
 		setValue: setValueProp,
@@ -15,6 +16,7 @@
 		 */
 		items?: string[];
 		disabledItems?: string[];
+		readonlyItems?: string[];
 		onFormSubmit?: (fd: FormData) => void;
 		setValue?: (value: string[]) => void;
 		getValue?: () => string[];
@@ -28,6 +30,7 @@
 		data-testid="{itemValue}-checkbox"
 		value={itemValue}
 		disabled={disabledItems?.includes(itemValue)}
+		readonly={readonlyItems?.includes(itemValue)}
 	>
 		{#snippet children({ checked, indeterminate })}
 			<span data-testid="{itemValue}-indicator">

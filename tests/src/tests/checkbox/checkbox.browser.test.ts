@@ -194,6 +194,54 @@ describe("Single Checkbox", () => {
 			await tick();
 			expect(binding).toHaveTextContent("true");
 		});
+
+		it("should be readonly when the `readonly` prop is passed", async () => {
+			const t = setup({ readonly: true, name: "checkbox" });
+			const indicator = t.getByTestId("indicator");
+
+			// Should have proper attributes
+			expect(t.root).toHaveAttribute("aria-readonly", "true");
+			expect(t.root).toHaveAttribute("data-readonly", "");
+			expect(getHiddenInput()).toHaveAttribute("readonly");
+
+			// Should not toggle when clicked
+			expectUnchecked(t.root);
+			expect(indicator).toHaveTextContent("false");
+			await t.user.click(t.root);
+			expectUnchecked(t.root);
+			expect(indicator).toHaveTextContent("false");
+			expect(page.getByRole("checkbox")).not.toBeChecked();
+		});
+
+		it("should not toggle when readonly and `Space` key is pressed", async () => {
+			const t = setup({ readonly: true });
+			const indicator = t.getByTestId("indicator");
+
+			expectUnchecked(t.root);
+			expect(indicator).toHaveTextContent("false");
+			t.root.focus();
+			await t.user.keyboard(kbd.SPACE);
+			expectUnchecked(t.root);
+			expect(indicator).toHaveTextContent("false");
+			expect(page.getByRole("checkbox")).not.toBeChecked();
+		});
+
+		it("should still be focusable when readonly", async () => {
+			const t = setup({ readonly: true });
+			t.root.focus();
+			expect(t.root).toHaveFocus();
+		});
+
+		it("should not fire onCheckedChange callback when readonly", async () => {
+			const mock = vi.fn();
+			const t = setup({ readonly: true, onCheckedChange: mock });
+			await t.user.click(t.root);
+			expect(mock).not.toHaveBeenCalled();
+
+			t.root.focus();
+			await t.user.keyboard(kbd.SPACE);
+			expect(mock).not.toHaveBeenCalled();
+		});
 	});
 });
 
@@ -323,6 +371,118 @@ describe("Checkbox Group", () => {
 			for (const checkbox of rest) {
 				expect(checkbox).not.toBeDisabled();
 			}
+		});
+	});
+
+	describe("Readonly Behavior", () => {
+		it("should propagate readonly state to children checkboxes", async () => {
+			const t = setupGroup({ readonly: true });
+			for (const checkbox of t.checkboxes) {
+				expect(checkbox).toHaveAttribute("aria-readonly", "true");
+				expect(checkbox).toHaveAttribute("data-readonly", "");
+			}
+		});
+
+		it("should prevent interaction with all checkboxes when group is readonly", async () => {
+			const t = setupGroup({ readonly: true, value: [] });
+			const [a, b] = t.checkboxes;
+
+			// Should not toggle when clicked
+			expectUnchecked(a, b);
+			await t.user.click(a);
+			expectUnchecked(a);
+			await t.user.click(b);
+			expectUnchecked(b);
+
+			// Should not change value binding
+			expect(t.binding).toHaveTextContent("");
+		});
+
+		it("should prevent keyboard interaction when group is readonly", async () => {
+			const t = setupGroup({ readonly: true, value: [] });
+			const [a, b] = t.checkboxes;
+
+			expectUnchecked(a, b);
+			a.focus();
+			await t.user.keyboard(kbd.SPACE);
+			expectUnchecked(a);
+
+			b.focus();
+			await t.user.keyboard(kbd.SPACE);
+			expectUnchecked(b);
+
+			expect(t.binding).toHaveTextContent("");
+		});
+
+		it("should not call onValueChange callback when group is readonly", async () => {
+			const mock = vi.fn();
+			const t = setupGroup({ readonly: true, onValueChange: mock });
+			const [a, b] = t.checkboxes;
+
+			await t.user.click(a);
+			await t.user.click(b);
+			a.focus();
+			await t.user.keyboard(kbd.SPACE);
+
+			expect(mock).not.toHaveBeenCalled();
+		});
+
+		it("should still allow checkboxes to be focusable when group is readonly", async () => {
+			const t = setupGroup({ readonly: true });
+			const [a, b] = t.checkboxes;
+
+			a.focus();
+			expect(a).toHaveFocus();
+			b.focus();
+			expect(b).toHaveFocus();
+		});
+
+		it("should handle individual checkbox readonly with non-readonly group", async () => {
+			const t = setupGroup({ readonlyItems: ["a"] });
+			const [a, b, c] = t.checkboxes;
+
+			// Only 'a' should be readonly
+			expect(a).toHaveAttribute("aria-readonly", "true");
+			expect(a).toHaveAttribute("data-readonly", "");
+			expect(b).not.toHaveAttribute("aria-readonly", "true");
+			expect(c).not.toHaveAttribute("aria-readonly", "true");
+
+			// 'a' should not be interactive
+			await t.user.click(a);
+			expectUnchecked(a);
+
+			// 'b' and 'c' should be interactive
+			await t.user.click(b);
+			expectChecked(b);
+			await t.user.click(c);
+			expectChecked(c);
+		});
+
+		it("should preserve existing checked state when becoming readonly", async () => {
+			const t = setupGroup({ value: ["a", "b"] });
+			const [a, b, c] = t.checkboxes;
+
+			// Initially some items are checked
+			expectChecked(a, b);
+			expectUnchecked(c);
+
+			// Re-render with readonly
+			t.rerender({ readonly: true, value: ["a", "b"] });
+			await tick();
+
+			// Should maintain checked state but be readonly
+			expectChecked(a, b);
+			expectUnchecked(c);
+
+			for (const checkbox of t.checkboxes) {
+				expect(checkbox).toHaveAttribute("aria-readonly", "true");
+			}
+
+			// Should not be able to toggle
+			await t.user.click(a);
+			expectChecked(a);
+			await t.user.click(c);
+			expectUnchecked(c);
 		});
 	});
 });
