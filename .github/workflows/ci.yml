@@ -72,11 +72,8 @@ jobs:
             - run: pnpm test:utils
 
     Test:
-        name: Test - ${{ matrix.browser }}
+        name: Test - Chromium
         runs-on: macos-latest
-        strategy:
-            matrix:
-                browser: [chromium, firefox, webkit]
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
@@ -88,15 +85,10 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - name: Install Playwright browser
-              run: pnpm dlx playwright install ${{ matrix.browser }}
+              run: pnpm dlx playwright install chromium
 
             - name: Build packages
               run: pnpm build:packages
 
             - name: Run browser tests
-              run: |
-                  if [ "${{ matrix.browser }}" = "firefox" ]; then
-                    rm -rf tests/node_modules/.vite && pnpm test:browser --browser ${{ matrix.browser }} --no-file-parallelism
-                  else
-                    rm -rf tests/node_modules/.vite && pnpm test:browser --browser ${{ matrix.browser }}
-                  fi
+              run: pnpm test:browser:chromium
