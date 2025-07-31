@@ -212,6 +212,10 @@ export class CheckboxRootState {
 
 	onclick(e: BitsMouseEvent) {
 		if (this.trueDisabled || this.trueReadonly) return;
+		if (this.opts.type.current === "submit") {
+			this.#toggle();
+			return;
+		}
 		e.preventDefault();
 		this.#toggle();
 	}
