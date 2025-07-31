@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.9.1
+
+### Patch Changes
+
+- fix(Checkbox): ensure `type='submit'` submits the form as expected ([#1691](https://github.com/huntabyte/bits-ui/pull/1691))
+
 ## 2.9.0
 
 ### Minor Changes
