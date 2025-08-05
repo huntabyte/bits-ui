@@ -6,6 +6,7 @@
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
 	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import Mounted from "$lib/bits/utilities/mounted.svelte";
 	import { noop } from "$lib/internal/noop.js";
 
 	const uid = $props.id();
@@ -58,6 +59,7 @@
 					{@render children?.()}
 				</div>
 			{/if}
+			<Mounted bind:mounted={contentState.root.contentMounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}

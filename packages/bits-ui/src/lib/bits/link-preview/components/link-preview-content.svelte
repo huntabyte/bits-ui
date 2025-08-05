@@ -79,6 +79,7 @@
 					</div>
 				</div>
 			{/if}
+			<Mounted bind:mounted={contentState.root.contentMounted} />
 		{/snippet}
 	</PopperLayerForceMount>
 {:else if !forceMount}
