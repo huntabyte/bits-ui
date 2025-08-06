@@ -1,51 +1,112 @@
 import { SvelteMap } from "svelte/reactivity";
-import {
-	type Getter,
-	type ReadableBox,
-	afterSleep,
-	afterTick,
-	box,
-	onDestroyEffect,
-} from "svelte-toolbelt";
+import { type Getter, type ReadableBox, afterTick, box, onDestroyEffect } from "svelte-toolbelt";
 import type { Fn } from "./types.js";
-import { isBrowser, isIOS } from "./is.js";
+import { isIOS } from "./is.js";
 import { addEventListener } from "./events.js";
 import { useId } from "./use-id.js";
 import { watch } from "runed";
 import { SharedState } from "./shared-state.svelte.js";
+import { BROWSER } from "esm-env";
 
 export interface ScrollBodyOption {
 	padding?: boolean | number;
 	margin?: boolean | number;
 }
+/** A map of lock ids to their `locked` state. */
+const lockMap = new SvelteMap<string, boolean>();
+
+let initialBodyStyle: string | null = $state<string | null>(null);
+let stopTouchMoveListener: Fn | null = null;
+let cleanupTimeoutId: number | null = null;
+
+const anyLocked = box.with(() => {
+	for (const value of lockMap.values()) {
+		if (value) return true;
+	}
+	return false;
+});
+
+/**
+ * We track the time we scheduled the cleanup to prevent race conditions
+ * when multiple locks are created/destroyed in the same tick, ensuring
+ * only the last one to schedule the cleanup will run.
+ *
+ * reference: https://github.com/huntabyte/bits-ui/issues/1639
+ */
+let cleanupScheduledAt: number | null = null;
 
 const bodyLockStackCount = new SharedState(() => {
-	const map = new SvelteMap<string, boolean>();
-
-	const locked = $derived.by(() => {
-		for (const value of map.values()) {
-			if (value) return true;
-		}
-		return false;
-	});
-
-	let initialBodyStyle: string | null = $state<string | null>(null);
-
-	let stopTouchMoveListener: Fn | null = null;
-
 	function resetBodyStyle() {
-		if (!isBrowser) return;
+		if (!BROWSER) return;
 		document.body.setAttribute("style", initialBodyStyle ?? "");
 		document.body.style.removeProperty("--scrollbar-width");
 		isIOS && stopTouchMoveListener?.();
+		// reset initialBodyStyle so next locker captures the correct styles
+		initialBodyStyle = null;
+		hasEverBeenLocked = false;
+	}
+
+	function cancelPendingCleanup() {
+		if (cleanupTimeoutId === null) return;
+		window.clearTimeout(cleanupTimeoutId);
+		cleanupTimeoutId = null;
+	}
+
+	function scheduleCleanupIfNoNewLocks(delay: number | null, callback: () => void) {
+		cancelPendingCleanup();
+
+		cleanupScheduledAt = Date.now();
+		const currentCleanupId = cleanupScheduledAt;
+
+		/**
+		 * We schedule the cleanup to run after a delay to allow new locks to register
+		 * that might have been added in the same tick as the current cleanup.
+		 *
+		 * If a new lock is added in the same tick, the cleanup will be cancelled and
+		 * a new cleanup will be scheduled.
+		 *
+		 * This is to prevent the cleanup from running too early and resetting the body
+		 * style before the new lock has had a chance to apply its styles.
+		 */
+		const cleanupFn = () => {
+			cleanupTimeoutId = null;
+
+			// check if this cleanup is still valid (no newer cleanups scheduled)
+			if (cleanupScheduledAt !== currentCleanupId) return;
+
+			// ensure no new locks were added during the delay
+			if (!isAnyLocked(lockMap)) {
+				callback();
+			}
+		};
+
+		if (delay === null) {
+			// use a small delay even when no restoreScrollDelay is set
+			// to handle same-tick destroy/create scenarios (~1 frame)
+			cleanupTimeoutId = window.setTimeout(cleanupFn, 16);
+		} else {
+			cleanupTimeoutId = window.setTimeout(cleanupFn, delay);
+		}
+	}
+
+	// track if we've ever applied lock styles in this session
+	let hasEverBeenLocked = false;
+
+	function ensureInitialStyleCaptured() {
+		if (!hasEverBeenLocked && initialBodyStyle === null) {
+			initialBodyStyle = document.body.getAttribute("style");
+			hasEverBeenLocked = true;
+		}
 	}
 
 	watch(
-		() => locked,
+		() => anyLocked.current,
 		() => {
-			if (!locked) return;
+			if (!anyLocked.current) return;
 
-			initialBodyStyle = document.body.getAttribute("style");
+			// ensure we've captured the initial style before applying any lock styles
+			ensureInitialStyleCaptured();
+
 			const bodyStyle = getComputedStyle(document.body);
 
 			// TODO: account for RTL direction, etc.
@@ -65,6 +126,7 @@ const bodyLockStackCount = new SharedState(() => {
 			}
 
 			if (isIOS) {
+				// IOS devices are special and require a touchmove listener to prevent scrolling
 				stopTouchMoveListener = addEventListener(
 					document,
 					"touchmove",
@@ -78,6 +140,14 @@ const bodyLockStackCount = new SharedState(() => {
 				);
 			}
 
+			/**
+			 * We ensure pointer-events: none is applied _after_ DOM updates, so that any focus/
+			 * interaction changes from opening overlays/menus complete _before_ we block pointer
+			 * events.
+			 *
+			 * this avoids race conditions where pointer-events could be set too early and break
+			 * focus/interaction.
+			 */
 			afterTick(() => {
 				document.body.style.pointerEvents = "none";
 				document.body.style.overflow = "hidden";
@@ -92,10 +162,13 @@ const bodyLockStackCount = new SharedState(() => {
 	});
 
 	return {
-		get map() {
-			return map;
+		get lockMap() {
+			return lockMap;
 		},
 		resetBodyStyle,
+		scheduleCleanupIfNoNewLocks,
+		cancelPendingCleanup,
+		ensureInitialStyleCaptured,
 	};
 });
 
@@ -116,26 +189,42 @@ export class BodyScrollLock {
 
 		if (!this.#countState) return;
 
-		this.#countState.map.set(this.#id, this.#initialState ?? false);
+		/**
+		 * Since a new lock is being created, we cancel any pending cleanup to
+		 * prevent the cleanup from running too early and resetting the body style
+		 * before the new lock has had a chance to apply its styles.
+		 *
+		 * reference: https://github.com/huntabyte/bits-ui/issues/1639
+		 */
+		this.#countState.cancelPendingCleanup();
+
+		// capture initial style before this lock is registered
+		this.#countState.ensureInitialStyleCaptured();
+
+		this.#countState.lockMap.set(this.#id, this.#initialState ?? false);
 
 		this.locked = box.with(
-			() => this.#countState.map.get(this.#id) ?? false,
-			(v) => this.#countState.map.set(this.#id, v)
+			() => this.#countState.lockMap.get(this.#id) ?? false,
+			(v) => this.#countState.lockMap.set(this.#id, v)
 		);
 
 		onDestroyEffect(() => {
-			this.#countState.map.delete(this.#id);
-			// if any locks are still active, we don't reset the body style
-			if (isAnyLocked(this.#countState.map)) return;
+			this.#countState.lockMap.delete(this.#id);
+
+			// if not the last lock, we don't need to do anything
+			if (isAnyLocked(this.#countState.lockMap)) return;
 
 			const restoreScrollDelay = this.#restoreScrollDelay();
 
-			// if no locks are active (meaning this was the last lock), we reset the body style
-			if (restoreScrollDelay === null) {
-				requestAnimationFrame(() => this.#countState.resetBodyStyle());
-			} else {
-				afterSleep(restoreScrollDelay, () => this.#countState.resetBodyStyle());
-			}
+			/**
+			 * We schedule the cleanup to run after a delay to handle same-tick
+			 * destroy/create scenarios.
+			 *
+			 * reference: https://github.com/huntabyte/bits-ui/issues/1639
+			 */
+			this.#countState.scheduleCleanupIfNoNewLocks(restoreScrollDelay, () => {
+				this.#countState.resetBodyStyle();
+			});
 		});
 	}
 }
