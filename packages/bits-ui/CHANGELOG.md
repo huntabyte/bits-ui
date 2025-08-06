@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.9.2
+
+### Patch Changes
+
+- fix: handle race conditions in scroll lock / restore ([#1700](https://github.com/huntabyte/bits-ui/pull/1700))
+
+- fix(LinkPreview): ensure grace area exists when `forceMount=true` ([#1698](https://github.com/huntabyte/bits-ui/pull/1698))
+
 ## 2.9.1
 
 ### Patch Changes
