@@ -87,7 +87,7 @@ Combines `Item`, `Header`, `Trigger`, and `Content` into a single component:
 
 <Accordion.Item {...restProps}>
   <Accordion.Header>
-    <Accordion.Trigger>{item.title}</Accordion.Trigger>
+    <Accordion.Trigger>{title}</Accordion.Trigger>
   </Accordion.Header>
   <Accordion.Content>
     {content}
@@ -114,6 +114,7 @@ Wraps `Root` and renders multiple `MyAccordionItem` components:
   let {
     value = $bindable(),
     ref = $bindable(null),
+    items,
     ...restProps
   }: WithoutChildrenOrChild<Accordion.RootProps> & {
     items: Item[];
