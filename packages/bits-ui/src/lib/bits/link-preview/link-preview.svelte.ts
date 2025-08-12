@@ -180,7 +180,7 @@ export class LinkPreviewTriggerState {
 
 	onpointerleave(e: BitsPointerEvent) {
 		if (isTouch(e)) return;
-		if (!this.root.contentMounted) {
+		if (!this.root.contentMounted || !this.root.opts.open.current) {
 			this.root.immediateClose();
 		}
 	}
