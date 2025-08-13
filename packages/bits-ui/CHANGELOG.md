@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.9.3
+
+### Patch Changes
+
+- fix(LinkPreview): ensure forceMount pointerleave doesn't open without remaining on trigger ([#1705](https://github.com/huntabyte/bits-ui/pull/1705))
+
 ## 2.9.2
 
 ### Patch Changes
