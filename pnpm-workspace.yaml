@@ -4,4 +4,14 @@ packages:
   - tests
 
 catalog:
-  svelte: 5.33.2
+  "@sveltejs/kit": ^2.31.0
+  "@sveltejs/vite-plugin-svelte": ^6.1.2
+  "@tailwindcss/vite": ^4.1.12
+  "@types/node": ^20.19.0
+  svelte: ^5.38.1
+  svelte-check: ^4.3.1
+  tailwindcss: ^4.1.12
+  typescript: ^5.8.3
+  vite: ^7.0.4
+  vitest: ^3.2.3
+  vitest-browser-svelte: ^1.0.0

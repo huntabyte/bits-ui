@@ -52,8 +52,10 @@
 			checked: box.with(
 				() => checked,
 				(v) => {
-					checked = v;
-					onCheckedChange(v);
+					if (v !== checked) {
+						checked = v;
+						onCheckedChange(v);
+					}
 				}
 			),
 			id: box.with(() => id),
@@ -67,8 +69,10 @@
 			indeterminate: box.with(
 				() => indeterminate,
 				(v) => {
-					indeterminate = v;
-					onIndeterminateChange(v);
+					if (v !== indeterminate) {
+						indeterminate = v;
+						onIndeterminateChange(v);
+					}
 				}
 			),
 			value: box.with(() => value),
