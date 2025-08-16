@@ -41,6 +41,7 @@ export default tseslint.config(
 			"@typescript-eslint/no-empty-object-type": "off",
 			"prefer-const": "off",
 			"svelte/no-at-html-tags": "off",
+			"svelte/prefer-svelte-reactivity": "off",
 		},
 	},
 	{

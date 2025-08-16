@@ -2,7 +2,7 @@
 	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils/styles.js";
 
-	let { class: className, children, ...restProps }: HTMLAttributes<HTMLQuoteElement> = $props();
+	let { class: className, children, ...restProps }: HTMLAttributes<HTMLElement> = $props();
 </script>
 
 <blockquote class={cn("mt-6 border-l-2 pl-6 italic", className)} {...restProps}>

@@ -1,0 +1,4 @@
+{
+	"tailwindCSS.experimental.configFile": "docs/src/lib/styles/app.css",
+	"tailwindCSS.classFunctions": ["cn", "clsx", "tv", "tw"]
+}
