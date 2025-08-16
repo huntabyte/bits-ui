@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.9.4
+
+### Patch Changes
+
+- fix(MenuCheckboxItem): ensure onchange is only called when the value changes ([#1709](https://github.com/huntabyte/bits-ui/pull/1709))
+
 ## 2.9.3
 
 ### Patch Changes
