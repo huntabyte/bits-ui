@@ -79,7 +79,7 @@ It's recommended to use the `Checkbox` primitive to create your own custom check
   } = $props();
 </script>
 
-<Checkbox.Root bind:checked bind:ref {...restProps}>
+<Checkbox.Root {id} bind:checked bind:ref {...restProps}>
   {#snippet children({ checked, indeterminate })}
     {#if indeterminate}
       -
