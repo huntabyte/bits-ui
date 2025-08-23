@@ -275,27 +275,15 @@ const STATE = defineEnumDataAttr({
 type DataAttrs = ComponentAPISchema["dataAttributes"];
 
 const triggerAttrs: DataAttrs = [
-	STATE,
-	defineSimpleDataAttr({
-		name: "menu-trigger",
-		description: "Present on the trigger element.",
-	}),
+	STATE
 ];
 
 const contentAttrs: DataAttrs = [
-	STATE,
-	defineSimpleDataAttr({
-		name: "menu-content",
-		description: "Present on the content element.",
-	}),
+	STATE
 ];
 
 const arrowAttrs: DataAttrs = [
-	STATE,
-	defineSimpleDataAttr({
-		name: "menu-arrow",
-		description: "Present on the arrow element.",
-	}),
+	STATE
 ];
 
 const sharedItemAttrs: DataAttrs = [
@@ -315,32 +303,7 @@ const sharedItemAttrs: DataAttrs = [
 ];
 
 const itemAttrs: DataAttrs = [
-	...sharedItemAttrs,
-	defineSimpleDataAttr({
-		name: "menu-item",
-		description: "Present on the item element.",
-	}),
-];
-
-const groupAttrs: DataAttrs = [
-	defineSimpleDataAttr({
-		name: "menu-group",
-		description: "Present on the group element.",
-	}),
-];
-
-const labelAttrs: DataAttrs = [
-	defineSimpleDataAttr({
-		name: "menu-group-heading",
-		description: "Present on the group heading element.",
-	}),
-];
-
-const checkboxGroupAttrs: DataAttrs = [
-	defineSimpleDataAttr({
-		name: "menu-checkbox-group",
-		description: "Present on the checkbox group element.",
-	}),
+	...sharedItemAttrs
 ];
 
 const checkboxItemAttrs: DataAttrs = [
@@ -350,13 +313,6 @@ const checkboxItemAttrs: DataAttrs = [
 		value: MenuCheckedStateAttr,
 		options: ["checked", "unchecked", "indeterminate"],
 		description: "The checkbox menu item's checked state.",
-	}),
-];
-
-const radioGroupAttrs: DataAttrs = [
-	defineSimpleDataAttr({
-		name: "menu-radio-group",
-		description: "Present on the radio group element.",
 	}),
 ];
 
@@ -371,10 +327,6 @@ const radioItemAttrs: DataAttrs = [
 	defineSimpleDataAttr({
 		name: "value",
 		description: "The value of the radio item.",
-	}),
-	defineSimpleDataAttr({
-		name: "menu-radio-item",
-		description: "Present on the radio item element.",
 	}),
 ];
 
@@ -391,20 +343,12 @@ const separatorAttrs: DataAttrs = [
 ];
 
 const subContentAttrs: DataAttrs = [
-	STATE,
-	defineSimpleDataAttr({
-		name: "menu-sub-content",
-		description: "Present on the submenu content element.",
-	}),
+	STATE
 ];
 
 const subTriggerAttrs: DataAttrs = [
 	...sharedItemAttrs,
-	STATE,
-	defineSimpleDataAttr({
-		name: "menu-sub-trigger",
-		description: "Present on the submenu trigger element.",
-	}),
+	STATE
 ];
 
 export const trigger = {
@@ -434,12 +378,10 @@ export const item = {
 
 export const group = {
 	props: groupProps,
-	dataAttributes: groupAttrs,
 };
 
 export const label = {
 	props: groupHeadingProps,
-	dataAttributes: labelAttrs,
 };
 
 export const separator = {
@@ -454,7 +396,6 @@ export const checkboxItem = {
 
 export const radioGroup = {
 	props: radioGroupProps,
-	dataAttributes: radioGroupAttrs,
 };
 
 export const radioItem = {
@@ -491,7 +432,6 @@ const portal = {
 
 const checkboxGroup = {
 	props: checkboxGroupProps,
-	dataAttributes: checkboxGroupAttrs,
 };
 
 export const menu = {
