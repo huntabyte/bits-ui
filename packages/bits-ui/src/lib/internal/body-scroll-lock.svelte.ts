@@ -18,6 +18,7 @@ const lockMap = new SvelteMap<string, boolean>();
 let initialBodyStyle: string | null = $state<string | null>(null);
 let stopTouchMoveListener: Fn | null = null;
 let cleanupTimeoutId: number | null = null;
+let isInCleanupTransition = false;
 
 const anyLocked = box.with(() => {
 	for (const value of lockMap.values()) {
@@ -43,7 +44,6 @@ const bodyLockStackCount = new SharedState(() => {
 		isIOS && stopTouchMoveListener?.();
 		// reset initialBodyStyle so next locker captures the correct styles
 		initialBodyStyle = null;
-		hasEverBeenLocked = false;
 	}
 
 	function cancelPendingCleanup() {
@@ -54,6 +54,7 @@ const bodyLockStackCount = new SharedState(() => {
 
 	function scheduleCleanupIfNoNewLocks(delay: number | null, callback: () => void) {
 		cancelPendingCleanup();
+		isInCleanupTransition = true;
 
 		cleanupScheduledAt = Date.now();
 		const currentCleanupId = cleanupScheduledAt;
@@ -76,26 +77,21 @@ const bodyLockStackCount = new SharedState(() => {
 
 			// ensure no new locks were added during the delay
 			if (!isAnyLocked(lockMap)) {
+				isInCleanupTransition = false;
 				callback();
+			} else {
+				isInCleanupTransition = false;
 			}
 		};
 
-		if (delay === null) {
-			// use a small delay even when no restoreScrollDelay is set
-			// to handle same-tick destroy/create scenarios (~1 frame)
-			cleanupTimeoutId = window.setTimeout(cleanupFn, 16);
-		} else {
-			cleanupTimeoutId = window.setTimeout(cleanupFn, delay);
-		}
+		const actualDelay = delay === null ? 24 : delay;
+		cleanupTimeoutId = window.setTimeout(cleanupFn, actualDelay);
 	}
 
-	// track if we've ever applied lock styles in this session
-	let hasEverBeenLocked = false;
-
 	function ensureInitialStyleCaptured() {
-		if (!hasEverBeenLocked && initialBodyStyle === null) {
+		// only capture initial style once, when no locks exist and no cleanup is in progress
+		if (initialBodyStyle === null && lockMap.size === 0 && !isInCleanupTransition) {
 			initialBodyStyle = document.body.getAttribute("style");
-			hasEverBeenLocked = true;
 		}
 	}
 
@@ -106,6 +102,9 @@ const bodyLockStackCount = new SharedState(() => {
 
 			// ensure we've captured the initial style before applying any lock styles
 			ensureInitialStyleCaptured();
+
+			// if we're applying lock styles, we're no longer in a cleanup transition
+			isInCleanupTransition = false;
 
 			const bodyStyle = getComputedStyle(document.body);
 

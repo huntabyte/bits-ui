@@ -1,33 +1,65 @@
 <script lang="ts">
-	import { DropdownMenu } from "bits-ui";
+	import { mount, onMount, unmount } from "svelte";
+	import AlertDialog from "./alert-dialog.svelte";
 
-	let filters = $state<string[]>([]);
+	async function makeAlert(message: string) {
+		const component = mount(AlertDialog, {
+			props: {
+				title: `Loading ${message}`,
+				message: message,
+			},
+			target: document.body,
+		});
+
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+		await unmount(component);
+	}
+
+	async function badAlert() {
+		// doesnt work
+		await makeAlert("number 1");
+		await makeAlert("number2");
+
+		// hacky fix
+		// await makeAlert('number 1');
+		// await new Promise((resolve) => setTimeout(resolve, 500));
+		// await makeAlert('number2');
+
+		// works
+		// await makeAlert('1');
+	}
+
+	let bodyPointerEventsNone = $state(
+		typeof document !== "undefined" && document.body.style.pointerEvents === "none"
+	);
+
+	onMount(() => {
+		const interval = setInterval(() => {
+			if (document.body.style.pointerEvents === "none") {
+				bodyPointerEventsNone = true;
+			} else {
+				bodyPointerEventsNone = false;
+			}
+		}, 250);
+
+		return () => {
+			clearInterval(interval);
+		};
+	});
 </script>
 
-<div class="pt-8">
-	{JSON.stringify(filters)}
+{#if bodyPointerEventsNone}
+	<div class="fixed left-0 top-0 z-50 w-full bg-red-500 py-2 text-center text-white">
+		POINTER EVENTS NOT ALLOWED
+	</div>
+{/if}
 
-	<DropdownMenu.Root>
-		<DropdownMenu.Trigger>open dropdown</DropdownMenu.Trigger>
-
-		<DropdownMenu.Portal>
-			<DropdownMenu.Content>
-				<DropdownMenu.CheckboxGroup bind:value={filters}>
-					{#each ["apple", "orange", "banana"] as fruit (fruit)}
-						<DropdownMenu.CheckboxItem
-							value={fruit}
-							onCheckedChange={(checked) => {
-								console.log(fruit, checked);
-							}}
-						>
-							{#snippet children({ checked })}
-								{fruit}
-								{#if checked}✓{/if}
-							{/snippet}
-						</DropdownMenu.CheckboxItem>
-					{/each}
-				</DropdownMenu.CheckboxGroup>
-			</DropdownMenu.Content>
-		</DropdownMenu.Portal>
-	</DropdownMenu.Root>
+<div
+	class="fixed left-1/2 top-1/2 z-40 flex h-screen w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center {bodyPointerEventsNone
+		? 'bg-red-500/70'
+		: 'bg-slate-900'}"
+>
+	<button class="rounded-md bg-blue-500 px-4 py-2 text-white" onclick={badAlert}>
+		Bad Alert
+	</button>
 </div>
