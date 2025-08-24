@@ -274,17 +274,11 @@ const STATE = defineEnumDataAttr({
 
 type DataAttrs = ComponentAPISchema["dataAttributes"];
 
-const triggerAttrs: DataAttrs = [
-	STATE
-];
+const triggerAttrs: DataAttrs = [STATE];
 
-const contentAttrs: DataAttrs = [
-	STATE
-];
+const contentAttrs: DataAttrs = [STATE];
 
-const arrowAttrs: DataAttrs = [
-	STATE
-];
+const arrowAttrs: DataAttrs = [STATE];
 
 const sharedItemAttrs: DataAttrs = [
 	defineSimpleDataAttr({
@@ -302,9 +296,7 @@ const sharedItemAttrs: DataAttrs = [
 	}),
 ];
 
-const itemAttrs: DataAttrs = [
-	...sharedItemAttrs
-];
+const itemAttrs: DataAttrs = [...sharedItemAttrs];
 
 const checkboxItemAttrs: DataAttrs = [
 	...sharedItemAttrs,
@@ -342,14 +334,9 @@ const separatorAttrs: DataAttrs = [
 	}),
 ];
 
-const subContentAttrs: DataAttrs = [
-	STATE
-];
+const subContentAttrs: DataAttrs = [STATE];
 
-const subTriggerAttrs: DataAttrs = [
-	...sharedItemAttrs,
-	STATE
-];
+const subTriggerAttrs: DataAttrs = [...sharedItemAttrs, STATE];
 
 export const trigger = {
 	props: triggerProps,
