@@ -1,4 +1,4 @@
-# Bits UI
+# Bots UI
 
 <!-- automd:badges license name="bits-ui" color="pink" github="huntabyte/bits-ui" -->
 
