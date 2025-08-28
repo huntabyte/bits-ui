@@ -6,6 +6,7 @@
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
 
 	let {
+		disabled = false,
 		open = $bindable(false),
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
@@ -15,6 +16,7 @@
 	}: LinkPreviewRootProps = $props();
 
 	LinkPreviewRootState.create({
+		disabled: box.with(() => disabled),
 		open: box.with(
 			() => open,
 			(v) => {

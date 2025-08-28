@@ -34,6 +34,7 @@ interface LinkPreviewRootStateOpts
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
+			disabled: boolean;
 			openDelay: number;
 			closeDelay: number;
 			onOpenChangeComplete: OnChangeFn<boolean>;
@@ -123,7 +124,7 @@ export class LinkPreviewRootState {
 
 	handleOpen() {
 		this.clearTimeout();
-		if (this.opts.open.current) return;
+		if (this.opts.open.current || this.opts.disabled.current) return;
 		this.isOpening = true;
 		this.timeout = this.domContext.setTimeout(() => {
 			if (this.isOpening) {
