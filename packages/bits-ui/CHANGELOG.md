@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.9.5
+
+### Patch Changes
+
+- fix(LinkPreview): add disabled state functionality ([#1726](https://github.com/huntabyte/bits-ui/pull/1726))
+
+- fix: body scroll lock restoration ([#1714](https://github.com/huntabyte/bits-ui/pull/1714))
+
 ## 2.9.4
 
 ### Patch Changes
