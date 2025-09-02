@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.9.6
+
+### Patch Changes
+
+- fix: restore focus to element that triggered the dialog/popover ([#1729](https://github.com/huntabyte/bits-ui/pull/1729))
+
 ## 2.9.5
 
 ### Patch Changes
