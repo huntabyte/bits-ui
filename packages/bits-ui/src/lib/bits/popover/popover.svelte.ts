@@ -128,7 +128,6 @@ interface PopoverContentStateOpts
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
-			onCloseAutoFocus: (e: Event) => void;
 			customAnchor: string | HTMLElement | null | Measurable;
 		}> {}
 
@@ -171,13 +170,6 @@ export class PopoverContentState {
 		this.root.handleClose();
 	};
 
-	onCloseAutoFocus = (e: Event) => {
-		this.opts.onCloseAutoFocus.current?.(e);
-		if (e.defaultPrevented) return;
-		e.preventDefault();
-		this.root.triggerNode?.focus();
-	};
-
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	readonly props = $derived.by(
@@ -197,7 +189,6 @@ export class PopoverContentState {
 	readonly popperProps = {
 		onInteractOutside: this.onInteractOutside,
 		onEscapeKeydown: this.onEscapeKeydown,
-		onCloseAutoFocus: this.onCloseAutoFocus,
 	};
 }
 

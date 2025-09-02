@@ -168,6 +168,48 @@ describe("Focus Management", () => {
 		const closeButton = t.getByTestId("close").element();
 		expect(document.activeElement).toBe(closeButton);
 	});
+
+	it("should return focus to programmatically focused element when closed", async () => {
+		const t = await setup();
+
+		const outsideButton = t.getByTestId("outside").element() as HTMLElement;
+		outsideButton.tabIndex = 0;
+		outsideButton.focus();
+		expect(outsideButton).toHaveFocus();
+
+		const toggleButton = t.getByTestId("toggle").element();
+		await t.user.click(toggleButton);
+		await expectExists(t.getByTestId("content"));
+
+		await t.user.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getByTestId("content"));
+
+		expect(toggleButton).toHaveFocus();
+	});
+
+	it("should still respect onCloseAutoFocus when opened programmatically", async () => {
+		const t = await setup({
+			contentProps: {
+				onCloseAutoFocus: (e) => {
+					e.preventDefault();
+					document.getElementById("close-focus-override")?.focus();
+				},
+			},
+		});
+
+		const outsideButton = t.getByTestId("outside").element() as HTMLElement;
+		outsideButton.tabIndex = 0;
+		outsideButton.focus();
+
+		const toggleButton = t.getByTestId("toggle").element();
+		await t.user.click(toggleButton);
+		await expectExists(t.getByTestId("content"));
+
+		await t.user.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getByTestId("content"));
+
+		expect(t.getByTestId("close-focus-override")).toHaveFocus();
+	});
 });
 
 describe("Portal Behavior", () => {

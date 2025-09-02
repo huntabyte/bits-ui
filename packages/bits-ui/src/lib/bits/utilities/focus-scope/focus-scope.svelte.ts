@@ -71,6 +71,7 @@ export class FocusScope {
 		this.#handleCloseAutoFocus();
 
 		this.#manager.unregister(this);
+		this.#manager.clearPreFocusMemory(this);
 		this.#container = null;
 	}
 
@@ -106,10 +107,16 @@ export class FocusScope {
 		this.#opts.onCloseAutoFocus.current?.(event);
 
 		if (!event.defaultPrevented) {
-			// return focus to previously focused element
-			const prevFocused = document.activeElement as HTMLElement;
-			if (prevFocused && prevFocused !== document.body) {
-				prevFocused.focus();
+			// return focus to the element that was focused before this scope opened
+			const preFocusedElement = this.#manager.getPreFocusMemory(this);
+			if (preFocusedElement && document.contains(preFocusedElement)) {
+				// ensure the element is still focusable and in the document
+				try {
+					preFocusedElement.focus();
+				} catch {
+					// fallback if focus fails
+					document.body.focus();
+				}
 			}
 		}
 	}

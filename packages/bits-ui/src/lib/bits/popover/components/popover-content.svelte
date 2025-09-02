@@ -33,7 +33,6 @@
 		),
 		onInteractOutside: box.with(() => onInteractOutside),
 		onEscapeKeydown: box.with(() => onEscapeKeydown),
-		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
 		customAnchor: box.with(() => customAnchor),
 	});
 
@@ -52,6 +51,7 @@
 		loop
 		forceMount={true}
 		{customAnchor}
+		{onCloseAutoFocus}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
@@ -80,6 +80,7 @@
 		loop
 		forceMount={false}
 		{customAnchor}
+		{onCloseAutoFocus}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {

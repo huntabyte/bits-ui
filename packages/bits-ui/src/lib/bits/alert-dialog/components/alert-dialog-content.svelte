@@ -57,11 +57,7 @@
 				present: contentState.root.opts.open.current,
 				open: contentState.root.opts.open.current,
 			})}
-			onCloseAutoFocus={(e) => {
-				onCloseAutoFocus(e);
-				if (e.defaultPrevented) return;
-				afterSleep(0, () => contentState.root.triggerNode?.focus());
-			}}
+			{onCloseAutoFocus}
 			onOpenAutoFocus={(e) => {
 				onOpenAutoFocus(e);
 				if (e.defaultPrevented) return;
