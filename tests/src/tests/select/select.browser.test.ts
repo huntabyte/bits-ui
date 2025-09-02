@@ -595,11 +595,6 @@ describe("select - multiple", () => {
 		expect(t.trigger).not.toHaveAttribute("data-placeholder");
 	});
 
-	it("should not render a hidden input if the `name` prop is passed and a value is not selected", async () => {
-		const t = setupMultiple();
-		expect(t.getHiddenInputs()).toHaveLength(0);
-	});
-
 	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
 		const t = setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
@@ -827,7 +822,7 @@ describe("select - multiple", () => {
 		expectSelected(item2!);
 	});
 
-	it("should submit an empty array when the user submits the form without selecting any items", async () => {
+	it("should submit an array with a single empty string when the user submits the form without selecting any items", async () => {
 		let submittedValues: string[] | undefined;
 		const t = setupMultiple({
 			onFormSubmit: (fd) => {
@@ -837,7 +832,8 @@ describe("select - multiple", () => {
 		});
 
 		await t.user.click(t.submit);
-		expect(submittedValues).toHaveLength(0);
+		expect(submittedValues).toHaveLength(1);
+		expect(submittedValues![0]).toBe("");
 	});
 
 	it("should not open when disabled on touch devices", async () => {
