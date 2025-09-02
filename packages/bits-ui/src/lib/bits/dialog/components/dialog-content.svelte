@@ -57,11 +57,7 @@
 				open: contentState.root.opts.open.current,
 			})}
 			{onOpenAutoFocus}
-			onCloseAutoFocus={(e) => {
-				onCloseAutoFocus(e);
-				if (e.defaultPrevented) return;
-				afterSleep(1, () => contentState.root.triggerNode?.focus());
-			}}
+			{onCloseAutoFocus}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
 				<EscapeLayer
