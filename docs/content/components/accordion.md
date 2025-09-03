@@ -246,7 +246,7 @@ Set the `type` prop to `"multiple"` to allow multiple accordion items to be open
 />
 ```
 
-<AccordionDemoCustom type="single" />
+<AccordionDemoCustom type="multiple" />
 
 ### Default Open Items
 
