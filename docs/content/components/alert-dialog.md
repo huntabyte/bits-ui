@@ -212,7 +212,7 @@ Disabling focus trap may reduce accessibility. Use with caution.
 
 ### Open Focus
 
-By default, when a dialog is opened, focus will be set to the `AlertDialog.Cancel` button if it exists, or the first focusable element within the `AlertDialog.Content`. This ensures that users navigating my keyboard end up somewhere within the Dialog that they can interact with.
+By default, when a dialog is opened, focus will be set to the `AlertDialog.Content`. This is needed to allow screen readers to properly read the content. Focusing the `AlertDialog.Content` also ensures that people navigating with their keyboard end up somewhere within the Dialog that they can interact with.
 
 You can override this behavior using the `onOpenAutoFocus` prop on the `AlertDialog.Content` component. It's _highly_ recommended that you use this prop to focus _something_ within the Dialog.
 
