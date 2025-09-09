@@ -162,7 +162,7 @@ Below is an example of how you might create a reusable tooltip component that ca
   let {
     open = $bindable(false),
     children,
-    buttonText,
+    trigger,
     triggerProps = {},
     ...restProps
   }: Tooltip.RootProps = $props();
@@ -172,7 +172,7 @@ Below is an example of how you might create a reusable tooltip component that ca
  Ensure you have a `Tooltip.Provider` component wrapping
  your root layout content
 -->
-<Tooltip.Root bind:open {onOpenChange}>
+<Tooltip.Root bind:open {...restProps}>
   <Tooltip.Trigger {...triggerProps}>
     {@render trigger()}
   </Tooltip.Trigger>
