@@ -1,5 +1,17 @@
 # bits-ui
 
+## 2.9.7
+
+### Patch Changes
+
+- fix(Checkbox): ensure focus does not go to hidden input on invalid form submission ([#1750](https://github.com/huntabyte/bits-ui/pull/1750))
+
+- fix(RadioGroup): ensure focus does not go to hidden input on invalid form submission ([#1750](https://github.com/huntabyte/bits-ui/pull/1750))
+
+- fix(Command): ensure value is properly registered when using textContent instead of value prop ([#1748](https://github.com/huntabyte/bits-ui/pull/1748))
+
+- fix(TimeField): include `'timeZoneName'` in `TimeSegmentPart` type ([#1744](https://github.com/huntabyte/bits-ui/pull/1744))
+
 ## 2.9.6
 
 ### Patch Changes
