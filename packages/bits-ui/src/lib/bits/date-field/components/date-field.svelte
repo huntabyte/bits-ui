@@ -92,10 +92,6 @@
 		errorMessageId: box.with(() => errorMessageId),
 		isInvalidProp: box.with(() => undefined),
 	});
-
-	$effect.pre(() => {
-		console.log("placeholder changed", placeholder);
-	});
 </script>
 
 {@render children?.()}
