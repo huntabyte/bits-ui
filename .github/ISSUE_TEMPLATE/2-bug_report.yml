@@ -27,8 +27,7 @@ body:
           description: |
               Please provide a link to a repo or Stackblitz that can reproduce the problem you ran into. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "needs reproduction" label. If no reproduction is provided within a reasonable time-frame, the issue will be closed.
 
-              You can use the following template to get started:
-              https://bits-ui.com/repro
+              You can use the "Open in Stackblitz" button in the bottom right corner of any demo component in the docs to quickly create a reproduction.
           placeholder: Reproduction
       validations:
           required: true
