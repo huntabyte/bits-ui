@@ -15,4 +15,9 @@ declare global {
 		resetBodyStyle: () => void;
 	};
 	var bitsAnimationsDisabled: boolean;
+
+	// dismissible-layer interaction queue
+	var bitsDL_windowOpen: boolean;
+	var bitsDL_pendingLayerAdds: Array<() => void>;
+	var bitsDL_flushTimerId: number;
 }

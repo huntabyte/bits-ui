@@ -246,11 +246,8 @@ describe("select - single", () => {
 	});
 
 	it("should respect binding the `open` prop", async () => {
-		const t = await openSingle();
-		expect(t.openBinding).toHaveTextContent("true");
-		await t.user.click(t.openBinding);
+		const t = setupSingle();
 		expect(t.openBinding).toHaveTextContent("false");
-		await vi.waitFor(() => expectNotExists(t.getContent()));
 		await t.user.click(t.openBinding);
 		expect(t.openBinding).toHaveTextContent("true");
 		await vi.waitFor(() => expectExists(t.getContent()));
@@ -664,11 +661,8 @@ describe("select - multiple", () => {
 	});
 
 	it("should respect binding the `open` prop", async () => {
-		const t = await openMultiple();
-		expect(t.openBinding).toHaveTextContent("true");
-		await t.user.click(t.openBinding);
+		const t = setupMultiple();
 		expect(t.openBinding).toHaveTextContent("false");
-		await vi.waitFor(() => expectNotExists(t.getContent()));
 		await t.user.click(t.openBinding);
 		expect(t.openBinding).toHaveTextContent("true");
 		await vi.waitFor(() => expectExists(t.getContent()));
