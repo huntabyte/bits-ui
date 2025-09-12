@@ -1,65 +1,28 @@
 <script lang="ts">
-	import { mount, onMount, unmount } from "svelte";
-	import AlertDialog from "./alert-dialog.svelte";
-
-	async function makeAlert(message: string) {
-		const component = mount(AlertDialog, {
-			props: {
-				title: `Loading ${message}`,
-				message: message,
-			},
-			target: document.body,
-		});
-
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		await unmount(component);
-	}
-
-	async function badAlert() {
-		// doesnt work
-		await makeAlert("number 1");
-		await makeAlert("number2");
-
-		// hacky fix
-		// await makeAlert('number 1');
-		// await new Promise((resolve) => setTimeout(resolve, 500));
-		// await makeAlert('number2');
-
-		// works
-		// await makeAlert('1');
-	}
-
-	let bodyPointerEventsNone = $state(
-		typeof document !== "undefined" && document.body.style.pointerEvents === "none"
-	);
-
-	onMount(() => {
-		const interval = setInterval(() => {
-			if (document.body.style.pointerEvents === "none") {
-				bodyPointerEventsNone = true;
-			} else {
-				bodyPointerEventsNone = false;
-			}
-		}, 250);
-
-		return () => {
-			clearInterval(interval);
-		};
-	});
+	import { ContextMenu } from "bits-ui";
 </script>
 
-{#if bodyPointerEventsNone}
-	<div class="fixed left-0 top-0 z-50 w-full bg-red-500 py-2 text-center text-white">
-		POINTER EVENTS NOT ALLOWED
-	</div>
-{/if}
-
-<div
-	class="fixed left-1/2 top-1/2 z-40 flex h-screen w-screen -translate-x-1/2 -translate-y-1/2 items-center justify-center {bodyPointerEventsNone
-		? 'bg-red-500/70'
-		: 'bg-slate-900'}"
->
-	<button class="rounded-md bg-blue-500 px-4 py-2 text-white" onclick={badAlert}>
-		Bad Alert
-	</button>
+<div class="flex flex-col">
+	{#each { length: 50 } as _, i (i)}
+		<ContextMenu.Root>
+			<ContextMenu.Trigger
+				class="rounded-card border-border-input text-muted-foreground flex select-none items-center justify-center border-2 border-dashed bg-transparent font-semibold"
+			>
+				<div class="flex flex-col items-center justify-center gap-4 text-center">
+					Right click me {i}
+				</div>
+			</ContextMenu.Trigger>
+			<ContextMenu.Portal>
+				<ContextMenu.Content
+					class="border-muted bg-background shadow-popover w-[229px] rounded-xl border px-1 py-1.5 outline-none focus-visible:outline-none"
+				>
+					<ContextMenu.Item
+						class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					>
+						{i}
+					</ContextMenu.Item>
+				</ContextMenu.Content>
+			</ContextMenu.Portal>
+		</ContextMenu.Root>
+	{/each}
 </div>

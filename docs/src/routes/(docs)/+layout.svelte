@@ -6,15 +6,15 @@
 	import SidebarNav from "$lib/components/navigation/sidebar-nav.svelte";
 	import { navigation } from "$lib/config/index.js";
 	import "$lib/styles/app.css";
-	import { onMount } from "svelte";
-	import { page } from "$app/state";
+	// import { onMount } from "svelte";
+	// import { page } from "$app/state";
 
-	onMount(async () => {
-		if (dev || page.url.searchParams.get("test")) {
-			const eruda = (await import("eruda")).default;
-			eruda.init();
-		}
-	});
+	// onMount(async () => {
+	// 	if (dev || page.url.searchParams.get("test")) {
+	// 		const eruda = (await import("eruda")).default;
+	// 		eruda.init();
+	// 	}
+	// });
 
 	let { children } = $props();
 </script>
