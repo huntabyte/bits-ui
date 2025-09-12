@@ -1,3 +1,3 @@
 ```ts
-"hour", "minute", "second", "dayPeriod", "timeZoneName", "literal"
+"hour" | "minute" | "second" | "dayPeriod" | "timeZoneName" | "literal";
 ```
