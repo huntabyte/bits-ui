@@ -657,7 +657,6 @@ export class CommandRootState {
 		this.#scheduleUpdate();
 		return () => {
 			const selectedItem = this.#getSelectedItem();
-			this.allIds.delete(id);
 			this.allItems.delete(id);
 			this.commandState.filtered.items.delete(id);
 
@@ -1411,21 +1410,25 @@ export class CommandItemState {
 				() => this.opts.forceMount.current,
 			],
 			() => {
-				if (this.opts.forceMount.current) return;
+				if (this.opts.forceMount.current || !this.trueValue) return;
 				return this.root.registerItem(this.trueValue, this.#group?.trueValue);
 			}
 		);
 
 		watch([() => this.opts.value.current, () => this.opts.ref.current], () => {
-			if (!this.opts.value.current && this.opts.ref.current?.textContent) {
+			if (this.opts.value.current) {
+				this.trueValue = this.opts.value.current;
+			} else if (this.opts.ref.current?.textContent) {
 				this.trueValue = this.opts.ref.current.textContent.trim();
 			}
 
-			this.root.registerValue(
-				this.trueValue,
-				opts.keywords.current.map((kw) => kw.trim())
-			);
-			this.opts.ref.current?.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
+			if (this.trueValue) {
+				this.root.registerValue(
+					this.trueValue,
+					opts.keywords.current.map((kw) => kw.trim())
+				);
+				this.opts.ref.current?.setAttribute(COMMAND_VALUE_ATTR, this.trueValue);
+			}
 		});
 
 		// bindings
