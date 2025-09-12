@@ -1,15 +1,8 @@
 <script lang="ts">
 	import { DateField } from "bits-ui";
-
-	let attributes = $state({
-		disabled: false,
-	});
-	$effect(() => {
-		attributes = { disabled: false };
-	});
 </script>
 
-<DateField.Root {...attributes}>
+<DateField.Root>
 	<div class="flex w-full max-w-[280px] flex-col gap-1.5">
 		<DateField.Label class="block select-none text-sm font-medium">Birthday</DateField.Label>
 		<DateField.Input
