@@ -49,8 +49,9 @@
 	 * undefined which causes errors to be thrown.
 	 */
 	watch.pre(
-		() => placeholder,
+		() => $state.snapshot(placeholder),
 		() => {
+			console.log("placeholder changed");
 			handleDefaultPlaceholder();
 		}
 	);

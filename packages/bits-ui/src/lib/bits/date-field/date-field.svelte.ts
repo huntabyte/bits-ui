@@ -65,7 +65,7 @@ import {
 	DATE_SEGMENT_PARTS,
 	EDITABLE_TIME_SEGMENT_PARTS,
 } from "$lib/internal/date-time/field/parts.js";
-import { getDaysInMonth, getDefaultDate, isBefore, toDate } from "$lib/internal/date-time/utils.js";
+import { getDaysInMonth, isBefore, toDate } from "$lib/internal/date-time/utils.js";
 import {
 	getFirstSegment,
 	handleSegmentNavigation,
@@ -527,18 +527,16 @@ export class DateFieldRootState {
 	readonly dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
 
 	readonly allSegmentContent = $derived.by(() => {
-		const dateRef =
-			this.dateRef ??
-			getDefaultDate({
-				granularity: untrack(() => this.inferredGranularity),
-			});
+		console.log("date ref", this.dateRef);
+		console.log("placeholder", this.placeholder.current);
+		console.log("value", this.value.current);
 
 		return createContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
 			locale: this.locale.current,
 			granularity: this.inferredGranularity,
-			dateRef: dateRef,
+			dateRef: this.dateRef,
 			hideTimeZone: this.hideTimeZone.current,
 			hourCycle: this.hourCycle.current,
 		});
