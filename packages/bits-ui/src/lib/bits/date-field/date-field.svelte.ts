@@ -116,8 +116,10 @@ const SEGMENT_CONFIGS: Record<
 		max: 12,
 		cycle: 1,
 		padZero: true,
-		getAnnouncement: (month, root) =>
-			`${month} - ${root.formatter.fullMonth(toDate(root.placeholder.current.set({ month })))}`,
+		getAnnouncement: (month, root) => {
+			if (!root.placeholder.current) return "";
+			return `${month} - ${root.formatter.fullMonth(toDate(root.placeholder.current.set({ month })))}`;
+		},
 	},
 	year: {
 		min: 1,
