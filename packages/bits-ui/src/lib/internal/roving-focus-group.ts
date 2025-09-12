@@ -140,4 +140,14 @@ export class RovingFocusGroup {
 	setCurrentTabStopId(id: string) {
 		this.#currentTabStopId.current = id;
 	}
+
+	focusCurrentTabStop() {
+		const currentTabStopId = this.#currentTabStopId.current;
+		if (!currentTabStopId) return;
+		const currentTabStop = this.#opts.rootNode.current?.querySelector(`#${currentTabStopId}`);
+		if (!currentTabStop) return;
+		if (currentTabStop instanceof HTMLElement) {
+			currentTabStop.focus();
+		}
+	}
 }

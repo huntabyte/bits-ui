@@ -189,6 +189,16 @@ export class RadioGroupInputState {
 
 	readonly root: RadioGroupRootState;
 	readonly shouldRender = $derived.by(() => this.root.opts.name.current !== undefined);
+
+	constructor(root: RadioGroupRootState) {
+		this.root = root;
+		this.onfocus = this.onfocus.bind(this);
+	}
+
+	onfocus(_: BitsFocusEvent) {
+		this.root.rovingFocusGroup.focusCurrentTabStop();
+	}
+
 	readonly props = $derived.by(
 		() =>
 			({
@@ -196,10 +206,7 @@ export class RadioGroupInputState {
 				value: this.root.opts.value.current,
 				required: this.root.opts.required.current,
 				disabled: this.root.opts.disabled.current,
+				onfocus: this.onfocus,
 			}) as const
 	);
-
-	constructor(root: RadioGroupRootState) {
-		this.root = root;
-	}
 }
