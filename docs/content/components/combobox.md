@@ -38,7 +38,6 @@ The Combobox component is composed of several sub-components, each with a specif
 - **Group**: A container for grouped items, used to group related items.
 - **GroupHeading**: A heading for a group of items, providing a descriptive label for the group.
 - **Item**: An individual item within the list.
-- **Separator**: A visual separator between items.
 - **Content**: The dropdown container that displays the items. It uses [Floating UI](https://floating-ui.com/) to position the content relative to the trigger.
 - **ContentStatic**: An alternative to the Content component, that enables you to opt-out of Floating UI and position the content yourself.
 - **Viewport**: The visible area of the dropdown content, used to determine the size and scroll behavior.
