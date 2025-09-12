@@ -93,7 +93,7 @@ export type EditableSegmentPart = (typeof EDITABLE_SEGMENT_PARTS)[number];
 export type NonEditableSegmentPart = (typeof NON_EDITABLE_SEGMENT_PARTS)[number];
 export type SegmentPart = EditableSegmentPart | NonEditableSegmentPart;
 
-export type TimeSegmentPart = EditableTimeSegmentPart | "literal";
+export type TimeSegmentPart = EditableTimeSegmentPart | "literal" | "timeZoneName";
 export type AnyTimeExceptLiteral = Exclude<TimeSegmentPart, "literal">;
 
 export type AnyExceptLiteral = Exclude<SegmentPart, "literal">;
