@@ -524,13 +524,11 @@ export class DateFieldRootState {
 		return inferred;
 	});
 
-	readonly dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
+	readonly dateRef = $derived.by(() =>
+		this.value.current !== undefined ? this.value.current : this.placeholder.current
+	);
 
 	readonly allSegmentContent = $derived.by(() => {
-		console.log("date ref", this.dateRef);
-		console.log("placeholder", this.placeholder.current);
-		console.log("value", this.value.current);
-
 		return createContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
