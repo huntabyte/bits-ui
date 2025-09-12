@@ -2,6 +2,7 @@ import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "s
 import type { HTMLButtonAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
 import type {
+	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
@@ -18,6 +19,7 @@ import {
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
+import { isHTMLElement } from "$lib/internal/is.js";
 
 const checkboxAttrs = createBitsAttrs({
 	component: "checkbox",
@@ -273,6 +275,12 @@ export class CheckboxInputState {
 
 	constructor(root: CheckboxRootState) {
 		this.root = root;
+		this.onfocus = this.onfocus.bind(this);
+	}
+
+	onfocus(_: BitsFocusEvent) {
+		if (!isHTMLElement(this.root.opts.ref.current)) return;
+		this.root.opts.ref.current.focus();
 	}
 
 	readonly props = $derived.by(
@@ -285,6 +293,7 @@ export class CheckboxInputState {
 				name: this.root.trueName,
 				value: this.root.opts.value.current,
 				readonly: this.root.trueReadonly,
+				onfocus: this.onfocus,
 			}) as const
 	);
 }
