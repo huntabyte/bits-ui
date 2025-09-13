@@ -27,6 +27,9 @@ export default tseslint.config(
 				parser: tseslint.parser,
 			},
 		},
+		rules: {
+			"svelte/no-navigation-without-resolve": "off",
+		},
 	},
 	{
 		rules: {

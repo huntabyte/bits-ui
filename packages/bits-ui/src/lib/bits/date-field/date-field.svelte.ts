@@ -116,8 +116,10 @@ const SEGMENT_CONFIGS: Record<
 		max: 12,
 		cycle: 1,
 		padZero: true,
-		getAnnouncement: (month, root) =>
-			`${month} - ${root.formatter.fullMonth(toDate(root.placeholder.current.set({ month })))}`,
+		getAnnouncement: (month, root) => {
+			if (!root.placeholder.current) return "";
+			return `${month} - ${root.formatter.fullMonth(toDate(root.placeholder.current.set({ month })))}`;
+		},
 	},
 	year: {
 		min: 1,
@@ -522,10 +524,12 @@ export class DateFieldRootState {
 		return inferred;
 	});
 
-	readonly dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
+	readonly dateRef = $derived.by(() =>
+		this.value.current !== undefined ? this.value.current : this.placeholder.current
+	);
 
-	readonly allSegmentContent = $derived.by(() =>
-		createContent({
+	readonly allSegmentContent = $derived.by(() => {
+		return createContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
 			locale: this.locale.current,
@@ -533,8 +537,8 @@ export class DateFieldRootState {
 			dateRef: this.dateRef,
 			hideTimeZone: this.hideTimeZone.current,
 			hourCycle: this.hourCycle.current,
-		})
-	);
+		});
+	});
 
 	readonly segmentContents = $derived.by(() => this.allSegmentContent.arr);
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { watch } from "runed";
 	import { box } from "svelte-toolbelt";
-	import type { DateValue } from "@internationalized/date";
 	import { DateFieldRootState } from "../date-field.svelte.js";
 	import type { DateFieldRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -29,15 +28,19 @@
 		children,
 	}: DateFieldRootProps = $props();
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return;
+	function handleDefaultPlaceholder(setPlaceholder = true) {
+		if (placeholder !== undefined) return placeholder;
 
 		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultValue: value,
 		});
 
-		placeholder = defaultPlaceholder;
+		if (setPlaceholder) {
+			placeholder = defaultPlaceholder;
+		}
+
+		return defaultPlaceholder;
 	}
 
 	// SSR
@@ -64,8 +67,12 @@
 			}
 		),
 		placeholder: box.with(
-			() => placeholder as DateValue,
+			() => {
+				if (placeholder === undefined) return handleDefaultPlaceholder(false);
+				return placeholder;
+			},
 			(v) => {
+				if (v === undefined) return;
 				placeholder = v;
 				onPlaceholderChange(v);
 			}
