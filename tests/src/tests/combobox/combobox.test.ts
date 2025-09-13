@@ -41,7 +41,7 @@ const testItems: Item[] = [
 function setupSingle(
 	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
 	items: Item[] = testItems,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	component: Component<any, any, any> = ComboboxTest
 ) {
 	const user = setupUserEvents();

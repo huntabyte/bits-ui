@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// oxlint-disable-next-line ban-ts-comment
 // @ts-nocheck
 import { fileURLToPath } from "node:url";
 import { writeFileSync } from "node:fs";

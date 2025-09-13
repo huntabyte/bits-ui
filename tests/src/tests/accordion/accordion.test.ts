@@ -35,7 +35,7 @@ function setupSingle(
 	props: Partial<ComponentProps<typeof AccordionSingleTest>> = { items: ITEMS }
 ) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	const returned = render(AccordionSingleTest, { ...(props as any) });
 	const itemEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-item`));
 	const triggerEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-trigger`));
@@ -48,7 +48,7 @@ function setupSingleForceMount(
 	}
 ) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	const returned = render(AccordionSingleForceMountTest, { ...(props as any) });
 	const itemEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-item`));
 	const triggerEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-trigger`));
@@ -59,7 +59,7 @@ function setupMultiple(
 	props: Partial<ComponentProps<typeof AccordionMultiTest>> = { items: ITEMS }
 ) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	const returned = render(AccordionMultiTest, { ...(props as any) });
 	const itemEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-item`));
 	const triggerEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-trigger`));

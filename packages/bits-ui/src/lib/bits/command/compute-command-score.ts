@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+// oxlint-disable ban-ts-comment
 // @ts-nocheck
 // The scores are arranged so that a continuous match of characters will
 // result in a total score of 1.

@@ -25,7 +25,7 @@ const zonedDateTime = {
 
 function setup<T extends TimeValue = Time>(props: TimeRangeFieldTestProps<T> = {}) {
 	const user = setupBrowserUserEvents();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	const returned = render(TimeRangeFieldTest, { ...props } as any);
 
 	const start = {

@@ -1019,7 +1019,7 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 	onkeydown(e: BitsKeyboardEvent) {
 		if (isNumberString(e.key)) {
 			const oldUpdateSegment = this.root.updateSegment.bind(this.root);
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// oxlint-disable-next-line no-explicit-any
 			this.root.updateSegment = (part: any, cb: any) => {
 				const result = oldUpdateSegment(part, cb);
 

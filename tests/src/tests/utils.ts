@@ -120,7 +120,7 @@ export async function fireFocus(node: HTMLElement) {
 	await sleep(20);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line no-explicit-any
 export type AnyFn = (...args: any[]) => any;
 
 type Rect = {

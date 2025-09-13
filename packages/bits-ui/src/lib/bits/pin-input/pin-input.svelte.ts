@@ -38,10 +38,10 @@ interface PinInputRootStateOpts
 		ReadableBoxedValues<{
 			inputId: string;
 			disabled: boolean;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// oxlint-disable-next-line no-explicit-any
 			onComplete: (...args: any[]) => void;
 			pasteTransformer?: (text: string) => string;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// oxlint-disable-next-line no-explicit-any
 			pattern: any;
 			maxLength: number;
 			pushPasswordManagerStrategy: "increase-width" | "none";
@@ -558,7 +558,7 @@ export class PinInputCellState {
 	);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line no-explicit-any
 export function syncTimeouts(cb: (...args: any[]) => unknown, domContext: DOMContext): number[] {
 	const t1 = domContext.setTimeout(cb, 0); // For faster machines
 	const t2 = domContext.setTimeout(cb, 1_0);
