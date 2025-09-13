@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.9.8
+
+### Patch Changes
+
+- fix(DateField): ensure attribute reassignment doesn't create invalid state ([#1751](https://github.com/huntabyte/bits-ui/pull/1751))
+
 ## 2.9.7
 
 ### Patch Changes
