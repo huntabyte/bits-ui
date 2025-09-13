@@ -71,7 +71,7 @@ function setupSingle(
 
 function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = setupBrowserUserEvents();
-	// @ts-expect-error - testing lib needs to update their generic types
+	// @ts-expect-error - this is fine
 	const returned = render(SelectMultiTest, { name: "test", ...props, items });
 	const trigger = returned.getByTestId("trigger").element() as HTMLElement;
 	const openBinding = returned.getByTestId("open-binding").element() as HTMLElement;
@@ -825,7 +825,7 @@ describe("select - multiple", () => {
 	it("should submit an array with a single empty string when the user submits the form without selecting any items", async () => {
 		let submittedValues: string[] | undefined;
 		const t = setupMultiple({
-			onFormSubmit: (fd) => {
+			onFormSubmit: (fd: FormData) => {
 				submittedValues = fd.getAll("themes") as string[];
 			},
 			name: "themes",
