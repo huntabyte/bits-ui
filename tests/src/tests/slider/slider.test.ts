@@ -26,7 +26,7 @@ function setup(
 	kind: "default" | "range" | "labels" = "default"
 ) {
 	const user = setupUserEvents();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	let returned: any;
 	if (kind === "default") {
 		returned = renderSlider(props as SliderMultiTestProps);

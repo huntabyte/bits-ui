@@ -39,7 +39,7 @@ const testItems: Item[] = [
 function setupSingle(
 	props: Partial<SelectSingleTestProps | SelectForceMountTestProps> = {},
 	items: Item[] = testItems,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	component: Component<any, any, any> = SelectTest
 ) {
 	const user = setupBrowserUserEvents();

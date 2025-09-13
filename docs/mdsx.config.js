@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+// oxlint-disable ban-ts-comment
 // @ts-nocheck
 
 import { readFileSync } from "node:fs";
@@ -190,7 +190,6 @@ export function rehypeComponentExample() {
 						],
 					});
 					if (!index) return;
-					// @ts-expect-error - we're using an untyped node here
 					parent.children.splice(index + 1, 0, sourceCodeNode);
 				} catch (e) {
 					console.error(e);

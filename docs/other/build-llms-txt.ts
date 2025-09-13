@@ -109,7 +109,7 @@ async function transformAndSaveMarkdown(rawHtml: string) {
 		.replace(REGEX_PATTERNS.codeBlockIndent, "```$1\n")
 		.replace(/\u00C2/g, "") // Â
 		.replace(/\u2014/g, "") // â€”
-		// eslint-disable-next-line no-control-regex
+		// oxlint-disable-next-line no-control-regex
 		.replace(/[^\u0000-\u007F]/g, "")
 		.replaceAll("\t", " ")
 		.trim();

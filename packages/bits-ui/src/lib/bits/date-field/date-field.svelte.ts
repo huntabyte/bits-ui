@@ -1321,7 +1321,7 @@ class DateFieldHourSegmentState extends BaseNumericSegmentState {
 		// Add special handling for hour display with dayPeriod
 		if (isNumberString(e.key)) {
 			const oldUpdateSegment = this.root.updateSegment.bind(this.root);
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// oxlint-disable-next-line no-explicit-any
 			this.root.updateSegment = (part: any, cb: any) => {
 				const result = oldUpdateSegment(part, cb);
 

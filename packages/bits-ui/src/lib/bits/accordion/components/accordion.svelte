@@ -43,7 +43,7 @@
 			() => value!,
 			(v) => {
 				value = v;
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				// oxlint-disable-next-line no-explicit-any
 				onValueChange(v as any);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,

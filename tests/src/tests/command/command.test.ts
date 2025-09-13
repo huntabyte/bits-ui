@@ -10,7 +10,7 @@ const kbd = getTestKbd();
 function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
 	const user = setupUserEvents();
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	const returned = render(CommandTest, props as any);
 	const input = returned.getByTestId("input");
 	const root = returned.getByTestId("root");

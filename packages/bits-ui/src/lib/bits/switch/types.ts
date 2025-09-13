@@ -37,7 +37,7 @@ export type SwitchRootPropsWithoutHTML = WithChild<
 		 *
 		 * @defaultValue undefined
 		 */
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		// oxlint-disable-next-line no-explicit-any
 		value?: any;
 
 		/**

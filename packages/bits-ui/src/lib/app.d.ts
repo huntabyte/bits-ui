@@ -1,3 +1,4 @@
+// oxlint-disable no-var
 import type { ReadableBox } from "svelte-toolbelt";
 import type { DismissibleLayerState } from "./bits/utilities/dismissible-layer/use-dismissable-layer.svelte.ts";
 import type { InteractOutsideBehaviorType } from "./bits/utilities/dismissible-layer/types.ts";

@@ -4,7 +4,7 @@ import prettier from "eslint-config-prettier";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-
+import oxlint from "eslint-plugin-oxlint";
 export default tseslint.config(
 	eslint.configs.recommended,
 	...tseslint.configs.recommended,
@@ -62,5 +62,7 @@ export default tseslint.config(
 			"packages/bits-ui/.svelte-kit/**/*",
 			"tests/.svelte-kit/**/*",
 		],
-	}
+	},
+	...oxlint.configs["flat/recommended"],
+	...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json")
 );

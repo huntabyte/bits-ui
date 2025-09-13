@@ -7,7 +7,7 @@ type MachineState<T> = keyof T;
 type MachineEvent<T> = keyof UnionToIntersection<T[keyof T]>;
 
 // 🤯 https://fettblog.eu/typescript-union-to-intersection/
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line no-explicit-any
 type UnionToIntersection<T> = (T extends any ? (x: T) => any : never) extends (x: infer R) => any
 	? R
 	: never;

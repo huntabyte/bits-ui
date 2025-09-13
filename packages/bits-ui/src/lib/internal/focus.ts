@@ -90,7 +90,7 @@ export function getTabbableCandidates(container: HTMLElement) {
 	const nodes: HTMLElement[] = [];
 	const doc = getDocument(container);
 	const walker = doc.createTreeWalker(container, NodeFilter.SHOW_ELEMENT, {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		// oxlint-disable-next-line no-explicit-any
 		acceptNode: (node: any) => {
 			const isHiddenInput = node.tagName === "INPUT" && node.type === "hidden";
 			if (node.disabled || node.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
