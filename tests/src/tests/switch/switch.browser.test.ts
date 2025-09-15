@@ -3,20 +3,18 @@ import { render } from "vitest-browser-svelte";
 import type { Switch } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import SwitchTest from "./switch-test.svelte";
-import { setupBrowserUserEvents } from "../browser-utils";
+import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
 function setup(props: Switch.RootProps = {}) {
-	const user = setupBrowserUserEvents();
 	const t = render(SwitchTest, { name: "switch-input", ...props });
-	const root = t.getByTestId("root").element() as HTMLElement;
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
+	const root = page.getByTestId("root");
+	const thumb = page.getByTestId("thumb");
 	const input = t.container.querySelector("input") as HTMLInputElement;
 	return {
 		root,
 		thumb,
-		user,
 		input,
 		...t,
 	};
@@ -24,8 +22,8 @@ function setup(props: Switch.RootProps = {}) {
 
 it("should have bits data attrs", async () => {
 	const t = setup();
-	expect(t.root).toHaveAttribute("data-switch-root");
-	expect(t.thumb).toHaveAttribute("data-switch-thumb");
+	await expect.element(t.root).toHaveAttribute("data-switch-root");
+	await expect.element(t.thumb).toHaveAttribute("data-switch-thumb");
 });
 
 it('should default the value to "on", when no value prop is passed', async () => {
@@ -38,7 +36,7 @@ it("should toggle when clicked", async () => {
 	expect(t.root).toHaveAttribute("data-state", "unchecked");
 	expect(t.root).not.toHaveAttribute("data-checked");
 	expect(t.input.checked).toBe(false);
-	await t.user.click(t.root);
+	await userEvent.click(t.root);
 	expect(t.root).toHaveAttribute("data-state", "checked");
 	expect(t.root).toHaveAttribute("aria-checked", "true");
 	expect(t.input.checked).toBe(true);
@@ -49,8 +47,8 @@ it.each([kbd.ENTER, kbd.SPACE])("should toggle when the `%s` key is pressed", as
 	expect(t.root).toHaveAttribute("data-state", "unchecked");
 	expect(t.root).toHaveAttribute("aria-checked", "false");
 	expect(t.input.checked).toBe(false);
-	t.root.focus();
-	await t.user.keyboard(key);
+	(t.root.element() as HTMLElement).focus();
+	await userEvent.keyboard(key);
 	expect(t.root).toHaveAttribute("data-state", "checked");
 	expect(t.root).toHaveAttribute("aria-checked", "true");
 	expect(t.input.checked).toBe(true);
@@ -77,15 +75,15 @@ it("should fire the `onChange` callback when changing", async () => {
 
 	const t = setup({ onCheckedChange });
 	expect(newValue).toBe(false);
-	await t.user.click(t.root);
+	await userEvent.click(t.root);
 	expect(newValue).toBe(true);
 });
 
 it("should respect binding to the `checked` prop", async () => {
 	const t = setup();
-	const binding = t.getByTestId("binding");
+	const binding = page.getByTestId("binding");
 	expect(binding).toHaveTextContent("false");
-	await t.user.click(binding);
+	await userEvent.click(binding);
 	expect(binding).toHaveTextContent("true");
 	expect(t.root).toHaveAttribute("data-state", "checked");
 	expect(t.input.checked).toBe(true);
@@ -103,9 +101,9 @@ it("should render the input when the `name` prop is passed", async () => {
 
 it("should not focus the hidden input", async () => {
 	const t = setup();
-	t.root.focus();
+	(t.root.element() as HTMLElement).focus();
 	expect(t.root).toHaveFocus();
-	await t.user.keyboard(kbd.TAB);
+	await userEvent.keyboard(kbd.TAB);
 	expect(t.input).not.toHaveFocus();
 	expect(t.input).toHaveAttribute("tabindex", "-1");
 });
