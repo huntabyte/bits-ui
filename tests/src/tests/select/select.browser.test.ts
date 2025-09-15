@@ -1,6 +1,6 @@
 import { expect, it, vi, describe, beforeEach } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { tick, type Component } from "svelte";
+import type { Component } from "svelte";
 import { getTestId } from "../helpers/select.js";
 import { getTestKbd } from "../utils.js";
 import type { SelectForceMountTestProps } from "./select-force-mount-test.svelte";
@@ -521,23 +521,19 @@ describe("select - single", () => {
 		await expectSelected(item0v3);
 	});
 
-	it.skip("should allow deselecting an item when `allowDeselect` is true", async () => {
+	it("should allow deselecting an item when `allowDeselect` is true", async () => {
 		const t = await openSingle({
 			allowDeselect: true,
 		});
 		const [_, item1] = getItems(page.getByTestId);
 		await item1.click({ force: true });
-		await tick();
 		await expectNotExists(t.getContent());
 		await t.trigger.click();
 		await expectSelected(item1);
 
-		const [__, item2] = getItems(page.getByTestId);
-
-		await item2.click();
-		await expectNotExists(t.getContent());
-		await t.trigger.click();
-		await expectNotSelected(item2);
+		await item1.click();
+		await expectExists(t.getContent());
+		await expectNotSelected(item1);
 	});
 
 	it("should forward the `autocomplete` prop to the hidden input", async () => {
