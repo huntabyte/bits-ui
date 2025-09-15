@@ -12,7 +12,8 @@ export async function expectNotExists(loc: Locator) {
 }
 
 export async function expectExists(loc: Locator) {
-	await vi.waitFor(() => expect(loc.element()).toBeInTheDocument());
+	await expect.element(loc).toBeInTheDocument();
+	// await vi.waitFor(() => expect(loc.element()).toBeInTheDocument());
 }
 
 export async function simulateOutsideClick(node: Element | HTMLElement | Locator) {
