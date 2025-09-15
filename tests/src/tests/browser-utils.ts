@@ -7,6 +7,10 @@ export async function expectNotClickable(node: Element | HTMLElement | Locator) 
 	await expect(user.click(node, { timeout: 100 })).rejects.toThrow();
 }
 
+export async function expectNotClickableLoc(loc: Locator) {
+	await expect(loc.click()).rejects.toThrow();
+}
+
 export async function expectNotExists(loc: Locator) {
 	await vi.waitFor(() => expect(() => loc.element()).toThrow());
 }
