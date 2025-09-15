@@ -2,7 +2,7 @@ import { page, userEvent } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { tick, type Component } from "svelte";
-import { type AnyFn, getTestKbd, sleep } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
 import type { ComboboxMultipleTestProps } from "./combobox-multi-test.svelte";
@@ -10,7 +10,7 @@ import ComboboxMultiTest from "./combobox-multi-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
-import { expectExists, expectNotExists, simulateOutsideClick } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -215,7 +215,7 @@ describe("combobox - single", () => {
 
 	it("should close on escape keydown", async () => {
 		const t = await openSingle();
-		await t.user.keyboard(kbd.ESCAPE);
+		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(t.getContent());
 	});
 
@@ -281,7 +281,7 @@ describe("combobox - single", () => {
 		await expect.element(t.input).toHaveValue("A");
 		await expect.element(t.getHiddenInput()).toHaveValue("1");
 		await t.trigger.click();
-		await expectSelected(item1.element());
+		await expectSelected(item1);
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
@@ -289,25 +289,25 @@ describe("combobox - single", () => {
 
 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
-		await expectHighlighted(item0!);
+		await expectHighlighted(item0);
 		// TODO: figure out why we need to do this twice for it to register properly?
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expectHighlighted(item1!);
+		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expectHighlighted(item2!);
+		await expectHighlighted(item2);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expectHighlighted(item3!);
+		await expectHighlighted(item3);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expectHighlighted(item3!);
+		await expectHighlighted(item3);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item2!);
+		await expectHighlighted(item2);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item1!);
+		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item0!);
+		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item0!);
+		await expectHighlighted(item0);
 	});
 
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
@@ -320,27 +320,27 @@ describe("combobox - single", () => {
 
 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
-		await expectHighlighted(item0!);
+		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expectHighlighted(item1!);
+		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expectHighlighted(item2!);
+		await expectHighlighted(item2);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expectHighlighted(item3!);
+		await expectHighlighted(item3);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		expectNotHighlighted(item3!);
-		await expectHighlighted(item0!);
+		expectNotHighlighted(item3);
+		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item3!);
+		await expectHighlighted(item3);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item2!);
+		await expectHighlighted(item2);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item1!);
+		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item0!);
+		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expectHighlighted(item3!);
+		await expectHighlighted(item3);
 	});
 
 	it("should allow items to be selected using the keyboard", async () => {
@@ -366,10 +366,10 @@ describe("combobox - single", () => {
 		await openSingle({}, kbd.ARROW_DOWN);
 		const [item1, item2] = getItems(page.getByTestId);
 		await item1.hover();
-		await expectHighlighted(item1!);
+		await expectHighlighted(item1);
 		await item2.hover();
-		await expectHighlighted(item2!);
-		await expectNotHighlighted(item1!);
+		await expectHighlighted(item2);
+		await expectNotHighlighted(item1);
 	});
 
 	it("should start keyboard navigation at the highlighted item even if hovered with mouse", async () => {
@@ -400,391 +400,397 @@ describe("combobox - single", () => {
 		await expectSelected(item2);
 	});
 
-	// it("should allow navigating after navigating to the bottom, closing, and reopening the menu", async () => {
-	// 	const t = await openSingle();
-	// 	const item1 = t.getByTestId("1");
-	// 	const item2 = t.getByTestId("2");
-	// 	const item3 = t.getByTestId("3");
-	// 	const item4 = t.getByTestId("4");
-	// 	await expectHighlighted(item1.element());
-	// 	await t.user.keyboard(kbd.ARROW_DOWN);
-	// 	await expectHighlighted(item2.element());
-	// 	await t.user.keyboard(kbd.ARROW_DOWN);
-	// 	await expectHighlighted(item3.element());
-	// 	await t.user.keyboard(kbd.ARROW_DOWN);
-	// 	await expectHighlighted(item4.element());
-	// 	await t.user.keyboard(kbd.ARROW_DOWN);
-	// 	await expectHighlighted(item4.element());
-	// 	await t.user.keyboard(kbd.ESCAPE);
-	// 	await expectNotExists(t.getContent());
+	it("should allow navigating after navigating to the bottom, closing, and reopening the menu", async () => {
+		const t = await openSingle();
+		const item1 = t.getByTestId("1");
+		const item2 = t.getByTestId("2");
+		const item3 = t.getByTestId("3");
+		const item4 = t.getByTestId("4");
+		await expectHighlighted(item1);
+		// TODO: figure out why we need to do this twice for it to register properly?
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item2);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item3);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item4);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item4);
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
 
-	// 	await t.user.keyboard(kbd.ARROW_DOWN);
-	// 	await expectExists(t.getContent());
-	// 	await expectHighlighted(item1.element());
-	// 	await t.user.keyboard(kbd.ARROW_DOWN);
-	// 	await expectHighlighted(item2.element());
-	// });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectExists(t.getContent());
+		await expectHighlighted(item1);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item2);
+	});
 
-	// it("should forceMount the content when `forceMount` is true", async () => {
-	// 	const t = setupSingle({}, [], ComboboxForceMountTest);
+	it("should forceMount the content when `forceMount` is true", async () => {
+		setupSingle({}, [], ComboboxForceMountTest);
 
-	// 	const content = t.getByTestId("content");
-	// 	await expect.element(content).toBeVisible();
-	// });
+		await expect.element(page.getByTestId("content")).toBeVisible();
+	});
 
-	// it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-	// 	const t = setupSingle({ withOpenCheck: true }, [], ComboboxForceMountTest);
+	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
+		const t = setupSingle({ withOpenCheck: true }, [], ComboboxForceMountTest);
 
-	// 	await expectNotExists(t.getByTestId("content"));
-	// 	await t.trigger.click();
+		await expectNotExists(page.getByTestId("content"));
+		await t.trigger.click();
 
-	// 	await expectExists(t.getByTestId("content"));
-	// });
+		await expectExists(page.getByTestId("content"));
+	});
 
-	// it("should not allow deselecting an item when `allowDeselect` is false", async () => {
-	// 	const t = await openSingle({
-	// 		allowDeselect: false,
-	// 	});
+	it("should not allow deselecting an item when `allowDeselect` is false", async () => {
+		const t = await openSingle({
+			allowDeselect: false,
+		});
 
-	// 	const item1 = t.getByTestId("1");
-	// 	await item1.click();
-	// 	await t.trigger.click();
+		const item1 = t.getByTestId("1");
+		await item1.click();
+		await t.trigger.click();
 
-	// 	await expectSelected(item1.element());
+		await expectSelected(item1);
 
-	// 	await item1.click();
-	// 	await t.trigger.click();
-	// 	await expectSelected(item1.element());
-	// });
+		await item1.click();
+		await t.trigger.click();
+		await expectSelected(item1);
+	});
 
-	// it("should clear the input when the selected item is deselected when `clearOnDeselect` is `true`", async () => {
-	// 	const t = await openSingle({
-	// 		inputProps: {
-	// 			clearOnDeselect: true,
-	// 		},
-	// 	});
-	// 	const item1 = t.getByTestId("1");
+	it("should clear the input when the selected item is deselected when `clearOnDeselect` is `true`", async () => {
+		const t = await openSingle({
+			inputProps: {
+				clearOnDeselect: true,
+			},
+		});
+		const item1 = t.getByTestId("1");
 
-	// 	await item1.click();
-	// 	await expect.element(t.input).toHaveValue("A");
-	// 	await t.trigger.click();
-	// 	await expectSelected(item1.element());
+		await item1.click();
+		await expect.element(t.input).toHaveValue("A");
+		await t.trigger.click();
+		await expectSelected(item1);
 
-	// 	await item1.click();
+		await item1.click();
 
-	// 	await expect.element(t.input).toHaveValue("");
-	// 	await expect.element(t.input).not.toHaveValue("A");
-	// });
+		await expect.element(t.input).toHaveValue("");
+		await expect.element(t.input).not.toHaveValue("A");
+	});
 
-	// it("should allow programmatic updates to the value alongside `inputValue`", async () => {
-	// 	const t = setupSingle();
-	// 	const setter = t.getByTestId("value-binding-3");
-	// 	await setter.click();
-	// 	await expect.element(t.input).toHaveValue("C");
-	// });
+	it("should allow programmatic updates to the value alongside `inputValue`", async () => {
+		const t = setupSingle();
+		const setter = t.getByTestId("value-binding-3");
+		await setter.click();
+		await expect.element(t.input).toHaveValue("C");
+	});
 });
 
 // ////////////////////////////////////
 // // MULTIPLE
 // ////////////////////////////////////
-// describe("combobox - multiple", () => {
-// 	it("should open on click", async () => {
-// 		await openMultiple();
-// 	});
+describe("combobox - multiple", () => {
+	it("should open on click", async () => {
+		await openMultiple();
+	});
 
-// 	it.each(OPEN_KEYS)("should open on %s keydown", async (key) => {
-// 		await openMultiple({}, key);
-// 	});
+	it.each(OPEN_KEYS)("should open on %s keydown", async (key) => {
+		await openMultiple({}, key);
+	});
 
-// 	it("should select item with the enter key", async () => {
-// 		const t = await openMultiple();
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await t.user.keyboard(kbd.ENTER);
-// 		await expect.element(t.input).toHaveValue("B");
-// 	});
+	it("should select item with the enter key", async () => {
+		const t = await openMultiple();
+		// TODO: figure out why we need to do this twice for it to register properly?
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("B");
+	});
 
-// 	it("should not render a hidden input if the `name` prop is passed and a value is not selected", async () => {
-// 		const t = setupMultiple();
-// 		expect(t.getHiddenInputs()).toHaveLength(0);
-// 	});
+	it("should not render a hidden input if the `name` prop is passed and a value is not selected", async () => {
+		const t = setupMultiple();
+		expect(t.getHiddenInputs()).toHaveLength(0);
+	});
 
-// 	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
-// 		const t = setupMultiple({ value: ["a", "b"] });
-// 		const hiddenInputs = t.getHiddenInputs();
-// 		expect(hiddenInputs).toHaveLength(2);
-// 		await expect.element(hiddenInputs[0]).toHaveAttribute("name", "test");
-// 		await expect.element(hiddenInputs[1]).toHaveAttribute("name", "test");
-// 	});
+	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
+		const t = setupMultiple({ value: ["a", "b"] });
+		const hiddenInputs = t.getHiddenInputs();
+		expect(hiddenInputs).toHaveLength(2);
+		await expect.element(hiddenInputs[0]).toHaveAttribute("name", "test");
+		await expect.element(hiddenInputs[1]).toHaveAttribute("name", "test");
+	});
 
-// 	it("should sync the value prop to the hidden inputs", async () => {
-// 		const t = setupMultiple({ value: ["a", "b"] });
-// 		const hiddenInputs = t.getHiddenInputs();
-// 		expect(hiddenInputs).toHaveLength(2);
-// 		await expect.element(hiddenInputs[0]).toHaveValue("a");
-// 		await expect.element(hiddenInputs[1]).toHaveValue("b");
-// 	});
+	it("should sync the value prop to the hidden inputs", async () => {
+		const t = setupMultiple({ value: ["a", "b"] });
+		const hiddenInputs = t.getHiddenInputs();
+		expect(hiddenInputs).toHaveLength(2);
+		await expect.element(hiddenInputs[0]).toHaveValue("a");
+		await expect.element(hiddenInputs[1]).toHaveValue("b");
+	});
 
-// 	it("should sync the required prop to the hidden inputs", async () => {
-// 		const t = setupMultiple({ required: true, value: ["a", "b"] });
-// 		const hiddenInputs = t.getHiddenInputs();
-// 		expect(hiddenInputs).toHaveLength(2);
+	it("should sync the required prop to the hidden inputs", async () => {
+		const t = setupMultiple({ required: true, value: ["a", "b"] });
+		const hiddenInputs = t.getHiddenInputs();
+		expect(hiddenInputs).toHaveLength(2);
 
-// 		for (const hiddenInput of hiddenInputs) {
-// 			await expect.element(hiddenInput).toHaveAttribute("required");
-// 		}
-// 	});
+		for (const hiddenInput of hiddenInputs) {
+			await expect.element(hiddenInput).toHaveAttribute("required");
+		}
+	});
 
-// 	it("should sync the disabled prop to the hidden inputs", async () => {
-// 		const t = setupMultiple({ disabled: true, value: ["a", "b"] });
-// 		const hiddenInputs = t.getHiddenInputs();
-// 		expect(hiddenInputs).toHaveLength(2);
+	it("should sync the disabled prop to the hidden inputs", async () => {
+		const t = setupMultiple({ disabled: true, value: ["a", "b"] });
+		const hiddenInputs = t.getHiddenInputs();
+		expect(hiddenInputs).toHaveLength(2);
 
-// 		for (const hiddenInput of hiddenInputs) {
-// 			await expect.element(hiddenInput).toHaveAttribute("disabled");
-// 		}
-// 	});
+		for (const hiddenInput of hiddenInputs) {
+			await expect.element(hiddenInput).toHaveAttribute("disabled");
+		}
+	});
 
-// 	it("should close on escape keydown", async () => {
-// 		const t = await openMultiple();
-// 		await t.user.keyboard(kbd.ESCAPE);
-// 		expect(() => t.getContent()).toThrow();
-// 	});
+	it("should close on escape keydown", async () => {
+		const t = await openMultiple();
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+	});
 
-// 	it("should close on outside click", async () => {
-// 		const t = await openMultiple();
-// 		await sleep(10);
-// 		await simulateOutsideClick(t.outside);
-// 		await sleep(10);
-// 		expect(() => t.getContent()).toThrow();
-// 	});
+	it("should close on outside click", async () => {
+		const t = await openMultiple();
+		await t.outside.click({ force: true });
+		await expectNotExists(t.getContent());
+	});
 
-// 	it("should portal to the body by default", async () => {
-// 		const t = await openMultiple();
-// 		expect(t.content.element().parentElement?.parentElement).toBe(document.body);
-// 	});
+	it("should portal to the body by default", async () => {
+		const t = await openMultiple();
+		expect(t.content.element().parentElement?.parentElement).toBe(document.body);
+	});
 
-// 	it("should portal to a custom element if specified", async () => {
-// 		const t = await openMultiple({
-// 			portalProps: { to: "#portal-target" },
-// 		});
-// 		const portalTarget = t.getByTestId("portal-target").element();
-// 		expect(t.content.element().parentElement?.parentElement).toBe(portalTarget);
-// 	});
+	it("should portal to a custom element if specified", async () => {
+		const t = await openMultiple({
+			portalProps: { to: "#portal-target" },
+		});
+		const portalTarget = t.getByTestId("portal-target").element();
+		expect(t.content.element().parentElement?.parentElement).toBe(portalTarget);
+	});
 
-// 	it("should not portal if `disabled` is passed as portal prop", async () => {
-// 		const t = await openMultiple({ portalProps: { disabled: true } });
-// 		const form = t.getByTestId("form").element();
-// 		expect(t.content.element().parentElement?.parentElement).toBe(form);
-// 	});
+	it("should not portal if `disabled` is passed as portal prop", async () => {
+		const t = await openMultiple({ portalProps: { disabled: true } });
+		const form = t.getByTestId("form").element();
+		expect(t.content.element().parentElement?.parentElement).toBe(form);
+	});
 
-// 	it("should respect binding the `open` prop", async () => {
-// 		const t = await openMultiple();
-// 		await expect.element(t.openBinding).toHaveTextContent("true");
-// 		await t.openBinding.click();
-// 		await expect.element(t.openBinding).toHaveTextContent("false");
-// 		expect(() => page.getByTestId("content").element()).toThrow();
-// 		await t.openBinding.click();
-// 		await expect.element(t.openBinding).toHaveTextContent("true");
-// 		await expect.element(page.getByTestId("content")).toBeInTheDocument();
-// 	});
+	it("should respect binding the `open` prop", async () => {
+		const t = await openMultiple();
+		await expect.element(t.openBinding).toHaveTextContent("true");
+		await t.openBinding.click();
+		await expect.element(t.openBinding).toHaveTextContent("false");
+		await expectNotExists(t.getContent());
+		await t.openBinding.click();
+		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(page.getByTestId("content")).toBeInTheDocument();
+	});
 
-// 	it("should respect binding the `value` prop", async () => {
-// 		const t = await openMultiple({ value: ["1", "2"] });
-// 		await expect.element(t.valueBinding).toHaveTextContent(/^1,2$/);
-// 		await t.valueBinding.click();
-// 		await expect.element(t.valueBinding).toHaveTextContent("empty");
-// 	});
+	it("should respect binding the `value` prop", async () => {
+		const t = await openMultiple({ value: ["1", "2"] });
+		await expect.element(t.valueBinding).toHaveTextContent(/^1,2$/);
+		await t.valueBinding.click();
+		await expect.element(t.valueBinding).toHaveTextContent("empty");
+	});
 
-// 	it("should call `onValueChange` when the value changes", async () => {
-// 		const mock = vi.fn();
-// 		const t = await openMultiple({ value: ["1", "2"], onValueChange: mock });
-// 		const [item1] = getItems(t.getByTestId);
-// 		await item1.click();
-// 		expect(mock).toHaveBeenCalledWith(["2"]);
-// 	});
+	it("should call `onValueChange` when the value changes", async () => {
+		const mock = vi.fn();
+		const t = await openMultiple({ value: ["1", "2"], onValueChange: mock });
+		const [item1] = getItems(t.getByTestId);
+		await item1.click();
+		expect(mock).toHaveBeenCalledWith(["2"]);
+	});
 
-// 	it("should select items when clicked", async () => {
-// 		const t = await openMultiple();
-// 		const [item] = getItems(t.getByTestId);
-// 		await expectNotExists(page.getByTestId("1-indicator"));
-// 		await item!.click();
-// 		await expect.element(t.input).toHaveValue("A");
-// 		expect(t.getHiddenInputs()).toHaveLength(1);
-// 		expect(t.getHiddenInputs()[0]).toHaveValue("1");
-// 		await t.input.click();
+	it("should select items when clicked", async () => {
+		const t = await openMultiple();
+		const [item] = getItems(t.getByTestId);
+		await expectNotExists(page.getByTestId("1-indicator"));
+		await item.click();
+		await expect.element(t.input).toHaveValue("A");
+		expect(t.getHiddenInputs()).toHaveLength(1);
+		expect(t.getHiddenInputs()[0]).toHaveValue("1");
+		await t.input.click();
 
-// 		await expectSelected(item!);
-// 		await expectExists(page.getByTestId("1-indicator"));
-// 	});
+		await expectSelected(item);
+		await expectExists(page.getByTestId("1-indicator"));
+	});
 
-// 	it("should navigate through the items using the keyboard (loop = false)", async () => {
-// 		const t = await openMultiple({}, kbd.ARROW_DOWN);
+	it("should navigate through the items using the keyboard (loop = false)", async () => {
+		const t = await openMultiple({}, kbd.ARROW_DOWN);
 
-// 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
-// 		await expectHighlighted(item0!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectHighlighted(item1!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectHighlighted(item2!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectHighlighted(item3!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectHighlighted(item3!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item2!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item1!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item0!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item0!);
-// 	});
+		await expectHighlighted(item0);
+		// TODO: figure out why we need to do this twice for it to register properly?
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item1);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item2);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item3);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item3);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item2);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item1);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item0);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item0);
+	});
 
-// 	it("should navigate through the items using the keyboard (loop = true)", async () => {
-// 		const t = await openMultiple(
-// 			{
-// 				loop: true,
-// 			},
-// 			kbd.ARROW_DOWN
-// 		);
+	it("should navigate through the items using the keyboard (loop = true)", async () => {
+		const t = await openMultiple(
+			{
+				loop: true,
+			},
+			kbd.ARROW_DOWN
+		);
 
-// 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
-// 		await expectHighlighted(item0!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectHighlighted(item1!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectHighlighted(item2!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectHighlighted(item3!);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await expectNotHighlighted(item3!);
-// 		await expectHighlighted(item0!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item3!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item2!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item1!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item0!);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item3!);
-// 	});
+		await expectHighlighted(item0);
+		// TODO: figure out why we need to do this twice for it to register properly?
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item1);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item2);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item3);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectNotHighlighted(item3);
+		await expectHighlighted(item0);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item3);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item2);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item1);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item0);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item3);
+	});
 
-// 	it("should allow items to be selected using the keyboard", async () => {
-// 		const t = await openMultiple({}, kbd.ARROW_DOWN);
-// 		const item1 = t.getByTestId("1");
-// 		const item2 = t.getByTestId("2");
-// 		const item3 = t.getByTestId("3");
-// 		const item4 = t.getByTestId("4");
+	it("should allow items to be selected using the keyboard", async () => {
+		const t = await openMultiple({}, kbd.ARROW_DOWN);
+		const [item1, item2, item3, item4] = getItems(t.getByTestId);
 
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await t.user.keyboard(kbd.ENTER);
-// 		await expect.element(t.input).toHaveValue("D");
-// 		const hiddenInputs = t.getHiddenInputs();
-// 		expect(hiddenInputs).toHaveLength(1);
-// 		await expect.element(hiddenInputs[0]).toHaveValue("4");
-// 		await t.input.click();
-// 		await expectNotSelected([item1.element(), item2.element(), item3.element()]);
-// 		await expectSelected(item4.element());
-// 	});
+		// TODO: figure out why we need to do this twice for it to register properly?
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("D");
+		const hiddenInputs = t.getHiddenInputs();
+		expect(hiddenInputs).toHaveLength(1);
+		await expect.element(hiddenInputs[0]).toHaveValue("4");
+		await t.input.click();
+		await expectNotSelected([item1, item2, item3]);
+		await expectSelected(item4);
+	});
 
-// 	it("should allow multiple items to be selected using the keyboard", async () => {
-// 		const t = await openMultiple({});
+	it("should allow multiple items to be selected using the keyboard", async () => {
+		const t = await openMultiple({});
 
-// 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await t.user.keyboard(kbd.ARROW_DOWN);
-// 		await t.user.keyboard(kbd.ENTER);
-// 		await expect.element(t.input).toHaveValue("D");
-// 		const hiddenInputs = t.getHiddenInputs();
-// 		expect(hiddenInputs).toHaveLength(1);
-// 		await expect.element(hiddenInputs[0]).toHaveValue("4");
-// 		await expectSelected(item3!);
-// 		await expectNotSelected([item0!, item1!, item2!]);
-// 		await t.user.keyboard(kbd.ARROW_UP);
-// 		await expectHighlighted(item2!);
-// 		await t.user.keyboard(kbd.ENTER);
-// 		await expectSelected([item3!, item2!]);
-// 		await expectNotSelected([item0!, item1!]);
-// 	});
+		// TODO: figure out why we need to do this twice for it to register properly?
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("D");
+		const hiddenInputs = t.getHiddenInputs();
+		expect(hiddenInputs).toHaveLength(1);
+		await expect.element(hiddenInputs[0]).toHaveValue("4");
+		await expectSelected(item3);
+		await expectNotSelected([item0, item1, item2]);
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expectHighlighted(item2);
+		await userEvent.keyboard(kbd.ENTER);
+		await expectSelected([item3, item2]);
+		await expectNotSelected([item0, item1]);
+	});
 
-// 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
-// 		const t = await openMultiple({}, kbd.ARROW_DOWN);
-// 		const [item1, item2] = getItems(t.getByTestId);
-// 		await t.user.hover(item1!);
-// 		await expectHighlighted(item1!);
-// 		await t.user.hover(item2!);
-// 		await expectHighlighted(item2!);
-// 		await expectNotHighlighted(item1!);
-// 	});
+	it("should apply the `data-highlighted` attribute on mouseover", async () => {
+		const t = await openMultiple({}, kbd.ARROW_DOWN);
+		const [item1, item2] = getItems(t.getByTestId);
+		await item1.hover();
+		await expectHighlighted(item1);
+		await item2.hover();
+		await expectHighlighted(item2);
+		await expectNotHighlighted(item1);
+	});
 
-// 	it("should select a default item when provided", async () => {
-// 		const t = await openMultiple({
-// 			value: ["2"],
-// 			inputProps: {
-// 				defaultValue: "B",
-// 			},
-// 		});
-// 		await expectExists(page.getByTestId("2-indicator"));
-// 		await expect.element(t.input).toHaveValue("B");
+	it("should select a default item when provided", async () => {
+		const t = await openMultiple({
+			value: ["2"],
+			inputProps: {
+				defaultValue: "B",
+			},
+		});
+		await expectExists(page.getByTestId("2-indicator"));
+		await expect.element(t.input).toHaveValue("B");
 
-// 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
-// 		const [_, item2] = getItems(t.getByTestId);
-// 		await expectSelected(item2!);
-// 	});
+		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
+		const [_, item2] = getItems(t.getByTestId);
+		await expectSelected(item2);
+	});
 
-// 	it("should submit an empty array when the user submits the form without selecting any items", async () => {
-// 		let submittedValues: string[] | undefined;
-// 		const t = setupMultiple({
-// 			onFormSubmit: (fd) => {
-// 				submittedValues = fd.getAll("themes") as string[];
-// 			},
-// 			name: "themes",
-// 		});
+	it("should submit an empty array when the user submits the form without selecting any items", async () => {
+		let submittedValues: string[] | undefined;
+		const t = setupMultiple({
+			onFormSubmit: (fd) => {
+				submittedValues = fd.getAll("themes") as string[];
+			},
+			name: "themes",
+		});
+		await t.submit.click();
 
-// 		await t.user.click(t.submit);
-// 		expect(submittedValues).toHaveLength(0);
-// 	});
+		expect(submittedValues).toHaveLength(0);
+	});
 
-// 	it("should clear the input when the last item is deselected when `clearOnDeselect` is `true`", async () => {
-// 		const t = await openMultiple({
-// 			inputProps: {
-// 				clearOnDeselect: true,
-// 			},
-// 		});
-// 		const [item, item2, item3] = getItems(t.getByTestId);
-// 		await expectNotExists(page.getByTestId("1-indicator"));
-// 		await item!.click();
-// 		await expect.element(t.input).toHaveValue("A");
-// 		expect(t.getHiddenInputs()).toHaveLength(1);
-// 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("1");
-// 		await t.input.click();
+	it("should clear the input when the last item is deselected when `clearOnDeselect` is `true`", async () => {
+		const t = await openMultiple({
+			inputProps: {
+				clearOnDeselect: true,
+			},
+		});
+		const [item, item2, item3] = getItems(t.getByTestId);
+		await expectNotExists(page.getByTestId("1-indicator"));
+		await item.click();
+		await expect.element(t.input).toHaveValue("A");
+		expect(t.getHiddenInputs()).toHaveLength(1);
+		await expect.element(t.getHiddenInputs()[0]).toHaveValue("1");
+		await t.input.click();
 
-// 		await expectSelected(item!);
-// 		await expectExists(page.getByTestId("1-indicator"));
-// 		await item.click();
-// 		await expect.element(t.input).toHaveValue("");
-// 		await expect.element(t.input).not.toHaveValue("A");
-// 		await item2.click();
-// 		await item3.click();
-// 		expect(t.getHiddenInputs()).toHaveLength(2);
-// 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
-// 		await expect.element(t.getHiddenInputs()[1]).toHaveValue("3");
-// 		await item3.click();
-// 		expect(t.getHiddenInputs()).toHaveLength(1);
-// 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
-// 		await item2.click();
-// 		await expect.element(t.input).toHaveValue("");
-// 		expect(t.getHiddenInputs()).toHaveLength(0);
-// 	});
-// });
+		await expectSelected(item);
+		await expectExists(page.getByTestId("1-indicator"));
+		await item.click();
+		await expect.element(t.input).toHaveValue("");
+		await expect.element(t.input).not.toHaveValue("A");
+		await item2.click();
+		await item3.click();
+		expect(t.getHiddenInputs()).toHaveLength(2);
+		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
+		await expect.element(t.getHiddenInputs()[1]).toHaveValue("3");
+		await item3.click();
+		expect(t.getHiddenInputs()).toHaveLength(1);
+		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
+		await item2.click();
+		await expect.element(t.input).toHaveValue("");
+		expect(t.getHiddenInputs()).toHaveLength(0);
+	});
+});
 
 function getItems(getter: typeof page.getByTestId, items = testItems) {
 	const itemsArr: ReturnType<typeof page.getByTestId>[] = [];
