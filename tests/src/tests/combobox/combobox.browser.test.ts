@@ -683,7 +683,7 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should allow multiple items to be selected using the keyboard", async () => {
-		const t = await openMultiple({}, kbd.ARROW_DOWN);
+		const t = await openMultiple({});
 
 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
