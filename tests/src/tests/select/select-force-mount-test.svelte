@@ -96,7 +96,7 @@
 			{/if}
 		</Select.Portal>
 	</Select.Root>
-	<div data-testid="outside"></div>
+	<div data-testid="outside" style="bottom: 0px; right: 10px; position: absolute;">outside</div>
 	<button data-testid="open-binding" onclick={() => (open = !open)}>
 		{open}
 	</button>
