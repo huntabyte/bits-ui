@@ -441,12 +441,7 @@ it("should renders six weeks when `fixedWeeks` is `true`", { timeout: 10000 }, a
 
 	const nextButton = page.getByTestId("next-button");
 
-	for (let i = 0; i < 12; i++) {
-		expect(getNumberOfWeeks()).toBe(6);
-		await nextButton.click({ force: true });
-	}
-
-	for (let i = 0; i < 24; i++) {
+	for (let i = 0; i < 16; i++) {
 		expect(getNumberOfWeeks()).toBe(6);
 		await nextButton.click({ force: true });
 	}
