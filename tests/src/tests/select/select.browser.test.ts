@@ -710,7 +710,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
-		await openMultiple({}, kbd.ARROW_DOWN);
+		await openMultiple({});
 
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
@@ -737,12 +737,9 @@ describe("select - multiple", () => {
 		await expectHighlighted(item0);
 	});
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
-		await openSingle(
-			{
-				loop: true,
-			},
-			kbd.ARROW_DOWN
-		);
+		await openSingle({
+			loop: true,
+		});
 
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
@@ -775,7 +772,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should allow items to be selected using the keyboard", async () => {
-		const t = await openMultiple({}, kbd.ARROW_DOWN);
+		const t = await openMultiple({});
 
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
@@ -800,7 +797,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should allow multiple items to be selected using the keyboard", async () => {
-		const t = await openMultiple({}, kbd.ARROW_DOWN);
+		const t = await openMultiple({});
 
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
@@ -825,7 +822,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
-		await openMultiple({}, kbd.ARROW_DOWN);
+		await openMultiple({});
 		const [item1, item2] = getItems(page.getByTestId);
 		await item1.hover();
 		await expectHighlighted(item1);
