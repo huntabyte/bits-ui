@@ -83,7 +83,7 @@ The following example shows how you might create a reusable `MyDateField` compon
 </DateField.Root>
 ```
 
-<ComponentPreview size="xs" fileName="MyDateField.svelte" containerClass="mt-4" name="date-field-demo-custom" componentName="DateField">
+<ComponentPreview variant="collapsed" size="xs" fileName="MyDateField.svelte" containerClass="mt-4" name="date-field-demo-custom" componentName="DateField">
 
 {#snippet preview()}
 <DateFieldDemoCustom labelText="Select a date" />
