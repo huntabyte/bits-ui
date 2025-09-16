@@ -478,11 +478,13 @@ describe("select - single", () => {
 		await expectHighlighted(item4);
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(t.getContent());
+		await expect.element(t.trigger).toHaveFocus();
 
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectExists(t.getContent());
 		const [i0, i1] = getItems(page.getByTestId);
 		await expectHighlighted(i0);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(i1);
 	});
