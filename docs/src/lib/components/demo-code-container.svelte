@@ -66,7 +66,7 @@
 				<Collapsible.Content forceMount>
 					<ScrollArea
 						class={cn(
-							"h-full max-h-fit min-h-80 w-full",
+							"h-full max-h-fit min-h-80 w-full py-0",
 							!open && "max-h-80!",
 							className
 						)}
