@@ -299,12 +299,9 @@ describe("select - single", () => {
 		await expectHighlighted(item0);
 	});
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
-		await openSingle(
-			{
-				loop: true,
-			},
-			kbd.ARROW_DOWN
-		);
+		await openSingle({
+			loop: true,
+		});
 
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
