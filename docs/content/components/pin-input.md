@@ -4,17 +4,17 @@ description: Allows users to input a sequence of one-character alphanumeric inpu
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, PinInputDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PinInputDemo, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="pin-input-demo" componentName="Pin Input">
+<ComponentPreview name="pin-input-demo" componentName="Pin Input">
 
 {#snippet preview()}
 <PinInputDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 

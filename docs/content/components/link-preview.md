@@ -4,17 +4,17 @@ description: Displays a summarized preview of a linked content's details or info
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, LinkPreviewDemo, LinkPreviewDemoTransition, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, LinkPreviewDemo, LinkPreviewDemoTransition, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="link-preview-demo" componentName="LinkPreview">
+<ComponentPreview name="link-preview-demo" componentName="LinkPreview">
 
 {#snippet preview()}
 <LinkPreviewDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -151,12 +151,12 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="link-preview-demo-transition" componentName="LinkPreview" containerClass="mt-4">
+<ComponentPreview name="link-preview-demo-transition" componentName="LinkPreview" containerClass="mt-4">
 
 {#snippet preview()}
 <LinkPreviewDemoTransition />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

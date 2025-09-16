@@ -4,17 +4,17 @@ description: A modal window that alerts users with important information and awa
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, AlertDialogDemo,  Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AlertDialogDemo,  Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="alert-dialog-demo" componentName="Alert Dialog">
+<ComponentPreview name="alert-dialog-demo" componentName="Alert Dialog">
 
 {#snippet preview()}
 <AlertDialogDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Key Features
 

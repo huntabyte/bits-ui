@@ -4,17 +4,17 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, Callout, CalendarDemoMax } from '$lib/components'
+	import { APISection, ComponentPreview, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, Callout, CalendarDemoMax } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="calendar-demo" componentName="Calendar">
+<ComponentPreview name="calendar-demo" componentName="Calendar">
 
 {#snippet preview()}
 <CalendarDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <Callout type="tip" title="Heads up!">
 
@@ -287,13 +287,13 @@ You can set the `maxDays` prop to limit the maximum number of days that can be s
 </Calendar.Root>
 ```
 
-<ComponentPreviewV2 name="calendar-demo-max" componentName="Calendar">
+<ComponentPreview name="calendar-demo-max" componentName="Calendar">
 
 {#snippet preview()}
 <CalendarDemoMax />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Appearance & Behavior
 
@@ -397,24 +397,24 @@ Updating the `placeholder` will update the calendar view to reflect the new mont
 
 This example demonstrates how to use the `placeholder` prop to set the month and year of the calendar view programmatically.
 
-<ComponentPreviewV2 name="calendar-demo-selects" componentName="Calendar Selects">
+<ComponentPreview name="calendar-demo-selects" componentName="Calendar Selects">
 
 {#snippet preview()}
 <CalendarDemoSelects />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Preset Dates
 
 This example demonstrates how to programatically set the `value` of the calendar to a specific date when a user presses a button.
 
-<ComponentPreviewV2 name="calendar-demo-presets" componentName="Calendar Presets">
+<ComponentPreview name="calendar-demo-presets" componentName="Calendar Presets">
 
 {#snippet preview()}
 <CalendarDemoPresets />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

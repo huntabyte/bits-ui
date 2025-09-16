@@ -4,18 +4,18 @@ description: Organizes content into collapsible sections, allowing users to focu
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, AccordionDemoHorizontalCards, Callout, AccordionDemoCheckoutSteps } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, AccordionDemoHorizontalCards, Callout, AccordionDemoCheckoutSteps } from '$lib/components/index.js'
 
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="accordion-demo" componentName="Accordion">
+<ComponentPreview name="accordion-demo" componentName="Accordion">
 
 {#snippet preview()}
 <AccordionDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -297,13 +297,13 @@ In this example:
 - Svelte's `#if` block controls when the content is visible.
 - Transition directives (`transition:fade` and `transition:fly`) apply the animations.
 
-<ComponentPreviewV2 name="accordion-demo-transitions" componentName="Accordion">
+<ComponentPreview name="accordion-demo-transitions" componentName="Accordion">
 
 {#snippet preview()}
 <AccordionDemoTransitions />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 #### Best Practices
 
@@ -360,24 +360,24 @@ The following examples demonstrate different ways to use the Accordion component
 
 Use the Accordion component to create a horizontal card layout with collapsible sections.
 
-<ComponentPreviewV2 name="accordion-demo-horizontal-cards" componentName="Accordion Horizontal Cards">
+<ComponentPreview name="accordion-demo-horizontal-cards" componentName="Accordion Horizontal Cards">
 
 {#snippet preview()}
 <AccordionDemoHorizontalCards />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Checkout Steps
 
 Use the Accordion component to create a multi-step checkout process.
 
-<ComponentPreviewV2 name="accordion-demo-checkout-steps" componentName="Accordion Checkout Steps">
+<ComponentPreview name="accordion-demo-checkout-steps" componentName="Accordion Checkout Steps">
 
 {#snippet preview()}
 <AccordionDemoCheckoutSteps />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

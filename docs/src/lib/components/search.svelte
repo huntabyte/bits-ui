@@ -7,7 +7,7 @@
 		createContentIndex,
 		searchContentIndex,
 	} from "$lib/utils/search.js";
-	import ScrollArea from "./scroll-area.svelte";
+	import ScrollArea from "./ui/scroll-area.svelte";
 
 	let { showTrigger = true }: { showTrigger?: boolean } = $props();
 

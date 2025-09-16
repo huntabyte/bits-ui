@@ -5,17 +5,17 @@ navLabel: Preview
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, RatingGroupDemo, RatingGroupDemoCustom, RatingGroupDemoNoHover, RatingGroupDemoRtl, RatingGroupDemoHalfStars, Callout, DemoContainer } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, RatingGroupDemo, RatingGroupDemoCustom, RatingGroupDemoNoHover, RatingGroupDemoRtl, RatingGroupDemoHalfStars, Callout, DemoContainer } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="rating-group-demo" componentName="Rating Group">
+<ComponentPreview name="rating-group-demo" componentName="Rating Group">
 
 {#snippet preview()}
 <RatingGroupDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <Callout type="warning">
 
@@ -208,13 +208,13 @@ The rating group supports half ratings when you set the `allowHalf` prop to `tru
 </RatingGroup.Root>
 ```
 
-<ComponentPreviewV2 name="rating-group-demo-half-stars" componentName="Rating Group Half Stars">
+<ComponentPreview name="rating-group-demo-half-stars" componentName="Rating Group Half Stars">
 
 {#snippet preview()}
 <RatingGroupDemoHalfStars />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Readonly Mode
 
@@ -262,13 +262,13 @@ By default, the rating group shows a preview of the potential rating when hoveri
 
 When disabled, only the currently selected rating will be highlighted, and hovering over items won't show a preview of the potential selection.
 
-<ComponentPreviewV2 name="rating-group-demo-no-hover" componentName="Rating Group No Hover Preview">
+<ComponentPreview name="rating-group-demo-no-hover" componentName="Rating Group No Hover Preview">
 
 {#snippet preview()}
 <RatingGroupDemoNoHover />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## RTL Support
 
@@ -290,13 +290,13 @@ The rating group automatically adapts to right-to-left (RTL) text direction. Sim
 
 In RTL mode, the arrow key navigation is automatically reversed to match the visual direction.
 
-<ComponentPreviewV2 name="rating-group-demo-rtl" componentName="Rating Group RTL">
+<ComponentPreview name="rating-group-demo-rtl" componentName="Rating Group RTL">
 
 {#snippet preview()}
 <RatingGroupDemoRtl />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Maximum Rating
 

@@ -4,17 +4,17 @@ description: Visualizes the progress or completion status of a task or process.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ProgressDemo, ProgressDemoCustom } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ProgressDemo, ProgressDemoCustom } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="progress-demo" componentName="Progress">
+<ComponentPreview name="progress-demo" componentName="Progress">
 
 {#snippet preview()}
 <ProgressDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 While often visually similar, progress bars and [Meters](/docs/components/meter) serve distinct purposes:
 

@@ -3,7 +3,7 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { navigation } from "$lib/config/index.js";
 	import { Popover } from "bits-ui";
-	import ScrollArea from "../scroll-area.svelte";
+	import ScrollArea from "$lib/components/ui/scroll-area.svelte";
 	import { page } from "$app/state";
 	import MobileMenuIcon from "./mobile-menu-icon.svelte";
 

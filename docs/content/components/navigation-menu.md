@@ -4,17 +4,17 @@ description: A list of links that allow users to navigate between pages of a web
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoNoViewport, NavigationMenuDemoNoHover } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoNoViewport, NavigationMenuDemoNoHover } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="navigation-menu-demo" componentName="Navigation Menu">
+<ComponentPreview name="navigation-menu-demo" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 
@@ -137,13 +137,13 @@ You can create a submenu by nesting your navigation menu and using the `Navigati
 ```
 
 <!--
-<ComponentPreviewV2 name="navigation-menu-submenu-demo" componentName="Navigation Menu">
+<ComponentPreview name="navigation-menu-submenu-demo" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemoSubmenu />
 {/snippet}
 
-</ComponentPreviewV2> -->
+</ComponentPreview> -->
 
 ### Submenus with Viewport
 
@@ -173,13 +173,13 @@ You can use the `NavigationMenu.Viewport` component inside of a `NavigationMenu.
 
 The `NavigationMenu.Viewport` component provides a way to transition between `NavigationMenu.Content` without the need for a full close/open animation between them, however, this is completely optional and you don't need to use it.
 
-<ComponentPreviewV2 name="navigation-menu-no-viewport-demo" componentName="Navigation Menu">
+<ComponentPreview name="navigation-menu-no-viewport-demo" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemoNoViewport />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Advanced Animation
 
@@ -300,13 +300,13 @@ You may wish for the links in the Navigation Menu to persist in the DOM, regardl
 <NavigationMenu.Viewport forceMount></NavigationMenu.Viewport>
 ```
 
-<ComponentPreviewV2 name="navigation-menu-demo-force-mount" componentName="Navigation Menu">
+<ComponentPreview name="navigation-menu-demo-force-mount" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemoForceMount />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Open on Hover
 
@@ -325,12 +325,12 @@ Unlike the default behavior, when `openOnHover` is `false`, the menu will not cl
 </NavigationMenu.Item>
 ```
 
-<ComponentPreviewV2 name="navigation-menu-no-hover-demo" componentName="Navigation Menu">
+<ComponentPreview name="navigation-menu-no-hover-demo" componentName="Navigation Menu">
 
 {#snippet preview()}
 <NavigationMenuDemoNoHover />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />
