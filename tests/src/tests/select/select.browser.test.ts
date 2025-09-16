@@ -797,6 +797,7 @@ describe("select - multiple", () => {
 		await expect.element(t.trigger).toHaveTextContent("D");
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(1);
+		await t.trigger.click();
 		await expectSelected(item4);
 		await expectNotSelected([item0, item1, item2, item3]);
 	});
