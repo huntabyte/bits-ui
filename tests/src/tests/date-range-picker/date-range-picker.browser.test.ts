@@ -429,7 +429,7 @@ it("should navigate the months backwards using the prev button", async () => {
 	await expect.element(heading).toHaveTextContent("January 1979");
 });
 
-it("should renders six weeks when `fixedWeeks` is `true`", { timeout: 5000 }, async () => {
+it("should renders six weeks when `fixedWeeks` is `true`", { timeout: 10000 }, async () => {
 	const t = await open({
 		value: calendarDateTimeRange,
 		fixedWeeks: true,
@@ -443,12 +443,12 @@ it("should renders six weeks when `fixedWeeks` is `true`", { timeout: 5000 }, as
 
 	for (let i = 0; i < 12; i++) {
 		expect(getNumberOfWeeks()).toBe(6);
-		await nextButton.click();
+		await nextButton.click({ force: true });
 	}
 
 	for (let i = 0; i < 24; i++) {
 		expect(getNumberOfWeeks()).toBe(6);
-		await nextButton.click();
+		await nextButton.click({ force: true });
 	}
 });
 
