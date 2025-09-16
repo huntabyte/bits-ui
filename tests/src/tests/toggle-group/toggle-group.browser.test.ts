@@ -1,12 +1,11 @@
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { getTestKbd, sleep } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import ToggleGroupTest from "./toggle-group-test.svelte";
 import type { Item, SingleToggleGroupTestProps } from "./toggle-group-test.svelte";
 import ToggleGroupMultipleTest, {
 	type MultipleToggleGroupTestProps,
 } from "./toggle-group-multi-test.svelte";
-import { setupBrowserUserEvents } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
