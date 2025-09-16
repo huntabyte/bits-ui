@@ -419,10 +419,12 @@ describe("combobox - single", () => {
 		await expectHighlighted(item4);
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(t.getContent());
+		await expect.element(t.input).toHaveFocus();
 
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectExists(t.getContent());
 		await expectHighlighted(item1);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item2);
 	});
