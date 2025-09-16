@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.9.9
+
+### Patch Changes
+
+- fix(Dropdown Menu): ensure menu can open on `V0+Space` when using VoiceOver on Safari/Firefox ([#1761](https://github.com/huntabyte/bits-ui/pull/1761))
+
 ## 2.9.8
 
 ### Patch Changes
