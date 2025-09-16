@@ -73,7 +73,7 @@ jobs:
 
     Test:
         name: Test - Chromium
-        runs-on: macos-latest
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
