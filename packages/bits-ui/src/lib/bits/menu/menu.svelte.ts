@@ -45,7 +45,7 @@ import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { isTabbable } from "tabbable";
-import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
+import type { KeyboardEventHandler, PointerEventHandler, MouseEventHandler } from "svelte/elements";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
@@ -1046,6 +1046,17 @@ export class DropdownMenuTriggerState {
 		this.attachment = attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v));
 	}
 
+	onclick: MouseEventHandler<HTMLElement> = (e) => {
+		/**
+		 * MacOS VoiceOver sends a click in Safari/Firefox bypassing the keydown event
+		 * when V0+Space is pressed. Since we already handle the keydown event and the
+		 * pointerdown events separately, we ignore it if the detail is not 0.
+		 */
+		if (this.opts.disabled.current || e.detail !== 0) return;
+		this.parentMenu.toggleOpen();
+		e.preventDefault();
+	};
+
 	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
@@ -1097,6 +1108,7 @@ export class DropdownMenuTriggerState {
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[this.parentMenu.root.getBitsAttr("trigger")]: "",
 				//
+				onclick: this.onclick,
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
