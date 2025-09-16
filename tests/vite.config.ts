@@ -47,7 +47,6 @@ export default defineConfig({
 					environment: "browser",
 					testTimeout: 5000,
 					retry: 3,
-					maxConcurrency: 3,
 					browser: {
 						enabled: true,
 						headless: true,
