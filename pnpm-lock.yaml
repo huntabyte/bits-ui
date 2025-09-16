@@ -18,6 +18,9 @@ catalogs:
     '@types/node':
       specifier: ^20.19.0
       version: 20.19.11
+    playwright:
+      specifier: ^1.53.1
+      version: 1.53.1
     svelte:
       specifier: ^5.38.10
       version: 5.38.1
@@ -71,6 +74,9 @@ importers:
       oxlint:
         specifier: ^1.15.0
         version: 1.15.0
+      playwright:
+        specifier: 'catalog:'
+        version: 1.53.1
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
@@ -341,7 +347,7 @@ importers:
         specifier: ^24.1.3
         version: 24.1.3
       playwright:
-        specifier: ^1.53.1
+        specifier: 'catalog:'
         version: 1.53.1
       resize-observer-polyfill:
         specifier: ^1.5.1
