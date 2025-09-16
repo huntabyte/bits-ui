@@ -25,7 +25,7 @@ export default defineConfig({
 	test: {
 		poolOptions: {
 			forks: {
-				maxForks: 3,
+				maxForks: 5,
 			},
 		},
 		projects: [
