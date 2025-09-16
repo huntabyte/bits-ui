@@ -26,7 +26,7 @@
 			orientation="vertical"
 			{...scrollbarYProps}
 			class={cn(
-				"hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 bg-background before:bg-background relative flex w-2.5 touch-none select-none rounded-full p-px transition-all duration-200 before:absolute before:inset-0 hover:w-3",
+				"hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 bg-background before:bg-background relative flex w-2.5 touch-none select-none rounded-full p-px transition-all duration-150 before:absolute before:inset-0 hover:w-3",
 				scrollbarYProps?.class
 			)}
 		>
@@ -38,7 +38,7 @@
 			orientation="horizontal"
 			{...scrollbarXProps}
 			class={cn(
-				"hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 bg-background before:bg-background relative flex h-2.5 touch-none select-none rounded-full p-px transition-all duration-200 before:absolute before:inset-0 hover:h-3",
+				"hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 bg-background before:bg-background relative flex h-2.5 touch-none select-none rounded-full p-px transition-all duration-150 before:absolute before:inset-0 hover:h-3",
 				scrollbarXProps?.class
 			)}
 		>
