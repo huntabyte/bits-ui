@@ -18,7 +18,7 @@
 		"check": "pnpm build:content && pnpm build:demos && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
-		"@internationalized/date": "^3.9.0",
+		"@internationalized/date": "^3.8.1",
 		"@prettier/sync": "0.3.0",
 		"@stackblitz/sdk": "^1.11.0",
 		"@sveltejs/adapter-cloudflare": "^7.2.3",
