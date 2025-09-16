@@ -8,7 +8,7 @@ import SliderWithLabelsTest, {
 	type SliderWithLabelsTestProps,
 } from "./slider-test-with-labels.svelte";
 import { setupBrowserUserEvents } from "../browser-utils";
-import type { Locator } from "@vitest/browser/context";
+import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
@@ -36,110 +36,116 @@ function setup(
 		t = renderSliderWithLabels(props as SliderWithLabelsTestProps);
 	}
 
-	const root = t.getByTestId("root").element() as HTMLElement;
+	const root = page.getByTestId("root");
 
-	function getAllByTestId(testId: Parameters<typeof t.getByTestId>[0]) {
-		return t.getByTestId(testId).all();
+	function getAllByTestId(testId: Parameters<typeof page.getByTestId>[0]) {
+		return page.getByTestId(testId).all();
 	}
-	return { root, user, getAllByTestId, ...t };
+	return { root, user, getAllByTestId, rerender: t.rerender };
 }
 
 it("should have a thumb positioned at 30% of the container", async () => {
-	const t = setup();
+	setup();
 
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
-	expect(thumb).toBeInTheDocument();
+	const thumb = page.getByTestId("thumb");
+	await expect.element(thumb).toBeInTheDocument();
 
-	expect(isCloseEnough(30, thumb.style.left)).toBeTruthy();
+	expect(isCloseEnough(30, (thumb.element() as HTMLElement).style.left)).toBeTruthy();
 });
 it("should have a range that covers from 0 to 30%", async () => {
-	const t = setup();
+	setup();
 
-	const range = t.getByTestId("range").element() as HTMLElement;
-	expect(range).toBeInTheDocument();
+	const range = page.getByTestId("range");
+	await expect.element(range).toBeInTheDocument();
 
-	expect(isCloseEnough(0, range.style.left)).toBeTruthy();
-	expect(isCloseEnough(70, range.style.right)).toBeTruthy();
+	expect(isCloseEnough(0, (range.element() as HTMLElement).style.left)).toBeTruthy();
+	expect(isCloseEnough(70, (range.element() as HTMLElement).style.right)).toBeTruthy();
 });
 
 it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("should change by 1% when pressing %s", async (key) => {
-	const t = setup();
+	setup();
 
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
-	const range = t.getByTestId("range").element() as HTMLElement;
+	const thumb = page.getByTestId("thumb");
+	await expect.element(thumb).toBeInTheDocument();
+	const range = page.getByTestId("range");
+	await expect.element(range).toBeInTheDocument();
 
-	thumb.focus();
-	await t.user.keyboard(key);
+	(thumb.element() as HTMLElement).focus();
+	await userEvent.keyboard(key);
 
-	expectPercentage({ percentage: 31, thumb, range });
+	expectPercentage({
+		percentage: 31,
+		thumb: thumb.element() as HTMLElement,
+		range: range.element() as HTMLElement,
+	});
 });
 
 it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("should change by 1% when pressing %s", async (key) => {
-	const t = setup();
+	setup();
 
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
-	const range = t.getByTestId("range").element() as HTMLElement;
+	const thumb = page.getByTestId("thumb").element() as HTMLElement;
+	const range = page.getByTestId("range").element() as HTMLElement;
 	thumb.focus();
 
-	await t.user.keyboard(key);
+	await userEvent.keyboard(key);
 
 	expectPercentage({ percentage: 29, thumb, range });
 });
 
 it("should go to minimum when pressing Home", async () => {
-	const t = setup();
+	setup();
 
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
-	const range = t.getByTestId("range").element() as HTMLElement;
+	const thumb = page.getByTestId("thumb").element() as HTMLElement;
+	const range = page.getByTestId("range").element() as HTMLElement;
 
 	thumb.focus();
-	await t.user.keyboard(kbd.HOME);
+	await userEvent.keyboard(kbd.HOME);
 
 	expectPercentage({ percentage: 0, thumb, range });
 });
 
 it("should go to maximum when pressing End", async () => {
-	const t = setup();
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
-	const range = t.getByTestId("range").element() as HTMLElement;
+	setup();
+	const thumb = page.getByTestId("thumb").element() as HTMLElement;
+	const range = page.getByTestId("range").element() as HTMLElement;
 
 	thumb.focus();
-	await t.user.keyboard(kbd.END);
+	await userEvent.keyboard(kbd.END);
 
 	expectPercentage({ percentage: 100, thumb, range });
 });
 
 it("should call onValueChange when the value changes", async () => {
 	const mock = vi.fn();
-	const t = setup({
+	setup({
 		onValueChange: mock,
 	});
 
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
+	const thumb = page.getByTestId("thumb").element() as HTMLElement;
 	thumb.focus();
 
-	await t.user.keyboard(kbd.ARROW_RIGHT);
+	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	expect(mock).toHaveBeenCalledWith([31]);
 });
 
 it("should not allow the value to change when the `disabled` prop is set to true", async () => {
-	const t = setup({ disabled: true });
+	setup({ disabled: true });
 
-	const thumb = t.getByTestId("thumb").element() as HTMLElement;
-	const range = t.getByTestId("range").element() as HTMLElement;
+	const thumb = page.getByTestId("thumb").element() as HTMLElement;
+	const range = page.getByTestId("range").element() as HTMLElement;
 
 	thumb.focus();
-	await t.user.keyboard(kbd.HOME);
+	await userEvent.keyboard(kbd.HOME);
 	expectPercentage({ percentage: 30, thumb, range });
 });
 
 describe("range", () => {
 	it("should have a thumb positioned at 20% of the container and one at 80%", async () => {
-		const t = setup({}, "range");
+		setup({}, "range");
 
-		const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
+		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 		expect(thumb0).toBeInTheDocument();
-		const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
+		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
 		expect(thumb1).toBeInTheDocument();
 
 		expect(isCloseEnough(20, thumb0.style.left)).toBeTruthy();
@@ -147,9 +153,9 @@ describe("range", () => {
 	});
 
 	it("should have a range that covers from 20% to 80%", async () => {
-		const t = setup({}, "range");
+		setup({}, "range");
 
-		const range = t.getByTestId("range").element() as HTMLElement;
+		const range = page.getByTestId("range").element() as HTMLElement;
 		expect(range).toBeInTheDocument();
 
 		expect(isCloseEnough(20, range.style.left)).toBeTruthy();
@@ -159,14 +165,14 @@ describe("range", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
-			const t = setup({}, "range");
+			setup({}, "range");
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb0.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentages({ percentages: [21, 80], thumbs: [thumb0, thumb1], range });
 		}
@@ -175,14 +181,14 @@ describe("range", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
-			const t = setup({}, "range");
+			setup({}, "range");
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb1.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentages({ percentages: [20, 81], thumbs: [thumb0, thumb1], range });
 		}
@@ -191,14 +197,14 @@ describe("range", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
-			const t = setup({}, "range");
+			setup({}, "range");
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb0.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentages({ percentages: [19, 80], thumbs: [thumb0, thumb1], range });
 		}
@@ -207,14 +213,14 @@ describe("range", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
-			const t = setup({}, "range");
+			setup({}, "range");
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb1.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentages({ percentages: [20, 79], thumbs: [thumb0, thumb1], range });
 		}
@@ -223,21 +229,21 @@ describe("range", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should swap handler places when they overlap pressing %s (going up)",
 		async (key) => {
-			const t = setup(
+			setup(
 				{
 					value: [49, 51],
 				},
 				"range"
 			);
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb0.focus();
-			await t.user.keyboard(key);
-			await t.user.keyboard(key);
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
+			await userEvent.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentages({ percentages: [51, 52], thumbs: [thumb0, thumb1], range });
 			expect(thumb1).toHaveFocus();
@@ -248,7 +254,7 @@ describe("range", () => {
 		"should call onValueChange when handlers swap places when they overlap pressing %s (going up)",
 		async (key) => {
 			const mock = vi.fn();
-			const t = setup(
+			setup(
 				{
 					value: [49, 51],
 					onValueChange: mock,
@@ -256,16 +262,16 @@ describe("range", () => {
 				"range"
 			);
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb0.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 			expect(mock).toHaveBeenCalledWith([50, 51]);
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 			expect(mock).toHaveBeenCalledWith([51, 51]);
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 			expect(mock).toHaveBeenCalledWith([51, 52]);
 
 			expectPercentages({ percentages: [51, 52], thumbs: [thumb0, thumb1], range });
@@ -276,21 +282,21 @@ describe("range", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should swap handler places when they overlap pressing %s (going down)",
 		async (key) => {
-			const t = setup(
+			setup(
 				{
 					value: [49, 51],
 				},
 				"range"
 			);
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb1.focus();
-			await t.user.keyboard(key);
-			await t.user.keyboard(key);
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
+			await userEvent.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentages({ percentages: [48, 49], thumbs: [thumb0, thumb1], range });
 			expect(thumb0).toHaveFocus();
@@ -298,54 +304,54 @@ describe("range", () => {
 	);
 
 	it("should bring thumb to 0  to minimum when pressing Home", async () => {
-		const t = setup({}, "range");
+		setup({}, "range");
 
-		const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-		const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-		const range = t.getByTestId("range").element() as HTMLElement;
+		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+		const range = page.getByTestId("range").element() as HTMLElement;
 
 		thumb0.focus();
-		await t.user.keyboard(kbd.HOME);
+		await userEvent.keyboard(kbd.HOME);
 
 		expectPercentages({ percentages: [0, 80], thumbs: [thumb0, thumb1], range });
 	});
 
 	it("should bring thumb 1  to maximum when pressing End", async () => {
-		const t = setup({}, "range");
+		setup({}, "range");
 
-		const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-		const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-		const range = t.getByTestId("range").element() as HTMLElement;
+		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+		const range = page.getByTestId("range").element() as HTMLElement;
 
 		thumb1.focus();
-		await t.user.keyboard(kbd.END);
+		await userEvent.keyboard(kbd.END);
 
 		expectPercentages({ percentages: [20, 100], thumbs: [thumb0, thumb1], range });
 	});
 
 	it("should bring thumb 1  to minimum when pressing Home (thumbs swap places)", async () => {
-		const t = setup({}, "range");
+		setup({}, "range");
 
-		const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-		const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-		const range = t.getByTestId("range").element() as HTMLElement;
+		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+		const range = page.getByTestId("range").element() as HTMLElement;
 
 		thumb1.focus();
-		await t.user.keyboard(kbd.HOME);
+		await userEvent.keyboard(kbd.HOME);
 
 		expectPercentages({ percentages: [0, 20], thumbs: [thumb0, thumb1], range });
 		expect(thumb0).toHaveFocus();
 	});
 
 	it("should bring thumb 0 to maximum when pressing End (thumbs swap places)", async () => {
-		const t = setup({}, "range");
+		setup({}, "range");
 
-		const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-		const thumb1 = t.getByTestId("thumb-1").element() as HTMLElement;
-		const range = t.getByTestId("range").element() as HTMLElement;
+		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
+		const range = page.getByTestId("range").element() as HTMLElement;
 
 		thumb0.focus();
-		await t.user.keyboard(kbd.END);
+		await userEvent.keyboard(kbd.END);
 
 		expectPercentages({ percentages: [80, 100], thumbs: [thumb0, thumb1], range });
 		expect(thumb1).toHaveFocus();
@@ -354,14 +360,14 @@ describe("range", () => {
 
 describe("small min, max, step", () => {
 	it("should have a thumb positioned at 50% of the container", async () => {
-		const t = setup({
+		setup({
 			value: [0.5],
 			min: 0,
 			max: 1,
 			step: 0.01,
 		});
 
-		const thumb = t.getByTestId("thumb").element() as HTMLElement;
+		const thumb = page.getByTestId("thumb").element() as HTMLElement;
 		expect(thumb).toBeInTheDocument();
 
 		expect(isCloseEnough(50, thumb.style.left)).toBeTruthy();
@@ -370,18 +376,18 @@ describe("small min, max, step", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s",
 		async (key) => {
-			const t = setup({
+			setup({
 				value: [0.5],
 				min: 0,
 				max: 1,
 				step: 0.01,
 			});
 
-			const thumb = t.getByTestId("thumb").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb = page.getByTestId("thumb").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentage({ percentage: 51, thumb, range });
 		}
@@ -390,18 +396,18 @@ describe("small min, max, step", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 10% when pressing %s",
 		async (key) => {
-			const t = setup({
+			setup({
 				value: [0.5],
 				min: 0,
 				max: 1,
 				step: 0.01,
 			});
 
-			const thumb = t.getByTestId("thumb").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb = page.getByTestId("thumb").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentage({ percentage: 49, thumb, range });
 		}
@@ -410,14 +416,14 @@ describe("small min, max, step", () => {
 
 describe("slider (negative min)", () => {
 	it("should have a thumb positioned at 50% of the container", async () => {
-		const t = setup({
+		setup({
 			value: [0],
 			min: -50,
 			max: 50,
 			step: 1,
 		});
 
-		const thumb = t.getByTestId("thumb").element() as HTMLElement;
+		const thumb = page.getByTestId("thumb").element() as HTMLElement;
 		expect(thumb).toBeInTheDocument();
 
 		expect(isCloseEnough(50, thumb.style.left)).toBeTruthy();
@@ -426,18 +432,18 @@ describe("slider (negative min)", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s",
 		async (key) => {
-			const t = setup({
+			setup({
 				value: [0],
 				min: -50,
 				max: 50,
 				step: 1,
 			});
 
-			const thumb = t.getByTestId("thumb").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb = page.getByTestId("thumb").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentage({ percentage: 51, thumb, range });
 		}
@@ -446,18 +452,18 @@ describe("slider (negative min)", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 10% when pressing %s",
 		async (key) => {
-			const t = setup({
+			setup({
 				value: [0],
 				min: -50,
 				max: 50,
 				step: 1,
 			});
 
-			const thumb = t.getByTestId("thumb").element() as HTMLElement;
-			const range = t.getByTestId("range").element() as HTMLElement;
+			const thumb = page.getByTestId("thumb").element() as HTMLElement;
+			const range = page.getByTestId("range").element() as HTMLElement;
 
 			thumb.focus();
-			await t.user.keyboard(key);
+			await userEvent.keyboard(key);
 
 			expectPercentage({ percentage: 49, thumb, range });
 		}
@@ -596,7 +602,7 @@ describe("slider changing options after building", () => {
 describe("floating point precision", () => {
 	it("should handle decimal steps without floating point precision errors", async () => {
 		const mock = vi.fn();
-		const t = setup({
+		setup({
 			value: [1.1],
 			min: 0,
 			max: 2,
@@ -604,11 +610,11 @@ describe("floating point precision", () => {
 			onValueChange: mock,
 		});
 
-		const thumb = t.getByTestId("thumb").element() as HTMLElement;
+		const thumb = page.getByTestId("thumb").element() as HTMLElement;
 		thumb.focus();
 
 		// move right by one step (from 1.1 to 1.2)
-		await t.user.keyboard(kbd.ARROW_RIGHT);
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
 
 		// check that the value is exactly 1.2, not 1.2000000000000002
 		expect(mock).toHaveBeenCalledWith([1.2]);
@@ -620,7 +626,7 @@ describe("floating point precision", () => {
 
 	it("should handle smaller decimal steps (0.01) without precision errors", async () => {
 		const mock = vi.fn();
-		const t = setup({
+		setup({
 			value: [0.11],
 			min: 0,
 			max: 1,
@@ -628,11 +634,11 @@ describe("floating point precision", () => {
 			onValueChange: mock,
 		});
 
-		const thumb = t.getByTestId("thumb").element() as HTMLElement;
+		const thumb = page.getByTestId("thumb").element() as HTMLElement;
 		thumb.focus();
 
 		// move right by one step (from 0.11 to 0.12)
-		await t.user.keyboard(kbd.ARROW_RIGHT);
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
 
 		// check that the value is exactly 0.12
 		expect(mock).toHaveBeenCalledWith([0.12]);
@@ -836,9 +842,9 @@ describe("labels", () => {
 
 	describe("thumb labels", () => {
 		it("should render thumb labels with correct data attributes", async () => {
-			const t = setup({ value: [50] }, "labels");
+			setup({ value: [50] }, "labels");
 
-			const thumbLabel = t.getByTestId("thumb-label-0");
+			const thumbLabel = page.getByTestId("thumb-label-0");
 			expect(thumbLabel).toHaveAttribute("data-value", "50");
 			expect(thumbLabel).toHaveAttribute("data-orientation", "horizontal");
 			expect(thumbLabel).toHaveAttribute("data-slider-thumb-label");
@@ -848,14 +854,14 @@ describe("labels", () => {
 		});
 
 		it("should render thumb labels with correct content", async () => {
-			const t = setup({ value: [75] }, "labels");
+			setup({ value: [75] }, "labels");
 
-			const thumbLabel = t.getByTestId("thumb-label-0");
+			const thumbLabel = page.getByTestId("thumb-label-0");
 			expect(thumbLabel.element().textContent).toBe("75");
 		});
 
 		it("should handle disabled state correctly", async () => {
-			const t = setup(
+			setup(
 				{
 					value: [50],
 					disabled: true,
@@ -863,12 +869,12 @@ describe("labels", () => {
 				"labels"
 			);
 
-			const thumbLabel = t.getByTestId("thumb-label-0");
+			const thumbLabel = page.getByTestId("thumb-label-0");
 			expect(thumbLabel).toHaveAttribute("data-disabled");
 		});
 
 		it("should position thumb labels correctly with different positions", async () => {
-			const t = setup(
+			setup(
 				{
 					value: [50],
 					thumbLabelPosition: "bottom",
@@ -876,13 +882,13 @@ describe("labels", () => {
 				"labels"
 			);
 
-			const thumbLabel = t.getByTestId("thumb-label-0");
+			const thumbLabel = page.getByTestId("thumb-label-0");
 			expect(thumbLabel).toHaveAttribute("data-position", "bottom");
 			expect((thumbLabel.element() as HTMLElement).style.top).toBe("100%");
 		});
 
 		it("should handle vertical orientation correctly", async () => {
-			const t = setup(
+			setup(
 				{
 					value: [50],
 					orientation: "vertical",
@@ -890,19 +896,19 @@ describe("labels", () => {
 				"labels"
 			);
 
-			const thumbLabel = t.getByTestId("thumb-label-0");
+			const thumbLabel = page.getByTestId("thumb-label-0");
 			expect(thumbLabel).toHaveAttribute("data-orientation", "vertical");
 			expect(thumbLabel).toHaveAttribute("data-position", "left");
 		});
 
 		it("should update value when thumb moves", async () => {
-			const t = setup({ value: [50] }, "labels");
+			setup({ value: [50] }, "labels");
 
-			const thumb = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumbLabel = t.getByTestId("thumb-label-0").element() as HTMLElement;
+			const thumb = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumbLabel = page.getByTestId("thumb-label-0").element() as HTMLElement;
 
 			thumb.focus();
-			await t.user.keyboard(kbd.ARROW_RIGHT);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
 
 			expect(thumbLabel).toHaveAttribute("data-value", "51");
 			expect(thumbLabel.textContent).toBe("51");
@@ -919,8 +925,8 @@ describe("labels", () => {
 			const thumbLabels = t.getAllByTestId(/^thumb-label-/);
 			expect(thumbLabels).toHaveLength(2);
 
-			const thumbLabel0 = t.getByTestId("thumb-label-0").element() as HTMLElement;
-			const thumbLabel1 = t.getByTestId("thumb-label-1").element() as HTMLElement;
+			const thumbLabel0 = page.getByTestId("thumb-label-0").element() as HTMLElement;
+			const thumbLabel1 = page.getByTestId("thumb-label-1").element() as HTMLElement;
 
 			expect(thumbLabel0).toHaveAttribute("data-value", "20");
 			expect(thumbLabel0.textContent).toBe("20");
@@ -930,28 +936,28 @@ describe("labels", () => {
 		});
 
 		it("should maintain correct labels when thumbs swap positions (autoSort=true)", async () => {
-			const t = setup(
+			setup(
 				{
 					value: [49, 51],
 				},
 				"labels"
 			);
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumbLabel0 = t.getByTestId("thumb-label-0").element() as HTMLElement;
-			const thumbLabel1 = t.getByTestId("thumb-label-1").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumbLabel0 = page.getByTestId("thumb-label-0").element() as HTMLElement;
+			const thumbLabel1 = page.getByTestId("thumb-label-1").element() as HTMLElement;
 
 			thumb0.focus();
-			await t.user.keyboard(kbd.ARROW_RIGHT);
-			await t.user.keyboard(kbd.ARROW_RIGHT);
-			await t.user.keyboard(kbd.ARROW_RIGHT);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
 
 			expect(thumbLabel0).toHaveAttribute("data-value", "51");
 			expect(thumbLabel1).toHaveAttribute("data-value", "52");
 		});
 
 		it("should maintain correct labels when thumbs swap positions (autoSort=false)", async () => {
-			const t = setup(
+			setup(
 				{
 					value: [49, 51],
 					autoSort: false,
@@ -959,14 +965,14 @@ describe("labels", () => {
 				"labels"
 			);
 
-			const thumb0 = t.getByTestId("thumb-0").element() as HTMLElement;
-			const thumbLabel0 = t.getByTestId("thumb-label-0").element() as HTMLElement;
-			const thumbLabel1 = t.getByTestId("thumb-label-1").element() as HTMLElement;
+			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
+			const thumbLabel0 = page.getByTestId("thumb-label-0").element() as HTMLElement;
+			const thumbLabel1 = page.getByTestId("thumb-label-1").element() as HTMLElement;
 
 			thumb0.focus();
-			await t.user.keyboard(kbd.ARROW_RIGHT);
-			await t.user.keyboard(kbd.ARROW_RIGHT);
-			await t.user.keyboard(kbd.ARROW_RIGHT);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
 
 			expect(thumbLabel0).toHaveAttribute("data-value", "52");
 			expect(thumbLabel1).toHaveAttribute("data-value", "51");

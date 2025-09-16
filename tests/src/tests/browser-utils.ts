@@ -7,12 +7,17 @@ export async function expectNotClickable(node: Element | HTMLElement | Locator) 
 	await expect(user.click(node, { timeout: 100 })).rejects.toThrow();
 }
 
+export async function expectNotClickableLoc(loc: Locator) {
+	await expect(loc.click()).rejects.toThrow();
+}
+
 export async function expectNotExists(loc: Locator) {
 	await vi.waitFor(() => expect(() => loc.element()).toThrow());
 }
 
 export async function expectExists(loc: Locator) {
-	await vi.waitFor(() => expect(loc.element()).toBeInTheDocument());
+	await expect.element(loc).toBeInTheDocument();
+	// await vi.waitFor(() => expect(loc.element()).toBeInTheDocument());
 }
 
 export async function simulateOutsideClick(node: Element | HTMLElement | Locator) {

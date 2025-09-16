@@ -3,42 +3,42 @@ import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.svelte";
 import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
 function setup(props: ScrollAreaTestProps = {}) {
 	const user = setupBrowserUserEvents();
-	const t = render(ScrollAreaTest, { ...props });
+	render(ScrollAreaTest, { ...props });
 
-	const root = t.getByTestId("root").element() as HTMLElement;
-	const viewport = t.getByTestId("viewport").element() as HTMLElement;
-	const typeSelect = t.getByTestId("type").element() as HTMLElement;
-	const heightInput = t.getByTestId("height").element() as HTMLElement;
-	const widthInput = t.getByTestId("width").element() as HTMLElement;
-	const numParagraphsInput = t.getByTestId("numParagraphs").element() as HTMLElement;
+	const root = page.getByTestId("root");
+	const viewport = page.getByTestId("viewport");
+	const typeSelect = page.getByTestId("type");
+	const heightInput = page.getByTestId("height");
+	const widthInput = page.getByTestId("width");
+	const numParagraphsInput = page.getByTestId("numParagraphs");
 
 	function getScrollbarX() {
-		return t.getByTestId("scrollbar-x");
+		return page.getByTestId("scrollbar-x");
 	}
 
 	function getScrollbarY() {
-		return t.getByTestId("scrollbar-y");
+		return page.getByTestId("scrollbar-y");
 	}
 
 	function getThumbX() {
-		return t.getByTestId("thumb-x");
+		return page.getByTestId("thumb-x");
 	}
 
 	function getThumbY() {
-		return t.getByTestId("thumb-y");
+		return page.getByTestId("thumb-y");
 	}
 
 	function getCorner() {
-		return t.getByTestId("corner");
+		return page.getByTestId("corner");
 	}
 
 	return {
-		...t,
 		root,
 		viewport,
 		typeSelect,
@@ -55,13 +55,13 @@ function setup(props: ScrollAreaTestProps = {}) {
 }
 
 describe("ScrollArea", () => {
-	if (navigator.userAgent.includes("WebKit")) {
-		it.skip("skipped on webkit");
-		return;
-	}
+	// if (navigator.userAgent.includes("WebKit")) {
+	// 	it.skip("skipped on webkit");
+	// 	return;
+	// }
 
 	it("should have bits data attrs", async () => {
-		const t = setup({ type: "always", height: 5, numParagraphs: 10, wrapText: false });
+		setup({ type: "always", height: 5, numParagraphs: 10, wrapText: false });
 		const parts = [
 			"root",
 			"viewport",
@@ -73,27 +73,27 @@ describe("ScrollArea", () => {
 		];
 
 		for (const part of parts) {
-			const el = t.getByTestId(part);
+			const el = page.getByTestId(part);
 			if (part.startsWith("scrollbar")) {
-				expect(el).toHaveAttribute("data-scroll-area-scrollbar");
+				await expect.element(el).toHaveAttribute("data-scroll-area-scrollbar");
 			} else if (part.startsWith("thumb")) {
-				expect(el).toHaveAttribute("data-scroll-area-thumb");
+				await expect.element(el).toHaveAttribute("data-scroll-area-thumb");
 			} else {
-				expect(el).toHaveAttribute(`data-scroll-area-${part}`);
+				await expect.element(el).toHaveAttribute(`data-scroll-area-${part}`);
 			}
 		}
 	});
 
 	it("should render the root and viewport elements", async () => {
 		const t = setup();
-		expect(t.root).toBeInTheDocument();
-		expect(t.viewport).toBeInTheDocument();
+		await expect.element(t.root).toBeInTheDocument();
+		await expect.element(t.viewport).toBeInTheDocument();
 	});
 
 	it("should show scrollbars when content overflows", async () => {
 		const t = setup({ numParagraphs: 20, height: 100 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectExists(t.getScrollbarY());
 		await expectExists(t.getThumbY());
@@ -102,7 +102,7 @@ describe("ScrollArea", () => {
 	it("should hide scrollbars when content fits", async () => {
 		const t = setup({ numParagraphs: 1, height: 400 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectNotExists(t.getScrollbarY());
 		await expectNotExists(t.getThumbY());
@@ -111,7 +111,7 @@ describe("ScrollArea", () => {
 	it("should show horizontal scrollbar when text doesn't wrap", async () => {
 		const t = setup({ wrapText: false, numParagraphs: 1, width: 50 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectExists(t.getScrollbarX());
 		await expectExists(t.getThumbX());
@@ -120,7 +120,7 @@ describe("ScrollArea", () => {
 	it("should hide horizontal scrollbar when text wraps", async () => {
 		const t = setup({ wrapText: true, numParagraphs: 1, width: 100 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectNotExists(t.getScrollbarX());
 		await expectNotExists(t.getThumbX());
@@ -129,7 +129,7 @@ describe("ScrollArea", () => {
 	it("should show corner when both scrollbars are visible", async () => {
 		const t = setup({ wrapText: false, numParagraphs: 20, height: 100, width: 50 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectExists(t.getCorner());
 	});
@@ -137,7 +137,7 @@ describe("ScrollArea", () => {
 	it("should hide corner when only one scrollbar is visible", async () => {
 		const t = setup({ wrapText: true, numParagraphs: 20, height: 100 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectNotExists(t.getCorner());
 	});
@@ -147,11 +147,11 @@ describe("ScrollArea", () => {
 
 		await expectNotExists(t.getScrollbarY());
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 		await expectExists(t.getScrollbarY());
 
 		// scrollbars should hide when leaving
-		await t.user.unhover(t.root);
+		await t.root.unhover();
 		await expectNotExists(t.getScrollbarY());
 	});
 
@@ -160,9 +160,9 @@ describe("ScrollArea", () => {
 
 		await expectExists(t.getScrollbarY());
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 		await expectExists(t.getScrollbarY());
-		await t.user.unhover(t.root);
+		await t.root.unhover();
 		await expectExists(t.getScrollbarY());
 	});
 
@@ -171,9 +171,9 @@ describe("ScrollArea", () => {
 
 		expectNotExists(t.getScrollbarY());
 
-		await t.user.click(t.viewport, { position: { x: 50, y: 50 } });
-		await t.user.keyboard(kbd.ARROW_DOWN);
-		await vi.waitFor(() => expectExists(t.getScrollbarY()));
+		await t.viewport.click({ position: { x: 50, y: 50 } });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectExists(t.getScrollbarY());
 	});
 
 	it("should show scrollbars when content overflows when type is `auto`", async () => {
@@ -187,11 +187,11 @@ describe("ScrollArea", () => {
 
 		await expectNotExists(t.getScrollbarY());
 
-		await t.user.click(t.numParagraphsInput);
-		await t.user.keyboard("20");
-		await t.user.keyboard(kbd.ENTER);
+		await t.numParagraphsInput.click();
+		await userEvent.keyboard("20");
+		await userEvent.keyboard(kbd.ENTER);
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectExists(t.getScrollbarY());
 	});
@@ -201,11 +201,11 @@ describe("ScrollArea", () => {
 
 		await expectNotExists(t.getScrollbarY());
 
-		await t.user.click(t.heightInput);
-		await t.user.fill(t.heightInput, "100");
-		await t.user.keyboard(kbd.ENTER);
+		await t.heightInput.click();
+		await t.heightInput.fill("100");
+		await userEvent.keyboard(kbd.ENTER);
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectExists(t.getScrollbarY());
 	});
@@ -218,15 +218,17 @@ describe("ScrollArea", () => {
 
 		const t = setup({ numParagraphs: 20, height: 100 });
 
-		await t.user.hover(t.viewport, { position: { x: 50, y: 50 } });
+		await t.viewport.hover({ position: { x: 50, y: 50 } });
 		await expectExists(t.getScrollbarY());
 
-		const initialScrollTop = t.viewport.scrollTop;
+		const initialScrollTop = t.viewport.element().scrollTop;
 
-		await t.user.click(t.viewport, { position: { x: 50, y: 50 } });
-		await t.user.keyboard(kbd.ARROW_DOWN);
+		await t.viewport.click({ position: { x: 50, y: 50 } });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
 
-		await vi.waitFor(() => expect(t.viewport.scrollTop).toBeGreaterThan(initialScrollTop));
+		await vi.waitFor(() =>
+			expect(t.viewport.element().scrollTop).toBeGreaterThan(initialScrollTop)
+		);
 	});
 
 	it("should handle both scrollbars simultaneously", async () => {
@@ -237,21 +239,25 @@ describe("ScrollArea", () => {
 
 		const t = setup({ wrapText: false, numParagraphs: 20, height: 100, width: 50 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 
 		await expectExists(t.getScrollbarX());
 		await expectExists(t.getScrollbarY());
 		await expectExists(t.getCorner());
 
-		const initialScrollTop = t.viewport.scrollTop;
-		const initialScrollLeft = t.viewport.scrollLeft;
+		const initialScrollTop = t.viewport.element().scrollTop;
+		const initialScrollLeft = t.viewport.element().scrollLeft;
 
-		await t.user.click(t.viewport);
-		await t.user.keyboard(kbd.ARROW_DOWN);
-		await t.user.keyboard(kbd.ARROW_RIGHT);
+		await t.viewport.click();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
 
-		await vi.waitFor(() => expect(t.viewport.scrollTop).toBeGreaterThan(initialScrollTop));
-		await vi.waitFor(() => expect(t.viewport.scrollLeft).toBeGreaterThan(initialScrollLeft));
+		await vi.waitFor(() =>
+			expect(t.viewport.element().scrollTop).toBeGreaterThan(initialScrollTop)
+		);
+		await vi.waitFor(() =>
+			expect(t.viewport.element().scrollLeft).toBeGreaterThan(initialScrollLeft)
+		);
 	});
 
 	it("should handle keyboard navigation", async () => {
@@ -261,24 +267,30 @@ describe("ScrollArea", () => {
 		}
 		const t = setup({ numParagraphs: 20, height: 100 });
 
-		await t.user.hover(t.root, { position: { x: 10, y: 10 } });
+		await t.root.hover({ position: { x: 10, y: 10 } });
 		await expectExists(t.getScrollbarY());
 
-		await t.user.click(t.viewport);
+		await t.viewport.click();
 
-		const initialScrollTop = t.viewport.scrollTop;
+		const initialScrollTop = t.viewport.element().scrollTop;
 
-		await t.user.keyboard(kbd.ARROW_DOWN);
-		await vi.waitFor(() => expect(t.viewport.scrollTop).toBeGreaterThan(initialScrollTop));
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await vi.waitFor(() =>
+			expect(t.viewport.element().scrollTop).toBeGreaterThan(initialScrollTop)
+		);
 
-		await t.user.keyboard(kbd.PAGE_DOWN);
-		await vi.waitFor(() => expect(t.viewport.scrollTop).toBeGreaterThan(initialScrollTop));
+		await userEvent.keyboard(kbd.PAGE_DOWN);
+		await vi.waitFor(() =>
+			expect(t.viewport.element().scrollTop).toBeGreaterThan(initialScrollTop)
+		);
 
-		await t.user.keyboard(kbd.END);
-		await vi.waitFor(() => expect(t.viewport.scrollTop).toBeGreaterThan(initialScrollTop));
+		await userEvent.keyboard(kbd.END);
+		await vi.waitFor(() =>
+			expect(t.viewport.element().scrollTop).toBeGreaterThan(initialScrollTop)
+		);
 
-		await t.user.keyboard(kbd.HOME);
-		await vi.waitFor(() => expect(t.viewport.scrollTop).toBe(0));
+		await userEvent.keyboard(kbd.HOME);
+		await vi.waitFor(() => expect(t.viewport.element().scrollTop).toBe(0));
 	});
 
 	it("should handle RTL direction", async () => {
@@ -289,15 +301,15 @@ describe("ScrollArea", () => {
 
 		const t = setup({ dir: "rtl", wrapText: false, numParagraphs: 1, width: 50 });
 
-		await t.user.hover(t.root);
+		await t.root.hover();
 		const scrollbarX = t.getScrollbarX();
 		await expectExists(scrollbarX);
 
-		const initialScrollLeft = t.viewport.scrollLeft;
+		const initialScrollLeft = t.viewport.element().scrollLeft;
 
-		await t.user.click(t.viewport);
-		await t.user.keyboard(kbd.ARROW_LEFT);
+		await t.viewport.click();
+		await userEvent.keyboard(kbd.ARROW_LEFT);
 
-		await vi.waitFor(() => expect(t.viewport.scrollLeft).not.toBe(initialScrollLeft));
+		await vi.waitFor(() => expect(t.viewport.element().scrollLeft).not.toBe(initialScrollLeft));
 	});
 });

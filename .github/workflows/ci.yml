@@ -73,7 +73,7 @@ jobs:
 
     Test:
         name: Test - Chromium
-        runs-on: macos-latest
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
@@ -85,7 +85,7 @@ jobs:
               run: pnpm install --frozen-lockfile
 
             - name: Install Playwright browser
-              run: pnpm dlx playwright install chromium
+              run: pnpm exec playwright install chromium
 
             - name: Build packages
               run: pnpm build:packages

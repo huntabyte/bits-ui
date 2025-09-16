@@ -9,7 +9,8 @@
 
 <main>
 	<Pagination.Root data-testid="root" {count} {perPage} {...restProps}>
-		{#snippet children({ pages, range, currentPage: _currentPage })}
+		{#snippet children({ pages, range, currentPage })}
+			<p data-testid="current-page">{currentPage}</p>
 			<p data-testid="range-start">{range.start}</p>
 			<p data-testid="range-end">{range.end}</p>
 			<p data-testid="range">Showing items {range.start} - {range.end}</p>
