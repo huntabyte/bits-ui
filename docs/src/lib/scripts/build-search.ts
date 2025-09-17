@@ -20,44 +20,36 @@ function cleanContent(raw: string): string {
 
 export function buildDocsIndex() {
 	const components = componentDocs.map((doc) => {
-		const content = cleanContent(doc.raw);
-
 		return {
 			title: doc.title,
-			content,
+			content: cleanContent(doc.raw),
 			description: doc.description,
 			href: `/docs/components/${doc.slug}`,
 		};
 	});
 
 	const utilities = utilityDocs.map((doc) => {
-		const content = cleanContent(doc.raw);
-
 		return {
 			title: doc.title,
-			content,
+			content: cleanContent(doc.raw),
 			description: doc.description,
 			href: `/docs/utilities/${doc.slug}`,
 		};
 	});
 
 	const typeHelpers = typeHelperDocs.map((doc) => {
-		const content = cleanContent(doc.raw);
-
 		return {
 			title: doc.title,
-			content,
+			content: cleanContent(doc.raw),
 			description: doc.description,
 			href: `/docs/type-helpers/${doc.slug}`,
 		};
 	});
 
 	const mainPages = docs.map((doc) => {
-		const content = cleanContent(doc.raw);
-
 		return {
 			title: doc.title,
-			content,
+			content: cleanContent(doc.raw),
 			description: doc.description,
 			href: `/docs/${doc.slug}`,
 		};
