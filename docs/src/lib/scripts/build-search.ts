@@ -25,7 +25,7 @@ export function buildDocsIndex() {
 		return {
 			title: doc.title,
 			content,
-			description: doc.description ?? "",
+			description: doc.description,
 			href: `/docs/components/${doc.slug}`,
 		};
 	});
@@ -36,7 +36,7 @@ export function buildDocsIndex() {
 		return {
 			title: doc.title,
 			content,
-			description: doc.description ?? "",
+			description: doc.description,
 			href: `/docs/utilities/${doc.slug}`,
 		};
 	});
@@ -47,7 +47,7 @@ export function buildDocsIndex() {
 		return {
 			title: doc.title,
 			content,
-			description: doc.description ?? "",
+			description: doc.description,
 			href: `/docs/type-helpers/${doc.slug}`,
 		};
 	});
@@ -58,7 +58,7 @@ export function buildDocsIndex() {
 		return {
 			title: doc.title,
 			content,
-			description: doc.description ?? "",
+			description: doc.description,
 			href: `/docs/${doc.slug}`,
 		};
 	});
