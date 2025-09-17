@@ -3,11 +3,6 @@ import { render } from "vitest-browser-svelte";
 import BitsConfigTest from "./bits-config-test.svelte";
 import { page } from "@vitest/browser/context";
 
-it("should render test component without errors", () => {
-	const { container } = render(BitsConfigTest);
-	expect(container).toBeTruthy();
-});
-
 it("should show undefined values when no config is set", async () => {
 	render(BitsConfigTest);
 
