@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Popover, Separator } from "bits-ui";
-	import ScrollArea from "$lib/components/scroll-area.svelte";
+	import ScrollArea from "$lib/components/ui/scroll-area.svelte";
 	import type { PropSchema } from "$lib/types/index.js";
 	import Info from "phosphor-svelte/lib/Info";
 	import PropsRequiredBadge from "./props-required-badge.svelte";

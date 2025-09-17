@@ -4,17 +4,17 @@ description: Allows users to select a value from a continuous range by sliding a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps, SliderDemoTickLabels, SliderDemoThumbLabels, SliderDemoVertical } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps, SliderDemoTickLabels, SliderDemoThumbLabels, SliderDemoVertical } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="slider-demo" componentName="Slider">
+<ComponentPreview name="slider-demo" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 
@@ -218,13 +218,13 @@ If the `value` prop has more than one value, the slider will render multiple thu
 
 To determine the number of ticks that will be rendered, you can simply divide the `max` value by the `step` value.
 
-<ComponentPreviewV2 name="slider-demo-ticks" componentName="Slider">
+<ComponentPreview name="slider-demo-ticks" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemoTicks />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Single Type
 
@@ -234,13 +234,13 @@ Set the `type` prop to `"single"` to allow only one slider handle.
 <Slider.Root type="single" />
 ```
 
-<ComponentPreviewV2 name="slider-demo" componentName="Slider">
+<ComponentPreview name="slider-demo" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Multiple Type
 
@@ -250,13 +250,13 @@ Set the `type` prop to `"multiple"` to allow multiple slider handles.
 <Slider.Root type="multiple" />
 ```
 
-<ComponentPreviewV2 name="slider-demo-multiple" componentName="Slider">
+<ComponentPreview name="slider-demo-multiple" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemoMultiple />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Vertical Orientation
 
@@ -268,13 +268,13 @@ You can use the `orientation` prop to change the orientation of the slider, whic
 </Slider.Root>
 ```
 
-<ComponentPreviewV2 name="slider-demo-vertical" componentName="Slider">
+<ComponentPreview name="slider-demo-vertical" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemoVertical />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Tick Labels
 
@@ -293,13 +293,13 @@ You can use the `tickItems` snippet prop in combination with the `Slider.TickLab
 </Slider.Root>
 ```
 
-<ComponentPreviewV2 name="slider-demo-tick-labels" componentName="Slider">
+<ComponentPreview name="slider-demo-tick-labels" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemoTickLabels />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Discrete Steps
 
@@ -311,13 +311,13 @@ Instead of passing a single value to the `step` prop, you can pass an array of d
 </Slider.Root>
 ```
 
-<ComponentPreviewV2 name="slider-demo-custom-steps" componentName="Slider">
+<ComponentPreview name="slider-demo-custom-steps" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemoCustomSteps />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Thumb Labels
 
@@ -351,12 +351,12 @@ or use the `thumbItems` snippet prop to render a label for each thumb:
 </Slider.Root>
 ```
 
-<ComponentPreviewV2 name="slider-demo-thumb-labels" componentName="Slider">
+<ComponentPreview name="slider-demo-thumb-labels" componentName="Slider">
 
 {#snippet preview()}
 <SliderDemoThumbLabels />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

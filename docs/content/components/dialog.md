@@ -4,17 +4,17 @@ description: A modal window presenting content or seeking user input without nav
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="dialog-demo" componentName="Dialog">
+<ComponentPreview name="dialog-demo" componentName="Dialog">
 
 {#snippet preview()}
 <DialogDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 

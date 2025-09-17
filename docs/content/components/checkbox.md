@@ -4,17 +4,17 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CheckboxDemo, CheckboxDemoCustom, CheckboxDemoGroup, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, CheckboxDemo, CheckboxDemoCustom, CheckboxDemoGroup, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="checkbox-demo" componentName="Checkbox">
+<ComponentPreview name="checkbox-demo" componentName="Checkbox">
 
 {#snippet preview()}
 <CheckboxDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -256,13 +256,13 @@ You can use the `Checkbox.Group` component to create a checkbox group.
 </Checkbox.Group>
 ```
 
-<ComponentPreviewV2 name="checkbox-demo-group" componentName="Checkbox" containerClass="mt-6">
+<ComponentPreview name="checkbox-demo-group" componentName="Checkbox" containerClass="mt-6">
 
 {#snippet preview()}
 <CheckboxDemoGroup />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Managing Value State
 

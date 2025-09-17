@@ -4,17 +4,17 @@ description: Displays frequently used actions or tools in a compact, easily acce
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ToolbarDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ToolbarDemo } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="toolbar-demo" componentName="Toolbar">
+<ComponentPreview name="toolbar-demo" componentName="Toolbar">
 
 {#snippet preview()}
 <ToolbarDemo slot="preview" />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 

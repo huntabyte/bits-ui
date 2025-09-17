@@ -4,17 +4,17 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="combobox-demo" componentName="Combobox">
+<ComponentPreview name="combobox-demo" componentName="Combobox">
 
 {#snippet preview()}
 <ComboboxDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -321,13 +321,13 @@ The initial and subsequent scroll delays can be controlled using the `delay` pro
 
 For example, we can use the [`cubicOut`](https://svelte.dev/docs/svelte/svelte-easing#cubicOut) easing function from Svelte to create a smooth scrolling effect that speeds up over time.
 
-<ComponentPreviewV2 name="combobox-demo-auto-scroll-delay" componentName="Combobox">
+<ComponentPreview name="combobox-demo-auto-scroll-delay" componentName="Combobox">
 
 {#snippet preview()}
 <ComboboxDemoAutoScrollDelay />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Native Scrolling/Overflow
 
@@ -388,12 +388,12 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="combobox-demo-transition" componentName="Select" containerClass="mt-4">
+<ComponentPreview name="combobox-demo-transition" componentName="Select" containerClass="mt-4">
 
 {#snippet preview()}
 <ComboboxDemoTransition />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

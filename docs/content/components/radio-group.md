@@ -4,17 +4,17 @@ description: Allows users to select a single option from a list of mutually excl
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, RadioGroupDemo, RadioGroupDemoReadonly, RadioGroupDemoDisabled, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, RadioGroupDemo, RadioGroupDemoReadonly, RadioGroupDemoDisabled, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="radio-group-demo" componentName="Radio Group">
+<ComponentPreview name="radio-group-demo" componentName="Radio Group">
 
 {#snippet preview()}
 <RadioGroupDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 
@@ -194,13 +194,13 @@ When the `orientation` is set to `'vertical'`, the radio group will navigate thr
 
 When a radio group is readonly, users can focus and navigate through the items but cannot change the selection. This is useful for displaying information that should be visible but not editable.
 
-<ComponentPreviewV2 name="radio-group-demo-readonly" componentName="Radio Group Readonly">
+<ComponentPreview name="radio-group-demo-readonly" componentName="Radio Group Readonly">
 
 {#snippet preview()}
 <RadioGroupDemoReadonly />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ```svelte /readonly/
 <RadioGroup.Root readonly>
@@ -212,13 +212,13 @@ When a radio group is readonly, users can focus and navigate through the items b
 
 When a radio group is disabled, users cannot interact with it at all. The entire group becomes non-focusable and non-interactive.
 
-<ComponentPreviewV2 name="radio-group-demo-disabled" componentName="Radio Group Disabled">
+<ComponentPreview name="radio-group-demo-disabled" componentName="Radio Group Disabled">
 
 {#snippet preview()}
 <RadioGroupDemoDisabled />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ```svelte /disabled/
 <RadioGroup.Root disabled>

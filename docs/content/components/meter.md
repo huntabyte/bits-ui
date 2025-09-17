@@ -4,17 +4,17 @@ description: Display real-time measurements within a defined range.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, MeterDemo, DemoCodeContainer, MeterDemoCustom } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, MeterDemo, DemoCodeContainer, MeterDemoCustom } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="meter-demo" componentName="Meter">
+<ComponentPreview name="meter-demo" componentName="Meter">
 
 {#snippet preview()}
 <MeterDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 While often visually similar, meters and [Progress](/docs/components/progress) bars serve distinct purposes:
 

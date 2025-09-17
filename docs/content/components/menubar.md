@@ -4,17 +4,17 @@ description: Organizes and presents a collection of menu options or actions with
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, MenubarDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, MenubarDemo } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="menubar-demo" componentName="Menubar">
+<ComponentPreview name="menubar-demo" componentName="Menubar">
 
 {#snippet preview()}
 <MenubarDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 

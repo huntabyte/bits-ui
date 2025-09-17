@@ -4,17 +4,17 @@ description: Conceals or reveals content sections, enhancing space utilization a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CollapsibleDemo, CollapsibleDemoTransitions, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, CollapsibleDemo, CollapsibleDemoTransitions, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="collapsible-demo" componentName="Collapsible">
+<ComponentPreview name="collapsible-demo" componentName="Collapsible">
 
 {#snippet preview()}
 <CollapsibleDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
