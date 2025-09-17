@@ -313,7 +313,7 @@
 	}
 
 	.search-result mark {
-		@apply bg-yellow-200 dark:bg-yellow-900 text-foreground rounded-sm px-0.5;
+		@apply bg-[#fdffa4] dark:text-background text-foreground rounded px-0.5 py-px;
 	}
 }
 
