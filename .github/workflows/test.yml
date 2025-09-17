@@ -1,30 +1,26 @@
-name: CI
+name: Test
 
 on:
     push:
         branches:
             - main
             - next
-        paths-ignore:
-            - ".changeset/**"
-            - README.md
-            - ".vscode/**"
-            - CHANGELOG.md
+        paths:
+            - packages/**
+            - tests/**
     pull_request:
-        paths-ignore:
-            - ".changeset/**"
-            - README.md
-            - ".vscode/**"
-            - CHANGELOG.md
+        paths:
+            - packages/**
+            - tests/**
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
     cancel-in-progress: true
 
 jobs:
-    Check:
-        name: Run svelte-check
+    Test-Utils:
         runs-on: macos-latest
+        name: Test Utils
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
@@ -36,21 +32,26 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Run svelte-check
-              run: pnpm check
+            - run: pnpm test:utils
 
-    Lint:
-        runs-on: macos-latest
-        name: Lint
+    Test:
+        name: Test - Chromium
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: pnpm/action-setup@v4
             - uses: actions/setup-node@v4
               with:
                   node-version: 20
-                  cache: pnpm
 
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - run: pnpm lint
+            - name: Install Playwright browser
+              run: pnpm exec playwright install chromium
+
+            - name: Build packages
+              run: pnpm build:packages
+
+            - name: Run browser tests
+              run: pnpm test:browser:chromium

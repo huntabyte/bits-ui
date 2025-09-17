@@ -168,6 +168,7 @@
 	}
 
 	@keyframes caret-blink {
+
 		0%,
 		70%,
 		100% {
@@ -274,6 +275,7 @@
 }
 
 @layer base {
+
 	*,
 	::after,
 	::before,
@@ -308,6 +310,10 @@
 @layer components {
 	.link {
 		@apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;
+	}
+
+	.search-result mark {
+		@apply bg-[#fdffa4] dark:text-background text-foreground rounded px-0.5 py-px;
 	}
 }
 
