@@ -453,7 +453,11 @@ export class SelectInputState {
 				return;
 			}
 
-			if (this.root.highlightedValue) {
+			if (
+				this.root.highlightedValue &&
+				this.root.highlightedNode &&
+				this.root.highlightedNode.isConnected
+			) {
 				this.root.toggleItem(
 					this.root.highlightedValue,
 					this.root.highlightedLabel ?? undefined
