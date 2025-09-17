@@ -3,7 +3,6 @@ import {
 	afterSleep,
 	afterTick,
 	onDestroyEffect,
-	onMountEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
@@ -39,7 +38,6 @@ import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floatin
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
-import { debounce } from "$lib/internal/debounce.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -136,11 +134,6 @@ abstract class SelectBaseRootState {
 		});
 	}
 
-	#debouncedSetHighlightedToFirstCandidate = debounce(
-		this.setHighlightedToFirstCandidate.bind(this),
-		20
-	);
-
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
 		if (node && (this.isUsingKeyboard || initial)) {
@@ -156,11 +149,7 @@ abstract class SelectBaseRootState {
 		);
 	}
 
-	setHighlightedToFirstCandidate(options: { debounced: boolean } = { debounced: false }) {
-		if (options.debounced) {
-			this.#debouncedSetHighlightedToFirstCandidate();
-			return;
-		}
+	setHighlightedToFirstCandidate() {
 		this.setHighlightedNode(null);
 		const candidateNodes = this.getCandidateNodes();
 		if (!candidateNodes.length) return;
@@ -516,6 +505,7 @@ export class SelectInputState {
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.opts.inputValue.current = e.currentTarget.value;
+		this.root.setHighlightedToFirstCandidate();
 	}
 
 	readonly props = $derived.by(
@@ -1003,14 +993,6 @@ export class SelectItemState {
 		this.opts = opts;
 		this.root = root;
 		this.attachment = attachRef(opts.ref);
-
-		onMountEffect(() => {
-			this.root.setHighlightedToFirstCandidate({ debounced: true });
-		});
-
-		onDestroyEffect(() => {
-			this.root.setHighlightedToFirstCandidate({ debounced: true });
-		});
 
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
