@@ -23,18 +23,18 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 
 function setup(props: Partial<CalendarSingleTestProps> = {}) {
 	const returned = render(CalendarTest, { ...props, type: "single" });
-	const calendar = returned.getByTestId("calendar").element() as HTMLElement;
-	const prevButton = returned.getByTestId("prev-button").element() as HTMLElement;
-	const nextButton = returned.getByTestId("next-button").element() as HTMLElement;
+	const calendar = returned.getByTestId("calendar");
+	const prevButton = returned.getByTestId("prev-button");
+	const nextButton = returned.getByTestId("next-button");
 	expect(calendar).toBeVisible();
 	return { ...returned, calendar, prevButton, nextButton };
 }
 
 function setupMulti(props: Partial<CalendarMultiTestProps> = {}) {
 	const returned = render(CalendarMultiTest, { ...props, type: "multiple" });
-	const calendar = returned.getByTestId("calendar").element() as HTMLElement;
-	const prevButton = returned.getByTestId("prev-button").element() as HTMLElement;
-	const nextButton = returned.getByTestId("next-button").element() as HTMLElement;
+	const calendar = returned.getByTestId("calendar");
+	const prevButton = returned.getByTestId("prev-button");
+	const nextButton = returned.getByTestId("next-button");
 	expect(calendar).toBeVisible();
 	return { ...returned, calendar, prevButton, nextButton };
 }
@@ -43,19 +43,25 @@ describe("type='single'", () => {
 	describe("Value Handling", () => {
 		it("should respect a default value if provided - `CalendarDate`", async () => {
 			const t = setup({ value: calendarDate });
-			expect(getSelectedDay(t.calendar)).toHaveTextContent(String(calendarDate.day));
+			expect(getSelectedDay(t.calendar.element())).toHaveTextContent(
+				String(calendarDate.day)
+			);
 			await expect.element(page.getByTestId("heading")).toHaveTextContent("January 1980");
 		});
 
 		it("should respect a default value if provided - `CalendarDateTime`", async () => {
 			const t = setup({ value: calendarDateTime });
-			expect(getSelectedDay(t.calendar)).toHaveTextContent(String(calendarDateTime.day));
+			expect(getSelectedDay(t.calendar.element())).toHaveTextContent(
+				String(calendarDateTime.day)
+			);
 			await expect.element(page.getByTestId("heading")).toHaveTextContent("January 1980");
 		});
 
 		it("should respect a default value if provided - `ZonedDateTime`", async () => {
 			const t = setup({ value: zonedDateTime });
-			expect(getSelectedDay(t.calendar)).toHaveTextContent(String(zonedDateTime.day));
+			expect(getSelectedDay(t.calendar.element())).toHaveTextContent(
+				String(zonedDateTime.day)
+			);
 			await expect.element(page.getByTestId("heading")).toHaveTextContent("January 1980");
 		});
 
@@ -103,13 +109,13 @@ describe("type='single'", () => {
 
 		it("should update the selected date when value controlled externally", async () => {
 			const t = setup({ value: calendarDate });
-			const selectedDate = getSelectedDay(t.calendar);
+			const selectedDate = getSelectedDay(t.calendar.element());
 			await expect.element(selectedDate).toHaveTextContent("20");
-			expect(getSelectedDays(t.calendar).length).toBe(1);
+			expect(getSelectedDays(t.calendar.element()).length).toBe(1);
 			const addDayBtn = page.getByTestId("add-day");
 			await addDayBtn.click();
-			await expect.element(getSelectedDay(t.calendar)).toHaveTextContent("21");
-			expect(getSelectedDays(t.calendar).length).toBe(1);
+			await expect.element(getSelectedDay(t.calendar.element())).toHaveTextContent("21");
+			expect(getSelectedDays(t.calendar.element()).length).toBe(1);
 		});
 
 		it("should persist time when selecting a date (CalendarDateTime)", async () => {
@@ -302,7 +308,7 @@ describe("type='single'", () => {
 			const t = setup({ value: calendarDate });
 			const value = page.getByTestId("value");
 			await expect.element(value).toHaveTextContent("1980-01-20");
-			const selectedDay = getSelectedDay(t.calendar);
+			const selectedDay = getSelectedDay(t.calendar.element());
 			await expect.element(selectedDay).toHaveTextContent(String(calendarDate.day));
 			await userEvent.click(selectedDay);
 			await expect.element(value).toHaveTextContent("undefined");
@@ -312,7 +318,7 @@ describe("type='single'", () => {
 			const t = setup({ value: calendarDate });
 			const value = page.getByTestId("value");
 			await expect.element(value).toHaveTextContent("1980-01-20");
-			const selectedDay = getSelectedDay(t.calendar);
+			const selectedDay = getSelectedDay(t.calendar.element());
 			await expect.element(selectedDay).toHaveTextContent(String(calendarDate.day));
 			selectedDay.focus();
 			await userEvent.keyboard(key);
@@ -345,7 +351,7 @@ describe("type='single'", () => {
 				value: calendarDateTime,
 				numberOfMonths: 2,
 			});
-			const selectedDay = getSelectedDay(t.calendar);
+			const selectedDay = getSelectedDay(t.calendar.element());
 			expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
 			const heading = page.getByTestId("heading");
 			expect(heading).toHaveTextContent("January - February 1980");
@@ -373,7 +379,7 @@ describe("type='single'", () => {
 				numberOfMonths: 2,
 				pagedNavigation: true,
 			});
-			const selectedDay = getSelectedDay(t.calendar);
+			const selectedDay = getSelectedDay(t.calendar.element());
 			expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
 			const heading = page.getByTestId("heading");
 			expect(heading).toHaveTextContent("January - February 1980");
@@ -404,7 +410,7 @@ describe("type='single'", () => {
 				fixedWeeks: true,
 			});
 			function getNumberOfWeeks() {
-				return t.calendar.querySelectorAll("[data-week]").length;
+				return t.calendar.element().querySelectorAll("[data-week]").length;
 			}
 			const nextButton = page.getByTestId("next-button");
 			for (let i = 0; i < 12; i++) {
@@ -542,7 +548,7 @@ describe("type='multiple'", () => {
 			const d1 = new CalendarDate(1980, 1, 2);
 			const d2 = new CalendarDate(1980, 1, 5);
 			const t = setupMulti({ value: [d1, d2] });
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays.length).toBe(2);
 			await expect.element(selectedDays[0]).toHaveTextContent(String(d1.day));
 			await expect.element(selectedDays[1]).toHaveTextContent(String(d2.day));
@@ -552,7 +558,7 @@ describe("type='multiple'", () => {
 			const d1 = new CalendarDateTime(1980, 1, 2);
 			const d2 = new CalendarDateTime(1980, 1, 5);
 			const t = setupMulti({ value: [d1, d2] });
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays.length).toBe(2);
 			await expect.element(selectedDays[0]).toHaveTextContent(String(d1.day));
 			await expect.element(selectedDays[1]).toHaveTextContent(String(d2.day));
@@ -562,7 +568,7 @@ describe("type='multiple'", () => {
 			const d1 = toZoned(new CalendarDateTime(1980, 1, 2), "America/New_York");
 			const d2 = toZoned(new CalendarDateTime(1980, 1, 5), "America/New_York");
 			const t = setupMulti({ value: [d1, d2] });
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays.length).toBe(2);
 			await expect.element(selectedDays[0]).toHaveTextContent(String(d1.day));
 			await expect.element(selectedDays[1]).toHaveTextContent(String(d2.day));
@@ -572,7 +578,7 @@ describe("type='multiple'", () => {
 			const d1 = new CalendarDate(1980, 1, 2);
 			const d2 = new CalendarDate(1980, 5, 5);
 			const t = setupMulti({ value: [d1, d2] });
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays.length).toBe(1);
 			await expect.element(page.getByTestId("heading")).toHaveTextContent("May 1980");
 		});
@@ -583,21 +589,21 @@ describe("type='multiple'", () => {
 			const d1 = new CalendarDate(1980, 1, 2);
 			const d2 = new CalendarDate(1980, 1, 5);
 			const t = setupMulti({ value: [d1, d2] });
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays.length).toBe(2);
 			await userEvent.click(selectedDays[0]);
-			expect(getSelectedDays(t.calendar).length).toBe(1);
+			expect(getSelectedDays(t.calendar.element()).length).toBe(1);
 		});
 
 		it("should prevent deselection when only one date is selected and `preventDeselect` is `true`", async () => {
 			const d1 = new CalendarDate(1980, 1, 2);
 			const t = setupMulti({ value: [d1], preventDeselect: true });
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			await userEvent.click(selectedDays[0]);
-			const selectedDays2 = getSelectedDays(t.calendar);
+			const selectedDays2 = getSelectedDays(t.calendar.element());
 			expect(selectedDays2.length).toBe(1);
 			await userEvent.click(selectedDays2[0]);
-			expect(getSelectedDays(t.calendar).length).toBe(1);
+			expect(getSelectedDays(t.calendar.element()).length).toBe(1);
 		});
 	});
 
@@ -624,13 +630,13 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ value: [d1, d2], maxDays: 2 });
 
 			// initially should have 2 selected dates
-			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(2);
 
 			// clicking a third date should reset selection to just that date
 			const thirdDate = page.getByTestId("date-1-8");
 			await thirdDate.click();
 
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays).toHaveLength(1);
 			await expect.element(selectedDays[0]).toHaveTextContent("8");
 		});
@@ -640,17 +646,17 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ value: [d1], maxDays: 3 });
 
 			// initially should have 1 selected date
-			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(1);
 
 			// adding a second date should work
 			const secondDate = page.getByTestId("date-1-5");
 			await secondDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(2);
 
 			// adding a third date should work (exactly at maxDays)
 			const thirdDate = page.getByTestId("date-1-8");
 			await thirdDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(3);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(3);
 		});
 
 		it("should work with maxDays constraint", async () => {
@@ -659,23 +665,23 @@ describe("type='multiple'", () => {
 			// select first date
 			const firstDate = page.getByTestId("date-1-5");
 			await firstDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(1);
 
 			// select second date (should work)
 			const secondDate = page.getByTestId("date-1-8");
 			await secondDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(2);
 
 			// select third date (should work - exactly at maxDays)
 			const thirdDate = page.getByTestId("date-1-12");
 			await thirdDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(3);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(3);
 
 			// select fourth date (violates maxDays, should reset to just that date)
 			const fourthDate = page.getByTestId("date-1-15");
 			await fourthDate.click({ force: true });
 
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays).toHaveLength(1);
 			await expect.element(selectedDays[0]).toHaveTextContent("15");
 		});
@@ -686,17 +692,17 @@ describe("type='multiple'", () => {
 			const d3 = new CalendarDate(1980, 1, 8);
 			const t = setupMulti({ value: [d1, d2, d3], maxDays: 5 });
 
-			expect(getSelectedDays(t.calendar)).toHaveLength(3);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(3);
 
 			// deselecting a date should work normally
 			const firstDate = page.getByTestId("date-1-2");
 			await firstDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(2);
 
 			// deselecting another date should work
 			const secondDate = page.getByTestId("date-1-5");
 			await secondDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(1);
 		});
 
 		it("should handle constraints when no initial value is provided", async () => {
@@ -705,18 +711,18 @@ describe("type='multiple'", () => {
 			// select first date
 			const firstDate = page.getByTestId("date-1-5");
 			await firstDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(1);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(1);
 
 			// select second date (should work)
 			const secondDate = page.getByTestId("date-1-8");
 			await secondDate.click();
-			expect(getSelectedDays(t.calendar)).toHaveLength(2);
+			expect(getSelectedDays(t.calendar.element())).toHaveLength(2);
 
 			// select third date (violates maxDays, should reset to just that date)
 			const thirdDate = page.getByTestId("date-1-12");
 			await thirdDate.click({ force: true });
 
-			const selectedDays = getSelectedDays(t.calendar);
+			const selectedDays = getSelectedDays(t.calendar.element());
 			expect(selectedDays).toHaveLength(1);
 			await expect.element(selectedDays[0]).toHaveTextContent("12");
 		});
