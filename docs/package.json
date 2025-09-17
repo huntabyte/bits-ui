@@ -18,10 +18,10 @@
 		"check": "pnpm build:content && pnpm build:demos && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
-		"@internationalized/date": "^3.8.1",
+		"@internationalized/date": "3.8.2",
 		"@prettier/sync": "0.3.0",
 		"@stackblitz/sdk": "^1.11.0",
-		"@sveltejs/adapter-cloudflare": "^7.2.3",
+		"@sveltejs/adapter-cloudflare": "^7.0.4",
 		"@sveltejs/kit": "catalog:",
 		"@sveltejs/vite-plugin-svelte": "catalog:",
 		"@tailwindcss/vite": "catalog:",
