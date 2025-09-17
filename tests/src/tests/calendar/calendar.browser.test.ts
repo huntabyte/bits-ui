@@ -1,4 +1,4 @@
-import { userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "@vitest/browser/context";
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
@@ -7,7 +7,7 @@ import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 import CalendarTest, { type CalendarSingleTestProps } from "./calendar-test.svelte";
 import CalendarMultiTest, { type CalendarMultiTestProps } from "./calendar-multi-test.svelte";
 import CalendarSelectsTest from "./calendar-selects-test.svelte";
-import { setupBrowserUserEvents } from "../browser-utils";
+import { focusAndExpectToHaveFocus } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -22,23 +22,21 @@ const longWeekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "F
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 function setup(props: Partial<CalendarSingleTestProps> = {}) {
-	const user = setupBrowserUserEvents();
 	const returned = render(CalendarTest, { ...props, type: "single" });
 	const calendar = returned.getByTestId("calendar").element() as HTMLElement;
 	const prevButton = returned.getByTestId("prev-button").element() as HTMLElement;
 	const nextButton = returned.getByTestId("next-button").element() as HTMLElement;
 	expect(calendar).toBeVisible();
-	return { ...returned, user, calendar, prevButton, nextButton };
+	return { ...returned, calendar, prevButton, nextButton };
 }
 
 function setupMulti(props: Partial<CalendarMultiTestProps> = {}) {
-	const user = setupBrowserUserEvents();
 	const returned = render(CalendarMultiTest, { ...props, type: "multiple" });
 	const calendar = returned.getByTestId("calendar").element() as HTMLElement;
 	const prevButton = returned.getByTestId("prev-button").element() as HTMLElement;
 	const nextButton = returned.getByTestId("next-button").element() as HTMLElement;
 	expect(calendar).toBeVisible();
-	return { ...returned, user, calendar, prevButton, nextButton };
+	return { ...returned, calendar, prevButton, nextButton };
 }
 
 describe("type='single'", () => {
@@ -46,86 +44,86 @@ describe("type='single'", () => {
 		it("should respect a default value if provided - `CalendarDate`", async () => {
 			const t = setup({ value: calendarDate });
 			expect(getSelectedDay(t.calendar)).toHaveTextContent(String(calendarDate.day));
-			expect(t.getByTestId("heading")).toHaveTextContent("January 1980");
+			await expect.element(page.getByTestId("heading")).toHaveTextContent("January 1980");
 		});
 
 		it("should respect a default value if provided - `CalendarDateTime`", async () => {
 			const t = setup({ value: calendarDateTime });
 			expect(getSelectedDay(t.calendar)).toHaveTextContent(String(calendarDateTime.day));
-			expect(t.getByTestId("heading")).toHaveTextContent("January 1980");
+			await expect.element(page.getByTestId("heading")).toHaveTextContent("January 1980");
 		});
 
 		it("should respect a default value if provided - `ZonedDateTime`", async () => {
 			const t = setup({ value: zonedDateTime });
 			expect(getSelectedDay(t.calendar)).toHaveTextContent(String(zonedDateTime.day));
-			expect(t.getByTestId("heading")).toHaveTextContent("January 1980");
+			await expect.element(page.getByTestId("heading")).toHaveTextContent("January 1980");
 		});
 
 		it("should bind to `value` - `CalendarDate`", async () => {
-			const t = setup({ value: calendarDate });
-			const addDayBtn = t.getByTestId("add-day");
-			await t.user.click(addDayBtn);
-			const valueEl = t.getByTestId("value");
-			expect(valueEl).toHaveTextContent("1980-01-21");
-			const addMonthBtn = t.getByTestId("add-month");
-			await t.user.click(addMonthBtn);
-			expect(valueEl).toHaveTextContent("1980-02-21");
-			const addYearBtn = t.getByTestId("add-year");
-			await t.user.click(addYearBtn);
-			expect(valueEl).toHaveTextContent("1981-02-21");
+			setup({ value: calendarDate });
+			const addDayBtn = page.getByTestId("add-day");
+			await addDayBtn.click();
+			const valueEl = page.getByTestId("value");
+			await expect.element(valueEl).toHaveTextContent("1980-01-21");
+			const addMonthBtn = page.getByTestId("add-month");
+			await addMonthBtn.click();
+			await expect.element(valueEl).toHaveTextContent("1980-02-21");
+			const addYearBtn = page.getByTestId("add-year");
+			await addYearBtn.click();
+			await expect.element(valueEl).toHaveTextContent("1981-02-21");
 		});
 
 		it("should bind to `value` - `CalendarDateTime`", async () => {
-			const t = setup({ value: calendarDateTime });
-			const addDayBtn = t.getByTestId("add-day");
-			await t.user.click(addDayBtn);
-			const valueEl = t.getByTestId("value");
-			expect(valueEl).toHaveTextContent("1980-01-21");
-			const addMonthBtn = t.getByTestId("add-month");
-			await t.user.click(addMonthBtn);
-			expect(valueEl).toHaveTextContent("1980-02-21");
-			const addYearBtn = t.getByTestId("add-year");
-			await t.user.click(addYearBtn);
-			expect(valueEl).toHaveTextContent("1981-02-21");
+			setup({ value: calendarDateTime });
+			const addDayBtn = page.getByTestId("add-day");
+			await addDayBtn.click();
+			const valueEl = page.getByTestId("value");
+			await expect.element(valueEl).toHaveTextContent("1980-01-21");
+			const addMonthBtn = page.getByTestId("add-month");
+			await addMonthBtn.click();
+			await expect.element(valueEl).toHaveTextContent("1980-02-21");
+			const addYearBtn = page.getByTestId("add-year");
+			await addYearBtn.click();
+			await expect.element(valueEl).toHaveTextContent("1981-02-21");
 		});
 
 		it("properly binds to `value` - `ZonedDateTime`", async () => {
-			const t = setup({ value: zonedDateTime });
-			const addDayBtn = t.getByTestId("add-day");
-			await t.user.click(addDayBtn);
-			const valueEl = t.getByTestId("value");
-			expect(valueEl).toHaveTextContent("1980-01-21");
-			const addMonthBtn = t.getByTestId("add-month");
-			await t.user.click(addMonthBtn);
-			expect(valueEl).toHaveTextContent("1980-02-21");
-			const addYearBtn = t.getByTestId("add-year");
-			await t.user.click(addYearBtn);
-			expect(valueEl).toHaveTextContent("1981-02-21");
+			setup({ value: zonedDateTime });
+			const addDayBtn = page.getByTestId("add-day");
+			await addDayBtn.click();
+			const valueEl = page.getByTestId("value");
+			await expect.element(valueEl).toHaveTextContent("1980-01-21");
+			const addMonthBtn = page.getByTestId("add-month");
+			await addMonthBtn.click();
+			await expect.element(valueEl).toHaveTextContent("1980-02-21");
+			const addYearBtn = page.getByTestId("add-year");
+			await addYearBtn.click();
+			await expect.element(valueEl).toHaveTextContent("1981-02-21");
 		});
 
 		it("should update the selected date when value controlled externally", async () => {
 			const t = setup({ value: calendarDate });
 			const selectedDate = getSelectedDay(t.calendar);
-			expect(selectedDate).toHaveTextContent("20");
+			await expect.element(selectedDate).toHaveTextContent("20");
 			expect(getSelectedDays(t.calendar).length).toBe(1);
-			const addDayBtn = t.getByTestId("add-day");
-			await t.user.click(addDayBtn);
-			expect(getSelectedDay(t.calendar)).toHaveTextContent("21");
+			const addDayBtn = page.getByTestId("add-day");
+			await addDayBtn.click();
+			await expect.element(getSelectedDay(t.calendar)).toHaveTextContent("21");
 			expect(getSelectedDays(t.calendar).length).toBe(1);
 		});
 
 		it("should persist time when selecting a date (CalendarDateTime)", async () => {
-			const t = setup({ value: calendarDateTime });
-			const value = t.getByTestId("value");
+			setup({ value: calendarDateTime });
+			const value = page.getByTestId("value");
 			expect(value).toHaveTextContent(calendarDateTime.toString());
-			await t.user.click(t.getByTestId("set-time"));
+			await page.getByTestId("set-time").click();
 			expect(value).toHaveTextContent(
 				calendarDateTime
 					.set({ hour: 15, minute: 15, second: 15, millisecond: 15 })
 					.toString()
 			);
-			const firstDayInMonth = t.getByTestId("date-1-1");
-			await t.user.click(firstDayInMonth);
+			const firstDayInMonth = page.getByTestId("date-1-1");
+			await firstDayInMonth.click();
 			expect(value).toHaveTextContent(
 				calendarDateTime
 					.set({ day: 1, hour: 15, minute: 15, second: 15, millisecond: 15 })
@@ -134,15 +132,15 @@ describe("type='single'", () => {
 		});
 
 		it("should persist time when selecting a date (ZonedDateTime)", async () => {
-			const t = setup({ value: zonedDateTime });
-			const value = t.getByTestId("value");
+			setup({ value: zonedDateTime });
+			const value = page.getByTestId("value");
 			expect(value).toHaveTextContent(zonedDateTime.toString());
-			await t.user.click(t.getByTestId("set-time"));
+			await page.getByTestId("set-time").click();
 			expect(value).toHaveTextContent(
 				zonedDateTime.set({ hour: 15, minute: 15, second: 15, millisecond: 15 }).toString()
 			);
-			const firstDayInMonth = t.getByTestId("date-1-1");
-			await t.user.click(firstDayInMonth);
+			const firstDayInMonth = page.getByTestId("date-1-1");
+			await firstDayInMonth.click();
 			expect(value).toHaveTextContent(
 				zonedDateTime
 					.set({ day: 1, hour: 15, minute: 15, second: 15, millisecond: 15 })
@@ -153,191 +151,191 @@ describe("type='single'", () => {
 
 	describe("Navigation", () => {
 		it("should navigate the months forward using the next button", async () => {
-			const t = setup({ value: calendarDate });
-			const heading = t.getByTestId("heading");
-			const nextBtn = t.getByTestId("next-button");
+			setup({ value: calendarDate });
+			const heading = page.getByTestId("heading");
+			const nextBtn = page.getByTestId("next-button");
 			for (const month of months) {
-				expect(heading).toHaveTextContent(`${month} 1980`);
-				await t.user.click(nextBtn);
+				await expect.element(heading).toHaveTextContent(`${month} 1980`);
+				await nextBtn.click();
 			}
-			expect(heading).toHaveTextContent("January 1981");
+			await expect.element(heading).toHaveTextContent("January 1981");
 		});
 
 		it("should navigate the months backwards using the prev button", async () => {
-			const t = setup({ value: calendarDate });
-			const heading = t.getByTestId("heading");
-			const prevBtn = t.getByTestId("prev-button");
+			setup({ value: calendarDate });
+			const heading = page.getByTestId("heading");
+			const prevBtn = page.getByTestId("prev-button");
 			const newMonths = [...months].reverse();
 			newMonths.pop();
-			expect(heading).toHaveTextContent("January 1980");
-			await t.user.click(prevBtn);
+			await expect.element(heading).toHaveTextContent("January 1980");
+			await prevBtn.click();
 			for (const month of newMonths) {
-				expect(heading).toHaveTextContent(`${month} 1979`);
-				await t.user.click(prevBtn);
+				await expect.element(heading).toHaveTextContent(`${month} 1979`);
+				await prevBtn.click({ force: true });
 			}
-			expect(heading).toHaveTextContent("January 1979");
+			await expect.element(heading).toHaveTextContent("January 1979");
 		});
 
 		it("should not allow navigation before the `minValue` (prev button)", async () => {
-			const t = setup({
+			setup({
 				value: calendarDate,
 				minValue: new CalendarDate(1979, 11, 25),
 			});
-			const prevBtn = t.getByTestId("prev-button");
-			await t.user.click(prevBtn);
-			const heading = t.getByTestId("heading");
-			expect(heading).toHaveTextContent("December 1979");
-			expect(prevBtn).not.toHaveAttribute("aria-disabled", "true");
-			expect(prevBtn).not.toHaveAttribute("data-disabled");
-			await t.user.click(prevBtn);
-			expect(heading).toHaveTextContent("November 1979");
-			expect(prevBtn).toHaveAttribute("aria-disabled", "true");
-			expect(prevBtn).toHaveAttribute("data-disabled");
-			await t.user.click(prevBtn);
-			expect(heading).toHaveTextContent("November 1979");
+			const prevBtn = page.getByTestId("prev-button");
+			await prevBtn.click({ force: true });
+			const heading = page.getByTestId("heading");
+			await expect.element(heading).toHaveTextContent("December 1979");
+			await expect.element(prevBtn).not.toHaveAttribute("aria-disabled", "true");
+			await expect.element(prevBtn).not.toHaveAttribute("data-disabled");
+			await prevBtn.click({ force: true });
+			await expect.element(heading).toHaveTextContent("November 1979");
+			await expect.element(prevBtn).toHaveAttribute("aria-disabled", "true");
+			await expect.element(prevBtn).toHaveAttribute("data-disabled");
+			await prevBtn.click({ force: true });
+			await expect.element(heading).toHaveTextContent("November 1979");
 		});
 
 		it("should not allow navigation after the `maxValue` (next button)", async () => {
-			const t = setup({
+			setup({
 				value: calendarDate,
 				maxValue: new CalendarDate(1980, 3, 25),
 			});
-			const nextBtn = t.getByTestId("next-button");
-			await t.user.click(nextBtn);
-			const heading = t.getByTestId("heading");
-			expect(heading).toHaveTextContent("February 1980");
-			expect(nextBtn).not.toHaveAttribute("aria-disabled", "true");
-			expect(nextBtn).not.toHaveAttribute("data-disabled");
-			await t.user.click(nextBtn);
-			expect(heading).toHaveTextContent("March 1980");
-			expect(nextBtn).toHaveAttribute("aria-disabled", "true");
-			expect(nextBtn).toHaveAttribute("data-disabled");
-			await t.user.click(nextBtn);
+			const nextBtn = page.getByTestId("next-button");
+			await nextBtn.click({ force: true });
+			const heading = page.getByTestId("heading");
+			await expect.element(heading).toHaveTextContent("February 1980");
+			await expect.element(nextBtn).not.toHaveAttribute("aria-disabled", "true");
+			await expect.element(nextBtn).not.toHaveAttribute("data-disabled");
+			await nextBtn.click({ force: true });
+			await expect.element(heading).toHaveTextContent("March 1980");
+			await expect.element(nextBtn).toHaveAttribute("aria-disabled", "true");
+			await expect.element(nextBtn).toHaveAttribute("data-disabled");
+			await nextBtn.click({ force: true });
 
-			expect(heading).toHaveTextContent("March 1980");
+			await expect.element(heading).toHaveTextContent("March 1980");
 		});
 
 		it("should not navigate after `maxValue` (with keyboard)", async () => {
-			const t = setup({
+			setup({
 				value: calendarDate,
 				maxValue: new CalendarDate(1980, 3, 31),
 			});
-			const firstDayInMonth = t.getByTestId("date-1-1").element() as HTMLElement;
-			firstDayInMonth.focus();
-			expect(firstDayInMonth).toHaveFocus();
-			const heading = t.getByTestId("heading");
-			expect(heading).toHaveTextContent("January 1980");
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-1-8")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-1-15")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-1-22")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-1-29")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-2-5")).toHaveFocus();
-			expect(heading).toHaveTextContent("February 1980");
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-2-12")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-2-19")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-2-26")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-3-4")).toHaveFocus();
-			expect(heading).toHaveTextContent("March 1980");
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-3-11")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-3-18")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-3-25")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_DOWN);
-			expect(t.getByTestId("date-3-25")).toHaveFocus();
-			expect(heading).toHaveTextContent("March 1980");
+			const firstDayInMonth = page.getByTestId("date-1-1");
+			await focusAndExpectToHaveFocus(firstDayInMonth);
+			await expect.element(firstDayInMonth).toHaveFocus();
+			const heading = page.getByTestId("heading");
+			await expect.element(heading).toHaveTextContent("January 1980");
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-1-8")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-1-15")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-1-22")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-1-29")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-2-5")).toHaveFocus();
+			await expect.element(heading).toHaveTextContent("February 1980");
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-2-12")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-2-19")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-2-26")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-3-4")).toHaveFocus();
+			await expect.element(heading).toHaveTextContent("March 1980");
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-3-11")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-3-18")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-3-25")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-3-25")).toHaveFocus();
+			await expect.element(heading).toHaveTextContent("March 1980");
 		});
 
 		it("should not navigate before `minValue` (with keyboard)", async () => {
-			const t = setup({
+			setup({
 				value: calendarDate,
 				minValue: new CalendarDate(1979, 12, 1),
 			});
-			const firstDayInMonth = t.getByTestId("date-1-1").element() as HTMLElement;
-			firstDayInMonth.focus();
-			expect(firstDayInMonth).toHaveFocus();
-			const heading = t.getByTestId("heading");
-			expect(heading).toHaveTextContent("January 1980");
-			await t.user.keyboard(kbd.ARROW_UP);
-			expect(t.getByTestId("date-12-25")).toHaveFocus();
-			expect(heading).toHaveTextContent("December 1979");
-			await t.user.keyboard(kbd.ARROW_UP);
-			expect(t.getByTestId("date-12-18")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_UP);
-			expect(t.getByTestId("date-12-11")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_UP);
-			expect(t.getByTestId("date-12-4")).toHaveFocus();
-			await t.user.keyboard(kbd.ARROW_UP);
-			expect(t.getByTestId("date-12-4")).toHaveFocus();
-			expect(heading).toHaveTextContent("December 1979");
+			const firstDayInMonth = page.getByTestId("date-1-1");
+			await focusAndExpectToHaveFocus(firstDayInMonth);
+			await expect.element(firstDayInMonth).toHaveFocus();
+			const heading = page.getByTestId("heading");
+			await expect.element(heading).toHaveTextContent("January 1980");
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(page.getByTestId("date-12-25")).toHaveFocus();
+			await expect.element(heading).toHaveTextContent("December 1979");
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(page.getByTestId("date-12-18")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(page.getByTestId("date-12-11")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(page.getByTestId("date-12-4")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(page.getByTestId("date-12-4")).toHaveFocus();
+			await expect.element(heading).toHaveTextContent("December 1979");
 		});
 
 		it("should change view when controlled placeholder changes", async () => {
-			const t = setup({ placeholder: calendarDate });
-			const heading = t.getByTestId("heading");
-			expect(heading).toHaveTextContent("January 1980");
-			const addMonthBtn = t.getByTestId("add-month");
-			await t.user.click(addMonthBtn);
-			expect(heading).toHaveTextContent("February 1980");
-			const addYearBtn = t.getByTestId("add-year");
-			await t.user.click(addYearBtn);
-			expect(heading).toHaveTextContent("February 1981");
-			await t.user.click(addMonthBtn);
-			await t.user.click(addMonthBtn);
-			await t.user.click(addMonthBtn);
-			expect(heading).toHaveTextContent("May 1981");
+			setup({ placeholder: calendarDate });
+			const heading = page.getByTestId("heading");
+			await expect.element(heading).toHaveTextContent("January 1980");
+			const addMonthBtn = page.getByTestId("add-month");
+			await addMonthBtn.click();
+			await expect.element(heading).toHaveTextContent("February 1980");
+			const addYearBtn = page.getByTestId("add-year");
+			await addYearBtn.click();
+			await expect.element(heading).toHaveTextContent("February 1981");
+			await addMonthBtn.click();
+			await addMonthBtn.click();
+			await addMonthBtn.click();
+			await expect.element(heading).toHaveTextContent("May 1981");
 		});
 	});
 
 	describe("Selection and Deselection", () => {
 		it("should allow dates to be deselected by clicking the selected date", async () => {
 			const t = setup({ value: calendarDate });
-			const value = t.getByTestId("value");
-			expect(value).toHaveTextContent("1980-01-20");
+			const value = page.getByTestId("value");
+			await expect.element(value).toHaveTextContent("1980-01-20");
 			const selectedDay = getSelectedDay(t.calendar);
-			expect(selectedDay).toHaveTextContent(String(calendarDate.day));
-			await t.user.click(selectedDay);
-			expect(value).toHaveTextContent("undefined");
+			await expect.element(selectedDay).toHaveTextContent(String(calendarDate.day));
+			await userEvent.click(selectedDay);
+			await expect.element(value).toHaveTextContent("undefined");
 		});
 
 		it.each([kbd.ENTER, kbd.SPACE])("should allow deselection with %s key", async (key) => {
 			const t = setup({ value: calendarDate });
-			const value = t.getByTestId("value");
-			expect(value).toHaveTextContent("1980-01-20");
+			const value = page.getByTestId("value");
+			await expect.element(value).toHaveTextContent("1980-01-20");
 			const selectedDay = getSelectedDay(t.calendar);
-			expect(selectedDay).toHaveTextContent(String(calendarDate.day));
+			await expect.element(selectedDay).toHaveTextContent(String(calendarDate.day));
 			selectedDay.focus();
-			await t.user.keyboard(key);
-			expect(value).toHaveTextContent("undefined");
+			await userEvent.keyboard(key);
+			await expect.element(value).toHaveTextContent("undefined");
 		});
 
 		it("should allow selection with mouse", async () => {
-			const t = setup({ placeholder: zonedDateTime });
-			const secondDayInMonth = t.getByTestId("date-1-2");
+			setup({ placeholder: zonedDateTime });
+			const secondDayInMonth = page.getByTestId("date-1-2");
 			expect(secondDayInMonth).toHaveTextContent("2");
-			await t.user.click(secondDayInMonth);
+			await userEvent.click(secondDayInMonth);
 			const newDate = zonedDateTime.set({ day: 2 });
-			expect(t.getByTestId("value")).toHaveTextContent(newDate.toString());
+			expect(page.getByTestId("value")).toHaveTextContent(newDate.toString());
 		});
 
 		it.each([kbd.SPACE, kbd.ENTER])("should allow selection with %s key", async (key) => {
-			const t = setup({ placeholder: zonedDateTime });
-			const secondDayInMonth = t.getByTestId("date-1-2").element() as HTMLElement;
-			expect(secondDayInMonth).toHaveTextContent("2");
-			secondDayInMonth.focus();
-			await t.user.keyboard(key);
+			setup({ placeholder: zonedDateTime });
+			const secondDayInMonth = page.getByTestId("date-1-2");
+			await expect.element(secondDayInMonth).toHaveTextContent("2");
+			await focusAndExpectToHaveFocus(secondDayInMonth);
+			await userEvent.keyboard(key);
 			const newDate = zonedDateTime.set({ day: 2 });
-			expect(t.getByTestId("value")).toHaveTextContent(newDate.toString());
+			await expect.element(page.getByTestId("value")).toHaveTextContent(newDate.toString());
 		});
 	});
 
@@ -349,23 +347,23 @@ describe("type='single'", () => {
 			});
 			const selectedDay = getSelectedDay(t.calendar);
 			expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
-			const heading = t.getByTestId("heading");
+			const heading = page.getByTestId("heading");
 			expect(heading).toHaveTextContent("January - February 1980");
 			const firstMonthDayDateStr = calendarDateTime.set({ day: 12 }).toString();
-			const firstMonthDay = t.getByTestId("date-1-12");
+			const firstMonthDay = page.getByTestId("date-1-12");
 			expect(firstMonthDay).toHaveTextContent("12");
 			expect(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
-			const secondMonthDay = t.getByTestId("date-2-15");
+			const secondMonthDay = page.getByTestId("date-2-15");
 			const secondMonthDayDateStr = calendarDateTime.set({ day: 15, month: 2 }).toString();
 			expect(secondMonthDay).toHaveTextContent("15");
 			expect(secondMonthDay).toHaveAttribute("data-value", secondMonthDayDateStr);
-			const prevButton = t.getByTestId("prev-button");
-			const nextButton = t.getByTestId("next-button");
-			await t.user.click(nextButton);
+			const prevButton = page.getByTestId("prev-button");
+			const nextButton = page.getByTestId("next-button");
+			await userEvent.click(nextButton);
 			expect(heading).toHaveTextContent("February - March 1980");
-			await t.user.click(prevButton);
+			await userEvent.click(prevButton);
 			expect(heading).toHaveTextContent("January - February 1980");
-			await t.user.click(prevButton);
+			await userEvent.click(prevButton);
 			expect(heading).toHaveTextContent("December 1979 - January 1980");
 		});
 
@@ -377,24 +375,24 @@ describe("type='single'", () => {
 			});
 			const selectedDay = getSelectedDay(t.calendar);
 			expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
-			const heading = t.getByTestId("heading");
+			const heading = page.getByTestId("heading");
 			expect(heading).toHaveTextContent("January - February 1980");
 			const firstMonthDayDateStr = calendarDateTime.set({ day: 12 }).toString();
-			const firstMonthDay = t.getByTestId("date-1-12");
+			const firstMonthDay = page.getByTestId("date-1-12");
 			expect(firstMonthDay).toHaveTextContent("12");
 			expect(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
-			const secondMonthDay = t.getByTestId("date-2-15");
+			const secondMonthDay = page.getByTestId("date-2-15");
 			const secondMonthDayDateStr = calendarDateTime.set({ day: 15, month: 2 }).toString();
 			expect(secondMonthDay).toHaveTextContent("15");
 			expect(secondMonthDay).toHaveAttribute("data-value", secondMonthDayDateStr);
-			const prevButton = t.getByTestId("prev-button");
-			const nextButton = t.getByTestId("next-button");
-			await t.user.click(nextButton);
+			const prevButton = page.getByTestId("prev-button");
+			const nextButton = page.getByTestId("next-button");
+			await userEvent.click(nextButton);
 			expect(heading).toHaveTextContent("March - April 1980");
 
-			await t.user.click(prevButton);
+			await userEvent.click(prevButton);
 			expect(heading).toHaveTextContent("January - February 1980");
-			await t.user.click(prevButton);
+			await userEvent.click(prevButton);
 			expect(heading).toHaveTextContent("November - December 1979");
 		});
 	});
@@ -408,119 +406,118 @@ describe("type='single'", () => {
 			function getNumberOfWeeks() {
 				return t.calendar.querySelectorAll("[data-week]").length;
 			}
-			const nextButton = t.getByTestId("next-button");
+			const nextButton = page.getByTestId("next-button");
 			for (let i = 0; i < 12; i++) {
 				expect(getNumberOfWeeks()).toBe(6);
-				await t.user.click(nextButton);
+				await nextButton.click({ force: true });
 			}
 		});
 
 		it("should format the weekday labels correctly - `'narrow'`", async () => {
-			const t = setup({
+			setup({
 				placeholder: calendarDate,
 				weekdayFormat: "narrow",
 			});
 			for (const [i, weekday] of narrowWeekdays.entries()) {
-				const weekdayEl = t.getByTestId(`weekday-1-${i}`);
-				expect(weekdayEl).toHaveTextContent(weekday);
+				const weekdayEl = page.getByTestId(`weekday-1-${i}`);
+				await expect.element(weekdayEl).toHaveTextContent(weekday);
 			}
 		});
 
 		it("should format the weekday labels correctly - `'short'`", async () => {
-			const t = setup({
+			setup({
 				placeholder: calendarDate,
 				weekdayFormat: "short",
 			});
 			for (const [i, weekday] of shortWeekdays.entries()) {
-				const weekdayEl = t.getByTestId(`weekday-1-${i}`);
-				expect(weekdayEl).toHaveTextContent(weekday);
+				const weekdayEl = page.getByTestId(`weekday-1-${i}`);
+				await expect.element(weekdayEl).toHaveTextContent(weekday);
 			}
 		});
 
 		it("should format the weekday labels correctly - `'long'`", async () => {
-			const t = setup({ placeholder: calendarDate, weekdayFormat: "long" });
+			setup({ placeholder: calendarDate, weekdayFormat: "long" });
 			for (const [i, weekday] of longWeekdays.entries()) {
-				const weekdayEl = t.getByTestId(`weekday-1-${i}`);
-				expect(weekdayEl).toHaveTextContent(weekday);
+				const weekdayEl = page.getByTestId(`weekday-1-${i}`);
+				await expect.element(weekdayEl).toHaveTextContent(weekday);
 			}
 		});
 
 		it("should respect the `weekStartsOn` prop", async () => {
-			const t = setup({ placeholder: calendarDate, weekStartsOn: 2, weekdayFormat: "short" });
-			expect(t.getByTestId("weekday-1-0").element().textContent).toBe("Tue");
+			setup({ placeholder: calendarDate, weekStartsOn: 2, weekdayFormat: "short" });
+			await expect.element(page.getByTestId("weekday-1-0")).toHaveTextContent(/^Tue$/);
 		});
 
 		it("should respect the `weekStartsOn` prop regardless of locale", async () => {
-			const t = setup({
+			setup({
 				placeholder: calendarDate,
 				weekStartsOn: 2,
 				weekdayFormat: "short",
 				locale: "fr",
 			});
-			expect(t.getByTestId("weekday-1-0").element().textContent).toBe("mar.");
+			await expect.element(page.getByTestId("weekday-1-0")).toHaveTextContent("mar.");
 		});
 
 		it("should default the first day of the week to the locale's first day of the week if `weekStartsOn` is not provided", async () => {
-			const t = setup({
+			setup({
 				placeholder: calendarDate,
 				weekdayFormat: "short",
 				locale: "fr",
 			});
-			expect(t.getByTestId("weekday-1-0").element().textContent).toBe("lun.");
+			await expect.element(page.getByTestId("weekday-1-0")).toHaveTextContent("lun.");
 		});
 	});
 
 	describe("Availability and Interaction", () => {
 		it("should handle unavailable dates appropriately", async () => {
-			const t = setup({
+			setup({
 				placeholder: calendarDate,
 				isDateUnavailable: (date) => date.day === 3,
 			});
-			const thirdDayInMonth = t.getByTestId("date-1-3");
-			expect(thirdDayInMonth).toHaveTextContent("3");
-			expect(thirdDayInMonth).toHaveAttribute("data-unavailable");
-			expect(thirdDayInMonth).toHaveAttribute("aria-disabled", "true");
-			await t.user.click(thirdDayInMonth);
-			expect(thirdDayInMonth).not.toHaveAttribute("data-selected");
+			const thirdDayInMonth = page.getByTestId("date-1-3");
+			await expect.element(thirdDayInMonth).toHaveTextContent("3");
+			await expect.element(thirdDayInMonth).toHaveAttribute("data-unavailable");
+			await expect.element(thirdDayInMonth).toHaveAttribute("aria-disabled", "true");
+			await thirdDayInMonth.click({ force: true });
+			await expect.element(thirdDayInMonth).not.toHaveAttribute("data-selected");
 		});
 
 		it("should not allow focus or interaction when `disabled` is `true`", async () => {
-			const t = setup({ placeholder: calendarDate, disabled: true });
-			const grid = t.getByTestId("grid-1");
-			expect(grid).toHaveAttribute("aria-disabled", "true");
-			expect(grid).toHaveAttribute("data-disabled");
-			const firstDayOfMonth = t.getByTestId("date-1-1").element() as HTMLElement;
-			expect(firstDayOfMonth).toHaveAttribute("aria-disabled", "true");
-			expect(firstDayOfMonth).toHaveAttribute("data-disabled");
+			setup({ placeholder: calendarDate, disabled: true });
+			const grid = page.getByTestId("grid-1");
+			await expect.element(grid).toHaveAttribute("aria-disabled", "true");
+			await expect.element(grid).toHaveAttribute("data-disabled");
+			const firstDayOfMonth = page.getByTestId("date-1-1");
+			await expect.element(firstDayOfMonth).toHaveAttribute("aria-disabled", "true");
+			await expect.element(firstDayOfMonth).toHaveAttribute("data-disabled");
 
-			await t.user.click(firstDayOfMonth);
-			expect(firstDayOfMonth).not.toHaveAttribute("data-selected");
-			firstDayOfMonth.focus();
-			expect(firstDayOfMonth).not.toHaveFocus();
-			const tenthDayOfMonth = t.getByTestId("date-1-10").element() as HTMLElement;
-			expect(tenthDayOfMonth).toHaveAttribute("aria-disabled", "true");
-			expect(tenthDayOfMonth).toHaveAttribute("data-disabled");
-			await t.user.click(tenthDayOfMonth);
-			expect(tenthDayOfMonth).not.toHaveAttribute("data-selected");
-			tenthDayOfMonth.focus();
-			expect(tenthDayOfMonth).not.toHaveFocus();
+			await firstDayOfMonth.click({ force: true });
+
+			await expect.element(firstDayOfMonth).not.toHaveAttribute("data-selected");
+			(firstDayOfMonth.element() as HTMLElement).focus();
+			await expect.element(firstDayOfMonth).not.toHaveFocus();
+			const tenthDayOfMonth = page.getByTestId("date-1-10");
+			await expect.element(tenthDayOfMonth).toHaveAttribute("aria-disabled", "true");
+			await expect.element(tenthDayOfMonth).toHaveAttribute("data-disabled");
+			await tenthDayOfMonth.click({ force: true });
+			await expect.element(tenthDayOfMonth).not.toHaveAttribute("data-selected");
+			(tenthDayOfMonth.element() as HTMLElement).focus();
+			await expect.element(tenthDayOfMonth).not.toHaveFocus();
 		});
 
 		it("should prevent selection but allow focus when `readonly` is `true`", async () => {
-			const t = setup({ placeholder: calendarDate, readonly: true });
-			const grid = t.getByTestId("grid-1");
-			expect(grid).toHaveAttribute("aria-readonly", "true");
-			expect(grid).toHaveAttribute("data-readonly");
-			const firstDayOfMonth = t.getByTestId("date-1-1").element() as HTMLElement;
-			await t.user.click(firstDayOfMonth);
-			expect(firstDayOfMonth).not.toHaveAttribute("data-selected");
-			firstDayOfMonth.focus();
-			expect(firstDayOfMonth).toHaveFocus();
-			const tenthDayOfMonth = t.getByTestId("date-1-10").element() as HTMLElement;
-			await t.user.click(tenthDayOfMonth);
-			expect(tenthDayOfMonth).not.toHaveAttribute("data-selected");
-			tenthDayOfMonth.focus();
-			expect(tenthDayOfMonth).toHaveFocus();
+			setup({ placeholder: calendarDate, readonly: true });
+			const grid = page.getByTestId("grid-1");
+			await expect.element(grid).toHaveAttribute("aria-readonly", "true");
+			await expect.element(grid).toHaveAttribute("data-readonly");
+			const firstDayOfMonth = page.getByTestId("date-1-1");
+			await firstDayOfMonth.click({ force: true });
+			await expect.element(firstDayOfMonth).not.toHaveAttribute("data-selected");
+			await focusAndExpectToHaveFocus(firstDayOfMonth);
+			const tenthDayOfMonth = page.getByTestId("date-1-10");
+			await tenthDayOfMonth.click({ force: true });
+			await expect.element(tenthDayOfMonth).not.toHaveAttribute("data-selected");
+			await focusAndExpectToHaveFocus(tenthDayOfMonth);
 		});
 
 		it("should not allow focusing on disabled dates, even if selected, falling back to first available date", async () => {
@@ -528,13 +525,13 @@ describe("type='single'", () => {
 				value: new CalendarDate(1980, 1, 3),
 				isDateDisabled: (date) => date.day === 3,
 			});
-			expect(document.body).toHaveFocus();
-			await t.user.keyboard(kbd.TAB);
-			expect(t.prevButton).toHaveFocus();
-			await t.user.keyboard(kbd.TAB);
-			expect(t.nextButton).toHaveFocus();
-			await t.user.keyboard(kbd.TAB);
-			expect(t.getByTestId("date-1-1")).toHaveFocus();
+			await expect.element(document.body).toHaveFocus();
+			await userEvent.keyboard(kbd.TAB);
+			await expect.element(t.prevButton).toHaveFocus();
+			await userEvent.keyboard(kbd.TAB);
+			await expect.element(t.nextButton).toHaveFocus();
+			await userEvent.keyboard(kbd.TAB);
+			await expect.element(page.getByTestId("date-1-1")).toHaveFocus();
 		});
 	});
 });
@@ -547,8 +544,8 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ value: [d1, d2] });
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays.length).toBe(2);
-			expect(selectedDays[0]).toHaveTextContent(String(d1.day));
-			expect(selectedDays[1]).toHaveTextContent(String(d2.day));
+			await expect.element(selectedDays[0]).toHaveTextContent(String(d1.day));
+			await expect.element(selectedDays[1]).toHaveTextContent(String(d2.day));
 		});
 
 		it("should handle default value when `value` prop is provided - `CalendarDateTime[]`", async () => {
@@ -557,8 +554,8 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ value: [d1, d2] });
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays.length).toBe(2);
-			expect(selectedDays[0]).toHaveTextContent(String(d1.day));
-			expect(selectedDays[1]).toHaveTextContent(String(d2.day));
+			await expect.element(selectedDays[0]).toHaveTextContent(String(d1.day));
+			await expect.element(selectedDays[1]).toHaveTextContent(String(d2.day));
 		});
 
 		it("should handle default value when `value` prop is provided - `ZonedDateTime[]`", async () => {
@@ -567,8 +564,8 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ value: [d1, d2] });
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays.length).toBe(2);
-			expect(selectedDays[0]).toHaveTextContent(String(d1.day));
-			expect(selectedDays[1]).toHaveTextContent(String(d2.day));
+			await expect.element(selectedDays[0]).toHaveTextContent(String(d1.day));
+			await expect.element(selectedDays[1]).toHaveTextContent(String(d2.day));
 		});
 
 		it("should set placeholder to last value in `value` prop", async () => {
@@ -577,7 +574,7 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ value: [d1, d2] });
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays.length).toBe(1);
-			expect(t.getByTestId("heading")).toHaveTextContent("May 1980");
+			await expect.element(page.getByTestId("heading")).toHaveTextContent("May 1980");
 		});
 	});
 
@@ -588,7 +585,7 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ value: [d1, d2] });
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays.length).toBe(2);
-			await t.user.click(selectedDays[0] as HTMLElement);
+			await userEvent.click(selectedDays[0]);
 			expect(getSelectedDays(t.calendar).length).toBe(1);
 		});
 
@@ -596,10 +593,10 @@ describe("type='multiple'", () => {
 			const d1 = new CalendarDate(1980, 1, 2);
 			const t = setupMulti({ value: [d1], preventDeselect: true });
 			const selectedDays = getSelectedDays(t.calendar);
-			await t.user.click(selectedDays[0] as HTMLElement);
+			await userEvent.click(selectedDays[0]);
 			const selectedDays2 = getSelectedDays(t.calendar);
 			expect(selectedDays2.length).toBe(1);
-			await t.user.click(selectedDays2[0] as HTMLElement);
+			await userEvent.click(selectedDays2[0]);
 			expect(getSelectedDays(t.calendar).length).toBe(1);
 		});
 	});
@@ -610,13 +607,13 @@ describe("type='multiple'", () => {
 				value: [new CalendarDate(1980, 1, 3)],
 				isDateDisabled: (date) => date.day === 3,
 			});
-			expect(document.body).toHaveFocus();
-			await t.user.keyboard(kbd.TAB);
-			expect(t.prevButton).toHaveFocus();
-			await t.user.keyboard(kbd.TAB);
-			expect(t.nextButton).toHaveFocus();
-			await t.user.keyboard(kbd.TAB);
-			expect(t.getByTestId("date-1-1")).toHaveFocus();
+			await expect.element(document.body).toHaveFocus();
+			await userEvent.keyboard(kbd.TAB);
+			await expect.element(t.prevButton).toHaveFocus();
+			await userEvent.keyboard(kbd.TAB);
+			await expect.element(t.nextButton).toHaveFocus();
+			await userEvent.keyboard(kbd.TAB);
+			await expect.element(page.getByTestId("date-1-1")).toHaveFocus();
 		});
 	});
 
@@ -630,12 +627,12 @@ describe("type='multiple'", () => {
 			expect(getSelectedDays(t.calendar)).toHaveLength(2);
 
 			// clicking a third date should reset selection to just that date
-			const thirdDate = t.getByTestId("date-1-8");
-			await t.user.click(thirdDate);
+			const thirdDate = page.getByTestId("date-1-8");
+			await thirdDate.click();
 
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays).toHaveLength(1);
-			expect(selectedDays[0]).toHaveTextContent("8");
+			await expect.element(selectedDays[0]).toHaveTextContent("8");
 		});
 
 		it("should allow valid selections within maxDays constraint", async () => {
@@ -646,13 +643,13 @@ describe("type='multiple'", () => {
 			expect(getSelectedDays(t.calendar)).toHaveLength(1);
 
 			// adding a second date should work
-			const secondDate = t.getByTestId("date-1-5");
-			await t.user.click(secondDate);
+			const secondDate = page.getByTestId("date-1-5");
+			await secondDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(2);
 
 			// adding a third date should work (exactly at maxDays)
-			const thirdDate = t.getByTestId("date-1-8");
-			await t.user.click(thirdDate);
+			const thirdDate = page.getByTestId("date-1-8");
+			await thirdDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(3);
 		});
 
@@ -660,27 +657,27 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ maxDays: 3, placeholder: calendarDate });
 
 			// select first date
-			const firstDate = t.getByTestId("date-1-5");
-			await t.user.click(firstDate);
+			const firstDate = page.getByTestId("date-1-5");
+			await firstDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(1);
 
 			// select second date (should work)
-			const secondDate = t.getByTestId("date-1-8");
-			await t.user.click(secondDate);
+			const secondDate = page.getByTestId("date-1-8");
+			await secondDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(2);
 
 			// select third date (should work - exactly at maxDays)
-			const thirdDate = t.getByTestId("date-1-12");
-			await t.user.click(thirdDate);
+			const thirdDate = page.getByTestId("date-1-12");
+			await thirdDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(3);
 
 			// select fourth date (violates maxDays, should reset to just that date)
-			const fourthDate = t.getByTestId("date-1-15");
-			await t.user.click(fourthDate);
+			const fourthDate = page.getByTestId("date-1-15");
+			await fourthDate.click({ force: true });
 
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays).toHaveLength(1);
-			expect(selectedDays[0]).toHaveTextContent("15");
+			await expect.element(selectedDays[0]).toHaveTextContent("15");
 		});
 
 		it("should allow deselection even with constraints", async () => {
@@ -692,13 +689,13 @@ describe("type='multiple'", () => {
 			expect(getSelectedDays(t.calendar)).toHaveLength(3);
 
 			// deselecting a date should work normally
-			const firstDate = t.getByTestId("date-1-2");
-			await t.user.click(firstDate);
+			const firstDate = page.getByTestId("date-1-2");
+			await firstDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(2);
 
 			// deselecting another date should work
-			const secondDate = t.getByTestId("date-1-5");
-			await t.user.click(secondDate);
+			const secondDate = page.getByTestId("date-1-5");
+			await secondDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(1);
 		});
 
@@ -706,22 +703,22 @@ describe("type='multiple'", () => {
 			const t = setupMulti({ maxDays: 2, placeholder: calendarDate });
 
 			// select first date
-			const firstDate = t.getByTestId("date-1-5");
-			await t.user.click(firstDate);
+			const firstDate = page.getByTestId("date-1-5");
+			await firstDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(1);
 
 			// select second date (should work)
-			const secondDate = t.getByTestId("date-1-8");
-			await t.user.click(secondDate);
+			const secondDate = page.getByTestId("date-1-8");
+			await secondDate.click();
 			expect(getSelectedDays(t.calendar)).toHaveLength(2);
 
 			// select third date (violates maxDays, should reset to just that date)
-			const thirdDate = t.getByTestId("date-1-12");
-			await t.user.click(thirdDate);
+			const thirdDate = page.getByTestId("date-1-12");
+			await thirdDate.click({ force: true });
 
 			const selectedDays = getSelectedDays(t.calendar);
 			expect(selectedDays).toHaveLength(1);
-			expect(selectedDays[0]).toHaveTextContent("12");
+			await expect.element(selectedDays[0]).toHaveTextContent("12");
 		});
 	});
 });
@@ -757,8 +754,8 @@ describe("Calendar Select Components", () => {
 
 			// should have 12 months
 			expect(options).toHaveLength(12);
-			expect(options[0]).toHaveTextContent("January");
-			expect(options[11]).toHaveTextContent("December");
+			await expect.element(options[0]).toHaveTextContent("January");
+			await expect.element(options[11]).toHaveTextContent("December");
 		});
 
 		it("should respect custom months prop", async () => {
@@ -770,9 +767,9 @@ describe("Calendar Select Components", () => {
 			const options = monthSelect.querySelectorAll("option");
 
 			expect(options).toHaveLength(3);
-			expect(options[0]).toHaveTextContent("January");
-			expect(options[1]).toHaveTextContent("February");
-			expect(options[2]).toHaveTextContent("March");
+			await expect.element(options[0]).toHaveTextContent("January");
+			await expect.element(options[1]).toHaveTextContent("February");
+			await expect.element(options[2]).toHaveTextContent("March");
 		});
 
 		it("should respect monthFormat prop - short", async () => {
@@ -783,8 +780,8 @@ describe("Calendar Select Components", () => {
 			const monthSelect = t.monthSelect;
 			const options = monthSelect.querySelectorAll("option");
 
-			expect(options[0]).toHaveTextContent("Jan");
-			expect(options[1]).toHaveTextContent("Feb");
+			await expect.element(options[0]).toHaveTextContent("Jan");
+			await expect.element(options[1]).toHaveTextContent("Feb");
 		});
 
 		it("should respect monthFormat prop - numeric", async () => {
@@ -795,8 +792,8 @@ describe("Calendar Select Components", () => {
 			const monthSelect = t.monthSelect;
 			const options = monthSelect.querySelectorAll("option");
 
-			expect(options[0]).toHaveTextContent("1");
-			expect(options[1]).toHaveTextContent("2");
+			await expect.element(options[0]).toHaveTextContent("1");
+			await expect.element(options[1]).toHaveTextContent("2");
 		});
 
 		it("should have correct selected option for current month", async () => {
@@ -804,8 +801,8 @@ describe("Calendar Select Components", () => {
 			const monthSelect = t.monthSelect;
 			const selectedOption = monthSelect.querySelector("option[selected]");
 
-			expect(selectedOption).toHaveTextContent("January");
-			expect(selectedOption).toHaveValue("1");
+			await expect.element(selectedOption).toHaveTextContent("January");
+			await expect.element(selectedOption).toHaveValue("1");
 		});
 
 		it("should update calendar when month is changed", async () => {
@@ -813,11 +810,11 @@ describe("Calendar Select Components", () => {
 			const monthSelect = t.monthSelect;
 
 			// Change to March (value="3")
-			await t.user.selectOptions(monthSelect, "3");
+			await userEvent.selectOptions(monthSelect, "3");
 
 			// Calendar should show March 1980
-			const grid = t.getByTestId("grid-3");
-			expect(grid).toBeVisible();
+			const grid = page.getByTestId("grid-3");
+			await expect.element(grid).toBeVisible();
 		});
 
 		it("should be disabled when calendar is disabled", async () => {
@@ -827,7 +824,7 @@ describe("Calendar Select Components", () => {
 			});
 			const monthSelect = t.monthSelect;
 
-			expect(monthSelect).toHaveAttribute("disabled");
+			await expect.element(monthSelect).toHaveAttribute("disabled");
 		});
 	});
 
@@ -887,9 +884,9 @@ describe("Calendar Select Components", () => {
 			const options = yearSelect.querySelectorAll("option");
 
 			expect(options).toHaveLength(3);
-			expect(options[0]).toHaveTextContent("2020");
-			expect(options[1]).toHaveTextContent("2021");
-			expect(options[2]).toHaveTextContent("2022");
+			await expect.element(options[0]).toHaveTextContent("2020");
+			await expect.element(options[1]).toHaveTextContent("2021");
+			await expect.element(options[2]).toHaveTextContent("2022");
 		});
 
 		it("should use minValue year as exact starting boundary", async () => {
@@ -1010,11 +1007,11 @@ describe("Calendar Select Components", () => {
 			const yearSelect = t.yearSelect;
 
 			// Change to 1981
-			await t.user.selectOptions(yearSelect, "1981");
+			await userEvent.selectOptions(yearSelect, "1981");
 
 			// Should still show January but now 1981
-			const grid = t.getByTestId("grid-1");
-			expect(grid).toBeVisible();
+			const grid = page.getByTestId("grid-1");
+			await expect.element(grid).toBeVisible();
 		});
 
 		it("should be disabled when calendar is disabled", async () => {
@@ -1024,7 +1021,7 @@ describe("Calendar Select Components", () => {
 			});
 			const yearSelect = t.yearSelect;
 
-			expect(yearSelect).toHaveAttribute("disabled");
+			await expect.element(yearSelect).toHaveAttribute("disabled");
 		});
 
 		it("should respect yearFormat prop - 2-digit", async () => {
@@ -1036,9 +1033,9 @@ describe("Calendar Select Components", () => {
 			const yearSelect = t.yearSelect;
 			const options = yearSelect.querySelectorAll("option");
 
-			expect(options[0]).toHaveTextContent("80");
-			expect(options[1]).toHaveTextContent("81");
-			expect(options[2]).toHaveTextContent("82");
+			await expect.element(options[0]).toHaveTextContent("80");
+			await expect.element(options[1]).toHaveTextContent("81");
+			await expect.element(options[2]).toHaveTextContent("82");
 		});
 
 		it("should respect yearFormat prop - numeric (default)", async () => {
@@ -1050,9 +1047,9 @@ describe("Calendar Select Components", () => {
 			const yearSelect = t.yearSelect;
 			const options = yearSelect.querySelectorAll("option");
 
-			expect(options[0]).toHaveTextContent("1980");
-			expect(options[1]).toHaveTextContent("1981");
-			expect(options[2]).toHaveTextContent("1982");
+			await expect.element(options[0]).toHaveTextContent("1980");
+			await expect.element(options[1]).toHaveTextContent("1981");
+			await expect.element(options[2]).toHaveTextContent("1982");
 		});
 	});
 
@@ -1064,12 +1061,12 @@ describe("Calendar Select Components", () => {
 			});
 
 			// Change to March 1981
-			await t.user.selectOptions(t.monthSelect, "3");
-			await t.user.selectOptions(t.yearSelect, "1981");
+			await userEvent.selectOptions(t.monthSelect, "3");
+			await userEvent.selectOptions(t.yearSelect, "1981");
 
 			// Should show March 1981
-			const grid = t.getByTestId("grid-3");
-			expect(grid).toBeVisible();
+			const grid = page.getByTestId("grid-3");
+			await expect.element(grid).toBeVisible();
 		});
 
 		it("should maintain selections when switching between months", async () => {
@@ -1079,18 +1076,18 @@ describe("Calendar Select Components", () => {
 			});
 
 			// Change to February
-			await t.user.selectOptions(t.monthSelect, "2");
+			await userEvent.selectOptions(t.monthSelect, "2");
 
 			// February should be selected
 			let selectedOption = t.monthSelect.querySelector("option[selected]");
-			expect(selectedOption).toHaveTextContent("February");
+			await expect.element(selectedOption).toHaveTextContent("February");
 
 			// Change to April
-			await t.user.selectOptions(t.monthSelect, "4");
+			await userEvent.selectOptions(t.monthSelect, "4");
 
 			// April should be selected
 			selectedOption = t.monthSelect.querySelector("option[selected]");
-			expect(selectedOption).toHaveTextContent("April");
+			await expect.element(selectedOption).toHaveTextContent("April");
 		});
 
 		it("should handle edge cases with limited month/year arrays", async () => {
@@ -1105,8 +1102,8 @@ describe("Calendar Select Components", () => {
 
 			expect(monthOptions).toHaveLength(1);
 			expect(yearOptions).toHaveLength(1);
-			expect(monthOptions[0]).toHaveAttribute("selected");
-			expect(yearOptions[0]).toHaveAttribute("selected");
+			await expect.element(monthOptions[0]).toHaveAttribute("selected");
+			await expect.element(yearOptions[0]).toHaveAttribute("selected");
 		});
 	});
 });
