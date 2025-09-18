@@ -63,6 +63,11 @@ jobs:
                       echo "changed=true" >> $GITHUB_OUTPUT
                   fi
 
+            - name: Add latest.json to git
+              if: steps.check-changes.outputs.changed == 'true'
+              run: |
+                  git add ./bundle-analyzer/bundle-reports/latest.json
+
             - name: Generate bundle change summary
               if: steps.check-changes.outputs.changed == 'true'
               id: summary
