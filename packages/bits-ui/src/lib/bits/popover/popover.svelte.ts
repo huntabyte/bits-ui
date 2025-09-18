@@ -2,7 +2,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	attachRef,
-	box,
+	boxWith,
 } from "svelte-toolbelt";
 import { Context } from "runed";
 import { kbd } from "$lib/internal/kbd.js";
@@ -47,7 +47,7 @@ export class PopoverRootState {
 		this.opts = opts;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);

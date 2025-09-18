@@ -1,6 +1,5 @@
 import {
 	afterTick,
-	box,
 	mergeProps,
 	onDestroyEffect,
 	attachRef,
@@ -8,6 +7,8 @@ import {
 	getWindow,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
+	boxWith,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
@@ -132,7 +133,7 @@ export class MenuMenuState {
 	readonly opts: MenuMenuStateOpts;
 	readonly root: MenuRootState;
 	readonly parentMenu: MenuMenuState | null;
-	contentId = box.with<string>(() => "");
+	contentId = boxWith<string>(() => "");
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 
@@ -142,7 +143,7 @@ export class MenuMenuState {
 		this.parentMenu = parentMenu;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -239,10 +240,10 @@ export class MenuContentState {
 			getWindow: () => this.domContext.getWindow(),
 		}).handleTypeaheadSearch;
 		this.rovingFocusGroup = new RovingFocusGroup({
-			rootNode: box.with(() => this.parentMenu.contentNode),
+			rootNode: boxWith(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getBitsAttr("item"),
 			loop: this.opts.loop,
-			orientation: box.with(() => "vertical"),
+			orientation: boxWith(() => "vertical"),
 		});
 
 		watch(
@@ -1133,7 +1134,7 @@ export class ContextMenuTriggerState {
 	readonly attachment: RefAttachment;
 	#point = $state({ x: 0, y: 0 });
 
-	virtualElement = box({
+	virtualElement = simpleBox({
 		getBoundingClientRect: () => DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
 	});
 	#longPressTimer: number | null = null;

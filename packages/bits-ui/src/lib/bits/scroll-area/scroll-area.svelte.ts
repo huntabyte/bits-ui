@@ -8,7 +8,7 @@
 import { Context, useDebounce, watch } from "runed";
 import { untrack } from "svelte";
 import {
-	box,
+	simpleBox,
 	executeCallbacks,
 	attachRef,
 	DOMContext,
@@ -111,8 +111,8 @@ export class ScrollAreaViewportState {
 	readonly opts: ScrollAreaViewportStateOpts;
 	readonly root: ScrollAreaRootState;
 	readonly attachment: RefAttachment;
-	#contentId = box(useId());
-	#contentRef = box<HTMLElement | null>(null);
+	#contentId = simpleBox(useId());
+	#contentRef = simpleBox<HTMLElement | null>(null);
 	readonly contentAttachment: RefAttachment = attachRef(
 		this.#contentRef,
 		(v) => (this.root.contentNode = v)

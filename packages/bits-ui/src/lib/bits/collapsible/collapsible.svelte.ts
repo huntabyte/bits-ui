@@ -1,7 +1,7 @@
 import {
 	afterTick,
 	attachRef,
-	box,
+	boxWith,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
@@ -55,7 +55,7 @@ export class CollapsibleRootState {
 		this.attachment = attachRef(this.opts.ref);
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);

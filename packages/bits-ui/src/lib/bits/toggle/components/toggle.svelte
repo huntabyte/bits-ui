@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ToggleRootProps } from "../types.js";
 	import { ToggleRootState } from "../toggle.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -20,16 +20,16 @@
 	}: ToggleRootProps = $props();
 
 	const toggleState = ToggleRootState.create({
-		pressed: box.with(
+		pressed: boxWith(
 			() => pressed,
 			(v) => {
 				pressed = v;
 				onPressedChange(v);
 			}
 		),
-		disabled: box.with(() => disabled ?? false),
-		id: box.with(() => id),
-		ref: box.with(
+		disabled: boxWith(() => disabled ?? false),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

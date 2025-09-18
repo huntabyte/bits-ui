@@ -8,7 +8,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
-	box,
+	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
@@ -120,7 +120,7 @@ abstract class SelectBaseRootState {
 		this.isCombobox = opts.isCombobox;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);

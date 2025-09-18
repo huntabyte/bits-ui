@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { untrack, type Snippet } from "svelte";
 	import type { NavigationMenuContentProps } from "../types.js";
 	import {
@@ -35,8 +35,8 @@
 
 	const contentImplState = NavigationMenuContentImplState.create(
 		{
-			id: box.with(() => id),
-			ref: box.with(
+			id: boxWith(() => id),
+			ref: boxWith(
 				() => ref,
 				(v) => {
 					ref = v;

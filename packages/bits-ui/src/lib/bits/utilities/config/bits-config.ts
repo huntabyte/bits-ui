@@ -1,5 +1,5 @@
 import { Context } from "runed";
-import { box, type ReadableBox, type ReadableBoxedValues } from "svelte-toolbelt";
+import { boxWith, type ReadableBox, type ReadableBoxedValues } from "svelte-toolbelt";
 import type { BitsConfigPropsWithoutChildren } from "$lib/bits/utilities/config/types.js";
 
 type BitsConfigStateProps = ReadableBoxedValues<BitsConfigPropsWithoutChildren>;
@@ -91,7 +91,7 @@ function createConfigResolver(
 	currentOpts: BitsConfigStateProps
 ): ConfigOptionResolver {
 	return <T>(getter: ConfigOptionGetter<T>) => {
-		const configOption = box.with(() => {
+		const configOption = boxWith(() => {
 			// try current opts first
 			const value = getter(currentOpts)?.current;
 			if (value !== undefined) return value;

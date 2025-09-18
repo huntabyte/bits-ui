@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CollapsibleTriggerProps } from "../types.js";
 	import { CollapsibleTriggerState } from "../collapsible.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,12 +16,12 @@
 	}: CollapsibleTriggerProps = $props();
 
 	const triggerState = CollapsibleTriggerState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		disabled: box.with(() => disabled),
+		disabled: boxWith(() => disabled),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props));

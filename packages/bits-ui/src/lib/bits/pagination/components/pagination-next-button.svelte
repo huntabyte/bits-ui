@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { PaginationNextButtonProps } from "../types.js";
 	import { PaginationButtonState } from "../pagination.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,12 +18,12 @@
 
 	const nextButtonState = PaginationButtonState.create({
 		type: "next",
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		disabled: box.with(() => Boolean(disabled)),
+		disabled: boxWith(() => Boolean(disabled)),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, nextButtonState.props, { type }));

@@ -1,6 +1,6 @@
 import type { DateValue } from "@internationalized/date";
 import {
-	box,
+	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
@@ -80,8 +80,8 @@ export class DateRangeFieldRootState {
 		this.opts = opts;
 		this.formatter = createFormatter({
 			initialLocale: this.opts.locale.current,
-			monthFormat: box.with(() => "long"),
-			yearFormat: box.with(() => "numeric"),
+			monthFormat: boxWith(() => "long"),
+			yearFormat: boxWith(() => "numeric"),
 		});
 		this.domContext = new DOMContext(this.opts.ref);
 		this.attachment = attachRef(this.opts.ref, (v) => (this.fieldNode = v));
@@ -277,7 +277,7 @@ export class DateRangeFieldInputState {
 				disabled: root.opts.disabled,
 				readonly: root.opts.readonly,
 				readonlySegments: root.opts.readonlySegments,
-				validate: box.with(() => undefined),
+				validate: boxWith(() => undefined),
 				minValue: root.opts.minValue,
 				maxValue: root.opts.maxValue,
 				hourCycle: root.opts.hourCycle,
@@ -288,7 +288,7 @@ export class DateRangeFieldInputState {
 				placeholder: root.opts.placeholder,
 				onInvalid: root.opts.onInvalid,
 				errorMessageId: root.opts.errorMessageId,
-				isInvalidProp: box.with(() => root.isInvalid),
+				isInvalidProp: boxWith(() => root.isInvalid),
 			},
 			root
 		);

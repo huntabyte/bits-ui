@@ -2,12 +2,13 @@ import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import {
 	type WritableBox,
-	box,
+	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
@@ -226,7 +227,7 @@ export class DateFieldRootState {
 		 */
 		this.value = props.value;
 		this.placeholder = rangeRoot ? rangeRoot.opts.placeholder : props.placeholder;
-		this.validate = rangeRoot ? box(undefined) : props.validate;
+		this.validate = rangeRoot ? simpleBox(undefined) : props.validate;
 		this.minValue = rangeRoot ? rangeRoot.opts.minValue : props.minValue;
 		this.maxValue = rangeRoot ? rangeRoot.opts.maxValue : props.maxValue;
 		this.disabled = rangeRoot ? rangeRoot.opts.disabled : props.disabled;
@@ -244,8 +245,8 @@ export class DateFieldRootState {
 		this.isInvalidProp = props.isInvalidProp;
 		this.formatter = createFormatter({
 			initialLocale: this.locale.current,
-			monthFormat: box.with(() => "long"),
-			yearFormat: box.with(() => "numeric"),
+			monthFormat: boxWith(() => "long"),
+			yearFormat: boxWith(() => "numeric"),
 		});
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;

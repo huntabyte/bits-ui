@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { TooltipRootProps } from "../types.js";
 	import { TooltipRootState } from "../tooltip.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
@@ -18,19 +18,19 @@
 	}: TooltipRootProps = $props();
 
 	TooltipRootState.create({
-		open: box.with(
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange(v);
 			}
 		),
-		delayDuration: box.with(() => delayDuration),
-		disableCloseOnTriggerClick: box.with(() => disableCloseOnTriggerClick),
-		disableHoverableContent: box.with(() => disableHoverableContent),
-		ignoreNonKeyboardFocus: box.with(() => ignoreNonKeyboardFocus),
-		disabled: box.with(() => disabled),
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		delayDuration: boxWith(() => delayDuration),
+		disableCloseOnTriggerClick: boxWith(() => disableCloseOnTriggerClick),
+		disableHoverableContent: boxWith(() => disableHoverableContent),
+		ignoreNonKeyboardFocus: boxWith(() => ignoreNonKeyboardFocus),
+		disabled: boxWith(() => disabled),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 </script>
 

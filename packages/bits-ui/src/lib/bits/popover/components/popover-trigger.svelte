@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { PopoverTriggerProps } from "../types.js";
 	import { PopoverTriggerState } from "../popover.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,12 +18,12 @@
 	}: PopoverTriggerProps = $props();
 
 	const triggerState = PopoverTriggerState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		disabled: box.with(() => Boolean(disabled)),
+		disabled: boxWith(() => Boolean(disabled)),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));

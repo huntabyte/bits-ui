@@ -2,11 +2,11 @@ import { Previous, watch } from "runed";
 import { onMount } from "svelte";
 import {
 	type WritableBox,
-	box,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
@@ -83,10 +83,10 @@ export class PinInputRootState {
 
 	readonly opts: PinInputRootStateOpts;
 	readonly attachment: RefAttachment;
-	#inputRef = box<HTMLInputElement | null>(null);
+	#inputRef = simpleBox<HTMLInputElement | null>(null);
 	#isHoveringInput = $state(false);
 	readonly inputAttachment: RefAttachment<HTMLInputElement> = attachRef(this.#inputRef);
-	#isFocused = box(false);
+	#isFocused = simpleBox(false);
 	#mirrorSelectionStart = $state<number | null>(null);
 	#mirrorSelectionEnd = $state<number | null>(null);
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { AlertDialogActionProps } from "../types.js";
 	import { DialogActionState } from "$lib/bits/dialog/dialog.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -15,8 +15,8 @@
 	}: AlertDialogActionProps = $props();
 
 	const actionState = DialogActionState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

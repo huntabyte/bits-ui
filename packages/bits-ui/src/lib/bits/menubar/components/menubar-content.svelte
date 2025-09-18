@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenubarContentProps } from "../types.js";
 	import { MenubarContentState } from "../menubar.svelte.js";
 	import MenuContent from "$lib/bits/menu/components/menu-content.svelte";
@@ -20,16 +20,16 @@
 	}: MenubarContentProps = $props();
 
 	const contentState = MenubarContentState.create({
-		id: box.with(() => id),
-		interactOutsideBehavior: box.with(() => interactOutsideBehavior),
-		ref: box.with(
+		id: boxWith(() => id),
+		interactOutsideBehavior: boxWith(() => interactOutsideBehavior),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onInteractOutside: box.with(() => onInteractOutside),
-		onFocusOutside: box.with(() => onFocusOutside),
-		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
-		onOpenAutoFocus: box.with(() => onOpenAutoFocus),
+		onInteractOutside: boxWith(() => onInteractOutside),
+		onFocusOutside: boxWith(() => onFocusOutside),
+		onCloseAutoFocus: boxWith(() => onCloseAutoFocus),
+		onOpenAutoFocus: boxWith(() => onOpenAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

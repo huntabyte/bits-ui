@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Date Picker composes the DateField, Popover, and Calendar components
 	import { watch } from "runed";
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { DatePickerRootState } from "../date-picker.svelte.js";
 	import type { DatePickerRootProps } from "../types.js";
@@ -82,57 +82,57 @@
 	}
 
 	const pickerRootState = DatePickerRootState.create({
-		open: box.with(
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange(v);
 			}
 		),
-		value: box.with(
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		placeholder: box.with(
+		placeholder: boxWith(
 			() => placeholder as DateValue,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v as DateValue);
 			}
 		),
-		isDateUnavailable: box.with(() => isDateUnavailable),
-		minValue: box.with(() => minValue),
-		maxValue: box.with(() => maxValue),
-		disabled: box.with(() => disabled),
-		readonly: box.with(() => readonly),
-		granularity: box.with(() => granularity),
-		readonlySegments: box.with(() => readonlySegments),
-		hourCycle: box.with(() => hourCycle),
+		isDateUnavailable: boxWith(() => isDateUnavailable),
+		minValue: boxWith(() => minValue),
+		maxValue: boxWith(() => maxValue),
+		disabled: boxWith(() => disabled),
+		readonly: boxWith(() => readonly),
+		granularity: boxWith(() => granularity),
+		readonlySegments: boxWith(() => readonlySegments),
+		hourCycle: boxWith(() => hourCycle),
 		locale: resolveLocaleProp(() => locale),
-		hideTimeZone: box.with(() => hideTimeZone),
-		required: box.with(() => required),
-		calendarLabel: box.with(() => calendarLabel),
-		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
-		preventDeselect: box.with(() => preventDeselect),
-		pagedNavigation: box.with(() => pagedNavigation),
-		weekStartsOn: box.with(() => weekStartsOn),
-		weekdayFormat: box.with(() => weekdayFormat),
-		isDateDisabled: box.with(() => isDateDisabled),
-		fixedWeeks: box.with(() => fixedWeeks),
-		numberOfMonths: box.with(() => numberOfMonths),
-		initialFocus: box.with(() => initialFocus),
-		onDateSelect: box.with(() => onDateSelect),
+		hideTimeZone: boxWith(() => hideTimeZone),
+		required: boxWith(() => required),
+		calendarLabel: boxWith(() => calendarLabel),
+		disableDaysOutsideMonth: boxWith(() => disableDaysOutsideMonth),
+		preventDeselect: boxWith(() => preventDeselect),
+		pagedNavigation: boxWith(() => pagedNavigation),
+		weekStartsOn: boxWith(() => weekStartsOn),
+		weekdayFormat: boxWith(() => weekdayFormat),
+		isDateDisabled: boxWith(() => isDateDisabled),
+		fixedWeeks: boxWith(() => fixedWeeks),
+		numberOfMonths: boxWith(() => numberOfMonths),
+		initialFocus: boxWith(() => initialFocus),
+		onDateSelect: boxWith(() => onDateSelect),
 		defaultPlaceholder,
-		monthFormat: box.with(() => monthFormat),
-		yearFormat: box.with(() => yearFormat),
+		monthFormat: boxWith(() => monthFormat),
+		yearFormat: boxWith(() => yearFormat),
 	});
 
 	PopoverRootState.create({
 		open: pickerRootState.opts.open,
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 
 	DateFieldRootState.create({
@@ -140,8 +140,8 @@
 		disabled: pickerRootState.opts.disabled,
 		readonly: pickerRootState.opts.readonly,
 		readonlySegments: pickerRootState.opts.readonlySegments,
-		validate: box.with(() => validate),
-		onInvalid: box.with(() => onInvalid),
+		validate: boxWith(() => validate),
+		onInvalid: boxWith(() => onInvalid),
 		minValue: pickerRootState.opts.minValue,
 		maxValue: pickerRootState.opts.maxValue,
 		granularity: pickerRootState.opts.granularity,
@@ -150,8 +150,8 @@
 		locale: pickerRootState.opts.locale,
 		required: pickerRootState.opts.required,
 		placeholder: pickerRootState.opts.placeholder,
-		errorMessageId: box.with(() => errorMessageId),
-		isInvalidProp: box.with(() => undefined),
+		errorMessageId: boxWith(() => errorMessageId),
+		isInvalidProp: boxWith(() => undefined),
 	});
 </script>
 

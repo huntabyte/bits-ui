@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubTriggerProps } from "../types.js";
 	import { MenuSubTriggerState } from "../menu.svelte.js";
 	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
@@ -19,10 +19,10 @@
 	}: MenuSubTriggerProps = $props();
 
 	const subTriggerState = MenuSubTriggerState.create({
-		disabled: box.with(() => disabled),
-		onSelect: box.with(() => onSelect),
-		id: box.with(() => id),
-		ref: box.with(
+		disabled: boxWith(() => disabled),
+		onSelect: boxWith(() => onSelect),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { MenuSubProps } from "../types.js";
 	import { MenuSubmenuState } from "../menu.svelte.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
@@ -13,14 +13,14 @@
 	}: MenuSubProps = $props();
 
 	MenuSubmenuState.create({
-		open: box.with(
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange?.(v);
 			}
 		),
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 </script>
 

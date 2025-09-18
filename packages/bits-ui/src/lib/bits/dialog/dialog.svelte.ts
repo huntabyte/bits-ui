@@ -1,6 +1,6 @@
 import {
 	attachRef,
-	box,
+	boxWith,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
@@ -55,7 +55,7 @@ export class DialogRootState {
 		this.handleClose = this.handleClose.bind(this);
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			enabled: true,
 			onComplete: () => {

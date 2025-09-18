@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type WritableBox, box } from "svelte-toolbelt";
+	import { type WritableBox, boxWith } from "svelte-toolbelt";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupRootProps } from "../types.js";
 	import { ToggleGroupRootState } from "../toggle-group.svelte.js";
@@ -40,8 +40,8 @@
 	);
 
 	const rootState = ToggleGroupRootState.create({
-		id: box.with(() => id),
-		value: box.with(
+		id: boxWith(() => id),
+		value: boxWith(
 			() => value!,
 			(v) => {
 				value = v;
@@ -49,12 +49,12 @@
 				onValueChange(v);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
-		disabled: box.with(() => disabled),
-		loop: box.with(() => loop),
-		orientation: box.with(() => orientation),
-		rovingFocus: box.with(() => rovingFocus),
+		disabled: boxWith(() => disabled),
+		loop: boxWith(() => loop),
+		orientation: boxWith(() => orientation),
+		rovingFocus: boxWith(() => rovingFocus),
 		type,
-		ref: box.with(
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

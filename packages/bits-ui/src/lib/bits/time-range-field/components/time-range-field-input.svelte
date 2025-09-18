@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { TimeRangeFieldInputProps } from "../types.js";
 	import { TimeRangeFieldInputState } from "../time-range-field.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -19,12 +19,12 @@
 
 	const inputState = TimeRangeFieldInputState.create(
 		{
-			id: box.with(() => id),
-			ref: box.with(
+			id: boxWith(() => id),
+			ref: boxWith(
 				() => ref,
 				(v) => (ref = v)
 			),
-			name: box.with(() => name),
+			name: boxWith(() => name),
 		},
 		type
 	);

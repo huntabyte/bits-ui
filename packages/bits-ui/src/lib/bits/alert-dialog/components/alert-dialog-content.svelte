@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterSleep, box, mergeProps } from "svelte-toolbelt";
+	import { afterSleep, boxWith, mergeProps } from "svelte-toolbelt";
 	import type { AlertDialogContentProps } from "../types.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
@@ -32,8 +32,8 @@
 	}: AlertDialogContentProps = $props();
 
 	const contentState = DialogContentState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

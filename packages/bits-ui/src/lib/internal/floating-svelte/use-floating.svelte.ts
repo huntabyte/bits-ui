@@ -1,5 +1,5 @@
 import { computePosition } from "@floating-ui/dom";
-import { box } from "svelte-toolbelt";
+import { simpleBox } from "svelte-toolbelt";
 import type { UseFloatingOptions, UseFloatingReturn } from "./types.js";
 import { get, getDPR, roundByDPR } from "./floating-utils.svelte.js";
 
@@ -19,7 +19,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	let x = $state(0);
 	let y = $state(0);
 
-	const floating = box<HTMLElement | null>(null);
+	const floating = simpleBox<HTMLElement | null>(null);
 
 	// svelte-ignore state_referenced_locally
 	let strategy = $state(strategyOption);

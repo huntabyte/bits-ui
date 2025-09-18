@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { LinkPreviewRootProps } from "../types.js";
 	import { LinkPreviewRootState } from "../link-preview.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -16,17 +16,17 @@
 	}: LinkPreviewRootProps = $props();
 
 	LinkPreviewRootState.create({
-		disabled: box.with(() => disabled),
-		open: box.with(
+		disabled: boxWith(() => disabled),
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange(v);
 			}
 		),
-		openDelay: box.with(() => openDelay),
-		closeDelay: box.with(() => closeDelay),
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		openDelay: boxWith(() => openDelay),
+		closeDelay: boxWith(() => closeDelay),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 </script>
 

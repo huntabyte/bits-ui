@@ -1,7 +1,7 @@
 import {
 	type ReadableBox,
 	afterTick,
-	box,
+	boxWith,
 	attachRef,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -58,7 +58,7 @@ export class MenubarRootState {
 			rootNode: this.opts.ref,
 			candidateAttr: menubarAttrs.trigger,
 			loop: this.opts.loop,
-			orientation: box.with(() => "horizontal"),
+			orientation: boxWith(() => "horizontal"),
 		});
 	}
 

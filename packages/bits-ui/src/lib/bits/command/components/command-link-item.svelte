@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CommandLinkItemProps } from "../types.js";
 	import { CommandItemState } from "../command.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -21,16 +21,16 @@
 	}: CommandLinkItemProps = $props();
 
 	const itemState = CommandItemState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(() => value),
-		disabled: box.with(() => disabled),
-		onSelect: box.with(() => onSelect),
-		forceMount: box.with(() => forceMount),
-		keywords: box.with(() => keywords),
+		value: boxWith(() => value),
+		disabled: boxWith(() => disabled),
+		onSelect: boxWith(() => onSelect),
+		forceMount: boxWith(() => forceMount),
+		keywords: boxWith(() => keywords),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));

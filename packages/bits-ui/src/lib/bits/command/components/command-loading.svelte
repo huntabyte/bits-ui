@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CommandLoadingProps } from "../types.js";
 	import { CommandLoadingState } from "../command.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,12 +16,12 @@
 	}: CommandLoadingProps = $props();
 
 	const loadingState = CommandLoadingState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		progress: box.with(() => progress),
+		progress: boxWith(() => progress),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, loadingState.props));

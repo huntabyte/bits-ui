@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { attachRef, box, mergeProps } from "svelte-toolbelt";
+	import { attachRef, boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenubarTriggerProps } from "../types.js";
 	import { MenubarTriggerState } from "../menubar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,9 +18,9 @@
 	}: MenubarTriggerProps = $props();
 
 	const triggerState = MenubarTriggerState.create({
-		id: box.with(() => id),
-		disabled: box.with(() => disabled ?? false),
-		ref: box.with(
+		id: boxWith(() => id),
+		disabled: boxWith(() => disabled ?? false),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

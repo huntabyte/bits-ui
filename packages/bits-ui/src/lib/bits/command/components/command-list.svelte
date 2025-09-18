@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CommandListProps } from "../types.js";
 	import { CommandListState } from "../command.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,12 +16,12 @@
 	}: CommandListProps = $props();
 
 	const listState = CommandListState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		ariaLabel: box.with(() => ariaLabel ?? "Suggestions..."),
+		ariaLabel: boxWith(() => ariaLabel ?? "Suggestions..."),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, listState.props));

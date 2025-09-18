@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuRootProps } from "../types.js";
 	import { NavigationMenuRootState } from "../navigation-menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -22,19 +22,19 @@
 	}: NavigationMenuRootProps = $props();
 
 	const rootState = NavigationMenuRootState.create({
-		id: box.with(() => id),
-		value: box.with(
+		id: boxWith(() => id),
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		delayDuration: box.with(() => delayDuration),
-		skipDelayDuration: box.with(() => skipDelayDuration),
-		dir: box.with(() => dir),
-		orientation: box.with(() => orientation),
-		ref: box.with(
+		delayDuration: boxWith(() => delayDuration),
+		skipDelayDuration: boxWith(() => skipDelayDuration),
+		dir: boxWith(() => dir),
+		orientation: boxWith(() => orientation),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

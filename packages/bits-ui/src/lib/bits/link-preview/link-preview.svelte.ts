@@ -5,7 +5,7 @@ import {
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
-	box,
+	boxWith,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
@@ -61,7 +61,7 @@ export class LinkPreviewRootState {
 		this.opts = opts;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);

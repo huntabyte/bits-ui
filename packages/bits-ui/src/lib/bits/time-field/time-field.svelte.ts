@@ -4,10 +4,10 @@ import {
 	onDestroyEffect,
 	attachRef,
 	type WritableBox,
-	box,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
@@ -204,7 +204,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		 */
 		this.value = props.value;
 		this.placeholder = rangeRoot ? rangeRoot.opts.placeholder : props.placeholder;
-		this.validate = rangeRoot ? box(undefined) : props.validate;
+		this.validate = rangeRoot ? simpleBox(undefined) : props.validate;
 		this.minValue = rangeRoot ? rangeRoot.opts.minValue : props.minValue;
 		this.maxValue = rangeRoot ? rangeRoot.opts.maxValue : props.maxValue;
 		this.disabled = rangeRoot ? rangeRoot.opts.disabled : props.disabled;

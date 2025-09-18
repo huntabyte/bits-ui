@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { CollapsibleContentState } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
 	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
@@ -17,9 +17,9 @@
 	}: CollapsibleContentProps = $props();
 
 	const contentState = CollapsibleContentState.create({
-		id: box.with(() => id),
-		forceMount: box.with(() => forceMount),
-		ref: box.with(
+		id: boxWith(() => id),
+		forceMount: boxWith(() => forceMount),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

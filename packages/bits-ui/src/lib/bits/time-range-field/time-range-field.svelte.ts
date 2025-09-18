@@ -1,6 +1,6 @@
 import type { Time } from "@internationalized/date";
 import {
-	box,
+	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
@@ -299,7 +299,7 @@ export class TimeRangeFieldInputState {
 				disabled: root.opts.disabled,
 				readonly: root.opts.readonly,
 				readonlySegments: root.opts.readonlySegments,
-				validate: box.with(() => undefined),
+				validate: boxWith(() => undefined),
 				minValue: root.opts.minValue,
 				maxValue: root.opts.maxValue,
 				hourCycle: root.opts.hourCycle,
@@ -310,7 +310,7 @@ export class TimeRangeFieldInputState {
 				placeholder: root.opts.placeholder,
 				onInvalid: root.opts.onInvalid,
 				errorMessageId: root.opts.errorMessageId,
-				isInvalidProp: box.with(() => root.isInvalid),
+				isInvalidProp: boxWith(() => root.isInvalid),
 			},
 			root
 		);

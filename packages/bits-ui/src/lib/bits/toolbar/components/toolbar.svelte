@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ToolbarRootProps } from "../types.js";
 	import { ToolbarRootState } from "../toolbar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -17,10 +17,10 @@
 	}: ToolbarRootProps = $props();
 
 	const rootState = ToolbarRootState.create({
-		id: box.with(() => id),
-		orientation: box.with(() => orientation),
-		loop: box.with(() => loop),
-		ref: box.with(
+		id: boxWith(() => id),
+		orientation: boxWith(() => orientation),
+		loop: boxWith(() => loop),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

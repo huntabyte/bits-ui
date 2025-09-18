@@ -1,4 +1,4 @@
-import { box, type WritableBox } from "svelte-toolbelt";
+import { simpleBox, type WritableBox } from "svelte-toolbelt";
 
 interface Machine<S> {
 	[k: string]: { [k: string]: S };
@@ -17,7 +17,7 @@ export class StateMachine<M> {
 	readonly #machine: M & Machine<MachineState<M>>;
 
 	constructor(initialState: MachineState<M>, machine: M & Machine<MachineState<M>>) {
-		this.state = box(initialState);
+		this.state = simpleBox(initialState);
 		this.#machine = machine;
 		this.dispatch = this.dispatch.bind(this);
 	}

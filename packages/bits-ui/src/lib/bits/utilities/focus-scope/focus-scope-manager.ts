@@ -1,9 +1,9 @@
-import { box } from "svelte-toolbelt";
+import { simpleBox } from "svelte-toolbelt";
 import { FocusScope } from "./focus-scope.svelte.js";
 
 export class FocusScopeManager {
 	static instance: FocusScopeManager;
-	#scopeStack = box<FocusScope[]>([]);
+	#scopeStack = simpleBox<FocusScope[]>([]);
 	#focusHistory = new WeakMap<FocusScope, HTMLElement>();
 	#preFocusHistory = new WeakMap<FocusScope, HTMLElement>();
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxGroupLabelProps } from "../types.js";
 	import { CheckboxGroupLabelState } from "../checkbox.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -15,8 +15,8 @@
 	}: CheckboxGroupLabelProps = $props();
 
 	const labelState = CheckboxGroupLabelState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

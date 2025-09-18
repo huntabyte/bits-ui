@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { LinkPreviewContentProps } from "../types.js";
 	import { LinkPreviewContentState } from "../link-preview.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -31,13 +31,13 @@
 	}: LinkPreviewContentProps = $props();
 
 	const contentState = LinkPreviewContentState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onInteractOutside: box.with(() => onInteractOutside),
-		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		onInteractOutside: boxWith(() => onInteractOutside),
+		onEscapeKeydown: boxWith(() => onEscapeKeydown),
 	});
 
 	const floatingProps = $derived({

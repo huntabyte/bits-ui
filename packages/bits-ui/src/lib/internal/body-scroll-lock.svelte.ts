@@ -1,5 +1,11 @@
 import { SvelteMap } from "svelte/reactivity";
-import { type Getter, type ReadableBox, afterTick, box, onDestroyEffect } from "svelte-toolbelt";
+import {
+	type Getter,
+	type ReadableBox,
+	afterTick,
+	boxWith,
+	onDestroyEffect,
+} from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isIOS } from "./is.js";
 import { useId } from "./use-id.js";
@@ -20,7 +26,7 @@ let stopTouchMoveListener: Fn | null = null;
 let cleanupTimeoutId: number | null = null;
 let isInCleanupTransition = false;
 
-const anyLocked = box.with(() => {
+const anyLocked = boxWith(() => {
 	for (const value of lockMap.values()) {
 		if (value) return true;
 	}
@@ -202,7 +208,7 @@ export class BodyScrollLock {
 
 		this.#countState.lockMap.set(this.#id, this.#initialState ?? false);
 
-		this.locked = box.with(
+		this.locked = boxWith(
 			() => this.#countState.lockMap.get(this.#id) ?? false,
 			(v) => this.#countState.lockMap.set(this.#id, v)
 		);

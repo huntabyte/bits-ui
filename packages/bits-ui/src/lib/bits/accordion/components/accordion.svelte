@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type WritableBox, box, mergeProps } from "svelte-toolbelt";
+	import { type WritableBox, boxWith, mergeProps } from "svelte-toolbelt";
 	import { AccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -39,7 +39,7 @@
 
 	const rootState = AccordionRootState.create({
 		type,
-		value: box.with(
+		value: boxWith(
 			() => value!,
 			(v) => {
 				value = v;
@@ -47,11 +47,11 @@
 				onValueChange(v as any);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
-		id: box.with(() => id),
-		disabled: box.with(() => disabled),
-		loop: box.with(() => loop),
-		orientation: box.with(() => orientation),
-		ref: box.with(
+		id: boxWith(() => id),
+		disabled: boxWith(() => disabled),
+		loop: boxWith(() => loop),
+		orientation: boxWith(() => orientation),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

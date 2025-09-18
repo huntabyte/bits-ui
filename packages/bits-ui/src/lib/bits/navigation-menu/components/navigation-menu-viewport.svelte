@@ -3,7 +3,7 @@
 	import { NavigationMenuViewportState } from "../navigation-menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { Mounted } from "$lib/bits/utilities/index.js";
 
 	const uid = $props.id();
@@ -18,8 +18,8 @@
 	}: NavigationMenuViewportProps = $props();
 
 	const viewportState = NavigationMenuViewportState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

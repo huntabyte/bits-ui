@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuIndicatorProps } from "../types.js";
 	import { NavigationMenuIndicatorState } from "../navigation-menu.svelte.js";
 	import NavigationMenuIndicatorImpl from "./navigation-menu-indicator-impl.svelte";
@@ -24,7 +24,7 @@
 
 {#if indicatorState.context.indicatorTrackRef.current}
 	<Portal to={indicatorState.context.indicatorTrackRef.current}>
-		<PresenceLayer open={forceMount || indicatorState.isVisible} ref={box.with(() => ref)}>
+		<PresenceLayer open={forceMount || indicatorState.isVisible} ref={boxWith(() => ref)}>
 			{#snippet presence()}
 				<NavigationMenuIndicatorImpl {...mergedProps} {children} {child} {id} bind:ref />
 			{/snippet}

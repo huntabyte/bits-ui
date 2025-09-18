@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { IsMounted } from "runed";
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { ScrollAreaScrollbarYState } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
 	import ScrollAreaScrollbarShared from "./scroll-area-scrollbar-shared.svelte";
@@ -10,7 +10,7 @@
 	const isMounted = new IsMounted();
 
 	const scrollbarYState = ScrollAreaScrollbarYState.create({
-		mounted: box.with(() => isMounted.current),
+		mounted: boxWith(() => isMounted.current),
 	});
 
 	// oxlint-disable-next-line no-explicit-any
