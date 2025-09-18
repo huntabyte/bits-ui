@@ -85,7 +85,7 @@ jobs:
 
             - name: Create or update bundle baseline PR
               if: steps.check-changes.outputs.changed == 'true'
-              uses: peter-evans/create-pull-request@915d841
+              uses: peter-evans/create-pull-request@915d841dae6a4f191bb78faf61a257411d7be4d2
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
                   branch: chore/update-bundle-baseline

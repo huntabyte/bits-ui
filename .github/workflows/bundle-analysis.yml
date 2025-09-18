@@ -79,7 +79,7 @@ jobs:
                     ./bundle-analysis-temp/target-report.json
 
             - name: Find existing comment
-              uses: peter-evans/find-comment@a723a15
+              uses: peter-evans/find-comment@915d841dae6a4f191bb78faf61a257411d7be4d2
               id: existing-comment
               with:
                   issue-number: ${{ github.event.pull_request.number }}
@@ -87,7 +87,7 @@ jobs:
                   body-includes: "## 📦 Bundle Size Analysis"
 
             - name: Update or create comment
-              uses: peter-evans/create-or-update-comment@be17e0c
+              uses: peter-evans/create-or-update-comment@be17e0c03de886b7aff3fb3224d28bfb6fc5d114
               with:
                   comment-id: ${{ steps.existing-comment.outputs.comment-id }}
                   issue-number: ${{ github.event.pull_request.number }}
