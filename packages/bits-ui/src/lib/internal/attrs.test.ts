@@ -9,10 +9,9 @@ import {
 	getAriaRequired,
 	getAriaSelected,
 	getAriaChecked,
-	getAriaOrientation,
 	getAriaHidden,
 	getAriaInvalid,
-	getDataOrientation,
+	getOrientation,
 	getDataInvalid,
 	getDataRequired,
 	getDataReadonly,
@@ -240,23 +239,13 @@ describe("Special case functions", () => {
 		});
 	});
 
-	describe("getAriaOrientation", () => {
+	describe("getOrientation", () => {
 		it("returns 'horizontal' when orientation is horizontal", () => {
-			expect(getAriaOrientation("horizontal")).toBe("horizontal");
+			expect(getOrientation("horizontal")).toBe("horizontal");
 		});
 
 		it("returns 'vertical' when orientation is vertical", () => {
-			expect(getAriaOrientation("vertical")).toBe("vertical");
-		});
-	});
-
-	describe("getDataOrientation", () => {
-		it("returns 'horizontal' when orientation is horizontal", () => {
-			expect(getDataOrientation("horizontal")).toBe("horizontal");
-		});
-
-		it("returns 'vertical' when orientation is vertical", () => {
-			expect(getDataOrientation("vertical")).toBe("vertical");
+			expect(getOrientation("vertical")).toBe("vertical");
 		});
 	});
 });

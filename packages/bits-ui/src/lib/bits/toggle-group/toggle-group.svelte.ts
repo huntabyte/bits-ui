@@ -10,7 +10,7 @@ import {
 	getAriaChecked,
 	getAriaPressed,
 	getDataDisabled,
-	getDataOrientation,
+	getOrientation,
 	getDisabled,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -61,7 +61,7 @@ abstract class ToggleGroupBaseState {
 				id: this.opts.id.current,
 				[toggleGroupAttrs.root]: "",
 				role: "group",
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				...this.attachment,
 			}) as const
@@ -235,7 +235,7 @@ export class ToggleGroupItemState {
 				id: this.opts.id.current,
 				role: this.root.isMulti ? undefined : "radio",
 				tabindex: this.#tabIndex,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": getToggleItemDataState(this.isPressed),
 				"data-value": this.opts.value.current,

@@ -10,7 +10,7 @@ import {
 	getAriaChecked,
 	getAriaPressed,
 	getDataDisabled,
-	getDataOrientation,
+	getOrientation,
 	getDisabled,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -92,7 +92,7 @@ abstract class ToolbarGroupBaseState {
 				id: this.opts.id.current,
 				[toolbarAttrs.group]: "",
 				role: "group",
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				...this.attachment,
 			}) as const
@@ -264,7 +264,7 @@ export class ToolbarGroupItemState {
 				id: this.opts.id.current,
 				role: this.group.isMulti ? undefined : "radio",
 				tabindex: this.#tabIndex,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": getToggleItemDataState(this.isPressed),
 				"data-value": this.opts.value.current,
@@ -324,7 +324,7 @@ export class ToolbarLinkState {
 				[toolbarAttrs.item]: "",
 				role: this.#role,
 				tabindex: this.#tabIndex,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				//
 				onkeydown: this.onkeydown,
 				...this.attachment,
@@ -379,7 +379,7 @@ export class ToolbarButtonState {
 				role: this.#role,
 				tabindex: this.#tabIndex,
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				disabled: getDisabled(this.opts.disabled.current),
 				//
 				onkeydown: this.onkeydown,

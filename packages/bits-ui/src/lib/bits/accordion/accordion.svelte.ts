@@ -17,7 +17,7 @@ import {
 	getAriaExpanded,
 	getDataDisabled,
 	getDataOpenClosed,
-	getDataOrientation,
+	getOrientation,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
@@ -112,7 +112,7 @@ abstract class AccordionBaseState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				[accordionAttrs.root]: "",
 				...this.attachment,
@@ -205,7 +205,7 @@ export class AccordionItemState {
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.isActive),
 				"data-disabled": getDataDisabled(this.isDisabled),
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				[accordionAttrs.item]: "",
 				...this.attachment,
 			}) as const
@@ -266,7 +266,7 @@ export class AccordionTriggerState {
 				"aria-disabled": getAriaDisabled(this.#isDisabled),
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"data-state": getDataOpenClosed(this.itemState.isActive),
-				"data-orientation": getDataOrientation(this.#root.opts.orientation.current),
+				"data-orientation": getOrientation(this.#root.opts.orientation.current),
 				[accordionAttrs.trigger]: "",
 				tabindex: 0,
 				onclick: this.onclick,
@@ -344,7 +344,7 @@ export class AccordionContentState {
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
 				"data-disabled": getDataDisabled(this.item.isDisabled),
-				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.item.root.opts.orientation.current),
 				[accordionAttrs.content]: "",
 				style: {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
@@ -378,7 +378,7 @@ export class AccordionHeaderState {
 				"aria-level": this.opts.level.current,
 				"data-heading-level": this.opts.level.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
-				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.item.root.opts.orientation.current),
 				[accordionAttrs.header]: "",
 				...this.attachment,
 			}) as const

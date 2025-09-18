@@ -1,3 +1,19 @@
+function boolToStr(): (condition: boolean) => "true" | "false" {
+	return (condition: boolean) => (condition ? "true" : "false");
+}
+
+function boolToTrueOrUndefined(): (condition: boolean) => "true" | undefined {
+	return (condition: boolean) => (condition ? "true" : undefined);
+}
+
+function boolToEmptyOrUndefined(): (condition: boolean) => "" | undefined {
+	return (condition: boolean) => (condition ? "" : undefined);
+}
+
+export function getOrientation(orientation: "horizontal" | "vertical"): "horizontal" | "vertical" {
+	return orientation;
+}
+
 export function getDataOpenClosed(condition: boolean): "open" | "closed" {
 	return condition ? "open" : "closed";
 }
@@ -6,29 +22,14 @@ export function getDataChecked(condition: boolean): "checked" | "unchecked" {
 	return condition ? "checked" : "unchecked";
 }
 
-export function getAriaDisabled(condition: boolean): "true" | "false" {
-	return condition ? "true" : "false";
-}
-
-export function getAriaReadonly(condition: boolean): "true" | "false" {
-	return condition ? "true" : "false";
-}
-
-export function getAriaExpanded(condition: boolean): "true" | "false" {
-	return condition ? "true" : "false";
-}
-
-export function getDataDisabled(condition: boolean): "" | undefined {
-	return condition ? "" : undefined;
-}
-
-export function getAriaRequired(condition: boolean): "true" | "false" {
-	return condition ? "true" : "false";
-}
-
-export function getAriaSelected(condition: boolean): "true" | "false" {
-	return condition ? "true" : "false";
-}
+export const getAriaDisabled = boolToStr();
+export const getAriaReadonly = boolToStr();
+export const getAriaExpanded = boolToStr();
+export const getAriaRequired = boolToStr();
+export const getAriaSelected = boolToStr();
+export const getAriaHidden = boolToTrueOrUndefined();
+export const getAriaInvalid = boolToTrueOrUndefined();
+export const getAriaPressed = boolToStr();
 
 export function getAriaChecked(
 	checked: boolean,
@@ -40,61 +41,16 @@ export function getAriaChecked(
 	return checked ? "true" : "false";
 }
 
-export function getAriaOrientation(
-	orientation: "horizontal" | "vertical"
-): "horizontal" | "vertical" {
-	return orientation;
-}
+export const getDataRequired = boolToEmptyOrUndefined();
+export const getDataInvalid = boolToEmptyOrUndefined();
+export const getDataReadonly = boolToEmptyOrUndefined();
+export const getDataSelected = boolToEmptyOrUndefined();
+export const getDataUnavailable = boolToEmptyOrUndefined();
+export const getDataDisabled = boolToEmptyOrUndefined();
 
-export function getAriaHidden(condition: boolean): "true" | undefined {
-	return condition ? "true" : undefined;
-}
-
-export function getAriaInvalid(condition: boolean): "true" | undefined {
-	return condition ? "true" : undefined;
-}
-
-export function getDataOrientation(
-	orientation: "horizontal" | "vertical"
-): "horizontal" | "vertical" {
-	return orientation;
-}
-
-export function getDataInvalid(condition: boolean): "" | undefined {
-	return condition ? "" : undefined;
-}
-
-export function getDataRequired(condition: boolean): "" | undefined {
-	return condition ? "" : undefined;
-}
-
-export function getDataReadonly(condition: boolean): "" | undefined {
-	return condition ? "" : undefined;
-}
-
-export function getDataSelected(condition: boolean): "" | undefined {
-	return condition ? "" : undefined;
-}
-
-export function getDataUnavailable(condition: boolean): "" | undefined {
-	return condition ? "" : undefined;
-}
-
-export function getHidden(condition: boolean): true | undefined {
-	return condition ? true : undefined;
-}
-
-export function getDisabled(condition: boolean): true | undefined {
-	return condition ? true : undefined;
-}
-
-export function getAriaPressed(condition: boolean): "true" | "false" {
-	return condition ? "true" : "false";
-}
-
-export function getRequired(condition: boolean): true | undefined {
-	return condition ? true : undefined;
-}
+export const getHidden = boolToTrueOrUndefined();
+export const getDisabled = boolToTrueOrUndefined();
+export const getRequired = boolToTrueOrUndefined();
 
 export type BitsAttrsConfig<T extends readonly string[]> = {
 	component: string;

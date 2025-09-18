@@ -25,7 +25,7 @@ import {
 	getAriaExpanded,
 	getDataDisabled,
 	getDataOpenClosed,
-	getDataOrientation,
+	getOrientation,
 } from "$lib/internal/attrs.js";
 import { noop } from "$lib/internal/noop.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
@@ -243,7 +243,7 @@ export class NavigationMenuRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				dir: this.opts.dir.current,
 				[navigationMenuAttrs.root]: "",
 				[navigationMenuAttrs.menu]: "",
@@ -305,7 +305,7 @@ export class NavigationMenuSubState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				[navigationMenuAttrs.sub]: "",
 				[navigationMenuAttrs.menu]: "",
 				...this.attachment,
@@ -365,7 +365,7 @@ export class NavigationMenuListState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": getOrientation(this.context.opts.orientation.current),
 				[navigationMenuAttrs.list]: "",
 				...this.attachment,
 			}) as const
@@ -772,7 +772,7 @@ export class NavigationMenuIndicatorImplState {
 			({
 				id: this.opts.id.current,
 				"data-state": this.isVisible ? "visible" : "hidden",
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": getOrientation(this.context.opts.orientation.current),
 				style: {
 					position: "absolute",
 					...(this.isHorizontal
@@ -1049,7 +1049,7 @@ export class NavigationMenuContentImplState {
 				id: this.opts.id.current,
 				"aria-labelledby": this.itemContext.triggerId,
 				"data-motion": this.motionAttribute ?? undefined,
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": getOrientation(this.context.opts.orientation.current),
 				"data-state": getDataOpenClosed(
 					this.context.opts.value.current === this.itemContext.opts.value.current
 				),
@@ -1128,7 +1128,7 @@ export class NavigationMenuViewportState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.open),
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": getOrientation(this.context.opts.orientation.current),
 				style: {
 					pointerEvents: !this.open && this.context.opts.isRootMenu ? "none" : undefined,
 					"--bits-navigation-menu-viewport-width": this.viewportWidth,

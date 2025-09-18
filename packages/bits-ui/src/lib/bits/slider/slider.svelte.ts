@@ -28,9 +28,8 @@ import {
 import {
 	createBitsAttrs,
 	getAriaDisabled,
-	getAriaOrientation,
 	getDataDisabled,
-	getDataOrientation,
+	getOrientation,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
@@ -155,7 +154,7 @@ abstract class SliderBaseRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
 				style: {
 					touchAction: this.#touchAction,
@@ -319,9 +318,9 @@ class SliderSingleRootState extends SliderBaseRootState {
 				"aria-valuemax": this.opts.max.current,
 				"aria-valuenow": thumbValue,
 				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-				"aria-orientation": getAriaOrientation(this.opts.orientation.current),
+				"aria-orientation": getOrientation(this.opts.orientation.current),
 				"data-value": thumbValue,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				style,
 				[sliderAttrs.thumb]: "",
 			} as const;
@@ -349,7 +348,7 @@ class SliderSingleRootState extends SliderBaseRootState {
 
 			return {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				"data-bounded": bounded ? "" : undefined,
 				"data-value": tickValue,
 				"data-selected": this.isTickValueSelected(tickValue) ? "" : undefined,
@@ -645,9 +644,9 @@ class SliderMultiRootState extends SliderBaseRootState {
 				"aria-valuemax": this.opts.max.current,
 				"aria-valuenow": thumbValue,
 				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-				"aria-orientation": getAriaOrientation(this.opts.orientation.current),
+				"aria-orientation": getOrientation(this.opts.orientation.current),
 				"data-value": thumbValue,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				style,
 				[sliderAttrs.thumb]: "",
 			} as const;
@@ -678,7 +677,7 @@ class SliderMultiRootState extends SliderBaseRootState {
 
 			return {
 				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				"data-bounded": bounded ? "" : undefined,
 				"data-value": tickValue,
 				style,
@@ -803,7 +802,7 @@ export class SliderRangeState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 				style: this.rangeStyles,
 				[sliderAttrs.range]: "",
@@ -1001,7 +1000,7 @@ export class SliderTickLabelState {
 
 		return {
 			id: this.opts.id.current,
-			"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+			"data-orientation": getOrientation(this.root.opts.orientation.current),
 			"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 			"data-bounded": tickProps["data-bounded"],
 			"data-value": tickValue,
@@ -1045,7 +1044,7 @@ export class SliderThumbLabelState {
 
 		return {
 			id: this.opts.id.current,
-			"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+			"data-orientation": getOrientation(this.root.opts.orientation.current),
 			"data-disabled": getDataDisabled(this.root.opts.disabled.current),
 			"data-value": thumbValue,
 			"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,

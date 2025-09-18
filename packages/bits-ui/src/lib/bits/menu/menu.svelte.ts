@@ -37,7 +37,7 @@ import {
 	getAriaChecked,
 	getAriaDisabled,
 	getAriaExpanded,
-	getAriaOrientation,
+	getOrientation,
 	getDataDisabled,
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
@@ -431,7 +431,7 @@ export class MenuContentState {
 			({
 				id: this.opts.id.current,
 				role: "menu",
-				"aria-orientation": getAriaOrientation("vertical"),
+				"aria-orientation": getOrientation("vertical"),
 				[this.parentMenu.root.getBitsAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				onkeydown: this.onkeydown,

@@ -4,10 +4,9 @@ import { Context, watch } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
 	createBitsAttrs,
-	getAriaOrientation,
 	getAriaSelected,
 	getDataDisabled,
-	getDataOrientation,
+	getOrientation,
 	getDisabled,
 	getHidden,
 } from "$lib/internal/attrs.js";
@@ -93,7 +92,7 @@ export class TabsRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": getOrientation(this.opts.orientation.current),
 				[tabsAttrs.root]: "",
 				...this.attachment,
 			}) as const
@@ -122,8 +121,8 @@ export class TabsListState {
 			({
 				id: this.opts.id.current,
 				role: "tablist",
-				"aria-orientation": getAriaOrientation(this.root.opts.orientation.current),
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"aria-orientation": getOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				[tabsAttrs.list]: "",
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				...this.attachment,
@@ -209,7 +208,7 @@ export class TabsTriggerState {
 				role: "tab",
 				"data-state": getTabDataState(this.#isActive),
 				"data-value": this.opts.value.current,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				"data-disabled": getDataDisabled(this.#isDisabled),
 				"aria-selected": getAriaSelected(this.#isActive),
 				"aria-controls": this.#ariaControls,
@@ -264,7 +263,7 @@ export class TabsContentState {
 				"data-value": this.opts.value.current,
 				"data-state": getTabDataState(this.#isActive),
 				"aria-labelledby": this.#ariaLabelledBy,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": getOrientation(this.root.opts.orientation.current),
 				[tabsAttrs.content]: "",
 				...this.attachment,
 			}) as const
