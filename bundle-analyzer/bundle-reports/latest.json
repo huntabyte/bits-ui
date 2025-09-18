@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-09-18T15:58:27.156Z",
+  "timestamp": "2025-09-18T21:33:15.747Z",
   "results": [
     {
       "component": "Accordion",
-      "size": 28301,
-      "gzipSize": 9381,
+      "size": 28323,
+      "gzipSize": 9429,
       "exports": [
         "Root",
         "Item",
@@ -15,8 +15,8 @@
     },
     {
       "component": "AlertDialog",
-      "size": 69672,
-      "gzipSize": 23719,
+      "size": 68640,
+      "gzipSize": 23355,
       "exports": [
         "Root",
         "Title",
@@ -31,16 +31,16 @@
     },
     {
       "component": "AspectRatio",
-      "size": 3201,
-      "gzipSize": 1501,
+      "size": 3198,
+      "gzipSize": 1502,
       "exports": [
         "Root"
       ]
     },
     {
       "component": "Avatar",
-      "size": 8677,
-      "gzipSize": 3186,
+      "size": 8666,
+      "gzipSize": 3185,
       "exports": [
         "Root",
         "Image",
@@ -57,8 +57,8 @@
     },
     {
       "component": "Calendar",
-      "size": 94649,
-      "gzipSize": 27038,
+      "size": 94565,
+      "gzipSize": 27073,
       "exports": [
         "Root",
         "Day",
@@ -78,8 +78,8 @@
     },
     {
       "component": "Checkbox",
-      "size": 17695,
-      "gzipSize": 5977,
+      "size": 17706,
+      "gzipSize": 6009,
       "exports": [
         "Root",
         "Group",
@@ -88,8 +88,8 @@
     },
     {
       "component": "Collapsible",
-      "size": 19506,
-      "gzipSize": 6721,
+      "size": 19603,
+      "gzipSize": 6770,
       "exports": [
         "Root",
         "Content",
@@ -98,8 +98,8 @@
     },
     {
       "component": "Combobox",
-      "size": 149682,
-      "gzipSize": 45164,
+      "size": 148738,
+      "gzipSize": 44814,
       "exports": [
         "Root",
         "Input",
@@ -119,8 +119,8 @@
     },
     {
       "component": "Command",
-      "size": 75077,
-      "gzipSize": 21753,
+      "size": 75011,
+      "gzipSize": 21791,
       "exports": [
         "Root",
         "Empty",
@@ -138,8 +138,8 @@
     },
     {
       "component": "ContextMenu",
-      "size": 183604,
-      "gzipSize": 56619,
+      "size": 182569,
+      "gzipSize": 56366,
       "exports": [
         "Root",
         "Sub",
@@ -163,8 +163,8 @@
     },
     {
       "component": "DateField",
-      "size": 84626,
-      "gzipSize": 22158,
+      "size": 84655,
+      "gzipSize": 22204,
       "exports": [
         "Root",
         "Input",
@@ -174,8 +174,8 @@
     },
     {
       "component": "DatePicker",
-      "size": 265177,
-      "gzipSize": 75802,
+      "size": 263966,
+      "gzipSize": 75462,
       "exports": [
         "Root",
         "Calendar",
@@ -205,8 +205,8 @@
     },
     {
       "component": "DateRangeField",
-      "size": 92813,
-      "gzipSize": 24408,
+      "size": 92835,
+      "gzipSize": 24453,
       "exports": [
         "Root",
         "Input",
@@ -216,8 +216,8 @@
     },
     {
       "component": "DateRangePicker",
-      "size": 275159,
-      "gzipSize": 77182,
+      "size": 273946,
+      "gzipSize": 76846,
       "exports": [
         "Root",
         "Calendar",
@@ -245,8 +245,8 @@
     },
     {
       "component": "Dialog",
-      "size": 67605,
-      "gzipSize": 23034,
+      "size": 66574,
+      "gzipSize": 22667,
       "exports": [
         "Root",
         "Title",
@@ -260,8 +260,8 @@
     },
     {
       "component": "DropdownMenu",
-      "size": 181353,
-      "gzipSize": 55956,
+      "size": 180312,
+      "gzipSize": 55699,
       "exports": [
         "Root",
         "Sub",
@@ -285,7 +285,7 @@
     },
     {
       "component": "Label",
-      "size": 2979,
+      "size": 2977,
       "gzipSize": 1379,
       "exports": [
         "Root"
@@ -293,8 +293,8 @@
     },
     {
       "component": "LinkPreview",
-      "size": 113964,
-      "gzipSize": 36638,
+      "size": 112960,
+      "gzipSize": 36273,
       "exports": [
         "Arrow",
         "Root",
@@ -306,8 +306,8 @@
     },
     {
       "component": "Menubar",
-      "size": 196648,
-      "gzipSize": 60798,
+      "size": 195585,
+      "gzipSize": 60538,
       "exports": [
         "Root",
         "Menu",
@@ -332,7 +332,7 @@
     },
     {
       "component": "Meter",
-      "size": 3278,
+      "size": 3273,
       "gzipSize": 1421,
       "exports": [
         "Root"
@@ -340,8 +340,8 @@
     },
     {
       "component": "NavigationMenu",
-      "size": 93265,
-      "gzipSize": 29771,
+      "size": 92345,
+      "gzipSize": 29513,
       "exports": [
         "Root",
         "Content",
@@ -356,8 +356,8 @@
     },
     {
       "component": "Pagination",
-      "size": 17715,
-      "gzipSize": 6123,
+      "size": 17689,
+      "gzipSize": 6117,
       "exports": [
         "Root",
         "PrevButton",
@@ -367,8 +367,8 @@
     },
     {
       "component": "PinInput",
-      "size": 23026,
-      "gzipSize": 7446,
+      "size": 23085,
+      "gzipSize": 7473,
       "exports": [
         "Root",
         "Cell"
@@ -376,8 +376,8 @@
     },
     {
       "component": "Popover",
-      "size": 103290,
-      "gzipSize": 33197,
+      "size": 102285,
+      "gzipSize": 32833,
       "exports": [
         "Root",
         "Arrow",
@@ -390,16 +390,16 @@
     },
     {
       "component": "Progress",
-      "size": 3702,
-      "gzipSize": 1541,
+      "size": 3697,
+      "gzipSize": 1542,
       "exports": [
         "Root"
       ]
     },
     {
       "component": "RadioGroup",
-      "size": 16938,
-      "gzipSize": 5760,
+      "size": 16956,
+      "gzipSize": 5799,
       "exports": [
         "Root",
         "Item"
@@ -407,8 +407,8 @@
     },
     {
       "component": "RangeCalendar",
-      "size": 103612,
-      "gzipSize": 28547,
+      "size": 103526,
+      "gzipSize": 28583,
       "exports": [
         "Root",
         "Day",
@@ -428,8 +428,8 @@
     },
     {
       "component": "RatingGroup",
-      "size": 18682,
-      "gzipSize": 5909,
+      "size": 18769,
+      "gzipSize": 5944,
       "exports": [
         "Root",
         "Item"
@@ -437,8 +437,8 @@
     },
     {
       "component": "ScrollArea",
-      "size": 53719,
-      "gzipSize": 15379,
+      "size": 52698,
+      "gzipSize": 15011,
       "exports": [
         "Root",
         "Viewport",
@@ -449,8 +449,8 @@
     },
     {
       "component": "Select",
-      "size": 152819,
-      "gzipSize": 45909,
+      "size": 151962,
+      "gzipSize": 45574,
       "exports": [
         "Root",
         "Content",
@@ -467,16 +467,16 @@
     },
     {
       "component": "Separator",
-      "size": 3529,
-      "gzipSize": 1516,
+      "size": 3519,
+      "gzipSize": 1533,
       "exports": [
         "Root"
       ]
     },
     {
       "component": "Slider",
-      "size": 47564,
-      "gzipSize": 11804,
+      "size": 47525,
+      "gzipSize": 11827,
       "exports": [
         "Root",
         "Range",
@@ -488,8 +488,8 @@
     },
     {
       "component": "Switch",
-      "size": 9876,
-      "gzipSize": 3707,
+      "size": 10005,
+      "gzipSize": 3763,
       "exports": [
         "Root",
         "Thumb"
@@ -497,8 +497,8 @@
     },
     {
       "component": "Tabs",
-      "size": 18270,
-      "gzipSize": 6096,
+      "size": 18296,
+      "gzipSize": 6129,
       "exports": [
         "Root",
         "Content",
@@ -508,8 +508,8 @@
     },
     {
       "component": "TimeField",
-      "size": 68561,
-      "gzipSize": 19421,
+      "size": 68592,
+      "gzipSize": 19464,
       "exports": [
         "Root",
         "Input",
@@ -519,8 +519,8 @@
     },
     {
       "component": "TimeRangeField",
-      "size": 79332,
-      "gzipSize": 22173,
+      "size": 79358,
+      "gzipSize": 22218,
       "exports": [
         "Root",
         "Input",
@@ -530,16 +530,16 @@
     },
     {
       "component": "Toggle",
-      "size": 4455,
-      "gzipSize": 1823,
+      "size": 4618,
+      "gzipSize": 1872,
       "exports": [
         "Root"
       ]
     },
     {
       "component": "ToggleGroup",
-      "size": 15253,
-      "gzipSize": 5085,
+      "size": 15397,
+      "gzipSize": 5134,
       "exports": [
         "Root",
         "Item"
@@ -547,8 +547,8 @@
     },
     {
       "component": "Toolbar",
-      "size": 21920,
-      "gzipSize": 6994,
+      "size": 22050,
+      "gzipSize": 7042,
       "exports": [
         "Root",
         "Button",
@@ -559,8 +559,8 @@
     },
     {
       "component": "Tooltip",
-      "size": 116347,
-      "gzipSize": 36874,
+      "size": 115372,
+      "gzipSize": 36513,
       "exports": [
         "Root",
         "Content",
