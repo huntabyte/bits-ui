@@ -41,8 +41,8 @@ jobs:
 
             - name: Save PR bundle report
               run: |
-                  mkdir -p ./bundle-analysis-temp
-                  cp ./bundle-analyzer/bundle-reports/latest.json ./bundle-analysis-temp/pr-report.json
+                  mkdir -p /tmp/bundle-analysis
+                  cp ./bundle-analyzer/bundle-reports/latest.json /tmp/bundle-analysis/pr-report.json
 
             - name: Checkout target branch
               run: |
@@ -54,7 +54,7 @@ jobs:
               run: |
                   if [ -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
                       echo "exists=true" >> $GITHUB_OUTPUT
-                      cp ./bundle-analyzer/bundle-reports/latest.json ./bundle-analysis-temp/target-report.json
+                      cp ./bundle-analyzer/bundle-reports/latest.json /tmp/bundle-analysis/target-report.json
                   else
                       echo "exists=false" >> $GITHUB_OUTPUT
                   fi
@@ -76,9 +76,9 @@ jobs:
               if: steps.check-target-bundle.outputs.exists == 'false'
               run: |
                   if [ -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
-                      cp ./bundle-analyzer/bundle-reports/latest.json ./bundle-analysis-temp/target-report.json
+                      cp ./bundle-analyzer/bundle-reports/latest.json /tmp/bundle-analysis/target-report.json
                   else
-                      echo '{"timestamp":"","results":[]}' > ./bundle-analysis-temp/target-report.json
+                      echo '{"timestamp":"","results":[]}' > /tmp/bundle-analysis/target-report.json
                   fi
 
             - name: Checkout PR again
@@ -88,8 +88,8 @@ jobs:
               id: bundle-comment
               run: |
                   node ./bundle-analyzer/generate-pr-comment.js \
-                    ./bundle-analysis-temp/pr-report.json \
-                    ./bundle-analysis-temp/target-report.json
+                    /tmp/bundle-analysis/pr-report.json \
+                    /tmp/bundle-analysis/target-report.json
 
             - name: Find existing comment
               uses: peter-evans/find-comment@a723a15ad60cf9419c01a6b8c9548ddd15e79531
@@ -104,5 +104,5 @@ jobs:
               with:
                   comment-id: ${{ steps.existing-comment.outputs.comment-id }}
                   issue-number: ${{ github.event.pull_request.number }}
-                  body-path: ./bundle-analysis-temp/comment.md
+                  body-path: /tmp/bundle-analysis/comment.md
                   edit-mode: replace
