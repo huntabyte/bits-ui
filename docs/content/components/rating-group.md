@@ -1,7 +1,6 @@
 ---
 title: Rating Group
 description: Allows users to provide ratings using customizable items (like stars).
-navLabel: Preview
 ---
 
 <script>
@@ -17,17 +16,11 @@ navLabel: Preview
 
 </ComponentPreview>
 
-<Callout type="warning">
-
-This component is currently in preview. The API may change before it is considered stable. You will know when it is stable because the component will be exported as `RatingGroup` instead of `unstable_RatingGroup`. Your feedback will be invaluable in shaping the final API.
-
-</Callout>
-
 ## Structure
 
 ```svelte
 <script lang="ts">
-  import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+  import { RatingGroup } from "bits-ui";
 </script>
 
 <RatingGroup.Root max={5}>
@@ -53,10 +46,7 @@ In the example below, we're creating a custom `MyRatingGroup` component that ren
 
 ```svelte title="MyRatingGroup.svelte"
 <script lang="ts">
-  import {
-    unstable_RatingGroup as RatingGroup,
-    type WithoutChildrenOrChild,
-  } from "bits-ui";
+  import { RatingGroup, type WithoutChildrenOrChild } from "bits-ui";
   import Star from "phosphor-svelte/lib/Star";
   import StarHalf from "phosphor-svelte/lib/StarHalf";
 
@@ -117,7 +107,7 @@ Use `bind:value` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-  import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+  import { RatingGroup } from "bits-ui";
   let myRating = $state(3);
 </script>
 
@@ -140,7 +130,7 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-  import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+  import { RatingGroup } from "bits-ui";
   let myRating = $state(0);
 
   function getValue() {
@@ -208,7 +198,7 @@ The rating group supports half ratings when you set the `allowHalf` prop to `tru
 </RatingGroup.Root>
 ```
 
-<ComponentPreview name="rating-group-demo-half-stars" componentName="Rating Group Half Stars">
+<ComponentPreview variant="collapsed" name="rating-group-demo-half-stars" componentName="Rating Group Half Stars">
 
 {#snippet preview()}
 <RatingGroupDemoHalfStars />
@@ -262,7 +252,7 @@ By default, the rating group shows a preview of the potential rating when hoveri
 
 When disabled, only the currently selected rating will be highlighted, and hovering over items won't show a preview of the potential selection.
 
-<ComponentPreview name="rating-group-demo-no-hover" componentName="Rating Group No Hover Preview">
+<ComponentPreview variant="collapsed" name="rating-group-demo-no-hover" componentName="Rating Group No Hover Preview">
 
 {#snippet preview()}
 <RatingGroupDemoNoHover />
@@ -290,7 +280,7 @@ The rating group automatically adapts to right-to-left (RTL) text direction. Sim
 
 In RTL mode, the arrow key navigation is automatically reversed to match the visual direction.
 
-<ComponentPreview name="rating-group-demo-rtl" componentName="Rating Group RTL">
+<ComponentPreview variant="collapsed" name="rating-group-demo-rtl" componentName="Rating Group RTL">
 
 {#snippet preview()}
 <RatingGroupDemoRtl />

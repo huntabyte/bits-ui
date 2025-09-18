@@ -76,7 +76,7 @@ You can set the `minDays` prop to limit the minimum number of days that must be 
 </RangeCalendar.Root>
 ```
 
-<ComponentPreview name="range-calendar-demo-min" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-min" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoMin />
@@ -94,7 +94,7 @@ You can set the `maxDays` prop to limit the maximum number of days that can be s
 </RangeCalendar.Root>
 ```
 
-<ComponentPreview name="range-calendar-demo-max" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-max" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoMax />
@@ -112,7 +112,7 @@ You can set both `minDays` and `maxDays` to limit the number of days that can be
 </RangeCalendar.Root>
 ```
 
-<ComponentPreview name="range-calendar-demo-min-max" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-min-max" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoMinMax />
@@ -133,7 +133,7 @@ You can set the `excludeDisabled` prop to automatically reset the range if any d
 </RangeCalendar.Root>
 ```
 
-<ComponentPreview name="range-calendar-demo-exclude-disabled" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-exclude-disabled" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoExcludeDisabled />
