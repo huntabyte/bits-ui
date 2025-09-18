@@ -33,11 +33,6 @@ function formatBytes(bytes) {
 	return (bytes / 1024).toFixed(2);
 }
 
-function formatPercent(percent) {
-	if (!isFinite(percent)) return "0.0";
-	return Math.abs(percent).toFixed(1);
-}
-
 function formatDiff(diff, showSign = true) {
 	const sign = showSign && diff > 0 ? "+" : "";
 	return `${sign}${formatBytes(diff)}`;
@@ -45,10 +40,6 @@ function formatDiff(diff, showSign = true) {
 
 function getStatusIcon(status, sizeDiff) {
 	switch (status) {
-		case "added":
-			return "✨";
-		case "removed":
-			return "❌";
 		case "changed":
 			return sizeDiff > 0 ? "📈" : sizeDiff < 0 ? "📉" : "➡️";
 		case "unchanged":
@@ -71,33 +62,7 @@ function analyzeBundleChanges(prReport, targetReport) {
 		const prResult = prMap.get(component);
 		const targetResult = targetMap.get(component);
 
-		if (!prResult && targetResult) {
-			changes.push({
-				component,
-				status: "removed",
-				sizeDiff: -targetResult.size,
-				gzipSizeDiff: -targetResult.gzipSize,
-				sizePercent: -100,
-				gzipSizePercent: -100,
-				currentSize: 0,
-				currentGzipSize: 0,
-				targetSize: targetResult.size,
-				targetGzipSize: targetResult.gzipSize,
-			});
-		} else if (prResult && !targetResult) {
-			changes.push({
-				component,
-				status: "added",
-				sizeDiff: prResult.size,
-				gzipSizeDiff: prResult.gzipSize,
-				sizePercent: Infinity,
-				gzipSizePercent: Infinity,
-				currentSize: prResult.size,
-				currentGzipSize: prResult.gzipSize,
-				targetSize: 0,
-				targetGzipSize: 0,
-			});
-		} else if (prResult && targetResult) {
+		if (prResult && targetResult) {
 			const sizeDiff = prResult.size - targetResult.size;
 			const gzipSizeDiff = prResult.gzipSize - targetResult.gzipSize;
 			const sizePercent = targetResult.size > 0 ? (sizeDiff / targetResult.size) * 100 : 0;
@@ -136,12 +101,12 @@ function generateComment(changes, hasBaseline = true) {
 
 		if (changes.length > 0) {
 			comment += "### 📊 Current Component Sizes\n\n";
-			comment += "| Component | Size | Gzipped |\n";
-			comment += "|-----------|------|----------|\n";
+			comment += "| Component | Size |\n";
+			comment += "|-----------|------|\n";
 
 			const sortedComponents = changes.sort((a, b) => a.component.localeCompare(b.component));
 			for (const comp of sortedComponents) {
-				comment += `| \`${comp.component}\` | ${formatBytes(comp.currentSize)} KB | ${formatBytes(comp.currentGzipSize)} KB |\n`;
+				comment += `| \`${comp.component}\` | ${formatBytes(comp.currentSize)} KB <sub>(${formatBytes(comp.currentGzipSize)} KB)</sub> |\n`;
 			}
 			comment += "\n";
 		}
@@ -154,66 +119,34 @@ function generateComment(changes, hasBaseline = true) {
 		return comment;
 	}
 
-	// Group changes by status
-	const addedComponents = changedComponents.filter((c) => c.status === "added");
-	const removedComponents = changedComponents.filter((c) => c.status === "removed");
 	const modifiedComponents = changedComponents.filter((c) => c.status === "changed");
-
-	if (addedComponents.length > 0) {
-		comment += "### ✨ New Components\n\n";
-		comment += "| Component | Size | Gzipped |\n";
-		comment += "|-----------|------|----------|\n";
-		for (const comp of addedComponents) {
-			comment += `| \`${comp.component}\` | +${formatBytes(comp.currentSize)} KB | +${formatBytes(comp.currentGzipSize)} KB |\n`;
-		}
-		comment += "\n";
-	}
-
-	if (removedComponents.length > 0) {
-		comment += "### ❌ Removed Components\n\n";
-		comment += "| Component | Size | Gzipped |\n";
-		comment += "|-----------|------|----------|\n";
-		for (const comp of removedComponents) {
-			comment += `| \`${comp.component}\` | -${formatBytes(comp.targetSize)} KB | -${formatBytes(comp.targetGzipSize)} KB |\n`;
-		}
-		comment += "\n";
-	}
 
 	if (modifiedComponents.length > 0) {
 		comment += "### 📊 Modified Components\n\n";
-		comment +=
-			"| Component | Current | New | Size Change | Curr. Gzip | New Gzip | Gzip Change | % Change |\n";
-		comment +=
-			"|-----------|---------|-----|-------------|-----------------|-------------|----------------|----------|\n";
+		comment += "| Component | Current | New | Change |\n";
+		comment += "|-----------|---------|-----|--------|\n";
 
 		for (const comp of modifiedComponents) {
 			const icon = getStatusIcon(comp.status, comp.sizeDiff);
-			const currentSize = `${formatBytes(comp.targetSize)} KB`;
-			const newSize = `${formatBytes(comp.currentSize)} KB`;
-			const sizeChange = `${formatDiff(comp.sizeDiff)} KB`;
-			const currentGzipped = `${formatBytes(comp.targetGzipSize)} KB`;
-			const newGzipped = `${formatBytes(comp.currentGzipSize)} KB`;
-			const gzipChange = `${formatDiff(comp.gzipSizeDiff)} KB`;
-			const percentChange =
-				comp.sizeDiff !== 0
-					? `${comp.sizeDiff > 0 ? "+" : ""}${formatPercent(comp.sizePercent)}%`
-					: "0.0%";
-
-			comment += `| ${icon} \`${comp.component}\` | ${currentSize} | ${newSize} | ${sizeChange} | ${currentGzipped} | ${newGzipped} | ${gzipChange} | ${percentChange} |\n`;
+			const currentSize = `${formatBytes(comp.targetSize)} KB <sub>(${formatBytes(comp.targetGzipSize)} KB)</sub>`;
+			const newSize = `${formatBytes(comp.currentSize)} KB <sub>(${formatBytes(comp.currentGzipSize)} KB)</sub>`;
+			const sizeChange = `${formatDiff(comp.sizeDiff)} KB <sub>(${formatDiff(comp.gzipSizeDiff)} KB)</sub>`;
+			comment += `| ${icon} \`${comp.component}\` | ${currentSize} | ${newSize} | ${sizeChange} |\n`;
 		}
 		comment += "\n";
 	}
 
-	// Add helpful context
 	comment += "---\n\n";
-	comment += "> [!NOTE]\n";
+	comment += "<details>\n";
+	comment += "<summary>📋 Understanding Bundle Analysis</summary>\n\n";
 	comment +=
-		"> **Individual Import Cost**: Each component is measured in isolation, including all its dependencies\n";
+		"- **Individual Import Cost**: Each component is measured in isolation, including all its dependencies\n";
 	comment +=
-		"> **Real-world Usage**: When multiple components are used together, shared dependencies are deduplicated thus the actual bundle size is smaller than the sum of the individual component sizes\n";
+		"- **Real-world Usage**: When multiple components are used together, shared dependencies are deduplicated thus the actual bundle size is smaller than the sum of the individual component sizes\n";
 	comment +=
-		"> **Thresholds**: Changes smaller than 0.01 KB or 0.1% are considered insignificant\n";
-	comment += "> **Gzipped Size**: Represents the compressed size served to users\n";
+		"- **Thresholds**: Changes smaller than 0.01 KB or 0.1% are considered insignificant\n";
+	comment += "- **Gzipped Size**: Represents the compressed size served to users\n\n";
+	comment += "</details>\n";
 
 	return comment;
 }
