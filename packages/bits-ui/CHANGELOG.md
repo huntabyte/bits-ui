@@ -1,5 +1,17 @@
 # bits-ui
 
+## 2.10.0
+
+### Minor Changes
+
+- feat(Rating Group): remove `unstable_` prefix. `RatingGroup` now considered stable. ([#1767](https://github.com/huntabyte/bits-ui/pull/1767))
+
+### Patch Changes
+
+- fix(Select): selected item should be in view on open ([#1765](https://github.com/huntabyte/bits-ui/pull/1765))
+
+- fix(Combobox): selected item should be in view on open ([#1765](https://github.com/huntabyte/bits-ui/pull/1765))
+
 ## 2.9.9
 
 ### Patch Changes
