@@ -106,7 +106,7 @@ function generateComment(changes, hasBaseline = true) {
 
 			const sortedComponents = changes.sort((a, b) => a.component.localeCompare(b.component));
 			for (const comp of sortedComponents) {
-				comment += `| \`${comp.component}\` | ${formatBytes(comp.currentSize)} KB <sub>(${formatBytes(comp.currentGzipSize)} KB)</sub> |\n`;
+				comment += `| \`${comp.component}\` | ${formatBytes(comp.currentSize)} KB <sub>gzipped: (${formatBytes(comp.currentGzipSize)} KB)</sub> |\n`;
 			}
 			comment += "\n";
 		}
@@ -128,9 +128,9 @@ function generateComment(changes, hasBaseline = true) {
 
 		for (const comp of modifiedComponents) {
 			const icon = getStatusIcon(comp.status, comp.sizeDiff);
-			const currentSize = `${formatBytes(comp.targetSize)} KB <sub>(${formatBytes(comp.targetGzipSize)} KB)</sub>`;
-			const newSize = `${formatBytes(comp.currentSize)} KB <sub>(${formatBytes(comp.currentGzipSize)} KB)</sub>`;
-			const sizeChange = `${formatDiff(comp.sizeDiff)} KB <sub>(${formatDiff(comp.gzipSizeDiff)} KB)</sub>`;
+			const currentSize = `${formatBytes(comp.targetSize)} KB <sub>gzipped: (${formatBytes(comp.targetGzipSize)} KB)</sub>`;
+			const newSize = `${formatBytes(comp.currentSize)} KB <sub>gzipped: (${formatBytes(comp.currentGzipSize)} KB)</sub>`;
+			const sizeChange = `${formatDiff(comp.sizeDiff)} KB <sub>gzipped: (${formatDiff(comp.gzipSizeDiff)} KB)</sub>`;
 			comment += `| ${icon} \`${comp.component}\` | ${currentSize} | ${newSize} | ${sizeChange} |\n`;
 		}
 		comment += "\n";
