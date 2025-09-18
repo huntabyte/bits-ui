@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"target": "ES2022",
+		"module": "Node16",
+		"moduleResolution": "Node16",
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"noUncheckedIndexedAccess": true,
+		"declaration": true,
+		"isolatedDeclarations": true,
+		"verbatimModuleSyntax": true,
+		"rewriteRelativeImportExtensions": true,
+		"noEmit": true
+	},
+	"include": ["bundle-analyzer.ts", "extract-components.ts"]
+}
