@@ -111,4 +111,3 @@ jobs:
                   author: "github-actions[bot] <action@github.com>"
                   committer: "github-actions[bot] <action@github.com>"
                   base: main
-                  push-to-fork: false
