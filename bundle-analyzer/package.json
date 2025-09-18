@@ -5,7 +5,8 @@
 	"private": true,
 	"scripts": {
 		"bundle:analyze": "tsx bundle-analyzer.ts",
-		"bundle:compare": "tsx bundle-analyzer.ts --compare"
+		"bundle:compare": "tsx bundle-analyzer.ts --compare",
+		"generate-comment": "node generate-pr-comment.js"
 	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "catalog:",
