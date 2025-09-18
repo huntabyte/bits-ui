@@ -15,7 +15,6 @@ jobs:
     bundle-analysis:
         name: Bundle Size Analysis
         runs-on: ubuntu-latest
-        if: github.event.pull_request.draft == false
 
         permissions:
             contents: read
@@ -37,46 +36,52 @@ jobs:
             - name: Build packages
               run: pnpm build:packages
 
-            - name: Run bundle analysis
+            - name: Run bundle analysis on PR
               run: pnpm bundle:analyze
 
-            - name: Save PR bundle report
+            - name: Create temp directory and save PR bundle report
               run: |
-                  mkdir -p ./bundle-analysis-temp
-                  cp ./bundle-analyzer/bundle-reports/latest.json ./bundle-analysis-temp/pr-report.json
+                  mkdir -p /tmp/bundle-analysis
+                  cp ./bundle-analyzer/bundle-reports/latest.json /tmp/bundle-analysis/pr-current.json
 
             - name: Checkout target branch
               run: |
                   git fetch origin ${{ github.base_ref }}
                   git checkout origin/${{ github.base_ref }}
 
-            - name: Install dependencies (target branch)
-              run: pnpm install --frozen-lockfile
-
-            - name: Build packages (target branch)
-              run: pnpm build:packages
-
-            - name: Run bundle analysis (target branch)
-              run: pnpm bundle:analyze
-              continue-on-error: true
-
-            - name: Save target branch bundle report
+            - name: Get target branch bundle report
+              id: check-target-bundle
               run: |
-                  if [ -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
-                      cp ./bundle-analyzer/bundle-reports/latest.json ./bundle-analysis-temp/target-report.json
+                  if git cat-file -e HEAD:bundle-analyzer/bundle-reports/latest.json 2>/dev/null; then
+                      echo "exists=true" >> $GITHUB_OUTPUT
+                      git show HEAD:bundle-analyzer/bundle-reports/latest.json > /tmp/bundle-analysis/target-baseline.json
                   else
-                      echo '{"timestamp":"","results":[]}' > ./bundle-analysis-temp/target-report.json
+                      echo "exists=false" >> $GITHUB_OUTPUT
                   fi
 
-            - name: Checkout PR again
+            - name: Checkout PR branch
               run: git checkout ${{ github.head_ref }}
+
+            - name: Generate target baseline if missing
+              if: steps.check-target-bundle.outputs.exists == 'false'
+              run: |
+                  git checkout origin/${{ github.base_ref }}
+                  pnpm install --frozen-lockfile
+                  pnpm build:packages
+                  pnpm bundle:analyze || echo "Bundle analysis failed"
+                  if [ -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
+                      cp ./bundle-analyzer/bundle-reports/latest.json /tmp/bundle-analysis/target-baseline.json
+                  else
+                      echo '{"timestamp":"","results":[]}' > /tmp/bundle-analysis/target-baseline.json
+                  fi
+                  git checkout ${{ github.head_ref }}
 
             - name: Generate bundle comparison comment
               id: bundle-comment
               run: |
                   node ./bundle-analyzer/generate-pr-comment.js \
-                    ./bundle-analysis-temp/pr-report.json \
-                    ./bundle-analysis-temp/target-report.json
+                    /tmp/bundle-analysis/pr-current.json \
+                    /tmp/bundle-analysis/target-baseline.json
 
             - name: Find existing comment
               uses: peter-evans/find-comment@a723a15ad60cf9419c01a6b8c9548ddd15e79531
@@ -91,5 +96,5 @@ jobs:
               with:
                   comment-id: ${{ steps.existing-comment.outputs.comment-id }}
                   issue-number: ${{ github.event.pull_request.number }}
-                  body-path: ./bundle-analysis-temp/comment.md
+                  body-path: /tmp/bundle-analysis/comment.md
                   edit-mode: replace
