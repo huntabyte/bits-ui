@@ -79,7 +79,7 @@ jobs:
                     ./bundle-analysis-temp/target-report.json
 
             - name: Find existing comment
-              uses: peter-evans/find-comment@915d841dae6a4f191bb78faf61a257411d7be4d2
+              uses: peter-evans/find-comment@a723a15ad60cf9419c01a6b8c9548ddd15e79531
               id: existing-comment
               with:
                   issue-number: ${{ github.event.pull_request.number }}
