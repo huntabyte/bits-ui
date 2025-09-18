@@ -154,14 +154,6 @@ function generateComment(changes, hasBaseline = true) {
 		return comment;
 	}
 
-	// Summary stats
-	const totalSizeDiff = changedComponents.reduce((sum, c) => sum + c.sizeDiff, 0);
-	const totalGzipDiff = changedComponents.reduce((sum, c) => sum + c.gzipSizeDiff, 0);
-
-	const summaryIcon = totalSizeDiff > 0 ? "📈" : totalSizeDiff < 0 ? "📉" : "➡️";
-	comment += `### ${summaryIcon} Summary\n\n`;
-	comment += `**Total bundle size change**: ${formatDiff(totalSizeDiff)} KB (${formatDiff(totalGzipDiff)} KB gzipped)\n\n`;
-
 	// Group changes by status
 	const addedComponents = changedComponents.filter((c) => c.status === "added");
 	const removedComponents = changedComponents.filter((c) => c.status === "removed");
@@ -208,16 +200,14 @@ function generateComment(changes, hasBaseline = true) {
 
 	// Add helpful context
 	comment += "---\n\n";
-	comment += "<details>\n";
-	comment += "<summary>📋 Understanding Bundle Analysis</summary>\n\n";
+	comment += "> [!NOTE]\n";
 	comment +=
-		"- **Individual Import Cost**: Each component is measured in isolation, including all its dependencies\n";
+		"> **Individual Import Cost**: Each component is measured in isolation, including all its dependencies\n";
 	comment +=
-		"- **Real-world Usage**: When multiple components are used together, shared dependencies are deduplicated thus the actual bundle size is smaller than the sum of the individual component sizes\n";
+		"> **Real-world Usage**: When multiple components are used together, shared dependencies are deduplicated thus the actual bundle size is smaller than the sum of the individual component sizes\n";
 	comment +=
-		"- **Thresholds**: Changes smaller than 0.01 KB or 0.1% are considered insignificant\n";
-	comment += "- **Gzipped Size**: Represents the compressed size served to users\n\n";
-	comment += "</details>\n";
+		"> **Thresholds**: Changes smaller than 0.01 KB or 0.1% are considered insignificant\n";
+	comment += "> **Gzipped Size**: Represents the compressed size served to users\n";
 
 	return comment;
 }

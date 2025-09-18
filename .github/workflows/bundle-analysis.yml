@@ -56,7 +56,17 @@ jobs:
             - name: Build packages (target branch)
               run: pnpm build:packages
 
+            - name: Check if target branch has bundle report
+              id: check-target-bundle
+              run: |
+                  if [ -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
+                      echo "exists=true" >> $GITHUB_OUTPUT
+                  else
+                      echo "exists=false" >> $GITHUB_OUTPUT
+                  fi
+
             - name: Run bundle analysis (target branch)
+              if: steps.check-target-bundle.outputs.exists == 'false'
               run: pnpm bundle:analyze
               continue-on-error: true
 
