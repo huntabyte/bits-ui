@@ -178,8 +178,6 @@ describe("combobox - single", () => {
 		await openSingle();
 		await expect.element(page.getByTestId("input")).toHaveFocus();
 		await expect.element(page.getByTestId("content")).toBeVisible();
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 
 		await expect.element(page.getByTestId("2")).toHaveAttribute("data-highlighted");
@@ -290,8 +288,6 @@ describe("combobox - single", () => {
 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -322,7 +318,6 @@ describe("combobox - single", () => {
 
 		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item2);
@@ -350,7 +345,6 @@ describe("combobox - single", () => {
 		const item3 = t.getByTestId("3");
 		const item4 = t.getByTestId("4");
 
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -407,8 +401,6 @@ describe("combobox - single", () => {
 		const item3 = t.getByTestId("3");
 		const item4 = t.getByTestId("4");
 		await expectHighlighted(item1);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item2);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -424,7 +416,6 @@ describe("combobox - single", () => {
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectExists(t.getContent());
 		await expectHighlighted(item1);
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item2);
 	});
@@ -501,8 +492,6 @@ describe("combobox - multiple", () => {
 
 	it("should select item with the enter key", async () => {
 		const t = await openMultiple();
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
 		await expect.element(t.input).toHaveValue("B");
@@ -626,8 +615,6 @@ describe("combobox - multiple", () => {
 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -657,8 +644,6 @@ describe("combobox - multiple", () => {
 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -684,8 +669,6 @@ describe("combobox - multiple", () => {
 		const t = await openMultiple({}, kbd.ARROW_DOWN);
 		const [item1, item2, item3, item4] = getItems(t.getByTestId);
 
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -704,8 +687,6 @@ describe("combobox - multiple", () => {
 
 		const [item0, item1, item2, item3] = getItems(t.getByTestId);
 
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);

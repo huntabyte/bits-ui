@@ -169,7 +169,6 @@ describe("select - single", () => {
 		const t = await openSingle();
 		(t.trigger.element() as HTMLElement).focus();
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
 		await expect.element(t.trigger).toHaveTextContent("A");
 	});
@@ -178,7 +177,6 @@ describe("select - single", () => {
 		const t = await openSingle();
 		(t.trigger.element() as HTMLElement).focus();
 		await expect.element(t.trigger).toHaveAttribute("data-placeholder");
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
 		await expect.element(t.trigger).toHaveTextContent("A");
@@ -279,8 +277,6 @@ describe("select - single", () => {
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -306,8 +302,6 @@ describe("select - single", () => {
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -340,8 +334,6 @@ describe("select - single", () => {
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -379,8 +371,6 @@ describe("select - single", () => {
 	it("should select empty string value in loop navigation", async () => {
 		const t = await openSingle({ loop: true });
 		(t.trigger.element() as HTMLElement).focus();
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN); // to "1"
 		await userEvent.keyboard(kbd.ARROW_DOWN); // to "1"
 		await userEvent.keyboard(kbd.ARROW_DOWN); // to "2"
 		await userEvent.keyboard(kbd.ARROW_DOWN); // to "3"
@@ -396,7 +386,6 @@ describe("select - single", () => {
 		(t.trigger.element() as HTMLElement).focus();
 		// First select a non-empty value
 		await userEvent.keyboard(kbd.ARROW_DOWN); // to "1"
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
 		await expect.element(t.valueBinding).not.toHaveTextContent("empty");
 
@@ -461,8 +450,6 @@ describe("select - single", () => {
 
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -481,7 +468,6 @@ describe("select - single", () => {
 		await expectExists(t.getContent());
 		const [i0, i1] = getItems(page.getByTestId);
 		await expectHighlighted(i0);
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(i1);
 	});
@@ -590,7 +576,6 @@ describe("select - multiple", () => {
 		});
 		(t.trigger.element() as HTMLElement).focus();
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		mockFn.mockClear();
 		await userEvent.keyboard(kbd.ENTER);
 		expect(mockFn).toHaveBeenCalledWith("A");
@@ -603,7 +588,6 @@ describe("select - multiple", () => {
 		});
 		(t.trigger.element() as HTMLElement).focus();
 		await expect.element(t.trigger).toHaveAttribute("data-placeholder");
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		mockFn.mockClear();
 		await userEvent.keyboard(kbd.ENTER);
@@ -715,8 +699,6 @@ describe("select - multiple", () => {
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -744,8 +726,6 @@ describe("select - multiple", () => {
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -777,8 +757,6 @@ describe("select - multiple", () => {
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -800,8 +778,6 @@ describe("select - multiple", () => {
 
 		const [item0, item1, item2, item3, item4] = getItems(page.getByTestId);
 
-		// TODO: figure out why we need to do this twice for it to register properly?
-		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
