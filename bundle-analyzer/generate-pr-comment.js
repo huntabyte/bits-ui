@@ -59,8 +59,6 @@ function getStatusIcon(status, sizeDiff) {
 }
 
 function analyzeBundleChanges(prReport, targetReport) {
-	console.log("PR Report", prReport);
-	console.log("Target Report", targetReport);
 	/** @type {ComponentDiff[]} */
 	const changes = [];
 
