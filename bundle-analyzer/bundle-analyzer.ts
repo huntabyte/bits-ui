@@ -33,6 +33,36 @@ interface BundleReport {
 	};
 }
 
+// rollup-plugin-visualizer data structures
+interface VisualizerTreeNode {
+	name: string;
+	uid?: string;
+	children?: VisualizerTreeNode[];
+}
+
+interface VisualizerNodePart {
+	renderedLength: number;
+	gzipLength: number;
+	brotliLength: number;
+	metaUid: string;
+}
+
+interface VisualizerStats {
+	version: number;
+	tree: VisualizerTreeNode;
+	nodeParts: Record<string, VisualizerNodePart>;
+}
+
+interface EnrichedModule {
+	name: string;
+	uid: string;
+	path: string;
+	id: string;
+	renderedLength: number;
+	gzipLength: number;
+	brotliLength: number;
+}
+
 // component definitions - extracted from the actual exports
 const COMPONENTS: ComponentInfo[] = [
 	{
@@ -145,7 +175,7 @@ class BundleAnalyzer {
 
 	constructor() {
 		this.tempDir = resolve(__dirname, ".temp-bundle-analysis");
-		this.outputDir = resolve(__dirname, "../bundle-reports");
+		this.outputDir = resolve(__dirname, "./bundle-reports");
 	}
 
 	async analyze(components?: string[]): Promise<BundleReport> {
@@ -307,13 +337,13 @@ export const allExports = [
 		}
 
 		try {
-			const stats = JSON.parse(readFileSync(statsPath, "utf-8"));
+			const stats: VisualizerStats = JSON.parse(readFileSync(statsPath, "utf-8"));
 
 			// Extract all modules from the tree structure
-			const allModules = this.extractModulesFromTree(stats.tree || stats);
+			const allModules = this.extractModulesFromTree(stats.tree);
 
 			// Add size information from nodeParts
-			const enrichedModules = this.enrichModulesWithSizes(allModules, stats.nodeParts || {});
+			const enrichedModules = this.enrichModulesWithSizes(allModules, stats.nodeParts);
 
 			// Filter to keep only the specific component code
 			const componentModules = this.filterComponentModules(enrichedModules, componentName);
@@ -340,18 +370,23 @@ export const allExports = [
 		}
 	}
 
-	private extractModulesFromTree(node: any): any[] {
-		const modules: any[] = [];
+	private extractModulesFromTree(node: VisualizerTreeNode): EnrichedModule[] {
+		const modules: EnrichedModule[] = [];
 
-		const traverse = (n: any, path: string = "") => {
+		const traverse = (n: VisualizerTreeNode, path: string = "") => {
 			const currentPath = path ? `${path}/${n.name}` : n.name;
 
 			// If node has uid, it's a leaf module
 			if (n.uid) {
 				modules.push({
-					...n,
+					name: n.name,
+					uid: n.uid,
 					path: currentPath,
 					id: currentPath,
+					// enriched later
+					renderedLength: 0,
+					gzipLength: 0,
+					brotliLength: 0,
 				});
 			}
 
@@ -367,21 +402,30 @@ export const allExports = [
 		return modules;
 	}
 
-	private enrichModulesWithSizes(modules: any[], nodeParts: any): any[] {
+	private enrichModulesWithSizes(
+		modules: EnrichedModule[],
+		nodeParts: Record<string, VisualizerNodePart>
+	): EnrichedModule[] {
 		return modules.map((module) => {
-			const sizeInfo = nodeParts[module.uid] || {};
-			return {
-				...module,
-				renderedLength: sizeInfo.renderedLength || 0,
-				gzipLength: sizeInfo.gzipLength || 0,
-				brotliLength: sizeInfo.brotliLength || 0,
-			};
+			const sizeInfo = nodeParts[module.uid];
+			if (sizeInfo) {
+				return {
+					...module,
+					renderedLength: sizeInfo.renderedLength,
+					gzipLength: sizeInfo.gzipLength,
+					brotliLength: sizeInfo.brotliLength,
+				};
+			}
+			return module;
 		});
 	}
 
-	private filterComponentModules(modules: any[], componentName: string): any[] {
+	private filterComponentModules(
+		modules: EnrichedModule[],
+		_componentName: string
+	): EnrichedModule[] {
 		// Keep ONLY modules from packages/bits-ui/dist (component + shared internals)
-		return modules.filter((module: any) => {
+		return modules.filter((module) => {
 			const path = module.path || module.id || "";
 			const name = module.name || "";
 
