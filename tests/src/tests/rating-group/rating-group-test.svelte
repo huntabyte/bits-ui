@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+	import { RatingGroup } from "bits-ui";
 
 	export type RatingGroupTestProps = Omit<RatingGroup.RootProps, "child" | "children">;
 </script>
