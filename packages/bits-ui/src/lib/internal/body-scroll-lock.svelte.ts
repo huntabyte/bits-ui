@@ -2,11 +2,11 @@ import { SvelteMap } from "svelte/reactivity";
 import { type Getter, type ReadableBox, afterTick, box, onDestroyEffect } from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isIOS } from "./is.js";
-import { addEventListener } from "./events.js";
 import { useId } from "./use-id.js";
 import { watch } from "runed";
 import { SharedState } from "./shared-state.svelte.js";
 import { BROWSER } from "esm-env";
+import { on } from "svelte/events";
 
 export interface ScrollBodyOption {
 	padding?: boolean | number;
@@ -126,7 +126,7 @@ const bodyLockStackCount = new SharedState(() => {
 
 			if (isIOS) {
 				// IOS devices are special and require a touchmove listener to prevent scrolling
-				stopTouchMoveListener = addEventListener(
+				stopTouchMoveListener = on(
 					document,
 					"touchmove",
 					(e) => {

@@ -2,8 +2,12 @@ function boolToStr(): (condition: boolean) => "true" | "false" {
 	return (condition: boolean) => (condition ? "true" : "false");
 }
 
-function boolToTrueOrUndefined(): (condition: boolean) => "true" | undefined {
+function boolToStringTrueOrUndefined(): (condition: boolean) => "true" | undefined {
 	return (condition: boolean) => (condition ? "true" : undefined);
+}
+
+function boolToTrueOrUndefined(): (condition: boolean) => true | undefined {
+	return (condition: boolean) => (condition ? true : undefined);
 }
 
 function boolToEmptyOrUndefined(): (condition: boolean) => "" | undefined {
@@ -27,8 +31,8 @@ export const getAriaReadonly = boolToStr();
 export const getAriaExpanded = boolToStr();
 export const getAriaRequired = boolToStr();
 export const getAriaSelected = boolToStr();
-export const getAriaHidden = boolToTrueOrUndefined();
-export const getAriaInvalid = boolToTrueOrUndefined();
+export const getAriaHidden = boolToStringTrueOrUndefined();
+export const getAriaInvalid = boolToStringTrueOrUndefined();
 export const getAriaPressed = boolToStr();
 
 export function getAriaChecked(
