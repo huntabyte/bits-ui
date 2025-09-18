@@ -182,9 +182,9 @@ function generateComment(changes, hasBaseline = true) {
 	if (modifiedComponents.length > 0) {
 		comment += "### 📊 Modified Components\n\n";
 		comment +=
-			"| Component | Current Size | New Size | Size Change | Current Gzipped | New Gzipped | Gzipped Change | % Change |\n";
+			"| Component | Current | New | Size Change | Curr. Gzip | New Gzip | Gzip Change | % Change |\n";
 		comment +=
-			"|-----------|--------------|----------|-------------|-----------------|-------------|----------------|----------|\n";
+			"|-----------|---------|-----|-------------|-----------------|-------------|----------------|----------|\n";
 
 		for (const comp of modifiedComponents) {
 			const icon = getStatusIcon(comp.status, comp.sizeDiff);
