@@ -181,19 +181,25 @@ function generateComment(changes, hasBaseline = true) {
 
 	if (modifiedComponents.length > 0) {
 		comment += "### 📊 Modified Components\n\n";
-		comment += "| Component | Size Change | Gzipped Change | % Change |\n";
-		comment += "|-----------|-------------|----------------|----------|\n";
+		comment +=
+			"| Component | Current Size | New Size | Size Change | Current Gzipped | New Gzipped | Gzipped Change | % Change |\n";
+		comment +=
+			"|-----------|--------------|----------|-------------|-----------------|-------------|----------------|----------|\n";
 
 		for (const comp of modifiedComponents) {
 			const icon = getStatusIcon(comp.status, comp.sizeDiff);
+			const currentSize = `${formatBytes(comp.targetSize)} KB`;
+			const newSize = `${formatBytes(comp.currentSize)} KB`;
 			const sizeChange = `${formatDiff(comp.sizeDiff)} KB`;
+			const currentGzipped = `${formatBytes(comp.targetGzipSize)} KB`;
+			const newGzipped = `${formatBytes(comp.currentGzipSize)} KB`;
 			const gzipChange = `${formatDiff(comp.gzipSizeDiff)} KB`;
 			const percentChange =
 				comp.sizeDiff !== 0
 					? `${comp.sizeDiff > 0 ? "+" : ""}${formatPercent(comp.sizePercent)}%`
 					: "0.0%";
 
-			comment += `| ${icon} \`${comp.component}\` | ${sizeChange} | ${gzipChange} | ${percentChange} |\n`;
+			comment += `| ${icon} \`${comp.component}\` | ${currentSize} | ${newSize} | ${sizeChange} | ${currentGzipped} | ${newGzipped} | ${gzipChange} | ${percentChange} |\n`;
 		}
 		comment += "\n";
 	}
