@@ -37,16 +37,29 @@ jobs:
             - name: Run bundle analysis
               run: pnpm bundle:analyze
 
-            - name: Check if latest.json changed
+            - name: Check if latest.json needs PR
               id: check-changes
               run: |
-                  if [ -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
+                  # Check if latest.json was generated
+                  if [ ! -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
+                      echo "No latest.json generated - skipping PR"
+                      echo "changed=false" >> $GITHUB_OUTPUT
+                      exit 0
+                  fi
+
+                  # Check if latest.json exists in git (committed)
+                  if git cat-file -e HEAD:bundle-analyzer/bundle-reports/latest.json 2>/dev/null; then
+                      # File exists in git, check if it changed
                       if git diff --quiet HEAD -- ./bundle-analyzer/bundle-reports/latest.json; then
+                          echo "No changes to latest.json - skipping PR"
                           echo "changed=false" >> $GITHUB_OUTPUT
                       else
+                          echo "latest.json changed - creating/updating PR"
                           echo "changed=true" >> $GITHUB_OUTPUT
                       fi
                   else
+                      # File doesn't exist in git yet (first time) - create PR
+                      echo "First time creating latest.json - creating PR"
                       echo "changed=true" >> $GITHUB_OUTPUT
                   fi
 
