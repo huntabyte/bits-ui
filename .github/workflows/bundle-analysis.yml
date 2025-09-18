@@ -49,12 +49,6 @@ jobs:
                   git fetch origin ${{ github.base_ref }}
                   git checkout origin/${{ github.base_ref }}
 
-            - name: Install dependencies (target branch)
-              run: pnpm install --frozen-lockfile
-
-            - name: Build packages (target branch)
-              run: pnpm build:packages
-
             - name: Check if target branch has bundle report
               id: check-target-bundle
               run: |
@@ -64,6 +58,14 @@ jobs:
                   else
                       echo "exists=false" >> $GITHUB_OUTPUT
                   fi
+
+            - name: Install dependencies (target branch)
+              if: steps.check-target-bundle.outputs.exists == 'false'
+              run: pnpm install --frozen-lockfile
+
+            - name: Build packages (target branch)
+              if: steps.check-target-bundle.outputs.exists == 'false'
+              run: pnpm build:packages
 
             - name: Run bundle analysis (target branch)
               if: steps.check-target-bundle.outputs.exists == 'false'
