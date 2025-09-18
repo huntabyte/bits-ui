@@ -2,6 +2,7 @@
 
 import { build } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { visualizer } from "rollup-plugin-visualizer";
 import { resolve, join } from "node:path";
 import { writeFileSync, readFileSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -247,10 +248,18 @@ export const allExports = [
 		componentName: string
 	): Promise<{ size: number; gzipSize: number }> {
 		const outputPath = join(this.tempDir, `dist-${componentName}`);
+		const statsPath = join(outputPath, "stats.json");
 
 		try {
 			await build({
-				plugins: [svelte()],
+				plugins: [
+					svelte(),
+					visualizer({
+						filename: statsPath,
+						template: "raw-data",
+						gzipSize: true,
+					}),
+				],
 				build: {
 					lib: {
 						entry: entryPath,
@@ -278,24 +287,128 @@ export const allExports = [
 				},
 			});
 
-			// read the generated bundle file
-			const bundlePath = join(outputPath, "bundle.js");
-			if (!existsSync(bundlePath)) {
-				throw new Error(`Bundle file not found at ${bundlePath}`);
-			}
-
-			const bundleContent = readFileSync(bundlePath, "utf-8");
-			const size = Buffer.byteLength(bundleContent, "utf-8");
-
-			// calculate actual gzip size
-			const gzipBuffer = gzipSync(bundleContent);
-			const gzipSize = gzipBuffer.length;
+			// analyze bundle composition using visualizer data
+			const { size, gzipSize } = this.analyzeBundleComposition(statsPath, componentName);
 
 			return { size, gzipSize };
 		} catch (error) {
 			console.error(`Failed to build ${componentName}:`, error);
 			return { size: 0, gzipSize: 0 };
 		}
+	}
+
+	private analyzeBundleComposition(
+		statsPath: string,
+		componentName: string
+	): { size: number; gzipSize: number } {
+		if (!existsSync(statsPath)) {
+			console.warn(`Stats file not found for ${componentName}, falling back to bundle file`);
+			return this.fallbackBundleSize(componentName);
+		}
+
+		try {
+			const stats = JSON.parse(readFileSync(statsPath, "utf-8"));
+
+			// Extract all modules from the tree structure
+			const allModules = this.extractModulesFromTree(stats.tree || stats);
+
+			// Add size information from nodeParts
+			const enrichedModules = this.enrichModulesWithSizes(allModules, stats.nodeParts || {});
+
+			// Filter to keep only the specific component code
+			const componentModules = this.filterComponentModules(enrichedModules, componentName);
+
+			let totalSize = 0;
+			let totalGzipSize = 0;
+
+			for (const module of componentModules) {
+				totalSize += module.renderedLength || 0;
+				totalGzipSize += module.gzipLength || 0;
+			}
+
+			console.log(
+				`📊 ${componentName} - Component code: ${totalSize} bytes (${totalGzipSize} gzipped)`
+			);
+			console.log(
+				`   Filtered out ${enrichedModules.length - componentModules.length} Svelte runtime modules`
+			);
+
+			return { size: totalSize, gzipSize: totalGzipSize };
+		} catch (error) {
+			console.error(`Failed to analyze bundle composition for ${componentName}:`, error);
+			return this.fallbackBundleSize(componentName);
+		}
+	}
+
+	private extractModulesFromTree(node: any): any[] {
+		const modules: any[] = [];
+
+		const traverse = (n: any, path: string = "") => {
+			const currentPath = path ? `${path}/${n.name}` : n.name;
+
+			// If node has uid, it's a leaf module
+			if (n.uid) {
+				modules.push({
+					...n,
+					path: currentPath,
+					id: currentPath,
+				});
+			}
+
+			// Recursively traverse children
+			if (n.children && Array.isArray(n.children)) {
+				for (const child of n.children) {
+					traverse(child, currentPath);
+				}
+			}
+		};
+
+		traverse(node);
+		return modules;
+	}
+
+	private enrichModulesWithSizes(modules: any[], nodeParts: any): any[] {
+		return modules.map((module) => {
+			const sizeInfo = nodeParts[module.uid] || {};
+			return {
+				...module,
+				renderedLength: sizeInfo.renderedLength || 0,
+				gzipLength: sizeInfo.gzipLength || 0,
+				brotliLength: sizeInfo.brotliLength || 0,
+			};
+		});
+	}
+
+	private filterComponentModules(modules: any[], componentName: string): any[] {
+		// Keep ONLY modules from packages/bits-ui/dist (component + shared internals)
+		return modules.filter((module: any) => {
+			const path = module.path || module.id || "";
+			const name = module.name || "";
+
+			// Only include modules from bits-ui dist directory
+			const isBitsUIDistModule =
+				path.includes("packages/bits-ui/dist") ||
+				path.includes("bits-ui/dist") ||
+				(name.includes("bits-ui") && path.includes("dist"));
+
+			return isBitsUIDistModule;
+		});
+	}
+
+	private fallbackBundleSize(componentName: string): { size: number; gzipSize: number } {
+		const outputPath = join(this.tempDir, `dist-${componentName}`);
+		const bundlePath = join(outputPath, "bundle.js");
+
+		if (!existsSync(bundlePath)) {
+			return { size: 0, gzipSize: 0 };
+		}
+
+		const bundleContent = readFileSync(bundlePath, "utf-8");
+		const size = Buffer.byteLength(bundleContent, "utf-8");
+		const gzipBuffer = gzipSync(bundleContent);
+		const gzipSize = gzipBuffer.length;
+
+		return { size, gzipSize };
 	}
 
 	private saveReport(report: BundleReport) {

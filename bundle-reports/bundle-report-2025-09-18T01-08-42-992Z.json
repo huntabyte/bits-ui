@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-09-18T01:19:15.533Z",
+  "timestamp": "2025-09-18T01:08:42.992Z",
   "results": [
     {
       "component": "Select",
-      "size": 147982,
-      "gzipSize": 44666,
+      "size": 20760,
+      "gzipSize": 7087,
       "exports": [
         "Root",
         "Content",
@@ -20,8 +20,8 @@
     },
     {
       "component": "Dialog",
-      "size": 67605,
-      "gzipSize": 23034,
+      "size": 12376,
+      "gzipSize": 5080,
       "exports": [
         "Root",
         "Content",
@@ -35,8 +35,8 @@
     },
     {
       "component": "Popover",
-      "size": 97924,
-      "gzipSize": 31843,
+      "size": 12302,
+      "gzipSize": 4987,
       "exports": [
         "Root",
         "Content",
@@ -48,8 +48,8 @@
     },
     {
       "component": "Accordion",
-      "size": 28301,
-      "gzipSize": 9381,
+      "size": 6800,
+      "gzipSize": 2452,
       "exports": [
         "Root",
         "Item",
@@ -60,8 +60,8 @@
     },
     {
       "component": "Tabs",
-      "size": 18270,
-      "gzipSize": 6096,
+      "size": 6362,
+      "gzipSize": 2226,
       "exports": [
         "Root",
         "List",
@@ -71,8 +71,8 @@
     },
     {
       "component": "DropdownMenu",
-      "size": 165059,
-      "gzipSize": 51805,
+      "size": 26900,
+      "gzipSize": 9886,
       "exports": [
         "Root",
         "Content",
@@ -93,8 +93,8 @@
     },
     {
       "component": "ContextMenu",
-      "size": 166540,
-      "gzipSize": 52162,
+      "size": 26900,
+      "gzipSize": 9886,
       "exports": [
         "Root",
         "Content",
@@ -115,8 +115,8 @@
     },
     {
       "component": "AlertDialog",
-      "size": 69672,
-      "gzipSize": 23719,
+      "size": 12376,
+      "gzipSize": 5080,
       "exports": [
         "Root",
         "Content",
@@ -131,8 +131,8 @@
     },
     {
       "component": "Tooltip",
-      "size": 109208,
-      "gzipSize": 35032,
+      "size": 13114,
+      "gzipSize": 5296,
       "exports": [
         "Root",
         "Content",
@@ -143,8 +143,8 @@
     },
     {
       "component": "Checkbox",
-      "size": 11204,
-      "gzipSize": 3810,
+      "size": 1583,
+      "gzipSize": 695,
       "exports": [
         "Root",
         "Input",
@@ -153,7 +153,7 @@
     }
   ],
   "total": {
-    "size": 881765,
-    "gzipSize": 281548
+    "size": 139473,
+    "gzipSize": 52675
   }
 }
