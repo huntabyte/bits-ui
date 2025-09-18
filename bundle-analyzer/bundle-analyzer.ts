@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { build } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -8,14 +6,10 @@ import { writeFileSync, readFileSync, existsSync, mkdirSync, rmSync } from "node
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { gzipSync } from "node:zlib";
+import { extractComponents, type ComponentInfo } from "./extract-components.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-interface ComponentInfo {
-	name: string;
-	exports: string[];
-}
 
 interface BundleResult {
 	component: string;
@@ -63,111 +57,10 @@ interface EnrichedModule {
 	brotliLength: number;
 }
 
-// component definitions - extracted from the actual exports
-const COMPONENTS: ComponentInfo[] = [
-	{
-		name: "Select",
-		exports: [
-			"Root",
-			"Content",
-			"Item",
-			"Group",
-			"GroupHeading",
-			"Trigger",
-			"Viewport",
-			"ScrollUpButton",
-			"ScrollDownButton",
-			"Portal",
-		],
-	},
-	{
-		name: "Dialog",
-		exports: [
-			"Root",
-			"Content",
-			"Trigger",
-			"Portal",
-			"Overlay",
-			"Close",
-			"Title",
-			"Description",
-		],
-	},
-	{
-		name: "Popover",
-		exports: ["Root", "Content", "Trigger", "Portal", "Close", "Arrow"],
-	},
-	{
-		name: "Accordion",
-		exports: ["Root", "Item", "Header", "Trigger", "Content"],
-	},
-	{
-		name: "Tabs",
-		exports: ["Root", "List", "Trigger", "Content"],
-	},
-	{
-		name: "DropdownMenu",
-		exports: [
-			"Root",
-			"Content",
-			"Item",
-			"Group",
-			"GroupHeading",
-			"Trigger",
-			"Portal",
-			"CheckboxItem",
-			"RadioGroup",
-			"RadioItem",
-			"Separator",
-			"Arrow",
-			"Sub",
-			"SubContent",
-			"SubTrigger",
-		],
-	},
-	{
-		name: "ContextMenu",
-		exports: [
-			"Root",
-			"Content",
-			"Item",
-			"Group",
-			"GroupHeading",
-			"Trigger",
-			"Portal",
-			"CheckboxItem",
-			"RadioGroup",
-			"RadioItem",
-			"Separator",
-			"Arrow",
-			"Sub",
-			"SubContent",
-			"SubTrigger",
-		],
-	},
-	{
-		name: "AlertDialog",
-		exports: [
-			"Root",
-			"Content",
-			"Trigger",
-			"Portal",
-			"Overlay",
-			"Cancel",
-			"Action",
-			"Title",
-			"Description",
-		],
-	},
-	{
-		name: "Tooltip",
-		exports: ["Root", "Content", "Trigger", "Portal", "Arrow"],
-	},
-	{
-		name: "Checkbox",
-		exports: ["Root", "Input", "Indicator"],
-	},
-];
+// get component definitions dynamically from extract-components
+function getComponents(): ComponentInfo[] {
+	return extractComponents();
+}
 
 class BundleAnalyzer {
 	private tempDir: string;
@@ -181,9 +74,10 @@ class BundleAnalyzer {
 	async analyze(components?: string[]): Promise<BundleReport> {
 		console.log("🔍 Starting bundle analysis...");
 
+		const allComponents = getComponents();
 		const componentsToAnalyze = components
-			? COMPONENTS.filter((c) => components.includes(c.name))
-			: COMPONENTS;
+			? allComponents.filter((c) => components.includes(c.name))
+			: allComponents;
 
 		this.setupTempDirectory();
 

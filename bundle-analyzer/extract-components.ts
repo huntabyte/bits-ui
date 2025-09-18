@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,6 +10,9 @@ interface ComponentInfo {
 	name: string;
 	exports: string[];
 }
+
+// components to ignore during extraction
+const IGNORED_COMPONENTS = ["Menu"];
 
 function extractExportsFromFile(filePath: string): string[] {
 	try {
@@ -50,10 +51,13 @@ function extractComponents(): ComponentInfo[] {
 					letter.toUpperCase()
 				);
 
-				components.push({
-					name: formattedName,
-					exports,
-				});
+				// skip ignored components
+				if (!IGNORED_COMPONENTS.includes(formattedName)) {
+					components.push({
+						name: formattedName,
+						exports,
+					});
+				}
 			}
 		}
 	} catch (error) {

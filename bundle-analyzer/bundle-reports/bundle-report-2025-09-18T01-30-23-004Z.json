@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-18T01:37:09.868Z",
+  "timestamp": "2025-09-18T01:30:23.004Z",
   "results": [
     {
       "component": "Accordion",
@@ -302,6 +302,31 @@
         "Trigger",
         "Portal",
         "ContentStatic"
+      ]
+    },
+    {
+      "component": "Menu",
+      "size": 0,
+      "gzipSize": 0,
+      "exports": [
+        "Root",
+        "Arrow",
+        "CheckboxGroup",
+        "CheckboxItem",
+        "Content",
+        "ContentStatic",
+        "Group",
+        "Item",
+        "GroupHeading",
+        "Portal",
+        "RadioGroup",
+        "RadioItem",
+        "Separator",
+        "Sub",
+        "SubContent",
+        "SubTrigger",
+        "Trigger",
+        "SubContentStatic"
       ]
     },
     {
