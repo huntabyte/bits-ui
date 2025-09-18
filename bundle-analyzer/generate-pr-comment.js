@@ -41,7 +41,7 @@ function formatDiff(diff, showSign = true) {
 function getStatusIcon(status, sizeDiff) {
 	switch (status) {
 		case "changed":
-			return sizeDiff > 0 ? "📈" : sizeDiff < 0 ? "📉" : "➡️";
+			return sizeDiff > 0 ? "🔴" : sizeDiff < 0 ? "🟢" : "➡️";
 		case "unchanged":
 			return "➡️";
 		default:
