@@ -15,7 +15,9 @@
 		"test:browser": "pnpm -F tests test:browser",
 		"test:browser:chromium": "pnpm -F tests test:browser --browser chromium",
 		"test:components": "pnpm -F tests test",
-		"test:utils": "pnpm -F bits-ui test"
+		"test:utils": "pnpm -F bits-ui test",
+		"bundle:analyze": "pnpm -F @bits-ui/bundle-analyzer bundle:analyze",
+		"bundle:compare": "pnpm -F @bits-ui/bundle-analyzer bundle:compare"
 	},
 	"keywords": [],
 	"author": "Hunter Johnston <https://github.com/huntabyte>",

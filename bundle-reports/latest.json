@@ -1,0 +1,159 @@
+{
+  "timestamp": "2025-09-18T00:48:45.492Z",
+  "results": [
+    {
+      "component": "Select",
+      "size": 338036,
+      "gzipSize": 68924,
+      "exports": [
+        "Root",
+        "Content",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Trigger",
+        "Viewport",
+        "ScrollUpButton",
+        "ScrollDownButton",
+        "Portal"
+      ]
+    },
+    {
+      "component": "Dialog",
+      "size": 189783,
+      "gzipSize": 41609,
+      "exports": [
+        "Root",
+        "Content",
+        "Trigger",
+        "Portal",
+        "Overlay",
+        "Close",
+        "Title",
+        "Description"
+      ]
+    },
+    {
+      "component": "Popover",
+      "size": 279323,
+      "gzipSize": 58872,
+      "exports": [
+        "Root",
+        "Content",
+        "Trigger",
+        "Portal",
+        "Close",
+        "Arrow"
+      ]
+    },
+    {
+      "component": "Accordion",
+      "size": 130366,
+      "gzipSize": 29536,
+      "exports": [
+        "Root",
+        "Item",
+        "Header",
+        "Trigger",
+        "Content"
+      ]
+    },
+    {
+      "component": "Tabs",
+      "size": 124000,
+      "gzipSize": 28549,
+      "exports": [
+        "Root",
+        "List",
+        "Trigger",
+        "Content"
+      ]
+    },
+    {
+      "component": "DropdownMenu",
+      "size": 343694,
+      "gzipSize": 69086,
+      "exports": [
+        "Root",
+        "Content",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Trigger",
+        "Portal",
+        "CheckboxItem",
+        "RadioGroup",
+        "RadioItem",
+        "Separator",
+        "Arrow",
+        "Sub",
+        "SubContent",
+        "SubTrigger"
+      ]
+    },
+    {
+      "component": "ContextMenu",
+      "size": 346712,
+      "gzipSize": 69758,
+      "exports": [
+        "Root",
+        "Content",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Trigger",
+        "Portal",
+        "CheckboxItem",
+        "RadioGroup",
+        "RadioItem",
+        "Separator",
+        "Arrow",
+        "Sub",
+        "SubContent",
+        "SubTrigger"
+      ]
+    },
+    {
+      "component": "AlertDialog",
+      "size": 192134,
+      "gzipSize": 41812,
+      "exports": [
+        "Root",
+        "Content",
+        "Trigger",
+        "Portal",
+        "Overlay",
+        "Cancel",
+        "Action",
+        "Title",
+        "Description"
+      ]
+    },
+    {
+      "component": "Tooltip",
+      "size": 290424,
+      "gzipSize": 61932,
+      "exports": [
+        "Root",
+        "Content",
+        "Trigger",
+        "Portal",
+        "Arrow"
+      ]
+    },
+    {
+      "component": "Checkbox",
+      "size": 124680,
+      "gzipSize": 29342,
+      "exports": [
+        "Root",
+        "Input",
+        "Indicator"
+      ]
+    }
+  ],
+  "total": {
+    "size": 2359152,
+    "gzipSize": 499420
+  }
+}
