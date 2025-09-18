@@ -4,6 +4,10 @@ on:
     push:
         branches:
             - main
+        paths:
+            - bundle-analyzer/**
+            - packages/bits-ui/**
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
