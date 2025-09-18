@@ -256,7 +256,7 @@ function main() {
 
 		const comment = generateComment(changes, hasBaseline);
 
-		writeFileSync("./bundle-analysis-temp/comment.md", comment);
+		writeFileSync("/tmp/bundle-analysis/comment.md", comment);
 
 		console.log("✅ Bundle analysis comment generated successfully");
 		if (hasBaseline) {
