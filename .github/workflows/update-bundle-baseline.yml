@@ -59,8 +59,21 @@ jobs:
                           echo "No changes to latest.json - skipping PR"
                           echo "changed=false" >> $GITHUB_OUTPUT
                       else
-                          echo "latest.json changed - creating/updating PR"
-                          echo "changed=true" >> $GITHUB_OUTPUT
+                          # Check if only timestamp changed
+                          OLD_FILE=$(git show HEAD:bundle-analyzer/bundle-reports/latest.json)
+                          NEW_FILE=$(cat ./bundle-analyzer/bundle-reports/latest.json)
+
+                          # Remove timestamp fields and compare
+                          OLD_NO_TIMESTAMP=$(echo "$OLD_FILE" | jq 'del(.timestamp)')
+                          NEW_NO_TIMESTAMP=$(echo "$NEW_FILE" | jq 'del(.timestamp)')
+
+                          if [ "$OLD_NO_TIMESTAMP" = "$NEW_NO_TIMESTAMP" ]; then
+                              echo "Only timestamp changed - skipping PR"
+                              echo "changed=false" >> $GITHUB_OUTPUT
+                          else
+                              echo "Bundle data changed - creating/updating PR"
+                              echo "changed=true" >> $GITHUB_OUTPUT
+                          fi
                       fi
                   else
                       # File doesn't exist in git yet (first time) - create PR
