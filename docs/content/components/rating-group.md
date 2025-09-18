@@ -208,7 +208,7 @@ The rating group supports half ratings when you set the `allowHalf` prop to `tru
 </RatingGroup.Root>
 ```
 
-<ComponentPreview name="rating-group-demo-half-stars" componentName="Rating Group Half Stars">
+<ComponentPreview variant="collapsed" name="rating-group-demo-half-stars" componentName="Rating Group Half Stars">
 
 {#snippet preview()}
 <RatingGroupDemoHalfStars />
@@ -262,7 +262,7 @@ By default, the rating group shows a preview of the potential rating when hoveri
 
 When disabled, only the currently selected rating will be highlighted, and hovering over items won't show a preview of the potential selection.
 
-<ComponentPreview name="rating-group-demo-no-hover" componentName="Rating Group No Hover Preview">
+<ComponentPreview variant="collapsed" name="rating-group-demo-no-hover" componentName="Rating Group No Hover Preview">
 
 {#snippet preview()}
 <RatingGroupDemoNoHover />
@@ -290,7 +290,7 @@ The rating group automatically adapts to right-to-left (RTL) text direction. Sim
 
 In RTL mode, the arrow key navigation is automatically reversed to match the visual direction.
 
-<ComponentPreview name="rating-group-demo-rtl" componentName="Rating Group RTL">
+<ComponentPreview variant="collapsed" name="rating-group-demo-rtl" componentName="Rating Group RTL">
 
 {#snippet preview()}
 <RatingGroupDemoRtl />
