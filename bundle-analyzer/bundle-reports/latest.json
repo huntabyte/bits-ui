@@ -1,0 +1,575 @@
+{
+  "timestamp": "2025-09-18T15:58:27.156Z",
+  "results": [
+    {
+      "component": "Accordion",
+      "size": 28301,
+      "gzipSize": 9381,
+      "exports": [
+        "Root",
+        "Item",
+        "Header",
+        "Trigger",
+        "Content"
+      ]
+    },
+    {
+      "component": "AlertDialog",
+      "size": 69672,
+      "gzipSize": 23719,
+      "exports": [
+        "Root",
+        "Title",
+        "Action",
+        "Cancel",
+        "Portal",
+        "Content",
+        "Overlay",
+        "Trigger",
+        "Description"
+      ]
+    },
+    {
+      "component": "AspectRatio",
+      "size": 3201,
+      "gzipSize": 1501,
+      "exports": [
+        "Root"
+      ]
+    },
+    {
+      "component": "Avatar",
+      "size": 8677,
+      "gzipSize": 3186,
+      "exports": [
+        "Root",
+        "Image",
+        "Fallback"
+      ]
+    },
+    {
+      "component": "Button",
+      "size": 1139,
+      "gzipSize": 482,
+      "exports": [
+        "Root"
+      ]
+    },
+    {
+      "component": "Calendar",
+      "size": 94649,
+      "gzipSize": 27038,
+      "exports": [
+        "Root",
+        "Day",
+        "Grid",
+        "GridBody",
+        "Cell",
+        "GridHead",
+        "HeadCell",
+        "GridRow",
+        "Header",
+        "Heading",
+        "MonthSelect",
+        "NextButton",
+        "PrevButton",
+        "YearSelect"
+      ]
+    },
+    {
+      "component": "Checkbox",
+      "size": 17695,
+      "gzipSize": 5977,
+      "exports": [
+        "Root",
+        "Group",
+        "GroupLabel"
+      ]
+    },
+    {
+      "component": "Collapsible",
+      "size": 19506,
+      "gzipSize": 6721,
+      "exports": [
+        "Root",
+        "Content",
+        "Trigger"
+      ]
+    },
+    {
+      "component": "Combobox",
+      "size": 149682,
+      "gzipSize": 45164,
+      "exports": [
+        "Root",
+        "Input",
+        "Separator",
+        "Arrow",
+        "Trigger",
+        "Portal",
+        "Content",
+        "ContentStatic",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Viewport",
+        "ScrollDownButton",
+        "ScrollUpButton"
+      ]
+    },
+    {
+      "component": "Command",
+      "size": 75077,
+      "gzipSize": 21753,
+      "exports": [
+        "Root",
+        "Empty",
+        "Group",
+        "GroupHeading",
+        "GroupItems",
+        "Input",
+        "Item",
+        "LinkItem",
+        "List",
+        "Viewport",
+        "Loading",
+        "Separator"
+      ]
+    },
+    {
+      "component": "ContextMenu",
+      "size": 183604,
+      "gzipSize": 56619,
+      "exports": [
+        "Root",
+        "Sub",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Arrow",
+        "Content",
+        "ContentStatic",
+        "Trigger",
+        "RadioItem",
+        "Separator",
+        "RadioGroup",
+        "SubContent",
+        "SubContentStatic",
+        "SubTrigger",
+        "CheckboxItem",
+        "Portal",
+        "CheckboxGroup"
+      ]
+    },
+    {
+      "component": "DateField",
+      "size": 84626,
+      "gzipSize": 22158,
+      "exports": [
+        "Root",
+        "Input",
+        "Label",
+        "Segment"
+      ]
+    },
+    {
+      "component": "DatePicker",
+      "size": 265177,
+      "gzipSize": 75802,
+      "exports": [
+        "Root",
+        "Calendar",
+        "Content",
+        "ContentStatic",
+        "Trigger",
+        "Arrow",
+        "Close",
+        "Input",
+        "Label",
+        "Segment",
+        "GridBody",
+        "GridHead",
+        "GridRow",
+        "Grid",
+        "HeadCell",
+        "Header",
+        "Heading",
+        "NextButton",
+        "PrevButton",
+        "MonthSelect",
+        "YearSelect",
+        "Cell",
+        "Day",
+        "Portal"
+      ]
+    },
+    {
+      "component": "DateRangeField",
+      "size": 92813,
+      "gzipSize": 24408,
+      "exports": [
+        "Root",
+        "Input",
+        "Label",
+        "Segment"
+      ]
+    },
+    {
+      "component": "DateRangePicker",
+      "size": 275159,
+      "gzipSize": 77182,
+      "exports": [
+        "Root",
+        "Calendar",
+        "Trigger",
+        "Content",
+        "Arrow",
+        "Close",
+        "Input",
+        "Label",
+        "Segment",
+        "GridBody",
+        "GridHead",
+        "GridRow",
+        "Grid",
+        "HeadCell",
+        "Header",
+        "Heading",
+        "NextButton",
+        "PrevButton",
+        "MonthSelect",
+        "YearSelect",
+        "Cell",
+        "Day"
+      ]
+    },
+    {
+      "component": "Dialog",
+      "size": 67605,
+      "gzipSize": 23034,
+      "exports": [
+        "Root",
+        "Title",
+        "Close",
+        "Portal",
+        "Content",
+        "Overlay",
+        "Trigger",
+        "Description"
+      ]
+    },
+    {
+      "component": "DropdownMenu",
+      "size": 181353,
+      "gzipSize": 55956,
+      "exports": [
+        "Root",
+        "Sub",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Arrow",
+        "Content",
+        "ContentStatic",
+        "Trigger",
+        "RadioItem",
+        "Separator",
+        "RadioGroup",
+        "SubContent",
+        "SubContentStatic",
+        "SubTrigger",
+        "CheckboxItem",
+        "Portal",
+        "CheckboxGroup"
+      ]
+    },
+    {
+      "component": "Label",
+      "size": 2979,
+      "gzipSize": 1379,
+      "exports": [
+        "Root"
+      ]
+    },
+    {
+      "component": "LinkPreview",
+      "size": 113964,
+      "gzipSize": 36638,
+      "exports": [
+        "Arrow",
+        "Root",
+        "Content",
+        "Trigger",
+        "Portal",
+        "ContentStatic"
+      ]
+    },
+    {
+      "component": "Menubar",
+      "size": 196648,
+      "gzipSize": 60798,
+      "exports": [
+        "Root",
+        "Menu",
+        "Content",
+        "ContentStatic",
+        "Trigger",
+        "Sub",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Arrow",
+        "RadioItem",
+        "Separator",
+        "SubContent",
+        "SubContentStatic",
+        "SubTrigger",
+        "RadioGroup",
+        "CheckboxItem",
+        "Portal",
+        "CheckboxGroup"
+      ]
+    },
+    {
+      "component": "Meter",
+      "size": 3278,
+      "gzipSize": 1421,
+      "exports": [
+        "Root"
+      ]
+    },
+    {
+      "component": "NavigationMenu",
+      "size": 93265,
+      "gzipSize": 29771,
+      "exports": [
+        "Root",
+        "Content",
+        "Indicator",
+        "Item",
+        "Link",
+        "List",
+        "Trigger",
+        "Viewport",
+        "Sub"
+      ]
+    },
+    {
+      "component": "Pagination",
+      "size": 17715,
+      "gzipSize": 6123,
+      "exports": [
+        "Root",
+        "PrevButton",
+        "NextButton",
+        "Page"
+      ]
+    },
+    {
+      "component": "PinInput",
+      "size": 23026,
+      "gzipSize": 7446,
+      "exports": [
+        "Root",
+        "Cell"
+      ]
+    },
+    {
+      "component": "Popover",
+      "size": 103290,
+      "gzipSize": 33197,
+      "exports": [
+        "Root",
+        "Arrow",
+        "Content",
+        "ContentStatic",
+        "Trigger",
+        "Close",
+        "Portal"
+      ]
+    },
+    {
+      "component": "Progress",
+      "size": 3702,
+      "gzipSize": 1541,
+      "exports": [
+        "Root"
+      ]
+    },
+    {
+      "component": "RadioGroup",
+      "size": 16938,
+      "gzipSize": 5760,
+      "exports": [
+        "Root",
+        "Item"
+      ]
+    },
+    {
+      "component": "RangeCalendar",
+      "size": 103612,
+      "gzipSize": 28547,
+      "exports": [
+        "Root",
+        "Day",
+        "Cell",
+        "Grid",
+        "GridBody",
+        "GridHead",
+        "HeadCell",
+        "GridRow",
+        "Header",
+        "Heading",
+        "NextButton",
+        "PrevButton",
+        "MonthSelect",
+        "YearSelect"
+      ]
+    },
+    {
+      "component": "RatingGroup",
+      "size": 18682,
+      "gzipSize": 5909,
+      "exports": [
+        "Root",
+        "Item"
+      ]
+    },
+    {
+      "component": "ScrollArea",
+      "size": 53719,
+      "gzipSize": 15379,
+      "exports": [
+        "Root",
+        "Viewport",
+        "Scrollbar",
+        "Thumb",
+        "Corner"
+      ]
+    },
+    {
+      "component": "Select",
+      "size": 152819,
+      "gzipSize": 45909,
+      "exports": [
+        "Root",
+        "Content",
+        "ContentStatic",
+        "Item",
+        "Group",
+        "GroupHeading",
+        "Trigger",
+        "Portal",
+        "Viewport",
+        "ScrollUpButton",
+        "ScrollDownButton"
+      ]
+    },
+    {
+      "component": "Separator",
+      "size": 3529,
+      "gzipSize": 1516,
+      "exports": [
+        "Root"
+      ]
+    },
+    {
+      "component": "Slider",
+      "size": 47564,
+      "gzipSize": 11804,
+      "exports": [
+        "Root",
+        "Range",
+        "Thumb",
+        "Tick",
+        "TickLabel",
+        "ThumbLabel"
+      ]
+    },
+    {
+      "component": "Switch",
+      "size": 9876,
+      "gzipSize": 3707,
+      "exports": [
+        "Root",
+        "Thumb"
+      ]
+    },
+    {
+      "component": "Tabs",
+      "size": 18270,
+      "gzipSize": 6096,
+      "exports": [
+        "Root",
+        "Content",
+        "List",
+        "Trigger"
+      ]
+    },
+    {
+      "component": "TimeField",
+      "size": 68561,
+      "gzipSize": 19421,
+      "exports": [
+        "Root",
+        "Input",
+        "Label",
+        "Segment"
+      ]
+    },
+    {
+      "component": "TimeRangeField",
+      "size": 79332,
+      "gzipSize": 22173,
+      "exports": [
+        "Root",
+        "Input",
+        "Label",
+        "Segment"
+      ]
+    },
+    {
+      "component": "Toggle",
+      "size": 4455,
+      "gzipSize": 1823,
+      "exports": [
+        "Root"
+      ]
+    },
+    {
+      "component": "ToggleGroup",
+      "size": 15253,
+      "gzipSize": 5085,
+      "exports": [
+        "Root",
+        "Item"
+      ]
+    },
+    {
+      "component": "Toolbar",
+      "size": 21920,
+      "gzipSize": 6994,
+      "exports": [
+        "Root",
+        "Button",
+        "Link",
+        "Group",
+        "GroupItem"
+      ]
+    },
+    {
+      "component": "Tooltip",
+      "size": 116347,
+      "gzipSize": 36874,
+      "exports": [
+        "Root",
+        "Content",
+        "ContentStatic",
+        "Trigger",
+        "Arrow",
+        "Provider",
+        "Portal"
+      ]
+    }
+  ]
+}
