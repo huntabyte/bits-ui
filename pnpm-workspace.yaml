@@ -2,6 +2,7 @@ packages:
   - packages/*
   - docs
   - tests
+  - bundle-analyzer
 
 catalog:
   '@sveltejs/kit': ^2.42.0
