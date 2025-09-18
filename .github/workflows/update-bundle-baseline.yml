@@ -97,7 +97,5 @@ jobs:
                   delete-branch: true
                   author: "github-actions[bot] <action@github.com>"
                   committer: "github-actions[bot] <action@github.com>"
-                  # Ensures existing PR is updated instead of creating duplicates
                   base: main
-                  # Always update the existing PR if one exists
                   push-to-fork: false
