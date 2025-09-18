@@ -151,7 +151,6 @@ function generateComment(changes, hasBaseline = true) {
 
 	if (changedComponents.length === 0) {
 		comment += "✅ **No significant bundle size changes detected**\n\n";
-		comment += "_All component sizes remain within acceptable thresholds._\n";
 		return comment;
 	}
 
