@@ -60,7 +60,7 @@
 <Combobox.Root
 	type="multiple"
 	name="favoriteFruit"
-	onOpenChange={(o) => {
+	onOpenChangeComplete={(o) => {
 		if (!o) searchValue = "";
 	}}
 >

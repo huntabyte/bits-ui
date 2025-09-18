@@ -2,11 +2,6 @@ import { userEvent, type Locator } from "@vitest/browser/context";
 import { expect, onTestFinished, vi } from "vitest";
 import { sleep } from "./utils";
 
-export async function expectNotClickable(node: Element | HTMLElement | Locator) {
-	const user = setupBrowserUserEvents();
-	await expect(user.click(node, { timeout: 100 })).rejects.toThrow();
-}
-
 export async function expectNotClickableLoc(loc: Locator) {
 	await expect(loc.click()).rejects.toThrow();
 }
@@ -17,18 +12,6 @@ export async function expectNotExists(loc: Locator) {
 
 export async function expectExists(loc: Locator) {
 	await expect.element(loc).toBeInTheDocument();
-	// await vi.waitFor(() => expect(loc.element()).toBeInTheDocument());
-}
-
-export async function simulateOutsideClick(node: Element | HTMLElement | Locator) {
-	// simulate an outside click by dispatching the event directly
-	// this bypasses pointer event interception
-	const element = "element" in node ? node.element() : node;
-
-	// dispatch mousedown, mouseup, and click events
-	element.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
-	element.dispatchEvent(new PointerEvent("pointerup", { bubbles: true }));
-	element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 }
 
 const defaultClickOpts = {
@@ -53,4 +36,9 @@ export function setupBrowserUserEvents() {
 	};
 
 	return user;
+}
+
+export async function focusAndExpectToHaveFocus(loc: Locator) {
+	(loc.element() as HTMLElement).focus();
+	await expect.element(loc).toHaveFocus();
 }
