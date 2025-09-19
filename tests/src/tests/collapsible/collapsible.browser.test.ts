@@ -166,7 +166,7 @@ describe("Collapsible ", () => {
 			expect(mock).not.toHaveBeenCalled();
 		});
 
-		it.only("should maintain hidden='until-found' after closing when hiddenUntilFound is true", async () => {
+		it("should maintain hidden='until-found' after closing when hiddenUntilFound is true", async () => {
 			const t = setupHiddenUntilFound({ open: false, hiddenUntilFound: true });
 
 			await t.user.click(t.trigger);
