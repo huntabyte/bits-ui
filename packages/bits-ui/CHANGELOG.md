@@ -1,5 +1,19 @@
 # bits-ui
 
+## 2.11.0
+
+### Minor Changes
+
+- feat(Collapsible): add `hiddenUntilFound` prop to expand collapsible when the content matches a browser search ([#1782](https://github.com/huntabyte/bits-ui/pull/1782))
+
+- feat(Accordion): `hiddenUntilFound` to expand on browser search match ([#1782](https://github.com/huntabyte/bits-ui/pull/1782))
+
+### Patch Changes
+
+- perf: optimizations ([#1777](https://github.com/huntabyte/bits-ui/pull/1777))
+
+- fix(Tooltip): expose `strategy` prop ([#1780](https://github.com/huntabyte/bits-ui/pull/1780))
+
 ## 2.10.0
 
 ### Minor Changes
