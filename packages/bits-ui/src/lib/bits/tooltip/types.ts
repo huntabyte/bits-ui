@@ -121,22 +121,7 @@ export type TooltipRootPropsWithoutHTML = WithChildren<{
 export type TooltipRootProps = TooltipRootPropsWithoutHTML;
 
 export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
-	Pick<
-		FloatingLayerContentProps,
-		| "side"
-		| "sideOffset"
-		| "align"
-		| "alignOffset"
-		| "avoidCollisions"
-		| "collisionBoundary"
-		| "collisionPadding"
-		| "arrowPadding"
-		| "sticky"
-		| "hideWhenDetached"
-		| "updatePositionStrategy"
-		| "dir"
-		| "customAnchor"
-	> &
+	Omit<FloatingLayerContentProps, "content" | "preventScroll"> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
 			/**

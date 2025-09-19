@@ -21,6 +21,7 @@
 		avoidCollisions = true,
 		arrowPadding = 0,
 		sticky = "partial",
+		strategy,
 		hideWhenDetached = false,
 		collisionPadding = 0,
 		onInteractOutside = noop,
@@ -48,6 +49,7 @@
 		sticky,
 		hideWhenDetached,
 		collisionPadding,
+		strategy,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, floatingProps, contentState.props));
