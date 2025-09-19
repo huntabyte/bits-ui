@@ -138,18 +138,10 @@ class BundleAnalyzer {
 		const componentContent = `${namespaceImport}
 
 // test component that uses all exports to ensure they're included in bundle
-export function Test${component.name}Component() {
-	// reference all exports to prevent tree-shaking
-	const refs = [
-		${exportReferences}
-	];
-	return refs;
-}
-
-// ensure all exports are referenced to prevent tree-shaking
-export const allExports = [
+const refs = [
 	${exportReferences}
-	];
+];
+;(globalThis.__bits_keep ||= []).push(refs);
 `;
 
 		const filePath = join(this.tempDir, `${component.name}.test.ts`);
@@ -170,7 +162,29 @@ export const allExports = [
 						template: "raw-data",
 						gzipSize: true,
 					}),
+					{
+						name: "strip-comments",
+						generateBundle(options, bundle) {
+							for (const fileName in bundle) {
+								const chunk = bundle[fileName];
+								if (!chunk) continue;
+								if (chunk.type === "chunk") {
+									chunk.code = chunk.code
+										.replace(/\/\*[\s\S]*?\*\//g, "")
+										.replace(/\/\/.*$/gm, "")
+										.replace(/^\s*\n/gm, "");
+								}
+							}
+						},
+					},
 				],
+				esbuild: {
+					minifyWhitespace: true,
+					minifyIdentifiers: true,
+					minifySyntax: true,
+					legalComments: "none",
+					target: "es2020",
+				},
 				build: {
 					lib: {
 						entry: entryPath,
@@ -179,7 +193,8 @@ export const allExports = [
 					},
 					outDir: outputPath,
 					write: true,
-					minify: "terser",
+					minify: "esbuild",
+					sourcemap: false,
 					rollupOptions: {
 						external: [
 							"svelte",
@@ -193,6 +208,30 @@ export const allExports = [
 						],
 						output: {
 							manualChunks: undefined,
+							compact: true,
+							generatedCode: {
+								arrowFunctions: true,
+								constBindings: true,
+								objectShorthand: true,
+								reservedNamesAsProps: false,
+								symbols: true,
+								preset: "es2015",
+							},
+							minifyInternalExports: true,
+							hoistTransitiveImports: false,
+							inlineDynamicImports: true,
+							entryFileNames: "bundle.js",
+							banner: "",
+							footer: "",
+							intro: "",
+							outro: "",
+						},
+						treeshake: {
+							preset: "smallest",
+							moduleSideEffects: false,
+							propertyReadSideEffects: false,
+							tryCatchDeoptimization: false,
+							unknownGlobalSideEffects: false,
 						},
 					},
 				},

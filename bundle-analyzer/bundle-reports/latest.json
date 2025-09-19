@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-18T21:42:15.787Z",
+  "timestamp": "2025-09-19T00:54:52.929Z",
   "results": [
     {
       "component": "Accordion",
@@ -57,8 +57,8 @@
     },
     {
       "component": "Calendar",
-      "size": 94565,
-      "gzipSize": 27073,
+      "size": 94411,
+      "gzipSize": 27053,
       "exports": [
         "Root",
         "Day",
@@ -119,8 +119,8 @@
     },
     {
       "component": "Command",
-      "size": 75011,
-      "gzipSize": 21791,
+      "size": 74986,
+      "gzipSize": 21790,
       "exports": [
         "Root",
         "Empty",
@@ -163,8 +163,8 @@
     },
     {
       "component": "DateField",
-      "size": 84655,
-      "gzipSize": 22204,
+      "size": 84594,
+      "gzipSize": 22194,
       "exports": [
         "Root",
         "Input",
@@ -174,8 +174,8 @@
     },
     {
       "component": "DatePicker",
-      "size": 263966,
-      "gzipSize": 75462,
+      "size": 263751,
+      "gzipSize": 75432,
       "exports": [
         "Root",
         "Calendar",
@@ -205,8 +205,8 @@
     },
     {
       "component": "DateRangeField",
-      "size": 92835,
-      "gzipSize": 24453,
+      "size": 92774,
+      "gzipSize": 24443,
       "exports": [
         "Root",
         "Input",
@@ -216,8 +216,8 @@
     },
     {
       "component": "DateRangePicker",
-      "size": 273946,
-      "gzipSize": 76846,
+      "size": 273731,
+      "gzipSize": 76813,
       "exports": [
         "Root",
         "Calendar",
@@ -407,8 +407,8 @@
     },
     {
       "component": "RangeCalendar",
-      "size": 103526,
-      "gzipSize": 28583,
+      "size": 103372,
+      "gzipSize": 28558,
       "exports": [
         "Root",
         "Day",
@@ -437,8 +437,8 @@
     },
     {
       "component": "ScrollArea",
-      "size": 52698,
-      "gzipSize": 15011,
+      "size": 52535,
+      "gzipSize": 14948,
       "exports": [
         "Root",
         "Viewport",
@@ -497,8 +497,8 @@
     },
     {
       "component": "Tabs",
-      "size": 18296,
-      "gzipSize": 6129,
+      "size": 18264,
+      "gzipSize": 6120,
       "exports": [
         "Root",
         "Content",
@@ -508,8 +508,8 @@
     },
     {
       "component": "TimeField",
-      "size": 68592,
-      "gzipSize": 19464,
+      "size": 68568,
+      "gzipSize": 19458,
       "exports": [
         "Root",
         "Input",
@@ -519,8 +519,8 @@
     },
     {
       "component": "TimeRangeField",
-      "size": 79358,
-      "gzipSize": 22218,
+      "size": 79334,
+      "gzipSize": 22212,
       "exports": [
         "Root",
         "Input",

@@ -45,6 +45,7 @@
 		"remark-gfm": "^4.0.1",
 		"remark-stringify": "^11.0.0",
 		"remove-markdown": "^0.5.5",
+		"rollup-plugin-visualizer": "^5.14.0",
 		"runed": "catalog:",
 		"shiki": "^1.29.2",
 		"svelte": "catalog:",
