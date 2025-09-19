@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-09-19T14:52:42.775Z",
+  "timestamp": "2025-09-19T19:31:01.703Z",
   "results": [
     {
       "component": "Accordion",
-      "size": 28049,
-      "gzipSize": 9377,
+      "size": 29081,
+      "gzipSize": 9682,
       "exports": [
         "Root",
         "Item",
@@ -88,8 +88,8 @@
     },
     {
       "component": "Collapsible",
-      "size": 19511,
-      "gzipSize": 6745,
+      "size": 20583,
+      "gzipSize": 7046,
       "exports": [
         "Root",
         "Content",
