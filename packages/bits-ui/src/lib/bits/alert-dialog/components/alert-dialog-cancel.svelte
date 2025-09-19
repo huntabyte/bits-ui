@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { AlertDialogCancelProps } from "../types.js";
 	import { AlertDialogCancelState } from "$lib/bits/dialog/dialog.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,12 +16,12 @@
 	}: AlertDialogCancelProps = $props();
 
 	const cancelState = AlertDialogCancelState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		disabled: box.with(() => Boolean(disabled)),
+		disabled: boxWith(() => Boolean(disabled)),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, cancelState.props));

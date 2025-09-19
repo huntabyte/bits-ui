@@ -10,7 +10,7 @@ import {
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
-import { type EventCallback, addEventListener } from "$lib/internal/events.js";
+import { type EventCallback } from "$lib/internal/events.js";
 import { debounce } from "$lib/internal/debounce.js";
 import { noop } from "$lib/internal/noop.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
@@ -131,7 +131,7 @@ export class DismissibleLayerState {
 		);
 	}
 
-	#handleDismiss = (e: PointerEvent) => {
+	#handleDismiss = (e: MouseEvent) => {
 		let event = e;
 		if (event.defaultPrevented) {
 			event = createWrappedEvent(e);
@@ -169,13 +169,9 @@ export class DismissibleLayerState {
 		if (e.pointerType === "touch") {
 			this.#unsubClickListener();
 
-			// @ts-expect-error - later
-			this.#unsubClickListener = addEventListener(
-				this.#documentObj,
-				"click",
-				this.#handleDismiss,
-				{ once: true }
-			);
+			this.#unsubClickListener = on(this.#documentObj, "click", this.#handleDismiss, {
+				once: true,
+			});
 		} else {
 			this.#interactOutsideProp.current(event);
 		}

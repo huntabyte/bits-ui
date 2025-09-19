@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { DateRangePickerCalendarProps } from "../types.js";
 	import { DateRangePickerRootContext } from "../date-range-picker.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,8 +18,8 @@
 	const dateRangePickerRootState = DateRangePickerRootContext.get();
 
 	const rangeCalendarState = RangeCalendarRootState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

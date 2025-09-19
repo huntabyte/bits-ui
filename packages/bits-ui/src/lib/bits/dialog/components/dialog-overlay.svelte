@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { DialogOverlayState } from "../dialog.svelte.js";
 	import type { DialogOverlayProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -17,8 +17,8 @@
 	}: DialogOverlayProps = $props();
 
 	const overlayState = DialogOverlayState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

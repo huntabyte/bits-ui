@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import { DateFieldRootState } from "../date-field.svelte.js";
 	import type { DateFieldRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -59,14 +59,14 @@
 	);
 
 	DateFieldRootState.create({
-		value: box.with(
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		placeholder: box.with(
+		placeholder: boxWith(
 			() => {
 				if (placeholder === undefined) return handleDefaultPlaceholder(false);
 				return placeholder;
@@ -77,20 +77,20 @@
 				onPlaceholderChange(v);
 			}
 		),
-		disabled: box.with(() => disabled),
-		granularity: box.with(() => granularity),
-		hideTimeZone: box.with(() => hideTimeZone),
-		hourCycle: box.with(() => hourCycle),
+		disabled: boxWith(() => disabled),
+		granularity: boxWith(() => granularity),
+		hideTimeZone: boxWith(() => hideTimeZone),
+		hourCycle: boxWith(() => hourCycle),
 		locale: resolveLocaleProp(() => locale),
-		maxValue: box.with(() => maxValue),
-		minValue: box.with(() => minValue),
-		validate: box.with(() => validate),
-		readonly: box.with(() => readonly),
-		readonlySegments: box.with(() => readonlySegments),
-		required: box.with(() => required),
-		onInvalid: box.with(() => onInvalid),
-		errorMessageId: box.with(() => errorMessageId),
-		isInvalidProp: box.with(() => undefined),
+		maxValue: boxWith(() => maxValue),
+		minValue: boxWith(() => minValue),
+		validate: boxWith(() => validate),
+		readonly: boxWith(() => readonly),
+		readonlySegments: boxWith(() => readonlySegments),
+		required: boxWith(() => required),
+		onInvalid: boxWith(() => onInvalid),
+		errorMessageId: boxWith(() => errorMessageId),
+		isInvalidProp: boxWith(() => undefined),
 	});
 </script>
 

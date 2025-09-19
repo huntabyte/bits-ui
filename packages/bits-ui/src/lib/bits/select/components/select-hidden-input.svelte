@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import { SelectHiddenInputState } from "../select.svelte.js";
 	import type { HTMLInputAttributes } from "svelte/elements";
 	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
@@ -10,7 +10,7 @@
 	}: { value?: string } & Omit<HTMLInputAttributes, "value"> = $props();
 
 	const hiddenInputState = SelectHiddenInputState.create({
-		value: box.with(() => value),
+		value: boxWith(() => value),
 	});
 </script>
 

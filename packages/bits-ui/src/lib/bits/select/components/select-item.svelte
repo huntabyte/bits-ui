@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { SelectItemState } from "../select.svelte.js";
 	import type { SelectItemProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -22,16 +22,16 @@
 	}: SelectItemProps = $props();
 
 	const itemState = SelectItemState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(() => value),
-		disabled: box.with(() => disabled),
-		label: box.with(() => label),
-		onHighlight: box.with(() => onHighlight),
-		onUnhighlight: box.with(() => onUnhighlight),
+		value: boxWith(() => value),
+		disabled: boxWith(() => disabled),
+		label: boxWith(() => label),
+		onHighlight: boxWith(() => onHighlight),
+		onUnhighlight: boxWith(() => onUnhighlight),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));

@@ -46,6 +46,7 @@ jobs:
 
             - name: Checkout target branch
               run: |
+                  git stash push -m "temp stash for bundle analysis" || true
                   git fetch origin ${{ github.base_ref }}
                   git checkout origin/${{ github.base_ref }}
 
@@ -60,11 +61,14 @@ jobs:
                   fi
 
             - name: Checkout PR branch
-              run: git checkout ${{ github.head_ref }}
+              run: |
+                  git checkout ${{ github.head_ref }}
+                  git stash pop || true
 
             - name: Generate target baseline if missing
               if: steps.check-target-bundle.outputs.exists == 'false'
               run: |
+                  git stash push -m "temp stash for baseline generation" || true
                   git checkout origin/${{ github.base_ref }}
                   pnpm install --frozen-lockfile
                   pnpm build:packages
@@ -75,6 +79,7 @@ jobs:
                       echo '{"timestamp":"","results":[]}' > /tmp/bundle-analysis/target-baseline.json
                   fi
                   git checkout ${{ github.head_ref }}
+                  git stash pop || true
 
             - name: Generate bundle comparison comment
               id: bundle-comment

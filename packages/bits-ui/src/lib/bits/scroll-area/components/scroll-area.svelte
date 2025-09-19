@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ScrollAreaRootProps } from "../types.js";
 	import { ScrollAreaRootState } from "../scroll-area.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,11 +18,11 @@
 	}: ScrollAreaRootProps = $props();
 
 	const rootState = ScrollAreaRootState.create({
-		type: box.with(() => type),
-		dir: box.with(() => dir),
-		scrollHideDelay: box.with(() => scrollHideDelay),
-		id: box.with(() => id),
-		ref: box.with(
+		type: boxWith(() => type),
+		dir: boxWith(() => dir),
+		scrollHideDelay: boxWith(() => scrollHideDelay),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

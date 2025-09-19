@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { MenubarMenuProps } from "../types.js";
 	import { MenubarMenuState } from "../menubar.svelte.js";
 	import Menu from "$lib/bits/menu/components/menu.svelte";
@@ -11,8 +11,8 @@
 	let { value = createId(uid), onOpenChange = noop, ...restProps }: MenubarMenuProps = $props();
 
 	const menuState = MenubarMenuState.create({
-		value: box.with(() => value),
-		onOpenChange: box.with(() => onOpenChange),
+		value: boxWith(() => value),
+		onOpenChange: boxWith(() => onOpenChange),
 	});
 </script>
 

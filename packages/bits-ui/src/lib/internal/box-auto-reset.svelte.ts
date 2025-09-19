@@ -1,4 +1,4 @@
-import { type WritableBox, box } from "svelte-toolbelt";
+import { type WritableBox, boxWith } from "svelte-toolbelt";
 import { noop } from "./noop.js";
 
 type BoxAutoResetOptions<T> = {
@@ -37,7 +37,7 @@ export function boxAutoReset<T>(defaultValue: T, options: BoxAutoResetOptions<T>
 		};
 	});
 
-	return box.with(
+	return boxWith(
 		() => value,
 		(v) => {
 			value = v;

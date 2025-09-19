@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ProgressRootProps } from "../types.js";
 	import { ProgressRootState } from "../progress.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,11 +18,11 @@
 	}: ProgressRootProps = $props();
 
 	const rootState = ProgressRootState.create({
-		value: box.with(() => value),
-		max: box.with(() => max),
-		min: box.with(() => min),
-		id: box.with(() => id),
-		ref: box.with(
+		value: boxWith(() => value),
+		max: boxWith(() => max),
+		min: boxWith(() => min),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

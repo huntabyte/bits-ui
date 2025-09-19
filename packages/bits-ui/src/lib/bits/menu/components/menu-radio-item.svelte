@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuRadioItemProps } from "../types.js";
 	import { MenuRadioItemState } from "../menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -20,15 +20,15 @@
 	}: MenuRadioItemProps = $props();
 
 	const radioItemState = MenuRadioItemState.create({
-		value: box.with(() => value),
-		id: box.with(() => id),
-		disabled: box.with(() => disabled),
-		onSelect: box.with(() => handleSelect),
-		ref: box.with(
+		value: boxWith(() => value),
+		id: boxWith(() => id),
+		disabled: boxWith(() => disabled),
+		onSelect: boxWith(() => handleSelect),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		closeOnSelect: box.with(() => closeOnSelect),
+		closeOnSelect: boxWith(() => closeOnSelect),
 	});
 
 	function handleSelect(e: Event) {

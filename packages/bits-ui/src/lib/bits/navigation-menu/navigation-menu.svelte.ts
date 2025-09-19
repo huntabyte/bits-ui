@@ -11,10 +11,11 @@ import {
 	type WritableBoxedValues,
 	afterSleep,
 	afterTick,
-	box,
 	attachRef,
 	DOMContext,
 	getWindow,
+	simpleBox,
+	boxWith,
 } from "svelte-toolbelt";
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
@@ -22,10 +23,9 @@ import { SvelteMap } from "svelte/reactivity";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
 import {
 	createBitsAttrs,
-	getAriaExpanded,
-	getDataDisabled,
+	boolToStr,
+	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-	getDataOrientation,
 } from "$lib/internal/attrs.js";
 import { noop } from "$lib/internal/noop.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
@@ -102,8 +102,8 @@ class NavigationMenuProviderState {
 		return NavigationMenuProviderContext.set(new NavigationMenuProviderState(opts));
 	}
 	readonly opts: NavigationMenuProviderStateOpts;
-	indicatorTrackRef = box<HTMLElement | null>(null);
-	viewportRef = box<HTMLElement | null>(null);
+	indicatorTrackRef = simpleBox<HTMLElement | null>(null);
+	viewportRef = simpleBox<HTMLElement | null>(null);
 	viewportContent = new SvelteMap<string, NavigationMenuItemState>();
 	onTriggerEnter: NavigationMenuProviderStateOpts["onTriggerEnter"];
 	onTriggerLeave: () => void = noop;
@@ -148,7 +148,7 @@ export class NavigationMenuRootState {
 	readonly opts: NavigationMenuRootStateOpts;
 	readonly attachment: RefAttachment;
 	provider: NavigationMenuProviderState;
-	previousValue = box("");
+	previousValue = simpleBox("");
 	isDelaySkipped: WritableBox<boolean>;
 	readonly #derivedDelay = $derived.by(() => {
 		const isOpen = this.opts?.value?.current !== "";
@@ -243,7 +243,7 @@ export class NavigationMenuRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				dir: this.opts.dir.current,
 				[navigationMenuAttrs.root]: "",
 				[navigationMenuAttrs.menu]: "",
@@ -267,7 +267,7 @@ export class NavigationMenuSubState {
 	}
 	readonly opts: NavigationMenuSubStateOpts;
 	readonly context: NavigationMenuProviderState;
-	previousValue = box("");
+	previousValue = simpleBox("");
 	readonly subProvider: NavigationMenuProviderState;
 	readonly attachment: RefAttachment;
 
@@ -305,7 +305,7 @@ export class NavigationMenuSubState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				[navigationMenuAttrs.sub]: "",
 				[navigationMenuAttrs.menu]: "",
 				...this.attachment,
@@ -321,8 +321,8 @@ export class NavigationMenuListState {
 			new NavigationMenuListState(opts, NavigationMenuProviderContext.get())
 		);
 	}
-	wrapperId = box(useId());
-	wrapperRef = box<HTMLElement | null>(null);
+	wrapperId = simpleBox(useId());
+	wrapperRef = simpleBox<HTMLElement | null>(null);
 	readonly opts: NavigationMenuListStateOpts;
 	readonly context: NavigationMenuProviderState;
 	readonly attachment: RefAttachment;
@@ -341,7 +341,7 @@ export class NavigationMenuListState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: opts.ref,
 			candidateSelector: `${navigationMenuAttrs.selector("trigger")}:not([data-disabled]), ${navigationMenuAttrs.selector("link")}:not([data-disabled])`,
-			loop: box.with(() => false),
+			loop: boxWith(() => false),
 			orientation: this.context.opts.orientation,
 		});
 	}
@@ -365,7 +365,7 @@ export class NavigationMenuListState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				[navigationMenuAttrs.list]: "",
 				...this.attachment,
 			}) as const
@@ -395,10 +395,10 @@ export class NavigationMenuItemState {
 	wasEscapeClose = false;
 	readonly contentId = $derived.by(() => this.contentNode?.id);
 	readonly triggerId = $derived.by(() => this.triggerNode?.id);
-	contentChildren: ReadableBox<Snippet | undefined> = box(undefined);
+	contentChildren: ReadableBox<Snippet | undefined> = simpleBox(undefined);
 	contentChild: ReadableBox<Snippet<[{ props: Record<string, unknown> }]> | undefined> =
-		box(undefined);
-	contentProps: ReadableBox<Record<string, unknown>> = box({});
+		simpleBox(undefined);
+	contentProps: ReadableBox<Record<string, unknown>> = simpleBox({});
 	domContext: DOMContext;
 	constructor(opts: NavigationMenuItemStateOpts, listContext: NavigationMenuListState) {
 		this.opts = opts;
@@ -455,8 +455,8 @@ export class NavigationMenuTriggerState {
 	}
 	readonly opts: NavigationMenuTriggerStateOpts;
 	readonly attachment: RefAttachment;
-	focusProxyId = box(useId());
-	focusProxyRef = box<HTMLElement | null>(null);
+	focusProxyId = simpleBox(useId());
+	focusProxyRef = simpleBox<HTMLElement | null>(null);
 	readonly focusProxyAttachment: RefAttachment = attachRef(
 		this.focusProxyRef,
 		(v) => (this.itemContext.focusProxyNode = v)
@@ -464,7 +464,7 @@ export class NavigationMenuTriggerState {
 	context: NavigationMenuProviderState;
 	itemContext: NavigationMenuItemState;
 	listContext: NavigationMenuListState;
-	hasPointerMoveOpened = box(false);
+	hasPointerMoveOpened = simpleBox(false);
 	wasClickClose = false;
 	focusProxyMounted = $state(false);
 	readonly open = $derived.by(
@@ -571,10 +571,10 @@ export class NavigationMenuTriggerState {
 			({
 				id: this.opts.id.current,
 				disabled: this.opts.disabled.current,
-				"data-disabled": getDataDisabled(Boolean(this.opts.disabled.current)),
+				"data-disabled": boolToEmptyStrOrUndef(Boolean(this.opts.disabled.current)),
 				"data-state": getDataOpenClosed(this.open),
 				"data-value": this.itemContext.opts.value.current,
-				"aria-expanded": getAriaExpanded(this.open),
+				"aria-expanded": boolToStr(this.open),
 				"aria-controls": this.itemContext.contentId,
 				[navigationMenuAttrs.trigger]: "",
 				onpointermove: this.onpointermove,
@@ -772,7 +772,7 @@ export class NavigationMenuIndicatorImplState {
 			({
 				id: this.opts.id.current,
 				"data-state": this.isVisible ? "visible" : "hidden",
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				style: {
 					position: "absolute",
 					...(this.isHorizontal
@@ -1049,7 +1049,7 @@ export class NavigationMenuContentImplState {
 				id: this.opts.id.current,
 				"aria-labelledby": this.itemContext.triggerId,
 				"data-motion": this.motionAttribute ?? undefined,
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				"data-state": getDataOpenClosed(
 					this.context.opts.value.current === this.itemContext.opts.value.current
 				),
@@ -1128,7 +1128,7 @@ export class NavigationMenuViewportState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.open),
-				"data-orientation": getDataOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				style: {
 					pointerEvents: !this.open && this.context.opts.isRootMenu ? "none" : undefined,
 					"--bits-navigation-menu-viewport-width": this.viewportWidth,

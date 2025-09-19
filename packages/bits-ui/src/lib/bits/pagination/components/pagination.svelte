@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { PaginationRootProps } from "../types.js";
 	import { PaginationRootState } from "../pagination.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -23,20 +23,20 @@
 	}: PaginationRootProps = $props();
 
 	const rootState = PaginationRootState.create({
-		id: box.with(() => id),
-		count: box.with(() => count),
-		perPage: box.with(() => perPage),
-		page: box.with(
+		id: boxWith(() => id),
+		count: boxWith(() => count),
+		perPage: boxWith(() => perPage),
+		page: boxWith(
 			() => page,
 			(v) => {
 				page = v;
 				onPageChange?.(v);
 			}
 		),
-		loop: box.with(() => loop),
-		siblingCount: box.with(() => siblingCount),
-		orientation: box.with(() => orientation),
-		ref: box.with(
+		loop: boxWith(() => loop),
+		siblingCount: boxWith(() => siblingCount),
+		orientation: boxWith(() => orientation),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

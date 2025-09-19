@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuCheckboxItemProps } from "../types.js";
 	import { MenuCheckboxGroupContext, MenuCheckboxItemState } from "../menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -49,7 +49,7 @@
 
 	const checkboxItemState = MenuCheckboxItemState.create(
 		{
-			checked: box.with(
+			checked: boxWith(
 				() => checked,
 				(v) => {
 					if (v !== checked) {
@@ -58,15 +58,15 @@
 					}
 				}
 			),
-			id: box.with(() => id),
-			disabled: box.with(() => disabled),
-			onSelect: box.with(() => handleSelect),
-			ref: box.with(
+			id: boxWith(() => id),
+			disabled: boxWith(() => disabled),
+			onSelect: boxWith(() => handleSelect),
+			ref: boxWith(
 				() => ref,
 				(v) => (ref = v)
 			),
-			closeOnSelect: box.with(() => closeOnSelect),
-			indeterminate: box.with(
+			closeOnSelect: boxWith(() => closeOnSelect),
+			indeterminate: boxWith(
 				() => indeterminate,
 				(v) => {
 					if (v !== indeterminate) {
@@ -75,7 +75,7 @@
 					}
 				}
 			),
-			value: box.with(() => value),
+			value: boxWith(() => value),
 		},
 		group
 	);

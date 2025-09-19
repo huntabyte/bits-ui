@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxRootProps } from "../types.js";
 	import { CheckboxGroupContext, CheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
@@ -51,31 +51,31 @@
 
 	const rootState = CheckboxRootState.create(
 		{
-			checked: box.with(
+			checked: boxWith(
 				() => checked,
 				(v) => {
 					checked = v;
 					onCheckedChange?.(v);
 				}
 			),
-			disabled: box.with(() => disabled ?? false),
-			required: box.with(() => required),
-			name: box.with(() => name),
-			value: box.with(() => value),
-			id: box.with(() => id),
-			ref: box.with(
+			disabled: boxWith(() => disabled ?? false),
+			required: boxWith(() => required),
+			name: boxWith(() => name),
+			value: boxWith(() => value),
+			id: boxWith(() => id),
+			ref: boxWith(
 				() => ref,
 				(v) => (ref = v)
 			),
-			indeterminate: box.with(
+			indeterminate: boxWith(
 				() => indeterminate,
 				(v) => {
 					indeterminate = v;
 					onIndeterminateChange?.(v);
 				}
 			),
-			type: box.with(() => type),
-			readonly: box.with(() => Boolean(readonly)),
+			type: boxWith(() => type),
+			readonly: boxWith(() => Boolean(readonly)),
 		},
 		group
 	);

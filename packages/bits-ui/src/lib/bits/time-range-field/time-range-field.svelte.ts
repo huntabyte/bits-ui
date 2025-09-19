@@ -1,6 +1,6 @@
 import type { Time } from "@internationalized/date";
 import {
-	box,
+	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
@@ -13,7 +13,7 @@ import { TimeFieldInputState } from "../time-field/time-field.svelte.js";
 import { useId } from "$lib/internal/use-id.js";
 import type { TimeSegmentPart } from "$lib/shared/index.js";
 import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type {
 	TimeGranularity,
 	TimeOnInvalid,
@@ -239,7 +239,7 @@ export class TimeRangeFieldRootState<T extends TimeValue = Time> {
 				id: this.opts.id.current,
 				role: "group",
 				[timeRangeFieldAttrs.root]: "",
-				"data-invalid": getDataInvalid(this.isInvalid),
+				"data-invalid": boolToEmptyStrOrUndef(this.isInvalid),
 				...this.attachment,
 			}) as const
 	);
@@ -272,8 +272,8 @@ export class TimeRangeFieldLabelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-invalid": getDataInvalid(this.root.isInvalid),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-invalid": boolToEmptyStrOrUndef(this.root.isInvalid),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[timeRangeFieldAttrs.label]: "",
 				onclick: this.#onclick,
 				...this.attachment,
@@ -299,7 +299,7 @@ export class TimeRangeFieldInputState {
 				disabled: root.opts.disabled,
 				readonly: root.opts.readonly,
 				readonlySegments: root.opts.readonlySegments,
-				validate: box.with(() => undefined),
+				validate: boxWith(() => undefined),
 				minValue: root.opts.minValue,
 				maxValue: root.opts.maxValue,
 				hourCycle: root.opts.hourCycle,
@@ -310,7 +310,7 @@ export class TimeRangeFieldInputState {
 				placeholder: root.opts.placeholder,
 				onInvalid: root.opts.onInvalid,
 				errorMessageId: root.opts.errorMessageId,
-				isInvalidProp: box.with(() => root.isInvalid),
+				isInvalidProp: boxWith(() => root.isInvalid),
 			},
 			root
 		);

@@ -25,12 +25,7 @@ import {
 	toDate,
 } from "./utils.js";
 import type { Formatter } from "./formatter.js";
-import {
-	createBitsAttrs,
-	getDataDisabled,
-	getDataInvalid,
-	getDataReadonly,
-} from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -727,9 +722,9 @@ export function getCalendarElementProps({
 		id,
 		role: "application",
 		"aria-label": fullCalendarLabel,
-		"data-invalid": getDataInvalid(isInvalid),
-		"data-disabled": getDataDisabled(disabled),
-		"data-readonly": getDataReadonly(readonly),
+		"data-invalid": boolToEmptyStrOrUndef(isInvalid),
+		"data-disabled": boolToEmptyStrOrUndef(disabled),
+		"data-readonly": boolToEmptyStrOrUndef(readonly),
 	} as const;
 }
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { LinkPreviewContentStaticProps } from "../types.js";
 	import { LinkPreviewContentState } from "../link-preview.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -23,13 +23,13 @@
 	}: LinkPreviewContentStaticProps = $props();
 
 	const contentState = LinkPreviewContentState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onInteractOutside: box.with(() => onInteractOutside),
-		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		onInteractOutside: boxWith(() => onInteractOutside),
+		onEscapeKeydown: boxWith(() => onEscapeKeydown),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

@@ -1,9 +1,9 @@
 import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import {
 	createBitsAttrs,
-	getAriaPressed,
-	getDataDisabled,
-	getDisabled,
+	boolToStr,
+	boolToEmptyStrOrUndef,
+	boolToTrueOrUndef,
 } from "$lib/internal/attrs.js";
 import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 
@@ -34,15 +34,9 @@ export class ToggleRootState {
 		this.onclick = this.onclick.bind(this);
 	}
 
-	#togglePressed() {
-		if (!this.opts.disabled.current) {
-			this.opts.pressed.current = !this.opts.pressed.current;
-		}
-	}
-
 	onclick(_: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
-		this.#togglePressed();
+		this.opts.pressed.current = !this.opts.pressed.current;
 	}
 
 	readonly snippetProps = $derived.by(() => ({
@@ -54,10 +48,10 @@ export class ToggleRootState {
 			({
 				[toggleAttrs.root]: "",
 				id: this.opts.id.current,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"aria-pressed": getAriaPressed(this.opts.pressed.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"aria-pressed": boolToStr(this.opts.pressed.current),
 				"data-state": getToggleDataState(this.opts.pressed.current),
-				disabled: getDisabled(this.opts.disabled.current),
+				disabled: boolToTrueOrUndef(this.opts.disabled.current),
 				onclick: this.onclick,
 				...this.attachment,
 			}) as const

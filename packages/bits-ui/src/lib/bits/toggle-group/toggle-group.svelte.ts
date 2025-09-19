@@ -8,10 +8,9 @@ import { Context } from "runed";
 import {
 	createBitsAttrs,
 	getAriaChecked,
-	getAriaPressed,
-	getDataDisabled,
-	getDataOrientation,
-	getDisabled,
+	boolToStr,
+	boolToEmptyStrOrUndef,
+	boolToTrueOrUndef,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
@@ -61,8 +60,8 @@ abstract class ToggleGroupBaseState {
 				id: this.opts.id.current,
 				[toggleGroupAttrs.root]: "",
 				role: "group",
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-orientation": this.opts.orientation.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				...this.attachment,
 			}) as const
 	);
@@ -182,7 +181,7 @@ export class ToggleGroupItemState {
 	});
 
 	readonly #ariaPressed = $derived.by(() => {
-		return this.root.isMulti ? getAriaPressed(this.isPressed) : undefined;
+		return this.root.isMulti ? boolToStr(this.isPressed) : undefined;
 	});
 
 	constructor(opts: ToggleGroupItemStateOpts, root: ToggleGroup) {
@@ -235,13 +234,13 @@ export class ToggleGroupItemState {
 				id: this.opts.id.current,
 				role: this.root.isMulti ? undefined : "radio",
 				tabindex: this.#tabIndex,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-orientation": this.root.opts.orientation.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				"data-state": getToggleItemDataState(this.isPressed),
 				"data-value": this.opts.value.current,
 				"aria-pressed": this.#ariaPressed,
 				"aria-checked": this.#ariaChecked,
-				disabled: getDisabled(this.#isDisabled),
+				disabled: boolToTrueOrUndef(this.#isDisabled),
 				[toggleGroupAttrs.item]: "",
 				//
 				onclick: this.onclick,

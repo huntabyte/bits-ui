@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { TooltipTriggerProps } from "../types.js";
 	import { TooltipTriggerState } from "../tooltip.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,9 +18,9 @@
 	}: TooltipTriggerProps = $props();
 
 	const triggerState = TooltipTriggerState.create({
-		id: box.with(() => id),
-		disabled: box.with(() => disabled ?? false),
-		ref: box.with(
+		id: boxWith(() => id),
+		disabled: boxWith(() => disabled ?? false),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

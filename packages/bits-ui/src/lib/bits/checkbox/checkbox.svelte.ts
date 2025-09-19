@@ -10,12 +10,10 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import {
+	boolToStr,
 	createBitsAttrs,
 	getAriaChecked,
-	getAriaReadonly,
-	getAriaRequired,
-	getDataDisabled,
-	getDataReadonly,
+	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
@@ -81,7 +79,7 @@ export class CheckboxGroupState {
 				id: this.opts.id.current,
 				role: "group",
 				"aria-labelledby": this.labelId,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				[checkboxAttrs.group]: "",
 				...this.attachment,
 			}) as const
@@ -117,7 +115,7 @@ export class CheckboxGroupLabelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-disabled": getDataDisabled(this.group.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.group.opts.disabled.current),
 				[checkboxAttrs["group-label"]]: "",
 				...this.attachment,
 			}) as const
@@ -238,10 +236,10 @@ export class CheckboxRootState {
 					this.opts.checked.current,
 					this.opts.indeterminate.current
 				),
-				"aria-required": getAriaRequired(this.trueRequired),
-				"aria-readonly": getAriaReadonly(this.trueReadonly),
-				"data-disabled": getDataDisabled(this.trueDisabled),
-				"data-readonly": getDataReadonly(this.trueReadonly),
+				"aria-required": boolToStr(this.trueRequired),
+				"aria-readonly": boolToStr(this.trueReadonly),
+				"data-disabled": boolToEmptyStrOrUndef(this.trueDisabled),
+				"data-readonly": boolToEmptyStrOrUndef(this.trueReadonly),
 				"data-state": getCheckboxDataState(
 					this.opts.checked.current,
 					this.opts.indeterminate.current

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { RatingGroupRootProps } from "../types.js";
 	import { RatingGroupRootState } from "../rating-group.svelte.js";
 	import RatingGroupInput from "./rating-group-input.svelte";
@@ -39,16 +39,16 @@
 	});
 
 	const rootState = RatingGroupRootState.create({
-		orientation: box.with(() => orientation),
-		disabled: box.with(() => disabled),
-		name: box.with(() => name),
-		required: box.with(() => required),
-		min: box.with(() => min),
-		max: box.with(() => max),
-		allowHalf: box.with(() => allowHalf),
-		readonly: box.with(() => readonly),
-		id: box.with(() => id),
-		value: box.with(
+		orientation: boxWith(() => orientation),
+		disabled: boxWith(() => disabled),
+		name: boxWith(() => name),
+		required: boxWith(() => required),
+		min: boxWith(() => min),
+		max: boxWith(() => max),
+		allowHalf: boxWith(() => allowHalf),
+		readonly: boxWith(() => readonly),
+		id: boxWith(() => id),
+		value: boxWith(
 			() => value,
 			(v) => {
 				if (v === value) return;
@@ -56,12 +56,12 @@
 				onValueChange?.(v);
 			}
 		),
-		ref: box.with(
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		ariaValuetext: box.with(() => ariaValuetext),
-		hoverPreview: box.with(() => hoverPreview),
+		ariaValuetext: boxWith(() => ariaValuetext),
+		hoverPreview: boxWith(() => hoverPreview),
 	});
 
 	const mergedProps = $derived(

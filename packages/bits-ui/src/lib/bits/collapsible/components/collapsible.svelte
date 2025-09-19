@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CollapsibleRootProps } from "../types.js";
 	import { CollapsibleRootState } from "../collapsible.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -20,20 +20,20 @@
 	}: CollapsibleRootProps = $props();
 
 	const rootState = CollapsibleRootState.create({
-		open: box.with(
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange(v);
 			}
 		),
-		disabled: box.with(() => disabled),
-		id: box.with(() => id),
-		ref: box.with(
+		disabled: boxWith(() => disabled),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

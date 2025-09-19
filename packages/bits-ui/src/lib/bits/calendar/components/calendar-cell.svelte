@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { CalendarCellState } from "../calendar.svelte.js";
 	import type { CalendarCellProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -17,13 +17,13 @@
 	}: CalendarCellProps = $props();
 
 	const cellState = CalendarCellState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		date: box.with(() => date),
-		month: box.with(() => month),
+		date: boxWith(() => date),
+		month: boxWith(() => month),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, cellState.props));

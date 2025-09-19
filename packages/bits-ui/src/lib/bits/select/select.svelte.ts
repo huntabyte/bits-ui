@@ -8,17 +8,16 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
-	box,
+	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
-	getAriaExpanded,
-	getAriaHidden,
-	getDataDisabled,
+	boolToStr,
+	boolToStrTrueOrUndef,
+	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-	getDisabled,
-	getRequired,
+	boolToTrueOrUndef,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
@@ -120,7 +119,7 @@ abstract class SelectBaseRootState {
 		this.isCombobox = opts.isCombobox;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -520,9 +519,9 @@ export class SelectInputState {
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				onkeydown: this.onkeydown,
 				oninput: this.oninput,
 				[this.root.getBitsAttr("input")]: "",
@@ -580,7 +579,7 @@ export class SelectComboTriggerState {
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
@@ -838,10 +837,10 @@ export class SelectTriggerState {
 				id: this.opts.id.current,
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				"data-placeholder": this.root.hasValue ? undefined : "",
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
@@ -1108,7 +1107,7 @@ export class SelectItemState {
 					? "true"
 					: undefined,
 				"data-value": this.opts.value.current,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted":
 					this.root.highlightedValue === this.opts.value.current &&
 					!this.opts.disabled.current
@@ -1212,8 +1211,8 @@ export class SelectHiddenInputState {
 	readonly props = $derived.by(
 		() =>
 			({
-				disabled: getDisabled(this.root.opts.disabled.current),
-				required: getRequired(this.root.opts.required.current),
+				disabled: boolToTrueOrUndef(this.root.opts.disabled.current),
+				required: boolToTrueOrUndef(this.root.opts.required.current),
 				name: this.root.opts.name.current,
 				value: this.opts.value.current,
 				onfocus: this.onfocus,
@@ -1341,7 +1340,7 @@ export class SelectScrollButtonImplState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"aria-hidden": getAriaHidden(true),
+				"aria-hidden": boolToStrTrueOrUndef(true),
 				style: {
 					flexShrink: 0,
 				},

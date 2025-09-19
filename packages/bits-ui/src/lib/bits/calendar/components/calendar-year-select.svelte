@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CalendarYearSelectProps } from "../types.js";
 	import { CalendarYearSelectState } from "../calendar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -19,14 +19,14 @@
 	}: CalendarYearSelectProps = $props();
 
 	const yearSelectState = CalendarYearSelectState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		years: box.with(() => years),
-		yearFormat: box.with(() => yearFormat),
-		disabled: box.with(() => Boolean(disabled)),
+		years: boxWith(() => years),
+		yearFormat: boxWith(() => yearFormat),
+		disabled: boxWith(() => Boolean(disabled)),
 	});
 
 	const mergedProps = $derived(

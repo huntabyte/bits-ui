@@ -4,12 +4,9 @@ import { Context, watch } from "runed";
 import type { TabsActivationMode } from "./types.js";
 import {
 	createBitsAttrs,
-	getAriaOrientation,
-	getAriaSelected,
-	getDataDisabled,
-	getDataOrientation,
-	getDisabled,
-	getHidden,
+	boolToStr,
+	boolToEmptyStrOrUndef,
+	boolToTrueOrUndef,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
@@ -93,7 +90,7 @@ export class TabsRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				[tabsAttrs.root]: "",
 				...this.attachment,
 			}) as const
@@ -122,10 +119,10 @@ export class TabsListState {
 			({
 				id: this.opts.id.current,
 				role: "tablist",
-				"aria-orientation": getAriaOrientation(this.root.opts.orientation.current),
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"aria-orientation": this.root.opts.orientation.current,
+				"data-orientation": this.root.opts.orientation.current,
 				[tabsAttrs.list]: "",
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				...this.attachment,
 			}) as const
 	);
@@ -209,12 +206,12 @@ export class TabsTriggerState {
 				role: "tab",
 				"data-state": getTabDataState(this.#isActive),
 				"data-value": this.opts.value.current,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
-				"data-disabled": getDataDisabled(this.#isDisabled),
-				"aria-selected": getAriaSelected(this.#isActive),
+				"data-orientation": this.root.opts.orientation.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
+				"aria-selected": boolToStr(this.#isActive),
 				"aria-controls": this.#ariaControls,
 				[tabsAttrs.trigger]: "",
-				disabled: getDisabled(this.#isDisabled),
+				disabled: boolToTrueOrUndef(this.#isDisabled),
 				tabindex: this.#tabIndex,
 				//
 				onclick: this.onclick,
@@ -259,12 +256,12 @@ export class TabsContentState {
 			({
 				id: this.opts.id.current,
 				role: "tabpanel",
-				hidden: getHidden(!this.#isActive),
+				hidden: boolToTrueOrUndef(!this.#isActive),
 				tabindex: 0,
 				"data-value": this.opts.value.current,
 				"data-state": getTabDataState(this.#isActive),
 				"aria-labelledby": this.#ariaLabelledBy,
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-orientation": this.root.opts.orientation.current,
 				[tabsAttrs.content]: "",
 				...this.attachment,
 			}) as const

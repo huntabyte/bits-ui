@@ -1,4 +1,4 @@
-import { box, type Getter, type ReadableBox } from "svelte-toolbelt";
+import { boxWith, type Getter, type ReadableBox } from "svelte-toolbelt";
 import { type BitsConfigState, getBitsConfig } from "./bits-config.js";
 
 /**
@@ -13,7 +13,7 @@ function createPropResolver<T>(
 ) {
 	return (getProp: Getter<T | undefined>): ReadableBox<T> => {
 		const config = getBitsConfig();
-		return box.with(() => {
+		return boxWith(() => {
 			// 1. return the prop's value, if provided
 			const propValue = getProp();
 			if (propValue !== undefined) return propValue;

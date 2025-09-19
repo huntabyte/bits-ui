@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { ContextMenuRootProps } from "../types.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
@@ -14,8 +14,8 @@
 	}: ContextMenuRootProps = $props();
 
 	const root = MenuRootState.create({
-		variant: box.with(() => "context-menu"),
-		dir: box.with(() => dir),
+		variant: boxWith(() => "context-menu"),
+		dir: boxWith(() => dir),
 		onClose: () => {
 			open = false;
 			onOpenChange?.(false);
@@ -24,14 +24,14 @@
 
 	MenuMenuState.create(
 		{
-			open: box.with(
+			open: boxWith(
 				() => open,
 				(v) => {
 					open = v;
 					onOpenChange(v);
 				}
 			),
-			onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+			onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 		},
 		root
 	);

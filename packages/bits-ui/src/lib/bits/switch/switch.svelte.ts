@@ -2,12 +2,11 @@ import { attachRef, type ReadableBoxedValues, type WritableBoxedValues } from "s
 import { Context } from "runed";
 import {
 	getAriaChecked,
-	getAriaRequired,
+	boolToStr,
 	getDataChecked,
-	getDataDisabled,
-	getDataRequired,
-	getDisabled,
+	boolToTrueOrUndef,
 	createBitsAttrs,
+	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
@@ -66,9 +65,9 @@ export class SwitchRootState {
 	}
 
 	readonly sharedProps = $derived.by(() => ({
-		"data-disabled": getDataDisabled(this.opts.disabled.current),
+		"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 		"data-state": getDataChecked(this.opts.checked.current),
-		"data-required": getDataRequired(this.opts.required.current),
+		"data-required": boolToEmptyStrOrUndef(this.opts.required.current),
 	}));
 
 	readonly snippetProps = $derived.by(() => ({
@@ -81,9 +80,9 @@ export class SwitchRootState {
 				...this.sharedProps,
 				id: this.opts.id.current,
 				role: "switch",
-				disabled: getDisabled(this.opts.disabled.current),
+				disabled: boolToTrueOrUndef(this.opts.disabled.current),
 				"aria-checked": getAriaChecked(this.opts.checked.current, false),
-				"aria-required": getAriaRequired(this.opts.required.current),
+				"aria-required": boolToStr(this.opts.required.current),
 				[switchAttrs.root]: "",
 				//
 				onclick: this.onclick,

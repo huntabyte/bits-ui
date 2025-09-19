@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { AvatarImageProps } from "../types.js";
 	import { AvatarImageState } from "../avatar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -17,14 +17,14 @@
 	}: AvatarImageProps = $props();
 
 	const imageState = AvatarImageState.create({
-		src: box.with(() => src),
-		id: box.with(() => id),
-		ref: box.with(
+		src: boxWith(() => src),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		crossOrigin: box.with(() => crossorigin),
-		referrerPolicy: box.with(() => referrerpolicy),
+		crossOrigin: boxWith(() => crossorigin),
+		referrerPolicy: boxWith(() => referrerpolicy),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, imageState.props));

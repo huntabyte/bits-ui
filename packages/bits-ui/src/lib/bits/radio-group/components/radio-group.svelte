@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { RadioGroupRootProps } from "../types.js";
 	import { RadioGroupRootState } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
@@ -25,14 +25,14 @@
 	}: RadioGroupRootProps = $props();
 
 	const rootState = RadioGroupRootState.create({
-		orientation: box.with(() => orientation),
-		disabled: box.with(() => disabled),
-		loop: box.with(() => loop),
-		name: box.with(() => name),
-		required: box.with(() => required),
-		readonly: box.with(() => readonly),
-		id: box.with(() => id),
-		value: box.with(
+		orientation: boxWith(() => orientation),
+		disabled: boxWith(() => disabled),
+		loop: boxWith(() => loop),
+		name: boxWith(() => name),
+		required: boxWith(() => required),
+		readonly: boxWith(() => readonly),
+		id: boxWith(() => id),
+		value: boxWith(
 			() => value,
 			(v) => {
 				if (v === value) return;
@@ -40,7 +40,7 @@
 				onValueChange?.(v);
 			}
 		),
-		ref: box.with(
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

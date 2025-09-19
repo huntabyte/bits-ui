@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxGroupProps } from "../types.js";
 	import { CheckboxGroupState } from "../checkbox.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -23,16 +23,16 @@
 	}: CheckboxGroupProps = $props();
 
 	const groupState = CheckboxGroupState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		disabled: box.with(() => Boolean(disabled)),
-		required: box.with(() => Boolean(required)),
-		readonly: box.with(() => Boolean(readonly)),
-		name: box.with(() => name),
-		value: box.with(
+		disabled: boxWith(() => Boolean(disabled)),
+		required: boxWith(() => Boolean(required)),
+		readonly: boxWith(() => Boolean(readonly)),
+		name: boxWith(() => name),
+		value: boxWith(
 			() => $state.snapshot(value),
 			(v) => {
 				if (arraysAreEqual(value, v)) return;
@@ -40,7 +40,7 @@
 				onValueChange(v);
 			}
 		),
-		onValueChange: box.with(() => onValueChange),
+		onValueChange: boxWith(() => onValueChange),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));

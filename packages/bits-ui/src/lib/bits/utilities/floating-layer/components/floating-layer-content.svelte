@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { FloatingContentState } from "../use-floating-layer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -30,25 +30,25 @@
 
 	const contentState = FloatingContentState.create(
 		{
-			side: box.with(() => side),
-			sideOffset: box.with(() => sideOffset),
-			align: box.with(() => align),
-			alignOffset: box.with(() => alignOffset),
-			id: box.with(() => id),
-			arrowPadding: box.with(() => arrowPadding),
-			avoidCollisions: box.with(() => avoidCollisions),
-			collisionBoundary: box.with(() => collisionBoundary),
-			collisionPadding: box.with(() => collisionPadding),
-			hideWhenDetached: box.with(() => hideWhenDetached),
-			onPlaced: box.with(() => onPlaced),
-			sticky: box.with(() => sticky),
-			updatePositionStrategy: box.with(() => updatePositionStrategy),
-			strategy: box.with(() => strategy),
-			dir: box.with(() => dir),
-			style: box.with(() => style),
-			enabled: box.with(() => enabled),
-			wrapperId: box.with(() => wrapperId),
-			customAnchor: box.with(() => customAnchor),
+			side: boxWith(() => side),
+			sideOffset: boxWith(() => sideOffset),
+			align: boxWith(() => align),
+			alignOffset: boxWith(() => alignOffset),
+			id: boxWith(() => id),
+			arrowPadding: boxWith(() => arrowPadding),
+			avoidCollisions: boxWith(() => avoidCollisions),
+			collisionBoundary: boxWith(() => collisionBoundary),
+			collisionPadding: boxWith(() => collisionPadding),
+			hideWhenDetached: boxWith(() => hideWhenDetached),
+			onPlaced: boxWith(() => onPlaced),
+			sticky: boxWith(() => sticky),
+			updatePositionStrategy: boxWith(() => updatePositionStrategy),
+			strategy: boxWith(() => strategy),
+			dir: boxWith(() => dir),
+			style: boxWith(() => style),
+			enabled: boxWith(() => enabled),
+			wrapperId: boxWith(() => wrapperId),
+			customAnchor: boxWith(() => customAnchor),
 		},
 		tooltip
 	);

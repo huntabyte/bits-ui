@@ -108,7 +108,8 @@
 		".svelte-kit",
 		"packages/bits-ui/dist/**/*",
 		"packages/bits-ui/.svelte-kit/**/*",
-		"tests/.svelte-kit/**/*"
+		"tests/.svelte-kit/**/*",
+		"bundle-analyzer/.temp-bundle-analysis/**/*"
 	],
 	"overrides": [
 		{
