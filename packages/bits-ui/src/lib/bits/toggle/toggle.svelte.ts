@@ -34,15 +34,9 @@ export class ToggleRootState {
 		this.onclick = this.onclick.bind(this);
 	}
 
-	#togglePressed() {
-		if (!this.opts.disabled.current) {
-			this.opts.pressed.current = !this.opts.pressed.current;
-		}
-	}
-
 	onclick(_: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
-		this.#togglePressed();
+		this.opts.pressed.current = !this.opts.pressed.current;
 	}
 
 	readonly snippetProps = $derived.by(() => ({
