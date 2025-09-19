@@ -17,6 +17,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+import { on } from "svelte/events";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
@@ -62,6 +63,7 @@ interface AccordionContentStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
+			hiddenUntilFound: boolean;
 		}> {}
 
 interface AccordionHeaderStateOpts
@@ -279,7 +281,10 @@ export class AccordionContentState {
 	#isMountAnimationPrevented = false;
 	#dimensions = $state({ width: 0, height: 0 });
 
-	readonly open = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
+	readonly open = $derived.by(() => {
+		if (this.opts.hiddenUntilFound.current) return this.item.isActive;
+		return this.opts.forceMount.current || this.item.isActive;
+	});
 
 	constructor(opts: AccordionContentStateOpts, item: AccordionItemState) {
 		this.opts = opts;
@@ -293,6 +298,25 @@ export class AccordionContentState {
 			});
 			return () => cancelAnimationFrame(rAF);
 		});
+
+		watch.pre(
+			[() => this.opts.ref.current, () => this.opts.hiddenUntilFound.current],
+			([node, hiddenUntilFound]) => {
+				if (!node || !hiddenUntilFound) return;
+
+				const handleBeforeMatch = () => {
+					if (this.item.isActive) return;
+					// we need to defer opening until after browser completes search highlighting
+					// otherwise the browser will immediately open the accordion
+					// and the search highlighting will not be visible
+					requestAnimationFrame(() => {
+						this.item.updateValue();
+					});
+				};
+
+				return on(node, "beforematch", handleBeforeMatch);
+			}
+		);
 
 		// Handle dimension updates
 		watch([() => this.open, () => this.opts.ref.current], this.#updateDimensions);
@@ -344,6 +368,10 @@ export class AccordionContentState {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
 					"--bits-accordion-content-width": `${this.#dimensions.width}px`,
 				},
+				hidden:
+					this.opts.hiddenUntilFound.current && !this.item.isActive
+						? "until-found"
+						: undefined,
 				...this.attachment,
 			}) as const
 	);

@@ -7,6 +7,8 @@ import AccordionTestIsolated from "./accordion-test-isolated.svelte";
 import AccordionSingleTestControlledSvelte from "./accordion-single-test-controlled.svelte";
 import AccordionMultiTestControlled from "./accordion-multi-test-controlled.svelte";
 import AccordionSingleForceMountTest from "./accordion-single-force-mount-test.svelte";
+import AccordionHiddenUntilFoundTest from "./accordion-hidden-until-found-test.svelte";
+import AccordionMultiHiddenUntilFoundTest from "./accordion-multi-hidden-until-found-test.svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
 import { setupBrowserUserEvents } from "../browser-utils";
@@ -626,6 +628,241 @@ describe("type='multiple'", () => {
 			await t.user.keyboard(kbd.ARROW_UP);
 			await t.user.keyboard(kbd.ENTER);
 			expect(mock).toHaveBeenCalledWith([]);
+		});
+	});
+});
+
+describe("Hidden Until Found Behavior", () => {
+	function setupHiddenUntilFound(
+		props: {
+			value?: string;
+			hiddenUntilFound?: boolean;
+			items?: Item[];
+			onValueChange?: (v: string) => void;
+		} = {}
+	) {
+		const user = setupBrowserUserEvents();
+		const defaultItems = ITEMS.slice(0, 1); // use just one item for simplicity
+		const returned = render(AccordionHiddenUntilFoundTest, {
+			items: defaultItems,
+			...props,
+		});
+		const root = page.getByTestId("root");
+		const item = defaultItems[0];
+		const trigger = page.getByTestId(`${item.value}-trigger`);
+		const content = page.getByTestId(`${item.value}-content`);
+		const searchableContent = page.getByTestId(`${item.value}-searchable-content`);
+		const nestedContent = page.getByTestId(`${item.value}-nested-content`);
+		const binding = page.getByTestId("binding");
+		return {
+			...returned,
+			root,
+			trigger,
+			content,
+			searchableContent,
+			nestedContent,
+			binding,
+			user,
+			item,
+		};
+	}
+
+	it("should render content with hidden='until-found' when closed and hiddenUntilFound is true", async () => {
+		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
+		await expect.element(t.content).toHaveAttribute("hidden", "until-found");
+		await expect.element(t.binding).toHaveTextContent("");
+	});
+
+	it("should not have hidden='until-found' when hiddenUntilFound is false", async () => {
+		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: false });
+		await expect.element(t.content).toHaveAttribute("hidden");
+		await expect.element(t.binding).toHaveTextContent("");
+	});
+
+	it("should open accordion when beforematch event is triggered", async () => {
+		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
+		await expect.element(t.content).toHaveAttribute("hidden", "until-found");
+
+		// simulate the beforematch event that browsers fire when content is found during search
+		const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+		t.content.element().dispatchEvent(beforeMatchEvent);
+
+		await new Promise((resolve) => setTimeout(resolve, 10));
+
+		await expect.element(t.content).not.toHaveAttribute("hidden");
+	});
+
+	it("should call onValueChange when beforematch event opens the accordion", async () => {
+		const mock = vi.fn();
+		const t = setupHiddenUntilFound({
+			value: "",
+			hiddenUntilFound: true,
+			onValueChange: mock,
+		});
+
+		const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+		t.content.element().dispatchEvent(beforeMatchEvent);
+
+		// wait for state to update
+		await new Promise((resolve) => setTimeout(resolve, 10));
+
+		expect(mock).toHaveBeenCalledWith(t.item.value);
+	});
+
+	it("should not trigger value change when already open and beforematch is fired", async () => {
+		const mock = vi.fn();
+		const t = setupHiddenUntilFound({
+			value: ITEMS[0].value, // accordion should already be open
+			hiddenUntilFound: true,
+			onValueChange: mock,
+		});
+
+		const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+		t.content.element().dispatchEvent(beforeMatchEvent);
+
+		await new Promise((resolve) => setTimeout(resolve, 10));
+
+		expect(mock).not.toHaveBeenCalled();
+	});
+
+	it("should maintain hidden='until-found' after closing when hiddenUntilFound is true", async () => {
+		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
+
+		await t.user.click(t.trigger);
+		await t.user.click(t.trigger);
+		await expect.element(t.content).toHaveAttribute("hidden", "until-found");
+	});
+
+	describe("type='multiple'", () => {
+		function setupMultipleHiddenUntilFound(
+			props: {
+				value?: string[];
+				hiddenUntilFound?: boolean;
+				items?: Item[];
+				onValueChange?: (v: string[]) => void;
+			} = {}
+		) {
+			const user = setupBrowserUserEvents();
+			const defaultItems = ITEMS.slice(0, 2); // use two items for multiple testing
+			const returned = render(AccordionMultiHiddenUntilFoundTest, {
+				items: defaultItems,
+				...props,
+			});
+			const root = page.getByTestId("root");
+			const items = defaultItems.map((item) => ({
+				item,
+				trigger: page.getByTestId(`${item.value}-trigger`),
+				content: page.getByTestId(`${item.value}-content`),
+				searchableContent: page.getByTestId(`${item.value}-searchable-content`),
+				nestedContent: page.getByTestId(`${item.value}-nested-content`),
+			}));
+			const binding = page.getByTestId("binding");
+			return {
+				...returned,
+				root,
+				items,
+				binding,
+				user,
+			};
+		}
+
+		it("should render content with hidden='until-found' when closed and hiddenUntilFound is true", async () => {
+			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			await expect.element(t.items[0].content).toHaveAttribute("hidden", "until-found");
+			await expect.element(t.items[1].content).toHaveAttribute("hidden", "until-found");
+			await expect.element(t.binding).toHaveTextContent("[]");
+		});
+
+		it("should not have hidden='until-found' when hiddenUntilFound is false", async () => {
+			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: false });
+			await expect.element(t.items[0].content).toHaveAttribute("hidden", "");
+			await expect.element(t.items[1].content).toHaveAttribute("hidden", "");
+			await expect.element(t.binding).toHaveTextContent("[]");
+		});
+
+		it("should open accordion item when beforematch event is triggered on first item", async () => {
+			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			await expect.element(t.binding).toHaveTextContent("[]");
+			await expect.element(t.items[0].content).toHaveAttribute("hidden", "until-found");
+
+			// simulate the beforematch event that browsers fire when content is found during search
+			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+			t.items[0].content.element().dispatchEvent(beforeMatchEvent);
+
+			// wait for requestAnimationFrame and state update
+			await new Promise((resolve) => setTimeout(resolve, 10));
+
+			await expect.element(t.binding).toHaveTextContent(`["${t.items[0].item.value}"]`);
+		});
+
+		it("should open accordion item when beforematch event is triggered on second item", async () => {
+			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			await expect.element(t.binding).toHaveTextContent("[]");
+			await expect.element(t.items[1].content).toHaveAttribute("hidden", "until-found");
+
+			// simulate the beforematch event that browsers fire when content is found during search
+			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+			t.items[1].content.element().dispatchEvent(beforeMatchEvent);
+
+			await expect.element(t.binding).toHaveTextContent(`["${t.items[1].item.value}"]`);
+		});
+
+		it("should call onValueChange when beforematch event opens an accordion item", async () => {
+			const mock = vi.fn();
+			const t = setupMultipleHiddenUntilFound({
+				value: [],
+				hiddenUntilFound: true,
+				onValueChange: mock,
+			});
+
+			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+			t.items[0].content.element().dispatchEvent(beforeMatchEvent);
+
+			await new Promise((resolve) => setTimeout(resolve, 10));
+
+			expect(mock).toHaveBeenCalledWith([t.items[0].item.value]);
+		});
+
+		it("should not trigger value change when already open and beforematch is fired", async () => {
+			const mock = vi.fn();
+			const firstItemValue = ITEMS[0].value;
+			const t = setupMultipleHiddenUntilFound({
+				value: [firstItemValue],
+				hiddenUntilFound: true,
+				onValueChange: mock,
+			});
+
+			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+			t.items[0].content.element().dispatchEvent(beforeMatchEvent);
+
+			expect(mock).not.toHaveBeenCalled();
+		});
+
+		it("should maintain hidden='until-found' after closing when hiddenUntilFound is true", async () => {
+			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+
+			await t.user.click(t.items[0].trigger);
+			await t.user.click(t.items[0].trigger);
+			await expect.element(t.items[0].content).toHaveAttribute("hidden", "until-found");
+		});
+
+		it("should allow multiple items to be opened via beforematch events", async () => {
+			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			await expect.element(t.binding).toHaveTextContent("[]");
+
+			// trigger beforematch on first item
+			const beforeMatchEvent1 = new Event("beforematch", { bubbles: true });
+			t.items[0].content.element().dispatchEvent(beforeMatchEvent1);
+
+			await expect.element(t.binding).toHaveTextContent(`["${t.items[0].item.value}"]`);
+
+			// trigger beforematch on second item
+			const beforeMatchEvent2 = new Event("beforematch", { bubbles: true });
+			t.items[1].content.element().dispatchEvent(beforeMatchEvent2);
+
+			await expect
+				.element(t.binding)
+				.toHaveTextContent(`["${t.items[0].item.value}","${t.items[1].item.value}"]`);
 		});
 	});
 });

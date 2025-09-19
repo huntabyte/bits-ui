@@ -13,6 +13,7 @@
 		id = createId(uid),
 		forceMount = false,
 		children,
+		hiddenUntilFound = false,
 		...restProps
 	}: AccordionContentProps = $props();
 
@@ -23,14 +24,21 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		hiddenUntilFound: boxWith(() => hiddenUntilFound),
 	});
 </script>
 
 <PresenceLayer forceMount={true} open={contentState.open} ref={contentState.opts.ref}>
 	{#snippet presence({ present })}
-		{@const mergedProps = mergeProps(restProps, contentState.props, {
-			hidden: forceMount ? undefined : !present,
-		})}
+		{@const mergedProps = mergeProps(
+			restProps,
+			contentState.props,
+			hiddenUntilFound && !present
+				? {}
+				: {
+						hidden: hiddenUntilFound ? !present : forceMount ? undefined : !present,
+					}
+		)}
 		{#if child}
 			{@render child({
 				props: mergedProps,

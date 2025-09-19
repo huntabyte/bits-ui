@@ -270,6 +270,25 @@ Disable specific items with the `disabled` prop:
 </Accordion.Root>
 ```
 
+### Hidden Until Found
+
+The `hiddenUntilFound` prop enables browser search functionality within collapsed accordion content. When enabled, collapsed content is marked with `hidden="until-found"`, allowing browsers to automatically expand accordion items when users search for text within them.
+
+```svelte {4}
+<Accordion.Root type="single">
+  <Accordion.Item value="item-1">
+    <Accordion.Header>
+      <Accordion.Trigger>Search Demo</Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content hiddenUntilFound>
+      This content can be found by browser search (Ctrl+F/CMD+F) even when the
+      accordion is closed. The accordion will automatically open when the
+      browser finds matching text.
+    </Accordion.Content>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
 ### Svelte Transitions
 
 The Accordion component can be enhanced with Svelte's built-in transition effects or other animation libraries.
