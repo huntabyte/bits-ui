@@ -14,7 +14,10 @@
 		</Collapsible.Trigger>
 	</div>
 
-	<Collapsible.Content class="space-y-2 font-mono text-[15px] tracking-[0.01em]">
+	<Collapsible.Content
+		hiddenUntilFound
+		class="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up space-y-2 overflow-hidden font-mono text-[15px] tracking-[0.01em]"
+	>
 		<div class="rounded-9px bg-muted inline-flex h-12 w-full items-center px-[18px] py-3">
 			@huntabyte/bits-ui
 		</div>

@@ -11,6 +11,7 @@
 		child,
 		ref = $bindable(null),
 		forceMount = false,
+		hiddenUntilFound = false,
 		children,
 		id = createId(uid),
 		...restProps
@@ -19,6 +20,7 @@
 	const contentState = CollapsibleContentState.create({
 		id: boxWith(() => id),
 		forceMount: boxWith(() => forceMount),
+		hiddenUntilFound: boxWith(() => hiddenUntilFound),
 		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
@@ -28,9 +30,15 @@
 
 <PresenceLayer forceMount={true} open={contentState.present} ref={contentState.opts.ref}>
 	{#snippet presence({ present })}
-		{@const mergedProps = mergeProps(restProps, contentState.props, {
-			hidden: forceMount ? undefined : !present,
-		})}
+		{@const mergedProps = mergeProps(
+			restProps,
+			contentState.props,
+			hiddenUntilFound && !present
+				? {}
+				: {
+						hidden: hiddenUntilFound ? !present : forceMount ? undefined : !present,
+					}
+		)}
 		{#if child}
 			{@render child({
 				...contentState.snippetProps,
