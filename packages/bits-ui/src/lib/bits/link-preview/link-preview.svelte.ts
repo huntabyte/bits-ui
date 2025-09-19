@@ -9,7 +9,7 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
-import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import type {
 	BitsFocusEvent,
@@ -200,7 +200,7 @@ export class LinkPreviewTriggerState {
 			({
 				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"aria-controls": this.root.contentNode?.id,
 				role: "button",

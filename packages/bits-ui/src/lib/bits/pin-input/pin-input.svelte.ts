@@ -18,7 +18,7 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import { createBitsAttrs, getDisabled } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToTrueOrUndef } from "$lib/internal/attrs.js";
 import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
@@ -487,7 +487,7 @@ export class PinInputRootState {
 		pattern: this.#regexPattern?.source,
 		maxlength: this.opts.maxLength.current,
 		value: this.opts.value.current,
-		disabled: getDisabled(this.opts.disabled.current),
+		disabled: boolToTrueOrUndef(this.opts.disabled.current),
 		//
 		onpaste: this.onpaste,
 		oninput: this.oninput,

@@ -6,7 +6,7 @@ import {
 } from "svelte-toolbelt";
 import { Context } from "runed";
 import { kbd } from "$lib/internal/kbd.js";
-import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -110,7 +110,7 @@ export class PopoverTriggerState {
 			({
 				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"aria-controls": this.#getAriaControls(),
 				[popoverAttrs.trigger]: "",

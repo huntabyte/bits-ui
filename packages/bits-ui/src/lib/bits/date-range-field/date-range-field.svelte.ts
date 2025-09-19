@@ -17,7 +17,7 @@ import type {
 	SegmentPart,
 } from "$lib/shared/index.js";
 import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import { removeDescriptionElement } from "$lib/internal/date-time/field/helpers.js";
@@ -216,7 +216,7 @@ export class DateRangeFieldRootState {
 				id: this.opts.id.current,
 				role: "group",
 				[dateRangeFieldAttrs.root]: "",
-				"data-invalid": getDataInvalid(this.isInvalid),
+				"data-invalid": boolToEmptyStrOrUndef(this.isInvalid),
 				...this.attachment,
 			}) as const
 	);
@@ -250,8 +250,8 @@ export class DateRangeFieldLabelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-invalid": getDataInvalid(this.root.isInvalid),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-invalid": boolToEmptyStrOrUndef(this.root.isInvalid),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[dateRangeFieldAttrs.label]: "",
 				onclick: this.#onclick,
 				...this.attachment,

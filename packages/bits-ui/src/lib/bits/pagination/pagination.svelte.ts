@@ -7,7 +7,7 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import { createBitsAttrs, getOrientation } from "$lib/internal/attrs.js";
+import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getElemDirection } from "$lib/internal/locale.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
@@ -97,7 +97,7 @@ export class PaginationRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				[paginationAttrs.root]: "",
 				...this.attachment,
 			}) as const

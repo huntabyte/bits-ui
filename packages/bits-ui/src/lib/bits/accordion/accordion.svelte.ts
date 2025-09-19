@@ -12,13 +12,7 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import {
-	getAriaDisabled,
-	getAriaExpanded,
-	getDataDisabled,
-	getDataOpenClosed,
-	getOrientation,
-} from "$lib/internal/attrs.js";
+import { boolToStr, boolToEmptyStrOrUndef, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
@@ -112,8 +106,8 @@ abstract class AccordionBaseState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getOrientation(this.opts.orientation.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-orientation": this.opts.orientation.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				[accordionAttrs.root]: "",
 				...this.attachment,
 			}) as const
@@ -204,8 +198,8 @@ export class AccordionItemState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.isActive),
-				"data-disabled": getDataDisabled(this.isDisabled),
-				"data-orientation": getOrientation(this.root.opts.orientation.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
+				"data-orientation": this.root.opts.orientation.current,
 				[accordionAttrs.item]: "",
 				...this.attachment,
 			}) as const
@@ -262,11 +256,11 @@ export class AccordionTriggerState {
 			({
 				id: this.opts.id.current,
 				disabled: this.#isDisabled,
-				"aria-expanded": getAriaExpanded(this.itemState.isActive),
-				"aria-disabled": getAriaDisabled(this.#isDisabled),
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"aria-expanded": boolToStr(this.itemState.isActive),
+				"aria-disabled": boolToStr(this.#isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				"data-state": getDataOpenClosed(this.itemState.isActive),
-				"data-orientation": getOrientation(this.#root.opts.orientation.current),
+				"data-orientation": this.#root.opts.orientation.current,
 				[accordionAttrs.trigger]: "",
 				tabindex: 0,
 				onclick: this.onclick,
@@ -343,8 +337,8 @@ export class AccordionContentState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
-				"data-disabled": getDataDisabled(this.item.isDisabled),
-				"data-orientation": getOrientation(this.item.root.opts.orientation.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.item.isDisabled),
+				"data-orientation": this.item.root.opts.orientation.current,
 				[accordionAttrs.content]: "",
 				style: {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
@@ -378,7 +372,7 @@ export class AccordionHeaderState {
 				"aria-level": this.opts.level.current,
 				"data-heading-level": this.opts.level.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
-				"data-orientation": getOrientation(this.item.root.opts.orientation.current),
+				"data-orientation": this.item.root.opts.orientation.current,
 				[accordionAttrs.header]: "",
 				...this.attachment,
 			}) as const

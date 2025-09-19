@@ -36,11 +36,9 @@ import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
 	getAriaChecked,
-	getAriaDisabled,
-	getAriaExpanded,
-	getOrientation,
-	getDataDisabled,
+	boolToStr,
 	getDataOpenClosed,
+	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
@@ -432,7 +430,7 @@ export class MenuContentState {
 			({
 				id: this.opts.id.current,
 				role: "menu",
-				"aria-orientation": getOrientation("vertical"),
+				"aria-orientation": "vertical" as const,
 				[this.parentMenu.root.getBitsAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				onkeydown: this.onkeydown,
@@ -514,8 +512,8 @@ class MenuItemSharedState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				role: "menuitem",
-				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"aria-disabled": boolToStr(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted": this.#isFocused ? "" : undefined,
 				[this.content.parentMenu.root.getBitsAttr("item")]: "",
 				//
@@ -718,7 +716,7 @@ export class MenuSubTriggerState {
 		mergeProps(
 			{
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.submenu.opts.open.current),
+				"aria-expanded": boolToStr(this.submenu.opts.open.current),
 				"data-state": getDataOpenClosed(this.submenu.opts.open.current),
 				"aria-controls": this.submenu.opts.open.current
 					? this.submenu.contentId.current
@@ -1103,9 +1101,9 @@ export class DropdownMenuTriggerState {
 				id: this.opts.id.current,
 				disabled: this.opts.disabled.current,
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.parentMenu.opts.open.current),
+				"aria-expanded": boolToStr(this.parentMenu.opts.open.current),
 				"aria-controls": this.#ariaControls,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[this.parentMenu.root.getBitsAttr("trigger")]: "",
 				//
@@ -1218,7 +1216,7 @@ export class ContextMenuTriggerState {
 			({
 				id: this.opts.id.current,
 				disabled: this.opts.disabled.current,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				tabindex: -1,

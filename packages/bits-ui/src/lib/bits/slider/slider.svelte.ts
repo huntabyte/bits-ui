@@ -25,12 +25,7 @@ import {
 	getTickLabelStyles,
 	getThumbLabelStyles,
 } from "./helpers.js";
-import {
-	createBitsAttrs,
-	getAriaDisabled,
-	getDataDisabled,
-	getOrientation,
-} from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
@@ -154,8 +149,8 @@ abstract class SliderBaseRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getOrientation(this.opts.orientation.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-orientation": this.opts.orientation.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				style: {
 					touchAction: this.#touchAction,
 				},
@@ -317,10 +312,10 @@ class SliderSingleRootState extends SliderBaseRootState {
 				"aria-valuemin": this.opts.min.current,
 				"aria-valuemax": this.opts.max.current,
 				"aria-valuenow": thumbValue,
-				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-				"aria-orientation": getOrientation(this.opts.orientation.current),
+				"aria-disabled": boolToStr(this.opts.disabled.current),
+				"aria-orientation": this.opts.orientation.current,
 				"data-value": thumbValue,
-				"data-orientation": getOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				style,
 				[sliderAttrs.thumb]: "",
 			} as const;
@@ -347,8 +342,8 @@ class SliderSingleRootState extends SliderBaseRootState {
 			const bounded = tickValue <= currValue;
 
 			return {
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-orientation": getOrientation(this.opts.orientation.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"data-orientation": this.opts.orientation.current,
 				"data-bounded": bounded ? "" : undefined,
 				"data-value": tickValue,
 				"data-selected": this.isTickValueSelected(tickValue) ? "" : undefined,
@@ -643,10 +638,10 @@ class SliderMultiRootState extends SliderBaseRootState {
 				"aria-valuemin": this.opts.min.current,
 				"aria-valuemax": this.opts.max.current,
 				"aria-valuenow": thumbValue,
-				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-				"aria-orientation": getOrientation(this.opts.orientation.current),
+				"aria-disabled": boolToStr(this.opts.disabled.current),
+				"aria-orientation": this.opts.orientation.current,
 				"data-value": thumbValue,
-				"data-orientation": getOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				style,
 				[sliderAttrs.thumb]: "",
 			} as const;
@@ -676,8 +671,8 @@ class SliderMultiRootState extends SliderBaseRootState {
 					: currValue[0]! <= tickValue && tickValue <= currValue[currValue.length - 1]!;
 
 			return {
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-orientation": getOrientation(this.opts.orientation.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"data-orientation": this.opts.orientation.current,
 				"data-bounded": bounded ? "" : undefined,
 				"data-value": tickValue,
 				style,
@@ -802,8 +797,8 @@ export class SliderRangeState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getOrientation(this.root.opts.orientation.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-orientation": this.root.opts.orientation.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				style: this.rangeStyles,
 				[sliderAttrs.range]: "",
 				...this.attachment,
@@ -929,7 +924,7 @@ export class SliderThumbState {
 				id: this.opts.id.current,
 				onkeydown: this.onkeydown,
 				"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
-				"data-disabled": getDataDisabled(
+				"data-disabled": boolToEmptyStrOrUndef(
 					this.opts.disabled.current || this.root.opts.disabled.current
 				),
 				tabindex: this.opts.disabled.current || this.root.opts.disabled.current ? -1 : 0,
@@ -1000,8 +995,8 @@ export class SliderTickLabelState {
 
 		return {
 			id: this.opts.id.current,
-			"data-orientation": getOrientation(this.root.opts.orientation.current),
-			"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+			"data-orientation": this.root.opts.orientation.current,
+			"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 			"data-bounded": tickProps["data-bounded"],
 			"data-value": tickValue,
 			"data-selected": this.root.isTickValueSelected(tickValue) ? "" : undefined,
@@ -1044,8 +1039,8 @@ export class SliderThumbLabelState {
 
 		return {
 			id: this.opts.id.current,
-			"data-orientation": getOrientation(this.root.opts.orientation.current),
-			"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+			"data-orientation": this.root.opts.orientation.current,
+			"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 			"data-value": thumbValue,
 			"data-active": this.root.isThumbActive(this.opts.index.current) ? "" : undefined,
 			"data-position": labelPosition,

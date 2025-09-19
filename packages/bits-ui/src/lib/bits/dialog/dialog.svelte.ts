@@ -5,7 +5,7 @@ import {
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import { createBitsAttrs, getAriaExpanded, getDataOpenClosed } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -127,7 +127,7 @@ export class DialogTriggerState {
 			({
 				id: this.opts.id.current,
 				"aria-haspopup": "dialog",
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"aria-controls": this.root.contentId,
 				[this.root.getBitsAttr("trigger")]: "",
 				onkeydown: this.onkeydown,

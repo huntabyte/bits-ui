@@ -23,10 +23,9 @@ import { SvelteMap } from "svelte/reactivity";
 import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
 import {
 	createBitsAttrs,
-	getAriaExpanded,
-	getDataDisabled,
+	boolToStr,
+	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-	getOrientation,
 } from "$lib/internal/attrs.js";
 import { noop } from "$lib/internal/noop.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
@@ -244,7 +243,7 @@ export class NavigationMenuRootState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				dir: this.opts.dir.current,
 				[navigationMenuAttrs.root]: "",
 				[navigationMenuAttrs.menu]: "",
@@ -306,7 +305,7 @@ export class NavigationMenuSubState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getOrientation(this.opts.orientation.current),
+				"data-orientation": this.opts.orientation.current,
 				[navigationMenuAttrs.sub]: "",
 				[navigationMenuAttrs.menu]: "",
 				...this.attachment,
@@ -366,7 +365,7 @@ export class NavigationMenuListState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				[navigationMenuAttrs.list]: "",
 				...this.attachment,
 			}) as const
@@ -572,10 +571,10 @@ export class NavigationMenuTriggerState {
 			({
 				id: this.opts.id.current,
 				disabled: this.opts.disabled.current,
-				"data-disabled": getDataDisabled(Boolean(this.opts.disabled.current)),
+				"data-disabled": boolToEmptyStrOrUndef(Boolean(this.opts.disabled.current)),
 				"data-state": getDataOpenClosed(this.open),
 				"data-value": this.itemContext.opts.value.current,
-				"aria-expanded": getAriaExpanded(this.open),
+				"aria-expanded": boolToStr(this.open),
 				"aria-controls": this.itemContext.contentId,
 				[navigationMenuAttrs.trigger]: "",
 				onpointermove: this.onpointermove,
@@ -773,7 +772,7 @@ export class NavigationMenuIndicatorImplState {
 			({
 				id: this.opts.id.current,
 				"data-state": this.isVisible ? "visible" : "hidden",
-				"data-orientation": getOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				style: {
 					position: "absolute",
 					...(this.isHorizontal
@@ -1050,7 +1049,7 @@ export class NavigationMenuContentImplState {
 				id: this.opts.id.current,
 				"aria-labelledby": this.itemContext.triggerId,
 				"data-motion": this.motionAttribute ?? undefined,
-				"data-orientation": getOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				"data-state": getDataOpenClosed(
 					this.context.opts.value.current === this.itemContext.opts.value.current
 				),
@@ -1129,7 +1128,7 @@ export class NavigationMenuViewportState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.open),
-				"data-orientation": getOrientation(this.context.opts.orientation.current),
+				"data-orientation": this.context.opts.orientation.current,
 				style: {
 					pointerEvents: !this.open && this.context.opts.isRootMenu ? "none" : undefined,
 					"--bits-navigation-menu-viewport-width": this.viewportWidth,

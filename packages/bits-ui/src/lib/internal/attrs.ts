@@ -1,21 +1,17 @@
-function boolToStr(): (condition: boolean) => "true" | "false" {
-	return (condition: boolean) => (condition ? "true" : "false");
+export function boolToStr(condition: boolean): "true" | "false" {
+	return condition ? "true" : "false";
 }
 
-function boolToStringTrueOrUndefined(): (condition: boolean) => "true" | undefined {
-	return (condition: boolean) => (condition ? "true" : undefined);
+export function boolToStrTrueOrUndef(condition: boolean): "true" | undefined {
+	return condition ? "true" : undefined;
 }
 
-function boolToTrueOrUndefined(): (condition: boolean) => true | undefined {
-	return (condition: boolean) => (condition ? true : undefined);
+export function boolToEmptyStrOrUndef(condition: boolean): "" | undefined {
+	return condition ? "" : undefined;
 }
 
-function boolToEmptyOrUndefined(): (condition: boolean) => "" | undefined {
-	return (condition: boolean) => (condition ? "" : undefined);
-}
-
-export function getOrientation(orientation: "horizontal" | "vertical"): "horizontal" | "vertical" {
-	return orientation;
+export function boolToTrueOrUndef(condition: boolean): true | undefined {
+	return condition ? true : undefined;
 }
 
 export function getDataOpenClosed(condition: boolean): "open" | "closed" {
@@ -26,15 +22,6 @@ export function getDataChecked(condition: boolean): "checked" | "unchecked" {
 	return condition ? "checked" : "unchecked";
 }
 
-export const getAriaDisabled = boolToStr();
-export const getAriaReadonly = boolToStr();
-export const getAriaExpanded = boolToStr();
-export const getAriaRequired = boolToStr();
-export const getAriaSelected = boolToStr();
-export const getAriaHidden = boolToStringTrueOrUndefined();
-export const getAriaInvalid = boolToStringTrueOrUndefined();
-export const getAriaPressed = boolToStr();
-
 export function getAriaChecked(
 	checked: boolean,
 	indeterminate: boolean
@@ -44,17 +31,6 @@ export function getAriaChecked(
 	}
 	return checked ? "true" : "false";
 }
-
-export const getDataRequired = boolToEmptyOrUndefined();
-export const getDataInvalid = boolToEmptyOrUndefined();
-export const getDataReadonly = boolToEmptyOrUndefined();
-export const getDataSelected = boolToEmptyOrUndefined();
-export const getDataUnavailable = boolToEmptyOrUndefined();
-export const getDataDisabled = boolToEmptyOrUndefined();
-
-export const getHidden = boolToTrueOrUndefined();
-export const getDisabled = boolToTrueOrUndefined();
-export const getRequired = boolToTrueOrUndefined();
 
 export type BitsAttrsConfig<T extends readonly string[]> = {
 	component: string;

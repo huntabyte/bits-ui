@@ -8,8 +8,8 @@ import {
 import { Context, watch } from "runed";
 import {
 	createBitsAttrs,
-	getAriaExpanded,
-	getDataDisabled,
+	boolToStr,
+	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -72,7 +72,7 @@ export class CollapsibleRootState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.opts.open.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				[collapsibleAttrs.root]: "",
 				...this.attachment,
 			}) as const
@@ -171,7 +171,7 @@ export class CollapsibleContentState {
 						: undefined,
 				},
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[collapsibleAttrs.content]: "",
 				...this.attachment,
 			}) as const
@@ -224,9 +224,9 @@ export class CollapsibleTriggerState {
 				type: "button",
 				disabled: this.#isDisabled,
 				"aria-controls": this.root.contentId,
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				[collapsibleAttrs.trigger]: "",
 				//
 				onclick: this.onclick,

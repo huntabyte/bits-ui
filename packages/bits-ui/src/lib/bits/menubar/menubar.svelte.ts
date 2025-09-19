@@ -11,8 +11,8 @@ import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer
 import type { Direction } from "$lib/shared/index.js";
 import {
 	createBitsAttrs,
-	getAriaExpanded,
-	getDataDisabled,
+	boolToStr,
+	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -272,11 +272,11 @@ export class MenubarTriggerState {
 				role: "menuitem",
 				id: this.opts.id.current,
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.menu.open),
+				"aria-expanded": boolToStr(this.menu.open),
 				"aria-controls": this.menu.open ? this.menu.contentId : undefined,
 				"data-highlighted": this.isFocused ? "" : undefined,
 				"data-state": getDataOpenClosed(this.menu.open),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-menu-value": this.menu.opts.value.current,
 				disabled: this.opts.disabled.current ? true : undefined,
 				tabindex: this.#tabIndex,
