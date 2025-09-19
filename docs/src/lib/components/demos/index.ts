@@ -16,6 +16,7 @@ export { default as CheckboxDemoCustom } from "./checkbox-demo-custom.svelte";
 export { default as CheckboxDemoGroup } from "./checkbox-demo-group.svelte";
 export { default as CollapsibleDemo } from "./collapsible-demo.svelte";
 export { default as CollapsibleDemoTransitions } from "./collapsible-demo-transitions.svelte";
+export { default as CollapsibleHiddenUntilFoundDemo } from "./collapsible-hidden-until-found-demo.svelte";
 export { default as ComboboxDemo } from "./combobox-demo.svelte";
 export { default as ComboboxDemoAutoScrollDelay } from "./combobox-demo-auto-scroll-delay.svelte";
 export { default as ComboboxDemoTransition } from "./combobox-demo-transition.svelte";

@@ -84,6 +84,11 @@ export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHT
 	description: "The content displayed when the collapsible is open.",
 	props: {
 		forceMount: forceMountProp,
+		hiddenUntilFound: defineBooleanProp({
+			default: false,
+			description:
+				'When true, the content will be marked with `hidden="until-found"` when collapsed, allowing browsers to find and automatically expand the content during page searches.',
+		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
 			child: {

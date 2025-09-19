@@ -5,6 +5,7 @@ import type { Component } from "svelte";
 import type { Collapsible } from "bits-ui";
 import CollapsibleTest from "./collapsible-test.svelte";
 import CollapsibleForceMountTest from "./collapsible-force-mount-test.svelte";
+import CollapsibleHiddenUntilFoundTest from "./collapsible-hidden-until-found-test.svelte";
 
 function setup(
 	props: Collapsible.RootProps & { withOpenCheck?: boolean } = {},
@@ -81,6 +82,96 @@ describe("Collapsible ", () => {
 			await t.user.click(t.trigger);
 			const content = t.getByTestId("content");
 			expect(content).toBeVisible();
+		});
+	});
+
+	describe("Hidden Until Found Behavior", () => {
+		function setupHiddenUntilFound(
+			props: Collapsible.RootProps & { hiddenUntilFound?: boolean } = {}
+		) {
+			const user = userEvent;
+			const returned = render(CollapsibleHiddenUntilFoundTest, props);
+			const root = page.getByTestId("root");
+			const trigger = page.getByTestId("trigger");
+			const content = page.getByTestId("content");
+			const searchableContent = page.getByTestId("searchable-content");
+			const nestedContent = page.getByTestId("nested-content");
+			const binding = page.getByTestId("binding");
+			return {
+				...returned,
+				root,
+				trigger,
+				content,
+				searchableContent,
+				nestedContent,
+				binding,
+				user,
+			};
+		}
+
+		it("should render content with hidden='until-found' when closed and hiddenUntilFound is true", async () => {
+			const t = setupHiddenUntilFound({ open: false, hiddenUntilFound: true });
+			expect(t.content).toHaveAttribute("hidden", "until-found");
+			expect(t.binding).toHaveTextContent("false");
+		});
+
+		it("should not have hidden='until-found' when hiddenUntilFound is false", async () => {
+			const t = setupHiddenUntilFound({ open: false, hiddenUntilFound: false });
+			await expect.element(t.content).toHaveAttribute("hidden", "");
+			await expect.element(t.binding).toHaveTextContent("false");
+		});
+
+		it("should open collapsible when beforematch event is triggered", async () => {
+			const t = setupHiddenUntilFound({ open: false, hiddenUntilFound: true });
+			await expect.element(t.binding).toHaveTextContent("false");
+			await expect.element(t.content).toHaveAttribute("hidden", "until-found");
+
+			// simulate the beforematch event that browsers fire when content is found during search
+			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+			t.content.element().dispatchEvent(beforeMatchEvent);
+
+			await expect.element(t.binding).toHaveTextContent("true");
+		});
+
+		it("should call onOpenChange when beforematch event opens the collapsible", async () => {
+			const mock = vi.fn();
+			const t = setupHiddenUntilFound({
+				open: false,
+				hiddenUntilFound: true,
+				onOpenChange: mock,
+			});
+
+			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+			t.content.element().dispatchEvent(beforeMatchEvent);
+
+			// wait for state to update
+			await new Promise((resolve) => setTimeout(resolve, 10));
+
+			expect(mock).toHaveBeenCalledWith(true);
+		});
+
+		it("should not trigger open change when already open and beforematch is fired", async () => {
+			const mock = vi.fn();
+			const t = setupHiddenUntilFound({
+				open: true,
+				hiddenUntilFound: true,
+				onOpenChange: mock,
+			});
+
+			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
+			t.content.element().dispatchEvent(beforeMatchEvent);
+
+			await new Promise((resolve) => setTimeout(resolve, 10));
+
+			expect(mock).not.toHaveBeenCalled();
+		});
+
+		it("should maintain hidden='until-found' after closing when hiddenUntilFound is true", async () => {
+			const t = setupHiddenUntilFound({ open: false, hiddenUntilFound: true });
+
+			await t.user.click(t.trigger);
+			await t.user.click(t.trigger);
+			await expect.element(t.content).toHaveAttribute("hidden", "until-found");
 		});
 	});
 });
