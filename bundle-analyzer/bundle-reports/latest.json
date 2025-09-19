@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-09-19T01:17:57.540Z",
+  "timestamp": "2025-09-19T14:52:42.775Z",
   "results": [
     {
       "component": "Accordion",
@@ -559,8 +559,8 @@
     },
     {
       "component": "Tooltip",
-      "size": 115325,
-      "gzipSize": 36504,
+      "size": 115370,
+      "gzipSize": 36518,
       "exports": [
         "Root",
         "Content",
