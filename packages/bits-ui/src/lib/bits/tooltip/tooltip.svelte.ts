@@ -46,13 +46,9 @@ export class TooltipProviderState {
 
 	constructor(opts: TooltipProviderStateOpts) {
 		this.opts = opts;
-		this.#timerFn = new TimeoutFn(
-			() => {
-				this.isOpenDelayed = true;
-			},
-			this.opts.skipDelayDuration.current,
-			{ immediate: false }
-		);
+		this.#timerFn = new TimeoutFn(() => {
+			this.isOpenDelayed = true;
+		}, this.opts.skipDelayDuration.current);
 	}
 
 	#startTimer = () => {
@@ -143,14 +139,10 @@ export class TooltipRootState {
 	constructor(opts: TooltipRootStateOpts, provider: TooltipProviderState) {
 		this.opts = opts;
 		this.provider = provider;
-		this.#timerFn = new TimeoutFn(
-			() => {
-				this.#wasOpenDelayed = true;
-				this.opts.open.current = true;
-			},
-			this.delayDuration ?? 0,
-			{ immediate: false }
-		);
+		this.#timerFn = new TimeoutFn(() => {
+			this.#wasOpenDelayed = true;
+			this.opts.open.current = true;
+		}, this.delayDuration ?? 0);
 
 		new OpenChangeComplete({
 			open: this.opts.open,
@@ -164,14 +156,10 @@ export class TooltipRootState {
 			() => this.delayDuration,
 			() => {
 				if (this.delayDuration === undefined) return;
-				this.#timerFn = new TimeoutFn(
-					() => {
-						this.#wasOpenDelayed = true;
-						this.opts.open.current = true;
-					},
-					this.delayDuration,
-					{ immediate: false }
-				);
+				this.#timerFn = new TimeoutFn(() => {
+					this.#wasOpenDelayed = true;
+					this.opts.open.current = true;
+				}, this.delayDuration);
 			}
 		);
 
@@ -183,7 +171,8 @@ export class TooltipRootState {
 				} else {
 					this.provider.onClose(this);
 				}
-			}
+			},
+			{ lazy: true }
 		);
 	}
 

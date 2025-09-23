@@ -22,7 +22,7 @@
 					Click "Close" to close dialog and hover tooltip again. The tooltip will not
 					appear.
 				</p>
-				<Dialog.Close>Close</Dialog.Close>
+				<Dialog.Close data-testid="dialog-close">Close</Dialog.Close>
 			</Dialog.Content>
 		</Dialog.Portal>
 	</Dialog.Root>

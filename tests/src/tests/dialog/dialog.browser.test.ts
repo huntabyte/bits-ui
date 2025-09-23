@@ -414,8 +414,9 @@ describe("Integration with other components", () => {
 		await expectExists(page.getByTestId("tooltip-content"));
 		await trigger.click();
 		await expectExists(page.getByTestId("dialog-content"));
+		await expectNotExists(page.getByTestId("tooltip-content"));
+		await page.getByTestId("dialog-close").click();
 
-		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("dialog-content"));
 		await trigger.hover();
 		await expectExists(page.getByTestId("tooltip-content"));
