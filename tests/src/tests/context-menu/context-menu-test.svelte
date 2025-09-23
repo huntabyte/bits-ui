@@ -11,6 +11,7 @@
 		portalProps?: Omit<ContextMenu.PortalProps, "children" | "child">;
 		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "children" | "child">;
 		checkboxGroupProps?: Omit<ContextMenu.CheckboxGroupProps, "children" | "child" | "value">;
+		triggerProps?: Omit<ContextMenu.TriggerProps, "children" | "child">;
 		openFocusOverride?: boolean;
 	};
 </script>
@@ -28,6 +29,7 @@
 		subTriggerProps = {},
 		checkboxGroupProps = {},
 		openFocusOverride = false,
+		triggerProps = {},
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
@@ -41,6 +43,7 @@
 				class="h-[500px] w-[500px]"
 				aria-expanded={undefined}
 				aria-controls={undefined}
+				{...triggerProps}
 			>
 				open
 			</ContextMenu.Trigger>

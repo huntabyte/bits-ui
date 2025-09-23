@@ -24,7 +24,14 @@
 	});
 
 	const mergedProps = $derived(
-		mergeProps(restProps, triggerState.props, { style: { pointerEvents: "auto" } })
+		mergeProps(
+			restProps,
+			triggerState.props,
+			{ style: { pointerEvents: "auto" } },
+			{
+				style: restProps.style,
+			}
+		)
 	);
 </script>
 
