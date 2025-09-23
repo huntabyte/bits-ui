@@ -7,6 +7,8 @@ import type { ContextMenuTestProps } from "./context-menu-test.svelte";
 import type { ContextMenuForceMountTestProps } from "./context-menu-force-mount-test.svelte";
 import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
 import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
+import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -426,4 +428,44 @@ it("calls `onValueChange` when the value of the checkbox group changes", async (
 	await t.open();
 	await page.getByTestId("checkbox-group-item-1").click();
 	expect(onValueChange).toHaveBeenCalledWith(["2"]);
+});
+
+it("should not open when right-clicked while another floating layer is open that is not a context menu", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("dropdown-trigger").click();
+	const dropdownContent = page.getByTestId("dropdown-content");
+	await expectExists(dropdownContent);
+	await page.getByTestId("context-trigger-1").click({ button: "right" });
+	await expectNotExists(page.getByTestId("context-content-1"));
+	await expectExists(dropdownContent);
+});
+
+it("should allow switching between context menus via right-click", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("context-trigger-1").click({ button: "right" });
+	await expectExists(page.getByTestId("context-content-1"));
+	await page.getByTestId("context-trigger-2").click({ button: "right" });
+	await expectNotExists(page.getByTestId("context-content-1"));
+	await expectExists(page.getByTestId("context-content-2"));
+});
+
+it("should open inside of a dialog", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("dialog-trigger").click();
+	await expectExists(page.getByTestId("dialog-content"));
+	await page.getByTestId("context-trigger-3").click({ button: "right" });
+	await expectExists(page.getByTestId("context-content-3"));
+	await expectExists(page.getByTestId("dialog-content"));
+	await page.getByTestId("dialog-content").click({ force: true });
+	await expectExists(page.getByTestId("dialog-content"));
+	await expectNotExists(page.getByTestId("context-content-3"));
+});
+
+it("should open nested context menus", async () => {
+	render(ContextMenuNestedTest);
+	await page.getByTestId("trigger").click({ button: "right" });
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("nested-trigger").click({ button: "right" });
+	await expectExists(page.getByTestId("nested-content"));
+	await expectExists(page.getByTestId("content"));
 });
