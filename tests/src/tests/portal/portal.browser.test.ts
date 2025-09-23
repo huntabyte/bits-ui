@@ -3,50 +3,50 @@ import { render } from "vitest-browser-svelte";
 import { tick } from "svelte";
 import PortalTest from "./portal-test.svelte";
 import { page } from "@vitest/browser/context";
-import { expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 
 it("should portal content to document.body by default", async () => {
 	render(PortalTest);
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
-	expect(content).toBeInTheDocument();
-	expect(content.parentElement).toBe(document.body);
+	const content = page.getByTestId("portal-content");
+	await expectExists(content);
+	await expect.element(content.element()).toBeInTheDocument();
+	await expect.element(content.element().parentElement).toBe(document.body);
 });
 
 it("should display the portal content", async () => {
 	render(PortalTest, { content: "Test content" });
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
-	expect(content).toHaveTextContent("Test content");
+	const content = page.getByTestId("portal-content");
+	await expectExists(content);
+	await expect.element(content).toHaveTextContent("Test content");
 });
 
 it("should portal to element by ID selector", async () => {
 	render(PortalTest, { to: "#string-target" });
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
-	const target = page.getByTestId("string-target").element();
-	expect(content.parentElement).toBe(target);
+	const content = page.getByTestId("portal-content");
+	const target = page.getByTestId("string-target");
+	await expectExists(content);
+	await expect.element(content.element().parentElement).toBe(target.element());
 });
 
 it("should portal to element by class selector", async () => {
 	render(PortalTest, { to: ".class-target" });
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
-	const target = page.getByTestId("class-target").element();
-	expect(content.parentElement).toBe(target);
+	const content = page.getByTestId("portal-content");
+	await expectExists(content);
+	const target = page.getByTestId("class-target");
+	await expect.element(content.element().parentElement).toBe(target.element());
 });
 
 it("should portal to element by attribute selector", async () => {
 	render(PortalTest, { to: '[data-testid="custom-target"]' });
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
-	const target = page.getByTestId("custom-target").element();
-	expect(content.parentElement).toBe(target);
+	const content = page.getByTestId("portal-content");
+	const target = page.getByTestId("custom-target");
+	await expectExists(content);
+	await expect.element(content.element().parentElement).toBe(target.element());
 });
 
 it("should portal to HTMLElement target", async () => {
@@ -55,10 +55,10 @@ it("should portal to HTMLElement target", async () => {
 	document.body.appendChild(targetElement);
 
 	render(PortalTest, { to: targetElement, includeTargets: false });
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
-	expect(content.parentElement).toBe(targetElement);
+	const content = page.getByTestId("portal-content");
+	await expectExists(content);
+	await expect.element(content.element().parentElement).toBe(targetElement);
 
 	document.body.removeChild(targetElement);
 });
@@ -75,28 +75,27 @@ it("should portal to DocumentFragment target", async () => {
 	host.appendChild(fragment);
 
 	render(PortalTest, { to: container, includeTargets: false });
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
-	expect(content.parentElement).toBe(container);
+	const content = page.getByTestId("portal-content");
+	await expectExists(content);
+	await expect.element(content.element().parentElement).toBe(container);
 
 	document.body.removeChild(host);
 });
 
 it("should render inline when disabled", async () => {
 	render(PortalTest, { disabled: true });
-	await tick();
 
-	const content = page.getByTestId("portal-content").element();
+	const content = page.getByTestId("portal-content");
+	await expectExists(content);
 	const mainContainer = page.getByTestId("main-container").element();
 
-	expect(mainContainer.contains(content)).toBe(true);
-	expect(content.parentElement).not.toBe(document.body);
+	expect(mainContainer.contains(content.element())).toBe(true);
+	expect(content.element().parentElement).not.toBe(document.body);
 });
 
 it("should not portal when disabled even with target", async () => {
 	render(PortalTest, { to: "#string-target", disabled: true });
-	await tick();
 
 	const content = page.getByTestId("portal-content").element();
 	const target = page.getByTestId("string-target").element();
@@ -108,13 +107,12 @@ it("should not portal when disabled even with target", async () => {
 
 it("should clean up portal content when component unmounts", async () => {
 	const { unmount } = render(PortalTest, { content: "Cleanup test" });
-	await tick();
 
-	let content = page.getByTestId("portal-content").element();
-	expect(content).toBeInTheDocument();
+	let content = page.getByTestId("portal-content");
+	await expectExists(content);
+	await expect.element(content).toBeInTheDocument();
 
 	unmount();
-	await tick();
 
 	await expectNotExists(page.getByTestId("portal-content"));
 });

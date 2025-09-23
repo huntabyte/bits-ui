@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CommandInputProps } from "../types.js";
 	import { CommandInputState } from "../command.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,18 +16,18 @@
 	}: CommandInputProps = $props();
 
 	const inputState = CommandInputState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
 			}
 		),
-		autofocus: box.with(() => autofocus ?? false),
+		autofocus: boxWith(() => autofocus ?? false),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, inputState.props));

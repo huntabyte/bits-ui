@@ -1,15 +1,15 @@
 import {
 	afterTick,
 	attachRef,
-	box,
+	boxWith,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
 	createBitsAttrs,
-	getAriaExpanded,
-	getDataDisabled,
+	boolToStr,
+	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -21,6 +21,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { on } from "svelte/events";
 
 const collapsibleAttrs = createBitsAttrs({
 	component: "collapsible",
@@ -55,7 +56,7 @@ export class CollapsibleRootState {
 		this.attachment = attachRef(this.opts.ref);
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -72,7 +73,7 @@ export class CollapsibleRootState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.opts.open.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				[collapsibleAttrs.root]: "",
 				...this.attachment,
 			}) as const
@@ -83,6 +84,7 @@ interface CollapsibleContentStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
+			hiddenUntilFound: boolean;
 		}> {}
 
 export class CollapsibleContentState {
@@ -93,9 +95,10 @@ export class CollapsibleContentState {
 	readonly opts: CollapsibleContentStateOpts;
 	readonly root: CollapsibleRootState;
 	readonly attachment: RefAttachment;
-	readonly present = $derived.by(
-		() => this.opts.forceMount.current || this.root.opts.open.current
-	);
+	readonly present = $derived.by(() => {
+		if (this.opts.hiddenUntilFound.current) return this.root.opts.open.current;
+		return this.opts.forceMount.current || this.root.opts.open.current;
+	});
 
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
 	#isMountAnimationPrevented = $state(false);
@@ -125,6 +128,25 @@ export class CollapsibleContentState {
 				cancelAnimationFrame(rAF);
 			};
 		});
+
+		watch.pre(
+			[() => this.opts.ref.current, () => this.opts.hiddenUntilFound.current],
+			([node, hiddenUntilFound]) => {
+				if (!node || !hiddenUntilFound) return;
+
+				const handleBeforeMatch = () => {
+					if (this.root.opts.open.current) return;
+					// we need to defer opening until after browser completes search highlighting
+					// otherwise the browser will immediately open the collapsible
+					// and the search highlighting will not be visible
+					requestAnimationFrame(() => {
+						this.root.opts.open.current = true;
+					});
+				};
+
+				return on(node, "beforematch", handleBeforeMatch);
+			}
+		);
 
 		watch([() => this.opts.ref.current, () => this.present], ([node]) => {
 			if (!node) return;
@@ -170,8 +192,12 @@ export class CollapsibleContentState {
 						? `${this.#width}px`
 						: undefined,
 				},
+				hidden:
+					this.opts.hiddenUntilFound.current && !this.root.opts.open.current
+						? "until-found"
+						: undefined,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[collapsibleAttrs.content]: "",
 				...this.attachment,
 			}) as const
@@ -224,9 +250,9 @@ export class CollapsibleTriggerState {
 				type: "button",
 				disabled: this.#isDisabled,
 				"aria-controls": this.root.contentId,
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				[collapsibleAttrs.trigger]: "",
 				//
 				onclick: this.onclick,

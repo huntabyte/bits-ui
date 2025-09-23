@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ScrollAreaViewportProps } from "../types.js";
 	import { ScrollAreaViewportState } from "../scroll-area.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -14,8 +14,8 @@
 	}: ScrollAreaViewportProps = $props();
 
 	const viewportState = ScrollAreaViewportState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

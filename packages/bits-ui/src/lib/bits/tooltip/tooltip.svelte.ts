@@ -1,15 +1,16 @@
 import {
-	box,
 	onMountEffect,
 	attachRef,
 	DOMContext,
 	type WritableBoxedValues,
 	type ReadableBoxedValues,
+	simpleBox,
+	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
-import { createBitsAttrs, getDataDisabled } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
@@ -39,7 +40,7 @@ export class TooltipProviderState {
 	}
 	readonly opts: TooltipProviderStateOpts;
 	isOpenDelayed = $state<boolean>(true);
-	isPointerInTransit = box(false);
+	isPointerInTransit = simpleBox(false);
 	#timerFn: TimeoutFn<() => void>;
 	#openTooltip = $state<TooltipRootState | null>(null);
 
@@ -153,7 +154,7 @@ export class TooltipRootState {
 
 		new OpenChangeComplete({
 			open: this.opts.open,
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
@@ -240,7 +241,7 @@ export class TooltipTriggerState {
 	readonly opts: TooltipTriggerStateOpts;
 	readonly root: TooltipRootState;
 	readonly attachment: RefAttachment;
-	#isPointerDown = box(false);
+	#isPointerDown = simpleBox(false);
 	#hasPointerMoveOpened = $state(false);
 	readonly #isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
 	domContext: DOMContext;
@@ -316,7 +317,7 @@ export class TooltipTriggerState {
 					? this.root.contentNode?.id
 					: undefined,
 				"data-state": this.root.stateAttr,
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				"data-delay-duration": `${this.root.delayDuration}`,
 				[tooltipAttrs.trigger]: "",
 				tabindex: this.#isDisabled ? undefined : 0,
@@ -414,7 +415,7 @@ export class TooltipContentState {
 			({
 				id: this.opts.id.current,
 				"data-state": this.root.stateAttr,
-				"data-disabled": getDataDisabled(this.root.disabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled),
 				style: {
 					pointerEvents: "auto",
 					outline: "none",

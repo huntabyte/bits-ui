@@ -83,3 +83,6 @@ docs/src/routes/api/demos.json/demos.json
 # WebStorm/IntelliJ IDE files
 .idea/
 __screenshots__
+bundle-analyzer/.temp-bundle-analysis
+bundle-analyzer/bundle-reports/*
+!bundle-analyzer/bundle-reports/latest.json

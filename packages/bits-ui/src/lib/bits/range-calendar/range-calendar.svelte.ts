@@ -22,13 +22,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { useId } from "$lib/internal/use-id.js";
-import {
-	getAriaDisabled,
-	getAriaSelected,
-	getDataDisabled,
-	getDataSelected,
-	getDataUnavailable,
-} from "$lib/internal/attrs.js";
+import { boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import {
@@ -813,7 +807,7 @@ export class RangeCalendarCellState {
 	readonly sharedDataAttrs = $derived.by(
 		() =>
 			({
-				"data-unavailable": getDataUnavailable(this.isUnavailable),
+				"data-unavailable": boolToEmptyStrOrUndef(this.isUnavailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
@@ -824,10 +818,10 @@ export class RangeCalendarCellState {
 				"data-range-end": this.isRangeEnd ? "" : undefined,
 				"data-range-middle": this.isRangeMiddle ? "" : undefined,
 				"data-highlighted": this.isHighlighted ? "" : undefined,
-				"data-selected": getDataSelected(this.isSelectedDate),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelectedDate),
 				"data-value": this.opts.date.current.toString(),
 				"data-type": getDateValueType(this.opts.date.current),
-				"data-disabled": getDataDisabled(
+				"data-disabled": boolToEmptyStrOrUndef(
 					this.isDisabled ||
 						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
 				),
@@ -839,8 +833,8 @@ export class RangeCalendarCellState {
 			({
 				id: this.opts.id.current,
 				role: "gridcell",
-				"aria-selected": getAriaSelected(this.isSelectedDate),
-				"aria-disabled": getAriaDisabled(this.ariaDisabled),
+				"aria-selected": boolToStr(this.isSelectedDate),
+				"aria-disabled": boolToStr(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
 				...this.attachment,
@@ -906,7 +900,7 @@ export class RangeCalendarDayState {
 				id: this.opts.id.current,
 				role: "button",
 				"aria-label": this.cell.labelText,
-				"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),
+				"aria-disabled": boolToStr(this.cell.ariaDisabled),
 				...this.cell.sharedDataAttrs,
 				tabindex: this.#tabindex,
 				[this.cell.root.getBitsAttr("day")]: "",

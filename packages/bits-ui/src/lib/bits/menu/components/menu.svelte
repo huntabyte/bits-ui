@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { MenuRootProps } from "../types.js";
 	import { MenuMenuState, MenuRootState } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -17,8 +17,8 @@
 	} = $props();
 
 	const root = MenuRootState.create({
-		variant: box.with(() => variant),
-		dir: box.with(() => dir),
+		variant: boxWith(() => variant),
+		dir: boxWith(() => dir),
 		onClose: () => {
 			open = false;
 			onOpenChange(false);
@@ -27,14 +27,14 @@
 
 	MenuMenuState.create(
 		{
-			open: box.with(
+			open: boxWith(
 				() => open,
 				(v) => {
 					open = v;
 					onOpenChange(v);
 				}
 			),
-			onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+			onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 		},
 		root
 	);

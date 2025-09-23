@@ -4,17 +4,17 @@ description: Conceals or reveals content sections, enhancing space utilization a
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CollapsibleDemo, CollapsibleDemoTransitions, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, CollapsibleDemo, CollapsibleDemoTransitions, CollapsibleHiddenUntilFoundDemo, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="collapsible-demo" componentName="Collapsible">
+<ComponentPreview name="collapsible-demo" componentName="Collapsible">
 
 {#snippet preview()}
 <CollapsibleDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -26,6 +26,7 @@ The Collapsible component enables you to create expandable and collapsible conte
 - **Transition Support**: CSS variables and data attributes for smooth transitions between states.
 - **Flexible State Management**: Supports controlled and uncontrolled state, take control if needed.
 - **Compound Component Structure**: Provides a set of sub-components that work together to create a fully-featured collapsible.
+- **Hidden Until Found**: Support for the `hidden="until-found"` attribute for browser search integration.
 
 ## Architecture
 
@@ -215,6 +216,39 @@ You can then use the `MyCollapsibleContent` component alongside the other `Colla
   <MyCollapsibleContent duration={300}>
     <!-- ... -->
   </MyCollapsibleContent>
+</Collapsible.Root>
+```
+
+## Hidden Until Found
+
+The `hiddenUntilFound` prop enables integration with the browser's find-in-page functionality. When enabled, the collapsible content is marked with `hidden="until-found"`, which allows browsers to automatically expand collapsed content when users search for text within it.
+
+<ComponentPreview variant="collapsed" name="collapsible-hidden-until-found-demo" componentName="Collapsible">
+
+{#snippet preview()}
+<CollapsibleHiddenUntilFoundDemo />
+{/snippet}
+
+</ComponentPreview>
+
+### Basic Usage
+
+```svelte
+<script lang="ts">
+  import { Collapsible } from "bits-ui";
+</script>
+
+<Collapsible.Root>
+  <Collapsible.Trigger>Show More Details</Collapsible.Trigger>
+  <Collapsible.Content hiddenUntilFound={true}>
+    <p>
+      This content will be automatically revealed when users search for text
+      within it using Ctrl+F (Cmd+F on Mac).
+    </p>
+    <p>
+      For example, try searching for "automatically revealed" on this page.
+    </p>
+  </Collapsible.Content>
 </Collapsible.Root>
 ```
 

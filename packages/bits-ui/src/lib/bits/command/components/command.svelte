@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { CommandRootState } from "../command.svelte.js";
 	import type { CommandRootProps } from "../types.js";
 	import CommandLabel from "./_command-label.svelte";
@@ -29,15 +29,15 @@
 	}: CommandRootProps = $props();
 
 	const rootState = CommandRootState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		filter: box.with(() => filter),
-		shouldFilter: box.with(() => shouldFilter),
-		loop: box.with(() => loop),
-		value: box.with(
+		filter: boxWith(() => filter),
+		shouldFilter: boxWith(() => shouldFilter),
+		loop: boxWith(() => loop),
+		value: boxWith(
 			() => value,
 			(v) => {
 				if (value !== v) {
@@ -46,11 +46,11 @@
 				}
 			}
 		),
-		vimBindings: box.with(() => vimBindings),
-		disablePointerSelection: box.with(() => disablePointerSelection),
-		disableInitialScroll: box.with(() => disableInitialScroll),
-		onStateChange: box.with(() => onStateChange),
-		columns: box.with(() => columns),
+		vimBindings: boxWith(() => vimBindings),
+		disablePointerSelection: boxWith(() => disablePointerSelection),
+		disableInitialScroll: boxWith(() => disableInitialScroll),
+		onStateChange: boxWith(() => onStateChange),
+		columns: boxWith(() => columns),
 	});
 
 	// Imperative APIs - DO NOT REMOVE OR RENAME

@@ -4,18 +4,18 @@ description: Organizes content into collapsible sections, allowing users to focu
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, AccordionDemoHorizontalCards, Callout, AccordionDemoCheckoutSteps } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, AccordionDemoHorizontalCards, Callout, AccordionDemoCheckoutSteps } from '$lib/components/index.js'
 
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="accordion-demo" componentName="Accordion">
+<ComponentPreview name="accordion-demo" componentName="Accordion">
 
 {#snippet preview()}
 <AccordionDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -270,6 +270,25 @@ Disable specific items with the `disabled` prop:
 </Accordion.Root>
 ```
 
+### Hidden Until Found
+
+The `hiddenUntilFound` prop enables browser search functionality within collapsed accordion content. When enabled, collapsed content is marked with `hidden="until-found"`, allowing browsers to automatically expand accordion items when users search for text within them.
+
+```svelte {4}
+<Accordion.Root type="single">
+  <Accordion.Item value="item-1">
+    <Accordion.Header>
+      <Accordion.Trigger>Search Demo</Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content hiddenUntilFound>
+      This content can be found by browser search (Ctrl+F/CMD+F) even when the
+      accordion is closed. The accordion will automatically open when the
+      browser finds matching text.
+    </Accordion.Content>
+  </Accordion.Item>
+</Accordion.Root>
+```
+
 ### Svelte Transitions
 
 The Accordion component can be enhanced with Svelte's built-in transition effects or other animation libraries.
@@ -297,13 +316,13 @@ In this example:
 - Svelte's `#if` block controls when the content is visible.
 - Transition directives (`transition:fade` and `transition:fly`) apply the animations.
 
-<ComponentPreviewV2 name="accordion-demo-transitions" componentName="Accordion">
+<ComponentPreview name="accordion-demo-transitions" componentName="Accordion">
 
 {#snippet preview()}
 <AccordionDemoTransitions />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 #### Best Practices
 
@@ -360,24 +379,24 @@ The following examples demonstrate different ways to use the Accordion component
 
 Use the Accordion component to create a horizontal card layout with collapsible sections.
 
-<ComponentPreviewV2 name="accordion-demo-horizontal-cards" componentName="Accordion Horizontal Cards">
+<ComponentPreview name="accordion-demo-horizontal-cards" componentName="Accordion Horizontal Cards">
 
 {#snippet preview()}
 <AccordionDemoHorizontalCards />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Checkout Steps
 
 Use the Accordion component to create a multi-step checkout process.
 
-<ComponentPreviewV2 name="accordion-demo-checkout-steps" componentName="Accordion Checkout Steps">
+<ComponentPreview name="accordion-demo-checkout-steps" componentName="Accordion Checkout Steps">
 
 {#snippet preview()}
 <AccordionDemoCheckoutSteps />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

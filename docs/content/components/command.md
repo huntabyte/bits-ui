@@ -4,17 +4,17 @@ description: A command menu component that can be used to search, filter, and se
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, CommandDemo, CommandDemoGrid, CommandDemoDialog, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, CommandDemo, CommandDemoGrid, CommandDemoDialog, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="command-demo" componentName="Command">
+<ComponentPreview name="command-demo" componentName="Command">
 
 {#snippet preview()}
 <CommandDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -162,13 +162,13 @@ You can combine the `Command` component with the `Dialog` component to display t
 
 <br>
 
-<ComponentPreviewV2 name="command-demo-dialog" componentName="Command" size="xs">
+<ComponentPreview name="command-demo-dialog" componentName="Command" size="xs">
 
 {#snippet preview()}
 <CommandDemoDialog />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Grid
 
@@ -176,13 +176,13 @@ You can add the `columns` prop to use the command as a grid.
 
 <br>
 
-<ComponentPreviewV2 name="command-grid-demo" componentName="Command" size="xs">
+<ComponentPreview name="command-grid-demo" componentName="Command" size="xs">
 
 {#snippet preview()}
 <CommandDemoGrid />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Filtering
 

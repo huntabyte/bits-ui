@@ -5,17 +5,17 @@ description: Enables users to input a date within a designated field.
 
 <script>
 	import { CalendarDateTime, CalendarDate, now, getLocalTimeZone, parseDate, today } from "@internationalized/date";
-	import { APISection, ComponentPreviewV2, DateFieldDemo, DateFieldDemoCustom, DemoContainer, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DateFieldDemo, DateFieldDemoCustom, DemoContainer, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="date-field-demo" componentName="Date Field">
+<ComponentPreview name="date-field-demo" componentName="Date Field">
 
 {#snippet preview()}
 <DateFieldDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <Callout type="tip" title="Heads up!">
 
@@ -83,13 +83,13 @@ The following example shows how you might create a reusable `MyDateField` compon
 </DateField.Root>
 ```
 
-<ComponentPreviewV2 size="xs" fileName="MyDateField.svelte" containerClass="mt-4" name="date-field-demo-custom" componentName="DateField">
+<ComponentPreview variant="collapsed" size="xs" fileName="MyDateField.svelte" containerClass="mt-4" name="date-field-demo-custom" componentName="DateField">
 
 {#snippet preview()}
 <DateFieldDemoCustom labelText="Select a date" />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 We'll be using this newly created `MyDateField` component in the following demos and examples to prevent repeating the same code, so be sure to reference it as you go through the documentation.
 

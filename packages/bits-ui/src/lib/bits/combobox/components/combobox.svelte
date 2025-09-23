@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type WritableBox, box } from "svelte-toolbelt";
+	import { type WritableBox, boxWith } from "svelte-toolbelt";
 	import type { ComboboxRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
@@ -40,7 +40,7 @@
 
 	const rootState = SelectRootState.create({
 		type,
-		value: box.with(
+		value: boxWith(
 			() => value!,
 			(v) => {
 				value = v;
@@ -48,26 +48,26 @@
 				onValueChange(v);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
-		disabled: box.with(() => disabled),
-		required: box.with(() => required),
-		open: box.with(
+		disabled: boxWith(() => disabled),
+		required: boxWith(() => required),
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange(v);
 			}
 		),
-		loop: box.with(() => loop),
-		scrollAlignment: box.with(() => scrollAlignment),
-		name: box.with(() => name),
+		loop: boxWith(() => loop),
+		scrollAlignment: boxWith(() => scrollAlignment),
+		name: boxWith(() => name),
 		isCombobox: true,
-		items: box.with(() => items),
-		allowDeselect: box.with(() => allowDeselect),
-		inputValue: box.with(
+		items: boxWith(() => items),
+		allowDeselect: boxWith(() => allowDeselect),
+		inputValue: boxWith(
 			() => inputValue,
 			(v) => (inputValue = v)
 		),
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 </script>
 

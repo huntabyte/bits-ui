@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentProps } from "../types.js";
 	import { MenuOpenEvent, MenuContentState } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
@@ -32,14 +32,14 @@
 	}: MenuSubContentProps = $props();
 
 	const subContentState = MenuContentState.create({
-		id: box.with(() => id),
-		loop: box.with(() => loop),
-		ref: box.with(
+		id: boxWith(() => id),
+		loop: boxWith(() => loop),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
 		isSub: true,
-		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
+		onCloseAutoFocus: boxWith(() => handleCloseAutoFocus),
 	});
 
 	function onkeydown(e: KeyboardEvent) {

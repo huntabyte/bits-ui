@@ -4,17 +4,17 @@ description: Facilitates the selection of dates through an input and calendar-ba
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, DatePickerDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DatePickerDemo, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="date-picker-demo" componentName="Date Picker">
+<ComponentPreview name="date-picker-demo" componentName="Date Picker">
 
 {#snippet preview()}
 <DatePickerDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <Callout type="tip" title="Heads up!">
 

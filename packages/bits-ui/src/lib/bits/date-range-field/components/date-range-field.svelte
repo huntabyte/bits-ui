@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { DateRangeFieldRootState } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldRootProps } from "../types.js";
@@ -80,52 +80,52 @@
 	);
 
 	const rootState = DateRangeFieldRootState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		disabled: box.with(() => disabled),
-		readonly: box.with(() => readonly),
-		required: box.with(() => required),
-		hourCycle: box.with(() => hourCycle),
-		granularity: box.with(() => granularity),
+		disabled: boxWith(() => disabled),
+		readonly: boxWith(() => readonly),
+		required: boxWith(() => required),
+		hourCycle: boxWith(() => hourCycle),
+		granularity: boxWith(() => granularity),
 		locale: resolveLocaleProp(() => locale),
-		hideTimeZone: box.with(() => hideTimeZone),
-		validate: box.with(() => validate),
-		maxValue: box.with(() => maxValue),
-		minValue: box.with(() => minValue),
-		placeholder: box.with(
+		hideTimeZone: boxWith(() => hideTimeZone),
+		validate: boxWith(() => validate),
+		maxValue: boxWith(() => maxValue),
+		minValue: boxWith(() => minValue),
+		placeholder: boxWith(
 			() => placeholder as DateValue,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);
 			}
 		),
-		readonlySegments: box.with(() => readonlySegments),
-		value: box.with(
+		readonlySegments: boxWith(() => readonlySegments),
+		value: boxWith(
 			() => value as DateRange,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		startValue: box.with(
+		startValue: boxWith(
 			() => startValue,
 			(v) => {
 				startValue = v;
 				onStartValueChange(v);
 			}
 		),
-		endValue: box.with(
+		endValue: boxWith(
 			() => endValue,
 			(v) => {
 				endValue = v;
 				onEndValueChange(v);
 			}
 		),
-		onInvalid: box.with(() => onInvalid),
-		errorMessageId: box.with(() => errorMessageId),
+		onInvalid: boxWith(() => onInvalid),
+		errorMessageId: boxWith(() => errorMessageId),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

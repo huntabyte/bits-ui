@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuTriggerProps } from "../types.js";
 	import { DropdownMenuTriggerState } from "../menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -18,9 +18,9 @@
 	}: MenuTriggerProps = $props();
 
 	const triggerState = DropdownMenuTriggerState.create({
-		id: box.with(() => id),
-		disabled: box.with(() => disabled ?? false),
-		ref: box.with(
+		id: boxWith(() => id),
+		disabled: boxWith(() => disabled ?? false),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

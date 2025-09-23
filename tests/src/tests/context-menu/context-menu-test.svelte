@@ -11,6 +11,7 @@
 		portalProps?: Omit<ContextMenu.PortalProps, "children" | "child">;
 		subTriggerProps?: Omit<ContextMenu.SubTriggerProps, "children" | "child">;
 		checkboxGroupProps?: Omit<ContextMenu.CheckboxGroupProps, "children" | "child" | "value">;
+		triggerProps?: Omit<ContextMenu.TriggerProps, "children" | "child">;
 		openFocusOverride?: boolean;
 	};
 </script>
@@ -28,12 +29,12 @@
 		subTriggerProps = {},
 		checkboxGroupProps = {},
 		openFocusOverride = false,
+		triggerProps = {},
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
 
 <main class="flex flex-col gap-4">
-	<div data-testid="outside">outside</div>
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<ContextMenu.Root bind:open {...restProps}>
@@ -42,6 +43,7 @@
 				class="h-[500px] w-[500px]"
 				aria-expanded={undefined}
 				aria-controls={undefined}
+				{...triggerProps}
 			>
 				open
 			</ContextMenu.Trigger>
@@ -159,4 +161,5 @@
 		onclick={() => (group = [])}>Group value: {group}</button
 	>
 	<div id="portal-target" data-testid="portal-target"></div>
+	<div data-testid="outside" style="bottom: 0px; right: 10px; position: absolute;">outside</div>
 </main>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Code from "$lib/components/markdown/code.svelte";
 	import { Popover } from "bits-ui";
-	import ScrollArea from "$lib/components/scroll-area.svelte";
+	import ScrollArea from "$lib/components/ui/scroll-area.svelte";
 	import type { DataAttrSchema } from "$lib/types/index.js";
 	import Info from "phosphor-svelte/lib/Info";
 

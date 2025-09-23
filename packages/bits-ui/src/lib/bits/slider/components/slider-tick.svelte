@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { SliderTickProps } from "../types.js";
 	import { SliderTickState } from "../slider.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,12 +16,12 @@
 	}: SliderTickProps = $props();
 
 	const tickState = SliderTickState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		index: box.with(() => index),
+		index: boxWith(() => index),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, tickState.props));

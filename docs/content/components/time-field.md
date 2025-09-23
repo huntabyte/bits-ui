@@ -5,18 +5,18 @@ description: Enables users to input a time within a designated field.
 
 <script>
 	import { CalendarDateTime, CalendarDate, now, getLocalTimeZone, parseDateTime, today, Time } from "@internationalized/date";
-	import { APISection, ComponentPreviewV2, TimeFieldDemo, TimeFieldDemoCustom, DemoContainer, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, TimeFieldDemo, TimeFieldDemoCustom, DemoContainer, Callout } from '$lib/components/index.js'
 	import { toast } from 'svelte-sonner';
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="time-field-demo" componentName="Time Field">
+<ComponentPreview name="time-field-demo" componentName="Time Field">
 
 {#snippet preview()}
 <TimeFieldDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <Callout type="tip" title="Heads up!">
 
@@ -91,13 +91,13 @@ The following example shows how you might create a reusable `MyTimeField` compon
 </TimeField.Root>
 ```
 
-<ComponentPreviewV2 size="xs" fileName="MyTimeField.svelte" containerClass="mt-4" name="time-field-demo-custom" componentName="TimeField">
+<ComponentPreview size="xs" fileName="MyTimeField.svelte" containerClass="mt-4" name="time-field-demo-custom" componentName="TimeField">
 
 {#snippet preview()}
 <TimeFieldDemoCustom labelText="Select a time" />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 We'll be using this newly created `MyTimeField` component in the following demos and examples to prevent repeating the same code, so be sure to reference it as you go through the documentation.
 

@@ -2,16 +2,17 @@ import { render } from "vitest-browser-svelte";
 import { describe, expect, it } from "vitest";
 import type { Separator } from "bits-ui";
 import SeparatorTest from "./separator-test.svelte";
+import { page } from "@vitest/browser/context";
 
 function setup(props: Separator.RootProps = {}) {
-	const t = render(SeparatorTest, { ...props });
-	const root = t.getByTestId("root").element() as HTMLElement;
-	return { root, ...t };
+	render(SeparatorTest, { ...props });
+	const root = page.getByTestId("root").element() as HTMLElement;
+	return { root };
 }
 
 describe("Separator", () => {
 	it("should have bits data attrs", async () => {
 		const t = setup();
-		expect(t.root).toHaveAttribute("data-separator-root");
+		await expect.element(t.root).toHaveAttribute("data-separator-root");
 	});
 });

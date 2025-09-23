@@ -12,17 +12,12 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import {
-	getAriaDisabled,
-	getAriaExpanded,
-	getDataDisabled,
-	getDataOpenClosed,
-	getDataOrientation,
-} from "$lib/internal/attrs.js";
+import { boolToStr, boolToEmptyStrOrUndef, getDataOpenClosed } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+import { on } from "svelte/events";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
@@ -68,6 +63,7 @@ interface AccordionContentStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
+			hiddenUntilFound: boolean;
 		}> {}
 
 interface AccordionHeaderStateOpts
@@ -112,8 +108,8 @@ abstract class AccordionBaseState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-orientation": getDataOrientation(this.opts.orientation.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-orientation": this.opts.orientation.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				[accordionAttrs.root]: "",
 				...this.attachment,
 			}) as const
@@ -204,8 +200,8 @@ export class AccordionItemState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.isActive),
-				"data-disabled": getDataDisabled(this.isDisabled),
-				"data-orientation": getDataOrientation(this.root.opts.orientation.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
+				"data-orientation": this.root.opts.orientation.current,
 				[accordionAttrs.item]: "",
 				...this.attachment,
 			}) as const
@@ -262,11 +258,11 @@ export class AccordionTriggerState {
 			({
 				id: this.opts.id.current,
 				disabled: this.#isDisabled,
-				"aria-expanded": getAriaExpanded(this.itemState.isActive),
-				"aria-disabled": getAriaDisabled(this.#isDisabled),
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"aria-expanded": boolToStr(this.itemState.isActive),
+				"aria-disabled": boolToStr(this.#isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				"data-state": getDataOpenClosed(this.itemState.isActive),
-				"data-orientation": getDataOrientation(this.#root.opts.orientation.current),
+				"data-orientation": this.#root.opts.orientation.current,
 				[accordionAttrs.trigger]: "",
 				tabindex: 0,
 				onclick: this.onclick,
@@ -285,7 +281,10 @@ export class AccordionContentState {
 	#isMountAnimationPrevented = false;
 	#dimensions = $state({ width: 0, height: 0 });
 
-	readonly open = $derived.by(() => this.opts.forceMount.current || this.item.isActive);
+	readonly open = $derived.by(() => {
+		if (this.opts.hiddenUntilFound.current) return this.item.isActive;
+		return this.opts.forceMount.current || this.item.isActive;
+	});
 
 	constructor(opts: AccordionContentStateOpts, item: AccordionItemState) {
 		this.opts = opts;
@@ -299,6 +298,25 @@ export class AccordionContentState {
 			});
 			return () => cancelAnimationFrame(rAF);
 		});
+
+		watch.pre(
+			[() => this.opts.ref.current, () => this.opts.hiddenUntilFound.current],
+			([node, hiddenUntilFound]) => {
+				if (!node || !hiddenUntilFound) return;
+
+				const handleBeforeMatch = () => {
+					if (this.item.isActive) return;
+					// we need to defer opening until after browser completes search highlighting
+					// otherwise the browser will immediately open the accordion
+					// and the search highlighting will not be visible
+					requestAnimationFrame(() => {
+						this.item.updateValue();
+					});
+				};
+
+				return on(node, "beforematch", handleBeforeMatch);
+			}
+		);
 
 		// Handle dimension updates
 		watch([() => this.open, () => this.opts.ref.current], this.#updateDimensions);
@@ -343,13 +361,17 @@ export class AccordionContentState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
-				"data-disabled": getDataDisabled(this.item.isDisabled),
-				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.item.isDisabled),
+				"data-orientation": this.item.root.opts.orientation.current,
 				[accordionAttrs.content]: "",
 				style: {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
 					"--bits-accordion-content-width": `${this.#dimensions.width}px`,
 				},
+				hidden:
+					this.opts.hiddenUntilFound.current && !this.item.isActive
+						? "until-found"
+						: undefined,
 				...this.attachment,
 			}) as const
 	);
@@ -378,7 +400,7 @@ export class AccordionHeaderState {
 				"aria-level": this.opts.level.current,
 				"data-heading-level": this.opts.level.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
-				"data-orientation": getDataOrientation(this.item.root.opts.orientation.current),
+				"data-orientation": this.item.root.opts.orientation.current,
 				[accordionAttrs.header]: "",
 				...this.attachment,
 			}) as const

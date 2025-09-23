@@ -102,7 +102,6 @@
 {/snippet}
 
 <main>
-	<div data-testid="outside">outside</div>
 	<button data-testid="previous-button">previous button</button>
 	<div data-testid="non-portal-container">
 		<ContextMenu.Root bind:open {...restProps}>
@@ -147,4 +146,5 @@
 		>{subRadio}</button
 	>
 	<div id="portal-target" data-testid="portal-target"></div>
+	<div data-testid="outside" style="bottom: 0px; right: 10px; position: absolute;">outside</div>
 </main>

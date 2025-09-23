@@ -1,6 +1,5 @@
 import {
 	afterTick,
-	box,
 	mergeProps,
 	onDestroyEffect,
 	attachRef,
@@ -8,6 +7,8 @@ import {
 	getWindow,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
+	boxWith,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
@@ -35,21 +36,20 @@ import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
 	getAriaChecked,
-	getAriaDisabled,
-	getAriaExpanded,
-	getAriaOrientation,
-	getDataDisabled,
+	boolToStr,
 	getDataOpenClosed,
+	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/index.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { isTabbable } from "tabbable";
-import type { KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
+import type { KeyboardEventHandler, PointerEventHandler, MouseEventHandler } from "svelte/elements";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { getTopMostDismissableLayer } from "../utilities/dismissible-layer/use-dismissable-layer.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 
@@ -132,7 +132,7 @@ export class MenuMenuState {
 	readonly opts: MenuMenuStateOpts;
 	readonly root: MenuRootState;
 	readonly parentMenu: MenuMenuState | null;
-	contentId = box.with<string>(() => "");
+	contentId = boxWith<string>(() => "");
 	contentNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 
@@ -142,7 +142,7 @@ export class MenuMenuState {
 		this.parentMenu = parentMenu;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -239,10 +239,10 @@ export class MenuContentState {
 			getWindow: () => this.domContext.getWindow(),
 		}).handleTypeaheadSearch;
 		this.rovingFocusGroup = new RovingFocusGroup({
-			rootNode: box.with(() => this.parentMenu.contentNode),
+			rootNode: boxWith(() => this.parentMenu.contentNode),
 			candidateAttr: this.parentMenu.root.getBitsAttr("item"),
 			loop: this.opts.loop,
-			orientation: box.with(() => "vertical"),
+			orientation: boxWith(() => "vertical"),
 		});
 
 		watch(
@@ -431,7 +431,7 @@ export class MenuContentState {
 			({
 				id: this.opts.id.current,
 				role: "menu",
-				"aria-orientation": getAriaOrientation("vertical"),
+				"aria-orientation": "vertical" as const,
 				[this.parentMenu.root.getBitsAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				onkeydown: this.onkeydown,
@@ -513,8 +513,8 @@ class MenuItemSharedState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				role: "menuitem",
-				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"aria-disabled": boolToStr(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted": this.#isFocused ? "" : undefined,
 				[this.content.parentMenu.root.getBitsAttr("item")]: "",
 				//
@@ -717,7 +717,7 @@ export class MenuSubTriggerState {
 		mergeProps(
 			{
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.submenu.opts.open.current),
+				"aria-expanded": boolToStr(this.submenu.opts.open.current),
 				"data-state": getDataOpenClosed(this.submenu.opts.open.current),
 				"aria-controls": this.submenu.opts.open.current
 					? this.submenu.contentId.current
@@ -1046,6 +1046,17 @@ export class DropdownMenuTriggerState {
 		this.attachment = attachRef(this.opts.ref, (v) => (this.parentMenu.triggerNode = v));
 	}
 
+	onclick: MouseEventHandler<HTMLElement> = (e) => {
+		/**
+		 * MacOS VoiceOver sends a click in Safari/Firefox bypassing the keydown event
+		 * when V0+Space is pressed. Since we already handle the keydown event and the
+		 * pointerdown events separately, we ignore it if the detail is not 0.
+		 */
+		if (this.opts.disabled.current || e.detail !== 0) return;
+		this.parentMenu.toggleOpen();
+		e.preventDefault();
+	};
+
 	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.opts.disabled.current) return;
 		if (e.pointerType === "touch") return e.preventDefault();
@@ -1091,12 +1102,13 @@ export class DropdownMenuTriggerState {
 				id: this.opts.id.current,
 				disabled: this.opts.disabled.current,
 				"aria-haspopup": "menu",
-				"aria-expanded": getAriaExpanded(this.parentMenu.opts.open.current),
+				"aria-expanded": boolToStr(this.parentMenu.opts.open.current),
 				"aria-controls": this.#ariaControls,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[this.parentMenu.root.getBitsAttr("trigger")]: "",
 				//
+				onclick: this.onclick,
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
@@ -1121,7 +1133,7 @@ export class ContextMenuTriggerState {
 	readonly attachment: RefAttachment;
 	#point = $state({ x: 0, y: 0 });
 
-	virtualElement = box({
+	virtualElement = simpleBox({
 		getBoundingClientRect: () => DOMRect.fromRect({ width: 0, height: 0, ...this.#point }),
 	});
 	#longPressTimer: number | null = null;
@@ -1171,6 +1183,21 @@ export class ContextMenuTriggerState {
 
 	oncontextmenu(e: BitsMouseEvent) {
 		if (e.defaultPrevented || this.opts.disabled.current) return;
+
+		const topMostLayer = getTopMostDismissableLayer();
+
+		if (topMostLayer) {
+			const topLayerRef = topMostLayer[0].opts.ref.current;
+			const topLayerRefContainsTrigger = topLayerRef?.contains(this.opts.ref.current);
+
+			if (
+				!topLayerRefContainsTrigger &&
+				!topLayerRef?.hasAttribute?.("data-context-menu-content")
+			) {
+				return;
+			}
+		}
+
 		this.#clearLongPressTimer();
 		this.#handleOpen(e);
 		e.preventDefault();
@@ -1206,7 +1233,7 @@ export class ContextMenuTriggerState {
 			({
 				id: this.opts.id.current,
 				disabled: this.opts.disabled.current,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				tabindex: -1,

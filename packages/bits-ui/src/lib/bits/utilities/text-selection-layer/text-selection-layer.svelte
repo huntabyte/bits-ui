@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { TextSelectionLayerImplProps } from "./types.js";
 	import { TextSelectionLayerState } from "./use-text-selection-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -15,10 +15,10 @@
 	}: TextSelectionLayerImplProps = $props();
 
 	TextSelectionLayerState.create({
-		id: box.with(() => id),
-		onPointerDown: box.with(() => onPointerDown),
-		onPointerUp: box.with(() => onPointerUp),
-		enabled: box.with(() => enabled && preventOverflowTextSelection),
+		id: boxWith(() => id),
+		onPointerDown: boxWith(() => onPointerDown),
+		onPointerUp: boxWith(() => onPointerUp),
+		enabled: boxWith(() => enabled && preventOverflowTextSelection),
 		ref,
 	});
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import type { EscapeLayerImplProps } from "./types.js";
 	import { EscapeLayerState } from "./use-escape-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -13,9 +13,9 @@
 	}: EscapeLayerImplProps = $props();
 
 	EscapeLayerState.create({
-		escapeKeydownBehavior: box.with(() => escapeKeydownBehavior),
-		onEscapeKeydown: box.with(() => onEscapeKeydown),
-		enabled: box.with(() => enabled),
+		escapeKeydownBehavior: boxWith(() => escapeKeydownBehavior),
+		onEscapeKeydown: boxWith(() => onEscapeKeydown),
+		enabled: boxWith(() => enabled),
 		ref,
 	});
 </script>

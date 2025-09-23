@@ -4,10 +4,10 @@ import {
 	onDestroyEffect,
 	attachRef,
 	type WritableBox,
-	box,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
@@ -20,13 +20,9 @@ import type {
 } from "$lib/internal/types.js";
 import {
 	createBitsAttrs,
-	getAriaDisabled,
-	getAriaHidden,
-	getAriaInvalid,
-	getAriaReadonly,
-	getDataDisabled,
-	getDataInvalid,
-	getDataReadonly,
+	boolToStr,
+	boolToStrTrueOrUndef,
+	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
 import { isBrowser, isNumberString } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -204,7 +200,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		 */
 		this.value = props.value;
 		this.placeholder = rangeRoot ? rangeRoot.opts.placeholder : props.placeholder;
-		this.validate = rangeRoot ? box(undefined) : props.validate;
+		this.validate = rangeRoot ? simpleBox(undefined) : props.validate;
 		this.minValue = rangeRoot ? rangeRoot.opts.minValue : props.minValue;
 		this.maxValue = rangeRoot ? rangeRoot.opts.maxValue : props.maxValue;
 		this.disabled = rangeRoot ? rangeRoot.opts.disabled : props.disabled;
@@ -569,12 +565,12 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	getBaseSegmentAttrs(part: SegmentPart, segmentId: string) {
 		const inReadonlySegments = this.readonlySegmentsSet.has(part);
 		const defaultAttrs = {
-			"aria-invalid": getAriaInvalid(this.isInvalid),
-			"aria-disabled": getAriaDisabled(this.disabled.current),
-			"aria-readonly": getAriaReadonly(this.readonly.current || inReadonlySegments),
-			"data-invalid": getDataInvalid(this.isInvalid),
-			"data-disabled": getDataDisabled(this.disabled.current),
-			"data-readonly": getDataReadonly(this.readonly.current || inReadonlySegments),
+			"aria-invalid": boolToStrTrueOrUndef(this.isInvalid),
+			"aria-disabled": boolToStr(this.disabled.current),
+			"aria-readonly": boolToStr(this.readonly.current || inReadonlySegments),
+			"data-invalid": boolToEmptyStrOrUndef(this.isInvalid),
+			"data-disabled": boolToEmptyStrOrUndef(this.disabled.current),
+			"data-readonly": boolToEmptyStrOrUndef(this.readonly.current || inReadonlySegments),
 			"data-segment": `${part}`,
 		};
 
@@ -645,9 +641,9 @@ export class TimeFieldInputState {
 				role: "group",
 				"aria-labelledby": this.root.getLabelNode()?.id ?? undefined,
 				"aria-describedby": this.#ariaDescribedBy,
-				"aria-disabled": getAriaDisabled(this.root.disabled.current),
+				"aria-disabled": boolToStr(this.root.disabled.current),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled.current),
 				[timeFieldAttrs.input]: "",
 				...this.attachment,
 			}) as const
@@ -706,8 +702,8 @@ export class TimeFieldLabelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-invalid": getDataInvalid(this.root.isInvalid),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-invalid": boolToEmptyStrOrUndef(this.root.isInvalid),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled.current),
 				[timeFieldAttrs.label]: "",
 				onclick: this.onclick,
 				...this.attachment,
@@ -1019,7 +1015,7 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 	onkeydown(e: BitsKeyboardEvent) {
 		if (isNumberString(e.key)) {
 			const oldUpdateSegment = this.root.updateSegment.bind(this.root);
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// oxlint-disable-next-line no-explicit-any
 			this.root.updateSegment = (part: any, cb: any) => {
 				const result = oldUpdateSegment(part, cb);
 
@@ -1158,7 +1154,7 @@ class TimeFieldLiteralSegmentState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"aria-hidden": getAriaHidden(true),
+				"aria-hidden": boolToStrTrueOrUndef(true),
 				...this.root.getBaseSegmentAttrs("literal", this.opts.id.current),
 				...this.attachment,
 			}) as const
@@ -1197,7 +1193,7 @@ class TimeFieldTimeZoneSegmentState {
 				onkeydown: this.onkeydown,
 				tabindex: 0,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
-				"data-readonly": getDataReadonly(true),
+				"data-readonly": boolToEmptyStrOrUndef(true),
 				...this.attachment,
 			}) as const
 	);

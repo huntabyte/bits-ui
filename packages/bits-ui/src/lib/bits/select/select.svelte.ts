@@ -3,23 +3,21 @@ import {
 	afterSleep,
 	afterTick,
 	onDestroyEffect,
-	onMountEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
-	box,
+	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
-	getAriaExpanded,
-	getAriaHidden,
-	getDataDisabled,
+	boolToStr,
+	boolToStrTrueOrUndef,
+	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-	getDisabled,
-	getRequired,
+	boolToTrueOrUndef,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
@@ -39,7 +37,6 @@ import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floatin
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
-import { debounce } from "$lib/internal/debounce.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -122,7 +119,7 @@ abstract class SelectBaseRootState {
 		this.isCombobox = opts.isCombobox;
 
 		new OpenChangeComplete({
-			ref: box.with(() => this.contentNode),
+			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
@@ -135,11 +132,6 @@ abstract class SelectBaseRootState {
 			}
 		});
 	}
-
-	#debouncedSetHighlightedToFirstCandidate = debounce(
-		this.setHighlightedToFirstCandidate.bind(this),
-		20
-	);
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
@@ -156,11 +148,7 @@ abstract class SelectBaseRootState {
 		);
 	}
 
-	setHighlightedToFirstCandidate(options: { debounced: boolean } = { debounced: false }) {
-		if (options.debounced) {
-			this.#debouncedSetHighlightedToFirstCandidate();
-			return;
-		}
+	setHighlightedToFirstCandidate() {
 		this.setHighlightedNode(null);
 		const candidateNodes = this.getCandidateNodes();
 		if (!candidateNodes.length) return;
@@ -464,7 +452,11 @@ export class SelectInputState {
 				return;
 			}
 
-			if (this.root.highlightedValue) {
+			if (
+				this.root.highlightedValue &&
+				this.root.highlightedNode &&
+				this.root.highlightedNode.isConnected
+			) {
 				this.root.toggleItem(
 					this.root.highlightedValue,
 					this.root.highlightedLabel ?? undefined
@@ -516,6 +508,7 @@ export class SelectInputState {
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.opts.inputValue.current = e.currentTarget.value;
+		this.root.setHighlightedToFirstCandidate();
 	}
 
 	readonly props = $derived.by(
@@ -526,9 +519,9 @@ export class SelectInputState {
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				onkeydown: this.onkeydown,
 				oninput: this.oninput,
 				[this.root.getBitsAttr("input")]: "",
@@ -586,7 +579,7 @@ export class SelectComboTriggerState {
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
@@ -844,10 +837,10 @@ export class SelectTriggerState {
 				id: this.opts.id.current,
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
-				"aria-expanded": getAriaExpanded(this.root.opts.open.current),
+				"aria-expanded": boolToStr(this.root.opts.open.current),
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				"data-placeholder": this.root.hasValue ? undefined : "",
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
@@ -1004,14 +997,6 @@ export class SelectItemState {
 		this.root = root;
 		this.attachment = attachRef(opts.ref);
 
-		onMountEffect(() => {
-			this.root.setHighlightedToFirstCandidate({ debounced: true });
-		});
-
-		onDestroyEffect(() => {
-			this.root.setHighlightedToFirstCandidate({ debounced: true });
-		});
-
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
 				this.opts.onHighlight.current();
@@ -1122,7 +1107,7 @@ export class SelectItemState {
 					? "true"
 					: undefined,
 				"data-value": this.opts.value.current,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted":
 					this.root.highlightedValue === this.opts.value.current &&
 					!this.opts.disabled.current
@@ -1226,8 +1211,8 @@ export class SelectHiddenInputState {
 	readonly props = $derived.by(
 		() =>
 			({
-				disabled: getDisabled(this.root.opts.disabled.current),
-				required: getRequired(this.root.opts.required.current),
+				disabled: boolToTrueOrUndef(this.root.opts.disabled.current),
+				required: boolToTrueOrUndef(this.root.opts.required.current),
 				name: this.root.opts.name.current,
 				value: this.opts.value.current,
 				onfocus: this.onfocus,
@@ -1355,7 +1340,7 @@ export class SelectScrollButtonImplState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"aria-hidden": getAriaHidden(true),
+				"aria-hidden": boolToStrTrueOrUndef(true),
 				style: {
 					flexShrink: 0,
 				},

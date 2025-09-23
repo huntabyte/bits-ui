@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuContentStaticProps } from "../types.js";
 	import { CONTEXT_MENU_TRIGGER_ATTR, MenuContentState } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -25,13 +25,13 @@
 	}: ContextMenuContentStaticProps = $props();
 
 	const contentState = MenuContentState.create({
-		id: box.with(() => id),
-		loop: box.with(() => loop),
-		ref: box.with(
+		id: boxWith(() => id),
+		loop: boxWith(() => loop),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onCloseAutoFocus: box.with(() => onCloseAutoFocus),
+		onCloseAutoFocus: boxWith(() => onCloseAutoFocus),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

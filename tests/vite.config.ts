@@ -23,6 +23,11 @@ const vitestBrowserConditionPlugin: Plugin = {
 export default defineConfig({
 	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
 	test: {
+		poolOptions: {
+			forks: {
+				maxForks: 7,
+			},
+		},
 		projects: [
 			{
 				extends: "./vite.config.ts",

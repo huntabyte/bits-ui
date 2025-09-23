@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { unstable_RatingGroup as RatingGroup } from "bits-ui";
+	import { RatingGroup } from "bits-ui";
 	import Star from "phosphor-svelte/lib/Star";
 
 	let value = $state(2);

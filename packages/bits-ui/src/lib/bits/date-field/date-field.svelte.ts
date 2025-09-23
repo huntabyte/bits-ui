@@ -2,12 +2,13 @@ import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import {
 	type WritableBox,
-	box,
+	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
@@ -21,13 +22,9 @@ import type {
 } from "$lib/internal/types.js";
 import {
 	createBitsAttrs,
-	getAriaDisabled,
-	getAriaHidden,
-	getAriaInvalid,
-	getAriaReadonly,
-	getDataDisabled,
-	getDataInvalid,
-	getDataReadonly,
+	boolToStr,
+	boolToStrTrueOrUndef,
+	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
 import { isBrowser, isNumberString } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -116,8 +113,10 @@ const SEGMENT_CONFIGS: Record<
 		max: 12,
 		cycle: 1,
 		padZero: true,
-		getAnnouncement: (month, root) =>
-			`${month} - ${root.formatter.fullMonth(toDate(root.placeholder.current.set({ month })))}`,
+		getAnnouncement: (month, root) => {
+			if (!root.placeholder.current) return "";
+			return `${month} - ${root.formatter.fullMonth(toDate(root.placeholder.current.set({ month })))}`;
+		},
 	},
 	year: {
 		min: 1,
@@ -224,7 +223,7 @@ export class DateFieldRootState {
 		 */
 		this.value = props.value;
 		this.placeholder = rangeRoot ? rangeRoot.opts.placeholder : props.placeholder;
-		this.validate = rangeRoot ? box(undefined) : props.validate;
+		this.validate = rangeRoot ? simpleBox(undefined) : props.validate;
 		this.minValue = rangeRoot ? rangeRoot.opts.minValue : props.minValue;
 		this.maxValue = rangeRoot ? rangeRoot.opts.maxValue : props.maxValue;
 		this.disabled = rangeRoot ? rangeRoot.opts.disabled : props.disabled;
@@ -242,8 +241,8 @@ export class DateFieldRootState {
 		this.isInvalidProp = props.isInvalidProp;
 		this.formatter = createFormatter({
 			initialLocale: this.locale.current,
-			monthFormat: box.with(() => "long"),
-			yearFormat: box.with(() => "numeric"),
+			monthFormat: boxWith(() => "long"),
+			yearFormat: boxWith(() => "numeric"),
 		});
 		this.initialSegments = initializeSegmentValues(this.inferredGranularity);
 		this.segmentValues = this.initialSegments;
@@ -522,10 +521,12 @@ export class DateFieldRootState {
 		return inferred;
 	});
 
-	readonly dateRef = $derived.by(() => this.value.current ?? this.placeholder.current);
+	readonly dateRef = $derived.by(() =>
+		this.value.current !== undefined ? this.value.current : this.placeholder.current
+	);
 
-	readonly allSegmentContent = $derived.by(() =>
-		createContent({
+	readonly allSegmentContent = $derived.by(() => {
+		return createContent({
 			segmentValues: this.segmentValues,
 			formatter: this.formatter,
 			locale: this.locale.current,
@@ -533,8 +534,8 @@ export class DateFieldRootState {
 			dateRef: this.dateRef,
 			hideTimeZone: this.hideTimeZone.current,
 			hourCycle: this.hourCycle.current,
-		})
-	);
+		});
+	});
 
 	readonly segmentContents = $derived.by(() => this.allSegmentContent.arr);
 
@@ -686,12 +687,12 @@ export class DateFieldRootState {
 	getBaseSegmentAttrs(part: SegmentPart, segmentId: string) {
 		const inReadonlySegments = this.readonlySegmentsSet.has(part);
 		const defaultAttrs = {
-			"aria-invalid": getAriaInvalid(this.isInvalid),
-			"aria-disabled": getAriaDisabled(this.disabled.current),
-			"aria-readonly": getAriaReadonly(this.readonly.current || inReadonlySegments),
-			"data-invalid": getDataInvalid(this.isInvalid),
-			"data-disabled": getDataDisabled(this.disabled.current),
-			"data-readonly": getDataReadonly(this.readonly.current || inReadonlySegments),
+			"aria-invalid": boolToStrTrueOrUndef(this.isInvalid),
+			"aria-disabled": boolToStr(this.disabled.current),
+			"aria-readonly": boolToStr(this.readonly.current || inReadonlySegments),
+			"data-invalid": boolToEmptyStrOrUndef(this.isInvalid),
+			"data-disabled": boolToEmptyStrOrUndef(this.disabled.current),
+			"data-readonly": boolToEmptyStrOrUndef(this.readonly.current || inReadonlySegments),
 			"data-segment": `${part}`,
 			[dateFieldAttrs.segment]: "",
 		};
@@ -767,9 +768,9 @@ export class DateFieldInputState {
 				role: "group",
 				"aria-labelledby": this.root.getLabelNode()?.id ?? undefined,
 				"aria-describedby": this.#ariaDescribedBy,
-				"aria-disabled": getAriaDisabled(this.root.disabled.current),
+				"aria-disabled": boolToStr(this.root.disabled.current),
 				"data-invalid": this.root.isInvalid ? "" : undefined,
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled.current),
 				[dateFieldAttrs.input]: "",
 				...this.attachment,
 			}) as const
@@ -828,8 +829,8 @@ export class DateFieldLabelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-invalid": getDataInvalid(this.root.isInvalid),
-				"data-disabled": getDataDisabled(this.root.disabled.current),
+				"data-invalid": boolToEmptyStrOrUndef(this.root.isInvalid),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled.current),
 				[dateFieldAttrs.label]: "",
 				onclick: this.onclick,
 				...this.attachment,
@@ -1317,7 +1318,7 @@ class DateFieldHourSegmentState extends BaseNumericSegmentState {
 		// Add special handling for hour display with dayPeriod
 		if (isNumberString(e.key)) {
 			const oldUpdateSegment = this.root.updateSegment.bind(this.root);
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// oxlint-disable-next-line no-explicit-any
 			this.root.updateSegment = (part: any, cb: any) => {
 				const result = oldUpdateSegment(part, cb);
 
@@ -1466,7 +1467,7 @@ export class DateFieldLiteralSegmentState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"aria-hidden": getAriaHidden(true),
+				"aria-hidden": boolToStrTrueOrUndef(true),
 				...this.root.getBaseSegmentAttrs("literal", this.opts.id.current),
 				...this.attachment,
 			}) as const
@@ -1510,7 +1511,7 @@ export class DateFieldTimeZoneSegmentState {
 				},
 				onkeydown: this.onkeydown,
 				...this.root.getBaseSegmentAttrs("timeZoneName", this.opts.id.current),
-				"data-readonly": getDataReadonly(true),
+				"data-readonly": boolToEmptyStrOrUndef(true),
 				...this.attachment,
 			}) as const
 	);

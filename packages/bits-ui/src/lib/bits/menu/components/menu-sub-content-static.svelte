@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { afterTick, box, mergeProps } from "svelte-toolbelt";
+	import { afterTick, boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubContentStaticProps } from "../types.js";
 	import { MenuContentState } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
@@ -31,13 +31,13 @@
 	}: MenuSubContentStaticProps = $props();
 
 	const subContentState = MenuContentState.create({
-		id: box.with(() => id),
-		loop: box.with(() => loop),
-		ref: box.with(
+		id: boxWith(() => id),
+		loop: boxWith(() => loop),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onCloseAutoFocus: box.with(() => handleCloseAutoFocus),
+		onCloseAutoFocus: boxWith(() => handleCloseAutoFocus),
 		isSub: true,
 	});
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { TabsRootProps } from "../types.js";
 	import { TabsRootState } from "../tabs.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -22,19 +22,19 @@
 	}: TabsRootProps = $props();
 
 	const rootState = TabsRootState.create({
-		id: box.with(() => id),
-		value: box.with(
+		id: boxWith(() => id),
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		orientation: box.with(() => orientation),
-		loop: box.with(() => loop),
-		activationMode: box.with(() => activationMode),
-		disabled: box.with(() => disabled),
-		ref: box.with(
+		orientation: boxWith(() => orientation),
+		loop: boxWith(() => loop),
+		activationMode: boxWith(() => activationMode),
+		disabled: boxWith(() => disabled),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

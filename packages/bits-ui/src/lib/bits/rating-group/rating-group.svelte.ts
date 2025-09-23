@@ -12,7 +12,7 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import { createBitsAttrs, getAriaRequired, getDataDisabled } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type {
 	RatingGroupAriaValuetext,
 	RatingGroupItemState as RatingGroupItemStateType,
@@ -284,10 +284,10 @@ export class RatingGroupRootState {
 			"aria-valuemax": this.opts.max.current,
 			"aria-valuetext": this.ariaValuetext,
 			"aria-orientation": this.opts.orientation.current,
-			"aria-required": getAriaRequired(this.opts.required.current),
+			"aria-required": boolToStr(this.opts.required.current),
 			"aria-disabled": this.opts.disabled.current ? "true" : undefined,
 			"aria-label": "Rating",
-			"data-disabled": getDataDisabled(this.opts.disabled.current),
+			"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 			"data-readonly": this.opts.readonly.current ? "" : undefined,
 			"data-orientation": this.opts.orientation.current,
 			tabindex: this.opts.disabled.current ? -1 : 0,
@@ -393,7 +393,7 @@ export class RatingGroupItemState {
 				role: "presentation",
 				"data-value": this.opts.index.current + 1,
 				"data-orientation": this.root.opts.orientation.current,
-				"data-disabled": getDataDisabled(this.#isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				"data-readonly": this.root.opts.readonly.current ? "" : undefined,
 				"data-state": this.#state,
 				[ratingGroupAttrs.item]: "",

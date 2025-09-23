@@ -1,12 +1,12 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Component } from "svelte";
-import { getTestKbd, sleep } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import LinkPreviewTest, { type LinkPreviewTestProps } from "./link-preview-test.svelte";
 import type { LinkPreviewForceMountTestProps } from "./link-preview-force-mount-test.svelte";
 import LinkPreviewForceMountTest from "./link-preview-force-mount-test.svelte";
 import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
-import { page } from "@vitest/browser/context";
+import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
@@ -23,8 +23,7 @@ function setup(
 async function open(props: LinkPreviewTestProps = {}) {
 	const t = setup(props);
 	await expectNotExists(page.getByTestId("content"));
-	await t.user.hover(t.trigger);
-	await sleep(100);
+	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
 
 	return { ...t };
@@ -36,34 +35,33 @@ it("should have bits data attrs", async () => {
 
 	for (const part of parts) {
 		const el = page.getByTestId(part);
-		expect(el).toHaveAttribute(`data-link-preview-${part}`);
+		await expect.element(el).toHaveAttribute(`data-link-preview-${part}`);
 	}
 });
 
 it("should open on hover", async () => {
-	const t = await open();
-	await t.user.click(page.getByTestId("content"));
+	await open();
+	await page.getByTestId("content").click();
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should close on escape keydown", async () => {
 	const mockEsc = vi.fn();
-	const t = await open({
+	await open({
 		contentProps: {
 			onEscapeKeydown: mockEsc,
 		},
 	});
-	await t.user.click(page.getByTestId("content"));
-	await t.user.keyboard(kbd.ESCAPE);
+	await page.getByTestId("content").click();
+	await userEvent.keyboard(kbd.ESCAPE);
 	expect(mockEsc).toHaveBeenCalledTimes(1);
 });
 
 it.skip("closes when pointer moves outside the trigger and content", async () => {
-	const t = await open();
+	await open();
 	const outside = page.getByTestId("outside");
-	await t.user.hover(outside);
-	await sleep(100);
-	await vi.waitFor(() => expectNotExists(page.getByTestId("content")));
+	await outside.hover();
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should portal to the body by default", async () => {
@@ -88,40 +86,40 @@ it("should not portal if `disabled` is passed as portal prop", async () => {
 });
 
 it("should respect the `escapeKeydownBehavior` prop", async () => {
-	const t = await open({
+	await open({
 		contentProps: {
 			escapeKeydownBehavior: "ignore",
 		},
 	});
-	await t.user.click(page.getByTestId("content"));
-	await t.user.keyboard(kbd.ESCAPE);
+	await page.getByTestId("content").click();
+	await userEvent.keyboard(kbd.ESCAPE);
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should respect the `interactOutsideBehavior` prop", async () => {
-	const t = await open({
+	await open({
 		contentProps: {
 			interactOutsideBehavior: "ignore",
 		},
 	});
-	await t.user.click(page.getByTestId("content"));
+	await page.getByTestId("content").click();
 	const outside = page.getByTestId("outside");
-	await t.user.click(outside);
+	await outside.click({ force: true });
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should respect binding the open prop", async () => {
-	const t = await open({
+	await open({
 		contentProps: {
 			interactOutsideBehavior: "ignore",
 		},
 	});
 	const binding = page.getByTestId("binding");
 	expect(binding).toHaveTextContent("true");
-	await t.user.click(binding);
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(page.getByTestId("content"));
 	expect(binding).toHaveTextContent("false");
-	expectNotExists(page.getByTestId("content"));
-	await t.user.click(binding);
+	await binding.click();
 	expect(binding).toHaveTextContent("true");
 	await expectExists(page.getByTestId("content"));
 });
@@ -135,7 +133,6 @@ it("should forceMount the content when `forceMount` is true", async () => {
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 	const t = setup({ withOpenCheck: true }, LinkPreviewForceMountTest);
 	await expectNotExists(page.getByTestId("content"));
-	await t.user.hover(t.trigger);
-	await sleep(100);
+	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
 });

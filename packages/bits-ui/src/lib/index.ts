@@ -28,7 +28,7 @@ export {
 	Progress,
 	RadioGroup,
 	RangeCalendar,
-	RatingGroup as unstable_RatingGroup,
+	RatingGroup,
 	ScrollArea,
 	Select,
 	Separator,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CommandEmptyProps } from "../types.js";
 	import { CommandEmptyState } from "../command.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -16,12 +16,12 @@
 	}: CommandEmptyProps = $props();
 
 	const emptyState = CommandEmptyState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		forceMount: box.with(() => forceMount),
+		forceMount: boxWith(() => forceMount),
 	});
 
 	const mergedProps = $derived(mergeProps(emptyState.props, restProps));

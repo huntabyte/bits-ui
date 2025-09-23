@@ -1,6 +1,6 @@
 import type { DateValue } from "@internationalized/date";
 import {
-	box,
+	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
@@ -17,7 +17,7 @@ import type {
 	SegmentPart,
 } from "$lib/shared/index.js";
 import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs, getDataDisabled, getDataInvalid } from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type { Granularity } from "$lib/shared/date/types.js";
 import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
 import { removeDescriptionElement } from "$lib/internal/date-time/field/helpers.js";
@@ -80,8 +80,8 @@ export class DateRangeFieldRootState {
 		this.opts = opts;
 		this.formatter = createFormatter({
 			initialLocale: this.opts.locale.current,
-			monthFormat: box.with(() => "long"),
-			yearFormat: box.with(() => "numeric"),
+			monthFormat: boxWith(() => "long"),
+			yearFormat: boxWith(() => "numeric"),
 		});
 		this.domContext = new DOMContext(this.opts.ref);
 		this.attachment = attachRef(this.opts.ref, (v) => (this.fieldNode = v));
@@ -216,7 +216,7 @@ export class DateRangeFieldRootState {
 				id: this.opts.id.current,
 				role: "group",
 				[dateRangeFieldAttrs.root]: "",
-				"data-invalid": getDataInvalid(this.isInvalid),
+				"data-invalid": boolToEmptyStrOrUndef(this.isInvalid),
 				...this.attachment,
 			}) as const
 	);
@@ -250,8 +250,8 @@ export class DateRangeFieldLabelState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-invalid": getDataInvalid(this.root.isInvalid),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"data-invalid": boolToEmptyStrOrUndef(this.root.isInvalid),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[dateRangeFieldAttrs.label]: "",
 				onclick: this.#onclick,
 				...this.attachment,
@@ -277,7 +277,7 @@ export class DateRangeFieldInputState {
 				disabled: root.opts.disabled,
 				readonly: root.opts.readonly,
 				readonlySegments: root.opts.readonlySegments,
-				validate: box.with(() => undefined),
+				validate: boxWith(() => undefined),
 				minValue: root.opts.minValue,
 				maxValue: root.opts.maxValue,
 				hourCycle: root.opts.hourCycle,
@@ -288,7 +288,7 @@ export class DateRangeFieldInputState {
 				placeholder: root.opts.placeholder,
 				onInvalid: root.opts.onInvalid,
 				errorMessageId: root.opts.errorMessageId,
-				isInvalidProp: box.with(() => root.isInvalid),
+				isInvalidProp: boxWith(() => root.isInvalid),
 			},
 			root
 		);

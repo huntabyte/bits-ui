@@ -132,6 +132,8 @@
 
 	--animate-accordion-down: accordion-down 0.2s ease-out;
 	--animate-accordion-up: accordion-up 0.2s ease-out;
+	--animate-collapsible-down: collapsible-down 0.2s ease-out;
+	--animate-collapsible-up: collapsible-up 0.2s ease-out;
 	--animate-caret-blink: caret-blink 1s ease-out infinite;
 	--animate-scale-in: scale-in 0.2s ease;
 	--animate-scale-out: scale-out 0.15s ease;
@@ -167,7 +169,29 @@
 		}
 	}
 
+	@keyframes collapsible-down {
+		from {
+			height: 0;
+		}
+
+		to {
+			height: var(--bits-collapsible-content-height);
+		}
+	}
+
+	@keyframes collapsible-up {
+		from {
+			height: var(--bits-collapsible-content-height);
+		}
+
+		to {
+			height: 0;
+		}
+	}
+
+
 	@keyframes caret-blink {
+
 		0%,
 		70%,
 		100% {
@@ -274,6 +298,7 @@
 }
 
 @layer base {
+
 	*,
 	::after,
 	::before,
@@ -308,6 +333,10 @@
 @layer components {
 	.link {
 		@apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;
+	}
+
+	.search-result mark {
+		@apply bg-[#fdffa4] dark:text-background text-foreground rounded px-0.5 py-px;
 	}
 }
 

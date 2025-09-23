@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { RatingGroupItemProps } from "../types.js";
 	import { RatingGroupItemState } from "../rating-group.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -17,10 +17,10 @@
 	}: RatingGroupItemProps = $props();
 
 	const itemState = RatingGroupItemState.create({
-		disabled: box.with(() => Boolean(disabled)),
-		index: box.with(() => index),
-		id: box.with(() => id),
-		ref: box.with(
+		disabled: boxWith(() => Boolean(disabled)),
+		index: boxWith(() => index),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

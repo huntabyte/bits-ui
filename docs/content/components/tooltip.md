@@ -4,17 +4,17 @@ description: Provides additional information or context when users hover over or
 ---
 
 <script>
-	import { ComponentPreviewV2, TooltipDemo, TooltipDemoCustom, TooltipDemoCustomAnchor, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
+	import { ComponentPreview, TooltipDemo, TooltipDemoCustom, TooltipDemoCustomAnchor, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="tooltip-demo" componentName="Tooltip">
+<ComponentPreview name="tooltip-demo" componentName="Tooltip">
 
 {#snippet preview()}
 <TooltipDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 
@@ -271,13 +271,13 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content components that handles this logic if you intend to use this approach throughout your app. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="tooltip-demo-transition" componentName="Tooltip" containerClass="mt-4">
+<ComponentPreview name="tooltip-demo-transition" componentName="Tooltip" containerClass="mt-4">
 
 {#snippet preview()}
 <TooltipDemoTransition />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Opt-out of Floating UI
 
@@ -322,12 +322,12 @@ If you wish to instead anchor the content to a different element, you can pass e
 </Tooltip.Root>
 ```
 
-<ComponentPreviewV2 name="tooltip-demo-custom-anchor" componentName="Tooltip Custom Anchor">
+<ComponentPreview name="tooltip-demo-custom-anchor" componentName="Tooltip Custom Anchor">
 
 {#snippet preview()}
 <TooltipDemoCustomAnchor />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

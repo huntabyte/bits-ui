@@ -14,7 +14,7 @@ export type BaseAccordionRootPropsWithoutHTML = {
 	/**
 	 * Whether the accordion is disabled or not.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
 
@@ -22,14 +22,14 @@ export type BaseAccordionRootPropsWithoutHTML = {
 	 * Whether to loop through the accordion items when navigating
 	 * with the arrow keys.
 	 *
-	 * @defaultValue true
+	 * @default true
 	 */
 	loop?: boolean;
 
 	/**
 	 * The orientation of the accordion.
 	 *
-	 * @defaultValue "vertical"
+	 * @default "vertical"
 	 */
 	orientation?: Orientation;
 };
@@ -48,7 +48,7 @@ export type AccordionRootSinglePropsWithoutHTML = BaseAccordionRootPropsWithoutH
 	 * The value of the currently open accordion item.
 	 *
 	 * @bindable
-	 * @defaultValue ""
+	 * @default ""
 	 */
 	value?: string;
 
@@ -72,7 +72,7 @@ export type AccordionRootMultiplePropsWithoutHTML = BaseAccordionRootPropsWithou
 	 * The value of the currently open accordion item.
 	 *
 	 * @bindable
-	 * @defaultValue []
+	 * @default []
 	 */
 	value?: string[];
 
@@ -113,9 +113,19 @@ export type AccordionContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 		 * Whether to forcefully mount the content, regardless of the open state.
 		 * This is useful if you want to use Svelte transitions for the content.
 		 *
-		 * @defaultValue `true`
+		 * @default true
 		 */
 		forceMount?: boolean;
+
+		/**
+		 * Whether to allow the browser to expand the content when searching for content
+		 * within the panel via the browser's built-in search functionality.
+		 *
+		 * When `true`, this prop will override the `forceMount` prop.
+		 *
+		 * @default false
+		 */
+		hiddenUntilFound?: boolean;
 	},
 	AccordionContentSnippetProps
 >;
@@ -133,7 +143,7 @@ export type AccordionItemPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the accordion item is disabled, which prevents users from interacting with it.
 	 *
-	 * @defaultValue `false`
+	 * @default false
 	 */
 	disabled?: boolean;
 }>;
@@ -145,7 +155,7 @@ export type AccordionHeaderPropsWithoutHTML = WithChild<{
 	 * The level of the accordion header, applied to the element's `aria-level` attribute.
 	 * This is used to indicate the hierarchical relationship between the accordion items.
 	 *
-	 * @defaultValue `3`
+	 * @default `3`
 	 */
 	level?: 1 | 2 | 3 | 4 | 5 | 6;
 }>;

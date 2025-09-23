@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { SwitchRootProps } from "../types.js";
 	import { SwitchRootState } from "../switch.svelte.js";
 	import SwitchInput from "./switch-input.svelte";
@@ -24,19 +24,19 @@
 	}: SwitchRootProps = $props();
 
 	const rootState = SwitchRootState.create({
-		checked: box.with(
+		checked: boxWith(
 			() => checked,
 			(v) => {
 				checked = v;
 				onCheckedChange?.(v);
 			}
 		),
-		disabled: box.with(() => disabled ?? false),
-		required: box.with(() => required),
-		value: box.with(() => value),
-		name: box.with(() => name),
-		id: box.with(() => id),
-		ref: box.with(
+		disabled: boxWith(() => disabled ?? false),
+		required: boxWith(() => required),
+		value: boxWith(() => value),
+		name: boxWith(() => name),
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

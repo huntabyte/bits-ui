@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// oxlint-disable no-explicit-any
 import { describe, expect, it } from "vitest";
 import { getDirectionalKeys } from "./get-directional-keys.js";
 import { kbd } from "./kbd.js";

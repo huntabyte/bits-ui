@@ -10,10 +10,8 @@ import type {
 import {
 	createBitsAttrs,
 	getAriaChecked,
-	getAriaRequired,
-	getDataDisabled,
-	getDataReadonly,
-	getAriaDisabled,
+	boolToEmptyStrOrUndef,
+	boolToStr,
 } from "$lib/internal/attrs.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -71,11 +69,11 @@ export class RadioGroupRootState {
 			({
 				id: this.opts.id.current,
 				role: "radiogroup",
-				"aria-required": getAriaRequired(this.opts.required.current),
-				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
+				"aria-required": boolToStr(this.opts.required.current),
+				"aria-disabled": boolToStr(this.opts.disabled.current),
 				"aria-readonly": this.opts.readonly.current ? "true" : undefined,
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.opts.readonly.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.opts.readonly.current),
 				"data-orientation": this.opts.orientation.current,
 				[radioGroupAttrs.root]: "",
 				...this.attachment,
@@ -165,8 +163,8 @@ export class RadioGroupItemState {
 				disabled: this.#isDisabled ? true : undefined,
 				"data-value": this.opts.value.current,
 				"data-orientation": this.root.opts.orientation.current,
-				"data-disabled": getDataDisabled(this.#isDisabled),
-				"data-readonly": getDataReadonly(this.#isReadonly),
+				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
+				"data-readonly": boolToEmptyStrOrUndef(this.#isReadonly),
 				"data-state": this.#isChecked ? "checked" : "unchecked",
 				"aria-checked": getAriaChecked(this.#isChecked, false),
 				[radioGroupAttrs.item]: "",

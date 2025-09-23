@@ -107,7 +107,7 @@
 			{/if}
 		</Combobox.Portal>
 	</Combobox.Root>
-	<div data-testid="outside">outside</div>
+	<div data-testid="outside" style="bottom: 0px; right: 10px; position: absolute;">outside</div>
 	<button data-testid="input-binding" onclick={() => (searchValue = "")}>
 		{#if searchValue === ""}
 			empty

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CommandGroupProps } from "../types.js";
 	import { CommandGroupContainerState } from "../command.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -17,13 +17,13 @@
 	}: CommandGroupProps = $props();
 
 	const groupState = CommandGroupContainerState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		forceMount: box.with(() => forceMount),
-		value: box.with(() => value),
+		forceMount: boxWith(() => forceMount),
+		value: boxWith(() => value),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, groupState.props));

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { SelectContentProps } from "../types.js";
 	import { SelectContentState } from "../select.svelte.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
@@ -23,13 +23,13 @@
 	}: SelectContentProps = $props();
 
 	const contentState = SelectContentState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onInteractOutside: box.with(() => onInteractOutside),
-		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		onInteractOutside: boxWith(() => onInteractOutside),
+		onEscapeKeydown: boxWith(() => onEscapeKeydown),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

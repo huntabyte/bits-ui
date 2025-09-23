@@ -21,6 +21,7 @@
 </script>
 
 <script lang="ts">
+	import "../../app.css";
 	let {
 		contentProps,
 		portalProps,
@@ -56,7 +57,7 @@
 			if (!v) searchValue = "";
 		}}
 	>
-		<Combobox.Trigger data-testid="trigger">Open combobox</Combobox.Trigger>
+		<Combobox.Trigger data-testid="trigger" class="p-4">Open combobox</Combobox.Trigger>
 		<Combobox.Input
 			data-testid="input"
 			aria-label="open combobox"
@@ -67,8 +68,14 @@
 			<Combobox.Content data-testid="content" {...contentProps}>
 				<Combobox.Group data-testid="group">
 					<Combobox.GroupHeading data-testid="group-label">Options</Combobox.GroupHeading>
-					{#each filteredItems as { value, label, disabled } (value)}
-						<Combobox.Item data-testid={value} {disabled} {value} {label}>
+					{#each filteredItems as { value, label, disabled }, i (i)}
+						<Combobox.Item
+							data-testid={value}
+							{disabled}
+							{value}
+							{label}
+							class="data-highlighted:bg-red-500 data-highlighted:text-white data-selected:bg-blue-500 data-selected:text-white p-2"
+						>
 							{#snippet children({ selected, highlighted: _highlighted })}
 								{#if selected}
 									<span data-testid="{value}-indicator">x</span>
@@ -81,7 +88,7 @@
 			</Combobox.Content>
 		</Combobox.Portal>
 	</Combobox.Root>
-	<div data-testid="outside">outside</div>
+	<div data-testid="outside" style="bottom: 0px; right: 10px; position: absolute;">outside</div>
 	<button data-testid="input-binding" onclick={() => (searchValue = "")}>
 		{#if searchValue === ""}
 			empty

@@ -4,17 +4,17 @@ description: Groups multiple toggle controls, allowing users to enable one or mu
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ToggleGroupDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ToggleGroupDemo } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="toggle-group-demo" componentName="ToggleGroup">
+<ComponentPreview name="toggle-group-demo" componentName="ToggleGroup">
 
 {#snippet preview()}
 <ToggleGroupDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+// oxlint-disable no-explicit-any
 import type { Snippet } from "svelte";
 
 import type { attachRef, Box, ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";

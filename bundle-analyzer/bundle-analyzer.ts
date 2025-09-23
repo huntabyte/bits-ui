@@ -1,0 +1,462 @@
+import { build } from "vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { visualizer } from "rollup-plugin-visualizer";
+import { resolve, join } from "node:path";
+import { writeFileSync, readFileSync, existsSync, mkdirSync, rmSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
+import { gzipSync } from "node:zlib";
+import { extractComponents, type ComponentInfo } from "./extract-components.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+interface BundleResult {
+	component: string;
+	size: number;
+	gzipSize: number;
+	exports: string[];
+}
+
+interface BundleReport {
+	timestamp: string;
+	results: BundleResult[];
+}
+
+// rollup-plugin-visualizer data structures
+interface VisualizerTreeNode {
+	name: string;
+	uid?: string;
+	children?: VisualizerTreeNode[];
+}
+
+interface VisualizerNodePart {
+	renderedLength: number;
+	gzipLength: number;
+	brotliLength: number;
+	metaUid: string;
+}
+
+interface VisualizerStats {
+	version: number;
+	tree: VisualizerTreeNode;
+	nodeParts: Record<string, VisualizerNodePart>;
+}
+
+interface EnrichedModule {
+	name: string;
+	uid: string;
+	path: string;
+	id: string;
+	renderedLength: number;
+	gzipLength: number;
+	brotliLength: number;
+}
+
+interface SizeResult {
+	size: number;
+	gzipSize: number;
+}
+
+function getComponents(): ComponentInfo[] {
+	return extractComponents();
+}
+
+class BundleAnalyzer {
+	tempDir: string;
+	outputDir: string;
+
+	constructor() {
+		this.tempDir = resolve(__dirname, ".temp-bundle-analysis");
+		this.outputDir = resolve(__dirname, "./bundle-reports");
+	}
+
+	async analyze(components?: string[]): Promise<BundleReport> {
+		console.log("🔍 Starting bundle analysis...");
+
+		const allComponents = getComponents();
+		const componentsToAnalyze = components
+			? allComponents.filter((c) => components.includes(c.name))
+			: allComponents;
+
+		this.setupTempDirectory();
+
+		const results: BundleResult[] = [];
+
+		for (const component of componentsToAnalyze) {
+			console.log(`📦 Analyzing ${component.name}...`);
+			const result = await this.analyzeComponent(component);
+			results.push(result);
+		}
+
+		const report: BundleReport = {
+			timestamp: new Date().toISOString(),
+			results,
+		};
+
+		this.saveReport(report);
+		this.printReport(report);
+
+		return report;
+	}
+
+	setupTempDirectory(): void {
+		if (existsSync(this.tempDir)) {
+			rmSync(this.tempDir, { recursive: true });
+		}
+		mkdirSync(this.tempDir, { recursive: true });
+
+		if (!existsSync(this.outputDir)) {
+			mkdirSync(this.outputDir, { recursive: true });
+		}
+	}
+
+	async analyzeComponent(component: ComponentInfo): Promise<BundleResult> {
+		// create test component file
+		const testComponentPath = this.createTestComponent(component);
+
+		// build with vite
+		const buildResult = await this.buildComponent(testComponentPath, component.name);
+
+		return {
+			component: component.name,
+			size: buildResult.size,
+			gzipSize: buildResult.gzipSize,
+			exports: component.exports,
+		};
+	}
+
+	createTestComponent(component: ComponentInfo): string {
+		// Import the component namespace
+		const namespaceImport = `import { ${component.name} } from "bits-ui";`;
+
+		// Create references to all exports to prevent tree-shaking
+		const exportReferences = component.exports
+			.map((exp) => `${component.name}.${exp}`)
+			.join(",\n\t");
+
+		const componentContent = `${namespaceImport}
+
+// test component that uses all exports to ensure they're included in bundle
+const refs = [
+	${exportReferences}
+];
+;(globalThis.__bits_keep ||= []).push(refs);
+`;
+
+		const filePath = join(this.tempDir, `${component.name}.test.ts`);
+		writeFileSync(filePath, componentContent);
+		return filePath;
+	}
+
+	async buildComponent(entryPath: string, componentName: string): Promise<SizeResult> {
+		const outputPath = join(this.tempDir, `dist-${componentName}`);
+		const statsPath = join(outputPath, "stats.json");
+
+		try {
+			await build({
+				plugins: [
+					svelte(),
+					visualizer({
+						filename: statsPath,
+						template: "raw-data",
+						gzipSize: true,
+					}),
+					{
+						name: "strip-comments",
+						generateBundle(options, bundle) {
+							for (const fileName in bundle) {
+								const chunk = bundle[fileName];
+								if (!chunk) continue;
+								if (chunk.type === "chunk") {
+									chunk.code = chunk.code
+										.replace(/\/\*[\s\S]*?\*\//g, "")
+										.replace(/\/\/.*$/gm, "")
+										.replace(/^\s*\n/gm, "");
+								}
+							}
+						},
+					},
+				],
+				esbuild: {
+					minifyWhitespace: true,
+					minifyIdentifiers: true,
+					minifySyntax: true,
+					legalComments: "none",
+					target: "es2020",
+				},
+				build: {
+					lib: {
+						entry: entryPath,
+						formats: ["es"],
+						fileName: "bundle",
+					},
+					outDir: outputPath,
+					write: true,
+					minify: "esbuild",
+					sourcemap: false,
+					rollupOptions: {
+						external: [
+							"svelte",
+							"svelte/internal",
+							"svelte/store",
+							"svelte/animate",
+							"svelte/easing",
+							"svelte/motion",
+							"svelte/transition",
+							"svelte/compiler",
+						],
+						output: {
+							manualChunks: undefined,
+							compact: true,
+							generatedCode: {
+								arrowFunctions: true,
+								constBindings: true,
+								objectShorthand: true,
+								reservedNamesAsProps: false,
+								symbols: true,
+								preset: "es2015",
+							},
+							minifyInternalExports: true,
+							hoistTransitiveImports: false,
+							inlineDynamicImports: true,
+							entryFileNames: "bundle.js",
+							banner: "",
+							footer: "",
+							intro: "",
+							outro: "",
+						},
+						treeshake: {
+							preset: "smallest",
+							moduleSideEffects: false,
+							propertyReadSideEffects: false,
+							tryCatchDeoptimization: false,
+							unknownGlobalSideEffects: false,
+						},
+					},
+				},
+			});
+
+			// analyze bundle composition using visualizer data
+			const { size, gzipSize } = this.analyzeBundleComposition(statsPath, componentName);
+
+			return { size, gzipSize };
+		} catch (error) {
+			console.error(`Failed to build ${componentName}:`, error);
+			return { size: 0, gzipSize: 0 };
+		}
+	}
+
+	analyzeBundleComposition(statsPath: string, componentName: string): SizeResult {
+		if (!existsSync(statsPath)) {
+			console.warn(`Stats file not found for ${componentName}, falling back to bundle file`);
+			return this.fallbackBundleSize(componentName);
+		}
+
+		try {
+			const stats: VisualizerStats = JSON.parse(readFileSync(statsPath, "utf-8"));
+
+			const allModules = this.extractModulesFromTree(stats.tree);
+
+			const enrichedModules = this.enrichModulesWithSizes(allModules, stats.nodeParts);
+
+			const componentModules = this.filterComponentModules(enrichedModules, componentName);
+
+			let totalSize = 0;
+			let totalGzipSize = 0;
+
+			for (const module of componentModules) {
+				totalSize += module.renderedLength || 0;
+				totalGzipSize += module.gzipLength || 0;
+			}
+
+			console.log(
+				`📊 ${componentName} - Component code: ${totalSize} bytes (${totalGzipSize} gzipped)`
+			);
+			console.log(
+				`   Filtered out ${enrichedModules.length - componentModules.length} Svelte runtime modules`
+			);
+
+			return { size: totalSize, gzipSize: totalGzipSize };
+		} catch (error) {
+			console.error(`Failed to analyze bundle composition for ${componentName}:`, error);
+			return this.fallbackBundleSize(componentName);
+		}
+	}
+
+	extractModulesFromTree(node: VisualizerTreeNode): EnrichedModule[] {
+		const modules: EnrichedModule[] = [];
+
+		const traverse = (n: VisualizerTreeNode, path: string = "") => {
+			const currentPath = path ? `${path}/${n.name}` : n.name;
+
+			// if node has uid, it's a leaf module
+			if (n.uid) {
+				modules.push({
+					name: n.name,
+					uid: n.uid,
+					path: currentPath,
+					id: currentPath,
+					// enriched later
+					renderedLength: 0,
+					gzipLength: 0,
+					brotliLength: 0,
+				});
+			}
+
+			if (n.children && Array.isArray(n.children)) {
+				for (const child of n.children) {
+					traverse(child, currentPath);
+				}
+			}
+		};
+
+		traverse(node);
+		return modules;
+	}
+
+	enrichModulesWithSizes(
+		modules: EnrichedModule[],
+		nodeParts: Record<string, VisualizerNodePart>
+	): EnrichedModule[] {
+		return modules.map((module) => {
+			const sizeInfo = nodeParts[module.uid];
+			if (!sizeInfo) return module;
+			return {
+				...module,
+				renderedLength: sizeInfo.renderedLength,
+				gzipLength: sizeInfo.gzipLength,
+				brotliLength: sizeInfo.brotliLength,
+			};
+		});
+	}
+
+	filterComponentModules(modules: EnrichedModule[], _componentName: string): EnrichedModule[] {
+		return modules.filter((module) => {
+			const path = module.path ?? module.id ?? "";
+			const name = module.name ?? "";
+
+			const isBitsUIDistModule =
+				path.includes("packages/bits-ui/dist") ||
+				path.includes("bits-ui/dist") ||
+				(name.includes("bits-ui") && path.includes("dist"));
+
+			return isBitsUIDistModule;
+		});
+	}
+
+	fallbackBundleSize(componentName: string): SizeResult {
+		const outputPath = join(this.tempDir, `dist-${componentName}`);
+		const bundlePath = join(outputPath, "bundle.js");
+
+		if (!existsSync(bundlePath)) {
+			return { size: 0, gzipSize: 0 };
+		}
+
+		const bundleContent = readFileSync(bundlePath, "utf-8");
+		const size = Buffer.byteLength(bundleContent, "utf-8");
+		const gzipBuffer = gzipSync(bundleContent);
+		const gzipSize = gzipBuffer.length;
+
+		return { size, gzipSize };
+	}
+
+	private saveReport(report: BundleReport) {
+		const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+		const filename = `bundle-report-${timestamp}.json`;
+		const filepath = join(this.outputDir, filename);
+
+		writeFileSync(filepath, JSON.stringify(report, null, 2));
+
+		const latestPath = join(this.outputDir, "latest.json");
+		writeFileSync(latestPath, JSON.stringify(report, null, 2));
+
+		console.log(`📊 Report saved to ${filepath}`);
+	}
+
+	private printReport(report: BundleReport) {
+		console.log("\n📊 Bundle Size Report");
+		console.log("=====================");
+		console.log(`Generated: ${new Date(report.timestamp).toLocaleString()}\n`);
+
+		const sortedResults = [...report.results].sort((a, b) =>
+			a.component.localeCompare(b.component)
+		);
+
+		console.log("Component Sizes:");
+		console.log("----------------");
+		for (const result of sortedResults) {
+			const sizeKB = (result.size / 1024).toFixed(2);
+			const gzipKB = (result.gzipSize / 1024).toFixed(2);
+			console.log(
+				`${result.component.padEnd(15)} ${sizeKB.padStart(8)} KB (${gzipKB} KB gzipped)`
+			);
+		}
+	}
+
+	static compare(currentPath: string, previousPath: string): void {
+		const current: BundleReport = JSON.parse(readFileSync(currentPath, "utf-8"));
+		const previous: BundleReport = JSON.parse(readFileSync(previousPath, "utf-8"));
+
+		console.log("\n📈 Bundle Size Comparison");
+		console.log("=========================");
+
+		const currentMap = new Map(current.results.map((r) => [r.component, r]));
+		const previousMap = new Map(previous.results.map((r) => [r.component, r]));
+
+		const allComponents = new Set([...currentMap.keys(), ...previousMap.keys()]);
+
+		for (const component of Array.from(allComponents).sort()) {
+			const curr = currentMap.get(component);
+			const prev = previousMap.get(component);
+
+			if (!curr) {
+				console.log(`❌ ${component}: REMOVED`);
+				continue;
+			}
+
+			if (!prev) {
+				console.log(`✨ ${component}: NEW (+${(curr.size / 1024).toFixed(2)} KB)`);
+				continue;
+			}
+
+			const sizeDiff = curr.size - prev.size;
+			const percentChange = ((sizeDiff / prev.size) * 100).toFixed(1);
+			const diffKB = (sizeDiff / 1024).toFixed(2);
+
+			const icon = sizeDiff > 0 ? "📈" : sizeDiff < 0 ? "📉" : "➡️";
+			const sign = sizeDiff > 0 ? "+" : "";
+
+			console.log(`${icon} ${component}: ${sign}${diffKB} KB (${sign}${percentChange}%)`);
+		}
+	}
+}
+
+async function main() {
+	const args = process.argv.slice(2);
+	const analyzer = new BundleAnalyzer();
+
+	if (args.includes("--compare")) {
+		const currentIndex = args.indexOf("--compare") + 1;
+		const previousIndex = args.indexOf("--compare") + 2;
+
+		if (args[currentIndex] && args[previousIndex]) {
+			BundleAnalyzer.compare(args[currentIndex], args[previousIndex]);
+		} else {
+			console.error("Usage: --compare <current-report.json> <previous-report.json>");
+			process.exit(1);
+		}
+		return;
+	}
+
+	const componentArgs = args.filter((arg) => !arg.startsWith("--"));
+	const components = componentArgs.length > 0 ? componentArgs : undefined;
+
+	await analyzer.analyze(components);
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+	main().catch(console.error);
+}
+
+export { BundleAnalyzer, type BundleReport, type BundleResult };

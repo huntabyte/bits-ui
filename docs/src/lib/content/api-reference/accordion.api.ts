@@ -131,6 +131,11 @@ const content = defineComponentApiSchema<AccordionContentPropsWithoutHTML>({
 	description: "The accordion item content, which is displayed when the item is open.",
 	props: {
 		forceMount: forceMountProp,
+		hiddenUntilFound: defineBooleanProp({
+			description:
+				"Whether the content should use `hidden='until-found'` when closed. This allows browsers to search within collapsed content and automatically expand the accordion item when matches are found.",
+			default: false,
+		}),
 		...withChildProps({
 			elType: "HTMLDivElement",
 			child: {

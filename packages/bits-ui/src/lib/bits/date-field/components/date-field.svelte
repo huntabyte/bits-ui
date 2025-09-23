@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { box } from "svelte-toolbelt";
-	import type { DateValue } from "@internationalized/date";
+	import { boxWith } from "svelte-toolbelt";
 	import { DateFieldRootState } from "../date-field.svelte.js";
 	import type { DateFieldRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -29,15 +28,19 @@
 		children,
 	}: DateFieldRootProps = $props();
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return;
+	function handleDefaultPlaceholder(setPlaceholder = true) {
+		if (placeholder !== undefined) return placeholder;
 
 		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultValue: value,
 		});
 
-		placeholder = defaultPlaceholder;
+		if (setPlaceholder) {
+			placeholder = defaultPlaceholder;
+		}
+
+		return defaultPlaceholder;
 	}
 
 	// SSR
@@ -56,34 +59,38 @@
 	);
 
 	DateFieldRootState.create({
-		value: box.with(
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		placeholder: box.with(
-			() => placeholder as DateValue,
+		placeholder: boxWith(
+			() => {
+				if (placeholder === undefined) return handleDefaultPlaceholder(false);
+				return placeholder;
+			},
 			(v) => {
+				if (v === undefined) return;
 				placeholder = v;
 				onPlaceholderChange(v);
 			}
 		),
-		disabled: box.with(() => disabled),
-		granularity: box.with(() => granularity),
-		hideTimeZone: box.with(() => hideTimeZone),
-		hourCycle: box.with(() => hourCycle),
+		disabled: boxWith(() => disabled),
+		granularity: boxWith(() => granularity),
+		hideTimeZone: boxWith(() => hideTimeZone),
+		hourCycle: boxWith(() => hourCycle),
 		locale: resolveLocaleProp(() => locale),
-		maxValue: box.with(() => maxValue),
-		minValue: box.with(() => minValue),
-		validate: box.with(() => validate),
-		readonly: box.with(() => readonly),
-		readonlySegments: box.with(() => readonlySegments),
-		required: box.with(() => required),
-		onInvalid: box.with(() => onInvalid),
-		errorMessageId: box.with(() => errorMessageId),
-		isInvalidProp: box.with(() => undefined),
+		maxValue: boxWith(() => maxValue),
+		minValue: boxWith(() => minValue),
+		validate: boxWith(() => validate),
+		readonly: boxWith(() => readonly),
+		readonlySegments: boxWith(() => readonlySegments),
+		required: boxWith(() => required),
+		onInvalid: boxWith(() => onInvalid),
+		errorMessageId: boxWith(() => errorMessageId),
+		isInvalidProp: boxWith(() => undefined),
 	});
 </script>
 

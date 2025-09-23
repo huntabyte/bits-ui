@@ -13,14 +13,14 @@ export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	/**
 	 * Whether the collapsible is disabled.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	disabled?: boolean;
 
 	/**
 	 * Whether the collapsible is open.
 	 *
-	 * @defaultValue false
+	 * @default false
 	 */
 	open?: boolean;
 
@@ -47,9 +47,19 @@ export type CollapsibleContentPropsWithoutHTML = WithChildNoChildrenSnippetProps
 		/**
 		 * Whether to force mount the content to the DOM.
 		 *
-		 * @defaultValue false
+		 * @default false
 		 */
 		forceMount?: boolean;
+
+		/**
+		 * Whether to allow the browser to expand the content when searching for content
+		 * within the panel via the browser's built-in search functionality.
+		 *
+		 * When `true`, this prop will override the `forceMount` prop.
+		 *
+		 * @default true
+		 */
+		hiddenUntilFound?: boolean;
 	},
 	CollapsibleContentSnippetProps
 >;

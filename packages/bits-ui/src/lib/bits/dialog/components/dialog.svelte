@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box } from "svelte-toolbelt";
+	import { boxWith } from "svelte-toolbelt";
 	import { DialogRootState } from "../dialog.svelte.js";
 	import type { DialogRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -12,15 +12,15 @@
 	}: DialogRootProps = $props();
 
 	DialogRootState.create({
-		variant: box.with(() => "dialog"),
-		open: box.with(
+		variant: boxWith(() => "dialog"),
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange(v);
 			}
 		),
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 </script>
 

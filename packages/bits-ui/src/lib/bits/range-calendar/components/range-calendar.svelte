@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { type DateValue } from "@internationalized/date";
 	import type { RangeCalendarRootProps } from "../types.js";
 	import { RangeCalendarRootState } from "../range-calendar.svelte.js";
@@ -83,59 +83,59 @@
 	);
 
 	const rootState = RangeCalendarRootState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(
+		value: boxWith(
 			() => value!,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		placeholder: box.with(
+		placeholder: boxWith(
 			() => placeholder!,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);
 			}
 		),
-		disabled: box.with(() => disabled),
-		readonly: box.with(() => readonly),
-		preventDeselect: box.with(() => preventDeselect),
-		minValue: box.with(() => minValue),
-		maxValue: box.with(() => maxValue),
-		isDateUnavailable: box.with(() => isDateUnavailable),
-		isDateDisabled: box.with(() => isDateDisabled),
-		pagedNavigation: box.with(() => pagedNavigation),
-		weekStartsOn: box.with(() => weekStartsOn),
-		weekdayFormat: box.with(() => weekdayFormat),
-		numberOfMonths: box.with(() => numberOfMonths),
+		disabled: boxWith(() => disabled),
+		readonly: boxWith(() => readonly),
+		preventDeselect: boxWith(() => preventDeselect),
+		minValue: boxWith(() => minValue),
+		maxValue: boxWith(() => maxValue),
+		isDateUnavailable: boxWith(() => isDateUnavailable),
+		isDateDisabled: boxWith(() => isDateDisabled),
+		pagedNavigation: boxWith(() => pagedNavigation),
+		weekStartsOn: boxWith(() => weekStartsOn),
+		weekdayFormat: boxWith(() => weekdayFormat),
+		numberOfMonths: boxWith(() => numberOfMonths),
 		locale: resolveLocaleProp(() => locale),
-		calendarLabel: box.with(() => calendarLabel),
-		fixedWeeks: box.with(() => fixedWeeks),
-		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
-		minDays: box.with(() => minDays),
-		maxDays: box.with(() => maxDays),
-		excludeDisabled: box.with(() => excludeDisabled),
-		startValue: box.with(
+		calendarLabel: boxWith(() => calendarLabel),
+		fixedWeeks: boxWith(() => fixedWeeks),
+		disableDaysOutsideMonth: boxWith(() => disableDaysOutsideMonth),
+		minDays: boxWith(() => minDays),
+		maxDays: boxWith(() => maxDays),
+		excludeDisabled: boxWith(() => excludeDisabled),
+		startValue: boxWith(
 			() => startValue,
 			(v) => {
 				startValue = v;
 				onStartValueChange(v);
 			}
 		),
-		endValue: box.with(
+		endValue: boxWith(
 			() => endValue,
 			(v) => {
 				endValue = v;
 				onEndValueChange(v);
 			}
 		),
-		monthFormat: box.with(() => monthFormat),
-		yearFormat: box.with(() => yearFormat),
+		monthFormat: boxWith(() => monthFormat),
+		yearFormat: boxWith(() => yearFormat),
 		defaultPlaceholder,
 	});
 

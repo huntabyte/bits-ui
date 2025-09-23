@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { DateValue } from "@internationalized/date";
 	import { DateRangePickerRootState } from "../date-range-picker.svelte.js";
 	import type { DateRangePickerRootProps } from "../types.js";
@@ -114,73 +114,73 @@
 	}
 
 	const pickerRootState = DateRangePickerRootState.create({
-		open: box.with(
+		open: boxWith(
 			() => open,
 			(v) => {
 				open = v;
 				onOpenChange(v);
 			}
 		),
-		value: box.with(
+		value: boxWith(
 			() => value as DateRange,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		placeholder: box.with(
+		placeholder: boxWith(
 			() => placeholder as DateValue,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v as DateValue);
 			}
 		),
-		isDateUnavailable: box.with(() => isDateUnavailable),
-		minValue: box.with(() => minValue),
-		maxValue: box.with(() => maxValue),
-		minDays: box.with(() => minDays),
-		maxDays: box.with(() => maxDays),
-		disabled: box.with(() => disabled),
-		readonly: box.with(() => readonly),
-		granularity: box.with(() => granularity),
-		readonlySegments: box.with(() => readonlySegments),
-		hourCycle: box.with(() => hourCycle),
+		isDateUnavailable: boxWith(() => isDateUnavailable),
+		minValue: boxWith(() => minValue),
+		maxValue: boxWith(() => maxValue),
+		minDays: boxWith(() => minDays),
+		maxDays: boxWith(() => maxDays),
+		disabled: boxWith(() => disabled),
+		readonly: boxWith(() => readonly),
+		granularity: boxWith(() => granularity),
+		readonlySegments: boxWith(() => readonlySegments),
+		hourCycle: boxWith(() => hourCycle),
 		locale: resolveLocaleProp(() => locale),
-		hideTimeZone: box.with(() => hideTimeZone),
-		required: box.with(() => required),
-		calendarLabel: box.with(() => calendarLabel),
-		disableDaysOutsideMonth: box.with(() => disableDaysOutsideMonth),
-		preventDeselect: box.with(() => preventDeselect),
-		pagedNavigation: box.with(() => pagedNavigation),
-		weekStartsOn: box.with(() => weekStartsOn),
-		weekdayFormat: box.with(() => weekdayFormat),
-		isDateDisabled: box.with(() => isDateDisabled),
-		fixedWeeks: box.with(() => fixedWeeks),
-		numberOfMonths: box.with(() => numberOfMonths),
-		excludeDisabled: box.with(() => excludeDisabled),
-		onRangeSelect: box.with(() => onRangeSelect),
-		startValue: box.with(
+		hideTimeZone: boxWith(() => hideTimeZone),
+		required: boxWith(() => required),
+		calendarLabel: boxWith(() => calendarLabel),
+		disableDaysOutsideMonth: boxWith(() => disableDaysOutsideMonth),
+		preventDeselect: boxWith(() => preventDeselect),
+		pagedNavigation: boxWith(() => pagedNavigation),
+		weekStartsOn: boxWith(() => weekStartsOn),
+		weekdayFormat: boxWith(() => weekdayFormat),
+		isDateDisabled: boxWith(() => isDateDisabled),
+		fixedWeeks: boxWith(() => fixedWeeks),
+		numberOfMonths: boxWith(() => numberOfMonths),
+		excludeDisabled: boxWith(() => excludeDisabled),
+		onRangeSelect: boxWith(() => onRangeSelect),
+		startValue: boxWith(
 			() => startValue,
 			(v) => {
 				startValue = v;
 				onStartValueChange(v);
 			}
 		),
-		endValue: box.with(
+		endValue: boxWith(
 			() => endValue,
 			(v) => {
 				endValue = v;
 				onEndValueChange(v);
 			}
 		),
-		monthFormat: box.with(() => monthFormat),
-		yearFormat: box.with(() => yearFormat),
+		monthFormat: boxWith(() => monthFormat),
+		yearFormat: boxWith(() => yearFormat),
 		defaultPlaceholder,
 	});
 
 	PopoverRootState.create({
 		open: pickerRootState.opts.open,
-		onOpenChangeComplete: box.with(() => onOpenChangeComplete),
+		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 	});
 
 	const fieldRootState = DateRangeFieldRootState.create({
@@ -188,7 +188,7 @@
 		disabled: pickerRootState.opts.disabled,
 		readonly: pickerRootState.opts.readonly,
 		readonlySegments: pickerRootState.opts.readonlySegments,
-		validate: box.with(() => validate),
+		validate: boxWith(() => validate),
 		minValue: pickerRootState.opts.minValue,
 		maxValue: pickerRootState.opts.maxValue,
 		granularity: pickerRootState.opts.granularity,
@@ -197,15 +197,15 @@
 		locale: pickerRootState.opts.locale,
 		required: pickerRootState.opts.required,
 		placeholder: pickerRootState.opts.placeholder,
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
 		startValue: pickerRootState.opts.startValue,
 		endValue: pickerRootState.opts.endValue,
-		onInvalid: box.with(() => onInvalid),
-		errorMessageId: box.with(() => errorMessageId),
+		onInvalid: boxWith(() => onInvalid),
+		errorMessageId: boxWith(() => errorMessageId),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, fieldRootState.props));

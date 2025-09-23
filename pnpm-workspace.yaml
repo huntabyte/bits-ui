@@ -2,16 +2,19 @@ packages:
   - packages/*
   - docs
   - tests
+  - bundle-analyzer
 
 catalog:
-  "@sveltejs/kit": ^2.31.0
-  "@sveltejs/vite-plugin-svelte": ^6.1.2
-  "@tailwindcss/vite": ^4.1.12
-  "@types/node": ^20.19.0
-  svelte: ^5.38.1
+  '@sveltejs/kit': ^2.42.0
+  '@sveltejs/vite-plugin-svelte': ^6.2.0
+  '@tailwindcss/vite': ^4.1.13
+  '@types/node': ^20.19.16
+  playwright: 1.55.0
+  runed: ^0.31.1
+  svelte: ^5.38.10
   svelte-check: ^4.3.1
-  tailwindcss: ^4.1.12
-  typescript: ^5.8.3
-  vite: ^7.0.4
-  vitest: ^3.2.3
-  vitest-browser-svelte: ^1.0.0
+  tailwindcss: ^4.1.13
+  typescript: ^5.9.2
+  vite: ^7.1.5
+  vitest: ^3.2.4
+  vitest-browser-svelte: ^1.1.0

@@ -1,5 +1,51 @@
 # bits-ui
 
+## 2.11.1
+
+### Patch Changes
+
+- fix(ContextMenu): ensure context menus respect interact outside of other dismissable layers ([#1788](https://github.com/huntabyte/bits-ui/pull/1788))
+
+- improve(ContextMenu): allow users to override `pointer-events` style on `ContextMenu.Trigger` ([#1790](https://github.com/huntabyte/bits-ui/pull/1790))
+
+## 2.11.0
+
+### Minor Changes
+
+- feat(Collapsible): add `hiddenUntilFound` prop to expand collapsible when the content matches a browser search ([#1782](https://github.com/huntabyte/bits-ui/pull/1782))
+
+- feat(Accordion): `hiddenUntilFound` to expand on browser search match ([#1782](https://github.com/huntabyte/bits-ui/pull/1782))
+
+### Patch Changes
+
+- perf: optimizations ([#1777](https://github.com/huntabyte/bits-ui/pull/1777))
+
+- fix(Tooltip): expose `strategy` prop ([#1780](https://github.com/huntabyte/bits-ui/pull/1780))
+
+## 2.10.0
+
+### Minor Changes
+
+- feat(Rating Group): remove `unstable_` prefix. `RatingGroup` now considered stable. ([#1767](https://github.com/huntabyte/bits-ui/pull/1767))
+
+### Patch Changes
+
+- fix(Select): selected item should be in view on open ([#1765](https://github.com/huntabyte/bits-ui/pull/1765))
+
+- fix(Combobox): selected item should be in view on open ([#1765](https://github.com/huntabyte/bits-ui/pull/1765))
+
+## 2.9.9
+
+### Patch Changes
+
+- fix(Dropdown Menu): ensure menu can open on `V0+Space` when using VoiceOver on Safari/Firefox ([#1761](https://github.com/huntabyte/bits-ui/pull/1761))
+
+## 2.9.8
+
+### Patch Changes
+
+- fix(DateField): ensure attribute reassignment doesn't create invalid state ([#1751](https://github.com/huntabyte/bits-ui/pull/1751))
+
 ## 2.9.7
 
 ### Patch Changes

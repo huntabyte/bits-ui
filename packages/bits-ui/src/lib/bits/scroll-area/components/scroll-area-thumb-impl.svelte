@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { IsMounted } from "runed";
 	import type { ScrollAreaThumbProps } from "../types.js";
 	import { ScrollAreaThumbImplState } from "../scroll-area.svelte.js";
@@ -19,12 +19,12 @@
 	const isMounted = new IsMounted();
 
 	const thumbState = ScrollAreaThumbImplState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		mounted: box.with(() => isMounted.current),
+		mounted: boxWith(() => isMounted.current),
 	});
 
 	const mergedProps = $derived(

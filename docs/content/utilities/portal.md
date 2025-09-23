@@ -4,7 +4,7 @@ description: A component that renders its children in a portal, preventing layou
 ---
 
 <script>
-    import { ComponentPreviewV2, PortalDemo, APISection } from '$lib/components'
+    import { ComponentPreview, PortalDemo, APISection } from '$lib/components'
 
 	let { schemas } = $props()
 </script>
@@ -67,12 +67,12 @@ The default target can modified using the `defaultPortalTo` prop of the [`BitsCo
 
 This will change the default target for all `Portal` components within its scope.
 
-<ComponentPreviewV2 size="xs" name="portal-demo" componentName="Portal">
+<ComponentPreview size="xs" name="portal-demo" componentName="Portal">
 
 {#snippet preview()}
 <PortalDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

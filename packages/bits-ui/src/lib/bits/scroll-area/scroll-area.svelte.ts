@@ -8,7 +8,7 @@
 import { Context, useDebounce, watch } from "runed";
 import { untrack } from "svelte";
 import {
-	box,
+	simpleBox,
 	executeCallbacks,
 	attachRef,
 	DOMContext,
@@ -16,7 +16,6 @@ import {
 	type ReadableBoxedValues,
 } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
-import { addEventListener } from "$lib/internal/events.js";
 import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
 import { clamp } from "$lib/internal/clamp.js";
@@ -112,8 +111,8 @@ export class ScrollAreaViewportState {
 	readonly opts: ScrollAreaViewportStateOpts;
 	readonly root: ScrollAreaRootState;
 	readonly attachment: RefAttachment;
-	#contentId = box(useId());
-	#contentRef = box<HTMLElement | null>(null);
+	#contentId = simpleBox(useId());
+	#contentRef = simpleBox<HTMLElement | null>(null);
 	readonly contentAttachment: RefAttachment = attachRef(
 		this.#contentRef,
 		(v) => (this.root.contentNode = v)
@@ -308,7 +307,7 @@ export class ScrollAreaScrollbarScrollState {
 				prevScrollPos = scrollPos;
 			};
 
-			const unsubListener = addEventListener(viewportNode, "scroll", handleScroll);
+			const unsubListener = on(viewportNode, "scroll", handleScroll);
 			return unsubListener;
 		});
 
@@ -736,14 +735,9 @@ export class ScrollAreaScrollbarSharedState {
 				if (isScrollbarWheel) this.handleWheelScroll(e, maxScrollPos);
 			};
 
-			const unsubListener = addEventListener(
-				this.root.domContext.getDocument(),
-				"wheel",
-				handleWheel,
-				{
-					passive: false,
-				}
-			);
+			const unsubListener = on(this.root.domContext.getDocument(), "wheel", handleWheel, {
+				passive: false,
+			});
 
 			return unsubListener;
 		});
@@ -864,7 +858,7 @@ export class ScrollAreaThumbImplState {
 				}
 			};
 			untrack(() => this.scrollbarState.handleThumbPositionChange());
-			const unsubListener = addEventListener(viewportNode, "scroll", handleScroll);
+			const unsubListener = on(viewportNode, "scroll", handleScroll);
 			return unsubListener;
 		});
 

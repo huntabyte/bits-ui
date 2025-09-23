@@ -4,17 +4,17 @@ description: Allows users to input a range of times within a designated field.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, DateRangeFieldDemo, TimeRangeFieldDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DateRangeFieldDemo, TimeRangeFieldDemo, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="time-range-field-demo" componentName="Time Range Field">
+<ComponentPreview name="time-range-field-demo" componentName="Time Range Field">
 
 {#snippet preview()}
 <TimeRangeFieldDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <Callout type="tip" title="Heads up!">
 

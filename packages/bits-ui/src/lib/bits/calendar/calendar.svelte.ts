@@ -15,16 +15,7 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
-import {
-	getAriaDisabled,
-	getAriaHidden,
-	getAriaReadonly,
-	getAriaSelected,
-	getDataDisabled,
-	getDataReadonly,
-	getDataSelected,
-	getDataUnavailable,
-} from "$lib/internal/attrs.js";
+import { boolToStr, boolToStrTrueOrUndef, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -565,9 +556,9 @@ export class CalendarHeadingState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"aria-hidden": getAriaHidden(true),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
+				"aria-hidden": boolToStrTrueOrUndef(true),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("heading")]: "",
 				...this.attachment,
 			}) as const
@@ -646,15 +637,15 @@ export class CalendarCellState {
 	readonly sharedDataAttrs = $derived.by(
 		() =>
 			({
-				"data-unavailable": getDataUnavailable(this.isUnavailable),
+				"data-unavailable": boolToEmptyStrOrUndef(this.isUnavailable),
 				"data-today": this.isDateToday ? "" : undefined,
 				"data-outside-month": this.isOutsideMonth ? "" : undefined,
 				"data-outside-visible-months": this.isOutsideVisibleMonths ? "" : undefined,
 				"data-focused": this.isFocusedDate ? "" : undefined,
-				"data-selected": getDataSelected(this.isSelectedDate),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelectedDate),
 				"data-value": this.opts.date.current.toString(),
 				"data-type": getDateValueType(this.opts.date.current),
-				"data-disabled": getDataDisabled(
+				"data-disabled": boolToEmptyStrOrUndef(
 					this.isDisabled ||
 						(this.isOutsideMonth && this.root.opts.disableDaysOutsideMonth.current)
 				),
@@ -666,8 +657,8 @@ export class CalendarCellState {
 			({
 				id: this.opts.id.current,
 				role: "gridcell",
-				"aria-selected": getAriaSelected(this.isSelectedDate),
-				"aria-disabled": getAriaDisabled(this.ariaDisabled),
+				"aria-selected": boolToStr(this.isSelectedDate),
+				"aria-disabled": boolToStr(this.ariaDisabled),
 				...this.sharedDataAttrs,
 				[this.root.getBitsAttr("cell")]: "",
 				...this.attachment,
@@ -720,7 +711,7 @@ export class CalendarDayState {
 				id: this.opts.id.current,
 				role: "button",
 				"aria-label": this.cell.labelText,
-				"aria-disabled": getAriaDisabled(this.cell.ariaDisabled),
+				"aria-disabled": boolToStr(this.cell.ariaDisabled),
 				...this.cell.sharedDataAttrs,
 				tabindex: this.#tabindex,
 				[this.cell.root.getBitsAttr("day")]: "",
@@ -767,8 +758,8 @@ export class CalendarNextButtonState {
 				role: "button",
 				type: "button",
 				"aria-label": "Next",
-				"aria-disabled": getAriaDisabled(this.isDisabled),
-				"data-disabled": getDataDisabled(this.isDisabled),
+				"aria-disabled": boolToStr(this.isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
 				disabled: this.isDisabled,
 				[this.root.getBitsAttr("next-button")]: "",
 				//
@@ -812,8 +803,8 @@ export class CalendarPrevButtonState {
 				role: "button",
 				type: "button",
 				"aria-label": "Previous",
-				"aria-disabled": getAriaDisabled(this.isDisabled),
-				"data-disabled": getDataDisabled(this.isDisabled),
+				"aria-disabled": boolToStr(this.isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
 				disabled: this.isDisabled,
 				[this.root.getBitsAttr("prev-button")]: "",
 				//
@@ -846,10 +837,10 @@ export class CalendarGridState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				role: "grid",
-				"aria-readonly": getAriaReadonly(this.root.opts.readonly.current),
-				"aria-disabled": getAriaDisabled(this.root.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
+				"aria-readonly": boolToStr(this.root.opts.readonly.current),
+				"aria-disabled": boolToStr(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("grid")]: "",
 				...this.attachment,
 			}) as const
@@ -877,8 +868,8 @@ export class CalendarGridBodyState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-body")]: "",
 				...this.attachment,
 			}) as const
@@ -905,8 +896,8 @@ export class CalendarGridHeadState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-head")]: "",
 				...this.attachment,
 			}) as const
@@ -933,8 +924,8 @@ export class CalendarGridRowState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("grid-row")]: "",
 				...this.attachment,
 			}) as const
@@ -961,8 +952,8 @@ export class CalendarHeadCellState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("head-cell")]: "",
 				...this.attachment,
 			}) as const
@@ -989,8 +980,8 @@ export class CalendarHeaderState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"data-disabled": getDataDisabled(this.root.opts.disabled.current),
-				"data-readonly": getDataReadonly(this.root.opts.readonly.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
 				[this.root.getBitsAttr("header")]: "",
 				...this.attachment,
 			}) as const
@@ -1080,7 +1071,7 @@ export class CalendarMonthSelectState {
 				id: this.opts.id.current,
 				value: this.currentMonth,
 				disabled: this.isDisabled,
-				"data-disabled": getDataDisabled(this.isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
 				[this.root.getBitsAttr("month-select")]: "",
 				//
 				onchange: this.onchange,
@@ -1174,7 +1165,7 @@ export class CalendarYearSelectState {
 				id: this.opts.id.current,
 				value: this.currentYear,
 				disabled: this.isDisabled,
-				"data-disabled": getDataDisabled(this.isDisabled),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
 				[this.root.getBitsAttr("year-select")]: "",
 				//
 				onchange: this.onchange,

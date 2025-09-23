@@ -7,7 +7,8 @@ import PopoverForceMountTest, {
 	type PopoverForceMountTestProps,
 } from "./popover-force-mount-test.svelte";
 import PopoverSiblingsTest from "./popover-siblings-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
+import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
@@ -15,38 +16,36 @@ function setup(
 	props: PopoverTestProps | PopoverForceMountTestProps = {},
 	component: Component = PopoverTest
 ) {
-	const user = setupBrowserUserEvents();
+	render(component, { ...props });
 
-	const t = render(component, { ...props });
-
-	const trigger = t.getByTestId("trigger").element() as HTMLElement;
+	const trigger = page.getByTestId("trigger");
 	function getContent() {
-		return t.getByTestId("content");
+		return page.getByTestId("content");
 	}
-	return { trigger, user, getContent, ...t };
+	return { trigger, getContent };
 }
 
 async function open(props: PopoverTestProps = {}, openWith: "click" | (string & {}) = "click") {
 	const t = setup(props);
 	await expectNotExists(t.getContent());
 	if (openWith === "click") {
-		await t.user.click(t.trigger);
+		await t.trigger.click();
 	} else {
-		t.trigger.focus();
-		await t.user.keyboard(openWith);
+		(t.trigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
-	const content = t.getByTestId("content").element() as HTMLElement;
+	const content = page.getByTestId("content");
 	return { content, ...t };
 }
 
 it("should have bits data attrs", async () => {
-	const t = await open();
+	await open();
 	const parts = ["trigger", "content", "close", "arrow"];
 
 	for (const part of parts) {
-		const el = t.getByTestId(part);
-		expect(el).toHaveAttribute(`data-popover-${part}`);
+		const el = page.getByTestId(part);
+		await expect.element(el).toHaveAttribute(`data-popover-${part}`);
 	}
 });
 
@@ -64,19 +63,18 @@ it("should open on space", async () => {
 
 it("should close on escape keydown by default", async () => {
 	const t = await open();
-	await t.user.keyboard(kbd.ESCAPE);
+	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(t.getContent());
 });
 
 it("should close on outside click", async () => {
 	const mockFn = vi.fn();
-	const t = await open({
+	await open({
 		contentProps: { onInteractOutside: mockFn },
 	});
 
-	await t.user.click(t.getByTestId("outside"));
-
-	expect(mockFn).toHaveBeenCalledTimes(1);
+	await page.getByTestId("outside").click({ force: true });
+	await vi.waitFor(() => expect(mockFn).toHaveBeenCalledTimes(1));
 
 	vi.resetAllMocks();
 });
@@ -87,14 +85,14 @@ it("should not close when clicking within bounds", async () => {
 		contentProps: { onInteractOutside: mockFn },
 	});
 
-	await t.user.click(t.getContent());
+	await t.getContent().click();
 
 	await expectExists(t.getContent());
 });
 
 it("should close when the close button is clicked", async () => {
 	const t = await open();
-	await t.user.click(t.getByTestId("close"));
+	await page.getByTestId("close").click();
 	await expectNotExists(t.getContent());
 });
 
@@ -106,7 +104,7 @@ it("should portal to the body by default", async () => {
 
 it("should portal to a custom element if specified", async () => {
 	const t = await open({ portalProps: { to: "#portal-target" } });
-	const portalTarget = t.getByTestId("portal-target").element() as HTMLElement;
+	const portalTarget = page.getByTestId("portal-target").element() as HTMLElement;
 	const contentWrapper = t.getContent().element()?.parentElement;
 	expect(contentWrapper?.parentElement).toBe(portalTarget);
 });
@@ -117,7 +115,7 @@ it("should not portal if `disabled` is passed to the portal ", async () => {
 			disabled: true,
 		},
 	});
-	const main = t.getByTestId("main").element() as HTMLElement;
+	const main = page.getByTestId("main").element() as HTMLElement;
 	const contentWrapper = t.getContent().element()?.parentElement;
 	expect(contentWrapper?.parentElement).toBe(main);
 });
@@ -128,8 +126,8 @@ it("should allow ignoring the escapeKeydownBehavior ", async () => {
 			escapeKeydownBehavior: "ignore",
 		},
 	});
-	await t.user.keyboard(kbd.ESCAPE);
-	expect(t.getContent()).toBeVisible();
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectExists(t.getContent());
 });
 
 it("should allow cancelling the `onEscapeKeydown` event", async () => {
@@ -144,9 +142,9 @@ it("should allow cancelling the `onEscapeKeydown` event", async () => {
 			},
 		},
 	});
-	await t.user.keyboard(kbd.ESCAPE);
+	await userEvent.keyboard(kbd.ESCAPE);
 	await expectExists(t.getContent());
-	await t.user.keyboard(kbd.ESCAPE);
+	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(t.getContent());
 });
 
@@ -156,24 +154,20 @@ it("should allow ignoring the interactOutsideBehavior", async () => {
 			interactOutsideBehavior: "ignore",
 		},
 	});
-	await t.user.click(t.getByTestId("outside"));
+	await page.getByTestId("outside").click({ force: true });
 	await expectExists(t.getContent());
 });
 
 it("should allow binding the `open` prop", async () => {
-	const t = await open({
-		contentProps: {
-			interactOutsideBehavior: "ignore",
-		},
-	});
-	const binding = t.getByTestId("binding").element() as HTMLElement;
-	expect(binding).toHaveTextContent("true");
-	await t.user.click(binding);
-	expect(binding).toHaveTextContent("false");
+	const t = await open();
+	const binding = page.getByTestId("binding");
+	await expect.element(binding).toHaveTextContent("true");
+	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(t.getContent());
-	await t.user.click(binding);
-	expect(binding).toHaveTextContent("true");
+	await expect.element(binding).toHaveTextContent("false");
+	await binding.click();
 	await expectExists(t.getContent());
+	await expect.element(binding).toHaveTextContent("true");
 });
 
 it("should forceMount the content when `forceMount` is true", async () => {
@@ -185,23 +179,22 @@ it("should forceMount the content when `forceMount` is true", async () => {
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 	const t = setup({ withOpenCheck: true }, PopoverForceMountTest);
 	await expectNotExists(t.getContent());
-	await t.user.click(t.getByTestId("trigger"));
+	await page.getByTestId("trigger").click();
 	await expectExists(t.getContent());
 });
 
 it("should correctly handle focus when closing one popover by clicking another popover's trigger", async () => {
-	const user = setupBrowserUserEvents();
 	const t = render(PopoverSiblingsTest);
-	await user.click(t.getByTestId("open-1"));
+	await t.getByTestId("open-1").click();
 	await expectExists(t.getByTestId("content-1"));
-	await user.click(t.getByTestId("open-2"));
+	await t.getByTestId("open-2").click();
 	await expectNotExists(t.getByTestId("content-1"));
 	await expectExists(t.getByTestId("content-2"));
-	expect(t.getByTestId("close-2")).toHaveFocus();
-	await user.click(t.getByTestId("open-3"));
+	await expect.element(t.getByTestId("close-2")).toHaveFocus();
+	await t.getByTestId("open-3").click();
 	await expectNotExists(t.getByTestId("content-2"));
 	await expectExists(t.getByTestId("content-3"));
-	expect(t.getByTestId("close-3")).toHaveFocus();
-	await user.click(t.getByTestId("close-3"));
+	await expect.element(t.getByTestId("close-3")).toHaveFocus();
+	await t.getByTestId("close-3").click();
 	await expectNotExists(t.getByTestId("content-3"));
 });

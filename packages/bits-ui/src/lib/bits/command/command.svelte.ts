@@ -17,14 +17,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
-import {
-	createBitsAttrs,
-	getAriaDisabled,
-	getAriaExpanded,
-	getAriaSelected,
-	getDataDisabled,
-	getDataSelected,
-} from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import { getFirstNonCommentChild } from "$lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
 import { cssEscape } from "$lib/internal/css-escape.js";
@@ -1344,7 +1337,7 @@ export class CommandInputState {
 				spellcheck: false,
 				"aria-autocomplete": "list",
 				role: "combobox",
-				"aria-expanded": getAriaExpanded(true),
+				"aria-expanded": boolToStr(true),
 				"aria-controls": this.root.viewportNode?.id ?? undefined,
 				"aria-labelledby": this.root.labelNode?.id ?? undefined,
 				"aria-activedescendant": this.#selectedItemId,
@@ -1461,10 +1454,10 @@ export class CommandItemState {
 		() =>
 			({
 				id: this.opts.id.current,
-				"aria-disabled": getAriaDisabled(this.opts.disabled.current),
-				"aria-selected": getAriaSelected(this.isSelected),
-				"data-disabled": getDataDisabled(this.opts.disabled.current),
-				"data-selected": getDataSelected(this.isSelected),
+				"aria-disabled": boolToStr(this.opts.disabled.current),
+				"aria-selected": boolToStr(this.isSelected),
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-value": this.trueValue,
 				"data-group": this.#group?.trueValue,
 				[commandAttrs.item]: "",

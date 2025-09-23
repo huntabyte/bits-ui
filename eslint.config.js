@@ -4,7 +4,7 @@ import prettier from "eslint-config-prettier";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-
+import oxlint from "eslint-plugin-oxlint";
 export default tseslint.config(
 	eslint.configs.recommended,
 	...tseslint.configs.recommended,
@@ -26,6 +26,9 @@ export default tseslint.config(
 				extraFileExtensions: [".svelte"], // Add support for additional file extensions, such as .svelte
 				parser: tseslint.parser,
 			},
+		},
+		rules: {
+			"svelte/no-navigation-without-resolve": "off",
 		},
 	},
 	{
@@ -58,6 +61,9 @@ export default tseslint.config(
 			"packages/bits-ui/dist/**/*",
 			"packages/bits-ui/.svelte-kit/**/*",
 			"tests/.svelte-kit/**/*",
+			"bundle-analyzer/.temp-bundle-analysis/**/*",
 		],
-	}
+	},
+	...oxlint.configs["flat/recommended"],
+	...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json")
 );

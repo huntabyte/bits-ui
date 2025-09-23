@@ -4,17 +4,17 @@ description: Enables users to choose from a list of options presented in a dropd
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="select-demo" componentName="Select">
+<ComponentPreview name="select-demo" componentName="Select">
 
 {#snippet preview()}
 <SelectDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -255,13 +255,13 @@ The `type` prop can be set to `'multiple'` to allow multiple items to be selecte
 </Select.Root>
 ```
 
-<ComponentPreviewV2 name="select-demo-multiple" componentName="Select">
+<ComponentPreview name="select-demo-multiple" componentName="Select">
 
 {#snippet preview()}
 <SelectDemoMultiple />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Opt-out of Floating UI
 
@@ -333,13 +333,13 @@ The initial and subsequent scroll delays can be controlled using the `delay` pro
 
 For example, we can use the [`cubicOut`](https://svelte.dev/docs/svelte/svelte-easing#cubicOut) easing function from Svelte to create a smooth scrolling effect that speeds up over time.
 
-<ComponentPreviewV2 name="select-demo-auto-scroll-delay" componentName="Select">
+<ComponentPreview name="select-demo-auto-scroll-delay" componentName="Select">
 
 {#snippet preview()}
 <SelectDemoAutoScrollDelay />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Native Scrolling/Overflow
 
@@ -400,12 +400,12 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="select-demo-transition" componentName="Select" containerClass="mt-4">
+<ComponentPreview name="select-demo-transition" componentName="Select" containerClass="mt-4">
 
 {#snippet preview()}
 <SelectDemoTransition />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

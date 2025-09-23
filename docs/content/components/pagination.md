@@ -4,17 +4,17 @@ description: Facilitates navigation between pages.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, PaginationDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PaginationDemo, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="pagination-demo" componentName="Pagination">
+<ComponentPreview name="pagination-demo" componentName="Pagination">
 
 {#snippet preview()}
 <PaginationDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 

@@ -4,17 +4,17 @@ description: Presents a calendar view tailored for selecting date ranges.
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="range-calendar-demo" componentName="Range Calendar">
+<ComponentPreview name="range-calendar-demo" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <Callout type="tip" title="Heads up!">
 
@@ -76,13 +76,13 @@ You can set the `minDays` prop to limit the minimum number of days that must be 
 </RangeCalendar.Root>
 ```
 
-<ComponentPreviewV2 name="range-calendar-demo-min" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-min" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoMin />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Max Days
 
@@ -94,13 +94,13 @@ You can set the `maxDays` prop to limit the maximum number of days that can be s
 </RangeCalendar.Root>
 ```
 
-<ComponentPreviewV2 name="range-calendar-demo-max" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-max" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoMax />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Min and Max Days
 
@@ -112,13 +112,13 @@ You can set both `minDays` and `maxDays` to limit the number of days that can be
 </RangeCalendar.Root>
 ```
 
-<ComponentPreviewV2 name="range-calendar-demo-min-max" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-min-max" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoMinMax />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ### Exclude Disabled
 
@@ -133,12 +133,12 @@ You can set the `excludeDisabled` prop to automatically reset the range if any d
 </RangeCalendar.Root>
 ```
 
-<ComponentPreviewV2 name="range-calendar-demo-exclude-disabled" componentName="Range Calendar">
+<ComponentPreview variant="collapsed" name="range-calendar-demo-exclude-disabled" componentName="Range Calendar">
 
 {#snippet preview()}
 <RangeCalendarDemoExcludeDisabled />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

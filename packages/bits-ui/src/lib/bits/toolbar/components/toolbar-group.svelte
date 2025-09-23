@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type WritableBox, box } from "svelte-toolbelt";
+	import { type WritableBox, boxWith } from "svelte-toolbelt";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupProps } from "../types.js";
 	import { ToolbarGroupState } from "../toolbar.svelte.js";
@@ -37,10 +37,10 @@
 	);
 
 	const groupState = ToolbarGroupState.create({
-		id: box.with(() => id),
-		disabled: box.with(() => disabled),
+		id: boxWith(() => id),
+		disabled: boxWith(() => disabled),
 		type,
-		value: box.with(
+		value: boxWith(
 			() => value!,
 			(v) => {
 				value = v;
@@ -48,7 +48,7 @@
 				onValueChange(v);
 			}
 		) as WritableBox<string> | WritableBox<string[]>,
-		ref: box.with(
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuTriggerProps } from "../types.js";
 	import { ContextMenuTriggerState } from "$lib/bits/menu/menu.svelte.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -15,16 +15,23 @@
 	}: ContextMenuTriggerProps = $props();
 
 	const triggerState = ContextMenuTriggerState.create({
-		id: box.with(() => id),
-		disabled: box.with(() => disabled),
-		ref: box.with(
+		id: boxWith(() => id),
+		disabled: boxWith(() => disabled),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
 	});
 
 	const mergedProps = $derived(
-		mergeProps(restProps, triggerState.props, { style: { pointerEvents: "auto" } })
+		mergeProps(
+			restProps,
+			triggerState.props,
+			{ style: { pointerEvents: "auto" } },
+			{
+				style: restProps.style,
+			}
+		)
 	);
 </script>
 

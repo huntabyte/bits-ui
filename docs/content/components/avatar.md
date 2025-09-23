@@ -4,17 +4,17 @@ description: Represents a user or entity with a recognizable image or placeholde
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, AvatarDemo, AvatarDemoLinkPreview } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AvatarDemo, AvatarDemoLinkPreview } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="avatar-demo" componentName="Avatar">
+<ComponentPreview name="avatar-demo" componentName="Avatar">
 
 {#snippet preview()}
 <AvatarDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Overview
 
@@ -134,12 +134,12 @@ When you're confident that an image will load (such as local assets), you can by
 
 This example demonstrates how to create a clickable avatar composed with a [Link Preview](/docs/components/link-preview):
 
-<ComponentPreviewV2 name="avatar-demo-link-preview" componentName="Avatar with Link Preview">
+<ComponentPreview name="avatar-demo-link-preview" componentName="Avatar with Link Preview">
 
 {#snippet preview()}
 <AvatarDemoLinkPreview />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />

@@ -25,12 +25,7 @@ import {
 	toDate,
 } from "./utils.js";
 import type { Formatter } from "./formatter.js";
-import {
-	createBitsAttrs,
-	getDataDisabled,
-	getDataInvalid,
-	getDataReadonly,
-} from "$lib/internal/attrs.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import { chunk, isValidIndex } from "$lib/internal/arrays.js";
 import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -387,7 +382,7 @@ export function handleCalendarKeydown({
 }: HandleCalendarKeydownProps) {
 	const currentCell = event.target;
 	if (!isCalendarDayNode(currentCell)) return;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	if (!ARROW_KEYS.includes(event.key as any) && !SELECT_KEYS.includes(event.key)) return;
 
 	event.preventDefault();
@@ -399,7 +394,7 @@ export function handleCalendarKeydown({
 		[kbd.ARROW_RIGHT]: 1,
 	};
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	if (ARROW_KEYS.includes(event.key as any)) {
 		const add = kbdFocusMap[event.key as (typeof ARROW_KEYS)[number]];
 		if (add !== undefined) {
@@ -727,9 +722,9 @@ export function getCalendarElementProps({
 		id,
 		role: "application",
 		"aria-label": fullCalendarLabel,
-		"data-invalid": getDataInvalid(isInvalid),
-		"data-disabled": getDataDisabled(disabled),
-		"data-readonly": getDataReadonly(readonly),
+		"data-invalid": boolToEmptyStrOrUndef(isInvalid),
+		"data-disabled": boolToEmptyStrOrUndef(disabled),
+		"data-readonly": boolToEmptyStrOrUndef(readonly),
 	} as const;
 }
 

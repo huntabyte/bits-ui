@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ComboboxInputProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -15,12 +15,12 @@
 	}: ComboboxInputProps = $props();
 
 	const inputState = SelectInputState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		clearOnDeselect: box.with(() => clearOnDeselect),
+		clearOnDeselect: boxWith(() => clearOnDeselect),
 	});
 
 	if (defaultValue) {

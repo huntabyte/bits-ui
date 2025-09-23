@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { TooltipContentProps } from "../types.js";
 	import { TooltipContentState } from "../tooltip.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -21,6 +21,7 @@
 		avoidCollisions = true,
 		arrowPadding = 0,
 		sticky = "partial",
+		strategy,
 		hideWhenDetached = false,
 		collisionPadding = 0,
 		onInteractOutside = noop,
@@ -30,13 +31,13 @@
 	}: TooltipContentProps = $props();
 
 	const contentState = TooltipContentState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		onInteractOutside: box.with(() => onInteractOutside),
-		onEscapeKeydown: box.with(() => onEscapeKeydown),
+		onInteractOutside: boxWith(() => onInteractOutside),
+		onEscapeKeydown: boxWith(() => onEscapeKeydown),
 	});
 
 	const floatingProps = $derived({
@@ -48,6 +49,7 @@
 		sticky,
 		hideWhenDetached,
 		collisionPadding,
+		strategy,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, floatingProps, contentState.props));

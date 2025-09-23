@@ -9,7 +9,7 @@ import {
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
-import { type EventCallback, addEventListener } from "$lib/internal/events.js";
+import { type EventCallback } from "$lib/internal/events.js";
 import { debounce } from "$lib/internal/debounce.js";
 import { noop } from "$lib/internal/noop.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
@@ -182,7 +182,7 @@ export class DismissibleLayerState {
 		);
 	}
 
-	#handleDismiss = (e: PointerEvent) => {
+	#handleDismiss = (e: MouseEvent) => {
 		let event = e;
 		if (event.defaultPrevented) {
 			event = createWrappedEvent(e);
@@ -220,13 +220,9 @@ export class DismissibleLayerState {
 
 			if (e.pointerType === "touch") {
 				this.#unsubClickListener();
-				// @ts-expect-error - later
-				this.#unsubClickListener = addEventListener(
-					this.#documentObj,
-					"click",
-					this.#handleDismiss,
-					{ once: true }
-				);
+				this.#unsubClickListener = on(this.#documentObj, "click", this.#handleDismiss, {
+					once: true,
+				});
 			} else {
 				this.#interactOutsideProp.current(event);
 			}
@@ -279,8 +275,10 @@ export class DismissibleLayerState {
 	};
 }
 
-function getTopMostLayer(
-	layersArr: [DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>][]
+export function getTopMostDismissableLayer(
+	layersArr: [DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>][] = [
+		...globalThis.bitsDismissableLayers,
+	]
 ) {
 	return layersArr.findLast(
 		([_, { current: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
@@ -295,7 +293,7 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 	 * responsible for the outside interaction. Otherwise, we know that all layers defer so
 	 * the first layer is the responsible one.
 	 */
-	const topMostLayer = getTopMostLayer(layersArr);
+	const topMostLayer = getTopMostDismissableLayer(layersArr);
 	if (topMostLayer) return topMostLayer[0].opts.ref.current === node;
 	const [firstLayerNode] = layersArr[0]!;
 	return firstLayerNode.opts.ref.current === node;
@@ -351,10 +349,10 @@ function createWrappedEvent(e: PointerEvent | MouseEvent): PointerEvent {
 				return isPrevented;
 			}
 			if (prop in target) {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				// oxlint-disable-next-line no-explicit-any
 				return (target as any)[prop];
 			}
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// oxlint-disable-next-line no-explicit-any
 			return (e as any)[prop];
 		},
 	});

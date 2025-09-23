@@ -12,13 +12,14 @@ import {
 } from "@floating-ui/dom";
 import {
 	attachRef,
-	box,
 	cssToStyleObj,
 	getWindow,
 	styleToString,
 	type ReadableBoxedValues,
 	type ReadableBox,
 	type Box,
+	simpleBox,
+	boxFrom,
 } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
 import type { Arrayable, WithRefOpts } from "$lib/internal/types.js";
@@ -53,9 +54,9 @@ export class FloatingRootState {
 			? FloatingTooltipRootContext.set(new FloatingRootState())
 			: FloatingRootContext.set(new FloatingRootState());
 	}
-	anchorNode = box<Measurable | HTMLElement | null>(null);
-	customAnchorNode = box<Measurable | HTMLElement | null | string>(null);
-	triggerNode: ReadableBox<Measurable | HTMLElement | null> = box(null);
+	anchorNode = simpleBox<Measurable | HTMLElement | null>(null);
+	customAnchorNode = simpleBox<Measurable | HTMLElement | null | string>(null);
+	triggerNode: ReadableBox<Measurable | HTMLElement | null> = simpleBox(null);
 
 	constructor() {
 		$effect(() => {
@@ -107,15 +108,15 @@ export class FloatingContentState {
 	readonly root: FloatingRootState;
 
 	// nodes
-	contentRef = box<HTMLElement | null>(null);
-	wrapperRef = box<HTMLElement | null>(null);
-	arrowRef = box<HTMLElement | null>(null);
+	contentRef = simpleBox<HTMLElement | null>(null);
+	wrapperRef = simpleBox<HTMLElement | null>(null);
+	arrowRef = simpleBox<HTMLElement | null>(null);
 	readonly contentAttachment = attachRef(this.contentRef);
 	readonly wrapperAttachment = attachRef(this.wrapperRef);
 	readonly arrowAttachment = attachRef(this.arrowRef);
 
 	// ids
-	arrowId: Box<string> = box(useId());
+	arrowId: Box<string> = simpleBox(useId());
 
 	#transformedStyle = $derived.by(() => {
 		if (typeof this.opts.style === "string") return cssToStyleObj(this.opts.style);
@@ -351,7 +352,7 @@ export class FloatingAnchorState {
 		this.root = root;
 
 		if (opts.virtualEl && opts.virtualEl.current) {
-			root.triggerNode = box.from(opts.virtualEl.current);
+			root.triggerNode = boxFrom(opts.virtualEl.current);
 		} else {
 			root.triggerNode = opts.ref;
 		}

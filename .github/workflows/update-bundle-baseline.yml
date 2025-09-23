@@ -1,0 +1,136 @@
+# name: Update Bundle Baseline
+
+# on:
+#     push:
+#         branches:
+#             - main
+#         paths:
+#             - bundle-analyzer/**
+#             - packages/bits-ui/**
+
+# concurrency:
+#     group: ${{ github.workflow }}-${{ github.ref }}
+#     cancel-in-progress: true
+
+# jobs:
+#     update-baseline:
+#         name: Update Bundle Size Baseline
+#         runs-on: ubuntu-latest
+
+#         permissions:
+#             contents: write
+#             pull-requests: write
+
+#         steps:
+#             - uses: actions/checkout@v4
+#               with:
+#                   token: ${{ secrets.GITHUB_TOKEN }}
+
+#             - uses: pnpm/action-setup@v4
+
+#             - uses: actions/setup-node@v4
+#               with:
+#                   node-version: 20
+#                   cache: pnpm
+
+#             - name: Install dependencies
+#               run: pnpm install --frozen-lockfile
+
+#             - name: Build packages
+#               run: pnpm build:packages
+
+#             - name: Run bundle analysis
+#               run: pnpm bundle:analyze
+
+#             - name: Check if latest.json needs PR
+#               id: check-changes
+#               run: |
+#                   # Check if latest.json was generated
+#                   if [ ! -f "./bundle-analyzer/bundle-reports/latest.json" ]; then
+#                       echo "No latest.json generated - skipping PR"
+#                       echo "changed=false" >> $GITHUB_OUTPUT
+#                       exit 0
+#                   fi
+
+#                   # Check if latest.json exists in git (committed)
+#                   if git cat-file -e HEAD:bundle-analyzer/bundle-reports/latest.json 2>/dev/null; then
+#                       # File exists in git, check if it changed
+#                       if git diff --quiet HEAD -- ./bundle-analyzer/bundle-reports/latest.json; then
+#                           echo "No changes to latest.json - skipping PR"
+#                           echo "changed=false" >> $GITHUB_OUTPUT
+#                       else
+#                           # Check if only timestamp changed
+#                           OLD_FILE=$(git show HEAD:bundle-analyzer/bundle-reports/latest.json)
+#                           NEW_FILE=$(cat ./bundle-analyzer/bundle-reports/latest.json)
+
+#                           # Remove timestamp fields and compare
+#                           OLD_NO_TIMESTAMP=$(echo "$OLD_FILE" | jq 'del(.timestamp)')
+#                           NEW_NO_TIMESTAMP=$(echo "$NEW_FILE" | jq 'del(.timestamp)')
+
+#                           if [ "$OLD_NO_TIMESTAMP" = "$NEW_NO_TIMESTAMP" ]; then
+#                               echo "Only timestamp changed - skipping PR"
+#                               echo "changed=false" >> $GITHUB_OUTPUT
+#                           else
+#                               echo "Bundle data changed - creating/updating PR"
+#                               echo "changed=true" >> $GITHUB_OUTPUT
+#                           fi
+#                       fi
+#                   else
+#                       # File doesn't exist in git yet (first time) - create PR
+#                       echo "First time creating latest.json - creating PR"
+#                       echo "changed=true" >> $GITHUB_OUTPUT
+#                   fi
+
+#             - name: Add latest.json to git
+#               if: steps.check-changes.outputs.changed == 'true'
+#               run: |
+#                   git add ./bundle-analyzer/bundle-reports/latest.json
+
+#             - name: Generate bundle change summary
+#               if: steps.check-changes.outputs.changed == 'true'
+#               id: summary
+#               run: |
+#                   echo "## Bundle Size Baseline Update" > bundle-summary.md
+#                   echo "" >> bundle-summary.md
+#                   echo "This PR updates the bundle size baseline after recent changes to main." >> bundle-summary.md
+#                   echo "" >> bundle-summary.md
+
+#                   # If there's an existing baseline, show comparison
+#                   if git show HEAD:bundle-analyzer/bundle-reports/latest.json > /dev/null 2>&1; then
+#                       echo "### 📊 Bundle Size Changes" >> bundle-summary.md
+#                       echo "" >> bundle-summary.md
+#                       echo "\`\`\`" >> bundle-summary.md
+#                       node ./bundle-analyzer/generate-pr-comment.js \
+#                           ./bundle-analyzer/bundle-reports/latest.json \
+#                           <(git show HEAD:bundle-analyzer/bundle-reports/latest.json) \
+#                           --format=text 2>/dev/null || echo "Unable to generate comparison"
+#                       echo "\`\`\`" >> bundle-summary.md
+#                       echo "" >> bundle-summary.md
+#                   fi
+
+#                   echo "### What changed?" >> bundle-summary.md
+#                   echo "- Updated \`bundle-analyzer/bundle-reports/latest.json\` with current component sizes" >> bundle-summary.md
+#                   echo "- This serves as the baseline for future bundle size comparisons in PRs" >> bundle-summary.md
+#                   echo "" >> bundle-summary.md
+#                   echo "### How to review" >> bundle-summary.md
+#                   echo "1. Check that the bundle size changes align with recent merged PRs" >> bundle-summary.md
+#                   echo "2. Verify no unexpected size increases" >> bundle-summary.md
+#                   echo "3. Merge when satisfied with the baseline update" >> bundle-summary.md
+#                   echo "" >> bundle-summary.md
+#                   echo "_This PR was automatically created by the bundle analysis workflow._" >> bundle-summary.md
+
+#             - name: Create or update bundle baseline PR
+#               if: steps.check-changes.outputs.changed == 'true'
+#               uses: peter-evans/create-pull-request@915d841dae6a4f191bb78faf61a257411d7be4d2
+#               with:
+#                   token: ${{ secrets.GITHUB_TOKEN }}
+#                   branch: chore/update-bundle-baseline
+#                   title: "chore: update bundle size baseline"
+#                   body-path: bundle-summary.md
+#                   commit-message: "chore: update bundle size baseline"
+#                   add-paths: |
+#                       bundle-analyzer/bundle-reports/latest.json
+#                   delete-branch: true
+#                   author: "github-actions[bot] <action@github.com>"
+#                   committer: "github-actions[bot] <action@github.com>"
+#                   base: main

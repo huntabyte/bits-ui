@@ -1,11 +1,9 @@
 import "@testing-library/svelte/vitest";
 import "@testing-library/jest-dom/vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
-import { expect, vi } from "vitest";
+import { expect } from "vitest";
 import { toHaveNoViolations } from "jest-axe";
 import { configure } from "@testing-library/dom";
-import type * as environment from "$app/environment";
-import type * as navigation from "$app/navigation";
 
 expect.extend(matchers);
 
@@ -15,33 +13,10 @@ configure({
 	asyncUtilTimeout: 1500,
 });
 
-// Mock SvelteKit runtime module $app/environment
-vi.mock("$app/environment", (): typeof environment => ({
-	browser: false,
-	dev: true,
-	building: false,
-	version: "any",
-}));
-
-// Mock SvelteKit runtime module $app/navigation
-vi.mock("$app/navigation", (): typeof navigation => ({
-	afterNavigate: () => {},
-	beforeNavigate: () => {},
-	disableScrollHandling: () => {},
-	goto: () => Promise.resolve(),
-	invalidate: () => Promise.resolve(),
-	invalidateAll: () => Promise.resolve(),
-	preloadData: () => Promise.resolve({ type: "loaded" as const, status: 200, data: {} }),
-	preloadCode: () => Promise.resolve(),
-	onNavigate: () => {},
-	pushState: () => {},
-	replaceState: () => {},
-}));
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+// oxlint-disable-next-line no-require-imports
 globalThis.ResizeObserver = require("resize-observer-polyfill");
 Element.prototype.scrollIntoView = () => {};
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line no-explicit-any
 Element.prototype.hasPointerCapture = (() => {}) as any;
 
 // @ts-expect-error - shut it

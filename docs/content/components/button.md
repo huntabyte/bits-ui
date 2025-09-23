@@ -4,17 +4,17 @@ description: A component that if passed a `href` prop will render an anchor elem
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, ButtonDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ButtonDemo } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="button-demo" componentName="Button" nonExpandableItems={["App.svelte"]}>
+<ComponentPreview name="button-demo" componentName="Button" nonExpandableItems={["App.svelte"]}>
 
 {#snippet preview()}
 <ButtonDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 

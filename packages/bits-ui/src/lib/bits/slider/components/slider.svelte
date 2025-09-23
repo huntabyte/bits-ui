@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps, type WritableBox } from "svelte-toolbelt";
+	import { boxWith, mergeProps, type WritableBox } from "svelte-toolbelt";
 	import type { SliderRootProps } from "../types.js";
 	import { SliderRootState } from "../slider.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -60,12 +60,12 @@
 	);
 
 	const rootState = SliderRootState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		value: box.with(
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
@@ -74,17 +74,17 @@
 			}
 		) as WritableBox<number> | WritableBox<number[]>,
 		// @ts-expect-error - we know
-		onValueCommit: box.with(() => onValueCommit),
-		disabled: box.with(() => disabled),
-		min: box.with(() => min),
-		max: box.with(() => max),
-		step: box.with(() => step),
-		dir: box.with(() => dir),
-		autoSort: box.with(() => autoSort),
-		orientation: box.with(() => orientation),
-		thumbPositioning: box.with(() => thumbPositioning),
+		onValueCommit: boxWith(() => onValueCommit),
+		disabled: boxWith(() => disabled),
+		min: boxWith(() => min),
+		max: boxWith(() => max),
+		step: boxWith(() => step),
+		dir: boxWith(() => dir),
+		autoSort: boxWith(() => autoSort),
+		orientation: boxWith(() => orientation),
+		thumbPositioning: boxWith(() => thumbPositioning),
 		type,
-		trackPadding: box.with(() => trackPadding),
+		trackPadding: boxWith(() => trackPadding),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));

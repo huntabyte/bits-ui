@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { box, mergeProps } from "svelte-toolbelt";
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { PinInputRootProps } from "../types.js";
 	import { PinInputRootState } from "../pin-input.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -28,28 +28,28 @@
 	}: PinInputRootProps = $props();
 
 	const rootState = PinInputRootState.create({
-		id: box.with(() => id),
-		ref: box.with(
+		id: boxWith(() => id),
+		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
 		),
-		inputId: box.with(() => inputId),
-		autocomplete: box.with(() => autocomplete),
-		maxLength: box.with(() => maxlength),
-		textAlign: box.with(() => textalign),
-		disabled: box.with(() => disabled),
-		inputmode: box.with(() => inputmode),
-		pattern: box.with(() => pattern),
-		onComplete: box.with(() => onComplete),
-		value: box.with(
+		inputId: boxWith(() => inputId),
+		autocomplete: boxWith(() => autocomplete),
+		maxLength: boxWith(() => maxlength),
+		textAlign: boxWith(() => textalign),
+		disabled: boxWith(() => disabled),
+		inputmode: boxWith(() => inputmode),
+		pattern: boxWith(() => pattern),
+		onComplete: boxWith(() => onComplete),
+		value: boxWith(
 			() => value,
 			(v) => {
 				value = v;
 				onValueChange(v);
 			}
 		),
-		pushPasswordManagerStrategy: box.with(() => pushPasswordManagerStrategy),
-		pasteTransformer: box.with(() => pasteTransformer),
+		pushPasswordManagerStrategy: boxWith(() => pushPasswordManagerStrategy),
+		pasteTransformer: boxWith(() => pasteTransformer),
 	});
 
 	const mergedInputProps = $derived(mergeProps(restProps, rootState.inputProps));

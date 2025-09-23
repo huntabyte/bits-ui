@@ -90,9 +90,11 @@
 													{date}
 													month={month.value}
 													data-testid="cell-{date.month}-{d}"
+													class="p-3"
 												>
 													<DateRangePicker.Day
 														data-testid="date-{date.month}-{date.day}"
+														class="p-1"
 													>
 														{date.day}
 													</DateRangePicker.Day>

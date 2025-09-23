@@ -4,7 +4,7 @@ import { CalendarDateTime, Time, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import TimeRangeFieldTest, { type TimeRangeFieldTestProps } from "./time-range-field-test.svelte";
 import type { TimeValue } from "bits-ui";
-import { setupBrowserUserEvents } from "../browser-utils";
+import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
@@ -24,41 +24,40 @@ const zonedDateTime = {
 };
 
 function setup<T extends TimeValue = Time>(props: TimeRangeFieldTestProps<T> = {}) {
-	const user = setupBrowserUserEvents();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// oxlint-disable-next-line no-explicit-any
 	const returned = render(TimeRangeFieldTest, { ...props } as any);
 
 	const start = {
-		input: returned.getByTestId("start-input"),
-		getHour: () => returned.getByTestId("start-hour"),
-		getMinute: () => returned.getByTestId("start-minute"),
-		getSecond: () => returned.getByTestId("start-second"),
-		getDayPeriod: () => returned.getByTestId("start-dayPeriod"),
-		getTimeZoneName: () => returned.getByTestId("start-timeZoneName"),
+		input: page.getByTestId("start-input"),
+		getHour: () => page.getByTestId("start-hour"),
+		getMinute: () => page.getByTestId("start-minute"),
+		getSecond: () => page.getByTestId("start-second"),
+		getDayPeriod: () => page.getByTestId("start-dayPeriod"),
+		getTimeZoneName: () => page.getByTestId("start-timeZoneName"),
 		getHiddenInput: () =>
 			returned.container.querySelector(
 				"input[name='start-hidden-input']"
 			) as HTMLInputElement,
-		value: returned.getByTestId("start-value"),
+		value: page.getByTestId("start-value"),
 	};
 
 	const end = {
-		input: returned.getByTestId("end-input"),
-		getHour: () => returned.getByTestId("end-hour"),
-		getMinute: () => returned.getByTestId("end-minute"),
-		getSecond: () => returned.getByTestId("end-second"),
-		getDayPeriod: () => returned.getByTestId("end-dayPeriod"),
-		getTimeZoneName: () => returned.getByTestId("end-timeZoneName"),
+		input: page.getByTestId("end-input"),
+		getHour: () => page.getByTestId("end-hour"),
+		getMinute: () => page.getByTestId("end-minute"),
+		getSecond: () => page.getByTestId("end-second"),
+		getDayPeriod: () => page.getByTestId("end-dayPeriod"),
+		getTimeZoneName: () => page.getByTestId("end-timeZoneName"),
 		getHiddenInput: () =>
 			returned.container.querySelector("input[name='end-hidden-input']") as HTMLInputElement,
-		value: returned.getByTestId("end-value"),
+		value: page.getByTestId("end-value"),
 	};
 
-	const root = returned.getByTestId("root").element() as HTMLElement;
+	const root = page.getByTestId("root").element() as HTMLElement;
 
-	const label = returned.getByTestId("label").element() as HTMLElement;
+	const label = page.getByTestId("label").element() as HTMLElement;
 
-	return { ...returned, user, start, end, root, label };
+	return { start, end, root, label };
 }
 
 it("should populate segment with value - `Time`", async () => {
@@ -130,25 +129,25 @@ it("should navigate between the fields", async () => {
 	const fields = ["start", "end"] as const;
 	const segments = ["hour", "minute", "second", "dayPeriod"] as const;
 
-	await t.user.click(t.start.getHour());
+	await t.start.getHour().click();
 
 	for (const field of fields) {
 		for (const segment of segments) {
 			if (field === "start" && segment === "hour") continue;
-			const seg = t.getByTestId(`${field}-${segment}`);
-			await t.user.keyboard(kbd.ARROW_RIGHT);
-			expect(seg).toHaveFocus();
+			const seg = page.getByTestId(`${field}-${segment}`);
+			await userEvent.keyboard(kbd.ARROW_RIGHT);
+			await expect.element(seg).toHaveFocus();
 		}
 	}
 
-	await t.user.click(t.start.getHour());
+	await t.start.getHour().click();
 
 	for (const field of fields) {
 		for (const segment of segments) {
 			if (field === "start" && segment === "hour") continue;
-			const seg = t.getByTestId(`${field}-${segment}`);
-			await t.user.keyboard(kbd.TAB);
-			expect(seg).toHaveFocus();
+			const seg = page.getByTestId(`${field}-${segment}`);
+			await userEvent.keyboard(kbd.TAB);
+			await expect.element(seg).toHaveFocus();
 		}
 	}
 });
@@ -163,25 +162,25 @@ it("should navigate between the fields - right to left", async () => {
 	const fields = ["end", "start"] as const;
 	const segments = ["dayPeriod", "second", "minute", "hour"] as const;
 
-	await t.user.click(t.end.getDayPeriod());
+	await t.end.getDayPeriod().click();
 
 	for (const field of fields) {
 		for (const segment of segments) {
 			if (field === "end" && segment === "dayPeriod") continue;
-			const seg = t.getByTestId(`${field}-${segment}`);
-			await t.user.keyboard(kbd.ARROW_LEFT);
-			expect(seg).toHaveFocus();
+			const seg = page.getByTestId(`${field}-${segment}`);
+			await userEvent.keyboard(kbd.ARROW_LEFT);
+			await expect.element(seg).toHaveFocus();
 		}
 	}
 
-	await t.user.click(t.end.getDayPeriod());
+	await t.end.getDayPeriod().click();
 
 	for (const field of fields) {
 		for (const segment of segments) {
 			if (field === "end" && segment === "dayPeriod") continue;
-			const seg = t.getByTestId(`${field}-${segment}`);
-			await t.user.keyboard(kbd.SHIFT_TAB);
-			expect(seg).toHaveFocus();
+			const seg = page.getByTestId(`${field}-${segment}`);
+			await userEvent.keyboard(kbd.SHIFT_TAB);
+			await expect.element(seg).toHaveFocus();
 		}
 	}
 });
@@ -191,13 +190,13 @@ it("should respect `bind:value` to the value", async () => {
 		value: time,
 		granularity: "second",
 	});
-	expect(t.start.value).toHaveTextContent(time.start.toString());
-	expect(t.end.value).toHaveTextContent(time.end.toString());
+	await expect.element(t.start.value).toHaveTextContent(time.start.toString());
+	await expect.element(t.end.value).toHaveTextContent(time.end.toString());
 
-	await t.user.click(t.start.getHour());
-	await t.user.keyboard("2");
-	expect(t.start.value).toHaveTextContent("02:30:00");
-	expect(t.end.value).toHaveTextContent(time.end.toString());
+	await t.start.getHour().click();
+	await userEvent.keyboard("2");
+	await expect.element(t.start.value).toHaveTextContent("02:30:00");
+	await expect.element(t.end.value).toHaveTextContent(time.end.toString());
 });
 
 it("should render an input for the start and end", async () => {
@@ -209,32 +208,32 @@ it("should render an input for the start and end", async () => {
 			name: "end-hidden-input",
 		},
 	});
-	expect(t.start.getHiddenInput()).toBeInTheDocument();
-	expect(t.end.getHiddenInput()).toBeInTheDocument();
+	await expect.element(t.start.getHiddenInput()).toBeInTheDocument();
+	await expect.element(t.end.getHiddenInput()).toBeInTheDocument();
 });
 
 it("should populate calendar date with keyboard", async () => {
 	const t = setup({ value: time });
 
-	await t.user.click(t.start.getHour());
+	await t.start.getHour().click();
 
-	await t.user.keyboard("{1}");
-	await t.user.keyboard("{2}");
-	expect(t.start.getMinute()).toHaveFocus();
-	await t.user.keyboard("{3}");
-	await t.user.keyboard("{4}");
-	expect(t.start.getDayPeriod()).toHaveFocus();
-	await t.user.keyboard("{P}");
-	await t.user.keyboard(kbd.ARROW_RIGHT);
-	expect(t.end.getHour()).toHaveFocus();
-	await t.user.keyboard("{1}");
-	await t.user.keyboard("{2}");
-	await t.user.keyboard("{3}");
-	await t.user.keyboard("{5}");
-	expect(t.end.getDayPeriod()).toHaveFocus();
+	await userEvent.keyboard("{1}");
+	await userEvent.keyboard("{2}");
+	await expect.element(t.start.getMinute()).toHaveFocus();
+	await userEvent.keyboard("{3}");
+	await userEvent.keyboard("{4}");
+	await expect.element(t.start.getDayPeriod()).toHaveFocus();
+	await userEvent.keyboard("{P}");
+	await userEvent.keyboard(kbd.ARROW_RIGHT);
+	await expect.element(t.end.getHour()).toHaveFocus();
+	await userEvent.keyboard("{1}");
+	await userEvent.keyboard("{2}");
+	await userEvent.keyboard("{3}");
+	await userEvent.keyboard("{5}");
+	await expect.element(t.end.getDayPeriod()).toHaveFocus();
 
-	expect(t.start.value).toHaveTextContent("12:34:00");
-	expect(t.end.value).toHaveTextContent("12:35:00");
+	await expect.element(t.start.value).toHaveTextContent("12:34:00");
+	await expect.element(t.end.value).toHaveTextContent("12:35:00");
 });
 
 // function extractTime(time: TimeValue): string {

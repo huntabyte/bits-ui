@@ -4,17 +4,17 @@ description: Display supplementary content or information when users interact wi
 ---
 
 <script>
-	import { APISection, ComponentPreviewV2, PopoverDemo, PopoverDemoTransition, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoTransition, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
-<ComponentPreviewV2 name="popover-demo" componentName="Popover">
+<ComponentPreview name="popover-demo" componentName="Popover">
 
 {#snippet preview()}
 <PopoverDemo />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 ## Structure
 
@@ -246,12 +246,12 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreviewV2 name="popover-demo-transition" componentName="Popover" containerClass="mt-4">
+<ComponentPreview name="popover-demo-transition" componentName="Popover" containerClass="mt-4">
 
 {#snippet preview()}
 <PopoverDemoTransition />
 {/snippet}
 
-</ComponentPreviewV2>
+</ComponentPreview>
 
 <APISection {schemas} />
