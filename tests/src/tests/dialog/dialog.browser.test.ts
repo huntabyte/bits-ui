@@ -7,6 +7,7 @@ import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
 import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
+import DialogIntegrationTest from "./dialog-integration-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -382,5 +383,25 @@ describe("Nested Dialogs", () => {
 		await expectNotExists(page.getByTestId("second-close"));
 		await expectExists(page.getByTestId("second-open"));
 		await expect.element(page.getByTestId("second-open")).toHaveFocus();
+	});
+});
+
+describe("Integration with other components", () => {
+	it("should allow opening nested floating components within the dialog", async () => {
+		render(DialogIntegrationTest);
+		await page.getByTestId("dialog-trigger").click();
+		await expectExists(page.getByTestId("dialog-content"));
+		await page.getByTestId("dropdown-trigger").click();
+		await expectExists(page.getByTestId("dropdown-content"));
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("dropdown-content"));
+		await expectExists(page.getByTestId("dialog-content"));
+		await page.getByTestId("popover-trigger").click();
+		await expectExists(page.getByTestId("popover-content"));
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("popover-content"));
+		await expectExists(page.getByTestId("dialog-content"));
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("dialog-content"));
 	});
 });
