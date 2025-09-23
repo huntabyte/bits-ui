@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.11.2
+
+### Patch Changes
+
+- fix(Tooltip): dont eagerly start timer ([#1791](https://github.com/huntabyte/bits-ui/pull/1791))
+
 ## 2.11.1
 
 ### Patch Changes
