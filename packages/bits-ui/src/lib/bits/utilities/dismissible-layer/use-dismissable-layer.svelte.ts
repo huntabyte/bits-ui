@@ -221,8 +221,10 @@ export class DismissibleLayerState {
 	};
 }
 
-function getTopMostLayer(
-	layersArr: [DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>][]
+export function getTopMostDismissableLayer(
+	layersArr: [DismissibleLayerState, ReadableBox<InteractOutsideBehaviorType>][] = [
+		...globalThis.bitsDismissableLayers,
+	]
 ) {
 	return layersArr.findLast(
 		([_, { current: behaviorType }]) => behaviorType === "close" || behaviorType === "ignore"
@@ -237,7 +239,7 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 	 * responsible for the outside interaction. Otherwise, we know that all layers defer so
 	 * the first layer is the responsible one.
 	 */
-	const topMostLayer = getTopMostLayer(layersArr);
+	const topMostLayer = getTopMostDismissableLayer(layersArr);
 	if (topMostLayer) return topMostLayer[0].opts.ref.current === node;
 	const [firstLayerNode] = layersArr[0]!;
 	return firstLayerNode.opts.ref.current === node;
