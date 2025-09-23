@@ -1173,6 +1173,7 @@ export class ContextMenuTriggerState {
 	#clearLongPressTimer() {
 		if (this.#longPressTimer === null) return;
 		getWindow(this.opts.ref.current).clearTimeout(this.#longPressTimer);
+		this.#longPressTimer = null;
 	}
 
 	#handleOpen(e: BitsMouseEvent | BitsPointerEvent) {

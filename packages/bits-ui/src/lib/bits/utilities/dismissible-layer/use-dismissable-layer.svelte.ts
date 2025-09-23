@@ -1,7 +1,6 @@
 import {
 	type ReadableBox,
 	type WritableBox,
-	afterSleep,
 	afterTick,
 	executeCallbacks,
 	onDestroyEffect,
@@ -22,6 +21,46 @@ globalThis.bitsDismissableLayers ??= new Map<
 	ReadableBox<InteractOutsideBehaviorType>
 >();
 
+// queue new layer registrations during an active outside-interaction window
+// to avoid race conditions where a newly added layer becomes "responsible"
+// before current layers finish handling the interaction
+globalThis.bitsDL_windowOpen ??= false;
+globalThis.bitsDL_pendingLayerAdds ??= [];
+globalThis.bitsDL_flushTimerId ??= 0;
+
+function queueLayerRegistration(register: () => void) {
+	globalThis.bitsDL_pendingLayerAdds.push(register);
+}
+
+function flushQueuedLayerAdds() {
+	const queue = globalThis.bitsDL_pendingLayerAdds;
+	while (queue.length) {
+		const fn = queue.shift()!;
+		try {
+			fn();
+		} catch {
+			// ignore
+		}
+	}
+}
+
+function beginInteractionWindow() {
+	globalThis.bitsDL_windowOpen = true;
+	if (globalThis.bitsDL_flushTimerId) window.clearTimeout(globalThis.bitsDL_flushTimerId);
+	// fallback to ensure the window eventually closes even if something prevents handlers
+	globalThis.bitsDL_flushTimerId = window.setTimeout(() => endInteractionWindow(), 120);
+}
+
+function endInteractionWindow() {
+	if (!globalThis.bitsDL_windowOpen) return;
+	globalThis.bitsDL_windowOpen = false;
+	if (globalThis.bitsDL_flushTimerId) {
+		window.clearTimeout(globalThis.bitsDL_flushTimerId);
+		globalThis.bitsDL_flushTimerId = 0;
+	}
+	flushQueuedLayerAdds();
+}
+
 interface DismissibleLayerStateOpts
 	extends ReadableBoxedValues<Required<Omit<DismissibleLayerImplProps, "children" | "ref">>> {
 	ref: WritableBox<HTMLElement | null>;
@@ -32,6 +71,7 @@ export class DismissibleLayerState {
 		return new DismissibleLayerState(opts);
 	}
 	readonly opts: DismissibleLayerStateOpts;
+	#isDestroyed = false;
 	#interactOutsideProp: ReadableBox<EventCallback<PointerEvent>>;
 	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
 	#interceptedEvents: Record<string, boolean> = {
@@ -59,26 +99,33 @@ export class DismissibleLayerState {
 		const cleanup = () => {
 			this.#resetState();
 			globalThis.bitsDismissableLayers.delete(this);
-			this.#handleInteractOutside.destroy();
 			unsubEvents();
 		};
 
 		watch([() => this.opts.enabled.current, () => this.opts.ref.current], () => {
 			if (!this.opts.enabled.current || !this.opts.ref.current) return;
-			afterSleep(1, () => {
-				if (!this.opts.ref.current) return;
+			const register = () => {
+				if (!this.opts.enabled.current || !this.opts.ref.current || this.#isDestroyed)
+					return;
+				// ensure document reference is up-to-date before attaching listeners
+				this.#documentObj = getOwnerDocument(this.opts.ref.current);
 				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
-
 				unsubEvents();
 				unsubEvents = this.#addEventListeners();
-			});
+			};
+
+			if (globalThis.bitsDL_windowOpen) {
+				queueLayerRegistration(register);
+			} else {
+				register();
+			}
 			return cleanup;
 		});
 
 		onDestroyEffect(() => {
+			this.#isDestroyed = true;
 			this.#resetState.destroy();
 			globalThis.bitsDismissableLayers.delete(this);
-			this.#handleInteractOutside.destroy();
 			this.#unsubClickListener();
 			unsubEvents();
 		});
@@ -109,7 +156,11 @@ export class DismissibleLayerState {
 			on(
 				this.#documentObj,
 				"pointerdown",
-				executeCallbacks(this.#markInterceptedEvent, this.#markResponsibleLayer),
+				executeCallbacks(
+					beginInteractionWindow,
+					this.#markInterceptedEvent,
+					this.#markResponsibleLayer
+				),
 				{ capture: true }
 			),
 
@@ -139,43 +190,46 @@ export class DismissibleLayerState {
 		this.#interactOutsideProp.current(e as PointerEvent);
 	};
 
-	#handleInteractOutside = debounce((e: PointerEvent) => {
-		if (!this.opts.ref.current) {
-			this.#unsubClickListener();
-			return;
-		}
-		const isEventValid =
-			this.opts.isValidEvent.current(e, this.opts.ref.current) ||
-			isValidEvent(e, this.opts.ref.current);
+	#handleInteractOutside = (e: PointerEvent) => {
+		try {
+			if (!this.opts.ref.current) {
+				this.#unsubClickListener();
+				return;
+			}
+			const isEventValid =
+				this.opts.isValidEvent.current(e, this.opts.ref.current) ||
+				isValidEvent(e, this.opts.ref.current);
 
-		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
-			this.#unsubClickListener();
-			return;
-		}
+			if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
+				this.#unsubClickListener();
+				return;
+			}
 
-		let event = e;
-		if (event.defaultPrevented) {
-			event = createWrappedEvent(event);
-		}
+			let event = e;
+			if (event.defaultPrevented) {
+				event = createWrappedEvent(event);
+			}
 
-		if (
-			this.#behaviorType.current !== "close" &&
-			this.#behaviorType.current !== "defer-otherwise-close"
-		) {
-			this.#unsubClickListener();
-			return;
-		}
+			if (
+				this.#behaviorType.current !== "close" &&
+				this.#behaviorType.current !== "defer-otherwise-close"
+			) {
+				this.#unsubClickListener();
+				return;
+			}
 
-		if (e.pointerType === "touch") {
-			this.#unsubClickListener();
-
-			this.#unsubClickListener = on(this.#documentObj, "click", this.#handleDismiss, {
-				once: true,
-			});
-		} else {
-			this.#interactOutsideProp.current(event);
+			if (e.pointerType === "touch") {
+				this.#unsubClickListener();
+				this.#unsubClickListener = on(this.#documentObj, "click", this.#handleDismiss, {
+					once: true,
+				});
+			} else {
+				this.#interactOutsideProp.current(event);
+			}
+		} finally {
+			endInteractionWindow();
 		}
-	}, 10);
+	};
 
 	#markInterceptedEvent = (e: PointerEvent) => {
 		this.#interceptedEvents[e.type] = true;
