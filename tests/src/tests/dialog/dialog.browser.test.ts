@@ -8,6 +8,7 @@ import DialogNestedTest from "./dialog-nested-test.svelte";
 import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
+import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -403,5 +404,20 @@ describe("Integration with other components", () => {
 		await expectExists(page.getByTestId("dialog-content"));
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("dialog-content"));
+	});
+
+	it("should not break tooltip when opened from tooltip trigger and disableCloseOnTriggerClick is true", async () => {
+		// https://github.com/huntabyte/bits-ui/issues/1666
+		render(DialogTooltipTest);
+		const trigger = page.getByTestId("trigger");
+		await trigger.hover();
+		await expectExists(page.getByTestId("tooltip-content"));
+		await trigger.click();
+		await expectExists(page.getByTestId("dialog-content"));
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("dialog-content"));
+		await trigger.hover();
+		await expectExists(page.getByTestId("tooltip-content"));
 	});
 });
