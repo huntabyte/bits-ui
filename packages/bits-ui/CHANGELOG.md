@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.11.1
+
+### Patch Changes
+
+- fix(ContextMenu): ensure context menus respect interact outside of other dismissable layers ([#1788](https://github.com/huntabyte/bits-ui/pull/1788))
+
+- improve(ContextMenu): allow users to override `pointer-events` style on `ContextMenu.Trigger` ([#1790](https://github.com/huntabyte/bits-ui/pull/1790))
+
 ## 2.11.0
 
 ### Minor Changes
