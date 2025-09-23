@@ -9,6 +9,7 @@ import PopoverForceMountTest, {
 import PopoverSiblingsTest from "./popover-siblings-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
+import PopoverMultipleTriggersTest from "./popover-multiple-triggers-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -197,4 +198,22 @@ it("should correctly handle focus when closing one popover by clicking another p
 	await expect.element(t.getByTestId("close-3")).toHaveFocus();
 	await t.getByTestId("close-3").click();
 	await expectNotExists(t.getByTestId("content-3"));
+});
+
+it("should restore focus to the trigger that opened the popover", async () => {
+	render(PopoverMultipleTriggersTest);
+	await page.getByTestId("trigger-1").click();
+	await expectExists(page.getByTestId("content"));
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expect.element(page.getByTestId("trigger-1")).toHaveFocus();
+
+	await page.getByTestId("trigger-2").click();
+	await expectExists(page.getByTestId("content"));
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expect.element(page.getByTestId("trigger-2")).toHaveFocus();
+
+	await page.getByTestId("trigger-3").click();
+	await expectExists(page.getByTestId("content"));
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expect.element(page.getByTestId("trigger-3")).toHaveFocus();
 });

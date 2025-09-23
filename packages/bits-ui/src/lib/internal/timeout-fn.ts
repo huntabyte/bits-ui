@@ -1,37 +1,17 @@
 import { onDestroyEffect } from "svelte-toolbelt";
 import type { AnyFn } from "./types.js";
-import { BROWSER } from "esm-env";
-
-type TimeoutFnOptions = {
-	/**
-	 * Start the timer immediate after calling this function
-	 *
-	 * @default true
-	 */
-	immediate?: boolean;
-};
-
-const defaultOpts: TimeoutFnOptions = {
-	immediate: true,
-};
 
 export class TimeoutFn<T extends AnyFn> {
-	readonly #opts: TimeoutFnOptions;
 	readonly #interval: number;
 	readonly #cb: T;
 	#timer: number | null = null;
 
-	constructor(cb: T, interval: number, opts: TimeoutFnOptions = {}) {
+	constructor(cb: T, interval: number) {
 		this.#cb = cb;
 		this.#interval = interval;
-		this.#opts = { ...defaultOpts, ...opts };
 
 		this.stop = this.stop.bind(this);
 		this.start = this.start.bind(this);
-
-		if (this.#opts.immediate && BROWSER) {
-			this.start();
-		}
 
 		onDestroyEffect(this.stop);
 	}
@@ -44,10 +24,12 @@ export class TimeoutFn<T extends AnyFn> {
 	}
 
 	stop() {
+		console.log("stopping timeout");
 		this.#clear();
 	}
 
 	start(...args: Parameters<T> | []) {
+		console.log("starting timeout");
 		this.#clear();
 		this.#timer = window.setTimeout(() => {
 			this.#timer = null;
