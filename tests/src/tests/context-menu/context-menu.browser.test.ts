@@ -469,3 +469,12 @@ it("should open nested context menus", async () => {
 	await expectExists(page.getByTestId("nested-content"));
 	await expectExists(page.getByTestId("content"));
 });
+
+it("should allow overriding the pointer events style", async () => {
+	setup({ triggerProps: { style: { pointerEvents: undefined } } });
+	const trigger = page.getByTestId("trigger");
+	await trigger.click({ button: "right" });
+	await expectExists(page.getByTestId("content"));
+	await trigger.click({ button: "right", force: true });
+	await expectNotExists(page.getByTestId("content"));
+});
