@@ -81,24 +81,7 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 		yearFormat: calendarRoot.props!.yearFormat,
 		children: childrenSnippet(),
 	},
-	dataAttributes: [
-		defineSimpleDataAttr({
-			name: "invalid",
-			description: "Present on the root element when the calendar is invalid.",
-		}),
-		defineSimpleDataAttr({
-			name: "disabled",
-			description: "Present on the root element when the calendar is disabled.",
-		}),
-		defineSimpleDataAttr({
-			name: "readonly",
-			description: "Present on the root element when the calendar is readonly.",
-		}),
-		defineSimpleDataAttr({
-			name: "date-picker-root",
-			description: "Present on the root element.",
-		}),
-	],
+	dataAttributes: [],
 });
 
 const calendar = defineComponentApiSchema<DatePickerCalendarPropsWithoutHTML>({
