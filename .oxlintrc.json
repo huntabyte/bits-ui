@@ -146,6 +146,12 @@
 				"no-inner-declarations": "off",
 				"no-self-assign": "off"
 			}
+		},
+		{
+			"files": ["packages/bits-ui/src/lib/**/*"],
+			"rules": {
+				"no-console": "error"
+			}
 		}
 	]
 }
