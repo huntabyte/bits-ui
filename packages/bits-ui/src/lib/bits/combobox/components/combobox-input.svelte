@@ -3,7 +3,7 @@
 	import type { ComboboxInputProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
-	import { SelectInputState } from "$lib/bits/select/select.svelte.js";
+	import { ComboboxInputState, SelectContentContext } from "$lib/bits/select/select.svelte.js";
 
 	let {
 		id = useId(),
@@ -14,14 +14,19 @@
 		...restProps
 	}: ComboboxInputProps = $props();
 
-	const inputState = SelectInputState.create({
-		id: boxWith(() => id),
-		ref: boxWith(
-			() => ref,
-			(v) => (ref = v)
-		),
-		clearOnDeselect: boxWith(() => clearOnDeselect),
-	});
+	const contentState = SelectContentContext.getOr(null);
+
+	const inputState = ComboboxInputState.create(
+		{
+			id: boxWith(() => id),
+			ref: boxWith(
+				() => ref,
+				(v) => (ref = v)
+			),
+			clearOnDeselect: boxWith(() => clearOnDeselect),
+		},
+		contentState
+	);
 
 	if (defaultValue) {
 		inputState.root.opts.inputValue.current = defaultValue;
@@ -32,10 +37,18 @@
 	);
 </script>
 
-<FloatingLayer.Anchor {id} ref={inputState.opts.ref}>
+{#if contentState}
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
-		<input {...mergedProps} />
+		<input bind:this={inputState.opts.ref.current} {...mergedProps} />
 	{/if}
-</FloatingLayer.Anchor>
+{:else}
+	<FloatingLayer.Anchor {id} ref={inputState.opts.ref}>
+		{#if child}
+			{@render child({ props: mergedProps })}
+		{:else}
+			<input {...mergedProps} />
+		{/if}
+	</FloatingLayer.Anchor>
+{/if}

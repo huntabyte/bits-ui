@@ -70,7 +70,9 @@ const selectAttrs = createBitsAttrs({
 
 const SelectRootContext = new Context<SelectRoot>("Select.Root | Combobox.Root");
 const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobox.Group");
-const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
+export const SelectContentContext = new Context<SelectContentState>(
+	"Select.Content | Combobox.Content"
+);
 
 interface SelectBaseRootStateOpts
 	extends ReadableBoxedValues<{
@@ -113,6 +115,7 @@ abstract class SelectBaseRootState {
 	isUsingKeyboard = false;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
+	hasInputInContent = $state(false);
 
 	constructor(opts: SelectBaseRootStateOpts) {
 		this.opts = opts;
@@ -370,21 +373,24 @@ export class SelectRootState {
 
 type SelectRoot = SelectSingleRootState | SelectMultipleRootState;
 
-interface SelectInputStateOpts
+interface ComboboxInputStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			clearOnDeselect: boolean;
 		}> {}
 
-export class SelectInputState {
-	static create(opts: SelectInputStateOpts) {
-		return new SelectInputState(opts, SelectRootContext.get());
+export class ComboboxInputState {
+	static create(opts: ComboboxInputStateOpts, contentState: SelectContentState | null = null) {
+		if (contentState) {
+			contentState.registerInput();
+		}
+		return new ComboboxInputState(opts, SelectRootContext.get());
 	}
-	readonly opts: SelectInputStateOpts;
+	readonly opts: ComboboxInputStateOpts;
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 
-	constructor(opts: SelectInputStateOpts, root: SelectRoot) {
+	constructor(opts: ComboboxInputStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
 		this.attachment = attachRef(opts.ref, (v) => (this.root.inputNode = v));
@@ -533,17 +539,17 @@ export class SelectInputState {
 	);
 }
 
-interface SelectComboTriggerStateOpts extends WithRefOpts {}
+interface ComboboxTriggerStateOpts extends WithRefOpts {}
 
-export class SelectComboTriggerState {
-	static create(opts: SelectComboTriggerStateOpts) {
-		return new SelectComboTriggerState(opts, SelectRootContext.get());
+export class ComboboxTriggerState {
+	static create(opts: ComboboxTriggerStateOpts) {
+		return new ComboboxTriggerState(opts, SelectRootContext.get());
 	}
-	readonly opts: SelectComboTriggerStateOpts;
+	readonly opts: ComboboxTriggerStateOpts;
 	readonly root: SelectBaseRootState;
 	readonly attachment: RefAttachment;
 
-	constructor(opts: SelectComboTriggerStateOpts, root: SelectBaseRootState) {
+	constructor(opts: ComboboxTriggerStateOpts, root: SelectBaseRootState) {
 		this.opts = opts;
 		this.root = root;
 		this.attachment = attachRef(opts.ref);
@@ -569,7 +575,11 @@ export class SelectComboTriggerState {
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current || !this.root.domContext) return;
 		e.preventDefault();
-		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
+
+		if (
+			this.root.inputNode &&
+			this.root.domContext.getActiveElement() !== this.root.inputNode
+		) {
 			this.root.inputNode?.focus();
 		}
 		this.root.toggleMenu();
@@ -872,6 +882,7 @@ export class SelectContentState {
 	viewportNode = $state<HTMLElement | null>(null);
 	isPositioned = $state(false);
 	domContext: DOMContext;
+	containsInput = $state(false);
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -901,6 +912,16 @@ export class SelectContentState {
 
 	onpointermove(_: BitsPointerEvent) {
 		this.root.isUsingKeyboard = false;
+	}
+
+	registerInput() {
+		this.containsInput = true;
+		this.root.hasInputInContent = true;
+
+		return () => {
+			this.containsInput = false;
+			this.root.hasInputInContent = false;
+		};
 	}
 
 	readonly #styles = $derived.by(() => {
