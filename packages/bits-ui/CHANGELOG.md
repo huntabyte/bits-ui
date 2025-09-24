@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.11.4
+
+### Patch Changes
+
+- fix(Combobox): recompute whether the `ScrollDown` but should render when the input value changes ([#1799](https://github.com/huntabyte/bits-ui/pull/1799))
+
+- fix(Combobox): dont set the input value to an unselected item when `type='multiple'` ([#1799](https://github.com/huntabyte/bits-ui/pull/1799))
+
 ## 2.11.3
 
 ### Patch Changes
