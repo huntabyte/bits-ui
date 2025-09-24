@@ -38,7 +38,7 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
-		value: calendarRoot.props!.value,
+		value: dateFieldRoot.props!.value,
 		onValueChange: calendarRoot.props!.onValueChange,
 		open: defineBooleanProp({
 			default: false,
@@ -71,8 +71,14 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 		minValue: calendarRoot.props!.minValue,
 		locale: calendarRoot.props!.locale,
 		numberOfMonths: calendarRoot.props!.numberOfMonths,
-		disabled: calendarRoot.props!.disabled,
-		readonly: dateFieldRoot.props!.readonly,
+		disabled: defineBooleanProp({
+			default: false,
+			description: "Whether or not the Date Picker is disabled.",
+		}),
+		readonly: defineBooleanProp({
+			description: "Whether or not the Date Picker is readonly.",
+			default: false,
+		}),
 		hourCycle: dateFieldRoot.props!.hourCycle,
 		granularity: dateFieldRoot.props!.granularity,
 		hideTimeZone: dateFieldRoot.props!.hideTimeZone,
@@ -81,24 +87,7 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 		yearFormat: calendarRoot.props!.yearFormat,
 		children: childrenSnippet(),
 	},
-	dataAttributes: [
-		defineSimpleDataAttr({
-			name: "invalid",
-			description: "Present on the root element when the calendar is invalid.",
-		}),
-		defineSimpleDataAttr({
-			name: "disabled",
-			description: "Present on the root element when the calendar is disabled.",
-		}),
-		defineSimpleDataAttr({
-			name: "readonly",
-			description: "Present on the root element when the calendar is readonly.",
-		}),
-		defineSimpleDataAttr({
-			name: "date-picker-root",
-			description: "Present on the root element.",
-		}),
-	],
+	dataAttributes: [],
 });
 
 const calendar = defineComponentApiSchema<DatePickerCalendarPropsWithoutHTML>({

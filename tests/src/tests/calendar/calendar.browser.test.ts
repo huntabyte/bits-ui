@@ -365,12 +365,12 @@ describe("type='single'", () => {
 			expect(secondMonthDay).toHaveAttribute("data-value", secondMonthDayDateStr);
 			const prevButton = page.getByTestId("prev-button");
 			const nextButton = page.getByTestId("next-button");
-			await userEvent.click(nextButton);
-			expect(heading).toHaveTextContent("February - March 1980");
-			await userEvent.click(prevButton);
-			expect(heading).toHaveTextContent("January - February 1980");
-			await userEvent.click(prevButton);
-			expect(heading).toHaveTextContent("December 1979 - January 1980");
+			await nextButton.click();
+			await expect.element(heading).toHaveTextContent("February - March 1980");
+			await prevButton.click();
+			await expect.element(heading).toHaveTextContent("January - February 1980");
+			await prevButton.click();
+			await expect.element(heading).toHaveTextContent("December 1979 - January 1980");
 		});
 
 		it("should handle `pagedNavigation` with multiple months", async () => {
@@ -380,26 +380,28 @@ describe("type='single'", () => {
 				pagedNavigation: true,
 			});
 			const selectedDay = getSelectedDay(t.calendar.element());
-			expect(selectedDay).toHaveTextContent(String(calendarDateTime.day));
+			await expect.element(selectedDay).toHaveTextContent(String(calendarDateTime.day));
 			const heading = page.getByTestId("heading");
-			expect(heading).toHaveTextContent("January - February 1980");
+			await expect.element(heading).toHaveTextContent("January - February 1980");
 			const firstMonthDayDateStr = calendarDateTime.set({ day: 12 }).toString();
 			const firstMonthDay = page.getByTestId("date-1-12");
-			expect(firstMonthDay).toHaveTextContent("12");
-			expect(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
+			await expect.element(firstMonthDay).toHaveTextContent("12");
+			await expect.element(firstMonthDay).toHaveAttribute("data-value", firstMonthDayDateStr);
 			const secondMonthDay = page.getByTestId("date-2-15");
 			const secondMonthDayDateStr = calendarDateTime.set({ day: 15, month: 2 }).toString();
-			expect(secondMonthDay).toHaveTextContent("15");
-			expect(secondMonthDay).toHaveAttribute("data-value", secondMonthDayDateStr);
+			await expect.element(secondMonthDay).toHaveTextContent("15");
+			await expect
+				.element(secondMonthDay)
+				.toHaveAttribute("data-value", secondMonthDayDateStr);
 			const prevButton = page.getByTestId("prev-button");
 			const nextButton = page.getByTestId("next-button");
-			await userEvent.click(nextButton);
-			expect(heading).toHaveTextContent("March - April 1980");
+			await nextButton.click();
+			await expect.element(heading).toHaveTextContent("March - April 1980");
 
-			await userEvent.click(prevButton);
-			expect(heading).toHaveTextContent("January - February 1980");
-			await userEvent.click(prevButton);
-			expect(heading).toHaveTextContent("November - December 1979");
+			await prevButton.click();
+			await expect.element(heading).toHaveTextContent("January - February 1980");
+			await prevButton.click();
+			await expect.element(heading).toHaveTextContent("November - December 1979");
 		});
 	});
 

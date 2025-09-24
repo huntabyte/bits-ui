@@ -5,7 +5,7 @@ import { getTestKbd } from "../utils.js";
 import LinkPreviewTest, { type LinkPreviewTestProps } from "./link-preview-test.svelte";
 import type { LinkPreviewForceMountTestProps } from "./link-preview-force-mount-test.svelte";
 import LinkPreviewForceMountTest from "./link-preview-force-mount-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -14,10 +14,9 @@ function setup(
 	props: LinkPreviewTestProps | LinkPreviewForceMountTestProps = {},
 	component: Component = LinkPreviewTest
 ) {
-	const user = setupBrowserUserEvents();
 	const t = render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
-	return { ...t, trigger, user };
+	return { ...t, trigger };
 }
 
 async function open(props: LinkPreviewTestProps = {}) {

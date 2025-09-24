@@ -5,12 +5,7 @@ import { render } from "vitest-browser-svelte";
 import DateRangePickerTest, {
 	type DateRangePickerTestProps,
 } from "./date-range-picker-test.svelte";
-import {
-	expectExists,
-	expectNotClickableLoc,
-	expectNotExists,
-	setupBrowserUserEvents,
-} from "../browser-utils";
+import { expectExists, expectNotClickableLoc, expectNotExists } from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -53,37 +48,35 @@ const SELECTED_DAY_SELECTOR = "[data-bits-day][data-selected]";
 const SELECTED_ATTR = "data-selected";
 
 function setup(props: Partial<DateRangePickerTestProps> = {}) {
-	const user = setupBrowserUserEvents();
-	const returned = render(DateRangePickerTest, { ...props });
-	const trigger = returned.getByTestId("trigger");
+	const t = render(DateRangePickerTest, { ...props });
+	const trigger = page.getByTestId("trigger");
 	const start = {
-		month: returned.getByTestId("start-month"),
-		day: returned.getByTestId("start-day"),
-		year: returned.getByTestId("start-year"),
-		value: returned.getByTestId("start-value"),
+		month: page.getByTestId("start-month"),
+		day: page.getByTestId("start-day"),
+		year: page.getByTestId("start-year"),
+		value: page.getByTestId("start-value"),
 	};
 
 	const end = {
-		month: returned.getByTestId("end-month"),
-		day: returned.getByTestId("end-day"),
-		year: returned.getByTestId("end-year"),
-		value: returned.getByTestId("end-value"),
+		month: page.getByTestId("end-month"),
+		day: page.getByTestId("end-day"),
+		year: page.getByTestId("end-year"),
+		value: page.getByTestId("end-value"),
 	};
-	const startInput = returned.getByTestId("start-input");
-	const endInput = returned.getByTestId("end-input");
-	const label = returned.getByTestId("label");
+	const startInput = page.getByTestId("start-input");
+	const endInput = page.getByTestId("end-input");
+	const label = page.getByTestId("label");
 
 	function getSelectedDays(calendar: HTMLElement) {
 		return calendar.querySelectorAll<HTMLElement>(SELECTED_DAY_SELECTOR);
 	}
 
 	function getContent() {
-		return returned.getByTestId("content");
+		return page.getByTestId("content");
 	}
 
 	return {
-		...returned,
-		user,
+		container: t.container,
 		trigger,
 		start,
 		end,
@@ -360,7 +353,7 @@ it("should allow clearing the selected range", async () => {
 
 	expect(t.getSelectedDays(t.calendar)).toHaveLength(6);
 
-	const clearButton = t.getByText("clear");
+	const clearButton = page.getByText("clear");
 
 	await clearButton.click();
 	await expectNotExists(t.getContent());
@@ -493,7 +486,7 @@ it("should not allow navigation after the `maxValue` (next button)", async () =>
 });
 
 it("should not navigate after `maxValue` (with keyboard)", async () => {
-	const t = await open({
+	await open({
 		value: calendarDateRange,
 		maxValue: new CalendarDate(1980, 3, 31),
 	});
@@ -506,43 +499,43 @@ it("should not navigate after `maxValue` (with keyboard)", async () => {
 	await expect.element(heading).toHaveTextContent("January 1980");
 
 	// five keypresses to February 1980
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-1-8")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-1-15")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-1-22")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-1-29")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-2-5")).toHaveFocus();
 	await expect.element(heading).toHaveTextContent("February 1980");
 
 	// four keypresses to March 1980
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-2-12")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-2-19")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-2-26")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-3-4")).toHaveFocus();
 	await expect.element(heading).toHaveTextContent("March 1980");
 
 	// four keypresses to April 1980
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-3-11")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-3-18")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-3-25")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-3-25")).toHaveFocus();
 	await expect.element(heading).toHaveTextContent("March 1980");
 });
 
 it("should not navigate before `minValue` (with keyboard)", async () => {
-	const t = await open({
+	await open({
 		value: calendarDateRange,
 		minValue: new CalendarDate(1979, 12, 1),
 	});
@@ -555,18 +548,18 @@ it("should not navigate before `minValue` (with keyboard)", async () => {
 	await expect.element(heading).toHaveTextContent("January 1980");
 
 	// one keypress to get to December 1979
-	await t.user.keyboard(kbd.ARROW_UP);
+	await userEvent.keyboard(kbd.ARROW_UP);
 	await expect.element(page.getByTestId("date-12-25")).toHaveFocus();
 	await expect.element(heading).toHaveTextContent("December 1979");
 
 	// four keypresses to November 1979
-	await t.user.keyboard(kbd.ARROW_UP);
+	await userEvent.keyboard(kbd.ARROW_UP);
 	await expect.element(page.getByTestId("date-12-18")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_UP);
+	await userEvent.keyboard(kbd.ARROW_UP);
 	await expect.element(page.getByTestId("date-12-11")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_UP);
+	await userEvent.keyboard(kbd.ARROW_UP);
 	await expect.element(page.getByTestId("date-12-4")).toHaveFocus();
-	await t.user.keyboard(kbd.ARROW_UP);
+	await userEvent.keyboard(kbd.ARROW_UP);
 	await expect.element(page.getByTestId("date-12-4")).toHaveFocus();
 	await expect.element(heading).toHaveTextContent("December 1979");
 });

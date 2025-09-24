@@ -162,7 +162,7 @@ export const root = defineComponentApiSchema<CalendarRootPropsWithoutHTML>({
 		}),
 		disabled: defineBooleanProp({
 			default: false,
-			description: "Whether or not the accordion is disabled.",
+			description: "Whether or not the calendar is disabled.",
 		}),
 		readonly: defineBooleanProp({
 			description: "Whether or not the calendar is readonly.",

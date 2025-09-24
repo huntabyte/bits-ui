@@ -2,14 +2,12 @@ import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Meter } from "bits-ui";
 import MeterTest from "./meter-test.svelte";
-import { setupBrowserUserEvents } from "../browser-utils";
 import { page } from "@vitest/browser/context";
 
 function setup(props: Meter.RootProps = {}) {
-	const user = setupBrowserUserEvents();
 	render(MeterTest, { ...props });
 	const root = page.getByTestId("root");
-	return { root, user };
+	return { root };
 }
 
 it("should have bits data attrs", async () => {

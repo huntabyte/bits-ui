@@ -233,13 +233,13 @@ describe("combobox - single", () => {
 		const t = await openSingle({
 			portalProps: { to: "#portal-target" },
 		});
-		const portalTarget = t.getByTestId("portal-target").element();
+		const portalTarget = page.getByTestId("portal-target").element();
 		expect(t.content.element().parentElement?.parentElement).toBe(portalTarget);
 	});
 
 	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const t = await openSingle({ portalProps: { disabled: true } });
-		const main = t.getByTestId("main").element();
+		const main = page.getByTestId("main").element();
 		expect(t.content.element().parentElement?.parentElement).toBe(main);
 	});
 
@@ -263,17 +263,17 @@ describe("combobox - single", () => {
 
 	it("should call `onValueChange` when the value changes", async () => {
 		const mock = vi.fn();
-		const t = await openSingle({
+		await openSingle({
 			onValueChange: mock,
 		});
-		const [item1] = getItems(t.getByTestId);
+		const [item1] = getItems(page.getByTestId);
 		await item1.click();
 		expect(mock).toHaveBeenCalledWith("1");
 	});
 
 	it("should select items when clicked", async () => {
 		const t = await openSingle();
-		const item1 = t.getByTestId("1");
+		const item1 = page.getByTestId("1");
 		await expectNotExists(page.getByTestId("1-indicator"));
 		await item1.click();
 		await expect.element(t.input).toHaveValue("A");
@@ -283,9 +283,9 @@ describe("combobox - single", () => {
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
-		const t = await openSingle({}, kbd.ARROW_DOWN);
+		await openSingle({}, kbd.ARROW_DOWN);
 
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -307,14 +307,14 @@ describe("combobox - single", () => {
 	});
 
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
-		const t = await openSingle(
+		await openSingle(
 			{
 				loop: true,
 			},
 			kbd.ARROW_DOWN
 		);
 
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -340,10 +340,10 @@ describe("combobox - single", () => {
 
 	it("should allow items to be selected using the keyboard", async () => {
 		const t = await openSingle({}, kbd.ARROW_DOWN);
-		const item1 = t.getByTestId("1");
-		const item2 = t.getByTestId("2");
-		const item3 = t.getByTestId("3");
-		const item4 = t.getByTestId("4");
+		const item1 = page.getByTestId("1");
+		const item2 = page.getByTestId("2");
+		const item3 = page.getByTestId("3");
+		const item4 = page.getByTestId("4");
 
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -368,7 +368,7 @@ describe("combobox - single", () => {
 
 	it("should start keyboard navigation at the highlighted item even if hovered with mouse", async () => {
 		const t = await openSingle({}, kbd.ARROW_DOWN);
-		const [item1, item2, item3] = getItems(t.getByTestId);
+		const [item1, item2, item3] = getItems(page.getByTestId);
 		await t.input.click();
 		await item1.hover();
 		await expectHighlighted(item1);
@@ -390,16 +390,16 @@ describe("combobox - single", () => {
 		await expect.element(page.getByTestId("2-indicator")).toBeInTheDocument();
 		await expect.element(t.input).toHaveValue("B");
 		await expect.element(t.getHiddenInput()).toHaveValue("2");
-		const [_, item2] = getItems(t.getByTestId);
+		const [_, item2] = getItems(page.getByTestId);
 		await expectSelected(item2);
 	});
 
 	it("should allow navigating after navigating to the bottom, closing, and reopening the menu", async () => {
 		const t = await openSingle();
-		const item1 = t.getByTestId("1");
-		const item2 = t.getByTestId("2");
-		const item3 = t.getByTestId("3");
-		const item4 = t.getByTestId("4");
+		const item1 = page.getByTestId("1");
+		const item2 = page.getByTestId("2");
+		const item3 = page.getByTestId("3");
+		const item4 = page.getByTestId("4");
 		await expectHighlighted(item1);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item2);
@@ -440,7 +440,7 @@ describe("combobox - single", () => {
 			allowDeselect: false,
 		});
 
-		const item1 = t.getByTestId("1");
+		const item1 = page.getByTestId("1");
 		await item1.click();
 		await t.trigger.click();
 
@@ -457,7 +457,7 @@ describe("combobox - single", () => {
 				clearOnDeselect: true,
 			},
 		});
-		const item1 = t.getByTestId("1");
+		const item1 = page.getByTestId("1");
 
 		await item1.click();
 		await expect.element(t.input).toHaveValue("A");
@@ -472,7 +472,7 @@ describe("combobox - single", () => {
 
 	it("should allow programmatic updates to the value alongside `inputValue`", async () => {
 		const t = setupSingle();
-		const setter = t.getByTestId("value-binding-3");
+		const setter = page.getByTestId("value-binding-3");
 		await setter.click();
 		await expect.element(t.input).toHaveValue("C");
 	});
@@ -559,13 +559,13 @@ describe("combobox - multiple", () => {
 		const t = await openMultiple({
 			portalProps: { to: "#portal-target" },
 		});
-		const portalTarget = t.getByTestId("portal-target").element();
+		const portalTarget = page.getByTestId("portal-target").element();
 		expect(t.content.element().parentElement?.parentElement).toBe(portalTarget);
 	});
 
 	it("should not portal if `disabled` is passed as portal prop", async () => {
 		const t = await openMultiple({ portalProps: { disabled: true } });
-		const form = t.getByTestId("form").element();
+		const form = page.getByTestId("form").element();
 		expect(t.content.element().parentElement?.parentElement).toBe(form);
 	});
 
@@ -589,15 +589,15 @@ describe("combobox - multiple", () => {
 
 	it("should call `onValueChange` when the value changes", async () => {
 		const mock = vi.fn();
-		const t = await openMultiple({ value: ["1", "2"], onValueChange: mock });
-		const [item1] = getItems(t.getByTestId);
+		await openMultiple({ value: ["1", "2"], onValueChange: mock });
+		const [item1] = getItems(page.getByTestId);
 		await item1.click();
 		expect(mock).toHaveBeenCalledWith(["2"]);
 	});
 
 	it("should select items when clicked", async () => {
 		const t = await openMultiple();
-		const [item] = getItems(t.getByTestId);
+		const [item] = getItems(page.getByTestId);
 		await expectNotExists(page.getByTestId("1-indicator"));
 		await item.click();
 		await expect.element(t.input).toHaveValue("A");
@@ -610,9 +610,9 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
-		const t = await openMultiple({}, kbd.ARROW_DOWN);
+		await openMultiple({}, kbd.ARROW_DOWN);
 
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -634,14 +634,14 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
-		const t = await openMultiple(
+		await openMultiple(
 			{
 				loop: true,
 			},
 			kbd.ARROW_DOWN
 		);
 
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(page.getByTestId);
 
 		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -667,7 +667,7 @@ describe("combobox - multiple", () => {
 
 	it("should allow items to be selected using the keyboard", async () => {
 		const t = await openMultiple({}, kbd.ARROW_DOWN);
-		const [item1, item2, item3, item4] = getItems(t.getByTestId);
+		const [item1, item2, item3, item4] = getItems(page.getByTestId);
 
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -685,7 +685,7 @@ describe("combobox - multiple", () => {
 	it("should allow multiple items to be selected using the keyboard", async () => {
 		const t = await openMultiple({});
 
-		const [item0, item1, item2, item3] = getItems(t.getByTestId);
+		const [item0, item1, item2, item3] = getItems(page.getByTestId);
 
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -705,8 +705,8 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
-		const t = await openMultiple({}, kbd.ARROW_DOWN);
-		const [item1, item2] = getItems(t.getByTestId);
+		await openMultiple({}, kbd.ARROW_DOWN);
+		const [item1, item2] = getItems(page.getByTestId);
 		await item1.hover();
 		await expectHighlighted(item1);
 		await item2.hover();
@@ -725,7 +725,7 @@ describe("combobox - multiple", () => {
 		await expect.element(t.input).toHaveValue("B");
 
 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
-		const [_, item2] = getItems(t.getByTestId);
+		const [_, item2] = getItems(page.getByTestId);
 		await expectSelected(item2);
 	});
 
@@ -748,7 +748,7 @@ describe("combobox - multiple", () => {
 				clearOnDeselect: true,
 			},
 		});
-		const [item, item2, item3] = getItems(t.getByTestId);
+		const [item, item2, item3] = getItems(page.getByTestId);
 		await expectNotExists(page.getByTestId("1-indicator"));
 		await item.click();
 		await expect.element(t.input).toHaveValue("A");

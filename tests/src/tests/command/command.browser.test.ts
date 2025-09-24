@@ -4,13 +4,11 @@ import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
 import CommandTest from "./command-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
 
 function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
-	const user = setupBrowserUserEvents();
-
 	// oxlint-disable-next-line no-explicit-any
 	const returned = render(CommandTest, props as any);
 	const input = page.getByTestId("input");
@@ -21,7 +19,6 @@ function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
 		root,
 		input,
 		list,
-		user,
 	};
 }
 

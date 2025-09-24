@@ -3,8 +3,7 @@ import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import TabsTest from "./tabs-test.svelte";
 import type { Item, TabsTestProps } from "./tabs-test.svelte";
-import { page } from "@vitest/browser/context";
-import userEvent from "@testing-library/user-event";
+import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 

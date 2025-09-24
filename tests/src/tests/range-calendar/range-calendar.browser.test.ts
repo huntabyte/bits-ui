@@ -580,13 +580,13 @@ describe("range selection data attributes", () => {
 
 		// select "end" date first (Jan 8)
 		const endDay = page.getByTestId("date-1-8");
-		await userEvent.click(endDay);
+		await endDay.click();
 		await expect.element(endDay).toHaveAttribute("data-selected", "");
 		await expect.element(endDay).toHaveAttribute("data-selection-start", "");
 
 		// select "start" date (Jan 5) - should become the actual start
 		const startDay = page.getByTestId("date-1-5");
-		await userEvent.click(startDay);
+		await startDay.click();
 
 		// verify the range is properly ordered
 		await expect.element(startDay).toHaveAttribute("data-selected", "");

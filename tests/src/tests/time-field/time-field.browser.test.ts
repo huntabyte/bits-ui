@@ -12,7 +12,7 @@ import { getTestKbd } from "../utils.js";
 import TimeFieldTest, { type TimeFieldTestProps } from "./time-field-test.svelte";
 import type { TimeValue } from "bits-ui";
 import { tick } from "svelte";
-import { expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -24,7 +24,6 @@ const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
 const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
 function setup<T extends TimeValue = Time>(props: TimeFieldTestProps<T> = {}) {
-	const user = setupBrowserUserEvents();
 	// oxlint-disable-next-line no-explicit-any
 	const returned = render(TimeFieldTest, { ...(props as any) });
 
@@ -42,7 +41,6 @@ function setup<T extends TimeValue = Time>(props: TimeFieldTestProps<T> = {}) {
 		returned.container.querySelector("input[aria-hidden]") as HTMLInputElement;
 
 	return {
-		user,
 		value,
 		input,
 		label,

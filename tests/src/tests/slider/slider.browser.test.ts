@@ -7,7 +7,6 @@ import SliderRangeTest, { type SliderMultiRangeTestProps } from "./slider-range-
 import SliderWithLabelsTest, {
 	type SliderWithLabelsTestProps,
 } from "./slider-test-with-labels.svelte";
-import { setupBrowserUserEvents } from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -26,7 +25,6 @@ function setup(
 	props: SliderMultiTestProps | SliderWithLabelsTestProps = {},
 	kind: "default" | "range" | "labels" = "default"
 ) {
-	const user = setupBrowserUserEvents();
 	let t: ReturnType<typeof render>;
 	if (kind === "default") {
 		t = renderSlider(props as SliderMultiTestProps);
@@ -41,7 +39,7 @@ function setup(
 	function getAllByTestId(testId: Parameters<typeof page.getByTestId>[0]) {
 		return page.getByTestId(testId).all();
 	}
-	return { root, user, getAllByTestId, rerender: t.rerender };
+	return { root, getAllByTestId, rerender: t.rerender };
 }
 
 it("should have a thumb positioned at 30% of the container", async () => {

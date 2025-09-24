@@ -2,13 +2,12 @@ import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
 function setup(props: ScrollAreaTestProps = {}) {
-	const user = setupBrowserUserEvents();
 	render(ScrollAreaTest, { ...props });
 
 	const root = page.getByTestId("root");
@@ -45,7 +44,6 @@ function setup(props: ScrollAreaTestProps = {}) {
 		heightInput,
 		widthInput,
 		numParagraphsInput,
-		user,
 		getScrollbarX,
 		getScrollbarY,
 		getThumbX,

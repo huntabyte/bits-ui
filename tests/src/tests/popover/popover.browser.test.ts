@@ -185,19 +185,19 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 });
 
 it("should correctly handle focus when closing one popover by clicking another popover's trigger", async () => {
-	const t = render(PopoverSiblingsTest);
-	await t.getByTestId("open-1").click();
-	await expectExists(t.getByTestId("content-1"));
-	await t.getByTestId("open-2").click();
-	await expectNotExists(t.getByTestId("content-1"));
-	await expectExists(t.getByTestId("content-2"));
-	await expect.element(t.getByTestId("close-2")).toHaveFocus();
-	await t.getByTestId("open-3").click();
-	await expectNotExists(t.getByTestId("content-2"));
-	await expectExists(t.getByTestId("content-3"));
-	await expect.element(t.getByTestId("close-3")).toHaveFocus();
-	await t.getByTestId("close-3").click();
-	await expectNotExists(t.getByTestId("content-3"));
+	render(PopoverSiblingsTest);
+	await page.getByTestId("open-1").click();
+	await expectExists(page.getByTestId("content-1"));
+	await page.getByTestId("open-2").click();
+	await expectNotExists(page.getByTestId("content-1"));
+	await expectExists(page.getByTestId("content-2"));
+	await expect.element(page.getByTestId("close-2")).toHaveFocus();
+	await page.getByTestId("open-3").click();
+	await expectNotExists(page.getByTestId("content-2"));
+	await expectExists(page.getByTestId("content-3"));
+	await expect.element(page.getByTestId("close-3")).toHaveFocus();
+	await page.getByTestId("close-3").click();
+	await expectNotExists(page.getByTestId("content-3"));
 });
 
 it("should restore focus to the trigger that opened the popover", async () => {

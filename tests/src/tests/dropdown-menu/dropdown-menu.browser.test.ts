@@ -1,11 +1,11 @@
 import { expect, it, vi, afterEach, onTestFinished } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { page, userEvent } from "@vitest/browser/context";
-import { getTestKbd, sleep } from "../utils.js";
+import { getTestKbd } from "../utils.js";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 
 const kbd = getTestKbd();
@@ -20,7 +20,6 @@ type DropdownMenuSetupProps = (DropdownMenuTestProps | DropdownMenuForceMountTes
  */
 async function setup(props: DropdownMenuSetupProps = {}) {
 	const { component: comp = DropdownMenuTest, ...rest } = props;
-	const user = setupBrowserUserEvents();
 	const t = render(comp, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
@@ -29,13 +28,11 @@ async function setup(props: DropdownMenuSetupProps = {}) {
 		await trigger.click();
 		await expectExists(page.getByTestId("content"));
 	};
-	await sleep(50);
 	return {
 		...t,
 		getContent: () => page.getByTestId("content"),
 		getSubContent: () => page.getByTestId("sub-content"),
 		open,
-		user,
 		trigger,
 	};
 }

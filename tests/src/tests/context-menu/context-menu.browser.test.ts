@@ -6,7 +6,7 @@ import ContextMenuTest from "./context-menu-test.svelte";
 import type { ContextMenuTestProps } from "./context-menu-test.svelte";
 import type { ContextMenuForceMountTestProps } from "./context-menu-force-mount-test.svelte";
 import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
 
@@ -21,7 +21,6 @@ type ContextMenuSetupProps = (ContextMenuTestProps | ContextMenuForceMountTestPr
  */
 async function setup(props: ContextMenuSetupProps = {}) {
 	const { component = ContextMenuTest, ...rest } = props;
-	const user = setupBrowserUserEvents();
 	const t = render(component, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
@@ -34,7 +33,6 @@ async function setup(props: ContextMenuSetupProps = {}) {
 		...t,
 		getContent: () => page.getByTestId("content"),
 		getSubContent: () => page.getByTestId("sub-content"),
-		user,
 		trigger,
 		open,
 	};
@@ -66,7 +64,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 
 it("should have bits data attrs", async () => {
 	const t = await setup();
-	await t.user.click(t.trigger, { button: "right" });
+	await t.trigger.click({ button: "right" });
 
 	const parts = [
 		"content",
@@ -130,7 +128,7 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	await expect.element(indicator).not.toHaveTextContent("true");
 	await expect.element(checkedBinding).toHaveTextContent("false");
 	const checkbox = page.getByTestId("checkbox-item");
-	await userEvent.click(checkbox);
+	await checkbox.click();
 	await expect.element(checkedBinding).toHaveTextContent("true");
 	await t.trigger.click({ button: "right" });
 	await expect.element(indicator).toHaveTextContent("true");
@@ -172,7 +170,7 @@ it("should check the radio item when clicked & respects binding", async () => {
 	const radioBinding = page.getByTestId("radio-binding");
 	await expect.element(radioBinding).toHaveTextContent("");
 	const radioItem1 = page.getByTestId("radio-item");
-	await userEvent.click(radioItem1);
+	await radioItem1.click();
 	await expect.element(radioBinding).toHaveTextContent("1");
 	await t.trigger.click({ button: "right" });
 	const radioIndicator = page.getByTestId("radio-indicator-1");

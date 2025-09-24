@@ -1,4 +1,4 @@
-import { page } from "@vitest/browser/context";
+import { page, userEvent, type Locator } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { type ComponentProps, tick } from "svelte";
@@ -6,31 +6,29 @@ import type { Checkbox } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import CheckboxTest from "./checkbox-test.svelte";
 import CheckboxGroupTest from "./checkbox-group-test.svelte";
-import { setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
 
 const groupItems = ["a", "b", "c", "d"];
 
 function setup(props?: Checkbox.RootProps) {
-	const user = setupBrowserUserEvents();
 	const returned = render(CheckboxTest, props);
-	const root = page.getByTestId("root").element() as HTMLElement;
-	return { ...returned, root, user };
+	const root = page.getByTestId("root");
+	return { ...returned, root };
 }
 
 function setupGroup(props: ComponentProps<typeof CheckboxGroupTest> = {}) {
 	const items = props.items ?? groupItems;
-	const user = setupBrowserUserEvents();
 	const returned = render(CheckboxGroupTest, { ...props, items });
-	const group = page.getByTestId("group").element() as HTMLElement;
-	const groupLabel = page.getByTestId("group-label").element() as HTMLElement;
-	const submit = page.getByTestId("submit").element() as HTMLButtonElement;
-	const binding = page.getByTestId("binding").element() as HTMLParagraphElement;
-	const updateBtn = page.getByTestId("update").element() as HTMLButtonElement;
+	const group = page.getByTestId("group");
+	const groupLabel = page.getByTestId("group-label");
+	const submit = page.getByTestId("submit");
+	const binding = page.getByTestId("binding");
+	const updateBtn = page.getByTestId("update");
 
-	const getCheckbox = (v: string) => page.getByTestId(`${v}-checkbox`).element() as HTMLElement;
-	const getIndicator = (v: string) => page.getByTestId(`${v}-indicator`).element() as HTMLElement;
+	const getCheckbox = (v: string) => page.getByTestId(`${v}-checkbox`);
+	const getIndicator = (v: string) => page.getByTestId(`${v}-indicator`);
 	const checkboxes = items.map((v) => getCheckbox(v));
 	const indicators = items.map((v) => getIndicator(v));
 
@@ -42,24 +40,23 @@ function setupGroup(props: ComponentProps<typeof CheckboxGroupTest> = {}) {
 		getIndicator,
 		checkboxes,
 		indicators,
-		user,
 		submit,
 		binding,
 		updateBtn,
 	};
 }
 
-function expectChecked(...nodes: HTMLElement[]) {
-	for (const n of nodes) {
-		expect(n).toHaveAttribute("data-state", "checked");
-		expect(n).toHaveAttribute("aria-checked", "true");
+async function expectChecked(...locs: Locator[]) {
+	for (const n of locs) {
+		await expect.element(n).toHaveAttribute("data-state", "checked");
+		await expect.element(n).toHaveAttribute("aria-checked", "true");
 	}
 }
 
-function expectUnchecked(...nodes: HTMLElement[]) {
-	for (const n of nodes) {
-		expect(n).toHaveAttribute("data-state", "unchecked");
-		expect(n).toHaveAttribute("aria-checked", "false");
+async function expectUnchecked(...locs: Locator[]) {
+	for (const n of locs) {
+		await expect.element(n).toHaveAttribute("data-state", "unchecked");
+		await expect.element(n).toHaveAttribute("aria-checked", "false");
 	}
 }
 
@@ -71,175 +68,174 @@ describe("Single Checkbox", () => {
 	describe("Accessibility and Structure", () => {
 		it("should have bits data attrs", async () => {
 			const t = setup();
-			expect(t.root).toHaveAttribute("data-checkbox-root");
+			await expect.element(t.root).toHaveAttribute("data-checkbox-root");
 		});
 
 		it("should not render the checkbox input if a name prop isn't passed", async () => {
 			setup({ name: "" });
-			expect(() => getHiddenInput().element()).toThrow();
+			await expectNotExists(getHiddenInput());
 		});
 
 		it("should render the checkbox input if a name prop is passed", async () => {
 			setup({ name: "checkbox" });
-			expect(getHiddenInput()).toBeInTheDocument();
-			expect(getHiddenInput()).toHaveAttribute("type", "checkbox");
+			await expectExists(getHiddenInput());
+			await expect.element(getHiddenInput()).toHaveAttribute("type", "checkbox");
 		});
 
 		it("should not have input as part of tab order", async () => {
 			setup({ name: "abc" });
-			expect(getHiddenInput()).toHaveAttribute("tabindex", "-1");
+			await expect.element(getHiddenInput()).toHaveAttribute("tabindex", "-1");
 		});
 
 		it('should default the value to "on" when no value prop is passed', async () => {
 			setup({ name: "hello" });
 
-			expect(getHiddenInput()).toHaveAttribute("value");
+			await expect.element(getHiddenInput()).toHaveAttribute("value");
 		});
 	});
 
 	describe("State and Interaction", () => {
 		it("should be able to be indeterminate", async () => {
 			const t = setup({ indeterminate: true });
-			const indicator = t.getByTestId("indicator");
-			expect(t.root).toHaveAttribute("data-state", "indeterminate");
-			expect(t.root).toHaveAttribute("aria-checked", "mixed");
-			expect(page.getByRole("checkbox")).not.toBeChecked();
-			expect(indicator).toHaveTextContent("indeterminate");
-			expect(indicator).not.toHaveTextContent("true");
-			expect(indicator).not.toHaveTextContent("false");
+			const indicator = page.getByTestId("indicator");
+			await expect.element(t.root).toHaveAttribute("data-state", "indeterminate");
+			await expect.element(t.root).toHaveAttribute("aria-checked", "mixed");
+			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
+			await expect.element(indicator).toHaveTextContent("indeterminate");
+			await expect.element(indicator).not.toHaveTextContent("true");
+			await expect.element(indicator).not.toHaveTextContent("false");
 		});
 
 		it("should toggle when clicked", async () => {
 			const t = setup();
-			const indicator = t.getByTestId("indicator");
-			expectUnchecked(t.root);
-			expect(page.getByRole("checkbox")).not.toBeChecked();
-			expect(indicator).toHaveTextContent("false");
-			expect(indicator).not.toHaveTextContent("true");
-			expect(indicator).not.toHaveTextContent("indeterminate");
-			await t.user.click(t.root);
-			expectChecked(t.root);
-			expect(page.getByRole("checkbox")).toBeChecked();
-			expect(indicator).toHaveTextContent("true");
-			expect(indicator).not.toHaveTextContent("false");
-			expect(indicator).not.toHaveTextContent("indeterminate");
+			const indicator = page.getByTestId("indicator");
+			await expectUnchecked(t.root);
+			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
+			await expect.element(indicator).toHaveTextContent("false");
+			await expect.element(indicator).not.toHaveTextContent("true");
+			await expect.element(indicator).not.toHaveTextContent("indeterminate");
+			await t.root.click();
+			await expectChecked(t.root);
+			await expect.element(page.getByRole("checkbox")).toBeChecked();
+			await expect.element(indicator).toHaveTextContent("true");
+			await expect.element(indicator).not.toHaveTextContent("false");
+			await expect.element(indicator).not.toHaveTextContent("indeterminate");
 		});
 
 		it("should toggle when the `Space` key is pressed", async () => {
 			const t = setup();
-			expectUnchecked(t.root);
-			expect(page.getByRole("checkbox")).not.toBeChecked();
-			t.root.focus();
-			await t.user.keyboard(kbd.SPACE);
-			expectChecked(t.root);
-			expect(page.getByRole("checkbox")).toBeChecked();
+			await expectUnchecked(t.root);
+			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
+			(t.root.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.SPACE);
+			await expectChecked(t.root);
+			await expect.element(page.getByRole("checkbox")).toBeChecked();
 		});
 
 		it("should not toggle when the `Enter` key is pressed", async () => {
 			const t = setup();
-			const indicator = t.getByTestId("indicator");
-			expectUnchecked(t.root);
-			expect(page.getByRole("checkbox")).not.toBeChecked();
-			expect(indicator).toHaveTextContent("false");
-			expect(indicator).not.toHaveTextContent("true");
-			expect(indicator).not.toHaveTextContent("indeterminate");
-			t.root.focus();
-			await t.user.keyboard(kbd.ENTER);
-			expectUnchecked(t.root);
-			expect(indicator).toHaveTextContent("false");
-			expect(indicator).not.toHaveTextContent("true");
-			expect(indicator).not.toHaveTextContent("indeterminate");
-			expect(page.getByRole("checkbox")).not.toBeChecked();
+			const indicator = page.getByTestId("indicator");
+			await expectUnchecked(t.root);
+			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
+			await expect.element(indicator).toHaveTextContent("false");
+			await expect.element(indicator).not.toHaveTextContent("true");
+			await expect.element(indicator).not.toHaveTextContent("indeterminate");
+			(t.root.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.ENTER);
+			await expectUnchecked(t.root);
+			await expect.element(indicator).toHaveTextContent("false");
+			await expect.element(indicator).not.toHaveTextContent("true");
+			await expect.element(indicator).not.toHaveTextContent("indeterminate");
+			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
 		});
 	});
 
 	describe("Props and Events", () => {
 		it("should be disabled when the `disabled` prop is passed", async () => {
 			const t = setup({ disabled: true });
-			expectUnchecked(t.root);
-			expect(page.getByRole("checkbox").element()).toBeDisabled();
-			await t.user.click(t.root);
-			expectUnchecked(t.root);
-			expect(t.root).toBeDisabled();
-			expect(page.getByRole("checkbox").element()).toBeDisabled();
+			await expectUnchecked(t.root);
+			await expect.element(page.getByRole("checkbox")).toBeDisabled();
+			await userEvent.click(t.root, { force: true });
+			await expectUnchecked(t.root);
+			await expect.element(t.root).toBeDisabled();
+			await expect.element(page.getByRole("checkbox")).toBeDisabled();
 		});
 
 		it("should be required when the `required` prop is passed", async () => {
 			const t = setup({ required: true, name: "checkbox" });
-			expect(t.root).toHaveAttribute("aria-required", "true");
-			expect(page.getByRole("checkbox").element()).toBeRequired();
+			await expect.element(t.root).toHaveAttribute("aria-required", "true");
+			await expect.element(page.getByRole("checkbox")).toBeRequired();
 		});
 
 		it('should fire the "onCheckedChange" callback when changing', async () => {
 			const mock = vi.fn();
 			const t = setup({ onCheckedChange: mock });
-			await t.user.click(t.root);
+			await t.root.click();
 			expect(mock).toHaveBeenCalledWith(true);
-			await t.user.click(t.root);
+			await t.root.click();
 			expect(mock).toHaveBeenCalledWith(false);
 		});
 
 		it("should fire the 'onIndeterminateChange' callback when changing from indeterminate", async () => {
 			const mock = vi.fn();
 			const t = setup({ onIndeterminateChange: mock, indeterminate: true });
-			await t.user.click(t.root);
+			await t.root.click();
 			expect(mock).toHaveBeenCalledWith(false);
 		});
 
 		it("should respect binding the `checked` prop", async () => {
 			const t = setup();
-			const binding = t.getByTestId("binding");
-			expect(binding).toHaveTextContent("false");
-			await t.user.click(t.root);
-			await tick();
-			expect(binding).toHaveTextContent("true");
+			const binding = page.getByTestId("binding");
+			await expect.element(binding).toHaveTextContent("false");
+			await t.root.click();
+			await expect.element(binding).toHaveTextContent("true");
 		});
 
 		it("should be readonly when the `readonly` prop is passed", async () => {
 			const t = setup({ readonly: true, name: "checkbox" });
-			const indicator = t.getByTestId("indicator");
+			const indicator = page.getByTestId("indicator");
 
 			// Should have proper attributes
-			expect(t.root).toHaveAttribute("aria-readonly", "true");
-			expect(t.root).toHaveAttribute("data-readonly", "");
-			expect(getHiddenInput()).toHaveAttribute("readonly");
+			await expect.element(t.root).toHaveAttribute("aria-readonly", "true");
+			await expect.element(t.root).toHaveAttribute("data-readonly", "");
+			await expect.element(getHiddenInput()).toHaveAttribute("readonly");
 
 			// Should not toggle when clicked
-			expectUnchecked(t.root);
-			expect(indicator).toHaveTextContent("false");
-			await t.user.click(t.root);
-			expectUnchecked(t.root);
-			expect(indicator).toHaveTextContent("false");
-			expect(page.getByRole("checkbox")).not.toBeChecked();
+			await expectUnchecked(t.root);
+			await expect.element(indicator).toHaveTextContent("false");
+			await t.root.click();
+			await expectUnchecked(t.root);
+			await expect.element(indicator).toHaveTextContent("false");
+			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
 		});
 
 		it("should not toggle when readonly and `Space` key is pressed", async () => {
 			const t = setup({ readonly: true });
-			const indicator = t.getByTestId("indicator");
+			const indicator = page.getByTestId("indicator");
 
-			expectUnchecked(t.root);
-			expect(indicator).toHaveTextContent("false");
-			t.root.focus();
-			await t.user.keyboard(kbd.SPACE);
-			expectUnchecked(t.root);
-			expect(indicator).toHaveTextContent("false");
-			expect(page.getByRole("checkbox")).not.toBeChecked();
+			await expectUnchecked(t.root);
+			await expect.element(indicator).toHaveTextContent("false");
+			(t.root.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.SPACE);
+			await expectUnchecked(t.root);
+			await expect.element(indicator).toHaveTextContent("false");
+			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
 		});
 
 		it("should still be focusable when readonly", async () => {
 			const t = setup({ readonly: true });
-			t.root.focus();
-			expect(t.root).toHaveFocus();
+			(t.root.element() as HTMLElement).focus();
+			await expect.element(t.root).toHaveFocus();
 		});
 
 		it("should not fire onCheckedChange callback when readonly", async () => {
 			const mock = vi.fn();
 			const t = setup({ readonly: true, onCheckedChange: mock });
-			await t.user.click(t.root);
+			await t.root.click();
 			expect(mock).not.toHaveBeenCalled();
 
-			t.root.focus();
-			await t.user.keyboard(kbd.SPACE);
+			(t.root.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.SPACE);
 			expect(mock).not.toHaveBeenCalled();
 		});
 	});
@@ -249,8 +245,8 @@ describe("Checkbox Group", () => {
 	describe("Accessibility and Structure", () => {
 		it("should have bits data attrs", async () => {
 			const t = setupGroup();
-			expect(t.group).toHaveAttribute("data-checkbox-group");
-			expect(t.groupLabel).toHaveAttribute("data-checkbox-group-label");
+			await expect.element(t.group).toHaveAttribute("data-checkbox-group");
+			await expect.element(t.groupLabel).toHaveAttribute("data-checkbox-group-label");
 		});
 	});
 
@@ -258,12 +254,12 @@ describe("Checkbox Group", () => {
 		it("should handle default values appropriately", async () => {
 			const t = setupGroup({ value: ["a", "b"] });
 			const [a, b, c, d] = t.checkboxes;
-			expectChecked(a, b);
-			expectUnchecked(c, d);
-			await t.user.click(a);
-			expectUnchecked(a);
-			await t.user.click(d);
-			expectChecked(d);
+			await expectChecked(a, b);
+			await expectUnchecked(c, d);
+			await a.click();
+			await expectUnchecked(a);
+			await d.click();
+			await expectChecked(d);
 		});
 
 		it("should submit the form data correctly using the checkbox values and group name", async () => {
@@ -275,27 +271,27 @@ describe("Checkbox Group", () => {
 				},
 			});
 			const [a, b] = t.checkboxes;
-			await t.user.click(a);
-			expectChecked(a);
-			await t.user.click(t.submit);
+			await a.click();
+			await expectChecked(a);
+			await t.submit.click();
 			expect(submittedValues).toEqual(["a"]);
-			await t.user.click(b);
-			await t.user.click(t.submit);
+			await b.click();
+			await t.submit.click();
 			expect(submittedValues).toEqual(["a", "b"]);
 		});
 
 		it("should handle binding value", async () => {
 			const t = setupGroup();
 			const [a, b, _, d] = t.checkboxes;
-			expect(t.binding).toHaveTextContent("");
-			await t.user.click(a);
-			expect(t.binding).toHaveTextContent("a");
-			await t.user.click(b);
-			expect(t.binding).toHaveTextContent("a,b");
-			await t.user.click(a);
-			expect(t.binding).toHaveTextContent("b");
-			await t.user.click(d);
-			expect(t.binding).toHaveTextContent("b,d");
+			await expect.element(t.binding).toHaveTextContent("");
+			await a.click();
+			await expect.element(t.binding).toHaveTextContent("a");
+			await b.click();
+			await expect.element(t.binding).toHaveTextContent("a,b");
+			await a.click();
+			await expect.element(t.binding).toHaveTextContent("b");
+			await d.click();
+			await expect.element(t.binding).toHaveTextContent("b,d");
 		});
 
 		it("should handle function binding", async () => {
@@ -303,16 +299,16 @@ describe("Checkbox Group", () => {
 			const getMock = vi.fn();
 			const t = setupGroup({ getValue: getMock, setValue: setMock, value: [] });
 			const [a, b, _, d] = t.checkboxes;
-			await t.user.click(a);
+			await a.click();
 			expect(setMock).toHaveBeenCalledWith(["a"]);
 			setMock.mockClear();
-			await t.user.click(b);
+			await b.click();
 			expect(setMock).toHaveBeenCalledWith(["a", "b"]);
 			setMock.mockClear();
-			await t.user.click(d);
+			await d.click();
 			expect(setMock).toHaveBeenCalledWith(["a", "b", "d"]);
 			setMock.mockClear();
-			await t.user.click(a);
+			await a.click();
 			expect(setMock).toHaveBeenCalledWith(["b", "d"]);
 		});
 
@@ -320,23 +316,23 @@ describe("Checkbox Group", () => {
 			const t = setupGroup({ value: ["a", "b"] });
 			const [a, b, c, d] = t.checkboxes;
 			await tick();
-			expectChecked(a, b);
-			await t.user.click(t.updateBtn);
-			expectUnchecked(a, b);
-			expectChecked(c, d);
+			await expectChecked(a, b);
+			await t.updateBtn.click();
+			await expectUnchecked(a, b);
+			await expectChecked(c, d);
 		});
 
 		it("should call the `onValueChange` callback when the value changes", async () => {
 			const mock = vi.fn();
 			const t = setupGroup({ onValueChange: mock });
 			const [a, b] = t.checkboxes;
-			await t.user.click(a);
+			await a.click();
 			expect(mock).toHaveBeenCalledWith(["a"]);
-			await t.user.click(b);
+			await b.click();
 			expect(mock).toHaveBeenCalledWith(["a", "b"]);
-			await t.user.click(a);
+			await a.click();
 			expect(mock).toHaveBeenCalledWith(["b"]);
-			await t.user.click(b);
+			await b.click();
 			expect(mock).toHaveBeenCalledWith([]);
 		});
 
@@ -344,13 +340,13 @@ describe("Checkbox Group", () => {
 			const mock = vi.fn();
 			const t = setupGroup({ onValueChange: mock });
 			const [a, b] = t.checkboxes;
-			await t.user.click(a);
+			await a.click();
 			expect(mock).toHaveBeenCalledExactlyOnceWith(["a"]);
 			mock.mockClear();
-			await t.user.click(b);
+			await b.click();
 			expect(mock).toHaveBeenCalledExactlyOnceWith(["a", "b"]);
 			mock.mockClear();
-			await t.user.click(a);
+			await a.click();
 			expect(mock).toHaveBeenCalledExactlyOnceWith(["b"]);
 		});
 	});
@@ -359,17 +355,17 @@ describe("Checkbox Group", () => {
 		it("should propagate disabled state to children checkboxes", async () => {
 			const t = setupGroup({ disabled: true, required: true });
 			for (const checkbox of t.checkboxes) {
-				expect(checkbox).toBeDisabled();
-				expect(checkbox).toHaveAttribute("aria-required", "true");
+				await expect.element(checkbox).toBeDisabled();
+				await expect.element(checkbox).toHaveAttribute("aria-required", "true");
 			}
 		});
 
 		it("should allow disabling a single item in the group", async () => {
 			const t = setupGroup({ disabledItems: ["a"] });
 			const [a, ...rest] = t.checkboxes;
-			expect(a).toBeDisabled();
+			await expect.element(a).toBeDisabled();
 			for (const checkbox of rest) {
-				expect(checkbox).not.toBeDisabled();
+				await expect.element(checkbox).not.toBeDisabled();
 			}
 		});
 	});
@@ -378,8 +374,8 @@ describe("Checkbox Group", () => {
 		it("should propagate readonly state to children checkboxes", async () => {
 			const t = setupGroup({ readonly: true });
 			for (const checkbox of t.checkboxes) {
-				expect(checkbox).toHaveAttribute("aria-readonly", "true");
-				expect(checkbox).toHaveAttribute("data-readonly", "");
+				await expect.element(checkbox).toHaveAttribute("aria-readonly", "true");
+				await expect.element(checkbox).toHaveAttribute("data-readonly", "");
 			}
 		});
 
@@ -388,30 +384,30 @@ describe("Checkbox Group", () => {
 			const [a, b] = t.checkboxes;
 
 			// Should not toggle when clicked
-			expectUnchecked(a, b);
-			await t.user.click(a);
-			expectUnchecked(a);
-			await t.user.click(b);
-			expectUnchecked(b);
+			await expectUnchecked(a, b);
+			await a.click();
+			await expectUnchecked(a);
+			await b.click();
+			await expectUnchecked(b);
 
 			// Should not change value binding
-			expect(t.binding).toHaveTextContent("");
+			await expect.element(t.binding).toHaveTextContent("");
 		});
 
 		it("should prevent keyboard interaction when group is readonly", async () => {
 			const t = setupGroup({ readonly: true, value: [] });
 			const [a, b] = t.checkboxes;
 
-			expectUnchecked(a, b);
-			a.focus();
-			await t.user.keyboard(kbd.SPACE);
-			expectUnchecked(a);
+			await expectUnchecked(a, b);
+			(a.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.SPACE);
+			await expectUnchecked(a);
 
-			b.focus();
-			await t.user.keyboard(kbd.SPACE);
-			expectUnchecked(b);
+			(b.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.SPACE);
+			await expectUnchecked(b);
 
-			expect(t.binding).toHaveTextContent("");
+			await expect.element(t.binding).toHaveTextContent("");
 		});
 
 		it("should not call onValueChange callback when group is readonly", async () => {
@@ -419,10 +415,10 @@ describe("Checkbox Group", () => {
 			const t = setupGroup({ readonly: true, onValueChange: mock });
 			const [a, b] = t.checkboxes;
 
-			await t.user.click(a);
-			await t.user.click(b);
-			a.focus();
-			await t.user.keyboard(kbd.SPACE);
+			await a.click();
+			await b.click();
+			(a.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.SPACE);
 
 			expect(mock).not.toHaveBeenCalled();
 		});
@@ -431,10 +427,10 @@ describe("Checkbox Group", () => {
 			const t = setupGroup({ readonly: true });
 			const [a, b] = t.checkboxes;
 
-			a.focus();
-			expect(a).toHaveFocus();
-			b.focus();
-			expect(b).toHaveFocus();
+			(a.element() as HTMLElement).focus();
+			await expect.element(a).toHaveFocus();
+			(b.element() as HTMLElement).focus();
+			await expect.element(b).toHaveFocus();
 		});
 
 		it("should handle individual checkbox readonly with non-readonly group", async () => {
@@ -442,20 +438,20 @@ describe("Checkbox Group", () => {
 			const [a, b, c] = t.checkboxes;
 
 			// Only 'a' should be readonly
-			expect(a).toHaveAttribute("aria-readonly", "true");
-			expect(a).toHaveAttribute("data-readonly", "");
-			expect(b).not.toHaveAttribute("aria-readonly", "true");
-			expect(c).not.toHaveAttribute("aria-readonly", "true");
+			await expect.element(a).toHaveAttribute("aria-readonly", "true");
+			await expect.element(a).toHaveAttribute("data-readonly", "");
+			await expect.element(b).not.toHaveAttribute("aria-readonly", "true");
+			await expect.element(c).not.toHaveAttribute("aria-readonly", "true");
 
 			// 'a' should not be interactive
-			await t.user.click(a);
-			expectUnchecked(a);
+			await a.click();
+			await expectUnchecked(a);
 
 			// 'b' and 'c' should be interactive
-			await t.user.click(b);
-			expectChecked(b);
-			await t.user.click(c);
-			expectChecked(c);
+			await b.click();
+			await expectChecked(b);
+			await c.click();
+			await expectChecked(c);
 		});
 
 		it("should preserve existing checked state when becoming readonly", async () => {
@@ -463,26 +459,26 @@ describe("Checkbox Group", () => {
 			const [a, b, c] = t.checkboxes;
 
 			// Initially some items are checked
-			expectChecked(a, b);
-			expectUnchecked(c);
+			await expectChecked(a, b);
+			await expectUnchecked(c);
 
 			// Re-render with readonly
 			t.rerender({ readonly: true, value: ["a", "b"] });
 			await tick();
 
 			// Should maintain checked state but be readonly
-			expectChecked(a, b);
-			expectUnchecked(c);
+			await expectChecked(a, b);
+			await expectUnchecked(c);
 
 			for (const checkbox of t.checkboxes) {
-				expect(checkbox).toHaveAttribute("aria-readonly", "true");
+				await expect.element(checkbox).toHaveAttribute("aria-readonly", "true");
 			}
 
 			// Should not be able to toggle
-			await t.user.click(a);
-			expectChecked(a);
-			await t.user.click(c);
-			expectUnchecked(c);
+			await a.click();
+			await expectChecked(a);
+			await c.click();
+			await expectUnchecked(c);
 		});
 	});
 });
