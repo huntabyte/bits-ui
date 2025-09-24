@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.11.3
+
+### Patch Changes
+
+- fix: removed leftover console.logs in timeout-fn.ts ([#1794](https://github.com/huntabyte/bits-ui/pull/1794))
+
 ## 2.11.2
 
 ### Patch Changes
