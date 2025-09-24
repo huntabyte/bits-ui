@@ -38,7 +38,7 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date picker component.",
 	props: {
-		value: calendarRoot.props!.value,
+		value: dateFieldRoot.props!.value,
 		onValueChange: calendarRoot.props!.onValueChange,
 		open: defineBooleanProp({
 			default: false,
