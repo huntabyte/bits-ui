@@ -1200,6 +1200,7 @@ export class ContextMenuTriggerState {
 		this.#clearLongPressTimer();
 		this.#handleOpen(e);
 		e.preventDefault();
+		e.stopPropagation();
 		this.parentMenu.contentNode?.focus();
 	}
 
