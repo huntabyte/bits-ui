@@ -170,7 +170,7 @@ describe("date field", () => {
 		await t.year.click();
 		await userEvent.keyboard(kbd.ARROW_UP);
 		await expect.element(t.year).toHaveTextContent(cycle("year"));
-		await t.user.click(hour);
+		await hour.click();
 		await userEvent.keyboard(kbd.ARROW_UP);
 		await expect.element(hour).toHaveTextContent("1");
 		await minute.click();
@@ -232,7 +232,7 @@ describe("date field", () => {
 			t.getByTestId("timeZoneName"),
 		];
 
-		await t.user.click(t.month);
+		await t.month.click();
 
 		for (const seg of segments) {
 			await expect.element(seg).toHaveFocus();

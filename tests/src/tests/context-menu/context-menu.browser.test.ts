@@ -66,7 +66,7 @@ async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
 
 it("should have bits data attrs", async () => {
 	const t = await setup();
-	await t.user.click(t.trigger, { button: "right" });
+	await t.trigger.click({ button: "right" });
 
 	const parts = [
 		"content",
