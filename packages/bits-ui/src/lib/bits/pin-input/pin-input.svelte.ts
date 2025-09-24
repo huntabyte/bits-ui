@@ -570,6 +570,7 @@ function safeInsertRule(sheet: CSSStyleSheet, rule: string) {
 	try {
 		sheet.insertRule(rule);
 	} catch {
+		// oxlint-disable-next-line no-console
 		console.error("pin input could not insert CSS rule:", rule);
 	}
 }
