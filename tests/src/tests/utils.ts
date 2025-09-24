@@ -1,11 +1,3 @@
-import { type Matcher, type MatcherOptions, fireEvent } from "@testing-library/svelte";
-import { userEvent } from "@testing-library/user-event";
-import { vi } from "vitest";
-
-export function sleep(ms: number) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 /**
  * A wrapper around the internal kbd object to make it easier to use in tests
  * which require the key names to be wrapped in curly braces.
@@ -70,73 +62,4 @@ export function getTestKbd() {
 		...initTestKbd,
 		SHIFT_TAB: `{Shift>}{${kbd.TAB}}`,
 	};
-}
-
-export type queryByTestId = (
-	id: Matcher,
-	options?: MatcherOptions | undefined
-) => HTMLElement | null;
-
-export type CustomUserEvents = typeof userEvent & {
-	pointerDownUp: (target: HTMLElement | null) => Promise<void>;
-};
-
-export function setupUserEvents(): CustomUserEvents {
-	const user = userEvent.setup({ pointerEventsCheck: 0, delay: null });
-	const originalClick = user.click;
-	const originalKeyboard = user.keyboard;
-	const originalPointer = user.pointer;
-
-	const click = async (element: HTMLElement) => {
-		await originalClick(element);
-		await sleep(20);
-	};
-
-	const keyboard = async (keys: string) => {
-		await originalKeyboard(keys);
-		await sleep(20);
-	};
-
-	const pointer: typeof originalPointer = async (input) => {
-		await originalPointer(input);
-		await sleep(20);
-	};
-
-	const pointerDownUp = async (target: HTMLElement | null) => {
-		if (!target) return;
-		await fireEvent.pointerDown(target);
-		await fireEvent.pointerUp(target);
-		await fireEvent.click(target);
-		await sleep(20);
-	};
-
-	Object.assign(user, { click, keyboard, pointer, pointerDownUp });
-
-	return user as unknown as CustomUserEvents;
-}
-
-export async function fireFocus(node: HTMLElement) {
-	node.focus();
-	await sleep(20);
-}
-
-// oxlint-disable-next-line no-explicit-any
-export type AnyFn = (...args: any[]) => any;
-
-type Rect = {
-	left: number;
-	top: number;
-	right: number;
-	bottom: number;
-};
-
-export function mockBoundingClientRect(
-	rect: Rect = {
-		left: 100,
-		top: 100,
-		right: 200,
-		bottom: 200,
-	}
-): void {
-	vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue(rect as DOMRect);
 }

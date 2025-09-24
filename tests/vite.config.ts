@@ -1,7 +1,6 @@
 import process from "node:process";
 import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
-import { svelteTesting } from "@testing-library/svelte/vite";
 import { defineConfig } from "vite";
 import type { Plugin } from "vite";
 
@@ -21,7 +20,7 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
-	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit(), svelteTesting()],
+	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit()],
 	test: {
 		poolOptions: {
 			forks: {
@@ -29,19 +28,6 @@ export default defineConfig({
 			},
 		},
 		projects: [
-			{
-				extends: "./vite.config.ts",
-				test: {
-					name: "jsdom",
-					include: ["src/tests/**/*.{test,spec}.{js,ts}"],
-					globals: true,
-					environment: "jsdom",
-					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
-					setupFiles: ["./other/setup-test.ts"],
-					exclude: ["./other/setup-test.ts"],
-					retry: 3,
-				},
-			},
 			{
 				extends: "./vite.config.ts",
 				test: {

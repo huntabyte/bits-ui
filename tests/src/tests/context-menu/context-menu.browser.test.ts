@@ -6,7 +6,7 @@ import ContextMenuTest from "./context-menu-test.svelte";
 import type { ContextMenuTestProps } from "./context-menu-test.svelte";
 import type { ContextMenuForceMountTestProps } from "./context-menu-force-mount-test.svelte";
 import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
 
@@ -21,7 +21,6 @@ type ContextMenuSetupProps = (ContextMenuTestProps | ContextMenuForceMountTestPr
  */
 async function setup(props: ContextMenuSetupProps = {}) {
 	const { component = ContextMenuTest, ...rest } = props;
-	const user = setupBrowserUserEvents();
 	const t = render(component, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
@@ -34,7 +33,6 @@ async function setup(props: ContextMenuSetupProps = {}) {
 		...t,
 		getContent: () => page.getByTestId("content"),
 		getSubContent: () => page.getByTestId("sub-content"),
-		user,
 		trigger,
 		open,
 	};

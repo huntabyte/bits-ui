@@ -1,11 +1,10 @@
-import { page } from "@vitest/browser/context";
+import { page, userEvent } from "@vitest/browser/context";
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
 import CommandGridTest from "./command-grid-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
-import userEvent from "@testing-library/user-event";
 
 const kbd = getTestKbd();
 
