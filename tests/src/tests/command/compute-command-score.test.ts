@@ -1,4 +1,5 @@
 import { computeCommandScore } from "bits-ui";
+import { expect, it, describe } from "vitest";
 
 describe("computeCommandScore", () => {
 	it("returns 1 for exact matches", () => {
