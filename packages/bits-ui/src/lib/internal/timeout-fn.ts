@@ -24,12 +24,10 @@ export class TimeoutFn<T extends AnyFn> {
 	}
 
 	stop() {
-		console.log("stopping timeout");
 		this.#clear();
 	}
 
 	start(...args: Parameters<T> | []) {
-		console.log("starting timeout");
 		this.#clear();
 		this.#timer = window.setTimeout(() => {
 			this.#timer = null;
