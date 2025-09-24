@@ -198,10 +198,10 @@ export class SelectSingleRootState extends SelectBaseRootState {
 	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
 	readonly currentLabel = $derived.by(() => {
 		if (!this.opts.items.current.length) return "";
-		const match = this.opts.items.current.find(
-			(item) => item.value === this.opts.value.current
-		)?.label;
-		return match ?? "";
+		return (
+			this.opts.items.current.find((item) => item.value === this.opts.value.current)?.label ??
+			""
+		);
 	});
 	readonly candidateLabels = $derived.by(() => {
 		if (!this.opts.items.current.length) return [];
@@ -239,8 +239,11 @@ export class SelectSingleRootState extends SelectBaseRootState {
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
-		this.opts.value.current = this.includesItem(itemValue) ? "" : itemValue;
-		this.opts.inputValue.current = itemLabel;
+		const newValue = this.includesItem(itemValue) ? "" : itemValue;
+		this.opts.value.current = newValue;
+		if (newValue !== "") {
+			this.opts.inputValue.current = itemLabel;
+		}
 	}
 
 	setInitialHighlightedNode() {
@@ -1054,8 +1057,6 @@ export class SelectItemState {
 	 */
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
-		// prevent any default behavior
-
 		/**
 		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
 		 * we need to listen for the immediate click event to handle the selection,
@@ -1376,6 +1377,22 @@ export class SelectScrollDownButtonState {
 
 			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
 		});
+
+		/**
+		 * If the input value changes, this means that the filtered items may have changed,
+		 * so we need to re-evaluate the scroll-ability of the list.
+		 */
+		watch(
+			[
+				() => this.root.opts.inputValue.current,
+				() => this.content.viewportNode,
+				() => this.content.isPositioned,
+			],
+			() => {
+				if (!this.content.viewportNode || !this.content.isPositioned) return;
+				this.handleScroll(true);
+			}
+		);
 
 		watch(
 			() => this.scrollButtonState.mounted,

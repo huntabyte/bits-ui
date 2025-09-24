@@ -773,6 +773,19 @@ describe("combobox - multiple", () => {
 		await expect.element(t.input).toHaveValue("");
 		expect(t.getHiddenInputs()).toHaveLength(0);
 	});
+
+	it("should not update the input value when the item is deselected", async () => {
+		const t = await openMultiple({});
+		const [item1, item2] = getItems(page.getByTestId);
+		await expectNotSelected([item1, item2]);
+		await item1.click();
+		await item2.click();
+		await expectSelected([item1, item2]);
+		await expect.element(t.input).toHaveValue("B");
+		await item1.click();
+		await expectNotSelected(item1);
+		await expect.element(t.input).toHaveValue("A");
+	});
 });
 
 function getItems(getter: typeof page.getByTestId, items = testItems) {
