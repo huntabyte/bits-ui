@@ -25,7 +25,7 @@ describe("toggle", () => {
 		const t = setup();
 		await expect.element(t.root).toHaveAttribute("data-state", "off");
 		await expect.element(t.root).toHaveAttribute("aria-pressed", "false");
-		await userEvent.click(t.root);
+		await t.root.click();
 		await expect.element(t.root).toHaveAttribute("data-state", "on");
 		await expect.element(t.root).toHaveAttribute("aria-pressed", "true");
 	});

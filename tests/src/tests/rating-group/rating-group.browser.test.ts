@@ -698,7 +698,7 @@ describe("RTL Behavior", () => {
 
 	it("should handle keyboard navigation in RTL mode", async () => {
 		const t = setupRTL({ value: 2, max: 5 });
-		const valueDisplay = t.getByTestId("value-display");
+		const valueDisplay = page.getByTestId("value-display");
 
 		(t.root.element() as HTMLElement).focus();
 		await expect.element(valueDisplay).toHaveTextContent("2");
@@ -721,17 +721,17 @@ describe("RTL Behavior", () => {
 	});
 
 	it("should handle hover preview in RTL mode", async () => {
-		const t = setupRTL({ value: 1, max: 5, hoverPreview: true });
+		setupRTL({ value: 1, max: 5, hoverPreview: true });
 
 		// hover should still work normally in RTL
-		const item3 = t.getByTestId("item-2");
+		const item3 = page.getByTestId("item-2");
 		await item3.hover();
 
 		// should show preview regardless of RTL
-		await expect.element(t.getByTestId("state-0")).toHaveTextContent("active");
-		await expect.element(t.getByTestId("state-1")).toHaveTextContent("active");
-		await expect.element(t.getByTestId("state-2")).toHaveTextContent("active");
-		await expect.element(t.getByTestId("state-3")).toHaveTextContent("inactive");
+		await expect.element(page.getByTestId("state-0")).toHaveTextContent("active");
+		await expect.element(page.getByTestId("state-1")).toHaveTextContent("active");
+		await expect.element(page.getByTestId("state-2")).toHaveTextContent("active");
+		await expect.element(page.getByTestId("state-3")).toHaveTextContent("inactive");
 	});
 
 	it("should handle vertical orientation in RTL mode", async () => {
@@ -741,10 +741,10 @@ describe("RTL Behavior", () => {
 		await expect.element(t.root).toHaveAttribute("aria-orientation", "vertical");
 
 		// clicking should still work in vertical RTL
-		const item3 = t.getByTestId("item-2");
+		const item3 = page.getByTestId("item-2");
 		await item3.click();
 
-		const valueDisplay = t.getByTestId("value-display");
+		const valueDisplay = page.getByTestId("value-display");
 		await expect.element(valueDisplay).toHaveTextContent("3");
 	});
 
@@ -760,44 +760,44 @@ describe("RTL Behavior", () => {
 	});
 
 	it("should handle allowHalf functionality in RTL mode", async () => {
-		const t = setupRTL({ allowHalf: true, max: 5 });
-		const valueDisplay = t.getByTestId("value-display");
+		setupRTL({ allowHalf: true, max: 5 });
+		const valueDisplay = page.getByTestId("value-display");
 
 		// test half functionality by setting half value programmatically
-		const setHalfButton = t.getByTestId("set-half-button");
+		const setHalfButton = page.getByTestId("set-half-button");
 		await setHalfButton.click();
 
 		await expect.element(valueDisplay).toHaveTextContent("2.5");
 
 		// check that item states are correct regardless of RTL
-		await expect.element(t.getByTestId("state-0")).toHaveTextContent("active");
-		await expect.element(t.getByTestId("state-1")).toHaveTextContent("active");
-		await expect.element(t.getByTestId("state-2")).toHaveTextContent("partial");
-		await expect.element(t.getByTestId("state-3")).toHaveTextContent("inactive");
-		await expect.element(t.getByTestId("state-4")).toHaveTextContent("inactive");
+		await expect.element(page.getByTestId("state-0")).toHaveTextContent("active");
+		await expect.element(page.getByTestId("state-1")).toHaveTextContent("active");
+		await expect.element(page.getByTestId("state-2")).toHaveTextContent("partial");
+		await expect.element(page.getByTestId("state-3")).toHaveTextContent("inactive");
+		await expect.element(page.getByTestId("state-4")).toHaveTextContent("inactive");
 	});
 
 	it("should handle disabled state in RTL mode", async () => {
-		const t = setupRTL({ disabled: true, max: 5 });
-		const valueDisplay = t.getByTestId("value-display");
+		setupRTL({ disabled: true, max: 5 });
+		const valueDisplay = page.getByTestId("value-display");
 
 		await expect.element(valueDisplay).toHaveTextContent("0");
 
 		// clicking should not work when disabled, regardless of RTL
-		const item3 = t.getByTestId("item-2");
+		const item3 = page.getByTestId("item-2");
 		await userEvent.click(item3, { force: true });
 
 		await expect.element(valueDisplay).toHaveTextContent("0");
 	});
 
 	it("should handle readonly state in RTL mode", async () => {
-		const t = setupRTL({ readonly: true, max: 5 });
-		const valueDisplay = t.getByTestId("value-display");
+		setupRTL({ readonly: true, max: 5 });
+		const valueDisplay = page.getByTestId("value-display");
 
 		await expect.element(valueDisplay).toHaveTextContent("0");
 
 		// clicking should not work when readonly, regardless of RTL
-		const item3 = t.getByTestId("item-2");
+		const item3 = page.getByTestId("item-2");
 		await item3.click();
 
 		await expect.element(valueDisplay).toHaveTextContent("0");
@@ -805,7 +805,7 @@ describe("RTL Behavior", () => {
 
 	it("should handle keyboard navigation with half values in RTL mode", async () => {
 		const t = setupRTL({ value: 2, max: 5, allowHalf: true });
-		const valueDisplay = t.getByTestId("value-display");
+		const valueDisplay = page.getByTestId("value-display");
 
 		(t.root.element() as HTMLElement).focus();
 		await expect.element(valueDisplay).toHaveTextContent("2");

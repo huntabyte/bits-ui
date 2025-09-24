@@ -5,7 +5,7 @@ import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
-import { expectExists, expectNotExists, setupBrowserUserEvents } from "../browser-utils";
+import { expectExists, expectNotExists } from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
@@ -13,22 +13,20 @@ import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 const kbd = getTestKbd();
 
 async function setup(props: DialogTestProps = {}, component: Component = DialogTest) {
-	const user = setupBrowserUserEvents();
 	const t = render(component, { ...props });
-	const trigger = t.getByTestId("trigger");
+	const trigger = page.getByTestId("trigger");
 
 	return {
 		...t,
 		trigger,
-		user,
 	};
 }
 
 async function open(props: DialogTestProps = {}, component: Component = DialogTest) {
 	const t = await setup(props, component);
-	await expectNotExists(t.getByTestId("content"));
+	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.click();
-	await expectExists(t.getByTestId("content"));
+	await expectExists(page.getByTestId("content"));
 	return t;
 }
 
@@ -248,16 +246,16 @@ it("should not close when content is clicked", async () => {
 });
 
 it("should respect binding to the `open` prop", async () => {
-	const t = await setup();
+	await setup();
 	const trigger = page.getByTestId("trigger");
 	const binding = page.getByTestId("binding");
 	await expect.element(binding).toHaveTextContent("false");
 	await trigger.click();
-	await expect.element(t.getByTestId("binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
 	await userEvent.keyboard(kbd.ESCAPE);
 	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
 
-	const toggle = t.getByTestId("toggle");
+	const toggle = page.getByTestId("toggle");
 	await expectNotExists(page.getByTestId("content"));
 	await toggle.click();
 	await expectExists(page.getByTestId("content"));
@@ -276,16 +274,16 @@ it("should close on outside click", async () => {
 
 it("should not close when clicking within bounds", async () => {
 	const mockFn = vi.fn();
-	const t = await open({
+	await open({
 		contentProps: { onInteractOutside: mockFn },
 	});
 
 	await page.getByTestId("content").click();
-	await expectExists(t.getByTestId("content"));
+	await expectExists(page.getByTestId("content"));
 });
 
 it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
-	const t = await open({
+	await open({
 		contentProps: {
 			interactOutsideBehavior: "ignore",
 		},
@@ -294,7 +292,7 @@ it("should respect the `interactOutsideBehavior: 'ignore'` prop", async () => {
 	await expectExists(overlay);
 
 	await overlay.click();
-	await expectExists(t.getByTestId("content"));
+	await expectExists(page.getByTestId("content"));
 });
 
 it("should respect the the `escapeKeydownBehavior: 'ignore'` prop", async () => {

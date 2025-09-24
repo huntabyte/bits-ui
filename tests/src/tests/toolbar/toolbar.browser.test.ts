@@ -8,12 +8,12 @@ import { page, userEvent } from "@vitest/browser/context";
 const kbd = getTestKbd();
 
 function setup(props: Partial<ToolbarTestProps> = {}) {
-	const t = render(ToolbarTest, { ...props });
+	render(ToolbarTest, { ...props });
 	const root = page.getByTestId("root");
 	const groupMultiple = page.getByTestId("group-multiple");
 	const groupMultipleItemBold = page.getByTestId("group-multiple-bold");
 	const groupMultipleItemItalic = page.getByTestId("group-multiple-italic");
-	const groupMultipleItemStrikethrough = t.getByTestId("group-multiple-strikethrough");
+	const groupMultipleItemStrikethrough = page.getByTestId("group-multiple-strikethrough");
 
 	const groupSingle = page.getByTestId("group-single");
 	const groupSingleItemLeft = page.getByTestId("group-single-left");
@@ -100,9 +100,9 @@ describe("Toolbar", () => {
 	it("should toggles when clicked when toolbar toggle group, type `'single'`", async () => {
 		const t = setup();
 		await expect.element(t.alignBinding).toHaveTextContent("");
-		await userEvent.click(t.groupSingleItemLeft);
+		await t.groupSingleItemLeft.click();
 		await expect.element(t.alignBinding).toHaveTextContent("left");
-		await userEvent.click(t.groupSingleItemCenter);
+		await t.groupSingleItemCenter.click();
 		await expect.element(t.alignBinding).toHaveTextContent("center");
 	});
 
@@ -123,15 +123,15 @@ describe("Toolbar", () => {
 	it("should allow multiple items to be selected with toolbar toggle group type `'multiple'`", async () => {
 		const t = setup();
 		await expect.element(t.styleBinding).toHaveTextContent("bold");
-		await userEvent.click(t.groupMultipleItemItalic);
+		await t.groupMultipleItemItalic.click();
 		await expect.element(t.styleBinding).toHaveTextContent("bold,italic");
-		await userEvent.click(t.groupMultipleItemStrikethrough);
+		await t.groupMultipleItemStrikethrough.click();
 		await expect.element(t.styleBinding).toHaveTextContent("bold,italic,strikethrough");
-		await userEvent.click(t.groupMultipleItemBold);
+		await t.groupMultipleItemBold.click();
 		await expect.element(t.styleBinding).toHaveTextContent("italic,strikethrough");
-		await userEvent.click(t.groupMultipleItemItalic);
+		await t.groupMultipleItemItalic.click();
 		await expect.element(t.styleBinding).toHaveTextContent("strikethrough");
-		await userEvent.click(t.groupMultipleItemStrikethrough);
+		await t.groupMultipleItemStrikethrough.click();
 		await expect.element(t.styleBinding).toHaveTextContent("");
 	});
 

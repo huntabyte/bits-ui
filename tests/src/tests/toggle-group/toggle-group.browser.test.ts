@@ -66,7 +66,7 @@ describe("Toggle Group", () => {
 		await item.click();
 		await expect.element(t.binding).toHaveTextContent("1");
 		const item2 = page.getByTestId("item-2");
-		await userEvent.click(item2);
+		await item2.click();
 		await expect.element(t.binding).toHaveTextContent("2");
 	});
 

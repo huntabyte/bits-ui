@@ -3,7 +3,6 @@ import { render } from "vitest-browser-svelte";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./date-range-field-test.svelte";
-import { setupBrowserUserEvents } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -23,30 +22,29 @@ const zonedDateTime = {
 };
 
 function setup(props: DateRangeFieldTestProps = {}) {
-	const user = setupBrowserUserEvents();
 	const t = render(DateRangeFieldTest, { ...props });
 
 	const start = {
-		month: t.getByTestId("start-month"),
-		day: t.getByTestId("start-day"),
-		year: t.getByTestId("start-year"),
-		value: t.getByTestId("start-value"),
+		month: page.getByTestId("start-month"),
+		day: page.getByTestId("start-day"),
+		year: page.getByTestId("start-year"),
+		value: page.getByTestId("start-value"),
 	};
 
 	const end = {
-		month: t.getByTestId("end-month"),
-		day: t.getByTestId("end-day"),
-		year: t.getByTestId("end-year"),
-		value: t.getByTestId("end-value"),
+		month: page.getByTestId("end-month"),
+		day: page.getByTestId("end-day"),
+		year: page.getByTestId("end-year"),
+		value: page.getByTestId("end-value"),
 	};
 
-	const root = t.getByTestId("root");
-	const startInput = t.getByTestId("start-input");
-	const endInput = t.getByTestId("end-input");
+	const root = page.getByTestId("root");
+	const startInput = page.getByTestId("start-input");
+	const endInput = page.getByTestId("end-input");
 
-	const label = t.getByTestId("label");
+	const label = page.getByTestId("label");
 
-	return { ...t, user, start, end, root, startInput, endInput, label };
+	return { ...t, start, end, root, startInput, endInput, label };
 }
 
 it("should populate segment with value - `CalendarDate`", async () => {
@@ -73,13 +71,13 @@ it("should populate segment with value - `CalendarDateTime`", async () => {
 	await expect.element(t.start.day).toHaveTextContent(String(calendarDateTime.start.day));
 	await expect.element(t.start.year).toHaveTextContent(String(calendarDateTime.start.year));
 	await expect
-		.element(t.getByTestId("start-hour"))
+		.element(page.getByTestId("start-hour"))
 		.toHaveTextContent(String(calendarDateTime.start.hour));
 	await expect
-		.element(t.getByTestId("start-minute"))
+		.element(page.getByTestId("start-minute"))
 		.toHaveTextContent(String(calendarDateTime.start.minute));
 	await expect
-		.element(t.getByTestId("start-second"))
+		.element(page.getByTestId("start-second"))
 		.toHaveTextContent(String(calendarDateTime.start.second));
 	await expect.element(t.start.value).toHaveTextContent(calendarDateTime.start.toString());
 
@@ -87,13 +85,13 @@ it("should populate segment with value - `CalendarDateTime`", async () => {
 	await expect.element(t.end.day).toHaveTextContent(String(calendarDateTime.end.day));
 	await expect.element(t.end.year).toHaveTextContent(String(calendarDateTime.end.year));
 	await expect
-		.element(t.getByTestId("end-hour"))
+		.element(page.getByTestId("end-hour"))
 		.toHaveTextContent(String(calendarDateTime.end.hour));
 	await expect
-		.element(t.getByTestId("end-minute"))
+		.element(page.getByTestId("end-minute"))
 		.toHaveTextContent(String(calendarDateTime.end.minute));
 	await expect
-		.element(t.getByTestId("end-second"))
+		.element(page.getByTestId("end-second"))
 		.toHaveTextContent(String(calendarDateTime.end.second));
 	await expect.element(t.end.value).toHaveTextContent(calendarDateTime.end.toString());
 });
@@ -108,13 +106,13 @@ it("should populate segment with value - `ZonedDateTime`", async () => {
 	await expect.element(t.start.day).toHaveTextContent(String(calendarDateTime.start.day));
 	await expect.element(t.start.year).toHaveTextContent(String(calendarDateTime.start.year));
 	await expect
-		.element(t.getByTestId("start-hour"))
+		.element(page.getByTestId("start-hour"))
 		.toHaveTextContent(String(calendarDateTime.start.hour));
 	await expect
-		.element(t.getByTestId("start-minute"))
+		.element(page.getByTestId("start-minute"))
 		.toHaveTextContent(String(calendarDateTime.start.minute));
 	await expect
-		.element(t.getByTestId("start-second"))
+		.element(page.getByTestId("start-second"))
 		.toHaveTextContent(String(calendarDateTime.start.second));
 	await expect.element(t.start.value).toHaveTextContent(calendarDateTime.start.toString());
 
@@ -122,13 +120,13 @@ it("should populate segment with value - `ZonedDateTime`", async () => {
 	await expect.element(t.end.day).toHaveTextContent(String(calendarDateTime.end.day));
 	await expect.element(t.end.year).toHaveTextContent(String(calendarDateTime.end.year));
 	await expect
-		.element(t.getByTestId("end-hour"))
+		.element(page.getByTestId("end-hour"))
 		.toHaveTextContent(String(calendarDateTime.end.hour));
 	await expect
-		.element(t.getByTestId("end-minute"))
+		.element(page.getByTestId("end-minute"))
 		.toHaveTextContent(String(calendarDateTime.end.minute));
 	await expect
-		.element(t.getByTestId("end-second"))
+		.element(page.getByTestId("end-second"))
 		.toHaveTextContent(String(calendarDateTime.end.second));
 	await expect.element(t.end.value).toHaveTextContent(calendarDateTime.end.toString());
 });
@@ -243,7 +241,7 @@ it("should allow valid days in end month regardless of start month", async () =>
 	await userEvent.keyboard("31");
 	await userEvent.keyboard("2025");
 
-	const seg = t.getByTestId(`end-day`);
+	const seg = page.getByTestId(`end-day`);
 	await expect.element(seg).toHaveTextContent("31");
 
 	await expect.element(t.start.value).toHaveTextContent("2025-02-02");
@@ -251,14 +249,14 @@ it("should allow valid days in end month regardless of start month", async () =>
 });
 
 it("should allow valid days in end month when a value is prepopulated", async () => {
-	const t = setup({
+	setup({
 		value: {
 			start: new CalendarDate(2025, 2, 1),
 			end: new CalendarDate(2025, 5, 31),
 		},
 	});
 
-	const seg = t.getByTestId("end-day");
+	const seg = page.getByTestId("end-day");
 	await expect.element(seg).toHaveTextContent("31");
 
 	(seg.element() as HTMLElement).focus();

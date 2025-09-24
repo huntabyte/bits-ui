@@ -1,4 +1,4 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { page } from "@vitest/browser/context";
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import AvatarTest from "./avatar-test.svelte";
@@ -41,7 +41,7 @@ describe("Rendering Behavior", () => {
 		const avatar = page.getByAltText("huntabyte");
 		await expect.element(avatar).toHaveAttribute("src", "https://github.com/huntabyte.png");
 		const clearButton = page.getByTestId("clear-button");
-		await userEvent.click(clearButton);
+		await clearButton.click();
 		await expect.element(avatar).not.toBeVisible();
 		await expect.element(page.getByText("HJ")).toBeVisible();
 	});

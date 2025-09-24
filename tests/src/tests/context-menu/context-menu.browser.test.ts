@@ -130,7 +130,7 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	await expect.element(indicator).not.toHaveTextContent("true");
 	await expect.element(checkedBinding).toHaveTextContent("false");
 	const checkbox = page.getByTestId("checkbox-item");
-	await userEvent.click(checkbox);
+	await checkbox.click();
 	await expect.element(checkedBinding).toHaveTextContent("true");
 	await t.trigger.click({ button: "right" });
 	await expect.element(indicator).toHaveTextContent("true");
@@ -172,7 +172,7 @@ it("should check the radio item when clicked & respects binding", async () => {
 	const radioBinding = page.getByTestId("radio-binding");
 	await expect.element(radioBinding).toHaveTextContent("");
 	const radioItem1 = page.getByTestId("radio-item");
-	await userEvent.click(radioItem1);
+	await radioItem1.click();
 	await expect.element(radioBinding).toHaveTextContent("1");
 	await t.trigger.click({ button: "right" });
 	const radioIndicator = page.getByTestId("radio-indicator-1");
