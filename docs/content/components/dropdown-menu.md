@@ -73,10 +73,10 @@ This example shows you how to create a Dropdown Menu component that accepts a fe
   import type { Snippet } from "svelte";
   import { DropdownMenu, type WithoutChild } from "bits-ui";
 
-  type Props = DropdownMenu.Props & {
+  type Props = DropdownMenu.RootProps & {
     buttonText: string;
     items: string[];
-    contentProps?: WithoutChild<DropdownMenu.Content.Props>;
+    contentProps?: WithoutChild<DropdownMenu.ContentProps>;
     // other component props if needed
   };
 
