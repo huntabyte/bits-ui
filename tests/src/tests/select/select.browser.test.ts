@@ -851,6 +851,17 @@ describe("select - multiple", () => {
 
 		await expectNotExists(t.getContent());
 	});
+
+	it("should not submit an array with a single empty string when the `name` prop is passed but no items are selected", async () => {
+		let submittedValues: string[] | undefined;
+		const t = setupMultiple({
+			onFormSubmit: (fd: FormData) => {
+				submittedValues = fd.getAll("themes") as string[];
+			},
+		});
+		await t.submit.click();
+		expect(submittedValues).toHaveLength(0);
+	});
 });
 
 function getItems(getter: typeof page.getByTestId, items = testItems) {

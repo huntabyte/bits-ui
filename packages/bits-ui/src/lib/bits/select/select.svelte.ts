@@ -1182,7 +1182,7 @@ export class SelectGroupHeadingState {
 
 interface SelectHiddenInputStateOpts
 	extends ReadableBoxedValues<{
-		value: string;
+		value: string | undefined;
 	}> {}
 
 export class SelectHiddenInputState {
