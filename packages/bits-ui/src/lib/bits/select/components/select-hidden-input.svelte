@@ -5,7 +5,7 @@
 	import HiddenInput from "$lib/bits/utilities/hidden-input.svelte";
 
 	let {
-		value = $bindable(""),
+		value = $bindable(),
 		autocomplete,
 	}: { value?: string } & Omit<HTMLInputAttributes, "value"> = $props();
 
