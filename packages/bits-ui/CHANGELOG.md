@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.11.5
+
+### Patch Changes
+
+- fix(Select): don't submit empty string when no values are selected in multiple mode ([#1816](https://github.com/huntabyte/bits-ui/pull/1816))
+
 ## 2.11.4
 
 ### Patch Changes
