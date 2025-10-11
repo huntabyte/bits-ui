@@ -39,7 +39,7 @@
 		</span>
 		<div class="mb-9 mt-3 flex items-center">
 			<button
-				class="hover:bg-muted/50 text-foreground-alt hover:text-foreground flex h-8 items-center gap-1.5 rounded-md rounded-r-none border border-r-0 px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
+				class="hover:bg-muted/50 text-foreground-alt hover:text-foreground flex h-8 select-none items-center gap-1.5 rounded-md rounded-r-none border border-r-0 px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
 				onclick={async () => {
 					await copyMarkdown();
 				}}

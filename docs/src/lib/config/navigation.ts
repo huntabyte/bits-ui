@@ -91,6 +91,77 @@ function generateTypeHelpersNav(): SidebarNavItem[] {
 	return utilityNavItems;
 }
 
+function generateOverviewNav(): SidebarNavItem[] {
+	return [
+		{
+			title: "Introduction",
+			href: "/docs/introduction",
+			items: [],
+			icon: Sticker,
+		},
+		{
+			title: "Getting Started",
+			href: "/docs/getting-started",
+			items: [],
+			icon: Compass,
+		},
+		{
+			title: "Child Snippet",
+			href: "/docs/child-snippet",
+			items: [],
+			icon: CodeBlock,
+		},
+		{
+			title: "Ref",
+			href: "/docs/ref",
+			items: [],
+			icon: Link,
+		},
+		{
+			title: "Transitions",
+			href: "/docs/transitions",
+			items: [],
+			icon: Resize,
+		},
+		{
+			title: "Styling",
+			href: "/docs/styling",
+			items: [],
+			icon: Palette,
+		},
+		{
+			title: "Dates",
+			href: "/docs/dates",
+			items: [],
+			icon: CalendarBlank,
+		},
+		{
+			title: "State Management",
+			href: "/docs/state-management",
+			items: [],
+			icon: CirclesThreePlus,
+		},
+		{
+			title: "Figma",
+			href: "/docs/figma-file",
+			items: [],
+			icon: FigmaLogo,
+		},
+		{
+			title: "Migration Guide",
+			href: "/docs/migration-guide",
+			items: [],
+			icon: Swap,
+		},
+		{
+			title: "LLMs",
+			href: "/docs/llms",
+			items: [],
+			icon: Robot,
+		},
+	];
+}
+
 export const navigation: Navigation = {
 	main: [
 		{
@@ -101,74 +172,7 @@ export const navigation: Navigation = {
 	sidebar: [
 		{
 			title: "Overview",
-			items: [
-				{
-					title: "Introduction",
-					href: "/docs/introduction",
-					items: [],
-					icon: Sticker,
-				},
-				{
-					title: "Getting Started",
-					href: "/docs/getting-started",
-					items: [],
-					icon: Compass,
-				},
-				{
-					title: "Child Snippet",
-					href: "/docs/child-snippet",
-					items: [],
-					icon: CodeBlock,
-				},
-				{
-					title: "Ref",
-					href: "/docs/ref",
-					items: [],
-					icon: Link,
-				},
-				{
-					title: "Transitions",
-					href: "/docs/transitions",
-					items: [],
-					icon: Resize,
-				},
-				{
-					title: "Styling",
-					href: "/docs/styling",
-					items: [],
-					icon: Palette,
-				},
-				{
-					title: "Dates",
-					href: "/docs/dates",
-					items: [],
-					icon: CalendarBlank,
-				},
-				{
-					title: "State Management",
-					href: "/docs/state-management",
-					items: [],
-					icon: CirclesThreePlus,
-				},
-				{
-					title: "Figma",
-					href: "/docs/figma-file",
-					items: [],
-					icon: FigmaLogo,
-				},
-				{
-					title: "Migration Guide",
-					href: "/docs/migration-guide",
-					items: [],
-					icon: Swap,
-				},
-				{
-					title: "LLMs",
-					href: "/docs/llms",
-					items: [],
-					icon: Robot,
-				},
-			],
+			items: generateOverviewNav(),
 		},
 		{
 			title: "Components",
@@ -184,3 +188,5 @@ export const navigation: Navigation = {
 		},
 	],
 };
+
+export const flatNavigation = navigation.sidebar.flatMap((item) => item.items);

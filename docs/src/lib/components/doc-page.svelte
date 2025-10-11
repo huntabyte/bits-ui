@@ -9,6 +9,7 @@
 	import type { DocMetadata } from "$lib/utils/docs.js";
 	import DocPageHeader from "./doc-page-header.svelte";
 	import SidebarSponsor from "./sidebar-sponsor.svelte";
+	import DocsPager from "./docs-pager.svelte";
 
 	let {
 		component,
@@ -62,6 +63,7 @@
 		<main class="markdown pb-24" id="main-content">
 			<DocPageHeader {metadata} />
 			<PageComponent {schemas} />
+			<DocsPager />
 		</main>
 	</div>
 </div>
