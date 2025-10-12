@@ -72,6 +72,7 @@ It's recommended to use the `Checkbox` primitive to create your own custom check
     checked = $bindable(false),
     ref = $bindable(null),
     labelRef = $bindable(null),
+	labelText,
     ...restProps
   }: WithoutChildrenOrChild<Checkbox.RootProps> & {
     labelText: string;
