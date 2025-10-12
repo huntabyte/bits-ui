@@ -189,9 +189,7 @@
 		}
 	}
 
-
 	@keyframes caret-blink {
-
 		0%,
 		70%,
 		100% {
@@ -298,7 +296,6 @@
 }
 
 @layer base {
-
 	*,
 	::after,
 	::before,
@@ -336,7 +333,7 @@
 	}
 
 	.search-result mark {
-		@apply bg-[#fdffa4] dark:text-background text-foreground rounded px-0.5 py-px;
+		@apply dark:text-background text-foreground rounded bg-[#fdffa4] px-0.5 py-px;
 	}
 }
 
