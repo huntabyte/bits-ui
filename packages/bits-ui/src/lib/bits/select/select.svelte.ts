@@ -95,6 +95,7 @@ abstract class SelectBaseRootState {
 	touchedInput = $state(false);
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
@@ -150,9 +151,30 @@ abstract class SelectBaseRootState {
 
 	setHighlightedToFirstCandidate(initial = false) {
 		this.setHighlightedNode(null);
-		const candidateNodes = this.getCandidateNodes();
-		if (!candidateNodes.length) return;
-		this.setHighlightedNode(candidateNodes[0]!, initial);
+
+		let nodes = this.getCandidateNodes();
+		if (!nodes.length) return;
+
+		// don't consider nodes that aren't visible within the viewport
+		if (this.viewportNode) {
+			const viewportRect = this.viewportNode.getBoundingClientRect();
+
+			nodes = nodes.filter((node) => {
+				if (!this.viewportNode) return false;
+
+				const nodeRect = node.getBoundingClientRect();
+
+				const isNodeWhollyVisible =
+					nodeRect.right < viewportRect.right &&
+					nodeRect.left > viewportRect.left &&
+					nodeRect.bottom < viewportRect.bottom &&
+					nodeRect.top > viewportRect.top;
+
+				return isNodeWhollyVisible;
+			});
+		}
+
+		this.setHighlightedNode(nodes[0]!, initial);
 	}
 
 	getNodeByValue(value: string): HTMLElement | null {
@@ -1233,7 +1255,10 @@ export class SelectViewportState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
-		this.attachment = attachRef(opts.ref, (v) => (this.content.viewportNode = v));
+		this.attachment = attachRef(opts.ref, (v) => {
+			this.content.viewportNode = v;
+			this.root.viewportNode = v;
+		});
 	}
 
 	readonly props = $derived.by(
