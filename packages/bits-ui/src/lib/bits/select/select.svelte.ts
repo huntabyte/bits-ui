@@ -148,11 +148,11 @@ abstract class SelectBaseRootState {
 		);
 	}
 
-	setHighlightedToFirstCandidate() {
+	setHighlightedToFirstCandidate(initial = false) {
 		this.setHighlightedNode(null);
 		const candidateNodes = this.getCandidateNodes();
 		if (!candidateNodes.length) return;
-		this.setHighlightedNode(candidateNodes[0]!);
+		this.setHighlightedNode(candidateNodes[0]!, initial);
 	}
 
 	getNodeByValue(value: string): HTMLElement | null {
@@ -261,9 +261,7 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				}
 			}
 			// if no value is set, we want to highlight the first item
-			const firstCandidate = this.getCandidateNodes()[0];
-			if (!firstCandidate) return;
-			this.setHighlightedNode(firstCandidate, true);
+			this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
@@ -328,9 +326,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				}
 			}
 			// if no value is set, we want to highlight the first item
-			const firstCandidate = this.getCandidateNodes()[0];
-			if (!firstCandidate) return;
-			this.setHighlightedNode(firstCandidate, true);
+			this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
