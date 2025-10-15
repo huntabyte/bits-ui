@@ -406,13 +406,6 @@ export class MenuContentState {
 		return false;
 	}
 
-	onOpenAutoFocus = (e: Event) => {
-		if (e.defaultPrevented) return;
-		e.preventDefault();
-		const contentNode = this.parentMenu.contentNode;
-		contentNode?.focus();
-	};
-
 	handleInteractOutside(e: PointerEvent) {
 		if (!isElementOrSVGElement(e.target)) return;
 		const triggerId = this.parentMenu.triggerNode?.id;
@@ -448,7 +441,6 @@ export class MenuContentState {
 
 	readonly popperProps = {
 		onCloseAutoFocus: (e: Event) => this.onCloseAutoFocus(e),
-		onOpenAutoFocus: (e: Event) => this.onOpenAutoFocus(e),
 	};
 }
 
