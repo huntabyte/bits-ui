@@ -286,6 +286,7 @@ export class MenuContentState {
 		if (e.defaultPrevented || this.#isSub) return;
 
 		if (this.parentMenu.triggerNode && isTabbable(this.parentMenu.triggerNode)) {
+			e.preventDefault();
 			this.parentMenu.triggerNode.focus();
 		}
 	};
@@ -404,13 +405,6 @@ export class MenuContentState {
 		if (this.#isPointerMovingToSubmenu()) return true;
 		return false;
 	}
-
-	onOpenAutoFocus = (e: Event) => {
-		if (e.defaultPrevented) return;
-		e.preventDefault();
-		const contentNode = this.parentMenu.contentNode;
-		contentNode?.focus();
-	};
 
 	handleInteractOutside(e: PointerEvent) {
 		if (!isElementOrSVGElement(e.target)) return;
