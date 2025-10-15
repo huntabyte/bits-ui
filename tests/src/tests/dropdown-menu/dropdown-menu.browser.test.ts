@@ -512,7 +512,7 @@ it("should not cause unwanted focus jumps between different dropdown menus", asy
 	await expect.element(trigger1).not.toHaveFocus();
 });
 
-it.only("should not scroll to previous dropdown trigger when closing a different dropdown", async () => {
+it("should not scroll to previous dropdown trigger when closing a different dropdown", async () => {
 	const t = render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
