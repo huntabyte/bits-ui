@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.11.6
+
+### Patch Changes
+
+- fix(DropdownMenu): focus restoration issue ([#1827](https://github.com/huntabyte/bits-ui/pull/1827))
+
 ## 2.11.5
 
 ### Patch Changes
