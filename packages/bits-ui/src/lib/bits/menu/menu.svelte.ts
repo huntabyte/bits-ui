@@ -286,6 +286,7 @@ export class MenuContentState {
 		if (e.defaultPrevented || this.#isSub) return;
 
 		if (this.parentMenu.triggerNode && isTabbable(this.parentMenu.triggerNode)) {
+			e.preventDefault();
 			this.parentMenu.triggerNode.focus();
 		}
 	};
@@ -447,6 +448,7 @@ export class MenuContentState {
 
 	readonly popperProps = {
 		onCloseAutoFocus: (e: Event) => this.onCloseAutoFocus(e),
+		onOpenAutoFocus: (e: Event) => this.onOpenAutoFocus(e),
 	};
 }
 

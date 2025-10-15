@@ -7,6 +7,7 @@ import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-moun
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
+import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -479,3 +480,148 @@ it.each([true, false])(
 		}
 	}
 );
+
+it("should not cause unwanted focus jumps between different dropdown menus", async () => {
+	const t = render(DropdownMenuMultipleTest);
+	onTestFinished(() => t.unmount());
+
+	const trigger1 = page.getByTestId("trigger-1");
+	const trigger2 = page.getByTestId("trigger-2");
+	const content1 = page.getByTestId("content-1");
+	const content2 = page.getByTestId("content-2");
+
+	// open and close dropdown 1
+	await trigger1.click();
+	await expectExists(content1);
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(content1);
+
+	// trigger 1 should have focus after closing
+	await expect.element(trigger1).toHaveFocus();
+
+	// now open dropdown 2
+	await trigger2.click();
+	await expectExists(content2);
+
+	// close dropdown 2
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(content2);
+
+	// focus should return to trigger 2, NOT jump back to trigger 1
+	await expect.element(trigger2).toHaveFocus();
+	await expect.element(trigger1).not.toHaveFocus();
+});
+
+it.only("should not scroll to previous dropdown trigger when closing a different dropdown", async () => {
+	const t = render(DropdownMenuMultipleTest);
+	onTestFinished(() => t.unmount());
+
+	const trigger1 = page.getByTestId("trigger-1");
+	const trigger2 = page.getByTestId("trigger-2");
+	const trigger3 = page.getByTestId("trigger-3");
+	const topButton = page.getByTestId("top-button");
+	const content1 = page.getByTestId("content-1");
+	const content2 = page.getByTestId("content-2");
+	const content3 = page.getByTestId("content-3");
+
+	// open and close dropdown 1
+	await trigger1.click();
+	await expectExists(content1);
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(content1);
+
+	// focus something else to clear focus from trigger 1
+	await topButton.click();
+	await expect.element(topButton).toHaveFocus();
+
+	// open and close dropdown 2
+	await trigger2.click();
+	await expectExists(content2);
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(content2);
+
+	// trigger 2 should have focus, not trigger 1
+	await expect.element(trigger2).toHaveFocus();
+	await expect.element(trigger1).not.toHaveFocus();
+
+	// open dropdown 3
+	await trigger3.click();
+	await expectExists(content3);
+	await userEvent.click(topButton, { force: true });
+
+	await expectNotExists(content3);
+});
+
+it("should properly restore focus when clicking between multiple dropdowns", async () => {
+	const t = render(DropdownMenuMultipleTest);
+	onTestFinished(() => t.unmount());
+
+	const trigger1 = page.getByTestId("trigger-1");
+	const trigger2 = page.getByTestId("trigger-2");
+	const trigger3 = page.getByTestId("trigger-3");
+	const content1 = page.getByTestId("content-1");
+	const content2 = page.getByTestId("content-2");
+	const content3 = page.getByTestId("content-3");
+
+	// open dropdown 1
+	await trigger1.click();
+	await expectExists(content1);
+	await userEvent.keyboard(kbd.ESCAPE);
+
+	await expectNotExists(content1);
+	await expect.element(trigger1).toHaveFocus();
+
+	// open dropdown 2
+	await trigger2.click();
+	await expectExists(content2);
+	await userEvent.keyboard(kbd.ESCAPE);
+
+	await expectNotExists(content2);
+	await expect.element(trigger2).toHaveFocus();
+
+	// open dropdown 3
+	await trigger3.click();
+	await expectExists(content3);
+	await userEvent.keyboard(kbd.ESCAPE);
+
+	await expectNotExists(content3);
+
+	// trigger 3 should have focus, not any other trigger
+	await expect.element(trigger3).toHaveFocus();
+	await expect.element(trigger1).not.toHaveFocus();
+	await expect.element(trigger2).not.toHaveFocus();
+});
+
+it("should maintain correct focus when opening dropdown via keyboard", async () => {
+	const t = render(DropdownMenuMultipleTest);
+	onTestFinished(() => t.unmount());
+
+	const trigger1 = page.getByTestId("trigger-1");
+	const trigger2 = page.getByTestId("trigger-2");
+
+	// focus and open dropdown 1 with keyboard
+	(trigger1.element() as HTMLElement).focus();
+	await expect.element(trigger1).toHaveFocus();
+	await userEvent.keyboard(kbd.ENTER);
+	await expectExists(page.getByTestId("content-1"));
+
+	// close with escape
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(page.getByTestId("content-1"));
+
+	// tab to trigger 2
+	await userEvent.tab();
+	await expect.element(trigger2).toHaveFocus();
+
+	// open dropdown 2 with keyboard
+	await userEvent.keyboard(kbd.ENTER);
+	await expectExists(page.getByTestId("content-2"));
+
+	// close with escape
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(page.getByTestId("content-2"));
+
+	// focus should be on trigger 2, not trigger 1
+	await expect.element(trigger2).toHaveFocus();
+	await expect.element(trigger1).not.toHaveFocus();
+});
