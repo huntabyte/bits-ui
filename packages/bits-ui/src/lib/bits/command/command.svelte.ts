@@ -189,8 +189,11 @@ export class CommandRootState {
 	 */
 	#sort(): void {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
-			// If no search and no selection yet, select first item
-			this.#selectFirstItem();
+			// if no search and no initial value set or when clearing search,
+			// we select the first item.
+			if (!this._commandState.value || !this.#isInitialMount) {
+				this.#selectFirstItem();
+			}
 			return;
 		}
 
