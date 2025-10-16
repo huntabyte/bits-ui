@@ -95,6 +95,7 @@ abstract class SelectBaseRootState {
 	touchedInput = $state(false);
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
@@ -148,11 +149,32 @@ abstract class SelectBaseRootState {
 		);
 	}
 
-	setHighlightedToFirstCandidate() {
+	setHighlightedToFirstCandidate(initial = false) {
 		this.setHighlightedNode(null);
-		const candidateNodes = this.getCandidateNodes();
-		if (!candidateNodes.length) return;
-		this.setHighlightedNode(candidateNodes[0]!);
+
+		let nodes = this.getCandidateNodes();
+		if (!nodes.length) return;
+
+		// don't consider nodes that aren't visible within the viewport
+		if (this.viewportNode) {
+			const viewportRect = this.viewportNode.getBoundingClientRect();
+
+			nodes = nodes.filter((node) => {
+				if (!this.viewportNode) return false;
+
+				const nodeRect = node.getBoundingClientRect();
+
+				const isNodeFullyVisible =
+					nodeRect.right < viewportRect.right &&
+					nodeRect.left > viewportRect.left &&
+					nodeRect.bottom < viewportRect.bottom &&
+					nodeRect.top > viewportRect.top;
+
+				return isNodeFullyVisible;
+			});
+		}
+
+		this.setHighlightedNode(nodes[0]!, initial);
 	}
 
 	getNodeByValue(value: string): HTMLElement | null {
@@ -261,9 +283,7 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				}
 			}
 			// if no value is set, we want to highlight the first item
-			const firstCandidate = this.getCandidateNodes()[0];
-			if (!firstCandidate) return;
-			this.setHighlightedNode(firstCandidate, true);
+			this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
@@ -328,9 +348,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				}
 			}
 			// if no value is set, we want to highlight the first item
-			const firstCandidate = this.getCandidateNodes()[0];
-			if (!firstCandidate) return;
-			this.setHighlightedNode(firstCandidate, true);
+			this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
@@ -869,7 +887,6 @@ export class SelectContentState {
 	readonly opts: SelectContentStateOpts;
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
-	viewportNode = $state<HTMLElement | null>(null);
 	isPositioned = $state(false);
 	domContext: DOMContext;
 
@@ -1237,7 +1254,9 @@ export class SelectViewportState {
 		this.opts = opts;
 		this.content = content;
 		this.root = content.root;
-		this.attachment = attachRef(opts.ref, (v) => (this.content.viewportNode = v));
+		this.attachment = attachRef(opts.ref, (v) => {
+			this.root.viewportNode = v;
+		});
 	}
 
 	readonly props = $derived.by(
@@ -1371,11 +1390,11 @@ export class SelectScrollDownButtonState {
 		this.root = scrollButtonState.root;
 		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
-		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.content.viewportNode || !this.content.isPositioned) return;
+		watch([() => this.root.viewportNode, () => this.content.isPositioned], () => {
+			if (!this.root.viewportNode || !this.content.isPositioned) return;
 			this.handleScroll(true);
 
-			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
+			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
 		});
 
 		/**
@@ -1385,11 +1404,11 @@ export class SelectScrollDownButtonState {
 		watch(
 			[
 				() => this.root.opts.inputValue.current,
-				() => this.content.viewportNode,
+				() => this.root.viewportNode,
 				() => this.content.isPositioned,
 			],
 			() => {
-				if (!this.content.viewportNode || !this.content.isPositioned) return;
+				if (!this.root.viewportNode || !this.content.isPositioned) return;
 				this.handleScroll(true);
 			}
 		);
@@ -1416,20 +1435,15 @@ export class SelectScrollDownButtonState {
 		if (!manual) {
 			this.scrollButtonState.handleUserScroll();
 		}
-		if (!this.content.viewportNode) return;
-		const maxScroll =
-			this.content.viewportNode.scrollHeight - this.content.viewportNode.clientHeight;
-		const paddingTop = Number.parseInt(
-			getComputedStyle(this.content.viewportNode).paddingTop,
-			10
-		);
+		if (!this.root.viewportNode) return;
+		const maxScroll = this.root.viewportNode.scrollHeight - this.root.viewportNode.clientHeight;
+		const paddingTop = Number.parseInt(getComputedStyle(this.root.viewportNode).paddingTop, 10);
 
-		this.canScrollDown =
-			Math.ceil(this.content.viewportNode.scrollTop) < maxScroll - paddingTop;
+		this.canScrollDown = Math.ceil(this.root.viewportNode.scrollTop) < maxScroll - paddingTop;
 	};
 
 	handleAutoScroll = () => {
-		const viewport = this.content.viewportNode;
+		const viewport = this.root.viewportNode;
 		const selectedItem = this.root.highlightedNode;
 		if (!viewport || !selectedItem) return;
 		viewport.scrollTop = viewport.scrollTop + selectedItem.offsetHeight;
@@ -1461,11 +1475,11 @@ export class SelectScrollUpButtonState {
 		this.root = scrollButtonState.root;
 		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
-		watch([() => this.content.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.content.viewportNode || !this.content.isPositioned) return;
+		watch([() => this.root.viewportNode, () => this.content.isPositioned], () => {
+			if (!this.root.viewportNode || !this.content.isPositioned) return;
 
 			this.handleScroll(true);
-			return on(this.content.viewportNode, "scroll", () => this.handleScroll());
+			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
 		});
 	}
 
@@ -1477,18 +1491,15 @@ export class SelectScrollUpButtonState {
 		if (!manual) {
 			this.scrollButtonState.handleUserScroll();
 		}
-		if (!this.content.viewportNode) return;
-		const paddingTop = Number.parseInt(
-			getComputedStyle(this.content.viewportNode).paddingTop,
-			10
-		);
-		this.canScrollUp = this.content.viewportNode.scrollTop - paddingTop > 0.1;
+		if (!this.root.viewportNode) return;
+		const paddingTop = Number.parseInt(getComputedStyle(this.root.viewportNode).paddingTop, 10);
+		this.canScrollUp = this.root.viewportNode.scrollTop - paddingTop > 0.1;
 	};
 
 	handleAutoScroll = () => {
-		if (!this.content.viewportNode || !this.root.highlightedNode) return;
-		this.content.viewportNode.scrollTop =
-			this.content.viewportNode.scrollTop - this.root.highlightedNode.offsetHeight;
+		if (!this.root.viewportNode || !this.root.highlightedNode) return;
+		this.root.viewportNode.scrollTop =
+			this.root.viewportNode.scrollTop - this.root.highlightedNode.offsetHeight;
 	};
 
 	readonly props = $derived.by(
