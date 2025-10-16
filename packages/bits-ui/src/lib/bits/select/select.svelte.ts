@@ -1011,7 +1011,7 @@ export class SelectItemState {
 		watch(
 			() => this.mounted,
 			() => {
-				if (!this.mounted) return;
+				if (!this.mounted || this.root.highlightedValue) return;
 				this.root.setInitialHighlightedNode();
 			}
 		);
