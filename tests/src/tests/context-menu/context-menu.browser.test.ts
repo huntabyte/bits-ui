@@ -9,6 +9,7 @@ import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
+import ContextMenuTooltipTest from "./context-menu-tooltip-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -428,16 +429,6 @@ it("calls `onValueChange` when the value of the checkbox group changes", async (
 	expect(onValueChange).toHaveBeenCalledWith(["2"]);
 });
 
-it("should not open when right-clicked while another floating layer is open that is not a context menu", async () => {
-	render(ContextMenuIntegrationTest);
-	await page.getByTestId("dropdown-trigger").click();
-	const dropdownContent = page.getByTestId("dropdown-content");
-	await expectExists(dropdownContent);
-	await page.getByTestId("context-trigger-1").click({ button: "right" });
-	await expectNotExists(page.getByTestId("context-content-1"));
-	await expectExists(dropdownContent);
-});
-
 it("should allow switching between context menus via right-click", async () => {
 	render(ContextMenuIntegrationTest);
 	await page.getByTestId("context-trigger-1").click({ button: "right" });
@@ -475,4 +466,12 @@ it("should allow overriding the pointer events style", async () => {
 	await expectExists(page.getByTestId("content"));
 	await trigger.click({ button: "right", force: true });
 	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should open when right clicked inside a tooltip trigger", async () => {
+	render(ContextMenuTooltipTest);
+
+	await page.getByTestId("tooltip-trigger").hover();
+	await page.getByTestId("context-menu-trigger").click({ button: "right" });
+	await expectExists(page.getByTestId("context-menu-content"));
 });
