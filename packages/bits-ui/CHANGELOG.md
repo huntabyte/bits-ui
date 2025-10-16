@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.11.7
+
+### Patch Changes
+
+- fix(ContextMenu): not opening under certain conditions ([#1831](https://github.com/huntabyte/bits-ui/pull/1831))
+
 ## 2.11.6
 
 ### Patch Changes
