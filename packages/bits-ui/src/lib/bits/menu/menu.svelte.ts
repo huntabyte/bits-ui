@@ -49,9 +49,9 @@ import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
-import { getTopMostDismissableLayer } from "../utilities/dismissible-layer/use-dismissable-layer.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
+export const CONTEXT_MENU_CONTENT_ATTR = "data-context-menu-content";
 
 const MenuRootContext = new Context<MenuRootState>("Menu.Root");
 const MenuMenuContext = new Context<MenuMenuState>("Menu.Root | Menu.Sub");
@@ -1176,20 +1176,6 @@ export class ContextMenuTriggerState {
 
 	oncontextmenu(e: BitsMouseEvent) {
 		if (e.defaultPrevented || this.opts.disabled.current) return;
-
-		const topMostLayer = getTopMostDismissableLayer();
-
-		if (topMostLayer) {
-			const topLayerRef = topMostLayer[0].opts.ref.current;
-			const topLayerRefContainsTrigger = topLayerRef?.contains(this.opts.ref.current);
-
-			if (
-				!topLayerRefContainsTrigger &&
-				!topLayerRef?.hasAttribute?.("data-context-menu-content")
-			) {
-				return;
-			}
-		}
 
 		this.#clearLongPressTimer();
 		this.#handleOpen(e);

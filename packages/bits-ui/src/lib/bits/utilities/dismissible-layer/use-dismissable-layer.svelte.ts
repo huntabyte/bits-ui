@@ -14,8 +14,12 @@ import { type EventCallback } from "$lib/internal/events.js";
 import { debounce } from "$lib/internal/debounce.js";
 import { noop } from "$lib/internal/noop.js";
 import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
-import { isElement } from "$lib/internal/is.js";
+import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isClickTrulyOutside } from "$lib/internal/dom.js";
+import {
+	CONTEXT_MENU_CONTENT_ATTR,
+	CONTEXT_MENU_TRIGGER_ATTR,
+} from "$lib/bits/menu/menu.svelte.js";
 
 globalThis.bitsDismissableLayers ??= new Map<
 	DismissibleLayerState,
@@ -246,9 +250,15 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 }
 
 function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
-	if ("button" in e && e.button > 0) return false;
 	const target = e.target;
-	if (!isElement(target)) return false;
+	if (!isElementOrSVGElement(target)) return false;
+
+	const targetIsContextMenuTrigger = Boolean(target.closest(`[${CONTEXT_MENU_TRIGGER_ATTR}]`));
+	if ("button" in e && e.button > 0 && !targetIsContextMenuTrigger) return false;
+
+	const nodeIsContextMenu = Boolean(node.closest(`[${CONTEXT_MENU_CONTENT_ATTR}]`));
+	if (targetIsContextMenuTrigger && nodeIsContextMenu) return false;
+
 	const ownerDocument = getOwnerDocument(target);
 	const isValid =
 		ownerDocument.documentElement.contains(target) &&
