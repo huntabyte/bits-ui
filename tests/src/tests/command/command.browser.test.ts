@@ -36,6 +36,22 @@ it("should allow forcing the selected value", async () => {
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 });
 
+it("should respect initial value when it's not the first item", async () => {
+	setup({ value: "Radio Group" });
+
+	// ensure the initial value is selected, not the first item
+	await expect.element(page.getByText("Radio Group")).toHaveAttribute("data-selected");
+	await expect.element(page.getByText("Introduction")).not.toHaveAttribute("data-selected");
+});
+
+it("should respect initial value for items in the first group", async () => {
+	setup({ value: "Styling" });
+
+	// ensure the provided value is selected, not the first item
+	await expect.element(page.getByText("Styling")).toHaveAttribute("data-selected");
+	await expect.element(page.getByText("Introduction")).not.toHaveAttribute("data-selected");
+});
+
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
 	const t = setup();
 
