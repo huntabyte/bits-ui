@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.11.8
+
+### Patch Changes
+
+- fix(Command): allow selection of the initial value when passed as the `value` prop ([#1837](https://github.com/huntabyte/bits-ui/pull/1837))
+
+- fix(Select): prevent interrupting scroll when virtual select items are added ([#1830](https://github.com/huntabyte/bits-ui/pull/1830))
+
+- chore: update `runed` and `svelte-toolbelt` ([#1838](https://github.com/huntabyte/bits-ui/pull/1838))
+
 ## 2.11.7
 
 ### Patch Changes
