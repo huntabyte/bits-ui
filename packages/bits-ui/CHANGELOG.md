@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.12.0
+
+### Minor Changes
+
+- feat(AlertDialog): add nested attributes and CSS vars for better styling of nested dialogs ([#1841](https://github.com/huntabyte/bits-ui/pull/1841))
+
+- feat(Dialog): add nested attributes and CSS vars for better styling of nested dialogs ([#1841](https://github.com/huntabyte/bits-ui/pull/1841))
+
 ## 2.11.8
 
 ### Patch Changes
