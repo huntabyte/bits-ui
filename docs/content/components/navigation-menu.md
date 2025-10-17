@@ -8,7 +8,7 @@ description: A list of links that allow users to navigate between pages of a web
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="navigation-menu-demo" componentName="Navigation Menu">
+<ComponentPreview name="navigation-menu-demo" componentName="Navigation Menu" variant="preview">
 
 {#snippet preview()}
 <NavigationMenuDemo />

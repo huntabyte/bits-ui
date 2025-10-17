@@ -9,7 +9,7 @@ description: Enables users to input a date within a designated field.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="date-field-demo" componentName="Date Field">
+<ComponentPreview name="date-field-demo" componentName="Date Field" variant="preview">
 
 {#snippet preview()}
 <DateFieldDemo />

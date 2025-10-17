@@ -8,7 +8,7 @@ description: Allows users to input a sequence of one-character alphanumeric inpu
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="pin-input-demo" componentName="Pin Input">
+<ComponentPreview name="pin-input-demo" componentName="Pin Input" variant="preview">
 
 {#snippet preview()}
 <PinInputDemo />

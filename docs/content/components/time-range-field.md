@@ -8,7 +8,7 @@ description: Allows users to input a range of times within a designated field.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="time-range-field-demo" componentName="Time Range Field">
+<ComponentPreview name="time-range-field-demo" componentName="Time Range Field" variant="preview">
 
 {#snippet preview()}
 <TimeRangeFieldDemo />

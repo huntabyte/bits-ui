@@ -8,7 +8,7 @@ description: Presents a calendar view tailored for selecting date ranges.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="range-calendar-demo" componentName="Range Calendar">
+<ComponentPreview name="range-calendar-demo" componentName="Range Calendar" variant="preview">
 
 {#snippet preview()}
 <RangeCalendarDemo />

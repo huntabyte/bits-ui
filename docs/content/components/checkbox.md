@@ -8,7 +8,7 @@ description: Allow users to switch between checked, unchecked, and indeterminate
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="checkbox-demo" componentName="Checkbox">
+<ComponentPreview name="checkbox-demo" componentName="Checkbox" variant="preview">
 
 {#snippet preview()}
 <CheckboxDemo />

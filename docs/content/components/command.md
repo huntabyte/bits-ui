@@ -8,7 +8,7 @@ description: A command menu component that can be used to search, filter, and se
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="command-demo" componentName="Command">
+<ComponentPreview name="command-demo" componentName="Command" variant="preview">
 
 {#snippet preview()}
 <CommandDemo />

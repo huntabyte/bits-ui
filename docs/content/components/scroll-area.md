@@ -8,7 +8,7 @@ description: Provides a consistent scroll area across platforms.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="scroll-area-demo" componentName="Scroll Area">
+<ComponentPreview name="scroll-area-demo" componentName="Scroll Area" variant="preview">
 
 {#snippet preview()}
 <ScrollAreaDemo />

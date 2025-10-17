@@ -8,7 +8,7 @@ description: Enables users to choose from a list of options presented in a dropd
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="select-demo" componentName="Select">
+<ComponentPreview name="select-demo" componentName="Select" variant="preview">
 
 {#snippet preview()}
 <SelectDemo />

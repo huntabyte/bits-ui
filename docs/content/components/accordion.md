@@ -9,7 +9,7 @@ description: Organizes content into collapsible sections, allowing users to focu
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="accordion-demo" componentName="Accordion">
+<ComponentPreview name="accordion-demo" componentName="Accordion" variant="preview">
 
 {#snippet preview()}
 <AccordionDemo />

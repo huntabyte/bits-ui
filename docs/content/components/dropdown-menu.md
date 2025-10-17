@@ -8,7 +8,7 @@ description: Displays a menu of items that users can select from when triggered.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="dropdown-menu-demo" componentName="Dropdown Menu">
+<ComponentPreview name="dropdown-menu-demo" componentName="Dropdown Menu" variant="preview">
 
 {#snippet preview()}
 <DropdownMenuDemo />

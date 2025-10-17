@@ -8,7 +8,7 @@ description: Organizes and presents a collection of menu options or actions with
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="menubar-demo" componentName="Menubar">
+<ComponentPreview name="menubar-demo" componentName="Menubar" variant="preview">
 
 {#snippet preview()}
 <MenubarDemo />

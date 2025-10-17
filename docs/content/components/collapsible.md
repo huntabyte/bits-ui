@@ -8,7 +8,7 @@ description: Conceals or reveals content sections, enhancing space utilization a
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="collapsible-demo" componentName="Collapsible">
+<ComponentPreview name="collapsible-demo" componentName="Collapsible" variant="preview">
 
 {#snippet preview()}
 <CollapsibleDemo />

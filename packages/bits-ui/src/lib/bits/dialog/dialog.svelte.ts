@@ -1,11 +1,17 @@
 import {
 	attachRef,
 	boxWith,
+	onDestroyEffect,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	boolToStr,
+	getDataOpenClosed,
+	boolToEmptyStrOrUndef,
+} from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
@@ -36,7 +42,8 @@ interface DialogRootStateOpts
 
 export class DialogRootState {
 	static create(opts: DialogRootStateOpts) {
-		return DialogRootContext.set(new DialogRootState(opts));
+		const parent = DialogRootContext.getOr(null);
+		return DialogRootContext.set(new DialogRootState(opts, parent));
 	}
 
 	readonly opts: DialogRootStateOpts;
@@ -48,9 +55,14 @@ export class DialogRootState {
 	triggerId = $state<string | undefined>(undefined);
 	descriptionId = $state<string | undefined>(undefined);
 	cancelNode = $state<HTMLElement | null>(null);
+	nestedOpenCount = $state(0);
+	readonly depth: number;
+	readonly parent: DialogRootState | null;
 
-	constructor(opts: DialogRootStateOpts) {
+	constructor(opts: DialogRootStateOpts, parent: DialogRootState | null) {
 		this.opts = opts;
+		this.parent = parent;
+		this.depth = parent ? parent.depth + 1 : 0;
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 
@@ -61,6 +73,25 @@ export class DialogRootState {
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
+		});
+
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!this.parent) return;
+				if (isOpen) {
+					this.parent.incrementNested();
+				} else {
+					this.parent.decrementNested();
+				}
+			},
+			{ lazy: true }
+		);
+
+		onDestroyEffect(() => {
+			if (this.opts.open.current) {
+				this.parent?.decrementNested();
+			}
 		});
 	}
 
@@ -77,6 +108,17 @@ export class DialogRootState {
 	getBitsAttr: typeof dialogAttrs.getAttr = (part) => {
 		return dialogAttrs.getAttr(part, this.opts.variant.current);
 	};
+
+	incrementNested() {
+		this.nestedOpenCount++;
+		this.parent?.incrementNested();
+	}
+
+	decrementNested() {
+		if (this.nestedOpenCount === 0) return;
+		this.nestedOpenCount--;
+		this.parent?.decrementNested();
+	}
 
 	readonly sharedProps = $derived.by(
 		() =>
@@ -327,8 +369,12 @@ export class DialogContentState {
 				style: {
 					pointerEvents: "auto",
 					outline: this.root.opts.variant.current === "alert-dialog" ? "none" : undefined,
+					"--bits-dialog-depth": this.root.depth,
+					"--bits-dialog-nested-count": this.root.nestedOpenCount,
 				},
 				tabindex: this.root.opts.variant.current === "alert-dialog" ? -1 : undefined,
+				"data-nested-open": boolToEmptyStrOrUndef(this.root.nestedOpenCount > 0),
+				"data-nested": boolToEmptyStrOrUndef(this.root.parent !== null),
 				...this.root.sharedProps,
 				...this.attachment,
 			}) as const
@@ -360,7 +406,11 @@ export class DialogOverlayState {
 				[this.root.getBitsAttr("overlay")]: "",
 				style: {
 					pointerEvents: "auto",
+					"--bits-dialog-depth": this.root.depth,
+					"--bits-dialog-nested-count": this.root.nestedOpenCount,
 				},
+				"data-nested-open": boolToEmptyStrOrUndef(this.root.nestedOpenCount > 0),
+				"data-nested": boolToEmptyStrOrUndef(this.root.parent !== null),
 				...this.root.sharedProps,
 				...this.attachment,
 			}) as const

@@ -8,7 +8,7 @@ description: Facilitates navigation between pages.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="pagination-demo" componentName="Pagination">
+<ComponentPreview name="pagination-demo" componentName="Pagination" variant="preview">
 
 {#snippet preview()}
 <PaginationDemo />

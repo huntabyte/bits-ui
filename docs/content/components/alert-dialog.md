@@ -8,7 +8,7 @@ description: A modal window that alerts users with important information and awa
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="alert-dialog-demo" componentName="Alert Dialog">
+<ComponentPreview name="alert-dialog-demo" componentName="Alert Dialog" variant="preview">
 
 {#snippet preview()}
 <AlertDialogDemo />
@@ -375,7 +375,29 @@ By leveraging these advanced features, you can create highly customized dialog e
 
 ## Nested Dialogs
 
-Dialogs can be nested within each other to create more complex layouts. See the [Dialog](/docs/components/dialog) component for more information on nested dialogs.
+Alert Dialogs can be nested within each other (or with regular Dialogs) to create more complex layouts. The same nested dialog tracking and styling capabilities are available for Alert Dialogs.
+
+### Styling Nested Alert Dialogs
+
+Alert Dialogs provide the same data attributes and CSS variables as regular Dialogs for tracking nesting:
+
+**Data Attributes:**
+
+- `data-nested-open`: Present on `AlertDialog.Content` and `AlertDialog.Overlay` when nested dialogs are open.
+- `data-nested`: Present on `AlertDialog.Content` and `AlertDialog.Overlay` when the dialog is a nested dialog, useful for hiding the overlay of nested dialogs to avoid overlapping with parent dialogs.
+
+**CSS Variables:**
+
+- `--bits-dialog-depth`: The nesting depth (0 for root, 1 for first nested, etc.).
+- `--bits-dialog-nested-count`: The number of currently open nested dialogs (updates reactively).
+
+```svelte
+<AlertDialog.Content
+  style="transform: scale(calc(1 - var(--dialog-nested-count) * 0.05));"
+>
+  <!-- Alert dialog content -->
+</AlertDialog.Content>
+```
 
 ## Svelte Transitions
 

@@ -8,7 +8,7 @@ description: Allows users to select a value from a continuous range by sliding a
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="slider-demo" componentName="Slider">
+<ComponentPreview name="slider-demo" componentName="Slider" variant="preview">
 
 {#snippet preview()}
 <SliderDemo />

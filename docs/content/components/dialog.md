@@ -8,7 +8,7 @@ description: A modal window presenting content or seeking user input without nav
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="dialog-demo" componentName="Dialog">
+<ComponentPreview name="dialog-demo" componentName="Dialog" variant="preview">
 
 {#snippet preview()}
 <DialogDemo />
@@ -412,30 +412,50 @@ By leveraging these advanced features, you can create highly customized dialog e
 
 Dialogs can be nested within each other to create more complex user interfaces:
 
-```svelte
-<script lang="ts">
-  import MyDialog from "$lib/components/MyDialog.svelte";
-</script>
+<ComponentPreview name="dialog-demo-nested" componentName="Dialog" size="xs">
 
-<MyDialog buttonText="Open first dialog">
-  {#snippet title()}
-    First Dialog
-  {/snippet}
-  {#snippet description()}
-    This is the first dialog.
-  {/snippet}
-  <MyDialog buttonText="Open second dialog">
-    {#snippet title()}
-      Second Dialog
-    {/snippet}
-    {#snippet description()}
-      This is the second dialog.
-    {/snippet}
-  </MyDialog>
-</MyDialog>
+{#snippet preview()}
+<DialogDemoNested />
+{/snippet}
+
+</ComponentPreview>
+
+### Styling Nested Dialogs
+
+The Dialog component automatically tracks nesting information that can be used to create visual hierarchy when dialogs are nested. This is particularly useful for creating effects like scaling down or dimming parent dialogs when child dialogs open.
+
+#### Available Styling Hooks
+
+Each dialog provides the following data attributes and CSS variables:
+
+**Data Attributes:**
+
+- `data-nested-open`: Present on `Dialog.Content` and `Dialog.Overlay` when one or more nested dialogs are open within this dialog.
+- `data-nested`: Present on `Dialog.Content` and `Dialog.Overlay` when the dialog is a nested dialog, useful for hiding the overlay of nested dialogs to avoid overlapping with parent dialogs.
+
+**CSS Variables:**
+
+- `--bits-dialog-depth`: The nesting depth of the dialog (0 for root, 1 for first nested, etc.).
+- `--bits-dialog-nested-count`: The number of currently open nested dialogs within this dialog (updates reactively).
+
+#### Example: Scale Down Parent Dialogs
+
+```svelte {6-8}
+<Dialog.Root>
+  <Dialog.Trigger>Open Dialog</Dialog.Trigger>
+  <Dialog.Portal>
+    <Dialog.Overlay class="overlay" />
+    <Dialog.Content
+      style="transform: scale(calc(1 - var(--bits-dialog-nested-count) * 0.05));
+             filter: blur(calc(var(--bits-dialog-nested-count) * 2px));"
+    >
+      <!-- Dialog content -->
+    </Dialog.Content>
+  </Dialog.Portal>
+</Dialog.Root>
 ```
 
-<DialogDemoNested />
+These styling hooks allow you to create sophisticated visual feedback that helps users understand the hierarchy of nested dialogs.
 
 ## Svelte Transitions
 
