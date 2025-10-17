@@ -8,7 +8,7 @@ description: Displays content while maintaining a specified aspect ratio, ensuri
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="aspect-ratio-demo" componentName="Aspect Ratio" nonExpandableItems={["App.svelte"]}>
+<ComponentPreview name="aspect-ratio-demo" componentName="Aspect Ratio" nonExpandableItems={["App.svelte"]} variant="preview">
 
 {#snippet preview()}
 <AspectRatioDemo />

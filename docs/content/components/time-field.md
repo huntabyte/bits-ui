@@ -10,7 +10,7 @@ description: Enables users to input a time within a designated field.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="time-field-demo" componentName="Time Field">
+<ComponentPreview name="time-field-demo" componentName="Time Field" variant="preview">
 
 {#snippet preview()}
 <TimeFieldDemo />

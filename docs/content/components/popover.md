@@ -8,7 +8,7 @@ description: Display supplementary content or information when users interact wi
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="popover-demo" componentName="Popover">
+<ComponentPreview name="popover-demo" componentName="Popover" variant="preview">
 
 {#snippet preview()}
 <PopoverDemo />

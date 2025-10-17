@@ -8,7 +8,7 @@ description: A control element that switches between two states, providing a bin
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="toggle-demo" componentName="Toggle">
+<ComponentPreview name="toggle-demo" componentName="Toggle" variant="preview">
 
 {#snippet preview()}
 <ToggleDemo />

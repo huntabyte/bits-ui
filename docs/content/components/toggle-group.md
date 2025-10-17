@@ -8,7 +8,7 @@ description: Groups multiple toggle controls, allowing users to enable one or mu
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="toggle-group-demo" componentName="ToggleGroup">
+<ComponentPreview name="toggle-group-demo" componentName="ToggleGroup" variant="preview">
 
 {#snippet preview()}
 <ToggleGroupDemo />

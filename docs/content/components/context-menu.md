@@ -8,7 +8,7 @@ description: Displays options or actions relevant to a specific context or selec
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="context-menu-demo" componentName="Context Menu">
+<ComponentPreview name="context-menu-demo" componentName="Context Menu" variant="preview">
 
 {#snippet preview()}
 <ContextMenuDemo />

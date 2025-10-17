@@ -8,7 +8,7 @@ description: Allows users to provide ratings using customizable items (like star
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="rating-group-demo" componentName="Rating Group">
+<ComponentPreview name="rating-group-demo" componentName="Rating Group" variant="preview">
 
 {#snippet preview()}
 <RatingGroupDemo />

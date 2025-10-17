@@ -8,7 +8,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="combobox-demo" componentName="Combobox">
+<ComponentPreview name="combobox-demo" componentName="Combobox" variant="preview">
 
 {#snippet preview()}
 <ComboboxDemo />

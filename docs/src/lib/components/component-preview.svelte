@@ -14,7 +14,7 @@
 		name,
 		nonExpandableItems = [],
 		componentName = fileName,
-		variant = "preview",
+		variant = "collapsed",
 	}: {
 		fileName?: string;
 		componentName?: string;

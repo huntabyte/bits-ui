@@ -39,6 +39,32 @@ const stateDataAttr = defineEnumDataAttr({
 	options: ["open", "closed"],
 });
 
+export const nestedDataAttrs = [
+	defineSimpleDataAttr({
+		name: "nested-open",
+		description:
+			"Present when one or more nested dialogs are open within this dialog. Can be used to style parent dialogs differently when children are open.",
+	}),
+	defineSimpleDataAttr({
+		name: "nested",
+		description:
+			"Present when the dialog is a nested dialog, useful for hiding the overlay of nested dialogs to avoid overlapping with the root dialog's overlay.",
+	}),
+];
+
+export const nestedCSSVars = [
+	{
+		name: "--bits-dialog-depth",
+		description:
+			"The nesting depth of the dialog (0 for root dialogs, 1 for first nested, etc.).",
+	},
+	{
+		name: "--bits-dialog-nested-count",
+		description:
+			"The number of currently open nested dialogs within this dialog. Updates reactively as nested dialogs open and close.",
+	},
+];
+
 export const root = defineComponentApiSchema<DialogRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root component used to set and manage the state of the dialog.",
@@ -88,7 +114,9 @@ export const content = defineComponentApiSchema<DialogContentPropsWithoutHTML>({
 			name: "dialog-content",
 			description: "Present on the content.",
 		}),
+		...nestedDataAttrs,
 	],
+	cssVars: nestedCSSVars,
 });
 
 export const title = defineComponentApiSchema<DialogTitlePropsWithoutHTML>({
@@ -151,7 +179,9 @@ export const overlay = defineComponentApiSchema<DialogOverlayPropsWithoutHTML>({
 			name: "dialog-overlay",
 			description: "Present on the overlay.",
 		}),
+		...nestedDataAttrs,
 	],
+	cssVars: nestedCSSVars,
 });
 
 export const portal = defineComponentApiSchema<DialogPortalPropsWithoutHTML>({

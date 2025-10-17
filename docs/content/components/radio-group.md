@@ -8,7 +8,7 @@ description: Allows users to select a single option from a list of mutually excl
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="radio-group-demo" componentName="Radio Group">
+<ComponentPreview name="radio-group-demo" componentName="Radio Group" variant="preview">
 
 {#snippet preview()}
 <RadioGroupDemo />

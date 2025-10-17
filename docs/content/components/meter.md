@@ -8,7 +8,7 @@ description: Display real-time measurements within a defined range.
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="meter-demo" componentName="Meter">
+<ComponentPreview name="meter-demo" componentName="Meter" variant="preview">
 
 {#snippet preview()}
 <MeterDemo />

@@ -35,6 +35,7 @@ import {
 	defineSimpleDataAttr,
 	defineUnionProp,
 } from "../utils.js";
+import { nestedCSSVars, nestedDataAttrs } from "./dialog.api.js";
 
 const stateDataAttr = defineEnumDataAttr({
 	name: "state",
@@ -107,7 +108,9 @@ const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 			name: "alert-dialog-content",
 			description: "Present on the content element.",
 		}),
+		...nestedDataAttrs,
 	],
+	cssVars: nestedCSSVars,
 });
 
 const title = defineComponentApiSchema<AlertDialogTitlePropsWithoutHTML>({
@@ -178,7 +181,9 @@ const overlay = defineComponentApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 			name: "alert-dialog-overlay",
 			description: "Present on the overlay element.",
 		}),
+		...nestedDataAttrs,
 	],
+	cssVars: nestedCSSVars,
 });
 
 const portal = defineComponentApiSchema<AlertDialogPortalPropsWithoutHTML>({

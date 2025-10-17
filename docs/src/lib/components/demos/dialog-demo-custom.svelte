@@ -32,21 +32,20 @@
 	</Dialog.Trigger>
 	<Dialog.Portal>
 		<Dialog.Overlay
-			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80"
+			class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-nested:hidden fixed inset-0 z-50 bg-black/80 transition-opacity duration-200"
 		/>
 		<Dialog.Content
 			{...contentProps}
-			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 outline-hidden fixed left-[50%] top-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] border p-5 sm:max-w-[490px] md:w-full"
+			class="rounded-card-lg bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 outline-hidden fixed left-[50%] top-[50%] z-50 w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[calc(-50%+var(--bits-dialog-nested-count)*-1.5rem)] scale-[calc(1-var(--bits-dialog-nested-count)*0.05)] border p-6 transition-all duration-200 sm:max-w-[500px] md:w-full"
+			style="filter: blur(calc(var(--bits-dialog-nested-count) * 1.5px)); min-height: 400px;"
 		>
-			<Dialog.Title
-				class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
-			>
+			<Dialog.Title class="mb-2 text-center text-lg font-semibold tracking-tight">
 				{@render title()}
 			</Dialog.Title>
-			<Dialog.Description class="text-foreground-alt text-sm">
+			<Dialog.Description class="text-foreground-alt mb-6 text-center text-sm">
 				{@render description()}
 			</Dialog.Description>
-			<div class="flex flex-col items-start gap-1 pb-11 pt-7">
+			<div class="flex min-h-[200px] flex-col gap-4 pb-12">
 				{@render children?.()}
 			</div>
 			<Dialog.Close

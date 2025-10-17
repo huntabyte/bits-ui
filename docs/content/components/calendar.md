@@ -8,7 +8,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="calendar-demo" componentName="Calendar">
+<ComponentPreview name="calendar-demo" componentName="Calendar" variant="preview">
 
 {#snippet preview()}
 <CalendarDemo />

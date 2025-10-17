@@ -9,6 +9,7 @@ import { expectExists, expectNotExists } from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
+import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -382,6 +383,275 @@ describe("Nested Dialogs", () => {
 		await expectNotExists(page.getByTestId("second-close"));
 		await expectExists(page.getByTestId("second-open"));
 		await expect.element(page.getByTestId("second-open")).toHaveFocus();
+	});
+
+	it("should track dialog depth correctly", async () => {
+		render(DialogNestedTest);
+
+		// open first dialog
+		await page.getByTestId("first-open").click();
+		await expectExists(page.getByTestId("first-content"));
+
+		const firstContent = page.getByTestId("first-content").element() as HTMLElement;
+		expect(firstContent.style.getPropertyValue("--bits-dialog-depth")).toBe("0");
+		expect(firstContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("first-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("first-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+
+		// open second dialog
+		await page.getByTestId("second-open").click();
+		await expectExists(page.getByTestId("second-content"));
+
+		const secondContent = page.getByTestId("second-content").element() as HTMLElement;
+		expect(firstContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(secondContent.style.getPropertyValue("--bits-dialog-depth")).toBe("1");
+		expect(secondContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("first-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("first-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("second-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect.element(page.getByTestId("second-content")).toHaveAttribute("data-nested", "");
+		await expect
+			.element(page.getByTestId("second-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect.element(page.getByTestId("second-content")).toHaveAttribute("data-nested", "");
+
+		// open third dialog
+		await page.getByTestId("third-open").click();
+		await expectExists(page.getByTestId("third-content"));
+
+		const thirdContent = page.getByTestId("third-content").element() as HTMLElement;
+		expect(firstContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("2");
+		expect(secondContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(thirdContent.style.getPropertyValue("--bits-dialog-depth")).toBe("2");
+		expect(thirdContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("first-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("first-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("second-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("second-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("third-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("third-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+
+		// close third dialog
+		await page.getByTestId("third-close").click();
+		await expectNotExists(page.getByTestId("third-content"));
+
+		expect(firstContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(secondContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("first-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("first-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("second-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("second-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+
+		// close second dialog
+		await page.getByTestId("second-close").click();
+		await expectNotExists(page.getByTestId("second-content"));
+
+		expect(firstContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("first-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("first-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+	});
+});
+
+describe("Nested Alert Dialogs and Dialogs", () => {
+	it("should handle Alert Dialog nested inside Dialog with correct depth tracking", async () => {
+		render(DialogAlertDialogNestedTest);
+
+		// open dialog
+		await page.getByTestId("dialog-open").click();
+		await expectExists(page.getByTestId("dialog-content"));
+
+		const dialogContent = page.getByTestId("dialog-content").element() as HTMLElement;
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-depth")).toBe("0");
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("dialog-content"))
+			.not.toHaveAttribute("data-nested-open");
+
+		// open alert dialog inside
+		await page.getByTestId("alert-open").click();
+		await expectExists(page.getByTestId("alert-content"));
+
+		const alertContent = page.getByTestId("alert-content").element() as HTMLElement;
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(alertContent.style.getPropertyValue("--bits-dialog-depth")).toBe("1");
+		expect(alertContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("dialog-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("dialog-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("alert-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect.element(page.getByTestId("alert-content")).toHaveAttribute("data-nested", "");
+
+		// close alert dialog
+		await page.getByTestId("alert-cancel").click();
+		await expectNotExists(page.getByTestId("alert-content"));
+
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("dialog-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("dialog-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+	});
+
+	it("should handle Dialog nested inside Alert Dialog with correct depth tracking", async () => {
+		render(DialogAlertDialogNestedTest);
+
+		// open alert dialog
+		await page.getByTestId("alert-first-open").click();
+		await expectExists(page.getByTestId("alert-first-content"));
+
+		const alertContent = page.getByTestId("alert-first-content").element() as HTMLElement;
+		expect(alertContent.style.getPropertyValue("--bits-dialog-depth")).toBe("0");
+		expect(alertContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("alert-first-content"))
+			.not.toHaveAttribute("data-nested-open");
+
+		// open dialog inside
+		await page.getByTestId("dialog-nested-open").click();
+		await expectExists(page.getByTestId("dialog-nested-content"));
+
+		const dialogContent = page.getByTestId("dialog-nested-content").element() as HTMLElement;
+		expect(alertContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-depth")).toBe("1");
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("alert-first-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("alert-first-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("dialog-nested-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("dialog-nested-content"))
+			.toHaveAttribute("data-nested", "");
+
+		// close dialog
+		await page.getByTestId("dialog-nested-close").click();
+		await expectNotExists(page.getByTestId("dialog-nested-content"));
+
+		expect(alertContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("alert-first-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("alert-first-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+	});
+
+	it("should handle three-level nesting: Dialog -> Alert Dialog -> Dialog", async () => {
+		render(DialogAlertDialogNestedTest);
+
+		// open first dialog
+		await page.getByTestId("dialog-open").click();
+		await expectExists(page.getByTestId("dialog-content"));
+
+		const dialogContent = page.getByTestId("dialog-content").element() as HTMLElement;
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-depth")).toBe("0");
+
+		// open alert dialog
+		await page.getByTestId("alert-open").click();
+		await expectExists(page.getByTestId("alert-content"));
+
+		const alertContent = page.getByTestId("alert-content").element() as HTMLElement;
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(alertContent.style.getPropertyValue("--bits-dialog-depth")).toBe("1");
+
+		// open nested dialog
+		await page.getByTestId("nested-dialog-open").click();
+		await expectExists(page.getByTestId("nested-dialog-content"));
+
+		const nestedDialogContent = page
+			.getByTestId("nested-dialog-content")
+			.element() as HTMLElement;
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("2");
+		expect(alertContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(nestedDialogContent.style.getPropertyValue("--bits-dialog-depth")).toBe("2");
+		expect(nestedDialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+
+		// verify data attributes
+		await expect
+			.element(page.getByTestId("dialog-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("dialog-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("alert-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("alert-overlay"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("nested-dialog-content"))
+			.not.toHaveAttribute("data-nested-open");
+		await expect
+			.element(page.getByTestId("nested-dialog-overlay"))
+			.not.toHaveAttribute("data-nested-open");
+
+		// close nested dialog
+		await page.getByTestId("nested-dialog-close").click();
+		await expectNotExists(page.getByTestId("nested-dialog-content"));
+
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("1");
+		expect(alertContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("dialog-content"))
+			.toHaveAttribute("data-nested-open", "");
+		await expect
+			.element(page.getByTestId("alert-content"))
+			.not.toHaveAttribute("data-nested-open");
+
+		// close alert dialog
+		await page.getByTestId("alert-cancel").click();
+		await expectNotExists(page.getByTestId("alert-content"));
+
+		expect(dialogContent.style.getPropertyValue("--bits-dialog-nested-count")).toBe("0");
+		await expect
+			.element(page.getByTestId("dialog-content"))
+			.not.toHaveAttribute("data-nested-open");
 	});
 });
 

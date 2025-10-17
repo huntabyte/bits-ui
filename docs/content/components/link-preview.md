@@ -8,7 +8,7 @@ description: Displays a summarized preview of a linked content's details or info
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="link-preview-demo" componentName="LinkPreview">
+<ComponentPreview name="link-preview-demo" componentName="LinkPreview" variant="preview">
 
 {#snippet preview()}
 <LinkPreviewDemo />

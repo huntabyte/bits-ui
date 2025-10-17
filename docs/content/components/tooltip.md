@@ -8,7 +8,7 @@ description: Provides additional information or context when users hover over or
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="tooltip-demo" componentName="Tooltip">
+<ComponentPreview name="tooltip-demo" componentName="Tooltip" variant="preview">
 
 {#snippet preview()}
 <TooltipDemo />

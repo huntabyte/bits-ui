@@ -8,7 +8,7 @@ description: Facilitates the selection of date ranges through an input and calen
 	let { schemas } = $props()
 </script>
 
-<ComponentPreview name="date-range-picker-demo" componentName="Date Range Picker">
+<ComponentPreview name="date-range-picker-demo" componentName="Date Range Picker" variant="preview">
 
 {#snippet preview()}
 <DateRangePickerDemo />
