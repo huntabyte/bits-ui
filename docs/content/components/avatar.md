@@ -134,7 +134,7 @@ When you're confident that an image will load (such as local assets), you can by
 
 This example demonstrates how to create a clickable avatar composed with a [Link Preview](/docs/components/link-preview):
 
-<ComponentPreview name="avatar-demo-link-preview" componentName="Avatar with Link Preview">
+<ComponentPreview name="avatar-demo-link-preview" componentName="Avatar with Link Preview" size="sm">
 
 {#snippet preview()}
 <AvatarDemoLinkPreview />

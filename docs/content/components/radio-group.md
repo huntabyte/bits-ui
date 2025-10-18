@@ -194,7 +194,7 @@ When the `orientation` is set to `'vertical'`, the radio group will navigate thr
 
 When a radio group is readonly, users can focus and navigate through the items but cannot change the selection. This is useful for displaying information that should be visible but not editable.
 
-<ComponentPreview name="radio-group-demo-readonly" componentName="Radio Group Readonly">
+<ComponentPreview name="radio-group-demo-readonly" componentName="Radio Group Readonly" size="xs">
 
 {#snippet preview()}
 <RadioGroupDemoReadonly />
@@ -212,7 +212,7 @@ When a radio group is readonly, users can focus and navigate through the items b
 
 When a radio group is disabled, users cannot interact with it at all. The entire group becomes non-focusable and non-interactive.
 
-<ComponentPreview name="radio-group-demo-disabled" componentName="Radio Group Disabled">
+<ComponentPreview name="radio-group-demo-disabled" componentName="Radio Group Disabled" size="xs">
 
 {#snippet preview()}
 <RadioGroupDemoDisabled />
