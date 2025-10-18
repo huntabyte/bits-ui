@@ -15,6 +15,7 @@
 		children,
 		child,
 		onSelect = noop,
+		openDelay = 100,
 		...restProps
 	}: MenuSubTriggerProps = $props();
 
@@ -26,6 +27,7 @@
 			() => ref,
 			(v) => (ref = v)
 		),
+		openDelay: boxWith(() => openDelay),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, subTriggerState.props));

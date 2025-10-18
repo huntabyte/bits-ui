@@ -9,6 +9,7 @@ import {
 	type WritableBoxedValues,
 	simpleBox,
 	boxWith,
+	type ReadableBox,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
@@ -609,7 +610,9 @@ export class MenuItemState {
 
 interface MenuSubTriggerStateOpts
 	extends MenuItemSharedStateOpts,
-		Pick<MenuItemStateOpts, "onSelect"> {}
+		Pick<MenuItemStateOpts, "onSelect"> {
+	openDelay: ReadableBox<number>;
+}
 
 export class MenuSubTriggerState {
 	static create(opts: MenuSubTriggerStateOpts) {
@@ -664,7 +667,7 @@ export class MenuSubTriggerState {
 			this.#openTimer = this.content.domContext.setTimeout(() => {
 				this.submenu.onOpen();
 				this.#clearOpenTimer();
-			}, 100);
+			}, this.opts.openDelay.current);
 		}
 	}
 
