@@ -2,7 +2,7 @@ import type { DateValue } from "@internationalized/date";
 import { type ReadableBoxedValues, type WritableBoxedValues } from "svelte-toolbelt";
 import { Context } from "runed";
 import type { DateMatcher, DateRange, SegmentPart } from "$lib/shared/index.js";
-import type { Granularity, HourCycle, WeekStartsOn } from "$lib/shared/date/types.js";
+import type { Granularity, HourCycle, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 
 export const DateRangePickerRootContext = new Context<DateRangePickerRootState>(
 	"DateRangePicker.Root"
@@ -13,6 +13,7 @@ interface DateRangePickerRootStateOpts
 			value: DateRange;
 			startValue: DateValue | undefined;
 			endValue: DateValue | undefined;
+			months: Month<DateValue>[];
 			open: boolean;
 			placeholder: DateValue;
 		}>,

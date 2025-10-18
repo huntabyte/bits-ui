@@ -35,6 +35,11 @@ type CalendarBaseRootPropsWithoutHTML = {
 	onPlaceholderChange?: OnChangeFn<DateValue>;
 
 	/**
+	 * A callback function called when the currently displayed month(s) changes.
+	 */
+	onVisibleMonthsChange?: OnChangeFn<Month<DateValue>[]>;
+
+	/**
 	 * Whether or not users can deselect a date once selected
 	 * without selecting another date.
 	 *
