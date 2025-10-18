@@ -475,3 +475,9 @@ it("should open when right clicked inside a tooltip trigger", async () => {
 	await page.getByTestId("context-menu-trigger").click({ button: "right" });
 	await expectExists(page.getByTestId("context-menu-content"));
 });
+
+it("should close when the trigger is left clicked and the menu is open", async () => {
+	await open();
+	await page.getByTestId("trigger").click({ force: true });
+	await expectNotExists(page.getByTestId("content"));
+});
