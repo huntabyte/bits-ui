@@ -59,6 +59,7 @@ import {
 	defineSimpleDataAttr,
 	defineStringProp,
 	defineSimplePropSchema,
+	defineNumberProp,
 } from "../utils.js";
 
 const sharedItemProps = {
@@ -241,6 +242,11 @@ const subTriggerProps = {
 	disabled: defineBooleanProp({
 		default: false,
 		description: "Whether or not the submenu trigger is disabled.",
+	}),
+	openDelay: defineNumberProp({
+		default: 100,
+		description:
+			"The amount of time in ms from when the mouse enters the subtrigger until the submenu opens.",
 	}),
 	...omit(sharedItemProps, "closeOnSelect"),
 } satisfies PropObj<DropdownMenuSubTriggerPropsWithoutHTML>;

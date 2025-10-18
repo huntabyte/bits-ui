@@ -223,8 +223,22 @@ export type MenuSubContentStaticPropsWithoutHTML = Expand<
 export type MenuSubContentStaticProps = MenuSubContentStaticPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, MenuSubContentStaticPropsWithoutHTML>;
 
-export type MenuSubTriggerPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "closeOnSelect">;
-export type MenuSubTriggerProps = Omit<MenuItemProps, "closeOnSelect">;
+export type MenuSubTriggerPropsWithoutHTML = Omit<MenuItemPropsWithoutHTML, "closeOnSelect"> & {
+	/**
+	 * The amount of time in ms from when the mouse enters the subtrigger until
+	 * the submenu opens. This is useful for preventing the submenu from opening
+	 * as a user is moving their mouse through the menu without a true intention to open that
+	 * submenu.
+	 *
+	 * To disable the behavior, set it to `0`.
+	 *
+	 * @default 100
+	 */
+	openDelay?: number;
+};
+
+export type MenuSubTriggerProps = MenuSubTriggerPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, MenuSubTriggerPropsWithoutHTML>;
 
 export type MenuSeparatorPropsWithoutHTML = WithChild;
 export type MenuSeparatorProps = MenuSeparatorPropsWithoutHTML &
