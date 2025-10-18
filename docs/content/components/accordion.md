@@ -274,7 +274,7 @@ Disable specific items with the `disabled` prop:
 
 The `hiddenUntilFound` prop enables browser search functionality within collapsed accordion content. When enabled, collapsed content is marked with `hidden="until-found"`, allowing browsers to automatically expand accordion items when users search for text within them.
 
-```svelte {4}
+```svelte {6}
 <Accordion.Root type="single">
   <Accordion.Item value="item-1">
     <Accordion.Header>
