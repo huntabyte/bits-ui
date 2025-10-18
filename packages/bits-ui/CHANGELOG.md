@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.13.1
+
+### Patch Changes
+
+- fix(ContextMenu): left clicking the trigger when open should register as outside click event ([#1848](https://github.com/huntabyte/bits-ui/pull/1848))
+
 ## 2.13.0
 
 ### Minor Changes
