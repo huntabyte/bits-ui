@@ -694,6 +694,7 @@ export class CalendarDayState {
 	);
 
 	onclick(e: BitsMouseEvent) {
+		e.stopPropagation();
 		if (this.cell.isDisabled) return;
 		this.cell.root.handleCellClick(e, this.cell.opts.date.current);
 	}
