@@ -22,7 +22,7 @@
 			bind:checked
 			{id}
 			aria-labelledby="terms-label"
-			class="border-muted bg-foreground data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40 data-disabled:cursor-not-allowed data-disabled:opacity-70 peer inline-flex size-[25px] items-center justify-center rounded-md border transition-all duration-150 ease-in-out active:scale-[0.98]"
+			class="border-muted bg-foreground data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40 data-disabled:cursor-not-allowed data-disabled:opacity-70 data-disabled:pointer-events-none  peer inline-flex size-[25px] items-center justify-center rounded-md border transition-all duration-150 ease-in-out active:scale-[0.98]"
 			name="hello"
 			{...restProps}
 		>
@@ -39,7 +39,7 @@
 		<Label.Root
 			id="terms-label"
 			for={id}
-			class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+			class="text-sm font-medium leading-none peer-disabled:pointer-events-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
 			{labelText}
 		</Label.Root>
