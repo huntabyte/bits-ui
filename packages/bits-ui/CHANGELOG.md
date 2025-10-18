@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.13.0
+
+### Minor Changes
+
+- feat(Menu): expose `openDelay` prop on `*Menu.SubTrigger` to control open delay ([#1845](https://github.com/huntabyte/bits-ui/pull/1845))
+
 ## 2.12.0
 
 ### Minor Changes
