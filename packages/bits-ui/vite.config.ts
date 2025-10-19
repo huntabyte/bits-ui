@@ -19,7 +19,6 @@ export default defineConfig({
 		include: ["src/**/*.{test,spec}.{js,ts}"],
 		// jest like globals
 		globals: true,
-		environment: "jsdom",
 		// in-source testing
 		includeSource: ["src/**/*.{js,ts,svelte}"],
 	},
