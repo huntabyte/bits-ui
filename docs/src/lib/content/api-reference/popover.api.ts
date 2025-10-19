@@ -3,6 +3,7 @@ import type {
 	PopoverClosePropsWithoutHTML,
 	PopoverContentPropsWithoutHTML,
 	PopoverContentStaticPropsWithoutHTML,
+	PopoverOverlayPropsWithoutHTML,
 	PopoverPortalPropsWithoutHTML,
 	PopoverRootPropsWithoutHTML,
 	PopoverTriggerPropsWithoutHTML,
@@ -165,4 +166,21 @@ export const portal = defineComponentApiSchema<PopoverPortalPropsWithoutHTML>({
 	props: portalProps,
 });
 
-export const popover = [root, trigger, content, contentStatic, close, arrow, portal];
+export const overlay = defineComponentApiSchema<PopoverOverlayPropsWithoutHTML>({
+	title: "Overlay",
+	description:
+		"An overlay that can be used to create a semi-transparent overlay behind the popover when open.",
+	props: {
+		forceMount: forceMountProp,
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "popover-overlay",
+			description: "Present on the overlay element.",
+		}),
+		openClosedDataAttr,
+	],
+});
+
+export const popover = [root, trigger, content, contentStatic, overlay, close, arrow, portal];

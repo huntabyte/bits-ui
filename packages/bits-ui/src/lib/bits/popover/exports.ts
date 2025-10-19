@@ -5,6 +5,7 @@ export { default as ContentStatic } from "./components/popover-content-static.sv
 export { default as Trigger } from "./components/popover-trigger.svelte";
 export { default as Close } from "./components/popover-close.svelte";
 export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
+export { default as Overlay } from "./components/popover-overlay.svelte";
 
 export type {
 	PopoverRootProps as RootProps,
@@ -14,4 +15,5 @@ export type {
 	PopoverTriggerProps as TriggerProps,
 	PopoverCloseProps as CloseProps,
 	PopoverPortalProps as PortalProps,
+	PopoverOverlayProps as OverlayProps,
 } from "./types.js";

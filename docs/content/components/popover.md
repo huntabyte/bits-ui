@@ -4,7 +4,7 @@ description: Display supplementary content or information when users interact wi
 ---
 
 <script>
-	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoTransition, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoTransition, PopoverDemoOverlay } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -25,10 +25,13 @@ description: Display supplementary content or information when users interact wi
 
 <Popover.Root>
   <Popover.Trigger />
-  <Popover.Content>
-    <Popover.Close />
-    <Popover.Arrow />
-  </Popover.Content>
+  <Popover.Portal>
+    <Popover.Overlay />
+    <Popover.Content>
+      <Popover.Close />
+      <Popover.Arrow />
+    </Popover.Content>
+  </Popover.Portal>
 </Popover.Root>
 ```
 
@@ -246,10 +249,22 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content component that handles this logic if you intend to use this approach. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
 
-<ComponentPreview name="popover-demo-transition" componentName="Popover" containerClass="mt-4">
+<ComponentPreview name="popover-demo-transition" componentName="Popover" containerClass="mt-4" size="xs">
 
 {#snippet preview()}
 <PopoverDemoTransition />
+{/snippet}
+
+</ComponentPreview>
+
+## Overlay Component
+
+You can use the `Popover.Overlay` component to create an overlay behind the popover that appears when the popover is open.
+
+<ComponentPreview name="popover-demo-overlay" componentName="Popover" size="xs">
+
+{#snippet preview()}
+<PopoverDemoOverlay />
 {/snippet}
 
 </ComponentPreview>

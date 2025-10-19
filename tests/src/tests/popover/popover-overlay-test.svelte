@@ -1,35 +1,35 @@
 <script lang="ts" module>
 	import { Popover } from "bits-ui";
-	export type PopoverTestProps = Popover.RootProps & {
-		contentProps?: Omit<Popover.ContentProps, "asChild" | "child" | "children">;
-		portalProps?: Popover.PortalProps;
+	export type PopoverOverlayTestProps = Popover.RootProps & {
 		overlayProps?: Omit<Popover.OverlayProps, "asChild" | "child" | "children">;
-		withOverlay?: boolean;
+		withChild?: boolean;
 	};
 </script>
 
 <script lang="ts">
-	let {
-		open = false,
-		contentProps,
-		portalProps,
-		overlayProps,
-		withOverlay = false,
-		...restProps
-	}: PopoverTestProps = $props();
+	let { open = false, overlayProps, withChild = false, ...restProps }: PopoverOverlayTestProps = $props();
 </script>
 
 <main data-testid="main">
 	<Popover.Root bind:open {...restProps}>
 		<Popover.Trigger data-testid="trigger">trigger</Popover.Trigger>
-		<Popover.Portal {...portalProps}>
-			{#if withOverlay}
-				<Popover.Overlay {...overlayProps} data-testid="overlay" />
+		<Popover.Portal>
+			{#if withChild}
+				<Popover.Overlay {...overlayProps} data-testid="overlay">
+					{#snippet child(props)}
+						<div {...props.props} data-testid="overlay-child" data-open={props.open}>
+							overlay
+						</div>
+					{/snippet}
+				</Popover.Overlay>
+			{:else}
+				<Popover.Overlay {...overlayProps} data-testid="overlay">
+					overlay content
+				</Popover.Overlay>
 			{/if}
-			<Popover.Content {...contentProps} data-testid="content">
+			<Popover.Content data-testid="content">
 				content
 				<Popover.Close data-testid="close">close</Popover.Close>
-				<Popover.Arrow data-testid="arrow" />
 			</Popover.Content>
 		</Popover.Portal>
 	</Popover.Root>
@@ -38,3 +38,4 @@
 	<div data-testid="outside">outside</div>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>
+

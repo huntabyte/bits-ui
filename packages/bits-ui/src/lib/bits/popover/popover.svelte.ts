@@ -21,7 +21,7 @@ import type { Measurable } from "$lib/internal/floating-svelte/types.js";
 
 const popoverAttrs = createBitsAttrs({
 	component: "popover",
-	parts: ["root", "trigger", "content", "close"],
+	parts: ["root", "trigger", "content", "close", "overlay"],
 });
 
 const PopoverRootContext = new Context<PopoverRootState>("Popover.Root");
@@ -229,6 +229,39 @@ export class PopoverCloseState {
 				onkeydown: this.onkeydown,
 				type: "button",
 				[popoverAttrs.close]: "",
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface PopoverOverlayStateOpts extends WithRefOpts {}
+
+export class PopoverOverlayState {
+	static create(opts: PopoverOverlayStateOpts) {
+		return new PopoverOverlayState(opts, PopoverRootContext.get());
+	}
+
+	readonly opts: PopoverOverlayStateOpts;
+	readonly root: PopoverRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: PopoverOverlayStateOpts, root: PopoverRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				[popoverAttrs.overlay]: "",
+				style: {
+					pointerEvents: "auto",
+				},
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				...this.attachment,
 			}) as const
 	);
