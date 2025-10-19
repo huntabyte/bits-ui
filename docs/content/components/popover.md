@@ -257,7 +257,7 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 
 </ComponentPreview>
 
-## Overlay
+## Overlay Component
 
 You can use the `Popover.Overlay` component to create an overlay behind the popover that appears when the popover is open.
 
