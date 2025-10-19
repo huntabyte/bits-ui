@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.14.0
+
+### Minor Changes
+
+- feat(Popover): add `Popover.Overlay` component ([#1851](https://github.com/huntabyte/bits-ui/pull/1851))
+
 ## 2.13.1
 
 ### Patch Changes
