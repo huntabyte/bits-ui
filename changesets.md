@@ -1,0 +1,1 @@
+- breaking: update peer dependency of `@internationalized/date` to `^3.10.0`
