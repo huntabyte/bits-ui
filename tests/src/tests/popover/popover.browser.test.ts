@@ -10,6 +10,7 @@ import PopoverSiblingsTest from "./popover-siblings-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 import PopoverMultipleTriggersTest from "./popover-multiple-triggers-test.svelte";
+import PopoverOverlayTest from "./popover-overlay-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -48,6 +49,12 @@ it("should have bits data attrs", async () => {
 		const el = page.getByTestId(part);
 		await expect.element(el).toHaveAttribute(`data-popover-${part}`);
 	}
+});
+
+it("should have bits data attrs for overlay", async () => {
+	await open({ withOverlay: true });
+	const overlay = page.getByTestId("overlay");
+	await expect.element(overlay).toHaveAttribute("data-popover-overlay");
 });
 
 it("should open on click", async () => {
@@ -216,4 +223,71 @@ it("should restore focus to the trigger that opened the popover", async () => {
 	await expectExists(page.getByTestId("content"));
 	await userEvent.keyboard(kbd.ESCAPE);
 	await expect.element(page.getByTestId("trigger-3")).toHaveFocus();
+});
+
+it("should render overlay when popover is open", async () => {
+	await open({ withOverlay: true });
+	await expectExists(page.getByTestId("overlay"));
+});
+
+it("should not render overlay when popover is closed", async () => {
+	setup({ withOverlay: true });
+	await expectNotExists(page.getByTestId("overlay"));
+});
+
+it("should forceMount overlay when forceMount is true", async () => {
+	setup({ withOverlay: true, overlayProps: { forceMount: true } });
+	await expectExists(page.getByTestId("overlay"));
+});
+
+it("should have correct data-state attribute on overlay when open", async () => {
+	await open({ withOverlay: true });
+	const overlay = page.getByTestId("overlay");
+	await expect.element(overlay).toHaveAttribute("data-state", "open");
+});
+
+it("should have correct data-state attribute on overlay when closed with forceMount", async () => {
+	setup({ withOverlay: true, overlayProps: { forceMount: true } });
+	const overlay = page.getByTestId("overlay");
+	await expect.element(overlay).toHaveAttribute("data-state", "closed");
+});
+
+it("should portal overlay along with content by default", async () => {
+	await open({ withOverlay: true });
+	const overlay = page.getByTestId("overlay").element();
+	expect(overlay?.parentElement).toBe(document.body);
+});
+
+it("should portal overlay to custom element if specified", async () => {
+	await open({ withOverlay: true, portalProps: { to: "#portal-target" } });
+	const portalTarget = page.getByTestId("portal-target").element() as HTMLElement;
+	const overlay = page.getByTestId("overlay").element();
+	expect(overlay?.parentElement).toBe(portalTarget);
+});
+
+it("should render overlay with child snippet", async () => {
+	render(PopoverOverlayTest, { withChild: true });
+	await page.getByTestId("trigger").click();
+	await expectExists(page.getByTestId("overlay-child"));
+	await expect.element(page.getByTestId("overlay-child")).toHaveAttribute("data-popover-overlay");
+});
+
+it("should pass open snippet prop to overlay child", async () => {
+	render(PopoverOverlayTest, { withChild: true });
+	const trigger = page.getByTestId("trigger");
+	await trigger.click();
+	await expectExists(page.getByTestId("overlay-child"));
+	await expect.element(page.getByTestId("overlay-child")).toHaveAttribute("data-open", "true");
+
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(page.getByTestId("overlay-child"));
+});
+
+it("should pass open snippet prop to overlay children", async () => {
+	render(PopoverOverlayTest, { withChild: true, overlayProps: { forceMount: true } });
+	const overlayChild = page.getByTestId("overlay-child");
+	await expect.element(overlayChild).toHaveAttribute("data-open", "false");
+
+	await page.getByTestId("trigger").click();
+	await expect.element(overlayChild).toHaveAttribute("data-open", "true");
 });

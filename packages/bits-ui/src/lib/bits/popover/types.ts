@@ -13,6 +13,7 @@ import type {
 } from "$lib/shared/attributes.js";
 import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 import type { PortalProps } from "$lib/types.js";
+import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
 
 export type PopoverRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -65,3 +66,15 @@ export type PopoverArrowProps = ArrowProps;
 
 export type PopoverPortalPropsWithoutHTML = PortalProps;
 export type PopoverPortalProps = PortalProps;
+
+export type PopoverOverlaySnippetProps = {
+	open: boolean;
+};
+
+export type PopoverOverlayPropsWithoutHTML = WithChild<
+	PresenceLayerProps,
+	PopoverOverlaySnippetProps
+>;
+
+export type PopoverOverlayProps = PopoverOverlayPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, PopoverOverlayPropsWithoutHTML>;
