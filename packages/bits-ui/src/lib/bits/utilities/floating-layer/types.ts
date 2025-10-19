@@ -93,11 +93,6 @@ export type FloatingLayerContentProps = {
 	dir?: Direction;
 
 	/**
-	 * Whether to prevent scrolling the body when the content is open.
-	 */
-	preventScroll?: boolean;
-
-	/**
 	 * Use an element other than the trigger to anchor the content to. If provided,
 	 * the content will be anchored to the provided element instead of the trigger.
 	 *
