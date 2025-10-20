@@ -121,7 +121,7 @@
 		preventScroll={false}
 		{loop}
 		{trapFocus}
-		shouldRender={subContentState.parentMenu.contentMounted}
+		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
@@ -157,7 +157,7 @@
 		preventScroll={false}
 		{loop}
 		{trapFocus}
-		shouldRender={subContentState.parentMenu.contentMounted}
+		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, mergedProps, {
