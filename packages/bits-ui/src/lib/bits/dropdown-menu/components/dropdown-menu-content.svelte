@@ -68,7 +68,7 @@
 		{loop}
 		forceMount={true}
 		{id}
-		shouldRender={contentState.parentMenu.contentMounted}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
@@ -97,7 +97,7 @@
 		{loop}
 		forceMount={false}
 		{id}
-		shouldRender={contentState.parentMenu.contentMounted}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
