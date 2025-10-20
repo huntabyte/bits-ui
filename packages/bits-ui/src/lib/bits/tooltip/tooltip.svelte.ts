@@ -15,7 +15,7 @@ import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 export const tooltipAttrs = createBitsAttrs({
 	component: "tooltip",
@@ -128,7 +128,7 @@ export class TooltipRootState {
 			this.provider.opts.ignoreNonKeyboardFocus.current
 	);
 	contentNode = $state<HTMLElement | null>(null);
-	contentMounted = $state(false);
+	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
 	#timerFn: TimeoutFn<() => void>;
@@ -140,27 +140,15 @@ export class TooltipRootState {
 	constructor(opts: TooltipRootStateOpts, provider: TooltipProviderState) {
 		this.opts = opts;
 		this.provider = provider;
-		this.contentMounted = opts.open.current;
 		this.#timerFn = new TimeoutFn(() => {
 			this.#wasOpenDelayed = true;
 			this.opts.open.current = true;
 		}, this.delayDuration ?? 0);
 
-		watch(
-			() => this.opts.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				this.contentMounted = true;
-			}
-		);
-
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			open: this.opts.open,
 			ref: boxWith(() => this.contentNode),
 			onComplete: () => {
-				if (!this.opts.open.current) {
-					this.contentMounted = false;
-				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
@@ -409,6 +397,10 @@ export class TooltipContentState {
 	onCloseAutoFocus = (e: Event) => {
 		e.preventDefault();
 	};
+
+	get shouldRender() {
+		return this.root.contentPresence.shouldRender;
+	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 

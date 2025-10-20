@@ -26,7 +26,7 @@
 	const mergedProps = $derived(mergeProps(restProps, overlayState.props));
 </script>
 
-{#if overlayState.root.overlayMounted || forceMount}
+{#if overlayState.shouldRender || forceMount}
 	{#if child}
 		{@render child({ props: mergeProps(mergedProps), ...overlayState.snippetProps })}
 	{:else}

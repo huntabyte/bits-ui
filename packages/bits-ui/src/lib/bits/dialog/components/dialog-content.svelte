@@ -38,7 +38,7 @@
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-{#if contentState.root.contentMounted || forceMount}
+{#if contentState.shouldRender || forceMount}
 	<FocusScope
 		ref={contentState.opts.ref}
 		loop

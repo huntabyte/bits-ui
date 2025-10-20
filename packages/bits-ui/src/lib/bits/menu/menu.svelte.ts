@@ -49,7 +49,7 @@ import type { KeyboardEventHandler, PointerEventHandler, MouseEventHandler } fro
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 export const CONTEXT_MENU_CONTENT_ATTR = "data-context-menu-content";
@@ -135,30 +135,18 @@ export class MenuMenuState {
 	readonly parentMenu: MenuMenuState | null;
 	contentId = boxWith<string>(() => "");
 	contentNode = $state<HTMLElement | null>(null);
-	contentMounted = $state(false);
+	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
 
 	constructor(opts: MenuMenuStateOpts, root: MenuRootState, parentMenu: MenuMenuState | null) {
 		this.opts = opts;
 		this.root = root;
 		this.parentMenu = parentMenu;
-		this.contentMounted = opts.open.current;
 
-		watch(
-			() => this.opts.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				this.contentMounted = true;
-			}
-		);
-
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
-				if (!this.opts.open.current) {
-					this.contentMounted = false;
-				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
@@ -430,6 +418,10 @@ export class MenuContentState {
 		if (e.target.closest(`#${triggerId}`)) {
 			e.preventDefault();
 		}
+	}
+
+	get shouldRender() {
+		return this.parentMenu.contentPresence.shouldRender;
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.parentMenu.opts.open.current }));

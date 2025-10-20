@@ -2,21 +2,24 @@ import { watch } from "runed";
 import type { ReadableBoxedValues } from "svelte-toolbelt";
 import { AnimationsComplete } from "./animations-complete.js";
 
-interface OpenChangeCompleteOpts
+interface PresenceManagerOpts
 	extends ReadableBoxedValues<{
 		open: boolean;
 		ref: HTMLElement | null;
 	}> {
-	onComplete: () => void;
+	onComplete?: () => void;
 	enabled?: boolean;
 }
 
-export class OpenChangeComplete {
-	#opts: OpenChangeCompleteOpts;
+export class PresenceManager {
+	#opts: PresenceManagerOpts;
 	#enabled: boolean;
 	#afterAnimations: AnimationsComplete;
-	constructor(opts: OpenChangeCompleteOpts) {
+	#shouldRender = $state(false);
+
+	constructor(opts: PresenceManagerOpts) {
 		this.#opts = opts;
+		this.#shouldRender = opts.open.current;
 		this.#enabled = opts.enabled ?? true;
 		this.#afterAnimations = new AnimationsComplete({
 			ref: this.#opts.ref,
@@ -25,15 +28,23 @@ export class OpenChangeComplete {
 
 		watch(
 			() => this.#opts.open.current,
-			(open) => {
+			(isOpen) => {
+				if (isOpen) this.#shouldRender = true;
 				if (!this.#enabled) return;
 
 				this.#afterAnimations.run(() => {
-					if (open === this.#opts.open.current) {
-						this.#opts.onComplete();
+					if (isOpen === this.#opts.open.current) {
+						if (!this.#opts.open.current) {
+							this.#shouldRender = false;
+						}
+						this.#opts.onComplete?.();
 					}
 				});
 			}
 		);
+	}
+
+	get shouldRender() {
+		return this.#shouldRender;
 	}
 }

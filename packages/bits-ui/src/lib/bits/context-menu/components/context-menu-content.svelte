@@ -86,7 +86,7 @@
 		{trapFocus}
 		{loop}
 		{id}
-		shouldRender={contentState.parentMenu.contentMounted}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
@@ -120,7 +120,7 @@
 		{trapFocus}
 		{loop}
 		{id}
-		shouldRender={contentState.parentMenu.contentMounted}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {

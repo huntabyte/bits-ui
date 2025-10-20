@@ -20,7 +20,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -59,47 +59,29 @@ export class DialogRootState {
 	nestedOpenCount = $state(0);
 	readonly depth: number;
 	readonly parent: DialogRootState | null;
-	contentMounted = $state(false);
-	overlayMounted = $state(false);
+	contentPresence: PresenceManager;
+	overlayPresence: PresenceManager;
 
 	constructor(opts: DialogRootStateOpts, parent: DialogRootState | null) {
 		this.opts = opts;
-		this.contentMounted = opts.open.current;
 		this.parent = parent;
 		this.depth = parent ? parent.depth + 1 : 0;
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 
-		watch(
-			() => this.opts.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				this.contentMounted = true;
-				this.overlayMounted = true;
-			}
-		);
-
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			enabled: true,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
-				if (!this.opts.open.current) {
-					this.contentMounted = false;
-				}
 			},
 		});
 
-		new OpenChangeComplete({
+		this.overlayPresence = new PresenceManager({
 			ref: boxWith(() => this.overlayNode),
 			open: this.opts.open,
 			enabled: true,
-			onComplete: () => {
-				if (!this.opts.open.current) {
-					this.overlayMounted = false;
-				}
-			},
 		});
 
 		watch(
@@ -406,6 +388,10 @@ export class DialogContentState {
 				...this.attachment,
 			}) as const
 	);
+
+	get shouldRender() {
+		return this.root.contentPresence.shouldRender;
+	}
 }
 
 interface DialogOverlayStateOpts extends WithRefOpts {}
@@ -442,6 +428,10 @@ export class DialogOverlayState {
 				...this.attachment,
 			}) as const
 	);
+
+	get shouldRender() {
+		return this.root.overlayPresence.shouldRender;
+	}
 }
 
 interface AlertDialogCancelStateOpts

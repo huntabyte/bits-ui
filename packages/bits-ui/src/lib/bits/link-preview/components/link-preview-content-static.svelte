@@ -47,7 +47,7 @@
 		loop={false}
 		preventScroll={false}
 		forceMount={true}
-		shouldRender={contentState.root.contentShouldRender}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const mergedProps = mergeProps(props, {
@@ -75,7 +75,7 @@
 		loop={false}
 		preventScroll={false}
 		forceMount={false}
-		shouldRender={contentState.root.contentShouldRender}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const mergedProps = mergeProps(props, {

@@ -4,7 +4,7 @@ import {
 	attachRef,
 	boxWith,
 } from "svelte-toolbelt";
-import { Context, watch } from "runed";
+import { Context } from "runed";
 import { kbd } from "$lib/internal/kbd.js";
 import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
@@ -16,8 +16,8 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { isElement } from "$lib/internal/is.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 import type { Measurable } from "$lib/internal/floating-svelte/types.js";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 const popoverAttrs = createBitsAttrs({
 	component: "popover",
@@ -41,44 +41,25 @@ export class PopoverRootState {
 
 	readonly opts: PopoverRootStateOpts;
 	contentNode = $state<HTMLElement | null>(null);
-	contentShouldRender = $state(false);
+	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
 	overlayNode = $state<HTMLElement | null>(null);
-	overlayShouldRender = $state(false);
+	overlayPresence: PresenceManager;
 
 	constructor(opts: PopoverRootStateOpts) {
 		this.opts = opts;
-		this.overlayShouldRender = opts.open.current;
-		this.contentShouldRender = opts.open.current;
 
-		watch(
-			() => this.opts.open.current,
-			(isOpen) => {
-				if (!isOpen) return;
-				this.overlayShouldRender = true;
-				this.contentShouldRender = true;
-			}
-		);
-
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
-				if (!this.opts.open.current) {
-					this.contentShouldRender = false;
-				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
 
-		new OpenChangeComplete({
+		this.overlayPresence = new PresenceManager({
 			ref: boxWith(() => this.overlayNode),
 			open: this.opts.open,
-			onComplete: () => {
-				if (!this.opts.open.current) {
-					this.overlayShouldRender = false;
-				}
-			},
 		});
 	}
 
@@ -197,6 +178,10 @@ export class PopoverContentState {
 		this.root.handleClose();
 	};
 
+	get shouldRender() {
+		return this.root.contentPresence.shouldRender;
+	}
+
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 
 	readonly props = $derived.by(
@@ -276,6 +261,10 @@ export class PopoverOverlayState {
 		this.opts = opts;
 		this.root = root;
 		this.attachment = attachRef(this.opts.ref, (v) => (this.root.overlayNode = v));
+	}
+
+	get shouldRender() {
+		return this.root.overlayPresence.shouldRender;
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));

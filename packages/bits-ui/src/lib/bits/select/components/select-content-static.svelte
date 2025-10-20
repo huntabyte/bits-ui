@@ -44,7 +44,7 @@
 		{id}
 		{preventScroll}
 		forceMount={true}
-		shouldRender={contentState.root.contentMounted}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
@@ -67,7 +67,7 @@
 		{id}
 		{preventScroll}
 		forceMount={false}
-		shouldRender={contentState.root.contentMounted}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
