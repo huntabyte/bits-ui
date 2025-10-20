@@ -8,8 +8,7 @@ interface AnimationsCompleteOpts
 
 export class AnimationsComplete {
 	#opts: AnimationsCompleteOpts;
-	#currentFrame: number | undefined = undefined;
-	#isRunning = false;
+	#currentFrame: number | null = null;
 
 	constructor(opts: AnimationsCompleteOpts) {
 		this.#opts = opts;
@@ -17,25 +16,17 @@ export class AnimationsComplete {
 	}
 
 	#cleanup() {
-		if (this.#currentFrame) {
-			window.cancelAnimationFrame(this.#currentFrame);
-			this.#currentFrame = undefined;
-		}
-		this.#isRunning = false;
+		if (!this.#currentFrame) return;
+		window.cancelAnimationFrame(this.#currentFrame);
+		this.#currentFrame = null;
 	}
 
 	run(fn: () => void | Promise<void>) {
-		// prevent multiple concurrent runs
-		if (this.#isRunning) return;
-
+		// if already running, cleanup and restart
 		this.#cleanup();
-		this.#isRunning = true;
 
 		const node = this.#opts.ref.current;
-		if (!node) {
-			this.#isRunning = false;
-			return;
-		}
+		if (!node) return;
 
 		if (typeof node.getAnimations !== "function") {
 			this.#executeCallback(fn);
@@ -59,7 +50,6 @@ export class AnimationsComplete {
 	#executeCallback(fn: () => void | Promise<void>) {
 		const execute = () => {
 			fn();
-			this.#isRunning = false;
 		};
 
 		if (this.#opts.afterTick) {

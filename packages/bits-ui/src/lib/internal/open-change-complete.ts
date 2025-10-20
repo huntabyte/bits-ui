@@ -23,14 +23,17 @@ export class OpenChangeComplete {
 			afterTick: this.#opts.open,
 		});
 
-		watch([() => this.#opts.open.current], ([open]) => {
-			if (!this.#enabled) return;
+		watch(
+			() => this.#opts.open.current,
+			(open) => {
+				if (!this.#enabled) return;
 
-			this.#afterAnimations.run(() => {
-				if (open === this.#opts.open.current) {
-					this.#opts.onComplete();
-				}
-			});
-		});
+				this.#afterAnimations.run(() => {
+					if (open === this.#opts.open.current) {
+						this.#opts.onComplete();
+					}
+				});
+			}
+		);
 	}
 }

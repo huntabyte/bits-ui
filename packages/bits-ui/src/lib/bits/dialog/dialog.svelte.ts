@@ -49,6 +49,7 @@ export class DialogRootState {
 	readonly opts: DialogRootStateOpts;
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	overlayNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	contentId = $state<string | undefined>(undefined);
 	titleId = $state<string | undefined>(undefined);
@@ -58,13 +59,25 @@ export class DialogRootState {
 	nestedOpenCount = $state(0);
 	readonly depth: number;
 	readonly parent: DialogRootState | null;
+	contentMounted = $state(false);
+	overlayMounted = $state(false);
 
 	constructor(opts: DialogRootStateOpts, parent: DialogRootState | null) {
 		this.opts = opts;
+		this.contentMounted = opts.open.current;
 		this.parent = parent;
 		this.depth = parent ? parent.depth + 1 : 0;
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.contentMounted = true;
+				this.overlayMounted = true;
+			}
+		);
 
 		new OpenChangeComplete({
 			ref: boxWith(() => this.contentNode),
@@ -72,6 +85,20 @@ export class DialogRootState {
 			enabled: true,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+				if (!this.opts.open.current) {
+					this.contentMounted = false;
+				}
+			},
+		});
+
+		new OpenChangeComplete({
+			ref: boxWith(() => this.overlayNode),
+			open: this.opts.open,
+			enabled: true,
+			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.overlayMounted = false;
+				}
 			},
 		});
 
@@ -394,7 +421,7 @@ export class DialogOverlayState {
 	constructor(opts: DialogOverlayStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.overlayNode = v));
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
