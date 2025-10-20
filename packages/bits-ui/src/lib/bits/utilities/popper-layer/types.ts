@@ -41,6 +41,7 @@ export type PopperLayerImplProps = Omit<
 		FloatingLayerContentImplProps &
 		Omit<PresenceLayerImplProps, "presence"> &
 		TextSelectionLayerImplProps &
+		Omit<ScrollLockProps, "restoreScrollDelay"> &
 		FocusScopeImplProps & {
 			popper: Snippet<
 				[{ props: Record<string, unknown>; wrapperProps: Record<string, unknown> }]

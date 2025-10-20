@@ -7,7 +7,7 @@
 	let {
 		enabled = false,
 		trapFocus = false,
-		loop = false,
+		loop = true,
 		onCloseAutoFocus = noop,
 		onOpenAutoFocus = noop,
 		focusScope,

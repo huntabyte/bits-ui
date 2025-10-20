@@ -231,9 +231,7 @@ export class FocusScope {
 
 		watch([() => opts.ref.current, () => opts.enabled.current], ([ref, enabled]) => {
 			if (ref && enabled) {
-				if (!scope) {
-					scope = new FocusScope(opts);
-				}
+				if (!scope) scope = new FocusScope(opts);
 				scope.mount(ref);
 			} else if (scope) {
 				scope.unmount();

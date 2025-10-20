@@ -54,7 +54,6 @@
 			{trapFocus}
 			enabled={shouldEnableFocusTrap({
 				forceMount,
-				present: contentState.root.opts.open.current,
 				open: contentState.root.opts.open.current,
 			})}
 			{onCloseAutoFocus}

@@ -58,11 +58,13 @@ export class DialogRootState {
 	nestedOpenCount = $state(0);
 	readonly depth: number;
 	readonly parent: DialogRootState | null;
+	mounted = $state(false);
 
 	constructor(opts: DialogRootStateOpts, parent: DialogRootState | null) {
 		this.opts = opts;
 		this.parent = parent;
 		this.depth = parent ? parent.depth + 1 : 0;
+		this.mounted = opts.open.current;
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 
@@ -71,9 +73,20 @@ export class DialogRootState {
 			open: this.opts.open,
 			enabled: true,
 			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.mounted = false;
+				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
+
+		watch.pre(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.mounted = true;
+			}
+		);
 
 		watch(
 			() => this.opts.open.current,
