@@ -120,6 +120,7 @@
 		{loop}
 		{trapFocus}
 		isStatic
+		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, mergedProps, {
@@ -150,6 +151,7 @@
 		{loop}
 		{trapFocus}
 		isStatic
+		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, mergedProps, {

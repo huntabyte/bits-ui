@@ -52,6 +52,7 @@
 		forceMount={true}
 		{customAnchor}
 		{onCloseAutoFocus}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
@@ -81,6 +82,7 @@
 		forceMount={false}
 		{customAnchor}
 		{onCloseAutoFocus}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {

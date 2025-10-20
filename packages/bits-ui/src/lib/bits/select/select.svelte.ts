@@ -36,7 +36,7 @@ import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -95,6 +95,7 @@ abstract class SelectBaseRootState {
 	touchedInput = $state(false);
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
@@ -119,7 +120,7 @@ abstract class SelectBaseRootState {
 		this.opts = opts;
 		this.isCombobox = opts.isCombobox;
 
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
@@ -947,6 +948,10 @@ export class SelectContentState {
 	onCloseAutoFocus = (e: Event) => {
 		e.preventDefault();
 	};
+
+	get shouldRender() {
+		return this.root.contentPresence.shouldRender;
+	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 

@@ -20,8 +20,8 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 import { on } from "svelte/events";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 const collapsibleAttrs = createBitsAttrs({
 	component: "collapsible",
@@ -48,6 +48,7 @@ export class CollapsibleRootState {
 	readonly opts: CollapsibleRootStateOpts;
 	readonly attachment: RefAttachment;
 	contentNode = $state<HTMLElement | null>(null);
+	contentPresence: PresenceManager;
 	contentId = $state<string | undefined>(undefined);
 
 	constructor(opts: CollapsibleRootStateOpts) {
@@ -55,7 +56,7 @@ export class CollapsibleRootState {
 		this.toggleOpen = this.toggleOpen.bind(this);
 		this.attachment = attachRef(this.opts.ref);
 
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
@@ -176,6 +177,10 @@ export class CollapsibleContentState {
 		});
 	}
 
+	get shouldRender() {
+		return this.root.contentPresence.shouldRender;
+	}
+
 	readonly snippetProps = $derived.by(() => ({
 		open: this.root.opts.open.current,
 	}));
@@ -199,6 +204,15 @@ export class CollapsibleContentState {
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[collapsibleAttrs.content]: "",
+				...(this.opts.hiddenUntilFound.current && !this.shouldRender
+					? {}
+					: {
+							hidden: this.opts.hiddenUntilFound.current
+								? !this.shouldRender
+								: this.opts.forceMount.current
+									? undefined
+									: !this.shouldRender,
+						}),
 				...this.attachment,
 			}) as const
 	);

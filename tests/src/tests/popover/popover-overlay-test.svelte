@@ -7,7 +7,12 @@
 </script>
 
 <script lang="ts">
-	let { open = false, overlayProps, withChild = false, ...restProps }: PopoverOverlayTestProps = $props();
+	let {
+		open = false,
+		overlayProps,
+		withChild = false,
+		...restProps
+	}: PopoverOverlayTestProps = $props();
 </script>
 
 <main data-testid="main">
@@ -38,4 +43,3 @@
 	<div data-testid="outside">outside</div>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>
-
