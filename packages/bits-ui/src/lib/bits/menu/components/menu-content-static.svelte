@@ -65,6 +65,7 @@
 		forceMount={true}
 		isStatic
 		{id}
+		shouldRender={contentState.parentMenu.contentMounted}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {
@@ -95,6 +96,7 @@
 		forceMount={false}
 		isStatic
 		{id}
+		shouldRender={contentState.parentMenu.contentMounted}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {

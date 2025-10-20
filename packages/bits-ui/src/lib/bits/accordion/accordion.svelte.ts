@@ -1,6 +1,7 @@
 import {
 	afterTick,
 	attachRef,
+	boxWith,
 	type Box,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -18,6 +19,7 @@ import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { on } from "svelte/events";
+import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
@@ -183,12 +185,33 @@ export class AccordionItemState {
 		() => this.opts.disabled.current || this.root.opts.disabled.current
 	);
 	readonly attachment: RefAttachment;
+	contentNode = $state<HTMLElement | null>(null);
+	contentShouldRender = $state(false);
 
 	constructor(opts: AccordionItemStateOpts) {
 		this.opts = opts;
 		this.root = opts.rootState;
+		this.contentShouldRender = this.root.includesItem(this.opts.value.current);
 		this.updateValue = this.updateValue.bind(this);
 		this.attachment = attachRef(this.opts.ref);
+
+		watch(
+			() => this.isActive,
+			(isActive) => {
+				if (!isActive) return;
+				this.contentShouldRender = true;
+			}
+		);
+
+		new OpenChangeComplete({
+			ref: boxWith(() => this.contentNode),
+			open: boxWith(() => this.isActive),
+			onComplete: () => {
+				if (!this.isActive) {
+					this.contentShouldRender = false;
+				}
+			},
+		});
 	}
 
 	updateValue(): void {
@@ -290,7 +313,7 @@ export class AccordionContentState {
 		this.opts = opts;
 		this.item = item;
 		this.#isMountAnimationPrevented = this.item.isActive;
-		this.attachment = attachRef(this.opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => (this.item.contentNode = v));
 		// Prevent mount animations on initial render
 		$effect(() => {
 			const rAF = requestAnimationFrame(() => {
@@ -372,6 +395,15 @@ export class AccordionContentState {
 					this.opts.hiddenUntilFound.current && !this.item.isActive
 						? "until-found"
 						: undefined,
+				...(this.opts.hiddenUntilFound.current && !this.item.contentShouldRender
+					? {}
+					: {
+							hidden: this.opts.hiddenUntilFound.current
+								? !this.item.contentShouldRender
+								: this.opts.forceMount.current
+									? undefined
+									: !this.item.contentShouldRender,
+						}),
 				...this.attachment,
 			}) as const
 	);

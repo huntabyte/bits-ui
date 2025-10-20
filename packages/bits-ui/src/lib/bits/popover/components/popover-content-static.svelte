@@ -51,6 +51,7 @@
 		loop
 		forceMount={true}
 		{onCloseAutoFocus}
+		shouldRender={contentState.root.contentShouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {
@@ -78,6 +79,7 @@
 		loop
 		forceMount={false}
 		{onCloseAutoFocus}
+		shouldRender={contentState.root.contentShouldRender}
 	>
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {

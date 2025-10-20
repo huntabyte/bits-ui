@@ -128,6 +128,7 @@ export class TooltipRootState {
 			this.provider.opts.ignoreNonKeyboardFocus.current
 	);
 	contentNode = $state<HTMLElement | null>(null);
+	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	#wasOpenDelayed = $state(false);
 	#timerFn: TimeoutFn<() => void>;
@@ -139,15 +140,27 @@ export class TooltipRootState {
 	constructor(opts: TooltipRootStateOpts, provider: TooltipProviderState) {
 		this.opts = opts;
 		this.provider = provider;
+		this.contentMounted = opts.open.current;
 		this.#timerFn = new TimeoutFn(() => {
 			this.#wasOpenDelayed = true;
 			this.opts.open.current = true;
 		}, this.delayDuration ?? 0);
 
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.contentMounted = true;
+			}
+		);
+
 		new OpenChangeComplete({
 			open: this.opts.open,
 			ref: boxWith(() => this.contentNode),
 			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.contentMounted = false;
+				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});

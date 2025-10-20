@@ -4,7 +4,7 @@ import {
 	attachRef,
 	boxWith,
 } from "svelte-toolbelt";
-import { Context } from "runed";
+import { Context, watch } from "runed";
 import { kbd } from "$lib/internal/kbd.js";
 import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
 import type {
@@ -41,16 +41,43 @@ export class PopoverRootState {
 
 	readonly opts: PopoverRootStateOpts;
 	contentNode = $state<HTMLElement | null>(null);
+	contentShouldRender = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
+	overlayNode = $state<HTMLElement | null>(null);
+	overlayShouldRender = $state(false);
 
 	constructor(opts: PopoverRootStateOpts) {
 		this.opts = opts;
+		this.overlayShouldRender = opts.open.current;
+		this.contentShouldRender = opts.open.current;
+
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.overlayShouldRender = true;
+				this.contentShouldRender = true;
+			}
+		);
 
 		new OpenChangeComplete({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.contentShouldRender = false;
+				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+		});
+
+		new OpenChangeComplete({
+			ref: boxWith(() => this.overlayNode),
+			open: this.opts.open,
+			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.overlayShouldRender = false;
+				}
 			},
 		});
 	}
@@ -248,7 +275,7 @@ export class PopoverOverlayState {
 	constructor(opts: PopoverOverlayStateOpts, root: PopoverRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.overlayNode = v));
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));

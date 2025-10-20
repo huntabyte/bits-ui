@@ -48,17 +48,30 @@ export class CollapsibleRootState {
 	readonly opts: CollapsibleRootStateOpts;
 	readonly attachment: RefAttachment;
 	contentNode = $state<HTMLElement | null>(null);
+	contentShouldRender = $state(false);
 	contentId = $state<string | undefined>(undefined);
 
 	constructor(opts: CollapsibleRootStateOpts) {
 		this.opts = opts;
+		this.contentShouldRender = opts.open.current;
 		this.toggleOpen = this.toggleOpen.bind(this);
 		this.attachment = attachRef(this.opts.ref);
+
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.contentShouldRender = true;
+			}
+		);
 
 		new OpenChangeComplete({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.contentShouldRender = false;
+				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
@@ -199,6 +212,15 @@ export class CollapsibleContentState {
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[collapsibleAttrs.content]: "",
+				...(this.opts.hiddenUntilFound.current && !this.root.contentShouldRender
+					? {}
+					: {
+							hidden: this.opts.hiddenUntilFound.current
+								? !this.root.contentShouldRender
+								: this.opts.forceMount.current
+									? undefined
+									: !this.root.contentShouldRender,
+						}),
 				...this.attachment,
 			}) as const
 	);

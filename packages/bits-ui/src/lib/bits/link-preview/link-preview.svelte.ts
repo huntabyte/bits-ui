@@ -53,17 +53,30 @@ export class LinkPreviewRootState {
 	timeout: number | null = null;
 	contentNode = $state<HTMLElement | null>(null);
 	contentMounted = $state(false);
+	contentShouldRender = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
 	domContext: DOMContext = new DOMContext(() => null);
 
 	constructor(opts: LinkPreviewRootStateOpts) {
 		this.opts = opts;
+		this.contentShouldRender = opts.open.current;
+
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.contentShouldRender = true;
+			}
+		);
 
 		new OpenChangeComplete({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.contentShouldRender = false;
+				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});

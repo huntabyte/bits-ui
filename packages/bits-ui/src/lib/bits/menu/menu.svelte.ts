@@ -135,17 +135,30 @@ export class MenuMenuState {
 	readonly parentMenu: MenuMenuState | null;
 	contentId = boxWith<string>(() => "");
 	contentNode = $state<HTMLElement | null>(null);
+	contentMounted = $state(false);
 	triggerNode = $state<HTMLElement | null>(null);
 
 	constructor(opts: MenuMenuStateOpts, root: MenuRootState, parentMenu: MenuMenuState | null) {
 		this.opts = opts;
 		this.root = root;
 		this.parentMenu = parentMenu;
+		this.contentMounted = opts.open.current;
+
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.contentMounted = true;
+			}
+		);
 
 		new OpenChangeComplete({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.contentMounted = false;
+				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});

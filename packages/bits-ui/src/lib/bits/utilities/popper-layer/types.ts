@@ -55,6 +55,11 @@ export type PopperLayerImplProps = Omit<
 			 * symbol so that conflicts don't occur.
 			 */
 			tooltip?: boolean;
+
+			/**
+			 * Whether the popper layer should be rendered.
+			 */
+			shouldRender: boolean;
 		},
 	"enabled"
 >;

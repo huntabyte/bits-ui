@@ -95,6 +95,7 @@ abstract class SelectBaseRootState {
 	touchedInput = $state(false);
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	contentMounted = $state(false);
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
@@ -117,12 +118,24 @@ abstract class SelectBaseRootState {
 
 	constructor(opts: SelectBaseRootStateOpts) {
 		this.opts = opts;
+		this.contentMounted = opts.open.current;
 		this.isCombobox = opts.isCombobox;
+
+		watch(
+			() => this.opts.open.current,
+			(isOpen) => {
+				if (!isOpen) return;
+				this.contentMounted = true;
+			}
+		);
 
 		new OpenChangeComplete({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
+				if (!this.opts.open.current) {
+					this.contentMounted = false;
+				}
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
