@@ -20,7 +20,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -49,6 +49,7 @@ export class DialogRootState {
 	readonly opts: DialogRootStateOpts;
 	triggerNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	overlayNode = $state<HTMLElement | null>(null);
 	descriptionNode = $state<HTMLElement | null>(null);
 	contentId = $state<string | undefined>(undefined);
 	titleId = $state<string | undefined>(undefined);
@@ -58,6 +59,8 @@ export class DialogRootState {
 	nestedOpenCount = $state(0);
 	readonly depth: number;
 	readonly parent: DialogRootState | null;
+	contentPresence: PresenceManager;
+	overlayPresence: PresenceManager;
 
 	constructor(opts: DialogRootStateOpts, parent: DialogRootState | null) {
 		this.opts = opts;
@@ -66,13 +69,19 @@ export class DialogRootState {
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			enabled: true,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
+		});
+
+		this.overlayPresence = new PresenceManager({
+			ref: boxWith(() => this.overlayNode),
+			open: this.opts.open,
+			enabled: true,
 		});
 
 		watch(
@@ -379,6 +388,10 @@ export class DialogContentState {
 				...this.attachment,
 			}) as const
 	);
+
+	get shouldRender() {
+		return this.root.contentPresence.shouldRender;
+	}
 }
 
 interface DialogOverlayStateOpts extends WithRefOpts {}
@@ -394,7 +407,7 @@ export class DialogOverlayState {
 	constructor(opts: DialogOverlayStateOpts, root: DialogRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(this.opts.ref);
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.overlayNode = v));
 	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
@@ -415,6 +428,10 @@ export class DialogOverlayState {
 				...this.attachment,
 			}) as const
 	);
+
+	get shouldRender() {
+		return this.root.overlayPresence.shouldRender;
+	}
 }
 
 interface AlertDialogCancelStateOpts

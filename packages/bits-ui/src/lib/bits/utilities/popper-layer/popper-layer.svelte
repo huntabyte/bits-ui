@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PopperLayerImplProps } from "./types.js";
 	import PopperLayerInner from "./popper-layer-inner.svelte";
-	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
 	let {
 		popper,
@@ -40,51 +39,50 @@
 		customAnchor = null,
 		isStatic = false,
 		ref,
+		shouldRender,
 		...restProps
 	}: PopperLayerImplProps = $props();
 </script>
 
-<PresenceLayer {open} {ref}>
-	{#snippet presence()}
-		<PopperLayerInner
-			{popper}
-			{onEscapeKeydown}
-			{escapeKeydownBehavior}
-			{preventOverflowTextSelection}
-			{id}
-			{onPointerDown}
-			{onPointerUp}
-			{side}
-			{sideOffset}
-			{align}
-			{alignOffset}
-			{arrowPadding}
-			{avoidCollisions}
-			{collisionBoundary}
-			{collisionPadding}
-			{sticky}
-			{hideWhenDetached}
-			{updatePositionStrategy}
-			{strategy}
-			{dir}
-			{preventScroll}
-			{wrapperId}
-			{style}
-			{onPlaced}
-			{customAnchor}
-			{isStatic}
-			enabled={open}
-			{onInteractOutside}
-			{onCloseAutoFocus}
-			{onOpenAutoFocus}
-			{interactOutsideBehavior}
-			{loop}
-			{trapFocus}
-			{isValidEvent}
-			{onFocusOutside}
-			forceMount={false}
-			{ref}
-			{...restProps}
-		/>
-	{/snippet}
-</PresenceLayer>
+{#if shouldRender}
+	<PopperLayerInner
+		{popper}
+		{onEscapeKeydown}
+		{escapeKeydownBehavior}
+		{preventOverflowTextSelection}
+		{id}
+		{onPointerDown}
+		{onPointerUp}
+		{side}
+		{sideOffset}
+		{align}
+		{alignOffset}
+		{arrowPadding}
+		{avoidCollisions}
+		{collisionBoundary}
+		{collisionPadding}
+		{sticky}
+		{hideWhenDetached}
+		{updatePositionStrategy}
+		{strategy}
+		{dir}
+		{preventScroll}
+		{wrapperId}
+		{style}
+		{onPlaced}
+		{customAnchor}
+		{isStatic}
+		enabled={open}
+		{onInteractOutside}
+		{onCloseAutoFocus}
+		{onOpenAutoFocus}
+		{interactOutsideBehavior}
+		{loop}
+		{trapFocus}
+		{isValidEvent}
+		{onFocusOutside}
+		forceMount={false}
+		{ref}
+		{...restProps}
+	/>
+{/if}

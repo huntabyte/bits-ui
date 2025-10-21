@@ -20,7 +20,7 @@ import type {
 } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
-import { OpenChangeComplete } from "$lib/internal/open-change-complete.js";
+import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 const linkPreviewAttrs = createBitsAttrs({
 	component: "link-preview",
@@ -53,6 +53,7 @@ export class LinkPreviewRootState {
 	timeout: number | null = null;
 	contentNode = $state<HTMLElement | null>(null);
 	contentMounted = $state(false);
+	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
 	domContext: DOMContext = new DOMContext(() => null);
@@ -60,7 +61,7 @@ export class LinkPreviewRootState {
 	constructor(opts: LinkPreviewRootStateOpts) {
 		this.opts = opts;
 
-		new OpenChangeComplete({
+		this.contentPresence = new PresenceManager({
 			ref: boxWith(() => this.contentNode),
 			open: this.opts.open,
 			onComplete: () => {
@@ -292,6 +293,10 @@ export class LinkPreviewContentState {
 	onCloseAutoFocus = (e: Event) => {
 		e.preventDefault();
 	};
+
+	get shouldRender() {
+		return this.root.contentPresence.shouldRender;
+	}
 
 	readonly snippetProps = $derived.by(() => ({ open: this.root.opts.open.current }));
 

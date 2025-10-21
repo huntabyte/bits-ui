@@ -2,7 +2,6 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { CollapsibleContentState } from "../collapsible.svelte.js";
 	import type { CollapsibleContentProps } from "../types.js";
-	import { PresenceLayer } from "$lib/bits/utilities/presence-layer/index.js";
 	import { createId } from "$lib/internal/create-id.js";
 
 	const uid = $props.id();
@@ -26,28 +25,17 @@
 			(v) => (ref = v)
 		),
 	});
+
+	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
-<PresenceLayer forceMount={true} open={contentState.present} ref={contentState.opts.ref}>
-	{#snippet presence({ present })}
-		{@const mergedProps = mergeProps(
-			restProps,
-			contentState.props,
-			hiddenUntilFound && !present
-				? {}
-				: {
-						hidden: hiddenUntilFound ? !present : forceMount ? undefined : !present,
-					}
-		)}
-		{#if child}
-			{@render child({
-				...contentState.snippetProps,
-				props: mergedProps,
-			})}
-		{:else}
-			<div {...mergedProps}>
-				{@render children?.()}
-			</div>
-		{/if}
-	{/snippet}
-</PresenceLayer>
+{#if child}
+	{@render child({
+		...contentState.snippetProps,
+		props: mergedProps,
+	})}
+{:else}
+	<div {...mergedProps}>
+		{@render children?.()}
+	</div>
+{/if}

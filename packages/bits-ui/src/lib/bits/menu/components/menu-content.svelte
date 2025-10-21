@@ -69,6 +69,7 @@
 		{loop}
 		forceMount={true}
 		{id}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
@@ -100,6 +101,7 @@
 		{loop}
 		forceMount={false}
 		{id}
+		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
