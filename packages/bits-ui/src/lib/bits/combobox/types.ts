@@ -58,6 +58,8 @@ export type {
 	SelectArrowPropsWithoutHTML as ComboboxArrowPropsWithoutHTML,
 	SelectPortalProps as ComboboxPortalProps,
 	SelectPortalPropsWithoutHTML as ComboboxPortalPropsWithoutHTML,
+	SelectListPropsWithoutHTML as ComboboxListPropsWithoutHTML,
+	SelectListProps as ComboboxListProps,
 } from "$lib/bits/select/types.js";
 
 export type ComboboxInputPropsWithoutHTML = WithChild<{

@@ -9,6 +9,7 @@ export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
 export { default as Viewport } from "./components/select-viewport.svelte";
 export { default as ScrollUpButton } from "./components/select-scroll-up-button.svelte";
 export { default as ScrollDownButton } from "./components/select-scroll-down-button.svelte";
+export { default as List } from "./components/select-list.svelte";
 
 export type {
 	SelectRootProps as RootProps,
@@ -22,4 +23,5 @@ export type {
 	SelectScrollUpButtonProps as ScrollUpButtonProps,
 	SelectScrollDownButtonProps as ScrollDownButtonProps,
 	SelectPortalProps as PortalProps,
+	SelectListProps as ListProps,
 } from "./types.js";

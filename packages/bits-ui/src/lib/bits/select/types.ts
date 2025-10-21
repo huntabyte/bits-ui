@@ -292,3 +292,8 @@ export type SelectScrollDownButtonPropsWithoutHTML = SelectScrollButtonPropsWith
 
 export type SelectScrollDownButtonProps = SelectScrollDownButtonPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, SelectScrollDownButtonPropsWithoutHTML>;
+
+export type SelectListPropsWithoutHTML = WithChild;
+
+export type SelectListProps = SelectListPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, SelectListPropsWithoutHTML>;

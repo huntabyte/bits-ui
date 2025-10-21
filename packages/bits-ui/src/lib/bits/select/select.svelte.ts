@@ -65,6 +65,7 @@ const selectAttrs = createBitsAttrs({
 		"content-wrapper",
 		"item-text",
 		"value",
+		"list",
 	],
 });
 
@@ -95,6 +96,7 @@ abstract class SelectBaseRootState {
 	touchedInput = $state(false);
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
+	listNode = $state<HTMLElement | null>(null);
 	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
@@ -143,7 +145,7 @@ abstract class SelectBaseRootState {
 	}
 
 	getCandidateNodes(): HTMLElement[] {
-		const node = this.contentNode;
+		const node = this.listNode;
 		if (!node) return [];
 		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
@@ -959,8 +961,6 @@ export class SelectContentState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "listbox",
-				"aria-multiselectable": this.root.isMulti ? "true" : undefined,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				[this.root.getBitsAttr("content")]: "",
 				style: {
@@ -1512,6 +1512,46 @@ export class SelectScrollUpButtonState {
 			({
 				...this.scrollButtonState.props,
 				[this.root.getBitsAttr("scroll-up-button")]: "",
+			}) as const
+	);
+}
+
+interface SelectListStateOpts extends WithRefOpts {}
+
+export class SelectListState {
+	static create(opts: SelectListStateOpts) {
+		return new SelectListState(opts);
+	}
+	readonly opts: SelectListStateOpts;
+	readonly content: SelectContentState;
+	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SelectListStateOpts) {
+		this.opts = opts;
+		this.content = SelectContentContext.get();
+		this.root = this.content.root;
+		this.attachment = attachRef(opts.ref, (v) => {
+			this.root.listNode = v;
+		});
+	}
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				role: "listbox",
+				"aria-multiselectable": this.root.isMulti ? "true" : undefined,
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				[this.root.getBitsAttr("list")]: "",
+				style: {
+					display: "flex",
+					flexDirection: "column",
+					outline: "none",
+					boxSizing: "border-box",
+					pointerEvents: "auto",
+				},
+				...this.attachment,
 			}) as const
 	);
 }

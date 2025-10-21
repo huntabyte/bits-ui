@@ -70,38 +70,40 @@
 				{#if open}
 					<div {...wrapperProps}>
 						<div {...props} transition:fly={{ duration: 300 }}>
-							<Combobox.ScrollUpButton
-								class="flex w-full items-center justify-center"
-							>
-								<CaretDoubleUp class="size-3" />
-							</Combobox.ScrollUpButton>
-							<Combobox.Viewport class="p-1">
-								{#each filteredFruits as fruit, i (i + fruit.value)}
-									<Combobox.Item
-										class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm  capitalize"
-										value={fruit.value}
-										label={fruit.label}
-									>
-										{#snippet children({ selected })}
-											{fruit.label}
-											{#if selected}
-												<div class="ml-auto">
-													<Check />
-												</div>
-											{/if}
-										{/snippet}
-									</Combobox.Item>
-								{:else}
-									<span class="block px-5 py-2 text-sm text-muted-foreground">
-										No results found, try again.
-									</span>
-								{/each}
-							</Combobox.Viewport>
-							<Combobox.ScrollDownButton
-								class="flex w-full items-center justify-center"
-							>
-								<CaretDoubleDown class="size-3" />
-							</Combobox.ScrollDownButton>
+							<Combobox.List class="min-h-0">
+								<Combobox.ScrollUpButton
+									class="flex w-full items-center justify-center"
+								>
+									<CaretDoubleUp class="size-3" />
+								</Combobox.ScrollUpButton>
+								<Combobox.Viewport class="p-1">
+									{#each filteredFruits as fruit, i (i + fruit.value)}
+										<Combobox.Item
+											class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm  capitalize"
+											value={fruit.value}
+											label={fruit.label}
+										>
+											{#snippet children({ selected })}
+												{fruit.label}
+												{#if selected}
+													<div class="ml-auto">
+														<Check />
+													</div>
+												{/if}
+											{/snippet}
+										</Combobox.Item>
+									{:else}
+										<span class="block px-5 py-2 text-sm text-muted-foreground">
+											No results found, try again.
+										</span>
+									{/each}
+								</Combobox.Viewport>
+								<Combobox.ScrollDownButton
+									class="flex w-full items-center justify-center"
+								>
+									<CaretDoubleDown class="size-3" />
+								</Combobox.ScrollDownButton>
+							</Combobox.List>
 						</div>
 					</div>
 				{/if}

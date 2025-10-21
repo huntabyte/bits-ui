@@ -12,6 +12,7 @@ export { default as GroupHeading } from "$lib/bits/select/components/select-grou
 export { default as Viewport } from "$lib/bits/select/components/select-viewport.svelte";
 export { default as ScrollDownButton } from "$lib/bits/select/components/select-scroll-down-button.svelte";
 export { default as ScrollUpButton } from "$lib/bits/select/components/select-scroll-up-button.svelte";
+export { default as List } from "$lib/bits/select/components/select-list.svelte";
 
 export type {
 	ComboboxRootProps as RootProps,
@@ -27,4 +28,5 @@ export type {
 	ComboboxScrollDownButtonProps as ScrollDownButtonProps,
 	ComboboxScrollUpButtonProps as ScrollUpButtonProps,
 	ComboboxViewportProps as ViewportProps,
+	ComboboxListProps as ListProps,
 } from "./types.js";

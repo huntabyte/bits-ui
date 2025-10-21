@@ -55,30 +55,32 @@
 			sideOffset={10}
 			{...contentProps}
 		>
-			<Select.ScrollUpButton class="flex w-full items-center justify-center">
-				<CaretDoubleUp class="size-3" />
-			</Select.ScrollUpButton>
-			<Select.Viewport class="p-1">
-				{#each themes as theme, i (i + theme.value)}
-					<Select.Item
-						class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
-						value={theme.value}
-						label={theme.label}
-					>
-						{#snippet children({ selected })}
-							{theme.label}
-							{#if selected}
-								<div class="ml-auto">
-									<Check />
-								</div>
-							{/if}
-						{/snippet}
-					</Select.Item>
-				{/each}
-			</Select.Viewport>
-			<Select.ScrollDownButton class="flex w-full items-center justify-center">
-				<CaretDoubleDown class="size-3" />
-			</Select.ScrollDownButton>
+			<Select.List class="min-h-0">
+				<Select.ScrollUpButton class="flex w-full items-center justify-center">
+					<CaretDoubleUp class="size-3" />
+				</Select.ScrollUpButton>
+				<Select.Viewport class="p-1">
+					{#each themes as theme, i (i + theme.value)}
+						<Select.Item
+							class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
+							value={theme.value}
+							label={theme.label}
+						>
+							{#snippet children({ selected })}
+								{theme.label}
+								{#if selected}
+									<div class="ml-auto">
+										<Check />
+									</div>
+								{/if}
+							{/snippet}
+						</Select.Item>
+					{/each}
+				</Select.Viewport>
+				<Select.ScrollDownButton class="flex w-full items-center justify-center">
+					<CaretDoubleDown class="size-3" />
+				</Select.ScrollDownButton>
+			</Select.List>
 		</Select.Content>
 	</Select.Portal>
 </Select.Root>
