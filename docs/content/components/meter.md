@@ -90,14 +90,14 @@ You can then use the `MyMeter` component in your application like so:
   const max = 4000;
 </script>
 
-<MyMeter label="Tokens remaining" valueLabel="{value} / {max}" {value} {max} />
+<MyMeter label="Tokens used" valueLabel="{value} / {max}" {value} {max} />
 ```
 
 Of course, you'd want to apply your own styles and other customizations to the `MyMeter` component to fit your application's design.
 
 <br>
 
-<MeterDemoCustom value={3000} label="Tokens remaining" valueLabel="3000 / 4000" max={4000} />
+<MeterDemoCustom value={3000} label="Tokens used" valueLabel="3000 / 4000" max={4000} />
 
 ## Accessibility
 
