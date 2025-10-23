@@ -47,6 +47,7 @@ import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.
 import {
 	areAllSegmentsFilled,
 	createContent,
+	getDefaultHourCycle,
 	getValueFromSegments,
 	inferGranularity,
 	initSegmentStates,
@@ -128,9 +129,10 @@ const SEGMENT_CONFIGS: Record<
 		min: (root) => (root.hourCycle.current === 12 ? 1 : 0),
 		max: (root) => {
 			if (root.hourCycle.current === 24) return 23;
-			if ("dayPeriod" in root.segmentValues && root.segmentValues.dayPeriod !== null)
-				return 12;
-			return 23;
+			if (root.hourCycle.current === 12) return 12;
+			// if hourCycle is undefined, infer from locale
+			const inferredHourCycle = getDefaultHourCycle(root.locale.current);
+			return inferredHourCycle === 12 ? 12 : 23;
 		},
 		cycle: 1,
 		canBeZero: true,
