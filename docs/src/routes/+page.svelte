@@ -15,10 +15,13 @@
 	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
 	import { goto } from "$app/navigation";
 	import Search from "$lib/components/search.svelte";
+
+	let searchOpen = $state(false);
 </script>
 
 <svelte:window
 	onkeydown={(e) => {
+		if (searchOpen) return;
 		if (e.key === "s" && !(e.metaKey || e.ctrlKey || e.altKey || e.shiftKey)) {
 			goto("/docs");
 		}
@@ -42,7 +45,7 @@
 		>
 			<Logo />
 		</a>
-		<Search showTrigger={false} />
+		<Search showTrigger={false} bind:open={searchOpen} />
 
 		<nav class="mt-2 flex items-center text-center lg:block">
 			<ul>

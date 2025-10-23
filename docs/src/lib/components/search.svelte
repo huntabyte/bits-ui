@@ -9,7 +9,8 @@
 	} from "$lib/utils/search.js";
 	import ScrollArea from "./ui/scroll-area.svelte";
 
-	let { showTrigger = true }: { showTrigger?: boolean } = $props();
+	let { showTrigger = true, open = $bindable(false) }: { showTrigger?: boolean; open?: boolean } =
+		$props();
 
 	let searchState = $state<"loading" | "ready">("loading");
 	let searchQuery = $state("");
@@ -26,13 +27,12 @@
 		results = searchContentIndex(searchQuery);
 	});
 
-	let dialogOpen = $state(false);
 	let clearTimeoutId: number | undefined;
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
-			dialogOpen = true;
+			open = true;
 		}
 	}
 
@@ -48,7 +48,7 @@
 <svelte:document onkeydown={handleKeydown} />
 
 <Dialog.Root
-	bind:open={dialogOpen}
+	bind:open
 	onOpenChange={(o) => {
 		if (o) return;
 		clearSearchWithDelay();
@@ -56,7 +56,7 @@
 >
 	{#if showTrigger}
 		<Button.Root
-			onclick={() => (dialogOpen = true)}
+			onclick={() => (open = true)}
 			aria-label="Search Docs"
 			class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center px-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 sm:hidden"
 		>
@@ -130,7 +130,7 @@
 											class="rounded-button data-selected:bg-muted outline-hidden flex cursor-pointer select-none flex-col items-start gap-1 px-3 py-2.5 text-sm"
 											onSelect={() => {
 												searchQuery = "";
-												dialogOpen = false;
+												open = false;
 											}}
 										>
 											<div class="flex w-full items-center justify-between">
