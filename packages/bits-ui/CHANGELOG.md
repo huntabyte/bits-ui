@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.14.1
+
+### Patch Changes
+
+- chore: simplify internals ([#1853](https://github.com/huntabyte/bits-ui/pull/1853))
+
+- fix(DateField): fallback to infer hour cycle from locale ([#1859](https://github.com/huntabyte/bits-ui/pull/1859))
+
 ## 2.14.0
 
 ### Minor Changes
