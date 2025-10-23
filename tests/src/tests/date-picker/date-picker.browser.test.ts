@@ -579,47 +579,30 @@ it("should not close popover when closeOnDateSelect is false", async () => {
 
 describe("date picker - 24-hour format with locales", () => {
 	it("should allow typing hours 0-23 with non en-US locales that use 24-hour format", async () => {
-		if (navigator.userAgent.includes("WebKit")) {
-			expect(true);
-			return;
-		}
-
-		setup({
+		const t = setup({
 			granularity: "minute",
-			locale: "de-DE", // german uses 24-hour format
+			locale: "nl-NL", // dutch uses 24-hour format
 		});
 
-		const { getHour } = getTimeSegments(page.getByTestId);
-		const hour = getHour();
+		const { getHour, getMinute } = getTimeSegments(page.getByTestId);
 
-		// should not have dayPeriod for 24-hour locales
-		await expectNotExists(page.getByTestId("dayPeriod"));
+		await t.day.click();
+		await userEvent.keyboard("9");
 
-		// test typing single digit hours > 2 (issue: these get clamped to 12-hour format)
-		await hour.click();
-		await userEvent.keyboard("3");
-		await expect.element(hour).toHaveTextContent("03");
-
-		// test typing hours 13-23 (issue: these should work but currently clamp)
-		await hour.click();
-		await userEvent.keyboard("15");
-		await expect.element(hour).toHaveTextContent("15");
-
-		await hour.click();
-		await userEvent.keyboard("23");
-		await expect.element(hour).toHaveTextContent("23");
-
-		await hour.click();
-		await userEvent.keyboard("18");
-		await expect.element(hour).toHaveTextContent("18");
+		await expect.element(t.day).toHaveTextContent("09");
+		await expect.element(t.month).toHaveFocus();
+		await userEvent.keyboard("9");
+		await expect.element(t.month).toHaveTextContent("09");
+		await expect.element(t.year).toHaveFocus();
+		await userEvent.keyboard("1234");
+		await expect.element(t.year).toHaveTextContent("1234");
+		await expect.element(getHour()).toHaveFocus();
+		await userEvent.keyboard("22");
+		await expect.element(getHour()).toHaveTextContent("22");
+		await expect.element(getMinute()).toHaveFocus();
 	});
 
 	it("should allow arrow key navigation through full 0-23 range with 24-hour locales", async () => {
-		if (navigator.userAgent.includes("WebKit")) {
-			expect(true);
-			return;
-		}
-
 		const value = new CalendarDateTime(2023, 10, 12, 14, 30, 30, 0);
 		setup({
 			value,
@@ -653,11 +636,6 @@ describe("date picker - 24-hour format with locales", () => {
 	});
 
 	it("should display and allow typing hours > 12 with sv-SE locale (24-hour format)", async () => {
-		if (navigator.userAgent.includes("WebKit")) {
-			expect(true);
-			return;
-		}
-
 		const value = new CalendarDateTime(2023, 10, 12, 18, 30, 30, 0);
 		setup({
 			value,
@@ -686,11 +664,6 @@ describe("date picker - 24-hour format with locales", () => {
 	});
 
 	it("should handle ja-JP locale (24-hour format) correctly", async () => {
-		if (navigator.userAgent.includes("WebKit")) {
-			expect(true);
-			return;
-		}
-
 		const value = new CalendarDateTime(2023, 10, 12, 16, 30, 0, 0);
 		setup({
 			value,

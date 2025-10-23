@@ -17,6 +17,7 @@ import { styleToString } from "svelte-toolbelt";
 import { useId } from "$lib/internal/use-id.js";
 import { getPlaceholder } from "../placeholders.js";
 import { isZonedDateTime } from "../utils.js";
+import { getDefaultHourCycle } from "./helpers.js";
 
 export function initializeSegmentValues() {
 	const initialParts = EDITABLE_TIME_SEGMENT_PARTS.map((part) => {
@@ -81,7 +82,10 @@ function createTimeContentObj(props: CreateTimeContentObjProps) {
 			 * If we're operating in a 12 hour clock and the part is an hour, we handle
 			 * the conversion to 12 hour format with 2 digit hours and leading zeros here.
 			 */
-			if (part === "hour" && "dayPeriod" in segmentValues && props.hourCycle !== 24) {
+			const is12HourMode =
+				props.hourCycle === 12 ||
+				(props.hourCycle === undefined && getDefaultHourCycle(locale) === 12);
+			if (part === "hour" && is12HourMode) {
 				/**
 				 * If the value is over 12, we convert to 12 hour format and add leading
 				 * zeroes if the value is less than 10.
