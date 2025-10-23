@@ -55,7 +55,7 @@
 				{#if open}
 					<div {...wrapperProps}>
 						<div {...props} transition:fly={{ duration: 300 }}>
-							<Select.List class="min-h-0">
+							<Select.List>
 								<Select.ScrollUpButton
 									class="flex w-full items-center justify-center"
 								>

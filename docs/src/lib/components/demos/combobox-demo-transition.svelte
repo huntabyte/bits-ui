@@ -70,7 +70,7 @@
 				{#if open}
 					<div {...wrapperProps}>
 						<div {...props} transition:fly={{ duration: 300 }}>
-							<Combobox.List class="min-h-0">
+							<Combobox.List>
 								<Combobox.ScrollUpButton
 									class="flex w-full items-center justify-center"
 								>

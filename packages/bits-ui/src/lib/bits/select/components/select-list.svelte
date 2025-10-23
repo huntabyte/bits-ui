@@ -11,6 +11,7 @@
 		ref = $bindable(null),
 		child,
 		children,
+		style,
 		...restProps
 	}: SelectListProps = $props();
 
@@ -22,7 +23,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, listState.props));
+	const mergedProps = $derived(mergeProps(restProps, listState.props, { style }));
 </script>
 
 {#if child}

@@ -55,7 +55,7 @@
 			sideOffset={10}
 			{...contentProps}
 		>
-			<Select.List class="min-h-0">
+			<Select.List>
 				<Select.ScrollUpButton class="flex w-full items-center justify-center">
 					<CaretDoubleUp class="size-3" />
 				</Select.ScrollUpButton>

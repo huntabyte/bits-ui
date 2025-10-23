@@ -100,7 +100,7 @@ abstract class SelectBaseRootState {
 	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
-	valueId = $state("");
+	valueNode = $state<HTMLElement | null>(null);
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
 		if (!this.highlightedNode) return null;
@@ -871,6 +871,7 @@ export class SelectTriggerState {
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
 				onpointerup: this.onpointerup,
+				role: this.root.opts.items.current.length > 0 ? "combobox" : undefined,
 				...this.attachment,
 			}) as const
 	);
@@ -1545,12 +1546,39 @@ export class SelectListState {
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				[this.root.getBitsAttr("list")]: "",
 				style: {
+					minHeight: 0,
 					display: "flex",
 					flexDirection: "column",
-					outline: "none",
-					boxSizing: "border-box",
-					pointerEvents: "auto",
 				},
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface SelectValueStateOpts extends WithRefOpts {}
+
+export class SelectValueState {
+	static create(opts: SelectValueStateOpts) {
+		return new SelectValueState(opts, SelectRootContext.get());
+	}
+	readonly opts: SelectValueStateOpts;
+	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SelectValueStateOpts, root: SelectRoot) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.valueNode = v));
+	}
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				[this.root.getBitsAttr("value")]: "",
+				"data-placeholder": boolToEmptyStrOrUndef(!this.root.hasValue),
+				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				...this.attachment,
 			}) as const
 	);
