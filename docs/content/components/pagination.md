@@ -1,6 +1,6 @@
 ---
 title: Pagination
-description: Facilitates navigation between pages.
+description: Enables users to navigate through a series of pages.
 ---
 
 <script>

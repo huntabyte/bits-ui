@@ -1,6 +1,6 @@
 ---
 title: Date Range Picker
-description: Facilitates the selection of date ranges through an input and calendar-based interface.
+description: Enables users to select a range of dates using an input field and calendar interface.
 ---
 
 <script>

@@ -81,7 +81,7 @@ This section covers how to manage the `placeholder` state of the Calendar.
 
 Use `bind:placeholder` for simple, automatic state synchronization:
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
   import { Calendar } from "bits-ui";
   import { CalendarDateTime } from "@internationalized/date";
@@ -132,7 +132,7 @@ This section covers how to manage the `value` state of the Calendar.
 
 Use `bind:value` for simple, automatic state synchronization:
 
-```svelte {3,6,8}
+```svelte
 <script lang="ts">
   import { Calendar } from "bits-ui";
   import { CalendarDateTime } from "@internationalized/date";

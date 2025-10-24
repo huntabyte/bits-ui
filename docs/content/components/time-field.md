@@ -1,6 +1,6 @@
 ---
 title: Time Field
-description: Enables users to input a time within a designated field.
+description: An alternative to the native `<input type="time">` element.
 ---
 
 <script>

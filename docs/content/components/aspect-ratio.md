@@ -1,6 +1,6 @@
 ---
 title: Aspect Ratio
-description: Displays content while maintaining a specified aspect ratio, ensuring consistent visual proportions.
+description: Displays content while maintaining a specified aspect ratio.
 ---
 
 <script>

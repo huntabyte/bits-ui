@@ -1,6 +1,6 @@
 ---
 title: Tabs
-description: Organizes content into distinct sections, allowing users to switch between them.
+description: Organizes content into tabbed sections.
 ---
 
 <script>

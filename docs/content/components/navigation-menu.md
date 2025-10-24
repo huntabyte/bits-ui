@@ -1,6 +1,6 @@
 ---
 title: Navigation Menu
-description: A list of links that allow users to navigate between pages of a website.
+description: A menu that allows users to navigate between pages of a website.
 ---
 
 <script>

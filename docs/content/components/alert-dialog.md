@@ -1,6 +1,6 @@
 ---
 title: Alert Dialog
-description: A modal window that alerts users with important information and awaits their acknowledgment or action.
+description: A modal window presenting content or seeking user input without navigating away from the current context.
 ---
 
 <script>

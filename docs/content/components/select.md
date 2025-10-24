@@ -1,6 +1,6 @@
 ---
 title: Select
-description: Enables users to choose from a list of options presented in a dropdown.
+description: Enables users to pick from a list of options displayed in a dropdown.
 ---
 
 <script>

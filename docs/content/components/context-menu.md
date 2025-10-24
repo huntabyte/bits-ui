@@ -1,6 +1,6 @@
 ---
 title: Context Menu
-description: Displays options or actions relevant to a specific context or selected item, triggered by a right-click.
+description: Displays contextual options and actions triggered by right-click.
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: Range Calendar
-description: Presents a calendar view tailored for selecting date ranges.
+description: Enables users to select a range of dates using a calendar interface.
 ---
 
 <script>

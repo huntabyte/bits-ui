@@ -1,6 +1,6 @@
 ---
 title: Switch
-description: A toggle control enabling users to switch between "on" and "off" states.
+description: A toggle control that allows users to switch between "on" and "off" states.
 ---
 
 <script>

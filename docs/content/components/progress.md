@@ -1,6 +1,6 @@
 ---
 title: Progress
-description: Visualizes the progress or completion status of a task or process.
+description: Shows the completion status of a task.
 ---
 
 <script>

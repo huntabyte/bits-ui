@@ -1,6 +1,6 @@
 ---
 title: Date Field
-description: Enables users to input a date within a designated field.
+description: An alternative to the native `<input type="date">` element.
 ---
 
 <script>

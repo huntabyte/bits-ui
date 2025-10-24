@@ -1,6 +1,6 @@
 ---
 title: Checkbox
-description: Allow users to switch between checked, unchecked, and indeterminate states.
+description: Enables users to select or deselect options with support for indeterminate states.
 ---
 
 <script>

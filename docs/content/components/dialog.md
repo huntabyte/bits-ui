@@ -1,6 +1,6 @@
 ---
 title: Dialog
-description: A modal window presenting content or seeking user input without navigating away from the current context.
+description: A modal window for displaying content or requesting user input.
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: Collapsible
-description: Conceals or reveals content sections, enhancing space utilization and organization.
+description: Conceals or reveals content sections.
 ---
 
 <script>

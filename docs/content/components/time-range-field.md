@@ -1,6 +1,6 @@
 ---
 title: Time Range Field
-description: Allows users to input a range of times within a designated field.
+description: Enables users to input a range of times within a designated field.
 ---
 
 <script>
