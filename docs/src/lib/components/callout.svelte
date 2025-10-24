@@ -25,9 +25,7 @@
 		</Alert.Title>
 	{/if}
 
-	<Alert.Description
-		class="[&_code]:!bg-dark-10 [&_code]:!text-foreground leading-relaxed [&>p]:text-[15px] [&>p]:leading-7"
-	>
+	<Alert.Description class="leading-relaxed [&>p]:text-[15px] [&>p]:leading-7">
 		{@render children?.()}
 	</Alert.Description>
 </Alert.Root>

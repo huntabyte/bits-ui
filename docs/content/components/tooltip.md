@@ -1,6 +1,6 @@
 ---
 title: Tooltip
-description: Provides additional information or context when users hover over or interact with an element.
+description: Displays supplementary information when users hover over or interact with an element.
 ---
 
 <script>

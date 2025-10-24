@@ -1,6 +1,6 @@
 ---
 title: Date Range Field
-description: Allows users to input a range of dates within a designated field.
+description: Enables users to input a range of dates within a designated field.
 ---
 
 <script>

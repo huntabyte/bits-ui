@@ -1,6 +1,6 @@
 ---
 title: Popover
-description: Display supplementary content or information when users interact with specific elements.
+description: Displays rich content in a floating panel anchored to a trigger element.
 ---
 
 <script>

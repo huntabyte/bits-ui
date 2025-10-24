@@ -1,6 +1,6 @@
 ---
 title: Toggle
-description: A control element that switches between two states, providing a binary choice.
+description: A toggle control that allows users to switch between two states.
 ---
 
 <script>

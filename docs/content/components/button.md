@@ -1,6 +1,6 @@
 ---
 title: Button
-description: A component that if passed a `href` prop will render an anchor element instead of a button element.
+description: A component that can switch between a button and an anchor tag based on the `href` prop.
 ---
 
 <script>

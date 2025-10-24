@@ -1,6 +1,6 @@
 ---
 title: Menubar
-description: Organizes and presents a collection of menu options or actions within a horizontal bar.
+description: A horizontal bar containing a collection of menus.
 ---
 
 <script>

@@ -1,6 +1,6 @@
 ---
 title: Radio Group
-description: Allows users to select a single option from a list of mutually exclusive choices.
+description: Groups multiple radio items under a common name for form submission.
 ---
 
 <script>

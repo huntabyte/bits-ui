@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
 @import "tailwindcss";
@@ -145,7 +146,7 @@
 	--animate-exit-to-right: exit-to-right 0.2s ease;
 
 	--font-sans: "Inter", sans-serif;
-	--font-mono: "Source Code Pro", monospace;
+	--font-mono: "JetBrains Mono", monospace;
 	--font-alt: "Courier", sans-serif;
 	--font-display: "Cal Sans", sans-serif;
 

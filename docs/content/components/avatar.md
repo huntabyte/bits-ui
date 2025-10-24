@@ -1,6 +1,6 @@
 ---
 title: Avatar
-description: Represents a user or entity with a recognizable image or placeholder in UI elements.
+description: Represents an entity with an image and fallback placeholder.
 ---
 
 <script>

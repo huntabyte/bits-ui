@@ -1,6 +1,6 @@
 ---
 title: Rating Group
-description: Allows users to provide ratings using customizable items (like stars).
+description: Enables users to provide ratings using customizable items (like stars).
 ---
 
 <script>

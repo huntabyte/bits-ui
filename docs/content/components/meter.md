@@ -1,6 +1,6 @@
 ---
 title: Meter
-description: Display real-time measurements within a defined range.
+description: Displays a static measurement within a known range.
 ---
 
 <script>

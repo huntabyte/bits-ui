@@ -1,6 +1,6 @@
 ---
 title: PIN Input
-description: Allows users to input a sequence of one-character alphanumeric inputs.
+description: Enables users to input a sequence of one-character inputs.
 ---
 
 <script>

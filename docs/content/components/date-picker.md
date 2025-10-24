@@ -1,6 +1,6 @@
 ---
 title: Date Picker
-description: Facilitates the selection of dates through an input and calendar-based interface.
+description: Enables users to select dates using an input field and calendar interface.
 ---
 
 <script>

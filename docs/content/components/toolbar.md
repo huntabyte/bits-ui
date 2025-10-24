@@ -1,6 +1,6 @@
 ---
 title: Toolbar
-description: Displays frequently used actions or tools in a compact, easily accessible bar.
+description: Displays frequently used actions or tools in a compact and easily accessible bar.
 ---
 
 <script>

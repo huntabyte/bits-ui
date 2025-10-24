@@ -1,6 +1,6 @@
 ---
 title: Command
-description: A command menu component that can be used to search, filter, and select items.
+description: A command menu component that enables users to search, filter, and select items.
 ---
 
 <script>
