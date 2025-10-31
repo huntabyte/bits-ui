@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.14.2
+
+### Patch Changes
+
+- added $bindable to menu.root value ([#1868](https://github.com/huntabyte/bits-ui/pull/1868))
+
 ## 2.14.1
 
 ### Patch Changes
