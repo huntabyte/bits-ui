@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.14.3
+
+### Patch Changes
+
+- fix(Tooltip): ensure hovering between triggers of the same provider is smooth ([#1875](https://github.com/huntabyte/bits-ui/pull/1875))
+
 ## 2.14.2
 
 ### Patch Changes
