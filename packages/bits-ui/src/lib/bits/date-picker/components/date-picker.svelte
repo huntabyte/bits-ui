@@ -53,6 +53,8 @@
 	const defaultPlaceholder = getDefaultDate({
 		granularity,
 		defaultValue: value,
+		minValue,
+		maxValue,
 	});
 
 	function handleDefaultPlaceholder() {
