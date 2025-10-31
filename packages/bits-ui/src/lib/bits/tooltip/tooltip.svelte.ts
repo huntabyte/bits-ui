@@ -265,6 +265,16 @@ export class TooltipTriggerState {
 		);
 	};
 
+	#onpointerenter: PointerEventHandler<HTMLElement> = (e) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch") return;
+
+		if (this.root.provider.isPointerInTransit.current) return;
+
+		this.root.onTriggerEnter();
+		this.#hasPointerMoveOpened = true;
+	};
+
 	#onpointermove: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled) return;
 		if (e.pointerType === "touch") return;
@@ -314,6 +324,7 @@ export class TooltipTriggerState {
 				disabled: this.opts.disabled.current,
 				onpointerup: this.#onpointerup,
 				onpointerdown: this.#onpointerdown,
+				onpointerenter: this.#onpointerenter,
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
 				onfocus: this.#onfocus,
