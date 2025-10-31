@@ -12,7 +12,7 @@
 		children,
 		child,
 		ref = $bindable(null),
-		value = "",
+		value = $bindable(""),
 		dir = "ltr",
 		loop = true,
 		onValueChange = noop,
