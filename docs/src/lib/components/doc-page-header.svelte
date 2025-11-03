@@ -8,7 +8,6 @@
 	import { page } from "$app/state";
 	import Check from "phosphor-svelte/lib/Check";
 	import CopyPageDropdown from "./copy-page-dropdown.svelte";
-  import { onDestroy, onMount } from "svelte";
   import { watch } from "runed";
 
 	let { metadata }: { metadata: DocMetadata } = $props();
@@ -56,7 +55,7 @@
 			<button
 				class="hover:bg-muted/50 text-foreground-alt hover:text-foreground flex h-8 select-none items-center gap-1.5 rounded-md rounded-r-none border border-r-0 px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
         onmouseenter={fetchText}
-        onfoucs={fetchText}
+        onfocus={fetchText}
         onclick={copyMarkdown}
 			>
 				Copy Page
