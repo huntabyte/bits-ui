@@ -69,6 +69,8 @@ export class FloatingRootState {
 			} else {
 				this.anchorNode.current = this.triggerNode.current;
 			}
+
+			this.anchorNode.current;
 		});
 	}
 }
