@@ -61,7 +61,9 @@
 		"unist-util-visit": "^5.0.0",
 		"velite": "^0.2.4",
 		"vite": "catalog:",
-		"vite-plugin-devtools-json": "^1.0.0"
+		"vite-plugin-devtools-json": "^1.0.0",
+		"rehype-remove-comments": "^6.1.1",
+		"unist-util-visit-parents": "^6.0.2"
 	},
 	"type": "module"
 }
