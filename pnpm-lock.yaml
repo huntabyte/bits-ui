@@ -164,6 +164,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.11
+      '@types/unist':
+        specifier: ^3.0.3
+        version: 3.0.3
       bits-ui:
         specifier: workspace:*
         version: link:../packages/bits-ui

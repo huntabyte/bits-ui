@@ -5,6 +5,7 @@ import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
 import remarkGfm from "remark-gfm";
 import { visitParents } from "unist-util-visit-parents";
+import type { Node } from "unist";
 import { basename, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
@@ -49,9 +50,9 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<FileMa
  * Custom remark plugin to clean up code blocks by removing excessive blank lines.
  */
 function remarkCleanCodeBlocks() {
-	return (tree: any) => {
-		function visit(node: any) {
-			if (node.type === 'code' && node.value) {
+	return (tree: Node) => {
+		function visit(node: Node) {
+			if (node.type === 'code' && 'value' in node && typeof node.value === 'string') {
 				// Remove lines that only contain whitespace
 				node.value = node.value
 					.split('\n')
@@ -59,9 +60,9 @@ function remarkCleanCodeBlocks() {
 					.join('\n').trim();
 			}
 
-			if (node.children) {
+			if ('children' in node && Array.isArray(node.children)) {
 				for (const child of node.children) {
-					visit(child);
+					visit(child as Node);
 				}
 			}
 		}
@@ -75,12 +76,12 @@ function remarkCleanCodeBlocks() {
  * This is a special case, and the easiest way to handle it is to just manually decode it.
  */
 function remarkDecodeTableEntities() {
-	return (tree: any) => {
-		visitParents(tree, 'text', (node: any, ancestors: any[]) => {
+	return (tree: Node) => {
+		visitParents(tree, 'text', (node: Node, ancestors: Node[]) => {
 			// Check if any ancestor is a tableCell
 			const isInTableCell = ancestors.some((ancestor) => ancestor.type === 'tableCell');
 
-			if (isInTableCell) {
+			if (isInTableCell && 'value' in node && typeof node.value === 'string') {
 				node.value = node.value
 					.replace(/\\&#123;/g, "{")
 					.replace(/\\&#125;/g, "}")
