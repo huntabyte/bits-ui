@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.14.3
+
+### Patch Changes
+
+- fix(ContextMenu): allow overriding tabindex of trigger ([#1887](https://github.com/huntabyte/bits-ui/pull/1887))
+
+- fix(Calendar, DateField, DatePicker, DateRangeField, DateRangePicker, RangeCalendar): Change default placeholder behaviour to choose the closest available value to current date, in case current date is outside of allowed range by minValue and maxValue. ([#1874](https://github.com/huntabyte/bits-ui/pull/1874))
+
 ## 2.14.2
 
 ### Patch Changes
