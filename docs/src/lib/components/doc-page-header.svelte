@@ -13,7 +13,6 @@
 	let { metadata }: { metadata: DocMetadata } = $props();
 
 	let text = $state("");
-	let fetched = $state(false);
 	const copyState = new CopyToClipboard();
 
 	function copyMarkdown() {
@@ -22,8 +21,7 @@
 	}
 
 	async function fetchText() {
-		if (fetched) return;
-		fetched = true;
+		if (text !== "") return;
 
 		const url = page.url.origin + page.url.pathname + "/llms.txt";
 		const res = await fetch(url);
@@ -33,7 +31,6 @@
 	watch(
 		() => page.url.pathname,
 		() => {
-			fetched = false;
 			text = "";
 		}
 	);
