@@ -71,7 +71,7 @@ The `placeholder` prop for the `Calendar.Root` component determines what date ou
 
 As the user navigates through the calendar, the `placeholder` will be updated to reflect the currently focused date in that view.
 
-By default, the `placeholder` will be set to the current date, and be of type `CalendarDate`.
+By default, the `placeholder` will be set to the closed alowed (by `maxValue`, `minValue`) value to current date, and be of type `CalendarDate`.
 
 ## Managing Placeholder State
 

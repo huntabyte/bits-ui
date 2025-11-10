@@ -301,6 +301,22 @@ describe("type='single'", () => {
 			await addMonthBtn.click();
 			await expect.element(heading).toHaveTextContent("May 1981");
 		});
+
+		it("should set default placeholder greater than `minValue`", async () => {
+			const currentYear = new Date().getFullYear();
+			const minValue = new CalendarDate(currentYear + 2, 2, 1);
+			setup({ minValue });
+			const heading = page.getByTestId("heading");
+			await expect.element(heading).toHaveTextContent(`February ${minValue.year}`);
+		});
+
+		it("should set default placeholder lower than `maxValue`", async () => {
+			const currentYear = new Date().getFullYear();
+			const maxValue = new CalendarDate(currentYear - 2, 11, 11);
+			setup({ maxValue });
+			const heading = page.getByTestId("heading");
+			await expect.element(heading).toHaveTextContent(`November ${maxValue.year}`);
+		});
 	});
 
 	describe("Selection and Deselection", () => {

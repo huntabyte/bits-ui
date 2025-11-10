@@ -103,7 +103,7 @@ Notice that in the `MyDateField` component we created, we're styling the `DateFi
 
 The `placeholder` prop for the `DateField.Root` component isn't what is displayed when the field is empty, but rather what date our field should start with when the user attempts to cycle through the segments. The placeholder can also be used to set a granularity for the date field, which will determine which type of `DateValue` object is used for the `value`.
 
-By default, the `placeholder` will be set to the current date, and be of type `CalendarDate`. However, if we wanted this date field to also allow for selecting a time, we could set the placeholder to a `CalendarDateTime` object.
+By default, the `placeholder` will be set to the closed alowed (by `maxValue`, `minValue`) value to current date, and be of type `CalendarDate`. However, if we wanted this date field to also allow for selecting a time, we could set the placeholder to a `CalendarDateTime` object.
 
 ```svelte
 <script lang="ts">

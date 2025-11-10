@@ -446,6 +446,22 @@ it("should not navigate before `minValue` (with keyboard)", async () => {
 	await expect.element(heading).toHaveTextContent("December 1979");
 });
 
+it("should set default placeholder greater than `minValue`", async () => {
+	const currentYear = new Date().getFullYear();
+	const minValue = new CalendarDate(currentYear + 2, 2, 1);
+	await open({minValue});
+	const heading = page.getByTestId("heading");
+	await expect.element(heading).toHaveTextContent(`February ${minValue.year}`);
+});
+
+it("should set default placeholder lower than `maxValue`", async () => {
+	const currentYear = new Date().getFullYear();
+	const maxValue = new CalendarDate(currentYear - 2, 11, 11);
+	await open({maxValue});
+	const heading = page.getByTestId("heading");
+	await expect.element(heading).toHaveTextContent(`November ${maxValue.year}`);
+});
+
 it("should handle unavailable dates appropriately", async () => {
 	await open({
 		placeholder: testDate,

@@ -44,7 +44,12 @@
 
 	function handleDefaultPlaceholder() {
 		if (placeholder !== undefined) return;
-		const defaultPlaceholder = getDefaultDate({ granularity, defaultValue: value?.start });
+		const defaultPlaceholder = getDefaultDate({
+			granularity,
+			defaultValue: value?.start,
+			minValue,
+			maxValue,
+		});
 		placeholder = defaultPlaceholder;
 	}
 
