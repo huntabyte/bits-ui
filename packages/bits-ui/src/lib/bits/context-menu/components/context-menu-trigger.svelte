@@ -30,6 +30,7 @@
 			{ style: { pointerEvents: "auto" } },
 			{
 				style: restProps.style,
+				tabindex: restProps.tabindex,
 			}
 		)
 	);
