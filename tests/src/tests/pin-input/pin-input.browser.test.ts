@@ -221,7 +221,7 @@ it("should allow pasting more than the max-length if transformation is provided"
 	expect(mockComplete).toHaveBeenCalledWith("123456");
 });
 
-it.only("should handle ArrowLeft navigation correctly", async () => {
+it("should handle ArrowLeft navigation correctly", async () => {
 	const t = setup();
 
 	await t.hiddenInput.click();
@@ -234,10 +234,12 @@ it.only("should handle ArrowLeft navigation correctly", async () => {
 
 	await userEvent.keyboard(kbd.ARROW_LEFT);
 	await expect.element(t.cells[3]).toHaveAttribute("data-active");
-	await tick();
-	await expect.element(t.cells[3]).toHaveAttribute("data-active");
 	await expect.element(t.cells[4]).not.toHaveAttribute("data-active");
 	await expect.element(t.cells[2]).not.toHaveAttribute("data-active");
+
+	await userEvent.keyboard(kbd.ARROW_LEFT);
+	await expect.element(t.cells[2]).toHaveAttribute("data-active");
+	await expect.element(t.cells[3]).not.toHaveAttribute("data-active");
 
 	await userEvent.keyboard(kbd.ARROW_LEFT);
 	await expect.element(t.cells[1]).toHaveAttribute("data-active");
@@ -281,6 +283,9 @@ it("should correctly replace characters when navigating back with ArrowLeft and 
 	await expect.element(t.hiddenInput).toHaveValue("1234");
 
 	// navigate back using ArrowLeft
+	await userEvent.keyboard(kbd.ARROW_LEFT);
+	await expect.element(t.cells[3]).toHaveAttribute("data-active");
+
 	await userEvent.keyboard(kbd.ARROW_LEFT);
 	await expect.element(t.cells[2]).toHaveAttribute("data-active");
 

@@ -350,14 +350,14 @@ export class PinInputRootState {
 				} else if (maxLength > 1 && val.length > 1) {
 					let offset = 0;
 					if (prev[0] !== null && prev[1] !== null) {
-						direction = c < prev[0] ? "backward" : "forward";
+						direction = c < prev[1] ? "backward" : "forward";
 						const wasPreviouslyInserting = prev[0] === prev[1] && prev[0] < maxLength;
 						if (direction === "backward" && !wasPreviouslyInserting) {
 							offset = -1;
 						}
 					}
 
-					start = offset - c;
+					start = offset + c;
 					end = offset + c + 1;
 				}
 			}
