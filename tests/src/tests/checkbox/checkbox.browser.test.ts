@@ -280,6 +280,23 @@ describe("Checkbox Group", () => {
 			expect(submittedValues).toEqual(["a", "b"]);
 		});
 
+		it("should submit the form when `Enter` is pressed on a checkbox", async () => {
+			let submittedValues: string[] | undefined;
+			const t = setupGroup({
+				name: "myGroup",
+				onFormSubmit: (fd) => {
+					submittedValues = fd.getAll("myGroup") as string[];
+				},
+			});
+			const [a] = t.checkboxes;
+			await a.click();
+			await expectChecked(a);
+			(a.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.ENTER);
+			expect(submittedValues).toEqual(["a"]);
+			await expectChecked(a);
+		});
+
 		it("should handle binding value", async () => {
 			const t = setupGroup();
 			const [a, b, _, d] = t.checkboxes;
