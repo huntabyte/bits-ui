@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.14.4
+
+### Patch Changes
+
+- fix(Command): scroll initial selected into view ([#1896](https://github.com/huntabyte/bits-ui/pull/1896))
+
 ## 2.14.3
 
 ### Patch Changes
