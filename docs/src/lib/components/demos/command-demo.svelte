@@ -9,7 +9,6 @@
 </script>
 
 <Command.Root
-	value="combobox"
 	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
 >
 	<Command.Input
@@ -74,7 +73,6 @@
 					<Command.Item
 						class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 						keywords={["inputs", "text", "autocomplete"]}
-						value="combobox"
 					>
 						<Textbox class="size-4" />
 						Combobox
