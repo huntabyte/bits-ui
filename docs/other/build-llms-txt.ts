@@ -1,8 +1,11 @@
 import { unified } from "unified";
 import rehypeParse from "rehype-parse";
+import rehypeRemoveComments from "rehype-remove-comments";
 import rehypeRemark from "rehype-remark";
 import remarkStringify from "remark-stringify";
 import remarkGfm from "remark-gfm";
+import { visitParents } from "unist-util-visit-parents";
+import type { Node } from "unist";
 import { basename, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
@@ -43,20 +46,55 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<FileMa
 	}
 }
 
-const REGEX_PATTERNS = {
-	multipleNewlines: /\n{3,}/g,
-	bulletSpacing: /- \n\s+/g,
-	multiLineBullets: /(- [^\n]*)(?:\n\s+([^\n-][^\n]*))/g,
-	startLineSpaces: /(\n|^)[ \t]+\n/g,
-	endLineSpaces: /\n[ \t]+($|\n)/g,
-	inlineCodeBefore: /(\S+)\s*\n\s*(`[^`]+?`)/g,
-	inlineCodeAfter: /(`[^`]+?`)\s*\n\s*(\S+)/g,
-	parenCodeStart: /\(\s*\n\s*(`[^`]+?`)/g,
-	parenCodeEnd: /(`[^`]+?`)\s*\n\s*\)/g,
-	escapedBackticks: /\\`([^`]+?)\\`/g,
-	codeBlockIndent: /```([a-z]*)\n\t/g,
-	htmlComments: /<!--.*?-->/gs,
-} as const;
+/**
+ * Custom remark plugin to clean up code blocks by removing excessive blank lines.
+ */
+function remarkCleanCodeBlocks() {
+	return (tree: Node) => {
+		function visit(node: Node) {
+			if (node.type === 'code' && 'value' in node && typeof node.value === 'string') {
+				// Remove lines that only contain whitespace
+				node.value = node.value
+					.split('\n')
+					.filter((line: string) => line.trim().length > 0)
+					.join('\n').trim();
+			}
+
+			if ('children' in node && Array.isArray(node.children)) {
+				for (const child of node.children) {
+					visit(child as Node);
+				}
+			}
+		}
+
+		visit(tree);
+	};
+}
+
+/**
+ * Text inside parameter tables is double-html-encodes, meaning > becomes &gt; becomes &amp;gt;;
+ * This is a special case, and the easiest way to handle it is to just manually decode it.
+ */
+function remarkDecodeTableEntities() {
+	return (tree: Node) => {
+		visitParents(tree, 'text', (node: Node, ancestors: Node[]) => {
+			// Check if any ancestor is a tableCell
+			const isInTableCell = ancestors.some((ancestor) => ancestor.type === 'tableCell');
+
+			if (isInTableCell && 'value' in node && typeof node.value === 'string') {
+				node.value = node.value
+					.replace(/\\&#123;/g, "{")
+					.replace(/\\&#125;/g, "}")
+					.replace(/\\&amp;/g, "&")
+					.replace(/&#123;/g, "{")
+					.replace(/&#125;/g, "}")
+					.replace(/&lt;/g, "<")
+					.replace(/&gt;/g, ">")
+					.replace(/&amp;/g, "&");
+			}
+		});
+	};
+}
 
 async function transformAndSaveMarkdown(rawHtml: string) {
 	const dom = new JSDOM(rawHtml);
@@ -84,8 +122,11 @@ async function transformAndSaveMarkdown(rawHtml: string) {
 
 	const file = await unified()
 		.use(rehypeParse)
+		.use(rehypeRemoveComments)
 		.use(rehypeRemark)
 		.use(remarkGfm)
+		.use(remarkCleanCodeBlocks)
+		.use(remarkDecodeTableEntities)
 		.use(remarkStringify, {
 			bullet: "-",
 			listItemIndent: "one",
@@ -94,27 +135,7 @@ async function transformAndSaveMarkdown(rawHtml: string) {
 		})
 		.process(html);
 
-	const sanitizedFile = String(file)
-		.replace(REGEX_PATTERNS.htmlComments, "")
-		.replace(REGEX_PATTERNS.multipleNewlines, "\n\n")
-		.replace(REGEX_PATTERNS.bulletSpacing, "- ")
-		.replace(REGEX_PATTERNS.multiLineBullets, "$1 $2")
-		.replace(REGEX_PATTERNS.startLineSpaces, "$1")
-		.replace(REGEX_PATTERNS.endLineSpaces, "$1")
-		.replace(REGEX_PATTERNS.inlineCodeBefore, "$1 $2")
-		.replace(REGEX_PATTERNS.inlineCodeAfter, "$1 $2")
-		.replace(REGEX_PATTERNS.parenCodeStart, "($1")
-		.replace(REGEX_PATTERNS.parenCodeEnd, "$1)")
-		.replace(REGEX_PATTERNS.escapedBackticks, "`$1`")
-		.replace(REGEX_PATTERNS.codeBlockIndent, "```$1\n")
-		.replace(/\u00C2/g, "") // Â
-		.replace(/\u2014/g, "") // â€”
-		// oxlint-disable-next-line no-control-regex
-		.replace(/[^\u0000-\u007F]/g, "")
-		.replaceAll("\t", " ")
-		.trim();
-
-	return sanitizedFile;
+	return String(file).trim();
 }
 
 async function generateRootLLMsTxt(fileNames: string[]) {
