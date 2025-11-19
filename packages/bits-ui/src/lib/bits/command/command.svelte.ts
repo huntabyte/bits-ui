@@ -193,6 +193,9 @@ export class CommandRootState {
 			// we select the first item.
 			if (!this._commandState.value || !this.#isInitialMount) {
 				this.#selectFirstItem();
+			} else if (this.#isInitialMount && this._commandState.value) {
+				// scroll the initial value into view if it exists
+				this.#scrollInitialValue();
 			}
 			return;
 		}
@@ -293,6 +296,20 @@ export class CommandRootState {
 			const shouldPreventScroll =
 				this.#isInitialMount && this.opts.disableInitialScroll.current;
 			this.setValue(value ?? "", shouldPreventScroll);
+			this.#isInitialMount = false;
+		});
+	}
+
+	/**
+	 * Scrolls the initial value into view if it exists and is not the first item.
+	 * Called during initial mount when a value is provided.
+	 */
+	#scrollInitialValue(): void {
+		afterTick(() => {
+			const shouldPreventScroll = this.opts.disableInitialScroll.current;
+			if (!shouldPreventScroll) {
+				this.#scrollSelectedIntoView();
+			}
 			this.#isInitialMount = false;
 		});
 	}
