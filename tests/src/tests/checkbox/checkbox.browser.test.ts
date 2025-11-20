@@ -2,7 +2,6 @@ import { page, userEvent, type Locator } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { type ComponentProps, tick } from "svelte";
-import type { Checkbox } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import CheckboxTest from "./checkbox-test.svelte";
 import CheckboxGroupTest from "./checkbox-group-test.svelte";
@@ -12,7 +11,7 @@ const kbd = getTestKbd();
 
 const groupItems = ["a", "b", "c", "d"];
 
-function setup(props?: Checkbox.RootProps) {
+function setup(props?: ComponentProps<typeof CheckboxTest>) {
 	const returned = render(CheckboxTest, props);
 	const root = page.getByTestId("root");
 	return { ...returned, root };
@@ -153,7 +152,7 @@ describe("Single Checkbox", () => {
 			let submittedValues: FormDataEntryValue[] | undefined;
 			const t = setup({
 				type: "submit",
-				onFormSubmit: (fd) => {
+				onFormSubmit: (fd: FormData) => {
 					submittedValues = fd.getAll("terms");
 				},
 			});
@@ -169,7 +168,7 @@ describe("Single Checkbox", () => {
 			let submittedValues: FormDataEntryValue[] | undefined;
 			const t = setup({
 				type: "button",
-				onFormSubmit: (fd) => {
+				onFormSubmit: (fd: FormData) => {
 					submittedValues = fd.getAll("terms");
 				},
 			});
@@ -298,7 +297,7 @@ describe("Checkbox Group", () => {
 			let submittedValues: string[] | undefined;
 			const t = setupGroup({
 				name: "myGroup",
-				onFormSubmit: (fd) => {
+				onFormSubmit: (fd: FormData) => {
 					submittedValues = fd.getAll("myGroup") as string[];
 				},
 			});
@@ -317,7 +316,7 @@ describe("Checkbox Group", () => {
 			const t = setupGroup({
 				name: "myGroup",
 				type: "submit",
-				onFormSubmit: (fd) => {
+				onFormSubmit: (fd: FormData) => {
 					submittedValues = fd.getAll("myGroup") as string[];
 				},
 			});
@@ -334,7 +333,7 @@ describe("Checkbox Group", () => {
 			let submittedValues: string[] | undefined;
 			const t = setupGroup({
 				name: "myGroup",
-				onFormSubmit: (fd) => {
+				onFormSubmit: (fd: FormData) => {
 					submittedValues = fd.getAll("myGroup") as string[];
 				},
 			});
