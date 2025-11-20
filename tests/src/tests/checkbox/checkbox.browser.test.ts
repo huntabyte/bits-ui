@@ -148,6 +148,38 @@ describe("Single Checkbox", () => {
 			await expect.element(indicator).not.toHaveTextContent("indeterminate");
 			await expect.element(page.getByRole("checkbox")).not.toBeChecked();
 		});
+
+		it("should submit the form when the `Enter` key is pressed with type='submit'", async () => {
+			let submittedValues: FormDataEntryValue[] | undefined;
+			const t = setup({
+				type: "submit",
+				onFormSubmit: (fd) => {
+					submittedValues = fd.getAll("terms");
+				},
+			});
+			await t.root.click();
+			await expectChecked(t.root);
+			(t.root.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.ENTER);
+			expect(submittedValues).toEqual(["on"]);
+			await expectChecked(t.root);
+		});
+
+		it("should not toggle or submit the form when `Enter` is pressed on a checkbox with type='button'", async () => {
+			let submittedValues: FormDataEntryValue[] | undefined;
+			const t = setup({
+				type: "button",
+				onFormSubmit: (fd) => {
+					submittedValues = fd.getAll("terms");
+				},
+			});
+			await t.root.click();
+			await expectChecked(t.root);
+			(t.root.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.ENTER);
+			expect(submittedValues).toBeUndefined();
+			await expectChecked(t.root);
+		});
 	});
 
 	describe("Props and Events", () => {
@@ -280,7 +312,25 @@ describe("Checkbox Group", () => {
 			expect(submittedValues).toEqual(["a", "b"]);
 		});
 
-		it("should submit the form when `Enter` is pressed on a checkbox", async () => {
+		it("should submit the form when `Enter` is pressed on a checkbox with type='submit'", async () => {
+			let submittedValues: string[] | undefined;
+			const t = setupGroup({
+				name: "myGroup",
+				type: "submit",
+				onFormSubmit: (fd) => {
+					submittedValues = fd.getAll("myGroup") as string[];
+				},
+			});
+			const [a] = t.checkboxes;
+			await a.click();
+			await expectChecked(a);
+			(a.element() as HTMLElement).focus();
+			await userEvent.keyboard(kbd.ENTER);
+			expect(submittedValues).toEqual(["a"]);
+			await expectChecked(a);
+		});
+
+		it("should not toggle or submit the form when `Enter` is pressed on a checkbox with default type", async () => {
 			let submittedValues: string[] | undefined;
 			const t = setupGroup({
 				name: "myGroup",
@@ -293,7 +343,7 @@ describe("Checkbox Group", () => {
 			await expectChecked(a);
 			(a.element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ENTER);
-			expect(submittedValues).toEqual(["a"]);
+			expect(submittedValues).toBeUndefined();
 			await expectChecked(a);
 		});
 

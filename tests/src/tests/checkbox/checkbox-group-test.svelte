@@ -6,6 +6,7 @@
 		items = [],
 		disabledItems = [],
 		readonlyItems = [],
+		type,
 		onFormSubmit,
 		getValue: getValueProp,
 		setValue: setValueProp,
@@ -17,6 +18,7 @@
 		items?: string[];
 		disabledItems?: string[];
 		readonlyItems?: string[];
+		type?: "submit";
 		onFormSubmit?: (fd: FormData) => void;
 		setValue?: (value: string[]) => void;
 		getValue?: () => string[];
@@ -31,6 +33,7 @@
 		value={itemValue}
 		disabled={disabledItems?.includes(itemValue)}
 		readonly={readonlyItems?.includes(itemValue)}
+		{type}
 	>
 		{#snippet children({ checked, indeterminate })}
 			<span data-testid="{itemValue}-indicator">
