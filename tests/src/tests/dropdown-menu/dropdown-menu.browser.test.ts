@@ -447,7 +447,7 @@ it("calls `onValueChange` when the value of the checkbox group changes", async (
 	expect(onValueChange).toHaveBeenCalledWith(["1"]);
 });
 
-it("should only call the `onValueChange` callback once when the value of the checkbox group changes", async () => {
+it("should only call `onValueChange` once when the value of the checkbox group changes", async () => {
 	const onValueChange = vi.fn();
 	await open({
 		checkboxGroupProps: {
@@ -456,10 +456,10 @@ it("should only call the `onValueChange` callback once when the value of the che
 	});
 	await page.getByTestId("checkbox-group-item-1").click();
 	expect(onValueChange).toHaveBeenCalledExactlyOnceWith(["1"]);
-	onValueChange.mockClear()
+	onValueChange.mockClear();
 	await page.getByTestId("checkbox-group-item-2").click();
 	expect(onValueChange).toHaveBeenCalledExactlyOnceWith(["1", "2"]);
-	onValueChange.mockClear()
+	onValueChange.mockClear();
 	await page.getByTestId("checkbox-group-item-1").click();
 	expect(onValueChange).toHaveBeenCalledExactlyOnceWith(["2"]);
 });
