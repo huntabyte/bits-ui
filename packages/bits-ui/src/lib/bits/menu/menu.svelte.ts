@@ -50,6 +50,7 @@ import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import { arraysAreEqual } from "$lib/internal/arrays.js";
 
 export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
 export const CONTEXT_MENU_CONTENT_ATTR = "data-context-menu-content";
@@ -1269,6 +1270,7 @@ export class MenuCheckboxGroupState {
 		if (!this.opts.value.current.includes(checkboxValue)) {
 			const newValue = [...$state.snapshot(this.opts.value.current), checkboxValue];
 			this.opts.value.current = newValue;
+			if (arraysAreEqual(this.opts.value.current, newValue)) return;
 			this.opts.onValueChange.current(newValue);
 		}
 	}
@@ -1279,6 +1281,7 @@ export class MenuCheckboxGroupState {
 		if (index === -1) return;
 		const newValue = this.opts.value.current.filter((v) => v !== checkboxValue);
 		this.opts.value.current = newValue;
+		if (arraysAreEqual(this.opts.value.current, newValue)) return;
 		this.opts.onValueChange.current(newValue);
 	}
 
