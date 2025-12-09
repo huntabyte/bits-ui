@@ -42,7 +42,7 @@ import {
 	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
-import { IsUsingKeyboard } from "$lib/index.js";
+import { IsUsingKeyboard } from "$lib/bits/utilities/is-using-keyboard/is-using-keyboard.svelte.js";
 import { getTabbableFrom } from "$lib/internal/tabbable.js";
 import { isTabbable } from "tabbable";
 import type { KeyboardEventHandler, PointerEventHandler, MouseEventHandler } from "svelte/elements";
