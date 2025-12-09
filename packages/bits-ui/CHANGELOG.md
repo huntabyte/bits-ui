@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.14.5
+
+### Patch Changes
+
+- fix(imports): resolve circular dependency ([#1898](https://github.com/huntabyte/bits-ui/pull/1898))
+
+- fix(Menu): only call onValueChange once per change to CheckboxGroup value ([#1902](https://github.com/huntabyte/bits-ui/pull/1902))
+
 ## 2.14.4
 
 ### Patch Changes
