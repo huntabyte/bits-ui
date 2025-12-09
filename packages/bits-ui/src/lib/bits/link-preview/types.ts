@@ -80,6 +80,7 @@ export type LinkPreviewContentPropsWithoutHTML = WithChildNoChildrenSnippetProps
 		| "sticky"
 		| "hideWhenDetached"
 		| "dir"
+		| "customAnchor"
 	> &
 		Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 		EscapeLayerProps & {
