@@ -194,7 +194,14 @@ export class CheckboxRootState {
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (this.trueDisabled || this.trueReadonly) return;
-		if (e.key === kbd.ENTER) e.preventDefault();
+		if (e.key === kbd.ENTER) {
+			e.preventDefault();
+			if (this.opts.type.current === "submit") {
+				const form = e.currentTarget.closest("form");
+				form?.requestSubmit();
+			}
+			return;
+		}
 		if (e.key === kbd.SPACE) {
 			e.preventDefault();
 			this.#toggle();
