@@ -20,6 +20,11 @@
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js",
 			"default": "./dist/index.js"
+		},
+		"./*":{
+  		"types": "./dist/bits/*/index.d.ts",
+  		"svelte": "./dist/bits/*/index.js",
+  		"default": "./dist/bits/*/index.js"
 		}
 	},
 	"files": [
