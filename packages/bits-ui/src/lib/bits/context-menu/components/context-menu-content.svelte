@@ -77,13 +77,13 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
+		{side}
+		{sideOffset}
+		{align}
 		enabled={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
 		onEscapeKeydown={handleEscapeKeydown}
-		{side}
-		{sideOffset}
-		{align}
 		{onOpenAutoFocus}
 		{isValidEvent}
 		{trapFocus}
