@@ -52,15 +52,16 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<FileMa
 function remarkCleanCodeBlocks() {
 	return (tree: Node) => {
 		function visit(node: Node) {
-			if (node.type === 'code' && 'value' in node && typeof node.value === 'string') {
+			if (node.type === "code" && "value" in node && typeof node.value === "string") {
 				// Remove lines that only contain whitespace
 				node.value = node.value
-					.split('\n')
+					.split("\n")
 					.filter((line: string) => line.trim().length > 0)
-					.join('\n').trim();
+					.join("\n")
+					.trim();
 			}
 
-			if ('children' in node && Array.isArray(node.children)) {
+			if ("children" in node && Array.isArray(node.children)) {
 				for (const child of node.children) {
 					visit(child as Node);
 				}
@@ -77,11 +78,11 @@ function remarkCleanCodeBlocks() {
  */
 function remarkDecodeTableEntities() {
 	return (tree: Node) => {
-		visitParents(tree, 'text', (node: Node, ancestors: Node[]) => {
+		visitParents(tree, "text", (node: Node, ancestors: Node[]) => {
 			// Check if any ancestor is a tableCell
-			const isInTableCell = ancestors.some((ancestor) => ancestor.type === 'tableCell');
+			const isInTableCell = ancestors.some((ancestor) => ancestor.type === "tableCell");
 
-			if (isInTableCell && 'value' in node && typeof node.value === 'string') {
+			if (isInTableCell && "value" in node && typeof node.value === "string") {
 				node.value = node.value
 					.replace(/\\&#123;/g, "{")
 					.replace(/\\&#125;/g, "}")

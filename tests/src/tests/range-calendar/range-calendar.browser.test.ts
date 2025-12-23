@@ -299,7 +299,6 @@ it("should set default placeholder lower than `maxValue`", async () => {
 	await expect.element(heading).toHaveTextContent(`November ${maxValue.year}`);
 });
 
-
 it("should handle unavailable dates appropriately", async () => {
 	setup({
 		placeholder: calendarDateRange.start,
