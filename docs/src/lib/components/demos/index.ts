@@ -19,6 +19,7 @@ export { default as CollapsibleDemoTransitions } from "./collapsible-demo-transi
 export { default as CollapsibleHiddenUntilFoundDemo } from "./collapsible-hidden-until-found-demo.svelte";
 export { default as ComboboxDemo } from "./combobox-demo.svelte";
 export { default as ComboboxDemoAutoScrollDelay } from "./combobox-demo-auto-scroll-delay.svelte";
+export { default as ComboboxDemoChips } from "./combobox-chips-demo.svelte";
 export { default as ComboboxDemoTransition } from "./combobox-demo-transition.svelte";
 export { default as CommandDemo } from "./command-demo.svelte";
 export { default as CommandDemoGrid } from "./command-grid-demo.svelte";

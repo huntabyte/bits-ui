@@ -10,6 +10,7 @@ import ComboboxMultiTest from "./combobox-multi-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
+import ComboboxChipsTest, { type ComboboxChipsTestProps } from "./combobox-chips-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
@@ -844,3 +845,255 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 		await expect.element(node).not.toHaveAttribute("data-highlighted");
 	}
 }
+
+////////////////////////////////////
+// CHIPS TESTS
+////////////////////////////////////
+
+function setupChips(props: Partial<ComboboxChipsTestProps> = {}, items: Item[] = testItems) {
+	const user = userEvent;
+	const returned = render(ComboboxChipsTest, { ...props, items });
+	const input = page.getByTestId("input");
+	const chipsContainer = page.getByTestId("chips-container");
+	const valueBinding = page.getByTestId("value-binding");
+	const outside = page.getByTestId("outside");
+
+	function getContent() {
+		return page.getByTestId("content");
+	}
+
+	function getChip(value: string) {
+		return page.getByTestId(`chip-${value}`);
+	}
+
+	function getChipRemove(value: string) {
+		return page.getByTestId(`chip-remove-${value}`);
+	}
+
+	return {
+		user,
+		input,
+		chipsContainer,
+		valueBinding,
+		outside,
+		getContent,
+		getChip,
+		getChipRemove,
+		...returned,
+	};
+}
+
+async function openChips(
+	props: Partial<ComboboxChipsTestProps> = {},
+	openWith: "click" | "type" | (string & {}) = "click"
+) {
+	const returned = setupChips(props);
+	await expectNotExists(page.getByTestId("content"));
+
+	if (openWith === "click") {
+		await returned.input.click();
+	} else {
+		(returned.input.element() as HTMLElement).focus();
+		await returned.user.keyboard(openWith);
+	}
+	await expectExists(page.getByTestId("content"));
+	const content = page.getByTestId("content");
+	return {
+		...returned,
+		content,
+	};
+}
+
+describe("combobox - chips", () => {
+	it("should render chips for selected values", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await expectExists(t.getChip("1"));
+		await expectExists(t.getChip("2"));
+		await expect.element(page.getByTestId("chip-label-1")).toHaveTextContent("A");
+		await expect.element(page.getByTestId("chip-label-2")).toHaveTextContent("B");
+	});
+
+	it("should have data-focus-within on chips container when input is focused", async () => {
+		const t = setupChips({ value: ["1"] });
+		await expect.element(t.chipsContainer).not.toHaveAttribute("data-focus-within");
+		await t.input.click();
+		await expect.element(t.chipsContainer).toHaveAttribute("data-focus-within");
+	});
+
+	it("chips should have tabindex=-1", async () => {
+		const t = setupChips({ value: ["1"] });
+		await expect.element(t.getChip("1")).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("chip remove buttons should have tabindex=-1", async () => {
+		const t = setupChips({ value: ["1"] });
+		await expect.element(t.getChipRemove("1")).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("should remove chip when remove button is clicked", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await expectExists(t.getChip("1"));
+		await t.getChipRemove("1").click();
+		await expectNotExists(t.getChip("1"));
+		await expectExists(t.getChip("2"));
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should navigate to last chip with ArrowLeft when cursor at start", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await t.input.click();
+		await expect.element(t.input).toHaveFocus();
+
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+		await expect.element(t.getChip("2")).toHaveAttribute("data-highlighted");
+	});
+
+	it("should navigate to last chip with Backspace when input is empty", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await t.input.click();
+		await expect.element(t.input).toHaveFocus();
+
+		await t.user.keyboard(kbd.BACKSPACE);
+		await expect.element(t.getChip("2")).toHaveFocus();
+	});
+
+	it("should navigate between chips with arrow keys", async () => {
+		const t = setupChips({ value: ["1", "2", "3"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("3")).toHaveFocus();
+
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("1")).toHaveFocus();
+
+		// stay on first chip
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("1")).toHaveFocus();
+
+		// go back right
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(t.getChip("3")).toHaveFocus();
+
+		// right from last chip goes to input
+		await t.user.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should remove chip with Backspace key and focus next chip", async () => {
+		const t = setupChips({ value: ["1", "2", "3"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+
+		await t.user.keyboard(kbd.BACKSPACE);
+		await expectNotExists(t.getChip("2"));
+		// should focus next chip (which is now "3" at index 1)
+		await expect.element(t.getChip("3")).toHaveFocus();
+	});
+
+	it("should remove chip with Delete key", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+
+		await t.user.keyboard(kbd.DELETE);
+		await expectNotExists(t.getChip("2"));
+		// should focus previous chip or input
+		await expect.element(t.getChip("1")).toHaveFocus();
+	});
+
+	it("should focus input after removing last chip", async () => {
+		const t = setupChips({ value: ["1"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("1")).toHaveFocus();
+
+		await t.user.keyboard(kbd.BACKSPACE);
+		await expectNotExists(t.getChip("1"));
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should focus input when Tab is pressed on chip", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+
+		await t.user.keyboard(kbd.TAB);
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should focus input when Enter is pressed on chip", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+
+		await t.user.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should focus input when Space is pressed on chip", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("2")).toHaveFocus();
+
+		await t.user.keyboard(kbd.SPACE);
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should open popup and focus input when ArrowDown is pressed on chip", async () => {
+		const t = setupChips({ value: ["1"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("1")).toHaveFocus();
+		await expectNotExists(t.getContent());
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expectExists(t.getContent());
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should focus input when clicking on a chip", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await t.getChip("1").click();
+		await expect.element(t.input).toHaveFocus();
+	});
+
+	it("should focus input and start typing when printable key is pressed on chip", async () => {
+		const t = setupChips({ value: ["1"] });
+		await t.input.click();
+		await t.user.keyboard(kbd.ARROW_LEFT);
+		await expect.element(t.getChip("1")).toHaveFocus();
+
+		await t.user.keyboard("a");
+		await expect.element(t.input).toHaveFocus();
+		await expect.element(t.input).toHaveValue("a");
+	});
+
+	it("should update value binding when chip is removed", async () => {
+		const t = setupChips({ value: ["1", "2"] });
+		await expect.element(t.valueBinding).toHaveTextContent("1,2");
+		await t.getChipRemove("1").click();
+		await expect.element(t.valueBinding).toHaveTextContent("2");
+	});
+
+	it("should add chips when items are selected", async () => {
+		const t = await openChips({ value: [] });
+		await expectNotExists(t.getChip("1"));
+
+		const item1 = page.getByTestId("1");
+		await item1.click();
+		await expectExists(t.getChip("1"));
+	});
+});

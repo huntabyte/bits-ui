@@ -1,5 +1,8 @@
 import type {
 	ComboboxArrowPropsWithoutHTML,
+	ComboboxChipPropsWithoutHTML,
+	ComboboxChipRemovePropsWithoutHTML,
+	ComboboxChipsPropsWithoutHTML,
 	ComboboxContentPropsWithoutHTML,
 	ComboboxContentStaticPropsWithoutHTML,
 	ComboboxGroupHeadingPropsWithoutHTML,
@@ -399,6 +402,76 @@ export const viewport = defineComponentApiSchema<ComboboxViewportPropsWithoutHTM
 	],
 });
 
+export const chips = defineComponentApiSchema<ComboboxChipsPropsWithoutHTML>({
+	title: "Chips",
+	description:
+		"A container for displaying selected values as chips. Typically wraps `Combobox.Chip` components and the `Combobox.Input`.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "focus-within",
+			description: "Present when any child element (chip or input) has focus.",
+		}),
+		defineSimpleDataAttr({
+			name: "combobox-chips",
+			description: "Present on the chips container element.",
+		}),
+	],
+});
+
+export const chip = defineComponentApiSchema<ComboboxChipPropsWithoutHTML>({
+	title: "Chip",
+	description:
+		"An individual chip representing a selected value. Must be a child of `Combobox.Chips`.",
+	props: {
+		value: defineStringProp({
+			description: "The value of the chip. This should match one of the selected values.",
+			required: true,
+		}),
+		disabled: defineBooleanProp({
+			default: false,
+			description: "Whether or not the chip is disabled.",
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "value",
+			description: "The value of the chip.",
+			value: "string",
+		}),
+		defineSimpleDataAttr({
+			name: "highlighted",
+			description: "Present when the chip has keyboard focus.",
+		}),
+		defineSimpleDataAttr({
+			name: "disabled",
+			description: "Present when the chip is disabled.",
+		}),
+		defineSimpleDataAttr({
+			name: "combobox-chip",
+			description: "Present on the chip element.",
+		}),
+	],
+});
+
+export const chipRemove = defineComponentApiSchema<ComboboxChipRemovePropsWithoutHTML>({
+	title: "ChipRemove",
+	description:
+		"A button to remove the parent chip. Has `tabindex='-1'` to prevent keyboard focus, but remains accessible to screen readers.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "disabled",
+			description: "Present when the chip or combobox is disabled.",
+		}),
+		defineSimpleDataAttr({
+			name: "combobox-chip-remove",
+			description: "Present on the chip remove button element.",
+		}),
+	],
+});
+
 export const combobox = [
 	root,
 	trigger,
@@ -408,6 +481,9 @@ export const combobox = [
 	portal,
 	item,
 	input,
+	chips,
+	chip,
+	chipRemove,
 	group,
 	groupHeading,
 	scrollUpButton,

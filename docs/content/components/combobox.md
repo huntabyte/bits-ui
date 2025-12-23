@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, ComboboxDemoChips, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -395,5 +395,93 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 {/snippet}
 
 </ComponentPreview>
+
+## Chips
+
+For multi-select comboboxes, you can use the `Combobox.Chips`, `Combobox.Chip`, and `Combobox.ChipRemove` components to display selected values as removable chips within the input area.
+
+<ComponentPreview name="combobox-chips-demo" componentName="Combobox" containerClass="mt-4">
+
+{#snippet preview()}
+<ComboboxDemoChips />
+{/snippet}
+
+</ComponentPreview>
+
+### Structure
+
+The chips components are designed to wrap the input, providing a unified styling area:
+
+```svelte
+<Combobox.Root type="multiple" items={fruits}>
+  <Combobox.Chips>
+    {#snippet children({ selectedItems })}
+      {#each selectedItems as item (item.value)}
+        <Combobox.Chip value={item.value}>
+          {#snippet children({ label })}
+            <span>{label}</span>
+            <Combobox.ChipRemove aria-label="Remove {label}">
+              ×
+            </Combobox.ChipRemove>
+          {/snippet}
+        </Combobox.Chip>
+      {/each}
+      <Combobox.Input placeholder="Add more..." />
+    {/snippet}
+  </Combobox.Chips>
+  <Combobox.Portal>
+    <Combobox.Content>
+      <!-- items -->
+    </Combobox.Content>
+  </Combobox.Portal>
+</Combobox.Root>
+```
+
+### Keyboard Navigation
+
+Chips support full keyboard navigation:
+
+| Key                        | Action                                                      |
+| -------------------------- | ----------------------------------------------------------- |
+| `ArrowLeft`                | When cursor is at the start of input, focuses last chip     |
+| `Backspace`                | When input is empty, focuses last chip                      |
+| `ArrowLeft` / `ArrowRight` | Navigate between chips                                      |
+| `Backspace` / `Delete`     | Remove focused chip, then focus next/previous chip or input |
+| `Tab`                      | From chip, focuses input                                    |
+| `Shift+Tab`                | From chip, focuses previous element outside combobox        |
+| `Enter` / `Space`          | From chip, focuses input                                    |
+| `ArrowDown` / `ArrowUp`    | Opens popup and focuses input                               |
+
+### Selected Items
+
+The `Combobox.Chips` component provides a `selectedItems` array via its snippet props. Each item contains:
+
+- `value`: The value of the selected item
+- `label`: The display label (derived from the `items` prop on Root, or falls back to the value)
+
+This allows you to render chips using the same data structure as your items.
+
+### Styling Focus
+
+The `Combobox.Chips` container exposes a `data-focus-within` attribute when any child (chip or input) has focus. Use this to style the container as if it were a focused input:
+
+```svelte
+<Combobox.Chips
+  class="rounded-md border p-2 data-[focus-within]:ring-2 data-[focus-within]:ring-blue-500"
+>
+  <!-- ... -->
+</Combobox.Chips>
+```
+
+Individual chips expose a `data-highlighted` attribute when focused, allowing you to style the currently active chip:
+
+```svelte
+<Combobox.Chip
+  value={item.value}
+  class="rounded px-2 py-1 data-[highlighted]:ring-2"
+>
+  <!-- ... -->
+</Combobox.Chip>
+```
 
 <APISection {schemas} />

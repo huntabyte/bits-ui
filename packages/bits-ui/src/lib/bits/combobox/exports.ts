@@ -12,6 +12,9 @@ export { default as GroupHeading } from "$lib/bits/select/components/select-grou
 export { default as Viewport } from "$lib/bits/select/components/select-viewport.svelte";
 export { default as ScrollDownButton } from "$lib/bits/select/components/select-scroll-down-button.svelte";
 export { default as ScrollUpButton } from "$lib/bits/select/components/select-scroll-up-button.svelte";
+export { default as Chips } from "./components/combobox-chips.svelte";
+export { default as Chip } from "./components/combobox-chip.svelte";
+export { default as ChipRemove } from "./components/combobox-chip-remove.svelte";
 
 export type {
 	ComboboxRootProps as RootProps,
@@ -27,4 +30,9 @@ export type {
 	ComboboxScrollDownButtonProps as ScrollDownButtonProps,
 	ComboboxScrollUpButtonProps as ScrollUpButtonProps,
 	ComboboxViewportProps as ViewportProps,
+	ComboboxChipsProps as ChipsProps,
+	ComboboxChipProps as ChipProps,
+	ComboboxChipRemoveProps as ChipRemoveProps,
+	ComboboxChipsSnippetProps as ChipsSnippetProps,
+	ComboboxChipSnippetProps as ChipSnippetProps,
 } from "./types.js";

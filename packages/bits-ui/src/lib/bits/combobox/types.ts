@@ -1,10 +1,15 @@
-import type { BitsPrimitiveInputAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+	BitsPrimitiveInputAttributes,
+} from "$lib/shared/attributes.js";
 import type {
 	SelectBaseRootPropsWithoutHTML,
 	SelectMultipleRootPropsWithoutHTML,
 	SelectSingleRootPropsWithoutHTML,
 } from "$lib/bits/select/types.js";
 import type { WithChild, Without } from "$lib/internal/types.js";
+import type { SelectedItem } from "$lib/bits/select/select.svelte.js";
 
 export type ComboboxBaseRootPropsWithoutHTML = Omit<
 	SelectBaseRootPropsWithoutHTML,
@@ -77,3 +82,65 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
 	Without<Omit<BitsPrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
+
+//
+// CHIPS
+//
+
+export type ComboboxChipsSnippetProps = {
+	/**
+	 * An array of selected items with their values and labels.
+	 * Derived from the Root's `items` prop filtered to selected values.
+	 * If no `items` array is provided, value is used for both value and label.
+	 */
+	selectedItems: SelectedItem[];
+};
+
+export type ComboboxChipsPropsWithoutHTML = WithChild<{}, ComboboxChipsSnippetProps>;
+
+export type ComboboxChipsProps = ComboboxChipsPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxChipsPropsWithoutHTML>;
+
+export type ComboboxChipSnippetProps = {
+	/**
+	 * The value of this chip.
+	 */
+	value: string;
+	/**
+	 * The label for this chip (derived from items array or equals value).
+	 */
+	label: string;
+	/**
+	 * Whether the chip is disabled.
+	 */
+	disabled: boolean;
+	/**
+	 * Whether the chip is currently highlighted (has focus).
+	 */
+	highlighted: boolean;
+};
+
+export type ComboboxChipPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The value of the chip. This should match one of the selected values.
+		 * @required
+		 */
+		value: string;
+
+		/**
+		 * Whether the chip is disabled.
+		 * @default false
+		 */
+		disabled?: boolean;
+	},
+	ComboboxChipSnippetProps
+>;
+
+export type ComboboxChipProps = ComboboxChipPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxChipPropsWithoutHTML>;
+
+export type ComboboxChipRemovePropsWithoutHTML = WithChild;
+
+export type ComboboxChipRemoveProps = ComboboxChipRemovePropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, ComboboxChipRemovePropsWithoutHTML>;

@@ -87,3 +87,4 @@ bundle-analyzer/.temp-bundle-analysis
 bundle-analyzer/bundle-reports/*
 !bundle-analyzer/bundle-reports/latest.json
 .tmp
+tmp/

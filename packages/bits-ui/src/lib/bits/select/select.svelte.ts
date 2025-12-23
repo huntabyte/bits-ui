@@ -65,12 +65,17 @@ const selectAttrs = createBitsAttrs({
 		"content-wrapper",
 		"item-text",
 		"value",
+		"chips",
+		"chip",
+		"chip-remove",
 	],
 });
 
 const SelectRootContext = new Context<SelectRoot>("Select.Root | Combobox.Root");
 const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobox.Group");
 const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
+const ComboboxChipsContext = new Context<ComboboxChipsState>("Combobox.Chips");
+const ComboboxChipContext = new Context<ComboboxChipState>("Combobox.Chip");
 
 interface SelectBaseRootStateOpts
 	extends ReadableBoxedValues<{
@@ -100,6 +105,8 @@ abstract class SelectBaseRootState {
 	triggerNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
+	// set to true when Combobox.Chips is used - input value should be cleared after selection
+	hasChips = $state(false);
 	readonly highlightedValue = $derived.by(() => {
 		if (!this.highlightedNode) return null;
 		return this.highlightedNode.getAttribute("data-value");
@@ -265,7 +272,8 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		const newValue = this.includesItem(itemValue) ? "" : itemValue;
 		this.opts.value.current = newValue;
 		if (newValue !== "") {
-			this.opts.inputValue.current = itemLabel;
+			// when chips are used, clear input so selected value only shows as chip
+			this.opts.inputValue.current = this.hasChips ? "" : itemLabel;
 		}
 	}
 
@@ -330,7 +338,8 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		} else {
 			this.opts.value.current = [...this.opts.value.current, itemValue];
 		}
-		this.opts.inputValue.current = itemLabel;
+		// when chips are used, clear input so selected value only shows as chip
+		this.opts.inputValue.current = this.hasChips ? "" : itemLabel;
 	}
 
 	setInitialHighlightedNode() {
@@ -397,15 +406,21 @@ interface SelectInputStateOpts
 
 export class SelectInputState {
 	static create(opts: SelectInputStateOpts) {
-		return new SelectInputState(opts, SelectRootContext.get());
+		return new SelectInputState(
+			opts,
+			SelectRootContext.get(),
+			ComboboxChipsContext.getOr(null)
+		);
 	}
 	readonly opts: SelectInputStateOpts;
 	readonly root: SelectRoot;
+	readonly chips: ComboboxChipsState | null;
 	readonly attachment: RefAttachment;
 
-	constructor(opts: SelectInputStateOpts, root: SelectRoot) {
+	constructor(opts: SelectInputStateOpts, root: SelectRoot, chips: ComboboxChipsState | null) {
 		this.opts = opts;
 		this.root = root;
+		this.chips = chips;
 		this.attachment = attachRef(opts.ref, (v) => (this.root.inputNode = v));
 		this.root.domContext = new DOMContext(opts.ref);
 
@@ -427,16 +442,42 @@ export class SelectInputState {
 		);
 	}
 
+	#hasChipsToNavigateTo(): boolean {
+		return this.chips !== null && this.chips.selectedItems.length > 0;
+	}
+
+	#tryNavigateToChips(e: BitsKeyboardEvent): boolean {
+		if (!this.#hasChipsToNavigateTo()) return false;
+
+		e.preventDefault();
+		this.chips!.focusLastChip();
+		return true;
+	}
+
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
+
+		const inputEl = e.currentTarget as HTMLInputElement;
+		const cursorAtStart = inputEl.selectionStart === 0 && inputEl.selectionEnd === 0;
+		const inputEmpty = this.root.opts.inputValue.current === "";
+
+		// handle chip navigation: ArrowLeft at cursor position 0
+		if (e.key === kbd.ARROW_LEFT && cursorAtStart && this.#hasChipsToNavigateTo()) {
+			if (this.#tryNavigateToChips(e)) return;
+		}
+
+		// handle chip navigation: Backspace when input is empty
+		if (e.key === kbd.BACKSPACE && inputEmpty && this.#hasChipsToNavigateTo()) {
+			if (this.#tryNavigateToChips(e)) return;
+		}
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
 		if (!this.root.opts.open.current) {
 			if (INTERACTION_KEYS.includes(e.key)) return;
 			if (e.key === kbd.TAB) return;
-			if (e.key === kbd.BACKSPACE && this.root.opts.inputValue.current === "") return;
+			if (e.key === kbd.BACKSPACE && inputEmpty) return;
 			this.root.handleOpen();
 			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
 			// set correctly.
@@ -1512,6 +1553,386 @@ export class SelectScrollUpButtonState {
 			({
 				...this.scrollButtonState.props,
 				[this.root.getBitsAttr("scroll-up-button")]: "",
+			}) as const
+	);
+}
+
+//
+// COMBOBOX CHIPS
+//
+
+export type SelectedItem = { value: string; label: string };
+
+interface ComboboxChipsStateOpts extends WithRefOpts {}
+
+export class ComboboxChipsState {
+	static create(opts: ComboboxChipsStateOpts) {
+		return ComboboxChipsContext.set(new ComboboxChipsState(opts, SelectRootContext.get()));
+	}
+	readonly opts: ComboboxChipsStateOpts;
+	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
+	readonly chipsRef: { current: Array<HTMLElement | null> } = { current: [] };
+	highlightedChipIndex = $state<number | undefined>(undefined);
+	hasFocusWithin = $state(false);
+
+	readonly selectedItems = $derived.by((): SelectedItem[] => {
+		const items = this.root.opts.items.current;
+		const value = this.root.opts.value.current;
+
+		if (this.root.isMulti) {
+			const values = value as string[];
+			if (!values.length) return [];
+
+			if (items.length) {
+				return values.map((v) => {
+					const item = items.find((i) => i.value === v);
+					return { value: v, label: item?.label ?? v };
+				});
+			}
+			return values.map((v) => ({ value: v, label: v }));
+		} else {
+			const singleValue = value as string;
+			if (singleValue === "") return [];
+
+			if (items.length) {
+				const item = items.find((i) => i.value === singleValue);
+				return [{ value: singleValue, label: item?.label ?? singleValue }];
+			}
+			return [{ value: singleValue, label: singleValue }];
+		}
+	});
+
+	constructor(opts: ComboboxChipsStateOpts, root: SelectRoot) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
+
+		// mark root as having chips so input value is cleared on selection
+		this.root.hasChips = true;
+
+		// clear highlighted chip when popup opens
+		$effect(() => {
+			if (this.root.opts.open.current && this.highlightedChipIndex !== undefined) {
+				this.highlightedChipIndex = undefined;
+			}
+		});
+	}
+
+	setHighlightedChipIndex(index: number | undefined) {
+		this.highlightedChipIndex = index;
+	}
+
+	focusChip(index: number) {
+		const chip = this.chipsRef.current[index];
+		if (chip) {
+			chip.focus();
+		}
+	}
+
+	focusInput() {
+		this.root.inputNode?.focus();
+	}
+
+	focusLastChip() {
+		const chips = this.chipsRef.current.filter(Boolean);
+		if (chips.length > 0) {
+			const lastIndex = chips.length - 1;
+			this.setHighlightedChipIndex(lastIndex);
+			this.focusChip(lastIndex);
+		}
+	}
+
+	readonly snippetProps = $derived.by(() => ({
+		selectedItems: this.selectedItems,
+	}));
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				"data-focus-within": this.hasFocusWithin ? "" : undefined,
+				[this.root.getBitsAttr("chips")]: "",
+				onfocusin: () => {
+					this.hasFocusWithin = true;
+				},
+				onfocusout: () => {
+					this.hasFocusWithin = false;
+				},
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface ComboboxChipStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+			disabled: boolean;
+		}> {}
+
+export class ComboboxChipState {
+	static create(opts: ComboboxChipStateOpts) {
+		return ComboboxChipContext.set(
+			new ComboboxChipState(opts, SelectRootContext.get(), ComboboxChipsContext.get())
+		);
+	}
+	readonly opts: ComboboxChipStateOpts;
+	readonly root: SelectRoot;
+	readonly chips: ComboboxChipsState;
+	readonly attachment: RefAttachment;
+	index = $state(-1);
+
+	readonly label = $derived.by(() => {
+		const items = this.root.opts.items.current;
+		const value = this.opts.value.current;
+		if (items.length) {
+			const item = items.find((i) => i.value === value);
+			return item?.label ?? value;
+		}
+		return value;
+	});
+
+	readonly isHighlighted = $derived.by(() => {
+		return this.chips.highlightedChipIndex === this.index;
+	});
+
+	constructor(opts: ComboboxChipStateOpts, root: SelectRoot, chips: ComboboxChipsState) {
+		this.opts = opts;
+		this.root = root;
+		this.chips = chips;
+		this.attachment = attachRef(opts.ref, (node) => {
+			if (node) {
+				// register with chips ref array
+				const idx = this.chips.chipsRef.current.indexOf(node);
+				if (idx === -1) {
+					this.index = this.chips.chipsRef.current.length;
+					this.chips.chipsRef.current.push(node);
+				} else {
+					this.index = idx;
+				}
+			}
+		});
+
+		// cleanup on destroy
+		onDestroyEffect(() => {
+			const node = this.opts.ref.current;
+			if (node) {
+				const idx = this.chips.chipsRef.current.indexOf(node);
+				if (idx !== -1) {
+					this.chips.chipsRef.current.splice(idx, 1);
+				}
+			}
+		});
+
+		this.onkeydown = this.onkeydown.bind(this);
+		this.onmousedown = this.onmousedown.bind(this);
+		this.onfocus = this.onfocus.bind(this);
+	}
+
+	removeChip() {
+		const chipValue = this.opts.value.current;
+		if (this.root.isMulti) {
+			const values = this.root.opts.value.current as string[];
+			// use type assertion to bypass readonly - the root manages this
+			// oxlint-disable-next-line no-explicit-any
+			(this.root.opts.value as any).current = values.filter((v: string) => v !== chipValue);
+		} else {
+			// oxlint-disable-next-line no-explicit-any
+			(this.root.opts.value as any).current = "";
+		}
+	}
+
+	onkeydown(e: BitsKeyboardEvent) {
+		if (this.opts.disabled.current || this.root.opts.disabled.current) return;
+
+		const chips = this.chips.chipsRef.current.filter(Boolean);
+		const chipCount = chips.length;
+
+		if (e.key === kbd.ARROW_LEFT) {
+			e.preventDefault();
+			if (this.index > 0) {
+				this.chips.setHighlightedChipIndex(this.index - 1);
+				this.chips.focusChip(this.index - 1);
+			}
+			// stay on first chip if already there
+		} else if (e.key === kbd.ARROW_RIGHT) {
+			e.preventDefault();
+			if (this.index < chipCount - 1) {
+				this.chips.setHighlightedChipIndex(this.index + 1);
+				this.chips.focusChip(this.index + 1);
+			} else {
+				// last chip, go to input
+				this.chips.setHighlightedChipIndex(undefined);
+				this.chips.focusInput();
+			}
+		} else if (e.key === kbd.BACKSPACE || e.key === kbd.DELETE) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const isOnlyChip = chipCount === 1;
+			const isLastInList = this.index === chipCount - 1;
+
+			// FOCUS FIRST, then remove - prevents focus from ever going to body
+			if (isOnlyChip) {
+				// only chip - focus input before removing
+				this.chips.setHighlightedChipIndex(undefined);
+				this.chips.focusInput();
+			} else if (isLastInList) {
+				// last chip in list - focus previous chip
+				this.chips.setHighlightedChipIndex(this.index - 1);
+				this.chips.focusChip(this.index - 1);
+			} else {
+				// middle chip - focus next chip (it will shift into our position)
+				// but keep the same highlighted index since indices shift down
+				this.chips.setHighlightedChipIndex(this.index);
+				this.chips.focusChip(this.index + 1);
+			}
+
+			// now remove the chip - focus is already on the right element
+			this.removeChip();
+
+			// fallback: ensure focus lands correctly after DOM settles
+			// use requestAnimationFrame for reliable timing after browser reflow
+			requestAnimationFrame(() => {
+				const remainingChips = this.chips.chipsRef.current.filter(Boolean);
+				const document = this.root.domContext.getDocument();
+				const activeEl = document.activeElement;
+				const inputNode = this.root.inputNode;
+
+				// if focus is on body or null, redirect to appropriate target
+				if (!activeEl || activeEl === document.body) {
+					if (remainingChips.length === 0) {
+						inputNode?.focus();
+					} else if (isOnlyChip || isLastInList) {
+						// should have gone to input or prev chip
+						inputNode?.focus();
+					}
+				}
+			});
+		} else if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
+			e.preventDefault();
+			// move to input (no action on chip)
+			this.chips.setHighlightedChipIndex(undefined);
+			this.chips.focusInput();
+		} else if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) {
+			e.preventDefault();
+			// open popup and focus input
+			this.root.handleOpen();
+			this.chips.setHighlightedChipIndex(undefined);
+			this.chips.focusInput();
+		} else if (e.key === kbd.TAB) {
+			// Tab goes to input, Shift+Tab goes to previous element
+			if (!e.shiftKey) {
+				e.preventDefault();
+				this.chips.setHighlightedChipIndex(undefined);
+				this.chips.focusInput();
+			}
+			// let shift+tab happen naturally
+		} else if (
+			// printable character - focus input to start typing
+			e.key.length === 1 &&
+			!e.ctrlKey &&
+			!e.metaKey &&
+			!e.altKey
+		) {
+			this.chips.setHighlightedChipIndex(undefined);
+			this.chips.focusInput();
+			// don't prevent default - let the character be typed
+		}
+	}
+
+	onmousedown(e: BitsMouseEvent) {
+		if (this.opts.disabled.current || this.root.opts.disabled.current) return;
+		// clicking chip focuses the input (per Base UI behavior)
+		e.preventDefault();
+		this.chips.focusInput();
+	}
+
+	onfocus() {
+		// update highlighted index when chip receives focus
+		this.chips.setHighlightedChipIndex(this.index);
+	}
+
+	readonly snippetProps = $derived.by(() => ({
+		value: this.opts.value.current,
+		label: this.label,
+		disabled: this.opts.disabled.current,
+		highlighted: this.isHighlighted,
+	}));
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				tabindex: -1,
+				"aria-disabled": this.opts.disabled.current || undefined,
+				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"data-highlighted": this.isHighlighted ? "" : undefined,
+				"data-value": this.opts.value.current,
+				[this.root.getBitsAttr("chip")]: "",
+				onkeydown: this.onkeydown,
+				onmousedown: this.onmousedown,
+				onfocus: this.onfocus,
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface ComboboxChipRemoveStateOpts extends WithRefOpts {}
+
+export class ComboboxChipRemoveState {
+	static create(opts: ComboboxChipRemoveStateOpts) {
+		return new ComboboxChipRemoveState(
+			opts,
+			SelectRootContext.get(),
+			ComboboxChipsContext.get(),
+			ComboboxChipContext.get()
+		);
+	}
+	readonly opts: ComboboxChipRemoveStateOpts;
+	readonly root: SelectRoot;
+	readonly chips: ComboboxChipsState;
+	readonly chip: ComboboxChipState;
+	readonly attachment: RefAttachment;
+
+	constructor(
+		opts: ComboboxChipRemoveStateOpts,
+		root: SelectRoot,
+		chips: ComboboxChipsState,
+		chip: ComboboxChipState
+	) {
+		this.opts = opts;
+		this.root = root;
+		this.chips = chips;
+		this.chip = chip;
+		this.attachment = attachRef(opts.ref);
+
+		this.onclick = this.onclick.bind(this);
+	}
+
+	onclick(e: BitsMouseEvent) {
+		if (this.chip.opts.disabled.current || this.root.opts.disabled.current) return;
+
+		e.stopPropagation();
+		this.chip.removeChip();
+		this.chips.focusInput();
+	}
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				type: "button" as const,
+				tabindex: -1,
+				disabled:
+					this.chip.opts.disabled.current || this.root.opts.disabled.current || undefined,
+				"data-disabled": boolToEmptyStrOrUndef(
+					this.chip.opts.disabled.current || this.root.opts.disabled.current
+				),
+				[this.root.getBitsAttr("chip-remove")]: "",
+				onclick: this.onclick,
+				...this.attachment,
 			}) as const
 	);
 }
