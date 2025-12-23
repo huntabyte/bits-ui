@@ -33,7 +33,6 @@ import {
 	withChildProps,
 } from "./shared.js";
 import { menu } from "./menu.api.js";
-import { omit } from "$lib/utils/omit.js";
 import { defineBooleanProp, defineComponentApiSchema, defineSimpleDataAttr } from "../utils.js";
 
 export const root = defineComponentApiSchema<ContextMenuRootPropsWithoutHTML>({
