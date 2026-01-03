@@ -56,13 +56,30 @@ it("should close on escape keydown", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
-it.skip("should close when pointer moves outside the trigger and content", async () => {
+it("should close when pointer moves outside the trigger and content", async () => {
 	await open();
 
 	const outside = page.getByTestId("outside");
 
 	await outside.hover();
 
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should stay open when hovering content", async () => {
+	const t = await open();
+	await t.content.hover();
+	await expectExists(page.getByTestId("content"));
+});
+
+it("should open on focus and close on blur", async () => {
+	const t = setup();
+	await expectNotExists(page.getByTestId("content"));
+
+	(t.trigger.element() as HTMLElement).focus();
+	await expectExists(page.getByTestId("content"));
+
+	(t.trigger.element() as HTMLElement).blur();
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -98,17 +115,12 @@ it("should allow ignoring escapeKeydownBehavior ", async () => {
 });
 
 it("should respect binding the open prop", async () => {
-	await open({
-		contentProps: {
-			interactOutsideBehavior: "ignore",
-		},
-	});
+	await open();
 	const binding = page.getByTestId("binding");
-	await vi.waitFor(() => expect(binding).toHaveTextContent("true"));
 	await expect.element(binding).toHaveTextContent("true");
-	await binding.click();
-	await expect.element(binding).toHaveTextContent("false");
+	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(page.getByTestId("content"));
+	await expect.element(binding).toHaveTextContent("false");
 	await binding.click();
 	await expect.element(binding).toHaveTextContent("true");
 	await expectExists(page.getByTestId("content"));

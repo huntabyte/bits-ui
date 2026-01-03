@@ -14,7 +14,7 @@ import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
-import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 export const tooltipAttrs = createBitsAttrs({
@@ -378,7 +378,7 @@ export class TooltipContentState {
 		this.root = root;
 		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
 
-		new GraceArea({
+		new SafePolygon({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
@@ -387,10 +387,6 @@ export class TooltipContentState {
 					this.root.handleClose();
 				}
 			},
-			setIsPointerInTransit: (value) => {
-				this.root.provider.isPointerInTransit.current = value;
-			},
-			transitTimeout: this.root.provider.opts.skipDelayDuration.current,
 		});
 
 		onMountEffect(() =>
