@@ -169,7 +169,7 @@ it("should have pointer-events: none on content when disableHoverableContent is 
 });
 
 it("should close when hovering content with disableHoverableContent: true", async () => {
-	const t = await open({ providerProps: { disableHoverableContent: true } });
+	await open({ providerProps: { disableHoverableContent: true } });
 	const outside = page.getByTestId("outside");
 	await outside.hover();
 	await expectNotExists(page.getByTestId("content"));
