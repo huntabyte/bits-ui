@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.15.2
+
+### Patch Changes
+
+- fix(Tooltip): content should not have pointer events if `disableHoverableContent` is `true` ([#1917](https://github.com/huntabyte/bits-ui/pull/1917))
+
 ## 2.15.1
 
 ### Patch Changes
