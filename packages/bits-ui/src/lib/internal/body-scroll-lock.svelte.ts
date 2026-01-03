@@ -112,7 +112,13 @@ const bodyLockStackCount = new SharedState(() => {
 			// if we're applying lock styles, we're no longer in a cleanup transition
 			isInCleanupTransition = false;
 
+			const htmlStyle = getComputedStyle(document.documentElement);
 			const bodyStyle = getComputedStyle(document.body);
+
+			// check if scrollbar-gutter: stable is already handling scrollbar space
+			const hasStableGutter =
+				htmlStyle.scrollbarGutter?.includes("stable") ||
+				bodyStyle.scrollbarGutter?.includes("stable");
 
 			// TODO: account for RTL direction, etc.
 			const verticalScrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -123,12 +129,13 @@ const bodyLockStackCount = new SharedState(() => {
 				margin: Number.parseInt(bodyStyle.marginRight ?? "0", 10),
 			};
 
-			if (verticalScrollbarWidth > 0) {
+			// only add padding compensation if stable gutter isn't handling it
+			if (verticalScrollbarWidth > 0 && !hasStableGutter) {
 				document.body.style.paddingRight = `${config.padding}px`;
 				document.body.style.marginRight = `${config.margin}px`;
 				document.body.style.setProperty("--scrollbar-width", `${verticalScrollbarWidth}px`);
-				document.body.style.overflow = "hidden";
 			}
+			document.body.style.overflow = "hidden";
 
 			if (isIOS) {
 				// IOS devices are special and require a touchmove listener to prevent scrolling

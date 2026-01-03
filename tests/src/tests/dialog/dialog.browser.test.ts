@@ -10,6 +10,7 @@ import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelte";
+import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -688,5 +689,19 @@ describe("Integration with other components", () => {
 		await expectNotExists(page.getByTestId("dialog-content"));
 		await trigger.hover();
 		await expectExists(page.getByTestId("tooltip-content"));
+	});
+});
+
+describe("Scroll Lock", () => {
+	it("should not add padding when scrollbar-gutter: stable is applied", async () => {
+		render(DialogScrollbarGutterTest);
+
+		const initialPadding = document.body.style.paddingRight;
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		// with scrollbar-gutter: stable, no padding compensation should be added
+		expect(document.body.style.paddingRight).toBe(initialPadding);
 	});
 });
