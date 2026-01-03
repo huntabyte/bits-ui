@@ -56,10 +56,28 @@ it("should close on escape keydown", async () => {
 	expect(mockEsc).toHaveBeenCalledTimes(1);
 });
 
-it.skip("closes when pointer moves outside the trigger and content", async () => {
+it("closes when pointer moves outside the trigger and content", async () => {
 	await open();
 	const outside = page.getByTestId("outside");
 	await outside.hover();
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should stay open when hovering content", async () => {
+	await open();
+	const content = page.getByTestId("content");
+	await content.hover();
+	await expectExists(page.getByTestId("content"));
+});
+
+it("should open on focus and close on blur", async () => {
+	const t = setup();
+	await expectNotExists(page.getByTestId("content"));
+
+	(t.trigger.element() as HTMLElement).focus();
+	await expectExists(page.getByTestId("content"));
+
+	(t.trigger.element() as HTMLElement).blur();
 	await expectNotExists(page.getByTestId("content"));
 });
 

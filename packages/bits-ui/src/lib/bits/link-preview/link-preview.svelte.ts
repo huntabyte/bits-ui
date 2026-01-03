@@ -19,7 +19,7 @@ import type {
 	WithRefOpts,
 } from "$lib/internal/types.js";
 import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 const linkPreviewAttrs = createBitsAttrs({
@@ -240,7 +240,7 @@ export class LinkPreviewContentState {
 		this.onpointerenter = this.onpointerenter.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
 
-		new GraceArea({
+		new SafePolygon({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.opts.ref.current,
 			enabled: () => this.root.opts.open.current,
