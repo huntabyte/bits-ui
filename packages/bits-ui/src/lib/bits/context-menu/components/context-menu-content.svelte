@@ -18,6 +18,9 @@
 		onCloseAutoFocus = noop,
 		onOpenAutoFocus = noop,
 		preventScroll = true,
+		side = "right",
+		sideOffset = 2,
+		align = "start",
 		// we need to explicitly pass this prop to the PopperLayer to override
 		// the default menu behavior of handling outside interactions on the trigger
 		onEscapeKeydown = noop,
@@ -74,9 +77,9 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		side="right"
-		sideOffset={2}
-		align="start"
+		{side}
+		{sideOffset}
+		{align}
 		enabled={contentState.parentMenu.opts.open.current}
 		{preventScroll}
 		onInteractOutside={handleInteractOutside}
