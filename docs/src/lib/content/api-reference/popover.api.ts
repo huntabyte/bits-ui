@@ -31,8 +31,10 @@ import {
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
 import {
+	defineBooleanProp,
 	defineComponentApiSchema,
 	defineEnumDataAttr,
+	defineNumberProp,
 	definePropSchema,
 	defineSimpleDataAttr,
 } from "../utils.js";
@@ -59,31 +61,19 @@ export const trigger = defineComponentApiSchema<PopoverTriggerPropsWithoutHTML>(
 	title: "Trigger",
 	description: "A component which toggles the opening and closing of the popover on press.",
 	props: {
-		openOnHover: definePropSchema({
-			type: "boolean",
+		openOnHover: defineBooleanProp({
 			description: "Whether the popover should open when the trigger is hovered.",
-			default: {
-				variant: "simple",
-				value: "false",
-			},
+			default: false,
 		}),
-		openDelay: definePropSchema({
-			type: "number",
+		openDelay: defineNumberProp({
 			description:
 				"The delay in milliseconds before the popover opens after hovering the trigger. Only applies when `openOnHover` is `true`.",
-			default: {
-				variant: "simple",
-				value: "700",
-			},
+			default: 700,
 		}),
-		closeDelay: definePropSchema({
-			type: "number",
+		closeDelay: defineNumberProp({
 			description:
 				"The delay in milliseconds before the popover closes after the mouse leaves the trigger or content. Only applies when `openOnHover` is `true`.",
-			default: {
-				variant: "simple",
-				value: "300",
-			},
+			default: 300,
 		}),
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
