@@ -16,6 +16,7 @@
 		ref = $bindable(null),
 		id = createId(uid),
 		forceMount = false,
+		onOpenAutoFocus = noop,
 		onCloseAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
@@ -37,6 +38,17 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+
+	// respect user's trapFocus setting, but disable when hover-opened without interaction
+	const effectiveTrapFocus = $derived(trapFocus && contentState.shouldTrapFocus);
+
+	// prevent auto-focus when opened via hover until user interacts
+	function handleOpenAutoFocus(e: Event) {
+		if (!contentState.shouldTrapFocus) {
+			e.preventDefault();
+		}
+		onOpenAutoFocus(e);
+	}
 </script>
 
 {#if forceMount}
@@ -46,11 +58,12 @@
 		ref={contentState.opts.ref}
 		enabled={contentState.root.opts.open.current}
 		{id}
-		{trapFocus}
+		trapFocus={effectiveTrapFocus}
 		{preventScroll}
 		loop
 		forceMount={true}
 		{customAnchor}
+		onOpenAutoFocus={handleOpenAutoFocus}
 		{onCloseAutoFocus}
 		shouldRender={contentState.shouldRender}
 	>
@@ -76,11 +89,12 @@
 		ref={contentState.opts.ref}
 		open={contentState.root.opts.open.current}
 		{id}
-		{trapFocus}
+		trapFocus={effectiveTrapFocus}
 		{preventScroll}
 		loop
 		forceMount={false}
 		{customAnchor}
+		onOpenAutoFocus={handleOpenAutoFocus}
 		{onCloseAutoFocus}
 		shouldRender={contentState.shouldRender}
 	>

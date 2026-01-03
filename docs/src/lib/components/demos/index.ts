@@ -55,6 +55,7 @@ export { default as NavigationMenuDemoNoViewport } from "./navigation-menu-no-vi
 export { default as PaginationDemo } from "./pagination-demo.svelte";
 export { default as PinInputDemo } from "./pin-input-demo.svelte";
 export { default as PopoverDemo } from "./popover-demo.svelte";
+export { default as PopoverDemoHover } from "./popover-demo-hover.svelte";
 export { default as PopoverDemoTransition } from "./popover-demo-transition.svelte";
 export { default as PopoverDemoOverlay } from "./popover-demo-overlay.svelte";
 export { default as PortalDemo } from "./portal-demo.svelte";

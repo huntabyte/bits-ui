@@ -14,6 +14,9 @@
 		ref = $bindable(null),
 		type = "button",
 		disabled = false,
+		openOnHover = false,
+		openDelay = 700,
+		closeDelay = 300,
 		...restProps
 	}: PopoverTriggerProps = $props();
 
@@ -24,6 +27,9 @@
 			(v) => (ref = v)
 		),
 		disabled: boxWith(() => Boolean(disabled)),
+		openOnHover: boxWith(() => openOnHover),
+		openDelay: boxWith(() => openDelay),
+		closeDelay: boxWith(() => closeDelay),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, triggerState.props, { type }));
