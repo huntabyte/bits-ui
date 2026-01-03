@@ -60,6 +60,12 @@ export type PopperLayerImplProps = Omit<
 			 * Whether the popper layer should be rendered.
 			 */
 			shouldRender: boolean;
+
+			/**
+			 * Override for the content's pointer-events style.
+			 * @default "auto"
+			 */
+			contentPointerEvents?: "auto" | "none";
 		},
 	"enabled"
 >;

@@ -68,6 +68,7 @@
 		ref={contentState.opts.ref}
 		tooltip={true}
 		shouldRender={contentState.shouldRender}
+		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {
@@ -97,6 +98,7 @@
 		ref={contentState.opts.ref}
 		tooltip={true}
 		shouldRender={contentState.shouldRender}
+		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const mergedProps = mergeProps(props, {

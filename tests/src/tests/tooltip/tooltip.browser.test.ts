@@ -155,3 +155,22 @@ it("should open when composed with another floating trigger", async () => {
 	await expectExists(page.getByTestId("popover-content"));
 	await expectNotExists(page.getByTestId("tooltip-content"));
 });
+
+it("should have pointer-events: auto on content by default", async () => {
+	const t = await open();
+	const contentEl = t.content.element() as HTMLElement;
+	expect(contentEl.style.pointerEvents).toBe("auto");
+});
+
+it("should have pointer-events: none on content when disableHoverableContent is true", async () => {
+	const t = await open({ providerProps: { disableHoverableContent: true } });
+	const contentEl = t.content.element() as HTMLElement;
+	expect(contentEl.style.pointerEvents).toBe("none");
+});
+
+it("should close when hovering content with disableHoverableContent: true", async () => {
+	await open({ providerProps: { disableHoverableContent: true } });
+	const outside = page.getByTestId("outside");
+	await outside.hover();
+	await expectNotExists(page.getByTestId("content"));
+});

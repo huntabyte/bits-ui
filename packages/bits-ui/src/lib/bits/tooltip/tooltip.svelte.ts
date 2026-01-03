@@ -441,7 +441,6 @@ export class TooltipContentState {
 				"data-state": this.root.stateAttr,
 				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled),
 				style: {
-					pointerEvents: "auto",
 					outline: "none",
 				},
 				[tooltipAttrs.content]: "",

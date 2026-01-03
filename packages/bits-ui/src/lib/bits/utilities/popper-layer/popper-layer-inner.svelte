@@ -46,9 +46,11 @@
 		enabled,
 		ref,
 		tooltip = false,
+		contentPointerEvents = "auto",
 		...restProps
 	}: Omit<PopperLayerImplProps, "open" | "children" | "shouldRender"> & {
 		enabled: boolean;
+		contentPointerEvents?: "auto" | "none";
 	} = $props();
 </script>
 
@@ -118,7 +120,7 @@
 										focusScopeProps,
 										{
 											style: {
-												pointerEvents: "auto",
+												pointerEvents: contentPointerEvents,
 											},
 										}
 									),
