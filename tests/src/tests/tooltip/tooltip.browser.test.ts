@@ -1,4 +1,4 @@
-import { expect, it, vi } from "vitest";
+import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
