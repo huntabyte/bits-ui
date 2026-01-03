@@ -4,7 +4,7 @@ description: Displays rich content in a floating panel anchored to a trigger ele
 ---
 
 <script>
-	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoTransition, PopoverDemoOverlay } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoHover, PopoverDemoTransition, PopoverDemoOverlay } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -78,6 +78,36 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
   <!-- ... -->
 </Popover.Root>
 ```
+
+## Open on Hover
+
+You can make a Popover open when the trigger is hovered by setting the `openOnHover` prop to `true` on the `Popover.Trigger` component. You can also control the delay before opening with `openDelay` (default: `700ms`) and the delay before closing with `closeDelay` (default: `300ms`).
+
+When opened via hover, the popover will automatically close when the mouse leaves both the trigger and the content, unless the user has interacted with the content (clicked or focused an element inside). A "grace area" polygon allows smooth cursor movement between the trigger and content without closing.
+
+<ComponentPreview name="popover-demo-hover" componentName="Popover" size="sm">
+
+{#snippet preview()}
+<PopoverDemoHover />
+{/snippet}
+
+</ComponentPreview>
+
+```svelte
+<Popover.Root>
+  <Popover.Trigger openOnHover>@huntabyte</Popover.Trigger>
+  <Popover.Content>
+    <!-- profile card content -->
+  </Popover.Content>
+</Popover.Root>
+```
+
+### Behavior Notes
+
+- **Click while hovering**: If the user clicks the trigger while the popover is open via hover, it converts to "click-opened" mode and will only close via escape or clicking outside.
+- **Interaction inside content**: Clicking or focusing an interactive element inside the content will keep the popover open until explicitly closed.
+- **Keyboard**: `openOnHover` does not open on keyboard focus. Keyboard users can still press Enter or Space to open.
+- **Touch devices**: Touch events are ignored for hover functionality to prevent conflicts with tap-to-open behavior.
 
 ## Managing Focus
 

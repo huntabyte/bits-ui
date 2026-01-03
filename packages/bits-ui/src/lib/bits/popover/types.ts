@@ -50,7 +50,27 @@ export type PopoverContentStaticPropsWithoutHTML = WithChildNoChildrenSnippetPro
 export type PopoverContentStaticProps = PopoverContentStaticPropsWithoutHTML &
 	Without<BitsPrimitiveDivAttributes, PopoverContentStaticPropsWithoutHTML>;
 
-export type PopoverTriggerPropsWithoutHTML = WithChild;
+export type PopoverTriggerPropsWithoutHTML = WithChild<{
+	/**
+	 * Whether the popover should open when the trigger is hovered.
+	 * @default false
+	 */
+	openOnHover?: boolean;
+
+	/**
+	 * How long to wait before opening the popover on hover (ms).
+	 * Only applies when `openOnHover` is `true`.
+	 * @default 700
+	 */
+	openDelay?: number;
+
+	/**
+	 * How long to wait before closing the popover after hover ends (ms).
+	 * Only applies when `openOnHover` is `true`.
+	 * @default 300
+	 */
+	closeDelay?: number;
+}>;
 
 export type PopoverTriggerProps = PopoverTriggerPropsWithoutHTML &
 	Without<BitsPrimitiveButtonAttributes, PopoverTriggerPropsWithoutHTML>;
