@@ -1,5 +1,25 @@
 # bits-ui
 
+## 2.15.0
+
+### Minor Changes
+
+- feat(Popover): add `openOnHover` prop to `Popover.Trigger` ([#1913](https://github.com/huntabyte/bits-ui/pull/1913))
+
+### Patch Changes
+
+- fix(Checkbox): allow form submission when pressing enter on a checkbox that has `type="submit"` ([#1895](https://github.com/huntabyte/bits-ui/pull/1895))
+
+- fix(LinkPreview): add customAnchor to LinkPreviewContent type ([#1905](https://github.com/huntabyte/bits-ui/pull/1905))
+
+- fix(ContextMenu): Add side, sideOffset, and align ([#1911](https://github.com/huntabyte/bits-ui/pull/1911))
+
+- fix(imports): resolve circular dependency ([#1898](https://github.com/huntabyte/bits-ui/pull/1898))
+
+- fix: ensure scroll locking respects stable gutter ([#1914](https://github.com/huntabyte/bits-ui/pull/1914))
+
+- fix(Menu): only call onValueChange once per change to CheckboxGroup value ([#1902](https://github.com/huntabyte/bits-ui/pull/1902))
+
 ## 2.14.4
 
 ### Patch Changes
