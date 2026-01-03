@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.15.1
+
+### Patch Changes
+
+- fix(Tooltip): inconsistent grace area ([#1915](https://github.com/huntabyte/bits-ui/pull/1915))
+
+- fix(LinkPreview): inconsistent grace area ([#1915](https://github.com/huntabyte/bits-ui/pull/1915))
+
 ## 2.15.0
 
 ### Minor Changes
