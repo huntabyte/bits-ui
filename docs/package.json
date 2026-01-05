@@ -7,7 +7,7 @@
 	"scripts": {
 		"dev": "pnpm --reporter append-only --color \"/dev:/\"",
 		"dev:content": "velite dev --watch",
-		"dev:svelte": "svelte-kit sync && vite dev",
+		"dev:svelte": "svelte-kit sync && vite dev --port 5177",
 		"dev:demos": "pnpm build:demos",
 		"build": "pnpm build:content && pnpm build:search && pnpm build:demos && vite build && pnpm build:llms && vite build",
 		"build:llms": "pnpx tsx ./other/build-llms-txt.ts",

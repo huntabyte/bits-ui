@@ -53,6 +53,7 @@ export class PopoverRootState {
 	// hover tracking state
 	openedViaHover = $state(false);
 	hasInteractedWithContent = $state(false);
+	hoverCooldown = $state(false);
 	closeDelay = $state(0);
 	#closeTimeout: number | null = null;
 	#domContext: DOMContext | null = null;
@@ -221,7 +222,7 @@ export class PopoverTriggerState {
 		this.#clearCloseTimeout();
 		this.root.cancelDelayedClose();
 
-		if (this.root.opts.open.current) return;
+		if (this.root.opts.open.current || this.root.hoverCooldown) return;
 
 		const delay = this.opts.openDelay.current;
 		if (delay <= 0) {
@@ -241,6 +242,7 @@ export class PopoverTriggerState {
 
 		this.#isHovering = false;
 		this.#clearOpenTimeout();
+		this.root.hoverCooldown = false;
 
 		// let GraceArea handle the close - it will call handleHoverClose via onPointerExit
 		// we just need to stop any pending open timer
@@ -257,6 +259,17 @@ export class PopoverTriggerState {
 			this.root.openedViaHover = false;
 			this.root.hasInteractedWithContent = true;
 			return;
+		}
+
+		// if closing while hovering with openOnHover enabled, set cooldown to prevent
+		// immediate re-open via hover
+		if (this.#isHovering && this.opts.openOnHover.current && this.root.opts.open.current) {
+			this.root.hoverCooldown = true;
+		}
+
+		// if clicking to open while in cooldown, reset cooldown (explicit open)
+		if (this.root.hoverCooldown && !this.root.opts.open.current) {
+			this.root.hoverCooldown = false;
 		}
 
 		this.root.toggleOpen();

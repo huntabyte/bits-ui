@@ -522,6 +522,68 @@ describe("openOnHover", () => {
 		// should still be open
 		await expectExists(t.getContent());
 	});
+
+	it("should close on second click and not reopen immediately via hover", async () => {
+		const t = setupHover({ triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 0 } });
+
+		// hover opens
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+
+		// first click converts to click-based
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		// second click closes
+		await t.trigger.click();
+		await expectNotExists(t.getContent());
+
+		// should not reopen via hover while mouse is still over trigger
+		await new Promise((r) => setTimeout(r, 50));
+		await expectNotExists(t.getContent());
+	});
+
+	it("should allow hover reopen after leaving and re-entering trigger", async () => {
+		const t = setupHover({ triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 0 } });
+
+		// hover opens
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+
+		// first click converts
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		// second click closes
+		await t.trigger.click();
+		await expectNotExists(t.getContent());
+
+		// leave trigger
+		await page.getByTestId("outside").hover();
+
+		// re-enter trigger - hover should work again
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+	});
+
+	it("should allow click to explicitly reopen while in cooldown", async () => {
+		const t = setupHover({ triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 0 } });
+
+		// hover opens
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+
+		// first click converts
+		await t.trigger.click();
+
+		// second click closes
+		await t.trigger.click();
+		await expectNotExists(t.getContent());
+
+		// third click should explicitly reopen
+		await t.trigger.click();
+		await expectExists(t.getContent());
+	});
 });
 
 describe("openOnHover with forceMount", () => {
@@ -768,6 +830,74 @@ describe("openOnHover with forceMount", () => {
 		// wait longer than close delay
 		await new Promise((r) => setTimeout(r, 300));
 		// should still be open
+		await expectExists(t.getContent());
+	});
+
+	it("should close on second click and not reopen immediately via hover", async () => {
+		const t = setupForceMountHover({
+			triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 0 },
+		});
+
+		// hover opens
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+
+		// first click converts to click-based
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		// second click closes
+		await t.trigger.click();
+		await expectNotExists(t.getContent());
+
+		// should not reopen via hover while mouse is still over trigger
+		await new Promise((r) => setTimeout(r, 50));
+		await expectNotExists(t.getContent());
+	});
+
+	it("should allow hover reopen after leaving and re-entering trigger", async () => {
+		const t = setupForceMountHover({
+			triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 0 },
+		});
+
+		// hover opens
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+
+		// first click converts
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		// second click closes
+		await t.trigger.click();
+		await expectNotExists(t.getContent());
+
+		// leave trigger
+		await t.getOutside().hover();
+
+		// re-enter trigger - hover should work again
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+	});
+
+	it("should allow click to explicitly reopen while in cooldown", async () => {
+		const t = setupForceMountHover({
+			triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 0 },
+		});
+
+		// hover opens
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+
+		// first click converts
+		await t.trigger.click();
+
+		// second click closes
+		await t.trigger.click();
+		await expectNotExists(t.getContent());
+
+		// third click should explicitly reopen
+		await t.trigger.click();
 		await expectExists(t.getContent());
 	});
 });
