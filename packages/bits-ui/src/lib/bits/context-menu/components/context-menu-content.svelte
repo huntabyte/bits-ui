@@ -39,7 +39,23 @@
 		onCloseAutoFocus: boxWith(() => onCloseAutoFocus),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+	const mergedProps = $derived(
+		mergeProps(restProps, contentState.props, {
+			side,
+			sideOffset,
+			align,
+			onOpenAutoFocus,
+			isValidEvent,
+			trapFocus,
+			loop,
+			id,
+			ref: contentState.opts.ref,
+			preventScroll,
+			onInteractOutside: handleInteractOutside,
+			onEscapeKeydown: handleEscapeKeydown,
+			shouldRender: contentState.shouldRender,
+		})
+	);
 
 	function handleInteractOutside(e: PointerEvent) {
 		onInteractOutside(e);
@@ -76,20 +92,7 @@
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}
-		ref={contentState.opts.ref}
-		{side}
-		{sideOffset}
-		{align}
 		enabled={contentState.parentMenu.opts.open.current}
-		{preventScroll}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		{onOpenAutoFocus}
-		{isValidEvent}
-		{trapFocus}
-		{loop}
-		{id}
-		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
@@ -110,20 +113,7 @@
 	<PopperLayer
 		{...mergedProps}
 		{...contentState.popperProps}
-		ref={contentState.opts.ref}
-		side="right"
-		sideOffset={2}
-		align="start"
 		open={contentState.parentMenu.opts.open.current}
-		{preventScroll}
-		onInteractOutside={handleInteractOutside}
-		onEscapeKeydown={handleEscapeKeydown}
-		{onOpenAutoFocus}
-		{isValidEvent}
-		{trapFocus}
-		{loop}
-		{id}
-		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(props, {
