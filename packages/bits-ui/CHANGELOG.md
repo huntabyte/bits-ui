@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.15.3
+
+### Patch Changes
+
+- fix(ContextMenu): Ensure props are applied correctly when force mounted ([#1919](https://github.com/huntabyte/bits-ui/pull/1919))
+
 ## 2.15.2
 
 ### Patch Changes
