@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.15.4
+
+### Patch Changes
+
+- fix(Popover): openOnHover trigger click while open behavior ([#1921](https://github.com/huntabyte/bits-ui/pull/1921))
+
 ## 2.15.3
 
 ### Patch Changes
