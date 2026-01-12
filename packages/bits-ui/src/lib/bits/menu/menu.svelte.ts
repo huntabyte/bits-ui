@@ -441,6 +441,8 @@ export class MenuContentState {
 				dir: this.parentMenu.root.opts.dir.current,
 				style: {
 					pointerEvents: "auto",
+					// CSS containment isolates style/layout/paint calculations from the rest of the page
+					contain: "layout style paint",
 				},
 				...this.attachment,
 			}) as const

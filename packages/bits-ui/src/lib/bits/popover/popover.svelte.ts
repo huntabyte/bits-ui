@@ -414,6 +414,8 @@ export class PopoverContentState {
 				[popoverAttrs.content]: "",
 				style: {
 					pointerEvents: "auto",
+					// CSS containment isolates style/layout/paint calculations from the rest of the page
+					contain: "layout style paint",
 				},
 				onpointerdown: this.onpointerdown,
 				onfocusin: this.onfocusin,
