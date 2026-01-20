@@ -14,6 +14,7 @@
 		scrollHideDelay = 600,
 		children,
 		child,
+		style,
 		...restProps
 	}: ScrollAreaRootProps = $props();
 
@@ -28,7 +29,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, rootState.props));
+	const mergedProps = $derived(mergeProps(restProps, rootState.props, { style }));
 </script>
 
 {#if child}

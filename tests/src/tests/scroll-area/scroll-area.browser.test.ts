@@ -2,6 +2,9 @@ import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.svelte";
+import ScrollAreaStyleOverrideTest, {
+	type ScrollAreaStyleOverrideTestProps,
+} from "./scroll-area-style-override-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -309,5 +312,15 @@ describe("ScrollArea", () => {
 		await userEvent.keyboard(kbd.ARROW_LEFT);
 
 		await vi.waitFor(() => expect(t.viewport.element().scrollLeft).not.toBe(initialScrollLeft));
+	});
+
+	it("should allow overriding predefined scrollbar styles via style prop", async () => {
+		render(ScrollAreaStyleOverrideTest, { scrollbarYStyle: "top: 20px;" });
+
+		const scrollbarY = page.getByTestId("scrollbar-y");
+		await expectExists(scrollbarY);
+
+		const element = scrollbarY.element() as HTMLElement;
+		expect(element.style.top).toBe("20px");
 	});
 });
