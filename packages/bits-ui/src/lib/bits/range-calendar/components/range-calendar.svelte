@@ -50,6 +50,8 @@
 
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value?.start,
+		minValue,
+		maxValue,
 	});
 
 	function handleDefaultPlaceholder() {

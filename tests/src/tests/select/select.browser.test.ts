@@ -157,6 +157,16 @@ describe("select - single", () => {
 		await openSingle({}, key);
 	});
 
+	it("should apply custom style prop to content", async () => {
+		const t = await openSingle({
+			contentProps: {
+				style: { backgroundColor: "rgb(255, 0, 0)" },
+			},
+		});
+		const contentEl = t.getContent().element() as HTMLElement;
+		expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+	});
+
 	it("should apply the appropriate `aria-labelledby` attribute to the group", async () => {
 		const t = await openSingle();
 

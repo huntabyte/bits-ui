@@ -8,18 +8,32 @@
 	import { page } from "$app/state";
 	import Check from "phosphor-svelte/lib/Check";
 	import CopyPageDropdown from "./copy-page-dropdown.svelte";
+	import { watch } from "runed";
 
 	let { metadata }: { metadata: DocMetadata } = $props();
 
+	let text = $state("");
 	const copyState = new CopyToClipboard();
 
-	async function copyMarkdown() {
-		const url = page.url.origin + page.url.pathname + "/llms.txt";
-		const res = await fetch(url);
-		const text = await res.text();
+	function copyMarkdown() {
 		copyState.setCodeString(text);
 		copyState.copyToClipboard();
 	}
+
+	async function fetchText() {
+		if (text !== "") return;
+
+		const url = page.url.origin + page.url.pathname + "/llms.txt";
+		const res = await fetch(url);
+		text = await res.text();
+	}
+
+	watch(
+		() => page.url.pathname,
+		() => {
+			text = "";
+		}
+	);
 </script>
 
 <PageHeader>
@@ -40,9 +54,9 @@
 		<div class="mb-9 mt-3 flex items-center">
 			<button
 				class="hover:bg-muted/50 text-foreground-alt hover:text-foreground flex h-8 select-none items-center gap-1.5 rounded-md rounded-r-none border border-r-0 px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
-				onclick={async () => {
-					await copyMarkdown();
-				}}
+				onmouseenter={fetchText}
+				onfocus={fetchText}
+				onclick={copyMarkdown}
 			>
 				Copy Page
 				{#if !copyState || !copyState.isCopied}

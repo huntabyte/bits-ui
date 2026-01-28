@@ -2,12 +2,9 @@ import type { MenuContentProps, MenuContentPropsWithoutHTML } from "../menu/type
 import type { WithChild, Without } from "$lib/internal/types.js";
 import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 
-export type ContextMenuContentPropsWithoutHTML = Omit<
-	MenuContentPropsWithoutHTML,
-	"align" | "side" | "sideOffset"
->;
+export type ContextMenuContentPropsWithoutHTML = MenuContentPropsWithoutHTML;
 
-export type ContextMenuContentProps = Omit<MenuContentProps, "side" | "sideOffset" | "align">;
+export type ContextMenuContentProps = MenuContentProps;
 
 export type ContextMenuTriggerPropsWithoutHTML = WithChild<{
 	/**

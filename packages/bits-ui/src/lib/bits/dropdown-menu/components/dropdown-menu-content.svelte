@@ -21,6 +21,7 @@
 		onCloseAutoFocus = noop,
 		forceMount = false,
 		trapFocus = false,
+		style,
 		...restProps
 	}: DropdownMenuContentProps = $props();
 
@@ -71,9 +72,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("dropdown-menu"),
-			})}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("dropdown-menu") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
@@ -100,9 +103,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("dropdown-menu"),
-			})}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("dropdown-menu") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}

@@ -2,7 +2,7 @@
 
 .markdown code:not(pre > code):not(.custom) {
 	/* @apply bg-muted text-foreground relative rounded px-[0.375rem] py-[0.125rem] font-mono text-sm font-semibold; */
-	@apply font-mono dark:text-[#fdffa4] text-[#0040A7] mx-[0.1em];
+	@apply mx-[0.1em] font-mono text-[#0040A7] dark:text-[#fdffa4];
 }
 
 .markdown h1 code,

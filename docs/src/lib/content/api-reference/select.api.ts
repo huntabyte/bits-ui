@@ -93,7 +93,8 @@ export const root = defineComponentApiSchema<SelectRootPropsWithoutHTML>({
 		}),
 		required: defineBooleanProp({
 			default: false,
-			description: "Whether or not the select menu is required.",
+			description:
+				"Whether or not the select menu is required. When `required` is `true`, a `name` attribute must also be provided so that the hidden input is rendered",
 		}),
 		scrollAlignment: defineEnumProp({
 			options: ["nearest", "center"],

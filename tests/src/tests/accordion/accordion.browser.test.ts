@@ -105,6 +105,18 @@ describe("Shared Behavior", () => {
 		await expect.element(content).toHaveAttribute("data-accordion-content");
 		await expect.element(trigger).toHaveAttribute("data-accordion-trigger");
 	});
+
+	it("should respect custom tabindex on trigger", async () => {
+		render(AccordionTestIsolated, { triggerProps: { tabindex: -1 } });
+		const trigger = page.getByTestId("trigger");
+		await expect.element(trigger).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("should have default tabindex of 0 on trigger", async () => {
+		render(AccordionTestIsolated);
+		const trigger = page.getByTestId("trigger");
+		await expect.element(trigger).toHaveAttribute("tabindex", "0");
+	});
 });
 
 describe("type='single'", () => {

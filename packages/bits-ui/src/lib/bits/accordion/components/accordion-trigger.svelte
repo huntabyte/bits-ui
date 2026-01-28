@@ -10,6 +10,7 @@
 		disabled = false,
 		ref = $bindable(null),
 		id = createId(uid),
+		tabindex = 0,
 		children,
 		child,
 		...restProps
@@ -18,6 +19,7 @@
 	const triggerState = AccordionTriggerState.create({
 		disabled: boxWith(() => disabled),
 		id: boxWith(() => id),
+		tabindex: boxWith(() => tabindex ?? 0),
 		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)

@@ -165,7 +165,7 @@ Below is an example of how you might create a reusable tooltip component that ca
     trigger,
     triggerProps = {},
     ...restProps
-  }: Tooltip.RootProps = $props();
+  }: Props = $props();
 </script>
 
 <!--

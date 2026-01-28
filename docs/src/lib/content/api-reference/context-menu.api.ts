@@ -33,7 +33,6 @@ import {
 	withChildProps,
 } from "./shared.js";
 import { menu } from "./menu.api.js";
-import { omit } from "$lib/utils/omit.js";
 import { defineBooleanProp, defineComponentApiSchema, defineSimpleDataAttr } from "../utils.js";
 
 export const root = defineComponentApiSchema<ContextMenuRootPropsWithoutHTML>({
@@ -69,7 +68,7 @@ export const content = defineComponentApiSchema<ContextMenuContentPropsWithoutHT
 	title: "Content",
 	description: "The content displayed when the context menu is open.",
 	props: {
-		...omit(floatingProps(), "align", "side", "sideOffset"),
+		...floatingProps(),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		...focusScopeProps,

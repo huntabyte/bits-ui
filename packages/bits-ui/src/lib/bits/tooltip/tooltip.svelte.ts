@@ -14,7 +14,7 @@ import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
 import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
-import { GraceArea } from "$lib/internal/grace-area.svelte.js";
+import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 
 export const tooltipAttrs = createBitsAttrs({
@@ -222,6 +222,7 @@ interface TooltipTriggerStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
+			tabindex: number;
 		}> {}
 
 export class TooltipTriggerState {
@@ -235,6 +236,7 @@ export class TooltipTriggerState {
 	#hasPointerMoveOpened = $state(false);
 	readonly #isDisabled = $derived.by(() => this.opts.disabled.current || this.root.disabled);
 	domContext: DOMContext;
+	#transitCheckTimeout: number | null = null;
 
 	constructor(opts: TooltipTriggerStateOpts, root: TooltipRootState) {
 		this.opts = opts;
@@ -242,6 +244,13 @@ export class TooltipTriggerState {
 		this.domContext = new DOMContext(opts.ref);
 		this.attachment = attachRef(this.opts.ref, (v) => (this.root.triggerNode = v));
 	}
+
+	#clearTransitCheck = () => {
+		if (this.#transitCheckTimeout !== null) {
+			clearTimeout(this.#transitCheckTimeout);
+			this.#transitCheckTimeout = null;
+		}
+	};
 
 	handlePointerUp = () => {
 		this.#isPointerDown.current = false;
@@ -265,12 +274,36 @@ export class TooltipTriggerState {
 		);
 	};
 
+	#onpointerenter: PointerEventHandler<HTMLElement> = (e) => {
+		if (this.#isDisabled) return;
+		if (e.pointerType === "touch") return;
+
+		// if in transit, wait briefly to see if user is actually heading to old content or staying here
+		if (this.root.provider.isPointerInTransit.current) {
+			this.#clearTransitCheck();
+			this.#transitCheckTimeout = window.setTimeout(() => {
+				// if still in transit after delay, user is likely staying on this trigger
+				if (this.root.provider.isPointerInTransit.current) {
+					this.root.provider.isPointerInTransit.current = false;
+					this.root.onTriggerEnter();
+					this.#hasPointerMoveOpened = true;
+				}
+			}, 250);
+			return;
+		}
+
+		this.root.onTriggerEnter();
+		this.#hasPointerMoveOpened = true;
+	};
+
 	#onpointermove: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled) return;
 		if (e.pointerType === "touch") return;
 		if (this.#hasPointerMoveOpened) return;
 
-		if (this.root.provider.isPointerInTransit.current) return;
+		// moving within trigger means we're definitely not in transit anymore
+		this.#clearTransitCheck();
+		this.root.provider.isPointerInTransit.current = false;
 
 		this.root.onTriggerEnter();
 		this.#hasPointerMoveOpened = true;
@@ -278,6 +311,7 @@ export class TooltipTriggerState {
 
 	#onpointerleave: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled) return;
+		this.#clearTransitCheck();
 		this.root.onTriggerLeave();
 		this.#hasPointerMoveOpened = false;
 	};
@@ -310,10 +344,11 @@ export class TooltipTriggerState {
 				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				"data-delay-duration": `${this.root.delayDuration}`,
 				[tooltipAttrs.trigger]: "",
-				tabindex: this.#isDisabled ? undefined : 0,
+				tabindex: this.#isDisabled ? undefined : this.opts.tabindex.current,
 				disabled: this.opts.disabled.current,
 				onpointerup: this.#onpointerup,
 				onpointerdown: this.#onpointerdown,
+				onpointerenter: this.#onpointerenter,
 				onpointermove: this.#onpointermove,
 				onpointerleave: this.#onpointerleave,
 				onfocus: this.#onfocus,
@@ -344,7 +379,7 @@ export class TooltipContentState {
 		this.root = root;
 		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
 
-		new GraceArea({
+		new SafePolygon({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
@@ -353,10 +388,6 @@ export class TooltipContentState {
 					this.root.handleClose();
 				}
 			},
-			setIsPointerInTransit: (value) => {
-				this.root.provider.isPointerInTransit.current = value;
-			},
-			transitTimeout: this.root.provider.opts.skipDelayDuration.current,
 		});
 
 		onMountEffect(() =>
@@ -411,7 +442,6 @@ export class TooltipContentState {
 				"data-state": this.root.stateAttr,
 				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled),
 				style: {
-					pointerEvents: "auto",
 					outline: "none",
 				},
 				[tooltipAttrs.content]: "",

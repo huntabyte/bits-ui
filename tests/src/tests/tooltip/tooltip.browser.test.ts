@@ -1,4 +1,4 @@
-import { expect, it, vi } from "vitest";
+import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
@@ -56,13 +56,30 @@ it("should close on escape keydown", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
-it.skip("should close when pointer moves outside the trigger and content", async () => {
+it("should close when pointer moves outside the trigger and content", async () => {
 	await open();
 
 	const outside = page.getByTestId("outside");
 
 	await outside.hover();
 
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should stay open when hovering content", async () => {
+	const t = await open();
+	await t.content.hover();
+	await expectExists(page.getByTestId("content"));
+});
+
+it("should open on focus and close on blur", async () => {
+	const t = setup();
+	await expectNotExists(page.getByTestId("content"));
+
+	(t.trigger.element() as HTMLElement).focus();
+	await expectExists(page.getByTestId("content"));
+
+	(t.trigger.element() as HTMLElement).blur();
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -98,17 +115,12 @@ it("should allow ignoring escapeKeydownBehavior ", async () => {
 });
 
 it("should respect binding the open prop", async () => {
-	await open({
-		contentProps: {
-			interactOutsideBehavior: "ignore",
-		},
-	});
+	await open();
 	const binding = page.getByTestId("binding");
-	await vi.waitFor(() => expect(binding).toHaveTextContent("true"));
 	await expect.element(binding).toHaveTextContent("true");
-	await binding.click();
-	await expect.element(binding).toHaveTextContent("false");
+	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(page.getByTestId("content"));
+	await expect.element(binding).toHaveTextContent("false");
 	await binding.click();
 	await expect.element(binding).toHaveTextContent("true");
 	await expectExists(page.getByTestId("content"));
@@ -142,4 +154,43 @@ it("should open when composed with another floating trigger", async () => {
 	await page.getByTestId("trigger").click();
 	await expectExists(page.getByTestId("popover-content"));
 	await expectNotExists(page.getByTestId("tooltip-content"));
+});
+
+it("should have pointer-events: auto on content by default", async () => {
+	const t = await open();
+	const contentEl = t.content.element() as HTMLElement;
+	expect(contentEl.style.pointerEvents).toBe("auto");
+});
+
+it("should have pointer-events: none on content when disableHoverableContent is true", async () => {
+	const t = await open({ providerProps: { disableHoverableContent: true } });
+	const contentEl = t.content.element() as HTMLElement;
+	expect(contentEl.style.pointerEvents).toBe("none");
+});
+
+it("should close when hovering content with disableHoverableContent: true", async () => {
+	await open({ providerProps: { disableHoverableContent: true } });
+	const outside = page.getByTestId("outside");
+	await outside.hover();
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should respect custom tabindex on trigger", async () => {
+	const t = setup({ triggerProps: { tabindex: -1 } });
+	await expect.element(t.trigger).toHaveAttribute("tabindex", "-1");
+});
+
+it("should have default tabindex of 0 on trigger", async () => {
+	const t = setup();
+	await expect.element(t.trigger).toHaveAttribute("tabindex", "0");
+});
+
+it("should apply custom style prop to content", async () => {
+	const t = await open({
+		contentProps: {
+			style: { backgroundColor: "rgb(255, 0, 0)" },
+		},
+	});
+	const contentEl = t.content.element() as HTMLElement;
+	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
 });

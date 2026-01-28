@@ -20,6 +20,8 @@ import type {
 
 type GetDefaultDateProps = {
 	defaultValue?: DateValue | DateValue[] | undefined;
+	minValue?: DateValue;
+	maxValue?: DateValue;
 	granularity?: Granularity;
 };
 
@@ -41,7 +43,7 @@ const defaultTimeDefaults = {
 /**
  * A helper function used throughout the various date builders
  * to generate a default `DateValue` using the `defaultValue`,
- * `defaultPlaceholder`, and `granularity` props.
+ * `defaultPlaceholder`, `minValue`, `maxValue`, and `granularity` props.
  *
  * It's important to match the `DateValue` type being used
  * elsewhere in the builder, so they behave according to the
@@ -50,7 +52,7 @@ const defaultTimeDefaults = {
  */
 export function getDefaultDate(opts: GetDefaultDateProps): DateValue {
 	const withDefaults = { ...defaultDateDefaults, ...opts };
-	const { defaultValue, granularity } = withDefaults;
+	const { defaultValue, granularity, minValue, maxValue } = withDefaults;
 
 	if (Array.isArray(defaultValue) && defaultValue.length) {
 		return defaultValue[defaultValue.length - 1]!;
@@ -59,7 +61,12 @@ export function getDefaultDate(opts: GetDefaultDateProps): DateValue {
 	if (defaultValue && !Array.isArray(defaultValue)) {
 		return defaultValue;
 	} else {
-		const date = new Date();
+		let date = new Date();
+		if (minValue && date < minValue.toDate(getLocalTimeZone())) {
+			date = minValue.toDate(getLocalTimeZone());
+		} else if (maxValue && date > maxValue.toDate(getLocalTimeZone())) {
+			date = maxValue.toDate(getLocalTimeZone());
+		}
 		const year = date.getFullYear();
 		const month = date.getMonth() + 1;
 		const day = date.getDate();

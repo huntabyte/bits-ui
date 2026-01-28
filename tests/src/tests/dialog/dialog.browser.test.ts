@@ -10,6 +10,8 @@ import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelte";
+import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
+import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -207,6 +209,22 @@ describe("Focus Management", () => {
 		await expectNotExists(page.getByTestId("content"));
 
 		await expect.element(page.getByTestId("close-focus-override")).toHaveFocus();
+	});
+
+	it("should trap focus and allow Escape to close when only one focusable element exists", async () => {
+		render(DialogSingleFocusableTest);
+		const trigger = page.getByTestId("trigger");
+		await trigger.click();
+		await expectExists(page.getByTestId("content"));
+
+		const closeButton = page.getByTestId("close");
+		await expect.element(closeButton).toHaveFocus();
+
+		await userEvent.keyboard(kbd.TAB);
+		await expect.element(closeButton).toHaveFocus();
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("content"));
 	});
 });
 
@@ -688,5 +706,19 @@ describe("Integration with other components", () => {
 		await expectNotExists(page.getByTestId("dialog-content"));
 		await trigger.hover();
 		await expectExists(page.getByTestId("tooltip-content"));
+	});
+});
+
+describe("Scroll Lock", () => {
+	it("should not add padding when scrollbar-gutter: stable is applied", async () => {
+		render(DialogScrollbarGutterTest);
+
+		const initialPadding = document.body.style.paddingRight;
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		// with scrollbar-gutter: stable, no padding compensation should be added
+		expect(document.body.style.paddingRight).toBe(initialPadding);
 	});
 });

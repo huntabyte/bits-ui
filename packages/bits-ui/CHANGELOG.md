@@ -1,5 +1,72 @@
 # bits-ui
 
+## 2.15.4
+
+### Patch Changes
+
+- fix(Popover): openOnHover trigger click while open behavior ([#1921](https://github.com/huntabyte/bits-ui/pull/1921))
+
+## 2.15.3
+
+### Patch Changes
+
+- fix(ContextMenu): Ensure props are applied correctly when force mounted ([#1919](https://github.com/huntabyte/bits-ui/pull/1919))
+
+## 2.15.2
+
+### Patch Changes
+
+- fix(Tooltip): content should not have pointer events if `disableHoverableContent` is `true` ([#1917](https://github.com/huntabyte/bits-ui/pull/1917))
+
+## 2.15.1
+
+### Patch Changes
+
+- fix(Tooltip): inconsistent grace area ([#1915](https://github.com/huntabyte/bits-ui/pull/1915))
+
+- fix(LinkPreview): inconsistent grace area ([#1915](https://github.com/huntabyte/bits-ui/pull/1915))
+
+## 2.15.0
+
+### Minor Changes
+
+- feat(Popover): add `openOnHover` prop to `Popover.Trigger` ([#1913](https://github.com/huntabyte/bits-ui/pull/1913))
+
+### Patch Changes
+
+- fix(Checkbox): allow form submission when pressing enter on a checkbox that has `type="submit"` ([#1895](https://github.com/huntabyte/bits-ui/pull/1895))
+
+- fix(LinkPreview): add customAnchor to LinkPreviewContent type ([#1905](https://github.com/huntabyte/bits-ui/pull/1905))
+
+- fix(ContextMenu): Add side, sideOffset, and align ([#1911](https://github.com/huntabyte/bits-ui/pull/1911))
+
+- fix(imports): resolve circular dependency ([#1898](https://github.com/huntabyte/bits-ui/pull/1898))
+
+- fix: ensure scroll locking respects stable gutter ([#1914](https://github.com/huntabyte/bits-ui/pull/1914))
+
+- fix(Menu): only call onValueChange once per change to CheckboxGroup value ([#1902](https://github.com/huntabyte/bits-ui/pull/1902))
+
+## 2.14.4
+
+### Patch Changes
+
+- fix(Command): scroll initial selected into view ([#1896](https://github.com/huntabyte/bits-ui/pull/1896))
+
+## 2.14.3
+
+### Patch Changes
+
+- fix(ContextMenu): allow overriding tabindex of trigger ([#1887](https://github.com/huntabyte/bits-ui/pull/1887))
+
+- fix(Calendar, DateField, DatePicker, DateRangeField, DateRangePicker, RangeCalendar): Change default placeholder behaviour to choose the closest available value to current date, in case current date is outside of allowed range by minValue and maxValue. ([#1874](https://github.com/huntabyte/bits-ui/pull/1874))
+
+## 2.14.2
+
+### Patch Changes
+
+- added $bindable to menu.root value ([#1868](https://github.com/huntabyte/bits-ui/pull/1868))
+- fix(Tooltip): ensure hovering between triggers of the same provider is smooth ([#1875](https://github.com/huntabyte/bits-ui/pull/1875))
+
 ## 2.14.1
 
 ### Patch Changes
