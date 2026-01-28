@@ -758,6 +758,7 @@ export class ScrollAreaScrollbarSharedState {
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
+		this.onlostpointercapture = this.onlostpointercapture.bind(this);
 	}
 
 	handleDragScroll(e: PointerEvent) {
@@ -765,6 +766,13 @@ export class ScrollAreaScrollbarSharedState {
 		const x = e.clientX - this.rect.left;
 		const y = e.clientY - this.rect.top;
 		this.scrollbarState.onDragScroll({ x, y });
+	}
+
+	#cleanupPointerState(): void {
+		if (this.rect === null) return;
+		this.root.domContext.getDocument().body.style.webkitUserSelect = this.prevWebkitUserSelect;
+		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "";
+		this.rect = null;
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
@@ -789,9 +797,11 @@ export class ScrollAreaScrollbarSharedState {
 		if (target.hasPointerCapture(e.pointerId)) {
 			target.releasePointerCapture(e.pointerId);
 		}
-		this.root.domContext.getDocument().body.style.webkitUserSelect = this.prevWebkitUserSelect;
-		if (this.root.viewportNode) this.root.viewportNode.style.scrollBehavior = "";
-		this.rect = null;
+		this.#cleanupPointerState();
+	}
+
+	onlostpointercapture(_: BitsPointerEvent) {
+		this.#cleanupPointerState();
 	}
 
 	readonly props = $derived.by(() =>
@@ -805,6 +815,7 @@ export class ScrollAreaScrollbarSharedState {
 			onpointerdown: this.onpointerdown,
 			onpointermove: this.onpointermove,
 			onpointerup: this.onpointerup,
+			onlostpointercapture: this.onlostpointercapture,
 		})
 	);
 }
