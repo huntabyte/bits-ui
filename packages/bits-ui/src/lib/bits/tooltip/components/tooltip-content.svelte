@@ -72,7 +72,11 @@
 		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("tooltip") }, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("tooltip") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
@@ -100,7 +104,11 @@
 		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("tooltip") }, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("tooltip") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}

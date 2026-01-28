@@ -51,7 +51,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("tooltip") }, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("tooltip") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
@@ -77,7 +81,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("tooltip") }, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("tooltip") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}

@@ -55,9 +55,13 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("popover"),
-			}, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{
+					style: getFloatingContentCSSVars("popover"),
+				},
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
@@ -83,7 +87,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("popover") }, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("popover") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}

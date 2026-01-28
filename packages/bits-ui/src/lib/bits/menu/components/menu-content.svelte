@@ -73,7 +73,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, { style: { outline: "none", ...getFloatingContentCSSVars("menu") } }, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: { outline: "none", ...getFloatingContentCSSVars("menu") } },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
@@ -100,7 +104,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, { style: { outline: "none", ...getFloatingContentCSSVars("menu") } }, { style })}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: { outline: "none", ...getFloatingContentCSSVars("menu") } },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
