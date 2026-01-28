@@ -11,6 +11,22 @@ export interface PresenceOptions
 
 type PresenceStatus = "unmounted" | "mounted" | "unmountSuspended";
 
+/**
+ * Cached style properties to avoid storing live CSSStyleDeclaration
+ * which triggers style recalculations when accessed.
+ */
+interface CachedStyles {
+	display: string;
+	animationName: string;
+}
+
+/**
+ * Cache for animation names with TTL to reduce getComputedStyle calls.
+ * Uses WeakMap to avoid memory leaks when elements are removed.
+ */
+const animationNameCache = new WeakMap<HTMLElement, { value: string; timestamp: number }>();
+const ANIMATION_NAME_CACHE_TTL_MS = 16; // One frame at 60fps
+
 const presenceMachine = {
 	mounted: {
 		UNMOUNT: "unmounted",
@@ -30,7 +46,7 @@ type PresenceMachine = StateMachine<typeof presenceMachine>;
 export class Presence {
 	readonly opts: PresenceOptions;
 	prevAnimationNameState = $state("none");
-	styles = $state({}) as CSSStyleDeclaration;
+	styles = $state<CachedStyles>({ display: "", animationName: "none" });
 	initialStatus: PresenceStatus;
 	previousPresent: Previous<boolean>;
 	machine: PresenceMachine;
@@ -59,7 +75,9 @@ export class Presence {
 	 */
 	handleAnimationEnd(event: AnimationEvent) {
 		if (!this.opts.ref.current) return;
-		const currAnimationName = getAnimationName(this.opts.ref.current);
+		// Use cached animation name from styles when available to avoid getComputedStyle
+		const currAnimationName =
+			this.styles.animationName || getAnimationName(this.opts.ref.current);
 		const isCurrentAnimation =
 			currAnimationName.includes(event.animationName) || currAnimationName === "none";
 
@@ -71,7 +89,11 @@ export class Presence {
 	handleAnimationStart(event: AnimationEvent) {
 		if (!this.opts.ref.current) return;
 		if (event.target === this.opts.ref.current) {
-			this.prevAnimationNameState = getAnimationName(this.opts.ref.current);
+			// Force refresh cache on animation start to get accurate animation name
+			const animationName = getAnimationName(this.opts.ref.current, true);
+			this.prevAnimationNameState = animationName;
+			// Update styles cache for subsequent reads
+			this.styles.animationName = animationName;
 		}
 	}
 
@@ -89,7 +111,10 @@ function watchPresenceChange(state: Presence) {
 			if (!hasPresentChanged) return;
 
 			const prevAnimationName = state.prevAnimationNameState;
-			const currAnimationName = getAnimationName(state.opts.ref.current);
+			// Force refresh on state change to get accurate current animation
+			const currAnimationName = getAnimationName(state.opts.ref.current, true);
+			// Update styles cache for subsequent reads
+			state.styles.animationName = currAnimationName;
 
 			if (state.present.current) {
 				state.machine.dispatch("MOUNT");
@@ -121,9 +146,14 @@ function watchStatusChange(state: Presence) {
 		() => state.machine.state.current,
 		() => {
 			if (!state.opts.ref.current) return;
-			const currAnimationName = getAnimationName(state.opts.ref.current);
-			state.prevAnimationNameState =
-				state.machine.state.current === "mounted" ? currAnimationName : "none";
+			// Use cached animation name first, only force refresh if needed for mounted state
+			const currAnimationName =
+				state.machine.state.current === "mounted"
+					? getAnimationName(state.opts.ref.current, true)
+					: "none";
+			state.prevAnimationNameState = currAnimationName;
+			// Update styles cache
+			state.styles.animationName = currAnimationName;
 		}
 	);
 }
@@ -133,7 +163,13 @@ function watchRefChange(state: Presence) {
 		() => state.opts.ref.current,
 		() => {
 			if (!state.opts.ref.current) return;
-			state.styles = getComputedStyle(state.opts.ref.current);
+			// Snapshot only needed style properties instead of storing live CSSStyleDeclaration
+			// This avoids triggering style recalculations when accessing the cached object
+			const computed = getComputedStyle(state.opts.ref.current);
+			state.styles = {
+				display: computed.display,
+				animationName: computed.animationName || "none",
+			};
 
 			return executeCallbacks(
 				on(state.opts.ref.current, "animationstart", state.handleAnimationStart),
@@ -144,6 +180,26 @@ function watchRefChange(state: Presence) {
 	);
 }
 
-function getAnimationName(node?: HTMLElement) {
-	return node ? getComputedStyle(node).animationName || "none" : "none";
+/**
+ * Gets the animation name from computed styles with optional caching.
+ *
+ * @param node - The HTML element to get animation name from
+ * @param forceRefresh - If true, bypasses the cache and forces a fresh getComputedStyle call
+ * @returns The animation name or "none" if not animating
+ */
+function getAnimationName(node?: HTMLElement, forceRefresh = false): string {
+	if (!node) return "none";
+
+	const now = performance.now();
+	const cached = animationNameCache.get(node);
+
+	// Return cached value if still valid and not forced to refresh
+	if (!forceRefresh && cached && now - cached.timestamp < ANIMATION_NAME_CACHE_TTL_MS) {
+		return cached.value;
+	}
+
+	// Compute and cache the new value
+	const value = getComputedStyle(node).animationName || "none";
+	animationNameCache.set(node, { value, timestamp: now });
+	return value;
 }
