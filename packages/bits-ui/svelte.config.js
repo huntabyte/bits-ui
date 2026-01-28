@@ -6,10 +6,10 @@ const config = {
 	preprocess: [vitePreprocess()],
 	compilerOptions: {
 		warningFilter: (w) => {
-			if (w.code === 'state_referenced_locally') return false
-			return true
-		}
-	}
+			if (w.code === "state_referenced_locally") return false;
+			return true;
+		},
+	},
 };
 
 export default config;
