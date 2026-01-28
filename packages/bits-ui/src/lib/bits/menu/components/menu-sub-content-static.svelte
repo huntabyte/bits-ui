@@ -27,6 +27,7 @@
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		onFocusOutside = noop,
 		trapFocus = false,
+		style,
 		...restProps
 	}: MenuSubContentStaticProps = $props();
 
@@ -123,9 +124,7 @@
 		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, mergedProps, {
-				style: getFloatingContentCSSVars("menu"),
-			})}
+			{@const finalProps = mergeProps(props, mergedProps, { style: getFloatingContentCSSVars("menu") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...subContentState.snippetProps })}
 			{:else}
@@ -154,9 +153,7 @@
 		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, mergedProps, {
-				style: getFloatingContentCSSVars("menu"),
-			})}
+			{@const finalProps = mergeProps(props, mergedProps, { style: getFloatingContentCSSVars("menu") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...subContentState.snippetProps })}
 			{:else}

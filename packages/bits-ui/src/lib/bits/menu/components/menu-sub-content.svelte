@@ -28,6 +28,7 @@
 		onFocusOutside = noop,
 		side = "right",
 		trapFocus = false,
+		style,
 		...restProps
 	}: MenuSubContentProps = $props();
 
@@ -124,9 +125,7 @@
 		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, mergedProps, {
-				style: getFloatingContentCSSVars("menu"),
-			})}
+			{@const finalProps = mergeProps(props, mergedProps, { style: getFloatingContentCSSVars("menu") }, { style })}
 			{#if child}
 				{@render child({
 					props: finalProps,
@@ -160,9 +159,7 @@
 		shouldRender={subContentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, mergedProps, {
-				style: getFloatingContentCSSVars("menu"),
-			})}
+			{@const finalProps = mergeProps(props, mergedProps, { style: getFloatingContentCSSVars("menu") }, { style })}
 			{#if child}
 				{@render child({
 					props: finalProps,

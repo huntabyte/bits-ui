@@ -23,6 +23,7 @@
 		trapFocus = true,
 		preventScroll = false,
 		customAnchor = null,
+		style,
 		...restProps
 	}: PopoverContentProps = $props();
 
@@ -68,9 +69,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("popover"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("popover") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
@@ -99,9 +98,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("popover"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("popover") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}

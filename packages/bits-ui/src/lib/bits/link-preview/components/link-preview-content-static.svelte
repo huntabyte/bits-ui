@@ -19,6 +19,7 @@
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		forceMount = false,
+		style,
 		...restProps
 	}: LinkPreviewContentStaticProps = $props();
 
@@ -50,13 +51,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const mergedProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("link-preview"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("link-preview") }, { style })}
 			{#if child}
-				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...mergedProps}>
+				<div {...finalProps}>
 					{@render children?.()}
 				</div>
 			{/if}
@@ -78,13 +77,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const mergedProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("link-preview"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("link-preview") }, { style })}
 			{#if child}
-				{@render child({ props: mergedProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...mergedProps}>
+				<div {...finalProps}>
 					{@render children?.()}
 				</div>
 			{/if}

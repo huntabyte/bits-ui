@@ -20,6 +20,7 @@
 		onEscapeKeydown = noop,
 		onCloseAutoFocus = noop,
 		forceMount = false,
+		style,
 		...restProps
 	}: DropdownMenuContentStaticProps = $props();
 
@@ -65,9 +66,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("dropdown-menu"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("dropdown-menu") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
@@ -93,9 +92,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("dropdown-menu"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("dropdown-menu") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}

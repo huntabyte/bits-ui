@@ -27,6 +27,7 @@
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		forceMount = false,
+		style,
 		...restProps
 	}: TooltipContentProps = $props();
 
@@ -71,14 +72,12 @@
 		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const mergedProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("tooltip"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("tooltip") }, { style })}
 			{#if child}
-				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
 				<div {...wrapperProps}>
-					<div {...mergedProps}>
+					<div {...finalProps}>
 						{@render children?.()}
 					</div>
 				</div>
@@ -101,14 +100,12 @@
 		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const mergedProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("tooltip"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("tooltip") }, { style })}
 			{#if child}
-				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
 				<div {...wrapperProps}>
-					<div {...mergedProps}>
+					<div {...finalProps}>
 						{@render children?.()}
 					</div>
 				</div>

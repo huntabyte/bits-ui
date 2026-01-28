@@ -26,6 +26,7 @@
 		onEscapeKeydown = noop,
 		forceMount = false,
 		trapFocus = false,
+		style,
 		...restProps
 	}: ContextMenuContentProps = $props();
 
@@ -95,9 +96,7 @@
 		enabled={contentState.parentMenu.opts.open.current}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("context-menu"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("context-menu") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
@@ -116,9 +115,7 @@
 		open={contentState.parentMenu.opts.open.current}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("context-menu"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("context-menu") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}

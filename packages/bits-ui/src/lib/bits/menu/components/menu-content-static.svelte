@@ -20,6 +20,7 @@
 		onEscapeKeydown = noop,
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		forceMount = false,
+		style,
 		...restProps
 	}: MenuContentStaticProps = $props();
 
@@ -68,12 +69,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: {
-					outline: "none",
-					...getFloatingContentCSSVars("menu"),
-				},
-			})}
+			{@const finalProps = mergeProps(props, { style: { outline: "none", ...getFloatingContentCSSVars("menu") } }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
@@ -99,12 +95,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: {
-					outline: "none",
-					...getFloatingContentCSSVars("menu"),
-				},
-			})}
+			{@const finalProps = mergeProps(props, { style: { outline: "none", ...getFloatingContentCSSVars("menu") } }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}

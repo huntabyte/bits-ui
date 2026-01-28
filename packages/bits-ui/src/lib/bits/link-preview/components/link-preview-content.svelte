@@ -27,6 +27,7 @@
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		forceMount = false,
+		style,
 		...restProps
 	}: LinkPreviewContentProps = $props();
 
@@ -68,14 +69,12 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const mergedProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("link-preview"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("link-preview") }, { style })}
 			{#if child}
-				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
 				<div {...wrapperProps}>
-					<div {...mergedProps}>
+					<div {...finalProps}>
 						{@render children?.()}
 					</div>
 				</div>
@@ -97,14 +96,12 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const mergedProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("link-preview"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("link-preview") }, { style })}
 			{#if child}
-				{@render child({ props: mergedProps, wrapperProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
 				<div {...wrapperProps}>
-					<div {...mergedProps}>
+					<div {...finalProps}>
 						{@render children?.()}
 					</div>
 				</div>

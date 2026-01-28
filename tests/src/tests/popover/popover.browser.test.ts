@@ -52,6 +52,30 @@ it("should have bits data attrs", async () => {
 	}
 });
 
+it("should apply custom style prop to content", async () => {
+	const t = await open({
+		contentProps: {
+			style: { backgroundColor: "rgb(255, 0, 0)" },
+		},
+	});
+	const contentEl = t.content.element() as HTMLElement;
+	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});
+
+it("should apply custom style prop to content (static)", async () => {
+	const t = setup(
+		{
+			contentProps: {
+				style: { backgroundColor: "rgb(0, 255, 0)" },
+			},
+		},
+		PopoverForceMountTest
+	);
+	await expectExists(t.getContent());
+	const contentEl = t.getContent().element() as HTMLElement;
+	expect(contentEl.style.backgroundColor).toBe("rgb(0, 255, 0)");
+});
+
 it("should have bits data attrs for overlay", async () => {
 	await open({ withOverlay: true });
 	const overlay = page.getByTestId("overlay");

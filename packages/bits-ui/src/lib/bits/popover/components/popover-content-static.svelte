@@ -21,6 +21,7 @@
 		onInteractOutside = noop,
 		trapFocus = true,
 		preventScroll = false,
+		style,
 		...restProps
 	}: PopoverContentStaticProps = $props();
 
@@ -56,7 +57,7 @@
 		{#snippet popper({ props })}
 			{@const finalProps = mergeProps(props, {
 				style: getFloatingContentCSSVars("popover"),
-			})}
+			}, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
@@ -82,9 +83,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("popover"),
-			})}
+			{@const finalProps = mergeProps(props, { style: getFloatingContentCSSVars("popover") }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
