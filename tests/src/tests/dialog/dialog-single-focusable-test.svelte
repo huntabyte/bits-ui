@@ -8,7 +8,10 @@
 	<Dialog.Root bind:open>
 		<Dialog.Trigger data-testid="trigger">open</Dialog.Trigger>
 		<Dialog.Portal>
-			<Dialog.Overlay data-testid="overlay" class="fixed inset-0 h-[100vh] w-[100vw] bg-black">
+			<Dialog.Overlay
+				data-testid="overlay"
+				class="fixed inset-0 h-[100vh] w-[100vw] bg-black"
+			>
 				overlay
 			</Dialog.Overlay>
 			<Dialog.Content

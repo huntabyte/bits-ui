@@ -310,4 +310,37 @@ describe("ScrollArea", () => {
 
 		await vi.waitFor(() => expect(t.viewport.element().scrollLeft).not.toBe(initialScrollLeft));
 	});
+
+	it("should restore webkitUserSelect when pointer capture is lost without pointerup", async () => {
+		document.body.style.webkitUserSelect = "";
+
+		const t = setup({ type: "always", numParagraphs: 20, height: 100 });
+
+		await expectExists(t.getScrollbarY());
+		const scrollbar = t.getScrollbarY().element();
+
+		expect(document.body.style.webkitUserSelect).toBe("");
+
+		const rect = scrollbar.getBoundingClientRect();
+		const pointerdownEvent = new PointerEvent("pointerdown", {
+			bubbles: true,
+			cancelable: true,
+			pointerId: 1,
+			button: 0,
+			clientX: rect.left + 5,
+			clientY: rect.top + 20,
+		});
+		scrollbar.dispatchEvent(pointerdownEvent);
+
+		expect(document.body.style.webkitUserSelect).toBe("none");
+
+		const lostCaptureEvent = new PointerEvent("lostpointercapture", {
+			bubbles: true,
+			cancelable: true,
+			pointerId: 1,
+		});
+		scrollbar.dispatchEvent(lostCaptureEvent);
+
+		expect(document.body.style.webkitUserSelect).toBe("");
+	});
 });
