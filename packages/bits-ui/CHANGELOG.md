@@ -1,5 +1,23 @@
 # bits-ui
 
+## 2.15.5
+
+### Patch Changes
+
+- fix(Tooltip): allow overriding trigger tabindex ([#1932](https://github.com/huntabyte/bits-ui/pull/1932))
+
+- fix(Pin Input): keyboard navigation ([#1872](https://github.com/huntabyte/bits-ui/pull/1872))
+
+- fix(ScrollArea): cleanup when pointercapture is lost ([#1935](https://github.com/huntabyte/bits-ui/pull/1935))
+
+- fix(Accordion): allow overriding trigger tabindex ([#1932](https://github.com/huntabyte/bits-ui/pull/1932))
+
+- fix(Presence): optimize animation detection for large DOMs ([#1924](https://github.com/huntabyte/bits-ui/pull/1924))
+
+- fix: floating components should respect `style` prop ([#1934](https://github.com/huntabyte/bits-ui/pull/1934))
+
+- fix(FocusScope): ensure focus scopes works with only 1 tabbable item ([#1933](https://github.com/huntabyte/bits-ui/pull/1933))
+
 ## 2.15.4
 
 ### Patch Changes
