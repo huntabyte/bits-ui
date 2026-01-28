@@ -59,6 +59,7 @@ interface AccordionTriggerStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean | null | undefined;
+			tabindex: number;
 		}> {}
 
 interface AccordionContentStateOpts
@@ -273,7 +274,7 @@ export class AccordionTriggerState {
 				"data-state": getDataOpenClosed(this.itemState.isActive),
 				"data-orientation": this.#root.opts.orientation.current,
 				[accordionAttrs.trigger]: "",
-				tabindex: 0,
+				tabindex: this.opts.tabindex.current,
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				...this.attachment,

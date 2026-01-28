@@ -222,6 +222,7 @@ interface TooltipTriggerStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
+			tabindex: number;
 		}> {}
 
 export class TooltipTriggerState {
@@ -343,7 +344,7 @@ export class TooltipTriggerState {
 				"data-disabled": boolToEmptyStrOrUndef(this.#isDisabled),
 				"data-delay-duration": `${this.root.delayDuration}`,
 				[tooltipAttrs.trigger]: "",
-				tabindex: this.#isDisabled ? undefined : 0,
+				tabindex: this.#isDisabled ? undefined : this.opts.tabindex.current,
 				disabled: this.opts.disabled.current,
 				onpointerup: this.#onpointerup,
 				onpointerdown: this.#onpointerdown,

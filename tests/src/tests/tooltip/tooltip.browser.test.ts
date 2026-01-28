@@ -174,3 +174,13 @@ it("should close when hovering content with disableHoverableContent: true", asyn
 	await outside.hover();
 	await expectNotExists(page.getByTestId("content"));
 });
+
+it("should respect custom tabindex on trigger", async () => {
+	const t = setup({ triggerProps: { tabindex: -1 } });
+	await expect.element(t.trigger).toHaveAttribute("tabindex", "-1");
+});
+
+it("should have default tabindex of 0 on trigger", async () => {
+	const t = setup();
+	await expect.element(t.trigger).toHaveAttribute("tabindex", "0");
+});

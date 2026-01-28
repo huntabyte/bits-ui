@@ -5,6 +5,7 @@
 		contentProps?: WithoutChildrenOrChild<Tooltip.ContentProps>;
 		portalProps?: WithoutChildrenOrChild<Tooltip.PortalProps>;
 		providerProps?: WithoutChildrenOrChild<Tooltip.ProviderProps>;
+		triggerProps?: WithoutChildrenOrChild<Tooltip.TriggerProps>;
 		withCustomAnchor?: boolean;
 	};
 </script>
@@ -15,6 +16,7 @@
 		portalProps,
 		contentProps,
 		providerProps,
+		triggerProps,
 		withCustomAnchor = false,
 		...restProps
 	}: TooltipTestProps = $props();
@@ -25,7 +27,7 @@
 <main data-testid="main">
 	<Tooltip.Provider delayDuration={0} {...providerProps}>
 		<Tooltip.Root bind:open {...restProps}>
-			<Tooltip.Trigger data-testid="trigger">@sveltejs</Tooltip.Trigger>
+			<Tooltip.Trigger data-testid="trigger" {...triggerProps}>@sveltejs</Tooltip.Trigger>
 			<Tooltip.Portal {...portalProps}>
 				<Tooltip.Content
 					{...contentProps}
