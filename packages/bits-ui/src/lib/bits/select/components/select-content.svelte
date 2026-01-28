@@ -19,6 +19,7 @@
 		children,
 		child,
 		preventScroll = false,
+		style,
 		...restProps
 	}: SelectContentProps = $props();
 
@@ -48,7 +49,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
+			{@const finalProps = mergeProps(props, { style: contentState.props.style }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
@@ -73,7 +74,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(props, { style: contentState.props.style })}
+			{@const finalProps = mergeProps(props, { style: contentState.props.style }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}

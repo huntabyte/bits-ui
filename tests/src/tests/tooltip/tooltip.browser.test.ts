@@ -184,3 +184,13 @@ it("should have default tabindex of 0 on trigger", async () => {
 	const t = setup();
 	await expect.element(t.trigger).toHaveAttribute("tabindex", "0");
 });
+
+it("should apply custom style prop to content", async () => {
+	const t = await open({
+		contentProps: {
+			style: { backgroundColor: "rgb(255, 0, 0)" },
+		},
+	});
+	const contentEl = t.content.element() as HTMLElement;
+	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});

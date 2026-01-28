@@ -481,3 +481,13 @@ it("should close when the trigger is left clicked and the menu is open", async (
 	await page.getByTestId("trigger").click({ force: true });
 	await expectNotExists(page.getByTestId("content"));
 });
+
+it("should apply custom style prop to content", async () => {
+	const t = await open({
+		contentProps: {
+			style: { backgroundColor: "rgb(255, 0, 0)" },
+		},
+	});
+	const contentEl = t.getContent().element() as HTMLElement;
+	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});

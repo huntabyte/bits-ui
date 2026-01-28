@@ -21,6 +21,7 @@
 		// the default menu behavior of handling outside interactions on the trigger
 		onEscapeKeydown = noop,
 		forceMount = false,
+		style,
 		...restProps
 	}: ContextMenuContentStaticProps = $props();
 
@@ -82,9 +83,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("context-menu"),
-			})}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("context-menu") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
@@ -115,9 +118,11 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props })}
-			{@const finalProps = mergeProps(props, {
-				style: getFloatingContentCSSVars("context-menu"),
-			})}
+			{@const finalProps = mergeProps(
+				props,
+				{ style: getFloatingContentCSSVars("context-menu") },
+				{ style }
+			)}
 			{#if child}
 				{@render child({ props: finalProps, ...contentState.snippetProps })}
 			{:else}
