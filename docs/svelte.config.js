@@ -42,6 +42,12 @@ const config = {
 			name: execSync("git rev-parse HEAD").toString().trim(),
 		},
 	},
+	compilerOptions: {
+		warningFilter: (w) => {
+			if (w.code === 'state_referenced_locally') return false
+			return true
+		}
+	}
 };
 
 export default config;

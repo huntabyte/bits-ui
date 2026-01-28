@@ -158,7 +158,7 @@ export class FocusScope {
 			if (!this.#manager.isActiveScope(this)) return;
 
 			const tabbables = this.#getTabbables();
-			if (tabbables.length < 2) return;
+			if (tabbables.length === 0) return;
 
 			const first = tabbables[0];
 			const last = tabbables[tabbables.length - 1];
