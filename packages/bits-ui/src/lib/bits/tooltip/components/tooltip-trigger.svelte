@@ -13,6 +13,7 @@
 		id = createId(uid),
 		disabled = false,
 		type = "button",
+		tabindex = 0,
 		ref = $bindable(null),
 		...restProps
 	}: TooltipTriggerProps = $props();
@@ -20,6 +21,7 @@
 	const triggerState = TooltipTriggerState.create({
 		id: boxWith(() => id),
 		disabled: boxWith(() => disabled ?? false),
+		tabindex: boxWith(() => tabindex ?? 0),
 		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
