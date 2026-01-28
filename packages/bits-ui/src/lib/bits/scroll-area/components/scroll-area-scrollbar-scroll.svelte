@@ -5,11 +5,11 @@
 	import ScrollAreaScrollbarVisible from "./scroll-area-scrollbar-visible.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
-	let { forceMount = false, ...restProps }: _ScrollbarStubProps = $props();
+	let { forceMount = false, style, ...restProps }: _ScrollbarStubProps = $props();
 
 	const scrollbarScrollState = ScrollAreaScrollbarScrollState.create();
 
-	const mergedProps = $derived(mergeProps(restProps, scrollbarScrollState.props));
+	const mergedProps = $derived(mergeProps(restProps, scrollbarScrollState.props, { style }));
 </script>
 
 <PresenceLayer

@@ -8,14 +8,20 @@
 	import ScrollAreaScrollbarVisible from "./scroll-area-scrollbar-visible.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
 
-	let { forceMount = false, ...restProps }: _ScrollbarStubProps = $props();
+	let { forceMount = false, style, ...restProps }: _ScrollbarStubProps = $props();
 
 	const scrollbarHoverState = ScrollAreaScrollbarHoverState.create();
 	const scrollbarAutoState = ScrollAreaScrollbarAutoState.create();
 	const mergedProps = $derived(
-		mergeProps(restProps, scrollbarHoverState.props, scrollbarAutoState.props, {
-			"data-state": scrollbarHoverState.isVisible ? "visible" : "hidden",
-		})
+		mergeProps(
+			restProps,
+			scrollbarHoverState.props,
+			scrollbarAutoState.props,
+			{
+				"data-state": scrollbarHoverState.isVisible ? "visible" : "hidden",
+			},
+			{ style }
+		)
 	);
 
 	const open = $derived(

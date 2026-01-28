@@ -10,6 +10,7 @@
 		ref = $bindable(null),
 		id = createId(uid),
 		children,
+		style,
 		...restProps
 	}: ScrollAreaViewportProps = $props();
 
@@ -21,7 +22,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, viewportState.props));
+	const mergedProps = $derived(mergeProps(restProps, viewportState.props, { style }));
 	const mergedContentProps = $derived(mergeProps({}, viewportState.contentProps));
 </script>
 

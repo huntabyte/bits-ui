@@ -8,6 +8,7 @@
 		id,
 		children,
 		child,
+		style,
 		...restProps
 	}: Omit<ScrollAreaCornerProps, "id"> & {
 		id: string;
@@ -21,7 +22,7 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, cornerState.props));
+	const mergedProps = $derived(mergeProps(restProps, cornerState.props, { style }));
 </script>
 
 {#if child}

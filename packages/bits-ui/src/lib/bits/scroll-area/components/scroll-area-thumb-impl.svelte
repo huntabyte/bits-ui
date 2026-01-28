@@ -10,6 +10,7 @@
 		child,
 		children,
 		present,
+		style,
 		...restProps
 	}: Omit<ScrollAreaThumbProps, "forceMount" | "id"> & {
 		id: string;
@@ -28,11 +29,16 @@
 	});
 
 	const mergedProps = $derived(
-		mergeProps(restProps, thumbState.props, {
-			style: {
-				hidden: !present,
-			},
-		})
+		mergeProps(
+			restProps,
+			thumbState.props,
+			{ style },
+			{
+				style: {
+					hidden: !present,
+				},
+			}
+		)
 	);
 </script>
 
