@@ -3,7 +3,7 @@ import { render } from "vitest-browser-svelte";
 import { REGEXP_ONLY_DIGITS } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import PinInputTest from "./pin-input-test.svelte";
-import { tick, type ComponentProps } from "svelte";
+import type { ComponentProps } from "svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
