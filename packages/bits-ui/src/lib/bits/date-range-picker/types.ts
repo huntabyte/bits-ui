@@ -9,7 +9,7 @@ import type {
 	EditableSegmentPart,
 } from "$lib/shared/index.js";
 import type { CalendarRootSnippetProps } from "$lib/types.js";
-import type { Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
+import type { Granularity, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 
 export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	/**
@@ -270,6 +270,11 @@ export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	 * only part of the value is changed/completed.
 	 */
 	onEndValueChange?: OnChangeFn<DateValue | undefined>;
+
+	/**
+	 * A callback function called when the currently displayed month(s) changes.
+	 */
+	onVisibleMonthsChange?: OnChangeFn<Month<DateValue>[]>;
 
 	/**
 	 * The `id` of the element which contains the error messages for the date field when the
