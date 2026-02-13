@@ -2,7 +2,6 @@
 	href="https://github.com/EpicenterHQ/epicenter"
 	class="bg-background border-foreground/5 hover:border-foreground/10 group relative block h-[150px] w-full overflow-hidden rounded-xl border transition-all"
 >
-	<!-- Glow -->
 	<div
 		class="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-[#FFD4B2] opacity-10 blur-[50px] transition-opacity group-hover:opacity-20"
 	></div>
