@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.15.6
+
+### Patch Changes
+
+- fix(Dialog): remove paint containment ([#1946](https://github.com/huntabyte/bits-ui/pull/1946))
+
+- fix(Popover): remove paint containment ([#1946](https://github.com/huntabyte/bits-ui/pull/1946))
+
+- fix(Menu): remove paint containment ([#1946](https://github.com/huntabyte/bits-ui/pull/1946))
+
 ## 2.15.5
 
 ### Patch Changes
