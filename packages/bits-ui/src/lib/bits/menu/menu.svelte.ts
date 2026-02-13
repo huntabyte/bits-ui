@@ -442,7 +442,7 @@ export class MenuContentState {
 				style: {
 					pointerEvents: "auto",
 					// CSS containment isolates style/layout/paint calculations from the rest of the page
-					contain: "layout style paint",
+					contain: "layout style",
 				},
 				...this.attachment,
 			}) as const
