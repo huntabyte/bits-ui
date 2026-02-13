@@ -380,9 +380,10 @@ export class DialogContentState {
 					outline: this.root.opts.variant.current === "alert-dialog" ? "none" : undefined,
 					"--bits-dialog-depth": this.root.depth,
 					"--bits-dialog-nested-count": this.root.nestedOpenCount,
-					// CSS containment isolates style/layout/paint calculations from the rest of the page,
-					// improving performance when there's a large DOM behind the dialog
-					contain: "layout style paint",
+					// CSS containment isolates style/layout calculations from the rest of the page,
+					// improving performance when there's a large DOM behind the dialog.
+					// Paint is omitted so tooltips/selects can render outside dialog bounds.
+					contain: "layout style",
 				},
 				tabindex: this.root.opts.variant.current === "alert-dialog" ? -1 : undefined,
 				"data-nested-open": boolToEmptyStrOrUndef(this.root.nestedOpenCount > 0),
