@@ -139,6 +139,12 @@ export const content = defineComponentApiSchema<ComboboxContentPropsWithoutHTML>
 	description: "The element which contains the combobox's items.",
 	props: {
 		...floatingProps(),
+		positioning: defineEnumProp({
+			options: ["popper", "item-aligned"],
+			default: "popper",
+			description:
+				"Controls how content is positioned. `'item-aligned'` aligns the selected item with the trigger and falls back to popper positioning when alignment isn't possible (including touch-open interactions).",
+		}),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,

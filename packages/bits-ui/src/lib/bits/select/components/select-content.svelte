@@ -13,7 +13,11 @@
 		id = createId(uid),
 		ref = $bindable(null),
 		forceMount = false,
+		positioning = "popper",
 		side = "bottom",
+		align = "center",
+		sideOffset = 0,
+		alignOffset = 0,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		children,
@@ -31,9 +35,18 @@
 		),
 		onInteractOutside: boxWith(() => onInteractOutside),
 		onEscapeKeydown: boxWith(() => onEscapeKeydown),
+		positioning: boxWith(() => positioning),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+	const effectiveSide = $derived(contentState.useItemAlignedPositioning ? "bottom" : side);
+	const effectiveAlign = $derived(contentState.useItemAlignedPositioning ? "center" : align);
+	const effectiveAlignOffset = $derived(contentState.useItemAlignedPositioning ? 0 : alignOffset);
+	const effectiveSideOffset = $derived(
+		contentState.useItemAlignedPositioning
+			? sideOffset + contentState.itemAlignedSideOffset
+			: sideOffset
+	);
 </script>
 
 {#if forceMount}
@@ -41,7 +54,10 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		{side}
+		side={effectiveSide}
+		align={effectiveAlign}
+		alignOffset={effectiveAlignOffset}
+		sideOffset={effectiveSideOffset}
 		enabled={contentState.root.opts.open.current}
 		{id}
 		{preventScroll}
@@ -66,7 +82,10 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		{side}
+		side={effectiveSide}
+		align={effectiveAlign}
+		alignOffset={effectiveAlignOffset}
+		sideOffset={effectiveSideOffset}
 		open={contentState.root.opts.open.current}
 		{id}
 		{preventScroll}

@@ -98,6 +98,8 @@ abstract class SelectBaseRootState {
 	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
+	selectedItemNode = $state<HTMLElement | null>(null);
+	lastOpenPointerType = $state<string | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
@@ -133,6 +135,13 @@ abstract class SelectBaseRootState {
 				this.setHighlightedNode(null);
 			}
 		});
+
+		watch(
+			() => this.contentNode,
+			() => {
+				this.updateSelectedItemNode();
+			}
+		);
 	}
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
@@ -143,11 +152,14 @@ abstract class SelectBaseRootState {
 	}
 
 	getCandidateNodes(): HTMLElement[] {
+		return this.getItemNodes(false);
+	}
+
+	getItemNodes(includeDisabled = true): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
-		return Array.from(
-			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
-		);
+		const itemNodes = Array.from(node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`));
+		return includeDisabled ? itemNodes : itemNodes.filter((item) => !item.hasAttribute("data-disabled"));
 	}
 
 	setHighlightedToFirstCandidate(initial = false) {
@@ -178,9 +190,20 @@ abstract class SelectBaseRootState {
 		this.setHighlightedNode(nodes[0]!, initial);
 	}
 
-	getNodeByValue(value: string): HTMLElement | null {
-		const candidateNodes = this.getCandidateNodes();
-		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
+	getNodeByValue(value: string, includeDisabled = false): HTMLElement | null {
+		const itemNodes = this.getItemNodes(includeDisabled);
+		return itemNodes.find((node) => node.dataset.value === value) ?? null;
+	}
+
+	abstract getPrimarySelectedValue(): string | null;
+
+	updateSelectedItemNode() {
+		const selectedValue = this.getPrimarySelectedValue();
+		const nextSelectedNode =
+			selectedValue === null ? null : this.getNodeByValue(selectedValue, true);
+		if (this.selectedItemNode !== nextSelectedNode) {
+			this.selectedItemNode = nextSelectedNode;
+		}
 	}
 
 	setOpen(open: boolean) {
@@ -191,17 +214,24 @@ abstract class SelectBaseRootState {
 		this.opts.open.current = !this.opts.open.current;
 	}
 
-	handleOpen() {
+	handleOpen(pointerType: string | null = null) {
+		this.lastOpenPointerType = pointerType;
 		this.setOpen(true);
+		this.updateSelectedItemNode();
 	}
 
 	handleClose() {
 		this.setHighlightedNode(null);
+		this.lastOpenPointerType = null;
 		this.setOpen(false);
 	}
 
-	toggleMenu() {
-		this.toggleOpen();
+	toggleMenu(pointerType: string | null = null) {
+		if (this.opts.open.current) {
+			this.handleClose();
+		} else {
+			this.handleOpen(pointerType);
+		}
 	}
 
 	getBitsAttr: typeof selectAttrs.getAttr = (part) => {
@@ -255,6 +285,17 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
+
+		watch(
+			() => this.opts.value.current,
+			() => {
+				this.updateSelectedItemNode();
+			}
+		);
+	}
+
+	getPrimarySelectedValue() {
+		return this.opts.value.current;
 	}
 
 	includesItem(itemValue: string) {
@@ -318,6 +359,17 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
+
+		watch(
+			() => this.opts.value.current,
+			() => {
+				this.updateSelectedItemNode();
+			}
+		);
+	}
+
+	getPrimarySelectedValue() {
+		return this.opts.value.current[0] ?? null;
 	}
 
 	includesItem(itemValue: string) {
@@ -591,7 +643,7 @@ export class SelectComboTriggerState {
 		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
 			this.root.inputNode?.focus();
 		}
-		this.root.toggleMenu();
+		this.root.toggleMenu(e.pointerType);
 	}
 
 	readonly props = $derived.by(
@@ -662,14 +714,14 @@ export class SelectTriggerState {
 		this.onclick = this.onclick.bind(this);
 	}
 
-	#handleOpen() {
-		this.root.opts.open.current = true;
+	#handleOpen(pointerType: string | null = null) {
+		this.root.handleOpen(pointerType);
 		this.#dataTypeahead.resetTypeahead();
 		this.#domTypeahead.resetTypeahead();
 	}
 
-	#handlePointerOpen(_: PointerEvent) {
-		this.#handleOpen();
+	#handlePointerOpen(e: PointerEvent) {
+		this.#handleOpen(e.pointerType);
 	}
 
 	/**
@@ -879,6 +931,7 @@ interface SelectContentStateOpts
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
+			positioning: "popper" | "item-aligned";
 		}> {}
 
 export class SelectContentState {
@@ -890,6 +943,9 @@ export class SelectContentState {
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
 	domContext: DOMContext;
+	itemAlignedFallback = $state(false);
+	itemAlignedOffsetY = $state(0);
+	#itemAlignedRaf: number | null = null;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -904,18 +960,117 @@ export class SelectContentState {
 		onDestroyEffect(() => {
 			this.root.contentNode = null;
 			this.isPositioned = false;
+			this.#cancelItemAlignedRaf();
 		});
 
 		watch(
 			() => this.root.opts.open.current,
 			() => {
-				if (this.root.opts.open.current) return;
+				if (this.root.opts.open.current) {
+					this.#scheduleItemAlignedUpdate();
+					return;
+				}
 				this.isPositioned = false;
+				this.itemAlignedOffsetY = 0;
+				this.itemAlignedFallback = false;
+			}
+		);
+
+		watch(
+			[
+				() => this.opts.positioning.current,
+				() => this.root.selectedItemNode,
+				() => this.root.triggerNode,
+				() => this.root.contentNode,
+				() => this.root.lastOpenPointerType,
+			],
+			() => {
+				this.#scheduleItemAlignedUpdate();
+			}
+		);
+
+		watch(
+			[() => this.root.opts.open.current, () => this.opts.positioning.current],
+			([open, positioning]) => {
+				if (!open || positioning !== "item-aligned") return;
+				return on(this.domContext.getWindow(), "resize", this.#scheduleItemAlignedUpdate);
 			}
 		);
 
 		this.onpointermove = this.onpointermove.bind(this);
 	}
+
+	readonly useItemAlignedPositioning = $derived.by(
+		() => this.opts.positioning.current === "item-aligned" && !this.itemAlignedFallback
+	);
+
+	readonly itemAlignedSideOffset = $derived.by(() => {
+		return this.useItemAlignedPositioning ? -this.itemAlignedOffsetY : 0;
+	});
+
+	#cancelItemAlignedRaf = () => {
+		if (this.#itemAlignedRaf === null) return;
+		this.domContext.getWindow().cancelAnimationFrame(this.#itemAlignedRaf);
+		this.#itemAlignedRaf = null;
+	};
+
+	#scheduleItemAlignedUpdate = () => {
+		if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
+		this.#cancelItemAlignedRaf();
+		afterTick(() => {
+			if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
+			this.#itemAlignedRaf = this.domContext
+				.getWindow()
+				.requestAnimationFrame(this.#updateItemAlignedPositioning);
+		});
+	};
+
+	#updateItemAlignedPositioning = () => {
+		this.#itemAlignedRaf = null;
+		if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
+		if (this.root.lastOpenPointerType === "touch") {
+			this.itemAlignedFallback = true;
+			this.itemAlignedOffsetY = 0;
+			return;
+		}
+
+		this.root.updateSelectedItemNode();
+		const selectedItem = this.root.selectedItemNode;
+		const trigger = this.root.triggerNode;
+		const floating = this.root.contentNode;
+
+		if (!selectedItem || !trigger || !floating) {
+			this.itemAlignedFallback = true;
+			this.itemAlignedOffsetY = 0;
+			return;
+		}
+
+		selectedItem.scrollIntoView({
+			block: "nearest",
+			inline: "nearest",
+		});
+
+		const triggerRect = trigger.getBoundingClientRect();
+		const itemRect = selectedItem.getBoundingClientRect();
+		const viewportHeight = this.domContext.getWindow().innerHeight;
+		const popupHeight = floating.offsetHeight;
+
+		const canAlign =
+			triggerRect.top > 20 &&
+			viewportHeight - triggerRect.bottom > 20 &&
+			popupHeight <= viewportHeight;
+
+		if (!canAlign) {
+			this.itemAlignedFallback = true;
+			this.itemAlignedOffsetY = 0;
+			return;
+		}
+
+		const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+		const itemCenterY = itemRect.top + itemRect.height / 2;
+		this.itemAlignedOffsetY = itemCenterY - triggerCenterY;
+		this.itemAlignedFallback = false;
+	};
 
 	onpointermove(_: BitsPointerEvent) {
 		this.root.isUsingKeyboard = false;
@@ -1033,6 +1188,7 @@ export class SelectItemState {
 		watch(
 			() => this.mounted,
 			() => {
+				this.root.updateSelectedItemNode();
 				if (!this.mounted) return;
 				this.root.setInitialHighlightedNode();
 			}

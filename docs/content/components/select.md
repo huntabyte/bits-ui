@@ -315,6 +315,32 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 <SelectDemoCustomAnchor />
 
+## Item-Aligned Positioning
+
+By default, `Select.Content` uses `positioning="popper"`, which follows standard Floating UI placement.
+
+If you want Radix-style item alignment, set `positioning="item-aligned"`:
+
+- The selected item is aligned with the trigger value.
+- The content still uses the trigger as its anchor.
+- The content falls back to normal popper positioning when alignment isn't possible.
+- Touch-open interactions fall back to normal popper positioning.
+
+```svelte /positioning="item-aligned"/
+<Select.Root type="single">
+  <Select.Trigger />
+  <Select.Portal>
+    <Select.Content positioning="item-aligned">
+      <Select.Viewport>
+        <!-- items -->
+      </Select.Viewport>
+    </Select.Content>
+  </Select.Portal>
+</Select.Root>
+```
+
+When `positioning="item-aligned"` is active, `side`, `align`, and `alignOffset` are ignored. If it falls back to popper behavior, those props apply again.
+
 ## What is the Viewport?
 
 The `Select.Viewport` component is used to determine the size of the content in order to determine whether or not the scroll up and down buttons should be rendered.
