@@ -944,7 +944,7 @@ export class SelectContentState {
 	isPositioned = $state(false);
 	domContext: DOMContext;
 	itemAlignedFallback = $state(false);
-	itemAlignedOffsetY = $state(0);
+	itemAlignedSideOffset = $state(0);
 	#itemAlignedRaf: number | null = null;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
@@ -967,12 +967,13 @@ export class SelectContentState {
 			() => this.root.opts.open.current,
 			() => {
 				if (this.root.opts.open.current) {
+					this.itemAlignedSideOffset = 0;
+					this.itemAlignedFallback = false;
 					this.#scheduleItemAlignedUpdate();
 					return;
 				}
 				this.isPositioned = false;
-				this.itemAlignedOffsetY = 0;
-				this.itemAlignedFallback = false;
+				this.#cancelItemAlignedRaf();
 			}
 		);
 
@@ -983,6 +984,7 @@ export class SelectContentState {
 				() => this.root.triggerNode,
 				() => this.root.contentNode,
 				() => this.root.lastOpenPointerType,
+				() => this.isPositioned,
 			],
 			() => {
 				this.#scheduleItemAlignedUpdate();
@@ -1004,10 +1006,6 @@ export class SelectContentState {
 		() => this.opts.positioning.current === "item-aligned" && !this.itemAlignedFallback
 	);
 
-	readonly itemAlignedSideOffset = $derived.by(() => {
-		return this.useItemAlignedPositioning ? -this.itemAlignedOffsetY : 0;
-	});
-
 	#cancelItemAlignedRaf = () => {
 		if (this.#itemAlignedRaf === null) return;
 		this.domContext.getWindow().cancelAnimationFrame(this.#itemAlignedRaf);
@@ -1016,9 +1014,11 @@ export class SelectContentState {
 
 	#scheduleItemAlignedUpdate = () => {
 		if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
+		if (!this.isPositioned) return;
 		this.#cancelItemAlignedRaf();
 		afterTick(() => {
 			if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
+			if (!this.isPositioned) return;
 			this.#itemAlignedRaf = this.domContext
 				.getWindow()
 				.requestAnimationFrame(this.#updateItemAlignedPositioning);
@@ -1030,7 +1030,7 @@ export class SelectContentState {
 		if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
 		if (this.root.lastOpenPointerType === "touch") {
 			this.itemAlignedFallback = true;
-			this.itemAlignedOffsetY = 0;
+			this.itemAlignedSideOffset = 0;
 			return;
 		}
 
@@ -1038,37 +1038,43 @@ export class SelectContentState {
 		const selectedItem = this.root.selectedItemNode;
 		const trigger = this.root.triggerNode;
 		const floating = this.root.contentNode;
+		const viewport = this.root.viewportNode;
 
 		if (!selectedItem || !trigger || !floating) {
 			this.itemAlignedFallback = true;
-			this.itemAlignedOffsetY = 0;
+			this.itemAlignedSideOffset = 0;
 			return;
 		}
 
-		selectedItem.scrollIntoView({
-			block: "nearest",
-			inline: "nearest",
-		});
+		if (viewport && !isFullyVisibleInContainer(selectedItem, viewport)) {
+			selectedItem.scrollIntoView({
+				block: "nearest",
+				inline: "nearest",
+			});
+		}
 
 		const triggerRect = trigger.getBoundingClientRect();
+		const floatingRect = floating.getBoundingClientRect();
 		const itemRect = selectedItem.getBoundingClientRect();
 		const viewportHeight = this.domContext.getWindow().innerHeight;
-		const popupHeight = floating.offsetHeight;
+		const viewportMargin = 20;
+		const selectedItemCenterWithinFloating =
+			itemRect.top - floatingRect.top + itemRect.height / 2;
+		const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+		const desiredFloatingTop = triggerCenterY - selectedItemCenterWithinFloating;
+		const desiredFloatingBottom = desiredFloatingTop + floatingRect.height;
 
 		const canAlign =
-			triggerRect.top > 20 &&
-			viewportHeight - triggerRect.bottom > 20 &&
-			popupHeight <= viewportHeight;
+			desiredFloatingTop >= viewportMargin &&
+			desiredFloatingBottom <= viewportHeight - viewportMargin;
 
 		if (!canAlign) {
 			this.itemAlignedFallback = true;
-			this.itemAlignedOffsetY = 0;
+			this.itemAlignedSideOffset = 0;
 			return;
 		}
 
-		const triggerCenterY = triggerRect.top + triggerRect.height / 2;
-		const itemCenterY = itemRect.top + itemRect.height / 2;
-		this.itemAlignedOffsetY = itemCenterY - triggerCenterY;
+		this.itemAlignedSideOffset = desiredFloatingTop - floatingRect.top;
 		this.itemAlignedFallback = false;
 	};
 
@@ -1669,5 +1675,16 @@ export class SelectScrollUpButtonState {
 				...this.scrollButtonState.props,
 				[this.root.getBitsAttr("scroll-up-button")]: "",
 			}) as const
+	);
+}
+
+function isFullyVisibleInContainer(node: HTMLElement, container: HTMLElement): boolean {
+	const nodeRect = node.getBoundingClientRect();
+	const containerRect = container.getBoundingClientRect();
+	return (
+		nodeRect.top >= containerRect.top &&
+		nodeRect.bottom <= containerRect.bottom &&
+		nodeRect.left >= containerRect.left &&
+		nodeRect.right <= containerRect.right
 	);
 }
