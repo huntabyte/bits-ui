@@ -99,7 +99,7 @@ abstract class SelectBaseRootState {
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
 	selectedItemNode = $state<HTMLElement | null>(null);
-	lastOpenPointerType = $state<string | null>(null);
+	pendingOpenPointerId = $state<number | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
@@ -214,24 +214,35 @@ abstract class SelectBaseRootState {
 		this.opts.open.current = !this.opts.open.current;
 	}
 
-	handleOpen(pointerType: string | null = null) {
-		this.lastOpenPointerType = pointerType;
+	handleOpen(_pointerType: string | null = null, pendingOpenPointerId: number | null = null) {
+		this.pendingOpenPointerId = pendingOpenPointerId;
 		this.setOpen(true);
 		this.updateSelectedItemNode();
 	}
 
 	handleClose() {
 		this.setHighlightedNode(null);
-		this.lastOpenPointerType = null;
+		this.pendingOpenPointerId = null;
 		this.setOpen(false);
 	}
 
-	toggleMenu(pointerType: string | null = null) {
+	toggleMenu(pointerType: string | null = null, pendingOpenPointerId: number | null = null) {
 		if (this.opts.open.current) {
 			this.handleClose();
 		} else {
-			this.handleOpen(pointerType);
+			this.handleOpen(pointerType, pendingOpenPointerId);
 		}
+	}
+
+	clearPendingOpenPointer() {
+		this.pendingOpenPointerId = null;
+	}
+
+	consumePendingOpenPointer(pointerId: number): boolean {
+		if (this.pendingOpenPointerId === null) return false;
+		if (this.pendingOpenPointerId !== pointerId) return false;
+		this.pendingOpenPointerId = null;
+		return true;
 	}
 
 	getBitsAttr: typeof selectAttrs.getAttr = (part) => {
@@ -643,7 +654,7 @@ export class SelectComboTriggerState {
 		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
 			this.root.inputNode?.focus();
 		}
-		this.root.toggleMenu(e.pointerType);
+		this.root.toggleMenu(e.pointerType, e.pointerId);
 	}
 
 	readonly props = $derived.by(
@@ -714,14 +725,18 @@ export class SelectTriggerState {
 		this.onclick = this.onclick.bind(this);
 	}
 
-	#handleOpen(pointerType: string | null = null) {
-		this.root.handleOpen(pointerType);
+	#handleOpen(pointerType: string | null = null, pendingOpenPointerId: number | null = null) {
+		this.root.handleOpen(pointerType, pendingOpenPointerId);
 		this.#dataTypeahead.resetTypeahead();
 		this.#domTypeahead.resetTypeahead();
 	}
 
-	#handlePointerOpen(e: PointerEvent) {
-		this.#handleOpen(e.pointerType);
+	#handlePointerDownOpen(e: PointerEvent) {
+		this.#handleOpen(e.pointerType, e.pointerId);
+	}
+
+	#handlePointerUpOpen(e: PointerEvent) {
+		this.#handleOpen(e.pointerType, null);
 	}
 
 	/**
@@ -886,7 +901,7 @@ export class SelectTriggerState {
 		// by right clicks as well, but not when ctrl is pressed
 		if (e.button === 0 && e.ctrlKey === false) {
 			if (this.root.opts.open.current === false) {
-				this.#handlePointerOpen(e);
+				this.#handlePointerDownOpen(e);
 			} else {
 				this.root.handleClose();
 			}
@@ -898,11 +913,13 @@ export class SelectTriggerState {
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			if (this.root.opts.open.current === false) {
-				this.#handlePointerOpen(e);
+				this.#handlePointerUpOpen(e);
 			} else {
 				this.root.handleClose();
 			}
+			return;
 		}
+		this.root.clearPendingOpenPointer();
 	}
 
 	readonly props = $derived.by(
@@ -931,7 +948,7 @@ interface SelectContentStateOpts
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
-			positioning: "popper" | "item-aligned";
+			position: "popper" | "item-aligned";
 		}> {}
 
 export class SelectContentState {
@@ -979,11 +996,10 @@ export class SelectContentState {
 
 		watch(
 			[
-				() => this.opts.positioning.current,
+				() => this.opts.position.current,
 				() => this.root.selectedItemNode,
 				() => this.root.triggerNode,
 				() => this.root.contentNode,
-				() => this.root.lastOpenPointerType,
 				() => this.isPositioned,
 			],
 			() => {
@@ -992,18 +1008,19 @@ export class SelectContentState {
 		);
 
 		watch(
-			[() => this.root.opts.open.current, () => this.opts.positioning.current],
-			([open, positioning]) => {
-				if (!open || positioning !== "item-aligned") return;
+			[() => this.root.opts.open.current, () => this.opts.position.current],
+			([open, position]) => {
+				if (!open || position !== "item-aligned") return;
 				return on(this.domContext.getWindow(), "resize", this.#scheduleItemAlignedUpdate);
 			}
 		);
 
 		this.onpointermove = this.onpointermove.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
 	}
 
 	readonly useItemAlignedPositioning = $derived.by(
-		() => this.opts.positioning.current === "item-aligned" && !this.itemAlignedFallback
+		() => this.opts.position.current === "item-aligned" && !this.itemAlignedFallback
 	);
 
 	#cancelItemAlignedRaf = () => {
@@ -1013,11 +1030,11 @@ export class SelectContentState {
 	};
 
 	#scheduleItemAlignedUpdate = () => {
-		if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
+		if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current) return;
 		if (!this.isPositioned) return;
 		this.#cancelItemAlignedRaf();
 		afterTick(() => {
-			if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
+			if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current) return;
 			if (!this.isPositioned) return;
 			this.#itemAlignedRaf = this.domContext
 				.getWindow()
@@ -1027,12 +1044,7 @@ export class SelectContentState {
 
 	#updateItemAlignedPositioning = () => {
 		this.#itemAlignedRaf = null;
-		if (this.opts.positioning.current !== "item-aligned" || !this.root.opts.open.current) return;
-		if (this.root.lastOpenPointerType === "touch") {
-			this.itemAlignedFallback = true;
-			this.itemAlignedSideOffset = 0;
-			return;
-		}
+		if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current) return;
 
 		this.root.updateSelectedItemNode();
 		const selectedItem = this.root.selectedItemNode;
@@ -1046,40 +1058,63 @@ export class SelectContentState {
 			return;
 		}
 
-		if (viewport && !isFullyVisibleInContainer(selectedItem, viewport)) {
-			selectedItem.scrollIntoView({
-				block: "nearest",
-				inline: "nearest",
-			});
-		}
-
-		const triggerRect = trigger.getBoundingClientRect();
-		const floatingRect = floating.getBoundingClientRect();
-		const itemRect = selectedItem.getBoundingClientRect();
 		const viewportHeight = this.domContext.getWindow().innerHeight;
 		const viewportMargin = 20;
-		const selectedItemCenterWithinFloating =
-			itemRect.top - floatingRect.top + itemRect.height / 2;
-		const triggerCenterY = triggerRect.top + triggerRect.height / 2;
-		const desiredFloatingTop = triggerCenterY - selectedItemCenterWithinFloating;
-		const desiredFloatingBottom = desiredFloatingTop + floatingRect.height;
+		const triggerRect = trigger.getBoundingClientRect();
+		let floatingRect = floating.getBoundingClientRect();
+		let itemRect = selectedItem.getBoundingClientRect();
+		const popupHeight = Math.max(floating.offsetHeight, floatingRect.height);
+		const minAllowedTop = viewportMargin;
+		const maxAllowedTop = viewportHeight - viewportMargin - floatingRect.height;
+		const popupFitsViewport = popupHeight <= viewportHeight - viewportMargin * 2;
 
-		const canAlign =
-			desiredFloatingTop >= viewportMargin &&
-			desiredFloatingBottom <= viewportHeight - viewportMargin;
-
-		if (!canAlign) {
+		if (!popupFitsViewport || maxAllowedTop < minAllowedTop) {
 			this.itemAlignedFallback = true;
 			this.itemAlignedSideOffset = 0;
 			return;
 		}
 
-		this.itemAlignedSideOffset = desiredFloatingTop - floatingRect.top;
+		const getClampedTop = (nextItemRect: DOMRect, nextFloatingRect: DOMRect) => {
+			const selectedItemCenterWithinFloating =
+				nextItemRect.top - nextFloatingRect.top + nextItemRect.height / 2;
+			const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+			const desiredFloatingTop = triggerCenterY - selectedItemCenterWithinFloating;
+			return clamp(desiredFloatingTop, minAllowedTop, maxAllowedTop);
+		};
+
+		// First pass target position based on current scroll state.
+		let clampedFloatingTop = getClampedTop(itemRect, floatingRect);
+
+		// Adjust viewport scroll so the selected item center lines up with the trigger center
+		// for the chosen (possibly clamped) popup top.
+		if (viewport) {
+			const currentCenterWithinFloating = itemRect.top - floatingRect.top + itemRect.height / 2;
+			const desiredCenterWithinFloating = triggerRect.top + triggerRect.height / 2 - clampedFloatingTop;
+			const scrollDelta = currentCenterWithinFloating - desiredCenterWithinFloating;
+
+			if (Math.abs(scrollDelta) > 0.5) {
+				const maxScrollTop = Math.max(viewport.scrollHeight - viewport.clientHeight, 0);
+				const nextScrollTop = clamp(viewport.scrollTop + scrollDelta, 0, maxScrollTop);
+				if (Math.abs(nextScrollTop - viewport.scrollTop) > 0.5) {
+					viewport.scrollTop = nextScrollTop;
+					itemRect = selectedItem.getBoundingClientRect();
+					floatingRect = floating.getBoundingClientRect();
+					clampedFloatingTop = getClampedTop(itemRect, floatingRect);
+				}
+			}
+		}
+
+		this.itemAlignedSideOffset = clampedFloatingTop - floatingRect.top;
 		this.itemAlignedFallback = false;
 	};
 
 	onpointermove(_: BitsPointerEvent) {
 		this.root.isUsingKeyboard = false;
+	}
+
+	onpointerup(e: BitsPointerEvent) {
+		if (e.pointerType === "touch") return;
+		this.root.clearPendingOpenPointer();
 	}
 
 	readonly #styles = $derived.by(() => {
@@ -1131,10 +1166,11 @@ export class SelectContentState {
 					boxSizing: "border-box",
 					pointerEvents: "auto",
 					...this.#styles,
-				},
-				onpointermove: this.onpointermove,
-				...this.attachment,
-			}) as const
+					},
+					onpointermove: this.onpointermove,
+					onpointerup: this.onpointerup,
+					...this.attachment,
+				}) as const
 	);
 
 	readonly popperProps = {
@@ -1146,7 +1182,7 @@ export class SelectContentState {
 		loop: false,
 		onPlaced: () => {
 			// onPlaced is also called when the menu is closed, so we need to check if the menu
-			// is actually open to avoid setting positioning to true when the menu is closed
+			// is actually open to avoid setting `isPositioned` to true when the menu is closed
 			if (this.root.opts.open.current) {
 				this.isPositioned = true;
 			}
@@ -1241,6 +1277,7 @@ export class SelectItemState {
 	 */
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
+		if (this.root.consumePendingOpenPointer(e.pointerId)) return;
 		/**
 		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
 		 * we need to listen for the immediate click event to handle the selection,
@@ -1678,13 +1715,6 @@ export class SelectScrollUpButtonState {
 	);
 }
 
-function isFullyVisibleInContainer(node: HTMLElement, container: HTMLElement): boolean {
-	const nodeRect = node.getBoundingClientRect();
-	const containerRect = container.getBoundingClientRect();
-	return (
-		nodeRect.top >= containerRect.top &&
-		nodeRect.bottom <= containerRect.bottom &&
-		nodeRect.left >= containerRect.left &&
-		nodeRect.right <= containerRect.right
-	);
+function clamp(value: number, min: number, max: number): number {
+	return Math.min(Math.max(value, min), max);
 }

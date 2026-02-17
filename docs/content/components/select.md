@@ -317,20 +317,19 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 ## Item-Aligned Positioning
 
-By default, `Select.Content` uses `positioning="popper"`, which follows standard Floating UI placement.
+By default, `Select.Content` uses `position="popper"`, which follows standard Floating UI placement.
 
-If you want Radix-style item alignment, set `positioning="item-aligned"`:
+If you want Radix-style item alignment, set `position="item-aligned"`:
 
 - The selected item is aligned with the trigger value.
 - The content still uses the trigger as its anchor.
 - The content falls back to normal popper positioning when alignment isn't possible.
-- Touch-open interactions fall back to normal popper positioning.
 
-```svelte /positioning="item-aligned"/
+```svelte /position="item-aligned"/
 <Select.Root type="single">
   <Select.Trigger />
   <Select.Portal>
-    <Select.Content positioning="item-aligned">
+    <Select.Content position="item-aligned">
       <Select.Viewport>
         <!-- items -->
       </Select.Viewport>
@@ -339,7 +338,7 @@ If you want Radix-style item alignment, set `positioning="item-aligned"`:
 </Select.Root>
 ```
 
-When `positioning="item-aligned"` is active, `side`, `align`, and `alignOffset` are ignored. If it falls back to popper behavior, those props apply again.
+When `position="item-aligned"` is active, `side`, `align`, and `alignOffset` are ignored. If it falls back to popper behavior, those props apply again.
 
 <ComponentPreview name="select-demo-item-aligned" componentName="Select">
 

@@ -45,7 +45,7 @@
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			positioning="item-aligned"
+			position="item-aligned"
 			class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 outline-hidden z-50 h-96 max-h-[var(--bits-select-content-available-height)] w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3"
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">

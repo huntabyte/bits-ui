@@ -179,7 +179,7 @@ export type _SharedSelectContentProps = {
 	 *
 	 * @defaultValue `"popper"`
 	 */
-	positioning?: "popper" | "item-aligned";
+	position?: "popper" | "item-aligned";
 };
 
 export type SelectContentPropsWithoutHTML = Expand<

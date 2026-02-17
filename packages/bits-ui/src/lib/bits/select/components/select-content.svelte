@@ -13,7 +13,7 @@
 		id = createId(uid),
 		ref = $bindable(null),
 		forceMount = false,
-		positioning = "popper",
+		position = "popper",
 		side = "bottom",
 		align = "center",
 		sideOffset = 0,
@@ -35,7 +35,7 @@
 		),
 		onInteractOutside: boxWith(() => onInteractOutside),
 		onEscapeKeydown: boxWith(() => onEscapeKeydown),
-		positioning: boxWith(() => positioning),
+		position: boxWith(() => position),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

@@ -21,7 +21,7 @@ import {
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
-import { DelayProp, ItemsProp, PositioningProp } from "./extended-types/select/index.js";
+import { DelayProp, ItemsProp, PositionProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -139,12 +139,12 @@ export const content = defineComponentApiSchema<ComboboxContentPropsWithoutHTML>
 	description: "The element which contains the combobox's items.",
 	props: {
 		...floatingProps(),
-		positioning: defineEnumProp({
+		position: defineEnumProp({
 			options: ["popper", "item-aligned"],
 			default: "popper",
 			description:
-				"Controls how content is positioned. `'item-aligned'` aligns the selected item with the trigger and falls back to popper positioning when alignment isn't possible (including touch-open interactions).",
-			definition: PositioningProp,
+				"Controls how content is positioned. `'item-aligned'` aligns the selected item with the trigger and falls back to popper positioning when alignment isn't possible.",
+			definition: PositionProp,
 		}),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
