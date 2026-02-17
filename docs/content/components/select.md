@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoItemAligned, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -340,6 +340,14 @@ If you want Radix-style item alignment, set `positioning="item-aligned"`:
 ```
 
 When `positioning="item-aligned"` is active, `side`, `align`, and `alignOffset` are ignored. If it falls back to popper behavior, those props apply again.
+
+<ComponentPreview name="select-demo-item-aligned" componentName="Select">
+
+{#snippet preview()}
+<SelectDemoItemAligned />
+{/snippet}
+
+</ComponentPreview>
 
 ## What is the Viewport?
 
