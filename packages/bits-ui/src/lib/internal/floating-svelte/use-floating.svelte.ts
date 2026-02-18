@@ -100,6 +100,8 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			return;
 		}
 
+		if (!openOption) return;
+
 		if (reference.current === null || floating.current === null) return;
 
 		whileElementsMountedCleanup = whileElementsMountedOption(
@@ -128,6 +130,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 
 	$effect(() => {
 		if (whileElementsMountedOption !== undefined) return;
+		if (!openOption) return;
 		update();
 	});
 	$effect(attach);
@@ -135,6 +138,10 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 		if (whileElementsMountedOption === undefined) return;
 
 		trackWhileMountedDeps();
+		if (!openOption) {
+			hasWhileMountedPosition = false;
+			return;
+		}
 
 		if (!isPositioned) {
 			hasWhileMountedPosition = false;

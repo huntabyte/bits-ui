@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
@@ -6,6 +6,7 @@ import TooltipTest, { type TooltipTestProps } from "./tooltip-test.svelte";
 import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svelte";
 import TooltipForceMountTest from "./tooltip-force-mount-test.svelte";
 import TooltipPopoverTest from "./tooltip-popover-test.svelte";
+import TooltipManyTest from "./tooltip-many-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -64,6 +65,14 @@ it("should close when pointer moves outside the trigger and content", async () =
 	await outside.hover();
 
 	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should close on scroll when the scrolled target contains the trigger", async () => {
+	const t = await open();
+	const main = page.getByTestId("main").element() as HTMLElement;
+	main.dispatchEvent(new Event("scroll", { bubbles: true }));
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(t.trigger).toBeVisible();
 });
 
 it("should stay open when hovering content", async () => {
@@ -193,4 +202,17 @@ it("should apply custom style prop to content", async () => {
 	});
 	const contentEl = t.content.element() as HTMLElement;
 	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});
+
+it("should not add a scroll listener per tooltip instance", async () => {
+	const addEventListenerSpy = vi.spyOn(window, "addEventListener");
+
+	render(TooltipManyTest, { count: 80 });
+
+	const scrollListenerCalls = addEventListenerSpy.mock.calls.filter(
+		([type]) => type === "scroll"
+	).length;
+	expect(scrollListenerCalls).toBe(1);
+
+	addEventListenerSpy.mockRestore();
 });
