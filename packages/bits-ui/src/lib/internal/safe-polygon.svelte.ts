@@ -66,6 +66,8 @@ export class SafePolygon {
 	#exitPoint: Point | null = null;
 	// tracks what we're moving toward: "content" when leaving trigger, "trigger" when leaving content
 	#exitTarget: "trigger" | "content" | null = null;
+	#triggerRect: DOMRect | null = null;
+	#contentRect: DOMRect | null = null;
 
 	constructor(opts: SafePolygonOptions) {
 		this.#opts = opts;
@@ -75,8 +77,7 @@ export class SafePolygon {
 			[opts.triggerNode, opts.contentNode, opts.enabled],
 			([triggerNode, contentNode, enabled]) => {
 				if (!triggerNode || !contentNode || !enabled) {
-					this.#exitPoint = null;
-					this.#exitTarget = null;
+					this.#clearTracking();
 					return;
 				}
 
@@ -95,18 +96,17 @@ export class SafePolygon {
 					}
 					this.#exitPoint = [e.clientX, e.clientY];
 					this.#exitTarget = "content";
+					this.#captureRects(triggerNode, contentNode);
 				};
 
 				const handleTriggerEnter = () => {
 					// reached trigger, clear tracking
-					this.#exitPoint = null;
-					this.#exitTarget = null;
+					this.#clearTracking();
 				};
 
 				const handleContentEnter = () => {
 					// reached content, clear tracking
-					this.#exitPoint = null;
-					this.#exitTarget = null;
+					this.#clearTracking();
 				};
 
 				const handleContentLeave = (e: PointerEvent) => {
@@ -119,6 +119,7 @@ export class SafePolygon {
 					// might be traversing gap back to trigger, set up polygon tracking
 					this.#exitPoint = [e.clientX, e.clientY];
 					this.#exitTarget = "trigger";
+					this.#captureRects(triggerNode, contentNode);
 				};
 
 				return [
@@ -143,18 +144,19 @@ export class SafePolygon {
 		if (!this.#exitPoint || !this.#exitTarget) return;
 
 		const clientPoint: Point = [e.clientX, e.clientY];
-		const triggerRect = triggerNode.getBoundingClientRect();
-		const contentRect = contentNode.getBoundingClientRect();
+		if (!this.#triggerRect || !this.#contentRect) {
+			this.#captureRects(triggerNode, contentNode);
+		}
+		const triggerRect = this.#triggerRect ?? triggerNode.getBoundingClientRect();
+		const contentRect = this.#contentRect ?? contentNode.getBoundingClientRect();
 
 		// check if pointer reached the target
 		if (this.#exitTarget === "content" && isInsideRect(clientPoint, contentRect)) {
-			this.#exitPoint = null;
-			this.#exitTarget = null;
+			this.#clearTracking();
 			return;
 		}
 		if (this.#exitTarget === "trigger" && isInsideRect(clientPoint, triggerRect)) {
-			this.#exitPoint = null;
-			this.#exitTarget = null;
+			this.#clearTracking();
 			return;
 		}
 
@@ -173,9 +175,20 @@ export class SafePolygon {
 		}
 
 		// pointer is outside all safe zones - close
+		this.#clearTracking();
+		this.#opts.onPointerExit();
+	}
+
+	#captureRects(triggerNode: HTMLElement, contentNode: HTMLElement) {
+		this.#triggerRect = triggerNode.getBoundingClientRect();
+		this.#contentRect = contentNode.getBoundingClientRect();
+	}
+
+	#clearTracking() {
 		this.#exitPoint = null;
 		this.#exitTarget = null;
-		this.#opts.onPointerExit();
+		this.#triggerRect = null;
+		this.#contentRect = null;
 	}
 
 	/**

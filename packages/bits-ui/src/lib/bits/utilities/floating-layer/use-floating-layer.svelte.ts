@@ -296,7 +296,18 @@ export class FloatingContentState {
 			(contentNode) => {
 				if (!contentNode) return;
 				const win = getWindow(contentNode);
-				this.contentZIndex = win.getComputedStyle(contentNode).zIndex;
+				const rafId = win.requestAnimationFrame(() => {
+					// avoid applying stale values when refs change quickly
+					if (this.contentRef.current !== contentNode) return;
+					const zIndex = win.getComputedStyle(contentNode).zIndex;
+					if (zIndex !== this.contentZIndex) {
+						this.contentZIndex = zIndex;
+					}
+				});
+
+				return () => {
+					win.cancelAnimationFrame(rafId);
+				};
 			}
 		);
 
