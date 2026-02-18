@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
@@ -6,6 +6,7 @@ import TooltipTest, { type TooltipTestProps } from "./tooltip-test.svelte";
 import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svelte";
 import TooltipForceMountTest from "./tooltip-force-mount-test.svelte";
 import TooltipPopoverTest from "./tooltip-popover-test.svelte";
+import TooltipManyTest from "./tooltip-many-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -44,7 +45,7 @@ it("should use provider delay duration if provided and the tooltip.root did not 
 	expect(t.trigger).toHaveAttribute("data-delay-duration", "0");
 });
 
-it("should on hover", async () => {
+it("should open on hover", async () => {
 	const t = await open();
 	await t.content.click();
 	await expect.element(t.content).toBeVisible();
@@ -64,6 +65,14 @@ it("should close when pointer moves outside the trigger and content", async () =
 	await outside.hover();
 
 	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should close on scroll when the scrolled target contains the trigger", async () => {
+	const t = await open();
+	const main = page.getByTestId("main").element() as HTMLElement;
+	main.dispatchEvent(new Event("scroll", { bubbles: true }));
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(t.trigger).toBeVisible();
 });
 
 it("should stay open when hovering content", async () => {
@@ -140,6 +149,55 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 	await expect.element(page.getByTestId("content")).toBeVisible();
 });
 
+it("should open and close correctly with forceMount + open check", async () => {
+	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+
+	await page.getByTestId("outside").hover();
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+});
+
+it("should keep open state behavior when forceMount keeps content mounted", async () => {
+	const t = setup({}, TooltipForceMountTest);
+	const binding = page.getByTestId("binding");
+	await expect.element(page.getByTestId("content")).toBeVisible();
+	await expect.element(binding).toHaveTextContent("false");
+
+	await t.trigger.hover();
+	await expect.element(binding).toHaveTextContent("true");
+
+	await page.getByTestId("outside").hover();
+	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(page.getByTestId("content")).toBeVisible();
+});
+
+it("should close on trigger leave after reopening with forceMount", async () => {
+	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
+	const outside = page.getByTestId("outside");
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+
+	await outside.hover();
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+
+	await outside.hover();
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expectNotExists(page.getByTestId("content"));
+});
+
 it("should use the custom anchor element when `customAnchor` is provided", async () => {
 	// type check
 	const t = setup();
@@ -193,4 +251,17 @@ it("should apply custom style prop to content", async () => {
 	});
 	const contentEl = t.content.element() as HTMLElement;
 	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});
+
+it("should not add a scroll listener per tooltip instance", async () => {
+	const addEventListenerSpy = vi.spyOn(window, "addEventListener");
+
+	render(TooltipManyTest, { count: 80 });
+
+	const scrollListenerCalls = addEventListenerSpy.mock.calls.filter(
+		([type]) => type === "scroll"
+	).length;
+	expect(scrollListenerCalls).toBe(1);
+
+	addEventListenerSpy.mockRestore();
 });

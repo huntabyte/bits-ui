@@ -27,6 +27,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	let placement = $state(placementOption);
 	let middlewareData = $state({});
 	let isPositioned = $state(false);
+	let hasWhileMountedPosition = false;
 	const floatingStyles = $derived.by(() => {
 		// preserve last known position when floating ref is null (during transitions)
 		const xVal = floating.current ? roundByDPR(floating.current, x) : x;
@@ -99,6 +100,8 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			return;
 		}
 
+		if (!openOption) return;
+
 		if (reference.current === null || floating.current === null) return;
 
 		whileElementsMountedCleanup = whileElementsMountedOption(
@@ -114,8 +117,45 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 		}
 	}
 
-	$effect(update);
+	function trackWhileMountedDeps() {
+		return [
+			middlewareOption,
+			placementOption,
+			strategyOption,
+			sideOffsetOption,
+			alignOffsetOption,
+			openOption,
+		] as const;
+	}
+
+	$effect(() => {
+		if (whileElementsMountedOption !== undefined) return;
+		if (!openOption) return;
+		update();
+	});
 	$effect(attach);
+	$effect(() => {
+		if (whileElementsMountedOption === undefined) return;
+
+		trackWhileMountedDeps();
+		if (!openOption) {
+			hasWhileMountedPosition = false;
+			return;
+		}
+
+		if (!isPositioned) {
+			hasWhileMountedPosition = false;
+			return;
+		}
+
+		// skip the first post-position run, since autoUpdate already computed it
+		if (!hasWhileMountedPosition) {
+			hasWhileMountedPosition = true;
+			return;
+		}
+
+		update();
+	});
 	$effect(reset);
 	$effect(() => cleanup);
 

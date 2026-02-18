@@ -49,6 +49,22 @@ export class TooltipProviderState {
 		this.#timerFn = new TimeoutFn(() => {
 			this.isOpenDelayed = true;
 		}, this.opts.skipDelayDuration.current);
+
+		onMountEffect(() =>
+			on(window, "scroll", (e) => {
+				const activeTooltip = this.#openTooltip;
+				if (!activeTooltip) return;
+				const triggerNode = activeTooltip.triggerNode;
+				if (!triggerNode) return;
+
+				const target = e.target;
+				if (!(target instanceof Element || target instanceof Document)) return;
+
+				if (target.contains(triggerNode)) {
+					activeTooltip.handleClose();
+				}
+			})
+		);
 	}
 
 	#startTimer = () => {
@@ -309,10 +325,21 @@ export class TooltipTriggerState {
 		this.#hasPointerMoveOpened = true;
 	};
 
-	#onpointerleave: PointerEventHandler<HTMLElement> = () => {
+	#onpointerleave: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled) return;
 		this.#clearTransitCheck();
-		this.root.onTriggerLeave();
+		const relatedTarget = e.relatedTarget;
+		if (
+			!this.root.disableHoverableContent &&
+			this.root.opts.open.current &&
+			isElement(relatedTarget) &&
+			this.root.contentNode &&
+			!this.root.contentNode.contains(relatedTarget)
+		) {
+			this.root.handleClose();
+		} else {
+			this.root.onTriggerLeave();
+		}
 		this.#hasPointerMoveOpened = false;
 	};
 
@@ -373,13 +400,11 @@ export class TooltipContentState {
 	readonly opts: TooltipContentStateOpts;
 	readonly root: TooltipRootState;
 	readonly attachment: RefAttachment;
+	#safePolygon: SafePolygon | null = null;
 
-	constructor(opts: TooltipContentStateOpts, root: TooltipRootState) {
-		this.opts = opts;
-		this.root = root;
-		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
-
-		new SafePolygon({
+	#createSafePolygon = () => {
+		if (this.#safePolygon) return;
+		this.#safePolygon = new SafePolygon({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
@@ -389,15 +414,20 @@ export class TooltipContentState {
 				}
 			},
 		});
+	};
 
-		onMountEffect(() =>
-			on(window, "scroll", (e) => {
-				const target = e.target as HTMLElement | null;
-				if (!target) return;
-				if (target.contains(this.root.triggerNode)) {
-					this.root.handleClose();
-				}
-			})
+	constructor(opts: TooltipContentStateOpts, root: TooltipRootState) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
+
+		watch(
+			() => this.root.opts.open.current && !this.root.disableHoverableContent,
+			(shouldTrackSafePolygon) => {
+				if (!shouldTrackSafePolygon) return;
+				this.#createSafePolygon();
+			},
+			{ lazy: true }
 		);
 	}
 
