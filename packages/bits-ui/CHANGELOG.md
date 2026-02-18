@@ -1,5 +1,19 @@
 # bits-ui
 
+## 2.15.8
+
+### Patch Changes
+
+- perf(Popover): optimized hover tracking for openOnHover ([#1959](https://github.com/huntabyte/bits-ui/pull/1959))
+
+- perf: reduced rapid toggle overhead by avoiding unnecessary positioning/observer work while closed ([#1959](https://github.com/huntabyte/bits-ui/pull/1959))
+
+- perf(Tooltip): use only a single scroll listener per provider ([#1959](https://github.com/huntabyte/bits-ui/pull/1959))
+
+- fix(Tooltip): improve hover-close reliability ([#1959](https://github.com/huntabyte/bits-ui/pull/1959))
+
+- perf: optimize safe polygon and floating layers ([#1959](https://github.com/huntabyte/bits-ui/pull/1959))
+
 ## 2.15.7
 
 ### Patch Changes
