@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.15.7
+
+### Patch Changes
+
+- fix(Select): restore initial highlight in unpadded Select.Viewport ([#1956](https://github.com/huntabyte/bits-ui/pull/1956))
+
 ## 2.15.6
 
 ### Patch Changes
