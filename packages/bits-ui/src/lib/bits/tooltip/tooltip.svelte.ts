@@ -325,10 +325,21 @@ export class TooltipTriggerState {
 		this.#hasPointerMoveOpened = true;
 	};
 
-	#onpointerleave: PointerEventHandler<HTMLElement> = () => {
+	#onpointerleave: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled) return;
 		this.#clearTransitCheck();
-		this.root.onTriggerLeave();
+		const relatedTarget = e.relatedTarget;
+		if (
+			!this.root.disableHoverableContent &&
+			this.root.opts.open.current &&
+			isElement(relatedTarget) &&
+			this.root.contentNode &&
+			!this.root.contentNode.contains(relatedTarget)
+		) {
+			this.root.handleClose();
+		} else {
+			this.root.onTriggerLeave();
+		}
 		this.#hasPointerMoveOpened = false;
 	};
 

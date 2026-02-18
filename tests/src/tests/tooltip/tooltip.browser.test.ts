@@ -45,7 +45,7 @@ it("should use provider delay duration if provided and the tooltip.root did not 
 	expect(t.trigger).toHaveAttribute("data-delay-duration", "0");
 });
 
-it("should on hover", async () => {
+it("should open on hover", async () => {
 	const t = await open();
 	await t.content.click();
 	await expect.element(t.content).toBeVisible();
@@ -147,6 +147,55 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
 	await expect.element(page.getByTestId("content")).toBeVisible();
+});
+
+it("should open and close correctly with forceMount + open check", async () => {
+	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+
+	await page.getByTestId("outside").hover();
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+});
+
+it("should keep open state behavior when forceMount keeps content mounted", async () => {
+	const t = setup({}, TooltipForceMountTest);
+	const binding = page.getByTestId("binding");
+	await expect.element(page.getByTestId("content")).toBeVisible();
+	await expect.element(binding).toHaveTextContent("false");
+
+	await t.trigger.hover();
+	await expect.element(binding).toHaveTextContent("true");
+
+	await page.getByTestId("outside").hover();
+	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(page.getByTestId("content")).toBeVisible();
+});
+
+it("should close on trigger leave after reopening with forceMount", async () => {
+	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
+	const outside = page.getByTestId("outside");
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+
+	await outside.hover();
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+
+	await outside.hover();
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should use the custom anchor element when `customAnchor` is provided", async () => {
