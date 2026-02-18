@@ -9,6 +9,7 @@ import type { SelectMultipleTestProps } from "./select-multi-test.svelte";
 import SelectMultiTest from "./select-multi-test.svelte";
 import type { Item, SelectSingleTestProps } from "./select-test.svelte";
 import SelectTest from "./select-test.svelte";
+import SelectViewportTest from "./select-viewport-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -560,6 +561,17 @@ describe("select - single", () => {
 		t.trigger.element().dispatchEvent(mouseEvent);
 
 		await expectNotExists(page.getByTestId("content"));
+	});
+
+	it("should highlight the first item when Select.Viewport has no padding", async () => {
+		const t = setupSingle({}, testItems, SelectViewportTest);
+
+		await expectNotExists(t.getContent());
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		await expectHighlighted(page.getByTestId("empty"));
+		await expectNotHighlighted(page.getByTestId("1"));
 	});
 });
 

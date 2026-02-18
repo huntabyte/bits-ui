@@ -166,10 +166,10 @@ abstract class SelectBaseRootState {
 				const nodeRect = node.getBoundingClientRect();
 
 				const isNodeFullyVisible =
-					nodeRect.right < viewportRect.right &&
-					nodeRect.left > viewportRect.left &&
-					nodeRect.bottom < viewportRect.bottom &&
-					nodeRect.top > viewportRect.top;
+					nodeRect.right <= viewportRect.right &&
+					nodeRect.left >= viewportRect.left &&
+					nodeRect.bottom <= viewportRect.bottom &&
+					nodeRect.top >= viewportRect.top;
 
 				return isNodeFullyVisible;
 			});
