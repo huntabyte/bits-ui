@@ -9,6 +9,7 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import CopyPageDropdown from "./copy-page-dropdown.svelte";
 	import { watch } from "runed";
+	import SidebarSponsorMobile from "./sidebar-sponsor-mobile.svelte";
 
 	let { metadata }: { metadata: DocMetadata } = $props();
 
@@ -51,7 +52,7 @@
 			documentation, you can ignore the classnames applied to the demos unless they are
 			relevant to the user's issue.
 		</span>
-		<div class="mb-9 mt-3 flex items-center">
+		<div class="mb-3 mt-3 flex items-center">
 			<button
 				class="hover:bg-muted/50 text-foreground-alt hover:text-foreground flex h-8 select-none items-center gap-1.5 rounded-md rounded-r-none border border-r-0 px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
 				onmouseenter={fetchText}
@@ -68,4 +69,8 @@
 			<CopyPageDropdown />
 		</div>
 	{/if}
+
+	<div class="mb-3">
+		<SidebarSponsorMobile />
+	</div>
 </PageHeader>

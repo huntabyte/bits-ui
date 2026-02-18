@@ -53,7 +53,7 @@
 </script>
 
 <ScrollArea.Root>
-	<ScrollArea.Viewport class="h-[calc(100vh-300px)]">
+	<ScrollArea.Viewport class="max-h-[calc(100vh-300px)]">
 		{#if toc?.items?.length}
 			<div class="w-[220px] max-w-[220px] space-y-2 text-sm">
 				<div class="text-muted-foreground -ml-px flex items-center gap-1.5">
