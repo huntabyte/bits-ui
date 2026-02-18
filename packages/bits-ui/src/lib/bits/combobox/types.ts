@@ -3,6 +3,8 @@ import type {
 	SelectBaseRootPropsWithoutHTML,
 	SelectMultipleRootPropsWithoutHTML,
 	SelectSingleRootPropsWithoutHTML,
+	SelectContentProps,
+	SelectContentPropsWithoutHTML,
 } from "$lib/bits/select/types.js";
 import type { WithChild, Without } from "$lib/internal/types.js";
 
@@ -34,9 +36,10 @@ export type ComboboxRootPropsWithoutHTML = ComboboxBaseRootPropsWithoutHTML &
 
 export type ComboboxRootProps = ComboboxRootPropsWithoutHTML;
 
+export type ComboboxContentPropsWithoutHTML = Omit<SelectContentPropsWithoutHTML, "position">;
+export type ComboboxContentProps = Omit<SelectContentProps, "position">;
+
 export type {
-	SelectContentProps as ComboboxContentProps,
-	SelectContentPropsWithoutHTML as ComboboxContentPropsWithoutHTML,
 	SelectContentStaticProps as ComboboxContentStaticProps,
 	SelectContentStaticPropsWithoutHTML as ComboboxContentStaticPropsWithoutHTML,
 	SelectItemProps as ComboboxItemProps,

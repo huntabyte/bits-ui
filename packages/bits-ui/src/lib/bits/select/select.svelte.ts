@@ -158,8 +158,12 @@ abstract class SelectBaseRootState {
 	getItemNodes(includeDisabled = true): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
-		const itemNodes = Array.from(node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`));
-		return includeDisabled ? itemNodes : itemNodes.filter((item) => !item.hasAttribute("data-disabled"));
+		const itemNodes = Array.from(
+			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`)
+		);
+		return includeDisabled
+			? itemNodes
+			: itemNodes.filter((item) => !item.hasAttribute("data-disabled"));
 	}
 
 	setHighlightedToFirstCandidate(initial = false) {
@@ -1034,7 +1038,8 @@ export class SelectContentState {
 		if (!this.isPositioned) return;
 		this.#cancelItemAlignedRaf();
 		afterTick(() => {
-			if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current) return;
+			if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current)
+				return;
 			if (!this.isPositioned) return;
 			this.#itemAlignedRaf = this.domContext
 				.getWindow()
@@ -1088,8 +1093,10 @@ export class SelectContentState {
 		// Adjust viewport scroll so the selected item center lines up with the trigger center
 		// for the chosen (possibly clamped) popup top.
 		if (viewport) {
-			const currentCenterWithinFloating = itemRect.top - floatingRect.top + itemRect.height / 2;
-			const desiredCenterWithinFloating = triggerRect.top + triggerRect.height / 2 - clampedFloatingTop;
+			const currentCenterWithinFloating =
+				itemRect.top - floatingRect.top + itemRect.height / 2;
+			const desiredCenterWithinFloating =
+				triggerRect.top + triggerRect.height / 2 - clampedFloatingTop;
 			const scrollDelta = currentCenterWithinFloating - desiredCenterWithinFloating;
 
 			if (Math.abs(scrollDelta) > 0.5) {
@@ -1166,11 +1173,11 @@ export class SelectContentState {
 					boxSizing: "border-box",
 					pointerEvents: "auto",
 					...this.#styles,
-					},
-					onpointermove: this.onpointermove,
-					onpointerup: this.onpointerup,
-					...this.attachment,
-				}) as const
+				},
+				onpointermove: this.onpointermove,
+				onpointerup: this.onpointerup,
+				...this.attachment,
+			}) as const
 	);
 
 	readonly popperProps = {

@@ -21,7 +21,7 @@ import {
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
-import { DelayProp, ItemsProp, PositionProp } from "./extended-types/select/index.js";
+import { DelayProp, ItemsProp } from "./extended-types/select/index.js";
 import {
 	arrowProps,
 	childrenSnippet,
@@ -139,13 +139,6 @@ export const content = defineComponentApiSchema<ComboboxContentPropsWithoutHTML>
 	description: "The element which contains the combobox's items.",
 	props: {
 		...floatingProps(),
-		position: defineEnumProp({
-			options: ["popper", "item-aligned"],
-			default: "popper",
-			description:
-				"Controls how content is positioned. `'item-aligned'` aligns the selected item with the trigger and falls back to popper positioning when alignment isn't possible.",
-			definition: PositionProp,
-		}),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
@@ -182,13 +175,6 @@ export const contentStatic = defineComponentApiSchema<ComboboxContentStaticProps
 	title: "ContentStatic",
 	description: "The element which contains the combobox's items. (Static/No Floating UI)",
 	props: {
-		position: defineEnumProp({
-			options: ["popper", "item-aligned"],
-			default: "popper",
-			description:
-				"Controls how content is positioned. `'item-aligned'` aligns the selected item with the trigger and falls back to popper positioning when alignment isn't possible.",
-			definition: PositionProp,
-		}),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		...focusScopeProps,
