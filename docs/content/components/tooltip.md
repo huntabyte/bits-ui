@@ -4,7 +4,21 @@ description: Displays supplementary information when users hover over or interac
 ---
 
 <script>
-	import { ComponentPreview, TooltipDemo, TooltipDemoCustom, TooltipDemoCustomAnchor, TooltipDemoDelayDuration, TooltipDemoTransition, APISection, Callout } from '$lib/components'
+	import {
+		ComponentPreview,
+		TooltipDemo,
+		TooltipDemoCustom,
+		TooltipDemoCustomAnchor,
+		TooltipDemoDelayDuration,
+		TooltipDemoSkipDelay,
+		TooltipDemoTransition,
+		TooltipDemoSingleton,
+		TooltipDemoTether,
+		TooltipDemoControlledTriggerId,
+		TooltipDemoSingletonForceMount,
+		APISection,
+		Callout
+	} from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -123,6 +137,149 @@ Use a [Function Binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 </Tooltip.Root>
 ```
 
+## Tether
+
+`tether` is a shared connection object that lets `Tooltip.Trigger` and `Tooltip.Root` communicate even when they are not in the same component subtree.
+
+Without a tether, each root/trigger pair is local, which makes detached layouts harder (for example, a toolbar trigger rendered in one place and tooltip content rendered elsewhere). A tether solves that by giving both sides shared state for the active trigger, open/close behavior, and trigger payload, so you can build singleton-style tooltip patterns without duplicating tooltip content instances.
+
+`tether` is inspired by [Base UI](https://base-ui.com/react/components/tooltip#detached-triggers)'s `handle` concept.
+
+### Detached Triggers
+
+Use a shared tether when action controls and the tooltip root are not colocated (for example, a dashboard with toolbar actions in different regions):
+
+```svelte
+<script lang="ts">
+  import { Tooltip } from "bits-ui";
+  const actionsTether = Tooltip.createTether<{
+    label: string;
+    description: string;
+    shortcut: string;
+  }>();
+</script>
+
+<Tooltip.Trigger
+  tether={actionsTether}
+  payload={{
+    label: "Sync now",
+    description:
+      "Refreshes every connected source and recalculates all metrics.",
+    shortcut: "S",
+  }}
+>
+  Sync now
+</Tooltip.Trigger>
+
+<Tooltip.Root tether={actionsTether}>
+  {#snippet children({ payload })}
+    <Tooltip.Portal>
+      <Tooltip.Content>
+        <p>{payload?.label}</p>
+        <p>{payload?.description}</p>
+        <kbd>{payload?.shortcut}</kbd>
+      </Tooltip.Content>
+    </Tooltip.Portal>
+  {/snippet}
+</Tooltip.Root>
+```
+
+<ComponentPreview name="tooltip-demo-tether" componentName="Tooltip Detached Triggers" containerClass="mt-4">
+
+{#snippet preview()}
+<TooltipDemoTether />
+{/snippet}
+
+</ComponentPreview>
+
+### Singleton Tooltip with Payload
+
+A single tooltip can be reused by multiple triggers. The active trigger payload is available from `Tooltip.Root` snippet props:
+
+```svelte
+<script lang="ts">
+  import { Tooltip } from "bits-ui";
+  const boardTether = Tooltip.createTether<{
+    name: string;
+    description: string;
+  }>();
+</script>
+
+<Tooltip.Root tether={boardTether}>
+  {#snippet children({ payload })}
+    <Tooltip.Trigger
+      tether={boardTether}
+      payload={{
+        name: "Blocked",
+        description: "Waiting on an external dependency.",
+      }}
+    >
+      Blocked
+    </Tooltip.Trigger>
+    <Tooltip.Trigger
+      tether={boardTether}
+      payload={{
+        name: "Done",
+        description: "Ready for release notes and QA sign-off.",
+      }}
+    >
+      Done
+    </Tooltip.Trigger>
+    <Tooltip.Portal>
+      <Tooltip.Content>
+        <p>{payload?.name}</p>
+        <p>{payload?.description}</p>
+      </Tooltip.Content>
+    </Tooltip.Portal>
+  {/snippet}
+</Tooltip.Root>
+```
+
+<ComponentPreview name="tooltip-demo-singleton" componentName="Tooltip Singleton" containerClass="mt-4">
+
+{#snippet preview()}
+<TooltipDemoSingleton />
+{/snippet}
+
+</ComponentPreview>
+
+### Controlled Active Trigger
+
+In controlled mode, bind both `open` and `triggerId` to open a specific trigger programmatically (useful for guided onboarding flows):
+
+```svelte
+<script lang="ts">
+  import { Tooltip } from "bits-ui";
+  const setupTether = Tooltip.createTether<{
+    title: string;
+    description: string;
+  }>();
+  let open = $state(false);
+  let triggerId = $state<string | null>(null);
+</script>
+
+<button
+  onclick={() => {
+    triggerId = "setup-members";
+    open = true;
+  }}
+>
+  Show members tip
+</button>
+
+<Tooltip.Root tether={setupTether} bind:open bind:triggerId>
+  <!-- ... -->
+</Tooltip.Root>
+```
+
+<ComponentPreview name="tooltip-demo-controlled-trigger-id" componentName="Tooltip Controlled Trigger" containerClass="mt-4">
+
+{#snippet preview()}
+<TooltipDemoControlledTriggerId />
+{/snippet}
+
+</ComponentPreview>
+
 ## Mobile Tooltips
 
 Tooltips are _not_ supported on mobile devices. The intent of a tooltip is to provide a "tip" about a "tool" before the user interacts with that tool (in most cases, a button).
@@ -213,6 +370,28 @@ You can change how long a user needs to hover over a trigger before the tooltip 
 
 <TooltipDemoDelayDuration />
 
+## Skip Delay Duration
+
+When multiple tooltips share a `Tooltip.Provider`, moving quickly from one trigger to another would normally require waiting through the full `delayDuration` each time. The `skipDelayDuration` prop controls a grace period: if the user re-enters any trigger within that window after closing a tooltip, it opens instantly instead of waiting.
+
+```svelte /skipDelayDuration={200}/
+<Tooltip.Provider delayDuration={600} skipDelayDuration={200}>
+  <Tooltip.Root><!-- ... --></Tooltip.Root>
+  <Tooltip.Root><!-- ... --></Tooltip.Root>
+  <Tooltip.Root><!-- ... --></Tooltip.Root>
+</Tooltip.Provider>
+```
+
+This is ideal for toolbars, nav items, or any group of controls where the user's intent to scan tooltips is clear once they've opened the first one. Hover any button below, then move across the rest. Subsequent tooltips will open without the delay.
+
+<ComponentPreview name="tooltip-demo-skip-delay" componentName="Tooltip Skip Delay" containerClass="mt-4">
+
+{#snippet preview()}
+<TooltipDemoSkipDelay />
+{/snippet}
+
+</ComponentPreview>
+
 ## Close on Trigger Click
 
 By default, the tooltip will close when the user clicks the trigger. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true`.
@@ -275,6 +454,16 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 
 {#snippet preview()}
 <TooltipDemoTransition />
+{/snippet}
+
+</ComponentPreview>
+
+You can combine the same force-mount transition pattern with singleton triggers:
+
+<ComponentPreview name="tooltip-demo-singleton-force-mount" componentName="Tooltip Singleton Force Mount" containerClass="mt-4">
+
+{#snippet preview()}
+<TooltipDemoSingletonForceMount />
 {/snippet}
 
 </ComponentPreview>
