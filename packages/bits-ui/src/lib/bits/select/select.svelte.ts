@@ -98,8 +98,6 @@ abstract class SelectBaseRootState {
 	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
-	selectedItemNode = $state<HTMLElement | null>(null);
-	pendingOpenPointerId = $state<number | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
@@ -117,8 +115,6 @@ abstract class SelectBaseRootState {
 	isUsingKeyboard = false;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
-	scrollUpButtonMounted = $state(false);
-	scrollDownButtonMounted = $state(false);
 
 	constructor(opts: SelectBaseRootStateOpts) {
 		this.opts = opts;
@@ -137,13 +133,6 @@ abstract class SelectBaseRootState {
 				this.setHighlightedNode(null);
 			}
 		});
-
-		watch(
-			() => this.contentNode,
-			() => {
-				this.updateSelectedItemNode();
-			}
-		);
 	}
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
@@ -154,18 +143,11 @@ abstract class SelectBaseRootState {
 	}
 
 	getCandidateNodes(): HTMLElement[] {
-		return this.getItemNodes(false);
-	}
-
-	getItemNodes(includeDisabled = true): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
-		const itemNodes = Array.from(
-			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`)
+		return Array.from(
+			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
 		);
-		return includeDisabled
-			? itemNodes
-			: itemNodes.filter((item) => !item.hasAttribute("data-disabled"));
 	}
 
 	setHighlightedToFirstCandidate(initial = false) {
@@ -196,20 +178,9 @@ abstract class SelectBaseRootState {
 		this.setHighlightedNode(nodes[0]!, initial);
 	}
 
-	getNodeByValue(value: string, includeDisabled = false): HTMLElement | null {
-		const itemNodes = this.getItemNodes(includeDisabled);
-		return itemNodes.find((node) => node.dataset.value === value) ?? null;
-	}
-
-	abstract getPrimarySelectedValue(): string | null;
-
-	updateSelectedItemNode() {
-		const selectedValue = this.getPrimarySelectedValue();
-		const nextSelectedNode =
-			selectedValue === null ? null : this.getNodeByValue(selectedValue, true);
-		if (this.selectedItemNode !== nextSelectedNode) {
-			this.selectedItemNode = nextSelectedNode;
-		}
+	getNodeByValue(value: string): HTMLElement | null {
+		const candidateNodes = this.getCandidateNodes();
+		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
 	}
 
 	setOpen(open: boolean) {
@@ -220,35 +191,17 @@ abstract class SelectBaseRootState {
 		this.opts.open.current = !this.opts.open.current;
 	}
 
-	handleOpen(_pointerType: string | null = null, pendingOpenPointerId: number | null = null) {
-		this.pendingOpenPointerId = pendingOpenPointerId;
+	handleOpen() {
 		this.setOpen(true);
-		this.updateSelectedItemNode();
 	}
 
 	handleClose() {
 		this.setHighlightedNode(null);
-		this.pendingOpenPointerId = null;
 		this.setOpen(false);
 	}
 
-	toggleMenu(pointerType: string | null = null, pendingOpenPointerId: number | null = null) {
-		if (this.opts.open.current) {
-			this.handleClose();
-		} else {
-			this.handleOpen(pointerType, pendingOpenPointerId);
-		}
-	}
-
-	clearPendingOpenPointer() {
-		this.pendingOpenPointerId = null;
-	}
-
-	consumePendingOpenPointer(pointerId: number): boolean {
-		if (this.pendingOpenPointerId === null) return false;
-		if (this.pendingOpenPointerId !== pointerId) return false;
-		this.pendingOpenPointerId = null;
-		return true;
+	toggleMenu() {
+		this.toggleOpen();
 	}
 
 	getBitsAttr: typeof selectAttrs.getAttr = (part) => {
@@ -302,17 +255,6 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
-
-		watch(
-			() => this.opts.value.current,
-			() => {
-				this.updateSelectedItemNode();
-			}
-		);
-	}
-
-	getPrimarySelectedValue() {
-		return this.opts.value.current;
 	}
 
 	includesItem(itemValue: string) {
@@ -376,17 +318,6 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
-
-		watch(
-			() => this.opts.value.current,
-			() => {
-				this.updateSelectedItemNode();
-			}
-		);
-	}
-
-	getPrimarySelectedValue() {
-		return this.opts.value.current[0] ?? null;
 	}
 
 	includesItem(itemValue: string) {
@@ -660,7 +591,7 @@ export class SelectComboTriggerState {
 		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
 			this.root.inputNode?.focus();
 		}
-		this.root.toggleMenu(e.pointerType);
+		this.root.toggleMenu();
 	}
 
 	readonly props = $derived.by(
@@ -731,18 +662,14 @@ export class SelectTriggerState {
 		this.onclick = this.onclick.bind(this);
 	}
 
-	#handleOpen(pointerType: string | null = null, pendingOpenPointerId: number | null = null) {
-		this.root.handleOpen(pointerType, pendingOpenPointerId);
+	#handleOpen() {
+		this.root.opts.open.current = true;
 		this.#dataTypeahead.resetTypeahead();
 		this.#domTypeahead.resetTypeahead();
 	}
 
-	#handlePointerDownOpen(e: PointerEvent) {
-		this.#handleOpen(e.pointerType, e.pointerId);
-	}
-
-	#handlePointerUpOpen(e: PointerEvent) {
-		this.#handleOpen(e.pointerType, null);
+	#handlePointerOpen(_: PointerEvent) {
+		this.#handleOpen();
 	}
 
 	/**
@@ -907,7 +834,7 @@ export class SelectTriggerState {
 		// by right clicks as well, but not when ctrl is pressed
 		if (e.button === 0 && e.ctrlKey === false) {
 			if (this.root.opts.open.current === false) {
-				this.#handlePointerDownOpen(e);
+				this.#handlePointerOpen(e);
 			} else {
 				this.root.handleClose();
 			}
@@ -919,13 +846,11 @@ export class SelectTriggerState {
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			if (this.root.opts.open.current === false) {
-				this.#handlePointerUpOpen(e);
+				this.#handlePointerOpen(e);
 			} else {
 				this.root.handleClose();
 			}
-			return;
 		}
-		this.root.clearPendingOpenPointer();
 	}
 
 	readonly props = $derived.by(
@@ -954,7 +879,6 @@ interface SelectContentStateOpts
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
-			position: "popper" | "item-aligned";
 		}> {}
 
 export class SelectContentState {
@@ -966,9 +890,6 @@ export class SelectContentState {
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
 	domContext: DOMContext;
-	itemAlignedFallback = $state(false);
-	itemAlignedSideOffset = $state(0);
-	#itemAlignedRaf: number | null = null;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -983,152 +904,21 @@ export class SelectContentState {
 		onDestroyEffect(() => {
 			this.root.contentNode = null;
 			this.isPositioned = false;
-			this.#cancelItemAlignedRaf();
 		});
 
 		watch(
 			() => this.root.opts.open.current,
 			() => {
-				if (this.root.opts.open.current) {
-					if (this.opts.position.current === "item-aligned") {
-						this.itemAlignedSideOffset = 0;
-						this.itemAlignedFallback = false;
-						this.#scheduleItemAlignedUpdate();
-					}
-					return;
-				}
+				if (this.root.opts.open.current) return;
 				this.isPositioned = false;
-				this.#cancelItemAlignedRaf();
-			}
-		);
-
-		watch(
-			[
-				() => this.opts.position.current,
-				() => this.root.selectedItemNode,
-				() => this.root.triggerNode,
-				() => this.root.contentNode,
-				() => this.isPositioned,
-				() => this.root.scrollUpButtonMounted,
-				() => this.root.scrollDownButtonMounted,
-			],
-			() => {
-				if (this.opts.position.current !== "item-aligned") return;
-				this.#scheduleItemAlignedUpdate();
-			}
-		);
-
-		watch(
-			[() => this.root.opts.open.current, () => this.opts.position.current],
-			([open, position]) => {
-				if (!open || position !== "item-aligned") return;
-				return on(this.domContext.getWindow(), "resize", this.#scheduleItemAlignedUpdate);
 			}
 		);
 
 		this.onpointermove = this.onpointermove.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
 	}
-
-	readonly useItemAlignedPositioning = $derived.by(
-		() => this.opts.position.current === "item-aligned" && !this.itemAlignedFallback
-	);
-
-	#cancelItemAlignedRaf = () => {
-		if (this.#itemAlignedRaf === null) return;
-		this.domContext.getWindow().cancelAnimationFrame(this.#itemAlignedRaf);
-		this.#itemAlignedRaf = null;
-	};
-
-	#scheduleItemAlignedUpdate = () => {
-		if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current) return;
-		if (!this.isPositioned) return;
-		this.#cancelItemAlignedRaf();
-		afterTick(() => {
-			if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current)
-				return;
-			if (!this.isPositioned) return;
-			this.#itemAlignedRaf = this.domContext
-				.getWindow()
-				.requestAnimationFrame(this.#updateItemAlignedPositioning);
-		});
-	};
-
-	#updateItemAlignedPositioning = () => {
-		this.#itemAlignedRaf = null;
-		if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current) return;
-
-		this.root.updateSelectedItemNode();
-		const selectedItem = this.root.selectedItemNode;
-		const trigger = this.root.triggerNode;
-		const floating = this.root.contentNode;
-		const viewport = this.root.viewportNode;
-
-		if (!selectedItem || !trigger || !floating) {
-			this.itemAlignedFallback = true;
-			this.itemAlignedSideOffset = 0;
-			return;
-		}
-
-		const viewportHeight = this.domContext.getWindow().innerHeight;
-		const viewportMargin = 20;
-		const triggerRect = trigger.getBoundingClientRect();
-		let floatingRect = floating.getBoundingClientRect();
-		let itemRect = selectedItem.getBoundingClientRect();
-		const popupHeight = Math.max(floating.offsetHeight, floatingRect.height);
-		const minAllowedTop = viewportMargin;
-		const maxAllowedTop = viewportHeight - viewportMargin - floatingRect.height;
-		const popupFitsViewport = popupHeight <= viewportHeight - viewportMargin * 2;
-
-		if (!popupFitsViewport || maxAllowedTop < minAllowedTop) {
-			this.itemAlignedFallback = true;
-			this.itemAlignedSideOffset = 0;
-			return;
-		}
-
-		const getClampedTop = (nextItemRect: DOMRect, nextFloatingRect: DOMRect) => {
-			const selectedItemCenterWithinFloating =
-				nextItemRect.top - nextFloatingRect.top + nextItemRect.height / 2;
-			const triggerCenterY = triggerRect.top + triggerRect.height / 2;
-			const desiredFloatingTop = triggerCenterY - selectedItemCenterWithinFloating;
-			return clamp(desiredFloatingTop, minAllowedTop, maxAllowedTop);
-		};
-
-		// First pass target position based on current scroll state.
-		let clampedFloatingTop = getClampedTop(itemRect, floatingRect);
-
-		// Adjust viewport scroll so the selected item center lines up with the trigger center
-		// for the chosen (possibly clamped) popup top.
-		if (viewport) {
-			const currentCenterWithinFloating =
-				itemRect.top - floatingRect.top + itemRect.height / 2;
-			const desiredCenterWithinFloating =
-				triggerRect.top + triggerRect.height / 2 - clampedFloatingTop;
-			const scrollDelta = currentCenterWithinFloating - desiredCenterWithinFloating;
-
-			if (Math.abs(scrollDelta) > 0.5) {
-				const maxScrollTop = Math.max(viewport.scrollHeight - viewport.clientHeight, 0);
-				const nextScrollTop = clamp(viewport.scrollTop + scrollDelta, 0, maxScrollTop);
-				if (Math.abs(nextScrollTop - viewport.scrollTop) > 0.5) {
-					viewport.scrollTop = nextScrollTop;
-					itemRect = selectedItem.getBoundingClientRect();
-					floatingRect = floating.getBoundingClientRect();
-					clampedFloatingTop = getClampedTop(itemRect, floatingRect);
-				}
-			}
-		}
-
-		this.itemAlignedSideOffset = clampedFloatingTop - floatingRect.top;
-		this.itemAlignedFallback = false;
-	};
 
 	onpointermove(_: BitsPointerEvent) {
 		this.root.isUsingKeyboard = false;
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (e.pointerType === "touch") return;
-		this.root.clearPendingOpenPointer();
 	}
 
 	readonly #styles = $derived.by(() => {
@@ -1182,7 +972,6 @@ export class SelectContentState {
 					...this.#styles,
 				},
 				onpointermove: this.onpointermove,
-				onpointerup: this.onpointerup,
 				...this.attachment,
 			}) as const
 	);
@@ -1196,7 +985,7 @@ export class SelectContentState {
 		loop: false,
 		onPlaced: () => {
 			// onPlaced is also called when the menu is closed, so we need to check if the menu
-			// is actually open to avoid setting `isPositioned` to true when the menu is closed
+			// is actually open to avoid setting positioning to true when the menu is closed
 			if (this.root.opts.open.current) {
 				this.isPositioned = true;
 			}
@@ -1244,7 +1033,6 @@ export class SelectItemState {
 		watch(
 			() => this.mounted,
 			() => {
-				this.root.updateSelectedItemNode();
 				if (!this.mounted) return;
 				this.root.setInitialHighlightedNode();
 			}
@@ -1291,7 +1079,6 @@ export class SelectItemState {
 	 */
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
-		if (this.root.consumePendingOpenPointer(e.pointerId)) return;
 		/**
 		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
 		 * we need to listen for the immediate click event to handle the selection,
@@ -1634,7 +1421,6 @@ export class SelectScrollDownButtonState {
 		watch(
 			() => this.scrollButtonState.mounted,
 			() => {
-				this.root.scrollDownButtonMounted = this.scrollButtonState.mounted;
 				if (!this.scrollButtonState.mounted) return;
 				if (this.scrollIntoViewTimer) {
 					clearTimeout(this.scrollIntoViewTimer);
@@ -1645,10 +1431,6 @@ export class SelectScrollDownButtonState {
 				});
 			}
 		);
-
-		onDestroyEffect(() => {
-			this.root.scrollDownButtonMounted = false;
-		});
 	}
 	/**
 	 * @param manual - if true, it means the function was invoked manually outside of an event
@@ -1704,17 +1486,6 @@ export class SelectScrollUpButtonState {
 			this.handleScroll(true);
 			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
 		});
-
-		watch(
-			() => this.scrollButtonState.mounted,
-			() => {
-				this.root.scrollUpButtonMounted = this.scrollButtonState.mounted;
-			}
-		);
-
-		onDestroyEffect(() => {
-			this.root.scrollUpButtonMounted = false;
-		});
 	}
 
 	/**
@@ -1743,8 +1514,4 @@ export class SelectScrollUpButtonState {
 				[this.root.getBitsAttr("scroll-up-button")]: "",
 			}) as const
 	);
-}
-
-function clamp(value: number, min: number, max: number): number {
-	return Math.min(Math.max(value, min), max);
 }

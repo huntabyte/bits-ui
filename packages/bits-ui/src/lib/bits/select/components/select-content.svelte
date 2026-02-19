@@ -13,11 +13,7 @@
 		id = createId(uid),
 		ref = $bindable(null),
 		forceMount = false,
-		position = "popper",
 		side = "bottom",
-		align = "center",
-		sideOffset = 0,
-		alignOffset = 0,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		children,
@@ -35,19 +31,9 @@
 		),
 		onInteractOutside: boxWith(() => onInteractOutside),
 		onEscapeKeydown: boxWith(() => onEscapeKeydown),
-		position: boxWith(() => position),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
-	const effectiveSide = $derived(contentState.useItemAlignedPositioning ? "bottom" : side);
-	const effectiveAlign = $derived(contentState.useItemAlignedPositioning ? "center" : align);
-	const effectiveAlignOffset = $derived(contentState.useItemAlignedPositioning ? 0 : alignOffset);
-	const effectiveSideOffset = $derived(
-		contentState.useItemAlignedPositioning ? contentState.itemAlignedSideOffset : sideOffset
-	);
-	const effectiveAvoidCollisions = $derived(
-		contentState.useItemAlignedPositioning ? false : undefined
-	);
 </script>
 
 {#if forceMount}
@@ -55,11 +41,7 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		side={effectiveSide}
-		align={effectiveAlign}
-		alignOffset={effectiveAlignOffset}
-		sideOffset={effectiveSideOffset}
-		avoidCollisions={effectiveAvoidCollisions}
+		{side}
 		enabled={contentState.root.opts.open.current}
 		{id}
 		{preventScroll}
@@ -67,16 +49,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(
-				props,
-				{
-					"data-side": contentState.useItemAlignedPositioning
-						? "none"
-						: (props["data-side"] as string | undefined),
-				},
-				{ style: contentState.props.style },
-				{ style }
-			)}
+			{@const finalProps = mergeProps(props, { style: contentState.props.style }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}
@@ -93,11 +66,7 @@
 		{...mergedProps}
 		{...contentState.popperProps}
 		ref={contentState.opts.ref}
-		side={effectiveSide}
-		align={effectiveAlign}
-		alignOffset={effectiveAlignOffset}
-		sideOffset={effectiveSideOffset}
-		avoidCollisions={effectiveAvoidCollisions}
+		{side}
 		open={contentState.root.opts.open.current}
 		{id}
 		{preventScroll}
@@ -105,16 +74,7 @@
 		shouldRender={contentState.shouldRender}
 	>
 		{#snippet popper({ props, wrapperProps })}
-			{@const finalProps = mergeProps(
-				props,
-				{
-					"data-side": contentState.useItemAlignedPositioning
-						? "none"
-						: (props["data-side"] as string | undefined),
-				},
-				{ style: contentState.props.style },
-				{ style }
-			)}
+			{@const finalProps = mergeProps(props, { style: contentState.props.style }, { style })}
 			{#if child}
 				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
 			{:else}

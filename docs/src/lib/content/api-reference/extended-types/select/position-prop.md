@@ -1,3 +1,0 @@
-```ts
-"popper" | "item-aligned"
-```
