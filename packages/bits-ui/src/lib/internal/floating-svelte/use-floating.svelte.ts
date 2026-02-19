@@ -64,6 +64,22 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			placement: placementOption,
 			strategy: strategyOption,
 		}).then((position) => {
+			const referenceNode = reference.current;
+			const referenceHidden = isReferenceHidden(referenceNode);
+			if (referenceHidden) {
+				// keep last good coordinates when the anchor disappears to avoid
+				// a transient jump to viewport origin before close propagates.
+				middlewareData = {
+					...middlewareData,
+					hide: {
+						// oxlint-disable-next-line no-explicit-any
+						...(middlewareData as any).hide,
+						referenceHidden: true,
+					},
+				};
+				return;
+			}
+
 			// ignore bad coordinates that cause jumping during close transitions
 			if (!openOption && x !== 0 && y !== 0) {
 				// if we had a good position and now getting coordinates near
@@ -181,4 +197,11 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			return update;
 		},
 	};
+}
+
+function isReferenceHidden(node: unknown): boolean {
+	if (!(node instanceof Element)) return false;
+	if (!node.isConnected) return true;
+	if (node instanceof HTMLElement && node.hidden) return true;
+	return node.getClientRects().length === 0;
 }
