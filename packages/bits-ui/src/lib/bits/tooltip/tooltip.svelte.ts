@@ -109,6 +109,7 @@ class TooltipTetherState {
 	root = $state<TooltipRootState | null>(null);
 }
 
+// oxlint-disable-next-line no-unused-vars
 export class TooltipTether<Payload = never> {
 	readonly #state = new TooltipTetherState();
 
