@@ -258,6 +258,7 @@ export class FloatingContentState {
 	constructor(opts: FloatingContentStateOpts, root: FloatingRootState) {
 		this.opts = opts;
 		this.root = root;
+		this.#updatePositionStrategy = opts.updatePositionStrategy;
 
 		if (opts.customAnchor) {
 			this.root.customAnchorNode.current = opts.customAnchor.current;
@@ -294,9 +295,20 @@ export class FloatingContentState {
 		watch(
 			() => this.contentRef.current,
 			(contentNode) => {
-				if (!contentNode) return;
+				if (!contentNode || !this.opts.enabled.current) return;
 				const win = getWindow(contentNode);
-				this.contentZIndex = win.getComputedStyle(contentNode).zIndex;
+				const rafId = win.requestAnimationFrame(() => {
+					// avoid applying stale values when refs change quickly
+					if (this.contentRef.current !== contentNode || !this.opts.enabled.current) return;
+					const zIndex = win.getComputedStyle(contentNode).zIndex;
+					if (zIndex !== this.contentZIndex) {
+						this.contentZIndex = zIndex;
+					}
+				});
+
+				return () => {
+					win.cancelAnimationFrame(rafId);
+				};
 			}
 		);
 

@@ -52,10 +52,10 @@
 			<div
 				class="-mt-13 sticky top-16 flex h-[calc(100vh-3.5rem)] flex-col gap-4 overflow-hidden pt-6"
 			>
-				<SidebarSponsor />
 				{#key metadata.title}
 					<Toc toc={{ items: fullToc }} />
 				{/key}
+				<SidebarSponsor />
 			</div>
 		</aside>
 	{/if}

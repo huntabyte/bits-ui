@@ -52,6 +52,7 @@ export interface SafePolygonOptions {
 	contentNode: Getter<HTMLElement | null>;
 	onPointerExit: () => void;
 	buffer?: number;
+	throttlePointerMove?: boolean;
 }
 
 /**
@@ -66,6 +67,36 @@ export class SafePolygon {
 	#exitPoint: Point | null = null;
 	// tracks what we're moving toward: "content" when leaving trigger, "trigger" when leaving content
 	#exitTarget: "trigger" | "content" | null = null;
+	#triggerRect: DOMRect | null = null;
+	#contentRect: DOMRect | null = null;
+	#pointerMoveRafId: number | null = null;
+	#pendingClientPoint: Point | null = null;
+	#leaveFallbackRafId: number | null = null;
+
+	#cancelLeaveFallback() {
+		if (this.#leaveFallbackRafId !== null) {
+			cancelAnimationFrame(this.#leaveFallbackRafId);
+			this.#leaveFallbackRafId = null;
+		}
+	}
+
+	#scheduleLeaveFallback() {
+		this.#cancelLeaveFallback();
+		this.#leaveFallbackRafId = requestAnimationFrame(() => {
+			this.#leaveFallbackRafId = null;
+			if (!this.#exitPoint || !this.#exitTarget) return;
+			this.#clearTracking();
+			this.#opts.onPointerExit();
+		});
+	}
+
+	#closeIfPointerEnteredOutside(target: EventTarget | null, triggerNode: HTMLElement, contentNode: HTMLElement) {
+		if (!isElement(target)) return false;
+		if (triggerNode.contains(target) || contentNode.contains(target)) return false;
+		this.#clearTracking();
+		this.#opts.onPointerExit();
+		return true;
+	}
 
 	constructor(opts: SafePolygonOptions) {
 		this.#opts = opts;
@@ -75,15 +106,18 @@ export class SafePolygon {
 			[opts.triggerNode, opts.contentNode, opts.enabled],
 			([triggerNode, contentNode, enabled]) => {
 				if (!triggerNode || !contentNode || !enabled) {
-					this.#exitPoint = null;
-					this.#exitTarget = null;
+					this.#clearTracking();
 					return;
 				}
 
 				const doc = getDocument(triggerNode);
 
 				const handlePointerMove = (e: PointerEvent) => {
-					this.#onPointerMove(e, triggerNode, contentNode);
+					if (this.#opts.throttlePointerMove) {
+						this.#onPointerMoveThrottled(e, triggerNode, contentNode);
+					} else {
+						this.#onPointerMove([e.clientX, e.clientY], triggerNode, contentNode);
+					}
 				};
 
 				const handleTriggerLeave = (e: PointerEvent) => {
@@ -93,20 +127,23 @@ export class SafePolygon {
 					if (isElement(target) && contentNode.contains(target)) {
 						return;
 					}
+					if (this.#closeIfPointerEnteredOutside(target, triggerNode, contentNode)) {
+						return;
+					}
 					this.#exitPoint = [e.clientX, e.clientY];
 					this.#exitTarget = "content";
+					this.#captureRects(triggerNode, contentNode);
+					this.#scheduleLeaveFallback();
 				};
 
 				const handleTriggerEnter = () => {
 					// reached trigger, clear tracking
-					this.#exitPoint = null;
-					this.#exitTarget = null;
+					this.#clearTracking();
 				};
 
 				const handleContentEnter = () => {
 					// reached content, clear tracking
-					this.#exitPoint = null;
-					this.#exitTarget = null;
+					this.#clearTracking();
 				};
 
 				const handleContentLeave = (e: PointerEvent) => {
@@ -116,9 +153,14 @@ export class SafePolygon {
 						// going directly to trigger, no polygon tracking needed
 						return;
 					}
+					if (this.#closeIfPointerEnteredOutside(target, triggerNode, contentNode)) {
+						return;
+					}
 					// might be traversing gap back to trigger, set up polygon tracking
 					this.#exitPoint = [e.clientX, e.clientY];
 					this.#exitTarget = "trigger";
+					this.#captureRects(triggerNode, contentNode);
+					this.#scheduleLeaveFallback();
 				};
 
 				return [
@@ -138,23 +180,46 @@ export class SafePolygon {
 		);
 	}
 
-	#onPointerMove(e: PointerEvent, triggerNode: HTMLElement, contentNode: HTMLElement): void {
+	#onPointerMoveThrottled(
+		e: PointerEvent,
+		triggerNode: HTMLElement,
+		contentNode: HTMLElement
+	): void {
+		if (this.#pointerMoveRafId === null) {
+			// handle the first move in the frame immediately so close checks
+			// are not deferred when only a single pointermove fires.
+			this.#pointerMoveRafId = requestAnimationFrame(() => {
+				this.#pointerMoveRafId = null;
+				const point = this.#pendingClientPoint;
+				this.#pendingClientPoint = null;
+				if (!point) return;
+				this.#onPointerMove(point, triggerNode, contentNode);
+			});
+			this.#onPointerMove([e.clientX, e.clientY], triggerNode, contentNode);
+			return;
+		}
+
+		this.#pendingClientPoint = [e.clientX, e.clientY];
+	}
+
+	#onPointerMove(clientPoint: Point, triggerNode: HTMLElement, contentNode: HTMLElement): void {
 		// if no exit point recorded, nothing to check
 		if (!this.#exitPoint || !this.#exitTarget) return;
+		this.#cancelLeaveFallback();
 
-		const clientPoint: Point = [e.clientX, e.clientY];
-		const triggerRect = triggerNode.getBoundingClientRect();
-		const contentRect = contentNode.getBoundingClientRect();
+		if (!this.#triggerRect || !this.#contentRect) {
+			this.#captureRects(triggerNode, contentNode);
+		}
+		const triggerRect = this.#triggerRect ?? triggerNode.getBoundingClientRect();
+		const contentRect = this.#contentRect ?? contentNode.getBoundingClientRect();
 
 		// check if pointer reached the target
 		if (this.#exitTarget === "content" && isInsideRect(clientPoint, contentRect)) {
-			this.#exitPoint = null;
-			this.#exitTarget = null;
+			this.#clearTracking();
 			return;
 		}
 		if (this.#exitTarget === "trigger" && isInsideRect(clientPoint, triggerRect)) {
-			this.#exitPoint = null;
-			this.#exitTarget = null;
+			this.#clearTracking();
 			return;
 		}
 
@@ -173,9 +238,26 @@ export class SafePolygon {
 		}
 
 		// pointer is outside all safe zones - close
+		this.#clearTracking();
+		this.#opts.onPointerExit();
+	}
+
+	#captureRects(triggerNode: HTMLElement, contentNode: HTMLElement) {
+		this.#triggerRect = triggerNode.getBoundingClientRect();
+		this.#contentRect = contentNode.getBoundingClientRect();
+	}
+
+	#clearTracking() {
 		this.#exitPoint = null;
 		this.#exitTarget = null;
-		this.#opts.onPointerExit();
+		this.#triggerRect = null;
+		this.#contentRect = null;
+		this.#pendingClientPoint = null;
+		if (this.#pointerMoveRafId !== null) {
+			cancelAnimationFrame(this.#pointerMoveRafId);
+			this.#pointerMoveRafId = null;
+		}
+		this.#cancelLeaveFallback();
 	}
 
 	/**

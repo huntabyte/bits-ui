@@ -670,6 +670,24 @@ describe("openOnHover with forceMount", () => {
 		await expectNotExists(t.getContent());
 	});
 
+	it("should reopen on second hover after closing via hover out (forceMount)", async () => {
+		const t = setupForceMountHover({
+			triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 0 },
+		});
+
+		// first hover opens
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+
+		// hover out closes
+		await t.getOutside().hover();
+		await expectNotExists(t.getContent());
+
+		// second hover opens again
+		await t.trigger.hover();
+		await expectExists(t.getContent());
+	});
+
 	it("should respect closeDelay before closing", async () => {
 		const t = setupForceMountHover({
 			triggerProps: { openOnHover: true, openDelay: 0, closeDelay: 100 },
