@@ -158,12 +158,14 @@ abstract class SelectBaseRootState {
 	getItemNodes(includeDisabled = true): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
-		const itemNodes = Array.from(
+		if (includeDisabled) {
+			return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`)
+).filter((item) => !item.hasAttribute("data-disabled"))
+		}
+		return Array.from(
+			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
 		);
-		return includeDisabled
-			? itemNodes
-			: itemNodes.filter((item) => !item.hasAttribute("data-disabled"));
 	}
 
 	setHighlightedToFirstCandidate(initial = false) {
