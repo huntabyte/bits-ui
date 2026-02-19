@@ -23,6 +23,7 @@
 		sticky = "partial",
 		strategy,
 		hideWhenDetached = false,
+		customAnchor,
 		collisionPadding = 0,
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
@@ -51,6 +52,7 @@
 		hideWhenDetached,
 		collisionPadding,
 		strategy,
+		customAnchor: customAnchor ?? contentState.root.triggerNode,
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, floatingProps, contentState.props));

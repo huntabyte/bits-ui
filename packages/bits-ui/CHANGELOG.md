@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.16.0
+
+### Minor Changes
+
+- feat(Tooltip): introduce `tether` functionality/singleton tooltip support ([#1962](https://github.com/huntabyte/bits-ui/pull/1962))
+
+### Patch Changes
+
+- fix(Tooltip): resolve issue where SafePolygon wasn't respected under specific conditions ([#1962](https://github.com/huntabyte/bits-ui/pull/1962))
+
 ## 2.15.8
 
 ### Patch Changes

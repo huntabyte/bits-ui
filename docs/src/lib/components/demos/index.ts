@@ -85,6 +85,11 @@ export { default as TooltipDemoCustomAnchor } from "./tooltip-demo-custom-anchor
 export { default as TooltipDemoDelayDuration } from "./tooltip-demo-delay-duration.svelte";
 export { default as TooltipDemoTransition } from "./tooltip-demo-transition.svelte";
 export { default as TooltipDemoGroup } from "./tooltip-demo-group.svelte";
+export { default as TooltipDemoSingleton } from "./tooltip-demo-singleton.svelte";
+export { default as TooltipDemoTether } from "./tooltip-demo-tether.svelte";
+export { default as TooltipDemoControlledTriggerId } from "./tooltip-demo-controlled-trigger-id.svelte";
+export { default as TooltipDemoSingletonForceMount } from "./tooltip-demo-singleton-force-mount.svelte";
+export { default as TooltipDemoSkipDelay } from "./tooltip-demo-skip-delay.svelte";
 export { default as DateFieldDemoCustom } from "./date-field-demo-custom.svelte";
 export { default as TimeFieldDemoCustom } from "./time-field-demo-custom.svelte";
 export { default as TimeRangeFieldDemo } from "./time-range-field-demo.svelte";
