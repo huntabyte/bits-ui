@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.16.1
+
+### Patch Changes
+
+- fix(FloatingLayer): prevent floating content from visibly jumping to the viewport origin when its reference becomes hidden by ignoring detached/hidden-anchor position updates until close completes ([#1964](https://github.com/huntabyte/bits-ui/pull/1964))
+
 ## 2.16.0
 
 ### Minor Changes
