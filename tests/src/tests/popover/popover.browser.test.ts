@@ -12,6 +12,7 @@ import { page, userEvent } from "@vitest/browser/context";
 import PopoverMultipleTriggersTest from "./popover-multiple-triggers-test.svelte";
 import PopoverOverlayTest from "./popover-overlay-test.svelte";
 import PopoverHoverTest, { type PopoverHoverTestProps } from "./popover-hover-test.svelte";
+import PopoverHiddenTriggerTabsTest from "./popover-hidden-trigger-tabs-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -110,6 +111,58 @@ it("should close on outside click", async () => {
 	await vi.waitFor(() => expect(mockFn).toHaveBeenCalledTimes(1));
 
 	vi.resetAllMocks();
+});
+
+it("should close before content visibly jumps to viewport origin when outside interaction hides the trigger", async () => {
+	render(PopoverHiddenTriggerTabsTest);
+
+	await page.getByTestId("trigger").click();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+
+	const content = page.getByTestId("content").element() as HTMLElement;
+	const wrapper = content.parentElement as HTMLElement;
+	const initialRect = wrapper.getBoundingClientRect();
+	expect(initialRect.left).toBeGreaterThan(100);
+	expect(initialRect.top).toBeGreaterThan(100);
+
+	let sawVisibleTopLeftJump = false;
+	const markIfVisibleTopLeft = () => {
+		if (!document.body.contains(wrapper)) return;
+		const rect = wrapper.getBoundingClientRect();
+		const style = window.getComputedStyle(wrapper);
+		const isVisible =
+			style.visibility !== "hidden" &&
+			style.display !== "none" &&
+			style.opacity !== "0" &&
+			style.pointerEvents !== "none";
+		if (isVisible && rect.left < 20 && rect.top < 20) {
+			sawVisibleTopLeftJump = true;
+		}
+	};
+
+	let stopSampling = false;
+	const sample = () => {
+		if (stopSampling) return;
+		markIfVisibleTopLeft();
+		window.requestAnimationFrame(sample);
+	};
+	window.requestAnimationFrame(sample);
+
+	const observer = new MutationObserver(() => {
+		markIfVisibleTopLeft();
+	});
+	observer.observe(wrapper, { attributes: true, attributeFilter: ["style"] });
+
+	await page.getByTestId("tab-other").click();
+
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+
+	stopSampling = true;
+	observer.disconnect();
+
+	expect(sawVisibleTopLeftJump).toBe(false);
 });
 
 it("should not close when clicking within bounds", async () => {
