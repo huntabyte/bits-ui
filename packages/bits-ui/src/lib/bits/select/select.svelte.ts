@@ -658,7 +658,7 @@ export class SelectComboTriggerState {
 		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
 			this.root.inputNode?.focus();
 		}
-		this.root.toggleMenu(e.pointerType, e.pointerId);
+		this.root.toggleMenu(e.pointerType);
 	}
 
 	readonly props = $derived.by(
