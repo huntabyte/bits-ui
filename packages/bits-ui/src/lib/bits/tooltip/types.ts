@@ -2,6 +2,7 @@ import type { FloatingLayerContentProps } from "../utilities/floating-layer/type
 import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { DismissibleLayerProps } from "../utilities/dismissible-layer/types.js";
 import type { EscapeLayerProps } from "../utilities/escape-layer/types.js";
+import type { Snippet } from "svelte";
 import type {
 	OnChangeFn,
 	WithChild,
@@ -15,6 +16,15 @@ import type {
 } from "$lib/shared/attributes.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
 import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+import type { TooltipTether as TooltipTetherImpl } from "./tooltip.svelte.js";
+
+export type TooltipTether<Payload = never> = TooltipTetherImpl<Payload>;
+
+export type TooltipRootSnippetProps<Payload = never> = {
+	open: boolean;
+	triggerId: string | null;
+	payload: [Payload] extends [never] ? null : Payload | null;
+};
 
 export type TooltipProviderPropsWithoutHTML = WithChildren<{
 	/**
@@ -63,7 +73,8 @@ export type TooltipProviderPropsWithoutHTML = WithChildren<{
 
 export type TooltipProviderProps = TooltipProviderPropsWithoutHTML;
 
-export type TooltipRootPropsWithoutHTML = WithChildren<{
+export type TooltipRootPropsWithoutHTML<Payload = never> = Omit<
+	WithChildren<{
 	/**
 	 * The open state of the tooltip.
 	 *
@@ -116,9 +127,21 @@ export type TooltipRootPropsWithoutHTML = WithChildren<{
 	 * @defaultValue false
 	 */
 	ignoreNonKeyboardFocus?: boolean;
-}>;
+	/**
+	 * The active trigger id for controlled single tooltip mode.
+	 */
+	triggerId?: string | null;
+	/**
+	 * Shared tether used to connect detached triggers and infer payload types.
+	 */
+	tether?: TooltipTether<Payload> | undefined;
+	}>,
+	"children"
+> & {
+	children?: Snippet | Snippet<[TooltipRootSnippetProps<Payload>]>;
+};
 
-export type TooltipRootProps = TooltipRootPropsWithoutHTML;
+export type TooltipRootProps<Payload = never> = TooltipRootPropsWithoutHTML<Payload>;
 
 export type TooltipContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 	Omit<FloatingLayerContentProps, "content" | "preventScroll"> &
@@ -160,14 +183,22 @@ export type TooltipArrowProps = ArrowProps;
 export type TooltipPortalPropsWithoutHTML = PortalProps;
 export type TooltipPortalProps = PortalProps;
 
-export type TooltipTriggerPropsWithoutHTML = WithChild<{
+export type TooltipTriggerPropsWithoutHTML<Payload = never> = WithChild<{
 	/**
 	 * Whether the tooltip trigger is disabled or not.
 	 *
 	 * @defaultValue false
 	 */
 	disabled?: boolean | null | undefined;
+	/**
+	 * Payload for the trigger used by singleton tooltip root snippets.
+	 */
+	payload?: [Payload] extends [never] ? unknown : Payload;
+	/**
+	 * Shared tether used to connect detached triggers and infer payload types.
+	 */
+	tether?: TooltipTether<Payload> | undefined;
 }>;
 
-export type TooltipTriggerProps = TooltipTriggerPropsWithoutHTML &
-	Without<BitsPrimitiveButtonAttributes, TooltipTriggerPropsWithoutHTML>;
+export type TooltipTriggerProps<Payload = never> = TooltipTriggerPropsWithoutHTML<Payload> &
+	Without<BitsPrimitiveButtonAttributes, TooltipTriggerPropsWithoutHTML<Payload>>;

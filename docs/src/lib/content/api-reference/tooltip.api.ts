@@ -31,6 +31,7 @@ import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
 	defineNumberProp,
+	defineSimplePropSchema,
 	defineSimpleDataAttr,
 } from "../utils.js";
 
@@ -77,6 +78,26 @@ const ignoreNonKeyboardFocus = defineBooleanProp({
 		"Whether or not to ignore the tooltip when the focus is not on the trigger. This is useful when the content contains interactive elements.",
 });
 
+const tetherProp = defineSimplePropSchema({
+	type: "TooltipTether<any>",
+	description:
+		"A shared tether object created by `Tooltip.createTether()` used to connect detached triggers and infer root snippet payload types.",
+});
+
+const triggerIdProp = defineSimplePropSchema({
+	type: "string | null",
+	description:
+		"The active trigger id for controlled singleton tooltips. Useful with `bind:triggerId` and programmatic open behavior.",
+	default: "null",
+	bindable: true,
+});
+
+const payloadProp = defineSimplePropSchema({
+	type: "Payload",
+	description:
+		"Payload associated with this trigger. The active payload is available from the `Tooltip.Root` children snippet props.",
+});
+
 export const provider = defineComponentApiSchema<TooltipProviderPropsWithoutHTML>({
 	title: "Provider",
 	description:
@@ -95,7 +116,7 @@ export const provider = defineComponentApiSchema<TooltipProviderPropsWithoutHTML
 export const root = defineComponentApiSchema<TooltipRootPropsWithoutHTML>({
 	title: "Root",
 	description:
-		"The root component containing the parts of the tooltip. Must be a descendant of a `Tooltip.Provider` component.",
+		"The root component containing the parts of the tooltip. Must be a descendant of a `Tooltip.Provider` component. In singleton mode, root children snippet props include `open`, `triggerId`, and `payload`.",
 	props: {
 		open: openProp,
 		onOpenChange: onOpenChangeProp,
@@ -105,6 +126,8 @@ export const root = defineComponentApiSchema<TooltipRootPropsWithoutHTML>({
 		disableHoverableContent,
 		disableCloseOnTriggerClick,
 		ignoreNonKeyboardFocus,
+		triggerId: triggerIdProp,
+		tether: tetherProp,
 		children: childrenSnippet(),
 	},
 });
@@ -118,6 +141,8 @@ export const trigger = defineComponentApiSchema<TooltipTriggerPropsWithoutHTML>(
 			default: false,
 			description: "Whether or not the tooltip trigger is disabled.",
 		}),
+		payload: payloadProp,
+		tether: tetherProp,
 		...withChildProps({ elType: "HTMLButtonElement" }),
 	},
 	dataAttributes: [

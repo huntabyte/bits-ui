@@ -343,7 +343,6 @@ export class PopoverContentState {
 				this.root.opts.open.current &&
 				this.root.openedViaHover &&
 				!this.root.hasInteractedWithContent,
-			throttlePointerMove: true,
 			onPointerExit: () => {
 				this.root.handleDelayedHoverClose();
 			},
