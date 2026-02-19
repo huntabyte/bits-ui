@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoItemAligned, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -314,6 +314,39 @@ If you wish to instead anchor the content to a different element, you can pass e
 ```
 
 <SelectDemoCustomAnchor />
+
+## Item-Aligned Positioning
+
+By default, `Select.Content` uses `position="popper"`, which follows standard Floating UI placement.
+
+If you want Radix-style item alignment, set `position="item-aligned"`:
+
+- The selected item is aligned with the trigger value.
+- The content still uses the trigger as its anchor.
+- The content falls back to normal popper positioning when alignment isn't possible.
+
+```svelte /position="item-aligned"/
+<Select.Root type="single">
+  <Select.Trigger />
+  <Select.Portal>
+    <Select.Content position="item-aligned">
+      <Select.Viewport>
+        <!-- items -->
+      </Select.Viewport>
+    </Select.Content>
+  </Select.Portal>
+</Select.Root>
+```
+
+When `position="item-aligned"` is active, `side`, `align`, and `alignOffset` are ignored. If it falls back to popper behavior, those props apply again.
+
+<ComponentPreview name="select-demo-item-aligned" componentName="Select">
+
+{#snippet preview()}
+<SelectDemoItemAligned />
+{/snippet}
+
+</ComponentPreview>
 
 ## What is the Viewport?
 
