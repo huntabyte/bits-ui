@@ -117,6 +117,8 @@ abstract class SelectBaseRootState {
 	isUsingKeyboard = false;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
+	scrollUpButtonMounted = $state(false);
+	scrollDownButtonMounted = $state(false);
 
 	constructor(opts: SelectBaseRootStateOpts) {
 		this.opts = opts;
@@ -988,9 +990,11 @@ export class SelectContentState {
 			() => this.root.opts.open.current,
 			() => {
 				if (this.root.opts.open.current) {
-					this.itemAlignedSideOffset = 0;
-					this.itemAlignedFallback = false;
-					this.#scheduleItemAlignedUpdate();
+					if (this.opts.position.current === "item-aligned") {
+						this.itemAlignedSideOffset = 0;
+						this.itemAlignedFallback = false;
+						this.#scheduleItemAlignedUpdate();
+					}
 					return;
 				}
 				this.isPositioned = false;
@@ -1005,8 +1009,11 @@ export class SelectContentState {
 				() => this.root.triggerNode,
 				() => this.root.contentNode,
 				() => this.isPositioned,
+				() => this.root.scrollUpButtonMounted,
+				() => this.root.scrollDownButtonMounted,
 			],
 			() => {
+				if (this.opts.position.current !== "item-aligned") return;
 				this.#scheduleItemAlignedUpdate();
 			}
 		);
@@ -1627,6 +1634,7 @@ export class SelectScrollDownButtonState {
 		watch(
 			() => this.scrollButtonState.mounted,
 			() => {
+				this.root.scrollDownButtonMounted = this.scrollButtonState.mounted;
 				if (!this.scrollButtonState.mounted) return;
 				if (this.scrollIntoViewTimer) {
 					clearTimeout(this.scrollIntoViewTimer);
@@ -1637,6 +1645,10 @@ export class SelectScrollDownButtonState {
 				});
 			}
 		);
+
+		onDestroyEffect(() => {
+			this.root.scrollDownButtonMounted = false;
+		});
 	}
 	/**
 	 * @param manual - if true, it means the function was invoked manually outside of an event
@@ -1691,6 +1703,17 @@ export class SelectScrollUpButtonState {
 
 			this.handleScroll(true);
 			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
+		});
+
+		watch(
+			() => this.scrollButtonState.mounted,
+			() => {
+				this.root.scrollUpButtonMounted = this.scrollButtonState.mounted;
+			}
+		);
+
+		onDestroyEffect(() => {
+			this.root.scrollUpButtonMounted = false;
 		});
 	}
 
