@@ -319,7 +319,7 @@ If you wish to instead anchor the content to a different element, you can pass e
 
 By default, `Select.Content` uses `position="popper"`, which follows standard Floating UI placement.
 
-If you want Radix-style item alignment, set `position="item-aligned"`:
+If you want MacOS native style item alignment, set `position="item-aligned"`:
 
 - The selected item is aligned with the trigger value.
 - The content still uses the trigger as its anchor.
