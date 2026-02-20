@@ -263,7 +263,7 @@
 	class="dark:border-foreground/10 flex justify-between border-t border-black/10 px-[22px] pb-10 pt-6"
 >
 	<div class="text-muted-foreground flex items-center gap-2 text-sm font-medium lg:gap-3">
-		<span class="bg-foreground/20 block aspect-square h-3 w-3 rounded-full"></span>2025 Bits UI
+		<span class="bg-foreground/20 block aspect-square h-3 w-3 rounded-full"></span>2026 Bits UI
 		team
 	</div>
 	<ul class="flex items-center justify-end gap-3 lg:gap-[26px]">
