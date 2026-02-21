@@ -13,6 +13,7 @@ import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type {
 	BitsFocusEvent,
+	BitsInputEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
@@ -1067,6 +1068,24 @@ class TimeFieldDayPeriodSegmentState {
 		this.#announcer = this.root.announcer;
 		this.attachment = attachRef(opts.ref, (v) => (this.root.dayPeriodNode = v));
 		this.onkeydown = this.onkeydown.bind(this);
+		this.onbeforeinput = this.onbeforeinput.bind(this);
+	}
+
+	onbeforeinput(e: BitsInputEvent) {
+		if (this.root.disabled.current) return;
+
+		const data = typeof e.data === "string" ? e.data.trim().toLowerCase() : "";
+		if (!data) return;
+
+		e.preventDefault();
+
+		if (data === "a" || data === "p") {
+			this.root.updateSegment("dayPeriod", () => {
+				const next = data === "a" ? "AM" : "PM";
+				this.#announcer.announce(next);
+				return next;
+			});
+		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -1130,6 +1149,7 @@ class TimeFieldDayPeriodSegmentState {
 			"aria-valuenow": valueNow,
 			"aria-valuetext": valueText,
 			onkeydown: this.onkeydown,
+			onbeforeinput: this.onbeforeinput,
 			onclick: this.root.handleSegmentClick,
 			...this.root.getBaseSegmentAttrs("dayPeriod", this.opts.id.current),
 			...this.attachment,
