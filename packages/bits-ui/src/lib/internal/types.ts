@@ -89,5 +89,6 @@ export type BitsPointerEvent<T extends HTMLElement = HTMLElement> = BitsEvent<Po
 export type BitsKeyboardEvent<T extends HTMLElement = HTMLElement> = BitsEvent<KeyboardEvent, T>;
 export type BitsMouseEvent<T extends HTMLElement = HTMLElement> = BitsEvent<MouseEvent, T>;
 export type BitsFocusEvent<T extends HTMLElement = HTMLElement> = BitsEvent<FocusEvent, T>;
+export type BitsInputEvent<T extends HTMLElement = HTMLElement> = BitsEvent<InputEvent, T>;
 
 export type RefAttachment<T extends HTMLElement = HTMLElement> = ReturnType<typeof attachRef<T>>;
