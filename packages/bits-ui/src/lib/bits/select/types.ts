@@ -169,6 +169,17 @@ export type _SharedSelectContentProps = {
 	 * @defaultValue `false`
 	 */
 	loop?: boolean;
+
+	/**
+	 * Controls how the content is positioned.
+	 *
+	 * - `"popper"` uses standard floating placement behavior.
+	 * - `"item-aligned"` attempts to align the selected item with the trigger value,
+	 *   and falls back to `"popper"` when alignment is not possible.
+	 *
+	 * @defaultValue `"popper"`
+	 */
+	position?: "popper" | "item-aligned";
 };
 
 export type SelectContentPropsWithoutHTML = Expand<
