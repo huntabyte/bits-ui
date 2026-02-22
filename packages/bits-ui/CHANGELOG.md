@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.16.2
+
+### Patch Changes
+
+- fix(TimeField): prevent mobile keyboard input from appending raw characters to the day period (AM/PM) segment by handling `beforeinput` events ([#1970](https://github.com/huntabyte/bits-ui/pull/1970))
+
 ## 2.16.1
 
 ### Patch Changes
