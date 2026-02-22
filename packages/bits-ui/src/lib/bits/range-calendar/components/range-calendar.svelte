@@ -8,6 +8,7 @@
 	import { createId } from "$lib/internal/create-id.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import type { Month } from "$lib/shared/index.js";
 
 	const uid = $props.id();
 
@@ -42,11 +43,13 @@
 		excludeDisabled = false,
 		monthFormat = "long",
 		yearFormat = "numeric",
+		onVisibleMonthsChange = noop,
 		...restProps
 	}: RangeCalendarRootProps = $props();
 
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
+	let months = $state.raw<Month<DateValue>[]>([]);
 
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value?.start,
@@ -122,6 +125,13 @@
 		minDays: boxWith(() => minDays),
 		maxDays: boxWith(() => maxDays),
 		excludeDisabled: boxWith(() => excludeDisabled),
+		months: boxWith(
+			() => months,
+			(v) => {
+				months = v;
+				onVisibleMonthsChange(v);
+			}
+		),
 		startValue: boxWith(
 			() => startValue,
 			(v) => {
