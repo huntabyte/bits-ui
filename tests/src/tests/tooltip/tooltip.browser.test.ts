@@ -14,6 +14,8 @@ import TooltipSingletonForceMountTest, {
 	type TooltipSingletonForceMountTestProps,
 } from "./tooltip-singleton-force-mount-test.svelte";
 import TooltipSingletonEdgeTest from "./tooltip-singleton-edge-test.svelte";
+import TooltipSafePolygonIntermediateTargetTest from "./tooltip-safe-polygon-intermediate-target-test.svelte";
+import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -573,4 +575,144 @@ it("should stay open on first hover when pointer moves through gap between trigg
 
 	await expectExists(page.getByTestId("content"));
 	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+});
+
+it("should stay open when moving through an intermediate element toward content", async () => {
+	render(TooltipSafePolygonIntermediateTargetTest);
+	const trigger = page.getByTestId("trigger");
+	await trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("rail").hover();
+	await expectExists(page.getByTestId("content"));
+});
+
+it("tether: should stay open when moving across a sibling-trigger gap", async () => {
+	render(TooltipTetherGapTest);
+	const leftTrigger = page.getByTestId("trigger-left");
+	const rightTrigger = page.getByTestId("trigger-right");
+
+	await leftTrigger.hover();
+	await expectExists(page.getByTestId("content"));
+
+	const contentEl = page.getByTestId("content").element() as HTMLElement;
+	const stateHistory: string[] = [];
+	const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.type === "attributes" && mutation.attributeName === "data-state") {
+				stateHistory.push((mutation.target as Element).getAttribute("data-state") ?? "");
+			}
+		}
+	});
+	observer.observe(contentEl, { attributes: true });
+
+	const leftRect = (leftTrigger.element() as HTMLElement).getBoundingClientRect();
+	const rightRect = (rightTrigger.element() as HTMLElement).getBoundingClientRect();
+	const cardEl = page.getByTestId("automation-card").element() as HTMLElement;
+	const gapX = (leftRect.right + rightRect.left) / 2;
+	const gapY = leftRect.top + leftRect.height / 2;
+
+	(leftTrigger.element() as HTMLElement).dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			clientX: leftRect.right,
+			clientY: gapY,
+			relatedTarget: cardEl,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			clientX: gapX,
+			clientY: gapY,
+		})
+	);
+
+	await rightTrigger.hover();
+	observer.disconnect();
+
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("payload")).toHaveTextContent("Right");
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	expect(stateHistory).not.toContain("closed");
+});
+
+it("tether: should not close on frame after sibling handoff via shared container", async () => {
+	render(TooltipTetherGapTest);
+	const leftTrigger = page.getByTestId("trigger-left");
+	const rightTrigger = page.getByTestId("trigger-right");
+	const cardEl = page.getByTestId("automation-card").element() as HTMLElement;
+
+	await leftTrigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("payload")).toHaveTextContent("Left");
+
+	const leftEl = leftTrigger.element() as HTMLElement;
+	const rightEl = rightTrigger.element() as HTMLElement;
+	const leftRect = leftEl.getBoundingClientRect();
+	const rightRect = rightEl.getBoundingClientRect();
+	const y = leftRect.top + leftRect.height / 2;
+
+	leftEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			clientX: leftRect.right,
+			clientY: y,
+			relatedTarget: cardEl,
+		})
+	);
+
+	rightEl.dispatchEvent(
+		new PointerEvent("pointerenter", {
+			bubbles: true,
+			clientX: rightRect.left + rightRect.width / 2,
+			clientY: y,
+			relatedTarget: cardEl,
+			pointerType: "mouse",
+		})
+	);
+
+	await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("payload")).toHaveTextContent("Right");
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+});
+
+it("tether: should close when pointer idles in the sibling gap", async () => {
+	render(TooltipTetherGapTest);
+	const leftTrigger = page.getByTestId("trigger-left");
+	const rightTrigger = page.getByTestId("trigger-right");
+	const cardEl = page.getByTestId("automation-card").element() as HTMLElement;
+
+	await leftTrigger.hover();
+	await expectExists(page.getByTestId("content"));
+
+	const leftEl = leftTrigger.element() as HTMLElement;
+	const leftRect = leftEl.getBoundingClientRect();
+	const rightRect = (rightTrigger.element() as HTMLElement).getBoundingClientRect();
+	const gapX = (leftRect.right + rightRect.left) / 2;
+	const gapY = leftRect.top + leftRect.height / 2;
+
+	leftEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			clientX: leftRect.right,
+			clientY: gapY,
+			relatedTarget: cardEl,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			clientX: gapX,
+			clientY: gapY,
+		})
+	);
+
+	await new Promise<void>((resolve) => setTimeout(resolve, 260));
+
+	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
 });

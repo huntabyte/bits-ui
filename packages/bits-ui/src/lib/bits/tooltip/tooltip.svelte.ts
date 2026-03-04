@@ -683,14 +683,18 @@ export class TooltipTriggerState {
 
 		// when moving to a sibling trigger and skip delay is active, don't close —
 		// the sibling's enter handler will switch the active trigger instantly.
-		// if skipDelayDuration is 0 there's no grace period, so let the tooltip
-		// close and make the sibling wait through the full delay (and re-animate).
-		if (isElement(relatedTarget) && root.provider.opts.skipDelayDuration.current > 0) {
+		// if skipDelayDuration is 0 there's no grace period, so close now and let
+		// the sibling wait through the full delay (and re-animate).
+		if (isElement(relatedTarget)) {
 			for (const record of root.registry.triggers.values()) {
-				if (record.node === relatedTarget) {
+				if (record.node !== relatedTarget) continue;
+				if (root.provider.opts.skipDelayDuration.current > 0) {
 					this.#hasPointerMoveOpened = false;
 					return;
 				}
+				root.handleClose();
+				this.#hasPointerMoveOpened = false;
+				return;
 			}
 		}
 
@@ -778,6 +782,7 @@ export class TooltipContentState {
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
+			transitIntentTimeout: 180,
 			ignoredTargets: () => {
 				// only skip closing for sibling triggers when there's a skip-delay grace period;
 				// with skipDelayDuration=0 the close+reopen is intentional (full delay + re-animation)
