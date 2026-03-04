@@ -128,7 +128,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	}
 
 	function reset() {
-		if (!openOption) {
+		if (!openOption && floating.current === null) {
 			isPositioned = false;
 		}
 	}
