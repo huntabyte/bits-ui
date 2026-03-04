@@ -293,13 +293,14 @@ export class FloatingContentState {
 		});
 
 		watch(
-			() => this.contentRef.current,
-			(contentNode) => {
-				if (!contentNode || !this.opts.enabled.current) return;
+			[() => this.contentRef.current, () => this.opts.enabled.current],
+			([contentNode, enabled]) => {
+				if (!contentNode || !enabled) return;
 				const win = getWindow(contentNode);
 				const rafId = win.requestAnimationFrame(() => {
 					// avoid applying stale values when refs change quickly
-					if (this.contentRef.current !== contentNode || !this.opts.enabled.current) return;
+					if (this.contentRef.current !== contentNode || !this.opts.enabled.current)
+						return;
 					const zIndex = win.getComputedStyle(contentNode).zIndex;
 					if (zIndex !== this.contentZIndex) {
 						this.contentZIndex = zIndex;
