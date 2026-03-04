@@ -154,6 +154,81 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	await expect.element(page.getByTestId("sub-item")).toHaveFocus();
 });
 
+it("should keep submenu open while pointer is moving toward it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const y = triggerRect.top + triggerRect.height / 2;
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: triggerRect.right - 1,
+			clientY: y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: (triggerRect.right + contentRect.left) / 2,
+			clientY: y,
+		})
+	);
+
+	await expectExists(t.getSubContent());
+});
+
+it("should close submenu when pointer intent changes away from submenu", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const y = triggerRect.top + triggerRect.height / 2;
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: triggerRect.right - 1,
+			clientY: y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: triggerRect.left - 80,
+			clientY: triggerRect.top - 80,
+		})
+	);
+
+	await expectNotExists(t.getSubContent());
+	await page.getByTestId("item-2").hover();
+	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
+});
+
 it("should toggle the checkbox item when clicked & respects binding", async () => {
 	const t = await open();
 	const checkedBinding = page.getByTestId("checked-binding");

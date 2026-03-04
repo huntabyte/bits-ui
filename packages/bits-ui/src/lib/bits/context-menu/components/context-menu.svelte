@@ -8,6 +8,7 @@
 	let {
 		open = $bindable(false),
 		dir = "ltr",
+		debugMode = false,
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
 		children,
@@ -16,6 +17,7 @@
 	const root = MenuRootState.create({
 		variant: boxWith(() => "context-menu"),
 		dir: boxWith(() => dir),
+		debugMode: boxWith(() => debugMode),
 		onClose: () => {
 			open = false;
 			onOpenChange?.(false);
