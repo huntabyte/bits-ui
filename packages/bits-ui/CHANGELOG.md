@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.16.3
+
+### Patch Changes
+
+- fix: floating content exit animations ([#1980](https://github.com/huntabyte/bits-ui/pull/1980))
+
+- fix(Tooltip): improve transit handling from trigger to content ([#1981](https://github.com/huntabyte/bits-ui/pull/1981))
+
 ## 2.16.2
 
 ### Patch Changes
