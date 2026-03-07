@@ -10,7 +10,7 @@ import SelectMultiTest from "./select-multi-test.svelte";
 import type { Item, SelectSingleTestProps } from "./select-test.svelte";
 import SelectTest from "./select-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -166,6 +166,19 @@ describe("select - single", () => {
 		});
 		const contentEl = t.getContent().element() as HTMLElement;
 		expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+	});
+
+	it("should apply transition attrs to content during open and close", async () => {
+		const t = setupSingle({}, testItems, SelectForceMountTest);
+		const observer = observeTransitionAttrs(t.getContent().element());
+
+		await t.trigger.click();
+		await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
+
+		await t.outside.click({ force: true });
+		await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
+
+		observer.disconnect();
 	});
 
 	it("should apply the appropriate `aria-labelledby` attribute to the group", async () => {
