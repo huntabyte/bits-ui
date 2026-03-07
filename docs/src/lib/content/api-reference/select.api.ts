@@ -16,6 +16,7 @@ import {
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
+	transitionStyleDataAttrs,
 	typeSingleOrMultipleProp,
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
@@ -153,6 +154,7 @@ export const content = defineComponentApiSchema<SelectContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "select-content",
 			description: "Present on the content element.",
@@ -184,6 +186,7 @@ export const contentStatic = defineComponentApiSchema<SelectContentStaticPropsWi
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "select-content",
 			description: "Present on the content element.",
