@@ -39,6 +39,7 @@ import {
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
 import {
@@ -163,6 +164,7 @@ export const content = defineComponentApiSchema<ComboboxContentPropsWithoutHTML>
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "combobox-content",
 			description: "Present on the content element.",
@@ -194,6 +196,7 @@ export const contentStatic = defineComponentApiSchema<ComboboxContentStaticProps
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "combobox-content",
 			description: "Present on the content element.",

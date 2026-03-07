@@ -23,6 +23,7 @@ import {
 	openChildDefinition,
 	openProp,
 	portalProps,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
 import { TooltipStateDataAttr } from "./extended-types/tooltip/index.js";
@@ -170,6 +171,7 @@ export const content = defineComponentApiSchema<TooltipContentPropsWithoutHTML>(
 	},
 	dataAttributes: [
 		openClosedDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "tooltip-content",
 			description: "Present on the tooltip content element.",
@@ -194,6 +196,7 @@ export const contentStatic = defineComponentApiSchema<TooltipContentStaticPropsW
 	},
 	dataAttributes: [
 		openClosedDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "tooltip-content",
 			description: "Present on the tooltip content element.",

@@ -1,5 +1,6 @@
 import type { Snippet } from "svelte";
 import type { ReadableBox } from "svelte-toolbelt";
+import type { TransitionState } from "$lib/internal/attrs.js";
 
 export type PresenceLayerProps = {
 	/**
@@ -14,7 +15,14 @@ export type PresenceLayerImplProps = PresenceLayerProps & {
 	 */
 	open: boolean;
 
-	presence?: Snippet<[{ present: boolean }]>;
+	presence?: Snippet<
+		[
+			{
+				present: boolean;
+				transitionStatus: TransitionState;
+			},
+		]
+	>;
 
 	ref: ReadableBox<HTMLElement | null>;
 };

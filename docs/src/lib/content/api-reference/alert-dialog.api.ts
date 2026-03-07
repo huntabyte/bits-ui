@@ -27,6 +27,7 @@ import {
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
 import {
@@ -104,6 +105,7 @@ const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "alert-dialog-content",
 			description: "Present on the content element.",
@@ -177,6 +179,7 @@ const overlay = defineComponentApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "alert-dialog-overlay",
 			description: "Present on the overlay element.",
