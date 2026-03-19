@@ -552,6 +552,9 @@ export class DateFieldRootState {
 		style: {
 			caretColor: "transparent",
 		},
+		onbeforeinput: (e: Event) => {
+			e.preventDefault();
+		},
 	};
 
 	#getLabelledBy(segmentId: string) {
