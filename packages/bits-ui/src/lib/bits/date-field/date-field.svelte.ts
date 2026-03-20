@@ -553,10 +553,7 @@ export class DateFieldRootState {
 		style: {
 			caretColor: "transparent",
 		},
-		onkeydowncapture: () => {
-			this._handlingKeydown = true;
-		},
-		onkeyupcapture: () => {
+		onkeyup: () => {
 			this._handlingKeydown = false;
 		},
 		onbeforeinput: (e: InputEvent) => {
@@ -895,6 +892,7 @@ abstract class BaseNumericSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		this.root._handlingKeydown = true;
 		const placeholder = this.root.value.current ?? this.root.placeholder.current;
 		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
 
@@ -1175,6 +1173,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		this.root._handlingKeydown = true;
 		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (!isAcceptableSegmentKey(e.key)) return;
@@ -1393,6 +1392,7 @@ export class DateFieldDayPeriodSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		this.root._handlingKeydown = true;
 		if (e.ctrlKey || e.metaKey || this.root.disabled.current) return;
 
 		if (e.key !== kbd.TAB) e.preventDefault();
@@ -1507,6 +1507,7 @@ export class DateFieldTimeZoneSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		this.root._handlingKeydown = true;
 		if (e.key !== kbd.TAB) e.preventDefault();
 		if (this.root.disabled.current) return;
 		if (isSegmentNavigationKey(e.key)) {
