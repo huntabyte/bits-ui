@@ -215,6 +215,7 @@ export class DateFieldRootState {
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
 	domContext: DOMContext = new DOMContext(() => null);
+	_handlingKeydown = false;
 
 	constructor(props: DateFieldRootStateOpts, rangeRoot?: DateRangeFieldRootState) {
 		this.rangeRoot = rangeRoot;
@@ -552,8 +553,16 @@ export class DateFieldRootState {
 		style: {
 			caretColor: "transparent",
 		},
-		onbeforeinput: (e: Event) => {
-			e.preventDefault();
+		onkeydowncapture: () => {
+			this._handlingKeydown = true;
+		},
+		onkeyupcapture: () => {
+			this._handlingKeydown = false;
+		},
+		onbeforeinput: (e: InputEvent) => {
+			if (!this._handlingKeydown) {
+				e.preventDefault();
+			}
 		},
 	};
 
