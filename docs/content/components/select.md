@@ -281,8 +281,8 @@ You can opt-out of this behavior by instead using the `Select.ContentStatic` com
           <Select.GroupHeading />
           <Select.Item />
         </Select.Group>
-        <Select.ScrollDownButton />
       </Select.Viewport>
+      <Select.ScrollDownButton />
     </Select.ContentStatic>
   </Select.Portal>
 </Select.Root>
