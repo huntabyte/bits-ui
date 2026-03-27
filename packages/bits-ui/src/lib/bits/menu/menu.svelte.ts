@@ -287,6 +287,10 @@ export class MenuContentState {
 	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current?.(e);
 		if (e.defaultPrevented || this.#isSub) return;
+		if (this.parentMenu.root.ignoreCloseAutoFocus) {
+			e.preventDefault();
+			return;
+		}
 
 		if (this.parentMenu.triggerNode && isTabbable(this.parentMenu.triggerNode)) {
 			e.preventDefault();
@@ -418,7 +422,17 @@ export class MenuContentState {
 		}
 		if (e.target.closest(`#${triggerId}`)) {
 			e.preventDefault();
+			return;
 		}
+		/**
+		 * when the menu closes due to an outside pointer interaction (for example,
+		 * clicking another dropdown trigger), avoid focusing this menu's trigger
+		 * to prevent stealing focus from the new interaction target.
+		 */
+		this.parentMenu.root.ignoreCloseAutoFocus = true;
+		afterTick(() => {
+			this.parentMenu.root.ignoreCloseAutoFocus = false;
+		});
 	}
 
 	get shouldRender() {
