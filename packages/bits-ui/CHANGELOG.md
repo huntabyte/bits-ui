@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.16.4
+
+### Patch Changes
+
+- fix: menu not ignoring onCloseAutoFocus when closed as another focus scope ([#1999](https://github.com/huntabyte/bits-ui/pull/1999))
+
+- fix: floating layer bouncing on scroll ([#1997](https://github.com/huntabyte/bits-ui/pull/1997))
+
 ## 2.16.3
 
 ### Patch Changes
