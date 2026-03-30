@@ -112,6 +112,7 @@ abstract class SelectBaseRootState {
 		if (!this.highlightedNode) return null;
 		return this.highlightedNode.getAttribute("data-label");
 	});
+	contentIsPositioned = $state(false);
 	isUsingKeyboard = false;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
@@ -138,8 +139,13 @@ abstract class SelectBaseRootState {
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
 		if (node && (this.isUsingKeyboard || initial)) {
-			node.scrollIntoView({ block: this.opts.scrollAlignment.current });
+			this.scrollHighlightedNodeIntoView(node);
 		}
+	}
+
+	scrollHighlightedNodeIntoView(node: HTMLElement) {
+		if (!this.viewportNode || !this.contentIsPositioned) return;
+		node.scrollIntoView({ block: this.opts.scrollAlignment.current });
 	}
 
 	getCandidateNodes(): HTMLElement[] {
@@ -903,6 +909,7 @@ export class SelectContentState {
 
 		onDestroyEffect(() => {
 			this.root.contentNode = null;
+			this.root.contentIsPositioned = false;
 			this.isPositioned = false;
 		});
 
@@ -910,9 +917,15 @@ export class SelectContentState {
 			() => this.root.opts.open.current,
 			() => {
 				if (this.root.opts.open.current) return;
+				this.root.contentIsPositioned = false;
 				this.isPositioned = false;
 			}
 		);
+
+		watch([() => this.isPositioned, () => this.root.highlightedNode], () => {
+			if (!this.isPositioned || !this.root.highlightedNode) return;
+			this.root.scrollHighlightedNodeIntoView(this.root.highlightedNode);
+		});
 
 		this.onpointermove = this.onpointermove.bind(this);
 	}
@@ -987,6 +1000,7 @@ export class SelectContentState {
 			// onPlaced is also called when the menu is closed, so we need to check if the menu
 			// is actually open to avoid setting positioning to true when the menu is closed
 			if (this.root.opts.open.current) {
+				this.root.contentIsPositioned = true;
 				this.isPositioned = true;
 			}
 		},
@@ -1427,7 +1441,8 @@ export class SelectScrollDownButtonState {
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
 					const activeItem = this.root.highlightedNode;
-					activeItem?.scrollIntoView({ block: this.root.opts.scrollAlignment.current });
+					if (!activeItem) return;
+					this.root.scrollHighlightedNodeIntoView(activeItem);
 				});
 			}
 		);
