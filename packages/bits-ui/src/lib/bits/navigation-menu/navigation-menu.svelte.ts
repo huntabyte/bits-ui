@@ -154,7 +154,7 @@ export class NavigationMenuRootState {
 		const isOpen = this.opts?.value?.current !== "";
 		if (isOpen || this.isDelaySkipped.current) {
 			// 150 for user to switch trigger or move into content view
-			return 100;
+			return 150;
 		} else {
 			return this.opts.delayDuration.current;
 		}
