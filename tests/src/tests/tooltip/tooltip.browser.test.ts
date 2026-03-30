@@ -7,7 +7,9 @@ import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svel
 import TooltipForceMountTest from "./tooltip-force-mount-test.svelte";
 import TooltipPopoverTest from "./tooltip-popover-test.svelte";
 import TooltipManyTest from "./tooltip-many-test.svelte";
-import TooltipSingletonTest, { type TooltipSingletonTestProps } from "./tooltip-singleton-test.svelte";
+import TooltipSingletonTest, {
+	type TooltipSingletonTestProps,
+} from "./tooltip-singleton-test.svelte";
 import TooltipTetherTest from "./tooltip-tether-test.svelte";
 import TooltipSingletonControlledTest from "./tooltip-singleton-controlled-test.svelte";
 import TooltipSingletonForceMountTest, {
@@ -284,6 +286,45 @@ it("should not add a scroll listener per tooltip instance", async () => {
 	expect(scrollListenerCalls).toBe(1);
 
 	addEventListenerSpy.mockRestore();
+});
+
+it("provider: should not re-enable delay while switching between tooltips", async () => {
+	render(TooltipManyTest, {
+		count: 2,
+		delayDuration: 150,
+		skipDelayDuration: 500,
+		disableHoverableContent: true,
+	});
+	const trigger0El = page.getByTestId("trigger-0").element() as HTMLElement;
+	const trigger1El = page.getByTestId("trigger-1").element() as HTMLElement;
+
+	const pointerEnter = (el: HTMLElement) => {
+		el.dispatchEvent(
+			new PointerEvent("pointerenter", {
+				bubbles: true,
+				pointerType: "mouse",
+			})
+		);
+	};
+
+	pointerEnter(trigger0El);
+	await expectExists(page.getByTestId("content-0"));
+	expect(trigger0El.getAttribute("data-state")).toBe("delayed-open");
+
+	pointerEnter(trigger1El);
+	await expectExists(page.getByTestId("content-1"));
+	await vi.waitFor(
+		() => {
+			expect(trigger1El.getAttribute("data-state")).toBe("instant-open");
+		},
+		{ timeout: 80 }
+	);
+
+	await new Promise<void>((resolve) => setTimeout(resolve, 650));
+	await expectExists(page.getByTestId("content-1"));
+	pointerEnter(trigger0El);
+	await new Promise<void>((resolve) => setTimeout(resolve, 180));
+	expect(trigger0El.getAttribute("data-state")).toBe("instant-open");
 });
 
 it("singleton: should open with either trigger and update payload", async () => {
