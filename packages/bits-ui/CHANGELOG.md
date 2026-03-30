@@ -1,5 +1,17 @@
 # bits-ui
 
+## 2.16.5
+
+### Patch Changes
+
+- fix(DateField): `onbeforeinput` handling ([#1990](https://github.com/huntabyte/bits-ui/pull/1990))
+
+- fix(Select): scroll jumping ([#2005](https://github.com/huntabyte/bits-ui/pull/2005))
+
+- fix(Tooltip): skip delay race condition with multiple tooltips ([#2002](https://github.com/huntabyte/bits-ui/pull/2002))
+
+- fix(NavigationMenu): delay hover close; add leave-delay regression test ([#1983](https://github.com/huntabyte/bits-ui/pull/1983))
+
 ## 2.16.4
 
 ### Patch Changes
