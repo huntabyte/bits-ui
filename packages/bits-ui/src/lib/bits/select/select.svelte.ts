@@ -138,7 +138,31 @@ abstract class SelectBaseRootState {
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
 		if (node && (this.isUsingKeyboard || initial)) {
-			node.scrollIntoView({ block: this.opts.scrollAlignment.current });
+			this.scrollHighlightedNodeIntoView(node);
+		}
+	}
+
+	scrollHighlightedNodeIntoView(node: HTMLElement) {
+		const scrollContainer = this.viewportNode ?? this.contentNode;
+		if (!scrollContainer) return;
+
+		const scrollContainerRect = scrollContainer.getBoundingClientRect();
+		const nodeRect = node.getBoundingClientRect();
+
+		if (this.opts.scrollAlignment.current === "center") {
+			const scrollContainerCenter = scrollContainerRect.top + scrollContainerRect.height / 2;
+			const nodeCenter = nodeRect.top + nodeRect.height / 2;
+			scrollContainer.scrollTop += nodeCenter - scrollContainerCenter;
+			return;
+		}
+
+		if (nodeRect.top < scrollContainerRect.top) {
+			scrollContainer.scrollTop -= scrollContainerRect.top - nodeRect.top;
+			return;
+		}
+
+		if (nodeRect.bottom > scrollContainerRect.bottom) {
+			scrollContainer.scrollTop += nodeRect.bottom - scrollContainerRect.bottom;
 		}
 	}
 
@@ -1427,7 +1451,8 @@ export class SelectScrollDownButtonState {
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
 					const activeItem = this.root.highlightedNode;
-					activeItem?.scrollIntoView({ block: this.root.opts.scrollAlignment.current });
+					if (!activeItem) return;
+					this.root.scrollHighlightedNodeIntoView(activeItem);
 				});
 			}
 		);
