@@ -18,6 +18,7 @@ import {
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
 	boolToTrueOrUndef,
+	getDataTransitionAttrs,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
@@ -975,6 +976,7 @@ export class SelectContentState {
 				role: "listbox",
 				"aria-multiselectable": this.root.isMulti ? "true" : undefined,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				[this.root.getBitsAttr("content")]: "",
 				style: {
 					display: "flex",

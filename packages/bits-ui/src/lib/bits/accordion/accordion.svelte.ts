@@ -13,7 +13,12 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import { boolToStr, boolToEmptyStrOrUndef, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	boolToStr,
+	boolToEmptyStrOrUndef,
+	getDataOpenClosed,
+	getDataTransitionAttrs,
+} from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
@@ -375,6 +380,7 @@ export class AccordionContentState {
 			({
 				id: this.opts.id.current,
 				"data-state": getDataOpenClosed(this.item.isActive),
+				...getDataTransitionAttrs(this.item.contentPresence.transitionStatus),
 				"data-disabled": boolToEmptyStrOrUndef(this.item.isDisabled),
 				"data-orientation": this.item.root.opts.orientation.current,
 				[accordionAttrs.content]: "",
