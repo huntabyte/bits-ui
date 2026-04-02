@@ -153,8 +153,7 @@
 					<TextSelectionLayer
 						{...mergedProps}
 						ref={popupState.opts.ref}
-						enabled={() =>
-							popupState.root.opts.open.current &&
+						enabled={popupState.root.opts.open.current &&
 							!popupState.root.viewportSwipeDelegate?.isSwipeGestureActive()}
 					>
 						{#if child}

@@ -72,7 +72,9 @@ function createTouchEvent(
 			value: touches,
 			configurable: true,
 		});
-	} catch {}
+	} catch {
+		// noop
+	}
 	return event;
 }
 

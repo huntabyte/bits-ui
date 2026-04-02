@@ -598,6 +598,7 @@ interface DrawerRootStateOpts
 			swipeDirection: DrawerSwipeDirection;
 			snapPoints: DrawerSnapPoint[] | undefined;
 			snapToSequentialPoints: boolean;
+			// oxlint-disable-next-line no-explicit-any
 			tether: DrawerTether<any> | undefined;
 			onOpenChangeComplete: OnChangeFn<boolean>;
 			onSnapPointChange: OnChangeFn<DrawerSnapPoint | null | undefined>;
@@ -1046,6 +1047,7 @@ interface DrawerTriggerStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
+			// oxlint-disable-next-line no-explicit-any
 			tether: DrawerTether<any> | undefined;
 			payload: unknown;
 		}> {}
@@ -3184,7 +3186,7 @@ export class DrawerSwipeAreaState {
 				this.applySwipeMovement(details.deltaX, details.deltaY);
 			},
 			onRelease: ({
-				event,
+				event: _event,
 				direction,
 				deltaX,
 				deltaY,
