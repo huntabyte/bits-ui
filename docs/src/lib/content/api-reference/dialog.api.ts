@@ -21,6 +21,7 @@ import {
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "./shared.js";
 import { HeaderLevelProp, OpenClosedProp } from "./extended-types/shared/index.js";
@@ -110,6 +111,7 @@ export const content = defineComponentApiSchema<DialogContentPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "dialog-content",
 			description: "Present on the content.",
@@ -175,6 +177,7 @@ export const overlay = defineComponentApiSchema<DialogOverlayPropsWithoutHTML>({
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "dialog-overlay",
 			description: "Present on the overlay.",

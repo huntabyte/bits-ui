@@ -7,7 +7,7 @@ import PopoverForceMountTest, {
 	type PopoverForceMountTestProps,
 } from "./popover-force-mount-test.svelte";
 import PopoverSiblingsTest from "./popover-siblings-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 import PopoverMultipleTriggersTest from "./popover-multiple-triggers-test.svelte";
 import PopoverOverlayTest from "./popover-overlay-test.svelte";
@@ -88,6 +88,37 @@ it("should have bits data attrs for overlay", async () => {
 	await open({ withOverlay: true });
 	const overlay = page.getByTestId("overlay");
 	await expect.element(overlay).toHaveAttribute("data-popover-overlay");
+});
+
+it("should apply transition attrs to content and overlay during open and close", async () => {
+	render(PopoverTest, {
+		withOverlay: true,
+		contentProps: { forceMount: true },
+		overlayProps: { forceMount: true },
+	});
+
+	const trigger = page.getByTestId("trigger");
+	const contentObserver = observeTransitionAttrs(page.getByTestId("content").element());
+	const overlayObserver = observeTransitionAttrs(page.getByTestId("overlay").element());
+
+	await trigger.click();
+	await vi.waitFor(() =>
+		expect(contentObserver.history.some((entry) => entry.starting)).toBe(true)
+	);
+	await vi.waitFor(() =>
+		expect(overlayObserver.history.some((entry) => entry.starting)).toBe(true)
+	);
+
+	await trigger.click();
+	await vi.waitFor(() =>
+		expect(contentObserver.history.some((entry) => entry.ending)).toBe(true)
+	);
+	await vi.waitFor(() =>
+		expect(overlayObserver.history.some((entry) => entry.ending)).toBe(true)
+	);
+
+	contentObserver.disconnect();
+	overlayObserver.disconnect();
 });
 
 it("should open on click", async () => {

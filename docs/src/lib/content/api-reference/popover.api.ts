@@ -28,6 +28,7 @@ import {
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "$lib/content/api-reference/shared.js";
 import {
@@ -111,6 +112,7 @@ export const content = defineComponentApiSchema<PopoverContentPropsWithoutHTML>(
 	},
 	dataAttributes: [
 		openClosedDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "popover-content",
 			description: "Present on the content element.",
@@ -141,6 +143,7 @@ export const contentStatic = defineComponentApiSchema<PopoverContentStaticPropsW
 	},
 	dataAttributes: [
 		openClosedDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "popover-content",
 			description: "Present on the content element.",
@@ -198,6 +201,7 @@ export const overlay = defineComponentApiSchema<PopoverOverlayPropsWithoutHTML>(
 			description: "Present on the overlay element.",
 		}),
 		openClosedDataAttr,
+		...transitionStyleDataAttrs,
 	],
 });
 

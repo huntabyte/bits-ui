@@ -40,6 +40,7 @@ import {
 	preventScrollProp,
 	radioGroupItemChildDefinition,
 	radioGroupItemChildrenDefinition,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "./shared.js";
 import {
@@ -282,7 +283,7 @@ type DataAttrs = ComponentAPISchema["dataAttributes"];
 
 const triggerAttrs: DataAttrs = [STATE];
 
-const contentAttrs: DataAttrs = [STATE];
+const contentAttrs: DataAttrs = [STATE, ...transitionStyleDataAttrs];
 
 const arrowAttrs: DataAttrs = [STATE];
 
@@ -340,7 +341,7 @@ const separatorAttrs: DataAttrs = [
 	}),
 ];
 
-const subContentAttrs: DataAttrs = [STATE];
+const subContentAttrs: DataAttrs = [STATE, ...transitionStyleDataAttrs];
 
 const subTriggerAttrs: DataAttrs = [...sharedItemAttrs, STATE];
 

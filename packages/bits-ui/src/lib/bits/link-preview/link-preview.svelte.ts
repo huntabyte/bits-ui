@@ -9,7 +9,12 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
-import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	boolToStr,
+	getDataOpenClosed,
+	getDataTransitionAttrs,
+} from "$lib/internal/attrs.js";
 import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
 import type {
 	BitsFocusEvent,
@@ -306,6 +311,7 @@ export class LinkPreviewContentState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				[linkPreviewAttrs.content]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,

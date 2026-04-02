@@ -3,6 +3,7 @@
 	import { NavigationMenuContentState } from "../navigation-menu.svelte.js";
 	import NavigationMenuContentImpl from "./navigation-menu-content-impl.svelte";
 	import { createId } from "$lib/internal/create-id.js";
+	import { getDataTransitionAttrs } from "$lib/internal/attrs.js";
 	import type { NavigationMenuContentProps } from "$lib/types.js";
 	import Portal from "$lib/bits/utilities/portal/portal.svelte";
 	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
@@ -38,8 +39,12 @@
 		open={forceMount || contentState.open || contentState.isLastActiveValue}
 		ref={contentState.opts.ref}
 	>
-		{#snippet presence()}
-			<NavigationMenuContentImpl {...mergedProps} {children} {child} />
+		{#snippet presence({ transitionStatus })}
+			<NavigationMenuContentImpl
+				{...mergeProps(mergedProps, getDataTransitionAttrs(transitionStatus))}
+				{children}
+				{child}
+			/>
 			<Mounted bind:mounted={contentState.mounted} />
 		{/snippet}
 	</PresenceLayer>

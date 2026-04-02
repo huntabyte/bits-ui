@@ -9,19 +9,25 @@ interface AnimationsCompleteOpts
 export class AnimationsComplete {
 	#opts: AnimationsCompleteOpts;
 	#currentFrame: number | null = null;
+	#observer: MutationObserver | null = null;
+	#runId = 0;
 
 	constructor(opts: AnimationsCompleteOpts) {
 		this.#opts = opts;
 		onDestroyEffect(() => this.#cleanup());
 	}
 
-	#cleanup() {
-		if (!this.#currentFrame) return;
-		window.cancelAnimationFrame(this.#currentFrame);
-		this.#currentFrame = null;
+	#cleanup(): void {
+		if (this.#currentFrame !== null) {
+			window.cancelAnimationFrame(this.#currentFrame);
+			this.#currentFrame = null;
+		}
+		this.#observer?.disconnect();
+		this.#observer = null;
+		this.#runId++;
 	}
 
-	run(fn: () => void | Promise<void>) {
+	run(fn: () => void | Promise<void>): void {
 		// if already running, cleanup and restart
 		this.#cleanup();
 
@@ -33,21 +39,80 @@ export class AnimationsComplete {
 			return;
 		}
 
-		this.#currentFrame = window.requestAnimationFrame(() => {
+		const runId = this.#runId;
+
+		const executeIfCurrent = (): void => {
+			if (runId !== this.#runId) return;
+			this.#executeCallback(fn);
+		};
+
+		const waitForAnimations = (): void => {
+			if (runId !== this.#runId) return;
 			const animations = node.getAnimations();
 
 			if (animations.length === 0) {
-				this.#executeCallback(fn);
+				executeIfCurrent();
 				return;
 			}
 
-			Promise.allSettled(animations.map((animation) => animation.finished)).then(() => {
-				this.#executeCallback(fn);
+			Promise.all(animations.map((animation) => animation.finished))
+				.then(() => {
+					executeIfCurrent();
+				})
+				.catch(() => {
+					if (runId !== this.#runId) return;
+					const currentAnimations = node.getAnimations();
+					const hasRunningAnimations = currentAnimations.some(
+						(animation) => animation.pending || animation.playState !== "finished"
+					);
+
+					if (hasRunningAnimations) {
+						waitForAnimations();
+						return;
+					}
+
+					executeIfCurrent();
+				});
+		};
+
+		const requestWaitForAnimations = (): void => {
+			this.#currentFrame = window.requestAnimationFrame(() => {
+				this.#currentFrame = null;
+				waitForAnimations();
+			});
+		};
+
+		if (!this.#opts.afterTick.current) {
+			requestWaitForAnimations();
+			return;
+		}
+
+		this.#currentFrame = window.requestAnimationFrame(() => {
+			this.#currentFrame = null;
+			const startingStyleAttr = "data-starting-style";
+
+			if (!node.hasAttribute(startingStyleAttr)) {
+				requestWaitForAnimations();
+				return;
+			}
+
+			this.#observer = new MutationObserver(() => {
+				if (runId !== this.#runId) return;
+				if (node.hasAttribute(startingStyleAttr)) return;
+
+				this.#observer?.disconnect();
+				this.#observer = null;
+				requestWaitForAnimations();
+			});
+
+			this.#observer.observe(node, {
+				attributes: true,
+				attributeFilter: [startingStyleAttr],
 			});
 		});
 	}
 
-	#executeCallback(fn: () => void | Promise<void>) {
+	#executeCallback(fn: () => void | Promise<void>): void {
 		const execute = () => {
 			fn();
 		};
