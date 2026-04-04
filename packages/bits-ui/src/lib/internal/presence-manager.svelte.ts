@@ -10,6 +10,11 @@ interface PresenceManagerOpts
 	}> {
 	onComplete?: () => void;
 	enabled?: boolean;
+	/**
+	 * When closing, if true, skip waiting on exit animations (instant unmount).
+	 * Used e.g. when swapping top-level menubar panels so exit animations still run for dismissals.
+	 */
+	shouldSkipExitAnimation?: () => boolean;
 }
 
 export class PresenceManager {
@@ -40,6 +45,13 @@ export class PresenceManager {
 				}
 
 				this.#clearTransitionFrame();
+
+				if (!isOpen && this.#opts.shouldSkipExitAnimation?.()) {
+					this.#shouldRender = false;
+					this.#transitionStatus = undefined;
+					this.#opts.onComplete?.();
+					return;
+				}
 
 				if (isOpen) this.#shouldRender = true;
 				this.#transitionStatus = isOpen ? "starting" : "ending";

@@ -74,6 +74,8 @@ export interface MenuRootStateOpts
 		debugMode: boolean;
 	}> {
 	onClose: AnyFn;
+	/** When closing, if this returns true, exit animations are skipped (instant unmount). */
+	shouldSkipExitAnimation?: () => boolean;
 }
 
 export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
@@ -866,6 +868,12 @@ export class MenuMenuState {
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+			shouldSkipExitAnimation: () => {
+				if (this.root.opts.variant.current !== "menubar" || this.parentMenu !== null) {
+					return false;
+				}
+				return this.root.opts.shouldSkipExitAnimation?.() ?? false;
 			},
 		});
 

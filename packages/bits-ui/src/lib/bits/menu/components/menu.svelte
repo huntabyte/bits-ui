@@ -12,9 +12,11 @@
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
 		_internal_variant: variant = "dropdown-menu",
+		_internal_should_skip_exit_animation: shouldSkipExitAnimation = undefined,
 		children,
 	}: MenuRootProps & {
 		_internal_variant?: "context-menu" | "dropdown-menu" | "menubar";
+		_internal_should_skip_exit_animation?: () => boolean;
 	} = $props();
 
 	const root = MenuRootState.create({
@@ -25,6 +27,7 @@
 			open = false;
 			onOpenChange(false);
 		},
+		shouldSkipExitAnimation: () => shouldSkipExitAnimation?.() ?? false,
 	});
 
 	MenuMenuState.create(
