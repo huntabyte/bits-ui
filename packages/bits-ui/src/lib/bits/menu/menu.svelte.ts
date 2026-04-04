@@ -1402,14 +1402,22 @@ export class MenuSubTriggerState {
 			!this.submenu.opts.open.current &&
 			!this.#openTimer
 		) {
+			const openDelay = this.opts.openDelay.current;
+
+			if (openDelay <= 0) {
+				this.submenu.onOpen();
+				return;
+			}
+
 			this.#openTimer = this.content.domContext.setTimeout(() => {
 				if (this.submenu.root.isPointerInTransit) {
 					this.#clearOpenTimer();
 					return;
 				}
+
 				this.submenu.onOpen();
 				this.#clearOpenTimer();
-			}, this.opts.openDelay.current);
+			}, openDelay);
 		}
 	}
 
