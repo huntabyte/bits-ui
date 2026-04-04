@@ -7,6 +7,7 @@ import {
 	forceMountProp,
 	onOpenChangeCompleteProp,
 	onOpenChangeProp,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "./shared.js";
 import { CollapsibleContentChildSnippetProps } from "./extended-types/collapsible/index.js";
@@ -111,6 +112,7 @@ export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHT
 			name: "disabled",
 			description: "Present when the collapsible is disabled.",
 		}),
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "collapsible-content",
 			description: "Present on the content element.",

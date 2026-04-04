@@ -10,7 +10,11 @@ import {
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
-import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	boolToEmptyStrOrUndef,
+	getDataTransitionAttrs,
+} from "$lib/internal/attrs.js";
 import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
@@ -211,8 +215,8 @@ export class TooltipProviderState {
 	onClose = (tooltip: TooltipRootState) => {
 		if (this.#openTooltip === tooltip) {
 			this.#openTooltip = null;
+			this.#startTimer();
 		}
-		this.#startTimer();
 	};
 
 	isTooltipOpen = (tooltip: TooltipRootState) => {
@@ -683,14 +687,18 @@ export class TooltipTriggerState {
 
 		// when moving to a sibling trigger and skip delay is active, don't close —
 		// the sibling's enter handler will switch the active trigger instantly.
-		// if skipDelayDuration is 0 there's no grace period, so let the tooltip
-		// close and make the sibling wait through the full delay (and re-animate).
-		if (isElement(relatedTarget) && root.provider.opts.skipDelayDuration.current > 0) {
+		// if skipDelayDuration is 0 there's no grace period, so close now and let
+		// the sibling wait through the full delay (and re-animate).
+		if (isElement(relatedTarget)) {
 			for (const record of root.registry.triggers.values()) {
-				if (record.node === relatedTarget) {
+				if (record.node !== relatedTarget) continue;
+				if (root.provider.opts.skipDelayDuration.current > 0) {
 					this.#hasPointerMoveOpened = false;
 					return;
 				}
+				root.handleClose();
+				this.#hasPointerMoveOpened = false;
+				return;
 			}
 		}
 
@@ -778,6 +786,7 @@ export class TooltipContentState {
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
 			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
+			transitIntentTimeout: 180,
 			ignoredTargets: () => {
 				// only skip closing for sibling triggers when there's a skip-delay grace period;
 				// with skipDelayDuration=0 the close+reopen is intentional (full delay + re-animation)
@@ -839,6 +848,7 @@ export class TooltipContentState {
 				id: this.opts.id.current,
 				"data-state": this.root.stateAttr,
 				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				style: {
 					outline: "none",
 				},

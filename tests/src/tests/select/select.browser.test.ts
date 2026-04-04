@@ -10,7 +10,8 @@ import SelectMultiTest from "./select-multi-test.svelte";
 import type { Item, SelectSingleTestProps } from "./select-test.svelte";
 import SelectTest from "./select-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -147,6 +148,12 @@ async function openMultiple(
 	};
 }
 
+function nextFrame() {
+	return new Promise<void>((resolve) => {
+		window.requestAnimationFrame(() => resolve());
+	});
+}
+
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("select - single", () => {
@@ -166,6 +173,19 @@ describe("select - single", () => {
 		});
 		const contentEl = t.getContent().element() as HTMLElement;
 		expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+	});
+
+	it("should apply transition attrs to content during open and close", async () => {
+		const t = setupSingle({}, testItems, SelectForceMountTest);
+		const observer = observeTransitionAttrs(t.getContent().element());
+
+		await t.trigger.click();
+		await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
+
+		await t.outside.click({ force: true });
+		await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
+
+		observer.disconnect();
 	});
 
 	it("should apply the appropriate `aria-labelledby` attribute to the group", async () => {
@@ -572,6 +592,36 @@ describe("select - single", () => {
 
 		await expectHighlighted(page.getByTestId("empty"));
 		await expectNotHighlighted(page.getByTestId("1"));
+	});
+
+	it("should not scroll the page when opening on trigger click", async () => {
+		render(SelectScrollJumpTest);
+
+		window.scrollTo(0, 640);
+		for (let i = 0; i < 3; i++) {
+			await nextFrame();
+		}
+
+		const baselineY = window.scrollY;
+		let maxDrift = 0;
+		const handleScroll = () => {
+			maxDrift = Math.max(maxDrift, Math.abs(window.scrollY - baselineY));
+		};
+
+		window.addEventListener("scroll", handleScroll, { passive: true });
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		for (let i = 0; i < 30; i++) {
+			await nextFrame();
+			handleScroll();
+		}
+
+		window.removeEventListener("scroll", handleScroll);
+
+		expect(maxDrift).toBeLessThanOrEqual(1);
+		expect(Math.abs(window.scrollY - baselineY)).toBeLessThanOrEqual(1);
 	});
 });
 

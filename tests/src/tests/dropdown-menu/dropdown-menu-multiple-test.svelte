@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { DropdownMenu } from "bits-ui";
 
+	let { contentProps = {} }: { contentProps: DropdownMenu.ContentProps } = $props();
+
 	let open1 = $state(false);
 	let open2 = $state(false);
 	let open3 = $state(false);
@@ -15,7 +17,7 @@
 	<div data-testid="dropdown-1-container">
 		<DropdownMenu.Root bind:open={open1}>
 			<DropdownMenu.Trigger data-testid="trigger-1">Open Dropdown 1</DropdownMenu.Trigger>
-			<DropdownMenu.Content data-testid="content-1">
+			<DropdownMenu.Content data-testid="content-1" {...contentProps}>
 				<DropdownMenu.Item data-testid="item-1">Item 1</DropdownMenu.Item>
 				<DropdownMenu.Item data-testid="item-1-2">Item 2</DropdownMenu.Item>
 			</DropdownMenu.Content>
@@ -26,7 +28,7 @@
 	<div data-testid="dropdown-2-container">
 		<DropdownMenu.Root bind:open={open2}>
 			<DropdownMenu.Trigger data-testid="trigger-2">Open Dropdown 2</DropdownMenu.Trigger>
-			<DropdownMenu.Content data-testid="content-2">
+			<DropdownMenu.Content data-testid="content-2" {...contentProps}>
 				<DropdownMenu.Item data-testid="item-2">Item 1</DropdownMenu.Item>
 				<DropdownMenu.Item data-testid="item-2-2">Item 2</DropdownMenu.Item>
 			</DropdownMenu.Content>
@@ -37,7 +39,7 @@
 	<div data-testid="dropdown-3-container">
 		<DropdownMenu.Root bind:open={open3}>
 			<DropdownMenu.Trigger data-testid="trigger-3">Open Dropdown 3</DropdownMenu.Trigger>
-			<DropdownMenu.Content data-testid="content-3">
+			<DropdownMenu.Content data-testid="content-3" {...contentProps}>
 				<DropdownMenu.Item data-testid="item-3">Item 1</DropdownMenu.Item>
 				<DropdownMenu.Item data-testid="item-3-2">Item 2</DropdownMenu.Item>
 			</DropdownMenu.Content>

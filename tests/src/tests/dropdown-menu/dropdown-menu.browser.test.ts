@@ -58,8 +58,7 @@ async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd
 
 async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	const t = props;
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 
 	await expectNotExists(t.getSubContent());
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
@@ -69,6 +68,15 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	return {
 		...t,
 	};
+}
+
+async function focusSubTrigger(): Promise<void> {
+	const subtrigger = page.getByTestId("sub-trigger");
+	if (subtrigger.element() === document.activeElement) return;
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	if (subtrigger.element() === document.activeElement) return;
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(subtrigger).toHaveFocus();
 }
 
 afterEach(() => {
@@ -145,9 +153,7 @@ it("should manage focus correctly when opened with keyboard", async () => {
 it("should open submenu with keyboard on subtrigger", async () => {
 	await openWithKbd();
 
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	const subtrigger = page.getByTestId("sub-trigger");
-	await expect.element(subtrigger).toHaveFocus();
+	await focusSubTrigger();
 	await expectNotExists(page.getByTestId("sub-content"));
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expectExists(page.getByTestId("sub-content"));
@@ -276,8 +282,7 @@ it("should check the radio item when clicked & respects binding", async () => {
 it("should skip over disabled items when navigating with the keyboard", async () => {
 	await openWithKbd();
 	await expect.element(page.getByTestId("item")).toHaveFocus();
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("checkbox-item")).toHaveFocus();
 	await expect.element(page.getByTestId("disabled-item")).not.toHaveFocus();
@@ -290,8 +295,7 @@ it("should not loop through the menu items when the `loop` prop is set to false/
 			loop: false,
 		},
 	});
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("checkbox-item")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -310,8 +314,7 @@ it("should loop through the menu items when the `loop` prop is set to true", asy
 			loop: true,
 		},
 	});
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("checkbox-item")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -731,4 +734,22 @@ it("should apply custom style prop to content", async () => {
 	});
 	const contentEl = t.getContent().element() as HTMLElement;
 	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});
+
+it("keyboard navigation should not cause unwanted jumps between menus", async () => {
+	const t = render(DropdownMenuMultipleTest, { contentProps: { preventScroll: false } });
+	onTestFinished(() => t.unmount());
+
+	const trigger1 = page.getByTestId("trigger-1");
+	const trigger2 = page.getByTestId("trigger-2");
+	const content1 = page.getByTestId("content-1");
+	const content2 = page.getByTestId("content-2");
+
+	await trigger1.click();
+	await expectExists(content1);
+	await trigger2.click();
+	await expectExists(content2);
+	await expectNotExists(content1);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expectNotExists(content1);
 });

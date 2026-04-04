@@ -52,6 +52,11 @@
 		enabled: boolean;
 		contentPointerEvents?: "auto" | "none";
 	} = $props();
+
+	const resolvedPreventScroll = $derived(preventScroll ?? true);
+	const effectiveStrategy = $derived(
+		strategy ?? (resolvedPreventScroll ? "fixed" : "absolute")
+	);
 </script>
 
 <PopperContent
@@ -68,7 +73,7 @@
 	{sticky}
 	{hideWhenDetached}
 	{updatePositionStrategy}
-	{strategy}
+	strategy={effectiveStrategy}
 	{dir}
 	{wrapperId}
 	{style}
@@ -79,9 +84,9 @@
 >
 	{#snippet content({ props: floatingProps, wrapperProps })}
 		{#if restProps.forceMount && enabled}
-			<ScrollLock {preventScroll} />
+			<ScrollLock preventScroll={resolvedPreventScroll} />
 		{:else if !restProps.forceMount}
-			<ScrollLock {preventScroll} />
+			<ScrollLock preventScroll={resolvedPreventScroll} />
 		{/if}
 		<FocusScope
 			{onOpenAutoFocus}
