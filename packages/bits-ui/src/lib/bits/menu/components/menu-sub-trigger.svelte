@@ -15,7 +15,7 @@
 		children,
 		child,
 		onSelect = noop,
-		openDelay = 100,
+		openDelay = 0,
 		...restProps
 	}: MenuSubTriggerProps = $props();
 
