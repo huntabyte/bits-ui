@@ -1,6 +1,89 @@
 import { type Locator } from "@vitest/browser/context";
 import { expect, vi } from "vitest";
 
+/** Mirrors `getSide` in menu.svelte.ts so tests match popper placement (incl. vertical). */
+export function getSubmenuPlacementSide(
+	triggerRect: DOMRect,
+	contentRect: DOMRect
+): "top" | "bottom" | "left" | "right" {
+	const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+	const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+	const contentCenterX = contentRect.left + contentRect.width / 2;
+	const contentCenterY = contentRect.top + contentRect.height / 2;
+	const deltaX = contentCenterX - triggerCenterX;
+	const deltaY = contentCenterY - triggerCenterY;
+	if (Math.abs(deltaX) > Math.abs(deltaY)) {
+		return deltaX > 0 ? "right" : "left";
+	}
+	return deltaY > 0 ? "bottom" : "top";
+}
+
+/**
+ * Synthetic pointerleave coords on the trigger edge facing the submenu (same basis as menu intent).
+ */
+export function getPointerLeaveTowardSubmenuClientCoords(
+	triggerRect: DOMRect,
+	contentRect: DOMRect
+): { x: number; y: number } {
+	const side = getSubmenuPlacementSide(triggerRect, contentRect);
+	const mx = triggerRect.left + triggerRect.width / 2;
+	const my = triggerRect.top + triggerRect.height / 2;
+	switch (side) {
+		case "right":
+			return { x: triggerRect.right - 1, y: my };
+		case "left":
+			return { x: triggerRect.left + 1, y: my };
+		case "bottom":
+			return { x: mx, y: triggerRect.bottom - 1 };
+		case "top":
+			return { x: mx, y: triggerRect.top + 1 };
+	}
+}
+
+/**
+ * Midpoint between trigger and submenu along the placement axis (for "moving toward" synthetic moves).
+ */
+export function getPointerMidpointTowardSubmenuClientCoords(
+	triggerRect: DOMRect,
+	contentRect: DOMRect
+): { x: number; y: number } {
+	const side = getSubmenuPlacementSide(triggerRect, contentRect);
+	const my = triggerRect.top + triggerRect.height / 2;
+	const mx = triggerRect.left + triggerRect.width / 2;
+	switch (side) {
+		case "right":
+			return { x: (triggerRect.right + contentRect.left) / 2, y: my };
+		case "left":
+			return { x: (triggerRect.left + contentRect.right) / 2, y: my };
+		case "bottom":
+			return { x: mx, y: (triggerRect.bottom + contentRect.top) / 2 };
+		case "top":
+			return { x: mx, y: (triggerRect.top + contentRect.bottom) / 2 };
+	}
+}
+
+/**
+ * Point outside the submenu panel on the parent-menu side so intent can exit (not "entered submenu").
+ */
+export function getPointerAwayFromSubmenuIntentClientCoords(
+	triggerRect: DOMRect,
+	subContentRect: DOMRect
+): { x: number; y: number } {
+	const side = getSubmenuPlacementSide(triggerRect, subContentRect);
+	const my = triggerRect.top + triggerRect.height / 2;
+	const mx = triggerRect.left + triggerRect.width / 2;
+	switch (side) {
+		case "right":
+			return { x: subContentRect.left - 8, y: my };
+		case "left":
+			return { x: subContentRect.right + 8, y: my };
+		case "bottom":
+			return { x: mx, y: subContentRect.top - 8 };
+		case "top":
+			return { x: mx, y: subContentRect.bottom + 8 };
+	}
+}
+
 export async function expectNotClickableLoc(loc: Locator) {
 	await expect(loc.click()).rejects.toThrow();
 }

@@ -5,7 +5,13 @@ import { getTestKbd } from "../utils.js";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	getPointerAwayFromSubmenuIntentClientCoords,
+	getPointerLeaveTowardSubmenuClientCoords,
+	getPointerMidpointTowardSubmenuClientCoords,
+} from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 
@@ -173,14 +179,15 @@ it("should keep submenu open while pointer is moving toward it", async () => {
 	const subContentWrapper = subContentEl.parentElement as HTMLElement;
 	const triggerRect = subTriggerEl.getBoundingClientRect();
 	const contentRect = subContentEl.getBoundingClientRect();
-	const y = triggerRect.top + triggerRect.height / 2;
+	const leaveToward = getPointerLeaveTowardSubmenuClientCoords(triggerRect, contentRect);
+	const midToward = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
 
 	subTriggerEl.dispatchEvent(
 		new PointerEvent("pointerleave", {
 			bubbles: true,
 			pointerType: "mouse",
-			clientX: triggerRect.right - 1,
-			clientY: y,
+			clientX: leaveToward.x,
+			clientY: leaveToward.y,
 			relatedTarget: subContentWrapper,
 		})
 	);
@@ -189,8 +196,8 @@ it("should keep submenu open while pointer is moving toward it", async () => {
 		new PointerEvent("pointermove", {
 			bubbles: true,
 			pointerType: "mouse",
-			clientX: (triggerRect.right + contentRect.left) / 2,
-			clientY: y,
+			clientX: midToward.x,
+			clientY: midToward.y,
 		})
 	);
 
@@ -209,14 +216,16 @@ it("should close submenu when pointer intent changes away from submenu", async (
 	const subContentEl = t.getSubContent().element() as HTMLElement;
 	const subContentWrapper = subContentEl.parentElement as HTMLElement;
 	const triggerRect = subTriggerEl.getBoundingClientRect();
-	const y = triggerRect.top + triggerRect.height / 2;
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+	const awayFromSub = getPointerAwayFromSubmenuIntentClientCoords(triggerRect, contentRect);
 
 	subTriggerEl.dispatchEvent(
 		new PointerEvent("pointerleave", {
 			bubbles: true,
 			pointerType: "mouse",
-			clientX: triggerRect.right - 1,
-			clientY: y,
+			clientX: leavePt.x,
+			clientY: leavePt.y,
 			relatedTarget: subContentWrapper,
 		})
 	);
@@ -225,8 +234,8 @@ it("should close submenu when pointer intent changes away from submenu", async (
 		new PointerEvent("pointermove", {
 			bubbles: true,
 			pointerType: "mouse",
-			clientX: triggerRect.left - 80,
-			clientY: triggerRect.top - 80,
+			clientX: awayFromSub.x,
+			clientY: awayFromSub.y,
 		})
 	);
 
