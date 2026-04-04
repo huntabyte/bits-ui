@@ -990,6 +990,7 @@ export class MenuContentState {
 			`[${this.parentMenu.root.getBitsAttr("sub-trigger")}]`
 		);
 		if (!hoveredSubTrigger || !parentContentNode.contains(hoveredSubTrigger)) return;
+		if (hoveredSubTrigger === this.parentMenu.triggerNode) return;
 		hoveredSubTrigger.dispatchEvent(
 			new PointerEvent("pointermove", {
 				bubbles: true,
