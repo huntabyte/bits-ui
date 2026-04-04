@@ -14,6 +14,7 @@ import {
 	dismissibleLayerProps,
 	escapeLayerProps,
 	forceMountProp,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "./shared.js";
 import {
@@ -27,6 +28,7 @@ import {
 	defineEnumProp,
 	defineFunctionProp,
 	defineNumberProp,
+	defineSimpleDataAttr,
 	defineStringProp,
 } from "../utils.js";
 
@@ -133,6 +135,13 @@ export const content = defineComponentApiSchema<NavigationMenuContentPropsWithou
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		...transitionStyleDataAttrs,
+		defineSimpleDataAttr({
+			name: "navigation-menu-content",
+			description: "Present on the content element.",
+		}),
+	],
 });
 
 export const link = defineComponentApiSchema<NavigationMenuLinkPropsWithoutHTML>({
@@ -160,6 +169,13 @@ export const indicator = defineComponentApiSchema<NavigationMenuIndicatorPropsWi
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLSpanElement" }),
 	},
+	dataAttributes: [
+		...transitionStyleDataAttrs,
+		defineSimpleDataAttr({
+			name: "navigation-menu-indicator",
+			description: "Present on the indicator element.",
+		}),
+	],
 });
 
 export const viewport = defineComponentApiSchema<NavigationMenuViewportPropsWithoutHTML>({
@@ -170,6 +186,13 @@ export const viewport = defineComponentApiSchema<NavigationMenuViewportPropsWith
 		forceMount: forceMountProp,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
+	dataAttributes: [
+		...transitionStyleDataAttrs,
+		defineSimpleDataAttr({
+			name: "navigation-menu-viewport",
+			description: "Present on the viewport element.",
+		}),
+	],
 });
 
 export const navigationMenu = [root, sub, list, item, trigger, content, link, viewport, indicator];

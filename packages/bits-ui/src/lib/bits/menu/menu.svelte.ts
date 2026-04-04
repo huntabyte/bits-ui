@@ -4,6 +4,7 @@ import {
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
+	getDocument,
 	getWindow,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -40,6 +41,7 @@ import {
 	boolToStr,
 	getDataOpenClosed,
 	boolToEmptyStrOrUndef,
+	getDataTransitionAttrs,
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/bits/utilities/is-using-keyboard/is-using-keyboard.svelte.js";
@@ -48,7 +50,6 @@ import { isTabbable } from "tabbable";
 import type { KeyboardEventHandler, PointerEventHandler, MouseEventHandler } from "svelte/elements";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
-import { GraceArea } from "$lib/internal/grace-area.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
 
@@ -70,8 +71,11 @@ export interface MenuRootStateOpts
 	extends ReadableBoxedValues<{
 		dir: Direction;
 		variant: MenuVariant;
+		// debugMode: boolean;
 	}> {
 	onClose: AnyFn;
+	/** When closing, if this returns true, exit animations are skipped (instant unmount). */
+	shouldSkipExitAnimation?: () => boolean;
 }
 
 export const MenuOpenEvent = new CustomEventDispatcher("bitsmenuopen", {
@@ -97,6 +101,686 @@ export const menuAttrs = createBitsAttrs({
 		"arrow",
 	],
 });
+
+type PolygonSide = "top" | "bottom" | "left" | "right";
+type IntentTarget = "trigger" | "content";
+type Point = { x: number; y: number };
+type Polygon = Point[];
+
+// const SVG_NS = "http://www.w3.org/2000/svg";
+
+interface MenuSubmenuIntentOptions {
+	enabled: () => boolean;
+	triggerNode: () => HTMLElement | null;
+	contentNode: () => HTMLElement | null;
+	parentContentNode: () => HTMLElement | null;
+	subContentSelector: () => string;
+	// debugMode: () => boolean;
+	onIntentExit: (pointerPoint: Point | null) => void;
+	setIsPointerInTransit: (value: boolean) => void;
+}
+
+/*
+interface MenuIntentDebugSnapshot {
+	active: boolean;
+	target: IntentTarget | null;
+	exitPoint: Point | null;
+	pointerPoint: Point | null;
+	corridor: Polygon | null;
+	intentPolygon: Polygon | null;
+}
+
+class MenuIntentDebugOverlay {
+	readonly #enabled: () => boolean;
+	readonly #getDocument: () => Document | null;
+	#root: HTMLDivElement | null = null;
+	#corridorPolygon: SVGPolygonElement | null = null;
+	#intentPolygon: SVGPolygonElement | null = null;
+	#exitPoint: SVGCircleElement | null = null;
+	#pointerPoint: SVGCircleElement | null = null;
+
+	constructor(opts: { enabled: () => boolean; getDocument: () => Document | null }) {
+		this.#enabled = opts.enabled;
+		this.#getDocument = opts.getDocument;
+	}
+
+	update(state: MenuIntentDebugSnapshot) {
+		if (!this.#enabled()) {
+			this.#detach();
+			return;
+		}
+		this.#ensureRoot();
+		if (!this.#root) return;
+
+		if (!state.active || !state.corridor || !state.intentPolygon || !state.exitPoint) {
+			this.#root.style.display = "none";
+			return;
+		}
+
+		const color = state.target === "trigger" ? "16 185 129" : "59 130 246";
+		const strokeColor = `rgb(${color})`;
+		const fillColor = `rgb(${color} / 0.18)`;
+		const corridorFill = `rgb(${color} / 0.1)`;
+
+		this.#root.style.display = "block";
+		this.#setPolygon(this.#corridorPolygon, state.corridor, corridorFill, strokeColor, 1.5);
+		this.#setPolygon(this.#intentPolygon, state.intentPolygon, fillColor, strokeColor, 2);
+		this.#setPoint(this.#exitPoint, state.exitPoint, strokeColor, 5);
+		this.#setPoint(
+			this.#pointerPoint,
+			state.pointerPoint,
+			"rgb(15 23 42 / 0.9)",
+			4,
+			"rgb(255 255 255 / 0.95)"
+		);
+	}
+
+	destroy() {
+		this.#detach();
+	}
+
+	#setPolygon(
+		node: SVGPolygonElement | null,
+		points: Polygon | null,
+		fill: string,
+		stroke: string,
+		strokeWidth: number
+	) {
+		if (!node || !points || points.length === 0) return;
+		node.setAttribute("points", polygonToSvgPoints(points));
+		node.setAttribute("fill", fill);
+		node.setAttribute("stroke", stroke);
+		node.setAttribute("stroke-width", `${strokeWidth}`);
+		node.setAttribute("stroke-dasharray", "6 4");
+	}
+
+	#setPoint(
+		node: SVGCircleElement | null,
+		point: Point | null,
+		fill: string,
+		radius: number,
+		stroke = "transparent"
+	) {
+		if (!node || !point) return;
+		node.setAttribute("cx", `${point.x}`);
+		node.setAttribute("cy", `${point.y}`);
+		node.setAttribute("r", `${radius}`);
+		node.setAttribute("fill", fill);
+		node.setAttribute("stroke", stroke);
+		node.setAttribute("stroke-width", "1.5");
+	}
+
+	#ensureRoot() {
+		if (this.#root) return;
+		const doc = this.#getDocument();
+		if (!doc?.body) return;
+
+		const root = doc.createElement("div");
+		root.setAttribute("aria-hidden", "true");
+		root.style.position = "fixed";
+		root.style.inset = "0";
+		root.style.pointerEvents = "none";
+		root.style.zIndex = "2147483647";
+		root.style.display = "none";
+
+		const svg = doc.createElementNS(SVG_NS, "svg");
+		svg.setAttribute("width", "100%");
+		svg.setAttribute("height", "100%");
+		svg.style.overflow = "visible";
+
+		const corridorPolygon = doc.createElementNS(SVG_NS, "polygon");
+		const intentPolygon = doc.createElementNS(SVG_NS, "polygon");
+		const exitPoint = doc.createElementNS(SVG_NS, "circle");
+		const pointerPoint = doc.createElementNS(SVG_NS, "circle");
+
+		svg.append(corridorPolygon, intentPolygon, exitPoint, pointerPoint);
+		root.append(svg);
+		doc.body.append(root);
+
+		this.#root = root;
+		this.#corridorPolygon = corridorPolygon;
+		this.#intentPolygon = intentPolygon;
+		this.#exitPoint = exitPoint;
+		this.#pointerPoint = pointerPoint;
+	}
+
+	#detach() {
+		this.#root?.remove();
+		this.#root = null;
+		this.#corridorPolygon = null;
+		this.#intentPolygon = null;
+		this.#exitPoint = null;
+		this.#pointerPoint = null;
+	}
+}
+*/
+
+class MenuSubmenuIntent {
+	readonly #opts: MenuSubmenuIntentOptions;
+	// readonly #debugOverlay: MenuIntentDebugOverlay;
+	#cleanupDocMove: AnyFn | null = null;
+	#fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+	#active = false;
+	#target: IntentTarget | null = null;
+	#apex: Point | null = null;
+	#pointerPoint: Point | null = null;
+	// #corridor: Polygon | null = null;
+	// #intentPolygon: Polygon | null = null;
+	#launchPoint: Point | null = null;
+
+	constructor(opts: MenuSubmenuIntentOptions) {
+		this.#opts = opts;
+		// this.#debugOverlay = new MenuIntentDebugOverlay({
+		// 	enabled: () => this.#opts.debugMode(),
+		// 	getDocument: () => getDocument(this.#opts.triggerNode() ?? this.#opts.contentNode()),
+		// });
+
+		watch(
+			[opts.triggerNode, opts.contentNode, opts.enabled],
+			([triggerNode, contentNode, enabled]) => {
+				this.#reset();
+				if (!triggerNode || !contentNode || !enabled) return;
+
+				const onTriggerMove = (e: PointerEvent) => {
+					if (!isMouseEvent(e)) return;
+					this.#launchPoint = { x: e.clientX, y: e.clientY };
+					if (!this.#active) this.#preview(e, "content");
+				};
+
+				const onTriggerLeave = (e: PointerEvent) => {
+					if (!isMouseEvent(e)) return;
+					this.#engage(e, "content");
+				};
+
+				const onContentMove = (e: PointerEvent) => {
+					if (!isMouseEvent(e)) return;
+					if (!this.#active) this.#preview(e, "trigger");
+				};
+
+				const onContentLeave = (e: PointerEvent) => {
+					if (!isMouseEvent(e)) return;
+					if (isElement(e.relatedTarget)) {
+						const selector = this.#opts.subContentSelector();
+						const matchedSubContent = e.relatedTarget.closest(selector);
+						if (
+							matchedSubContent &&
+							matchedSubContent !== contentNode &&
+							matchedSubContent.id
+						) {
+							const isChild = !!contentNode.querySelector(
+								`[aria-controls="${matchedSubContent.id}"]`
+							);
+							if (isChild) {
+								return;
+							}
+						}
+					}
+					this.#engage(e, "trigger");
+				};
+
+				const onTriggerEnter = (e: PointerEvent) => {
+					if (!isMouseEvent(e)) return;
+					this.#disengage();
+				};
+
+				const onContentEnter = (e: PointerEvent) => {
+					if (!isMouseEvent(e)) return;
+					this.#disengage();
+				};
+
+				triggerNode.addEventListener("pointermove", onTriggerMove);
+				triggerNode.addEventListener("pointerleave", onTriggerLeave);
+				triggerNode.addEventListener("pointerenter", onTriggerEnter);
+				contentNode.addEventListener("pointermove", onContentMove);
+				contentNode.addEventListener("pointerleave", onContentLeave);
+				contentNode.addEventListener("pointerenter", onContentEnter);
+
+				return () => {
+					triggerNode.removeEventListener("pointermove", onTriggerMove);
+					triggerNode.removeEventListener("pointerleave", onTriggerLeave);
+					triggerNode.removeEventListener("pointerenter", onTriggerEnter);
+					contentNode.removeEventListener("pointermove", onContentMove);
+					contentNode.removeEventListener("pointerleave", onContentLeave);
+					contentNode.removeEventListener("pointerenter", onContentEnter);
+					this.#reset();
+				};
+			}
+		);
+
+		onDestroyEffect(() => {
+			this.#reset();
+			// this.#debugOverlay.destroy();
+		});
+	}
+
+	#parentTargetRect(): DOMRect | null {
+		const parent = this.#opts.parentContentNode();
+		if (parent) return parent.getBoundingClientRect();
+		return this.#opts.triggerNode()?.getBoundingClientRect() ?? null;
+	}
+
+	#computePolygons(
+		pointerPt: Point,
+		target: IntentTarget
+	): {
+		corridor: Polygon;
+		intent: Polygon;
+		targetRect: DOMRect;
+		side: PolygonSide;
+	} | null {
+		const triggerNode = this.#opts.triggerNode();
+		const contentNode = this.#opts.contentNode();
+		if (!triggerNode || !contentNode) return null;
+
+		const triggerRect = triggerNode.getBoundingClientRect();
+		const contentRect = contentNode.getBoundingClientRect();
+		const side = getSide(triggerRect, contentRect);
+
+		let apex: Point;
+		let targetRect: DOMRect;
+
+		let sourceRect: DOMRect | undefined;
+
+		if (target === "content") {
+			apex = this.#active ? (this.#apex ?? pointerPt) : pointerPt;
+			targetRect = contentRect;
+		} else {
+			apex = this.#launchPoint ?? pointerPt;
+			targetRect = this.#parentTargetRect() ?? triggerRect;
+			sourceRect = contentRect;
+		}
+
+		this.#apex = apex;
+
+		return {
+			corridor: getCorridorPolygon(triggerRect, contentRect, side),
+			intent: getIntentPolygon(apex, targetRect, side, target, sourceRect),
+			targetRect,
+			side,
+		};
+	}
+
+	#isInSafeZone(pt: Point, corridor: Polygon, intent: Polygon): boolean {
+		return isPointInPolygon(pt, corridor) || isPointInPolygon(pt, intent);
+	}
+
+	#preview(e: PointerEvent, target: IntentTarget) {
+		const pt = { x: e.clientX, y: e.clientY };
+		const geo = this.#computePolygons(pt, target);
+		if (!geo) return;
+
+		this.#target = target;
+		this.#pointerPoint = pt;
+		// this.#corridor = geo.corridor;
+		// this.#intentPolygon = geo.intent;
+		// this.#syncDebug();
+	}
+
+	#engage(e: PointerEvent, target: IntentTarget) {
+		if (!this.#opts.enabled()) return;
+
+		const triggerNode = this.#opts.triggerNode();
+		const contentNode = this.#opts.contentNode();
+		if (!triggerNode || !contentNode) return;
+
+		const related = e.relatedTarget;
+		if (isElement(related)) {
+			if (target === "content" && contentNode.contains(related)) return;
+			if (target === "trigger" && triggerNode.contains(related)) return;
+		}
+
+		const pt = { x: e.clientX, y: e.clientY };
+
+		const geo = this.#computePolygons(pt, target);
+		if (!geo) return;
+
+		if (
+			!isInsideRect(pt, geo.targetRect) &&
+			!this.#isInSafeZone(pt, geo.corridor, geo.intent)
+		) {
+			this.#clearVisuals();
+			return;
+		}
+
+		this.#active = true;
+		this.#target = target;
+		this.#pointerPoint = pt;
+		// this.#corridor = geo.corridor;
+		// this.#intentPolygon = geo.intent;
+
+		this.#opts.setIsPointerInTransit(true);
+		this.#attachDocMove();
+		this.#startFallback();
+		// this.#syncDebug();
+	}
+
+	#disengageTimer: ReturnType<typeof setTimeout> | null = null;
+
+	#disengage() {
+		if (!this.#active) return;
+		const wasReturning = this.#target === "trigger";
+		this.#detachDocMove();
+		this.#clearFallback();
+		this.#active = false;
+		this.#clearVisuals();
+
+		if (wasReturning) {
+			this.#clearDisengageTimer();
+			this.#disengageTimer = setTimeout(() => {
+				this.#disengageTimer = null;
+				this.#opts.setIsPointerInTransit(false);
+			}, 100);
+		} else {
+			this.#opts.setIsPointerInTransit(false);
+		}
+	}
+
+	#clearDisengageTimer() {
+		if (this.#disengageTimer === null) return;
+		clearTimeout(this.#disengageTimer);
+		this.#disengageTimer = null;
+	}
+
+	#intentExit() {
+		const pointerPoint = this.#pointerPoint;
+		this.#detachDocMove();
+		this.#clearFallback();
+		this.#clearDisengageTimer();
+		this.#active = false;
+		this.#opts.setIsPointerInTransit(false);
+		this.#clearVisuals();
+		this.#opts.onIntentExit(pointerPoint);
+	}
+
+	#reset() {
+		this.#detachDocMove();
+		this.#clearFallback();
+		this.#clearDisengageTimer();
+		if (this.#active) this.#opts.setIsPointerInTransit(false);
+		this.#active = false;
+		this.#target = null;
+		this.#apex = null;
+		this.#pointerPoint = null;
+		// this.#corridor = null;
+		// this.#intentPolygon = null;
+		this.#launchPoint = null;
+		// this.#syncDebug();
+	}
+
+	#isPointerInDescendantSubContent(pt: Point): boolean {
+		const contentNode = this.#opts.contentNode();
+		if (!contentNode) return false;
+		const doc = contentNode.ownerDocument;
+		const el = doc.elementFromPoint(pt.x, pt.y);
+		if (!el) return false;
+		const selector = this.#opts.subContentSelector();
+		const subContent = el.closest(selector);
+		if (!subContent || subContent === contentNode) return false;
+		if (subContent.id) return !!contentNode.querySelector(`[aria-controls="${subContent.id}"]`);
+		return false;
+	}
+
+	#onDocMove = (e: PointerEvent) => {
+		if (!this.#active || !this.#target) return;
+		if (!isMouseEvent(e)) return;
+
+		const triggerNode = this.#opts.triggerNode();
+		const contentNode = this.#opts.contentNode();
+		if (!triggerNode || !contentNode) {
+			this.#intentExit();
+			return;
+		}
+
+		this.#clearFallback();
+		const pt = { x: e.clientX, y: e.clientY };
+		this.#pointerPoint = pt;
+
+		const triggerRect = triggerNode.getBoundingClientRect();
+		const contentRect = contentNode.getBoundingClientRect();
+		if (this.#target === "content" && isInsideRect(pt, contentRect)) {
+			this.#disengage();
+			return;
+		}
+		if (this.#target === "trigger" && isInsideInsetRect(pt, triggerRect, 4)) {
+			this.#disengage();
+			return;
+		}
+
+		if (this.#isPointerInDescendantSubContent(pt)) {
+			this.#startFallback();
+			return;
+		}
+
+		const geo = this.#computePolygons(pt, this.#target);
+		if (!geo) {
+			this.#intentExit();
+			return;
+		}
+
+		// this.#corridor = geo.corridor;
+		// this.#intentPolygon = geo.intent;
+		// this.#syncDebug();
+
+		if (this.#isInSafeZone(pt, geo.corridor, geo.intent)) {
+			this.#startFallback();
+			return;
+		}
+
+		this.#intentExit();
+	};
+
+	#attachDocMove() {
+		if (this.#cleanupDocMove) return;
+		const doc = getDocument(this.#opts.triggerNode() ?? this.#opts.contentNode());
+		if (!doc) return;
+		doc.addEventListener("pointermove", this.#onDocMove, true);
+		this.#cleanupDocMove = () => {
+			doc.removeEventListener("pointermove", this.#onDocMove, true);
+			this.#cleanupDocMove = null;
+		};
+	}
+
+	#detachDocMove() {
+		this.#cleanupDocMove?.();
+	}
+
+	#startFallback() {
+		this.#clearFallback();
+		this.#fallbackTimer = setTimeout(() => {
+			this.#fallbackTimer = null;
+			if (this.#active) this.#intentExit();
+		}, 500);
+	}
+
+	#clearFallback() {
+		if (this.#fallbackTimer === null) return;
+		clearTimeout(this.#fallbackTimer);
+		this.#fallbackTimer = null;
+	}
+
+	#clearVisuals() {
+		this.#target = null;
+		this.#apex = null;
+		this.#pointerPoint = null;
+		// this.#corridor = null;
+		// this.#intentPolygon = null;
+		// this.#syncDebug();
+	}
+
+	/*
+	#syncDebug() {
+		this.#debugOverlay.update({
+			active: this.#active || this.#corridor !== null,
+			target: this.#target,
+			exitPoint: this.#apex,
+			pointerPoint: this.#pointerPoint,
+			corridor: this.#corridor,
+			intentPolygon: this.#intentPolygon,
+		});
+	}
+	*/
+}
+
+/*
+function polygonToSvgPoints(points: Polygon): string {
+	return points.map((point) => `${point.x},${point.y}`).join(" ");
+}
+*/
+
+function isPointInPolygon(point: Point, polygon: Polygon): boolean {
+	const { x, y } = point;
+	let inside = false;
+	for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+		const xi = polygon[i]!.x;
+		const yi = polygon[i]!.y;
+		const xj = polygon[j]!.x;
+		const yj = polygon[j]!.y;
+		// prettier-ignore
+		const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+		if (intersect) inside = !inside;
+	}
+	return inside;
+}
+
+function isInsideRect(point: Point, rect: DOMRect): boolean {
+	return (
+		point.x >= rect.left &&
+		point.x <= rect.right &&
+		point.y >= rect.top &&
+		point.y <= rect.bottom
+	);
+}
+
+function isInsideInsetRect(point: Point, rect: DOMRect, inset: number): boolean {
+	return (
+		point.x >= rect.left + inset &&
+		point.x <= rect.right - inset &&
+		point.y >= rect.top + inset &&
+		point.y <= rect.bottom - inset
+	);
+}
+
+function getSide(triggerRect: DOMRect, contentRect: DOMRect): PolygonSide {
+	const triggerCenterX = triggerRect.left + triggerRect.width / 2;
+	const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+	const contentCenterX = contentRect.left + contentRect.width / 2;
+	const contentCenterY = contentRect.top + contentRect.height / 2;
+
+	const deltaX = contentCenterX - triggerCenterX;
+	const deltaY = contentCenterY - triggerCenterY;
+	if (Math.abs(deltaX) > Math.abs(deltaY)) {
+		return deltaX > 0 ? "right" : "left";
+	}
+	return deltaY > 0 ? "bottom" : "top";
+}
+
+function getCorridorPolygon(
+	triggerRect: DOMRect,
+	contentRect: DOMRect,
+	side: PolygonSide
+): Polygon {
+	const buffer = 2;
+	switch (side) {
+		case "top":
+			return [
+				{ x: Math.min(triggerRect.left, contentRect.left) - buffer, y: triggerRect.top },
+				{ x: Math.min(triggerRect.left, contentRect.left) - buffer, y: contentRect.bottom },
+				{
+					x: Math.max(triggerRect.right, contentRect.right) + buffer,
+					y: contentRect.bottom,
+				},
+				{ x: Math.max(triggerRect.right, contentRect.right) + buffer, y: triggerRect.top },
+			];
+		case "bottom":
+			return [
+				{ x: Math.min(triggerRect.left, contentRect.left) - buffer, y: triggerRect.bottom },
+				{ x: Math.min(triggerRect.left, contentRect.left) - buffer, y: contentRect.top },
+				{ x: Math.max(triggerRect.right, contentRect.right) + buffer, y: contentRect.top },
+				{
+					x: Math.max(triggerRect.right, contentRect.right) + buffer,
+					y: triggerRect.bottom,
+				},
+			];
+		case "left":
+			return [
+				{ x: triggerRect.left, y: Math.min(triggerRect.top, contentRect.top) - buffer },
+				{ x: contentRect.right, y: Math.min(triggerRect.top, contentRect.top) - buffer },
+				{
+					x: contentRect.right,
+					y: Math.max(triggerRect.bottom, contentRect.bottom) + buffer,
+				},
+				{
+					x: triggerRect.left,
+					y: Math.max(triggerRect.bottom, contentRect.bottom) + buffer,
+				},
+			];
+		case "right":
+			return [
+				{ x: triggerRect.right, y: Math.min(triggerRect.top, contentRect.top) - buffer },
+				{ x: contentRect.left, y: Math.min(triggerRect.top, contentRect.top) - buffer },
+				{
+					x: contentRect.left,
+					y: Math.max(triggerRect.bottom, contentRect.bottom) + buffer,
+				},
+				{
+					x: triggerRect.right,
+					y: Math.max(triggerRect.bottom, contentRect.bottom) + buffer,
+				},
+			];
+	}
+}
+
+function getIntentPolygon(
+	exitPoint: Point,
+	targetRect: DOMRect,
+	side: PolygonSide,
+	target: IntentTarget,
+	sourceRect?: DOMRect
+): Polygon {
+	const edgeBuffer = 8;
+	const effectiveSide = target === "trigger" ? flipSide(side) : side;
+
+	const top = sourceRect
+		? Math.min(targetRect.top, sourceRect.top) - edgeBuffer
+		: targetRect.top - edgeBuffer;
+	const bottom = sourceRect
+		? Math.max(targetRect.bottom, sourceRect.bottom) + edgeBuffer
+		: targetRect.bottom + edgeBuffer;
+	const left = sourceRect
+		? Math.min(targetRect.left, sourceRect.left) - edgeBuffer
+		: targetRect.left - edgeBuffer;
+	const right = sourceRect
+		? Math.max(targetRect.right, sourceRect.right) + edgeBuffer
+		: targetRect.right + edgeBuffer;
+
+	switch (effectiveSide) {
+		case "right":
+			return [exitPoint, { x: targetRect.left, y: top }, { x: targetRect.left, y: bottom }];
+		case "left":
+			return [exitPoint, { x: targetRect.right, y: top }, { x: targetRect.right, y: bottom }];
+		case "bottom":
+			return [exitPoint, { x: left, y: targetRect.top }, { x: right, y: targetRect.top }];
+		case "top":
+			return [
+				exitPoint,
+				{ x: left, y: targetRect.bottom },
+				{ x: right, y: targetRect.bottom },
+			];
+	}
+}
+
+function flipSide(side: PolygonSide): PolygonSide {
+	switch (side) {
+		case "top":
+			return "bottom";
+		case "bottom":
+			return "top";
+		case "left":
+			return "right";
+		case "right":
+			return "left";
+	}
+}
 
 export class MenuRootState {
 	static create(opts: MenuRootStateOpts) {
@@ -149,6 +833,12 @@ export class MenuMenuState {
 			open: this.opts.open,
 			onComplete: () => {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
+			},
+			shouldSkipExitAnimation: () => {
+				if (this.root.opts.variant.current !== "menubar" || this.parentMenu !== null) {
+					return false;
+				}
+				return this.root.opts.shouldSkipExitAnimation?.() ?? false;
 			},
 		});
 
@@ -219,9 +909,12 @@ export class MenuContentState {
 		this.onfocus = this.onfocus.bind(this);
 		this.handleInteractOutside = this.handleInteractOutside.bind(this);
 
-		new GraceArea({
+		new MenuSubmenuIntent({
 			contentNode: () => this.parentMenu.contentNode,
 			triggerNode: () => this.parentMenu.triggerNode,
+			parentContentNode: () => this.parentMenu.parentMenu?.contentNode ?? null,
+			subContentSelector: () => `[${this.parentMenu.root.getBitsAttr("sub-content")}]`,
+			// debugMode: () => this.parentMenu.root.opts.debugMode.current,
 			enabled: () =>
 				this.parentMenu.opts.open.current &&
 				Boolean(
@@ -229,8 +922,9 @@ export class MenuContentState {
 						this.parentMenu.root.getBitsAttr("sub-trigger")
 					)
 				),
-			onPointerExit: () => {
+			onIntentExit: (pointerPoint) => {
 				this.parentMenu.opts.open.current = false;
+				this.#dispatchPointerMoveToHoveredSubTrigger(pointerPoint);
 			},
 			setIsPointerInTransit: (value) => {
 				this.parentMenu.root.isPointerInTransit = value;
@@ -284,6 +978,30 @@ export class MenuContentState {
 		return this.parentMenu.root.isPointerInTransit;
 	}
 
+	#dispatchPointerMoveToHoveredSubTrigger(pointerPoint: Point | null) {
+		if (!pointerPoint) return;
+		const parentContentNode = this.parentMenu.parentMenu?.contentNode;
+		if (!parentContentNode) return;
+		const hoveredNode = this.domContext
+			.getDocument()
+			.elementFromPoint(pointerPoint.x, pointerPoint.y);
+		if (!isElement(hoveredNode)) return;
+		const hoveredSubTrigger = hoveredNode.closest<HTMLElement>(
+			`[${this.parentMenu.root.getBitsAttr("sub-trigger")}]`
+		);
+		if (!hoveredSubTrigger || !parentContentNode.contains(hoveredSubTrigger)) return;
+		if (hoveredSubTrigger === this.parentMenu.triggerNode) return;
+		hoveredSubTrigger.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "mouse",
+				clientX: pointerPoint.x,
+				clientY: pointerPoint.y,
+			})
+		);
+	}
+
 	onCloseAutoFocus = (e: Event) => {
 		this.opts.onCloseAutoFocus.current?.(e);
 		if (e.defaultPrevented || this.#isSub) return;
@@ -308,13 +1026,8 @@ export class MenuContentState {
 		while (rootMenu.parentMenu !== null) {
 			rootMenu = rootMenu.parentMenu;
 		}
-		// if for some unforeseen reason the root menu has no trigger, we bail
 		if (!rootMenu.triggerNode) return;
-
-		// cancel default tab behavior
 		e.preventDefault();
-
-		// find the next/previous tabbable
 		const nodeToFocus = getTabbableFrom(rootMenu.triggerNode, e.shiftKey ? "prev" : "next");
 		if (nodeToFocus) {
 			/**
@@ -449,13 +1162,13 @@ export class MenuContentState {
 				"aria-orientation": "vertical" as const,
 				[this.parentMenu.root.getBitsAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
+				...getDataTransitionAttrs(this.parentMenu.contentPresence.transitionStatus),
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
 				onfocus: this.onfocus,
 				dir: this.parentMenu.root.opts.dir.current,
 				style: {
 					pointerEvents: "auto",
-					// CSS containment isolates style/layout/paint calculations from the rest of the page
 					contain: "layout style",
 				},
 				...this.attachment,
@@ -679,14 +1392,21 @@ export class MenuSubTriggerState {
 
 	onpointermove(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
+		if (this.submenu.root.isPointerInTransit) {
+			if (this.#openTimer !== null) this.#clearOpenTimer();
+			return;
+		}
 
 		if (
 			!this.item.opts.disabled.current &&
 			!this.submenu.opts.open.current &&
-			!this.#openTimer &&
-			!this.content.parentMenu.root.isPointerInTransit
+			!this.#openTimer
 		) {
 			this.#openTimer = this.content.domContext.setTimeout(() => {
+				if (this.submenu.root.isPointerInTransit) {
+					this.#clearOpenTimer();
+					return;
+				}
 				this.submenu.onOpen();
 				this.#clearOpenTimer();
 			}, this.opts.openDelay.current);
@@ -1241,7 +1961,6 @@ export class ContextMenuTriggerState {
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				tabindex: -1,
-				//
 				onpointerdown: this.onpointerdown,
 				onpointermove: this.onpointermove,
 				onpointercancel: this.onpointercancel,

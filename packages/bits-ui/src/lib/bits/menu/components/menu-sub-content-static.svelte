@@ -97,12 +97,21 @@
 	function handleOnFocusOutside(e: FocusEvent) {
 		onFocusOutside(e);
 		if (e.defaultPrevented) return;
-		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
-		// on pointer interaction.
 		if (!isHTMLElement(e.target)) return;
-		if (e.target.id !== subContentState.parentMenu.triggerNode?.id) {
+		if (e.target.id === subContentState.parentMenu.triggerNode?.id) return;
+		const parentContent = subContentState.parentMenu.parentMenu?.contentNode;
+		if (parentContent?.contains(e.target)) {
 			subContentState.parentMenu.onClose();
+			e.preventDefault();
+			return;
 		}
+		// focus moved to a descendant sub-content (rendered in a portal)
+		const subContentSelector = `[${subContentState.parentMenu.root.getBitsAttr("sub-content")}]`;
+		if (e.target.closest(subContentSelector)) {
+			e.preventDefault();
+			return;
+		}
+		subContentState.parentMenu.onClose();
 	}
 </script>
 

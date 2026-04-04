@@ -5,7 +5,13 @@ import { getTestKbd } from "../utils.js";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	getPointerAwayFromSubmenuIntentClientCoords,
+	getPointerLeaveTowardSubmenuClientCoords,
+	getPointerMidpointTowardSubmenuClientCoords,
+} from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 
@@ -58,8 +64,7 @@ async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd
 
 async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	const t = props;
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 
 	await expectNotExists(t.getSubContent());
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
@@ -69,6 +74,15 @@ async function openSubmenu(props: Awaited<ReturnType<typeof openWithKbd>>) {
 	return {
 		...t,
 	};
+}
+
+async function focusSubTrigger(): Promise<void> {
+	const subtrigger = page.getByTestId("sub-trigger");
+	if (subtrigger.element() === document.activeElement) return;
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	if (subtrigger.element() === document.activeElement) return;
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(subtrigger).toHaveFocus();
 }
 
 afterEach(() => {
@@ -145,13 +159,89 @@ it("should manage focus correctly when opened with keyboard", async () => {
 it("should open submenu with keyboard on subtrigger", async () => {
 	await openWithKbd();
 
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	const subtrigger = page.getByTestId("sub-trigger");
-	await expect.element(subtrigger).toHaveFocus();
+	await focusSubTrigger();
 	await expectNotExists(page.getByTestId("sub-content"));
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expectExists(page.getByTestId("sub-content"));
 	await expect.element(page.getByTestId("sub-item")).toHaveFocus();
+});
+
+it("should keep submenu open while pointer is moving toward it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leaveToward = getPointerLeaveTowardSubmenuClientCoords(triggerRect, contentRect);
+	const midToward = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leaveToward.x,
+			clientY: leaveToward.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: midToward.x,
+			clientY: midToward.y,
+		})
+	);
+
+	await expectExists(t.getSubContent());
+});
+
+it("should close submenu when pointer intent changes away from submenu", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+	const awayFromSub = getPointerAwayFromSubmenuIntentClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: awayFromSub.x,
+			clientY: awayFromSub.y,
+		})
+	);
+
+	await expectNotExists(t.getSubContent());
+	await page.getByTestId("item-2").hover();
+	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
 });
 
 it("should toggle the checkbox item when clicked & respects binding", async () => {
@@ -201,8 +291,7 @@ it("should check the radio item when clicked & respects binding", async () => {
 it("should skip over disabled items when navigating with the keyboard", async () => {
 	await openWithKbd();
 	await expect.element(page.getByTestId("item")).toHaveFocus();
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("checkbox-item")).toHaveFocus();
 	await expect.element(page.getByTestId("disabled-item")).not.toHaveFocus();
@@ -215,8 +304,7 @@ it("should not loop through the menu items when the `loop` prop is set to false/
 			loop: false,
 		},
 	});
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("checkbox-item")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -235,8 +323,7 @@ it("should loop through the menu items when the `loop` prop is set to true", asy
 			loop: true,
 		},
 	});
-	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(page.getByTestId("sub-trigger")).toHaveFocus();
+	await focusSubTrigger();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("checkbox-item")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);

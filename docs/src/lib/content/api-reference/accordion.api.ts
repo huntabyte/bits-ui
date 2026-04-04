@@ -5,7 +5,13 @@ import type {
 	AccordionRootPropsWithoutHTML,
 	AccordionTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { disabledDataAttr, forceMountProp, orientationDataAttr, withChildProps } from "./shared.js";
+import {
+	disabledDataAttr,
+	forceMountProp,
+	orientationDataAttr,
+	transitionStyleDataAttrs,
+	withChildProps,
+} from "./shared.js";
 import {
 	HeaderLevelProp,
 	OnChangeStringOrArrayProp,
@@ -150,6 +156,7 @@ const content = defineComponentApiSchema<AccordionContentPropsWithoutHTML>({
 	dataAttributes: [
 		orientationDataAttr,
 		disabledDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "accordion-content",
 			description: "Present on the content element.",

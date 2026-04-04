@@ -7,7 +7,12 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { kbd } from "$lib/internal/kbd.js";
-import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	boolToStr,
+	getDataOpenClosed,
+	getDataTransitionAttrs,
+} from "$lib/internal/attrs.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
@@ -411,6 +416,7 @@ export class PopoverContentState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				[popoverAttrs.content]: "",
 				style: {
 					pointerEvents: "auto",
@@ -505,6 +511,7 @@ export class PopoverOverlayState {
 					pointerEvents: "auto",
 				},
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				...getDataTransitionAttrs(this.root.overlayPresence.transitionStatus),
 				...this.attachment,
 			}) as const
 	);

@@ -5,7 +5,7 @@ import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
@@ -49,6 +49,24 @@ describe("Data Attributes", () => {
 		await expect.element(overlay).toHaveAttribute("data-state", "open");
 		const content = page.getByTestId("content");
 		await expect.element(content).toHaveAttribute("data-state", "open");
+	});
+
+	it("should apply transition attrs to content and overlay during open and close", async () => {
+		await setup({}, DialogForceMountTest);
+		const trigger = page.getByTestId("trigger");
+		const contentObserver = observeTransitionAttrs(page.getByTestId("content").element());
+		const overlayObserver = observeTransitionAttrs(page.getByTestId("overlay").element());
+
+		await trigger.click();
+		await vi.waitFor(() => expect(contentObserver.history.some((entry) => entry.starting)).toBe(true));
+		await vi.waitFor(() => expect(overlayObserver.history.some((entry) => entry.starting)).toBe(true));
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await vi.waitFor(() => expect(contentObserver.history.some((entry) => entry.ending)).toBe(true));
+		await vi.waitFor(() => expect(overlayObserver.history.some((entry) => entry.ending)).toBe(true));
+
+		contentObserver.disconnect();
+		overlayObserver.disconnect();
 	});
 });
 

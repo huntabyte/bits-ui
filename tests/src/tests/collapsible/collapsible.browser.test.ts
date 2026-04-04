@@ -6,7 +6,7 @@ import type { Collapsible } from "bits-ui";
 import CollapsibleTest from "./collapsible-test.svelte";
 import CollapsibleForceMountTest from "./collapsible-force-mount-test.svelte";
 import CollapsibleHiddenUntilFoundTest from "./collapsible-hidden-until-found-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 
 function setup(
 	props: Collapsible.RootProps & { withOpenCheck?: boolean } = {},
@@ -74,6 +74,19 @@ describe("Collapsible ", () => {
 			setup({ withOpenCheck: false }, CollapsibleForceMountTest);
 			const content = page.getByTestId("content");
 			await expect.element(content).toBeVisible();
+		});
+
+		it("should apply transition attrs to content during open and close", async () => {
+			const t = setup({}, CollapsibleForceMountTest);
+			const observer = observeTransitionAttrs(t.content.element());
+
+			await t.trigger.click();
+			await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
+
+			await t.trigger.click();
+			await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
+
+			observer.disconnect();
 		});
 
 		it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used", async () => {
