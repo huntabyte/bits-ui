@@ -4,7 +4,7 @@ description: Displays a menu of items that users can select from when triggered.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DropdownMenuDemo, DropdownMenuDemoTransition, Callout } from '$lib/components'
+	import { APISection, ComponentPreview, DropdownMenuDemo, DropdownMenuDemoNested, DropdownMenuDemoTransition, Callout } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -304,6 +304,16 @@ The `value` state does not persist between menu open/close cycles. To persist th
 
 You can create nested menus using the `DropdownMenu.Sub` component to create complex menu structures.
 
+The example below shows a deeper hierarchy with radio groups, a checkbox group, and multiple nested submenus (similar to filtering an issue in a project tracker).
+
+<ComponentPreview name="dropdown-menu-demo-nested" componentName="Dropdown Menu" containerClass="mt-4" size="xs">
+
+{#snippet preview()}
+<DropdownMenuDemoNested />
+{/snippet}
+
+</ComponentPreview>
+
 ```svelte /DropdownMenu.Sub/
 <script lang="ts">
   import { DropdownMenu } from "bits-ui";
@@ -321,8 +331,6 @@ You can create nested menus using the `DropdownMenu.Sub` component to create com
   </DropdownMenu.Sub>
 </DropdownMenu.Content>
 ```
-
-<!-- <DropdownMenuDemoNested /> -->
 
 ## Svelte Transitions
 
