@@ -116,7 +116,7 @@ interface MenuSubmenuIntentOptions {
 	parentContentNode: () => HTMLElement | null;
 	subContentSelector: () => string;
 	debugMode: () => boolean;
-	onIntentExit: () => void;
+	onIntentExit: (pointerPoint: Point | null) => void;
 	setIsPointerInTransit: (value: boolean) => void;
 }
 
@@ -480,13 +480,14 @@ class MenuSubmenuIntent {
 	}
 
 	#intentExit() {
+		const pointerPoint = this.#pointerPoint;
 		this.#detachDocMove();
 		this.#clearFallback();
 		this.#clearDisengageTimer();
 		this.#active = false;
 		this.#opts.setIsPointerInTransit(false);
 		this.#clearVisuals();
-		this.#opts.onIntentExit();
+		this.#opts.onIntentExit(pointerPoint);
 	}
 
 	#reset() {
@@ -915,8 +916,9 @@ export class MenuContentState {
 						this.parentMenu.root.getBitsAttr("sub-trigger")
 					)
 				),
-			onIntentExit: () => {
+			onIntentExit: (pointerPoint) => {
 				this.parentMenu.opts.open.current = false;
+				this.#dispatchPointerMoveToHoveredSubTrigger(pointerPoint);
 			},
 			setIsPointerInTransit: (value) => {
 				this.parentMenu.root.isPointerInTransit = value;
@@ -968,6 +970,29 @@ export class MenuContentState {
 
 	#isPointerMovingToSubmenu() {
 		return this.parentMenu.root.isPointerInTransit;
+	}
+
+	#dispatchPointerMoveToHoveredSubTrigger(pointerPoint: Point | null) {
+		if (!pointerPoint) return;
+		const parentContentNode = this.parentMenu.parentMenu?.contentNode;
+		if (!parentContentNode) return;
+		const hoveredNode = this.domContext
+			.getDocument()
+			.elementFromPoint(pointerPoint.x, pointerPoint.y);
+		if (!isElement(hoveredNode)) return;
+		const hoveredSubTrigger = hoveredNode.closest<HTMLElement>(
+			`[${this.parentMenu.root.getBitsAttr("sub-trigger")}]`
+		);
+		if (!hoveredSubTrigger || !parentContentNode.contains(hoveredSubTrigger)) return;
+		hoveredSubTrigger.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "mouse",
+				clientX: pointerPoint.x,
+				clientY: pointerPoint.y,
+			})
+		);
 	}
 
 	onCloseAutoFocus = (e: Event) => {

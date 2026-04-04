@@ -7,6 +7,10 @@
 
 	let debugMode = $state(true);
 	let openDelay = $state(80);
+	let contentSideOffset = $state(10);
+	let contentAlignOffset = $state(0);
+	let subContentSideOffset = $state(10);
+	let subContentAlignOffset = $state(0);
 	let selectedStatus = $state("icebox");
 	let selectedPriority = $state("p1");
 	let selectedLabel = $state("strategic-initiative");
@@ -102,6 +106,70 @@
 					>{openDelay}ms</span
 				>
 			</label>
+
+			<div class="border-input rounded-button flex flex-col gap-2 border px-3 py-2 text-sm">
+				<p class="font-medium">content offsets</p>
+				<label class="flex items-center gap-3 text-xs">
+					<span class="min-w-[68px] font-medium">sideOffset</span>
+					<input
+						type="range"
+						min={-30}
+						max={30}
+						step={1}
+						bind:value={contentSideOffset}
+						class="w-full"
+					/>
+					<span class="text-muted-foreground min-w-[30px] text-right"
+						>{contentSideOffset}</span
+					>
+				</label>
+				<label class="flex items-center gap-3 text-xs">
+					<span class="min-w-[68px] font-medium">alignOffset</span>
+					<input
+						type="range"
+						min={-30}
+						max={30}
+						step={1}
+						bind:value={contentAlignOffset}
+						class="w-full"
+					/>
+					<span class="text-muted-foreground min-w-[30px] text-right"
+						>{contentAlignOffset}</span
+					>
+				</label>
+			</div>
+
+			<div class="border-input rounded-button flex flex-col gap-2 border px-3 py-2 text-sm">
+				<p class="font-medium">subcontent offsets</p>
+				<label class="flex items-center gap-3 text-xs">
+					<span class="min-w-[68px] font-medium">sideOffset</span>
+					<input
+						type="range"
+						min={-30}
+						max={30}
+						step={1}
+						bind:value={subContentSideOffset}
+						class="w-full"
+					/>
+					<span class="text-muted-foreground min-w-[30px] text-right"
+						>{subContentSideOffset}</span
+					>
+				</label>
+				<label class="flex items-center gap-3 text-xs">
+					<span class="min-w-[68px] font-medium">alignOffset</span>
+					<input
+						type="range"
+						min={-30}
+						max={30}
+						step={1}
+						bind:value={subContentAlignOffset}
+						class="w-full"
+					/>
+					<span class="text-muted-foreground min-w-[30px] text-right"
+						>{subContentAlignOffset}</span
+					>
+				</label>
+			</div>
 		</div>
 	</div>
 
@@ -118,7 +186,11 @@
 					<span class="ml-1.5">Filter</span>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Portal>
-					<DropdownMenu.Content class={contentClass} sideOffset={10}>
+					<DropdownMenu.Content
+						class={contentClass}
+						sideOffset={contentSideOffset}
+						alignOffset={contentAlignOffset}
+					>
 						<DropdownMenu.Item class={itemClass} disabled
 							>Search all...</DropdownMenu.Item
 						>
@@ -129,7 +201,11 @@
 								<CaretRight class="text-foreground-alt ml-auto size-4" />
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.Portal>
-								<DropdownMenu.SubContent class={subContentClass} sideOffset={10}>
+								<DropdownMenu.SubContent
+									class={subContentClass}
+									sideOffset={subContentSideOffset}
+									alignOffset={subContentAlignOffset}
+								>
 									<DropdownMenu.RadioGroup bind:value={selectedStatus}>
 										{#each statusItems as item (item.value)}
 											<DropdownMenu.RadioItem
@@ -156,7 +232,11 @@
 								<CaretRight class="text-foreground-alt ml-auto size-4" />
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.Portal>
-								<DropdownMenu.SubContent class={subContentClass} sideOffset={10}>
+								<DropdownMenu.SubContent
+									class={subContentClass}
+									sideOffset={subContentSideOffset}
+									alignOffset={subContentAlignOffset}
+								>
 									<DropdownMenu.Item class={itemClass}
 										>Project status</DropdownMenu.Item
 									>
@@ -177,7 +257,8 @@
 										<DropdownMenu.Portal>
 											<DropdownMenu.SubContent
 												class={subContentClass}
-												sideOffset={10}
+												sideOffset={subContentSideOffset}
+												alignOffset={subContentAlignOffset}
 											>
 												<DropdownMenu.RadioGroup
 													bind:value={selectedPriority}
@@ -215,7 +296,8 @@
 										<DropdownMenu.Portal>
 											<DropdownMenu.SubContent
 												class={subContentClass}
-												sideOffset={10}
+												sideOffset={subContentSideOffset}
+												alignOffset={subContentAlignOffset}
 											>
 												<DropdownMenu.RadioGroup bind:value={selectedLabel}>
 													{#each labelItems as item (item.value)}
@@ -248,7 +330,8 @@
 													<DropdownMenu.Portal>
 														<DropdownMenu.SubContent
 															class={subContentClass}
-															sideOffset={10}
+															sideOffset={subContentSideOffset}
+															alignOffset={subContentAlignOffset}
 														>
 															<DropdownMenu.Item class={itemClass}
 																>Kubernetes</DropdownMenu.Item
@@ -282,7 +365,8 @@
 										<DropdownMenu.Portal>
 											<DropdownMenu.SubContent
 												class={subContentClass}
-												sideOffset={10}
+												sideOffset={subContentSideOffset}
+												alignOffset={subContentAlignOffset}
 											>
 												<DropdownMenu.RadioGroup bind:value={selectedLead}>
 													{#each leadItems as item (item.value)}
@@ -325,7 +409,11 @@
 					right click in this panel
 				</ContextMenu.Trigger>
 				<ContextMenu.Portal>
-					<ContextMenu.Content class={contentClass}>
+					<ContextMenu.Content
+						class={contentClass}
+						sideOffset={contentSideOffset}
+						alignOffset={contentAlignOffset}
+					>
 						<ContextMenu.Item class={itemClass}>Open</ContextMenu.Item>
 						<ContextMenu.Item class={itemClass}>Rename</ContextMenu.Item>
 						<ContextMenu.Sub>
@@ -334,7 +422,11 @@
 								<CaretRight class="text-foreground-alt ml-auto size-4" />
 							</ContextMenu.SubTrigger>
 							<ContextMenu.Portal>
-								<ContextMenu.SubContent class={subContentClass} sideOffset={10}>
+								<ContextMenu.SubContent
+									class={subContentClass}
+									sideOffset={subContentSideOffset}
+									alignOffset={subContentAlignOffset}
+								>
 									<ContextMenu.Item class={itemClass}>Backlog</ContextMenu.Item>
 									<ContextMenu.Item class={itemClass}
 										>In Progress</ContextMenu.Item
@@ -350,7 +442,8 @@
 										<ContextMenu.Portal>
 											<ContextMenu.SubContent
 												class={subContentClass}
-												sideOffset={10}
+												sideOffset={subContentSideOffset}
+												alignOffset={subContentAlignOffset}
 											>
 												<ContextMenu.Item class={itemClass}
 													>Q1 2026</ContextMenu.Item
