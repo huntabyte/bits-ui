@@ -297,7 +297,6 @@ class MenuSubmenuIntent {
 
 				const onContentLeave = (e: PointerEvent) => {
 					if (!isMouseEvent(e)) return;
-					// don't start return-tracking when leaving into a child sub-content
 					if (isElement(e.relatedTarget)) {
 						const selector = this.#opts.subContentSelector();
 						const matchedSubContent = e.relatedTarget.closest(selector);
@@ -319,13 +318,11 @@ class MenuSubmenuIntent {
 
 				const onTriggerEnter = (e: PointerEvent) => {
 					if (!isMouseEvent(e)) return;
-					// arrived at trigger, transit complete
 					this.#disengage();
 				};
 
 				const onContentEnter = (e: PointerEvent) => {
 					if (!isMouseEvent(e)) return;
-					// arrived at content, transit complete
 					this.#disengage();
 				};
 
@@ -405,10 +402,6 @@ class MenuSubmenuIntent {
 		return isPointInPolygon(pt, corridor) || isPointInPolygon(pt, intent);
 	}
 
-	/**
-	 * When the pointer hovers over the trigger or content, we start previewing the transit.
-	 * This is used to show the debug overlay while hovering the trigger or content.
-	 */
 	#preview(e: PointerEvent, target: IntentTarget) {
 		const pt = { x: e.clientX, y: e.clientY };
 		const geo = this.#computePolygons(pt, target);
@@ -421,9 +414,6 @@ class MenuSubmenuIntent {
 		this.#syncDebug();
 	}
 
-	/**
-	 * When the pointer leaves the trigger or content, we start actively tracking the transit.
-	 */
 	#engage(e: PointerEvent, target: IntentTarget) {
 		if (!this.#opts.enabled()) return;
 
@@ -431,7 +421,6 @@ class MenuSubmenuIntent {
 		const contentNode = this.#opts.contentNode();
 		if (!triggerNode || !contentNode) return;
 
-		// pointer moved directly into the destination — no transit needed
 		const related = e.relatedTarget;
 		if (isElement(related)) {
 			if (target === "content" && contentNode.contains(related)) return;
@@ -440,8 +429,6 @@ class MenuSubmenuIntent {
 
 		const pt = { x: e.clientX, y: e.clientY };
 
-		// immediately check if pointer is already outside the safe zone
-		// (e.g. moving downward to a sibling instead of toward the content)
 		const geo = this.#computePolygons(pt, target);
 		if (!geo) return;
 
@@ -449,7 +436,6 @@ class MenuSubmenuIntent {
 			!isInsideRect(pt, geo.targetRect) &&
 			!this.#isInSafeZone(pt, geo.corridor, geo.intent)
 		) {
-			// pointer left toward somewhere outside the safe zone — don't engage
 			this.#clearVisuals();
 			return;
 		}
@@ -468,9 +454,6 @@ class MenuSubmenuIntent {
 
 	#disengageTimer: ReturnType<typeof setTimeout> | null = null;
 
-	/**
-	 * When the pointer arrives at the destination, we stop tracking the transit.
-	 */
 	#disengage() {
 		if (!this.#active) return;
 		const wasReturning = this.#target === "trigger";
@@ -480,8 +463,6 @@ class MenuSubmenuIntent {
 		this.#clearVisuals();
 
 		if (wasReturning) {
-			// keep isPointerInTransit true briefly so the pointer can settle on the
-			// trigger without accidentally opening a neighboring sub-trigger
 			this.#clearDisengageTimer();
 			this.#disengageTimer = setTimeout(() => {
 				this.#disengageTimer = null;
@@ -498,9 +479,6 @@ class MenuSubmenuIntent {
 		this.#disengageTimer = null;
 	}
 
-	/**
-	 * When the pointer leaves the safe zone, we close the submenu.
-	 */
 	#intentExit() {
 		this.#detachDocMove();
 		this.#clearFallback();
@@ -511,9 +489,6 @@ class MenuSubmenuIntent {
 		this.#opts.onIntentExit();
 	}
 
-	/**
-	 * When the node changes or the component is destroyed, we reset the state.
-	 */
 	#reset() {
 		this.#detachDocMove();
 		this.#clearFallback();
@@ -529,9 +504,6 @@ class MenuSubmenuIntent {
 		this.#syncDebug();
 	}
 
-	/**
-	 * When the pointer moves over the document, we track the transit.
-	 */
 	#isPointerInDescendantSubContent(pt: Point): boolean {
 		const contentNode = this.#opts.contentNode();
 		if (!contentNode) return false;
@@ -541,9 +513,6 @@ class MenuSubmenuIntent {
 		const selector = this.#opts.subContentSelector();
 		const subContent = el.closest(selector);
 		if (!subContent || subContent === contentNode) return false;
-		// verify this sub-content was triggered from within our content by checking
-		// if a sub-trigger with aria-controls matching the sub-content's id exists
-		// inside our content node
 		if (subContent.id) return !!contentNode.querySelector(`[aria-controls="${subContent.id}"]`);
 		return false;
 	}
@@ -563,7 +532,6 @@ class MenuSubmenuIntent {
 		const pt = { x: e.clientX, y: e.clientY };
 		this.#pointerPoint = pt;
 
-		// check if pointer arrived at the destination element
 		const triggerRect = triggerNode.getBoundingClientRect();
 		const contentRect = contentNode.getBoundingClientRect();
 		if (this.#target === "content" && isInsideRect(pt, contentRect)) {
@@ -575,13 +543,11 @@ class MenuSubmenuIntent {
 			return;
 		}
 
-		// pointer is inside a child sub-content portal, treat as safe, don't close
 		if (this.#isPointerInDescendantSubContent(pt)) {
 			this.#startFallback();
 			return;
 		}
 
-		// recompute safe zone from the locked apex
 		const geo = this.#computePolygons(pt, this.#target);
 		if (!geo) {
 			this.#intentExit();
@@ -615,9 +581,6 @@ class MenuSubmenuIntent {
 		this.#cleanupDocMove?.();
 	}
 
-	/**
-	 * When the pointer goes completely still mid-transit, we close the submenu.
-	 */
 	#startFallback() {
 		this.#clearFallback();
 		this.#fallbackTimer = setTimeout(() => {
@@ -770,8 +733,6 @@ function getIntentPolygon(
 	const edgeBuffer = 8;
 	const effectiveSide = target === "trigger" ? flipSide(side) : side;
 
-	// when returning to trigger, the base edge should span the full extent
-	// of both the source (submenu content) and the target (parent content)
 	const top = sourceRect
 		? Math.min(targetRect.top, sourceRect.top) - edgeBuffer
 		: targetRect.top - edgeBuffer;
@@ -1176,7 +1137,6 @@ export class MenuContentState {
 				dir: this.parentMenu.root.opts.dir.current,
 				style: {
 					pointerEvents: "auto",
-					// CSS containment isolates style/layout/paint calculations from the rest of the page
 					contain: "layout style",
 				},
 				...this.attachment,
@@ -1969,7 +1929,6 @@ export class ContextMenuTriggerState {
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
 				[CONTEXT_MENU_TRIGGER_ATTR]: "",
 				tabindex: -1,
-				//
 				onpointerdown: this.onpointerdown,
 				onpointermove: this.onpointermove,
 				onpointercancel: this.onpointercancel,

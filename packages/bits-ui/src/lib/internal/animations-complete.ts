@@ -28,7 +28,6 @@ export class AnimationsComplete {
 	}
 
 	run(fn: () => void | Promise<void>): void {
-		// if already running, cleanup and restart
 		this.#cleanup();
 
 		const node = this.#opts.ref.current;

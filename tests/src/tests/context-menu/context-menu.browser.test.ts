@@ -180,7 +180,6 @@ it("should close submenu when pointer intent changes away from submenu", async (
 	const subContentWrapper = subContentEl.parentElement as HTMLElement;
 	const triggerRect = subTriggerEl.getBoundingClientRect();
 	const contentRect = subContentEl.getBoundingClientRect();
-	// edge-based leave coords can fall outside the intent corridor for some placements; midpoint matches menu geometry
 	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
 	const awayFromSub = getPointerAwayFromSubmenuIntentClientCoords(triggerRect, contentRect);
 

@@ -11,7 +11,7 @@
 	let selectedPriority = $state("p1");
 	let selectedLabel = $state("strategic-initiative");
 	let selectedLead = $state("hunter");
-	const debugRootProps = $derived.by(() => ({ debugMode }) as any);
+	const debugRootProps = $derived.by(() => ({ debugMode }) satisfies { debugMode: boolean });
 
 	const statusItems = [
 		{ value: "icebox", label: "Icebox" },

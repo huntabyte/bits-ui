@@ -1,7 +1,6 @@
 import { type Locator } from "@vitest/browser/context";
 import { expect, vi } from "vitest";
 
-/** Mirrors `getSide` in menu.svelte.ts so tests match popper placement (incl. vertical). */
 export function getSubmenuPlacementSide(
 	triggerRect: DOMRect,
 	contentRect: DOMRect
@@ -18,9 +17,6 @@ export function getSubmenuPlacementSide(
 	return deltaY > 0 ? "bottom" : "top";
 }
 
-/**
- * Synthetic pointerleave coords on the trigger edge facing the submenu (same basis as menu intent).
- */
 export function getPointerLeaveTowardSubmenuClientCoords(
 	triggerRect: DOMRect,
 	contentRect: DOMRect
@@ -40,9 +36,6 @@ export function getPointerLeaveTowardSubmenuClientCoords(
 	}
 }
 
-/**
- * Midpoint between trigger and submenu along the placement axis (for "moving toward" synthetic moves).
- */
 export function getPointerMidpointTowardSubmenuClientCoords(
 	triggerRect: DOMRect,
 	contentRect: DOMRect
@@ -62,9 +55,6 @@ export function getPointerMidpointTowardSubmenuClientCoords(
 	}
 }
 
-/**
- * Point outside the submenu panel on the parent-menu side so intent can exit (not "entered submenu").
- */
 export function getPointerAwayFromSubmenuIntentClientCoords(
 	triggerRect: DOMRect,
 	subContentRect: DOMRect
