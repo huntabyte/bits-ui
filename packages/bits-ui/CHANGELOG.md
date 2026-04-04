@@ -1,5 +1,21 @@
 # bits-ui
 
+## 2.17.0
+
+### Minor Changes
+
+- feat: support CSS transitions ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+### Patch Changes
+
+- fix(ContextMenu): nested submenus not opening ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+- fix(Menu): exit animations not firing on close ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+- improve(Menu): safe area handling ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+- perf(PresenceLayer): simplify and improve efficiency ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
 ## 2.16.5
 
 ### Patch Changes
