@@ -133,7 +133,6 @@ class MenuIntentDebugOverlay {
 	readonly #enabled: () => boolean;
 	readonly #getDocument: () => Document | null;
 	#root: HTMLDivElement | null = null;
-	#svg: SVGSVGElement | null = null;
 	#corridorPolygon: SVGPolygonElement | null = null;
 	#intentPolygon: SVGPolygonElement | null = null;
 	#exitPoint: SVGCircleElement | null = null;
@@ -238,7 +237,6 @@ class MenuIntentDebugOverlay {
 		doc.body.append(root);
 
 		this.#root = root;
-		this.#svg = svg;
 		this.#corridorPolygon = corridorPolygon;
 		this.#intentPolygon = intentPolygon;
 		this.#exitPoint = exitPoint;
@@ -248,7 +246,6 @@ class MenuIntentDebugOverlay {
 	#detach() {
 		this.#root?.remove();
 		this.#root = null;
-		this.#svg = null;
 		this.#corridorPolygon = null;
 		this.#intentPolygon = null;
 		this.#exitPoint = null;
@@ -267,14 +264,12 @@ class MenuSubmenuIntent {
 	#pointerPoint: Point | null = null;
 	#corridor: Polygon | null = null;
 	#intentPolygon: Polygon | null = null;
-	// last known position while hovering the sub-trigger — becomes the apex
-	// of the "return to parent" safe triangle once the user enters the submenu
 	#launchPoint: Point | null = null;
 
 	constructor(opts: MenuSubmenuIntentOptions) {
 		this.#opts = opts;
 		this.#debugOverlay = new MenuIntentDebugOverlay({
-			enabled: () => true,
+			enabled: () => this.#opts.debugMode(),
 			getDocument: () => getDocument(this.#opts.triggerNode() ?? this.#opts.contentNode()),
 		});
 
@@ -324,13 +319,13 @@ class MenuSubmenuIntent {
 
 				const onTriggerEnter = (e: PointerEvent) => {
 					if (!isMouseEvent(e)) return;
-					// arrived at trigger — transit complete
+					// arrived at trigger, transit complete
 					this.#disengage();
 				};
 
 				const onContentEnter = (e: PointerEvent) => {
 					if (!isMouseEvent(e)) return;
-					// arrived at content — transit complete
+					// arrived at content, transit complete
 					this.#disengage();
 				};
 
@@ -358,8 +353,6 @@ class MenuSubmenuIntent {
 			this.#debugOverlay.destroy();
 		});
 	}
-
-	// --- geometry helpers ---
 
 	#parentTargetRect(): DOMRect | null {
 		const parent = this.#opts.parentContentNode();
@@ -412,8 +405,10 @@ class MenuSubmenuIntent {
 		return isPointInPolygon(pt, corridor) || isPointInPolygon(pt, intent);
 	}
 
-	// --- preview (debug overlay while hovering trigger/content, no transit) ---
-
+	/**
+	 * When the pointer hovers over the trigger or content, we start previewing the transit.
+	 * This is used to show the debug overlay while hovering the trigger or content.
+	 */
 	#preview(e: PointerEvent, target: IntentTarget) {
 		const pt = { x: e.clientX, y: e.clientY };
 		const geo = this.#computePolygons(pt, target);
@@ -426,8 +421,9 @@ class MenuSubmenuIntent {
 		this.#syncDebug();
 	}
 
-	// --- engage: pointer left trigger/content, actively tracking transit ---
-
+	/**
+	 * When the pointer leaves the trigger or content, we start actively tracking the transit.
+	 */
 	#engage(e: PointerEvent, target: IntentTarget) {
 		if (!this.#opts.enabled()) return;
 
@@ -472,8 +468,9 @@ class MenuSubmenuIntent {
 
 	#disengageTimer: ReturnType<typeof setTimeout> | null = null;
 
-	// --- disengage: pointer arrived at destination, stop tracking ---
-
+	/**
+	 * When the pointer arrives at the destination, we stop tracking the transit.
+	 */
 	#disengage() {
 		if (!this.#active) return;
 		const wasReturning = this.#target === "trigger";
@@ -501,8 +498,9 @@ class MenuSubmenuIntent {
 		this.#disengageTimer = null;
 	}
 
-	// --- intentExit: pointer left safe zone, close the submenu ---
-
+	/**
+	 * When the pointer leaves the safe zone, we close the submenu.
+	 */
 	#intentExit() {
 		this.#detachDocMove();
 		this.#clearFallback();
@@ -513,8 +511,9 @@ class MenuSubmenuIntent {
 		this.#opts.onIntentExit();
 	}
 
-	// --- full reset (node change / destroy) ---
-
+	/**
+	 * When the node changes or the component is destroyed, we reset the state.
+	 */
 	#reset() {
 		this.#detachDocMove();
 		this.#clearFallback();
@@ -530,8 +529,9 @@ class MenuSubmenuIntent {
 		this.#syncDebug();
 	}
 
-	// --- document-level capture-phase pointermove ---
-
+	/**
+	 * When the pointer moves over the document, we track the transit.
+	 */
 	#isPointerInDescendantSubContent(pt: Point): boolean {
 		const contentNode = this.#opts.contentNode();
 		if (!contentNode) return false;
@@ -544,9 +544,7 @@ class MenuSubmenuIntent {
 		// verify this sub-content was triggered from within our content by checking
 		// if a sub-trigger with aria-controls matching the sub-content's id exists
 		// inside our content node
-		if (subContent.id) {
-			return !!contentNode.querySelector(`[aria-controls="${subContent.id}"]`);
-		}
+		if (subContent.id) return !!contentNode.querySelector(`[aria-controls="${subContent.id}"]`);
 		return false;
 	}
 
@@ -577,7 +575,7 @@ class MenuSubmenuIntent {
 			return;
 		}
 
-		// pointer is inside a child sub-content portal — treat as safe, don't close
+		// pointer is inside a child sub-content portal, treat as safe, don't close
 		if (this.#isPointerInDescendantSubContent(pt)) {
 			this.#startFallback();
 			return;
@@ -617,8 +615,9 @@ class MenuSubmenuIntent {
 		this.#cleanupDocMove?.();
 	}
 
-	// --- fallback timer: close if pointer goes completely still mid-transit ---
-
+	/**
+	 * When the pointer goes completely still mid-transit, we close the submenu.
+	 */
 	#startFallback() {
 		this.#clearFallback();
 		this.#fallbackTimer = setTimeout(() => {
@@ -632,8 +631,6 @@ class MenuSubmenuIntent {
 		clearTimeout(this.#fallbackTimer);
 		this.#fallbackTimer = null;
 	}
-
-	// --- debug overlay ---
 
 	#clearVisuals() {
 		this.#target = null;
@@ -1036,13 +1033,8 @@ export class MenuContentState {
 		while (rootMenu.parentMenu !== null) {
 			rootMenu = rootMenu.parentMenu;
 		}
-		// if for some unforeseen reason the root menu has no trigger, we bail
 		if (!rootMenu.triggerNode) return;
-
-		// cancel default tab behavior
 		e.preventDefault();
-
-		// find the next/previous tabbable
 		const nodeToFocus = getTabbableFrom(rootMenu.triggerNode, e.shiftKey ? "prev" : "next");
 		if (nodeToFocus) {
 			/**
