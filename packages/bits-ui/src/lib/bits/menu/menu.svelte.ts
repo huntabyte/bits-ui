@@ -264,8 +264,8 @@ class MenuSubmenuIntent {
 	#target: IntentTarget | null = null;
 	#apex: Point | null = null;
 	#pointerPoint: Point | null = null;
-	#corridor: Polygon | null = null;
-	#intentPolygon: Polygon | null = null;
+	// #corridor: Polygon | null = null;
+	// #intentPolygon: Polygon | null = null;
 	#launchPoint: Point | null = null;
 
 	constructor(opts: MenuSubmenuIntentOptions) {
@@ -411,8 +411,8 @@ class MenuSubmenuIntent {
 
 		this.#target = target;
 		this.#pointerPoint = pt;
-		this.#corridor = geo.corridor;
-		this.#intentPolygon = geo.intent;
+		// this.#corridor = geo.corridor;
+		// this.#intentPolygon = geo.intent;
 		// this.#syncDebug();
 	}
 
@@ -445,8 +445,8 @@ class MenuSubmenuIntent {
 		this.#active = true;
 		this.#target = target;
 		this.#pointerPoint = pt;
-		this.#corridor = geo.corridor;
-		this.#intentPolygon = geo.intent;
+		// this.#corridor = geo.corridor;
+		// this.#intentPolygon = geo.intent;
 
 		this.#opts.setIsPointerInTransit(true);
 		this.#attachDocMove();
@@ -501,8 +501,8 @@ class MenuSubmenuIntent {
 		this.#target = null;
 		this.#apex = null;
 		this.#pointerPoint = null;
-		this.#corridor = null;
-		this.#intentPolygon = null;
+		// this.#corridor = null;
+		// this.#intentPolygon = null;
 		this.#launchPoint = null;
 		// this.#syncDebug();
 	}
@@ -557,8 +557,8 @@ class MenuSubmenuIntent {
 			return;
 		}
 
-		this.#corridor = geo.corridor;
-		this.#intentPolygon = geo.intent;
+		// this.#corridor = geo.corridor;
+		// this.#intentPolygon = geo.intent;
 		// this.#syncDebug();
 
 		if (this.#isInSafeZone(pt, geo.corridor, geo.intent)) {
@@ -602,8 +602,8 @@ class MenuSubmenuIntent {
 		this.#target = null;
 		this.#apex = null;
 		this.#pointerPoint = null;
-		this.#corridor = null;
-		this.#intentPolygon = null;
+		// this.#corridor = null;
+		// this.#intentPolygon = null;
 		// this.#syncDebug();
 	}
 
