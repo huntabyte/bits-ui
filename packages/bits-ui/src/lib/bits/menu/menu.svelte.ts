@@ -40,6 +40,7 @@ import {
 	boolToStr,
 	getDataOpenClosed,
 	boolToEmptyStrOrUndef,
+	getDataTransitionAttrs,
 } from "$lib/internal/attrs.js";
 import type { Direction } from "$lib/shared/index.js";
 import { IsUsingKeyboard } from "$lib/bits/utilities/is-using-keyboard/is-using-keyboard.svelte.js";
@@ -449,6 +450,7 @@ export class MenuContentState {
 				"aria-orientation": "vertical" as const,
 				[this.parentMenu.root.getBitsAttr("content")]: "",
 				"data-state": getDataOpenClosed(this.parentMenu.opts.open.current),
+				...getDataTransitionAttrs(this.parentMenu.contentPresence.transitionStatus),
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
 				onfocus: this.onfocus,
@@ -683,8 +685,7 @@ export class MenuSubTriggerState {
 		if (
 			!this.item.opts.disabled.current &&
 			!this.submenu.opts.open.current &&
-			!this.#openTimer &&
-			!this.content.parentMenu.root.isPointerInTransit
+			!this.#openTimer
 		) {
 			this.#openTimer = this.content.domContext.setTimeout(() => {
 				this.submenu.onOpen();

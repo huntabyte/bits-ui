@@ -1,4 +1,4 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import NavigationMenuTest, { type NavigationMenuTestProps } from "./navigation-menu-test.svelte";
 import { getTestKbd } from "../utils";
@@ -106,6 +106,119 @@ it("should show indicator when hovering trigger", async () => {
 	const trigger = page.getByTestId("group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("indicator"));
+});
+
+it("should apply transition attrs to content during open and close without a viewport", async () => {
+	setup({ noViewport: true });
+
+	type TransitionRecord = { starting: boolean; ending: boolean };
+	const history: TransitionRecord[] = [];
+
+	const capture = (element: Element): void => {
+		history.push({
+			starting: element.hasAttribute("data-starting-style"),
+			ending: element.hasAttribute("data-ending-style"),
+		});
+	};
+
+	const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.type === "attributes") {
+				const element = mutation.target as HTMLElement;
+				if (element.dataset.testid === "group-item-content") {
+					capture(element);
+				}
+				continue;
+			}
+
+			for (const node of mutation.addedNodes) {
+				if (!(node instanceof Element)) continue;
+				if ((node as HTMLElement).dataset.testid === "group-item-content") {
+					capture(node);
+				}
+			}
+		}
+	});
+
+	observer.observe(document.body, {
+		subtree: true,
+		attributes: true,
+		childList: true,
+		attributeFilter: ["data-starting-style", "data-ending-style"],
+	});
+
+	const trigger = page.getByTestId("group-item-trigger");
+
+	await trigger.hover();
+	await vi.waitFor(() => expect(history.some((entry) => entry.starting)).toBe(true));
+
+	await page.getByTestId("next-button").hover();
+	await vi.waitFor(() => expect(history.some((entry) => entry.ending)).toBe(true));
+
+	observer.disconnect();
+});
+
+it("should apply transition attrs to viewport and indicator during open and close", async () => {
+	setup();
+
+	type TransitionRecord = { starting: boolean; ending: boolean };
+	const history = {
+		viewport: [] as TransitionRecord[],
+		indicator: [] as TransitionRecord[],
+	};
+
+	const capture = (key: keyof typeof history, element: Element): void => {
+		history[key].push({
+			starting: element.hasAttribute("data-starting-style"),
+			ending: element.hasAttribute("data-ending-style"),
+		});
+	};
+
+	const captureIfTracked = (element: Element): void => {
+		const testId = (element as HTMLElement).dataset.testid;
+
+		if (testId === "viewport") {
+			capture("viewport", element);
+		} else if (testId === "indicator") {
+			capture("indicator", element);
+		}
+	};
+
+	const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.type === "attributes") {
+				captureIfTracked(mutation.target as Element);
+				continue;
+			}
+
+			for (const node of mutation.addedNodes) {
+				if (!(node instanceof Element)) continue;
+				captureIfTracked(node);
+				node.querySelectorAll("[data-testid]").forEach((element) =>
+					captureIfTracked(element)
+				);
+			}
+		}
+	});
+
+	observer.observe(document.body, {
+		subtree: true,
+		attributes: true,
+		childList: true,
+		attributeFilter: ["data-starting-style", "data-ending-style"],
+	});
+
+	const trigger = page.getByTestId("group-item-trigger");
+
+	await trigger.hover();
+	await vi.waitFor(() => expect(history.viewport.some((entry) => entry.starting)).toBe(true));
+	await vi.waitFor(() => expect(history.indicator.some((entry) => entry.starting)).toBe(true));
+
+	await page.getByTestId("next-button").hover();
+	await vi.waitFor(() => expect(history.viewport.some((entry) => entry.ending)).toBe(true));
+	await vi.waitFor(() => expect(history.indicator.some((entry) => entry.ending)).toBe(true));
+
+	observer.disconnect();
 });
 
 it("should receive focus on the first item", async () => {

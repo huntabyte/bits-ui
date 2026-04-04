@@ -11,6 +11,7 @@ import {
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
+	getDataTransitionAttrs,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
 import type {
@@ -202,6 +203,7 @@ export class CollapsibleContentState {
 						? "until-found"
 						: undefined,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[collapsibleAttrs.content]: "",
 				...(this.opts.hiddenUntilFound.current && !this.shouldRender

@@ -18,7 +18,7 @@ import TooltipSingletonForceMountTest, {
 import TooltipSingletonEdgeTest from "./tooltip-singleton-edge-test.svelte";
 import TooltipSafePolygonIntermediateTargetTest from "./tooltip-safe-polygon-intermediate-target-test.svelte";
 import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -161,6 +161,19 @@ it("should forceMount the content when `forceMount` is true", async () => {
 	setup({}, TooltipForceMountTest);
 
 	expect(page.getByTestId("content")).toBeVisible();
+});
+
+it("should apply transition attrs to content during open and close", async () => {
+	const t = setup({}, TooltipForceMountTest);
+	const observer = observeTransitionAttrs(page.getByTestId("content").element());
+
+	await t.trigger.hover();
+	await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
+
+	await page.getByTestId("outside").hover();
+	await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
+
+	observer.disconnect();
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {

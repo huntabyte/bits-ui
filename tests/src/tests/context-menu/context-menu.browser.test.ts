@@ -9,6 +9,7 @@ import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
+import ContextMenuNestedSubmenuTest from "./context-menu-nested-submenu-test.svelte";
 import ContextMenuTooltipTest from "./context-menu-tooltip-test.svelte";
 
 const kbd = getTestKbd();
@@ -457,6 +458,19 @@ it("should open nested context menus", async () => {
 	await page.getByTestId("nested-trigger").click({ button: "right" });
 	await expectExists(page.getByTestId("nested-content"));
 	await expectExists(page.getByTestId("content"));
+});
+
+it("should open nested submenus in context menu", async () => {
+	render(ContextMenuNestedSubmenuTest);
+	await page.getByTestId("trigger").click({ button: "right" });
+	await expectExists(page.getByTestId("content"));
+
+	await page.getByTestId("sub-trigger").hover();
+	await expectExists(page.getByTestId("sub-content"));
+
+	await page.getByTestId("sub-sub-trigger").hover();
+	await expectExists(page.getByTestId("sub-sub-content"));
+	await expectExists(page.getByTestId("sub-sub-item"));
 });
 
 it("should allow overriding the pointer events style", async () => {

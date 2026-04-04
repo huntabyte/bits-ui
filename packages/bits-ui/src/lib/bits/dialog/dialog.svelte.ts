@@ -11,6 +11,7 @@ import {
 	boolToStr,
 	getDataOpenClosed,
 	boolToEmptyStrOrUndef,
+	getDataTransitionAttrs,
 } from "$lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
@@ -388,6 +389,7 @@ export class DialogContentState {
 				tabindex: this.root.opts.variant.current === "alert-dialog" ? -1 : undefined,
 				"data-nested-open": boolToEmptyStrOrUndef(this.root.nestedOpenCount > 0),
 				"data-nested": boolToEmptyStrOrUndef(this.root.parent !== null),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				...this.root.sharedProps,
 				...this.attachment,
 			}) as const
@@ -428,6 +430,7 @@ export class DialogOverlayState {
 				},
 				"data-nested-open": boolToEmptyStrOrUndef(this.root.nestedOpenCount > 0),
 				"data-nested": boolToEmptyStrOrUndef(this.root.parent !== null),
+				...getDataTransitionAttrs(this.root.overlayPresence.transitionStatus),
 				...this.root.sharedProps,
 				...this.attachment,
 			}) as const
