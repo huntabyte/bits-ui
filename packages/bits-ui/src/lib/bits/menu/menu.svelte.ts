@@ -71,7 +71,7 @@ export interface MenuRootStateOpts
 	extends ReadableBoxedValues<{
 		dir: Direction;
 		variant: MenuVariant;
-		debugMode: boolean;
+		// debugMode: boolean;
 	}> {
 	onClose: AnyFn;
 	/** When closing, if this returns true, exit animations are skipped (instant unmount). */

@@ -8,7 +8,7 @@
 	let {
 		open = $bindable(false),
 		dir = "ltr",
-		debugMode = false,
+		// debugMode = false,
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
 		_internal_variant: variant = "dropdown-menu",
@@ -22,7 +22,7 @@
 	const root = MenuRootState.create({
 		variant: boxWith(() => variant),
 		dir: boxWith(() => dir),
-		debugMode: boxWith(() => debugMode),
+		// debugMode: boxWith(() => debugMode),
 		onClose: () => {
 			open = false;
 			onOpenChange(false);
