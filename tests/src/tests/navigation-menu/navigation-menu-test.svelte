@@ -25,13 +25,15 @@
 		subGroupItemProps,
 		subGroupItem1Props,
 		subGroupItem2Props,
+		delayDuration = 0,
+		skipDelayDuration = 0,
 		...restProps
 	}: NavigationMenuTestProps = $props();
 </script>
 
 <main>
 	<button data-testid="previous-button" tabindex={0}>previous button</button>
-	<NavigationMenu.Root {...restProps} data-testid="root" delayDuration={0} skipDelayDuration={0}>
+	<NavigationMenu.Root {...restProps} data-testid="root" {delayDuration} {skipDelayDuration}>
 		<NavigationMenu.List data-testid="list">
 			<NavigationMenu.Item value="group" data-testid="group-item" {...groupItemProps}>
 				<NavigationMenu.Trigger data-testid="group-item-trigger">

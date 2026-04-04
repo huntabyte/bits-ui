@@ -215,8 +215,8 @@ export class TooltipProviderState {
 	onClose = (tooltip: TooltipRootState) => {
 		if (this.#openTooltip === tooltip) {
 			this.#openTooltip = null;
+			this.#startTimer();
 		}
-		this.#startTimer();
 	};
 
 	isTooltipOpen = (tooltip: TooltipRootState) => {

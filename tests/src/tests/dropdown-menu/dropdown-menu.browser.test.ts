@@ -660,3 +660,21 @@ it("should apply custom style prop to content", async () => {
 	const contentEl = t.getContent().element() as HTMLElement;
 	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
 });
+
+it("keyboard navigation should not cause unwanted jumps between menus", async () => {
+	const t = render(DropdownMenuMultipleTest, { contentProps: { preventScroll: false } });
+	onTestFinished(() => t.unmount());
+
+	const trigger1 = page.getByTestId("trigger-1");
+	const trigger2 = page.getByTestId("trigger-2");
+	const content1 = page.getByTestId("content-1");
+	const content2 = page.getByTestId("content-2");
+
+	await trigger1.click();
+	await expectExists(content1);
+	await trigger2.click();
+	await expectExists(content2);
+	await expectNotExists(content1);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expectNotExists(content1);
+});

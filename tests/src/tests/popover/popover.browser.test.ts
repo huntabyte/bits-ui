@@ -13,6 +13,7 @@ import PopoverMultipleTriggersTest from "./popover-multiple-triggers-test.svelte
 import PopoverOverlayTest from "./popover-overlay-test.svelte";
 import PopoverHoverTest, { type PopoverHoverTestProps } from "./popover-hover-test.svelte";
 import PopoverHiddenTriggerTabsTest from "./popover-hidden-trigger-tabs-test.svelte";
+import PopoverScrollJitterTest from "./popover-scroll-jitter-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -41,6 +42,12 @@ async function open(props: PopoverTestProps = {}, openWith: "click" | (string & 
 	await expectExists(t.getContent());
 	const content = page.getByTestId("content");
 	return { content, ...t };
+}
+
+function nextFrame() {
+	return new Promise<void>((resolve) => {
+		window.requestAnimationFrame(() => resolve());
+	});
 }
 
 it("should have bits data attrs", async () => {
@@ -194,6 +201,60 @@ it("should close before content visibly jumps to viewport origin when outside in
 	observer.disconnect();
 
 	expect(sawVisibleTopLeftJump).toBe(false);
+});
+
+it("should stay stably anchored during tiny page scroll bursts when preventScroll is false", async () => {
+	render(PopoverScrollJitterTest);
+
+	window.scrollTo(0, 480);
+	for (let i = 0; i < 3; i++) {
+		await nextFrame();
+	}
+
+	await page.getByTestId("trigger").click();
+	await expectExists(page.getByTestId("content"));
+
+	const triggerEl = page.getByTestId("trigger").element() as HTMLElement;
+	const contentEl = page.getByTestId("content").element() as HTMLElement;
+	const wrapperEl = contentEl.parentElement as HTMLElement;
+	function getGap() {
+		const triggerRect = triggerEl.getBoundingClientRect();
+		const wrapperRect = wrapperEl.getBoundingClientRect();
+		return wrapperRect.top - triggerRect.bottom;
+	}
+
+	const initialSpaceBelow = window.innerHeight - triggerEl.getBoundingClientRect().bottom;
+	expect(initialSpaceBelow).toBeGreaterThan(180);
+
+	const baselineGap = getGap();
+	const gaps = [baselineGap];
+	const sideHistory = [contentEl.getAttribute("data-side") ?? ""];
+	const sample = () => {
+		gaps.push(getGap());
+		sideHistory.push(contentEl.getAttribute("data-side") ?? "");
+	};
+
+	const observer = new MutationObserver(() => {
+		sample();
+	});
+	observer.observe(wrapperEl, { attributes: true, attributeFilter: ["style"] });
+
+	window.scrollTo({ top: window.scrollY + 40, behavior: "smooth" });
+	for (let i = 0; i < 90; i++) {
+		await nextFrame();
+		sample();
+	}
+
+	window.scrollTo({ top: window.scrollY - 40, behavior: "smooth" });
+	for (let i = 0; i < 90; i++) {
+		await nextFrame();
+		sample();
+	}
+	observer.disconnect();
+
+	const maxGapDrift = Math.max(...gaps.map((gap) => Math.abs(gap - baselineGap)));
+	expect([...new Set(sideHistory)]).toEqual(["bottom"]);
+	expect(maxGapDrift).toBeLessThanOrEqual(0.3);
 });
 
 it("should not close when clicking within bounds", async () => {

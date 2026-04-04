@@ -6,6 +6,7 @@ import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Helper function to reduce boilerplate in tests
@@ -15,6 +16,22 @@ function setup(props: NavigationMenuTestProps = {}) {
 
 	return { ...returned };
 }
+
+it("should keep content open briefly after leaving a trigger", async () => {
+	setup({ delayDuration: 0, skipDelayDuration: 0 });
+	const trigger = page.getByTestId("group-item-trigger");
+	const outside = page.getByTestId("previous-button");
+
+	await trigger.hover();
+	await expectExists(page.getByTestId("viewport"));
+
+	await outside.hover();
+	await sleep(125);
+	await expectExists(page.getByTestId("viewport"));
+
+	await sleep(80);
+	await expectNotExists(page.getByTestId("viewport"));
+});
 
 it("should open viewport when hovering trigger", async () => {
 	setup();
