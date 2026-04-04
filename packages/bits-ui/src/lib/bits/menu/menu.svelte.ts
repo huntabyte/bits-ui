@@ -272,7 +272,7 @@ class MenuSubmenuIntent {
 	constructor(opts: MenuSubmenuIntentOptions) {
 		this.#opts = opts;
 		this.#debugOverlay = new MenuIntentDebugOverlay({
-			enabled: () => this.#opts.debugMode(),
+			enabled: () => true,
 			getDocument: () => getDocument(this.#opts.triggerNode() ?? this.#opts.contentNode()),
 		});
 
@@ -304,8 +304,14 @@ class MenuSubmenuIntent {
 					if (isElement(e.relatedTarget)) {
 						const selector = this.#opts.subContentSelector();
 						const matchedSubContent = e.relatedTarget.closest(selector);
-						if (matchedSubContent && matchedSubContent !== contentNode && matchedSubContent.id) {
-							const isChild = !!contentNode.querySelector(`[aria-controls="${matchedSubContent.id}"]`);
+						if (
+							matchedSubContent &&
+							matchedSubContent !== contentNode &&
+							matchedSubContent.id
+						) {
+							const isChild = !!contentNode.querySelector(
+								`[aria-controls="${matchedSubContent.id}"]`
+							);
 							if (isChild) {
 								return;
 							}
@@ -784,11 +790,7 @@ function getIntentPolygon(
 		case "right":
 			return [exitPoint, { x: targetRect.left, y: top }, { x: targetRect.left, y: bottom }];
 		case "left":
-			return [
-				exitPoint,
-				{ x: targetRect.right, y: top },
-				{ x: targetRect.right, y: bottom },
-			];
+			return [exitPoint, { x: targetRect.right, y: top }, { x: targetRect.right, y: bottom }];
 		case "bottom":
 			return [exitPoint, { x: left, y: targetRect.top }, { x: right, y: targetRect.top }];
 		case "top":
@@ -1398,6 +1400,10 @@ export class MenuSubTriggerState {
 
 	onpointermove(e: BitsPointerEvent) {
 		if (!isMouseEvent(e)) return;
+		if (this.submenu.root.isPointerInTransit) {
+			if (this.#openTimer !== null) this.#clearOpenTimer();
+			return;
+		}
 
 		if (
 			!this.item.opts.disabled.current &&
@@ -1405,6 +1411,10 @@ export class MenuSubTriggerState {
 			!this.#openTimer
 		) {
 			this.#openTimer = this.content.domContext.setTimeout(() => {
+				if (this.submenu.root.isPointerInTransit) {
+					this.#clearOpenTimer();
+					return;
+				}
 				this.submenu.onOpen();
 				this.#clearOpenTimer();
 			}, this.opts.openDelay.current);
