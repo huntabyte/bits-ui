@@ -107,7 +107,7 @@ type IntentTarget = "trigger" | "content";
 type Point = { x: number; y: number };
 type Polygon = Point[];
 
-const SVG_NS = "http://www.w3.org/2000/svg";
+// const SVG_NS = "http://www.w3.org/2000/svg";
 
 interface MenuSubmenuIntentOptions {
 	enabled: () => boolean;
@@ -115,11 +115,12 @@ interface MenuSubmenuIntentOptions {
 	contentNode: () => HTMLElement | null;
 	parentContentNode: () => HTMLElement | null;
 	subContentSelector: () => string;
-	debugMode: () => boolean;
+	// debugMode: () => boolean;
 	onIntentExit: (pointerPoint: Point | null) => void;
 	setIsPointerInTransit: (value: boolean) => void;
 }
 
+/*
 interface MenuIntentDebugSnapshot {
 	active: boolean;
 	target: IntentTarget | null;
@@ -252,10 +253,11 @@ class MenuIntentDebugOverlay {
 		this.#pointerPoint = null;
 	}
 }
+*/
 
 class MenuSubmenuIntent {
 	readonly #opts: MenuSubmenuIntentOptions;
-	readonly #debugOverlay: MenuIntentDebugOverlay;
+	// readonly #debugOverlay: MenuIntentDebugOverlay;
 	#cleanupDocMove: AnyFn | null = null;
 	#fallbackTimer: ReturnType<typeof setTimeout> | null = null;
 	#active = false;
@@ -268,10 +270,10 @@ class MenuSubmenuIntent {
 
 	constructor(opts: MenuSubmenuIntentOptions) {
 		this.#opts = opts;
-		this.#debugOverlay = new MenuIntentDebugOverlay({
-			enabled: () => this.#opts.debugMode(),
-			getDocument: () => getDocument(this.#opts.triggerNode() ?? this.#opts.contentNode()),
-		});
+		// this.#debugOverlay = new MenuIntentDebugOverlay({
+		// 	enabled: () => this.#opts.debugMode(),
+		// 	getDocument: () => getDocument(this.#opts.triggerNode() ?? this.#opts.contentNode()),
+		// });
 
 		watch(
 			[opts.triggerNode, opts.contentNode, opts.enabled],
@@ -347,7 +349,7 @@ class MenuSubmenuIntent {
 
 		onDestroyEffect(() => {
 			this.#reset();
-			this.#debugOverlay.destroy();
+			// this.#debugOverlay.destroy();
 		});
 	}
 
@@ -411,7 +413,7 @@ class MenuSubmenuIntent {
 		this.#pointerPoint = pt;
 		this.#corridor = geo.corridor;
 		this.#intentPolygon = geo.intent;
-		this.#syncDebug();
+		// this.#syncDebug();
 	}
 
 	#engage(e: PointerEvent, target: IntentTarget) {
@@ -449,7 +451,7 @@ class MenuSubmenuIntent {
 		this.#opts.setIsPointerInTransit(true);
 		this.#attachDocMove();
 		this.#startFallback();
-		this.#syncDebug();
+		// this.#syncDebug();
 	}
 
 	#disengageTimer: ReturnType<typeof setTimeout> | null = null;
@@ -502,7 +504,7 @@ class MenuSubmenuIntent {
 		this.#corridor = null;
 		this.#intentPolygon = null;
 		this.#launchPoint = null;
-		this.#syncDebug();
+		// this.#syncDebug();
 	}
 
 	#isPointerInDescendantSubContent(pt: Point): boolean {
@@ -557,7 +559,7 @@ class MenuSubmenuIntent {
 
 		this.#corridor = geo.corridor;
 		this.#intentPolygon = geo.intent;
-		this.#syncDebug();
+		// this.#syncDebug();
 
 		if (this.#isInSafeZone(pt, geo.corridor, geo.intent)) {
 			this.#startFallback();
@@ -602,9 +604,10 @@ class MenuSubmenuIntent {
 		this.#pointerPoint = null;
 		this.#corridor = null;
 		this.#intentPolygon = null;
-		this.#syncDebug();
+		// this.#syncDebug();
 	}
 
+	/*
 	#syncDebug() {
 		this.#debugOverlay.update({
 			active: this.#active || this.#corridor !== null,
@@ -615,11 +618,14 @@ class MenuSubmenuIntent {
 			intentPolygon: this.#intentPolygon,
 		});
 	}
+	*/
 }
 
+/*
 function polygonToSvgPoints(points: Polygon): string {
 	return points.map((point) => `${point.x},${point.y}`).join(" ");
 }
+*/
 
 function isPointInPolygon(point: Point, polygon: Polygon): boolean {
 	const { x, y } = point;
@@ -908,7 +914,7 @@ export class MenuContentState {
 			triggerNode: () => this.parentMenu.triggerNode,
 			parentContentNode: () => this.parentMenu.parentMenu?.contentNode ?? null,
 			subContentSelector: () => `[${this.parentMenu.root.getBitsAttr("sub-content")}]`,
-			debugMode: () => this.parentMenu.root.opts.debugMode.current,
+			// debugMode: () => this.parentMenu.root.opts.debugMode.current,
 			enabled: () =>
 				this.parentMenu.opts.open.current &&
 				Boolean(

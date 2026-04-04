@@ -22,12 +22,12 @@ export type MenuRootPropsWithoutHTML = WithChildren<{
 	 */
 	open?: boolean;
 
-	/**
-	 * When `true`, renders safe-area debug overlays for submenu pointer intent.
-	 *
-	 * @defaultValue false
-	 */
-	debugMode?: boolean;
+	// /**
+	//  * When `true`, renders safe-area debug overlays for submenu pointer intent.
+	//  *
+	//  * @defaultValue false
+	//  */
+	// debugMode?: boolean;
 
 	/**
 	 * A callback that is called when the menu is opened or closed.
