@@ -29,6 +29,7 @@ import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal
 import { kbd } from "$lib/internal/kbd.js";
 import { isElementOrSVGElement } from "$lib/internal/is.js";
 import { isValidIndex } from "$lib/internal/arrays.js";
+import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
 import type {
 	BitsKeyboardEvent,
 	OnChangeFn,
@@ -64,6 +65,7 @@ abstract class SliderBaseRootState {
 	readonly opts: SliderBaseRootStateOpts;
 	readonly attachment: RefAttachment;
 	isActive = $state(false);
+	#layoutVersion = $state(0);
 	readonly direction: "rl" | "lr" | "tb" | "bt" = $derived.by(() => {
 		if (this.opts.orientation.current === "horizontal") {
 			return this.opts.dir.current === "rtl" ? "rl" : "lr";
@@ -82,7 +84,12 @@ abstract class SliderBaseRootState {
 		this.opts = opts;
 		this.attachment = attachRef(opts.ref);
 		this.domContext = new DOMContext(this.opts.ref);
+		new SvelteResizeObserver(() => this.opts.ref.current, this.#handleLayoutChange);
 	}
+
+	#handleLayoutChange = (): void => {
+		this.#layoutVersion += 1;
+	};
 
 	isThumbActive(_index: number) {
 		return this.isActive;
@@ -100,6 +107,8 @@ abstract class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
+		void this.#layoutVersion;
+
 		// If trackPadding is explicitly set, use it directly instead of calculating from thumb size
 		const trackPadding = this.opts.trackPadding?.current;
 		if (trackPadding !== undefined && trackPadding > 0) {
