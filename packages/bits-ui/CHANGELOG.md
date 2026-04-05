@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.17.1
+
+### Patch Changes
+
+- fix(MenuSubTriggerState): handle open delay correctly ([#2013](https://github.com/huntabyte/bits-ui/pull/2013))
+
 ## 2.17.0
 
 ### Minor Changes
