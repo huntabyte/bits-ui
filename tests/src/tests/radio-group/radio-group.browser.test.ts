@@ -1,9 +1,10 @@
-import { expect, it, describe } from "vitest";
+import { expect, it, describe, onTestFinished } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import RadioGroupTest from "./radio-group-test.svelte";
 import type { Item, RadioGroupTestProps } from "./radio-group-test.svelte";
 import RadioGroupPopoverTest from "./radio-group-popover-test.svelte";
+import RadioGroupScrollLayoutTest from "./radio-group-scroll-layout-test.svelte";
 import { expectExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -28,6 +29,12 @@ function setup(props: Partial<RadioGroupTestProps> = {}, items: Item[] = TEST_IT
 
 function getRandomItemIndex(length = TEST_ITEMS.length) {
 	return Math.floor(Math.random() * length);
+}
+
+function nextFrame(): Promise<void> {
+	return new Promise((resolve) => {
+		window.requestAnimationFrame(() => resolve());
+	});
 }
 
 describe("Data Attributes", () => {
@@ -364,5 +371,27 @@ describe("Focus Management", () => {
 
 		const item1 = page.getByTestId(`${TEST_ITEMS[1]?.value}-item`);
 		await expect.element(item1).toHaveFocus();
+	});
+});
+
+describe("Scroll Behavior", () => {
+	it("should not make the page scrollable when rendering a named input in nested overflow containers", async () => {
+		const t = render(RadioGroupScrollLayoutTest, { name: "radio-group" });
+		onTestFinished(() => t.unmount());
+
+		window.scrollTo(0, 0);
+		for (let i = 0; i < 3; i++) {
+			await nextFrame();
+		}
+
+		const baselineY = window.scrollY;
+		window.scrollTo(0, 99999);
+
+		for (let i = 0; i < 3; i++) {
+			await nextFrame();
+		}
+
+		expect(window.scrollY).toBe(baselineY);
+		expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight + 1);
 	});
 });
