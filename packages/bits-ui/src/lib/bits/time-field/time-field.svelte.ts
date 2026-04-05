@@ -112,6 +112,18 @@ const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 	},
 };
 
+function get24HourValueFromTypedHour(
+	hour: string,
+	dayPeriod: Exclude<TimeSegmentObj["dayPeriod"], null>
+): string {
+	const parsedHour = Number.parseInt(hour);
+	if (Number.isNaN(parsedHour)) return hour;
+	if (dayPeriod === "AM") {
+		return parsedHour === 12 ? "0" : `${parsedHour}`;
+	}
+	return parsedHour < 12 ? `${parsedHour + 12}` : `${parsedHour}`;
+}
+
 export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
 	extends WritableBoxedValues<{
 			value: T | undefined;
@@ -171,6 +183,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
 	states = initTimeSegmentStates();
+	hourInputDayPeriodHint: TimeSegmentObj["dayPeriod"] = null;
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	name = $state("");
 	readonly maxValueTime = $derived.by(() => {
@@ -523,12 +536,18 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			const next = cb(prev[part]) as TimeSegmentObj["hour"];
 			this.states.hour.updating = next;
 			if (next !== null && prev.dayPeriod !== null) {
-				const dayPeriod = this.formatter.dayPeriod(
-					toDate(this.#toDateValue(this.timeRef.set({ hour: Number.parseInt(next) }))),
-					this.hourCycle
-				);
-				if (dayPeriod === "AM" || dayPeriod === "PM") {
-					prev.dayPeriod = dayPeriod;
+				if (this.hourCycle !== 24 && this.hourInputDayPeriodHint !== null) {
+					prev.dayPeriod = this.hourInputDayPeriodHint;
+				} else {
+					const dayPeriod = this.formatter.dayPeriod(
+						toDate(
+							this.#toDateValue(this.timeRef.set({ hour: Number.parseInt(next) }))
+						),
+						this.hourCycle
+					);
+					if (dayPeriod === "AM" || dayPeriod === "PM") {
+						prev.dayPeriod = dayPeriod;
+					}
 				}
 			}
 			newSegmentValues = { ...prev, [part]: next };
@@ -543,17 +562,29 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		}
 
 		this.segmentValues = newSegmentValues;
+
+		const segmentObjForValue: TimeSegmentObj =
+			part === "hour" &&
+			this.hourCycle !== 24 &&
+			this.hourInputDayPeriodHint !== null &&
+			newSegmentValues.hour !== null
+				? {
+						...newSegmentValues,
+						hour: get24HourValueFromTypedHour(
+							newSegmentValues.hour,
+							this.hourInputDayPeriodHint
+						),
+					}
+				: newSegmentValues;
+
 		if (areAllTimeSegmentsFilled(newSegmentValues, this.#fieldNode)) {
 			this.setValue(
 				getTimeValueFromSegments({
-					segmentObj: newSegmentValues,
+					segmentObj: segmentObjForValue,
 					fieldNode: this.#fieldNode,
 					timeRef: this.timeRef,
 				})
 			);
-		} else {
-			// this.setValue(undefined);
-			// this.segmentValues = newSegmentValues;
 		}
 	}
 
@@ -1014,11 +1045,16 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
+		const oldUpdateSegment = this.root.updateSegment.bind(this.root);
+
 		if (isNumberString(e.key)) {
-			const oldUpdateSegment = this.root.updateSegment.bind(this.root);
-			// oxlint-disable-next-line no-explicit-any
-			this.root.updateSegment = (part: any, cb: any) => {
-				const result = oldUpdateSegment(part, cb);
+			this.root.hourInputDayPeriodHint =
+				this.root.hourCycle === 24 ? null : this.root.segmentValues.dayPeriod;
+			this.root.updateSegment = <T extends EditableTimeSegmentPart>(
+				part: T,
+				cb: Updater<TimeSegmentObj[T]>
+			): void => {
+				oldUpdateSegment(part, cb);
 
 				// after updating hour, check if we need to display "12" instead of "0"
 				if (part === "hour" && "hour" in this.root.segmentValues) {
@@ -1031,14 +1067,13 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 						this.root.segmentValues.hour = "12";
 					}
 				}
-
-				return result;
 			};
 		}
 
 		super.onkeydown(e);
 
-		this.root.updateSegment = this.root.updateSegment.bind(this.root);
+		this.root.updateSegment = oldUpdateSegment;
+		this.root.hourInputDayPeriodHint = null;
 	}
 }
 
