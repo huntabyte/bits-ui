@@ -107,7 +107,7 @@ abstract class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
-		this.#layoutVersion;
+		void this.#layoutVersion;
 
 		// If trackPadding is explicitly set, use it directly instead of calculating from thumb size
 		const trackPadding = this.opts.trackPadding?.current;
