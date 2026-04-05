@@ -340,6 +340,67 @@ it("should change the value when the dayPeriod segment is changed", async () => 
 	await expect.element(t.value).toHaveTextContent("1980-01-20T00:30");
 });
 
+it("should preserve the PM day period when typing the hour in 12h mode", async () => {
+	const t = setup({
+		value: new CalendarDateTime(2026, 3, 11, 14, 0, 0, 0),
+	});
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T14:00");
+
+	await t.getHour().click();
+	await userEvent.keyboard(`{1}`);
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T13:00");
+});
+
+it("should preserve the AM day period when typing the hour in 12h mode", async () => {
+	const t = setup({
+		value: new CalendarDateTime(2026, 3, 11, 2, 0, 0, 0),
+	});
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T02:00");
+
+	await t.getHour().click();
+	await userEvent.keyboard(`{1}`);
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T01:00");
+});
+
+it("should keep 24 hour semantics when typing the hour with hourCycle 24", async () => {
+	const t = setup({
+		value: new CalendarDateTime(2026, 3, 11, 14, 0, 0, 0),
+		hourCycle: 24,
+	});
+
+	await expectNotExists(t.getDayPeriod());
+	await expect.element(t.value).toHaveTextContent("2026-03-11T14:00");
+
+	await t.getHour().click();
+	await userEvent.keyboard(`{1}`);
+
+	await expect.element(t.getHour()).toHaveTextContent("01");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T01:00");
+});
+
+it("should preserve PM when typing minutes in 12h mode", async () => {
+	const t = setup({
+		value: new CalendarDateTime(2026, 3, 11, 14, 0, 0, 0),
+	});
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T14:00");
+
+	await t.getMinute().click();
+	await userEvent.keyboard(`{3}{0}`);
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T14:30");
+});
+
 it("should go all the way through the segment with spamming 3", async () => {
 	const t = setup({
 		value: zonedDateTime,

@@ -195,8 +195,28 @@ it("should respect `bind:value` to the value", async () => {
 
 	await t.start.getHour().click();
 	await userEvent.keyboard("2");
-	await expect.element(t.start.value).toHaveTextContent("02:30:00");
+	await expect.element(t.start.value).toHaveTextContent("14:30:00");
 	await expect.element(t.end.value).toHaveTextContent(time.end.toString());
+});
+
+it("should keep 24 hour semantics when typing the start hour with hourCycle 24", async () => {
+	const t = setup({
+		value: {
+			start: new Time(14, 30, 0),
+			end: new Time(17, 30, 0),
+		},
+		granularity: "second",
+		hourCycle: 24,
+	});
+
+	await expect.element(t.start.value).toHaveTextContent("14:30:00");
+	await expect.element(t.end.value).toHaveTextContent("17:30:00");
+
+	await t.start.getHour().click();
+	await userEvent.keyboard("2");
+
+	await expect.element(t.start.value).toHaveTextContent("02:30:00");
+	await expect.element(t.end.value).toHaveTextContent("17:30:00");
 });
 
 it("should render an input for the start and end", async () => {
