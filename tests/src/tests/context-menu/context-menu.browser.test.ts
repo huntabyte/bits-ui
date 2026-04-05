@@ -535,6 +535,26 @@ it("should open inside of a dialog", async () => {
 	await expectNotExists(page.getByTestId("context-content-3"));
 });
 
+it("should not close the dialog when the context menu trigger is left clicked", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("dialog-trigger").click();
+	await expectExists(page.getByTestId("dialog-content"));
+	await page.getByTestId("context-trigger-3").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expect.element(page.getByTestId("dialog-content")).toHaveAttribute("data-state", "open");
+	await expectNotExists(page.getByTestId("context-content-3"));
+});
+
+it("should not close the popover when the context menu trigger is left clicked", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("popover-trigger").click();
+	await expectExists(page.getByTestId("popover-content"));
+	await page.getByTestId("context-trigger-4").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expect.element(page.getByTestId("popover-content")).toHaveAttribute("data-state", "open");
+	await expectNotExists(page.getByTestId("context-content-4"));
+});
+
 it("should open nested context menus", async () => {
 	render(ContextMenuNestedTest);
 	await page.getByTestId("trigger").click({ button: "right" });
