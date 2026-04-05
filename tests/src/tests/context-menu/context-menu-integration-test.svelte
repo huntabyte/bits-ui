@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { ContextMenu, Dialog, DropdownMenu } from "bits-ui";
+	import { ContextMenu, Dialog, DropdownMenu, Popover } from "bits-ui";
 	export type ContextMenuTestProps = ContextMenu.RootProps & {
 		checked?: boolean;
 		subChecked?: boolean;
@@ -56,4 +56,13 @@
 			</Dialog.Content>
 		</Dialog.Portal>
 	</Dialog.Root>
+
+	<Popover.Root>
+		<Popover.Trigger data-testid="popover-trigger">open</Popover.Trigger>
+		<Popover.Portal>
+			<Popover.Content data-testid="popover-content">
+				{@render contextMenu({ id: "4" })}
+			</Popover.Content>
+		</Popover.Portal>
+	</Popover.Root>
 </main>
