@@ -1,5 +1,17 @@
 # bits-ui
 
+## 2.17.2
+
+### Patch Changes
+
+- fix(ContextMenu): prevent left-click on nested context-menu triggers from dismissing parent layers ([#2019](https://github.com/huntabyte/bits-ui/pull/2019))
+
+- fix(Slider): use ResizeObserver to recompute thumb positioning ([#2015](https://github.com/huntabyte/bits-ui/pull/2015))
+
+- fix(TimeField): preserve current AM/PM when typing the hour in 12-hour mode so PM values no longer flip to AM ([#2016](https://github.com/huntabyte/bits-ui/pull/2016))
+
+- fix(HiddenInput): prevent page scroll in nested overflow layouts by anchoring the visually hidden input at top-left ([#2018](https://github.com/huntabyte/bits-ui/pull/2018))
+
 ## 2.17.1
 
 ### Patch Changes
