@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { ContextMenu, Dialog, DropdownMenu, Popover } from "bits-ui";
+	import { ContextMenu, Dialog, DropdownMenu, Popover, Select } from "bits-ui";
 	export type ContextMenuTestProps = ContextMenu.RootProps & {
 		checked?: boolean;
 		subChecked?: boolean;
@@ -65,4 +65,43 @@
 			</Popover.Content>
 		</Popover.Portal>
 	</Popover.Root>
+
+	<ContextMenu.Root>
+		<ContextMenu.Trigger
+			data-testid="context-trigger-0"
+			class="z-[100] h-[500px] w-[500px]"
+			aria-expanded={undefined}
+			aria-controls={undefined}
+		>
+			<Popover.Root>
+				<Popover.Trigger data-testid="popover-trigger-1">open</Popover.Trigger>
+				<Popover.Portal>
+					<Popover.Content data-testid="popover-content-1">Hello</Popover.Content>
+				</Popover.Portal>
+			</Popover.Root>
+			<Select.Root type="single">
+				<Select.Trigger data-testid="select-trigger-1">open</Select.Trigger>
+				<Select.Portal>
+					<Select.Content data-testid="select-content-1">
+						<Select.Item value="1">Hello</Select.Item>
+					</Select.Content>
+				</Select.Portal>
+			</Select.Root>
+			<Select.Root type="single">
+				<Select.Trigger data-testid="select-trigger-2">open</Select.Trigger>
+				<Select.Portal>
+					<Select.Content data-testid="select-content-2">
+						<Select.Item value="1">Hello</Select.Item>
+					</Select.Content>
+				</Select.Portal>
+			</Select.Root>
+		</ContextMenu.Trigger>
+		<ContextMenu.Portal>
+			<ContextMenu.Content data-testid="context-content-0">
+				<ContextMenu.Item>
+					<span>item</span>
+				</ContextMenu.Item>
+			</ContextMenu.Content>
+		</ContextMenu.Portal>
+	</ContextMenu.Root>
 </main>

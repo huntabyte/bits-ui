@@ -555,6 +555,36 @@ it("should not close the popover when the context menu trigger is left clicked",
 	await expectNotExists(page.getByTestId("context-content-4"));
 });
 
+it("should close a nested popover when interacting with a sibling select trigger inside the same context menu trigger", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("popover-trigger-1").click();
+	await expectExists(page.getByTestId("popover-content-1"));
+	await page.getByTestId("select-trigger-1").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("popover-content-1"));
+	await expectExists(page.getByTestId("select-content-1"));
+});
+
+it("should close a nested select when interacting with the popover trigger inside the same context menu trigger", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("select-trigger-1").click();
+	await expectExists(page.getByTestId("select-content-1"));
+	await page.getByTestId("popover-trigger-1").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("select-content-1"));
+	await expectExists(page.getByTestId("popover-content-1"));
+});
+
+it("should close the first nested select when opening the sibling select inside the same context menu trigger", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("select-trigger-1").click();
+	await expectExists(page.getByTestId("select-content-1"));
+	await page.getByTestId("select-trigger-2").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("select-content-1"));
+	await expectExists(page.getByTestId("select-content-2"));
+});
+
 it("should open nested context menus", async () => {
 	render(ContextMenuNestedTest);
 	await page.getByTestId("trigger").click({ button: "right" });
