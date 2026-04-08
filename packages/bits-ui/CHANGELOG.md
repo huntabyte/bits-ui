@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.17.3
+
+### Patch Changes
+
+- fix(ContextMenu): treat outside interactions correctly for nested floaters inside the trigger ([#2020](https://github.com/huntabyte/bits-ui/pull/2020))
+
 ## 2.17.2
 
 ### Patch Changes
