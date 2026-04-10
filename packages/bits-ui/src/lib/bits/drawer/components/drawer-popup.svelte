@@ -8,6 +8,7 @@
 	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
 	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
 	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
+	import { isClickTrulyOutside } from "$lib/internal/dom.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
 
@@ -131,6 +132,7 @@
 
 								const atPoint = doc.elementFromPoint(up.clientX, up.clientY);
 								if (atPoint && popupEl.contains(atPoint)) return;
+								if (!isClickTrulyOutside(up, popupEl)) return;
 
 								popupState.root.handleClose();
 							};
@@ -146,6 +148,22 @@
 							(targetIsViewport || targetIsBackdrop)
 						) {
 							e.preventDefault();
+						}
+
+						// Touch: dismissible defers to a document `click` after an outside `pointerdown`.
+						// Hit-testing can attribute pointerdown to an ancestor (e.g. viewport) while
+						// the synthetic click targets the sheet; re-check coords + bbox like deferred mouse.
+						if (e.type === "click") {
+							const popupEl = popupState.opts.ref.current;
+							if (popupEl && "clientX" in e && "clientY" in e) {
+								const doc = popupEl.ownerDocument;
+								const cx = (e as PointerEvent).clientX;
+								const cy = (e as PointerEvent).clientY;
+								const atPoint = doc.elementFromPoint(cx, cy);
+								if (atPoint && popupEl.contains(atPoint)) return;
+								const truly = isClickTrulyOutside(e as PointerEvent, popupEl);
+								if (!truly) return;
+							}
 						}
 						popupState.root.handleClose();
 					}}

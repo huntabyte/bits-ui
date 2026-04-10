@@ -149,9 +149,9 @@ export class DismissibleLayerState {
 			return;
 		}
 		const node = this.opts.ref.current;
-		const isEventValid =
-			this.opts.isValidEvent.current(e, node) ||
-			defaultDismissibleInteractOutsideIsValid(e, node);
+		const customValid = this.opts.isValidEvent.current(e, node);
+		const defaultValid = defaultDismissibleInteractOutsideIsValid(e, node);
+		const isEventValid = customValid || defaultValid;
 
 		const anyEventIntercepted = this.#isAnyEventIntercepted();
 

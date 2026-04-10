@@ -94,6 +94,11 @@ function clamp(value: number, min: number, max: number) {
 	return Math.min(Math.max(value, min), max);
 }
 
+function isPointerInPopupHitRegion(popup: HTMLElement, x: number, y: number): boolean {
+	const rect = popup.getBoundingClientRect();
+	return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+}
+
 function isElement(target: EventTarget | null): target is Element {
 	return target instanceof Element;
 }
@@ -1251,11 +1256,33 @@ export class DrawerCloseState {
 		this.attachment = attachRef(this.opts.ref);
 		this.onclick = this.onclick.bind(this);
 		this.onkeydown = this.onkeydown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+	}
+
+	onpointerup(e: PointerEvent) {
+		if (this.opts.disabled.current) return;
+		if (e.button !== 0) return;
+		if (e.pointerType !== "touch") return;
+		const el = this.opts.ref.current;
+		if (!el) return;
+		if (!(e.target instanceof Node) || !el.contains(e.target)) return;
+		this.root.handleClose();
 	}
 
 	onclick(e: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
+		const touchDerivedClick = (e as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } })
+			.sourceCapabilities?.firesTouchEvents;
+		if (touchDerivedClick) return;
+		const el = this.opts.ref.current;
+		if (el) {
+			const doc = el.ownerDocument;
+			const top = doc.elementFromPoint(e.clientX, e.clientY);
+			if (!top || (!el.contains(top) && top !== el)) {
+				return;
+			}
+		}
 		this.root.handleClose();
 	}
 
@@ -1273,6 +1300,7 @@ export class DrawerCloseState {
 				id: this.opts.id.current,
 				[this.root.getBitsAttr("close")]: "",
 				onclick: this.onclick,
+				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
 				disabled: this.opts.disabled.current ? true : undefined,
 				tabindex: 0,
@@ -1390,6 +1418,22 @@ export class DrawerBackdropState {
 
 	onclick(e: BitsMouseEvent) {
 		if (e.button > 0) return;
+		const touchDerivedClick = (e as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } })
+			.sourceCapabilities?.firesTouchEvents;
+		if (touchDerivedClick) return;
+		const backdrop = this.opts.ref.current;
+		const popup = this.root.popupNode;
+		if (!backdrop) return;
+		if (popup && isPointerInPopupHitRegion(popup, e.clientX, e.clientY)) return;
+		const doc = backdrop.ownerDocument;
+		const top = doc.elementFromPoint(e.clientX, e.clientY);
+		if (!top) return;
+		if (popup && (top === popup || popup.contains(top))) {
+			return;
+		}
+		if (top !== backdrop && !backdrop.contains(top)) {
+			return;
+		}
 		this.root.handleClose();
 	}
 
@@ -1404,8 +1448,29 @@ export class DrawerBackdropState {
 	}
 
 	onpointerup(event: PointerEvent) {
-		if (event.pointerType === "touch") return;
+		if (event.pointerType === "touch") {
+			this.#tryCloseBackdropFromTouchPointer(event);
+			return;
+		}
 		this.root.viewportSwipeDelegate?.onpointerup(event);
+	}
+
+	#tryCloseBackdropFromTouchPointer(event: PointerEvent) {
+		if (event.button !== 0) return;
+		const backdrop = this.opts.ref.current;
+		const popup = this.root.popupNode;
+		if (!backdrop) return;
+		if (popup && isPointerInPopupHitRegion(popup, event.clientX, event.clientY)) return;
+		const doc = backdrop.ownerDocument;
+		const top = doc.elementFromPoint(event.clientX, event.clientY);
+		if (!top) return;
+		if (popup && (top === popup || popup.contains(top))) {
+			return;
+		}
+		if (top !== backdrop && !backdrop.contains(top)) {
+			return;
+		}
+		this.root.handleClose();
 	}
 
 	onpointercancel(event: PointerEvent) {
@@ -1532,13 +1597,22 @@ export class DrawerViewportState {
 					(nativeEvent instanceof PointerEvent && nativeEvent.pointerType === "touch");
 				let reason = "allow";
 
-				if (!elementAtPoint || !popupElement.contains(elementAtPoint)) {
+				const inPopupDom =
+					elementAtPoint != null &&
+					(elementAtPoint === popupElement || popupElement.contains(elementAtPoint));
+				const inPopupRect = isPointerInPopupHitRegion(
+					popupElement,
+					position.x,
+					position.y
+				);
+
+				if (!inPopupDom && !inPopupRect) {
 					reason = "outside-popup";
 				} else if (touchLike && shouldIgnoreSwipeForTextSelection(doc, popupElement)) {
 					reason = "text-selection";
 				} else if (
 					nativeEvent.type === "touchstart" &&
-					elementAtPoint.closest(BITS_UI_SWIPE_IGNORE_SELECTOR)
+					elementAtPoint?.closest(BITS_UI_SWIPE_IGNORE_SELECTOR)
 				) {
 					reason = "swipe-ignore";
 				}
@@ -1734,6 +1808,11 @@ export class DrawerViewportState {
 					if (
 						preserveNativeCrossAxisScrollOnMove(touchState, touch, isVerticalScrollAxis)
 					) {
+						updateTouchScrollPosition(touchState, touch);
+						return;
+					}
+
+					if (touchState.allowSwipe === false) {
 						updateTouchScrollPosition(touchState, touch);
 						return;
 					}
@@ -3053,6 +3132,7 @@ export class DrawerPopupState {
 			tabindex: -1,
 			[this.root.getBitsAttr("popup")]: "",
 			style: {
+				pointerEvents: "auto",
 				"--nested-drawers": this.root.nestedOpenCount,
 				"--drawer-height": popupHeightCssVarValue,
 				"--drawer-frontmost-height": frontmostHeightCssVarValue,

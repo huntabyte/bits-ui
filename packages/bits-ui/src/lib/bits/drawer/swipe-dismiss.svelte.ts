@@ -820,7 +820,10 @@ export class SwipeDismiss {
 			}
 			const lostPrimaryButtonDuringSwipe =
 				event.buttons === 0 && this.sawPrimaryButtonsOnMove;
-			if ((event.buttons !== 0 && !hasPrimaryButton) || lostPrimaryButtonDuringSwipe) {
+			if (
+				(event.buttons !== 0 && !hasPrimaryButton) ||
+				(lostPrimaryButtonDuringSwipe && this.swiping)
+			) {
 				this.cancelSwipeInteraction(event);
 				return;
 			}
