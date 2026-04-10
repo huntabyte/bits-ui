@@ -1,5 +1,45 @@
 # bits-ui
 
+## 2.17.3
+
+### Patch Changes
+
+- fix(ContextMenu): treat outside interactions correctly for nested floaters inside the trigger ([#2020](https://github.com/huntabyte/bits-ui/pull/2020))
+
+## 2.17.2
+
+### Patch Changes
+
+- fix(ContextMenu): prevent left-click on nested context-menu triggers from dismissing parent layers ([#2019](https://github.com/huntabyte/bits-ui/pull/2019))
+
+- fix(Slider): use ResizeObserver to recompute thumb positioning ([#2015](https://github.com/huntabyte/bits-ui/pull/2015))
+
+- fix(TimeField): preserve current AM/PM when typing the hour in 12-hour mode so PM values no longer flip to AM ([#2016](https://github.com/huntabyte/bits-ui/pull/2016))
+
+- fix(HiddenInput): prevent page scroll in nested overflow layouts by anchoring the visually hidden input at top-left ([#2018](https://github.com/huntabyte/bits-ui/pull/2018))
+
+## 2.17.1
+
+### Patch Changes
+
+- fix(MenuSubTriggerState): handle open delay correctly ([#2013](https://github.com/huntabyte/bits-ui/pull/2013))
+
+## 2.17.0
+
+### Minor Changes
+
+- feat: support CSS transitions ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+### Patch Changes
+
+- fix(ContextMenu): nested submenus not opening ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+- fix(Menu): exit animations not firing on close ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+- improve(Menu): safe area handling ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
+- perf(PresenceLayer): simplify and improve efficiency ([#2010](https://github.com/huntabyte/bits-ui/pull/2010))
+
 ## 2.16.5
 
 ### Patch Changes

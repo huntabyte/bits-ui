@@ -10,6 +10,7 @@ interface PresenceManagerOpts
 	}> {
 	onComplete?: () => void;
 	enabled?: boolean;
+	shouldSkipExitAnimation?: () => boolean;
 }
 
 export class PresenceManager {
@@ -40,6 +41,13 @@ export class PresenceManager {
 				}
 
 				this.#clearTransitionFrame();
+
+				if (!isOpen && this.#opts.shouldSkipExitAnimation?.()) {
+					this.#shouldRender = false;
+					this.#transitionStatus = undefined;
+					this.#opts.onComplete?.();
+					return;
+				}
 
 				if (isOpen) this.#shouldRender = true;
 				this.#transitionStatus = isOpen ? "starting" : "ending";

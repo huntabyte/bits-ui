@@ -6,9 +6,16 @@ import ContextMenuTest from "./context-menu-test.svelte";
 import type { ContextMenuTestProps } from "./context-menu-test.svelte";
 import type { ContextMenuForceMountTestProps } from "./context-menu-force-mount-test.svelte";
 import ContextMenuForceMountTest from "./context-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	getPointerAwayFromSubmenuIntentClientCoords,
+	getPointerLeaveTowardSubmenuClientCoords,
+	getPointerMidpointTowardSubmenuClientCoords,
+} from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
+import ContextMenuNestedSubmenuTest from "./context-menu-nested-submenu-test.svelte";
 import ContextMenuTooltipTest from "./context-menu-tooltip-test.svelte";
 
 const kbd = getTestKbd();
@@ -120,6 +127,84 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expectExists(t.getSubContent());
 	await expect.element(page.getByTestId("sub-item")).toHaveFocus();
+});
+
+it("should keep submenu open while pointer is moving toward it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leaveToward = getPointerLeaveTowardSubmenuClientCoords(triggerRect, contentRect);
+	const midToward = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leaveToward.x,
+			clientY: leaveToward.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: midToward.x,
+			clientY: midToward.y,
+		})
+	);
+
+	await expectExists(t.getSubContent());
+});
+
+it("should close submenu when pointer intent changes away from submenu", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+	const awayFromSub = getPointerAwayFromSubmenuIntentClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: awayFromSub.x,
+			clientY: awayFromSub.y,
+		})
+	);
+
+	await expectNotExists(t.getSubContent());
+	await page.getByTestId("item-2").hover();
+	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
 });
 
 it("should toggle the checkbox item when clicked & respects binding", async () => {
@@ -450,6 +535,56 @@ it("should open inside of a dialog", async () => {
 	await expectNotExists(page.getByTestId("context-content-3"));
 });
 
+it("should not close the dialog when the context menu trigger is left clicked", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("dialog-trigger").click();
+	await expectExists(page.getByTestId("dialog-content"));
+	await page.getByTestId("context-trigger-3").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expect.element(page.getByTestId("dialog-content")).toHaveAttribute("data-state", "open");
+	await expectNotExists(page.getByTestId("context-content-3"));
+});
+
+it("should not close the popover when the context menu trigger is left clicked", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("popover-trigger").click();
+	await expectExists(page.getByTestId("popover-content"));
+	await page.getByTestId("context-trigger-4").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expect.element(page.getByTestId("popover-content")).toHaveAttribute("data-state", "open");
+	await expectNotExists(page.getByTestId("context-content-4"));
+});
+
+it("should close a nested popover when interacting with a sibling select trigger inside the same context menu trigger", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("popover-trigger-1").click();
+	await expectExists(page.getByTestId("popover-content-1"));
+	await page.getByTestId("select-trigger-1").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("popover-content-1"));
+	await expectExists(page.getByTestId("select-content-1"));
+});
+
+it("should close a nested select when interacting with the popover trigger inside the same context menu trigger", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("select-trigger-1").click();
+	await expectExists(page.getByTestId("select-content-1"));
+	await page.getByTestId("popover-trigger-1").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("select-content-1"));
+	await expectExists(page.getByTestId("popover-content-1"));
+});
+
+it("should close the first nested select when opening the sibling select inside the same context menu trigger", async () => {
+	render(ContextMenuIntegrationTest);
+	await page.getByTestId("select-trigger-1").click();
+	await expectExists(page.getByTestId("select-content-1"));
+	await page.getByTestId("select-trigger-2").click();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("select-content-1"));
+	await expectExists(page.getByTestId("select-content-2"));
+});
+
 it("should open nested context menus", async () => {
 	render(ContextMenuNestedTest);
 	await page.getByTestId("trigger").click({ button: "right" });
@@ -457,6 +592,19 @@ it("should open nested context menus", async () => {
 	await page.getByTestId("nested-trigger").click({ button: "right" });
 	await expectExists(page.getByTestId("nested-content"));
 	await expectExists(page.getByTestId("content"));
+});
+
+it("should open nested submenus in context menu", async () => {
+	render(ContextMenuNestedSubmenuTest);
+	await page.getByTestId("trigger").click({ button: "right" });
+	await expectExists(page.getByTestId("content"));
+
+	await page.getByTestId("sub-trigger").hover();
+	await expectExists(page.getByTestId("sub-content"));
+
+	await page.getByTestId("sub-sub-trigger").hover();
+	await expectExists(page.getByTestId("sub-sub-content"));
+	await expectExists(page.getByTestId("sub-sub-item"));
 });
 
 it("should allow overriding the pointer events style", async () => {

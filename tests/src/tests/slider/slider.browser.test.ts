@@ -7,6 +7,7 @@ import SliderRangeTest, { type SliderMultiRangeTestProps } from "./slider-range-
 import SliderWithLabelsTest, {
 	type SliderWithLabelsTestProps,
 } from "./slider-test-with-labels.svelte";
+import SliderInAccordionTest from "./slider-in-accordion-test.svelte";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -135,6 +136,19 @@ it("should not allow the value to change when the `disabled` prop is set to true
 	thumb.focus();
 	await userEvent.keyboard(kbd.HOME);
 	expectPercentage({ percentage: 30, thumb, range });
+});
+
+it("should recalculate thumb position when a hidden slider becomes visible", async () => {
+	render(SliderInAccordionTest);
+
+	const secondThumb = page.getByTestId("thumb-2");
+	await expect.element(secondThumb).toBeInTheDocument();
+
+	await userEvent.click(page.getByTestId("2-trigger"));
+
+	await vi.waitFor(() => {
+		expect(isCloseEnough(10, (secondThumb.element() as HTMLElement).style.left)).toBeTruthy();
+	});
 });
 
 describe("range", () => {

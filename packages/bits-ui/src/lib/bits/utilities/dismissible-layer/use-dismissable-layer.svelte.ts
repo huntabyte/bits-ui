@@ -260,10 +260,12 @@ export function defaultDismissibleInteractOutsideIsValid(
 	if (!isElementOrSVGElement(target)) return false;
 
 	const targetIsContextMenuTrigger = Boolean(target.closest(`[${CONTEXT_MENU_TRIGGER_ATTR}]`));
-	if ("button" in e && e.button > 0 && !targetIsContextMenuTrigger) return false;
-	if ("button" in e && e.button === 0 && targetIsContextMenuTrigger) return true;
-
 	const nodeIsContextMenu = Boolean(node.closest(`[${CONTEXT_MENU_CONTENT_ATTR}]`));
+
+	if ("button" in e && e.button > 0 && !targetIsContextMenuTrigger) return false;
+	if ("button" in e && e.button === 0 && targetIsContextMenuTrigger && nodeIsContextMenu) {
+		return true;
+	}
 	if (targetIsContextMenuTrigger && nodeIsContextMenu) return false;
 
 	const ownerDocument = getOwnerDocument(target);

@@ -5,7 +5,13 @@ import { getTestKbd } from "../utils.js";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	getPointerAwayFromSubmenuIntentClientCoords,
+	getPointerLeaveTowardSubmenuClientCoords,
+	getPointerMidpointTowardSubmenuClientCoords,
+} from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 
@@ -158,6 +164,84 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expectExists(page.getByTestId("sub-content"));
 	await expect.element(page.getByTestId("sub-item")).toHaveFocus();
+});
+
+it("should keep submenu open while pointer is moving toward it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leaveToward = getPointerLeaveTowardSubmenuClientCoords(triggerRect, contentRect);
+	const midToward = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leaveToward.x,
+			clientY: leaveToward.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: midToward.x,
+			clientY: midToward.y,
+		})
+	);
+
+	await expectExists(t.getSubContent());
+});
+
+it("should close submenu when pointer intent changes away from submenu", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+	const awayFromSub = getPointerAwayFromSubmenuIntentClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: awayFromSub.x,
+			clientY: awayFromSub.y,
+		})
+	);
+
+	await expectNotExists(t.getSubContent());
+	await page.getByTestId("item-2").hover();
+	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
 });
 
 it("should toggle the checkbox item when clicked & respects binding", async () => {

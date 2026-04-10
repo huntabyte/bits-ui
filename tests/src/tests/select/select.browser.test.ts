@@ -10,8 +10,8 @@ import SelectMultiTest from "./select-multi-test.svelte";
 import type { Item, SelectSingleTestProps } from "./select-test.svelte";
 import SelectTest from "./select-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
-import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();

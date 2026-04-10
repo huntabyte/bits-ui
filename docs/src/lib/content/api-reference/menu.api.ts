@@ -245,7 +245,7 @@ const subTriggerProps = {
 		description: "Whether or not the submenu trigger is disabled.",
 	}),
 	openDelay: defineNumberProp({
-		default: 100,
+		default: 0,
 		description:
 			"The amount of time in ms from when the mouse enters the subtrigger until the submenu opens.",
 	}),

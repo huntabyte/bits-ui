@@ -8,14 +8,16 @@
 	let {
 		open = $bindable(false),
 		dir = "ltr",
+		// debugMode = false,
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
 		children,
 	}: ContextMenuRootProps = $props();
 
 	const root = MenuRootState.create({
-		variant: boxWith(() => "context-menu"),
+		variant: boxWith(() => "context-menu" as const),
 		dir: boxWith(() => dir),
+		// debugMode: boxWith(() => debugMode),
 		onClose: () => {
 			open = false;
 			onOpenChange?.(false);

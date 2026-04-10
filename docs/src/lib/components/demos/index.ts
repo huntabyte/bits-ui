@@ -24,6 +24,7 @@ export { default as CommandDemo } from "./command-demo.svelte";
 export { default as CommandDemoGrid } from "./command-grid-demo.svelte";
 export { default as CommandDemoDialog } from "./command-demo-dialog.svelte";
 export { default as ContextMenuDemo } from "./context-menu-demo.svelte";
+export { default as ContextMenuDemoNested } from "./context-menu-demo-nested.svelte";
 export { default as ContextMenuDemoTransition } from "./context-menu-demo-transition.svelte";
 export { default as DateFieldDemo } from "./date-field-demo.svelte";
 export { default as DateRangeFieldDemo } from "./date-range-field-demo.svelte";
@@ -46,6 +47,7 @@ export { default as DrawerDemoSnapPoints } from "./drawer-demo-snap-points.svelt
 export { default as DrawerDemoSwipeArea } from "./drawer-demo-swipe-area.svelte";
 export { default as DrawerDemoUncontained } from "./drawer-demo-uncontained.svelte";
 export { default as DropdownMenuDemo } from "./dropdown-menu-demo.svelte";
+export { default as DropdownMenuDemoNested } from "./dropdown-menu-demo-nested.svelte";
 export { default as DropdownMenuDemoTransition } from "./dropdown-menu-demo-transition.svelte";
 export { default as LabelDemo } from "./label-demo.svelte";
 export { default as LinkPreviewDemo } from "./link-preview-demo.svelte";
