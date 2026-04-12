@@ -10,6 +10,10 @@ import { getTestKbd } from "../utils.js";
 
 const kbd = getTestKbd();
 
+function clickInFlowButtonWhileDrawerOpen(testId: string): void {
+	(page.getByTestId(testId).element() as HTMLButtonElement).click();
+}
+
 async function setup(props: DrawerTestProps = {}) {
 	const t = render(DrawerTest, { ...props });
 	const trigger = page.getByTestId("trigger");
@@ -170,7 +174,14 @@ describe("Open/Close Behavior", () => {
 
 	it("should close when the backdrop is clicked", async () => {
 		await open();
-		(page.getByTestId("backdrop").element() as HTMLDivElement).click();
+		const popupTop = (page.getByTestId("popup").element() as HTMLElement).getBoundingClientRect()
+			.top;
+		const y = Math.max(4, popupTop - 12);
+		await page.getByTestId("backdrop").click({
+			force: true,
+			position: { x: 120, y },
+			delay: 20,
+		});
 		await expectNotExists(page.getByTestId("popup"));
 	});
 });
@@ -208,14 +219,14 @@ describe("Tether", () => {
 		await expect.element(page.getByTestId("payload")).toHaveTextContent("Top");
 		await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
 
-		await page.getByTestId("tether-open-bottom").click();
+		clickInFlowButtonWhileDrawerOpen("tether-open-bottom");
 		await expectExists(page.getByTestId("popup"));
 		await expect.element(page.getByTestId("payload")).toHaveTextContent("Bottom");
 		await expect
 			.element(page.getByTestId("trigger-binding"))
 			.toHaveTextContent("trigger-bottom");
 
-		await page.getByTestId("tether-close").click();
+		clickInFlowButtonWhileDrawerOpen("tether-close");
 		await expectNotExists(page.getByTestId("popup"));
 		await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
 	});
@@ -249,12 +260,12 @@ describe("Tether", () => {
 		await expect.element(page.getByTestId("payload")).toHaveTextContent("One");
 		await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-1");
 
-		await page.getByTestId("open-trigger-2").click();
+		clickInFlowButtonWhileDrawerOpen("open-trigger-2");
 		await expectExists(page.getByTestId("popup"));
 		await expect.element(page.getByTestId("payload")).toHaveTextContent("Two");
 		await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-2");
 
-		await page.getByTestId("set-null-trigger").click();
+		clickInFlowButtonWhileDrawerOpen("set-null-trigger");
 		await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("null");
 
 		await page.getByTestId("popup").getByTestId("close").click();
