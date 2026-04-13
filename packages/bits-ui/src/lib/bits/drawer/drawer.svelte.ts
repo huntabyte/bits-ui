@@ -1556,6 +1556,7 @@ export class DrawerViewportState {
 	ignoreTouchSwipe = false;
 	keyboardViewportInset = $state(0);
 	lastKeyboardAutoScrollSignature = "";
+	destroyed = false;
 
 	constructor(opts: DrawerViewportStateOpts, root: DrawerRootState) {
 		this.opts = opts;
@@ -1565,8 +1566,10 @@ export class DrawerViewportState {
 			this.root.viewportNode = v;
 		});
 		this.swipe = new SwipeDismiss({
-			enabled: () => this.root.opts.open.current && this.root.nestedOpenCount === 0,
+			enabled: () =>
+				!this.destroyed && this.root.opts.open.current && this.root.nestedOpenCount === 0,
 			directions: () => {
+				if (this.destroyed) return [];
 				const hasSnapPoints =
 					(this.root.opts.snapPoints.current?.length ?? 0) > 0 &&
 					(this.root.opts.swipeDirection.current === "down" ||
@@ -1581,7 +1584,7 @@ export class DrawerViewportState {
 
 				return [this.root.opts.swipeDirection.current];
 			},
-			element: () => this.root.popupNode,
+			element: () => (this.destroyed ? null : this.root.popupNode),
 			ignoreSelectorWhenTouch: false,
 			ignoreScrollableAncestors: true,
 			trackDrag: false,
@@ -2053,6 +2056,8 @@ export class DrawerViewportState {
 		);
 
 		onDestroyEffect(() => {
+			this.destroyed = true;
+			this.swipe.destroy();
 			if (this.root.viewportSwipeDelegate === this) {
 				this.root.viewportSwipeDelegate = null;
 			}
@@ -2083,6 +2088,7 @@ export class DrawerViewportState {
 	}
 
 	isSwipeGestureActive(): boolean {
+		if (this.destroyed) return false;
 		return this.swipe.shouldLockTouchMove || this.swipe.swiping;
 	}
 
@@ -2436,6 +2442,7 @@ export class DrawerViewportState {
 	}
 
 	onpointerdown(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		if (!this.root.opts.open.current || this.root.nestedOpenCount > 0) return;
 		const currentTarget = event.currentTarget;
@@ -2451,6 +2458,7 @@ export class DrawerViewportState {
 	}
 
 	onpointermove(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		this.swipe.onpointermove(event);
 		this.applyMovement();
@@ -2458,18 +2466,21 @@ export class DrawerViewportState {
 	}
 
 	onpointerup(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		this.swipe.onpointerup(event);
 		this.clearStaleSwipeStyles();
 	}
 
 	onpointercancel(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		this.swipe.onpointercancel(event);
 		this.clearSwipeStyles();
 	}
 
 	ontouchstart(event: TouchEvent) {
+		if (this.destroyed) return;
 		if (this.root.touchSwipeSource === null) {
 			this.root.touchSwipeSource = "viewport";
 		}
@@ -2548,6 +2559,7 @@ export class DrawerViewportState {
 	}
 
 	ontouchmove(event: TouchEvent) {
+		if (this.destroyed) return;
 		if (this.ignoreTouchSwipe) return;
 
 		const touchState = this.touchScrollState;
@@ -2566,6 +2578,7 @@ export class DrawerViewportState {
 	}
 
 	ontouchend(event: TouchEvent) {
+		if (this.destroyed) return;
 		this.swipe.ontouchend(event);
 		this.clearStaleSwipeStyles();
 		this.root.touchSwipeSource = null;
@@ -2573,6 +2586,7 @@ export class DrawerViewportState {
 	}
 
 	ontouchcancel(event: TouchEvent) {
+		if (this.destroyed) return;
 		this.swipe.ontouchcancel(event);
 		this.clearSwipeStyles();
 		this.root.touchSwipeSource = null;
@@ -3218,6 +3232,7 @@ export class DrawerSwipeAreaState {
 	openedBySwipe = false;
 	closedOffset: number | null = null;
 	popupSwipeTransition: string | null = null;
+	destroyed = false;
 
 	constructor(opts: DrawerSwipeAreaStateOpts, root: DrawerRootState) {
 		this.opts = opts;
@@ -3233,9 +3248,11 @@ export class DrawerSwipeAreaState {
 		this.ontouchcancel = this.ontouchcancel.bind(this);
 		this.swipe = new SwipeDismiss({
 			enabled: () =>
-				!this.opts.disabled.current && (!this.root.opts.open.current || this.swipeActive),
-			directions: () => [this.resolvedSwipeDirection],
-			element: () => this.opts.ref.current,
+				!this.destroyed &&
+				!this.opts.disabled.current &&
+				(!this.root.opts.open.current || this.swipeActive),
+			directions: () => (this.destroyed ? [] : [this.resolvedSwipeDirection]),
+			element: () => (this.destroyed ? null : this.opts.ref.current),
 			trackDrag: false,
 			onSwipeStart: () => {
 				this.swipeActive = true;
@@ -3305,6 +3322,11 @@ export class DrawerSwipeAreaState {
 				this.clearSwipeStyles();
 				return false;
 			},
+		});
+
+		onDestroyEffect(() => {
+			this.destroyed = true;
+			this.swipe.destroy();
 		});
 	}
 
@@ -3410,40 +3432,48 @@ export class DrawerSwipeAreaState {
 	}
 
 	onpointerdown(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		this.swipe.onpointerdown(event);
 		event.preventDefault();
 	}
 
 	onpointermove(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		this.swipe.onpointermove(event);
 	}
 
 	onpointerup(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		this.swipe.onpointerup(event);
 	}
 
 	onpointercancel(event: PointerEvent) {
+		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
 		this.swipe.onpointercancel(event);
 		this.clearSwipeStyles();
 	}
 
 	ontouchstart(event: TouchEvent) {
+		if (this.destroyed) return;
 		this.swipe.ontouchstart(event);
 	}
 
 	ontouchmove(event: TouchEvent) {
+		if (this.destroyed) return;
 		this.swipe.ontouchmove(event);
 	}
 
 	ontouchend(event: TouchEvent) {
+		if (this.destroyed) return;
 		this.swipe.ontouchend(event);
 	}
 
 	ontouchcancel(event: TouchEvent) {
+		if (this.destroyed) return;
 		this.swipe.ontouchcancel(event);
 		this.clearSwipeStyles();
 	}

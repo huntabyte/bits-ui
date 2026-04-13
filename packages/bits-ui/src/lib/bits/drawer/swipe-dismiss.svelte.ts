@@ -196,6 +196,7 @@ type SwipeDismissOptions = {
 
 export class SwipeDismiss {
 	readonly #opts: SwipeDismissOptions;
+	#destroyed = false;
 	readonly ignoreSelector = DEFAULT_IGNORE_SELECTOR;
 
 	swiping = $state(false);
@@ -239,16 +240,20 @@ export class SwipeDismiss {
 		this.ontouchcancel = this.ontouchcancel.bind(this);
 	}
 
+	destroy(): void {
+		this.#destroyed = true;
+	}
+
 	get directions() {
-		return this.#opts.directions();
+		return this.#destroyed ? [] : this.#opts.directions();
 	}
 
 	get enabled() {
-		return this.#opts.enabled();
+		return this.#destroyed ? false : this.#opts.enabled();
 	}
 
 	get element() {
-		return this.#opts.element();
+		return this.#destroyed ? null : this.#opts.element();
 	}
 
 	get primaryDirection() {
@@ -610,6 +615,7 @@ export class SwipeDismiss {
 	}
 
 	handleStart(event: PointerEvent | TouchEvent) {
+		if (this.#destroyed) return;
 		if (
 			!this.enabled ||
 			event.defaultPrevented ||
@@ -810,6 +816,7 @@ export class SwipeDismiss {
 	}
 
 	handleMove(event: PointerEvent | TouchEvent) {
+		if (this.#destroyed) return;
 		const currentPos = this.getPrimaryPosition(event);
 		if (!currentPos) return;
 
@@ -909,6 +916,7 @@ export class SwipeDismiss {
 	}
 
 	handleEnd(event: PointerEvent | TouchEvent) {
+		if (this.#destroyed) return;
 		if (!this.enabled) return;
 		const resolvedDragOffset = this.dragOffset;
 		const resolvedInitialTransform = this.initialTransform;
