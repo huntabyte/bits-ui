@@ -445,7 +445,7 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 			{/if}
 		{/snippet}
 	</Tooltip.Content>
-</Dialog.Root>
+</Tooltip.Root>
 ```
 
 Of course, this isn't the prettiest syntax, so it's recommended to create your own reusable content components that handles this logic if you intend to use this approach throughout your app. For more information on using transitions with Bits UI components, see the [Transitions](/docs/transitions) documentation.
