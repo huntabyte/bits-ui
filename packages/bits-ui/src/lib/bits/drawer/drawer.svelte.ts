@@ -574,7 +574,7 @@ export class DrawerTether<Payload = unknown> {
 	}
 
 	get isOpen() {
-		return this.#state.root?.opts.open.current ?? false;
+		return this.#state.root?.isOpen ?? false;
 	}
 
 	get payload() {
@@ -659,6 +659,7 @@ export class DrawerRootState {
 	lastTouchTriggerUpId = $state<string | null>(null);
 	lastCommittedSnapOffset = $state<number | null>(null);
 	backdropSwipeProgress = $state(0);
+	isOpen = false;
 
 	popupPresence: PresenceManager;
 	backdropPresence: PresenceManager;
@@ -669,6 +670,7 @@ export class DrawerRootState {
 		this.depth = parent ? parent.depth + 1 : 0;
 		this.tetherState = opts.tether.current?.state ?? null;
 		this.registry = this.tetherState?.registry ?? new DrawerTriggerRegistryState();
+		this.isOpen = this.opts.open.current;
 
 		this.popupPresence = new PresenceManager({
 			ref: boxWith(() => this.popupNode),
@@ -720,6 +722,7 @@ export class DrawerRootState {
 		watch(
 			() => this.opts.open.current,
 			(isOpen) => {
+				this.isOpen = isOpen;
 				if (isOpen) {
 					this.ensureActiveTrigger();
 					this.parent?.incrementNested();
@@ -761,7 +764,7 @@ export class DrawerRootState {
 		}
 
 		onDestroyEffect(() => {
-			if (this.opts.open.current) {
+			if (this.isOpen) {
 				this.parent?.decrementNested();
 			}
 			this.provider?.removeDrawer(this.opts.id.current);
@@ -770,17 +773,20 @@ export class DrawerRootState {
 
 	handleOpen = () => {
 		this.ensureActiveTrigger();
+		this.isOpen = true;
 		this.opts.open.current = true;
 	};
 
 	handleOpenWithPayload = (payload: unknown) => {
 		this.registry.setActiveTrigger(null);
 		this.tetherPayload = payload;
+		this.isOpen = true;
 		this.opts.open.current = true;
 	};
 
 	handleClose = () => {
-		if (!this.opts.open.current) return;
+		if (!this.isOpen) return;
+		this.isOpen = false;
 		this.opts.open.current = false;
 	};
 
@@ -1567,7 +1573,7 @@ export class DrawerViewportState {
 		});
 		this.swipe = new SwipeDismiss({
 			enabled: () =>
-				!this.destroyed && this.root.opts.open.current && this.root.nestedOpenCount === 0,
+				!this.destroyed && this.root.isOpen && this.root.nestedOpenCount === 0,
 			directions: () => {
 				if (this.destroyed) return [];
 				const hasSnapPoints =
@@ -1801,7 +1807,7 @@ export class DrawerViewportState {
 
 					if (
 						shouldIgnoreSwipeForTextSelection(doc, rootElement) ||
-						!this.root.opts.open.current ||
+						!this.root.isOpen ||
 						this.root.nestedOpenCount > 0
 					) {
 						updateTouchScrollPosition(touchState, touch);
@@ -1907,7 +1913,7 @@ export class DrawerViewportState {
 							? viewport.ownerDocument.defaultView.visualViewport.offsetTop +
 								viewport.ownerDocument.defaultView.visualViewport.height
 							: viewport.getBoundingClientRect().bottom;
-					if (isIOS && this.root.opts.open.current && this.keyboardViewportInset > 0) {
+					if (isIOS && this.root.isOpen && this.keyboardViewportInset > 0) {
 						this.syncFocusedInputVisibilityWithinPopup(visualViewportBottom);
 					}
 				};
@@ -2167,7 +2173,7 @@ export class DrawerViewportState {
 		const backdropElement = this.root.backdropNode;
 		if (!popupElement) return;
 
-		const isActive = this.root.opts.open.current && shouldTrackProgress;
+		const isActive = this.root.isOpen && shouldTrackProgress;
 		const swipeProgress = isActive ? progress : 0;
 		this.root.backdropSwipeProgress = swipeProgress;
 		if (notifyParent && this.root.parent) {
@@ -2444,7 +2450,7 @@ export class DrawerViewportState {
 	onpointerdown(event: PointerEvent) {
 		if (this.destroyed) return;
 		if (event.pointerType === "touch") return;
-		if (!this.root.opts.open.current || this.root.nestedOpenCount > 0) return;
+		if (!this.root.isOpen || this.root.nestedOpenCount > 0) return;
 		const currentTarget = event.currentTarget;
 		if (!(currentTarget instanceof Element)) return;
 		const elementAtPoint = currentTarget.ownerDocument.elementFromPoint(
@@ -2487,7 +2493,7 @@ export class DrawerViewportState {
 		const touch = event.touches[0];
 		const rootElement = this.root.viewportNode ?? this.root.popupNode;
 		if (
-			!this.root.opts.open.current ||
+			!this.root.isOpen ||
 			this.root.nestedOpenCount > 0 ||
 			!touch ||
 			!rootElement
@@ -3232,6 +3238,7 @@ export class DrawerSwipeAreaState {
 	openedBySwipe = false;
 	closedOffset: number | null = null;
 	popupSwipeTransition: string | null = null;
+	isDisabled = false;
 	destroyed = false;
 
 	constructor(opts: DrawerSwipeAreaStateOpts, root: DrawerRootState) {
@@ -3246,11 +3253,12 @@ export class DrawerSwipeAreaState {
 		this.ontouchmove = this.ontouchmove.bind(this);
 		this.ontouchend = this.ontouchend.bind(this);
 		this.ontouchcancel = this.ontouchcancel.bind(this);
+		this.isDisabled = this.opts.disabled.current;
 		this.swipe = new SwipeDismiss({
 			enabled: () =>
 				!this.destroyed &&
-				!this.opts.disabled.current &&
-				(!this.root.opts.open.current || this.swipeActive),
+				!this.isDisabled &&
+				(!this.root.isOpen || this.swipeActive),
 			directions: () => (this.destroyed ? [] : [this.resolvedSwipeDirection]),
 			element: () => (this.destroyed ? null : this.opts.ref.current),
 			trackDrag: false,
@@ -3306,10 +3314,10 @@ export class DrawerSwipeAreaState {
 					threshold != null &&
 					direction === this.resolvedSwipeDirection &&
 					(hasEnoughDistance || hasEnoughVelocity || softCommitWhileDragging) &&
-					!this.opts.disabled.current;
+					!this.isDisabled;
 
 				if (shouldOpen) {
-					if (!this.root.opts.open.current) {
+					if (!this.root.isOpen) {
 						this.root.handleOpen();
 					}
 				} else if (this.openedBySwipe) {
@@ -3323,6 +3331,13 @@ export class DrawerSwipeAreaState {
 				return false;
 			},
 		});
+
+		watch(
+			() => this.opts.disabled.current,
+			(disabled) => {
+				this.isDisabled = disabled;
+			}
+		);
 
 		onDestroyEffect(() => {
 			this.destroyed = true;
@@ -3357,7 +3372,7 @@ export class DrawerSwipeAreaState {
 		if (!this.swipeActive) return;
 		const popupElement = this.root.popupNode;
 		if (!popupElement) return;
-		if (!this.root.opts.open.current) return;
+		if (!this.root.isOpen) return;
 
 		if (this.closedOffset == null) {
 			this.closedOffset = this.resolvePopupSize();
