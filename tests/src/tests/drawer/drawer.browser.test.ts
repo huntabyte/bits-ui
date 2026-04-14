@@ -1,5 +1,5 @@
 import { page, userEvent } from "@vitest/browser/context";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import DrawerTest, { type DrawerTestProps } from "./drawer-test.svelte";
 import DrawerTetherTest from "./drawer-tether-test.svelte";
@@ -9,6 +9,15 @@ import { expectExists, expectNotExists } from "../browser-utils";
 import { getTestKbd } from "../utils.js";
 
 const kbd = getTestKbd();
+
+function isCaptureEventListenerOption(
+	options:
+		| Parameters<Document["addEventListener"]>[2]
+		| Parameters<Document["removeEventListener"]>[2]
+): boolean {
+	if (typeof options === "boolean") return options;
+	return options?.capture === true;
+}
 
 function clickInFlowButtonWhileDrawerOpen(testId: string): void {
 	(page.getByTestId(testId).element() as HTMLButtonElement).click();
@@ -174,8 +183,9 @@ describe("Open/Close Behavior", () => {
 
 	it("should close when the backdrop is clicked", async () => {
 		await open();
-		const popupTop = (page.getByTestId("popup").element() as HTMLElement).getBoundingClientRect()
-			.top;
+		const popupTop = (
+			page.getByTestId("popup").element() as HTMLElement
+		).getBoundingClientRect().top;
 		const y = Math.max(4, popupTop - 12);
 		await page.getByTestId("backdrop").click({
 			force: true,
@@ -183,6 +193,49 @@ describe("Open/Close Behavior", () => {
 			delay: 20,
 		});
 		await expectNotExists(page.getByTestId("popup"));
+	});
+
+	it("should clean up document touchmove capture listeners once closed", async () => {
+		const trackedTouchmoveListeners = new Set<EventListenerOrEventListenerObject | null>();
+		const originalAddEventListener = Document.prototype.addEventListener;
+		const originalRemoveEventListener = Document.prototype.removeEventListener;
+
+		const addEventListenerSpy = vi
+			.spyOn(Document.prototype, "addEventListener")
+			.mockImplementation(function (...args: Parameters<Document["addEventListener"]>): void {
+				const [type, listener, options] = args;
+				if (type === "touchmove" && isCaptureEventListenerOption(options)) {
+					trackedTouchmoveListeners.add(listener);
+				}
+				// @ts-expect-error - this is a mock
+				originalAddEventListener.call(this, ...args);
+			});
+
+		const removeEventListenerSpy = vi
+			.spyOn(Document.prototype, "removeEventListener")
+			.mockImplementation(function (
+				...args: Parameters<Document["removeEventListener"]>
+			): void {
+				const [type, listener, options] = args;
+				if (type === "touchmove" && isCaptureEventListenerOption(options)) {
+					trackedTouchmoveListeners.delete(listener);
+				}
+				// @ts-expect-error - this is a mock
+				originalRemoveEventListener.call(this, ...args);
+			});
+
+		try {
+			await open();
+			expect(trackedTouchmoveListeners.size).toBeGreaterThan(0);
+
+			await page.getByTestId("close").click();
+			await expectNotExists(page.getByTestId("popup"));
+
+			expect(trackedTouchmoveListeners.size).toBe(0);
+		} finally {
+			addEventListenerSpy.mockRestore();
+			removeEventListenerSpy.mockRestore();
+		}
 	});
 });
 

@@ -1278,8 +1278,9 @@ export class DrawerCloseState {
 	onclick(e: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
-		const touchDerivedClick = (e as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } })
-			.sourceCapabilities?.firesTouchEvents;
+		const touchDerivedClick = (
+			e as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } }
+		).sourceCapabilities?.firesTouchEvents;
 		if (touchDerivedClick) return;
 		const el = this.opts.ref.current;
 		if (el) {
@@ -1424,8 +1425,9 @@ export class DrawerBackdropState {
 
 	onclick(e: BitsMouseEvent) {
 		if (e.button > 0) return;
-		const touchDerivedClick = (e as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } })
-			.sourceCapabilities?.firesTouchEvents;
+		const touchDerivedClick = (
+			e as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } }
+		).sourceCapabilities?.firesTouchEvents;
 		if (touchDerivedClick) return;
 		const backdrop = this.opts.ref.current;
 		const popup = this.root.popupNode;
@@ -1572,8 +1574,7 @@ export class DrawerViewportState {
 			this.root.viewportNode = v;
 		});
 		this.swipe = new SwipeDismiss({
-			enabled: () =>
-				!this.destroyed && this.root.isOpen && this.root.nestedOpenCount === 0,
+			enabled: () => !this.destroyed && this.root.isOpen && this.root.nestedOpenCount === 0,
 			directions: () => {
 				if (this.destroyed) return [];
 				const hasSnapPoints =
@@ -1609,11 +1610,7 @@ export class DrawerViewportState {
 				const inPopupDom =
 					elementAtPoint != null &&
 					(elementAtPoint === popupElement || popupElement.contains(elementAtPoint));
-				const inPopupRect = isPointerInPopupHitRegion(
-					popupElement,
-					position.x,
-					position.y
-				);
+				const inPopupRect = isPointerInPopupHitRegion(popupElement, position.x, position.y);
 
 				if (!inPopupDom && !inPopupRect) {
 					reason = "outside-popup";
@@ -1779,9 +1776,12 @@ export class DrawerViewportState {
 		);
 
 		watch(
-			() => this.root.viewportNode ?? this.root.popupNode,
-			(rootElement) => {
-				if (!rootElement) return;
+			[
+				() => this.root.viewportNode ?? this.root.popupNode,
+				() => this.root.opts.open.current,
+			],
+			([rootElement, open]) => {
+				if (!rootElement || !open) return;
 				const doc = rootElement.ownerDocument;
 				const handleNativeTouchMove = (event: TouchEvent) => {
 					const touchState = this.touchScrollState;
@@ -2492,12 +2492,7 @@ export class DrawerViewportState {
 		}
 		const touch = event.touches[0];
 		const rootElement = this.root.viewportNode ?? this.root.popupNode;
-		if (
-			!this.root.isOpen ||
-			this.root.nestedOpenCount > 0 ||
-			!touch ||
-			!rootElement
-		) {
+		if (!this.root.isOpen || this.root.nestedOpenCount > 0 || !touch || !rootElement) {
 			this.resetTouchTrackingState();
 			return;
 		}
@@ -3256,9 +3251,7 @@ export class DrawerSwipeAreaState {
 		this.isDisabled = this.opts.disabled.current;
 		this.swipe = new SwipeDismiss({
 			enabled: () =>
-				!this.destroyed &&
-				!this.isDisabled &&
-				(!this.root.isOpen || this.swipeActive),
+				!this.destroyed && !this.isDisabled && (!this.root.isOpen || this.swipeActive),
 			directions: () => (this.destroyed ? [] : [this.resolvedSwipeDirection]),
 			element: () => (this.destroyed ? null : this.opts.ref.current),
 			trackDrag: false,
