@@ -5,6 +5,7 @@ import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
+	BitsPrimitiveSpanAttributes,
 } from "$lib/shared/attributes.js";
 import type {
 	OnChangeFn,
@@ -15,6 +16,7 @@ import type {
 } from "$lib/internal/types.js";
 import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 import type { HTMLInputAttributes } from "svelte/elements";
+import type { Snippet } from "svelte";
 
 export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -161,6 +163,23 @@ export type SelectRootPropsWithoutHTML = SelectBaseRootPropsWithoutHTML &
 	(SelectSingleRootPropsWithoutHTML | SelectMultipleRootPropsWithoutHTML);
 
 export type SelectRootProps = SelectRootPropsWithoutHTML;
+
+export type SelectValueSnippetProps = {
+	type: 'single',
+	selected: { value: string, label: string },
+	setValue: (value: string) => void
+} | {
+	type: 'multiple',
+	selected: { value: string, label: string }[],
+	setValue: (value: string[]) => void
+}
+
+export type SelectValuePropsWithoutHTML = {
+	child?: Snippet<[SelectValueSnippetProps]>
+}
+
+export type SelectValueProps = SelectValuePropsWithoutHTML &
+	Without<BitsPrimitiveSpanAttributes, SelectValuePropsWithoutHTML>;
 
 export type _SharedSelectContentProps = {
 	/**

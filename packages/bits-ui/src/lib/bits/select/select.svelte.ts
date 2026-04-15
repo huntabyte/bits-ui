@@ -38,6 +38,8 @@ import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floatin
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import { DEV } from "esm-env";
+import type { SelectValueSnippetProps } from "./types.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -75,19 +77,19 @@ const SelectContentContext = new Context<SelectContentState>("Select.Content | C
 
 interface SelectBaseRootStateOpts
 	extends ReadableBoxedValues<{
-			disabled: boolean;
-			required: boolean;
-			name: string;
-			loop: boolean;
-			scrollAlignment: "nearest" | "center";
-			items: { value: string; label: string; disabled?: boolean }[];
-			allowDeselect: boolean;
-			onOpenChangeComplete: OnChangeFn<boolean>;
-		}>,
-		WritableBoxedValues<{
-			open: boolean;
-			inputValue: string;
-		}> {
+		disabled: boolean;
+		required: boolean;
+		name: string;
+		loop: boolean;
+		scrollAlignment: "nearest" | "center";
+		items: { value: string; label: string; disabled?: boolean }[];
+		allowDeselect: boolean;
+		onOpenChangeComplete: OnChangeFn<boolean>;
+	}>,
+	WritableBoxedValues<{
+		open: boolean;
+		inputValue: string;
+	}> {
 	isCombobox: boolean;
 }
 
@@ -218,9 +220,9 @@ abstract class SelectBaseRootState {
 
 interface SelectSingleRootStateOpts
 	extends SelectBaseRootStateOpts,
-		WritableBoxedValues<{
-			value: string;
-		}> {}
+	WritableBoxedValues<{
+		value: string;
+	}> { }
 
 export class SelectSingleRootState extends SelectBaseRootState {
 	readonly opts: SelectSingleRootStateOpts;
@@ -298,9 +300,9 @@ export class SelectSingleRootState extends SelectBaseRootState {
 
 interface SelectMultipleRootStateOpts
 	extends SelectBaseRootStateOpts,
-		WritableBoxedValues<{
-			value: string[];
-		}> {}
+	WritableBoxedValues<{
+		value: string[];
+	}> { }
 
 class SelectMultipleRootState extends SelectBaseRootState {
 	readonly opts: SelectMultipleRootStateOpts;
@@ -363,19 +365,19 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 interface SelectRootStateOpts
 	extends ReadableBoxedValues<{
-			disabled: boolean;
-			required: boolean;
-			loop: boolean;
-			scrollAlignment: "nearest" | "center";
-			name: string;
-			items: { value: string; label: string; disabled?: boolean }[];
-			allowDeselect: boolean;
-			onOpenChangeComplete: OnChangeFn<boolean>;
-		}>,
-		WritableBoxedValues<{
-			open: boolean;
-			inputValue: string;
-		}> {
+		disabled: boolean;
+		required: boolean;
+		loop: boolean;
+		scrollAlignment: "nearest" | "center";
+		name: string;
+		items: { value: string; label: string; disabled?: boolean }[];
+		allowDeselect: boolean;
+		onOpenChangeComplete: OnChangeFn<boolean>;
+	}>,
+	WritableBoxedValues<{
+		open: boolean;
+		inputValue: string;
+	}> {
 	isCombobox: boolean;
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
@@ -396,11 +398,44 @@ export class SelectRootState {
 
 type SelectRoot = SelectSingleRootState | SelectMultipleRootState;
 
+export class SelectValueState {
+	static create() {
+		return new SelectValueState(SelectRootContext.get());
+	}
+	readonly root: SelectRoot;
+
+	constructor(root: SelectRoot) {
+		this.root = root;
+		this.setValue = this.setValue.bind(this);
+	}
+
+	setValue(value: string | string[]) {
+		if (this.root.isMulti && !Array.isArray(value)) {
+			if (DEV) throw new Error(`Expected an array of strings passed to \`setValue\` got ${typeof value}.`);
+			return;
+		}
+		if (!this.root.isMulti && typeof value !== 'string') {
+			if (DEV) throw new Error(`Expected a string passed to \`setValue\` got ${typeof value}.`);
+			return;
+		}
+		this.root.opts.value.current = value;
+	}
+
+	// this way consumers get type narrowing for the value on `type`
+	readonly snippetProps = $derived.by(() => (
+		{
+			type: this.root.isMulti ? 'multiple' : 'single',
+			value: this.root.opts.value.current,
+			setValue: this.setValue,
+		} as SelectValueSnippetProps
+	))
+}
+
 interface SelectInputStateOpts
 	extends WithRefOpts,
-		ReadableBoxedValues<{
-			clearOnDeselect: boolean;
-		}> {}
+	ReadableBoxedValues<{
+		clearOnDeselect: boolean;
+	}> { }
 
 export class SelectInputState {
 	static create(opts: SelectInputStateOpts) {
@@ -559,7 +594,7 @@ export class SelectInputState {
 	);
 }
 
-interface SelectComboTriggerStateOpts extends WithRefOpts {}
+interface SelectComboTriggerStateOpts extends WithRefOpts { }
 
 export class SelectComboTriggerState {
 	static create(opts: SelectComboTriggerStateOpts) {
@@ -617,7 +652,7 @@ export class SelectComboTriggerState {
 	);
 }
 
-interface SelectTriggerStateOpts extends WithRefOpts {}
+interface SelectTriggerStateOpts extends WithRefOpts { }
 
 export class SelectTriggerState {
 	static create(opts: SelectTriggerStateOpts) {
@@ -883,10 +918,10 @@ export class SelectTriggerState {
 
 interface SelectContentStateOpts
 	extends WithRefOpts,
-		ReadableBoxedValues<{
-			onInteractOutside: (e: PointerEvent) => void;
-			onEscapeKeydown: (e: KeyboardEvent) => void;
-		}> {}
+	ReadableBoxedValues<{
+		onInteractOutside: (e: PointerEvent) => void;
+		onEscapeKeydown: (e: KeyboardEvent) => void;
+	}> { }
 
 export class SelectContentState {
 	static create(opts: SelectContentStateOpts) {
@@ -1011,13 +1046,13 @@ export class SelectContentState {
 
 interface SelectItemStateOpts
 	extends WithRefOpts,
-		ReadableBoxedValues<{
-			value: string;
-			disabled: boolean;
-			label: string;
-			onHighlight: () => void;
-			onUnhighlight: () => void;
-		}> {}
+	ReadableBoxedValues<{
+		value: string;
+		disabled: boolean;
+		label: string;
+		onHighlight: () => void;
+		onUnhighlight: () => void;
+	}> { }
 
 export class SelectItemState {
 	static create(opts: SelectItemStateOpts) {
@@ -1062,6 +1097,8 @@ export class SelectItemState {
 	handleSelect() {
 		if (this.opts.disabled.current) return;
 		const isCurrentSelectedValue = this.opts.value.current === this.root.opts.value.current;
+
+		console.log(this.opts.ref.current?.innerText)
 
 		// if allowDeselect is false and the item is already selected and we're not in a
 		// multi select, do nothing and close the menu
@@ -1149,7 +1186,7 @@ export class SelectItemState {
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted":
 					this.root.highlightedValue === this.opts.value.current &&
-					!this.opts.disabled.current
+						!this.opts.disabled.current
 						? ""
 						: undefined,
 				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
@@ -1163,7 +1200,7 @@ export class SelectItemState {
 	);
 }
 
-interface SelectGroupStateOpts extends WithRefOpts {}
+interface SelectGroupStateOpts extends WithRefOpts { }
 
 export class SelectGroupState {
 	static create(opts: SelectGroupStateOpts) {
@@ -1192,7 +1229,7 @@ export class SelectGroupState {
 	);
 }
 
-interface SelectGroupHeadingStateOpts extends WithRefOpts {}
+interface SelectGroupHeadingStateOpts extends WithRefOpts { }
 
 export class SelectGroupHeadingState {
 	static create(opts: SelectGroupHeadingStateOpts) {
@@ -1221,7 +1258,7 @@ export class SelectGroupHeadingState {
 interface SelectHiddenInputStateOpts
 	extends ReadableBoxedValues<{
 		value: string | undefined;
-	}> {}
+	}> { }
 
 export class SelectHiddenInputState {
 	static create(opts: SelectHiddenInputStateOpts) {
@@ -1259,7 +1296,7 @@ export class SelectHiddenInputState {
 	);
 }
 
-interface SelectViewportStateOpts extends WithRefOpts {}
+interface SelectViewportStateOpts extends WithRefOpts { }
 
 export class SelectViewportState {
 	static create(opts: SelectViewportStateOpts) {
@@ -1301,9 +1338,9 @@ export class SelectViewportState {
 
 interface SelectScrollButtonImplStateOpts
 	extends WithRefOpts,
-		ReadableBoxedValues<{
-			delay: (tick: number) => number;
-		}> {}
+	ReadableBoxedValues<{
+		delay: (tick: number) => number;
+	}> { }
 
 export class SelectScrollButtonImplState {
 	readonly opts: SelectScrollButtonImplStateOpts;

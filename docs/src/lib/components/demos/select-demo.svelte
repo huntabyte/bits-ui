@@ -42,7 +42,7 @@
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />
-		{selectedLabel}
+		<Select.Value/>
 		<CaretUpDown class="text-muted-foreground ml-auto size-6" />
 	</Select.Trigger>
 	<Select.Portal>
