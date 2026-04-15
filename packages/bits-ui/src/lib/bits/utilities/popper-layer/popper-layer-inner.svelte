@@ -54,9 +54,7 @@
 	} = $props();
 
 	const resolvedPreventScroll = $derived(preventScroll ?? true);
-	const effectiveStrategy = $derived(
-		strategy ?? (resolvedPreventScroll ? "fixed" : "absolute")
-	);
+	const effectiveStrategy = $derived(strategy ?? (resolvedPreventScroll ? "fixed" : "absolute"));
 </script>
 
 <PopperContent

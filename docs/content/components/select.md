@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -57,7 +57,7 @@ Here's an overview of how the Select component is structured in code:
 
 <Select.Root>
   <Select.Trigger>
-    <Select.Value/>
+    <Select.Value />
   </Select.Trigger>
   <Select.Portal>
     <Select.Content>
@@ -406,6 +406,16 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 
 {#snippet preview()}
 <SelectDemoTransition />
+{/snippet}
+
+</ComponentPreview>
+
+## Customizing Select.Value
+
+<ComponentPreview name="select-demo-custom-value" componentName="Select" variant="preview">
+
+{#snippet preview()}
+<SelectDemoCustomValue />
 {/snippet}
 
 </ComponentPreview>

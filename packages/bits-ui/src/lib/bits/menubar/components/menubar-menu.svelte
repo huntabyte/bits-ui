@@ -25,6 +25,5 @@
 	_internal_variant="menubar"
 	{...restProps}
 	_internal_should_skip_exit_animation={() =>
-		menuState.root.skipExitAnimationForMenuValue === menuState.opts.value.current
-	}
+		menuState.root.skipExitAnimationForMenuValue === menuState.opts.value.current}
 />

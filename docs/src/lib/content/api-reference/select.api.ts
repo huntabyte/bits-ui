@@ -292,8 +292,7 @@ export const value = defineComponentApiSchema<SelectValueApiProps>({
 		"A text label of the currently selected item(s). Renders a `<span>` by default, or use the `child` snippet for full control.",
 	props: {
 		placeholder: defineStringProp({
-			description:
-				"Text shown when no value is selected.",
+			description: "Text shown when no value is selected.",
 		}),
 		child: childSnippet({
 			variant: "complex",

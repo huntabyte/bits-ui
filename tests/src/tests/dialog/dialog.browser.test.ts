@@ -58,12 +58,20 @@ describe("Data Attributes", () => {
 		const overlayObserver = observeTransitionAttrs(page.getByTestId("overlay").element());
 
 		await trigger.click();
-		await vi.waitFor(() => expect(contentObserver.history.some((entry) => entry.starting)).toBe(true));
-		await vi.waitFor(() => expect(overlayObserver.history.some((entry) => entry.starting)).toBe(true));
+		await vi.waitFor(() =>
+			expect(contentObserver.history.some((entry) => entry.starting)).toBe(true)
+		);
+		await vi.waitFor(() =>
+			expect(overlayObserver.history.some((entry) => entry.starting)).toBe(true)
+		);
 
 		await userEvent.keyboard(kbd.ESCAPE);
-		await vi.waitFor(() => expect(contentObserver.history.some((entry) => entry.ending)).toBe(true));
-		await vi.waitFor(() => expect(overlayObserver.history.some((entry) => entry.ending)).toBe(true));
+		await vi.waitFor(() =>
+			expect(contentObserver.history.some((entry) => entry.ending)).toBe(true)
+		);
+		await vi.waitFor(() =>
+			expect(overlayObserver.history.some((entry) => entry.ending)).toBe(true)
+		);
 
 		contentObserver.disconnect();
 		overlayObserver.disconnect();

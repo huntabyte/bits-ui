@@ -40,7 +40,9 @@
 <Tooltip.Provider delayDuration={200}>
 	<Tooltip.Root tether={planTether}>
 		{#snippet children({ payload })}
-			<div class="rounded-10px border-border bg-background-alt shadow-mini flex flex-wrap items-center gap-1 border p-1">
+			<div
+				class="rounded-10px border-border bg-background-alt shadow-mini flex flex-wrap items-center gap-1 border p-1"
+			>
 				{#each plans as plan (plan.id)}
 					<Tooltip.Trigger
 						tether={planTether}
@@ -61,7 +63,9 @@
 									<div
 										class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden z-0 w-[300px] border p-3"
 									>
-										<p class="text-sm font-semibold">{payload?.name ?? "Plan details"}</p>
+										<p class="text-sm font-semibold">
+											{payload?.name ?? "Plan details"}
+										</p>
 										<p class="text-foreground/70 mt-1 text-xs leading-relaxed">
 											{payload?.description ??
 												"forceMount keeps one tooltip node mounted so transitions stay smooth while content changes."}
