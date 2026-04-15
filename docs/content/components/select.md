@@ -422,7 +422,7 @@ You can use the `child` snippet to customize the rendering of the value in the `
 </Select.Value>
 ```
 
-This allows you to create custom value components that can modify the value as well.
+This allows you to display and modify the value however you want.
 
 <ComponentPreview name="select-demo-custom-value" componentName="Select" variant="preview">
 
