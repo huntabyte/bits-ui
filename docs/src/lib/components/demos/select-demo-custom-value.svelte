@@ -50,6 +50,8 @@
 								<span class="text-nowrap">{selectedTheme.label}</span>
 								<button
 									type="button"
+									onpointerdown={(e) => e.stopPropagation()}
+									onpointerup={(e) => e.stopPropagation()}
 									onclick={(e) => {
 										e.stopPropagation();
 										e.preventDefault();
