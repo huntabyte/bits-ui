@@ -176,10 +176,19 @@ export type SelectValueSnippetProps = {
 	setValue: (value: string[]) => void
 }
 
-export type SelectValuePropsWithoutHTML = {
+type SelectValueHeadlessKeys = {
 	placeholder?: string | null;
 	ref?: HTMLSpanElement | null | undefined;
-	child?: Snippet<[SelectValueSnippetProps]>
+};
+
+export type SelectValueChildSnippetProps = Expand<
+	SelectValueSnippetProps &
+		Without<BitsPrimitiveSpanAttributes, SelectValueHeadlessKeys & { child?: unknown }> &
+		Pick<SelectValueHeadlessKeys, 'ref'>
+>;
+
+export type SelectValuePropsWithoutHTML = SelectValueHeadlessKeys & {
+	child?: Snippet<[SelectValueChildSnippetProps]>
 }
 
 export type SelectValueProps = SelectValuePropsWithoutHTML &

@@ -24,10 +24,11 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, valueState.props));
+	const childProps = $derived(mergeProps(mergedProps, valueState.snippetProps));
 </script>
 
 {#if child}
-	{@render child({ ...mergedProps, ...valueState.snippetProps })}
+	{@render child(childProps)}
 {:else}
 	<span {...mergedProps}>
 		{#if valueState.snippetProps.type === "single"}
