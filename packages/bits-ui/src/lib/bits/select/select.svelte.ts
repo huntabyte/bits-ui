@@ -101,6 +101,7 @@ abstract class SelectBaseRootState {
 	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
+	valueNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
@@ -190,6 +191,23 @@ abstract class SelectBaseRootState {
 	getNodeByValue(value: string): HTMLElement | null {
 		const candidateNodes = this.getCandidateNodes();
 		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
+	}
+
+	/**
+	 * Resolves the display label for a value: `items` entry when present, otherwise the
+	 * mounted item's `data-label` or its text content.
+	 */
+	getLabelForValue(value: string): string {
+		if (value === "") return "";
+		const fromItems = this.opts.items.current.find((item) => item.value === value)?.label;
+		if (fromItems !== undefined) return fromItems;
+		const node = this.getNodeByValue(value);
+		if (node) {
+			const dataLabel = node.getAttribute("data-label");
+			if (dataLabel !== null && dataLabel !== "") return dataLabel;
+			return node.textContent?.trim() ?? value;
+		}
+		return value;
 	}
 
 	setOpen(open: boolean) {
@@ -398,14 +416,22 @@ export class SelectRootState {
 
 type SelectRoot = SelectSingleRootState | SelectMultipleRootState;
 
+type SelectValueStateProps = WithRefOpts<ReadableBoxedValues<{
+	placeholder: string | null | undefined;
+}>>
+
 export class SelectValueState {
-	static create() {
-		return new SelectValueState(SelectRootContext.get());
+	static create(opts: SelectValueStateProps) {
+		return new SelectValueState(opts, SelectRootContext.get());
 	}
 	readonly root: SelectRoot;
+	readonly opts: SelectValueStateProps;
+	readonly attachment: RefAttachment;
 
-	constructor(root: SelectRoot) {
+	constructor(opts: SelectValueStateProps, root: SelectRoot) {
 		this.root = root;
+		this.opts = opts;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.valueNode = v));
 		this.setValue = this.setValue.bind(this);
 	}
 
@@ -422,13 +448,36 @@ export class SelectValueState {
 	}
 
 	// this way consumers get type narrowing for the value on `type`
-	readonly snippetProps = $derived.by(() => (
-		{
-			type: this.root.isMulti ? 'multiple' : 'single',
-			value: this.root.opts.value.current,
+	readonly snippetProps: SelectValueSnippetProps = $derived.by(() => {
+		if (this.root.isMulti) {
+			return {
+				type: "multiple" as const,
+				selected: this.root.opts.value.current.length > 0 ? this.root.opts.value.current.map((value) => ({
+					value,
+					label: this.root.getLabelForValue(value),
+				})) : undefined,
+				placeholder: this.opts.placeholder.current,
+				setValue: this.setValue,
+			};
+		}
+		const value = this.root.opts.value.current;
+		return {
+			type: "single" as const,
+			selected: value !== "" ? {
+				value,
+				label: value === "" ? "" : this.root.getLabelForValue(value),
+			} : undefined,
+			placeholder: this.opts.placeholder.current,
 			setValue: this.setValue,
-		} as SelectValueSnippetProps
-	))
+		};
+	});
+
+	readonly props = $derived.by(() => ({
+		id: this.opts.id.current,
+		'data-placeholder': this.root.hasValue ? undefined : "",
+		'data-select-value': '',
+		...this.attachment,
+	}));
 }
 
 interface SelectInputStateOpts
@@ -1097,8 +1146,6 @@ export class SelectItemState {
 	handleSelect() {
 		if (this.opts.disabled.current) return;
 		const isCurrentSelectedValue = this.opts.value.current === this.root.opts.value.current;
-
-		console.log(this.opts.ref.current?.innerText)
 
 		// if allowDeselect is false and the item is already selected and we're not in a
 		// multi select, do nothing and close the menu

@@ -166,15 +166,19 @@ export type SelectRootProps = SelectRootPropsWithoutHTML;
 
 export type SelectValueSnippetProps = {
 	type: 'single',
-	selected: { value: string, label: string },
+	placeholder?: string | null,
+	selected?: { value: string, label: string },
 	setValue: (value: string) => void
 } | {
 	type: 'multiple',
-	selected: { value: string, label: string }[],
+	placeholder?: string | null,
+	selected?: { value: string, label: string }[],
 	setValue: (value: string[]) => void
 }
 
 export type SelectValuePropsWithoutHTML = {
+	placeholder?: string | null;
+	ref?: HTMLSpanElement | null | undefined;
 	child?: Snippet<[SelectValueSnippetProps]>
 }
 

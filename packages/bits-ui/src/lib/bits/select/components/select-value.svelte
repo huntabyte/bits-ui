@@ -1,20 +1,41 @@
 <script lang="ts">
+	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { SelectValueState } from "../select.svelte.js";
 	import type { SelectValueProps } from "../types.js";
+	import { createId } from "$lib/internal/create-id.js";
 
-	let { child, ...restProps }: SelectValueProps = $props();
+	const uid = $props.id();
 
-	const valueState = SelectValueState.create();
+	let {
+		ref = $bindable(null),
+		id = createId(uid),
+		placeholder,
+		child,
+		...restProps
+	}: SelectValueProps = $props();
+
+	const valueState = SelectValueState.create({
+		id: boxWith(() => id),
+		ref: boxWith(
+			() => ref,
+			(v) => (ref = v)
+		),
+		placeholder: boxWith(() => placeholder),
+	});
+
+	const mergedProps = $derived(mergeProps(restProps, valueState.props));
 </script>
 
 {#if child}
-    {@render child({ ...valueState.snippetProps })}
+	{@render child({ ...mergedProps, ...valueState.snippetProps })}
 {:else}
-    <span {...restProps}>
-        {#if valueState.snippetProps.type === 'single'}
-            {valueState.snippetProps.selected.label}
-        {:else}
-            {valueState.snippetProps.selected.map((selected) => selected.label).join(', ')}
-        {/if}
-    </span>
+	<span {...mergedProps}>
+		{#if valueState.snippetProps.type === "single"}
+			{valueState.snippetProps.selected?.label ?? placeholder}
+		{:else if valueState.snippetProps.selected}
+			{valueState.snippetProps.selected.map((selected) => selected.label).join(", ")}
+		{:else}
+			{placeholder}
+		{/if}
+	</span>
 {/if}

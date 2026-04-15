@@ -56,7 +56,9 @@ Here's an overview of how the Select component is structured in code:
 </script>
 
 <Select.Root>
-  <Select.Trigger />
+  <Select.Trigger>
+    <Select.Value/>
+  </Select.Trigger>
   <Select.Portal>
     <Select.Content>
       <Select.ScrollUpButton />
@@ -99,10 +101,6 @@ Here's an example of how you might create a reusable `MySelect` component that r
     placeholder,
     ...restProps
   }: Props = $props();
-
-  const selectedLabel = $derived(
-    items.find((item) => item.value === value)?.label
-  );
 </script>
 
 <!--
@@ -112,7 +110,7 @@ from the perspective of the consumer of this component, it will be typed appropr
 -->
 <Select.Root bind:value={value as never} {...restProps}>
   <Select.Trigger>
-    {selectedLabel ? selectedLabel : placeholder}
+    <Select.Value {placeholder} />
   </Select.Trigger>
   <Select.Portal>
     <Select.Content {...contentProps}>
@@ -271,7 +269,9 @@ You can opt-out of this behavior by instead using the `Select.ContentStatic` com
 
 ```svelte /Select.ContentStatic/
 <Select.Root>
-  <Select.Trigger />
+  <Select.Trigger>
+    <Select.Value />
+  </Select.Trigger>
   <Select.Portal>
     <Select.ContentStatic>
       <Select.ScrollUpButton />
@@ -306,7 +306,9 @@ If you wish to instead anchor the content to a different element, you can pass e
 <div bind:this={customAnchor}></div>
 
 <Select.Root>
-  <Select.Trigger />
+  <Select.Trigger>
+    <Select.Value />
+  </Select.Trigger>
   <Select.Content {customAnchor}>
     <!-- ... -->
   </Select.Content>
