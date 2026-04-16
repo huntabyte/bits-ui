@@ -39,7 +39,7 @@
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6 shrink-0" />
 		<Select.Value placeholder="Select your favorite themes">
-			{#snippet child({ selected, setValue, placeholder })}
+			{#snippet child({ selected, setValue, placeholder, disabled })}
 				{@const selectedThemes = selected as { value: string; label: string }[] | undefined}
 				<div class="flex gap-2 overflow-x-auto">
 					{#if selectedThemes}
@@ -50,9 +50,11 @@
 								<span class="text-nowrap">{selectedTheme.label}</span>
 								<button
 									type="button"
+									{disabled}
 									onpointerdown={(e) => e.stopPropagation()}
 									onpointerup={(e) => e.stopPropagation()}
 									onclick={(e) => {
+										if (disabled) return;
 										e.stopPropagation();
 										e.preventDefault();
 										setValue([
@@ -63,7 +65,7 @@
 												.map((theme) => theme.value),
 										]);
 									}}
-									class="ml-auto"
+									class="ml-auto disabled:cursor-not-allowed"
 								>
 									<X />
 								</button>

@@ -467,6 +467,7 @@ export class SelectValueState {
 						: undefined,
 				placeholder: this.opts.placeholder.current,
 				setValue: this.setValue,
+				disabled: this.root.opts.disabled.current,
 			};
 		}
 		const value = this.root.opts.value.current;
@@ -481,6 +482,7 @@ export class SelectValueState {
 					: undefined,
 			placeholder: this.opts.placeholder.current,
 			setValue: this.setValue,
+			disabled: this.root.opts.disabled.current,
 		};
 	});
 

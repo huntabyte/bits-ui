@@ -177,6 +177,7 @@ export type SelectValueSnippetProps = (
 	placeholder?: string | null;
 	// we don't have this inside the union because typescript will sometimes do weird things like making the signature setValue(value: string & string[]) => void
 	setValue: (value: string | string[]) => void;
+	disabled: boolean;
 };
 
 type SelectValueHeadlessKeys = {
