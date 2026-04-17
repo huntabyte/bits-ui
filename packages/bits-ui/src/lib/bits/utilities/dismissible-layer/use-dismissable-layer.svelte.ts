@@ -148,11 +148,14 @@ export class DismissibleLayerState {
 			this.#unsubClickListener();
 			return;
 		}
-		const isEventValid =
-			this.opts.isValidEvent.current(e, this.opts.ref.current) ||
-			isValidEvent(e, this.opts.ref.current);
+		const node = this.opts.ref.current;
+		const customValid = this.opts.isValidEvent.current(e, node);
+		const defaultValid = defaultDismissibleInteractOutsideIsValid(e, node);
+		const isEventValid = customValid || defaultValid;
 
-		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
+		const anyEventIntercepted = this.#isAnyEventIntercepted();
+
+		if (!this.#isResponsibleLayer || anyEventIntercepted || !isEventValid) {
 			this.#unsubClickListener();
 			return;
 		}
@@ -249,7 +252,10 @@ function isResponsibleLayer(node: HTMLElement): boolean {
 	return firstLayerNode.opts.ref.current === node;
 }
 
-function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
+export function defaultDismissibleInteractOutsideIsValid(
+	e: PointerEvent,
+	node: HTMLElement
+): boolean {
 	const target = e.target;
 	if (!isElementOrSVGElement(target)) return false;
 
@@ -263,11 +269,11 @@ function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
 	if (targetIsContextMenuTrigger && nodeIsContextMenu) return false;
 
 	const ownerDocument = getOwnerDocument(target);
-	const isValid =
+	return (
 		ownerDocument.documentElement.contains(target) &&
 		!isOrContainsTarget(node, target) &&
-		isClickTrulyOutside(e, node);
-	return isValid;
+		isClickTrulyOutside(e, node)
+	);
 }
 
 export type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;
