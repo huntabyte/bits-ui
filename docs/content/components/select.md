@@ -414,7 +414,7 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 
 You can use the `child` or `children` snippets to customize the rendering of the value in the `Select.Value` component.
 
-```svelte /child/ /children/
+```svelte
 <Select.Value>
   {#snippet child({ props, selection, placeholder, disabled })}
     <div {...props}>
