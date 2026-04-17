@@ -16,7 +16,6 @@ import type {
 } from "$lib/internal/types.js";
 import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
 import type { HTMLInputAttributes } from "svelte/elements";
-import type { Snippet } from "svelte";
 
 export type SelectBaseRootPropsWithoutHTML = WithChildren<{
 	/**
