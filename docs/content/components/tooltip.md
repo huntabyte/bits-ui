@@ -428,23 +428,23 @@ You can use the `forceMount` prop along with the `child` snippet to forcefully m
 
 ```svelte /forceMount/ /transition:fade/ /transition:fly/
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
-	import { fly, fade } from "svelte/transition";
+  import { Tooltip } from "bits-ui";
+  import { fly, fade } from "svelte/transition";
 </script>
 
 <Tooltip.Root>
-	<!-- ... other tooltip components -->
-	<Tooltip.Content forceMount>
-		{#snippet child({ wrapperProps, props, open })}
-			{#if open}
-				<div {...wrapperProps}>
-					<div {...props} transition:fly>
-						<!-- ... -->
-					</div>
-				</div>
-			{/if}
-		{/snippet}
-	</Tooltip.Content>
+  <!-- ... other tooltip components -->
+  <Tooltip.Content forceMount>
+    {#snippet child({ wrapperProps, props, open })}
+      {#if open}
+        <div {...wrapperProps}>
+          <div {...props} transition:fly>
+            <!-- ... -->
+          </div>
+        </div>
+      {/if}
+    {/snippet}
+  </Tooltip.Content>
 </Tooltip.Root>
 ```
 

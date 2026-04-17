@@ -38,6 +38,8 @@ import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floatin
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import { DEV } from "esm-env";
+import type { SelectValueSnippetProps } from "./types.js";
 
 // prettier-ignore
 export const INTERACTION_KEYS = [kbd.ARROW_LEFT, kbd.ESCAPE, kbd.ARROW_RIGHT, kbd.SHIFT, kbd.CAPS_LOCK, kbd.CONTROL, kbd.ALT, kbd.META, kbd.ENTER, kbd.F1, kbd.F2, kbd.F3, kbd.F4, kbd.F5, kbd.F6, kbd.F7, kbd.F8, kbd.F9, kbd.F10, kbd.F11, kbd.F12];
@@ -99,6 +101,7 @@ abstract class SelectBaseRootState {
 	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
+	valueNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
@@ -188,6 +191,23 @@ abstract class SelectBaseRootState {
 	getNodeByValue(value: string): HTMLElement | null {
 		const candidateNodes = this.getCandidateNodes();
 		return candidateNodes.find((node) => node.dataset.value === value) ?? null;
+	}
+
+	/**
+	 * Resolves the display label for a value: `items` entry when present, otherwise the
+	 * mounted item's `data-label` or its text content.
+	 */
+	getLabelForValue(value: string): string {
+		if (value === "") return "";
+		const fromItems = this.opts.items.current.find((item) => item.value === value)?.label;
+		if (fromItems !== undefined) return fromItems;
+		const node = this.getNodeByValue(value);
+		if (node) {
+			const dataLabel = node.getAttribute("data-label");
+			if (dataLabel !== null && dataLabel !== "") return dataLabel;
+			return node.textContent?.trim() ?? value;
+		}
+		return value;
 	}
 
 	setOpen(open: boolean) {
@@ -395,6 +415,85 @@ export class SelectRootState {
 }
 
 type SelectRoot = SelectSingleRootState | SelectMultipleRootState;
+
+type SelectValueStateProps = WithRefOpts<
+	ReadableBoxedValues<{
+		placeholder: string | null | undefined;
+	}>
+>;
+
+export class SelectValueState {
+	static create(opts: SelectValueStateProps) {
+		return new SelectValueState(opts, SelectRootContext.get());
+	}
+	readonly root: SelectRoot;
+	readonly opts: SelectValueStateProps;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SelectValueStateProps, root: SelectRoot) {
+		this.root = root;
+		this.opts = opts;
+		this.attachment = attachRef(opts.ref, (v) => (this.root.valueNode = v));
+		this.setValue = this.setValue.bind(this);
+	}
+
+	setValue(value: string | string[]) {
+		if (this.root.isMulti && !Array.isArray(value)) {
+			if (DEV)
+				throw new Error(
+					`Expected an array of strings passed to \`setValue\` got ${typeof value}.`
+				);
+			return;
+		}
+		if (!this.root.isMulti && typeof value !== "string") {
+			if (DEV)
+				throw new Error(`Expected a string passed to \`setValue\` got ${typeof value}.`);
+			return;
+		}
+		this.root.opts.value.current = value;
+	}
+
+	// this way consumers get type narrowing for the value on `type`
+	readonly snippetProps: SelectValueSnippetProps = $derived.by(() => {
+		if (this.root.isMulti) {
+			return {
+				selection: {
+					type: "multiple" as const,
+					selected:
+						this.root.opts.value.current.length > 0
+							? this.root.opts.value.current.map((value) => ({
+									value,
+									label: this.root.getLabelForValue(value),
+								}))
+							: [],
+					setValue: this.setValue,
+				},
+				placeholder: this.opts.placeholder.current ?? null,
+				disabled: this.root.opts.disabled.current,
+			};
+		}
+		const value = this.root.opts.value.current;
+		return {
+			selection: {
+				type: "single" as const,
+				selected:
+					value !== ""
+						? { value, label: value === "" ? "" : this.root.getLabelForValue(value) }
+						: undefined,
+				setValue: this.setValue,
+			},
+			placeholder: this.opts.placeholder.current ?? null,
+			disabled: this.root.opts.disabled.current,
+		};
+	});
+
+	readonly props = $derived.by(() => ({
+		id: this.opts.id.current,
+		"data-placeholder": this.root.hasValue ? undefined : "",
+		"data-select-value": "",
+		...this.attachment,
+	}));
+}
 
 interface SelectInputStateOpts
 	extends WithRefOpts,

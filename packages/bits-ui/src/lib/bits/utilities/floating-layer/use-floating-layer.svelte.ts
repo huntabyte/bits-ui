@@ -299,7 +299,8 @@ export class FloatingContentState {
 				const win = getWindow(contentNode);
 				const rafId = win.requestAnimationFrame(() => {
 					// avoid applying stale values when refs change quickly
-					if (this.contentRef.current !== contentNode || !this.opts.enabled.current) return;
+					if (this.contentRef.current !== contentNode || !this.opts.enabled.current)
+						return;
 					const zIndex = win.getComputedStyle(contentNode).zIndex;
 					if (zIndex !== this.contentZIndex) {
 						this.contentZIndex = zIndex;

@@ -46,7 +46,14 @@ import {
 	defineStringProp,
 	defineSimplePropSchema,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
+import calendarMonthSelectChildSnippetPropsRaw from "./extended-types/shared/calendar-month-select-child-snippet-prop.md?raw";
+import calendarMonthSelectChildrenSnippetPropsRaw from "./extended-types/shared/calendar-month-select-children-snippet-prop.md?raw";
+import calendarRootChildSnippetPropsRaw from "./extended-types/shared/calendar-root-child-snippet-props.md?raw";
+import calendarRootChildrenSnippetPropsRaw from "./extended-types/shared/calendar-root-children-snippet-props.md?raw";
+import calendarYearSelectChildSnippetPropsRaw from "./extended-types/shared/calendar-year-select-child-snippet-prop.md?raw";
+import calendarYearSelectChildrenSnippetPropsRaw from "./extended-types/shared/calendar-year-select-children-snippet-prop.md?raw";
 
 const sharedCellDayAttrs = [
 	defineSimpleDataAttr({
@@ -199,74 +206,11 @@ export const root = defineComponentApiSchema<CalendarRootPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: CalendarRootChildSnippetProps,
-				stringDefinition: `type Month<T> = {
-	/**
-	 * A DateValue used to represent the month. Since days
-	 * from the previous and next months may be included in the
-	 * calendar grid, we need a source of truth for the value
-	 * the grid is representing.
-	 */
-	value: DateValue;
-
-	/**
-	 * An array of arrays representing the weeks in the calendar.
-	 * Each sub-array represents a week, and contains the dates for each
-	 * day in that week. This structure is useful for rendering the calendar
-	 * grid using a table, where each row represents a week and each cell
-	 * represents a day.
-	 */
-	weeks: T[][];
-
-	/**
-	 * An array of all the dates in the current month, including dates from
-	 * the previous and next months that are used to fill out the calendar grid.
-	 * This array is useful for rendering the calendar grid in a customizable way,
-	 * as it provides all the dates that should be displayed in the grid in a flat
-	 * array.
-	 */
-	dates: T[];
-};
-
-type ChildSnippetProps = {
-	props: Record<string, unknown>;
-	months: Month<DateValue>[];
-	weekdays: string[];
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(calendarRootChildSnippetPropsRaw),
 			},
 			children: {
 				definition: CalendarRootChildrenSnippetProps,
-				stringDefinition: `type Month<T> = {
-	/**
-	 * A DateValue used to represent the month. Since days
-	 * from the previous and next months may be included in the
-	 * calendar grid, we need a source of truth for the value
-	 * the grid is representing.
-	 */
-	value: DateValue;
-
-	/**
-	 * An array of arrays representing the weeks in the calendar.
-	 * Each sub-array represents a week, and contains the dates for each
-	 * day in that week. This structure is useful for rendering the calendar
-	 * grid using a table, where each row represents a week and each cell
-	 * represents a day.
-	 */
-	weeks: T[][];
-
-	/**
-	 * An array of all the dates in the current month, including dates from
-	 * the previous and next months that are used to fill out the calendar grid.
-	 * This array is useful for rendering the calendar grid in a customizable way,
-	 * as it provides all the dates that should be displayed in the grid in a flat
-	 * array.
-	 */
-	dates: T[];
-};
-
-type ChildrenSnippetProps = {
-	months: Month<DateValue>[];
-	weekdays: string[];
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(calendarRootChildrenSnippetPropsRaw),
 			},
 		}),
 	},
@@ -572,18 +516,11 @@ export function createCalendarMonthSelectSchema(isRange: boolean) {
 				elType: "HTMLSelectElement",
 				child: {
 					definition: CalendarMonthSelectChildSnippetProps,
-					stringDefinition: `type ChildSnippetProps = {
-	props: Record<string, unknown>;
-	monthItems: Array<{ value: number; label: string }>;
-	selectedMonthItem: { value: number; label: string };
-};`,
+					stringDefinition: stringDefinitionFromMarkdown(calendarMonthSelectChildSnippetPropsRaw),
 				},
 				children: {
 					definition: CalendarMonthSelectChildrenSnippetProps,
-					stringDefinition: `type ChildrenSnippetProps = {
-	monthItems: Array<{ value: number; label: string }>;
-	selectedMonthItem: { value: number; label: string };
-};`,
+					stringDefinition: stringDefinitionFromMarkdown(calendarMonthSelectChildrenSnippetPropsRaw),
 				},
 			}),
 		},
@@ -624,18 +561,11 @@ export function createCalendarYearSelectSchema(isRange: boolean) {
 				elType: "HTMLSelectElement",
 				child: {
 					definition: CalendarYearSelectChildSnippetProps,
-					stringDefinition: `type ChildSnippetProps = {
-	props: Record<string, unknown>;
-	yearItems: Array<{ value: number; label: string }>;
-	selectedYearItem: { value: number; label: string };
-};`,
+					stringDefinition: stringDefinitionFromMarkdown(calendarYearSelectChildSnippetPropsRaw),
 				},
 				children: {
 					definition: CalendarYearSelectChildrenSnippetProps,
-					stringDefinition: `type ChildrenSnippetProps = {
-	yearItems: Array<{ value: number; label: string }>;
-	selectedYearItem: { value: number; label: string };
-};`,
+					stringDefinition: stringDefinitionFromMarkdown(calendarYearSelectChildrenSnippetPropsRaw),
 				},
 			}),
 		},

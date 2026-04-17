@@ -12,6 +12,8 @@ import {
 	SliderRootOnValueChangeProp,
 	SliderTickLabelPositionProp,
 } from "./extended-types/slider/index.js";
+import sliderRootChildSnippetPropsRaw from "./extended-types/slider/slider-root-child-snippet-props.md?raw";
+import sliderRootChildrenSnippetPropsRaw from "./extended-types/slider/slider-root-children-snippet-props.md?raw";
 import {
 	NumberOrArrayNumberProp,
 	OrientationProp,
@@ -31,6 +33,7 @@ import {
 	defineNumberProp,
 	defineSimpleDataAttr,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 const orientationDataAttr = defineEnumDataAttr({
@@ -47,6 +50,7 @@ const sharedDataAttrs = [
 		description: "Present when the slider is disabled.",
 	}),
 ];
+
 
 const root = defineComponentApiSchema<SliderRootPropsWithoutHTML>({
 	title: "Root",
@@ -120,37 +124,11 @@ const root = defineComponentApiSchema<SliderRootPropsWithoutHTML>({
 			elType: "HTMLSpanElement",
 			child: {
 				definition: SliderRootChildSnippetProps,
-				stringDefinition: `type TickItem = {
-	/** The value this tick represents */
-	value: number;
-	/** The index of this tick */
-	index: number;
-};
-
-type ChildSnippetProps = {
-	/** The tick items to iterate over and render */
-	tickItems: TickItem[];
-	/** The currently active thumb */
-	thumbs: number[];
-	/** Props to apply to the root element */
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(sliderRootChildSnippetPropsRaw),
 			},
 			children: {
 				definition: SliderRootChildrenSnippetProps,
-				stringDefinition: `type TickItem = {
-	/** The value this tick represents */
-	value: number;
-	/** The index of this tick */
-	index: number;
-};
-
-type ChildrenSnippetProps = {
-	/** The tick items to iterate over and render */
-	tickItems: TickItem[];
-	/** The currently active thumb */
-	thumbs: number[];
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(sliderRootChildrenSnippetPropsRaw),
 			},
 		}),
 	},

@@ -31,7 +31,11 @@
 				>
 					<Select.Viewport data-testid="viewport">
 						{#each items as item (item.value)}
-							<Select.Item value={item.value} label={item.label} data-testid={`item-${item.value}`}>
+							<Select.Item
+								value={item.value}
+								label={item.label}
+								data-testid={`item-${item.value}`}
+							>
 								{item.label}
 							</Select.Item>
 						{/each}
