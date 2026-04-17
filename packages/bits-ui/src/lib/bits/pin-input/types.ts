@@ -70,6 +70,13 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			inputId?: string;
 
 			/**
+			 * The underlying hidden `<input>` element. Bind to call `focus()`, read selection, etc.
+			 *
+			 * @bindable
+			 */
+			inputRef?: HTMLInputElement | null;
+
+			/**
 			 * The children snippet used to render the individual cells.
 			 */
 			children: Snippet<[PinInputRootSnippetProps]>;
