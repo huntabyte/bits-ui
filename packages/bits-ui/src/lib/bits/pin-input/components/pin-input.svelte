@@ -11,6 +11,7 @@
 		id = createId(uid),
 		inputId = `${createId(uid)}-input`,
 		ref = $bindable(null),
+		inputRef = $bindable(null),
 		maxlength = 6,
 		textalign = "left",
 		pattern,
@@ -32,6 +33,10 @@
 		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
+		),
+		inputRef: boxWith(
+			() => inputRef,
+			(v) => (inputRef = v)
 		),
 		inputId: boxWith(() => inputId),
 		autocomplete: boxWith(() => autocomplete),

@@ -18,6 +18,7 @@ import {
 	defineNumberProp,
 	defineObjectProp,
 	defineSimpleDataAttr,
+	defineSimplePropSchema,
 	defineStringProp,
 } from "../utils.js";
 
@@ -62,6 +63,13 @@ const root = defineComponentApiSchema<PinInputRootPropsWithoutHTML>({
 		}),
 		inputId: defineStringProp({
 			description: "Optionally provide an ID to apply to the hidden input element.",
+		}),
+		inputRef: defineSimplePropSchema({
+			type: "HTMLInputElement",
+			description:
+				"The hidden `<input>` element that holds the OTP value. Bind to this to call `focus()`, read the selection, etc.",
+			bindable: true,
+			default: "null",
 		}),
 		pushPasswordManagerStrategy: defineEnumProp({
 			description:
