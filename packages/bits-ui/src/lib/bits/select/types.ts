@@ -164,36 +164,23 @@ export type SelectRootPropsWithoutHTML = SelectBaseRootPropsWithoutHTML &
 
 export type SelectRootProps = SelectRootPropsWithoutHTML;
 
-export type SelectValueSnippetProps = (
-	| {
-			type: "single";
-			selected?: { value: string; label: string };
-	  }
-	| {
-			type: "multiple";
-			selected?: { value: string; label: string }[];
-	  }
-) & {
-	placeholder?: string | null;
-	// we don't have this inside the union because typescript will sometimes do weird things like making the signature setValue(value: string & string[]) => void
-	setValue: (value: string | string[]) => void;
+export type SelectValueSnippetProps = {
+	selection:
+		| {
+				type: "single";
+				selected?: { value: string; label: string };
+				setValue: (value: string) => void;
+		  }
+		| {
+				type: "multiple";
+				selected: { value: string; label: string }[];
+				setValue: (value: string[]) => void;
+		  };
+	placeholder: string | null;
 	disabled: boolean;
 };
 
-type SelectValueHeadlessKeys = {
-	placeholder?: string | null;
-	ref?: HTMLSpanElement | null | undefined;
-};
-
-export type SelectValueChildSnippetProps = Expand<
-	SelectValueSnippetProps &
-		Without<BitsPrimitiveSpanAttributes, SelectValueHeadlessKeys & { child?: unknown }> &
-		Pick<SelectValueHeadlessKeys, "ref">
->;
-
-export type SelectValuePropsWithoutHTML = SelectValueHeadlessKeys & {
-	child?: Snippet<[SelectValueChildSnippetProps]>;
-};
+export type SelectValuePropsWithoutHTML = WithChild<{}, SelectValueSnippetProps>;
 
 export type SelectValueProps = SelectValuePropsWithoutHTML &
 	Without<BitsPrimitiveSpanAttributes, SelectValuePropsWithoutHTML>;

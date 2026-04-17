@@ -11,6 +11,7 @@
 		id = createId(uid),
 		placeholder,
 		child,
+		children,
 		...restProps
 	}: SelectValueProps = $props();
 
@@ -24,17 +25,22 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, valueState.props));
-	const childProps = $derived(mergeProps(mergedProps, valueState.snippetProps));
 </script>
 
 {#if child}
-	{@render child(childProps)}
+	{@render child({ props: mergedProps, ...valueState.snippetProps })}
 {:else}
 	<span {...mergedProps}>
-		{#if valueState.snippetProps.type === "single"}
-			{valueState.snippetProps.selected?.label ?? placeholder}
-		{:else if valueState.snippetProps.selected}
-			{valueState.snippetProps.selected.map((selected) => selected.label).join(", ")}
+		{#if children}
+			{@render children?.(valueState.snippetProps)}
+		{:else if valueState.snippetProps.selection.type === "single"}
+			{valueState.snippetProps.selection.selected?.label ?? placeholder}
+		{:else if valueState.snippetProps.selection.type === "multiple" && valueState.snippetProps.selection.selected}
+			{valueState.snippetProps.selection.selected.length > 0
+				? valueState.snippetProps.selection.selected
+						.map((selected) => selected.label)
+						.join(", ")
+				: placeholder}
 		{:else}
 			{placeholder}
 		{/if}

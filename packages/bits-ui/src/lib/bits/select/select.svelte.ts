@@ -457,31 +457,32 @@ export class SelectValueState {
 	readonly snippetProps: SelectValueSnippetProps = $derived.by(() => {
 		if (this.root.isMulti) {
 			return {
-				type: "multiple" as const,
-				selected:
-					this.root.opts.value.current.length > 0
-						? this.root.opts.value.current.map((value) => ({
-								value,
-								label: this.root.getLabelForValue(value),
-							}))
-						: undefined,
-				placeholder: this.opts.placeholder.current,
-				setValue: this.setValue,
+				selection: {
+					type: "multiple" as const,
+					selected:
+						this.root.opts.value.current.length > 0
+							? this.root.opts.value.current.map((value) => ({
+									value,
+									label: this.root.getLabelForValue(value),
+								}))
+							: [],
+					setValue: this.setValue,
+				},
+				placeholder: this.opts.placeholder.current ?? null,
 				disabled: this.root.opts.disabled.current,
 			};
 		}
 		const value = this.root.opts.value.current;
 		return {
-			type: "single" as const,
-			selected:
-				value !== ""
-					? {
-							value,
-							label: value === "" ? "" : this.root.getLabelForValue(value),
-						}
-					: undefined,
-			placeholder: this.opts.placeholder.current,
-			setValue: this.setValue,
+			selection: {
+				type: "single" as const,
+				selected:
+					value !== ""
+						? { value, label: value === "" ? "" : this.root.getLabelForValue(value) }
+						: undefined,
+				setValue: this.setValue,
+			},
+			placeholder: this.opts.placeholder.current ?? null,
 			disabled: this.root.opts.disabled.current,
 		};
 	});

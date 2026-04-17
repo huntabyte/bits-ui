@@ -412,11 +412,19 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 
 ## Customizing Select.Value
 
-You can use the `child` snippet to customize the rendering of the value in the `Select.Value` component.
+You can use the `child` or `children` snippets to customize the rendering of the value in the `Select.Value` component.
 
-```svelte /child/
+```svelte /child/ /children/
 <Select.Value>
-  {#snippet child({ selected, setValue, placeholder })}
+  {#snippet child({ props, selection, placeholder, disabled })}
+    <div {...props}>
+      <!-- ... -->
+    </div>
+    <!-- ... -->
+  {/snippet}
+</Select.Value>
+<Select.Value>
+  {#snippet children({ selection, placeholder, disabled })}
     <!-- ... -->
   {/snippet}
 </Select.Value>

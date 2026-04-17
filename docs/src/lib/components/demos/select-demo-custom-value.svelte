@@ -39,45 +39,54 @@
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6 shrink-0" />
 		<Select.Value placeholder="Select your favorite themes">
-			{#snippet child({ selected, setValue, placeholder, disabled })}
-				{@const selectedThemes = selected as { value: string; label: string }[] | undefined}
-				<div class="flex gap-2 overflow-x-auto">
-					{#if selectedThemes}
-						{#each selectedThemes as selectedTheme (selectedTheme.value)}
+			{#snippet child({ props, selection, placeholder, disabled })}
+				<div
+					{...props}
+					class="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+				>
+					{#if selection.type === "multiple" && selection.selected.length > 0}
+						{#each selection.selected as selectedTheme (selectedTheme.value)}
 							<div
-								class="rounded-button bg-muted flex items-center gap-1 px-2 py-1 text-sm"
+								class="rounded-button bg-muted flex shrink-0 items-center gap-0.5 py-0.5 pl-2 pr-1 text-sm"
 							>
 								<span class="text-nowrap">{selectedTheme.label}</span>
-								<button
-									type="button"
-									{disabled}
+								<div
+									role="button"
+									tabindex={0}
+									aria-disabled={disabled}
+									aria-label="Remove {selectedTheme.label}"
 									onpointerdown={(e) => e.stopPropagation()}
 									onpointerup={(e) => e.stopPropagation()}
+									onkeydown={(e) => {
+										if (e.key === "Enter" || e.key === " ") {
+											e.currentTarget.click();
+										}
+									}}
 									onclick={(e) => {
 										if (disabled) return;
 										e.stopPropagation();
 										e.preventDefault();
-										setValue([
-											...selectedThemes
+										selection.setValue(
+											selection.selected
 												.filter(
 													(theme) => theme.value !== selectedTheme.value
 												)
-												.map((theme) => theme.value),
-										]);
+												.map((theme) => theme.value)
+										);
 									}}
-									class="ml-auto disabled:cursor-not-allowed"
+									class="text-muted-foreground hover:bg-background/60 hover:text-foreground rounded-sm p-0.5 transition-colors disabled:cursor-not-allowed"
 								>
-									<X />
-								</button>
+									<X class="size-3" />
+								</div>
 							</div>
 						{/each}
 					{:else}
-						{placeholder}
+						<span class="text-foreground-alt/50 truncate">{placeholder}</span>
 					{/if}
 				</div>
 			{/snippet}
 		</Select.Value>
-		<CaretUpDown class="text-muted-foreground ml-auto size-6 shrink-0" />
+		<CaretUpDown class="text-muted-foreground ml-2 size-6 shrink-0" />
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content

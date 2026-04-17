@@ -1,6 +1,5 @@
 ```ts
-type ChildSnippetProps = {
-	props: Record<string, unknown>
+type ChildrenSnippetProps = {
 	selection:
 		| {
 				type: "single"

@@ -42,7 +42,10 @@ import {
 	DelayProp,
 	ItemsProp,
 	SelectValueChildSnippetProps,
+	SelectValueChildrenSnippetProps,
 } from "./extended-types/select/index.js";
+import selectValueChildSnippetPropsRaw from "./extended-types/select/select-value-child-snippet-props.md?raw";
+import selectValueChildrenSnippetPropsRaw from "./extended-types/select/select-value-children-snippet-props.md?raw";
 import {
 	NoopProp,
 	OnChangeStringOrArrayProp,
@@ -68,6 +71,18 @@ const stateDataAttr = defineEnumDataAttr({
 	description: "The select's open state.",
 	value: OpenClosedProp,
 });
+
+function stripCodeFence(raw: string): string {
+	return raw
+		.replace(/^```[a-zA-Z0-9_-]*\r?\n/, "")
+		.replace(/\r?\n```[\r\n]*$/, "")
+		.trim();
+}
+
+const selectValueChildSnippetStringDefinition = stripCodeFence(selectValueChildSnippetPropsRaw);
+const selectValueChildrenSnippetStringDefinition = stripCodeFence(
+	selectValueChildrenSnippetPropsRaw
+);
 
 export const root = defineComponentApiSchema<SelectRootPropsWithoutHTML>({
 	title: "Root",
@@ -284,6 +299,7 @@ export const trigger = defineComponentApiSchema<SelectTriggerPropsWithoutHTML>({
 
 type SelectValueApiProps = SelectValuePropsWithoutHTML & {
 	ref?: HTMLSpanElement | null;
+	placeholder?: string;
 };
 
 export const value = defineComponentApiSchema<SelectValueApiProps>({
@@ -294,23 +310,17 @@ export const value = defineComponentApiSchema<SelectValueApiProps>({
 		placeholder: defineStringProp({
 			description: "Text shown when no value is selected.",
 		}),
+		children: childrenSnippet({
+			variant: "complex",
+			type: "Snippet",
+			definition: SelectValueChildrenSnippetProps,
+			stringDefinition: selectValueChildrenSnippetStringDefinition,
+		}),
 		child: childSnippet({
 			variant: "complex",
 			type: "Snippet",
 			definition: SelectValueChildSnippetProps,
-			stringDefinition: `type SelectValueSnippetProps =
-	| {
-			type: "single";
-			placeholder?: string | null;
-			selected?: { value: string; label: string };
-			setValue: (value: string) => void;
-	  }
-	| {
-			type: "multiple";
-			placeholder?: string | null;
-			selected?: { value: string; label: string }[];
-			setValue: (value: string[]) => void;
-	  };`,
+			stringDefinition: selectValueChildSnippetStringDefinition,
 		}),
 		ref: refProp({ elType: "HTMLSpanElement" }),
 	},
