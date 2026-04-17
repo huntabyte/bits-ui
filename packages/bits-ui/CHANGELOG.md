@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.18.0
+
+### Minor Changes
+
+- feat(Select): Add `<Select.Value/>` component ([#2026](https://github.com/huntabyte/bits-ui/pull/2026))
+
+- feat(PinInput): add bindable `inputRef` on `PinInput.Root` ([#2028](https://github.com/huntabyte/bits-ui/pull/2028))
+
 ## 2.17.3
 
 ### Patch Changes
