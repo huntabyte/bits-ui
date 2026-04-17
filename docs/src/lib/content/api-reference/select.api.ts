@@ -63,6 +63,7 @@ import {
 	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 const stateDataAttr = defineEnumDataAttr({
@@ -72,17 +73,6 @@ const stateDataAttr = defineEnumDataAttr({
 	value: OpenClosedProp,
 });
 
-function stripCodeFence(raw: string): string {
-	return raw
-		.replace(/^```[a-zA-Z0-9_-]*\r?\n/, "")
-		.replace(/\r?\n```[\r\n]*$/, "")
-		.trim();
-}
-
-const selectValueChildSnippetStringDefinition = stripCodeFence(selectValueChildSnippetPropsRaw);
-const selectValueChildrenSnippetStringDefinition = stripCodeFence(
-	selectValueChildrenSnippetPropsRaw
-);
 
 export const root = defineComponentApiSchema<SelectRootPropsWithoutHTML>({
 	title: "Root",
@@ -314,13 +304,13 @@ export const value = defineComponentApiSchema<SelectValueApiProps>({
 			variant: "complex",
 			type: "Snippet",
 			definition: SelectValueChildrenSnippetProps,
-			stringDefinition: selectValueChildrenSnippetStringDefinition,
+			stringDefinition: stringDefinitionFromMarkdown(selectValueChildrenSnippetPropsRaw),
 		}),
 		child: childSnippet({
 			variant: "complex",
 			type: "Snippet",
 			definition: SelectValueChildSnippetProps,
-			stringDefinition: selectValueChildSnippetStringDefinition,
+			stringDefinition: stringDefinitionFromMarkdown(selectValueChildSnippetPropsRaw),
 		}),
 		ref: refProp({ elType: "HTMLSpanElement" }),
 	},

@@ -14,6 +14,7 @@ import type {
 } from "bits-ui";
 import { NoopProp, OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import { CommandFilterProp, CommandOnStateChangeProp } from "./extended-types/command/index.js";
+import commandOnStateChangePropRaw from "./extended-types/command/command-on-state-change-prop.md?raw";
 import { withChildProps } from "$lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
@@ -24,7 +25,9 @@ import {
 	defineSimpleDataAttr,
 	defineStringProp,
 	defineSimplePropSchema,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
+
 
 const root = defineComponentApiSchema<CommandRootPropsWithoutHTML>({
 	title: "Root",
@@ -62,23 +65,7 @@ const root = defineComponentApiSchema<CommandRootPropsWithoutHTML>({
 			definition: CommandOnStateChangeProp,
 			description: `A callback that fires when the command's internal state changes. This callback receives a readonly snapshot of the current state.
 			The callback is debounced and only fires once per batch of related updates (e.g., when typing triggers filtering and selection changes).`,
-			stringDefinition: `type CommandState = {
-	/** The value of the search query */
-	search: string;
-	/** The value of the selected command menu item */
-	value: string;
-	/** The filtered items */
-	filtered: {
-		/** The count of all visible items. */
-		count: number;
-		/** Map from visible item id to its search store. */
-		items: Map<string, number>;
-		/** Set of groups with at least one visible item. */
-		groups: Set<string>;
-	};
-};
-
-type onStateChange = (state: Readonly<CommandState>) => void;`,
+			stringDefinition: stringDefinitionFromMarkdown(commandOnStateChangePropRaw),
 		}),
 		loop: defineBooleanProp({
 			default: false,
