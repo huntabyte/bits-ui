@@ -22,6 +22,8 @@ import {
 } from "./extended-types/shared/index.js";
 
 import { DateFieldEditableSegmentPartProp } from "./extended-types/date-field/index.js";
+import dateFieldInputChildSnippetPropsRaw from "./extended-types/shared/date-field-input-child-snippet-props.md?raw";
+import dateFieldInputChildrenSnippetPropsRaw from "./extended-types/shared/date-field-input-children-snippet-props.md?raw";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -31,8 +33,10 @@ import {
 	definePropSchema,
 	defineSimpleDataAttr,
 	defineStringProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 import { dateValueProp } from "./shared.js";
+
 
 export const root = defineComponentApiSchema<DateFieldRootPropsWithoutHTML>({
 	title: "Root",
@@ -119,18 +123,11 @@ export const input = defineComponentApiSchema<DateFieldInputPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			children: {
 				definition: DateFieldInputChildrenSnippetProps,
-				stringDefinition: `import type { SegmentPart } from "bits-ui";
-type ChildrenSnippetProps = {
-	segments: Array<{ part: SegmentPart; value: string }>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(dateFieldInputChildrenSnippetPropsRaw),
 			},
 			child: {
 				definition: DateFieldInputChildSnippetProps,
-				stringDefinition: `import type { SegmentPart } from "bits-ui";
-type ChildSnippetProps = {
-	props: Record<string, unknown>;
-	segments: Array<{ part: SegmentPart; value: string }>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(dateFieldInputChildSnippetPropsRaw),
 			},
 		}),
 	},

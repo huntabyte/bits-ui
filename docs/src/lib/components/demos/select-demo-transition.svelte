@@ -29,20 +29,15 @@
 		{ value: "turquoise-blue", label: "Turquoise Blue" },
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
-
-	let value = $state<string>("");
-	const selectedLabel = $derived(
-		value ? themes.find((theme) => theme.value === value)?.label : "Select a theme"
-	);
 </script>
 
-<Select.Root type="single" bind:value items={themes}>
+<Select.Root type="single" items={themes}>
 	<Select.Trigger
 		class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 inline-flex w-[296px] touch-none select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />
-		{selectedLabel}
+		<Select.Value placeholder="Select a theme" />
 		<CaretUpDown class="text-muted-foreground ml-auto size-6" />
 	</Select.Trigger>
 	<Select.Portal>

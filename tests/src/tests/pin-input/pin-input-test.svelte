@@ -11,6 +11,8 @@
 		toCopy?: string;
 	} = $props();
 
+	let inputRef = $state<HTMLInputElement | null>(null);
+
 	type CellProps = PinInputRootSnippetProps["cells"][0];
 </script>
 
@@ -19,9 +21,14 @@
 		{value}
 	</button>
 
+	<button type="button" data-testid="focus-input" onclick={() => inputRef?.focus()}>
+		focus input
+	</button>
+
 	<PinInput.Root
 		aria-label="my input"
 		inputId="myInput"
+		bind:inputRef
 		bind:value
 		class="group/pininput text-foreground flex items-center has-[:disabled]:opacity-30"
 		{maxlength}

@@ -1,5 +1,6 @@
 import {
 	arrowProps,
+	childSnippet,
 	childrenSnippet,
 	dirProp,
 	dismissibleLayerProps,
@@ -16,6 +17,7 @@ import {
 	portalProps,
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
+	refProp,
 	transitionStyleDataAttrs,
 	typeSingleOrMultipleProp,
 	withChildProps,
@@ -29,13 +31,21 @@ import type {
 	SelectItemPropsWithoutHTML,
 	SelectPortalPropsWithoutHTML,
 	SelectRootPropsWithoutHTML,
+	SelectValuePropsWithoutHTML,
 	SelectScrollDownButtonPropsWithoutHTML,
 	SelectScrollUpButtonPropsWithoutHTML,
 	SelectTriggerPropsWithoutHTML,
 	SelectViewportPropsWithoutHTML,
 } from "bits-ui";
 import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js";
-import { DelayProp, ItemsProp } from "./extended-types/select/index.js";
+import {
+	DelayProp,
+	ItemsProp,
+	SelectValueChildSnippetProps,
+	SelectValueChildrenSnippetProps,
+} from "./extended-types/select/index.js";
+import selectValueChildSnippetPropsRaw from "./extended-types/select/select-value-child-snippet-props.md?raw";
+import selectValueChildrenSnippetPropsRaw from "./extended-types/select/select-value-children-snippet-props.md?raw";
 import {
 	NoopProp,
 	OnChangeStringOrArrayProp,
@@ -53,6 +63,7 @@ import {
 	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 const stateDataAttr = defineEnumDataAttr({
@@ -61,6 +72,7 @@ const stateDataAttr = defineEnumDataAttr({
 	description: "The select's open state.",
 	value: OpenClosedProp,
 });
+
 
 export const root = defineComponentApiSchema<SelectRootPropsWithoutHTML>({
 	title: "Root",
@@ -275,6 +287,45 @@ export const trigger = defineComponentApiSchema<SelectTriggerPropsWithoutHTML>({
 	],
 });
 
+type SelectValueApiProps = SelectValuePropsWithoutHTML & {
+	ref?: HTMLSpanElement | null;
+	placeholder?: string;
+};
+
+export const value = defineComponentApiSchema<SelectValueApiProps>({
+	title: "Value",
+	description:
+		"A text label of the currently selected item(s). Renders a `<span>` by default, or use the `child` snippet for full control.",
+	props: {
+		placeholder: defineStringProp({
+			description: "Text shown when no value is selected.",
+		}),
+		children: childrenSnippet({
+			variant: "complex",
+			type: "Snippet",
+			definition: SelectValueChildrenSnippetProps,
+			stringDefinition: stringDefinitionFromMarkdown(selectValueChildrenSnippetPropsRaw),
+		}),
+		child: childSnippet({
+			variant: "complex",
+			type: "Snippet",
+			definition: SelectValueChildSnippetProps,
+			stringDefinition: stringDefinitionFromMarkdown(selectValueChildSnippetPropsRaw),
+		}),
+		ref: refProp({ elType: "HTMLSpanElement" }),
+	},
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "placeholder",
+			description: "Present when the select does not have a value.",
+		}),
+		defineSimpleDataAttr({
+			name: "select-value",
+			description: "Present on the value element.",
+		}),
+	],
+});
+
 export const viewport = defineComponentApiSchema<SelectViewportPropsWithoutHTML>({
 	title: "Viewport",
 	description:
@@ -377,6 +428,7 @@ export const portal = defineComponentApiSchema<SelectPortalPropsWithoutHTML>({
 export const select = [
 	root,
 	trigger,
+	value,
 	content,
 	contentStatic,
 	portal,

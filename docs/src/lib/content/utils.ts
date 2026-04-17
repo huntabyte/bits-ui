@@ -299,3 +299,14 @@ export function defineSimpleDataAttr(
 export function defineCSSVarSchema(opts: CSSVarSchema) {
 	return opts;
 }
+
+/**
+ * Converts a fenced markdown code block imported via `?raw` into
+ * a plain string definition used by API schema prop helpers.
+ */
+export function stringDefinitionFromMarkdown(raw: string): string {
+	const fencedBlockMatch = raw
+		.trim()
+		.match(/^```[^\r\n]*\r?\n([\s\S]*?)\r?\n```$/);
+	return (fencedBlockMatch?.[1] ?? raw).trim();
+}

@@ -1,4 +1,5 @@
 export { default as Root } from "./components/select.svelte";
+export { default as Value } from "./components/select-value.svelte";
 export { default as Content } from "./components/select-content.svelte";
 export { default as ContentStatic } from "./components/select-content-static.svelte";
 export { default as Item } from "./components/select-item.svelte";
@@ -12,6 +13,7 @@ export { default as ScrollDownButton } from "./components/select-scroll-down-but
 
 export type {
 	SelectRootProps as RootProps,
+	SelectValueProps as ValueProps,
 	SelectContentProps as ContentProps,
 	SelectContentStaticProps as ContentStaticProps,
 	SelectItemProps as ItemProps,

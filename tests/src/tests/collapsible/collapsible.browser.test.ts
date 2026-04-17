@@ -81,10 +81,14 @@ describe("Collapsible ", () => {
 			const observer = observeTransitionAttrs(t.content.element());
 
 			await t.trigger.click();
-			await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
+			await vi.waitFor(() =>
+				expect(observer.history.some((entry) => entry.starting)).toBe(true)
+			);
 
 			await t.trigger.click();
-			await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
+			await vi.waitFor(() =>
+				expect(observer.history.some((entry) => entry.ending)).toBe(true)
+			);
 
 			observer.disconnect();
 		});

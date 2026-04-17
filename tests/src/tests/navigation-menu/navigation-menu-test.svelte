@@ -39,7 +39,10 @@
 				<NavigationMenu.Trigger data-testid="group-item-trigger">
 					trigger
 				</NavigationMenu.Trigger>
-				<NavigationMenu.Content data-testid="group-item-content" forceMount={contentForceMount}>
+				<NavigationMenu.Content
+					data-testid="group-item-content"
+					forceMount={contentForceMount}
+				>
 					<button data-testid="group-item-content-button1">first button</button>
 					<button data-testid="group-item-content-button2">second button </button>
 				</NavigationMenu.Content>
@@ -112,16 +115,12 @@
 				</NavigationMenu.Link>
 			</NavigationMenu.Item>
 
-			<NavigationMenu.Indicator
-				data-testid="indicator"
-				forceMount={indicatorForceMount}
+			<NavigationMenu.Indicator data-testid="indicator" forceMount={indicatorForceMount}
 			></NavigationMenu.Indicator>
 		</NavigationMenu.List>
 
 		{#if !noViewport}
-			<NavigationMenu.Viewport
-				data-testid="viewport"
-				forceMount={viewportForceMount}
+			<NavigationMenu.Viewport data-testid="viewport" forceMount={viewportForceMount}
 			></NavigationMenu.Viewport>
 		{/if}
 	</NavigationMenu.Root>

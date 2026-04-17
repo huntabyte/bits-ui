@@ -28,27 +28,18 @@
 		{ value: "turquoise-blue", label: "Turquoise Blue" },
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
-
-	let value = $state<string[]>([]);
-	const selectedLabel = $derived(
-		value.length
-			? themes
-					.filter((theme) => value.includes(theme.value))
-					.map((theme) => theme.label)
-					.join(", ")
-			: "Select your favorite themes"
-	);
 </script>
 
-<Select.Root type="multiple" bind:value>
+<Select.Root type="multiple">
 	<Select.Trigger
 		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] touch-none select-none items-center border px-[11px] text-sm transition-colors"
 		aria-label="Select a theme"
 	>
 		<Palette class="text-muted-foreground mr-[9px] size-6" />
-		<span class="w-[calc(296px-11px-11px-9px)] truncate text-start">
-			{selectedLabel}
-		</span>
+		<Select.Value
+			class="w-[calc(296px-11px-11px-9px)] truncate text-start"
+			placeholder="Select your favorite themes"
+		/>
 		<CaretUpDown class="text-muted-foreground ml-auto size-6" />
 	</Select.Trigger>
 	<Select.Portal>

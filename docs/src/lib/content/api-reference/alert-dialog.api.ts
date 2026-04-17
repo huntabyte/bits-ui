@@ -14,6 +14,8 @@ import {
 	DialogContentChildSnippetProps,
 	DialogOverlayChildSnippetProps,
 } from "./extended-types/dialog/index.js";
+import dialogContentChildSnippetPropsRaw from "./extended-types/dialog/dialog-content-child-snippet-props.md?raw";
+import dialogOverlayChildSnippetPropsRaw from "./extended-types/dialog/dialog-overlay-child-snippet-props.md?raw";
 import {
 	childrenSnippet,
 	dismissibleLayerProps,
@@ -35,6 +37,7 @@ import {
 	defineEnumDataAttr,
 	defineSimpleDataAttr,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 import { nestedCSSVars, nestedDataAttrs } from "./dialog.api.js";
 
@@ -96,10 +99,7 @@ const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: DialogContentChildSnippetProps,
-				stringDefinition: `type SnippetProps = {
-	props: Record<string, unknown>;
-	open: boolean;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(dialogContentChildSnippetPropsRaw),
 			},
 		}),
 	},
@@ -170,10 +170,7 @@ const overlay = defineComponentApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: DialogOverlayChildSnippetProps,
-				stringDefinition: `type SnippetProps = {
-	props: Record<string, unknown>;
-	open: boolean;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(dialogOverlayChildSnippetPropsRaw),
 			},
 		}),
 	},

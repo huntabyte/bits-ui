@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -56,7 +56,9 @@ Here's an overview of how the Select component is structured in code:
 </script>
 
 <Select.Root>
-  <Select.Trigger />
+  <Select.Trigger>
+    <Select.Value />
+  </Select.Trigger>
   <Select.Portal>
     <Select.Content>
       <Select.ScrollUpButton />
@@ -99,10 +101,6 @@ Here's an example of how you might create a reusable `MySelect` component that r
     placeholder,
     ...restProps
   }: Props = $props();
-
-  const selectedLabel = $derived(
-    items.find((item) => item.value === value)?.label
-  );
 </script>
 
 <!--
@@ -112,7 +110,7 @@ from the perspective of the consumer of this component, it will be typed appropr
 -->
 <Select.Root bind:value={value as never} {...restProps}>
   <Select.Trigger>
-    {selectedLabel ? selectedLabel : placeholder}
+    <Select.Value {placeholder} />
   </Select.Trigger>
   <Select.Portal>
     <Select.Content {...contentProps}>
@@ -271,7 +269,9 @@ You can opt-out of this behavior by instead using the `Select.ContentStatic` com
 
 ```svelte /Select.ContentStatic/
 <Select.Root>
-  <Select.Trigger />
+  <Select.Trigger>
+    <Select.Value />
+  </Select.Trigger>
   <Select.Portal>
     <Select.ContentStatic>
       <Select.ScrollUpButton />
@@ -306,7 +306,9 @@ If you wish to instead anchor the content to a different element, you can pass e
 <div bind:this={customAnchor}></div>
 
 <Select.Root>
-  <Select.Trigger />
+  <Select.Trigger>
+    <Select.Value />
+  </Select.Trigger>
   <Select.Content {customAnchor}>
     <!-- ... -->
   </Select.Content>
@@ -404,6 +406,36 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 
 {#snippet preview()}
 <SelectDemoTransition />
+{/snippet}
+
+</ComponentPreview>
+
+## Customizing Select.Value
+
+You can use the `child` or `children` snippets to customize the rendering of the value in the `Select.Value` component.
+
+```svelte
+<Select.Value>
+  {#snippet child({ props, selection, placeholder, disabled })}
+    <div {...props}>
+      <!-- ... -->
+    </div>
+    <!-- ... -->
+  {/snippet}
+</Select.Value>
+<Select.Value>
+  {#snippet children({ selection, placeholder, disabled })}
+    <!-- ... -->
+  {/snippet}
+</Select.Value>
+```
+
+This allows you to display and modify the value however you want.
+
+<ComponentPreview name="select-demo-custom-value" componentName="Select" variant="preview">
+
+{#snippet preview()}
+<SelectDemoCustomValue />
 {/snippet}
 
 </ComponentPreview>
