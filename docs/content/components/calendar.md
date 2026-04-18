@@ -4,7 +4,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreview, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, Callout, CalendarDemoMax } from '$lib/components'
+	import { APISection, ComponentPreview, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, CalendarDemoWeekNumbers, Callout, CalendarDemoMax } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -356,6 +356,14 @@ The week number is computed using the ISO 8601 standard (week 1 is the week cont
   {/snippet}
 </Calendar.WeekNumberCell>
 ```
+
+<ComponentPreview name="calendar-demo-week-numbers" componentName="Calendar">
+
+{#snippet preview()}
+<CalendarDemoWeekNumbers />
+{/snippet}
+
+</ComponentPreview>
 
 ### Multiple Months
 
