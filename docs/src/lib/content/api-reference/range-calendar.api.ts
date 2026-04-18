@@ -14,6 +14,8 @@ import {
 	createCalendarMonthSelectSchema,
 	createCalendarNextButtonSchema,
 	createCalendarPrevButtonSchema,
+	createCalendarWeekNumberCellSchema,
+	createCalendarWeekNumberHeadCellSchema,
 	createCalendarYearSelectSchema,
 } from "./calendar.api.js";
 import { root as rangeFieldRoot } from "./date-range-field.api.js";
@@ -39,6 +41,7 @@ export const root = defineComponentApiSchema<RangeCalendarRootPropsWithoutHTML>(
 		weekStartsOn: calendarRoot.props!.weekStartsOn,
 		calendarLabel: calendarRoot.props!.calendarLabel,
 		fixedWeeks: calendarRoot.props!.fixedWeeks,
+		showWeekNumbers: calendarRoot.props!.showWeekNumbers,
 		isDateDisabled: calendarRoot.props!.isDateDisabled,
 		isDateUnavailable: calendarRoot.props!.isDateUnavailable,
 		maxValue: calendarRoot.props!.maxValue,
@@ -132,6 +135,8 @@ export const nextButton = createCalendarNextButtonSchema(true);
 export const prevButton = createCalendarPrevButtonSchema(true);
 export const monthSelect = createCalendarMonthSelectSchema(true);
 export const yearSelect = createCalendarYearSelectSchema(true);
+export const weekNumberCell = createCalendarWeekNumberCellSchema(true);
+export const weekNumberHeadCell = createCalendarWeekNumberHeadCellSchema(true);
 
 export const rangeCalendar = [
 	root,
@@ -146,6 +151,8 @@ export const rangeCalendar = [
 	gridHead,
 	gridRow,
 	headCell,
+	weekNumberCell,
+	weekNumberHeadCell,
 	monthSelect,
 	yearSelect,
 ];
