@@ -139,6 +139,15 @@ type CalendarBaseRootPropsWithoutHTML = {
 	fixedWeeks?: boolean;
 
 	/**
+	 * Whether to display ISO 8601 week numbers in the calendar. When enabled, include
+	 * `<Calendar.WeekNumberHeadCell>` in the grid head row and
+	 * `<Calendar.WeekNumberCell week={weekDates} />` as the first child of each grid row.
+	 *
+	 * @default false
+	 */
+	showWeekNumbers?: boolean;
+
+	/**
 	 * Determines the number of months to display on the calendar simultaneously.
 	 * For navigation between months, refer to the `pagedNavigation` prop.
 	 *
@@ -425,3 +434,29 @@ export type CalendarYearSelectPropsWithoutHTML = WithChild<
 
 export type CalendarYearSelectProps = CalendarYearSelectPropsWithoutHTML &
 	Without<BitsPrimitiveSelectAttributes, CalendarYearSelectPropsWithoutHTML>;
+
+export type CalendarWeekNumberCellSnippetProps = {
+	weekNumber: number;
+};
+
+export type CalendarWeekNumberCellPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The dates for the week row. Pass the `weekDates` value from the
+		 * `{#each month.weeks as weekDates}` loop. The ISO week number is
+		 * derived from the first day of the array.
+		 *
+		 * @required
+		 */
+		week: DateValue[];
+	},
+	CalendarWeekNumberCellSnippetProps
+>;
+
+export type CalendarWeekNumberCellProps = CalendarWeekNumberCellPropsWithoutHTML &
+	Without<BitsPrimitiveTdAttributes, CalendarWeekNumberCellPropsWithoutHTML>;
+
+export type CalendarWeekNumberHeadCellPropsWithoutHTML = WithChild;
+
+export type CalendarWeekNumberHeadCellProps = CalendarWeekNumberHeadCellPropsWithoutHTML &
+	Without<BitsPrimitiveThAttributes, CalendarWeekNumberHeadCellPropsWithoutHTML>;

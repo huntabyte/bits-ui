@@ -127,6 +127,14 @@ export function toDate(dateValue: DateValue, tz: string = getLocalTimeZone()) {
 	}
 }
 
+export function getISOWeekNumber(dateValue: DateValue): number {
+	const d = toDate(dateValue);
+	const day = d.getUTCDay() || 7;
+	d.setUTCDate(d.getUTCDate() + 4 - day);
+	const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+	return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
+
 export function getDateValueType(date: DateValue): string {
 	if (date instanceof CalendarDate) return "date";
 	if (date instanceof CalendarDateTime) return "datetime";
