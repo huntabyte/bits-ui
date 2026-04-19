@@ -41,6 +41,7 @@ import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js"
 import {
 	DelayProp,
 	ItemsProp,
+	PositionProp,
 	SelectValueChildSnippetProps,
 	SelectValueChildrenSnippetProps,
 } from "./extended-types/select/index.js";
