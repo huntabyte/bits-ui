@@ -34,6 +34,7 @@ interface PinInputRootStateOpts
 	extends WithRefOpts,
 		WritableBoxedValues<{
 			value: string;
+			inputRef: HTMLInputElement | null;
 		}>,
 		ReadableBoxedValues<{
 			inputId: string;
@@ -83,9 +84,8 @@ export class PinInputRootState {
 
 	readonly opts: PinInputRootStateOpts;
 	readonly attachment: RefAttachment;
-	#inputRef = simpleBox<HTMLInputElement | null>(null);
+	readonly inputAttachment: RefAttachment<HTMLInputElement>;
 	#isHoveringInput = $state(false);
-	readonly inputAttachment: RefAttachment<HTMLInputElement> = attachRef(this.#inputRef);
 	#isFocused = simpleBox(false);
 	#mirrorSelectionStart = $state<number | null>(null);
 	#mirrorSelectionEnd = $state<number | null>(null);
@@ -110,6 +110,7 @@ export class PinInputRootState {
 	constructor(opts: PinInputRootStateOpts) {
 		this.opts = opts;
 		this.attachment = attachRef(this.opts.ref);
+		this.inputAttachment = attachRef(this.opts.inputRef);
 		this.domContext = new DOMContext(opts.ref);
 
 		this.#initialLoad = {
@@ -121,14 +122,14 @@ export class PinInputRootState {
 
 		this.#pwmb = usePasswordManagerBadge({
 			containerRef: this.opts.ref,
-			inputRef: this.#inputRef,
+			inputRef: this.opts.inputRef,
 			isFocused: this.#isFocused,
 			pushPasswordManagerStrategy: this.opts.pushPasswordManagerStrategy,
 			domContext: this.domContext,
 		});
 
 		onMount(() => {
-			const input = this.#inputRef.current;
+			const input = this.opts.inputRef.current;
 			const container = this.opts.ref.current;
 
 			if (!input || !container) return;
@@ -180,9 +181,9 @@ export class PinInputRootState {
 			};
 		});
 
-		watch([() => this.opts.value.current, () => this.#inputRef.current], () => {
+		watch([() => this.opts.value.current, () => this.opts.inputRef.current], () => {
 			syncTimeouts(() => {
-				const input = this.#inputRef.current;
+				const input = this.opts.inputRef.current;
 				if (!input) return;
 				// forcefully remove :autofill state
 				input.dispatchEvent(new Event("input"));
@@ -313,7 +314,7 @@ export class PinInputRootState {
 	}
 
 	#onDocumentSelectionChange = () => {
-		const input = this.#inputRef.current;
+		const input = this.opts.inputRef.current;
 		const container = this.opts.ref.current;
 		if (!input || !container) return;
 
@@ -363,7 +364,7 @@ export class PinInputRootState {
 			}
 
 			if (start !== -1 && end !== -1 && start !== end) {
-				this.#inputRef.current?.setSelectionRange(start, end, direction);
+				this.opts.inputRef.current?.setSelectionRange(start, end, direction);
 			}
 		}
 
@@ -398,7 +399,7 @@ export class PinInputRootState {
 	};
 
 	onfocus = (_: BitsFocusEvent<HTMLInputElement>) => {
-		const input = this.#inputRef.current;
+		const input = this.opts.inputRef.current;
 		if (input) {
 			const start = Math.min(input.value.length, this.opts.maxLength.current - 1);
 			const end = input.value.length;
@@ -410,7 +411,7 @@ export class PinInputRootState {
 	};
 
 	onpaste = (e: BitsEvent<ClipboardEvent>) => {
-		const input = this.#inputRef.current;
+		const input = this.opts.inputRef.current;
 		if (!input) return;
 
 		const getNewValue = (finalContent: string | undefined) => {

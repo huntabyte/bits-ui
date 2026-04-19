@@ -36,6 +36,12 @@ afterEach(() => {
 	vi.resetAllMocks();
 });
 
+it("should focus the hidden input when `inputRef.focus()` is called", async () => {
+	const t = setup();
+	await t.getByTestId("focus-input").click();
+	await expect.element(t.hiddenInput).toHaveFocus();
+});
+
 it("should sync the `name` prop to the hidden input", async () => {
 	const t = setup({ name: "test" });
 	await expect.element(t.hiddenInput).toHaveAttribute("name", "test");

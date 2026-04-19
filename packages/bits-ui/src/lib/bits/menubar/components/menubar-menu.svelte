@@ -24,4 +24,6 @@
 	dir={menuState.root.opts.dir.current}
 	_internal_variant="menubar"
 	{...restProps}
+	_internal_should_skip_exit_animation={() =>
+		menuState.root.skipExitAnimationForMenuValue === menuState.opts.value.current}
 />

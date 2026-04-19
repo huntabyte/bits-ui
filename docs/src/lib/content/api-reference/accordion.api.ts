@@ -5,7 +5,13 @@ import type {
 	AccordionRootPropsWithoutHTML,
 	AccordionTriggerPropsWithoutHTML,
 } from "bits-ui";
-import { disabledDataAttr, forceMountProp, orientationDataAttr, withChildProps } from "./shared.js";
+import {
+	disabledDataAttr,
+	forceMountProp,
+	orientationDataAttr,
+	transitionStyleDataAttrs,
+	withChildProps,
+} from "./shared.js";
 import {
 	HeaderLevelProp,
 	OnChangeStringOrArrayProp,
@@ -15,6 +21,7 @@ import {
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ContentChildSnippetProps } from "./extended-types/accordion/index.js";
+import contentChildSnippetPropsRaw from "./extended-types/accordion/content-child-snippet-props.md?raw";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -25,6 +32,7 @@ import {
 	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 const stateDataAttr = defineEnumDataAttr({
@@ -33,6 +41,7 @@ const stateDataAttr = defineEnumDataAttr({
 	options: ["open", "closed"],
 	value: OpenClosedProp,
 });
+
 
 const root = defineComponentApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
@@ -140,16 +149,14 @@ const content = defineComponentApiSchema<AccordionContentPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: ContentChildSnippetProps,
-				stringDefinition: `type SnippetProps = {
-	open: boolean;
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(contentChildSnippetPropsRaw),
 			},
 		}),
 	},
 	dataAttributes: [
 		orientationDataAttr,
 		disabledDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "accordion-content",
 			description: "Present on the content element.",

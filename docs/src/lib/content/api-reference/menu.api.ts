@@ -40,6 +40,7 @@ import {
 	preventScrollProp,
 	radioGroupItemChildDefinition,
 	radioGroupItemChildrenDefinition,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "./shared.js";
 import {
@@ -244,7 +245,7 @@ const subTriggerProps = {
 		description: "Whether or not the submenu trigger is disabled.",
 	}),
 	openDelay: defineNumberProp({
-		default: 100,
+		default: 0,
 		description:
 			"The amount of time in ms from when the mouse enters the subtrigger until the submenu opens.",
 	}),
@@ -282,7 +283,7 @@ type DataAttrs = ComponentAPISchema["dataAttributes"];
 
 const triggerAttrs: DataAttrs = [STATE];
 
-const contentAttrs: DataAttrs = [STATE];
+const contentAttrs: DataAttrs = [STATE, ...transitionStyleDataAttrs];
 
 const arrowAttrs: DataAttrs = [STATE];
 
@@ -340,7 +341,7 @@ const separatorAttrs: DataAttrs = [
 	}),
 ];
 
-const subContentAttrs: DataAttrs = [STATE];
+const subContentAttrs: DataAttrs = [STATE, ...transitionStyleDataAttrs];
 
 const subTriggerAttrs: DataAttrs = [...sharedItemAttrs, STATE];
 

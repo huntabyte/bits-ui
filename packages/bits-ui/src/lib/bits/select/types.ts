@@ -5,6 +5,7 @@ import type { ArrowProps, ArrowPropsWithoutHTML } from "../utilities/arrow/types
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
+	BitsPrimitiveSpanAttributes,
 } from "$lib/shared/attributes.js";
 import type {
 	OnChangeFn,
@@ -161,6 +162,27 @@ export type SelectRootPropsWithoutHTML = SelectBaseRootPropsWithoutHTML &
 	(SelectSingleRootPropsWithoutHTML | SelectMultipleRootPropsWithoutHTML);
 
 export type SelectRootProps = SelectRootPropsWithoutHTML;
+
+export type SelectValueSnippetProps = {
+	selection:
+		| {
+				type: "single";
+				selected?: { value: string; label: string };
+				setValue: (value: string) => void;
+		  }
+		| {
+				type: "multiple";
+				selected: { value: string; label: string }[];
+				setValue: (value: string[]) => void;
+		  };
+	placeholder: string | null;
+	disabled: boolean;
+};
+
+export type SelectValuePropsWithoutHTML = WithChild<{}, SelectValueSnippetProps>;
+
+export type SelectValueProps = SelectValuePropsWithoutHTML &
+	Without<BitsPrimitiveSpanAttributes, SelectValuePropsWithoutHTML>;
 
 export type _SharedSelectContentProps = {
 	/**

@@ -8,6 +8,9 @@ import {
 	PinInputRootPushPasswordManagerStrategyProp,
 	PinInputRootTextAlignProp,
 } from "./extended-types/pin-input/index.js";
+import pinInputCellCellPropRaw from "./extended-types/pin-input/pin-input-cell-cell-prop.md?raw";
+import pinInputRootChildSnippetPropsRaw from "./extended-types/pin-input/pin-input-root-child-snippet-props.md?raw";
+import pinInputRootChildrenSnippetPropsRaw from "./extended-types/pin-input/pin-input-root-children-snippet-props.md?raw";
 import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import { withChildProps } from "$lib/content/api-reference/shared.js";
 import {
@@ -18,7 +21,9 @@ import {
 	defineNumberProp,
 	defineObjectProp,
 	defineSimpleDataAttr,
+	defineSimplePropSchema,
 	defineStringProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 const root = defineComponentApiSchema<PinInputRootPropsWithoutHTML>({
@@ -63,6 +68,13 @@ const root = defineComponentApiSchema<PinInputRootPropsWithoutHTML>({
 		inputId: defineStringProp({
 			description: "Optionally provide an ID to apply to the hidden input element.",
 		}),
+		inputRef: defineSimplePropSchema({
+			type: "HTMLInputElement",
+			description:
+				"The hidden `<input>` element that holds the OTP value. Bind to this to call `focus()`, read the selection, etc.",
+			bindable: true,
+			default: "null",
+		}),
 		pushPasswordManagerStrategy: defineEnumProp({
 			description:
 				"Enabled by default, it's an optional strategy for detecting Password Managers in the page and then shifting their badges to the right side, outside the input.",
@@ -73,34 +85,11 @@ const root = defineComponentApiSchema<PinInputRootPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: PinInputRootChildSnippetProps,
-				stringDefinition: `type PinInputCell = {
-	/** The character displayed in the cell. */
-	char: string | null | undefined;
-	/** Whether the cell is active. */
-	isActive: boolean;
-	/** Whether the cell has a fake caret. */
-	hasFakeCaret: boolean;
-};
-
-type SnippetProps = {
-	cells: PinInputCell[];
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(pinInputRootChildSnippetPropsRaw),
 			},
 			children: {
 				definition: PinInputRootChildrenSnippetProps,
-				stringDefinition: `type PinInputCell = {
-	/** The character displayed in the cell. */
-	char: string | null | undefined;
-	/** Whether the cell is active. */
-	isActive: boolean;
-	/** Whether the cell has a fake caret. */
-	hasFakeCaret: boolean;
-};
-
-type SnippetProps = {
-	cells: PinInputCell[];
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(pinInputRootChildrenSnippetPropsRaw),
 			},
 		}),
 	},
@@ -120,14 +109,7 @@ const cell = defineComponentApiSchema<PinInputCellPropsWithoutHTML>({
 			definition: PinInputCellCellProp,
 			description:
 				"The cell object provided by the `cells` snippet prop from the `PinInput.Root` component.",
-			stringDefinition: `type Cell = {
-	/** The character displayed in the cell. */
-	char: string | null | undefined;
-	/** Whether the cell is active. */
-	isActive: boolean;
-	/** Whether the cell has a fake caret. */
-	hasFakeCaret: boolean;
-}`,
+			stringDefinition: stringDefinitionFromMarkdown(pinInputCellCellPropRaw),
 		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},

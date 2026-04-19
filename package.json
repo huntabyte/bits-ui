@@ -48,7 +48,7 @@
     "pnpm": ">=10.12.1",
     "node": ">=20"
   },
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@10.33.0",
   "private": true,
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -70,9 +70,9 @@
       "@tailwindcss/vite": "^4.1.13",
       "@types/node": "^20.19.16",
       "playwright": "1.55.0",
-      "runed": "^0.35.1",
-      "svelte": "5.46.4",
-      "svelte-check": "^4.3.1",
+      "runed": "0.37.1",
+      "svelte": "5.55.4",
+      "svelte-check": "^4.4.6",
       "tailwindcss": "^4.1.13",
       "typescript": "^5.9.2",
       "vite": "^7.1.5",

@@ -22,13 +22,22 @@ export function getDataChecked(condition: boolean): "checked" | "unchecked" {
 	return condition ? "checked" : "unchecked";
 }
 
+export type TransitionState = "starting" | "ending" | "idle" | undefined;
+
+export function getDataTransitionAttrs(state: TransitionState): {
+	"data-starting-style"?: "";
+	"data-ending-style"?: "";
+} {
+	if (state === "starting") return { "data-starting-style": "" };
+	if (state === "ending") return { "data-ending-style": "" };
+	return {};
+}
+
 export function getAriaChecked(
 	checked: boolean,
 	indeterminate: boolean
 ): "true" | "false" | "mixed" {
-	if (indeterminate) {
-		return "mixed";
-	}
+	if (indeterminate) return "mixed";
 	return checked ? "true" : "false";
 }
 

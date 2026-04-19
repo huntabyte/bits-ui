@@ -62,6 +62,7 @@ export default tseslint.config(
 			"packages/bits-ui/.svelte-kit/**/*",
 			"tests/.svelte-kit/**/*",
 			"bundle-analyzer/.temp-bundle-analysis/**/*",
+			".tmp/",
 		],
 	},
 	...oxlint.configs["flat/recommended"],

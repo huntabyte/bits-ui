@@ -10,6 +10,8 @@ import {
 	PaginationChildrenSnippetProps,
 	PaginationOnPageChangeProp,
 } from "./extended-types/pagination/index.js";
+import paginationChildSnippetPropsRaw from "./extended-types/pagination/pagination-child-snippet-props.md?raw";
+import paginationChildrenSnippetPropsRaw from "./extended-types/pagination/pagination-children-snippet-props.md?raw";
 import { OrientationProp } from "./extended-types/shared/index.js";
 import {
 	defineBooleanProp,
@@ -18,7 +20,9 @@ import {
 	defineFunctionProp,
 	defineNumberProp,
 	defineSimpleDataAttr,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
+
 
 export const root = defineComponentApiSchema<PaginationRootPropsWithoutHTML>({
 	title: "Root",
@@ -62,54 +66,11 @@ export const root = defineComponentApiSchema<PaginationRootPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: PaginationChildSnippetProps,
-				stringDefinition: `type Page = {
-	type: "page";
-	value: number;
-};
-
-type Ellipsis = {
-	type: "ellipsis";
-};
-
-type PageItem = (Page | Ellipsis) & {
-	/**  A unique key to be used as the key in a svelte #each block. */
-	key: string;
-};
-
-type ChildSnippetProps = {
-	/** The items to iterate over and render for the pagination component */
-	pages: PageItem[];
-	/** The range of pages to render */
-	range: { start: number; end: number };
-	/** The currently active page */
-	currentPage: number;
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(paginationChildSnippetPropsRaw),
 			},
 			children: {
 				definition: PaginationChildrenSnippetProps,
-				stringDefinition: `type Page = {
-	type: "page";
-	value: number;
-};
-
-type Ellipsis = {
-	type: "ellipsis";
-};
-
-type PageItem = (Page | Ellipsis) & {
-	/**  A unique key to be used as the key in a svelte #each block. */
-	key: string;
-};
-
-type ChildrenSnippetProps = {
-	/** The items to iterate over and render for the pagination component */
-	pages: PageItem[];
-	/** The range of pages to render */
-	range: { start: number; end: number };
-	/** The currently active page */
-	currentPage: number;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(paginationChildrenSnippetPropsRaw),
 			},
 		}),
 	},

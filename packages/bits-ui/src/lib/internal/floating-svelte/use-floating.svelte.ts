@@ -28,6 +28,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	let middlewareData = $state({});
 	let isPositioned = $state(false);
 	let hasWhileMountedPosition = false;
+	let updateRequestId = 0;
 	const floatingStyles = $derived.by(() => {
 		// preserve last known position when floating ref is null (during transitions)
 		const xVal = floating.current ? roundByDPR(floating.current, x) : x;
@@ -59,12 +60,20 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	function update() {
 		if (reference.current === null || floating.current === null) return;
 
-		computePosition(reference.current, floating.current, {
+		const referenceNode = reference.current;
+		const floatingNode = floating.current;
+		const requestId = ++updateRequestId;
+
+		computePosition(referenceNode, floatingNode, {
 			middleware: middlewareOption,
 			placement: placementOption,
 			strategy: strategyOption,
 		}).then((position) => {
-			const referenceNode = reference.current;
+			// ignore stale async resolutions when newer updates were requested.
+			if (requestId !== updateRequestId) return;
+			// ignore stale resolutions after ref replacement.
+			if (reference.current !== referenceNode || floating.current !== floatingNode) return;
+
 			const referenceHidden = isReferenceHidden(referenceNode);
 			if (referenceHidden) {
 				// keep last good coordinates when the anchor disappears to avoid
@@ -106,6 +115,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			whileElementsMountedCleanup();
 			whileElementsMountedCleanup = undefined;
 		}
+		updateRequestId++;
 	}
 
 	function attach() {

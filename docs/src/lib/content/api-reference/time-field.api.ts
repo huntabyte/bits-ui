@@ -17,6 +17,8 @@ import {
 	TimeValidateProp,
 	TimeSegmentDataAttr,
 } from "./extended-types/shared/index.js";
+import timeFieldInputChildSnippetPropsRaw from "./extended-types/shared/time-field-input-child-snippet-props.md?raw";
+import timeFieldInputChildrenSnippetPropsRaw from "./extended-types/shared/time-field-input-children-snippet-props.md?raw";
 
 import { TimeFieldEditableSegmentPartProp } from "./extended-types/time-field/index.js";
 import {
@@ -29,7 +31,9 @@ import {
 	definePropSchema,
 	defineSimpleDataAttr,
 	defineStringProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
+
 
 export const root = defineComponentApiSchema<TimeFieldRootPropsWithoutHTML>({
 	title: "Root",
@@ -136,20 +140,11 @@ export const input = defineComponentApiSchema<TimeFieldInputPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			children: {
 				definition: TimeFieldInputChildrenSnippetProps,
-				stringDefinition: `import type { TimeSegmentPart } from "bits-ui";
-
-type ChildrenSnippetProps = {
-	segments: Array<{ part: TimeSegmentPart; value: string }>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(timeFieldInputChildrenSnippetPropsRaw),
 			},
 			child: {
 				definition: TimeFieldInputChildSnippetProps,
-				stringDefinition: `import type { TimeSegmentPart } from "bits-ui";
-
-type ChildSnippetProps = {
-	props: Record<string, unknown>;
-	segments: Array<{ part: TimeSegmentPart; value: string }>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(timeFieldInputChildSnippetPropsRaw),
 			},
 		}),
 	},

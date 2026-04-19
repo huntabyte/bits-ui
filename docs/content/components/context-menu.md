@@ -4,7 +4,7 @@ description: Displays contextual options and actions triggered by right-click.
 ---
 
 <script>
-	import { APISection, ComponentPreview, ContextMenuDemo, ContextMenuDemoTransition, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ContextMenuDemo, ContextMenuDemoNested, ContextMenuDemoTransition, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -297,6 +297,16 @@ The `value` state does not persist between menu open/close cycles. To persist th
 ## Nested Menus
 
 You can create nested menus using the `ContextMenu.Sub` component to create complex menu structures.
+
+The example below shows a deeper hierarchy with radio groups, a checkbox group, and multiple nested submenus (similar to filtering an issue in a project tracker).
+
+<ComponentPreview name="context-menu-demo-nested" componentName="Context Menu" containerClass="mt-4">
+
+{#snippet preview()}
+<ContextMenuDemoNested />
+{/snippet}
+
+</ComponentPreview>
 
 ```svelte /ContextMenu.Sub/
 <script lang="ts">

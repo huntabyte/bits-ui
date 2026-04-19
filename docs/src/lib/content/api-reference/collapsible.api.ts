@@ -7,9 +7,11 @@ import {
 	forceMountProp,
 	onOpenChangeCompleteProp,
 	onOpenChangeProp,
+	transitionStyleDataAttrs,
 	withChildProps,
 } from "./shared.js";
 import { CollapsibleContentChildSnippetProps } from "./extended-types/collapsible/index.js";
+import collapsibleContentChildSnippetPropsRaw from "./extended-types/collapsible/content-child-snippet-props.md?raw";
 import { OpenClosedProp } from "./extended-types/shared/index.js";
 import {
 	defineBooleanProp,
@@ -17,6 +19,7 @@ import {
 	defineCSSVarSchema,
 	defineEnumDataAttr,
 	defineSimpleDataAttr,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<CollapsibleRootPropsWithoutHTML>({
@@ -93,10 +96,7 @@ export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHT
 			elType: "HTMLDivElement",
 			child: {
 				definition: CollapsibleContentChildSnippetProps,
-				stringDefinition: `type SnippetProps = {
-	open: boolean;
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(collapsibleContentChildSnippetPropsRaw),
 			},
 		}),
 	},
@@ -111,6 +111,7 @@ export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHT
 			name: "disabled",
 			description: "Present when the collapsible is disabled.",
 		}),
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "collapsible-content",
 			description: "Present on the content element.",

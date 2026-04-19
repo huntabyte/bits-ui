@@ -12,5 +12,8 @@
 </script>
 
 {#if forceMount || open || presenceState.isPresent}
-	{@render presence?.({ present: presenceState.isPresent })}
+	{@render presence?.({
+		present: presenceState.isPresent,
+		transitionStatus: presenceState.transitionStatus,
+	})}
 {/if}

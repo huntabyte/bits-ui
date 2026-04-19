@@ -10,7 +10,11 @@ import {
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
-import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
+import {
+	createBitsAttrs,
+	boolToEmptyStrOrUndef,
+	getDataTransitionAttrs,
+} from "$lib/internal/attrs.js";
 import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
 import { TimeoutFn } from "$lib/internal/timeout-fn.js";
@@ -211,8 +215,8 @@ export class TooltipProviderState {
 	onClose = (tooltip: TooltipRootState) => {
 		if (this.#openTooltip === tooltip) {
 			this.#openTooltip = null;
+			this.#startTimer();
 		}
-		this.#startTimer();
 	};
 
 	isTooltipOpen = (tooltip: TooltipRootState) => {
@@ -844,6 +848,7 @@ export class TooltipContentState {
 				id: this.opts.id.current,
 				"data-state": this.root.stateAttr,
 				"data-disabled": boolToEmptyStrOrUndef(this.root.disabled),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				style: {
 					outline: "none",
 				},

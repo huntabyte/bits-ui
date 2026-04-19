@@ -11,7 +11,7 @@ import AccordionHiddenUntilFoundTest from "./accordion-hidden-until-found-test.s
 import AccordionMultiHiddenUntilFoundTest from "./accordion-multi-hidden-until-found-test.svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
-import { expectNotExists } from "../browser-utils";
+import { expectNotExists, observeTransitionAttrs } from "../browser-utils";
 
 export type Item = {
 	value: string;
@@ -321,6 +321,26 @@ describe("type='single'", () => {
 			for (const content of contentEls) {
 				await expect.element(content).toBeVisible();
 			}
+		});
+
+		it("should apply transition attrs to content during open and close", async () => {
+			const t = setupSingleForceMount({
+				items: ITEMS_WITH_DISABLED,
+			});
+			const content = page.getByTestId(`${ITEMS[0]!.value}-content`);
+			const observer = observeTransitionAttrs(content.element());
+
+			await t.triggerEls[0]!.click();
+			await vi.waitFor(() =>
+				expect(observer.history.some((entry) => entry.starting)).toBe(true)
+			);
+
+			await t.triggerEls[0]!.click();
+			await vi.waitFor(() =>
+				expect(observer.history.some((entry) => entry.ending)).toBe(true)
+			);
+
+			observer.disconnect();
 		});
 
 		it("works properly when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {

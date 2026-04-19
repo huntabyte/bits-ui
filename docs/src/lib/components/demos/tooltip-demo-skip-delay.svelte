@@ -45,7 +45,7 @@
 						>
 							<span class="text-sm font-medium">{tool.label}</span>
 							<kbd
-								class="rounded-[4px] border-dark-10 text-foreground/50 bg-background-alt border px-1.5 py-0.5 font-mono text-[11px] leading-none"
+								class="border-dark-10 text-foreground/50 bg-background-alt rounded-[4px] border px-1.5 py-0.5 font-mono text-[11px] leading-none"
 							>
 								{tool.shortcut}
 							</kbd>

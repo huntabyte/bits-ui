@@ -2,6 +2,9 @@
 	export type NavigationMenuTestProps = NavigationMenu.RootProps & {
 		noViewport?: boolean;
 		noSubViewport?: boolean;
+		contentForceMount?: boolean;
+		viewportForceMount?: boolean;
+		indicatorForceMount?: boolean;
 		groupItemProps?: NavigationMenu.ItemProps;
 		subGroupItemProps?: NavigationMenu.ItemProps;
 		subGroupItem1Props?: NavigationMenu.ItemProps;
@@ -15,23 +18,31 @@
 	let {
 		noViewport,
 		noSubViewport,
+		contentForceMount = false,
+		viewportForceMount = false,
+		indicatorForceMount = false,
 		groupItemProps,
 		subGroupItemProps,
 		subGroupItem1Props,
 		subGroupItem2Props,
+		delayDuration = 0,
+		skipDelayDuration = 0,
 		...restProps
 	}: NavigationMenuTestProps = $props();
 </script>
 
 <main>
 	<button data-testid="previous-button" tabindex={0}>previous button</button>
-	<NavigationMenu.Root {...restProps} data-testid="root" delayDuration={0} skipDelayDuration={0}>
+	<NavigationMenu.Root {...restProps} data-testid="root" {delayDuration} {skipDelayDuration}>
 		<NavigationMenu.List data-testid="list">
 			<NavigationMenu.Item value="group" data-testid="group-item" {...groupItemProps}>
 				<NavigationMenu.Trigger data-testid="group-item-trigger">
 					trigger
 				</NavigationMenu.Trigger>
-				<NavigationMenu.Content data-testid="group-item-content">
+				<NavigationMenu.Content
+					data-testid="group-item-content"
+					forceMount={contentForceMount}
+				>
 					<button data-testid="group-item-content-button1">first button</button>
 					<button data-testid="group-item-content-button2">second button </button>
 				</NavigationMenu.Content>
@@ -45,7 +56,10 @@
 				<NavigationMenu.Trigger data-testid="sub-group-item-trigger">
 					sub
 				</NavigationMenu.Trigger>
-				<NavigationMenu.Content data-testid="sub-group-item-content">
+				<NavigationMenu.Content
+					data-testid="sub-group-item-content"
+					forceMount={contentForceMount}
+				>
 					<NavigationMenu.Sub value="sub1" data-testid="sub-group-item-sub">
 						<NavigationMenu.List data-testid="sub-group-item-sub-list">
 							<NavigationMenu.Item
@@ -60,6 +74,7 @@
 								</NavigationMenu.Trigger>
 								<NavigationMenu.Content
 									data-testid="sub-group-item-sub-item1-content"
+									forceMount={contentForceMount}
 								>
 									<button data-testid="sub-group-item-sub-item1-content-button">
 										first sub button
@@ -78,6 +93,7 @@
 								</NavigationMenu.Trigger>
 								<NavigationMenu.Content
 									data-testid="sub-group-item-sub-item2-content"
+									forceMount={contentForceMount}
 								>
 									<button data-testid="sub-group-item-sub-item2-content-button">
 										second sub button
@@ -99,11 +115,13 @@
 				</NavigationMenu.Link>
 			</NavigationMenu.Item>
 
-			<NavigationMenu.Indicator data-testid="indicator"></NavigationMenu.Indicator>
+			<NavigationMenu.Indicator data-testid="indicator" forceMount={indicatorForceMount}
+			></NavigationMenu.Indicator>
 		</NavigationMenu.List>
 
 		{#if !noViewport}
-			<NavigationMenu.Viewport data-testid="viewport"></NavigationMenu.Viewport>
+			<NavigationMenu.Viewport data-testid="viewport" forceMount={viewportForceMount}
+			></NavigationMenu.Viewport>
 		{/if}
 	</NavigationMenu.Root>
 	<button data-testid="next-button" tabindex={0}>next button</button>

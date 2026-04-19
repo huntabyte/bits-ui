@@ -404,6 +404,20 @@ export const disabledDataAttr = defineSimpleDataAttr({
 	description: "Present when the component is disabled.",
 });
 
+export const startingStyleDataAttr = defineSimpleDataAttr({
+	name: "starting-style",
+	description:
+		"Present during the initial open frame. Use this to define the starting styles for CSS transitions.",
+});
+
+export const endingStyleDataAttr = defineSimpleDataAttr({
+	name: "ending-style",
+	description:
+		"Present while closing before unmount. Use this to define the ending styles for CSS transitions.",
+});
+
+export const transitionStyleDataAttrs = [startingStyleDataAttr, endingStyleDataAttr] as const;
+
 export const valueDateRangeProp = defineComponentPropSchema({
 	type: "DateRange",
 	definition: DateRangeProp,

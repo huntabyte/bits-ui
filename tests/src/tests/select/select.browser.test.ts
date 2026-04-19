@@ -9,8 +9,13 @@ import type { SelectMultipleTestProps } from "./select-multi-test.svelte";
 import SelectMultiTest from "./select-multi-test.svelte";
 import type { Item, SelectSingleTestProps } from "./select-test.svelte";
 import SelectTest from "./select-test.svelte";
+import type { SelectValueChildTestProps } from "./select-value-child-test.svelte";
+import SelectValueChildTest from "./select-value-child-test.svelte";
+import type { SelectValueChildrenMultiTestProps } from "./select-value-children-multi-test.svelte";
+import SelectValueChildrenMultiTest from "./select-value-children-multi-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -98,6 +103,74 @@ function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item
 	};
 }
 
+function setupValueChildSingle(
+	props: Partial<SelectValueChildTestProps> = {},
+	items: Item[] = testItems
+) {
+	const returned = render(SelectValueChildTest, { ...props, items });
+	const trigger = page.getByTestId("trigger");
+	const valueNode = page.getByTestId("value-node");
+	const selectionType = page.getByTestId("selection-type");
+	const selectionValue = page.getByTestId("selection-value");
+	const selectionLabel = page.getByTestId("selection-label");
+	const selectionDisabled = page.getByTestId("selection-disabled");
+	const setValueButton = page.getByTestId("set-value-2");
+
+	function getContent() {
+		return page.getByTestId("content");
+	}
+
+	function getHiddenInput(name = "theme") {
+		return returned.container.querySelector(`input[name="${name}"]`);
+	}
+
+	return {
+		trigger,
+		valueNode,
+		selectionType,
+		selectionValue,
+		selectionLabel,
+		selectionDisabled,
+		setValueButton,
+		getContent,
+		getHiddenInput,
+	};
+}
+
+function setupValueChildrenMultiple(
+	props: Partial<SelectValueChildrenMultiTestProps> = {},
+	items: Item[] = testItems
+) {
+	const returned = render(SelectValueChildrenMultiTest, { ...props, items });
+	const trigger = page.getByTestId("trigger");
+	const selectionType = page.getByTestId("selection-type");
+	const selectionValues = page.getByTestId("selection-values");
+	const selectionLabel = page.getByTestId("selection-label");
+	const selectionDisabled = page.getByTestId("selection-disabled");
+	const setValuesButton = page.getByTestId("set-values-1-3");
+
+	function getContent() {
+		return page.getByTestId("content");
+	}
+
+	function getHiddenInputs(name = "themes") {
+		return Array.from(
+			returned.container.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`)
+		);
+	}
+
+	return {
+		trigger,
+		selectionType,
+		selectionValues,
+		selectionLabel,
+		selectionDisabled,
+		setValuesButton,
+		getContent,
+		getHiddenInputs,
+	};
+}
+
 async function openSingle(
 	props: Partial<SelectSingleTestProps> = {},
 	openWith: "click" | "type" | (string & {}) = "click",
@@ -147,6 +220,12 @@ async function openMultiple(
 	};
 }
 
+function nextFrame() {
+	return new Promise<void>((resolve) => {
+		window.requestAnimationFrame(() => resolve());
+	});
+}
+
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];
 
 describe("select - single", () => {
@@ -166,6 +245,19 @@ describe("select - single", () => {
 		});
 		const contentEl = t.getContent().element() as HTMLElement;
 		expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+	});
+
+	it("should apply transition attrs to content during open and close", async () => {
+		const t = setupSingle({}, testItems, SelectForceMountTest);
+		const observer = observeTransitionAttrs(t.getContent().element());
+
+		await t.trigger.click();
+		await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
+
+		await t.outside.click({ force: true });
+		await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
+
+		observer.disconnect();
 	});
 
 	it("should apply the appropriate `aria-labelledby` attribute to the group", async () => {
@@ -573,6 +665,36 @@ describe("select - single", () => {
 		await expectHighlighted(page.getByTestId("empty"));
 		await expectNotHighlighted(page.getByTestId("1"));
 	});
+
+	it("should not scroll the page when opening on trigger click", async () => {
+		render(SelectScrollJumpTest);
+
+		window.scrollTo(0, 640);
+		for (let i = 0; i < 3; i++) {
+			await nextFrame();
+		}
+
+		const baselineY = window.scrollY;
+		let maxDrift = 0;
+		const handleScroll = () => {
+			maxDrift = Math.max(maxDrift, Math.abs(window.scrollY - baselineY));
+		};
+
+		window.addEventListener("scroll", handleScroll, { passive: true });
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		for (let i = 0; i < 30; i++) {
+			await nextFrame();
+			handleScroll();
+		}
+
+		window.removeEventListener("scroll", handleScroll);
+
+		expect(maxDrift).toBeLessThanOrEqual(1);
+		expect(Math.abs(window.scrollY - baselineY)).toBeLessThanOrEqual(1);
+	});
 });
 
 ////////////////////////////////////
@@ -883,6 +1005,72 @@ describe("select - multiple", () => {
 		});
 		await t.submit.click();
 		expect(submittedValues).toHaveLength(0);
+	});
+});
+
+describe("select - value", () => {
+	it("should expose child snippet props in single mode and update when setValue is called", async () => {
+		const t = setupValueChildSingle({ name: "theme", placeholder: "Pick a theme" });
+
+		await expect.element(t.selectionType).toHaveTextContent("single");
+		await expect.element(t.selectionValue).toHaveTextContent("none");
+		await expect.element(t.selectionLabel).toHaveTextContent("Pick a theme");
+		await expect.element(t.selectionDisabled).toHaveTextContent("false");
+		await expect.element(t.valueNode).toHaveAttribute("data-select-value");
+		await expect.element(t.valueNode).toHaveAttribute("data-placeholder");
+
+		await t.setValueButton.click();
+
+		await expect.element(t.selectionValue).toHaveTextContent("2");
+		await expect.element(t.selectionLabel).toHaveTextContent("B");
+		await expect.element(t.valueNode).not.toHaveAttribute("data-placeholder");
+
+		const hiddenInput = t.getHiddenInput();
+		expect(hiddenInput).not.toBeNull();
+		await expect.element(hiddenInput!).toHaveValue("2");
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await expectSelected(page.getByTestId("2"));
+	});
+
+	it("should expose children snippet props in multiple mode and update when setValue is called", async () => {
+		const t = setupValueChildrenMultiple({ name: "themes", placeholder: "Pick themes" });
+
+		await expect.element(t.selectionType).toHaveTextContent("multiple");
+		await expect.element(t.selectionValues).toHaveTextContent("none");
+		await expect.element(t.selectionLabel).toHaveTextContent("Pick themes");
+		await expect.element(t.selectionDisabled).toHaveTextContent("false");
+
+		await t.setValuesButton.click();
+
+		await expect.element(t.selectionValues).toHaveTextContent("1,3");
+		await expect.element(t.selectionLabel).toHaveTextContent("A, C");
+		const hiddenInputs = t.getHiddenInputs();
+		expect(hiddenInputs).toHaveLength(2);
+		await expect.element(hiddenInputs[0]).toHaveValue("1");
+		await expect.element(hiddenInputs[1]).toHaveValue("3");
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await expectSelected([page.getByTestId("1"), page.getByTestId("3")]);
+	});
+
+	it("should pass disabled state to value snippets so consumers can block setValue", async () => {
+		const t = setupValueChildSingle({
+			name: "theme",
+			placeholder: "Pick a theme",
+			disabled: true,
+		});
+
+		await expect.element(t.selectionDisabled).toHaveTextContent("true");
+		await t.setValueButton.click();
+		await expect.element(t.selectionValue).toHaveTextContent("none");
+		await expect.element(t.selectionLabel).toHaveTextContent("Pick a theme");
+
+		const hiddenInput = t.getHiddenInput();
+		expect(hiddenInput).not.toBeNull();
+		await expect.element(hiddenInput!).toHaveValue("");
 	});
 });
 

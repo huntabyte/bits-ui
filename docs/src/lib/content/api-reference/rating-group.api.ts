@@ -9,6 +9,10 @@ import {
 	RatingGroupRootChildrenSnippetProps,
 	RatingGroupRootChildSnippetProps,
 } from "./extended-types/rating-group/index.js";
+import ratingGroupItemChildSnippetPropsRaw from "./extended-types/rating-group/rating-group-item-child-snippet-props.md?raw";
+import ratingGroupItemChildrenSnippetPropsRaw from "./extended-types/rating-group/rating-group-item-children-snippet-props.md?raw";
+import ratingGroupRootChildSnippetPropsRaw from "./extended-types/rating-group/rating-group-root-child-snippet-props.md?raw";
+import ratingGroupRootChildrenSnippetPropsRaw from "./extended-types/rating-group/rating-group-root-children-snippet-props.md?raw";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -19,6 +23,7 @@ import {
 	defineSimpleDataAttr,
 	defineStringProp,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 export const root = defineComponentApiSchema<RatingGroupRootPropsWithoutHTML>({
@@ -88,34 +93,11 @@ export const root = defineComponentApiSchema<RatingGroupRootPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: RatingGroupRootChildSnippetProps,
-				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
-
-type RatingGroupItemData = {
-	index: number;
-	state: RatingGroupItemState;
-};
-
-type ChildSnippetProps = {
-	items: RatingGroupItemData[];
-	value: number;
-	max: number;
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(ratingGroupRootChildSnippetPropsRaw),
 			},
 			children: {
 				definition: RatingGroupRootChildrenSnippetProps,
-				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
-
-type RatingGroupItemData = {
-	index: number;
-	state: RatingGroupItemState;
-};
-
-type ChildrenSnippetProps = {
-	items: RatingGroupItemData[];
-	value: number;
-	max: number;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(ratingGroupRootChildrenSnippetPropsRaw),
 			},
 		}),
 	},
@@ -157,20 +139,11 @@ export const item = defineComponentApiSchema<RatingGroupItemPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: RatingGroupItemChildSnippetProps,
-				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
-
-type ChildSnippetProps = {
-	state: RatingGroupItemState;
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(ratingGroupItemChildSnippetPropsRaw),
 			},
 			children: {
 				definition: RatingGroupItemChildrenSnippetProps,
-				stringDefinition: `type RatingGroupItemState = "active" | "partial" | "inactive";
-
-type ChildrenSnippetProps = {
-	state: RatingGroupItemState;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(ratingGroupItemChildrenSnippetPropsRaw),
 			},
 		}),
 	},
