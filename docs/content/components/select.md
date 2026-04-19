@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, SelectDemoItemAligned, Callout, SelectDemoCustomValue } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
