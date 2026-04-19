@@ -187,6 +187,7 @@ async function openSingle(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer();
 	const content = t.getContent();
 	const group = page.getByTestId("group");
 	const groupHeading = page.getByTestId("group-label");
@@ -213,6 +214,7 @@ async function openMultiple(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer();
 	const content = t.getContent();
 	return {
 		...t,
@@ -224,6 +226,12 @@ function nextFrame() {
 	return new Promise<void>((resolve) => {
 		window.requestAnimationFrame(() => resolve());
 	});
+}
+
+// Wait long enough for the DismissibleLayer's afterSleep(1, ...) to register
+// event listeners AND the 10ms debounce on handleInteractOutside to settle.
+function waitForDismissibleLayer() {
+	return new Promise<void>((resolve) => setTimeout(resolve, 50));
 }
 
 const OPEN_KEYS = [kbd.ARROW_DOWN, kbd.ARROW_UP];

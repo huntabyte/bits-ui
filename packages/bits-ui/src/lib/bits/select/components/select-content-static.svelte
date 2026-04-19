@@ -13,6 +13,7 @@
 		id = createId(uid),
 		ref = $bindable(null),
 		forceMount = false,
+		position = "popper",
 		onInteractOutside = noop,
 		onEscapeKeydown = noop,
 		children,
@@ -30,6 +31,7 @@
 		),
 		onInteractOutside: boxWith(() => onInteractOutside),
 		onEscapeKeydown: boxWith(() => onEscapeKeydown),
+		position: boxWith(() => position),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));

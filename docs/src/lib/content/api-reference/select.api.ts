@@ -41,6 +41,7 @@ import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js"
 import {
 	DelayProp,
 	ItemsProp,
+	PositionProp,
 	SelectValueChildSnippetProps,
 	SelectValueChildrenSnippetProps,
 } from "./extended-types/select/index.js";
@@ -142,6 +143,13 @@ export const content = defineComponentApiSchema<SelectContentPropsWithoutHTML>({
 	description: "The element which contains the select's items.",
 	props: {
 		...floatingProps(),
+		position: defineEnumProp({
+			options: ["popper", "item-aligned"],
+			default: "popper",
+			description:
+				"Controls how content is positioned. `'item-aligned'` aligns the selected item with the trigger and falls back to popper positioning when alignment isn't possible.",
+			definition: PositionProp,
+		}),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
@@ -179,6 +187,13 @@ export const contentStatic = defineComponentApiSchema<SelectContentStaticPropsWi
 	title: "ContentStatic",
 	description: "The element which contains the select's items. (Static/No Floating UI)",
 	props: {
+		position: defineEnumProp({
+			options: ["popper", "item-aligned"],
+			default: "popper",
+			description:
+				"Controls how content is positioned. `'item-aligned'` aligns the selected item with the trigger and falls back to popper positioning when alignment isn't possible.",
+			definition: PositionProp,
+		}),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		...focusScopeProps,
