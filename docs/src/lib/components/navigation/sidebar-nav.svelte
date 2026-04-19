@@ -15,7 +15,7 @@
 			<ScrollArea.Viewport
 				class="h-full max-h-[calc(100vh-var(--header-height))] w-full shrink-0 "
 			>
-				<div class="h-full py-6 pr-4 lg:py-8">
+				<div class="h-full pb-6 pr-4 pt-4 lg:pb-8">
 					<nav class="space-y-3">
 						<div class="flex w-full flex-col pb-[50px]">
 							{#each items as item, index (index)}
