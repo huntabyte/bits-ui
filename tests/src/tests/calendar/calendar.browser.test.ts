@@ -520,7 +520,7 @@ describe("type='single'", () => {
 			// (getISOWeekNumber uses week[0]; Jan 20 → day=7 → +4-7=Jan 17 → W3)
 			setup({ placeholder: calendarDate, showWeekNumbers: true });
 			const weekCell = page.getByTestId("week-number-cell-1-3");
-			await expect.element(weekCell).toHaveTextContent("3");
+			await expect.element(weekCell).toHaveTextContent("03");
 		});
 
 		it("should display correct ISO week numbers at year boundaries (Dec 30, 2024 → W01 of 2025)", async () => {
@@ -529,7 +529,7 @@ describe("type='single'", () => {
 			const decDate = new CalendarDate(2024, 12, 1);
 			setup({ placeholder: decDate, showWeekNumbers: true, weekStartsOn: 1 });
 			const lastWeekCell = page.getByTestId("week-number-cell-12-5");
-			await expect.element(lastWeekCell).toHaveTextContent("1");
+			await expect.element(lastWeekCell).toHaveTextContent("01");
 		});
 	});
 

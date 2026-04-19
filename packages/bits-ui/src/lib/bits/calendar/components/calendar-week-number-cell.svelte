@@ -38,7 +38,7 @@
 			{#if children}
 				{@render children(cellState.snippetProps)}
 			{:else}
-				{cellState.weekNumber}
+				{String(cellState.weekNumber).padStart(2, "0")}
 			{/if}
 		</td>
 	{/if}
