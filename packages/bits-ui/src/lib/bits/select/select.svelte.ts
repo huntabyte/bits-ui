@@ -1161,6 +1161,10 @@ export class SelectContentState {
 		});
 	};
 
+	readonly notifyScrollChanged = () => {
+		this.#scheduleItemAlignedUpdate();
+	};
+
 	#updateItemAlignedPositioning = () => {
 		this.#itemAlignedRaf = null;
 		if (this.opts.position.current !== "item-aligned" || !this.root.opts.open.current) return;
@@ -1225,7 +1229,7 @@ export class SelectContentState {
 			}
 		}
 
-		this.itemAlignedSideOffset = clampedFloatingTop - floatingRect.top;
+		this.itemAlignedSideOffset = clampedFloatingTop - triggerRect.bottom;
 		this.itemAlignedFallback = false;
 	};
 
@@ -1766,8 +1770,11 @@ export class SelectScrollDownButtonState {
 		if (!this.root.viewportNode) return;
 		const maxScroll = this.root.viewportNode.scrollHeight - this.root.viewportNode.clientHeight;
 		const paddingTop = Number.parseInt(getComputedStyle(this.root.viewportNode).paddingTop, 10);
-
+		const prev = this.canScrollDown;
 		this.canScrollDown = Math.ceil(this.root.viewportNode.scrollTop) < maxScroll - paddingTop;
+		if (this.canScrollDown !== prev) {
+			this.content.notifyScrollChanged();
+		}
 	};
 
 	handleAutoScroll = () => {
@@ -1821,7 +1828,11 @@ export class SelectScrollUpButtonState {
 		}
 		if (!this.root.viewportNode) return;
 		const paddingTop = Number.parseInt(getComputedStyle(this.root.viewportNode).paddingTop, 10);
+		const prev = this.canScrollUp;
 		this.canScrollUp = this.root.viewportNode.scrollTop - paddingTop > 0.1;
+		if (this.canScrollUp !== prev) {
+			this.content.notifyScrollChanged();
+		}
 	};
 
 	handleAutoScroll = () => {
