@@ -170,8 +170,8 @@ abstract class SelectBaseRootState {
 		if (!node) return [];
 		if (includeDisabled) {
 			return Array.from(
-			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`)
-).filter((item) => !item.hasAttribute("data-disabled"))
+				node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`)
+			).filter((item) => !item.hasAttribute("data-disabled"));
 		}
 		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
@@ -1096,14 +1096,14 @@ export class SelectContentState {
 		watch(
 			() => this.root.opts.open.current,
 			() => {
-
 				if (this.root.opts.open.current) {
 					this.itemAlignedSideOffset = 0;
 					this.itemAlignedFallback = false;
 					this.#scheduleItemAlignedUpdate();
-				  this.root.contentIsPositioned = false;
-				  this.isPositioned = false;
-				  this.#cancelItemAlignedRaf();
+					this.root.contentIsPositioned = false;
+					this.isPositioned = false;
+					this.#cancelItemAlignedRaf();
+				}
 			}
 		);
 
