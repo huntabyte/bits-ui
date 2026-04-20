@@ -45,7 +45,12 @@ import {
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
-import { getDateValueType, getISOWeekNumber, isBefore, toDate } from "$lib/internal/date-time/utils.js";
+import {
+	getDateValueType,
+	getISOWeekNumberForWeek,
+	isBefore,
+	toDate,
+} from "$lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
 
 interface CalendarRootStateOpts
@@ -1200,9 +1205,7 @@ export class CalendarWeekNumberCellState {
 	}
 
 	readonly weekNumber = $derived.by(() => {
-		const firstDay = this.opts.week.current[0];
-		if (!firstDay) return 0;
-		return getISOWeekNumber(firstDay);
+		return getISOWeekNumberForWeek(this.opts.week.current);
 	});
 
 	readonly snippetProps = $derived.by(() => ({ weekNumber: this.weekNumber }));

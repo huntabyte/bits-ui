@@ -512,15 +512,12 @@ describe("type='single'", () => {
 		});
 
 		it("should display the correct ISO 8601 week number", async () => {
-			// calendarDate = Jan 20, 1980 (Sunday). With weekStartsOn=0 (default):
-			// Row 0: Dec 30 (Sun) → week[0]=Dec 30 → Thursday=Jan 3, 1980 → W1
-			// Row 1: Jan 6  (Sun) → week[0]=Jan 6  → Thursday=Jan 10 → W2
-			// Row 2: Jan 13 (Sun) → week[0]=Jan 13 → Thursday=Jan 17 → W3
-			// Row 3: Jan 20 (Sun) → week[0]=Jan 20 → Thursday=Jan 17 → W3
-			// (getISOWeekNumber uses week[0]; Jan 20 → day=7 → +4-7=Jan 17 → W3)
+			// calendarDate = Jan 20, 1980 (Sunday). With weekStartsOn=0 (default),
+			// week numbers are anchored to each row's Thursday.
+			// Row 3 spans Jan 20-26, and its Thursday is Jan 24, 1980 => ISO week 4.
 			setup({ placeholder: calendarDate, showWeekNumbers: true });
 			const weekCell = page.getByTestId("week-number-cell-1-3");
-			await expect.element(weekCell).toHaveTextContent("03");
+			await expect.element(weekCell).toHaveTextContent("04");
 		});
 
 		it("should display correct ISO week numbers at year boundaries (Dec 30, 2024 → W01 of 2025)", async () => {

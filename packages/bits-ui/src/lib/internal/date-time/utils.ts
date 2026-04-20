@@ -2,6 +2,7 @@ import {
 	CalendarDate,
 	CalendarDateTime,
 	type DateValue,
+	GregorianCalendar,
 	Time,
 	ZonedDateTime,
 	getDayOfWeek,
@@ -127,12 +128,31 @@ export function toDate(dateValue: DateValue, tz: string = getLocalTimeZone()) {
 	}
 }
 
+function toGregorianUTCDate(dateValue: DateValue): Date {
+	const gregorianDate = toCalendar(dateValue, new GregorianCalendar());
+	return new Date(Date.UTC(gregorianDate.year, gregorianDate.month - 1, gregorianDate.day));
+}
+
 export function getISOWeekNumber(dateValue: DateValue): number {
-	const d = toDate(dateValue);
+	const d = toGregorianUTCDate(dateValue);
 	const day = d.getUTCDay() || 7;
 	d.setUTCDate(d.getUTCDate() + 4 - day);
 	const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
 	return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
+
+export function getISOWeekNumberForWeek(week: DateValue[]): number {
+	let weekThursday: DateValue | undefined;
+	for (const date of week) {
+		if (toGregorianUTCDate(date).getUTCDay() === 4) {
+			weekThursday = date;
+			break;
+		}
+	}
+
+	const anchorDate = weekThursday ?? week[0];
+	if (!anchorDate) return 0;
+	return getISOWeekNumber(anchorDate);
 }
 
 export function getDateValueType(date: DateValue): string {

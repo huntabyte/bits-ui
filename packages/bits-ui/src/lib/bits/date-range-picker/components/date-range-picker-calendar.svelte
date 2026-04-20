@@ -25,7 +25,7 @@
 		),
 		calendarLabel: dateRangePickerRootState.opts.calendarLabel,
 		fixedWeeks: dateRangePickerRootState.opts.fixedWeeks,
-		showWeekNumbers: boxWith(() => false),
+		showWeekNumbers: dateRangePickerRootState.opts.showWeekNumbers,
 		isDateDisabled: dateRangePickerRootState.opts.isDateDisabled,
 		isDateUnavailable: dateRangePickerRootState.opts.isDateUnavailable,
 		locale: dateRangePickerRootState.opts.locale,
