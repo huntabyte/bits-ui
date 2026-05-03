@@ -773,6 +773,7 @@ it("should call `focus` with `preventScroll: true` on hover and item-leave so `s
 
 	const focusSpy = vi.spyOn(HTMLElement.prototype, "focus");
 	try {
+		const scrollYBeforeHover = window.scrollY;
 		// hover one item then another to trigger both onpointermove (item focus)
 		// and onItemLeave (content focus)
 		await page.getByTestId("item-1").hover();
@@ -787,10 +788,14 @@ it("should call `focus` with `preventScroll: true` on hover and item-leave so `s
 				({ testid }) => testid === "item-1" || testid === "item-2" || testid === "content"
 			);
 
-		expect(relevantCalls.length).toBeGreaterThan(0);
-		for (const { options } of relevantCalls) {
-			expect(options).toEqual({ preventScroll: true });
-		}
+		expect(window.scrollY).toBe(scrollYBeforeHover);
+		expect(relevantCalls).toEqual(
+			expect.arrayContaining([
+				{ testid: "item-1", options: { preventScroll: true } },
+				{ testid: "item-2", options: { preventScroll: true } },
+				{ testid: "content", options: { preventScroll: true } },
+			])
+		);
 	} finally {
 		focusSpy.mockRestore();
 	}
