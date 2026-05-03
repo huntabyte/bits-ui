@@ -74,15 +74,20 @@
 		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
+			{@const finalWrapperProps = mergeProps(wrapperProps, {
+				style: {
+					pointerEvents: contentState.root.disableHoverableContent ? "none" : undefined,
+				},
+			})}
 			{@const finalProps = mergeProps(
 				props,
 				{ style: getFloatingContentCSSVars("tooltip") },
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...wrapperProps}>
+				<div {...finalWrapperProps}>
 					<div {...finalProps}>
 						{@render children?.()}
 					</div>
@@ -106,15 +111,20 @@
 		contentPointerEvents={contentState.root.disableHoverableContent ? "none" : "auto"}
 	>
 		{#snippet popper({ props, wrapperProps })}
+			{@const finalWrapperProps = mergeProps(wrapperProps, {
+				style: {
+					pointerEvents: contentState.root.disableHoverableContent ? "none" : undefined,
+				},
+			})}
 			{@const finalProps = mergeProps(
 				props,
 				{ style: getFloatingContentCSSVars("tooltip") },
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps, ...contentState.snippetProps })}
+				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
 			{:else}
-				<div {...wrapperProps}>
+				<div {...finalWrapperProps}>
 					<div {...finalProps}>
 						{@render children?.()}
 					</div>
