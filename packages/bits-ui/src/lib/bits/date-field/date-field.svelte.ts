@@ -211,6 +211,7 @@ export class DateFieldRootState {
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
 	states = initSegmentStates();
+	#segmentClearedValue = false;
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
@@ -311,6 +312,10 @@ export class DateFieldRootState {
 
 		$effect(() => {
 			if (this.value.current === undefined) {
+				if (this.#segmentClearedValue) {
+					this.#segmentClearedValue = false;
+					return;
+				}
 				this.segmentValues = initializeSegmentValues(this.inferredGranularity);
 			}
 		});
@@ -680,6 +685,7 @@ export class DateFieldRootState {
 				})
 			);
 		} else {
+			this.#segmentClearedValue = true;
 			this.setValue(undefined);
 			this.segmentValues = newSegmentValues;
 		}
