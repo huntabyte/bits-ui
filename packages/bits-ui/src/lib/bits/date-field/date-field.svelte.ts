@@ -1280,15 +1280,16 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 				this.announcer.announce(null);
 				return null;
 			}
-			const str = prev.toString();
-			if (str.length === 1) {
+			// Use integer division to strip the last significant digit, so that
+			// zero-padded values like "0001" don't leave a confusing "000" remnant
+			// that causes subsequent typing to misinterpret the year.
+			const next = Math.floor(Number.parseInt(prev) / 10);
+			if (next === 0) {
 				this.announcer.announce(null);
 				return null;
 			}
-			const next = str.slice(0, -1);
 			this.announcer.announce(next);
-
-			return `${next}`;
+			return prependYearZeros(next);
 		});
 
 		if (moveToPrev) {
