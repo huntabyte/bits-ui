@@ -643,7 +643,7 @@ describe("date field", () => {
 		await userEvent.keyboard(kbd.BACKSPACE);
 		await expect.element(t.year).toHaveTextContent("009");
 		await userEvent.keyboard(kbd.BACKSPACE);
-		await expect.element(t.year).toHaveTextContent("00");
+		await expect.element(t.year).toHaveTextContent("yyyy");
 		await userEvent.keyboard(`{8}`);
 		await userEvent.keyboard(`{7}`);
 		await expect.element(t.year).toHaveTextContent("0087");
