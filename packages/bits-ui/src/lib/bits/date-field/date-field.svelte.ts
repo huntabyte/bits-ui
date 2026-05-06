@@ -1259,7 +1259,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 			return mergedIntStr;
 		});
 
-		if (this.#pressedKeys.length === 4 || this.#pressedKeys.length === this.#backspaceCount) {
+		if (this.#pressedKeys.length === 4) {
 			moveToNext = true;
 		}
 
