@@ -120,6 +120,7 @@ abstract class SelectBaseRootState {
 		return this.highlightedNode.getAttribute("data-label");
 	});
 	contentIsPositioned = $state(false);
+	isItemAligned = $state(false);
 	isUsingKeyboard = false;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
@@ -147,7 +148,10 @@ abstract class SelectBaseRootState {
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
-		if (node && (this.isUsingKeyboard || initial)) {
+		// In item-aligned mode, the content positioner scrolls the viewport so the
+		// selected item lines up with the trigger. Calling scrollIntoView here would
+		// fight that positioning and break the alignment.
+		if (node && (this.isUsingKeyboard || initial) && !this.isItemAligned) {
 			this.scrollHighlightedNodeIntoView(node);
 		}
 	}
@@ -1032,6 +1036,10 @@ export class SelectContentState {
 			this.root.domContext = this.domContext;
 		}
 
+		$effect(() => {
+			this.root.isItemAligned = this.useItemAligned;
+		});
+
 		onDestroyEffect(() => {
 			this.root.contentNode = null;
 			this.root.contentWrapperNode = null;
@@ -1900,11 +1908,25 @@ export class SelectScrollDownButtonState {
 		if (!manual) {
 			this.scrollButtonState.handleUserScroll();
 		}
-		if (!this.root.viewportNode) return;
-		const maxScroll = this.root.viewportNode.scrollHeight - this.root.viewportNode.clientHeight;
-		const paddingTop = Number.parseInt(getComputedStyle(this.root.viewportNode).paddingTop, 10);
+		const viewport = this.root.viewportNode;
+		if (!viewport) return;
+		const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+		const paddingTop = Number.parseInt(getComputedStyle(viewport).paddingTop, 10);
 
-		this.canScrollDown = Math.ceil(this.root.viewportNode.scrollTop) < maxScroll - paddingTop;
+		// In item-aligned mode the algorithm may scroll just enough to align the
+		// selected item's center with the trigger center, leaving a tiny strip of
+		// scrollable space below the last item. That strip would mount the scroll-
+		// down arrow even though there is no NEXT item to scroll to. Treat the
+		// arrow as unnecessary when the last item's top is already within the
+		// visible viewport.
+		const items = this.root.getAllItemNodes();
+		const lastItem = items.length ? items[items.length - 1] : null;
+		const lastItemTopVisible =
+			!!lastItem && lastItem.offsetTop < viewport.scrollTop + viewport.clientHeight;
+
+		this.canScrollDown =
+			!lastItemTopVisible &&
+			Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
 	};
 
 	handleAutoScroll = () => {
