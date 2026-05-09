@@ -14,6 +14,7 @@ import {
 } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
+import DropdownMenuScrollPaddingTest from "./dropdown-menu-scroll-padding-test.svelte";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -761,4 +762,41 @@ it("keyboard navigation should not cause unwanted jumps between menus", async ()
 	await expectNotExists(content1);
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expectNotExists(content1);
+});
+
+it("should call `focus` with `preventScroll: true` on hover and item-leave so `scroll-padding` does not scroll the page", async () => {
+	const t = render(DropdownMenuScrollPaddingTest);
+	onTestFinished(() => t.unmount());
+
+	await page.getByTestId("trigger").click();
+	await expectExists(page.getByTestId("content"));
+
+	const focusSpy = vi.spyOn(HTMLElement.prototype, "focus");
+	try {
+		const scrollYBeforeHover = window.scrollY;
+		// hover one item then another to trigger both onpointermove (item focus)
+		// and onItemLeave (content focus)
+		await page.getByTestId("item-1").hover();
+		await page.getByTestId("item-2").hover();
+
+		const relevantCalls = focusSpy.mock.calls
+			.map(([options], i) => ({
+				options,
+				testid: (focusSpy.mock.contexts[i] as HTMLElement).getAttribute("data-testid"),
+			}))
+			.filter(
+				({ testid }) => testid === "item-1" || testid === "item-2" || testid === "content"
+			);
+
+		expect(window.scrollY).toBe(scrollYBeforeHover);
+		expect(relevantCalls).toEqual(
+			expect.arrayContaining([
+				{ testid: "item-1", options: { preventScroll: true } },
+				{ testid: "item-2", options: { preventScroll: true } },
+				{ testid: "content", options: { preventScroll: true } },
+			])
+		);
+	} finally {
+		focusSpy.mockRestore();
+	}
 });

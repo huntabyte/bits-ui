@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.18.1
+
+### Patch Changes
+
+- fix(text-selection-layer): snapshot enabled and pointer handlers for listeners ([#2041](https://github.com/huntabyte/bits-ui/pull/2041))
+
+- fix(Tooltip): set wrapper pointer-events when hoverable content is disabled ([#2041](https://github.com/huntabyte/bits-ui/pull/2041))
+
+- fix(Menu): prevent page scroll-jump on item hover when `scroll-padding` is set ([#2035](https://github.com/huntabyte/bits-ui/pull/2035))
+
 ## 2.18.0
 
 ### Minor Changes

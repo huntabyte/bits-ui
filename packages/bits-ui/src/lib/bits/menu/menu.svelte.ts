@@ -1117,7 +1117,7 @@ export class MenuContentState {
 		if (this.#isPointerMovingToSubmenu() || this.parentMenu.root.isUsingKeyboard.current)
 			return;
 		const contentNode = this.parentMenu.contentNode;
-		contentNode?.focus();
+		contentNode?.focus({ preventScroll: true });
 		this.rovingFocusGroup.setCurrentTabStopId("");
 	}
 
@@ -1213,7 +1213,7 @@ class MenuItemSharedState {
 			if (defaultPrevented) return;
 			const item = e.currentTarget;
 			if (!isHTMLElement(item)) return;
-			item.focus();
+			item.focus({ preventScroll: true });
 		}
 	}
 
