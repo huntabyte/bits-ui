@@ -12,7 +12,7 @@
 </script>
 
 <h1 class={cn("mt-2 scroll-m-20 text-4xl font-bold", className)} {id} {...restProps}>
-	<HeadingAnchor {id}>
+	<HeadingAnchor id={id ?? undefined}>
 		{@render children?.()}
 	</HeadingAnchor>
 </h1>

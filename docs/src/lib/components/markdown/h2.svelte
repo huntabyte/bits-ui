@@ -19,7 +19,7 @@
 	{id}
 	{...restProps}
 >
-	<HeadingAnchor {id}>
+	<HeadingAnchor id={id ?? undefined}>
 		{@render children?.()}
 	</HeadingAnchor>
 </h2>
