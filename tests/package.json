@@ -16,7 +16,7 @@
 		"@sveltejs/vite-plugin-svelte": "catalog:",
 		"@tailwindcss/vite": "catalog:",
 		"@types/node": "catalog:",
-		"@vitest/browser": "^3.2.4",
+		"@vitest/browser": "^4.1.6",
 		"playwright": "catalog:",
 		"svelte": "catalog:",
 		"svelte-check": "catalog:",
@@ -27,7 +27,7 @@
 		"vitest-browser-svelte": "catalog:"
 	},
 	"dependencies": {
-		"@internationalized/date": "^3.8.2",
+		"@internationalized/date": "^3.12.1",
 		"bits-ui": "workspace:*"
 	},
 	"type": "module",
