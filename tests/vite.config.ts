@@ -32,7 +32,6 @@ export default defineConfig({
 					include: ["src/tests/**/*.browser.test.ts"],
 					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
 					setupFiles: ["./other/setup-browser-test.ts"],
-					environment: "browser",
 					testTimeout: 5000,
 					retry: 3,
 					browser: {
