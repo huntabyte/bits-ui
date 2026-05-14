@@ -4,7 +4,9 @@
 
 	let {
 		id = useId(),
+		// eslint-disable-next-line no-useless-assignment
 		checked = $bindable(false),
+		// eslint-disable-next-line no-useless-assignment
 		ref = $bindable(null),
 		labelText,
 		...restProps

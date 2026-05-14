@@ -14,6 +14,7 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
+	// @ts-expect-error - vite v8 / vitest v3 (vite v7) type mismatch in plugins
 	plugins: [vitestBrowserConditionPlugin, sveltekit()],
 	test: {
 		include: ["src/**/*.{test,spec}.{js,ts}"],

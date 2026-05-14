@@ -10,7 +10,7 @@ import { defineConfig } from "mdsx";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import { getHighlighter } from "shiki";
+import { createHighlighter } from "shiki";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
 import { codeBlockPrettierConfig } from "./other/code-block-prettier.js";
@@ -43,7 +43,7 @@ const prettyCodeOptions = {
 		),
 	},
 	getHighlighter: (options) =>
-		getHighlighter({
+		createHighlighter({
 			...options,
 			langs: [
 				"plaintext",

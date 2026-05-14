@@ -41,7 +41,8 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<FileMa
 		return files;
 	} catch (error) {
 		throw new Error(
-			`Failed to collect files from ${currentDir}: ${error instanceof Error ? error.message : String(error)}`
+			`Failed to collect files from ${currentDir}: ${error instanceof Error ? error.message : String(error)}`,
+			{ cause: error }
 		);
 	}
 }

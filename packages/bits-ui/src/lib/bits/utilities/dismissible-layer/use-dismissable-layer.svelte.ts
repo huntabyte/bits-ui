@@ -136,11 +136,8 @@ export class DismissibleLayerState {
 	}
 
 	#handleDismiss = (e: MouseEvent) => {
-		let event = e;
-		if (event.defaultPrevented) {
-			event = createWrappedEvent(e);
-		}
-		this.#interactOutsideProp.current(e as PointerEvent);
+		const event = e.defaultPrevented ? createWrappedEvent(e) : e;
+		this.#interactOutsideProp.current(event as PointerEvent);
 	};
 
 	#handleInteractOutside = debounce((e: PointerEvent) => {
