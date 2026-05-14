@@ -1,7 +1,7 @@
 import process from "node:process";
 import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 import type { Plugin } from "vite";
 
 const vitestBrowserConditionPlugin: Plugin = {
@@ -20,6 +20,7 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
+	// @ts-expect-error - vite v8 / vitest v3 (vite v7) type mismatch in plugins
 	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit()],
 	test: {
 		poolOptions: {
