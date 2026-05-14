@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoChips, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -402,14 +402,6 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 ## Multiple Selection with Chips
 
 When using `type="multiple"`, you can render the selected values as removable chips alongside the input using the `Combobox.Chips`, `Combobox.Chip`, and `Combobox.ChipRemoveButton` components.
-
-<ComponentPreview name="combobox-demo-chips" componentName="Combobox" containerClass="mt-4">
-
-{#snippet preview()}
-<ComboboxDemoChips />
-{/snippet}
-
-</ComponentPreview>
 
 ### Structure
 

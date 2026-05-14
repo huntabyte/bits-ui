@@ -2,7 +2,7 @@
 	import { Combobox } from "bits-ui";
 	import CaretUpDown from "phosphor-svelte/lib/CaretUpDown";
 	import Check from "phosphor-svelte/lib/Check";
-	import OrangeSlice from "phosphor-svelte/lib/OrangeSlice";
+	import X from "phosphor-svelte/lib/X";
 	import CaretDoubleUp from "phosphor-svelte/lib/CaretDoubleUp";
 	import CaretDoubleDown from "phosphor-svelte/lib/CaretDoubleDown";
 
@@ -27,40 +27,62 @@
 		{ value: "grapefruit", label: "Grapefruit" },
 	];
 
-	let searchValue = $state("");
+	let value = $state<string[]>([]);
+	let inputValue = $state("");
+	let chipsRef = $state<HTMLElement | null>(null);
 
 	const filteredFruits = $derived(
-		searchValue === ""
+		inputValue === ""
 			? fruits
-			: fruits.filter((fruit) =>
-					fruit.label.toLowerCase().includes(searchValue.toLowerCase())
-				)
+			: fruits.filter((fruit) => fruit.label.toLowerCase().includes(inputValue.toLowerCase()))
 	);
 </script>
 
 <Combobox.Root
 	type="multiple"
 	name="favoriteFruit"
-	onOpenChangeComplete={(o) => {
-		if (!o) searchValue = "";
+	bind:value
+	bind:inputValue
+	items={fruits.map((f) => ({ value: f.value, label: f.label }))}
+	onOpenChange={(open) => {
+		if (!open) inputValue = "";
 	}}
 >
 	<div class="relative">
-		<OrangeSlice
-			class="text-muted-foreground absolute start-3 top-1/2 size-6 -translate-y-1/2"
-		/>
-		<Combobox.Input
-			oninput={(e) => (searchValue = e.currentTarget.value)}
-			class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 focus:ring-foreground focus:ring-offset-background focus:outline-hidden inline-flex w-[296px] touch-none truncate border px-11 text-base transition-colors focus:ring-2 focus:ring-offset-2 sm:text-sm"
-			placeholder="Search a fruit"
-			aria-label="Search a fruit"
-		/>
+		<Combobox.Chips
+			bind:ref={chipsRef}
+			class="border-border-input bg-background focus-within:ring-foreground focus-within:ring-offset-background flex min-h-10 w-[296px] flex-wrap items-center gap-1.5 rounded-[9px] border px-2 py-1.5 pe-10 focus-within:ring-2 focus-within:ring-offset-2"
+		>
+			{#each value as chipValue (chipValue)}
+				<Combobox.Chip
+					value={chipValue}
+					class="bg-muted text-foreground flex items-center gap-1 rounded-md px-2 py-0.5 text-sm"
+				>
+					{#snippet children({ label })}
+						<span>{label}</span>
+						<Combobox.ChipRemoveButton
+							class="text-muted-foreground hover:text-foreground flex size-4 items-center justify-center"
+						>
+							<X class="size-3" />
+						</Combobox.ChipRemoveButton>
+					{/snippet}
+				</Combobox.Chip>
+			{/each}
+			<Combobox.Input
+				class="placeholder:text-foreground-alt/50 min-w-[80px] flex-1 bg-transparent text-sm outline-none"
+				placeholder={value.length === 0 ? "Search a fruit" : ""}
+				aria-label="Search a fruit"
+				clearInputOnSelect
+				removeOnBackspace
+			/>
+		</Combobox.Chips>
 		<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2 touch-none">
 			<CaretUpDown class="text-muted-foreground size-6" />
 		</Combobox.Trigger>
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
+			customAnchor={chipsRef}
 			class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 outline-hidden z-50 h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] select-none rounded-xl border px-1 py-3 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
 			sideOffset={10}
 		>
