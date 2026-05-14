@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTags, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -44,6 +44,9 @@ The Combobox component is composed of several sub-components, each with a specif
 - **ScrollUpButton**: A button that scrolls the content up when the content is larger than the viewport.
 - **ScrollDownButton**: A button that scrolls the content down when the content is larger than the viewport.
 - **Arrow**: An arrow element that points to the trigger when using the `Combobox.Content` component.
+- **Tags**: A container for the selected value tags in a multiple combobox, rendered alongside the input.
+- **Tag**: An individual tag representing a selected value, exposing a `label` snippet prop.
+- **TagRemoveButton**: A button inside a `Tag` that removes the associated value when clicked.
 
 ## Structure
 
@@ -395,5 +398,79 @@ Of course, this isn't the prettiest syntax, so it's recommended to create your o
 {/snippet}
 
 </ComponentPreview>
+
+## Multiple Selection with Tags
+
+When using `type="multiple"`, you can render the selected values as removable tags alongside the input using the `Combobox.Tags`, `Combobox.Tag`, and `Combobox.TagRemoveButton` components.
+
+<ComponentPreview name="combobox-demo-tags" componentName="Combobox" containerClass="mt-4">
+
+{#snippet preview()}
+<ComboboxDemoTags />
+{/snippet}
+
+</ComponentPreview>
+
+### Structure
+
+```svelte
+<Combobox.Root type="multiple" bind:value bind:inputValue {items}>
+  <Combobox.Tags>
+    {#each value as tagValue (tagValue)}
+      <Combobox.Tag value={tagValue}>
+        {#snippet children({ label })}
+          <span>{label}</span>
+          <Combobox.TagRemoveButton />
+        {/snippet}
+      </Combobox.Tag>
+    {/each}
+    <Combobox.Input clearInputOnSelect removeOnBackspace />
+  </Combobox.Tags>
+  <Combobox.Portal>
+    <Combobox.Content>
+      {#each filteredItems as item}
+        <Combobox.Item value={item.value} label={item.label} />
+      {/each}
+    </Combobox.Content>
+  </Combobox.Portal>
+</Combobox.Root>
+```
+
+### Tag Labels
+
+Each `Combobox.Tag` exposes a `label` snippet prop that resolves to the human-readable label for the tag's value. This lookup relies on the `items` prop passed to `Combobox.Root`, so be sure to pass an `items` array when using tags.
+
+```svelte
+<Combobox.Root type="multiple" {items}>
+  <Combobox.Tags>
+    {#each value as tagValue (tagValue)}
+      <Combobox.Tag value={tagValue}>
+        {#snippet children({ label })}
+          <!-- label is resolved from the items array -->
+          <span>{label}</span>
+          <Combobox.TagRemoveButton>✕</Combobox.TagRemoveButton>
+        {/snippet}
+      </Combobox.Tag>
+    {/each}
+    <Combobox.Input />
+  </Combobox.Tags>
+</Combobox.Root>
+```
+
+### Backspace to Remove
+
+Pass the `removeOnBackspace` prop to `Combobox.Input` to allow the user to remove the last selected tag by pressing `Backspace` when the input is empty.
+
+```svelte /removeOnBackspace/
+<Combobox.Input removeOnBackspace />
+```
+
+### Clear Input on Select
+
+Pass `clearInputOnSelect` to `Combobox.Input` to automatically clear the search input whenever a new item is selected or deselected. This is useful in multiple-select tag scenarios where you want the input ready for the next search immediately.
+
+```svelte /clearInputOnSelect/
+<Combobox.Input clearInputOnSelect />
+```
 
 <APISection {schemas} />

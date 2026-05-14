@@ -8,6 +8,9 @@ import type {
 	ComboboxItemPropsWithoutHTML,
 	ComboboxPortalPropsWithoutHTML,
 	ComboboxRootPropsWithoutHTML,
+	ComboboxTagPropsWithoutHTML,
+	ComboboxTagRemoveButtonPropsWithoutHTML,
+	ComboboxTagsPropsWithoutHTML,
 	ComboboxTriggerPropsWithoutHTML,
 	ComboboxViewportPropsWithoutHTML,
 	SelectScrollDownButtonPropsWithoutHTML,
@@ -276,6 +279,16 @@ export const input = defineComponentApiSchema<ComboboxInputPropsWithoutHTML>({
 			description: "Whether to clear the input when the last item is deselected.",
 			default: false,
 		}),
+		clearInputOnSelect: defineBooleanProp({
+			description:
+				"Whether to clear the input value whenever an item is selected or deselected. Useful in multiple-select tag scenarios.",
+			default: false,
+		}),
+		removeOnBackspace: defineBooleanProp({
+			description:
+				"When `true`, pressing `Backspace` while the input is empty will remove the last selected item. Only applies when `type='multiple'`.",
+			default: false,
+		}),
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
 	dataAttributes: [
@@ -402,6 +415,60 @@ export const viewport = defineComponentApiSchema<ComboboxViewportPropsWithoutHTM
 	],
 });
 
+export const tags = defineComponentApiSchema<ComboboxTagsPropsWithoutHTML>({
+	title: "Tags",
+	description:
+		"A container for the selected value tags in a multiple combobox. Rendered alongside the `Combobox.Input` and wraps both tags and input.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "combobox-tags",
+			description: "Present on the tags container element.",
+		}),
+	],
+});
+
+export const tag = defineComponentApiSchema<ComboboxTagPropsWithoutHTML>({
+	title: "Tag",
+	description: "An individual tag representing a selected value in a multiple combobox.",
+	props: {
+		value: defineStringProp({
+			description: "The value this tag represents. Should match one of the selected values.",
+			required: true,
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "value",
+			description: "The value of the tag.",
+			value: "string",
+		}),
+		defineSimpleDataAttr({
+			name: "label",
+			description: "The resolved label of the tag's value.",
+			value: "string",
+		}),
+		defineSimpleDataAttr({
+			name: "combobox-tag",
+			description: "Present on the tag element.",
+		}),
+	],
+});
+
+export const tagRemoveButton = defineComponentApiSchema<ComboboxTagRemoveButtonPropsWithoutHTML>({
+	title: "TagRemoveButton",
+	description:
+		"A button inside a `Combobox.Tag` that removes the associated value from the selection when clicked.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "combobox-tag-remove",
+			description: "Present on the tag remove button element.",
+		}),
+	],
+});
+
 export const combobox = [
 	root,
 	trigger,
@@ -416,4 +483,7 @@ export const combobox = [
 	scrollUpButton,
 	scrollDownButton,
 	arrow,
+	tags,
+	tag,
+	tagRemoveButton,
 ];
