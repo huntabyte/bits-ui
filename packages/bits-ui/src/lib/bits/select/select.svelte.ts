@@ -68,6 +68,9 @@ const selectAttrs = createBitsAttrs({
 		"content-wrapper",
 		"item-text",
 		"value",
+		"tags",
+		"tag",
+		"tag-remove",
 	],
 });
 
@@ -499,6 +502,8 @@ interface SelectInputStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			clearOnDeselect: boolean;
+			clearInputOnSelect: boolean;
+			removeOnBackspace: boolean;
 		}> {}
 
 export class SelectInputState {
@@ -519,14 +524,21 @@ export class SelectInputState {
 		this.oninput = this.oninput.bind(this);
 
 		watch(
-			[() => this.root.opts.value.current, () => this.opts.clearOnDeselect.current],
-			([value, clearOnDeselect], [prevValue]) => {
-				if (!clearOnDeselect) return;
+			[
+				() => this.root.opts.value.current,
+				() => this.opts.clearOnDeselect.current,
+				() => this.opts.clearInputOnSelect.current,
+			],
+			([value, clearOnDeselect, clearInputOnSelect], [prevValue]) => {
 				if (Array.isArray(value) && Array.isArray(prevValue)) {
-					if (value.length === 0 && prevValue.length !== 0) {
+					if (clearInputOnSelect && value.length !== prevValue.length) {
+						this.root.opts.inputValue.current = "";
+						return;
+					}
+					if (clearOnDeselect && value.length === 0 && prevValue.length !== 0) {
 						this.root.opts.inputValue.current = "";
 					}
-				} else if (value === "" && prevValue !== "") {
+				} else if (clearOnDeselect && value === "" && prevValue !== "") {
 					this.root.opts.inputValue.current = "";
 				}
 			}
@@ -536,6 +548,19 @@ export class SelectInputState {
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
+
+		if (
+			e.key === kbd.BACKSPACE &&
+			this.root.opts.inputValue.current === "" &&
+			this.opts.removeOnBackspace.current &&
+			this.root.isMulti
+		) {
+			const values = this.root.opts.value.current as string[];
+			if (values.length > 0) {
+				this.root.toggleItem(values[values.length - 1]!);
+			}
+			return;
+		}
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
@@ -1628,6 +1653,116 @@ export class SelectScrollUpButtonState {
 			({
 				...this.scrollButtonState.props,
 				[this.root.getBitsAttr("scroll-up-button")]: "",
+			}) as const
+	);
+}
+
+// ——— Combobox Tag components ———
+
+const SelectComboTagContext = new Context<SelectComboTagState>("Combobox.Tag");
+
+interface SelectComboTagsStateOpts extends WithRefOpts {}
+
+export class SelectComboTagsState {
+	static create(opts: SelectComboTagsStateOpts) {
+		return new SelectComboTagsState(opts, SelectRootContext.get());
+	}
+	readonly opts: SelectComboTagsStateOpts;
+	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SelectComboTagsStateOpts, root: SelectRoot) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
+	}
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				[this.root.getBitsAttr("tags")]: "",
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface SelectComboTagStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			value: string;
+		}> {}
+
+export class SelectComboTagState {
+	static create(opts: SelectComboTagStateOpts) {
+		return SelectComboTagContext.set(new SelectComboTagState(opts, SelectRootContext.get()));
+	}
+	readonly opts: SelectComboTagStateOpts;
+	readonly root: SelectRoot;
+	readonly attachment: RefAttachment;
+	readonly label = $derived.by(() => this.root.getLabelForValue(this.opts.value.current));
+
+	constructor(opts: SelectComboTagStateOpts, root: SelectRoot) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(opts.ref);
+	}
+
+	readonly snippetProps = $derived.by(() => ({
+		value: this.opts.value.current,
+		label: this.label,
+	}));
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				"data-value": this.opts.value.current,
+				"data-label": this.label,
+				[this.root.getBitsAttr("tag")]: "",
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface SelectComboTagRemoveStateOpts extends WithRefOpts {}
+
+export class SelectComboTagRemoveState {
+	static create(opts: SelectComboTagRemoveStateOpts) {
+		return new SelectComboTagRemoveState(opts, SelectComboTagContext.get());
+	}
+	readonly opts: SelectComboTagRemoveStateOpts;
+	readonly tag: SelectComboTagState;
+	readonly attachment: RefAttachment;
+
+	constructor(opts: SelectComboTagRemoveStateOpts, tag: SelectComboTagState) {
+		this.opts = opts;
+		this.tag = tag;
+		this.attachment = attachRef(opts.ref);
+		this.onclick = this.onclick.bind(this);
+		this.onpointerdown = this.onpointerdown.bind(this);
+	}
+
+	onclick(_: BitsMouseEvent) {
+		if (this.tag.root.opts.disabled.current) return;
+		this.tag.root.toggleItem(this.tag.opts.value.current, this.tag.label);
+	}
+
+	onpointerdown(e: BitsPointerEvent) {
+		e.preventDefault();
+	}
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				type: "button" as const,
+				"aria-label": `Remove ${this.tag.label}`,
+				disabled: this.tag.root.opts.disabled.current ? true : undefined,
+				[this.tag.root.getBitsAttr("tag-remove")]: "",
+				onclick: this.onclick,
+				onpointerdown: this.onpointerdown,
+				...this.attachment,
 			}) as const
 	);
 }

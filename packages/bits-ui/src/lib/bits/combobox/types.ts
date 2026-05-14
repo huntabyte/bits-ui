@@ -1,4 +1,4 @@
-import type { BitsPrimitiveInputAttributes } from "$lib/shared/attributes.js";
+import type { BitsPrimitiveInputAttributes, BitsPrimitiveButtonAttributes, BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
 import type {
 	SelectBaseRootPropsWithoutHTML,
 	SelectMultipleRootPropsWithoutHTML,
@@ -73,7 +73,56 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 	 * @default false
 	 */
 	clearOnDeselect?: boolean;
+
+	/**
+	 * Whether to clear the input after any item is selected or deselected.
+	 * Useful with the `Tags` component pattern where selected items are
+	 * displayed as chips and the input should reset for the next search.
+	 *
+	 * Only applies to `type="multiple"` comboboxes.
+	 *
+	 * @default false
+	 */
+	clearInputOnSelect?: boolean;
+
+	/**
+	 * Whether to remove the last selected item when the user presses Backspace
+	 * with an empty input. Useful with the `Tags` component pattern.
+	 *
+	 * Only applies to `type="multiple"` comboboxes.
+	 *
+	 * @default false
+	 */
+	removeOnBackspace?: boolean;
 }>;
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
 	Without<Omit<BitsPrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
+
+export type ComboboxTagsPropsWithoutHTML = WithChild;
+
+export type ComboboxTagsProps = ComboboxTagsPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxTagsPropsWithoutHTML>;
+
+export type ComboboxTagSnippetProps = {
+	value: string;
+	label: string;
+};
+
+export type ComboboxTagPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The value of the selected item this tag represents.
+		 */
+		value: string;
+	},
+	ComboboxTagSnippetProps
+>;
+
+export type ComboboxTagProps = ComboboxTagPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxTagPropsWithoutHTML>;
+
+export type ComboboxTagRemoveButtonPropsWithoutHTML = WithChild;
+
+export type ComboboxTagRemoveButtonProps = ComboboxTagRemoveButtonPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, ComboboxTagRemoveButtonPropsWithoutHTML>;

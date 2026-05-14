@@ -1,5 +1,8 @@
 export { default as Root } from "./components/combobox.svelte";
 export { default as Input } from "./components/combobox-input.svelte";
+export { default as Tags } from "./components/combobox-tags.svelte";
+export { default as Tag } from "./components/combobox-tag.svelte";
+export { default as TagRemoveButton } from "./components/combobox-tag-remove.svelte";
 export { default as Separator } from "../separator/components/separator.svelte";
 export { default as Arrow } from "$lib/bits/utilities/arrow/arrow.svelte";
 export { default as Trigger } from "./components/combobox-trigger.svelte";
@@ -18,6 +21,10 @@ export type {
 	ComboboxContentProps as ContentProps,
 	ComboboxContentStaticProps as ContentStaticProps,
 	ComboboxInputProps as InputProps,
+	ComboboxTagsProps as TagsProps,
+	ComboboxTagProps as TagProps,
+	ComboboxTagSnippetProps as TagSnippetProps,
+	ComboboxTagRemoveButtonProps as TagRemoveButtonProps,
 	ComboboxItemProps as ItemProps,
 	ComboboxGroupProps as GroupProps,
 	ComboboxGroupHeadingProps as GroupHeadingProps,
