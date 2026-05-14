@@ -24,8 +24,8 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 const SELECTED_DAY_SELECTOR = "[data-bits-day][data-selected]";
 const SELECTED_ATTR = "data-selected";
 
-function setup(props: Partial<DatePickerTestProps> = {}) {
-	const t = render(DatePickerTest, { ...props });
+async function setup(props: Partial<DatePickerTestProps> = {}) {
+	const t = await render(DatePickerTest, { ...props });
 	const month = page.getByTestId("month");
 	const day = page.getByTestId("day");
 	const year = page.getByTestId("year");
@@ -53,7 +53,7 @@ function getTimeSegments(getByTestId: (...args: any[]) => Locator) {
 }
 
 async function open(props: DatePickerTestProps = {}, openWith: "click" | (string & {}) = "click") {
-	const t = setup(props);
+	const t = await setup(props);
 	await expectNotExists(t.getContent());
 	if (openWith === "click") {
 		await t.trigger.click();
@@ -86,7 +86,7 @@ it.each([kbd.ENTER, kbd.SPACE])("should open on %s", async (key) => {
 });
 
 it("should populate segment with value - `CalendarDate`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDate,
 	});
 
@@ -97,7 +97,7 @@ it("should populate segment with value - `CalendarDate`", async () => {
 });
 
 it("should populate segment with value - `CalendarDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 		granularity: "second",
 	});
@@ -116,7 +116,7 @@ it("should populate segment with value - `CalendarDateTime`", async () => {
 });
 
 it("should populate segment with value - `ZonedDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
@@ -135,7 +135,7 @@ it("should populate segment with value - `ZonedDateTime`", async () => {
 });
 
 it("should navigate between the segments", async () => {
-	setup({
+	await setup({
 		value: calendarDate,
 	});
 
@@ -162,7 +162,7 @@ it("should navigate between the segments", async () => {
 });
 
 it("should navigate between the segments - right to left", async () => {
-	setup({
+	await setup({
 		value: calendarDate,
 	});
 
@@ -189,7 +189,7 @@ it("should navigate between the segments - right to left", async () => {
 });
 
 it("should respect `bind:value`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDate,
 	});
 	await expect.element(t.value).toHaveTextContent(calendarDate.toString());
@@ -200,7 +200,7 @@ it("should respect `bind:value`", async () => {
 });
 
 it("should populate date with keyboard", async () => {
-	const t = setup({ value: calendarDate });
+	const t = await setup({ value: calendarDate });
 
 	await t.month.click();
 
@@ -479,7 +479,7 @@ it("should handle unavailable dates appropriately", async () => {
 });
 
 it("should sync the calendar with the input when input is changed", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDate,
 	});
 	await expect.element(t.value).toHaveTextContent(calendarDate.toString());
@@ -595,7 +595,7 @@ it("should not close popover when closeOnDateSelect is false", async () => {
 
 describe("date picker - 24-hour format with locales", () => {
 	it("should allow typing hours 0-23 with non en-US locales that use 24-hour format", async () => {
-		const t = setup({
+		const t = await setup({
 			granularity: "minute",
 			locale: "nl-NL", // dutch uses 24-hour format
 		});
@@ -620,7 +620,7 @@ describe("date picker - 24-hour format with locales", () => {
 
 	it("should allow arrow key navigation through full 0-23 range with 24-hour locales", async () => {
 		const value = new CalendarDateTime(2023, 10, 12, 14, 30, 30, 0);
-		setup({
+		await setup({
 			value,
 			granularity: "minute",
 			locale: "fr-FR", // french uses 24-hour format
@@ -653,7 +653,7 @@ describe("date picker - 24-hour format with locales", () => {
 
 	it("should display and allow typing hours > 12 with sv-SE locale (24-hour format)", async () => {
 		const value = new CalendarDateTime(2023, 10, 12, 18, 30, 30, 0);
-		setup({
+		await setup({
 			value,
 			granularity: "minute",
 			locale: "sv-SE", // swedish uses 24-hour format
@@ -681,7 +681,7 @@ describe("date picker - 24-hour format with locales", () => {
 
 	it("should handle ja-JP locale (24-hour format) correctly", async () => {
 		const value = new CalendarDateTime(2023, 10, 12, 16, 30, 0, 0);
-		setup({
+		await setup({
 			value,
 			granularity: "minute",
 			locale: "ja-JP", // japanese uses 24-hour format

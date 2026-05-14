@@ -28,7 +28,7 @@ type DropdownMenuSetupProps = (DropdownMenuTestProps | DropdownMenuForceMountTes
  */
 async function setup(props: DropdownMenuSetupProps = {}) {
 	const { component: comp = DropdownMenuTest, ...rest } = props;
-	const t = render(comp, { ...rest });
+	const t = await render(comp, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
 

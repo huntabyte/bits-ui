@@ -211,10 +211,10 @@ it("should render an input for the start and end", async () => {
 		},
 	});
 	await expect
-		.element(t.container.querySelector('input[name="start-hidden-input"]'))
+		.element(t.container.querySelector('input[name="start-hidden-input"]') as HTMLElement | null)
 		.toBeInTheDocument();
 	await expect
-		.element(t.container.querySelector('input[name="end-hidden-input"]'))
+		.element(t.container.querySelector('input[name="end-hidden-input"]') as HTMLElement | null)
 		.toBeInTheDocument();
 });
 

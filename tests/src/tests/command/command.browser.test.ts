@@ -90,13 +90,13 @@ it("should restore original order when search is cleared", async () => {
 	await expect.element(t.input).toHaveValue("d");
 	await expect.element(page.getByText("Delegation")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
 		.toHaveTextContent("Delegation");
 	await userEvent.keyboard(kbd.BACKSPACE);
 	await expect.element(t.input).toHaveValue("");
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
 		.toHaveTextContent("Introduction");
 });
 

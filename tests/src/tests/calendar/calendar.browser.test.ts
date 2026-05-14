@@ -823,7 +823,7 @@ describe("Calendar Select Components", () => {
 		it("should have correct selected option for current month", async () => {
 			const t = setupWithSelects({ placeholder: calendarDate }); // January 1980
 			const monthSelect = t.monthSelect;
-			const selectedOption = monthSelect.querySelector("option[selected]");
+			const selectedOption = monthSelect.querySelector("option[selected]") as HTMLElement | null;
 
 			await expect.element(selectedOption).toHaveTextContent("January");
 			await expect.element(selectedOption).toHaveValue("1");
@@ -1103,14 +1103,14 @@ describe("Calendar Select Components", () => {
 			await userEvent.selectOptions(t.monthSelect, "2");
 
 			// February should be selected
-			let selectedOption = t.monthSelect.querySelector("option[selected]");
+			let selectedOption = t.monthSelect.querySelector("option[selected]") as HTMLElement | null;
 			await expect.element(selectedOption).toHaveTextContent("February");
 
 			// Change to April
 			await userEvent.selectOptions(t.monthSelect, "4");
 
 			// April should be selected
-			selectedOption = t.monthSelect.querySelector("option[selected]");
+			selectedOption = t.monthSelect.querySelector("option[selected]") as HTMLElement | null;
 			await expect.element(selectedOption).toHaveTextContent("April");
 		});
 

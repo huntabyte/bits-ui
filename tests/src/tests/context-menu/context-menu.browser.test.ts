@@ -29,7 +29,7 @@ type ContextMenuSetupProps = (ContextMenuTestProps | ContextMenuForceMountTestPr
  */
 async function setup(props: ContextMenuSetupProps = {}) {
 	const { component = ContextMenuTest, ...rest } = props;
-	const t = render(component, { ...rest });
+	const t = await render(component, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
 	const open = async () => {

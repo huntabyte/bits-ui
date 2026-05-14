@@ -60,7 +60,7 @@ function setupSingle(
 	}
 
 	function getHiddenInput(name = "test") {
-		return returned.container.querySelector(`input[name="${name}"]`);
+		return returned.container.querySelector(`input[name="${name}"]`) as HTMLElement | null;
 	}
 
 	return {
@@ -121,7 +121,7 @@ function setupValueChildSingle(
 	}
 
 	function getHiddenInput(name = "theme") {
-		return returned.container.querySelector(`input[name="${name}"]`);
+		return returned.container.querySelector(`input[name="${name}"]`) as HTMLElement | null;
 	}
 
 	return {

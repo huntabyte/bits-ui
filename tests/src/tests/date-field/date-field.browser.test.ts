@@ -91,10 +91,10 @@ describe("date field", () => {
 			locale: "en-UK",
 		});
 
-		const firstSeg = t.input.element().children[0];
+		const firstSeg = t.input.element().children[0] as HTMLElement;
 		// skipping the literal slashes here
-		const secondSeg = t.input.element().children[2];
-		const thirdSeg = t.input.element().children[4];
+		const secondSeg = t.input.element().children[2] as HTMLElement;
+		const thirdSeg = t.input.element().children[4] as HTMLElement;
 
 		await expect.element(firstSeg).toHaveTextContent("dd");
 		await expect.element(secondSeg).toHaveTextContent("mm");
@@ -891,7 +891,7 @@ describe("date field", () => {
 		const t = setup({
 			name: "date-field",
 		});
-		const hiddenInput = t.container.querySelector("input");
+		const hiddenInput = t.container.querySelector("input") as HTMLElement | null;
 		await expect.element(hiddenInput).not.toBeNull();
 
 		await expect.element(hiddenInput).toHaveAttribute("name", "date-field");
@@ -900,7 +900,7 @@ describe("date field", () => {
 
 	it("should not render a hidden input if the name prop isn't passed", async () => {
 		const t = setup();
-		const hiddenInput = t.container.querySelector("input");
+		const hiddenInput = t.container.querySelector("input") as HTMLElement | null;
 		await expect.element(hiddenInput).toBeNull();
 	});
 
@@ -911,7 +911,7 @@ describe("date field", () => {
 			value,
 		});
 
-		const hiddenInput = t.container.querySelector("input");
+		const hiddenInput = t.container.querySelector("input") as HTMLElement | null;
 		await expect.element(hiddenInput).toHaveValue(value.toString());
 
 		await t.year.click();

@@ -33,14 +33,14 @@ const testItems: Item[] = [
 	},
 ];
 
-function setupSingle(
+async function setupSingle(
 	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
 	items: Item[] = testItems,
 	// oxlint-disable-next-line no-explicit-any
 	component: Component<any, any, any> = ComboboxTest
 ) {
 	const user = userEvent;
-	const returned = render(component, { name: "test", ...props, items });
+	const returned = await render(component, { name: "test", ...props, items });
 	const input = page.getByTestId("input");
 	const trigger = page.getByTestId("trigger");
 	const openBinding = page.getByTestId("open-binding");
@@ -68,9 +68,9 @@ function setupSingle(
 	};
 }
 
-function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: Item[] = testItems) {
+async function setupMultiple(props: Partial<ComboboxMultipleTestProps> = {}, items: Item[] = testItems) {
 	const user = userEvent;
-	const returned = render(ComboboxMultiTest, { name: "test", ...props, items });
+	const returned = await render(ComboboxMultiTest, { name: "test", ...props, items });
 	const input = page.getByTestId("input");
 	const trigger = page.getByTestId("trigger");
 	const openBinding = page.getByTestId("open-binding");
@@ -107,7 +107,7 @@ async function openSingle(
 	openWith: "click" | "type" | (string & {}) = "click",
 	searchValue?: string
 ) {
-	const returned = setupSingle(props);
+	const returned = await setupSingle(props);
 
 	await expectNotExists(page.getByTestId("content"));
 	if (openWith === "click") {
@@ -136,7 +136,7 @@ async function openMultiple(
 	openWith: "click" | "type" | (string & {}) = "click",
 	searchValue?: string
 ) {
-	const returned = setupMultiple(props);
+	const returned = await setupMultiple(props);
 	await expectNotExists(page.getByTestId("content"));
 
 	if (openWith === "click") {
@@ -187,27 +187,27 @@ describe("combobox - single", () => {
 	});
 
 	it("should render an input if the `name` prop is passed", async () => {
-		const t = setupSingle();
+		const t = await setupSingle();
 		await expect.element(t.getHiddenInput()).toBeInTheDocument();
 	});
 
 	it("should not render an input if the `name` prop isn't passed or is an empty string/undefined", async () => {
-		const t = setupSingle({ name: "" });
+		const t = await setupSingle({ name: "" });
 		await expect.element(t.getHiddenInput()).not.toBeInTheDocument();
 	});
 
 	it("should sync the value prop to the hidden input", async () => {
-		const t = setupSingle({ value: "test" });
+		const t = await setupSingle({ value: "test" });
 		await expect.element(t.getHiddenInput()).toHaveValue("test");
 	});
 
 	it("should sync the required prop to the hidden input", async () => {
-		const t = setupSingle({ required: true });
+		const t = await setupSingle({ required: true });
 		await expect.element(t.getHiddenInput()).toHaveAttribute("required");
 	});
 
 	it("should sync the disabled prop to the hidden input", async () => {
-		const t = setupSingle({ disabled: true });
+		const t = await setupSingle({ disabled: true });
 		await expect.element(t.getHiddenInput()).toHaveAttribute("disabled");
 	});
 
@@ -244,7 +244,7 @@ describe("combobox - single", () => {
 	});
 
 	it("should respect binding the `open` prop", async () => {
-		const t = setupSingle();
+		const t = await setupSingle();
 		await expect.element(t.openBinding).toHaveTextContent("false");
 		await t.openBinding.click();
 		await expect.element(t.openBinding).toHaveTextContent("true");
@@ -421,13 +421,13 @@ describe("combobox - single", () => {
 	});
 
 	it("should forceMount the content when `forceMount` is true", async () => {
-		setupSingle({}, [], ComboboxForceMountTest);
+		await setupSingle({}, [], ComboboxForceMountTest);
 
 		await expect.element(page.getByTestId("content")).toBeVisible();
 	});
 
 	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-		const t = setupSingle({ withOpenCheck: true }, [], ComboboxForceMountTest);
+		const t = await setupSingle({ withOpenCheck: true }, [], ComboboxForceMountTest);
 
 		await expectNotExists(page.getByTestId("content"));
 		await t.trigger.click();
@@ -471,7 +471,7 @@ describe("combobox - single", () => {
 	});
 
 	it("should allow programmatic updates to the value alongside `inputValue`", async () => {
-		const t = setupSingle();
+		const t = await setupSingle();
 		const setter = page.getByTestId("value-binding-3");
 		await setter.click();
 		await expect.element(t.input).toHaveValue("C");
@@ -498,12 +498,12 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should not render a hidden input if the `name` prop is passed and a value is not selected", async () => {
-		const t = setupMultiple();
+		const t = await setupMultiple();
 		expect(t.getHiddenInputs()).toHaveLength(0);
 	});
 
 	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
-		const t = setupMultiple({ value: ["a", "b"] });
+		const t = await setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 		await expect.element(hiddenInputs[0]).toHaveAttribute("name", "test");
@@ -511,7 +511,7 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should sync the value prop to the hidden inputs", async () => {
-		const t = setupMultiple({ value: ["a", "b"] });
+		const t = await setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 		await expect.element(hiddenInputs[0]).toHaveValue("a");
@@ -519,7 +519,7 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should sync the required prop to the hidden inputs", async () => {
-		const t = setupMultiple({ required: true, value: ["a", "b"] });
+		const t = await setupMultiple({ required: true, value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 
@@ -529,7 +529,7 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should sync the disabled prop to the hidden inputs", async () => {
-		const t = setupMultiple({ disabled: true, value: ["a", "b"] });
+		const t = await setupMultiple({ disabled: true, value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 
@@ -731,7 +731,7 @@ describe("combobox - multiple", () => {
 
 	it("should submit an empty array when the user submits the form without selecting any items", async () => {
 		let submittedValues: string[] | undefined;
-		const t = setupMultiple({
+		const t = await setupMultiple({
 			onFormSubmit: (fd) => {
 				submittedValues = fd.getAll("themes") as string[];
 			},
