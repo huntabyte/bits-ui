@@ -69,7 +69,7 @@
 				</Combobox.Chip>
 			{/each}
 			<Combobox.Input
-				class="placeholder:text-foreground-alt/50 min-w-0 flex-1 bg-transparent text-sm outline-none"
+				class="placeholder:text-foreground-alt/50 min-w-[80px] flex-1 bg-transparent text-sm outline-none"
 				placeholder={value.length === 0 ? "Search a fruit" : ""}
 				aria-label="Search a fruit"
 				clearInputOnSelect
