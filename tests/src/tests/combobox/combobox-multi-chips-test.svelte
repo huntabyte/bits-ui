@@ -12,7 +12,7 @@
 		disabled?: boolean;
 	};
 
-	export type ComboboxMultiTagsTestProps = Omit<
+	export type ComboboxMultiChipsTestProps = Omit<
 		WithoutChildren<ComboboxMultipleRootProps>,
 		"type"
 	> & {
@@ -36,7 +36,7 @@
 		onOpenChange,
 		onFormSubmit,
 		...restProps
-	}: ComboboxMultiTagsTestProps = $props();
+	}: ComboboxMultiChipsTestProps = $props();
 
 	const filteredItems = $derived(
 		inputValue === ""
@@ -67,14 +67,14 @@
 				if (!v) inputValue = "";
 			}}
 		>
-			<Combobox.Tags data-testid="tags">
-				{#each value as tagValue (tagValue)}
-					<Combobox.Tag value={tagValue} data-testid="tag-{tagValue}">
+			<Combobox.Chips data-testid="chips">
+				{#each value as chipValue (chipValue)}
+					<Combobox.Chip value={chipValue} data-testid="chip-{chipValue}">
 						{#snippet children({ label })}
-							<span data-testid="tag-label-{tagValue}">{label}</span>
-							<Combobox.TagRemoveButton data-testid="tag-remove-{tagValue}">✕</Combobox.TagRemoveButton>
+							<span data-testid="chip-label-{chipValue}">{label}</span>
+							<Combobox.ChipRemoveButton data-testid="chip-remove-{chipValue}">✕</Combobox.ChipRemoveButton>
 						{/snippet}
-					</Combobox.Tag>
+					</Combobox.Chip>
 				{/each}
 				<Combobox.Input
 					data-testid="input"
@@ -83,7 +83,7 @@
 					removeOnBackspace
 					{...inputProps}
 				/>
-			</Combobox.Tags>
+			</Combobox.Chips>
 			<Combobox.Trigger data-testid="trigger">Open combobox</Combobox.Trigger>
 			<Combobox.Portal {...portalProps}>
 				<Combobox.Content data-testid="content" {...contentProps}>

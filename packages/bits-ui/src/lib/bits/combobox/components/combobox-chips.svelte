@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
-	import type { ComboboxTagRemoveButtonProps } from "../types.js";
+	import type { ComboboxChipsProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { SelectComboTagRemoveState } from "$lib/bits/select/select.svelte.js";
+	import { SelectComboChipsState } from "$lib/bits/select/select.svelte.js";
 
 	let {
 		id = useId(),
@@ -10,9 +10,9 @@
 		child,
 		children,
 		...restProps
-	}: ComboboxTagRemoveButtonProps = $props();
+	}: ComboboxChipsProps = $props();
 
-	const removeState = SelectComboTagRemoveState.create({
+	const chipsState = SelectComboChipsState.create({
 		id: boxWith(() => id),
 		ref: boxWith(
 			() => ref,
@@ -20,13 +20,13 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, removeState.props));
+	const mergedProps = $derived(mergeProps(restProps, chipsState.props));
 </script>
 
 {#if child}
 	{@render child({ props: mergedProps })}
 {:else}
-	<button {...mergedProps}>
+	<div {...mergedProps}>
 		{@render children?.()}
-	</button>
+	</div>
 {/if}

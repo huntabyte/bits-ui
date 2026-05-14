@@ -38,23 +38,23 @@
 		if (!open) inputValue = "";
 	}}
 >
-	<Combobox.Tags
+	<Combobox.Chips
 		class="border-border-input bg-background focus-within:ring-foreground focus-within:ring-offset-background flex min-h-10 w-[296px] flex-wrap items-center gap-1.5 rounded-[9px] border px-2 py-1.5 focus-within:ring-2 focus-within:ring-offset-2"
 	>
-		{#each value as tagValue (tagValue)}
-			<Combobox.Tag
-				value={tagValue}
+		{#each value as chipValue (chipValue)}
+			<Combobox.Chip
+				value={chipValue}
 				class="bg-muted text-foreground flex items-center gap-1 rounded-md px-2 py-0.5 text-sm"
 			>
 				{#snippet children({ label })}
 					<span>{label}</span>
-					<Combobox.TagRemoveButton
+					<Combobox.ChipRemoveButton
 						class="text-muted-foreground hover:text-foreground flex size-4 items-center justify-center rounded-full"
 					>
 						<X class="size-3" />
-					</Combobox.TagRemoveButton>
+					</Combobox.ChipRemoveButton>
 				{/snippet}
-			</Combobox.Tag>
+			</Combobox.Chip>
 		{/each}
 		<Combobox.Input
 			oninput={(e) => (inputValue = e.currentTarget.value)}
@@ -64,7 +64,7 @@
 			clearInputOnSelect
 			removeOnBackspace
 		/>
-	</Combobox.Tags>
+	</Combobox.Chips>
 	<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2 touch-none">
 		<CaretUpDown class="text-muted-foreground size-4" />
 	</Combobox.Trigger>

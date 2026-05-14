@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
-	import type { ComboboxTagProps } from "../types.js";
+	import type { ComboboxChipProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
-	import { SelectComboTagState } from "$lib/bits/select/select.svelte.js";
+	import { SelectComboChipState } from "$lib/bits/select/select.svelte.js";
 
 	let {
 		id = useId(),
@@ -11,9 +11,9 @@
 		children,
 		value,
 		...restProps
-	}: ComboboxTagProps = $props();
+	}: ComboboxChipProps = $props();
 
-	const tagState = SelectComboTagState.create({
+	const chipState = SelectComboChipState.create({
 		id: boxWith(() => id),
 		ref: boxWith(
 			() => ref,
@@ -22,13 +22,13 @@
 		value: boxWith(() => value),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, tagState.props));
+	const mergedProps = $derived(mergeProps(restProps, chipState.props));
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, ...tagState.snippetProps })}
+	{@render child({ props: mergedProps, ...chipState.snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.(tagState.snippetProps)}
+		{@render children?.(chipState.snippetProps)}
 	</div>
 {/if}

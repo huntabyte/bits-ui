@@ -99,30 +99,30 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
 	Without<Omit<BitsPrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
 
-export type ComboboxTagsPropsWithoutHTML = WithChild;
+export type ComboboxChipsPropsWithoutHTML = WithChild;
 
-export type ComboboxTagsProps = ComboboxTagsPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, ComboboxTagsPropsWithoutHTML>;
+export type ComboboxChipsProps = ComboboxChipsPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxChipsPropsWithoutHTML>;
 
-export type ComboboxTagSnippetProps = {
+export type ComboboxChipSnippetProps = {
 	value: string;
 	label: string;
 };
 
-export type ComboboxTagPropsWithoutHTML = WithChild<
+export type ComboboxChipPropsWithoutHTML = WithChild<
 	{
 		/**
-		 * The value of the selected item this tag represents.
+		 * The value of the selected item this chip represents.
 		 */
 		value: string;
 	},
-	ComboboxTagSnippetProps
+	ComboboxChipSnippetProps
 >;
 
-export type ComboboxTagProps = ComboboxTagPropsWithoutHTML &
-	Without<BitsPrimitiveDivAttributes, ComboboxTagPropsWithoutHTML>;
+export type ComboboxChipProps = ComboboxChipPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxChipPropsWithoutHTML>;
 
-export type ComboboxTagRemoveButtonPropsWithoutHTML = WithChild;
+export type ComboboxChipRemoveButtonPropsWithoutHTML = WithChild;
 
-export type ComboboxTagRemoveButtonProps = ComboboxTagRemoveButtonPropsWithoutHTML &
-	Without<BitsPrimitiveButtonAttributes, ComboboxTagRemoveButtonPropsWithoutHTML>;
+export type ComboboxChipRemoveButtonProps = ComboboxChipRemoveButtonPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, ComboboxChipRemoveButtonPropsWithoutHTML>;

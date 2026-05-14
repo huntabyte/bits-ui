@@ -68,9 +68,9 @@ const selectAttrs = createBitsAttrs({
 		"content-wrapper",
 		"item-text",
 		"value",
-		"tags",
-		"tag",
-		"tag-remove",
+		"chips",
+		"chip",
+		"chip-remove",
 	],
 });
 
@@ -1657,21 +1657,21 @@ export class SelectScrollUpButtonState {
 	);
 }
 
-// ——— Combobox Tag components ———
+// ——— Combobox Chip components ———
 
-const SelectComboTagContext = new Context<SelectComboTagState>("Combobox.Tag");
+const SelectComboChipContext = new Context<SelectComboChipState>("Combobox.Chip");
 
-interface SelectComboTagsStateOpts extends WithRefOpts {}
+interface SelectComboChipsStateOpts extends WithRefOpts {}
 
-export class SelectComboTagsState {
-	static create(opts: SelectComboTagsStateOpts) {
-		return new SelectComboTagsState(opts, SelectRootContext.get());
+export class SelectComboChipsState {
+	static create(opts: SelectComboChipsStateOpts) {
+		return new SelectComboChipsState(opts, SelectRootContext.get());
 	}
-	readonly opts: SelectComboTagsStateOpts;
+	readonly opts: SelectComboChipsStateOpts;
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 
-	constructor(opts: SelectComboTagsStateOpts, root: SelectRoot) {
+	constructor(opts: SelectComboChipsStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
 		this.attachment = attachRef(opts.ref);
@@ -1681,28 +1681,28 @@ export class SelectComboTagsState {
 		() =>
 			({
 				id: this.opts.id.current,
-				[this.root.getBitsAttr("tags")]: "",
+				[this.root.getBitsAttr("chips")]: "",
 				...this.attachment,
 			}) as const
 	);
 }
 
-interface SelectComboTagStateOpts
+interface SelectComboChipStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 		}> {}
 
-export class SelectComboTagState {
-	static create(opts: SelectComboTagStateOpts) {
-		return SelectComboTagContext.set(new SelectComboTagState(opts, SelectRootContext.get()));
+export class SelectComboChipState {
+	static create(opts: SelectComboChipStateOpts) {
+		return SelectComboChipContext.set(new SelectComboChipState(opts, SelectRootContext.get()));
 	}
-	readonly opts: SelectComboTagStateOpts;
+	readonly opts: SelectComboChipStateOpts;
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 	readonly label = $derived.by(() => this.root.getLabelForValue(this.opts.value.current));
 
-	constructor(opts: SelectComboTagStateOpts, root: SelectRoot) {
+	constructor(opts: SelectComboChipStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
 		this.attachment = attachRef(opts.ref);
@@ -1719,33 +1719,33 @@ export class SelectComboTagState {
 				id: this.opts.id.current,
 				"data-value": this.opts.value.current,
 				"data-label": this.label,
-				[this.root.getBitsAttr("tag")]: "",
+				[this.root.getBitsAttr("chip")]: "",
 				...this.attachment,
 			}) as const
 	);
 }
 
-interface SelectComboTagRemoveStateOpts extends WithRefOpts {}
+interface SelectComboChipRemoveStateOpts extends WithRefOpts {}
 
-export class SelectComboTagRemoveState {
-	static create(opts: SelectComboTagRemoveStateOpts) {
-		return new SelectComboTagRemoveState(opts, SelectComboTagContext.get());
+export class SelectComboChipRemoveState {
+	static create(opts: SelectComboChipRemoveStateOpts) {
+		return new SelectComboChipRemoveState(opts, SelectComboChipContext.get());
 	}
-	readonly opts: SelectComboTagRemoveStateOpts;
-	readonly tag: SelectComboTagState;
+	readonly opts: SelectComboChipRemoveStateOpts;
+	readonly chip: SelectComboChipState;
 	readonly attachment: RefAttachment;
 
-	constructor(opts: SelectComboTagRemoveStateOpts, tag: SelectComboTagState) {
+	constructor(opts: SelectComboChipRemoveStateOpts, chip: SelectComboChipState) {
 		this.opts = opts;
-		this.tag = tag;
+		this.chip = chip;
 		this.attachment = attachRef(opts.ref);
 		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 	}
 
 	onclick(_: BitsMouseEvent) {
-		if (this.tag.root.opts.disabled.current) return;
-		this.tag.root.toggleItem(this.tag.opts.value.current, this.tag.label);
+		if (this.chip.root.opts.disabled.current) return;
+		this.chip.root.toggleItem(this.chip.opts.value.current, this.chip.label);
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
@@ -1757,9 +1757,9 @@ export class SelectComboTagRemoveState {
 			({
 				id: this.opts.id.current,
 				type: "button" as const,
-				"aria-label": `Remove ${this.tag.label}`,
-				disabled: this.tag.root.opts.disabled.current ? true : undefined,
-				[this.tag.root.getBitsAttr("tag-remove")]: "",
+				"aria-label": `Remove ${this.chip.label}`,
+				disabled: this.chip.root.opts.disabled.current ? true : undefined,
+				[this.chip.root.getBitsAttr("chip-remove")]: "",
 				onclick: this.onclick,
 				onpointerdown: this.onpointerdown,
 				...this.attachment,
