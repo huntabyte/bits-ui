@@ -884,7 +884,7 @@ describe("combobox - multiple with chips", () => {
 	});
 
 	it("should show the label inside each Chip", async () => {
-		const t = setupMultipleChips({ value: ["1", "2"] });
+		setupMultipleChips({ value: ["1", "2"] });
 		await expect.element(page.getByTestId("chip-label-1")).toHaveTextContent("A");
 		await expect.element(page.getByTestId("chip-label-2")).toHaveTextContent("B");
 	});

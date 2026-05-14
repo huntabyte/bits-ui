@@ -1,4 +1,8 @@
-import type { BitsPrimitiveInputAttributes, BitsPrimitiveButtonAttributes, BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveInputAttributes,
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type {
 	SelectBaseRootPropsWithoutHTML,
 	SelectMultipleRootPropsWithoutHTML,

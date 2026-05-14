@@ -72,7 +72,9 @@
 					<Combobox.Chip value={chipValue} data-testid="chip-{chipValue}">
 						{#snippet children({ label })}
 							<span data-testid="chip-label-{chipValue}">{label}</span>
-							<Combobox.ChipRemoveButton data-testid="chip-remove-{chipValue}">✕</Combobox.ChipRemoveButton>
+							<Combobox.ChipRemoveButton data-testid="chip-remove-{chipValue}"
+								>✕</Combobox.ChipRemoveButton
+							>
 						{/snippet}
 					</Combobox.Chip>
 				{/each}
@@ -88,9 +90,16 @@
 			<Combobox.Portal {...portalProps}>
 				<Combobox.Content data-testid="content" {...contentProps}>
 					<Combobox.Group data-testid="group">
-						<Combobox.GroupHeading data-testid="group-label">Options</Combobox.GroupHeading>
+						<Combobox.GroupHeading data-testid="group-label"
+							>Options</Combobox.GroupHeading
+						>
 						{#each filteredItems as { value: itemValue, label, disabled } (itemValue)}
-							<Combobox.Item data-testid={itemValue} {disabled} value={itemValue} {label}>
+							<Combobox.Item
+								data-testid={itemValue}
+								{disabled}
+								value={itemValue}
+								{label}
+							>
 								{#snippet children({ selected })}
 									{#if selected}
 										<span data-testid="{itemValue}-indicator">✓</span>
