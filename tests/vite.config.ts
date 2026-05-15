@@ -22,6 +22,12 @@ const vitestBrowserConditionPlugin: Plugin = {
 export default defineConfig({
 	// @ts-expect-error - vite v8 / vitest v3 (vite v7) type mismatch in plugins
 	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit()],
+	optimizeDeps: {
+		// svelte-toolbelt ships .svelte.js source files that must be compiled by
+		// vite-plugin-svelte. Exclude it from esbuild pre-bundling so Svelte runes
+		// ($derived, $state, etc.) are not served raw and undefined at runtime.
+		exclude: ["svelte-toolbelt"],
+	},
 	test: {
 		poolOptions: {
 			forks: {
