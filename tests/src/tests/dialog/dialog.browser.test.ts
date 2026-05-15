@@ -16,7 +16,7 @@ import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 const kbd = getTestKbd();
 
 async function setup(props: DialogTestProps = {}, component: Component = DialogTest) {
-	const t = await render(component, { ...props });
+	const t = render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
 
 	return {

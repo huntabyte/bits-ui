@@ -1082,7 +1082,7 @@ describe("RangeCalendar Select Components", () => {
 		it("should have correct selected option for current month", async () => {
 			const t = setupWithSelects({ placeholder: calendarDateRange.start }); // January 1980
 			const monthSelect = t.monthSelect;
-			const selectedOption = monthSelect.element().querySelector("option[selected]") as HTMLElement | null;
+			const selectedOption = monthSelect.element().querySelector("option[selected]");
 
 			await expect.element(selectedOption).toHaveTextContent("January");
 			await expect.element(selectedOption).toHaveValue("1");
@@ -1239,7 +1239,7 @@ describe("RangeCalendar Select Components", () => {
 		it("should have correct selected option for current year", async () => {
 			const t = setupWithSelects({ placeholder: calendarDateRange.start }); // 1980
 			const yearSelect = t.yearSelect;
-			const selectedOption = yearSelect.element().querySelector("option[selected]") as HTMLElement | null;
+			const selectedOption = yearSelect.element().querySelector("option[selected]");
 
 			await expect.element(selectedOption).toHaveTextContent("1980");
 			await expect.element(selectedOption).toHaveValue("1980");
