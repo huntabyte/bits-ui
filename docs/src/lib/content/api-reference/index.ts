@@ -14,6 +14,7 @@ import { datePicker } from "./date-picker.api.js";
 import { dateRangeField } from "./date-range-field.api.js";
 import { dateRangePicker } from "./date-range-picker.api.js";
 import { dialog } from "./dialog.api.js";
+import { drawer } from "./drawer.api.js";
 import { dropdownMenu } from "./dropdown-menu.api.js";
 import { label } from "./label.api.js";
 import { linkPreview } from "./link-preview.api.js";
@@ -60,6 +61,7 @@ export const bits = [
 	"date-range-field",
 	"date-range-picker",
 	"dialog",
+	"drawer",
 	"dropdown-menu",
 	"label",
 	"link-preview",
@@ -112,6 +114,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"date-range-field": dateRangeField,
 	"date-range-picker": dateRangePicker,
 	dialog,
+	drawer,
 	"dropdown-menu": dropdownMenu,
 	label,
 	"link-preview": linkPreview,

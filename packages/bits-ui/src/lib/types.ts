@@ -14,6 +14,7 @@ export type * from "$lib/bits/date-picker/types.js";
 export type * from "$lib/bits/date-range-field/types.js";
 export type * from "$lib/bits/date-range-picker/types.js";
 export type * from "$lib/bits/dialog/types.js";
+export type * from "$lib/bits/drawer/types.js";
 export type * from "$lib/bits/dropdown-menu/types.js";
 export type * from "$lib/bits/label/types.js";
 export type * from "$lib/bits/link-preview/types.js";
