@@ -4,7 +4,7 @@ description: Enables users to select a range of dates using a calendar interface
 ---
 
 <script>
-	import { APISection, ComponentPreview, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, RangeCalendarDemo, RangeCalendarDemoWeekNumbers, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '$lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -116,6 +116,24 @@ You can set both `minDays` and `maxDays` to limit the number of days that can be
 
 {#snippet preview()}
 <RangeCalendarDemoMinMax />
+{/snippet}
+
+</ComponentPreview>
+
+### Week Numbers
+
+Set `showWeekNumbers` on `RangeCalendar.Root` to display ISO 8601 week numbers. Include `<RangeCalendar.WeekNumberHeadCell>` in the grid head row and `<RangeCalendar.WeekNumberCell week={weekDates} />` as the first child of each body grid row.
+
+```svelte
+<RangeCalendar.Root showWeekNumbers>
+  <!-- ... -->
+</RangeCalendar.Root>
+```
+
+<ComponentPreview name="range-calendar-demo-week-numbers" componentName="Range Calendar">
+
+{#snippet preview()}
+<RangeCalendarDemoWeekNumbers />
 {/snippet}
 
 </ComponentPreview>

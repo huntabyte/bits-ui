@@ -45,7 +45,12 @@ import {
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
-import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/utils.js";
+import {
+	getDateValueType,
+	getISOWeekNumberForWeek,
+	isBefore,
+	toDate,
+} from "$lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
 
 interface CalendarRootStateOpts
@@ -69,6 +74,7 @@ interface CalendarRootStateOpts
 			locale: string;
 			calendarLabel: string;
 			type: "single" | "multiple";
+			showWeekNumbers: boolean;
 			readonly: boolean;
 			disableDaysOutsideMonth: boolean;
 			initialFocus: boolean;
@@ -1169,6 +1175,81 @@ export class CalendarYearSelectState {
 				[this.root.getBitsAttr("year-select")]: "",
 				//
 				onchange: this.onchange,
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface CalendarWeekNumberCellStateOpts
+	extends WithRefOpts,
+		ReadableBoxedValues<{
+			week: DateValue[];
+		}> {}
+
+export class CalendarWeekNumberCellState {
+	static create(opts: CalendarWeekNumberCellStateOpts) {
+		return new CalendarWeekNumberCellState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarWeekNumberCellStateOpts;
+	readonly root: CalendarRootState | RangeCalendarRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(
+		opts: CalendarWeekNumberCellStateOpts,
+		root: CalendarRootState | RangeCalendarRootState
+	) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly weekNumber = $derived.by(() => {
+		return getISOWeekNumberForWeek(this.opts.week.current);
+	});
+
+	readonly snippetProps = $derived.by(() => ({ weekNumber: this.weekNumber }));
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
+				[this.root.getBitsAttr("week-number-cell")]: "",
+				...this.attachment,
+			}) as const
+	);
+}
+
+interface CalendarWeekNumberHeadCellStateOpts extends WithRefOpts {}
+
+export class CalendarWeekNumberHeadCellState {
+	static create(opts: CalendarWeekNumberHeadCellStateOpts) {
+		return new CalendarWeekNumberHeadCellState(opts, CalendarRootContext.get());
+	}
+
+	readonly opts: CalendarWeekNumberHeadCellStateOpts;
+	readonly root: CalendarRootState | RangeCalendarRootState;
+	readonly attachment: RefAttachment;
+
+	constructor(
+		opts: CalendarWeekNumberHeadCellStateOpts,
+		root: CalendarRootState | RangeCalendarRootState
+	) {
+		this.opts = opts;
+		this.root = root;
+		this.attachment = attachRef(this.opts.ref);
+	}
+
+	readonly props = $derived.by(
+		() =>
+			({
+				id: this.opts.id.current,
+				scope: "col",
+				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
+				"data-readonly": boolToEmptyStrOrUndef(this.root.opts.readonly.current),
+				[this.root.getBitsAttr("week-number-head-cell")]: "",
 				...this.attachment,
 			}) as const
 	);

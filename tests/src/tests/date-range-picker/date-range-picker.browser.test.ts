@@ -440,6 +440,30 @@ it("should renders six weeks when `fixedWeeks` is `true`", { timeout: 10000 }, a
 	}
 });
 
+describe("Week Numbers", () => {
+	it("should not render week number cells when `showWeekNumbers` is false (default)", async () => {
+		await open({ placeholder: calendarDateRange.start });
+		const cell = page.getByTestId("week-number-cell-1-0");
+		const headCell = page.getByTestId("week-number-head-cell-1");
+		await expect.element(cell).not.toBeInTheDocument();
+		await expect.element(headCell).not.toBeInTheDocument();
+	});
+
+	it("should render week number cells when `showWeekNumbers` is true", async () => {
+		await open({ placeholder: calendarDateRange.start, showWeekNumbers: true });
+		const headCell = page.getByTestId("week-number-head-cell-1");
+		const firstWeekCell = page.getByTestId("week-number-cell-1-0");
+		await expect.element(headCell).toBeInTheDocument();
+		await expect.element(firstWeekCell).toBeInTheDocument();
+	});
+
+	it("should anchor row week numbers to the row's Thursday", async () => {
+		await open({ placeholder: calendarDateRange.start, showWeekNumbers: true });
+		const weekCell = page.getByTestId("week-number-cell-1-3");
+		await expect.element(weekCell).toHaveTextContent("04");
+	});
+});
+
 it("should not allow navigation before the `minValue` (prev button)", async () => {
 	await open({
 		value: calendarDateRange,

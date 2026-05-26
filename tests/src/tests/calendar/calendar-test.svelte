@@ -37,6 +37,9 @@
 					<Calendar.Grid data-testid="grid-{m}">
 						<Calendar.GridHead data-testid="grid-head-{m}">
 							<Calendar.GridRow data-testid="grid-row-{m}">
+								<Calendar.WeekNumberHeadCell
+									data-testid="week-number-head-cell-{m}"
+								/>
 								{#each weekdays as day, i (day + i)}
 									<Calendar.HeadCell data-testid="weekday-{m}-{i}">
 										{day}
@@ -47,6 +50,10 @@
 						<Calendar.GridBody data-testid="grid-body-{m}">
 							{#each month.weeks as weekDates, i (i)}
 								<Calendar.GridRow data-testid="grid-row-{m}-{i}" data-week>
+									<Calendar.WeekNumberCell
+										week={weekDates}
+										data-testid="week-number-cell-{m}-{i}"
+									/>
 									{#each weekDates as date, d (d)}
 										<Calendar.Cell
 											{date}
