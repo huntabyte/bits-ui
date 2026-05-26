@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue, SelectDemoItemAligned } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -289,6 +289,32 @@ You can opt-out of this behavior by instead using the `Select.ContentStatic` com
 ```
 
 When using this component, you'll need to handle the positioning of the content yourself. Keep in mind that using `Select.Portal` alongside `Select.ContentStatic` may result in some unexpected positioning behavior, feel free to not use the portal or work around it.
+
+## Item-Aligned Positioning
+
+By default, `Select.Content` uses [Floating UI](https://floating-ui.com/) to anchor the list to the trigger, much like a popover. When you set `position="item-aligned"`, the content is instead placed so that the currently selected item sits directly over the trigger, mirroring the behavior of a native `<select>` on macOS.
+
+```svelte /position="item-aligned"/
+<Select.Content position="item-aligned">
+	<Select.ScrollUpButton />
+	<Select.Viewport>
+		<Select.Item />
+	</Select.Viewport>
+	<Select.ScrollDownButton />
+</Select.Content>
+```
+
+In this mode, the `side`, `sideOffset`, `align`, `alignOffset`, `avoidCollisions`, and other collision-related props are ignored. The `data-side` attribute on the content is set to `none` so that side-specific animations or styles don't run — keep this in mind if your styles depend on `data-[side=...]` selectors.
+
+If the list is taller than the viewport, `Select.Viewport`'s scroll position is adjusted automatically to keep the selected item aligned with the trigger, and the remaining items can be scrolled into view using `Select.ScrollUpButton` and `Select.ScrollDownButton`. For this reason, the `Select.Viewport` and scroll button components should always be included in your structure when using this mode.
+
+<ComponentPreview name="select-demo-item-aligned" componentName="Select">
+
+{#snippet preview()}
+<SelectDemoItemAligned />
+{/snippet}
+
+</ComponentPreview>
 
 ## Custom Anchor
 
