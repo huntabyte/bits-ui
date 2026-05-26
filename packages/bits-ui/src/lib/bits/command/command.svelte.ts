@@ -482,9 +482,11 @@ export class CommandRootState {
 					const closestGroupHeader = item
 						?.closest(COMMAND_GROUP_SELECTOR)
 						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
-					closestGroupHeader?.scrollIntoView({ block: "nearest" });
 
-					return;
+					if (closestGroupHeader) {
+						closestGroupHeader.scrollIntoView({ block: "nearest" });
+						return;
+					}
 				}
 			}
 
