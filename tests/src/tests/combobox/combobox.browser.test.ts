@@ -10,6 +10,9 @@ import ComboboxMultiTest from "./combobox-multi-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
+import ComboboxMultiChipsTest, {
+	type ComboboxMultiChipsTestProps,
+} from "./combobox-multi-chips-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
@@ -137,6 +140,82 @@ async function openMultiple(
 	searchValue?: string
 ) {
 	const returned = setupMultiple(props);
+	await expectNotExists(page.getByTestId("content"));
+
+	if (openWith === "click") {
+		await returned.user.click(returned.trigger, { force: true });
+	} else if (openWith === "type" && searchValue) {
+		await returned.user.type(returned.input, searchValue);
+	} else {
+		(returned.input.element() as HTMLElement).focus();
+		await returned.user.keyboard(openWith);
+	}
+	await expectExists(page.getByTestId("content"));
+	const content = page.getByTestId("content");
+	return {
+		...returned,
+		content,
+	};
+}
+
+function setupMultipleChips(
+	props: Partial<ComboboxMultiChipsTestProps> = {},
+	items: Item[] = testItems
+) {
+	const user = userEvent;
+	const returned = render(ComboboxMultiChipsTest, { name: "test", ...props, items });
+	const input = page.getByTestId("input");
+	const trigger = page.getByTestId("trigger");
+	const openBinding = page.getByTestId("open-binding");
+	const valueBinding = page.getByTestId("value-binding");
+	const outside = page.getByTestId("outside");
+	const submit = page.getByTestId("submit");
+
+	function getHiddenInputs(name = "test") {
+		return Array.from(
+			returned.container.querySelectorAll<HTMLElement>(`input[name="${name}"]`)
+		);
+	}
+
+	function getContent() {
+		return page.getByTestId("content");
+	}
+
+	function getChips() {
+		return page.getByTestId("chips");
+	}
+
+	function getChip(value: string) {
+		return page.getByTestId(`chip-${value}`);
+	}
+
+	function getChipRemove(value: string) {
+		return page.getByTestId(`chip-remove-${value}`);
+	}
+
+	return {
+		user,
+		input,
+		trigger,
+		openBinding,
+		valueBinding,
+		outside,
+		submit,
+		getHiddenInputs,
+		getContent,
+		getChips,
+		getChip,
+		getChipRemove,
+		...returned,
+	};
+}
+
+async function openMultipleChips(
+	props: Partial<ComboboxMultiChipsTestProps> = {},
+	openWith: "click" | "type" | (string & {}) = "click",
+	searchValue?: string
+) {
+	const returned = setupMultipleChips(props);
 	await expectNotExists(page.getByTestId("content"));
 
 	if (openWith === "click") {
@@ -785,6 +864,154 @@ describe("combobox - multiple", () => {
 		await item1.click();
 		await expectNotSelected(item1);
 		await expect.element(t.input).toHaveValue("A");
+	});
+});
+
+// ////////////////////////////////////
+// // MULTIPLE WITH CHIPS
+// ////////////////////////////////////
+describe("combobox - multiple with chips", () => {
+	it("should render the Chips container", async () => {
+		const t = setupMultipleChips();
+		await expect.element(t.getChips()).toBeInTheDocument();
+	});
+
+	it("should render a Chip for each pre-selected value", async () => {
+		const t = setupMultipleChips({ value: ["1", "2"] });
+		await expectExists(t.getChip("1"));
+		await expectExists(t.getChip("2"));
+		await expectNotExists(t.getChip("3"));
+	});
+
+	it("should show the label inside each Chip", async () => {
+		setupMultipleChips({ value: ["1", "2"] });
+		await expect.element(page.getByTestId("chip-label-1")).toHaveTextContent("A");
+		await expect.element(page.getByTestId("chip-label-2")).toHaveTextContent("B");
+	});
+
+	it("should render a ChipRemoveButton inside each Chip", async () => {
+		const t = setupMultipleChips({ value: ["1"] });
+		await expectExists(t.getChipRemove("1"));
+	});
+
+	it("should remove a chip when the ChipRemoveButton is clicked", async () => {
+		const t = setupMultipleChips({ value: ["1", "2"] });
+		await expectExists(t.getChip("1"));
+		await t.getChipRemove("1").click();
+		await expectNotExists(t.getChip("1"));
+		await expectExists(t.getChip("2"));
+		expect(t.getHiddenInputs()).toHaveLength(1);
+		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
+	});
+
+	it("should call onValueChange when a chip is removed", async () => {
+		const mock = vi.fn();
+		const t = setupMultipleChips({ value: ["1", "2"], onValueChange: mock });
+		await t.getChipRemove("1").click();
+		expect(mock).toHaveBeenCalledWith(["2"]);
+	});
+
+	it("should clear the input after selecting an item (clearInputOnSelect)", async () => {
+		const t = await openMultipleChips();
+		const [item1] = getItems(page.getByTestId);
+		await item1.click();
+		await expect.element(t.input).toHaveValue("");
+	});
+
+	it("should add a chip after selecting an item and keep the dropdown open", async () => {
+		const t = await openMultipleChips();
+		const [item1] = getItems(page.getByTestId);
+		await item1.click();
+		await expectExists(t.getChip("1"));
+		await expectExists(t.getContent());
+	});
+
+	it("should select multiple items as separate chips", async () => {
+		const t = await openMultipleChips();
+		const [item1, item2] = getItems(page.getByTestId);
+		await item1.click();
+		await item2.click();
+		await expectExists(t.getChip("1"));
+		await expectExists(t.getChip("2"));
+		expect(t.getHiddenInputs()).toHaveLength(2);
+	});
+
+	it("should clear input after keyboard selection (clearInputOnSelect)", async () => {
+		const t = await openMultipleChips();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("");
+	});
+
+	it("should remove last chip with Backspace on empty input (removeOnBackspace)", async () => {
+		const t = setupMultipleChips({ value: ["1", "2"] });
+		(t.input.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.BACKSPACE);
+		await expectExists(t.getChip("1"));
+		await expectNotExists(t.getChip("2"));
+	});
+
+	it("should do nothing on Backspace with empty input when no chips selected", async () => {
+		const t = setupMultipleChips();
+		(t.input.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.BACKSPACE);
+		await expectNotExists(t.getChip("1"));
+	});
+
+	it("should filter items as user types", async () => {
+		const t = await openMultipleChips();
+		await t.user.type(t.input, "A");
+		await expectExists(page.getByTestId("1"));
+		await expectNotExists(page.getByTestId("2"));
+		await expectNotExists(page.getByTestId("3"));
+	});
+
+	it("should reset filter when input is cleared after selection", async () => {
+		const t = await openMultipleChips();
+		await t.user.type(t.input, "A");
+		const item1 = page.getByTestId("1");
+		await item1.click();
+		await expect.element(t.input).toHaveValue("");
+		// All items should now be visible again
+		await expectExists(page.getByTestId("1"));
+		await expectExists(page.getByTestId("2"));
+		await expectExists(page.getByTestId("3"));
+		await expectExists(page.getByTestId("4"));
+	});
+
+	it("should deselect an item by clicking it again (removes chip)", async () => {
+		const t = await openMultipleChips({ value: ["1"] });
+		await expectExists(t.getChip("1"));
+		const item1 = page.getByTestId("1");
+		await item1.click();
+		await expectNotExists(t.getChip("1"));
+	});
+
+	it("should respect binding the value prop", async () => {
+		const t = setupMultipleChips({ value: ["1", "2"] });
+		await expectExists(t.getChip("1"));
+		await expectExists(t.getChip("2"));
+		await t.valueBinding.click();
+		await expectNotExists(t.getChip("1"));
+		await expectNotExists(t.getChip("2"));
+	});
+
+	it("should have correct data attributes on Chips container", async () => {
+		const t = setupMultipleChips();
+		await expect.element(t.getChips()).toHaveAttribute("data-combobox-chips");
+	});
+
+	it("should have correct data attributes on Chip", async () => {
+		const t = setupMultipleChips({ value: ["1"] });
+		await expect.element(t.getChip("1")).toHaveAttribute("data-combobox-chip");
+		await expect.element(t.getChip("1")).toHaveAttribute("data-value", "1");
+		await expect.element(t.getChip("1")).toHaveAttribute("data-label", "A");
+	});
+
+	it("should have correct data attributes on ChipRemoveButton", async () => {
+		const t = setupMultipleChips({ value: ["1"] });
+		await expect.element(t.getChipRemove("1")).toHaveAttribute("data-combobox-chip-remove");
+		await expect.element(t.getChipRemove("1")).toHaveAttribute("aria-label", "Remove A");
 	});
 });
 
