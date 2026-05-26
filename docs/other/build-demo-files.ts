@@ -112,7 +112,8 @@ async function collectFiles(currentDir: string, baseDir: string): Promise<FileMa
 		return files;
 	} catch (error) {
 		throw new Error(
-			`Failed to collect files from ${currentDir}: ${error instanceof Error ? error.message : String(error)}`
+			`Failed to collect files from ${currentDir}: ${error instanceof Error ? error.message : String(error)}`,
+			{ cause: error }
 		);
 	}
 }
@@ -124,7 +125,8 @@ async function writeJsonFile(path: string, data: unknown): Promise<void> {
 		console.info(`Successfully wrote to ${path}`);
 	} catch (error) {
 		throw new Error(
-			`Failed to write to ${path}: ${error instanceof Error ? error.message : String(error)}`
+			`Failed to write to ${path}: ${error instanceof Error ? error.message : String(error)}`,
+			{ cause: error }
 		);
 	}
 }
@@ -163,7 +165,8 @@ async function buildDemoRegistry(): Promise<void> {
 		await writeJsonFile(outputPath, components);
 	} catch (error) {
 		throw new Error(
-			`Failed to build demo registry: ${error instanceof Error ? error.message : String(error)}`
+			`Failed to build demo registry: ${error instanceof Error ? error.message : String(error)}`,
+			{ cause: error }
 		);
 	}
 }
@@ -180,7 +183,8 @@ async function createSvelteProject(): Promise<string> {
 		return projectDir;
 	} catch (error) {
 		throw new Error(
-			`Failed to create Svelte project: ${error instanceof Error ? error.message : String(error)}`
+			`Failed to create Svelte project: ${error instanceof Error ? error.message : String(error)}`,
+			{ cause: error }
 		);
 	}
 }
@@ -220,7 +224,8 @@ async function buildBaseStackBlitzFiles(files: FileMap): Promise<void> {
 		await writeJsonFile(outputPath, outputFiles);
 	} catch (error) {
 		throw new Error(
-			`Failed to build StackBlitz files: ${error instanceof Error ? error.message : String(error)}`
+			`Failed to build StackBlitz files: ${error instanceof Error ? error.message : String(error)}`,
+			{ cause: error }
 		);
 	}
 }

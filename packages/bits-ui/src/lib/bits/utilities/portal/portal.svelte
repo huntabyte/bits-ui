@@ -17,7 +17,7 @@
 	function getTarget() {
 		if (!isBrowser || disabled) return null;
 
-		let localTarget: Element | null = null;
+		let localTarget: Element | null;
 
 		if (typeof to.current === "string") {
 			const target = document.querySelector(to.current);

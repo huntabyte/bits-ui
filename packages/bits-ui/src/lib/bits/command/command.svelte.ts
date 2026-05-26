@@ -773,7 +773,7 @@ export class CommandRootState {
 		const column = this.#getColumn(selected, grid);
 		if (!column) return 0;
 
-		let newItem: HTMLElement | null = null;
+		let newItem: HTMLElement | null;
 
 		const skipRows = e.altKey ? 1 : 0;
 
@@ -900,7 +900,7 @@ export class CommandRootState {
 		const column = this.#getColumn(selected, grid);
 		if (column === null) return 0;
 
-		let newItem: HTMLElement | null = null;
+		let newItem: HTMLElement | null;
 
 		const skipRows = e.altKey ? 1 : 0;
 

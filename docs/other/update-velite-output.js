@@ -26,8 +26,9 @@ async function replaceIndexContents() {
 	});
 	if (!data) return;
 
+	// velite v0.3+ already generates import attributes; skip if already present
+	if (data.includes("with { type: 'json' }")) return;
 	const updatedContent = data.replaceAll(".json'", ".json' with { type: 'json' }");
-	if (updatedContent === data) return;
 
 	await writeFile(indexPath, updatedContent, "utf8").catch((err) => {
 		console.error("Error writing file:", err);
