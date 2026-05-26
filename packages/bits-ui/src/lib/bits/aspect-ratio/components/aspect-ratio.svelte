@@ -27,12 +27,12 @@
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
 </script>
 
-<div style:position="relative" style:width="100%" style:padding-bottom="{ratio ? 100 / ratio : 0}%">
-	{#if child}
-		{@render child({ props: mergedProps })}
-	{:else}
-		<div {...mergedProps}>
+{#if child}
+	{@render child({ props: mergedProps })}
+{:else}
+	<div {...mergedProps}>
+		<div style:position="absolute" style:inset="0">
 			{@render children?.()}
 		</div>
-	{/if}
-</div>
+	</div>
+{/if}
