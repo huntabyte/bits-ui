@@ -1,3 +1,4 @@
+import { SvelteMap } from "svelte/reactivity";
 import { Context, Previous, watch } from "runed";
 import {
 	afterSleep,
@@ -103,6 +104,11 @@ abstract class SelectBaseRootState {
 	triggerNode = $state<HTMLElement | null>(null);
 	valueNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
+	/**
+	 * Labels for selected values, populated when items are toggled or resolved from
+	 * mounted item nodes. Used so `<Select.Value>` keeps labels after the menu closes.
+	 */
+	readonly selectedLabelsByValue = new SvelteMap<string, string>();
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
 		if (!this.highlightedNode) return null;
@@ -194,20 +200,47 @@ abstract class SelectBaseRootState {
 	}
 
 	/**
-	 * Resolves the display label for a value: `items` entry when present, otherwise the
-	 * mounted item's `data-label` or its text content.
+	 * Resolves the display label for a value: `items` entry when present, otherwise a
+	 * cached label from a prior selection, then the mounted item's `data-label` or its
+	 * text content.
 	 */
 	getLabelForValue(value: string): string {
 		if (value === "") return "";
 		const fromItems = this.opts.items.current.find((item) => item.value === value)?.label;
 		if (fromItems !== undefined) return fromItems;
+		const fromCache = this.selectedLabelsByValue.get(value);
+		if (fromCache !== undefined) return fromCache;
 		const node = this.getNodeByValue(value);
 		if (node) {
 			const dataLabel = node.getAttribute("data-label");
-			if (dataLabel !== null && dataLabel !== "") return dataLabel;
-			return node.textContent?.trim() ?? value;
+			const label =
+				dataLabel !== null && dataLabel !== ""
+					? dataLabel
+					: (node.textContent?.trim() ?? value);
+			if (label !== value) {
+				this.selectedLabelsByValue.set(value, label);
+			}
+			return label;
 		}
 		return value;
+	}
+
+	setSelectedLabel(value: string, label: string) {
+		if (value === "") return;
+		this.selectedLabelsByValue.set(value, label);
+	}
+
+	removeSelectedLabel(value: string) {
+		this.selectedLabelsByValue.delete(value);
+	}
+
+	pruneSelectedLabels(keptValues: string[]) {
+		const kept = new Set(keptValues);
+		for (const value of this.selectedLabelsByValue.keys()) {
+			if (!kept.has(value)) {
+				this.selectedLabelsByValue.delete(value);
+			}
+		}
 	}
 
 	setOpen(open: boolean) {
@@ -292,7 +325,10 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		const newValue = this.includesItem(itemValue) ? "" : itemValue;
 		this.opts.value.current = newValue;
 		if (newValue !== "") {
+			this.setSelectedLabel(itemValue, itemLabel);
 			this.opts.inputValue.current = itemLabel;
+		} else {
+			this.removeSelectedLabel(itemValue);
 		}
 	}
 
@@ -354,8 +390,10 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
 		if (this.includesItem(itemValue)) {
 			this.opts.value.current = this.opts.value.current.filter((v) => v !== itemValue);
+			this.removeSelectedLabel(itemValue);
 		} else {
 			this.opts.value.current = [...this.opts.value.current, itemValue];
+			this.setSelectedLabel(itemValue, itemLabel);
 		}
 		this.opts.inputValue.current = itemLabel;
 	}
@@ -451,6 +489,9 @@ export class SelectValueState {
 			return;
 		}
 		this.root.opts.value.current = value;
+		if (this.root.isMulti && Array.isArray(value)) {
+			this.root.pruneSelectedLabels(value);
+		}
 	}
 
 	// this way consumers get type narrowing for the value on `type`
@@ -478,7 +519,13 @@ export class SelectValueState {
 				type: "single" as const,
 				selected:
 					value !== ""
-						? { value, label: value === "" ? "" : this.root.getLabelForValue(value) }
+						? {
+								value,
+								label:
+									value === ""
+										? ""
+										: this.root.getLabelForValue(value),
+							}
 						: undefined,
 				setValue: this.setValue,
 			},

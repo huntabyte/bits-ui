@@ -13,6 +13,7 @@ import type { SelectValueChildTestProps } from "./select-value-child-test.svelte
 import SelectValueChildTest from "./select-value-child-test.svelte";
 import type { SelectValueChildrenMultiTestProps } from "./select-value-children-multi-test.svelte";
 import SelectValueChildrenMultiTest from "./select-value-children-multi-test.svelte";
+import SelectValueLabelPersistTest from "./select-value-label-persist-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
@@ -1054,6 +1055,25 @@ describe("select - value", () => {
 		await t.trigger.click();
 		await expectExists(t.getContent());
 		await expectSelected([page.getByTestId("1"), page.getByTestId("3")]);
+	});
+
+	it("should keep selection labels after the menu closes in multiple mode", async () => {
+		render(SelectValueLabelPersistTest);
+		const trigger = page.getByTestId("trigger");
+		const selectionLabel = page.getByTestId("selection-label");
+		const item1 = page.getByTestId("1");
+		const item2 = page.getByTestId("2");
+
+		await trigger.click();
+		await expectExists(page.getByTestId("content"));
+		await item1.click();
+		await expect.element(selectionLabel).toHaveTextContent("A");
+		await item2.click();
+		await expect.element(selectionLabel).toHaveTextContent("A, B");
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("content"));
+		await expect.element(selectionLabel).toHaveTextContent("A, B");
 	});
 
 	it("should pass disabled state to value snippets so consumers can block setValue", async () => {
