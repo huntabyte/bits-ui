@@ -1076,6 +1076,7 @@ export class SelectContentState {
 				() => this.root.viewportNode,
 				() => this.root.triggerNode,
 				() => this.root.selectedItemNode,
+				() => this.root.highlightedNode,
 			],
 			() => {
 				if (!this.useItemAligned || !this.root.opts.open.current) return;
@@ -1083,12 +1084,25 @@ export class SelectContentState {
 			}
 		);
 
+		$effect(() => {
+			if (!this.useItemAligned || !this.root.opts.open.current) return;
+			this.root.contentWrapperNode;
+			this.root.contentNode;
+			this.root.viewportNode;
+			this.root.triggerNode;
+			this.root.selectedItemNode;
+			this.root.highlightedNode;
+			afterTick(() => this.#position());
+		});
+
 		// Radix closes the select on resize in item-aligned mode.
 		// On page scroll, reposition without clamping so the content scrolls off-screen
 		// naturally when the trigger scrolls out of view.
 		$effect(() => {
 			if (!this.useItemAligned) return;
-			const win = this.domContext.getWindow();
+			const content = this.root.contentNode;
+			if (!content) return;
+			const win = content.ownerDocument.defaultView;
 			if (!win) return;
 			const reposition = (e: Event) => {
 				if (e.target === this.root.viewportNode) return;
@@ -1124,7 +1138,7 @@ export class SelectContentState {
 			const handlePointerUp = (e: PointerEvent) => {
 				if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
 					e.preventDefault();
-				} else if (!content.contains(e.target as HTMLElement)) {
+				} else if (!e.composedPath().includes(content)) {
 					this.root.handleClose();
 				}
 				this.root.triggerPointerDownPos = null;
@@ -1144,6 +1158,9 @@ export class SelectContentState {
 
 	setContentWrapper(node: HTMLElement | null) {
 		this.root.contentWrapperNode = node;
+		if (node) {
+			afterTick(() => this.#position());
+		}
 	}
 
 	/**
@@ -1202,13 +1219,14 @@ export class SelectContentState {
 		const content = this.root.contentNode;
 		const viewport = this.root.viewportNode;
 		const trigger = this.root.triggerNode;
-		const selectedItem = this.root.selectedItemNode;
+		const selectedItem =
+			this.root.selectedItemNode ?? this.root.highlightedNode ?? this.root.getCandidateNodes()[0];
 
 		if (!contentWrapper || !content || !viewport || !trigger || !selectedItem) {
 			return;
 		}
 
-		const win = this.domContext.getWindow();
+		const win = content.ownerDocument.defaultView;
 		if (!win) return;
 
 		const triggerRect = trigger.getBoundingClientRect();

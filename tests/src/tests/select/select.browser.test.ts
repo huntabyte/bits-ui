@@ -1101,27 +1101,42 @@ describe("select - item-aligned", () => {
 		{ value: "5", label: "Elderberry" },
 	];
 
-	function setupAligned(props: Partial<SelectItemAlignedTestProps> = {}) {
-		render(SelectItemAlignedTest, { items: alignedItems, ...props } as SelectItemAlignedTestProps);
-		return {
-			trigger: page.getByTestId("trigger"),
-			outside: page.getByTestId("outside"),
-			openBinding: page.getByTestId("open-binding"),
-			valueBinding: page.getByTestId("value-binding"),
-			getContent: () => page.getByTestId("content"),
-			// generateTestId(value) returns the value itself (no prefix)
-			getItem: (value: string) => page.getByTestId(value),
-		};
-	}
+		function setupAligned(
+			props: Partial<SelectItemAlignedTestProps> = {},
+			items: Item[] = alignedItems
+		) {
+			render(SelectItemAlignedTest, { items, ...props } as SelectItemAlignedTestProps);
+			return {
+				trigger: page.getByTestId("trigger"),
+				outside: page.getByTestId("outside"),
+				openBinding: page.getByTestId("open-binding"),
+				valueBinding: page.getByTestId("value-binding"),
+				getContent: () => page.getByTestId("content"),
+				viewport: page.getByTestId("viewport"),
+				// generateTestId(value) returns the value itself (no prefix)
+				getItem: (value: string) => page.getByTestId(value),
+			};
+		}
 
-	async function openAligned(props: Partial<SelectItemAlignedTestProps> = {}) {
-		const t = setupAligned(props);
-		await expectNotExists(t.getContent());
-		await t.trigger.click();
-		await expectExists(t.getContent());
-		await waitForDismissableReady();
-		return t;
-	}
+		async function openAligned(
+			props: Partial<SelectItemAlignedTestProps> = {},
+			items: Item[] = alignedItems
+		) {
+			const t = setupAligned(props, items);
+			await expectNotExists(t.getContent());
+			await t.trigger.click();
+			await expectExists(t.getContent());
+			await waitForDismissableReady();
+			return t;
+		}
+
+		async function waitForPositionedWrapper() {
+			return await vi.waitFor(() => {
+				const el = document.querySelector<HTMLElement>("[data-select-content-wrapper]");
+				if (!el?.style.height || !el.style.top) throw new Error("wrapper not positioned yet");
+				return el;
+			});
+		}
 
 	it("should open on click", async () => {
 		await openAligned();
@@ -1164,25 +1179,63 @@ describe("select - item-aligned", () => {
 		await expect.element(t.valueBinding).not.toHaveTextContent("empty");
 	});
 
-	it("should highlight the pre-selected item on open", async () => {
-		const t = await openAligned({ value: "2" });
-		await expectHighlighted(t.getItem("2"));
-	});
-
-	it("should match portal width to the trigger width", async () => {
-		// Need a pre-selected value so #position() has a selectedItemNode to align against.
-		const t = await openAligned({ value: "2" });
-		const triggerEl = t.trigger.element() as HTMLElement;
-		const triggerWidth = triggerEl.getBoundingClientRect().width;
-		// Poll until #position() runs and sets style.width on the wrapper element.
-		const wrapper = await vi.waitFor(() => {
-			const el = document.querySelector<HTMLElement>("[data-select-content-wrapper]");
-			if (!el?.style.width) throw new Error("wrapper not positioned yet");
-			return el;
+		it("should highlight the pre-selected item on open", async () => {
+			const t = await openAligned({ value: "2" });
+			await expectHighlighted(t.getItem("2"));
 		});
-		const wrapperWidth = parseFloat(wrapper.style.width);
-		expect(Math.abs(wrapperWidth - triggerWidth)).toBeLessThanOrEqual(1);
-	});
+
+		it("should position against the first item when no value is selected", async () => {
+			const t = await openAligned();
+			await waitForPositionedWrapper();
+
+			const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+			const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
+			const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+			const itemMiddle = itemRect.top + itemRect.height / 2;
+
+			expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+			await expectHighlighted(t.getItem("1"));
+		});
+
+		it("should align the selected item middle to the trigger middle", async () => {
+			const t = await openAligned({ value: "3" });
+			await waitForPositionedWrapper();
+
+			const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+			const itemRect = (t.getItem("3").element() as HTMLElement).getBoundingClientRect();
+			const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+			const itemMiddle = itemRect.top + itemRect.height / 2;
+
+			expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+		});
+
+		it("should scroll a long item-aligned viewport to the selected item", async () => {
+			const manyItems = Array.from({ length: 80 }, (_, index) => ({
+				value: String(index + 1),
+				label: `Item ${index + 1}`,
+			}));
+			const t = await openAligned({ value: "75" }, manyItems);
+			await waitForPositionedWrapper();
+
+			const viewportEl = t.viewport.element() as HTMLElement;
+			const itemRect = (t.getItem("75").element() as HTMLElement).getBoundingClientRect();
+			const viewportRect = viewportEl.getBoundingClientRect();
+
+			expect(viewportEl.scrollTop).toBeGreaterThan(0);
+			expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top - 1);
+			expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom + 1);
+			await expectHighlighted(t.getItem("75"));
+		});
+
+		it("should match portal width to the trigger width", async () => {
+			// Need a pre-selected value so #position() has a selectedItemNode to align against.
+			const t = await openAligned({ value: "2" });
+			const triggerEl = t.trigger.element() as HTMLElement;
+			const triggerWidth = triggerEl.getBoundingClientRect().width;
+			const wrapper = await waitForPositionedWrapper();
+			const wrapperWidth = parseFloat(wrapper.style.width);
+			expect(Math.abs(wrapperWidth - triggerWidth)).toBeLessThanOrEqual(1);
+		});
 
 	it("should prevent immediate re-selection when pointer barely moves after trigger click", async () => {
 		const t = await openAligned({ value: "1" });
@@ -1274,6 +1327,27 @@ describe("select - item-aligned", () => {
 		await nextFrame();
 
 		await expectNotExists(t.getContent());
+	});
+
+	it("should stay open when the page scrolls with portalled content", async () => {
+		const previousMinHeight = document.body.style.minHeight;
+		document.body.style.minHeight = "2000px";
+		window.scrollTo(0, 0);
+
+		try {
+			const t = await openAligned({ value: "2" });
+
+			window.scrollTo(0, 240);
+			for (let i = 0; i < 3; i++) {
+				await nextFrame();
+			}
+
+			await expectExists(t.getContent());
+			await expect.element(t.openBinding).toHaveTextContent("true");
+		} finally {
+			document.body.style.minHeight = previousMinHeight;
+			window.scrollTo(0, 0);
+		}
 	});
 });
 
