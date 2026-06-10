@@ -14,6 +14,7 @@ import SelectValueChildTest from "./select-value-child-test.svelte";
 import type { SelectValueChildrenMultiTestProps } from "./select-value-children-multi-test.svelte";
 import SelectValueChildrenMultiTest from "./select-value-children-multi-test.svelte";
 import SelectValueLabelPersistTest from "./select-value-label-persist-test.svelte";
+import SelectValueLabelPersistSingleTest from "./select-value-label-persist-single-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
@@ -1061,19 +1062,131 @@ describe("select - value", () => {
 		render(SelectValueLabelPersistTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
+		const selectionValues = page.getByTestId("selection-values");
 		const item1 = page.getByTestId("1");
 		const item2 = page.getByTestId("2");
 
 		await trigger.click();
 		await expectExists(page.getByTestId("content"));
 		await item1.click();
+		await expect.element(selectionValues).toHaveTextContent("1");
 		await expect.element(selectionLabel).toHaveTextContent("A");
 		await item2.click();
+		await expect.element(selectionValues).toHaveTextContent("1,2");
 		await expect.element(selectionLabel).toHaveTextContent("A, B");
 
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
 		await expect.element(selectionLabel).toHaveTextContent("A, B");
+	});
+
+	it("should resolve programmatic labels from mounted items without derived cache mutation", async () => {
+		render(SelectValueLabelPersistTest);
+		const trigger = page.getByTestId("trigger");
+		const selectionLabel = page.getByTestId("selection-label");
+		const selectionValues = page.getByTestId("selection-values");
+		const setValues2 = page.getByTestId("set-values-2");
+
+		await trigger.click();
+		await expectExists(page.getByTestId("content"));
+		await setValues2.click();
+
+		await expect.element(selectionValues).toHaveTextContent("2");
+		await expect.element(selectionLabel).toHaveTextContent("B");
+		await expectExists(page.getByTestId("content"));
+	});
+
+	it("should update cached labels while a selected item label changes", async () => {
+		render(SelectValueLabelPersistTest);
+		const trigger = page.getByTestId("trigger");
+		const selectionLabel = page.getByTestId("selection-label");
+		const item1 = page.getByTestId("1");
+		const updateLabel = page.getByTestId("update-label-1");
+
+		await trigger.click();
+		await item1.click();
+		await expect.element(selectionLabel).toHaveTextContent("A");
+
+		await updateLabel.click();
+		await expect.element(item1).toHaveTextContent("A updated");
+		await expect.element(selectionLabel).toHaveTextContent("A updated");
+	});
+
+	it("should fall back to item text when selected item label is empty", async () => {
+		render(SelectValueLabelPersistTest);
+		const trigger = page.getByTestId("trigger");
+		const selectionLabel = page.getByTestId("selection-label");
+		const selectionValues = page.getByTestId("selection-values");
+		const emptyLabelItem = page.getByTestId("empty-label");
+
+		await trigger.click();
+		await emptyLabelItem.click();
+
+		await expect.element(selectionValues).toHaveTextContent("empty-label");
+		await expect.element(selectionLabel).toHaveTextContent("Visible fallback");
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("content"));
+		await expect.element(selectionLabel).toHaveTextContent("Visible fallback");
+	});
+
+	it("should prune cached labels when multiple values are replaced", async () => {
+		render(SelectValueLabelPersistTest);
+		const trigger = page.getByTestId("trigger");
+		const selectionLabel = page.getByTestId("selection-label");
+		const selectionValues = page.getByTestId("selection-values");
+		const item1 = page.getByTestId("1");
+		const item2 = page.getByTestId("2");
+		const setValues1 = page.getByTestId("set-values-1");
+		const setValues2 = page.getByTestId("set-values-2");
+		const updateLabel = page.getByTestId("update-label-1");
+
+		await trigger.click();
+		await item1.click();
+		await item2.click();
+		await expect.element(selectionValues).toHaveTextContent("1,2");
+		await expect.element(selectionLabel).toHaveTextContent("A, B");
+
+		await setValues2.click();
+		await expect.element(selectionValues).toHaveTextContent("2");
+		await expect.element(selectionLabel).toHaveTextContent("B");
+
+		await updateLabel.click();
+		await setValues1.click();
+		await expect.element(selectionValues).toHaveTextContent("1");
+		await expect.element(selectionLabel).toHaveTextContent("A updated");
+	});
+
+	it("should keep selection labels after the menu closes in single mode", async () => {
+		render(SelectValueLabelPersistSingleTest);
+		const trigger = page.getByTestId("trigger");
+		const selectionLabel = page.getByTestId("selection-label");
+		const selectionValue = page.getByTestId("selection-value");
+		const item1 = page.getByTestId("1");
+
+		await trigger.click();
+		await expectExists(page.getByTestId("content"));
+		await item1.click();
+
+		await expectNotExists(page.getByTestId("content"));
+		await expect.element(selectionValue).toHaveTextContent("1");
+		await expect.element(selectionLabel).toHaveTextContent("A");
+	});
+
+	it("should resolve single programmatic labels from mounted items without derived cache mutation", async () => {
+		render(SelectValueLabelPersistSingleTest);
+		const trigger = page.getByTestId("trigger");
+		const selectionLabel = page.getByTestId("selection-label");
+		const selectionValue = page.getByTestId("selection-value");
+		const setValue2 = page.getByTestId("set-value-2");
+
+		await trigger.click();
+		await expectExists(page.getByTestId("content"));
+		await setValue2.click();
+
+		await expect.element(selectionValue).toHaveTextContent("2");
+		await expect.element(selectionLabel).toHaveTextContent("B");
+		await expectExists(page.getByTestId("content"));
 	});
 
 	it("should pass disabled state to value snippets so consumers can block setValue", async () => {
