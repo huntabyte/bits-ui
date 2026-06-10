@@ -940,6 +940,23 @@ describe("select - multiple", () => {
 		await expectNotSelected([item0, item1, item2]);
 	});
 
+	it("should toggle a highlighted item with a single space keypress", async () => {
+		const t = await openMultiple({}, kbd.SPACE);
+		const [item0, item1] = getItems(page.getByTestId);
+
+		await expectHighlighted(item0);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item1);
+
+		await userEvent.keyboard(kbd.SPACE);
+		await expect.element(t.trigger).toHaveTextContent("A");
+		await expectSelected(item1);
+
+		await userEvent.keyboard(kbd.SPACE);
+		await expect.element(t.trigger).toHaveTextContent("Open combobox");
+		await expectNotSelected(item1);
+	});
+
 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
 		await openMultiple({});
 		const [item1, item2] = getItems(page.getByTestId);
