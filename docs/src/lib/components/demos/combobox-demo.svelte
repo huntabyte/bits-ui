@@ -48,10 +48,10 @@
 		if (!open) inputValue = "";
 	}}
 >
-	<div class="relative">
+	<div class="relative w-3/4">
 		<Combobox.Chips
 			bind:ref={chipsRef}
-			class="border-border-input bg-background focus-within:ring-foreground focus-within:ring-offset-background flex min-h-10 w-[296px] flex-wrap items-center gap-1.5 rounded-[9px] border px-2 py-1.5 pe-10 focus-within:ring-2 focus-within:ring-offset-2"
+			class="border-border-input bg-background focus-within:ring-foreground focus-within:ring-offset-background flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-[9px] border px-2 py-1.5 pe-10 focus-within:ring-2 focus-within:ring-offset-2"
 		>
 			{#each value as chipValue (chipValue)}
 				<Combobox.Chip

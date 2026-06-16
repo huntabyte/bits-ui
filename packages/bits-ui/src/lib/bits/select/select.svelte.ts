@@ -122,6 +122,7 @@ abstract class SelectBaseRootState {
 	contentIsPositioned = $state(false);
 	isUsingKeyboard = false;
 	isCombobox = false;
+	lastPointerPosition = $state<{ x: number; y: number } | null>(null);
 	domContext = new DOMContext(() => null);
 
 	constructor(opts: SelectBaseRootStateOpts) {
@@ -148,6 +149,21 @@ abstract class SelectBaseRootState {
 		if (node && (this.isUsingKeyboard || initial)) {
 			this.scrollHighlightedNodeIntoView(node);
 		}
+	}
+
+	setPointerPosition(e: PointerEvent) {
+		this.lastPointerPosition = { x: e.clientX, y: e.clientY };
+	}
+
+	getItemFromLastPointerPosition(): HTMLElement | null {
+		if (!this.lastPointerPosition || !this.contentNode) return null;
+		const target = this.domContext
+			.getDocument()
+			.elementFromPoint(this.lastPointerPosition.x, this.lastPointerPosition.y);
+		const item = target?.closest<HTMLElement>(`[${this.getBitsAttr("item")}]`);
+		if (!item || item.hasAttribute("data-disabled")) return null;
+		if (!this.contentNode.contains(item)) return null;
+		return item;
 	}
 
 	scrollHighlightedNodeIntoView(node: HTMLElement) {
@@ -306,6 +322,11 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
+			const pointerItem = this.getItemFromLastPointerPosition();
+			if (pointerItem) {
+				this.setHighlightedNode(pointerItem);
+				return;
+			}
 			if (this.opts.value.current !== "") {
 				const node = this.getNodeByValue(this.opts.value.current);
 				if (node) {
@@ -371,6 +392,11 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
+			const pointerItem = this.getItemFromLastPointerPosition();
+			if (pointerItem) {
+				this.setHighlightedNode(pointerItem);
+				return;
+			}
 			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
 				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
@@ -1219,6 +1245,7 @@ export class SelectItemState {
 	 */
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
+		this.root.setPointerPosition(e);
 		/**
 		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
 		 * we need to listen for the immediate click event to handle the selection,
@@ -1249,6 +1276,7 @@ export class SelectItemState {
 	}
 
 	onpointermove(e: BitsPointerEvent) {
+		this.root.setPointerPosition(e);
 		/**
 		 * We don't want to highlight items on touch devices when scrolling,
 		 * as this is confusing behavior, so we return here and instead handle

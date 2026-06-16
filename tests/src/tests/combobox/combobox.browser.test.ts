@@ -979,6 +979,17 @@ describe("combobox - multiple with chips", () => {
 		await expectExists(page.getByTestId("4"));
 	});
 
+	it("should keep the hovered item highlighted after selecting another item", async () => {
+		const t = await openMultipleChips({ value: ["1"] });
+		await t.user.type(t.input, "B");
+		const item2 = page.getByTestId("2");
+		await item2.hover();
+		await item2.click();
+		await expectSelected([page.getByTestId("1"), item2]);
+		await expectHighlighted(item2);
+		await expectNotHighlighted(page.getByTestId("1"));
+	});
+
 	it("should deselect an item by clicking it again (removes chip)", async () => {
 		const t = await openMultipleChips({ value: ["1"] });
 		await expectExists(t.getChip("1"));
