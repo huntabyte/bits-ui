@@ -290,6 +290,21 @@ function getUsedSegments(fieldNode: HTMLElement | null) {
 	return usedSegments;
 }
 
+export function get24HourValueFromTypedHour(
+	hour: string,
+	dayPeriod: "AM" | "PM"
+): string {
+	const parsedHour = Number.parseInt(hour);
+	if (Number.isNaN(parsedHour)) return hour;
+	if (dayPeriod === "AM") {
+		return parsedHour === 12 ? "0" : `${parsedHour}`;
+	}
+	if (dayPeriod === "PM") {
+		return parsedHour < 12 ? `${parsedHour + 12}` : `${parsedHour}`;
+	}
+	return hour;
+}
+
 type GetValueFromSegments = {
 	segmentObj: SegmentValueObj;
 	fieldNode: HTMLElement | null;
@@ -305,6 +320,15 @@ export function getValueFromSegments(props: GetValueFromSegments) {
 		if ("hour" in segmentObj) {
 			const value = segmentObj[part];
 			if (isNull(value)) continue;
+			if (part === "dayPeriod") continue;
+			if (part === "hour" && !isNull(segmentObj.dayPeriod)) {
+				const hour24 = get24HourValueFromTypedHour(
+					value,
+					segmentObj.dayPeriod as "AM" | "PM"
+				);
+				date = date.set({ hour: Number.parseInt(hour24) });
+				continue;
+			}
 			date = date.set({ [part]: segmentObj[part] });
 		} else if (isDateSegmentPart(part)) {
 			const value = segmentObj[part];
