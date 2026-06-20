@@ -1025,6 +1025,8 @@ export class SelectContentState {
 	shouldExpandOnScroll = false;
 	// True when #position() used the if-branch (content grows upward from below trigger).
 	expandsUpward = false;
+	pageScrollTopOffset: number | null = null;
+	pageScrollRaf = 0;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -1041,10 +1043,12 @@ export class SelectContentState {
 		});
 
 		onDestroyEffect(() => {
+			this.#cancelPageScrollReposition();
 			this.root.contentNode = null;
 			this.root.contentWrapperNode = null;
 			this.root.contentIsPositioned = false;
 			this.isPositioned = false;
+			this.pageScrollTopOffset = null;
 		});
 
 		watch(
@@ -1053,10 +1057,13 @@ export class SelectContentState {
 				if (this.root.opts.open.current) {
 					this.shouldReposition = true;
 					this.shouldExpandOnScroll = false;
+					this.pageScrollTopOffset = null;
 					return;
 				}
+				this.#cancelPageScrollReposition();
 				this.root.contentIsPositioned = false;
 				this.isPositioned = false;
+				this.pageScrollTopOffset = null;
 			}
 		);
 
@@ -1096,8 +1103,10 @@ export class SelectContentState {
 		});
 
 		// Radix closes the select on resize in item-aligned mode.
-		// On page scroll, reposition without clamping so the content scrolls off-screen
-		// naturally when the trigger scrolls out of view.
+		// Radix also locks page scroll while open. Bits leaves page scroll available by
+		// default, so page scroll only moves the already-positioned fixed wrapper with
+		// the trigger. The size from the Radix alignment pass is preserved to avoid a
+		// visibly unstable resize while the page is moving.
 		$effect(() => {
 			if (!this.useItemAligned) return;
 			const content = this.root.contentNode;
@@ -1107,7 +1116,7 @@ export class SelectContentState {
 			const reposition = (e: Event) => {
 				if (e.target === this.root.viewportNode) return;
 				if (!this.isPositioned) return;
-				this.#repositionOnScroll();
+				this.#queuePageScrollReposition();
 			};
 			return executeCallbacks(
 				on(win, "resize", () => this.root.handleClose()),
@@ -1202,6 +1211,7 @@ export class SelectContentState {
 					// Grow upward: shift top up by the amount height grew.
 					contentWrapper.style.top =
 						(parseFloat(contentWrapper.style.top) - actualIncrease) + "px";
+					this.#capturePageScrollOffset();
 					viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
 					contentWrapper.style.justifyContent = "flex-end";
 				}
@@ -1321,6 +1331,7 @@ export class SelectContentState {
 		contentWrapper.style.maxHeight = availableHeight + "px";
 		// Copy z-index from content so stacking context is preserved.
 		contentWrapper.style.zIndex = win.getComputedStyle(content).zIndex;
+		this.#capturePageScrollOffset();
 
 		if (!this.isPositioned) {
 			this.isPositioned = true;
@@ -1334,22 +1345,43 @@ export class SelectContentState {
 	}
 
 	/**
-	 * Lightweight reposition used on page scroll. The trigger has moved (page scrolled) but
-	 * the content wrapper (position: fixed) has not. Shift the wrapper by the delta between
-	 * the trigger center's new position and the selected item's current screen center so the
-	 * two stay aligned without rerunning the full layout algorithm.
+	 * Capture the wrapper's stable offset from the trigger after the full Radix alignment
+	 * pass. While the page scrolls, we reuse this offset instead of re-running layout math,
+	 * preserving the portal size and avoiding scroll-time jitter.
 	 */
-	#repositionOnScroll() {
+	#capturePageScrollOffset() {
 		const contentWrapper = this.root.contentWrapperNode;
 		const trigger = this.root.triggerNode;
-		const selectedItem = this.root.selectedItemNode;
-		if (!contentWrapper || !trigger || !selectedItem) return;
+		if (!contentWrapper || !trigger) return;
 
-		const currentTop = parseFloat(contentWrapper.style.top) || 0;
 		const triggerCenterY = trigger.getBoundingClientRect().top + trigger.offsetHeight / 2;
-		const itemCenterY = selectedItem.getBoundingClientRect().top + selectedItem.offsetHeight / 2;
-		contentWrapper.style.top = (currentTop + triggerCenterY - itemCenterY) + "px";
+		this.pageScrollTopOffset = (parseFloat(contentWrapper.style.top) || 0) - triggerCenterY;
+	}
+
+	#queuePageScrollReposition() {
+		if (this.pageScrollRaf) return;
+		this.pageScrollRaf = requestAnimationFrame(() => {
+			this.pageScrollRaf = 0;
+			this.#repositionOnPageScroll();
+		});
+	}
+
+	#repositionOnPageScroll() {
+		const contentWrapper = this.root.contentWrapperNode;
+		const trigger = this.root.triggerNode;
+		if (!contentWrapper || !trigger || this.pageScrollTopOffset === null) return;
+
+		const triggerRect = trigger.getBoundingClientRect();
+		const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+		contentWrapper.style.top = triggerCenterY + this.pageScrollTopOffset + "px";
+		contentWrapper.style.left = triggerRect.left + "px";
 		contentWrapper.style.bottom = "";
+	}
+
+	#cancelPageScrollReposition() {
+		if (!this.pageScrollRaf) return;
+		cancelAnimationFrame(this.pageScrollRaf);
+		this.pageScrollRaf = 0;
 	}
 
 	onpointermove(_: BitsPointerEvent) {

@@ -1349,6 +1349,36 @@ describe("select - item-aligned", () => {
 			window.scrollTo(0, 0);
 		}
 	});
+
+	it("should move the item-aligned portal with the trigger on page scroll", async () => {
+		const previousMinHeight = document.body.style.minHeight;
+		document.body.style.minHeight = "2000px";
+		window.scrollTo(0, 0);
+
+		try {
+			const t = await openAligned();
+			const wrapper = await waitForPositionedWrapper();
+			const initialHeight = parseFloat(wrapper.style.height);
+
+			window.scrollTo(0, 240);
+
+			await vi.waitFor(() => {
+				const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+				const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
+				const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+				const itemMiddle = itemRect.top + itemRect.height / 2;
+
+				expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+				expect(parseFloat(wrapper.style.height)).toBe(initialHeight);
+			});
+
+			await expectExists(t.getContent());
+			await expect.element(t.openBinding).toHaveTextContent("true");
+		} finally {
+			document.body.style.minHeight = previousMinHeight;
+			window.scrollTo(0, 0);
+		}
+	});
 });
 
 function getItems(getter: typeof page.getByTestId, items = testItems) {
