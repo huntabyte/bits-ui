@@ -254,7 +254,7 @@ describe("select - single", () => {
 		await t.trigger.click();
 		await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
 
-		await clickOutside(t.outside);
+		await t.outside.click({ force: true });
 		await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
 
 		observer.disconnect();
@@ -320,7 +320,7 @@ describe("select - single", () => {
 	it("should close on outside click", async () => {
 		const t = await openSingle();
 
-		await clickOutside(t.outside);
+		await t.outside.click({ force: true });
 		await expectNotExists(t.getContent());
 	});
 
@@ -783,7 +783,7 @@ describe("select - multiple", () => {
 
 	it("should close on outside click", async () => {
 		const t = await openMultiple();
-		await clickOutside(t.outside);
+		await t.outside.click({ force: true });
 		await expectNotExists(t.getContent());
 	});
 
@@ -1087,12 +1087,6 @@ function getItems(getter: typeof page.getByTestId, items = testItems) {
 ////////////////////////////////////
 
 type MaybeArray<T> = T | T[];
-
-async function clickOutside(loc: ReturnType<typeof page.getByTestId>) {
-	await new Promise((resolve) => setTimeout(resolve, 25));
-	await loc.click({ force: true });
-}
-
 async function expectSelected(node: MaybeArray<ReturnType<typeof page.getByTestId>>) {
 	if (Array.isArray(node)) {
 		for (const n of node) {
