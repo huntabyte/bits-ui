@@ -65,6 +65,7 @@ it("should navigate between menus when using the arrow keys and focus is within 
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
 	await expectExists(content1);
@@ -81,6 +82,7 @@ it("should close the menu and focus the next tabbable element when `TAB` is pres
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
 	await expectExists(content1);
@@ -94,10 +96,11 @@ it("should close the menu and focus the previous tabbable element when `SHIFT+TA
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
 	await expectExists(content1);
-	expect(content1).toBeVisible();
+	await expect.element(content1).toBeVisible();
 	const previousButton = page.getByTestId("previous-button");
 	await userEvent.keyboard(kbd.SHIFT_TAB);
 	await expect.element(previousButton).toHaveFocus();

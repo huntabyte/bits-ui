@@ -6,6 +6,7 @@ import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
 import {
+	clickOutside,
 	expectExists,
 	expectNotExists,
 	getPointerAwayFromSubmenuIntentClientCoords,
@@ -363,7 +364,7 @@ it("should respect the `interactOutsideBehavior` prop - ignore", async () => {
 			interactOutsideBehavior: "ignore",
 		},
 	});
-	await page.getByTestId("outside").click({ force: true });
+	await clickOutside(page.getByTestId("outside"));
 	await expectExists(page.getByTestId("content"));
 });
 
@@ -375,7 +376,7 @@ it("should respect the `interactOutsideBehavior` prop - close", async () => {
 	});
 
 	const outside = page.getByTestId("outside");
-	await outside.click({ force: true });
+	await clickOutside(outside);
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -657,7 +658,7 @@ it("should not scroll to previous dropdown trigger when closing a different drop
 	// open dropdown 3
 	await trigger3.click();
 	await expectExists(content3);
-	await userEvent.click(topButton, { force: true });
+	await clickOutside(topButton);
 
 	await expectNotExists(content3);
 });

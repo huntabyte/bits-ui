@@ -14,7 +14,12 @@ import SelectValueChildTest from "./select-value-child-test.svelte";
 import type { SelectValueChildrenMultiTestProps } from "./select-value-children-multi-test.svelte";
 import SelectValueChildrenMultiTest from "./select-value-children-multi-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
-import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import {
+	clickOutside,
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+} from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -254,7 +259,7 @@ describe("select - single", () => {
 		await t.trigger.click();
 		await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
 
-		await t.outside.click({ force: true });
+		await clickOutside(t.outside);
 		await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
 
 		observer.disconnect();
@@ -320,7 +325,7 @@ describe("select - single", () => {
 	it("should close on outside click", async () => {
 		const t = await openSingle();
 
-		await t.outside.click({ force: true });
+		await clickOutside(t.outside);
 		await expectNotExists(t.getContent());
 	});
 
@@ -783,7 +788,7 @@ describe("select - multiple", () => {
 
 	it("should close on outside click", async () => {
 		const t = await openMultiple();
-		await t.outside.click({ force: true });
+		await clickOutside(t.outside);
 		await expectNotExists(t.getContent());
 	});
 
@@ -1087,6 +1092,7 @@ function getItems(getter: typeof page.getByTestId, items = testItems) {
 ////////////////////////////////////
 
 type MaybeArray<T> = T | T[];
+
 async function expectSelected(node: MaybeArray<ReturnType<typeof page.getByTestId>>) {
 	if (Array.isArray(node)) {
 		for (const n of node) {

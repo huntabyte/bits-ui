@@ -86,6 +86,11 @@ export async function expectExists(loc: Locator) {
 	await expect.element(loc).toBeInTheDocument();
 }
 
+export async function clickOutside(loc: Locator) {
+	await new Promise((resolve) => setTimeout(resolve, 25));
+	await loc.click({ force: true });
+}
+
 export async function focusAndExpectToHaveFocus(loc: Locator) {
 	(loc.element() as HTMLElement).focus();
 	await expect.element(loc).toHaveFocus();
