@@ -1020,13 +1020,11 @@ export class SelectContentState {
 	// Matches Radix shouldRepositionRef — resets to true on each open, flipped false after
 	// the first scroll-button-triggered reposition so we only reposition once.
 	shouldReposition = true;
-	// Matches Radix shouldExpandOnScrollRef — activated after initial positioning so that
-	// user-initiated scrolling can expand the content wrapper height.
-	shouldExpandOnScroll = false;
 	// True when #position() used the if-branch (content grows upward from below trigger).
 	expandsUpward = false;
 	pageScrollTopOffset: number | null = null;
 	pageScrollRaf = 0;
+	itemAlignedAnchorNode: HTMLElement | null = null;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -1049,6 +1047,7 @@ export class SelectContentState {
 			this.root.contentIsPositioned = false;
 			this.isPositioned = false;
 			this.pageScrollTopOffset = null;
+			this.itemAlignedAnchorNode = null;
 		});
 
 		watch(
@@ -1056,14 +1055,15 @@ export class SelectContentState {
 			() => {
 				if (this.root.opts.open.current) {
 					this.shouldReposition = true;
-					this.shouldExpandOnScroll = false;
 					this.pageScrollTopOffset = null;
+					this.itemAlignedAnchorNode = null;
 					return;
 				}
 				this.#cancelPageScrollReposition();
 				this.root.contentIsPositioned = false;
 				this.isPositioned = false;
 				this.pageScrollTopOffset = null;
+				this.itemAlignedAnchorNode = null;
 			}
 		);
 
@@ -1083,7 +1083,6 @@ export class SelectContentState {
 				() => this.root.viewportNode,
 				() => this.root.triggerNode,
 				() => this.root.selectedItemNode,
-				() => this.root.highlightedNode,
 			],
 			() => {
 				if (!this.useItemAligned || !this.root.opts.open.current) return;
@@ -1098,7 +1097,6 @@ export class SelectContentState {
 			this.root.viewportNode;
 			this.root.triggerNode;
 			this.root.selectedItemNode;
-			this.root.highlightedNode;
 			afterTick(() => this.#position());
 		});
 
@@ -1185,42 +1183,6 @@ export class SelectContentState {
 	}
 
 	/**
-	 * Called by SelectViewportState's scroll handler. Expands the content wrapper height
-	 * as the user scrolls, up to the available viewport height. Mirrors Radix's
-	 * `shouldExpandOnScrollRef` logic in the viewport's onScroll handler.
-	 */
-	handleExpandOnScroll(viewport: HTMLElement, prevScrollTop: number): number {
-		const contentWrapper = this.root.contentWrapperNode;
-		if (!this.shouldExpandOnScroll || !contentWrapper) return viewport.scrollTop;
-
-		const scrolledBy = Math.abs(prevScrollTop - viewport.scrollTop);
-		if (scrolledBy > 0) {
-			const win = this.domContext.getWindow();
-			if (!win) return viewport.scrollTop;
-			const availableHeight = win.innerHeight - CONTENT_MARGIN * 2;
-			const cssMinHeight = parseFloat(contentWrapper.style.minHeight);
-			const cssHeight = parseFloat(contentWrapper.style.height);
-			const prevHeight = Math.max(cssMinHeight, cssHeight);
-			if (prevHeight < availableHeight) {
-				const nextHeight = prevHeight + scrolledBy;
-				const clampedNextHeight = Math.min(availableHeight, nextHeight);
-				const heightDiff = nextHeight - clampedNextHeight;
-				const actualIncrease = clampedNextHeight - prevHeight;
-				contentWrapper.style.height = clampedNextHeight + "px";
-				if (this.expandsUpward) {
-					// Grow upward: shift top up by the amount height grew.
-					contentWrapper.style.top =
-						(parseFloat(contentWrapper.style.top) - actualIncrease) + "px";
-					this.#capturePageScrollOffset();
-					viewport.scrollTop = heightDiff > 0 ? heightDiff : 0;
-					contentWrapper.style.justifyContent = "flex-end";
-				}
-			}
-		}
-		return viewport.scrollTop;
-	}
-
-	/**
 	 * Positions the content wrapper so the selected item's center aligns with the
 	 * trigger's center, exactly matching the Radix UI SelectItemAlignedPosition algorithm.
 	 */
@@ -1229,8 +1191,7 @@ export class SelectContentState {
 		const content = this.root.contentNode;
 		const viewport = this.root.viewportNode;
 		const trigger = this.root.triggerNode;
-		const selectedItem =
-			this.root.selectedItemNode ?? this.root.highlightedNode ?? this.root.getCandidateNodes()[0];
+		const selectedItem = this.#getItemAlignedAnchorNode();
 
 		if (!contentWrapper || !content || !viewport || !trigger || !selectedItem) {
 			return;
@@ -1280,7 +1241,10 @@ export class SelectContentState {
 		const contentWrapperRect = contentWrapper.getBoundingClientRect();
 		const selectedItemRect = selectedItem.getBoundingClientRect();
 		const viewportTopToItemMiddle =
-			selectedItemRect.top - contentWrapperRect.top + viewport.scrollTop + selectedItemHalfHeight;
+			selectedItemRect.top -
+			contentWrapperRect.top +
+			viewport.scrollTop +
+			selectedItemHalfHeight;
 
 		const willAlignWithoutTopOverflow = viewportTopToItemMiddle <= topEdgeToTriggerMiddle;
 
@@ -1301,7 +1265,7 @@ export class SelectContentState {
 			contentWrapper.style.height = height + "px";
 			// Compute top explicitly so content can scroll off-screen with the trigger.
 			// Equivalent to bottom:0px + CONTENT_MARGIN gap but expressed as top.
-			contentWrapper.style.top = (win.innerHeight - CONTENT_MARGIN - height) + "px";
+			contentWrapper.style.top = win.innerHeight - CONTENT_MARGIN - height + "px";
 			contentWrapper.style.bottom = "";
 		} else {
 			this.expandsUpward = false;
@@ -1323,7 +1287,7 @@ export class SelectContentState {
 			const desiredScrollTop = viewportTopToItemMiddle - topEdgeToTriggerMiddle;
 			viewport.scrollTop = desiredScrollTop;
 			const clampedBy = desiredScrollTop - viewport.scrollTop;
-			contentWrapper.style.top = (CONTENT_MARGIN - clampedBy) + "px";
+			contentWrapper.style.top = CONTENT_MARGIN - clampedBy + "px";
 		}
 
 		contentWrapper.style.margin = "";
@@ -1337,11 +1301,22 @@ export class SelectContentState {
 			this.isPositioned = true;
 			this.root.contentIsPositioned = true;
 		}
+	}
 
-		// Enable expand-on-scroll after the initial positioning settles.
-		requestAnimationFrame(() => {
-			this.shouldExpandOnScroll = true;
-		});
+	#getItemAlignedAnchorNode() {
+		const selectedItem = this.root.selectedItemNode;
+		if (selectedItem) {
+			this.itemAlignedAnchorNode = selectedItem;
+			return selectedItem;
+		}
+
+		if (this.itemAlignedAnchorNode?.isConnected) {
+			return this.itemAlignedAnchorNode;
+		}
+
+		const anchor = this.root.highlightedNode ?? this.root.getCandidateNodes()[0] ?? null;
+		this.itemAlignedAnchorNode = anchor;
+		return anchor;
 	}
 
 	/**
@@ -1395,7 +1370,8 @@ export class SelectContentState {
 	onInteractOutside = (e: PointerEvent) => {
 		const target = e.target as Element | null;
 		if (
-			(this.root.triggerNode && isOrContainsTarget(this.root.triggerNode, target as HTMLElement)) ||
+			(this.root.triggerNode &&
+				isOrContainsTarget(this.root.triggerNode, target as HTMLElement)) ||
 			(this.root.inputNode && isOrContainsTarget(this.root.inputNode, target as HTMLElement))
 		) {
 			e.preventDefault();
@@ -1754,7 +1730,6 @@ export class SelectViewportState {
 	readonly content: SelectContentState;
 	readonly root: SelectBaseRootState;
 	readonly attachment: RefAttachment;
-	prevScrollTop = $state(0);
 
 	constructor(opts: SelectViewportStateOpts, content: SelectContentState) {
 		this.opts = opts;
@@ -1762,16 +1737,6 @@ export class SelectViewportState {
 		this.root = content.root;
 		this.attachment = attachRef(opts.ref, (v) => {
 			this.root.viewportNode = v;
-		});
-
-		// Expand the content wrapper as the user scrolls in item-aligned mode.
-		watch([() => this.root.viewportNode, () => this.content.useItemAligned], () => {
-			const viewport = this.root.viewportNode;
-			if (!viewport || !this.content.useItemAligned) return;
-			let prevScrollTop = viewport.scrollTop;
-			return on(viewport, "scroll", () => {
-				prevScrollTop = this.content.handleExpandOnScroll(viewport, prevScrollTop);
-			});
 		});
 	}
 
@@ -1975,8 +1940,7 @@ export class SelectScrollDownButtonState {
 			!!lastItem && lastItem.offsetTop < viewport.scrollTop + viewport.clientHeight;
 
 		this.canScrollDown =
-			!lastItemTopVisible &&
-			Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
+			!lastItemTopVisible && Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
 	};
 
 	handleAutoScroll = () => {

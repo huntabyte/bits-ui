@@ -1101,42 +1101,42 @@ describe("select - item-aligned", () => {
 		{ value: "5", label: "Elderberry" },
 	];
 
-		function setupAligned(
-			props: Partial<SelectItemAlignedTestProps> = {},
-			items: Item[] = alignedItems
-		) {
-			render(SelectItemAlignedTest, { items, ...props } as SelectItemAlignedTestProps);
-			return {
-				trigger: page.getByTestId("trigger"),
-				outside: page.getByTestId("outside"),
-				openBinding: page.getByTestId("open-binding"),
-				valueBinding: page.getByTestId("value-binding"),
-				getContent: () => page.getByTestId("content"),
-				viewport: page.getByTestId("viewport"),
-				// generateTestId(value) returns the value itself (no prefix)
-				getItem: (value: string) => page.getByTestId(value),
-			};
-		}
+	function setupAligned(
+		props: Partial<SelectItemAlignedTestProps> = {},
+		items: Item[] = alignedItems
+	) {
+		render(SelectItemAlignedTest, { items, ...props } as SelectItemAlignedTestProps);
+		return {
+			trigger: page.getByTestId("trigger"),
+			outside: page.getByTestId("outside"),
+			openBinding: page.getByTestId("open-binding"),
+			valueBinding: page.getByTestId("value-binding"),
+			getContent: () => page.getByTestId("content"),
+			viewport: page.getByTestId("viewport"),
+			// generateTestId(value) returns the value itself (no prefix)
+			getItem: (value: string) => page.getByTestId(value),
+		};
+	}
 
-		async function openAligned(
-			props: Partial<SelectItemAlignedTestProps> = {},
-			items: Item[] = alignedItems
-		) {
-			const t = setupAligned(props, items);
-			await expectNotExists(t.getContent());
-			await t.trigger.click();
-			await expectExists(t.getContent());
-			await waitForDismissableReady();
-			return t;
-		}
+	async function openAligned(
+		props: Partial<SelectItemAlignedTestProps> = {},
+		items: Item[] = alignedItems
+	) {
+		const t = setupAligned(props, items);
+		await expectNotExists(t.getContent());
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await waitForDismissableReady();
+		return t;
+	}
 
-		async function waitForPositionedWrapper() {
-			return await vi.waitFor(() => {
-				const el = document.querySelector<HTMLElement>("[data-select-content-wrapper]");
-				if (!el?.style.height || !el.style.top) throw new Error("wrapper not positioned yet");
-				return el;
-			});
-		}
+	async function waitForPositionedWrapper() {
+		return await vi.waitFor(() => {
+			const el = document.querySelector<HTMLElement>("[data-select-content-wrapper]");
+			if (!el?.style.height || !el.style.top) throw new Error("wrapper not positioned yet");
+			return el;
+		});
+	}
 
 	it("should open on click", async () => {
 		await openAligned();
@@ -1179,63 +1179,88 @@ describe("select - item-aligned", () => {
 		await expect.element(t.valueBinding).not.toHaveTextContent("empty");
 	});
 
-		it("should highlight the pre-selected item on open", async () => {
-			const t = await openAligned({ value: "2" });
-			await expectHighlighted(t.getItem("2"));
-		});
+	it("should highlight the pre-selected item on open", async () => {
+		const t = await openAligned({ value: "2" });
+		await expectHighlighted(t.getItem("2"));
+	});
 
-		it("should position against the first item when no value is selected", async () => {
-			const t = await openAligned();
-			await waitForPositionedWrapper();
+	it("should position against the first item when no value is selected", async () => {
+		const t = await openAligned();
+		await waitForPositionedWrapper();
 
-			const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
-			const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
-			const triggerMiddle = triggerRect.top + triggerRect.height / 2;
-			const itemMiddle = itemRect.top + itemRect.height / 2;
+		const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+		const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
+		const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+		const itemMiddle = itemRect.top + itemRect.height / 2;
 
-			expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
-			await expectHighlighted(t.getItem("1"));
-		});
+		expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+		await expectHighlighted(t.getItem("1"));
+	});
 
-		it("should align the selected item middle to the trigger middle", async () => {
-			const t = await openAligned({ value: "3" });
-			await waitForPositionedWrapper();
+	it("should align the selected item middle to the trigger middle", async () => {
+		const t = await openAligned({ value: "3" });
+		await waitForPositionedWrapper();
 
-			const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
-			const itemRect = (t.getItem("3").element() as HTMLElement).getBoundingClientRect();
-			const triggerMiddle = triggerRect.top + triggerRect.height / 2;
-			const itemMiddle = itemRect.top + itemRect.height / 2;
+		const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+		const itemRect = (t.getItem("3").element() as HTMLElement).getBoundingClientRect();
+		const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+		const itemMiddle = itemRect.top + itemRect.height / 2;
 
-			expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
-		});
+		expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+	});
 
-		it("should scroll a long item-aligned viewport to the selected item", async () => {
-			const manyItems = Array.from({ length: 80 }, (_, index) => ({
-				value: String(index + 1),
-				label: `Item ${index + 1}`,
-			}));
-			const t = await openAligned({ value: "75" }, manyItems);
-			await waitForPositionedWrapper();
+	it("should scroll a long item-aligned viewport to the selected item", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned({ value: "75" }, manyItems);
+		await waitForPositionedWrapper();
 
-			const viewportEl = t.viewport.element() as HTMLElement;
-			const itemRect = (t.getItem("75").element() as HTMLElement).getBoundingClientRect();
-			const viewportRect = viewportEl.getBoundingClientRect();
+		const viewportEl = t.viewport.element() as HTMLElement;
+		const itemRect = (t.getItem("75").element() as HTMLElement).getBoundingClientRect();
+		const viewportRect = viewportEl.getBoundingClientRect();
 
-			expect(viewportEl.scrollTop).toBeGreaterThan(0);
-			expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top - 1);
-			expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom + 1);
-			await expectHighlighted(t.getItem("75"));
-		});
+		expect(viewportEl.scrollTop).toBeGreaterThan(0);
+		expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top - 1);
+		expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom + 1);
+		await expectHighlighted(t.getItem("75"));
+	});
 
-		it("should match portal width to the trigger width", async () => {
-			// Need a pre-selected value so #position() has a selectedItemNode to align against.
-			const t = await openAligned({ value: "2" });
-			const triggerEl = t.trigger.element() as HTMLElement;
-			const triggerWidth = triggerEl.getBoundingClientRect().width;
-			const wrapper = await waitForPositionedWrapper();
-			const wrapperWidth = parseFloat(wrapper.style.width);
-			expect(Math.abs(wrapperWidth - triggerWidth)).toBeLessThanOrEqual(1);
-		});
+	it("should keep item-aligned portal size stable while scrolling the viewport", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned({ value: "20" }, manyItems);
+		const wrapper = await waitForPositionedWrapper();
+		const viewportEl = t.viewport.element() as HTMLElement;
+		const initialWrapperHeight = wrapper.getBoundingClientRect().height;
+		const initialViewportHeight = viewportEl.getBoundingClientRect().height;
+
+		for (const scrollTop of [80, 220, 420]) {
+			viewportEl.scrollTop = scrollTop;
+			viewportEl.dispatchEvent(new Event("scroll", { bubbles: true }));
+			await nextFrame();
+		}
+
+		expect(
+			Math.abs(wrapper.getBoundingClientRect().height - initialWrapperHeight)
+		).toBeLessThanOrEqual(1);
+		expect(
+			Math.abs(viewportEl.getBoundingClientRect().height - initialViewportHeight)
+		).toBeLessThanOrEqual(1);
+	});
+
+	it("should match portal width to the trigger width", async () => {
+		// Need a pre-selected value so #position() has a selectedItemNode to align against.
+		const t = await openAligned({ value: "2" });
+		const triggerEl = t.trigger.element() as HTMLElement;
+		const triggerWidth = triggerEl.getBoundingClientRect().width;
+		const wrapper = await waitForPositionedWrapper();
+		const wrapperWidth = parseFloat(wrapper.style.width);
+		expect(Math.abs(wrapperWidth - triggerWidth)).toBeLessThanOrEqual(1);
+	});
 
 	it("should prevent immediate re-selection when pointer barely moves after trigger click", async () => {
 		const t = await openAligned({ value: "1" });
@@ -1378,6 +1403,33 @@ describe("select - item-aligned", () => {
 			document.body.style.minHeight = previousMinHeight;
 			window.scrollTo(0, 0);
 		}
+	});
+
+	it("should not jump viewport scroll when hovering after scrolling item-aligned content", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned({}, manyItems);
+		await waitForPositionedWrapper();
+
+		const viewportEl = t.viewport.element() as HTMLElement;
+		viewportEl.scrollTop = 420;
+		viewportEl.dispatchEvent(new Event("scroll", { bubbles: true }));
+		await nextFrame();
+
+		const scrollTopAfterScroll = viewportEl.scrollTop;
+		const item30 = t.getItem("30").element() as HTMLElement;
+		item30.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+			})
+		);
+		await nextFrame();
+
+		expect(Math.abs(viewportEl.scrollTop - scrollTopAfterScroll)).toBeLessThanOrEqual(1);
+		await expectHighlighted(t.getItem("30"));
 	});
 });
 
