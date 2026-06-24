@@ -14,7 +14,12 @@ import SelectValueChildTest from "./select-value-child-test.svelte";
 import type { SelectValueChildrenMultiTestProps } from "./select-value-children-multi-test.svelte";
 import SelectValueChildrenMultiTest from "./select-value-children-multi-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
-import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+	pointerDown,
+} from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -320,6 +325,7 @@ describe("select - single", () => {
 	it("should close on outside click", async () => {
 		const t = await openSingle();
 
+		await pointerDown(t.outside);
 		await t.outside.click({ force: true });
 		await expectNotExists(t.getContent());
 	});
@@ -783,6 +789,7 @@ describe("select - multiple", () => {
 
 	it("should close on outside click", async () => {
 		const t = await openMultiple();
+		await pointerDown(t.outside);
 		await t.outside.click({ force: true });
 		await expectNotExists(t.getContent());
 	});

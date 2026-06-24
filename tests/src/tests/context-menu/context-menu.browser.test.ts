@@ -12,6 +12,7 @@ import {
 	getPointerAwayFromSubmenuIntentClientCoords,
 	getPointerLeaveTowardSubmenuClientCoords,
 	getPointerMidpointTowardSubmenuClientCoords,
+	pointerDown,
 } from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
@@ -626,7 +627,9 @@ it("should open when right clicked inside a tooltip trigger", async () => {
 
 it("should close when the trigger is left clicked and the menu is open", async () => {
 	await open();
-	await page.getByTestId("trigger").click({ force: true });
+	const trigger = page.getByTestId("trigger");
+	await pointerDown(trigger);
+	await trigger.click({ force: true });
 	await expectNotExists(page.getByTestId("content"));
 });
 
