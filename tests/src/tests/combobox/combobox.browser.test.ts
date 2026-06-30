@@ -186,6 +186,31 @@ describe("combobox - single", () => {
 		await expect.element(page.getByTestId("input")).toHaveValue("B");
 	});
 
+	it("should not select an item on enter while composing with an IME (keyCode 229)", async () => {
+		await openSingle();
+		await expect.element(page.getByTestId("input")).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-highlighted");
+
+		// Safari + Japanese IME deliver the composition-commit Enter with `keyCode === 229`
+		// and `isComposing === false`, so it must not commit the highlighted item.
+		page.getByTestId("input").element().dispatchEvent(
+			new KeyboardEvent("keydown", {
+				key: "Enter",
+				keyCode: 229,
+				bubbles: true,
+				cancelable: true,
+			})
+		);
+		await tick();
+		await expect.element(page.getByTestId("content")).toBeVisible();
+		await expect.element(page.getByTestId("input")).not.toHaveValue("B");
+
+		// a normal Enter (keyCode 13, not composing) still commits the selection
+		await userEvent.keyboard(kbd.ENTER);
+		await expect.element(page.getByTestId("input")).toHaveValue("B");
+	});
+
 	it("should render an input if the `name` prop is passed", async () => {
 		const t = setupSingle();
 		await expect.element(t.getHiddenInput()).toBeInTheDocument();

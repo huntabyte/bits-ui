@@ -565,7 +565,10 @@ export class SelectInputState {
 			return;
 		}
 
-		if (e.key === kbd.ENTER && !e.isComposing) {
+		// `e.keyCode === 229` covers Safari + Japanese IME, where `isComposing` is not
+		// set while composing, so an IME-commit Enter would otherwise select an item.
+		// Mirrors the Enter guard in `command.svelte.ts`.
+		if (e.key === kbd.ENTER && !e.isComposing && e.keyCode !== 229) {
 			e.preventDefault();
 
 			const isCurrentSelectedValue =
