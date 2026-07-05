@@ -2,15 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { mergeProps as mergePropsToolbelt } from "svelte-toolbelt";
 import { mergeProps } from "./merge-props.js";
 
-/**
- * The internal `mergeProps` is a performance-tuned rewrite of svelte-toolbelt's.
- * These tests assert parity with the original for every merge behavior.
- */
-
 function expectParity(...args: (Record<string, unknown> | null | undefined)[]) {
 	const ours = mergeProps(...args) as Record<string, unknown>;
 	const theirs = mergePropsToolbelt(...args) as Record<string, unknown>;
-	// compare non-function values structurally
 	expect(Object.keys(ours).sort()).toEqual(Object.keys(theirs).sort());
 	for (const key of Object.keys(theirs)) {
 		if (typeof theirs[key] === "function") {

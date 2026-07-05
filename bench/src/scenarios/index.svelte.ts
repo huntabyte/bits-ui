@@ -1,4 +1,4 @@
-import { flushSync, mount, unmount } from "svelte";
+import { flushSync, mount, unmount, type Component } from "svelte";
 import {
 	forceLayout,
 	keydown,
@@ -28,9 +28,8 @@ function getTrigger(): HTMLElement {
 
 function openScenario(opts: {
 	cpuThrottle: number;
-	component: unknown;
+	component: Component;
 	props?: Record<string, unknown>;
-	/** how a "user" activates the trigger */
 	activate: (trigger: HTMLElement) => void;
 }): Scenario {
 	const ctl = $state({ open: false, value: "" });
@@ -39,7 +38,7 @@ function openScenario(opts: {
 		samples: 5,
 		warmup: 2,
 		setup(target) {
-			mount(opts.component as any, { target, props: { ctl, ...opts.props } });
+			mount(opts.component, { target, props: { ctl, ...opts.props } });
 		},
 		async run() {
 			const trigger = getTrigger();
@@ -55,7 +54,7 @@ function openScenario(opts: {
 	};
 }
 
-function mountScenario(opts: { component: unknown; props?: Record<string, unknown> }): Scenario {
+function mountScenario(opts: { component: Component; props?: Record<string, unknown> }): Scenario {
 	return {
 		cpuThrottle: 1,
 		samples: 5,
@@ -67,7 +66,7 @@ function mountScenario(opts: { component: unknown; props?: Record<string, unknow
 				target,
 				iterations: 20,
 				mountOnce: (t) => {
-					const app = mount(opts.component as any, {
+					const app = mount(opts.component, {
 						target: t,
 						props: opts.props,
 					});
@@ -98,7 +97,6 @@ function menuHighlightScenario(): Scenario {
 				document.querySelectorAll<HTMLElement>("[data-bench-content] .item")
 			);
 			if (items.length === 0) throw new Error("no menu items");
-			// sweep over 50 evenly-spaced visible items
 			const content = document.querySelector<HTMLElement>("[data-bench-content]")!;
 			const contentRect = content.getBoundingClientRect();
 			const visible = items.filter((el) => {
@@ -114,10 +112,6 @@ function menuHighlightScenario(): Scenario {
 			let highlightedCount = 0;
 			for (const el of sweep) {
 				const r = el.getBoundingClientRect();
-				// timed: event dispatch + handlers + reactivity flush (including
-				// the microtask-deferred focus state update) + forced style/layout.
-				// Paint waits happen untimed below so the number reflects work
-				// done, not the display refresh rate.
 				const t0 = performance.now();
 				pointerMove(el, { x: r.left + r.width / 2, y: r.top + r.height / 2 });
 				flushSync();

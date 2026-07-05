@@ -12,6 +12,8 @@ import {
 	getPointerAwayFromSubmenuIntentClientCoords,
 	getPointerLeaveTowardSubmenuClientCoords,
 	getPointerMidpointTowardSubmenuClientCoords,
+	rightClickCenter,
+	waitForDismissableLayerReady,
 } from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
@@ -52,6 +54,12 @@ async function open(props: ContextMenuSetupProps = {}) {
 	await t.trigger.click({ button: "right" });
 	await expectExists(t.getContent());
 	return { ...t };
+}
+
+function renderIntegrationTest() {
+	const t = render(ContextMenuIntegrationTest);
+	onTestFinished(() => t.unmount());
+	return t;
 }
 
 async function openSubmenu(props: Awaited<ReturnType<typeof open>>) {
@@ -515,16 +523,19 @@ it("calls `onValueChange` when the value of the checkbox group changes", async (
 });
 
 it("should allow switching between context menus via right-click", async () => {
-	render(ContextMenuIntegrationTest);
-	await page.getByTestId("context-trigger-1").click({ button: "right" });
+	renderIntegrationTest();
+	const trigger1 = page.getByTestId("context-trigger-1");
+	const trigger2 = page.getByTestId("context-trigger-2");
+	await rightClickCenter(trigger1);
 	await expectExists(page.getByTestId("context-content-1"));
-	await page.getByTestId("context-trigger-2").click({ button: "right" });
+	await waitForDismissableLayerReady(page.getByTestId("context-content-1"));
+	await rightClickCenter(trigger2);
 	await expectNotExists(page.getByTestId("context-content-1"));
 	await expectExists(page.getByTestId("context-content-2"));
 });
 
 it("should open inside of a dialog", async () => {
-	render(ContextMenuIntegrationTest);
+	renderIntegrationTest();
 	await page.getByTestId("dialog-trigger").click();
 	await expectExists(page.getByTestId("dialog-content"));
 	await page.getByTestId("context-trigger-3").click({ button: "right" });
@@ -536,7 +547,7 @@ it("should open inside of a dialog", async () => {
 });
 
 it("should not close the dialog when the context menu trigger is left clicked", async () => {
-	render(ContextMenuIntegrationTest);
+	renderIntegrationTest();
 	await page.getByTestId("dialog-trigger").click();
 	await expectExists(page.getByTestId("dialog-content"));
 	await page.getByTestId("context-trigger-3").click();
@@ -546,7 +557,7 @@ it("should not close the dialog when the context menu trigger is left clicked", 
 });
 
 it("should not close the popover when the context menu trigger is left clicked", async () => {
-	render(ContextMenuIntegrationTest);
+	renderIntegrationTest();
 	await page.getByTestId("popover-trigger").click();
 	await expectExists(page.getByTestId("popover-content"));
 	await page.getByTestId("context-trigger-4").click();
@@ -556,37 +567,35 @@ it("should not close the popover when the context menu trigger is left clicked",
 });
 
 it("should close a nested popover when interacting with a sibling select trigger inside the same context menu trigger", async () => {
-	render(ContextMenuIntegrationTest);
+	renderIntegrationTest();
 	await page.getByTestId("popover-trigger-1").click();
-	await expectExists(page.getByTestId("popover-content-1"));
+	await waitForDismissableLayerReady(page.getByTestId("popover-content-1"));
 	await page.getByTestId("select-trigger-1").click();
-	await new Promise((resolve) => setTimeout(resolve, 50));
 	await expectNotExists(page.getByTestId("popover-content-1"));
 	await expectExists(page.getByTestId("select-content-1"));
 });
 
 it("should close a nested select when interacting with the popover trigger inside the same context menu trigger", async () => {
-	render(ContextMenuIntegrationTest);
+	renderIntegrationTest();
 	await page.getByTestId("select-trigger-1").click();
-	await expectExists(page.getByTestId("select-content-1"));
+	await waitForDismissableLayerReady(page.getByTestId("select-content-1"));
 	await page.getByTestId("popover-trigger-1").click();
-	await new Promise((resolve) => setTimeout(resolve, 50));
 	await expectNotExists(page.getByTestId("select-content-1"));
 	await expectExists(page.getByTestId("popover-content-1"));
 });
 
 it("should close the first nested select when opening the sibling select inside the same context menu trigger", async () => {
-	render(ContextMenuIntegrationTest);
+	renderIntegrationTest();
 	await page.getByTestId("select-trigger-1").click();
-	await expectExists(page.getByTestId("select-content-1"));
+	await waitForDismissableLayerReady(page.getByTestId("select-content-1"));
 	await page.getByTestId("select-trigger-2").click();
-	await new Promise((resolve) => setTimeout(resolve, 50));
 	await expectNotExists(page.getByTestId("select-content-1"));
 	await expectExists(page.getByTestId("select-content-2"));
 });
 
 it("should open nested context menus", async () => {
-	render(ContextMenuNestedTest);
+	const t = render(ContextMenuNestedTest);
+	onTestFinished(() => t.unmount());
 	await page.getByTestId("trigger").click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
 	await page.getByTestId("nested-trigger").click({ button: "right" });
@@ -595,7 +604,8 @@ it("should open nested context menus", async () => {
 });
 
 it("should open nested submenus in context menu", async () => {
-	render(ContextMenuNestedSubmenuTest);
+	const t = render(ContextMenuNestedSubmenuTest);
+	onTestFinished(() => t.unmount());
 	await page.getByTestId("trigger").click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
 
@@ -608,7 +618,7 @@ it("should open nested submenus in context menu", async () => {
 });
 
 it("should allow overriding the pointer events style", async () => {
-	setup({ triggerProps: { style: { pointerEvents: undefined } } });
+	await setup({ triggerProps: { style: { pointerEvents: undefined } } });
 	const trigger = page.getByTestId("trigger");
 	await trigger.click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
@@ -617,7 +627,8 @@ it("should allow overriding the pointer events style", async () => {
 });
 
 it("should open when right clicked inside a tooltip trigger", async () => {
-	render(ContextMenuTooltipTest);
+	const t = render(ContextMenuTooltipTest);
+	onTestFinished(() => t.unmount());
 
 	await page.getByTestId("tooltip-trigger").hover();
 	await page.getByTestId("context-menu-trigger").click({ button: "right" });

@@ -15,17 +15,6 @@ export interface ScrollBodyOption {
 }
 /** A map of lock ids to their `locked` state. */
 const lockMap = new SvelteMap<string, boolean>();
-
-/**
- * A map of lock ids to a predicate deciding whether that lock needs
- * `pointer-events: none` applied to the body while it is active.
- *
- * Setting `pointer-events` on the body is by far the most expensive part of
- * locking (it's an inherited property, so the browser must recalculate style
- * for every element in the body's subtree — twice, once on lock and once on
- * unlock). Components that already block pointer interaction another way
- * (e.g. a dialog rendering a full-viewport overlay) can skip it.
- */
 const pointerEventsMap = new SvelteMap<string, () => boolean>();
 
 let initialBodyStyle: string | null = $state<string | null>(null);
@@ -181,10 +170,6 @@ const bodyLockStackCount = new SharedState(() => {
 			 *
 			 * this avoids race conditions where pointer-events could be set too early and break
 			 * focus/interaction.
-			 *
-			 * The check runs inside `afterTick` (not when the lock is created) so that lock
-			 * owners can base their decision on refs that only settle once the open content
-			 * has mounted (e.g. a dialog's overlay node).
 			 */
 			afterTick(() => {
 				if (anyActiveLockWantsPointerEventsNone()) {
@@ -195,13 +180,6 @@ const bodyLockStackCount = new SharedState(() => {
 		}
 	);
 
-	/**
-	 * Handles locks that begin wanting `pointer-events: none` while the body is
-	 * already locked (e.g. an overlay-less dialog opening on top of an already
-	 * open popup that skipped the write) — the `anyLocked` watch above only fires
-	 * on the first lock. Once applied, `pointer-events` is only restored when the
-	 * last lock releases (via `resetBodyStyle`), matching the previous behavior.
-	 */
 	watch(
 		() => anyPointerEventsNoneWanted.current,
 		() => {

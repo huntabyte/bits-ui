@@ -86,6 +86,23 @@ export async function expectExists(loc: Locator) {
 	await expect.element(loc).toBeInTheDocument();
 }
 
+export async function waitForDismissableLayerReady(loc: Locator) {
+	await expect.element(loc).toHaveAttribute("data-state", "open");
+	await new Promise((r) => setTimeout(r, 15));
+}
+
+export async function rightClickCenter(loc: Locator) {
+	const el = loc.element() as HTMLElement;
+	const rect = el.getBoundingClientRect();
+	await loc.click({
+		button: "right",
+		position: {
+			x: rect.width / 2,
+			y: rect.height / 2,
+		},
+	});
+}
+
 export async function focusAndExpectToHaveFocus(loc: Locator) {
 	(loc.element() as HTMLElement).focus();
 	await expect.element(loc).toHaveFocus();

@@ -38,12 +38,6 @@
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 
-	/**
-	 * When an overlay is rendered it already blocks pointer interaction with the
-	 * rest of the page, so the scroll lock can skip the expensive
-	 * `pointer-events: none` body write (an inherited property — toggling it
-	 * forces a style recalculation of every element on the page).
-	 */
 	function shouldBlockPointerEvents() {
 		return contentState.root.overlayNode === null;
 	}

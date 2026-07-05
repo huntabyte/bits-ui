@@ -166,9 +166,7 @@ abstract class SelectBaseRootState {
 		const nodes = this.getCandidateNodes();
 		if (!nodes.length) return;
 
-		// only consider nodes that are visible within the viewport — we want the
-		// first such node, so bail out of the scan as soon as we find it rather
-		// than measuring every candidate.
+		// don't consider nodes that aren't visible within the viewport
 		if (this.viewportNode) {
 			const viewportRect = this.viewportNode.getBoundingClientRect();
 
@@ -241,10 +239,6 @@ abstract class SelectBaseRootState {
 
 	#initialHighlightPending = false;
 
-	/**
-	 * Defers `fn` to after the next tick, coalescing calls so that many items
-	 * mounting in the same tick schedule a single callback instead of one each.
-	 */
 	protected scheduleInitialHighlight(fn: () => void) {
 		if (this.#initialHighlightPending) return;
 		this.#initialHighlightPending = true;
@@ -1153,9 +1147,6 @@ export class SelectItemState {
 	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
-		// the mount half of the attachment stands in for a per-item `Mounted`
-		// component: whenever an item mounts, ask the root to (re)establish the
-		// initial highlight (the root coalesces these into one deferred pass).
 		this.attachment = attachRef(opts.ref, (node) => {
 			if (node) this.root.setInitialHighlightedNode();
 		});
@@ -1256,9 +1247,6 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				// read the memoized deriveds (`isSelected`/`isHighlighted`) rather than
-				// root state directly so a highlight/value change only invalidates the
-				// props of the items whose state actually flipped, not every item.
 				"aria-selected": this.isSelected ? "true" : undefined,
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),

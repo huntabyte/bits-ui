@@ -18,11 +18,7 @@ export type ScrollLockProps = {
 	restoreScrollDelay?: number | null;
 
 	/**
-	 * Decides whether this lock needs `pointer-events: none` applied to the body
-	 * while active. Components that already block pointer interaction another way
-	 * (e.g. a dialog rendering an overlay) can return `false` to skip the
-	 * full-page style recalculation that write causes. Checked after the open
-	 * content has mounted.
+	 * Whether to apply `pointer-events: none` to the body while locked.
 	 *
 	 * @default () => true
 	 */

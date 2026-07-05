@@ -1334,8 +1334,6 @@ export class MenuItemState {
 	}
 
 	readonly props = $derived.by(() => ({
-		// key sets are disjoint (and contain no class/style/hidden/disabled),
-		// so a plain spread is equivalent to mergeProps at a fraction of the cost
 		...this.item.props,
 		onclick: this.onclick,
 		onpointerdown: this.onpointerdown,

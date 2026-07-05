@@ -1,10 +1,5 @@
 /**
- * A performance-tuned drop-in replacement for svelte-toolbelt's `mergeProps`.
- * `mergeProps` runs once per rendered component (per item in large lists), so
- * this version fast-paths the overwhelmingly common cases — plain value
- * overrides and string class merging — while preserving the exact semantics
- * of the original for handlers, class values, and styles.
- *
+ * Performance-tuned drop-in for svelte-toolbelt's `mergeProps`.
  * Modified from https://github.com/adobe/react-spectrum/blob/main/packages/%40react-aria/utils/src/mergeProps.ts
  * (see NOTICE.txt for source)
  */
@@ -22,11 +17,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 	? I
 	: never;
 
-/**
- * All lowercase DOM event handler attribute names — handlers for these are
- * composed (stop once `defaultPrevented`), other same-named functions chain.
- * Mirrors svelte-toolbelt's event list.
- */
+/** DOM event handler names that mergeProps composes instead of chaining. */
 const EVENT_LIST_SET = new Set([
 	"onabort",
 	"onanimationcancel",
@@ -133,7 +124,7 @@ const EVENT_LIST_SET = new Set([
 	"onwheel",
 ]);
 
-/** clsx-compatible check: can `value` be handled as a class value? */
+/** clsx-compatible class value check. */
 function isClassValue(value: unknown): value is ClassValue {
 	if (value === null || value === undefined) return true;
 	const t = typeof value;
@@ -143,7 +134,6 @@ function isClassValue(value: unknown): value is ClassValue {
 	return false;
 }
 
-/** Minimal clsx-equivalent for normalizing/merging class values. */
 function classValueToString(value: ClassValue): string {
 	if (typeof value === "string") return value;
 	if (typeof value === "number" || typeof value === "bigint") return String(value);
@@ -164,7 +154,6 @@ function classValueToString(value: ClassValue): string {
 }
 
 function mergeClass(a: unknown, b: unknown): unknown {
-	// fast path: both plain strings (the common case by far)
 	if (typeof a === "string") {
 		if (typeof b === "string") return a && b ? `${a} ${b}` : a || b;
 		if (b === null || b === undefined) return a;
@@ -178,7 +167,6 @@ function mergeClass(a: unknown, b: unknown): unknown {
 	}
 	if (aIsClassValue) return classValueToString(a as ClassValue);
 	if (bIsClassValue) return classValueToString(b as ClassValue);
-	// neither is a mergeable class value — keep the original
 	return a;
 }
 
@@ -223,9 +211,6 @@ export function mergeProps<T extends PropsArg[]>(
 			const a = result[key];
 
 			if (a === undefined) {
-				// nothing to merge with — the only keys that still need
-				// normalization are non-string class values and `style` strings
-				// (both handled below); everything else is a plain override.
 				if (key === "class") {
 					result[key] = typeof b === "string" ? b : mergeClass(undefined, b);
 				} else {
@@ -238,13 +223,11 @@ export function mergeProps<T extends PropsArg[]>(
 			const bIsFunction = typeof b === "function";
 
 			if (aIsFunction && bIsFunction && EVENT_LIST_SET.has(key)) {
-				// compose event handlers
 				result[key] = composeHandlers(
 					a as (...args: unknown[]) => unknown,
 					b as (...args: unknown[]) => unknown
 				);
 			} else if (aIsFunction && bIsFunction) {
-				// chain non-event handler functions
 				result[key] = executeCallbacks(a, b);
 			} else if (key === "class") {
 				result[key] = mergeClass(a, b);
@@ -255,7 +238,6 @@ export function mergeProps<T extends PropsArg[]>(
 			}
 		}
 
-		// handle symbol keys (mostly for `Attachments`)
 		const symbols = Object.getOwnPropertySymbols(props);
 		for (const key of symbols) {
 			const b = (props as Record<symbol, unknown>)[key];
@@ -264,16 +246,13 @@ export function mergeProps<T extends PropsArg[]>(
 		}
 	}
 
-	// convert style object to string
 	if (typeof result.style === "object" && result.style !== null) {
 		result.style = styleToString(result.style as Record<string, string>).replaceAll("\n", " ");
 	}
 
-	// handle weird svelte bug where `hidden` is not removed when set to `false`
 	if (result.hidden === false) {
 		delete result.hidden;
 	}
-	// handle weird svelte bug where `disabled` is not removed when set to `false`
 	if (result.disabled === false) {
 		delete result.disabled;
 	}

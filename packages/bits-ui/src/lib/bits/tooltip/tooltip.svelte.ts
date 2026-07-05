@@ -287,8 +287,6 @@ export class TooltipRootState {
 				this.#wasOpenDelayed = true;
 				this.opts.open.current = true;
 			},
-			// resolved lazily on `start()` so we don't need to watch `delayDuration`
-			// and recreate the timer whenever it changes
 			() => this.delayDuration ?? 0
 		);
 
@@ -476,8 +474,6 @@ export class TooltipTriggerState {
 	readonly root: TooltipRootState | null;
 	readonly tether: TooltipTetherState | null;
 	readonly attachment: RefAttachment;
-	// only read/written inside event handlers — no reactive consumers, so plain
-	// fields avoid a reactive cell per trigger
 	#isPointerDown = { current: false };
 	#hasPointerMoveOpened = false;
 	domContext: DOMContext;

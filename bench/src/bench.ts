@@ -1,20 +1,12 @@
 /**
- * Shared in-page measurement helpers. All timings use performance.now() and
- * treat "visible" as: element present, non-zero rect, then two rAFs (the
- * second rAF callback runs right before the frame after the paint we care
- * about is committed).
+ * Shared in-page measurement helpers.
  */
 
 export interface Scenario {
-	/** CDP CPU throttle rate applied while sampling (1 = none). */
 	cpuThrottle: number;
-	/** Number of samples the runner collects (after warmup). */
 	samples: number;
-	/** Warmup runs (not recorded). */
 	warmup: number;
-	/** Mount the scenario app. Resolves when ready to measure. */
 	setup: (target: HTMLElement) => Promise<void> | void;
-	/** Execute one sample, returns duration in ms. */
 	run: () => Promise<number>;
 }
 
@@ -30,7 +22,6 @@ export function raf(): Promise<void> {
 	return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
 
-/** rAF-polls until `fn` returns truthy. Throws after `timeout` ms. */
 export function waitFor(fn: () => unknown, timeout = 10_000): Promise<void> {
 	const start = performance.now();
 	return new Promise((resolve, reject) => {
@@ -74,7 +65,6 @@ export function pointerMove(el: Element, opts: { x: number; y: number }): void {
 	el.dispatchEvent(new PointerEvent("pointermove", init));
 }
 
-/** Force a synchronous style + layout flush. */
 export function forceLayout(): number {
 	return document.body.offsetHeight;
 }
@@ -87,9 +77,7 @@ export function makeItems(n: number): { value: string; label: string }[] {
 }
 
 /**
- * Measures one open/close cycle:
- * activate() -> content visible -> painted = recorded duration,
- * then closes via `close()` and waits for teardown (not recorded).
+ * Measures one open/close cycle.
  */
 export async function measureOpenCycle(opts: {
 	activate: () => void;
@@ -109,8 +97,7 @@ export async function measureOpenCycle(opts: {
 }
 
 /**
- * Measures mount cost of a component: `iterations` mount/unmount cycles,
- * each forcing style+layout after mount. Returns average ms per mount.
+ * Measures mount cost of a component.
  */
 export async function measureMount(opts: {
 	target: HTMLElement;
