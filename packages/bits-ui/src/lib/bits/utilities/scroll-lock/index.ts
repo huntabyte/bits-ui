@@ -16,11 +16,4 @@ export type ScrollLockProps = {
 	 * @default null
 	 */
 	restoreScrollDelay?: number | null;
-
-	/**
-	 * Whether to apply `pointer-events: none` to the body while locked.
-	 *
-	 * @default () => true
-	 */
-	shouldBlockPointerEvents?: () => boolean;
 };
