@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { afterTick, boxWith, mergeProps } from "svelte-toolbelt";
+	import { afterTick } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { MenuSubContentStaticProps } from "../types.js";
 	import { MenuContentState } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";

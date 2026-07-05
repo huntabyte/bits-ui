@@ -8,8 +8,8 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
-	boxWith,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { on } from "svelte/events";
 import { backward, forward, next, prev } from "$lib/internal/arrays.js";
 import {
@@ -163,16 +163,16 @@ abstract class SelectBaseRootState {
 	setHighlightedToFirstCandidate(initial = false) {
 		this.setHighlightedNode(null);
 
-		let nodes = this.getCandidateNodes();
+		const nodes = this.getCandidateNodes();
 		if (!nodes.length) return;
 
-		// don't consider nodes that aren't visible within the viewport
+		// only consider nodes that are visible within the viewport — we want the
+		// first such node, so bail out of the scan as soon as we find it rather
+		// than measuring every candidate.
 		if (this.viewportNode) {
 			const viewportRect = this.viewportNode.getBoundingClientRect();
 
-			nodes = nodes.filter((node) => {
-				if (!this.viewportNode) return false;
-
+			for (const node of nodes) {
 				const nodeRect = node.getBoundingClientRect();
 
 				const isNodeFullyVisible =
@@ -181,8 +181,12 @@ abstract class SelectBaseRootState {
 					nodeRect.bottom <= viewportRect.bottom &&
 					nodeRect.top >= viewportRect.top;
 
-				return isNodeFullyVisible;
-			});
+				if (isNodeFullyVisible) {
+					this.setHighlightedNode(node, initial);
+					return;
+				}
+			}
+			return;
 		}
 
 		this.setHighlightedNode(nodes[0]!, initial);
@@ -234,6 +238,21 @@ abstract class SelectBaseRootState {
 	getBitsAttr: typeof selectAttrs.getAttr = (part) => {
 		return selectAttrs.getAttr(part, this.isCombobox ? "combobox" : undefined);
 	};
+
+	#initialHighlightPending = false;
+
+	/**
+	 * Defers `fn` to after the next tick, coalescing calls so that many items
+	 * mounting in the same tick schedule a single callback instead of one each.
+	 */
+	protected scheduleInitialHighlight(fn: () => void) {
+		if (this.#initialHighlightPending) return;
+		this.#initialHighlightPending = true;
+		afterTick(() => {
+			this.#initialHighlightPending = false;
+			fn();
+		});
+	}
 }
 
 interface SelectSingleRootStateOpts
@@ -297,7 +316,7 @@ export class SelectSingleRootState extends SelectBaseRootState {
 	}
 
 	setInitialHighlightedNode() {
-		afterTick(() => {
+		this.scheduleInitialHighlight(() => {
 			if (
 				this.highlightedNode &&
 				this.domContext.getDocument().contains(this.highlightedNode)
@@ -361,7 +380,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 
 	setInitialHighlightedNode() {
-		afterTick(() => {
+		this.scheduleInitialHighlight(() => {
 			if (!this.domContext) return;
 			if (
 				this.highlightedNode &&
@@ -1130,12 +1149,16 @@ export class SelectItemState {
 		() => this.root.highlightedValue === this.opts.value.current
 	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
-	mounted = $state(false);
 
 	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
-		this.attachment = attachRef(opts.ref);
+		// the mount half of the attachment stands in for a per-item `Mounted`
+		// component: whenever an item mounts, ask the root to (re)establish the
+		// initial highlight (the root coalesces these into one deferred pass).
+		this.attachment = attachRef(opts.ref, (node) => {
+			if (node) this.root.setInitialHighlightedNode();
+		});
 
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
@@ -1144,14 +1167,6 @@ export class SelectItemState {
 				this.opts.onUnhighlight.current();
 			}
 		});
-
-		watch(
-			() => this.mounted,
-			() => {
-				if (!this.mounted) return;
-				this.root.setInitialHighlightedNode();
-			}
-		);
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
@@ -1241,17 +1256,15 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.opts.value.current)
-					? "true"
-					: undefined,
+				// read the memoized deriveds (`isSelected`/`isHighlighted`) rather than
+				// root state directly so a highlight/value change only invalidates the
+				// props of the items whose state actually flipped, not every item.
+				"aria-selected": this.isSelected ? "true" : undefined,
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted":
-					this.root.highlightedValue === this.opts.value.current &&
-					!this.opts.disabled.current
-						? ""
-						: undefined,
-				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
+					this.isHighlighted && !this.opts.disabled.current ? "" : undefined,
+				"data-selected": this.isSelected ? "" : undefined,
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
 				onpointermove: this.onpointermove,

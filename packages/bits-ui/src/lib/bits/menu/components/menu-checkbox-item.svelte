@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { MenuCheckboxItemProps } from "../types.js";
 	import { MenuCheckboxGroupContext, MenuCheckboxItemState } from "../menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -26,6 +27,7 @@
 
 	const group = MenuCheckboxGroupContext.getOr(null);
 
+	// svelte-ignore state_referenced_locally
 	if (group && value) {
 		if (group.opts.value.current.includes(value)) {
 			checked = true;

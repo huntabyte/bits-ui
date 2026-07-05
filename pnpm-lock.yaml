@@ -102,6 +102,28 @@ importers:
         specifier: ^4.37.1
         version: 4.37.1(@cloudflare/workers-types@4.20250913.0)
 
+  bench:
+    dependencies:
+      bits-ui:
+        specifier: workspace:*
+        version: link:../packages/bits-ui
+    devDependencies:
+      '@sveltejs/vite-plugin-svelte':
+        specifier: 'catalog:'
+        version: 6.2.0(svelte@5.46.4)(vite@7.1.5(@types/node@20.19.16)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
+      playwright:
+        specifier: 'catalog:'
+        version: 1.60.0
+      svelte:
+        specifier: 'catalog:'
+        version: 5.46.4
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.1.5(@types/node@20.19.16)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
+
   bundle-analyzer:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':

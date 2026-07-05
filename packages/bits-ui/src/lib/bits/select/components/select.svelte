@@ -1,7 +1,8 @@
 <script lang="ts">
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "$lib/internal/noop.js";
-	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { type WritableBox } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { SelectRootState } from "../select.svelte.js";
 	import type { SelectRootProps } from "../types.js";
 	import SelectHiddenInput from "./select-hidden-input.svelte";
@@ -43,6 +44,7 @@
 	let inputValue = $state("");
 
 	const rootState = SelectRootState.create({
+		// svelte-ignore state_referenced_locally
 		type,
 		value: boxWith(
 			() => value!,

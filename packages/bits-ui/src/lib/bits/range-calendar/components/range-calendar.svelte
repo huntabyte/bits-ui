@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { type DateValue } from "@internationalized/date";
 	import type { RangeCalendarRootProps } from "../types.js";
 	import { RangeCalendarRootState } from "../range-calendar.svelte.js";
@@ -50,7 +51,9 @@
 
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value?.start,
+		// svelte-ignore state_referenced_locally
 		minValue,
+		// svelte-ignore state_referenced_locally
 		maxValue,
 	});
 

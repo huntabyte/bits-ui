@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { DateRangePickerTriggerProps } from "../types.js";
 	import PopoverTrigger from "$lib/bits/popover/components/popover-trigger.svelte";
 	import { dateRangeFieldAttrs } from "$lib/bits/date-range-field/date-range-field.svelte.js";

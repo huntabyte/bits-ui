@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { TextSelectionLayerImplProps } from "./types.js";
 	import { TextSelectionLayerState } from "./use-text-selection-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -19,6 +19,7 @@
 		onPointerDown: boxWith(() => onPointerDown),
 		onPointerUp: boxWith(() => onPointerUp),
 		enabled: boxWith(() => enabled && preventOverflowTextSelection),
+		// svelte-ignore state_referenced_locally
 		ref,
 	});
 </script>

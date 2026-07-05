@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { ScrollAreaScrollbarAutoState } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
 	import ScrollAreaScrollbarVisible from "./scroll-area-scrollbar-visible.svelte";

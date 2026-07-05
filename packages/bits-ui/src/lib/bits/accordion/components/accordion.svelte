@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { type WritableBox, boxWith, mergeProps } from "svelte-toolbelt";
+	import { type WritableBox } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { AccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -38,6 +40,7 @@
 	);
 
 	const rootState = AccordionRootState.create({
+		// svelte-ignore state_referenced_locally
 		type,
 		value: boxWith(
 			() => value!,

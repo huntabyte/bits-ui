@@ -62,7 +62,7 @@ export type {
 	TimeOnInvalid,
 } from "./date/types.js";
 export type { WithChild, Without, WithChildren } from "$lib/internal/types.js";
-export { mergeProps } from "svelte-toolbelt";
+export { mergeProps } from "$lib/internal/merge-props.js";
 export { useId } from "$lib/internal/use-id.js";
 export * from "./attributes.js";
 export * from "./types.js";

@@ -2,9 +2,13 @@
 	import type { ScrollLockProps } from "./index.js";
 	import { BodyScrollLock } from "$lib/internal/body-scroll-lock.svelte.js";
 
-	let { preventScroll = true, restoreScrollDelay = null }: ScrollLockProps = $props();
+	let {
+		preventScroll = true,
+		restoreScrollDelay = null,
+		shouldBlockPointerEvents,
+	}: ScrollLockProps = $props();
 
 	if (preventScroll) {
-		new BodyScrollLock(preventScroll, () => restoreScrollDelay);
+		new BodyScrollLock(preventScroll, () => restoreScrollDelay, shouldBlockPointerEvents);
 	}
 </script>

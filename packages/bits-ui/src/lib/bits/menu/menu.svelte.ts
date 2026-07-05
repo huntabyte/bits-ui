@@ -1,6 +1,5 @@
 import {
 	afterTick,
-	mergeProps,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
@@ -9,9 +8,10 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	simpleBox,
-	boxWith,
 	type ReadableBox,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
+import { mergeProps } from "$lib/internal/merge-props.js";
 import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,
@@ -1333,14 +1333,15 @@ export class MenuItemState {
 		this.#isPointerDown = true;
 	}
 
-	readonly props = $derived.by(() =>
-		mergeProps(this.item.props, {
-			onclick: this.onclick,
-			onpointerdown: this.onpointerdown,
-			onpointerup: this.onpointerup,
-			onkeydown: this.onkeydown,
-		})
-	);
+	readonly props = $derived.by(() => ({
+		// key sets are disjoint (and contain no class/style/hidden/disabled),
+		// so a plain spread is equivalent to mergeProps at a fraction of the cost
+		...this.item.props,
+		onclick: this.onclick,
+		onpointerdown: this.onpointerdown,
+		onpointerup: this.onpointerup,
+		onkeydown: this.onkeydown,
+	}));
 }
 
 interface MenuSubTriggerStateOpts

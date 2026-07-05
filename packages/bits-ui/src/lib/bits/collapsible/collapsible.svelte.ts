@@ -1,10 +1,10 @@
 import {
 	afterTick,
 	attachRef,
-	boxWith,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import {
 	createBitsAttrs,

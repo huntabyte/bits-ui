@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { untrack, type Snippet } from "svelte";
 	import type { NavigationMenuContentProps } from "../types.js";
 	import {
@@ -44,9 +45,11 @@
 				}
 			),
 		},
+		// svelte-ignore state_referenced_locally
 		itemState
 	);
 
+	// svelte-ignore state_referenced_locally
 	if (itemState) {
 		NavigationMenuItemContext.set(itemState);
 	}

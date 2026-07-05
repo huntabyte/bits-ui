@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { boxWith, mergeProps, type WritableBox } from "svelte-toolbelt";
+	import { type WritableBox } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { SliderRootProps } from "../types.js";
 	import { SliderRootState } from "../slider.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -83,6 +85,7 @@
 		autoSort: boxWith(() => autoSort),
 		orientation: boxWith(() => orientation),
 		thumbPositioning: boxWith(() => thumbPositioning),
+		// svelte-ignore state_referenced_locally
 		type,
 		trackPadding: boxWith(() => trackPadding),
 	});

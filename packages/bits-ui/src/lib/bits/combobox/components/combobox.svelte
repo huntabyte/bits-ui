@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { type WritableBox } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { ComboboxRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";

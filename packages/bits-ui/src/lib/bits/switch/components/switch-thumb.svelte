@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { SwitchThumbProps } from "../types.js";
 	import { SwitchThumbState } from "../switch.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";

@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { afterSleep, boxWith, mergeProps } from "svelte-toolbelt";
+	import { afterSleep } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { AlertDialogContentProps } from "../types.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
@@ -38,6 +40,16 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+
+	/**
+	 * When an overlay is rendered it already blocks pointer interaction with the
+	 * rest of the page, so the scroll lock can skip the expensive
+	 * `pointer-events: none` body write (an inherited property — toggling it
+	 * forces a style recalculation of every element on the page).
+	 */
+	function shouldBlockPointerEvents() {
+		return contentState.root.overlayNode === null;
+	}
 </script>
 
 {#if contentState.shouldRender || forceMount}
@@ -83,14 +95,18 @@
 					>
 						{#if child}
 							{#if contentState.root.opts.open.current}
-								<ScrollLock {preventScroll} {restoreScrollDelay} />
+								<ScrollLock
+									{preventScroll}
+									{restoreScrollDelay}
+									{shouldBlockPointerEvents}
+								/>
 							{/if}
 							{@render child({
 								props: mergeProps(mergedProps, focusScopeProps),
 								...contentState.snippetProps,
 							})}
 						{:else}
-							<ScrollLock {preventScroll} />
+							<ScrollLock {preventScroll} {shouldBlockPointerEvents} />
 							<div {...mergeProps(mergedProps, focusScopeProps)}>
 								{@render children?.()}
 							</div>

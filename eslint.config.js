@@ -29,6 +29,7 @@ export default tseslint.config(
 		},
 		rules: {
 			"svelte/no-navigation-without-resolve": "off",
+			"svelte/no-unused-svelte-ignore": "off",
 		},
 	},
 	{

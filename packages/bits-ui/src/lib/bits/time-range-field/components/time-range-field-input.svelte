@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { TimeRangeFieldInputProps } from "../types.js";
 	import { TimeRangeFieldInputState } from "../time-range-field.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -26,6 +27,7 @@
 			),
 			name: boxWith(() => name),
 		},
+		// svelte-ignore state_referenced_locally
 		type
 	);
 

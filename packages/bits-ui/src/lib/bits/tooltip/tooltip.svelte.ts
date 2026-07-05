@@ -5,8 +5,8 @@ import {
 	type WritableBoxedValues,
 	type ReadableBoxedValues,
 	simpleBox,
-	boxWith,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { on } from "svelte/events";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
@@ -282,10 +282,15 @@ export class TooltipRootState {
 		this.provider = provider;
 		this.tether = opts.tether.current?.state ?? null;
 		this.registry = this.tether?.registry ?? new TooltipTriggerRegistryState();
-		this.#timerFn = new TimeoutFn(() => {
-			this.#wasOpenDelayed = true;
-			this.opts.open.current = true;
-		}, this.delayDuration ?? 0);
+		this.#timerFn = new TimeoutFn(
+			() => {
+				this.#wasOpenDelayed = true;
+				this.opts.open.current = true;
+			},
+			// resolved lazily on `start()` so we don't need to watch `delayDuration`
+			// and recreate the timer whenever it changes
+			() => this.delayDuration ?? 0
+		);
 
 		if (this.tether) {
 			this.tether.root = this;
@@ -305,17 +310,6 @@ export class TooltipRootState {
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
-
-		watch(
-			() => this.delayDuration,
-			() => {
-				if (this.delayDuration === undefined) return;
-				this.#timerFn = new TimeoutFn(() => {
-					this.#wasOpenDelayed = true;
-					this.opts.open.current = true;
-				}, this.delayDuration);
-			}
-		);
 
 		watch(
 			() => this.opts.open.current,
@@ -482,8 +476,10 @@ export class TooltipTriggerState {
 	readonly root: TooltipRootState | null;
 	readonly tether: TooltipTetherState | null;
 	readonly attachment: RefAttachment;
-	#isPointerDown = simpleBox(false);
-	#hasPointerMoveOpened = $state(false);
+	// only read/written inside event handlers — no reactive consumers, so plain
+	// fields avoid a reactive cell per trigger
+	#isPointerDown = { current: false };
+	#hasPointerMoveOpened = false;
 	domContext: DOMContext;
 	#transitCheckTimeout: number | null = null;
 	#mounted = false;
@@ -501,19 +497,11 @@ export class TooltipTriggerState {
 		this.attachment = attachRef(this.opts.ref, (v) => this.#register(v));
 
 		watch(
-			() => this.opts.id.current,
-			() => {
-				this.#register(this.opts.ref.current);
-			}
-		);
-		watch(
-			() => this.opts.payload.current,
-			() => {
-				this.#register(this.opts.ref.current);
-			}
-		);
-		watch(
-			() => this.opts.disabled.current,
+			[
+				() => this.opts.id.current,
+				() => this.opts.payload.current,
+				() => this.opts.disabled.current,
+			],
 			() => {
 				this.#register(this.opts.ref.current);
 			}

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { TooltipContentProps } from "../types.js";
 	import { TooltipContentState } from "../tooltip.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -85,7 +86,11 @@
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps: finalWrapperProps,
+					...contentState.snippetProps,
+				})}
 			{:else}
 				<div {...finalWrapperProps}>
 					<div {...finalProps}>
@@ -122,7 +127,11 @@
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps: finalWrapperProps,
+					...contentState.snippetProps,
+				})}
 			{:else}
 				<div {...finalWrapperProps}>
 					<div {...finalProps}>

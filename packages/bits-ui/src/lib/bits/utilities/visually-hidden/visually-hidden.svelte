@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { VisuallyHiddenProps } from "./types.js";
 	import type { StyleProperties } from "$lib/shared/index.js";
 

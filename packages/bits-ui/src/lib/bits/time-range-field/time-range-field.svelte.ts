@@ -1,12 +1,12 @@
 import type { Time } from "@internationalized/date";
 import {
-	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { TimeFieldRootState } from "../time-field/time-field.svelte.js";
 import { TimeFieldInputState } from "../time-field/time-field.svelte.js";

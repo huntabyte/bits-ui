@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { ScrollAreaScrollbarProps } from "../types.js";
 	import { ScrollAreaScrollbarState } from "../scroll-area.svelte.js";
 	import ScrollAreaScrollbarAuto from "./scroll-area-scrollbar-auto.svelte";

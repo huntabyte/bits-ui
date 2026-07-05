@@ -2,7 +2,6 @@ import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import {
 	type WritableBox,
-	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
@@ -10,6 +9,7 @@ import {
 	type WritableBoxedValues,
 	simpleBox,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";

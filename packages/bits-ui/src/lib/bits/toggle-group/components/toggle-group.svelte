@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { type WritableBox } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupRootProps } from "../types.js";
 	import { ToggleGroupRootState } from "../toggle-group.svelte.js";
@@ -53,6 +54,7 @@
 		loop: boxWith(() => loop),
 		orientation: boxWith(() => orientation),
 		rovingFocus: boxWith(() => rovingFocus),
+		// svelte-ignore state_referenced_locally
 		type,
 		ref: boxWith(
 			() => ref,

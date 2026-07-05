@@ -1,0 +1,21 @@
+{
+	"name": "@bits-ui/bench",
+	"description": "Performance benchmarks for Bits UI floating components.",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"bench": "node runner.mjs"
+	},
+	"dependencies": {
+		"bits-ui": "workspace:*"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "catalog:",
+		"playwright": "catalog:",
+		"svelte": "catalog:",
+		"typescript": "catalog:",
+		"vite": "catalog:"
+	},
+	"sideEffects": false
+}
