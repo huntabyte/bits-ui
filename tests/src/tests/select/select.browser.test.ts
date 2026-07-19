@@ -1381,21 +1381,21 @@ describe("select - item-aligned", () => {
 		window.scrollTo(0, 0);
 
 		try {
-			const t = await openAligned();
+			const t = await openAligned({ contentProps: { preventScroll: false } });
 			const wrapper = await waitForPositionedWrapper();
 			const initialHeight = parseFloat(wrapper.style.height);
 
 			window.scrollTo(0, 240);
 
-			await vi.waitFor(() => {
-				const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
-				const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
-				const triggerMiddle = triggerRect.top + triggerRect.height / 2;
-				const itemMiddle = itemRect.top + itemRect.height / 2;
+			// The unlocked portal is document-positioned, so it follows page scroll in the
+			// same rendering step without waiting for requestAnimationFrame.
+			const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+			const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
+			const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+			const itemMiddle = itemRect.top + itemRect.height / 2;
 
-				expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
-				expect(parseFloat(wrapper.style.height)).toBe(initialHeight);
-			});
+			expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+			expect(parseFloat(wrapper.style.height)).toBe(initialHeight);
 
 			await expectExists(t.getContent());
 			await expect.element(t.openBinding).toHaveTextContent("true");
@@ -1403,6 +1403,35 @@ describe("select - item-aligned", () => {
 			document.body.style.minHeight = previousMinHeight;
 			window.scrollTo(0, 0);
 		}
+	});
+
+	it("should match Radix page scroll locking when preventScroll is enabled", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned(
+			{ value: "20", contentProps: { preventScroll: true } },
+			manyItems
+		);
+		const wrapper = await waitForPositionedWrapper();
+
+		await vi.waitFor(() => {
+			expect(document.body.style.overflow).toBe("hidden");
+		});
+		expect(wrapper.style.position).toBe("fixed");
+
+		const viewportEl = t.viewport.element() as HTMLElement;
+		const initialViewportScroll = viewportEl.scrollTop;
+		viewportEl.scrollTop += 120;
+		viewportEl.dispatchEvent(new Event("scroll", { bubbles: true }));
+		expect(viewportEl.scrollTop).toBeGreaterThan(initialViewportScroll);
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+		await vi.waitFor(() => {
+			expect(document.body.style.overflow).not.toBe("hidden");
+		});
 	});
 
 	it("should not jump viewport scroll when hovering after scrolling item-aligned content", async () => {

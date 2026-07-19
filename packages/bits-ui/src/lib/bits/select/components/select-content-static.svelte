@@ -59,7 +59,12 @@
 	>
 		{#snippet content({ props: layerProps })}
 			{@const contentProps = mergeProps(restProps, layerProps, contentState.props, { style })}
-			<div use:mountWrapper data-select-content-wrapper style="position: fixed; display: flex; flex-direction: column;">
+			<div
+				use:mountWrapper
+				data-select-content-wrapper
+				style:position={preventScroll ? "fixed" : "absolute"}
+				style="display: flex; flex-direction: column;"
+			>
 				{#if child}
 					{@render child({ props: contentProps, ...contentState.snippetProps })}
 				{:else}

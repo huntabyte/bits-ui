@@ -62,8 +62,17 @@
 	>
 		{#snippet content({ props: layerProps })}
 			{@const contentProps = mergeProps(restProps, layerProps, contentState.props, { style })}
-			<!-- Radix-style two-div structure: fixed wrapper + content div that fills it -->
-			<div use:mountWrapper data-select-content-wrapper style="position: fixed; display: flex; flex-direction: column;">
+			<!--
+				Radix uses a fixed wrapper because Select always locks page scroll. When Bits
+				leaves scrolling enabled, use document positioning so the browser moves the
+				wrapper with the trigger without a frame-delayed scroll handler.
+			-->
+			<div
+				use:mountWrapper
+				data-select-content-wrapper
+				style:position={preventScroll ? "fixed" : "absolute"}
+				style="display: flex; flex-direction: column;"
+			>
 				{#if child}
 					{@render child({
 						props: contentProps,
