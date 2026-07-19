@@ -28,6 +28,7 @@ import { ratingGroup } from "./rating-group.api.js";
 import { scrollArea } from "./scroll-area.api.js";
 import { select } from "./select.api.js";
 import { separator } from "./separator.api.js";
+import { sidebar } from "./sidebar.api.js";
 import { slider } from "./slider.api.js";
 import { switchData } from "./switch.api.js";
 import { tabs } from "./tabs.api.js";
@@ -76,6 +77,7 @@ export const bits = [
 	"scroll-area",
 	"select",
 	"separator",
+	"sidebar",
 	"slider",
 	"switch",
 	"tabs",
@@ -128,6 +130,7 @@ export const apiSchemas: Record<Bit, APISchema[]> = {
 	"scroll-area": scrollArea,
 	select,
 	separator,
+	sidebar,
 	slider,
 	switch: switchData,
 	tabs,

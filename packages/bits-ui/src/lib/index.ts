@@ -32,6 +32,7 @@ export {
 	ScrollArea,
 	Select,
 	Separator,
+	Sidebar,
 	Slider,
 	Switch,
 	Tabs,

@@ -31,6 +31,7 @@ export { RatingGroup } from "./rating-group/index.js";
 export { ScrollArea } from "./scroll-area/index.js";
 export { Select } from "./select/index.js";
 export { Separator } from "./separator/index.js";
+export { Sidebar } from "./sidebar/index.js";
 export { Slider } from "./slider/index.js";
 export { Switch } from "./switch/index.js";
 export { Tabs } from "./tabs/index.js";

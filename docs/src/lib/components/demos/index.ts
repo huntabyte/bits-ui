@@ -71,6 +71,7 @@ export { default as RangeCalendarDemo } from "./range-calendar-demo.svelte";
 export { default as ScrollAreaDemo } from "./scroll-area-demo.svelte";
 export { default as ScrollAreaDemoCustom } from "./scroll-area-demo-custom.svelte";
 export { default as SeparatorDemo } from "./separator-demo.svelte";
+export { default as SidebarDemo } from "./sidebar-demo.svelte";
 export { default as SliderDemo } from "./slider-demo.svelte";
 export { default as SliderDemoMultiple } from "./slider-demo-multiple.svelte";
 export { default as SliderDemoTicks } from "./slider-demo-ticks.svelte";

@@ -31,6 +31,7 @@ export type * from "$lib/bits/rating-group/types.js";
 export type * from "$lib/bits/scroll-area/types.js";
 export type * from "$lib/bits/select/types.js";
 export type * from "$lib/bits/separator/types.js";
+export type * from "$lib/bits/sidebar/types.js";
 export type * from "$lib/bits/slider/types.js";
 export type * from "$lib/bits/switch/types.js";
 export type * from "$lib/bits/tabs/types.js";
