@@ -45,7 +45,6 @@
 	<Select.Portal>
 		<Select.Content
 			position="item-aligned"
-			preventScroll
 			class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 outline-hidden z-50 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3"
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">
