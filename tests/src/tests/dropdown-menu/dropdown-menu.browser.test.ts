@@ -119,6 +119,24 @@ it("should have bits data attrs", async () => {
 	await expect.element(subContent).toHaveAttribute(`data-dropdown-menu-sub-content`);
 });
 
+it("should not expose the group heading and separator as groups", async () => {
+	const t = await setup();
+	await t.trigger.click();
+
+	// The group itself is the only `group` in the menu — a heading is the group's
+	// accessible name (referenced by `aria-labelledby`, which works off the id, not the
+	// role), and a separator is a separator. Exposing either as `role="group"` puts empty
+	// groups into the a11y tree. This also matches `Select`/`Command`, whose group
+	// headings set no role at all.
+	await expect.element(page.getByTestId("group")).toHaveAttribute("role", "group");
+	await expect.element(page.getByTestId("separator")).toHaveAttribute("role", "separator");
+	expect(page.getByTestId("group-heading").element().hasAttribute("role")).toBe(false);
+
+	// The heading still names its group.
+	const headingId = page.getByTestId("group-heading").element().id;
+	await expect.element(page.getByTestId("group")).toHaveAttribute("aria-labelledby", headingId);
+});
+
 it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (key) => {
 	await openWithKbd({}, key);
 	await expect.element(page.getByTestId("item")).toHaveFocus();
