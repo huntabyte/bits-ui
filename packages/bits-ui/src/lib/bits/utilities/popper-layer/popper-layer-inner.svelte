@@ -122,6 +122,7 @@
 										dismissibleProps,
 										focusScopeProps,
 										{
+											id,
 											style: {
 												pointerEvents: contentPointerEvents,
 											},
