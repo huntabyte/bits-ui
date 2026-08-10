@@ -10,7 +10,7 @@ import ComboboxMultiTest from "./combobox-multi-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, pointerDown } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -219,6 +219,7 @@ describe("combobox - single", () => {
 
 	it("should close on outside click", async () => {
 		const t = await openSingle();
+		await pointerDown(t.outside);
 		await t.outside.click({ force: true });
 		await expectNotExists(t.getContent());
 	});
@@ -304,6 +305,36 @@ describe("combobox - single", () => {
 		await expectHighlighted(item0);
 		await userEvent.keyboard(kbd.ARROW_UP);
 		await expectHighlighted(item0);
+	});
+
+	it("should auto-highlight the first matching item after input when `autoHighlight` is true", async () => {
+		const t = setupSingle({ autoHighlight: true }, [
+			{ value: "1", label: "apple" },
+			{ value: "2", label: "banana" },
+			{ value: "3", label: "cherry" },
+			{ value: "4", label: "date" },
+		]);
+		await t.trigger.click({ force: true });
+		await expectExists(t.getContent());
+		const [item1, item2, item3, item4] = getItems(page.getByTestId);
+
+		await expectNotHighlighted([item1, item2, item3, item4]);
+		await t.user.type(t.input, "b");
+		await expectHighlighted(item2);
+		await expect.element(t.input).toHaveAttribute("aria-activedescendant", item2.element().id);
+		await t.user.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+		t.unmount();
+	});
+
+	it("should clear the auto-highlight when input filtering removes all items", async () => {
+		const t = await openSingle({ autoHighlight: true });
+
+		await t.user.type(t.input, "Z");
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+		await t.user.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+		t.unmount();
 	});
 
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
@@ -546,6 +577,7 @@ describe("combobox - multiple", () => {
 
 	it("should close on outside click", async () => {
 		const t = await openMultiple();
+		await pointerDown(t.outside);
 		await t.outside.click({ force: true });
 		await expectNotExists(t.getContent());
 	});

@@ -11,6 +11,14 @@ export type ComboboxBaseRootPropsWithoutHTML = Omit<
 	"autocomplete"
 > & {
 	/**
+	 * Whether the first matching item should be highlighted automatically as the
+	 * user filters the list.
+	 *
+	 * @default false
+	 */
+	autoHighlight?: boolean;
+
+	/**
 	 * A read-only value that can be used to programmatically
 	 * update the input value.
 	 *

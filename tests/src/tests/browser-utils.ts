@@ -86,6 +86,21 @@ export async function expectExists(loc: Locator) {
 	await expect.element(loc).toBeInTheDocument();
 }
 
+export async function pointerDown(loc: Locator, init: PointerEventInit = {}) {
+	loc.element().dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			cancelable: true,
+			button: 0,
+			buttons: 1,
+			pointerId: 1,
+			pointerType: "mouse",
+			isPrimary: true,
+			...init,
+		})
+	);
+}
+
 export async function focusAndExpectToHaveFocus(loc: Locator) {
 	(loc.element() as HTMLElement).focus();
 	await expect.element(loc).toHaveFocus();
