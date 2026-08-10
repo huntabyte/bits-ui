@@ -6,6 +6,7 @@
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 	import { createId } from "$lib/internal/create-id.js";
+	import SelectItemAlignedContent from "./select-item-aligned-content.svelte";
 
 	const uid = $props.id();
 
@@ -20,6 +21,7 @@
 		child,
 		preventScroll = false,
 		style,
+		position = "popper",
 		...restProps
 	}: SelectContentProps = $props();
 
@@ -31,12 +33,61 @@
 		),
 		onInteractOutside: boxWith(() => onInteractOutside),
 		onEscapeKeydown: boxWith(() => onEscapeKeydown),
+		position: boxWith(() => position),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+
+	// Svelte action to register the fixed wrapper node. Using use: instead of ref={fn}
+	// because the callback ref syntax doesn't trigger in this Svelte version.
+	function mountWrapper(node: HTMLElement) {
+		contentState.setContentWrapper(node);
+		return { destroy: () => contentState.setContentWrapper(null) };
+	}
 </script>
 
-{#if forceMount}
+{#if contentState.useItemAligned}
+	<SelectItemAlignedContent
+		{id}
+		ref={contentState.opts.ref}
+		enabled={contentState.root.opts.open.current}
+		shouldRender={contentState.shouldRender}
+		{preventScroll}
+		onEscapeKeydown={contentState.onEscapeKeydown}
+		onInteractOutside={contentState.onInteractOutside}
+		onOpenAutoFocus={contentState.onOpenAutoFocus}
+		onCloseAutoFocus={contentState.onCloseAutoFocus}
+		trapFocus={false}
+		loop={false}
+	>
+		{#snippet content({ props: layerProps })}
+			{@const contentProps = mergeProps(restProps, layerProps, contentState.props, { style })}
+			<!--
+				Radix uses a fixed wrapper because Select always locks page scroll. When Bits
+				leaves scrolling enabled, use document positioning so the browser moves the
+				wrapper with the trigger without a frame-delayed scroll handler.
+			-->
+			<div
+				use:mountWrapper
+				data-select-content-wrapper
+				style:position={preventScroll ? "fixed" : "absolute"}
+				style="display: flex; flex-direction: column;"
+			>
+				{#if child}
+					{@render child({
+						props: contentProps,
+						wrapperProps: {},
+						...contentState.snippetProps,
+					})}
+				{:else}
+					<div {...contentProps}>
+						{@render children?.()}
+					</div>
+				{/if}
+			</div>
+		{/snippet}
+	</SelectItemAlignedContent>
+{:else if forceMount}
 	<PopperLayerForceMount
 		{...mergedProps}
 		{...contentState.popperProps}

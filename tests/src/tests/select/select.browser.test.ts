@@ -16,6 +16,8 @@ import SelectValueChildrenMultiTest from "./select-value-children-multi-test.sve
 import SelectViewportTest from "./select-viewport-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
+import SelectItemAlignedTest from "./select-item-aligned-test.svelte";
+import type { SelectItemAlignedTestProps } from "./select-item-aligned-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -171,6 +173,17 @@ function setupValueChildrenMultiple(
 	};
 }
 
+// The dismissable layer attaches its outside-click listeners via setTimeout(1),
+// so a test that opens the menu and immediately clicks outside can race. Wait
+// until the layer has registered itself globally before returning.
+async function waitForDismissableReady() {
+	await vi.waitFor(() => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const layers = (globalThis as any).bitsDismissableLayers;
+		expect(layers && layers.size > 0).toBe(true);
+	});
+}
+
 async function openSingle(
 	props: Partial<SelectSingleTestProps> = {},
 	openWith: "click" | "type" | (string & {}) = "click",
@@ -187,6 +200,7 @@ async function openSingle(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissableReady();
 	const content = t.getContent();
 	const group = page.getByTestId("group");
 	const groupHeading = page.getByTestId("group-label");
@@ -213,6 +227,7 @@ async function openMultiple(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissableReady();
 	const content = t.getContent();
 	return {
 		...t,
@@ -1071,6 +1086,379 @@ describe("select - value", () => {
 		const hiddenInput = t.getHiddenInput();
 		expect(hiddenInput).not.toBeNull();
 		await expect.element(hiddenInput!).toHaveValue("");
+	});
+});
+
+////////////////////////////////////
+// ITEM-ALIGNED
+////////////////////////////////////
+describe("select - item-aligned", () => {
+	const alignedItems: Item[] = [
+		{ value: "1", label: "Apple" },
+		{ value: "2", label: "Banana" },
+		{ value: "3", label: "Cherry" },
+		{ value: "4", label: "Date" },
+		{ value: "5", label: "Elderberry" },
+	];
+
+	function setupAligned(
+		props: Partial<SelectItemAlignedTestProps> = {},
+		items: Item[] = alignedItems
+	) {
+		render(SelectItemAlignedTest, { items, ...props } as SelectItemAlignedTestProps);
+		return {
+			trigger: page.getByTestId("trigger"),
+			outside: page.getByTestId("outside"),
+			openBinding: page.getByTestId("open-binding"),
+			valueBinding: page.getByTestId("value-binding"),
+			getContent: () => page.getByTestId("content"),
+			viewport: page.getByTestId("viewport"),
+			// generateTestId(value) returns the value itself (no prefix)
+			getItem: (value: string) => page.getByTestId(value),
+		};
+	}
+
+	async function openAligned(
+		props: Partial<SelectItemAlignedTestProps> = {},
+		items: Item[] = alignedItems
+	) {
+		const t = setupAligned(props, items);
+		await expectNotExists(t.getContent());
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await waitForDismissableReady();
+		return t;
+	}
+
+	async function waitForPositionedWrapper() {
+		return await vi.waitFor(() => {
+			const el = document.querySelector<HTMLElement>("[data-select-content-wrapper]");
+			if (!el?.style.height || !el.style.top) throw new Error("wrapper not positioned yet");
+			return el;
+		});
+	}
+
+	it("should open on click", async () => {
+		await openAligned();
+	});
+
+	it.each([kbd.ARROW_DOWN, kbd.ARROW_UP])("should open on %s keydown", async (key) => {
+		const t = setupAligned();
+		await expectNotExists(t.getContent());
+		(t.trigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(key);
+		await expectExists(t.getContent());
+	});
+
+	it("should close on escape keydown", async () => {
+		const t = await openAligned();
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+	});
+
+	it("should close on outside click", async () => {
+		const t = await openAligned();
+		await t.outside.click();
+		await expectNotExists(t.getContent());
+	});
+
+	it("should select an item on click", async () => {
+		const t = await openAligned();
+		await t.getItem("2").click();
+		await expectNotExists(t.getContent());
+		await expect.element(t.valueBinding).toHaveTextContent("2");
+	});
+
+	it("should support keyboard navigation and selection", async () => {
+		const t = await openAligned();
+		(t.trigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ENTER);
+		await expectNotExists(t.getContent());
+		// some item was selected
+		await expect.element(t.valueBinding).not.toHaveTextContent("empty");
+	});
+
+	it("should highlight the pre-selected item on open", async () => {
+		const t = await openAligned({ value: "2" });
+		await expectHighlighted(t.getItem("2"));
+	});
+
+	it("should position against the first item when no value is selected", async () => {
+		const t = await openAligned();
+		await waitForPositionedWrapper();
+
+		const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+		const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
+		const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+		const itemMiddle = itemRect.top + itemRect.height / 2;
+
+		expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+		await expectHighlighted(t.getItem("1"));
+	});
+
+	it("should align the selected item middle to the trigger middle", async () => {
+		const t = await openAligned({ value: "3" });
+		await waitForPositionedWrapper();
+
+		const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+		const itemRect = (t.getItem("3").element() as HTMLElement).getBoundingClientRect();
+		const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+		const itemMiddle = itemRect.top + itemRect.height / 2;
+
+		expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+	});
+
+	it("should scroll a long item-aligned viewport to the selected item", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned({ value: "75" }, manyItems);
+		await waitForPositionedWrapper();
+
+		const viewportEl = t.viewport.element() as HTMLElement;
+		const itemRect = (t.getItem("75").element() as HTMLElement).getBoundingClientRect();
+		const viewportRect = viewportEl.getBoundingClientRect();
+
+		expect(viewportEl.scrollTop).toBeGreaterThan(0);
+		expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top - 1);
+		expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom + 1);
+		await expectHighlighted(t.getItem("75"));
+	});
+
+	it("should keep item-aligned portal size stable while scrolling the viewport", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned({ value: "20" }, manyItems);
+		const wrapper = await waitForPositionedWrapper();
+		const viewportEl = t.viewport.element() as HTMLElement;
+		const initialWrapperHeight = wrapper.getBoundingClientRect().height;
+		const initialViewportHeight = viewportEl.getBoundingClientRect().height;
+
+		for (const scrollTop of [80, 220, 420]) {
+			viewportEl.scrollTop = scrollTop;
+			viewportEl.dispatchEvent(new Event("scroll", { bubbles: true }));
+			await nextFrame();
+		}
+
+		expect(
+			Math.abs(wrapper.getBoundingClientRect().height - initialWrapperHeight)
+		).toBeLessThanOrEqual(1);
+		expect(
+			Math.abs(viewportEl.getBoundingClientRect().height - initialViewportHeight)
+		).toBeLessThanOrEqual(1);
+	});
+
+	it("should match portal width to the trigger width", async () => {
+		// Need a pre-selected value so #position() has a selectedItemNode to align against.
+		const t = await openAligned({ value: "2" });
+		const triggerEl = t.trigger.element() as HTMLElement;
+		const triggerWidth = triggerEl.getBoundingClientRect().width;
+		const wrapper = await waitForPositionedWrapper();
+		const wrapperWidth = parseFloat(wrapper.style.width);
+		expect(Math.abs(wrapperWidth - triggerWidth)).toBeLessThanOrEqual(1);
+	});
+
+	it("should prevent immediate re-selection when pointer barely moves after trigger click", async () => {
+		const t = await openAligned({ value: "1" });
+		// Menu is open with item-1 pre-selected. The content is positioned so the
+		// selected item overlaps the trigger. Simulate a quick pointerup at the same
+		// location (≤10px delta) — the 10px threshold guard should preventDefault,
+		// blocking item selection and keeping the menu open.
+		const triggerEl = t.trigger.element() as HTMLElement;
+		const rect = triggerEl.getBoundingClientRect();
+		const cx = Math.round(rect.left + rect.width / 2);
+		const cy = Math.round(rect.top + rect.height / 2);
+
+		// Fire pointerup at the same coords as the click that opened the menu.
+		document.dispatchEvent(
+			new PointerEvent("pointerup", {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "mouse",
+				clientX: cx,
+				clientY: cy,
+			})
+		);
+
+		await nextFrame();
+		await nextFrame();
+
+		// Menu should still be open and selected value unchanged
+		await expectExists(t.getContent());
+		await expect.element(t.valueBinding).toHaveTextContent("1");
+	});
+
+	it("should select an item when pointer drags from trigger to item (>10px move)", async () => {
+		const t = setupAligned({ value: "1" });
+		const triggerEl = t.trigger.element() as HTMLElement;
+		const rect = triggerEl.getBoundingClientRect();
+		const cx = Math.round(rect.left + rect.width / 2);
+		const cy = Math.round(rect.top + rect.height / 2);
+
+		// Dispatch only pointerdown (not a full click) so the menu opens and the
+		// threshold mechanism is armed but hasn't fired yet.
+		triggerEl.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "mouse",
+				button: 0,
+				clientX: cx,
+				clientY: cy,
+			})
+		);
+		await expectExists(t.getContent());
+		// Wait for the content $effect to register the document handlers
+		await nextFrame();
+
+		// Move pointer more than 10px — threshold allows selection on pointerup
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+				clientX: cx,
+				clientY: cy + 20,
+			})
+		);
+
+		// pointerup on item "3" (Cherry). bubbles:true ensures the capture handler
+		// on document fires first (delta>10 → no preventDefault), then the item's
+		// onpointerup handler fires and calls handleSelect().
+		const itemEl = t.getItem("3").element() as HTMLElement;
+		itemEl.dispatchEvent(
+			new PointerEvent("pointerup", {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "mouse",
+				clientX: cx,
+				clientY: cy + 20,
+			})
+		);
+
+		await nextFrame();
+		await nextFrame();
+
+		await expect.element(t.valueBinding).toHaveTextContent("3");
+	});
+
+	it("should close on resize", async () => {
+		const t = await openAligned();
+
+		window.dispatchEvent(new Event("resize"));
+		await nextFrame();
+
+		await expectNotExists(t.getContent());
+	});
+
+	it("should stay open when the page scrolls with portalled content", async () => {
+		const previousMinHeight = document.body.style.minHeight;
+		document.body.style.minHeight = "2000px";
+		window.scrollTo(0, 0);
+
+		try {
+			const t = await openAligned({ value: "2" });
+
+			window.scrollTo(0, 240);
+			for (let i = 0; i < 3; i++) {
+				await nextFrame();
+			}
+
+			await expectExists(t.getContent());
+			await expect.element(t.openBinding).toHaveTextContent("true");
+		} finally {
+			document.body.style.minHeight = previousMinHeight;
+			window.scrollTo(0, 0);
+		}
+	});
+
+	it("should move the item-aligned portal with the trigger on page scroll", async () => {
+		const previousMinHeight = document.body.style.minHeight;
+		document.body.style.minHeight = "2000px";
+		window.scrollTo(0, 0);
+
+		try {
+			const t = await openAligned({ contentProps: { preventScroll: false } });
+			const wrapper = await waitForPositionedWrapper();
+			const initialHeight = parseFloat(wrapper.style.height);
+
+			window.scrollTo(0, 240);
+
+			// The unlocked portal is document-positioned, so it follows page scroll in the
+			// same rendering step without waiting for requestAnimationFrame.
+			const triggerRect = (t.trigger.element() as HTMLElement).getBoundingClientRect();
+			const itemRect = (t.getItem("1").element() as HTMLElement).getBoundingClientRect();
+			const triggerMiddle = triggerRect.top + triggerRect.height / 2;
+			const itemMiddle = itemRect.top + itemRect.height / 2;
+
+			expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
+			expect(parseFloat(wrapper.style.height)).toBe(initialHeight);
+
+			await expectExists(t.getContent());
+			await expect.element(t.openBinding).toHaveTextContent("true");
+		} finally {
+			document.body.style.minHeight = previousMinHeight;
+			window.scrollTo(0, 0);
+		}
+	});
+
+	it("should match Radix page scroll locking when preventScroll is enabled", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned(
+			{ value: "20", contentProps: { preventScroll: true } },
+			manyItems
+		);
+		const wrapper = await waitForPositionedWrapper();
+
+		await vi.waitFor(() => {
+			expect(document.body.style.overflow).toBe("hidden");
+		});
+		expect(wrapper.style.position).toBe("fixed");
+
+		const viewportEl = t.viewport.element() as HTMLElement;
+		const initialViewportScroll = viewportEl.scrollTop;
+		viewportEl.scrollTop += 120;
+		viewportEl.dispatchEvent(new Event("scroll", { bubbles: true }));
+		expect(viewportEl.scrollTop).toBeGreaterThan(initialViewportScroll);
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+		await vi.waitFor(() => {
+			expect(document.body.style.overflow).not.toBe("hidden");
+		});
+	});
+
+	it("should not jump viewport scroll when hovering after scrolling item-aligned content", async () => {
+		const manyItems = Array.from({ length: 80 }, (_, index) => ({
+			value: String(index + 1),
+			label: `Item ${index + 1}`,
+		}));
+		const t = await openAligned({}, manyItems);
+		await waitForPositionedWrapper();
+
+		const viewportEl = t.viewport.element() as HTMLElement;
+		viewportEl.scrollTop = 420;
+		viewportEl.dispatchEvent(new Event("scroll", { bubbles: true }));
+		await nextFrame();
+
+		const scrollTopAfterScroll = viewportEl.scrollTop;
+		const item30 = t.getItem("30").element() as HTMLElement;
+		item30.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+			})
+		);
+		await nextFrame();
+
+		expect(Math.abs(viewportEl.scrollTop - scrollTopAfterScroll)).toBeLessThanOrEqual(1);
+		await expectHighlighted(t.getItem("30"));
 	});
 });
 
