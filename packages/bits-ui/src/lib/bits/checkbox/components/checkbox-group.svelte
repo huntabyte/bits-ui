@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { CheckboxGroupProps } from "../types.js";
 	import { CheckboxGroupState } from "../checkbox.svelte.js";
 	import { noop } from "$lib/internal/noop.js";

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { FocusScopeImplProps } from "./types.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { FocusScope } from "./focus-scope.svelte.js";
@@ -17,9 +17,11 @@
 	const focusScopeState = FocusScope.use({
 		enabled: boxWith(() => enabled),
 		trap: boxWith(() => trapFocus),
+		// svelte-ignore state_referenced_locally
 		loop: loop,
 		onCloseAutoFocus: boxWith(() => onCloseAutoFocus),
 		onOpenAutoFocus: boxWith(() => onOpenAutoFocus),
+		// svelte-ignore state_referenced_locally
 		ref,
 	});
 </script>

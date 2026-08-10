@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { DateValue } from "@internationalized/date";
 	import { DateRangePickerRootState } from "../date-range-picker.svelte.js";
 	import type { DateRangePickerRootProps } from "../types.js";
@@ -82,6 +83,7 @@
 		}
 	);
 
+	// svelte-ignore state_referenced_locally
 	const defaultPlaceholder = getDefaultDate({
 		granularity,
 		defaultValue: value?.start,

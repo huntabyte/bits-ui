@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Date Picker composes the DateField, Popover, and Calendar components
 	import { watch } from "runed";
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { DateValue } from "@internationalized/date";
 	import { DatePickerRootState } from "../date-picker.svelte.js";
 	import type { DatePickerRootProps } from "../types.js";
@@ -50,6 +50,7 @@
 		yearFormat = "numeric",
 	}: DatePickerRootProps = $props();
 
+	// svelte-ignore state_referenced_locally
 	const defaultPlaceholder = getDefaultDate({
 		granularity,
 		defaultValue: value,

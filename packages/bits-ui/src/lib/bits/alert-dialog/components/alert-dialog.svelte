@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { AlertDialogRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
 	import { DialogRootState } from "$lib/bits/dialog/dialog.svelte.js";

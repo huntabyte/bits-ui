@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import ScrollLock from "../scroll-lock/scroll-lock.svelte";
 	import type { PopperLayerImplProps } from "./types.js";
 	import PopperContent from "./popper-content.svelte";

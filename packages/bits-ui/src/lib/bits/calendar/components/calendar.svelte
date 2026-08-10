@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { type DateValue } from "@internationalized/date";
 	import { CalendarRootState } from "../calendar.svelte.js";
 	import type { CalendarRootProps } from "../types.js";
@@ -41,6 +42,7 @@
 		...restProps
 	}: CalendarRootProps = $props();
 
+	// svelte-ignore state_referenced_locally
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value,
 		minValue,

@@ -7,7 +7,12 @@ import PopoverForceMountTest, {
 	type PopoverForceMountTestProps,
 } from "./popover-force-mount-test.svelte";
 import PopoverSiblingsTest from "./popover-siblings-test.svelte";
-import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+	waitForDismissableLayerReady,
+} from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 import PopoverMultipleTriggersTest from "./popover-multiple-triggers-test.svelte";
 import PopoverOverlayTest from "./popover-overlay-test.svelte";
@@ -362,17 +367,25 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 });
 
 it("should correctly handle focus when closing one popover by clicking another popover's trigger", async () => {
+	window.scrollTo(0, 0);
 	render(PopoverSiblingsTest);
+
 	await page.getByTestId("open-1").click();
 	await expectExists(page.getByTestId("content-1"));
+	await waitForDismissableLayerReady(page.getByTestId("content-1"));
+
 	await page.getByTestId("open-2").click();
-	await expectNotExists(page.getByTestId("content-1"));
 	await expectExists(page.getByTestId("content-2"));
+	await expectNotExists(page.getByTestId("content-1"));
+	await waitForDismissableLayerReady(page.getByTestId("content-2"));
 	await expect.element(page.getByTestId("close-2")).toHaveFocus();
+
 	await page.getByTestId("open-3").click();
-	await expectNotExists(page.getByTestId("content-2"));
 	await expectExists(page.getByTestId("content-3"));
+	await expectNotExists(page.getByTestId("content-2"));
+	await waitForDismissableLayerReady(page.getByTestId("content-3"));
 	await expect.element(page.getByTestId("close-3")).toHaveFocus();
+
 	await page.getByTestId("close-3").click();
 	await expectNotExists(page.getByTestId("content-3"));
 });

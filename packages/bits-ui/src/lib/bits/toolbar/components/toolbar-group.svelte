@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { type WritableBox } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupProps } from "../types.js";
 	import { ToolbarGroupState } from "../toolbar.svelte.js";
@@ -39,6 +40,7 @@
 	const groupState = ToolbarGroupState.create({
 		id: boxWith(() => id),
 		disabled: boxWith(() => disabled),
+		// svelte-ignore state_referenced_locally
 		type,
 		value: boxWith(
 			() => value!,

@@ -3,6 +3,7 @@ packages:
   - docs
   - tests
   - bundle-analyzer
+  - bench
 
 catalog:
   '@sveltejs/kit': 2.49.5

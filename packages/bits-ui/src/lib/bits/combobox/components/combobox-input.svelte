@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { ComboboxInputProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -23,6 +24,7 @@
 		clearOnDeselect: boxWith(() => clearOnDeselect),
 	});
 
+	// svelte-ignore state_referenced_locally
 	if (defaultValue) {
 		inputState.root.opts.inputValue.current = defaultValue;
 	}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { PresenceLayerImplProps } from "./types.js";
 	import { Presence } from "./presence.svelte.js";
 
@@ -7,6 +7,7 @@
 
 	const presenceState = new Presence({
 		open: boxWith(() => open),
+		// svelte-ignore state_referenced_locally
 		ref,
 	});
 </script>

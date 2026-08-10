@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { ArrowProps } from "./types.js";
 	import { useId } from "$lib/internal/use-id.js";
 

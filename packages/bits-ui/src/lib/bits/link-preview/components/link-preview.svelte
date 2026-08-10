@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { LinkPreviewRootProps } from "../types.js";
 	import { LinkPreviewRootState } from "../link-preview.svelte.js";
 	import { noop } from "$lib/internal/noop.js";

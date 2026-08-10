@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { FloatingContentState } from "../use-floating-layer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -50,6 +51,7 @@
 			wrapperId: boxWith(() => wrapperId),
 			customAnchor: boxWith(() => customAnchor),
 		},
+		// svelte-ignore state_referenced_locally
 		tooltip
 	);
 

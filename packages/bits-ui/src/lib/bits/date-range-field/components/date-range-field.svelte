@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import type { DateValue } from "@internationalized/date";
 	import { DateRangeFieldRootState } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldRootProps } from "../types.js";

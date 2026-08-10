@@ -73,28 +73,36 @@
 			aria-expanded={undefined}
 			aria-controls={undefined}
 		>
-			<Popover.Root>
-				<Popover.Trigger data-testid="popover-trigger-1">open</Popover.Trigger>
-				<Popover.Portal>
-					<Popover.Content data-testid="popover-content-1">Hello</Popover.Content>
-				</Popover.Portal>
-			</Popover.Root>
-			<Select.Root type="single">
-				<Select.Trigger data-testid="select-trigger-1">open</Select.Trigger>
-				<Select.Portal>
-					<Select.Content data-testid="select-content-1">
-						<Select.Item value="1">Hello</Select.Item>
-					</Select.Content>
-				</Select.Portal>
-			</Select.Root>
-			<Select.Root type="single">
-				<Select.Trigger data-testid="select-trigger-2">open</Select.Trigger>
-				<Select.Portal>
-					<Select.Content data-testid="select-content-2">
-						<Select.Item value="1">Hello</Select.Item>
-					</Select.Content>
-				</Select.Portal>
-			</Select.Root>
+			<div class="flex flex-col items-start gap-4 p-4">
+				<Popover.Root>
+					<Popover.Trigger data-testid="popover-trigger-1" class="min-h-10 min-w-40">
+						open popover
+					</Popover.Trigger>
+					<Popover.Portal>
+						<Popover.Content data-testid="popover-content-1">Hello</Popover.Content>
+					</Popover.Portal>
+				</Popover.Root>
+				<Select.Root type="single">
+					<Select.Trigger data-testid="select-trigger-1" class="min-h-10 min-w-40">
+						open select 1
+					</Select.Trigger>
+					<Select.Portal>
+						<Select.Content data-testid="select-content-1">
+							<Select.Item value="1">Hello</Select.Item>
+						</Select.Content>
+					</Select.Portal>
+				</Select.Root>
+				<Select.Root type="single">
+					<Select.Trigger data-testid="select-trigger-2" class="min-h-10 min-w-40">
+						open select 2
+					</Select.Trigger>
+					<Select.Portal>
+						<Select.Content data-testid="select-content-2">
+							<Select.Item value="1">Hello</Select.Item>
+						</Select.Content>
+					</Select.Portal>
+				</Select.Root>
+			</div>
 		</ContextMenu.Trigger>
 		<ContextMenu.Portal>
 			<ContextMenu.Content data-testid="context-content-0">

@@ -2,11 +2,11 @@ import { onDestroyEffect } from "svelte-toolbelt";
 import type { AnyFn } from "./types.js";
 
 export class TimeoutFn<T extends AnyFn> {
-	readonly #interval: number;
+	readonly #interval: number | (() => number);
 	readonly #cb: T;
 	#timer: number | null = null;
 
-	constructor(cb: T, interval: number) {
+	constructor(cb: T, interval: number | (() => number)) {
 		this.#cb = cb;
 		this.#interval = interval;
 
@@ -29,10 +29,12 @@ export class TimeoutFn<T extends AnyFn> {
 
 	start(...args: Parameters<T> | []) {
 		this.#clear();
+		const interval =
+			typeof this.#interval === "function" ? this.#interval() : this.#interval;
 		this.#timer = window.setTimeout(() => {
 			this.#timer = null;
 
 			this.#cb(...args);
-		}, this.#interval);
+		}, interval);
 	}
 }

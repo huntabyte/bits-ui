@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { DismissibleLayerImplProps } from "./types.js";
 	import { DismissibleLayerState } from "./use-dismissable-layer.svelte.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -22,6 +22,7 @@
 		enabled: boxWith(() => enabled),
 		onFocusOutside: boxWith(() => onFocusOutside),
 		isValidEvent: boxWith(() => isValidEvent),
+		// svelte-ignore state_referenced_locally
 		ref,
 	});
 </script>

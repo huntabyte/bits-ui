@@ -1,11 +1,6 @@
 import { SvelteMap } from "svelte/reactivity";
-import {
-	type Getter,
-	type ReadableBox,
-	afterTick,
-	boxWith,
-	onDestroyEffect,
-} from "svelte-toolbelt";
+import { type Getter, type ReadableBox, afterTick, onDestroyEffect } from "svelte-toolbelt";
+import { boxWith } from "./box.svelte.js";
 import type { Fn } from "./types.js";
 import { isIOS } from "./is.js";
 import { useId } from "./use-id.js";
@@ -20,6 +15,7 @@ export interface ScrollBodyOption {
 }
 /** A map of lock ids to their `locked` state. */
 const lockMap = new SvelteMap<string, boolean>();
+const pointerEventsMap = new SvelteMap<string, () => boolean>();
 
 let initialBodyStyle: string | null = $state<string | null>(null);
 let stopTouchMoveListener: Fn | null = null;
@@ -32,6 +28,21 @@ const anyLocked = boxWith(() => {
 	}
 	return false;
 });
+
+const anyPointerEventsNoneWanted = boxWith(() => {
+	if (!anyLocked.current) return false;
+	for (const [id, wantsPointerEventsNone] of pointerEventsMap) {
+		if (lockMap.get(id) && wantsPointerEventsNone()) return true;
+	}
+	return false;
+});
+
+function anyActiveLockWantsPointerEventsNone() {
+	for (const [id, wantsPointerEventsNone] of pointerEventsMap) {
+		if (lockMap.get(id) && wantsPointerEventsNone()) return true;
+	}
+	return false;
+}
 
 /**
  * We track the time we scheduled the cleanup to prevent race conditions
@@ -161,8 +172,23 @@ const bodyLockStackCount = new SharedState(() => {
 			 * focus/interaction.
 			 */
 			afterTick(() => {
-				document.body.style.pointerEvents = "none";
+				if (anyActiveLockWantsPointerEventsNone()) {
+					document.body.style.pointerEvents = "none";
+				}
 				document.body.style.overflow = "hidden";
+			});
+		}
+	);
+
+	watch(
+		() => anyPointerEventsNoneWanted.current,
+		() => {
+			if (!anyPointerEventsNoneWanted.current) return;
+			ensureInitialStyleCaptured();
+			afterTick(() => {
+				if (anyActiveLockWantsPointerEventsNone()) {
+					document.body.style.pointerEvents = "none";
+				}
 			});
 		}
 	);
@@ -193,7 +219,8 @@ export class BodyScrollLock {
 
 	constructor(
 		initialState?: boolean | undefined,
-		restoreScrollDelay: Getter<number | null> = () => null
+		restoreScrollDelay: Getter<number | null> = () => null,
+		shouldBlockPointerEvents: () => boolean = () => true
 	) {
 		this.#initialState = initialState;
 		this.#restoreScrollDelay = restoreScrollDelay;
@@ -214,6 +241,7 @@ export class BodyScrollLock {
 		this.#countState.ensureInitialStyleCaptured();
 
 		this.#countState.lockMap.set(this.#id, this.#initialState ?? false);
+		pointerEventsMap.set(this.#id, shouldBlockPointerEvents);
 
 		this.locked = boxWith(
 			() => this.#countState.lockMap.get(this.#id) ?? false,
@@ -222,6 +250,7 @@ export class BodyScrollLock {
 
 		onDestroyEffect(() => {
 			this.#countState.lockMap.delete(this.#id);
+			pointerEventsMap.delete(this.#id);
 
 			// if not the last lock, we don't need to do anything
 			if (isAnyLocked(this.#countState.lockMap)) return;

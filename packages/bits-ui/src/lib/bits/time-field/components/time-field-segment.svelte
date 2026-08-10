@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { mergeProps } from "$lib/internal/merge-props.js";
 	import { DateFieldSegmentState } from "../time-field.svelte.js";
 	import type { TimeFieldSegmentProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -14,7 +15,7 @@
 		part,
 		...restProps
 	}: TimeFieldSegmentProps = $props();
-
+	// svelte-ignore state_referenced_locally
 	const segmentState = DateFieldSegmentState.create(part, {
 		id: boxWith(() => id),
 		ref: boxWith(
