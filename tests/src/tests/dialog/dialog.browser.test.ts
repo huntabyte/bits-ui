@@ -748,3 +748,61 @@ describe("Scroll Lock", () => {
 		expect(document.body.style.paddingRight).toBe(initialPadding);
 	});
 });
+
+/**
+ * Regression for https://github.com/huntabyte/bits-ui/issues/2080
+ *
+ * DismissibleLayer used to schedule afterSleep(1) without cancelling on destroy.
+ * Unmounting (or remounting) within that window left a timer that read a destroyed
+ * $derived and could re-attach document pointerdown listeners to a dead instance.
+ */
+describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
+	function installDerivedInertCounter() {
+		const counts = { inert: 0 };
+		const orig = console.warn.bind(console);
+		console.warn = (...args: unknown[]) => {
+			const text = args.map(String).join(" ");
+			if (text.includes("derived_inert")) counts.inert += 1;
+			orig(...args);
+		};
+		return {
+			counts,
+			restore: () => {
+				console.warn = orig;
+			},
+		};
+	}
+
+	it("should not emit derived_inert when unmounted while open", async () => {
+		const counter = installDerivedInertCounter();
+		try {
+			const t = render(DialogTest, { open: true });
+			await expectExists(page.getByTestId("content"));
+			// Unmount while the layer is live — races the afterSleep(1) attach window.
+			await t.unmount();
+			await new Promise((r) => setTimeout(r, 50));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+
+	it("should not auto-dismiss on sequential open after close via trigger-cycle", async () => {
+		const counter = installDerivedInertCounter();
+		try {
+			await open();
+			await page.getByTestId("close").click();
+			await expectNotExists(page.getByTestId("content"));
+
+			// Immediate pointer reopen — stale document listeners used to fire
+			// onInteractOutside on the new layer (~10ms debounce) and close it.
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await new Promise((r) => setTimeout(r, 50));
+			await expectExists(page.getByTestId("content"));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+});
