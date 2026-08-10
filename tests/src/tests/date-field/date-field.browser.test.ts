@@ -1103,6 +1103,14 @@ describe("date field", () => {
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expect.element(hour).toHaveTextContent("19");
 	});
+
+	it("should not affect day/month segments when backspacing the year", async () => {
+		const t = setup({ value: new CalendarDate(2023, 10, 12) });
+		await t.year.click();
+		await userEvent.keyboard(kbd.BACKSPACE);
+		await expect.element(t.day).toHaveTextContent("12");
+		await expect.element(t.month).toHaveTextContent("10");
+	});
 });
 
 /**
