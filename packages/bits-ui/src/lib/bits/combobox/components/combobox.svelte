@@ -21,7 +21,7 @@
 		required = false,
 		items = [],
 		allowDeselect = true,
-		inputValue = "",
+		inputValue = $bindable(""),
 		children,
 	}: ComboboxRootProps = $props();
 
