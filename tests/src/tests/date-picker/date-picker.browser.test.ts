@@ -3,7 +3,12 @@ import { getTestKbd } from "../utils";
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import DatePickerTest, { type DatePickerTestProps } from "./date-picker-test.svelte";
-import { expectExists, expectNotClickableLoc, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotClickableLoc,
+	expectNotExists,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -62,6 +67,7 @@ async function open(props: DatePickerTestProps = {}, openWith: "click" | (string
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = page.getByTestId("content");
 	const calendar = page.getByTestId("calendar");
 

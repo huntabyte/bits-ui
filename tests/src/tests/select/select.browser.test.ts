@@ -14,7 +14,12 @@ import SelectValueChildTest from "./select-value-child-test.svelte";
 import type { SelectValueChildrenMultiTestProps } from "./select-value-children-multi-test.svelte";
 import SelectValueChildrenMultiTest from "./select-value-children-multi-test.svelte";
 import SelectViewportTest from "./select-viewport-test.svelte";
-import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -187,6 +192,7 @@ async function openSingle(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = t.getContent();
 	const group = page.getByTestId("group");
 	const groupHeading = page.getByTestId("group-label");
@@ -213,6 +219,7 @@ async function openMultiple(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = t.getContent();
 	return {
 		...t,
@@ -253,6 +260,7 @@ describe("select - single", () => {
 
 		await t.trigger.click();
 		await vi.waitFor(() => expect(observer.history.some((entry) => entry.starting)).toBe(true));
+		await waitForDismissibleLayer(t.getContent());
 
 		await t.outside.click({ force: true });
 		await vi.waitFor(() => expect(observer.history.some((entry) => entry.ending)).toBe(true));
