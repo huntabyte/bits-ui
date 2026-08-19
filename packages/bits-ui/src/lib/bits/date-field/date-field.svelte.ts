@@ -211,6 +211,7 @@ export class DateFieldRootState {
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
 	states = initSegmentStates();
+	#segmentClearedValue = false;
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
@@ -311,6 +312,10 @@ export class DateFieldRootState {
 
 		$effect(() => {
 			if (this.value.current === undefined) {
+				if (this.#segmentClearedValue) {
+					this.#segmentClearedValue = false;
+					return;
+				}
 				this.segmentValues = initializeSegmentValues(this.inferredGranularity);
 			}
 		});
@@ -680,6 +685,7 @@ export class DateFieldRootState {
 				})
 			);
 		} else {
+			this.#segmentClearedValue = true;
 			this.setValue(undefined);
 			this.segmentValues = newSegmentValues;
 		}
@@ -1253,7 +1259,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 			return mergedIntStr;
 		});
 
-		if (this.#pressedKeys.length === 4 || this.#pressedKeys.length === this.#backspaceCount) {
+		if (this.#pressedKeys.length === 4) {
 			moveToNext = true;
 		}
 
@@ -1274,15 +1280,16 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 				this.announcer.announce(null);
 				return null;
 			}
-			const str = prev.toString();
-			if (str.length === 1) {
+			// Use integer division to strip the last significant digit, so that
+			// zero-padded values like "0001" don't leave a confusing "000" remnant
+			// that causes subsequent typing to misinterpret the year.
+			const next = Math.floor(Number.parseInt(prev) / 10);
+			if (next === 0) {
 				this.announcer.announce(null);
 				return null;
 			}
-			const next = str.slice(0, -1);
 			this.announcer.announce(next);
-
-			return `${next}`;
+			return prependYearZeros(next);
 		});
 
 		if (moveToPrev) {
