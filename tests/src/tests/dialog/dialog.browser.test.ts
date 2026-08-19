@@ -806,3 +806,53 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 		}
 	});
 });
+
+/**
+ * TextSelectionLayer leaks a document `pointerdown` listener when a layer is
+ * rapidly toggled open/closed. `#pointerdown` read `this.opts.ref.current` — a
+ * writable `box` backed by a `$derived` owned by the (now destroyed) Content
+ * component — as its first statement, before any enabled/target check. Every
+ * document pointerdown then re-executed a destroyed derived and warned, for any
+ * click target anywhere in the app, forever.
+ *
+ * NB: `derived_inert` was added after the svelte version this repo pins, so this
+ * assertion only bites once the pinned svelte is new enough to emit it.
+ */
+describe("TextSelectionLayer teardown (derived_inert)", () => {
+	function installCounter() {
+		const counts = { inert: 0 };
+		const orig = console.warn.bind(console);
+		console.warn = (...args: unknown[]) => {
+			if (args.map(String).join(" ").includes("derived_inert")) counts.inert += 1;
+			orig(...args);
+		};
+		return {
+			counts,
+			restore: () => {
+				console.warn = orig;
+			},
+		};
+	}
+
+	it("should not emit derived_inert on document pointerdown after teardown", async () => {
+		const counter = installCounter();
+		try {
+			const t = render(DialogTest, { open: false });
+			for (let i = 0; i < 6; i++) {
+				await t.rerender({ open: i % 2 === 0 });
+				await new Promise((r) => setTimeout(r, 3));
+			}
+			await t.unmount();
+			await new Promise((r) => setTimeout(r, 100));
+
+			counter.counts.inert = 0;
+			document.body.dispatchEvent(
+				new PointerEvent("pointerdown", { bubbles: true, cancelable: true, button: 0 })
+			);
+			await new Promise((r) => setTimeout(r, 50));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+});
