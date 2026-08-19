@@ -131,6 +131,7 @@ interface CheckboxRootStateOpts
 			required: boolean;
 			readonly: boolean;
 			name: string | undefined;
+			form: string | undefined;
 			value: string | undefined;
 			type: HTMLButtonAttributes["type"];
 		}>,
@@ -296,6 +297,7 @@ export class CheckboxInputState {
 				disabled: this.root.trueDisabled,
 				required: this.root.trueRequired,
 				name: this.root.trueName,
+				form: this.root.opts.form.current,
 				value: this.root.opts.value.current,
 				readonly: this.root.trueReadonly,
 				onfocus: this.onfocus,

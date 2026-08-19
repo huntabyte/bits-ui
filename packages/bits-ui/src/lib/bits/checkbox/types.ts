@@ -43,6 +43,13 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		name?: any;
 
 		/**
+		 * The id of the form to link the hidden input to.
+		 *
+		 * @default undefined
+		 */
+		form?: string;
+
+		/**
 		 * The value of the checkbox used in form submission and to identify
 		 * the checkbox when in a `Checkbox.Group`. If not provided while in a
 		 * `Checkbox.Group`, the checkbox will use a random identifier.
