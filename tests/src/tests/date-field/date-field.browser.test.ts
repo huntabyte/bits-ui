@@ -650,6 +650,20 @@ describe("date field", () => {
 		await expect.element(hour).toHaveFocus();
 	});
 
+	it("should keep focus on the year after correcting its first digit", async () => {
+		const t = setup({ granularity: "hour" });
+		const { getHour } = getTimeSegments(page.getByTestId);
+
+		await t.year.click();
+		await userEvent.keyboard("1");
+		await userEvent.keyboard(kbd.BACKSPACE);
+		await userEvent.keyboard("2");
+
+		await expect.element(t.year).toHaveTextContent("2");
+		await expect.element(t.year).toHaveFocus();
+		await expect.element(getHour()).not.toHaveFocus();
+	});
+
 	it("should allow going from 12PM -> 12AM without changing the display hour to 0", async () => {
 		setup({
 			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),

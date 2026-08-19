@@ -1226,7 +1226,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 
 			if (prev === null) {
 				this.announcer.announce(num);
-				return `000${num}`;
+				return `${num}`;
 			}
 
 			const str = prev.toString() + num.toString();
@@ -1266,10 +1266,6 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 			moveToNext = true;
 		}
 
-		if (this.#backspaceCount > 0 && this.#pressedKeys.length === this.#backspaceCount) {
-			moveToNext = true;
-		}
-
 		if (moveToNext) {
 			moveToNextSegment(e, this.root.getFieldNode());
 		}
@@ -1295,7 +1291,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 			const next = str.slice(0, -1);
 			this.announcer.announce(Number.parseInt(next));
 			return next;
-	});
+		});
 
 		if (moveToPrev) {
 			moveToPrevSegment(e, this.root.getFieldNode());
