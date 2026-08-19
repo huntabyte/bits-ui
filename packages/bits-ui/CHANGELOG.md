@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.18.2
+
+### Patch Changes
+
+- fix(DismissibleLayer): cancel pending `afterSleep` timer on destroy to prevent `derived_inert` and stale document listeners (#2080) ([#2087](https://github.com/huntabyte/bits-ui/pull/2087))
+
+- fix(TextSelectionLayer): don't read the `ref` box in `#pointerdown` before the enabled check, which emitted `derived_inert` on every document pointerdown when a leaked listener outlived its component ([#2107](https://github.com/huntabyte/bits-ui/pull/2107))
+
+- fix(AlertDialog): pass `disabled` through to button in `AlertDialog.Cancel` ([#2068](https://github.com/huntabyte/bits-ui/pull/2068))
+
 ## 2.18.1
 
 ### Patch Changes
