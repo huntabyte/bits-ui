@@ -5,7 +5,12 @@ import { render } from "vitest-browser-svelte";
 import DateRangePickerTest, {
 	type DateRangePickerTestProps,
 } from "./date-range-picker-test.svelte";
-import { expectExists, expectNotClickableLoc, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotClickableLoc,
+	expectNotExists,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -101,6 +106,7 @@ async function open(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = page.getByTestId("content");
 	const calendar = page.getByTestId("calendar");
 
