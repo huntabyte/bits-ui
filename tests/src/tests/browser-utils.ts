@@ -86,6 +86,35 @@ export async function expectExists(loc: Locator) {
 	await expect.element(loc).toBeInTheDocument();
 }
 
+type RegisteredLayer = { opts: { ref: { current: HTMLElement | null } } };
+
+/**
+ * Waits until `loc`'s dismissible layer has attached its document listeners.
+ *
+ * `DismissibleLayerState` defers attachment by a tick so the interaction that opened the
+ * layer can't immediately dismiss it, so a `pointerdown` dispatched before that runs is
+ * silently ignored — the layer never sees it and nothing re-delivers it. Content being in
+ * the DOM is therefore not enough to assert on outside-click dismissal: on a loaded CI
+ * machine the deferred callback can land after the test's click, and the assertion fails
+ * for every retry because the load persists.
+ *
+ * Waits on the layer registry the implementation itself reads, so it stays correct however
+ * long attachment is delayed.
+ */
+export async function waitForDismissibleLayer(loc: Locator) {
+	const node = loc.element() as HTMLElement;
+	const getLayers = () =>
+		(globalThis as { bitsDismissableLayers?: Map<RegisteredLayer, unknown> })
+			.bitsDismissableLayers;
+
+	await vi.waitFor(() => {
+		const registered = [...(getLayers() ?? [])].some(
+			([layer]) => layer.opts.ref.current === node
+		);
+		expect(registered, "dismissible layer never attached its listeners").toBe(true);
+	});
+}
+
 export async function focusAndExpectToHaveFocus(loc: Locator) {
 	(loc.element() as HTMLElement).focus();
 	await expect.element(loc).toHaveFocus();

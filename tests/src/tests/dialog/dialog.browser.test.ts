@@ -5,7 +5,12 @@ import type { Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
-import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
@@ -30,6 +35,7 @@ async function open(props: DialogTestProps = {}, component: Component = DialogTe
 	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.click();
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	return t;
 }
 
@@ -800,6 +806,56 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 			await expectExists(page.getByTestId("content"));
 			await new Promise((r) => setTimeout(r, 50));
 			await expectExists(page.getByTestId("content"));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+});
+
+/**
+ * TextSelectionLayer leaks a document `pointerdown` listener when a layer is
+ * rapidly toggled open/closed. `#pointerdown` read `this.opts.ref.current` — a
+ * writable `box` backed by a `$derived` owned by the (now destroyed) Content
+ * component — as its first statement, before any enabled/target check. Every
+ * document pointerdown then re-executed a destroyed derived and warned, for any
+ * click target anywhere in the app, forever.
+ *
+ * NB: `derived_inert` was added after the svelte version this repo pins, so this
+ * assertion only bites once the pinned svelte is new enough to emit it.
+ */
+describe("TextSelectionLayer teardown (derived_inert)", () => {
+	function installCounter() {
+		const counts = { inert: 0 };
+		const orig = console.warn.bind(console);
+		console.warn = (...args: unknown[]) => {
+			if (args.map(String).join(" ").includes("derived_inert")) counts.inert += 1;
+			orig(...args);
+		};
+		return {
+			counts,
+			restore: () => {
+				console.warn = orig;
+			},
+		};
+	}
+
+	it("should not emit derived_inert on document pointerdown after teardown", async () => {
+		const counter = installCounter();
+		try {
+			const t = render(DialogTest, { open: false });
+			for (let i = 0; i < 6; i++) {
+				await t.rerender({ open: i % 2 === 0 });
+				await new Promise((r) => setTimeout(r, 3));
+			}
+			await t.unmount();
+			await new Promise((r) => setTimeout(r, 100));
+
+			counter.counts.inert = 0;
+			document.body.dispatchEvent(
+				new PointerEvent("pointerdown", { bubbles: true, cancelable: true, button: 0 })
+			);
+			await new Promise((r) => setTimeout(r, 50));
 			expect(counter.counts.inert).toBe(0);
 		} finally {
 			counter.restore();
