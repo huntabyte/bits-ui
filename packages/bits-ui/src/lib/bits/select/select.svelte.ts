@@ -5,6 +5,7 @@ import {
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
+	executeCallbacks,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
@@ -995,6 +996,9 @@ export class SelectContentState {
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
+	// set when the user scrolls the viewport by hand (wheel, touch, or holding a
+	// scroll button) and reset on close; shared by both scroll buttons
+	userHasScrolled = false;
 	domContext: DOMContext;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
@@ -1019,6 +1023,7 @@ export class SelectContentState {
 				if (this.root.opts.open.current) return;
 				this.root.contentIsPositioned = false;
 				this.isPositioned = false;
+				this.userHasScrolled = false;
 			}
 		);
 
@@ -1422,11 +1427,8 @@ export class SelectScrollButtonImplState {
 		this.attachment = attachRef(opts.ref);
 
 		watch([() => this.mounted], () => {
-			if (!this.mounted) {
-				this.isUserScrolling = false;
-				return;
-			}
-			if (this.isUserScrolling) return;
+			if (this.mounted) return;
+			this.isUserScrolling = false;
 		});
 
 		$effect(() => {
@@ -1455,6 +1457,7 @@ export class SelectScrollButtonImplState {
 
 	onpointerdown(_: BitsPointerEvent) {
 		if (this.autoScrollTimer !== null) return;
+		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
 			this.autoScrollTimer = this.content.domContext.setTimeout(
@@ -1511,10 +1514,21 @@ export class SelectScrollDownButtonState {
 		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
 		watch([() => this.root.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.root.viewportNode || !this.content.isPositioned) return;
+			const viewport = this.root.viewportNode;
+			if (!viewport || !this.content.isPositioned) return;
 			this.handleScroll(true);
 
-			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
+			const onUserScroll = () => {
+				this.content.userHasScrolled = true;
+			};
+
+			// not `scroll`: the realign below scrolls the viewport itself, so `scroll`
+			// fires for our own writes and cannot tell the user's gesture from ours
+			return executeCallbacks(
+				on(viewport, "scroll", () => this.handleScroll()),
+				on(viewport, "wheel", onUserScroll, { passive: true }),
+				on(viewport, "touchmove", onUserScroll, { passive: true })
+			);
 		});
 
 		/**
@@ -1541,6 +1555,9 @@ export class SelectScrollDownButtonState {
 					clearTimeout(this.scrollIntoViewTimer);
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
+					// this button remounts whenever the viewport leaves the bottom, which
+					// would otherwise realign onto the highlighted item mid-gesture
+					if (this.content.userHasScrolled) return;
 					const activeItem = this.root.highlightedNode;
 					if (!activeItem) return;
 					this.root.scrollHighlightedNodeIntoView(activeItem);
