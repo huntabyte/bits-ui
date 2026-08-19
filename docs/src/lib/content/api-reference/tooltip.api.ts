@@ -64,7 +64,7 @@ const disabled = defineBooleanProp({
 const disableCloseOnTriggerClick = defineBooleanProp({
 	default: false,
 	description:
-		"Whether or not to close the tooltip when pressing the escape key. This is useful when the content contains interactive elements.",
+		"Whether or not to prevent the tooltip from closing when the trigger is pressed with any pointer button.",
 });
 
 const skipDelayDuration = defineNumberProp({

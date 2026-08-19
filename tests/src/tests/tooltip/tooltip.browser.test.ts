@@ -770,3 +770,54 @@ it("tether: should close when pointer idles in the sibling gap", async () => {
 	await expectNotExists(page.getByTestId("content"));
 	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
 });
+
+function dispatchPointerDown(el: HTMLElement, button: number) {
+	el.dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			pointerType: "mouse",
+			button,
+		})
+	);
+}
+
+it("should close when the trigger is clicked", async () => {
+	const t = await open();
+	await t.trigger.click();
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should close when the trigger is right clicked", async () => {
+	const t = await open();
+	await t.trigger.click({ button: "right" });
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should close when the trigger is middle clicked", async () => {
+	const t = await open();
+	dispatchPointerDown(t.trigger.element() as HTMLElement, 1);
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should not close on non-primary button press when `disableCloseOnTriggerClick` is true", async () => {
+	const t = await open({ disableCloseOnTriggerClick: true });
+	dispatchPointerDown(t.trigger.element() as HTMLElement, 2);
+	await expect.element(t.content).toBeVisible();
+});
+
+it("should cancel a pending delayed open when the trigger is right clicked", async () => {
+	// offset the trigger so the real pointer (parked over the previous test's trigger)
+	// can't land on it and restart the delay timer mid-test
+	const t = setup({
+		delayDuration: 300,
+		triggerProps: { style: "margin: 200px 0 0 300px" },
+	});
+	const el = t.trigger.element() as HTMLElement;
+
+	el.dispatchEvent(new PointerEvent("pointerenter", { bubbles: true, pointerType: "mouse" }));
+	await expectNotExists(page.getByTestId("content"));
+
+	dispatchPointerDown(el, 2);
+	await new Promise<void>((resolve) => setTimeout(resolve, 500));
+	await expectNotExists(page.getByTestId("content"));
+});
