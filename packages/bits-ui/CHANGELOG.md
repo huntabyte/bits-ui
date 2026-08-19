@@ -1,5 +1,19 @@
 # bits-ui
 
+## 2.19.0
+
+### Minor Changes
+
+- feat(Checkbox): pass `form` to the hidden input ([#2089](https://github.com/huntabyte/bits-ui/pull/2089))
+
+### Patch Changes
+
+- fix(DateField): keep focus on the year while correcting its first digit ([#2100](https://github.com/huntabyte/bits-ui/pull/2100))
+
+- fix(Tooltip): close `Tooltip.Trigger` on `pointerdown` for any pointer button so right/middle click dismiss the tooltip and cancel a pending delayed open ([#2101](https://github.com/huntabyte/bits-ui/pull/2101))
+
+- fix(RadioGroup): don't select item on pointer-driven focus- #2098 ([#2098](https://github.com/huntabyte/bits-ui/pull/2098))
+
 ## 2.18.2
 
 ### Patch Changes
