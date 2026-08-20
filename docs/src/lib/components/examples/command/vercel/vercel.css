@@ -66,7 +66,7 @@
 		transition: all 150ms ease;
 		transition-property: none;
 
-		&[data-selected] {
+		&[data-highlighted] {
 			background: var(--grayA3);
 			color: var(--gray12);
 		}

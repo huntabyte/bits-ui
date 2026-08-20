@@ -63,7 +63,7 @@
 		transition: all 150ms ease;
 		transition-property: none;
 
-		&[data-selected] {
+		&[data-highlighted] {
 			background: var(--blue9);
 			color: #ffffff;
 
