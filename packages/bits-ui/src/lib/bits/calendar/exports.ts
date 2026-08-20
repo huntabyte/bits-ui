@@ -12,6 +12,8 @@ export { default as MonthSelect } from "./components/calendar-month-select.svelt
 export { default as NextButton } from "./components/calendar-next-button.svelte";
 export { default as PrevButton } from "./components/calendar-prev-button.svelte";
 export { default as YearSelect } from "./components/calendar-year-select.svelte";
+export { default as WeekNumberCell } from "./components/calendar-week-number-cell.svelte";
+export { default as WeekNumberHeadCell } from "./components/calendar-week-number-head-cell.svelte";
 
 export type {
 	CalendarRootProps as RootProps,
@@ -28,4 +30,6 @@ export type {
 	CalendarDayProps as DayProps,
 	CalendarMonthSelectProps as MonthSelectProps,
 	CalendarYearSelectProps as YearSelectProps,
+	CalendarWeekNumberCellProps as WeekNumberCellProps,
+	CalendarWeekNumberHeadCellProps as WeekNumberHeadCellProps,
 } from "./types.js";

@@ -32,6 +32,9 @@
 					<RangeCalendar.Grid data-testid="grid-{m}">
 						<RangeCalendar.GridHead data-testid="grid-head-{m}">
 							<RangeCalendar.GridRow data-testid="grid-row-{m}">
+								<RangeCalendar.WeekNumberHeadCell
+									data-testid="week-number-head-cell-{m}"
+								/>
 								{#each weekdays as day, i (i)}
 									<RangeCalendar.HeadCell data-testid="weekday-{m}-{i}">
 										{day}
@@ -42,6 +45,10 @@
 						<RangeCalendar.GridBody data-testid="grid-body-{m}">
 							{#each month.weeks as weekDates, i (i)}
 								<RangeCalendar.GridRow data-testid="grid-row-{m}-{i}" data-week>
+									<RangeCalendar.WeekNumberCell
+										week={weekDates}
+										data-testid="week-number-cell-{m}-{i}"
+									/>
 									{#each weekDates as date, d (d)}
 										<RangeCalendar.Cell
 											{date}

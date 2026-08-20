@@ -30,6 +30,7 @@ interface DatePickerRootStateOpts
 			weekStartsOn: WeekStartsOn | undefined;
 			weekdayFormat: Intl.DateTimeFormatOptions["weekday"];
 			fixedWeeks: boolean;
+			showWeekNumbers: boolean;
 			numberOfMonths: number;
 			calendarLabel: string;
 			disableDaysOutsideMonth: boolean;
