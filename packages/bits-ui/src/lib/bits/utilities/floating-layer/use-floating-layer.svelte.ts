@@ -191,7 +191,7 @@ export class FloatingContentState {
 	arrowX = $derived.by(() => this.floating.middlewareData.arrow?.x ?? 0);
 	arrowY = $derived.by(() => this.floating.middlewareData.arrow?.y ?? 0);
 	cannotCenterArrow = $derived.by(() => this.floating.middlewareData.arrow?.centerOffset !== 0);
-	contentZIndex = $state<string>();
+	contentZIndex = $state<string>("auto");
 	arrowBaseSide = $derived(OPPOSITE_SIDE[this.placedSide]);
 	wrapperProps = $derived.by(
 		() =>
