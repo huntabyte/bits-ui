@@ -3,7 +3,7 @@ import {
 	getLocalTimeZone,
 	isSameDay,
 	isSameMonth,
-	isToday,
+	today,
 } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { onMount, untrack } from "svelte";
@@ -95,6 +95,15 @@ export class CalendarRootState {
 
 	readonly opts: CalendarRootStateOpts;
 	readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
+	/**
+	 * `today()` resolves the local timezone via `Intl.DateTimeFormat#formatToParts`, which is
+	 * far too expensive to run once per rendered cell. We read `months` so this refreshes on
+	 * the same cadence the per-cell computation used to (whenever the visible dates change).
+	 */
+	readonly todayDate = $derived.by(() => {
+		this.months;
+		return today(getLocalTimeZone());
+	});
 	readonly formatter: Formatter;
 	readonly accessibleHeadingId = useId();
 	readonly domContext: DOMContext;
@@ -587,7 +596,9 @@ export class CalendarCellState {
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
-	readonly isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
+	readonly isDateToday = $derived.by(() =>
+		isSameDay(this.opts.date.current, this.root.todayDate)
+	);
 	readonly isOutsideMonth = $derived.by(
 		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
 	);
