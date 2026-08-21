@@ -326,6 +326,11 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	readonly opts: SelectMultipleRootStateOpts;
 	readonly isMulti = true as const;
 	readonly hasValue = $derived.by(() => this.opts.value.current.length > 0);
+	/**
+	 * `includesItem` is called once per mounted item whenever the value changes, so we keep a
+	 * set around to avoid a linear scan of `value` per item.
+	 */
+	readonly #valueSet = $derived.by(() => new Set(this.opts.value.current));
 
 	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
@@ -348,7 +353,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 
 	includesItem(itemValue: string) {
-		return this.opts.value.current.includes(itemValue);
+		return this.#valueSet.has(itemValue);
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
@@ -1129,6 +1134,15 @@ export class SelectItemState {
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
 	);
+	/**
+	 * Kept as a separate boolean derived so that `props` (and the `mergeProps` /
+	 * attribute-diffing work downstream of it) is only invalidated for the two items whose
+	 * highlighted state actually changed, rather than for every mounted item each time the
+	 * highlighted value moves.
+	 */
+	readonly #isHighlightedAndEnabled = $derived.by(
+		() => this.isHighlighted && !this.opts.disabled.current
+	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
 
@@ -1241,17 +1255,11 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.opts.value.current)
-					? "true"
-					: undefined,
+				"aria-selected": this.isSelected ? "true" : undefined,
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
-				"data-highlighted":
-					this.root.highlightedValue === this.opts.value.current &&
-					!this.opts.disabled.current
-						? ""
-						: undefined,
-				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
+				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
 				onpointermove: this.onpointermove,
