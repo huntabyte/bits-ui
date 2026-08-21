@@ -98,7 +98,7 @@ export class DismissibleLayerState {
 		onDestroyEffect(() => {
 			destroyed = true;
 			clearPendingTimer();
-			this.#resetState.destroy();
+			this.#resetState();
 			globalThis.bitsDismissableLayers.delete(this);
 			this.#handleInteractOutside.destroy();
 			this.#unsubClickListener();
@@ -217,12 +217,25 @@ export class DismissibleLayerState {
 		return isOrContainsTarget(this.opts.ref.current, target);
 	};
 
-	#resetState = debounce(() => {
+	/**
+	 * Resets the per-interaction state. Must stay synchronous.
+	 *
+	 * This was a `debounce(..., 20)` from when it was also wired to a capture-phase
+	 * interaction-end listener and had to land after the 10ms `#handleInteractOutside`
+	 * debounce. That listener is gone, but the debounce stayed on the `cleanup()` path —
+	 * and because `watch` runs `cleanup()` once per open (`ref` goes null -> node), every
+	 * layer scheduled a reset 20ms into its own lifetime. An outside `pointerdown` landing
+	 * 10-20ms after that cleanup would have its `#isResponsibleLayer` flag cleared by the
+	 * stale reset in the gap before the debounced `#handleInteractOutside` ran, which then
+	 * bailed and left the layer open. `cleanup()` destroys `#handleInteractOutside` anyway,
+	 * so nothing is left in flight that needs to observe the pre-reset state.
+	 */
+	#resetState = () => {
 		for (const eventType in this.#interceptedEvents) {
 			this.#interceptedEvents[eventType] = false;
 		}
 		this.#isResponsibleLayer = false;
-	}, 20);
+	};
 
 	#isAnyEventIntercepted() {
 		const i = Object.values(this.#interceptedEvents).some(Boolean);
