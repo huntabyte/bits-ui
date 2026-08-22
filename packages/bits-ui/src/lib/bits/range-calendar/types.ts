@@ -235,6 +235,11 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * @default "numeric"
 		 */
 		yearFormat?: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
+
+     /* 
+		 * A callback function called when the currently displayed month(s) changes.
+		 */
+		onVisibleMonthsChange?: OnChangeFn<Month<DateValue>[]>;
 	},
 	RangeCalendarRootSnippetProps
 >;
