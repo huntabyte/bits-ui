@@ -4,7 +4,7 @@ import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -22,6 +22,7 @@ async function open(props: AlertDialogTestProps = {}) {
 	await t.trigger.click();
 
 	await expectExists(content);
+	await waitForDismissibleLayer(content);
 
 	const cancel = page.getByTestId("cancel");
 	const action = page.getByTestId("action");

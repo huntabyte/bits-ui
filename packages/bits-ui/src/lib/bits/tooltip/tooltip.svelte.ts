@@ -359,6 +359,11 @@ export class TooltipRootState {
 		this.opts.open.current = false;
 	};
 
+	/** Stops a pending delayed open without touching the open state. */
+	cancelPendingOpen = () => {
+		this.#timerFn.stop();
+	};
+
 	#handleDelayedOpen = () => {
 		this.#timerFn.stop();
 
@@ -614,6 +619,18 @@ export class TooltipTriggerState {
 
 	#onpointerdown: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled()) return;
+		const root = this.#getRoot();
+
+		// close on pointerdown regardless of button so right/middle click dismiss the
+		// tooltip too, and so a pending open timer is cancelled before `contextmenu` fires
+		if (root && !root.disableCloseOnTriggerClick) {
+			if (root.opts.open.current) {
+				root.handleClose();
+			} else {
+				root.cancelPendingOpen();
+			}
+		}
+
 		this.#isPointerDown.current = true;
 
 		this.domContext.getDocument().addEventListener(

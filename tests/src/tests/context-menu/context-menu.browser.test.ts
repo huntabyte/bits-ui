@@ -12,6 +12,7 @@ import {
 	getPointerAwayFromSubmenuIntentClientCoords,
 	getPointerLeaveTowardSubmenuClientCoords,
 	getPointerMidpointTowardSubmenuClientCoords,
+	waitForDismissibleLayer,
 } from "../browser-utils";
 import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
@@ -51,6 +52,7 @@ async function open(props: ContextMenuSetupProps = {}) {
 	await expectNotExists(t.getContent());
 	await t.trigger.click({ button: "right" });
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	return { ...t };
 }
 
@@ -518,6 +520,7 @@ it("should allow switching between context menus via right-click", async () => {
 	render(ContextMenuIntegrationTest);
 	await page.getByTestId("context-trigger-1").click({ button: "right" });
 	await expectExists(page.getByTestId("context-content-1"));
+	await waitForDismissibleLayer(page.getByTestId("context-content-1"));
 	await page.getByTestId("context-trigger-2").click({ button: "right" });
 	await expectNotExists(page.getByTestId("context-content-1"));
 	await expectExists(page.getByTestId("context-content-2"));
@@ -529,6 +532,7 @@ it("should open inside of a dialog", async () => {
 	await expectExists(page.getByTestId("dialog-content"));
 	await page.getByTestId("context-trigger-3").click({ button: "right" });
 	await expectExists(page.getByTestId("context-content-3"));
+	await waitForDismissibleLayer(page.getByTestId("context-content-3"));
 	await expectExists(page.getByTestId("dialog-content"));
 	await page.getByTestId("dialog-content").click({ force: true });
 	await expectExists(page.getByTestId("dialog-content"));
@@ -559,6 +563,7 @@ it("should close a nested popover when interacting with a sibling select trigger
 	render(ContextMenuIntegrationTest);
 	await page.getByTestId("popover-trigger-1").click();
 	await expectExists(page.getByTestId("popover-content-1"));
+	await waitForDismissibleLayer(page.getByTestId("popover-content-1"));
 	await page.getByTestId("select-trigger-1").click();
 	await new Promise((resolve) => setTimeout(resolve, 50));
 	await expectNotExists(page.getByTestId("popover-content-1"));
@@ -569,6 +574,7 @@ it("should close a nested select when interacting with the popover trigger insid
 	render(ContextMenuIntegrationTest);
 	await page.getByTestId("select-trigger-1").click();
 	await expectExists(page.getByTestId("select-content-1"));
+	await waitForDismissibleLayer(page.getByTestId("select-content-1"));
 	await page.getByTestId("popover-trigger-1").click();
 	await new Promise((resolve) => setTimeout(resolve, 50));
 	await expectNotExists(page.getByTestId("select-content-1"));
@@ -579,6 +585,7 @@ it("should close the first nested select when opening the sibling select inside 
 	render(ContextMenuIntegrationTest);
 	await page.getByTestId("select-trigger-1").click();
 	await expectExists(page.getByTestId("select-content-1"));
+	await waitForDismissibleLayer(page.getByTestId("select-content-1"));
 	await page.getByTestId("select-trigger-2").click();
 	await new Promise((resolve) => setTimeout(resolve, 50));
 	await expectNotExists(page.getByTestId("select-content-1"));
@@ -612,6 +619,7 @@ it("should allow overriding the pointer events style", async () => {
 	const trigger = page.getByTestId("trigger");
 	await trigger.click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	await trigger.click({ button: "right", force: true });
 	await expectNotExists(page.getByTestId("content"));
 });

@@ -11,6 +11,7 @@ import {
 	getPointerAwayFromSubmenuIntentClientCoords,
 	getPointerLeaveTowardSubmenuClientCoords,
 	getPointerMidpointTowardSubmenuClientCoords,
+	waitForDismissibleLayer,
 } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
@@ -50,6 +51,7 @@ async function open(props: DropdownMenuSetupProps = {}) {
 	await expectNotExists(t.getContent());
 	await t.trigger.click();
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	return { ...t };
 }
 
@@ -60,6 +62,7 @@ async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd
 	await expect.element(t.trigger).toHaveFocus();
 	await userEvent.keyboard(key);
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	return t;
 }
 
@@ -657,6 +660,7 @@ it("should not scroll to previous dropdown trigger when closing a different drop
 	// open dropdown 3
 	await trigger3.click();
 	await expectExists(content3);
+	await waitForDismissibleLayer(content3);
 	await userEvent.click(topButton, { force: true });
 
 	await expectNotExists(content3);
@@ -757,6 +761,7 @@ it("keyboard navigation should not cause unwanted jumps between menus", async ()
 
 	await trigger1.click();
 	await expectExists(content1);
+	await waitForDismissibleLayer(content1);
 	await trigger2.click();
 	await expectExists(content2);
 	await expectNotExists(content1);

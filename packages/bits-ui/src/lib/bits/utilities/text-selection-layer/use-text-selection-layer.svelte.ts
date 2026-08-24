@@ -85,9 +85,14 @@ export class TextSelectionLayerState {
 	};
 
 	#pointerdown = (e: PointerEvent) => {
+		// Check the plain-boolean snapshot BEFORE reading `this.opts.ref.current`.
+		// If this document listener outlives its component, that box is a `$derived`
+		// owned by a destroyed effect, and reading it emits `derived_inert` on every
+		// pointerdown anywhere in the document, forever.
+		if (!this.#enabledSnapshot) return;
 		const node = this.opts.ref.current;
 		const target = e.target;
-		if (!isHTMLElement(node) || !isHTMLElement(target) || !this.#enabledSnapshot) return;
+		if (!isHTMLElement(node) || !isHTMLElement(target)) return;
 		/**
 		 * We only lock user-selection overflow if layer is the top most layer and
 		 * pointerdown occurred inside the node. You are still allowed to select text

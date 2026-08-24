@@ -59,8 +59,21 @@ export class DismissibleLayerState {
 		});
 
 		let unsubEvents = noop;
+		// Track the deferred afterSleep timer so teardown can cancel it. Without this,
+		// a layer destroyed within the 1ms window still fires the callback and reads a
+		// destroyed $derived (`ref.current`) → `derived_inert` (and can re-attach document
+		// listeners to a dead instance). See https://github.com/huntabyte/bits-ui/issues/2080
+		let pendingTimer: ReturnType<typeof afterSleep> | null = null;
+		let destroyed = false;
+		const clearPendingTimer = () => {
+			if (pendingTimer != null) {
+				clearTimeout(pendingTimer);
+				pendingTimer = null;
+			}
+		};
 
 		const cleanup = () => {
+			clearPendingTimer();
 			this.#resetState();
 			globalThis.bitsDismissableLayers.delete(this);
 			this.#handleInteractOutside.destroy();
@@ -69,8 +82,11 @@ export class DismissibleLayerState {
 
 		watch([() => this.opts.enabled.current, () => this.opts.ref.current], () => {
 			if (!this.opts.enabled.current || !this.opts.ref.current) return;
-			afterSleep(1, () => {
-				if (!this.opts.ref.current) return;
+			clearPendingTimer();
+			pendingTimer = afterSleep(1, () => {
+				pendingTimer = null;
+				// `destroyed` must short-circuit before any `this.opts.ref.current` read.
+				if (destroyed || !this.opts.ref.current) return;
 				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
 
 				unsubEvents();
@@ -80,6 +96,8 @@ export class DismissibleLayerState {
 		});
 
 		onDestroyEffect(() => {
+			destroyed = true;
+			clearPendingTimer();
 			this.#resetState.destroy();
 			globalThis.bitsDismissableLayers.delete(this);
 			this.#handleInteractOutside.destroy();

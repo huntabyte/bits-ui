@@ -89,6 +89,28 @@ describe("Value Changes", () => {
 			.toHaveTextContent("true");
 	});
 
+	it("should not change the value when an unselected item receives focus without keyboard navigation", async () => {
+		setup({ value: "b" });
+
+		const aItem = page.getByTestId("a-item");
+		(aItem.element() as HTMLElement).focus();
+		await expect.element(aItem).toHaveFocus();
+
+		await expect.element(page.getByTestId("b-indicator")).toHaveTextContent("true");
+		await expect.element(page.getByTestId("a-indicator")).toHaveTextContent("false");
+	});
+
+	it("should select the newly focused item when navigating with the keyboard and a value is set", async () => {
+		setup({ value: "a" });
+
+		(page.getByTestId("a-item").element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+
+		await expect.element(page.getByTestId("b-item")).toHaveFocus();
+		await expect.element(page.getByTestId("b-indicator")).toHaveTextContent("true");
+		await expect.element(page.getByTestId("a-indicator")).toHaveTextContent("false");
+	});
+
 	it("should respect the value prop & binding", async () => {
 		setup({ value: "b" });
 		const binding = page.getByTestId("binding");

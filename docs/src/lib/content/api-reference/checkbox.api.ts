@@ -58,6 +58,9 @@ export const root = defineComponentApiSchema<CheckboxRootPropsWithoutHTML>({
 			description:
 				"The name of the checkbox. If provided a hidden input will be render to use for form submission. If not provided, the hidden input will not be rendered.",
 		}),
+		form: defineStringProp({
+			description: "The id of a form element the hidden input will be attached.",
+		}),
 		value: defineStringProp({
 			description:
 				"The value of the checkbox. This is what is submitted with the form when the checkbox is checked.",
