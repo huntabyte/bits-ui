@@ -349,6 +349,8 @@ To prevent the user from scrolling outside of the `Combobox.Content` component w
 
 The Combobox component follows the [WAI-ARIA descendant pattern](https://www.w3.org/TR/wai-aria-practices-1.2/#combobox) for highlighting items. This means that the `Combobox.Input` retains focus the entire time, even when navigating with the keyboard, and items are highlighted as the user navigates them.
 
+Use the `autoHighlight` prop on `Combobox.Root` to automatically highlight the first matching item after the user filters the list.
+
 ### Styling Highlighted Items
 
 You can use the `data-highlighted` attribute on the `Combobox.Item` component to style the item differently when it is highlighted.
