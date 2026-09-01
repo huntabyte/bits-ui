@@ -296,9 +296,27 @@ type GetValueFromSegments = {
 	dateRef: DateValue;
 };
 
+/**
+ * The order the segments are applied in when building a date from them.
+ *
+ * Setting a part on a `DateValue` constrains the result immediately, so the day
+ * has to be applied after the year and month it belongs to. Applying it in the
+ * order the segments are displayed clamps the day to the number of days in the
+ * `dateRef`'s month in day-first locales (e.g. `31/08` entered in `en-GB` with a
+ * `dateRef` in November would resolve to the 30th).
+ */
+const SEGMENT_APPLY_ORDER = ["year", "month", "day", "hour", "minute", "second", "dayPeriod"];
+
+function getSegmentApplyOrder(part: EditableSegmentPart) {
+	const index = SEGMENT_APPLY_ORDER.indexOf(part);
+	return index === -1 ? SEGMENT_APPLY_ORDER.length : index;
+}
+
 export function getValueFromSegments(props: GetValueFromSegments) {
 	const { segmentObj, fieldNode, dateRef } = props;
-	const usedSegments = getUsedSegments(fieldNode);
+	const usedSegments = getUsedSegments(fieldNode).sort(
+		(a, b) => getSegmentApplyOrder(a) - getSegmentApplyOrder(b)
+	);
 	let date = dateRef;
 
 	for (const part of usedSegments) {
