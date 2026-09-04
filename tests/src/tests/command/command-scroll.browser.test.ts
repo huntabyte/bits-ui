@@ -1,12 +1,12 @@
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
 import CommandScrollTest from "./command-scroll-test.svelte";
 
-function setup(props: Partial<ComponentProps<typeof CommandScrollTest>> = {}) {
+async function setup(props: Partial<ComponentProps<typeof CommandScrollTest>> = {}) {
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(CommandScrollTest, props as any);
+	const returned = await render(CommandScrollTest, props as any);
 	const input = page.getByTestId("input");
 	const root = page.getByTestId("root");
 	const list = page.getByTestId("list");
@@ -21,7 +21,7 @@ function setup(props: Partial<ComponentProps<typeof CommandScrollTest>> = {}) {
 }
 
 it("should scroll initial value into view when it's not the first item", async () => {
-	setup({ value: "Popover" });
+	await setup({ value: "Popover" });
 
 	const item = page.getByText("Popover");
 	await expect.element(item).toHaveAttribute("data-selected");
@@ -42,7 +42,7 @@ it("should scroll initial value into view when it's not the first item", async (
 });
 
 it("should scroll initial value in the middle of the list into view", async () => {
-	setup({ value: "Radio Group" });
+	await setup({ value: "Radio Group" });
 
 	const item = page.getByText("Radio Group");
 	await expect.element(item).toHaveAttribute("data-selected");
@@ -62,7 +62,7 @@ it("should scroll initial value in the middle of the list into view", async () =
 });
 
 it("should respect disableInitialScroll prop and not scroll", async () => {
-	setup({ value: "Popover", disableInitialScroll: true });
+	await setup({ value: "Popover", disableInitialScroll: true });
 
 	const item = page.getByText("Popover");
 	await expect.element(item).toHaveAttribute("data-selected");
@@ -77,7 +77,7 @@ it("should respect disableInitialScroll prop and not scroll", async () => {
 });
 
 it("should not scroll when initial value is the first item", async () => {
-	setup({ value: "Introduction" });
+	await setup({ value: "Introduction" });
 
 	const item = page.getByText("Introduction");
 	await expect.element(item).toHaveAttribute("data-selected");

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
@@ -9,7 +9,7 @@ import { expectExists, expectNotExists, waitForDismissibleLayer } from "../brows
 const kbd = getTestKbd();
 
 async function setup(props: AlertDialogTestProps = {}, component = AlertDialogTest) {
-	render(component, { ...props });
+	await render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
 	return { trigger };
 }
@@ -202,11 +202,11 @@ describe("Props and Rendering", () => {
 	it("should respect binding to the `open` prop", async () => {
 		const t = await setup();
 		const binding = page.getByTestId("binding");
-		await expect.element(binding).toHaveTextContent("false");
+		await expect.element(binding).toMatchTextContent("false");
 		await t.trigger.click();
-		await expect.element(binding).toHaveTextContent("true");
+		await expect.element(binding).toMatchTextContent("true");
 		await userEvent.keyboard(kbd.ESCAPE);
-		await expect.element(binding).toHaveTextContent("false");
+		await expect.element(binding).toMatchTextContent("false");
 		await expectNotExists(page.getByTestId("content"));
 		await page.getByTestId("toggle").click();
 		await expectExists(page.getByTestId("content"));

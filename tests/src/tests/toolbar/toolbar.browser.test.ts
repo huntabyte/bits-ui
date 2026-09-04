@@ -3,12 +3,12 @@ import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import ToolbarTest from "./toolbar-test.svelte";
 import type { ToolbarTestProps } from "./toolbar-test.svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
-function setup(props: Partial<ToolbarTestProps> = {}) {
-	render(ToolbarTest, { ...props });
+async function setup(props: Partial<ToolbarTestProps> = {}) {
+	await render(ToolbarTest, { ...props });
 	const root = page.getByTestId("root");
 	const groupMultiple = page.getByTestId("group-multiple");
 	const groupMultipleItemBold = page.getByTestId("group-multiple-bold");
@@ -44,7 +44,7 @@ function setup(props: Partial<ToolbarTestProps> = {}) {
 
 describe("Toolbar", () => {
 	it("should have bits data attrs", async () => {
-		const t = setup();
+		const t = await setup();
 		await expect.element(t.root).toHaveAttribute("data-toolbar-root");
 		await expect.element(t.groupMultiple).toHaveAttribute("data-toolbar-group");
 		await expect.element(t.groupMultipleItemBold).toHaveAttribute("data-toolbar-group-item");
@@ -55,7 +55,7 @@ describe("Toolbar", () => {
 	});
 
 	it("should navigate between the items using the arrow keys", async () => {
-		const t = setup();
+		const t = await setup();
 		(t.groupMultipleItemBold.element() as HTMLElement).focus();
 		await userEvent.keyboard(kbd.ARROW_RIGHT);
 		await expect.element(t.groupMultipleItemItalic).toHaveFocus();
@@ -75,7 +75,7 @@ describe("Toolbar", () => {
 	});
 
 	it("should loop around when navigating with the arrow keys", async () => {
-		const t = setup();
+		const t = await setup();
 		(t.groupMultipleItemBold.element() as HTMLElement).focus();
 		await userEvent.keyboard(kbd.ARROW_LEFT);
 		await expect.element(t.button).toHaveFocus();
@@ -84,7 +84,7 @@ describe("Toolbar", () => {
 	});
 
 	it("should respect the loop: false prop", async () => {
-		const t = setup({
+		const t = await setup({
 			loop: false,
 		});
 		(t.groupMultipleItemBold.element() as HTMLElement).focus();
@@ -98,45 +98,45 @@ describe("Toolbar", () => {
 	});
 
 	it("should toggles when clicked when toolbar toggle group, type `'single'`", async () => {
-		const t = setup();
-		await expect.element(t.alignBinding).toHaveTextContent("");
+		const t = await setup();
+		await expect.element(t.alignBinding).toMatchTextContent("");
 		await t.groupSingleItemLeft.click();
-		await expect.element(t.alignBinding).toHaveTextContent("left");
+		await expect.element(t.alignBinding).toMatchTextContent("left");
 		await t.groupSingleItemCenter.click();
-		await expect.element(t.alignBinding).toHaveTextContent("center");
+		await expect.element(t.alignBinding).toMatchTextContent("center");
 	});
 
 	it.each([kbd.ENTER, kbd.SPACE])(
 		"should toggles when the %s key is pressed when toolbar toogle group, type `'single'`",
 		async (key) => {
-			const t = setup();
-			await expect.element(t.alignBinding).toHaveTextContent("");
+			const t = await setup();
+			await expect.element(t.alignBinding).toMatchTextContent("");
 			(t.groupSingleItemLeft.element() as HTMLElement).focus();
 			await userEvent.keyboard(key);
-			await expect.element(t.alignBinding).toHaveTextContent("left");
+			await expect.element(t.alignBinding).toMatchTextContent("left");
 			(t.groupSingleItemCenter.element() as HTMLElement).focus();
 			await userEvent.keyboard(key);
-			await expect.element(t.alignBinding).toHaveTextContent("center");
+			await expect.element(t.alignBinding).toMatchTextContent("center");
 		}
 	);
 
 	it("should allow multiple items to be selected with toolbar toggle group type `'multiple'`", async () => {
-		const t = setup();
-		await expect.element(t.styleBinding).toHaveTextContent("bold");
+		const t = await setup();
+		await expect.element(t.styleBinding).toMatchTextContent("bold");
 		await t.groupMultipleItemItalic.click();
-		await expect.element(t.styleBinding).toHaveTextContent("bold,italic");
+		await expect.element(t.styleBinding).toMatchTextContent("bold,italic");
 		await t.groupMultipleItemStrikethrough.click();
-		await expect.element(t.styleBinding).toHaveTextContent("bold,italic,strikethrough");
+		await expect.element(t.styleBinding).toMatchTextContent("bold,italic,strikethrough");
 		await t.groupMultipleItemBold.click();
-		await expect.element(t.styleBinding).toHaveTextContent("italic,strikethrough");
+		await expect.element(t.styleBinding).toMatchTextContent("italic,strikethrough");
 		await t.groupMultipleItemItalic.click();
-		await expect.element(t.styleBinding).toHaveTextContent("strikethrough");
+		await expect.element(t.styleBinding).toMatchTextContent("strikethrough");
 		await t.groupMultipleItemStrikethrough.click();
-		await expect.element(t.styleBinding).toHaveTextContent("");
+		await expect.element(t.styleBinding).toMatchTextContent("");
 	});
 
 	it("should disable group items when the `disabled` prop is set to true", async () => {
-		const t = setup({
+		const t = await setup({
 			multipleProps: { disabled: true },
 			singleProps: { disabled: true },
 		});
@@ -159,7 +159,7 @@ describe("Toolbar", () => {
 			newSingleValue = next;
 		}
 
-		const t = setup({
+		const t = await setup({
 			multipleProps: { onValueChange: multipleOnValueChange },
 			singleProps: { onValueChange: singleOnValueChange },
 		});
@@ -172,21 +172,21 @@ describe("Toolbar", () => {
 	});
 
 	it("should respect binding to the `value` prop", async () => {
-		const t = setup();
-		await expect.element(t.styleBinding).toHaveTextContent("bold");
-		await expect.element(t.alignBinding).toHaveTextContent("");
+		const t = await setup();
+		await expect.element(t.styleBinding).toMatchTextContent("bold");
+		await expect.element(t.alignBinding).toMatchTextContent("");
 		await expect.element(t.groupMultipleItemItalic).toHaveAttribute("data-state", "off");
 		await expect.element(t.groupMultipleItemItalic).toHaveAttribute("aria-pressed", "false");
 		await expect.element(t.groupSingleItemCenter).toHaveAttribute("data-state", "off");
 		await expect.element(t.groupSingleItemCenter).toHaveAttribute("aria-checked", "false");
 
 		await t.styleBinding.click();
-		await expect.element(t.styleBinding).toHaveTextContent("italic");
+		await expect.element(t.styleBinding).toMatchTextContent("italic");
 		await expect.element(t.groupMultipleItemItalic).toHaveAttribute("data-state", "on");
 		await expect.element(t.groupMultipleItemItalic).toHaveAttribute("aria-pressed", "true");
 
 		await t.alignBinding.click();
-		await expect.element(t.alignBinding).toHaveTextContent("center");
+		await expect.element(t.alignBinding).toMatchTextContent("center");
 		await expect.element(t.groupSingleItemCenter).toHaveAttribute("data-state", "on");
 		await expect.element(t.groupSingleItemCenter).toHaveAttribute("aria-checked", "true");
 	});
@@ -194,24 +194,24 @@ describe("Toolbar", () => {
 	it.each(["link", "button"])(
 		"should forward click event when the %s is clicked",
 		async (kind) => {
-			const t = setup();
+			const t = await setup();
 
-			expect(t.clickedBinding).toHaveTextContent("");
-			const el = t[kind as keyof ReturnType<typeof setup>];
+			expect(t.clickedBinding).toMatchTextContent("");
+			const el = t[kind as keyof Awaited<ReturnType<typeof setup>>];
 			await el.click();
-			await expect.element(t.clickedBinding).toHaveTextContent(kind);
+			await expect.element(t.clickedBinding).toMatchTextContent(kind);
 		}
 	);
 
 	it.each([kbd.ENTER, kbd.SPACE])(
 		"should forward click event when the %s key is pressed",
 		async (key) => {
-			const t = setup();
+			const t = await setup();
 
 			(t.button.element() as HTMLElement).focus();
-			await expect.element(t.clickedBinding).toHaveTextContent("");
+			await expect.element(t.clickedBinding).toMatchTextContent("");
 			await userEvent.keyboard(key);
-			await expect.element(t.clickedBinding).toHaveTextContent("button");
+			await expect.element(t.clickedBinding).toMatchTextContent("button");
 		}
 	);
 });

@@ -1,4 +1,4 @@
-import { userEvent, page } from "@vitest/browser/context";
+import { userEvent, page } from "vitest/browser";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { Component } from "svelte";
@@ -21,7 +21,7 @@ import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 const kbd = getTestKbd();
 
 async function setup(props: DialogTestProps = {}, component: Component = DialogTest) {
-	const t = render(component, { ...props });
+	const t = await render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
 
 	return {
@@ -244,7 +244,7 @@ describe("Focus Management", () => {
 	});
 
 	it("should trap focus and allow Escape to close when only one focusable element exists", async () => {
-		render(DialogSingleFocusableTest);
+		await render(DialogSingleFocusableTest);
 		const trigger = page.getByTestId("trigger");
 		await trigger.click();
 		await expectExists(page.getByTestId("content"));
@@ -300,11 +300,11 @@ it("should respect binding to the `open` prop", async () => {
 	await setup();
 	const trigger = page.getByTestId("trigger");
 	const binding = page.getByTestId("binding");
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 	await trigger.click();
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("true");
 	await userEvent.keyboard(kbd.ESCAPE);
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("false");
 
 	const toggle = page.getByTestId("toggle");
 	await expectNotExists(page.getByTestId("content"));
@@ -415,7 +415,7 @@ describe("ARIA Attributes", () => {
 
 describe("Nested Dialogs", () => {
 	it("should handle focus scoping correctly", async () => {
-		render(DialogNestedTest);
+		await render(DialogNestedTest);
 		const trigger = page.getByTestId("first-open");
 		await trigger.click();
 		await expectExists(page.getByTestId("first-close"));
@@ -436,7 +436,7 @@ describe("Nested Dialogs", () => {
 	});
 
 	it("should track dialog depth correctly", async () => {
-		render(DialogNestedTest);
+		await render(DialogNestedTest);
 
 		// open first dialog
 		await page.getByTestId("first-open").click();
@@ -538,7 +538,7 @@ describe("Nested Dialogs", () => {
 
 describe("Nested Alert Dialogs and Dialogs", () => {
 	it("should handle Alert Dialog nested inside Dialog with correct depth tracking", async () => {
-		render(DialogAlertDialogNestedTest);
+		await render(DialogAlertDialogNestedTest);
 
 		// open dialog
 		await page.getByTestId("dialog-open").click();
@@ -584,7 +584,7 @@ describe("Nested Alert Dialogs and Dialogs", () => {
 	});
 
 	it("should handle Dialog nested inside Alert Dialog with correct depth tracking", async () => {
-		render(DialogAlertDialogNestedTest);
+		await render(DialogAlertDialogNestedTest);
 
 		// open alert dialog
 		await page.getByTestId("alert-first-open").click();
@@ -632,7 +632,7 @@ describe("Nested Alert Dialogs and Dialogs", () => {
 	});
 
 	it("should handle three-level nesting: Dialog -> Alert Dialog -> Dialog", async () => {
-		render(DialogAlertDialogNestedTest);
+		await render(DialogAlertDialogNestedTest);
 
 		// open first dialog
 		await page.getByTestId("dialog-open").click();
@@ -707,7 +707,7 @@ describe("Nested Alert Dialogs and Dialogs", () => {
 
 describe("Integration with other components", () => {
 	it("should allow opening nested floating components within the dialog", async () => {
-		render(DialogIntegrationTest);
+		await render(DialogIntegrationTest);
 		await page.getByTestId("dialog-trigger").click();
 		await expectExists(page.getByTestId("dialog-content"));
 		await page.getByTestId("dropdown-trigger").click();
@@ -726,7 +726,7 @@ describe("Integration with other components", () => {
 
 	it("should not break tooltip when opened from tooltip trigger and disableCloseOnTriggerClick is true", async () => {
 		// https://github.com/huntabyte/bits-ui/issues/1666
-		render(DialogTooltipTest);
+		await render(DialogTooltipTest);
 		const trigger = page.getByTestId("trigger");
 		await trigger.hover();
 		await expectExists(page.getByTestId("tooltip-content"));
@@ -743,7 +743,7 @@ describe("Integration with other components", () => {
 
 describe("Scroll Lock", () => {
 	it("should not add padding when scrollbar-gutter: stable is applied", async () => {
-		render(DialogScrollbarGutterTest);
+		await render(DialogScrollbarGutterTest);
 
 		const initialPadding = document.body.style.paddingRight;
 
@@ -782,7 +782,7 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 	it("should not emit derived_inert when unmounted while open", async () => {
 		const counter = installDerivedInertCounter();
 		try {
-			const t = render(DialogTest, { open: true });
+			const t = await render(DialogTest, { open: true });
 			await expectExists(page.getByTestId("content"));
 			// Unmount while the layer is live — races the afterSleep(1) attach window.
 			await t.unmount();
@@ -843,7 +843,7 @@ describe("TextSelectionLayer teardown (derived_inert)", () => {
 	it("should not emit derived_inert on document pointerdown after teardown", async () => {
 		const counter = installCounter();
 		try {
-			const t = render(DialogTest, { open: false });
+			const t = await render(DialogTest, { open: false });
 			for (let i = 0; i < 6; i++) {
 				await t.rerender({ open: i % 2 === 0 });
 				await new Promise((r) => setTimeout(r, 3));

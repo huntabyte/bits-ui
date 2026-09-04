@@ -3,7 +3,7 @@ import { render } from "vitest-browser-svelte";
 import NavigationMenuTest, { type NavigationMenuTestProps } from "./navigation-menu-test.svelte";
 import { getTestKbd } from "../utils";
 import { expectExists, expectNotExists } from "../browser-utils";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -11,14 +11,14 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(props: NavigationMenuTestProps = {}) {
-	const returned = render(NavigationMenuTest, { ...props });
+async function setup(props: NavigationMenuTestProps = {}) {
+	const returned = await render(NavigationMenuTest, { ...props });
 
 	return { ...returned };
 }
 
 it("should keep content open briefly after leaving a trigger", async () => {
-	setup({ delayDuration: 0, skipDelayDuration: 0 });
+	await setup({ delayDuration: 0, skipDelayDuration: 0 });
 	const trigger = page.getByTestId("group-item-trigger");
 	const outside = page.getByTestId("previous-button");
 
@@ -34,7 +34,7 @@ it("should keep content open briefly after leaving a trigger", async () => {
 });
 
 it("should open viewport when hovering trigger", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 
 	await expectNotExists(page.getByTestId("viewport"));
@@ -47,7 +47,7 @@ it("should open viewport when hovering trigger", async () => {
 });
 
 it("should toggle viewport when pressing enter on focused trigger", async () => {
-	setup();
+	await setup();
 	(page.getByTestId("sub-group-item-trigger").element() as HTMLElement).focus();
 	await expectNotExists(page.getByTestId("viewport"));
 	await userEvent.keyboard(kbd.ENTER);
@@ -60,7 +60,7 @@ it("should toggle viewport when pressing enter on focused trigger", async () => 
 });
 
 it("should show initial submenu items on trigger hover", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("viewport"));
@@ -70,7 +70,7 @@ it("should show initial submenu items on trigger hover", async () => {
 });
 
 it("should show submenu items on subtrigger hover", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("viewport"));
@@ -89,7 +89,7 @@ it("should show submenu items on subtrigger hover", async () => {
 });
 
 it("should open submenu viewport when pressing enter on focused subtrigger", async () => {
-	setup();
+	await setup();
 	(page.getByTestId("sub-group-item-trigger").element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
 	await expectExists(page.getByTestId("sub-group-item-sub-item2-trigger"));
@@ -102,14 +102,14 @@ it("should open submenu viewport when pressing enter on focused subtrigger", asy
 });
 
 it("should show indicator when hovering trigger", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("indicator"));
 });
 
 it("should apply transition attrs to content during open and close without a viewport", async () => {
-	setup({ noViewport: true });
+	await setup({ noViewport: true });
 
 	type TransitionRecord = { starting: boolean; ending: boolean };
 	const history: TransitionRecord[] = [];
@@ -159,7 +159,7 @@ it("should apply transition attrs to content during open and close without a vie
 });
 
 it("should apply transition attrs to viewport and indicator during open and close", async () => {
-	setup();
+	await setup();
 
 	type TransitionRecord = { starting: boolean; ending: boolean };
 	const history = {
@@ -222,14 +222,14 @@ it("should apply transition attrs to viewport and indicator during open and clos
 });
 
 it("should receive focus on the first item", async () => {
-	setup();
+	await setup();
 	(page.getByTestId("previous-button").element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.TAB);
 	await expect.element(page.getByTestId("group-item-trigger")).toHaveFocus();
 });
 
 it("should focus next item with right arrow or down arrow, and previous with left or up", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
@@ -239,7 +239,7 @@ it("should focus next item with right arrow or down arrow, and previous with lef
 });
 
 it("should focus next item with tab", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.TAB);
@@ -249,7 +249,7 @@ it("should focus next item with tab", async () => {
 });
 
 it("should focus next sub-item with right arrow, and previous with left", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("sub-group-item-sub-viewport"));
@@ -262,7 +262,7 @@ it("should focus next sub-item with right arrow, and previous with left", async 
 });
 
 it("should focus next content item with right arrow or down arrow, and previous with left or up", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
@@ -278,7 +278,7 @@ it("should focus next content item with right arrow or down arrow, and previous 
 });
 
 it("should focus next on content with tab when opened", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
@@ -287,7 +287,7 @@ it("should focus next on content with tab when opened", async () => {
 });
 
 it("should focus next on content with down arrow when opened", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
@@ -296,7 +296,7 @@ it("should focus next on content with down arrow when opened", async () => {
 });
 
 it("should render content without viewport", async () => {
-	setup({ noViewport: true });
+	await setup({ noViewport: true });
 	const trigger = page.getByTestId("group-item-trigger");
 	await expectNotExists(page.getByTestId("viewport"));
 	await expectNotExists(page.getByTestId("group-item-content"));
@@ -309,7 +309,7 @@ it("should render content without viewport", async () => {
 });
 
 it("should render subcontent without subviewport", async () => {
-	setup({ noSubViewport: true });
+	await setup({ noSubViewport: true });
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("viewport"));
@@ -325,7 +325,7 @@ it("should render subcontent without subviewport", async () => {
 });
 
 it("should switch between submenu items on pointer hover", async () => {
-	setup();
+	await setup();
 
 	// First open the main submenu
 	const trigger = page.getByTestId("sub-group-item-trigger");
@@ -346,7 +346,7 @@ it("should switch between submenu items on pointer hover", async () => {
 });
 
 it("should not open menu on hover when `openOnHover` is false", async () => {
-	setup({ groupItemProps: { openOnHover: false } });
+	await setup({ groupItemProps: { openOnHover: false } });
 	const trigger = page.getByTestId("group-item-trigger");
 	await trigger.hover();
 	await expectNotExists(page.getByTestId("viewport"));
@@ -354,7 +354,7 @@ it("should not open menu on hover when `openOnHover` is false", async () => {
 });
 
 it("should toggle on trigger click when `openOnHover` is false", async () => {
-	setup({ groupItemProps: { openOnHover: false } });
+	await setup({ groupItemProps: { openOnHover: false } });
 	const trigger = page.getByTestId("group-item-trigger");
 	await trigger.click();
 	await expectExists(page.getByTestId("viewport"));

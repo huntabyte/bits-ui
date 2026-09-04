@@ -2,11 +2,11 @@ import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { tick } from "svelte";
 import PortalTest from "./portal-test.svelte";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { expectExists, expectNotExists } from "../browser-utils";
 
 it("should portal content to document.body by default", async () => {
-	render(PortalTest);
+	await render(PortalTest);
 
 	const content = page.getByTestId("portal-content");
 	await expectExists(content);
@@ -15,15 +15,15 @@ it("should portal content to document.body by default", async () => {
 });
 
 it("should display the portal content", async () => {
-	render(PortalTest, { content: "Test content" });
+	await render(PortalTest, { content: "Test content" });
 
 	const content = page.getByTestId("portal-content");
 	await expectExists(content);
-	await expect.element(content).toHaveTextContent("Test content");
+	await expect.element(content).toMatchTextContent("Test content");
 });
 
 it("should portal to element by ID selector", async () => {
-	render(PortalTest, { to: "#string-target" });
+	await render(PortalTest, { to: "#string-target" });
 
 	const content = page.getByTestId("portal-content");
 	const target = page.getByTestId("string-target");
@@ -32,7 +32,7 @@ it("should portal to element by ID selector", async () => {
 });
 
 it("should portal to element by class selector", async () => {
-	render(PortalTest, { to: ".class-target" });
+	await render(PortalTest, { to: ".class-target" });
 
 	const content = page.getByTestId("portal-content");
 	await expectExists(content);
@@ -41,7 +41,7 @@ it("should portal to element by class selector", async () => {
 });
 
 it("should portal to element by attribute selector", async () => {
-	render(PortalTest, { to: '[data-testid="custom-target"]' });
+	await render(PortalTest, { to: '[data-testid="custom-target"]' });
 
 	const content = page.getByTestId("portal-content");
 	const target = page.getByTestId("custom-target");
@@ -54,7 +54,7 @@ it("should portal to HTMLElement target", async () => {
 	targetElement.setAttribute("data-testid", "dynamic-target");
 	document.body.appendChild(targetElement);
 
-	render(PortalTest, { to: targetElement, includeTargets: false });
+	await render(PortalTest, { to: targetElement, includeTargets: false });
 
 	const content = page.getByTestId("portal-content");
 	await expectExists(content);
@@ -74,7 +74,7 @@ it("should portal to DocumentFragment target", async () => {
 	document.body.appendChild(host);
 	host.appendChild(fragment);
 
-	render(PortalTest, { to: container, includeTargets: false });
+	await render(PortalTest, { to: container, includeTargets: false });
 
 	const content = page.getByTestId("portal-content");
 	await expectExists(content);
@@ -84,7 +84,7 @@ it("should portal to DocumentFragment target", async () => {
 });
 
 it("should render inline when disabled", async () => {
-	render(PortalTest, { disabled: true });
+	await render(PortalTest, { disabled: true });
 
 	const content = page.getByTestId("portal-content");
 	await expectExists(content);
@@ -95,7 +95,7 @@ it("should render inline when disabled", async () => {
 });
 
 it("should not portal when disabled even with target", async () => {
-	render(PortalTest, { to: "#string-target", disabled: true });
+	await render(PortalTest, { to: "#string-target", disabled: true });
 
 	const content = page.getByTestId("portal-content").element();
 	const target = page.getByTestId("string-target").element();
@@ -106,7 +106,7 @@ it("should not portal when disabled even with target", async () => {
 });
 
 it("should clean up portal content when component unmounts", async () => {
-	const { unmount } = render(PortalTest, { content: "Cleanup test" });
+	const { unmount } = await render(PortalTest, { content: "Cleanup test" });
 
 	let content = page.getByTestId("portal-content");
 	await expectExists(content);
@@ -118,8 +118,8 @@ it("should clean up portal content when component unmounts", async () => {
 });
 
 it("should handle multiple portals to different targets", async () => {
-	render(PortalTest, { to: "#string-target", content: "First portal" });
-	render(PortalTest, {
+	await render(PortalTest, { to: "#string-target", content: "First portal" });
+	await render(PortalTest, {
 		to: ".class-target",
 		content: "Second portal",
 		includeTargets: false,

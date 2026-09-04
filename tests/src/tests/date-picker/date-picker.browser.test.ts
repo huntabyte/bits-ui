@@ -9,7 +9,7 @@ import {
 	expectNotExists,
 	waitForDismissibleLayer,
 } from "../browser-utils";
-import { page, userEvent, type Locator } from "@vitest/browser/context";
+import { page, userEvent, type Locator } from "vitest/browser";
 
 const kbd = getTestKbd();
 
@@ -29,8 +29,8 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 const SELECTED_DAY_SELECTOR = "[data-bits-day][data-selected]";
 const SELECTED_ATTR = "data-selected";
 
-function setup(props: Partial<DatePickerTestProps> = {}) {
-	const t = render(DatePickerTest, { ...props });
+async function setup(props: Partial<DatePickerTestProps> = {}) {
+	const t = await render(DatePickerTest, { ...props });
 	const month = page.getByTestId("month");
 	const day = page.getByTestId("day");
 	const year = page.getByTestId("year");
@@ -58,7 +58,7 @@ function getTimeSegments(getByTestId: (...args: any[]) => Locator) {
 }
 
 async function open(props: DatePickerTestProps = {}, openWith: "click" | (string & {}) = "click") {
-	const t = setup(props);
+	const t = await setup(props);
 	await expectNotExists(t.getContent());
 	if (openWith === "click") {
 		await t.trigger.click();
@@ -92,56 +92,60 @@ it.each([kbd.ENTER, kbd.SPACE])("should open on %s", async (key) => {
 });
 
 it("should populate segment with value - `CalendarDate`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDate,
 	});
 
-	await expect.element(t.month).toHaveTextContent(String(calendarDate.month));
-	await expect.element(t.day).toHaveTextContent(String(calendarDate.day));
-	await expect.element(t.year).toHaveTextContent(String(calendarDate.year));
-	await expect.element(t.value).toHaveTextContent(calendarDate.toString());
+	await expect.element(t.month).toMatchTextContent(String(calendarDate.month));
+	await expect.element(t.day).toMatchTextContent(String(calendarDate.day));
+	await expect.element(t.year).toMatchTextContent(String(calendarDate.year));
+	await expect.element(t.value).toMatchTextContent(calendarDate.toString());
 });
 
 it("should populate segment with value - `CalendarDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 		granularity: "second",
 	});
 
-	await expect.element(t.month).toHaveTextContent(String(calendarDateTime.month));
-	await expect.element(t.day).toHaveTextContent(String(calendarDateTime.day));
-	await expect.element(t.year).toHaveTextContent(String(calendarDateTime.year));
-	await expect.element(page.getByTestId("hour")).toHaveTextContent(String(calendarDateTime.hour));
+	await expect.element(t.month).toMatchTextContent(String(calendarDateTime.month));
+	await expect.element(t.day).toMatchTextContent(String(calendarDateTime.day));
+	await expect.element(t.year).toMatchTextContent(String(calendarDateTime.year));
+	await expect
+		.element(page.getByTestId("hour"))
+		.toMatchTextContent(String(calendarDateTime.hour));
 	await expect
 		.element(page.getByTestId("minute"))
-		.toHaveTextContent(String(calendarDateTime.minute));
+		.toMatchTextContent(String(calendarDateTime.minute));
 	await expect
 		.element(page.getByTestId("second"))
-		.toHaveTextContent(String(calendarDateTime.second));
-	await expect.element(t.value).toHaveTextContent(calendarDateTime.toString());
+		.toMatchTextContent(String(calendarDateTime.second));
+	await expect.element(t.value).toMatchTextContent(calendarDateTime.toString());
 });
 
 it("should populate segment with value - `ZonedDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
 
-	await expect.element(t.month).toHaveTextContent(String(calendarDateTime.month));
-	await expect.element(t.day).toHaveTextContent(String(calendarDateTime.day));
-	await expect.element(t.year).toHaveTextContent(String(calendarDateTime.year));
-	await expect.element(page.getByTestId("hour")).toHaveTextContent(String(calendarDateTime.hour));
+	await expect.element(t.month).toMatchTextContent(String(calendarDateTime.month));
+	await expect.element(t.day).toMatchTextContent(String(calendarDateTime.day));
+	await expect.element(t.year).toMatchTextContent(String(calendarDateTime.year));
+	await expect
+		.element(page.getByTestId("hour"))
+		.toMatchTextContent(String(calendarDateTime.hour));
 	await expect
 		.element(page.getByTestId("minute"))
-		.toHaveTextContent(String(calendarDateTime.minute));
+		.toMatchTextContent(String(calendarDateTime.minute));
 	await expect
 		.element(page.getByTestId("second"))
-		.toHaveTextContent(String(calendarDateTime.second));
-	await expect.element(t.value).toHaveTextContent(calendarDateTime.toString());
+		.toMatchTextContent(String(calendarDateTime.second));
+	await expect.element(t.value).toMatchTextContent(calendarDateTime.toString());
 });
 
 it("should navigate between the segments", async () => {
-	setup({
+	await setup({
 		value: calendarDate,
 	});
 
@@ -168,7 +172,7 @@ it("should navigate between the segments", async () => {
 });
 
 it("should navigate between the segments - right to left", async () => {
-	setup({
+	await setup({
 		value: calendarDate,
 	});
 
@@ -195,24 +199,24 @@ it("should navigate between the segments - right to left", async () => {
 });
 
 it("should respect `bind:value`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDate,
 	});
-	await expect.element(t.value).toHaveTextContent(calendarDate.toString());
+	await expect.element(t.value).toMatchTextContent(calendarDate.toString());
 
 	await t.month.click();
 	await userEvent.keyboard("2");
-	await expect.element(t.value).toHaveTextContent("2022-02-15");
+	await expect.element(t.value).toMatchTextContent("2022-02-15");
 });
 
 it("should populate date with keyboard", async () => {
-	const t = setup({ value: calendarDate });
+	const t = await setup({ value: calendarDate });
 
 	await t.month.click();
 
 	await userEvent.keyboard("2142020");
 
-	await expect.element(t.value).toHaveTextContent("2020-02-14");
+	await expect.element(t.value).toMatchTextContent("2020-02-14");
 });
 
 describe("respects value if provided", () => {
@@ -222,7 +226,7 @@ describe("respects value if provided", () => {
 		expect(t.getSelectedDay()).toBeTruthy();
 
 		const heading = page.getByTestId("heading");
-		await expect.element(heading).toHaveTextContent("January 1980");
+		await expect.element(heading).toMatchTextContent("January 1980");
 	});
 
 	it("CalendarDateTime", async () => {
@@ -231,7 +235,7 @@ describe("respects value if provided", () => {
 		expect(t.getSelectedDay()).toBeTruthy();
 
 		const heading = page.getByTestId("heading");
-		await expect.element(heading).toHaveTextContent("January 1980");
+		await expect.element(heading).toMatchTextContent("January 1980");
 	});
 
 	it("ZonedDateTime", async () => {
@@ -240,7 +244,7 @@ describe("respects value if provided", () => {
 		expect(t.getSelectedDay()).toBeTruthy();
 
 		const heading = page.getByTestId("heading");
-		await expect.element(heading).toHaveTextContent("January 1980");
+		await expect.element(heading).toMatchTextContent("January 1980");
 	});
 });
 
@@ -267,12 +271,12 @@ it("should update value when selecting a date", async () => {
 	});
 
 	const value = page.getByTestId("value");
-	await expect.element(value).toHaveTextContent("undefined");
+	await expect.element(value).toMatchTextContent("undefined");
 
 	const fifthDayInMonth = page.getByTestId("date-1-5");
 	await fifthDayInMonth.click();
 
-	await expect.element(value).toHaveTextContent("1980-01-05");
+	await expect.element(value).toMatchTextContent("1980-01-05");
 	await expectNotExists(t.getContent());
 	await t.trigger.click();
 	await expectExists(t.getContent());
@@ -287,10 +291,10 @@ it("should navigate the months forward using the next button", async () => {
 	const nextBtn = page.getByTestId("next-button");
 
 	for (const month of months) {
-		await expect.element(heading).toHaveTextContent(`${month} 1980`);
+		await expect.element(heading).toMatchTextContent(`${month} 1980`);
 		await nextBtn.click();
 	}
-	await expect.element(heading).toHaveTextContent("January 1981");
+	await expect.element(heading).toMatchTextContent("January 1981");
 });
 
 it("should navigate the months backwards using the prev button", async () => {
@@ -301,14 +305,14 @@ it("should navigate the months backwards using the prev button", async () => {
 	const newMonths = [...months].reverse();
 	newMonths.pop();
 
-	await expect.element(heading).toHaveTextContent("January 1980");
+	await expect.element(heading).toMatchTextContent("January 1980");
 	await prevBtn.click();
 
 	for (const month of newMonths) {
-		await expect.element(heading).toHaveTextContent(`${month} 1979`);
+		await expect.element(heading).toMatchTextContent(`${month} 1979`);
 		await prevBtn.click();
 	}
-	await expect.element(heading).toHaveTextContent("January 1979");
+	await expect.element(heading).toMatchTextContent("January 1979");
 });
 
 it("should render six weeks when `fixedWeeks` is `true`", { timeout: 10000 }, async () => {
@@ -338,17 +342,17 @@ it("should not allow navigation before the `minValue` (prev button)", async () =
 	const prevBtn = page.getByTestId("prev-button");
 	await prevBtn.click();
 	const heading = page.getByTestId("heading");
-	await expect.element(heading).toHaveTextContent("December 1979");
+	await expect.element(heading).toMatchTextContent("December 1979");
 	await expect.element(prevBtn).not.toHaveAttribute("aria-disabled", "true");
 	await expect.element(prevBtn).not.toHaveAttribute("data-disabled");
 
 	await prevBtn.click();
-	await expect.element(heading).toHaveTextContent("November 1979");
+	await expect.element(heading).toMatchTextContent("November 1979");
 	await expect.element(prevBtn).toHaveAttribute("aria-disabled", "true");
 	await expect.element(prevBtn).toHaveAttribute("data-disabled");
 
 	await expectNotClickableLoc(prevBtn);
-	await expect.element(heading).toHaveTextContent("November 1979");
+	await expect.element(heading).toMatchTextContent("November 1979");
 });
 
 it("should not allow navigation after the `maxValue` (next button)", async () => {
@@ -360,17 +364,17 @@ it("should not allow navigation after the `maxValue` (next button)", async () =>
 	const nextBtn = page.getByTestId("next-button");
 	await nextBtn.click();
 	const heading = page.getByTestId("heading");
-	await expect.element(heading).toHaveTextContent("February 1980");
+	await expect.element(heading).toMatchTextContent("February 1980");
 	await expect.element(nextBtn).not.toHaveAttribute("aria-disabled", "true");
 	await expect.element(nextBtn).not.toHaveAttribute("data-disabled");
 
 	await nextBtn.click();
-	await expect.element(heading).toHaveTextContent("March 1980");
+	await expect.element(heading).toMatchTextContent("March 1980");
 	await expect.element(nextBtn).toHaveAttribute("aria-disabled", "true");
 	await expect.element(nextBtn).toHaveAttribute("data-disabled");
 
 	await expectNotClickableLoc(nextBtn);
-	await expect.element(heading).toHaveTextContent("March 1980");
+	await expect.element(heading).toMatchTextContent("March 1980");
 });
 
 it("should not navigate after `maxValue` (with keyboard)", async () => {
@@ -384,7 +388,7 @@ it("should not navigate after `maxValue` (with keyboard)", async () => {
 	await expect.element(firstDayInMonth).toHaveFocus();
 
 	const heading = page.getByTestId("heading");
-	await expect.element(heading).toHaveTextContent("January 1980");
+	await expect.element(heading).toMatchTextContent("January 1980");
 
 	// five keypresses to February 1980
 	await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -397,7 +401,7 @@ it("should not navigate after `maxValue` (with keyboard)", async () => {
 	await expect.element(page.getByTestId("date-1-29")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-2-5")).toHaveFocus();
-	await expect.element(heading).toHaveTextContent("February 1980");
+	await expect.element(heading).toMatchTextContent("February 1980");
 
 	// four keypresses to March 1980
 	await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -408,7 +412,7 @@ it("should not navigate after `maxValue` (with keyboard)", async () => {
 	await expect.element(page.getByTestId("date-2-26")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-3-4")).toHaveFocus();
-	await expect.element(heading).toHaveTextContent("March 1980");
+	await expect.element(heading).toMatchTextContent("March 1980");
 
 	// four keypresses to April 1980 - should stop at max
 	await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -419,7 +423,7 @@ it("should not navigate after `maxValue` (with keyboard)", async () => {
 	await expect.element(page.getByTestId("date-3-25")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(page.getByTestId("date-3-25")).toHaveFocus();
-	await expect.element(heading).toHaveTextContent("March 1980");
+	await expect.element(heading).toMatchTextContent("March 1980");
 });
 
 it("should not navigate before `minValue` (with keyboard)", async () => {
@@ -433,12 +437,12 @@ it("should not navigate before `minValue` (with keyboard)", async () => {
 	await expect.element(firstDayInMonth).toHaveFocus();
 
 	const heading = page.getByTestId("heading");
-	await expect.element(heading).toHaveTextContent("January 1980");
+	await expect.element(heading).toMatchTextContent("January 1980");
 
 	// one keypress to get to December 1979
 	await userEvent.keyboard(kbd.ARROW_UP);
 	await expect.element(page.getByTestId("date-12-25")).toHaveFocus();
-	await expect.element(heading).toHaveTextContent("December 1979");
+	await expect.element(heading).toMatchTextContent("December 1979");
 
 	// four keypresses to November 1979 - should stop at min
 	await userEvent.keyboard(kbd.ARROW_UP);
@@ -449,7 +453,7 @@ it("should not navigate before `minValue` (with keyboard)", async () => {
 	await expect.element(page.getByTestId("date-12-4")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_UP);
 	await expect.element(page.getByTestId("date-12-4")).toHaveFocus();
-	await expect.element(heading).toHaveTextContent("December 1979");
+	await expect.element(heading).toMatchTextContent("December 1979");
 });
 
 it("should set default placeholder greater than `minValue`", async () => {
@@ -457,7 +461,7 @@ it("should set default placeholder greater than `minValue`", async () => {
 	const minValue = new CalendarDate(currentYear + 2, 2, 1);
 	await open({ minValue });
 	const heading = page.getByTestId("heading");
-	await expect.element(heading).toHaveTextContent(`February ${minValue.year}`);
+	await expect.element(heading).toMatchTextContent(`February ${minValue.year}`);
 });
 
 it("should set default placeholder lower than `maxValue`", async () => {
@@ -465,7 +469,7 @@ it("should set default placeholder lower than `maxValue`", async () => {
 	const maxValue = new CalendarDate(currentYear - 2, 11, 11);
 	await open({ maxValue });
 	const heading = page.getByTestId("heading");
-	await expect.element(heading).toHaveTextContent(`November ${maxValue.year}`);
+	await expect.element(heading).toMatchTextContent(`November ${maxValue.year}`);
 });
 
 it("should handle unavailable dates appropriately", async () => {
@@ -477,7 +481,7 @@ it("should handle unavailable dates appropriately", async () => {
 	});
 
 	const thirdDayInMonth = page.getByTestId("date-1-3");
-	await expect.element(thirdDayInMonth).toHaveTextContent("3");
+	await expect.element(thirdDayInMonth).toMatchTextContent("3");
 	await expect.element(thirdDayInMonth).toHaveAttribute("data-unavailable");
 	await expect.element(thirdDayInMonth).toHaveAttribute("aria-disabled", "true");
 	await expectNotClickableLoc(thirdDayInMonth);
@@ -485,19 +489,19 @@ it("should handle unavailable dates appropriately", async () => {
 });
 
 it("should sync the calendar with the input when input is changed", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDate,
 	});
-	await expect.element(t.value).toHaveTextContent(calendarDate.toString());
+	await expect.element(t.value).toMatchTextContent(calendarDate.toString());
 
 	await t.month.click();
 	await userEvent.keyboard("2");
-	await expect.element(t.value).toHaveTextContent("2022-02-15");
+	await expect.element(t.value).toMatchTextContent("2022-02-15");
 	await t.trigger.click();
 	await expectExists(t.getContent());
 
 	const heading = page.getByTestId("heading");
-	await expect.element(heading).toHaveTextContent("February 2022");
+	await expect.element(heading).toMatchTextContent("February 2022");
 });
 
 describe("correct weekday label formatting", () => {
@@ -508,7 +512,7 @@ describe("correct weekday label formatting", () => {
 		});
 		for (const [i, weekday] of narrowWeekdays.entries()) {
 			const weekdayEl = page.getByTestId(`weekday-1-${i}`);
-			await expect.element(weekdayEl).toHaveTextContent(weekday);
+			await expect.element(weekdayEl).toMatchTextContent(weekday);
 		}
 	});
 
@@ -519,7 +523,7 @@ describe("correct weekday label formatting", () => {
 		});
 		for (const [i, weekday] of shortWeekdays.entries()) {
 			const weekdayEl = page.getByTestId(`weekday-1-${i}`);
-			await expect.element(weekdayEl).toHaveTextContent(weekday);
+			await expect.element(weekdayEl).toMatchTextContent(weekday);
 		}
 	});
 
@@ -530,7 +534,7 @@ describe("correct weekday label formatting", () => {
 		});
 		for (const [i, weekday] of longWeekdays.entries()) {
 			const weekdayEl = page.getByTestId(`weekday-1-${i}`);
-			await expect.element(weekdayEl).toHaveTextContent(weekday);
+			await expect.element(weekdayEl).toMatchTextContent(weekday);
 		}
 	});
 });
@@ -542,7 +546,7 @@ it("should respect the `weekStartsOn` prop regardless of locale", async () => {
 		weekdayFormat: "short",
 		locale: "fr",
 	});
-	await expect.element(page.getByTestId("weekday-1-0")).toHaveTextContent("mar.");
+	await expect.element(page.getByTestId("weekday-1-0")).toMatchTextContent("mar.");
 });
 
 it("should default the first day of the week to the locale's first day of the week if `weekStartsOn` is not provided", async () => {
@@ -551,7 +555,7 @@ it("should default the first day of the week to the locale's first day of the we
 		weekdayFormat: "short",
 		locale: "fr",
 	});
-	await expect.element(page.getByTestId("weekday-1-0")).toHaveTextContent("lun.");
+	await expect.element(page.getByTestId("weekday-1-0")).toMatchTextContent("lun.");
 });
 
 it("should handle disabled dates correctly", async () => {
@@ -561,7 +565,7 @@ it("should handle disabled dates correctly", async () => {
 	});
 
 	const fifthDayInMonth = page.getByTestId("date-1-5");
-	await expect.element(fifthDayInMonth).toHaveTextContent("5");
+	await expect.element(fifthDayInMonth).toMatchTextContent("5");
 	await expect.element(fifthDayInMonth).toHaveAttribute("data-disabled");
 	await expect.element(fifthDayInMonth).toHaveAttribute("aria-disabled", "true");
 	await expectNotClickableLoc(fifthDayInMonth);
@@ -580,7 +584,7 @@ it("should close popover when date is selected and closeOnDateSelect is true", a
 
 	// should close after selection
 	await expectNotExists(t.getContent());
-	await expect.element(t.value).toHaveTextContent("1980-01-05");
+	await expect.element(t.value).toMatchTextContent("1980-01-05");
 });
 
 it("should not close popover when closeOnDateSelect is false", async () => {
@@ -596,12 +600,12 @@ it("should not close popover when closeOnDateSelect is false", async () => {
 
 	// should remain open
 	await expectExists(t.getContent());
-	await expect.element(t.value).toHaveTextContent("1980-01-05");
+	await expect.element(t.value).toMatchTextContent("1980-01-05");
 });
 
 describe("date picker - 24-hour format with locales", () => {
 	it("should allow typing hours 0-23 with non en-US locales that use 24-hour format", async () => {
-		const t = setup({
+		const t = await setup({
 			granularity: "minute",
 			locale: "nl-NL", // dutch uses 24-hour format
 		});
@@ -611,22 +615,22 @@ describe("date picker - 24-hour format with locales", () => {
 		await t.day.click();
 		await userEvent.keyboard("9");
 
-		await expect.element(t.day).toHaveTextContent("09");
+		await expect.element(t.day).toMatchTextContent("09");
 		await expect.element(t.month).toHaveFocus();
 		await userEvent.keyboard("9");
-		await expect.element(t.month).toHaveTextContent("09");
+		await expect.element(t.month).toMatchTextContent("09");
 		await expect.element(t.year).toHaveFocus();
 		await userEvent.keyboard("1234");
-		await expect.element(t.year).toHaveTextContent("1234");
+		await expect.element(t.year).toMatchTextContent("1234");
 		await expect.element(getHour()).toHaveFocus();
 		await userEvent.keyboard("22");
-		await expect.element(getHour()).toHaveTextContent("22");
+		await expect.element(getHour()).toMatchTextContent("22");
 		await expect.element(getMinute()).toHaveFocus();
 	});
 
 	it("should allow arrow key navigation through full 0-23 range with 24-hour locales", async () => {
 		const value = new CalendarDateTime(2023, 10, 12, 14, 30, 30, 0);
-		setup({
+		await setup({
 			value,
 			granularity: "minute",
 			locale: "fr-FR", // french uses 24-hour format
@@ -635,31 +639,31 @@ describe("date picker - 24-hour format with locales", () => {
 		const { getHour } = getTimeSegments(page.getByTestId);
 		const hour = getHour();
 
-		await expect.element(hour).toHaveTextContent("14");
+		await expect.element(hour).toMatchTextContent("14");
 
 		// arrow up should go to 15, not clamp to 12
 		await hour.click();
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expect.element(hour).toHaveTextContent("15");
+		await expect.element(hour).toMatchTextContent("15");
 
 		// continue to 23
 		for (let i = 0; i < 8; i++) {
 			await userEvent.keyboard(kbd.ARROW_UP);
 		}
-		await expect.element(hour).toHaveTextContent("23");
+		await expect.element(hour).toMatchTextContent("23");
 
 		// arrow up from 23 should cycle to 00
 		await userEvent.keyboard(kbd.ARROW_UP);
-		await expect.element(hour).toHaveTextContent("00");
+		await expect.element(hour).toMatchTextContent("00");
 
 		// arrow down from 00 should go to 23
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expect.element(hour).toHaveTextContent("23");
+		await expect.element(hour).toMatchTextContent("23");
 	});
 
 	it("should display and allow typing hours > 12 with sv-SE locale (24-hour format)", async () => {
 		const value = new CalendarDateTime(2023, 10, 12, 18, 30, 30, 0);
-		setup({
+		await setup({
 			value,
 			granularity: "minute",
 			locale: "sv-SE", // swedish uses 24-hour format
@@ -669,7 +673,7 @@ describe("date picker - 24-hour format with locales", () => {
 		const hour = getHour();
 
 		// should display 18, not clamp to 12 or convert to 12-hour format
-		await expect.element(hour).toHaveTextContent("18");
+		await expect.element(hour).toMatchTextContent("18");
 
 		// should not have dayPeriod segment
 		await expectNotExists(page.getByTestId("dayPeriod"));
@@ -677,17 +681,17 @@ describe("date picker - 24-hour format with locales", () => {
 		// typing should allow values > 12
 		await hour.click();
 		await userEvent.keyboard("20");
-		await expect.element(hour).toHaveTextContent("20");
+		await expect.element(hour).toMatchTextContent("20");
 
 		// arrow down should work correctly (not clamp to 1-12 range)
 		await hour.click();
 		await userEvent.keyboard(kbd.ARROW_DOWN);
-		await expect.element(hour).toHaveTextContent("19");
+		await expect.element(hour).toMatchTextContent("19");
 	});
 
 	it("should handle ja-JP locale (24-hour format) correctly", async () => {
 		const value = new CalendarDateTime(2023, 10, 12, 16, 30, 0, 0);
-		setup({
+		await setup({
 			value,
 			granularity: "minute",
 			locale: "ja-JP", // japanese uses 24-hour format
@@ -697,7 +701,7 @@ describe("date picker - 24-hour format with locales", () => {
 		const hour = getHour();
 
 		// should display 16
-		await expect.element(hour).toHaveTextContent("16");
+		await expect.element(hour).toMatchTextContent("16");
 
 		// should not have dayPeriod segment
 		await expectNotExists(page.getByTestId("dayPeriod"));
@@ -705,6 +709,6 @@ describe("date picker - 24-hour format with locales", () => {
 		// typing should allow values > 12
 		await hour.click();
 		await userEvent.keyboard("21");
-		await expect.element(hour).toHaveTextContent("21");
+		await expect.element(hour).toMatchTextContent("21");
 	});
 });
