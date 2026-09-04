@@ -779,6 +779,40 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 		};
 	}
 
+	/**
+	 * `#handleFocus` defers its `ref.current` read with `afterTick`, and a focus
+	 * change is frequently the very thing that closes a layer. #2080's fix guarded
+	 * the `afterSleep` timer with a constructor-local `destroyed`, which a class
+	 * field handler like `#handleFocus` cannot reference, so this path stayed open.
+	 *
+	 * Honest caveat: like the sibling cases below, this is a smoke test — it does
+	 * not fail against the unguarded source. `derived_inert` only fires when the
+	 * derived is *dirty* and its parent is destroyed but `is_destroying_effect` is
+	 * no longer set, a window this harness does not reliably hit. The guard is
+	 * verified by inspection; the failing case came from production telemetry.
+	 */
+	it("should survive a focus change that closes the layer in the same tick", async () => {
+		const counter = installDerivedInertCounter();
+		const outside = document.createElement("button");
+		try {
+			const t = render(DialogTest, { open: true });
+			await expectExists(page.getByTestId("content"));
+
+			document.body.appendChild(outside);
+			counter.counts.inert = 0;
+
+			outside.focus();
+			await t.rerender({ open: false });
+			await expectNotExists(page.getByTestId("content"));
+
+			await new Promise((r) => setTimeout(r, 50));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			outside.remove();
+			counter.restore();
+		}
+	});
+
 	it("should not emit derived_inert when unmounted while open", async () => {
 		const counter = installDerivedInertCounter();
 		try {
