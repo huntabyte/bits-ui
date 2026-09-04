@@ -382,6 +382,28 @@ describe("combobox - single", () => {
 		await expectNotHighlighted(item2);
 	});
 
+	it("items are not shown when filtering has no match", async () => {
+		const t = await openSingle();
+		await t.user.type(t.input, "z");
+		await expectNotExists(page.getByTestId("1"));
+		await expectNotExists(page.getByTestId("2"));
+	});
+
+	it("should highlight the first filtered item after typing in the input", async () => {
+		const t = await openSingle();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+	});
+
+	it("should select the highlighted filtered item with Enter after typing", async () => {
+		const t = await openSingle();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+		await t.user.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("B");
+		await expect.element(t.getHiddenInput()).toHaveValue("2");
+	});
+
 	it("should select a default item when provided", async () => {
 		const t = await openSingle({
 			value: "2",
@@ -714,6 +736,29 @@ describe("combobox - multiple", () => {
 		await item2.hover();
 		await expectHighlighted(item2);
 		await expectNotHighlighted(item1);
+	});
+
+	it("items are not shown when filtering has no match", async () => {
+		const t = await openMultiple();
+		await t.user.type(t.input, "z");
+		await expectNotExists(page.getByTestId("1"));
+		await expectNotExists(page.getByTestId("2"));
+	});
+
+	it("should highlight the first filtered item after typing in the input", async () => {
+		const t = await openMultiple();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+	});
+
+	it("should select the highlighted filtered item with Enter after typing", async () => {
+		const t = await openMultiple();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+		await t.user.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("B");
+		expect(t.getHiddenInputs()).toHaveLength(1);
+		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
 	});
 
 	it("should select a default item when provided", async () => {
