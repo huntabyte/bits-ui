@@ -1627,7 +1627,6 @@ export class MenuGroupHeadingState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "group",
 				[this.group.root.getBitsAttr("group-heading")]: "",
 				...this.attachment,
 			}) as const
@@ -1655,7 +1654,7 @@ export class MenuSeparatorState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "group",
+				role: "separator",
 				[this.root.getBitsAttr("separator")]: "",
 				...this.attachment,
 			}) as const
