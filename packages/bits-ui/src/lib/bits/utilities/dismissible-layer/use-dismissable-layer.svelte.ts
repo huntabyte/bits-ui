@@ -46,6 +46,14 @@ export class DismissibleLayerState {
 	#documentObj = undefined as unknown as Document;
 	#onFocusOutside: DismissibleLayerStateOpts["onFocusOutside"];
 	#unsubClickListener = noop;
+	/**
+	 * Set once the layer is torn down. Deferred work scheduled before teardown can
+	 * still run afterwards, so every such callback must short-circuit on this
+	 * before reading `this.opts.ref.current` — reading a destroyed `$derived`
+	 * triggers Svelte's `derived_inert` warning. A class field rather than a
+	 * constructor local so the class-field handlers below can see it too.
+	 */
+	#destroyed = false;
 
 	constructor(opts: DismissibleLayerStateOpts) {
 		this.opts = opts;
@@ -64,7 +72,6 @@ export class DismissibleLayerState {
 		// destroyed $derived (`ref.current`) → `derived_inert` (and can re-attach document
 		// listeners to a dead instance). See https://github.com/huntabyte/bits-ui/issues/2080
 		let pendingTimer: ReturnType<typeof afterSleep> | null = null;
-		let destroyed = false;
 		const clearPendingTimer = () => {
 			if (pendingTimer != null) {
 				clearTimeout(pendingTimer);
@@ -85,8 +92,8 @@ export class DismissibleLayerState {
 			clearPendingTimer();
 			pendingTimer = afterSleep(1, () => {
 				pendingTimer = null;
-				// `destroyed` must short-circuit before any `this.opts.ref.current` read.
-				if (destroyed || !this.opts.ref.current) return;
+				// `#destroyed` must short-circuit before any `this.opts.ref.current` read.
+				if (this.#destroyed || !this.opts.ref.current) return;
 				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
 
 				unsubEvents();
@@ -96,7 +103,7 @@ export class DismissibleLayerState {
 		});
 
 		onDestroyEffect(() => {
-			destroyed = true;
+			this.#destroyed = true;
 			clearPendingTimer();
 			this.#resetState();
 			globalThis.bitsDismissableLayers.delete(this);
@@ -108,8 +115,12 @@ export class DismissibleLayerState {
 
 	#handleFocus = (event: FocusEvent) => {
 		if (event.defaultPrevented) return;
-		if (!this.opts.ref.current) return;
+		if (this.#destroyed || !this.opts.ref.current) return;
 		afterTick(() => {
+			// The layer can be destroyed between the focus event and this tick — a
+			// focus change is frequently what closes it. `#destroyed` must
+			// short-circuit before any `this.opts.ref.current` read.
+			if (this.#destroyed) return;
 			if (!this.opts.ref.current || this.#isTargetWithinLayer(event.target as HTMLElement))
 				return;
 
