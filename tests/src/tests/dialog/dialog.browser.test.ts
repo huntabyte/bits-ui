@@ -1,7 +1,7 @@
 import { userEvent, page } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { tick, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
@@ -779,37 +779,41 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 		};
 	}
 
-	/**
-	 * `#handleFocus` defers its `ref.current` read with `afterTick`, and a focus
-	 * change is frequently the very thing that closes a layer. #2080's fix guarded
-	 * the `afterSleep` timer with a constructor-local `destroyed`, which a class
-	 * field handler like `#handleFocus` cannot reference, so this path stayed open.
-	 *
-	 * Honest caveat: like the sibling cases below, this is a smoke test — it does
-	 * not fail against the unguarded source. `derived_inert` only fires when the
-	 * derived is *dirty* and its parent is destroyed but `is_destroying_effect` is
-	 * no longer set, a window this harness does not reliably hit. The guard is
-	 * verified by inspection; the failing case came from production telemetry.
-	 */
-	it("should survive a focus change that closes the layer in the same tick", async () => {
-		const counter = installDerivedInertCounter();
-		const outside = document.createElement("button");
+	it("should not read the layer ref from pending focus work after unmount", async () => {
+		const t = await open();
+		const content = page.getByTestId("content").element();
+		const layers = (
+			globalThis as {
+				bitsDismissableLayers?: Map<
+					{ opts: { ref: { current: HTMLElement | null } } },
+					unknown
+				>;
+			}
+		).bitsDismissableLayers!;
+		const layer = [...layers.keys()].find((layer) => layer.opts.ref.current === content)!;
+		const originalRef = layer.opts.ref;
+		const readRef = vi.fn(() => originalRef.current);
+		layer.opts.ref = {
+			get current() {
+				return readRef();
+			},
+			set current(value) {
+				originalRef.current = value;
+			},
+		};
+
 		try {
-			const t = render(DialogTest, { open: true });
-			await expectExists(page.getByTestId("content"));
+			content.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+			expect(readRef).toHaveBeenCalled();
+			// Unmount synchronously before the focus handler's afterTick callback runs.
+			t.unmount();
+			expect(layers.has(layer)).toBe(false);
+			readRef.mockClear();
 
-			document.body.appendChild(outside);
-			counter.counts.inert = 0;
-
-			outside.focus();
-			await t.rerender({ open: false });
-			await expectNotExists(page.getByTestId("content"));
-
-			await new Promise((r) => setTimeout(r, 50));
-			expect(counter.counts.inert).toBe(0);
+			await tick();
+			expect(readRef).not.toHaveBeenCalled();
 		} finally {
-			outside.remove();
-			counter.restore();
+			layer.opts.ref = originalRef;
 		}
 	});
 
