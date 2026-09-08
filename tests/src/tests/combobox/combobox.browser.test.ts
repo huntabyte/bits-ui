@@ -762,7 +762,7 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should not move highlight to first item when clicking a non-first item in multi-select", async () => {
-		const t = await openMultiple();
+		await openMultiple();
 		const [item1, , , item4] = getItems(page.getByTestId);
 		await item4.hover();
 		await expectHighlighted(item4);
