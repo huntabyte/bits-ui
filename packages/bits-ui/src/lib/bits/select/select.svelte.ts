@@ -636,7 +636,10 @@ export class SelectInputState {
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.opts.inputValue.current = e.currentTarget.value;
-		this.root.setHighlightedToFirstCandidate();
+		afterTick(() => {
+			if (!this.root.opts.open.current) return;
+			this.root.setHighlightedToFirstCandidate();
+		});
 	}
 
 	readonly props = $derived.by(

@@ -761,6 +761,16 @@ describe("combobox - multiple", () => {
 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
 	});
 
+	it("should not move highlight to first item when clicking a non-first item in multi-select", async () => {
+		const t = await openMultiple();
+		const [item1, , , item4] = getItems(page.getByTestId);
+		await item4.hover();
+		await expectHighlighted(item4);
+		await item4.click();
+		await expectHighlighted(item4);
+		await expectNotHighlighted(item1);
+	});
+
 	it("should select a default item when provided", async () => {
 		const t = await openMultiple({
 			value: ["2"],
