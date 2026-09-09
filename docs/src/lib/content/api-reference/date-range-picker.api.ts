@@ -78,6 +78,7 @@ const root = defineComponentApiSchema<DateRangePickerRootPropsWithoutHTML>({
 		excludeDisabled: rangeCalendarRoot.props!.excludeDisabled,
 		monthFormat: rangeCalendarRoot.props!.monthFormat,
 		yearFormat: rangeCalendarRoot.props!.yearFormat,
+		showWeekNumbers: rangeCalendarRoot.props!.showWeekNumbers,
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [

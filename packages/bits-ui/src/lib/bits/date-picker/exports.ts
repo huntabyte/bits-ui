@@ -19,6 +19,8 @@ export { default as NextButton } from "$lib/bits/calendar/components/calendar-ne
 export { default as PrevButton } from "$lib/bits/calendar/components/calendar-prev-button.svelte";
 export { default as MonthSelect } from "$lib/bits/calendar/components/calendar-month-select.svelte";
 export { default as YearSelect } from "$lib/bits/calendar/components/calendar-year-select.svelte";
+export { default as WeekNumberCell } from "$lib/bits/calendar/components/calendar-week-number-cell.svelte";
+export { default as WeekNumberHeadCell } from "$lib/bits/calendar/components/calendar-week-number-head-cell.svelte";
 export { default as Cell } from "$lib/bits/calendar/components/calendar-cell.svelte";
 export { default as Day } from "$lib/bits/calendar/components/calendar-day.svelte";
 export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
@@ -48,4 +50,6 @@ export type {
 	DatePickerPortalProps as PortalProps,
 	DatePickerMonthSelectProps as MonthSelectProps,
 	DatePickerYearSelectProps as YearSelectProps,
+	DatePickerWeekNumberCellProps as WeekNumberCellProps,
+	DatePickerWeekNumberHeadCellProps as WeekNumberHeadCellProps,
 } from "./types.js";

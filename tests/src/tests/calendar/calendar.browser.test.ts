@@ -492,6 +492,44 @@ describe("type='single'", () => {
 		});
 	});
 
+	describe("Week Numbers", () => {
+		it("should not render week number cells when `showWeekNumbers` is false (default)", async () => {
+			setup({ placeholder: calendarDate });
+			const cell = page.getByTestId("week-number-cell-1-0");
+			const headCell = page.getByTestId("week-number-head-cell-1");
+			await expect.element(cell).not.toBeInTheDocument();
+			await expect.element(headCell).not.toBeInTheDocument();
+		});
+
+		it("should render week number cells when `showWeekNumbers` is true", async () => {
+			setup({ placeholder: calendarDate, showWeekNumbers: true });
+			// calendarDate is January 20, 1980. January 1980 has 5 weeks in the grid (no fixedWeeks).
+			// Check that head cell and at least the first body cell render.
+			const headCell = page.getByTestId("week-number-head-cell-1");
+			await expect.element(headCell).toBeInTheDocument();
+			const firstWeekCell = page.getByTestId("week-number-cell-1-0");
+			await expect.element(firstWeekCell).toBeInTheDocument();
+		});
+
+		it("should display the correct ISO 8601 week number", async () => {
+			// calendarDate = Jan 20, 1980 (Sunday). With weekStartsOn=0 (default),
+			// week numbers are anchored to each row's Thursday.
+			// Row 3 spans Jan 20-26, and its Thursday is Jan 24, 1980 => ISO week 4.
+			setup({ placeholder: calendarDate, showWeekNumbers: true });
+			const weekCell = page.getByTestId("week-number-cell-1-3");
+			await expect.element(weekCell).toHaveTextContent("04");
+		});
+
+		it("should display correct ISO week numbers at year boundaries (Dec 30, 2024 → W01 of 2025)", async () => {
+			// With weekStartsOn=1 (Monday), December 2024 grid:
+			// Row 5: Dec 30 (Mon) → week[0]=Dec 30 → day=1 → +4-1=Jan 2, 2025 → yearStart=Jan1,2025 → W1
+			const decDate = new CalendarDate(2024, 12, 1);
+			setup({ placeholder: decDate, showWeekNumbers: true, weekStartsOn: 1 });
+			const lastWeekCell = page.getByTestId("week-number-cell-12-5");
+			await expect.element(lastWeekCell).toHaveTextContent("01");
+		});
+	});
+
 	describe("Availability and Interaction", () => {
 		it("should handle unavailable dates appropriately", async () => {
 			setup({
