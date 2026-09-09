@@ -148,7 +148,7 @@ export class CommandRootState {
 		if (key === "search") {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
-			this.#sort();
+			this.#sort({ forceSelectFirst: value === "" && !this.#isInitialMount });
 		} else if (key === "value") {
 			if (!preventScroll) this.#scrollSelectedIntoView();
 		}
@@ -185,13 +185,13 @@ export class CommandRootState {
 	/**
 	 * Sorts items and groups based on search scores.
 	 * Groups are sorted by their highest scoring item.
-	 * When no search active, selects first item.
+	 * When no search is active, preserves the current item unless a reset is requested.
 	 */
-	#sort(): void {
+	#sort(opts: { forceSelectFirst?: boolean } = {}): void {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
 			// if no search and no initial value set or when clearing search,
 			// we select the first item.
-			if (!this._commandState.value || !this.#isInitialMount) {
+			if (!this._commandState.value || opts.forceSelectFirst) {
 				this.#selectFirstItem();
 			} else if (this.#isInitialMount && this._commandState.value) {
 				// scroll the initial value into view if it exists
@@ -297,6 +297,20 @@ export class CommandRootState {
 				this.#isInitialMount && this.opts.disableInitialScroll.current;
 			this.setValue(value ?? "", shouldPreventScroll);
 			this.#isInitialMount = false;
+		});
+	}
+
+	#selectFirstItemIfValueMissing(value: string): void {
+		afterTick(() => {
+			if (this._commandState.value !== value) return;
+
+			const selectedItemExists = this.getValidItems().some(
+				(item) => item.getAttribute(COMMAND_VALUE_ATTR) === value
+			);
+
+			if (!selectedItemExists) {
+				this.#selectFirstItem();
+			}
 		});
 	}
 
@@ -675,10 +689,13 @@ export class CommandRootState {
 
 			this.#filterItems();
 
-			// The item removed have been the selected one,
-			// so selection should be moved to the first
 			if (selectedItem?.getAttribute("id") === id) {
-				this.#selectFirstItem();
+				const selectedValue = selectedItem.getAttribute(COMMAND_VALUE_ATTR);
+				if (selectedValue) {
+					this.#selectFirstItemIfValueMissing(selectedValue);
+				} else {
+					this.#selectFirstItem();
+				}
 			}
 
 			this.#scheduleUpdate();
