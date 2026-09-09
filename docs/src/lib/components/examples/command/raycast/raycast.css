@@ -153,7 +153,7 @@
 		transition: all 150ms ease;
 		transition-property: none;
 
-		&[data-selected] {
+		&[data-highlighted] {
 			background: var(--gray4);
 			color: var(--gray12);
 		}

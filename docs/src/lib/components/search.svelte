@@ -127,7 +127,7 @@
 									{#each results as { title, href, snippet, category } (title + href)}
 										<Command.LinkItem
 											{href}
-											class="rounded-button data-selected:bg-muted outline-hidden flex cursor-pointer select-none flex-col items-start gap-1 px-3 py-2.5 text-sm"
+											class="rounded-button data-highlighted:bg-muted outline-hidden flex cursor-pointer select-none flex-col items-start gap-1 px-3 py-2.5 text-sm"
 											onSelect={() => {
 												searchQuery = "";
 												open = false;
