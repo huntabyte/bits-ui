@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.19.2
+
+### Patch Changes
+
+- fix: render the `id` attribute on Popper-based content elements (Tooltip, Popover, Select, Combobox, DropdownMenu, ContextMenu, Menubar, LinkPreview) so `aria-describedby` on triggers resolves correctly ([#2094](https://github.com/huntabyte/bits-ui/pull/2094))
+
+- fix: restore body styles on the captured document when delayed scroll-lock cleanup runs after the global document is torn down or replaced ([#2133](https://github.com/huntabyte/bits-ui/pull/2133))
+
+- fix: respect an explicit `Tabs.Content` tabindex while preserving the default panel tab stop ([#2132](https://github.com/huntabyte/bits-ui/pull/2132))
+
 ## 2.19.1
 
 ### Patch Changes
