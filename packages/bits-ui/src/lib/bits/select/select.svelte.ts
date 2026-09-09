@@ -862,7 +862,7 @@ export class SelectTriggerState {
 		) {
 			e.preventDefault();
 			const shouldReturn = this.#handleKeyboardSelection();
-			if (shouldReturn) return;
+			if (shouldReturn || e.key === kbd.SPACE) return;
 		}
 
 		if (e.key === kbd.ARROW_UP && e.altKey) {
