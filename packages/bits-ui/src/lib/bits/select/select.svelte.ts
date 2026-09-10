@@ -970,6 +970,8 @@ export class SelectTriggerState {
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
 				"aria-expanded": boolToStr(this.root.opts.open.current),
+				role: "combobox",
+				"aria-controls": this.root.contentNode?.id,
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
