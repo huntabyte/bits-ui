@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.19.3
+
+### Patch Changes
+
+- Fix outside clicks being lost while dismissible content such as DropdownMenu is opening. ([#2143](https://github.com/huntabyte/bits-ui/pull/2143))
+
 ## 2.19.2
 
 ### Patch Changes
