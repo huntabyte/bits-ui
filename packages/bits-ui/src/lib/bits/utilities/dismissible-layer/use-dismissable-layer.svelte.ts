@@ -1,13 +1,13 @@
 import {
 	type ReadableBox,
 	type WritableBox,
-	afterSleep,
 	afterTick,
 	executeCallbacks,
 	onDestroyEffect,
 	type ReadableBoxedValues,
 } from "svelte-toolbelt";
 import { watch } from "runed";
+import { untrack } from "svelte";
 import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
 import { type EventCallback } from "$lib/internal/events.js";
@@ -42,6 +42,7 @@ export class DismissibleLayerState {
 		pointerdown: false,
 	};
 	#isResponsibleLayer = false;
+	#capturedPointerDown: PointerEvent | null = null;
 	#isFocusInsideDOMTree = false;
 	#documentObj = undefined as unknown as Document;
 	#onFocusOutside: DismissibleLayerStateOpts["onFocusOutside"];
@@ -62,54 +63,34 @@ export class DismissibleLayerState {
 		this.#interactOutsideProp = opts.onInteractOutside;
 		this.#onFocusOutside = opts.onFocusOutside;
 
-		$effect(() => {
-			this.#documentObj = getOwnerDocument(this.opts.ref.current);
-		});
-
 		let unsubEvents = noop;
-		// Track the deferred afterSleep timer so teardown can cancel it. Without this,
-		// a layer destroyed within the 1ms window still fires the callback and reads a
-		// destroyed $derived (`ref.current`) → `derived_inert` (and can re-attach document
-		// listeners to a dead instance). See https://github.com/huntabyte/bits-ui/issues/2080
-		let pendingTimer: ReturnType<typeof afterSleep> | null = null;
-		const clearPendingTimer = () => {
-			if (pendingTimer != null) {
-				clearTimeout(pendingTimer);
-				pendingTimer = null;
-			}
-		};
+		let registeredNode: HTMLElement | null = null;
 
 		const cleanup = () => {
-			clearPendingTimer();
-			this.#resetState();
-			globalThis.bitsDismissableLayers.delete(this);
-			this.#handleInteractOutside.destroy();
-			unsubEvents();
-		};
-
-		watch([() => this.opts.enabled.current, () => this.opts.ref.current], () => {
-			if (!this.opts.enabled.current || !this.opts.ref.current) return;
-			clearPendingTimer();
-			pendingTimer = afterSleep(1, () => {
-				pendingTimer = null;
-				// `#destroyed` must short-circuit before any `this.opts.ref.current` read.
-				if (this.#destroyed || !this.opts.ref.current) return;
-				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
-
-				unsubEvents();
-				unsubEvents = this.#addEventListeners();
-			});
-			return cleanup;
-		});
-
-		onDestroyEffect(() => {
-			this.#destroyed = true;
-			clearPendingTimer();
+			registeredNode = null;
 			this.#resetState();
 			globalThis.bitsDismissableLayers.delete(this);
 			this.#handleInteractOutside.destroy();
 			this.#unsubClickListener();
 			unsubEvents();
+		};
+
+		watch([() => this.opts.enabled.current, () => this.opts.ref.current], ([enabled, node]) => {
+			const nextNode = enabled ? node : null;
+			// Ref boxes can invalidate without changing the DOM node during opening.
+			// Keep an in-flight interaction when this is still the same registration.
+			if (registeredNode === nextNode) return;
+			cleanup();
+			if (!nextNode) return;
+			registeredNode = nextNode;
+			this.#documentObj = getOwnerDocument(nextNode);
+			globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
+			unsubEvents = this.#addEventListeners();
+		});
+
+		onDestroyEffect(() => {
+			this.#destroyed = true;
+			cleanup();
 		});
 	}
 
@@ -131,36 +112,32 @@ export class DismissibleLayerState {
 	};
 
 	#addEventListeners() {
+		const document = this.#documentObj;
+		const onPointerDownCapture = (event: PointerEvent) => {
+			untrack(() => {
+				this.#markInterceptedEvent(event);
+				this.#markResponsibleLayer(event);
+			});
+		};
+		const onPointerDown = (event: PointerEvent) => {
+			// Ignore stopped events and bubble-only events such as the opening pointerdown.
+			// It can resume bubbling after a nested early outside click has been captured.
+			if (event.cancelBubble || event !== this.#capturedPointerDown) return;
+			this.#markNonInterceptedEvent(event);
+			this.#handleInteractOutside(event);
+		};
+
+		// `svelte/events.on` defers pointer listener attachment to a microtask, leaving
+		// a gap even without a registration timer. Document is already connected, so
+		// attach immediately. Only layers present at capture can own this interaction;
+		// a layer opened by its target/bubble handlers must not dismiss itself.
+		document.addEventListener("pointerdown", onPointerDownCapture, true);
+		document.addEventListener("pointerdown", onPointerDown);
+
 		return executeCallbacks(
-			/**
-			 * CAPTURE INTERACTION START
-			 * mark interaction-start event as intercepted.
-			 * mark responsible layer during interaction start
-			 * to avoid checking if is responsible layer during interaction end
-			 * when a new floating element may have been opened.
-			 */
-			on(
-				this.#documentObj,
-				"pointerdown",
-				executeCallbacks(this.#markInterceptedEvent, this.#markResponsibleLayer),
-				{ capture: true }
-			),
-
-			/**
-			 * BUBBLE INTERACTION START
-			 * Mark interaction-start event as non-intercepted. Debounce `onInteractOutsideStart`
-			 * to avoid prematurely checking if other events were intercepted.
-			 */
-			on(
-				this.#documentObj,
-				"pointerdown",
-				executeCallbacks(this.#markNonInterceptedEvent, this.#handleInteractOutside)
-			),
-
-			/**
-			 * HANDLE FOCUS OUTSIDE
-			 */
-			on(this.#documentObj, "focusin", this.#handleFocus)
+			() => document.removeEventListener("pointerdown", onPointerDownCapture, true),
+			() => document.removeEventListener("pointerdown", onPointerDown),
+			on(document, "focusin", this.#handleFocus)
 		);
 	}
 
@@ -218,7 +195,8 @@ export class DismissibleLayerState {
 		this.#interceptedEvents[e.type] = false;
 	};
 
-	#markResponsibleLayer = () => {
+	#markResponsibleLayer = (event: PointerEvent) => {
+		this.#capturedPointerDown = event;
 		if (!this.opts.ref.current) return;
 		this.#isResponsibleLayer = isResponsibleLayer(this.opts.ref.current);
 	};
@@ -246,6 +224,7 @@ export class DismissibleLayerState {
 			this.#interceptedEvents[eventType] = false;
 		}
 		this.#isResponsibleLayer = false;
+		this.#capturedPointerDown = null;
 	};
 
 	#isAnyEventIntercepted() {
