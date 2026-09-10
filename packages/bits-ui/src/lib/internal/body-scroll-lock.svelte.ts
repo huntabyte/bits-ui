@@ -45,7 +45,12 @@ let cleanupScheduledAt: number | null = null;
 const bodyLockStackCount = new SharedState(() => {
 	function resetBodyStyle(documentObj: Document) {
 		if (!BROWSER) return;
-		documentObj.body.setAttribute("style", initialBodyStyle ?? "");
+		// Restore through the CSSOM, not `setAttribute("style", ...)`: a CSP without
+		// `style-src 'unsafe-inline'` treats setAttribute as an inline style and
+		// blocks it, which left the body stuck with `overflow: hidden` and
+		// `pointer-events: none` after the last lock was released. CSSOM writes
+		// (like every other style change in this module) are never CSP-governed.
+		documentObj.body.style.cssText = initialBodyStyle ?? "";
 		documentObj.body.style.removeProperty("--scrollbar-width");
 		isIOS && stopTouchMoveListener?.();
 		// reset initialBodyStyle so next locker captures the correct styles

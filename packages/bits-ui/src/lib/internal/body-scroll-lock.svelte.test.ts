@@ -51,4 +51,49 @@ describe("BodyScrollLock", () => {
 			}
 		}
 	);
+
+	it("restores the body through the CSSOM so a CSP without style-src 'unsafe-inline' cannot block it", async () => {
+		const originalStyle = document.body.getAttribute("style");
+		document.body.style.cssText = "color: red;";
+		const initialStyle = document.body.getAttribute("style");
+		// Under such a CSP, `setAttribute("style", ...)` is silently ignored (and
+		// reported as a violation) while CSSOM writes still apply. Emulate that.
+		const setAttribute = vi.spyOn(document.body, "setAttribute").mockImplementation(function (
+			this: HTMLElement,
+			name: string,
+			value: string
+		) {
+			if (name === "style") return;
+			return HTMLElement.prototype.setAttribute.call(this, name, value);
+		});
+		let destroy: (() => void) | undefined;
+
+		try {
+			vi.useFakeTimers();
+			destroy = $effect.root(() => {
+				new BodyScrollLock(true);
+			});
+			flushSync();
+			await vi.runAllTimersAsync();
+			expect(document.body.style.overflow).toBe("hidden");
+			expect(document.body.style.pointerEvents).toBe("none");
+
+			destroy();
+			destroy = undefined;
+			await vi.runAllTimersAsync();
+
+			expect(setAttribute).not.toHaveBeenCalledWith("style", expect.anything());
+			expect(document.body.style.overflow).toBe("");
+			expect(document.body.style.pointerEvents).toBe("");
+			expect(document.body.getAttribute("style")).toBe(initialStyle);
+			expect(document.body.style.getPropertyValue("--scrollbar-width")).toBe("");
+		} finally {
+			destroy?.();
+			vi.clearAllTimers();
+			vi.restoreAllMocks();
+			vi.useRealTimers();
+			if (originalStyle === null) document.body.removeAttribute("style");
+			else document.body.setAttribute("style", originalStyle);
+		}
+	});
 });
