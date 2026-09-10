@@ -129,6 +129,22 @@ describe("Focus Management", () => {
 		}
 	);
 
+	it.each(["content", "open-focus-override"])(
+		"should preserve focus placed on %s during opening",
+		async (testId) => {
+			await open({
+				contentProps: {
+					onOpenAutoFocus: () => {
+						const target = page.getByTestId(testId).element() as HTMLElement;
+						target.focus();
+					},
+				},
+			});
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+			await expect.element(page.getByTestId(testId)).toHaveFocus();
+		}
+	);
+
 	it("should respect `onOpenAutoFocus` prop", async () => {
 		await open({
 			contentProps: {

@@ -87,6 +87,12 @@ export class FocusScope {
 		if (!event.defaultPrevented) {
 			requestAnimationFrame(() => {
 				if (!this.#container) return;
+				const activeElement = this.#container.ownerDocument
+					.activeElement as HTMLElement | null;
+				if (activeElement && this.#container.contains(activeElement)) {
+					this.#manager.setFocusMemory(this, activeElement);
+					return;
+				}
 				const firstTabbable = this.#getFirstTabbable();
 				if (firstTabbable) {
 					firstTabbable.focus();
