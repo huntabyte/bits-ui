@@ -51,7 +51,8 @@
 			onOpenAutoFocus(e);
 			if (e.defaultPrevented) return;
 			e.preventDefault();
-			afterSleep(0, () => contentState.opts.ref.current?.focus());
+			const content = contentState.opts.ref.current;
+			afterSleep(0, () => content?.isConnected && content.focus());
 		}}
 	>
 		{#snippet focusScope({ props: focusScopeProps })}
