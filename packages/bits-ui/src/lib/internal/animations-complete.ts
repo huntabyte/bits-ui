@@ -30,14 +30,6 @@ export class AnimationsComplete {
 	run(fn: () => void | Promise<void>): void {
 		this.#cleanup();
 
-		const node = this.#opts.ref.current;
-		if (!node) return;
-
-		if (typeof node.getAnimations !== "function") {
-			this.#executeCallback(fn);
-			return;
-		}
-
 		const runId = this.#runId;
 
 		const executeIfCurrent = (): void => {
@@ -45,8 +37,12 @@ export class AnimationsComplete {
 			this.#executeCallback(fn);
 		};
 
-		const waitForAnimations = (): void => {
+		const waitForAnimations = (node: HTMLElement): void => {
 			if (runId !== this.#runId) return;
+			if (typeof node.getAnimations !== "function") {
+				executeIfCurrent();
+				return;
+			}
 			const animations = node.getAnimations();
 
 			if (animations.length === 0) {
@@ -66,7 +62,7 @@ export class AnimationsComplete {
 					);
 
 					if (hasRunningAnimations) {
-						waitForAnimations();
+						waitForAnimations(node);
 						return;
 					}
 
@@ -77,7 +73,9 @@ export class AnimationsComplete {
 		const requestWaitForAnimations = (): void => {
 			this.#currentFrame = window.requestAnimationFrame(() => {
 				this.#currentFrame = null;
-				waitForAnimations();
+				const node = this.#opts.ref.current;
+				if (!node) return;
+				waitForAnimations(node);
 			});
 		};
 
@@ -88,6 +86,8 @@ export class AnimationsComplete {
 
 		this.#currentFrame = window.requestAnimationFrame(() => {
 			this.#currentFrame = null;
+			const node = this.#opts.ref.current;
+			if (!node) return;
 			const startingStyleAttr = "data-starting-style";
 
 			if (!node.hasAttribute(startingStyleAttr)) {
