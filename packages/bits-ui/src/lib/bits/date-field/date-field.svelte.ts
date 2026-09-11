@@ -48,6 +48,7 @@ import {
 	areAllSegmentsFilled,
 	createContent,
 	getDefaultHourCycle,
+	get24HourValueFromTypedHour,
 	getValueFromSegments,
 	inferGranularity,
 	initSegmentStates,
@@ -213,6 +214,7 @@ export class DateFieldRootState {
 	states = initSegmentStates();
 	#segmentClearedValue = false;
 	dayPeriodNode = $state<HTMLElement | null>(null);
+	hourInputDayPeriodHint: DateAndTimeSegmentObj["dayPeriod"] = null;
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
 	domContext: DOMContext = new DOMContext(() => null);
@@ -622,12 +624,16 @@ export class DateFieldRootState {
 				const next = castCb(pVal) as DateAndTimeSegmentObj["hour"];
 				this.states.hour.updating = next;
 				if (next !== null && prev.dayPeriod !== null) {
-					const dayPeriod = this.formatter.dayPeriod(
-						toDate(dateRef.set({ hour: Number.parseInt(next) })),
-						this.hourCycle.current
-					);
-					if (dayPeriod === "AM" || dayPeriod === "PM") {
-						prev.dayPeriod = dayPeriod;
+					if (this.hourCycle.current !== 24 && this.hourInputDayPeriodHint !== null) {
+						prev.dayPeriod = this.hourInputDayPeriodHint;
+					} else {
+						const dayPeriod = this.formatter.dayPeriod(
+							toDate(dateRef.set({ hour: Number.parseInt(next) })),
+							this.hourCycle.current
+						);
+						if (dayPeriod === "AM" || dayPeriod === "PM") {
+							prev.dayPeriod = dayPeriod;
+						}
 					}
 				}
 				newSegmentValues = { ...prev, [part]: next };
@@ -677,9 +683,22 @@ export class DateFieldRootState {
 		}
 		this.segmentValues = newSegmentValues;
 		if (areAllSegmentsFilled(newSegmentValues, this.#fieldNode)) {
+			const segmentObjForValue =
+				"hour" in newSegmentValues &&
+				this.hourCycle.current !== 24 &&
+				this.hourInputDayPeriodHint !== null &&
+				newSegmentValues.hour !== null
+					? {
+							...newSegmentValues,
+							hour: get24HourValueFromTypedHour(
+								newSegmentValues.hour,
+								this.hourInputDayPeriodHint as "AM" | "PM"
+							),
+						}
+					: newSegmentValues;
 			this.setValue(
 				getValueFromSegments({
-					segmentObj: newSegmentValues,
+					segmentObj: segmentObjForValue,
 					fieldNode: this.#fieldNode,
 					dateRef: this.placeholder.current,
 				})
@@ -1330,12 +1349,19 @@ class DateFieldHourSegmentState extends BaseNumericSegmentState {
 
 	// Override to handle special hour logic
 	onkeydown(e: BitsKeyboardEvent) {
+		const oldUpdateSegment = this.root.updateSegment.bind(this.root);
+
 		// Add special handling for hour display with dayPeriod
 		if (isNumberString(e.key)) {
-			const oldUpdateSegment = this.root.updateSegment.bind(this.root);
+			this.root.hourInputDayPeriodHint =
+				this.root.hourCycle.current === 24
+					? null
+					: isDateAndTimeSegmentObj(this.root.segmentValues)
+						? this.root.segmentValues.dayPeriod
+						: null;
 			// oxlint-disable-next-line no-explicit-any
 			this.root.updateSegment = (part: any, cb: any) => {
-				const result = oldUpdateSegment(part, cb);
+				oldUpdateSegment(part, cb);
 
 				// After updating hour, check if we need to display "12" instead of "0"
 				if (part === "hour" && "hour" in this.root.segmentValues) {
@@ -1348,15 +1374,14 @@ class DateFieldHourSegmentState extends BaseNumericSegmentState {
 						this.root.segmentValues.hour = "12";
 					}
 				}
-
-				return result;
 			};
 		}
 
 		super.onkeydown(e);
 
 		// Restore original updateSegment
-		this.root.updateSegment = this.root.updateSegment.bind(this.root);
+		this.root.updateSegment = oldUpdateSegment;
+		this.root.hourInputDayPeriodHint = null;
 	}
 }
 

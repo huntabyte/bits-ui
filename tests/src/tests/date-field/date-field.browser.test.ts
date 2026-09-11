@@ -679,6 +679,38 @@ describe("date field", () => {
 		await expect.element(getDayPeriod()).toHaveTextContent("AM");
 	});
 
+	it("should preserve the PM day period when typing the hour in 12h mode", async () => {
+		setup({
+			value: new CalendarDateTime(2026, 3, 11, 14, 0, 0, 0),
+		});
+		const { getHour, getDayPeriod } = getTimeSegments(page.getByTestId);
+
+		await expect.element(getDayPeriod()).toHaveTextContent("PM");
+		await expect.element(page.getByTestId("value")).toHaveTextContent("2026-03-11T14:00");
+
+		await getHour().click();
+		await userEvent.keyboard(`{1}`);
+
+		await expect.element(getDayPeriod()).toHaveTextContent("PM");
+		await expect.element(page.getByTestId("value")).toHaveTextContent("2026-03-11T13:00");
+	});
+
+	it("should preserve the AM day period when typing the hour in 12h mode", async () => {
+		setup({
+			value: new CalendarDateTime(2026, 3, 11, 2, 0, 0, 0),
+		});
+		const { getHour, getDayPeriod } = getTimeSegments(page.getByTestId);
+
+		await expect.element(getDayPeriod()).toHaveTextContent("AM");
+		await expect.element(page.getByTestId("value")).toHaveTextContent("2026-03-11T02:00");
+
+		await getHour().click();
+		await userEvent.keyboard(`{1}`);
+
+		await expect.element(getDayPeriod()).toHaveTextContent("AM");
+		await expect.element(page.getByTestId("value")).toHaveTextContent("2026-03-11T01:00");
+	});
+
 	it("should never allow the hour to be 0 when in a 12 hour cycle", async () => {
 		setup({
 			value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
