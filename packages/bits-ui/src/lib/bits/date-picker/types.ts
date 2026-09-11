@@ -8,7 +8,7 @@ import type {
 	DateValidator,
 	EditableSegmentPart,
 } from "$lib/shared/index.js";
-import type { Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
+import type { Granularity, Month, WeekStartsOn } from "$lib/shared/date/types.js";
 import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
 
 export type DatePickerRootPropsWithoutHTML = WithChildren<{
@@ -23,6 +23,11 @@ export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	 * A callback function called when the value changes.
 	 */
 	onValueChange?: OnChangeFn<DateValue | undefined>;
+
+	/**
+	 * A callback function called when the currently displayed month(s) changes.
+	 */
+	onVisibleMonthsChange?: OnChangeFn<Month<DateValue>[]>;
 
 	/**
 	 * The placeholder value of the date field. This determines the format

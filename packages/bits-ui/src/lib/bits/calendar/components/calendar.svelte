@@ -8,6 +8,7 @@
 	import { noop } from "$lib/internal/noop.js";
 	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
 	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import type { Month } from "$lib/shared/index.js";
 
 	let {
 		child,
@@ -38,8 +39,11 @@
 		maxDays,
 		monthFormat = "long",
 		yearFormat = "numeric",
+		onVisibleMonthsChange = noop,
 		...restProps
 	}: CalendarRootProps = $props();
+
+	let months = $state<Month<DateValue>[]>([]);
 
 	const defaultPlaceholder = getDefaultDate({
 		defaultValue: value,
@@ -119,6 +123,13 @@
 		monthFormat: boxWith(() => monthFormat),
 		yearFormat: boxWith(() => yearFormat),
 		defaultPlaceholder,
+		months: boxWith(
+			() => months,
+			(v) => {
+				months = v;
+				onVisibleMonthsChange(v);
+			}
+		),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, rootState.props));
