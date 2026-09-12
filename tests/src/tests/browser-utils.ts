@@ -89,17 +89,9 @@ export async function expectExists(loc: Locator) {
 type RegisteredLayer = { opts: { ref: { current: HTMLElement | null } } };
 
 /**
- * Waits until `loc`'s dismissible layer has attached its document listeners.
- *
- * `DismissibleLayerState` defers attachment by a tick so the interaction that opened the
- * layer can't immediately dismiss it, so a `pointerdown` dispatched before that runs is
- * silently ignored — the layer never sees it and nothing re-delivers it. Content being in
- * the DOM is therefore not enough to assert on outside-click dismissal: on a loaded CI
- * machine the deferred callback can land after the test's click, and the assertion fails
- * for every retry because the load persists.
- *
- * Waits on the layer registry the implementation itself reads, so it stays correct however
- * long attachment is delayed.
+ * Waits until `loc` has an active dismissible layer registration. Use this when
+ * inspecting a registered layer or measuring time from registration; opening-click
+ * regressions intentionally dispatch before waiting on this helper.
  */
 export async function waitForDismissibleLayer(loc: Locator) {
 	const node = loc.element() as HTMLElement;

@@ -16,6 +16,7 @@
 	export type SelectItemAlignedTestProps = WithoutChildren<SelectSingleRootProps> & {
 		contentProps?: WithoutChildrenOrChild<Select.ContentProps>;
 		items: Item[];
+		scrollButtons?: boolean;
 	};
 </script>
 
@@ -24,6 +25,7 @@
 
 	let {
 		contentProps,
+		scrollButtons = false,
 		items,
 		value = $bindable(""),
 		open = $bindable(false),
@@ -41,11 +43,10 @@
 			{selectedLabel}
 		</Select.Trigger>
 		<Select.Portal>
-			<Select.Content
-				data-testid="content"
-				{...contentProps}
-				position="item-aligned"
-			>
+			<Select.Content data-testid="content" {...contentProps} position="item-aligned">
+				{#if scrollButtons}
+					<Select.ScrollUpButton style="height: 24px;">up</Select.ScrollUpButton>
+				{/if}
 				<Select.Viewport data-testid="viewport">
 					{#each items as { value, label, disabled } (value)}
 						{@const testId = generateTestId(value)}
@@ -59,6 +60,9 @@
 						</Select.Item>
 					{/each}
 				</Select.Viewport>
+				{#if scrollButtons}
+					<Select.ScrollDownButton style="height: 24px;">down</Select.ScrollDownButton>
+				{/if}
 			</Select.Content>
 		</Select.Portal>
 	</Select.Root>

@@ -1,11 +1,42 @@
+import { page, userEvent } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
+
+import { expectExists, expectNotExists } from "../browser-utils";
 import { getTestKbd } from "../utils.js";
 import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
-import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
+
+class ControlledResizeObserver implements ResizeObserver {
+	static observers: ControlledResizeObserver[] = [];
+	readonly #callback: ResizeObserverCallback;
+
+	constructor(callback: ResizeObserverCallback) {
+		this.#callback = callback;
+		ControlledResizeObserver.observers.push(this);
+	}
+
+	disconnect() {}
+	observe() {}
+	unobserve() {}
+
+	trigger() {
+		this.#callback([], this);
+	}
+
+	static reset() {
+		ControlledResizeObserver.observers.length = 0;
+	}
+
+	static triggerAll() {
+		for (const observer of ControlledResizeObserver.observers) observer.trigger();
+	}
+}
+
+async function waitForAnimationFrame() {
+	await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+}
 
 function setup(props: ScrollAreaTestProps = {}) {
 	render(ScrollAreaTest, { ...props });
@@ -207,6 +238,51 @@ describe("ScrollArea", () => {
 
 		await expectExists(t.getScrollbarY());
 	});
+
+	it.each(["always", "auto"] as const)(
+		"should not schedule resize work that can outlive a %s ScrollArea",
+		async (type) => {
+			const warnings: unknown[][] = [];
+			ControlledResizeObserver.reset();
+			vi.stubGlobal("ResizeObserver", ControlledResizeObserver);
+			const consoleWarn = vi
+				.spyOn(console, "warn")
+				.mockImplementation((...args: unknown[]) => {
+					warnings.push(args);
+				});
+			const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
+
+			try {
+				const rendered = render(ScrollAreaTest, {
+					type,
+					height: 5,
+					numParagraphs: 10,
+					wrapText: false,
+				});
+
+				await waitForAnimationFrame();
+				expect(ControlledResizeObserver.observers.length).toBeGreaterThan(0);
+
+				setTimeoutSpy.mockClear();
+				ControlledResizeObserver.triggerAll();
+				await waitForAnimationFrame();
+				await rendered.unmount();
+
+				expect(setTimeoutSpy.mock.calls.some(([, delay]) => delay === 10)).toBe(false);
+				await new Promise<void>((resolve) => setTimeout(resolve, 20));
+				expect(
+					warnings.some((args) =>
+						args.some((argument) => String(argument).includes("derived_inert"))
+					)
+				).toBe(false);
+			} finally {
+				setTimeoutSpy.mockRestore();
+				consoleWarn.mockRestore();
+				vi.unstubAllGlobals();
+				ControlledResizeObserver.reset();
+			}
+		}
+	);
 
 	it("should allow wheel scrolling", async () => {
 		if (navigator.userAgent.includes("WebKit")) {

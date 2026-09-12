@@ -16,6 +16,7 @@
 		ref,
 		enabled,
 		shouldRender,
+		forceMount = false,
 		preventScroll = false,
 		onEscapeKeydown = noop,
 		escapeKeydownBehavior = "close",
@@ -34,6 +35,7 @@
 		ref: WritableBox<HTMLElement | null>;
 		enabled: boolean;
 		shouldRender: boolean;
+		forceMount?: boolean;
 		preventScroll?: boolean;
 		onEscapeKeydown?: (e: KeyboardEvent) => void;
 		escapeKeydownBehavior?: EscapeBehaviorType;
@@ -50,15 +52,17 @@
 	} = $props();
 </script>
 
-{#if shouldRender}
-	<ScrollLock {preventScroll} />
+{#if forceMount || shouldRender}
+	{#if !forceMount || enabled}
+		<ScrollLock {preventScroll} />
+	{/if}
 	<FocusScope
 		{onOpenAutoFocus}
 		{onCloseAutoFocus}
 		{loop}
 		{enabled}
 		{trapFocus}
-		forceMount={false}
+		{forceMount}
 		{ref}
 	>
 		{#snippet focusScope({ props: focusScopeProps })}
@@ -73,12 +77,7 @@
 					{ref}
 				>
 					{#snippet children({ props: dismissibleProps })}
-						<TextSelectionLayer
-							{id}
-							{preventOverflowTextSelection}
-							{enabled}
-							{ref}
-						>
+						<TextSelectionLayer {id} {preventOverflowTextSelection} {enabled} {ref}>
 							{@render content({
 								props: mergeProps(focusScopeProps, dismissibleProps),
 							})}

@@ -48,7 +48,9 @@
 
 {#if contentState.useItemAligned}
 	<SelectItemAlignedContent
+		{...restProps}
 		{id}
+		{forceMount}
 		ref={contentState.opts.ref}
 		enabled={contentState.root.opts.open.current}
 		shouldRender={contentState.shouldRender}

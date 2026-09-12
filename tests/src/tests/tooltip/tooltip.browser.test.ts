@@ -62,6 +62,13 @@ it("should have bits data attrs", async () => {
 	}
 });
 
+it("should render an id on the content and reference it via aria-describedby on the trigger", async () => {
+	const t = await open();
+	const contentId = (t.content.element() as HTMLElement).id;
+	expect(contentId).not.toBe("");
+	await expect.element(t.trigger).toHaveAttribute("aria-describedby", contentId);
+});
+
 it("should use provider delay duration if provided and the tooltip.root did not provide one", async () => {
 	const t = setup();
 	expect(t.trigger).toHaveAttribute("data-delay-duration", "0");

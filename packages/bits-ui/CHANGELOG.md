@@ -1,5 +1,43 @@
 # bits-ui
 
+## 2.19.2
+
+### Patch Changes
+
+- fix: render the `id` attribute on Popper-based content elements (Tooltip, Popover, Select, Combobox, DropdownMenu, ContextMenu, Menubar, LinkPreview) so `aria-describedby` on triggers resolves correctly ([#2094](https://github.com/huntabyte/bits-ui/pull/2094))
+
+- fix: restore body styles on the captured document when delayed scroll-lock cleanup runs after the global document is torn down or replaced ([#2133](https://github.com/huntabyte/bits-ui/pull/2133))
+
+- fix: respect an explicit `Tabs.Content` tabindex while preserving the default panel tab stop ([#2132](https://github.com/huntabyte/bits-ui/pull/2132))
+
+## 2.19.1
+
+### Patch Changes
+
+- fix(Avatar): detach image handlers on destroy and actually apply the load cleanup - #2050 ([#2128](https://github.com/huntabyte/bits-ui/pull/2128))
+
+- fix(Menu): `Menu.GroupHeading` no longer sets `role="group"`, `Menu.Separator` now sets `role="separator"` ([#2091](https://github.com/huntabyte/bits-ui/pull/2091))
+
+- fix(DismissibleLayer): guard the deferred focus handler against teardown - #2080 ([#2126](https://github.com/huntabyte/bits-ui/pull/2126))
+
+- fix(DateField): apply date segments in year/month/day order so a valid day isn't clamped by the placeholder's month in day-first locales ([#2123](https://github.com/huntabyte/bits-ui/pull/2123))
+
+- fix(Select): keep the user's scroll position when the scroll down button remounts. The button unmounts at the bottom of the list and remounts as soon as the viewport leaves it, and its mount effect realigned the viewport onto the highlighted item, so a small scroll up from the bottom jumped back to the highlighted item. ([#2109](https://github.com/huntabyte/bits-ui/pull/2109))
+
+- fix(DismissibleLayer): outside clicks shortly after a layer opens no longer fail to dismiss it ([#2111](https://github.com/huntabyte/bits-ui/pull/2111))
+
+  `DismissibleLayerState` reset its per-interaction state through a 20ms debounce. Because the
+  layer's `watch` runs its cleanup once on every open, each layer scheduled a reset 20ms into its
+  own lifetime. An outside `pointerdown` landing 10-20ms after that cleanup had its
+  "responsible layer" flag cleared by the stale reset before the debounced interact-outside
+  handler ran, so the handler bailed and the layer stayed open. The reset is now synchronous.
+
+- fix(ScrollArea): prevent resize work from reading destroyed state after unmount ([#2122](https://github.com/huntabyte/bits-ui/pull/2122))
+
+- fix(Combobox): highlight the first matching item after custom filtering updates the rendered items. ([#2129](https://github.com/huntabyte/bits-ui/pull/2129))
+
+- fix(Accordion): cancel deferred content work on destroy to avoid `derived_inert` ([#2127](https://github.com/huntabyte/bits-ui/pull/2127))
+
 ## 2.19.0
 
 ### Minor Changes

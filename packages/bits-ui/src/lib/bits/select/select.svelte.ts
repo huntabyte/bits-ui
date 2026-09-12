@@ -659,7 +659,10 @@ export class SelectInputState {
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.opts.inputValue.current = e.currentTarget.value;
-		this.root.setHighlightedToFirstCandidate();
+		afterTick(() => {
+			if (!this.root.opts.open.current) return;
+			this.root.setHighlightedToFirstCandidate();
+		});
 	}
 
 	readonly props = $derived.by(
@@ -1023,6 +1026,9 @@ export class SelectContentState {
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
+	// set when the user scrolls the viewport by hand (wheel, touch, or holding a
+	// scroll button) and reset on close; shared by both scroll buttons
+	userHasScrolled = false;
 	domContext: DOMContext;
 	readonly useItemAligned = $derived.by(() => this.opts.position.current === "item-aligned");
 	// Matches Radix shouldRepositionRef — resets to true on each open, flipped false after
@@ -1069,6 +1075,7 @@ export class SelectContentState {
 				this.isPositioned = false;
 				this.pageScrollTopOffset = null;
 				this.itemAlignedAnchorNode = null;
+				this.userHasScrolled = false;
 			}
 		);
 
@@ -1187,10 +1194,18 @@ export class SelectContentState {
 	 * shifts the viewport down, invalidating the initial alignment).
 	 */
 	handleScrollButtonChange() {
-		if (this.shouldReposition) {
+		if (!this.shouldReposition) return;
+		this.shouldReposition = false;
+		// Measure after both buttons have mounted. Positioning can also remove the
+		// down button at the last item. Wait for its scroll event and browser scroll
+		// clamping before measuring the settled layout in the next frame.
+		afterTick(() => {
 			this.#position();
-			this.shouldReposition = false;
-		}
+			this.root.contentNode?.ownerDocument.defaultView?.requestAnimationFrame(() => {
+				if (this.userHasScrolled) return;
+				afterTick(() => this.#position());
+			});
+		});
 	}
 
 	/**
@@ -1198,6 +1213,7 @@ export class SelectContentState {
 	 * trigger's center, exactly matching the Radix UI SelectItemAlignedPosition algorithm.
 	 */
 	#position() {
+		if (!this.useItemAligned || !this.root.opts.open.current) return;
 		const contentWrapper = this.root.contentWrapperNode;
 		const content = this.root.contentNode;
 		const viewport = this.root.viewportNode;
@@ -1229,11 +1245,15 @@ export class SelectContentState {
 
 		const contentStyles = win.getComputedStyle(content);
 		const contentBorderTopWidth = parseInt(contentStyles.borderTopWidth, 10);
-		const contentPaddingTop = parseInt(contentStyles.paddingTop, 10);
 		const contentBorderBottomWidth = parseInt(contentStyles.borderBottomWidth, 10);
-		const contentPaddingBottom = parseInt(contentStyles.paddingBottom, 10);
-		// prettier-ignore
-		const fullContentHeight = contentBorderTopWidth + contentPaddingTop + itemsHeight + contentPaddingBottom + contentBorderBottomWidth;
+		// Include mounted scroll buttons in the content height so they cannot cover
+		// the selected item when the viewport is aligned near the end of the list.
+		const fullContentHeight =
+			contentBorderTopWidth +
+			content.clientHeight -
+			viewport.clientHeight +
+			itemsHeight +
+			contentBorderBottomWidth;
 		const minContentHeight = Math.min(selectedItem.offsetHeight * 5, fullContentHeight);
 
 		const viewportStyles = win.getComputedStyle(viewport);
@@ -1245,7 +1265,10 @@ export class SelectContentState {
 
 		const selectedItemHalfHeight = selectedItem.offsetHeight / 2;
 		const itemOffsetMiddle = selectedItem.offsetTop + selectedItemHalfHeight;
-		const contentTopToItemMiddle = contentBorderTopWidth + contentPaddingTop + itemOffsetMiddle;
+		const contentTopToItemMiddle =
+			viewport.getBoundingClientRect().top -
+			content.getBoundingClientRect().top +
+			itemOffsetMiddle;
 		const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
 		// Use getBoundingClientRect for a pixel-accurate measurement that includes the content
 		// element's border regardless of its CSS position value (relative vs. static changes
@@ -1786,11 +1809,8 @@ export class SelectScrollButtonImplState {
 		this.attachment = attachRef(opts.ref);
 
 		watch([() => this.mounted], () => {
-			if (!this.mounted) {
-				this.isUserScrolling = false;
-				return;
-			}
-			if (this.isUserScrolling) return;
+			if (this.mounted) return;
+			this.isUserScrolling = false;
 		});
 
 		$effect(() => {
@@ -1819,6 +1839,7 @@ export class SelectScrollButtonImplState {
 
 	onpointerdown(_: BitsPointerEvent) {
 		if (this.autoScrollTimer !== null) return;
+		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
 			this.autoScrollTimer = this.content.domContext.setTimeout(
@@ -1875,10 +1896,21 @@ export class SelectScrollDownButtonState {
 		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
 		watch([() => this.root.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.root.viewportNode || !this.content.isPositioned) return;
+			const viewport = this.root.viewportNode;
+			if (!viewport || !this.content.isPositioned) return;
 			this.handleScroll(true);
 
-			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
+			const onUserScroll = () => {
+				this.content.userHasScrolled = true;
+			};
+
+			// not `scroll`: the realign below scrolls the viewport itself, so `scroll`
+			// fires for our own writes and cannot tell the user's gesture from ours
+			return executeCallbacks(
+				on(viewport, "scroll", () => this.handleScroll()),
+				on(viewport, "wheel", onUserScroll, { passive: true }),
+				on(viewport, "touchmove", onUserScroll, { passive: true })
+			);
 		});
 
 		/**
@@ -1906,6 +1938,9 @@ export class SelectScrollDownButtonState {
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
 					if (this.content.useItemAligned) return;
+					// this button remounts whenever the viewport leaves the bottom, which
+					// would otherwise realign onto the highlighted item mid-gesture
+					if (this.content.userHasScrolled) return;
 					const activeItem = this.root.highlightedNode;
 					if (!activeItem) return;
 					this.root.scrollHighlightedNodeIntoView(activeItem);
@@ -1930,6 +1965,9 @@ export class SelectScrollDownButtonState {
 		if (!viewport) return;
 		const maxScroll = viewport.scrollHeight - viewport.clientHeight;
 		const paddingTop = Number.parseInt(getComputedStyle(viewport).paddingTop, 10);
+
+		this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
+		if (!this.content.useItemAligned) return;
 
 		// In item-aligned mode the algorithm may scroll just enough to align the
 		// selected item's center with the trigger center, leaving a tiny strip of

@@ -23,6 +23,7 @@ import {
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import SelectItemAlignedTest from "./select-item-aligned-test.svelte";
 import type { SelectItemAlignedTestProps } from "./select-item-aligned-test.svelte";
+import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -232,6 +233,12 @@ async function openMultiple(
 function nextFrame() {
 	return new Promise<void>((resolve) => {
 		window.requestAnimationFrame(() => resolve());
+	});
+}
+
+function sleep(ms: number) {
+	return new Promise<void>((resolve) => {
+		window.setTimeout(() => resolve(), ms);
 	});
 }
 
@@ -705,6 +712,54 @@ describe("select - single", () => {
 		expect(maxDrift).toBeLessThanOrEqual(1);
 		expect(Math.abs(window.scrollY - baselineY)).toBeLessThanOrEqual(1);
 	});
+
+	it("should keep the user's scroll position when the scroll down button remounts", async () => {
+		render(SelectScrollButtonsTest, { overlayScrollButtons: true });
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		const viewport = page.getByTestId("viewport").element() as HTMLElement;
+
+		// let the content finish positioning and settle onto the highlighted item
+		await sleep(100);
+
+		// at the bottom of the list the scroll down button unmounts
+		viewport.scrollTop = viewport.scrollHeight;
+		await expectNotExists(page.getByTestId("scroll-down-button"));
+
+		const bottom = viewport.scrollTop;
+		expect(bottom).toBeGreaterThan(0);
+
+		// scrolling back up by a few pixels remounts the button, whose mount effect
+		// used to realign the viewport onto the highlighted item, which here is the
+		// first item at the very top of the list
+		viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: -5, bubbles: true }));
+		viewport.scrollTop = bottom - 5;
+		await expectExists(page.getByTestId("scroll-down-button"));
+
+		await sleep(100);
+
+		expect(viewport.scrollTop).toBeGreaterThanOrEqual(bottom - 20);
+	});
+
+	it("should still scroll the selected item into view when opening", async () => {
+		render(SelectScrollButtonsTest, { value: "55" });
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		const viewport = page.getByTestId("viewport").element() as HTMLElement;
+		const selected = page.getByTestId("item-55").element() as HTMLElement;
+
+		await sleep(100);
+
+		const viewportRect = viewport.getBoundingClientRect();
+		const selectedRect = selected.getBoundingClientRect();
+
+		expect(selectedRect.top).toBeGreaterThanOrEqual(viewportRect.top);
+		expect(selectedRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
+	});
 });
 
 ////////////////////////////////////
@@ -1157,6 +1212,35 @@ describe("select - item-aligned", () => {
 		await expectNotExists(t.getContent());
 	});
 
+	it("should respect escapeKeydownBehavior in item-aligned mode", async () => {
+		const t = await openAligned({ contentProps: { escapeKeydownBehavior: "ignore" } });
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+	});
+
+	it("should respect interactOutsideBehavior in item-aligned mode", async () => {
+		const t = await openAligned({ contentProps: { interactOutsideBehavior: "ignore" } });
+		await t.outside.click();
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+	});
+
+	it("should forceMount item-aligned content and only lock scrolling while open", async () => {
+		const t = setupAligned({ contentProps: { forceMount: true, preventScroll: true } });
+		await expectExists(t.getContent());
+		await expect.element(t.getContent()).toHaveAttribute("data-state", "closed");
+		expect(document.body.style.overflow).not.toBe("hidden");
+		(t.trigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(t.getContent()).toHaveAttribute("data-state", "open");
+		await waitForDismissibleLayer(t.getContent());
+		await vi.waitFor(() => expect(document.body.style.overflow).toBe("hidden"));
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expect.element(t.getContent()).toHaveAttribute("data-state", "closed");
+		await vi.waitFor(() => expect(document.body.style.overflow).not.toBe("hidden"));
+	});
+
 	it("should select an item on click", async () => {
 		const t = await openAligned();
 		await t.getItem("2").click();
@@ -1203,6 +1287,31 @@ describe("select - item-aligned", () => {
 
 		expect(Math.abs(itemMiddle - triggerMiddle)).toBeLessThanOrEqual(1);
 	});
+
+	it.each(["1", "40", "80"])(
+		"should keep selected item %s under the trigger when scroll buttons mount",
+		async (value) => {
+			const items = Array.from({ length: 80 }, (_, index) => ({
+				value: String(index + 1),
+				label: `Item ${index + 1}`,
+			}));
+			const t = setupAligned({ value, scrollButtons: true }, items);
+			(t.trigger.element() as HTMLElement).style.marginTop = "250px";
+			await t.trigger.click();
+			await waitForDismissibleLayer(t.getContent());
+			await waitForPositionedWrapper();
+			await vi.waitFor(() => {
+				const triggerRect = t.trigger.element().getBoundingClientRect();
+				const itemRect = t.getItem(value).element().getBoundingClientRect();
+				const x = triggerRect.left + triggerRect.width / 2;
+				const y = triggerRect.top + triggerRect.height / 2;
+				expect(Math.abs(itemRect.top + itemRect.height / 2 - y)).toBeLessThanOrEqual(1);
+				expect(t.getItem(value).element().contains(document.elementFromPoint(x, y))).toBe(
+					true
+				);
+			});
+		}
+	);
 
 	it("should scroll a long item-aligned viewport to the selected item", async () => {
 		const manyItems = Array.from({ length: 80 }, (_, index) => ({

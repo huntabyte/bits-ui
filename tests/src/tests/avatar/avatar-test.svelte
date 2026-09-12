@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Avatar } from "bits-ui";
-	let { src }: { src: string } = $props();
+	import { Avatar, type AvatarRootProps } from "bits-ui";
+	let { src, ...rootProps }: { src: string } & AvatarRootProps = $props();
 </script>
 
 <main>
-	<Avatar.Root data-testid="root">
+	<Avatar.Root {...rootProps} data-testid="root">
 		<Avatar.Image {src} alt="huntabyte" data-testid="image" />
 		<Avatar.Fallback data-testid="fallback">HJ</Avatar.Fallback>
 	</Avatar.Root>
