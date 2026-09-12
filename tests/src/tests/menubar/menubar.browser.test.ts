@@ -67,7 +67,9 @@ it.skip("should return focus to the menu trigger when closed via `ESC`", async (
 it("should navigate between menus when using the arrow keys and focus is within a menu", async () => {
 	const t = setup();
 	const trigger = t.getTrigger("1");
-	(trigger.element() as HTMLElement).focus();
+	// Focus through browser input so the test iframe owns subsequent keyboard events.
+	await page.getByTestId("previous-button").click();
+	await userEvent.keyboard(kbd.TAB);
 	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
@@ -84,7 +86,9 @@ it("should navigate between menus when using the arrow keys and focus is within 
 it("should close the menu and focus the next tabbable element when `TAB` is pressed while the menu is open", async () => {
 	const t = setup();
 	const trigger = t.getTrigger("1");
-	(trigger.element() as HTMLElement).focus();
+	// Focus through browser input so the test iframe owns subsequent keyboard events.
+	await page.getByTestId("previous-button").click();
+	await userEvent.keyboard(kbd.TAB);
 	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
@@ -98,7 +102,9 @@ it("should close the menu and focus the next tabbable element when `TAB` is pres
 it("should close the menu and focus the previous tabbable element when `SHIFT+TAB` is pressed while the menu is open", async () => {
 	const t = setup();
 	const trigger = t.getTrigger("1");
-	(trigger.element() as HTMLElement).focus();
+	// Focus through browser input so the test iframe owns subsequent keyboard events.
+	await page.getByTestId("previous-button").click();
+	await userEvent.keyboard(kbd.TAB);
 	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
