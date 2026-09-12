@@ -33,7 +33,6 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { isIOS } from "$lib/internal/is.js";
 import { isOrContainsTarget } from "$lib/internal/elements.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
@@ -754,6 +753,8 @@ export class SelectTriggerState {
 	readonly #domTypeahead: DOMTypeahead;
 	readonly #dataTypeahead: DataTypeahead;
 
+	pointerType = "touch";
+
 	constructor(opts: SelectTriggerStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
@@ -790,7 +791,6 @@ export class SelectTriggerState {
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
 		this.onclick = this.onclick.bind(this);
 	}
 
@@ -946,19 +946,20 @@ export class SelectTriggerState {
 	}
 
 	onclick(e: BitsMouseEvent) {
-		// While browsers generally have no issue focusing the trigger when clicking
-		// on a label, Safari seems to struggle with the fact that there's no `onClick`.
-		// We force `focus` in this case. Note: this doesn't create any other side-effect
-		// because we are preventing default in `onpointerdown` so effectively
-		// this only runs for a label 'click'
+		// Safari needs explicit focus for label clicks. Avoid scrolling the page
+		// when a touch tap focuses the trigger before opening the menu.
 		const currTarget = e.currentTarget as HTMLElement;
-		currTarget.focus();
+		currTarget.focus({ preventScroll: true });
+		// A completed click distinguishes a touch/pen tap from a scroll gesture.
+		if (this.pointerType !== "mouse" && !this.root.opts.disabled.current) {
+			this.root.triggerPointerDownPos = null;
+			this.#handleOpen();
+		}
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current) return;
-		// prevent opening on touch down which can be triggered when scrolling on touch devices
-		if (e.pointerType === "touch") return e.preventDefault();
+		this.pointerType = e.pointerType;
 
 		// prevent implicit pointer capture
 		const target = e.target as HTMLElement;
@@ -968,19 +969,7 @@ export class SelectTriggerState {
 
 		// only call the handle if it's a left click, since pointerdown is triggered
 		// by right clicks as well, but not when ctrl is pressed
-		if (e.button === 0 && e.ctrlKey === false) {
-			if (this.root.opts.open.current === false) {
-				this.#handlePointerOpen(e);
-			} else {
-				this.root.handleClose();
-			}
-		}
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
-		e.preventDefault();
-		if (e.pointerType === "touch") {
+		if (e.button === 0 && e.ctrlKey === false && e.pointerType === "mouse") {
 			if (this.root.opts.open.current === false) {
 				this.#handlePointerOpen(e);
 			} else {
@@ -1004,7 +993,6 @@ export class SelectTriggerState {
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
-				onpointerup: this.onpointerup,
 				...this.attachment,
 			}) as const
 	);
@@ -1134,8 +1122,20 @@ export class SelectContentState {
 				if (contentWrapperIsAbsolute(this.root.contentWrapperNode) && isPageScroll) return;
 				this.#repositionOnScroll();
 			};
+			const initialWidth = win.innerWidth;
+			const onResize = () => {
+				// Radix locks page scrolling; Bits leaves it enabled by default. Mobile
+				// browser chrome changes viewport height while scrolling, not orientation.
+				if (
+					win.matchMedia("(pointer: coarse)").matches &&
+					win.innerWidth === initialWidth
+				) {
+					return;
+				}
+				this.root.handleClose();
+			};
 			return executeCallbacks(
-				on(win, "resize", () => this.root.handleClose()),
+				on(win, "resize", onResize),
 				on(win, "scroll", reposition, { capture: true, passive: true })
 			);
 		});
@@ -1503,6 +1503,7 @@ export class SelectItemState {
 	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
+	pointerType = "touch";
 
 	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -1541,6 +1542,7 @@ export class SelectItemState {
 			}
 		});
 
+		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1570,55 +1572,31 @@ export class SelectItemState {
 		highlighted: this.isHighlighted,
 	}));
 
-	onpointerdown(e: BitsPointerEvent) {
-		// prevent focus from leaving the input/select trigger
-		e.preventDefault();
+	onclick(_: BitsMouseEvent) {
+		// Like Radix, touch and pen select only on a completed click, never on
+		// pointerup: the browser suppresses click when the gesture becomes a scroll.
+		if (this.pointerType === "mouse" || this.opts.disabled.current) return;
+		this.handleSelect();
+		this.root.setHighlightedNode(this.opts.ref.current);
 	}
 
-	/**
-	 * Using `pointerup` instead of `click` allows power users to pointerdown
-	 * the trigger, then release pointerup on an item to select it vs having to do
-	 * multiple clicks.
-	 */
-	onpointerup(e: BitsPointerEvent) {
-		if (e.defaultPrevented || !this.opts.ref.current) return;
-		/**
-		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
-		 * we need to listen for the immediate click event to handle the selection,
-		 * otherwise a click event will fire on the element _behind_ the item.
-		 */
-		if (e.pointerType === "touch" && !isIOS) {
-			on(
-				this.opts.ref.current,
-				"click",
-				() => {
-					this.handleSelect();
-					// set highlighted node since we don't do it on `pointermove` events
-					// for touch devices
-					this.root.setHighlightedNode(this.opts.ref.current);
-				},
-				{ once: true }
-			);
-			return;
-		}
-		e.preventDefault();
+	onpointerdown(e: BitsPointerEvent) {
+		this.pointerType = e.pointerType;
+		// Keep mouse focus on the input/select trigger without cancelling native
+		// touch scrolling or the click generated by a completed tap.
+		if (e.pointerType === "mouse") e.preventDefault();
+	}
 
+	onpointerup(e: BitsPointerEvent) {
+		// Preserve mouse press-drag-release selection across items.
+		if (e.defaultPrevented || e.pointerType !== "mouse" || !this.opts.ref.current) return;
+		e.preventDefault();
 		this.handleSelect();
-		if (e.pointerType === "touch") {
-			// set highlighted node since we don't do it on `pointermove` events
-			// for touch devices
-			this.root.setHighlightedNode(this.opts.ref.current);
-		}
 	}
 
 	onpointermove(e: BitsPointerEvent) {
-		/**
-		 * We don't want to highlight items on touch devices when scrolling,
-		 * as this is confusing behavior, so we return here and instead handle
-		 * the highlighting on the `pointerup` (or following `click`) event for
-		 * touch devices only.
-		 */
-		if (e.pointerType === "touch") return;
+		this.pointerType = e.pointerType;
+		if (e.pointerType !== "mouse") return;
 		if (this.root.highlightedNode !== this.opts.ref.current) {
 			this.root.setHighlightedNode(this.opts.ref.current);
 		}
@@ -1642,6 +1620,7 @@ export class SelectItemState {
 				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
+				onclick: this.onclick,
 				onpointermove: this.onpointermove,
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,

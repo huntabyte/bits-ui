@@ -1188,6 +1188,95 @@ describe("select - item-aligned", () => {
 		});
 	}
 
+	it.each(["touch", "pen"])(
+		"should open and select on completed %s clicks",
+		async (pointerType) => {
+			const onValueChange = vi.fn();
+			const t = setupAligned({ value: "2", onValueChange });
+			const trigger = t.trigger.element();
+			const pointer = (type: string) =>
+				new PointerEvent(type, { pointerType, bubbles: true, cancelable: true });
+			expect(trigger.dispatchEvent(pointer("pointerdown"))).toBe(true);
+			await expectNotExists(t.getContent());
+			trigger.dispatchEvent(pointer("pointerup"));
+			await expectNotExists(t.getContent());
+			trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+			await expectExists(t.getContent());
+			await waitForDismissibleLayer(t.getContent());
+			expect(onValueChange).not.toHaveBeenCalled();
+
+			const item = t.getItem("3").element();
+			expect(item.dispatchEvent(pointer("pointerdown"))).toBe(true);
+			item.dispatchEvent(pointer("pointerup"));
+			expect(onValueChange).not.toHaveBeenCalled();
+			await expect.element(t.openBinding).toHaveTextContent("true");
+			item.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+			await expect.element(t.valueBinding).toHaveTextContent("3");
+			await expectNotExists(t.getContent());
+			expect(onValueChange).toHaveBeenCalledExactlyOnceWith("3");
+		}
+	);
+
+	it("should not open from a cancelled touch gesture on the trigger", async () => {
+		const t = setupAligned();
+		const trigger = t.trigger.element();
+		for (const type of ["pointerdown", "pointermove", "pointercancel", "pointerup"]) {
+			trigger.dispatchEvent(new PointerEvent(type, { pointerType: "touch", bubbles: true }));
+		}
+		await expectNotExists(t.getContent());
+	});
+
+	it("should not select or dismiss when a touch scroll ends outside the content", async () => {
+		const t = setupAligned({ value: "2" });
+		const trigger = t.trigger.element();
+		for (const type of ["pointerdown", "pointerup"]) {
+			trigger.dispatchEvent(new PointerEvent(type, { pointerType: "touch", bubbles: true }));
+		}
+		trigger.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		await expectExists(t.getContent());
+		await waitForDismissibleLayer(t.getContent());
+		const item = t.getItem("3").element();
+		item.dispatchEvent(
+			new PointerEvent("pointerdown", { pointerType: "touch", bubbles: true })
+		);
+		document.dispatchEvent(
+			new PointerEvent("pointermove", { pointerType: "touch", clientY: 200, bubbles: true })
+		);
+		item.dispatchEvent(
+			new PointerEvent("pointercancel", { pointerType: "touch", bubbles: true })
+		);
+		t.outside
+			.element()
+			.dispatchEvent(
+				new PointerEvent("pointerup", { pointerType: "touch", clientY: 200, bubbles: true })
+			);
+		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.valueBinding).toHaveTextContent("2");
+	});
+
+	it("should remain open on mobile toolbar resize but close on orientation change", async () => {
+		const matchMedia = window.matchMedia.bind(window);
+		const mediaSpy = vi
+			.spyOn(window, "matchMedia")
+			.mockImplementation((query) =>
+				query === "(pointer: coarse)"
+					? { ...matchMedia(query), matches: true }
+					: matchMedia(query)
+			);
+		const originalWidth = window.innerWidth;
+		try {
+			const t = await openAligned();
+			window.dispatchEvent(new Event("resize"));
+			await expect.element(t.openBinding).toHaveTextContent("true");
+			vi.stubGlobal("innerWidth", originalWidth + 100);
+			window.dispatchEvent(new Event("resize"));
+			await expectNotExists(t.getContent());
+		} finally {
+			vi.unstubAllGlobals();
+			mediaSpy.mockRestore();
+		}
+	});
+
 	it("should open on click", async () => {
 		await openAligned();
 	});

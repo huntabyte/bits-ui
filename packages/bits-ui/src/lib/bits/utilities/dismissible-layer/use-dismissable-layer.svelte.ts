@@ -70,7 +70,7 @@ export class DismissibleLayerState {
 			registeredNode = null;
 			this.#resetState();
 			globalThis.bitsDismissableLayers.delete(this);
-			this.#handleInteractOutside.destroy();
+			this.#handleInteractOutsideDebounced.destroy();
 			this.#unsubClickListener();
 			unsubEvents();
 		};
@@ -124,7 +124,14 @@ export class DismissibleLayerState {
 			// It can resume bubbling after a nested early outside click has been captured.
 			if (event.cancelBubble || event !== this.#capturedPointerDown) return;
 			this.#markNonInterceptedEvent(event);
-			this.#handleInteractOutside(event);
+			// Arm touch dismissal before its click arrives. Debouncing this can miss
+			// a fast tap entirely; a scroll still cannot dismiss because it has no click.
+			if (event.pointerType === "touch") {
+				this.#handleInteractOutsideDebounced.destroy();
+				this.#handleInteractOutside(event);
+			} else {
+				this.#handleInteractOutsideDebounced(event);
+			}
 		};
 
 		// `svelte/events.on` defers pointer listener attachment to a microtask, leaving
@@ -149,7 +156,11 @@ export class DismissibleLayerState {
 		this.#interactOutsideProp.current(e as PointerEvent);
 	};
 
-	#handleInteractOutside = debounce((e: PointerEvent) => {
+	#handleInteractOutsideDebounced = debounce((e: PointerEvent) => {
+		this.#handleInteractOutside(e);
+	}, 10);
+
+	#handleInteractOutside = (e: PointerEvent) => {
 		if (!this.opts.ref.current) {
 			this.#unsubClickListener();
 			return;
@@ -185,7 +196,7 @@ export class DismissibleLayerState {
 		} else {
 			this.#interactOutsideProp.current(event);
 		}
-	}, 10);
+	};
 
 	#markInterceptedEvent = (e: PointerEvent) => {
 		this.#interceptedEvents[e.type] = true;
