@@ -44,6 +44,7 @@ export { default as SelectDemoAutoScrollDelay } from "./select-demo-auto-scroll-
 export { default as SelectDemoCustom } from "./select-demo-custom.svelte";
 export { default as SelectDemoCustomAnchor } from "./select-demo-custom-anchor.svelte";
 export { default as SelectDemoCustomValue } from "./select-demo-custom-value.svelte";
+export { default as SelectDemoItemAligned } from "./select-demo-item-aligned.svelte";
 export { default as SelectDemoMultiple } from "./select-demo-multiple.svelte";
 export { default as SelectDemoTransition } from "./select-demo-transition.svelte";
 export { default as MenubarDemo } from "./menubar-demo.svelte";

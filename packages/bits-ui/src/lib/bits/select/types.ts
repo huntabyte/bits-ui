@@ -191,6 +191,20 @@ export type _SharedSelectContentProps = {
 	 * @defaultValue `false`
 	 */
 	loop?: boolean;
+
+	/**
+	 * The positioning strategy for the content.
+	 *
+	 * - `"popper"` (default): positions the content relative to the trigger using [Floating UI](https://floating-ui.com/),
+	 *   supporting `side`, `align`, `sideOffset`, and collision-related props.
+	 * - `"item-aligned"`: aligns the currently selected item's center with the trigger's center,
+	 *   like a native `<select>` on macOS. Ported from Radix UI's `SelectItemAlignedPosition`.
+	 *   When active, `side`, `sideOffset`, `align`, `alignOffset`, and collision-related props
+	 *   are ignored.
+	 *
+	 * @defaultValue `"popper"`
+	 */
+	position?: "popper" | "item-aligned";
 };
 
 export type SelectContentPropsWithoutHTML = Expand<

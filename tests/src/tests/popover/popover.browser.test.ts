@@ -151,7 +151,20 @@ it("should close on outside click", async () => {
 		contentProps: { onInteractOutside: mockFn },
 	});
 
-	await page.getByTestId("outside").click({ force: true });
+	const outside = page.getByTestId("outside");
+	await expect.element(outside).toBeVisible();
+	const outsideRect = (outside.element() as HTMLElement).getBoundingClientRect();
+	const outsideX = outsideRect.left + outsideRect.width / 2;
+	const outsideY = outsideRect.top + outsideRect.height / 2;
+	(outside.element() as HTMLElement).dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			cancelable: true,
+			pointerType: "mouse",
+			clientX: outsideX,
+			clientY: outsideY,
+		})
+	);
 	await vi.waitFor(() => expect(mockFn).toHaveBeenCalledTimes(1));
 
 	vi.resetAllMocks();
