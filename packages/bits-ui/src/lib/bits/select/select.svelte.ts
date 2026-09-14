@@ -32,7 +32,7 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { isIOS } from "$lib/internal/is.js";
+import { isElementOrSVGElement, isIOS } from "$lib/internal/is.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
@@ -1090,7 +1090,11 @@ export class SelectContentState {
 	});
 
 	onInteractOutside = (e: PointerEvent) => {
-		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
+		const target = e.target;
+		const isChipRemoveButton =
+			isElementOrSVGElement(target) &&
+			target.closest(`[${this.root.getBitsAttr("chip-remove")}]`) !== null;
+		if (target === this.root.triggerNode || target === this.root.inputNode || isChipRemoveButton) {
 			e.preventDefault();
 			return;
 		}

@@ -229,6 +229,7 @@ async function openMultipleChips(
 		await returned.user.keyboard(openWith);
 	}
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	const content = page.getByTestId("content");
 	return {
 		...returned,
@@ -904,6 +905,13 @@ describe("combobox - multiple with chips", () => {
 		await expectExists(t.getChip("2"));
 		expect(t.getHiddenInputs()).toHaveLength(1);
 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
+	});
+
+	it("should keep the menu open when a ChipRemoveButton is clicked", async () => {
+		const t = await openMultipleChips({ value: ["1", "2"] });
+		await t.getChipRemove("1").click();
+		await expectNotExists(t.getChip("1"));
+		await expectExists(t.getContent());
 	});
 
 	it("should call onValueChange when a chip is removed", async () => {
