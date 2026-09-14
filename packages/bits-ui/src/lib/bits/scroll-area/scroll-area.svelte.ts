@@ -345,13 +345,13 @@ export class ScrollAreaScrollbarAutoState {
 		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
 
-		const handleResize = useDebounce(() => {
+		const handleResize = () => {
 			const viewportNode = this.root.viewportNode;
 			if (!viewportNode) return;
 			const isOverflowX = viewportNode.offsetWidth < viewportNode.scrollWidth;
 			const isOverflowY = viewportNode.offsetHeight < viewportNode.scrollHeight;
 			this.isVisible = this.scrollbar.isHorizontal ? isOverflowX : isOverflowY;
-		}, 10);
+		};
 
 		new SvelteResizeObserver(() => this.root.viewportNode, handleResize);
 		new SvelteResizeObserver(() => this.root.contentNode, handleResize);
@@ -718,7 +718,7 @@ export class ScrollAreaScrollbarSharedState {
 		this.root = scrollbarState.root;
 		this.scrollbarVis = scrollbarState.scrollbarVis;
 		this.scrollbar = scrollbarState.scrollbarVis.scrollbar;
-		this.handleResize = useDebounce(() => this.scrollbarState.onResize(), 10);
+		this.handleResize = () => this.scrollbarState.onResize();
 		this.handleThumbPositionChange = this.scrollbarState.onThumbPositionChange;
 		this.handleWheelScroll = this.scrollbarState.onWheelScroll;
 		this.handleThumbPointerDown = this.scrollbarState.onThumbPointerDown;

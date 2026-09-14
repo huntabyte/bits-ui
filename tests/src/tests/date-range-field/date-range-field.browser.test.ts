@@ -263,3 +263,21 @@ it("should allow valid days in end month when a value is prepopulated", async ()
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(seg).toHaveTextContent("30");
 });
+
+it("should allow valid days in the end month with a day-first locale", async () => {
+	const t = setup({
+		locale: "en-GB",
+		value: {
+			// start sits in a 30-day month, end in a 31-day one
+			start: new CalendarDate(2024, 11, 1),
+			end: new CalendarDate(2026, 8, 30),
+		},
+	});
+
+	await t.end.day.click();
+	await userEvent.keyboard("31");
+
+	await expect.element(t.end.day).toHaveTextContent("31");
+	await expect.element(t.end.value).toHaveTextContent("2026-08-31");
+	await expect.element(t.start.value).toHaveTextContent("2024-11-01");
+});

@@ -1,7 +1,7 @@
 import { userEvent, page } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { tick, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
@@ -778,6 +778,44 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 			},
 		};
 	}
+
+	it("should not read the layer ref from pending focus work after unmount", async () => {
+		const t = await open();
+		const content = page.getByTestId("content").element();
+		const layers = (
+			globalThis as {
+				bitsDismissableLayers?: Map<
+					{ opts: { ref: { current: HTMLElement | null } } },
+					unknown
+				>;
+			}
+		).bitsDismissableLayers!;
+		const layer = [...layers.keys()].find((layer) => layer.opts.ref.current === content)!;
+		const originalRef = layer.opts.ref;
+		const readRef = vi.fn(() => originalRef.current);
+		layer.opts.ref = {
+			get current() {
+				return readRef();
+			},
+			set current(value) {
+				originalRef.current = value;
+			},
+		};
+
+		try {
+			content.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+			expect(readRef).toHaveBeenCalled();
+			// Unmount synchronously before the focus handler's afterTick callback runs.
+			t.unmount();
+			expect(layers.has(layer)).toBe(false);
+			readRef.mockClear();
+
+			await tick();
+			expect(readRef).not.toHaveBeenCalled();
+		} finally {
+			layer.opts.ref = originalRef;
+		}
+	});
 
 	it("should not emit derived_inert when unmounted while open", async () => {
 		const counter = installDerivedInertCounter();
