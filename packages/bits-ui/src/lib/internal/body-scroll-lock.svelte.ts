@@ -43,10 +43,10 @@ const anyLocked = boxWith(() => {
 let cleanupScheduledAt: number | null = null;
 
 const bodyLockStackCount = new SharedState(() => {
-	function resetBodyStyle() {
+	function resetBodyStyle(documentObj: Document) {
 		if (!BROWSER) return;
-		document.body.setAttribute("style", initialBodyStyle ?? "");
-		document.body.style.removeProperty("--scrollbar-width");
+		documentObj.body.setAttribute("style", initialBodyStyle ?? "");
+		documentObj.body.style.removeProperty("--scrollbar-width");
 		isIOS && stopTouchMoveListener?.();
 		// reset initialBodyStyle so next locker captures the correct styles
 		initialBodyStyle = null;
@@ -227,6 +227,7 @@ export class BodyScrollLock {
 			if (isAnyLocked(this.#countState.lockMap)) return;
 
 			const restoreScrollDelay = this.#restoreScrollDelay();
+			const documentObj = document;
 
 			/**
 			 * We schedule the cleanup to run after a delay to handle same-tick
@@ -235,7 +236,7 @@ export class BodyScrollLock {
 			 * reference: https://github.com/huntabyte/bits-ui/issues/1639
 			 */
 			this.#countState.scheduleCleanupIfNoNewLocks(restoreScrollDelay, () => {
-				this.#countState.resetBodyStyle();
+				this.#countState.resetBodyStyle(documentObj);
 			});
 		});
 	}

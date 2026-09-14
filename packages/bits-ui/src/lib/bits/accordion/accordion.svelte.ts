@@ -2,6 +2,7 @@ import {
 	afterTick,
 	attachRef,
 	boxWith,
+	onDestroyEffect,
 	type Box,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -295,6 +296,14 @@ export class AccordionContentState {
 	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
 	#isMountAnimationPrevented = false;
 	#dimensions = $state({ width: 0, height: 0 });
+	/**
+	 * Set once the content is torn down. Work deferred before teardown can still
+	 * run afterwards, so it must short-circuit on this before touching
+	 * `this.opts.ref.current` or `this.item` — reading a destroyed `$derived`
+	 * triggers Svelte's `derived_inert` warning.
+	 */
+	#destroyed = false;
+	#beforeMatchFrame: number | null = null;
 
 	readonly open = $derived.by(() => {
 		if (this.opts.hiddenUntilFound.current) return this.item.isActive;
@@ -324,17 +333,39 @@ export class AccordionContentState {
 					// we need to defer opening until after browser completes search highlighting
 					// otherwise the browser will immediately open the accordion
 					// and the search highlighting will not be visible
-					requestAnimationFrame(() => {
+					if (this.#beforeMatchFrame !== null) {
+						cancelAnimationFrame(this.#beforeMatchFrame);
+					}
+					this.#beforeMatchFrame = requestAnimationFrame(() => {
+						this.#beforeMatchFrame = null;
+						if (this.#destroyed) return;
 						this.item.updateValue();
 					});
 				};
 
-				return on(node, "beforematch", handleBeforeMatch);
+				const unsubBeforeMatch = on(node, "beforematch", handleBeforeMatch);
+				return () => {
+					// Removing the listener does not cancel a frame already scheduled
+					// by it, which would then read `this.item` after teardown.
+					if (this.#beforeMatchFrame !== null) {
+						cancelAnimationFrame(this.#beforeMatchFrame);
+						this.#beforeMatchFrame = null;
+					}
+					unsubBeforeMatch();
+				};
 			}
 		);
 
 		// Handle dimension updates
 		watch([() => this.open, () => this.opts.ref.current], this.#updateDimensions);
+
+		onDestroyEffect(() => {
+			this.#destroyed = true;
+			if (this.#beforeMatchFrame !== null) {
+				cancelAnimationFrame(this.#beforeMatchFrame);
+				this.#beforeMatchFrame = null;
+			}
+		});
 	}
 
 	static create(props: AccordionContentStateOpts): AccordionContentState {
@@ -345,6 +376,9 @@ export class AccordionContentState {
 		if (!node) return;
 
 		afterTick(() => {
+			// The content can be destroyed between the watch firing and this tick.
+			// `#destroyed` must short-circuit before any `this.opts.ref.current` read.
+			if (this.#destroyed) return;
 			const element = this.opts.ref.current;
 			if (!element) return;
 

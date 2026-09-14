@@ -21,6 +21,7 @@ import {
 	waitForDismissibleLayer,
 } from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
+import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -230,6 +231,12 @@ async function openMultiple(
 function nextFrame() {
 	return new Promise<void>((resolve) => {
 		window.requestAnimationFrame(() => resolve());
+	});
+}
+
+function sleep(ms: number) {
+	return new Promise<void>((resolve) => {
+		window.setTimeout(() => resolve(), ms);
 	});
 }
 
@@ -702,6 +709,54 @@ describe("select - single", () => {
 
 		expect(maxDrift).toBeLessThanOrEqual(1);
 		expect(Math.abs(window.scrollY - baselineY)).toBeLessThanOrEqual(1);
+	});
+
+	it("should keep the user's scroll position when the scroll down button remounts", async () => {
+		render(SelectScrollButtonsTest, { overlayScrollButtons: true });
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		const viewport = page.getByTestId("viewport").element() as HTMLElement;
+
+		// let the content finish positioning and settle onto the highlighted item
+		await sleep(100);
+
+		// at the bottom of the list the scroll down button unmounts
+		viewport.scrollTop = viewport.scrollHeight;
+		await expectNotExists(page.getByTestId("scroll-down-button"));
+
+		const bottom = viewport.scrollTop;
+		expect(bottom).toBeGreaterThan(0);
+
+		// scrolling back up by a few pixels remounts the button, whose mount effect
+		// used to realign the viewport onto the highlighted item, which here is the
+		// first item at the very top of the list
+		viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: -5, bubbles: true }));
+		viewport.scrollTop = bottom - 5;
+		await expectExists(page.getByTestId("scroll-down-button"));
+
+		await sleep(100);
+
+		expect(viewport.scrollTop).toBeGreaterThanOrEqual(bottom - 20);
+	});
+
+	it("should still scroll the selected item into view when opening", async () => {
+		render(SelectScrollButtonsTest, { value: "55" });
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		const viewport = page.getByTestId("viewport").element() as HTMLElement;
+		const selected = page.getByTestId("item-55").element() as HTMLElement;
+
+		await sleep(100);
+
+		const viewportRect = viewport.getBoundingClientRect();
+		const selectedRect = selected.getBoundingClientRect();
+
+		expect(selectedRect.top).toBeGreaterThanOrEqual(viewportRect.top);
+		expect(selectedRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
 	});
 });
 
