@@ -818,7 +818,9 @@ export class MenuMenuState {
 	readonly opts: MenuMenuStateOpts;
 	readonly root: MenuRootState;
 	readonly parentMenu: MenuMenuState | null;
-	contentId = boxWith<string>(() => "");
+	// the content replaces this box when it mounts; a plain field would leave every
+	// derived that read the empty box (a trigger rendered first) pointing at it forever
+	contentId = $state.raw(boxWith<string>(() => ""));
 	contentNode = $state<HTMLElement | null>(null);
 	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
