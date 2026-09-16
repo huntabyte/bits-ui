@@ -2,7 +2,6 @@ import {
 	DOMContext,
 	type ReadableBox,
 	type ReadableBoxedValues,
-	composeHandlers,
 	contains,
 	executeCallbacks,
 } from "svelte-toolbelt";
@@ -72,15 +71,17 @@ export class TextSelectionLayerState {
 	#addEventListeners() {
 		return executeCallbacks(
 			on(this.domContext.getDocument(), "pointerdown", this.#pointerdown),
-			on(
-				this.domContext.getDocument(),
-				"pointerup",
-				composeHandlers(this.#resetSelectionLock, this.#pointerupUserHandler)
-			)
+			on(this.domContext.getDocument(), "pointerup", this.#pointerup)
 		);
 	}
 
-	#pointerupUserHandler = (e: PointerEvent) => {
+	#pointerup = (e: PointerEvent) => {
+		// Releasing the lock is internal cleanup, not a consumer callback, so it must run
+		// whatever the event's default-prevented state. Composing it with the user handler
+		// meant `composeHandlers` bailed out of the whole chain on a `pointerup` that
+		// anything else had cancelled, leaving `user-select: none` on `<body>`.
+		this.#resetSelectionLock();
+		if (e.defaultPrevented) return;
 		this.#onPointerUpSnapshot(e);
 	};
 
