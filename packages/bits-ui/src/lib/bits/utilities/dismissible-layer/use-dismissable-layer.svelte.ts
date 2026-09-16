@@ -179,9 +179,32 @@ export class DismissibleLayerState {
 		if (e.pointerType === "touch") {
 			this.#unsubClickListener();
 
-			this.#unsubClickListener = on(this.#documentObj, "click", this.#handleDismiss, {
-				once: true,
-			});
+			// the tap's click dismisses from the bubble phase, as before. A capture-phase
+			// listener backs it up with a task, so a target that stops propagation cannot
+			// hide the click, while a target that closes this layer still tears it down
+			// (and the backup with it) before the task runs.
+			let backup: ReturnType<typeof setTimeout> | null = null;
+			let unsubClick = noop;
+			const dismiss = (event: MouseEvent) => {
+				unsubClick();
+				this.#handleDismiss(event);
+			};
+			unsubClick = executeCallbacks(
+				on(this.#documentObj, "click", dismiss, { once: true }),
+				on(
+					this.#documentObj,
+					"click",
+					(event: MouseEvent) => {
+						backup = setTimeout(() => dismiss(event), 0);
+					},
+					{ once: true, capture: true }
+				),
+				() => {
+					if (backup !== null) clearTimeout(backup);
+					backup = null;
+				}
+			);
+			this.#unsubClickListener = unsubClick;
 		} else {
 			this.#interactOutsideProp.current(event);
 		}
