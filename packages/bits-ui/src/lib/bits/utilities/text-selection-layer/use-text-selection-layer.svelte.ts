@@ -90,6 +90,11 @@ export class TextSelectionLayerState {
 		// owned by a destroyed effect, and reading it emits `derived_inert` on every
 		// pointerdown anywhere in the document, forever.
 		if (!this.#enabledSnapshot) return;
+		// Release any lock still held before arming a new one. Under `forceMount` this
+		// handler can run twice for a single event, and `preventTextSelectionOverflow`
+		// snapshots the current `user-select` to restore later. Resetting the lock
+		// prevents the second arm from re-snapshotting the `none` written the first time.
+		this.#resetSelectionLock();
 		const node = this.opts.ref.current;
 		const target = e.target;
 		if (!isHTMLElement(node) || !isHTMLElement(target)) return;
