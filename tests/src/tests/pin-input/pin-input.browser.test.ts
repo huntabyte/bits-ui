@@ -339,3 +339,24 @@ it("should correctly replace characters when navigating with ArrowUp and typing"
 	await expect.element(t.cells[2]).toHaveTextContent("3");
 	await expect.element(t.cells[3]).toHaveTextContent("4");
 });
+
+it("should cancel the deferred selection sync when destroyed", async () => {
+	const setTimeoutSpy = vi.spyOn(window, "setTimeout");
+	const clearTimeoutSpy = vi.spyOn(window, "clearTimeout");
+	const t = setup({ value: "123" });
+	setTimeoutSpy.mockClear();
+
+	// re-runs the watch that defers the selection sync, leaving its timeouts pending
+	await t.rerender({ value: "1234" });
+	const deferred = setTimeoutSpy.mock.calls
+		.map(([, delay], i) => ({ delay, id: setTimeoutSpy.mock.results[i]!.value as number }))
+		.filter(({ delay }) => delay === 0 || delay === 10 || delay === 50);
+	expect(deferred).toHaveLength(3);
+
+	t.unmount();
+
+	// a timeout that outlives the component dispatches `input` on a detached node and
+	// writes state belonging to a destroyed effect
+	const cleared = new Set(clearTimeoutSpy.mock.calls.map(([id]) => id));
+	expect(deferred.filter(({ id }) => !cleared.has(id))).toEqual([]);
+});

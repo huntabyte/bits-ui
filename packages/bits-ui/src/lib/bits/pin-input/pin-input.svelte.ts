@@ -182,7 +182,7 @@ export class PinInputRootState {
 		});
 
 		watch([() => this.opts.value.current, () => this.opts.inputRef.current], () => {
-			syncTimeouts(() => {
+			return syncTimeouts(() => {
 				const input = this.opts.inputRef.current;
 				if (!input) return;
 				// forcefully remove :autofill state
@@ -559,12 +559,29 @@ export class PinInputCellState {
 	);
 }
 
-// oxlint-disable-next-line no-explicit-any
-export function syncTimeouts(cb: (...args: any[]) => unknown, domContext: DOMContext): number[] {
-	const t1 = domContext.setTimeout(cb, 0); // For faster machines
-	const t2 = domContext.setTimeout(cb, 1_0);
-	const t3 = domContext.setTimeout(cb, 5_0);
-	return [t1, t2, t3];
+/**
+ * Schedules `cb` a few times to catch up with the browser's async selection updates,
+ * returning a disposer that cancels whichever timeouts are still pending.
+ *
+ * The disposer must be called on teardown: a timeout that outlives its owner dispatches
+ * `input` on a detached node and writes state belonging to a destroyed effect.
+ */
+export function syncTimeouts(
+	// oxlint-disable-next-line no-explicit-any
+	cb: (...args: any[]) => unknown,
+	domContext: DOMContext
+): () => void {
+	// capture the window up front so the disposer never reads the (possibly destroyed)
+	// reactive state backing `domContext`.
+	const win = domContext.getWindow();
+	const t1 = win.setTimeout(cb, 0); // For faster machines
+	const t2 = win.setTimeout(cb, 1_0);
+	const t3 = win.setTimeout(cb, 5_0);
+	return () => {
+		win.clearTimeout(t1);
+		win.clearTimeout(t2);
+		win.clearTimeout(t3);
+	};
 }
 
 function safeInsertRule(sheet: CSSStyleSheet, rule: string) {
