@@ -124,6 +124,14 @@ function get24HourValueFromTypedHour(
 	return parsedHour < 12 ? `${parsedHour + 12}` : `${parsedHour}`;
 }
 
+function getTypedHourFrom24HourValue(hour: string | null): string | null {
+	if (hour === null) return hour;
+	const parsedHour = Number.parseInt(hour);
+	if (Number.isNaN(parsedHour)) return hour;
+	if (parsedHour === 0) return "12";
+	return parsedHour > 12 ? `${parsedHour - 12}` : hour;
+}
+
 export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
 	extends WritableBoxedValues<{
 			value: T | undefined;
@@ -533,11 +541,20 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			}
 			newSegmentValues = { ...prev, [part]: next };
 		} else if (part === "hour") {
-			const next = cb(prev[part]) as TimeSegmentObj["hour"];
+			const dayPeriodHint = this.hourCycle !== 24 ? this.hourInputDayPeriodHint : null;
+			const typed = cb(
+				(dayPeriodHint !== null
+					? getTypedHourFrom24HourValue(prev.hour)
+					: prev.hour) as TimeSegmentObj[T]
+			) as TimeSegmentObj["hour"];
+			const next =
+				typed !== null && dayPeriodHint !== null
+					? get24HourValueFromTypedHour(typed, dayPeriodHint)
+					: typed;
 			this.states.hour.updating = next;
 			if (next !== null && prev.dayPeriod !== null) {
-				if (this.hourCycle !== 24 && this.hourInputDayPeriodHint !== null) {
-					prev.dayPeriod = this.hourInputDayPeriodHint;
+				if (dayPeriodHint !== null) {
+					prev.dayPeriod = dayPeriodHint;
 				} else {
 					const dayPeriod = this.formatter.dayPeriod(
 						toDate(
@@ -563,24 +580,10 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 
 		this.segmentValues = newSegmentValues;
 
-		const segmentObjForValue: TimeSegmentObj =
-			part === "hour" &&
-			this.hourCycle !== 24 &&
-			this.hourInputDayPeriodHint !== null &&
-			newSegmentValues.hour !== null
-				? {
-						...newSegmentValues,
-						hour: get24HourValueFromTypedHour(
-							newSegmentValues.hour,
-							this.hourInputDayPeriodHint
-						),
-					}
-				: newSegmentValues;
-
 		if (areAllTimeSegmentsFilled(newSegmentValues, this.#fieldNode)) {
 			this.setValue(
 				getTimeValueFromSegments({
-					segmentObj: segmentObjForValue,
+					segmentObj: newSegmentValues,
 					fieldNode: this.#fieldNode,
 					timeRef: this.timeRef,
 				})
@@ -1045,34 +1048,13 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		const oldUpdateSegment = this.root.updateSegment.bind(this.root);
-
-		if (isNumberString(e.key)) {
+		if (isNumberString(e.key) || isBackspace(e.key)) {
 			this.root.hourInputDayPeriodHint =
 				this.root.hourCycle === 24 ? null : this.root.segmentValues.dayPeriod;
-			this.root.updateSegment = <T extends EditableTimeSegmentPart>(
-				part: T,
-				cb: Updater<TimeSegmentObj[T]>
-			): void => {
-				oldUpdateSegment(part, cb);
-
-				// after updating hour, check if we need to display "12" instead of "0"
-				if (part === "hour" && "hour" in this.root.segmentValues) {
-					const hourValue = this.root.segmentValues.hour;
-					if (
-						hourValue === "0" &&
-						this.root.dayPeriodNode &&
-						this.root.hourCycle !== 24
-					) {
-						this.root.segmentValues.hour = "12";
-					}
-				}
-			};
 		}
 
 		super.onkeydown(e);
 
-		this.root.updateSegment = oldUpdateSegment;
 		this.root.hourInputDayPeriodHint = null;
 	}
 }
