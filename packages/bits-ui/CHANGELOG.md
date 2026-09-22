@@ -1,5 +1,38 @@
 # bits-ui
 
+## 2.19.3
+
+### Patch Changes
+
+- Prevent delayed focus-scope autofocus from overriding focus already established in the scope or a nested scope. ([#2165](https://github.com/huntabyte/bits-ui/pull/2165))
+
+- fix(Dialog, AlertDialog): pass `preventOverflowTextSelection` to the text selection layer explicitly instead of letting it ride the rest props onto the rendered content element as a `preventoverflowtextselection` attribute. ([#2154](https://github.com/huntabyte/bits-ui/pull/2154))
+
+- fix(Floating): ignore `autoUpdate` callbacks that fire after the floating element's effect is destroyed to avoid `derived_inert` ([#2164](https://github.com/huntabyte/bits-ui/pull/2164))
+
+- Fix `user-select: none` being stranded on `<body>` after clicking inside `forceMount`ed content (Popover, Tooltip, Dialog, AlertDialog, Menu, Select), which left the whole page unselectable until a reload. ([#2161](https://github.com/huntabyte/bits-ui/pull/2161))
+
+- refactor: the context-menu attribute names and the floating root/anchor state move to leaf modules, so `DismissibleLayer` no longer imports the menu module for two strings, and `FloatingLayer` / `FloatingLayer.Anchor` no longer import the floating content module (and `@floating-ui/dom`) to register a root and its trigger. No behaviour change. ([#2158](https://github.com/huntabyte/bits-ui/pull/2158))
+
+- fix(Menu): the trigger's `aria-controls` links to the content when the menu starts open. The content registers its id by replacing a plain field on the menu state, which a trigger rendered before the content had already read as empty and never re-read; the registration is now reactive. ([#2159](https://github.com/huntabyte/bits-ui/pull/2159))
+
+- fix(Combobox): open the trigger on a touch tap instead of on touch down, so a finger that lands on it while scrolling no longer opens the list. Takes the Select trigger's touch timing. ([#2156](https://github.com/huntabyte/bits-ui/pull/2156))
+
+- perf: avoid O(n) work per rendered item on hot paths ([#2110](https://github.com/huntabyte/bits-ui/pull/2110))
+  - `Select`/`Combobox`: item props now derive from per-item booleans, so moving the highlight or changing the value only rebuilds props (and re-diffs attributes) for the items that actually changed instead of every mounted item
+  - `Select`/`Combobox` (multiple): selection lookups use a set instead of scanning the value array once per item
+  - `Calendar`/`RangeCalendar`: `data-today` resolves the local timezone once per calendar rather than once per cell
+  - `Menu` family: the document-level `pointermove` listener is only attached while keyboard mode is active
+  - `ScrollArea`, `Slider`, `NavigationMenu`: internal resize observation shares a single `ResizeObserver` across all observed elements
+
+- fix(TimeField): keep the day period when typing the hour and then editing another segment in 12-hour mode ([#2148](https://github.com/huntabyte/bits-ui/pull/2148))
+
+- Fix `user-select: none` being left on `<body>` when something else on the page calls `preventDefault()` on a `pointerup`, which made the whole page unselectable. The text-selection layer's release is internal cleanup and no longer skipped when the event's default action has been cancelled. ([#2163](https://github.com/huntabyte/bits-ui/pull/2163))
+
+- fix(Collapsible): invalidate deferred measurements when content is replaced or destroyed ([#2149](https://github.com/huntabyte/bits-ui/pull/2149))
+
+- Fix outside clicks being lost while dismissible content such as DropdownMenu is opening. ([#2143](https://github.com/huntabyte/bits-ui/pull/2143))
+
 ## 2.19.2
 
 ### Patch Changes
