@@ -1,4 +1,8 @@
-import type { BitsPrimitiveInputAttributes } from "$lib/shared/attributes.js";
+import type {
+	BitsPrimitiveInputAttributes,
+	BitsPrimitiveButtonAttributes,
+	BitsPrimitiveDivAttributes,
+} from "$lib/shared/attributes.js";
 import type {
 	SelectBaseRootPropsWithoutHTML,
 	SelectMultipleRootPropsWithoutHTML,
@@ -73,7 +77,56 @@ export type ComboboxInputPropsWithoutHTML = WithChild<{
 	 * @default false
 	 */
 	clearOnDeselect?: boolean;
+
+	/**
+	 * Whether to clear the input after any item is selected or deselected.
+	 * Useful with the `Tags` component pattern where selected items are
+	 * displayed as chips and the input should reset for the next search.
+	 *
+	 * Only applies to `type="multiple"` comboboxes.
+	 *
+	 * @default false
+	 */
+	clearInputOnSelect?: boolean;
+
+	/**
+	 * Whether to remove the last selected item when the user presses Backspace
+	 * with an empty input. Useful with the `Tags` component pattern.
+	 *
+	 * Only applies to `type="multiple"` comboboxes.
+	 *
+	 * @default false
+	 */
+	removeOnBackspace?: boolean;
 }>;
 
 export type ComboboxInputProps = ComboboxInputPropsWithoutHTML &
 	Without<Omit<BitsPrimitiveInputAttributes, "value">, ComboboxInputPropsWithoutHTML>;
+
+export type ComboboxChipsPropsWithoutHTML = WithChild;
+
+export type ComboboxChipsProps = ComboboxChipsPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxChipsPropsWithoutHTML>;
+
+export type ComboboxChipSnippetProps = {
+	value: string;
+	label: string;
+};
+
+export type ComboboxChipPropsWithoutHTML = WithChild<
+	{
+		/**
+		 * The value of the selected item this chip represents.
+		 */
+		value: string;
+	},
+	ComboboxChipSnippetProps
+>;
+
+export type ComboboxChipProps = ComboboxChipPropsWithoutHTML &
+	Without<BitsPrimitiveDivAttributes, ComboboxChipPropsWithoutHTML>;
+
+export type ComboboxChipRemoveButtonPropsWithoutHTML = WithChild;
+
+export type ComboboxChipRemoveButtonProps = ComboboxChipRemoveButtonPropsWithoutHTML &
+	Without<BitsPrimitiveButtonAttributes, ComboboxChipRemoveButtonPropsWithoutHTML>;
