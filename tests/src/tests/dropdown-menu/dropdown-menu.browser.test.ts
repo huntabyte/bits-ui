@@ -89,6 +89,29 @@ async function focusSubTrigger(): Promise<void> {
 	await expect.element(subtrigger).toHaveFocus();
 }
 
+function holdOpenAutoFocusFrame() {
+	const requestAnimationFrame = window.requestAnimationFrame;
+	let heldFrame: FrameRequestCallback | undefined;
+
+	return {
+		onOpenAutoFocus() {
+			window.requestAnimationFrame = (callback) => {
+				window.requestAnimationFrame = requestAnimationFrame;
+				heldFrame = callback;
+				return -1;
+			};
+		},
+		async release() {
+			if (!heldFrame) throw new Error("Open autofocus frame was not scheduled");
+			heldFrame(performance.now());
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+		},
+		restore() {
+			window.requestAnimationFrame = requestAnimationFrame;
+		},
+	};
+}
+
 afterEach(() => {
 	vi.resetAllMocks();
 });
@@ -186,6 +209,56 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expectExists(page.getByTestId("sub-content"));
 	await expect.element(page.getByTestId("sub-item")).toHaveFocus();
+});
+
+it("should not let delayed parent autofocus dismiss a focused submenu", async () => {
+	const parentAutoFocus = holdOpenAutoFocusFrame();
+
+	try {
+		const t = await setup({
+			contentProps: { onOpenAutoFocus: parentAutoFocus.onOpenAutoFocus },
+		});
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		const subTrigger = page.getByTestId("sub-trigger");
+		(subTrigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expectExists(t.getSubContent());
+		await waitForDismissibleLayer(t.getSubContent());
+
+		const subItem = page.getByTestId("sub-item");
+		await expect.element(subItem).toHaveFocus();
+		await parentAutoFocus.release();
+
+		await expect.element(t.getSubContent()).toBeInTheDocument();
+		await expect.element(subItem).toHaveFocus();
+	} finally {
+		parentAutoFocus.restore();
+	}
+});
+
+it("should not let delayed autofocus override focus already inside its scope", async () => {
+	const autoFocus = holdOpenAutoFocusFrame();
+
+	try {
+		const t = await setup({
+			contentProps: { onOpenAutoFocus: autoFocus.onOpenAutoFocus },
+		});
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		const subTrigger = page.getByTestId("sub-trigger");
+		(subTrigger.element() as HTMLElement).focus();
+		await expect.element(subTrigger).toHaveFocus();
+		await autoFocus.release();
+
+		await expect.element(subTrigger).toHaveFocus();
+	} finally {
+		autoFocus.restore();
+	}
 });
 
 it("should keep submenu open while pointer is moving toward it", async () => {
