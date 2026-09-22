@@ -53,8 +53,7 @@ import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
 
-export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
-export const CONTEXT_MENU_CONTENT_ATTR = "data-context-menu-content";
+import { CONTEXT_MENU_TRIGGER_ATTR } from "./context-menu-attributes.js";
 
 const MenuRootContext = new Context<MenuRootState>("Menu.Root");
 const MenuMenuContext = new Context<MenuMenuState>("Menu.Root | Menu.Sub");
