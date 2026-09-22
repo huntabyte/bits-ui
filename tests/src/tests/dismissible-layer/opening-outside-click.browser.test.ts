@@ -1,4 +1,4 @@
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import DropdownMenuTest from "./opening-dropdown-menu-test.svelte";
@@ -30,9 +30,12 @@ describe("dismissible layer - opening outside click", () => {
 			const onSelect = vi.fn();
 			const contentProps = { onInteractOutside };
 			if (component === "DropdownMenu") {
-				render(DropdownMenuTest, { onInteractOutside, onSelect });
+				await render(DropdownMenuTest, { onInteractOutside, onSelect });
 			} else {
-				render(ComboboxTest, { items: [{ value: "1", label: "One" }], contentProps });
+				await render(ComboboxTest, {
+					items: [{ value: "1", label: "One" }],
+					contentProps,
+				});
 			}
 
 			for (let attempt = 1; attempt <= 2; attempt++) {

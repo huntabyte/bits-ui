@@ -1,4 +1,4 @@
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { describe, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import ComboboxTest, { type Item } from "../combobox/combobox-test.svelte";
@@ -32,7 +32,7 @@ describe("dismissible layer - outside click timing", () => {
 	for (const delay of DELAYS_MS) {
 		for (let rep = 0; rep < REPS; rep++) {
 			it(`should close on an outside click ${delay}ms after the layer registers (rep ${rep})`, async () => {
-				render(ComboboxTest, { name: "test", items });
+				await render(ComboboxTest, { name: "test", items });
 
 				await page.getByTestId("trigger").click({ force: true });
 				await expectExists(page.getByTestId("content"));

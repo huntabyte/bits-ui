@@ -13,7 +13,7 @@ import TimeFieldTest, { type TimeFieldTestProps } from "./time-field-test.svelte
 import type { TimeValue } from "bits-ui";
 import { tick } from "svelte";
 import { expectNotExists } from "../browser-utils";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
@@ -23,9 +23,9 @@ const time = new Time(12, 30, 0, 0);
 const calendarDateTime = new CalendarDateTime(1980, 1, 20, 12, 30, 0, 0);
 const zonedDateTime = toZoned(calendarDateTime, "America/New_York");
 
-function setup<T extends TimeValue = Time>(props: TimeFieldTestProps<T> = {}) {
+async function setup<T extends TimeValue = Time>(props: TimeFieldTestProps<T> = {}) {
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(TimeFieldTest, { ...(props as any) });
+	const returned = await render(TimeFieldTest, { ...(props as any) });
 
 	const getHour = () => page.getByTestId("hour");
 	const getMinute = () => page.getByTestId("minute");
@@ -54,36 +54,36 @@ function setup<T extends TimeValue = Time>(props: TimeFieldTestProps<T> = {}) {
 }
 
 it("should populate segment with value - `Time`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: time,
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent(String(time.hour));
-	await expect.element(t.getMinute()).toHaveTextContent(String(time.minute));
-	await expect.element(t.value).toHaveTextContent(time.toString());
+	await expect.element(t.getHour()).toMatchTextContent(String(time.hour));
+	await expect.element(t.getMinute()).toMatchTextContent(String(time.minute));
+	await expect.element(t.value).toMatchTextContent(time.toString());
 });
 
 it("should populate segment with value - `CalendarDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent(String(calendarDateTime.hour));
-	await expect.element(t.getMinute()).toHaveTextContent(String(calendarDateTime.minute));
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
-	await expect.element(t.value).toHaveTextContent(calendarDateTime.toString());
+	await expect.element(t.getHour()).toMatchTextContent(String(calendarDateTime.hour));
+	await expect.element(t.getMinute()).toMatchTextContent(String(calendarDateTime.minute));
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent(calendarDateTime.toString());
 });
 
 it("should populate segment with value - `ZonedDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent(String(zonedDateTime.hour));
-	await expect.element(t.getMinute()).toHaveTextContent(String(zonedDateTime.minute));
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
-	await expect.element(t.getTimeZoneName()).toHaveTextContent("EST");
-	await expect.element(t.value).toHaveTextContent(zonedDateTime.toString());
+	await expect.element(t.getHour()).toMatchTextContent(String(zonedDateTime.hour));
+	await expect.element(t.getMinute()).toMatchTextContent(String(zonedDateTime.minute));
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
+	await expect.element(t.getTimeZoneName()).toMatchTextContent("EST");
+	await expect.element(t.value).toMatchTextContent(zonedDateTime.toString());
 });
 
 it("should not show the day period for locales that don't use them", async () => {
@@ -91,7 +91,7 @@ it("should not show the day period for locales that don't use them", async () =>
 		expect(true);
 		return;
 	}
-	const t = setup({
+	const t = await setup({
 		locale: "en-UK",
 		value: calendarDateTime,
 	});
@@ -99,20 +99,20 @@ it("should not show the day period for locales that don't use them", async () =>
 });
 
 it("should show the day period for locales that do use them", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 	});
 	await expect.element(t.getDayPeriod()).not.toBeNull();
 });
 
 it("should focus first segment on label click", async () => {
-	const t = setup();
+	const t = await setup();
 	await t.label.click();
 	await expect.element(t.getHour()).toHaveFocus();
 });
 
 it("should focus segments on click", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 	});
 
@@ -129,7 +129,7 @@ it("should focus segments on click", async () => {
 });
 
 it("should increment segment on arrow up", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
@@ -140,17 +140,17 @@ it("should increment segment on arrow up", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent("1");
+	await expect.element(t.getHour()).toMatchTextContent("1");
 	await t.getMinute().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getMinute()).toHaveTextContent(cycle("minute"));
+	await expect.element(t.getMinute()).toMatchTextContent(cycle("minute"));
 	await t.getSecond().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getSecond()).toHaveTextContent(cycle("second"));
+	await expect.element(t.getSecond()).toMatchTextContent(cycle("second"));
 });
 
 it("should decrement segment on arrow down", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
@@ -161,17 +161,17 @@ it("should decrement segment on arrow down", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getHour()).toHaveTextContent(cycle("hour"));
+	await expect.element(t.getHour()).toMatchTextContent(cycle("hour"));
 	await t.getMinute().click();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getMinute()).toHaveTextContent(cycle("minute"));
+	await expect.element(t.getMinute()).toMatchTextContent(cycle("minute"));
 	await t.getSecond().click();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getSecond()).toHaveTextContent(cycle("second"));
+	await expect.element(t.getSecond()).toMatchTextContent(cycle("second"));
 });
 
 it("should navigate segments using the arrow keys", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
@@ -200,7 +200,7 @@ it("should navigate segments using the arrow keys", async () => {
 });
 
 it("should navigate the segments using tab", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
@@ -222,7 +222,7 @@ it("should navigate the segments using tab", async () => {
 });
 
 it("should prevent interaction when `disabled`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 		disabled: true,
@@ -243,7 +243,7 @@ it("should prevent interaction when `disabled`", async () => {
 });
 
 it("should prevent modification when `readonly`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 		readonly: true,
@@ -257,7 +257,7 @@ it("should prevent modification when `readonly`", async () => {
 		await userEvent.keyboard(kbd.ARROW_UP);
 		await expect
 			.element(segment)
-			.toHaveTextContent(
+			.toMatchTextContent(
 				String(
 					zonedDateTime[
 						(segment.element() as HTMLElement).dataset.segment as keyof TimeFields
@@ -268,7 +268,7 @@ it("should prevent modification when `readonly`", async () => {
 });
 
 it("should marks the field as invalid if the value is invalid", async () => {
-	const t = setup({
+	const t = await setup({
 		granularity: "second",
 		validate: (time) => (time.hour === 13 ? "Invalid time" : undefined),
 		value: zonedDateTime,
@@ -276,27 +276,27 @@ it("should marks the field as invalid if the value is invalid", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard(`{1}`);
-	await expect.element(t.getHour()).toHaveTextContent("1");
+	await expect.element(t.getHour()).toMatchTextContent("1");
 	await userEvent.keyboard(`{3}`);
-	await expect.element(t.getHour()).toHaveTextContent("03");
+	await expect.element(t.getHour()).toMatchTextContent("03");
 });
 
 it("should adjust the hour cycle with the `hourCycle` prop", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		hourCycle: 24,
 	});
 
 	await expectNotExists(t.getDayPeriod());
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 	await t.getHour().click();
 	await expect.element(t.getHour()).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent("13");
+	await expect.element(t.getHour()).toMatchTextContent("13");
 });
 
 it("should override the default displayed segments with the `granularity` prop - `'hour'`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 		granularity: "hour",
 	});
@@ -313,7 +313,7 @@ it("should override the default displayed segments with the `granularity` prop -
 });
 
 it("should override the default displayed segments with the `granularity` prop - `'second'`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 		granularity: "second",
 	});
@@ -326,83 +326,83 @@ it("should override the default displayed segments with the `granularity` prop -
 });
 
 it("should change the value when the dayPeriod segment is changed", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 	});
 
-	await expect.element(t.value).toHaveTextContent("1980-01-20T12:30");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("1980-01-20T12:30");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 
 	await t.getDayPeriod().click();
 	await expect.element(t.getDayPeriod()).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
-	await expect.element(t.value).toHaveTextContent("1980-01-20T00:30");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
+	await expect.element(t.value).toMatchTextContent("1980-01-20T00:30");
 });
 
 it("should preserve the PM day period when typing the hour in 12h mode", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2026, 3, 11, 14, 0, 0, 0),
 	});
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
-	await expect.element(t.value).toHaveTextContent("2026-03-11T14:00");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T14:00");
 
 	await t.getHour().click();
 	await userEvent.keyboard(`{1}`);
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
-	await expect.element(t.value).toHaveTextContent("2026-03-11T13:00");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T13:00");
 });
 
 it("should preserve the AM day period when typing the hour in 12h mode", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2026, 3, 11, 2, 0, 0, 0),
 	});
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
-	await expect.element(t.value).toHaveTextContent("2026-03-11T02:00");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T02:00");
 
 	await t.getHour().click();
 	await userEvent.keyboard(`{1}`);
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
-	await expect.element(t.value).toHaveTextContent("2026-03-11T01:00");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T01:00");
 });
 
 it("should keep 24 hour semantics when typing the hour with hourCycle 24", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2026, 3, 11, 14, 0, 0, 0),
 		hourCycle: 24,
 	});
 
 	await expectNotExists(t.getDayPeriod());
-	await expect.element(t.value).toHaveTextContent("2026-03-11T14:00");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T14:00");
 
 	await t.getHour().click();
 	await userEvent.keyboard(`{1}`);
 
-	await expect.element(t.getHour()).toHaveTextContent("01");
-	await expect.element(t.value).toHaveTextContent("2026-03-11T01:00");
+	await expect.element(t.getHour()).toMatchTextContent("01");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T01:00");
 });
 
 it("should preserve PM when typing minutes in 12h mode", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2026, 3, 11, 14, 0, 0, 0),
 	});
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
-	await expect.element(t.value).toHaveTextContent("2026-03-11T14:00");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T14:00");
 
 	await t.getMinute().click();
 	await userEvent.keyboard(`{3}{0}`);
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
-	await expect.element(t.value).toHaveTextContent("2026-03-11T14:30");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T14:30");
 });
 
 it("should go all the way through the segment with spamming 3", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
@@ -419,64 +419,64 @@ it("should go all the way through the segment with spamming 3", async () => {
 });
 
 it("should overwrite on first click and type - `hour`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
 
 	await t.getHour().click();
 	await expect.element(t.getHour()).toHaveFocus();
-	await expect.element(t.getHour()).toHaveTextContent(String(zonedDateTime.hour));
+	await expect.element(t.getHour()).toMatchTextContent(String(zonedDateTime.hour));
 	await userEvent.keyboard(`{1}`);
-	await expect.element(t.getHour()).toHaveTextContent("1");
+	await expect.element(t.getHour()).toMatchTextContent("1");
 });
 
 it("should overwrite on first click and type - `minute`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
 
 	await t.getMinute().click();
 	await expect.element(t.getMinute()).toHaveFocus();
-	await expect.element(t.getMinute()).toHaveTextContent(String(zonedDateTime.minute));
+	await expect.element(t.getMinute()).toMatchTextContent(String(zonedDateTime.minute));
 	await userEvent.keyboard(`{1}`);
-	await expect.element(t.getMinute()).toHaveTextContent("1");
+	await expect.element(t.getMinute()).toMatchTextContent("1");
 });
 
 it("should overwrite on first click and type - `second`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
 
 	await t.getSecond().click();
 	await expect.element(t.getSecond()).toHaveFocus();
-	await expect.element(t.getSecond()).toHaveTextContent(String(zonedDateTime.second));
+	await expect.element(t.getSecond()).toMatchTextContent(String(zonedDateTime.second));
 	await userEvent.keyboard(`{1}`);
-	await expect.element(t.getSecond()).toHaveTextContent("1");
+	await expect.element(t.getSecond()).toMatchTextContent("1");
 });
 
 it("should move to the previous segment when backspace is pressed while empty - `minute`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
 
 	await t.getMinute().click();
 	await expect.element(t.getMinute()).toHaveFocus();
-	await expect.element(t.getMinute()).toHaveTextContent(String(zonedDateTime.minute));
+	await expect.element(t.getMinute()).toMatchTextContent(String(zonedDateTime.minute));
 	await userEvent.keyboard(kbd.BACKSPACE);
-	await expect.element(t.getMinute()).toHaveTextContent("3");
+	await expect.element(t.getMinute()).toMatchTextContent("3");
 	await userEvent.keyboard(kbd.BACKSPACE);
-	await expect.element(t.getMinute()).toHaveTextContent(TIME_PLACEHOLDER);
+	await expect.element(t.getMinute()).toMatchTextContent(TIME_PLACEHOLDER);
 	await expect.element(t.getMinute()).toHaveFocus();
 	await userEvent.keyboard(kbd.BACKSPACE);
 	await expect.element(t.getHour()).toHaveFocus();
 });
 
 it("should to the previous segment when backspace is pressed while empty - `second`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
@@ -484,77 +484,77 @@ it("should to the previous segment when backspace is pressed while empty - `seco
 	await t.getSecond().click();
 	await expect.element(t.getSecond()).toHaveFocus();
 	await userEvent.keyboard(kbd.BACKSPACE);
-	await expect.element(t.getSecond()).toHaveTextContent(TIME_PLACEHOLDER);
+	await expect.element(t.getSecond()).toMatchTextContent(TIME_PLACEHOLDER);
 	await expect.element(t.getSecond()).toHaveFocus();
 	await userEvent.keyboard(kbd.BACKSPACE);
 	await expect.element(t.getMinute()).toHaveFocus();
 });
 
 it("displays correct timezone with ZonedDateTime value - absolute -> local", async () => {
-	const t = setup({
+	const t = await setup({
 		value: parseAbsoluteToLocal("2023-10-12T12:30:00Z"),
 	});
 
 	await expect
 		.element(t.getTimeZoneName())
-		.toHaveTextContent(thisTimeZone("2023-10-12T12:30:00Z"));
+		.toMatchTextContent(thisTimeZone("2023-10-12T12:30:00Z"));
 });
 
 it("should not allow changing the dayPeriod without a value", async () => {
-	const t = setup({
+	const t = await setup({
 		granularity: "second",
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent(TIME_PLACEHOLDER);
+	await expect.element(t.getHour()).toMatchTextContent(TIME_PLACEHOLDER);
 	await t.getDayPeriod().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent(TIME_PLACEHOLDER);
+	await expect.element(t.getHour()).toMatchTextContent(TIME_PLACEHOLDER);
 });
 
 it("should allow going from 12PM -> 12AM without changing the display hour to 0", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 
 	await t.getDayPeriod().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.getHour()).toMatchTextContent("12");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
 });
 
 it("should never allow the hour to be 0 when in a 12 hour cycle", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 
 	await t.getDayPeriod().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.getHour()).toMatchTextContent("12");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
 
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent("01");
-	await expect.element(t.getHour()).not.toHaveTextContent("12");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.getHour()).toMatchTextContent("01");
+	await expect.element(t.getHour()).not.toMatchTextContent("12");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
 	await t.getDayPeriod().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent("01");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.getHour()).toMatchTextContent("01");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getHour()).toHaveTextContent("12");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.getHour()).toMatchTextContent("12");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 });
 
 it("should add missing leading zeroes to the hour and minute segments on focusout", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new Time(12, 30, 0, 0),
 	});
 
@@ -562,122 +562,122 @@ it("should add missing leading zeroes to the hour and minute segments on focusou
 	await userEvent.keyboard(`{1}`);
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expect.element(t.getMinute()).toHaveFocus();
-	await expect.element(t.getHour()).toHaveTextContent("01");
+	await expect.element(t.getHour()).toMatchTextContent("01");
 
 	await userEvent.keyboard(`{1}`);
 	await userEvent.keyboard(kbd.ARROW_LEFT);
 	await expect.element(t.getHour()).toHaveFocus();
-	await expect.element(t.getHour()).toHaveTextContent("01");
+	await expect.element(t.getHour()).toMatchTextContent("01");
 });
 
 it("should not intercept number keys when the ctrl or meta key is pressed, allowing default browser behavior", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new Time(12, 30, 0, 0),
 	});
 
 	await t.getHour().click();
 	await userEvent.keyboard(`{1}`);
 	await userEvent.keyboard(`{2}`);
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 
 	await userEvent.keyboard(`{Shift>}1{/Shift}`);
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 
 	await userEvent.keyboard(`{Ctrl>}2{/Ctrl}`);
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 
 	await userEvent.keyboard(`{Meta>}2{/Meta}`);
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 });
 
 it("should not allow typing 24 hour cycle hours when the hourcycle is 12", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 	await t.getHour().click();
 	await userEvent.keyboard(`{1}{4}`);
 	await expect.element(t.getMinute()).toHaveFocus();
-	await expect.element(t.getHour()).toHaveTextContent("04");
+	await expect.element(t.getHour()).toMatchTextContent("04");
 });
 
 it("should not go to zero on arrow navigation with a 12 hour cycle", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 	await t.getHour().click();
 	await userEvent.keyboard(`{1}{4}`);
 	await expect.element(t.getMinute()).toHaveFocus();
-	await expect.element(t.getHour()).toHaveTextContent("04");
+	await expect.element(t.getHour()).toMatchTextContent("04");
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getHour()).toHaveTextContent("02");
+	await expect.element(t.getHour()).toMatchTextContent("02");
 });
 
 it("should allow double zeroes to be set in the minute segment", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 	await t.getMinute().click();
 	await userEvent.keyboard(`{0}{0}`);
-	await expect.element(t.getMinute()).toHaveTextContent("00");
+	await expect.element(t.getMinute()).toMatchTextContent("00");
 });
 
 it("should advance to the next segment when typing two zeroes into the minute segment", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 0, 0),
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 	await t.getMinute().click();
 	await userEvent.keyboard(`{0}{0}`);
 	await expect.element(t.getDayPeriod()).toHaveFocus();
 });
 
 it("should allow double zeroes to be set in the second segment", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
 		granularity: "second",
 	});
 
-	await expect.element(t.getSecond()).toHaveTextContent("30");
+	await expect.element(t.getSecond()).toMatchTextContent("30");
 	await t.getSecond().click();
 	await userEvent.keyboard(`{0}{0}`);
-	await expect.element(t.getSecond()).toHaveTextContent("00");
+	await expect.element(t.getSecond()).toMatchTextContent("00");
 });
 
 it("should advance to the next segment when typing two zeroes into the second segment", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
 		granularity: "second",
 	});
 
-	await expect.element(t.getSecond()).toHaveTextContent("30");
+	await expect.element(t.getSecond()).toMatchTextContent("30");
 	await t.getSecond().click();
 	await userEvent.keyboard(`{0}{0}`);
 	await expect.element(t.getDayPeriod()).toHaveFocus();
 });
 
 it("should not allow typing characters that are not `a` or `p` into the dayPeriod segment", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
 		granularity: "second",
 	});
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 	await t.getDayPeriod().click();
 	await userEvent.keyboard("{i}{d}{k}");
-	await expect.element(t.getDayPeriod().element() as HTMLElement).toHaveTextContent("PM");
+	await expect.element(t.getDayPeriod().element() as HTMLElement).toMatchTextContent("PM");
 });
 
 it("should not allow typing non-numeric characters into the time segments", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
 		granularity: "second",
 	});
@@ -687,30 +687,30 @@ it("should not allow typing non-numeric characters into the time segments", asyn
 	for (const seg of segments) {
 		await seg.click();
 		await userEvent.keyboard("{i}{d}{k}");
-		await expect.element(seg).not.toHaveTextContent("idk");
+		await expect.element(seg).not.toMatchTextContent("idk");
 	}
 });
 
 it("should allow changing the day period with capital or lowercase `a` and `p`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
 		granularity: "second",
 	});
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 	await t.getDayPeriod().click();
 	await userEvent.keyboard("{Shift>}a{/Shift}");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
 	await userEvent.keyboard("{Shift>}p{/Shift}");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 	await userEvent.keyboard("a");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
 	await userEvent.keyboard("p");
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 });
 
 it("should render a hidden input if the `name` prop is passed", async () => {
-	const t = setup({
+	const t = await setup({
 		name: "time-field",
 	});
 	await expect.element(t.getHiddenInput()).not.toBeNull();
@@ -719,13 +719,13 @@ it("should render a hidden input if the `name` prop is passed", async () => {
 });
 
 it("should not render a hidden input if the name prop isn't passed", async () => {
-	const t = setup();
+	const t = await setup();
 	await expect.element(t.getHiddenInput()).toBeNull();
 });
 
 it("should keep the value of the hidden input in sync with the fields value", async () => {
 	const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
-	const t = setup({
+	const t = await setup({
 		name: "hello",
 		value,
 	});
@@ -743,7 +743,7 @@ it("should keep the value of the hidden input in sync with the fields value", as
 
 it("should handle 24 hour time appropriately", async () => {
 	const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
-	const t = setup({
+	const t = await setup({
 		name: "hello",
 		value,
 		hourCycle: 24,
@@ -751,12 +751,12 @@ it("should handle 24 hour time appropriately", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard("22");
-	await expect.element(t.getHour()).toHaveTextContent("22");
+	await expect.element(t.getHour()).toMatchTextContent("22");
 });
 
 it("should allow 00 to be entered when hourCycle is 24", async () => {
 	const value = new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0);
-	const t = setup({
+	const t = await setup({
 		name: "hello",
 		value,
 		hourCycle: 24,
@@ -764,12 +764,12 @@ it("should allow 00 to be entered when hourCycle is 24", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard("00");
-	await expect.element(t.getHour()).toHaveTextContent("00");
+	await expect.element(t.getHour()).toMatchTextContent("00");
 });
 
 it("navigating to 00 with ArrowUp/Down when hourCycle is 24 should show 00 and not 0", async () => {
 	const value = new CalendarDateTime(2023, 10, 12, 1, 30, 30, 0);
-	const t = setup({
+	const t = await setup({
 		name: "hello",
 		value,
 		hourCycle: 24,
@@ -777,39 +777,39 @@ it("navigating to 00 with ArrowUp/Down when hourCycle is 24 should show 00 and n
 
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getHour()).toHaveTextContent("00");
+	await expect.element(t.getHour()).toMatchTextContent("00");
 	expect(t.getHour().element().textContent).not.toBe("0");
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getHour()).toHaveTextContent("23");
+	await expect.element(t.getHour()).toMatchTextContent("23");
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent("00");
+	await expect.element(t.getHour()).toMatchTextContent("00");
 });
 
 it("should display correct hour when prepopulated with value and hourCycle is 24", async () => {
 	const value = new CalendarDateTime(2023, 10, 12, 0, 30, 30, 0);
-	const t = setup({
+	const t = await setup({
 		name: "hello",
 		value,
 		hourCycle: 24,
 	});
 
-	await expect.element(t.getHour()).toHaveTextContent("00");
+	await expect.element(t.getHour()).toMatchTextContent("00");
 });
 
 it("should reset the segment values when the value is reset", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new CalendarDateTime(2023, 10, 12, 12, 30, 30, 0),
 		granularity: "second",
 	});
 
 	await page.getByTestId("reset").click();
 
-	await expect.element(t.getHour()).toHaveTextContent(TIME_PLACEHOLDER);
-	await expect.element(t.getMinute()).toHaveTextContent(TIME_PLACEHOLDER);
+	await expect.element(t.getHour()).toMatchTextContent(TIME_PLACEHOLDER);
+	await expect.element(t.getMinute()).toMatchTextContent(TIME_PLACEHOLDER);
 });
 
 it("should hide timezone when hideTimeZone is true", async () => {
-	setup({
+	await setup({
 		value: zonedDateTime,
 		hideTimeZone: true,
 	});
@@ -818,7 +818,7 @@ it("should hide timezone when hideTimeZone is true", async () => {
 });
 
 it("should show timezone when hideTimeZone is false", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		hideTimeZone: false,
 	});
@@ -829,7 +829,7 @@ it("should show timezone when hideTimeZone is false", async () => {
 it("should type the onValueChange callback with the type of the provided value (CalendarDateTime)", async () => {
 	// calendar date time
 	let changedValue: CalendarDateTime | undefined;
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 		// v should be CalendarDateTime | undefined,
 		onValueChange: (v) => {
@@ -853,7 +853,7 @@ it("should type the onValueChange callback with the type of the provided value (
 it("should type the onValueChange callback with the type of the provided value (Time)", async () => {
 	// time
 	let changedValue: Time | undefined;
-	const t = setup({
+	const t = await setup({
 		value: new Time(12, 30, 0),
 		// v should be Time | undefined
 		onValueChange: (v) => {
@@ -876,7 +876,7 @@ it("should type the onValueChange callback with the type of the provided value (
 it("should type the onValueChange callback with the type of the provided value (ZonedDateTime)", async () => {
 	// Test another type error case
 	let changedValue: ZonedDateTime | undefined;
-	const t = setup({
+	const t = await setup({
 		value: toZoned(calendarDateTime, "America/New_York"),
 		// v should be ZonedDateTime | undefined
 		onValueChange: (v) => {
@@ -898,7 +898,7 @@ it("should type the onValueChange callback with the type of the provided value (
 it("should respect the minValue prop", async () => {
 	const mockOnInvalid = vi.fn();
 
-	const t = setup({
+	const t = await setup({
 		minValue: new Time(12, 30, 0),
 		value: new Time(12, 30, 0),
 		onInvalid: mockOnInvalid,
@@ -906,7 +906,7 @@ it("should respect the minValue prop", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(t.getHour()).toHaveTextContent("11");
+	await expect.element(t.getHour()).toMatchTextContent("11");
 	expect(mockOnInvalid).toHaveBeenCalledWith("min", undefined);
 
 	await expect.element(t.getHour()).toHaveAttribute("aria-invalid", "true");
@@ -917,7 +917,7 @@ it("should respect the minValue prop", async () => {
 it("should respect the maxValue prop", async () => {
 	const mockOnInvalid = vi.fn();
 
-	const t = setup({
+	const t = await setup({
 		maxValue: new Time(12, 30, 0),
 		value: new Time(12, 30, 0),
 		onInvalid: mockOnInvalid,
@@ -925,7 +925,7 @@ it("should respect the maxValue prop", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent("01");
+	await expect.element(t.getHour()).toMatchTextContent("01");
 	expect(mockOnInvalid).toHaveBeenCalledWith("max", undefined);
 
 	await expect.element(t.getHour()).toHaveAttribute("aria-invalid", "true");
@@ -934,7 +934,7 @@ it("should respect the maxValue prop", async () => {
 });
 
 it("should respect readonlySegments prop", async () => {
-	const t = setup({
+	const t = await setup({
 		value: new Time(12, 30, 0),
 		readonlySegments: ["hour", "minute"],
 		granularity: "second",
@@ -942,15 +942,15 @@ it("should respect readonlySegments prop", async () => {
 
 	await t.getHour().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getHour()).toMatchTextContent("12");
 
 	await t.getMinute().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getMinute()).toHaveTextContent("30");
+	await expect.element(t.getMinute()).toMatchTextContent("30");
 
 	await t.getSecond().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getSecond()).toHaveTextContent("01");
+	await expect.element(t.getSecond()).toMatchTextContent("01");
 });
 
 it("should default to a 24 hour clock for locales that use it", async () => {
@@ -961,32 +961,32 @@ it("should default to a 24 hour clock for locales that use it", async () => {
 		return;
 	}
 
-	const t = setup({
+	const t = await setup({
 		locale: "en-UK",
 		value: new Time(13, 30, 0),
 	});
 
-	await vi.waitFor(() => expect.element(t.getHour()).toHaveTextContent("13"));
+	await vi.waitFor(() => expect.element(t.getHour()).toMatchTextContent("13"));
 });
 
 it("should allow changing the day period even if no value is populated yet", async () => {
-	const t = setup();
+	const t = await setup();
 
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
 	await t.getDayPeriod().click();
 
 	await userEvent.keyboard(kbd.p);
-	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("PM");
 });
 
 it("should not adjust the hour when the day period is changed", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await t.getDayPeriod().click();
 	await userEvent.keyboard(kbd.ARROW_UP);
 	await userEvent.keyboard(kbd.ARROW_UP);
-	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
-	await expect.element(t.getHour()).toHaveTextContent(TIME_PLACEHOLDER);
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
+	await expect.element(t.getHour()).toMatchTextContent(TIME_PLACEHOLDER);
 });
 
 function thisTimeZone(date: string): string {

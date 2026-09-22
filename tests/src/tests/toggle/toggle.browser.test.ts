@@ -3,12 +3,12 @@ import { render } from "vitest-browser-svelte";
 import type { Toggle } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import ToggleTest from "./toggle-test.svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
-function setup(props: Toggle.RootProps = {}) {
-	render(ToggleTest, { ...props });
+async function setup(props: Toggle.RootProps = {}) {
+	await render(ToggleTest, { ...props });
 	const root = page.getByTestId("root");
 	return {
 		root,
@@ -17,12 +17,12 @@ function setup(props: Toggle.RootProps = {}) {
 
 describe("toggle", () => {
 	it("should have bits data attrs", async () => {
-		const t = setup();
+		const t = await setup();
 		await expect.element(t.root).toHaveAttribute("data-toggle-root");
 	});
 
 	it("should toggle when clicked", async () => {
-		const t = setup();
+		const t = await setup();
 		await expect.element(t.root).toHaveAttribute("data-state", "off");
 		await expect.element(t.root).toHaveAttribute("aria-pressed", "false");
 		await t.root.click();
@@ -31,7 +31,7 @@ describe("toggle", () => {
 	});
 
 	it.each([kbd.ENTER, kbd.SPACE])("should toggle when the `%s` key is pressed", async (key) => {
-		const t = setup();
+		const t = await setup();
 		await expect.element(t.root).toHaveAttribute("data-state", "off");
 		await expect.element(t.root).toHaveAttribute("aria-pressed", "false");
 		(t.root.element() as HTMLElement).focus();
@@ -41,7 +41,7 @@ describe("toggle", () => {
 	});
 
 	it("should be disabled then the `disabled` prop is set to true", async () => {
-		const t = setup({ disabled: true });
+		const t = await setup({ disabled: true });
 		await expect.element(t.root).toHaveAttribute("data-disabled");
 		await expect.element(t.root).toBeDisabled();
 	});
@@ -52,18 +52,18 @@ describe("toggle", () => {
 			newValue = next;
 		}
 
-		const t = setup({ onPressedChange });
+		const t = await setup({ onPressedChange });
 		expect(newValue).toBe(false);
 		await t.root.click();
 		expect(newValue).toBe(true);
 	});
 
 	it("should respect binding to the `pressed` prop", async () => {
-		const t = setup();
+		const t = await setup();
 		const binding = page.getByTestId("binding");
-		await expect.element(binding).toHaveTextContent("false");
+		await expect.element(binding).toMatchTextContent("false");
 		await binding.click();
-		await expect.element(binding).toHaveTextContent("true");
+		await expect.element(binding).toMatchTextContent("true");
 		await expect.element(t.root).toHaveAttribute("data-state", "on");
 	});
 });

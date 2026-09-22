@@ -1,4 +1,4 @@
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { tick } from "svelte";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
@@ -24,7 +24,7 @@ function dispatchPointerdown(target: HTMLElement, pointerType = "mouse") {
 
 describe("dismissible layer registration lifecycle", () => {
 	it("keeps an in-flight outside interaction when the same ref rerenders", async () => {
-		render(RegistrationLifecycleTest);
+		await render(RegistrationLifecycleTest);
 		await expectExists(page.getByTestId("layer"));
 
 		dispatchPointerdown(page.getByTestId("rerender-outside").element() as HTMLElement);
@@ -33,7 +33,7 @@ describe("dismissible layer registration lifecycle", () => {
 	});
 
 	it("registers the replacement ref after the previous node is removed", async () => {
-		render(RegistrationLifecycleTest);
+		await render(RegistrationLifecycleTest);
 		const initialLayer = page.getByTestId("layer").element();
 
 		dispatchPointerdown(page.getByTestId("replace-ref").element() as HTMLElement);
@@ -44,7 +44,7 @@ describe("dismissible layer registration lifecycle", () => {
 	});
 
 	it("does not dismiss from the pointerdown that synchronously mounts the layer", async () => {
-		render(RegistrationLifecycleTest, { mode: "opening" });
+		await render(RegistrationLifecycleTest, { mode: "opening" });
 
 		dispatchPointerdown(page.getByTestId("open-during-pointerdown").element() as HTMLElement);
 		await expectExists(page.getByTestId("layer"));
@@ -56,7 +56,7 @@ describe("dismissible layer registration lifecycle", () => {
 	});
 
 	it("does not leave a layer registered when it unmounts from the opening mutation", async () => {
-		const view = render(RegistrationLifecycleTest, { mode: "opening" });
+		const view = await render(RegistrationLifecycleTest, { mode: "opening" });
 		type RegisteredLayer = { opts: { ref: { current: HTMLElement | null } } };
 		const layers = (
 			globalThis as {
@@ -68,7 +68,7 @@ describe("dismissible layer registration lifecycle", () => {
 		let originalRef: RegisteredLayer["opts"]["ref"] | undefined;
 		const readRef = vi.fn();
 		let unmounted = false;
-		const observer = new MutationObserver(() => {
+		const observer = new MutationObserver(async () => {
 			const node = document.querySelector<HTMLElement>('[data-testid="layer"]');
 			if (!node) return;
 			observer.disconnect();
@@ -86,7 +86,7 @@ describe("dismissible layer registration lifecycle", () => {
 					},
 				};
 			}
-			view.unmount();
+			await view.unmount();
 			readRef.mockClear();
 			unmounted = true;
 		});
@@ -111,7 +111,7 @@ describe("dismissible layer registration lifecycle", () => {
 	});
 
 	it("does not dismiss an interaction whose delegated target stops propagation", async () => {
-		render(RegistrationLifecycleTest);
+		await render(RegistrationLifecycleTest);
 		await expectExists(page.getByTestId("layer"));
 
 		dispatchPointerdown(page.getByTestId("intercepted-outside").element() as HTMLElement);
@@ -123,7 +123,7 @@ describe("dismissible layer registration lifecycle", () => {
 	});
 
 	it("cancels a pending touch click when the layer is disabled", async () => {
-		render(RegistrationLifecycleTest);
+		await render(RegistrationLifecycleTest);
 		await expectExists(page.getByTestId("layer"));
 
 		const outside = page.getByTestId("outside").element() as HTMLElement;
