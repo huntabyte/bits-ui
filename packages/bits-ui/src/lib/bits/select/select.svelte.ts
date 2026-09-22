@@ -683,16 +683,22 @@ export class SelectComboTriggerState {
 		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+	}
+
+	#focusInputAndToggle() {
+		if (!this.root.domContext) return;
+		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
+			this.root.inputNode?.focus();
+		}
+		this.root.toggleMenu();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!this.root.domContext) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-				this.root.inputNode?.focus();
-			}
-			this.root.toggleMenu();
+			this.#focusInputAndToggle();
 		}
 	}
 
@@ -703,10 +709,16 @@ export class SelectComboTriggerState {
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current || !this.root.domContext) return;
 		e.preventDefault();
-		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-			this.root.inputNode?.focus();
-		}
-		this.root.toggleMenu();
+		// prevent opening on touch down which can be triggered when scrolling on touch devices
+		if (e.pointerType === "touch") return;
+		this.#focusInputAndToggle();
+	}
+
+	onpointerup(e: BitsPointerEvent) {
+		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (e.pointerType !== "touch") return;
+		e.preventDefault();
+		this.#focusInputAndToggle();
 	}
 
 	readonly props = $derived.by(
@@ -719,6 +731,7 @@ export class SelectComboTriggerState {
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
