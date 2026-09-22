@@ -120,6 +120,11 @@ export const root = defineComponentApiSchema<ComboboxRootPropsWithoutHTML>({
 			description:
 				"Whether or not the user can deselect the selected item by pressing it in a single select.",
 		}),
+		autoHighlight: defineBooleanProp({
+			default: false,
+			description:
+				"Whether or not the first matching item should be highlighted automatically as the user filters the list.",
+		}),
 		items: defineComponentPropSchema({
 			definition: ItemsProp,
 			stringDefinition: `{ value: string; label: string; disabled?: boolean}[]`,

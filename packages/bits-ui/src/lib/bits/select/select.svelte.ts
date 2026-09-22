@@ -85,6 +85,7 @@ interface SelectBaseRootStateOpts
 			scrollAlignment: "nearest" | "center";
 			items: { value: string; label: string; disabled?: boolean }[];
 			allowDeselect: boolean;
+			autoHighlight: boolean;
 			onOpenChangeComplete: OnChangeFn<boolean>;
 		}>,
 		WritableBoxedValues<{
@@ -235,6 +236,10 @@ abstract class SelectBaseRootState {
 	getBitsAttr: typeof selectAttrs.getAttr = (part) => {
 		return selectAttrs.getAttr(part, this.isCombobox ? "combobox" : undefined);
 	};
+
+	shouldAutoHighlightAfterInput() {
+		return this.isCombobox && this.opts.autoHighlight.current;
+	}
 }
 
 interface SelectSingleRootStateOpts
@@ -299,6 +304,7 @@ export class SelectSingleRootState extends SelectBaseRootState {
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
+			if (this.shouldAutoHighlightAfterInput()) return;
 			if (
 				this.highlightedNode &&
 				this.domContext.getDocument().contains(this.highlightedNode)
@@ -368,6 +374,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
+			if (this.shouldAutoHighlightAfterInput()) return;
 			if (!this.domContext) return;
 			if (
 				this.highlightedNode &&
@@ -405,16 +412,18 @@ interface SelectRootStateOpts
 	isCombobox: boolean;
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
+	autoHighlight?: Box<boolean>;
 }
 
 export class SelectRootState {
 	static create(props: SelectRootStateOpts): SelectRoot {
-		const { type, ...rest } = props;
+		const { type, autoHighlight = boxWith(() => false), ...rest } = props;
+		const rootProps = { ...rest, autoHighlight };
 
 		const rootState =
 			type === "single"
-				? new SelectSingleRootState(rest as SelectSingleRootStateOpts)
-				: new SelectMultipleRootState(rest as SelectMultipleRootStateOpts);
+				? new SelectSingleRootState(rootProps as SelectSingleRootStateOpts)
+				: new SelectMultipleRootState(rootProps as SelectMultipleRootStateOpts);
 
 		return SelectRootContext.set(rootState);
 	}
