@@ -26,7 +26,7 @@ type CalendarBaseRootPropsWithoutHTML = {
 	 *
 	 * @default the current date
 	 */
-	placeholder?: DateValue;
+	placeholder?: DateValue | undefined;
 
 	/**
 	 * A callback function called when the placeholder value
@@ -224,7 +224,7 @@ export type CalendarSingleRootPropsWithoutHTML = {
 	/**
 	 * The value of the selected date in the calendar.
 	 */
-	value?: DateValue;
+	value?: DateValue | undefined;
 
 	/**
 	 * A callback function called when the value changes.
@@ -243,7 +243,7 @@ export type CalendarMultipleRootPropsWithoutHTML = {
 	/**
 	 * The value of the selected dates in the calendar.
 	 */
-	value?: DateValue[];
+	value?: DateValue[] | undefined;
 
 	/**
 	 * A callback function called when the value changes.
