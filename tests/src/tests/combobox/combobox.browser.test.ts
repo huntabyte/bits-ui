@@ -901,3 +901,46 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 		await expect.element(node).not.toHaveAttribute("data-highlighted");
 	}
 }
+
+describe("Touch", () => {
+	function touch(target: Element, type: "pointerdown" | "pointerup" | "pointercancel") {
+		target.dispatchEvent(
+			new PointerEvent(type, {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "touch",
+				isPrimary: true,
+				button: 0,
+				buttons: type === "pointerdown" ? 1 : 0,
+			})
+		);
+	}
+
+	it("should not open the trigger on touch down, which also fires when a scroll starts on it", async () => {
+		const t = setupSingle();
+		const trigger = t.trigger.element();
+		touch(trigger, "pointerdown");
+		await tick();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("false");
+		expect(document.activeElement).not.toBe(t.input.element());
+		// the browser cancels the pointer once the finger scrolls
+		touch(trigger, "pointercancel");
+		await tick();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("false");
+	});
+
+	it("should open the trigger on a tap", async () => {
+		const t = setupSingle();
+		const trigger = t.trigger.element();
+		touch(trigger, "pointerdown");
+		await tick();
+		await expectNotExists(t.getContent());
+		expect(document.activeElement).not.toBe(t.input.element());
+		touch(trigger, "pointerup");
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.input).toHaveFocus();
+	});
+});

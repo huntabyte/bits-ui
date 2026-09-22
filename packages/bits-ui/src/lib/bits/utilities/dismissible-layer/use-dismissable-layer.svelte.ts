@@ -19,7 +19,7 @@ import { isClickTrulyOutside } from "$lib/internal/dom.js";
 import {
 	CONTEXT_MENU_CONTENT_ATTR,
 	CONTEXT_MENU_TRIGGER_ATTR,
-} from "$lib/bits/menu/menu.svelte.js";
+} from "$lib/bits/menu/context-menu-attributes.js";
 
 globalThis.bitsDismissableLayers ??= new Map<
 	DismissibleLayerState,

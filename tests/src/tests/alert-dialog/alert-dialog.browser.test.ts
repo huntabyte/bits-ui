@@ -284,3 +284,43 @@ describe("ARIA Attributes", () => {
 		await expect.element(page.getByTestId("title")).toHaveAttribute("aria-level", "3");
 	});
 });
+
+describe("Text Selection", () => {
+	function pointer(type: "pointerdown" | "pointerup") {
+		page.getByTestId("content")
+			.element()
+			.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+				})
+			);
+	}
+
+	function bodyUserSelect() {
+		return document.body.style.userSelect || document.body.style.webkitUserSelect;
+	}
+
+	it("should lock text selection overflow while pointing down inside the content", async () => {
+		await open();
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("none");
+		pointer("pointerup");
+		expect(bodyUserSelect()).toBe("");
+	});
+
+	it("should pass preventOverflowTextSelection to the layer instead of rendering it as an attribute", async () => {
+		await open({ contentProps: { preventOverflowTextSelection: false } });
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("");
+		pointer("pointerup");
+	});
+});
