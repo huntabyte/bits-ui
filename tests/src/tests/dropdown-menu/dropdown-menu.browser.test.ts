@@ -14,6 +14,7 @@ import {
 	waitForDismissibleLayer,
 } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
+import DropdownMenuInitiallyOpenTest from "./dropdown-menu-initially-open-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 import DropdownMenuScrollPaddingTest from "./dropdown-menu-scroll-padding-test.svelte";
 
@@ -895,4 +896,39 @@ it("should call `focus` with `preventScroll: true` on hover and item-leave so `s
 	} finally {
 		focusSpy.mockRestore();
 	}
+});
+
+it("should point the trigger at the content while the menu is open", async () => {
+	const t = await open();
+	const id = t.getContent().element().id;
+	expect(id).not.toBe("");
+	await expect.element(t.trigger).toHaveAttribute("aria-controls", id);
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(t.getContent());
+	await expect.element(t.trigger).not.toHaveAttribute("aria-controls");
+});
+
+it("should point the trigger at the content when the menu starts open", async () => {
+	render(DropdownMenuInitiallyOpenTest);
+	await expectExists(page.getByTestId("content"));
+	await expect
+		.element(page.getByTestId("trigger"))
+		.toHaveAttribute("aria-controls", "menu-content-a");
+});
+
+it("should follow the content id when it changes while the menu is open", async () => {
+	render(DropdownMenuInitiallyOpenTest);
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("rename").click();
+	await expect.element(page.getByTestId("content")).toHaveAttribute("id", "menu-content-b");
+	await expect
+		.element(page.getByTestId("trigger"))
+		.toHaveAttribute("aria-controls", "menu-content-b");
+});
+
+it("should point the sub trigger at the sub content while the submenu is open", async () => {
+	const t = await openSubmenu(await openWithKbd());
+	const id = t.getSubContent().element().id;
+	expect(id).not.toBe("");
+	await expect.element(page.getByTestId("sub-trigger")).toHaveAttribute("aria-controls", id);
 });
