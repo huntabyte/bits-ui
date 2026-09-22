@@ -8,7 +8,8 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger data-testid="trigger">Actions</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
-		<DropdownMenu.Content data-testid="content" {onInteractOutside}>
+		<!-- scroll lock sets `pointer-events: none` on body, so a real tap could never reach the outside button -->
+		<DropdownMenu.Content data-testid="content" preventScroll={false} {onInteractOutside}>
 			<DropdownMenu.Item>Action</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Portal>
