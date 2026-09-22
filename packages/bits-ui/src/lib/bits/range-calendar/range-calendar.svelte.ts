@@ -3,7 +3,7 @@ import {
 	getLocalTimeZone,
 	isSameDay,
 	isSameMonth,
-	isToday,
+	today,
 } from "@internationalized/date";
 import {
 	attachRef,
@@ -101,6 +101,15 @@ export class RangeCalendarRootState {
 	readonly opts: RangeCalendarRootStateOpts;
 	readonly attachment: RefAttachment;
 	readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
+	/**
+	 * `today()` resolves the local timezone via `Intl.DateTimeFormat#formatToParts`, which is
+	 * far too expensive to run once per rendered cell. We read `months` so this refreshes on
+	 * the same cadence the per-cell computation used to (whenever the visible dates change).
+	 */
+	readonly todayDate = $derived.by(() => {
+		this.months;
+		return today(getLocalTimeZone());
+	});
 	months: Month<DateValue>[] = $state([]);
 	announcer: Announcer;
 	formatter: Formatter;
@@ -737,7 +746,9 @@ export class RangeCalendarCellState {
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
-	readonly isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
+	readonly isDateToday = $derived.by(() =>
+		isSameDay(this.opts.date.current, this.root.todayDate)
+	);
 
 	readonly isOutsideVisibleMonths = $derived.by(() =>
 		this.root.isOutsideVisibleMonths(this.opts.date.current)
