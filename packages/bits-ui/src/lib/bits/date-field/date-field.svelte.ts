@@ -271,7 +271,6 @@ export class DateFieldRootState {
 		});
 
 		$effect(() => {
-			if (rangeRoot) return;
 			if (this.formatter.getLocale() === this.locale.current) return;
 			this.formatter.setLocale(this.locale.current);
 		});
