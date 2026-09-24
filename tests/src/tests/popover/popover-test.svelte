@@ -35,6 +35,6 @@
 	</Popover.Root>
 
 	<button data-testid="binding" onclick={() => (open = !open)}>{open}</button>
-	<div data-testid="outside">outside</div>
+	<div data-testid="outside" style="position: fixed; bottom: 10px; right: 10px;">outside</div>
 </main>
 <div data-testid="portal-target" id="portal-target"></div>

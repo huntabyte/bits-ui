@@ -33,7 +33,7 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { isIOS } from "$lib/internal/is.js";
+import { isOrContainsTarget } from "$lib/internal/elements.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
@@ -51,6 +51,14 @@ export const FIRST_LAST_KEYS = [...FIRST_KEYS, ...LAST_KEYS];
 export const SELECTION_KEYS = [kbd.ENTER, kbd.SPACE];
 
 export const CONTENT_MARGIN = 10;
+
+function contentWrapperIsAbsolute(node: HTMLElement | null) {
+	return node?.style.position === "absolute";
+}
+
+function getWrapperPageOffset(node: HTMLElement, win: Window) {
+	return contentWrapperIsAbsolute(node) ? { x: win.scrollX, y: win.scrollY } : { x: 0, y: 0 };
+}
 
 const selectAttrs = createBitsAttrs({
 	component: "select",
@@ -102,6 +110,7 @@ abstract class SelectBaseRootState {
 	contentPresence: PresenceManager;
 	viewportNode = $state<HTMLElement | null>(null);
 	triggerNode = $state<HTMLElement | null>(null);
+	triggerPointerDownPos = $state<{ x: number; y: number } | null>(null);
 	valueNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
 	highlightedNode = $state<HTMLElement | null>(null);
@@ -118,9 +127,12 @@ abstract class SelectBaseRootState {
 		return this.highlightedNode.getAttribute("data-label");
 	});
 	contentIsPositioned = $state(false);
+	isItemAligned = $state(false);
 	isUsingKeyboard = false;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
+	selectedItemNode = $state<HTMLElement | null>(null);
+	contentWrapperNode = $state<HTMLElement | null>(null);
 
 	constructor(opts: SelectBaseRootStateOpts) {
 		this.opts = opts;
@@ -143,7 +155,10 @@ abstract class SelectBaseRootState {
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
-		if (node && (this.isUsingKeyboard || initial)) {
+		// In item-aligned mode, the content positioner scrolls the viewport so the
+		// selected item lines up with the trigger. Calling scrollIntoView here would
+		// fight that positioning and break the alignment.
+		if (node && (this.isUsingKeyboard || initial) && !this.isItemAligned) {
 			this.scrollHighlightedNodeIntoView(node);
 		}
 	}
@@ -159,6 +174,12 @@ abstract class SelectBaseRootState {
 		return Array.from(
 			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
 		);
+	}
+
+	getAllItemNodes(): HTMLElement[] {
+		const node = this.contentNode;
+		if (!node) return [];
+		return Array.from(node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`));
 	}
 
 	setHighlightedToFirstCandidate(initial = false) {
@@ -750,6 +771,8 @@ export class SelectTriggerState {
 	readonly #domTypeahead: DOMTypeahead;
 	readonly #dataTypeahead: DataTypeahead;
 
+	pointerType = "touch";
+
 	constructor(opts: SelectTriggerStateOpts, root: SelectRoot) {
 		this.opts = opts;
 		this.root = root;
@@ -786,7 +809,6 @@ export class SelectTriggerState {
 
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
-		this.onpointerup = this.onpointerup.bind(this);
 		this.onclick = this.onclick.bind(this);
 	}
 
@@ -796,7 +818,11 @@ export class SelectTriggerState {
 		this.#domTypeahead.resetTypeahead();
 	}
 
-	#handlePointerOpen(_: PointerEvent) {
+	#handlePointerOpen(e: PointerEvent) {
+		this.root.triggerPointerDownPos = {
+			x: Math.round(e.pageX),
+			y: Math.round(e.pageY),
+		};
 		this.#handleOpen();
 	}
 
@@ -938,19 +964,20 @@ export class SelectTriggerState {
 	}
 
 	onclick(e: BitsMouseEvent) {
-		// While browsers generally have no issue focusing the trigger when clicking
-		// on a label, Safari seems to struggle with the fact that there's no `onClick`.
-		// We force `focus` in this case. Note: this doesn't create any other side-effect
-		// because we are preventing default in `onpointerdown` so effectively
-		// this only runs for a label 'click'
+		// Safari needs explicit focus for label clicks. Avoid scrolling the page
+		// when a touch tap focuses the trigger before opening the menu.
 		const currTarget = e.currentTarget as HTMLElement;
-		currTarget.focus();
+		currTarget.focus({ preventScroll: true });
+		// A completed click distinguishes a touch/pen tap from a scroll gesture.
+		if (this.pointerType !== "mouse" && !this.root.opts.disabled.current) {
+			this.root.triggerPointerDownPos = null;
+			this.#handleOpen();
+		}
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current) return;
-		// prevent opening on touch down which can be triggered when scrolling on touch devices
-		if (e.pointerType === "touch") return e.preventDefault();
+		this.pointerType = e.pointerType;
 
 		// prevent implicit pointer capture
 		const target = e.target as HTMLElement;
@@ -960,19 +987,7 @@ export class SelectTriggerState {
 
 		// only call the handle if it's a left click, since pointerdown is triggered
 		// by right clicks as well, but not when ctrl is pressed
-		if (e.button === 0 && e.ctrlKey === false) {
-			if (this.root.opts.open.current === false) {
-				this.#handlePointerOpen(e);
-			} else {
-				this.root.handleClose();
-			}
-		}
-	}
-
-	onpointerup(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
-		e.preventDefault();
-		if (e.pointerType === "touch") {
+		if (e.button === 0 && e.ctrlKey === false && e.pointerType === "mouse") {
 			if (this.root.opts.open.current === false) {
 				this.#handlePointerOpen(e);
 			} else {
@@ -996,7 +1011,6 @@ export class SelectTriggerState {
 				onpointerdown: this.onpointerdown,
 				onkeydown: this.onkeydown,
 				onclick: this.onclick,
-				onpointerup: this.onpointerup,
 				...this.attachment,
 			}) as const
 	);
@@ -1007,6 +1021,7 @@ interface SelectContentStateOpts
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
+			position: "popper" | "item-aligned";
 		}> {}
 
 export class SelectContentState {
@@ -1021,6 +1036,14 @@ export class SelectContentState {
 	// scroll button) and reset on close; shared by both scroll buttons
 	userHasScrolled = false;
 	domContext: DOMContext;
+	readonly useItemAligned = $derived.by(() => this.opts.position.current === "item-aligned");
+	// Matches Radix shouldRepositionRef — resets to true on each open, flipped false after
+	// the first scroll-button-triggered reposition so we only reposition once.
+	shouldReposition = true;
+	// True when #position() used the if-branch (content grows upward from below trigger).
+	expandsUpward = false;
+	pageScrollTopOffset: number | null = null;
+	itemAlignedAnchorNode: HTMLElement | null = null;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -1032,28 +1055,352 @@ export class SelectContentState {
 			this.root.domContext = this.domContext;
 		}
 
+		$effect(() => {
+			this.root.isItemAligned = this.useItemAligned;
+		});
+
 		onDestroyEffect(() => {
 			this.root.contentNode = null;
+			this.root.contentWrapperNode = null;
 			this.root.contentIsPositioned = false;
 			this.isPositioned = false;
+			this.pageScrollTopOffset = null;
+			this.itemAlignedAnchorNode = null;
 		});
 
 		watch(
 			() => this.root.opts.open.current,
 			() => {
-				if (this.root.opts.open.current) return;
+				if (this.root.opts.open.current) {
+					this.shouldReposition = true;
+					this.pageScrollTopOffset = null;
+					this.itemAlignedAnchorNode = null;
+					return;
+				}
 				this.root.contentIsPositioned = false;
 				this.isPositioned = false;
+				this.pageScrollTopOffset = null;
+				this.itemAlignedAnchorNode = null;
 				this.userHasScrolled = false;
 			}
 		);
 
 		watch([() => this.isPositioned, () => this.root.highlightedNode], () => {
 			if (!this.isPositioned || !this.root.highlightedNode) return;
+			if (this.useItemAligned) return;
 			this.root.scrollHighlightedNodeIntoView(this.root.highlightedNode);
 		});
 
+		// Re-run item-aligned positioning whenever layout-affecting state changes.
+		watch(
+			[
+				() => this.useItemAligned,
+				() => this.root.opts.open.current,
+				() => this.root.contentWrapperNode,
+				() => this.root.contentNode,
+				() => this.root.viewportNode,
+				() => this.root.triggerNode,
+				() => this.root.selectedItemNode,
+			],
+			() => {
+				if (!this.useItemAligned || !this.root.opts.open.current) return;
+				this.#position();
+			}
+		);
+
+		$effect(() => {
+			if (!this.useItemAligned || !this.root.opts.open.current) return;
+			this.root.contentWrapperNode;
+			this.root.contentNode;
+			this.root.viewportNode;
+			this.root.triggerNode;
+			this.root.selectedItemNode;
+			afterTick(() => this.#position());
+		});
+
+		// Radix closes the select on resize in item-aligned mode. Its page is always
+		// scroll-locked, while Bits can opt out. The unlocked wrapper is document-positioned,
+		// so page scroll moves it natively; nested scrollers still need a synchronous update.
+		$effect(() => {
+			if (!this.useItemAligned) return;
+			const content = this.root.contentNode;
+			if (!content) return;
+			const win = content.ownerDocument.defaultView;
+			if (!win) return;
+			const reposition = (e: Event) => {
+				if (e.target === this.root.viewportNode) return;
+				if (!this.isPositioned) return;
+				const target = e.target;
+				const doc = content.ownerDocument;
+				const isPageScroll =
+					target === win ||
+					target === doc ||
+					target === doc.documentElement ||
+					target === doc.body;
+				if (contentWrapperIsAbsolute(this.root.contentWrapperNode) && isPageScroll) return;
+				this.#repositionOnScroll();
+			};
+			const initialWidth = win.innerWidth;
+			const onResize = () => {
+				// Radix locks page scrolling; Bits leaves it enabled by default. Mobile
+				// browser chrome changes viewport height while scrolling, not orientation.
+				if (
+					win.matchMedia("(pointer: coarse)").matches &&
+					win.innerWidth === initialWidth
+				) {
+					return;
+				}
+				this.root.handleClose();
+			};
+			return executeCallbacks(
+				on(win, "resize", onResize),
+				on(win, "scroll", reposition, { capture: true, passive: true })
+			);
+		});
+
+		// Mirrors Radix's pointer-movement threshold guard. When the menu opens via a
+		// mouse pointerdown on the trigger, attach document-level listeners that track
+		// how far the pointer has moved. On the first pointerup, if the delta is ≤10px
+		// in both axes, preventDefault() blocks item selection so that a quick click-to-
+		// open doesn't immediately re-select the highlighted item.
+		$effect(() => {
+			const content = this.root.contentNode;
+			const triggerPointerDownPos = this.root.triggerPointerDownPos;
+			if (!content || !triggerPointerDownPos) return;
+
+			const doc = this.domContext.getDocument();
+			let pointerMoveDelta = { x: 0, y: 0 };
+
+			const handlePointerMove = (e: PointerEvent) => {
+				pointerMoveDelta = {
+					x: Math.abs(Math.round(e.pageX) - triggerPointerDownPos.x),
+					y: Math.abs(Math.round(e.pageY) - triggerPointerDownPos.y),
+				};
+			};
+
+			const handlePointerUp = (e: PointerEvent) => {
+				if (pointerMoveDelta.x <= 10 && pointerMoveDelta.y <= 10) {
+					e.preventDefault();
+				} else if (!e.composedPath().includes(content)) {
+					this.root.handleClose();
+				}
+				this.root.triggerPointerDownPos = null;
+			};
+
+			doc.addEventListener("pointermove", handlePointerMove);
+			doc.addEventListener("pointerup", handlePointerUp, { capture: true, once: true });
+
+			return () => {
+				doc.removeEventListener("pointermove", handlePointerMove);
+				doc.removeEventListener("pointerup", handlePointerUp, { capture: true });
+			};
+		});
+
 		this.onpointermove = this.onpointermove.bind(this);
+	}
+
+	setContentWrapper(node: HTMLElement | null) {
+		this.root.contentWrapperNode = node;
+		if (node) {
+			afterTick(() => this.#position());
+		}
+	}
+
+	/**
+	 * Called when a scroll button mounts. Mirrors Radix's `handleScrollButtonChange`:
+	 * repositions once if `shouldReposition` is still true (scroll up button appearance
+	 * shifts the viewport down, invalidating the initial alignment).
+	 */
+	handleScrollButtonChange() {
+		if (!this.shouldReposition) return;
+		this.shouldReposition = false;
+		// Measure after both buttons have mounted. Positioning can also remove the
+		// down button at the last item. Wait for its scroll event and browser scroll
+		// clamping before measuring the settled layout in the next frame.
+		afterTick(() => {
+			this.#position();
+			this.root.contentNode?.ownerDocument.defaultView?.requestAnimationFrame(() => {
+				if (this.userHasScrolled) return;
+				afterTick(() => this.#position());
+			});
+		});
+	}
+
+	/**
+	 * Positions the content wrapper so the selected item's center aligns with the
+	 * trigger's center, exactly matching the Radix UI SelectItemAlignedPosition algorithm.
+	 */
+	#position() {
+		if (!this.useItemAligned || !this.root.opts.open.current) return;
+		const contentWrapper = this.root.contentWrapperNode;
+		const content = this.root.contentNode;
+		const viewport = this.root.viewportNode;
+		const trigger = this.root.triggerNode;
+		const selectedItem = this.#getItemAlignedAnchorNode();
+
+		if (!contentWrapper || !content || !viewport || !trigger || !selectedItem) {
+			return;
+		}
+
+		const win = content.ownerDocument.defaultView;
+		if (!win) return;
+
+		const triggerRect = trigger.getBoundingClientRect();
+		const pageOffset = getWrapperPageOffset(contentWrapper, win);
+
+		// -----------------------------------------------------------------------------------------
+		// Horizontal positioning — match trigger width and left edge exactly.
+		// -----------------------------------------------------------------------------------------
+		contentWrapper.style.width = triggerRect.width + "px";
+		contentWrapper.style.left = triggerRect.left + pageOffset.x + "px";
+
+		// -----------------------------------------------------------------------------------------
+		// Vertical positioning
+		// -----------------------------------------------------------------------------------------
+		const allItems = this.root.getAllItemNodes();
+		const availableHeight = win.innerHeight - CONTENT_MARGIN * 2;
+		const itemsHeight = viewport.scrollHeight;
+
+		const contentStyles = win.getComputedStyle(content);
+		const contentBorderTopWidth = parseInt(contentStyles.borderTopWidth, 10);
+		const contentBorderBottomWidth = parseInt(contentStyles.borderBottomWidth, 10);
+		// Include mounted scroll buttons in the content height so they cannot cover
+		// the selected item when the viewport is aligned near the end of the list.
+		const fullContentHeight =
+			contentBorderTopWidth +
+			content.clientHeight -
+			viewport.clientHeight +
+			itemsHeight +
+			contentBorderBottomWidth;
+		const minContentHeight = Math.min(selectedItem.offsetHeight * 5, fullContentHeight);
+
+		const viewportStyles = win.getComputedStyle(viewport);
+		const viewportPaddingTop = parseInt(viewportStyles.paddingTop, 10);
+		const viewportPaddingBottom = parseInt(viewportStyles.paddingBottom, 10);
+
+		const topEdgeToTriggerMiddle = triggerRect.top + triggerRect.height / 2 - CONTENT_MARGIN;
+		const triggerMiddleToBottomEdge = availableHeight - topEdgeToTriggerMiddle;
+
+		const selectedItemHalfHeight = selectedItem.offsetHeight / 2;
+		const itemOffsetMiddle = selectedItem.offsetTop + selectedItemHalfHeight;
+		const contentTopToItemMiddle =
+			viewport.getBoundingClientRect().top -
+			content.getBoundingClientRect().top +
+			itemOffsetMiddle;
+		const itemMiddleToContentBottom = fullContentHeight - contentTopToItemMiddle;
+		// Use getBoundingClientRect for a pixel-accurate measurement that includes the content
+		// element's border regardless of its CSS position value (relative vs. static changes
+		// which element is the offsetParent and whether viewport.offsetTop includes the border).
+		const contentWrapperRect = contentWrapper.getBoundingClientRect();
+		const selectedItemRect = selectedItem.getBoundingClientRect();
+		const viewportTopToItemMiddle =
+			selectedItemRect.top -
+			contentWrapperRect.top +
+			viewport.scrollTop +
+			selectedItemHalfHeight;
+
+		const willAlignWithoutTopOverflow = viewportTopToItemMiddle <= topEdgeToTriggerMiddle;
+
+		if (willAlignWithoutTopOverflow) {
+			this.expandsUpward = true;
+			const isLastItem =
+				allItems.length > 0 && selectedItem === allItems[allItems.length - 1];
+			const viewportOffsetBottom =
+				content.clientHeight - viewport.offsetTop - viewport.offsetHeight;
+			const clampedTriggerMiddleToBottomEdge = Math.max(
+				triggerMiddleToBottomEdge,
+				selectedItemHalfHeight +
+					(isLastItem ? viewportPaddingBottom : 0) +
+					viewportOffsetBottom +
+					contentBorderBottomWidth
+			);
+			const height = viewportTopToItemMiddle + clampedTriggerMiddleToBottomEdge;
+			contentWrapper.style.height = height + "px";
+			// Compute top explicitly so content can scroll off-screen with the trigger.
+			// Equivalent to bottom:0px + CONTENT_MARGIN gap but expressed as top.
+			contentWrapper.style.top =
+				win.innerHeight - CONTENT_MARGIN - height + pageOffset.y + "px";
+			contentWrapper.style.bottom = "";
+		} else {
+			this.expandsUpward = false;
+			const isFirstItem = allItems.length > 0 && selectedItem === allItems[0];
+			const clampedTopEdgeToTriggerMiddle = Math.max(
+				topEdgeToTriggerMiddle,
+				contentBorderTopWidth +
+					viewport.offsetTop +
+					(isFirstItem ? viewportPaddingTop : 0) +
+					selectedItemHalfHeight
+			);
+			const height = clampedTopEdgeToTriggerMiddle + itemMiddleToContentBottom;
+			contentWrapper.style.height = height + "px";
+			contentWrapper.style.bottom = "";
+			// Scroll the viewport so the selected item aligns with the trigger center.
+			// For items near the end of the list, the viewport may not be able to scroll as far as
+			// needed (scrollTop gets clamped to scrollHeight - clientHeight). In that case, shift
+			// the wrapper upward by the uncovered difference to keep the item on the trigger center.
+			const desiredScrollTop = viewportTopToItemMiddle - topEdgeToTriggerMiddle;
+			viewport.scrollTop = desiredScrollTop;
+			const clampedBy = desiredScrollTop - viewport.scrollTop;
+			contentWrapper.style.top = CONTENT_MARGIN - clampedBy + pageOffset.y + "px";
+		}
+
+		contentWrapper.style.margin = "";
+		contentWrapper.style.minHeight = minContentHeight + "px";
+		contentWrapper.style.maxHeight = availableHeight + "px";
+		// Copy z-index from content so stacking context is preserved.
+		contentWrapper.style.zIndex = win.getComputedStyle(content).zIndex;
+		this.#capturePageScrollOffset();
+
+		if (!this.isPositioned) {
+			this.isPositioned = true;
+			this.root.contentIsPositioned = true;
+		}
+	}
+
+	#getItemAlignedAnchorNode() {
+		const selectedItem = this.root.selectedItemNode;
+		if (selectedItem) {
+			this.itemAlignedAnchorNode = selectedItem;
+			return selectedItem;
+		}
+
+		if (this.itemAlignedAnchorNode?.isConnected) {
+			return this.itemAlignedAnchorNode;
+		}
+
+		const anchor = this.root.highlightedNode ?? this.root.getCandidateNodes()[0] ?? null;
+		this.itemAlignedAnchorNode = anchor;
+		return anchor;
+	}
+
+	/**
+	 * Capture the wrapper's stable viewport offset from the trigger after the full Radix
+	 * alignment pass. Nested scrollers reuse this offset instead of re-running layout math,
+	 * preserving the portal size and avoiding scroll-time jitter.
+	 */
+	#capturePageScrollOffset() {
+		const contentWrapper = this.root.contentWrapperNode;
+		const trigger = this.root.triggerNode;
+		if (!contentWrapper || !trigger) return;
+
+		const triggerRect = trigger.getBoundingClientRect();
+		const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+		this.pageScrollTopOffset = contentWrapper.getBoundingClientRect().top - triggerCenterY;
+	}
+
+	#repositionOnScroll() {
+		const contentWrapper = this.root.contentWrapperNode;
+		const trigger = this.root.triggerNode;
+		if (!contentWrapper || !trigger || this.pageScrollTopOffset === null) return;
+
+		const win = contentWrapper.ownerDocument.defaultView;
+		if (!win) return;
+		const triggerRect = trigger.getBoundingClientRect();
+		const triggerCenterY = triggerRect.top + triggerRect.height / 2;
+		const pageOffset = getWrapperPageOffset(contentWrapper, win);
+		contentWrapper.style.top = triggerCenterY + this.pageScrollTopOffset + pageOffset.y + "px";
+		contentWrapper.style.left = triggerRect.left + pageOffset.x + "px";
+		contentWrapper.style.bottom = "";
 	}
 
 	onpointermove(_: BitsPointerEvent) {
@@ -1065,7 +1412,12 @@ export class SelectContentState {
 	});
 
 	onInteractOutside = (e: PointerEvent) => {
-		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
+		const target = e.target as Element | null;
+		if (
+			(this.root.triggerNode &&
+				isOrContainsTarget(this.root.triggerNode, target as HTMLElement)) ||
+			(this.root.inputNode && isOrContainsTarget(this.root.inputNode, target as HTMLElement))
+		) {
 			e.preventDefault();
 			return;
 		}
@@ -1101,16 +1453,28 @@ export class SelectContentState {
 				role: "listbox",
 				"aria-multiselectable": this.root.isMulti ? "true" : undefined,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				"data-side": this.useItemAligned ? "none" : undefined,
 				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				[this.root.getBitsAttr("content")]: "",
-				style: {
-					display: "flex",
-					flexDirection: "column",
-					outline: "none",
-					boxSizing: "border-box",
-					pointerEvents: "auto",
-					...this.#styles,
-				},
+				style: this.useItemAligned
+					? {
+							// In item-aligned mode the wrapper div carries all positioning;
+							// the content div just needs to fill it with correct box model.
+							boxSizing: "border-box",
+							maxHeight: "100%",
+							display: "flex",
+							flexDirection: "column",
+							outline: "none",
+							pointerEvents: "auto",
+						}
+					: {
+							display: "flex",
+							flexDirection: "column",
+							outline: "none",
+							boxSizing: "border-box",
+							pointerEvents: "auto",
+							...this.#styles,
+						},
 				onpointermove: this.onpointermove,
 				...this.attachment,
 			}) as const
@@ -1166,6 +1530,7 @@ export class SelectItemState {
 	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
+	pointerType = "touch";
 
 	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -1188,6 +1553,23 @@ export class SelectItemState {
 			}
 		);
 
+		// Publish this item's node to the root while it is the selected item so the
+		// item-aligned positioner can measure it.
+		watch([() => this.isSelected, () => this.mounted], () => {
+			if (this.isSelected && this.mounted) {
+				this.root.selectedItemNode = this.opts.ref.current;
+			} else if (this.root.selectedItemNode === this.opts.ref.current) {
+				this.root.selectedItemNode = null;
+			}
+		});
+
+		onDestroyEffect(() => {
+			if (this.root.selectedItemNode === this.opts.ref.current) {
+				this.root.selectedItemNode = null;
+			}
+		});
+
+		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1217,55 +1599,31 @@ export class SelectItemState {
 		highlighted: this.isHighlighted,
 	}));
 
-	onpointerdown(e: BitsPointerEvent) {
-		// prevent focus from leaving the input/select trigger
-		e.preventDefault();
+	onclick(_: BitsMouseEvent) {
+		// Like Radix, touch and pen select only on a completed click, never on
+		// pointerup: the browser suppresses click when the gesture becomes a scroll.
+		if (this.pointerType === "mouse" || this.opts.disabled.current) return;
+		this.handleSelect();
+		this.root.setHighlightedNode(this.opts.ref.current);
 	}
 
-	/**
-	 * Using `pointerup` instead of `click` allows power users to pointerdown
-	 * the trigger, then release pointerup on an item to select it vs having to do
-	 * multiple clicks.
-	 */
-	onpointerup(e: BitsPointerEvent) {
-		if (e.defaultPrevented || !this.opts.ref.current) return;
-		/**
-		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
-		 * we need to listen for the immediate click event to handle the selection,
-		 * otherwise a click event will fire on the element _behind_ the item.
-		 */
-		if (e.pointerType === "touch" && !isIOS) {
-			on(
-				this.opts.ref.current,
-				"click",
-				() => {
-					this.handleSelect();
-					// set highlighted node since we don't do it on `pointermove` events
-					// for touch devices
-					this.root.setHighlightedNode(this.opts.ref.current);
-				},
-				{ once: true }
-			);
-			return;
-		}
-		e.preventDefault();
+	onpointerdown(e: BitsPointerEvent) {
+		this.pointerType = e.pointerType;
+		// Keep mouse focus on the input/select trigger without cancelling native
+		// touch scrolling or the click generated by a completed tap.
+		if (e.pointerType === "mouse") e.preventDefault();
+	}
 
+	onpointerup(e: BitsPointerEvent) {
+		// Preserve mouse press-drag-release selection across items.
+		if (e.defaultPrevented || e.pointerType !== "mouse" || !this.opts.ref.current) return;
+		e.preventDefault();
 		this.handleSelect();
-		if (e.pointerType === "touch") {
-			// set highlighted node since we don't do it on `pointermove` events
-			// for touch devices
-			this.root.setHighlightedNode(this.opts.ref.current);
-		}
 	}
 
 	onpointermove(e: BitsPointerEvent) {
-		/**
-		 * We don't want to highlight items on touch devices when scrolling,
-		 * as this is confusing behavior, so we return here and instead handle
-		 * the highlighting on the `pointerup` (or following `click`) event for
-		 * touch devices only.
-		 */
-		if (e.pointerType === "touch") return;
+		this.pointerType = e.pointerType;
+		if (e.pointerType !== "mouse") return;
 		if (this.root.highlightedNode !== this.opts.ref.current) {
 			this.root.setHighlightedNode(this.opts.ref.current);
 		}
@@ -1283,6 +1641,7 @@ export class SelectItemState {
 				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
+				onclick: this.onclick,
 				onpointermove: this.onpointermove,
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
@@ -1397,7 +1756,6 @@ export class SelectViewportState {
 	readonly content: SelectContentState;
 	readonly root: SelectBaseRootState;
 	readonly attachment: RefAttachment;
-	prevScrollTop = $state(0);
 
 	constructor(opts: SelectViewportStateOpts, content: SelectContentState) {
 		this.opts = opts;
@@ -1579,6 +1937,7 @@ export class SelectScrollDownButtonState {
 					clearTimeout(this.scrollIntoViewTimer);
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
+					if (this.content.useItemAligned) return;
 					// this button remounts whenever the viewport leaves the bottom, which
 					// would otherwise realign onto the highlighted item mid-gesture
 					if (this.content.userHasScrolled) return;
@@ -1586,6 +1945,11 @@ export class SelectScrollDownButtonState {
 					if (!activeItem) return;
 					this.root.scrollHighlightedNodeIntoView(activeItem);
 				});
+				// Reposition once when scroll button appears in item-aligned mode — the button
+				// shifts the viewport down, invalidating the initial alignment.
+				if (this.content.useItemAligned) {
+					this.content.handleScrollButtonChange();
+				}
 			}
 		);
 	}
@@ -1597,11 +1961,27 @@ export class SelectScrollDownButtonState {
 		if (!manual) {
 			this.scrollButtonState.handleUserScroll();
 		}
-		if (!this.root.viewportNode) return;
-		const maxScroll = this.root.viewportNode.scrollHeight - this.root.viewportNode.clientHeight;
-		const paddingTop = Number.parseInt(getComputedStyle(this.root.viewportNode).paddingTop, 10);
+		const viewport = this.root.viewportNode;
+		if (!viewport) return;
+		const maxScroll = viewport.scrollHeight - viewport.clientHeight;
+		const paddingTop = Number.parseInt(getComputedStyle(viewport).paddingTop, 10);
 
-		this.canScrollDown = Math.ceil(this.root.viewportNode.scrollTop) < maxScroll - paddingTop;
+		this.canScrollDown = Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
+		if (!this.content.useItemAligned) return;
+
+		// In item-aligned mode the algorithm may scroll just enough to align the
+		// selected item's center with the trigger center, leaving a tiny strip of
+		// scrollable space below the last item. That strip would mount the scroll-
+		// down arrow even though there is no NEXT item to scroll to. Treat the
+		// arrow as unnecessary when the last item's top is already within the
+		// visible viewport.
+		const items = this.root.getAllItemNodes();
+		const lastItem = items.length ? items[items.length - 1] : null;
+		const lastItemTopVisible =
+			!!lastItem && lastItem.offsetTop < viewport.scrollTop + viewport.clientHeight;
+
+		this.canScrollDown =
+			!lastItemTopVisible && Math.ceil(viewport.scrollTop) < maxScroll - paddingTop;
 	};
 
 	handleAutoScroll = () => {
@@ -1643,6 +2023,16 @@ export class SelectScrollUpButtonState {
 			this.handleScroll(true);
 			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
 		});
+
+		watch(
+			() => this.scrollButtonState.mounted,
+			() => {
+				// Reposition once when scroll up button appears in item-aligned mode.
+				if (this.scrollButtonState.mounted && this.content.useItemAligned) {
+					this.content.handleScrollButtonChange();
+				}
+			}
+		);
 	}
 
 	/**
