@@ -16,6 +16,7 @@ export {
 	DateRangeField,
 	DateRangePicker,
 	Dialog,
+	Drawer as unstable_Drawer,
 	DropdownMenu,
 	Label,
 	LinkPreview,
