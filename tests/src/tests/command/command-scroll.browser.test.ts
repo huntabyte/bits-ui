@@ -24,7 +24,7 @@ it("should scroll initial value into view when it's not the first item", async (
 	setup({ value: "Popover" });
 
 	const item = page.getByText("Popover");
-	await expect.element(item).toHaveAttribute("data-selected");
+	await expect.element(item).toHaveAttribute("data-highlighted");
 
 	// check that the item is visible in the viewport
 	const itemElement = item.element() as HTMLElement;
@@ -45,7 +45,7 @@ it("should scroll initial value in the middle of the list into view", async () =
 	setup({ value: "Radio Group" });
 
 	const item = page.getByText("Radio Group");
-	await expect.element(item).toHaveAttribute("data-selected");
+	await expect.element(item).toHaveAttribute("data-highlighted");
 
 	const itemElement = item.element() as HTMLElement;
 	const viewport = page.getByTestId("viewport").element() as HTMLElement;
@@ -65,7 +65,7 @@ it("should respect disableInitialScroll prop and not scroll", async () => {
 	setup({ value: "Popover", disableInitialScroll: true });
 
 	const item = page.getByText("Popover");
-	await expect.element(item).toHaveAttribute("data-selected");
+	await expect.element(item).toHaveAttribute("data-highlighted");
 
 	const viewport = page.getByTestId("viewport").element() as HTMLElement;
 
@@ -80,7 +80,7 @@ it("should not scroll when initial value is the first item", async () => {
 	setup({ value: "Introduction" });
 
 	const item = page.getByText("Introduction");
-	await expect.element(item).toHaveAttribute("data-selected");
+	await expect.element(item).toHaveAttribute("data-highlighted");
 
 	const viewport = page.getByTestId("viewport").element() as HTMLElement;
 

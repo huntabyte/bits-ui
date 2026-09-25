@@ -242,8 +242,8 @@ const item = defineComponentApiSchema<CommandItemPropsWithoutHTML>({
 			description: "Present when the item is disabled.",
 		}),
 		defineSimpleDataAttr({
-			name: "selected",
-			description: "Present when the item is selected.",
+			name: "highlighted",
+			description: "Present when the item is highlighted, via keyboard navigation or pointer hover.",
 		}),
 		defineSimpleDataAttr({
 			name: "command-item",
