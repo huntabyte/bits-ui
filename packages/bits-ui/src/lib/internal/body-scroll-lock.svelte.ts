@@ -21,10 +21,32 @@ export interface ScrollBodyOption {
 /** A map of lock ids to their `locked` state. */
 const lockMap = new SvelteMap<string, boolean>();
 
-let initialBodyStyle: string | null = $state<string | null>(null);
+const MANAGED_PROPERTIES = [
+	"padding-right",
+	"margin-right",
+	"overflow",
+	"pointer-events",
+	"--scrollbar-width",
+] as const;
+
+type ManagedProperty = (typeof MANAGED_PROPERTIES)[number];
+
+interface StylePropertySnapshot {
+	value: string;
+	priority: string;
+}
+
+let initialProperties: Map<ManagedProperty, StylePropertySnapshot> | null = null;
+let hadInitialStyleAttribute = false;
+const modifiedProperties = new Set<ManagedProperty>();
 let stopTouchMoveListener: Fn | null = null;
 let cleanupTimeoutId: number | null = null;
 let isInCleanupTransition = false;
+
+function setManagedProperty(style: CSSStyleDeclaration, property: ManagedProperty, value: string) {
+	style.setProperty(property, value);
+	modifiedProperties.add(property);
+}
 
 const anyLocked = boxWith(() => {
 	for (const value of lockMap.values()) {
@@ -45,11 +67,22 @@ let cleanupScheduledAt: number | null = null;
 const bodyLockStackCount = new SharedState(() => {
 	function resetBodyStyle(documentObj: Document) {
 		if (!BROWSER) return;
-		documentObj.body.setAttribute("style", initialBodyStyle ?? "");
-		documentObj.body.style.removeProperty("--scrollbar-width");
+		if (initialProperties) {
+			for (const prop of modifiedProperties) {
+				const initial = initialProperties.get(prop);
+				if (initial?.value) {
+					documentObj.body.style.setProperty(prop, initial.value, initial.priority);
+				} else {
+					documentObj.body.style.removeProperty(prop);
+				}
+			}
+			if (!hadInitialStyleAttribute && documentObj.body.style.length === 0) {
+				documentObj.body.removeAttribute("style");
+			}
+			initialProperties = null;
+		}
+		modifiedProperties.clear();
 		isIOS && stopTouchMoveListener?.();
-		// reset initialBodyStyle so next locker captures the correct styles
-		initialBodyStyle = null;
 	}
 
 	function cancelPendingCleanup() {
@@ -96,8 +129,15 @@ const bodyLockStackCount = new SharedState(() => {
 
 	function ensureInitialStyleCaptured() {
 		// only capture initial style once, when no locks exist and no cleanup is in progress
-		if (initialBodyStyle === null && lockMap.size === 0 && !isInCleanupTransition) {
-			initialBodyStyle = document.body.getAttribute("style");
+		if (initialProperties === null && lockMap.size === 0 && !isInCleanupTransition) {
+			hadInitialStyleAttribute = document.body.hasAttribute("style");
+			initialProperties = new Map();
+			for (const prop of MANAGED_PROPERTIES) {
+				initialProperties.set(prop, {
+					value: document.body.style.getPropertyValue(prop),
+					priority: document.body.style.getPropertyPriority(prop),
+				});
+			}
 		}
 	}
 
@@ -131,11 +171,15 @@ const bodyLockStackCount = new SharedState(() => {
 
 			// only add padding compensation if stable gutter isn't handling it
 			if (verticalScrollbarWidth > 0 && !hasStableGutter) {
-				document.body.style.paddingRight = `${config.padding}px`;
-				document.body.style.marginRight = `${config.margin}px`;
-				document.body.style.setProperty("--scrollbar-width", `${verticalScrollbarWidth}px`);
+				setManagedProperty(document.body.style, "padding-right", `${config.padding}px`);
+				setManagedProperty(document.body.style, "margin-right", `${config.margin}px`);
+				setManagedProperty(
+					document.body.style,
+					"--scrollbar-width",
+					`${verticalScrollbarWidth}px`
+				);
 			}
-			document.body.style.overflow = "hidden";
+			setManagedProperty(document.body.style, "overflow", "hidden");
 
 			if (isIOS) {
 				// IOS devices are special and require a touchmove listener to prevent scrolling
@@ -161,8 +205,8 @@ const bodyLockStackCount = new SharedState(() => {
 			 * focus/interaction.
 			 */
 			afterTick(() => {
-				document.body.style.pointerEvents = "none";
-				document.body.style.overflow = "hidden";
+				setManagedProperty(document.body.style, "pointer-events", "none");
+				setManagedProperty(document.body.style, "overflow", "hidden");
 			});
 		}
 	);
