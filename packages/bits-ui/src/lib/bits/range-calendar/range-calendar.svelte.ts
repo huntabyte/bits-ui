@@ -78,6 +78,7 @@ interface RangeCalendarRootStateOpts
 			locale: string;
 			calendarLabel: string;
 			readonly: boolean;
+			showWeekNumbers: boolean;
 			disableDaysOutsideMonth: boolean;
 			excludeDisabled: boolean;
 			minDays: number | undefined;

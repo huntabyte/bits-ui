@@ -11,6 +11,7 @@ export { default as ButtonDemo } from "./button-demo.svelte";
 export { default as CalendarDemo } from "./calendar-demo.svelte";
 export { default as CalendarDemoSelects } from "./calendar-demo-selects.svelte";
 export { default as CalendarDemoPresets } from "./calendar-demo-presets.svelte";
+export { default as CalendarDemoWeekNumbers } from "./calendar-demo-week-numbers.svelte";
 export { default as CheckboxDemo } from "./checkbox-demo.svelte";
 export { default as CheckboxDemoCustom } from "./checkbox-demo-custom.svelte";
 export { default as CheckboxDemoGroup } from "./checkbox-demo-group.svelte";
@@ -109,3 +110,4 @@ export { default as RangeCalendarDemoMax } from "./range-calendar-demo-max.svelt
 export { default as RangeCalendarDemoMinMax } from "./range-calendar-demo-min-max.svelte";
 export { default as CalendarDemoMax } from "./calendar-demo-max.svelte";
 export { default as RangeCalendarDemoExcludeDisabled } from "./range-calendar-demo-exclude-disabled.svelte";
+export { default as RangeCalendarDemoWeekNumbers } from "./range-calendar-demo-week-numbers.svelte";

@@ -154,6 +154,15 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		fixedWeeks?: boolean;
 
 		/**
+		 * Whether to display ISO 8601 week numbers in the calendar. When enabled, include
+		 * `<RangeCalendar.WeekNumberHeadCell>` in the grid head row and
+		 * `<RangeCalendar.WeekNumberCell week={weekDates} />` as the first child of each grid row.
+		 *
+		 * @default false
+		 */
+		showWeekNumbers?: boolean;
+
+		/**
 		 * Determines the number of months to display on the calendar simultaneously.
 		 * For navigation between months, refer to the `pagedNavigation` prop.
 		 *
@@ -269,4 +278,8 @@ export type {
 	CalendarMonthSelectPropsWithoutHTML as RangeCalendarMonthSelectPropsWithoutHTML,
 	CalendarYearSelectProps as RangeCalendarYearSelectProps,
 	CalendarYearSelectPropsWithoutHTML as RangeCalendarYearSelectPropsWithoutHTML,
+	CalendarWeekNumberCellProps as RangeCalendarWeekNumberCellProps,
+	CalendarWeekNumberCellPropsWithoutHTML as RangeCalendarWeekNumberCellPropsWithoutHTML,
+	CalendarWeekNumberHeadCellProps as RangeCalendarWeekNumberHeadCellProps,
+	CalendarWeekNumberHeadCellPropsWithoutHTML as RangeCalendarWeekNumberHeadCellPropsWithoutHTML,
 } from "../calendar/types.js";
