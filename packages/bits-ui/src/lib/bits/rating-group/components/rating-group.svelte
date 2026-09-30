@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { RatingGroupRootProps } from "../types.js";
 	import { RatingGroupRootState } from "../rating-group.svelte.js";
 	import RatingGroupInput from "./rating-group-input.svelte";
@@ -29,9 +30,11 @@
 		...restProps
 	}: RatingGroupRootProps = $props();
 
-	if (value < min || value > max) {
-		value = Math.max(min, Math.min(max, value));
-	}
+	untrack(() => {
+		if (value < min || value > max) {
+			value = Math.max(min, Math.min(max, value));
+		}
+	});
 
 	const ariaValuetext: NonNullable<RatingGroupRootProps["aria-valuetext"]> = $derived.by(() => {
 		if (ariaValuetextProp) return ariaValuetextProp;

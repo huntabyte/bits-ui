@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupProps } from "../types.js";
 	import { ToolbarGroupState } from "../toolbar.svelte.js";
@@ -39,7 +40,7 @@
 	const groupState = ToolbarGroupState.create({
 		id: boxWith(() => id),
 		disabled: boxWith(() => disabled),
-		type,
+		type: untrack(() => type),
 		value: boxWith(
 			() => value!,
 			(v) => {
