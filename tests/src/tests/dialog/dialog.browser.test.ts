@@ -1,7 +1,7 @@
 import { userEvent, page } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { tick, type Component } from "svelte";
+import { mount, tick, unmount, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
@@ -17,6 +17,7 @@ import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelte";
 import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
+import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -257,6 +258,42 @@ describe("Focus Management", () => {
 
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
+	});
+});
+
+describe("Shadow Root", () => {
+	it("should trap focus and restore it to the trigger inside a shadow root", async () => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const shadowRoot = host.attachShadow({ mode: "open" });
+		const app = shadowRoot.appendChild(document.createElement("div"));
+		// portal after the trigger so nothing focusable follows the dialog content
+		const portalTo = shadowRoot.appendChild(document.createElement("div"));
+		const component = mount(DialogShadowRootTest, { target: app, props: { portalTo } });
+		const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		const expectFocus = (id: string) =>
+			vi.waitFor(() => expect(shadowRoot.activeElement).toBe(get(id)));
+
+		try {
+			get("trigger")!.focus();
+			await userEvent.keyboard(kbd.ENTER);
+			await expectFocus("first");
+
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("second");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("close");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("first");
+			await userEvent.keyboard(kbd.SHIFT_TAB);
+			await expectFocus("close");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await vi.waitFor(() => expect(get("content")).toBeNull());
+			await expectFocus("trigger");
+		} finally {
+			unmount(component);
+			host.remove();
+		}
 	});
 });
 
