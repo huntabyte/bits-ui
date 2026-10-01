@@ -1,5 +1,13 @@
 # bits-ui
 
+## 2.19.4
+
+### Patch Changes
+
+- fix(PopperLayer): destructure the internal `forceMount` prop out of `restProps` so it stops leaking onto the rendered content element as an invalid `forcemount` attribute (Popover, Select, Combobox, DropdownMenu, ContextMenu, Menubar, Tooltip, LinkPreview) ([#2176](https://github.com/huntabyte/bits-ui/pull/2176))
+
+- fix(DismissibleLayer): dismiss on a touch tap even when the tapped element stops click propagation. Touch outside-dismissal waits for the tap's `click` on the document, and a bubbling listener never hears a click whose target handler calls `stopPropagation()`, so the layer stayed open behind elements that own their clicks. ([#2155](https://github.com/huntabyte/bits-ui/pull/2155))
+
 ## 2.19.3
 
 ### Patch Changes
