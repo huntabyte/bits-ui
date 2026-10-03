@@ -14,7 +14,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 * The value of the selected date range.
 		 * @bindable
 		 */
-		value?: DateRange;
+		value?: DateRange | undefined;
 
 		/**
 		 * A callback function called when the value changes.
@@ -27,7 +27,7 @@ export type RangeCalendarRootPropsWithoutHTML = WithChild<
 		 *
 		 * @default the current date
 		 */
-		placeholder?: DateValue;
+		placeholder?: DateValue | undefined;
 
 		/**
 		 * A callback function called when the placeholder value
