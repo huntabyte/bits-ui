@@ -384,6 +384,37 @@ it("should default the first day of the week to the locale's first day of the we
 	await expect.element(page.getByTestId("weekday-1-0").element()).toHaveTextContent("lun.");
 });
 
+describe("Week Numbers", () => {
+	it("should not render week number cells when `showWeekNumbers` is false (default)", async () => {
+		setup({ placeholder: calendarDateRange.start });
+		const cell = page.getByTestId("week-number-cell-1-0");
+		const headCell = page.getByTestId("week-number-head-cell-1");
+		await expect.element(cell).not.toBeInTheDocument();
+		await expect.element(headCell).not.toBeInTheDocument();
+	});
+
+	it("should render week number cells when `showWeekNumbers` is true", async () => {
+		setup({ placeholder: calendarDateRange.start, showWeekNumbers: true });
+		const headCell = page.getByTestId("week-number-head-cell-1");
+		const firstWeekCell = page.getByTestId("week-number-cell-1-0");
+		await expect.element(headCell).toBeInTheDocument();
+		await expect.element(firstWeekCell).toBeInTheDocument();
+	});
+
+	it("should anchor row week numbers to the row's Thursday", async () => {
+		setup({ placeholder: calendarDateRange.start, showWeekNumbers: true });
+		const weekCell = page.getByTestId("week-number-cell-1-3");
+		await expect.element(weekCell).toHaveTextContent("04");
+	});
+
+	it("should display correct ISO week numbers at year boundaries", async () => {
+		const decDate = new CalendarDate(2024, 12, 1);
+		setup({ placeholder: decDate, showWeekNumbers: true, weekStartsOn: 1 });
+		const lastWeekCell = page.getByTestId("week-number-cell-12-5");
+		await expect.element(lastWeekCell).toHaveTextContent("01");
+	});
+});
+
 describe("minDays and maxDays constraints", () => {
 	it("should reset range when selection violates minDays constraint", async () => {
 		setup({

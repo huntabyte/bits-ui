@@ -85,6 +85,7 @@ export const root = defineComponentApiSchema<DatePickerRootPropsWithoutHTML>({
 		initialFocus: calendarRoot.props!.initialFocus,
 		monthFormat: calendarRoot.props!.monthFormat,
 		yearFormat: calendarRoot.props!.yearFormat,
+		showWeekNumbers: calendarRoot.props!.showWeekNumbers,
 		children: childrenSnippet(),
 	},
 	dataAttributes: [],
