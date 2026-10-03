@@ -1,7 +1,7 @@
 import { userEvent, page } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { tick, type Component } from "svelte";
+import { mount, tick, unmount, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
@@ -17,6 +17,7 @@ import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelte";
 import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
+import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -257,6 +258,42 @@ describe("Focus Management", () => {
 
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
+	});
+});
+
+describe("Shadow Root", () => {
+	it("should trap focus and restore it to the trigger inside a shadow root", async () => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const shadowRoot = host.attachShadow({ mode: "open" });
+		const app = shadowRoot.appendChild(document.createElement("div"));
+		// portal after the trigger so nothing focusable follows the dialog content
+		const portalTo = shadowRoot.appendChild(document.createElement("div"));
+		const component = mount(DialogShadowRootTest, { target: app, props: { portalTo } });
+		const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		const expectFocus = (id: string) =>
+			vi.waitFor(() => expect(shadowRoot.activeElement).toBe(get(id)));
+
+		try {
+			get("trigger")!.focus();
+			await userEvent.keyboard(kbd.ENTER);
+			await expectFocus("first");
+
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("second");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("close");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("first");
+			await userEvent.keyboard(kbd.SHIFT_TAB);
+			await expectFocus("close");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await vi.waitFor(() => expect(get("content")).toBeNull());
+			await expectFocus("trigger");
+		} finally {
+			unmount(component);
+			host.remove();
+		}
 	});
 });
 
@@ -753,6 +790,23 @@ describe("Scroll Lock", () => {
 		// with scrollbar-gutter: stable, no padding compensation should be added
 		expect(document.body.style.paddingRight).toBe(initialPadding);
 	});
+
+	it("should restore a single inline overflow axis on body after closing", async () => {
+		document.body.style.overflowY = "scroll";
+		try {
+			await open();
+			expect(document.body.style.overflowY).toBe("hidden");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("content"));
+
+			await expect.poll(() => document.body.style.overflowY).toBe("scroll");
+			expect(document.body.style.overflowX).toBe("");
+			expect(document.body.style.pointerEvents).toBe("");
+		} finally {
+			document.body.removeAttribute("style");
+		}
+	});
 });
 
 /**
@@ -898,5 +952,45 @@ describe("TextSelectionLayer teardown (derived_inert)", () => {
 		} finally {
 			counter.restore();
 		}
+	});
+});
+
+describe("Text Selection", () => {
+	function pointer(type: "pointerdown" | "pointerup") {
+		page.getByTestId("content")
+			.element()
+			.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+				})
+			);
+	}
+
+	function bodyUserSelect() {
+		return document.body.style.userSelect || document.body.style.webkitUserSelect;
+	}
+
+	it("should lock text selection overflow while pointing down inside the content", async () => {
+		await open();
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("none");
+		pointer("pointerup");
+		expect(bodyUserSelect()).toBe("");
+	});
+
+	it("should pass preventOverflowTextSelection to the layer instead of rendering it as an attribute", async () => {
+		await open({ contentProps: { preventOverflowTextSelection: false } });
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("");
+		pointer("pointerup");
 	});
 });

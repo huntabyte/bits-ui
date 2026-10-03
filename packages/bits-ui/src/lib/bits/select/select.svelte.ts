@@ -348,6 +348,11 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	readonly opts: SelectMultipleRootStateOpts;
 	readonly isMulti = true as const;
 	readonly hasValue = $derived.by(() => this.opts.value.current.length > 0);
+	/**
+	 * `includesItem` is called once per mounted item whenever the value changes, so we keep a
+	 * set around to avoid a linear scan of `value` per item.
+	 */
+	readonly #valueSet = $derived.by(() => new Set(this.opts.value.current));
 
 	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
@@ -370,7 +375,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 
 	includesItem(itemValue: string) {
-		return this.opts.value.current.includes(itemValue);
+		return this.#valueSet.has(itemValue);
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
@@ -699,16 +704,22 @@ export class SelectComboTriggerState {
 		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+	}
+
+	#focusInputAndToggle() {
+		if (!this.root.domContext) return;
+		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
+			this.root.inputNode?.focus();
+		}
+		this.root.toggleMenu();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!this.root.domContext) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-				this.root.inputNode?.focus();
-			}
-			this.root.toggleMenu();
+			this.#focusInputAndToggle();
 		}
 	}
 
@@ -719,10 +730,16 @@ export class SelectComboTriggerState {
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current || !this.root.domContext) return;
 		e.preventDefault();
-		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-			this.root.inputNode?.focus();
-		}
-		this.root.toggleMenu();
+		// prevent opening on touch down which can be triggered when scrolling on touch devices
+		if (e.pointerType === "touch") return;
+		this.#focusInputAndToggle();
+	}
+
+	onpointerup(e: BitsPointerEvent) {
+		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (e.pointerType !== "touch") return;
+		e.preventDefault();
+		this.#focusInputAndToggle();
 	}
 
 	readonly props = $derived.by(
@@ -735,6 +752,7 @@ export class SelectComboTriggerState {
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
@@ -1501,6 +1519,15 @@ export class SelectItemState {
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
 	);
+	/**
+	 * Kept as a separate boolean derived so that `props` (and the `mergeProps` /
+	 * attribute-diffing work downstream of it) is only invalidated for the two items whose
+	 * highlighted state actually changed, rather than for every mounted item each time the
+	 * highlighted value moves.
+	 */
+	readonly #isHighlightedAndEnabled = $derived.by(
+		() => this.isHighlighted && !this.opts.disabled.current
+	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
 	pointerType = "touch";
@@ -1607,17 +1634,11 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.opts.value.current)
-					? "true"
-					: undefined,
+				"aria-selected": this.isSelected ? "true" : undefined,
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
-				"data-highlighted":
-					this.root.highlightedValue === this.opts.value.current &&
-					!this.opts.disabled.current
-						? ""
-						: undefined,
-				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
+				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
 				onclick: this.onclick,

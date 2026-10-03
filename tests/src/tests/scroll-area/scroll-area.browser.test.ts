@@ -8,36 +8,6 @@ import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.sve
 
 const kbd = getTestKbd();
 
-class ControlledResizeObserver implements ResizeObserver {
-	static observers: ControlledResizeObserver[] = [];
-	readonly #callback: ResizeObserverCallback;
-
-	constructor(callback: ResizeObserverCallback) {
-		this.#callback = callback;
-		ControlledResizeObserver.observers.push(this);
-	}
-
-	disconnect() {}
-	observe() {}
-	unobserve() {}
-
-	trigger() {
-		this.#callback([], this);
-	}
-
-	static reset() {
-		ControlledResizeObserver.observers.length = 0;
-	}
-
-	static triggerAll() {
-		for (const observer of ControlledResizeObserver.observers) observer.trigger();
-	}
-}
-
-async function waitForAnimationFrame() {
-	await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-}
-
 function setup(props: ScrollAreaTestProps = {}) {
 	render(ScrollAreaTest, { ...props });
 
@@ -243,8 +213,6 @@ describe("ScrollArea", () => {
 		"should not schedule resize work that can outlive a %s ScrollArea",
 		async (type) => {
 			const warnings: unknown[][] = [];
-			ControlledResizeObserver.reset();
-			vi.stubGlobal("ResizeObserver", ControlledResizeObserver);
 			const consoleWarn = vi
 				.spyOn(console, "warn")
 				.mockImplementation((...args: unknown[]) => {
@@ -259,13 +227,20 @@ describe("ScrollArea", () => {
 					numParagraphs: 10,
 					wrapText: false,
 				});
+				const thumbHeight = () =>
+					parseFloat(
+						getComputedStyle(
+							page.getByTestId("scrollbar-y").element()
+						).getPropertyValue("--bits-scroll-area-thumb-height")
+					);
 
-				await waitForAnimationFrame();
-				expect(ControlledResizeObserver.observers.length).toBeGreaterThan(0);
+				// a 5px viewport clamps the thumb to its 18px minimum
+				await expect.poll(thumbHeight).toBe(18);
 
 				setTimeoutSpy.mockClear();
-				ControlledResizeObserver.triggerAll();
-				await waitForAnimationFrame();
+				// a real resize, so the test does not depend on how the component observes it
+				await rendered.rerender({ height: 100 });
+				await expect.poll(thumbHeight).toBeGreaterThan(18);
 				await rendered.unmount();
 
 				expect(setTimeoutSpy.mock.calls.some(([, delay]) => delay === 10)).toBe(false);
@@ -278,8 +253,6 @@ describe("ScrollArea", () => {
 			} finally {
 				setTimeoutSpy.mockRestore();
 				consoleWarn.mockRestore();
-				vi.unstubAllGlobals();
-				ControlledResizeObserver.reset();
 			}
 		}
 	);

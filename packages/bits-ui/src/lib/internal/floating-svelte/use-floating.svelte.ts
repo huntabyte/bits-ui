@@ -29,6 +29,10 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	let isPositioned = $state(false);
 	let hasWhileMountedPosition = false;
 	let updateRequestId = 0;
+	// `update` is handed to `whileElementsMounted` (floating-ui's `autoUpdate`),
+	// whose observers can still fire after the effect owning the option
+	// `$derived`s above is destroyed. Reading them then warns `derived_inert`.
+	let destroyed = false;
 	const floatingStyles = $derived.by(() => {
 		// preserve last known position when floating ref is null (during transitions)
 		const xVal = floating.current ? roundByDPR(floating.current, x) : x;
@@ -58,6 +62,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	let whileElementsMountedCleanup: (() => void) | undefined;
 
 	function update() {
+		if (destroyed) return;
 		if (reference.current === null || floating.current === null) return;
 
 		const referenceNode = reference.current;
@@ -183,7 +188,10 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 		update();
 	});
 	$effect(reset);
-	$effect(() => cleanup);
+	$effect(() => () => {
+		destroyed = true;
+		cleanup();
+	});
 
 	return {
 		floating,

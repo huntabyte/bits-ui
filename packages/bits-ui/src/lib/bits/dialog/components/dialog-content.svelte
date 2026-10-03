@@ -23,6 +23,7 @@
 		onInteractOutside = noop,
 		trapFocus = true,
 		preventScroll = true,
+		preventOverflowTextSelection = true,
 		restoreScrollDelay = null,
 		...restProps
 	}: DialogContentProps = $props();
@@ -70,6 +71,7 @@
 				>
 					<TextSelectionLayer
 						{...mergedProps}
+						{preventOverflowTextSelection}
 						ref={contentState.opts.ref}
 						enabled={contentState.root.opts.open.current}
 					>

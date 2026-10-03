@@ -19,7 +19,7 @@ import { isClickTrulyOutside } from "$lib/internal/dom.js";
 import {
 	CONTEXT_MENU_CONTENT_ATTR,
 	CONTEXT_MENU_TRIGGER_ATTR,
-} from "$lib/bits/menu/menu.svelte.js";
+} from "$lib/bits/menu/context-menu-attributes.js";
 
 globalThis.bitsDismissableLayers ??= new Map<
 	DismissibleLayerState,
@@ -70,7 +70,7 @@ export class DismissibleLayerState {
 			registeredNode = null;
 			this.#resetState();
 			globalThis.bitsDismissableLayers.delete(this);
-			this.#handleInteractOutsideDebounced.destroy();
+			this.#handleInteractOutside.destroy();
 			this.#unsubClickListener();
 			unsubEvents();
 		};
@@ -124,13 +124,13 @@ export class DismissibleLayerState {
 			// It can resume bubbling after a nested early outside click has been captured.
 			if (event.cancelBubble || event !== this.#capturedPointerDown) return;
 			this.#markNonInterceptedEvent(event);
-			// Arm touch dismissal before its click arrives. Debouncing this can miss
-			// a fast tap entirely; a scroll still cannot dismiss because it has no click.
 			if (event.pointerType === "touch") {
-				this.#handleInteractOutsideDebounced.destroy();
-				this.#handleInteractOutside(event);
+				// a tap's click can follow its pointerdown within a millisecond (WebKit), so
+				// arm the click listener now rather than after the debounce flushes
+				this.#handleInteractOutside.destroy();
+				this.#interactOutside(event);
 			} else {
-				this.#handleInteractOutsideDebounced(event);
+				this.#handleInteractOutside(event);
 			}
 		};
 
@@ -156,11 +156,7 @@ export class DismissibleLayerState {
 		this.#interactOutsideProp.current(e as PointerEvent);
 	};
 
-	#handleInteractOutsideDebounced = debounce((e: PointerEvent) => {
-		this.#handleInteractOutside(e);
-	}, 10);
-
-	#handleInteractOutside = (e: PointerEvent) => {
+	#interactOutside = (e: PointerEvent) => {
 		if (!this.opts.ref.current) {
 			this.#unsubClickListener();
 			return;
@@ -190,13 +186,38 @@ export class DismissibleLayerState {
 		if (e.pointerType === "touch") {
 			this.#unsubClickListener();
 
-			this.#unsubClickListener = on(this.#documentObj, "click", this.#handleDismiss, {
-				once: true,
-			});
+			// the tap's click dismisses from the bubble phase, as before. A capture-phase
+			// listener backs it up with a task, so a target that stops propagation cannot
+			// hide the click, while a target that closes this layer still tears it down
+			// (and the backup with it) before the task runs.
+			let backup: ReturnType<typeof setTimeout> | null = null;
+			let unsubClick = noop;
+			const dismiss = (event: MouseEvent) => {
+				unsubClick();
+				this.#handleDismiss(event);
+			};
+			unsubClick = executeCallbacks(
+				on(this.#documentObj, "click", dismiss, { once: true }),
+				on(
+					this.#documentObj,
+					"click",
+					(event: MouseEvent) => {
+						backup = setTimeout(() => dismiss(event), 0);
+					},
+					{ once: true, capture: true }
+				),
+				() => {
+					if (backup !== null) clearTimeout(backup);
+					backup = null;
+				}
+			);
+			this.#unsubClickListener = unsubClick;
 		} else {
 			this.#interactOutsideProp.current(event);
 		}
 	};
+
+	#handleInteractOutside = debounce(this.#interactOutside, 10);
 
 	#markInterceptedEvent = (e: PointerEvent) => {
 		this.#interceptedEvents[e.type] = true;
