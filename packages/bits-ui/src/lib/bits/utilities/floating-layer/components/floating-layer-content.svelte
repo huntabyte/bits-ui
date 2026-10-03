@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { FloatingContentState } from "../use-floating-layer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
 	import { useId } from "$lib/internal/use-id.js";
@@ -50,7 +51,7 @@
 			wrapperId: boxWith(() => wrapperId),
 			customAnchor: boxWith(() => customAnchor),
 		},
-		tooltip
+		untrack(() => tooltip)
 	);
 
 	const mergedProps = $derived(

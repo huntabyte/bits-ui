@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { PresenceLayerImplProps } from "./types.js";
 	import { Presence } from "./presence.svelte.js";
 
@@ -7,7 +8,7 @@
 
 	const presenceState = new Presence({
 		open: boxWith(() => open),
-		ref,
+		ref: untrack(() => ref),
 	});
 </script>
 

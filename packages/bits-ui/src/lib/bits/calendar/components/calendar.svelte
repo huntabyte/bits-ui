@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { watch } from "runed";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { type DateValue } from "@internationalized/date";
 	import { CalendarRootState } from "../calendar.svelte.js";
 	import type { CalendarRootProps } from "../types.js";
@@ -41,11 +42,13 @@
 		...restProps
 	}: CalendarRootProps = $props();
 
-	const defaultPlaceholder = getDefaultDate({
-		defaultValue: value,
-		minValue,
-		maxValue,
-	});
+	const defaultPlaceholder = untrack(() =>
+		getDefaultDate({
+			defaultValue: value,
+			minValue,
+			maxValue,
+		})
+	);
 
 	function handleDefaultPlaceholder() {
 		if (placeholder !== undefined) return;

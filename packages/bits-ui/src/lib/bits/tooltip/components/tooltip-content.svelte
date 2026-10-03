@@ -85,7 +85,11 @@
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps: finalWrapperProps,
+					...contentState.snippetProps,
+				})}
 			{:else}
 				<div {...finalWrapperProps}>
 					<div {...finalProps}>
@@ -122,7 +126,11 @@
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps: finalWrapperProps,
+					...contentState.snippetProps,
+				})}
 			{:else}
 				<div {...finalWrapperProps}>
 					<div {...finalProps}>

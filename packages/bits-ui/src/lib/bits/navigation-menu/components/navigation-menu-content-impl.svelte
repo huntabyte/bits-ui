@@ -44,12 +44,14 @@
 				}
 			),
 		},
-		itemState
+		untrack(() => itemState)
 	);
 
-	if (itemState) {
-		NavigationMenuItemContext.set(itemState);
-	}
+	untrack(() => {
+		if (itemState) {
+			NavigationMenuItemContext.set(itemState);
+		}
+	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentImplState.props));
 </script>
