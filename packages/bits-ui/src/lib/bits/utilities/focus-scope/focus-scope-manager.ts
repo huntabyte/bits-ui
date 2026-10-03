@@ -1,4 +1,4 @@
-import { simpleBox } from "svelte-toolbelt";
+import { getActiveElement, simpleBox } from "svelte-toolbelt";
 import { FocusScope } from "./focus-scope.svelte.js";
 
 export class FocusScopeManager {
@@ -21,7 +21,7 @@ export class FocusScopeManager {
 		}
 
 		// capture the currently focused element before this scope becomes active
-		const activeElement = document.activeElement as HTMLElement;
+		const activeElement = getActiveElement(document);
 		if (activeElement && activeElement !== document.body) {
 			this.#preFocusHistory.set(scope, activeElement);
 		}

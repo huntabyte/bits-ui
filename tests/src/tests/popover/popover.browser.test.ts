@@ -66,6 +66,17 @@ it("should have bits data attrs", async () => {
 	}
 });
 
+it("should not render the internal `forceMount` prop as an attribute on the content", async () => {
+	const t = await open();
+	await expect.element(t.content).not.toHaveAttribute("forcemount");
+});
+
+it("should not render the internal `forceMount` prop as an attribute on the content (force mounted)", async () => {
+	const t = await setup({}, PopoverForceMountTest);
+	await expectExists(t.getContent());
+	await expect.element(t.getContent()).not.toHaveAttribute("forcemount");
+});
+
 it("should apply custom style prop to content", async () => {
 	const t = await open({
 		contentProps: {

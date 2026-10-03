@@ -152,7 +152,10 @@ export class CollapsibleContentState {
 
 		watch([() => this.opts.ref.current, () => this.present], ([node]) => {
 			if (!node) return;
+			let active = true;
 			afterTick(() => {
+				// Cleanup can run before this tick; do not read destroyed or superseded state.
+				if (!active) return;
 				if (!this.opts.ref.current) return;
 				// get the dimensions of the element
 				this.#originalStyles = this.#originalStyles || {
@@ -175,6 +178,9 @@ export class CollapsibleContentState {
 					node.style.animationName = animationName;
 				}
 			});
+			return () => {
+				active = false;
+			};
 		});
 	}
 

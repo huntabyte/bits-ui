@@ -24,6 +24,7 @@
 		onOpenAutoFocus = noop,
 		onInteractOutside = noop,
 		preventScroll = true,
+		preventOverflowTextSelection = true,
 		trapFocus = true,
 		restoreScrollDelay = null,
 		...restProps
@@ -78,6 +79,7 @@
 				>
 					<TextSelectionLayer
 						{...mergedProps}
+						{preventOverflowTextSelection}
 						ref={contentState.opts.ref}
 						enabled={contentState.root.opts.open.current}
 					>

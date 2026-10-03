@@ -1,4 +1,4 @@
-import { onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
+import { getActiveElement, onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
 import { FocusScopeManager } from "./focus-scope-manager.js";
 import { focusable, isFocusable, tabbable } from "tabbable";
 import { on } from "svelte/events";
@@ -86,7 +86,14 @@ export class FocusScope {
 
 		if (!event.defaultPrevented) {
 			requestAnimationFrame(() => {
-				if (!this.#container) return;
+				if (
+					!this.#container ||
+					this.#paused ||
+					!this.#manager.isActiveScope(this) ||
+					this.#container.contains(getActiveElement(this.#container.ownerDocument))
+				) {
+					return;
+				}
 				const firstTabbable = this.#getFirstTabbable();
 				if (firstTabbable) {
 					firstTabbable.focus();
@@ -109,7 +116,7 @@ export class FocusScope {
 		if (!event.defaultPrevented) {
 			// return focus to the element that was focused before this scope opened
 			const preFocusedElement = this.#manager.getPreFocusMemory(this);
-			if (preFocusedElement && document.contains(preFocusedElement)) {
+			if (preFocusedElement && preFocusedElement.isConnected) {
 				// ensure the element is still focusable and in the document
 				try {
 					preFocusedElement.focus();
@@ -130,7 +137,7 @@ export class FocusScope {
 		const handleFocus = (e: FocusEvent) => {
 			if (this.#paused || !this.#manager.isActiveScope(this)) return;
 
-			const target = e.target as HTMLElement;
+			const target = e.composedPath()[0] as HTMLElement;
 			if (!target) return;
 
 			const isInside = container.contains(target);
@@ -163,10 +170,10 @@ export class FocusScope {
 			const first = tabbables[0];
 			const last = tabbables[tabbables.length - 1];
 
-			if (!e.shiftKey && doc.activeElement === last) {
+			if (!e.shiftKey && getActiveElement(doc) === last) {
 				e.preventDefault();
 				first!.focus();
-			} else if (e.shiftKey && doc.activeElement === first) {
+			} else if (e.shiftKey && getActiveElement(doc) === first) {
 				e.preventDefault();
 				last!.focus();
 			}
