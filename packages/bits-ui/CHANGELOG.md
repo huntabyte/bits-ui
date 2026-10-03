@@ -1,5 +1,19 @@
 # bits-ui
 
+## 2.19.5
+
+### Patch Changes
+
+- fix(Select): ensure `Select.Value` labels persist after the select is closed ([#2066](https://github.com/huntabyte/bits-ui/pull/2066))
+
+- fix(DismissibleLayer): dismiss on a touch tap whose `click` follows its `pointerdown` within a few milliseconds. The click listener was armed only after a 10ms debounce, so on WebKit (mobile Safari) a quick tap on a sibling trigger landed before it and left the open layer open beside the new one. ([#2182](https://github.com/huntabyte/bits-ui/pull/2182))
+
+- fix(body-scroll-lock): restore only modified body styles to preserve concurrent changes ([#2175](https://github.com/huntabyte/bits-ui/pull/2175))
+
+- Fix `DateRangePicker` and `DateRangeField` not reformatting their segments when the `locale` prop changes after mount. ([#2150](https://github.com/huntabyte/bits-ui/pull/2150))
+
+- fix(FocusScope): trap and restore focus inside a Shadow Root. Focus reads now follow `shadowRoot.activeElement` and the `focusin` target comes from `composedPath()`, so Tab wraps within the scope and focus returns to a trigger inside the root on close. ([#2180](https://github.com/huntabyte/bits-ui/pull/2180))
+
 ## 2.19.4
 
 ### Patch Changes
