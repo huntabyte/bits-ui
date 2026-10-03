@@ -184,7 +184,7 @@
 						<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
 							{#each group.items as groupItem (groupItem)}
 								<Command.Item
-									class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+									class="rounded-button bg-muted data-highlighted:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
 									keywords={groupItem.keywords}
 									disabled={groupItem.disabled}
 								>
@@ -216,7 +216,7 @@
 						<Command.GroupItems>
 							{#each group.items as groupItem (groupItem)}
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={groupItem.keywords}
 									disabled={groupItem.disabled}
 									onSelect={groupItem.action}
