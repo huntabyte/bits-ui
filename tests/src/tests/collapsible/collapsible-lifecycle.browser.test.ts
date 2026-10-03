@@ -4,12 +4,12 @@ import { flushSync, tick } from "svelte";
 import { CollapsibleContentState } from "../../../../packages/bits-ui/dist/bits/collapsible/collapsible.svelte.js";
 import CollapsibleTest from "./collapsible-test.svelte";
 import CollapsibleReplacementTest from "./collapsible-replacement-test.svelte";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 
 describe("Collapsible deferred measurements", () => {
 	it("does not read the content ref after unmount", async () => {
 		const create = vi.spyOn(CollapsibleContentState, "create");
-		const view = render(CollapsibleTest, { open: true });
+		const view = await render(CollapsibleTest, { open: true });
 		const state = create.mock.results[0]?.value;
 		if (!state) throw new Error("Missing Collapsible content state");
 		const ref = state.opts.ref;
@@ -34,7 +34,7 @@ describe("Collapsible deferred measurements", () => {
 		}
 	});
 	it("does not measure a replaced node and still measures its replacement", async () => {
-		const view = render(CollapsibleReplacementTest);
+		const view = await render(CollapsibleReplacementTest);
 		const oldNode = page.getByTestId("content").element();
 		const measureOldNode = vi.spyOn(oldNode, "getBoundingClientRect");
 		try {
@@ -71,7 +71,7 @@ describe("Collapsible deferred measurements", () => {
             }
         `;
 		document.head.append(style);
-		const view = render(CollapsibleTest);
+		const view = await render(CollapsibleTest);
 		try {
 			await page.getByTestId("trigger").click();
 			const content = page.getByTestId("content").element();

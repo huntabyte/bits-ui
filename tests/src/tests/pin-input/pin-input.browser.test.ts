@@ -4,13 +4,13 @@ import { REGEXP_ONLY_DIGITS } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import PinInputTest from "./pin-input-test.svelte";
 import type { ComponentProps } from "svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
-function setup(props: Partial<ComponentProps<typeof PinInputTest>> = {}) {
+async function setup(props: Partial<ComponentProps<typeof PinInputTest>> = {}) {
 	// @ts-expect-error - testing lib needs to update their generic types
-	const returned = render(PinInputTest, { ...props });
+	const returned = await render(PinInputTest, { ...props });
 	const cells = new Array(6).fill(null).map((_, i) => returned.getByTestId(`cell-${i}`));
 	const binding = returned.getByTestId("binding");
 	const hiddenInput = returned.getByTestId("input");
@@ -37,42 +37,42 @@ afterEach(() => {
 });
 
 it("should focus the hidden input when `inputRef.focus()` is called", async () => {
-	const t = setup();
+	const t = await setup();
 	await t.getByTestId("focus-input").click();
 	await expect.element(t.hiddenInput).toHaveFocus();
 });
 
 it("should sync the `name` prop to the hidden input", async () => {
-	const t = setup({ name: "test" });
+	const t = await setup({ name: "test" });
 	await expect.element(t.hiddenInput).toHaveAttribute("name", "test");
 });
 
 it("should sync the `value` prop to the hidden input", async () => {
 	const value = "123456";
-	const t = setup({ value });
+	const t = await setup({ value });
 	await expect.element(t.hiddenInput).toHaveValue(value);
 });
 
 it("should sync the `disabled` prop to the hidden input", async () => {
-	const t = setup({ disabled: true });
+	const t = await setup({ disabled: true });
 	await expect.element(t.hiddenInput).toHaveAttribute("disabled", "");
 });
 
 it("should respect binding to the `value` prop", async () => {
 	const initialValue = "123456";
-	const t = setup({
+	const t = await setup({
 		value: initialValue,
 	});
 	await expect.element(t.hiddenInput).toHaveValue(initialValue);
-	await expect.element(t.binding).toHaveTextContent(initialValue);
+	await expect.element(t.binding).toMatchTextContent(initialValue);
 	await t.binding.click();
 	await expect.element(t.hiddenInput).toHaveValue("999999");
-	await expect.element(t.binding).toHaveTextContent("999999");
+	await expect.element(t.binding).toMatchTextContent("999999");
 });
 
 it("should set the appropriate `isActive` prop on each cell", async () => {
 	const mocked = vi.fn();
-	const t = setup({
+	const t = await setup({
 		onComplete: mocked,
 	});
 
@@ -98,22 +98,22 @@ it("should set the appropriate `isActive` prop on each cell", async () => {
 });
 
 it("should handle backspace appropriately", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await t.hiddenInput.click();
 	await t.hiddenInput.fill("123");
 	await userEvent.keyboard(kbd.BACKSPACE);
-	await expect.element(t.cells[2]).toHaveTextContent("");
+	await expect.element(t.cells[2]).toMatchTextContent("");
 	await expect.element(t.cells[2]).toHaveAttribute("data-active");
 	await userEvent.keyboard(kbd.BACKSPACE);
-	await expect.element(t.cells[1]).toHaveTextContent("");
+	await expect.element(t.cells[1]).toMatchTextContent("");
 	await expect.element(t.cells[1]).toHaveAttribute("data-active");
 	await expect.element(t.cells[2]).not.toHaveAttribute("data-active");
 });
 
 it("should fire the `onComplete` callback when the input is complete", async () => {
 	const mockComplete = vi.fn();
-	const t = setup({
+	const t = await setup({
 		onComplete: mockComplete,
 	});
 
@@ -135,7 +135,7 @@ it("should fire the `onComplete` callback when the input is complete", async () 
 
 it("should handle paste events correctly", async () => {
 	const mockComplete = vi.fn();
-	const t = setup({
+	const t = await setup({
 		onComplete: mockComplete,
 		toCopy: "123456",
 	});
@@ -148,7 +148,7 @@ it("should handle paste events correctly", async () => {
 
 it("should allow the user to sanitize pasted text (remove hyphens, etc.)", async () => {
 	const mockComplete = vi.fn();
-	const t = setup({
+	const t = await setup({
 		onComplete: mockComplete,
 		pasteTransformer: (text) => text.replace(/-/g, ""),
 		toCopy: "123-456",
@@ -161,7 +161,7 @@ it("should allow the user to sanitize pasted text (remove hyphens, etc.)", async
 });
 
 it("should ignore keys that do not match the pattern", async () => {
-	const t = setup({
+	const t = await setup({
 		pattern: REGEXP_ONLY_DIGITS,
 	});
 
@@ -183,7 +183,7 @@ it("should allow pasting numbers that match the pattern", async () => {
 	const mockComplete = vi.fn();
 	const mockClipboard = "123456";
 
-	const t = setup({
+	const t = await setup({
 		pattern: REGEXP_ONLY_DIGITS,
 		onComplete: mockComplete,
 		toCopy: mockClipboard,
@@ -199,7 +199,7 @@ it("should not allow pasting numbers that do not match the pattern", async () =>
 	const mockComplete = vi.fn();
 	const mockClipboard = "abcdef";
 
-	const t = setup({
+	const t = await setup({
 		pattern: REGEXP_ONLY_DIGITS,
 		onComplete: mockComplete,
 		toCopy: mockClipboard,
@@ -214,7 +214,7 @@ it("should allow pasting more than the max-length if transformation is provided"
 	const mockComplete = vi.fn();
 	const mockClipboard = "1-2-3-4-5-6";
 
-	const t = setup({
+	const t = await setup({
 		maxlength: 6,
 		onComplete: mockComplete,
 		pasteTransformer: (text) => text.replace(/-/g, ""),
@@ -228,7 +228,7 @@ it("should allow pasting more than the max-length if transformation is provided"
 });
 
 it("should handle ArrowLeft navigation correctly", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await t.hiddenInput.click();
 	await userEvent.keyboard("1");
@@ -257,7 +257,7 @@ it("should handle ArrowLeft navigation correctly", async () => {
 });
 
 it("should correctly replace characters when navigating back and typing", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await t.hiddenInput.click();
 	await t.hiddenInput.fill("1234");
@@ -270,19 +270,19 @@ it("should correctly replace characters when navigating back and typing", async 
 	// type 5 and 6 - should replace first two characters
 	await userEvent.keyboard("5");
 	await expect.element(t.hiddenInput).toHaveValue("5234");
-	await expect.element(t.cells[0]).toHaveTextContent("5");
+	await expect.element(t.cells[0]).toMatchTextContent("5");
 	await expect.element(t.cells[1]).toHaveAttribute("data-active");
 
 	await userEvent.keyboard("6");
 	await expect.element(t.hiddenInput).toHaveValue("5634");
-	await expect.element(t.cells[0]).toHaveTextContent("5");
-	await expect.element(t.cells[1]).toHaveTextContent("6");
-	await expect.element(t.cells[2]).toHaveTextContent("3");
-	await expect.element(t.cells[3]).toHaveTextContent("4");
+	await expect.element(t.cells[0]).toMatchTextContent("5");
+	await expect.element(t.cells[1]).toMatchTextContent("6");
+	await expect.element(t.cells[2]).toMatchTextContent("3");
+	await expect.element(t.cells[3]).toMatchTextContent("4");
 });
 
 it("should correctly replace characters when navigating back with ArrowLeft and typing", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await t.hiddenInput.click();
 	await t.hiddenInput.fill("1234");
@@ -304,19 +304,19 @@ it("should correctly replace characters when navigating back with ArrowLeft and 
 	// type 5 and 6 - should replace first two characters
 	await userEvent.keyboard("5");
 	await expect.element(t.hiddenInput).toHaveValue("5234");
-	await expect.element(t.cells[0]).toHaveTextContent("5");
+	await expect.element(t.cells[0]).toMatchTextContent("5");
 	await expect.element(t.cells[1]).toHaveAttribute("data-active");
 
 	await userEvent.keyboard("6");
 	await expect.element(t.hiddenInput).toHaveValue("5634");
-	await expect.element(t.cells[0]).toHaveTextContent("5");
-	await expect.element(t.cells[1]).toHaveTextContent("6");
-	await expect.element(t.cells[2]).toHaveTextContent("3");
-	await expect.element(t.cells[3]).toHaveTextContent("4");
+	await expect.element(t.cells[0]).toMatchTextContent("5");
+	await expect.element(t.cells[1]).toMatchTextContent("6");
+	await expect.element(t.cells[2]).toMatchTextContent("3");
+	await expect.element(t.cells[3]).toMatchTextContent("4");
 });
 
 it("should correctly replace characters when navigating with ArrowUp and typing", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await t.hiddenInput.click();
 	await t.hiddenInput.fill("1234");
@@ -329,13 +329,13 @@ it("should correctly replace characters when navigating with ArrowUp and typing"
 	// type 5 and 6 - should replace first two characters
 	await userEvent.keyboard("5");
 	await expect.element(t.hiddenInput).toHaveValue("5234");
-	await expect.element(t.cells[0]).toHaveTextContent("5");
+	await expect.element(t.cells[0]).toMatchTextContent("5");
 	await expect.element(t.cells[1]).toHaveAttribute("data-active");
 
 	await userEvent.keyboard("6");
 	await expect.element(t.hiddenInput).toHaveValue("5634");
-	await expect.element(t.cells[0]).toHaveTextContent("5");
-	await expect.element(t.cells[1]).toHaveTextContent("6");
-	await expect.element(t.cells[2]).toHaveTextContent("3");
-	await expect.element(t.cells[3]).toHaveTextContent("4");
+	await expect.element(t.cells[0]).toMatchTextContent("5");
+	await expect.element(t.cells[1]).toMatchTextContent("6");
+	await expect.element(t.cells[2]).toMatchTextContent("3");
+	await expect.element(t.cells[3]).toMatchTextContent("4");
 });

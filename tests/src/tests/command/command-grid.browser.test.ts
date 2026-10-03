@@ -1,4 +1,4 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
@@ -8,9 +8,9 @@ import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
 
-function setup(props: Partial<ComponentProps<typeof CommandGridTest>> = {}) {
+async function setup(props: Partial<ComponentProps<typeof CommandGridTest>> = {}) {
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(CommandGridTest, props as any);
+	const returned = await render(CommandGridTest, props as any);
 	const input = page.getByTestId("input");
 	const root = page.getByTestId("root");
 	const list = page.getByTestId("list");
@@ -23,18 +23,18 @@ function setup(props: Partial<ComponentProps<typeof CommandGridTest>> = {}) {
 }
 
 it("should select the first item by default", async () => {
-	setup();
+	await setup();
 
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 });
 
 it("should allow forcing the selected value", async () => {
-	setup({ value: "Introduction" });
+	await setup({ value: "Introduction" });
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 });
 
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
-	setup();
+	await setup();
 
 	const separator = page.getByTestId("separator");
 	await expectExists(separator);
@@ -43,7 +43,7 @@ it("should render the separator when search is empty and remove it when search i
 });
 
 it("should always render the separator when forceMount", async () => {
-	setup({
+	await setup({
 		separatorProps: {
 			forceMount: true,
 		},
@@ -56,7 +56,7 @@ it("should always render the separator when forceMount", async () => {
 });
 
 it("should show empty state when no items are found", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await expectNotExists(page.getByTestId("empty"));
 	const input = t.input.element() as HTMLElement;
@@ -67,7 +67,7 @@ it("should show empty state when no items are found", async () => {
 });
 
 it("should restore original order when search is cleared", async () => {
-	const t = setup();
+	const t = await setup();
 
 	const input = t.input.element() as HTMLElement;
 
@@ -76,18 +76,18 @@ it("should restore original order when search is cleared", async () => {
 	await expect.element(t.input).toHaveValue("d");
 	await expect.element(page.getByText("Delegation")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
-		.toHaveTextContent("Delegation");
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
+		.toMatchTextContent("Delegation");
 	await userEvent.keyboard(kbd.BACKSPACE);
 	await expect.element(t.input).toHaveValue("");
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
-		.toHaveTextContent("Introduction");
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
+		.toMatchTextContent("Introduction");
 });
 
 it("should hide the group if all items are filtered out", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await userEvent.type(t.input.element(), "radio");
 	await expect.element(page.getByTestId("group-a")).not.toBeVisible();
@@ -96,7 +96,7 @@ it("should hide the group if all items are filtered out", async () => {
 });
 
 it("should navigate to the correct column in the next row", async () => {
-	const t = setup();
+	const t = await setup();
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 	await userEvent.type(t.input.element(), kbd.ARROW_DOWN);
 	await expect.element(page.getByText("Calendar")).toHaveAttribute("data-selected");
