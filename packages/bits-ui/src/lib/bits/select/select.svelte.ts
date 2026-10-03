@@ -201,77 +201,31 @@ abstract class SelectBaseRootState {
 	}
 
 	/**
-	 * Resolves the display label for a value: `items` entry when present, otherwise the
-	 * mounted item's `data-label` or text content, then a cached label from a prior
-	 * selection.
+	 * Resolves the display label for a value: a non-empty `items` entry, otherwise the
+	 * label cached from the selected item. Never reads the DOM, so it stays reactive and
+	 * works the same whether items are mounted, unmounted, or force-mounted.
 	 */
 	getLabelForValue(value: string): string {
 		if (value === "") return "";
 		const fromItems = this.opts.items.current.find((item) => item.value === value)?.label;
-		const node = this.getLabelNodeByValue(value);
-		if (fromItems !== undefined) {
-			if (fromItems.trim() !== "") return fromItems;
-			return node ? this.getLabelFromNode(value, node) : value;
-		}
-		if (node) return this.getLabelFromNode(value, node);
+		if (fromItems?.trim()) return fromItems;
 		return this.selectedLabelsByValue.get(value) ?? value;
 	}
 
-	/**
-	 * Like {@link getNodeByValue} but includes disabled items, since a disabled
-	 * item's label is still valid for display.
-	 */
-	getLabelNodeByValue(value: string): HTMLElement | null {
-		const content = this.contentNode;
-		if (!content) return null;
-		const itemNodes = content.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]`);
-		return Array.from(itemNodes).find((node) => node.dataset.value === value) ?? null;
-	}
-
-	getLabelFromNode(value: string, node: HTMLElement): string {
-		const dataLabel = node.getAttribute("data-label");
-		if (dataLabel !== null && dataLabel.trim() !== "") return dataLabel;
-		return node.textContent?.trim() ?? value;
-	}
-
-	resolveItemLabel(
-		value: string,
-		label: string | null | undefined,
-		node: HTMLElement | null = null
-	) {
+	/** The item's `label`, falling back to its text content when the label is empty. */
+	resolveItemLabel(value: string, label: string | null | undefined, node: HTMLElement | null) {
 		if (label?.trim()) return label;
-		if (node) return this.getLabelFromNode(value, node);
-		return label ?? value;
-	}
-
-	/** Resolves the label for the currently highlighted item, if any. */
-	resolveHighlightedLabel(): string | undefined {
-		if (this.highlightedValue === null) return undefined;
-		return this.resolveItemLabel(
-			this.highlightedValue,
-			this.highlightedLabel,
-			this.highlightedNode
-		);
+		return node?.textContent?.trim() || value;
 	}
 
 	setSelectedLabel(value: string, label: string) {
-		if (value === "" || label.trim() === "" || label === value) {
-			this.removeSelectedLabel(value);
-			return;
-		}
-		this.selectedLabelsByValue.set(value, label);
-	}
-
-	removeSelectedLabel(value: string) {
-		this.selectedLabelsByValue.delete(value);
+		if (value === "" || label === value) this.selectedLabelsByValue.delete(value);
+		else this.selectedLabelsByValue.set(value, label);
 	}
 
 	pruneSelectedLabels(keptValues: string[]) {
-		const kept = new Set(keptValues);
 		for (const value of this.selectedLabelsByValue.keys()) {
-			if (!kept.has(value)) {
-				this.selectedLabelsByValue.delete(value);
-			}
+			if (!keptValues.includes(value)) this.selectedLabelsByValue.delete(value);
 		}
 	}
 
@@ -366,8 +320,6 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		if (newValue !== "") {
 			this.setSelectedLabel(itemValue, itemLabel);
 			this.opts.inputValue.current = itemLabel;
-		} else {
-			this.removeSelectedLabel(itemValue);
 		}
 	}
 
@@ -441,7 +393,6 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
 		if (this.includesItem(itemValue)) {
 			this.opts.value.current = this.opts.value.current.filter((v) => v !== itemValue);
-			this.removeSelectedLabel(itemValue);
 		} else {
 			this.opts.value.current = [...this.opts.value.current, itemValue];
 			this.setSelectedLabel(itemValue, itemLabel);
@@ -675,7 +626,11 @@ export class SelectInputState {
 			) {
 				this.root.toggleItem(
 					this.root.highlightedValue,
-					this.root.resolveHighlightedLabel()
+					this.root.resolveItemLabel(
+						this.root.highlightedValue,
+						this.root.highlightedLabel,
+						this.root.highlightedNode
+					)
 				);
 			}
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
@@ -899,7 +854,14 @@ export class SelectTriggerState {
 
 		// "" is a valid value for a select item so we need to check for that
 		if (this.root.highlightedValue !== null) {
-			this.root.toggleItem(this.root.highlightedValue, this.root.resolveHighlightedLabel());
+			this.root.toggleItem(
+				this.root.highlightedValue,
+				this.root.resolveItemLabel(
+					this.root.highlightedValue,
+					this.root.highlightedLabel,
+					this.root.highlightedNode
+				)
+			);
 		}
 
 		if (!this.root.isMulti && !isCurrentSelectedValue) {

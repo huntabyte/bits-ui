@@ -1143,7 +1143,7 @@ describe("select - value", () => {
 		await expect.element(selectionLabel).toHaveTextContent("A, B");
 	});
 
-	it("should resolve programmatic labels from mounted items without derived cache mutation", async () => {
+	it("should resolve labels for values set programmatically while open in multiple mode", async () => {
 		render(SelectValueLabelPersistTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
@@ -1236,7 +1236,7 @@ describe("select - value", () => {
 		await expect.element(selectionLabel).toHaveTextContent("A");
 	});
 
-	it("should resolve single programmatic labels from mounted items without derived cache mutation", async () => {
+	it("should resolve labels for values set programmatically while open in single mode", async () => {
 		render(SelectValueLabelPersistSingleTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
@@ -1250,6 +1250,11 @@ describe("select - value", () => {
 		await expect.element(selectionValue).toHaveTextContent("2");
 		await expect.element(selectionLabel).toHaveTextContent("B");
 		await expectExists(page.getByTestId("content"));
+	});
+
+	it("should resolve labels from force-mounted items without opening", async () => {
+		render(SelectValueLabelPersistSingleTest, { value: "2", forceMount: true });
+		await expect.element(page.getByTestId("selection-label")).toHaveTextContent("B");
 	});
 
 	it("should pass disabled state to value snippets so consumers can block setValue", async () => {

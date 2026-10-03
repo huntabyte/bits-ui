@@ -7,7 +7,7 @@
 		{ value: "2", label: "B", text: "B" },
 	]);
 
-	let { value = $bindable(""), open = $bindable(false) } = $props();
+	let { value = $bindable(""), open = $bindable(false), forceMount = false } = $props();
 
 	const stopContentEvent = (e: Event) => {
 		e.stopPropagation();
@@ -37,7 +37,7 @@
 			</Select.Value>
 		</Select.Trigger>
 		<Select.Portal>
-			<Select.Content data-testid="content">
+			<Select.Content data-testid="content" {forceMount}>
 				<button
 					type="button"
 					data-testid="set-value-2"
