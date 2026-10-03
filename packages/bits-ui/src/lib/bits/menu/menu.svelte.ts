@@ -53,8 +53,7 @@ import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
 
-export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
-export const CONTEXT_MENU_CONTENT_ATTR = "data-context-menu-content";
+import { CONTEXT_MENU_TRIGGER_ATTR } from "./context-menu-attributes.js";
 
 const MenuRootContext = new Context<MenuRootState>("Menu.Root");
 const MenuMenuContext = new Context<MenuMenuState>("Menu.Root | Menu.Sub");
@@ -818,7 +817,9 @@ export class MenuMenuState {
 	readonly opts: MenuMenuStateOpts;
 	readonly root: MenuRootState;
 	readonly parentMenu: MenuMenuState | null;
-	contentId = boxWith<string>(() => "");
+	// the content replaces this box when it mounts; a plain field would leave every
+	// derived that read the empty box (a trigger rendered first) pointing at it forever
+	contentId = $state.raw(boxWith<string>(() => ""));
 	contentNode = $state<HTMLElement | null>(null);
 	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
@@ -1627,7 +1628,6 @@ export class MenuGroupHeadingState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "group",
 				[this.group.root.getBitsAttr("group-heading")]: "",
 				...this.attachment,
 			}) as const
@@ -1655,7 +1655,7 @@ export class MenuSeparatorState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "group",
+				role: "separator",
 				[this.root.getBitsAttr("separator")]: "",
 				...this.attachment,
 			}) as const

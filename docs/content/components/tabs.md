@@ -103,4 +103,16 @@ When set to `'manual'`, the user will need to activate the tab by pressing the t
 </Tabs.Root>
 ```
 
+## Panel Focus
+
+`Tabs.Content` defaults to `tabindex="0"`, so keyboard users can focus the panel. Keep this default when the panel has no focusable elements or its first meaningful content is not focusable, even if a button or link appears later.
+
+When the first meaningful content is focusable, set `tabindex={-1}` to let Tab move directly to that element. Choose this based on your content, following the [WAI-ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/).
+
+```svelte
+<Tabs.Content value="settings" tabindex={-1}>
+  <button>Update settings</button>
+</Tabs.Content>
+```
+
 <APISection {schemas} />

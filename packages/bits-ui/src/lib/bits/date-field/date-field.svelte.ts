@@ -211,6 +211,7 @@ export class DateFieldRootState {
 	descriptionNode = $state<HTMLElement | null>(null);
 	validationNode = $state<HTMLElement | null>(null);
 	states = initSegmentStates();
+	#segmentClearedValue = false;
 	dayPeriodNode = $state<HTMLElement | null>(null);
 	rangeRoot: DateRangeFieldRootState | undefined = undefined;
 	name = $state("");
@@ -270,7 +271,6 @@ export class DateFieldRootState {
 		});
 
 		$effect(() => {
-			if (rangeRoot) return;
 			if (this.formatter.getLocale() === this.locale.current) return;
 			this.formatter.setLocale(this.locale.current);
 		});
@@ -311,6 +311,10 @@ export class DateFieldRootState {
 
 		$effect(() => {
 			if (this.value.current === undefined) {
+				if (this.#segmentClearedValue) {
+					this.#segmentClearedValue = false;
+					return;
+				}
 				this.segmentValues = initializeSegmentValues(this.inferredGranularity);
 			}
 		});
@@ -680,6 +684,7 @@ export class DateFieldRootState {
 				})
 			);
 		} else {
+			this.#segmentClearedValue = true;
 			this.setValue(undefined);
 			this.segmentValues = newSegmentValues;
 		}
@@ -1220,7 +1225,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 
 			if (prev === null) {
 				this.announcer.announce(num);
-				return `000${num}`;
+				return `${num}`;
 			}
 
 			const str = prev.toString() + num.toString();
@@ -1234,6 +1239,9 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 					str.length <= 4
 				) {
 					this.announcer.announce(mergedInt);
+					if (str.length === 4) {
+						moveToNext = true;
+					}
 					return str;
 				}
 
@@ -1253,7 +1261,7 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 			return mergedIntStr;
 		});
 
-		if (this.#pressedKeys.length === 4 || this.#pressedKeys.length === this.#backspaceCount) {
+		if (this.#pressedKeys.length === 4) {
 			moveToNext = true;
 		}
 
@@ -1280,9 +1288,8 @@ class DateFieldYearSegmentState extends BaseNumericSegmentState {
 				return null;
 			}
 			const next = str.slice(0, -1);
-			this.announcer.announce(next);
-
-			return `${next}`;
+			this.announcer.announce(Number.parseInt(next));
+			return next;
 		});
 
 		if (moveToPrev) {

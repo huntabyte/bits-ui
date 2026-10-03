@@ -62,6 +62,11 @@ export class AvatarRootState {
 			this.opts.loadingStatus.current = "error";
 		};
 		return () => {
+			// Detach the handlers before anything else: the request may still be in
+			// flight, and `onload` would otherwise fire after teardown and reach
+			// `domContext`'s destroyed `$derived` via `setTimeout` → `derived_inert`.
+			image.onload = null;
+			image.onerror = null;
 			if (!imageTimerId) return;
 			this.domContext.clearTimeout(imageTimerId);
 		};
@@ -106,7 +111,10 @@ export class AvatarImageState {
 					this.root.opts.loadingStatus.current = "error";
 					return;
 				}
-				this.root.loadImage(src, crossOrigin, this.opts.referrerPolicy.current);
+				// Returned so the watch runs it on re-run and on destroy. Without this
+				// the cleanup `loadImage` builds was constructed and then dropped, so
+				// a `src` change left the previous image's handlers attached.
+				return this.root.loadImage(src, crossOrigin, this.opts.referrerPolicy.current);
 			}
 		);
 	}

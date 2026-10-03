@@ -44,6 +44,7 @@
 		customAnchor = null,
 		isStatic = false,
 		enabled,
+		forceMount,
 		ref,
 		tooltip = false,
 		contentPointerEvents = "auto",
@@ -81,9 +82,9 @@
 	{tooltip}
 >
 	{#snippet content({ props: floatingProps, wrapperProps })}
-		{#if restProps.forceMount && enabled}
+		{#if forceMount && enabled}
 			<ScrollLock preventScroll={resolvedPreventScroll} />
-		{:else if !restProps.forceMount}
+		{:else if !forceMount}
 			<ScrollLock preventScroll={resolvedPreventScroll} />
 		{/if}
 		<FocusScope
@@ -92,7 +93,7 @@
 			{loop}
 			{enabled}
 			{trapFocus}
-			forceMount={restProps.forceMount}
+			{forceMount}
 			{ref}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
@@ -122,6 +123,7 @@
 										dismissibleProps,
 										focusScopeProps,
 										{
+											id,
 											style: {
 												pointerEvents: contentPointerEvents,
 											},

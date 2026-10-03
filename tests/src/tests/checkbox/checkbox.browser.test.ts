@@ -76,9 +76,10 @@ describe("Single Checkbox", () => {
 		});
 
 		it("should render the checkbox input if a name prop is passed", async () => {
-			setup({ name: "checkbox" });
+			setup({ name: "checkbox", form: "login" });
 			await expectExists(getHiddenInput());
 			await expect.element(getHiddenInput()).toHaveAttribute("type", "checkbox");
+			await expect.element(getHiddenInput()).toHaveAttribute("form", "login");
 		});
 
 		it("should not have input as part of tab order", async () => {

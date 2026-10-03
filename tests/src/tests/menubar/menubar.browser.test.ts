@@ -25,6 +25,7 @@ it("should navigate triggers within the menubar using arrow keys", async () => {
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expect.element(t.getTrigger("2")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
@@ -39,6 +40,7 @@ it("should respect `loop: false`", async () => {
 	const t = setup({ loop: false });
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expect.element(t.getTrigger("2")).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
@@ -53,6 +55,7 @@ it.skip("should return focus to the menu trigger when closed via `ESC`", async (
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
 	await expectExists(content1);
@@ -65,6 +68,7 @@ it("should navigate between menus when using the arrow keys and focus is within 
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
 	await expectExists(content1);
@@ -81,6 +85,7 @@ it("should close the menu and focus the next tabbable element when `TAB` is pres
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
 	await expectExists(content1);
@@ -94,6 +99,7 @@ it("should close the menu and focus the previous tabbable element when `SHIFT+TA
 	const t = setup();
 	const trigger = t.getTrigger("1");
 	(trigger.element() as HTMLElement).focus();
+	await expect.element(trigger).toHaveFocus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	const content1 = t.getContent("1");
 	await expectExists(content1);

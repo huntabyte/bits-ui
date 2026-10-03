@@ -4,7 +4,7 @@ import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -22,6 +22,7 @@ async function open(props: AlertDialogTestProps = {}) {
 	await t.trigger.click();
 
 	await expectExists(content);
+	await waitForDismissibleLayer(content);
 
 	const cancel = page.getByTestId("cancel");
 	const action = page.getByTestId("action");
@@ -281,5 +282,45 @@ describe("ARIA Attributes", () => {
 			titleProps: { level: 3 },
 		});
 		await expect.element(page.getByTestId("title")).toHaveAttribute("aria-level", "3");
+	});
+});
+
+describe("Text Selection", () => {
+	function pointer(type: "pointerdown" | "pointerup") {
+		page.getByTestId("content")
+			.element()
+			.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+				})
+			);
+	}
+
+	function bodyUserSelect() {
+		return document.body.style.userSelect || document.body.style.webkitUserSelect;
+	}
+
+	it("should lock text selection overflow while pointing down inside the content", async () => {
+		await open();
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("none");
+		pointer("pointerup");
+		expect(bodyUserSelect()).toBe("");
+	});
+
+	it("should pass preventOverflowTextSelection to the layer instead of rendering it as an attribute", async () => {
+		await open({ contentProps: { preventOverflowTextSelection: false } });
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("");
+		pointer("pointerup");
 	});
 });

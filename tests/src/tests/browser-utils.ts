@@ -86,6 +86,27 @@ export async function expectExists(loc: Locator) {
 	await expect.element(loc).toBeInTheDocument();
 }
 
+type RegisteredLayer = { opts: { ref: { current: HTMLElement | null } } };
+
+/**
+ * Waits until `loc` has an active dismissible layer registration. Use this when
+ * inspecting a registered layer or measuring time from registration; opening-click
+ * regressions intentionally dispatch before waiting on this helper.
+ */
+export async function waitForDismissibleLayer(loc: Locator) {
+	const node = loc.element() as HTMLElement;
+	const getLayers = () =>
+		(globalThis as { bitsDismissableLayers?: Map<RegisteredLayer, unknown> })
+			.bitsDismissableLayers;
+
+	await vi.waitFor(() => {
+		const registered = [...(getLayers() ?? [])].some(
+			([layer]) => layer.opts.ref.current === node
+		);
+		expect(registered, "dismissible layer never attached its listeners").toBe(true);
+	});
+}
+
 export async function focusAndExpectToHaveFocus(loc: Locator) {
 	(loc.element() as HTMLElement).focus();
 	await expect.element(loc).toHaveFocus();

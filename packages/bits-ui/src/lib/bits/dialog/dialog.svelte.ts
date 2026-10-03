@@ -484,6 +484,7 @@ export class AlertDialogCancelState {
 				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				tabindex: 0,
+				disabled: this.opts.disabled.current,
 				...this.root.sharedProps,
 				...this.attachment,
 			}) as const

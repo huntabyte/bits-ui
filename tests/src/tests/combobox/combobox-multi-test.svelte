@@ -42,7 +42,7 @@
 	const filteredItems = $derived(
 		searchValue === ""
 			? items
-			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
+			: items.filter((item) => item.label.toLowerCase().includes(searchValue.toLowerCase()))
 	);
 </script>
 

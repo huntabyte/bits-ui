@@ -1,13 +1,13 @@
 import {
 	type ReadableBox,
 	type WritableBox,
-	afterSleep,
 	afterTick,
 	executeCallbacks,
 	onDestroyEffect,
 	type ReadableBoxedValues,
 } from "svelte-toolbelt";
 import { watch } from "runed";
+import { untrack } from "svelte";
 import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
 import { type EventCallback } from "$lib/internal/events.js";
@@ -19,7 +19,7 @@ import { isClickTrulyOutside } from "$lib/internal/dom.js";
 import {
 	CONTEXT_MENU_CONTENT_ATTR,
 	CONTEXT_MENU_TRIGGER_ATTR,
-} from "$lib/bits/menu/menu.svelte.js";
+} from "$lib/bits/menu/context-menu-attributes.js";
 
 globalThis.bitsDismissableLayers ??= new Map<
 	DismissibleLayerState,
@@ -42,10 +42,19 @@ export class DismissibleLayerState {
 		pointerdown: false,
 	};
 	#isResponsibleLayer = false;
+	#capturedPointerDown: PointerEvent | null = null;
 	#isFocusInsideDOMTree = false;
 	#documentObj = undefined as unknown as Document;
 	#onFocusOutside: DismissibleLayerStateOpts["onFocusOutside"];
 	#unsubClickListener = noop;
+	/**
+	 * Set once the layer is torn down. Deferred work scheduled before teardown can
+	 * still run afterwards, so every such callback must short-circuit on this
+	 * before reading `this.opts.ref.current` — reading a destroyed `$derived`
+	 * triggers Svelte's `derived_inert` warning. A class field rather than a
+	 * constructor local so the class-field handlers below can see it too.
+	 */
+	#destroyed = false;
 
 	constructor(opts: DismissibleLayerStateOpts) {
 		this.opts = opts;
@@ -54,44 +63,45 @@ export class DismissibleLayerState {
 		this.#interactOutsideProp = opts.onInteractOutside;
 		this.#onFocusOutside = opts.onFocusOutside;
 
-		$effect(() => {
-			this.#documentObj = getOwnerDocument(this.opts.ref.current);
-		});
-
 		let unsubEvents = noop;
+		let registeredNode: HTMLElement | null = null;
 
 		const cleanup = () => {
+			registeredNode = null;
 			this.#resetState();
-			globalThis.bitsDismissableLayers.delete(this);
-			this.#handleInteractOutside.destroy();
-			unsubEvents();
-		};
-
-		watch([() => this.opts.enabled.current, () => this.opts.ref.current], () => {
-			if (!this.opts.enabled.current || !this.opts.ref.current) return;
-			afterSleep(1, () => {
-				if (!this.opts.ref.current) return;
-				globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
-
-				unsubEvents();
-				unsubEvents = this.#addEventListeners();
-			});
-			return cleanup;
-		});
-
-		onDestroyEffect(() => {
-			this.#resetState.destroy();
 			globalThis.bitsDismissableLayers.delete(this);
 			this.#handleInteractOutside.destroy();
 			this.#unsubClickListener();
 			unsubEvents();
+		};
+
+		watch([() => this.opts.enabled.current, () => this.opts.ref.current], ([enabled, node]) => {
+			const nextNode = enabled ? node : null;
+			// Ref boxes can invalidate without changing the DOM node during opening.
+			// Keep an in-flight interaction when this is still the same registration.
+			if (registeredNode === nextNode) return;
+			cleanup();
+			if (!nextNode) return;
+			registeredNode = nextNode;
+			this.#documentObj = getOwnerDocument(nextNode);
+			globalThis.bitsDismissableLayers.set(this, this.#behaviorType);
+			unsubEvents = this.#addEventListeners();
+		});
+
+		onDestroyEffect(() => {
+			this.#destroyed = true;
+			cleanup();
 		});
 	}
 
 	#handleFocus = (event: FocusEvent) => {
 		if (event.defaultPrevented) return;
-		if (!this.opts.ref.current) return;
+		if (this.#destroyed || !this.opts.ref.current) return;
 		afterTick(() => {
+			// The layer can be destroyed between the focus event and this tick — a
+			// focus change is frequently what closes it. `#destroyed` must
+			// short-circuit before any `this.opts.ref.current` read.
+			if (this.#destroyed) return;
 			if (!this.opts.ref.current || this.#isTargetWithinLayer(event.target as HTMLElement))
 				return;
 
@@ -102,36 +112,39 @@ export class DismissibleLayerState {
 	};
 
 	#addEventListeners() {
+		const document = this.#documentObj;
+		const onPointerDownCapture = (event: PointerEvent) => {
+			untrack(() => {
+				this.#markInterceptedEvent(event);
+				this.#markResponsibleLayer(event);
+			});
+		};
+		const onPointerDown = (event: PointerEvent) => {
+			// Ignore stopped events and bubble-only events such as the opening pointerdown.
+			// It can resume bubbling after a nested early outside click has been captured.
+			if (event.cancelBubble || event !== this.#capturedPointerDown) return;
+			this.#markNonInterceptedEvent(event);
+			if (event.pointerType === "touch") {
+				// a tap's click can follow its pointerdown within a millisecond (WebKit), so
+				// arm the click listener now rather than after the debounce flushes
+				this.#handleInteractOutside.destroy();
+				this.#interactOutside(event);
+			} else {
+				this.#handleInteractOutside(event);
+			}
+		};
+
+		// `svelte/events.on` defers pointer listener attachment to a microtask, leaving
+		// a gap even without a registration timer. Document is already connected, so
+		// attach immediately. Only layers present at capture can own this interaction;
+		// a layer opened by its target/bubble handlers must not dismiss itself.
+		document.addEventListener("pointerdown", onPointerDownCapture, true);
+		document.addEventListener("pointerdown", onPointerDown);
+
 		return executeCallbacks(
-			/**
-			 * CAPTURE INTERACTION START
-			 * mark interaction-start event as intercepted.
-			 * mark responsible layer during interaction start
-			 * to avoid checking if is responsible layer during interaction end
-			 * when a new floating element may have been opened.
-			 */
-			on(
-				this.#documentObj,
-				"pointerdown",
-				executeCallbacks(this.#markInterceptedEvent, this.#markResponsibleLayer),
-				{ capture: true }
-			),
-
-			/**
-			 * BUBBLE INTERACTION START
-			 * Mark interaction-start event as non-intercepted. Debounce `onInteractOutsideStart`
-			 * to avoid prematurely checking if other events were intercepted.
-			 */
-			on(
-				this.#documentObj,
-				"pointerdown",
-				executeCallbacks(this.#markNonInterceptedEvent, this.#handleInteractOutside)
-			),
-
-			/**
-			 * HANDLE FOCUS OUTSIDE
-			 */
-			on(this.#documentObj, "focusin", this.#handleFocus)
+			() => document.removeEventListener("pointerdown", onPointerDownCapture, true),
+			() => document.removeEventListener("pointerdown", onPointerDown),
+			on(document, "focusin", this.#handleFocus)
 		);
 	}
 
@@ -143,7 +156,7 @@ export class DismissibleLayerState {
 		this.#interactOutsideProp.current(e as PointerEvent);
 	};
 
-	#handleInteractOutside = debounce((e: PointerEvent) => {
+	#interactOutside = (e: PointerEvent) => {
 		if (!this.opts.ref.current) {
 			this.#unsubClickListener();
 			return;
@@ -173,13 +186,38 @@ export class DismissibleLayerState {
 		if (e.pointerType === "touch") {
 			this.#unsubClickListener();
 
-			this.#unsubClickListener = on(this.#documentObj, "click", this.#handleDismiss, {
-				once: true,
-			});
+			// the tap's click dismisses from the bubble phase, as before. A capture-phase
+			// listener backs it up with a task, so a target that stops propagation cannot
+			// hide the click, while a target that closes this layer still tears it down
+			// (and the backup with it) before the task runs.
+			let backup: ReturnType<typeof setTimeout> | null = null;
+			let unsubClick = noop;
+			const dismiss = (event: MouseEvent) => {
+				unsubClick();
+				this.#handleDismiss(event);
+			};
+			unsubClick = executeCallbacks(
+				on(this.#documentObj, "click", dismiss, { once: true }),
+				on(
+					this.#documentObj,
+					"click",
+					(event: MouseEvent) => {
+						backup = setTimeout(() => dismiss(event), 0);
+					},
+					{ once: true, capture: true }
+				),
+				() => {
+					if (backup !== null) clearTimeout(backup);
+					backup = null;
+				}
+			);
+			this.#unsubClickListener = unsubClick;
 		} else {
 			this.#interactOutsideProp.current(event);
 		}
-	}, 10);
+	};
+
+	#handleInteractOutside = debounce(this.#interactOutside, 10);
 
 	#markInterceptedEvent = (e: PointerEvent) => {
 		this.#interceptedEvents[e.type] = true;
@@ -189,7 +227,8 @@ export class DismissibleLayerState {
 		this.#interceptedEvents[e.type] = false;
 	};
 
-	#markResponsibleLayer = () => {
+	#markResponsibleLayer = (event: PointerEvent) => {
+		this.#capturedPointerDown = event;
 		if (!this.opts.ref.current) return;
 		this.#isResponsibleLayer = isResponsibleLayer(this.opts.ref.current);
 	};
@@ -199,12 +238,26 @@ export class DismissibleLayerState {
 		return isOrContainsTarget(this.opts.ref.current, target);
 	};
 
-	#resetState = debounce(() => {
+	/**
+	 * Resets the per-interaction state. Must stay synchronous.
+	 *
+	 * This was a `debounce(..., 20)` from when it was also wired to a capture-phase
+	 * interaction-end listener and had to land after the 10ms `#handleInteractOutside`
+	 * debounce. That listener is gone, but the debounce stayed on the `cleanup()` path —
+	 * and because `watch` runs `cleanup()` once per open (`ref` goes null -> node), every
+	 * layer scheduled a reset 20ms into its own lifetime. An outside `pointerdown` landing
+	 * 10-20ms after that cleanup would have its `#isResponsibleLayer` flag cleared by the
+	 * stale reset in the gap before the debounced `#handleInteractOutside` ran, which then
+	 * bailed and left the layer open. `cleanup()` destroys `#handleInteractOutside` anyway,
+	 * so nothing is left in flight that needs to observe the pre-reset state.
+	 */
+	#resetState = () => {
 		for (const eventType in this.#interceptedEvents) {
 			this.#interceptedEvents[eventType] = false;
 		}
 		this.#isResponsibleLayer = false;
-	}, 20);
+		this.#capturedPointerDown = null;
+	};
 
 	#isAnyEventIntercepted() {
 		const i = Object.values(this.#interceptedEvents).some(Boolean);

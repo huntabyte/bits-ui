@@ -31,13 +31,23 @@ export class IsUsingKeyboard {
 						on(document, "pointerdown", handlePointer, {
 							capture: true,
 						}),
-						on(document, "pointermove", handlePointer, {
-							capture: true,
-						}),
 						on(document, "keydown", handleKeydown, {
 							capture: true,
 						})
 					);
+
+					/**
+					 * `pointermove` fires constantly, so we only keep it attached while we're
+					 * actually in keyboard mode and have something to switch off. Once it has
+					 * flipped `isUsingKeyboard` back to `false`, the listener is removed again
+					 * and mouse movement costs nothing until the next keypress.
+					 */
+					$effect(() => {
+						if (!isUsingKeyboard) return;
+						return on(document, "pointermove", handlePointer, {
+							capture: true,
+						});
+					});
 
 					// Don't forget to spread and call twice.
 					return executeCallbacks(...callbacksToDispose);

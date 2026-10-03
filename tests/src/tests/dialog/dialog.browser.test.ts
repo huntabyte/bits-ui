@@ -1,17 +1,23 @@
 import { userEvent, page } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { mount, tick, unmount, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
-import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelte";
 import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
+import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -30,6 +36,7 @@ async function open(props: DialogTestProps = {}, component: Component = DialogTe
 	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.click();
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	return t;
 }
 
@@ -251,6 +258,42 @@ describe("Focus Management", () => {
 
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
+	});
+});
+
+describe("Shadow Root", () => {
+	it("should trap focus and restore it to the trigger inside a shadow root", async () => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const shadowRoot = host.attachShadow({ mode: "open" });
+		const app = shadowRoot.appendChild(document.createElement("div"));
+		// portal after the trigger so nothing focusable follows the dialog content
+		const portalTo = shadowRoot.appendChild(document.createElement("div"));
+		const component = mount(DialogShadowRootTest, { target: app, props: { portalTo } });
+		const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		const expectFocus = (id: string) =>
+			vi.waitFor(() => expect(shadowRoot.activeElement).toBe(get(id)));
+
+		try {
+			get("trigger")!.focus();
+			await userEvent.keyboard(kbd.ENTER);
+			await expectFocus("first");
+
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("second");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("close");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("first");
+			await userEvent.keyboard(kbd.SHIFT_TAB);
+			await expectFocus("close");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await vi.waitFor(() => expect(get("content")).toBeNull());
+			await expectFocus("trigger");
+		} finally {
+			unmount(component);
+			host.remove();
+		}
 	});
 });
 
@@ -746,5 +789,208 @@ describe("Scroll Lock", () => {
 
 		// with scrollbar-gutter: stable, no padding compensation should be added
 		expect(document.body.style.paddingRight).toBe(initialPadding);
+	});
+
+	it("should restore a single inline overflow axis on body after closing", async () => {
+		document.body.style.overflowY = "scroll";
+		try {
+			await open();
+			expect(document.body.style.overflowY).toBe("hidden");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("content"));
+
+			await expect.poll(() => document.body.style.overflowY).toBe("scroll");
+			expect(document.body.style.overflowX).toBe("");
+			expect(document.body.style.pointerEvents).toBe("");
+		} finally {
+			document.body.removeAttribute("style");
+		}
+	});
+});
+
+/**
+ * Regression for https://github.com/huntabyte/bits-ui/issues/2080
+ *
+ * DismissibleLayer used to schedule afterSleep(1) without cancelling on destroy.
+ * Unmounting (or remounting) within that window left a timer that read a destroyed
+ * $derived and could re-attach document pointerdown listeners to a dead instance.
+ */
+describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
+	function installDerivedInertCounter() {
+		const counts = { inert: 0 };
+		const orig = console.warn.bind(console);
+		console.warn = (...args: unknown[]) => {
+			const text = args.map(String).join(" ");
+			if (text.includes("derived_inert")) counts.inert += 1;
+			orig(...args);
+		};
+		return {
+			counts,
+			restore: () => {
+				console.warn = orig;
+			},
+		};
+	}
+
+	it("should not read the layer ref from pending focus work after unmount", async () => {
+		const t = await open();
+		const content = page.getByTestId("content").element();
+		const layers = (
+			globalThis as {
+				bitsDismissableLayers?: Map<
+					{ opts: { ref: { current: HTMLElement | null } } },
+					unknown
+				>;
+			}
+		).bitsDismissableLayers!;
+		const layer = [...layers.keys()].find((layer) => layer.opts.ref.current === content)!;
+		const originalRef = layer.opts.ref;
+		const readRef = vi.fn(() => originalRef.current);
+		layer.opts.ref = {
+			get current() {
+				return readRef();
+			},
+			set current(value) {
+				originalRef.current = value;
+			},
+		};
+
+		try {
+			content.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+			expect(readRef).toHaveBeenCalled();
+			// Unmount synchronously before the focus handler's afterTick callback runs.
+			t.unmount();
+			expect(layers.has(layer)).toBe(false);
+			readRef.mockClear();
+
+			await tick();
+			expect(readRef).not.toHaveBeenCalled();
+		} finally {
+			layer.opts.ref = originalRef;
+		}
+	});
+
+	it("should not emit derived_inert when unmounted while open", async () => {
+		const counter = installDerivedInertCounter();
+		try {
+			const t = render(DialogTest, { open: true });
+			await expectExists(page.getByTestId("content"));
+			// Unmount while the layer is live — races the afterSleep(1) attach window.
+			await t.unmount();
+			await new Promise((r) => setTimeout(r, 50));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+
+	it("should not auto-dismiss on sequential open after close via trigger-cycle", async () => {
+		const counter = installDerivedInertCounter();
+		try {
+			await open();
+			await page.getByTestId("close").click();
+			await expectNotExists(page.getByTestId("content"));
+
+			// Immediate pointer reopen — stale document listeners used to fire
+			// onInteractOutside on the new layer (~10ms debounce) and close it.
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await new Promise((r) => setTimeout(r, 50));
+			await expectExists(page.getByTestId("content"));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+});
+
+/**
+ * TextSelectionLayer leaks a document `pointerdown` listener when a layer is
+ * rapidly toggled open/closed. `#pointerdown` read `this.opts.ref.current` — a
+ * writable `box` backed by a `$derived` owned by the (now destroyed) Content
+ * component — as its first statement, before any enabled/target check. Every
+ * document pointerdown then re-executed a destroyed derived and warned, for any
+ * click target anywhere in the app, forever.
+ *
+ * NB: `derived_inert` was added after the svelte version this repo pins, so this
+ * assertion only bites once the pinned svelte is new enough to emit it.
+ */
+describe("TextSelectionLayer teardown (derived_inert)", () => {
+	function installCounter() {
+		const counts = { inert: 0 };
+		const orig = console.warn.bind(console);
+		console.warn = (...args: unknown[]) => {
+			if (args.map(String).join(" ").includes("derived_inert")) counts.inert += 1;
+			orig(...args);
+		};
+		return {
+			counts,
+			restore: () => {
+				console.warn = orig;
+			},
+		};
+	}
+
+	it("should not emit derived_inert on document pointerdown after teardown", async () => {
+		const counter = installCounter();
+		try {
+			const t = render(DialogTest, { open: false });
+			for (let i = 0; i < 6; i++) {
+				await t.rerender({ open: i % 2 === 0 });
+				await new Promise((r) => setTimeout(r, 3));
+			}
+			await t.unmount();
+			await new Promise((r) => setTimeout(r, 100));
+
+			counter.counts.inert = 0;
+			document.body.dispatchEvent(
+				new PointerEvent("pointerdown", { bubbles: true, cancelable: true, button: 0 })
+			);
+			await new Promise((r) => setTimeout(r, 50));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+});
+
+describe("Text Selection", () => {
+	function pointer(type: "pointerdown" | "pointerup") {
+		page.getByTestId("content")
+			.element()
+			.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+				})
+			);
+	}
+
+	function bodyUserSelect() {
+		return document.body.style.userSelect || document.body.style.webkitUserSelect;
+	}
+
+	it("should lock text selection overflow while pointing down inside the content", async () => {
+		await open();
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("none");
+		pointer("pointerup");
+		expect(bodyUserSelect()).toBe("");
+	});
+
+	it("should pass preventOverflowTextSelection to the layer instead of rendering it as an attribute", async () => {
+		await open({ contentProps: { preventOverflowTextSelection: false } });
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("");
+		pointer("pointerup");
 	});
 });

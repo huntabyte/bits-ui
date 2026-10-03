@@ -44,6 +44,12 @@ export class RadioGroupRootState {
 	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
 	readonly rovingFocusGroup: RovingFocusGroup;
 	readonly attachment: RefAttachment;
+	/**
+	 * Whether focus is currently being moved by keyboard navigation within the
+	 * group. Items only select on focus during keyboard navigation — pointer
+	 * (and programmatic) focus waits for the click to commit the selection.
+	 */
+	isKeyboardNavigating = false;
 
 	constructor(opts: RadioGroupRootStateOpts) {
 		this.opts = opts;
@@ -139,6 +145,7 @@ export class RadioGroupItemState {
 
 	onfocus(_: BitsFocusEvent) {
 		if (!this.root.hasValue || this.#isReadonly) return;
+		if (!this.root.isKeyboardNavigating) return;
 		this.root.setValue(this.opts.value.current);
 	}
 
@@ -151,7 +158,14 @@ export class RadioGroupItemState {
 			}
 			return;
 		}
-		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
+		// `handleKeydown` moves focus synchronously, so the flag is observed by
+		// the newly focused item's `onfocus` before it resets.
+		this.root.isKeyboardNavigating = true;
+		try {
+			this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
+		} finally {
+			this.root.isKeyboardNavigating = false;
+		}
 	}
 
 	readonly snippetProps = $derived.by(() => ({ checked: this.#isChecked }));

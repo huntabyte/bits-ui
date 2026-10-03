@@ -28,6 +28,26 @@ function setup(props: Partial<TabsTestProps> = {}) {
 }
 
 describe("Tabs", () => {
+	it.each(["text", "text-button"] as const)(
+		"should tab to the panel when its first content is not focusable (%s)",
+		async (contentLayout) => {
+			setup({ contentLayout });
+			await page.getByTestId("trigger-1").click();
+			await userEvent.tab();
+			await expect.element(page.getByTestId("content-1")).toHaveFocus();
+		}
+	);
+
+	it("should allow skipping the panel when its first content is focusable", async () => {
+		setup({ contentLayout: "button", contentTabindex: -1 });
+		await page.getByTestId("trigger-1").click();
+		await expect.element(page.getByTestId("content-1")).toHaveAttribute("tabindex", "-1");
+		await userEvent.tab();
+		await expect.element(page.getByTestId("content-button-1")).toHaveFocus();
+		await userEvent.tab({ shift: true });
+		await expect.element(page.getByTestId("trigger-1")).toHaveFocus();
+	});
+
 	it("should have bits data attrs", async () => {
 		render(TabsTest, {
 			items: [items[0] as Item],

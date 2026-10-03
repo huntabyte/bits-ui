@@ -6,6 +6,7 @@ import {
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
+	executeCallbacks,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
@@ -400,6 +401,11 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	readonly opts: SelectMultipleRootStateOpts;
 	readonly isMulti = true as const;
 	readonly hasValue = $derived.by(() => this.opts.value.current.length > 0);
+	/**
+	 * `includesItem` is called once per mounted item whenever the value changes, so we keep a
+	 * set around to avoid a linear scan of `value` per item.
+	 */
+	readonly #valueSet = $derived.by(() => new Set(this.opts.value.current));
 
 	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
@@ -429,7 +435,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	}
 
 	includesItem(itemValue: string) {
-		return this.opts.value.current.includes(itemValue);
+		return this.#valueSet.has(itemValue);
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
@@ -718,7 +724,10 @@ export class SelectInputState {
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.opts.inputValue.current = e.currentTarget.value;
-		this.root.setHighlightedToFirstCandidate();
+		afterTick(() => {
+			if (!this.root.opts.open.current) return;
+			this.root.setHighlightedToFirstCandidate();
+		});
 	}
 
 	readonly props = $derived.by(
@@ -756,16 +765,22 @@ export class SelectComboTriggerState {
 		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+	}
+
+	#focusInputAndToggle() {
+		if (!this.root.domContext) return;
+		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
+			this.root.inputNode?.focus();
+		}
+		this.root.toggleMenu();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!this.root.domContext) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-				this.root.inputNode?.focus();
-			}
-			this.root.toggleMenu();
+			this.#focusInputAndToggle();
 		}
 	}
 
@@ -776,10 +791,16 @@ export class SelectComboTriggerState {
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current || !this.root.domContext) return;
 		e.preventDefault();
-		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-			this.root.inputNode?.focus();
-		}
-		this.root.toggleMenu();
+		// prevent opening on touch down which can be triggered when scrolling on touch devices
+		if (e.pointerType === "touch") return;
+		this.#focusInputAndToggle();
+	}
+
+	onpointerup(e: BitsPointerEvent) {
+		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (e.pointerType !== "touch") return;
+		e.preventDefault();
+		this.#focusInputAndToggle();
 	}
 
 	readonly props = $derived.by(
@@ -792,6 +813,7 @@ export class SelectComboTriggerState {
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
@@ -1074,6 +1096,9 @@ export class SelectContentState {
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
+	// set when the user scrolls the viewport by hand (wheel, touch, or holding a
+	// scroll button) and reset on close; shared by both scroll buttons
+	userHasScrolled = false;
 	domContext: DOMContext;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
@@ -1098,6 +1123,7 @@ export class SelectContentState {
 				if (this.root.opts.open.current) return;
 				this.root.contentIsPositioned = false;
 				this.isPositioned = false;
+				this.userHasScrolled = false;
 			}
 		);
 
@@ -1207,6 +1233,15 @@ export class SelectItemState {
 	readonly isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
+	);
+	/**
+	 * Kept as a separate boolean derived so that `props` (and the `mergeProps` /
+	 * attribute-diffing work downstream of it) is only invalidated for the two items whose
+	 * highlighted state actually changed, rather than for every mounted item each time the
+	 * highlighted value moves.
+	 */
+	readonly #isHighlightedAndEnabled = $derived.by(
+		() => this.isHighlighted && !this.opts.disabled.current
 	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
@@ -1342,17 +1377,11 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.opts.value.current)
-					? "true"
-					: undefined,
+				"aria-selected": this.isSelected ? "true" : undefined,
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
-				"data-highlighted":
-					this.root.highlightedValue === this.opts.value.current &&
-					!this.opts.disabled.current
-						? ""
-						: undefined,
-				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
+				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
 				onpointermove: this.onpointermove,
@@ -1523,11 +1552,8 @@ export class SelectScrollButtonImplState {
 		this.attachment = attachRef(opts.ref);
 
 		watch([() => this.mounted], () => {
-			if (!this.mounted) {
-				this.isUserScrolling = false;
-				return;
-			}
-			if (this.isUserScrolling) return;
+			if (this.mounted) return;
+			this.isUserScrolling = false;
 		});
 
 		$effect(() => {
@@ -1556,6 +1582,7 @@ export class SelectScrollButtonImplState {
 
 	onpointerdown(_: BitsPointerEvent) {
 		if (this.autoScrollTimer !== null) return;
+		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
 			this.autoScrollTimer = this.content.domContext.setTimeout(
@@ -1612,10 +1639,21 @@ export class SelectScrollDownButtonState {
 		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
 		watch([() => this.root.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.root.viewportNode || !this.content.isPositioned) return;
+			const viewport = this.root.viewportNode;
+			if (!viewport || !this.content.isPositioned) return;
 			this.handleScroll(true);
 
-			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
+			const onUserScroll = () => {
+				this.content.userHasScrolled = true;
+			};
+
+			// not `scroll`: the realign below scrolls the viewport itself, so `scroll`
+			// fires for our own writes and cannot tell the user's gesture from ours
+			return executeCallbacks(
+				on(viewport, "scroll", () => this.handleScroll()),
+				on(viewport, "wheel", onUserScroll, { passive: true }),
+				on(viewport, "touchmove", onUserScroll, { passive: true })
+			);
 		});
 
 		/**
@@ -1642,6 +1680,9 @@ export class SelectScrollDownButtonState {
 					clearTimeout(this.scrollIntoViewTimer);
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
+					// this button remounts whenever the viewport leaves the bottom, which
+					// would otherwise realign onto the highlighted item mid-gesture
+					if (this.content.userHasScrolled) return;
 					const activeItem = this.root.highlightedNode;
 					if (!activeItem) return;
 					this.root.scrollHighlightedNodeIntoView(activeItem);

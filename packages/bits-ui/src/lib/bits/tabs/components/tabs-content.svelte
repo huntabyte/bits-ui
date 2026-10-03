@@ -12,11 +12,13 @@
 		id = createId(uid),
 		ref = $bindable(null),
 		value,
+		tabindex = 0,
 		...restProps
 	}: TabsContentProps = $props();
 
 	const contentState = TabsContentState.create({
 		value: boxWith(() => value),
+		tabindex: boxWith(() => tabindex ?? 0),
 		id: boxWith(() => id),
 		ref: boxWith(
 			() => ref,
