@@ -124,7 +124,14 @@ export class DismissibleLayerState {
 			// It can resume bubbling after a nested early outside click has been captured.
 			if (event.cancelBubble || event !== this.#capturedPointerDown) return;
 			this.#markNonInterceptedEvent(event);
-			this.#handleInteractOutside(event);
+			if (event.pointerType === "touch") {
+				// a tap's click can follow its pointerdown within a millisecond (WebKit), so
+				// arm the click listener now rather than after the debounce flushes
+				this.#handleInteractOutside.destroy();
+				this.#interactOutside(event);
+			} else {
+				this.#handleInteractOutside(event);
+			}
 		};
 
 		// `svelte/events.on` defers pointer listener attachment to a microtask, leaving
@@ -149,7 +156,7 @@ export class DismissibleLayerState {
 		this.#interactOutsideProp.current(e as PointerEvent);
 	};
 
-	#handleInteractOutside = debounce((e: PointerEvent) => {
+	#interactOutside = (e: PointerEvent) => {
 		if (!this.opts.ref.current) {
 			this.#unsubClickListener();
 			return;
@@ -208,7 +215,9 @@ export class DismissibleLayerState {
 		} else {
 			this.#interactOutsideProp.current(event);
 		}
-	}, 10);
+	};
+
+	#handleInteractOutside = debounce(this.#interactOutside, 10);
 
 	#markInterceptedEvent = (e: PointerEvent) => {
 		this.#interceptedEvents[e.type] = true;
