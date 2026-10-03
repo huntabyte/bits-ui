@@ -753,6 +753,23 @@ describe("Scroll Lock", () => {
 		// with scrollbar-gutter: stable, no padding compensation should be added
 		expect(document.body.style.paddingRight).toBe(initialPadding);
 	});
+
+	it("should restore a single inline overflow axis on body after closing", async () => {
+		document.body.style.overflowY = "scroll";
+		try {
+			await open();
+			expect(document.body.style.overflowY).toBe("hidden");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("content"));
+
+			await expect.poll(() => document.body.style.overflowY).toBe("scroll");
+			expect(document.body.style.overflowX).toBe("");
+			expect(document.body.style.pointerEvents).toBe("");
+		} finally {
+			document.body.removeAttribute("style");
+		}
+	});
 });
 
 /**

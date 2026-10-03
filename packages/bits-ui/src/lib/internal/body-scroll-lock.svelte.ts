@@ -24,7 +24,11 @@ const lockMap = new SvelteMap<string, boolean>();
 const MANAGED_PROPERTIES = [
 	"padding-right",
 	"margin-right",
+	// the shorthand reads "" when only one axis is set inline, so its longhands are snapshotted
+	// too and restored after it (keep this order)
 	"overflow",
+	"overflow-x",
+	"overflow-y",
 	"pointer-events",
 	"--scrollbar-width",
 ] as const;
@@ -46,6 +50,10 @@ let isInCleanupTransition = false;
 function setManagedProperty(style: CSSStyleDeclaration, property: ManagedProperty, value: string) {
 	style.setProperty(property, value);
 	modifiedProperties.add(property);
+	if (property === "overflow") {
+		modifiedProperties.add("overflow-x");
+		modifiedProperties.add("overflow-y");
+	}
 }
 
 const anyLocked = boxWith(() => {
@@ -67,20 +75,20 @@ let cleanupScheduledAt: number | null = null;
 const bodyLockStackCount = new SharedState(() => {
 	function resetBodyStyle(documentObj: Document) {
 		if (!BROWSER) return;
-		if (initialProperties) {
-			for (const prop of modifiedProperties) {
-				const initial = initialProperties.get(prop);
-				if (initial?.value) {
-					documentObj.body.style.setProperty(prop, initial.value, initial.priority);
-				} else {
-					documentObj.body.style.removeProperty(prop);
-				}
+		// without a snapshot, still remove what we set so the body is never left locked
+		for (const prop of MANAGED_PROPERTIES) {
+			if (!modifiedProperties.has(prop)) continue;
+			const initial = initialProperties?.get(prop);
+			if (initial?.value) {
+				documentObj.body.style.setProperty(prop, initial.value, initial.priority);
+			} else {
+				documentObj.body.style.removeProperty(prop);
 			}
-			if (!hadInitialStyleAttribute && documentObj.body.style.length === 0) {
-				documentObj.body.removeAttribute("style");
-			}
-			initialProperties = null;
 		}
+		if (!hadInitialStyleAttribute && documentObj.body.style.length === 0) {
+			documentObj.body.removeAttribute("style");
+		}
+		initialProperties = null;
 		modifiedProperties.clear();
 		isIOS && stopTouchMoveListener?.();
 	}
