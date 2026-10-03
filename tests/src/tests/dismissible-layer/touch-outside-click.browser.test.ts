@@ -2,6 +2,7 @@ import { page } from "@vitest/browser/context";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import TouchOutsideStopPropagationTest from "./touch-outside-stop-propagation-test.svelte";
+import PopoverSiblingsTest from "../popover/popover-siblings-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 
 function dispatch(target: Element, type: "pointerdown" | "pointerup" | "click") {
@@ -46,5 +47,21 @@ describe("dismissible layer - touch outside click", () => {
 		// the capture-phase backup runs as a task; it must not dismiss a second time
 		await new Promise((resolve) => setTimeout(resolve, 20));
 		expect(onInteractOutside).toHaveBeenCalledTimes(1);
+	});
+
+	it("dismisses when a tap's click lands right after its pointerdown", async () => {
+		render(PopoverSiblingsTest);
+		await page.getByTestId("open-1").click();
+		await expectExists(page.getByTestId("content-1"));
+		await waitForDismissibleLayer(page.getByTestId("content-1"));
+		const sibling = page.getByTestId("open-2").element();
+
+		// WebKit can fire the whole tap within ~1ms, well before any debounce flushes
+		dispatch(sibling, "pointerdown");
+		dispatch(sibling, "pointerup");
+		dispatch(sibling, "click");
+
+		await expectNotExists(page.getByTestId("content-1"));
+		await expectExists(page.getByTestId("content-2"));
 	});
 });
