@@ -391,6 +391,18 @@ describe("select - single", () => {
 		await expectExists(page.getByTestId("1-indicator"));
 	});
 
+	it("should expose `aria-selected` on all items", async () => {
+		const t = await openSingle();
+		const items = getItems(page.getByTestId);
+		// the select's value defaults to "", so the empty-value item is selected
+		await expectSelected(items[0]);
+		await expectNotSelected(items.slice(1));
+		await items[1].click();
+		await t.trigger.click();
+		await expectNotSelected([items[0], ...items.slice(2)]);
+		await expectSelected(items[1]);
+	});
+
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		await openSingle({}, kbd.ARROW_DOWN);
 
@@ -1304,11 +1316,11 @@ async function expectNotSelected(node: MaybeArray<ReturnType<typeof page.getByTe
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			await expect.element(n).not.toHaveAttribute("data-selected");
-			await expect.element(n).not.toHaveAttribute("aria-selected");
+			await expect.element(n).toHaveAttribute("aria-selected", "false");
 		}
 	} else {
 		await expect.element(node).not.toHaveAttribute("data-selected");
-		await expect.element(node).not.toHaveAttribute("aria-selected");
+		await expect.element(node).toHaveAttribute("aria-selected", "false");
 	}
 }
 
