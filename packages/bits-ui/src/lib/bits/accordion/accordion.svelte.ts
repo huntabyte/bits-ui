@@ -103,6 +103,7 @@ abstract class AccordionBaseState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: accordionAttrs.trigger,
+			rootAttr: accordionAttrs.root,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});
