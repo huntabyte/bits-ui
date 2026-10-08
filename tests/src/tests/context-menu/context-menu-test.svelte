@@ -13,6 +13,7 @@
 		checkboxGroupProps?: Omit<ContextMenu.CheckboxGroupProps, "children" | "child" | "value">;
 		triggerProps?: Omit<ContextMenu.TriggerProps, "children" | "child">;
 		openFocusOverride?: boolean;
+		subContentProps?: Omit<ContextMenu.SubContentProps, "children" | "child">;
 	};
 </script>
 
@@ -30,6 +31,7 @@
 		checkboxGroupProps = {},
 		openFocusOverride = false,
 		triggerProps = {},
+		subContentProps = {},
 		...restProps
 	}: ContextMenuTestProps = $props();
 </script>
@@ -63,7 +65,7 @@
 						<ContextMenu.SubTrigger data-testid="sub-trigger" {...subTriggerProps}>
 							<span>subtrigger</span>
 						</ContextMenu.SubTrigger>
-						<ContextMenu.SubContent data-testid="sub-content">
+						<ContextMenu.SubContent data-testid="sub-content" {...subContentProps}>
 							<ContextMenu.Item data-testid="sub-item">
 								<span>Email</span>
 							</ContextMenu.Item>
