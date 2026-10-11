@@ -208,6 +208,16 @@ describe("Input Behavior", () => {
 		await expect.element(t.input).toBeInTheDocument();
 	});
 
+	it("should disable browser autocomplete on the input by default", async () => {
+		const t = setup({ name: "radio-group" });
+		await expect.element(t.input).toHaveAttribute("autocomplete", "off");
+	});
+
+	it("should forward the `autocomplete` prop to the input", async () => {
+		const t = setup({ name: "radio-group", autocomplete: "one-time-code" });
+		await expect.element(t.input).toHaveAttribute("autocomplete", "one-time-code");
+	});
+
 	it("should sync the input's value with the radio group value", async () => {
 		const t = setup({ name: "radio-group" });
 
