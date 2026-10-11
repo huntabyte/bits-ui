@@ -760,6 +760,38 @@ describe("select - single", () => {
 		expect(selectedRect.top).toBeGreaterThanOrEqual(viewportRect.top);
 		expect(selectedRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
 	});
+
+	it.each([
+		{ button: "scroll-down-button", value: "" },
+		{ button: "scroll-up-button", value: "50" },
+	])(
+		"should stop auto scrolling when closed while hovering the $button",
+		async ({ button, value }) => {
+			render(SelectScrollButtonsTest, { value });
+
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await sleep(100);
+
+			// hover the button until the list starts auto scrolling, then close without
+			// the pointer ever leaving it
+			page.getByTestId(button)
+				.element()
+				.dispatchEvent(new PointerEvent("pointermove", { bubbles: true }));
+			await sleep(120);
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("content"));
+
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await sleep(100);
+
+			const viewport = page.getByTestId("viewport").element() as HTMLElement;
+			const scrollTop = viewport.scrollTop;
+			await sleep(300);
+			expect(viewport.scrollTop).toBe(scrollTop);
+		}
+	);
 });
 
 ////////////////////////////////////
