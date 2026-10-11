@@ -13,6 +13,7 @@ import {
 	boolToEmptyStrOrUndef,
 	boolToStr,
 } from "$lib/internal/attrs.js";
+import type { HTMLInputAttributes } from "svelte/elements";
 import type { Orientation } from "$lib/shared/index.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
@@ -33,6 +34,7 @@ interface RadioGroupRootStateOpts
 			orientation: Orientation;
 			name: string | undefined;
 			readonly: boolean;
+			autocomplete: HTMLInputAttributes["autocomplete"];
 		}>,
 		WritableBoxedValues<{ value: string }> {}
 export class RadioGroupRootState {
@@ -218,6 +220,7 @@ export class RadioGroupInputState {
 				value: this.root.opts.value.current,
 				required: this.root.opts.required.current,
 				disabled: this.root.opts.disabled.current,
+				autocomplete: this.root.opts.autocomplete.current,
 				onfocus: this.onfocus,
 			}) as const
 	);
