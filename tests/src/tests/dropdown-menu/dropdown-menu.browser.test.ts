@@ -17,6 +17,7 @@ import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import DropdownMenuInitiallyOpenTest from "./dropdown-menu-initially-open-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 import DropdownMenuScrollPaddingTest from "./dropdown-menu-scroll-padding-test.svelte";
+import DropdownMenuTooltipTriggerTest from "./dropdown-menu-tooltip-trigger-test.svelte";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -260,6 +261,20 @@ it("should not let delayed autofocus override focus already inside its scope", a
 	} finally {
 		autoFocus.restore();
 	}
+});
+
+it("should focus the content when opened with the keyboard while the trigger's tooltip is open", async () => {
+	const t = render(DropdownMenuTooltipTriggerTest);
+	onTestFinished(() => t.unmount());
+	await page.getByTestId("outside").click();
+
+	const trigger = page.getByTestId("trigger");
+	(trigger.element() as HTMLElement).focus();
+	await expectExists(page.getByTestId("tooltip-content"));
+	trigger.element().dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("item")).toHaveFocus();
 });
 
 it("should keep submenu open while pointer is moving toward it", async () => {
