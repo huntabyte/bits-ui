@@ -239,6 +239,7 @@ export class CheckboxRootState {
 				id: this.opts.id.current,
 				role: "checkbox",
 				type: this.opts.type.current,
+				form: this.opts.type.current === "submit" ? this.opts.form.current : undefined,
 				disabled: this.trueDisabled,
 				"aria-checked": getAriaChecked(
 					this.opts.checked.current,
