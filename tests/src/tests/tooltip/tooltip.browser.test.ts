@@ -18,6 +18,7 @@ import TooltipSingletonForceMountTest, {
 import TooltipSingletonEdgeTest from "./tooltip-singleton-edge-test.svelte";
 import TooltipSafePolygonIntermediateTargetTest from "./tooltip-safe-polygon-intermediate-target-test.svelte";
 import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
+import TooltipScrollContainerTest from "./tooltip-scroll-container-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -827,4 +828,17 @@ it("should cancel a pending delayed open when the trigger is right clicked", asy
 	dispatchPointerDown(el, 2);
 	await new Promise<void>((resolve) => setTimeout(resolve, 500));
 	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should hide the content when the trigger is scrolled out of a nested scroll container and `hideWhenDetached` is true", async () => {
+	render(TooltipScrollContainerTest);
+	const trigger = page.getByTestId("trigger");
+	(trigger.element() as HTMLElement).focus();
+	const content = page.getByTestId("content");
+	await expect.element(content).toBeVisible();
+
+	const scroller = page.getByTestId("scroller").element() as HTMLElement;
+	scroller.scrollTop = 200;
+
+	await expect.element(content).not.toBeVisible();
 });
