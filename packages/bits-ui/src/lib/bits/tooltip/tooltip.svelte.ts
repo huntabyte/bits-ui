@@ -170,19 +170,25 @@ export class TooltipProviderState {
 		}, this.opts.skipDelayDuration.current);
 
 		onMountEffect(() =>
-			on(window, "scroll", (e) => {
-				const activeTooltip = this.#openTooltip;
-				if (!activeTooltip) return;
-				const triggerNode = activeTooltip.triggerNode;
-				if (!triggerNode) return;
+			on(
+				window,
+				"scroll",
+				(e) => {
+					const activeTooltip = this.#openTooltip;
+					if (!activeTooltip) return;
+					const triggerNode = activeTooltip.triggerNode;
+					if (!triggerNode) return;
 
-				const target = e.target;
-				if (!(target instanceof Element || target instanceof Document)) return;
+					const target = e.target;
+					if (!(target instanceof Element || target instanceof Document)) return;
 
-				if (target.contains(triggerNode)) {
-					activeTooltip.handleClose();
-				}
-			})
+					if (target.contains(triggerNode)) {
+						activeTooltip.handleClose();
+					}
+				},
+				// An element's scroll does not bubble, so only the capture phase sees it.
+				{ capture: true, passive: true }
+			)
 		);
 	}
 
