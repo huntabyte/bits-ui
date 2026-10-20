@@ -24,6 +24,7 @@ import {
 } from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
+import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -1331,3 +1332,98 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 		await expect.element(node).not.toHaveAttribute("data-highlighted");
 	}
 }
+
+describe("select - activation without a pointer press", () => {
+	it("should toggle the trigger on a click that no pointer press preceded", async () => {
+		const t = setupSingle();
+		(t.trigger.element() as HTMLElement).click();
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.trigger).toHaveFocus();
+		(t.trigger.element() as HTMLElement).click();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("false");
+	});
+
+	it("should open on the event sequence of a WebKit accessibility press", async () => {
+		const t = setupSingle();
+		const trigger = t.trigger.element() as HTMLElement;
+		// focus, mousedown, mouseup and a zero-`detail` click, with no pointer events
+		trigger.focus();
+		for (const type of ["mousedown", "mouseup", "click"]) {
+			trigger.dispatchEvent(
+				new MouseEvent(type, { bubbles: true, cancelable: true, detail: 0 })
+			);
+		}
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+	});
+
+	it("should not toggle again on the click that ends a mouse press", async () => {
+		const onOpenChange = vi.fn();
+		const t = setupSingle({ onOpenChange });
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		expect(onOpenChange).toHaveBeenCalledTimes(1);
+	});
+
+	it("should not toggle again on the click that ends a tap", async () => {
+		const onOpenChange = vi.fn();
+		const t = setupSingle({ onOpenChange });
+		const trigger = t.trigger.element();
+		for (const type of ["pointerdown", "pointerup"] as const) {
+			trigger.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "touch",
+					isPrimary: true,
+					button: 0,
+					buttons: type === "pointerdown" ? 1 : 0,
+				})
+			);
+		}
+		// a touch click can arrive in a later task than the `pointerup` (Chromium on Android)
+		await new Promise((resolve) => setTimeout(resolve));
+		trigger.dispatchEvent(
+			new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 })
+		);
+		await expectExists(t.getContent());
+		expect(onOpenChange).toHaveBeenCalledTimes(1);
+	});
+
+	it.each([kbd.ENTER, kbd.SPACE])(
+		"should toggle once when %s is pressed on the trigger",
+		async (key) => {
+			const onOpenChange = vi.fn();
+			const t = setupSingle({ onOpenChange });
+			(t.trigger.element() as HTMLElement).focus();
+			await userEvent.keyboard(key);
+			await expectExists(t.getContent());
+			expect(onOpenChange).toHaveBeenCalledTimes(1);
+		}
+	);
+
+	it("should stay open when a space is typed during typeahead", async () => {
+		const t = setupSingle({}, [
+			{ value: "1", label: "Apple pie" },
+			{ value: "2", label: "Apple tart" },
+		]);
+		(t.trigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ENTER);
+		await expectExists(t.getContent());
+		await userEvent.keyboard("Apple t");
+		await expectHighlighted(page.getByTestId("2"));
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+	});
+
+	it("should not toggle on a click without a pointer press when disabled", async () => {
+		const onOpenChange = vi.fn();
+		// a `div` trigger, which unlike a disabled `<button>` still receives the click
+		render(SelectChildTriggerTest, { onOpenChange, disabled: true });
+		(page.getByTestId("trigger").element() as HTMLElement).click();
+		await expectNotExists(page.getByTestId("content"));
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+});
