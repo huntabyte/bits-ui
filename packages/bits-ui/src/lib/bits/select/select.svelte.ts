@@ -966,9 +966,10 @@ export class SelectTriggerState {
 
 		if (!isModifierKey && (isCharacterKey || isSpaceKey)) {
 			const matchedNode = this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
-			if (!matchedNode && isSpaceKey) {
+			if (isSpaceKey) {
+				// prevent the button's activation `click`, which `onclick` would toggle
 				e.preventDefault();
-				this.#handleKeyboardSelection();
+				if (!matchedNode) this.#handleKeyboardSelection();
 			}
 			return;
 		}
@@ -986,6 +987,17 @@ export class SelectTriggerState {
 		// this only runs for a label 'click'
 		const currTarget = e.currentTarget as HTMLElement;
 		currTarget.focus();
+
+		// Screen readers can activate the trigger with a `click` that no pointer events
+		// precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+		// and was already handled by `onpointerdown` / `onpointerup`.
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		if (this.root.opts.open.current) {
+			this.root.handleClose();
+		} else {
+			this.#handleOpen();
+		}
+		e.preventDefault();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
