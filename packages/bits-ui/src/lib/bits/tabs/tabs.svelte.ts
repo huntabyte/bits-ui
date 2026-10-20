@@ -226,6 +226,7 @@ interface TabsContentStateOpts
 	extends WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
+			tabindex: number;
 		}> {}
 
 export class TabsContentState {
@@ -257,7 +258,7 @@ export class TabsContentState {
 				id: this.opts.id.current,
 				role: "tabpanel",
 				hidden: boolToTrueOrUndef(!this.#isActive),
-				tabindex: 0,
+				tabindex: this.opts.tabindex.current,
 				"data-value": this.opts.value.current,
 				"data-state": getTabDataState(this.#isActive),
 				"aria-labelledby": this.#ariaLabelledBy,

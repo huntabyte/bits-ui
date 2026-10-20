@@ -16,6 +16,7 @@
 		disabled = false,
 		required = false,
 		name = undefined,
+		form = undefined,
 		value = "on",
 		id = createId(uid),
 		indeterminate = $bindable(false),
@@ -61,6 +62,7 @@
 			disabled: boxWith(() => disabled ?? false),
 			required: boxWith(() => required),
 			name: boxWith(() => name),
+			form: boxWith(() => form),
 			value: boxWith(() => value),
 			id: boxWith(() => id),
 			ref: boxWith(

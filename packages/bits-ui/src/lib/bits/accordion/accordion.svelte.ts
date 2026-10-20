@@ -2,6 +2,7 @@ import {
 	afterTick,
 	attachRef,
 	boxWith,
+	onDestroyEffect,
 	type Box,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
@@ -25,6 +26,10 @@ import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { on } from "svelte/events";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import {
+	MountAnimationGuard,
+	measureWithoutAnimation,
+} from "$lib/internal/mount-animation.svelte.js";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
@@ -292,9 +297,16 @@ export class AccordionContentState {
 	readonly item: AccordionItemState;
 	readonly attachment: RefAttachment;
 
-	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
-	#isMountAnimationPrevented = false;
+	#mountAnimationGuard: MountAnimationGuard;
 	#dimensions = $state({ width: 0, height: 0 });
+	/**
+	 * Set once the content is torn down. Work deferred before teardown can still
+	 * run afterwards, so it must short-circuit on this before touching
+	 * `this.opts.ref.current` or `this.item` — reading a destroyed `$derived`
+	 * triggers Svelte's `derived_inert` warning.
+	 */
+	#destroyed = false;
+	#beforeMatchFrame: number | null = null;
 
 	readonly open = $derived.by(() => {
 		if (this.opts.hiddenUntilFound.current) return this.item.isActive;
@@ -304,15 +316,8 @@ export class AccordionContentState {
 	constructor(opts: AccordionContentStateOpts, item: AccordionItemState) {
 		this.opts = opts;
 		this.item = item;
-		this.#isMountAnimationPrevented = this.item.isActive;
+		this.#mountAnimationGuard = new MountAnimationGuard(() => this.item.isActive);
 		this.attachment = attachRef(this.opts.ref, (v) => (this.item.contentNode = v));
-		// Prevent mount animations on initial render
-		$effect(() => {
-			const rAF = requestAnimationFrame(() => {
-				this.#isMountAnimationPrevented = false;
-			});
-			return () => cancelAnimationFrame(rAF);
-		});
 
 		watch.pre(
 			[() => this.opts.ref.current, () => this.opts.hiddenUntilFound.current],
@@ -324,17 +329,39 @@ export class AccordionContentState {
 					// we need to defer opening until after browser completes search highlighting
 					// otherwise the browser will immediately open the accordion
 					// and the search highlighting will not be visible
-					requestAnimationFrame(() => {
+					if (this.#beforeMatchFrame !== null) {
+						cancelAnimationFrame(this.#beforeMatchFrame);
+					}
+					this.#beforeMatchFrame = requestAnimationFrame(() => {
+						this.#beforeMatchFrame = null;
+						if (this.#destroyed) return;
 						this.item.updateValue();
 					});
 				};
 
-				return on(node, "beforematch", handleBeforeMatch);
+				const unsubBeforeMatch = on(node, "beforematch", handleBeforeMatch);
+				return () => {
+					// Removing the listener does not cancel a frame already scheduled
+					// by it, which would then read `this.item` after teardown.
+					if (this.#beforeMatchFrame !== null) {
+						cancelAnimationFrame(this.#beforeMatchFrame);
+						this.#beforeMatchFrame = null;
+					}
+					unsubBeforeMatch();
+				};
 			}
 		);
 
 		// Handle dimension updates
 		watch([() => this.open, () => this.opts.ref.current], this.#updateDimensions);
+
+		onDestroyEffect(() => {
+			this.#destroyed = true;
+			if (this.#beforeMatchFrame !== null) {
+				cancelAnimationFrame(this.#beforeMatchFrame);
+				this.#beforeMatchFrame = null;
+			}
+		});
 	}
 
 	static create(props: AccordionContentStateOpts): AccordionContentState {
@@ -345,27 +372,14 @@ export class AccordionContentState {
 		if (!node) return;
 
 		afterTick(() => {
+			// The content can be destroyed between the watch firing and this tick.
+			// `#destroyed` must short-circuit before any `this.opts.ref.current` read.
+			if (this.#destroyed) return;
 			const element = this.opts.ref.current;
 			if (!element) return;
 
-			// store original styles on first run
-			this.#originalStyles ??= {
-				transitionDuration: element.style.transitionDuration,
-				animationName: element.style.animationName,
-			};
-
-			// temporarily disable animations for measurement
-			element.style.transitionDuration = "0s";
-			element.style.animationName = "none";
-
-			const rect = element.getBoundingClientRect();
+			const rect = measureWithoutAnimation(element);
 			this.#dimensions = { width: rect.width, height: rect.height };
-
-			// restore animations if not initial mount
-			if (!this.#isMountAnimationPrevented && this.#originalStyles) {
-				element.style.transitionDuration = this.#originalStyles.transitionDuration;
-				element.style.animationName = this.#originalStyles.animationName;
-			}
 		});
 	};
 
@@ -387,6 +401,7 @@ export class AccordionContentState {
 				style: {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
 					"--bits-accordion-content-width": `${this.#dimensions.width}px`,
+					...this.#mountAnimationGuard.style,
 				},
 				hidden:
 					this.opts.hiddenUntilFound.current && !this.item.isActive

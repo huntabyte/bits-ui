@@ -39,7 +39,7 @@ Here's an example of how you might create a reusable `MySlider` component.
 ```svelte title="MyMultiSlider.svelte"
 <script lang="ts">
   import type { ComponentProps } from "svelte";
-  import { Slider } from "bits-ui";
+  import { Slider, type WithoutChildren } from "bits-ui";
 
   type Props = WithoutChildren<ComponentProps<typeof Slider.Root>>;
 

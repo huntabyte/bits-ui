@@ -394,7 +394,7 @@ This is ideal for toolbars, nav items, or any group of controls where the user's
 
 ## Close on Trigger Click
 
-By default, the tooltip will close when the user clicks the trigger. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true`.
+By default, the tooltip will close when the user presses the trigger with any pointer button, including right and middle click. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true`.
 
 ```svelte /disableCloseOnTriggerClick/
 <Tooltip.Root disableCloseOnTriggerClick>

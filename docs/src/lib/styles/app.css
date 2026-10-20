@@ -16,6 +16,8 @@
 }
 
 :root {
+	--header-height: 71px;
+
 	/* Colors */
 	--background: hsl(0 0% 100%);
 	--background-alt: hsl(0 0% 100%);

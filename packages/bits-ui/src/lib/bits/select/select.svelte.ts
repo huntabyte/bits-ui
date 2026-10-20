@@ -1,3 +1,4 @@
+import { SvelteMap } from "svelte/reactivity";
 import { Context, Previous, watch } from "runed";
 import {
 	afterSleep,
@@ -5,6 +6,7 @@ import {
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
+	executeCallbacks,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
@@ -103,6 +105,11 @@ abstract class SelectBaseRootState {
 	triggerNode = $state<HTMLElement | null>(null);
 	valueNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
+	/**
+	 * Labels for selected values, populated when items are toggled or resolved from
+	 * mounted item nodes. Used so `<Select.Value>` keeps labels after the menu closes.
+	 */
+	readonly selectedLabelsByValue = new SvelteMap<string, string>();
 	highlightedNode = $state<HTMLElement | null>(null);
 	readonly highlightedValue = $derived.by(() => {
 		if (!this.highlightedNode) return null;
@@ -194,20 +201,32 @@ abstract class SelectBaseRootState {
 	}
 
 	/**
-	 * Resolves the display label for a value: `items` entry when present, otherwise the
-	 * mounted item's `data-label` or its text content.
+	 * Resolves the display label for a value: a non-empty `items` entry, otherwise the
+	 * label cached from the selected item. Never reads the DOM, so it stays reactive and
+	 * works the same whether items are mounted, unmounted, or force-mounted.
 	 */
 	getLabelForValue(value: string): string {
 		if (value === "") return "";
 		const fromItems = this.opts.items.current.find((item) => item.value === value)?.label;
-		if (fromItems !== undefined) return fromItems;
-		const node = this.getNodeByValue(value);
-		if (node) {
-			const dataLabel = node.getAttribute("data-label");
-			if (dataLabel !== null && dataLabel !== "") return dataLabel;
-			return node.textContent?.trim() ?? value;
+		if (fromItems?.trim()) return fromItems;
+		return this.selectedLabelsByValue.get(value) ?? value;
+	}
+
+	/** The item's `label`, falling back to its text content when the label is empty. */
+	resolveItemLabel(value: string, label: string | null | undefined, node: HTMLElement | null) {
+		if (label?.trim()) return label;
+		return node?.textContent?.trim() || value;
+	}
+
+	setSelectedLabel(value: string, label: string) {
+		if (value === "" || label === value) this.selectedLabelsByValue.delete(value);
+		else this.selectedLabelsByValue.set(value, label);
+	}
+
+	pruneSelectedLabels(keptValues: string[]) {
+		for (const value of this.selectedLabelsByValue.keys()) {
+			if (!keptValues.includes(value)) this.selectedLabelsByValue.delete(value);
 		}
-		return value;
 	}
 
 	setOpen(open: boolean) {
@@ -282,6 +301,13 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
+
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				this.pruneSelectedLabels(value === "" ? [] : [value]);
+			}
+		);
 	}
 
 	includesItem(itemValue: string) {
@@ -292,6 +318,7 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		const newValue = this.includesItem(itemValue) ? "" : itemValue;
 		this.opts.value.current = newValue;
 		if (newValue !== "") {
+			this.setSelectedLabel(itemValue, itemLabel);
 			this.opts.inputValue.current = itemLabel;
 		}
 	}
@@ -303,14 +330,13 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current !== "") {
-				const node = this.getNodeByValue(this.opts.value.current);
-				if (node) {
-					this.setHighlightedNode(node, true);
-					return;
-				}
+			// "" is a valid value for a select item so we need to look it up too
+			const node = this.getNodeByValue(this.opts.value.current);
+			if (node) {
+				this.setHighlightedNode(node, true);
+				return;
 			}
-			// if no value is set, we want to highlight the first item
+			// if no item matches the value, we want to highlight the first item
 			this.setHighlightedToFirstCandidate(true);
 		});
 	}
@@ -326,6 +352,11 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	readonly opts: SelectMultipleRootStateOpts;
 	readonly isMulti = true as const;
 	readonly hasValue = $derived.by(() => this.opts.value.current.length > 0);
+	/**
+	 * `includesItem` is called once per mounted item whenever the value changes, so we keep a
+	 * set around to avoid a linear scan of `value` per item.
+	 */
+	readonly #valueSet = $derived.by(() => new Set(this.opts.value.current));
 
 	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
@@ -345,10 +376,17 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
+
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				this.pruneSelectedLabels(value);
+			}
+		);
 	}
 
 	includesItem(itemValue: string) {
-		return this.opts.value.current.includes(itemValue);
+		return this.#valueSet.has(itemValue);
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
@@ -356,6 +394,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 			this.opts.value.current = this.opts.value.current.filter((v) => v !== itemValue);
 		} else {
 			this.opts.value.current = [...this.opts.value.current, itemValue];
+			this.setSelectedLabel(itemValue, itemLabel);
 		}
 		this.opts.inputValue.current = itemLabel;
 	}
@@ -368,7 +407,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
+			if (this.opts.value.current.length) {
 				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
 					this.setHighlightedNode(node, true);
@@ -450,6 +489,7 @@ export class SelectValueState {
 				throw new Error(`Expected a string passed to \`setValue\` got ${typeof value}.`);
 			return;
 		}
+		// stale cached labels are pruned by the root's value watcher
 		this.root.opts.value.current = value;
 	}
 
@@ -477,9 +517,7 @@ export class SelectValueState {
 			selection: {
 				type: "single" as const,
 				selected:
-					value !== ""
-						? { value, label: value === "" ? "" : this.root.getLabelForValue(value) }
-						: undefined,
+					value !== "" ? { value, label: this.root.getLabelForValue(value) } : undefined,
 				setValue: this.setValue,
 			},
 			placeholder: this.opts.placeholder.current ?? null,
@@ -581,13 +619,17 @@ export class SelectInputState {
 			}
 
 			if (
-				this.root.highlightedValue &&
+				this.root.highlightedValue !== null &&
 				this.root.highlightedNode &&
 				this.root.highlightedNode.isConnected
 			) {
 				this.root.toggleItem(
 					this.root.highlightedValue,
-					this.root.highlightedLabel ?? undefined
+					this.root.resolveItemLabel(
+						this.root.highlightedValue,
+						this.root.highlightedLabel,
+						this.root.highlightedNode
+					)
 				);
 			}
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
@@ -636,7 +678,10 @@ export class SelectInputState {
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
 		this.root.opts.inputValue.current = e.currentTarget.value;
-		this.root.setHighlightedToFirstCandidate();
+		afterTick(() => {
+			if (!this.root.opts.open.current) return;
+			this.root.setHighlightedToFirstCandidate();
+		});
 	}
 
 	readonly props = $derived.by(
@@ -674,16 +719,22 @@ export class SelectComboTriggerState {
 		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+	}
+
+	#focusInputAndToggle() {
+		if (!this.root.domContext) return;
+		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
+			this.root.inputNode?.focus();
+		}
+		this.root.toggleMenu();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!this.root.domContext) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-				this.root.inputNode?.focus();
-			}
-			this.root.toggleMenu();
+			this.#focusInputAndToggle();
 		}
 	}
 
@@ -694,10 +745,16 @@ export class SelectComboTriggerState {
 	onpointerdown(e: BitsPointerEvent) {
 		if (this.root.opts.disabled.current || !this.root.domContext) return;
 		e.preventDefault();
-		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-			this.root.inputNode?.focus();
-		}
-		this.root.toggleMenu();
+		// prevent opening on touch down which can be triggered when scrolling on touch devices
+		if (e.pointerType === "touch") return;
+		this.#focusInputAndToggle();
+	}
+
+	onpointerup(e: BitsPointerEvent) {
+		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (e.pointerType !== "touch") return;
+		e.preventDefault();
+		this.#focusInputAndToggle();
 	}
 
 	readonly props = $derived.by(
@@ -710,6 +767,7 @@ export class SelectComboTriggerState {
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
@@ -797,7 +855,11 @@ export class SelectTriggerState {
 		if (this.root.highlightedValue !== null) {
 			this.root.toggleItem(
 				this.root.highlightedValue,
-				this.root.highlightedLabel ?? undefined
+				this.root.resolveItemLabel(
+					this.root.highlightedValue,
+					this.root.highlightedLabel,
+					this.root.highlightedNode
+				)
 			);
 		}
 
@@ -903,9 +965,10 @@ export class SelectTriggerState {
 
 		if (!isModifierKey && (isCharacterKey || isSpaceKey)) {
 			const matchedNode = this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
-			if (!matchedNode && isSpaceKey) {
+			if (isSpaceKey) {
+				// prevent the button's activation `click`, which `onclick` would toggle
 				e.preventDefault();
-				this.#handleKeyboardSelection();
+				if (!matchedNode) this.#handleKeyboardSelection();
 			}
 			return;
 		}
@@ -923,6 +986,17 @@ export class SelectTriggerState {
 		// this only runs for a label 'click'
 		const currTarget = e.currentTarget as HTMLElement;
 		currTarget.focus();
+
+		// Screen readers can activate the trigger with a `click` that no pointer events
+		// precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+		// and was already handled by `onpointerdown` / `onpointerup`.
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		if (this.root.opts.open.current) {
+			this.root.handleClose();
+		} else {
+			this.#handleOpen();
+		}
+		e.preventDefault();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
@@ -963,9 +1037,11 @@ export class SelectTriggerState {
 		() =>
 			({
 				id: this.opts.id.current,
+				role: "combobox",
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
 				"aria-expanded": boolToStr(this.root.opts.open.current),
+				"aria-controls": this.root.contentNode?.id || undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
@@ -995,6 +1071,9 @@ export class SelectContentState {
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
+	// set when the user scrolls the viewport by hand (wheel, touch, or holding a
+	// scroll button) and reset on close; shared by both scroll buttons
+	userHasScrolled = false;
 	domContext: DOMContext;
 
 	constructor(opts: SelectContentStateOpts, root: SelectRoot) {
@@ -1019,6 +1098,7 @@ export class SelectContentState {
 				if (this.root.opts.open.current) return;
 				this.root.contentIsPositioned = false;
 				this.isPositioned = false;
+				this.userHasScrolled = false;
 			}
 		);
 
@@ -1129,6 +1209,15 @@ export class SelectItemState {
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
 	);
+	/**
+	 * Kept as a separate boolean derived so that `props` (and the `mergeProps` /
+	 * attribute-diffing work downstream of it) is only invalidated for the two items whose
+	 * highlighted state actually changed, rather than for every mounted item each time the
+	 * highlighted value moves.
+	 */
+	readonly #isHighlightedAndEnabled = $derived.by(
+		() => this.isHighlighted && !this.opts.disabled.current
+	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
 
@@ -1153,9 +1242,31 @@ export class SelectItemState {
 			}
 		);
 
+		// keep the cached label in sync while this item is selected and mounted
+		watch(
+			[
+				() => this.isSelected,
+				() => this.mounted,
+				() => this.opts.value.current,
+				() => this.opts.label.current,
+			],
+			([selected, mounted, value]) => {
+				if (!selected || !mounted) return;
+				this.root.setSelectedLabel(value, this.#resolveLabel());
+			}
+		);
+
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
+	}
+
+	#resolveLabel() {
+		return this.root.resolveItemLabel(
+			this.opts.value.current,
+			this.opts.label.current,
+			this.opts.ref.current
+		);
 	}
 
 	handleSelect() {
@@ -1170,7 +1281,7 @@ export class SelectItemState {
 		}
 
 		// otherwise, toggle the item and if we're not in a multi select, close the menu
-		this.root.toggleItem(this.opts.value.current, this.opts.label.current);
+		this.root.toggleItem(this.opts.value.current, this.#resolveLabel());
 
 		if (!this.root.isMulti && !isCurrentSelectedValue) {
 			this.root.handleClose();
@@ -1241,17 +1352,11 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.opts.value.current)
-					? "true"
-					: undefined,
+				"aria-selected": boolToStr(this.isSelected),
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
-				"data-highlighted":
-					this.root.highlightedValue === this.opts.value.current &&
-					!this.opts.disabled.current
-						? ""
-						: undefined,
-				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
+				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
 				onpointermove: this.onpointermove,
@@ -1422,11 +1527,8 @@ export class SelectScrollButtonImplState {
 		this.attachment = attachRef(opts.ref);
 
 		watch([() => this.mounted], () => {
-			if (!this.mounted) {
-				this.isUserScrolling = false;
-				return;
-			}
-			if (this.isUserScrolling) return;
+			if (this.mounted) return;
+			this.isUserScrolling = false;
 		});
 
 		$effect(() => {
@@ -1455,6 +1557,7 @@ export class SelectScrollButtonImplState {
 
 	onpointerdown(_: BitsPointerEvent) {
 		if (this.autoScrollTimer !== null) return;
+		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
 			this.autoScrollTimer = this.content.domContext.setTimeout(
@@ -1511,10 +1614,21 @@ export class SelectScrollDownButtonState {
 		this.scrollButtonState.onAutoScroll = this.handleAutoScroll;
 
 		watch([() => this.root.viewportNode, () => this.content.isPositioned], () => {
-			if (!this.root.viewportNode || !this.content.isPositioned) return;
+			const viewport = this.root.viewportNode;
+			if (!viewport || !this.content.isPositioned) return;
 			this.handleScroll(true);
 
-			return on(this.root.viewportNode, "scroll", () => this.handleScroll());
+			const onUserScroll = () => {
+				this.content.userHasScrolled = true;
+			};
+
+			// not `scroll`: the realign below scrolls the viewport itself, so `scroll`
+			// fires for our own writes and cannot tell the user's gesture from ours
+			return executeCallbacks(
+				on(viewport, "scroll", () => this.handleScroll()),
+				on(viewport, "wheel", onUserScroll, { passive: true }),
+				on(viewport, "touchmove", onUserScroll, { passive: true })
+			);
 		});
 
 		/**
@@ -1541,6 +1655,9 @@ export class SelectScrollDownButtonState {
 					clearTimeout(this.scrollIntoViewTimer);
 				}
 				this.scrollIntoViewTimer = afterSleep(5, () => {
+					// this button remounts whenever the viewport leaves the bottom, which
+					// would otherwise realign onto the highlighted item mid-gesture
+					if (this.content.userHasScrolled) return;
 					const activeItem = this.root.highlightedNode;
 					if (!activeItem) return;
 					this.root.scrollHighlightedNodeIntoView(activeItem);

@@ -5,7 +5,12 @@ import { render } from "vitest-browser-svelte";
 import DateRangePickerTest, {
 	type DateRangePickerTestProps,
 } from "./date-range-picker-test.svelte";
-import { expectExists, expectNotClickableLoc, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotClickableLoc,
+	expectNotExists,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -101,6 +106,7 @@ async function open(
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = page.getByTestId("content");
 	const calendar = page.getByTestId("calendar");
 
@@ -666,6 +672,21 @@ it("should default the first day of the week to the locale's first day of the we
 		locale: "fr",
 	});
 	await expect.element(page.getByTestId("weekday-1-0")).toHaveTextContent("lun.");
+});
+
+it("should update segment positioning when the `locale` changes", async () => {
+	const rangeValue = { start: new CalendarDate(2022, 1, 31), end: new CalendarDate(2022, 3, 15) };
+	const t = render(DateRangePickerTest, { value: rangeValue, locale: "en-US" });
+	const input = (type: "start" | "end") =>
+		t.container.querySelector(`[data-testid="${type}-input"]`)!;
+
+	expect(input("start").textContent).toBe("01/31/2022");
+	expect(input("end").textContent).toBe("03/15/2022");
+
+	await t.rerender({ value: rangeValue, locale: "sv-SE" });
+
+	expect(input("start").textContent).toBe("2022-01-31");
+	expect(input("end").textContent).toBe("2022-03-15");
 });
 
 describe("excludeDisabled functionality", () => {

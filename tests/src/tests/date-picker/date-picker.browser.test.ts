@@ -3,7 +3,12 @@ import { getTestKbd } from "../utils";
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import DatePickerTest, { type DatePickerTestProps } from "./date-picker-test.svelte";
-import { expectExists, expectNotClickableLoc, expectNotExists } from "../browser-utils";
+import {
+	expectExists,
+	expectNotClickableLoc,
+	expectNotExists,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -62,6 +67,7 @@ async function open(props: DatePickerTestProps = {}, openWith: "click" | (string
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = page.getByTestId("content");
 	const calendar = page.getByTestId("calendar");
 
@@ -83,6 +89,20 @@ it("should open on click", async () => {
 
 it.each([kbd.ENTER, kbd.SPACE])("should open on %s", async (key) => {
 	await open({}, key);
+});
+
+it("should not focus a day when `onOpenAutoFocus` is prevented", async () => {
+	const t = await open({
+		value: calendarDate,
+		contentProps: {
+			onOpenAutoFocus: (e) => {
+				e.preventDefault();
+				document.querySelector<HTMLElement>("[data-testid='next-button']")?.focus();
+			},
+		},
+	});
+	await expect.element(page.getByTestId("next-button")).toHaveFocus();
+	expect(t.getSelectedDay()).not.toBe(document.activeElement);
 });
 
 it("should populate segment with value - `CalendarDate`", async () => {

@@ -86,6 +86,27 @@ export async function expectExists(loc: Locator) {
 	await expect.element(loc).toBeInTheDocument();
 }
 
+type RegisteredLayer = { opts: { ref: { current: HTMLElement | null } } };
+
+/**
+ * Waits until `loc` has an active dismissible layer registration. Use this when
+ * inspecting a registered layer or measuring time from registration; opening-click
+ * regressions intentionally dispatch before waiting on this helper.
+ */
+export async function waitForDismissibleLayer(loc: Locator) {
+	const node = loc.element() as HTMLElement;
+	const getLayers = () =>
+		(globalThis as { bitsDismissableLayers?: Map<RegisteredLayer, unknown> })
+			.bitsDismissableLayers;
+
+	await vi.waitFor(() => {
+		const registered = [...(getLayers() ?? [])].some(
+			([layer]) => layer.opts.ref.current === node
+		);
+		expect(registered, "dismissible layer never attached its listeners").toBe(true);
+	});
+}
+
 export async function focusAndExpectToHaveFocus(loc: Locator) {
 	(loc.element() as HTMLElement).focus();
 	await expect.element(loc).toHaveFocus();
@@ -136,4 +157,19 @@ export function observeTransitionAttrs(node: Element): TransitionAttrObserver {
 		history,
 		disconnect: (): void => observer.disconnect(),
 	};
+}
+
+/**
+ * Resolves with the body's inline `pointer-events` in the microtask after `node` leaves the
+ * DOM, before any pending timer can run.
+ */
+export function bodyPointerEventsOnRemoval(node: Element): Promise<string> {
+	return new Promise((resolve) => {
+		const observer = new MutationObserver(() => {
+			if (node.isConnected) return;
+			observer.disconnect();
+			resolve(document.body.style.pointerEvents);
+		});
+		observer.observe(document.body, { childList: true, subtree: true });
+	});
 }

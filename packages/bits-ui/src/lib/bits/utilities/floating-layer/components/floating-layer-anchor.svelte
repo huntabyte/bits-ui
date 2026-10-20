@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { boxWith } from "svelte-toolbelt";
-	import { FloatingAnchorState } from "../use-floating-layer.svelte.js";
+	import { FloatingAnchorState } from "../floating-root.svelte.js";
 	import type { AnchorProps } from "./index.js";
 	import type { Measurable } from "$lib/internal/floating-svelte/types.js";
 

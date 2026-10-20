@@ -7,11 +7,19 @@
 
 	export type TabsTestProps = WithoutChildrenOrChild<Tabs.RootProps> & {
 		items: Item[];
+		contentTabindex?: number;
+		contentLayout?: "text" | "button" | "text-button";
 	};
 </script>
 
 <script lang="ts">
-	let { value = "1", items, ...restProps }: TabsTestProps = $props();
+	let {
+		value = "1",
+		items,
+		contentTabindex,
+		contentLayout = "text",
+		...restProps
+	}: TabsTestProps = $props();
 </script>
 
 <main>
@@ -24,8 +32,13 @@
 			{/each}
 		</Tabs.List>
 		{#each items as { value } (value)}
-			<Tabs.Content {value} data-testid="content-{value}">
-				{value}
+			<Tabs.Content {value} tabindex={contentTabindex} data-testid="content-{value}">
+				{#if contentLayout !== "button"}
+					<p>{value}</p>
+				{/if}
+				{#if contentLayout !== "text"}
+					<button tabindex="0" data-testid="content-button-{value}">Action</button>
+				{/if}
 			</Tabs.Content>
 		{/each}
 	</Tabs.Root>
