@@ -1,6 +1,7 @@
 import {
 	afterSleep,
 	afterTick,
+	onDestroyEffect,
 	srOnlyStyles,
 	attachRef,
 	type WritableBoxedValues,
@@ -100,6 +101,7 @@ export class CommandRootState {
 	readonly attachment: RefAttachment;
 	#updateScheduled = false;
 	#isInitialMount = true;
+	#isDestroyed = false;
 	sortAfterTick = false;
 	sortAndFilterAfterTick = false;
 	allItems = new Set<string>();
@@ -119,11 +121,19 @@ export class CommandRootState {
 		return $state.snapshot(this._commandState);
 	}
 
+	/** `afterTick` that skips `fn` if the root was destroyed in the meantime. */
+	#afterTick(fn: () => void) {
+		afterTick(() => {
+			if (this.#isDestroyed) return;
+			fn();
+		});
+	}
+
 	#scheduleUpdate() {
 		if (this.#updateScheduled) return;
 		this.#updateScheduled = true;
 
-		afterTick(() => {
+		this.#afterTick(() => {
 			this.#updateScheduled = false;
 
 			const currentState = this.#snapshot();
@@ -166,6 +176,9 @@ export class CommandRootState {
 		this.commandState = defaults;
 
 		this.onkeydown = this.onkeydown.bind(this);
+		onDestroyEffect(() => {
+			this.#isDestroyed = true;
+		});
 	}
 
 	/**
@@ -276,7 +289,7 @@ export class CommandRootState {
 	 */
 	setValue(value: string, opts?: boolean) {
 		if (value !== this.opts.value.current && value === "") {
-			afterTick(() => {
+			this.#afterTick(() => {
 				this.key++;
 			});
 		}
@@ -288,7 +301,7 @@ export class CommandRootState {
 	 * Selects first non-disabled item on next tick.
 	 */
 	#selectFirstItem(): void {
-		afterTick(() => {
+		this.#afterTick(() => {
 			const item = this.getValidItems().find(
 				(item) => item.getAttribute("aria-disabled") !== "true"
 			);
@@ -305,7 +318,7 @@ export class CommandRootState {
 	 * Called during initial mount when a value is provided.
 	 */
 	#scrollInitialValue(): void {
-		afterTick(() => {
+		this.#afterTick(() => {
 			const shouldPreventScroll = this.opts.disableInitialScroll.current;
 			if (!shouldPreventScroll) {
 				this.#scrollSelectedIntoView();
@@ -450,7 +463,7 @@ export class CommandRootState {
 	 * Special handling for first items in groups.
 	 */
 	#scrollSelectedIntoView(): void {
-		afterTick(() => {
+		this.#afterTick(() => {
 			const item = this.#getSelectedItem();
 			if (!item) return;
 			const grandparent = item.parentElement?.parentElement;
@@ -626,7 +639,7 @@ export class CommandRootState {
 		// Schedule sorting to run after this tick when all items are added not each time an item is added
 		if (!this.sortAfterTick) {
 			this.sortAfterTick = true;
-			afterTick(() => {
+			this.#afterTick(() => {
 				this.#sort();
 				this.sortAfterTick = false;
 			});
@@ -660,7 +673,7 @@ export class CommandRootState {
 		// Schedule sorting and filtering to run after this tick when all items are added not each time an item is added
 		if (!this.sortAndFilterAfterTick) {
 			this.sortAndFilterAfterTick = true;
-			afterTick(() => {
+			this.#afterTick(() => {
 				this.#filterItems();
 				this.#sort();
 				this.sortAndFilterAfterTick = false;
