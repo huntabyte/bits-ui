@@ -1339,7 +1339,7 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.isSelected ? "true" : undefined,
+				"aria-selected": boolToStr(this.isSelected),
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
