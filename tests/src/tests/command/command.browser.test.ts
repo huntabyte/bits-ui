@@ -4,6 +4,7 @@ import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
 import CommandTest from "./command-test.svelte";
+import CommandFlatScrollTest from "./command-flat-scroll-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
@@ -107,4 +108,18 @@ it("should hide the group if all items are filtered out", async () => {
 	await expect.element(page.getByTestId("group-a")).not.toBeVisible();
 	await expect.element(page.getByTestId("group-b")).toBeVisible();
 	await expect.element(page.getByText("Radio Group")).toHaveAttribute("data-selected");
+});
+
+it("should scroll the first item back into view when there are no groups", async () => {
+	render(CommandFlatScrollTest);
+	const viewport = page.getByTestId("viewport").element() as HTMLElement;
+	(page.getByTestId("input").element() as HTMLElement).focus();
+
+	await userEvent.keyboard(kbd.END);
+	await expect.element(page.getByText("Item 9")).toHaveAttribute("data-selected");
+	await expect.poll(() => viewport.scrollTop).toBeGreaterThan(0);
+
+	await userEvent.keyboard(kbd.HOME);
+	await expect.element(page.getByText("Item 0")).toHaveAttribute("data-selected");
+	await expect.poll(() => viewport.scrollTop).toBe(0);
 });
