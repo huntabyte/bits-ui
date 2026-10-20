@@ -760,6 +760,30 @@ describe("select - single", () => {
 		expect(selectedRect.top).toBeGreaterThanOrEqual(viewportRect.top);
 		expect(selectedRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
 	});
+
+	it("should highlight the selected item on reopen when its value is an empty string", async () => {
+		const items: Item[] = [
+			{ value: "1", label: "A" },
+			{ value: "2", label: "B" },
+			{ value: "", label: "All" },
+		];
+		const t = setupSingle({ value: "1" }, items);
+		(t.trigger.element() as HTMLElement).focus();
+
+		await userEvent.keyboard(kbd.ENTER);
+		await expectHighlighted(page.getByTestId("1"));
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("empty"));
+		await userEvent.keyboard(kbd.ENTER);
+		await expectNotExists(t.getContent());
+
+		await userEvent.keyboard(kbd.ENTER);
+		await expectExists(t.getContent());
+		await expectSelected(page.getByTestId("empty"));
+		await expectHighlighted(page.getByTestId("empty"));
+		await expectNotHighlighted(page.getByTestId("1"));
+	});
 });
 
 ////////////////////////////////////
@@ -1070,6 +1094,19 @@ describe("select - multiple", () => {
 		});
 		await t.submit.click();
 		expect(submittedValues).toHaveLength(0);
+	});
+
+	it("should highlight the selected item on open when its value is an empty string", async () => {
+		const t = setupMultiple({ value: [""] }, [
+			{ value: "1", label: "A" },
+			{ value: "", label: "All" },
+		]);
+		(t.trigger.element() as HTMLElement).focus();
+
+		await userEvent.keyboard(kbd.ENTER);
+		await expectExists(t.getContent());
+		await expectHighlighted(page.getByTestId("empty"));
+		await expectNotHighlighted(page.getByTestId("1"));
 	});
 });
 
