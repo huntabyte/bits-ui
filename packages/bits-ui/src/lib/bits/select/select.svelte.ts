@@ -330,14 +330,13 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current !== "") {
-				const node = this.getNodeByValue(this.opts.value.current);
-				if (node) {
-					this.setHighlightedNode(node, true);
-					return;
-				}
+			// "" is a valid value for a select item so we need to look it up too
+			const node = this.getNodeByValue(this.opts.value.current);
+			if (node) {
+				this.setHighlightedNode(node, true);
+				return;
 			}
-			// if no value is set, we want to highlight the first item
+			// if no item matches the value, we want to highlight the first item
 			this.setHighlightedToFirstCandidate(true);
 		});
 	}
@@ -408,7 +407,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
+			if (this.opts.value.current.length) {
 				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
 					this.setHighlightedNode(node, true);
@@ -620,7 +619,7 @@ export class SelectInputState {
 			}
 
 			if (
-				this.root.highlightedValue &&
+				this.root.highlightedValue !== null &&
 				this.root.highlightedNode &&
 				this.root.highlightedNode.isConnected
 			) {
@@ -976,9 +975,10 @@ export class SelectTriggerState {
 
 		if (!isModifierKey && (isCharacterKey || isSpaceKey)) {
 			const matchedNode = this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
-			if (!matchedNode && isSpaceKey) {
+			if (isSpaceKey) {
+				// prevent the button's activation `click`, which `onclick` would toggle
 				e.preventDefault();
-				this.#handleKeyboardSelection();
+				if (!matchedNode) this.#handleKeyboardSelection();
 			}
 			return;
 		}
@@ -996,6 +996,17 @@ export class SelectTriggerState {
 		// this only runs for a label 'click'
 		const currTarget = e.currentTarget as HTMLElement;
 		currTarget.focus();
+
+		// Screen readers can activate the trigger with a `click` that no pointer events
+		// precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+		// and was already handled by `onpointerdown` / `onpointerup`.
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		if (this.root.opts.open.current) {
+			this.root.handleClose();
+		} else {
+			this.#handleOpen();
+		}
+		e.preventDefault();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {

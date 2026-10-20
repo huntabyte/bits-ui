@@ -119,7 +119,7 @@ export class AnimationsComplete {
 			fn();
 		};
 
-		if (this.#opts.afterTick) {
+		if (this.#opts.afterTick.current) {
 			afterTick(execute);
 		} else {
 			execute();
