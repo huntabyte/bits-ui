@@ -1031,6 +1031,8 @@ export class SelectContentState {
 
 		watch([() => this.isPositioned, () => this.root.highlightedNode], () => {
 			if (!this.isPositioned || !this.root.highlightedNode) return;
+			// a keyboard highlight hands the scroll position back to us
+			if (this.root.isUsingKeyboard) this.userHasScrolled = false;
 			this.root.scrollHighlightedNodeIntoView(this.root.highlightedNode);
 		});
 

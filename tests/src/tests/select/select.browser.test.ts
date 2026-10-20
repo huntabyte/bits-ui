@@ -759,6 +759,40 @@ describe("select - single", () => {
 		expect(selectedRect.top).toBeGreaterThanOrEqual(viewportRect.top);
 		expect(selectedRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
 	});
+
+	it("should keep a typeahead-highlighted item clear of the scroll down button after the user has scrolled", async () => {
+		render(SelectScrollButtonsTest);
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		const viewport = page.getByTestId("viewport").element() as HTMLElement;
+		await sleep(100);
+
+		// wheel down and back up, leaving the scroll up button unmounted
+		viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: 40, bubbles: true }));
+		viewport.scrollTop = 40;
+		await expectExists(page.getByTestId("scroll-up-button"));
+		viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: -40, bubbles: true }));
+		viewport.scrollTop = 0;
+		await expectNotExists(page.getByTestId("scroll-up-button"));
+
+		// highlighting far down mounts the scroll up button, which shrinks the viewport
+		// under the item that was just scrolled into view
+		await userEvent.keyboard("Item 30");
+		await expectHighlighted(page.getByTestId("item-30"));
+		await expectExists(page.getByTestId("scroll-up-button"));
+		await sleep(100);
+
+		const item = page.getByTestId("item-30").element() as HTMLElement;
+		const downButton = page.getByTestId("scroll-down-button").element() as HTMLElement;
+		const viewportRect = viewport.getBoundingClientRect();
+		const itemRect = item.getBoundingClientRect();
+
+		expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top - 1);
+		expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom + 1);
+		expect(itemRect.bottom).toBeLessThanOrEqual(downButton.getBoundingClientRect().top + 1);
+	});
 });
 
 ////////////////////////////////////
