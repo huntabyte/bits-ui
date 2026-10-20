@@ -18,6 +18,7 @@ import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
 import ContextMenuNestedSubmenuTest from "./context-menu-nested-submenu-test.svelte";
 import ContextMenuTooltipTest from "./context-menu-tooltip-test.svelte";
+import ContextMenuRapidTest from "./context-menu-rapid-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -646,4 +647,16 @@ it("should apply custom style prop to content", async () => {
 	});
 	const contentEl = t.getContent().element() as HTMLElement;
 	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});
+
+it("should leave only the last menu open after rapid right clicks across triggers (#1743)", async () => {
+	render(ContextMenuRapidTest);
+	const order = [0, 5, 1, 9, 2, 14, 3, 7, 20, 4, 11, 6, 25, 8, 17, 10, 22, 12, 29, 13];
+	for (const i of order) {
+		await page.getByTestId(`trigger-${i}`).click({ button: "right", force: true });
+	}
+	await expect
+		.poll(() => document.querySelectorAll("[data-context-menu-content]").length)
+		.toBe(1);
+	await expectExists(page.getByTestId(`content-${order.at(-1)}`));
 });
