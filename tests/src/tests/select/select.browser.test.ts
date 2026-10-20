@@ -286,6 +286,11 @@ describe("select - single", () => {
 			.toHaveAttribute("aria-labelledby", t.groupHeading.element().id);
 	});
 
+	it("should expose the trigger as a combobox controlling the mounted listbox", async () => {
+		const t = setupSingle({ contentProps: { id: "select-listbox" } });
+		await expectTriggerControlsListbox(t.trigger, "select-listbox");
+	});
+
 	it("should select item with the enter key", async () => {
 		const t = await openSingle();
 		(t.trigger.element() as HTMLElement).focus();
@@ -390,6 +395,18 @@ describe("select - single", () => {
 		await t.trigger.click();
 		await expectSelected(item1);
 		await expectExists(page.getByTestId("1-indicator"));
+	});
+
+	it("should expose `aria-selected` on all items", async () => {
+		const t = await openSingle();
+		const items = getItems(page.getByTestId);
+		// the select's value defaults to "", so the empty-value item is selected
+		await expectSelected(items[0]);
+		await expectNotSelected(items.slice(1));
+		await items[1].click();
+		await t.trigger.click();
+		await expectNotSelected([items[0], ...items.slice(2)]);
+		await expectSelected(items[1]);
 	});
 
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
@@ -649,6 +666,14 @@ describe("select - single", () => {
 		await expect.element(t.getHiddenInput()).toHaveAttribute("autocomplete", "one-time-code");
 	});
 
+	it("should update the value when the hidden input is autofilled", async () => {
+		const t = setupSingle();
+		const input = t.getHiddenInput() as HTMLInputElement;
+		input.value = "2";
+		input.dispatchEvent(new Event("input", { bubbles: true }));
+		await expect.element(t.valueBinding).toHaveTextContent("2");
+	});
+
 	it("should not open when disabled on touch devices", async () => {
 		const t = setupSingle({ disabled: true });
 
@@ -779,6 +804,11 @@ describe("select - multiple", () => {
 		await openMultiple({}, key);
 	});
 
+	it("should expose the trigger as a combobox controlling the mounted listbox", async () => {
+		const t = setupMultiple({ contentProps: { id: "select-listbox" } });
+		await expectTriggerControlsListbox(t.trigger, "select-listbox");
+	});
+
 	it("should select item with the enter key", async () => {
 		const mockFn = vi.fn();
 		const t = await openMultiple({
@@ -817,6 +847,18 @@ describe("select - multiple", () => {
 		const t = setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
+		await expect.element(hiddenInputs[0]).toHaveValue("a");
+		await expect.element(hiddenInputs[1]).toHaveValue("b");
+	});
+
+	it("should keep the hidden inputs in sync with the value after a form reset", async () => {
+		const t = setupMultiple({ value: ["a", "b"] });
+		const form = page.getByTestId("form").element() as HTMLFormElement;
+		form.reset();
+		await new Promise((r) => requestAnimationFrame(r));
+
+		expect(new FormData(form).getAll("test")).toEqual(["a", "b"]);
+		const hiddenInputs = t.getHiddenInputs();
 		await expect.element(hiddenInputs[0]).toHaveValue("a");
 		await expect.element(hiddenInputs[1]).toHaveValue("b");
 	});
@@ -1305,11 +1347,11 @@ async function expectNotSelected(node: MaybeArray<ReturnType<typeof page.getByTe
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			await expect.element(n).not.toHaveAttribute("data-selected");
-			await expect.element(n).not.toHaveAttribute("aria-selected");
+			await expect.element(n).toHaveAttribute("aria-selected", "false");
 		}
 	} else {
 		await expect.element(node).not.toHaveAttribute("data-selected");
-		await expect.element(node).not.toHaveAttribute("aria-selected");
+		await expect.element(node).toHaveAttribute("aria-selected", "false");
 	}
 }
 
@@ -1321,6 +1363,26 @@ async function expectHighlighted(node: MaybeArray<ReturnType<typeof page.getByTe
 	} else {
 		await expect.element(node).toHaveAttribute("data-highlighted");
 	}
+}
+
+async function expectTriggerControlsListbox(
+	trigger: ReturnType<typeof page.getByTestId>,
+	listboxId: string
+) {
+	await expect.element(trigger).toHaveRole("combobox");
+	await expect.element(trigger).toHaveAttribute("aria-expanded", "false");
+	await expect.element(trigger).not.toHaveAttribute("aria-controls");
+
+	await trigger.click();
+	const listbox = page.getByRole("listbox");
+	await expect.element(listbox).toHaveAttribute("id", listboxId);
+	await expect.element(trigger).toHaveAttribute("aria-expanded", "true");
+	await expect.element(trigger).toHaveAttribute("aria-controls", listboxId);
+
+	await userEvent.keyboard("{Escape}");
+	await expect.element(listbox).not.toBeInTheDocument();
+	await expect.element(trigger).toHaveAttribute("aria-expanded", "false");
+	await expect.element(trigger).not.toHaveAttribute("aria-controls");
 }
 
 async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getByTestId>>) {

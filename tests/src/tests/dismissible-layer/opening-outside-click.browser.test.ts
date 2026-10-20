@@ -23,6 +23,11 @@ function outsideClick() {
 	}
 }
 
+// The previous close restores body `pointer-events` on a timer; until then a trigger
+// click lands on <html> and nothing opens.
+const waitForBodyPointerEvents = () =>
+	expect.poll(() => document.body.style.pointerEvents).not.toBe("none");
+
 describe("dismissible layer - opening outside click", () => {
 	for (const component of ["DropdownMenu", "Combobox"] as const) {
 		it(`${component} dismisses an outside click during opening and immediate reopen`, async () => {
@@ -36,6 +41,7 @@ describe("dismissible layer - opening outside click", () => {
 			}
 
 			for (let attempt = 1; attempt <= 2; attempt++) {
+				await waitForBodyPointerEvents();
 				let clickedDuringOpening = false;
 				// Dispatch in the first DOM-observer turn, before delayed registration can
 				// run. DropdownMenu must still have Presence's public opening marker.
@@ -84,4 +90,29 @@ describe("dismissible layer - opening outside click", () => {
 			}
 		});
 	}
+
+	// #2141: a native outside click sent right behind the opening click. Both clicks are
+	// queued without awaiting, so the outside one lands as early as the browser allows.
+	it("DropdownMenu dismisses a native outside click sent right after the opening click", async () => {
+		const onInteractOutside = vi.fn();
+		const onSelect = vi.fn();
+		render(DropdownMenuTest, { onInteractOutside, onSelect });
+		const trigger = page.getByTestId("trigger");
+		const outside = page.elementLocator(document.documentElement);
+
+		for (let attempt = 1; attempt <= 10; attempt++) {
+			await waitForBodyPointerEvents();
+			await Promise.all([
+				trigger.click({ force: true }),
+				outside.click({ force: true, position: { x: window.innerWidth - 1, y: 1 } }),
+			]);
+			await expect
+				.poll(() => onInteractOutside.mock.calls.length, {
+					message: `opening attempt ${attempt}`,
+				})
+				.toBe(attempt);
+			await expectNotExists(page.getByTestId("content"));
+		}
+		expect(onSelect).not.toHaveBeenCalled();
+	});
 });

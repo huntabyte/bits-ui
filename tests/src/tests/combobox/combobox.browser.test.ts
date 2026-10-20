@@ -285,6 +285,12 @@ describe("combobox - single", () => {
 		await expectSelected(item1);
 	});
 
+	it("should expose `aria-selected` false on all items when no value is selected", async () => {
+		await openSingle();
+		const items = getItems(page.getByTestId);
+		await expectNotSelected(items);
+	});
+
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		await openSingle({}, kbd.ARROW_DOWN);
 
@@ -875,11 +881,11 @@ async function expectNotSelected(node: MaybeArray<ReturnType<typeof page.getByTe
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			await expect.element(n).not.toHaveAttribute("data-selected");
-			await expect.element(n).not.toHaveAttribute("aria-selected");
+			await expect.element(n).toHaveAttribute("aria-selected", "false");
 		}
 	} else {
 		await expect.element(node).not.toHaveAttribute("data-selected");
-		await expect.element(node).not.toHaveAttribute("aria-selected");
+		await expect.element(node).toHaveAttribute("aria-selected", "false");
 	}
 }
 

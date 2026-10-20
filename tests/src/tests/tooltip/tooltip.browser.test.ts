@@ -99,7 +99,8 @@ it("should close when pointer moves outside the trigger and content", async () =
 it("should close on scroll when the scrolled target contains the trigger", async () => {
 	const t = await open();
 	const main = page.getByTestId("main").element() as HTMLElement;
-	main.dispatchEvent(new Event("scroll", { bubbles: true }));
+	// An element's scroll does not bubble.
+	main.dispatchEvent(new Event("scroll"));
 	await expectNotExists(page.getByTestId("content"));
 	await expect.element(t.trigger).toBeVisible();
 });

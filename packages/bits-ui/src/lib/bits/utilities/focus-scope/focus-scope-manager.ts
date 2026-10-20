@@ -28,6 +28,8 @@ export class FocusScopeManager {
 
 		this.#scopeStack.current = this.#scopeStack.current.filter((s) => s !== scope);
 		this.#scopeStack.current.unshift(scope);
+		// the incoming scope may still be paused from an earlier registration
+		scope.resume();
 	}
 
 	unregister(scope: FocusScope) {

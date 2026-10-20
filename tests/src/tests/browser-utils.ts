@@ -158,3 +158,18 @@ export function observeTransitionAttrs(node: Element): TransitionAttrObserver {
 		disconnect: (): void => observer.disconnect(),
 	};
 }
+
+/**
+ * Resolves with the body's inline `pointer-events` in the microtask after `node` leaves the
+ * DOM, before any pending timer can run.
+ */
+export function bodyPointerEventsOnRemoval(node: Element): Promise<string> {
+	return new Promise((resolve) => {
+		const observer = new MutationObserver(() => {
+			if (node.isConnected) return;
+			observer.disconnect();
+			resolve(document.body.style.pointerEvents);
+		});
+		observer.observe(document.body, { childList: true, subtree: true });
+	});
+}
