@@ -10,7 +10,8 @@
 	let {
 		value = $bindable(""),
 		overlayScrollButtons = false,
-	}: { value?: string; overlayScrollButtons?: boolean } = $props();
+		forceMount = false,
+	}: { value?: string; overlayScrollButtons?: boolean; forceMount?: boolean } = $props();
 	let open = $state(false);
 
 	const buttonStyle = { height: "20px", backgroundColor: "white" } as const;
@@ -33,6 +34,7 @@
 			<Select.Content
 				data-testid="content"
 				preventScroll={false}
+				{forceMount}
 				style={{
 					width: "220px",
 					height: "200px",

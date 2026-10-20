@@ -1558,9 +1558,14 @@ export class SelectScrollButtonImplState {
 		});
 
 		$effect(() => {
-			if (this.mounted) return;
+			if (this.mounted && this.root.opts.open.current) return;
 			this.clearAutoScrollInterval();
 		});
+
+		// closing destroys the button together with the effect above, so the effect never
+		// sees `mounted` flip and a removed button gets no `pointerleave`. without this the
+		// timer outlives the button and scrolls the viewport the next time the content opens
+		onDestroyEffect(() => this.clearAutoScrollInterval());
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1582,7 +1587,7 @@ export class SelectScrollButtonImplState {
 	}
 
 	onpointerdown(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
+		if (this.autoScrollTimer !== null || !this.root.opts.open.current) return;
 		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();

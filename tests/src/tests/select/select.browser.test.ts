@@ -788,6 +788,43 @@ describe("select - single", () => {
 		expect(selectedRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
 	});
 
+	it.each([
+		{ button: "scroll-down-button", value: "", forceMount: false },
+		{ button: "scroll-up-button", value: "50", forceMount: false },
+		{ button: "scroll-down-button", value: "", forceMount: true },
+		{ button: "scroll-up-button", value: "50", forceMount: true },
+	])(
+		"should stop auto scrolling when closed while hovering the $button (forceMount: $forceMount)",
+		async ({ button, value, forceMount }) => {
+			render(SelectScrollButtonsTest, { value, forceMount });
+
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await sleep(100);
+
+			// hover the button until the list starts auto scrolling, then close without
+			// the pointer ever leaving it
+			page.getByTestId(button)
+				.element()
+				.dispatchEvent(new PointerEvent("pointermove", { bubbles: true }));
+			await sleep(120);
+			await userEvent.keyboard(kbd.ESCAPE);
+			// force mounted content stays in the DOM, so its buttons are never destroyed
+			await expect
+				.element(page.getByTestId("trigger"))
+				.toHaveAttribute("data-state", "closed");
+
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await sleep(100);
+
+			const viewport = page.getByTestId("viewport").element() as HTMLElement;
+			const scrollTop = viewport.scrollTop;
+			await sleep(300);
+			expect(viewport.scrollTop).toBe(scrollTop);
+		}
+	);
+
 	it("should keep a typeahead-highlighted item clear of the scroll down button after the user has scrolled", async () => {
 		render(SelectScrollButtonsTest);
 
