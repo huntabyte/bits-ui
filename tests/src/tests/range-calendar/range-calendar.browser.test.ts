@@ -6,6 +6,8 @@ import { getTestKbd } from "../utils.js";
 import RangeCalendarTest, { type RangeCalendarTestProps } from "./range-calendar-test.svelte";
 import RangeCalendarSelectsTest from "./range-calendar-selects-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
+import RangeCalendarSpreadPropsTest from "./range-calendar-spread-props-test.svelte";
+import { collectErrors } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -1385,5 +1387,16 @@ describe("RangeCalendar Select Components", () => {
 			expect(monthOptions[0]).toHaveAttribute("selected");
 			expect(yearOptions[0]).toHaveAttribute("selected");
 		});
+	});
+});
+
+describe("Spread Props", () => {
+	it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+		const errors = await collectErrors(() => render(RangeCalendarSpreadPropsTest));
+		expect(errors).toEqual([]);
+		await expect.element(page.getByTestId("calendar")).toHaveAttribute("data-updated");
+		await expect.element(page.getByTestId("heading")).not.toHaveTextContent("");
+		await expect.element(page.getByTestId("month-select")).toBeVisible();
+		await expect.element(page.getByTestId("year-select")).toBeVisible();
 	});
 });

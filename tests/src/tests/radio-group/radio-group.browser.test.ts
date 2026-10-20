@@ -2,6 +2,7 @@ import { expect, it, describe, onTestFinished } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import RadioGroupTest from "./radio-group-test.svelte";
+import RadioGroupNestedTest from "./radio-group-nested-test.svelte";
 import type { Item, RadioGroupTestProps } from "./radio-group-test.svelte";
 import RadioGroupPopoverTest from "./radio-group-popover-test.svelte";
 import RadioGroupScrollLayoutTest from "./radio-group-scroll-layout-test.svelte";
@@ -196,6 +197,28 @@ describe("Keyboard Navigation", () => {
 		await userEvent.keyboard(kbd.ARROW_RIGHT);
 		await expect.element(item3).toHaveFocus();
 	});
+
+	it("should ignore the items of a nested `RadioGroup.Root` when navigating with the keyboard", async () => {
+		render(RadioGroupNestedTest);
+
+		const outerItem1 = page.getByTestId("outer-item-1");
+		const outerItem2 = page.getByTestId("outer-item-2");
+		const innerItem1 = page.getByTestId("inner-item-1");
+		const innerItem2 = page.getByTestId("inner-item-2");
+
+		(outerItem1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(outerItem2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(outerItem1).toHaveFocus();
+
+		// the nested RadioGroup.Root keeps navigating among its own items
+		(innerItem1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(innerItem2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(innerItem1).toHaveFocus();
+	});
 });
 
 describe("Input Behavior", () => {
@@ -207,6 +230,16 @@ describe("Input Behavior", () => {
 	it("should render an input if the `name` prop is passed", async () => {
 		const t = setup({ name: "radio-group" });
 		await expect.element(t.input).toBeInTheDocument();
+	});
+
+	it("should disable browser autocomplete on the input by default", async () => {
+		const t = setup({ name: "radio-group" });
+		await expect.element(t.input).toHaveAttribute("autocomplete", "off");
+	});
+
+	it("should forward the `autocomplete` prop to the input", async () => {
+		const t = setup({ name: "radio-group", autocomplete: "one-time-code" });
+		await expect.element(t.input).toHaveAttribute("autocomplete", "one-time-code");
 	});
 
 	it("should sync the input's value with the radio group value", async () => {

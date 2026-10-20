@@ -414,6 +414,7 @@ export class CalendarRootState {
 		return shiftCalendarFocus({
 			node,
 			add,
+			useCalendarDayOffset: Math.abs(add) === 7,
 			placeholder: this.opts.placeholder,
 			calendarNode: this.opts.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,

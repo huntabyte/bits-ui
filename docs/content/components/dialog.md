@@ -292,6 +292,12 @@ To change which element receives focus when the Dialog closes, use the `onCloseA
 </Dialog.Root>
 ```
 
+#### When the trigger is removed
+
+If closing the dialog also removes its trigger (for example, after deleting a row), use `onCloseAutoFocus` to prevent the default focus return and focus a logical element that remains in the page, such as the next row's action or an Add button. Keep that destination outside the content being removed.
+
+Test both paths with the keyboard: canceling should return focus to the existing trigger, while deleting should move focus to the chosen destination without leaving focus on the document body.
+
 ### Best Practices
 
 - Always maintain a clear focus management strategy for your Dialogs.

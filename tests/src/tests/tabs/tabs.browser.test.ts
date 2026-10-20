@@ -2,6 +2,7 @@ import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import TabsTest from "./tabs-test.svelte";
+import TabsNestedTest from "./tabs-nested-test.svelte";
 import type { Item, TabsTestProps } from "./tabs-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -261,5 +262,33 @@ describe("Tabs", () => {
 		await expect.element(trigger1).toHaveAttribute("tabindex", "-1");
 		await expect.element(trigger2).toHaveAttribute("tabindex", "0");
 		await expect.element(trigger3).toHaveAttribute("tabindex", "-1");
+	});
+
+	it("should ignore the triggers of a nested `Tabs.Root` when navigating with the keyboard", async () => {
+		render(TabsNestedTest);
+
+		const outerTrigger1 = page.getByTestId("outer-trigger-1");
+		const outerTrigger2 = page.getByTestId("outer-trigger-2");
+		const innerTrigger1 = page.getByTestId("inner-trigger-1");
+		const innerTrigger2 = page.getByTestId("inner-trigger-2");
+
+		(outerTrigger1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.END);
+		await expect.element(outerTrigger2).toHaveFocus();
+
+		(outerTrigger1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_LEFT);
+		await expect.element(outerTrigger2).toHaveFocus();
+
+		// the nested tabs are now in a hidden panel
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(outerTrigger1).toHaveFocus();
+
+		// the nested tabs keep navigating among their own triggers
+		(innerTrigger1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(innerTrigger2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(innerTrigger1).toHaveFocus();
 	});
 });

@@ -100,7 +100,7 @@
 		initialFocus: boxWith(() => initialFocus),
 		maxDays: boxWith(() => maxDays),
 		placeholder: boxWith(
-			() => placeholder as DateValue,
+			() => placeholder ?? defaultPlaceholder,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v as DateValue);

@@ -12,8 +12,9 @@ import { getTestKbd } from "../utils.js";
 import TimeFieldTest, { type TimeFieldTestProps } from "./time-field-test.svelte";
 import type { TimeValue } from "bits-ui";
 import { tick } from "svelte";
-import { expectNotExists } from "../browser-utils";
+import { collectErrors, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
+import TimeFieldSpreadPropsTest from "./time-field-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -1037,3 +1038,10 @@ function extractTime(time: TimeValue): string {
 	}
 	return new Time(time.hour, time.minute, time.second).toString();
 }
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(TimeFieldSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("hour")).toHaveTextContent("––");
+	await expect.element(page.getByTestId("minute")).toHaveTextContent("––");
+});

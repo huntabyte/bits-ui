@@ -7,7 +7,8 @@ import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 import CalendarTest, { type CalendarSingleTestProps } from "./calendar-test.svelte";
 import CalendarMultiTest, { type CalendarMultiTestProps } from "./calendar-multi-test.svelte";
 import CalendarSelectsTest from "./calendar-selects-test.svelte";
-import { focusAndExpectToHaveFocus } from "../browser-utils";
+import { collectErrors, focusAndExpectToHaveFocus } from "../browser-utils";
+import CalendarSpreadPropsTest from "./calendar-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -260,6 +261,20 @@ describe("type='single'", () => {
 			await userEvent.keyboard(kbd.ARROW_DOWN);
 			await expect.element(page.getByTestId("date-3-25")).toHaveFocus();
 			await expect.element(heading).toHaveTextContent("March 1980");
+		});
+
+		it("should preserve the weekday when moving vertically past disabled dates", async () => {
+			setup({
+				value: new CalendarDate(2026, 10, 13),
+				isDateDisabled: (date) =>
+					date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-10-20",
+			});
+			const tuesday = page.getByTestId("date-10-13");
+			await focusAndExpectToHaveFocus(tuesday);
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-10-27")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(tuesday).toHaveFocus();
 		});
 
 		it("should not navigate before `minValue` (with keyboard)", async () => {
@@ -1143,4 +1158,18 @@ describe("Calendar Select Components", () => {
 			await expect.element(yearOptions[0]).toHaveAttribute("selected");
 		});
 	});
+});
+
+describe("Spread Props", () => {
+	it.each(["single", "multiple"] as const)(
+		"should fall back to the default placeholder when spread props are reassigned during mount - type='%s' (#1950)",
+		async (type) => {
+			const errors = await collectErrors(() => render(CalendarSpreadPropsTest, { type }));
+			expect(errors).toEqual([]);
+			await expect.element(page.getByTestId("calendar")).toHaveAttribute("data-updated");
+			await expect.element(page.getByTestId("heading")).not.toHaveTextContent("");
+			await expect.element(page.getByTestId("month-select")).toBeVisible();
+			await expect.element(page.getByTestId("year-select")).toBeVisible();
+		}
+	);
 });
