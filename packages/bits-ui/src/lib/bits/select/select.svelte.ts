@@ -330,14 +330,13 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current !== "") {
-				const node = this.getNodeByValue(this.opts.value.current);
-				if (node) {
-					this.setHighlightedNode(node, true);
-					return;
-				}
+			// "" is a valid value for a select item so we need to look it up too
+			const node = this.getNodeByValue(this.opts.value.current);
+			if (node) {
+				this.setHighlightedNode(node, true);
+				return;
 			}
-			// if no value is set, we want to highlight the first item
+			// if no item matches the value, we want to highlight the first item
 			this.setHighlightedToFirstCandidate(true);
 		});
 	}
@@ -408,7 +407,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
+			if (this.opts.value.current.length) {
 				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
 					this.setHighlightedNode(node, true);
@@ -620,7 +619,7 @@ export class SelectInputState {
 			}
 
 			if (
-				this.root.highlightedValue &&
+				this.root.highlightedValue !== null &&
 				this.root.highlightedNode &&
 				this.root.highlightedNode.isConnected
 			) {
