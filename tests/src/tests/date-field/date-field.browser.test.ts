@@ -1011,6 +1011,41 @@ describe("date field", () => {
 		await expect.element(t.year).toHaveTextContent("yyyy");
 	});
 
+	it("should reset the segment values when the value is reset after typing a date while a segment is focused", async () => {
+		const t = setup();
+
+		await t.month.click();
+		await userEvent.keyboard("10122023");
+		await expect.element(t.value).toHaveTextContent("2023-10-12");
+		await expect.element(t.year).toHaveFocus();
+
+		// a DOM click resets the value without moving focus out of the year segment
+		(page.getByTestId("reset").element() as HTMLElement).click();
+
+		await expect.element(t.value).toHaveTextContent("");
+		await expect.element(t.year).toHaveFocus();
+		await expect.element(t.month).toHaveTextContent("mm");
+		await expect.element(t.day).toHaveTextContent("dd");
+		await expect.element(t.year).toHaveTextContent("yyyy");
+	});
+
+	it("should keep the other segments when a segment of a typed date is cleared", async () => {
+		const t = setup();
+
+		await t.month.click();
+		await userEvent.keyboard("10122023");
+		await expect.element(t.value).toHaveTextContent("2023-10-12");
+
+		await t.day.click();
+		await userEvent.keyboard(kbd.BACKSPACE);
+		await userEvent.keyboard(kbd.BACKSPACE);
+
+		await expect.element(t.value).toHaveTextContent("");
+		await expect.element(t.month).toHaveTextContent("10");
+		await expect.element(t.day).toHaveTextContent("dd");
+		await expect.element(t.year).toHaveTextContent("2023");
+	});
+
 	it("should allow typing hours 0-23 with non en-US locales that use 24-hour format", async () => {
 		if (navigator.userAgent.includes("WebKit")) {
 			expect(true);

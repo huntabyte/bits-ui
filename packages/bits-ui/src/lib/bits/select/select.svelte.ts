@@ -1026,9 +1026,11 @@ export class SelectTriggerState {
 		() =>
 			({
 				id: this.opts.id.current,
+				role: "combobox",
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
 				"aria-expanded": boolToStr(this.root.opts.open.current),
+				"aria-controls": this.root.contentNode?.id || undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
@@ -1339,7 +1341,7 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.isSelected ? "true" : undefined,
+				"aria-selected": boolToStr(this.isSelected),
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),

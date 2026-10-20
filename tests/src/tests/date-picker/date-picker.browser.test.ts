@@ -93,6 +93,20 @@ it.each([kbd.ENTER, kbd.SPACE])("should open on %s", async (key) => {
 	await open({}, key);
 });
 
+it("should not focus a day when `onOpenAutoFocus` is prevented", async () => {
+	const t = await open({
+		value: calendarDate,
+		contentProps: {
+			onOpenAutoFocus: (e) => {
+				e.preventDefault();
+				document.querySelector<HTMLElement>("[data-testid='next-button']")?.focus();
+			},
+		},
+	});
+	await expect.element(page.getByTestId("next-button")).toHaveFocus();
+	expect(t.getSelectedDay()).not.toBe(document.activeElement);
+});
+
 it("should populate segment with value - `CalendarDate`", async () => {
 	const t = setup({
 		value: calendarDate,

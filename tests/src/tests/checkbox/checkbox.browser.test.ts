@@ -549,3 +549,16 @@ describe("Checkbox Group", () => {
 		});
 	});
 });
+
+it("should keep the hidden input in sync with the checked state after a form reset", async () => {
+	const t = setup({ checked: true });
+	const input = t.container.querySelector<HTMLInputElement>('input[name="terms"]')!;
+	expect(input.checked).toBe(true);
+
+	input.form!.reset();
+	await new Promise((r) => requestAnimationFrame(r));
+
+	await expect.element(t.root).toHaveAttribute("data-state", "checked");
+	expect(input.checked).toBe(true);
+	expect(new FormData(input.form!).get("terms")).toBe("on");
+});

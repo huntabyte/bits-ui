@@ -684,7 +684,11 @@ export class DateFieldRootState {
 				})
 			);
 		} else {
-			this.#segmentClearedValue = true;
+			// only flag the clear when the value actually changes, otherwise the effect
+			// that consumes the flag never runs and it would skip the next external reset
+			if (this.value.current !== undefined) {
+				this.#segmentClearedValue = true;
+			}
 			this.setValue(undefined);
 			this.segmentValues = newSegmentValues;
 		}

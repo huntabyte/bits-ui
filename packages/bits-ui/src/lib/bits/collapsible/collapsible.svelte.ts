@@ -23,6 +23,10 @@ import type {
 } from "$lib/internal/types.js";
 import { on } from "svelte/events";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import {
+	MountAnimationGuard,
+	measureWithoutAnimation,
+} from "$lib/internal/mount-animation.svelte.js";
 
 const collapsibleAttrs = createBitsAttrs({
 	component: "collapsible",
@@ -102,15 +106,14 @@ export class CollapsibleContentState {
 		return this.opts.forceMount.current || this.root.opts.open.current;
 	});
 
-	#originalStyles: { transitionDuration: string; animationName: string } | undefined;
-	#isMountAnimationPrevented = $state(false);
+	#mountAnimationGuard: MountAnimationGuard;
 	#width = $state(0);
 	#height = $state(0);
 
 	constructor(opts: CollapsibleContentStateOpts, root: CollapsibleRootState) {
 		this.opts = opts;
 		this.root = root;
-		this.#isMountAnimationPrevented = root.opts.open.current;
+		this.#mountAnimationGuard = new MountAnimationGuard(() => this.root.opts.open.current);
 		this.root.contentId = this.opts.id.current;
 		this.attachment = attachRef(this.opts.ref, (v) => (this.root.contentNode = v));
 
@@ -120,16 +123,6 @@ export class CollapsibleContentState {
 				this.root.contentId = id;
 			}
 		);
-
-		$effect.pre(() => {
-			const rAF = requestAnimationFrame(() => {
-				this.#isMountAnimationPrevented = false;
-			});
-
-			return () => {
-				cancelAnimationFrame(rAF);
-			};
-		});
 
 		watch.pre(
 			[() => this.opts.ref.current, () => this.opts.hiddenUntilFound.current],
@@ -157,26 +150,9 @@ export class CollapsibleContentState {
 				// Cleanup can run before this tick; do not read destroyed or superseded state.
 				if (!active) return;
 				if (!this.opts.ref.current) return;
-				// get the dimensions of the element
-				this.#originalStyles = this.#originalStyles || {
-					transitionDuration: node.style.transitionDuration,
-					animationName: node.style.animationName,
-				};
-
-				// block any animations/transitions so the element renders at full dimensions
-				node.style.transitionDuration = "0s";
-				node.style.animationName = "none";
-
-				const rect = node.getBoundingClientRect();
+				const rect = measureWithoutAnimation(node);
 				this.#height = rect.height;
 				this.#width = rect.width;
-
-				// unblock any animations/transitions that were originally set if not the initial render
-				if (!this.#isMountAnimationPrevented) {
-					const { animationName, transitionDuration } = this.#originalStyles;
-					node.style.transitionDuration = transitionDuration;
-					node.style.animationName = animationName;
-				}
 			});
 			return () => {
 				active = false;
@@ -203,6 +179,7 @@ export class CollapsibleContentState {
 					"--bits-collapsible-content-width": this.#width
 						? `${this.#width}px`
 						: undefined,
+					...this.#mountAnimationGuard.style,
 				},
 				hidden:
 					this.opts.hiddenUntilFound.current && !this.root.opts.open.current

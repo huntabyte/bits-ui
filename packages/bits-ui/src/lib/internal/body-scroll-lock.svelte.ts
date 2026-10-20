@@ -73,17 +73,21 @@ const anyLocked = boxWith(() => {
 let cleanupScheduledAt: number | null = null;
 
 const bodyLockStackCount = new SharedState(() => {
+	function restoreProperty(documentObj: Document, prop: ManagedProperty) {
+		const initial = initialProperties?.get(prop);
+		if (initial?.value) {
+			documentObj.body.style.setProperty(prop, initial.value, initial.priority);
+		} else {
+			documentObj.body.style.removeProperty(prop);
+		}
+	}
+
 	function resetBodyStyle(documentObj: Document) {
 		if (!BROWSER) return;
 		// without a snapshot, still remove what we set so the body is never left locked
 		for (const prop of MANAGED_PROPERTIES) {
 			if (!modifiedProperties.has(prop)) continue;
-			const initial = initialProperties?.get(prop);
-			if (initial?.value) {
-				documentObj.body.style.setProperty(prop, initial.value, initial.priority);
-			} else {
-				documentObj.body.style.removeProperty(prop);
-			}
+			restoreProperty(documentObj, prop);
 		}
 		if (!hadInitialStyleAttribute && documentObj.body.style.length === 0) {
 			documentObj.body.removeAttribute("style");
@@ -91,6 +95,18 @@ const bodyLockStackCount = new SharedState(() => {
 		initialProperties = null;
 		modifiedProperties.clear();
 		isIOS && stopTouchMoveListener?.();
+	}
+
+	/**
+	 * Unlike overflow/padding, pointer-events has no handover flicker to avoid, so it's
+	 * restored as soon as the last lock goes. A lock that arrives during the cleanup delay
+	 * sets it again in `afterTick`.
+	 *
+	 * reference: https://github.com/huntabyte/bits-ui/issues/2202
+	 */
+	function restorePointerEvents(documentObj: Document) {
+		if (!modifiedProperties.delete("pointer-events")) return;
+		restoreProperty(documentObj, "pointer-events");
 	}
 
 	function cancelPendingCleanup() {
@@ -230,6 +246,7 @@ const bodyLockStackCount = new SharedState(() => {
 			return lockMap;
 		},
 		resetBodyStyle,
+		restorePointerEvents,
 		scheduleCleanupIfNoNewLocks,
 		cancelPendingCleanup,
 		ensureInitialStyleCaptured,
@@ -280,6 +297,8 @@ export class BodyScrollLock {
 
 			const restoreScrollDelay = this.#restoreScrollDelay();
 			const documentObj = document;
+
+			this.#countState.restorePointerEvents(documentObj);
 
 			/**
 			 * We schedule the cleanup to run after a delay to handle same-tick
