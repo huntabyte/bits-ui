@@ -4,6 +4,8 @@ import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date
 import { getTestKbd } from "../utils.js";
 import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./date-range-field-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
+import DateRangeFieldSpreadPropsTest from "./date-range-field-spread-props-test.svelte";
+import { collectErrors } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -295,6 +297,14 @@ it("should update segment positioning when the `locale` changes", async () => {
 
 	expect(input("start").textContent).toBe("2022-01-31");
 	expect(input("end").textContent).toBe("2022-03-15");
+});
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(DateRangeFieldSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("root")).toHaveAttribute("data-updated");
+	await expect.element(page.getByTestId("start-month")).toHaveTextContent("mm");
+	await expect.element(page.getByTestId("end-year")).toHaveTextContent("yyyy");
 });
 
 function at(hour: number) {

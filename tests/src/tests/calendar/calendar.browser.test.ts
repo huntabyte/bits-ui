@@ -7,7 +7,8 @@ import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 import CalendarTest, { type CalendarSingleTestProps } from "./calendar-test.svelte";
 import CalendarMultiTest, { type CalendarMultiTestProps } from "./calendar-multi-test.svelte";
 import CalendarSelectsTest from "./calendar-selects-test.svelte";
-import { focusAndExpectToHaveFocus } from "../browser-utils";
+import { collectErrors, focusAndExpectToHaveFocus } from "../browser-utils";
+import CalendarSpreadPropsTest from "./calendar-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -1143,4 +1144,18 @@ describe("Calendar Select Components", () => {
 			await expect.element(yearOptions[0]).toHaveAttribute("selected");
 		});
 	});
+});
+
+describe("Spread Props", () => {
+	it.each(["single", "multiple"] as const)(
+		"should fall back to the default placeholder when spread props are reassigned during mount - type='%s' (#1950)",
+		async (type) => {
+			const errors = await collectErrors(() => render(CalendarSpreadPropsTest, { type }));
+			expect(errors).toEqual([]);
+			await expect.element(page.getByTestId("calendar")).toHaveAttribute("data-updated");
+			await expect.element(page.getByTestId("heading")).not.toHaveTextContent("");
+			await expect.element(page.getByTestId("month-select")).toBeVisible();
+			await expect.element(page.getByTestId("year-select")).toBeVisible();
+		}
+	);
 });
