@@ -228,6 +228,11 @@ type ShiftCalendarFocusProps = {
 	add: number;
 
 	/**
+	 * Whether vertical navigation should target a calendar-day offset.
+	 */
+	useCalendarDayOffset?: boolean;
+
+	/**
 	 * The `placeholder` value box
 	 */
 	placeholder: WritableBox<DateValue>;
@@ -265,6 +270,7 @@ type ShiftCalendarFocusProps = {
 export function shiftCalendarFocus({
 	node,
 	add,
+	useCalendarDayOffset = false,
 	placeholder,
 	calendarNode,
 	isPrevButtonDisabled,
@@ -274,6 +280,33 @@ export function shiftCalendarFocus({
 }: ShiftCalendarFocusProps) {
 	const candidateCells = getSelectableCells(calendarNode);
 	if (!candidateCells.length) return;
+
+	if (useCalendarDayOffset) {
+		const currentValue = node.getAttribute("data-value");
+		if (!currentValue) return;
+
+		let targetDate = parseStringToDateValue(currentValue, placeholder.current).add({
+			days: add,
+		});
+		const renderedDates = Array.from(
+			calendarNode?.querySelectorAll<HTMLElement>(
+				"[data-bits-day]:not([data-outside-visible-months])"
+			) ?? []
+		)
+			.map((cell) => cell.getAttribute("data-value"))
+			.filter((value): value is string => value !== null);
+
+		while (renderedDates.includes(targetDate.toString())) {
+			const nextCell = candidateCells.find(
+				(cell) => cell.getAttribute("data-value") === targetDate.toString()
+			);
+			if (nextCell) {
+				setPlaceholderToNodeValue(nextCell, placeholder);
+				return nextCell.focus();
+			}
+			targetDate = targetDate.add({ days: add });
+		}
+	}
 
 	const index = candidateCells.indexOf(node);
 	const nextIndex = index + add;

@@ -262,6 +262,20 @@ describe("type='single'", () => {
 			await expect.element(heading).toHaveTextContent("March 1980");
 		});
 
+		it("should preserve the weekday when moving vertically past disabled dates", async () => {
+			setup({
+				value: new CalendarDate(2026, 10, 13),
+				isDateDisabled: (date) =>
+					date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-10-20",
+			});
+			const tuesday = page.getByTestId("date-10-13");
+			await focusAndExpectToHaveFocus(tuesday);
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-10-27")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(tuesday).toHaveFocus();
+		});
+
 		it("should not navigate before `minValue` (with keyboard)", async () => {
 			setup({
 				value: calendarDate,
