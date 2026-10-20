@@ -112,7 +112,10 @@ export class AnimationsComplete {
 	}
 
 	#executeCallback(fn: () => void | Promise<void>): void {
+		const runId = this.#runId;
 		const execute = () => {
+			// cleanup (destroy or a newer run) may have happened while `fn` was deferred
+			if (runId !== this.#runId) return;
 			fn();
 		};
 
