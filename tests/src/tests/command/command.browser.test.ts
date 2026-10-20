@@ -4,6 +4,7 @@ import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
 import CommandTest from "./command-test.svelte";
+import CommandRerenderTest from "./command-rerender-test.svelte";
 import CommandFlatScrollTest from "./command-flat-scroll-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 
@@ -20,6 +21,16 @@ function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
 		root,
 		input,
 		list,
+	};
+}
+
+function setupRerenderTest(props: Partial<ComponentProps<typeof CommandRerenderTest>> = {}) {
+	// oxlint-disable-next-line no-explicit-any
+	const returned = render(CommandRerenderTest, props as any);
+	const input = page.getByTestId("input");
+	return {
+		...returned,
+		input,
 	};
 }
 
@@ -51,6 +62,33 @@ it("should respect initial value for items in the first group", async () => {
 	// ensure the provided value is selected, not the first item
 	await expect.element(page.getByText("Styling")).toHaveAttribute("data-selected");
 	await expect.element(page.getByText("Introduction")).not.toHaveAttribute("data-selected");
+});
+
+it("should keep the clicked item active on initial click", async () => {
+	const t = setupRerenderTest();
+
+	await userEvent.click(page.getByTestId("item-done"));
+	await expect.element(page.getByTestId("selected-done")).toHaveTextContent("selected");
+	await expect.element(page.getByText("Done")).toHaveAttribute("data-selected");
+	await expect.element(page.getByText("Backlog")).not.toHaveAttribute("data-selected");
+
+	(t.input.element() as HTMLElement).focus();
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(page.getByText("Canceled")).toHaveAttribute("data-selected");
+});
+
+it("should select the first item when searching with shouldFilter false", async () => {
+	const t = setup({ shouldFilter: false });
+
+	(t.input.element() as HTMLElement).focus();
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(page.getByText("Styling")).toHaveAttribute("data-selected");
+
+	await userEvent.keyboard("a");
+	await expect.element(t.input).toHaveValue("a");
+	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
+	await expect.element(page.getByText("Styling")).not.toHaveAttribute("data-selected");
 });
 
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
