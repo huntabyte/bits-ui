@@ -57,6 +57,7 @@ export class RadioGroupRootState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: radioGroupAttrs.item,
+			rootAttr: radioGroupAttrs.root,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});

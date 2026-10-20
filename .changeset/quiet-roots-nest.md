@@ -2,4 +2,4 @@
 "bits-ui": patch
 ---
 
-fix(Tabs, Accordion): ignore the triggers of a nested `Tabs.Root` / `Accordion.Root` during keyboard navigation, so `Home`, `End` and arrow-key wrapping stay within the outer list
+fix(Tabs, Accordion, ToggleGroup, RadioGroup, Toolbar, Menubar): ignore the items and triggers of a nested root of the same kind during keyboard navigation, so arrow keys, `Home`, `End` and wrapping stay within the outer group
