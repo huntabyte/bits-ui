@@ -11,6 +11,7 @@ import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
+import ComboboxFieldsetDisabledTest from "./combobox-fieldset-disabled-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -969,4 +970,25 @@ describe("Touch", () => {
 		await expect.element(t.openBinding).toHaveTextContent("true");
 		await expect.element(t.input).toHaveFocus();
 	});
+});
+
+it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
+	render(ComboboxFieldsetDisabledTest);
+	const trigger = page.getByTestId("trigger");
+	await expect.element(trigger).toBeDisabled();
+
+	async function expectClosed() {
+		await new Promise((r) => setTimeout(r, 100));
+		expect(page.getByTestId("open-binding").element()).toHaveTextContent("false");
+		expect(page.getByTestId("content").query()).toBeNull();
+	}
+
+	// browsers still dispatch pointer events to disabled form controls
+	await trigger.click({ force: true });
+	await expectClosed();
+
+	trigger
+		.element()
+		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	await expectClosed();
 });

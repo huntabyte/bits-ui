@@ -24,6 +24,7 @@ import {
 } from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
+import SelectFieldsetDisabledTest from "./select-fieldset-disabled-test.svelte";
 import SelectSettlingContentTest from "./select-settling-content-test.svelte";
 import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
@@ -1503,6 +1504,27 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 		await expect.element(node).not.toHaveAttribute("data-highlighted");
 	}
 }
+
+it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
+	render(SelectFieldsetDisabledTest);
+	const trigger = page.getByTestId("trigger");
+	await expect.element(trigger).toBeDisabled();
+
+	async function expectClosed() {
+		await new Promise((r) => setTimeout(r, 100));
+		expect(page.getByTestId("open-binding").element()).toHaveTextContent("false");
+		expect(page.getByTestId("content").query()).toBeNull();
+	}
+
+	// browsers still dispatch pointer events to disabled form controls
+	await trigger.click({ force: true });
+	await expectClosed();
+
+	trigger
+		.element()
+		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	await expectClosed();
+});
 
 describe("Settling content", () => {
 	function itemInView(viewport: HTMLElement, item: HTMLElement) {

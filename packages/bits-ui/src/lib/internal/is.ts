@@ -39,6 +39,15 @@ export function isNull(value: unknown): value is null {
 	return value === null;
 }
 
+/**
+ * Whether the element is natively disabled, including via an ancestor `<fieldset disabled>`.
+ * Browsers still dispatch pointer events to disabled form controls, so handlers that
+ * open/toggle on `pointerdown`/`pointerup` need to check this.
+ */
+export function isDisabledElement(node: Element | null | undefined) {
+	return node?.matches(":disabled") ?? false;
+}
+
 export function isTouch(e: PointerEvent) {
 	return e.pointerType === "touch";
 }

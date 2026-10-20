@@ -33,7 +33,12 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
+import {
+	isDisabledElement,
+	isElement,
+	isElementOrSVGElement,
+	isHTMLElement,
+} from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
@@ -1805,7 +1810,7 @@ export class DropdownMenuTriggerState {
 	};
 
 	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
-		if (this.opts.disabled.current) return;
+		if (this.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 
 		if (e.button === 0 && e.ctrlKey === false) {
@@ -1817,7 +1822,7 @@ export class DropdownMenuTriggerState {
 	};
 
 	onpointerup: PointerEventHandler<HTMLElement> = (e) => {
-		if (this.opts.disabled.current) return;
+		if (this.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.parentMenu.toggleOpen();

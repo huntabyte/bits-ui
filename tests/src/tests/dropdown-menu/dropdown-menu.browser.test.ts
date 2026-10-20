@@ -18,6 +18,7 @@ import DropdownMenuTest from "./dropdown-menu-test.svelte";
 import DropdownMenuInitiallyOpenTest from "./dropdown-menu-initially-open-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 import DropdownMenuScrollPaddingTest from "./dropdown-menu-scroll-padding-test.svelte";
+import DropdownMenuFieldsetDisabledTest from "./dropdown-menu-fieldset-disabled-test.svelte";
 import DropdownMenuTooltipTriggerTest from "./dropdown-menu-tooltip-trigger-test.svelte";
 
 const kbd = getTestKbd();
@@ -962,4 +963,25 @@ it("should point the sub trigger at the sub content while the submenu is open", 
 	const id = t.getSubContent().element().id;
 	expect(id).not.toBe("");
 	await expect.element(page.getByTestId("sub-trigger")).toHaveAttribute("aria-controls", id);
+});
+
+it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
+	render(DropdownMenuFieldsetDisabledTest);
+	const trigger = page.getByTestId("trigger");
+	await expect.element(trigger).toBeDisabled();
+
+	async function expectClosed() {
+		await new Promise((r) => setTimeout(r, 100));
+		expect(page.getByTestId("open-binding").element()).toHaveTextContent("false");
+		expect(page.getByTestId("content").query()).toBeNull();
+	}
+
+	// browsers still dispatch pointer events to disabled form controls
+	await trigger.click({ force: true });
+	await expectClosed();
+
+	trigger
+		.element()
+		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	await expectClosed();
 });
