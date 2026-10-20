@@ -6,6 +6,7 @@ import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
 import {
+	bodyPointerEventsOnRemoval,
 	expectExists,
 	expectNotExists,
 	getPointerAwayFromSubmenuIntentClientCoords,
@@ -441,6 +442,21 @@ it("should close the menu on escape", async () => {
 	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(page.getByTestId("content"));
 });
+
+it.each([
+	["default", {}],
+	["forceMount", { component: DropdownMenuForceMountTest, withOpenCheck: true }],
+] as const)(
+	"should restore body pointer-events as soon as the menu closes (%s)",
+	async (_, props) => {
+		// https://github.com/huntabyte/bits-ui/issues/2202
+		await openWithKbd(props);
+		await vi.waitFor(() => expect(document.body.style.pointerEvents).toBe("none"));
+		const restored = bodyPointerEventsOnRemoval(page.getByTestId("content").element());
+		await userEvent.keyboard(kbd.ESCAPE);
+		expect(await restored).toBe("");
+	}
+);
 
 it("should respect the `escapeKeydownBehavior` prop", async () => {
 	await openWithKbd({

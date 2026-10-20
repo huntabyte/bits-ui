@@ -6,6 +6,7 @@ import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
 import {
+	bodyPointerEventsOnRemoval,
 	expectExists,
 	expectNotExists,
 	observeTransitionAttrs,
@@ -789,6 +790,15 @@ describe("Scroll Lock", () => {
 
 		// with scrollbar-gutter: stable, no padding compensation should be added
 		expect(document.body.style.paddingRight).toBe(initialPadding);
+	});
+
+	it("should restore body pointer-events as soon as the dialog closes", async () => {
+		// https://github.com/huntabyte/bits-ui/issues/2202
+		await open();
+		await vi.waitFor(() => expect(document.body.style.pointerEvents).toBe("none"));
+		const restored = bodyPointerEventsOnRemoval(page.getByTestId("content").element());
+		await userEvent.keyboard(kbd.ESCAPE);
+		expect(await restored).toBe("");
 	});
 
 	it("should restore a single inline overflow axis on body after closing", async () => {
