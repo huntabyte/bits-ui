@@ -1519,7 +1519,7 @@ export class SelectScrollButtonImplState {
 		});
 
 		$effect(() => {
-			if (this.mounted) return;
+			if (this.mounted && this.root.opts.open.current) return;
 			this.clearAutoScrollInterval();
 		});
 
@@ -1548,7 +1548,7 @@ export class SelectScrollButtonImplState {
 	}
 
 	onpointerdown(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
+		if (this.autoScrollTimer !== null || !this.root.opts.open.current) return;
 		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();

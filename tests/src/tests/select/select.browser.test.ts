@@ -762,12 +762,14 @@ describe("select - single", () => {
 	});
 
 	it.each([
-		{ button: "scroll-down-button", value: "" },
-		{ button: "scroll-up-button", value: "50" },
+		{ button: "scroll-down-button", value: "", forceMount: false },
+		{ button: "scroll-up-button", value: "50", forceMount: false },
+		{ button: "scroll-down-button", value: "", forceMount: true },
+		{ button: "scroll-up-button", value: "50", forceMount: true },
 	])(
-		"should stop auto scrolling when closed while hovering the $button",
-		async ({ button, value }) => {
-			render(SelectScrollButtonsTest, { value });
+		"should stop auto scrolling when closed while hovering the $button (forceMount: $forceMount)",
+		async ({ button, value, forceMount }) => {
+			render(SelectScrollButtonsTest, { value, forceMount });
 
 			await page.getByTestId("trigger").click();
 			await expectExists(page.getByTestId("content"));
@@ -780,7 +782,10 @@ describe("select - single", () => {
 				.dispatchEvent(new PointerEvent("pointermove", { bubbles: true }));
 			await sleep(120);
 			await userEvent.keyboard(kbd.ESCAPE);
-			await expectNotExists(page.getByTestId("content"));
+			// force mounted content stays in the DOM, so its buttons are never destroyed
+			await expect
+				.element(page.getByTestId("trigger"))
+				.toHaveAttribute("data-state", "closed");
 
 			await page.getByTestId("trigger").click();
 			await expectExists(page.getByTestId("content"));
