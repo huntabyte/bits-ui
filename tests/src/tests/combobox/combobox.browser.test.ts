@@ -7,6 +7,7 @@ import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
 import type { ComboboxMultipleTestProps } from "./combobox-multi-test.svelte";
 import ComboboxMultiTest from "./combobox-multi-test.svelte";
+import ComboboxAutoHighlightViewportTest from "./combobox-auto-highlight-viewport-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
@@ -32,6 +33,187 @@ const testItems: Item[] = [
 		label: "D",
 	},
 ];
+
+it("auto-highlights the first match even when it is outside the scrolled viewport", async () => {
+	render(ComboboxAutoHighlightViewportTest);
+	await page.getByTestId("trigger").click({ force: true });
+	await waitForDismissibleLayer(page.getByTestId("content"));
+	const viewport = page.getByTestId("viewport").element();
+	viewport.scrollTop = viewport.scrollHeight;
+	expect(viewport.scrollTop).toBeGreaterThan(0);
+	await userEvent.type(page.getByTestId("input"), "B");
+	await expectHighlighted(page.getByTestId("item-0"));
+	await expect.poll(() => viewport.scrollTop).toBe(0);
+});
+
+// Shared contract with Base UI's public boolean autoHighlight prop.
+// Reference: https://github.com/mui/base-ui/blob/aeba3eb9f4613424c1a66f767bb20d25233306b6/packages/react/src/combobox/root/ComboboxRoot.test.tsx
+describe.each(["single", "multiple"] as const)("combobox autoHighlight - %s", (type) => {
+	const setup = type === "single" ? setupSingle : setupMultiple;
+
+	it.each([false, true])(
+		"does not highlight on pointer open (autoHighlight=%s)",
+		async (autoHighlight) => {
+			const t = setup({ autoHighlight });
+			await t.trigger.click({ force: true });
+			await expectExists(t.getContent());
+			await expectNotHighlighted(getItems(page.getByTestId));
+			await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+		}
+	);
+
+	it("does not highlight after filtering by default", async () => {
+		const t = setup();
+		await t.user.type(t.input, "B");
+		await expectExists(t.getContent());
+		await expectNotHighlighted(page.getByTestId("2"));
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("2"));
+	});
+
+	it("clears a keyboard highlight when filtering with autoHighlight=false", async () => {
+		const t = setup({ autoHighlight: false });
+		(t.input.element() as HTMLElement).focus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("1"));
+		await t.user.type(t.input, "B");
+		await expectNotHighlighted(page.getByTestId("2"));
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+	});
+
+	it("does not restore the selection while filtering with autoHighlight=false", async () => {
+		const t =
+			type === "single"
+				? setupSingle({ autoHighlight: false, value: "3" })
+				: setupMultiple({ autoHighlight: false, value: ["3"] });
+		await t.trigger.click({ force: true });
+		await expectHighlighted(page.getByTestId("3"));
+		await t.user.clear(t.input);
+		await t.user.type(t.input, "C");
+		await expectNotHighlighted(page.getByTestId("3"));
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+	});
+
+	it("opens and highlights on a typed input event without a keydown", async () => {
+		const t = setup({ autoHighlight: true });
+		const input = t.input.element() as HTMLInputElement;
+		input.focus();
+		input.value = "B";
+		input.dispatchEvent(
+			new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" })
+		);
+		await expectHighlighted(page.getByTestId("2"));
+	});
+
+	it("highlights after IME composition commits and ignores composing Enter", async () => {
+		const t = setup({ autoHighlight: true });
+		await t.trigger.click({ force: true });
+		const input = t.input.element() as HTMLInputElement;
+		input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }));
+		input.value = "B";
+		input.dispatchEvent(
+			new InputEvent("input", {
+				bubbles: true,
+				inputType: "insertCompositionText",
+				isComposing: true,
+			})
+		);
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+		input.dispatchEvent(
+			new KeyboardEvent("keydown", { bubbles: true, key: "Enter", isComposing: true })
+		);
+		await expectExists(t.getContent());
+		input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true, data: "B" }));
+		await expectHighlighted(page.getByTestId("2"));
+		await t.user.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("B");
+	});
+
+	it.each([kbd.ARROW_DOWN, kbd.ARROW_UP])("highlights on keyboard open with %s", async (key) => {
+		const t = setup({ autoHighlight: true });
+		(t.input.element() as HTMLElement).focus();
+		await t.user.keyboard(key);
+		await expectHighlighted(page.getByTestId(key === kbd.ARROW_DOWN ? "1" : "4"));
+	});
+
+	it("restores the selection on open and after clearing the query", async () => {
+		const t =
+			type === "single"
+				? setupSingle({ autoHighlight: true, value: "3" })
+				: setupMultiple({ autoHighlight: true, value: ["3"] });
+		await t.trigger.click({ force: true });
+		await expectHighlighted(page.getByTestId("3"));
+		await t.user.clear(t.input);
+		await t.user.type(t.input, "B");
+		await expectHighlighted(page.getByTestId("2"));
+		await t.user.clear(t.input);
+		await expectHighlighted(page.getByTestId("3"));
+		await t.user.keyboard(kbd.ESCAPE);
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("3"));
+	});
+
+	it("highlights delayed results, skips disabled items, and selects with Enter", async () => {
+		const t = setup({ autoHighlight: true }, []);
+		await t.user.type(t.input, "B");
+		await expectExists(t.getContent());
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+		await t.rerender({
+			items: [
+				{ value: "disabled", label: "Bad", disabled: true },
+				{ value: "2", label: "Banana" },
+				{ value: "3", label: "Blackberry" },
+			],
+		});
+		await expectHighlighted(page.getByTestId("2"));
+		await expect
+			.element(t.input)
+			.toHaveAttribute("aria-activedescendant", page.getByTestId("2").element().id);
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("3"));
+		await t.rerender({
+			items: [
+				{ value: "2", label: "Banana" },
+				{ value: "3", label: "Blackberry" },
+				{ value: "4", label: "Blueberry" },
+			],
+		});
+		await expectHighlighted(page.getByTestId("3"));
+		await t.user.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("Blackberry");
+	});
+
+	it("clears a removed highlight and recovers when results return", async () => {
+		const t = setup({ autoHighlight: true });
+		await t.user.type(t.input, "B");
+		await expectHighlighted(page.getByTestId("2"));
+		await t.rerender({ items: [] });
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+		await t.rerender({ items: testItems });
+		await expectHighlighted(page.getByTestId("2"));
+	});
+
+	it("discards pending highlighting after closing", async () => {
+		const t = setup({ autoHighlight: true }, []);
+		await t.user.type(t.input, "B");
+		await t.user.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+		await t.rerender({ items: testItems });
+		await t.trigger.click({ force: true });
+		await expectExists(t.getContent());
+		await expectNotHighlighted(getItems(page.getByTestId));
+	});
+
+	it("does not highlight delayed results after disabling autoHighlight", async () => {
+		const t = setup({ autoHighlight: true }, []);
+		await t.user.type(t.input, "B");
+		await t.rerender({ autoHighlight: false });
+		await t.rerender({ items: testItems });
+		await expectNotHighlighted(page.getByTestId("2"));
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+	});
+});
 
 function setupSingle(
 	props: Partial<ComboboxSingleTestProps | ComboboxForceMountTestProps> = {},
@@ -182,10 +364,10 @@ describe("combobox - single", () => {
 		await expect.element(page.getByTestId("content")).toBeVisible();
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 
-		await expect.element(page.getByTestId("2")).toHaveAttribute("data-highlighted");
-		await expect.element(page.getByTestId("1")).not.toHaveAttribute("data-highlighted");
+		await expect.element(page.getByTestId("1")).toHaveAttribute("data-highlighted");
+		await expect.element(page.getByTestId("2")).not.toHaveAttribute("data-highlighted");
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(page.getByTestId("input")).toHaveValue("B");
+		await expect.element(page.getByTestId("input")).toHaveValue("A");
 	});
 
 	it("should render an input if the `name` prop is passed", async () => {
@@ -314,6 +496,38 @@ describe("combobox - single", () => {
 		await expectHighlighted(item0);
 	});
 
+	it("should auto-highlight the first matching item after input when `autoHighlight` is true", async () => {
+		const t = setupSingle({ autoHighlight: true }, [
+			{ value: "1", label: "apple" },
+			{ value: "2", label: "banana" },
+			{ value: "3", label: "cherry" },
+			{ value: "4", label: "date" },
+		]);
+		await t.trigger.click({ force: true });
+		await expectExists(t.getContent());
+		const [item1, item2, item3, item4] = getItems(page.getByTestId);
+
+		await expectNotHighlighted([item1, item2, item3, item4]);
+		await t.user.type(t.input, "b");
+		await expectHighlighted(item2);
+		await expect.element(t.input).toHaveAttribute("aria-activedescendant", item2.element().id);
+		await t.user.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+		t.unmount();
+	});
+
+	it("should clear the auto-highlight when input filtering removes all items", async () => {
+		const t = await openSingle({ autoHighlight: true });
+
+		await t.user.type(t.input, "B");
+		await expectHighlighted(page.getByTestId("2"));
+		await t.user.type(t.input, "Z");
+		await expect.element(t.input).not.toHaveAttribute("aria-activedescendant");
+		await t.user.keyboard(kbd.ESCAPE);
+		await expectNotExists(t.getContent());
+		t.unmount();
+	});
+
 	it("should navigate through the items using the keyboard (loop = true)", async () => {
 		await openSingle(
 			{
@@ -396,13 +610,13 @@ describe("combobox - single", () => {
 	});
 
 	it("should highlight the first filtered item after typing in the input", async () => {
-		const t = await openSingle();
+		const t = await openSingle({ autoHighlight: true });
 		await t.user.type(t.input, "b");
 		await expectHighlighted(page.getByTestId("2")); // B
 	});
 
 	it("should select the highlighted filtered item with Enter after typing", async () => {
-		const t = await openSingle();
+		const t = await openSingle({ autoHighlight: true });
 		await t.user.type(t.input, "b");
 		await expectHighlighted(page.getByTestId("2")); // B
 		await t.user.keyboard(kbd.ENTER);
@@ -425,7 +639,7 @@ describe("combobox - single", () => {
 	});
 
 	it("should allow navigating after navigating to the bottom, closing, and reopening the menu", async () => {
-		const t = await openSingle();
+		const t = await openSingle({}, kbd.ARROW_DOWN);
 		const item1 = page.getByTestId("1");
 		const item2 = page.getByTestId("2");
 		const item3 = page.getByTestId("3");
@@ -524,7 +738,7 @@ describe("combobox - multiple", () => {
 		const t = await openMultiple();
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.input).toHaveValue("B");
+		await expect.element(t.input).toHaveValue("A");
 	});
 
 	it("should not render a hidden input if the `name` prop is passed and a value is not selected", async () => {
@@ -713,7 +927,7 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should allow multiple items to be selected using the keyboard", async () => {
-		const t = await openMultiple({});
+		const t = await openMultiple({}, kbd.ARROW_DOWN);
 
 		const [item0, item1, item2, item3] = getItems(page.getByTestId);
 
@@ -752,13 +966,13 @@ describe("combobox - multiple", () => {
 	});
 
 	it("should highlight the first filtered item after typing in the input", async () => {
-		const t = await openMultiple();
+		const t = await openMultiple({ autoHighlight: true });
 		await t.user.type(t.input, "b");
 		await expectHighlighted(page.getByTestId("2")); // B
 	});
 
 	it("should select the highlighted filtered item with Enter after typing", async () => {
-		const t = await openMultiple();
+		const t = await openMultiple({ autoHighlight: true });
 		await t.user.type(t.input, "b");
 		await expectHighlighted(page.getByTestId("2")); // B
 		await t.user.keyboard(kbd.ENTER);

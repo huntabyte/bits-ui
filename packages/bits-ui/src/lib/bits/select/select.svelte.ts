@@ -86,6 +86,7 @@ interface SelectBaseRootStateOpts
 			scrollAlignment: "nearest" | "center";
 			items: { value: string; label: string; disabled?: boolean }[];
 			allowDeselect: boolean;
+			autoHighlight: boolean;
 			onOpenChangeComplete: OnChangeFn<boolean>;
 		}>,
 		WritableBoxedValues<{
@@ -98,6 +99,8 @@ interface SelectBaseRootStateOpts
 abstract class SelectBaseRootState {
 	readonly opts: SelectBaseRootStateOpts;
 	touchedInput = $state(false);
+	autoHighlightActive = false;
+	inputGeneration = 0;
 	inputNode = $state<HTMLElement | null>(null);
 	contentNode = $state<HTMLElement | null>(null);
 	contentPresence: PresenceManager;
@@ -111,18 +114,14 @@ abstract class SelectBaseRootState {
 	 */
 	readonly selectedLabelsByValue = new SvelteMap<string, string>();
 	highlightedNode = $state<HTMLElement | null>(null);
-	readonly highlightedValue = $derived.by(() => {
-		if (!this.highlightedNode) return null;
-		return this.highlightedNode.getAttribute("data-value");
-	});
+	// DOM attributes are not reactive, so snapshot metadata when elements are reused.
+	highlightedItem = $state<{ value: string | null; label: string | null } | null>(null);
+	readonly highlightedValue = $derived(this.highlightedItem?.value ?? null);
 	readonly highlightedId = $derived.by(() => {
 		if (!this.highlightedNode) return undefined;
 		return this.highlightedNode.id;
 	});
-	readonly highlightedLabel = $derived.by(() => {
-		if (!this.highlightedNode) return null;
-		return this.highlightedNode.getAttribute("data-label");
-	});
+	readonly highlightedLabel = $derived(this.highlightedItem?.label ?? null);
 	contentIsPositioned = $state(false);
 	isUsingKeyboard = false;
 	isCombobox = false;
@@ -142,13 +141,51 @@ abstract class SelectBaseRootState {
 
 		$effect.pre(() => {
 			if (!this.opts.open.current) {
+				this.touchedInput = false;
+				this.autoHighlightActive = false;
+				this.inputGeneration++;
 				this.setHighlightedNode(null);
 			}
+		});
+
+		$effect(() => {
+			const content = this.contentNode;
+			if (!this.isCombobox || !content || !this.opts.open.current) return;
+			if (!this.opts.autoHighlight.current) {
+				this.autoHighlightActive = false;
+			}
+			// Filtering can be asynchronous, and keyed items can update in place.
+			// Observe candidates rather than assuming one tick settles every result list.
+			const observer = new MutationObserver((mutations) => {
+				const changedValue = mutations.find(
+					(mutation) =>
+						mutation.target === this.highlightedNode &&
+						mutation.attributeName === "data-value"
+				);
+				if (changedValue) {
+					// Index-keyed lists can reuse the highlighted element for a different result.
+					this.setHighlightedNode(this.getNodeByValue(changedValue.oldValue ?? ""));
+				} else if (mutations.some((mutation) => mutation.target === this.highlightedNode)) {
+					this.setHighlightedNode(this.highlightedNode);
+				}
+				this.reconcileInputHighlight();
+			});
+			observer.observe(content, {
+				childList: true,
+				subtree: true,
+				attributes: true,
+				attributeFilter: ["data-disabled", "data-value", "data-label"],
+				attributeOldValue: true,
+			});
+			return () => observer.disconnect();
 		});
 	}
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
+		this.highlightedItem = node
+			? { value: node.getAttribute("data-value"), label: node.getAttribute("data-label") }
+			: null;
 		if (node && (this.isUsingKeyboard || initial)) {
 			this.scrollHighlightedNodeIntoView(node);
 		}
@@ -253,6 +290,19 @@ abstract class SelectBaseRootState {
 	getBitsAttr: typeof selectAttrs.getAttr = (part) => {
 		return selectAttrs.getAttr(part, this.isCombobox ? "combobox" : undefined);
 	};
+
+	reconcileInputHighlight(reset = false) {
+		if (!this.isCombobox || !this.opts.open.current) return;
+		const candidates = this.getCandidateNodes();
+		if (reset || (this.highlightedNode && !candidates.includes(this.highlightedNode))) {
+			this.setHighlightedNode(null);
+		}
+		if (!this.opts.autoHighlight.current || !this.autoHighlightActive) return;
+		if (!this.highlightedNode) {
+			// The first match can be outside the viewport; keyboard filtering must scroll to it.
+			this.setHighlightedNode(candidates[0] ?? null, true);
+		}
+	}
 }
 
 interface SelectSingleRootStateOpts
@@ -325,6 +375,15 @@ export class SelectSingleRootState extends SelectBaseRootState {
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
+			if (!this.opts.open.current) return;
+			if (
+				this.isCombobox &&
+				this.touchedInput &&
+				this.opts.inputValue.current.trim() !== ""
+			) {
+				this.reconcileInputHighlight();
+				return;
+			}
 			if (
 				this.highlightedNode &&
 				this.domContext.getDocument().contains(this.highlightedNode)
@@ -338,7 +397,7 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				}
 			}
 			// if no value is set, we want to highlight the first item
-			this.setHighlightedToFirstCandidate(true);
+			if (!this.isCombobox) this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
@@ -402,6 +461,15 @@ class SelectMultipleRootState extends SelectBaseRootState {
 
 	setInitialHighlightedNode() {
 		afterTick(() => {
+			if (!this.opts.open.current) return;
+			if (
+				this.isCombobox &&
+				this.touchedInput &&
+				this.opts.inputValue.current.trim() !== ""
+			) {
+				this.reconcileInputHighlight();
+				return;
+			}
 			if (!this.domContext) return;
 			if (
 				this.highlightedNode &&
@@ -416,7 +484,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				}
 			}
 			// if no value is set, we want to highlight the first item
-			this.setHighlightedToFirstCandidate(true);
+			if (!this.isCombobox) this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
@@ -439,16 +507,18 @@ interface SelectRootStateOpts
 	isCombobox: boolean;
 	type: "single" | "multiple";
 	value: Box<string> | Box<string[]>;
+	autoHighlight?: Box<boolean>;
 }
 
 export class SelectRootState {
 	static create(props: SelectRootStateOpts): SelectRoot {
-		const { type, ...rest } = props;
+		const { type, autoHighlight = boxWith(() => false), ...rest } = props;
+		const rootProps = { ...rest, autoHighlight };
 
 		const rootState =
 			type === "single"
-				? new SelectSingleRootState(rest as SelectSingleRootStateOpts)
-				: new SelectMultipleRootState(rest as SelectMultipleRootStateOpts);
+				? new SelectSingleRootState(rootProps as SelectSingleRootStateOpts)
+				: new SelectMultipleRootState(rootProps as SelectMultipleRootStateOpts);
 
 		return SelectRootContext.set(rootState);
 	}
@@ -574,6 +644,7 @@ export class SelectInputState {
 
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
+		if (e.isComposing) return;
 		if (e.key === kbd.ESCAPE) return;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
@@ -585,16 +656,14 @@ export class SelectInputState {
 			this.root.handleOpen();
 			// we need to wait for a tick after the menu opens to ensure the highlighted nodes are
 			// set correctly.
-			if (this.root.hasValue) return;
-			const candidateNodes = this.root.getCandidateNodes();
-			if (!candidateNodes.length) return;
-
-			if (e.key === kbd.ARROW_DOWN) {
-				const firstCandidate = candidateNodes[0]!;
-				this.root.setHighlightedNode(firstCandidate);
-			} else if (e.key === kbd.ARROW_UP) {
-				const lastCandidate = candidateNodes[candidateNodes.length - 1]!;
-				this.root.setHighlightedNode(lastCandidate);
+			if (e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+				afterTick(() => {
+					if (!this.root.opts.open.current || this.root.hasValue) return;
+					const candidates = this.root.getCandidateNodes();
+					this.root.setHighlightedNode(
+						(e.key === kbd.ARROW_DOWN ? candidates[0] : candidates.at(-1)) ?? null
+					);
+				});
 			}
 			return;
 		}
@@ -654,13 +723,23 @@ export class SelectInputState {
 			let nextItem: HTMLElement | undefined;
 
 			if (e.key === kbd.ARROW_DOWN) {
-				nextItem = next(candidateNodes, currIndex, loop);
+				nextItem =
+					currIndex === -1 ? candidateNodes[0] : next(candidateNodes, currIndex, loop);
 			} else if (e.key === kbd.ARROW_UP) {
-				nextItem = prev(candidateNodes, currIndex, loop);
+				nextItem =
+					currIndex === -1
+						? candidateNodes.at(-1)
+						: prev(candidateNodes, currIndex, loop);
 			} else if (e.key === kbd.PAGE_DOWN) {
-				nextItem = forward(candidateNodes, currIndex, 10, loop);
+				nextItem =
+					currIndex === -1
+						? candidateNodes.at(-1)
+						: forward(candidateNodes, currIndex, 10, loop);
 			} else if (e.key === kbd.PAGE_UP) {
-				nextItem = backward(candidateNodes, currIndex, 10, loop);
+				nextItem =
+					currIndex === -1
+						? candidateNodes[0]
+						: backward(candidateNodes, currIndex, 10, loop);
 			} else if (e.key === kbd.HOME) {
 				nextItem = candidateNodes[0];
 			} else if (e.key === kbd.END) {
@@ -670,18 +749,35 @@ export class SelectInputState {
 			this.root.setHighlightedNode(nextItem);
 			return;
 		}
-
-		if (INTERACTION_KEYS.includes(e.key)) return;
-		if (!this.root.highlightedNode) {
-			this.root.setHighlightedToFirstCandidate();
-		}
 	}
 
 	oninput(e: BitsEvent<Event, HTMLInputElement>) {
+		this.root.isUsingKeyboard = true;
+		this.root.touchedInput = true;
 		this.root.opts.inputValue.current = e.currentTarget.value;
+		if ("isComposing" in e && e.isComposing) return;
+		const generation = ++this.root.inputGeneration;
+		const query = e.currentTarget.value.trim();
+		const inputType =
+			"inputType" in e && typeof e.inputType === "string" ? e.inputType : undefined;
+		if (
+			query !== "" &&
+			(e.type === "compositionend" || (inputType && inputType !== "insertReplacementText"))
+		) {
+			this.root.handleOpen();
+		}
+		if (this.root.opts.autoHighlight.current && query !== "") {
+			this.root.autoHighlightActive = true;
+		}
 		afterTick(() => {
-			if (!this.root.opts.open.current) return;
-			this.root.setHighlightedToFirstCandidate();
+			if (!this.root.opts.open.current || generation !== this.root.inputGeneration) return;
+			if (query === "" && this.root.hasValue) {
+				this.root.autoHighlightActive = false;
+				this.root.setHighlightedNode(null);
+				this.root.setInitialHighlightedNode();
+				return;
+			}
+			this.root.reconcileInputHighlight(true);
 		});
 	}
 
@@ -698,6 +794,8 @@ export class SelectInputState {
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				onkeydown: this.onkeydown,
 				oninput: this.oninput,
+				oncompositionend: (e: BitsEvent<CompositionEvent, HTMLInputElement>) =>
+					this.oninput(e),
 				[this.root.getBitsAttr("input")]: "",
 				...this.attachment,
 			}) as const
