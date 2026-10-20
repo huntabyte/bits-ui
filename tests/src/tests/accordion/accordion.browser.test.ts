@@ -1,4 +1,4 @@
-import { page, userEvent, type Locator } from "@vitest/browser/context";
+import { page, userEvent, type Locator } from "vitest/browser";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import AccordionSingleTest from "./accordion-single-test.svelte";
@@ -34,34 +34,34 @@ const ITEMS_WITH_DISABLED = ITEMS.map((item) =>
 
 const kbd = getTestKbd();
 
-function setupSingle(
+async function setupSingle(
 	props: Partial<ComponentProps<typeof AccordionSingleTest>> = { items: ITEMS }
 ) {
 	// oxlint-disable-next-line no-explicit-any
-	render(AccordionSingleTest, { ...(props as any) });
+	await render(AccordionSingleTest, { ...(props as any) });
 	const itemEls = ITEMS.map((item) => page.getByTestId(`${item.value}-item`));
 	const triggerEls = ITEMS.map((item) => page.getByTestId(`${item.value}-trigger`));
 	return { itemEls, triggerEls };
 }
 
-function setupSingleForceMount(
+async function setupSingleForceMount(
 	props: Partial<ComponentProps<typeof AccordionSingleForceMountTest>> = {
 		items: ITEMS,
 	}
 ) {
 	// oxlint-disable-next-line no-explicit-any
-	render(AccordionSingleForceMountTest, { ...(props as any) });
+	await render(AccordionSingleForceMountTest, { ...(props as any) });
 	const itemEls = ITEMS.map((item) => page.getByTestId(`${item.value}-item`));
 	const triggerEls = ITEMS.map((item) => page.getByTestId(`${item.value}-trigger`));
 	return { itemEls, triggerEls };
 }
 
-function setupMultiple(
+async function setupMultiple(
 	props: Partial<ComponentProps<typeof AccordionMultiTest>> = { items: ITEMS }
 ) {
 	const user = userEvent;
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(AccordionMultiTest, { ...(props as any) });
+	const returned = await render(AccordionMultiTest, { ...(props as any) });
 	const itemEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-item`));
 	const triggerEls = ITEMS.map((item) => returned.getByTestId(`${item.value}-trigger`));
 	return { user, itemEls, triggerEls, ...returned };
@@ -93,7 +93,7 @@ async function expectNotDisabled(...triggerEls: Locator[]) {
 
 describe("Shared Behavior", () => {
 	it("should have bits data attrs", async () => {
-		render(AccordionTestIsolated);
+		await render(AccordionTestIsolated);
 		const root = page.getByTestId("root");
 		const trigger = page.getByTestId("trigger");
 		const item = page.getByTestId("item");
@@ -107,13 +107,13 @@ describe("Shared Behavior", () => {
 	});
 
 	it("should respect custom tabindex on trigger", async () => {
-		render(AccordionTestIsolated, { triggerProps: { tabindex: -1 } });
+		await render(AccordionTestIsolated, { triggerProps: { tabindex: -1 } });
 		const trigger = page.getByTestId("trigger");
 		await expect.element(trigger).toHaveAttribute("tabindex", "-1");
 	});
 
 	it("should have default tabindex of 0 on trigger", async () => {
-		render(AccordionTestIsolated);
+		await render(AccordionTestIsolated);
 		const trigger = page.getByTestId("trigger");
 		await expect.element(trigger).toHaveAttribute("tabindex", "0");
 	});
@@ -122,7 +122,7 @@ describe("Shared Behavior", () => {
 describe("type='single'", () => {
 	describe("Expansion Behavior", () => {
 		it("should have expected data attributes", async () => {
-			const t = setupSingle({ items: ITEMS_WITH_DISABLED });
+			const t = await setupSingle({ items: ITEMS_WITH_DISABLED });
 
 			await expectClosed(t.itemEls[0], t.triggerEls[0]);
 			await expectNotDisabled(t.itemEls[0], t.triggerEls[0]);
@@ -134,7 +134,7 @@ describe("type='single'", () => {
 		});
 
 		it("should display content when an item is expanded", async () => {
-			setupSingle();
+			await setupSingle();
 
 			for (const item of ITEMS) {
 				const trigger = page.getByTestId(`${item.value}-trigger`);
@@ -144,13 +144,13 @@ describe("type='single'", () => {
 				await expect.element(content).not.toBeVisible();
 				await trigger.click();
 				const contentAfter = page.getByTestId(`${item.value}-content`);
-				await expect.element(contentAfter).toHaveTextContent(item.content);
+				await expect.element(contentAfter).toMatchTextContent(item.content);
 				await expectOpen(itemEl, trigger);
 			}
 		});
 
 		it("should expand only one item at a time", async () => {
-			setupSingle();
+			await setupSingle();
 
 			for (const item of ITEMS) {
 				const trigger = page.getByTestId(`${item.value}-trigger`);
@@ -160,7 +160,7 @@ describe("type='single'", () => {
 				await expect.element(content).not.toBeVisible();
 				await trigger.click();
 				const contentAfter = page.getByTestId(`${item.value}-content`);
-				await expect.element(contentAfter).toHaveTextContent(item.content);
+				await expect.element(contentAfter).toMatchTextContent(item.content);
 				await expectOpen(itemEl, trigger);
 			}
 			const openItems = Array.from(
@@ -172,7 +172,7 @@ describe("type='single'", () => {
 		it.each([kbd.ENTER, kbd.SPACE])(
 			`should expand when the trigger is focused and "%s" key is pressed`,
 			async (key) => {
-				setupSingle();
+				await setupSingle();
 
 				for (const item of ITEMS) {
 					const trigger = page.getByTestId(`${item.value}-trigger`);
@@ -183,7 +183,7 @@ describe("type='single'", () => {
 					(trigger.element() as HTMLElement).focus();
 					await userEvent.keyboard(key);
 					const contentAfter = page.getByTestId(`${item.value}-content`);
-					await expect.element(contentAfter).toHaveTextContent(item.content);
+					await expect.element(contentAfter).toMatchTextContent(item.content);
 					await expectOpen(itemEl, trigger);
 				}
 			}
@@ -192,7 +192,7 @@ describe("type='single'", () => {
 
 	describe("Keyboard Navigation", () => {
 		it("should focus the next item when `ArrowDown` key is pressed", async () => {
-			const t = setupSingle();
+			const t = await setupSingle();
 
 			(t.triggerEls[0].element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -206,7 +206,7 @@ describe("type='single'", () => {
 		});
 
 		it("should focus the previous item when the `ArrowUp` key is pressed", async () => {
-			const t = setupSingle();
+			const t = await setupSingle();
 
 			(t.triggerEls[0].element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ARROW_UP);
@@ -220,7 +220,7 @@ describe("type='single'", () => {
 		});
 
 		it("should focus the first item when the `Home` key is pressed", async () => {
-			const t = setupSingle();
+			const t = await setupSingle();
 
 			for (const trigger of t.triggerEls) {
 				(trigger.element() as HTMLElement).focus();
@@ -230,7 +230,7 @@ describe("type='single'", () => {
 		});
 
 		it("should focus the last item when the `End` key is pressed", async () => {
-			const t = setupSingle();
+			const t = await setupSingle();
 
 			for (const trigger of t.triggerEls) {
 				(trigger.element() as HTMLElement).focus();
@@ -240,7 +240,7 @@ describe("type='single'", () => {
 		});
 
 		it("should skip over disabled items when navigating with Arrow Keys", async () => {
-			const t = setupSingle({ items: ITEMS_WITH_DISABLED });
+			const t = await setupSingle({ items: ITEMS_WITH_DISABLED });
 
 			(t.triggerEls[0].element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -249,7 +249,7 @@ describe("type='single'", () => {
 		});
 
 		it("should loop through the items when the `loop` prop is true", async () => {
-			const t = setupSingle({ items: ITEMS, loop: true });
+			const t = await setupSingle({ items: ITEMS, loop: true });
 
 			(t.triggerEls[0].element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ARROW_UP);
@@ -259,7 +259,7 @@ describe("type='single'", () => {
 		});
 
 		it("should not loop through the items when the `loop` prop is false", async () => {
-			const t = setupSingle({ items: ITEMS, loop: false });
+			const t = await setupSingle({ items: ITEMS, loop: false });
 
 			(t.triggerEls[0].element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ARROW_UP);
@@ -270,7 +270,7 @@ describe("type='single'", () => {
 		});
 
 		it("should navigate using ArrowLeft/Right when `orientation` is `horizontal`", async () => {
-			const t = setupSingle({
+			const t = await setupSingle({
 				items: ITEMS,
 				orientation: "horizontal",
 			});
@@ -283,7 +283,7 @@ describe("type='single'", () => {
 		});
 
 		it("should loop using ArrowLeft/Right when `orientation` is `horizontal` and `loop` is true", async () => {
-			const t = setupSingle({
+			const t = await setupSingle({
 				items: ITEMS,
 				orientation: "horizontal",
 				loop: true,
@@ -297,7 +297,7 @@ describe("type='single'", () => {
 		});
 
 		it("should not loop using ArrowLeft/Right when `orientation` is `horizontal` and `loop` is false", async () => {
-			const t = setupSingle({
+			const t = await setupSingle({
 				items: ITEMS,
 				orientation: "horizontal",
 				loop: false,
@@ -314,7 +314,7 @@ describe("type='single'", () => {
 
 	describe("Props and Bindings", () => {
 		it("should forceMount the content when `forceMount` is true", async () => {
-			setupSingleForceMount({
+			await setupSingleForceMount({
 				items: ITEMS_WITH_DISABLED,
 			});
 			const contentEls = ITEMS.map((item) => page.getByTestId(`${item.value}-content`));
@@ -324,7 +324,7 @@ describe("type='single'", () => {
 		});
 
 		it("should apply transition attrs to content during open and close", async () => {
-			const t = setupSingleForceMount({
+			const t = await setupSingleForceMount({
 				items: ITEMS_WITH_DISABLED,
 			});
 			const content = page.getByTestId(`${ITEMS[0]!.value}-content`);
@@ -344,7 +344,7 @@ describe("type='single'", () => {
 		});
 
 		it("works properly when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-			const t = setupSingleForceMount({
+			const t = await setupSingleForceMount({
 				items: ITEMS_WITH_DISABLED,
 				withOpenCheck: true,
 			});
@@ -361,7 +361,7 @@ describe("type='single'", () => {
 		});
 
 		it("should disable everything when true on root", async () => {
-			const t = setupSingle({ items: ITEMS, disabled: true });
+			const t = await setupSingle({ items: ITEMS, disabled: true });
 
 			await userEvent.click(t.triggerEls[0], { force: true });
 			await expectClosed(t.triggerEls[0]);
@@ -375,7 +375,7 @@ describe("type='single'", () => {
 		});
 
 		it("should respect the `disabled` prop for items", async () => {
-			const t = setupSingle({ items: ITEMS_WITH_DISABLED });
+			const t = await setupSingle({ items: ITEMS_WITH_DISABLED });
 
 			await userEvent.click(t.triggerEls[0], { force: true });
 			await expect.element(t.triggerEls[0]).toHaveFocus();
@@ -388,7 +388,7 @@ describe("type='single'", () => {
 			const itemsWithLevel = ITEMS.map((item, i) =>
 				i === 0 ? ({ ...item, level: 1 } as const) : item
 			);
-			setupSingle({ items: itemsWithLevel });
+			await setupSingle({ items: itemsWithLevel });
 
 			const headers = ITEMS.map((item) => page.getByTestId(`${item.value}-header`));
 			await expect.element(headers[0]).toHaveAttribute("data-heading-level", "1");
@@ -398,31 +398,31 @@ describe("type='single'", () => {
 		});
 
 		it("should update the `bind:value` prop when the value changes", async () => {
-			render(AccordionSingleTestControlledSvelte, { items: ITEMS });
+			await render(AccordionSingleTestControlledSvelte, { items: ITEMS });
 			const trigger = page.getByTestId("item-0-trigger");
 			const value = page.getByTestId("value");
 
-			await expect.element(value).toHaveTextContent("");
+			await expect.element(value).toMatchTextContent("");
 			await trigger.click();
-			await expect.element(value).toHaveTextContent("item-0");
+			await expect.element(value).toMatchTextContent("item-0");
 		});
 
 		it('should handle programmatic changes to the "value" prop', async () => {
-			render(AccordionSingleTestControlledSvelte, { items: ITEMS });
+			await render(AccordionSingleTestControlledSvelte, { items: ITEMS });
 			const updateButton = page.getByTestId("update-value");
 			const value = page.getByTestId("value");
 
-			await expect.element(value).toHaveTextContent("");
+			await expect.element(value).toMatchTextContent("");
 			const itemOneItem = page.getByTestId("item-1-item");
 			await expectClosed(itemOneItem);
 			await updateButton.click();
-			await expect.element(value).toHaveTextContent("item-1");
+			await expect.element(value).toMatchTextContent("item-1");
 			await expectOpen(itemOneItem);
 		});
 
 		it("should call `onValueChange` with the new value when an item is expanded", async () => {
 			const mock = vi.fn();
-			const t = setupSingle({
+			const t = await setupSingle({
 				items: ITEMS,
 				onValueChange: mock,
 			});
@@ -442,7 +442,7 @@ describe("type='single'", () => {
 describe("type='multiple'", () => {
 	describe("Expansion Behavior", () => {
 		it("should have expected data attributes", async () => {
-			const t = setupMultiple({ items: ITEMS_WITH_DISABLED });
+			const t = await setupMultiple({ items: ITEMS_WITH_DISABLED });
 
 			await expectClosed(t.itemEls[0], t.triggerEls[0]);
 			await expectNotDisabled(t.itemEls[0], t.triggerEls[0]);
@@ -452,7 +452,7 @@ describe("type='multiple'", () => {
 		});
 
 		it("should display content when an item is expanded", async () => {
-			setupMultiple();
+			await setupMultiple();
 
 			for (const item of ITEMS) {
 				const trigger = page.getByTestId(`${item.value}-trigger`);
@@ -462,13 +462,13 @@ describe("type='multiple'", () => {
 				await expect.element(content).not.toBeVisible();
 				await trigger.click();
 				const contentAfter = page.getByTestId(`${item.value}-content`);
-				await expect.element(contentAfter).toHaveTextContent(item.content);
+				await expect.element(contentAfter).toMatchTextContent(item.content);
 				await expectOpen(itemEl, trigger);
 			}
 		});
 
 		it("should allow expanding multiple items", async () => {
-			setupMultiple();
+			await setupMultiple();
 
 			for (const item of ITEMS) {
 				const trigger = page.getByTestId(`${item.value}-trigger`);
@@ -478,7 +478,7 @@ describe("type='multiple'", () => {
 				await expect.element(content).not.toBeVisible();
 				await trigger.click();
 				const contentAfter = page.getByTestId(`${item.value}-content`);
-				await expect.element(contentAfter).toHaveTextContent(item.content);
+				await expect.element(contentAfter).toMatchTextContent(item.content);
 				await expectOpen(itemEl, trigger);
 			}
 			const openItems = Array.from(
@@ -488,7 +488,7 @@ describe("type='multiple'", () => {
 		});
 
 		it("should expand when the trigger is focused and `Enter` key is pressed", async () => {
-			setupMultiple();
+			await setupMultiple();
 
 			for (const item of ITEMS) {
 				const trigger = page.getByTestId(`${item.value}-trigger`);
@@ -499,13 +499,13 @@ describe("type='multiple'", () => {
 				(trigger.element() as HTMLElement).focus();
 				await userEvent.keyboard(kbd.ENTER);
 				const contentAfter = page.getByTestId(`${item.value}-content`);
-				await expect.element(contentAfter).toHaveTextContent(item.content);
+				await expect.element(contentAfter).toMatchTextContent(item.content);
 				await expectOpen(itemEl, trigger);
 			}
 		});
 
 		it("should expand when the trigger is focused and `Space` key is pressed", async () => {
-			setupMultiple();
+			await setupMultiple();
 
 			for (const item of ITEMS) {
 				const trigger = page.getByTestId(`${item.value}-trigger`);
@@ -516,7 +516,7 @@ describe("type='multiple'", () => {
 				(trigger.element() as HTMLElement).focus();
 				await userEvent.keyboard(kbd.SPACE);
 				const contentAfter = page.getByTestId(`${item.value}-content`);
-				await expect.element(contentAfter).toHaveTextContent(item.content);
+				await expect.element(contentAfter).toMatchTextContent(item.content);
 				await expectOpen(itemEl, trigger);
 			}
 		});
@@ -524,7 +524,7 @@ describe("type='multiple'", () => {
 
 	describe("Keyboard Navigation", () => {
 		it("should focus the next item when `ArrowDown` key is pressed", async () => {
-			const t = setupMultiple();
+			const t = await setupMultiple();
 
 			(t.triggerEls[0].element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -538,7 +538,7 @@ describe("type='multiple'", () => {
 		});
 
 		it("should focus the previous item when the `ArrowUp` key is pressed", async () => {
-			const t = setupMultiple();
+			const t = await setupMultiple();
 
 			(t.triggerEls[0].element() as HTMLElement).focus();
 			await userEvent.keyboard(kbd.ARROW_UP);
@@ -552,7 +552,7 @@ describe("type='multiple'", () => {
 		});
 
 		it("should focus the first item when the `Home` key is pressed", async () => {
-			const t = setupMultiple();
+			const t = await setupMultiple();
 
 			for (const trigger of t.triggerEls) {
 				(trigger.element() as HTMLElement).focus();
@@ -562,7 +562,7 @@ describe("type='multiple'", () => {
 		});
 
 		it("should focus the last item when the `End` key is pressed", async () => {
-			const t = setupMultiple();
+			const t = await setupMultiple();
 
 			for (const trigger of t.triggerEls) {
 				(trigger.element() as HTMLElement).focus();
@@ -572,7 +572,7 @@ describe("type='multiple'", () => {
 		});
 
 		it("should respect the `disabled` prop for items", async () => {
-			const t = setupMultiple({ items: ITEMS_WITH_DISABLED });
+			const t = await setupMultiple({ items: ITEMS_WITH_DISABLED });
 
 			await t.triggerEls[0].click();
 			await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -583,7 +583,7 @@ describe("type='multiple'", () => {
 
 	describe("Props and Bindings", () => {
 		it("should disable everything when the `disabled` prop is true", async () => {
-			const t = setupMultiple({ items: ITEMS, disabled: true });
+			const t = await setupMultiple({ items: ITEMS, disabled: true });
 
 			await expectClosed(t.triggerEls[0]);
 			await expectDisabled(t.triggerEls[0]);
@@ -597,7 +597,7 @@ describe("type='multiple'", () => {
 			const itemsWithLevel = ITEMS.map((item, i) =>
 				i === 0 ? ({ ...item, level: 1 } as const) : item
 			);
-			setupMultiple({ items: itemsWithLevel });
+			await setupMultiple({ items: itemsWithLevel });
 
 			const headers = ITEMS.map((item) => page.getByTestId(`${item.value}-header`));
 			await expect.element(headers[0]).toHaveAttribute("data-heading-level", "1");
@@ -607,23 +607,23 @@ describe("type='multiple'", () => {
 		});
 
 		it("should update the `bind:value` prop when the value changes", async () => {
-			render(AccordionMultiTestControlled, {
+			await render(AccordionMultiTestControlled, {
 				items: ITEMS,
 			});
 			const trigger = page.getByTestId("item-0-trigger");
 			const value = page.getByTestId("value");
 
-			await expect.element(value).toHaveTextContent("");
+			await expect.element(value).toMatchTextContent("");
 			await trigger.click();
-			await expect.element(page.getByTestId("value").element()).toHaveTextContent("item-0");
+			await expect.element(page.getByTestId("value").element()).toMatchTextContent("item-0");
 		});
 
 		it('should handle programmatic changes to the "value" prop', async () => {
-			render(AccordionMultiTestControlled, { items: ITEMS });
+			await render(AccordionMultiTestControlled, { items: ITEMS });
 			const updateButton = page.getByTestId("update-value");
 			const value = page.getByTestId("value");
 
-			await expect.element(value).toHaveTextContent("");
+			await expect.element(value).toMatchTextContent("");
 			const itemOneItem = page.getByTestId("item-1-item");
 			await expectClosed(itemOneItem);
 			await updateButton.click();
@@ -632,7 +632,7 @@ describe("type='multiple'", () => {
 
 		it("should call `onValueChange` with the new value when an item is expanded/collapsed", async () => {
 			const mock = vi.fn();
-			const t = setupMultiple({
+			const t = await setupMultiple({
 				items: ITEMS,
 				onValueChange: mock,
 			});
@@ -653,7 +653,7 @@ describe("type='multiple'", () => {
 });
 
 describe("Hidden Until Found Behavior", () => {
-	function setupHiddenUntilFound(
+	async function setupHiddenUntilFound(
 		props: {
 			value?: string;
 			hiddenUntilFound?: boolean;
@@ -662,7 +662,7 @@ describe("Hidden Until Found Behavior", () => {
 		} = {}
 	) {
 		const defaultItems = ITEMS.slice(0, 1); // use just one item for simplicity
-		render(AccordionHiddenUntilFoundTest, {
+		await render(AccordionHiddenUntilFoundTest, {
 			items: defaultItems,
 			...props,
 		});
@@ -685,19 +685,19 @@ describe("Hidden Until Found Behavior", () => {
 	}
 
 	it("should render content with hidden='until-found' when closed and hiddenUntilFound is true", async () => {
-		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
+		const t = await setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
 		await expect.element(t.content).toHaveAttribute("hidden", "until-found");
-		await expect.element(t.binding).toHaveTextContent("");
+		await expect.element(t.binding).toMatchTextContent("");
 	});
 
 	it("should not have hidden='until-found' when hiddenUntilFound is false", async () => {
-		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: false });
+		const t = await setupHiddenUntilFound({ value: "", hiddenUntilFound: false });
 		await expect.element(t.content).toHaveAttribute("hidden");
-		await expect.element(t.binding).toHaveTextContent("");
+		await expect.element(t.binding).toMatchTextContent("");
 	});
 
 	it("should open accordion when beforematch event is triggered", async () => {
-		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
+		const t = await setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
 		await expect.element(t.content).toHaveAttribute("hidden", "until-found");
 
 		// simulate the beforematch event that browsers fire when content is found during search
@@ -711,7 +711,7 @@ describe("Hidden Until Found Behavior", () => {
 
 	it("should call onValueChange when beforematch event opens the accordion", async () => {
 		const mock = vi.fn();
-		const t = setupHiddenUntilFound({
+		const t = await setupHiddenUntilFound({
 			value: "",
 			hiddenUntilFound: true,
 			onValueChange: mock,
@@ -728,7 +728,7 @@ describe("Hidden Until Found Behavior", () => {
 
 	it("should not trigger value change when already open and beforematch is fired", async () => {
 		const mock = vi.fn();
-		const t = setupHiddenUntilFound({
+		const t = await setupHiddenUntilFound({
 			value: ITEMS[0].value, // accordion should already be open
 			hiddenUntilFound: true,
 			onValueChange: mock,
@@ -743,7 +743,7 @@ describe("Hidden Until Found Behavior", () => {
 	});
 
 	it("should maintain hidden='until-found' after closing when hiddenUntilFound is true", async () => {
-		const t = setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
+		const t = await setupHiddenUntilFound({ value: "", hiddenUntilFound: true });
 
 		await t.trigger.click();
 		await t.trigger.click();
@@ -751,7 +751,7 @@ describe("Hidden Until Found Behavior", () => {
 	});
 
 	describe("type='multiple'", () => {
-		function setupMultipleHiddenUntilFound(
+		async function setupMultipleHiddenUntilFound(
 			props: {
 				value?: string[];
 				hiddenUntilFound?: boolean;
@@ -760,7 +760,7 @@ describe("Hidden Until Found Behavior", () => {
 			} = {}
 		) {
 			const defaultItems = ITEMS.slice(0, 2); // use two items for multiple testing
-			render(AccordionMultiHiddenUntilFoundTest, {
+			await render(AccordionMultiHiddenUntilFoundTest, {
 				items: defaultItems,
 				...props,
 			});
@@ -781,22 +781,22 @@ describe("Hidden Until Found Behavior", () => {
 		}
 
 		it("should render content with hidden='until-found' when closed and hiddenUntilFound is true", async () => {
-			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			const t = await setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
 			await expect.element(t.items[0].content).toHaveAttribute("hidden", "until-found");
 			await expect.element(t.items[1].content).toHaveAttribute("hidden", "until-found");
-			await expect.element(t.binding).toHaveTextContent("[]");
+			await expect.element(t.binding).toMatchTextContent("[]");
 		});
 
 		it("should not have hidden='until-found' when hiddenUntilFound is false", async () => {
-			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: false });
+			const t = await setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: false });
 			await expect.element(t.items[0].content).toHaveAttribute("hidden", "");
 			await expect.element(t.items[1].content).toHaveAttribute("hidden", "");
-			await expect.element(t.binding).toHaveTextContent("[]");
+			await expect.element(t.binding).toMatchTextContent("[]");
 		});
 
 		it("should open accordion item when beforematch event is triggered on first item", async () => {
-			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
-			await expect.element(t.binding).toHaveTextContent("[]");
+			const t = await setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			await expect.element(t.binding).toMatchTextContent("[]");
 			await expect.element(t.items[0].content).toHaveAttribute("hidden", "until-found");
 
 			// simulate the beforematch event that browsers fire when content is found during search
@@ -806,24 +806,24 @@ describe("Hidden Until Found Behavior", () => {
 			// wait for requestAnimationFrame and state update
 			await new Promise((resolve) => setTimeout(resolve, 10));
 
-			await expect.element(t.binding).toHaveTextContent(`["${t.items[0].item.value}"]`);
+			await expect.element(t.binding).toMatchTextContent(`["${t.items[0].item.value}"]`);
 		});
 
 		it("should open accordion item when beforematch event is triggered on second item", async () => {
-			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
-			await expect.element(t.binding).toHaveTextContent("[]");
+			const t = await setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			await expect.element(t.binding).toMatchTextContent("[]");
 			await expect.element(t.items[1].content).toHaveAttribute("hidden", "until-found");
 
 			// simulate the beforematch event that browsers fire when content is found during search
 			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 			t.items[1].content.element().dispatchEvent(beforeMatchEvent);
 
-			await expect.element(t.binding).toHaveTextContent(`["${t.items[1].item.value}"]`);
+			await expect.element(t.binding).toMatchTextContent(`["${t.items[1].item.value}"]`);
 		});
 
 		it("should call onValueChange when beforematch event opens an accordion item", async () => {
 			const mock = vi.fn();
-			const t = setupMultipleHiddenUntilFound({
+			const t = await setupMultipleHiddenUntilFound({
 				value: [],
 				hiddenUntilFound: true,
 				onValueChange: mock,
@@ -840,7 +840,7 @@ describe("Hidden Until Found Behavior", () => {
 		it("should not trigger value change when already open and beforematch is fired", async () => {
 			const mock = vi.fn();
 			const firstItemValue = ITEMS[0].value;
-			const t = setupMultipleHiddenUntilFound({
+			const t = await setupMultipleHiddenUntilFound({
 				value: [firstItemValue],
 				hiddenUntilFound: true,
 				onValueChange: mock,
@@ -853,7 +853,7 @@ describe("Hidden Until Found Behavior", () => {
 		});
 
 		it("should maintain hidden='until-found' after closing when hiddenUntilFound is true", async () => {
-			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			const t = await setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
 
 			await t.items[0].trigger.click();
 			await t.items[0].trigger.click();
@@ -861,14 +861,14 @@ describe("Hidden Until Found Behavior", () => {
 		});
 
 		it("should allow multiple items to be opened via beforematch events", async () => {
-			const t = setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
-			await expect.element(t.binding).toHaveTextContent("[]");
+			const t = await setupMultipleHiddenUntilFound({ value: [], hiddenUntilFound: true });
+			await expect.element(t.binding).toMatchTextContent("[]");
 
 			// trigger beforematch on first item
 			const beforeMatchEvent1 = new Event("beforematch", { bubbles: true });
 			t.items[0].content.element().dispatchEvent(beforeMatchEvent1);
 
-			await expect.element(t.binding).toHaveTextContent(`["${t.items[0].item.value}"]`);
+			await expect.element(t.binding).toMatchTextContent(`["${t.items[0].item.value}"]`);
 
 			// trigger beforematch on second item
 			const beforeMatchEvent2 = new Event("beforematch", { bubbles: true });
@@ -876,7 +876,7 @@ describe("Hidden Until Found Behavior", () => {
 
 			await expect
 				.element(t.binding)
-				.toHaveTextContent(`["${t.items[0].item.value}","${t.items[1].item.value}"]`);
+				.toMatchTextContent(`["${t.items[0].item.value}","${t.items[1].item.value}"]`);
 		});
 	});
 });

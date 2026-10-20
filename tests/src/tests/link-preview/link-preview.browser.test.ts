@@ -6,21 +6,21 @@ import LinkPreviewTest, { type LinkPreviewTestProps } from "./link-preview-test.
 import type { LinkPreviewForceMountTestProps } from "./link-preview-force-mount-test.svelte";
 import LinkPreviewForceMountTest from "./link-preview-force-mount-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
-function setup(
+async function setup(
 	props: LinkPreviewTestProps | LinkPreviewForceMountTestProps = {},
 	component: Component = LinkPreviewTest
 ) {
-	const t = render(component, { ...props });
+	const t = await render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
 	return { ...t, trigger };
 }
 
 async function open(props: LinkPreviewTestProps = {}) {
-	const t = setup(props);
+	const t = await setup(props);
 	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
@@ -71,13 +71,14 @@ it("should stay open when hovering content", async () => {
 });
 
 it("should open on focus and close on blur", async () => {
-	const t = setup();
+	const t = await setup();
+	await page.getByTestId("outside").hover();
 	await expectNotExists(page.getByTestId("content"));
 
 	(t.trigger.element() as HTMLElement).focus();
 	await expectExists(page.getByTestId("content"));
 
-	(t.trigger.element() as HTMLElement).blur();
+	(page.getByTestId("binding").element() as HTMLElement).focus();
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -132,23 +133,23 @@ it("should respect binding the open prop", async () => {
 		},
 	});
 	const binding = page.getByTestId("binding");
-	expect(binding).toHaveTextContent("true");
+	expect(binding).toMatchTextContent("true");
 	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(page.getByTestId("content"));
-	expect(binding).toHaveTextContent("false");
+	expect(binding).toMatchTextContent("false");
 	await binding.click();
-	expect(binding).toHaveTextContent("true");
+	expect(binding).toMatchTextContent("true");
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should forceMount the content when `forceMount` is true", async () => {
-	setup({}, LinkPreviewForceMountTest);
+	await setup({}, LinkPreviewForceMountTest);
 
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should apply transition attrs to content during open and close", async () => {
-	const t = setup({}, LinkPreviewForceMountTest);
+	const t = await setup({}, LinkPreviewForceMountTest);
 	const observer = observeTransitionAttrs(page.getByTestId("content").element());
 
 	await t.trigger.hover();
@@ -161,31 +162,31 @@ it("should apply transition attrs to content during open and close", async () =>
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-	const t = setup({ withOpenCheck: true }, LinkPreviewForceMountTest);
+	const t = await setup({ withOpenCheck: true }, LinkPreviewForceMountTest);
 	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should reopen on hover after closing via hover out with forceMount", async () => {
-	const t = setup({ withOpenCheck: true }, LinkPreviewForceMountTest);
+	const t = await setup({ withOpenCheck: true }, LinkPreviewForceMountTest);
 	const outside = page.getByTestId("outside");
 	const binding = page.getByTestId("binding");
 
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 
 	await outside.hover();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 });
 
 it("should apply custom style prop to content", async () => {

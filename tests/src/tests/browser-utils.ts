@@ -1,4 +1,4 @@
-import { type Locator } from "@vitest/browser/context";
+import { type Locator } from "vitest/browser";
 import { expect, vi } from "vitest";
 
 export function getSubmenuPlacementSide(

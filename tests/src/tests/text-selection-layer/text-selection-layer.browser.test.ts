@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import TextSelectionLayerTest from "./text-selection-layer-test.svelte";
 import PopoverForceMountTest from "../popover/popover-force-mount-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
@@ -24,7 +24,7 @@ afterEach(() => {
 
 describe("text selection layer", () => {
 	it("should lock body text selection for the duration of a press inside the content", async () => {
-		render(TextSelectionLayerTest);
+		await render(TextSelectionLayerTest);
 		await page.getByTestId("trigger").click();
 		const content = page.getByTestId("content");
 		await expectExists(content);
@@ -44,7 +44,7 @@ describe("text selection layer, force-mounted content", () => {
 	// event. The press re-arms the lock over itself and snapshots the `none` it just wrote, so
 	// the release restores `none` and `<body>` stays locked.
 	it("should not strand `user-select` after open + close", async () => {
-		render(PopoverForceMountTest, { withOpenCheck: true });
+		await render(PopoverForceMountTest, { withOpenCheck: true });
 
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
@@ -57,7 +57,7 @@ describe("text selection layer, force-mounted content", () => {
 	});
 
 	it("should restore the body lock when a single press arms it twice", async () => {
-		render(PopoverForceMountTest, { withOpenCheck: true });
+		await render(PopoverForceMountTest, { withOpenCheck: true });
 
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));

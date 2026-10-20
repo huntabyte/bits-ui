@@ -1,4 +1,4 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
@@ -8,9 +8,9 @@ import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
 
-function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
+async function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(CommandTest, props as any);
+	const returned = await render(CommandTest, props as any);
 	const input = page.getByTestId("input");
 	const root = page.getByTestId("root");
 	const list = page.getByTestId("list");
@@ -23,7 +23,7 @@ function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
 }
 
 it("should select the first item by default", async () => {
-	setup();
+	await setup();
 
 	// since we aren't hardcoding a value for the item, we need to wait for
 	// the component to render before we can check if the first item is selected
@@ -31,13 +31,13 @@ it("should select the first item by default", async () => {
 });
 
 it("should allow forcing the selected value", async () => {
-	setup({ value: "Introduction" });
+	await setup({ value: "Introduction" });
 
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 });
 
 it("should respect initial value when it's not the first item", async () => {
-	setup({ value: "Radio Group" });
+	await setup({ value: "Radio Group" });
 
 	// ensure the initial value is selected, not the first item
 	await expect.element(page.getByText("Radio Group")).toHaveAttribute("data-selected");
@@ -45,7 +45,7 @@ it("should respect initial value when it's not the first item", async () => {
 });
 
 it("should respect initial value for items in the first group", async () => {
-	setup({ value: "Styling" });
+	await setup({ value: "Styling" });
 
 	// ensure the provided value is selected, not the first item
 	await expect.element(page.getByText("Styling")).toHaveAttribute("data-selected");
@@ -53,7 +53,7 @@ it("should respect initial value for items in the first group", async () => {
 });
 
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await expectExists(page.getByTestId("separator"));
 	await userEvent.type(t.input, "a");
@@ -61,7 +61,7 @@ it("should render the separator when search is empty and remove it when search i
 });
 
 it("should always render the separator when forceMount", async () => {
-	const t = setup({
+	const t = await setup({
 		separatorProps: {
 			forceMount: true,
 		},
@@ -73,7 +73,7 @@ it("should always render the separator when forceMount", async () => {
 });
 
 it("should show empty state when no items are found", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await expectNotExists(page.getByTestId("empty"));
 
@@ -83,25 +83,25 @@ it("should show empty state when no items are found", async () => {
 });
 
 it("should restore original order when search is cleared", async () => {
-	const t = setup();
+	const t = await setup();
 
 	(t.input.element() as HTMLElement).focus();
 	await userEvent.keyboard("d");
 	await expect.element(t.input).toHaveValue("d");
 	await expect.element(page.getByText("Delegation")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
-		.toHaveTextContent("Delegation");
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
+		.toMatchTextContent("Delegation");
 	await userEvent.keyboard(kbd.BACKSPACE);
 	await expect.element(t.input).toHaveValue("");
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
-		.toHaveTextContent("Introduction");
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
+		.toMatchTextContent("Introduction");
 });
 
 it("should hide the group if all items are filtered out", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await userEvent.type(t.input, "radio");
 	await expect.element(page.getByTestId("group-a")).not.toBeVisible();
