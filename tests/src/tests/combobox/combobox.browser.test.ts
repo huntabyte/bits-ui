@@ -506,6 +506,26 @@ describe("combobox - single", () => {
 		await setter.click();
 		await expect.element(t.input).toHaveValue("C");
 	});
+
+	it("should select a highlighted item with an empty string value on `Enter`", async () => {
+		const t = setupSingle({ value: "1" }, [
+			{ value: "1", label: "A" },
+			{ value: "", label: "All" },
+		]);
+		const allItem = page.getByRole("option", { name: "All" });
+		(t.input.element() as HTMLElement).focus();
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("1")).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ENTER);
+		await expectNotExists(t.getContent());
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-selected");
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
+	});
 });
 
 // ////////////////////////////////////

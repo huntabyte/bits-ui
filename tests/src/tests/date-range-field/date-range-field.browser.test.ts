@@ -306,3 +306,114 @@ it("should fall back to the default placeholder when spread props are reassigned
 	await expect.element(page.getByTestId("start-month")).toHaveTextContent("mm");
 	await expect.element(page.getByTestId("end-year")).toHaveTextContent("yyyy");
 });
+
+function at(hour: number) {
+	return new CalendarDateTime(2026, 3, 11, hour, 30, 0, 0);
+}
+
+function setupDayPeriod(value: CalendarDateTime) {
+	const t = setup({ value: { start: value, end: new CalendarDateTime(2026, 3, 11, 23, 59) } });
+	return {
+		...t,
+		hour: page.getByTestId("start-hour"),
+		minute: page.getByTestId("start-minute"),
+		dayPeriod: page.getByTestId("start-dayPeriod"),
+		value: t.start.value,
+	};
+}
+
+it("should keep PM when typing the hour and then the minutes", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{9}");
+	await expect.element(t.minute).toHaveFocus();
+	await userEvent.keyboard("{3}{0}");
+
+	await expect.element(t.hour).toHaveTextContent("09");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T21:30");
+});
+
+it("should keep PM when typing the hour and then pressing ArrowUp on it", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}{0}");
+	await expect.element(t.minute).toHaveFocus();
+	await expect.element(t.value).toHaveTextContent("2026-03-11T22:30");
+
+	await t.hour.click();
+	await userEvent.keyboard(kbd.ARROW_UP);
+
+	await expect.element(t.hour).toHaveTextContent("11");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T23:30");
+});
+
+it("should keep 12 AM when typing 12 and then the minutes", async () => {
+	const t = setupDayPeriod(at(0));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}{2}");
+	await expect.element(t.minute).toHaveFocus();
+	await userEvent.keyboard("{3}{0}");
+
+	await expect.element(t.hour).toHaveTextContent("12");
+	await expect.element(t.dayPeriod).toHaveTextContent("AM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T00:30");
+});
+
+it("should keep PM when typing the hour after switching to PM", async () => {
+	const t = setupDayPeriod(at(9));
+
+	await t.dayPeriod.click();
+	await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T21:30");
+
+	await t.hour.click();
+	await userEvent.keyboard("{3}");
+
+	await expect.element(t.hour).toHaveTextContent("03");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T15:30");
+});
+
+it("should keep PM when typing one hour digit and then tabbing away", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}");
+	await expect.element(t.hour).toHaveFocus();
+	await userEvent.keyboard(kbd.TAB);
+	await expect.element(t.minute).toHaveFocus();
+
+	await expect.element(t.hour).toHaveTextContent("01");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T13:30");
+});
+
+it("should keep PM when typing one hour digit and then blurring", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}");
+	await t.value.click();
+	await expect.element(t.hour).not.toHaveFocus();
+
+	await expect.element(t.hour).toHaveTextContent("01");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T13:30");
+});
+
+it("should keep PM when pressing Backspace on the hour", async () => {
+	const t = setupDayPeriod(at(22));
+
+	await t.hour.click();
+	await userEvent.keyboard(kbd.BACKSPACE);
+
+	await expect.element(t.hour).toHaveTextContent("01");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T13:30");
+});

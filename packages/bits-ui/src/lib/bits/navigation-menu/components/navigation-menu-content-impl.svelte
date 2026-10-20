@@ -57,7 +57,7 @@
 <DismissibleLayer
 	{id}
 	ref={contentImplState.opts.ref}
-	enabled={true}
+	enabled={contentImplState.open}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
@@ -72,7 +72,7 @@
 >
 	{#snippet children({ props: dismissibleProps })}
 		<EscapeLayer
-			enabled={true}
+			enabled={contentImplState.open}
 			ref={contentImplState.opts.ref}
 			onEscapeKeydown={(e) => {
 				onEscapeKeydown(e);
