@@ -792,6 +792,8 @@ describe("Scroll Lock", () => {
 	});
 
 	it("should restore a single inline overflow axis on body after closing", async () => {
+		// a lock left by the previous test releases on a delay and would reuse its stale snapshot
+		await expect.poll(() => document.body.style.overflow).toBe("");
 		document.body.style.overflowY = "scroll";
 		try {
 			await open();
