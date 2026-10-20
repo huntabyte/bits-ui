@@ -34,7 +34,7 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { isIOS } from "$lib/internal/is.js";
+import { isDisabledElement, isIOS } from "$lib/internal/is.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
@@ -744,7 +744,12 @@ export class SelectComboTriggerState {
 	 * behavior of focusing the button and keep focus on the input.
 	 */
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (
+			this.root.opts.disabled.current ||
+			isDisabledElement(this.opts.ref.current) ||
+			!this.root.domContext
+		)
+			return;
 		e.preventDefault();
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return;
@@ -752,7 +757,12 @@ export class SelectComboTriggerState {
 	}
 
 	onpointerup(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (
+			this.root.opts.disabled.current ||
+			isDisabledElement(this.opts.ref.current) ||
+			!this.root.domContext
+		)
+			return;
 		if (e.pointerType !== "touch") return;
 		e.preventDefault();
 		this.#focusInputAndToggle();
@@ -989,7 +999,7 @@ export class SelectTriggerState {
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -1011,7 +1021,7 @@ export class SelectTriggerState {
 	}
 
 	onpointerup(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			if (this.root.opts.open.current === false) {
