@@ -4,6 +4,7 @@ import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
+import AlertDialogReplaceContentTest from "./alert-dialog-replace-content-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 
 const kbd = getTestKbd();
@@ -181,6 +182,20 @@ describe("Focus Management", () => {
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expect.element(page.getByTestId("close-focus-override")).toHaveFocus();
 	});
+
+	// https://github.com/huntabyte/bits-ui/issues/2136
+	it("should not focus replacement content whose open autofocus was prevented", async () => {
+		const onOpenAutoFocus = vi.fn();
+		render(AlertDialogReplaceContentTest, { onOpenAutoFocus });
+
+		const content = page.getByTestId("content");
+		await expect.element(content).toHaveAttribute("data-version", "1");
+		expect(onOpenAutoFocus).toHaveBeenCalledTimes(2);
+
+		// let the first open's delayed autofocus run
+		await new Promise((r) => setTimeout(r, 50));
+		expect(document.activeElement).not.toBe(content.element());
+	});
 });
 
 describe("Props and Rendering", () => {
@@ -282,5 +297,45 @@ describe("ARIA Attributes", () => {
 			titleProps: { level: 3 },
 		});
 		await expect.element(page.getByTestId("title")).toHaveAttribute("aria-level", "3");
+	});
+});
+
+describe("Text Selection", () => {
+	function pointer(type: "pointerdown" | "pointerup") {
+		page.getByTestId("content")
+			.element()
+			.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+				})
+			);
+	}
+
+	function bodyUserSelect() {
+		return document.body.style.userSelect || document.body.style.webkitUserSelect;
+	}
+
+	it("should lock text selection overflow while pointing down inside the content", async () => {
+		await open();
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("none");
+		pointer("pointerup");
+		expect(bodyUserSelect()).toBe("");
+	});
+
+	it("should pass preventOverflowTextSelection to the layer instead of rendering it as an attribute", async () => {
+		await open({ contentProps: { preventOverflowTextSelection: false } });
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("");
+		pointer("pointerup");
 	});
 });

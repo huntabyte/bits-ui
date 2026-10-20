@@ -879,6 +879,9 @@ export class NavigationMenuContentImplState {
 	readonly listContext: NavigationMenuListState;
 	readonly attachment: RefAttachment;
 	prevMotionAttribute: MotionAttribute | null = $state(null);
+	readonly open = $derived.by(
+		() => this.context.opts.value.current === this.itemContext.opts.value.current
+	);
 	readonly motionAttribute: MotionAttribute | null = $derived.by(() => {
 		const items = this.listContext.listTriggers;
 		const values = items.map((item) => item.getAttribute("data-value")).filter(Boolean);
@@ -1050,9 +1053,7 @@ export class NavigationMenuContentImplState {
 				"aria-labelledby": this.itemContext.triggerId,
 				"data-motion": this.motionAttribute ?? undefined,
 				"data-orientation": this.context.opts.orientation.current,
-				"data-state": getDataOpenClosed(
-					this.context.opts.value.current === this.itemContext.opts.value.current
-				),
+				"data-state": getDataOpenClosed(this.open),
 				onkeydown: this.onkeydown,
 				[navigationMenuAttrs.content]: "",
 				...this.attachment,

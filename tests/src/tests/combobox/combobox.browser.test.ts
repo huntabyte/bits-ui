@@ -284,6 +284,12 @@ describe("combobox - single", () => {
 		await expectSelected(item1);
 	});
 
+	it("should expose `aria-selected` false on all items when no value is selected", async () => {
+		await openSingle();
+		const items = getItems(page.getByTestId);
+		await expectNotSelected(items);
+	});
+
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		await openSingle({}, kbd.ARROW_DOWN);
 
@@ -499,6 +505,26 @@ describe("combobox - single", () => {
 		const setter = page.getByTestId("value-binding-3");
 		await setter.click();
 		await expect.element(t.input).toHaveValue("C");
+	});
+
+	it("should select a highlighted item with an empty string value on `Enter`", async () => {
+		const t = setupSingle({ value: "1" }, [
+			{ value: "1", label: "A" },
+			{ value: "", label: "All" },
+		]);
+		const allItem = page.getByRole("option", { name: "All" });
+		(t.input.element() as HTMLElement).focus();
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("1")).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ENTER);
+		await expectNotExists(t.getContent());
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-selected");
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
 	});
 });
 
@@ -874,11 +900,11 @@ async function expectNotSelected(node: MaybeArray<ReturnType<typeof page.getByTe
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			await expect.element(n).not.toHaveAttribute("data-selected");
-			await expect.element(n).not.toHaveAttribute("aria-selected");
+			await expect.element(n).toHaveAttribute("aria-selected", "false");
 		}
 	} else {
 		await expect.element(node).not.toHaveAttribute("data-selected");
-		await expect.element(node).not.toHaveAttribute("aria-selected");
+		await expect.element(node).toHaveAttribute("aria-selected", "false");
 	}
 }
 
@@ -901,3 +927,46 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 		await expect.element(node).not.toHaveAttribute("data-highlighted");
 	}
 }
+
+describe("Touch", () => {
+	function touch(target: Element, type: "pointerdown" | "pointerup" | "pointercancel") {
+		target.dispatchEvent(
+			new PointerEvent(type, {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "touch",
+				isPrimary: true,
+				button: 0,
+				buttons: type === "pointerdown" ? 1 : 0,
+			})
+		);
+	}
+
+	it("should not open the trigger on touch down, which also fires when a scroll starts on it", async () => {
+		const t = setupSingle();
+		const trigger = t.trigger.element();
+		touch(trigger, "pointerdown");
+		await tick();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("false");
+		expect(document.activeElement).not.toBe(t.input.element());
+		// the browser cancels the pointer once the finger scrolls
+		touch(trigger, "pointercancel");
+		await tick();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("false");
+	});
+
+	it("should open the trigger on a tap", async () => {
+		const t = setupSingle();
+		const trigger = t.trigger.element();
+		touch(trigger, "pointerdown");
+		await tick();
+		await expectNotExists(t.getContent());
+		expect(document.activeElement).not.toBe(t.input.element());
+		touch(trigger, "pointerup");
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.input).toHaveFocus();
+	});
+});

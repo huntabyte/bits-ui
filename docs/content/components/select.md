@@ -108,7 +108,7 @@ TypeScript Discriminated Unions + destructing (required for "bindable") do not
 get along, so we shut typescript up by casting `value` to `never`, however,
 from the perspective of the consumer of this component, it will be typed appropriately.
 -->
-<Select.Root bind:value={value as never} {...restProps}>
+<Select.Root {items} bind:value={value as never} {...restProps}>
   <Select.Trigger>
     <Select.Value {placeholder} />
   </Select.Trigger>
