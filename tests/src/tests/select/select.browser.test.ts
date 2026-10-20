@@ -648,6 +648,14 @@ describe("select - single", () => {
 		await expect.element(t.getHiddenInput()).toHaveAttribute("autocomplete", "one-time-code");
 	});
 
+	it("should update the value when the hidden input is autofilled", async () => {
+		const t = setupSingle();
+		const input = t.getHiddenInput() as HTMLInputElement;
+		input.value = "2";
+		input.dispatchEvent(new Event("input", { bubbles: true }));
+		await expect.element(t.valueBinding).toHaveTextContent("2");
+	});
+
 	it("should not open when disabled on touch devices", async () => {
 		const t = setupSingle({ disabled: true });
 
@@ -816,6 +824,18 @@ describe("select - multiple", () => {
 		const t = setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
+		await expect.element(hiddenInputs[0]).toHaveValue("a");
+		await expect.element(hiddenInputs[1]).toHaveValue("b");
+	});
+
+	it("should keep the hidden inputs in sync with the value after a form reset", async () => {
+		const t = setupMultiple({ value: ["a", "b"] });
+		const form = page.getByTestId("form").element() as HTMLFormElement;
+		form.reset();
+		await new Promise((r) => requestAnimationFrame(r));
+
+		expect(new FormData(form).getAll("test")).toEqual(["a", "b"]);
+		const hiddenInputs = t.getHiddenInputs();
 		await expect.element(hiddenInputs[0]).toHaveValue("a");
 		await expect.element(hiddenInputs[1]).toHaveValue("b");
 	});

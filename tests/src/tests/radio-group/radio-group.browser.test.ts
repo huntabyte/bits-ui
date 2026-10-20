@@ -5,6 +5,7 @@ import RadioGroupTest from "./radio-group-test.svelte";
 import type { Item, RadioGroupTestProps } from "./radio-group-test.svelte";
 import RadioGroupPopoverTest from "./radio-group-popover-test.svelte";
 import RadioGroupScrollLayoutTest from "./radio-group-scroll-layout-test.svelte";
+import RadioGroupFormResetTest from "./radio-group-form-reset-test.svelte";
 import { expectExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -415,5 +416,38 @@ describe("Scroll Behavior", () => {
 
 		expect(window.scrollY).toBe(baselineY);
 		expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight + 1);
+	});
+});
+
+describe("Form Reset", () => {
+	function setupForm(props: { value?: string } = {}) {
+		render(RadioGroupFormResetTest, props);
+		const input = document.querySelector<HTMLInputElement>('input[name="option"]')!;
+		return { input };
+	}
+
+	it("should keep the hidden input in sync with the value after a form reset", async () => {
+		const { input } = setupForm();
+		await page.getByTestId("a-item").click();
+		expect(input.value).toBe("a");
+
+		await page.getByTestId("reset").click();
+		await nextFrame();
+
+		await expect.element(page.getByTestId("a-item")).toHaveAttribute("data-state", "checked");
+		expect(input.value).toBe("a");
+	});
+
+	it("should sync the hidden input when the value is set right after a form reset (#1942)", async () => {
+		const { input } = setupForm();
+		await page.getByTestId("a-item").click();
+
+		await page.getByTestId("reset-and-set").click();
+		await nextFrame();
+
+		await expect.element(page.getByTestId("value")).toHaveTextContent("b");
+		await expect.element(page.getByTestId("b-item")).toHaveAttribute("data-state", "checked");
+		expect(input.value).toBe("b");
+		expect(new FormData(input.form!).get("option")).toBe("b");
 	});
 });
