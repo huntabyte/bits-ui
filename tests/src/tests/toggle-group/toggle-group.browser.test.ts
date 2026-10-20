@@ -2,6 +2,7 @@ import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import ToggleGroupTest from "./toggle-group-test.svelte";
+import ToggleGroupNestedTest from "./toggle-group-nested-test.svelte";
 import type { Item, SingleToggleGroupTestProps } from "./toggle-group-test.svelte";
 import ToggleGroupMultipleTest, {
 	type MultipleToggleGroupTestProps,
@@ -181,5 +182,27 @@ describe("Toggle Group", () => {
 		await expect.element(binding).toHaveTextContent("4");
 		await item4.click();
 		await expect.element(binding).toHaveTextContent("");
+	});
+
+	it("should ignore the items of a nested `ToggleGroup.Root` when navigating with the keyboard", async () => {
+		render(ToggleGroupNestedTest);
+
+		const outerItem1 = page.getByTestId("outer-item-1");
+		const outerItem2 = page.getByTestId("outer-item-2");
+		const innerItem1 = page.getByTestId("inner-item-1");
+		const innerItem2 = page.getByTestId("inner-item-2");
+
+		(outerItem1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(outerItem2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(outerItem1).toHaveFocus();
+
+		// the nested ToggleGroup.Root keeps navigating among its own items
+		(innerItem1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(innerItem2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(innerItem1).toHaveFocus();
 	});
 });
