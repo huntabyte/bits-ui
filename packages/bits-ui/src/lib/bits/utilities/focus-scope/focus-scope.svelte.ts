@@ -4,6 +4,21 @@ import { focusable, isFocusable, tabbable } from "tabbable";
 import { on } from "svelte/events";
 import { watch } from "runed";
 
+/**
+ * Retargets `node` to the tree `container` lives in by climbing shadow hosts, so a
+ * node inside a shadow root nested in the scope resolves to its host. Returns `null`
+ * when `node` is from an unrelated tree.
+ */
+function retargetToScopeTree(node: Node | null, container: HTMLElement): Node | null {
+	const scopeRoot = container.getRootNode();
+	while (node) {
+		const root = node.getRootNode();
+		if (root === scopeRoot) return node;
+		node = root !== node && "host" in root ? (root as ShadowRoot).host : null;
+	}
+	return null;
+}
+
 interface FocusScopeOpts
 	extends ReadableBoxedValues<{
 		onOpenAutoFocus: (event: Event) => void;
@@ -90,7 +105,12 @@ export class FocusScope {
 					!this.#container ||
 					this.#paused ||
 					!this.#manager.isActiveScope(this) ||
-					this.#container.contains(getActiveElement(this.#container.ownerDocument))
+					this.#container.contains(
+						retargetToScopeTree(
+							getActiveElement(this.#container.ownerDocument),
+							this.#container
+						)
+					)
 				) {
 					return;
 				}
@@ -137,10 +157,11 @@ export class FocusScope {
 		const handleFocus = (e: FocusEvent) => {
 			if (this.#paused || !this.#manager.isActiveScope(this)) return;
 
-			const target = e.composedPath()[0] as HTMLElement;
-			if (!target) return;
-
-			const isInside = container.contains(target);
+			const target = retargetToScopeTree(
+				e.composedPath()[0] as Node,
+				container
+			) as HTMLElement | null;
+			const isInside = target !== null && container.contains(target);
 
 			if (isInside) {
 				// store last focused element

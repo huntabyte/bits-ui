@@ -19,6 +19,7 @@ import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelt
 import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
+import DialogShadowFieldTest from "./dialog-shadow-field-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -295,6 +296,35 @@ describe("Shadow Root", () => {
 			unmount(component);
 			host.remove();
 		}
+	});
+
+	it("should keep focus on an input inside an open shadow root within the content", async () => {
+		await open({}, DialogShadowFieldTest);
+		const shadowRoot = page.getByTestId("shadow-host").element().shadowRoot!;
+		const input = shadowRoot.querySelector("input")!;
+
+		await page.getByTestId("light").click();
+		await expect.element(page.getByTestId("light")).toHaveFocus();
+
+		input.focus();
+		await userEvent.keyboard("abc");
+		expect(shadowRoot.activeElement).toBe(input);
+		expect(input.value).toBe("abc");
+	});
+
+	it("should not steal open auto-focus from an input inside an open shadow root", async () => {
+		const shadowRoot = () => page.getByTestId("shadow-host").element().shadowRoot!;
+		await open(
+			{
+				contentProps: {
+					onOpenAutoFocus: () => shadowRoot().querySelector("input")!.focus(),
+				},
+			},
+			DialogShadowFieldTest
+		);
+		// wait past the deferred auto-focus frame
+		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		expect(shadowRoot().activeElement).toBe(shadowRoot().querySelector("input"));
 	});
 });
 
