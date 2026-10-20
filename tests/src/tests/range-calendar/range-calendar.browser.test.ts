@@ -348,6 +348,22 @@ describe("correct weekday label formatting", () => {
 			await expect.element(weekdayEl).toHaveTextContent(weekday);
 		}
 	});
+
+	it("should not shift for a `ZonedDateTime` ahead of the local time zone (#2022)", async () => {
+		// UTC+14, so midnight there is the previous day in (almost) every local zone
+		const value = {
+			start: toZoned(new CalendarDateTime(2026, 3, 1), "Pacific/Kiritimati"),
+			end: toZoned(new CalendarDateTime(2026, 3, 5), "Pacific/Kiritimati"),
+		};
+		setup({ value, weekdayFormat: "short", weekStartsOn: 0 });
+		for (const [i, weekday] of shortWeekdays.entries()) {
+			await expect.element(page.getByTestId(`weekday-3-${i}`)).toHaveTextContent(weekday);
+		}
+		await expect.element(page.getByTestId("heading")).toHaveTextContent("March 2026");
+		await expect
+			.element(page.getByTestId("date-3-1"))
+			.toHaveAttribute("aria-label", "Sunday, March 1, 2026");
+	});
 });
 
 it("should not allow focusing on disabled dates, even if they are the only selected date, it should fallback to the first available date within the view", async () => {
