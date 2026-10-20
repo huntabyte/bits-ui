@@ -4,12 +4,14 @@ import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import DatePickerTest, { type DatePickerTestProps } from "./date-picker-test.svelte";
 import {
+	collectErrors,
 	expectExists,
 	expectNotClickableLoc,
 	expectNotExists,
 	waitForDismissibleLayer,
 } from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
+import DatePickerSpreadPropsTest from "./date-picker-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -707,4 +709,11 @@ describe("date picker - 24-hour format with locales", () => {
 		await userEvent.keyboard("21");
 		await expect.element(hour).toHaveTextContent("21");
 	});
+});
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(DatePickerSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("month")).toHaveTextContent("mm");
+	await expect.element(page.getByTestId("year")).toHaveTextContent("yyyy");
 });

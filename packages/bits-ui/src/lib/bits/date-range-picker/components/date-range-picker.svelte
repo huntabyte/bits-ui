@@ -131,7 +131,7 @@
 			}
 		),
 		placeholder: boxWith(
-			() => placeholder as DateValue,
+			() => placeholder ?? defaultPlaceholder,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v as DateValue);

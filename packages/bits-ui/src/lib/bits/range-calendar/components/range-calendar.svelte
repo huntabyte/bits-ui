@@ -98,7 +98,7 @@
 			}
 		),
 		placeholder: boxWith(
-			() => placeholder!,
+			() => placeholder ?? defaultPlaceholder,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);
