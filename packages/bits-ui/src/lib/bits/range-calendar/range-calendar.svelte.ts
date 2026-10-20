@@ -3,6 +3,7 @@ import {
 	getLocalTimeZone,
 	isSameDay,
 	isSameMonth,
+	toCalendarDate,
 	today,
 } from "@internationalized/date";
 import {
@@ -734,7 +735,7 @@ export class RangeCalendarCellState {
 	readonly opts: RangeCalendarCellStateOpts;
 	readonly root: RangeCalendarRootState;
 	readonly attachment: RefAttachment;
-	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
+	readonly cellDate = $derived.by(() => toDate(toCalendarDate(this.opts.date.current)));
 	readonly isOutsideMonth = $derived.by(
 		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
 	);

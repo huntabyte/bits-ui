@@ -3,6 +3,7 @@ import {
 	getLocalTimeZone,
 	isSameDay,
 	isSameMonth,
+	toCalendarDate,
 	today,
 } from "@internationalized/date";
 import { DEV } from "esm-env";
@@ -592,7 +593,7 @@ export class CalendarCellState {
 
 	readonly opts: CalendarCellStateOpts;
 	readonly root: CalendarRootState;
-	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
+	readonly cellDate = $derived.by(() => toDate(toCalendarDate(this.opts.date.current)));
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
@@ -1038,7 +1039,9 @@ export class CalendarMonthSelectState {
 			if (typeof monthFormat === "function") {
 				label = monthFormat(month);
 			} else {
-				label = this.root.formatter.custom(toDate(date), { month: monthFormat });
+				label = this.root.formatter.custom(toDate(toCalendarDate(date)), {
+					month: monthFormat,
+				});
 			}
 			months.push({
 				value: month,
@@ -1134,7 +1137,9 @@ export class CalendarYearSelectState {
 			if (typeof yearFormat === "function") {
 				label = yearFormat(year);
 			} else {
-				label = this.root.formatter.custom(toDate(date), { year: yearFormat });
+				label = this.root.formatter.custom(toDate(toCalendarDate(date)), {
+					year: yearFormat,
+				});
 			}
 			localYears.push({
 				value: year,

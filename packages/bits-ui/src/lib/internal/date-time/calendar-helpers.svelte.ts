@@ -4,6 +4,7 @@ import {
 	isSameDay,
 	isSameMonth,
 	startOfMonth,
+	toCalendarDate,
 } from "@internationalized/date";
 import {
 	type ReadableBox,
@@ -495,7 +496,9 @@ export function getWeekdays({ months, formatter, weekdayFormat }: GetWeekdaysPro
 	const firstMonth = months[0]!;
 	const firstWeek = firstMonth.weeks[0];
 	if (!firstWeek) return [];
-	return firstWeek.map((date) => formatter.dayOfWeek(toDate(date), weekdayFormat));
+	return firstWeek.map((date) =>
+		formatter.dayOfWeek(toDate(toCalendarDate(date)), weekdayFormat)
+	);
 }
 
 type UseMonthViewSyncProps = {
@@ -682,12 +685,12 @@ export function getCalendarHeadingValue({
 		formatter.setLocale(locale);
 	}
 	if (months.length === 1) {
-		const month = toDate(months[0]!.value);
+		const month = toDate(toCalendarDate(months[0]!.value));
 		return `${formatter.fullMonthAndYear(month)}`;
 	}
 
-	const startMonth = toDate(months[0]!.value);
-	const endMonth = toDate(months[months.length - 1]!.value);
+	const startMonth = toDate(toCalendarDate(months[0]!.value));
+	const endMonth = toDate(toCalendarDate(months[months.length - 1]!.value));
 
 	const startMonthName = formatter.fullMonth(startMonth);
 	const endMonthName = formatter.fullMonth(endMonth);
