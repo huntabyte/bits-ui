@@ -116,10 +116,10 @@ export class FocusScope {
 				}
 				const firstTabbable = this.#getFirstTabbable();
 				if (firstTabbable) {
-					firstTabbable.focus();
+					firstTabbable.focus({ preventScroll: true });
 					this.#manager.setFocusMemory(this, firstTabbable);
 				} else {
-					this.#container.focus();
+					this.#container.focus({ preventScroll: true });
 				}
 			});
 		}
@@ -139,7 +139,7 @@ export class FocusScope {
 			if (preFocusedElement && preFocusedElement.isConnected) {
 				// ensure the element is still focusable and in the document
 				try {
-					preFocusedElement.focus();
+					preFocusedElement.focus({ preventScroll: true });
 				} catch {
 					// fallback if focus fails
 					document.body.focus();
@@ -171,12 +171,12 @@ export class FocusScope {
 				const lastFocused = this.#manager.getFocusMemory(this);
 				if (lastFocused && container.contains(lastFocused) && isFocusable(lastFocused)) {
 					e.preventDefault();
-					lastFocused.focus();
+					lastFocused.focus({ preventScroll: true });
 				} else {
 					// fallback to first tabbable or first focusable or container
 					const firstTabbable = this.#getFirstTabbable();
 					const firstFocusable = this.#getAllFocusables()[0];
-					(firstTabbable || firstFocusable || container).focus();
+					(firstTabbable || firstFocusable || container).focus({ preventScroll: true });
 				}
 			}
 		};
@@ -214,11 +214,11 @@ export class FocusScope {
 				const elementToFocus = firstTabbable || firstFocusable;
 
 				if (elementToFocus) {
-					elementToFocus.focus();
+					elementToFocus.focus({ preventScroll: true });
 					this.#manager.setFocusMemory(this, elementToFocus);
 				} else {
 					// no focusable elements left, focus container
-					container.focus();
+					container.focus({ preventScroll: true });
 				}
 			}
 		});
