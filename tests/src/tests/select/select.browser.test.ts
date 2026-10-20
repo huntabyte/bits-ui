@@ -285,6 +285,11 @@ describe("select - single", () => {
 			.toHaveAttribute("aria-labelledby", t.groupHeading.element().id);
 	});
 
+	it("should expose the trigger as a combobox controlling the mounted listbox", async () => {
+		const t = setupSingle({ contentProps: { id: "select-listbox" } });
+		await expectTriggerControlsListbox(t.trigger, "select-listbox");
+	});
+
 	it("should select item with the enter key", async () => {
 		const t = await openSingle();
 		(t.trigger.element() as HTMLElement).focus();
@@ -796,6 +801,11 @@ describe("select - multiple", () => {
 
 	it.each(OPEN_KEYS)("should open on %s keydown", async (key) => {
 		await openMultiple({}, key);
+	});
+
+	it("should expose the trigger as a combobox controlling the mounted listbox", async () => {
+		const t = setupMultiple({ contentProps: { id: "select-listbox" } });
+		await expectTriggerControlsListbox(t.trigger, "select-listbox");
 	});
 
 	it("should select item with the enter key", async () => {
@@ -1352,6 +1362,26 @@ async function expectHighlighted(node: MaybeArray<ReturnType<typeof page.getByTe
 	} else {
 		await expect.element(node).toHaveAttribute("data-highlighted");
 	}
+}
+
+async function expectTriggerControlsListbox(
+	trigger: ReturnType<typeof page.getByTestId>,
+	listboxId: string
+) {
+	await expect.element(trigger).toHaveRole("combobox");
+	await expect.element(trigger).toHaveAttribute("aria-expanded", "false");
+	await expect.element(trigger).not.toHaveAttribute("aria-controls");
+
+	await trigger.click();
+	const listbox = page.getByRole("listbox");
+	await expect.element(listbox).toHaveAttribute("id", listboxId);
+	await expect.element(trigger).toHaveAttribute("aria-expanded", "true");
+	await expect.element(trigger).toHaveAttribute("aria-controls", listboxId);
+
+	await userEvent.keyboard("{Escape}");
+	await expect.element(listbox).not.toBeInTheDocument();
+	await expect.element(trigger).toHaveAttribute("aria-expanded", "false");
+	await expect.element(trigger).not.toHaveAttribute("aria-controls");
 }
 
 async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getByTestId>>) {
