@@ -745,6 +745,8 @@ export type CalendarParts =
 	| "year-select";
 
 export function pickerOpenFocus(e: Event) {
+	// mergeProps chains non-DOM callbacks unconditionally, so honor the consumer's preventDefault here
+	if (e.defaultPrevented) return;
 	const doc = getDocument(e.target as HTMLElement);
 	const nodeToFocus = doc.querySelector<HTMLElement>("[data-bits-day][data-focused]");
 	if (nodeToFocus) {
