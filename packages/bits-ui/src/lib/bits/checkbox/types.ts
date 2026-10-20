@@ -43,7 +43,7 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		name?: any;
 
 		/**
-		 * The id of the form to link the hidden input to.
+		 * The id of the form to link the checkbox button and hidden input to.
 		 *
 		 * @default undefined
 		 */
