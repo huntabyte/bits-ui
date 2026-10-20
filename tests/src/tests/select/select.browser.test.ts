@@ -24,6 +24,7 @@ import {
 } from "../browser-utils";
 import SelectScrollJumpTest from "./select-scroll-jump-test.svelte";
 import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
+import SelectSettlingContentTest from "./select-settling-content-test.svelte";
 import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -787,6 +788,40 @@ describe("select - single", () => {
 		expect(selectedRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
 	});
 
+	it("should keep a typeahead-highlighted item clear of the scroll down button after the user has scrolled", async () => {
+		render(SelectScrollButtonsTest);
+
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+
+		const viewport = page.getByTestId("viewport").element() as HTMLElement;
+		await sleep(100);
+
+		// wheel down and back up, leaving the scroll up button unmounted
+		viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: 40, bubbles: true }));
+		viewport.scrollTop = 40;
+		await expectExists(page.getByTestId("scroll-up-button"));
+		viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: -40, bubbles: true }));
+		viewport.scrollTop = 0;
+		await expectNotExists(page.getByTestId("scroll-up-button"));
+
+		// highlighting far down mounts the scroll up button, which shrinks the viewport
+		// under the item that was just scrolled into view
+		await userEvent.keyboard("Item 30");
+		await expectHighlighted(page.getByTestId("item-30"));
+		await expectExists(page.getByTestId("scroll-up-button"));
+		await sleep(100);
+
+		const item = page.getByTestId("item-30").element() as HTMLElement;
+		const downButton = page.getByTestId("scroll-down-button").element() as HTMLElement;
+		const viewportRect = viewport.getBoundingClientRect();
+		const itemRect = item.getBoundingClientRect();
+
+		expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top - 1);
+		expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom + 1);
+		expect(itemRect.bottom).toBeLessThanOrEqual(downButton.getBoundingClientRect().top + 1);
+	});
+
 	it("should highlight the selected item on reopen when its value is an empty string", async () => {
 		const items: Item[] = [
 			{ value: "1", label: "A" },
@@ -1431,6 +1466,62 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 		await expect.element(node).not.toHaveAttribute("data-highlighted");
 	}
 }
+
+describe("Settling content", () => {
+	function itemInView(viewport: HTMLElement, item: HTMLElement) {
+		const v = viewport.getBoundingClientRect();
+		const i = item.getBoundingClientRect();
+		return i.top >= v.top - 1 && i.bottom <= v.bottom + 1;
+	}
+
+	// a resize observer delivers after layout, before paint; two frames is past that
+	function afterResizeDelivery() {
+		return new Promise<void>((resolve) =>
+			requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+		);
+	}
+
+	async function openOnLastItem() {
+		render(SelectSettlingContentTest, { value: "59" });
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+		const viewport = page.getByTestId("viewport").element() as HTMLElement;
+		const item = page.getByTestId("item-59").element() as HTMLElement;
+		const footer = page.getByTestId("footer").element() as HTMLElement;
+		await vi.waitFor(() => expect(itemInView(viewport, item)).toBe(true));
+		// the observer's initial notification is behind us before anything resizes
+		await afterResizeDelivery();
+		return { viewport, item, footer };
+	}
+
+	async function growFooter(viewport: HTMLElement, footer: HTMLElement, height: string) {
+		const before = viewport.getBoundingClientRect().height;
+		footer.style.height = height;
+		await vi.waitFor(() =>
+			expect(viewport.getBoundingClientRect().height).toBeLessThan(before)
+		);
+		await afterResizeDelivery();
+	}
+
+	it("should keep the selected item in view while chrome mounts after the content is positioned", async () => {
+		const { viewport, item, footer } = await openOnLastItem();
+		// chrome that takes its height only once the content is placed shrinks the
+		// viewport under the alignment that just put the selection on screen — twice,
+		// so one delayed alignment is not enough
+		await growFooter(viewport, footer, "48px");
+		await vi.waitFor(() => expect(itemInView(viewport, item)).toBe(true));
+		await growFooter(viewport, footer, "96px");
+		await vi.waitFor(() => expect(itemInView(viewport, item)).toBe(true));
+	});
+
+	it("should stop realigning once the user has scrolled", async () => {
+		const { viewport, footer } = await openOnLastItem();
+		viewport.dispatchEvent(new WheelEvent("wheel", { bubbles: true, deltaY: -100 }));
+		viewport.scrollTop = 0;
+		await growFooter(viewport, footer, "48px");
+		expect(viewport.scrollTop).toBe(0);
+	});
+});
 
 describe("select - activation without a pointer press", () => {
 	it("should toggle the trigger on a click that no pointer press preceded", async () => {
