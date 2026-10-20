@@ -52,7 +52,11 @@
 			onOpenAutoFocus(e);
 			if (e.defaultPrevented) return;
 			e.preventDefault();
-			afterSleep(0, () => contentState.opts.ref.current?.focus());
+			// capture the node so a replacement can't receive this node's delayed autofocus
+			const node = contentState.opts.ref.current;
+			afterSleep(0, () => {
+				if (node?.isConnected) node.focus();
+			});
 		}}
 	>
 		{#snippet focusScope({ props: focusScopeProps })}

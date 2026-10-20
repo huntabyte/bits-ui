@@ -4,6 +4,7 @@ import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
+import AlertDialogReplaceContentTest from "./alert-dialog-replace-content-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 
 const kbd = getTestKbd();
@@ -180,6 +181,20 @@ describe("Focus Management", () => {
 		});
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expect.element(page.getByTestId("close-focus-override")).toHaveFocus();
+	});
+
+	// https://github.com/huntabyte/bits-ui/issues/2136
+	it("should not focus replacement content whose open autofocus was prevented", async () => {
+		const onOpenAutoFocus = vi.fn();
+		render(AlertDialogReplaceContentTest, { onOpenAutoFocus });
+
+		const content = page.getByTestId("content");
+		await expect.element(content).toHaveAttribute("data-version", "1");
+		expect(onOpenAutoFocus).toHaveBeenCalledTimes(2);
+
+		// let the first open's delayed autofocus run
+		await new Promise((r) => setTimeout(r, 50));
+		expect(document.activeElement).not.toBe(content.element());
 	});
 });
 
