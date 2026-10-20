@@ -1,5 +1,5 @@
 import { page } from "@vitest/browser/context";
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import ComboboxTest, { type Item } from "../combobox/combobox-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
@@ -45,4 +45,46 @@ describe("dismissible layer - outside click timing", () => {
 			});
 		}
 	}
+});
+
+describe("dismissible layer - touch click timing", () => {
+	async function setupTouch() {
+		render(ComboboxTest, { name: "test", items });
+		await page.getByTestId("trigger").click();
+		const content = page.getByTestId("content");
+		await waitForDismissibleLayer(content);
+		return { content, outside: page.getByTestId("outside").element() };
+	}
+
+	function touchDown(target: Element) {
+		const rect = target.getBoundingClientRect();
+		target.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				pointerType: "touch",
+				bubbles: true,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+	}
+
+	it("should dismiss when the outside touch click arrives immediately after pointerdown", async () => {
+		const { content, outside } = await setupTouch();
+		touchDown(outside);
+		outside.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		await expectNotExists(content);
+	});
+
+	it("should not dismiss for a cancelled outside touch scroll or the following inside tap", async () => {
+		const { content, outside } = await setupTouch();
+		touchDown(outside);
+		outside.dispatchEvent(
+			new PointerEvent("pointercancel", { pointerType: "touch", bubbles: true })
+		);
+		await expectExists(content);
+		touchDown(content.element());
+		content.element().dispatchEvent(new MouseEvent("click", { bubbles: true }));
+		await expectExists(content);
+		await expect.element(content).toHaveAttribute("data-state", "open");
+	});
 });

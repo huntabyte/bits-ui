@@ -1,4 +1,5 @@
 export { default as ItemsProp } from "./items-prop.md"
 export { default as DelayProp } from "./delay-prop.md"
+export { default as SelectPositionProp } from "./position-prop.md"
 export { default as SelectValueChildSnippetProps } from "./select-value-child-snippet-props.md"
 export { default as SelectValueChildrenSnippetProps } from "./select-value-children-snippet-props.md"

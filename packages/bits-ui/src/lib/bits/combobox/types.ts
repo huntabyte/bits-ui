@@ -1,6 +1,10 @@
 import type { BitsPrimitiveInputAttributes } from "$lib/shared/attributes.js";
 import type {
 	SelectBaseRootPropsWithoutHTML,
+	SelectContentProps,
+	SelectContentPropsWithoutHTML,
+	SelectContentStaticProps,
+	SelectContentStaticPropsWithoutHTML,
 	SelectMultipleRootPropsWithoutHTML,
 	SelectSingleRootPropsWithoutHTML,
 } from "$lib/bits/select/types.js";
@@ -34,11 +38,17 @@ export type ComboboxRootPropsWithoutHTML = ComboboxBaseRootPropsWithoutHTML &
 
 export type ComboboxRootProps = ComboboxRootPropsWithoutHTML;
 
+// Combobox doesn't support `position="item-aligned"` — item-aligned positioning
+// doesn't apply when the list is filtered by typing.
+export type ComboboxContentProps = Omit<SelectContentProps, "position">;
+export type ComboboxContentPropsWithoutHTML = Omit<SelectContentPropsWithoutHTML, "position">;
+export type ComboboxContentStaticProps = Omit<SelectContentStaticProps, "position">;
+export type ComboboxContentStaticPropsWithoutHTML = Omit<
+	SelectContentStaticPropsWithoutHTML,
+	"position"
+>;
+
 export type {
-	SelectContentProps as ComboboxContentProps,
-	SelectContentPropsWithoutHTML as ComboboxContentPropsWithoutHTML,
-	SelectContentStaticProps as ComboboxContentStaticProps,
-	SelectContentStaticPropsWithoutHTML as ComboboxContentStaticPropsWithoutHTML,
 	SelectItemProps as ComboboxItemProps,
 	SelectItemPropsWithoutHTML as ComboboxItemPropsWithoutHTML,
 	SelectItemSnippetProps as ComboboxItemSnippetProps,

@@ -41,6 +41,7 @@ import { ComboboxScrollAlignmentProp } from "./extended-types/combobox/index.js"
 import {
 	DelayProp,
 	ItemsProp,
+	SelectPositionProp,
 	SelectValueChildSnippetProps,
 	SelectValueChildrenSnippetProps,
 } from "./extended-types/select/index.js";
@@ -151,6 +152,13 @@ export const content = defineComponentApiSchema<SelectContentPropsWithoutHTML>({
 			description:
 				"Whether or not the select should loop through items when reaching the end.",
 		}),
+		position: defineEnumProp({
+			options: ["popper", "item-aligned"],
+			default: "popper",
+			description:
+				"Controls how the content is positioned. `popper` uses Floating UI to anchor the content to the trigger, supporting `side`, `align`, `sideOffset`, and the collision props. `item-aligned` aligns the currently selected item's center with the trigger's center, like a native `<select>` on macOS — the `side`, `sideOffset`, `align`, `alignOffset`, and collision props are ignored, and `data-side` is set to `none`.",
+			definition: SelectPositionProp,
+		}),
 		forceMount: forceMountProp,
 		preventScroll: definePropSchema({
 			...preventScrollProp,
@@ -189,6 +197,13 @@ export const contentStatic = defineComponentApiSchema<SelectContentStaticPropsWi
 			default: false,
 			description:
 				"Whether or not the select should loop through items when reaching the end.",
+		}),
+		position: defineEnumProp({
+			options: ["popper", "item-aligned"],
+			default: "popper",
+			description:
+				"Controls how the content is positioned. `item-aligned` aligns the selected item's center with the trigger's center, like a native `<select>` on macOS. When this is active, `data-side` is set to `none`.",
+			definition: SelectPositionProp,
 		}),
 		forceMount: forceMountProp,
 		...withChildProps({
