@@ -2,4 +2,4 @@
 "bits-ui": minor
 ---
 
-feat(RadioGroup): add `autocomplete` prop to `RadioGroup.Root` for the hidden input, defaulting to `off` so browsers no longer autofill it
+feat(RadioGroup): set `autocomplete="off"` on the hidden input by default to discourage browser autofill, and add an `autocomplete` prop to `RadioGroup.Root` to override it
