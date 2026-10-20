@@ -148,7 +148,7 @@ export class CommandRootState {
 		if (key === "search") {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
-			this.#sort({ forceSelectFirst: value === "" && !this.#isInitialMount });
+			this.#sort({ forceSelectFirst: !this.#isInitialMount });
 		} else if (key === "value") {
 			if (!preventScroll) this.#scrollSelectedIntoView();
 		}

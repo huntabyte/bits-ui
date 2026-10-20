@@ -76,6 +76,20 @@ it("should keep the clicked item active on initial click", async () => {
 	await expect.element(page.getByText("Canceled")).toHaveAttribute("data-selected");
 });
 
+it("should select the first item when searching with shouldFilter false", async () => {
+	const t = setup({ shouldFilter: false });
+
+	(t.input.element() as HTMLElement).focus();
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(page.getByText("Styling")).toHaveAttribute("data-selected");
+
+	await userEvent.keyboard("a");
+	await expect.element(t.input).toHaveValue("a");
+	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
+	await expect.element(page.getByText("Styling")).not.toHaveAttribute("data-selected");
+});
+
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
 	const t = setup();
 
