@@ -1,4 +1,4 @@
-import { expect, it, vi, afterEach, onTestFinished } from "vitest";
+import { expect, it, vi, afterEach, onTestFinished, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { page, userEvent } from "@vitest/browser/context";
 import { getTestKbd } from "../utils.js";
@@ -20,6 +20,7 @@ import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 import DropdownMenuScrollPaddingTest from "./dropdown-menu-scroll-padding-test.svelte";
 import DropdownMenuFieldsetDisabledTest from "./dropdown-menu-fieldset-disabled-test.svelte";
 import DropdownMenuTooltipTriggerTest from "./dropdown-menu-tooltip-trigger-test.svelte";
+import DropdownMenuScrollItemsTest from "./dropdown-menu-scroll-items-test.svelte";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -984,4 +985,85 @@ it("should not open when the trigger is disabled by an ancestor `fieldset`", asy
 		.element()
 		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
 	await expectClosed();
+});
+
+describe("mouse press on an item", () => {
+	type Point = { clientX: number; clientY: number };
+
+	function mousePointer(type: string, point: Point) {
+		return new PointerEvent(type, {
+			...point,
+			bubbles: true,
+			cancelable: true,
+			pointerType: "mouse",
+			isPrimary: true,
+			button: 0,
+		});
+	}
+
+	function centerOf(testId: string): Point {
+		const rect = page.getByTestId(testId).element().getBoundingClientRect();
+		return { clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 };
+	}
+
+	function itemAt({ clientX, clientY }: Point) {
+		return document
+			.elementFromPoint(clientX, clientY)!
+			.closest<HTMLElement>("[role=menuitem]")!;
+	}
+
+	async function scrollContent(px: number) {
+		(page.getByTestId("content").element() as HTMLElement).scrollTop += px;
+		await new Promise((r) => setTimeout(r, 100));
+	}
+
+	async function setupScroll() {
+		const onSelect = vi.fn();
+		render(DropdownMenuScrollItemsTest, { onSelect });
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+		await new Promise((r) => setTimeout(r, 100));
+		return onSelect;
+	}
+
+	it("should select the pressed item when the content scrolls under a still pointer", async () => {
+		const onSelect = await setupScroll();
+		const point = centerOf("item-1");
+		page.getByTestId("item-1").element().dispatchEvent(mousePointer("pointerdown", point));
+		await scrollContent(60);
+
+		const released = itemAt(point);
+		expect(released.dataset.testid).not.toBe("item-1");
+		released.dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(1);
+	});
+
+	it("should not reuse a press that ended off an item", async () => {
+		const onSelect = await setupScroll();
+		const point = centerOf("item-1");
+		const content = page.getByTestId("content").element();
+		page.getByTestId("item-1").element().dispatchEvent(mousePointer("pointerdown", point));
+		content.dispatchEvent(mousePointer("pointerup", point));
+		await scrollContent(60);
+
+		const released = itemAt(point);
+		content.dispatchEvent(mousePointer("pointerdown", point));
+		released.dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(Number(released.dataset.testid!.slice(5)));
+	});
+
+	it("should select the item released on when dragging from the trigger", async () => {
+		const onSelect = vi.fn();
+		render(DropdownMenuScrollItemsTest, { onSelect });
+		const trigger = page.getByTestId("trigger").element();
+		trigger.dispatchEvent(mousePointer("pointerdown", centerOf("trigger")));
+		await expectExists(page.getByTestId("content"));
+		await new Promise((r) => setTimeout(r, 100));
+		const point = centerOf("item-2");
+		page.getByTestId("item-2").element().dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(2);
+	});
 });
