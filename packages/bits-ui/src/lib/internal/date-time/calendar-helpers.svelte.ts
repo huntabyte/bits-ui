@@ -778,7 +778,9 @@ export type CalendarParts =
 	| "header"
 	| "heading"
 	| "month-select"
-	| "year-select";
+	| "year-select"
+	| "week-number-cell"
+	| "week-number-head-cell";
 
 export function pickerOpenFocus(e: Event) {
 	// mergeProps chains non-DOM callbacks unconditionally, so honor the consumer's preventDefault here
@@ -908,6 +910,8 @@ export const calendarAttrs = createBitsAttrs({
 		"heading",
 		"month-select",
 		"year-select",
+		"week-number-cell",
+		"week-number-head-cell",
 	],
 });
 

@@ -4,7 +4,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreview, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, Callout, CalendarDemoMax } from '$lib/components'
+	import { APISection, ComponentPreview, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, CalendarDemoWeekNumbers, Callout, CalendarDemoMax } from '$lib/components'
 	let { schemas } = $props()
 </script>
 
@@ -41,6 +41,8 @@ Before diving into this component, it's important to understand how dates/times 
       <Calendar.Grid>
         <Calendar.GridHead>
           <Calendar.GridRow>
+            <!-- Optional: include when showWeekNumbers is true -->
+            <Calendar.WeekNumberHeadCell />
             {#each weekdays as day}
               <Calendar.HeadCell>
                 {day}
@@ -51,6 +53,8 @@ Before diving into this component, it's important to understand how dates/times 
         <Calendar.GridBody>
           {#each month.weeks as weekDates}
             <Calendar.GridRow>
+              <!-- Optional: include when showWeekNumbers is true -->
+              <Calendar.WeekNumberCell week={weekDates} />
               {#each weekDates as date}
                 <Calendar.Cell {date} month={month.value}>
                   <Calendar.Day />
@@ -306,6 +310,60 @@ You can use the `fixedWeeks` prop to ensure that the calendar renders a fixed nu
   <!-- ...-->
 </Calendar.Root>
 ```
+
+### Week Numbers
+
+Set `showWeekNumbers` on `Calendar.Root` to display ISO 8601 week numbers. You also need to include `<Calendar.WeekNumberHeadCell>` in the grid head row and `<Calendar.WeekNumberCell week={weekDates} />` as the first child of each body grid row. Both components render nothing when `showWeekNumbers` is `false`, so you can leave them in your template and toggle the prop to reveal or hide the column.
+
+```svelte
+<Calendar.Root showWeekNumbers>
+  {#snippet children({ months, weekdays })}
+    <!-- ... -->
+    {#each months as month}
+      <Calendar.Grid>
+        <Calendar.GridHead>
+          <Calendar.GridRow>
+            <Calendar.WeekNumberHeadCell>Wk</Calendar.WeekNumberHeadCell>
+            {#each weekdays as day}
+              <Calendar.HeadCell>{day}</Calendar.HeadCell>
+            {/each}
+          </Calendar.GridRow>
+        </Calendar.GridHead>
+        <Calendar.GridBody>
+          {#each month.weeks as weekDates}
+            <Calendar.GridRow>
+              <Calendar.WeekNumberCell week={weekDates} />
+              {#each weekDates as date}
+                <Calendar.Cell {date} month={month.value}>
+                  <Calendar.Day />
+                </Calendar.Cell>
+              {/each}
+            </Calendar.GridRow>
+          {/each}
+        </Calendar.GridBody>
+      </Calendar.Grid>
+    {/each}
+  {/snippet}
+</Calendar.Root>
+```
+
+The week number is computed using the ISO 8601 standard (week 1 is the week containing the first Thursday of the year, weeks start on Monday) regardless of the `weekStartsOn` prop. You can customize the cell content via the `children` snippet, which receives `{ weekNumber }`:
+
+```svelte
+<Calendar.WeekNumberCell week={weekDates}>
+  {#snippet children({ weekNumber })}
+    <span>W{weekNumber}</span>
+  {/snippet}
+</Calendar.WeekNumberCell>
+```
+
+<ComponentPreview name="calendar-demo-week-numbers" componentName="Calendar">
+
+{#snippet preview()}
+<CalendarDemoWeekNumbers />
+{/snippet}
+
+</ComponentPreview>
 
 ### Multiple Months
 
