@@ -358,6 +358,47 @@ it("should close submenu when pointer intent changes away from submenu", async (
 	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
 });
 
+it("should close submenu soon after the pointer stops moving closer to it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 16 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	for (let i = 0; i < 10; i++) {
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+				clientX: leavePt.x,
+				clientY: leavePt.y,
+			})
+		);
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+	}
+
+	expect(() => t.getSubContent().element()).toThrow();
+});
+
 it("should toggle the checkbox item when clicked & respects binding", async () => {
 	const t = await open();
 	const checkedBinding = page.getByTestId("checked-binding");
