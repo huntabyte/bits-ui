@@ -25,23 +25,23 @@
   "author": "Hunter Johnston <https://github.com/huntabyte>",
   "license": "MIT",
   "devDependencies": {
-    "@changesets/cli": "^2.29.7",
-    "@eslint/js": "^9.35.0",
+    "@changesets/cli": "^2.31.1",
+    "@eslint/js": "^9.39.5",
     "@svitejs/changesets-changelog-github-compact": "^1.2.0",
-    "eslint": "^9.35.0",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-oxlint": "^1.16.0",
-    "eslint-plugin-svelte": "^3.12.3",
-    "globals": "^16.4.0",
-    "oxlint": "^1.16.0",
+    "eslint-plugin-oxlint": "^1.89.0",
+    "eslint-plugin-svelte": "^3.23.1",
+    "globals": "^16.5.0",
+    "oxlint": "^1.89.0",
     "playwright": "catalog:",
-    "prettier": "^3.6.2",
-    "prettier-plugin-svelte": "^3.4.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-svelte": "^3.5.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "svelte": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.44.0",
-    "wrangler": "^4.37.1"
+    "typescript-eslint": "^8.72.0",
+    "wrangler": "^4.151.3"
   },
   "type": "module",
   "engines": {
@@ -51,6 +51,9 @@
   "packageManager": "pnpm@10.33.0",
   "private": true,
   "pnpm": {
+    "overrides": {
+      "vitest>tinypool": "^2.1.2"
+    },
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "esbuild",
