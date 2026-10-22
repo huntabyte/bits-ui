@@ -317,6 +317,27 @@ describe("type='single'", () => {
 			await expect.element(heading).toHaveTextContent("May 1981");
 		});
 
+		it("should keep a day tabbable when the placeholder becomes disabled after mount", async () => {
+			const t = setup({ placeholder: calendarDate });
+			await t.rerender({ isDateDisabled: (date) => date.day === calendarDate.day });
+			await expect.element(page.getByTestId("date-1-20")).not.toHaveAttribute("tabindex");
+			const tabbable = t.calendar.element().querySelectorAll('[data-bits-day][tabindex="0"]');
+			expect(tabbable).toHaveLength(1);
+			expect(tabbable[0]).toHaveAttribute("data-value", "1980-01-01");
+		});
+
+		it("should keep a day tabbable when Next lands the placeholder on a disabled day", async () => {
+			const t = setup({
+				placeholder: calendarDate,
+				isDateDisabled: (date) => date.month === 2 && date.day === calendarDate.day,
+			});
+			await t.nextButton.click();
+			await expect.element(page.getByTestId("heading")).toHaveTextContent("February 1980");
+			const tabbable = t.calendar.element().querySelectorAll('[data-bits-day][tabindex="0"]');
+			expect(tabbable).toHaveLength(1);
+			expect(tabbable[0]).toHaveAttribute("data-value", "1980-02-01");
+		});
+
 		it("should set default placeholder greater than `minValue`", async () => {
 			const currentYear = new Date().getFullYear();
 			const minValue = new CalendarDate(currentYear + 2, 2, 1);

@@ -805,6 +805,23 @@ export function getFirstNonDisabledDateInView(calendarRef: HTMLElement): DateVal
 }
 
 /**
+ * The day that should get `tabindex="0"`: the placeholder, or the first enabled day
+ * in view when the placeholder is disabled, so the calendar stays reachable by Tab.
+ */
+export function getTabbableDate(
+	placeholder: DateValue | undefined,
+	months: Month<DateValue>[],
+	isDisabled: (date: DateValue) => boolean
+): DateValue | undefined {
+	if (!placeholder || !isDisabled(placeholder)) return placeholder;
+	for (const month of months) {
+		const date = month.dates.find((d) => isSameMonth(d, month.value) && !isDisabled(d));
+		if (date) return date;
+	}
+	return placeholder;
+}
+
+/**
  * Ensures the placeholder is not set to a disabled date,
  * which would prevent the user from entering the Calendar
  * via the keyboard.
