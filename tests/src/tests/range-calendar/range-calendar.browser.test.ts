@@ -285,6 +285,21 @@ it("should not navigate before `minValue` (with keyboard)", async () => {
 	await expect.element(heading).toHaveTextContent("December 1979");
 });
 
+it("should preserve the weekday when moving vertically past disabled dates", async () => {
+	setup({
+		placeholder: new CalendarDate(2026, 10, 13),
+		isDateDisabled: (date) =>
+			date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-10-20",
+	});
+	const tuesday = page.getByTestId("date-10-13");
+	(tuesday.element() as HTMLElement).focus();
+	await expect.element(tuesday).toHaveFocus();
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(page.getByTestId("date-10-27")).toHaveFocus();
+	await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(tuesday).toHaveFocus();
+});
+
 it("should set default placeholder greater than `minValue`", async () => {
 	const currentYear = new Date().getFullYear();
 	const minValue = new CalendarDate(currentYear + 2, 2, 1);
