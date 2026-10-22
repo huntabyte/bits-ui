@@ -91,6 +91,19 @@ it("should select the first item when searching with shouldFilter false", async 
 	await expect.element(page.getByText("Styling")).not.toHaveAttribute("data-selected");
 });
 
+it("should not remount items when the first character is typed with shouldFilter false", async () => {
+	const t = setup({ shouldFilter: false });
+
+	const item = page.getByText("Introduction").element();
+	await userEvent.type(t.input, "a");
+	await expect.element(t.input).toHaveValue("a");
+	expect(page.getByText("Introduction").element()).toBe(item);
+
+	await userEvent.clear(t.input);
+	await expect.element(t.input).toHaveValue("");
+	expect(page.getByText("Introduction").element()).toBe(item);
+});
+
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
 	const t = setup();
 

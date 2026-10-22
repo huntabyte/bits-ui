@@ -27,7 +27,8 @@
 	const mergedProps = $derived(mergeProps(restProps, listState.props));
 </script>
 
-{#key listState.root._commandState.search === ""}
+<!-- remounting restores the original order after sorting, which only happens when filtering -->
+{#key listState.root.opts.shouldFilter.current === false || listState.root._commandState.search === ""}
 	{#if child}
 		{@render child({ props: mergedProps })}
 	{:else}
