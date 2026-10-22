@@ -112,14 +112,16 @@ export class FloatingContentState {
 					: "")) as Placement
 	);
 	#boundary = $derived.by(() =>
-		Array.isArray(this.opts.collisionBoundary.current)
+		(Array.isArray(this.opts.collisionBoundary.current)
 			? this.opts.collisionBoundary.current
 			: [this.opts.collisionBoundary.current]
+		).filter(isNotNull)
 	);
 	hasExplicitBoundaries = $derived(this.#boundary.length > 0);
 	detectOverflowOptions = $derived.by(() => ({
 		padding: this.opts.collisionPadding.current,
-		boundary: this.#boundary.filter(isNotNull),
+		// fall back to Floating UI's default so nested scroll containers of the anchor are respected
+		boundary: this.hasExplicitBoundaries ? this.#boundary : ("clippingAncestors" as const),
 		altBoundary: this.hasExplicitBoundaries,
 	}));
 	#availableWidth = $state<number | undefined>(undefined);
