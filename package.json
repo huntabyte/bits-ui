@@ -51,6 +51,9 @@
   "packageManager": "pnpm@10.33.0",
   "private": true,
   "pnpm": {
+    "overrides": {
+      "vitest>tinypool": "^2.1.2"
+    },
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "esbuild",
