@@ -1036,6 +1036,20 @@ describe("excludeDisabled functionality", () => {
 	});
 });
 
+describe("tabbable day", () => {
+	it("should keep a day tabbable when Next lands the placeholder on a disabled day", async () => {
+		const t = setup({
+			placeholder: new CalendarDate(1980, 1, 20),
+			isDateDisabled: (date) => date.month === 2 && date.day === 20,
+		});
+		await t.nextButton.click();
+		await expect.element(page.getByTestId("heading")).toHaveTextContent("February 1980");
+		const tabbable = t.calendar.element().querySelectorAll('[data-bits-day][tabindex="0"]');
+		expect(tabbable).toHaveLength(1);
+		expect(tabbable[0]).toHaveAttribute("data-value", "1980-02-01");
+	});
+});
+
 describe("RangeCalendar Select Components", () => {
 	function setupWithSelects(
 		props: {

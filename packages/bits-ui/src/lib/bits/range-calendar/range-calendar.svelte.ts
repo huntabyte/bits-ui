@@ -40,6 +40,7 @@ import {
 	handleCalendarPrevPage,
 	shiftCalendarFocus,
 	useEnsureNonDisabledPlaceholder,
+	getTabbableDate,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
@@ -112,6 +113,11 @@ export class RangeCalendarRootState {
 		return today(getLocalTimeZone());
 	});
 	months: Month<DateValue>[] = $state([]);
+	readonly tabbableDate = $derived.by(() =>
+		getTabbableDate(this.opts.placeholder.current, this.months, (date) =>
+			this.isDateDisabled(date)
+		)
+	);
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
@@ -879,7 +885,8 @@ export class RangeCalendarDayState {
 		(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 		this.cell.isDisabled
 			? undefined
-			: this.cell.isFocusedDate
+			: this.cell.root.tabbableDate &&
+				  isSameDay(this.cell.opts.date.current, this.cell.root.tabbableDate)
 				? 0
 				: -1
 	);
