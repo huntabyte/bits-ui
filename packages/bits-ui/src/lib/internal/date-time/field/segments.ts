@@ -178,12 +178,20 @@ export function getTimeSegments(fieldNode: HTMLElement | null) {
 }
 
 export function getFirstTimeSegment(fieldNode: HTMLElement | null) {
-	return getTimeSegments(fieldNode)[0];
+	if (!fieldNode) return;
+	for (const segment of fieldNode.querySelectorAll("[data-segment]")) {
+		if (isHTMLElement(segment) && segment.dataset.segment !== "literal") return segment;
+	}
 }
 
 /**
  * Get the first interactive segment within the field identified by the provided ID.
  */
 export function getFirstSegment(fieldNode: HTMLElement | null) {
-	return getSegments(fieldNode)[0];
+	if (!fieldNode) return;
+	for (const segment of fieldNode.querySelectorAll("[data-segment]")) {
+		if (!isHTMLElement(segment)) continue;
+		const part = segment.dataset.segment;
+		if (part === "trigger" || (isAnySegmentPart(part) && part !== "literal")) return segment;
+	}
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { attachRef, boxWith, mergeProps } from "svelte-toolbelt";
+	import { attachRef, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { MenubarTriggerProps } from "../types.js";
 	import { MenubarTriggerState } from "../menubar.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";

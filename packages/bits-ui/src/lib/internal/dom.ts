@@ -32,3 +32,23 @@ export function queryAll<T extends Element = HTMLElement>(node: ParentNode, sele
 	for (let i = 0; i < list.length; i++) arr[i] = list[i]!;
 	return arr;
 }
+
+/**
+ * The element after (`1`) or before (`-1`) `from` in document order, inside `root` and
+ * not `root` itself, that passes `accept`. Lets keyboard navigation step to a neighbour
+ * without collecting every candidate first.
+ */
+export function findAdjacentElement(
+	root: Element,
+	from: Node,
+	step: 1 | -1,
+	accept: (el: Element) => boolean
+): HTMLElement | null {
+	const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+	walker.currentNode = from;
+	let node = step === 1 ? walker.nextNode() : walker.previousNode();
+	while (node && (node === root || !accept(node as Element))) {
+		node = step === 1 ? walker.nextNode() : walker.previousNode();
+	}
+	return node as HTMLElement | null;
+}

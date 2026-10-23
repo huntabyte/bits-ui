@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { MenuRootProps } from "../types.js";
 	import { MenuMenuState, MenuRootState } from "../menu.svelte.js";
 	import { noop } from "$lib/internal/noop.js";

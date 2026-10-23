@@ -829,3 +829,11 @@ it("should cancel a pending delayed open when the trigger is right clicked", asy
 	await new Promise<void>((resolve) => setTimeout(resolve, 500));
 	await expectNotExists(page.getByTestId("content"));
 });
+
+it("should cancel a pending delayed open when `delayDuration` changes", async () => {
+	const t = render(TooltipTest, { delayDuration: 200 });
+	await page.getByTestId("trigger").hover();
+	await t.rerender({ delayDuration: 400 });
+	await new Promise((r) => setTimeout(r, 500));
+	await expectNotExists(page.getByTestId("content"));
+});

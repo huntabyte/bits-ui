@@ -1,4 +1,5 @@
-import { getActiveElement, simpleBox } from "svelte-toolbelt";
+import { getActiveElement } from "svelte-toolbelt";
+import { simpleBox } from "$lib/internal/box.svelte.js";
 import { FocusScope } from "./focus-scope.svelte.js";
 
 export class FocusScopeManager {

@@ -51,6 +51,7 @@ const IS_GAP_REGEXP = /[\\/_+.#"@[({&]/;
 const COUNT_GAPS_REGEXP = /[\\/_+.#"@[({&]/g;
 const IS_SPACE_REGEXP = /[\s-]/;
 const COUNT_SPACE_REGEXP = /[\s-]/g;
+let lastSearch: { value: string; formatted: string } | undefined;
 
 function computeCommandScoreInner(
 	string,
@@ -66,8 +67,8 @@ function computeCommandScoreInner(
 		return PENALTY_NOT_COMPLETE;
 	}
 
-	const memoizeKey = `${stringIndex},${abbreviationIndex}`;
-	if (memoizedResults[memoizeKey] !== undefined) return memoizedResults[memoizeKey];
+	const memoizedRow = (memoizedResults[abbreviationIndex] ??= []);
+	if (memoizedRow[stringIndex] !== undefined) return memoizedRow[stringIndex];
 
 	const abbreviationChar = lowerAbbreviation.charAt(abbreviationIndex);
 	let index = lowerString.indexOf(abbreviationChar, stringIndex);
@@ -142,7 +143,7 @@ function computeCommandScoreInner(
 		index = lowerString.indexOf(abbreviationChar, index + 1);
 	}
 
-	memoizedResults[memoizeKey] = highScore;
+	memoizedRow[stringIndex] = highScore;
 	return highScore;
 }
 
@@ -195,13 +196,16 @@ export function computeCommandScore(
 		commandKeywords && commandKeywords.length > 0
 			? `${`${command} ${commandKeywords?.join(" ")}`}`
 			: command;
+	if (lastSearch?.value !== search) {
+		lastSearch = { value: search, formatted: formatInput(search) };
+	}
 	return computeCommandScoreInner(
 		command,
 		search,
 		formatInput(command),
-		formatInput(search),
+		lastSearch.formatted,
 		0,
 		0,
-		{}
+		[]
 	);
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { TooltipContentProps } from "../types.js";
 	import { TooltipContentState } from "../tooltip.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { afterSleep, boxWith, mergeProps } from "svelte-toolbelt";
+	import { afterSleep, mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { AlertDialogContentProps } from "../types.js";
 	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
 	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";

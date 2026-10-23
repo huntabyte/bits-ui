@@ -3,9 +3,9 @@ import {
 	type Getter,
 	type ReadableBox,
 	afterTick,
-	boxWith,
 	onDestroyEffect,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import type { Fn } from "./types.js";
 import { isIOS } from "./is.js";
 import { useId } from "./use-id.js";

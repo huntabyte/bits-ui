@@ -8,10 +8,9 @@ import {
 	getWindow,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
-	simpleBox,
-	boxWith,
 	type ReadableBox,
 } from "svelte-toolbelt";
+import { boxWith, simpleBox } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,
@@ -1205,6 +1204,8 @@ class MenuItemSharedState {
 	readonly content: MenuContentState;
 	readonly attachment: RefAttachment;
 	#isFocused = $state(false);
+	/** Static handlers an owner adds to `props`, so it needn't copy `props` into its own. */
+	handlers: Record<string, unknown> | undefined;
 
 	constructor(opts: MenuItemSharedStateOpts, content: MenuContentState) {
 		this.opts = opts;
@@ -1266,6 +1267,7 @@ class MenuItemSharedState {
 				onpointerleave: this.onpointerleave,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				...this.handlers,
 				...this.attachment,
 			}) as const
 	);
@@ -1298,6 +1300,14 @@ export class MenuItemState {
 		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
+		// added to `item.props` itself rather than copied with it into a second object; none
+		// of these keys are already in it
+		item.handlers = {
+			onclick: this.onclick,
+			onpointerdown: this.onpointerdown,
+			onpointerup: this.onpointerup,
+			onkeydown: this.onkeydown,
+		};
 	}
 
 	#handleSelect() {
@@ -1354,15 +1364,9 @@ export class MenuItemState {
 		this.item.content.pressedItem = { item: this, x: e.clientX, y: e.clientY };
 	}
 
-	// no keys overlap `item.props` (and it has no style/class), so a spread is what
-	// `mergeProps` would produce, without its per-item cost
-	readonly props = $derived.by(() => ({
-		...this.item.props,
-		onclick: this.onclick,
-		onpointerdown: this.onpointerdown,
-		onpointerup: this.onpointerup,
-		onkeydown: this.onkeydown,
-	}));
+	get props() {
+		return this.item.props;
+	}
 }
 
 interface MenuSubTriggerStateOpts

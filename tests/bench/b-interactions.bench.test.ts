@@ -101,3 +101,18 @@ it("radio keyboard navigation through 50 of 500", () =>
 			assert(selected === document.activeElement, "focus moved");
 		},
 	}));
+
+
+it("command custom filter with groups and many keywords", () =>
+	bench("command/custom-groups-keywords-8-1000", {
+		component: Command,
+		props: props({ count: 1000, search: "", custom: true, exact: true, keywordCount: 8 }),
+		run: ({ props }) => void (props.search = "keyword-5-1-7"),
+		verify: ({ target }) => {
+			const items = $$(target, "[data-bench=item]");
+			assert(items.length === 1 && items[0]?.dataset.value === "item 5-1", "custom keyword match retained");
+			assert(items[0]?.hasAttribute("data-selected"), "match selected");
+			const groups = $$(target, "[data-command-group]:not([hidden])");
+			assert(groups.length === 1 && groups[0]?.dataset.value === "group-5", "matching group visible");
+		},
+	}));

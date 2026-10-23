@@ -19,7 +19,7 @@ import type {
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { getFirstNonCommentChild } from "$lib/internal/dom.js";
+import { getFirstNonCommentChild, queryAll } from "$lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
 import { cssEscape } from "$lib/internal/css-escape.js";
 
@@ -411,10 +411,7 @@ export class CommandRootState {
 	getValidItems(): HTMLElement[] {
 		const node = this.opts.ref.current;
 		if (!node) return [];
-		const validItems = Array.from(
-			node.querySelectorAll<HTMLElement>(COMMAND_VALID_ITEM_SELECTOR)
-		).filter((el): el is HTMLElement => !!el);
-		return validItems;
+		return queryAll<HTMLElement>(node, COMMAND_VALID_ITEM_SELECTOR);
 	}
 
 	/**
@@ -426,10 +423,7 @@ export class CommandRootState {
 	getVisibleItems(): HTMLElement[] {
 		const node = this.opts.ref.current;
 		if (!node) return [];
-		const visibleItems = Array.from(
-			node.querySelectorAll<HTMLElement>(COMMAND_ITEM_SELECTOR)
-		).filter((el): el is HTMLElement => !!el);
-		return visibleItems;
+		return queryAll<HTMLElement>(node, COMMAND_ITEM_SELECTOR);
 	}
 
 	/** Returns all visible items in a matrix structure

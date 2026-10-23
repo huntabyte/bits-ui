@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { BitsConfigProps } from "$lib/bits/utilities/config/types.js";
 	import { useBitsConfig } from "../bits-config.js";
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 
 	let { children, defaultPortalTo, defaultLocale }: BitsConfigProps = $props();
 

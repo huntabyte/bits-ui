@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { DropdownMenuContentStaticProps } from "../types.js";
 	import { MenuContentState } from "$lib/bits/menu/menu.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";

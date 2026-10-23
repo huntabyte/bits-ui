@@ -4,9 +4,19 @@
 		count,
 		search = "",
 		custom = false,
-	}: { count: number; search?: string; custom?: boolean } = $props();
+		keywordCount = 1,
+		exact = false,
+	}: {
+		count: number;
+		search?: string;
+		custom?: boolean;
+		keywordCount?: number;
+		exact?: boolean;
+	} = $props();
 	const customFilter = (value: string, search: string, keywords?: string[]) =>
-		computeCommandScore(value, search, keywords);
+		exact
+			? Number(value.includes(search) || keywords?.some((keyword) => keyword.includes(search)))
+			: computeCommandScore(value, search, keywords);
 </script>
 
 <Command.Root filter={custom ? customFilter : computeCommandScore}>
@@ -20,7 +30,9 @@
 						{#each { length: count / 10 }, i (i)}
 							<Command.Item
 								value="item {g}-{i}"
-								keywords={[`alias-${g}-${i}`]}
+								keywords={Array.from({ length: keywordCount }, (_, k) =>
+									k === 0 ? `alias-${g}-${i}` : `keyword-${g}-${i}-${k}`
+								)}
 								data-bench="item"
 							>
 								Item {g}-{i}

@@ -732,7 +732,7 @@ export class DateFieldRootState {
 		if (part === "literal") return defaultAttrs;
 
 		const descriptionId = this.descriptionNode?.id;
-		const hasDescription = isFirstSegment(segmentId, this.#fieldNode) && descriptionId;
+		const hasDescription = descriptionId && isFirstSegment(segmentId, this.#fieldNode);
 		const errorMsgId = this.errorMessageId?.current;
 
 		const describedBy = hasDescription

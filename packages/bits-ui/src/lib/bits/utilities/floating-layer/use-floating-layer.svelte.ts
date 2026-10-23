@@ -17,8 +17,8 @@ import {
 	styleToString,
 	type ReadableBoxedValues,
 	type Box,
-	simpleBox,
 } from "svelte-toolbelt";
+import { simpleBox } from "$lib/internal/box.svelte.js";
 import { Context, ElementSize, watch } from "runed";
 import {
 	FloatingRootContext,

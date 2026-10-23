@@ -4,9 +4,8 @@ import {
 	DOMContext,
 	type WritableBoxedValues,
 	type ReadableBoxedValues,
-	simpleBox,
-	boxWith,
 } from "svelte-toolbelt";
+import { boxWith, simpleBox } from "$lib/internal/box.svelte.js";
 import { on } from "svelte/events";
 import { SvelteMap } from "svelte/reactivity";
 import { Context, watch } from "runed";
@@ -284,10 +283,11 @@ export class TooltipRootState {
 		this.provider = provider;
 		this.tether = opts.tether.current?.state ?? null;
 		this.registry = this.tether?.registry ?? new TooltipTriggerRegistryState();
+		const initialDelay = this.delayDuration ?? 0;
 		this.#timerFn = new TimeoutFn(() => {
 			this.#wasOpenDelayed = true;
 			this.opts.open.current = true;
-		}, this.delayDuration ?? 0);
+		}, initialDelay);
 
 		if (this.tether) {
 			this.tether.root = this;
@@ -308,10 +308,19 @@ export class TooltipRootState {
 			},
 		});
 
+		let isFirstRun = true;
 		watch(
 			() => this.delayDuration,
 			() => {
+				const firstRun = isFirstRun;
+				isFirstRun = false;
 				if (this.delayDuration === undefined) return;
+				// The timer created above already has this delay and can't be pending yet. A
+				// timer made here would be stopped when this re-runs, so stop the kept one then.
+				if (firstRun && this.delayDuration === initialDelay) {
+					const timer = this.#timerFn;
+					return () => timer.stop();
+				}
 				this.#timerFn = new TimeoutFn(() => {
 					this.#wasOpenDelayed = true;
 					this.opts.open.current = true;

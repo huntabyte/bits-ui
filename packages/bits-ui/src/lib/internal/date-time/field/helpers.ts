@@ -19,7 +19,7 @@ import {
 	EDITABLE_SEGMENT_PARTS,
 	EDITABLE_TIME_SEGMENT_PARTS,
 } from "./parts.js";
-import { getSegments } from "./segments.js";
+import { getFirstSegment, getSegments } from "./segments.js";
 import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
 import { useId } from "$lib/internal/use-id.js";
 import { kbd } from "$lib/internal/kbd.js";
@@ -101,14 +101,6 @@ function createContentObj(props: CreateContentObjProps) {
 			if (value === "0" && part !== "year") {
 				return "0";
 			} else if (!isNull(value) && !isNull(intValue)) {
-				const formatted = formatter.part(
-					getDateRefForPart(part, dateRef, segmentValues).set({ [part]: value }),
-					part,
-					{
-						hourCycle: props.hourCycle === 24 ? "h23" : undefined,
-					}
-				);
-
 				/**
 				 * If we're operating in a 12 hour clock and the part is an hour, we handle
 				 * the conversion to 12 hour format with 2 digit hours and leading zeros here.
@@ -156,6 +148,14 @@ function createContentObj(props: CreateContentObjProps) {
 					return `${value}`;
 				}
 
+				const formatted = formatter.part(
+					getDateRefForPart(part, dateRef, segmentValues).set({ [part]: value }),
+					part,
+					{
+						hourCycle: props.hourCycle === 24 ? "h23" : undefined,
+					}
+				);
+
 				if (leadingZero && formatted.length === 1) {
 					return `0${formatted}`;
 				}
@@ -170,13 +170,13 @@ function createContentObj(props: CreateContentObjProps) {
 				if (value === "0") {
 					return "0";
 				} else if (!isNull(value)) {
+					if (part === "year") {
+						return `${value}`;
+					}
 					const formatted = formatter.part(
 						getDateRefForPart(part, dateRef, segmentValues).set({ [part]: value }),
 						part
 					);
-					if (part === "year") {
-						return `${value}`;
-					}
 					if (leadingZero && formatted.length === 1) {
 						return `0${formatted}`;
 					}
@@ -440,8 +440,7 @@ export function isAcceptableSegmentKey(key: string) {
  */
 export function isFirstSegment(id: string, fieldNode: HTMLElement | null) {
 	if (!isBrowser) return false;
-	const segments = getSegments(fieldNode);
-	return segments.length ? segments[0]!.id === id : false;
+	return getFirstSegment(fieldNode)?.id === id;
 }
 
 type SetDescriptionProps = {

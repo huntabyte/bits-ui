@@ -28,6 +28,8 @@ import SelectFieldsetDisabledTest from "./select-fieldset-disabled-test.svelte";
 import SelectSettlingContentTest from "./select-settling-content-test.svelte";
 import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
 import SelectHighlightCallbacksTest from "./select-highlight-callbacks-test.svelte";
+import SelectExternalValueTest from "./select-external-value-test.svelte";
+import SelectArrowWalkTest from "./select-arrow-walk-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -1784,4 +1786,93 @@ describe("select - activation without a pointer press", () => {
 		await expectHighlighted(page.getByTestId("3"));
 		await vi.waitFor(() => expect(log).toEqual(["h:1", "u:1", "h:2", "u:2", "h:3"]));
 	});
+});
+
+describe("select - value changed from outside while open", () => {
+	const selectedIds = () =>
+		["1", "2", "3", "4", "extra-3"].filter((id) =>
+			document.querySelector(`[data-testid="${id}"]`)?.hasAttribute("data-selected")
+		);
+	const expectSelected = (ids: string[]) =>
+		vi.waitFor(() => {
+			expect(selectedIds()).toEqual(ids);
+			for (const id of ["1", "2", "3", "4"]) {
+				const node = document.querySelector(`[data-testid="${id}"]`)!;
+				const selected = ids.includes(id);
+				expect(node.getAttribute("aria-selected")).toBe(String(selected));
+				expect(node.textContent?.endsWith("✓")).toBe(selected);
+			}
+		});
+
+	it("moves the selection to the new single value", async () => {
+		const t = render(SelectExternalValueTest, { type: "single", value: "1" });
+		await expectSelected(["1"]);
+		await t.rerender({ value: "3" });
+		await expectSelected(["3"]);
+		await t.rerender({ value: "" });
+		await expectSelected([]);
+		// an item mounting in the same update as the change starts out selected
+		await t.rerender({ value: "3", extra: true });
+		await expectSelected(["3", "extra-3"]);
+	});
+
+	it("updates every added and removed value of a multiple select", async () => {
+		const t = render(SelectExternalValueTest, { type: "multiple", value: ["1", "2"] });
+		await expectSelected(["1", "2"]);
+		await t.rerender({ value: ["2", "4"] });
+		await expectSelected(["2", "4"]);
+		await t.rerender({ value: ["3"], extra: true });
+		await expectSelected(["3", "extra-3"]);
+		await t.rerender({ value: [] });
+		await expectSelected([]);
+	});
+});
+
+describe("select - arrow keys across groups and disabled items", () => {
+	const highlighted = () =>
+		document.querySelector("[data-select-item][data-highlighted]")?.getAttribute("data-value");
+
+	async function walk(groups: string[][], loop: boolean, keys: string[]) {
+		render(SelectArrowWalkTest, { groups, loop });
+		(page.getByTestId("trigger").element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ENTER);
+		await expectExists(page.getByTestId("content"));
+		await vi.waitFor(() => expect(highlighted()).toBeTruthy());
+		const seen = [highlighted()];
+		for (const key of keys) {
+			await userEvent.keyboard(key);
+			seen.push(highlighted());
+		}
+		return seen;
+	}
+
+	const groups = [["!a", "b", "c"], ["!d"], ["e", "!f"], ["g", "!h"]];
+
+	it("skips disabled items and stops at the ends without loop", async () => {
+		const down = Array(5).fill(kbd.ARROW_DOWN);
+		const up = Array(5).fill(kbd.ARROW_UP);
+		expect(await walk(groups, false, [...down, ...up])).toEqual(
+			["b", "c", "e", "g", "g", "g", "e", "c", "b", "b", "b"]
+		);
+	});
+
+	it("wraps past disabled items at both ends with loop", async () => {
+		expect(
+			await walk(groups, true, [
+				kbd.ARROW_UP,
+				kbd.ARROW_UP,
+				kbd.ARROW_DOWN,
+				kbd.ARROW_DOWN,
+				kbd.ARROW_DOWN,
+			])
+		).toEqual(["b", "g", "e", "g", "b", "c"]);
+	});
+
+	for (const loop of [false, true]) {
+		it(`keeps a lone enabled item highlighted (loop = ${loop})`, async () => {
+			expect(await walk([["!a", "b", "!c"]], loop, [kbd.ARROW_DOWN, kbd.ARROW_UP])).toEqual(
+				["b", "b", "b"]
+			);
+		});
+	}
 });

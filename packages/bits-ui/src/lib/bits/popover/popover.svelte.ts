@@ -2,9 +2,9 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	attachRef,
-	boxWith,
 	DOMContext,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { kbd } from "$lib/internal/kbd.js";
 import {
