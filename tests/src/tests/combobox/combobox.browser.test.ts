@@ -291,6 +291,27 @@ describe("combobox - single", () => {
 		await expectNotSelected(items);
 	});
 
+	it("should leave Home/End to the input instead of moving the highlight", async () => {
+		const t = await openSingle({}, kbd.ARROW_DOWN);
+		const [item0, item1, , item3] = getItems(page.getByTestId);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item1);
+
+		await userEvent.keyboard(kbd.END);
+		await expectHighlighted(item1);
+		await expectNotHighlighted(item3);
+		await userEvent.keyboard(kbd.HOME);
+		await expectHighlighted(item1);
+		await expectNotHighlighted(item0);
+
+		await t.user.type(t.input, "b");
+		const input = t.input.element() as HTMLInputElement;
+		await userEvent.keyboard(kbd.HOME);
+		expect(input.selectionStart).toBe(0);
+		await userEvent.keyboard(kbd.END);
+		expect(input.selectionStart).toBe(1);
+	});
+
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		await openSingle({}, kbd.ARROW_DOWN);
 
