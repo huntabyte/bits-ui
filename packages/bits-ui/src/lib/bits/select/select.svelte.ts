@@ -727,6 +727,7 @@ export class SelectComboTriggerState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
 	}
 
 	#focusInputAndToggle() {
@@ -774,6 +775,17 @@ export class SelectComboTriggerState {
 		this.#focusInputAndToggle();
 	}
 
+	/**
+	 * Screen readers can activate the trigger with a `click` that no pointer events
+	 * precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+	 * and was already handled by `onpointerdown` / `onpointerup`.
+	 */
+	onclick(e: BitsMouseEvent) {
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		this.#focusInputAndToggle();
+		e.preventDefault();
+	}
+
 	readonly props = $derived.by(
 		() =>
 			({
@@ -785,6 +797,7 @@ export class SelectComboTriggerState {
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
