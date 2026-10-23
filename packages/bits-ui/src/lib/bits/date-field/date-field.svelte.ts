@@ -60,6 +60,7 @@ import {
 	isDateAndTimeSegmentObj,
 	isDateSegmentPart,
 	isFirstSegment,
+	MAX_DAYS_IN_MONTH,
 	removeDescriptionElement,
 	setDescription,
 } from "$lib/internal/date-time/field/helpers.js";
@@ -1158,9 +1159,9 @@ abstract class BaseNumericSegmentState {
 
 		// Mirrors the rendering in `getPartContent`: while the month is still empty the
 		// day keeps the typed value instead of the placeholder month's clamped one.
-		if (this.part === "day" && isNull(segmentValues.day) === false && isNull(segmentValues.month)) {
+		if (this.part === "day" && !isNull(segmentValues.day) && isNull(segmentValues.month)) {
 			const intValue = Number.parseInt(segmentValues.day as string);
-			if (intValue >= 1 && intValue <= 31) valueNow = intValue;
+			if (intValue >= 1 && intValue <= MAX_DAYS_IN_MONTH) valueNow = intValue;
 		}
 		const valueMin = this.#getMin();
 		const valueMax = this.#getMax();

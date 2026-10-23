@@ -489,6 +489,12 @@ export function removeDescriptionElement(id: string, doc: Document) {
 }
 
 /**
+ * The maximum number of days a month can have. Used while the month is still
+ * unknown, so the day is not constrained by an unrelated placeholder month.
+ */
+export const MAX_DAYS_IN_MONTH = 31;
+
+/**
  * Returns the maximum value for the day segment.
  *
  * The day is only constrained by the month when the month segment actually has a value.
@@ -501,15 +507,9 @@ export function getDaySegmentMaxValue(
 	segmentMonthValue: string | null | undefined,
 	placeholder: DateValue
 ): number {
-	if (!segmentMonthValue) return 31;
+	if (!segmentMonthValue) return MAX_DAYS_IN_MONTH;
 	return getDaysInMonth(placeholder.set({ month: Number.parseInt(segmentMonthValue) }));
 }
-
-/**
- * The maximum number of days a month can have. Used while the month is still
- * unknown, so the day is not constrained by an unrelated placeholder month.
- */
-const MAX_DAYS_IN_MONTH = 31;
 
 /**
  * The reference date used to render a single segment's value.
