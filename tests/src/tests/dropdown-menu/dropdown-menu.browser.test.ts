@@ -1,4 +1,4 @@
-import { expect, it, vi, afterEach, onTestFinished } from "vitest";
+import { expect, it, vi, afterEach, onTestFinished, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { page, userEvent } from "@vitest/browser/context";
 import { getTestKbd } from "../utils.js";
@@ -6,15 +6,21 @@ import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
 import {
+	bodyPointerEventsOnRemoval,
 	expectExists,
 	expectNotExists,
 	getPointerAwayFromSubmenuIntentClientCoords,
 	getPointerLeaveTowardSubmenuClientCoords,
 	getPointerMidpointTowardSubmenuClientCoords,
+	waitForDismissibleLayer,
 } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
+import DropdownMenuInitiallyOpenTest from "./dropdown-menu-initially-open-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
 import DropdownMenuScrollPaddingTest from "./dropdown-menu-scroll-padding-test.svelte";
+import DropdownMenuFieldsetDisabledTest from "./dropdown-menu-fieldset-disabled-test.svelte";
+import DropdownMenuTooltipTriggerTest from "./dropdown-menu-tooltip-trigger-test.svelte";
+import DropdownMenuScrollItemsTest from "./dropdown-menu-scroll-items-test.svelte";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -50,6 +56,7 @@ async function open(props: DropdownMenuSetupProps = {}) {
 	await expectNotExists(t.getContent());
 	await t.trigger.click();
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	return { ...t };
 }
 
@@ -60,6 +67,7 @@ async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd
 	await expect.element(t.trigger).toHaveFocus();
 	await userEvent.keyboard(key);
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	return t;
 }
 
@@ -84,6 +92,29 @@ async function focusSubTrigger(): Promise<void> {
 	if (subtrigger.element() === document.activeElement) return;
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(subtrigger).toHaveFocus();
+}
+
+function holdOpenAutoFocusFrame() {
+	const requestAnimationFrame = window.requestAnimationFrame;
+	let heldFrame: FrameRequestCallback | undefined;
+
+	return {
+		onOpenAutoFocus() {
+			window.requestAnimationFrame = (callback) => {
+				window.requestAnimationFrame = requestAnimationFrame;
+				heldFrame = callback;
+				return -1;
+			};
+		},
+		async release() {
+			if (!heldFrame) throw new Error("Open autofocus frame was not scheduled");
+			heldFrame(performance.now());
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+		},
+		restore() {
+			window.requestAnimationFrame = requestAnimationFrame;
+		},
+	};
 }
 
 afterEach(() => {
@@ -117,6 +148,24 @@ it("should have bits data attrs", async () => {
 
 	const subContent = page.getByTestId("sub-content");
 	await expect.element(subContent).toHaveAttribute(`data-dropdown-menu-sub-content`);
+});
+
+it("should not expose the group heading and separator as groups", async () => {
+	const t = await setup();
+	await t.trigger.click();
+
+	// The group itself is the only `group` in the menu — a heading is the group's
+	// accessible name (referenced by `aria-labelledby`, which works off the id, not the
+	// role), and a separator is a separator. Exposing either as `role="group"` puts empty
+	// groups into the a11y tree. This also matches `Select`/`Command`, whose group
+	// headings set no role at all.
+	await expect.element(page.getByTestId("group")).toHaveAttribute("role", "group");
+	await expect.element(page.getByTestId("separator")).toHaveAttribute("role", "separator");
+	expect(page.getByTestId("group-heading").element().hasAttribute("role")).toBe(false);
+
+	// The heading still names its group.
+	const headingId = page.getByTestId("group-heading").element().id;
+	await expect.element(page.getByTestId("group")).toHaveAttribute("aria-labelledby", headingId);
 });
 
 it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (key) => {
@@ -165,6 +214,70 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expectExists(page.getByTestId("sub-content"));
 	await expect.element(page.getByTestId("sub-item")).toHaveFocus();
+});
+
+it("should not let delayed parent autofocus dismiss a focused submenu", async () => {
+	const parentAutoFocus = holdOpenAutoFocusFrame();
+
+	try {
+		const t = await setup({
+			contentProps: { onOpenAutoFocus: parentAutoFocus.onOpenAutoFocus },
+		});
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		const subTrigger = page.getByTestId("sub-trigger");
+		(subTrigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expectExists(t.getSubContent());
+		await waitForDismissibleLayer(t.getSubContent());
+
+		const subItem = page.getByTestId("sub-item");
+		await expect.element(subItem).toHaveFocus();
+		await parentAutoFocus.release();
+
+		await expect.element(t.getSubContent()).toBeInTheDocument();
+		await expect.element(subItem).toHaveFocus();
+	} finally {
+		parentAutoFocus.restore();
+	}
+});
+
+it("should not let delayed autofocus override focus already inside its scope", async () => {
+	const autoFocus = holdOpenAutoFocusFrame();
+
+	try {
+		const t = await setup({
+			contentProps: { onOpenAutoFocus: autoFocus.onOpenAutoFocus },
+		});
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		const subTrigger = page.getByTestId("sub-trigger");
+		(subTrigger.element() as HTMLElement).focus();
+		await expect.element(subTrigger).toHaveFocus();
+		await autoFocus.release();
+
+		await expect.element(subTrigger).toHaveFocus();
+	} finally {
+		autoFocus.restore();
+	}
+});
+
+it("should focus the content when opened with the keyboard while the trigger's tooltip is open", async () => {
+	const t = render(DropdownMenuTooltipTriggerTest);
+	onTestFinished(() => t.unmount());
+	await page.getByTestId("outside").click();
+
+	const trigger = page.getByTestId("trigger");
+	(trigger.element() as HTMLElement).focus();
+	await expectExists(page.getByTestId("tooltip-content"));
+	trigger.element().dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("item")).toHaveFocus();
 });
 
 it("should keep submenu open while pointer is moving toward it", async () => {
@@ -346,6 +459,21 @@ it("should close the menu on escape", async () => {
 	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(page.getByTestId("content"));
 });
+
+it.each([
+	["default", {}],
+	["forceMount", { component: DropdownMenuForceMountTest, withOpenCheck: true }],
+] as const)(
+	"should restore body pointer-events as soon as the menu closes (%s)",
+	async (_, props) => {
+		// https://github.com/huntabyte/bits-ui/issues/2202
+		await openWithKbd(props);
+		await vi.waitFor(() => expect(document.body.style.pointerEvents).toBe("none"));
+		const restored = bodyPointerEventsOnRemoval(page.getByTestId("content").element());
+		await userEvent.keyboard(kbd.ESCAPE);
+		expect(await restored).toBe("");
+	}
+);
 
 it("should respect the `escapeKeydownBehavior` prop", async () => {
 	await openWithKbd({
@@ -657,6 +785,7 @@ it("should not scroll to previous dropdown trigger when closing a different drop
 	// open dropdown 3
 	await trigger3.click();
 	await expectExists(content3);
+	await waitForDismissibleLayer(content3);
 	await userEvent.click(topButton, { force: true });
 
 	await expectNotExists(content3);
@@ -757,6 +886,7 @@ it("keyboard navigation should not cause unwanted jumps between menus", async ()
 
 	await trigger1.click();
 	await expectExists(content1);
+	await waitForDismissibleLayer(content1);
 	await trigger2.click();
 	await expectExists(content2);
 	await expectNotExists(content1);
@@ -799,4 +929,141 @@ it("should call `focus` with `preventScroll: true` on hover and item-leave so `s
 	} finally {
 		focusSpy.mockRestore();
 	}
+});
+
+it("should point the trigger at the content while the menu is open", async () => {
+	const t = await open();
+	const id = t.getContent().element().id;
+	expect(id).not.toBe("");
+	await expect.element(t.trigger).toHaveAttribute("aria-controls", id);
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(t.getContent());
+	await expect.element(t.trigger).not.toHaveAttribute("aria-controls");
+});
+
+it("should point the trigger at the content when the menu starts open", async () => {
+	render(DropdownMenuInitiallyOpenTest);
+	await expectExists(page.getByTestId("content"));
+	await expect
+		.element(page.getByTestId("trigger"))
+		.toHaveAttribute("aria-controls", "menu-content-a");
+});
+
+it("should follow the content id when it changes while the menu is open", async () => {
+	render(DropdownMenuInitiallyOpenTest);
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("rename").click();
+	await expect.element(page.getByTestId("content")).toHaveAttribute("id", "menu-content-b");
+	await expect
+		.element(page.getByTestId("trigger"))
+		.toHaveAttribute("aria-controls", "menu-content-b");
+});
+
+it("should point the sub trigger at the sub content while the submenu is open", async () => {
+	const t = await openSubmenu(await openWithKbd());
+	const id = t.getSubContent().element().id;
+	expect(id).not.toBe("");
+	await expect.element(page.getByTestId("sub-trigger")).toHaveAttribute("aria-controls", id);
+});
+
+it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
+	render(DropdownMenuFieldsetDisabledTest);
+	const trigger = page.getByTestId("trigger");
+	await expect.element(trigger).toBeDisabled();
+
+	async function expectClosed() {
+		await new Promise((r) => setTimeout(r, 100));
+		expect(page.getByTestId("open-binding").element()).toHaveTextContent("false");
+		expect(page.getByTestId("content").query()).toBeNull();
+	}
+
+	// browsers still dispatch pointer events to disabled form controls
+	await trigger.click({ force: true });
+	await expectClosed();
+
+	trigger
+		.element()
+		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	await expectClosed();
+});
+
+describe("mouse press on an item", () => {
+	type Point = { clientX: number; clientY: number };
+
+	function mousePointer(type: string, point: Point) {
+		return new PointerEvent(type, {
+			...point,
+			bubbles: true,
+			cancelable: true,
+			pointerType: "mouse",
+			isPrimary: true,
+			button: 0,
+		});
+	}
+
+	function centerOf(testId: string): Point {
+		const rect = page.getByTestId(testId).element().getBoundingClientRect();
+		return { clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 };
+	}
+
+	function itemAt({ clientX, clientY }: Point) {
+		return document
+			.elementFromPoint(clientX, clientY)!
+			.closest<HTMLElement>("[role=menuitem]")!;
+	}
+
+	async function scrollContent(px: number) {
+		(page.getByTestId("content").element() as HTMLElement).scrollTop += px;
+		await new Promise((r) => setTimeout(r, 100));
+	}
+
+	async function setupScroll() {
+		const onSelect = vi.fn();
+		render(DropdownMenuScrollItemsTest, { onSelect });
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+		await new Promise((r) => setTimeout(r, 100));
+		return onSelect;
+	}
+
+	it("should select the pressed item when the content scrolls under a still pointer", async () => {
+		const onSelect = await setupScroll();
+		const point = centerOf("item-1");
+		page.getByTestId("item-1").element().dispatchEvent(mousePointer("pointerdown", point));
+		await scrollContent(60);
+
+		const released = itemAt(point);
+		expect(released.dataset.testid).not.toBe("item-1");
+		released.dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(1);
+	});
+
+	it("should not reuse a press that ended off an item", async () => {
+		const onSelect = await setupScroll();
+		const point = centerOf("item-1");
+		const content = page.getByTestId("content").element();
+		page.getByTestId("item-1").element().dispatchEvent(mousePointer("pointerdown", point));
+		content.dispatchEvent(mousePointer("pointerup", point));
+		await scrollContent(60);
+
+		const released = itemAt(point);
+		content.dispatchEvent(mousePointer("pointerdown", point));
+		released.dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(Number(released.dataset.testid!.slice(5)));
+	});
+
+	it("should select the item released on when dragging from the trigger", async () => {
+		const onSelect = vi.fn();
+		render(DropdownMenuScrollItemsTest, { onSelect });
+		const trigger = page.getByTestId("trigger").element();
+		trigger.dispatchEvent(mousePointer("pointerdown", centerOf("trigger")));
+		await expectExists(page.getByTestId("content"));
+		await new Promise((r) => setTimeout(r, 100));
+		const point = centerOf("item-2");
+		page.getByTestId("item-2").element().dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(2);
+	});
 });

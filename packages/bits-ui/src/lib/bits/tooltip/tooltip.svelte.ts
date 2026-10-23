@@ -170,19 +170,25 @@ export class TooltipProviderState {
 		}, this.opts.skipDelayDuration.current);
 
 		onMountEffect(() =>
-			on(window, "scroll", (e) => {
-				const activeTooltip = this.#openTooltip;
-				if (!activeTooltip) return;
-				const triggerNode = activeTooltip.triggerNode;
-				if (!triggerNode) return;
+			on(
+				window,
+				"scroll",
+				(e) => {
+					const activeTooltip = this.#openTooltip;
+					if (!activeTooltip) return;
+					const triggerNode = activeTooltip.triggerNode;
+					if (!triggerNode) return;
 
-				const target = e.target;
-				if (!(target instanceof Element || target instanceof Document)) return;
+					const target = e.target;
+					if (!(target instanceof Element || target instanceof Document)) return;
 
-				if (target.contains(triggerNode)) {
-					activeTooltip.handleClose();
-				}
-			})
+					if (target.contains(triggerNode)) {
+						activeTooltip.handleClose();
+					}
+				},
+				// An element's scroll does not bubble, so only the capture phase sees it.
+				{ capture: true, passive: true }
+			)
 		);
 	}
 
@@ -357,6 +363,11 @@ export class TooltipRootState {
 	handleClose = () => {
 		this.#timerFn.stop();
 		this.opts.open.current = false;
+	};
+
+	/** Stops a pending delayed open without touching the open state. */
+	cancelPendingOpen = () => {
+		this.#timerFn.stop();
 	};
 
 	#handleDelayedOpen = () => {
@@ -614,6 +625,18 @@ export class TooltipTriggerState {
 
 	#onpointerdown: PointerEventHandler<HTMLElement> = () => {
 		if (this.#isDisabled()) return;
+		const root = this.#getRoot();
+
+		// close on pointerdown regardless of button so right/middle click dismiss the
+		// tooltip too, and so a pending open timer is cancelled before `contextmenu` fires
+		if (root && !root.disableCloseOnTriggerClick) {
+			if (root.opts.open.current) {
+				root.handleClose();
+			} else {
+				root.cancelPendingOpen();
+			}
+		}
+
 		this.#isPointerDown.current = true;
 
 		this.domContext.getDocument().addEventListener(

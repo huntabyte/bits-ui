@@ -1,8 +1,23 @@
-import { onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
+import { getActiveElement, onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
 import { FocusScopeManager } from "./focus-scope-manager.js";
 import { focusable, isFocusable, tabbable } from "tabbable";
 import { on } from "svelte/events";
 import { watch } from "runed";
+
+/**
+ * Retargets `node` to the tree `container` lives in by climbing shadow hosts, so a
+ * node inside a shadow root nested in the scope resolves to its host. Returns `null`
+ * when `node` is from an unrelated tree.
+ */
+function retargetToScopeTree(node: Node | null, container: HTMLElement): Node | null {
+	const scopeRoot = container.getRootNode();
+	while (node) {
+		const root = node.getRootNode();
+		if (root === scopeRoot) return node;
+		node = root !== node && "host" in root ? (root as ShadowRoot).host : null;
+	}
+	return null;
+}
 
 interface FocusScopeOpts
 	extends ReadableBoxedValues<{
@@ -86,13 +101,25 @@ export class FocusScope {
 
 		if (!event.defaultPrevented) {
 			requestAnimationFrame(() => {
-				if (!this.#container) return;
+				if (
+					!this.#container ||
+					this.#paused ||
+					!this.#manager.isActiveScope(this) ||
+					this.#container.contains(
+						retargetToScopeTree(
+							getActiveElement(this.#container.ownerDocument),
+							this.#container
+						)
+					)
+				) {
+					return;
+				}
 				const firstTabbable = this.#getFirstTabbable();
 				if (firstTabbable) {
-					firstTabbable.focus();
+					firstTabbable.focus({ preventScroll: true });
 					this.#manager.setFocusMemory(this, firstTabbable);
 				} else {
-					this.#container.focus();
+					this.#container.focus({ preventScroll: true });
 				}
 			});
 		}
@@ -109,10 +136,10 @@ export class FocusScope {
 		if (!event.defaultPrevented) {
 			// return focus to the element that was focused before this scope opened
 			const preFocusedElement = this.#manager.getPreFocusMemory(this);
-			if (preFocusedElement && document.contains(preFocusedElement)) {
+			if (preFocusedElement && preFocusedElement.isConnected) {
 				// ensure the element is still focusable and in the document
 				try {
-					preFocusedElement.focus();
+					preFocusedElement.focus({ preventScroll: true });
 				} catch {
 					// fallback if focus fails
 					document.body.focus();
@@ -130,10 +157,11 @@ export class FocusScope {
 		const handleFocus = (e: FocusEvent) => {
 			if (this.#paused || !this.#manager.isActiveScope(this)) return;
 
-			const target = e.target as HTMLElement;
-			if (!target) return;
-
-			const isInside = container.contains(target);
+			const target = retargetToScopeTree(
+				e.composedPath()[0] as Node,
+				container
+			) as HTMLElement | null;
+			const isInside = target !== null && container.contains(target);
 
 			if (isInside) {
 				// store last focused element
@@ -143,12 +171,12 @@ export class FocusScope {
 				const lastFocused = this.#manager.getFocusMemory(this);
 				if (lastFocused && container.contains(lastFocused) && isFocusable(lastFocused)) {
 					e.preventDefault();
-					lastFocused.focus();
+					lastFocused.focus({ preventScroll: true });
 				} else {
 					// fallback to first tabbable or first focusable or container
 					const firstTabbable = this.#getFirstTabbable();
 					const firstFocusable = this.#getAllFocusables()[0];
-					(firstTabbable || firstFocusable || container).focus();
+					(firstTabbable || firstFocusable || container).focus({ preventScroll: true });
 				}
 			}
 		};
@@ -163,10 +191,10 @@ export class FocusScope {
 			const first = tabbables[0];
 			const last = tabbables[tabbables.length - 1];
 
-			if (!e.shiftKey && doc.activeElement === last) {
+			if (!e.shiftKey && getActiveElement(doc) === last) {
 				e.preventDefault();
 				first!.focus();
-			} else if (e.shiftKey && doc.activeElement === first) {
+			} else if (e.shiftKey && getActiveElement(doc) === first) {
 				e.preventDefault();
 				last!.focus();
 			}
@@ -186,11 +214,11 @@ export class FocusScope {
 				const elementToFocus = firstTabbable || firstFocusable;
 
 				if (elementToFocus) {
-					elementToFocus.focus();
+					elementToFocus.focus({ preventScroll: true });
 					this.#manager.setFocusMemory(this, elementToFocus);
 				} else {
 					// no focusable elements left, focus container
-					container.focus();
+					container.focus({ preventScroll: true });
 				}
 			}
 		});

@@ -4,6 +4,8 @@ import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date
 import { getTestKbd } from "../utils.js";
 import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./date-range-field-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
+import DateRangeFieldSpreadPropsTest from "./date-range-field-spread-props-test.svelte";
+import { collectErrors } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -262,4 +264,156 @@ it("should allow valid days in end month when a value is prepopulated", async ()
 	(seg.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(seg).toHaveTextContent("30");
+});
+
+it("should allow valid days in the end month with a day-first locale", async () => {
+	const t = setup({
+		locale: "en-GB",
+		value: {
+			// start sits in a 30-day month, end in a 31-day one
+			start: new CalendarDate(2024, 11, 1),
+			end: new CalendarDate(2026, 8, 30),
+		},
+	});
+
+	await t.end.day.click();
+	await userEvent.keyboard("31");
+
+	await expect.element(t.end.day).toHaveTextContent("31");
+	await expect.element(t.end.value).toHaveTextContent("2026-08-31");
+	await expect.element(t.start.value).toHaveTextContent("2024-11-01");
+});
+
+it("should update segment positioning when the `locale` changes", async () => {
+	const rangeValue = { start: new CalendarDate(2022, 1, 31), end: new CalendarDate(2022, 3, 15) };
+	const t = setup({ value: rangeValue, locale: "en-US" });
+	const input = (type: "start" | "end") =>
+		t.container.querySelector(`[data-testid="${type}-input"]`)!;
+
+	expect(input("start").textContent).toBe("01/31/2022");
+	expect(input("end").textContent).toBe("03/15/2022");
+
+	await t.rerender({ value: rangeValue, locale: "sv-SE" });
+
+	expect(input("start").textContent).toBe("2022-01-31");
+	expect(input("end").textContent).toBe("2022-03-15");
+});
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(DateRangeFieldSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("root")).toHaveAttribute("data-updated");
+	await expect.element(page.getByTestId("start-month")).toHaveTextContent("mm");
+	await expect.element(page.getByTestId("end-year")).toHaveTextContent("yyyy");
+});
+
+function at(hour: number) {
+	return new CalendarDateTime(2026, 3, 11, hour, 30, 0, 0);
+}
+
+function setupDayPeriod(value: CalendarDateTime) {
+	const t = setup({ value: { start: value, end: new CalendarDateTime(2026, 3, 11, 23, 59) } });
+	return {
+		...t,
+		hour: page.getByTestId("start-hour"),
+		minute: page.getByTestId("start-minute"),
+		dayPeriod: page.getByTestId("start-dayPeriod"),
+		value: t.start.value,
+	};
+}
+
+it("should keep PM when typing the hour and then the minutes", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{9}");
+	await expect.element(t.minute).toHaveFocus();
+	await userEvent.keyboard("{3}{0}");
+
+	await expect.element(t.hour).toHaveTextContent("09");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T21:30");
+});
+
+it("should keep PM when typing the hour and then pressing ArrowUp on it", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}{0}");
+	await expect.element(t.minute).toHaveFocus();
+	await expect.element(t.value).toHaveTextContent("2026-03-11T22:30");
+
+	await t.hour.click();
+	await userEvent.keyboard(kbd.ARROW_UP);
+
+	await expect.element(t.hour).toHaveTextContent("11");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T23:30");
+});
+
+it("should keep 12 AM when typing 12 and then the minutes", async () => {
+	const t = setupDayPeriod(at(0));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}{2}");
+	await expect.element(t.minute).toHaveFocus();
+	await userEvent.keyboard("{3}{0}");
+
+	await expect.element(t.hour).toHaveTextContent("12");
+	await expect.element(t.dayPeriod).toHaveTextContent("AM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T00:30");
+});
+
+it("should keep PM when typing the hour after switching to PM", async () => {
+	const t = setupDayPeriod(at(9));
+
+	await t.dayPeriod.click();
+	await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T21:30");
+
+	await t.hour.click();
+	await userEvent.keyboard("{3}");
+
+	await expect.element(t.hour).toHaveTextContent("03");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T15:30");
+});
+
+it("should keep PM when typing one hour digit and then tabbing away", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}");
+	await expect.element(t.hour).toHaveFocus();
+	await userEvent.keyboard(kbd.TAB);
+	await expect.element(t.minute).toHaveFocus();
+
+	await expect.element(t.hour).toHaveTextContent("01");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T13:30");
+});
+
+it("should keep PM when typing one hour digit and then blurring", async () => {
+	const t = setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}");
+	await t.value.click();
+	await expect.element(t.hour).not.toHaveFocus();
+
+	await expect.element(t.hour).toHaveTextContent("01");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T13:30");
+});
+
+it("should keep PM when pressing Backspace on the hour", async () => {
+	const t = setupDayPeriod(at(22));
+
+	await t.hour.click();
+	await userEvent.keyboard(kbd.BACKSPACE);
+
+	await expect.element(t.hour).toHaveTextContent("01");
+	await expect.element(t.dayPeriod).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T13:30");
 });

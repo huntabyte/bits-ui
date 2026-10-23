@@ -42,15 +42,16 @@
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return;
+	function handleDefaultPlaceholder(setPlaceholder = true) {
+		if (placeholder !== undefined) return placeholder;
 		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultValue: value?.start,
 			minValue,
 			maxValue,
 		});
-		placeholder = defaultPlaceholder;
+		if (setPlaceholder) placeholder = defaultPlaceholder;
+		return defaultPlaceholder;
 	}
 
 	// SSR
@@ -101,7 +102,7 @@
 		maxValue: boxWith(() => maxValue),
 		minValue: boxWith(() => minValue),
 		placeholder: boxWith(
-			() => placeholder as DateValue,
+			() => placeholder ?? handleDefaultPlaceholder(false),
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);

@@ -2,6 +2,7 @@ import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import ToolbarTest from "./toolbar-test.svelte";
+import ToolbarNestedTest from "./toolbar-nested-test.svelte";
 import type { ToolbarTestProps } from "./toolbar-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -214,4 +215,26 @@ describe("Toolbar", () => {
 			await expect.element(t.clickedBinding).toHaveTextContent("button");
 		}
 	);
+
+	it("should ignore the buttons of a nested `Toolbar.Root` when navigating with the keyboard", async () => {
+		render(ToolbarNestedTest);
+
+		const outerButton1 = page.getByTestId("outer-button-1");
+		const outerButton2 = page.getByTestId("outer-button-2");
+		const innerButton1 = page.getByTestId("inner-button-1");
+		const innerButton2 = page.getByTestId("inner-button-2");
+
+		(outerButton1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(outerButton2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(outerButton1).toHaveFocus();
+
+		// the nested Toolbar.Root keeps navigating among its own buttons
+		(innerButton1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(innerButton2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expect.element(innerButton1).toHaveFocus();
+	});
 });

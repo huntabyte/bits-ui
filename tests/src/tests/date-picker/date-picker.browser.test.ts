@@ -3,8 +3,15 @@ import { getTestKbd } from "../utils";
 import { expect, it, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import DatePickerTest, { type DatePickerTestProps } from "./date-picker-test.svelte";
-import { expectExists, expectNotClickableLoc, expectNotExists } from "../browser-utils";
+import {
+	collectErrors,
+	expectExists,
+	expectNotClickableLoc,
+	expectNotExists,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
+import DatePickerSpreadPropsTest from "./date-picker-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -62,6 +69,7 @@ async function open(props: DatePickerTestProps = {}, openWith: "click" | (string
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = page.getByTestId("content");
 	const calendar = page.getByTestId("calendar");
 
@@ -83,6 +91,20 @@ it("should open on click", async () => {
 
 it.each([kbd.ENTER, kbd.SPACE])("should open on %s", async (key) => {
 	await open({}, key);
+});
+
+it("should not focus a day when `onOpenAutoFocus` is prevented", async () => {
+	const t = await open({
+		value: calendarDate,
+		contentProps: {
+			onOpenAutoFocus: (e) => {
+				e.preventDefault();
+				document.querySelector<HTMLElement>("[data-testid='next-button']")?.focus();
+			},
+		},
+	});
+	await expect.element(page.getByTestId("next-button")).toHaveFocus();
+	expect(t.getSelectedDay()).not.toBe(document.activeElement);
 });
 
 it("should populate segment with value - `CalendarDate`", async () => {
@@ -701,4 +723,11 @@ describe("date picker - 24-hour format with locales", () => {
 		await userEvent.keyboard("21");
 		await expect.element(hour).toHaveTextContent("21");
 	});
+});
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(DatePickerSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("month")).toHaveTextContent("mm");
+	await expect.element(page.getByTestId("year")).toHaveTextContent("yyyy");
 });

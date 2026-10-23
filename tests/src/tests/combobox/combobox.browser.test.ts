@@ -10,7 +10,8 @@ import ComboboxMultiTest from "./combobox-multi-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
+import ComboboxFieldsetDisabledTest from "./combobox-fieldset-disabled-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -119,6 +120,7 @@ async function openSingle(
 		await returned.user.keyboard(openWith);
 	}
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	const content = page.getByTestId("content");
 	const group = page.getByTestId("group");
 	const groupHeading = page.getByTestId("group-label");
@@ -148,6 +150,7 @@ async function openMultiple(
 		await returned.user.keyboard(openWith);
 	}
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	const content = page.getByTestId("content");
 	return {
 		...returned,
@@ -282,6 +285,33 @@ describe("combobox - single", () => {
 		await expectSelected(item1);
 	});
 
+	it("should expose `aria-selected` false on all items when no value is selected", async () => {
+		await openSingle();
+		const items = getItems(page.getByTestId);
+		await expectNotSelected(items);
+	});
+
+	it("should leave Home/End to the input instead of moving the highlight", async () => {
+		const t = await openSingle({}, kbd.ARROW_DOWN);
+		const [item0, item1, , item3] = getItems(page.getByTestId);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item1);
+
+		await userEvent.keyboard(kbd.END);
+		await expectHighlighted(item1);
+		await expectNotHighlighted(item3);
+		await userEvent.keyboard(kbd.HOME);
+		await expectHighlighted(item1);
+		await expectNotHighlighted(item0);
+
+		await t.user.type(t.input, "b");
+		const input = t.input.element() as HTMLInputElement;
+		await userEvent.keyboard(kbd.HOME);
+		expect(input.selectionStart).toBe(0);
+		await userEvent.keyboard(kbd.END);
+		expect(input.selectionStart).toBe(1);
+	});
+
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		await openSingle({}, kbd.ARROW_DOWN);
 
@@ -380,6 +410,28 @@ describe("combobox - single", () => {
 		await expectNotHighlighted(item2);
 	});
 
+	it("items are not shown when filtering has no match", async () => {
+		const t = await openSingle();
+		await t.user.type(t.input, "z");
+		await expectNotExists(page.getByTestId("1"));
+		await expectNotExists(page.getByTestId("2"));
+	});
+
+	it("should highlight the first filtered item after typing in the input", async () => {
+		const t = await openSingle();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+	});
+
+	it("should select the highlighted filtered item with Enter after typing", async () => {
+		const t = await openSingle();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+		await t.user.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("B");
+		await expect.element(t.getHiddenInput()).toHaveValue("2");
+	});
+
 	it("should select a default item when provided", async () => {
 		const t = await openSingle({
 			value: "2",
@@ -475,6 +527,26 @@ describe("combobox - single", () => {
 		const setter = page.getByTestId("value-binding-3");
 		await setter.click();
 		await expect.element(t.input).toHaveValue("C");
+	});
+
+	it("should select a highlighted item with an empty string value on `Enter`", async () => {
+		const t = setupSingle({ value: "1" }, [
+			{ value: "1", label: "A" },
+			{ value: "", label: "All" },
+		]);
+		const allItem = page.getByRole("option", { name: "All" });
+		(t.input.element() as HTMLElement).focus();
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("1")).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ENTER);
+		await expectNotExists(t.getContent());
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-selected");
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
 	});
 });
 
@@ -714,6 +786,39 @@ describe("combobox - multiple", () => {
 		await expectNotHighlighted(item1);
 	});
 
+	it("items are not shown when filtering has no match", async () => {
+		const t = await openMultiple();
+		await t.user.type(t.input, "z");
+		await expectNotExists(page.getByTestId("1"));
+		await expectNotExists(page.getByTestId("2"));
+	});
+
+	it("should highlight the first filtered item after typing in the input", async () => {
+		const t = await openMultiple();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+	});
+
+	it("should select the highlighted filtered item with Enter after typing", async () => {
+		const t = await openMultiple();
+		await t.user.type(t.input, "b");
+		await expectHighlighted(page.getByTestId("2")); // B
+		await t.user.keyboard(kbd.ENTER);
+		await expect.element(t.input).toHaveValue("B");
+		expect(t.getHiddenInputs()).toHaveLength(1);
+		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
+	});
+
+	it("should not move highlight to first item when clicking a non-first item in multi-select", async () => {
+		await openMultiple();
+		const [item1, , , item4] = getItems(page.getByTestId);
+		await item4.hover();
+		await expectHighlighted(item4);
+		await item4.click();
+		await expectHighlighted(item4);
+		await expectNotHighlighted(item1);
+	});
+
 	it("should select a default item when provided", async () => {
 		const t = await openMultiple({
 			value: ["2"],
@@ -817,11 +922,11 @@ async function expectNotSelected(node: MaybeArray<ReturnType<typeof page.getByTe
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			await expect.element(n).not.toHaveAttribute("data-selected");
-			await expect.element(n).not.toHaveAttribute("aria-selected");
+			await expect.element(n).toHaveAttribute("aria-selected", "false");
 		}
 	} else {
 		await expect.element(node).not.toHaveAttribute("data-selected");
-		await expect.element(node).not.toHaveAttribute("aria-selected");
+		await expect.element(node).toHaveAttribute("aria-selected", "false");
 	}
 }
 
@@ -844,3 +949,67 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 		await expect.element(node).not.toHaveAttribute("data-highlighted");
 	}
 }
+
+describe("Touch", () => {
+	function touch(target: Element, type: "pointerdown" | "pointerup" | "pointercancel") {
+		target.dispatchEvent(
+			new PointerEvent(type, {
+				bubbles: true,
+				cancelable: true,
+				pointerType: "touch",
+				isPrimary: true,
+				button: 0,
+				buttons: type === "pointerdown" ? 1 : 0,
+			})
+		);
+	}
+
+	it("should not open the trigger on touch down, which also fires when a scroll starts on it", async () => {
+		const t = setupSingle();
+		const trigger = t.trigger.element();
+		touch(trigger, "pointerdown");
+		await tick();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("false");
+		expect(document.activeElement).not.toBe(t.input.element());
+		// the browser cancels the pointer once the finger scrolls
+		touch(trigger, "pointercancel");
+		await tick();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("false");
+	});
+
+	it("should open the trigger on a tap", async () => {
+		const t = setupSingle();
+		const trigger = t.trigger.element();
+		touch(trigger, "pointerdown");
+		await tick();
+		await expectNotExists(t.getContent());
+		expect(document.activeElement).not.toBe(t.input.element());
+		touch(trigger, "pointerup");
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.input).toHaveFocus();
+	});
+});
+
+it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
+	render(ComboboxFieldsetDisabledTest);
+	const trigger = page.getByTestId("trigger");
+	await expect.element(trigger).toBeDisabled();
+
+	async function expectClosed() {
+		await new Promise((r) => setTimeout(r, 100));
+		expect(page.getByTestId("open-binding").element()).toHaveTextContent("false");
+		expect(page.getByTestId("content").query()).toBeNull();
+	}
+
+	// browsers still dispatch pointer events to disabled form controls
+	await trigger.click({ force: true });
+	await expectClosed();
+
+	trigger
+		.element()
+		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	await expectClosed();
+});

@@ -7,7 +7,12 @@ import PopoverForceMountTest, {
 	type PopoverForceMountTestProps,
 } from "./popover-force-mount-test.svelte";
 import PopoverSiblingsTest from "./popover-siblings-test.svelte";
-import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
+import {
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 import PopoverMultipleTriggersTest from "./popover-multiple-triggers-test.svelte";
 import PopoverOverlayTest from "./popover-overlay-test.svelte";
@@ -40,6 +45,7 @@ async function open(props: PopoverTestProps = {}, openWith: "click" | (string & 
 		await userEvent.keyboard(openWith);
 	}
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	const content = page.getByTestId("content");
 	return { content, ...t };
 }
@@ -58,6 +64,17 @@ it("should have bits data attrs", async () => {
 		const el = page.getByTestId(part);
 		await expect.element(el).toHaveAttribute(`data-popover-${part}`);
 	}
+});
+
+it("should not render the internal `forceMount` prop as an attribute on the content", async () => {
+	const t = await open();
+	await expect.element(t.content).not.toHaveAttribute("forcemount");
+});
+
+it("should not render the internal `forceMount` prop as an attribute on the content (force mounted)", async () => {
+	const t = setup({}, PopoverForceMountTest);
+	await expectExists(t.getContent());
+	await expect.element(t.getContent()).not.toHaveAttribute("forcemount");
 });
 
 it("should apply custom style prop to content", async () => {
@@ -156,6 +173,7 @@ it("should close before content visibly jumps to viewport origin when outside in
 
 	await page.getByTestId("trigger").click();
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
 
 	const content = page.getByTestId("content").element() as HTMLElement;
@@ -354,6 +372,14 @@ it("should forceMount the content when `forceMount` is true", async () => {
 	await expectExists(t.getContent());
 });
 
+it("should not pass an invalid `z-index: undefined` in the child snippet's wrapperProps style", async () => {
+	// read the raw string, since browsers drop the invalid declaration from the DOM style
+	setup({}, PopoverForceMountTest);
+	const text = page.getByTestId("content-text");
+	await expect.element(text).toHaveAttribute("data-wrapper-style", expect.stringContaining("z-index"));
+	expect(text.element().getAttribute("data-wrapper-style")).not.toMatch(/z-index:\s*undefined/);
+});
+
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 	const t = setup({ withOpenCheck: true }, PopoverForceMountTest);
 	await expectNotExists(t.getContent());
@@ -361,13 +387,25 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 	await expectExists(t.getContent());
 });
 
+it("should apply the content z-index to the wrapper when force-mounted content opens after mounting closed", async () => {
+	render(PopoverForceMountTest, { contentProps: { style: "z-index: 50" } });
+	const wrapper = () =>
+		document.querySelector<HTMLElement>("[data-bits-floating-content-wrapper]");
+	await expect.poll(() => wrapper()).not.toBeNull();
+	await page.getByTestId("trigger").click();
+	await expect.element(page.getByTestId("content")).toHaveAttribute("data-state", "open");
+	await expect.poll(() => wrapper()?.style.zIndex).toBe("50");
+});
+
 it("should correctly handle focus when closing one popover by clicking another popover's trigger", async () => {
 	render(PopoverSiblingsTest);
 	await page.getByTestId("open-1").click();
 	await expectExists(page.getByTestId("content-1"));
+	await waitForDismissibleLayer(page.getByTestId("content-1"));
 	await page.getByTestId("open-2").click();
 	await expectNotExists(page.getByTestId("content-1"));
 	await expectExists(page.getByTestId("content-2"));
+	await waitForDismissibleLayer(page.getByTestId("content-2"));
 	await expect.element(page.getByTestId("close-2")).toHaveFocus();
 	await page.getByTestId("open-3").click();
 	await expectNotExists(page.getByTestId("content-2"));

@@ -19,6 +19,7 @@
 		name = undefined,
 		required = false,
 		readonly = false,
+		autocomplete = "off",
 		id = createId(uid),
 		onValueChange = noop,
 		...restProps
@@ -31,6 +32,7 @@
 		name: boxWith(() => name),
 		required: boxWith(() => required),
 		readonly: boxWith(() => readonly),
+		autocomplete: boxWith(() => autocomplete),
 		id: boxWith(() => id),
 		value: boxWith(
 			() => value,

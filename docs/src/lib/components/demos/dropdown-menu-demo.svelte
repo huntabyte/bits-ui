@@ -22,7 +22,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
-			class="border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[229px] rounded-xl border px-1 py-1.5"
+			class="border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden z-50 w-[229px] rounded-xl border px-1 py-1.5"
 			sideOffset={8}
 		>
 			<DropdownMenu.Item
@@ -115,7 +115,7 @@
 				</DropdownMenu.SubTrigger>
 				<DropdownMenu.Portal>
 					<DropdownMenu.SubContent
-						class="border-muted bg-background shadow-popover ring-0! ring-transparent! w-[209px] rounded-xl border px-1 py-1.5 outline-none"
+						class="border-muted bg-background shadow-popover ring-0! ring-transparent! z-50 w-[209px] rounded-xl border px-1 py-1.5 outline-none"
 						sideOffset={10}
 					>
 						<DropdownMenu.RadioGroup bind:value={invited}>

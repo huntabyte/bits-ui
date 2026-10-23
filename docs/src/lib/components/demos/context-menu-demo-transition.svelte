@@ -19,7 +19,7 @@
 	</ContextMenu.Trigger>
 	<ContextMenu.Portal>
 		<ContextMenu.Content
-			class="focus-override border-muted bg-background shadow-popover w-[229px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
+			class="focus-override border-muted bg-background shadow-popover z-50 w-[229px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
 			forceMount
 		>
 			{#snippet child({ wrapperProps, props, open })}

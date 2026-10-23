@@ -33,7 +33,12 @@ import type {
 	RefAttachment,
 	WithRefOpts,
 } from "$lib/internal/types.js";
-import { isElement, isElementOrSVGElement, isHTMLElement } from "$lib/internal/is.js";
+import {
+	isDisabledElement,
+	isElement,
+	isElementOrSVGElement,
+	isHTMLElement,
+} from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
@@ -53,8 +58,7 @@ import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
 
-export const CONTEXT_MENU_TRIGGER_ATTR = "data-context-menu-trigger";
-export const CONTEXT_MENU_CONTENT_ATTR = "data-context-menu-content";
+import { CONTEXT_MENU_TRIGGER_ATTR } from "./context-menu-attributes.js";
 
 const MenuRootContext = new Context<MenuRootState>("Menu.Root");
 const MenuMenuContext = new Context<MenuMenuState>("Menu.Root | Menu.Sub");
@@ -818,7 +822,9 @@ export class MenuMenuState {
 	readonly opts: MenuMenuStateOpts;
 	readonly root: MenuRootState;
 	readonly parentMenu: MenuMenuState | null;
-	contentId = boxWith<string>(() => "");
+	// the content replaces this box when it mounts; a plain field would leave every
+	// derived that read the empty box (a trigger rendered first) pointing at it forever
+	contentId = $state.raw(boxWith<string>(() => ""));
 	contentNode = $state<HTMLElement | null>(null);
 	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
@@ -889,6 +895,11 @@ export class MenuContentState {
 	#timer = 0;
 	#handleTypeaheadSearch: DOMTypeahead["handleTypeaheadSearch"];
 	mounted = $state(false);
+	/**
+	 * The item a press started on, and where. The content can scroll under a still
+	 * pointer before the release, which then lands on a neighbouring item.
+	 */
+	pressedItem: { item: MenuItemState; x: number; y: number } | null = null;
 	#isSub: boolean;
 
 	constructor(opts: MenuContentStateOpts, parentMenu: MenuMenuState) {
@@ -959,6 +970,7 @@ export class MenuContentState {
 		$effect(() => {
 			if (!this.parentMenu.opts.open.current) {
 				this.domContext.getWindow().clearTimeout(this.#timer);
+				this.clearPressedItem();
 			}
 		});
 	}
@@ -1148,6 +1160,10 @@ export class MenuContentState {
 		});
 	}
 
+	clearPressedItem = () => {
+		this.pressedItem = null;
+	};
+
 	get shouldRender() {
 		return this.parentMenu.contentPresence.shouldRender;
 	}
@@ -1166,6 +1182,8 @@ export class MenuContentState {
 				onkeydown: this.onkeydown,
 				onblur: this.onblur,
 				onfocus: this.onfocus,
+				// every press starts fresh, so a press that ended off an item isn't reused
+				onpointerdowncapture: this.clearPressedItem,
 				dir: this.parentMenu.root.opts.dir.current,
 				style: {
 					pointerEvents: "auto",
@@ -1274,7 +1292,6 @@ export class MenuItemState {
 	readonly opts: MenuItemStateOpts;
 	readonly item: MenuItemSharedState;
 	readonly root: MenuRootState;
-	#isPointerDown = false;
 
 	constructor(opts: MenuItemStateOpts, item: MenuItemSharedState) {
 		this.opts = opts;
@@ -1322,15 +1339,23 @@ export class MenuItemState {
 	}
 
 	onpointerup(e: BitsPointerEvent) {
+		const content = this.item.content;
+		const press = content.pressedItem;
+		content.pressedItem = null;
 		if (e.defaultPrevented) return;
-		if (!this.#isPointerDown) {
-			if (!isHTMLElement(e.currentTarget)) return;
-			e.currentTarget?.click();
-		}
+		// pressed here: the native click selects
+		if (press?.item === this) return;
+		// released on another item without the pointer moving: the content moved under it
+		const target =
+			press && Math.hypot(e.clientX - press.x, e.clientY - press.y) < 4
+				? press.item.item.opts.ref.current
+				: e.currentTarget;
+		if (!isHTMLElement(target)) return;
+		target.click();
 	}
 
-	onpointerdown(_: BitsPointerEvent) {
-		this.#isPointerDown = true;
+	onpointerdown(e: BitsPointerEvent) {
+		this.item.content.pressedItem = { item: this, x: e.clientX, y: e.clientY };
 	}
 
 	readonly props = $derived.by(() =>
@@ -1627,7 +1652,6 @@ export class MenuGroupHeadingState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "group",
 				[this.group.root.getBitsAttr("group-heading")]: "",
 				...this.attachment,
 			}) as const
@@ -1655,7 +1679,7 @@ export class MenuSeparatorState {
 		() =>
 			({
 				id: this.opts.id.current,
-				role: "group",
+				role: "separator",
 				[this.root.getBitsAttr("separator")]: "",
 				...this.attachment,
 			}) as const
@@ -1805,7 +1829,7 @@ export class DropdownMenuTriggerState {
 	};
 
 	onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
-		if (this.opts.disabled.current) return;
+		if (this.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		if (e.pointerType === "touch") return e.preventDefault();
 
 		if (e.button === 0 && e.ctrlKey === false) {
@@ -1817,7 +1841,7 @@ export class DropdownMenuTriggerState {
 	};
 
 	onpointerup: PointerEventHandler<HTMLElement> = (e) => {
-		if (this.opts.disabled.current) return;
+		if (this.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		if (e.pointerType === "touch") {
 			e.preventDefault();
 			this.parentMenu.toggleOpen();

@@ -1,9 +1,10 @@
+import { page, userEvent } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
+
+import { expectExists, expectNotExists } from "../browser-utils";
 import { getTestKbd } from "../utils.js";
 import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
-import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
 
@@ -207,6 +208,54 @@ describe("ScrollArea", () => {
 
 		await expectExists(t.getScrollbarY());
 	});
+
+	it.each(["always", "auto"] as const)(
+		"should not schedule resize work that can outlive a %s ScrollArea",
+		async (type) => {
+			const warnings: unknown[][] = [];
+			const consoleWarn = vi
+				.spyOn(console, "warn")
+				.mockImplementation((...args: unknown[]) => {
+					warnings.push(args);
+				});
+			const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
+
+			try {
+				const rendered = render(ScrollAreaTest, {
+					type,
+					height: 5,
+					numParagraphs: 10,
+					wrapText: false,
+				});
+				const thumbHeight = () =>
+					parseFloat(
+						getComputedStyle(
+							page.getByTestId("scrollbar-y").element()
+						).getPropertyValue("--bits-scroll-area-thumb-height")
+					);
+
+				// a 5px viewport clamps the thumb to its 18px minimum
+				await expect.poll(thumbHeight).toBe(18);
+
+				setTimeoutSpy.mockClear();
+				// a real resize, so the test does not depend on how the component observes it
+				await rendered.rerender({ height: 100 });
+				await expect.poll(thumbHeight).toBeGreaterThan(18);
+				await rendered.unmount();
+
+				expect(setTimeoutSpy.mock.calls.some(([, delay]) => delay === 10)).toBe(false);
+				await new Promise<void>((resolve) => setTimeout(resolve, 20));
+				expect(
+					warnings.some((args) =>
+						args.some((argument) => String(argument).includes("derived_inert"))
+					)
+				).toBe(false);
+			} finally {
+				setTimeoutSpy.mockRestore();
+				consoleWarn.mockRestore();
+			}
+		}
+	);
 
 	it("should allow wheel scrolling", async () => {
 		if (navigator.userAgent.includes("WebKit")) {

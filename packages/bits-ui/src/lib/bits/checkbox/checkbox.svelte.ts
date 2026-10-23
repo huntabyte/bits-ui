@@ -131,6 +131,7 @@ interface CheckboxRootStateOpts
 			required: boolean;
 			readonly: boolean;
 			name: string | undefined;
+			form: string | undefined;
 			value: string | undefined;
 			type: HTMLButtonAttributes["type"];
 		}>,
@@ -197,7 +198,8 @@ export class CheckboxRootState {
 		if (e.key === kbd.ENTER) {
 			e.preventDefault();
 			if (this.opts.type.current === "submit") {
-				const form = e.currentTarget.closest("form");
+				const form =
+					(e.currentTarget as HTMLButtonElement).form ?? e.currentTarget.closest("form");
 				form?.requestSubmit();
 			}
 			return;
@@ -238,6 +240,7 @@ export class CheckboxRootState {
 				id: this.opts.id.current,
 				role: "checkbox",
 				type: this.opts.type.current,
+				form: this.opts.form.current,
 				disabled: this.trueDisabled,
 				"aria-checked": getAriaChecked(
 					this.opts.checked.current,
@@ -296,6 +299,7 @@ export class CheckboxInputState {
 				disabled: this.root.trueDisabled,
 				required: this.root.trueRequired,
 				name: this.root.trueName,
+				form: this.root.opts.form.current,
 				value: this.root.opts.value.current,
 				readonly: this.root.trueReadonly,
 				onfocus: this.onfocus,

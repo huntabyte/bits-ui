@@ -7,7 +7,8 @@ import { getSelectedDay, getSelectedDays } from "../helpers/calendar.js";
 import CalendarTest, { type CalendarSingleTestProps } from "./calendar-test.svelte";
 import CalendarMultiTest, { type CalendarMultiTestProps } from "./calendar-multi-test.svelte";
 import CalendarSelectsTest from "./calendar-selects-test.svelte";
-import { focusAndExpectToHaveFocus } from "../browser-utils";
+import { collectErrors, focusAndExpectToHaveFocus } from "../browser-utils";
+import CalendarSpreadPropsTest from "./calendar-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -262,6 +263,20 @@ describe("type='single'", () => {
 			await expect.element(heading).toHaveTextContent("March 1980");
 		});
 
+		it("should preserve the weekday when moving vertically past disabled dates", async () => {
+			setup({
+				value: new CalendarDate(2026, 10, 13),
+				isDateDisabled: (date) =>
+					date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-10-20",
+			});
+			const tuesday = page.getByTestId("date-10-13");
+			await focusAndExpectToHaveFocus(tuesday);
+			await userEvent.keyboard(kbd.ARROW_DOWN);
+			await expect.element(page.getByTestId("date-10-27")).toHaveFocus();
+			await userEvent.keyboard(kbd.ARROW_UP);
+			await expect.element(tuesday).toHaveFocus();
+		});
+
 		it("should not navigate before `minValue` (with keyboard)", async () => {
 			setup({
 				value: calendarDate,
@@ -300,6 +315,27 @@ describe("type='single'", () => {
 			await addMonthBtn.click();
 			await addMonthBtn.click();
 			await expect.element(heading).toHaveTextContent("May 1981");
+		});
+
+		it("should keep a day tabbable when the placeholder becomes disabled after mount", async () => {
+			const t = setup({ placeholder: calendarDate });
+			await t.rerender({ isDateDisabled: (date) => date.day === calendarDate.day });
+			await expect.element(page.getByTestId("date-1-20")).not.toHaveAttribute("tabindex");
+			const tabbable = t.calendar.element().querySelectorAll('[data-bits-day][tabindex="0"]');
+			expect(tabbable).toHaveLength(1);
+			expect(tabbable[0]).toHaveAttribute("data-value", "1980-01-01");
+		});
+
+		it("should keep a day tabbable when Next lands the placeholder on a disabled day", async () => {
+			const t = setup({
+				placeholder: calendarDate,
+				isDateDisabled: (date) => date.month === 2 && date.day === calendarDate.day,
+			});
+			await t.nextButton.click();
+			await expect.element(page.getByTestId("heading")).toHaveTextContent("February 1980");
+			const tabbable = t.calendar.element().querySelectorAll('[data-bits-day][tabindex="0"]');
+			expect(tabbable).toHaveLength(1);
+			expect(tabbable[0]).toHaveAttribute("data-value", "1980-02-01");
 		});
 
 		it("should set default placeholder greater than `minValue`", async () => {
@@ -489,6 +525,19 @@ describe("type='single'", () => {
 				locale: "fr",
 			});
 			await expect.element(page.getByTestId("weekday-1-0")).toHaveTextContent("lun.");
+		});
+
+		it("should not shift weekdays, heading, or labels for a `ZonedDateTime` ahead of the local time zone (#2022)", async () => {
+			// UTC+14, so midnight there is the previous day in (almost) every local zone
+			const value = toZoned(new CalendarDateTime(2026, 3, 1), "Pacific/Kiritimati");
+			setup({ value, weekdayFormat: "short", weekStartsOn: 0 });
+			for (const [i, weekday] of shortWeekdays.entries()) {
+				await expect.element(page.getByTestId(`weekday-3-${i}`)).toHaveTextContent(weekday);
+			}
+			await expect.element(page.getByTestId("heading")).toHaveTextContent("March 2026");
+			await expect
+				.element(page.getByTestId("date-3-1"))
+				.toHaveAttribute("aria-label", "Sunday, March 1, 2026");
 		});
 	});
 
@@ -1130,4 +1179,18 @@ describe("Calendar Select Components", () => {
 			await expect.element(yearOptions[0]).toHaveAttribute("selected");
 		});
 	});
+});
+
+describe("Spread Props", () => {
+	it.each(["single", "multiple"] as const)(
+		"should fall back to the default placeholder when spread props are reassigned during mount - type='%s' (#1950)",
+		async (type) => {
+			const errors = await collectErrors(() => render(CalendarSpreadPropsTest, { type }));
+			expect(errors).toEqual([]);
+			await expect.element(page.getByTestId("calendar")).toHaveAttribute("data-updated");
+			await expect.element(page.getByTestId("heading")).not.toHaveTextContent("");
+			await expect.element(page.getByTestId("month-select")).toBeVisible();
+			await expect.element(page.getByTestId("year-select")).toBeVisible();
+		}
+	);
 });

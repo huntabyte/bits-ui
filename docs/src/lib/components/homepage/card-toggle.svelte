@@ -132,7 +132,7 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content
-					class="focus-override border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[229px] rounded-xl border px-1 py-1.5"
+					class="focus-override border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden z-50 w-[229px] rounded-xl border px-1 py-1.5"
 					sideOffset={8}
 				>
 					<DropdownMenu.Item

@@ -16,12 +16,15 @@ import {
 	getWindow,
 	styleToString,
 	type ReadableBoxedValues,
-	type ReadableBox,
 	type Box,
 	simpleBox,
-	boxFrom,
 } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
+import {
+	FloatingRootContext,
+	FloatingTooltipRootContext,
+	type FloatingRootState,
+} from "./floating-root.svelte.js";
 import type { Arrayable, WithRefOpts } from "$lib/internal/types.js";
 import { isNotNull } from "$lib/internal/is.js";
 import { useId } from "$lib/internal/use-id.js";
@@ -39,39 +42,12 @@ const OPPOSITE_SIDE: Record<Side, Side> = {
 	left: "right",
 };
 
-const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");
 const FloatingContentContext = new Context<FloatingContentState>("Floating.Content");
-const FloatingTooltipRootContext = new Context<FloatingRootState>("Floating.Root");
 
 export type Side = (typeof SIDE_OPTIONS)[number];
 export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
-
-export class FloatingRootState {
-	static create(tooltip = false) {
-		return tooltip
-			? FloatingTooltipRootContext.set(new FloatingRootState())
-			: FloatingRootContext.set(new FloatingRootState());
-	}
-	anchorNode = simpleBox<Measurable | HTMLElement | null>(null);
-	customAnchorNode = simpleBox<Measurable | HTMLElement | null | string>(null);
-	triggerNode: ReadableBox<Measurable | HTMLElement | null> = simpleBox(null);
-
-	constructor() {
-		$effect(() => {
-			if (this.customAnchorNode.current) {
-				if (typeof this.customAnchorNode.current === "string") {
-					this.anchorNode.current = document.querySelector(this.customAnchorNode.current);
-				} else {
-					this.anchorNode.current = this.customAnchorNode.current;
-				}
-			} else {
-				this.anchorNode.current = this.triggerNode.current;
-			}
-		});
-	}
-}
 
 export interface FloatingContentStateOpts
 	extends ReadableBoxedValues<{
@@ -191,7 +167,7 @@ export class FloatingContentState {
 	arrowX = $derived.by(() => this.floating.middlewareData.arrow?.x ?? 0);
 	arrowY = $derived.by(() => this.floating.middlewareData.arrow?.y ?? 0);
 	cannotCenterArrow = $derived.by(() => this.floating.middlewareData.arrow?.centerOffset !== 0);
-	contentZIndex = $state<string>();
+	contentZIndex = $state<string>("auto");
 	arrowBaseSide = $derived(OPPOSITE_SIDE[this.placedSide]);
 	wrapperProps = $derived.by(
 		() =>
@@ -293,9 +269,9 @@ export class FloatingContentState {
 		});
 
 		watch(
-			() => this.contentRef.current,
-			(contentNode) => {
-				if (!contentNode || !this.opts.enabled.current) return;
+			[() => this.contentRef.current, () => this.opts.enabled.current],
+			([contentNode, enabled]) => {
+				if (!contentNode || !enabled) return;
 				const win = getWindow(contentNode);
 				const rafId = win.requestAnimationFrame(() => {
 					// avoid applying stale values when refs change quickly
@@ -342,34 +318,6 @@ export class FloatingArrowState {
 				...this.content.arrowAttachment,
 			}) as const
 	);
-}
-
-interface FloatingAnchorStateOpts
-	extends ReadableBoxedValues<{
-		id: string;
-		virtualEl?: Measurable | null;
-		ref: Measurable | HTMLElement | null;
-	}> {}
-
-export class FloatingAnchorState {
-	static create(opts: FloatingAnchorStateOpts, tooltip = false) {
-		return tooltip
-			? new FloatingAnchorState(opts, FloatingTooltipRootContext.get())
-			: new FloatingAnchorState(opts, FloatingRootContext.get());
-	}
-	readonly opts: FloatingAnchorStateOpts;
-	readonly root: FloatingRootState;
-
-	constructor(opts: FloatingAnchorStateOpts, root: FloatingRootState) {
-		this.opts = opts;
-		this.root = root;
-
-		if (opts.virtualEl && opts.virtualEl.current) {
-			root.triggerNode = boxFrom(opts.virtualEl.current);
-		} else {
-			root.triggerNode = opts.ref;
-		}
-	}
 }
 
 //
