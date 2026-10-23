@@ -1046,6 +1046,33 @@ describe("date field", () => {
 		await expect.element(t.year).toHaveTextContent("2023");
 	});
 
+	it("should allow typing day 31 into an empty field when the placeholder month has 30 days", async () => {
+		const t = setup({ locale: "en-GB", placeholder: new CalendarDate(2026, 11, 5) });
+
+		await t.day.click();
+		await userEvent.keyboard("{3}{1}");
+		await expect.element(t.day).toHaveTextContent("31");
+		await expect.element(t.month).toHaveFocus();
+		await userEvent.keyboard("{1}{2}{2}{0}{2}{6}");
+		await expect.element(t.value).toHaveTextContent("2026-12-31");
+	});
+
+	it("should keep showing day 31 after typing the month in a date-time field", async () => {
+		const t = setup({
+			locale: "en-GB",
+			placeholder: new CalendarDateTime(2026, 11, 5, 10, 0),
+			granularity: "minute",
+		});
+
+		await t.day.click();
+		await userEvent.keyboard("{3}{1}");
+		await expect.element(t.day).toHaveTextContent("31");
+		await userEvent.keyboard("{1}{2}");
+		await expect.element(t.day).toHaveTextContent("31");
+		await userEvent.keyboard("{2}{0}{2}{6}{1}{0}{3}{0}");
+		await expect.element(t.value).toHaveTextContent("2026-12-31T10:30");
+	});
+
 	it("should allow typing hours 0-23 with non en-US locales that use 24-hour format", async () => {
 		if (navigator.userAgent.includes("WebKit")) {
 			expect(true);

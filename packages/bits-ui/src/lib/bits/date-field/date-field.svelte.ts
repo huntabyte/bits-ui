@@ -26,7 +26,7 @@ import {
 	boolToStrTrueOrUndef,
 	boolToEmptyStrOrUndef,
 } from "$lib/internal/attrs.js";
-import { isBrowser, isNumberString } from "$lib/internal/is.js";
+import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
 import { kbd } from "$lib/internal/kbd.js";
 import { useId } from "$lib/internal/use-id.js";
 import type {
@@ -48,6 +48,8 @@ import {
 	areAllSegmentsFilled,
 	createContent,
 	get24HourValueFromTypedHour,
+	getDateRefForPart,
+	getDaySegmentMaxValue,
 	getDefaultHourCycle,
 	getTypedHourFrom24HourValue,
 	getValueFromSegments,
@@ -58,6 +60,7 @@ import {
 	isDateAndTimeSegmentObj,
 	isDateSegmentPart,
 	isFirstSegment,
+	MAX_DAYS_IN_MONTH,
 	removeDescriptionElement,
 	setDescription,
 } from "$lib/internal/date-time/field/helpers.js";
@@ -102,11 +105,8 @@ const SEGMENT_CONFIGS: Record<
 	day: {
 		min: 1,
 		max: (root) => {
-			const segmentMonthValue = root.segmentValues.month;
 			const placeholder = root.value.current ?? root.placeholder.current;
-			return segmentMonthValue
-				? getDaysInMonth(placeholder.set({ month: Number.parseInt(segmentMonthValue) }))
-				: getDaysInMonth(placeholder);
+			return getDaySegmentMaxValue(root.segmentValues.month, placeholder);
 		},
 		cycle: 1,
 		padZero: true,
@@ -1142,16 +1142,27 @@ abstract class BaseNumericSegmentState {
 		const placeholder = this.root.placeholder.current;
 		const isEmpty = segmentValues[this.part as keyof SegmentValueObj] === null;
 
-		let date = placeholder;
+		// The day must be constrained by the month the user is entering, not by the
+		// placeholder month (see `getDateRefForPart`).
+		let date = isDateSegmentPart(this.part)
+			? getDateRefForPart(this.part, placeholder, segmentValues)
+			: placeholder;
 		if (segmentValues[this.part as keyof SegmentValueObj]) {
-			date = placeholder.set({
+			date = date.set({
 				[this.part]: Number.parseInt(
 					segmentValues[this.part as keyof SegmentValueObj] as string
 				),
 			});
 		}
 
-		const valueNow = date[this.part as keyof DateValue] as number;
+		let valueNow = date[this.part as keyof DateValue] as number;
+
+		// Mirrors the rendering in `getPartContent`: while the month is still empty the
+		// day keeps the typed value instead of the placeholder month's clamped one.
+		if (this.part === "day" && !isNull(segmentValues.day) && isNull(segmentValues.month)) {
+			const intValue = Number.parseInt(segmentValues.day as string);
+			if (intValue >= 1 && intValue <= MAX_DAYS_IN_MONTH) valueNow = intValue;
+		}
 		const valueMin = this.#getMin();
 		const valueMax = this.#getMax();
 		let valueText = isEmpty ? "Empty" : `${valueNow}`;

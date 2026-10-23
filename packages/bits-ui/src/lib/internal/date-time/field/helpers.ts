@@ -2,7 +2,7 @@ import type { DateValue } from "@internationalized/date";
 import { styleToString } from "svelte-toolbelt";
 import type { Formatter } from "../formatter.js";
 import { getPlaceholder } from "../placeholders.js";
-import { hasTime, isZonedDateTime } from "../utils.js";
+import { getDaysInMonth, hasTime, isZonedDateTime } from "../utils.js";
 import type {
 	DateAndTimeSegmentObj,
 	DateSegmentPart,
@@ -80,6 +80,19 @@ function createContentObj(props: CreateContentObjProps) {
 	}, {} as SegmentContentObj);
 
 	function getPartContent(part: DateSegmentPart | TimeSegmentPart) {
+		// While the month segment is still empty, the day is rendered exactly as typed.
+		// `dateRef` falls back to the placeholder, so formatting through it would clamp
+		// `31` to the placeholder month's last day even though `segmentValues.day` still
+		// holds `31` — the user would see the value being swallowed.
+		if (part === "day" && isNull(segmentValues.month) && !isNull(segmentValues.day)) {
+			const intValue = Number.parseInt(segmentValues.day);
+			if (intValue >= 1 && intValue <= MAX_DAYS_IN_MONTH) {
+				return segmentValues.day.startsWith("0") && `${intValue}`.length === 1
+					? `0${intValue}`
+					: `${intValue}`;
+			}
+		}
+
 		if ("hour" in segmentValues) {
 			const value = segmentValues[part];
 			const leadingZero = typeof value === "string" && value?.startsWith("0");
@@ -88,9 +101,13 @@ function createContentObj(props: CreateContentObjProps) {
 			if (value === "0" && part !== "year") {
 				return "0";
 			} else if (!isNull(value) && !isNull(intValue)) {
-				const formatted = formatter.part(dateRef.set({ [part]: value }), part, {
-					hourCycle: props.hourCycle === 24 ? "h23" : undefined,
-				});
+				const formatted = formatter.part(
+					getDateRefForPart(part, dateRef, segmentValues).set({ [part]: value }),
+					part,
+					{
+						hourCycle: props.hourCycle === 24 ? "h23" : undefined,
+					}
+				);
 
 				/**
 				 * If we're operating in a 12 hour clock and the part is an hour, we handle
@@ -153,7 +170,10 @@ function createContentObj(props: CreateContentObjProps) {
 				if (value === "0") {
 					return "0";
 				} else if (!isNull(value)) {
-					const formatted = formatter.part(dateRef.set({ [part]: value }), part);
+					const formatted = formatter.part(
+						getDateRefForPart(part, dateRef, segmentValues).set({ [part]: value }),
+						part
+					);
 					if (part === "year") {
 						return `${value}`;
 					}
@@ -466,6 +486,58 @@ export function removeDescriptionElement(id: string, doc: Document) {
 	const el = doc.getElementById(id);
 	if (!el) return;
 	doc.body.removeChild(el);
+}
+
+/**
+ * The maximum number of days a month can have. Used while the month is still
+ * unknown, so the day is not constrained by an unrelated placeholder month.
+ */
+export const MAX_DAYS_IN_MONTH = 31;
+
+/**
+ * Returns the maximum value for the day segment.
+ *
+ * The day is only constrained by the month when the month segment actually has a value.
+ * While the user is still typing, the month segment is empty, and falling back to the
+ * placeholder's month silently rejects days that are valid for the month being entered —
+ * typing `31102026` in November is rejected at `31` because November only has 30 days,
+ * which also pushes the remaining digits into the wrong segments.
+ */
+export function getDaySegmentMaxValue(
+	segmentMonthValue: string | null | undefined,
+	placeholder: DateValue
+): number {
+	if (!segmentMonthValue) return MAX_DAYS_IN_MONTH;
+	return getDaysInMonth(placeholder.set({ month: Number.parseInt(segmentMonthValue) }));
+}
+
+/**
+ * The reference date used to render a single segment's value.
+ *
+ * `dateRef.set({ day })` constrains the day to the number of days in `dateRef`'s
+ * month. While the month segment is still empty, `dateRef` falls back to the
+ * placeholder, so typing `31` in en-GB would render the placeholder month's clamped
+ * `30` even though the typed value is kept in `segmentValues` — the user sees the
+ * value being swallowed.
+ *
+ * Apply the already-typed year and month first, so the day is constrained by the
+ * month the user is entering rather than by the placeholder.
+ */
+export function getDateRefForPart(
+	part: DateSegmentPart | TimeSegmentPart,
+	dateRef: DateValue,
+	segmentValues: SegmentValueObj
+): DateValue {
+	if (part !== "day") return dateRef;
+
+	let next = dateRef;
+	if (!isNull(segmentValues.year)) {
+		next = next.set({ year: Number.parseInt(segmentValues.year) });
+	}
+	if (!isNull(segmentValues.month)) {
+		next = next.set({ month: Number.parseInt(segmentValues.month) });
+	}
+	return next;
 }
 
 export function getDefaultHourCycle(locale: string): 12 | 24 {
