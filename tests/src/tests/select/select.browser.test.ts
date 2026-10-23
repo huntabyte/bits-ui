@@ -860,6 +860,81 @@ describe("select - single", () => {
 		expect(itemRect.bottom).toBeLessThanOrEqual(downButton.getBoundingClientRect().top + 1);
 	});
 
+	describe("mouse press on an item", () => {
+		async function pressItem(testId: string) {
+			render(SelectScrollButtonsTest);
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await sleep(100);
+			const rect = page.getByTestId(testId).element().getBoundingClientRect();
+			const point = {
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			};
+			page.getByTestId(testId).element().dispatchEvent(mousePointer("pointerdown", point));
+			return point;
+		}
+
+		function mousePointer(type: string, point: { clientX: number; clientY: number }) {
+			return new PointerEvent(type, {
+				...point,
+				bubbles: true,
+				cancelable: true,
+				pointerType: "mouse",
+				isPrimary: true,
+				button: 0,
+			});
+		}
+
+		function itemAt({ clientX, clientY }: { clientX: number; clientY: number }) {
+			return document
+				.elementFromPoint(clientX, clientY)!
+				.closest<HTMLElement>("[role=option]")!;
+		}
+
+		it("should select the pressed item when the list scrolls under a still pointer", async () => {
+			const point = await pressItem("item-3");
+			const viewport = page.getByTestId("viewport").element() as HTMLElement;
+			viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: 60, bubbles: true }));
+			viewport.scrollTop = 60;
+			await expectExists(page.getByTestId("scroll-up-button"));
+			await sleep(100);
+
+			const released = itemAt(point);
+			expect(released.dataset.testid).not.toBe("item-3");
+			released.dispatchEvent(mousePointer("pointerup", point));
+			await expect.element(page.getByTestId("trigger")).toHaveTextContent(/^3$/);
+		});
+
+		it("should select the item the pointer was moved to before release", async () => {
+			const from = await pressItem("item-1");
+			const rect = page.getByTestId("item-2").element().getBoundingClientRect();
+			const to = { clientX: from.clientX, clientY: rect.top + rect.height / 2 };
+			itemAt(to).dispatchEvent(mousePointer("pointerup", to));
+			await expect.element(page.getByTestId("trigger")).toHaveTextContent(/^2$/);
+		});
+
+		it("should not reuse a press that was released off an item", async () => {
+			// press item-3, release off any item: that press is over
+			const point = await pressItem("item-3");
+			const content = page.getByTestId("content").element() as HTMLElement;
+			content.dispatchEvent(mousePointer("pointerup", point));
+			const viewport = page.getByTestId("viewport").element() as HTMLElement;
+			viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: 60, bubbles: true }));
+			viewport.scrollTop = 60;
+			await expectExists(page.getByTestId("scroll-up-button"));
+			await sleep(100);
+			// a new press that starts off any item and is released on one at the same point
+			content.dispatchEvent(mousePointer("pointerdown", point));
+			const released = itemAt(point);
+			expect(released.dataset.testid).not.toBe("item-3");
+			released.dispatchEvent(mousePointer("pointerup", point));
+			await expect
+				.element(page.getByTestId("trigger"))
+				.toHaveTextContent(released.dataset.testid!.replace("item-", ""));
+		});
+	});
+
 	it("should highlight the selected item on reopen when its value is an empty string", async () => {
 		const items: Item[] = [
 			{ value: "1", label: "A" },

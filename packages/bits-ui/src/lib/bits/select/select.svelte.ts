@@ -124,6 +124,11 @@ abstract class SelectBaseRootState {
 	});
 	contentIsPositioned = $state(false);
 	isUsingKeyboard = false;
+	/**
+	 * The item a press started on, and where. The list can scroll under a still
+	 * pointer before the release, which then lands on a neighbouring item.
+	 */
+	pressedItem: { item: SelectItemState; x: number; y: number } | null = null;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
 
@@ -142,6 +147,7 @@ abstract class SelectBaseRootState {
 		$effect.pre(() => {
 			if (!this.opts.open.current) {
 				this.setHighlightedNode(null);
+				this.pressedItem = null;
 			}
 		});
 	}
@@ -1152,6 +1158,11 @@ export class SelectContentState {
 		this.root.isUsingKeyboard = false;
 	}
 
+	// every press starts fresh, so a press that ended off an item isn't reused
+	onpointerdowncapture = () => {
+		this.root.pressedItem = null;
+	};
+
 	readonly #styles = $derived.by(() => {
 		return getFloatingContentCSSVars(this.root.isCombobox ? "combobox" : "select");
 	});
@@ -1204,6 +1215,7 @@ export class SelectContentState {
 					...this.#styles,
 				},
 				onpointermove: this.onpointermove,
+				onpointerdowncapture: this.onpointerdowncapture,
 				...this.attachment,
 			}) as const
 	);
@@ -1334,6 +1346,7 @@ export class SelectItemState {
 	onpointerdown(e: BitsPointerEvent) {
 		// prevent focus from leaving the input/select trigger
 		e.preventDefault();
+		this.root.pressedItem = { item: this, x: e.clientX, y: e.clientY };
 	}
 
 	/**
@@ -1343,6 +1356,18 @@ export class SelectItemState {
 	 */
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
+		const press = this.root.pressedItem;
+		this.root.pressedItem = null;
+		// released on another item without the pointer moving: the list moved under it
+		if (
+			press &&
+			press.item !== this &&
+			Math.hypot(e.clientX - press.x, e.clientY - press.y) < 4
+		) {
+			e.preventDefault();
+			press.item.handleSelect();
+			return;
+		}
 		/**
 		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
 		 * we need to listen for the immediate click event to handle the selection,
