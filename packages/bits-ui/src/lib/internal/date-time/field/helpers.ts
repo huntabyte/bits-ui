@@ -101,9 +101,13 @@ function createContentObj(props: CreateContentObjProps) {
 			if (value === "0" && part !== "year") {
 				return "0";
 			} else if (!isNull(value) && !isNull(intValue)) {
-				const formatted = formatter.part(dateRef.set({ [part]: value }), part, {
-					hourCycle: props.hourCycle === 24 ? "h23" : undefined,
-				});
+				const formatted = formatter.part(
+					getDateRefForPart(part, dateRef, segmentValues).set({ [part]: value }),
+					part,
+					{
+						hourCycle: props.hourCycle === 24 ? "h23" : undefined,
+					}
+				);
 
 				/**
 				 * If we're operating in a 12 hour clock and the part is an hour, we handle
@@ -520,7 +524,7 @@ const MAX_DAYS_IN_MONTH = 31;
  * month the user is entering rather than by the placeholder.
  */
 export function getDateRefForPart(
-	part: DateSegmentPart,
+	part: DateSegmentPart | TimeSegmentPart,
 	dateRef: DateValue,
 	segmentValues: SegmentValueObj
 ): DateValue {
