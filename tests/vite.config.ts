@@ -3,6 +3,43 @@ import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
 import type { Plugin } from "vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { fileURLToPath } from "node:url";
+
+const srcLib = fileURLToPath(new URL("../packages/bits-ui/src/lib", import.meta.url));
+
+/**
+ * Resolves `bits-ui` (and its internal `$lib/*` imports) to source at `lib` instead of `dist`.
+ * SvelteKit's `$lib` alias runs first and points at this package's `src/lib`, so undo that
+ * for imports coming from inside `lib`.
+ */
+const testsLib = fileURLToPath(new URL("./src/lib/", import.meta.url));
+function bitsUiSource(lib: string): Plugin {
+	return {
+		name: "bits-ui-source",
+		enforce: "pre",
+		resolveId(id, importer) {
+			if (id === "bits-ui") return `${lib}/index.ts`;
+			if (!importer?.startsWith(lib)) return;
+			const rest = id.startsWith("$lib/")
+				? id.slice(5)
+				: id.startsWith(testsLib)
+					? id.slice(testsLib.length)
+					: null;
+			if (rest !== null) return this.resolve(`${lib}/${rest}`, importer, { skipSelf: true });
+		},
+	};
+}
+
+// `BENCH_SRC=baseline` benches the pristine snapshot made by `pnpm bench:snapshot`.
+const benchLib = fileURLToPath(
+	new URL(
+		process.env.BENCH_SRC === "baseline"
+			? "../packages/bits-ui/.bench-baseline/lib"
+			: "../packages/bits-ui/src/lib",
+		import.meta.url
+	)
+);
 
 const vitestBrowserConditionPlugin: Plugin = {
 	name: "vite-plugin-vitest-browser-condition",
@@ -30,6 +67,8 @@ export default defineConfig({
 		projects: [
 			{
 				extends: "./vite.config.ts",
+				// `BITS_UI_SRC=1` tests bits-ui source directly instead of the built `dist`.
+				plugins: process.env.BITS_UI_SRC ? [bitsUiSource(srcLib)] : [],
 				test: {
 					name: "browser",
 					include: ["src/tests/**/*.browser.test.ts"],
@@ -44,6 +83,42 @@ export default defineConfig({
 						provider: "playwright",
 						isolate: true,
 						instances: [{ browser: "chromium" }, { browser: "webkit" }],
+					},
+				},
+			},
+			{
+				// Perf benchmarks against bits-ui *source* in production mode. See bench/README.md.
+				plugins: [bitsUiSource(benchLib), svelte({ compilerOptions: { dev: false } })],
+				resolve: {
+					conditions: ["browser", "production", "module", "import", "default"],
+				},
+				define: {
+					__BENCH_LABEL__: JSON.stringify(process.env.BENCH_LABEL ?? "current"),
+					__BENCH_RUNS__: Number(process.env.BENCH_RUNS ?? 20),
+				},
+				mode: "production",
+				test: {
+					name: "bench",
+					include: ["bench/**/*.bench.test.ts"],
+					testTimeout: 600_000,
+					hookTimeout: 60_000,
+					retry: 0,
+					fileParallelism: false,
+					browser: {
+						enabled: true,
+						headless: true,
+						provider: "playwright",
+						instances: [
+							{
+								browser: "chromium",
+								launch: {
+									args: [
+										"--js-flags=--expose-gc",
+										"--enable-precise-memory-info",
+									],
+								},
+							},
+						],
 					},
 				},
 			},

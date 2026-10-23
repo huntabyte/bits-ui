@@ -9,7 +9,12 @@
 		"sync": "svelte-kit sync",
 		"test": "pnpm sync && pnpm test:browser",
 		"test:jsdom": "pnpm sync && vitest --project=jsdom",
-		"test:browser": "pnpm sync && vitest --project=browser"
+		"test:browser": "pnpm sync && vitest --project=browser",
+		"bench": "vitest run --project=bench",
+		"bench:snapshot": "rm -rf ../packages/bits-ui/.bench-baseline && mkdir -p ../packages/bits-ui/.bench-baseline && git -C .. archive ${BENCH_REF:-HEAD} packages/bits-ui/src/lib | tar -x -C ../packages/bits-ui/.bench-baseline --strip-components=3",
+		"bench:baseline": "BENCH_SRC=baseline BENCH_LABEL=${BENCH_LABEL:-baseline} vitest run --project=bench",
+		"bench:compare": "node bench/compare.mjs",
+		"test:src": "pnpm sync && BITS_UI_SRC=1 vitest --project=browser"
 	},
 	"devDependencies": {
 		"@sveltejs/kit": "catalog:",
