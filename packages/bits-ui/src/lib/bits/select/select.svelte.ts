@@ -573,6 +573,8 @@ export class SelectInputState {
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
+		// Home/End move the text cursor in the input, per the WAI-ARIA combobox pattern
+		if (e.key === kbd.HOME || e.key === kbd.END) return;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
