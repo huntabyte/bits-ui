@@ -1,5 +1,23 @@
 # bits-ui
 
+## 2.20.2
+
+### Patch Changes
+
+- fix(Combobox): let `Home`/`End` move the text cursor in `Combobox.Input` instead of highlighting the first/last item ([#2241](https://github.com/huntabyte/bits-ui/pull/2241))
+
+- fix(Select): space to toggle items ([#2073](https://github.com/huntabyte/bits-ui/pull/2073))
+
+- Fix Date Field rejecting and rendering day 31 before a month is selected ([#2187](https://github.com/huntabyte/bits-ui/pull/2187))
+
+- fix(Floating): apply the content's z-index to the floating wrapper when force-mounted content opens ([#1961](https://github.com/huntabyte/bits-ui/pull/1961))
+
+- fix(Select, Combobox): select the pressed item when the list scrolls under a still pointer before release ([#2232](https://github.com/huntabyte/bits-ui/pull/2232))
+
+- fix(Combobox): open the trigger on a click that no pointer press precedes (`detail: 0`), such as `element.click()` or a VoiceOver activation in Safari ([#2186](https://github.com/huntabyte/bits-ui/pull/2186))
+
+- fix: silence `state_referenced_locally` compiler warnings emitted in consumer builds by wrapping intentional initialization-time prop reads in `untrack` ([#2179](https://github.com/huntabyte/bits-ui/pull/2179))
+
 ## 2.20.1
 
 ### Patch Changes
