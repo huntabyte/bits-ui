@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { watch } from "runed";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { type DateValue } from "@internationalized/date";
 	import type { RangeCalendarRootProps } from "../types.js";
 	import { RangeCalendarRootState } from "../range-calendar.svelte.js";
@@ -48,11 +49,13 @@
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
-	const defaultPlaceholder = getDefaultDate({
-		defaultValue: value?.start,
-		minValue,
-		maxValue,
-	});
+	const defaultPlaceholder = untrack(() =>
+		getDefaultDate({
+			defaultValue: value?.start,
+			minValue,
+			maxValue,
+		})
+	);
 
 	function handleDefaultPlaceholder() {
 		if (placeholder !== undefined) return;

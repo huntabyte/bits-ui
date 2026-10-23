@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type WritableBox, boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { AccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
 	import { noop } from "$lib/internal/noop.js";
@@ -38,7 +39,7 @@
 	);
 
 	const rootState = AccordionRootState.create({
-		type,
+		type: untrack(() => type),
 		value: boxWith(
 			() => value!,
 			(v) => {

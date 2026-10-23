@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { FloatingAnchorState } from "../floating-root.svelte.js";
 	import type { AnchorProps } from "./index.js";
 	import type { Measurable } from "$lib/internal/floating-svelte/types.js";
@@ -10,9 +11,9 @@
 		{
 			id: boxWith(() => id),
 			virtualEl: boxWith(() => virtualEl as unknown as Measurable | null),
-			ref,
+			ref: untrack(() => ref),
 		},
-		tooltip
+		untrack(() => tooltip)
 	);
 </script>
 
