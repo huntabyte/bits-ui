@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { CheckboxRootProps } from "../types.js";
 	import { CheckboxGroupContext, CheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
@@ -29,13 +30,15 @@
 
 	const group = CheckboxGroupContext.getOr(null);
 
-	if (group && value) {
-		if (group.opts.value.current.includes(value)) {
-			checked = true;
-		} else {
-			checked = false;
+	untrack(() => {
+		if (group && value) {
+			if (group.opts.value.current.includes(value)) {
+				checked = true;
+			} else {
+				checked = false;
+			}
 		}
-	}
+	});
 
 	watch.pre(
 		() => value,

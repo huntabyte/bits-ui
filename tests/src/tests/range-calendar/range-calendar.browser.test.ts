@@ -6,6 +6,8 @@ import { getTestKbd } from "../utils.js";
 import RangeCalendarTest, { type RangeCalendarTestProps } from "./range-calendar-test.svelte";
 import RangeCalendarSelectsTest from "./range-calendar-selects-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
+import RangeCalendarSpreadPropsTest from "./range-calendar-spread-props-test.svelte";
+import { collectErrors } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -283,6 +285,21 @@ it("should not navigate before `minValue` (with keyboard)", async () => {
 	await expect.element(heading).toHaveTextContent("December 1979");
 });
 
+it("should preserve the weekday when moving vertically past disabled dates", async () => {
+	setup({
+		placeholder: new CalendarDate(2026, 10, 13),
+		isDateDisabled: (date) =>
+			date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-10-20",
+	});
+	const tuesday = page.getByTestId("date-10-13");
+	(tuesday.element() as HTMLElement).focus();
+	await expect.element(tuesday).toHaveFocus();
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(page.getByTestId("date-10-27")).toHaveFocus();
+	await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(tuesday).toHaveFocus();
+});
+
 it("should set default placeholder greater than `minValue`", async () => {
 	const currentYear = new Date().getFullYear();
 	const minValue = new CalendarDate(currentYear + 2, 2, 1);
@@ -347,6 +364,22 @@ describe("correct weekday label formatting", () => {
 			const weekdayEl = page.getByTestId(`weekday-1-${i}`);
 			await expect.element(weekdayEl).toHaveTextContent(weekday);
 		}
+	});
+
+	it("should not shift for a `ZonedDateTime` ahead of the local time zone (#2022)", async () => {
+		// UTC+14, so midnight there is the previous day in (almost) every local zone
+		const value = {
+			start: toZoned(new CalendarDateTime(2026, 3, 1), "Pacific/Kiritimati"),
+			end: toZoned(new CalendarDateTime(2026, 3, 5), "Pacific/Kiritimati"),
+		};
+		setup({ value, weekdayFormat: "short", weekStartsOn: 0 });
+		for (const [i, weekday] of shortWeekdays.entries()) {
+			await expect.element(page.getByTestId(`weekday-3-${i}`)).toHaveTextContent(weekday);
+		}
+		await expect.element(page.getByTestId("heading")).toHaveTextContent("March 2026");
+		await expect
+			.element(page.getByTestId("date-3-1"))
+			.toHaveAttribute("aria-label", "Sunday, March 1, 2026");
 	});
 });
 
@@ -1018,6 +1051,20 @@ describe("excludeDisabled functionality", () => {
 	});
 });
 
+describe("tabbable day", () => {
+	it("should keep a day tabbable when Next lands the placeholder on a disabled day", async () => {
+		const t = setup({
+			placeholder: new CalendarDate(1980, 1, 20),
+			isDateDisabled: (date) => date.month === 2 && date.day === 20,
+		});
+		await t.nextButton.click();
+		await expect.element(page.getByTestId("heading")).toHaveTextContent("February 1980");
+		const tabbable = t.calendar.element().querySelectorAll('[data-bits-day][tabindex="0"]');
+		expect(tabbable).toHaveLength(1);
+		expect(tabbable[0]).toHaveAttribute("data-value", "1980-02-01");
+	});
+});
+
 describe("RangeCalendar Select Components", () => {
 	function setupWithSelects(
 		props: {
@@ -1369,5 +1416,16 @@ describe("RangeCalendar Select Components", () => {
 			expect(monthOptions[0]).toHaveAttribute("selected");
 			expect(yearOptions[0]).toHaveAttribute("selected");
 		});
+	});
+});
+
+describe("Spread Props", () => {
+	it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+		const errors = await collectErrors(() => render(RangeCalendarSpreadPropsTest));
+		expect(errors).toEqual([]);
+		await expect.element(page.getByTestId("calendar")).toHaveAttribute("data-updated");
+		await expect.element(page.getByTestId("heading")).not.toHaveTextContent("");
+		await expect.element(page.getByTestId("month-select")).toBeVisible();
+		await expect.element(page.getByTestId("year-select")).toBeVisible();
 	});
 });

@@ -475,3 +475,20 @@ export function getDefaultHourCycle(locale: string): 12 | 24 {
 
 	return hourPart?.value === "1" ? 12 : 24;
 }
+
+export function get24HourValueFromTypedHour(hour: string, dayPeriod: "AM" | "PM"): string {
+	const parsedHour = Number.parseInt(hour);
+	if (Number.isNaN(parsedHour)) return hour;
+	if (dayPeriod === "AM") {
+		return parsedHour === 12 ? "0" : `${parsedHour}`;
+	}
+	return parsedHour < 12 ? `${parsedHour + 12}` : `${parsedHour}`;
+}
+
+export function getTypedHourFrom24HourValue(hour: string | null): string | null {
+	if (hour === null) return hour;
+	const parsedHour = Number.parseInt(hour);
+	if (Number.isNaN(parsedHour)) return hour;
+	if (parsedHour === 0) return "12";
+	return parsedHour > 12 ? `${parsedHour - 12}` : hour;
+}

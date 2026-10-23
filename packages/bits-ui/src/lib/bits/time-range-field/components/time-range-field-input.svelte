@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { TimeRangeFieldInputProps } from "../types.js";
 	import { TimeRangeFieldInputState } from "../time-range-field.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -26,7 +27,7 @@
 			),
 			name: boxWith(() => name),
 		},
-		type
+		untrack(() => type)
 	);
 
 	const mergedProps = $derived(mergeProps(restProps, inputState.props, { role: "presentation" }));

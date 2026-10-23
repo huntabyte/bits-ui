@@ -34,15 +34,19 @@
 		children,
 	}: TimeFieldRootProps<T> = $props();
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return;
+	function handleDefaultPlaceholder(setPlaceholder = true) {
+		if (placeholder !== undefined) return placeholder;
 
 		const defaultPlaceholder = getDefaultTime({
 			granularity,
 			defaultValue: value,
 		});
 
-		placeholder = defaultPlaceholder;
+		if (setPlaceholder) {
+			placeholder = defaultPlaceholder;
+		}
+
+		return defaultPlaceholder;
 	}
 
 	// SSR
@@ -69,7 +73,7 @@
 			}
 		),
 		placeholder: boxWith(
-			() => placeholder as TimeValue,
+			() => placeholder ?? handleDefaultPlaceholder(false),
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);

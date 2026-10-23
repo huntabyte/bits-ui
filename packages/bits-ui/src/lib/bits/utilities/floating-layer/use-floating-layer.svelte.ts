@@ -167,7 +167,7 @@ export class FloatingContentState {
 	arrowX = $derived.by(() => this.floating.middlewareData.arrow?.x ?? 0);
 	arrowY = $derived.by(() => this.floating.middlewareData.arrow?.y ?? 0);
 	cannotCenterArrow = $derived.by(() => this.floating.middlewareData.arrow?.centerOffset !== 0);
-	contentZIndex = $state<string>();
+	contentZIndex = $state<string>("auto");
 	arrowBaseSide = $derived(OPPOSITE_SIDE[this.placedSide]);
 	wrapperProps = $derived.by(
 		() =>
@@ -269,9 +269,9 @@ export class FloatingContentState {
 		});
 
 		watch(
-			() => this.contentRef.current,
-			(contentNode) => {
-				if (!contentNode || !this.opts.enabled.current) return;
+			[() => this.contentRef.current, () => this.opts.enabled.current],
+			([contentNode, enabled]) => {
+				if (!contentNode || !enabled) return;
 				const win = getWindow(contentNode);
 				const rafId = win.requestAnimationFrame(() => {
 					// avoid applying stale values when refs change quickly

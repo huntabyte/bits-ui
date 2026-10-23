@@ -26,6 +26,10 @@ import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { on } from "svelte/events";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import {
+	MountAnimationGuard,
+	measureWithoutAnimation,
+} from "$lib/internal/mount-animation.svelte.js";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",
@@ -103,6 +107,7 @@ abstract class AccordionBaseState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: accordionAttrs.trigger,
+			rootAttr: accordionAttrs.root,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});
@@ -293,8 +298,7 @@ export class AccordionContentState {
 	readonly item: AccordionItemState;
 	readonly attachment: RefAttachment;
 
-	#originalStyles: { transitionDuration: string; animationName: string } | undefined = undefined;
-	#isMountAnimationPrevented = false;
+	#mountAnimationGuard: MountAnimationGuard;
 	#dimensions = $state({ width: 0, height: 0 });
 	/**
 	 * Set once the content is torn down. Work deferred before teardown can still
@@ -313,15 +317,8 @@ export class AccordionContentState {
 	constructor(opts: AccordionContentStateOpts, item: AccordionItemState) {
 		this.opts = opts;
 		this.item = item;
-		this.#isMountAnimationPrevented = this.item.isActive;
+		this.#mountAnimationGuard = new MountAnimationGuard(() => this.item.isActive);
 		this.attachment = attachRef(this.opts.ref, (v) => (this.item.contentNode = v));
-		// Prevent mount animations on initial render
-		$effect(() => {
-			const rAF = requestAnimationFrame(() => {
-				this.#isMountAnimationPrevented = false;
-			});
-			return () => cancelAnimationFrame(rAF);
-		});
 
 		watch.pre(
 			[() => this.opts.ref.current, () => this.opts.hiddenUntilFound.current],
@@ -382,24 +379,8 @@ export class AccordionContentState {
 			const element = this.opts.ref.current;
 			if (!element) return;
 
-			// store original styles on first run
-			this.#originalStyles ??= {
-				transitionDuration: element.style.transitionDuration,
-				animationName: element.style.animationName,
-			};
-
-			// temporarily disable animations for measurement
-			element.style.transitionDuration = "0s";
-			element.style.animationName = "none";
-
-			const rect = element.getBoundingClientRect();
+			const rect = measureWithoutAnimation(element);
 			this.#dimensions = { width: rect.width, height: rect.height };
-
-			// restore animations if not initial mount
-			if (!this.#isMountAnimationPrevented && this.#originalStyles) {
-				element.style.transitionDuration = this.#originalStyles.transitionDuration;
-				element.style.animationName = this.#originalStyles.animationName;
-			}
 		});
 	};
 
@@ -421,6 +402,7 @@ export class AccordionContentState {
 				style: {
 					"--bits-accordion-content-height": `${this.#dimensions.height}px`,
 					"--bits-accordion-content-width": `${this.#dimensions.width}px`,
+					...this.#mountAnimationGuard.style,
 				},
 				hidden:
 					this.opts.hiddenUntilFound.current && !this.item.isActive

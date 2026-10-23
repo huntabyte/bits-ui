@@ -30,14 +30,6 @@ export class AnimationsComplete {
 	run(fn: () => void | Promise<void>): void {
 		this.#cleanup();
 
-		const node = this.#opts.ref.current;
-		if (!node) return;
-
-		if (typeof node.getAnimations !== "function") {
-			this.#executeCallback(fn);
-			return;
-		}
-
 		const runId = this.#runId;
 
 		const executeIfCurrent = (): void => {
@@ -47,6 +39,17 @@ export class AnimationsComplete {
 
 		const waitForAnimations = (): void => {
 			if (runId !== this.#runId) return;
+
+			// The content element is only attached once the component has rendered,
+			// which can happen after `run()` is called when opening.
+			const node = this.#opts.ref.current;
+			if (!node) return;
+
+			if (typeof node.getAnimations !== "function") {
+				this.#executeCallback(fn);
+				return;
+			}
+
 			const animations = node.getAnimations();
 
 			if (animations.length === 0) {
@@ -89,6 +92,8 @@ export class AnimationsComplete {
 		this.#currentFrame = window.requestAnimationFrame(() => {
 			this.#currentFrame = null;
 			const startingStyleAttr = "data-starting-style";
+			const node = this.#opts.ref.current;
+			if (!node) return;
 
 			if (!node.hasAttribute(startingStyleAttr)) {
 				requestWaitForAnimations();
@@ -112,11 +117,14 @@ export class AnimationsComplete {
 	}
 
 	#executeCallback(fn: () => void | Promise<void>): void {
+		const runId = this.#runId;
 		const execute = () => {
+			// cleanup (destroy or a newer run) may have happened while `fn` was deferred
+			if (runId !== this.#runId) return;
 			fn();
 		};
 
-		if (this.#opts.afterTick) {
+		if (this.#opts.afterTick.current) {
 			afterTick(execute);
 		} else {
 			execute();

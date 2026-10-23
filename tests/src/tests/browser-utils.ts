@@ -158,3 +158,40 @@ export function observeTransitionAttrs(node: Element): TransitionAttrObserver {
 		disconnect: (): void => observer.disconnect(),
 	};
 }
+
+/**
+ * Runs `fn` and returns any errors it throws or that surface as uncaught window
+ * errors (e.g. from effects) shortly after.
+ */
+export async function collectErrors(fn: () => unknown): Promise<unknown[]> {
+	const errors: unknown[] = [];
+	const onError = (e: ErrorEvent) => {
+		e.preventDefault();
+		errors.push(e.error ?? e.message);
+	};
+	window.addEventListener("error", onError);
+	try {
+		await fn();
+		await new Promise((r) => setTimeout(r, 50));
+	} catch (e) {
+		errors.push(e);
+	} finally {
+		window.removeEventListener("error", onError);
+	}
+	return errors;
+}
+
+/**
+ * Resolves with the body's inline `pointer-events` in the microtask after `node` leaves the
+ * DOM, before any pending timer can run.
+ */
+export function bodyPointerEventsOnRemoval(node: Element): Promise<string> {
+	return new Promise((resolve) => {
+		const observer = new MutationObserver(() => {
+			if (node.isConnected) return;
+			observer.disconnect();
+			resolve(document.body.style.pointerEvents);
+		});
+		observer.observe(document.body, { childList: true, subtree: true });
+	});
+}

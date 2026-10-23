@@ -53,6 +53,7 @@ export class ToolbarRootState {
 			loop: this.opts.loop,
 			rootNode: this.opts.ref,
 			candidateAttr: toolbarAttrs.item,
+			rootAttr: toolbarAttrs.root,
 		});
 	}
 

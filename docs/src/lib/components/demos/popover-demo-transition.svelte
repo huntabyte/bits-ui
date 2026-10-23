@@ -17,7 +17,7 @@
 	</Popover.Trigger>
 	<Popover.Portal>
 		<Popover.Content
-			class="border-dark-10 bg-background shadow-popover z-30 w-full max-w-[328px] rounded-[12px] border p-4"
+			class="border-dark-10 bg-background shadow-popover z-50 w-full max-w-[328px] rounded-[12px] border p-4"
 			sideOffset={8}
 			forceMount
 		>

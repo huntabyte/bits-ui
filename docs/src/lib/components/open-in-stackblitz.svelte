@@ -16,7 +16,7 @@
 			>
 				<Stackblitz class="text-foreground/30 group-hover:text-foreground size-[18px]" />
 			</Tooltip.Trigger>
-			<Tooltip.Content sideOffset={4}>
+			<Tooltip.Content class="z-50" sideOffset={4}>
 				<div
 					class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden z-0 flex select-none items-center justify-center border p-3 text-xs"
 				>
