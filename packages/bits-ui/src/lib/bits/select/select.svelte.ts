@@ -1156,6 +1156,11 @@ export class SelectContentState {
 		this.root.isUsingKeyboard = false;
 	}
 
+	// every press starts fresh, so a press that ended off an item isn't reused
+	onpointerdowncapture = () => {
+		this.root.pressedItem = null;
+	};
+
 	readonly #styles = $derived.by(() => {
 		return getFloatingContentCSSVars(this.root.isCombobox ? "combobox" : "select");
 	});
@@ -1208,6 +1213,7 @@ export class SelectContentState {
 					...this.#styles,
 				},
 				onpointermove: this.onpointermove,
+				onpointerdowncapture: this.onpointerdowncapture,
 				...this.attachment,
 			}) as const
 	);
