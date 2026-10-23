@@ -22,6 +22,7 @@ import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+import { queryAll } from "$lib/internal/dom.js";
 
 const menubarAttrs = createBitsAttrs({
 	component: "menubar",
@@ -115,9 +116,7 @@ export class MenubarRootState {
 	getTriggers = () => {
 		const node = this.opts.ref.current;
 		if (!node) return [];
-		return Array.from(
-			node.querySelectorAll<HTMLButtonElement>(menubarAttrs.selector("trigger"))
-		);
+		return queryAll<HTMLButtonElement>(node, menubarAttrs.selector("trigger"));
 	};
 
 	onMenuOpen = (id: string, triggerId: string) => {

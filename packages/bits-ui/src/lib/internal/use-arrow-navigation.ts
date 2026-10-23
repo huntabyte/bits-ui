@@ -1,4 +1,5 @@
 import type { Direction } from "$lib/shared/index.js";
+import { queryAll } from "./dom.js";
 
 type ArrowKeyOptions = "horizontal" | "vertical" | "both";
 
@@ -113,7 +114,7 @@ export function useArrowNavigation(
 		return null;
 
 	const allCollectionItems: HTMLElement[] = parentElement
-		? Array.from(parentElement.querySelectorAll(attributeName))
+		? queryAll(parentElement, attributeName)
 		: itemsArray;
 
 	if (!allCollectionItems.length) return null;

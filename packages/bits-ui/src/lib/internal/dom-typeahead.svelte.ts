@@ -38,12 +38,13 @@ export class DOMTypeahead {
 		this.#search.current = this.#search.current + key;
 		const currentItem = this.#getCurrentItem();
 
-		const currentMatch =
-			candidates.find((item) => item === currentItem)?.textContent?.trim() ?? "";
-
+		// read each candidate's text once; `textContent` walks the whole subtree
 		const values = candidates.map((item) => item.textContent?.trim() ?? "");
+		const currentIndex = currentItem ? candidates.indexOf(currentItem) : -1;
+		const currentMatch = currentIndex === -1 ? "" : values[currentIndex]!;
+
 		const nextMatch = getNextMatch(values, this.#search.current, currentMatch);
-		const newItem = candidates.find((item) => item.textContent?.trim() === nextMatch);
+		const newItem = nextMatch === undefined ? undefined : candidates[values.indexOf(nextMatch)];
 		if (newItem) this.#onMatch(newItem);
 		return newItem;
 	}

@@ -540,12 +540,17 @@ export function getDateRefForPart(
 	return next;
 }
 
+let defaultHourCycle: { locale: string; value: 12 | 24 } | undefined;
+
 export function getDefaultHourCycle(locale: string): 12 | 24 {
+	if (defaultHourCycle?.locale === locale) return defaultHourCycle.value;
 	const formatter = new Intl.DateTimeFormat(locale, { hour: "numeric" });
 	const parts = formatter.formatToParts(new Date("2023-01-01T13:00:00"));
 	const hourPart = parts.find((part) => part.type === "hour");
 
-	return hourPart?.value === "1" ? 12 : 24;
+	const value = hourPart?.value === "1" ? 12 : 24;
+	defaultHourCycle = { locale, value };
+	return value;
 }
 
 export function get24HourValueFromTypedHour(hour: string, dayPeriod: "AM" | "PM"): string {

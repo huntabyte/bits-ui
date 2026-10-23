@@ -1,8 +1,10 @@
 import { SvelteMap } from "svelte/reactivity";
+import { untrack } from "svelte";
 import { Context, Previous, watch } from "runed";
 import {
 	afterTick,
 	onDestroyEffect,
+	onMountEffect,
 	attachRef,
 	DOMContext,
 	executeCallbacks,
@@ -40,6 +42,7 @@ import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 import { DEV } from "esm-env";
+import { queryAll } from "$lib/internal/dom.js";
 import type { SelectValueSnippetProps } from "./types.js";
 
 // prettier-ignore
@@ -92,6 +95,14 @@ interface SelectBaseRootStateOpts
 			inputValue: string;
 		}> {
 	isCombobox: boolean;
+}
+
+class HighlightFlag {
+	current = $state(false);
+	refs = 0;
+	constructor(initial: boolean) {
+		this.current = initial;
+	}
 }
 
 abstract class SelectBaseRootState {
@@ -154,9 +165,53 @@ abstract class SelectBaseRootState {
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
+		this.#setFlaggedValue(node?.getAttribute("data-value") ?? null);
 		if (node && (this.isUsingKeyboard || initial)) {
 			this.scrollHighlightedNodeIntoView(node);
 		}
+	}
+
+	/**
+	 * Per-value highlighted flags, retained by the mounted items. Moving the highlight
+	 * then only invalidates the items whose value gains or loses it, rather than every
+	 * mounted item reading `highlightedValue`.
+	 */
+	readonly #highlightFlags = new Map<string, HighlightFlag>();
+	#flaggedValue: string | null = null;
+
+	#setFlaggedValue(value: string | null) {
+		const prev = this.#flaggedValue;
+		if (value === prev) return;
+		this.#flaggedValue = value;
+		if (prev !== null) {
+			const flag = this.#highlightFlags.get(prev);
+			if (flag) flag.current = false;
+		}
+		if (value !== null) {
+			const flag = this.#highlightFlags.get(value);
+			if (flag) flag.current = true;
+		}
+	}
+
+	/** Returns a release function. */
+	retainHighlightFlag(value: string) {
+		let flag = this.#highlightFlags.get(value);
+		if (!flag) {
+			flag = new HighlightFlag(value === this.#flaggedValue);
+			this.#highlightFlags.set(value, flag);
+		}
+		flag.refs++;
+		const retained = flag;
+		return () => {
+			if (--retained.refs > 0) return;
+			if (this.#highlightFlags.get(value) === retained) this.#highlightFlags.delete(value);
+		};
+	}
+
+	isValueHighlighted(value: string) {
+		const flag = this.#highlightFlags.get(value);
+		// an item reads before it retains its flag only while its value is changing
+		return flag ? flag.current : this.highlightedValue === value;
 	}
 
 	scrollHighlightedNodeIntoView(node: HTMLElement) {
@@ -167,22 +222,23 @@ abstract class SelectBaseRootState {
 	getCandidateNodes(): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
-		return Array.from(
-			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
-		);
+		return queryAll(node, `[${this.getBitsAttr("item")}]:not([data-disabled])`);
 	}
 
 	setHighlightedToFirstCandidate(initial = false) {
 		this.setHighlightedNode(null);
 
-		let nodes = this.getCandidateNodes();
+		const nodes = this.getCandidateNodes();
 		if (!nodes.length) return;
+
+		let first: HTMLElement | undefined = nodes[0];
 
 		// don't consider nodes that aren't visible within the viewport
 		if (this.viewportNode) {
 			const viewportRect = this.viewportNode.getBoundingClientRect();
 
-			nodes = nodes.filter((node) => {
+			// only the first visible node is used, so stop measuring once it's found
+			first = nodes.find((node) => {
 				if (!this.viewportNode) return false;
 
 				const nodeRect = node.getBoundingClientRect();
@@ -197,7 +253,7 @@ abstract class SelectBaseRootState {
 			});
 		}
 
-		this.setHighlightedNode(nodes[0]!, initial);
+		this.setHighlightedNode(first!, initial);
 	}
 
 	getNodeByValue(value: string): HTMLElement | null {
@@ -1256,8 +1312,8 @@ export class SelectItemState {
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
 	readonly isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
-	readonly isHighlighted = $derived.by(
-		() => this.root.highlightedValue === this.opts.value.current
+	readonly isHighlighted = $derived.by(() =>
+		this.root.isValueHighlighted(this.opts.value.current)
 	);
 	/**
 	 * Kept as a separate boolean derived so that `props` (and the `mergeProps` /
@@ -1276,6 +1332,19 @@ export class SelectItemState {
 		this.root = root;
 		this.attachment = attachRef(opts.ref);
 
+		// retained up front so the first render already reads the flag
+		let initialFlag: (() => void) | null = root.retainHighlightFlag(
+			untrack(() => opts.value.current)
+		);
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				const release = initialFlag ?? this.root.retainHighlightFlag(value);
+				initialFlag = null;
+				return release;
+			}
+		);
+
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
 				this.opts.onHighlight.current();
@@ -1283,14 +1352,6 @@ export class SelectItemState {
 				this.opts.onUnhighlight.current();
 			}
 		});
-
-		watch(
-			() => this.mounted,
-			() => {
-				if (!this.mounted) return;
-				this.root.setInitialHighlightedNode();
-			}
-		);
 
 		// keep the cached label in sync while this item is selected and mounted
 		watch(
@@ -1305,6 +1366,15 @@ export class SelectItemState {
 				this.root.setSelectedLabel(value, this.#resolveLabel());
 			}
 		);
+
+		// created last, so it runs after the watchers above like the `<Mounted>` child it replaces
+		onMountEffect(() => {
+			this.mounted = true;
+			this.root.setInitialHighlightedNode();
+			return () => {
+				this.mounted = false;
+			};
+		});
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);

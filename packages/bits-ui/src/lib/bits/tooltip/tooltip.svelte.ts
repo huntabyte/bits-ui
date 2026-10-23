@@ -8,6 +8,7 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
+import { SvelteMap } from "svelte/reactivity";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import {
@@ -36,7 +37,8 @@ type TooltipTriggerRecord = {
 };
 
 class TooltipTriggerRegistryState {
-	triggers = $state(new Map<string, TooltipTriggerRecord>());
+	// keyed reactivity: registering a trigger is O(1) instead of copying every record
+	readonly triggers = new SvelteMap<string, TooltipTriggerRecord>();
 	activeTriggerId = $state<string | null>(null);
 	activeTriggerNode = $derived.by(() => {
 		const activeTriggerId = this.activeTriggerId;
@@ -50,24 +52,18 @@ class TooltipTriggerRegistryState {
 	});
 
 	register = (record: TooltipTriggerRecord) => {
-		const next = new Map(this.triggers);
-		next.set(record.id, record);
-		this.triggers = next;
+		this.triggers.set(record.id, record);
 		this.#coerceActiveTrigger();
 	};
 
 	update = (record: TooltipTriggerRecord) => {
-		const next = new Map(this.triggers);
-		next.set(record.id, record);
-		this.triggers = next;
+		this.triggers.set(record.id, record);
 		this.#coerceActiveTrigger();
 	};
 
 	unregister = (id: string) => {
 		if (!this.triggers.has(id)) return;
-		const next = new Map(this.triggers);
-		next.delete(id);
-		this.triggers = next;
+		this.triggers.delete(id);
 		if (this.activeTriggerId === id) {
 			this.activeTriggerId = null;
 		}
@@ -511,20 +507,14 @@ export class TooltipTriggerState {
 		this.domContext = new DOMContext(opts.ref);
 		this.attachment = attachRef(this.opts.ref, (v) => this.#register(v));
 
+		// one watcher for all three: `#register` is idempotent, so a flush that changes
+		// several of them needs only one call
 		watch(
-			() => this.opts.id.current,
-			() => {
-				this.#register(this.opts.ref.current);
-			}
-		);
-		watch(
-			() => this.opts.payload.current,
-			() => {
-				this.#register(this.opts.ref.current);
-			}
-		);
-		watch(
-			() => this.opts.disabled.current,
+			[
+				() => this.opts.id.current,
+				() => this.opts.payload.current,
+				() => this.opts.disabled.current,
+			],
 			() => {
 				this.#register(this.opts.ref.current);
 			}
@@ -757,11 +747,19 @@ export class TooltipTriggerState {
 		root.handleClose();
 	};
 
+	/**
+	 * A separate boolean derived so that opening or switching the active trigger only
+	 * invalidates `props` for the triggers whose state actually changed, rather than for
+	 * every trigger sharing the root (e.g. a tether).
+	 */
+	readonly #isOpenForTrigger = $derived.by(() => {
+		const root = this.#getRoot();
+		return Boolean(root?.opts.open.current && root.isActiveTrigger(this.opts.id.current));
+	});
+
 	readonly props = $derived.by(() => {
 		const root = this.#getRoot();
-		const isOpenForTrigger = Boolean(
-			root?.opts.open.current && root.isActiveTrigger(this.opts.id.current)
-		);
+		const isOpenForTrigger = this.#isOpenForTrigger;
 		const isDisabled = this.#isDisabled();
 
 		return {

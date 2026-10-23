@@ -1,4 +1,10 @@
-import { type ReadableBox, type ReadableBoxedValues, boxFrom, simpleBox } from "svelte-toolbelt";
+import {
+	type ReadableBox,
+	type ReadableBoxedValues,
+	boxFrom,
+	boxWith,
+	simpleBox,
+} from "svelte-toolbelt";
 import { Context } from "runed";
 import type { Measurable } from "$lib/internal/floating-svelte/types.js";
 
@@ -11,23 +17,22 @@ export class FloatingRootState {
 			? FloatingTooltipRootContext.set(new FloatingRootState())
 			: FloatingRootContext.set(new FloatingRootState());
 	}
-	anchorNode = simpleBox<Measurable | HTMLElement | null>(null);
 	customAnchorNode = simpleBox<Measurable | HTMLElement | null | string>(null);
-	triggerNode: ReadableBox<Measurable | HTMLElement | null> = simpleBox(null);
+	// `$state` so the reassignment by `FloatingAnchorState` is seen by `#anchorNode`
+	triggerNode = $state.raw<ReadableBox<Measurable | HTMLElement | null>>(simpleBox(null));
 
-	constructor() {
-		$effect(() => {
-			if (this.customAnchorNode.current) {
-				if (typeof this.customAnchorNode.current === "string") {
-					this.anchorNode.current = document.querySelector(this.customAnchorNode.current);
-				} else {
-					this.anchorNode.current = this.customAnchorNode.current;
-				}
-			} else {
-				this.anchorNode.current = this.triggerNode.current;
-			}
-		});
-	}
+	// derived rather than synced by an effect, so closed instances never compute it
+	readonly #anchorNode = $derived.by(() => {
+		const customAnchor = this.customAnchorNode.current;
+		if (customAnchor) {
+			if (typeof customAnchor === "string") return document.querySelector(customAnchor);
+			return customAnchor;
+		}
+		return this.triggerNode.current;
+	});
+	readonly anchorNode: ReadableBox<Measurable | HTMLElement | null> = boxWith(
+		() => this.#anchorNode
+	);
 }
 
 interface FloatingAnchorStateOpts

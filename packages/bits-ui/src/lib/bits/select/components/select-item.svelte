@@ -4,7 +4,6 @@
 	import type { SelectItemProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
 	import { noop } from "$lib/internal/noop.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
 
 	const uid = $props.id();
 
@@ -45,4 +44,3 @@
 	</div>
 {/if}
 
-<Mounted bind:mounted={itemState.mounted} />

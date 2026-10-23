@@ -12,8 +12,8 @@ export const BitsConfigContext = new Context<BitsConfigState>("BitsConfig");
  * Returns a default configuration (where all values are `undefined`) if no configuration is found.
  */
 export function getBitsConfig() {
-	const fallback = new BitsConfigState(null, {});
-	return BitsConfigContext.getOr(fallback).opts;
+	// only build the fallback when there's no config, rather than on every call
+	return (BitsConfigContext.getOr(null) ?? new BitsConfigState(null, {})).opts;
 }
 
 /**

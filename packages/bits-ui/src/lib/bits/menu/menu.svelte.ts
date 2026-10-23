@@ -57,6 +57,7 @@ import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
 import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
 import { arraysAreEqual } from "$lib/internal/arrays.js";
+import { queryAll } from "$lib/internal/dom.js";
 
 import { CONTEXT_MENU_TRIGGER_ATTR } from "./context-menu-attributes.js";
 
@@ -978,12 +979,7 @@ export class MenuContentState {
 	#getCandidateNodes() {
 		const node = this.parentMenu.contentNode;
 		if (!node) return [];
-		const candidates = Array.from(
-			node.querySelectorAll<HTMLElement>(
-				`[${this.parentMenu.root.getBitsAttr("item")}]:not([data-disabled])`
-			)
-		);
-		return candidates;
+		return queryAll(node, `[${this.parentMenu.root.getBitsAttr("item")}]:not([data-disabled])`);
 	}
 
 	#isPointerMovingToSubmenu() {
@@ -1358,14 +1354,15 @@ export class MenuItemState {
 		this.item.content.pressedItem = { item: this, x: e.clientX, y: e.clientY };
 	}
 
-	readonly props = $derived.by(() =>
-		mergeProps(this.item.props, {
-			onclick: this.onclick,
-			onpointerdown: this.onpointerdown,
-			onpointerup: this.onpointerup,
-			onkeydown: this.onkeydown,
-		})
-	);
+	// no keys overlap `item.props` (and it has no style/class), so a spread is what
+	// `mergeProps` would produce, without its per-item cost
+	readonly props = $derived.by(() => ({
+		...this.item.props,
+		onclick: this.onclick,
+		onpointerdown: this.onpointerdown,
+		onpointerup: this.onpointerup,
+		onkeydown: this.onkeydown,
+	}));
 }
 
 interface MenuSubTriggerStateOpts

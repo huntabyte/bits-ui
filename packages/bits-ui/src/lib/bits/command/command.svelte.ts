@@ -102,6 +102,9 @@ export class CommandRootState {
 	#updateScheduled = false;
 	#isInitialMount = true;
 	#isDestroyed = false;
+	#hasCustomFilter = false;
+	#scoreSearch: string | undefined;
+	#defaultScores = new WeakMap<object, number>();
 	sortAfterTick = false;
 	sortAndFilterAfterTick = false;
 	allItems = new Set<string>();
@@ -191,7 +194,24 @@ export class CommandRootState {
 	 */
 	#score(value: string, keywords?: string[]) {
 		const filter = this.opts.filter.current ?? computeCommandScore;
-		const score = value ? filter(value, this._commandState.search, keywords) : 0;
+		if (!value) return 0;
+		const search = this._commandState.search;
+		// Custom filters can retain and mutate the keyword arrays. Only cache
+		// scores while those arrays have been used exclusively by the built-in filter.
+		if (filter !== computeCommandScore) this.#hasCustomFilter = true;
+		if (this.#hasCustomFilter) return filter(value, search, keywords);
+
+		if (this.#scoreSearch !== search) {
+			this.#scoreSearch = search;
+			this.#defaultScores = new WeakMap();
+		}
+		const item = this.allIds.get(value);
+		const canCache =
+			item && (item.keywords === keywords || (!item.keywords?.length && !keywords?.length));
+		const cached = canCache ? this.#defaultScores.get(item) : undefined;
+		if (cached !== undefined) return cached;
+		const score = computeCommandScore(value, search, keywords);
+		if (canCache) this.#defaultScores.set(item, score);
 		return score;
 	}
 
@@ -352,31 +372,34 @@ export class CommandRootState {
 		}
 
 		// reset the groups
-		this._commandState.filtered.groups = new Set();
+		const filtered = this._commandState.filtered;
+		const scores = filtered.items;
+		filtered.groups = new Set();
 		let itemCount = 0;
 
 		// Check which items should be included
 		for (const id of this.allItems) {
-			const value = this.allIds.get(id)?.value ?? "";
-			const keywords = this.allIds.get(id)?.keywords ?? [];
+			const item = this.allIds.get(id);
+			const value = item?.value ?? "";
+			const keywords = item?.keywords ?? [];
 			const rank = this.#score(value, keywords);
-			this._commandState.filtered.items.set(id, rank);
+			scores.set(id, rank);
 			if (rank > 0) itemCount++;
 		}
 
 		// Check which groups have at least 1 item shown
 		for (const [groupId, group] of this.allGroups) {
 			for (const itemId of group) {
-				const currItem = this._commandState.filtered.items.get(itemId);
+				const currItem = scores.get(itemId);
 
 				if (currItem && currItem > 0) {
-					this._commandState.filtered.groups.add(groupId);
+					filtered.groups.add(groupId);
 					break;
 				}
 			}
 		}
 
-		this._commandState.filtered.count = itemCount;
+		filtered.count = itemCount;
 	}
 
 	/**

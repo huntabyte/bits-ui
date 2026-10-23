@@ -27,6 +27,7 @@ import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
 import SelectFieldsetDisabledTest from "./select-fieldset-disabled-test.svelte";
 import SelectSettlingContentTest from "./select-settling-content-test.svelte";
 import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
+import SelectHighlightCallbacksTest from "./select-highlight-callbacks-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -1766,5 +1767,21 @@ describe("select - activation without a pointer press", () => {
 		(page.getByTestId("trigger").element() as HTMLElement).click();
 		await expectNotExists(page.getByTestId("content"));
 		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
+	it("should call `onHighlight` / `onUnhighlight` only for the items whose highlight changed", async () => {
+		const log: string[] = [];
+		render(SelectHighlightCallbacksTest, {
+			items: testItems.slice(1),
+			onLog: (entry: string) => log.push(entry),
+		});
+		(page.getByTestId("trigger").element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ENTER);
+		await expectHighlighted(page.getByTestId("1"));
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("2"));
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("3"));
+		await vi.waitFor(() => expect(log).toEqual(["h:1", "u:1", "h:2", "u:2", "h:3"]));
 	});
 });

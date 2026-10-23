@@ -21,3 +21,14 @@ export function isClickTrulyOutside(event: PointerEvent, contentNode: HTMLElemen
 		clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom
 	);
 }
+
+/**
+ * `querySelectorAll` as an array. An indexed copy is about twice as fast as
+ * `Array.from(nodeList)`, which matters for per-keystroke scans of large lists.
+ */
+export function queryAll<T extends Element = HTMLElement>(node: ParentNode, selector: string): T[] {
+	const list = node.querySelectorAll<T>(selector);
+	const arr = new Array<T>(list.length);
+	for (let i = 0; i < list.length; i++) arr[i] = list[i]!;
+	return arr;
+}

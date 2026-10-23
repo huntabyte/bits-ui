@@ -5,6 +5,7 @@ import { kbd } from "./kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { BROWSER } from "esm-env";
 import { isHTMLElement } from "./is.js";
+import { queryAll } from "./dom.js";
 
 type RovingFocusGroupOptions = (
 	| {
@@ -58,26 +59,18 @@ export class RovingFocusGroup {
 		this.#opts = opts;
 	}
 
+	#getCandidateSelector() {
+		if (this.#opts.candidateSelector) return this.#opts.candidateSelector;
+		if (this.#opts.candidateAttr) return `[${this.#opts.candidateAttr}]:not([data-disabled])`;
+		return null;
+	}
+
 	getCandidateNodes() {
-		if (!BROWSER || !this.#opts.rootNode.current) return [];
-
-		if (this.#opts.candidateSelector) {
-			const candidates = Array.from(
-				this.#opts.rootNode.current.querySelectorAll<HTMLElement>(
-					this.#opts.candidateSelector
-				)
-			);
-			return this.#ownCandidates(this.#opts.rootNode.current, candidates);
-		} else if (this.#opts.candidateAttr) {
-			const candidates = Array.from(
-				this.#opts.rootNode.current.querySelectorAll<HTMLElement>(
-					`[${this.#opts.candidateAttr}]:not([data-disabled])`
-				)
-			);
-			return this.#ownCandidates(this.#opts.rootNode.current, candidates);
-		}
-
-		return [];
+		const rootNode = this.#opts.rootNode.current;
+		if (!BROWSER || !rootNode) return [];
+		const selector = this.#getCandidateSelector();
+		if (!selector) return [];
+		return this.#ownCandidates(rootNode, queryAll(rootNode, selector));
 	}
 
 	/**
@@ -88,6 +81,10 @@ export class RovingFocusGroup {
 		const rootAttr = this.#opts.rootAttr;
 		if (!rootAttr) return candidates;
 		const rootSelector = `[${rootAttr}]`;
+		// without a nested root every candidate is our own; skip the per-node `closest`
+		if (rootNode.matches(rootSelector) && !rootNode.querySelector(rootSelector)) {
+			return candidates;
+		}
 		return candidates.filter((node) => node.closest(rootSelector) === rootNode);
 	}
 
@@ -142,10 +139,12 @@ export class RovingFocusGroup {
 	}
 
 	getTabIndex(node: HTMLElement | null | undefined) {
-		const items = this.getCandidateNodes();
+		// read unconditionally: callers rely on it as a reactive dependency
+		const rootNode = this.#opts.rootNode.current;
 		const anyActive = this.#currentTabStopId.current !== null;
 
-		if (node && !anyActive && items[0] === node) {
+		// the candidate scan only matters while no tab stop is set, and per item it's O(n²)
+		if (rootNode && node && !anyActive && this.getCandidateNodes()[0] === node) {
 			this.#currentTabStopId.current = node.id;
 			return 0;
 		} else if (node?.id === this.#currentTabStopId.current) {

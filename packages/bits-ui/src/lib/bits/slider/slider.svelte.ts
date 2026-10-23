@@ -338,10 +338,15 @@ class SliderSingleRootState extends SliderBaseRootState {
 	readonly ticksPropsArr = $derived.by(() => {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
+		if (steps.length === 0) return [];
+		const positionFromValue = linearScale(
+			[this.opts.min.current, this.opts.max.current],
+			this.getThumbScale()
+		);
 
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = this.getPositionFromValue(tickValue);
+			const tickPosition = positionFromValue(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
@@ -664,10 +669,15 @@ class SliderMultiRootState extends SliderBaseRootState {
 	readonly ticksPropsArr = $derived.by(() => {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
+		if (steps.length === 0) return [];
+		const positionFromValue = linearScale(
+			[this.opts.min.current, this.opts.max.current],
+			this.getThumbScale()
+		);
 
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = this.getPositionFromValue(tickValue);
+			const tickPosition = positionFromValue(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
