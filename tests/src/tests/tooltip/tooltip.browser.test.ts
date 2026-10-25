@@ -122,6 +122,23 @@ it("should open on focus and close on blur", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
+it("should not open on the focus that follows a tap", async () => {
+	const t = setup();
+	const trigger = t.trigger.element() as HTMLElement;
+
+	// a tap can focus the trigger after `pointerup`, e.g. when the trigger also opens a
+	// menu, which prevents the default of a touch `pointerdown`
+	trigger.dispatchEvent(new PointerEvent("pointerdown", { pointerType: "touch", bubbles: true }));
+	trigger.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	trigger.focus();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("content"));
+
+	trigger.blur();
+	trigger.focus();
+	await expectExists(page.getByTestId("content"));
+});
+
 it("should portal to the body by default", async () => {
 	const t = await open();
 	const contentWrapper = t.content.element().parentElement;
