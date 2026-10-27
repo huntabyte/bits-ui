@@ -959,6 +959,17 @@ it("should follow the content id when it changes while the menu is open", async 
 		.toHaveAttribute("aria-controls", "menu-content-b");
 });
 
+it("should not render positioning props as attributes on the sub content", async () => {
+	const t = await openSubmenu(
+		await openWithKbd({ subContentProps: { side: "left", align: "center", sideOffset: 4 } })
+	);
+	const subContent = t.getSubContent();
+	await expect.element(subContent).not.toHaveAttribute("align");
+	await expect.element(subContent).not.toHaveAttribute("side");
+	await expect.element(subContent).not.toHaveAttribute("sideOffset");
+	await expect.element(subContent).toHaveAttribute("data-align", "center");
+});
+
 it("should point the sub trigger at the sub content while the submenu is open", async () => {
 	const t = await openSubmenu(await openWithKbd());
 	const id = t.getSubContent().element().id;

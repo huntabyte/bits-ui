@@ -8,6 +8,7 @@
 		open?: boolean;
 		group?: string[];
 		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child">;
+		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child">;
 		portalProps?: Omit<DropdownMenu.PortalProps, "children" | "child">;
 		subTriggerProps?: Omit<DropdownMenu.SubTriggerProps, "children" | "child">;
 		checkboxGroupProps?: Omit<DropdownMenu.CheckboxGroupProps, "children" | "child" | "value">;
@@ -25,6 +26,7 @@
 		subRadio = "",
 		open = false,
 		contentProps = {},
+		subContentProps = {},
 		portalProps = {},
 		subTriggerProps = {},
 		checkboxGroupProps = {},
@@ -71,7 +73,7 @@
 							<span>subtrigger</span>
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.Portal>
-							<DropdownMenu.SubContent data-testid="sub-content">
+							<DropdownMenu.SubContent {...subContentProps} data-testid="sub-content">
 								<DropdownMenu.Item
 									{...subItemProps}
 									data-testid="sub-item"
