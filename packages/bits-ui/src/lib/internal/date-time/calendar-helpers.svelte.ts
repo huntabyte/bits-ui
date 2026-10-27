@@ -285,27 +285,50 @@ export function shiftCalendarFocus({
 		const currentValue = node.getAttribute("data-value");
 		if (!currentValue) return;
 
-		let targetDate = parseStringToDateValue(currentValue, placeholder.current).add({
-			days: add,
-		});
-		const renderedDates = Array.from(
-			calendarNode?.querySelectorAll<HTMLElement>(
-				"[data-bits-day]:not([data-outside-visible-months])"
-			) ?? []
-		)
-			.map((cell) => cell.getAttribute("data-value"))
-			.filter((value): value is string => value !== null);
+		/**
+		 * Focuses the first enabled cell at `targetDate` or a whole number of weeks
+		 * past it within the displayed months. Returns the first date that falls
+		 * outside the displayed months if no cell was focused.
+		 */
+		const focusSameWeekday = (targetDate: DateValue): DateValue | undefined => {
+			const renderedDates = Array.from(
+				calendarNode?.querySelectorAll<HTMLElement>(
+					"[data-bits-day]:not([data-outside-visible-months])"
+				) ?? []
+			)
+				.map((cell) => cell.getAttribute("data-value"))
+				.filter((value): value is string => value !== null);
+			const cells = getSelectableCells(calendarNode);
 
-		while (renderedDates.includes(targetDate.toString())) {
-			const nextCell = candidateCells.find(
-				(cell) => cell.getAttribute("data-value") === targetDate.toString()
-			);
-			if (nextCell) {
-				setPlaceholderToNodeValue(nextCell, placeholder);
-				return nextCell.focus();
+			while (renderedDates.includes(targetDate.toString())) {
+				const nextCell = cells.find(
+					(cell) => cell.getAttribute("data-value") === targetDate.toString()
+				);
+				if (nextCell) {
+					setPlaceholderToNodeValue(nextCell, placeholder);
+					nextCell.focus();
+					return;
+				}
+				targetDate = targetDate.add({ days: add });
 			}
-			targetDate = targetDate.add({ days: add });
-		}
+			return targetDate;
+		};
+
+		const outsideDate = focusSameWeekday(
+			parseStringToDateValue(currentValue, placeholder.current).add({ days: add })
+		);
+		if (!outsideDate) return;
+
+		// the target is in another month, so move the calendar there and focus it
+		if (add > 0 ? isNextButtonDisabled : isPrevButtonDisabled) return;
+		const firstMonth = months[0]?.value;
+		if (!firstMonth) return;
+		placeholder.current =
+			add > 0
+				? firstMonth.add({ months: numberOfMonths })
+				: firstMonth.subtract({ months: numberOfMonths });
+		afterTick(() => focusSameWeekday(outsideDate));
+		return;
 	}
 
 	const index = candidateCells.indexOf(node);
