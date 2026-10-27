@@ -255,6 +255,23 @@ it("should not navigate after `maxValue` (with keyboard)", async () => {
 	await expect.element(heading).toHaveTextContent("March 1980");
 });
 
+it("should preserve the weekday when moving vertically across the month edge past disabled dates", async () => {
+	setup({
+		placeholder: new CalendarDate(2026, 10, 27),
+		isDateDisabled: (date) => date.toDate("UTC").getUTCDay() === 1,
+	});
+	const heading = page.getByTestId("heading");
+	const start = page.getByTestId("date-10-27");
+	(start.element() as HTMLElement).focus();
+	await expect.element(start).toHaveFocus();
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(page.getByTestId("date-11-3")).toHaveFocus();
+	await expect.element(heading).toHaveTextContent("November 2026");
+	await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(page.getByTestId("date-10-27")).toHaveFocus();
+	await expect.element(heading).toHaveTextContent("October 2026");
+});
+
 it("should not navigate before `minValue` (with keyboard)", async () => {
 	setup({
 		value: calendarDateRange,
