@@ -494,6 +494,7 @@ export class TooltipTriggerState {
 	readonly tether: TooltipTetherState | null;
 	readonly attachment: RefAttachment;
 	#isPointerDown = simpleBox(false);
+	#lastPointerType: string | null = null;
 	#hasPointerMoveOpened = $state(false);
 	domContext: DOMContext;
 	#transitCheckTimeout: number | null = null;
@@ -623,8 +624,9 @@ export class TooltipTriggerState {
 		this.#isPointerDown.current = false;
 	};
 
-	#onpointerdown: PointerEventHandler<HTMLElement> = () => {
+	#onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled()) return;
+		this.#lastPointerType = e.pointerType;
 		const root = this.#getRoot();
 
 		// close on pointerdown regardless of button so right/middle click dismiss the
@@ -733,6 +735,9 @@ export class TooltipTriggerState {
 		const root = this.#getRoot();
 		if (!root) return;
 		if (this.#isPointerDown.current) return;
+		// a tap can focus the trigger after `pointerup`, e.g. when the default of a touch
+		// `pointerdown` is prevented, and touch never opens the tooltip
+		if (this.#lastPointerType === "touch") return;
 		if (this.#isDisabled()) {
 			if (root.opts.open.current) {
 				root.handleClose();
@@ -746,6 +751,7 @@ export class TooltipTriggerState {
 	};
 
 	#onblur: FocusEventHandler<HTMLElement> = () => {
+		this.#lastPointerType = null;
 		const root = this.#getRoot();
 		if (!root || this.#isDisabled()) return;
 		root.handleClose();
