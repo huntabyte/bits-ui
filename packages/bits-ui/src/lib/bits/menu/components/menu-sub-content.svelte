@@ -136,7 +136,6 @@
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(
 				props,
-				mergedProps,
 				{ style: getFloatingContentCSSVars("menu") },
 				{ style }
 			)}
@@ -175,7 +174,6 @@
 		{#snippet popper({ props, wrapperProps })}
 			{@const finalProps = mergeProps(
 				props,
-				mergedProps,
 				{ style: getFloatingContentCSSVars("menu") },
 				{ style }
 			)}
