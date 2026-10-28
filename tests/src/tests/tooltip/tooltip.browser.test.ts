@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { mount, unmount, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import TooltipTest, { type TooltipTestProps } from "./tooltip-test.svelte";
 import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svelte";
@@ -828,6 +828,45 @@ it("should not close on non-primary button press when `disableCloseOnTriggerClic
 	const t = await open({ disableCloseOnTriggerClick: true });
 	dispatchPointerDown(t.trigger.element() as HTMLElement, 2);
 	await expect.element(t.content).toBeVisible();
+});
+
+it("should not close on a trigger press inside a shadow root when `disableCloseOnTriggerClick` is true", async () => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const shadowRoot = host.attachShadow({ mode: "open" });
+	const app = shadowRoot.appendChild(document.createElement("div"));
+	const portalTo = shadowRoot.appendChild(document.createElement("div"));
+	const component = mount(TooltipTest, {
+		target: app,
+		props: { disableCloseOnTriggerClick: true, portalProps: { to: portalTo } },
+	});
+	const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+
+	try {
+		await userEvent.hover(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+
+		// the document sees the shadow host as the target of this press
+		await userEvent.click(get("trigger")!);
+		// the dismissible layer handles an outside press 10ms after pointerdown
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+		expect(get("content")).not.toBeNull();
+
+		// a press outside the trigger still closes it
+		const rect = get("outside")!.getBoundingClientRect();
+		get("outside")!.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				composed: true,
+				pointerType: "mouse",
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+		await vi.waitFor(() => expect(get("content")).toBeNull());
+	} finally {
+		unmount(component);
+		host.remove();
+	}
 });
 
 it("should cancel a pending delayed open when the trigger is right clicked", async () => {
