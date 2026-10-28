@@ -6,6 +6,7 @@ import { getTestKbd } from "../utils.js";
 import CommandTest from "./command-test.svelte";
 import CommandRerenderTest from "./command-rerender-test.svelte";
 import CommandFlatScrollTest from "./command-flat-scroll-test.svelte";
+import CommandScrollTest from "./command-scroll-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
@@ -173,4 +174,34 @@ it("should scroll the first item back into view when there are no groups", async
 	await userEvent.keyboard(kbd.HOME);
 	await expect.element(page.getByText("Item 0")).toHaveAttribute("data-selected");
 	await expect.poll(() => viewport.scrollTop).toBe(0);
+});
+
+it("should scroll the first item of a group into view along with its heading", async () => {
+	render(CommandScrollTest);
+	const viewport = page.getByTestId("viewport").element() as HTMLElement;
+	const heading = page.getByTestId("group-b-heading").element() as HTMLElement;
+	const calendar = page.getByText("Calendar");
+	(page.getByTestId("input").element() as HTMLElement).focus();
+
+	function isInView(el: HTMLElement) {
+		const rect = el.getBoundingClientRect();
+		const viewportRect = viewport.getBoundingClientRect();
+		return rect.top >= viewportRect.top - 1 && rect.bottom <= viewportRect.bottom + 1;
+	}
+
+	// moving down onto the first item of a group below the fold
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(calendar).toHaveAttribute("data-selected");
+	await expect.poll(() => isInView(calendar.element() as HTMLElement)).toBe(true);
+	await expect.poll(() => isInView(heading)).toBe(true);
+
+	// moving up onto the first item of a group above the fold
+	await userEvent.keyboard(kbd.END);
+	await expect.element(page.getByText("Popover")).toHaveAttribute("data-selected");
+	for (let i = 0; i < 5; i++) await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(calendar).toHaveAttribute("data-selected");
+	await expect.poll(() => isInView(calendar.element() as HTMLElement)).toBe(true);
+	await expect.poll(() => isInView(heading)).toBe(true);
 });
