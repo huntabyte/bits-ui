@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { IsMounted } from "runed";
 	import type { ScrollAreaThumbProps } from "../types.js";
 	import { ScrollAreaThumbImplState } from "../scroll-area.svelte.js";

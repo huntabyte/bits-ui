@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import { DateFieldSegmentState } from "../time-field.svelte.js";
 	import type { TimeFieldSegmentProps } from "../types.js";

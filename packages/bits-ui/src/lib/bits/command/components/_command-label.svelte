@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { CommandLabelState } from "../command.svelte.js";
 
 	import type { WithChildren } from "$lib/internal/types.js";

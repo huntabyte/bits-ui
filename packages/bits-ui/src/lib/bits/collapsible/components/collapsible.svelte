@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { CollapsibleRootProps } from "../types.js";
 	import { CollapsibleRootState } from "../collapsible.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";

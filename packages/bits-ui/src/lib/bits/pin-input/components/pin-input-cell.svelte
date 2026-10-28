@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import type { PinInputCellProps } from "../types.js";
 	import { PinInputCellState } from "../pin-input.svelte.js";
 	import { createId } from "$lib/internal/create-id.js";

@@ -7,8 +7,8 @@ import {
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
-	simpleBox,
 } from "svelte-toolbelt";
+import { simpleBox } from "$lib/internal/box.svelte.js";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type {
@@ -115,7 +115,8 @@ const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 };
 
 export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			value: T | undefined;
 			placeholder: TimeValue;
 		}>,
@@ -618,7 +619,8 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 }
 
 interface TimeFieldInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			name: string;
 		}> {}

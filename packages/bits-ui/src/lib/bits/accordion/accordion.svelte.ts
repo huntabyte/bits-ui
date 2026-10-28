@@ -1,12 +1,12 @@
 import {
 	afterTick,
 	attachRef,
-	boxWith,
 	onDestroyEffect,
 	type Box,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import type {
 	BitsKeyboardEvent,
@@ -40,7 +40,8 @@ const AccordionRootContext = new Context<AccordionRoot>("Accordion.Root");
 const AccordionItemContext = new Context<AccordionItemState>("Accordion.Item");
 
 interface AccordionBaseStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			orientation: Orientation;
@@ -48,16 +49,15 @@ interface AccordionBaseStateOpts
 		}> {}
 
 interface AccordionSingleStateOpts
-	extends AccordionBaseStateOpts,
-		WritableBoxedValues<{ value: string }> {}
+	extends AccordionBaseStateOpts, WritableBoxedValues<{ value: string }> {}
 interface AccordionMultiStateOpts
-	extends AccordionBaseStateOpts,
-		WritableBoxedValues<{ value: string[] }> {}
+	extends AccordionBaseStateOpts, WritableBoxedValues<{ value: string[] }> {}
 
 type AccordionRoot = AccordionSingleState | AccordionMultiState;
 
 interface AccordionItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -66,27 +66,31 @@ interface AccordionItemStateOpts
 }
 
 interface AccordionTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean | null | undefined;
 			tabindex: number;
 		}> {}
 
 interface AccordionContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
 			hiddenUntilFound: boolean;
 		}> {}
 
 interface AccordionHeaderStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			level: 1 | 2 | 3 | 4 | 5 | 6;
 		}> {}
 
 interface AccordionRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			orientation: Orientation;

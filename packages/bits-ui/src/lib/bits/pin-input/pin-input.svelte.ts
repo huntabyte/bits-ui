@@ -6,8 +6,8 @@ import {
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
-	simpleBox,
 } from "svelte-toolbelt";
+import { simpleBox } from "$lib/internal/box.svelte.js";
 import { usePasswordManagerBadge } from "./usePasswordManager.svelte.js";
 import type { PinInputCell, PinInputRootProps as RootComponentProps } from "./types.js";
 import type {
@@ -31,7 +31,8 @@ const pinInputAttrs = createBitsAttrs({
 });
 
 interface PinInputRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: string;
 			inputRef: HTMLInputElement | null;
@@ -529,7 +530,8 @@ export class PinInputRootState {
 }
 
 interface PinInputCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			cell: PinInputCell;
 		}> {}

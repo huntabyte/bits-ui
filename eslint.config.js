@@ -60,11 +60,31 @@ export default tseslint.config(
 			".svelte-kit",
 			"packages/bits-ui/dist/**/*",
 			"packages/bits-ui/.svelte-kit/**/*",
+			"packages/bits-ui/.bench-baseline/**/*",
 			"tests/.svelte-kit/**/*",
 			"bundle-analyzer/.temp-bundle-analysis/**/*",
 			".tmp/",
 		],
 	},
 	...oxlint.configs["flat/recommended"],
-	...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json")
+	...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json"),
+	{
+		files: ["packages/bits-ui/src/lib/**/*"],
+		// the replacement itself reads toolbelt's markers off a `simpleBox`
+		ignores: ["**/*.test.ts", "packages/bits-ui/src/lib/internal/box.svelte.ts"],
+		rules: {
+			"no-restricted-imports": [
+				"error",
+				{
+					paths: [
+						{
+							name: "svelte-toolbelt",
+							importNames: ["boxWith", "simpleBox"],
+							message: "Use the cheaper `$lib/internal/box.svelte.js` versions.",
+						},
+					],
+				},
+			],
+		},
+	}
 );

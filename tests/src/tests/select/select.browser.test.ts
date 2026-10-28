@@ -30,6 +30,7 @@ import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
 import SelectHighlightCallbacksTest from "./select-highlight-callbacks-test.svelte";
 import SelectExternalValueTest from "./select-external-value-test.svelte";
 import SelectArrowWalkTest from "./select-arrow-walk-test.svelte";
+import SelectUnkeyedItemsTest from "./select-unkeyed-items-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -1825,6 +1826,38 @@ describe("select - value changed from outside while open", () => {
 		await expectSelected(["3", "extra-3"]);
 		await t.rerender({ value: [] });
 		await expectSelected([]);
+	});
+});
+
+describe("select - items whose values change in place", () => {
+	const item = (value: string) =>
+		document.querySelector(`[data-select-item][data-value="${value}"]`) as HTMLElement;
+	const flagged = (attr: string) =>
+		Array.from(document.querySelectorAll(`[data-select-item][${attr}]`)).map((n) =>
+			n.getAttribute("data-value")
+		);
+
+	it("keeps selected and highlighted in sync after unkeyed items swap values", async () => {
+		const t = render(SelectUnkeyedItemsTest, { values: ["a", "b", "c"] });
+		await vi.waitFor(() => expect(flagged("data-selected")).toEqual(["a"]));
+		await t.rerender({ values: ["c", "b", "a"] });
+		await vi.waitFor(() => expect(item("a").textContent?.trim()).toBe("a"));
+
+		for (const value of ["b", "a", "c"]) {
+			await userEvent.hover(item(value));
+			await vi.waitFor(() => expect(flagged("data-highlighted")).toEqual([value]));
+		}
+
+		(page.getByTestId("select-b").element() as HTMLElement).click();
+		await vi.waitFor(() => expect(flagged("data-selected")).toEqual(["b"]));
+		expect(item("a").getAttribute("aria-selected")).toBe("false");
+	});
+
+	it("reflects a value change in `selected` synchronously", async () => {
+		render(SelectUnkeyedItemsTest, { values: ["a", "b"] });
+		await vi.waitFor(() => expect(flagged("data-selected")).toEqual(["a"]));
+		(page.getByTestId("select-b").element() as HTMLElement).click();
+		await expect.element(page.getByTestId("observed")).toHaveTextContent("false");
 	});
 });
 

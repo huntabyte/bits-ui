@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import { type DateValue } from "@internationalized/date";
 	import { CalendarRootState } from "../calendar.svelte.js";

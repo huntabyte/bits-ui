@@ -1,5 +1,6 @@
 import {
 	isBox,
+	isWritableBox,
 	simpleBox as toolbeltSimpleBox,
 	type ReadableBox,
 	type WritableBox,
@@ -8,8 +9,19 @@ import {
 // svelte-toolbelt doesn't export its marker symbols; read them off a box so `isBox` /
 // `isWritableBox` (and toolbelt's own `attachRef`) recognise these boxes too.
 const markers = Object.getOwnPropertySymbols(toolbeltSimpleBox(null));
-const BOX = markers.find((s) => isBox({ [s]: true }))!;
-const WRITABLE = markers.find((s) => s !== BOX)!;
+const BOX = markers.find((s) => isBox({ [s]: true }));
+const WRITABLE = markers.find((s) => s !== BOX);
+// fail loudly at import if toolbelt changes how it marks boxes, rather than silently
+// producing boxes it doesn't recognise
+if (
+	markers.length !== 2 ||
+	!BOX ||
+	!WRITABLE ||
+	!isWritableBox({ [BOX]: true, [WRITABLE]: true }) ||
+	isWritableBox({ [BOX]: true })
+) {
+	throw new Error("bits-ui: unrecognised svelte-toolbelt box markers");
+}
 
 class ReadonlyGetterBox<T> {
 	readonly #getter: () => T;

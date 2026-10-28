@@ -108,6 +108,7 @@
 		".svelte-kit",
 		"packages/bits-ui/dist/**/*",
 		"packages/bits-ui/.svelte-kit/**/*",
+		"packages/bits-ui/.bench-baseline/**/*",
 		"tests/.svelte-kit/**/*",
 		"bundle-analyzer/.temp-bundle-analysis/**/*"
 	],

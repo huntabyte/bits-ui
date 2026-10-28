@@ -2,14 +2,13 @@ import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import {
 	type WritableBox,
-	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
-	simpleBox,
 } from "svelte-toolbelt";
+import { boxWith, simpleBox } from "$lib/internal/box.svelte.js";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
@@ -159,7 +158,8 @@ const SEGMENT_CONFIGS: Record<
 const DateFieldRootContext = new Context<DateFieldRootState>("DateField.Root");
 
 interface DateFieldRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			value: DateValue | undefined;
 			placeholder: DateValue;
 		}>,
@@ -756,7 +756,8 @@ export class DateFieldRootState {
 }
 
 interface DateFieldInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			name: string;
 		}> {}

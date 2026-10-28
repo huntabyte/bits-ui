@@ -1,12 +1,12 @@
 import type { Time } from "@internationalized/date";
 import {
-	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { TimeFieldRootState } from "../time-field/time-field.svelte.js";
 import { TimeFieldInputState } from "../time-field/time-field.svelte.js";
@@ -39,7 +39,8 @@ export const TimeRangeFieldRootContext = new Context<TimeRangeFieldRootState>(
 );
 
 interface TimeRangeFieldRootStateOpts<T extends TimeValue = Time>
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: TimeRange<T>;
 			placeholder: TimeValue;
@@ -282,7 +283,8 @@ export class TimeRangeFieldLabelState {
 }
 
 interface TimeRangeFieldInputStateOpts<T extends TimeValue = Time>
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			value: T | undefined;
 		}>,
 		ReadableBoxedValues<{

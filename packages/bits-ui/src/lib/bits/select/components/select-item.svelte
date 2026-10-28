@@ -35,13 +35,22 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
+
+	const snippetProps = {
+		get selected() {
+			return itemState.selectedNow;
+		},
+		get highlighted() {
+			return itemState.isHighlighted;
+		},
+	};
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, ...itemState.snippetProps })}
+	{@render child({ props: mergedProps, ...snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.(itemState.snippetProps)}
+		{@render children?.(snippetProps)}
 	</div>
 {/if}
 

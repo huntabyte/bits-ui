@@ -112,6 +112,7 @@ class ValueFlag {
  */
 class ValueFlags {
 	readonly #flags = new Map<string, ValueFlag>();
+	readonly #released = new Set<string>();
 
 	get(value: string) {
 		return this.#flags.get(value);
@@ -133,8 +134,21 @@ class ValueFlags {
 		const retained = flag;
 		return () => {
 			if (--retained.refs > 0) return;
-			if (this.#flags.get(value) === retained) this.#flags.delete(value);
+			if (this.#released.size === 0) queueMicrotask(() => this.#prune());
+			this.#released.add(value);
 		};
+	}
+
+	/**
+	 * Unretained flags are dropped after the flush, not on release: an item whose value
+	 * changes reads its new value's flag before its watcher retains it, so a flag released
+	 * in between (say, by an item swapping values with it) must still be the one it retains.
+	 */
+	#prune() {
+		for (const value of this.#released) {
+			if (this.#flags.get(value)?.refs === 0) this.#flags.delete(value);
+		}
+		this.#released.clear();
 	}
 }
 
@@ -238,6 +252,12 @@ abstract class SelectBaseRootState {
 		const flag = this.#highlightFlags.get(value);
 		return flag ? flag.current : this.highlightedValue === value;
 	}
+
+	/**
+	 * Whether the value changed since the subclass last synced `selectedFlags` to it, which
+	 * it does in a `$effect.pre`. Untracked, so it doesn't subscribe every item to the value.
+	 */
+	abstract selectedFlagsStale(): boolean;
 
 	isValueSelected(value: string) {
 		const flag = this.selectedFlags.get(value);
@@ -400,6 +420,9 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		return true;
 	});
 
+	/** The value `selectedFlags` was last synced to. */
+	#syncedValue: string;
+
 	constructor(opts: SelectSingleRootStateOpts) {
 		super(opts);
 
@@ -427,14 +450,18 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		);
 
 		// runs before the items render, so they see the flags already moved
-		let syncedValue = untrack(() => this.opts.value.current);
+		this.#syncedValue = untrack(() => this.opts.value.current);
 		$effect.pre(() => {
 			const value = this.opts.value.current;
-			if (value === syncedValue) return;
-			this.selectedFlags.set(syncedValue, false);
+			if (value === this.#syncedValue) return;
+			this.selectedFlags.set(this.#syncedValue, false);
 			this.selectedFlags.set(value, true);
-			syncedValue = value;
+			this.#syncedValue = value;
 		});
+	}
+
+	selectedFlagsStale() {
+		return untrack(() => this.opts.value.current) !== this.#syncedValue;
 	}
 
 	includesItem(itemValue: string) {
@@ -485,6 +512,9 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	 */
 	readonly #valueSet = $derived.by(() => new Set(this.opts.value.current));
 
+	/** The values `selectedFlags` were last synced to. */
+	#syncedValues: Set<string>;
+
 	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
 
@@ -512,18 +542,23 @@ class SelectMultipleRootState extends SelectBaseRootState {
 		);
 
 		// runs before the items render, so they see the flags already moved
-		let syncedValues = untrack(() => this.#valueSet);
+		this.#syncedValues = untrack(() => this.#valueSet);
 		$effect.pre(() => {
 			const values = this.#valueSet;
-			if (values === syncedValues) return;
-			for (const value of syncedValues) {
+			const synced = this.#syncedValues;
+			if (values === synced) return;
+			for (const value of synced) {
 				if (!values.has(value)) this.selectedFlags.set(value, false);
 			}
 			for (const value of values) {
-				if (!syncedValues.has(value)) this.selectedFlags.set(value, true);
+				if (!synced.has(value)) this.selectedFlags.set(value, true);
 			}
-			syncedValues = values;
+			this.#syncedValues = values;
 		});
+	}
+
+	selectedFlagsStale() {
+		return untrack(() => this.#valueSet) !== this.#syncedValues;
 	}
 
 	includesItem(itemValue: string) {
@@ -1498,10 +1533,16 @@ export class SelectItemState {
 		}
 	}
 
-	snippetProps = $derived.by(() => ({
-		selected: this.isSelected,
-		highlighted: this.isHighlighted,
-	}));
+	/**
+	 * `isSelected`, also right after a value change: it reads flags that catch up with the
+	 * value in a `$effect.pre`, so a read before that (say, in the event handler that changed
+	 * the value) checks the value itself. For the snippet props, which consumers can read
+	 * outside a render.
+	 */
+	get selectedNow() {
+		if (!this.root.selectedFlagsStale()) return this.isSelected;
+		return this.root.includesItem(this.opts.value.current);
+	}
 
 	onpointerdown(e: BitsPointerEvent) {
 		// prevent focus from leaving the input/select trigger

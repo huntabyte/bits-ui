@@ -1,10 +1,10 @@
 import {
 	afterTick,
 	attachRef,
-	boxWith,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import {
 	createBitsAttrs,
@@ -34,7 +34,8 @@ const collapsibleAttrs = createBitsAttrs({
 });
 
 interface CollapsibleRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			open: boolean;
 		}>,
@@ -87,7 +88,8 @@ export class CollapsibleRootState {
 }
 
 interface CollapsibleContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
 			hiddenUntilFound: boolean;
@@ -204,7 +206,8 @@ export class CollapsibleContentState {
 }
 
 interface CollapsibleTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean | null | undefined;
 		}> {}

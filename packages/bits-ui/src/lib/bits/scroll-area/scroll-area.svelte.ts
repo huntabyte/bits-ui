@@ -8,13 +8,13 @@
 import { Context, useDebounce, watch } from "runed";
 import { untrack } from "svelte";
 import {
-	simpleBox,
 	executeCallbacks,
 	attachRef,
 	DOMContext,
 	getWindow,
 	type ReadableBoxedValues,
 } from "svelte-toolbelt";
+import { simpleBox } from "$lib/internal/box.svelte.js";
 import type { ScrollAreaType } from "./types.js";
 import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
@@ -54,7 +54,8 @@ interface Sizes {
 }
 
 interface ScrollAreaRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			dir: Direction;
 			type: ScrollAreaType;
@@ -156,7 +157,8 @@ export class ScrollAreaViewportState {
 }
 
 interface ScrollAreaScrollbarStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			orientation: Orientation;
 		}> {}
@@ -821,7 +823,8 @@ export class ScrollAreaScrollbarSharedState {
 }
 
 interface ScrollAreaThumbImplStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			mounted: boolean;
 		}> {}

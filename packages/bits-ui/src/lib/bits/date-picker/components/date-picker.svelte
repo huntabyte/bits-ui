@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Date Picker composes the DateField, Popover, and Calendar components
 	import { watch } from "runed";
-	import { boxWith } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import type { DateValue } from "@internationalized/date";
 	import { DatePickerRootState } from "../date-picker.svelte.js";

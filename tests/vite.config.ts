@@ -5,21 +5,30 @@ import { defineConfig } from "vite";
 import type { Plugin } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
 
 const srcLib = fileURLToPath(new URL("../packages/bits-ui/src/lib", import.meta.url));
 
 /**
  * Resolves `bits-ui` (and its internal `$lib/*` imports) to source at `lib` instead of `dist`.
  * SvelteKit's `$lib` alias runs first and points at this package's `src/lib`, so undo that
- * for imports coming from inside `lib`.
+ * for imports coming from inside `lib`. Tests that import a `dist` module by path (to spy on
+ * a state class) get the matching source module, so they see the instances components use.
  */
 const testsLib = fileURLToPath(new URL("./src/lib/", import.meta.url));
+const dist = fileURLToPath(new URL("../packages/bits-ui/dist/", import.meta.url));
 function bitsUiSource(lib: string): Plugin {
 	return {
 		name: "bits-ui-source",
 		enforce: "pre",
 		resolveId(id, importer) {
 			if (id === "bits-ui") return `${lib}/index.ts`;
+			if (importer && id.startsWith(".")) {
+				const path = resolve(dirname(importer), id);
+				if (path.startsWith(dist)) {
+					return `${lib}/${path.slice(dist.length).replace(/\.js$/, ".ts")}`;
+				}
+			}
 			if (!importer?.startsWith(lib)) return;
 			const rest = id.startsWith("$lib/")
 				? id.slice(5)

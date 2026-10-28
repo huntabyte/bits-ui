@@ -1,12 +1,12 @@
 import type { DateValue } from "@internationalized/date";
 import {
-	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
+import { boxWith } from "$lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { DateFieldInputState, DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { useId } from "$lib/internal/use-id.js";
@@ -34,7 +34,8 @@ export const DateRangeFieldRootContext = new Context<DateRangeFieldRootState>(
 );
 
 interface DateRangeFieldRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateRange;
 			placeholder: DateValue;
@@ -260,7 +261,8 @@ export class DateRangeFieldLabelState {
 }
 
 interface DateRangeFieldInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateValue | undefined;
 		}>,

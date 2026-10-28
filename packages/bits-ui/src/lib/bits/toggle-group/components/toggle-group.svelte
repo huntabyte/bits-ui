@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { type WritableBox } from "svelte-toolbelt";
+	import { boxWith } from "$lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupRootProps } from "../types.js";

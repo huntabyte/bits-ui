@@ -17,6 +17,7 @@ package.json
 .contentlayer
 .velite
 **/dist
+**/.bench-baseline
 
 CHANGELOG.md
 pnpm-workspace.yaml
