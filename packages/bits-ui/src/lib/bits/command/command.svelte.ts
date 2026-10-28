@@ -511,6 +511,7 @@ export class CommandRootState {
 						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
 
 					if (closestGroupHeader) {
+						item.scrollIntoView({ block: "nearest" });
 						closestGroupHeader.scrollIntoView({ block: "nearest" });
 						return;
 					}
