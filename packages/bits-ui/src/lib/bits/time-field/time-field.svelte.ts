@@ -85,7 +85,7 @@ interface SegmentConfig {
 	padZero?: boolean;
 }
 
-const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
+const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second" | "millisecond", SegmentConfig> = {
 	hour: {
 		min: (root) => (root.hourCycle === 12 ? 1 : 0),
 		max: (root) => {
@@ -112,6 +112,13 @@ const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 		canBeZero: true,
 		padZero: true,
 	},
+	millisecond: {
+		min: 0,
+		max: 999,
+		cycle: 1,
+		canBeZero: true,
+		padZero: true,
+	},
 };
 
 export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
@@ -127,7 +134,7 @@ export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
 			maxValue: TimeValue | undefined;
 			disabled: boolean;
 			readonly: boolean;
-			granularity: "hour" | "minute" | "second" | undefined;
+			granularity: "hour" | "minute" | "second" | "millisecond" | undefined;
 			hourCycle: HourCycle | undefined;
 			locale: string;
 			hideTimeZone: boolean;
@@ -301,17 +308,13 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	}
 
 	#initializeTimeSegmentValues(): TimeSegmentObj {
-		const granularity = this.inferredGranularity;
 		const segments: TimeSegmentObj = {
 			hour: null,
 			minute: null,
 			second: null,
+			millisecond: null,
 			dayPeriod: "AM",
 		};
-
-		if (granularity === "second") {
-			segments.second = null;
-		}
 
 		if (this.hourCycle === 24) {
 			segments.dayPeriod = null;
@@ -341,6 +344,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		this.states.hour.updating = null;
 		this.states.minute.updating = null;
 		this.states.second.updating = null;
+		this.states.millisecond.updating = null;
 		this.states.dayPeriod.updating = null;
 	}
 
@@ -382,43 +386,19 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 	}
 
 	syncSegmentValues(value: TimeValue) {
+		const padZeros = (input: number, len: number) => String(input).padStart(len, '0');
+
 		const timeValues = EDITABLE_TIME_SEGMENT_PARTS.map((part) => {
-			if (part === "dayPeriod") {
-				if (this.states.dayPeriod.updating) {
-					return [part, this.states.dayPeriod.updating];
-				} else {
-					return [part, this.formatter.dayPeriod(toDate(this.#toDateValue(value)))];
-				}
-			} else if (part === "hour") {
-				if (this.states.hour.updating) {
-					return [part, this.states.hour.updating];
-				}
-
-				if (value[part] !== undefined && value[part] < 10) {
-					return [part, `0${value[part]}`];
-				}
-
-				if (value[part] === 0 && this.dayPeriodNode) {
-					return [part, "12"];
-				}
-			} else if (part === "minute") {
-				if (this.states.minute.updating) {
-					return [part, this.states.minute.updating];
-				}
-
-				if (value[part] !== undefined && value[part] < 10) {
-					return [part, `0${value[part]}`];
-				}
-			} else if (part === "second") {
-				if (this.states.second.updating) {
-					return [part, this.states.second.updating];
-				}
-
-				if (value[part] !== undefined && value[part] < 10) {
-					return [part, `0${value[part]}`];
-				}
+			if (this.states[part].updating) {
+				return [part, this.states[part].updating];
 			}
-			return [part, `${value[part]}`];
+
+			if (part === "dayPeriod") {
+				return [part, this.formatter.dayPeriod(toDate(this.#toDateValue(value)))];
+			} else if (part === "millisecond") {
+				return [part, padZeros(value[part], 3)];
+			}
+			return [part, padZeros(value[part], 2)];
 		});
 
 		this.segmentValues = Object.fromEntries(timeValues);
@@ -550,13 +530,9 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 				}
 			}
 			newSegmentValues = { ...prev, [part]: next };
-		} else if (part === "minute") {
-			const next = cb(prev[part]) as TimeSegmentObj["minute"];
-			this.states.minute.updating = next;
-			newSegmentValues = { ...prev, [part]: next };
-		} else if (part === "second") {
-			const next = cb(prev[part]) as TimeSegmentObj["second"];
-			this.states.second.updating = next;
+		} else { // minute | second | millisecond
+			const next = cb(prev[part]);
+			this.states[part].updating = next;
 			newSegmentValues = { ...prev, [part]: next };
 		}
 
@@ -736,6 +712,8 @@ abstract class BaseTimeSegmentState {
 	readonly part: string;
 	readonly config: SegmentConfig;
 	readonly attachment: RefAttachment;
+	readonly digitCount: number;
+	#pressedKeysCount = 0;
 
 	constructor(opts: WithRefOpts, root: TimeFieldRootState, part: string, config: SegmentConfig) {
 		this.opts = opts;
@@ -746,6 +724,7 @@ abstract class BaseTimeSegmentState {
 		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onfocusout = this.onfocusout.bind(this);
+		this.digitCount = String(this.#getMax()).length;
 	}
 
 	#getMax(): number {
@@ -756,12 +735,26 @@ abstract class BaseTimeSegmentState {
 		return typeof this.config.min === "function" ? this.config.min(this.root) : this.config.min;
 	}
 
-	#formatValue(value: number, forDisplay = true): string {
-		const str = String(value);
-		if (forDisplay && this.config.padZero && str.length === 1) {
-			return `0${value}`;
+	#formatValue(value: number): string {
+		if (this.config.padZero) {
+			return padZeros(value, this.digitCount);
+		} else {
+			return String(value);
 		}
-		return str;
+	}
+
+	#resetPressedKeysCount() {
+		this.#pressedKeysCount = 0;
+	}
+
+	#incrementPressedKeysCount() {
+		this.#pressedKeysCount++;
+	}
+
+	#decrementPressedKeysCount() {
+		if (this.#pressedKeysCount > 0) {
+			this.#pressedKeysCount--;
+		}
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
@@ -843,6 +836,7 @@ abstract class BaseTimeSegmentState {
 	}
 
 	#handleNumberKey(e: BitsKeyboardEvent) {
+		this.#incrementPressedKeysCount();
 		const num = Number.parseInt(e.key);
 		let moveToNext = false;
 		const max = this.#getMax();
@@ -877,9 +871,9 @@ abstract class BaseTimeSegmentState {
 					this.root.states[stateKey].lastKeyZero = false;
 				}
 
-				if (moveToNext && String(num).length === 1) {
+				if (moveToNext && String(num).length < this.digitCount) {
 					this.announcer.announce(num);
-					return `0${num}`;
+					return padZeros(num, this.digitCount);
 				}
 
 				return `${num}`;
@@ -889,7 +883,7 @@ abstract class BaseTimeSegmentState {
 				if (num !== 0) {
 					moveToNext = true;
 					this.root.states[stateKey].lastKeyZero = false;
-					return `0${num}`;
+					return padZeros(num, this.digitCount);
 				}
 
 				if (this.part === "hour" && num === 0 && this.root.hourCycle === 24) {
@@ -911,19 +905,21 @@ abstract class BaseTimeSegmentState {
 
 			if (total > max) {
 				moveToNext = true;
-				return `0${num}`;
+				return padZeros(num, this.digitCount);
 			}
 
-			moveToNext = true;
+			moveToNext = this.#pressedKeysCount >= this.digitCount;
 			return `${total}`;
 		});
 
 		if (moveToNext) {
+			this.#pressedKeysCount = 0;
 			moveToNextTimeSegment(e, this.root.getFieldNode());
 		}
 	}
 
 	#handleBackspace(e: BitsKeyboardEvent) {
+		this.#decrementPressedKeysCount();
 		const stateKey = this.part as keyof typeof this.root.states;
 		if (stateKey in this.root.states) {
 			this.root.states[stateKey].hasLeftFocus = false;
@@ -938,23 +934,23 @@ abstract class BaseTimeSegmentState {
 				return null;
 			}
 
-			if (prev.length === 2 && prev.startsWith("0")) {
+			if (prev.length === this.digitCount && prev.startsWith("0".repeat(this.digitCount - 1))) {
 				this.announcer.announce(null);
 				return null;
 			}
 
-			const str = prev.toString();
-			if (str.length === 1) {
+			if (prev.length === 1) {
 				this.announcer.announce(null);
 				return null;
 			}
 
-			const next = Number.parseInt(str.slice(0, -1));
+			const next = Number.parseInt(prev.slice(0, -1));
 			this.announcer.announce(String(next));
 			return `${next}`;
 		});
 
 		if (moveToPrev) {
+			this.#resetPressedKeysCount();
 			moveToPrevTimeSegment(e, this.root.getFieldNode());
 		}
 	}
@@ -969,8 +965,8 @@ abstract class BaseTimeSegmentState {
 		if (this.config.padZero) {
 			// @ts-expect-error this is a part
 			this.root.updateSegment(this.part, (prev: string | null) => {
-				if (prev && prev.length === 1) {
-					return `0${prev}`;
+				if (prev && prev.length < this.digitCount) {
+					return padZeros(prev, this.digitCount);
 				}
 				return prev;
 			});
@@ -1050,6 +1046,12 @@ class TimeFieldMinuteSegmentState extends BaseTimeSegmentState {
 class TimeFieldSecondSegmentState extends BaseTimeSegmentState {
 	constructor(opts: WithRefOpts, root: TimeFieldRootState) {
 		super(opts, root, "second", SEGMENT_CONFIGS.second);
+	}
+}
+
+class TimeFieldMillisecondSegmentState extends BaseTimeSegmentState {
+	constructor(opts: WithRefOpts, root: TimeFieldRootState) {
+		super(opts, root, "millisecond", SEGMENT_CONFIGS.millisecond);
 	}
 }
 
@@ -1228,6 +1230,8 @@ export class DateFieldSegmentState {
 				return new TimeFieldMinuteSegmentState(opts, root);
 			case "second":
 				return new TimeFieldSecondSegmentState(opts, root);
+			case "millisecond":
+				return new TimeFieldMillisecondSegmentState(opts, root);
 			case "dayPeriod":
 				return new TimeFieldDayPeriodSegmentState(opts, root);
 			case "literal":
@@ -1261,4 +1265,8 @@ function isArrowDown(key: string) {
 
 function isBackspace(key: string) {
 	return key === kbd.BACKSPACE;
+}
+
+function padZeros(input: number | string, targetLength: number) {
+	return String(input).padStart(targetLength, "0");
 }

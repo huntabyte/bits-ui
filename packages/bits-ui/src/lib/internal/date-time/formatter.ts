@@ -14,6 +14,7 @@ const defaultPartOptions: Intl.DateTimeFormatOptions = {
 	hour: "numeric",
 	minute: "numeric",
 	second: "numeric",
+	fractionalSecondDigits: 3,
 };
 
 type CreateFormatterOptions = {

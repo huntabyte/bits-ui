@@ -368,7 +368,7 @@ The strings are then passed to the `onInvalid` callback, which you can use to di
 
 ## Granularity
 
-The `granularity` prop sets the granularity of the date field, which determines which segments are rendered in the date field. The `granularity` can be set to either `'hour'`, `'minute'`, or `'second'` and defaults to `'minute'`.
+The `granularity` prop sets the granularity of the date field, which determines which segments are rendered in the date field. The `granularity` can be set to either `'hour'`, `'minute'`, `'second'`, or `'millisecond'` and defaults to `'minute'`.
 
 ```svelte
 <script lang="ts">

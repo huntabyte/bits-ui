@@ -1,5 +1,5 @@
 export const DATE_SEGMENT_PARTS = ["day", "month", "year"] as const;
-export const EDITABLE_TIME_SEGMENT_PARTS = ["hour", "minute", "second", "dayPeriod"] as const;
+export const EDITABLE_TIME_SEGMENT_PARTS = ["hour", "minute", "second", "millisecond", "dayPeriod"] as const;
 export const NON_EDITABLE_SEGMENT_PARTS = ["literal", "timeZoneName"] as const;
 export const EDITABLE_SEGMENT_PARTS = [
 	...DATE_SEGMENT_PARTS,
