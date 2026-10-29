@@ -7,6 +7,7 @@
 		subRadio?: string;
 		open?: boolean;
 		group?: string[];
+		triggerProps?: Omit<DropdownMenu.TriggerProps, "children" | "child">;
 		contentProps?: Omit<DropdownMenu.ContentProps, "children" | "child">;
 		subContentProps?: Omit<DropdownMenu.SubContentProps, "children" | "child">;
 		portalProps?: Omit<DropdownMenu.PortalProps, "children" | "child">;
@@ -25,6 +26,7 @@
 		group = [],
 		subRadio = "",
 		open = false,
+		triggerProps = {},
 		contentProps = {},
 		subContentProps = {},
 		portalProps = {},
@@ -46,6 +48,7 @@
 				class="h-[500px] w-[500px]"
 				aria-expanded={undefined}
 				aria-controls={undefined}
+				{...triggerProps}
 			>
 				open
 			</DropdownMenu.Trigger>

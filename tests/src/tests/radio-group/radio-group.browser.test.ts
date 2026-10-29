@@ -261,6 +261,15 @@ describe("Input Behavior", () => {
 		await expect.element(t.input).toHaveAttribute("disabled");
 	});
 
+	it("should focus the first item when the required input is invalid and the item's id isn't a valid CSS identifier", async () => {
+		const t = setup({ name: "radio-group", required: true }, [
+			{ value: "1", disabled: false },
+			{ value: "2", disabled: false },
+		]);
+		t.input.reportValidity();
+		await expect.element(page.getByTestId("1-item")).toHaveFocus();
+	});
+
 	it("should not automatically select the first item focused when the radio group does not have a value", async () => {
 		const t = setup({ name: "radio-group" });
 
