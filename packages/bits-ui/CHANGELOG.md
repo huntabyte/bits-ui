@@ -1,5 +1,19 @@
 # bits-ui
 
+## 2.20.3
+
+### Patch Changes
+
+- fix(Calendar/RangeCalendar): keep the weekday when `ArrowUp`/`ArrowDown` crosses the month edge with disabled days ([#2249](https://github.com/huntabyte/bits-ui/pull/2249))
+
+- fix(Command): scroll the first item of a group into view along with its heading, so arrowing down onto it no longer leaves the item hidden below the list ([#2252](https://github.com/huntabyte/bits-ui/pull/2252))
+
+- fix(ScrollArea): cancel the pending scroll-end timers and stop the thumb's scroll loop on unmount, so `type="scroll"` no longer keeps detached instances alive after unmount ([#2261](https://github.com/huntabyte/bits-ui/pull/2261))
+
+- fix(Menu): keep positioning props such as `align` and `side` off the sub content element, where `align` is the HTML attribute that aligns text ([#2248](https://github.com/huntabyte/bits-ui/pull/2248))
+
+- fix(Tooltip): don't open on the focus that follows a tap, which left the tooltip over a menu opened from the same trigger ([#2245](https://github.com/huntabyte/bits-ui/pull/2245))
+
 ## 2.20.2
 
 ### Patch Changes
