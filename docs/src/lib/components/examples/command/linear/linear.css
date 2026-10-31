@@ -75,7 +75,7 @@
 		transition-property: none;
 		position: relative;
 
-		&[data-selected] {
+		&[data-highlighted] {
 			background: var(--gray3);
 
 			svg {

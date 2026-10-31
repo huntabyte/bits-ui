@@ -231,7 +231,7 @@
 			height: 14px;
 		}
 
-		&[data-selected] {
+		&[data-highlighted] {
 			color: var(--gray12);
 
 			&:hover .activeTheme {

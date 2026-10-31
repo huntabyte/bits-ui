@@ -466,7 +466,7 @@ export class CommandRootState {
 		const node = this.opts.ref.current;
 		if (!node) return;
 		const selectedNode = node.querySelector<HTMLElement>(
-			`${COMMAND_VALID_ITEM_SELECTOR}[data-selected]`
+			`${COMMAND_VALID_ITEM_SELECTOR}[data-highlighted]`
 		);
 		if (!selectedNode) return;
 		return selectedNode;
@@ -1510,7 +1510,7 @@ export class CommandItemState {
 				"aria-disabled": boolToStr(this.opts.disabled.current),
 				"aria-selected": boolToStr(this.isSelected),
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
-				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
+				"data-highlighted": boolToEmptyStrOrUndef(this.isSelected),
 				"data-value": this.trueValue,
 				"data-group": this.#group?.trueValue,
 				[commandAttrs.item]: "",
