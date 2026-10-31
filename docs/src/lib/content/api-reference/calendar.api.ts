@@ -12,6 +12,8 @@ import type {
 	CalendarNextButtonPropsWithoutHTML,
 	CalendarPrevButtonPropsWithoutHTML,
 	CalendarRootPropsWithoutHTML,
+	CalendarWeekNumberCellPropsWithoutHTML,
+	CalendarWeekNumberHeadCellPropsWithoutHTML,
 	CalendarYearSelectPropsWithoutHTML,
 } from "bits-ui";
 import {
@@ -139,6 +141,11 @@ export const root = defineComponentApiSchema<CalendarRootPropsWithoutHTML>({
 		}),
 		fixedWeeks: defineBooleanProp({
 			description: "Whether or not to always display 6 weeks in the calendar.",
+			default: false,
+		}),
+		showWeekNumbers: defineBooleanProp({
+			description:
+				"Whether or not to display ISO 8601 week numbers. When enabled, include `<Calendar.WeekNumberHeadCell>` in the grid head row and `<Calendar.WeekNumberCell week={weekDates} />` as the first child of each body grid row.",
 			default: false,
 		}),
 		isDateDisabled: defineFunctionProp({
@@ -584,6 +591,68 @@ export function createCalendarYearSelectSchema(isRange: boolean) {
 
 export const yearSelect = createCalendarYearSelectSchema(false);
 
+export function createCalendarWeekNumberCellSchema(isRange: boolean) {
+	return defineComponentApiSchema<CalendarWeekNumberCellPropsWithoutHTML>({
+		title: "WeekNumberCell",
+		description:
+			"A table cell that displays the ISO 8601 week number for its row. Only renders when `showWeekNumbers` is enabled on the root.",
+		props: {
+			week: defineSimplePropSchema({
+				type: "DateValue[]",
+				description:
+					"The dates for the week row, passed from the `{#each month.weeks as weekDates}` loop. The ISO week number is derived from the first day of the array.",
+				required: true,
+			}),
+			...withChildProps({ elType: "HTMLTableCellElement" }),
+		},
+		dataAttributes: [
+			defineSimpleDataAttr({
+				name: "disabled",
+				description: "Present on the week number cell element when the calendar is disabled.",
+			}),
+			defineSimpleDataAttr({
+				name: "readonly",
+				description: "Present on the week number cell element when the calendar is readonly.",
+			}),
+			defineSimpleDataAttr({
+				name: isRange ? "range-calendar-week-number-cell" : "calendar-week-number-cell",
+				description: "Present on the week number cell element.",
+			}),
+		],
+	});
+}
+
+export const weekNumberCell = createCalendarWeekNumberCellSchema(false);
+
+export function createCalendarWeekNumberHeadCellSchema(isRange: boolean) {
+	return defineComponentApiSchema<CalendarWeekNumberHeadCellPropsWithoutHTML>({
+		title: "WeekNumberHeadCell",
+		description:
+			"A table header cell for the week number column. Only renders when `showWeekNumbers` is enabled on the root. Place this as the first child of the `GridRow` inside `GridHead`.",
+		props: withChildProps({ elType: "HTMLTableCellElement" }),
+		dataAttributes: [
+			defineSimpleDataAttr({
+				name: "disabled",
+				description:
+					"Present on the week number head cell element when the calendar is disabled.",
+			}),
+			defineSimpleDataAttr({
+				name: "readonly",
+				description:
+					"Present on the week number head cell element when the calendar is readonly.",
+			}),
+			defineSimpleDataAttr({
+				name: isRange
+					? "range-calendar-week-number-head-cell"
+					: "calendar-week-number-head-cell",
+				description: "Present on the week number head cell element.",
+			}),
+		],
+	});
+}
+
+export const weekNumberHeadCell = createCalendarWeekNumberHeadCellSchema(false);
+
 export const calendar = [
 	root,
 	header,
@@ -597,6 +666,8 @@ export const calendar = [
 	gridHead,
 	gridRow,
 	headCell,
+	weekNumberCell,
+	weekNumberHeadCell,
 	monthSelect,
 	yearSelect,
 ];
