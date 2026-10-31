@@ -1140,12 +1140,7 @@ export class MenuContentState {
 
 	handleInteractOutside(e: PointerEvent) {
 		if (!isElementOrSVGElement(e.target)) return;
-		const triggerId = this.parentMenu.triggerNode?.id;
-		if (e.target.id === triggerId) {
-			e.preventDefault();
-			return;
-		}
-		if (e.target.closest(`#${triggerId}`)) {
+		if (this.parentMenu.triggerNode?.contains(e.target)) {
 			e.preventDefault();
 			return;
 		}

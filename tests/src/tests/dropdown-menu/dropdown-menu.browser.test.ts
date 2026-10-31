@@ -507,6 +507,12 @@ it("should respect the `interactOutsideBehavior` prop - close", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
+it("should close when clicking outside if the trigger's id isn't a valid CSS identifier", async () => {
+	await open({ triggerProps: { id: "1" } });
+	await page.getByTestId("outside").click({ force: true });
+	await expectNotExists(page.getByTestId("content"));
+});
+
 it("should portal to the body if a `portal` prop is not passed", async () => {
 	await open();
 	const content = page.getByTestId("content").element() as HTMLElement;
