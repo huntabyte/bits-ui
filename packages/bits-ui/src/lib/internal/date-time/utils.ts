@@ -70,7 +70,7 @@ export function getDefaultDate(opts: GetDefaultDateProps): DateValue {
 		const year = date.getFullYear();
 		const month = date.getMonth() + 1;
 		const day = date.getDate();
-		const calendarDateTimeGranularities = ["hour", "minute", "second"];
+		const calendarDateTimeGranularities = ["hour", "minute", "second", "millisecond"];
 
 		if (calendarDateTimeGranularities.includes(granularity ?? "day")) {
 			return new CalendarDateTime(year, month, day, 0, 0, 0);
