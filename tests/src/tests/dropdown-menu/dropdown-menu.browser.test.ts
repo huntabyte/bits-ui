@@ -358,6 +358,133 @@ it("should close submenu when pointer intent changes away from submenu", async (
 	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
 });
 
+it("should close submenu soon after the pointer stops moving closer to it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 16 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	for (let i = 0; i < 10; i++) {
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+				clientX: leavePt.x,
+				clientY: leavePt.y,
+			})
+		);
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+	}
+
+	expect(() => t.getSubContent().element()).toThrow();
+});
+
+it("should keep submenu open while the pointer keeps moving closer", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 40 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const y = triggerRect.top + triggerRect.height / 2;
+	// the submenu may flip to either side of the trigger
+	const dir = contentRect.left >= triggerRect.right ? 1 : -1;
+	const startX = dir === 1 ? triggerRect.right + 1 : triggerRect.left - 1;
+	const endX = dir === 1 ? contentRect.left - 2 : contentRect.right + 2;
+	const steps = Math.floor(Math.abs(endX - startX) / 2);
+	expect(steps).toBeGreaterThan(10);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: startX,
+			clientY: y,
+			relatedTarget: subContentEl.parentElement,
+		})
+	);
+
+	// 2px closer every 20ms, staying short of the content, for well over the 100ms window
+	for (let i = 1; i <= steps; i++) {
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+				clientX: startX + dir * i * 2,
+				clientY: y,
+			})
+		);
+		await new Promise<void>((resolve) => setTimeout(resolve, 20));
+	}
+
+	expect(t.getSubContent().element()).toBeTruthy();
+});
+
+it("should close submenu within ~300ms when the pointer leaves and stops", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 16 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(
+		subTriggerEl.getBoundingClientRect(),
+		subContentEl.getBoundingClientRect()
+	);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentEl.parentElement,
+		})
+	);
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+		})
+	);
+
+	await expect
+		.poll(() => document.querySelector("[data-testid='sub-content']"), { timeout: 300 })
+		.toBeNull();
+});
+
 it("should toggle the checkbox item when clicked & respects binding", async () => {
 	const t = await open();
 	const checkedBinding = page.getByTestId("checked-binding");

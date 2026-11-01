@@ -111,6 +111,9 @@ type IntentTarget = "trigger" | "content";
 type Point = { x: number; y: number };
 type Polygon = Point[];
 
+const SUBMENU_INTENT_TIMEOUT_MS = 100;
+const SUBMENU_INTENT_MIN_PROGRESS_PX = 1;
+
 // const SVG_NS = "http://www.w3.org/2000/svg";
 
 interface MenuSubmenuIntentOptions {
@@ -271,6 +274,7 @@ class MenuSubmenuIntent {
 	// #corridor: Polygon | null = null;
 	// #intentPolygon: Polygon | null = null;
 	#launchPoint: Point | null = null;
+	#closestGap: number | null = null;
 
 	constructor(opts: MenuSubmenuIntentOptions) {
 		this.#opts = opts;
@@ -408,6 +412,17 @@ class MenuSubmenuIntent {
 		return isPointInPolygon(pt, corridor) || isPointInPolygon(pt, intent);
 	}
 
+	// only a move that gets closer to the target than ever before counts as intent,
+	// so jitter or drifting sideways doesn't keep extending the safe area
+	#hasMovedCloser(pt: Point, targetRect: DOMRect): boolean {
+		const gap = getDistanceToRect(pt, targetRect);
+		if (this.#closestGap !== null && gap > this.#closestGap - SUBMENU_INTENT_MIN_PROGRESS_PX) {
+			return false;
+		}
+		this.#closestGap = gap;
+		return true;
+	}
+
 	#preview(e: PointerEvent, target: IntentTarget) {
 		const pt = { x: e.clientX, y: e.clientY };
 		const geo = this.#computePolygons(pt, target);
@@ -449,6 +464,7 @@ class MenuSubmenuIntent {
 		this.#active = true;
 		this.#target = target;
 		this.#pointerPoint = pt;
+		this.#closestGap = getDistanceToRect(pt, geo.targetRect);
 		// this.#corridor = geo.corridor;
 		// this.#intentPolygon = geo.intent;
 
@@ -508,6 +524,7 @@ class MenuSubmenuIntent {
 		// this.#corridor = null;
 		// this.#intentPolygon = null;
 		this.#launchPoint = null;
+		this.#closestGap = null;
 		// this.#syncDebug();
 	}
 
@@ -535,7 +552,6 @@ class MenuSubmenuIntent {
 			return;
 		}
 
-		this.#clearFallback();
 		const pt = { x: e.clientX, y: e.clientY };
 		this.#pointerPoint = pt;
 
@@ -566,7 +582,7 @@ class MenuSubmenuIntent {
 		// this.#syncDebug();
 
 		if (this.#isInSafeZone(pt, geo.corridor, geo.intent)) {
-			this.#startFallback();
+			if (this.#hasMovedCloser(pt, geo.targetRect)) this.#startFallback();
 			return;
 		}
 
@@ -593,7 +609,7 @@ class MenuSubmenuIntent {
 		this.#fallbackTimer = setTimeout(() => {
 			this.#fallbackTimer = null;
 			if (this.#active) this.#intentExit();
-		}, 500);
+		}, SUBMENU_INTENT_TIMEOUT_MS);
 	}
 
 	#clearFallback() {
@@ -606,6 +622,7 @@ class MenuSubmenuIntent {
 		this.#target = null;
 		this.#apex = null;
 		this.#pointerPoint = null;
+		this.#closestGap = null;
 		// this.#corridor = null;
 		// this.#intentPolygon = null;
 		// this.#syncDebug();
@@ -662,6 +679,12 @@ function isInsideInsetRect(point: Point, rect: DOMRect, inset: number): boolean 
 		point.y >= rect.top + inset &&
 		point.y <= rect.bottom - inset
 	);
+}
+
+function getDistanceToRect(point: Point, rect: DOMRect): number {
+	const dx = Math.max(rect.left - point.x, 0, point.x - rect.right);
+	const dy = Math.max(rect.top - point.y, 0, point.y - rect.bottom);
+	return Math.hypot(dx, dy);
 }
 
 function getSide(triggerRect: DOMRect, contentRect: DOMRect): PolygonSide {
