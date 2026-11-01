@@ -1,5 +1,30 @@
 # bits-ui
 
+## 2.20.3
+
+### Patch Changes
+
+- fix(Calendar/RangeCalendar): keep the weekday when `ArrowUp`/`ArrowDown` crosses the month edge with disabled days ([#2249](https://github.com/huntabyte/bits-ui/pull/2249))
+
+- fix(Command): scroll the first item of a group into view along with its heading, so arrowing down onto it no longer leaves the item hidden below the list ([#2252](https://github.com/huntabyte/bits-ui/pull/2252))
+
+- fix(DropdownMenu): close on a click outside when the trigger's `id` isn't a valid CSS identifier, such as `"1"` ([#2259](https://github.com/huntabyte/bits-ui/pull/2259))
+
+- Preserve user focus and autofocus callbacks when an already mounted focus scope ([#2264](https://github.com/huntabyte/bits-ui/pull/2264))
+  receives the same container reference again.
+
+- fix(RadioGroup): focus the item on an invalid form submission when its `id` isn't a valid CSS identifier ([#2259](https://github.com/huntabyte/bits-ui/pull/2259))
+
+- fix(ScrollArea): cancel the pending scroll-end timers and stop the thumb's scroll loop on unmount, so `type="scroll"` no longer keeps detached instances alive after unmount ([#2261](https://github.com/huntabyte/bits-ui/pull/2261))
+
+- fix(Menu): keep positioning props such as `align` and `side` off the sub content element, where `align` is the HTML attribute that aligns text ([#2248](https://github.com/huntabyte/bits-ui/pull/2248))
+
+- fix(Menu): only extend the submenu safe area while the pointer moves closer to the submenu. A sibling sub trigger now takes over 100ms after the pointer stops making progress, instead of 500ms after its last move. ([#2192](https://github.com/huntabyte/bits-ui/pull/2192))
+
+- fix(Tooltip): stay open when focusing the trigger scrolls it into view, while later scrolling still closes it ([#2263](https://github.com/huntabyte/bits-ui/pull/2263))
+
+- fix(Tooltip): don't open on the focus that follows a tap, which left the tooltip over a menu opened from the same trigger ([#2245](https://github.com/huntabyte/bits-ui/pull/2245))
+
 ## 2.20.2
 
 ### Patch Changes
