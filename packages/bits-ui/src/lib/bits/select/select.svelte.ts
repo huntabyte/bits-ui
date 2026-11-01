@@ -22,6 +22,7 @@ import {
 	getDataTransitionAttrs,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { isEventTargetWithin } from "$lib/internal/events.js";
 import type {
 	BitsEvent,
 	BitsFocusEvent,
@@ -1181,7 +1182,10 @@ export class SelectContentState {
 	});
 
 	onInteractOutside = (e: PointerEvent) => {
-		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
+		if (
+			isEventTargetWithin(e, this.root.triggerNode) ||
+			isEventTargetWithin(e, this.root.inputNode)
+		) {
 			e.preventDefault();
 			return;
 		}

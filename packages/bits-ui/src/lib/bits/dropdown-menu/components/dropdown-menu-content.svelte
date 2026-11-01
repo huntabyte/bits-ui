@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getEventTargetClosest } from "$lib/internal/events.js";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { DropdownMenuContentProps } from "../types.js";
 	import { MenuContentState } from "$lib/bits/menu/menu.svelte.js";
@@ -46,7 +47,7 @@
 		// don't close if the interaction is with a submenu content or items
 		if (e.target && e.target instanceof Element) {
 			const subContentSelector = `[${contentState.parentMenu.root.getBitsAttr("sub-content")}]`;
-			if (e.target.closest(subContentSelector)) return;
+			if (getEventTargetClosest(e, subContentSelector)) return;
 		}
 		contentState.parentMenu.onClose();
 	}

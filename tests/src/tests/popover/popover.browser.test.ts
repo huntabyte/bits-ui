@@ -1,6 +1,6 @@
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { mount, unmount, flushSync, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
 import PopoverForceMountTest, {
@@ -376,7 +376,9 @@ it("should not pass an invalid `z-index: undefined` in the child snippet's wrapp
 	// read the raw string, since browsers drop the invalid declaration from the DOM style
 	setup({}, PopoverForceMountTest);
 	const text = page.getByTestId("content-text");
-	await expect.element(text).toHaveAttribute("data-wrapper-style", expect.stringContaining("z-index"));
+	await expect
+		.element(text)
+		.toHaveAttribute("data-wrapper-style", expect.stringContaining("z-index"));
 	expect(text.element().getAttribute("data-wrapper-style")).not.toMatch(/z-index:\s*undefined/);
 });
 
@@ -1125,4 +1127,112 @@ describe("openOnHover with forceMount", () => {
 		await t.trigger.click();
 		await expectExists(t.getContent());
 	});
+});
+
+async function runShadowTriggerPress(inShadow: boolean) {
+	const host = document.body.appendChild(document.createElement("div"));
+	const root: ParentNode = inShadow ? host.attachShadow({ mode: "open" }) : host;
+	const app = root.appendChild(document.createElement("div"));
+	const portalTo = root.appendChild(document.createElement("div"));
+	const component = mount(PopoverTest, { target: app, props: { portalProps: { to: portalTo } } });
+	const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await userEvent.click(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		await new Promise((r) => setTimeout(r, 100));
+		// real-user-like press: pointerdown, ~60ms, then click
+		const rect = get("trigger")!.getBoundingClientRect();
+		get("trigger")!.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				composed: true,
+				pointerType: "mouse",
+				button: 0,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+		await new Promise((r) => setTimeout(r, 60));
+		get("trigger")!.click();
+		flushSync();
+		await new Promise((r) => setTimeout(r, 300));
+		return get("content") !== null;
+	} finally {
+		unmount(component);
+		host.remove();
+	}
+}
+
+it("popover light DOM: trigger press closes", async () => {
+	expect(await runShadowTriggerPress(false)).toBe(false);
+});
+
+it("popover shadow DOM: trigger press closes", async () => {
+	expect(await runShadowTriggerPress(true)).toBe(false);
+});
+
+it("shadow outside callback preserves trusted event properties and callable methods", async () => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const root = host.attachShadow({ mode: "open" });
+	const app = root.appendChild(document.createElement("div"));
+	const portalTo = root.appendChild(document.createElement("div"));
+	let observed: { target: EventTarget | null; trusted: boolean; prevented: boolean } | undefined;
+	const component = mount(PopoverTest, {
+		target: app,
+		props: {
+			portalProps: { to: portalTo },
+			contentProps: {
+				onInteractOutside(e) {
+					e.composedPath();
+					e.stopPropagation();
+					e.preventDefault();
+					observed = {
+						target: e.target,
+						trusted: e.isTrusted,
+						prevented: e.defaultPrevented,
+					};
+				},
+			},
+		},
+	});
+	const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await userEvent.click(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		await userEvent.click(get("outside")!);
+		await vi.waitFor(() => expect(observed).toBeDefined());
+		expect(observed!.target).toBe(host);
+		expect(observed!.prevented).toBe(true);
+		expect(observed!.trusted).toBe(true);
+		expect(get("content")).not.toBeNull();
+	} finally {
+		await unmount(component);
+		host.remove();
+	}
+});
+
+it("trigger containing a shadow-root child closes the popover on press", async () => {
+	const t = render(PopoverTest);
+	const trigger = t.getByTestId("trigger").element() as HTMLElement;
+	const icon = trigger.appendChild(document.createElement("span"));
+	const child = icon.attachShadow({ mode: "open" }).appendChild(document.createElement("span"));
+	child.textContent = "icon";
+	await userEvent.click(trigger);
+	await expect.element(t.getByTestId("content")).toBeVisible();
+	await new Promise((r) => setTimeout(r, 100));
+	const rect = child.getBoundingClientRect();
+	child.dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			composed: true,
+			pointerType: "mouse",
+			button: 0,
+			clientX: rect.left + rect.width / 2,
+			clientY: rect.top + rect.height / 2,
+		})
+	);
+	await new Promise((r) => setTimeout(r, 60));
+	child.click();
+	await new Promise((r) => setTimeout(r, 300));
+	expect(document.querySelector('[data-testid="content"]')).toBeNull();
 });

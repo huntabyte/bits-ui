@@ -1,5 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
+import { mount, unmount } from "svelte";
 import NavigationMenuTest, { type NavigationMenuTestProps } from "./navigation-menu-test.svelte";
 import NavigationMenuForceMountTest from "./navigation-menu-force-mount-test.svelte";
 import { getTestKbd } from "../utils";
@@ -400,3 +401,58 @@ it("should return focus to the open item's trigger on escape when contents are f
 	await expect.element(page.getByTestId("one-content")).toHaveAttribute("data-state", "closed");
 	await expect.element(page.getByTestId("one-trigger")).toHaveFocus();
 });
+
+it.each([
+	[false, "trigger"],
+	[true, "trigger"],
+	[false, "viewport"],
+	[true, "viewport"],
+	[false, "outside"],
+	[true, "outside"],
+] as const)(
+	"pointerdown respects click-only navigation menu boundaries (shadow: %s, target: %s)",
+	async (inShadow, pressTarget) => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const root = inShadow ? host.attachShadow({ mode: "open" }) : host;
+		const app = root.appendChild(document.createElement("div"));
+		const component = mount(NavigationMenuTest, {
+			target: app,
+			props: { value: "group", groupItemProps: { openOnHover: false } },
+		});
+		const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		try {
+			await vi.waitFor(() => expect(get("viewport")).not.toBeNull());
+			await sleep(100);
+			const trigger = get("group-item-trigger")!;
+			const target =
+				pressTarget === "trigger"
+					? trigger
+					: get(pressTarget === "viewport" ? "viewport" : "previous-button")!;
+			if (pressTarget === "viewport") target.style.padding = "40px";
+			const rect = target.getBoundingClientRect();
+			target.dispatchEvent(
+				new PointerEvent("pointerdown", {
+					bubbles: true,
+					composed: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+					clientX: rect.left + 1,
+					clientY: rect.top + 1,
+				})
+			);
+			await sleep(60);
+			// The outside layer must leave the trigger's click handler in charge of toggling.
+			expect
+				.soft(trigger.getAttribute("aria-expanded"))
+				.toBe(pressTarget === "outside" ? "false" : "true");
+			if (pressTarget === "trigger") {
+				trigger.click();
+				await vi.waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("false"));
+			}
+		} finally {
+			await unmount(component);
+			host.remove();
+		}
+	}
+);

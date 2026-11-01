@@ -37,7 +37,7 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { CustomEventDispatcher } from "$lib/internal/events.js";
+import { CustomEventDispatcher, isEventTargetWithin } from "$lib/internal/events.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
 import { isElement } from "$lib/internal/is.js";
@@ -966,10 +966,12 @@ export class NavigationMenuContentImplState {
 	};
 
 	onInteractOutside = (e: PointerEvent) => {
-		const target = e.target as HTMLElement;
-		const isTrigger = this.listContext.listTriggers.some((trigger) => trigger.contains(target));
+		const isTrigger = this.listContext.listTriggers.some((trigger) =>
+			isEventTargetWithin(e, trigger)
+		);
 		const isRootViewport =
-			this.context.opts.isRootMenu && this.context.viewportRef.current?.contains(target);
+			this.context.opts.isRootMenu &&
+			isEventTargetWithin(e, this.context.viewportRef.current);
 		if (!this.context.opts.isRootMenu && !isTrigger) {
 			this.context.onItemDismiss();
 			return;

@@ -8,9 +8,9 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
+import { isEventTargetWithin } from "$lib/internal/events.js";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
-import { isClickTrulyOutside } from "$lib/internal/dom.js";
 import {
 	createBitsAttrs,
 	boolToEmptyStrOrUndef,
@@ -839,14 +839,7 @@ export class TooltipContentState {
 	}
 
 	onInteractOutside = (e: PointerEvent) => {
-		const triggerNode = this.root.triggerNode;
-		if (
-			triggerNode &&
-			this.root.disableCloseOnTriggerClick &&
-			// inside a shadow root `e.target` is the shadow host, so check the press position too
-			((isElement(e.target) && triggerNode.contains(e.target)) ||
-				!isClickTrulyOutside(e, triggerNode))
-		) {
+		if (isEventTargetWithin(e, this.root.triggerNode) && this.root.disableCloseOnTriggerClick) {
 			e.preventDefault();
 			return;
 		}

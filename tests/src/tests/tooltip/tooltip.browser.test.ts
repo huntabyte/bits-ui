@@ -885,3 +885,180 @@ it("should cancel a pending delayed open when the trigger is right clicked", asy
 	await new Promise<void>((resolve) => setTimeout(resolve, 500));
 	await expectNotExists(page.getByTestId("content"));
 });
+
+it("press on an unrelated element covering the trigger closes the tooltip", async () => {
+	const t = render(TooltipTest, { disableCloseOnTriggerClick: true });
+	const trigger = t.getByTestId("trigger").element() as HTMLElement;
+	trigger.focus();
+	await expect.element(t.getByTestId("content")).toBeVisible();
+	await new Promise((r) => setTimeout(r, 100));
+	const rect = trigger.getBoundingClientRect();
+	const cover = document.body.appendChild(document.createElement("div"));
+	Object.assign(cover.style, {
+		position: "fixed",
+		left: `${rect.left}px`,
+		top: `${rect.top}px`,
+		width: `${rect.width}px`,
+		height: `${rect.height}px`,
+		zIndex: "99999",
+	});
+	try {
+		cover.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				composed: true,
+				pointerType: "mouse",
+				button: 0,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+		await new Promise((r) => setTimeout(r, 100));
+		expect(document.querySelector('[data-testid="content"]')).toBeNull();
+	} finally {
+		cover.remove();
+	}
+});
+
+it("covering element inside shadow DOM still dismisses", async () => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const shadowRoot = host.attachShadow({ mode: "open" });
+	const app = shadowRoot.appendChild(document.createElement("div"));
+	const portalTo = shadowRoot.appendChild(document.createElement("div"));
+	const component = mount(TooltipTest, {
+		target: app,
+		props: { disableCloseOnTriggerClick: true, portalProps: { to: portalTo } },
+	});
+	const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await userEvent.hover(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		const rect = get("trigger")!.getBoundingClientRect();
+		const cover = shadowRoot.appendChild(document.createElement("div"));
+		Object.assign(cover.style, {
+			position: "fixed",
+			left: `${rect.left}px`,
+			top: `${rect.top}px`,
+			width: `${rect.width}px`,
+			height: `${rect.height}px`,
+			zIndex: "99999",
+		});
+		cover.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				composed: true,
+				cancelable: true,
+				pointerType: "mouse",
+				button: 0,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+		await new Promise((resolve) => setTimeout(resolve, 60));
+		expect(get("content")).toBeNull();
+	} finally {
+		await unmount(component);
+		host.remove();
+	}
+});
+
+it.each([false, true])(
+	"touch trigger press inside shadow DOM keeps tooltip open (stop click: %s)",
+	async (stopClick) => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const shadowRoot = host.attachShadow({ mode: "open" });
+		const app = shadowRoot.appendChild(document.createElement("div"));
+		const portalTo = shadowRoot.appendChild(document.createElement("div"));
+		const component = mount(TooltipTest, {
+			target: app,
+			props: { disableCloseOnTriggerClick: true, portalProps: { to: portalTo } },
+		});
+		const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		try {
+			await userEvent.hover(get("trigger")!);
+			await vi.waitFor(() => expect(get("content")).not.toBeNull());
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			const trigger = get("trigger")!;
+			const rect = trigger.getBoundingClientRect();
+			const init = {
+				bubbles: true,
+				composed: true,
+				cancelable: true,
+				pointerType: "touch",
+				button: 0,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			};
+			trigger.dispatchEvent(new PointerEvent("pointerdown", init));
+			await new Promise((resolve) => setTimeout(resolve, 60));
+			trigger.dispatchEvent(new PointerEvent("pointerup", init));
+			if (stopClick)
+				trigger.addEventListener("click", (e) => e.stopPropagation(), { once: true });
+			trigger.dispatchEvent(new PointerEvent("click", init));
+			await new Promise((resolve) => setTimeout(resolve, 60));
+			expect(get("content")).not.toBeNull();
+		} finally {
+			await unmount(component);
+			host.remove();
+		}
+	}
+);
+
+it("trigger containing a shadow child keeps tooltip open", async () => {
+	const t = render(TooltipTest, { disableCloseOnTriggerClick: true });
+	const trigger = t.getByTestId("trigger").element() as HTMLElement;
+	const host = trigger.appendChild(document.createElement("span"));
+	const shadow = host.attachShadow({ mode: "open" });
+	const child = shadow.appendChild(document.createElement("span"));
+	child.textContent = "shadow child";
+	await userEvent.hover(trigger);
+	await expect.element(t.getByTestId("content")).toBeVisible();
+	const rect = child.getBoundingClientRect();
+	child.dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			composed: true,
+			cancelable: true,
+			pointerType: "mouse",
+			button: 0,
+			clientX: rect.left + rect.width / 2,
+			clientY: rect.top + rect.height / 2,
+		})
+	);
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	expect(document.querySelector('[data-testid="content"]')).not.toBeNull();
+});
+
+it("prevented shadow trigger pointerdown retains its captured path", async () => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const root = host.attachShadow({ mode: "open" });
+	const app = root.appendChild(document.createElement("div"));
+	const portalTo = root.appendChild(document.createElement("div"));
+	const component = mount(TooltipTest, {
+		target: app,
+		props: { disableCloseOnTriggerClick: true, portalProps: { to: portalTo } },
+	});
+	const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await userEvent.hover(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		const rect = get("trigger")!.getBoundingClientRect();
+		const event = new PointerEvent("pointerdown", {
+			bubbles: true,
+			composed: true,
+			cancelable: true,
+			pointerType: "mouse",
+			button: 0,
+			clientX: rect.left + rect.width / 2,
+			clientY: rect.top + rect.height / 2,
+		});
+		event.preventDefault();
+		get("trigger")!.dispatchEvent(event);
+		await new Promise((resolve) => setTimeout(resolve, 60));
+		expect(get("content")).not.toBeNull();
+	} finally {
+		await unmount(component);
+		host.remove();
+	}
+});
