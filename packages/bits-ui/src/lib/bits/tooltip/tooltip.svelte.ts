@@ -162,6 +162,7 @@ export class TooltipProviderState {
 	isPointerInTransit = simpleBox(false);
 	#timerFn: TimeoutFn<() => void>;
 	#openTooltip = $state<TooltipRootState | null>(null);
+	#isFocusScrollPending = false;
 
 	constructor(opts: TooltipProviderStateOpts) {
 		this.opts = opts;
@@ -175,7 +176,7 @@ export class TooltipProviderState {
 				"scroll",
 				(e) => {
 					const activeTooltip = this.#openTooltip;
-					if (!activeTooltip) return;
+					if (!activeTooltip || this.#isFocusScrollPending) return;
 					const triggerNode = activeTooltip.triggerNode;
 					if (!triggerNode) return;
 
@@ -191,6 +192,20 @@ export class TooltipProviderState {
 			)
 		);
 	}
+
+	/**
+	 * Ignores the scroll the browser makes to reveal a newly focused trigger. That scroll's
+	 * event fires in the next frame, before its animation frame callbacks.
+	 *
+	 * Known limit: a smooth `scroll-behavior` spans several frames, so that scroll still
+	 * closes the tooltip. Track `scrollend` if that matters.
+	 */
+	ignoreFocusScroll = () => {
+		this.#isFocusScrollPending = true;
+		requestAnimationFrame(() => {
+			this.#isFocusScrollPending = false;
+		});
+	};
 
 	#startTimer = () => {
 		const skipDuration = this.opts.skipDelayDuration.current;
@@ -748,6 +763,7 @@ export class TooltipTriggerState {
 		if (root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) return;
 		root.setActiveTrigger(this.opts.id.current);
 		root.handleOpen();
+		root.provider.ignoreFocusScroll();
 	};
 
 	#onblur: FocusEventHandler<HTMLElement> = () => {
