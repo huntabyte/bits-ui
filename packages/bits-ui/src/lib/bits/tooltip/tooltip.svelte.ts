@@ -196,8 +196,10 @@ export class TooltipProviderState {
 	/**
 	 * Ignores the scroll the browser makes to reveal a newly focused trigger. That scroll's
 	 * event fires in the next frame, before its animation frame callbacks.
+	 *
+	 * Known limit: a smooth `scroll-behavior` spans several frames, so that scroll still
+	 * closes the tooltip. Track `scrollend` if that matters.
 	 */
-	// ponytail: a smooth `scroll-behavior` spans frames and still closes; track `scrollend` if needed
 	ignoreFocusScroll = () => {
 		this.#isFocusScrollPending = true;
 		requestAnimationFrame(() => {
