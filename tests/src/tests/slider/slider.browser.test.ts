@@ -8,6 +8,7 @@ import SliderWithLabelsTest, {
 	type SliderWithLabelsTestProps,
 } from "./slider-test-with-labels.svelte";
 import SliderInAccordionTest from "./slider-in-accordion-test.svelte";
+import SliderManyStepsTest from "./slider-many-steps-test.svelte";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
 
 const kbd = getTestKbd();
@@ -1072,5 +1073,31 @@ describe("non-finite bounds (#1663)", () => {
 		{ step: 0 },
 	])("should throw a descriptive error for %o", (props) => {
 		expect(() => setup(props)).toThrow(/finite/);
+	});
+});
+
+describe("many steps", () => {
+	it("should not measure the DOM per step when the value changes and no ticks are rendered", async () => {
+		render(SliderManyStepsTest);
+		const thumb = page.getByTestId("thumb");
+		await expect.element(thumb).toBeInTheDocument();
+		(thumb.element() as HTMLElement).focus();
+
+		const querySelectorAll = vi.spyOn(Element.prototype, "querySelectorAll");
+		try {
+			for (let i = 0; i < 5; i++) await userEvent.keyboard(kbd.ARROW_RIGHT);
+			await expect.element(thumb).toHaveAttribute("aria-valuenow", "5");
+			// 10,001 steps: measuring once per step would query the thumbs tens of thousands of times
+			expect(querySelectorAll.mock.calls.length).toBeLessThan(100);
+		} finally {
+			querySelectorAll.mockRestore();
+		}
+	});
+
+	it("should still position every rendered tick", async () => {
+		const t = setup({ value: [5], min: 0, max: 10, step: 1 });
+		const ticks = await t.getAllByTestId("tick");
+		expect(ticks).toHaveLength(11);
+		expect(isCloseEnough(50, (ticks[5]!.element() as HTMLElement).style.left)).toBeTruthy();
 	});
 });
