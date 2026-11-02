@@ -79,7 +79,8 @@ const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
 const NavigationMenuSubContext = new Context<NavigationMenuSubState>("NavigationMenu.Sub");
 
 interface NavigationMenuProviderStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			dir: Direction;
 			orientation: Orientation;
 		}>,
@@ -131,7 +132,8 @@ class NavigationMenuProviderState {
 }
 
 interface NavigationMenuRootStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -253,7 +255,8 @@ export class NavigationMenuRootState {
 }
 
 interface NavigationMenuSubStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -373,7 +376,8 @@ export class NavigationMenuListState {
 }
 
 interface NavigationMenuItemStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			value: string;
 			openOnHover: boolean;
@@ -439,7 +443,8 @@ export class NavigationMenuItemState {
 }
 
 interface NavigationMenuTriggerStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			disabled: boolean | null | undefined;
 		}> {}
@@ -598,7 +603,8 @@ export class NavigationMenuTriggerState {
 }
 
 interface NavigationMenuLinkStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			active: boolean;
 			onSelect: (e: Event) => void;
@@ -879,6 +885,9 @@ export class NavigationMenuContentImplState {
 	readonly listContext: NavigationMenuListState;
 	readonly attachment: RefAttachment;
 	prevMotionAttribute: MotionAttribute | null = $state(null);
+	readonly open = $derived.by(
+		() => this.context.opts.value.current === this.itemContext.opts.value.current
+	);
 	readonly motionAttribute: MotionAttribute | null = $derived.by(() => {
 		const items = this.listContext.listTriggers;
 		const values = items.map((item) => item.getAttribute("data-value")).filter(Boolean);
@@ -1050,9 +1059,7 @@ export class NavigationMenuContentImplState {
 				"aria-labelledby": this.itemContext.triggerId,
 				"data-motion": this.motionAttribute ?? undefined,
 				"data-orientation": this.context.opts.orientation.current,
-				"data-state": getDataOpenClosed(
-					this.context.opts.value.current === this.itemContext.opts.value.current
-				),
+				"data-state": getDataOpenClosed(this.open),
 				onkeydown: this.onkeydown,
 				[navigationMenuAttrs.content]: "",
 				...this.attachment,

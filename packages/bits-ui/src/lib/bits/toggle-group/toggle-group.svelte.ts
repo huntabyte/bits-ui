@@ -30,7 +30,8 @@ export const toggleGroupAttrs = createBitsAttrs({
 const ToggleGroupRootContext = new Context<ToggleGroup>("ToggleGroup.Root");
 
 interface ToggleGroupBaseStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			rovingFocus: boolean;
@@ -48,6 +49,7 @@ abstract class ToggleGroupBaseState {
 		this.attachment = attachRef(this.opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: toggleGroupAttrs.item,
+			rootAttr: toggleGroupAttrs.root,
 			rootNode: opts.ref,
 			loop: opts.loop,
 			orientation: opts.orientation,
@@ -68,7 +70,8 @@ abstract class ToggleGroupBaseState {
 }
 
 interface ToggleGroupSingleStateOpts
-	extends ToggleGroupBaseStateOpts,
+	extends
+		ToggleGroupBaseStateOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -102,7 +105,8 @@ class ToggleGroupSingleState extends ToggleGroupBaseState {
 //
 
 interface ToggleGroupMultipleStateOpts
-	extends ToggleGroupBaseStateOpts,
+	extends
+		ToggleGroupBaseStateOpts,
 		WritableBoxedValues<{
 			value: string[];
 		}> {}
@@ -135,7 +139,8 @@ class ToggleGroupMultipleState extends ToggleGroupBaseState {
 type ToggleGroup = ToggleGroupSingleState | ToggleGroupMultipleState;
 
 interface ToggleGroupRootOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			rovingFocus: boolean;
@@ -158,7 +163,8 @@ export class ToggleGroupRootState {
 }
 
 interface ToggleGroupItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;

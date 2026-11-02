@@ -63,7 +63,9 @@ import {
 	moveToPrevTimeSegment,
 } from "$lib/internal/date-time/field/segments.js";
 import {
+	get24HourValueFromTypedHour,
 	getDefaultHourCycle,
+	getTypedHourFrom24HourValue,
 	isAcceptableSegmentKey,
 } from "$lib/internal/date-time/field/helpers.js";
 import type { TimeRangeFieldRootState } from "../time-range-field/time-range-field.svelte.js";
@@ -112,28 +114,9 @@ const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 	},
 };
 
-function get24HourValueFromTypedHour(
-	hour: string,
-	dayPeriod: Exclude<TimeSegmentObj["dayPeriod"], null>
-): string {
-	const parsedHour = Number.parseInt(hour);
-	if (Number.isNaN(parsedHour)) return hour;
-	if (dayPeriod === "AM") {
-		return parsedHour === 12 ? "0" : `${parsedHour}`;
-	}
-	return parsedHour < 12 ? `${parsedHour + 12}` : `${parsedHour}`;
-}
-
-function getTypedHourFrom24HourValue(hour: string | null): string | null {
-	if (hour === null) return hour;
-	const parsedHour = Number.parseInt(hour);
-	if (Number.isNaN(parsedHour)) return hour;
-	if (parsedHour === 0) return "12";
-	return parsedHour > 12 ? `${parsedHour - 12}` : hour;
-}
-
 export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			value: T | undefined;
 			placeholder: TimeValue;
 		}>,
@@ -636,7 +619,8 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 }
 
 interface TimeFieldInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			name: string;
 		}> {}

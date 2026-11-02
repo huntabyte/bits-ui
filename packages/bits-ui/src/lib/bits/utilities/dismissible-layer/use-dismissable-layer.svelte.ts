@@ -26,8 +26,9 @@ globalThis.bitsDismissableLayers ??= new Map<
 	ReadableBox<InteractOutsideBehaviorType>
 >();
 
-interface DismissibleLayerStateOpts
-	extends ReadableBoxedValues<Required<Omit<DismissibleLayerImplProps, "children" | "ref">>> {
+interface DismissibleLayerStateOpts extends ReadableBoxedValues<
+	Required<Omit<DismissibleLayerImplProps, "children" | "ref">>
+> {
 	ref: WritableBox<HTMLElement | null>;
 }
 
@@ -115,6 +116,8 @@ export class DismissibleLayerState {
 		const document = this.#documentObj;
 		const onPointerDownCapture = (event: PointerEvent) => {
 			untrack(() => {
+				// settle the previous interaction before this one overwrites its state
+				this.#handleInteractOutside.flush();
 				this.#markInterceptedEvent(event);
 				this.#markResponsibleLayer(event);
 			});

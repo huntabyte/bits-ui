@@ -30,7 +30,7 @@
 		</Avatar.Root>
 	</LinkPreview.Trigger>
 	<LinkPreview.Content
-		class="border-muted bg-background shadow-popover w-[331px] rounded-xl border p-[17px]"
+		class="border-muted bg-background shadow-popover z-50 w-[331px] rounded-xl border p-[17px]"
 		sideOffset={8}
 		forceMount
 	>

@@ -27,7 +27,8 @@ const tabsAttrs = createBitsAttrs({
 const TabsRootContext = new Context<TabsRootState>("Tabs.Root");
 
 interface TabsRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			orientation: Orientation;
 			loop: boolean;
@@ -56,6 +57,7 @@ export class TabsRootState {
 		this.attachment = attachRef(opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: tabsAttrs.trigger,
+			rootAttr: tabsAttrs.root,
 			rootNode: this.opts.ref,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
@@ -129,7 +131,8 @@ export class TabsListState {
 }
 
 interface TabsTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -223,7 +226,8 @@ export class TabsTriggerState {
 }
 
 interface TabsContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			tabindex: number;

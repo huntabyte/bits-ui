@@ -3,6 +3,7 @@ import {
 	getLocalTimeZone,
 	isSameDay,
 	isSameMonth,
+	toCalendarDate,
 	today,
 } from "@internationalized/date";
 import {
@@ -39,6 +40,7 @@ import {
 	handleCalendarPrevPage,
 	shiftCalendarFocus,
 	useEnsureNonDisabledPlaceholder,
+	getTabbableDate,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "$lib/internal/date-time/calendar-helpers.svelte.js";
@@ -56,7 +58,8 @@ import { onMount, untrack } from "svelte";
 const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");
 
 interface RangeCalendarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateRange;
 			placeholder: DateValue;
@@ -111,6 +114,11 @@ export class RangeCalendarRootState {
 		return today(getLocalTimeZone());
 	});
 	months: Month<DateValue>[] = $state([]);
+	readonly tabbableDate = $derived.by(() =>
+		getTabbableDate(this.opts.placeholder.current, this.months, (date) =>
+			this.isDateDisabled(date)
+		)
+	);
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
@@ -523,6 +531,7 @@ export class RangeCalendarRootState {
 		return shiftCalendarFocus({
 			node,
 			add,
+			useCalendarDayOffset: Math.abs(add) === 7,
 			placeholder: this.opts.placeholder,
 			calendarNode: this.opts.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,
@@ -719,7 +728,8 @@ export class RangeCalendarRootState {
 }
 
 interface RangeCalendarCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
 			month: DateValue;
@@ -734,7 +744,7 @@ export class RangeCalendarCellState {
 	readonly opts: RangeCalendarCellStateOpts;
 	readonly root: RangeCalendarRootState;
 	readonly attachment: RefAttachment;
-	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
+	readonly cellDate = $derived.by(() => toDate(toCalendarDate(this.opts.date.current)));
 	readonly isOutsideMonth = $derived.by(
 		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
 	);
@@ -878,7 +888,8 @@ export class RangeCalendarDayState {
 		(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 		this.cell.isDisabled
 			? undefined
-			: this.cell.isFocusedDate
+			: this.cell.root.tabbableDate &&
+				  isSameDay(this.cell.opts.date.current, this.cell.root.tabbableDate)
 				? 0
 				: -1
 	);

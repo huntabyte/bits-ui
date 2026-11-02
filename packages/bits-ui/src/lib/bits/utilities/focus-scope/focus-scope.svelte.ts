@@ -4,17 +4,32 @@ import { focusable, isFocusable, tabbable } from "tabbable";
 import { on } from "svelte/events";
 import { watch } from "runed";
 
-interface FocusScopeOpts
-	extends ReadableBoxedValues<{
-		onOpenAutoFocus: (event: Event) => void;
-		onCloseAutoFocus: (event: Event) => void;
-		trap: boolean;
-	}> {
+/**
+ * Retargets `node` to the tree `container` lives in by climbing shadow hosts, so a
+ * node inside a shadow root nested in the scope resolves to its host. Returns `null`
+ * when `node` is from an unrelated tree.
+ */
+function retargetToScopeTree(node: Node | null, container: HTMLElement): Node | null {
+	const scopeRoot = container.getRootNode();
+	while (node) {
+		const root = node.getRootNode();
+		if (root === scopeRoot) return node;
+		node = root !== node && "host" in root ? (root as ShadowRoot).host : null;
+	}
+	return null;
+}
+
+interface FocusScopeOpts extends ReadableBoxedValues<{
+	onOpenAutoFocus: (event: Event) => void;
+	onCloseAutoFocus: (event: Event) => void;
+	trap: boolean;
+}> {
 	loop: boolean;
 }
 
 interface FocusScopeUseOpts
-	extends FocusScopeOpts,
+	extends
+		FocusScopeOpts,
 		ReadableBoxedValues<{
 			enabled: boolean;
 			ref: HTMLElement | null;
@@ -51,6 +66,8 @@ export class FocusScope {
 	}
 
 	mount(container: HTMLElement) {
+		if (this.#container === container) return;
+
 		if (this.#container) {
 			this.unmount();
 		}
@@ -90,16 +107,21 @@ export class FocusScope {
 					!this.#container ||
 					this.#paused ||
 					!this.#manager.isActiveScope(this) ||
-					this.#container.contains(getActiveElement(this.#container.ownerDocument))
+					this.#container.contains(
+						retargetToScopeTree(
+							getActiveElement(this.#container.ownerDocument),
+							this.#container
+						)
+					)
 				) {
 					return;
 				}
 				const firstTabbable = this.#getFirstTabbable();
 				if (firstTabbable) {
-					firstTabbable.focus();
+					firstTabbable.focus({ preventScroll: true });
 					this.#manager.setFocusMemory(this, firstTabbable);
 				} else {
-					this.#container.focus();
+					this.#container.focus({ preventScroll: true });
 				}
 			});
 		}
@@ -119,7 +141,7 @@ export class FocusScope {
 			if (preFocusedElement && preFocusedElement.isConnected) {
 				// ensure the element is still focusable and in the document
 				try {
-					preFocusedElement.focus();
+					preFocusedElement.focus({ preventScroll: true });
 				} catch {
 					// fallback if focus fails
 					document.body.focus();
@@ -137,10 +159,11 @@ export class FocusScope {
 		const handleFocus = (e: FocusEvent) => {
 			if (this.#paused || !this.#manager.isActiveScope(this)) return;
 
-			const target = e.composedPath()[0] as HTMLElement;
-			if (!target) return;
-
-			const isInside = container.contains(target);
+			const target = retargetToScopeTree(
+				e.composedPath()[0] as Node,
+				container
+			) as HTMLElement | null;
+			const isInside = target !== null && container.contains(target);
 
 			if (isInside) {
 				// store last focused element
@@ -150,12 +173,12 @@ export class FocusScope {
 				const lastFocused = this.#manager.getFocusMemory(this);
 				if (lastFocused && container.contains(lastFocused) && isFocusable(lastFocused)) {
 					e.preventDefault();
-					lastFocused.focus();
+					lastFocused.focus({ preventScroll: true });
 				} else {
 					// fallback to first tabbable or first focusable or container
 					const firstTabbable = this.#getFirstTabbable();
 					const firstFocusable = this.#getAllFocusables()[0];
-					(firstTabbable || firstFocusable || container).focus();
+					(firstTabbable || firstFocusable || container).focus({ preventScroll: true });
 				}
 			}
 		};
@@ -193,11 +216,11 @@ export class FocusScope {
 				const elementToFocus = firstTabbable || firstFocusable;
 
 				if (elementToFocus) {
-					elementToFocus.focus();
+					elementToFocus.focus({ preventScroll: true });
 					this.#manager.setFocusMemory(this, elementToFocus);
 				} else {
 					// no focusable elements left, focus container
-					container.focus();
+					container.focus({ preventScroll: true });
 				}
 			}
 		});

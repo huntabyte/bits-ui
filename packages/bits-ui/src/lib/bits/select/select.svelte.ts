@@ -1,7 +1,6 @@
 import { SvelteMap } from "svelte/reactivity";
 import { Context, Previous, watch } from "runed";
 import {
-	afterSleep,
 	afterTick,
 	onDestroyEffect,
 	attachRef,
@@ -34,7 +33,7 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { isIOS } from "$lib/internal/is.js";
+import { isDisabledElement, isIOS } from "$lib/internal/is.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
@@ -78,7 +77,8 @@ const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobo
 const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
 
 interface SelectBaseRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			name: string;
@@ -125,6 +125,11 @@ abstract class SelectBaseRootState {
 	});
 	contentIsPositioned = $state(false);
 	isUsingKeyboard = false;
+	/**
+	 * The item a press started on, and where. The list can scroll under a still
+	 * pointer before the release, which then lands on a neighbouring item.
+	 */
+	pressedItem: { item: SelectItemState; x: number; y: number } | null = null;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
 
@@ -143,6 +148,7 @@ abstract class SelectBaseRootState {
 		$effect.pre(() => {
 			if (!this.opts.open.current) {
 				this.setHighlightedNode(null);
+				this.pressedItem = null;
 			}
 		});
 	}
@@ -256,7 +262,8 @@ abstract class SelectBaseRootState {
 }
 
 interface SelectSingleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -330,21 +337,21 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current !== "") {
-				const node = this.getNodeByValue(this.opts.value.current);
-				if (node) {
-					this.setHighlightedNode(node, true);
-					return;
-				}
+			// "" is a valid value for a select item so we need to look it up too
+			const node = this.getNodeByValue(this.opts.value.current);
+			if (node) {
+				this.setHighlightedNode(node, true);
+				return;
 			}
-			// if no value is set, we want to highlight the first item
+			// if no item matches the value, we want to highlight the first item
 			this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
 
 interface SelectMultipleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string[];
 		}> {}
@@ -408,7 +415,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
+			if (this.opts.value.current.length) {
 				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
 					this.setHighlightedNode(node, true);
@@ -422,7 +429,8 @@ class SelectMultipleRootState extends SelectBaseRootState {
 }
 
 interface SelectRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			loop: boolean;
@@ -535,7 +543,8 @@ export class SelectValueState {
 }
 
 interface SelectInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			clearOnDeselect: boolean;
 		}> {}
@@ -575,6 +584,8 @@ export class SelectInputState {
 	onkeydown(e: BitsKeyboardEvent) {
 		this.root.isUsingKeyboard = true;
 		if (e.key === kbd.ESCAPE) return;
+		// Home/End move the text cursor in the input, per the WAI-ARIA combobox pattern
+		if (e.key === kbd.HOME || e.key === kbd.END) return;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
@@ -620,7 +631,7 @@ export class SelectInputState {
 			}
 
 			if (
-				this.root.highlightedValue &&
+				this.root.highlightedValue !== null &&
 				this.root.highlightedNode &&
 				this.root.highlightedNode.isConnected
 			) {
@@ -721,6 +732,7 @@ export class SelectComboTriggerState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
 	}
 
 	#focusInputAndToggle() {
@@ -744,7 +756,12 @@ export class SelectComboTriggerState {
 	 * behavior of focusing the button and keep focus on the input.
 	 */
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (
+			this.root.opts.disabled.current ||
+			isDisabledElement(this.opts.ref.current) ||
+			!this.root.domContext
+		)
+			return;
 		e.preventDefault();
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return;
@@ -752,10 +769,26 @@ export class SelectComboTriggerState {
 	}
 
 	onpointerup(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (
+			this.root.opts.disabled.current ||
+			isDisabledElement(this.opts.ref.current) ||
+			!this.root.domContext
+		)
+			return;
 		if (e.pointerType !== "touch") return;
 		e.preventDefault();
 		this.#focusInputAndToggle();
+	}
+
+	/**
+	 * Screen readers can activate the trigger with a `click` that no pointer events
+	 * precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+	 * and was already handled by `onpointerdown` / `onpointerup`.
+	 */
+	onclick(e: BitsMouseEvent) {
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		this.#focusInputAndToggle();
+		e.preventDefault();
 	}
 
 	readonly props = $derived.by(
@@ -769,6 +802,7 @@ export class SelectComboTriggerState {
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
@@ -921,7 +955,7 @@ export class SelectTriggerState {
 		) {
 			e.preventDefault();
 			const shouldReturn = this.#handleKeyboardSelection();
-			if (shouldReturn) return;
+			if (shouldReturn || e.key === kbd.SPACE) return;
 		}
 
 		if (e.key === kbd.ARROW_UP && e.altKey) {
@@ -966,9 +1000,10 @@ export class SelectTriggerState {
 
 		if (!isModifierKey && (isCharacterKey || isSpaceKey)) {
 			const matchedNode = this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
-			if (!matchedNode && isSpaceKey) {
+			if (isSpaceKey) {
+				// prevent the button's activation `click`, which `onclick` would toggle
 				e.preventDefault();
-				this.#handleKeyboardSelection();
+				if (!matchedNode) this.#handleKeyboardSelection();
 			}
 			return;
 		}
@@ -986,10 +1021,21 @@ export class SelectTriggerState {
 		// this only runs for a label 'click'
 		const currTarget = e.currentTarget as HTMLElement;
 		currTarget.focus();
+
+		// Screen readers can activate the trigger with a `click` that no pointer events
+		// precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+		// and was already handled by `onpointerdown` / `onpointerup`.
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		if (this.root.opts.open.current) {
+			this.root.handleClose();
+		} else {
+			this.#handleOpen();
+		}
+		e.preventDefault();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -1011,7 +1057,7 @@ export class SelectTriggerState {
 	}
 
 	onpointerup(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			if (this.root.opts.open.current === false) {
@@ -1026,9 +1072,11 @@ export class SelectTriggerState {
 		() =>
 			({
 				id: this.opts.id.current,
+				role: "combobox",
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
 				"aria-expanded": boolToStr(this.root.opts.open.current),
+				"aria-controls": this.root.contentNode?.id || undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
@@ -1044,7 +1092,8 @@ export class SelectTriggerState {
 }
 
 interface SelectContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -1059,7 +1108,7 @@ export class SelectContentState {
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
 	// set when the user scrolls the viewport by hand (wheel, touch, or holding a
-	// scroll button) and reset on close; shared by both scroll buttons
+	// scroll button) and reset on close; ends the realignment below
 	userHasScrolled = false;
 	domContext: DOMContext;
 
@@ -1091,7 +1140,34 @@ export class SelectContentState {
 
 		watch([() => this.isPositioned, () => this.root.highlightedNode], () => {
 			if (!this.isPositioned || !this.root.highlightedNode) return;
+			// a keyboard highlight hands the scroll position back to us
+			if (this.root.isUsingKeyboard) this.userHasScrolled = false;
 			this.root.scrollHighlightedNodeIntoView(this.root.highlightedNode);
+		});
+
+		// positioning is not the end of settling: chrome that mounts once the content
+		// is placed (scroll buttons in the flex flow, a header, a footer) shrinks the
+		// viewport under the alignment above and drops the highlighted item back below
+		// the fold, so keep aligning on every resize until the user takes the scroll
+		// position over
+		watch([() => this.isPositioned, () => this.root.viewportNode], () => {
+			const viewport = this.root.viewportNode;
+			if (!this.isPositioned || !viewport) return;
+			const onUserScroll = () => {
+				this.userHasScrolled = true;
+			};
+			const observer = new (this.domContext.getWindow().ResizeObserver)(() => {
+				if (this.userHasScrolled || !this.root.highlightedNode) return;
+				this.root.scrollHighlightedNodeIntoView(this.root.highlightedNode);
+			});
+			observer.observe(viewport);
+			// not `scroll`: the realign scrolls the viewport itself, so `scroll` fires
+			// for our own writes and cannot tell the user's gesture from ours
+			return executeCallbacks(
+				on(viewport, "wheel", onUserScroll, { passive: true }),
+				on(viewport, "touchmove", onUserScroll, { passive: true }),
+				() => observer.disconnect()
+			);
 		});
 
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1100,6 +1176,11 @@ export class SelectContentState {
 	onpointermove(_: BitsPointerEvent) {
 		this.root.isUsingKeyboard = false;
 	}
+
+	// every press starts fresh, so a press that ended off an item isn't reused
+	onpointerdowncapture = () => {
+		this.root.pressedItem = null;
+	};
 
 	readonly #styles = $derived.by(() => {
 		return getFloatingContentCSSVars(this.root.isCombobox ? "combobox" : "select");
@@ -1153,6 +1234,7 @@ export class SelectContentState {
 					...this.#styles,
 				},
 				onpointermove: this.onpointermove,
+				onpointerdowncapture: this.onpointerdowncapture,
 				...this.attachment,
 			}) as const
 	);
@@ -1176,7 +1258,8 @@ export class SelectContentState {
 }
 
 interface SelectItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -1283,6 +1366,7 @@ export class SelectItemState {
 	onpointerdown(e: BitsPointerEvent) {
 		// prevent focus from leaving the input/select trigger
 		e.preventDefault();
+		this.root.pressedItem = { item: this, x: e.clientX, y: e.clientY };
 	}
 
 	/**
@@ -1292,6 +1376,18 @@ export class SelectItemState {
 	 */
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
+		const press = this.root.pressedItem;
+		this.root.pressedItem = null;
+		// released on another item without the pointer moving: the list moved under it
+		if (
+			press &&
+			press.item !== this &&
+			Math.hypot(e.clientX - press.x, e.clientY - press.y) < 4
+		) {
+			e.preventDefault();
+			press.item.handleSelect();
+			return;
+		}
 		/**
 		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
 		 * we need to listen for the immediate click event to handle the selection,
@@ -1339,7 +1435,7 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.isSelected ? "true" : undefined,
+				"aria-selected": boolToStr(this.isSelected),
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
@@ -1409,10 +1505,9 @@ export class SelectGroupHeadingState {
 	);
 }
 
-interface SelectHiddenInputStateOpts
-	extends ReadableBoxedValues<{
-		value: string | undefined;
-	}> {}
+interface SelectHiddenInputStateOpts extends ReadableBoxedValues<{
+	value: string | undefined;
+}> {}
 
 export class SelectHiddenInputState {
 	static create(opts: SelectHiddenInputStateOpts) {
@@ -1491,7 +1586,8 @@ export class SelectViewportState {
 }
 
 interface SelectScrollButtonImplStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			delay: (tick: number) => number;
 		}> {}
@@ -1519,9 +1615,14 @@ export class SelectScrollButtonImplState {
 		});
 
 		$effect(() => {
-			if (this.mounted) return;
+			if (this.mounted && this.root.opts.open.current) return;
 			this.clearAutoScrollInterval();
 		});
+
+		// closing destroys the button together with the effect above, so the effect never
+		// sees `mounted` flip and a removed button gets no `pointerleave`. without this the
+		// timer outlives the button and scrolls the viewport the next time the content opens
+		onDestroyEffect(() => this.clearAutoScrollInterval());
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1543,7 +1644,7 @@ export class SelectScrollButtonImplState {
 	}
 
 	onpointerdown(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
+		if (this.autoScrollTimer !== null || !this.root.opts.open.current) return;
 		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
@@ -1592,7 +1693,6 @@ export class SelectScrollDownButtonState {
 	readonly content: SelectContentState;
 	readonly root: SelectBaseRootState;
 	canScrollDown = $state(false);
-	scrollIntoViewTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
 	constructor(scrollButtonState: SelectScrollButtonImplState) {
 		this.scrollButtonState = scrollButtonState;
@@ -1604,18 +1704,7 @@ export class SelectScrollDownButtonState {
 			const viewport = this.root.viewportNode;
 			if (!viewport || !this.content.isPositioned) return;
 			this.handleScroll(true);
-
-			const onUserScroll = () => {
-				this.content.userHasScrolled = true;
-			};
-
-			// not `scroll`: the realign below scrolls the viewport itself, so `scroll`
-			// fires for our own writes and cannot tell the user's gesture from ours
-			return executeCallbacks(
-				on(viewport, "scroll", () => this.handleScroll()),
-				on(viewport, "wheel", onUserScroll, { passive: true }),
-				on(viewport, "touchmove", onUserScroll, { passive: true })
-			);
+			return on(viewport, "scroll", () => this.handleScroll());
 		});
 
 		/**
@@ -1631,24 +1720,6 @@ export class SelectScrollDownButtonState {
 			() => {
 				if (!this.root.viewportNode || !this.content.isPositioned) return;
 				this.handleScroll(true);
-			}
-		);
-
-		watch(
-			() => this.scrollButtonState.mounted,
-			() => {
-				if (!this.scrollButtonState.mounted) return;
-				if (this.scrollIntoViewTimer) {
-					clearTimeout(this.scrollIntoViewTimer);
-				}
-				this.scrollIntoViewTimer = afterSleep(5, () => {
-					// this button remounts whenever the viewport leaves the bottom, which
-					// would otherwise realign onto the highlighted item mid-gesture
-					if (this.content.userHasScrolled) return;
-					const activeItem = this.root.highlightedNode;
-					if (!activeItem) return;
-					this.root.scrollHighlightedNodeIntoView(activeItem);
-				});
 			}
 		);
 	}

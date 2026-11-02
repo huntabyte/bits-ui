@@ -35,7 +35,8 @@ const linkPreviewAttrs = createBitsAttrs({
 const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
 
 interface LinkPreviewRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
@@ -105,11 +106,12 @@ export class LinkPreviewRootState {
 					handlePointerUp
 				);
 
-				if (!this.contentNode) return;
-				const tabCandidates = getTabbableCandidates(this.contentNode);
+				if (this.contentNode) {
+					const tabCandidates = getTabbableCandidates(this.contentNode);
 
-				for (const candidate of tabCandidates) {
-					candidate.setAttribute("tabindex", "-1");
+					for (const candidate of tabCandidates) {
+						candidate.setAttribute("tabindex", "-1");
+					}
 				}
 
 				return () => {
@@ -221,7 +223,8 @@ export class LinkPreviewTriggerState {
 }
 
 interface LinkPreviewContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;

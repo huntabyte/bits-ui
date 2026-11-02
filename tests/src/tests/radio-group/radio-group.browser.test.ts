@@ -2,9 +2,11 @@ import { expect, it, describe, onTestFinished } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import RadioGroupTest from "./radio-group-test.svelte";
+import RadioGroupNestedTest from "./radio-group-nested-test.svelte";
 import type { Item, RadioGroupTestProps } from "./radio-group-test.svelte";
 import RadioGroupPopoverTest from "./radio-group-popover-test.svelte";
 import RadioGroupScrollLayoutTest from "./radio-group-scroll-layout-test.svelte";
+import RadioGroupFormResetTest from "./radio-group-form-reset-test.svelte";
 import { expectExists } from "../browser-utils";
 import { page, userEvent } from "vitest/browser";
 
@@ -195,6 +197,28 @@ describe("Keyboard Navigation", () => {
 		await userEvent.keyboard(kbd.ARROW_RIGHT);
 		await expect.element(item3).toHaveFocus();
 	});
+
+	it("should ignore the items of a nested `RadioGroup.Root` when navigating with the keyboard", async () => {
+		await render(RadioGroupNestedTest);
+
+		const outerItem1 = page.getByTestId("outer-item-1");
+		const outerItem2 = page.getByTestId("outer-item-2");
+		const innerItem1 = page.getByTestId("inner-item-1");
+		const innerItem2 = page.getByTestId("inner-item-2");
+
+		(outerItem1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(outerItem2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(outerItem1).toHaveFocus();
+
+		// the nested RadioGroup.Root keeps navigating among its own items
+		(innerItem1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(innerItem2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(innerItem1).toHaveFocus();
+	});
 });
 
 describe("Input Behavior", () => {
@@ -206,6 +230,16 @@ describe("Input Behavior", () => {
 	it("should render an input if the `name` prop is passed", async () => {
 		const t = await setup({ name: "radio-group" });
 		await expect.element(t.input).toBeInTheDocument();
+	});
+
+	it("should disable browser autocomplete on the input by default", async () => {
+		const t = await setup({ name: "radio-group" });
+		await expect.element(t.input).toHaveAttribute("autocomplete", "off");
+	});
+
+	it("should forward the `autocomplete` prop to the input", async () => {
+		const t = await setup({ name: "radio-group", autocomplete: "one-time-code" });
+		await expect.element(t.input).toHaveAttribute("autocomplete", "one-time-code");
 	});
 
 	it("should sync the input's value with the radio group value", async () => {
@@ -225,6 +259,15 @@ describe("Input Behavior", () => {
 	it("should make the input disabled if the radio group is disabled", async () => {
 		const t = await setup({ disabled: true, name: "radio-group" });
 		await expect.element(t.input).toHaveAttribute("disabled");
+	});
+
+	it("should focus the first item when the required input is invalid and the item's id isn't a valid CSS identifier", async () => {
+		const t = await setup({ name: "radio-group", required: true }, [
+			{ value: "1", disabled: false },
+			{ value: "2", disabled: false },
+		]);
+		t.input.reportValidity();
+		await expect.element(page.getByTestId("1-item")).toHaveFocus();
 	});
 
 	it("should not automatically select the first item focused when the radio group does not have a value", async () => {
@@ -415,5 +458,38 @@ describe("Scroll Behavior", () => {
 
 		expect(window.scrollY).toBe(baselineY);
 		expect(document.documentElement.scrollHeight).toBeLessThanOrEqual(window.innerHeight + 1);
+	});
+});
+
+describe("Form Reset", () => {
+	async function setupForm(props: { value?: string } = {}) {
+		await render(RadioGroupFormResetTest, props);
+		const input = document.querySelector<HTMLInputElement>('input[name="option"]')!;
+		return { input };
+	}
+
+	it("should keep the hidden input in sync with the value after a form reset", async () => {
+		const { input } = await setupForm();
+		await page.getByTestId("a-item").click();
+		expect(input.value).toBe("a");
+
+		await page.getByTestId("reset").click();
+		await nextFrame();
+
+		await expect.element(page.getByTestId("a-item")).toHaveAttribute("data-state", "checked");
+		expect(input.value).toBe("a");
+	});
+
+	it("should sync the hidden input when the value is set right after a form reset (#1942)", async () => {
+		const { input } = await setupForm();
+		await page.getByTestId("a-item").click();
+
+		await page.getByTestId("reset-and-set").click();
+		await nextFrame();
+
+		await expect.element(page.getByTestId("value")).toMatchTextContent("b");
+		await expect.element(page.getByTestId("b-item")).toHaveAttribute("data-state", "checked");
+		expect(input.value).toBe("b");
+		expect(new FormData(input.form!).get("option")).toBe("b");
 	});
 });

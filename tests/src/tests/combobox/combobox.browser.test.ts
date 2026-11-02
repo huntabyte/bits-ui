@@ -7,10 +7,12 @@ import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
 import type { ComboboxMultipleTestProps } from "./combobox-multi-test.svelte";
 import ComboboxMultiTest from "./combobox-multi-test.svelte";
+import ComboboxTriggerInputTest from "./combobox-trigger-input-test.svelte";
 import ComboboxForceMountTest, {
 	type ComboboxForceMountTestProps,
 } from "./combobox-force-mount-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
+import ComboboxFieldsetDisabledTest from "./combobox-fieldset-disabled-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -287,6 +289,33 @@ describe("combobox - single", () => {
 		await expectSelected(item1);
 	});
 
+	it("should expose `aria-selected` false on all items when no value is selected", async () => {
+		await openSingle();
+		const items = getItems(page.getByTestId);
+		await expectNotSelected(items);
+	});
+
+	it("should leave Home/End to the input instead of moving the highlight", async () => {
+		const t = await openSingle({}, kbd.ARROW_DOWN);
+		const [item0, item1, , item3] = getItems(page.getByTestId);
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(item1);
+
+		await userEvent.keyboard(kbd.END);
+		await expectHighlighted(item1);
+		await expectNotHighlighted(item3);
+		await userEvent.keyboard(kbd.HOME);
+		await expectHighlighted(item1);
+		await expectNotHighlighted(item0);
+
+		await t.user.type(t.input, "b");
+		const input = t.input.element() as HTMLInputElement;
+		await userEvent.keyboard(kbd.HOME);
+		expect(input.selectionStart).toBe(0);
+		await userEvent.keyboard(kbd.END);
+		expect(input.selectionStart).toBe(1);
+	});
+
 	it("should navigate through the items using the keyboard (loop = false)", async () => {
 		await openSingle({}, kbd.ARROW_DOWN);
 
@@ -502,6 +531,26 @@ describe("combobox - single", () => {
 		const setter = page.getByTestId("value-binding-3");
 		await setter.click();
 		await expect.element(t.input).toHaveValue("C");
+	});
+
+	it("should select a highlighted item with an empty string value on `Enter`", async () => {
+		const t = await setupSingle({ value: "1" }, [
+			{ value: "1", label: "A" },
+			{ value: "", label: "All" },
+		]);
+		const allItem = page.getByRole("option", { name: "All", exact: false });
+		(t.input.element() as HTMLElement).focus();
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("1")).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
+		await t.user.keyboard(kbd.ENTER);
+		await expectNotExists(t.getContent());
+
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(allItem).toHaveAttribute("data-selected");
+		await expect.element(allItem).toHaveAttribute("data-highlighted");
 	});
 });
 
@@ -877,11 +926,11 @@ async function expectNotSelected(node: MaybeArray<ReturnType<typeof page.getByTe
 	if (Array.isArray(node)) {
 		for (const n of node) {
 			await expect.element(n).not.toHaveAttribute("data-selected");
-			await expect.element(n).not.toHaveAttribute("aria-selected");
+			await expect.element(n).toHaveAttribute("aria-selected", "false");
 		}
 	} else {
 		await expect.element(node).not.toHaveAttribute("data-selected");
-		await expect.element(node).not.toHaveAttribute("aria-selected");
+		await expect.element(node).toHaveAttribute("aria-selected", "false");
 	}
 }
 
@@ -925,13 +974,13 @@ describe("Touch", () => {
 		touch(trigger, "pointerdown");
 		await tick();
 		await expectNotExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("false");
+		await expect.element(t.openBinding).toMatchTextContent("false");
 		expect(document.activeElement).not.toBe(t.input.element());
 		// the browser cancels the pointer once the finger scrolls
 		touch(trigger, "pointercancel");
 		await tick();
 		await expectNotExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("false");
+		await expect.element(t.openBinding).toMatchTextContent("false");
 	});
 
 	it("should open the trigger on a tap", async () => {
@@ -943,7 +992,122 @@ describe("Touch", () => {
 		expect(document.activeElement).not.toBe(t.input.element());
 		touch(trigger, "pointerup");
 		await expectExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 		await expect.element(t.input).toHaveFocus();
 	});
+});
+
+describe("Activation without a pointer press", () => {
+	it("should toggle the trigger on a click that no pointer press preceded", async () => {
+		const t = await setupSingle();
+		(t.trigger.element() as HTMLElement).click();
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toMatchTextContent("true");
+		await expect.element(t.input).toHaveFocus();
+		(t.trigger.element() as HTMLElement).click();
+		await expectNotExists(t.getContent());
+		await expect.element(t.openBinding).toMatchTextContent("false");
+	});
+
+	it("should open on the event sequence of a WebKit accessibility press", async () => {
+		const t = await setupSingle();
+		const trigger = t.trigger.element() as HTMLElement;
+		// focus, mousedown, mouseup and a zero-`detail` click, with no pointer events
+		trigger.focus();
+		for (const type of ["mousedown", "mouseup", "click"]) {
+			trigger.dispatchEvent(
+				new MouseEvent(type, { bubbles: true, cancelable: true, detail: 0 })
+			);
+		}
+		await expectExists(t.getContent());
+		await expect.element(t.openBinding).toMatchTextContent("true");
+	});
+
+	it("should not toggle again on the click that ends a tap", async () => {
+		const onOpenChange = vi.fn();
+		const t = await setupSingle({ onOpenChange });
+		const trigger = t.trigger.element();
+		for (const type of ["pointerdown", "pointerup"] as const) {
+			trigger.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "touch",
+					isPrimary: true,
+					button: 0,
+					buttons: type === "pointerdown" ? 1 : 0,
+				})
+			);
+		}
+		// a touch click can arrive in a later task than the `pointerup` (Chromium on Android)
+		await new Promise((resolve) => setTimeout(resolve));
+		trigger.dispatchEvent(
+			new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 })
+		);
+		await expectExists(t.getContent());
+		expect(onOpenChange).toHaveBeenCalledTimes(1);
+	});
+
+	it("should not toggle again on the click that ends a mouse press", async () => {
+		const onOpenChange = vi.fn();
+		const t = await setupSingle({ onOpenChange });
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		expect(onOpenChange).toHaveBeenCalledTimes(1);
+	});
+
+	it.each([kbd.ENTER, kbd.SPACE])(
+		"should toggle once when %s is pressed on the trigger",
+		async (key) => {
+			const onOpenChange = vi.fn();
+			const t = await setupSingle({ onOpenChange });
+			(t.trigger.element() as HTMLElement).focus();
+			await t.user.keyboard(key);
+			await expectExists(t.getContent());
+			expect(onOpenChange).toHaveBeenCalledTimes(1);
+		}
+	);
+
+	it("should toggle once when a label inside the trigger is clicked without a pointer press", async () => {
+		const onOpenChange = vi.fn();
+		await render(ComboboxTriggerInputTest, { onOpenChange });
+		// the label would forward a second zero-`detail` click to its input
+		(page.getByTestId("label").element() as HTMLElement).click();
+		await expectExists(page.getByTestId("content"));
+		expect(onOpenChange).toHaveBeenCalledTimes(1);
+	});
+
+	it("should not toggle on a click without a pointer press when disabled", async () => {
+		const onOpenChange = vi.fn();
+		// a `div` trigger, which unlike a disabled `<button>` still receives the click
+		await render(ComboboxTriggerInputTest, { onOpenChange, disabled: true });
+		const outside = page.getByTestId("outside").element() as HTMLElement;
+		outside.focus();
+		(page.getByTestId("trigger").element() as HTMLElement).click();
+		await tick();
+		await expectNotExists(page.getByTestId("content"));
+		expect(onOpenChange).not.toHaveBeenCalled();
+		expect(document.activeElement).toBe(outside);
+	});
+});
+
+it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
+	await render(ComboboxFieldsetDisabledTest);
+	const trigger = page.getByTestId("trigger");
+	await expect.element(trigger).toBeDisabled();
+
+	async function expectClosed() {
+		await new Promise((r) => setTimeout(r, 100));
+		expect(page.getByTestId("open-binding").element()).toMatchTextContent("false");
+		expect(page.getByTestId("content").query()).toBeNull();
+	}
+
+	// browsers still dispatch pointer events to disabled form controls
+	await trigger.click({ force: true });
+	await expectClosed();
+
+	trigger
+		.element()
+		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	await expectClosed();
 });

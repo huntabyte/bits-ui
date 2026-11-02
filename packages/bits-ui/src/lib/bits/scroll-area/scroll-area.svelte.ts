@@ -5,7 +5,7 @@
  * Incredible thought must have went into solving all the intricacies of this component.
  */
 
-import { Context, useDebounce, watch } from "runed";
+import { Context, watch } from "runed";
 import { untrack } from "svelte";
 import {
 	simpleBox,
@@ -19,6 +19,7 @@ import type { ScrollAreaType } from "./types.js";
 import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
 import { clamp } from "$lib/internal/clamp.js";
+import { debounce } from "$lib/internal/debounce.js";
 import { on } from "svelte/events";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { StateMachine } from "$lib/internal/state-machine.js";
@@ -54,7 +55,8 @@ interface Sizes {
 }
 
 interface ScrollAreaRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			dir: Direction;
 			type: ScrollAreaType;
@@ -156,7 +158,8 @@ export class ScrollAreaViewportState {
 }
 
 interface ScrollAreaScrollbarStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			orientation: Orientation;
 		}> {}
@@ -277,7 +280,7 @@ export class ScrollAreaScrollbarScrollState {
 		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
 
-		const debounceScrollend = useDebounce(() => this.machine.dispatch("SCROLL_END"), 100);
+		const debounceScrollend = debounce(() => this.machine.dispatch("SCROLL_END"), 100);
 
 		$effect(() => {
 			const _state = this.machine.state.current;
@@ -308,7 +311,10 @@ export class ScrollAreaScrollbarScrollState {
 			};
 
 			const unsubListener = on(viewportNode, "scroll", handleScroll);
-			return unsubListener;
+			return () => {
+				unsubListener();
+				debounceScrollend.destroy();
+			};
 		});
 
 		this.onpointerenter = this.onpointerenter.bind(this);
@@ -821,7 +827,8 @@ export class ScrollAreaScrollbarSharedState {
 }
 
 interface ScrollAreaThumbImplStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			mounted: boolean;
 		}> {}
@@ -835,12 +842,13 @@ export class ScrollAreaThumbImplState {
 	readonly attachment: RefAttachment;
 	readonly #root: ScrollAreaRootState;
 	#removeUnlinkedScrollListener = $state<() => void>();
-	readonly #debounceScrollEnd = useDebounce(() => {
+	readonly #stopUnlinkedScrollListener = () => {
 		if (this.#removeUnlinkedScrollListener) {
 			this.#removeUnlinkedScrollListener();
 			this.#removeUnlinkedScrollListener = undefined;
 		}
-	}, 100);
+	};
+	readonly #debounceScrollEnd = debounce(this.#stopUnlinkedScrollListener, 100);
 
 	constructor(
 		opts: ScrollAreaThumbImplStateOpts,
@@ -870,7 +878,11 @@ export class ScrollAreaThumbImplState {
 			};
 			untrack(() => this.scrollbarState.handleThumbPositionChange());
 			const unsubListener = on(viewportNode, "scroll", handleScroll);
-			return unsubListener;
+			return () => {
+				unsubListener();
+				this.#debounceScrollEnd.destroy();
+				this.#stopUnlinkedScrollListener();
+			};
 		});
 
 		this.onpointerdowncapture = this.onpointerdowncapture.bind(this);

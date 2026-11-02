@@ -143,15 +143,14 @@ export function createTooltipTether<Payload = never>() {
 	return new TooltipTether<Payload>();
 }
 
-interface TooltipProviderStateOpts
-	extends ReadableBoxedValues<{
-		delayDuration: number;
-		disableHoverableContent: boolean;
-		disableCloseOnTriggerClick: boolean;
-		disabled: boolean;
-		ignoreNonKeyboardFocus: boolean;
-		skipDelayDuration: number;
-	}> {}
+interface TooltipProviderStateOpts extends ReadableBoxedValues<{
+	delayDuration: number;
+	disableHoverableContent: boolean;
+	disableCloseOnTriggerClick: boolean;
+	disabled: boolean;
+	ignoreNonKeyboardFocus: boolean;
+	skipDelayDuration: number;
+}> {}
 
 export class TooltipProviderState {
 	static create(opts: TooltipProviderStateOpts) {
@@ -162,6 +161,7 @@ export class TooltipProviderState {
 	isPointerInTransit = simpleBox(false);
 	#timerFn: TimeoutFn<() => void>;
 	#openTooltip = $state<TooltipRootState | null>(null);
+	#isFocusScrollPending = false;
 
 	constructor(opts: TooltipProviderStateOpts) {
 		this.opts = opts;
@@ -170,21 +170,41 @@ export class TooltipProviderState {
 		}, this.opts.skipDelayDuration.current);
 
 		onMountEffect(() =>
-			on(window, "scroll", (e) => {
-				const activeTooltip = this.#openTooltip;
-				if (!activeTooltip) return;
-				const triggerNode = activeTooltip.triggerNode;
-				if (!triggerNode) return;
+			on(
+				window,
+				"scroll",
+				(e) => {
+					const activeTooltip = this.#openTooltip;
+					if (!activeTooltip || this.#isFocusScrollPending) return;
+					const triggerNode = activeTooltip.triggerNode;
+					if (!triggerNode) return;
 
-				const target = e.target;
-				if (!(target instanceof Element || target instanceof Document)) return;
+					const target = e.target;
+					if (!(target instanceof Element || target instanceof Document)) return;
 
-				if (target.contains(triggerNode)) {
-					activeTooltip.handleClose();
-				}
-			})
+					if (target.contains(triggerNode)) {
+						activeTooltip.handleClose();
+					}
+				},
+				// An element's scroll does not bubble, so only the capture phase sees it.
+				{ capture: true, passive: true }
+			)
 		);
 	}
+
+	/**
+	 * Ignores the scroll the browser makes to reveal a newly focused trigger. That scroll's
+	 * event fires in the next frame, before its animation frame callbacks.
+	 *
+	 * Known limit: a smooth `scroll-behavior` spans several frames, so that scroll still
+	 * closes the tooltip. Track `scrollend` if that matters.
+	 */
+	ignoreFocusScroll = () => {
+		this.#isFocusScrollPending = true;
+		requestAnimationFrame(() => {
+			this.#isFocusScrollPending = false;
+		});
+	};
 
 	#startTimer = () => {
 		const skipDuration = this.opts.skipDelayDuration.current;
@@ -225,7 +245,8 @@ export class TooltipProviderState {
 }
 
 interface TooltipRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			delayDuration: number | undefined;
 			disableHoverableContent: boolean | undefined;
 			disableCloseOnTriggerClick: boolean | undefined;
@@ -468,7 +489,8 @@ export class TooltipRootState {
 }
 
 interface TooltipTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			tabindex: number;
@@ -488,6 +510,7 @@ export class TooltipTriggerState {
 	readonly tether: TooltipTetherState | null;
 	readonly attachment: RefAttachment;
 	#isPointerDown = simpleBox(false);
+	#lastPointerType: string | null = null;
 	#hasPointerMoveOpened = $state(false);
 	domContext: DOMContext;
 	#transitCheckTimeout: number | null = null;
@@ -617,8 +640,9 @@ export class TooltipTriggerState {
 		this.#isPointerDown.current = false;
 	};
 
-	#onpointerdown: PointerEventHandler<HTMLElement> = () => {
+	#onpointerdown: PointerEventHandler<HTMLElement> = (e) => {
 		if (this.#isDisabled()) return;
+		this.#lastPointerType = e.pointerType;
 		const root = this.#getRoot();
 
 		// close on pointerdown regardless of button so right/middle click dismiss the
@@ -727,6 +751,9 @@ export class TooltipTriggerState {
 		const root = this.#getRoot();
 		if (!root) return;
 		if (this.#isPointerDown.current) return;
+		// a tap can focus the trigger after `pointerup`, e.g. when the default of a touch
+		// `pointerdown` is prevented, and touch never opens the tooltip
+		if (this.#lastPointerType === "touch") return;
 		if (this.#isDisabled()) {
 			if (root.opts.open.current) {
 				root.handleClose();
@@ -737,9 +764,11 @@ export class TooltipTriggerState {
 		if (root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) return;
 		root.setActiveTrigger(this.opts.id.current);
 		root.handleOpen();
+		root.provider.ignoreFocusScroll();
 	};
 
 	#onblur: FocusEventHandler<HTMLElement> = () => {
+		this.#lastPointerType = null;
 		const root = this.#getRoot();
 		if (!root || this.#isDisabled()) return;
 		root.handleClose();
@@ -781,7 +810,8 @@ export class TooltipTriggerState {
 }
 
 interface TooltipContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;

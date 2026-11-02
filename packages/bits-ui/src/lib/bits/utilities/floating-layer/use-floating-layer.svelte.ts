@@ -49,28 +49,27 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
 
-export interface FloatingContentStateOpts
-	extends ReadableBoxedValues<{
-		id: string;
-		wrapperId: string;
-		side: Side;
-		sideOffset: number;
-		align: Align;
-		alignOffset: number;
-		arrowPadding: number;
-		avoidCollisions: boolean;
-		collisionBoundary: Arrayable<Boundary>;
-		collisionPadding: number | Partial<Record<Side, number>>;
-		sticky: "partial" | "always";
-		hideWhenDetached: boolean;
-		updatePositionStrategy: "optimized" | "always";
-		strategy: "fixed" | "absolute";
-		onPlaced: () => void;
-		dir: Direction;
-		style: StyleProperties | null | undefined | string;
-		enabled: boolean;
-		customAnchor: string | HTMLElement | null | Measurable;
-	}> {}
+export interface FloatingContentStateOpts extends ReadableBoxedValues<{
+	id: string;
+	wrapperId: string;
+	side: Side;
+	sideOffset: number;
+	align: Align;
+	alignOffset: number;
+	arrowPadding: number;
+	avoidCollisions: boolean;
+	collisionBoundary: Arrayable<Boundary>;
+	collisionPadding: number | Partial<Record<Side, number>>;
+	sticky: "partial" | "always";
+	hideWhenDetached: boolean;
+	updatePositionStrategy: "optimized" | "always";
+	strategy: "fixed" | "absolute";
+	onPlaced: () => void;
+	dir: Direction;
+	style: StyleProperties | null | undefined | string;
+	enabled: boolean;
+	customAnchor: string | HTMLElement | null | Measurable;
+}> {}
 
 export class FloatingContentState {
 	static create(opts: FloatingContentStateOpts, tooltip = false) {
@@ -167,7 +166,7 @@ export class FloatingContentState {
 	arrowX = $derived.by(() => this.floating.middlewareData.arrow?.x ?? 0);
 	arrowY = $derived.by(() => this.floating.middlewareData.arrow?.y ?? 0);
 	cannotCenterArrow = $derived.by(() => this.floating.middlewareData.arrow?.centerOffset !== 0);
-	contentZIndex = $state<string>();
+	contentZIndex = $state<string>("auto");
 	arrowBaseSide = $derived(OPPOSITE_SIDE[this.placedSide]);
 	wrapperProps = $derived.by(
 		() =>
@@ -269,9 +268,9 @@ export class FloatingContentState {
 		});
 
 		watch(
-			() => this.contentRef.current,
-			(contentNode) => {
-				if (!contentNode || !this.opts.enabled.current) return;
+			[() => this.contentRef.current, () => this.opts.enabled.current],
+			([contentNode, enabled]) => {
+				if (!contentNode || !enabled) return;
 				const win = getWindow(contentNode);
 				const rafId = win.requestAnimationFrame(() => {
 					// avoid applying stale values when refs change quickly

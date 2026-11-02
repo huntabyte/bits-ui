@@ -100,7 +100,7 @@
 			<Tooltip.Portal>
 				<Tooltip.Content
 					sideOffset={8}
-					class="animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 origin-(--bits-tooltip-content-transform-origin)"
+					class="animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 origin-(--bits-tooltip-content-transform-origin) z-50"
 				>
 					<div
 						class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden z-0 w-[290px] border p-3"

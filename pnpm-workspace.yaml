@@ -13,12 +13,12 @@ catalog:
   '@sveltejs/vite-plugin-svelte': ^7.3.0
   '@tailwindcss/vite': ^4.3.3
   '@types/node': ^22.0.0
-  playwright: ^1.60.0
+  playwright: ^1.64.1
   runed: ^0.35.1
-  svelte: 5.46.4
-  svelte-check: ^4.3.1
-  tailwindcss: ^4.1.13
-  typescript: ^5.9.2
+  svelte: 5.57.2
+  svelte-check: ^4.7.7
+  tailwindcss: ^4.3.3
+  typescript: ^5.9.3
   vite: ^8.2.2
   vitest: ^5.0.0
   vitest-browser-svelte: ^3.0.0

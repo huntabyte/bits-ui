@@ -31,7 +31,8 @@ const menubarAttrs = createBitsAttrs({
 const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
 const MenubarMenuContext = new Context<MenubarMenuState>("Menubar.Menu");
 interface MenubarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			dir: Direction;
 			loop: boolean;
@@ -59,6 +60,7 @@ export class MenubarRootState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: menubarAttrs.trigger,
+			rootAttr: menubarAttrs.root,
 			loop: this.opts.loop,
 			orientation: boxWith(() => "horizontal"),
 		});
@@ -143,11 +145,10 @@ export class MenubarRootState {
 	);
 }
 
-interface MenubarMenuStateOpts
-	extends ReadableBoxedValues<{
-		value: string;
-		onOpenChange: OnChangeFn<boolean>;
-	}> {}
+interface MenubarMenuStateOpts extends ReadableBoxedValues<{
+	value: string;
+	onOpenChange: OnChangeFn<boolean>;
+}> {}
 
 export class MenubarMenuState {
 	static create(opts: MenubarMenuStateOpts) {
@@ -195,7 +196,8 @@ export class MenubarMenuState {
 }
 
 interface MenubarTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {}
@@ -303,7 +305,8 @@ export class MenubarTriggerState {
 }
 
 interface MenubarContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			interactOutsideBehavior: InteractOutsideBehaviorType;
 			onOpenAutoFocus: (e: Event) => void;
