@@ -120,8 +120,7 @@ export class FloatingContentState {
 	hasExplicitBoundaries = $derived(this.#boundary.length > 0);
 	detectOverflowOptions = $derived.by(() => ({
 		padding: this.opts.collisionPadding.current,
-		// fall back to Floating UI's default so nested scroll containers of the anchor are respected
-		boundary: this.hasExplicitBoundaries ? this.#boundary : ("clippingAncestors" as const),
+		boundary: this.#boundary,
 		altBoundary: this.hasExplicitBoundaries,
 	}));
 	#availableWidth = $state<number | undefined>(undefined);
@@ -160,7 +159,12 @@ export class FloatingContentState {
 					}),
 				transformOrigin({ arrowWidth: this.#arrowWidth, arrowHeight: this.#arrowHeight }),
 				this.opts.hideWhenDetached.current &&
-					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
+					hide({
+						strategy: "referenceHidden",
+						...this.detectOverflowOptions,
+						// without an explicit boundary, also check the anchor's scroll containers
+						boundary: this.hasExplicitBoundaries ? this.#boundary : "clippingAncestors",
+					}),
 			].filter(Boolean) as Middleware[]
 	);
 	floating: UseFloatingReturn;
