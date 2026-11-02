@@ -6,6 +6,7 @@ import {
 	DOMContext,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
+import { isEventTargetWithin, getEventTargetClosest } from "$lib/internal/events.js";
 import { kbd } from "$lib/internal/kbd.js";
 import {
 	createBitsAttrs,
@@ -380,14 +381,14 @@ export class PopoverContentState {
 		if (e.defaultPrevented) return;
 		if (!isElement(e.target)) return;
 
-		const closestTrigger = e.target.closest(popoverAttrs.selector("trigger"));
+		const closestTrigger = getEventTargetClosest(e, popoverAttrs.selector("trigger"));
 		if (closestTrigger && closestTrigger === this.root.triggerNode) return;
 		if (this.opts.customAnchor.current) {
 			if (isElement(this.opts.customAnchor.current)) {
-				if (this.opts.customAnchor.current.contains(e.target)) return;
+				if (isEventTargetWithin(e, this.opts.customAnchor.current)) return;
 			} else if (typeof this.opts.customAnchor.current === "string") {
 				const el = document.querySelector(this.opts.customAnchor.current);
-				if (el && el.contains(e.target)) return;
+				if (el && isEventTargetWithin(e, el)) return;
 			}
 		}
 		this.root.handleClose();
