@@ -549,6 +549,37 @@ describe("combobox - single", () => {
 		await expect.element(allItem).toHaveAttribute("data-selected");
 		await expect.element(allItem).toHaveAttribute("data-highlighted");
 	});
+
+	it("does not select an option when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = setupSingle({ value: "1", onValueChange });
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await t.rerender({ disabled: true });
+		await page.getByTestId("2").click();
+		await expect.element(t.valueBinding).toHaveTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("does not select the highlighted option with the keyboard when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = setupSingle({ value: "1", onValueChange });
+		(t.input.element() as HTMLElement).focus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expectExists(t.getContent());
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-highlighted");
+		await t.rerender({ disabled: true });
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-disabled");
+		// the disabled input loses focus, so a real Enter can't reach it
+		t.input
+			.element()
+			.dispatchEvent(
+				new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true })
+			);
+		await expect.element(t.valueBinding).toHaveTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
 });
 
 // ////////////////////////////////////

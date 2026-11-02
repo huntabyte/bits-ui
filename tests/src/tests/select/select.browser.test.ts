@@ -81,6 +81,7 @@ function setupSingle(
 		outside,
 		getHiddenInput,
 		getContent,
+		rerender: returned.rerender,
 	};
 }
 
@@ -674,6 +675,42 @@ describe("select - single", () => {
 		input.value = "2";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
 		await expect.element(t.valueBinding).toHaveTextContent("2");
+	});
+
+	it("does not select an option when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = setupSingle({ value: "1", onValueChange });
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await t.rerender({ disabled: true });
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-disabled");
+		await page.getByTestId("2").click();
+		await expect.element(t.valueBinding).toHaveTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
+		await t.rerender({ disabled: false });
+		await page.getByTestId("2").click();
+		await expect.element(t.valueBinding).toHaveTextContent("2");
+		expect(onValueChange).toHaveBeenCalledWith("2");
+	});
+
+	it("does not select the highlighted option with the keyboard when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = setupSingle({ value: "1", onValueChange });
+		(t.trigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ENTER);
+		await expectExists(t.getContent());
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-highlighted");
+		await t.rerender({ disabled: true });
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-disabled");
+		// the disabled trigger loses focus, so a real Enter can't reach it
+		t.trigger
+			.element()
+			.dispatchEvent(
+				new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true })
+			);
+		await expect.element(t.valueBinding).toHaveTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
 	});
 
 	it("should not open when disabled on touch devices", async () => {
