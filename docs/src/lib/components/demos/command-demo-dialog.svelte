@@ -61,21 +61,21 @@
 							</Command.GroupHeading>
 							<Command.GroupItems>
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["getting started", "tutorial"]}
 								>
 									<Sticker class="size-4" />
 									Introduction
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["child", "custom element", "snippets"]}
 								>
 									<CodeBlock class="size-4 " />
 									Delegation
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["css", "theme", "colors", "fonts", "tailwind"]}
 								>
 									<Palette class="size-4" />
@@ -92,21 +92,21 @@
 							</Command.GroupHeading>
 							<Command.GroupItems>
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["dates", "times"]}
 								>
 									<CalendarBlank class="size-4" />
 									Calendar
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["buttons", "forms"]}
 								>
 									<RadioButton class="size-4" />
 									Radio Group
 								</Command.Item>
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
 									keywords={["inputs", "text", "autocomplete"]}
 								>
 									<Textbox class="size-4" />
