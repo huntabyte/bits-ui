@@ -19,6 +19,7 @@ import PopoverOverlayTest from "./popover-overlay-test.svelte";
 import PopoverHoverTest, { type PopoverHoverTestProps } from "./popover-hover-test.svelte";
 import PopoverHiddenTriggerTabsTest from "./popover-hidden-trigger-tabs-test.svelte";
 import PopoverScrollJitterTest from "./popover-scroll-jitter-test.svelte";
+import PopoverHideWhenDetachedTest from "./popover-hide-when-detached-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -1233,4 +1234,30 @@ it("trigger containing a shadow-root child closes the popover on press", async (
 	child.click();
 	await new Promise((r) => setTimeout(r, 300));
 	expect(document.querySelector('[data-testid="content"]')).toBeNull();
+});
+
+it("should hide the content when the trigger is scrolled out of a nested scroll container and `hideWhenDetached` is true", async () => {
+	render(PopoverHideWhenDetachedTest);
+	const content = page.getByTestId("content");
+	await expect.element(content).toBeVisible();
+
+	const scroller = page.getByTestId("scroller").element() as HTMLElement;
+	scroller.scrollTop = 200;
+	// give the scroll event and the next position update time to land
+	await new Promise((r) => setTimeout(r, 100));
+
+	await expect.element(content).not.toBeVisible();
+	scroller.scrollTop = 0;
+	await expect.element(content).toBeVisible();
+});
+
+it("should keep the viewport as the collision boundary for non-portalled content inside a scroll container", async () => {
+	render(PopoverHideWhenDetachedTest, { portalDisabled: true });
+	const content = page.getByTestId("content");
+	await expect.element(content).toBeVisible();
+	const wrapper = content.element().parentElement as HTMLElement;
+	// the scroller is 100px tall; the viewport leaves far more room below the trigger
+	await expect
+		.poll(() => parseFloat(wrapper.style.getPropertyValue("--bits-floating-available-height")))
+		.toBeGreaterThan(200);
 });

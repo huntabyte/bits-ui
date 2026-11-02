@@ -112,14 +112,15 @@ export class FloatingContentState {
 					: "")) as Placement
 	);
 	#boundary = $derived.by(() =>
-		Array.isArray(this.opts.collisionBoundary.current)
+		(Array.isArray(this.opts.collisionBoundary.current)
 			? this.opts.collisionBoundary.current
 			: [this.opts.collisionBoundary.current]
+		).filter(isNotNull)
 	);
 	hasExplicitBoundaries = $derived(this.#boundary.length > 0);
 	detectOverflowOptions = $derived.by(() => ({
 		padding: this.opts.collisionPadding.current,
-		boundary: this.#boundary.filter(isNotNull),
+		boundary: this.#boundary,
 		altBoundary: this.hasExplicitBoundaries,
 	}));
 	#availableWidth = $state<number | undefined>(undefined);
@@ -158,7 +159,12 @@ export class FloatingContentState {
 					}),
 				transformOrigin({ arrowWidth: this.#arrowWidth, arrowHeight: this.#arrowHeight }),
 				this.opts.hideWhenDetached.current &&
-					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
+					hide({
+						strategy: "referenceHidden",
+						...this.detectOverflowOptions,
+						// without an explicit boundary, also check the anchor's scroll containers
+						boundary: this.hasExplicitBoundaries ? this.#boundary : "clippingAncestors",
+					}),
 			].filter(Boolean) as Middleware[]
 	);
 	floating: UseFloatingReturn;
