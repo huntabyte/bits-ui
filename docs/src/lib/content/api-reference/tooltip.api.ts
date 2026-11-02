@@ -159,7 +159,7 @@ export const content = defineComponentApiSchema<TooltipContentPropsWithoutHTML>(
 	title: "Content",
 	description: "The contents of the tooltip which are displayed when the tooltip is open.",
 	props: {
-		...floatingProps(),
+		...floatingProps({ defaultSide: "top" }),
 		...dismissibleLayerProps,
 		...escapeLayerProps,
 		forceMount: forceMountProp,
