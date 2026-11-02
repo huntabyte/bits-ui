@@ -24,6 +24,7 @@
 		onOpenAutoFocus = noop,
 		onInteractOutside = noop,
 		preventScroll = true,
+		preventOverflowTextSelection = true,
 		trapFocus = true,
 		restoreScrollDelay = null,
 		...restProps
@@ -51,7 +52,11 @@
 			onOpenAutoFocus(e);
 			if (e.defaultPrevented) return;
 			e.preventDefault();
-			afterSleep(0, () => contentState.opts.ref.current?.focus());
+			// capture the node so a replacement can't receive this node's delayed autofocus
+			const node = contentState.opts.ref.current;
+			afterSleep(0, () => {
+				if (node?.isConnected) node.focus();
+			});
 		}}
 	>
 		{#snippet focusScope({ props: focusScopeProps })}
@@ -78,6 +83,7 @@
 				>
 					<TextSelectionLayer
 						{...mergedProps}
+						{preventOverflowTextSelection}
 						ref={contentState.opts.ref}
 						enabled={contentState.root.opts.open.current}
 					>

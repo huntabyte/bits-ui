@@ -18,8 +18,18 @@
 	);
 </script>
 
+<!--
+	The component state is the source of truth. Mirroring it into `defaultValue`/`defaultChecked`
+	makes a native form reset restore the current state instead of clearing the input, and avoids
+	`bind:value`, whose reset handler would write a stale value back into `value` (#1942).
+-->
 {#if mergedProps.type === "checkbox"}
-	<input {...mergedProps} {value} />
+	<input {...mergedProps} {value} defaultChecked={mergedProps.checked} />
 {:else}
-	<input bind:value {...mergedProps} />
+	<input
+		{...mergedProps}
+		{value}
+		defaultValue={value ?? ""}
+		oninput={(e) => (value = e.currentTarget.value)}
+	/>
 {/if}

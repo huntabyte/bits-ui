@@ -59,6 +59,7 @@ export class MenubarRootState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: menubarAttrs.trigger,
+			rootAttr: menubarAttrs.root,
 			loop: this.opts.loop,
 			orientation: boxWith(() => "horizontal"),
 		});

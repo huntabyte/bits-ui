@@ -2,6 +2,7 @@ import { render } from "vitest-browser-svelte";
 import { it, vi, expect } from "vitest";
 import { getTestKbd } from "../utils.js";
 import MenubarTest, { type MenubarTestProps } from "./menubar-test.svelte";
+import MenubarNestedTest from "./menubar-nested-test.svelte";
 import { page, userEvent } from "@vitest/browser/context";
 import { expectExists, expectNotExists } from "../browser-utils";
 
@@ -162,4 +163,26 @@ it("should respect the `onSelect` prop on SubTrigger", async () => {
 
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	expect(onSelect).toHaveBeenCalledTimes(3);
+});
+
+it("should ignore the triggers of a nested `Menubar.Root` when navigating with the keyboard", async () => {
+	render(MenubarNestedTest);
+
+	const outerTrigger1 = page.getByTestId("outer-trigger-1");
+	const outerTrigger2 = page.getByTestId("outer-trigger-2");
+	const innerTrigger1 = page.getByTestId("inner-trigger-1");
+	const innerTrigger2 = page.getByTestId("inner-trigger-2");
+
+	(outerTrigger1.element() as HTMLElement).focus();
+	await userEvent.keyboard(kbd.ARROW_RIGHT);
+	await expect.element(outerTrigger2).toHaveFocus();
+	await userEvent.keyboard(kbd.ARROW_RIGHT);
+	await expect.element(outerTrigger1).toHaveFocus();
+
+	// the nested Menubar.Root keeps navigating among its own triggers
+	(innerTrigger1.element() as HTMLElement).focus();
+	await userEvent.keyboard(kbd.ARROW_RIGHT);
+	await expect.element(innerTrigger2).toHaveFocus();
+	await userEvent.keyboard(kbd.ARROW_RIGHT);
+	await expect.element(innerTrigger1).toHaveFocus();
 });

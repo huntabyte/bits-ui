@@ -18,6 +18,7 @@ import ContextMenuIntegrationTest from "./context-menu-integration-test.svelte";
 import ContextMenuNestedTest from "./context-menu-nested-test.svelte";
 import ContextMenuNestedSubmenuTest from "./context-menu-nested-submenu-test.svelte";
 import ContextMenuTooltipTest from "./context-menu-tooltip-test.svelte";
+import ContextMenuRapidTest from "./context-menu-rapid-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -207,6 +208,47 @@ it("should close submenu when pointer intent changes away from submenu", async (
 	await expectNotExists(t.getSubContent());
 	await page.getByTestId("item-2").hover();
 	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
+});
+
+it("should close submenu soon after the pointer stops moving closer to it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 16 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	for (let i = 0; i < 10; i++) {
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+				clientX: leavePt.x,
+				clientY: leavePt.y,
+			})
+		);
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+	}
+
+	expect(() => t.getSubContent().element()).toThrow();
 });
 
 it("should toggle the checkbox item when clicked & respects binding", async () => {
@@ -646,4 +688,16 @@ it("should apply custom style prop to content", async () => {
 	});
 	const contentEl = t.getContent().element() as HTMLElement;
 	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
+});
+
+it("should leave only the last menu open after rapid right clicks across triggers (#1743)", async () => {
+	render(ContextMenuRapidTest);
+	const order = [0, 5, 1, 9, 2, 14, 3, 7, 20, 4, 11, 6, 25, 8, 17, 10, 22, 12, 29, 13];
+	for (const i of order) {
+		await page.getByTestId(`trigger-${i}`).click({ button: "right", force: true });
+	}
+	await expect
+		.poll(() => document.querySelectorAll("[data-context-menu-content]").length)
+		.toBe(1);
+	await expectExists(page.getByTestId(`content-${order.at(-1)}`));
 });

@@ -64,4 +64,21 @@ describe("debounce", () => {
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		expect(mockFn).not.toHaveBeenCalled();
 	});
+
+	it("should run the pending call immediately and only once when flush is called", async () => {
+		const mockFn = vi.fn();
+		const debouncedFn = debounce(mockFn, 100);
+
+		debouncedFn.flush();
+		expect(mockFn).not.toHaveBeenCalled();
+
+		debouncedFn(1);
+		debouncedFn(2);
+		debouncedFn.flush();
+		expect(mockFn).toHaveBeenCalledExactlyOnceWith(2);
+
+		debouncedFn.flush();
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		expect(mockFn).toHaveBeenCalledOnce();
+	});
 });

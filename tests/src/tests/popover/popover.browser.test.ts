@@ -66,6 +66,17 @@ it("should have bits data attrs", async () => {
 	}
 });
 
+it("should not render the internal `forceMount` prop as an attribute on the content", async () => {
+	const t = await open();
+	await expect.element(t.content).not.toHaveAttribute("forcemount");
+});
+
+it("should not render the internal `forceMount` prop as an attribute on the content (force mounted)", async () => {
+	const t = setup({}, PopoverForceMountTest);
+	await expectExists(t.getContent());
+	await expect.element(t.getContent()).not.toHaveAttribute("forcemount");
+});
+
 it("should apply custom style prop to content", async () => {
 	const t = await open({
 		contentProps: {
@@ -361,11 +372,29 @@ it("should forceMount the content when `forceMount` is true", async () => {
 	await expectExists(t.getContent());
 });
 
+it("should not pass an invalid `z-index: undefined` in the child snippet's wrapperProps style", async () => {
+	// read the raw string, since browsers drop the invalid declaration from the DOM style
+	setup({}, PopoverForceMountTest);
+	const text = page.getByTestId("content-text");
+	await expect.element(text).toHaveAttribute("data-wrapper-style", expect.stringContaining("z-index"));
+	expect(text.element().getAttribute("data-wrapper-style")).not.toMatch(/z-index:\s*undefined/);
+});
+
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
 	const t = setup({ withOpenCheck: true }, PopoverForceMountTest);
 	await expectNotExists(t.getContent());
 	await page.getByTestId("trigger").click();
 	await expectExists(t.getContent());
+});
+
+it("should apply the content z-index to the wrapper when force-mounted content opens after mounting closed", async () => {
+	render(PopoverForceMountTest, { contentProps: { style: "z-index: 50" } });
+	const wrapper = () =>
+		document.querySelector<HTMLElement>("[data-bits-floating-content-wrapper]");
+	await expect.poll(() => wrapper()).not.toBeNull();
+	await page.getByTestId("trigger").click();
+	await expect.element(page.getByTestId("content")).toHaveAttribute("data-state", "open");
+	await expect.poll(() => wrapper()?.style.zIndex).toBe("50");
 });
 
 it("should correctly handle focus when closing one popover by clicking another popover's trigger", async () => {

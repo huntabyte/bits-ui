@@ -5,6 +5,7 @@ import { type ComponentProps, tick } from "svelte";
 import { getTestKbd } from "../utils.js";
 import CheckboxTest from "./checkbox-test.svelte";
 import CheckboxGroupTest from "./checkbox-group-test.svelte";
+import CheckboxExternalFormTest from "./checkbox-external-form-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
@@ -179,6 +180,32 @@ describe("Single Checkbox", () => {
 			await userEvent.keyboard(kbd.ENTER);
 			expect(submittedValues).toBeUndefined();
 			await expectChecked(t.root);
+		});
+
+		describe("type='submit' with a `form` outside the form element", () => {
+			function setupExternal() {
+				const onFormSubmit = vi.fn();
+				render(CheckboxExternalFormTest, { onFormSubmit });
+				return { root: page.getByTestId("root"), onFormSubmit };
+			}
+
+			it("should pass the `form` attribute to the button", async () => {
+				const t = setupExternal();
+				await expect.element(t.root).toHaveAttribute("form", "ext");
+			});
+
+			it("should submit the external form on click", async () => {
+				const t = setupExternal();
+				await t.root.click();
+				expect(t.onFormSubmit).toHaveBeenCalledTimes(1);
+			});
+
+			it("should submit the external form when `Enter` is pressed", async () => {
+				const t = setupExternal();
+				(t.root.element() as HTMLElement).focus();
+				await userEvent.keyboard(kbd.ENTER);
+				expect(t.onFormSubmit).toHaveBeenCalledTimes(1);
+			});
 		});
 	});
 
@@ -548,4 +575,17 @@ describe("Checkbox Group", () => {
 			await expectUnchecked(c);
 		});
 	});
+});
+
+it("should keep the hidden input in sync with the checked state after a form reset", async () => {
+	const t = setup({ checked: true });
+	const input = t.container.querySelector<HTMLInputElement>('input[name="terms"]')!;
+	expect(input.checked).toBe(true);
+
+	input.form!.reset();
+	await new Promise((r) => requestAnimationFrame(r));
+
+	await expect.element(t.root).toHaveAttribute("data-state", "checked");
+	expect(input.checked).toBe(true);
+	expect(new FormData(input.form!).get("terms")).toBe("on");
 });

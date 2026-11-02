@@ -1,6 +1,6 @@
+import { SvelteMap } from "svelte/reactivity";
 import { Context, Previous, watch } from "runed";
 import {
-	afterSleep,
 	afterTick,
 	onDestroyEffect,
 	attachRef,
@@ -33,7 +33,7 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { noop } from "$lib/internal/noop.js";
-import { isIOS } from "$lib/internal/is.js";
+import { isDisabledElement, isIOS } from "$lib/internal/is.js";
 import { createBitsAttrs } from "$lib/internal/attrs.js";
 import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
 import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
@@ -77,7 +77,8 @@ const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobo
 const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
 
 interface SelectBaseRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			name: string;
@@ -107,6 +108,11 @@ abstract class SelectBaseRootState {
 	triggerNode = $state<HTMLElement | null>(null);
 	valueNode = $state<HTMLElement | null>(null);
 	valueId = $state("");
+	/**
+	 * Labels for selected values, populated when items are toggled or resolved from
+	 * mounted item nodes. Used so `<Select.Value>` keeps labels after the menu closes.
+	 */
+	readonly selectedLabelsByValue = new SvelteMap<string, string>();
 	highlightedNode = $state<HTMLElement | null>(null);
 	// DOM attributes are not reactive, so snapshot metadata when elements are reused.
 	highlightedItem = $state<{ value: string | null; label: string | null } | null>(null);
@@ -118,6 +124,11 @@ abstract class SelectBaseRootState {
 	readonly highlightedLabel = $derived(this.highlightedItem?.label ?? null);
 	contentIsPositioned = $state(false);
 	isUsingKeyboard = false;
+	/**
+	 * The item a press started on, and where. The list can scroll under a still
+	 * pointer before the release, which then lands on a neighbouring item.
+	 */
+	pressedItem: { item: SelectItemState; x: number; y: number } | null = null;
 	isCombobox = false;
 	domContext = new DOMContext(() => null);
 
@@ -139,6 +150,7 @@ abstract class SelectBaseRootState {
 				this.autoHighlightActive = false;
 				this.inputGeneration++;
 				this.setHighlightedNode(null);
+				this.pressedItem = null;
 			}
 		});
 
@@ -232,20 +244,32 @@ abstract class SelectBaseRootState {
 	}
 
 	/**
-	 * Resolves the display label for a value: `items` entry when present, otherwise the
-	 * mounted item's `data-label` or its text content.
+	 * Resolves the display label for a value: a non-empty `items` entry, otherwise the
+	 * label cached from the selected item. Never reads the DOM, so it stays reactive and
+	 * works the same whether items are mounted, unmounted, or force-mounted.
 	 */
 	getLabelForValue(value: string): string {
 		if (value === "") return "";
 		const fromItems = this.opts.items.current.find((item) => item.value === value)?.label;
-		if (fromItems !== undefined) return fromItems;
-		const node = this.getNodeByValue(value);
-		if (node) {
-			const dataLabel = node.getAttribute("data-label");
-			if (dataLabel !== null && dataLabel !== "") return dataLabel;
-			return node.textContent?.trim() ?? value;
+		if (fromItems?.trim()) return fromItems;
+		return this.selectedLabelsByValue.get(value) ?? value;
+	}
+
+	/** The item's `label`, falling back to its text content when the label is empty. */
+	resolveItemLabel(value: string, label: string | null | undefined, node: HTMLElement | null) {
+		if (label?.trim()) return label;
+		return node?.textContent?.trim() || value;
+	}
+
+	setSelectedLabel(value: string, label: string) {
+		if (value === "" || label === value) this.selectedLabelsByValue.delete(value);
+		else this.selectedLabelsByValue.set(value, label);
+	}
+
+	pruneSelectedLabels(keptValues: string[]) {
+		for (const value of this.selectedLabelsByValue.keys()) {
+			if (!keptValues.includes(value)) this.selectedLabelsByValue.delete(value);
 		}
-		return value;
 	}
 
 	setOpen(open: boolean) {
@@ -288,7 +312,8 @@ abstract class SelectBaseRootState {
 }
 
 interface SelectSingleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -333,6 +358,13 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
+
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				this.pruneSelectedLabels(value === "" ? [] : [value]);
+			}
+		);
 	}
 
 	includesItem(itemValue: string) {
@@ -343,6 +375,7 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		const newValue = this.includesItem(itemValue) ? "" : itemValue;
 		this.opts.value.current = newValue;
 		if (newValue !== "") {
+			this.setSelectedLabel(itemValue, itemLabel);
 			this.opts.inputValue.current = itemLabel;
 		}
 	}
@@ -363,21 +396,21 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current !== "") {
-				const node = this.getNodeByValue(this.opts.value.current);
-				if (node) {
-					this.setHighlightedNode(node, true);
-					return;
-				}
+			// "" is a valid value for a select item so we need to look it up too
+			const node = this.getNodeByValue(this.opts.value.current);
+			if (node) {
+				this.setHighlightedNode(node, true);
+				return;
 			}
-			// if no value is set, we want to highlight the first item
+			// if no item matches the value, we want to highlight the first item
 			if (!this.isCombobox) this.setHighlightedToFirstCandidate(true);
 		});
 	}
 }
 
 interface SelectMultipleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string[];
 		}> {}
@@ -386,6 +419,11 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	readonly opts: SelectMultipleRootStateOpts;
 	readonly isMulti = true as const;
 	readonly hasValue = $derived.by(() => this.opts.value.current.length > 0);
+	/**
+	 * `includesItem` is called once per mounted item whenever the value changes, so we keep a
+	 * set around to avoid a linear scan of `value` per item.
+	 */
+	readonly #valueSet = $derived.by(() => new Set(this.opts.value.current));
 
 	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
@@ -405,10 +443,17 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.setInitialHighlightedNode();
 			}
 		);
+
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				this.pruneSelectedLabels(value);
+			}
+		);
 	}
 
 	includesItem(itemValue: string) {
-		return this.opts.value.current.includes(itemValue);
+		return this.#valueSet.has(itemValue);
 	}
 
 	toggleItem(itemValue: string, itemLabel: string = itemValue) {
@@ -416,6 +461,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 			this.opts.value.current = this.opts.value.current.filter((v) => v !== itemValue);
 		} else {
 			this.opts.value.current = [...this.opts.value.current, itemValue];
+			this.setSelectedLabel(itemValue, itemLabel);
 		}
 		this.opts.inputValue.current = itemLabel;
 	}
@@ -437,7 +483,7 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.domContext.getDocument().contains(this.highlightedNode)
 			)
 				return;
-			if (this.opts.value.current.length && this.opts.value.current[0] !== "") {
+			if (this.opts.value.current.length) {
 				const node = this.getNodeByValue(this.opts.value.current[0]!);
 				if (node) {
 					this.setHighlightedNode(node, true);
@@ -451,7 +497,8 @@ class SelectMultipleRootState extends SelectBaseRootState {
 }
 
 interface SelectRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			loop: boolean;
@@ -521,6 +568,7 @@ export class SelectValueState {
 				throw new Error(`Expected a string passed to \`setValue\` got ${typeof value}.`);
 			return;
 		}
+		// stale cached labels are pruned by the root's value watcher
 		this.root.opts.value.current = value;
 	}
 
@@ -548,9 +596,7 @@ export class SelectValueState {
 			selection: {
 				type: "single" as const,
 				selected:
-					value !== ""
-						? { value, label: value === "" ? "" : this.root.getLabelForValue(value) }
-						: undefined,
+					value !== "" ? { value, label: this.root.getLabelForValue(value) } : undefined,
 				setValue: this.setValue,
 			},
 			placeholder: this.opts.placeholder.current ?? null,
@@ -567,7 +613,8 @@ export class SelectValueState {
 }
 
 interface SelectInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			clearOnDeselect: boolean;
 		}> {}
@@ -608,6 +655,8 @@ export class SelectInputState {
 		this.root.isUsingKeyboard = true;
 		if (e.isComposing) return;
 		if (e.key === kbd.ESCAPE) return;
+		// Home/End move the text cursor in the input, per the WAI-ARIA combobox pattern
+		if (e.key === kbd.HOME || e.key === kbd.END) return;
 
 		// prevent arrow up/down from moving the position of the cursor in the input
 		if (e.key === kbd.ARROW_UP || e.key === kbd.ARROW_DOWN) e.preventDefault();
@@ -620,10 +669,20 @@ export class SelectInputState {
 			// set correctly.
 			if (e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
 				afterTick(() => {
-					if (!this.root.opts.open.current || this.root.hasValue) return;
+					if (
+						!this.root.opts.open.current ||
+						this.root.hasValue ||
+						this.root.highlightedNode
+					)
+						return;
 					const candidates = this.root.getCandidateNodes();
+					const selected = !this.root.isMulti
+						? this.root.getNodeByValue(this.root.opts.value.current)
+						: null;
 					this.root.setHighlightedNode(
-						(e.key === kbd.ARROW_DOWN ? candidates[0] : candidates.at(-1)) ?? null
+						selected ??
+							(e.key === kbd.ARROW_DOWN ? candidates[0] : candidates.at(-1)) ??
+							null
 					);
 				});
 			}
@@ -651,13 +710,17 @@ export class SelectInputState {
 			}
 
 			if (
-				this.root.highlightedValue &&
+				this.root.highlightedValue !== null &&
 				this.root.highlightedNode &&
 				this.root.highlightedNode.isConnected
 			) {
 				this.root.toggleItem(
 					this.root.highlightedValue,
-					this.root.highlightedLabel ?? undefined
+					this.root.resolveItemLabel(
+						this.root.highlightedValue,
+						this.root.highlightedLabel,
+						this.root.highlightedNode
+					)
 				);
 			}
 			if (!this.root.isMulti && !isCurrentSelectedValue) {
@@ -776,16 +839,23 @@ export class SelectComboTriggerState {
 		this.attachment = attachRef(opts.ref);
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
+		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
+	}
+
+	#focusInputAndToggle() {
+		if (!this.root.domContext) return;
+		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
+			this.root.inputNode?.focus();
+		}
+		this.root.toggleMenu();
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (!this.root.domContext) return;
 		if (e.key === kbd.ENTER || e.key === kbd.SPACE) {
 			e.preventDefault();
-			if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-				this.root.inputNode?.focus();
-			}
-			this.root.toggleMenu();
+			this.#focusInputAndToggle();
 		}
 	}
 
@@ -794,12 +864,39 @@ export class SelectComboTriggerState {
 	 * behavior of focusing the button and keep focus on the input.
 	 */
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current || !this.root.domContext) return;
+		if (
+			this.root.opts.disabled.current ||
+			isDisabledElement(this.opts.ref.current) ||
+			!this.root.domContext
+		)
+			return;
 		e.preventDefault();
-		if (this.root.domContext.getActiveElement() !== this.root.inputNode) {
-			this.root.inputNode?.focus();
-		}
-		this.root.toggleMenu();
+		// prevent opening on touch down which can be triggered when scrolling on touch devices
+		if (e.pointerType === "touch") return;
+		this.#focusInputAndToggle();
+	}
+
+	onpointerup(e: BitsPointerEvent) {
+		if (
+			this.root.opts.disabled.current ||
+			isDisabledElement(this.opts.ref.current) ||
+			!this.root.domContext
+		)
+			return;
+		if (e.pointerType !== "touch") return;
+		e.preventDefault();
+		this.#focusInputAndToggle();
+	}
+
+	/**
+	 * Screen readers can activate the trigger with a `click` that no pointer events
+	 * precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+	 * and was already handled by `onpointerdown` / `onpointerup`.
+	 */
+	onclick(e: BitsMouseEvent) {
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		this.#focusInputAndToggle();
+		e.preventDefault();
 	}
 
 	readonly props = $derived.by(
@@ -812,6 +909,8 @@ export class SelectComboTriggerState {
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
+				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
@@ -899,7 +998,11 @@ export class SelectTriggerState {
 		if (this.root.highlightedValue !== null) {
 			this.root.toggleItem(
 				this.root.highlightedValue,
-				this.root.highlightedLabel ?? undefined
+				this.root.resolveItemLabel(
+					this.root.highlightedValue,
+					this.root.highlightedLabel,
+					this.root.highlightedNode
+				)
 			);
 		}
 
@@ -960,7 +1063,7 @@ export class SelectTriggerState {
 		) {
 			e.preventDefault();
 			const shouldReturn = this.#handleKeyboardSelection();
-			if (shouldReturn) return;
+			if (shouldReturn || e.key === kbd.SPACE) return;
 		}
 
 		if (e.key === kbd.ARROW_UP && e.altKey) {
@@ -1005,9 +1108,10 @@ export class SelectTriggerState {
 
 		if (!isModifierKey && (isCharacterKey || isSpaceKey)) {
 			const matchedNode = this.#domTypeahead.handleTypeaheadSearch(e.key, candidateNodes);
-			if (!matchedNode && isSpaceKey) {
+			if (isSpaceKey) {
+				// prevent the button's activation `click`, which `onclick` would toggle
 				e.preventDefault();
-				this.#handleKeyboardSelection();
+				if (!matchedNode) this.#handleKeyboardSelection();
 			}
 			return;
 		}
@@ -1025,10 +1129,21 @@ export class SelectTriggerState {
 		// this only runs for a label 'click'
 		const currTarget = e.currentTarget as HTMLElement;
 		currTarget.focus();
+
+		// Screen readers can activate the trigger with a `click` that no pointer events
+		// precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+		// and was already handled by `onpointerdown` / `onpointerup`.
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		if (this.root.opts.open.current) {
+			this.root.handleClose();
+		} else {
+			this.#handleOpen();
+		}
+		e.preventDefault();
 	}
 
 	onpointerdown(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		// prevent opening on touch down which can be triggered when scrolling on touch devices
 		if (e.pointerType === "touch") return e.preventDefault();
 
@@ -1050,7 +1165,7 @@ export class SelectTriggerState {
 	}
 
 	onpointerup(e: BitsPointerEvent) {
-		if (this.root.opts.disabled.current) return;
+		if (this.root.opts.disabled.current || isDisabledElement(this.opts.ref.current)) return;
 		e.preventDefault();
 		if (e.pointerType === "touch") {
 			if (this.root.opts.open.current === false) {
@@ -1065,9 +1180,11 @@ export class SelectTriggerState {
 		() =>
 			({
 				id: this.opts.id.current,
+				role: "combobox",
 				disabled: this.root.opts.disabled.current ? true : undefined,
 				"aria-haspopup": "listbox",
 				"aria-expanded": boolToStr(this.root.opts.open.current),
+				"aria-controls": this.root.contentNode?.id || undefined,
 				"aria-activedescendant": this.root.highlightedId,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
@@ -1083,7 +1200,8 @@ export class SelectTriggerState {
 }
 
 interface SelectContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -1098,7 +1216,7 @@ export class SelectContentState {
 	readonly attachment: RefAttachment;
 	isPositioned = $state(false);
 	// set when the user scrolls the viewport by hand (wheel, touch, or holding a
-	// scroll button) and reset on close; shared by both scroll buttons
+	// scroll button) and reset on close; ends the realignment below
 	userHasScrolled = false;
 	domContext: DOMContext;
 
@@ -1130,7 +1248,34 @@ export class SelectContentState {
 
 		watch([() => this.isPositioned, () => this.root.highlightedNode], () => {
 			if (!this.isPositioned || !this.root.highlightedNode) return;
+			// a keyboard highlight hands the scroll position back to us
+			if (this.root.isUsingKeyboard) this.userHasScrolled = false;
 			this.root.scrollHighlightedNodeIntoView(this.root.highlightedNode);
+		});
+
+		// positioning is not the end of settling: chrome that mounts once the content
+		// is placed (scroll buttons in the flex flow, a header, a footer) shrinks the
+		// viewport under the alignment above and drops the highlighted item back below
+		// the fold, so keep aligning on every resize until the user takes the scroll
+		// position over
+		watch([() => this.isPositioned, () => this.root.viewportNode], () => {
+			const viewport = this.root.viewportNode;
+			if (!this.isPositioned || !viewport) return;
+			const onUserScroll = () => {
+				this.userHasScrolled = true;
+			};
+			const observer = new (this.domContext.getWindow().ResizeObserver)(() => {
+				if (this.userHasScrolled || !this.root.highlightedNode) return;
+				this.root.scrollHighlightedNodeIntoView(this.root.highlightedNode);
+			});
+			observer.observe(viewport);
+			// not `scroll`: the realign scrolls the viewport itself, so `scroll` fires
+			// for our own writes and cannot tell the user's gesture from ours
+			return executeCallbacks(
+				on(viewport, "wheel", onUserScroll, { passive: true }),
+				on(viewport, "touchmove", onUserScroll, { passive: true }),
+				() => observer.disconnect()
+			);
 		});
 
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1139,6 +1284,11 @@ export class SelectContentState {
 	onpointermove(_: BitsPointerEvent) {
 		this.root.isUsingKeyboard = false;
 	}
+
+	// every press starts fresh, so a press that ended off an item isn't reused
+	onpointerdowncapture = () => {
+		this.root.pressedItem = null;
+	};
 
 	readonly #styles = $derived.by(() => {
 		return getFloatingContentCSSVars(this.root.isCombobox ? "combobox" : "select");
@@ -1192,6 +1342,7 @@ export class SelectContentState {
 					...this.#styles,
 				},
 				onpointermove: this.onpointermove,
+				onpointerdowncapture: this.onpointerdowncapture,
 				...this.attachment,
 			}) as const
 	);
@@ -1215,7 +1366,8 @@ export class SelectContentState {
 }
 
 interface SelectItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -1234,6 +1386,15 @@ export class SelectItemState {
 	readonly isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
+	);
+	/**
+	 * Kept as a separate boolean derived so that `props` (and the `mergeProps` /
+	 * attribute-diffing work downstream of it) is only invalidated for the two items whose
+	 * highlighted state actually changed, rather than for every mounted item each time the
+	 * highlighted value moves.
+	 */
+	readonly #isHighlightedAndEnabled = $derived.by(
+		() => this.isHighlighted && !this.opts.disabled.current
 	);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
@@ -1259,9 +1420,31 @@ export class SelectItemState {
 			}
 		);
 
+		// keep the cached label in sync while this item is selected and mounted
+		watch(
+			[
+				() => this.isSelected,
+				() => this.mounted,
+				() => this.opts.value.current,
+				() => this.opts.label.current,
+			],
+			([selected, mounted, value]) => {
+				if (!selected || !mounted) return;
+				this.root.setSelectedLabel(value, this.#resolveLabel());
+			}
+		);
+
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
+	}
+
+	#resolveLabel() {
+		return this.root.resolveItemLabel(
+			this.opts.value.current,
+			this.opts.label.current,
+			this.opts.ref.current
+		);
 	}
 
 	handleSelect() {
@@ -1276,7 +1459,7 @@ export class SelectItemState {
 		}
 
 		// otherwise, toggle the item and if we're not in a multi select, close the menu
-		this.root.toggleItem(this.opts.value.current, this.opts.label.current);
+		this.root.toggleItem(this.opts.value.current, this.#resolveLabel());
 
 		if (!this.root.isMulti && !isCurrentSelectedValue) {
 			this.root.handleClose();
@@ -1291,6 +1474,7 @@ export class SelectItemState {
 	onpointerdown(e: BitsPointerEvent) {
 		// prevent focus from leaving the input/select trigger
 		e.preventDefault();
+		this.root.pressedItem = { item: this, x: e.clientX, y: e.clientY };
 	}
 
 	/**
@@ -1300,6 +1484,18 @@ export class SelectItemState {
 	 */
 	onpointerup(e: BitsPointerEvent) {
 		if (e.defaultPrevented || !this.opts.ref.current) return;
+		const press = this.root.pressedItem;
+		this.root.pressedItem = null;
+		// released on another item without the pointer moving: the list moved under it
+		if (
+			press &&
+			press.item !== this &&
+			Math.hypot(e.clientX - press.x, e.clientY - press.y) < 4
+		) {
+			e.preventDefault();
+			press.item.handleSelect();
+			return;
+		}
 		/**
 		 * For one reason or another, when it's a touch pointer and _not_ on IOS,
 		 * we need to listen for the immediate click event to handle the selection,
@@ -1347,17 +1543,11 @@ export class SelectItemState {
 			({
 				id: this.opts.id.current,
 				role: "option",
-				"aria-selected": this.root.includesItem(this.opts.value.current)
-					? "true"
-					: undefined,
+				"aria-selected": boolToStr(this.isSelected),
 				"data-value": this.opts.value.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
-				"data-highlighted":
-					this.root.highlightedValue === this.opts.value.current &&
-					!this.opts.disabled.current
-						? ""
-						: undefined,
-				"data-selected": this.root.includesItem(this.opts.value.current) ? "" : undefined,
+				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
+				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,
 				[this.root.getBitsAttr("item")]: "",
 				onpointermove: this.onpointermove,
@@ -1423,10 +1613,9 @@ export class SelectGroupHeadingState {
 	);
 }
 
-interface SelectHiddenInputStateOpts
-	extends ReadableBoxedValues<{
-		value: string | undefined;
-	}> {}
+interface SelectHiddenInputStateOpts extends ReadableBoxedValues<{
+	value: string | undefined;
+}> {}
 
 export class SelectHiddenInputState {
 	static create(opts: SelectHiddenInputStateOpts) {
@@ -1505,7 +1694,8 @@ export class SelectViewportState {
 }
 
 interface SelectScrollButtonImplStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			delay: (tick: number) => number;
 		}> {}
@@ -1533,9 +1723,14 @@ export class SelectScrollButtonImplState {
 		});
 
 		$effect(() => {
-			if (this.mounted) return;
+			if (this.mounted && this.root.opts.open.current) return;
 			this.clearAutoScrollInterval();
 		});
+
+		// closing destroys the button together with the effect above, so the effect never
+		// sees `mounted` flip and a removed button gets no `pointerleave`. without this the
+		// timer outlives the button and scrolls the viewport the next time the content opens
+		onDestroyEffect(() => this.clearAutoScrollInterval());
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointermove = this.onpointermove.bind(this);
@@ -1557,7 +1752,7 @@ export class SelectScrollButtonImplState {
 	}
 
 	onpointerdown(_: BitsPointerEvent) {
-		if (this.autoScrollTimer !== null) return;
+		if (this.autoScrollTimer !== null || !this.root.opts.open.current) return;
 		this.content.userHasScrolled = true;
 		const autoScroll = (tick: number) => {
 			this.onAutoScroll();
@@ -1606,7 +1801,6 @@ export class SelectScrollDownButtonState {
 	readonly content: SelectContentState;
 	readonly root: SelectBaseRootState;
 	canScrollDown = $state(false);
-	scrollIntoViewTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
 	constructor(scrollButtonState: SelectScrollButtonImplState) {
 		this.scrollButtonState = scrollButtonState;
@@ -1618,18 +1812,7 @@ export class SelectScrollDownButtonState {
 			const viewport = this.root.viewportNode;
 			if (!viewport || !this.content.isPositioned) return;
 			this.handleScroll(true);
-
-			const onUserScroll = () => {
-				this.content.userHasScrolled = true;
-			};
-
-			// not `scroll`: the realign below scrolls the viewport itself, so `scroll`
-			// fires for our own writes and cannot tell the user's gesture from ours
-			return executeCallbacks(
-				on(viewport, "scroll", () => this.handleScroll()),
-				on(viewport, "wheel", onUserScroll, { passive: true }),
-				on(viewport, "touchmove", onUserScroll, { passive: true })
-			);
+			return on(viewport, "scroll", () => this.handleScroll());
 		});
 
 		/**
@@ -1645,24 +1828,6 @@ export class SelectScrollDownButtonState {
 			() => {
 				if (!this.root.viewportNode || !this.content.isPositioned) return;
 				this.handleScroll(true);
-			}
-		);
-
-		watch(
-			() => this.scrollButtonState.mounted,
-			() => {
-				if (!this.scrollButtonState.mounted) return;
-				if (this.scrollIntoViewTimer) {
-					clearTimeout(this.scrollIntoViewTimer);
-				}
-				this.scrollIntoViewTimer = afterSleep(5, () => {
-					// this button remounts whenever the viewport leaves the bottom, which
-					// would otherwise realign onto the highlighted item mid-gesture
-					if (this.content.userHasScrolled) return;
-					const activeItem = this.root.highlightedNode;
-					if (!activeItem) return;
-					this.root.scrollHighlightedNodeIntoView(activeItem);
-				});
 			}
 		);
 	}

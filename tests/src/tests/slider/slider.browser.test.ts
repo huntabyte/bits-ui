@@ -1062,3 +1062,15 @@ describe("labels", () => {
 		});
 	});
 });
+
+describe("non-finite bounds (#1663)", () => {
+	it.each([
+		{ max: Infinity },
+		{ min: -Infinity },
+		{ max: Number.NaN },
+		{ step: Number.POSITIVE_INFINITY },
+		{ step: 0 },
+	])("should throw a descriptive error for %o", (props) => {
+		expect(() => setup(props)).toThrow(/finite/);
+	});
+});

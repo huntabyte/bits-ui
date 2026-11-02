@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { DateFieldSegmentState } from "../time-field.svelte.js";
 	import type { TimeFieldSegmentProps } from "../types.js";
 	import { createId } from "$lib/internal/create-id.js";
@@ -15,13 +16,16 @@
 		...restProps
 	}: TimeFieldSegmentProps = $props();
 
-	const segmentState = DateFieldSegmentState.create(part, {
-		id: boxWith(() => id),
-		ref: boxWith(
-			() => ref,
-			(v) => (ref = v)
-		),
-	});
+	const segmentState = DateFieldSegmentState.create(
+		untrack(() => part),
+		{
+			id: boxWith(() => id),
+			ref: boxWith(
+				() => ref,
+				(v) => (ref = v)
+			),
+		}
+	);
 
 	const mergedProps = $derived(
 		mergeProps(restProps, segmentState.props as Record<string, unknown>)

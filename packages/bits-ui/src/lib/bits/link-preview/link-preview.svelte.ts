@@ -105,11 +105,12 @@ export class LinkPreviewRootState {
 					handlePointerUp
 				);
 
-				if (!this.contentNode) return;
-				const tabCandidates = getTabbableCandidates(this.contentNode);
+				if (this.contentNode) {
+					const tabCandidates = getTabbableCandidates(this.contentNode);
 
-				for (const candidate of tabCandidates) {
-					candidate.setAttribute("tabindex", "-1");
+					for (const candidate of tabCandidates) {
+						candidate.setAttribute("tabindex", "-1");
+					}
 				}
 
 				return () => {
