@@ -392,4 +392,62 @@ describe("ScrollArea", () => {
 
 		expect(document.body.style.webkitUserSelect).toBe("");
 	});
+	it("should clear pending scroll timers and the thumb rAF loop on unmount (#2253)", async () => {
+		const scheduled = new Set<number>();
+		const cleared = new Set<number>();
+		const origSetTimeout = window.setTimeout;
+		const origClearTimeout = window.clearTimeout;
+		const setTimeoutSpy = vi.spyOn(window, "setTimeout").mockImplementation(((
+			fn: TimerHandler,
+			ms?: number,
+			...args: unknown[]
+		) => {
+			const id = origSetTimeout(fn, ms, ...args);
+			if (ms === 100) scheduled.add(id);
+			return id;
+		}) as typeof setTimeout);
+		const clearTimeoutSpy = vi.spyOn(window, "clearTimeout").mockImplementation((id) => {
+			if (typeof id === "number") cleared.add(id);
+			origClearTimeout(id);
+		});
+		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+
+		try {
+			const { unmount } = render(ScrollAreaTest, {
+				type: "scroll",
+				numParagraphs: 20,
+				height: 100,
+			});
+			const viewport = page.getByTestId("viewport").element() as HTMLElement;
+
+			async function scrollBy(delta: number) {
+				const scrolled = new Promise((r) =>
+					viewport.addEventListener("scroll", r, { once: true })
+				);
+				viewport.scrollTop += delta;
+				await scrolled;
+			}
+
+			await scrollBy(20);
+			await expectExists(page.getByTestId("thumb-y"));
+			// the thumb is mounted now, so this scroll starts its rAF loop
+			await scrollBy(20);
+			expect(scheduled.size).toBeGreaterThan(0);
+
+			unmount();
+
+			// every pending 100ms debounce timer is cancelled on teardown
+			for (const id of scheduled) expect(cleared.has(id)).toBe(true);
+
+			// and the thumb's rAF loop stops rescheduling itself
+			await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+			const rafCalls = rafSpy.mock.calls.length;
+			await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+			expect(rafSpy.mock.calls.length - rafCalls).toBe(2);
+		} finally {
+			setTimeoutSpy.mockRestore();
+			clearTimeoutSpy.mockRestore();
+			rafSpy.mockRestore();
+		}
+	});
 });

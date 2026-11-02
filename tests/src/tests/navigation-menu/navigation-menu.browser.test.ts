@@ -1,6 +1,7 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import NavigationMenuTest, { type NavigationMenuTestProps } from "./navigation-menu-test.svelte";
+import NavigationMenuForceMountTest from "./navigation-menu-force-mount-test.svelte";
 import { getTestKbd } from "../utils";
 import { expectExists, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
@@ -362,4 +363,40 @@ it("should toggle on trigger click when `openOnHover` is false", async () => {
 	await trigger.click();
 	await expectNotExists(page.getByTestId("viewport"));
 	await expectNotExists(page.getByTestId("group-item-content"));
+});
+
+// https://github.com/huntabyte/bits-ui/issues/2034
+it("should keep a force-mounted item open when clicking inside its content with `openOnHover={false}`", async () => {
+	render(NavigationMenuForceMountTest);
+	const content = page.getByTestId("one-content");
+
+	await page.getByTestId("one-trigger").click();
+	await expect.element(content).toHaveAttribute("data-state", "open");
+
+	await page.getByTestId("one-content-button").click();
+	// let the dismissible layer's debounced outside-interaction handler run
+	await sleep(50);
+	await expect.element(content).toHaveAttribute("data-state", "open");
+});
+
+it("should close a non-last force-mounted item when clicking outside with `openOnHover={false}`", async () => {
+	render(NavigationMenuForceMountTest);
+	const content = page.getByTestId("two-content");
+
+	await page.getByTestId("two-trigger").click();
+	await expect.element(content).toHaveAttribute("data-state", "open");
+
+	await page.getByTestId("outside").click();
+	await expect.element(content).toHaveAttribute("data-state", "closed");
+});
+
+it("should return focus to the open item's trigger on escape when contents are force-mounted", async () => {
+	render(NavigationMenuForceMountTest);
+
+	await page.getByTestId("one-trigger").click();
+	await page.getByTestId("one-content-button").click();
+	await userEvent.keyboard(kbd.ESCAPE);
+
+	await expect.element(page.getByTestId("one-content")).toHaveAttribute("data-state", "closed");
+	await expect.element(page.getByTestId("one-trigger")).toHaveFocus();
 });

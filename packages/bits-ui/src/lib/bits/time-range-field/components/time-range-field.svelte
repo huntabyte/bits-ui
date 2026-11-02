@@ -47,10 +47,11 @@
 	let startValue = $state<T | undefined>(value?.start);
 	let endValue = $state<T | undefined>(value?.end);
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return;
+	function handleDefaultPlaceholder(setPlaceholder = true) {
+		if (placeholder !== undefined) return placeholder;
 		const defaultPlaceholder = getDefaultTime({ granularity, defaultValue: value?.start });
-		placeholder = defaultPlaceholder;
+		if (setPlaceholder) placeholder = defaultPlaceholder;
+		return defaultPlaceholder;
 	}
 
 	// SSR
@@ -101,7 +102,7 @@
 		maxValue: boxWith(() => maxValue),
 		minValue: boxWith(() => minValue),
 		placeholder: boxWith(
-			() => placeholder as TimeValue,
+			() => placeholder ?? handleDefaultPlaceholder(false),
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);

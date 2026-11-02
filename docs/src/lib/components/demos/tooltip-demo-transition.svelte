@@ -12,7 +12,7 @@
 		>
 			<MagicWand class="size-5" />
 		</Tooltip.Trigger>
-		<Tooltip.Content sideOffset={8} forceMount>
+		<Tooltip.Content class="z-50" sideOffset={8} forceMount>
 			{#snippet child({ wrapperProps, props, open })}
 				{#if open}
 					<div {...wrapperProps}>

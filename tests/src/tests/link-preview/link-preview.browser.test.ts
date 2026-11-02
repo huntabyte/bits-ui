@@ -197,3 +197,30 @@ it("should apply custom style prop to content", async () => {
 	const contentEl = page.getByTestId("content").element() as HTMLElement;
 	expect(contentEl.style.backgroundColor).toBe("rgb(255, 0, 0)");
 });
+
+it("should remove its document `pointerup` listener when unmounted after opening", async () => {
+	const added = new Set<EventListenerOrEventListenerObject>();
+	const removed = new Set<EventListenerOrEventListenerObject>();
+	const addSpy = vi.spyOn(document, "addEventListener");
+	const removeSpy = vi.spyOn(document, "removeEventListener");
+
+	try {
+		const t = await open();
+		await vi.waitFor(() => {
+			for (const [type, listener] of addSpy.mock.calls) {
+				if (type === "pointerup" && listener) added.add(listener);
+			}
+			expect(added.size).toBeGreaterThan(0);
+		});
+
+		t.unmount();
+
+		for (const [type, listener] of removeSpy.mock.calls) {
+			if (type === "pointerup" && listener) removed.add(listener);
+		}
+		expect([...added].filter((listener) => !removed.has(listener))).toHaveLength(0);
+	} finally {
+		addSpy.mockRestore();
+		removeSpy.mockRestore();
+	}
+});

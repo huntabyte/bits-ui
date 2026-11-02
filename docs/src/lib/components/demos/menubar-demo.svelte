@@ -150,7 +150,7 @@
 						</div>
 					</Menubar.SubTrigger>
 					<Menubar.SubContent
-						class="focus-override border-muted bg-background shadow-popover focus-visible:outline-hidden w-full max-w-[209px] rounded-xl border px-1 py-1.5"
+						class="focus-override border-muted bg-background shadow-popover focus-visible:outline-hidden z-50 w-full max-w-[209px] rounded-xl border px-1 py-1.5"
 					>
 						<Menubar.Item
 							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"

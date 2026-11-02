@@ -56,6 +56,7 @@ export class TabsRootState {
 		this.attachment = attachRef(opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: tabsAttrs.trigger,
+			rootAttr: tabsAttrs.root,
 			rootNode: this.opts.ref,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
