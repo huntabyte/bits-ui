@@ -676,6 +676,22 @@ describe("select - single", () => {
 		await expect.element(t.valueBinding).toHaveTextContent("2");
 	});
 
+	it("does not select an option when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const view = render(SelectTest, { items: testItems, value: "1", onValueChange });
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+		await view.rerender({ disabled: true });
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-disabled");
+		await page.getByTestId("2").click();
+		await expect.element(page.getByTestId("value-binding")).toHaveTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
+		await view.rerender({ disabled: false });
+		await page.getByTestId("2").click();
+		await expect.element(page.getByTestId("value-binding")).toHaveTextContent("2");
+		expect(onValueChange).toHaveBeenCalledWith("2");
+	});
+
 	it("should not open when disabled on touch devices", async () => {
 		const t = setupSingle({ disabled: true });
 
