@@ -1,5 +1,136 @@
 # bits-ui
 
+## 2.20.3
+
+### Patch Changes
+
+- fix(Calendar/RangeCalendar): keep the weekday when `ArrowUp`/`ArrowDown` crosses the month edge with disabled days ([#2249](https://github.com/huntabyte/bits-ui/pull/2249))
+
+- fix(Command): scroll the first item of a group into view along with its heading, so arrowing down onto it no longer leaves the item hidden below the list ([#2252](https://github.com/huntabyte/bits-ui/pull/2252))
+
+- fix(DropdownMenu): close on a click outside when the trigger's `id` isn't a valid CSS identifier, such as `"1"` ([#2259](https://github.com/huntabyte/bits-ui/pull/2259))
+
+- Preserve user focus and autofocus callbacks when an already mounted focus scope ([#2264](https://github.com/huntabyte/bits-ui/pull/2264))
+  receives the same container reference again.
+
+- fix(RadioGroup): focus the item on an invalid form submission when its `id` isn't a valid CSS identifier ([#2259](https://github.com/huntabyte/bits-ui/pull/2259))
+
+- fix(ScrollArea): cancel the pending scroll-end timers and stop the thumb's scroll loop on unmount, so `type="scroll"` no longer keeps detached instances alive after unmount ([#2261](https://github.com/huntabyte/bits-ui/pull/2261))
+
+- fix(Menu): keep positioning props such as `align` and `side` off the sub content element, where `align` is the HTML attribute that aligns text ([#2248](https://github.com/huntabyte/bits-ui/pull/2248))
+
+- fix(Menu): only extend the submenu safe area while the pointer moves closer to the submenu. A sibling sub trigger now takes over 100ms after the pointer stops making progress, instead of 500ms after its last move. ([#2192](https://github.com/huntabyte/bits-ui/pull/2192))
+
+- fix(Tooltip): stay open when focusing the trigger scrolls it into view, while later scrolling still closes it ([#2263](https://github.com/huntabyte/bits-ui/pull/2263))
+
+- fix(Tooltip): don't open on the focus that follows a tap, which left the tooltip over a menu opened from the same trigger ([#2245](https://github.com/huntabyte/bits-ui/pull/2245))
+
+## 2.20.2
+
+### Patch Changes
+
+- fix(Combobox): let `Home`/`End` move the text cursor in `Combobox.Input` instead of highlighting the first/last item ([#2241](https://github.com/huntabyte/bits-ui/pull/2241))
+
+- fix(Select): space to toggle items ([#2073](https://github.com/huntabyte/bits-ui/pull/2073))
+
+- Fix Date Field rejecting and rendering day 31 before a month is selected ([#2187](https://github.com/huntabyte/bits-ui/pull/2187))
+
+- fix(Floating): apply the content's z-index to the floating wrapper when force-mounted content opens ([#1961](https://github.com/huntabyte/bits-ui/pull/1961))
+
+- fix(Select, Combobox): select the pressed item when the list scrolls under a still pointer before release ([#2232](https://github.com/huntabyte/bits-ui/pull/2232))
+
+- fix(Combobox): open the trigger on a click that no pointer press precedes (`detail: 0`), such as `element.click()` or a VoiceOver activation in Safari ([#2186](https://github.com/huntabyte/bits-ui/pull/2186))
+
+- fix: silence `state_referenced_locally` compiler warnings emitted in consumer builds by wrapping intentional initialization-time prop reads in `untrack` ([#2179](https://github.com/huntabyte/bits-ui/pull/2179))
+
+## 2.20.1
+
+### Patch Changes
+
+- fix(Calendar, RangeCalendar): keep a day tabbable when the placeholder is disabled after mount or after Prev/Next. Also applies to `DatePicker` and `DateRangePicker`. ([#2235](https://github.com/huntabyte/bits-ui/pull/2235))
+
+- fix(Command): avoid remounting all items on the first search character when `shouldFilter` is `false` ([#2240](https://github.com/huntabyte/bits-ui/pull/2240))
+
+- fix(Floating): avoid an invalid `z-index: undefined` wrapper style that logs warnings in Firefox ([#2076](https://github.com/huntabyte/bits-ui/pull/2076))
+
+- fix(DropdownMenu, ContextMenu, Menubar): select the pressed item when the content scrolls under a still pointer before release (sibling of #2231) ([#2237](https://github.com/huntabyte/bits-ui/pull/2237))
+
+- chore: update `@floating-ui/core`, `@floating-ui/dom`, `esm-env`, and `tabbable` to their latest minor versions ([#2234](https://github.com/huntabyte/bits-ui/pull/2234))
+
+- fix(RangeCalendar): preserve the weekday when moving focus with Arrow Up/Down past disabled dates (#2224) ([#2236](https://github.com/huntabyte/bits-ui/pull/2236))
+
+## 2.20.0
+
+### Minor Changes
+
+- feat(RadioGroup): set `autocomplete="off"` on the hidden input by default to discourage browser autofill, and add an `autocomplete` prop to `RadioGroup.Root` to override it ([#2198](https://github.com/huntabyte/bits-ui/pull/2198))
+
+### Patch Changes
+
+- fix(Calendar): fall back to the default `placeholder` when spread props are reassigned and `placeholder` is not bound, preventing `Cannot read properties of undefined (reading 'set')`. Also applies to `RangeCalendar`, `DatePicker`, `DateRangePicker`, `DateRangeField`, `TimeField`, and `TimeRangeField`. ([#2226](https://github.com/huntabyte/bits-ui/pull/2226))
+
+- fix(Select): open the trigger on a click that no pointer press precedes (`detail: 0`), such as `element.click()` or a VoiceOver activation in Safari ([#2227](https://github.com/huntabyte/bits-ui/pull/2227))
+
+- fix(Calendar/RangeCalendar): prevent weekday headers, heading, and cell labels from shifting by a day when using a `ZonedDateTime` in a time zone ahead of the local one ([#2215](https://github.com/huntabyte/bits-ui/pull/2215))
+
+- fix(Collapsible/Accordion): prevent content mounted open from playing its open animation ([#2209](https://github.com/huntabyte/bits-ui/pull/2209))
+
+- fix(Command): skip deferred root work after `Command.Root` is destroyed ([#2210](https://github.com/huntabyte/bits-ui/pull/2210))
+
+- fix(Command): scroll the first item into view when items aren't grouped ([#2003](https://github.com/huntabyte/bits-ui/pull/2003))
+
+- fix(DatePicker): respect `preventDefault()` in `Content`'s `onOpenAutoFocus` so the calendar day is not auto-focused (also applies to `DateRangePicker`) ([#2219](https://github.com/huntabyte/bits-ui/pull/2219))
+
+- fix: prevent content from flashing visible for a frame after its exit animation when Svelte async mode is enabled ([#2193](https://github.com/huntabyte/bits-ui/pull/2193))
+
+- fix(Select/Combobox/DropdownMenu): don't open the trigger when it's disabled by an ancestor `<fieldset disabled>` ([#2214](https://github.com/huntabyte/bits-ui/pull/2214))
+
+- fix(body-scroll-lock): restore body `pointer-events` as soon as the last lock is released so clicks right after a layer closes aren't lost ([#2221](https://github.com/huntabyte/bits-ui/pull/2221))
+
+- fix(FocusScope): keep focus on elements inside an open shadow root nested in the scope (e.g. a web component's `<input>`) instead of treating it as escaping the trap ([#2223](https://github.com/huntabyte/bits-ui/pull/2223))
+
+- fix(FocusScope): prevent page scroll when auto-focusing on open, trapping focus, and restoring focus on close ([#2217](https://github.com/huntabyte/bits-ui/pull/2217))
+
+- fix(LinkPreview): always remove the document `pointerup` listener registered while open. When the content node wasn't attached yet, the open watcher returned early before its cleanup, so the listener was never unsubscribed and kept firing after the preview closed or unmounted. ([#2194](https://github.com/huntabyte/bits-ui/pull/2194))
+
+- fix(NavigationMenu): only register a `NavigationMenu.Content`'s dismiss/escape layers while it is open so closed `forceMount` content no longer closes the open item on inside clicks or steals escape focus ([#2218](https://github.com/huntabyte/bits-ui/pull/2218))
+
+- fix(Command): item selection logic ([#2074](https://github.com/huntabyte/bits-ui/pull/2074))
+
+- fix: call `onOpenChangeComplete` with `true` after content opens and its animations finish, not only on close ([#2199](https://github.com/huntabyte/bits-ui/pull/2199))
+
+- fix(HiddenInput): keep hidden form inputs in sync with component state after a form reset. A native form reset now restores the current value instead of clearing the input, so setting a value right after `form.reset()` (e.g. SvelteKit `use:enhance`'s `update()`) is no longer lost. Applies to `RadioGroup`, `Select`, `Combobox`, `Checkbox`, `Switch`, `RatingGroup`, and the date/time fields (#1942) ([#2212](https://github.com/huntabyte/bits-ui/pull/2212))
+
+- fix(DateField): reset the segments when `value` is cleared externally after a date was typed in ([#2196](https://github.com/huntabyte/bits-ui/pull/2196))
+
+- fix(Select/Combobox): highlight the selected item on open when its value is an empty string, and allow selecting it with Enter in `Combobox` ([#2213](https://github.com/huntabyte/bits-ui/pull/2213))
+
+- fix(Tabs, Accordion, ToggleGroup, RadioGroup, Toolbar, Menubar): ignore the items and triggers of a nested root of the same kind during keyboard navigation, so arrow keys, `Home`, `End` and wrapping stay within the outer group ([#2190](https://github.com/huntabyte/bits-ui/pull/2190))
+
+- Resume a paused focus scope when it registers again, so a menu whose trigger sits in a tooltip moves focus into its content when opened. ([#2201](https://github.com/huntabyte/bits-ui/pull/2201))
+
+- fix(DismissibleLayer): close an open layer when a second outside `pointerdown` lands within its 10ms dismissal debounce. The second event replaced the pending one and was judged against the newly opened layer, so rapidly right clicking across `ContextMenu` triggers left earlier menus open. ([#2229](https://github.com/huntabyte/bits-ui/pull/2229))
+
+- Set `aria-selected="false"` on unselected `Select.Item` and `Combobox.Item` options so every option exposes its selection state per the APG listbox pattern. ([#2188](https://github.com/huntabyte/bits-ui/pull/2188))
+
+- fix(Select): give `Select.Trigger` the `combobox` role and point `aria-controls` at the mounted listbox ([#2216](https://github.com/huntabyte/bits-ui/pull/2216))
+
+- fix(Select, Combobox): keep aligning the highlighted item while the content settles after positioning. Chrome that mounts once the content is placed (scroll buttons in the flex flow, a header, a footer) shrinks the viewport under the open-time alignment and left a far-down selection below the fold; the content now realigns on every viewport resize until the user scrolls, which also retires the scroll down button's own mount-time realign. ([#2157](https://github.com/huntabyte/bits-ui/pull/2157))
+
+- fix(Checkbox): pass the `form` prop to the button again and submit the linked form when `Enter` is pressed with `type="submit"` ([#2204](https://github.com/huntabyte/bits-ui/pull/2204))
+
+- fix(Slider): throw a descriptive error for non-finite `min`/`max`/`step` (or a `step` of `0`) instead of hanging the browser ([#2211](https://github.com/huntabyte/bits-ui/pull/2211))
+
+- fix: skip deferred animation-complete callbacks when the owning component is destroyed before they run ([#2210](https://github.com/huntabyte/bits-ui/pull/2210))
+
+- fix(Select, Combobox): stop the scroll button auto scroll when the content closes while the button is hovered ([#2197](https://github.com/huntabyte/bits-ui/pull/2197))
+
+- fix(AlertDialog): prevent delayed open autofocus from focusing replaced content ([#2220](https://github.com/huntabyte/bits-ui/pull/2220))
+
+- fix(DateField): keep the day period when typing or deleting the hour in 12-hour mode ([#2228](https://github.com/huntabyte/bits-ui/pull/2228))
+
+- fix(Tooltip): close when any scrolling ancestor of the trigger scrolls ([#2206](https://github.com/huntabyte/bits-ui/pull/2206))
+
 ## 2.19.5
 
 ### Patch Changes

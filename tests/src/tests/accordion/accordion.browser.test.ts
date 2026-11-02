@@ -9,6 +9,7 @@ import AccordionMultiTestControlled from "./accordion-multi-test-controlled.svel
 import AccordionSingleForceMountTest from "./accordion-single-force-mount-test.svelte";
 import AccordionHiddenUntilFoundTest from "./accordion-hidden-until-found-test.svelte";
 import AccordionMultiHiddenUntilFoundTest from "./accordion-multi-hidden-until-found-test.svelte";
+import AccordionNestedTest from "./accordion-nested-test.svelte";
 import type { ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
 import { expectNotExists, observeTransitionAttrs } from "../browser-utils";
@@ -878,5 +879,31 @@ describe("Hidden Until Found Behavior", () => {
 				.element(t.binding)
 				.toHaveTextContent(`["${t.items[0].item.value}","${t.items[1].item.value}"]`);
 		});
+	});
+});
+
+describe("Nested Accordions", () => {
+	it("should ignore the triggers of a nested `Accordion.Root` when navigating with the keyboard", async () => {
+		render(AccordionNestedTest);
+
+		const outerTrigger1 = page.getByTestId("outer-trigger-1");
+		const outerTrigger2 = page.getByTestId("outer-trigger-2");
+		const innerTrigger1 = page.getByTestId("inner-trigger-1");
+		const innerTrigger2 = page.getByTestId("inner-trigger-2");
+
+		(outerTrigger1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(outerTrigger2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_UP);
+		await expect.element(outerTrigger1).toHaveFocus();
+		await userEvent.keyboard(kbd.END);
+		await expect.element(outerTrigger2).toHaveFocus();
+
+		// the nested accordion keeps navigating among its own triggers
+		(innerTrigger1.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(innerTrigger2).toHaveFocus();
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(innerTrigger1).toHaveFocus();
 	});
 });

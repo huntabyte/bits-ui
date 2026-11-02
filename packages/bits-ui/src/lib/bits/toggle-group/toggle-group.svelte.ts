@@ -48,6 +48,7 @@ abstract class ToggleGroupBaseState {
 		this.attachment = attachRef(this.opts.ref);
 		this.rovingFocusGroup = new RovingFocusGroup({
 			candidateAttr: toggleGroupAttrs.item,
+			rootAttr: toggleGroupAttrs.root,
 			rootNode: opts.ref,
 			loop: opts.loop,
 			orientation: opts.orientation,

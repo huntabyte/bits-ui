@@ -172,6 +172,13 @@ function roundToPrecision(num: number, precision: number): number {
  */
 export function normalizeSteps(step: number | number[], min: number, max: number): number[] {
 	if (typeof step === "number") {
+		// a slider needs finite bounds (`aria-valuemin`/`aria-valuemax`) and a positive step,
+		// otherwise generating the steps never terminates
+		if (!Number.isFinite(min) || !Number.isFinite(max) || !Number.isFinite(step) || step <= 0) {
+			throw new Error(
+				`Slider requires finite \`min\` and \`max\` values and a finite \`step\` greater than 0. Received min=${min}, max=${max}, step=${step}.`
+			);
+		}
 		// generate regular steps - match original behavior exactly
 		const difference = max - min;
 		let count = Math.ceil(difference / step);

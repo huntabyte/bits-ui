@@ -100,9 +100,27 @@ it("should close when pointer moves outside the trigger and content", async () =
 it("should close on scroll when the scrolled target contains the trigger", async () => {
 	const t = await open();
 	const main = page.getByTestId("main").element() as HTMLElement;
-	main.dispatchEvent(new Event("scroll", { bubbles: true }));
+	// An element's scroll does not bubble.
+	main.dispatchEvent(new Event("scroll"));
 	await expectNotExists(page.getByTestId("content"));
 	await expect.element(t.trigger).toBeVisible();
+});
+
+it("should stay open when focusing the trigger scrolls it into view", async () => {
+	render(TooltipScrollContainerTest);
+	const scroller = page.getByTestId("scroller").element() as HTMLElement;
+	(page.getByTestId("before").element() as HTMLElement).focus();
+	expect(scroller.scrollTop).toBe(0);
+
+	await userEvent.tab();
+	await expect.element(page.getByTestId("trigger")).toHaveFocus();
+	expect(scroller.scrollTop).toBeGreaterThan(0);
+	// let the scroll event from the focus scroll-into-view fire
+	await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+	await expectExists(page.getByTestId("content"));
+
+	scroller.scrollTop -= 10;
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should stay open when hovering content", async () => {
@@ -120,6 +138,23 @@ it("should open on focus and close on blur", async () => {
 
 	(t.trigger.element() as HTMLElement).blur();
 	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should not open on the focus that follows a tap", async () => {
+	const t = setup();
+	const trigger = t.trigger.element() as HTMLElement;
+
+	// a tap can focus the trigger after `pointerup`, e.g. when the trigger also opens a
+	// menu, which prevents the default of a touch `pointerdown`
+	trigger.dispatchEvent(new PointerEvent("pointerdown", { pointerType: "touch", bubbles: true }));
+	trigger.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	trigger.focus();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("content"));
+
+	trigger.blur();
+	trigger.focus();
+	await expectExists(page.getByTestId("content"));
 });
 
 it("should portal to the body by default", async () => {

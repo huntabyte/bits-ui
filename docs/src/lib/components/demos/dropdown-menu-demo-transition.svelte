@@ -23,7 +23,7 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
-			class="border-muted bg-background shadow-popover w-[229px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
+			class="border-muted bg-background shadow-popover z-50 w-[229px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
 			sideOffset={8}
 			forceMount
 		>
@@ -120,7 +120,7 @@
 									</div>
 								</DropdownMenu.SubTrigger>
 								<DropdownMenu.SubContent
-									class="border-muted bg-background shadow-popover w-[209px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
+									class="border-muted bg-background shadow-popover z-50 w-[209px] rounded-xl border px-1 py-1.5 focus-visible:outline-none"
 									sideOffset={10}
 								>
 									<DropdownMenu.RadioGroup bind:value={invited}>

@@ -5,6 +5,7 @@ import { kbd } from "./kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { BROWSER } from "esm-env";
 import { isHTMLElement } from "./is.js";
+import { cssEscape } from "./css-escape.js";
 
 type RovingFocusGroupOptions = (
 	| {
@@ -26,6 +27,12 @@ type RovingFocusGroupOptions = (
 	 * The id of the root node
 	 */
 	rootNode: Box<HTMLElement | null>;
+
+	/**
+	 * The attribute that marks `rootNode`. When provided, candidates that belong to a
+	 * nested `rootNode` of the same kind are excluded.
+	 */
+	rootAttr?: string;
 
 	/**
 	 * Whether to loop through the candidates when reaching the end.
@@ -61,17 +68,28 @@ export class RovingFocusGroup {
 					this.#opts.candidateSelector
 				)
 			);
-			return candidates;
+			return this.#ownCandidates(this.#opts.rootNode.current, candidates);
 		} else if (this.#opts.candidateAttr) {
 			const candidates = Array.from(
 				this.#opts.rootNode.current.querySelectorAll<HTMLElement>(
 					`[${this.#opts.candidateAttr}]:not([data-disabled])`
 				)
 			);
-			return candidates;
+			return this.#ownCandidates(this.#opts.rootNode.current, candidates);
 		}
 
 		return [];
+	}
+
+	/**
+	 * Excludes candidates whose closest `[rootAttr]` ancestor is a nested root
+	 * rather than `rootNode` itself.
+	 */
+	#ownCandidates(rootNode: HTMLElement, candidates: HTMLElement[]) {
+		const rootAttr = this.#opts.rootAttr;
+		if (!rootAttr) return candidates;
+		const rootSelector = `[${rootAttr}]`;
+		return candidates.filter((node) => node.closest(rootSelector) === rootNode);
 	}
 
 	focusFirstCandidate() {
@@ -145,7 +163,9 @@ export class RovingFocusGroup {
 	focusCurrentTabStop() {
 		const currentTabStopId = this.#currentTabStopId.current;
 		if (!currentTabStopId) return;
-		const currentTabStop = this.#opts.rootNode.current?.querySelector(`#${currentTabStopId}`);
+		const currentTabStop = this.#opts.rootNode.current?.querySelector(
+			`#${cssEscape(currentTabStopId)}`
+		);
 		if (!currentTabStop || !isHTMLElement(currentTabStop)) return;
 		currentTabStop.focus();
 	}

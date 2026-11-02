@@ -6,6 +6,7 @@ import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
 import {
+	bodyPointerEventsOnRemoval,
 	expectExists,
 	expectNotExists,
 	observeTransitionAttrs,
@@ -18,6 +19,7 @@ import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelt
 import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
+import DialogShadowFieldTest from "./dialog-shadow-field-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -294,6 +296,35 @@ describe("Shadow Root", () => {
 			unmount(component);
 			host.remove();
 		}
+	});
+
+	it("should keep focus on an input inside an open shadow root within the content", async () => {
+		await open({}, DialogShadowFieldTest);
+		const shadowRoot = page.getByTestId("shadow-host").element().shadowRoot!;
+		const input = shadowRoot.querySelector("input")!;
+
+		await page.getByTestId("light").click();
+		await expect.element(page.getByTestId("light")).toHaveFocus();
+
+		input.focus();
+		await userEvent.keyboard("abc");
+		expect(shadowRoot.activeElement).toBe(input);
+		expect(input.value).toBe("abc");
+	});
+
+	it("should not steal open auto-focus from an input inside an open shadow root", async () => {
+		const shadowRoot = () => page.getByTestId("shadow-host").element().shadowRoot!;
+		await open(
+			{
+				contentProps: {
+					onOpenAutoFocus: () => shadowRoot().querySelector("input")!.focus(),
+				},
+			},
+			DialogShadowFieldTest
+		);
+		// wait past the deferred auto-focus frame
+		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		expect(shadowRoot().activeElement).toBe(shadowRoot().querySelector("input"));
 	});
 });
 
@@ -791,7 +822,18 @@ describe("Scroll Lock", () => {
 		expect(document.body.style.paddingRight).toBe(initialPadding);
 	});
 
+	it("should restore body pointer-events as soon as the dialog closes", async () => {
+		// https://github.com/huntabyte/bits-ui/issues/2202
+		await open();
+		await vi.waitFor(() => expect(document.body.style.pointerEvents).toBe("none"));
+		const restored = bodyPointerEventsOnRemoval(page.getByTestId("content").element());
+		await userEvent.keyboard(kbd.ESCAPE);
+		expect(await restored).toBe("");
+	});
+
 	it("should restore a single inline overflow axis on body after closing", async () => {
+		// a lock left by the previous test releases on a delay and would reuse its stale snapshot
+		await expect.poll(() => document.body.style.overflow).toBe("");
 		document.body.style.overflowY = "scroll";
 		try {
 			await open();

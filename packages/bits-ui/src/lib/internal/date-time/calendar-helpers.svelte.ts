@@ -4,6 +4,7 @@ import {
 	isSameDay,
 	isSameMonth,
 	startOfMonth,
+	toCalendarDate,
 } from "@internationalized/date";
 import {
 	type ReadableBox,
@@ -227,6 +228,11 @@ type ShiftCalendarFocusProps = {
 	add: number;
 
 	/**
+	 * Whether vertical navigation should target a calendar-day offset.
+	 */
+	useCalendarDayOffset?: boolean;
+
+	/**
 	 * The `placeholder` value box
 	 */
 	placeholder: WritableBox<DateValue>;
@@ -264,6 +270,7 @@ type ShiftCalendarFocusProps = {
 export function shiftCalendarFocus({
 	node,
 	add,
+	useCalendarDayOffset = false,
 	placeholder,
 	calendarNode,
 	isPrevButtonDisabled,
@@ -273,6 +280,56 @@ export function shiftCalendarFocus({
 }: ShiftCalendarFocusProps) {
 	const candidateCells = getSelectableCells(calendarNode);
 	if (!candidateCells.length) return;
+
+	if (useCalendarDayOffset) {
+		const currentValue = node.getAttribute("data-value");
+		if (!currentValue) return;
+
+		/**
+		 * Focuses the first enabled cell at `targetDate` or a whole number of weeks
+		 * past it within the displayed months. Returns the first date that falls
+		 * outside the displayed months if no cell was focused.
+		 */
+		const focusSameWeekday = (targetDate: DateValue): DateValue | undefined => {
+			const renderedDates = Array.from(
+				calendarNode?.querySelectorAll<HTMLElement>(
+					"[data-bits-day]:not([data-outside-visible-months])"
+				) ?? []
+			)
+				.map((cell) => cell.getAttribute("data-value"))
+				.filter((value): value is string => value !== null);
+			const cells = getSelectableCells(calendarNode);
+
+			while (renderedDates.includes(targetDate.toString())) {
+				const nextCell = cells.find(
+					(cell) => cell.getAttribute("data-value") === targetDate.toString()
+				);
+				if (nextCell) {
+					setPlaceholderToNodeValue(nextCell, placeholder);
+					nextCell.focus();
+					return;
+				}
+				targetDate = targetDate.add({ days: add });
+			}
+			return targetDate;
+		};
+
+		const outsideDate = focusSameWeekday(
+			parseStringToDateValue(currentValue, placeholder.current).add({ days: add })
+		);
+		if (!outsideDate) return;
+
+		// the target is in another month, so move the calendar there and focus it
+		if (add > 0 ? isNextButtonDisabled : isPrevButtonDisabled) return;
+		const firstMonth = months[0]?.value;
+		if (!firstMonth) return;
+		placeholder.current =
+			add > 0
+				? firstMonth.add({ months: numberOfMonths })
+				: firstMonth.subtract({ months: numberOfMonths });
+		afterTick(() => focusSameWeekday(outsideDate));
+		return;
+	}
 
 	const index = candidateCells.indexOf(node);
 	const nextIndex = index + add;
@@ -495,7 +552,9 @@ export function getWeekdays({ months, formatter, weekdayFormat }: GetWeekdaysPro
 	const firstMonth = months[0]!;
 	const firstWeek = firstMonth.weeks[0];
 	if (!firstWeek) return [];
-	return firstWeek.map((date) => formatter.dayOfWeek(toDate(date), weekdayFormat));
+	return firstWeek.map((date) =>
+		formatter.dayOfWeek(toDate(toCalendarDate(date)), weekdayFormat)
+	);
 }
 
 type UseMonthViewSyncProps = {
@@ -682,12 +741,12 @@ export function getCalendarHeadingValue({
 		formatter.setLocale(locale);
 	}
 	if (months.length === 1) {
-		const month = toDate(months[0]!.value);
+		const month = toDate(toCalendarDate(months[0]!.value));
 		return `${formatter.fullMonthAndYear(month)}`;
 	}
 
-	const startMonth = toDate(months[0]!.value);
-	const endMonth = toDate(months[months.length - 1]!.value);
+	const startMonth = toDate(toCalendarDate(months[0]!.value));
+	const endMonth = toDate(toCalendarDate(months[months.length - 1]!.value));
 
 	const startMonthName = formatter.fullMonth(startMonth);
 	const endMonthName = formatter.fullMonth(endMonth);
@@ -745,6 +804,8 @@ export type CalendarParts =
 	| "year-select";
 
 export function pickerOpenFocus(e: Event) {
+	// mergeProps chains non-DOM callbacks unconditionally, so honor the consumer's preventDefault here
+	if (e.defaultPrevented) return;
 	const doc = getDocument(e.target as HTMLElement);
 	const nodeToFocus = doc.querySelector<HTMLElement>("[data-bits-day][data-focused]");
 	if (nodeToFocus) {
@@ -764,6 +825,23 @@ export function getFirstNonDisabledDateInView(calendarRef: HTMLElement): DateVal
 	const type = element?.getAttribute("data-type");
 	if (!value || !type) return;
 	return parseAnyDateValue(value, type);
+}
+
+/**
+ * The day that should get `tabindex="0"`: the placeholder, or the first enabled day
+ * in view when the placeholder is disabled, so the calendar stays reachable by Tab.
+ */
+export function getTabbableDate(
+	placeholder: DateValue | undefined,
+	months: Month<DateValue>[],
+	isDisabled: (date: DateValue) => boolean
+): DateValue | undefined {
+	if (!placeholder || !isDisabled(placeholder)) return placeholder;
+	for (const month of months) {
+		const date = month.dates.find((d) => isSameMonth(d, month.value) && !isDisabled(d));
+		if (date) return date;
+	}
+	return placeholder;
 }
 
 /**

@@ -6,12 +6,14 @@ import DateRangePickerTest, {
 	type DateRangePickerTestProps,
 } from "./date-range-picker-test.svelte";
 import {
+	collectErrors,
 	expectExists,
 	expectNotClickableLoc,
 	expectNotExists,
 	waitForDismissibleLayer,
 } from "../browser-utils";
 import { page, userEvent, type Locator } from "@vitest/browser/context";
+import DateRangePickerSpreadPropsTest from "./date-range-picker-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -988,4 +990,12 @@ describe("excludeDisabled functionality", () => {
 		await expectExists(t.getContent());
 		expect(t.getSelectedDays(t.calendar)).toHaveLength(5); // includes disabled dates
 	});
+});
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(DateRangePickerSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("root")).toHaveAttribute("data-updated");
+	await expect.element(page.getByTestId("start-month")).toHaveTextContent("mm");
+	await expect.element(page.getByTestId("end-year")).toHaveTextContent("yyyy");
 });

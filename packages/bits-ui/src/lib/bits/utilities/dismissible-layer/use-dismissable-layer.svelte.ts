@@ -115,6 +115,8 @@ export class DismissibleLayerState {
 		const document = this.#documentObj;
 		const onPointerDownCapture = (event: PointerEvent) => {
 			untrack(() => {
+				// settle the previous interaction before this one overwrites its state
+				this.#handleInteractOutside.flush();
 				this.#markInterceptedEvent(event);
 				this.#markResponsibleLayer(event);
 			});

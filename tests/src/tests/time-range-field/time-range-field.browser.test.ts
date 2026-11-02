@@ -5,6 +5,8 @@ import { getTestKbd } from "../utils.js";
 import TimeRangeFieldTest, { type TimeRangeFieldTestProps } from "./time-range-field-test.svelte";
 import type { TimeValue } from "bits-ui";
 import { page, userEvent } from "@vitest/browser/context";
+import TimeRangeFieldSpreadPropsTest from "./time-range-field-spread-props-test.svelte";
+import { collectErrors } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -262,3 +264,11 @@ it("should populate calendar date with keyboard", async () => {
 // 	}
 // 	return new Time(time.hour, time.minute, time.second).toString();
 // }
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(TimeRangeFieldSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("root")).toHaveAttribute("data-updated");
+	await expect.element(page.getByTestId("start-hour")).toHaveTextContent("––");
+	await expect.element(page.getByTestId("end-minute")).toHaveTextContent("––");
+});
