@@ -25,7 +25,8 @@ const checkboxAttrs = createBitsAttrs({
 });
 
 interface CheckboxGroupStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			name: string | undefined;
 			disabled: boolean;
@@ -125,7 +126,8 @@ export class CheckboxGroupLabelState {
 const CheckboxRootContext = new Context<CheckboxRootState>("Checkbox.Root");
 
 interface CheckboxRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;

@@ -79,7 +79,8 @@ const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
 const NavigationMenuSubContext = new Context<NavigationMenuSubState>("NavigationMenu.Sub");
 
 interface NavigationMenuProviderStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			dir: Direction;
 			orientation: Orientation;
 		}>,
@@ -131,7 +132,8 @@ class NavigationMenuProviderState {
 }
 
 interface NavigationMenuRootStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -253,7 +255,8 @@ export class NavigationMenuRootState {
 }
 
 interface NavigationMenuSubStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -373,7 +376,8 @@ export class NavigationMenuListState {
 }
 
 interface NavigationMenuItemStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			value: string;
 			openOnHover: boolean;
@@ -439,7 +443,8 @@ export class NavigationMenuItemState {
 }
 
 interface NavigationMenuTriggerStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			disabled: boolean | null | undefined;
 		}> {}
@@ -598,7 +603,8 @@ export class NavigationMenuTriggerState {
 }
 
 interface NavigationMenuLinkStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			active: boolean;
 			onSelect: (e: Event) => void;

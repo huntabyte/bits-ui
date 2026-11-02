@@ -35,7 +35,8 @@ const linkPreviewAttrs = createBitsAttrs({
 const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
 
 interface LinkPreviewRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
@@ -222,7 +223,8 @@ export class LinkPreviewTriggerState {
 }
 
 interface LinkPreviewContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;

@@ -51,7 +51,8 @@ import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/util
 import type { WeekStartsOn } from "$lib/shared/date/types.js";
 
 interface CalendarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateValue | undefined | DateValue[];
 			placeholder: DateValue;
@@ -585,7 +586,8 @@ export class CalendarHeadingState {
 const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
 
 interface CalendarCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
 			month: DateValue;
@@ -1009,7 +1011,8 @@ export class CalendarHeaderState {
 }
 
 interface CalendarMonthSelectStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			months: number[];
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
@@ -1103,7 +1106,8 @@ export class CalendarMonthSelectState {
 }
 
 interface CalendarYearSelectStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			years: number[] | undefined;
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);

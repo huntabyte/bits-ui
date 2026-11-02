@@ -2,7 +2,7 @@ import { mount, unmount } from "svelte";
 import DropdownMenuShadowTest from "./dropdown-menu-shadow-test.svelte";
 import { expect, it, vi, afterEach, onTestFinished, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { getTestKbd } from "../utils.js";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
@@ -36,7 +36,7 @@ type DropdownMenuSetupProps = (DropdownMenuTestProps | DropdownMenuForceMountTes
  */
 async function setup(props: DropdownMenuSetupProps = {}) {
 	const { component: comp = DropdownMenuTest, ...rest } = props;
-	const t = render(comp, { ...rest });
+	const t = await render(comp, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
 
@@ -178,10 +178,10 @@ it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (k
 it("should open when clicked & respects binding", async () => {
 	const t = await setup();
 	const binding = page.getByTestId("binding");
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 	await t.trigger.click();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 });
 
 it("should manage focus correctly when opened with pointer", async () => {
@@ -269,7 +269,7 @@ it("should not let delayed autofocus override focus already inside its scope", a
 });
 
 it("should focus the content when opened with the keyboard while the trigger's tooltip is open", async () => {
-	const t = render(DropdownMenuTooltipTriggerTest);
+	const t = await render(DropdownMenuTooltipTriggerTest);
 	onTestFinished(() => t.unmount());
 	await page.getByTestId("outside").click();
 
@@ -491,20 +491,20 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	const t = await open();
 	const checkedBinding = page.getByTestId("checked-binding");
 	const indicator = page.getByTestId("checkbox-indicator");
-	await expect.element(indicator).not.toHaveTextContent("checked");
-	await expect.element(checkedBinding).toHaveTextContent("false");
+	await expect.element(indicator).not.toMatchTextContent("checked");
+	await expect.element(checkedBinding).toMatchTextContent("false");
 	const checkbox = page.getByTestId("checkbox-item");
 	await checkbox.click();
-	await expect.element(checkedBinding).toHaveTextContent("true");
+	await expect.element(checkedBinding).toMatchTextContent("true");
 	await t.trigger.click();
-	await expect.element(indicator).toHaveTextContent("true");
+	await expect.element(indicator).toMatchTextContent("true");
 	await page.getByTestId("checkbox-item").click();
-	await expect.element(checkedBinding).toHaveTextContent("false");
+	await expect.element(checkedBinding).toMatchTextContent("false");
 
 	await checkedBinding.click();
-	await expect.element(checkedBinding).toHaveTextContent("true");
+	await expect.element(checkedBinding).toMatchTextContent("true");
 	await t.trigger.click();
-	await expect.element(page.getByTestId("checkbox-indicator")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator")).toMatchTextContent("true");
 });
 
 it("should toggle checkbox items within submenus when clicked & respects binding", async () => {
@@ -512,22 +512,22 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 	await openSubmenu(props);
 
 	const subCheckedBinding = page.getByTestId("sub-checked-binding");
-	await expect.element(subCheckedBinding).toHaveTextContent("false");
+	await expect.element(subCheckedBinding).toMatchTextContent("false");
 	const indicator = page.getByTestId("sub-checkbox-indicator");
-	await expect.element(indicator).not.toHaveTextContent("true");
+	await expect.element(indicator).not.toMatchTextContent("true");
 	const subCheckbox = page.getByTestId("sub-checkbox-item");
 	await subCheckbox.click();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(subCheckedBinding).toHaveTextContent("true");
+	await expect.element(subCheckedBinding).toMatchTextContent("true");
 });
 
 it("should check the radio item when clicked & respects binding", async () => {
 	await open();
 	const radioBinding = page.getByTestId("radio-binding");
-	await expect.element(radioBinding).toHaveTextContent("");
+	await expect.element(radioBinding).toMatchTextContent("");
 	const radioItem1 = page.getByTestId("radio-item");
 	await radioItem1.click();
-	await expect.element(radioBinding).toHaveTextContent("1");
+	await expect.element(radioBinding).toMatchTextContent("1");
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -758,21 +758,21 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	const checkboxGroupItem1 = page.getByTestId("checkbox-group-item-1");
 	await expect.element(checkboxGroupItem1).toHaveAttribute("aria-checked", "true");
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("true");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 
 	await checkboxGroupItem1.click();
 	await expectNotExists(page.getByTestId("content"));
 	await t.open();
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 
 	await page.getByTestId("checkbox-group-item-2").click();
 	await t.open();
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("true");
 
 	await userEvent.keyboard(kbd.ESCAPE);
 
@@ -782,8 +782,8 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	await expectNotExists(page.getByTestId("content"));
 	await t.open();
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 });
 
 // CI hates this
@@ -855,7 +855,7 @@ it.each([true, false])(
 );
 
 it("should not cause unwanted focus jumps between different dropdown menus", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -886,7 +886,7 @@ it("should not cause unwanted focus jumps between different dropdown menus", asy
 });
 
 it("should not scroll to previous dropdown trigger when closing a different dropdown", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -927,7 +927,7 @@ it("should not scroll to previous dropdown trigger when closing a different drop
 });
 
 it("should properly restore focus when clicking between multiple dropdowns", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -967,7 +967,7 @@ it("should properly restore focus when clicking between multiple dropdowns", asy
 });
 
 it("should maintain correct focus when opening dropdown via keyboard", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -1011,7 +1011,7 @@ it("should apply custom style prop to content", async () => {
 });
 
 it("keyboard navigation should not cause unwanted jumps between menus", async () => {
-	const t = render(DropdownMenuMultipleTest, { contentProps: { preventScroll: false } });
+	const t = await render(DropdownMenuMultipleTest, { contentProps: { preventScroll: false } });
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -1030,7 +1030,7 @@ it("keyboard navigation should not cause unwanted jumps between menus", async ()
 });
 
 it("should call `focus` with `preventScroll: true` on hover and item-leave so `scroll-padding` does not scroll the page", async () => {
-	const t = render(DropdownMenuScrollPaddingTest);
+	const t = await render(DropdownMenuScrollPaddingTest);
 	onTestFinished(() => t.unmount());
 
 	await page.getByTestId("trigger").click();
@@ -1077,7 +1077,7 @@ it("should point the trigger at the content while the menu is open", async () =>
 });
 
 it("should point the trigger at the content when the menu starts open", async () => {
-	render(DropdownMenuInitiallyOpenTest);
+	await render(DropdownMenuInitiallyOpenTest);
 	await expectExists(page.getByTestId("content"));
 	await expect
 		.element(page.getByTestId("trigger"))
@@ -1085,7 +1085,7 @@ it("should point the trigger at the content when the menu starts open", async ()
 });
 
 it("should follow the content id when it changes while the menu is open", async () => {
-	render(DropdownMenuInitiallyOpenTest);
+	await render(DropdownMenuInitiallyOpenTest);
 	await expectExists(page.getByTestId("content"));
 	await page.getByTestId("rename").click();
 	await expect.element(page.getByTestId("content")).toHaveAttribute("id", "menu-content-b");
@@ -1113,13 +1113,13 @@ it("should point the sub trigger at the sub content while the submenu is open", 
 });
 
 it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
-	render(DropdownMenuFieldsetDisabledTest);
+	await render(DropdownMenuFieldsetDisabledTest);
 	const trigger = page.getByTestId("trigger");
 	await expect.element(trigger).toBeDisabled();
 
 	async function expectClosed() {
 		await new Promise((r) => setTimeout(r, 100));
-		expect(page.getByTestId("open-binding").element()).toHaveTextContent("false");
+		expect(page.getByTestId("open-binding").element()).toMatchTextContent("false");
 		expect(page.getByTestId("content").query()).toBeNull();
 	}
 
@@ -1165,7 +1165,7 @@ describe("mouse press on an item", () => {
 
 	async function setupScroll() {
 		const onSelect = vi.fn();
-		render(DropdownMenuScrollItemsTest, { onSelect });
+		await render(DropdownMenuScrollItemsTest, { onSelect });
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
 		await new Promise((r) => setTimeout(r, 100));
@@ -1202,7 +1202,7 @@ describe("mouse press on an item", () => {
 
 	it("should select the item released on when dragging from the trigger", async () => {
 		const onSelect = vi.fn();
-		render(DropdownMenuScrollItemsTest, { onSelect });
+		await render(DropdownMenuScrollItemsTest, { onSelect });
 		const trigger = page.getByTestId("trigger").element();
 		trigger.dispatchEvent(mousePointer("pointerdown", centerOf("trigger")));
 		await expectExists(page.getByTestId("content"));

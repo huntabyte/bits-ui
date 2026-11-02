@@ -32,8 +32,9 @@ globalThis.bitsDismissableLayers ??= new Map<
 	ReadableBox<InteractOutsideBehaviorType>
 >();
 
-interface DismissibleLayerStateOpts
-	extends ReadableBoxedValues<Required<Omit<DismissibleLayerImplProps, "children" | "ref">>> {
+interface DismissibleLayerStateOpts extends ReadableBoxedValues<
+	Required<Omit<DismissibleLayerImplProps, "children" | "ref">>
+> {
 	ref: WritableBox<HTMLElement | null>;
 }
 

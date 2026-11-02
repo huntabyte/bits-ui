@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import AccordionMountAnimationTest from "./accordion-mount-animation-test.svelte";
 
 const CONTENT = "[data-accordion-content]";
@@ -36,7 +36,7 @@ describe("Accordion mount animation", () => {
 	};
 
 	it("does not play the open animation for several items mounted open", async () => {
-		render(AccordionMountAnimationTest, { count: 3, busyMs: 50 });
+		await render(AccordionMountAnimationTest, { count: 3, busyMs: 50 });
 		await settle();
 		expect(started).toEqual([]);
 		for (let i = 0; i < 3; i++) {
@@ -45,7 +45,7 @@ describe("Accordion mount animation", () => {
 	});
 
 	it("still animates closing and reopening after mounting open", async () => {
-		render(AccordionMountAnimationTest, { count: 1, busyMs: 0 });
+		await render(AccordionMountAnimationTest, { count: 1, busyMs: 0 });
 		await settle();
 		await page.getByTestId("trigger-0").click();
 		await vi.waitFor(() => expect(started).toEqual(["content-0:slide-up"]));

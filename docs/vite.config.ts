@@ -7,6 +7,13 @@ import devtoolsJson from "vite-plugin-devtools-json";
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
 	assetsInclude: ["**/*.md"],
+	environments: {
+		ssr: {
+			build: {
+				rolldownOptions: { platform: "browser" },
+			},
+		},
+	},
 	server: {
 		fs: {
 			strict: false,

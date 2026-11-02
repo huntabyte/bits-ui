@@ -55,7 +55,8 @@ interface Sizes {
 }
 
 interface ScrollAreaRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			dir: Direction;
 			type: ScrollAreaType;
@@ -157,7 +158,8 @@ export class ScrollAreaViewportState {
 }
 
 interface ScrollAreaScrollbarStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			orientation: Orientation;
 		}> {}
@@ -825,7 +827,8 @@ export class ScrollAreaScrollbarSharedState {
 }
 
 interface ScrollAreaThumbImplStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			mounted: boolean;
 		}> {}

@@ -78,7 +78,8 @@ const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobo
 const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
 
 interface SelectBaseRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			name: string;
@@ -262,7 +263,8 @@ abstract class SelectBaseRootState {
 }
 
 interface SelectSingleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -349,7 +351,8 @@ export class SelectSingleRootState extends SelectBaseRootState {
 }
 
 interface SelectMultipleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string[];
 		}> {}
@@ -427,7 +430,8 @@ class SelectMultipleRootState extends SelectBaseRootState {
 }
 
 interface SelectRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			loop: boolean;
@@ -540,7 +544,8 @@ export class SelectValueState {
 }
 
 interface SelectInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			clearOnDeselect: boolean;
 		}> {}
@@ -1090,7 +1095,8 @@ export class SelectTriggerState {
 }
 
 interface SelectContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -1258,7 +1264,8 @@ export class SelectContentState {
 }
 
 interface SelectItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -1507,10 +1514,9 @@ export class SelectGroupHeadingState {
 	);
 }
 
-interface SelectHiddenInputStateOpts
-	extends ReadableBoxedValues<{
-		value: string | undefined;
-	}> {}
+interface SelectHiddenInputStateOpts extends ReadableBoxedValues<{
+	value: string | undefined;
+}> {}
 
 export class SelectHiddenInputState {
 	static create(opts: SelectHiddenInputStateOpts) {
@@ -1589,7 +1595,8 @@ export class SelectViewportState {
 }
 
 interface SelectScrollButtonImplStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			delay: (tick: number) => number;
 		}> {}

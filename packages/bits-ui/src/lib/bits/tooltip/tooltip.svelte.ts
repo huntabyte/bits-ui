@@ -144,15 +144,14 @@ export function createTooltipTether<Payload = never>() {
 	return new TooltipTether<Payload>();
 }
 
-interface TooltipProviderStateOpts
-	extends ReadableBoxedValues<{
-		delayDuration: number;
-		disableHoverableContent: boolean;
-		disableCloseOnTriggerClick: boolean;
-		disabled: boolean;
-		ignoreNonKeyboardFocus: boolean;
-		skipDelayDuration: number;
-	}> {}
+interface TooltipProviderStateOpts extends ReadableBoxedValues<{
+	delayDuration: number;
+	disableHoverableContent: boolean;
+	disableCloseOnTriggerClick: boolean;
+	disabled: boolean;
+	ignoreNonKeyboardFocus: boolean;
+	skipDelayDuration: number;
+}> {}
 
 export class TooltipProviderState {
 	static create(opts: TooltipProviderStateOpts) {
@@ -247,7 +246,8 @@ export class TooltipProviderState {
 }
 
 interface TooltipRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			delayDuration: number | undefined;
 			disableHoverableContent: boolean | undefined;
 			disableCloseOnTriggerClick: boolean | undefined;
@@ -490,7 +490,8 @@ export class TooltipRootState {
 }
 
 interface TooltipTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			tabindex: number;
@@ -810,7 +811,8 @@ export class TooltipTriggerState {
 }
 
 interface TooltipContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;

@@ -1,4 +1,4 @@
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import TouchOutsideStopPropagationTest from "./touch-outside-stop-propagation-test.svelte";
@@ -25,7 +25,7 @@ function dispatch(target: Element, type: "pointerdown" | "pointerup" | "click") 
 describe("dismissible layer - touch outside click", () => {
 	it("dismisses on a tap whose target stops click propagation", async () => {
 		const onInteractOutside = vi.fn();
-		render(TouchOutsideStopPropagationTest, { onInteractOutside });
+		await render(TouchOutsideStopPropagationTest, { onInteractOutside });
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
 		await waitForDismissibleLayer(page.getByTestId("content"));
@@ -50,7 +50,7 @@ describe("dismissible layer - touch outside click", () => {
 	});
 
 	it("dismisses when a tap's click lands right after its pointerdown", async () => {
-		render(PopoverSiblingsTest);
+		await render(PopoverSiblingsTest);
 		await page.getByTestId("open-1").click();
 		await expectExists(page.getByTestId("content-1"));
 		await waitForDismissibleLayer(page.getByTestId("content-1"));

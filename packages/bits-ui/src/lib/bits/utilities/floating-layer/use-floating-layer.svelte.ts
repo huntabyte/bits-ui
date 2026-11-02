@@ -49,28 +49,27 @@ export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
 
-export interface FloatingContentStateOpts
-	extends ReadableBoxedValues<{
-		id: string;
-		wrapperId: string;
-		side: Side;
-		sideOffset: number;
-		align: Align;
-		alignOffset: number;
-		arrowPadding: number;
-		avoidCollisions: boolean;
-		collisionBoundary: Arrayable<Boundary>;
-		collisionPadding: number | Partial<Record<Side, number>>;
-		sticky: "partial" | "always";
-		hideWhenDetached: boolean;
-		updatePositionStrategy: "optimized" | "always";
-		strategy: "fixed" | "absolute";
-		onPlaced: () => void;
-		dir: Direction;
-		style: StyleProperties | null | undefined | string;
-		enabled: boolean;
-		customAnchor: string | HTMLElement | null | Measurable;
-	}> {}
+export interface FloatingContentStateOpts extends ReadableBoxedValues<{
+	id: string;
+	wrapperId: string;
+	side: Side;
+	sideOffset: number;
+	align: Align;
+	alignOffset: number;
+	arrowPadding: number;
+	avoidCollisions: boolean;
+	collisionBoundary: Arrayable<Boundary>;
+	collisionPadding: number | Partial<Record<Side, number>>;
+	sticky: "partial" | "always";
+	hideWhenDetached: boolean;
+	updatePositionStrategy: "optimized" | "always";
+	strategy: "fixed" | "absolute";
+	onPlaced: () => void;
+	dir: Direction;
+	style: StyleProperties | null | undefined | string;
+	enabled: boolean;
+	customAnchor: string | HTMLElement | null | Measurable;
+}> {}
 
 export class FloatingContentState {
 	static create(opts: FloatingContentStateOpts, tooltip = false) {
