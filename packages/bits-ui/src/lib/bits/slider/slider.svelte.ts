@@ -38,7 +38,7 @@ import type {
 } from "$lib/internal/types.js";
 import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
 import { linearScale } from "$lib/internal/math.js";
-import type { SliderLabelPosition } from "./types.js";
+import type { SliderLabelPosition, SliderRootSnippetProps } from "./types.js";
 
 const sliderAttrs = createBitsAttrs({
 	component: "slider",
@@ -147,11 +147,16 @@ abstract class SliderBaseRootState {
 	};
 
 	getPositionFromValue = (thumbValue: number) => {
-		const thumbScale = this.getThumbScale();
+		return this.getValueToPosition()(thumbValue);
+	};
 
-		const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
-
-		return scale(thumbValue);
+	/**
+	 * Returns a function that maps a value to its position. The thumb scale is
+	 * measured once, so mapping many values (e.g. every tick) does not query
+	 * and measure the DOM for each of them.
+	 */
+	getValueToPosition = () => {
+		return linearScale([this.opts.min.current, this.opts.max.current], this.getThumbScale());
 	};
 
 	readonly props = $derived.by(
@@ -339,9 +344,11 @@ class SliderSingleRootState extends SliderBaseRootState {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 
+		const valueToPosition = this.getValueToPosition();
+
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = this.getPositionFromValue(tickValue);
+			const tickPosition = valueToPosition(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
@@ -383,15 +390,7 @@ class SliderSingleRootState extends SliderBaseRootState {
 		];
 	});
 
-	readonly snippetProps = $derived.by(
-		() =>
-			({
-				ticks: this.ticksRenderArr,
-				thumbs: this.thumbsRenderArr,
-				tickItems: this.tickItemsArr,
-				thumbItems: this.thumbItemsArr,
-			}) as const
-	);
+	readonly snippetProps = createSnippetProps(this);
 }
 
 interface SliderMultiRootStateOpts
@@ -665,9 +664,11 @@ class SliderMultiRootState extends SliderBaseRootState {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 
+		const valueToPosition = this.getValueToPosition();
+
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = this.getPositionFromValue(tickValue);
+			const tickPosition = valueToPosition(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
@@ -709,18 +710,37 @@ class SliderMultiRootState extends SliderBaseRootState {
 		}));
 	});
 
-	readonly snippetProps = $derived.by(
-		() =>
-			({
-				ticks: this.ticksRenderArr,
-				thumbs: this.thumbsRenderArr,
-				tickItems: this.tickItemsArr,
-				thumbItems: this.thumbItemsArr,
-			}) as const
-	);
+	readonly snippetProps = createSnippetProps(this);
 }
 
 type SliderRoot = SliderSingleRootState | SliderMultiRootState;
+
+/**
+ * The root's snippet props as getters, so each array is only computed when a
+ * snippet reads it: a slider with many steps that renders no ticks would
+ * otherwise build every tick on each value change.
+ */
+function createSnippetProps(root: {
+	readonly ticksRenderArr: SliderRootSnippetProps["ticks"];
+	readonly thumbsRenderArr: SliderRootSnippetProps["thumbs"];
+	readonly tickItemsArr: SliderRootSnippetProps["tickItems"];
+	readonly thumbItemsArr: SliderRootSnippetProps["thumbItems"];
+}): Readonly<SliderRootSnippetProps> {
+	return {
+		get ticks() {
+			return root.ticksRenderArr;
+		},
+		get thumbs() {
+			return root.thumbsRenderArr;
+		},
+		get tickItems() {
+			return root.tickItemsArr;
+		},
+		get thumbItems() {
+			return root.thumbItemsArr;
+		},
+	};
+}
 
 interface SliderRootStateOpts extends Omit<SliderBaseRootStateOpts, "type"> {
 	type: "single" | "multiple";
