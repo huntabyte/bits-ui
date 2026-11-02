@@ -612,6 +612,7 @@ export class SelectInputState {
 
 		if (e.key === kbd.ENTER && !e.isComposing) {
 			e.preventDefault();
+			if (this.root.opts.disabled.current) return;
 
 			const isCurrentSelectedValue =
 				this.root.highlightedValue === this.root.opts.value.current;
@@ -874,6 +875,7 @@ export class SelectTriggerState {
 	 *
 	 */
 	#handleKeyboardSelection() {
+		if (this.root.opts.disabled.current) return false;
 		const isCurrentSelectedValue = this.root.highlightedValue === this.root.opts.value.current;
 
 		if (!this.root.opts.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
