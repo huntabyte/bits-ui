@@ -186,7 +186,7 @@ export const floatingSideOffsetProp = defineNumberProp({
 	default: 0,
 });
 
-export function floatingAlignProp(defaultAlign = "start"): PropSchema {
+export function floatingAlignProp(defaultAlign = "center"): PropSchema {
 	return defineEnumProp({
 		options: ["start", "center", "end"],
 		default: defaultAlign,

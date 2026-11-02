@@ -27,6 +27,7 @@ import {
 	escapeLayerProps,
 	floatingContentChildDefinition,
 	floatingProps,
+	floatingSideProp,
 	focusScopeProps,
 	forceMountProp,
 	indeterminateProp,
@@ -140,9 +141,15 @@ const contentStaticProps = {
 	}),
 } satisfies PropObj<DropdownMenuContentStaticPropsWithoutHTML>;
 
-const subContentProps = contentProps satisfies PropObj<
-	Omit<DropdownMenuSubContentPropsWithoutHTML, "style">
->;
+const subContentProps = {
+	...contentProps,
+	side: floatingSideProp("right"),
+	loop: defineBooleanProp({
+		default: true,
+		description:
+			"Whether or not to loop through the menu items when reaching the end of the list when using the keyboard.",
+	}),
+} satisfies PropObj<Omit<DropdownMenuSubContentPropsWithoutHTML, "style">>;
 
 const subContentStaticProps = {
 	...escapeLayerProps,
