@@ -678,7 +678,7 @@ describe("select - single", () => {
 
 	it("does not select an option when disabled while open", async () => {
 		const onValueChange = vi.fn();
-		const view = render(SelectTest, { items: testItems, value: "1", onValueChange });
+		const view = render(SelectTest, { type: "single", items: testItems, value: "1", onValueChange });
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
 		await view.rerender({ disabled: true });
