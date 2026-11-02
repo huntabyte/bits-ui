@@ -133,6 +133,22 @@ it("should fire the `onComplete` callback when the input is complete", async () 
 	expect(mockComplete).toHaveBeenCalledTimes(2);
 });
 
+it("should fire `onComplete` once when the callback reads and writes state (#2262)", async () => {
+	const mockComplete = vi.fn();
+	const t = setup({
+		onComplete: mockComplete,
+		countCompletions: true,
+	});
+
+	await t.hiddenInput.click();
+	for (const key of ["1", "2", "3", "4", "5", "6"]) {
+		await userEvent.keyboard(key);
+	}
+	await expect.element(t.getByTestId("completions")).toHaveTextContent("1");
+	expect(mockComplete).toHaveBeenCalledTimes(1);
+	expect(mockComplete).toHaveBeenCalledWith("123456");
+});
+
 it("should handle paste events correctly", async () => {
 	const mockComplete = vi.fn();
 	const t = setup({

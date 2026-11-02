@@ -6,10 +6,14 @@
 		maxlength = 6,
 		value = "",
 		toCopy,
+		countCompletions = false,
 		...restProps
 	}: Omit<PinInput.RootProps, "children"> & {
 		toCopy?: string;
+		countCompletions?: boolean;
 	} = $props();
+
+	let completions = $state(0);
 
 	let inputRef = $state<HTMLInputElement | null>(null);
 
@@ -32,7 +36,13 @@
 		bind:value
 		class="group/pininput text-foreground flex items-center has-[:disabled]:opacity-30"
 		{maxlength}
-		{onComplete}
+		onComplete={countCompletions
+			? (v: string) => {
+					// reads and writes state, like `form.requestSubmit()` on a remote form
+					completions++;
+					onComplete(v);
+				}
+			: onComplete}
 		data-testid="input"
 		{...restProps}
 	>
@@ -54,6 +64,7 @@
 			</div>
 		{/snippet}
 	</PinInput.Root>
+	<div data-testid="completions">{completions}</div>
 	<div data-testid="to-copy">
 		{toCopy}
 	</div>
