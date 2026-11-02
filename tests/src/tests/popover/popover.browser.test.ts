@@ -376,9 +376,7 @@ it("should not pass an invalid `z-index: undefined` in the child snippet's wrapp
 	// read the raw string, since browsers drop the invalid declaration from the DOM style
 	setup({}, PopoverForceMountTest);
 	const text = page.getByTestId("content-text");
-	await expect
-		.element(text)
-		.toHaveAttribute("data-wrapper-style", expect.stringContaining("z-index"));
+	await expect.element(text).toHaveAttribute("data-wrapper-style", expect.stringContaining("z-index"));
 	expect(text.element().getAttribute("data-wrapper-style")).not.toMatch(/z-index:\s*undefined/);
 });
 
