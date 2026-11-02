@@ -1,6 +1,6 @@
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { mount, unmount, flushSync, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import PopoverTest, { type PopoverTestProps } from "./popover-test.svelte";
 import PopoverForceMountTest, {
@@ -19,6 +19,7 @@ import PopoverOverlayTest from "./popover-overlay-test.svelte";
 import PopoverHoverTest, { type PopoverHoverTestProps } from "./popover-hover-test.svelte";
 import PopoverHiddenTriggerTabsTest from "./popover-hidden-trigger-tabs-test.svelte";
 import PopoverScrollJitterTest from "./popover-scroll-jitter-test.svelte";
+import PopoverHideWhenDetachedTest from "./popover-hide-when-detached-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -1155,4 +1156,138 @@ describe("openOnHover with forceMount", () => {
 		await t.trigger.click();
 		await expectExists(t.getContent());
 	});
+});
+
+async function runShadowTriggerPress(inShadow: boolean) {
+	const host = document.body.appendChild(document.createElement("div"));
+	const root: ParentNode = inShadow ? host.attachShadow({ mode: "open" }) : host;
+	const app = root.appendChild(document.createElement("div"));
+	const portalTo = root.appendChild(document.createElement("div"));
+	const component = mount(PopoverTest, { target: app, props: { portalProps: { to: portalTo } } });
+	const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await userEvent.click(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		await new Promise((r) => setTimeout(r, 100));
+		// real-user-like press: pointerdown, ~60ms, then click
+		const rect = get("trigger")!.getBoundingClientRect();
+		get("trigger")!.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				composed: true,
+				pointerType: "mouse",
+				button: 0,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+		await new Promise((r) => setTimeout(r, 60));
+		get("trigger")!.click();
+		flushSync();
+		await new Promise((r) => setTimeout(r, 300));
+		return get("content") !== null;
+	} finally {
+		unmount(component);
+		host.remove();
+	}
+}
+
+it("popover light DOM: trigger press closes", async () => {
+	expect(await runShadowTriggerPress(false)).toBe(false);
+});
+
+it("popover shadow DOM: trigger press closes", async () => {
+	expect(await runShadowTriggerPress(true)).toBe(false);
+});
+
+it("shadow outside callback preserves trusted event properties and callable methods", async () => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const root = host.attachShadow({ mode: "open" });
+	const app = root.appendChild(document.createElement("div"));
+	const portalTo = root.appendChild(document.createElement("div"));
+	let observed: { target: EventTarget | null; trusted: boolean; prevented: boolean } | undefined;
+	const component = mount(PopoverTest, {
+		target: app,
+		props: {
+			portalProps: { to: portalTo },
+			contentProps: {
+				onInteractOutside(e) {
+					e.composedPath();
+					e.stopPropagation();
+					e.preventDefault();
+					observed = {
+						target: e.target,
+						trusted: e.isTrusted,
+						prevented: e.defaultPrevented,
+					};
+				},
+			},
+		},
+	});
+	const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await userEvent.click(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		await userEvent.click(get("outside")!);
+		await vi.waitFor(() => expect(observed).toBeDefined());
+		expect(observed!.target).toBe(host);
+		expect(observed!.prevented).toBe(true);
+		expect(observed!.trusted).toBe(true);
+		expect(get("content")).not.toBeNull();
+	} finally {
+		await unmount(component);
+		host.remove();
+	}
+});
+
+it("trigger containing a shadow-root child closes the popover on press", async () => {
+	const t = await render(PopoverTest);
+	const trigger = t.getByTestId("trigger").element() as HTMLElement;
+	const icon = trigger.appendChild(document.createElement("span"));
+	const child = icon.attachShadow({ mode: "open" }).appendChild(document.createElement("span"));
+	child.textContent = "icon";
+	await userEvent.click(trigger);
+	await expect.element(t.getByTestId("content")).toBeVisible();
+	await new Promise((r) => setTimeout(r, 100));
+	const rect = child.getBoundingClientRect();
+	child.dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			composed: true,
+			pointerType: "mouse",
+			button: 0,
+			clientX: rect.left + rect.width / 2,
+			clientY: rect.top + rect.height / 2,
+		})
+	);
+	await new Promise((r) => setTimeout(r, 60));
+	child.click();
+	await new Promise((r) => setTimeout(r, 300));
+	expect(document.querySelector('[data-testid="content"]')).toBeNull();
+});
+
+it("should hide the content when the trigger is scrolled out of a nested scroll container and `hideWhenDetached` is true", async () => {
+	await render(PopoverHideWhenDetachedTest);
+	const content = page.getByTestId("content");
+	await expect.element(content).toBeVisible();
+
+	const scroller = page.getByTestId("scroller").element() as HTMLElement;
+	scroller.scrollTop = 200;
+	// give the scroll event and the next position update time to land
+	await new Promise((r) => setTimeout(r, 100));
+
+	await expect.element(content).not.toBeVisible();
+	scroller.scrollTop = 0;
+	await expect.element(content).toBeVisible();
+});
+
+it("should keep the viewport as the collision boundary for non-portalled content inside a scroll container", async () => {
+	await render(PopoverHideWhenDetachedTest, { portalDisabled: true });
+	const content = page.getByTestId("content");
+	await expect.element(content).toBeVisible();
+	const wrapper = content.element().parentElement as HTMLElement;
+	// the scroller is 100px tall; the viewport leaves far more room below the trigger
+	await expect
+		.poll(() => parseFloat(wrapper.style.getPropertyValue("--bits-floating-available-height")))
+		.toBeGreaterThan(200);
 });

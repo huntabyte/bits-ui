@@ -1,3 +1,5 @@
+import { mount, unmount } from "svelte";
+import DropdownMenuShadowTest from "./dropdown-menu-shadow-test.svelte";
 import { expect, it, vi, afterEach, onTestFinished, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { page, userEvent } from "vitest/browser";
@@ -1211,3 +1213,36 @@ describe("mouse press on an item", () => {
 		expect(onSelect).toHaveBeenCalledWith(2);
 	});
 });
+
+for (const inShadow of [false, true]) {
+	it(`disabled portaled submenu press keeps parent open in ${inShadow ? "shadow" : "light"} DOM`, async () => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const root = inShadow ? host.attachShadow({ mode: "open" }) : host;
+		const app = root.appendChild(document.createElement("div"));
+		const portalTo = root.appendChild(document.createElement("div"));
+		const component = mount(DropdownMenuShadowTest, { target: app, props: { portalTo } });
+		const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		try {
+			await vi.waitFor(() => expect(get("shadow-menu-disabled")).not.toBeNull());
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			const target = get("shadow-menu-disabled")!;
+			const rect = target.getBoundingClientRect();
+			target.dispatchEvent(
+				new PointerEvent("pointerdown", {
+					bubbles: true,
+					composed: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+					clientX: rect.left + rect.width / 2,
+					clientY: rect.top + rect.height / 2,
+				})
+			);
+			await new Promise((resolve) => setTimeout(resolve, 60));
+			expect(get("shadow-menu-content")).not.toBeNull();
+		} finally {
+			await unmount(component);
+			host.remove();
+		}
+	});
+}

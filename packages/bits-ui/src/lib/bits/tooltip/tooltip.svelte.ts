@@ -8,6 +8,7 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
+import { isEventTargetWithin } from "$lib/internal/events.js";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import {
@@ -856,11 +857,7 @@ export class TooltipContentState {
 	}
 
 	onInteractOutside = (e: PointerEvent) => {
-		if (
-			isElement(e.target) &&
-			this.root.triggerNode?.contains(e.target) &&
-			this.root.disableCloseOnTriggerClick
-		) {
+		if (isEventTargetWithin(e, this.root.triggerNode) && this.root.disableCloseOnTriggerClick) {
 			e.preventDefault();
 			return;
 		}

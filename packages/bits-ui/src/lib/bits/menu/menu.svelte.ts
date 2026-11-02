@@ -22,7 +22,7 @@ import {
 	isMouseEvent,
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
-import { CustomEventDispatcher } from "$lib/internal/events.js";
+import { CustomEventDispatcher, isEventTargetWithin } from "$lib/internal/events.js";
 import type {
 	AnyFn,
 	BitsFocusEvent,
@@ -1164,7 +1164,7 @@ export class MenuContentState {
 
 	handleInteractOutside(e: PointerEvent) {
 		if (!isElementOrSVGElement(e.target)) return;
-		if (this.parentMenu.triggerNode?.contains(e.target)) {
+		if (isEventTargetWithin(e, this.parentMenu.triggerNode)) {
 			e.preventDefault();
 			return;
 		}

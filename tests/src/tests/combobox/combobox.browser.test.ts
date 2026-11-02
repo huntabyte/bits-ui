@@ -1,7 +1,7 @@
 import { page, userEvent } from "vitest/browser";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { tick, type Component } from "svelte";
+import { mount, unmount, tick, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import ComboboxTest from "./combobox-test.svelte";
 import type { ComboboxSingleTestProps, Item } from "./combobox-test.svelte";
@@ -551,6 +551,37 @@ describe("combobox - single", () => {
 		await t.user.keyboard(kbd.ARROW_DOWN);
 		await expect.element(allItem).toHaveAttribute("data-selected");
 		await expect.element(allItem).toHaveAttribute("data-highlighted");
+	});
+
+	it("does not select an option when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ value: "1", onValueChange });
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await t.rerender({ disabled: true });
+		await page.getByTestId("2").click();
+		await expect.element(t.valueBinding).toHaveTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("does not select the highlighted option with the keyboard when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ value: "1", onValueChange });
+		(t.input.element() as HTMLElement).focus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expectExists(t.getContent());
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-highlighted");
+		await t.rerender({ disabled: true });
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-disabled");
+		// the disabled input loses focus, so a real Enter can't reach it
+		t.input
+			.element()
+			.dispatchEvent(
+				new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true })
+			);
+		await expect.element(t.valueBinding).toHaveTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
 	});
 });
 
@@ -1110,4 +1141,38 @@ it("should not open when the trigger is disabled by an ancestor `fieldset`", asy
 		.element()
 		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
 	await expectClosed();
+});
+
+it.each([false, true])("input press keeps combobox open (shadow: %s)", async (inShadow) => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const root: ParentNode = inShadow ? host.attachShadow({ mode: "open" }) : host;
+	const app = root.appendChild(document.createElement("div"));
+	const portalTo = root.appendChild(document.createElement("div"));
+	const component = mount(ComboboxTest, {
+		target: app,
+		props: { items: [{ value: "a", label: "A" }], open: true, portalProps: { to: portalTo } },
+	});
+	const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		await new Promise((r) => setTimeout(r, 100));
+		const input = get("input")!;
+		const rect = input.getBoundingClientRect();
+		input.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				composed: true,
+				cancelable: true,
+				pointerType: "mouse",
+				button: 0,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+		await new Promise((r) => setTimeout(r, 60));
+		expect(get("content")).not.toBeNull();
+	} finally {
+		unmount(component);
+		host.remove();
+	}
 });
