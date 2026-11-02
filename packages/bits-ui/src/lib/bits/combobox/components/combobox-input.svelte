@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { ComboboxInputProps } from "../types.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
@@ -27,9 +28,11 @@
 		removeOnBackspace: boxWith(() => removeOnBackspace),
 	});
 
-	if (defaultValue) {
-		inputState.root.opts.inputValue.current = defaultValue;
-	}
+	untrack(() => {
+		if (defaultValue) {
+			inputState.root.opts.inputValue.current = defaultValue;
+		}
+	});
 
 	const mergedProps = $derived(
 		mergeProps(restProps, inputState.props, { value: inputState.root.opts.inputValue.current })

@@ -8,36 +8,6 @@ import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.sve
 
 const kbd = getTestKbd();
 
-class ControlledResizeObserver implements ResizeObserver {
-	static observers: ControlledResizeObserver[] = [];
-	readonly #callback: ResizeObserverCallback;
-
-	constructor(callback: ResizeObserverCallback) {
-		this.#callback = callback;
-		ControlledResizeObserver.observers.push(this);
-	}
-
-	disconnect() {}
-	observe() {}
-	unobserve() {}
-
-	trigger() {
-		this.#callback([], this);
-	}
-
-	static reset() {
-		ControlledResizeObserver.observers.length = 0;
-	}
-
-	static triggerAll() {
-		for (const observer of ControlledResizeObserver.observers) observer.trigger();
-	}
-}
-
-async function waitForAnimationFrame() {
-	await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-}
-
 function setup(props: ScrollAreaTestProps = {}) {
 	render(ScrollAreaTest, { ...props });
 
@@ -243,8 +213,6 @@ describe("ScrollArea", () => {
 		"should not schedule resize work that can outlive a %s ScrollArea",
 		async (type) => {
 			const warnings: unknown[][] = [];
-			ControlledResizeObserver.reset();
-			vi.stubGlobal("ResizeObserver", ControlledResizeObserver);
 			const consoleWarn = vi
 				.spyOn(console, "warn")
 				.mockImplementation((...args: unknown[]) => {
@@ -259,13 +227,20 @@ describe("ScrollArea", () => {
 					numParagraphs: 10,
 					wrapText: false,
 				});
+				const thumbHeight = () =>
+					parseFloat(
+						getComputedStyle(
+							page.getByTestId("scrollbar-y").element()
+						).getPropertyValue("--bits-scroll-area-thumb-height")
+					);
 
-				await waitForAnimationFrame();
-				expect(ControlledResizeObserver.observers.length).toBeGreaterThan(0);
+				// a 5px viewport clamps the thumb to its 18px minimum
+				await expect.poll(thumbHeight).toBe(18);
 
 				setTimeoutSpy.mockClear();
-				ControlledResizeObserver.triggerAll();
-				await waitForAnimationFrame();
+				// a real resize, so the test does not depend on how the component observes it
+				await rendered.rerender({ height: 100 });
+				await expect.poll(thumbHeight).toBeGreaterThan(18);
 				await rendered.unmount();
 
 				expect(setTimeoutSpy.mock.calls.some(([, delay]) => delay === 10)).toBe(false);
@@ -278,8 +253,6 @@ describe("ScrollArea", () => {
 			} finally {
 				setTimeoutSpy.mockRestore();
 				consoleWarn.mockRestore();
-				vi.unstubAllGlobals();
-				ControlledResizeObserver.reset();
 			}
 		}
 	);
@@ -418,5 +391,63 @@ describe("ScrollArea", () => {
 		scrollbar.dispatchEvent(lostCaptureEvent);
 
 		expect(document.body.style.webkitUserSelect).toBe("");
+	});
+	it("should clear pending scroll timers and the thumb rAF loop on unmount (#2253)", async () => {
+		const scheduled = new Set<number>();
+		const cleared = new Set<number>();
+		const origSetTimeout = window.setTimeout;
+		const origClearTimeout = window.clearTimeout;
+		const setTimeoutSpy = vi.spyOn(window, "setTimeout").mockImplementation(((
+			fn: TimerHandler,
+			ms?: number,
+			...args: unknown[]
+		) => {
+			const id = origSetTimeout(fn, ms, ...args);
+			if (ms === 100) scheduled.add(id);
+			return id;
+		}) as typeof setTimeout);
+		const clearTimeoutSpy = vi.spyOn(window, "clearTimeout").mockImplementation((id) => {
+			if (typeof id === "number") cleared.add(id);
+			origClearTimeout(id);
+		});
+		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+
+		try {
+			const { unmount } = render(ScrollAreaTest, {
+				type: "scroll",
+				numParagraphs: 20,
+				height: 100,
+			});
+			const viewport = page.getByTestId("viewport").element() as HTMLElement;
+
+			async function scrollBy(delta: number) {
+				const scrolled = new Promise((r) =>
+					viewport.addEventListener("scroll", r, { once: true })
+				);
+				viewport.scrollTop += delta;
+				await scrolled;
+			}
+
+			await scrollBy(20);
+			await expectExists(page.getByTestId("thumb-y"));
+			// the thumb is mounted now, so this scroll starts its rAF loop
+			await scrollBy(20);
+			expect(scheduled.size).toBeGreaterThan(0);
+
+			unmount();
+
+			// every pending 100ms debounce timer is cancelled on teardown
+			for (const id of scheduled) expect(cleared.has(id)).toBe(true);
+
+			// and the thumb's rAF loop stops rescheduling itself
+			await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+			const rafCalls = rafSpy.mock.calls.length;
+			await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+			expect(rafSpy.mock.calls.length - rafCalls).toBe(2);
+		} finally {
+			setTimeoutSpy.mockRestore();
+			clearTimeoutSpy.mockRestore();
+			rafSpy.mockRestore();
+		}
 	});
 });

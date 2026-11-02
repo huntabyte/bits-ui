@@ -12,8 +12,9 @@ import { getTestKbd } from "../utils.js";
 import TimeFieldTest, { type TimeFieldTestProps } from "./time-field-test.svelte";
 import type { TimeValue } from "bits-ui";
 import { tick } from "svelte";
-import { expectNotExists } from "../browser-utils";
+import { collectErrors, expectNotExists } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
+import TimeFieldSpreadPropsTest from "./time-field-spread-props-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -399,6 +400,40 @@ it("should preserve PM when typing minutes in 12h mode", async () => {
 
 	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
 	await expect.element(t.value).toHaveTextContent("2026-03-11T14:30");
+});
+
+it("should preserve PM when typing the hour and then the minutes in 12h mode", async () => {
+	const t = setup({
+		value: new CalendarDateTime(2026, 3, 11, 21, 30, 0, 0),
+	});
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T21:30");
+
+	await t.getHour().click();
+	await userEvent.keyboard(`{9}`);
+	await userEvent.keyboard(`{3}{0}`);
+
+	await expect.element(t.getHour()).toHaveTextContent("09");
+	await expect.element(t.getDayPeriod()).toHaveTextContent("PM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T21:30");
+});
+
+it("should preserve AM when typing 12 for the hour and then the minutes in 12h mode", async () => {
+	const t = setup({
+		value: new CalendarDateTime(2026, 3, 11, 0, 30, 0, 0),
+	});
+
+	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T00:30");
+
+	await t.getHour().click();
+	await userEvent.keyboard(`{1}{2}`);
+	await userEvent.keyboard(`{3}{0}`);
+
+	await expect.element(t.getHour()).toHaveTextContent("12");
+	await expect.element(t.getDayPeriod()).toHaveTextContent("AM");
+	await expect.element(t.value).toHaveTextContent("2026-03-11T00:30");
 });
 
 it("should go all the way through the segment with spamming 3", async () => {
@@ -1003,3 +1038,10 @@ function extractTime(time: TimeValue): string {
 	}
 	return new Time(time.hour, time.minute, time.second).toString();
 }
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(TimeFieldSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("hour")).toHaveTextContent("––");
+	await expect.element(page.getByTestId("minute")).toHaveTextContent("––");
+});

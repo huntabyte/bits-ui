@@ -21,10 +21,40 @@ export interface ScrollBodyOption {
 /** A map of lock ids to their `locked` state. */
 const lockMap = new SvelteMap<string, boolean>();
 
-let initialBodyStyle: string | null = $state<string | null>(null);
+const MANAGED_PROPERTIES = [
+	"padding-right",
+	"margin-right",
+	// the shorthand reads "" when only one axis is set inline, so its longhands are snapshotted
+	// too and restored after it (keep this order)
+	"overflow",
+	"overflow-x",
+	"overflow-y",
+	"pointer-events",
+	"--scrollbar-width",
+] as const;
+
+type ManagedProperty = (typeof MANAGED_PROPERTIES)[number];
+
+interface StylePropertySnapshot {
+	value: string;
+	priority: string;
+}
+
+let initialProperties: Map<ManagedProperty, StylePropertySnapshot> | null = null;
+let hadInitialStyleAttribute = false;
+const modifiedProperties = new Set<ManagedProperty>();
 let stopTouchMoveListener: Fn | null = null;
 let cleanupTimeoutId: number | null = null;
 let isInCleanupTransition = false;
+
+function setManagedProperty(style: CSSStyleDeclaration, property: ManagedProperty, value: string) {
+	style.setProperty(property, value);
+	modifiedProperties.add(property);
+	if (property === "overflow") {
+		modifiedProperties.add("overflow-x");
+		modifiedProperties.add("overflow-y");
+	}
+}
 
 const anyLocked = boxWith(() => {
 	for (const value of lockMap.values()) {
@@ -43,13 +73,40 @@ const anyLocked = boxWith(() => {
 let cleanupScheduledAt: number | null = null;
 
 const bodyLockStackCount = new SharedState(() => {
+	function restoreProperty(documentObj: Document, prop: ManagedProperty) {
+		const initial = initialProperties?.get(prop);
+		if (initial?.value) {
+			documentObj.body.style.setProperty(prop, initial.value, initial.priority);
+		} else {
+			documentObj.body.style.removeProperty(prop);
+		}
+	}
+
 	function resetBodyStyle(documentObj: Document) {
 		if (!BROWSER) return;
-		documentObj.body.setAttribute("style", initialBodyStyle ?? "");
-		documentObj.body.style.removeProperty("--scrollbar-width");
+		// without a snapshot, still remove what we set so the body is never left locked
+		for (const prop of MANAGED_PROPERTIES) {
+			if (!modifiedProperties.has(prop)) continue;
+			restoreProperty(documentObj, prop);
+		}
+		if (!hadInitialStyleAttribute && documentObj.body.style.length === 0) {
+			documentObj.body.removeAttribute("style");
+		}
+		initialProperties = null;
+		modifiedProperties.clear();
 		isIOS && stopTouchMoveListener?.();
-		// reset initialBodyStyle so next locker captures the correct styles
-		initialBodyStyle = null;
+	}
+
+	/**
+	 * Unlike overflow/padding, pointer-events has no handover flicker to avoid, so it's
+	 * restored as soon as the last lock goes. A lock that arrives during the cleanup delay
+	 * sets it again in `afterTick`.
+	 *
+	 * reference: https://github.com/huntabyte/bits-ui/issues/2202
+	 */
+	function restorePointerEvents(documentObj: Document) {
+		if (!modifiedProperties.delete("pointer-events")) return;
+		restoreProperty(documentObj, "pointer-events");
 	}
 
 	function cancelPendingCleanup() {
@@ -96,8 +153,15 @@ const bodyLockStackCount = new SharedState(() => {
 
 	function ensureInitialStyleCaptured() {
 		// only capture initial style once, when no locks exist and no cleanup is in progress
-		if (initialBodyStyle === null && lockMap.size === 0 && !isInCleanupTransition) {
-			initialBodyStyle = document.body.getAttribute("style");
+		if (initialProperties === null && lockMap.size === 0 && !isInCleanupTransition) {
+			hadInitialStyleAttribute = document.body.hasAttribute("style");
+			initialProperties = new Map();
+			for (const prop of MANAGED_PROPERTIES) {
+				initialProperties.set(prop, {
+					value: document.body.style.getPropertyValue(prop),
+					priority: document.body.style.getPropertyPriority(prop),
+				});
+			}
 		}
 	}
 
@@ -131,11 +195,15 @@ const bodyLockStackCount = new SharedState(() => {
 
 			// only add padding compensation if stable gutter isn't handling it
 			if (verticalScrollbarWidth > 0 && !hasStableGutter) {
-				document.body.style.paddingRight = `${config.padding}px`;
-				document.body.style.marginRight = `${config.margin}px`;
-				document.body.style.setProperty("--scrollbar-width", `${verticalScrollbarWidth}px`);
+				setManagedProperty(document.body.style, "padding-right", `${config.padding}px`);
+				setManagedProperty(document.body.style, "margin-right", `${config.margin}px`);
+				setManagedProperty(
+					document.body.style,
+					"--scrollbar-width",
+					`${verticalScrollbarWidth}px`
+				);
 			}
-			document.body.style.overflow = "hidden";
+			setManagedProperty(document.body.style, "overflow", "hidden");
 
 			if (isIOS) {
 				// IOS devices are special and require a touchmove listener to prevent scrolling
@@ -161,8 +229,8 @@ const bodyLockStackCount = new SharedState(() => {
 			 * focus/interaction.
 			 */
 			afterTick(() => {
-				document.body.style.pointerEvents = "none";
-				document.body.style.overflow = "hidden";
+				setManagedProperty(document.body.style, "pointer-events", "none");
+				setManagedProperty(document.body.style, "overflow", "hidden");
 			});
 		}
 	);
@@ -178,6 +246,7 @@ const bodyLockStackCount = new SharedState(() => {
 			return lockMap;
 		},
 		resetBodyStyle,
+		restorePointerEvents,
 		scheduleCleanupIfNoNewLocks,
 		cancelPendingCleanup,
 		ensureInitialStyleCaptured,
@@ -228,6 +297,8 @@ export class BodyScrollLock {
 
 			const restoreScrollDelay = this.#restoreScrollDelay();
 			const documentObj = document;
+
+			this.#countState.restorePointerEvents(documentObj);
 
 			/**
 			 * We schedule the cleanup to run after a delay to handle same-tick

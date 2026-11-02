@@ -440,7 +440,8 @@ export const valueDateRangeChangeFn = defineFunctionProp({
 
 export const onOpenChangeProp = defineFunctionProp({
 	definition: OnOpenChangeProp,
-	description: "A callback function called when the open state changes.",
+	description:
+		"A callback function called when the component changes the open state, such as from user interaction. It is not called when you set `open` yourself, so run any related logic where you set it.",
 	stringDefinition: "(open: boolean) => void",
 });
 

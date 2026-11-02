@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { CalendarDate, CalendarDateTime } from "@internationalized/date";
-import { getValueFromSegments } from "./helpers.js";
+import { boxWith } from "svelte-toolbelt";
+import { createFormatter } from "../formatter.js";
+import {
+	createContent,
+	getDateRefForPart,
+	getDaySegmentMaxValue,
+	getValueFromSegments,
+} from "./helpers.js";
 import type { SegmentValueObj } from "./types.js";
 
 /**
@@ -16,6 +23,103 @@ function createFieldNode(parts: string[]) {
 	}
 	return field;
 }
+
+/**
+ * Renders the day segment through the real `createContent` pipeline for a given
+ * set of typed segment values. The placeholder is in November, which only has 30
+ * days — so a typed `31` is only kept if the rendering does not constrain it.
+ */
+function renderDay(segmentValues: Partial<SegmentValueObj>) {
+	return createContent({
+		segmentValues: {
+			day: null,
+			month: null,
+			year: null,
+			hour: null,
+			minute: null,
+			second: null,
+			dayPeriod: null,
+			...segmentValues,
+		} as SegmentValueObj,
+		formatter: createFormatter({
+			initialLocale: "en-GB",
+			monthFormat: boxWith(() => "long"),
+			yearFormat: boxWith(() => "numeric"),
+		}),
+		locale: "en-GB",
+		granularity: "day",
+		dateRef: new CalendarDate(2026, 11, 5),
+		hideTimeZone: false,
+		hourCycle: undefined,
+	});
+}
+
+describe("day rendering", () => {
+	it("renders the typed day while the month segment is still empty", () => {
+		// The placeholder month has 30 days, so the typed `31` must not render as `30`.
+		expect(renderDay({ day: "31" }).obj.day).toBe("31");
+	});
+
+	it("constrains the rendered day once a month is entered", () => {
+		expect(renderDay({ day: "31", month: "11", year: "2026" }).obj.day).toBe("30");
+	});
+
+	it("renders february 29th when the entered year is a leap year", () => {
+		expect(renderDay({ day: "29", month: "02", year: "2028" }).obj.day).toBe("29");
+	});
+});
+
+describe("getDateRefForPart", () => {
+	it("applies the entered month and year before rendering the day", () => {
+		// February 2028 has 29 days. Without applying the entered month and year first,
+		// the day would be constrained by the placeholder's month (November, 30 days).
+		const dateRef = getDateRefForPart("day", new CalendarDate(2026, 11, 5), {
+			day: "29",
+			month: "02",
+			year: "2028",
+		} as SegmentValueObj);
+
+		expect(dateRef.month).toBe(2);
+		expect(dateRef.year).toBe(2028);
+		expect(dateRef.set({ day: 29 }).day).toBe(29);
+	});
+
+	it("constrains the day by the entered month and year", () => {
+		const dateRef = getDateRefForPart("day", new CalendarDate(2026, 11, 5), {
+			day: "29",
+			month: "02",
+			year: "2028",
+		} as SegmentValueObj);
+
+		expect(dateRef.set({ day: 29 }).day).toBe(29);
+	});
+
+	it("returns the given date for parts other than the day", () => {
+		const placeholder = new CalendarDate(2026, 11, 5);
+		expect(getDateRefForPart("month", placeholder, { day: "31" } as SegmentValueObj)).toBe(
+			placeholder
+		);
+	});
+});
+
+describe("getDaySegmentMaxValue", () => {
+	it("allows any day while the month segment is still empty", () => {
+		// Typing `31102026` while the placeholder is in November must not stop at `31`,
+		// otherwise the remaining digits land in the wrong segments.
+		expect(getDaySegmentMaxValue(undefined, new CalendarDate(2026, 11, 5))).toBe(31);
+		expect(getDaySegmentMaxValue("", new CalendarDate(2026, 11, 5))).toBe(31);
+	});
+
+	it("constrains the day to the entered month", () => {
+		expect(getDaySegmentMaxValue("02", new CalendarDate(2026, 11, 5))).toBe(28);
+		expect(getDaySegmentMaxValue("04", new CalendarDate(2026, 11, 5))).toBe(30);
+		expect(getDaySegmentMaxValue("10", new CalendarDate(2026, 11, 5))).toBe(31);
+	});
+
+	it("takes the leap year of the placeholder into account", () => {
+		expect(getDaySegmentMaxValue("02", new CalendarDate(2024, 11, 5))).toBe(29);
+	});
+});
 
 describe("getValueFromSegments", () => {
 	it("applies the day-first (en-GB) segment order without clamping the day to the dateRef's month", () => {

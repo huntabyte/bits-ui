@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ContextMenuContentProps } from "../types.js";
-	import { CONTEXT_MENU_TRIGGER_ATTR, MenuContentState } from "$lib/bits/menu/menu.svelte.js";
+	import { MenuContentState } from "$lib/bits/menu/menu.svelte.js";
+	import { CONTEXT_MENU_TRIGGER_ATTR } from "$lib/bits/menu/context-menu-attributes.js";
 	import { useId } from "$lib/internal/use-id.js";
 	import { noop } from "$lib/internal/noop.js";
 	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
