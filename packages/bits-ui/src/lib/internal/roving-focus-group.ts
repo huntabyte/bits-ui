@@ -5,6 +5,7 @@ import { kbd } from "./kbd.js";
 import type { Orientation } from "$lib/shared/index.js";
 import { BROWSER } from "esm-env";
 import { isHTMLElement } from "./is.js";
+import { cssEscape } from "./css-escape.js";
 
 type RovingFocusGroupOptions = (
 	| {
@@ -162,7 +163,9 @@ export class RovingFocusGroup {
 	focusCurrentTabStop() {
 		const currentTabStopId = this.#currentTabStopId.current;
 		if (!currentTabStopId) return;
-		const currentTabStop = this.#opts.rootNode.current?.querySelector(`#${currentTabStopId}`);
+		const currentTabStop = this.#opts.rootNode.current?.querySelector(
+			`#${cssEscape(currentTabStopId)}`
+		);
 		if (!currentTabStop || !isHTMLElement(currentTabStop)) return;
 		currentTabStop.focus();
 	}

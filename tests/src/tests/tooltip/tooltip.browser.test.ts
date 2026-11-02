@@ -18,6 +18,7 @@ import TooltipSingletonForceMountTest, {
 import TooltipSingletonEdgeTest from "./tooltip-singleton-edge-test.svelte";
 import TooltipSafePolygonIntermediateTargetTest from "./tooltip-safe-polygon-intermediate-target-test.svelte";
 import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
+import TooltipScrollContainerTest from "./tooltip-scroll-container-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "@vitest/browser/context";
 
@@ -103,6 +104,23 @@ it("should close on scroll when the scrolled target contains the trigger", async
 	main.dispatchEvent(new Event("scroll"));
 	await expectNotExists(page.getByTestId("content"));
 	await expect.element(t.trigger).toBeVisible();
+});
+
+it("should stay open when focusing the trigger scrolls it into view", async () => {
+	render(TooltipScrollContainerTest);
+	const scroller = page.getByTestId("scroller").element() as HTMLElement;
+	(page.getByTestId("before").element() as HTMLElement).focus();
+	expect(scroller.scrollTop).toBe(0);
+
+	await userEvent.tab();
+	await expect.element(page.getByTestId("trigger")).toHaveFocus();
+	expect(scroller.scrollTop).toBeGreaterThan(0);
+	// let the scroll event from the focus scroll-into-view fire
+	await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+	await expectExists(page.getByTestId("content"));
+
+	scroller.scrollTop -= 10;
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should stay open when hovering content", async () => {
