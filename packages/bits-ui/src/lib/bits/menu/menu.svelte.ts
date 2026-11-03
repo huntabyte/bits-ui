@@ -1152,6 +1152,9 @@ export class MenuContentState {
 		if (e.currentTarget.hasAttribute(this.parentMenu.root.getBitsAttr("sub-trigger"))) return;
 		if (this.#isPointerMovingToSubmenu() || this.parentMenu.root.isUsingKeyboard.current)
 			return;
+		// a closing menu stays mounted for its exit animation, and focusing it would take the
+		// focus from wherever it went after the menu closed
+		if (!this.parentMenu.opts.open.current) return;
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus({ preventScroll: true });
 		this.rovingFocusGroup.setCurrentTabStopId("");

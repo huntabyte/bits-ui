@@ -604,6 +604,23 @@ it.each([
 	}
 );
 
+it("should not take focus back when the pointer leaves an item of a closed menu", async () => {
+	const t = await setup({ component: DropdownMenuForceMountTest });
+	await t.trigger.click();
+	await expect.element(t.trigger).toHaveAttribute("data-state", "open");
+	const item = page.getByTestId("item");
+	await item.click();
+	await expect.element(t.trigger).toHaveAttribute("data-state", "closed");
+	const nextButton = page.getByTestId("next-button");
+	(nextButton.element() as HTMLElement).focus();
+
+	item.element().dispatchEvent(
+		new PointerEvent("pointerleave", { bubbles: true, pointerType: "mouse" })
+	);
+
+	await expect.element(nextButton).toHaveFocus();
+});
+
 it("should respect the `escapeKeydownBehavior` prop", async () => {
 	await openWithKbd({
 		contentProps: {
