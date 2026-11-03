@@ -56,9 +56,16 @@ function observeResize(node: Element, callback: ResizeCallback): () => void {
 export class SvelteResizeObserver {
 	#node: Getter<HTMLElement | null>;
 	#onResize: () => void;
-	constructor(node: Getter<HTMLElement | null>, onResize: () => void) {
+	#measure: (() => void) | undefined;
+	/**
+	 * `onResize` runs a frame after the report, so its state writes can't resize observed nodes
+	 * mid-delivery. Layout reads belong in `measure`, which runs in the report while layout is
+	 * clean; in the frame, the DOM may have changed again and reading forces a layout.
+	 */
+	constructor(node: Getter<HTMLElement | null>, onResize: () => void, measure?: () => void) {
 		this.#node = node;
 		this.#onResize = onResize;
+		this.#measure = measure;
 		this.handler = this.handler.bind(this);
 		$effect(this.handler);
 	}
@@ -68,6 +75,7 @@ export class SvelteResizeObserver {
 		const _node = this.#node();
 		if (!_node) return;
 		const unobserve = observeResize(_node, () => {
+			this.#measure?.();
 			cancelAnimationFrame(rAF);
 			rAF = window.requestAnimationFrame(this.#onResize);
 		});

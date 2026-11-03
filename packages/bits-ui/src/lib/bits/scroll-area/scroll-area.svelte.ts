@@ -351,16 +351,20 @@ export class ScrollAreaScrollbarAutoState {
 		this.scrollbar = scrollbar;
 		this.root = scrollbar.root;
 
-		const handleResize = () => {
+		let isOverflowing = false;
+		const measure = () => {
 			const viewportNode = this.root.viewportNode;
 			if (!viewportNode) return;
-			const isOverflowX = viewportNode.offsetWidth < viewportNode.scrollWidth;
-			const isOverflowY = viewportNode.offsetHeight < viewportNode.scrollHeight;
-			this.isVisible = this.scrollbar.isHorizontal ? isOverflowX : isOverflowY;
+			isOverflowing = this.scrollbar.isHorizontal
+				? viewportNode.offsetWidth < viewportNode.scrollWidth
+				: viewportNode.offsetHeight < viewportNode.scrollHeight;
+		};
+		const handleResize = () => {
+			this.isVisible = isOverflowing;
 		};
 
-		new SvelteResizeObserver(() => this.root.viewportNode, handleResize);
-		new SvelteResizeObserver(() => this.root.contentNode, handleResize);
+		new SvelteResizeObserver(() => this.root.viewportNode, handleResize, measure);
+		new SvelteResizeObserver(() => this.root.contentNode, handleResize, measure);
 	}
 
 	readonly props = $derived.by(

@@ -181,6 +181,21 @@ describe("ScrollArea", () => {
 		await expectExists(t.getScrollbarY());
 	});
 
+	it("should toggle the `auto` scrollbar as overflow changes", async () => {
+		const rendered = await render(ScrollAreaTest, {
+			type: "auto",
+			numParagraphs: 20,
+			height: 100,
+		});
+		const scrollbarY = page.getByTestId("scrollbar-y");
+
+		await expectExists(scrollbarY);
+		await rendered.rerender({ numParagraphs: 1, height: 400 });
+		await expectNotExists(scrollbarY);
+		await rendered.rerender({ numParagraphs: 20, height: 100 });
+		await expectExists(scrollbarY);
+	});
+
 	it("should respond to dynamic content changes", async () => {
 		const t = await setup({ numParagraphs: 1, height: 100 });
 
