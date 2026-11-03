@@ -1,5 +1,21 @@
 # bits-ui
 
+## 2.20.4
+
+### Patch Changes
+
+- fix: `hideWhenDetached` now respects the anchor's scroll containers when no `collisionBoundary` is set ([#2207](https://github.com/huntabyte/bits-ui/pull/2207))
+
+- fix(Menu): don't focus the content when the pointer leaves an item while the menu is closing, so focus moved elsewhere after a selection stays there ([#2271](https://github.com/huntabyte/bits-ui/pull/2271))
+
+- fix(PinInput): run `onComplete` untracked so a callback that reads and writes state no longer loops with `effect_update_depth_exceeded` ([#2267](https://github.com/huntabyte/bits-ui/pull/2267))
+
+- fix(Slider): measure the thumb scale once per update instead of once per step, and compute ticks only when a snippet reads them, so sliders with many steps stay fast (#1623) ([#2265](https://github.com/huntabyte/bits-ui/pull/2265))
+
+- Prevent selecting options when an open Select becomes disabled. Re-enabling the Select restores option interaction. ([#2266](https://github.com/huntabyte/bits-ui/pull/2266))
+
+- fix: preserve composed pointer paths for dismissible overlays in open shadow roots ([#2256](https://github.com/huntabyte/bits-ui/pull/2256))
+
 ## 2.20.3
 
 ### Patch Changes
