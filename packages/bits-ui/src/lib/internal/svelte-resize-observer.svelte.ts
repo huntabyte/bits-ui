@@ -1,4 +1,4 @@
-import type { Getter } from "svelte-toolbelt";
+import { getWindow, type Getter } from "svelte-toolbelt";
 
 type ResizeCallback = () => void;
 
@@ -34,10 +34,6 @@ function getPool(targetWindow: Window & typeof globalThis): ObserverPool {
 	return pool;
 }
 
-function getWindow(node: Element) {
-	return node.ownerDocument.defaultView ?? window;
-}
-
 /**
  * Observes `node` for size changes, returning a function that stops observing.
  *
@@ -54,7 +50,8 @@ function observeResize(node: Element, callback: ResizeCallback): () => void {
 		pool.targetCount++;
 	} else {
 		// `observe` only delivers its initial entry for newly observed targets, so re-observe
-		// to get one for this subscriber. Calling back now would measure mid-render.
+		// to get one for this subscriber. Calling back now would measure mid-render. Re-observing
+		// notifies the node's existing subscribers too; they just re-measure an unchanged size.
 		pool.observer.unobserve(node);
 	}
 	callbacks.add(callback);

@@ -7,6 +7,7 @@ type Stubbable = Window & typeof globalThis;
 /** Installs a fake `ResizeObserver` on `win` and records the instances it creates. */
 function stubResizeObserver(win: Stubbable) {
 	const instances: Array<{
+		callback: ResizeObserverCallback;
 		observe: ReturnType<typeof vi.fn>;
 		unobserve: ReturnType<typeof vi.fn>;
 		disconnect: ReturnType<typeof vi.fn>;
@@ -16,7 +17,9 @@ function stubResizeObserver(win: Stubbable) {
 		observe = vi.fn();
 		unobserve = vi.fn();
 		disconnect = vi.fn();
-		constructor() {
+		callback: ResizeObserverCallback;
+		constructor(callback: ResizeObserverCallback) {
+			this.callback = callback;
 			instances.push(this);
 		}
 	} as unknown as typeof ResizeObserver;
@@ -75,12 +78,32 @@ describe("SvelteResizeObserver", () => {
 		const node = iframeWindow.document.createElement("div");
 		iframeWindow.document.body.appendChild(node);
 
+		const spies = [
+			vi.spyOn(window, "requestAnimationFrame"),
+			vi.spyOn(window, "cancelAnimationFrame"),
+			vi.spyOn(iframeWindow, "requestAnimationFrame"),
+			vi.spyOn(iframeWindow, "cancelAnimationFrame"),
+		];
+		cleanups.push(() => spies.forEach((spy) => spy.mockRestore()));
+		const [mainRaf, mainCancel, iframeRaf, iframeCancel] = spies;
+
 		const { destroy } = observe(node);
 
 		expect(main.instances).toHaveLength(0);
 		expect(other.instances).toHaveLength(1);
-		expect(other.instances[0]!.observe).toHaveBeenCalledWith(node);
+		const [observer] = other.instances;
+		expect(observer!.observe).toHaveBeenCalledWith(node);
+
+		observer!.callback(
+			[{ target: node } as unknown as ResizeObserverEntry],
+			observer as unknown as ResizeObserver
+		);
+		expect(iframeRaf).toHaveBeenCalledTimes(1);
+		expect(iframeCancel).toHaveBeenCalled();
+		expect(mainRaf).not.toHaveBeenCalled();
+		expect(mainCancel).not.toHaveBeenCalled();
+
 		destroy();
-		expect(other.instances[0]!.disconnect).toHaveBeenCalledTimes(1);
+		expect(observer!.disconnect).toHaveBeenCalledTimes(1);
 	});
 });
