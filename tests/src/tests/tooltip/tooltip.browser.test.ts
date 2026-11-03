@@ -19,6 +19,7 @@ import TooltipSingletonEdgeTest from "./tooltip-singleton-edge-test.svelte";
 import TooltipSafePolygonIntermediateTargetTest from "./tooltip-safe-polygon-intermediate-target-test.svelte";
 import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
 import TooltipScrollContainerTest from "./tooltip-scroll-container-test.svelte";
+import TooltipTriggerTeardownTest from "./tooltip-trigger-teardown-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "vitest/browser";
 
@@ -1010,5 +1011,20 @@ it("prevented shadow trigger pointerdown retains its captured path", async () =>
 	} finally {
 		await unmount(component);
 		host.remove();
+	}
+});
+
+it("should not read trigger props when the trigger ref detaches during teardown", async () => {
+	const errors: unknown[] = [];
+	const onError = (e: ErrorEvent) => errors.push(e.error);
+	window.addEventListener("error", onError);
+	try {
+		await render(TooltipTriggerTeardownTest);
+		await expectExists(page.getByTestId("trigger"));
+		await page.getByTestId("remove").click();
+		await expectNotExists(page.getByTestId("trigger"));
+		expect(errors).toEqual([]);
+	} finally {
+		window.removeEventListener("error", onError);
 	}
 });

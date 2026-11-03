@@ -579,6 +579,9 @@ export class TooltipTriggerState {
 
 	#register = (node: HTMLElement | null) => {
 		if (!this.#mounted) return;
+		// a detaching node is unregistered by the mount cleanup or replaced by the next
+		// attach; reading props here would run consumer getters against torn-down state
+		if (node === null && this.#lastRegisteredId !== null) return;
 		const id = this.opts.id.current;
 		const payload = this.opts.payload.current;
 		const disabled = this.opts.disabled.current;
