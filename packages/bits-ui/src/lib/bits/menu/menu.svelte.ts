@@ -22,7 +22,7 @@ import {
 	isMouseEvent,
 } from "./utils.js";
 import { focusFirst } from "$lib/internal/focus.js";
-import { CustomEventDispatcher } from "$lib/internal/events.js";
+import { CustomEventDispatcher, isEventTargetWithin } from "$lib/internal/events.js";
 import type {
 	AnyFn,
 	BitsFocusEvent,
@@ -71,12 +71,11 @@ export const MenuCheckboxGroupContext = new Context<MenuCheckboxGroupState>("Men
 
 type MenuVariant = "context-menu" | "dropdown-menu" | "menubar";
 
-export interface MenuRootStateOpts
-	extends ReadableBoxedValues<{
-		dir: Direction;
-		variant: MenuVariant;
-		// debugMode: boolean;
-	}> {
+export interface MenuRootStateOpts extends ReadableBoxedValues<{
+	dir: Direction;
+	variant: MenuVariant;
+	// debugMode: boolean;
+}> {
 	onClose: AnyFn;
 	/** When closing, if this returns true, exit animations are skipped (instant unmount). */
 	shouldSkipExitAnimation?: () => boolean;
@@ -830,7 +829,8 @@ export class MenuRootState {
 }
 
 interface MenuMenuStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
@@ -896,7 +896,8 @@ export class MenuMenuState {
 }
 
 interface MenuContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			loop: boolean;
 			onCloseAutoFocus: (event: Event) => void;
@@ -1151,6 +1152,9 @@ export class MenuContentState {
 		if (e.currentTarget.hasAttribute(this.parentMenu.root.getBitsAttr("sub-trigger"))) return;
 		if (this.#isPointerMovingToSubmenu() || this.parentMenu.root.isUsingKeyboard.current)
 			return;
+		// a closing menu stays mounted for its exit animation, and focusing it would take the
+		// focus from wherever it went after the menu closed
+		if (!this.parentMenu.opts.open.current) return;
 		const contentNode = this.parentMenu.contentNode;
 		contentNode?.focus({ preventScroll: true });
 		this.rovingFocusGroup.setCurrentTabStopId("");
@@ -1163,7 +1167,7 @@ export class MenuContentState {
 
 	handleInteractOutside(e: PointerEvent) {
 		if (!isElementOrSVGElement(e.target)) return;
-		if (this.parentMenu.triggerNode?.contains(e.target)) {
+		if (isEventTargetWithin(e, this.parentMenu.triggerNode)) {
 			e.preventDefault();
 			return;
 		}
@@ -1217,7 +1221,8 @@ export class MenuContentState {
 }
 
 interface MenuItemSharedStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {}
@@ -1295,11 +1300,10 @@ class MenuItemSharedState {
 
 type MenuItemCombinedProps = MenuItemSharedStateOpts & MenuItemStateOpts;
 
-interface MenuItemStateOpts
-	extends ReadableBoxedValues<{
-		onSelect: AnyFn;
-		closeOnSelect: boolean;
-	}> {}
+interface MenuItemStateOpts extends ReadableBoxedValues<{
+	onSelect: AnyFn;
+	closeOnSelect: boolean;
+}> {}
 
 export class MenuItemState {
 	static create(opts: MenuItemCombinedProps) {
@@ -1387,8 +1391,7 @@ export class MenuItemState {
 }
 
 interface MenuSubTriggerStateOpts
-	extends MenuItemSharedStateOpts,
-		Pick<MenuItemStateOpts, "onSelect"> {
+	extends MenuItemSharedStateOpts, Pick<MenuItemStateOpts, "onSelect"> {
 	openDelay: ReadableBox<number>;
 }
 
@@ -1525,7 +1528,8 @@ export class MenuSubTriggerState {
 }
 
 interface MenuCheckboxItemStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			checked: boolean;
 			indeterminate: boolean;
 		}>,
@@ -1724,7 +1728,8 @@ export class MenuArrowState {
 }
 
 interface MenuRadioGroupStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -1765,7 +1770,8 @@ export class MenuRadioGroupState {
 }
 
 interface MenuRadioItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			closeOnSelect: boolean;
@@ -1815,7 +1821,8 @@ export class MenuRadioItemState {
 //
 
 interface DropdownMenuTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {}
@@ -1907,7 +1914,8 @@ export class DropdownMenuTriggerState {
 }
 
 interface ContextMenuTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {}
@@ -2022,7 +2030,8 @@ export class ContextMenuTriggerState {
 }
 
 interface MenuCheckboxGroupStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onValueChange: (value: string[]) => void;
 		}>,

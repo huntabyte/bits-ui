@@ -1,10 +1,9 @@
 import { afterTick, onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
 
-interface AnimationsCompleteOpts
-	extends ReadableBoxedValues<{
-		ref: HTMLElement | null;
-		afterTick: boolean;
-	}> {}
+interface AnimationsCompleteOpts extends ReadableBoxedValues<{
+	ref: HTMLElement | null;
+	afterTick: boolean;
+}> {}
 
 export class AnimationsComplete {
 	#opts: AnimationsCompleteOpts;

@@ -89,7 +89,7 @@ export const content = defineComponentApiSchema<LinkPreviewContentPropsWithoutHT
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
 	props: {
-		...floatingProps(),
+		...floatingProps({ defaultSide: "top" }),
 		...dismissibleLayerProps,
 		...escapeLayerProps,
 		...focusScopeProps,

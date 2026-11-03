@@ -159,7 +159,8 @@ const SEGMENT_CONFIGS: Record<
 const DateFieldRootContext = new Context<DateFieldRootState>("DateField.Root");
 
 interface DateFieldRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			value: DateValue | undefined;
 			placeholder: DateValue;
 		}>,
@@ -756,7 +757,8 @@ export class DateFieldRootState {
 }
 
 interface DateFieldInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			name: string;
 		}> {}

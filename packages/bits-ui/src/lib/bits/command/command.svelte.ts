@@ -63,7 +63,8 @@ interface GridItem {
 type ItemsGrid = GridItem[][];
 
 interface CommandRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			filter: (value: string, search: string, keywords?: string[]) => number;
 			shouldFilter: boolean;
@@ -1165,7 +1166,8 @@ function itemIsDisabled(item: HTMLElement) {
 }
 
 interface CommandEmptyStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
 		}> {}
@@ -1208,7 +1210,8 @@ export class CommandEmptyState {
 }
 
 interface CommandGroupContainerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			forceMount: boolean;
@@ -1331,7 +1334,8 @@ export class CommandGroupItemsState {
 }
 
 interface CommandInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -1400,7 +1404,8 @@ export class CommandInputState {
 }
 
 interface CommandItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -1523,7 +1528,8 @@ export class CommandItemState {
 }
 
 interface CommandLoadingStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			progress: number;
 		}> {}
@@ -1556,7 +1562,8 @@ export class CommandLoadingState {
 }
 
 interface CommandSeparatorStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
 		}> {}
@@ -1592,7 +1599,8 @@ export class CommandSeparatorState {
 }
 
 interface CommandListStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			ariaLabel: string;
 		}> {}
@@ -1625,7 +1633,8 @@ export class CommandListState {
 }
 
 interface CommandLabelStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			for?: string;
 		}> {}

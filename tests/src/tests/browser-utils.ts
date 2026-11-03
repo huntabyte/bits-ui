@@ -1,4 +1,4 @@
-import { type Locator } from "@vitest/browser/context";
+import { type Locator } from "vitest/browser";
 import { expect, vi } from "vitest";
 
 export function getSubmenuPlacementSide(
@@ -75,7 +75,7 @@ export function getPointerAwayFromSubmenuIntentClientCoords(
 }
 
 export async function expectNotClickableLoc(loc: Locator) {
-	await expect(loc.click()).rejects.toThrow();
+	await expect(async () => await loc.click({ timeout: 100 })).rejects.toThrow();
 }
 
 export async function expectNotExists(loc: Locator) {
