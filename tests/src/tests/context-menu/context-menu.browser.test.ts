@@ -1,4 +1,4 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { expect, it, onTestFinished, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
@@ -31,7 +31,7 @@ type ContextMenuSetupProps = (ContextMenuTestProps | ContextMenuForceMountTestPr
  */
 async function setup(props: ContextMenuSetupProps = {}) {
 	const { component = ContextMenuTest, ...rest } = props;
-	const t = render(component, { ...rest });
+	const t = await render(component, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
 	const open = async () => {
@@ -106,10 +106,10 @@ it("should have bits data attrs", async () => {
 it("should open when right-clicked & respects binding", async () => {
 	const t = await setup();
 	const binding = page.getByTestId("binding");
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 	await t.trigger.click({ button: "right" });
 	await expectExists(t.getContent());
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 });
 
 it("should manage focus correctly when opened with pointer", async () => {
@@ -255,56 +255,56 @@ it("should toggle the checkbox item when clicked & respects binding", async () =
 	const t = await open();
 	const checkedBinding = page.getByTestId("checked-binding");
 	const indicator = page.getByTestId("checkbox-indicator");
-	await expect.element(indicator).not.toHaveTextContent("true");
-	await expect.element(checkedBinding).toHaveTextContent("false");
+	await expect.element(indicator).not.toMatchTextContent("true");
+	await expect.element(checkedBinding).toMatchTextContent("false");
 	const checkbox = page.getByTestId("checkbox-item");
 	await checkbox.click();
-	await expect.element(checkedBinding).toHaveTextContent("true");
+	await expect.element(checkedBinding).toMatchTextContent("true");
 	await t.trigger.click({ button: "right" });
-	await expect.element(indicator).toHaveTextContent("true");
+	await expect.element(indicator).toMatchTextContent("true");
 	await page.getByTestId("checkbox-item").click();
-	await expect.element(checkedBinding).toHaveTextContent("false");
+	await expect.element(checkedBinding).toMatchTextContent("false");
 	await checkedBinding.click();
 
-	await expect.element(checkedBinding).toHaveTextContent("true");
+	await expect.element(checkedBinding).toMatchTextContent("true");
 	await t.trigger.click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("checkbox-indicator")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator")).toMatchTextContent("true");
 });
 
 it("should toggle checkbox items within submenus when clicked & respects binding", async () => {
 	const t = await open();
 	await openSubmenu(t);
 	const subCheckedBinding = page.getByTestId("sub-checked-binding");
-	await expect.element(subCheckedBinding).toHaveTextContent("false");
+	await expect.element(subCheckedBinding).toMatchTextContent("false");
 	const indicator = page.getByTestId("sub-checkbox-indicator");
-	await expect.element(indicator).not.toHaveTextContent("true");
+	await expect.element(indicator).not.toMatchTextContent("true");
 	const subCheckbox = page.getByTestId("sub-checkbox-item");
 	await subCheckbox.click();
-	await expect.element(subCheckedBinding).toHaveTextContent("true");
+	await expect.element(subCheckedBinding).toMatchTextContent("true");
 	await t.trigger.click({ button: "right" });
 	await openSubmenu(t);
-	await expect.element(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("sub-checkbox-indicator")).toMatchTextContent("true");
 	await page.getByTestId("sub-checkbox-item").click();
-	await expect.element(subCheckedBinding).toHaveTextContent("false");
+	await expect.element(subCheckedBinding).toMatchTextContent("false");
 
 	await subCheckedBinding.click();
-	await expect.element(subCheckedBinding).toHaveTextContent("true");
+	await expect.element(subCheckedBinding).toMatchTextContent("true");
 	await t.trigger.click({ button: "right" });
 	await openSubmenu(t);
-	await expect.element(page.getByTestId("sub-checkbox-indicator")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("sub-checkbox-indicator")).toMatchTextContent("true");
 });
 
 it("should check the radio item when clicked & respects binding", async () => {
 	const t = await open();
 	const radioBinding = page.getByTestId("radio-binding");
-	await expect.element(radioBinding).toHaveTextContent("");
+	await expect.element(radioBinding).toMatchTextContent("");
 	const radioItem1 = page.getByTestId("radio-item");
 	await radioItem1.click();
-	await expect.element(radioBinding).toHaveTextContent("1");
+	await expect.element(radioBinding).toMatchTextContent("1");
 	await t.trigger.click({ button: "right" });
 	const radioIndicator = page.getByTestId("radio-indicator-1");
-	await expect.element(radioIndicator).toHaveTextContent("true");
+	await expect.element(radioIndicator).toMatchTextContent("true");
 });
 
 it("should skip disabled items when navigating with the keyboard", async () => {
@@ -530,15 +530,15 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	const checkboxGroupItem1 = page.getByTestId("checkbox-group-item-1");
 	await expect.element(checkboxGroupItem1).toHaveAttribute("aria-checked", "true");
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("true");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 
 	await checkboxGroupItem1.click();
 
 	await t.open();
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 });
 
 it("calls `onValueChange` when the value of the checkbox group changes", async () => {
@@ -559,7 +559,7 @@ it("calls `onValueChange` when the value of the checkbox group changes", async (
 });
 
 it("should allow switching between context menus via right-click", async () => {
-	render(ContextMenuIntegrationTest);
+	await render(ContextMenuIntegrationTest);
 	await page.getByTestId("context-trigger-1").click({ button: "right" });
 	await expectExists(page.getByTestId("context-content-1"));
 	await waitForDismissibleLayer(page.getByTestId("context-content-1"));
@@ -569,7 +569,7 @@ it("should allow switching between context menus via right-click", async () => {
 });
 
 it("should open inside of a dialog", async () => {
-	render(ContextMenuIntegrationTest);
+	await render(ContextMenuIntegrationTest);
 	await page.getByTestId("dialog-trigger").click();
 	await expectExists(page.getByTestId("dialog-content"));
 	await page.getByTestId("context-trigger-3").click({ button: "right" });
@@ -582,7 +582,7 @@ it("should open inside of a dialog", async () => {
 });
 
 it("should not close the dialog when the context menu trigger is left clicked", async () => {
-	render(ContextMenuIntegrationTest);
+	await render(ContextMenuIntegrationTest);
 	await page.getByTestId("dialog-trigger").click();
 	await expectExists(page.getByTestId("dialog-content"));
 	await page.getByTestId("context-trigger-3").click();
@@ -592,7 +592,7 @@ it("should not close the dialog when the context menu trigger is left clicked", 
 });
 
 it("should not close the popover when the context menu trigger is left clicked", async () => {
-	render(ContextMenuIntegrationTest);
+	await render(ContextMenuIntegrationTest);
 	await page.getByTestId("popover-trigger").click();
 	await expectExists(page.getByTestId("popover-content"));
 	await page.getByTestId("context-trigger-4").click();
@@ -602,7 +602,7 @@ it("should not close the popover when the context menu trigger is left clicked",
 });
 
 it("should close a nested popover when interacting with a sibling select trigger inside the same context menu trigger", async () => {
-	render(ContextMenuIntegrationTest);
+	await render(ContextMenuIntegrationTest);
 	await page.getByTestId("popover-trigger-1").click();
 	await expectExists(page.getByTestId("popover-content-1"));
 	await waitForDismissibleLayer(page.getByTestId("popover-content-1"));
@@ -613,7 +613,7 @@ it("should close a nested popover when interacting with a sibling select trigger
 });
 
 it("should close a nested select when interacting with the popover trigger inside the same context menu trigger", async () => {
-	render(ContextMenuIntegrationTest);
+	await render(ContextMenuIntegrationTest);
 	await page.getByTestId("select-trigger-1").click();
 	await expectExists(page.getByTestId("select-content-1"));
 	await waitForDismissibleLayer(page.getByTestId("select-content-1"));
@@ -624,7 +624,7 @@ it("should close a nested select when interacting with the popover trigger insid
 });
 
 it("should close the first nested select when opening the sibling select inside the same context menu trigger", async () => {
-	render(ContextMenuIntegrationTest);
+	await render(ContextMenuIntegrationTest);
 	await page.getByTestId("select-trigger-1").click();
 	await expectExists(page.getByTestId("select-content-1"));
 	await waitForDismissibleLayer(page.getByTestId("select-content-1"));
@@ -635,7 +635,7 @@ it("should close the first nested select when opening the sibling select inside 
 });
 
 it("should open nested context menus", async () => {
-	render(ContextMenuNestedTest);
+	await render(ContextMenuNestedTest);
 	await page.getByTestId("trigger").click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
 	await page.getByTestId("nested-trigger").click({ button: "right" });
@@ -644,7 +644,7 @@ it("should open nested context menus", async () => {
 });
 
 it("should open nested submenus in context menu", async () => {
-	render(ContextMenuNestedSubmenuTest);
+	await render(ContextMenuNestedSubmenuTest);
 	await page.getByTestId("trigger").click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
 
@@ -657,7 +657,7 @@ it("should open nested submenus in context menu", async () => {
 });
 
 it("should allow overriding the pointer events style", async () => {
-	setup({ triggerProps: { style: { pointerEvents: undefined } } });
+	await setup({ triggerProps: { style: { pointerEvents: undefined } } });
 	const trigger = page.getByTestId("trigger");
 	await trigger.click({ button: "right" });
 	await expectExists(page.getByTestId("content"));
@@ -667,7 +667,7 @@ it("should allow overriding the pointer events style", async () => {
 });
 
 it("should open when right clicked inside a tooltip trigger", async () => {
-	render(ContextMenuTooltipTest);
+	await render(ContextMenuTooltipTest);
 
 	await page.getByTestId("tooltip-trigger").hover();
 	await page.getByTestId("context-menu-trigger").click({ button: "right" });
@@ -691,7 +691,7 @@ it("should apply custom style prop to content", async () => {
 });
 
 it("should leave only the last menu open after rapid right clicks across triggers (#1743)", async () => {
-	render(ContextMenuRapidTest);
+	await render(ContextMenuRapidTest);
 	const order = [0, 5, 1, 9, 2, 14, 3, 7, 20, 4, 11, 6, 25, 8, 17, 10, 22, 12, 29, 13];
 	for (const i of order) {
 		await page.getByTestId(`trigger-${i}`).click({ button: "right", force: true });

@@ -37,7 +37,7 @@ import type {
 	RefAttachment,
 } from "$lib/internal/types.js";
 import { kbd } from "$lib/internal/kbd.js";
-import { CustomEventDispatcher } from "$lib/internal/events.js";
+import { CustomEventDispatcher, isEventTargetWithin } from "$lib/internal/events.js";
 import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
 import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
 import { isElement } from "$lib/internal/is.js";
@@ -79,7 +79,8 @@ const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
 const NavigationMenuSubContext = new Context<NavigationMenuSubState>("NavigationMenu.Sub");
 
 interface NavigationMenuProviderStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			dir: Direction;
 			orientation: Orientation;
 		}>,
@@ -131,7 +132,8 @@ class NavigationMenuProviderState {
 }
 
 interface NavigationMenuRootStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -253,7 +255,8 @@ export class NavigationMenuRootState {
 }
 
 interface NavigationMenuSubStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -373,7 +376,8 @@ export class NavigationMenuListState {
 }
 
 interface NavigationMenuItemStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			value: string;
 			openOnHover: boolean;
@@ -439,7 +443,8 @@ export class NavigationMenuItemState {
 }
 
 interface NavigationMenuTriggerStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			disabled: boolean | null | undefined;
 		}> {}
@@ -598,7 +603,8 @@ export class NavigationMenuTriggerState {
 }
 
 interface NavigationMenuLinkStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			active: boolean;
 			onSelect: (e: Event) => void;
@@ -966,10 +972,12 @@ export class NavigationMenuContentImplState {
 	};
 
 	onInteractOutside = (e: PointerEvent) => {
-		const target = e.target as HTMLElement;
-		const isTrigger = this.listContext.listTriggers.some((trigger) => trigger.contains(target));
+		const isTrigger = this.listContext.listTriggers.some((trigger) =>
+			isEventTargetWithin(e, trigger)
+		);
 		const isRootViewport =
-			this.context.opts.isRootMenu && this.context.viewportRef.current?.contains(target);
+			this.context.opts.isRootMenu &&
+			isEventTargetWithin(e, this.context.viewportRef.current);
 		if (!this.context.opts.isRootMenu && !isTrigger) {
 			this.context.onItemDismiss();
 			return;

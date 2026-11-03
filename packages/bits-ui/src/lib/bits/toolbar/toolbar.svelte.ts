@@ -30,7 +30,8 @@ export const toolbarAttrs = createBitsAttrs({
 const ToolbarRootContext = new Context<ToolbarRootState>("Toolbar.Root");
 const ToolbarGroupContext = new Context<ToolbarGroup>("Toolbar.Group");
 interface ToolbarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			orientation: Orientation;
 			loop: boolean;
@@ -70,7 +71,8 @@ export class ToolbarRootState {
 }
 
 interface ToolbarGroupBaseStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {}
@@ -100,7 +102,8 @@ abstract class ToolbarGroupBaseState {
 }
 
 interface ToolbarGroupSingleStateOpts
-	extends ToolbarGroupBaseStateOpts,
+	extends
+		ToolbarGroupBaseStateOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -132,7 +135,8 @@ class ToolbarGroupSingleState extends ToolbarGroupBaseState {
 }
 
 interface ToolbarGroupMultipleStateOpts
-	extends ToolbarGroupBaseStateOpts,
+	extends
+		ToolbarGroupBaseStateOpts,
 		WritableBoxedValues<{
 			value: string[];
 		}> {}
@@ -166,7 +170,8 @@ class ToolbarGroupMultipleState extends ToolbarGroupBaseState {
 type ToolbarGroup = ToolbarGroupSingleState | ToolbarGroupMultipleState;
 
 interface ToolbarGroupRootOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {
@@ -192,7 +197,8 @@ export class ToolbarGroupState {
 //
 
 interface ToolbarGroupItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -333,7 +339,8 @@ export class ToolbarLinkState {
 }
 
 interface ToolbarButtonStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {}

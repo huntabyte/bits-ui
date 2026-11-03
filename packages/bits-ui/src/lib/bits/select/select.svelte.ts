@@ -22,6 +22,7 @@ import {
 	getDataTransitionAttrs,
 } from "$lib/internal/attrs.js";
 import { kbd } from "$lib/internal/kbd.js";
+import { isEventTargetWithin } from "$lib/internal/events.js";
 import type {
 	BitsEvent,
 	BitsFocusEvent,
@@ -668,6 +669,7 @@ export class SelectInputState {
 
 		if (e.key === kbd.ENTER && !e.isComposing) {
 			e.preventDefault();
+			if (this.root.opts.disabled.current) return;
 
 			const isCurrentSelectedValue =
 				this.root.highlightedValue === this.root.opts.value.current;
@@ -930,6 +932,7 @@ export class SelectTriggerState {
 	 *
 	 */
 	#handleKeyboardSelection() {
+		if (this.root.opts.disabled.current) return false;
 		const isCurrentSelectedValue = this.root.highlightedValue === this.root.opts.value.current;
 
 		if (!this.root.opts.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
@@ -1243,8 +1246,8 @@ export class SelectContentState {
 			isElementOrSVGElement(target) &&
 			target.closest(`[${this.root.getBitsAttr("chip-remove")}]`) !== null;
 		if (
-			target === this.root.triggerNode ||
-			target === this.root.inputNode ||
+			isEventTargetWithin(e, this.root.triggerNode) ||
+			isEventTargetWithin(e, this.root.inputNode) ||
 			isChipRemoveButton
 		) {
 			e.preventDefault();
@@ -1334,6 +1337,9 @@ export class SelectItemState {
 	readonly opts: SelectItemStateOpts;
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
+	readonly isDisabled = $derived.by(
+		() => this.root.opts.disabled.current || this.opts.disabled.current
+	);
 	readonly isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
 	readonly isHighlighted = $derived.by(
 		() => this.root.highlightedValue === this.opts.value.current
@@ -1344,9 +1350,7 @@ export class SelectItemState {
 	 * highlighted state actually changed, rather than for every mounted item each time the
 	 * highlighted value moves.
 	 */
-	readonly #isHighlightedAndEnabled = $derived.by(
-		() => this.isHighlighted && !this.opts.disabled.current
-	);
+	readonly #isHighlightedAndEnabled = $derived.by(() => this.isHighlighted && !this.isDisabled);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
 
@@ -1399,7 +1403,7 @@ export class SelectItemState {
 	}
 
 	handleSelect() {
-		if (this.opts.disabled.current) return;
+		if (this.isDisabled) return;
 		const isCurrentSelectedValue = this.opts.value.current === this.root.opts.value.current;
 
 		// if allowDeselect is false and the item is already selected and we're not in a
@@ -1498,7 +1502,7 @@ export class SelectItemState {
 				role: "option",
 				"aria-selected": boolToStr(this.isSelected),
 				"data-value": this.opts.value.current,
-				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
 				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
 				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,

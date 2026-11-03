@@ -1,6 +1,6 @@
 import { afterEach, expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import PopoverTest from "../popover/popover-test.svelte";
 import { expectExists } from "../browser-utils";
 
@@ -28,7 +28,7 @@ async function pressWithPreventedPointerup() {
 }
 
 it("should release the body lock when `pointerup` is `defaultPrevented`", async () => {
-	render(PopoverTest);
+	await render(PopoverTest);
 	await page.getByTestId("trigger").click();
 	await expectExists(page.getByTestId("content"));
 
@@ -38,7 +38,7 @@ it("should release the body lock when `pointerup` is `defaultPrevented`", async 
 });
 
 it("should not strand `user-select` on the body after the layer is dismissed", async () => {
-	render(PopoverTest);
+	await render(PopoverTest);
 	await page.getByTestId("trigger").click();
 	await expectExists(page.getByTestId("content"));
 

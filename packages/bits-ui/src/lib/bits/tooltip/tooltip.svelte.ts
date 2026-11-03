@@ -8,6 +8,7 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
+import { isEventTargetWithin } from "$lib/internal/events.js";
 import { Context, watch } from "runed";
 import { isElement, isFocusVisible } from "$lib/internal/is.js";
 import {
@@ -143,15 +144,14 @@ export function createTooltipTether<Payload = never>() {
 	return new TooltipTether<Payload>();
 }
 
-interface TooltipProviderStateOpts
-	extends ReadableBoxedValues<{
-		delayDuration: number;
-		disableHoverableContent: boolean;
-		disableCloseOnTriggerClick: boolean;
-		disabled: boolean;
-		ignoreNonKeyboardFocus: boolean;
-		skipDelayDuration: number;
-	}> {}
+interface TooltipProviderStateOpts extends ReadableBoxedValues<{
+	delayDuration: number;
+	disableHoverableContent: boolean;
+	disableCloseOnTriggerClick: boolean;
+	disabled: boolean;
+	ignoreNonKeyboardFocus: boolean;
+	skipDelayDuration: number;
+}> {}
 
 export class TooltipProviderState {
 	static create(opts: TooltipProviderStateOpts) {
@@ -246,7 +246,8 @@ export class TooltipProviderState {
 }
 
 interface TooltipRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			delayDuration: number | undefined;
 			disableHoverableContent: boolean | undefined;
 			disableCloseOnTriggerClick: boolean | undefined;
@@ -489,7 +490,8 @@ export class TooltipRootState {
 }
 
 interface TooltipTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			tabindex: number;
@@ -809,7 +811,8 @@ export class TooltipTriggerState {
 }
 
 interface TooltipContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -854,11 +857,7 @@ export class TooltipContentState {
 	}
 
 	onInteractOutside = (e: PointerEvent) => {
-		if (
-			isElement(e.target) &&
-			this.root.triggerNode?.contains(e.target) &&
-			this.root.disableCloseOnTriggerClick
-		) {
+		if (isEventTargetWithin(e, this.root.triggerNode) && this.root.disableCloseOnTriggerClick) {
 			e.preventDefault();
 			return;
 		}

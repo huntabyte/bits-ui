@@ -4,7 +4,7 @@ import { CalendarDateTime, Time, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import TimeRangeFieldTest, { type TimeRangeFieldTestProps } from "./time-range-field-test.svelte";
 import type { TimeValue } from "bits-ui";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import TimeRangeFieldSpreadPropsTest from "./time-range-field-spread-props-test.svelte";
 import { collectErrors } from "../browser-utils";
 
@@ -25,9 +25,9 @@ const zonedDateTime = {
 	end: toZoned(calendarDateTime.end, "America/New_York"),
 };
 
-function setup<T extends TimeValue = Time>(props: TimeRangeFieldTestProps<T> = {}) {
+async function setup<T extends TimeValue = Time>(props: TimeRangeFieldTestProps<T> = {}) {
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(TimeRangeFieldTest, { ...props } as any);
+	const returned = await render(TimeRangeFieldTest, { ...props } as any);
 
 	const start = {
 		input: page.getByTestId("start-input"),
@@ -63,66 +63,66 @@ function setup<T extends TimeValue = Time>(props: TimeRangeFieldTestProps<T> = {
 }
 
 it("should populate segment with value - `Time`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: time,
 		granularity: "second",
 	});
 
-	expect(t.start.getHour()).toHaveTextContent(String(time.start.hour));
-	expect(t.start.getMinute()).toHaveTextContent(String(time.start.minute));
-	expect(t.start.getSecond()).toHaveTextContent(String(time.start.second));
-	expect(t.start.getDayPeriod()).toHaveTextContent("PM");
-	expect(t.start.value).toHaveTextContent("12");
+	expect(t.start.getHour()).toMatchTextContent(String(time.start.hour));
+	expect(t.start.getMinute()).toMatchTextContent(String(time.start.minute));
+	expect(t.start.getSecond()).toMatchTextContent(String(time.start.second));
+	expect(t.start.getDayPeriod()).toMatchTextContent("PM");
+	expect(t.start.value).toMatchTextContent("12");
 
-	expect(t.end.getHour()).toHaveTextContent("05");
-	expect(t.end.getMinute()).toHaveTextContent(String(time.end.minute));
-	expect(t.end.getSecond()).toHaveTextContent(String(time.end.second));
-	expect(t.end.getDayPeriod()).toHaveTextContent("PM");
-	expect(t.end.value).toHaveTextContent("17:30:00");
+	expect(t.end.getHour()).toMatchTextContent("05");
+	expect(t.end.getMinute()).toMatchTextContent(String(time.end.minute));
+	expect(t.end.getSecond()).toMatchTextContent(String(time.end.second));
+	expect(t.end.getDayPeriod()).toMatchTextContent("PM");
+	expect(t.end.value).toMatchTextContent("17:30:00");
 });
 
 it("should populate segment with value - `CalendarDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 		granularity: "second",
 	});
 
-	expect(t.start.getHour()).toHaveTextContent(String(calendarDateTime.start.hour));
-	expect(t.start.getMinute()).toHaveTextContent(String(calendarDateTime.start.minute));
-	expect(t.start.getSecond()).toHaveTextContent(String(calendarDateTime.start.second));
-	expect(t.start.getDayPeriod()).toHaveTextContent("PM");
-	expect(t.start.value).toHaveTextContent(calendarDateTime.start.toString());
+	expect(t.start.getHour()).toMatchTextContent(String(calendarDateTime.start.hour));
+	expect(t.start.getMinute()).toMatchTextContent(String(calendarDateTime.start.minute));
+	expect(t.start.getSecond()).toMatchTextContent(String(calendarDateTime.start.second));
+	expect(t.start.getDayPeriod()).toMatchTextContent("PM");
+	expect(t.start.value).toMatchTextContent(calendarDateTime.start.toString());
 
-	expect(t.end.getHour()).toHaveTextContent(String(calendarDateTime.end.hour));
-	expect(t.end.getMinute()).toHaveTextContent(String(calendarDateTime.end.minute));
-	expect(t.end.getSecond()).toHaveTextContent(String(calendarDateTime.end.second));
-	expect(t.end.getDayPeriod()).toHaveTextContent("PM");
-	expect(t.end.value).toHaveTextContent(calendarDateTime.end.toString());
+	expect(t.end.getHour()).toMatchTextContent(String(calendarDateTime.end.hour));
+	expect(t.end.getMinute()).toMatchTextContent(String(calendarDateTime.end.minute));
+	expect(t.end.getSecond()).toMatchTextContent(String(calendarDateTime.end.second));
+	expect(t.end.getDayPeriod()).toMatchTextContent("PM");
+	expect(t.end.value).toMatchTextContent(calendarDateTime.end.toString());
 });
 
 it("should populate segment with value - `ZonedDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
 
-	expect(t.start.getHour()).toHaveTextContent(String(calendarDateTime.start.hour));
-	expect(t.start.getMinute()).toHaveTextContent(String(calendarDateTime.start.minute));
-	expect(t.start.getSecond()).toHaveTextContent(String(calendarDateTime.start.second));
-	expect(t.start.getDayPeriod()).toHaveTextContent("PM");
-	expect(t.start.getTimeZoneName()).toHaveTextContent("EST");
-	expect(t.start.value).toHaveTextContent(calendarDateTime.start.toString());
+	expect(t.start.getHour()).toMatchTextContent(String(calendarDateTime.start.hour));
+	expect(t.start.getMinute()).toMatchTextContent(String(calendarDateTime.start.minute));
+	expect(t.start.getSecond()).toMatchTextContent(String(calendarDateTime.start.second));
+	expect(t.start.getDayPeriod()).toMatchTextContent("PM");
+	expect(t.start.getTimeZoneName()).toMatchTextContent("EST");
+	expect(t.start.value).toMatchTextContent(calendarDateTime.start.toString());
 
-	expect(t.end.getHour()).toHaveTextContent(String(calendarDateTime.end.hour));
-	expect(t.end.getMinute()).toHaveTextContent(String(calendarDateTime.end.minute));
-	expect(t.end.getSecond()).toHaveTextContent(String(calendarDateTime.end.second));
-	expect(t.end.getDayPeriod()).toHaveTextContent("PM");
-	expect(t.end.getTimeZoneName()).toHaveTextContent("EST");
-	expect(t.end.value).toHaveTextContent(calendarDateTime.end.toString());
+	expect(t.end.getHour()).toMatchTextContent(String(calendarDateTime.end.hour));
+	expect(t.end.getMinute()).toMatchTextContent(String(calendarDateTime.end.minute));
+	expect(t.end.getSecond()).toMatchTextContent(String(calendarDateTime.end.second));
+	expect(t.end.getDayPeriod()).toMatchTextContent("PM");
+	expect(t.end.getTimeZoneName()).toMatchTextContent("EST");
+	expect(t.end.value).toMatchTextContent(calendarDateTime.end.toString());
 });
 
 it("should navigate between the fields", async () => {
-	const t = setup({
+	const t = await setup({
 		value: time,
 		granularity: "second",
 		locale: "en-US",
@@ -155,7 +155,7 @@ it("should navigate between the fields", async () => {
 });
 
 it("should navigate between the fields - right to left", async () => {
-	const t = setup({
+	const t = await setup({
 		value: time,
 		granularity: "second",
 		locale: "en-US",
@@ -188,21 +188,21 @@ it("should navigate between the fields - right to left", async () => {
 });
 
 it("should respect `bind:value` to the value", async () => {
-	const t = setup({
+	const t = await setup({
 		value: time,
 		granularity: "second",
 	});
-	await expect.element(t.start.value).toHaveTextContent(time.start.toString());
-	await expect.element(t.end.value).toHaveTextContent(time.end.toString());
+	await expect.element(t.start.value).toMatchTextContent(time.start.toString());
+	await expect.element(t.end.value).toMatchTextContent(time.end.toString());
 
 	await t.start.getHour().click();
 	await userEvent.keyboard("2");
-	await expect.element(t.start.value).toHaveTextContent("14:30:00");
-	await expect.element(t.end.value).toHaveTextContent(time.end.toString());
+	await expect.element(t.start.value).toMatchTextContent("14:30:00");
+	await expect.element(t.end.value).toMatchTextContent(time.end.toString());
 });
 
 it("should keep 24 hour semantics when typing the start hour with hourCycle 24", async () => {
-	const t = setup({
+	const t = await setup({
 		value: {
 			start: new Time(14, 30, 0),
 			end: new Time(17, 30, 0),
@@ -211,18 +211,18 @@ it("should keep 24 hour semantics when typing the start hour with hourCycle 24",
 		hourCycle: 24,
 	});
 
-	await expect.element(t.start.value).toHaveTextContent("14:30:00");
-	await expect.element(t.end.value).toHaveTextContent("17:30:00");
+	await expect.element(t.start.value).toMatchTextContent("14:30:00");
+	await expect.element(t.end.value).toMatchTextContent("17:30:00");
 
 	await t.start.getHour().click();
 	await userEvent.keyboard("2");
 
-	await expect.element(t.start.value).toHaveTextContent("02:30:00");
-	await expect.element(t.end.value).toHaveTextContent("17:30:00");
+	await expect.element(t.start.value).toMatchTextContent("02:30:00");
+	await expect.element(t.end.value).toMatchTextContent("17:30:00");
 });
 
 it("should render an input for the start and end", async () => {
-	const t = setup({
+	const t = await setup({
 		startProps: {
 			name: "start-hidden-input",
 		},
@@ -235,7 +235,7 @@ it("should render an input for the start and end", async () => {
 });
 
 it("should populate calendar date with keyboard", async () => {
-	const t = setup({ value: time });
+	const t = await setup({ value: time });
 
 	await t.start.getHour().click();
 
@@ -254,8 +254,8 @@ it("should populate calendar date with keyboard", async () => {
 	await userEvent.keyboard("{5}");
 	await expect.element(t.end.getDayPeriod()).toHaveFocus();
 
-	await expect.element(t.start.value).toHaveTextContent("12:34:00");
-	await expect.element(t.end.value).toHaveTextContent("12:35:00");
+	await expect.element(t.start.value).toMatchTextContent("12:34:00");
+	await expect.element(t.end.value).toMatchTextContent("12:35:00");
 });
 
 // function extractTime(time: TimeValue): string {
@@ -269,6 +269,6 @@ it("should fall back to the default placeholder when spread props are reassigned
 	const errors = await collectErrors(() => render(TimeRangeFieldSpreadPropsTest));
 	expect(errors).toEqual([]);
 	await expect.element(page.getByTestId("root")).toHaveAttribute("data-updated");
-	await expect.element(page.getByTestId("start-hour")).toHaveTextContent("––");
-	await expect.element(page.getByTestId("end-minute")).toHaveTextContent("––");
+	await expect.element(page.getByTestId("start-hour")).toMatchTextContent("––");
+	await expect.element(page.getByTestId("end-minute")).toMatchTextContent("––");
 });
