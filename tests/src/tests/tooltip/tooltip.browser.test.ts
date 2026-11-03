@@ -20,6 +20,7 @@ import TooltipSafePolygonIntermediateTargetTest from "./tooltip-safe-polygon-int
 import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
 import TooltipScrollContainerTest from "./tooltip-scroll-container-test.svelte";
 import TooltipTriggerTeardownTest from "./tooltip-trigger-teardown-test.svelte";
+import TooltipTriggerDetachTest from "./tooltip-trigger-detach-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "vitest/browser";
 
@@ -1027,4 +1028,53 @@ it("should not read trigger props when the trigger ref detaches during teardown"
 	} finally {
 		window.removeEventListener("error", onError);
 	}
+});
+
+async function expectContentAnchoredToTrigger() {
+	await expectExists(page.getByTestId("content"));
+	await expect
+		.poll(() => {
+			const trigger = page.getByTestId("trigger").element().getBoundingClientRect();
+			const content = page.getByTestId("content").element().getBoundingClientRect();
+			return Math.round(content.top - trigger.bottom);
+		})
+		.toBe(8);
+}
+
+it("should re-register the trigger when its element detaches and re-attaches while mounted", async () => {
+	await render(TooltipTriggerDetachTest);
+	await page.getByTestId("toggle").click();
+	await expectNotExists(page.getByTestId("trigger"));
+	await page.getByTestId("toggle").click();
+	await expectExists(page.getByTestId("trigger"));
+
+	await page.getByTestId("open-a").click();
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-a");
+	await expect.element(page.getByTestId("payload")).toHaveTextContent("A");
+	await expectContentAnchoredToTrigger();
+});
+
+it("should register id and payload changes made while the trigger element is detached", async () => {
+	await render(TooltipTriggerDetachTest);
+	await page.getByTestId("toggle").click();
+	await expectNotExists(page.getByTestId("trigger"));
+	await page.getByTestId("rename").click();
+
+	await page.getByTestId("open-b").click();
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-b");
+	await expect.element(page.getByTestId("payload")).toHaveTextContent("B");
+
+	// the old id is gone from the registry
+	await page.getByTestId("close").click();
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+	await page.getByTestId("open-a").click();
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+
+	await page.getByTestId("toggle").click();
+	await expectExists(page.getByTestId("trigger"));
+	await page.getByTestId("open-b").click();
+	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-b");
+	await expectContentAnchoredToTrigger();
 });
