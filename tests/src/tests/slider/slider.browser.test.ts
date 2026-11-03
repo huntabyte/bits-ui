@@ -10,6 +10,7 @@ import SliderWithLabelsTest, {
 import SliderInAccordionTest from "./slider-in-accordion-test.svelte";
 import SliderManyStepsTest from "./slider-many-steps-test.svelte";
 import { page, userEvent, type Locator } from "vitest/browser";
+import { SliderRootState } from "../../../../packages/bits-ui/dist/bits/slider/slider.svelte.js";
 
 const kbd = getTestKbd();
 
@@ -1100,4 +1101,38 @@ describe("many steps", () => {
 		expect(ticks).toHaveLength(11);
 		expect(isCloseEnough(50, (ticks[5]!.element() as HTMLElement).style.left)).toBeTruthy();
 	});
+});
+
+describe("layout changes", () => {
+	const nextFrame = () => new Promise((r) => requestAnimationFrame(r));
+
+	it.each([
+		{ name: "trackPadding is set", props: { trackPadding: 5 }, remeasures: false },
+		{
+			name: "thumbPositioning is exact",
+			props: { thumbPositioning: "exact" },
+			remeasures: false,
+		},
+		{ name: "the thumb is contained", props: {}, remeasures: true },
+	] as const)(
+		"recomputes positions on resize only if it measures: $name",
+		async ({ props, remeasures }) => {
+			const create = vi.spyOn(SliderRootState, "create");
+			await render(SliderManyStepsTest, { max: 10, ...props });
+			const root = create.mock.results[0]!.value;
+			create.mockRestore();
+			const rootEl = page.getByTestId("root").element() as HTMLElement;
+			// let the initial resize observation settle
+			await nextFrame();
+			await nextFrame();
+
+			const getThumbScale = vi.spyOn(root, "getThumbScale");
+			rootEl.style.width = `${rootEl.offsetWidth / 2}px`;
+			await vi.waitFor(() => {
+				if (remeasures) expect(getThumbScale).toHaveBeenCalled();
+			});
+			for (let i = 0; i < 3; i++) await nextFrame();
+			expect(getThumbScale.mock.calls.length > 0).toBe(remeasures);
+		}
+	);
 });
