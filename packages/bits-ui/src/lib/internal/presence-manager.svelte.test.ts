@@ -93,6 +93,26 @@ describe("PresenceManager", () => {
 		cleanup();
 	});
 
+	it("renders when opened in the same flush it was created in", async () => {
+		const open = box(false);
+		const ref = box<HTMLElement | null>(null);
+		const onComplete = vi.fn();
+		let manager!: PresenceManager;
+
+		const destroy = $effect.root(() => {
+			manager = new PresenceManager({ open, ref, onComplete });
+		});
+		// flip `open` before the watcher's first run
+		open.current = true;
+		flushSync();
+
+		expect(manager.shouldRender).toBe(true);
+		ref.current = document.createElement("div");
+		await settleAnimations();
+		expect(onComplete).toHaveBeenCalledTimes(1);
+		destroy();
+	});
+
 	it("reports the open state that triggered the callback", async () => {
 		const open = box(false);
 		const ref = box<HTMLElement | null>(null);
