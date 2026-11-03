@@ -113,6 +113,48 @@ describe("PresenceManager", () => {
 		destroy();
 	});
 
+	it("exits when closed in the same flush it was created in", async () => {
+		const open = box(true);
+		const ref = box<HTMLElement | null>(document.createElement("div"));
+		const onComplete = vi.fn();
+		let manager!: PresenceManager;
+
+		const destroy = $effect.root(() => {
+			manager = new PresenceManager({ open, ref, onComplete });
+		});
+		open.current = false;
+		flushSync();
+
+		expect(manager.transitionStatus).toBe("ending");
+		await settleAnimations();
+		expect(manager.shouldRender).toBe(false);
+		expect(onComplete).toHaveBeenCalledTimes(1);
+		destroy();
+	});
+
+	it("skips the exit animation when closed in the same flush it was created in", () => {
+		const open = box(true);
+		const ref = box<HTMLElement | null>(document.createElement("div"));
+		const onComplete = vi.fn();
+		let manager!: PresenceManager;
+
+		const destroy = $effect.root(() => {
+			manager = new PresenceManager({
+				open,
+				ref,
+				onComplete,
+				shouldSkipExitAnimation: () => true,
+			});
+		});
+		open.current = false;
+		flushSync();
+
+		expect(manager.shouldRender).toBe(false);
+		expect(manager.transitionStatus).toBe(undefined);
+		expect(onComplete).toHaveBeenCalledTimes(1);
+		destroy();
+	});
+
 	it("reports the open state that triggered the callback", async () => {
 		const open = box(false);
 		const ref = box<HTMLElement | null>(null);
