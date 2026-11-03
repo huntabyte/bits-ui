@@ -1,3 +1,4 @@
+import { untrack } from "svelte";
 import type { Getter } from "svelte-toolbelt";
 
 type ResizeCallback = () => void;
@@ -61,6 +62,8 @@ export class SvelteResizeObserver {
 	 * `onResize` runs a frame after the report, so its state writes can't resize observed nodes
 	 * mid-delivery. Layout reads belong in `measure`, which runs in the report while layout is
 	 * clean; in the frame, the DOM may have changed again and reading forces a layout.
+	 * `measure` runs inside the shared delivery loop, so it must not throw: a throw would stop
+	 * delivery to every later subscriber on the page.
 	 */
 	constructor(node: Getter<HTMLElement | null>, onResize: () => void, measure?: () => void) {
 		this.#node = node;
@@ -75,7 +78,9 @@ export class SvelteResizeObserver {
 		const _node = this.#node();
 		if (!_node) return;
 		const unobserve = observeResize(_node, () => {
-			this.#measure?.();
+			// untracked: a second subscriber is kicked off synchronously inside this effect, and
+			// whatever `measure` reads must not become a dependency that resubscribes the node
+			if (this.#measure) untrack(this.#measure);
 			cancelAnimationFrame(rAF);
 			rAF = window.requestAnimationFrame(this.#onResize);
 		});

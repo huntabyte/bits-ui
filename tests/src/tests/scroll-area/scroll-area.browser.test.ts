@@ -181,20 +181,54 @@ describe("ScrollArea", () => {
 		await expectExists(t.getScrollbarY());
 	});
 
-	it("should toggle the `auto` scrollbar as overflow changes", async () => {
-		const rendered = await render(ScrollAreaTest, {
-			type: "auto",
-			numParagraphs: 20,
-			height: 100,
-		});
-		const scrollbarY = page.getByTestId("scrollbar-y");
+	it.each([
+		{
+			change: "content and viewport",
+			scrollbar: "scrollbar-y",
+			base: {},
+			overflow: { numParagraphs: 20, height: 100 },
+			fit: { numParagraphs: 1, height: 400 },
+		},
+		{
+			change: "content only",
+			scrollbar: "scrollbar-y",
+			base: { height: 400 },
+			overflow: { numParagraphs: 20 },
+			fit: { numParagraphs: 1 },
+		},
+		{
+			change: "viewport only",
+			scrollbar: "scrollbar-y",
+			base: { numParagraphs: 1 },
+			overflow: { height: 100 },
+			fit: { height: 400 },
+		},
+		{
+			change: "text wrapping (horizontal)",
+			scrollbar: "scrollbar-x",
+			base: { numParagraphs: 1, width: 100 },
+			overflow: { wrapText: false },
+			fit: { wrapText: true },
+		},
+	] satisfies {
+		change: string;
+		scrollbar: string;
+		base: ScrollAreaTestProps;
+		overflow: ScrollAreaTestProps;
+		fit: ScrollAreaTestProps;
+	}[])(
+		"should toggle the `auto` scrollbar when $change changes overflow",
+		async ({ scrollbar, base, overflow, fit }) => {
+			const rendered = await render(ScrollAreaTest, { type: "auto", ...base, ...overflow });
+			const scrollbarEl = page.getByTestId(scrollbar);
 
-		await expectExists(scrollbarY);
-		await rendered.rerender({ numParagraphs: 1, height: 400 });
-		await expectNotExists(scrollbarY);
-		await rendered.rerender({ numParagraphs: 20, height: 100 });
-		await expectExists(scrollbarY);
-	});
+			await expectExists(scrollbarEl);
+			await rendered.rerender(fit);
+			await expectNotExists(scrollbarEl);
+			await rendered.rerender(overflow);
+			await expectExists(scrollbarEl);
+		}
+	);
 
 	it("should respond to dynamic content changes", async () => {
 		const t = await setup({ numParagraphs: 1, height: 100 });
