@@ -26,7 +26,8 @@ const radioGroupAttrs = createBitsAttrs({
 const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
 
 interface RadioGroupRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
@@ -91,7 +92,8 @@ export class RadioGroupRootState {
 }
 
 interface RadioGroupItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			value: string;

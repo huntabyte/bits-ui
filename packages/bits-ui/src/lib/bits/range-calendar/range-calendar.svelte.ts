@@ -58,7 +58,8 @@ import { onMount, untrack } from "svelte";
 const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");
 
 interface RangeCalendarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateRange;
 			placeholder: DateValue;
@@ -727,7 +728,8 @@ export class RangeCalendarRootState {
 }
 
 interface RangeCalendarCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
 			month: DateValue;

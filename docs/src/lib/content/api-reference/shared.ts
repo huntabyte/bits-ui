@@ -186,7 +186,7 @@ export const floatingSideOffsetProp = defineNumberProp({
 	default: 0,
 });
 
-export function floatingAlignProp(defaultAlign = "start"): PropSchema {
+export function floatingAlignProp(defaultAlign = "center"): PropSchema {
 	return defineEnumProp({
 		options: ["start", "center", "end"],
 		default: defaultAlign,
@@ -237,8 +237,8 @@ export const floatingStickyProp = defineEnumProp({
 
 export const floatingHideWhenDetachedProp = defineBooleanProp({
 	description:
-		"When `true`, hides the content when it is detached from the DOM. This is useful for when you want to hide the content when the user scrolls away.",
-	default: true,
+		"When `true`, hides the content when its anchor is fully clipped by a scroll container or the viewport. This is useful for when you want to hide the content when the user scrolls away.",
+	default: false,
 });
 
 export const floatingUpdatePositionStrategyProp = defineEnumProp({

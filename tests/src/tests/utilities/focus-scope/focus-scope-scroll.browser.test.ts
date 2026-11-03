@@ -1,11 +1,11 @@
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import FocusScopeScrollTest from "./focus-scope-scroll-test.svelte";
 
 // https://github.com/huntabyte/bits-ui/issues/2117
 async function openDialog() {
-	render(FocusScopeScrollTest);
+	await render(FocusScopeScrollTest);
 	window.scrollTo(0, 0);
 	await page.getByTestId("trigger").click();
 	await expect.poll(() => document.activeElement?.getAttribute("data-testid")).toBe("close");

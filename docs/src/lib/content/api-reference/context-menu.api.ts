@@ -68,7 +68,7 @@ export const content = defineComponentApiSchema<ContextMenuContentPropsWithoutHT
 	title: "Content",
 	description: "The content displayed when the context menu is open.",
 	props: {
-		...floatingProps(),
+		...floatingProps({ defaultSide: "right", defaultAlign: "start" }),
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		...focusScopeProps,

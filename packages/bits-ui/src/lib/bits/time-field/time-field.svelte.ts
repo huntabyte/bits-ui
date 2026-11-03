@@ -115,7 +115,8 @@ const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 };
 
 export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			value: T | undefined;
 			placeholder: TimeValue;
 		}>,
@@ -618,7 +619,8 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 }
 
 interface TimeFieldInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			name: string;
 		}> {}

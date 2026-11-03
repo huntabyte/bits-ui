@@ -29,7 +29,7 @@ import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
 import SelectFieldsetDisabledTest from "./select-fieldset-disabled-test.svelte";
 import SelectSettlingContentTest from "./select-settling-content-test.svelte";
 import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
@@ -56,13 +56,13 @@ const testItems: Item[] = [
 	},
 ];
 
-function setupSingle(
+async function setupSingle(
 	props: Partial<SelectSingleTestProps | SelectForceMountTestProps> = {},
 	items: Item[] = testItems,
 	// oxlint-disable-next-line no-explicit-any
 	component: Component<any, any, any> = SelectTest
 ) {
-	const returned = render(component, { name: "test", ...props, items });
+	const returned = await render(component, { name: "test", ...props, items });
 	const trigger = page.getByTestId("trigger");
 	const openBinding = page.getByTestId("open-binding");
 	const valueBinding = page.getByTestId("value-binding");
@@ -73,7 +73,7 @@ function setupSingle(
 	}
 
 	function getHiddenInput(name = "test") {
-		return returned.container.querySelector(`input[name="${name}"]`);
+		return returned.container.querySelector<HTMLInputElement>(`input[name="${name}"]`);
 	}
 
 	return {
@@ -83,12 +83,16 @@ function setupSingle(
 		outside,
 		getHiddenInput,
 		getContent,
+		rerender: returned.rerender,
 	};
 }
 
-function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item[] = testItems) {
+async function setupMultiple(
+	props: Partial<SelectMultipleTestProps> = {},
+	items: Item[] = testItems
+) {
 	// @ts-expect-error - this is fine
-	const returned = render(SelectMultiTest, { name: "test", ...props, items });
+	const returned = await render(SelectMultiTest, { name: "test", ...props, items });
 	const trigger = page.getByTestId("trigger");
 	const openBinding = page.getByTestId("open-binding");
 	const valueBinding = page.getByTestId("value-binding");
@@ -116,11 +120,11 @@ function setupMultiple(props: Partial<SelectMultipleTestProps> = {}, items: Item
 	};
 }
 
-function setupValueChildSingle(
+async function setupValueChildSingle(
 	props: Partial<SelectValueChildTestProps> = {},
 	items: Item[] = testItems
 ) {
-	const returned = render(SelectValueChildTest, { ...props, items });
+	const returned = await render(SelectValueChildTest, { ...props, items });
 	const trigger = page.getByTestId("trigger");
 	const valueNode = page.getByTestId("value-node");
 	const selectionType = page.getByTestId("selection-type");
@@ -134,7 +138,7 @@ function setupValueChildSingle(
 	}
 
 	function getHiddenInput(name = "theme") {
-		return returned.container.querySelector(`input[name="${name}"]`);
+		return returned.container.querySelector<HTMLInputElement>(`input[name="${name}"]`);
 	}
 
 	return {
@@ -150,11 +154,11 @@ function setupValueChildSingle(
 	};
 }
 
-function setupValueChildrenMultiple(
+async function setupValueChildrenMultiple(
 	props: Partial<SelectValueChildrenMultiTestProps> = {},
 	items: Item[] = testItems
 ) {
-	const returned = render(SelectValueChildrenMultiTest, { ...props, items });
+	const returned = await render(SelectValueChildrenMultiTest, { ...props, items });
 	const trigger = page.getByTestId("trigger");
 	const selectionType = page.getByTestId("selection-type");
 	const selectionValues = page.getByTestId("selection-values");
@@ -189,7 +193,7 @@ async function openSingle(
 	openWith: "click" | "type" | (string & {}) = "click",
 	_searchValue?: string
 ) {
-	const t = setupSingle(props);
+	const t = await setupSingle(props);
 
 	await expectNotExists(t.getContent());
 
@@ -218,7 +222,7 @@ async function openMultiple(
 	openWith: "click" | "type" | (string & {}) = "click",
 	_searchValue?: string
 ) {
-	const t = setupMultiple(props);
+	const t = await setupMultiple(props);
 	await expectNotExists(t.getContent());
 	if (openWith === "click") {
 		await t.trigger.click();
@@ -269,7 +273,7 @@ describe("select - single", () => {
 	});
 
 	it("should apply transition attrs to content during open and close", async () => {
-		const t = setupSingle({}, testItems, SelectForceMountTest);
+		const t = await setupSingle({}, testItems, SelectForceMountTest);
 		const observer = observeTransitionAttrs(t.getContent().element());
 
 		await t.trigger.click();
@@ -291,7 +295,7 @@ describe("select - single", () => {
 	});
 
 	it("should expose the trigger as a combobox controlling the mounted listbox", async () => {
-		const t = setupSingle({ contentProps: { id: "select-listbox" } });
+		const t = await setupSingle({ contentProps: { id: "select-listbox" } });
 		await expectTriggerControlsListbox(t.trigger, "select-listbox");
 	});
 
@@ -300,7 +304,7 @@ describe("select - single", () => {
 		(t.trigger.element() as HTMLElement).focus();
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.trigger).toHaveTextContent("A");
+		await expect.element(t.trigger).toMatchTextContent("A");
 	});
 
 	it("should have the placeholder attribute when empty and not when not empty", async () => {
@@ -309,32 +313,32 @@ describe("select - single", () => {
 		await expect.element(t.trigger).toHaveAttribute("data-placeholder");
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.trigger).toHaveTextContent("A");
+		await expect.element(t.trigger).toMatchTextContent("A");
 		await expect.element(t.trigger).not.toHaveAttribute("data-placeholder");
 	});
 
 	it("should render an input if the `name` prop is passed", async () => {
-		const t = setupSingle();
+		const t = await setupSingle();
 		await expect.element(t.getHiddenInput()).toBeInTheDocument();
 	});
 
 	it("should not render an input if the `name` prop isn't passed or is an empty string/undefined", async () => {
-		const t = setupSingle({ name: "" });
+		const t = await setupSingle({ name: "" });
 		await expect.element(t.getHiddenInput()).not.toBeInTheDocument();
 	});
 
 	it("should sync the value prop to the hidden input", async () => {
-		const t = setupSingle({ value: "test" });
+		const t = await setupSingle({ value: "test" });
 		await expect.element(t.getHiddenInput()).toHaveValue("test");
 	});
 
 	it("should sync the required prop to the hidden input", async () => {
-		const t = setupSingle({ required: true });
+		const t = await setupSingle({ required: true });
 		await expect.element(t.getHiddenInput()).toHaveAttribute("required");
 	});
 
 	it("should sync the disabled prop to the hidden input", async () => {
-		const t = setupSingle({ disabled: true });
+		const t = await setupSingle({ disabled: true });
 		await expect.element(t.getHiddenInput()).toHaveAttribute("disabled");
 	});
 
@@ -372,21 +376,21 @@ describe("select - single", () => {
 
 	it("should respect binding the `open` prop", async () => {
 		const t = await openSingle();
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 		await userEvent.keyboard(kbd.ESCAPE);
-		await expect.element(t.openBinding).toHaveTextContent("false");
+		await expect.element(t.openBinding).toMatchTextContent("false");
 		await expectNotExists(t.getContent());
 		await t.openBinding.click();
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 		await expectExists(t.getContent());
 	});
 
 	it("should respect binding the `value` prop", async () => {
 		const t = await openSingle({ value: "1" });
-		await expect.element(t.valueBinding).toHaveTextContent("1");
+		await expect.element(t.valueBinding).toMatchTextContent("1");
 		await userEvent.keyboard(kbd.ESCAPE);
 		await t.valueBinding.click();
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
 	});
 
 	it("should select items when clicked", async () => {
@@ -394,7 +398,7 @@ describe("select - single", () => {
 		const [_, item1] = getItems(page.getByTestId);
 		await expectNotExists(page.getByTestId("1-indicator"));
 		await item1.click();
-		await expect.element(t.trigger).toHaveTextContent("A");
+		await expect.element(t.trigger).toMatchTextContent("A");
 		await expect.element(t.getHiddenInput()).toHaveValue("1");
 		await t.trigger.click();
 		await expectSelected(item1);
@@ -485,7 +489,7 @@ describe("select - single", () => {
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item4);
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.trigger).toHaveTextContent("D");
+		await expect.element(t.trigger).toMatchTextContent("D");
 		await expect.element(t.getHiddenInput()).toHaveValue("4");
 		await t.trigger.click();
 		await expectSelected(item4);
@@ -496,8 +500,8 @@ describe("select - single", () => {
 		const t = await openSingle();
 		(t.trigger.element() as HTMLElement).focus();
 		await userEvent.keyboard(kbd.ENTER); // first item ("")
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
-		await expect.element(t.trigger).toHaveTextContent("Open Listbox");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
+		await expect.element(t.trigger).toMatchTextContent("Open Listbox");
 	});
 
 	it("should select empty string value after navigating through items", async () => {
@@ -506,8 +510,8 @@ describe("select - single", () => {
 		await userEvent.keyboard(kbd.ARROW_DOWN); // to "1"
 		await userEvent.keyboard(kbd.ARROW_UP); // back to ""
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
-		await expect.element(t.trigger).toHaveTextContent("Open Listbox");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
+		await expect.element(t.trigger).toMatchTextContent("Open Listbox");
 	});
 
 	it("should select empty string value in loop navigation", async () => {
@@ -519,8 +523,8 @@ describe("select - single", () => {
 		await userEvent.keyboard(kbd.ARROW_DOWN); // to "4"
 		await userEvent.keyboard(kbd.ARROW_DOWN); // back to ""
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
-		await expect.element(t.trigger).toHaveTextContent("Open Listbox");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
+		await expect.element(t.trigger).toMatchTextContent("Open Listbox");
 	});
 
 	it("should revert to empty state when deselecting a value", async () => {
@@ -529,27 +533,27 @@ describe("select - single", () => {
 		// First select a non-empty value
 		await userEvent.keyboard(kbd.ARROW_DOWN); // to "1"
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.valueBinding).not.toHaveTextContent("empty");
+		await expect.element(t.valueBinding).not.toMatchTextContent("empty");
 
 		// Then deselect by selecting empty value
 		await t.trigger.click();
 		await userEvent.keyboard(kbd.ARROW_UP); // back to ""
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
-		await expect.element(t.trigger).toHaveTextContent("Open Listbox");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
+		await expect.element(t.trigger).toMatchTextContent("Open Listbox");
 	});
 
 	it("should maintain empty value after reopening", async () => {
 		const t = await openSingle();
 		// Select empty value
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
 
 		// Close and reopen
 		await userEvent.keyboard(kbd.ESCAPE);
 		await t.trigger.click();
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
-		await expect.element(t.trigger).toHaveTextContent("Open Listbox");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
+		await expect.element(t.trigger).toMatchTextContent("Open Listbox");
 	});
 
 	it("should apply the `data-highlighted` attribute on mouseover", async () => {
@@ -580,7 +584,7 @@ describe("select - single", () => {
 			value: "2",
 		});
 		await expect.element(page.getByTestId("2-indicator")).toBeInTheDocument();
-		await expect.element(t.trigger).toHaveTextContent("B");
+		await expect.element(t.trigger).toMatchTextContent("B");
 		await expect.element(t.getHiddenInput()).toHaveValue("2");
 		const [_, __, item2] = getItems(page.getByTestId);
 		await expectSelected(item2);
@@ -615,14 +619,14 @@ describe("select - single", () => {
 	});
 
 	it("should forceMount the content when `forceMount` is true", async () => {
-		setupSingle({}, [], SelectForceMountTest);
+		await setupSingle({}, [], SelectForceMountTest);
 
 		const content = page.getByTestId("content");
 		await expect.element(content).toBeVisible();
 	});
 
 	it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-		const t = setupSingle({ withOpenCheck: true }, [], SelectForceMountTest);
+		const t = await setupSingle({ withOpenCheck: true }, [], SelectForceMountTest);
 
 		await expectNotExists(page.getByTestId("content"));
 
@@ -671,15 +675,51 @@ describe("select - single", () => {
 	});
 
 	it("should update the value when the hidden input is autofilled", async () => {
-		const t = setupSingle();
+		const t = await setupSingle();
 		const input = t.getHiddenInput() as HTMLInputElement;
 		input.value = "2";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
-		await expect.element(t.valueBinding).toHaveTextContent("2");
+		await expect.element(t.valueBinding).toMatchTextContent("2");
+	});
+
+	it("does not select an option when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ value: "1", onValueChange });
+		await t.trigger.click();
+		await expectExists(t.getContent());
+		await t.rerender({ disabled: true });
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-disabled");
+		await page.getByTestId("2").click();
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
+		await t.rerender({ disabled: false });
+		await page.getByTestId("2").click();
+		await expect.element(t.valueBinding).toMatchTextContent("2");
+		expect(onValueChange).toHaveBeenCalledWith("2");
+	});
+
+	it("does not select the highlighted option with the keyboard when disabled while open", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ value: "1", onValueChange });
+		(t.trigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ENTER);
+		await expectExists(t.getContent());
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-highlighted");
+		await t.rerender({ disabled: true });
+		await expect.element(page.getByTestId("2")).toHaveAttribute("data-disabled");
+		// the disabled trigger loses focus, so a real Enter can't reach it
+		t.trigger
+			.element()
+			.dispatchEvent(
+				new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true })
+			);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+		expect(onValueChange).not.toHaveBeenCalled();
 	});
 
 	it("should not open when disabled on touch devices", async () => {
-		const t = setupSingle({ disabled: true });
+		const t = await setupSingle({ disabled: true });
 
 		// simulate touch pointerup event (which is what touch devices use)
 		const touchEvent = new PointerEvent("pointerup", {
@@ -691,7 +731,7 @@ describe("select - single", () => {
 	});
 
 	it("should not open when disabled on mouse/pointer devices", async () => {
-		const t = setupSingle({ disabled: true });
+		const t = await setupSingle({ disabled: true });
 
 		// simulate mouse pointerdown event
 		const mouseEvent = new PointerEvent("pointerdown", {
@@ -703,7 +743,7 @@ describe("select - single", () => {
 	});
 
 	it("should highlight the first item when Select.Viewport has no padding", async () => {
-		const t = setupSingle({}, testItems, SelectViewportTest);
+		const t = await setupSingle({}, testItems, SelectViewportTest);
 
 		await expectNotExists(t.getContent());
 		await t.trigger.click();
@@ -714,7 +754,7 @@ describe("select - single", () => {
 	});
 
 	it("should not scroll the page when opening on trigger click", async () => {
-		render(SelectScrollJumpTest);
+		await render(SelectScrollJumpTest);
 
 		window.scrollTo(0, 640);
 		for (let i = 0; i < 3; i++) {
@@ -744,7 +784,7 @@ describe("select - single", () => {
 	});
 
 	it("should keep the user's scroll position when the scroll down button remounts", async () => {
-		render(SelectScrollButtonsTest, { overlayScrollButtons: true });
+		await render(SelectScrollButtonsTest, { overlayScrollButtons: true });
 
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
@@ -774,7 +814,7 @@ describe("select - single", () => {
 	});
 
 	it("should still scroll the selected item into view when opening", async () => {
-		render(SelectScrollButtonsTest, { value: "55" });
+		await render(SelectScrollButtonsTest, { value: "55" });
 
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
@@ -799,7 +839,7 @@ describe("select - single", () => {
 	])(
 		"should stop auto scrolling when closed while hovering the $button (forceMount: $forceMount)",
 		async ({ button, value, forceMount }) => {
-			render(SelectScrollButtonsTest, { value, forceMount });
+			await render(SelectScrollButtonsTest, { value, forceMount });
 
 			await page.getByTestId("trigger").click();
 			await expectExists(page.getByTestId("content"));
@@ -829,7 +869,7 @@ describe("select - single", () => {
 	);
 
 	it("should keep a typeahead-highlighted item clear of the scroll down button after the user has scrolled", async () => {
-		render(SelectScrollButtonsTest);
+		await render(SelectScrollButtonsTest);
 
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
@@ -864,7 +904,7 @@ describe("select - single", () => {
 
 	describe("mouse press on an item", () => {
 		async function pressItem(testId: string) {
-			render(SelectScrollButtonsTest);
+			await render(SelectScrollButtonsTest);
 			await page.getByTestId("trigger").click();
 			await expectExists(page.getByTestId("content"));
 			await sleep(100);
@@ -905,7 +945,7 @@ describe("select - single", () => {
 			const released = itemAt(point);
 			expect(released.dataset.testid).not.toBe("item-3");
 			released.dispatchEvent(mousePointer("pointerup", point));
-			await expect.element(page.getByTestId("trigger")).toHaveTextContent(/^3$/);
+			await expect.element(page.getByTestId("trigger")).toMatchTextContent(/^3$/);
 		});
 
 		it("should select the item the pointer was moved to before release", async () => {
@@ -913,7 +953,7 @@ describe("select - single", () => {
 			const rect = page.getByTestId("item-2").element().getBoundingClientRect();
 			const to = { clientX: from.clientX, clientY: rect.top + rect.height / 2 };
 			itemAt(to).dispatchEvent(mousePointer("pointerup", to));
-			await expect.element(page.getByTestId("trigger")).toHaveTextContent(/^2$/);
+			await expect.element(page.getByTestId("trigger")).toMatchTextContent(/^2$/);
 		});
 
 		it("should not reuse a press that was released off an item", async () => {
@@ -933,7 +973,7 @@ describe("select - single", () => {
 			released.dispatchEvent(mousePointer("pointerup", point));
 			await expect
 				.element(page.getByTestId("trigger"))
-				.toHaveTextContent(released.dataset.testid!.replace("item-", ""));
+				.toMatchTextContent(released.dataset.testid!.replace("item-", ""));
 		});
 	});
 
@@ -943,7 +983,7 @@ describe("select - single", () => {
 			{ value: "2", label: "B" },
 			{ value: "", label: "All" },
 		];
-		const t = setupSingle({ value: "1" }, items);
+		const t = await setupSingle({ value: "1" }, items);
 		(t.trigger.element() as HTMLElement).focus();
 
 		await userEvent.keyboard(kbd.ENTER);
@@ -979,7 +1019,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should expose the trigger as a combobox controlling the mounted listbox", async () => {
-		const t = setupMultiple({ contentProps: { id: "select-listbox" } });
+		const t = await setupMultiple({ contentProps: { id: "select-listbox" } });
 		await expectTriggerControlsListbox(t.trigger, "select-listbox");
 	});
 
@@ -1010,7 +1050,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should render a hidden input for each value in the `value` array, each with the same `name` prop", async () => {
-		const t = setupMultiple({ value: ["a", "b"] });
+		const t = await setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 		await expect.element(hiddenInputs[0]).toHaveAttribute("name", "test");
@@ -1018,7 +1058,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should sync the value prop to the hidden inputs", async () => {
-		const t = setupMultiple({ value: ["a", "b"] });
+		const t = await setupMultiple({ value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 		await expect.element(hiddenInputs[0]).toHaveValue("a");
@@ -1026,7 +1066,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should keep the hidden inputs in sync with the value after a form reset", async () => {
-		const t = setupMultiple({ value: ["a", "b"] });
+		const t = await setupMultiple({ value: ["a", "b"] });
 		const form = page.getByTestId("form").element() as HTMLFormElement;
 		form.reset();
 		await new Promise((r) => requestAnimationFrame(r));
@@ -1038,7 +1078,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should sync the required prop to the hidden inputs", async () => {
-		const t = setupMultiple({ required: true, value: ["a", "b"] });
+		const t = await setupMultiple({ required: true, value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 
@@ -1048,7 +1088,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should sync the disabled prop to the hidden inputs", async () => {
-		const t = setupMultiple({ disabled: true, value: ["a", "b"] });
+		const t = await setupMultiple({ disabled: true, value: ["a", "b"] });
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 
@@ -1090,20 +1130,20 @@ describe("select - multiple", () => {
 
 	it("should respect binding the `open` prop", async () => {
 		const t = await openMultiple();
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("false");
+		await expect.element(t.openBinding).toMatchTextContent("false");
 		await t.openBinding.click();
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 		await expectExists(t.getContent());
 	});
 
 	it("should respect binding the `value` prop", async () => {
 		const t = await openMultiple({ value: ["1", "2"] });
-		await expect.element(t.valueBinding).toHaveTextContent("1,2");
+		await expect.element(t.valueBinding).toMatchTextContent("1,2");
 		await t.valueBinding.click();
-		await expect.element(t.valueBinding).toHaveTextContent("empty");
+		await expect.element(t.valueBinding).toMatchTextContent("empty");
 	});
 
 	it("should select items when clicked", async () => {
@@ -1111,7 +1151,7 @@ describe("select - multiple", () => {
 		const [_, item] = getItems(page.getByTestId);
 		await expectNotExists(page.getByTestId("1-indicator"));
 		await item.click();
-		await expect.element(t.trigger).toHaveTextContent("A");
+		await expect.element(t.trigger).toMatchTextContent("A");
 		expect(t.getHiddenInputs()).toHaveLength(1);
 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("1");
 
@@ -1192,7 +1232,7 @@ describe("select - multiple", () => {
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await expectHighlighted(item4);
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.trigger).toHaveTextContent("D");
+		await expect.element(t.trigger).toMatchTextContent("D");
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(1);
 		await expectSelected(item4);
@@ -1209,7 +1249,7 @@ describe("select - multiple", () => {
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ARROW_DOWN);
 		await userEvent.keyboard(kbd.ENTER);
-		await expect.element(t.trigger).toHaveTextContent("D");
+		await expect.element(t.trigger).toMatchTextContent("D");
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(1);
 		await expect.element(hiddenInputs[0]).toHaveValue("4");
@@ -1231,11 +1271,11 @@ describe("select - multiple", () => {
 		await expectHighlighted(item1);
 
 		await userEvent.keyboard(kbd.SPACE);
-		await expect.element(t.trigger).toHaveTextContent("A");
+		await expect.element(t.trigger).toMatchTextContent("A");
 		await expectSelected(item1);
 
 		await userEvent.keyboard(kbd.SPACE);
-		await expect.element(t.trigger).toHaveTextContent("Open combobox");
+		await expect.element(t.trigger).toMatchTextContent("Open combobox");
 		await expectNotSelected(item1);
 	});
 
@@ -1254,7 +1294,7 @@ describe("select - multiple", () => {
 			value: ["2"],
 		});
 		await expect.element(page.getByTestId("2-indicator")).not.toBeNull();
-		await expect.element(t.trigger).toHaveTextContent("B");
+		await expect.element(t.trigger).toMatchTextContent("B");
 
 		await expect.element(t.getHiddenInputs()[0]).toHaveValue("2");
 		const [_, __, item2] = getItems(page.getByTestId);
@@ -1263,7 +1303,7 @@ describe("select - multiple", () => {
 
 	it("should submit an array with a single empty string when the user submits the form without selecting any items", async () => {
 		let submittedValues: string[] | undefined;
-		const t = setupMultiple({
+		const t = await setupMultiple({
 			onFormSubmit: (fd: FormData) => {
 				submittedValues = fd.getAll("themes") as string[];
 			},
@@ -1276,7 +1316,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should not open when disabled on touch devices", async () => {
-		const t = setupMultiple({ disabled: true });
+		const t = await setupMultiple({ disabled: true });
 
 		// simulate touch pointerup event (which is what touch devices use)
 		const touchEvent = new PointerEvent("pointerup", {
@@ -1288,7 +1328,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should not open when disabled on mouse/pointer devices", async () => {
-		const t = setupMultiple({ disabled: true });
+		const t = await setupMultiple({ disabled: true });
 
 		await t.trigger.click({ force: true });
 
@@ -1297,7 +1337,7 @@ describe("select - multiple", () => {
 
 	it("should not submit an array with a single empty string when the `name` prop is passed but no items are selected", async () => {
 		let submittedValues: string[] | undefined;
-		const t = setupMultiple({
+		const t = await setupMultiple({
 			onFormSubmit: (fd: FormData) => {
 				submittedValues = fd.getAll("themes") as string[];
 			},
@@ -1307,7 +1347,7 @@ describe("select - multiple", () => {
 	});
 
 	it("should highlight the selected item on open when its value is an empty string", async () => {
-		const t = setupMultiple({ value: [""] }, [
+		const t = await setupMultiple({ value: [""] }, [
 			{ value: "1", label: "A" },
 			{ value: "", label: "All" },
 		]);
@@ -1322,19 +1362,19 @@ describe("select - multiple", () => {
 
 describe("select - value", () => {
 	it("should expose child snippet props in single mode and update when setValue is called", async () => {
-		const t = setupValueChildSingle({ name: "theme", placeholder: "Pick a theme" });
+		const t = await setupValueChildSingle({ name: "theme", placeholder: "Pick a theme" });
 
-		await expect.element(t.selectionType).toHaveTextContent("single");
-		await expect.element(t.selectionValue).toHaveTextContent("none");
-		await expect.element(t.selectionLabel).toHaveTextContent("Pick a theme");
-		await expect.element(t.selectionDisabled).toHaveTextContent("false");
+		await expect.element(t.selectionType).toMatchTextContent("single");
+		await expect.element(t.selectionValue).toMatchTextContent("none");
+		await expect.element(t.selectionLabel).toMatchTextContent("Pick a theme");
+		await expect.element(t.selectionDisabled).toMatchTextContent("false");
 		await expect.element(t.valueNode).toHaveAttribute("data-select-value");
 		await expect.element(t.valueNode).toHaveAttribute("data-placeholder");
 
 		await t.setValueButton.click();
 
-		await expect.element(t.selectionValue).toHaveTextContent("2");
-		await expect.element(t.selectionLabel).toHaveTextContent("B");
+		await expect.element(t.selectionValue).toMatchTextContent("2");
+		await expect.element(t.selectionLabel).toMatchTextContent("B");
 		await expect.element(t.valueNode).not.toHaveAttribute("data-placeholder");
 
 		const hiddenInput = t.getHiddenInput();
@@ -1347,17 +1387,17 @@ describe("select - value", () => {
 	});
 
 	it("should expose children snippet props in multiple mode and update when setValue is called", async () => {
-		const t = setupValueChildrenMultiple({ name: "themes", placeholder: "Pick themes" });
+		const t = await setupValueChildrenMultiple({ name: "themes", placeholder: "Pick themes" });
 
-		await expect.element(t.selectionType).toHaveTextContent("multiple");
-		await expect.element(t.selectionValues).toHaveTextContent("none");
-		await expect.element(t.selectionLabel).toHaveTextContent("Pick themes");
-		await expect.element(t.selectionDisabled).toHaveTextContent("false");
+		await expect.element(t.selectionType).toMatchTextContent("multiple");
+		await expect.element(t.selectionValues).toMatchTextContent("none");
+		await expect.element(t.selectionLabel).toMatchTextContent("Pick themes");
+		await expect.element(t.selectionDisabled).toMatchTextContent("false");
 
 		await t.setValuesButton.click();
 
-		await expect.element(t.selectionValues).toHaveTextContent("1,3");
-		await expect.element(t.selectionLabel).toHaveTextContent("A, C");
+		await expect.element(t.selectionValues).toMatchTextContent("1,3");
+		await expect.element(t.selectionLabel).toMatchTextContent("A, C");
 		const hiddenInputs = t.getHiddenInputs();
 		expect(hiddenInputs).toHaveLength(2);
 		await expect.element(hiddenInputs[0]).toHaveValue("1");
@@ -1369,7 +1409,7 @@ describe("select - value", () => {
 	});
 
 	it("should keep selection labels after the menu closes in multiple mode", async () => {
-		render(SelectValueLabelPersistTest);
+		await render(SelectValueLabelPersistTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
 		const selectionValues = page.getByTestId("selection-values");
@@ -1379,19 +1419,19 @@ describe("select - value", () => {
 		await trigger.click();
 		await expectExists(page.getByTestId("content"));
 		await item1.click();
-		await expect.element(selectionValues).toHaveTextContent("1");
-		await expect.element(selectionLabel).toHaveTextContent("A");
+		await expect.element(selectionValues).toMatchTextContent("1");
+		await expect.element(selectionLabel).toMatchTextContent("A");
 		await item2.click();
-		await expect.element(selectionValues).toHaveTextContent("1,2");
-		await expect.element(selectionLabel).toHaveTextContent("A, B");
+		await expect.element(selectionValues).toMatchTextContent("1,2");
+		await expect.element(selectionLabel).toMatchTextContent("A, B");
 
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
-		await expect.element(selectionLabel).toHaveTextContent("A, B");
+		await expect.element(selectionLabel).toMatchTextContent("A, B");
 	});
 
 	it("should resolve labels for values set programmatically while open in multiple mode", async () => {
-		render(SelectValueLabelPersistTest);
+		await render(SelectValueLabelPersistTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
 		const selectionValues = page.getByTestId("selection-values");
@@ -1401,13 +1441,13 @@ describe("select - value", () => {
 		await expectExists(page.getByTestId("content"));
 		await setValues2.click();
 
-		await expect.element(selectionValues).toHaveTextContent("2");
-		await expect.element(selectionLabel).toHaveTextContent("B");
+		await expect.element(selectionValues).toMatchTextContent("2");
+		await expect.element(selectionLabel).toMatchTextContent("B");
 		await expectExists(page.getByTestId("content"));
 	});
 
 	it("should update cached labels while a selected item label changes", async () => {
-		render(SelectValueLabelPersistTest);
+		await render(SelectValueLabelPersistTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
 		const item1 = page.getByTestId("1");
@@ -1415,15 +1455,15 @@ describe("select - value", () => {
 
 		await trigger.click();
 		await item1.click();
-		await expect.element(selectionLabel).toHaveTextContent("A");
+		await expect.element(selectionLabel).toMatchTextContent("A");
 
 		await updateLabel.click();
-		await expect.element(item1).toHaveTextContent("A updated");
-		await expect.element(selectionLabel).toHaveTextContent("A updated");
+		await expect.element(item1).toMatchTextContent("A updated");
+		await expect.element(selectionLabel).toMatchTextContent("A updated");
 	});
 
 	it("should fall back to item text when selected item label is empty", async () => {
-		render(SelectValueLabelPersistTest);
+		await render(SelectValueLabelPersistTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
 		const selectionValues = page.getByTestId("selection-values");
@@ -1432,16 +1472,16 @@ describe("select - value", () => {
 		await trigger.click();
 		await emptyLabelItem.click();
 
-		await expect.element(selectionValues).toHaveTextContent("empty-label");
-		await expect.element(selectionLabel).toHaveTextContent("Visible fallback");
+		await expect.element(selectionValues).toMatchTextContent("empty-label");
+		await expect.element(selectionLabel).toMatchTextContent("Visible fallback");
 
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
-		await expect.element(selectionLabel).toHaveTextContent("Visible fallback");
+		await expect.element(selectionLabel).toMatchTextContent("Visible fallback");
 	});
 
 	it("should prune cached labels when multiple values are replaced", async () => {
-		render(SelectValueLabelPersistTest);
+		await render(SelectValueLabelPersistTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
 		const selectionValues = page.getByTestId("selection-values");
@@ -1454,21 +1494,21 @@ describe("select - value", () => {
 		await trigger.click();
 		await item1.click();
 		await item2.click();
-		await expect.element(selectionValues).toHaveTextContent("1,2");
-		await expect.element(selectionLabel).toHaveTextContent("A, B");
+		await expect.element(selectionValues).toMatchTextContent("1,2");
+		await expect.element(selectionLabel).toMatchTextContent("A, B");
 
 		await setValues2.click();
-		await expect.element(selectionValues).toHaveTextContent("2");
-		await expect.element(selectionLabel).toHaveTextContent("B");
+		await expect.element(selectionValues).toMatchTextContent("2");
+		await expect.element(selectionLabel).toMatchTextContent("B");
 
 		await updateLabel.click();
 		await setValues1.click();
-		await expect.element(selectionValues).toHaveTextContent("1");
-		await expect.element(selectionLabel).toHaveTextContent("A updated");
+		await expect.element(selectionValues).toMatchTextContent("1");
+		await expect.element(selectionLabel).toMatchTextContent("A updated");
 	});
 
 	it("should keep selection labels after the menu closes in single mode", async () => {
-		render(SelectValueLabelPersistSingleTest);
+		await render(SelectValueLabelPersistSingleTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
 		const selectionValue = page.getByTestId("selection-value");
@@ -1479,12 +1519,12 @@ describe("select - value", () => {
 		await item1.click();
 
 		await expectNotExists(page.getByTestId("content"));
-		await expect.element(selectionValue).toHaveTextContent("1");
-		await expect.element(selectionLabel).toHaveTextContent("A");
+		await expect.element(selectionValue).toMatchTextContent("1");
+		await expect.element(selectionLabel).toMatchTextContent("A");
 	});
 
 	it("should resolve labels for values set programmatically while open in single mode", async () => {
-		render(SelectValueLabelPersistSingleTest);
+		await render(SelectValueLabelPersistSingleTest);
 		const trigger = page.getByTestId("trigger");
 		const selectionLabel = page.getByTestId("selection-label");
 		const selectionValue = page.getByTestId("selection-value");
@@ -1494,27 +1534,27 @@ describe("select - value", () => {
 		await expectExists(page.getByTestId("content"));
 		await setValue2.click();
 
-		await expect.element(selectionValue).toHaveTextContent("2");
-		await expect.element(selectionLabel).toHaveTextContent("B");
+		await expect.element(selectionValue).toMatchTextContent("2");
+		await expect.element(selectionLabel).toMatchTextContent("B");
 		await expectExists(page.getByTestId("content"));
 	});
 
 	it("should resolve labels from force-mounted items without opening", async () => {
-		render(SelectValueLabelPersistSingleTest, { value: "2", forceMount: true });
-		await expect.element(page.getByTestId("selection-label")).toHaveTextContent("B");
+		await render(SelectValueLabelPersistSingleTest, { value: "2", forceMount: true });
+		await expect.element(page.getByTestId("selection-label")).toMatchTextContent("B");
 	});
 
 	it("should pass disabled state to value snippets so consumers can block setValue", async () => {
-		const t = setupValueChildSingle({
+		const t = await setupValueChildSingle({
 			name: "theme",
 			placeholder: "Pick a theme",
 			disabled: true,
 		});
 
-		await expect.element(t.selectionDisabled).toHaveTextContent("true");
+		await expect.element(t.selectionDisabled).toMatchTextContent("true");
 		await t.setValueButton.click();
-		await expect.element(t.selectionValue).toHaveTextContent("none");
-		await expect.element(t.selectionLabel).toHaveTextContent("Pick a theme");
+		await expect.element(t.selectionValue).toMatchTextContent("none");
+		await expect.element(t.selectionLabel).toMatchTextContent("Pick a theme");
 
 		const hiddenInput = t.getHiddenInput();
 		expect(hiddenInput).not.toBeNull();
@@ -1534,11 +1574,11 @@ describe("select - item-aligned", () => {
 		{ value: "5", label: "Elderberry" },
 	];
 
-	function setupAligned(
+	async function setupAligned(
 		props: Partial<SelectItemAlignedTestProps> = {},
 		items: Item[] = alignedItems
 	) {
-		render(SelectItemAlignedTest, { items, ...props } as SelectItemAlignedTestProps);
+		await render(SelectItemAlignedTest, { items, ...props } as SelectItemAlignedTestProps);
 		return {
 			trigger: page.getByTestId("trigger"),
 			outside: page.getByTestId("outside"),
@@ -1555,7 +1595,7 @@ describe("select - item-aligned", () => {
 		props: Partial<SelectItemAlignedTestProps> = {},
 		items: Item[] = alignedItems
 	) {
-		const t = setupAligned(props, items);
+		const t = await setupAligned(props, items);
 		await expectNotExists(t.getContent());
 		await t.trigger.click();
 		await expectExists(t.getContent());
@@ -1575,7 +1615,7 @@ describe("select - item-aligned", () => {
 		"should open and select on completed %s clicks",
 		async (pointerType) => {
 			const onValueChange = vi.fn();
-			const t = setupAligned({ value: "2", onValueChange });
+			const t = await setupAligned({ value: "2", onValueChange });
 			const trigger = t.trigger.element();
 			const pointer = (type: string) =>
 				new PointerEvent(type, { pointerType, bubbles: true, cancelable: true });
@@ -1592,16 +1632,16 @@ describe("select - item-aligned", () => {
 			expect(item.dispatchEvent(pointer("pointerdown"))).toBe(true);
 			item.dispatchEvent(pointer("pointerup"));
 			expect(onValueChange).not.toHaveBeenCalled();
-			await expect.element(t.openBinding).toHaveTextContent("true");
+			await expect.element(t.openBinding).toMatchTextContent("true");
 			item.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-			await expect.element(t.valueBinding).toHaveTextContent("3");
+			await expect.element(t.valueBinding).toMatchTextContent("3");
 			await expectNotExists(t.getContent());
 			expect(onValueChange).toHaveBeenCalledExactlyOnceWith("3");
 		}
 	);
 
 	it("should not open from a cancelled touch gesture on the trigger", async () => {
-		const t = setupAligned();
+		const t = await setupAligned();
 		const trigger = t.trigger.element();
 		for (const type of ["pointerdown", "pointermove", "pointercancel", "pointerup"]) {
 			trigger.dispatchEvent(new PointerEvent(type, { pointerType: "touch", bubbles: true }));
@@ -1610,7 +1650,7 @@ describe("select - item-aligned", () => {
 	});
 
 	it("should not select or dismiss when a touch scroll ends outside the content", async () => {
-		const t = setupAligned({ value: "2" });
+		const t = await setupAligned({ value: "2" });
 		const trigger = t.trigger.element();
 		for (const type of ["pointerdown", "pointerup"]) {
 			trigger.dispatchEvent(new PointerEvent(type, { pointerType: "touch", bubbles: true }));
@@ -1633,8 +1673,8 @@ describe("select - item-aligned", () => {
 			.dispatchEvent(
 				new PointerEvent("pointerup", { pointerType: "touch", clientY: 200, bubbles: true })
 			);
-		await expect.element(t.openBinding).toHaveTextContent("true");
-		await expect.element(t.valueBinding).toHaveTextContent("2");
+		await expect.element(t.openBinding).toMatchTextContent("true");
+		await expect.element(t.valueBinding).toMatchTextContent("2");
 	});
 
 	it("should remain open on mobile toolbar resize but close on orientation change", async () => {
@@ -1650,7 +1690,7 @@ describe("select - item-aligned", () => {
 		try {
 			const t = await openAligned();
 			window.dispatchEvent(new Event("resize"));
-			await expect.element(t.openBinding).toHaveTextContent("true");
+			await expect.element(t.openBinding).toMatchTextContent("true");
 			vi.stubGlobal("innerWidth", originalWidth + 100);
 			window.dispatchEvent(new Event("resize"));
 			await expectNotExists(t.getContent());
@@ -1665,7 +1705,7 @@ describe("select - item-aligned", () => {
 	});
 
 	it.each([kbd.ARROW_DOWN, kbd.ARROW_UP])("should open on %s keydown", async (key) => {
-		const t = setupAligned();
+		const t = await setupAligned();
 		await expectNotExists(t.getContent());
 		(t.trigger.element() as HTMLElement).focus();
 		await userEvent.keyboard(key);
@@ -1688,18 +1728,18 @@ describe("select - item-aligned", () => {
 		const t = await openAligned({ contentProps: { escapeKeydownBehavior: "ignore" } });
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 	});
 
 	it("should respect interactOutsideBehavior in item-aligned mode", async () => {
 		const t = await openAligned({ contentProps: { interactOutsideBehavior: "ignore" } });
 		await t.outside.click();
 		await expectExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 	});
 
 	it("should forceMount item-aligned content and only lock scrolling while open", async () => {
-		const t = setupAligned({ contentProps: { forceMount: true, preventScroll: true } });
+		const t = await setupAligned({ contentProps: { forceMount: true, preventScroll: true } });
 		await expectExists(t.getContent());
 		await expect.element(t.getContent()).toHaveAttribute("data-state", "closed");
 		expect(document.body.style.overflow).not.toBe("hidden");
@@ -1717,7 +1757,7 @@ describe("select - item-aligned", () => {
 		const t = await openAligned();
 		await t.getItem("2").click();
 		await expectNotExists(t.getContent());
-		await expect.element(t.valueBinding).toHaveTextContent("2");
+		await expect.element(t.valueBinding).toMatchTextContent("2");
 	});
 
 	it("should support keyboard navigation and selection", async () => {
@@ -1727,7 +1767,7 @@ describe("select - item-aligned", () => {
 		await userEvent.keyboard(kbd.ENTER);
 		await expectNotExists(t.getContent());
 		// some item was selected
-		await expect.element(t.valueBinding).not.toHaveTextContent("empty");
+		await expect.element(t.valueBinding).not.toMatchTextContent("empty");
 	});
 
 	it("should highlight the pre-selected item on open", async () => {
@@ -1767,7 +1807,7 @@ describe("select - item-aligned", () => {
 				value: String(index + 1),
 				label: `Item ${index + 1}`,
 			}));
-			const t = setupAligned({ value, scrollButtons: true }, items);
+			const t = await setupAligned({ value, scrollButtons: true }, items);
 			(t.trigger.element() as HTMLElement).style.marginTop = "250px";
 			await t.trigger.click();
 			await waitForDismissibleLayer(t.getContent());
@@ -1865,11 +1905,11 @@ describe("select - item-aligned", () => {
 
 		// Menu should still be open and selected value unchanged
 		await expectExists(t.getContent());
-		await expect.element(t.valueBinding).toHaveTextContent("1");
+		await expect.element(t.valueBinding).toMatchTextContent("1");
 	});
 
 	it("should select an item when pointer drags from trigger to item (>10px move)", async () => {
-		const t = setupAligned({ value: "1" });
+		const t = await setupAligned({ value: "1" });
 		const triggerEl = t.trigger.element() as HTMLElement;
 		const rect = triggerEl.getBoundingClientRect();
 		const cx = Math.round(rect.left + rect.width / 2);
@@ -1918,7 +1958,7 @@ describe("select - item-aligned", () => {
 		await nextFrame();
 		await nextFrame();
 
-		await expect.element(t.valueBinding).toHaveTextContent("3");
+		await expect.element(t.valueBinding).toMatchTextContent("3");
 	});
 
 	it("should close on resize", async () => {
@@ -1944,7 +1984,7 @@ describe("select - item-aligned", () => {
 			}
 
 			await expectExists(t.getContent());
-			await expect.element(t.openBinding).toHaveTextContent("true");
+			await expect.element(t.openBinding).toMatchTextContent("true");
 		} finally {
 			document.body.style.minHeight = previousMinHeight;
 			window.scrollTo(0, 0);
@@ -1974,7 +2014,7 @@ describe("select - item-aligned", () => {
 			expect(parseFloat(wrapper.style.height)).toBe(initialHeight);
 
 			await expectExists(t.getContent());
-			await expect.element(t.openBinding).toHaveTextContent("true");
+			await expect.element(t.openBinding).toMatchTextContent("true");
 		} finally {
 			document.body.style.minHeight = previousMinHeight;
 			window.scrollTo(0, 0);
@@ -2116,13 +2156,13 @@ async function expectNotHighlighted(node: MaybeArray<ReturnType<typeof page.getB
 }
 
 it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
-	render(SelectFieldsetDisabledTest);
+	await render(SelectFieldsetDisabledTest);
 	const trigger = page.getByTestId("trigger");
 	await expect.element(trigger).toBeDisabled();
 
 	async function expectClosed() {
 		await new Promise((r) => setTimeout(r, 100));
-		expect(page.getByTestId("open-binding").element()).toHaveTextContent("false");
+		expect(page.getByTestId("open-binding").element()).toMatchTextContent("false");
 		expect(page.getByTestId("content").query()).toBeNull();
 	}
 
@@ -2151,7 +2191,7 @@ describe("Settling content", () => {
 	}
 
 	async function openOnLastItem() {
-		render(SelectSettlingContentTest, { value: "59" });
+		await render(SelectSettlingContentTest, { value: "59" });
 		await page.getByTestId("trigger").click();
 		await expectExists(page.getByTestId("content"));
 		const viewport = page.getByTestId("viewport").element() as HTMLElement;
@@ -2194,18 +2234,18 @@ describe("Settling content", () => {
 
 describe("select - activation without a pointer press", () => {
 	it("should toggle the trigger on a click that no pointer press preceded", async () => {
-		const t = setupSingle();
+		const t = await setupSingle();
 		(t.trigger.element() as HTMLElement).click();
 		await expectExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 		await expect.element(t.trigger).toHaveFocus();
 		(t.trigger.element() as HTMLElement).click();
 		await expectNotExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("false");
+		await expect.element(t.openBinding).toMatchTextContent("false");
 	});
 
 	it("should open on the event sequence of a WebKit accessibility press", async () => {
-		const t = setupSingle();
+		const t = await setupSingle();
 		const trigger = t.trigger.element() as HTMLElement;
 		// focus, mousedown, mouseup and a zero-`detail` click, with no pointer events
 		trigger.focus();
@@ -2215,12 +2255,12 @@ describe("select - activation without a pointer press", () => {
 			);
 		}
 		await expectExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 	});
 
 	it("should not toggle again on the click that ends a mouse press", async () => {
 		const onOpenChange = vi.fn();
-		const t = setupSingle({ onOpenChange });
+		const t = await setupSingle({ onOpenChange });
 		await t.trigger.click();
 		await expectExists(t.getContent());
 		expect(onOpenChange).toHaveBeenCalledTimes(1);
@@ -2228,7 +2268,7 @@ describe("select - activation without a pointer press", () => {
 
 	it("should not toggle again on the click that ends a tap", async () => {
 		const onOpenChange = vi.fn();
-		const t = setupSingle({ onOpenChange });
+		const t = await setupSingle({ onOpenChange });
 		const trigger = t.trigger.element();
 		for (const type of ["pointerdown", "pointerup"] as const) {
 			trigger.dispatchEvent(
@@ -2255,7 +2295,7 @@ describe("select - activation without a pointer press", () => {
 		"should toggle once when %s is pressed on the trigger",
 		async (key) => {
 			const onOpenChange = vi.fn();
-			const t = setupSingle({ onOpenChange });
+			const t = await setupSingle({ onOpenChange });
 			(t.trigger.element() as HTMLElement).focus();
 			await userEvent.keyboard(key);
 			await expectExists(t.getContent());
@@ -2264,7 +2304,7 @@ describe("select - activation without a pointer press", () => {
 	);
 
 	it("should stay open when a space is typed during typeahead", async () => {
-		const t = setupSingle({}, [
+		const t = await setupSingle({}, [
 			{ value: "1", label: "Apple pie" },
 			{ value: "2", label: "Apple tart" },
 		]);
@@ -2274,13 +2314,13 @@ describe("select - activation without a pointer press", () => {
 		await userEvent.keyboard("Apple t");
 		await expectHighlighted(page.getByTestId("2"));
 		await expectExists(t.getContent());
-		await expect.element(t.openBinding).toHaveTextContent("true");
+		await expect.element(t.openBinding).toMatchTextContent("true");
 	});
 
 	it("should not toggle on a click without a pointer press when disabled", async () => {
 		const onOpenChange = vi.fn();
 		// a `div` trigger, which unlike a disabled `<button>` still receives the click
-		render(SelectChildTriggerTest, { onOpenChange, disabled: true });
+		await render(SelectChildTriggerTest, { onOpenChange, disabled: true });
 		(page.getByTestId("trigger").element() as HTMLElement).click();
 		await expectNotExists(page.getByTestId("content"));
 		expect(onOpenChange).not.toHaveBeenCalled();

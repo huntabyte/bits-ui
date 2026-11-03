@@ -1,4 +1,4 @@
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import { describe, expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import ComboboxTest, { type Item } from "../combobox/combobox-test.svelte";
@@ -32,7 +32,7 @@ describe("dismissible layer - outside click timing", () => {
 	for (const delay of DELAYS_MS) {
 		for (let rep = 0; rep < REPS; rep++) {
 			it(`should close on an outside click ${delay}ms after the layer registers (rep ${rep})`, async () => {
-				render(ComboboxTest, { name: "test", items });
+				await render(ComboboxTest, { name: "test", items });
 
 				await page.getByTestId("trigger").click({ force: true });
 				await expectExists(page.getByTestId("content"));
@@ -49,7 +49,7 @@ describe("dismissible layer - outside click timing", () => {
 
 describe("dismissible layer - touch click timing", () => {
 	async function setupTouch() {
-		render(ComboboxTest, { name: "test", items });
+		await render(ComboboxTest, { name: "test", items });
 		await page.getByTestId("trigger").click();
 		const content = page.getByTestId("content");
 		await waitForDismissibleLayer(content);
