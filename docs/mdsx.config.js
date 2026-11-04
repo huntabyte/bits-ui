@@ -72,6 +72,8 @@ const prettyCodeOptions = {
 
 export const mdsxConfig = defineConfig({
 	extensions: [".md"],
+	// SvelteKit 3 has no svelte.config.js; skip mdsx's per-file lookup for one.
+	svelteConfigPath: false,
 	remarkPlugins: [remarkGfm, remarkRemovePrettierIgnore],
 	rehypePlugins: [
 		rehypeSlug,
