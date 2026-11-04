@@ -4,6 +4,7 @@ import {
 	onDestroyEffect,
 	srOnlyStyles,
 	attachRef,
+	getWindow,
 	type WritableBoxedValues,
 	type ReadableBoxedValues,
 } from "svelte-toolbelt";
@@ -1683,9 +1684,10 @@ export class CommandViewportState {
 			([node, listNode]) => {
 				if (node === null || listNode === null) return;
 				let aF: number;
+				const win = getWindow(node);
 
-				const observer = new ResizeObserver(() => {
-					aF = requestAnimationFrame(() => {
+				const observer = new win.ResizeObserver(() => {
+					aF = win.requestAnimationFrame(() => {
 						const height = node.offsetHeight;
 						listNode.style.setProperty(
 							"--bits-command-list-height",
@@ -1697,7 +1699,7 @@ export class CommandViewportState {
 				observer.observe(node);
 
 				return () => {
-					cancelAnimationFrame(aF);
+					win.cancelAnimationFrame(aF);
 					observer.unobserve(node);
 				};
 			}

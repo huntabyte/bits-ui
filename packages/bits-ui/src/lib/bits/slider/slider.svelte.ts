@@ -107,8 +107,6 @@ abstract class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
-		void this.#layoutVersion;
-
 		// If trackPadding is explicitly set, use it directly instead of calculating from thumb size
 		const trackPadding = this.opts.trackPadding?.current;
 		if (trackPadding !== undefined && trackPadding > 0) {
@@ -119,6 +117,9 @@ abstract class SliderBaseRootState {
 			// User opted out of containment
 			return [0, 100];
 		}
+
+		// only the measuring path below needs to rerun when the layout changes
+		void this.#layoutVersion;
 
 		const isVertical = this.opts.orientation.current === "vertical";
 
