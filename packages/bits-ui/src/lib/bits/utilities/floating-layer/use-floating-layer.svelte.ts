@@ -158,12 +158,14 @@ export class FloatingContentState {
 					}),
 				transformOrigin({ arrowWidth: this.#arrowWidth, arrowHeight: this.#arrowHeight }),
 				this.opts.hideWhenDetached.current &&
-					hide({
-						strategy: "referenceHidden",
-						...this.detectOverflowOptions,
-						// without an explicit boundary, also check the anchor's scroll containers
-						boundary: this.hasExplicitBoundaries ? this.#boundary : "clippingAncestors",
-					}),
+					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
+				// without an explicit boundary, also hide when the anchor is clipped by its scroll
+				// containers. `collisionPadding` is meant for the viewport, so it isn't applied here.
+				this.opts.hideWhenDetached.current &&
+					!this.hasExplicitBoundaries && {
+						...hide({ strategy: "referenceHidden", boundary: "clippingAncestors" }),
+						name: "hideClipping",
+					},
 			].filter(Boolean) as Middleware[]
 	);
 	floating: UseFloatingReturn;
@@ -193,7 +195,8 @@ export class FloatingContentState {
 					"--bits-floating-anchor-width": `${this.#anchorWidth}px`,
 					"--bits-floating-anchor-height": `${this.#anchorHeight}px`,
 					// hide the content if using the hide middleware and should be hidden
-					...(this.floating.middlewareData.hide?.referenceHidden && {
+					...((this.floating.middlewareData.hide?.referenceHidden ||
+						this.floating.middlewareData.hideClipping?.referenceHidden) && {
 						visibility: "hidden",
 						"pointer-events": "none",
 					}),
