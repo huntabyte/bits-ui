@@ -172,7 +172,8 @@ export class PinInputRootState {
 			};
 			updateRootHeight();
 
-			const resizeObserver = new ResizeObserver(updateRootHeight);
+			const win = this.domContext.getWindow();
+			const resizeObserver = new win.ResizeObserver(updateRootHeight);
 			resizeObserver.observe(input);
 
 			return () => {
