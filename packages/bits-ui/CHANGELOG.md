@@ -1,5 +1,21 @@
 # bits-ui
 
+## 2.20.5
+
+### Patch Changes
+
+- fix: `hideWhenDetached` no longer hides content when `collisionPadding` overlaps the trigger's scroll container but the trigger is still visible in the viewport ([#2278](https://github.com/huntabyte/bits-ui/pull/2278))
+
+- fix: render (or start exiting) content when `open` changes in the same flush the component mounts in ([#2274](https://github.com/huntabyte/bits-ui/pull/2274))
+
+- fix(Tooltip): don't read trigger props when the trigger's ref detaches during teardown ([#2273](https://github.com/huntabyte/bits-ui/pull/2273))
+
+- fix: observe element resizes with the element's own window's `ResizeObserver`, so components rendered into another window (an iframe or Document Picture-in-Picture) measure correctly, and don't measure mid-render when a second subscriber attaches to an already-observed element ([#2276](https://github.com/huntabyte/bits-ui/pull/2276))
+
+- perf(ScrollArea): measure `type="auto"` overflow inside the resize observer report instead of the next animation frame, avoiding a forced synchronous layout ([#2272](https://github.com/huntabyte/bits-ui/pull/2272))
+
+- fix(Slider): don't recompute thumb and tick positions on resize when `trackPadding` is set or `thumbPositioning` is `"exact"`, since those paths never measure the DOM ([#2275](https://github.com/huntabyte/bits-ui/pull/2275))
+
 ## 2.20.4
 
 ### Patch Changes
