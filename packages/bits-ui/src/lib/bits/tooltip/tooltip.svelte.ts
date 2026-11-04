@@ -8,19 +8,19 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
-import { isEventTargetWithin } from "$lib/internal/events.js";
+import { isEventTargetWithin } from "#lib/internal/events.js";
 import { Context, watch } from "runed";
-import { isElement, isFocusVisible } from "$lib/internal/is.js";
+import { isElement, isFocusVisible } from "#lib/internal/is.js";
 import {
 	createBitsAttrs,
 	boolToEmptyStrOrUndef,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+} from "#lib/internal/attrs.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
-import { TimeoutFn } from "$lib/internal/timeout-fn.js";
-import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import { TimeoutFn } from "#lib/internal/timeout-fn.js";
+import { SafePolygon } from "#lib/internal/safe-polygon.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 
 export const tooltipAttrs = createBitsAttrs({
 	component: "tooltip",

@@ -5,15 +5,15 @@ import { readFileSync } from "node:fs";
 import path, { resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import prettier from "@prettier/sync";
 import { defineConfig } from "mdsx";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import { getHighlighter } from "shiki";
+import { createHighlighter } from "shiki";
+import { format } from "oxfmt";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
-import { codeBlockPrettierConfig } from "./other/code-block-prettier.js";
+import { codeBlockFormatConfig } from "./other/code-block-format.js";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -43,7 +43,7 @@ const prettyCodeOptions = {
 		),
 	},
 	getHighlighter: (options) =>
-		getHighlighter({
+		createHighlighter({
 			...options,
 			langs: [
 				"plaintext",
@@ -91,7 +91,7 @@ export const mdsxConfig = defineConfig({
  * before they are converted to HTML for syntax highlighting.
  *
  * We do this because sometimes we want to force a line break in code blocks, but
- * prettier removes them, however, we don't want to include the ignore statement
+ * the formatter removes them, however, we don't want to include the ignore statement
  * in the final code block.
  *
  * One caveat is that if you did want to include the ignore statement in the final
@@ -155,6 +155,8 @@ function rehypeHandleMetadata() {
 export function rehypeComponentExample() {
 	return async (tree) => {
 		const nameRegex = /name="([^"]+)"/;
+		/** @type {Promise<void>[]} */
+		const pending = [];
 		visit(tree, (node, index, parent) => {
 			if (node?.type === "raw" && node?.value?.startsWith("<ComponentPreview")) {
 				const currNode = node;
@@ -163,54 +165,64 @@ export function rehypeComponentExample() {
 
 				if (!name) return null;
 
-				try {
-					const sourceCode = getComponentSourceFileContent(name);
-					if (!sourceCode)
-						throw new Error(`Could not find source code for component: ${name}`);
+				if (!index) return;
+				pending.push(
+					getComponentSourceFileContent(name)
+						.then((sourceCode) => {
+							if (!sourceCode)
+								throw new Error(
+									`Could not find source code for component: ${name}`
+								);
 
-					const sourceCodeNode = u("element", {
-						tagName: "pre",
-						properties: {
-							className: ["code"],
-						},
-						children: [
-							u("element", {
-								tagName: "code",
+							const sourceCodeNode = u("element", {
+								tagName: "pre",
 								properties: {
-									className: [`language-svelte`],
+									className: ["code"],
 								},
-								attributes: {},
 								children: [
-									{
-										type: "text",
-										value: sourceCode,
-									},
+									u("element", {
+										tagName: "code",
+										properties: {
+											className: [`language-svelte`],
+										},
+										attributes: {},
+										children: [
+											{
+												type: "text",
+												value: sourceCode,
+											},
+										],
+									}),
 								],
-							}),
-						],
-					});
-					if (!index) return;
-					parent.children.splice(index + 1, 0, sourceCodeNode);
-				} catch (e) {
-					console.error(e);
-				}
+							});
+							parent.children.splice(
+								parent.children.indexOf(currNode) + 1,
+								0,
+								sourceCodeNode
+							);
+						})
+						.catch((e) => console.error(e))
+				);
 			}
 		});
+		await Promise.all(pending);
 	};
 }
 
 function transformComponentSourceContent(src = "") {
-	return src.replaceAll(`import { cn } from "$lib/utils/styles.js"`, `import cn from "clsx"`);
+	return src.replaceAll(`import { cn } from "#lib/utils/styles.js"`, `import cn from "clsx"`);
 }
 
-function getComponentSourceFileContent(src = "") {
+async function getComponentSourceFileContent(src = "") {
 	if (!src) return null;
 
 	// Read the source file.
 	const filePath = path.join(process.cwd(), `./src/lib/components/demos/${src}.svelte`);
-
-	return prettier.format(
+	const { code, errors } = await format(
+		filePath,
 		transformComponentSourceContent(readFileSync(filePath, "utf-8")),
-		codeBlockPrettierConfig
+		codeBlockFormatConfig
 	);
+	if (errors.length) throw new Error(errors.map((e) => e.message).join("\n"));
+	return code;
 }

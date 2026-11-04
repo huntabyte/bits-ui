@@ -11,14 +11,14 @@ import type {
 	BitsPointerEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
+} from "#lib/internal/types.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
 import type {
 	RatingGroupAriaValuetext,
 	RatingGroupItemState as RatingGroupItemStateType,
 } from "./types.js";
-import type { Orientation } from "$lib/shared/index.js";
-import { kbd } from "$lib/internal/kbd.js";
+import type { Orientation } from "#lib/shared/index.js";
+import { kbd } from "#lib/internal/kbd.js";
 
 const ratingGroupAttrs = createBitsAttrs({
 	component: "rating-group",
@@ -28,7 +28,8 @@ const ratingGroupAttrs = createBitsAttrs({
 const RatingGroupRootContext = new Context<RatingGroupRootState>("RatingGroup.Root");
 
 interface RatingGroupRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
@@ -300,7 +301,8 @@ export class RatingGroupRootState {
 }
 
 interface RatingGroupItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			index: number;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 	import OpenInStackblitz from "./open-in-stackblitz.svelte";
 
 	let {
@@ -24,7 +24,7 @@
 
 <div
 	class={cn(
-		"rounded-tl-card rounded-tr-card border-muted ring-transparent! relative mt-6 border-2 bg-zinc-50 dark:bg-neutral-900/50",
+		"relative mt-6 rounded-tl-card rounded-tr-card border-2 border-muted bg-zinc-50 ring-transparent! dark:bg-neutral-900/50",
 		wrapperClass
 	)}
 	data-llm-ignore

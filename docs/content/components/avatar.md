@@ -4,7 +4,7 @@ description: Represents an entity with an image and fallback placeholder.
 ---
 
 <script>
-	import { APISection, ComponentPreview, AvatarDemo, AvatarDemoLinkPreview } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AvatarDemo, AvatarDemoLinkPreview } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -90,7 +90,7 @@ Then use it throughout your application:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import UserAvatar from "$lib/components/UserAvatar.svelte";
+  import UserAvatar from "#lib/components/UserAvatar.svelte";
 
   const users = [
     { handle: "huntabyte", initials: "HJ" },

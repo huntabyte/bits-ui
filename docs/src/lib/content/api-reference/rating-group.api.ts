@@ -97,7 +97,9 @@ export const root = defineComponentApiSchema<RatingGroupRootPropsWithoutHTML>({
 			},
 			children: {
 				definition: RatingGroupRootChildrenSnippetProps,
-				stringDefinition: stringDefinitionFromMarkdown(ratingGroupRootChildrenSnippetPropsRaw),
+				stringDefinition: stringDefinitionFromMarkdown(
+					ratingGroupRootChildrenSnippetPropsRaw
+				),
 			},
 		}),
 	},
@@ -143,7 +145,9 @@ export const item = defineComponentApiSchema<RatingGroupItemPropsWithoutHTML>({
 			},
 			children: {
 				definition: RatingGroupItemChildrenSnippetProps,
-				stringDefinition: stringDefinitionFromMarkdown(ratingGroupItemChildrenSnippetPropsRaw),
+				stringDefinition: stringDefinitionFromMarkdown(
+					ratingGroupItemChildrenSnippetPropsRaw
+				),
 			},
 		}),
 	},

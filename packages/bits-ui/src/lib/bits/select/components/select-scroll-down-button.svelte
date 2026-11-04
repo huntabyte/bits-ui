@@ -2,8 +2,8 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { SelectScrollDownButtonProps } from "../types.js";
 	import { SelectScrollDownButtonState } from "../select.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { Mounted } from "$lib/bits/utilities/index.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { Mounted } from "#lib/bits/utilities/index.js";
 
 	const uid = $props.id();
 

@@ -20,35 +20,35 @@ import {
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
-import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
+import { type Direction, type Orientation, useId } from "#lib/shared/index.js";
 import {
 	createBitsAttrs,
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-} from "$lib/internal/attrs.js";
-import { noop } from "$lib/internal/noop.js";
-import { getTabbableCandidates } from "$lib/internal/focus.js";
+} from "#lib/internal/attrs.js";
+import { noop } from "#lib/internal/noop.js";
+import { getTabbableCandidates } from "#lib/internal/focus.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
 	RefAttachment,
-} from "$lib/internal/types.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { CustomEventDispatcher, isEventTargetWithin } from "$lib/internal/events.js";
-import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
-import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
-import { isElement } from "$lib/internal/is.js";
+} from "#lib/internal/types.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { CustomEventDispatcher, isEventTargetWithin } from "#lib/internal/events.js";
+import { useArrowNavigation } from "#lib/internal/use-arrow-navigation.js";
+import { boxAutoReset } from "#lib/internal/box-auto-reset.svelte.js";
+import { isElement } from "#lib/internal/is.js";
 import type {
 	FocusEventHandler,
 	KeyboardEventHandler,
 	MouseEventHandler,
 	PointerEventHandler,
 } from "svelte/elements";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
-import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
+import { SvelteResizeObserver } from "#lib/internal/svelte-resize-observer.svelte.js";
 
 const navigationMenuAttrs = createBitsAttrs({
 	component: "navigation-menu",

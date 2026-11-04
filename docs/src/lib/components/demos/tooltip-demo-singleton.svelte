@@ -48,13 +48,13 @@
 	<Tooltip.Root tether={boardTether}>
 		{#snippet children({ payload })}
 			<div
-				class="rounded-10px border-border bg-background-alt shadow-mini flex flex-wrap items-center gap-1 border p-1"
+				class="flex flex-wrap items-center gap-1 rounded-10px border border-border bg-background-alt p-1 shadow-mini"
 			>
 				{#each columns as column (column.id)}
 					<Tooltip.Trigger
 						tether={boardTether}
 						payload={column.payload}
-						class="rounded-9px text-foreground/80 hover:bg-muted data-[state=open]:bg-muted inline-flex h-9 items-center px-3 text-sm font-medium transition-colors"
+						class="inline-flex h-9 items-center rounded-9px px-3 text-sm font-medium text-foreground/80 transition-colors hover:bg-muted data-[state=open]:bg-muted"
 					>
 						{column.label}
 					</Tooltip.Trigger>
@@ -64,13 +64,13 @@
 			<Tooltip.Portal>
 				<Tooltip.Content
 					sideOffset={8}
-					class="data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-(--bits-tooltip-content-transform-origin) z-50"
+					class="z-50 origin-(--bits-tooltip-content-transform-origin) data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95"
 				>
 					<div
-						class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden z-0 w-[280px] border p-3"
+						class="z-0 w-[280px] rounded-input border border-dark-10 bg-background p-3 shadow-popover outline-hidden"
 					>
 						<p class="text-sm font-semibold">{payload?.name ?? "Column"}</p>
-						<p class="text-foreground/70 mt-1 text-xs leading-relaxed">
+						<p class="mt-1 text-xs leading-relaxed text-foreground/70">
 							{payload?.description ??
 								"Hover a column to see team workflow guidance."}
 						</p>

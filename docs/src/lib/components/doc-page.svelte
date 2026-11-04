@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 	import type { Component } from "svelte";
 	import Metadata from "./metadata.svelte";
-	import type { TocItem } from "$lib/utils/use-toc.svelte.js";
+	import type { TocItem } from "#lib/utils/use-toc.svelte.js";
 	import Toc from "./toc/toc.svelte";
-	import type { APISchema } from "$lib/content/types.js";
-	import type { DocMetadata } from "$lib/utils/docs.js";
+	import type { APISchema } from "#lib/content/types.js";
+	import type { DocMetadata } from "#lib/utils/docs.js";
 	import DocPageHeader from "./doc-page-header.svelte";
 	import SidebarSponsor from "./sidebar-sponsor.svelte";
 	import DocsPager from "./docs-pager.svelte";
@@ -43,7 +43,7 @@
 
 <div
 	class={cn(
-		"relative flex flex-row-reverse pl-4 pr-4 pt-8 sm:pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
+		"relative flex flex-row-reverse pt-8 pr-4 pl-4 sm:pt-16 md:pl-0 lg:gap-10 xl:grid-cols-[1fr_220px]",
 		page.error ?? "xl:grid"
 	)}
 >

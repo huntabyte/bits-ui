@@ -61,26 +61,26 @@
 </script>
 
 <Menubar.Root
-	class="rounded-10px border-dark-10 bg-background-alt shadow-mini flex h-12 items-center gap-1 border px-[3px]"
+	class="flex h-12 items-center gap-1 rounded-10px border border-dark-10 bg-background-alt px-[3px] shadow-mini"
 >
 	<div class="px-2.5">
 		<Cat class="size-6" />
 	</div>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="rounded-9px data-highlighted:bg-muted data-[state=open]:bg-muted inline-flex h-10 cursor-default items-center justify-center px-3 text-sm font-medium focus-visible:outline-none"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-9px px-3 text-sm font-medium focus-visible:outline-none data-highlighted:bg-muted data-[state=open]:bg-muted"
 		>
 			File
 		</Menubar.Trigger>
 		<Menubar.Portal>
 			<Menubar.Content
-				class="focus-override border-muted bg-background  shadow-popover focus-visible:outline-hidden z-50 w-fit rounded-xl border px-1 py-1.5"
+				class="focus-override z-50 w-fit  rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-hidden"
 				align="start"
 				sideOffset={3}
 			>
 				{#each grids as grid (grid.label)}
 					<Menubar.CheckboxItem
-						class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-3 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+						class="flex h-10 items-center gap-3 rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 						bind:checked={grid.checked}
 					>
 						{#snippet children({ checked })}
@@ -95,12 +95,12 @@
 						{/snippet}
 					</Menubar.CheckboxItem>
 				{/each}
-				<Menubar.Separator class="bg-muted my-1 -ml-1 -mr-1 block h-px" />
+				<Menubar.Separator class="my-1 -mr-1 -ml-1 block h-px bg-muted" />
 				<Menubar.RadioGroup bind:value={selectedView}>
 					{#each views as view, i (view.label + i)}
 						<Menubar.RadioItem
 							value={view.value}
-							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-2 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+							class="flex h-10 items-center gap-2 rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 						>
 							{#snippet children({ checked })}
 								{view.label}
@@ -119,57 +119,57 @@
 
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="data-highlighted:bg-muted data-[state=open]:bg-muted inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium focus-visible:outline-none"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium focus-visible:outline-none data-highlighted:bg-muted data-[state=open]:bg-muted"
 		>
 			Edit
 		</Menubar.Trigger>
 		<Menubar.Portal>
 			<Menubar.Content
-				class="focus-override border-muted bg-background shadow-popover focus-visible:outline-hidden z-50 w-full rounded-xl border px-1 py-1.5"
+				class="focus-override z-50 w-full rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-hidden"
 				align="start"
 				sideOffset={3}
 			>
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Undo
 				</Menubar.Item>
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 min-w-[130px] select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 min-w-[130px] items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Redo
 				</Menubar.Item>
 				<Menubar.Separator />
 				<Menubar.Sub>
 					<Menubar.SubTrigger
-						class="rounded-button data-highlighted:bg-muted data-[state=open]:bg-muted flex h-10 select-none items-center gap-3 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+						class="flex h-10 items-center gap-3 rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted data-[state=open]:bg-muted"
 					>
 						Find
 						<div class="ml-auto flex items-center">
-							<CaretRight class="text-foreground-alt h-4 w-4" />
+							<CaretRight class="h-4 w-4 text-foreground-alt" />
 						</div>
 					</Menubar.SubTrigger>
 					<Menubar.SubContent
-						class="focus-override border-muted bg-background shadow-popover focus-visible:outline-hidden z-50 w-full max-w-[209px] rounded-xl border px-1 py-1.5"
+						class="focus-override z-50 w-full max-w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-hidden"
 					>
 						<Menubar.Item
-							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+							class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 						>
 							Search the web
 						</Menubar.Item>
 						<Menubar.Separator />
 						<Menubar.Item
-							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+							class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 						>
 							Find...
 						</Menubar.Item>
 						<Menubar.Item
-							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+							class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 						>
 							Find Next
 						</Menubar.Item>
 						<Menubar.Item
-							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+							class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 						>
 							Find Previous
 						</Menubar.Item>
@@ -177,17 +177,17 @@
 				</Menubar.Sub>
 				<Menubar.Separator />
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Cut
 				</Menubar.Item>
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Copy
 				</Menubar.Item>
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Paste
 				</Menubar.Item>
@@ -196,19 +196,19 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="rounded-9px data-highlighted:bg-muted data-[state=open]:bg-muted inline-flex h-10 cursor-default items-center justify-center px-3 text-sm font-medium focus-visible:outline-none"
+			class="inline-flex h-10 cursor-default items-center justify-center rounded-9px px-3 text-sm font-medium focus-visible:outline-none data-highlighted:bg-muted data-[state=open]:bg-muted"
 		>
 			View
 		</Menubar.Trigger>
 		<Menubar.Portal>
 			<Menubar.Content
-				class="focus-override border-muted bg-background shadow-popover focus-visible:outline-hidden z-50 w-full max-w-[220px] rounded-xl border px-1 py-1.5"
+				class="focus-override z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-hidden"
 				align="start"
 				sideOffset={3}
 			>
 				{#each showConfigs as config, i (config.label + i)}
 					<Menubar.CheckboxItem
-						class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center gap-3 py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+						class="flex h-10 items-center gap-3 rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 						bind:checked={config.checked}
 					>
 						{#snippet children({ checked })}
@@ -225,24 +225,24 @@
 				{/each}
 				<Menubar.Separator />
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Reload
 				</Menubar.Item>
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Force Reload
 				</Menubar.Item>
 				<Menubar.Separator />
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Toggle Fullscreen
 				</Menubar.Item>
 				<Menubar.Separator />
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 				>
 					Hide Sidebar
 				</Menubar.Item>
@@ -251,20 +251,20 @@
 	</Menubar.Menu>
 	<Menubar.Menu>
 		<Menubar.Trigger
-			class="data-highlighted:bg-muted data-[state=open]:bg-muted mr-[20px] inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium focus-visible:outline-none"
+			class="mr-[20px] inline-flex h-10 cursor-default items-center justify-center rounded-[9px] px-3 text-sm font-medium focus-visible:outline-none data-highlighted:bg-muted data-[state=open]:bg-muted"
 		>
 			Profiles
 		</Menubar.Trigger>
 		<Menubar.Portal>
 			<Menubar.Content
-				class="focus-override border-muted bg-background shadow-popover focus-visible:outline-hidden z-50 w-full max-w-[220px] rounded-xl border px-1 py-1.5"
+				class="focus-override z-50 w-full max-w-[220px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover focus-visible:outline-hidden"
 				align="start"
 				sideOffset={3}
 			>
 				<Menubar.RadioGroup bind:value={selectedProfile}>
 					{#each profiles as profile, i (profile.label + i)}
 						<Menubar.RadioItem
-							class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+							class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 							value={profile.value}
 						>
 							{#snippet children({ checked })}
@@ -280,12 +280,12 @@
 				</Menubar.RadioGroup>
 				<Menubar.Separator />
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 					>Edit...</Menubar.Item
 				>
 				<Menubar.Separator />
 				<Menubar.Item
-					class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 					>Add Profile...</Menubar.Item
 				>
 			</Menubar.Content>
@@ -295,20 +295,20 @@
 
 {#snippet SwitchOn()}
 	<div
-		class="bg-dark-10 peer inline-flex h-[15.6px] min-h-[15.6px] w-[26px] shrink-0 items-center rounded-full px-[1.5px]"
+		class="peer inline-flex h-[15.6px] min-h-[15.6px] w-[26px] shrink-0 items-center rounded-full bg-dark-10 px-[1.5px]"
 	>
 		<span
-			class="bg-background dark:border-border-input dark:shadow-mini pointer-events-none block size-[13px] shrink-0 translate-x-[10px] rounded-full"
+			class="pointer-events-none block size-[13px] shrink-0 translate-x-[10px] rounded-full bg-background dark:border-border-input dark:shadow-mini"
 		></span>
 	</div>
 {/snippet}
 
 {#snippet SwitchOff()}
 	<div
-		class="bg-dark-10 shadow-mini-inset peer inline-flex h-[15.6px] w-[26px] shrink-0 items-center rounded-full px-[3px] transition-colors"
+		class="peer inline-flex h-[15.6px] w-[26px] shrink-0 items-center rounded-full bg-dark-10 px-[3px] shadow-mini-inset transition-colors"
 	>
 		<span
-			class="bg-background shadow-mini dark:border-border-input dark:shadow-mini pointer-events-none block size-[13px] shrink-0 translate-x-0 rounded-full transition-transform dark:border"
+			class="pointer-events-none block size-[13px] shrink-0 translate-x-0 rounded-full bg-background shadow-mini transition-transform dark:border dark:border-border-input dark:shadow-mini"
 		></span>
 	</div>
 {/snippet}

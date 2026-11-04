@@ -33,8 +33,8 @@ import {
 } from "./extended-types/floating/index.js";
 import { PortalToProp } from "./extended-types/portal/index.js";
 
-import type { PropSchema, PropTypeComplex } from "$lib/content/types.js";
-import * as C from "$lib/content/constants.js";
+import type { PropSchema, PropTypeComplex } from "#lib/content/types.js";
+import * as C from "#lib/content/constants.js";
 import {
 	defineBooleanProp,
 	defineComponentPropSchema,

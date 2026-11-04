@@ -74,7 +74,7 @@
 							{disabled}
 							{value}
 							{label}
-							class="data-highlighted:bg-red-500 data-highlighted:text-white data-selected:bg-blue-500 data-selected:text-white p-2"
+							class="p-2 data-highlighted:bg-red-500 data-highlighted:text-white data-selected:bg-blue-500 data-selected:text-white"
 						>
 							{#snippet children({ selected, highlighted: _highlighted })}
 								{#if selected}

@@ -25,19 +25,19 @@ import {
 	getTickLabelStyles,
 	getThumbLabelStyles,
 } from "./helpers.js";
-import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { isElementOrSVGElement } from "$lib/internal/is.js";
-import { isValidIndex } from "$lib/internal/arrays.js";
-import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { isElementOrSVGElement } from "#lib/internal/is.js";
+import { isValidIndex } from "#lib/internal/arrays.js";
+import { SvelteResizeObserver } from "#lib/internal/svelte-resize-observer.svelte.js";
 import type {
 	BitsKeyboardEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
-import { linearScale } from "$lib/internal/math.js";
+} from "#lib/internal/types.js";
+import type { Direction, Orientation, SliderThumbPositioning } from "#lib/shared/index.js";
+import { linearScale } from "#lib/internal/math.js";
 import type { SliderLabelPosition, SliderRootSnippetProps } from "./types.js";
 
 const sliderAttrs = createBitsAttrs({
@@ -48,7 +48,8 @@ const sliderAttrs = createBitsAttrs({
 export const SliderRootContext = new Context<SliderRoot>("Slider.Root");
 
 interface SliderBaseRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			orientation: Orientation;
@@ -176,7 +177,8 @@ abstract class SliderBaseRootState {
 }
 
 interface SliderSingleRootStateOpts
-	extends SliderBaseRootStateOpts,
+	extends
+		SliderBaseRootStateOpts,
 		ReadableBoxedValues<{
 			onValueCommit: OnChangeFn<number>;
 		}>,
@@ -395,7 +397,8 @@ class SliderSingleRootState extends SliderBaseRootState {
 }
 
 interface SliderMultiRootStateOpts
-	extends SliderBaseRootStateOpts,
+	extends
+		SliderBaseRootStateOpts,
 		ReadableBoxedValues<{
 			onValueCommit: OnChangeFn<number[]>;
 		}>,
@@ -837,7 +840,8 @@ export class SliderRangeState {
 }
 
 interface SliderThumbStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 			disabled: boolean;
@@ -964,7 +968,8 @@ export class SliderThumbState {
 }
 
 interface SliderTickStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 		}> {}
@@ -994,7 +999,8 @@ export class SliderTickState {
 }
 
 interface SliderTickLabelStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 			position?: SliderLabelPosition;
@@ -1039,7 +1045,8 @@ export class SliderTickLabelState {
 }
 
 interface SliderThumbLabelStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 			position?: SliderLabelPosition;

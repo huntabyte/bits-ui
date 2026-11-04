@@ -5,7 +5,7 @@ description: An alternative to the native `<input type="date">` element.
 
 <script>
 	import { CalendarDateTime, CalendarDate, now, getLocalTimeZone, parseDate, today } from "@internationalized/date";
-	import { APISection, ComponentPreview, DateFieldDemo, DateFieldDemoCustom, DemoContainer, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DateFieldDemo, DateFieldDemoCustom, DemoContainer, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -107,7 +107,7 @@ By default, the `placeholder` will be set to the closed alowed (by `maxValue`, `
 
 ```svelte
 <script lang="ts">
-  import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "#lib/components/MyDateField.svelte";
   import { CalendarDateTime } from "@internationalized/date";
 </script>
 
@@ -122,7 +122,7 @@ If we're collecting a date from the user where we want the timezone as well, we 
 
 ```svelte
 <script lang="ts">
-  import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "#lib/components/MyDateField.svelte";
   import { now, getLocalTimeZone } from "@internationalized/date";
 </script>
 
@@ -268,7 +268,7 @@ You can set a minimum value for the `DateField.Root` component by using the `min
 
 ```svelte
 <script lang="ts">
-  import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "#lib/components/MyDateField.svelte";
   import { today, getLocalTimeZone } from "@internationalized/date";
 
   const todayDate = today(getLocalTimeZone());
@@ -290,7 +290,7 @@ You can set a maximum value for the `DateField.Root` component by using the `max
 
 ```svelte
 <script lang="ts">
-  import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "#lib/components/MyDateField.svelte";
   import { today, getLocalTimeZone } from "@internationalized/date";
 
   const todayDate = today(getLocalTimeZone());
@@ -314,7 +314,7 @@ The strings are then passed to the `onInvalid` callback, which you can use to di
 
 ```svelte
 <script lang="ts">
-  import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "#lib/components/MyDateField.svelte";
   import { CalendarDate, type DateValue } from "@internationalized/date";
 
   const value = new CalendarDate(2024, 8, 2);
@@ -384,7 +384,7 @@ The `granularity` prop sets the granularity of the date field, which determines 
 
 ```svelte
 <script lang="ts">
-  import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "#lib/components/MyDateField.svelte";
   import { CalendarDateTime } from "@internationalized/date";
 
   const value = new CalendarDateTime(2024, 8, 2, 12, 30);
@@ -405,7 +405,7 @@ You can use the `locale` prop to set the locale of the date field. This will aff
 
 ```svelte
 <script lang="ts">
-  import MyDateField from "$lib/components/MyDateField.svelte";
+  import MyDateField from "#lib/components/MyDateField.svelte";
 </script>
 
 <MyDateField locale="de" />

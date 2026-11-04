@@ -29,10 +29,10 @@
 			{value}
 			{min}
 			{max}
-			class="bg-dark-10 shadow-mini-inset relative h-[15px] overflow-hidden rounded-full"
+			class="relative h-[15px] overflow-hidden rounded-full bg-dark-10 shadow-mini-inset"
 		>
 			<div
-				class="bg-foreground shadow-mini-inset h-full w-full flex-1 rounded-full transition-all duration-1000 ease-in-out"
+				class="h-full w-full flex-1 rounded-full bg-foreground shadow-mini-inset transition-all duration-1000 ease-in-out"
 				style={`transform: translateX(-${100 - (100 * (value ?? 0)) / max}%)`}
 			></div>
 		</Progress.Root>

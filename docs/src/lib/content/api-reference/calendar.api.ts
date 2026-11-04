@@ -516,11 +516,15 @@ export function createCalendarMonthSelectSchema(isRange: boolean) {
 				elType: "HTMLSelectElement",
 				child: {
 					definition: CalendarMonthSelectChildSnippetProps,
-					stringDefinition: stringDefinitionFromMarkdown(calendarMonthSelectChildSnippetPropsRaw),
+					stringDefinition: stringDefinitionFromMarkdown(
+						calendarMonthSelectChildSnippetPropsRaw
+					),
 				},
 				children: {
 					definition: CalendarMonthSelectChildrenSnippetProps,
-					stringDefinition: stringDefinitionFromMarkdown(calendarMonthSelectChildrenSnippetPropsRaw),
+					stringDefinition: stringDefinitionFromMarkdown(
+						calendarMonthSelectChildrenSnippetPropsRaw
+					),
 				},
 			}),
 		},
@@ -561,11 +565,15 @@ export function createCalendarYearSelectSchema(isRange: boolean) {
 				elType: "HTMLSelectElement",
 				child: {
 					definition: CalendarYearSelectChildSnippetProps,
-					stringDefinition: stringDefinitionFromMarkdown(calendarYearSelectChildSnippetPropsRaw),
+					stringDefinition: stringDefinitionFromMarkdown(
+						calendarYearSelectChildSnippetPropsRaw
+					),
 				},
 				children: {
 					definition: CalendarYearSelectChildrenSnippetProps,
-					stringDefinition: stringDefinitionFromMarkdown(calendarYearSelectChildrenSnippetPropsRaw),
+					stringDefinition: stringDefinitionFromMarkdown(
+						calendarYearSelectChildrenSnippetPropsRaw
+					),
 				},
 			}),
 		},

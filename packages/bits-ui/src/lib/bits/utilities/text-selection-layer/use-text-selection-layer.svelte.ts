@@ -8,19 +8,18 @@ import {
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { PointerHandler, TextSelectionLayerImplProps } from "./types.js";
-import { noop } from "$lib/internal/noop.js";
-import { isHTMLElement } from "$lib/internal/is.js";
+import { noop } from "#lib/internal/noop.js";
+import { isHTMLElement } from "#lib/internal/is.js";
 
 const noopPointer: PointerHandler = () => {};
 
-interface TextSelectionLayerStateOpts
-	extends ReadableBoxedValues<
-		Required<
-			Omit<TextSelectionLayerImplProps, "children" | "preventOverflowTextSelection" | "ref">
-		> & {
-			ref: HTMLElement | null;
-		}
-	> {}
+interface TextSelectionLayerStateOpts extends ReadableBoxedValues<
+	Required<
+		Omit<TextSelectionLayerImplProps, "children" | "preventOverflowTextSelection" | "ref">
+	> & {
+		ref: HTMLElement | null;
+	}
+> {}
 
 globalThis.bitsTextSelectionLayers ??= new Map<TextSelectionLayerState, ReadableBox<boolean>>();
 

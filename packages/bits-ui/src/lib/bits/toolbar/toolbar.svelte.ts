@@ -11,16 +11,16 @@ import {
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	boolToTrueOrUndef,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import type { Orientation } from "$lib/shared/index.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import type { Orientation } from "#lib/shared/index.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+} from "#lib/internal/types.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 
 export const toolbarAttrs = createBitsAttrs({
 	component: "toolbar",

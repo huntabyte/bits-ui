@@ -1,5 +1,5 @@
-import { utilityDocs } from "$content/index.js";
-import { getUtilityDoc } from "$lib/utils/docs.js";
+import { utilityDocs } from "#content/index.js";
+import { getUtilityDoc } from "#lib/utils/docs.js";
 import type { EntryGenerator } from "./$types.js";
 
 export const prerender = true;

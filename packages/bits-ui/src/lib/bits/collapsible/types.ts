@@ -3,11 +3,11 @@ import type {
 	WithChild,
 	WithChildNoChildrenSnippetProps,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 
 export type CollapsibleRootPropsWithoutHTML = WithChild<{
 	/**

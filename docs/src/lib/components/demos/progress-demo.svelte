@@ -24,10 +24,10 @@
 		aria-labelledby={labelId}
 		value={Math.round(tween.current)}
 		max={100}
-		class="bg-dark-10 shadow-mini-inset relative h-[15px] w-full overflow-hidden rounded-full"
+		class="relative h-[15px] w-full overflow-hidden rounded-full bg-dark-10 shadow-mini-inset"
 	>
 		<div
-			class="bg-foreground shadow-mini-inset h-full w-full flex-1 rounded-full"
+			class="h-full w-full flex-1 rounded-full bg-foreground shadow-mini-inset"
 			style={`transform: translateX(-${100 - (100 * (tween.current ?? 0)) / 100}%)`}
 		></div>
 	</Progress.Root>

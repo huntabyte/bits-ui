@@ -4,7 +4,7 @@ description: A modal window for displaying content or requesting user input.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -120,7 +120,7 @@ The following example demonstrates how to create a versatile, reusable Dialog co
 
 ```svelte
 <script lang="ts">
-  import MyDialog from "$lib/components/MyDialog.svelte";
+  import MyDialog from "#lib/components/MyDialog.svelte";
 </script>
 
 <MyDialog buttonText="Open Dialog">
@@ -140,7 +140,7 @@ The following example demonstrates how to create a versatile, reusable Dialog co
 
 ```svelte
 <script lang="ts">
-  import MyDialog from "$lib/components/MyDialog.svelte";
+  import MyDialog from "#lib/components/MyDialog.svelte";
 </script>
 
 {#snippet title()}
@@ -544,7 +544,7 @@ You can then use the `MyDialogOverlay` component alongside the other `Dialog` pr
 ```svelte
 <script lang="ts">
   import { Dialog } from "bits-ui";
-  import { MyDialogOverlay } from "$lib/components";
+  import { MyDialogOverlay } from "#lib/components/index.js";
 </script>
 
 <Dialog.Root>

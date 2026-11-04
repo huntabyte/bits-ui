@@ -6,15 +6,15 @@ import type { PortalProps } from "../utilities/portal/types.js";
 import type {
 	BitsPrimitiveAnchorAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 import type {
 	OnChangeFn,
 	WithChild,
 	WithChildNoChildrenSnippetProps,
 	WithChildren,
 	Without,
-} from "$lib/internal/types.js";
-import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+} from "#lib/internal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "#lib/shared/types.js";
 
 export type LinkPreviewRootPropsWithoutHTML = WithChildren<{
 	/**

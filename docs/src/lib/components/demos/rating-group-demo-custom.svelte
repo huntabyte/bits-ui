@@ -11,7 +11,7 @@
 		{#each items as item (item.index)}
 			<RatingGroup.Item
 				index={item.index}
-				class="text-foreground data-[state=inactive]:text-muted-foreground data-disabled:cursor-not-allowed size-10 cursor-pointer transition-colors disabled:opacity-50 data-[readonly]:cursor-default md:size-8"
+				class="size-10 cursor-pointer text-foreground transition-colors disabled:opacity-50 data-disabled:cursor-not-allowed data-[readonly]:cursor-default data-[state=inactive]:text-muted-foreground md:size-8"
 			>
 				<div class="relative size-full">
 					<Star class="size-full fill-current" weight="fill" />

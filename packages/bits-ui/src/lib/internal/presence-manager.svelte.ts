@@ -3,11 +3,10 @@ import { onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
 import { AnimationsComplete } from "./animations-complete.js";
 import type { TransitionState } from "./attrs.js";
 
-interface PresenceManagerOpts
-	extends ReadableBoxedValues<{
-		open: boolean;
-		ref: HTMLElement | null;
-	}> {
+interface PresenceManagerOpts extends ReadableBoxedValues<{
+	open: boolean;
+	ref: HTMLElement | null;
+}> {
 	onComplete?: () => void;
 	enabled?: boolean;
 	shouldSkipExitAnimation?: () => boolean;

@@ -23,7 +23,6 @@ const stateDataAttr = defineEnumDataAttr({
 	value: SwitchCheckedDataAttr,
 });
 
-
 const root = defineComponentApiSchema<SwitchRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root switch component used to set and manage the state of the switch.",

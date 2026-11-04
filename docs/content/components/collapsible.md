@@ -4,7 +4,7 @@ description: Conceals or reveals content sections.
 ---
 
 <script>
-	import { APISection, ComponentPreview, CollapsibleDemo, CollapsibleDemoTransitions, CollapsibleHiddenUntilFoundDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, CollapsibleDemo, CollapsibleDemoTransitions, CollapsibleHiddenUntilFoundDemo, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -84,7 +84,7 @@ You can then use the `MyCollapsible` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyCollapsible from "$lib/components/MyCollapsible.svelte";
+  import MyCollapsible from "#lib/components/MyCollapsible.svelte";
 </script>
 
 <MyCollapsible buttonText="Open Collapsible"
@@ -208,7 +208,7 @@ You can then use the `MyCollapsibleContent` component alongside the other `Colla
 ```svelte
 <script lang="ts">
   import { Collapsible } from "bits-ui";
-  import { MyCollapsibleContent } from "$lib/components";
+  import { MyCollapsibleContent } from "#lib/components/index.js";
 </script>
 
 <Collapsible.Root>

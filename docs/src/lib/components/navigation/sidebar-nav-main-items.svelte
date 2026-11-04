@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import type { SidebarNavItem } from "$lib/config/index.js";
-	import { cn } from "$lib/utils/styles.js";
+	import type { SidebarNavItem } from "#lib/config/index.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let { items = [] }: { items: SidebarNavItem[] } = $props();
 </script>
@@ -14,10 +14,10 @@
 				<a
 					href={item.href}
 					class={cn(
-						"text-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2",
+						"group flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden",
 						page.url.pathname === item.href
 							? "bg-muted"
-							: "hover:bg-muted/50 bg-transparent"
+							: "bg-transparent hover:bg-muted/50"
 					)}
 					target={item.external ? "_blank" : ""}
 					rel={item.external ? "noreferrer" : ""}
@@ -26,7 +26,7 @@
 					{item.title}
 					{#if item.label}
 						<span
-							class="rounded-[4px] bg-[#FCDAFE] px-1.5 py-1 text-xs font-semibold leading-none text-[#2A266B] no-underline group-hover:no-underline"
+							class="rounded-[4px] bg-[#FCDAFE] px-1.5 py-1 text-xs leading-none font-semibold text-[#2A266B] no-underline group-hover:no-underline"
 						>
 							{item.label}
 						</span>

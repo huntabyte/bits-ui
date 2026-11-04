@@ -10,7 +10,7 @@ import Sticker from "phosphor-svelte/lib/Sticker";
 import FigmaLogo from "phosphor-svelte/lib/FigmaLogo";
 import Swap from "phosphor-svelte/lib/Swap";
 import Robot from "phosphor-svelte/lib/Robot";
-import { componentDocs, typeHelperDocs, utilityDocs } from "$content/index.js";
+import { componentDocs, typeHelperDocs, utilityDocs } from "#content/index.js";
 
 export type NavItem = {
 	title: string;

@@ -8,20 +8,20 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
-import type { Direction } from "$lib/shared/index.js";
+import type { Direction } from "#lib/shared/index.js";
 import {
 	createBitsAttrs,
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { wrapArray } from "$lib/internal/arrays.js";
-import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { wrapArray } from "#lib/internal/arrays.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
 import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 
 const menubarAttrs = createBitsAttrs({
 	component: "menubar",

@@ -6,12 +6,12 @@ import type {
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
-import { getElemDirection } from "$lib/internal/locale.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { getDirectionalKeys } from "$lib/internal/get-directional-keys.js";
-import { type Orientation, useId } from "$lib/shared/index.js";
+} from "#lib/internal/types.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
+import { getElemDirection } from "#lib/internal/locale.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { getDirectionalKeys } from "#lib/internal/get-directional-keys.js";
+import { type Orientation, useId } from "#lib/shared/index.js";
 
 const paginationAttrs = createBitsAttrs({
 	component: "pagination",
@@ -21,7 +21,8 @@ const paginationAttrs = createBitsAttrs({
 const PaginationRootContext = new Context<PaginationRootState>("Pagination.Root");
 
 interface PaginationRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			count: number;
 			perPage: number;
@@ -105,7 +106,8 @@ export class PaginationRootState {
 }
 
 interface PaginationPageStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			page: Page;
 			disabled: boolean;
@@ -167,7 +169,8 @@ export class PaginationPageState {
 //
 
 interface PaginationButtonStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {

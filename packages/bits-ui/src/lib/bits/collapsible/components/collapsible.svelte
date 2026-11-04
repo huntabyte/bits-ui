@@ -2,8 +2,8 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CollapsibleRootProps } from "../types.js";
 	import { CollapsibleRootState } from "../collapsible.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 

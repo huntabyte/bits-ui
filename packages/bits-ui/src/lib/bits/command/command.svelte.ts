@@ -17,12 +17,12 @@ import type {
 	BitsPointerEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { getFirstNonCommentChild } from "$lib/internal/dom.js";
+} from "#lib/internal/types.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { getFirstNonCommentChild } from "#lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
-import { cssEscape } from "$lib/internal/css-escape.js";
+import { cssEscape } from "#lib/internal/css-escape.js";
 
 const COMMAND_VALUE_ATTR = "data-value";
 

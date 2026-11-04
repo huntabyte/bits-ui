@@ -12,7 +12,7 @@ import pinInputCellCellPropRaw from "./extended-types/pin-input/pin-input-cell-c
 import pinInputRootChildSnippetPropsRaw from "./extended-types/pin-input/pin-input-root-child-snippet-props.md?raw";
 import pinInputRootChildrenSnippetPropsRaw from "./extended-types/pin-input/pin-input-root-children-snippet-props.md?raw";
 import { OnStringValueChangeProp } from "./extended-types/shared/index.js";
-import { withChildProps } from "$lib/content/api-reference/shared.js";
+import { withChildProps } from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,

@@ -2,9 +2,9 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuTriggerProps } from "../types.js";
 	import { NavigationMenuTriggerState } from "../navigation-menu.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import VisuallyHidden from "$lib/bits/utilities/visually-hidden/visually-hidden.svelte";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import VisuallyHidden from "#lib/bits/utilities/visually-hidden/visually-hidden.svelte";
+	import Mounted from "#lib/bits/utilities/mounted.svelte";
 
 	const uid = $props.id();
 

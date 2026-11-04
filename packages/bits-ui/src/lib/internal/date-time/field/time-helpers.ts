@@ -1,4 +1,4 @@
-import { isBrowser, isNull } from "$lib/internal/is.js";
+import { isBrowser, isNull } from "#lib/internal/is.js";
 import type {
 	EditableTimeSegmentPart,
 	HourCycle,
@@ -7,14 +7,14 @@ import type {
 	TimeSegmentStateMap,
 	TimeSegmentValueObj,
 	TimeValue,
-} from "$lib/shared/date/types.js";
+} from "#lib/shared/date/types.js";
 import { CalendarDateTime, Time, ZonedDateTime } from "@internationalized/date";
 import type { TimeFormatter } from "../formatter.js";
 import { ALL_TIME_SEGMENT_PARTS, EDITABLE_TIME_SEGMENT_PARTS } from "./parts.js";
 import { getTimeSegments } from "./segments.js";
 import type { TimeSegmentPart } from "./types.js";
 import { styleToString } from "svelte-toolbelt";
-import { useId } from "$lib/internal/use-id.js";
+import { useId } from "#lib/internal/use-id.js";
 import { getPlaceholder } from "../placeholders.js";
 import { isZonedDateTime } from "../utils.js";
 import { getDefaultHourCycle } from "./helpers.js";

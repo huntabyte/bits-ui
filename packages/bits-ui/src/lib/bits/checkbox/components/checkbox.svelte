@@ -4,7 +4,7 @@
 	import type { CheckboxRootProps } from "../types.js";
 	import { CheckboxGroupContext, CheckboxRootState } from "../checkbox.svelte.js";
 	import CheckboxInput from "./checkbox-input.svelte";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 	import { watch } from "runed";
 
 	const uid = $props.id();

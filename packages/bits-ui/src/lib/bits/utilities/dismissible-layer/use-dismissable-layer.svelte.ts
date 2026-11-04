@@ -16,16 +16,16 @@ import {
 	getEventTargetClosest,
 	isEventTargetWithin,
 	type EventCallback,
-} from "$lib/internal/events.js";
-import { debounce } from "$lib/internal/debounce.js";
-import { noop } from "$lib/internal/noop.js";
-import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
-import { isElementOrSVGElement } from "$lib/internal/is.js";
-import { isClickTrulyOutside } from "$lib/internal/dom.js";
+} from "#lib/internal/events.js";
+import { debounce } from "#lib/internal/debounce.js";
+import { noop } from "#lib/internal/noop.js";
+import { getOwnerDocument, isOrContainsTarget } from "#lib/internal/elements.js";
+import { isElementOrSVGElement } from "#lib/internal/is.js";
+import { isClickTrulyOutside } from "#lib/internal/dom.js";
 import {
 	CONTEXT_MENU_CONTENT_ATTR,
 	CONTEXT_MENU_TRIGGER_ATTR,
-} from "$lib/bits/menu/context-menu-attributes.js";
+} from "#lib/bits/menu/context-menu-attributes.js";
 
 globalThis.bitsDismissableLayers ??= new Map<
 	DismissibleLayerState,
