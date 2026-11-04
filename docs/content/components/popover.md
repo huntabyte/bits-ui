@@ -4,7 +4,7 @@ description: Displays rich content in a floating panel anchored to a trigger ele
 ---
 
 <script>
-	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoHover, PopoverDemoTransition, PopoverDemoOverlay } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoHover, PopoverDemoTransition, PopoverDemoOverlay } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

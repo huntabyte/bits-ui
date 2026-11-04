@@ -26,11 +26,11 @@ import {
 	toDate,
 } from "./utils.js";
 import type { Formatter } from "./formatter.js";
-import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { chunk, isValidIndex } from "$lib/internal/arrays.js";
-import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
-import { kbd } from "$lib/internal/kbd.js";
-import type { DateMatcher, Month } from "$lib/shared/index.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { chunk, isValidIndex } from "#lib/internal/arrays.js";
+import { isBrowser, isHTMLElement } from "#lib/internal/is.js";
+import { kbd } from "#lib/internal/kbd.js";
+import type { DateMatcher, Month } from "#lib/shared/index.js";
 import { watch } from "runed";
 
 /**

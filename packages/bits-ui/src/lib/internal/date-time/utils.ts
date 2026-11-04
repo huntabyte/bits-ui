@@ -16,7 +16,7 @@ import type {
 	Granularity,
 	TimeGranularity,
 	TimeValue,
-} from "$lib/shared/date/types.js";
+} from "#lib/shared/date/types.js";
 
 type GetDefaultDateProps = {
 	defaultValue?: DateValue | DateValue[] | undefined;

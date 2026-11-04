@@ -5,10 +5,10 @@
 	import { type DateValue } from "@internationalized/date";
 	import { CalendarRootState } from "../calendar.svelte.js";
 	import type { CalendarRootProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { useId } from "#lib/internal/use-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { getDefaultDate } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		child,

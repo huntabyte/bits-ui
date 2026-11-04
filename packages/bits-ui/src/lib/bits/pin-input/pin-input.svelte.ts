@@ -17,8 +17,8 @@ import type {
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { createBitsAttrs, boolToTrueOrUndef } from "$lib/internal/attrs.js";
+} from "#lib/internal/types.js";
+import { createBitsAttrs, boolToTrueOrUndef } from "#lib/internal/attrs.js";
 import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
@@ -31,7 +31,8 @@ const pinInputAttrs = createBitsAttrs({
 });
 
 interface PinInputRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: string;
 			inputRef: HTMLInputElement | null;
@@ -530,7 +531,8 @@ export class PinInputRootState {
 }
 
 interface PinInputCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			cell: PinInputCell;
 		}> {}

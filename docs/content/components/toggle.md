@@ -4,7 +4,7 @@ description: A toggle control that allows users to switch between two states.
 ---
 
 <script>
-	import { APISection, ComponentPreview, ToggleDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ToggleDemo } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

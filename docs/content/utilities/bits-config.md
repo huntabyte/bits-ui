@@ -4,7 +4,7 @@ description: A global context provider for configuring default props across all 
 ---
 
 <script>
-	import { APISection } from '$lib/components/index.js'
+	import { APISection } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -102,7 +102,7 @@ Set app-wide defaults at the root layout:
 ```svelte title="+layout.svelte"
 <script lang="ts">
   import { BitsConfig } from "bits-ui";
-  import { locale } from "$lib/states/i18n.svelte.js";
+  import { locale } from "#lib/states/i18n.svelte.js";
 
   let { children } = $props();
 </script>
@@ -119,7 +119,7 @@ Different portal targets for distinct UI regions:
 ```svelte
 <script lang="ts">
   import { BitsConfig } from "bits-ui";
-  import { MyHeader, MySidebar, MyContent } from "$lib/components";
+  import { MyHeader, MySidebar, MyContent } from "#lib/components/index.js";
 </script>
 
 <div id="header-portals"></div>

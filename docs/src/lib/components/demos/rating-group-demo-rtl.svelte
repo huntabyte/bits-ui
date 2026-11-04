@@ -8,7 +8,7 @@
 <div class="flex flex-col gap-4" dir="rtl">
 	<div class="flex flex-col gap-2">
 		<h3 class="text-sm font-medium">تقييم بالنجوم (RTL)</h3>
-		<p class="text-muted-foreground text-sm">Rating group with right-to-left text direction.</p>
+		<p class="text-sm text-muted-foreground">Rating group with right-to-left text direction.</p>
 	</div>
 
 	<RatingGroup.Root bind:value max={5} class="flex gap-1" allowHalf>
@@ -16,7 +16,7 @@
 			{#each items as item (item.index)}
 				<RatingGroup.Item
 					index={item.index}
-					class="text-muted-foreground data-[state=active]:text-foreground data-[state=partial]:text-foreground size-8 cursor-pointer transition-colors md:size-6"
+					class="size-8 cursor-pointer text-muted-foreground transition-colors data-[state=active]:text-foreground data-[state=partial]:text-foreground md:size-6"
 				>
 					{#if item.state === "partial"}
 						<StarHalf class="size-full fill-current rtl:scale-x-[-1]" weight="fill" />
@@ -30,7 +30,7 @@
 		{/snippet}
 	</RatingGroup.Root>
 
-	<p class="text-muted-foreground text-sm">
+	<p class="text-sm text-muted-foreground">
 		التقييم: {value} من 5 نجوم
 	</p>
 </div>

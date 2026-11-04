@@ -46,10 +46,10 @@
 	<div class="relative">
 		<Combobox.Input
 			{...mergedInputProps}
-			class="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+			class="border-input flex h-10 w-full rounded-md border bg-background px-3 py-2 text-base file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
 		/>
 		<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2"
-			><ChevronUpDown class="text-muted-foreground h-5 w-5" /></Combobox.Trigger
+			><ChevronUpDown class="h-5 w-5 text-muted-foreground" /></Combobox.Trigger
 		>
 	</div>
 	<Combobox.Portal>
@@ -61,7 +61,7 @@
 				<Combobox.Item
 					value={item.value}
 					label={item.label}
-					class="relative flex w-full cursor-pointer select-none items-center rounded-sm p-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+					class="relative flex w-full cursor-pointer items-center rounded-sm p-1.5 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
 				>
 					{#snippet children({ selected })}
 						<div class="flex w-full flex-col">

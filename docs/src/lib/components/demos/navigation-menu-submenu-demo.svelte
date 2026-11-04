@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { NavigationMenu } from "bits-ui";
 	import CaretDown from "phosphor-svelte/lib/CaretDown";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	const components: { title: string; href: string; description: string }[] = [
 		{
@@ -77,13 +77,13 @@
 {#snippet ListItem({ className, title, content, href }: ListItemProps)}
 	<NavigationMenu.Link
 		class={cn(
-			"hover:bg-muted hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground outline-hidden block select-none space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
+			"block space-y-1 rounded-md p-3 leading-none no-underline outline-hidden transition-colors select-none hover:bg-muted hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground",
 			className
 		)}
 		{href}
 	>
-		<div class="text-sm font-medium leading-none">{title}</div>
-		<p class="text-muted-foreground line-clamp-2 text-sm leading-snug">
+		<div class="text-sm leading-none font-medium">{title}</div>
+		<p class="line-clamp-2 text-sm leading-snug text-muted-foreground">
 			{content}
 		</p>
 	</NavigationMenu.Link>
@@ -93,18 +93,18 @@
 	<NavigationMenu.Item {value} class="relative w-full">
 		<NavigationMenu.Trigger
 			class={cn(
-				"hover:bg-muted hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground data-[state=open]:bg-muted outline-hidden group flex w-full select-none items-center justify-between space-y-1 rounded-md p-3 leading-none no-underline transition-colors",
+				"group flex w-full items-center justify-between space-y-1 rounded-md p-3 leading-none no-underline outline-hidden transition-colors select-none hover:bg-muted hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground data-[state=open]:bg-muted",
 				className
 			)}
 		>
-			<div class="text-sm font-medium leading-none">{title}</div>
+			<div class="text-sm leading-none font-medium">{title}</div>
 			<CaretDown
 				class="ml-auto size-4 transition-transform duration-200 group-data-[state=open]:rotate-180"
 				aria-hidden="true"
 			/>
 		</NavigationMenu.Trigger>
 		<NavigationMenu.Content
-			class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-right-1 data-[state=open]:slide-in-from-right-1 absolute left-0 top-full z-50 mt-2 w-full min-w-[300px] rounded-md border shadow-lg transition-all duration-200 ease-out"
+			class="absolute top-full left-0 z-50 mt-2 w-full min-w-[300px] rounded-md border bg-background shadow-lg transition-all duration-200 ease-out data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-right-1 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-right-1"
 		>
 			<ul class="grid gap-1 p-2">
 				{#each items as item (item.title)}
@@ -123,7 +123,7 @@
 	<NavigationMenu.List class="group flex list-none items-center justify-center p-1">
 		<NavigationMenu.Item value="getting-started">
 			<NavigationMenu.Trigger
-				class="hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted focus-visible:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white"
+				class="group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted"
 			>
 				Getting started
 				<CaretDown
@@ -132,7 +132,7 @@
 				/>
 			</NavigationMenu.Trigger>
 			<NavigationMenu.Content
-				class="data-[motion=from-end]:animate-enter-from-right data-[motion=from-start]:animate-enter-from-left data-[motion=to-end]:animate-exit-to-right data-[motion=to-start]:animate-exit-to-left data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 bg-background absolute left-0 top-full mt-2 w-full rounded-md border shadow-lg sm:w-auto"
+				class="absolute top-full left-0 mt-2 w-full rounded-md border bg-background shadow-lg data-[motion=from-end]:animate-enter-from-right data-[motion=from-start]:animate-enter-from-left data-[motion=to-end]:animate-exit-to-right data-[motion=to-start]:animate-exit-to-left data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:w-auto"
 			>
 				<ul
 					class="m-0 grid list-none gap-x-2.5 p-3 sm:w-[600px] sm:grid-flow-col sm:grid-rows-3 sm:p-[22px]"
@@ -140,11 +140,11 @@
 					<li class="row-span-3 mb-2 sm:mb-0">
 						<NavigationMenu.Link
 							href="/"
-							class="from-muted/50 to-muted bg-linear-to-b outline-hidden flex h-full w-full select-none flex-col justify-end rounded-md p-6 no-underline focus-visible:shadow-md"
+							class="flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b from-muted/50 to-muted p-6 no-underline outline-hidden select-none focus-visible:shadow-md"
 						>
 							<!-- <Icons.logo class="h-6 w-6" /> -->
-							<div class="mb-2 mt-4 text-lg font-medium">Bits UI</div>
-							<p class="text-muted-foreground text-sm leading-tight">
+							<div class="mt-4 mb-2 text-lg font-medium">Bits UI</div>
+							<p class="text-sm leading-tight text-muted-foreground">
 								The headless components for Svelte.
 							</p>
 						</NavigationMenu.Link>
@@ -170,7 +170,7 @@
 		</NavigationMenu.Item>
 		<NavigationMenu.Item value="features">
 			<NavigationMenu.Trigger
-				class="hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted focus-visible:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white"
+				class="group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted"
 			>
 				Features
 				<CaretDown
@@ -179,13 +179,13 @@
 				/>
 			</NavigationMenu.Trigger>
 			<NavigationMenu.Content
-				class="data-[motion=from-end]:animate-enter-from-right data-[motion=from-start]:animate-enter-from-left data-[motion=to-end]:animate-exit-to-right data-[motion=to-start]:animate-exit-to-left data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 bg-background absolute left-0 top-full mt-2 w-full rounded-md border shadow-lg sm:w-auto"
+				class="absolute top-full left-0 mt-2 w-full rounded-md border bg-background shadow-lg data-[motion=from-end]:animate-enter-from-right data-[motion=from-start]:animate-enter-from-left data-[motion=to-end]:animate-exit-to-right data-[motion=to-start]:animate-exit-to-left data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:w-auto"
 			>
 				<div class="relative p-3 sm:w-[500px] sm:p-6">
 					<NavigationMenu.Sub orientation="vertical" class="w-full">
 						<NavigationMenu.List class="flex flex-col space-y-1">
 							<li>
-								<div class="text-muted-foreground px-3 py-2 text-sm font-medium">
+								<div class="px-3 py-2 text-sm font-medium text-muted-foreground">
 									Components
 								</div>
 							</li>
@@ -219,7 +219,7 @@
 		</NavigationMenu.Item>
 		<NavigationMenu.Item>
 			<NavigationMenu.Link
-				class="hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted focus-visible:outline-hidden group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white"
+				class="group inline-flex h-8 w-max items-center justify-center rounded-[7px] bg-transparent px-4 py-2 text-sm font-medium transition-colors hover:bg-white hover:text-accent-foreground focus-visible:bg-muted focus-visible:text-accent-foreground focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-white data-[state=open]:shadow-mini dark:hover:bg-muted dark:data-[state=open]:bg-muted"
 				href="/docs"
 			>
 				<span class="hidden sm:inline"> Documentation </span>

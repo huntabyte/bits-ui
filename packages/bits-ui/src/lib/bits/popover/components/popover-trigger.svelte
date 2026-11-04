@@ -2,8 +2,8 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { PopoverTriggerProps } from "../types.js";
 	import { PopoverTriggerState } from "../popover.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import FloatingLayerAnchor from "#lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 
 	const uid = $props.id();
 

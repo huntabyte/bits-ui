@@ -5,8 +5,13 @@
 </script>
 
 <script lang="ts">
-	let { value = 0, min = 0, max = 10_000, step = 1, ...restProps }: SliderManyStepsTestProps =
-		$props();
+	let {
+		value = 0,
+		min = 0,
+		max = 10_000,
+		step = 1,
+		...restProps
+	}: SliderManyStepsTestProps = $props();
 </script>
 
 <main>

@@ -5,7 +5,7 @@ export {
 	REGEXP_ONLY_DIGITS,
 	REGEXP_ONLY_CHARS,
 	REGEXP_ONLY_DIGITS_AND_CHARS,
-} from "$lib/bits/pin-input/pin-input.svelte.js";
+} from "#lib/bits/pin-input/pin-input.svelte.js";
 
 export type Selected<Value> = {
 	value: Value;
@@ -61,8 +61,8 @@ export type {
 	TimeRangeValidator,
 	TimeOnInvalid,
 } from "./date/types.js";
-export type { WithChild, Without, WithChildren } from "$lib/internal/types.js";
+export type { WithChild, Without, WithChildren } from "#lib/internal/types.js";
 export { mergeProps } from "svelte-toolbelt";
-export { useId } from "$lib/internal/use-id.js";
+export { useId } from "#lib/internal/use-id.js";
 export * from "./attributes.js";
 export * from "./types.js";

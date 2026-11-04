@@ -10,14 +10,16 @@
     "dev:docs": "pnpm -F docs dev",
     "dev:package": "pnpm -F bits-ui dev",
     "dev": "pnpm --reporter append-only --color \"/dev:/\"",
-    "format": "prettier --write .",
-    "lint": "oxlint . && eslint .",
-    "lint:fix": "eslint --fix .",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "test": "pnpm -F \"./{packages,tests}/**\" --parallel --reporter append-only --color test",
     "test:browser": "pnpm -F tests test:browser",
     "test:browser:chromium": "pnpm -F tests test:browser --browser chromium",
     "test:components": "pnpm -F tests test",
     "test:utils": "pnpm -F bits-ui test",
+    "test:scripts": "node --test \"scripts/*.test.ts\"",
     "bundle:analyze": "pnpm -F @bits-ui/bundle-analyzer bundle:analyze",
     "bundle:compare": "pnpm -F @bits-ui/bundle-analyzer bundle:compare"
   },
@@ -25,39 +27,53 @@
   "author": "Hunter Johnston <https://github.com/huntabyte>",
   "license": "MIT",
   "devDependencies": {
-    "@changesets/cli": "^2.31.1",
-    "@eslint/js": "^9.39.5",
-    "@svitejs/changesets-changelog-github-compact": "^1.2.0",
-    "eslint": "^9.39.5",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-oxlint": "^1.89.0",
-    "eslint-plugin-svelte": "^3.23.1",
-    "globals": "^16.5.0",
-    "oxlint": "^1.89.0",
+    "@changesets/cli": "^3.0.3",
+    "@changesets/get-github-info": "^1.0.1",
+    "oxfmt": "^0.76.0",
+    "oxlint": "^1.91.0",
     "playwright": "catalog:",
-    "prettier": "^3.9.10",
-    "prettier-plugin-svelte": "^3.5.2",
-    "prettier-plugin-tailwindcss": "^0.6.14",
     "svelte": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.72.0",
-    "wrangler": "^4.151.3"
+    "wrangler": "^4.157.0"
   },
   "type": "module",
   "engines": {
     "pnpm": ">=10.12.1",
-    "node": ">=22.12.0"
+    "node": ">=22.17.0"
   },
   "packageManager": "pnpm@10.33.0",
   "private": true,
   "pnpm": {
     "overrides": {
-      "vitest>tinypool": "^2.1.2"
+      "velite>sharp": "^0.35.5"
     },
     "onlyBuiltDependencies": [
       "@tailwindcss/oxide",
       "esbuild",
       "workerd"
     ]
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "docs",
+      "tests",
+      "bundle-analyzer"
+    ],
+    "catalog": {
+      "@sveltejs/kit": "3.1.1",
+      "@sveltejs/vite-plugin-svelte": "^7.3.1",
+      "@tailwindcss/vite": "^4.3.4",
+      "@types/node": "^22.0.0",
+      "playwright": "^1.64.1",
+      "runed": "^0.35.1",
+      "svelte": "5.57.3",
+      "svelte-check": "^4.7.8",
+      "tailwindcss": "^4.3.4",
+      "typescript": "^6.0.3",
+      "vite": "^8.3.5",
+      "vitest": "^5.1.0",
+      "vitest-browser-svelte": "^3.1.0"
+    }
   }
 }

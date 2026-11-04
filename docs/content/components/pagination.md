@@ -4,7 +4,7 @@ description: Enables users to navigate through a series of pages.
 ---
 
 <script>
-	import { APISection, ComponentPreview, PaginationDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PaginationDemo, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

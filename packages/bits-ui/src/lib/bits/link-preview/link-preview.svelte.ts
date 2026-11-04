@@ -14,18 +14,18 @@ import {
 	boolToStr,
 	getDataOpenClosed,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
+} from "#lib/internal/attrs.js";
+import { isElement, isFocusVisible, isTouch } from "#lib/internal/is.js";
 import type {
 	BitsFocusEvent,
 	BitsPointerEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+} from "#lib/internal/types.js";
+import { getTabbableCandidates } from "#lib/internal/focus.js";
+import { SafePolygon } from "#lib/internal/safe-polygon.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 
 const linkPreviewAttrs = createBitsAttrs({
 	component: "link-preview",

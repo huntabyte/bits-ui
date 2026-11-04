@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { BitsPrimitiveDivAttributes, WithChildren } from "bits-ui";
 	import { type Variant, alertVariants } from "./index.js";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let {
 		variant = "note",

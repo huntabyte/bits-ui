@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
 	import type { WithChildren } from "bits-ui";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let {
 		class: className,
@@ -10,6 +10,6 @@
 	}: WithChildren<HTMLAttributes<HTMLHeadingElement>> & {} = $props();
 </script>
 
-<h5 class={cn("mb-1 ml-8 font-medium leading-none tracking-tight", className)} {...restProps}>
+<h5 class={cn("mb-1 ml-8 leading-none font-medium tracking-tight", className)} {...restProps}>
 	{@render children?.()}
 </h5>

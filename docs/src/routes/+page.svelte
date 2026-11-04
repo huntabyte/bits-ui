@@ -1,20 +1,20 @@
 <script lang="ts">
-	import "$lib/styles/app.css";
+	import "#lib/styles/app.css";
 	import { Button } from "bits-ui";
 	import Sparkle from "phosphor-svelte/lib/Sparkle";
-	import CardAir from "$lib/components/homepage/card-air.svelte";
-	import CardSound from "$lib/components/homepage/card-sound.svelte";
-	import CardTimer from "$lib/components/homepage/card-timer.svelte";
-	import CardToggle from "$lib/components/homepage/card-toggle.svelte";
-	import { Logo } from "$icons/index.js";
-	import LightSwitch from "$lib/components/light-switch.svelte";
+	import CardAir from "#lib/components/homepage/card-air.svelte";
+	import CardSound from "#lib/components/homepage/card-sound.svelte";
+	import CardTimer from "#lib/components/homepage/card-timer.svelte";
+	import CardToggle from "#lib/components/homepage/card-toggle.svelte";
+	import { Logo } from "#icons/index.js";
+	import LightSwitch from "#lib/components/light-switch.svelte";
 
-	import Customizable from "$lib/components/homepage/svg-customizable.svelte";
-	import Accessible from "$lib/components/homepage/svg-accessible.svelte";
-	import AccessibleDark from "$lib/components/homepage/svg-accessible-dark.svelte";
-	import Consistent from "$lib/components/homepage/svg-consistent.svelte";
+	import Customizable from "#lib/components/homepage/svg-customizable.svelte";
+	import Accessible from "#lib/components/homepage/svg-accessible.svelte";
+	import AccessibleDark from "#lib/components/homepage/svg-accessible-dark.svelte";
+	import Consistent from "#lib/components/homepage/svg-consistent.svelte";
 	import { goto } from "$app/navigation";
-	import Search from "$lib/components/search.svelte";
+	import Search from "#lib/components/search.svelte";
 
 	let searchOpen = $state(false);
 </script>
@@ -40,7 +40,7 @@
 	<header class="flex items-center justify-between px-3 py-[17px] lg:grid lg:grid-cols-3 lg:px-5">
 		<a
 			href="/"
-			class="focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden ml-2 mt-2 rounded-md focus-visible:ring-2 focus-visible:ring-offset-2"
+			class="mt-2 ml-2 rounded-md focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 			aria-label="Home"
 		>
 			<Logo />
@@ -53,14 +53,14 @@
 					<a
 						data-active
 						href="/"
-						class=" data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] dark:text-white/50"
+						class=" rounded-[40px] px-[0.9em] pt-[0.3em] pb-[0.4em] text-sm leading-none font-medium tracking-[0.01em] data-active:bg-black/5 data-active:text-foreground dark:text-white/50 dark:data-active:bg-white/10 dark:data-active:text-white/100"
 						>Home</a
 					>
 				</li>
 				<li class="inline-block">
 					<a
 						href="/docs"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] transition hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/10"
+						class="rounded-[40px] px-[0.9em] pt-[0.3em] pb-[0.4em] text-sm leading-none font-medium tracking-[0.01em] transition hover:bg-black/5 data-active:bg-black/5 data-active:text-foreground dark:text-white/50 dark:hover:bg-white/10 dark:data-active:bg-white/10 dark:data-active:text-white/100"
 						>Docs</a
 					>
 				</li>
@@ -68,7 +68,7 @@
 					<a
 						href="https://github.com/huntabyte/bits-ui"
 						target="_blank"
-						class="data-active:text-foreground data-active:bg-black/5 dark:data-active:bg-white/10 dark:data-active:text-white/100 rounded-[40px] px-[0.9em] pb-[0.4em] pt-[0.3em] text-sm font-medium leading-none tracking-[0.01em] transition hover:bg-black/5 dark:text-white/50 dark:hover:bg-white/10"
+						class="rounded-[40px] px-[0.9em] pt-[0.3em] pb-[0.4em] text-sm leading-none font-medium tracking-[0.01em] transition hover:bg-black/5 data-active:bg-black/5 data-active:text-foreground dark:text-white/50 dark:hover:bg-white/10 dark:data-active:bg-white/10 dark:data-active:text-white/100"
 						>GitHub</a
 					>
 				</li>
@@ -82,9 +82,9 @@
 			<LightSwitch />
 
 			<Button.Root
-				class="rounded-input bg-dark text-background shadow-mini hover:bg-dark/95 inline-flex
-        h-10 items-center justify-center px-5 text-[14px]
-        font-semibold active:scale-[0.98] active:transition-all"
+				class="inline-flex h-10 items-center justify-center rounded-input bg-dark
+        px-5 text-[14px] font-semibold text-background shadow-mini
+        hover:bg-dark/95 active:scale-[0.98] active:transition-all"
 				href="/docs"
 			>
 				Get started
@@ -93,44 +93,44 @@
 	</header>
 
 	<section
-		class="desktop:max-h-[900px] flex flex-col justify-between overflow-hidden pt-20 lg:pt-[7em]"
+		class="flex flex-col justify-between overflow-hidden pt-20 desktop:max-h-[900px] lg:pt-[7em]"
 	>
 		<div class="mx-7 text-center lg:mx-auto lg:w-7/12">
 			<a
 				href="https://github.com/huntabyte/bits-ui/releases"
 				target="_blank"
-				class="rounded-card-lg border-border-input shadow-mini inline-flex gap-2 border bg-white py-1.5 pl-3 pr-4 dark:border-[#F4F4F5]/20 dark:bg-[#242429]"
+				class="inline-flex gap-2 rounded-card-lg border border-border-input bg-white py-1.5 pr-4 pl-3 shadow-mini dark:border-[#F4F4F5]/20 dark:bg-[#242429]"
 			>
 				<Sparkle class="mt-[2px] size-3 lg:size-4" aria-label="Stars" />
 				<span
-					class="border-l-border-input text-foreground inline-block border-l pl-3 text-[11px] font-medium lg:text-[13px]"
+					class="inline-block border-l border-l-border-input pl-3 text-[11px] font-medium text-foreground lg:text-[13px]"
 					>Bits UI v2 Now Available</span
 				>
 			</a>
 			<h1
-				class="selection:text-foreground dark:selection:text-background font-display dark:text-[#EAEAEA]! mx-auto mb-[0.35em] mt-[0.2em] text-balance pb-[0.1em] text-[2.875rem] font-semibold leading-[102%] text-transparent antialiased lg:max-w-3xl lg:text-[4.25rem]"
+				class="mx-auto mt-[0.2em] mb-[0.35em] pb-[0.1em] font-display text-[2.875rem] leading-[102%] font-semibold text-balance text-transparent antialiased selection:text-foreground lg:max-w-3xl lg:text-[4.25rem] dark:text-[#EAEAEA]! dark:selection:text-background"
 			>
 				The headless components for Svelte
 			</h1>
 			<p
-				class="text-foreground/60 dark:text-foreground/50 mx-auto mb-[2em] max-w-sm text-[0.9rem] font-medium leading-[144%] sm:max-w-2xl md:w-9/12 md:max-w-2xl md:text-[1.125rem]"
+				class="mx-auto mb-[2em] max-w-sm text-[0.9rem] leading-[144%] font-medium text-foreground/60 sm:max-w-2xl md:w-9/12 md:max-w-2xl md:text-[1.125rem] dark:text-foreground/50"
 			>
 				Flexible, unstyled, and accessible primitives that provide the foundation for
 				building your own high-quality component library.
 			</p>
 			<Button.Root
-				class="rounded-input bg-dark shadow-mini hover:bg-dark/95 inline-flex h-10
-        items-center justify-center
-        px-3 active:scale-[0.98] active:transition-all dark:bg-white"
+				class="inline-flex h-10 items-center justify-center rounded-input bg-dark
+        px-3 shadow-mini
+        hover:bg-dark/95 active:scale-[0.98] active:transition-all dark:bg-white"
 				href="/docs"
 			>
 				<kbd
-					class="bg-background-alt text-xxs pointer-events-none flex h-5 select-none items-center gap-1 rounded-sm border px-1.5 font-mono font-medium opacity-100 shadow-[0px_2px_0px_0px_#59595b] dark:border-[rgba(0,_0,_0,_0.10)] dark:bg-white dark:shadow-[0px_2px_0px_0px_#B8B8B8]"
+					class="pointer-events-none flex h-5 items-center gap-1 rounded-sm border bg-background-alt px-1.5 font-mono text-xxs font-medium opacity-100 shadow-[0px_2px_0px_0px_#59595b] select-none dark:border-[rgba(0,_0,_0,_0.10)] dark:bg-white dark:shadow-[0px_2px_0px_0px_#B8B8B8]"
 				>
-					<span class="text-foreground-alt text-xs">S</span>
+					<span class="text-xs text-foreground-alt">S</span>
 				</kbd>
 				<span
-					class="text-background ml-4 mr-3 text-[14px] font-semibold leading-none tracking-[0.01em]"
+					class="mr-3 ml-4 text-[14px] leading-none font-semibold tracking-[0.01em] text-background"
 					>Start building</span
 				>
 			</Button.Root>
@@ -140,9 +140,9 @@
 			class="mx-2.5 mt-24 grid grid-cols-2 gap-0 sm:mx-auto sm:w-[500px] sm:max-w-[500px] lg:w-[unset] lg:max-w-[unset] lg:grid-cols-[1fr_repeat(4,259px)_1fr]"
 		>
 			<div class="relative hidden lg:order-1 lg:block">
-				<div class="square dark:after:hidden! block dark:hidden"></div>
+				<div class="square block dark:hidden dark:after:hidden!"></div>
 				<div
-					class="dark_square after:hidden! dark:after:inline-block! hidden dark:block"
+					class="dark_square hidden after:hidden! dark:block dark:after:inline-block!"
 				></div>
 			</div>
 
@@ -152,9 +152,9 @@
 			<CardTimer />
 
 			<div class="relative hidden lg:order-6 lg:block">
-				<div class="circle dark:after:hidden! block dark:hidden"></div>
+				<div class="circle block dark:hidden dark:after:hidden!"></div>
 				<div
-					class="dark_circle after:hidden! dark:after:inline-block! hidden dark:block"
+					class="dark_circle hidden after:hidden! dark:block dark:after:inline-block!"
 				></div>
 			</div>
 		</div>
@@ -162,42 +162,42 @@
 </div>
 
 <section
-	class="mx-2.5 mb-20 mt-11 sm:mx-auto sm:max-w-[500px] lg:mb-40 lg:mt-24 lg:w-10/12 lg:max-w-[1036px]"
+	class="mx-2.5 mt-11 mb-20 sm:mx-auto sm:max-w-[500px] lg:mt-24 lg:mb-40 lg:w-10/12 lg:max-w-[1036px]"
 >
-	<h2 class="text-foreground mb-10 text-balance lg:w-1/3">
+	<h2 class="mb-10 text-balance text-foreground lg:w-1/3">
 		<small
-			class="border-foreground rounded-3xl border px-2 py-[3px] text-[13px] font-medium tracking-[0.01em]"
-			><span class="bg-foreground/90 mr-2.5 inline-block h-[7px] w-[7px] rounded-full"
+			class="rounded-3xl border border-foreground px-2 py-[3px] text-[13px] font-medium tracking-[0.01em]"
+			><span class="mr-2.5 inline-block h-[7px] w-[7px] rounded-full bg-foreground/90"
 			></span>explore</small
 		>
 		<span
-			class="font-display mt-2 block text-[28px] font-semibold leading-[118%] tracking-[0.02em] lg:text-[32px]"
+			class="mt-2 block font-display text-[28px] leading-[118%] font-semibold tracking-[0.02em] lg:text-[32px]"
 			>The foundation for your next web project</span
 		>
 	</h2>
 	<div class="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-x-[15px]">
 		<div
-			class="rounded-card-lg border-border shadow-card col-span-2 overflow-hidden border lg:col-span-1"
+			class="col-span-2 overflow-hidden rounded-card-lg border border-border shadow-card lg:col-span-1"
 		>
 			<div
-				class="dotted_bg rounded-15px bg-background mx-[7px] my-[9px] bg-[radial-gradient(#DEDEDE_1px,transparent_0)] dark:bg-[#1E1E22] dark:bg-[radial-gradient(#36363A_1px,transparent_0)]"
+				class="dotted_bg mx-[7px] my-[9px] rounded-15px bg-background bg-[radial-gradient(#DEDEDE_1px,transparent_0)] dark:bg-[#1E1E22] dark:bg-[radial-gradient(#36363A_1px,transparent_0)]"
 			>
 				<h3
-					class="text-foreground px-[14px] pt-4 text-base font-semibold leading-none -tracking-[0.01em] lg:pt-5 lg:text-[17px]"
+					class="px-[14px] pt-4 text-base leading-none font-semibold -tracking-[0.01em] text-foreground lg:pt-5 lg:text-[17px]"
 				>
 					Customizable
 				</h3>
 
-				<div class="pb-10 pt-8 lg:pb-16 lg:pt-9">
+				<div class="pt-8 pb-10 lg:pt-9 lg:pb-16">
 					<div
-						class="aspect-354/259 relative mx-auto w-10/12 overflow-hidden bg-transparent lg:left-12 lg:ml-auto lg:w-full"
+						class="relative mx-auto aspect-354/259 w-10/12 overflow-hidden bg-transparent lg:left-12 lg:ml-auto lg:w-full"
 					>
 						<Customizable />
 					</div>
 				</div>
 
 				<div
-					class="text-muted-foreground px-[14px] pb-4 text-[11px] font-medium lg:text-sm"
+					class="px-[14px] pb-4 text-[11px] font-medium text-muted-foreground lg:text-sm"
 				>
 					Freedom with foundation.
 				</div>
@@ -205,18 +205,18 @@
 		</div>
 
 		<div
-			class="rounded-card-lg border-border shadow-card dark:bg-muted overflow-hidden border bg-[#F8F8F8]"
+			class="overflow-hidden rounded-card-lg border border-border bg-[#F8F8F8] shadow-card dark:bg-muted"
 		>
 			<div class="bg-transparent px-[7px] py-[9px]">
 				<h3
-					class="text-foreground px-[14px] pt-4 text-base font-semibold leading-none -tracking-[0.01em] lg:pt-5 lg:text-[17px]"
+					class="px-[14px] pt-4 text-base leading-none font-semibold -tracking-[0.01em] text-foreground lg:pt-5 lg:text-[17px]"
 				>
 					Accessible
 				</h3>
 
-				<div class="pb-5 pt-8 lg:pb-16 lg:pt-9">
+				<div class="pt-8 pb-5 lg:pt-9 lg:pb-16">
 					<div
-						class="aspect-186/150 lg:aspect-354/259 relative left-[30px] w-full overflow-hidden bg-transparent lg:left-14"
+						class="relative left-[30px] aspect-186/150 w-full overflow-hidden bg-transparent lg:left-14 lg:aspect-354/259"
 					>
 						<Accessible />
 						<AccessibleDark />
@@ -224,7 +224,7 @@
 				</div>
 
 				<div
-					class="text-muted-foreground px-[14px] pb-2 text-[11px] font-medium lg:pb-4 lg:text-sm"
+					class="px-[14px] pb-2 text-[11px] font-medium text-muted-foreground lg:pb-4 lg:text-sm"
 				>
 					Built for everyone, by default.
 				</div>
@@ -232,18 +232,18 @@
 		</div>
 
 		<div
-			class="rounded-card-lg shadow-card overflow-hidden border border-white bg-[#2A2A2E] dark:border-[#F4F4F5]/10 dark:bg-[#3A3C42]"
+			class="overflow-hidden rounded-card-lg border border-white bg-[#2A2A2E] shadow-card dark:border-[#F4F4F5]/10 dark:bg-[#3A3C42]"
 		>
 			<div class="bg-transparent px-[7px] py-[9px]">
 				<h3
-					class="text-background dark:text-foreground px-[14px] pt-4 text-base font-semibold leading-none -tracking-[0.01em] lg:pt-5 lg:text-[17px]"
+					class="px-[14px] pt-4 text-base leading-none font-semibold -tracking-[0.01em] text-background lg:pt-5 lg:text-[17px] dark:text-foreground"
 				>
 					Unified
 				</h3>
 
-				<div class="pb-5 pt-8 lg:pb-16 lg:pt-9">
+				<div class="pt-8 pb-5 lg:pt-9 lg:pb-16">
 					<div
-						class="aspect-186/150 lg:aspect-354/259 relative left-6 w-full overflow-hidden bg-transparent lg:left-[50px]"
+						class="relative left-6 aspect-186/150 w-full overflow-hidden bg-transparent lg:left-[50px] lg:aspect-354/259"
 					>
 						<Consistent />
 					</div>
@@ -260,10 +260,10 @@
 </section>
 
 <footer
-	class="dark:border-foreground/10 flex justify-between border-t border-black/10 px-[22px] pb-10 pt-6"
+	class="flex justify-between border-t border-black/10 px-[22px] pt-6 pb-10 dark:border-foreground/10"
 >
-	<div class="text-muted-foreground flex items-center gap-2 text-sm font-medium lg:gap-3">
-		<span class="bg-foreground/20 block aspect-square h-3 w-3 rounded-full"></span>2026 Bits UI
+	<div class="flex items-center gap-2 text-sm font-medium text-muted-foreground lg:gap-3">
+		<span class="block aspect-square h-3 w-3 rounded-full bg-foreground/20"></span>2026 Bits UI
 		team
 	</div>
 	<ul class="flex items-center justify-end gap-3 lg:gap-[26px]">
@@ -271,7 +271,7 @@
 			<a
 				href="https://bits-ui.com/llms.txt"
 				target="_blank"
-				class="text-muted-foreground text-sm font-medium"
+				class="text-sm font-medium text-muted-foreground"
 			>
 				LLMs
 			</a>
@@ -280,14 +280,14 @@
 			<a
 				href="https://github.com/huntabyte/bits-ui"
 				target="_blank"
-				class="text-muted-foreground text-sm font-medium">GitHub</a
+				class="text-sm font-medium text-muted-foreground">GitHub</a
 			>
 		</li>
 		<li>
 			<a
 				href="https://github.com/huntabyte/bits-ui/releases"
 				target="_blank"
-				class="text-muted-foreground text-sm font-medium">Changelog</a
+				class="text-sm font-medium text-muted-foreground">Changelog</a
 			>
 		</li>
 	</ul>

@@ -6,14 +6,14 @@ import {
 	DOMContext,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
-import { isEventTargetWithin, getEventTargetClosest } from "$lib/internal/events.js";
-import { kbd } from "$lib/internal/kbd.js";
+import { isEventTargetWithin, getEventTargetClosest } from "#lib/internal/events.js";
+import { kbd } from "#lib/internal/kbd.js";
 import {
 	createBitsAttrs,
 	boolToStr,
 	getDataOpenClosed,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
+} from "#lib/internal/attrs.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
@@ -22,11 +22,11 @@ import type {
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { isElement, isTouch } from "$lib/internal/is.js";
-import type { Measurable } from "$lib/internal/floating-svelte/types.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
-import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
+} from "#lib/internal/types.js";
+import { isElement, isTouch } from "#lib/internal/is.js";
+import type { Measurable } from "#lib/internal/floating-svelte/types.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
+import { SafePolygon } from "#lib/internal/safe-polygon.svelte.js";
 import { isTabbable } from "tabbable";
 
 const popoverAttrs = createBitsAttrs({
@@ -37,7 +37,8 @@ const popoverAttrs = createBitsAttrs({
 const PopoverRootContext = new Context<PopoverRootState>("Popover.Root");
 
 interface PopoverRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
@@ -158,7 +159,8 @@ export class PopoverRootState {
 }
 
 interface PopoverTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			openOnHover: boolean;
@@ -316,7 +318,8 @@ export class PopoverTriggerState {
 }
 
 interface PopoverContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;

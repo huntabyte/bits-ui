@@ -4,7 +4,7 @@ description: Learn how to use transitions with Bits UI components.
 ---
 
 <script>
-	import Callout from '$lib/components/callout.svelte';
+	import Callout from '#lib/components/callout.svelte';
 </script>
 
 Svelte Transitions are one of the awesome features of Svelte. Unfortunately, they don't play very nicely with components, due to the fact that they rely on various directives like `in:`, `out:`, and `transition:`, which aren't supported by components.
@@ -80,7 +80,7 @@ Which can then be used alongside the other `Dialog.*` components:
 ```svelte
 <script lang="ts">
   import { Dialog } from "bits-ui";
-  import MyDialogContent from "$lib/components/MyDialogContent.svelte";
+  import MyDialogContent from "#lib/components/MyDialogContent.svelte";
 </script>
 
 <Dialog.Root>

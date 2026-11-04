@@ -5,7 +5,7 @@
 	import FileMd from "phosphor-svelte/lib/FileMd";
 	import { page } from "$app/state";
 	import type { Component } from "svelte";
-	import Claude from "$icons/claude.svelte";
+	import Claude from "#icons/claude.svelte";
 
 	const q = $derived(
 		`The following is a documentation page from Bits UI (a headless component library for Svelte 5): https://bits-ui.com${page.url.pathname}. Be ready to help answer questions about this page.`
@@ -16,13 +16,13 @@
 
 {#snippet LinkItem({ href, icon, label }: { href: string; icon: Component; label: string })}
 	<DropdownMenu.Item
-		class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+		class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium ring-0! ring-transparent! select-none focus-visible:outline-none data-highlighted:bg-muted"
 	>
 		{#snippet child({ props })}
 			{@const Icon = icon}
 			<a {href} target="_blank" {...props}>
 				<div class="flex items-center">
-					<Icon class="text-foreground-alt mr-2 size-5" />
+					<Icon class="mr-2 size-5 text-foreground-alt" />
 					{label}
 				</div>
 			</a>
@@ -32,13 +32,13 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="border-input text-foreground hover:bg-muted inline-flex size-8 select-none items-center justify-center rounded-r-md border text-sm font-medium active:scale-[0.98]"
+		class="border-input inline-flex size-8 items-center justify-center rounded-r-md border text-sm font-medium text-foreground select-none hover:bg-muted active:scale-[0.98]"
 	>
-		<CaretDown class="text-foreground size-4" />
+		<CaretDown class="size-4 text-foreground" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
-			class="border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 max-h-(--bits-dropdown-menu-content-available-height) origin-(--bits-dropdown-menu-content-transform-origin) z-50 w-[180px] rounded-xl border px-1 py-1.5"
+			class="z-50 max-h-(--bits-dropdown-menu-content-available-height) w-[180px] origin-(--bits-dropdown-menu-content-transform-origin) rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-hidden focus-visible:outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
 			sideOffset={8}
 			align="end"
 		>

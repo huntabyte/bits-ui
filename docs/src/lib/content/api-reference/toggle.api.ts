@@ -3,7 +3,7 @@ import {
 	ToggleRootOnPressedChangeProp,
 	ToggleRootStateDataAttr,
 } from "./extended-types/toggle/index.js";
-import { withChildProps } from "$lib/content/api-reference/shared.js";
+import { withChildProps } from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,

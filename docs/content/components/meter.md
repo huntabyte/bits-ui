@@ -4,7 +4,7 @@ description: Displays a static measurement within a known range.
 ---
 
 <script>
-	import { APISection, ComponentPreview, MeterDemo, DemoCodeContainer, MeterDemoCustom } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, MeterDemo, DemoCodeContainer, MeterDemoCustom } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -84,7 +84,7 @@ You can then use the `MyMeter` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyMeter from "$lib/components/MyMeter.svelte";
+  import MyMeter from "#lib/components/MyMeter.svelte";
 
   let value = $state(3000);
   const max = 4000;

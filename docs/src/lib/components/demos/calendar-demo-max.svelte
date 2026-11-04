@@ -8,7 +8,7 @@
 </script>
 
 <Calendar.Root
-	class="border-dark-10 bg-background-alt shadow-card mt-6 rounded-[15px] border p-[22px]"
+	class="mt-6 rounded-[15px] border border-dark-10 bg-background-alt p-[22px] shadow-card"
 	weekdayFormat="short"
 	fixedWeeks={true}
 	type="multiple"
@@ -18,25 +18,25 @@
 	{#snippet children({ months, weekdays })}
 		<Calendar.Header class="flex items-center justify-between">
 			<Calendar.PrevButton
-				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98] active:transition-all"
+				class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt hover:bg-muted active:scale-[0.98] active:transition-all"
 			>
 				<CaretLeft class="size-6" />
 			</Calendar.PrevButton>
 			<Calendar.Heading class="text-[15px] font-medium" />
 			<Calendar.NextButton
-				class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center active:scale-[0.98] active:transition-all"
+				class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt hover:bg-muted active:scale-[0.98] active:transition-all"
 			>
 				<CaretRight class="size-6" />
 			</Calendar.NextButton>
 		</Calendar.Header>
-		<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+		<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-y-0 sm:space-x-4">
 			{#each months as month, i (i)}
-				<Calendar.Grid class="w-full border-collapse select-none space-y-1">
+				<Calendar.Grid class="w-full border-collapse space-y-1 select-none">
 					<Calendar.GridHead>
 						<Calendar.GridRow class="mb-1 flex w-full justify-between">
 							{#each weekdays as day, i (i)}
 								<Calendar.HeadCell
-									class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
+									class="w-10 rounded-md text-xs font-normal! text-muted-foreground"
 								>
 									<div>{day.slice(0, 2)}</div>
 								</Calendar.HeadCell>
@@ -50,13 +50,13 @@
 									<Calendar.Cell
 										{date}
 										month={month.value}
-										class="p-0! relative size-10 text-center text-sm"
+										class="relative size-10 p-0! text-center text-sm"
 									>
 										<Calendar.Day
-											class="rounded-9px text-foreground hover:border-foreground data-selected:bg-foreground data-disabled:text-foreground/30 data-selected:text-background data-unavailable:text-muted-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-medium data-unavailable:line-through group relative inline-flex size-10 items-center justify-center whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal"
+											class="group relative inline-flex size-10 items-center justify-center rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal whitespace-nowrap text-foreground hover:border-foreground data-disabled:pointer-events-none data-disabled:text-foreground/30 data-outside-month:pointer-events-none data-selected:bg-foreground data-selected:font-medium data-selected:text-background data-unavailable:text-muted-foreground data-unavailable:line-through"
 										>
 											<div
-												class="bg-foreground group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full"
+												class="absolute top-[5px] hidden size-1 rounded-full bg-foreground group-data-selected:bg-background group-data-today:block"
 											></div>
 											{date.day}
 										</Calendar.Day>

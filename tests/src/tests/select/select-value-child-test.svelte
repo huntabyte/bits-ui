@@ -8,7 +8,7 @@
 		disabled?: boolean;
 	};
 
-export type SelectValueChildTestProps = Omit<WithoutChildren<SelectSingleRootProps>, "type"> & {
+	export type SelectValueChildTestProps = Omit<WithoutChildren<SelectSingleRootProps>, "type"> & {
 		items: Item[];
 		placeholder?: string;
 	};
@@ -27,7 +27,7 @@ export type SelectValueChildTestProps = Omit<WithoutChildren<SelectSingleRootPro
 </script>
 
 <main data-testid="main">
-	<Select.Root bind:value bind:open items={items} {...restProps} type="single">
+	<Select.Root bind:value bind:open {items} {...restProps} type="single">
 		<Select.Trigger data-testid="trigger">
 			<Select.Value {placeholder}>
 				{#snippet child({ props, selection, placeholder: currentPlaceholder, disabled })}

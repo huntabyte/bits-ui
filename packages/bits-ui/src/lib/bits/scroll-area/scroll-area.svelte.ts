@@ -16,14 +16,14 @@ import {
 	type ReadableBoxedValues,
 } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
-import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { type Direction, type Orientation, mergeProps, useId } from "$lib/shared/index.js";
-import { clamp } from "$lib/internal/clamp.js";
-import { debounce } from "$lib/internal/debounce.js";
+import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import { type Direction, type Orientation, mergeProps, useId } from "#lib/shared/index.js";
+import { clamp } from "#lib/internal/clamp.js";
+import { debounce } from "#lib/internal/debounce.js";
 import { on } from "svelte/events";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
-import { StateMachine } from "$lib/internal/state-machine.js";
-import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
+import { StateMachine } from "#lib/internal/state-machine.js";
+import { SvelteResizeObserver } from "#lib/internal/svelte-resize-observer.svelte.js";
 
 const scrollAreaAttrs = createBitsAttrs({
 	component: "scroll-area",

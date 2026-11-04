@@ -4,8 +4,8 @@
 	import type { RatingGroupRootProps } from "../types.js";
 	import { RatingGroupRootState } from "../rating-group.svelte.js";
 	import RatingGroupInput from "./rating-group-input.svelte";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 

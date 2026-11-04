@@ -1,13 +1,12 @@
 import { onDestroyEffect, type ReadableBox, type ReadableBoxedValues } from "svelte-toolbelt";
 import { watch } from "runed";
-import { AnimationsComplete } from "$lib/internal/animations-complete.js";
-import type { TransitionState } from "$lib/internal/attrs.js";
+import { AnimationsComplete } from "#lib/internal/animations-complete.js";
+import type { TransitionState } from "#lib/internal/attrs.js";
 
-export interface PresenceOptions
-	extends ReadableBoxedValues<{
-		open: boolean;
-		ref: HTMLElement | null;
-	}> {}
+export interface PresenceOptions extends ReadableBoxedValues<{
+	open: boolean;
+	ref: HTMLElement | null;
+}> {}
 
 export class Presence {
 	readonly opts: PresenceOptions;

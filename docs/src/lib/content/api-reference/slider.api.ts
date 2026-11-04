@@ -23,7 +23,7 @@ import {
 	dirProp,
 	typeSingleOrMultipleProp,
 	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+} from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -50,7 +50,6 @@ const sharedDataAttrs = [
 		description: "Present when the slider is disabled.",
 	}),
 ];
-
 
 const root = defineComponentApiSchema<SliderRootPropsWithoutHTML>({
 	title: "Root",

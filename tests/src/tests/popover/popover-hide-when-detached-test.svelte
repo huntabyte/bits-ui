@@ -8,7 +8,10 @@
 		$props();
 </script>
 
-<div data-testid="scroller" style="position: relative; height: 100px; overflow-y: auto; margin-top: 200px;">
+<div
+	data-testid="scroller"
+	style="position: relative; height: 100px; overflow-y: auto; margin-top: 200px;"
+>
 	<div style="height: 40px;"></div>
 	<Popover.Root open>
 		<Popover.Trigger data-testid="trigger">trigger</Popover.Trigger>

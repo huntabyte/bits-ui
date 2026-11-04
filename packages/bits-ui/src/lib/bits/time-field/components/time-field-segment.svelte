@@ -3,7 +3,7 @@
 	import { untrack } from "svelte";
 	import { DateFieldSegmentState } from "../time-field.svelte.js";
 	import type { TimeFieldSegmentProps } from "../types.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

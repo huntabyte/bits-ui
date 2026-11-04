@@ -19,22 +19,22 @@
 
 <TimeField.Root bind:value bind:placeholder {...restProps}>
 	<div class="flex w-fit min-w-[280px] flex-col gap-1.5">
-		<TimeField.Label class="block select-none text-sm font-medium">{labelText}</TimeField.Label>
+		<TimeField.Label class="block text-sm font-medium select-none">{labelText}</TimeField.Label>
 		<TimeField.Input
 			{name}
-			class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover data-invalid:border-destructive flex w-full select-none items-center border px-2 py-3 text-sm tracking-[0.01em] "
+			class="flex h-input w-full items-center rounded-input border border-border-input bg-background px-2 py-3 text-sm tracking-[0.01em] text-foreground select-none focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover data-invalid:border-destructive "
 		>
 			{#snippet children({ segments })}
 				{#each segments as { part, value }, i (i)}
 					<div class="inline-block select-none">
 						{#if part === "literal"}
-							<TimeField.Segment {part} class="text-muted-foreground p-1">
+							<TimeField.Segment {part} class="p-1 text-muted-foreground">
 								{value}
 							</TimeField.Segment>
 						{:else}
 							<TimeField.Segment
 								{part}
-								class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground data-invalid:text-destructive focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1"
+								class="rounded-5px px-1 py-1 hover:bg-muted focus:bg-muted focus:text-foreground focus-visible:ring-0! focus-visible:ring-offset-0! aria-[valuetext=Empty]:text-muted-foreground data-invalid:text-destructive"
 							>
 								{value}
 							</TimeField.Segment>

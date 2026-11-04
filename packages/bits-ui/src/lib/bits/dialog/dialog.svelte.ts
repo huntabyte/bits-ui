@@ -12,16 +12,16 @@ import {
 	getDataOpenClosed,
 	boolToEmptyStrOrUndef,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
+} from "#lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+} from "#lib/internal/types.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 
 type DialogVariant = "alert-dialog" | "dialog";
 
@@ -33,7 +33,8 @@ const dialogAttrs = createBitsAttrs({
 const DialogRootContext = new Context<DialogRootState>("Dialog.Root | AlertDialog.Root");
 
 interface DialogRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
@@ -192,7 +193,8 @@ export class DialogTriggerState {
 }
 
 interface DialogCloseStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{ variant: "action" | "cancel" | "close"; disabled: boolean }> {}
 
 export class DialogCloseState {
@@ -269,8 +271,7 @@ export class DialogActionState {
 }
 
 interface DialogTitleStateOpts
-	extends WithRefOpts,
-		ReadableBoxedValues<{ level: 1 | 2 | 3 | 4 | 5 | 6 }> {}
+	extends WithRefOpts, ReadableBoxedValues<{ level: 1 | 2 | 3 | 4 | 5 | 6 }> {}
 
 export class DialogTitleState {
 	static create(opts: DialogTitleStateOpts) {
@@ -442,8 +443,7 @@ export class DialogOverlayState {
 }
 
 interface AlertDialogCancelStateOpts
-	extends WithRefOpts,
-		ReadableBoxedValues<{ disabled: boolean }> {}
+	extends WithRefOpts, ReadableBoxedValues<{ disabled: boolean }> {}
 
 export class AlertDialogCancelState {
 	static create(opts: AlertDialogCancelStateOpts) {

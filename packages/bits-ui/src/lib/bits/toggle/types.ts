@@ -1,5 +1,5 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { BitsPrimitiveButtonAttributes } from "$lib/shared/attributes.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
+import type { BitsPrimitiveButtonAttributes } from "#lib/shared/attributes.js";
 
 export type ToggleRootSnippetProps = {
 	pressed: boolean;

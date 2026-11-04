@@ -26,7 +26,7 @@
 		<AlertDialog.Overlay class="fixed inset-0 z-[90]  bg-black/30" />
 		<AlertDialog.Content
 			class="fixed
-      left-[50%] top-[50%] z-[90] w-full max-w-[calc(100%-2rem)]
+      top-[50%] left-[50%] z-[90] w-full max-w-[calc(100%-2rem)]
       translate-x-[-50%] translate-y-[-50%] rounded-xl
       border bg-black p-5
       md:w-[350px]
@@ -38,12 +38,12 @@
 				</AlertDialog.Title>
 
 				{#if message}
-					<div class="text-center italic text-white">{message}</div>
+					<div class="text-center text-white italic">{message}</div>
 				{/if}
 
 				<div
-					class="border-neutral-e4 border-t-primary mb-2 mt-6
-					h-10 w-10 rounded-full border-[5px] [animation:spin_0.5s_linear_infinite]"
+					class="border-neutral-e4 border-t-primary mt-6 mb-2
+					h-10 w-10 [animation:spin_0.5s_linear_infinite] rounded-full border-[5px]"
 				></div>
 			</div>
 		</AlertDialog.Content>
