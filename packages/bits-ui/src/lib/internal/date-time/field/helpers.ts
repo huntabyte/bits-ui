@@ -26,7 +26,7 @@ import { kbd } from "$lib/internal/kbd.js";
 import type { Granularity, HourCycle } from "$lib/shared/date/types.js";
 
 export function initializeSegmentValues(granularity: Granularity) {
-	const calendarDateTimeGranularities = ["hour", "minute", "second"];
+	const calendarDateTimeGranularities = ["hour", "minute", "second", "millisecond"];
 	const initialParts = EDITABLE_SEGMENT_PARTS.map((part) => {
 		if (part === "dayPeriod") {
 			return [part, "AM"];
@@ -103,7 +103,7 @@ function createContentObj(props: CreateContentObjProps) {
 			} else if (!isNull(value) && !isNull(intValue)) {
 				const formatted = formatter.part(
 					getDateRefForPart(part, dateRef, segmentValues).set({ [part]: value }),
-					part,
+					part === "millisecond" ? "fractionalSecond" : part,
 					{
 						hourCycle: props.hourCycle === 24 ? "h23" : undefined,
 					}
@@ -198,16 +198,17 @@ function createContentArr(props: CreateContentArrProps) {
 	const segmentContentArr = parts
 		.map((part) => {
 			const defaultParts = ["literal", "dayPeriod", "timeZoneName", null];
+			const type = part.type === "fractionalSecond" ? "millisecond" : part.type;
 
-			if (defaultParts.includes(part.type) || !isSegmentPart(part.type)) {
+			if (defaultParts.includes(part.type) || !isSegmentPart(type)) {
 				return {
-					part: part.type,
+					part: type,
 					value: part.value,
 				};
 			}
 			return {
-				part: part.type,
-				value: contentObj[part.type],
+				part: type,
+				value: contentObj[type],
 			};
 		})
 		.filter((segment): segment is { part: SegmentPart; value: string } => {
@@ -242,22 +243,30 @@ function getOptsByGranularity(granularity: Granularity, hourCycle: HourCycle | u
 		hour: "2-digit",
 		minute: "2-digit",
 		second: "2-digit",
+		fractionalSecondDigits: 3,
 		timeZoneName: "short",
 		hourCycle: hourCycle === 24 ? "h23" : undefined,
 		hour12: hourCycle === 24 ? false : undefined,
 	};
 
 	if (granularity === "day") {
-		delete opts.second;
 		delete opts.hour;
 		delete opts.minute;
+		delete opts.second;
+		delete opts.fractionalSecondDigits;
 		delete opts.timeZoneName;
 	}
 	if (granularity === "hour") {
 		delete opts.minute;
+		delete opts.second;
+		delete opts.fractionalSecondDigits;
 	}
 	if (granularity === "minute") {
 		delete opts.second;
+		delete opts.fractionalSecondDigits;
+	}
+	if (granularity === "second") {
+		delete opts.fractionalSecondDigits;
 	}
 
 	return opts;
@@ -325,7 +334,7 @@ type GetValueFromSegments = {
  * `dateRef`'s month in day-first locales (e.g. `31/08` entered in `en-GB` with a
  * `dateRef` in November would resolve to the 30th).
  */
-const SEGMENT_APPLY_ORDER = ["year", "month", "day", "hour", "minute", "second", "dayPeriod"];
+const SEGMENT_APPLY_ORDER = ["year", "month", "day", "hour", "minute", "second", "millisecond", "dayPeriod"];
 
 function getSegmentApplyOrder(part: EditableSegmentPart) {
 	const index = SEGMENT_APPLY_ORDER.indexOf(part);

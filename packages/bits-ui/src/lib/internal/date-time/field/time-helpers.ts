@@ -74,7 +74,7 @@ function createTimeContentObj(props: CreateTimeContentObjProps) {
 		const intValue = value !== null ? Number.parseInt(value) : null;
 
 		if (!isNull(value) && !isNull(intValue)) {
-			const formatted = formatter.part(timeRef.set({ [part]: value }), part, {
+			const formatted = formatter.part(timeRef.set({ [part]: value }), part === "millisecond" ? "fractionalSecond" : part, {
 				hourCycle: props.hourCycle === 24 ? "h23" : undefined,
 			});
 
@@ -139,16 +139,17 @@ function createTimeContentArr(props: CreateTimeContentArrProps) {
 	const timeSegmentContentArr = parts
 		.map((part) => {
 			const defaultParts = ["literal", "timeZoneName", null];
+			const type = part.type === "fractionalSecond" ? "millisecond" : part.type;
 
-			if (defaultParts.includes(part.type) || !isEditableTimeSegmentPart(part.type)) {
+			if (defaultParts.includes(type) || !isEditableTimeSegmentPart(type)) {
 				return {
-					part: part.type,
+					part: type,
 					value: part.value,
 				};
 			}
 			return {
-				part: part.type,
-				value: contentObj[part.type],
+				part: type,
+				value: contentObj[type],
 			};
 		})
 		.filter((segment): segment is { part: TimeSegmentPart; value: string } => {
@@ -180,6 +181,7 @@ function getOptsByGranularity(granularity: TimeGranularity, hourCycle: HourCycle
 		hour: "2-digit",
 		minute: "2-digit",
 		second: "2-digit",
+		fractionalSecondDigits: 3,
 		timeZoneName: "short",
 		hourCycle: hourCycle === 24 ? "h23" : undefined,
 		hour12: hourCycle === 24 ? false : undefined,
@@ -188,9 +190,14 @@ function getOptsByGranularity(granularity: TimeGranularity, hourCycle: HourCycle
 	if (granularity === "hour") {
 		delete opts.minute;
 		delete opts.second;
+		delete opts.fractionalSecondDigits;
 	}
 	if (granularity === "minute") {
 		delete opts.second;
+		delete opts.fractionalSecondDigits;
+	}
+	if (granularity === "second") {
+		delete opts.fractionalSecondDigits;
 	}
 
 	return opts;

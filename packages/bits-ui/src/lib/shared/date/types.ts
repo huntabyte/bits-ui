@@ -6,8 +6,8 @@ import type {
 	EDITABLE_TIME_SEGMENT_PARTS,
 } from "$lib/internal/date-time/field/parts.js";
 
-export type Granularity = "day" | "hour" | "minute" | "second";
-export type TimeGranularity = "hour" | "minute" | "second";
+export type Granularity = "day" | "hour" | "minute" | "second" | "millisecond";
+export type TimeGranularity = "hour" | "minute" | "second" | "millisecond";
 export type HourCycle = 12 | 24;
 export type WeekStartsOn = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 

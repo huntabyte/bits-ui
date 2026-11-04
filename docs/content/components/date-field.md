@@ -380,24 +380,24 @@ Try selecting a date that is the first day of the month to see the date field ma
 
 ## Granularity
 
-The `granularity` prop sets the granularity of the date field, which determines which segments are rendered in the date field. The `granularity` can be set to either `'day'`, `'hour'`, `'minute'`, or `'second'`.
+The `granularity` prop sets the granularity of the date field, which determines which segments are rendered in the date field. The `granularity` can be set to either `'day'`, `'hour'`, `'minute'`, `'second'`, or `'millisecond'`.
 
 ```svelte
 <script lang="ts">
   import MyDateField from "$lib/components/MyDateField.svelte";
   import { CalendarDateTime } from "@internationalized/date";
 
-  const value = new CalendarDateTime(2024, 8, 2, 12, 30);
+  const value = new CalendarDateTime(2024, 8, 2, 12, 30, 456);
 </script>
 
-<MyDateField granularity="second" {value} />
+<MyDateField granularity="millisecond" {value} />
 ```
 
 <DemoContainer size="xs" wrapperClass="rounded-bl-card rounded-br-card">
-	<DateFieldDemoCustom granularity="second" value={new CalendarDateTime(2024, 8, 2, 12, 30)} />
+	<DateFieldDemoCustom granularity="millisecond" value={new CalendarDateTime(2024, 8, 2, 12, 30, 456)} />
 </DemoContainer>
 
-In the example above, we're setting the granularity to `'second'`, which means that the date field will include an additional segment for the seconds.
+In the example above, we're setting the granularity to `'millisecond'`, which means that the date field will include additional segments for the seconds and milliseconds.
 
 ## Localization
 

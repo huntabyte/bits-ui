@@ -19,6 +19,7 @@ export type SegmentPart =
 	| "hour"
 	| "minute"
 	| "second"
+	| "millisecond"
 	| "dayPeriod"
 	| "timeZoneName"
 	| "literal";

@@ -106,7 +106,7 @@ function getPlaceholderObj(locale: SupportedLocale | (string & {})) {
 	}
 }
 
-type Field = "era" | "year" | "month" | "day" | "hour" | "minute" | "second" | "dayPeriod";
+type Field = "era" | "year" | "month" | "day" | "hour" | "minute" | "second" | "millisecond" | "dayPeriod";
 
 export function getPlaceholder(
 	field: Field,
@@ -116,6 +116,7 @@ export function getPlaceholder(
 	if (isPlaceholderField(field)) return getPlaceholderObj(locale)[field];
 	if (isDefaultField(field)) return value;
 	if (isTimeField(field)) return "––";
+	if (field === "millisecond") return "–––";
 	return "";
 }
 

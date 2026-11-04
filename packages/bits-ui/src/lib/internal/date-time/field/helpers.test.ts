@@ -38,6 +38,7 @@ function renderDay(segmentValues: Partial<SegmentValueObj>) {
 			hour: null,
 			minute: null,
 			second: null,
+			millisecond: null,
 			dayPeriod: null,
 			...segmentValues,
 		} as SegmentValueObj,
