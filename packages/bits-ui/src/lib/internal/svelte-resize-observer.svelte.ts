@@ -73,9 +73,18 @@ function observeResize(node: Element, callback: ResizeCallback): () => void {
 export class SvelteResizeObserver {
 	#node: Getter<HTMLElement | null>;
 	#onResize: () => void;
-	constructor(node: Getter<HTMLElement | null>, onResize: () => void) {
+	#measure: (() => void) | undefined;
+	/**
+	 * `onResize` runs a frame after the report, so its state writes can't resize observed nodes
+	 * mid-delivery. Layout reads belong in `measure`, which runs in the report while layout is
+	 * clean; in the frame, the DOM may have changed again and reading forces a layout.
+	 * `measure` runs inside the shared delivery loop, so it must not throw: a throw would stop
+	 * delivery to every later subscriber in that window.
+	 */
+	constructor(node: Getter<HTMLElement | null>, onResize: () => void, measure?: () => void) {
 		this.#node = node;
 		this.#onResize = onResize;
+		this.#measure = measure;
 		this.handler = this.handler.bind(this);
 		$effect(this.handler);
 	}
@@ -86,6 +95,7 @@ export class SvelteResizeObserver {
 		if (!_node) return;
 		const targetWindow = getWindow(_node);
 		const unobserve = observeResize(_node, () => {
+			this.#measure?.();
 			targetWindow.cancelAnimationFrame(rAF);
 			rAF = targetWindow.requestAnimationFrame(this.#onResize);
 		});
