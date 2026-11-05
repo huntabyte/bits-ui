@@ -1,5 +1,5 @@
 // https://github.com/melt-ui/melt-ui
-import type { Direction } from "$lib/shared/index.js";
+import type { Direction } from "#lib/shared/index.js";
 
 /**
  * Detects the text direction in the element.

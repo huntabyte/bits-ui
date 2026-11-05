@@ -2,8 +2,8 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { PinInputRootProps } from "../types.js";
 	import { PinInputRootState } from "../pin-input.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 
@@ -11,6 +11,7 @@
 		id = createId(uid),
 		inputId = `${createId(uid)}-input`,
 		ref = $bindable(null),
+		inputRef = $bindable(null),
 		maxlength = 6,
 		textalign = "left",
 		pattern,
@@ -32,6 +33,10 @@
 		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)
+		),
+		inputRef: boxWith(
+			() => inputRef,
+			(v) => (inputRef = v)
 		),
 		inputId: boxWith(() => inputId),
 		autocomplete: boxWith(() => autocomplete),

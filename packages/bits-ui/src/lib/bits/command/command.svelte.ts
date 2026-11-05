@@ -1,8 +1,10 @@
 import {
 	afterSleep,
 	afterTick,
+	onDestroyEffect,
 	srOnlyStyles,
 	attachRef,
+	getWindow,
 	type WritableBoxedValues,
 	type ReadableBoxedValues,
 } from "svelte-toolbelt";
@@ -15,12 +17,12 @@ import type {
 	BitsPointerEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { getFirstNonCommentChild } from "$lib/internal/dom.js";
+} from "#lib/internal/types.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { getFirstNonCommentChild } from "#lib/internal/dom.js";
 import { computeCommandScore } from "./index.js";
-import { cssEscape } from "$lib/internal/css-escape.js";
+import { cssEscape } from "#lib/internal/css-escape.js";
 
 const COMMAND_VALUE_ATTR = "data-value";
 
@@ -62,7 +64,8 @@ interface GridItem {
 type ItemsGrid = GridItem[][];
 
 interface CommandRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			filter: (value: string, search: string, keywords?: string[]) => number;
 			shouldFilter: boolean;
@@ -100,6 +103,7 @@ export class CommandRootState {
 	readonly attachment: RefAttachment;
 	#updateScheduled = false;
 	#isInitialMount = true;
+	#isDestroyed = false;
 	sortAfterTick = false;
 	sortAndFilterAfterTick = false;
 	allItems = new Set<string>();
@@ -119,11 +123,19 @@ export class CommandRootState {
 		return $state.snapshot(this._commandState);
 	}
 
+	/** `afterTick` that skips `fn` if the root was destroyed in the meantime. */
+	#afterTick(fn: () => void) {
+		afterTick(() => {
+			if (this.#isDestroyed) return;
+			fn();
+		});
+	}
+
 	#scheduleUpdate() {
 		if (this.#updateScheduled) return;
 		this.#updateScheduled = true;
 
-		afterTick(() => {
+		this.#afterTick(() => {
 			this.#updateScheduled = false;
 
 			const currentState = this.#snapshot();
@@ -148,7 +160,7 @@ export class CommandRootState {
 		if (key === "search") {
 			// Filter synchronously before emitting back to children
 			this.#filterItems();
-			this.#sort();
+			this.#sort({ forceSelectFirst: !this.#isInitialMount });
 		} else if (key === "value") {
 			if (!preventScroll) this.#scrollSelectedIntoView();
 		}
@@ -166,6 +178,9 @@ export class CommandRootState {
 		this.commandState = defaults;
 
 		this.onkeydown = this.onkeydown.bind(this);
+		onDestroyEffect(() => {
+			this.#isDestroyed = true;
+		});
 	}
 
 	/**
@@ -185,13 +200,13 @@ export class CommandRootState {
 	/**
 	 * Sorts items and groups based on search scores.
 	 * Groups are sorted by their highest scoring item.
-	 * When no search active, selects first item.
+	 * When no search is active, preserves the current item unless a reset is requested.
 	 */
-	#sort(): void {
+	#sort(opts: { forceSelectFirst?: boolean } = {}): void {
 		if (!this._commandState.search || this.opts.shouldFilter.current === false) {
 			// if no search and no initial value set or when clearing search,
 			// we select the first item.
-			if (!this._commandState.value || !this.#isInitialMount) {
+			if (!this._commandState.value || opts.forceSelectFirst) {
 				this.#selectFirstItem();
 			} else if (this.#isInitialMount && this._commandState.value) {
 				// scroll the initial value into view if it exists
@@ -276,7 +291,7 @@ export class CommandRootState {
 	 */
 	setValue(value: string, opts?: boolean) {
 		if (value !== this.opts.value.current && value === "") {
-			afterTick(() => {
+			this.#afterTick(() => {
 				this.key++;
 			});
 		}
@@ -288,7 +303,7 @@ export class CommandRootState {
 	 * Selects first non-disabled item on next tick.
 	 */
 	#selectFirstItem(): void {
-		afterTick(() => {
+		this.#afterTick(() => {
 			const item = this.getValidItems().find(
 				(item) => item.getAttribute("aria-disabled") !== "true"
 			);
@@ -300,12 +315,26 @@ export class CommandRootState {
 		});
 	}
 
+	#selectFirstItemIfValueMissing(value: string): void {
+		afterTick(() => {
+			if (this._commandState.value !== value) return;
+
+			const selectedItemExists = this.getValidItems().some(
+				(item) => item.getAttribute(COMMAND_VALUE_ATTR) === value
+			);
+
+			if (!selectedItemExists) {
+				this.#selectFirstItem();
+			}
+		});
+	}
+
 	/**
 	 * Scrolls the initial value into view if it exists and is not the first item.
 	 * Called during initial mount when a value is provided.
 	 */
 	#scrollInitialValue(): void {
-		afterTick(() => {
+		this.#afterTick(() => {
 			const shouldPreventScroll = this.opts.disableInitialScroll.current;
 			if (!shouldPreventScroll) {
 				this.#scrollSelectedIntoView();
@@ -450,7 +479,7 @@ export class CommandRootState {
 	 * Special handling for first items in groups.
 	 */
 	#scrollSelectedIntoView(): void {
-		afterTick(() => {
+		this.#afterTick(() => {
 			const item = this.#getSelectedItem();
 			if (!item) return;
 			const grandparent = item.parentElement?.parentElement;
@@ -482,9 +511,12 @@ export class CommandRootState {
 					const closestGroupHeader = item
 						?.closest(COMMAND_GROUP_SELECTOR)
 						?.querySelector(COMMAND_GROUP_HEADING_SELECTOR);
-					closestGroupHeader?.scrollIntoView({ block: "nearest" });
 
-					return;
+					if (closestGroupHeader) {
+						item.scrollIntoView({ block: "nearest" });
+						closestGroupHeader.scrollIntoView({ block: "nearest" });
+						return;
+					}
 				}
 			}
 
@@ -626,7 +658,7 @@ export class CommandRootState {
 		// Schedule sorting to run after this tick when all items are added not each time an item is added
 		if (!this.sortAfterTick) {
 			this.sortAfterTick = true;
-			afterTick(() => {
+			this.#afterTick(() => {
 				this.#sort();
 				this.sortAfterTick = false;
 			});
@@ -660,7 +692,7 @@ export class CommandRootState {
 		// Schedule sorting and filtering to run after this tick when all items are added not each time an item is added
 		if (!this.sortAndFilterAfterTick) {
 			this.sortAndFilterAfterTick = true;
-			afterTick(() => {
+			this.#afterTick(() => {
 				this.#filterItems();
 				this.#sort();
 				this.sortAndFilterAfterTick = false;
@@ -675,10 +707,13 @@ export class CommandRootState {
 
 			this.#filterItems();
 
-			// The item removed have been the selected one,
-			// so selection should be moved to the first
 			if (selectedItem?.getAttribute("id") === id) {
-				this.#selectFirstItem();
+				const selectedValue = selectedItem.getAttribute(COMMAND_VALUE_ATTR);
+				if (selectedValue) {
+					this.#selectFirstItemIfValueMissing(selectedValue);
+				} else {
+					this.#selectFirstItem();
+				}
 			}
 
 			this.#scheduleUpdate();
@@ -1132,7 +1167,8 @@ function itemIsDisabled(item: HTMLElement) {
 }
 
 interface CommandEmptyStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
 		}> {}
@@ -1175,7 +1211,8 @@ export class CommandEmptyState {
 }
 
 interface CommandGroupContainerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			forceMount: boolean;
@@ -1298,7 +1335,8 @@ export class CommandGroupItemsState {
 }
 
 interface CommandInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -1367,7 +1405,8 @@ export class CommandInputState {
 }
 
 interface CommandItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -1490,7 +1529,8 @@ export class CommandItemState {
 }
 
 interface CommandLoadingStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			progress: number;
 		}> {}
@@ -1523,7 +1563,8 @@ export class CommandLoadingState {
 }
 
 interface CommandSeparatorStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			forceMount: boolean;
 		}> {}
@@ -1559,7 +1600,8 @@ export class CommandSeparatorState {
 }
 
 interface CommandListStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			ariaLabel: string;
 		}> {}
@@ -1592,7 +1634,8 @@ export class CommandListState {
 }
 
 interface CommandLabelStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			for?: string;
 		}> {}
@@ -1641,9 +1684,10 @@ export class CommandViewportState {
 			([node, listNode]) => {
 				if (node === null || listNode === null) return;
 				let aF: number;
+				const win = getWindow(node);
 
-				const observer = new ResizeObserver(() => {
-					aF = requestAnimationFrame(() => {
+				const observer = new win.ResizeObserver(() => {
+					aF = win.requestAnimationFrame(() => {
 						const height = node.offsetHeight;
 						listNode.style.setProperty(
 							"--bits-command-list-height",
@@ -1655,7 +1699,7 @@ export class CommandViewportState {
 				observer.observe(node);
 
 				return () => {
-					cancelAnimationFrame(aF);
+					win.cancelAnimationFrame(aF);
 					observer.unobserve(node);
 				};
 			}

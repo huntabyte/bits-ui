@@ -2,9 +2,9 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuSubTriggerProps } from "../types.js";
 	import { MenuSubTriggerState } from "../menu.svelte.js";
-	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
-	import { noop } from "$lib/internal/noop.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import FloatingLayerAnchor from "#lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
+	import { noop } from "#lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 
@@ -15,7 +15,7 @@
 		children,
 		child,
 		onSelect = noop,
-		openDelay = 100,
+		openDelay = 0,
 		...restProps
 	}: MenuSubTriggerProps = $props();
 

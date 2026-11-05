@@ -1,22 +1,31 @@
-import { userEvent, page } from "@vitest/browser/context";
+import { userEvent, page } from "vitest/browser";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { mount, tick, unmount, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import DialogTest, { type DialogTestProps } from "./dialog-test.svelte";
 import DialogNestedTest from "./dialog-nested-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import {
+	bodyPointerEventsOnRemoval,
+	expectExists,
+	expectNotExists,
+	observeTransitionAttrs,
+	waitForDismissibleLayer,
+} from "../browser-utils";
 import DialogForceMountTest from "./dialog-force-mount-test.svelte";
 import DialogIntegrationTest from "./dialog-integration-test.svelte";
 import DialogTooltipTest from "./dialog-tooltip-test.svelte";
 import DialogAlertDialogNestedTest from "./dialog-alert-dialog-nested-test.svelte";
 import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
+import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
+import DialogShadowFieldTest from "./dialog-shadow-field-test.svelte";
+import DialogOpenOnMountTest from "./dialog-open-on-mount-test.svelte";
 
 const kbd = getTestKbd();
 
 async function setup(props: DialogTestProps = {}, component: Component = DialogTest) {
-	const t = render(component, { ...props });
+	const t = await render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
 
 	return {
@@ -30,6 +39,7 @@ async function open(props: DialogTestProps = {}, component: Component = DialogTe
 	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.click();
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	return t;
 }
 
@@ -49,6 +59,32 @@ describe("Data Attributes", () => {
 		await expect.element(overlay).toHaveAttribute("data-state", "open");
 		const content = page.getByTestId("content");
 		await expect.element(content).toHaveAttribute("data-state", "open");
+	});
+
+	it("should apply transition attrs to content and overlay during open and close", async () => {
+		await setup({}, DialogForceMountTest);
+		const trigger = page.getByTestId("trigger");
+		const contentObserver = observeTransitionAttrs(page.getByTestId("content").element());
+		const overlayObserver = observeTransitionAttrs(page.getByTestId("overlay").element());
+
+		await trigger.click();
+		await vi.waitFor(() =>
+			expect(contentObserver.history.some((entry) => entry.starting)).toBe(true)
+		);
+		await vi.waitFor(() =>
+			expect(overlayObserver.history.some((entry) => entry.starting)).toBe(true)
+		);
+
+		await userEvent.keyboard(kbd.ESCAPE);
+		await vi.waitFor(() =>
+			expect(contentObserver.history.some((entry) => entry.ending)).toBe(true)
+		);
+		await vi.waitFor(() =>
+			expect(overlayObserver.history.some((entry) => entry.ending)).toBe(true)
+		);
+
+		contentObserver.disconnect();
+		overlayObserver.disconnect();
 	});
 });
 
@@ -212,7 +248,7 @@ describe("Focus Management", () => {
 	});
 
 	it("should trap focus and allow Escape to close when only one focusable element exists", async () => {
-		render(DialogSingleFocusableTest);
+		await render(DialogSingleFocusableTest);
 		const trigger = page.getByTestId("trigger");
 		await trigger.click();
 		await expectExists(page.getByTestId("content"));
@@ -225,6 +261,71 @@ describe("Focus Management", () => {
 
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
+	});
+});
+
+describe("Shadow Root", () => {
+	it("should trap focus and restore it to the trigger inside a shadow root", async () => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const shadowRoot = host.attachShadow({ mode: "open" });
+		const app = shadowRoot.appendChild(document.createElement("div"));
+		// portal after the trigger so nothing focusable follows the dialog content
+		const portalTo = shadowRoot.appendChild(document.createElement("div"));
+		const component = mount(DialogShadowRootTest, { target: app, props: { portalTo } });
+		const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		const expectFocus = (id: string) =>
+			vi.waitFor(() => expect(shadowRoot.activeElement).toBe(get(id)));
+
+		try {
+			get("trigger")!.focus();
+			await userEvent.keyboard(kbd.ENTER);
+			await expectFocus("first");
+
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("second");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("close");
+			await userEvent.keyboard(kbd.TAB);
+			await expectFocus("first");
+			await userEvent.keyboard(kbd.SHIFT_TAB);
+			await expectFocus("close");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await vi.waitFor(() => expect(get("content")).toBeNull());
+			await expectFocus("trigger");
+		} finally {
+			unmount(component);
+			host.remove();
+		}
+	});
+
+	it("should keep focus on an input inside an open shadow root within the content", async () => {
+		await open({}, DialogShadowFieldTest);
+		const shadowRoot = page.getByTestId("shadow-host").element().shadowRoot!;
+		const input = shadowRoot.querySelector("input")!;
+
+		await page.getByTestId("light").click();
+		await expect.element(page.getByTestId("light")).toHaveFocus();
+
+		input.focus();
+		await userEvent.keyboard("abc");
+		expect(shadowRoot.activeElement).toBe(input);
+		expect(input.value).toBe("abc");
+	});
+
+	it("should not steal open auto-focus from an input inside an open shadow root", async () => {
+		const shadowRoot = () => page.getByTestId("shadow-host").element().shadowRoot!;
+		await open(
+			{
+				contentProps: {
+					onOpenAutoFocus: () => shadowRoot().querySelector("input")!.focus(),
+				},
+			},
+			DialogShadowFieldTest
+		);
+		// wait past the deferred auto-focus frame
+		await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+		expect(shadowRoot().activeElement).toBe(shadowRoot().querySelector("input"));
 	});
 });
 
@@ -268,11 +369,11 @@ it("should respect binding to the `open` prop", async () => {
 	await setup();
 	const trigger = page.getByTestId("trigger");
 	const binding = page.getByTestId("binding");
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 	await trigger.click();
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("true");
 	await userEvent.keyboard(kbd.ESCAPE);
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("false");
 
 	const toggle = page.getByTestId("toggle");
 	await expectNotExists(page.getByTestId("content"));
@@ -383,7 +484,7 @@ describe("ARIA Attributes", () => {
 
 describe("Nested Dialogs", () => {
 	it("should handle focus scoping correctly", async () => {
-		render(DialogNestedTest);
+		await render(DialogNestedTest);
 		const trigger = page.getByTestId("first-open");
 		await trigger.click();
 		await expectExists(page.getByTestId("first-close"));
@@ -404,7 +505,7 @@ describe("Nested Dialogs", () => {
 	});
 
 	it("should track dialog depth correctly", async () => {
-		render(DialogNestedTest);
+		await render(DialogNestedTest);
 
 		// open first dialog
 		await page.getByTestId("first-open").click();
@@ -506,7 +607,7 @@ describe("Nested Dialogs", () => {
 
 describe("Nested Alert Dialogs and Dialogs", () => {
 	it("should handle Alert Dialog nested inside Dialog with correct depth tracking", async () => {
-		render(DialogAlertDialogNestedTest);
+		await render(DialogAlertDialogNestedTest);
 
 		// open dialog
 		await page.getByTestId("dialog-open").click();
@@ -552,7 +653,7 @@ describe("Nested Alert Dialogs and Dialogs", () => {
 	});
 
 	it("should handle Dialog nested inside Alert Dialog with correct depth tracking", async () => {
-		render(DialogAlertDialogNestedTest);
+		await render(DialogAlertDialogNestedTest);
 
 		// open alert dialog
 		await page.getByTestId("alert-first-open").click();
@@ -600,7 +701,7 @@ describe("Nested Alert Dialogs and Dialogs", () => {
 	});
 
 	it("should handle three-level nesting: Dialog -> Alert Dialog -> Dialog", async () => {
-		render(DialogAlertDialogNestedTest);
+		await render(DialogAlertDialogNestedTest);
 
 		// open first dialog
 		await page.getByTestId("dialog-open").click();
@@ -675,7 +776,7 @@ describe("Nested Alert Dialogs and Dialogs", () => {
 
 describe("Integration with other components", () => {
 	it("should allow opening nested floating components within the dialog", async () => {
-		render(DialogIntegrationTest);
+		await render(DialogIntegrationTest);
 		await page.getByTestId("dialog-trigger").click();
 		await expectExists(page.getByTestId("dialog-content"));
 		await page.getByTestId("dropdown-trigger").click();
@@ -694,7 +795,7 @@ describe("Integration with other components", () => {
 
 	it("should not break tooltip when opened from tooltip trigger and disableCloseOnTriggerClick is true", async () => {
 		// https://github.com/huntabyte/bits-ui/issues/1666
-		render(DialogTooltipTest);
+		await render(DialogTooltipTest);
 		const trigger = page.getByTestId("trigger");
 		await trigger.hover();
 		await expectExists(page.getByTestId("tooltip-content"));
@@ -711,7 +812,7 @@ describe("Integration with other components", () => {
 
 describe("Scroll Lock", () => {
 	it("should not add padding when scrollbar-gutter: stable is applied", async () => {
-		render(DialogScrollbarGutterTest);
+		await render(DialogScrollbarGutterTest);
 
 		const initialPadding = document.body.style.paddingRight;
 
@@ -721,4 +822,223 @@ describe("Scroll Lock", () => {
 		// with scrollbar-gutter: stable, no padding compensation should be added
 		expect(document.body.style.paddingRight).toBe(initialPadding);
 	});
+
+	it("should restore body pointer-events as soon as the dialog closes", async () => {
+		// https://github.com/huntabyte/bits-ui/issues/2202
+		await open();
+		await vi.waitFor(() => expect(document.body.style.pointerEvents).toBe("none"));
+		const restored = bodyPointerEventsOnRemoval(page.getByTestId("content").element());
+		await userEvent.keyboard(kbd.ESCAPE);
+		expect(await restored).toBe("");
+	});
+
+	it("should restore a single inline overflow axis on body after closing", async () => {
+		// a lock left by the previous test releases on a delay and would reuse its stale snapshot
+		await expect.poll(() => document.body.style.overflow).toBe("");
+		document.body.style.overflowY = "scroll";
+		try {
+			await open();
+			expect(document.body.style.overflowY).toBe("hidden");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("content"));
+
+			await expect.poll(() => document.body.style.overflowY).toBe("scroll");
+			expect(document.body.style.overflowX).toBe("");
+			expect(document.body.style.pointerEvents).toBe("");
+		} finally {
+			document.body.removeAttribute("style");
+		}
+	});
+});
+
+/**
+ * Regression for https://github.com/huntabyte/bits-ui/issues/2080
+ *
+ * DismissibleLayer used to schedule afterSleep(1) without cancelling on destroy.
+ * Unmounting (or remounting) within that window left a timer that read a destroyed
+ * $derived and could re-attach document pointerdown listeners to a dead instance.
+ */
+describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
+	function installDerivedInertCounter() {
+		const counts = { inert: 0 };
+		const orig = console.warn.bind(console);
+		console.warn = (...args: unknown[]) => {
+			const text = args.map(String).join(" ");
+			if (text.includes("derived_inert")) counts.inert += 1;
+			orig(...args);
+		};
+		return {
+			counts,
+			restore: () => {
+				console.warn = orig;
+			},
+		};
+	}
+
+	it("should not read the layer ref from pending focus work after unmount", async () => {
+		const t = await open();
+		const content = page.getByTestId("content").element();
+		const layers = (
+			globalThis as {
+				bitsDismissableLayers?: Map<
+					{ opts: { ref: { current: HTMLElement | null } } },
+					unknown
+				>;
+			}
+		).bitsDismissableLayers!;
+		const layer = [...layers.keys()].find((layer) => layer.opts.ref.current === content)!;
+		const originalRef = layer.opts.ref;
+		const readRef = vi.fn(() => originalRef.current);
+		layer.opts.ref = {
+			get current() {
+				return readRef();
+			},
+			set current(value) {
+				originalRef.current = value;
+			},
+		};
+
+		try {
+			content.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+			expect(readRef).toHaveBeenCalled();
+			// Unmount synchronously before the focus handler's afterTick callback runs.
+			t.unmount();
+			expect(layers.has(layer)).toBe(false);
+			readRef.mockClear();
+
+			await tick();
+			expect(readRef).not.toHaveBeenCalled();
+		} finally {
+			layer.opts.ref = originalRef;
+		}
+	});
+
+	it("should not emit derived_inert when unmounted while open", async () => {
+		const counter = installDerivedInertCounter();
+		try {
+			const t = await render(DialogTest, { open: true });
+			await expectExists(page.getByTestId("content"));
+			// Unmount while the layer is live — races the afterSleep(1) attach window.
+			await t.unmount();
+			await new Promise((r) => setTimeout(r, 50));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+
+	it("should not auto-dismiss on sequential open after close via trigger-cycle", async () => {
+		const counter = installDerivedInertCounter();
+		try {
+			await open();
+			await page.getByTestId("close").click();
+			await expectNotExists(page.getByTestId("content"));
+
+			// Immediate pointer reopen — stale document listeners used to fire
+			// onInteractOutside on the new layer (~10ms debounce) and close it.
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await new Promise((r) => setTimeout(r, 50));
+			await expectExists(page.getByTestId("content"));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+});
+
+/**
+ * TextSelectionLayer leaks a document `pointerdown` listener when a layer is
+ * rapidly toggled open/closed. `#pointerdown` read `this.opts.ref.current` — a
+ * writable `box` backed by a `$derived` owned by the (now destroyed) Content
+ * component — as its first statement, before any enabled/target check. Every
+ * document pointerdown then re-executed a destroyed derived and warned, for any
+ * click target anywhere in the app, forever.
+ *
+ * NB: `derived_inert` was added after the svelte version this repo pins, so this
+ * assertion only bites once the pinned svelte is new enough to emit it.
+ */
+describe("TextSelectionLayer teardown (derived_inert)", () => {
+	function installCounter() {
+		const counts = { inert: 0 };
+		const orig = console.warn.bind(console);
+		console.warn = (...args: unknown[]) => {
+			if (args.map(String).join(" ").includes("derived_inert")) counts.inert += 1;
+			orig(...args);
+		};
+		return {
+			counts,
+			restore: () => {
+				console.warn = orig;
+			},
+		};
+	}
+
+	it("should not emit derived_inert on document pointerdown after teardown", async () => {
+		const counter = installCounter();
+		try {
+			const t = await render(DialogTest, { open: false });
+			for (let i = 0; i < 6; i++) {
+				await t.rerender({ open: i % 2 === 0 });
+				await new Promise((r) => setTimeout(r, 3));
+			}
+			await t.unmount();
+			await new Promise((r) => setTimeout(r, 100));
+
+			counter.counts.inert = 0;
+			document.body.dispatchEvent(
+				new PointerEvent("pointerdown", { bubbles: true, cancelable: true, button: 0 })
+			);
+			await new Promise((r) => setTimeout(r, 50));
+			expect(counter.counts.inert).toBe(0);
+		} finally {
+			counter.restore();
+		}
+	});
+});
+
+describe("Text Selection", () => {
+	function pointer(type: "pointerdown" | "pointerup") {
+		page.getByTestId("content")
+			.element()
+			.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+				})
+			);
+	}
+
+	function bodyUserSelect() {
+		return document.body.style.userSelect || document.body.style.webkitUserSelect;
+	}
+
+	it("should lock text selection overflow while pointing down inside the content", async () => {
+		await open();
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("none");
+		pointer("pointerup");
+		expect(bodyUserSelect()).toBe("");
+	});
+
+	it("should pass preventOverflowTextSelection to the layer instead of rendering it as an attribute", async () => {
+		await open({ contentProps: { preventOverflowTextSelection: false } });
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("");
+		pointer("pointerup");
+	});
+});
+
+it("should render content when opened by a descendant's onMount", async () => {
+	await render(DialogOpenOnMountTest);
+	await expectExists(page.getByTestId("content"));
 });

@@ -1,15 +1,15 @@
 import type { DateValue } from "@internationalized/date";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
-import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
-import type { CalendarRootSnippetProps } from "$lib/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "#lib/internal/types.js";
+import type { BitsPrimitiveDivAttributes } from "#lib/shared/attributes.js";
+import type { CalendarRootSnippetProps } from "#lib/types.js";
 import type {
 	DateMatcher,
 	DateOnInvalid,
 	DateValidator,
 	EditableSegmentPart,
-} from "$lib/shared/index.js";
-import type { Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
-import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
+} from "#lib/shared/index.js";
+import type { Granularity, WeekStartsOn } from "#lib/shared/date/types.js";
+import type { PortalProps } from "#lib/bits/utilities/portal/index.js";
 
 export type DatePickerRootPropsWithoutHTML = WithChildren<{
 	/**
@@ -305,7 +305,7 @@ export type {
 	PopoverArrowProps as DatePickerArrowProps,
 	PopoverClosePropsWithoutHTML as DatePickerClosePropsWithoutHTML,
 	PopoverCloseProps as DatePickerCloseProps,
-} from "$lib/bits/popover/types.js";
+} from "#lib/bits/popover/types.js";
 
 export type {
 	DateFieldInputPropsWithoutHTML as DatePickerInputPropsWithoutHTML,
@@ -314,7 +314,7 @@ export type {
 	DateFieldLabelProps as DatePickerLabelProps,
 	DateFieldSegmentPropsWithoutHTML as DatePickerSegmentPropsWithoutHTML,
 	DateFieldSegmentProps as DatePickerSegmentProps,
-} from "$lib/bits/date-field/types.js";
+} from "#lib/bits/date-field/types.js";
 
 export type DatePickerCalendarPropsWithoutHTML = WithChild<{}, CalendarRootSnippetProps>;
 
@@ -355,4 +355,4 @@ export type {
 	CalendarWeekNumberCellPropsWithoutHTML as DatePickerWeekNumberCellPropsWithoutHTML,
 	CalendarWeekNumberHeadCellProps as DatePickerWeekNumberHeadCellProps,
 	CalendarWeekNumberHeadCellPropsWithoutHTML as DatePickerWeekNumberHeadCellPropsWithoutHTML,
-} from "$lib/bits/calendar/types.js";
+} from "#lib/bits/calendar/types.js";

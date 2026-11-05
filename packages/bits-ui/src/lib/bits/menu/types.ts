@@ -7,20 +7,27 @@ import type {
 	WithChildNoChildrenSnippetProps,
 	WithChildren,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
-import type { Direction } from "$lib/shared/index.js";
-import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
-import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+} from "#lib/shared/attributes.js";
+import type { Direction } from "#lib/shared/index.js";
+import type { PortalProps } from "#lib/bits/utilities/portal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "#lib/shared/types.js";
 
 export type MenuRootPropsWithoutHTML = WithChildren<{
 	/**
 	 * The open state of the menu.
 	 */
 	open?: boolean;
+
+	// /**
+	//  * When `true`, renders safe-area debug overlays for submenu pointer intent.
+	//  *
+	//  * @defaultValue false
+	//  */
+	// debugMode?: boolean;
 
 	/**
 	 * A callback that is called when the menu is opened or closed.

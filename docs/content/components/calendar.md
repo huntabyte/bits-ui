@@ -4,7 +4,7 @@ description: Displays dates and days of the week, facilitating date-related inte
 ---
 
 <script>
-	import { APISection, ComponentPreview, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, CalendarDemoWeekNumbers, Callout, CalendarDemoMax } from '$lib/components'
+	import { APISection, ComponentPreview, CalendarDemo, CalendarDemoSelects, CalendarDemoPresets, CalendarDemoWeekNumbers, Callout, CalendarDemoMax } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

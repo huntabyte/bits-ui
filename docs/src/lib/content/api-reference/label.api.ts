@@ -1,5 +1,5 @@
 import type { LabelRootPropsWithoutHTML } from "bits-ui";
-import { withChildProps } from "$lib/content/api-reference/shared.js";
+import { withChildProps } from "#lib/content/api-reference/shared.js";
 import { defineComponentApiSchema, defineSimpleDataAttr } from "../utils.js";
 
 export const root = defineComponentApiSchema<LabelRootPropsWithoutHTML>({

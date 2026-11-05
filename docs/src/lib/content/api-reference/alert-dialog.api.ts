@@ -14,6 +14,8 @@ import {
 	DialogContentChildSnippetProps,
 	DialogOverlayChildSnippetProps,
 } from "./extended-types/dialog/index.js";
+import dialogContentChildSnippetPropsRaw from "./extended-types/dialog/dialog-content-child-snippet-props.md?raw";
+import dialogOverlayChildSnippetPropsRaw from "./extended-types/dialog/dialog-overlay-child-snippet-props.md?raw";
 import {
 	childrenSnippet,
 	dismissibleLayerProps,
@@ -27,13 +29,15 @@ import {
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
+	transitionStyleDataAttrs,
 	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+} from "#lib/content/api-reference/shared.js";
 import {
 	defineComponentApiSchema,
 	defineEnumDataAttr,
 	defineSimpleDataAttr,
 	defineUnionProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 import { nestedCSSVars, nestedDataAttrs } from "./dialog.api.js";
 
@@ -95,15 +99,13 @@ const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: DialogContentChildSnippetProps,
-				stringDefinition: `type SnippetProps = {
-	props: Record<string, unknown>;
-	open: boolean;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(dialogContentChildSnippetPropsRaw),
 			},
 		}),
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "alert-dialog-content",
 			description: "Present on the content element.",
@@ -168,15 +170,13 @@ const overlay = defineComponentApiSchema<AlertDialogOverlayPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			child: {
 				definition: DialogOverlayChildSnippetProps,
-				stringDefinition: `type SnippetProps = {
-	props: Record<string, unknown>;
-	open: boolean;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(dialogOverlayChildSnippetPropsRaw),
 			},
 		}),
 	},
 	dataAttributes: [
 		stateDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "alert-dialog-overlay",
 			description: "Present on the overlay element.",

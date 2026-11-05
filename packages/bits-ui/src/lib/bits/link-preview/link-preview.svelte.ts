@@ -9,18 +9,23 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
-import { createBitsAttrs, boolToStr, getDataOpenClosed } from "$lib/internal/attrs.js";
-import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
+import {
+	createBitsAttrs,
+	boolToStr,
+	getDataOpenClosed,
+	getDataTransitionAttrs,
+} from "#lib/internal/attrs.js";
+import { isElement, isFocusVisible, isTouch } from "#lib/internal/is.js";
 import type {
 	BitsFocusEvent,
 	BitsPointerEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+} from "#lib/internal/types.js";
+import { getTabbableCandidates } from "#lib/internal/focus.js";
+import { SafePolygon } from "#lib/internal/safe-polygon.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 
 const linkPreviewAttrs = createBitsAttrs({
 	component: "link-preview",
@@ -30,7 +35,8 @@ const linkPreviewAttrs = createBitsAttrs({
 const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
 
 interface LinkPreviewRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
@@ -100,11 +106,12 @@ export class LinkPreviewRootState {
 					handlePointerUp
 				);
 
-				if (!this.contentNode) return;
-				const tabCandidates = getTabbableCandidates(this.contentNode);
+				if (this.contentNode) {
+					const tabCandidates = getTabbableCandidates(this.contentNode);
 
-				for (const candidate of tabCandidates) {
-					candidate.setAttribute("tabindex", "-1");
+					for (const candidate of tabCandidates) {
+						candidate.setAttribute("tabindex", "-1");
+					}
 				}
 
 				return () => {
@@ -216,7 +223,8 @@ export class LinkPreviewTriggerState {
 }
 
 interface LinkPreviewContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -306,6 +314,7 @@ export class LinkPreviewContentState {
 				id: this.opts.id.current,
 				tabindex: -1,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
+				...getDataTransitionAttrs(this.root.contentPresence.transitionStatus),
 				[linkPreviewAttrs.content]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerenter: this.onpointerenter,

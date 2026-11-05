@@ -11,26 +11,26 @@
 		max={10}
 		type="multiple"
 		bind:value
-		class="relative flex w-full touch-none select-none items-center"
+		class="relative flex w-full touch-none items-center select-none"
 		trackPadding={2}
 	>
 		{#snippet children({ tickItems, thumbItems })}
 			<span
-				class="bg-dark-10 relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full"
+				class="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-dark-10"
 			>
-				<Slider.Range class="bg-foreground absolute h-full" />
+				<Slider.Range class="absolute h-full bg-foreground" />
 			</span>
 			{#each thumbItems as { index } (index)}
 				<Slider.Thumb
 					{index}
-					class="border-border-input bg-background hover:border-dark-40 focus-visible:ring-foreground dark:bg-foreground dark:shadow-card data-active:border-dark-40 z-5 focus-visible:outline-hidden data-active:scale-[0.98] block size-[25px] cursor-pointer rounded-full border shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+					class="z-5 block size-[25px] cursor-pointer rounded-full border border-border-input bg-background shadow-sm transition-colors hover:border-dark-40 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-active:scale-[0.98] data-active:border-dark-40 dark:bg-foreground dark:shadow-card"
 				/>
 			{/each}
 			{#each tickItems as { index, value } (index)}
-				<Slider.Tick {index} class="dark:bg-background/20 bg-background z-1 h-2 w-[1px]" />
+				<Slider.Tick {index} class="z-1 h-2 w-[1px] bg-background dark:bg-background/20" />
 				<Slider.TickLabel
 					{index}
-					class="text-muted-foreground data-bounded:text-foreground mb-5 text-sm font-medium leading-none"
+					class="mb-5 text-sm leading-none font-medium text-muted-foreground data-bounded:text-foreground"
 					position="top"
 				>
 					{value}

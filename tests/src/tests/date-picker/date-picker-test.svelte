@@ -1,10 +1,18 @@
 <script lang="ts" module>
 	import { DatePicker, type WithoutChildrenOrChild } from "bits-ui";
-	export type DatePickerTestProps = WithoutChildrenOrChild<DatePicker.RootProps>;
+	export type DatePickerTestProps = WithoutChildrenOrChild<DatePicker.RootProps> & {
+		contentProps?: WithoutChildrenOrChild<DatePicker.ContentProps>;
+	};
 </script>
 
 <script lang="ts">
-	let { placeholder, value, open = false, ...restProps }: DatePickerTestProps = $props();
+	let {
+		placeholder,
+		value,
+		open = false,
+		contentProps = {},
+		...restProps
+	}: DatePickerTestProps = $props();
 
 	function clear() {
 		value = undefined;
@@ -29,7 +37,7 @@
 		</DatePicker.Input>
 
 		<DatePicker.Trigger data-testid="trigger">Open</DatePicker.Trigger>
-		<DatePicker.Content data-testid="content">
+		<DatePicker.Content {...contentProps} data-testid="content">
 			<DatePicker.Calendar data-testid="calendar">
 				{#snippet children({ months, weekdays })}
 					<DatePicker.Header data-testid="header">

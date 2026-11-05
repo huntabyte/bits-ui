@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { ComboboxRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { SelectRootState } from "$lib/bits/select/select.svelte.js";
-	import ListboxHiddenInput from "$lib/bits/select/components/select-hidden-input.svelte";
+	import { noop } from "#lib/internal/noop.js";
+	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import { SelectRootState } from "#lib/bits/select/select.svelte.js";
+	import ListboxHiddenInput from "#lib/bits/select/components/select-hidden-input.svelte";
 	import { watch } from "runed";
 
 	let {
@@ -26,7 +27,7 @@
 	}: ComboboxRootProps = $props();
 
 	if (value === undefined) {
-		const defaultValue = type === "single" ? "" : [];
+		const defaultValue = untrack(() => (type === "single" ? "" : []));
 		value = defaultValue;
 	}
 
@@ -39,7 +40,7 @@
 	);
 
 	const rootState = SelectRootState.create({
-		type,
+		type: untrack(() => type),
 		value: boxWith(
 			() => value!,
 			(v) => {

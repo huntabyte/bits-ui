@@ -2,15 +2,16 @@
 	// Date Picker composes the DateField, Popover, and Calendar components
 	import { watch } from "runed";
 	import { boxWith } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { DateValue } from "@internationalized/date";
 	import { DatePickerRootState } from "../date-picker.svelte.js";
 	import type { DatePickerRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
-	import { DateFieldRootState } from "$lib/bits/date-field/date-field.svelte.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
-	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { PopoverRootState } from "#lib/bits/popover/popover.svelte.js";
+	import { DateFieldRootState } from "#lib/bits/date-field/date-field.svelte.js";
+	import { FloatingLayer } from "#lib/bits/utilities/floating-layer/index.js";
+	import { getDefaultDate } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		open = $bindable(false),
@@ -51,12 +52,14 @@
 		yearFormat = "numeric",
 	}: DatePickerRootProps = $props();
 
-	const defaultPlaceholder = getDefaultDate({
-		granularity,
-		defaultValue: value,
-		minValue,
-		maxValue,
-	});
+	const defaultPlaceholder = untrack(() =>
+		getDefaultDate({
+			granularity,
+			defaultValue: value,
+			minValue,
+			maxValue,
+		})
+	);
 
 	function handleDefaultPlaceholder() {
 		if (placeholder !== undefined) return;
@@ -100,7 +103,7 @@
 			}
 		),
 		placeholder: boxWith(
-			() => placeholder as DateValue,
+			() => placeholder ?? defaultPlaceholder,
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v as DateValue);

@@ -3,7 +3,7 @@
 	import { CalendarWeekNumberCellState } from "../calendar.svelte.js";
 	import { CalendarRootContext } from "../calendar.svelte.js";
 	import type { CalendarWeekNumberCellProps } from "../types.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

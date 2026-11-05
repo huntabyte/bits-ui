@@ -1,15 +1,15 @@
 import type { DateValue } from "@internationalized/date";
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { BitsPrimitiveDivAttributes } from "$lib/shared/attributes.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
+import type { BitsPrimitiveDivAttributes } from "#lib/shared/attributes.js";
 import type {
 	DateMatcher,
 	DateOnInvalid,
 	DateRange,
 	DateRangeValidator,
 	EditableSegmentPart,
-} from "$lib/shared/index.js";
-import type { CalendarRootSnippetProps } from "$lib/types.js";
-import type { Granularity, WeekStartsOn } from "$lib/shared/date/types.js";
+} from "#lib/shared/index.js";
+import type { CalendarRootSnippetProps } from "#lib/types.js";
+import type { Granularity, WeekStartsOn } from "#lib/shared/date/types.js";
 
 export type DateRangePickerRootPropsWithoutHTML = WithChild<{
 	/**
@@ -336,7 +336,7 @@ export type {
 	PopoverArrowProps as DateRangePickerArrowProps,
 	PopoverClosePropsWithoutHTML as DateRangePickerClosePropsWithoutHTML,
 	PopoverCloseProps as DateRangePickerCloseProps,
-} from "$lib/bits/popover/types.js";
+} from "#lib/bits/popover/types.js";
 
 export type {
 	DateRangeFieldInputPropsWithoutHTML as DateRangePickerInputPropsWithoutHTML,
@@ -345,7 +345,7 @@ export type {
 	DateRangeFieldLabelProps as DateRangePickerLabelProps,
 	DateRangeFieldSegmentPropsWithoutHTML as DateRangePickerSegmentPropsWithoutHTML,
 	DateRangeFieldSegmentProps as DateRangePickerSegmentProps,
-} from "$lib/bits/date-range-field/types.js";
+} from "#lib/bits/date-range-field/types.js";
 
 export type DateRangePickerCalendarPropsWithoutHTML = WithChild<{}, CalendarRootSnippetProps>;
 
@@ -383,4 +383,4 @@ export type {
 	RangeCalendarWeekNumberCellPropsWithoutHTML as DateRangePickerWeekNumberCellPropsWithoutHTML,
 	RangeCalendarWeekNumberHeadCellProps as DateRangePickerWeekNumberHeadCellProps,
 	RangeCalendarWeekNumberHeadCellPropsWithoutHTML as DateRangePickerWeekNumberHeadCellPropsWithoutHTML,
-} from "$lib/bits/range-calendar/types.js";
+} from "#lib/bits/range-calendar/types.js";

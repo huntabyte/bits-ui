@@ -5,12 +5,15 @@ import {
 	SwitchRootChildSnippetProps,
 	SwitchRootChildrenSnippetProps,
 } from "./extended-types/switch/index.js";
+import switchRootChildSnippetPropsRaw from "./extended-types/switch/switch-root-child-snippet-props.md?raw";
+import switchRootChildrenSnippetPropsRaw from "./extended-types/switch/switch-root-children-snippet-props.md?raw";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
 	defineEnumDataAttr,
 	defineSimpleDataAttr,
 	defineStringProp,
+	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
 const stateDataAttr = defineEnumDataAttr({
@@ -46,16 +49,11 @@ const root = defineComponentApiSchema<SwitchRootPropsWithoutHTML>({
 			elType: "HTMLButtonElement",
 			children: {
 				definition: SwitchRootChildrenSnippetProps,
-				stringDefinition: `type ChildrenSnippetProps = {
-	checked: boolean;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(switchRootChildrenSnippetPropsRaw),
 			},
 			child: {
 				definition: SwitchRootChildSnippetProps,
-				stringDefinition: `type ChildSnippetProps = {
-	checked: boolean;
-	props: Record<string, unknown>;
-};`,
+				stringDefinition: stringDefinitionFromMarkdown(switchRootChildSnippetPropsRaw),
 			},
 		}),
 	},
@@ -83,16 +81,11 @@ const thumb = defineComponentApiSchema<SwitchThumbPropsWithoutHTML>({
 		elType: "HTMLSpanElement",
 		children: {
 			definition: SwitchRootChildrenSnippetProps,
-			stringDefinition: `type ChildrenSnippetProps = {
-	checked: boolean;
-};`,
+			stringDefinition: stringDefinitionFromMarkdown(switchRootChildrenSnippetPropsRaw),
 		},
 		child: {
 			definition: SwitchRootChildSnippetProps,
-			stringDefinition: `type ChildSnippetProps = {
-	checked: boolean;
-	props: Record<string, unknown>;
-};`,
+			stringDefinition: stringDefinitionFromMarkdown(switchRootChildSnippetPropsRaw),
 		},
 	}),
 	dataAttributes: [

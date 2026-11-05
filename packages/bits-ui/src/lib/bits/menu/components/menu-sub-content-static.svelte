@@ -3,12 +3,12 @@
 	import type { MenuSubContentStaticProps } from "../types.js";
 	import { MenuContentState } from "../menu.svelte.js";
 	import { SUB_CLOSE_KEYS } from "../utils.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { noop } from "$lib/internal/noop.js";
-	import { isHTMLElement } from "$lib/internal/is.js";
-	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
-	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import PopperLayer from "#lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { noop } from "#lib/internal/noop.js";
+	import { isHTMLElement } from "#lib/internal/is.js";
+	import { getFloatingContentCSSVars } from "#lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "#lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	const uid = $props.id();
 
@@ -97,12 +97,21 @@
 	function handleOnFocusOutside(e: FocusEvent) {
 		onFocusOutside(e);
 		if (e.defaultPrevented) return;
-		// We prevent closing when the trigger is focused to avoid triggering a re-open animation
-		// on pointer interaction.
 		if (!isHTMLElement(e.target)) return;
-		if (e.target.id !== subContentState.parentMenu.triggerNode?.id) {
+		if (e.target.id === subContentState.parentMenu.triggerNode?.id) return;
+		const parentContent = subContentState.parentMenu.parentMenu?.contentNode;
+		if (parentContent?.contains(e.target)) {
 			subContentState.parentMenu.onClose();
+			e.preventDefault();
+			return;
 		}
+		// focus moved to a descendant sub-content (rendered in a portal)
+		const subContentSelector = `[${subContentState.parentMenu.root.getBitsAttr("sub-content")}]`;
+		if (e.target.closest(subContentSelector)) {
+			e.preventDefault();
+			return;
+		}
+		subContentState.parentMenu.onClose();
 	}
 </script>
 

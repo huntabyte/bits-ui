@@ -1,17 +1,17 @@
 import type { Time } from "@internationalized/date";
-import type { EditableSegmentPart, WithChildren } from "$lib/shared/index.js";
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { EditableSegmentPart, WithChildren } from "#lib/shared/index.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveDivAttributes,
 	BitsPrimitiveSpanAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 import type {
 	TimeGranularity,
 	TimeOnInvalid,
 	TimeSegmentPart,
 	TimeValidator,
 	TimeValue,
-} from "$lib/shared/date/types.js";
+} from "#lib/shared/date/types.js";
 
 export type TimeFieldRootPropsWithoutHTML<T extends TimeValue = Time> = WithChildren<{
 	/**

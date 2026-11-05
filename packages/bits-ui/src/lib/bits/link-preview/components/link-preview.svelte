@@ -2,8 +2,8 @@
 	import { boxWith } from "svelte-toolbelt";
 	import type { LinkPreviewRootProps } from "../types.js";
 	import { LinkPreviewRootState } from "../link-preview.svelte.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { FloatingLayer } from "#lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		disabled = false,

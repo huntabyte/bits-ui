@@ -12,10 +12,20 @@
 <main data-testid="main" style="position: relative; width: 360px; height: 240px; padding: 24px;">
 	<Tooltip.Provider delayDuration={0}>
 		<div data-testid="automation-card" style="display: flex; align-items: center; gap: 16px;">
-			<Tooltip.Trigger id="trigger-left" data-testid="trigger-left" {tether} payload={{ label: "Left" }}>
+			<Tooltip.Trigger
+				id="trigger-left"
+				data-testid="trigger-left"
+				{tether}
+				payload={{ label: "Left" }}
+			>
 				Left
 			</Tooltip.Trigger>
-			<Tooltip.Trigger id="trigger-right" data-testid="trigger-right" {tether} payload={{ label: "Right" }}>
+			<Tooltip.Trigger
+				id="trigger-right"
+				data-testid="trigger-right"
+				{tether}
+				payload={{ label: "Right" }}
+			>
 				Right
 			</Tooltip.Trigger>
 		</div>

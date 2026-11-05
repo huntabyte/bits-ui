@@ -1,15 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { render } from "vitest-browser-svelte";
 import { getTestKbd } from "../utils.js";
 import AlertDialogTest, { type AlertDialogTestProps } from "./alert-dialog-test.svelte";
 import AlertDialogForceMountTest from "./alert-dialog-force-mount-test.svelte";
-import { expectExists, expectNotExists } from "../browser-utils";
+import AlertDialogReplaceContentTest from "./alert-dialog-replace-content-test.svelte";
+import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 
 const kbd = getTestKbd();
 
 async function setup(props: AlertDialogTestProps = {}, component = AlertDialogTest) {
-	render(component, { ...props });
+	await render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
 	return { trigger };
 }
@@ -22,6 +23,7 @@ async function open(props: AlertDialogTestProps = {}) {
 	await t.trigger.click();
 
 	await expectExists(content);
+	await waitForDismissibleLayer(content);
 
 	const cancel = page.getByTestId("cancel");
 	const action = page.getByTestId("action");
@@ -180,6 +182,20 @@ describe("Focus Management", () => {
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expect.element(page.getByTestId("close-focus-override")).toHaveFocus();
 	});
+
+	// https://github.com/huntabyte/bits-ui/issues/2136
+	it("should not focus replacement content whose open autofocus was prevented", async () => {
+		const onOpenAutoFocus = vi.fn();
+		await render(AlertDialogReplaceContentTest, { onOpenAutoFocus });
+
+		const content = page.getByTestId("content");
+		await expect.element(content).toHaveAttribute("data-version", "1");
+		expect(onOpenAutoFocus).toHaveBeenCalledTimes(2);
+
+		// let the first open's delayed autofocus run
+		await new Promise((r) => setTimeout(r, 50));
+		expect(document.activeElement).not.toBe(content.element());
+	});
 });
 
 describe("Props and Rendering", () => {
@@ -201,11 +217,11 @@ describe("Props and Rendering", () => {
 	it("should respect binding to the `open` prop", async () => {
 		const t = await setup();
 		const binding = page.getByTestId("binding");
-		await expect.element(binding).toHaveTextContent("false");
+		await expect.element(binding).toMatchTextContent("false");
 		await t.trigger.click();
-		await expect.element(binding).toHaveTextContent("true");
+		await expect.element(binding).toMatchTextContent("true");
 		await userEvent.keyboard(kbd.ESCAPE);
-		await expect.element(binding).toHaveTextContent("false");
+		await expect.element(binding).toMatchTextContent("false");
 		await expectNotExists(page.getByTestId("content"));
 		await page.getByTestId("toggle").click();
 		await expectExists(page.getByTestId("content"));
@@ -281,5 +297,45 @@ describe("ARIA Attributes", () => {
 			titleProps: { level: 3 },
 		});
 		await expect.element(page.getByTestId("title")).toHaveAttribute("aria-level", "3");
+	});
+});
+
+describe("Text Selection", () => {
+	function pointer(type: "pointerdown" | "pointerup") {
+		page.getByTestId("content")
+			.element()
+			.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+				})
+			);
+	}
+
+	function bodyUserSelect() {
+		return document.body.style.userSelect || document.body.style.webkitUserSelect;
+	}
+
+	it("should lock text selection overflow while pointing down inside the content", async () => {
+		await open();
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("none");
+		pointer("pointerup");
+		expect(bodyUserSelect()).toBe("");
+	});
+
+	it("should pass preventOverflowTextSelection to the layer instead of rendering it as an attribute", async () => {
+		await open({ contentProps: { preventOverflowTextSelection: false } });
+		await expect
+			.element(page.getByTestId("content"))
+			.not.toHaveAttribute("preventoverflowtextselection");
+		pointer("pointerdown");
+		expect(bodyUserSelect()).toBe("");
+		pointer("pointerup");
 	});
 });

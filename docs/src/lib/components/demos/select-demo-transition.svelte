@@ -29,25 +29,20 @@
 		{ value: "turquoise-blue", label: "Turquoise Blue" },
 		{ value: "burnt-orange", label: "Burnt Orange" },
 	];
-
-	let value = $state<string>("");
-	const selectedLabel = $derived(
-		value ? themes.find((theme) => theme.value === value)?.label : "Select a theme"
-	);
 </script>
 
-<Select.Root type="single" bind:value items={themes}>
+<Select.Root type="single" items={themes}>
 	<Select.Trigger
-		class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 inline-flex w-[296px] touch-none select-none items-center border px-[11px] text-sm transition-colors"
+		class="inline-flex h-input w-[296px] touch-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors select-none placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
 	>
-		<Palette class="text-muted-foreground mr-[9px] size-6" />
-		{selectedLabel}
-		<CaretUpDown class="text-muted-foreground ml-auto size-6" />
+		<Palette class="mr-[9px] size-6 text-muted-foreground" />
+		<Select.Value placeholder="Select a theme" />
+		<CaretUpDown class="ml-auto size-6 text-muted-foreground" />
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="focus-override border-muted bg-background shadow-popover outline-hidden z-50 h-96 max-h-[var(--bits-select-content-available-height)] w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3"
+			class="focus-override z-50 h-96 max-h-[var(--bits-select-content-available-height)] w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-hidden select-none"
 			sideOffset={10}
 			forceMount
 		>
@@ -61,7 +56,7 @@
 							<Select.Viewport class="p-1">
 								{#each themes as theme, i (i + theme.value)}
 									<Select.Item
-										class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize duration-75"
+										class="flex h-10 w-full items-center rounded-button py-3 pr-1.5 pl-5 text-sm capitalize outline-hidden duration-75 select-none data-highlighted:bg-muted"
 										value={theme.value}
 										label={theme.label}
 									>

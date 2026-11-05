@@ -1,9 +1,10 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { Orientation } from "$lib/index.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
+import type { HTMLInputAttributes } from "svelte/elements";
+import type { Orientation } from "#lib/index.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 
 export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	/**
@@ -64,6 +65,15 @@ export type RadioGroupRootPropsWithoutHTML = WithChild<{
 	 * @default false
 	 */
 	readonly?: boolean;
+
+	/**
+	 * The `autocomplete` attribute to forward to the hidden input element.
+	 * Browsers can otherwise autofill the hidden input with values that
+	 * don't match any of the radio items.
+	 *
+	 * @default "off"
+	 */
+	autocomplete?: HTMLInputAttributes["autocomplete"];
 }>;
 
 export type RadioGroupRootProps = RadioGroupRootPropsWithoutHTML &

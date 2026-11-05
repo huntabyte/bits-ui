@@ -4,7 +4,7 @@ import type {
 	EDITABLE_SEGMENT_PARTS,
 	NON_EDITABLE_SEGMENT_PARTS,
 	EDITABLE_TIME_SEGMENT_PARTS,
-} from "$lib/internal/date-time/field/parts.js";
+} from "#lib/internal/date-time/field/parts.js";
 
 export type Granularity = "day" | "hour" | "minute" | "second";
 export type TimeGranularity = "hour" | "minute" | "second";

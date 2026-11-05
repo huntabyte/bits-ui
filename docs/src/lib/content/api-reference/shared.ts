@@ -33,8 +33,8 @@ import {
 } from "./extended-types/floating/index.js";
 import { PortalToProp } from "./extended-types/portal/index.js";
 
-import type { PropSchema, PropTypeComplex } from "$lib/content/types.js";
-import * as C from "$lib/content/constants.js";
+import type { PropSchema, PropTypeComplex } from "#lib/content/types.js";
+import * as C from "#lib/content/constants.js";
 import {
 	defineBooleanProp,
 	defineComponentPropSchema,
@@ -186,7 +186,7 @@ export const floatingSideOffsetProp = defineNumberProp({
 	default: 0,
 });
 
-export function floatingAlignProp(defaultAlign = "start"): PropSchema {
+export function floatingAlignProp(defaultAlign = "center"): PropSchema {
 	return defineEnumProp({
 		options: ["start", "center", "end"],
 		default: defaultAlign,
@@ -237,8 +237,8 @@ export const floatingStickyProp = defineEnumProp({
 
 export const floatingHideWhenDetachedProp = defineBooleanProp({
 	description:
-		"When `true`, hides the content when it is detached from the DOM. This is useful for when you want to hide the content when the user scrolls away.",
-	default: true,
+		"When `true`, hides the content when its anchor is fully clipped by a scroll container or the viewport. This is useful for when you want to hide the content when the user scrolls away.",
+	default: false,
 });
 
 export const floatingUpdatePositionStrategyProp = defineEnumProp({
@@ -404,6 +404,20 @@ export const disabledDataAttr = defineSimpleDataAttr({
 	description: "Present when the component is disabled.",
 });
 
+export const startingStyleDataAttr = defineSimpleDataAttr({
+	name: "starting-style",
+	description:
+		"Present during the initial open frame. Use this to define the starting styles for CSS transitions.",
+});
+
+export const endingStyleDataAttr = defineSimpleDataAttr({
+	name: "ending-style",
+	description:
+		"Present while closing before unmount. Use this to define the ending styles for CSS transitions.",
+});
+
+export const transitionStyleDataAttrs = [startingStyleDataAttr, endingStyleDataAttr] as const;
+
 export const valueDateRangeProp = defineComponentPropSchema({
 	type: "DateRange",
 	definition: DateRangeProp,
@@ -426,7 +440,8 @@ export const valueDateRangeChangeFn = defineFunctionProp({
 
 export const onOpenChangeProp = defineFunctionProp({
 	definition: OnOpenChangeProp,
-	description: "A callback function called when the open state changes.",
+	description:
+		"A callback function called when the component changes the open state, such as from user interaction. It is not called when you set `open` yourself, so run any related logic where you set it.",
 	stringDefinition: "(open: boolean) => void",
 });
 

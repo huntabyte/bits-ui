@@ -4,7 +4,7 @@ description: A horizontal bar containing a collection of menus.
 ---
 
 <script>
-	import { APISection, ComponentPreview, MenubarDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, MenubarDemo } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

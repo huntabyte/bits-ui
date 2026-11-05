@@ -4,7 +4,7 @@ description: A component that renders its children in a portal, preventing layou
 ---
 
 <script>
-    import { ComponentPreview, PortalDemo, APISection } from '$lib/components'
+    import { ComponentPreview, PortalDemo, APISection } from '#lib/components/index.js'
 
 	let { schemas } = $props()
 </script>

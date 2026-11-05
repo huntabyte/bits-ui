@@ -1,7 +1,7 @@
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
-import { createBitsAttrs, boolToStrTrueOrUndef } from "$lib/internal/attrs.js";
-import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import type { Orientation } from "$lib/shared/index.js";
+import { createBitsAttrs, boolToStrTrueOrUndef } from "#lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import type { Orientation } from "#lib/shared/index.js";
 
 const separatorAttrs = createBitsAttrs({
 	component: "separator",
@@ -9,7 +9,8 @@ const separatorAttrs = createBitsAttrs({
 });
 
 interface SeparatorRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			orientation: Orientation;
 			decorative: boolean;

@@ -1,4 +1,5 @@
 import { on } from "svelte/events";
+import { isElementOrSVGElement } from "./is.js";
 
 export type EventCallback<E extends Event = Event> = (event: E) => void;
 
@@ -44,4 +45,33 @@ export class CustomEventDispatcher<T = unknown> {
 
 		return on(element, this.eventName, handler, options);
 	}
+}
+
+const capturedEventPaths = new WeakMap<Event, EventTarget[]>();
+
+export function captureEventPath(event: Event, path = event.composedPath()) {
+	capturedEventPaths.set(event, path);
+}
+
+function getEventPath(event: Event) {
+	return capturedEventPaths.get(event) ?? event.composedPath();
+}
+
+export function isEventTargetWithin(event: Event, node: Element | null | undefined) {
+	if (!node) return false;
+	return (
+		(isElementOrSVGElement(event.target) && node.contains(event.target)) ||
+		getEventPath(event).includes(node)
+	);
+}
+
+export function getEventTargetClosest(event: Event, selector: string) {
+	for (const target of getEventPath(event)) {
+		if (isElementOrSVGElement(target) && target.matches(selector)) return target;
+	}
+	return isElementOrSVGElement(event.target) ? event.target.closest(selector) : null;
+}
+
+export function copyEventPath(from: Event, to: Event) {
+	captureEventPath(to, getEventPath(from));
 }

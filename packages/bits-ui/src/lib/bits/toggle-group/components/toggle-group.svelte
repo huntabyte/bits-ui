@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { type WritableBox, boxWith } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToggleGroupRootProps } from "../types.js";
 	import { ToggleGroupRootState } from "../toggle-group.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 	import { watch } from "runed";
 
 	const uid = $props.id();
@@ -53,7 +54,7 @@
 		loop: boxWith(() => loop),
 		orientation: boxWith(() => orientation),
 		rovingFocus: boxWith(() => rovingFocus),
-		type,
+		type: untrack(() => type),
 		ref: boxWith(
 			() => ref,
 			(v) => (ref = v)

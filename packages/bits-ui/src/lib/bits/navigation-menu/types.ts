@@ -5,7 +5,7 @@ import type {
 	WithChild,
 	WithChildNoChildrenSnippetProps,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveAnchorAttributes,
 	BitsPrimitiveButtonAttributes,
@@ -13,8 +13,8 @@ import type {
 	BitsPrimitiveElementAttributes,
 	BitsPrimitiveLiAttributes,
 	BitsPrimitiveUListAttributes,
-} from "$lib/shared/attributes.js";
-import type { Direction, Orientation } from "$lib/shared/index.js";
+} from "#lib/shared/attributes.js";
+import type { Direction, Orientation } from "#lib/shared/index.js";
 
 export type NavigationMenuRootPropsWithoutHTML = WithChild<{
 	/**

@@ -35,7 +35,7 @@
 
 <ScrollArea.Root
 	{...restProps}
-	class="border-dark-10 bg-background-alt shadow-card relative overflow-hidden rounded-[10px] border px-4 py-4"
+	class="relative overflow-hidden rounded-[10px] border border-dark-10 bg-background-alt px-4 py-4 shadow-card"
 	{type}
 	data-testid="root"
 >

@@ -15,7 +15,7 @@ import type {
 import type { PresenceLayerImplProps, PresenceLayerProps } from "../presence-layer/types.js";
 import type { FocusScopeImplProps, FocusScopeProps } from "../focus-scope/types.js";
 import type { ScrollLockProps } from "../scroll-lock/index.js";
-import type { Direction } from "$lib/shared/index.js";
+import type { Direction } from "#lib/shared/index.js";
 
 export type PopperLayerProps = EscapeLayerProps &
 	Omit<DismissibleLayerProps, "onInteractOutsideStart"> &

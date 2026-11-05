@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { boxWith } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { DismissibleLayerImplProps } from "./types.js";
 	import { DismissibleLayerState } from "./use-dismissable-layer.svelte.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	let {
 		interactOutsideBehavior = "close",
@@ -22,7 +23,7 @@
 		enabled: boxWith(() => enabled),
 		onFocusOutside: boxWith(() => onFocusOutside),
 		isValidEvent: boxWith(() => isValidEvent),
-		ref,
+		ref: untrack(() => ref),
 	});
 </script>
 

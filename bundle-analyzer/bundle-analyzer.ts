@@ -219,7 +219,7 @@ const refs = [
 							},
 							minifyInternalExports: true,
 							hoistTransitiveImports: false,
-							inlineDynamicImports: true,
+							codeSplitting: false,
 							entryFileNames: "bundle.js",
 							banner: "",
 							footer: "",

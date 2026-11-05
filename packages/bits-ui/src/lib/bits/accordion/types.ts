@@ -3,12 +3,12 @@ import type {
 	WithChild,
 	WithChildNoChildrenSnippetProps,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
-import type { Orientation } from "$lib/shared/index.js";
+} from "#lib/shared/attributes.js";
+import type { Orientation } from "#lib/shared/index.js";
 
 export type BaseAccordionRootPropsWithoutHTML = {
 	/**

@@ -224,6 +224,30 @@ Here's an example styling an accordion with different states:
 
 ## Advanced Styling Techniques
 
+### CSS Transitions on Mount-Managed Surfaces
+
+Components that manage their mount lifecycle for animations expose transient
+`data-starting-style` and `data-ending-style` attributes on their animated
+surfaces. This is useful for popup content, overlays, and similar parts where
+you want enter and exit transitions without losing the close animation during
+unmount.
+
+```css
+[data-popover-content] {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+[data-popover-content][data-starting-style],
+[data-popover-content][data-ending-style] {
+  opacity: 0;
+  transform: scale(0.96);
+}
+```
+
 ### Combining Data Attributes with CSS Variables
 
 You can combine data attributes with CSS variables to create dynamic styles based on component state. Here's how to animate the accordion content using the `--bits-accordion-content-height` variable and the `data-state` attribute:

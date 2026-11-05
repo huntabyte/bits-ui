@@ -6,8 +6,8 @@
 	import { boxWith } from "svelte-toolbelt";
 	import type { TooltipRootProps } from "../types.js";
 	import { TooltipRootState } from "../tooltip.svelte.js";
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { noop } from "$lib/internal/noop.js";
+	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import { noop } from "#lib/internal/noop.js";
 
 	let {
 		open = $bindable(false),

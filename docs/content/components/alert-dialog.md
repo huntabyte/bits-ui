@@ -4,7 +4,7 @@ description: A modal window presenting content or seeking user input without nav
 ---
 
 <script>
-	import { APISection, ComponentPreview, AlertDialogDemo,  Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AlertDialogDemo,  Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -112,7 +112,7 @@ You can then use the `MyAlertDialog` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyAlertDialog from "$lib/components/MyAlertDialog.svelte";
+  import MyAlertDialog from "#lib/components/MyAlertDialog.svelte";
 </script>
 
 <MyAlertDialog buttonText="Open Dialog">
@@ -129,7 +129,7 @@ Alternatively, you can define the snippets separately and pass them as props to 
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyAlertDialog from "$lib/components/MyAlertDialog.svelte";
+  import MyAlertDialog from "#lib/components/MyAlertDialog.svelte";
 </script>
 
 {#snippet title()}

@@ -1,9 +1,9 @@
 import type { Snippet } from "svelte";
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveDivAttributes,
 	BitsPrimitiveInputAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 
 export type PinInputRootSnippetProps = {
 	cells: PinInputCell[];
@@ -68,6 +68,13 @@ export type PinInputRootPropsWithoutHTML = Omit<
 			 * Optionally provide an ID to apply to the hidden input element.
 			 */
 			inputId?: string;
+
+			/**
+			 * The underlying hidden `<input>` element. Bind to call `focus()`, read selection, etc.
+			 *
+			 * @bindable
+			 */
+			inputRef?: HTMLInputElement | null;
 
 			/**
 			 * The children snippet used to render the individual cells.

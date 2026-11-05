@@ -20,8 +20,9 @@ import {
 	onOpenChangeCompleteProp,
 	onOpenChangeProp,
 	portalProps,
+	transitionStyleDataAttrs,
 	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+} from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -88,7 +89,7 @@ export const content = defineComponentApiSchema<LinkPreviewContentPropsWithoutHT
 	title: "Content",
 	description: "The contents of the link preview which are displayed when the preview is open.",
 	props: {
-		...floatingProps(),
+		...floatingProps({ defaultSide: "top" }),
 		...dismissibleLayerProps,
 		...escapeLayerProps,
 		...focusScopeProps,
@@ -98,6 +99,7 @@ export const content = defineComponentApiSchema<LinkPreviewContentPropsWithoutHT
 	},
 	dataAttributes: [
 		openClosedDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "link-preview-content",
 			description: "Present on the content element.",
@@ -120,6 +122,7 @@ export const contentStatic = defineComponentApiSchema<LinkPreviewContentStaticPr
 	},
 	dataAttributes: [
 		openClosedDataAttr,
+		...transitionStyleDataAttrs,
 		defineSimpleDataAttr({
 			name: "link-preview-content",
 			description: "Present on the content element.",

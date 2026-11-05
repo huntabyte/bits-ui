@@ -1,23 +1,42 @@
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
+import { mount, unmount } from "svelte";
 import NavigationMenuTest, { type NavigationMenuTestProps } from "./navigation-menu-test.svelte";
+import NavigationMenuForceMountTest from "./navigation-menu-force-mount-test.svelte";
 import { getTestKbd } from "../utils";
 import { expectExists, expectNotExists } from "../browser-utils";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Helper function to reduce boilerplate in tests
  */
-function setup(props: NavigationMenuTestProps = {}) {
-	const returned = render(NavigationMenuTest, { ...props });
+async function setup(props: NavigationMenuTestProps = {}) {
+	const returned = await render(NavigationMenuTest, { ...props });
 
 	return { ...returned };
 }
 
+it("should keep content open briefly after leaving a trigger", async () => {
+	await setup({ delayDuration: 0, skipDelayDuration: 0 });
+	const trigger = page.getByTestId("group-item-trigger");
+	const outside = page.getByTestId("previous-button");
+
+	await trigger.hover();
+	await expectExists(page.getByTestId("viewport"));
+
+	await outside.hover();
+	await sleep(125);
+	await expectExists(page.getByTestId("viewport"));
+
+	await sleep(80);
+	await expectNotExists(page.getByTestId("viewport"));
+});
+
 it("should open viewport when hovering trigger", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 
 	await expectNotExists(page.getByTestId("viewport"));
@@ -30,7 +49,7 @@ it("should open viewport when hovering trigger", async () => {
 });
 
 it("should toggle viewport when pressing enter on focused trigger", async () => {
-	setup();
+	await setup();
 	(page.getByTestId("sub-group-item-trigger").element() as HTMLElement).focus();
 	await expectNotExists(page.getByTestId("viewport"));
 	await userEvent.keyboard(kbd.ENTER);
@@ -43,7 +62,7 @@ it("should toggle viewport when pressing enter on focused trigger", async () => 
 });
 
 it("should show initial submenu items on trigger hover", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("viewport"));
@@ -53,7 +72,7 @@ it("should show initial submenu items on trigger hover", async () => {
 });
 
 it("should show submenu items on subtrigger hover", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("viewport"));
@@ -72,7 +91,7 @@ it("should show submenu items on subtrigger hover", async () => {
 });
 
 it("should open submenu viewport when pressing enter on focused subtrigger", async () => {
-	setup();
+	await setup();
 	(page.getByTestId("sub-group-item-trigger").element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
 	await expectExists(page.getByTestId("sub-group-item-sub-item2-trigger"));
@@ -85,21 +104,134 @@ it("should open submenu viewport when pressing enter on focused subtrigger", asy
 });
 
 it("should show indicator when hovering trigger", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("indicator"));
 });
 
+it("should apply transition attrs to content during open and close without a viewport", async () => {
+	await setup({ noViewport: true });
+
+	type TransitionRecord = { starting: boolean; ending: boolean };
+	const history: TransitionRecord[] = [];
+
+	const capture = (element: Element): void => {
+		history.push({
+			starting: element.hasAttribute("data-starting-style"),
+			ending: element.hasAttribute("data-ending-style"),
+		});
+	};
+
+	const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.type === "attributes") {
+				const element = mutation.target as HTMLElement;
+				if (element.dataset.testid === "group-item-content") {
+					capture(element);
+				}
+				continue;
+			}
+
+			for (const node of mutation.addedNodes) {
+				if (!(node instanceof Element)) continue;
+				if ((node as HTMLElement).dataset.testid === "group-item-content") {
+					capture(node);
+				}
+			}
+		}
+	});
+
+	observer.observe(document.body, {
+		subtree: true,
+		attributes: true,
+		childList: true,
+		attributeFilter: ["data-starting-style", "data-ending-style"],
+	});
+
+	const trigger = page.getByTestId("group-item-trigger");
+
+	await trigger.hover();
+	await vi.waitFor(() => expect(history.some((entry) => entry.starting)).toBe(true));
+
+	await page.getByTestId("next-button").hover();
+	await vi.waitFor(() => expect(history.some((entry) => entry.ending)).toBe(true));
+
+	observer.disconnect();
+});
+
+it("should apply transition attrs to viewport and indicator during open and close", async () => {
+	await setup();
+
+	type TransitionRecord = { starting: boolean; ending: boolean };
+	const history = {
+		viewport: [] as TransitionRecord[],
+		indicator: [] as TransitionRecord[],
+	};
+
+	const capture = (key: keyof typeof history, element: Element): void => {
+		history[key].push({
+			starting: element.hasAttribute("data-starting-style"),
+			ending: element.hasAttribute("data-ending-style"),
+		});
+	};
+
+	const captureIfTracked = (element: Element): void => {
+		const testId = (element as HTMLElement).dataset.testid;
+
+		if (testId === "viewport") {
+			capture("viewport", element);
+		} else if (testId === "indicator") {
+			capture("indicator", element);
+		}
+	};
+
+	const observer = new MutationObserver((mutations) => {
+		for (const mutation of mutations) {
+			if (mutation.type === "attributes") {
+				captureIfTracked(mutation.target as Element);
+				continue;
+			}
+
+			for (const node of mutation.addedNodes) {
+				if (!(node instanceof Element)) continue;
+				captureIfTracked(node);
+				node.querySelectorAll("[data-testid]").forEach((element) =>
+					captureIfTracked(element)
+				);
+			}
+		}
+	});
+
+	observer.observe(document.body, {
+		subtree: true,
+		attributes: true,
+		childList: true,
+		attributeFilter: ["data-starting-style", "data-ending-style"],
+	});
+
+	const trigger = page.getByTestId("group-item-trigger");
+
+	await trigger.hover();
+	await vi.waitFor(() => expect(history.viewport.some((entry) => entry.starting)).toBe(true));
+	await vi.waitFor(() => expect(history.indicator.some((entry) => entry.starting)).toBe(true));
+
+	await page.getByTestId("next-button").hover();
+	await vi.waitFor(() => expect(history.viewport.some((entry) => entry.ending)).toBe(true));
+	await vi.waitFor(() => expect(history.indicator.some((entry) => entry.ending)).toBe(true));
+
+	observer.disconnect();
+});
+
 it("should receive focus on the first item", async () => {
-	setup();
+	await setup();
 	(page.getByTestId("previous-button").element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.TAB);
 	await expect.element(page.getByTestId("group-item-trigger")).toHaveFocus();
 });
 
 it("should focus next item with right arrow or down arrow, and previous with left or up", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
@@ -109,7 +241,7 @@ it("should focus next item with right arrow or down arrow, and previous with lef
 });
 
 it("should focus next item with tab", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.TAB);
@@ -119,7 +251,7 @@ it("should focus next item with tab", async () => {
 });
 
 it("should focus next sub-item with right arrow, and previous with left", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("sub-group-item-sub-viewport"));
@@ -132,7 +264,7 @@ it("should focus next sub-item with right arrow, and previous with left", async 
 });
 
 it("should focus next content item with right arrow or down arrow, and previous with left or up", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
@@ -148,7 +280,7 @@ it("should focus next content item with right arrow or down arrow, and previous 
 });
 
 it("should focus next on content with tab when opened", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
@@ -157,7 +289,7 @@ it("should focus next on content with tab when opened", async () => {
 });
 
 it("should focus next on content with down arrow when opened", async () => {
-	setup();
+	await setup();
 	const trigger = page.getByTestId("group-item-trigger");
 	(trigger.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ENTER);
@@ -166,7 +298,7 @@ it("should focus next on content with down arrow when opened", async () => {
 });
 
 it("should render content without viewport", async () => {
-	setup({ noViewport: true });
+	await setup({ noViewport: true });
 	const trigger = page.getByTestId("group-item-trigger");
 	await expectNotExists(page.getByTestId("viewport"));
 	await expectNotExists(page.getByTestId("group-item-content"));
@@ -179,7 +311,7 @@ it("should render content without viewport", async () => {
 });
 
 it("should render subcontent without subviewport", async () => {
-	setup({ noSubViewport: true });
+	await setup({ noSubViewport: true });
 	const trigger = page.getByTestId("sub-group-item-trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("viewport"));
@@ -195,7 +327,7 @@ it("should render subcontent without subviewport", async () => {
 });
 
 it("should switch between submenu items on pointer hover", async () => {
-	setup();
+	await setup();
 
 	// First open the main submenu
 	const trigger = page.getByTestId("sub-group-item-trigger");
@@ -216,7 +348,7 @@ it("should switch between submenu items on pointer hover", async () => {
 });
 
 it("should not open menu on hover when `openOnHover` is false", async () => {
-	setup({ groupItemProps: { openOnHover: false } });
+	await setup({ groupItemProps: { openOnHover: false } });
 	const trigger = page.getByTestId("group-item-trigger");
 	await trigger.hover();
 	await expectNotExists(page.getByTestId("viewport"));
@@ -224,7 +356,7 @@ it("should not open menu on hover when `openOnHover` is false", async () => {
 });
 
 it("should toggle on trigger click when `openOnHover` is false", async () => {
-	setup({ groupItemProps: { openOnHover: false } });
+	await setup({ groupItemProps: { openOnHover: false } });
 	const trigger = page.getByTestId("group-item-trigger");
 	await trigger.click();
 	await expectExists(page.getByTestId("viewport"));
@@ -233,3 +365,94 @@ it("should toggle on trigger click when `openOnHover` is false", async () => {
 	await expectNotExists(page.getByTestId("viewport"));
 	await expectNotExists(page.getByTestId("group-item-content"));
 });
+
+// https://github.com/huntabyte/bits-ui/issues/2034
+it("should keep a force-mounted item open when clicking inside its content with `openOnHover={false}`", async () => {
+	await render(NavigationMenuForceMountTest);
+	const content = page.getByTestId("one-content");
+
+	await page.getByTestId("one-trigger").click();
+	await expect.element(content).toHaveAttribute("data-state", "open");
+
+	await page.getByTestId("one-content-button").click();
+	// let the dismissible layer's debounced outside-interaction handler run
+	await sleep(50);
+	await expect.element(content).toHaveAttribute("data-state", "open");
+});
+
+it("should close a non-last force-mounted item when clicking outside with `openOnHover={false}`", async () => {
+	await render(NavigationMenuForceMountTest);
+	const content = page.getByTestId("two-content");
+
+	await page.getByTestId("two-trigger").click();
+	await expect.element(content).toHaveAttribute("data-state", "open");
+
+	await page.getByTestId("outside").click();
+	await expect.element(content).toHaveAttribute("data-state", "closed");
+});
+
+it("should return focus to the open item's trigger on escape when contents are force-mounted", async () => {
+	await render(NavigationMenuForceMountTest);
+
+	await page.getByTestId("one-trigger").click();
+	await page.getByTestId("one-content-button").click();
+	await userEvent.keyboard(kbd.ESCAPE);
+
+	await expect.element(page.getByTestId("one-content")).toHaveAttribute("data-state", "closed");
+	await expect.element(page.getByTestId("one-trigger")).toHaveFocus();
+});
+
+it.each([
+	[false, "trigger"],
+	[true, "trigger"],
+	[false, "viewport"],
+	[true, "viewport"],
+	[false, "outside"],
+	[true, "outside"],
+] as const)(
+	"pointerdown respects click-only navigation menu boundaries (shadow: %s, target: %s)",
+	async (inShadow, pressTarget) => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const root = inShadow ? host.attachShadow({ mode: "open" }) : host;
+		const app = root.appendChild(document.createElement("div"));
+		const component = mount(NavigationMenuTest, {
+			target: app,
+			props: { value: "group", groupItemProps: { openOnHover: false } },
+		});
+		const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		try {
+			await vi.waitFor(() => expect(get("viewport")).not.toBeNull());
+			await sleep(100);
+			const trigger = get("group-item-trigger")!;
+			const target =
+				pressTarget === "trigger"
+					? trigger
+					: get(pressTarget === "viewport" ? "viewport" : "previous-button")!;
+			if (pressTarget === "viewport") target.style.padding = "40px";
+			const rect = target.getBoundingClientRect();
+			target.dispatchEvent(
+				new PointerEvent("pointerdown", {
+					bubbles: true,
+					composed: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+					clientX: rect.left + 1,
+					clientY: rect.top + 1,
+				})
+			);
+			await sleep(60);
+			// The outside layer must leave the trigger's click handler in charge of toggling.
+			expect
+				.soft(trigger.getAttribute("aria-expanded"))
+				.toBe(pressTarget === "outside" ? "false" : "true");
+			if (pressTarget === "trigger") {
+				trigger.click();
+				await vi.waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("false"));
+			}
+		} finally {
+			await unmount(component);
+			host.remove();
+		}
+	}
+);

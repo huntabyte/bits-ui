@@ -2,8 +2,8 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { DateRangePickerCalendarProps } from "../types.js";
 	import { DateRangePickerRootContext } from "../date-range-picker.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { RangeCalendarRootState } from "$lib/bits/range-calendar/range-calendar.svelte.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { RangeCalendarRootState } from "#lib/bits/range-calendar/range-calendar.svelte.js";
 
 	const uid = $props.id();
 

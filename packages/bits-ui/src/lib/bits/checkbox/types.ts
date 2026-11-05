@@ -1,9 +1,9 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
 	BitsPrimitiveSpanAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 
 export type CheckboxRootSnippetProps = { checked: boolean; indeterminate: boolean };
 
@@ -41,6 +41,13 @@ export type CheckboxRootPropsWithoutHTML = WithChild<
 		 */
 		// oxlint-disable-next-line no-explicit-any
 		name?: any;
+
+		/**
+		 * The id of the form to link the checkbox button and hidden input to.
+		 *
+		 * @default undefined
+		 */
+		form?: string;
 
 		/**
 		 * The value of the checkbox used in form submission and to identify

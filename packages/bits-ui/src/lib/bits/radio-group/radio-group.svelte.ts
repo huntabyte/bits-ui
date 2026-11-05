@@ -6,16 +6,17 @@ import type {
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import {
 	createBitsAttrs,
 	getAriaChecked,
 	boolToEmptyStrOrUndef,
 	boolToStr,
-} from "$lib/internal/attrs.js";
-import type { Orientation } from "$lib/shared/index.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+} from "#lib/internal/attrs.js";
+import type { HTMLInputAttributes } from "svelte/elements";
+import type { Orientation } from "#lib/shared/index.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 
 const radioGroupAttrs = createBitsAttrs({
 	component: "radio-group",
@@ -25,7 +26,8 @@ const radioGroupAttrs = createBitsAttrs({
 const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
 
 interface RadioGroupRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
@@ -33,6 +35,7 @@ interface RadioGroupRootStateOpts
 			orientation: Orientation;
 			name: string | undefined;
 			readonly: boolean;
+			autocomplete: HTMLInputAttributes["autocomplete"];
 		}>,
 		WritableBoxedValues<{ value: string }> {}
 export class RadioGroupRootState {
@@ -44,6 +47,12 @@ export class RadioGroupRootState {
 	readonly hasValue = $derived.by(() => this.opts.value.current !== "");
 	readonly rovingFocusGroup: RovingFocusGroup;
 	readonly attachment: RefAttachment;
+	/**
+	 * Whether focus is currently being moved by keyboard navigation within the
+	 * group. Items only select on focus during keyboard navigation — pointer
+	 * (and programmatic) focus waits for the click to commit the selection.
+	 */
+	isKeyboardNavigating = false;
 
 	constructor(opts: RadioGroupRootStateOpts) {
 		this.opts = opts;
@@ -51,6 +60,7 @@ export class RadioGroupRootState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: radioGroupAttrs.item,
+			rootAttr: radioGroupAttrs.root,
 			loop: this.opts.loop,
 			orientation: this.opts.orientation,
 		});
@@ -82,7 +92,8 @@ export class RadioGroupRootState {
 }
 
 interface RadioGroupItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			value: string;
@@ -139,6 +150,7 @@ export class RadioGroupItemState {
 
 	onfocus(_: BitsFocusEvent) {
 		if (!this.root.hasValue || this.#isReadonly) return;
+		if (!this.root.isKeyboardNavigating) return;
 		this.root.setValue(this.opts.value.current);
 	}
 
@@ -151,7 +163,14 @@ export class RadioGroupItemState {
 			}
 			return;
 		}
-		this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
+		// `handleKeydown` moves focus synchronously, so the flag is observed by
+		// the newly focused item's `onfocus` before it resets.
+		this.root.isKeyboardNavigating = true;
+		try {
+			this.root.rovingFocusGroup.handleKeydown(this.opts.ref.current, e, true);
+		} finally {
+			this.root.isKeyboardNavigating = false;
+		}
 	}
 
 	readonly snippetProps = $derived.by(() => ({ checked: this.#isChecked }));
@@ -204,6 +223,7 @@ export class RadioGroupInputState {
 				value: this.root.opts.value.current,
 				required: this.root.opts.required.current,
 				disabled: this.root.opts.disabled.current,
+				autocomplete: this.root.opts.autocomplete.current,
 				onfocus: this.onfocus,
 			}) as const
 	);
