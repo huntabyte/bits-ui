@@ -17,8 +17,8 @@ import type {
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { createBitsAttrs, boolToTrueOrUndef } from "$lib/internal/attrs.js";
+} from "#lib/internal/types.js";
+import { createBitsAttrs, boolToTrueOrUndef } from "#lib/internal/attrs.js";
 import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
@@ -173,7 +173,8 @@ export class PinInputRootState {
 			};
 			updateRootHeight();
 
-			const resizeObserver = new ResizeObserver(updateRootHeight);
+			const win = this.domContext.getWindow();
+			const resizeObserver = new win.ResizeObserver(updateRootHeight);
 			resizeObserver.observe(input);
 
 			return () => {

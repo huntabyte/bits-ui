@@ -42,7 +42,6 @@ const stateDataAttr = defineEnumDataAttr({
 	value: OpenClosedProp,
 });
 
-
 const root = defineComponentApiSchema<AccordionRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root accordion component used to set and manage the state of the accordion.",

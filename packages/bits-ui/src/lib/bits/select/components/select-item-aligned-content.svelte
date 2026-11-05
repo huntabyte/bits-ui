@@ -2,14 +2,14 @@
 	import type { Snippet } from "svelte";
 	import type { WritableBox } from "svelte-toolbelt";
 	import { mergeProps } from "svelte-toolbelt";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
-	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
-	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
-	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
-	import type { EscapeBehaviorType } from "$lib/bits/utilities/escape-layer/types.js";
-	import type { InteractOutsideBehaviorType } from "$lib/bits/utilities/dismissible-layer/types.js";
-	import { noop } from "$lib/internal/noop.js";
+	import EscapeLayer from "#lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import DismissibleLayer from "#lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import FocusScope from "#lib/bits/utilities/focus-scope/focus-scope.svelte";
+	import TextSelectionLayer from "#lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
+	import ScrollLock from "#lib/bits/utilities/scroll-lock/scroll-lock.svelte";
+	import type { EscapeBehaviorType } from "#lib/bits/utilities/escape-layer/types.js";
+	import type { InteractOutsideBehaviorType } from "#lib/bits/utilities/dismissible-layer/types.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	let {
 		id,

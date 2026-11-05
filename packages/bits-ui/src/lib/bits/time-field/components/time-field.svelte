@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { TimeValue } from "$lib/shared/date/types.js";
+	import type { TimeValue } from "#lib/shared/date/types.js";
 	import type { Time } from "@internationalized/date";
 	type T = unknown;
 </script>
@@ -9,9 +9,9 @@
 	import { boxWith } from "svelte-toolbelt";
 	import { TimeFieldRootState } from "../time-field.svelte.js";
 	import type { TimeFieldRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { getDefaultTime } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		disabled = false,

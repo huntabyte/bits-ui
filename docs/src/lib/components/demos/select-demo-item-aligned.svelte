@@ -35,17 +35,17 @@
 
 <Select.Root type="single" items={themes} bind:value allowDeselect={false}>
 	<Select.Trigger
-		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] select-none items-center border px-[11px] text-sm transition-colors"
+		class="inline-flex h-input w-[296px] items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors select-none data-placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
 	>
-		<Palette class="text-muted-foreground mr-[9px] size-6" />
+		<Palette class="mr-[9px] size-6 text-muted-foreground" />
 		<Select.Value placeholder="Select a theme" />
-		<CaretUpDown class="text-muted-foreground ml-auto size-6" />
+		<CaretUpDown class="ml-auto size-6 text-muted-foreground" />
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
 			position="item-aligned"
-			class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 outline-hidden z-50 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3"
+			class="focus-override z-50 w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-hidden select-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">
 				<CaretDoubleUp class="size-3" />
@@ -53,7 +53,7 @@
 			<Select.Viewport class="p-1">
 				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="rounded-button data-highlighted:bg-muted outline-hidden data-disabled:opacity-50 flex h-10 w-full select-none items-center py-3 pl-[36px] pr-1.5 text-sm capitalize"
+						class="flex h-10 w-full items-center rounded-button py-3 pr-1.5 pl-[36px] text-sm capitalize outline-hidden select-none data-disabled:opacity-50 data-highlighted:bg-muted"
 						value={theme.value}
 						label={theme.label}
 						disabled={theme.disabled}

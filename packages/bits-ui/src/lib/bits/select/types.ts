@@ -6,15 +6,15 @@ import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
 	BitsPrimitiveSpanAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 import type {
 	OnChangeFn,
 	WithChild,
 	WithChildNoChildrenSnippetProps,
 	WithChildren,
 	Without,
-} from "$lib/internal/types.js";
-import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+} from "#lib/internal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "#lib/shared/types.js";
 import type { HTMLInputAttributes } from "svelte/elements";
 
 export type SelectBaseRootPropsWithoutHTML = WithChildren<{

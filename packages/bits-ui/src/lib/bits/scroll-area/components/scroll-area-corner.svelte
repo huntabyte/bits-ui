@@ -2,7 +2,7 @@
 	import type { ScrollAreaCornerProps } from "../types.js";
 	import { ScrollAreaRootContext } from "../scroll-area.svelte.js";
 	import ScrollAreaCornerImpl from "./scroll-area-corner-impl.svelte";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

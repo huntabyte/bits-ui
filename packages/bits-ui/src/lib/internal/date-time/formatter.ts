@@ -1,6 +1,6 @@
 import { DateFormatter, type DateValue } from "@internationalized/date";
 import { hasTime, isZonedDateTime, toDate } from "./utils.js";
-import type { HourCycle, TimeValue } from "$lib/shared/date/types.js";
+import type { HourCycle, TimeValue } from "#lib/shared/date/types.js";
 import { convertTimeValueToDateValue } from "./field/time-helpers.js";
 import type { ReadableBox } from "svelte-toolbelt";
 

@@ -4,8 +4,8 @@
 	import { mergeProps } from "svelte-toolbelt";
 	import type { ToolbarGroupProps } from "../types.js";
 	import { ToolbarGroupState } from "../toolbar.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 	import { watch } from "runed";
 
 	const uid = $props.id();

@@ -34,7 +34,7 @@
 		inputId="myInput"
 		bind:inputRef
 		bind:value
-		class="group/pininput text-foreground flex items-center has-[:disabled]:opacity-30"
+		class="group/pininput flex items-center text-foreground has-[:disabled]:opacity-30"
 		{maxlength}
 		onComplete={countCompletions
 			? (v: string) => {
@@ -54,7 +54,7 @@
 			</div>
 
 			<div class="flex w-10 items-center justify-center">
-				<div class="bg-border h-1 w-3 rounded-full"></div>
+				<div class="h-1 w-3 rounded-full bg-border"></div>
 			</div>
 
 			<div class="flex">
@@ -77,7 +77,7 @@
 		{/if}
 		{#if props.hasFakeCaret}
 			<div
-				class="animate-caret-blink pointer-events-none absolute inset-0 flex items-center justify-center"
+				class="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center"
 				data-testid="caret-{idx}"
 			>
 				<div class="h-8 w-px bg-white"></div>

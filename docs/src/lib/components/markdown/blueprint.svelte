@@ -19,13 +19,12 @@
 		th,
 		tr,
 		ul,
-	} from "$lib/components/markdown/index.js";
+	} from "#lib/components/markdown/index.js";
 </script>
 
 <script lang="ts">
 	let { title, description }: { title: string; description: string } = $props();
 </script>
 
-<!-- eslint-disable-next-line svelte/no-unused-svelte-ignore -->
 <!-- svelte-ignore slot_element_deprecated  -->
 <slot {title} {description} />

@@ -52,8 +52,8 @@ import {
 import { MenuCheckedStateAttr } from "./extended-types/menu/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
 import { CheckboxGroupOnValueChangeProp } from "./extended-types/checkbox/index.js";
-import type { ComponentAPISchema, PropObj } from "$lib/types/index.js";
-import { omit } from "$lib/utils/omit.js";
+import type { ComponentAPISchema, PropObj } from "#lib/types/index.js";
+import { omit } from "#lib/utils/omit.js";
 import {
 	defineBooleanProp,
 	defineEnumDataAttr,

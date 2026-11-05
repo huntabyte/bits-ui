@@ -8,8 +8,8 @@ import {
 import type { HTMLImgAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
 
 const avatarAttrs = createBitsAttrs({
 	component: "avatar",
@@ -84,7 +84,8 @@ export class AvatarRootState {
 }
 
 interface AvatarImageStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			src: AvatarImageSrc;
 			crossOrigin: CrossOrigin;

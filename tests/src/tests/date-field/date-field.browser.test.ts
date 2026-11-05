@@ -322,7 +322,8 @@ describe("date field", () => {
 					String(
 						zonedDateTime[
 							(segment.element() as HTMLElement).dataset.segment as
-								keyof TimeFields | keyof DateFields
+								| keyof TimeFields
+								| keyof DateFields
 						] ?? ""
 					)
 				);

@@ -1,4 +1,4 @@
-import type { DialogContentProps, DialogContentPropsWithoutHTML } from "$lib/types.js";
+import type { DialogContentProps, DialogContentPropsWithoutHTML } from "#lib/types.js";
 
 export type {
 	DialogRootPropsWithoutHTML as AlertDialogRootPropsWithoutHTML,
@@ -17,7 +17,7 @@ export type {
 	DialogDescriptionProps as AlertDialogDescriptionProps,
 	DialogTriggerPropsWithoutHTML as AlertDialogTriggerPropsWithoutHTML,
 	DialogTriggerProps as AlertDialogTriggerProps,
-} from "$lib/bits/dialog/types.js";
+} from "#lib/bits/dialog/types.js";
 
 export type AlertDialogContentPropsWithoutHTML = Omit<
 	DialogContentPropsWithoutHTML,

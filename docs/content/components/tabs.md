@@ -4,7 +4,7 @@ description: Organizes content into tabbed sections.
 ---
 
 <script>
-	import { APISection, ComponentPreview, TabsDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, TabsDemo, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

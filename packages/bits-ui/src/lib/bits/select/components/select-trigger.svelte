@@ -2,8 +2,8 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { SelectTriggerState } from "../select.svelte.js";
 	import type { SelectTriggerProps } from "../types.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { FloatingLayer } from "#lib/bits/utilities/floating-layer/index.js";
 
 	const uid = $props.id();
 

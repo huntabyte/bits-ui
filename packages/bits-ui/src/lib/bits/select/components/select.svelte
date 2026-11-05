@@ -1,6 +1,6 @@
 <script lang="ts">
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { noop } from "$lib/internal/noop.js";
+	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import { noop } from "#lib/internal/noop.js";
 	import { type WritableBox, boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import { SelectRootState } from "../select.svelte.js";

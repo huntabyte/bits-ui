@@ -12,7 +12,7 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
-import { backward, forward, next, prev } from "$lib/internal/arrays.js";
+import { backward, forward, next, prev } from "#lib/internal/arrays.js";
 import {
 	boolToStr,
 	boolToStrTrueOrUndef,
@@ -20,9 +20,9 @@ import {
 	getDataOpenClosed,
 	boolToTrueOrUndef,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { isEventTargetWithin } from "$lib/internal/events.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { isEventTargetWithin } from "#lib/internal/events.js";
 import type {
 	BitsEvent,
 	BitsFocusEvent,
@@ -32,14 +32,14 @@ import type {
 	OnChangeFn,
 	WithRefOpts,
 	RefAttachment,
-} from "$lib/internal/types.js";
-import { noop } from "$lib/internal/noop.js";
-import { isDisabledElement } from "$lib/internal/is.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
-import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
-import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
-import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+} from "#lib/internal/types.js";
+import { noop } from "#lib/internal/noop.js";
+import { isDisabledElement } from "#lib/internal/is.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
+import { getFloatingContentCSSVars } from "#lib/internal/floating-svelte/floating-utils.svelte.js";
+import { DataTypeahead } from "#lib/internal/data-typeahead.svelte.js";
+import { DOMTypeahead } from "#lib/internal/dom-typeahead.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 import { DEV } from "esm-env";
 import type { SelectValueSnippetProps } from "./types.js";
 

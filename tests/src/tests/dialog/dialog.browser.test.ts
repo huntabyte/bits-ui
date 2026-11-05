@@ -20,6 +20,7 @@ import DialogScrollbarGutterTest from "./dialog-scrollbar-gutter-test.svelte";
 import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
 import DialogShadowFieldTest from "./dialog-shadow-field-test.svelte";
+import DialogOpenOnMountTest from "./dialog-open-on-mount-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -1035,4 +1036,9 @@ describe("Text Selection", () => {
 		expect(bodyUserSelect()).toBe("");
 		pointer("pointerup");
 	});
+});
+
+it("should render content when opened by a descendant's onMount", async () => {
+	await render(DialogOpenOnMountTest);
+	await expectExists(page.getByTestId("content"));
 });

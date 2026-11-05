@@ -2,7 +2,7 @@
 import type { Snippet } from "svelte";
 
 import type { attachRef, Box, ReadableBoxedValues, WritableBoxedValues } from "svelte-toolbelt";
-import type { StyleProperties } from "$lib/shared/index.js";
+import type { StyleProperties } from "#lib/shared/index.js";
 
 export type OnChangeFn<T> = (value: T) => void;
 

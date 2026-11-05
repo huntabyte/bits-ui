@@ -8,10 +8,10 @@
 		disabled?: boolean;
 	};
 
-export type SelectValueChildrenMultiTestProps = Omit<
-	WithoutChildren<SelectMultipleRootProps>,
-	"type"
-> & {
+	export type SelectValueChildrenMultiTestProps = Omit<
+		WithoutChildren<SelectMultipleRootProps>,
+		"type"
+	> & {
 		items: Item[];
 		placeholder?: string;
 	};
@@ -30,7 +30,7 @@ export type SelectValueChildrenMultiTestProps = Omit<
 </script>
 
 <main data-testid="main">
-	<Select.Root bind:value bind:open items={items} {...restProps} type="multiple">
+	<Select.Root bind:value bind:open {items} {...restProps} type="multiple">
 		<Select.Trigger data-testid="trigger">
 			<Select.Value {placeholder}>
 				{#snippet children({ selection, placeholder: currentPlaceholder, disabled })}

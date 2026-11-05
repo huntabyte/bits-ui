@@ -2,13 +2,14 @@ import { DOMContext, type Box, type ReadableBox, type ReadableBoxedValues } from
 import { watch } from "runed";
 import { on } from "svelte/events";
 import type { EscapeBehaviorType, EscapeLayerImplProps } from "./types.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { noop } from "$lib/internal/noop.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { noop } from "#lib/internal/noop.js";
 
 globalThis.bitsEscapeLayers ??= new Map<EscapeLayerState, ReadableBox<EscapeBehaviorType>>();
 
-interface EscapeLayerStateOpts
-	extends ReadableBoxedValues<Required<Omit<EscapeLayerImplProps, "children" | "ref">>> {
+interface EscapeLayerStateOpts extends ReadableBoxedValues<
+	Required<Omit<EscapeLayerImplProps, "children" | "ref">>
+> {
 	ref: Box<HTMLElement | null>;
 }
 

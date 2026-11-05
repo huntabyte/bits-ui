@@ -8,19 +8,19 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
-import { isEventTargetWithin } from "$lib/internal/events.js";
+import { isEventTargetWithin } from "#lib/internal/events.js";
 import { Context, watch } from "runed";
-import { isElement, isFocusVisible } from "$lib/internal/is.js";
+import { isElement, isFocusVisible } from "#lib/internal/is.js";
 import {
 	createBitsAttrs,
 	boolToEmptyStrOrUndef,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+} from "#lib/internal/attrs.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
 import type { FocusEventHandler, MouseEventHandler, PointerEventHandler } from "svelte/elements";
-import { TimeoutFn } from "$lib/internal/timeout-fn.js";
-import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import { TimeoutFn } from "#lib/internal/timeout-fn.js";
+import { SafePolygon } from "#lib/internal/safe-polygon.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 
 export const tooltipAttrs = createBitsAttrs({
 	component: "tooltip",
@@ -516,7 +516,7 @@ export class TooltipTriggerState {
 	domContext: DOMContext;
 	#transitCheckTimeout: number | null = null;
 	#mounted = false;
-	#lastRegisteredId: string | null = null;
+	#lastRecord: TooltipTriggerRecord | null = null;
 
 	constructor(
 		opts: TooltipTriggerStateOpts,
@@ -527,7 +527,7 @@ export class TooltipTriggerState {
 		this.root = root;
 		this.tether = tether;
 		this.domContext = new DOMContext(opts.ref);
-		this.attachment = attachRef(this.opts.ref, (v) => this.#register(v));
+		this.attachment = attachRef(this.opts.ref, (v) => (v ? this.#register(v) : this.#detach()));
 
 		watch(
 			() => this.opts.id.current,
@@ -554,7 +554,7 @@ export class TooltipTriggerState {
 
 			return () => {
 				const root = this.#getRoot();
-				const id = this.#lastRegisteredId;
+				const id = this.#lastRecord?.id;
 				if (id) {
 					if (this.tether) {
 						this.tether.registry.unregister(id);
@@ -562,7 +562,7 @@ export class TooltipTriggerState {
 						root?.unregisterTrigger(id);
 					}
 				}
-				this.#lastRegisteredId = null;
+				this.#lastRecord = null;
 				this.#mounted = false;
 			};
 		});
@@ -579,25 +579,34 @@ export class TooltipTriggerState {
 
 	#register = (node: HTMLElement | null) => {
 		if (!this.#mounted) return;
-		const id = this.opts.id.current;
-		const payload = this.opts.payload.current;
-		const disabled = this.opts.disabled.current;
+		this.#write({
+			id: this.opts.id.current,
+			node,
+			payload: this.opts.payload.current,
+			disabled: this.opts.disabled.current,
+		});
+	};
 
-		if (this.#lastRegisteredId && this.#lastRegisteredId !== id) {
+	/**
+	 * The ref detached. Reuse the last record rather than reading props, which may run
+	 * consumer getters against torn-down state when the trigger itself is unmounting.
+	 */
+	#detach = () => {
+		if (!this.#mounted || !this.#lastRecord) return;
+		this.#write({ ...this.#lastRecord, node: null });
+	};
+
+	#write = (triggerRecord: TooltipTriggerRecord) => {
+		const { id, disabled } = triggerRecord;
+		const lastId = this.#lastRecord?.id;
+		if (lastId && lastId !== id) {
 			const root = this.#getRoot();
 			if (this.tether) {
-				this.tether.registry.unregister(this.#lastRegisteredId);
+				this.tether.registry.unregister(lastId);
 			} else {
-				root?.unregisterTrigger(this.#lastRegisteredId);
+				root?.unregisterTrigger(lastId);
 			}
 		}
-
-		const triggerRecord: TooltipTriggerRecord = {
-			id,
-			node,
-			payload,
-			disabled,
-		};
 
 		const root = this.#getRoot();
 		if (this.tether) {
@@ -622,7 +631,7 @@ export class TooltipTriggerState {
 			}
 		}
 
-		this.#lastRegisteredId = id;
+		this.#lastRecord = triggerRecord;
 	};
 
 	#clearTransitCheck = () => {

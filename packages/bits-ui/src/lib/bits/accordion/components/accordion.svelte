@@ -3,9 +3,9 @@
 	import { untrack } from "svelte";
 	import { AccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { noop } from "#lib/internal/noop.js";
 	import { watch } from "runed";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

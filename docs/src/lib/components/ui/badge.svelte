@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { BitsPrimitiveSpanAttributes, WithChildren } from "bits-ui";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let {
 		children,
@@ -11,7 +11,7 @@
 
 <span
 	class={cn(
-		"ml-2 rounded-[4px] bg-[#FCDAFE] px-1.5 py-1 text-[0.7rem] font-semibold leading-none text-[#2A266B] no-underline group-hover:no-underline",
+		"ml-2 rounded-[4px] bg-[#FCDAFE] px-1.5 py-1 text-[0.7rem] leading-none font-semibold text-[#2A266B] no-underline group-hover:no-underline",
 		className
 	)}
 	{...restProps}

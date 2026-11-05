@@ -2,7 +2,7 @@
 	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { AccordionContentState } from "../accordion.svelte.js";
 	import type { AccordionContentProps } from "../types.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

@@ -9,13 +9,13 @@ import type {
 	WithChildNoChildrenSnippetProps,
 	WithChildren,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
-import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
-import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+} from "#lib/shared/attributes.js";
+import type { PortalProps } from "#lib/bits/utilities/portal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "#lib/shared/types.js";
 import type { TooltipTether as TooltipTetherImpl } from "./tooltip.svelte.js";
 
 export type TooltipTether<Payload = never> = TooltipTetherImpl<Payload>;

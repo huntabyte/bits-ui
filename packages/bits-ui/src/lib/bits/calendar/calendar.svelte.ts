@@ -16,17 +16,17 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
-import { boolToStr, boolToStrTrueOrUndef, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
+import { boolToStr, boolToStrTrueOrUndef, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { useId } from "$lib/internal/use-id.js";
-import type { DateMatcher, Month } from "$lib/shared/index.js";
-import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
-import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+} from "#lib/internal/types.js";
+import { useId } from "#lib/internal/use-id.js";
+import type { DateMatcher, Month } from "#lib/shared/index.js";
+import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "#lib/internal/date-time/formatter.js";
 import {
 	calendarAttrs,
 	createAccessibleHeading,
@@ -46,9 +46,9 @@ import {
 	getTabbableDate,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/internal/date-time/calendar-helpers.svelte.js";
-import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/utils.js";
-import type { WeekStartsOn } from "$lib/shared/date/types.js";
+} from "#lib/internal/date-time/calendar-helpers.svelte.js";
+import { getDateValueType, isBefore, toDate } from "#lib/internal/date-time/utils.js";
+import type { WeekStartsOn } from "#lib/shared/date/types.js";
 
 interface CalendarRootStateOpts
 	extends

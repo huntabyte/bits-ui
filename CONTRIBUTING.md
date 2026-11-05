@@ -92,7 +92,7 @@ To get started with development:
 
 ## 7. Coding Style
 
-We use [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) to enforce a consistent coding style. Please ensure your code adheres to these guidelines. You can run `pnpm lint` to check for linting errors and `pnpm format` to automatically format your code.
+We use [Oxlint](https://oxc.rs/docs/guide/usage/linter) and [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) to enforce a consistent coding style. Please ensure your code adheres to these guidelines. You can run `pnpm lint` to check for linting errors and `pnpm format` to automatically format your code.
 
 - Follow existing naming conventions (e.g., camelCase for variables and functions, PascalCase for components).
 - Write clear and concise code.

@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue, SelectDemoItemAligned } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue, SelectDemoItemAligned } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -135,7 +135,7 @@ You can then use the `MySelect` component throughout your application like so:
 
 ```svelte
 <script lang="ts">
-  import MySelect from "$lib/components/MySelect.svelte";
+  import MySelect from "#lib/components/MySelect.svelte";
 
   const items = [
     { value: "apple", label: "Apple" },
@@ -296,11 +296,11 @@ By default, `Select.Content` uses [Floating UI](https://floating-ui.com/) to anc
 
 ```svelte /position="item-aligned"/
 <Select.Content position="item-aligned">
-	<Select.ScrollUpButton />
-	<Select.Viewport>
-		<Select.Item />
-	</Select.Viewport>
-	<Select.ScrollDownButton />
+  <Select.ScrollUpButton />
+  <Select.Viewport>
+    <Select.Item />
+  </Select.Viewport>
+  <Select.ScrollDownButton />
 </Select.Content>
 ```
 

@@ -4,7 +4,7 @@ description: Enables users to select a range of dates using an input field and c
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateRangePickerDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DateRangePickerDemo, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

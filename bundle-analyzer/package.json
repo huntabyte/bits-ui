@@ -12,7 +12,7 @@
 		"@sveltejs/vite-plugin-svelte": "catalog:",
 		"@types/node": "catalog:",
 		"bits-ui": "workspace:*",
-		"rollup-plugin-visualizer": "^5.14.0",
+		"rollup-plugin-visualizer": "^7.1.2",
 		"svelte": "catalog:",
 		"tsx": "^4.23.15",
 		"typescript": "catalog:",

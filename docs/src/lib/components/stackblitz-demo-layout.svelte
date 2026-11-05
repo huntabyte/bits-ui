@@ -33,10 +33,10 @@
 
 		<main class="flex justify-center p-4">
 			<div
-				class="border-muted relative flex w-full max-w-3xl items-center justify-center rounded-lg border-2 bg-zinc-50 p-8 shadow-sm dark:bg-neutral-900/50"
+				class="relative flex w-full max-w-3xl items-center justify-center rounded-lg border-2 border-muted bg-zinc-50 p-8 shadow-sm dark:bg-neutral-900/50"
 			>
 				<div
-					class="bg-foreground text-background absolute -left-0.5 -top-0.5 select-none rounded-br-md rounded-tl-md px-2 py-1 font-mono text-xs font-medium tracking-tighter"
+					class="absolute -top-0.5 -left-0.5 rounded-tl-md rounded-br-md bg-foreground px-2 py-1 font-mono text-xs font-medium tracking-tighter text-background select-none"
 				>
 					{componentName}
 				</div>
@@ -53,7 +53,7 @@
 		aria-label="Light Switch"
 		aria-checked={theme === "light"}
 		title="Toggle {theme === 'dark' ? 'Dark' : 'Light'} Mode"
-		class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative inline-flex h-10 w-10 items-center justify-center px-2 focus-visible:ring-2 focus-visible:ring-offset-2"
+		class="relative inline-flex h-10 w-10 items-center justify-center rounded-input px-2 hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 	>
 		{#if theme === "light"}
 			<div

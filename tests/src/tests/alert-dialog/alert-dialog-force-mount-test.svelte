@@ -45,7 +45,7 @@
 					forceMount
 					{...contentProps}
 					data-testid="content"
-					class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
+					class="tranlate-x-[50%] fixed top-[50%] left-[50%] translate-y-[50%] bg-white p-1"
 				>
 					{#snippet child({ props, open })}
 						{#if open}
@@ -73,7 +73,7 @@
 					forceMount
 					{...contentProps}
 					data-testid="content"
-					class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
+					class="tranlate-x-[50%] fixed top-[50%] left-[50%] translate-y-[50%] bg-white p-1"
 				>
 					{#snippet child({ props, open: _open })}
 						<div {...props}>

@@ -1,6 +1,6 @@
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
-import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
 
 const meterAttrs = createBitsAttrs({
 	component: "meter",
@@ -8,7 +8,8 @@ const meterAttrs = createBitsAttrs({
 });
 
 interface MeterRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: number;
 			max: number;

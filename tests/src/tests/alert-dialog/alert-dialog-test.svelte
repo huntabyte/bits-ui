@@ -33,7 +33,7 @@
 			<AlertDialog.Content
 				{...contentProps}
 				data-testid="content"
-				class="tranlate-x-[50%] fixed left-[50%] top-[50%] translate-y-[50%] bg-white p-1"
+				class="tranlate-x-[50%] fixed top-[50%] left-[50%] translate-y-[50%] bg-white p-1"
 			>
 				<AlertDialog.Title {...titleProps} data-testid="title">title</AlertDialog.Title>
 				<AlertDialog.Description {...descriptionProps} data-testid="description">

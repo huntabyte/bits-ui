@@ -38,7 +38,7 @@ import { tooltip } from "./tooltip.api.js";
 import { menubar } from "./menubar.api.js";
 import { meter } from "./meter.api.js";
 import { timeField } from "./time-field.api.js";
-import type { APISchema } from "$lib/types/index.js";
+import type { APISchema } from "#lib/types/index.js";
 import { timeRangeField } from "./time-range-field.api.js";
 import { bitsConfig } from "./bits-config.api.js";
 import { portal } from "./portal.api.js";

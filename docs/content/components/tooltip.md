@@ -18,7 +18,7 @@ description: Displays supplementary information when users hover over or interac
 		TooltipDemoSingletonForceMount,
 		APISection,
 		Callout
-	} from '$lib/components'
+	} from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -346,7 +346,7 @@ You could then use the `MyTooltip` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyTooltip from "$lib/components/MyTooltip.svelte";
+  import MyTooltip from "#lib/components/MyTooltip.svelte";
   import BoldIcon from "..some-icon-library"; // not real
 </script>
 
