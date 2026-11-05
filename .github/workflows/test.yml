@@ -34,6 +34,8 @@ jobs:
 
             - run: pnpm test:utils
 
+            - run: pnpm test:scripts
+
     Test:
         name: Test - Chromium
         runs-on: ubuntu-latest

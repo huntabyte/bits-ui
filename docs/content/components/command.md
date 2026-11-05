@@ -4,7 +4,7 @@ description: A command menu component that enables users to search, filter, and 
 ---
 
 <script>
-	import { APISection, ComponentPreview, CommandDemo, CommandDemoGrid, CommandDemoDialog, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, CommandDemo, CommandDemoGrid, CommandDemoDialog, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

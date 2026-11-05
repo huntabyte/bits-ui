@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { boxWith, mergeProps, type WritableBox } from "svelte-toolbelt";
+	import { untrack } from "svelte";
 	import type { SliderRootProps } from "../types.js";
 	import { SliderRootState } from "../slider.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 	import { watch } from "runed";
 
 	const uid = $props.id();
@@ -83,7 +84,7 @@
 		autoSort: boxWith(() => autoSort),
 		orientation: boxWith(() => orientation),
 		thumbPositioning: boxWith(() => thumbPositioning),
-		type,
+		type: untrack(() => type),
 		trackPadding: boxWith(() => trackPadding),
 	});
 

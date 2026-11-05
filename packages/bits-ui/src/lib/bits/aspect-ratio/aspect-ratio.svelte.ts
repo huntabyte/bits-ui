@@ -1,6 +1,6 @@
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
-import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
 
 const aspectRatioAttrs = createBitsAttrs({
 	component: "aspect-ratio",

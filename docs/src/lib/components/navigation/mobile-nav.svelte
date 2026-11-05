@@ -1,9 +1,9 @@
 <script lang="ts">
 	import MobileLink from "./mobile-link.svelte";
-	import { Button } from "$lib/components/ui/button/index.js";
-	import { navigation } from "$lib/config/index.js";
+	import { Button } from "#lib/components/ui/button/index.js";
+	import { navigation } from "#lib/config/index.js";
 	import { Popover } from "bits-ui";
-	import ScrollArea from "$lib/components/ui/scroll-area.svelte";
+	import ScrollArea from "#lib/components/ui/scroll-area.svelte";
 	import { page } from "$app/state";
 	import MobileMenuIcon from "./mobile-menu-icon.svelte";
 
@@ -25,7 +25,7 @@
 	</Popover.Trigger>
 	<Popover.Portal>
 		<Popover.Content
-			class="bg-background/90 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 h-(--bits-popover-content-available-height) w-(--bits-popover-content-available-width) origin-(--bits-popover-content-transform-origin) z-50 pr-0 backdrop-blur"
+			class="z-50 h-(--bits-popover-content-available-height) w-(--bits-popover-content-available-width) origin-(--bits-popover-content-transform-origin) bg-background/90 pr-0 backdrop-blur data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
 			align="start"
 			side="bottom"
 			alignOffset={-16}
@@ -34,13 +34,13 @@
 			trapFocus={false}
 		>
 			<ScrollArea
-				class="h-(--bits-popover-content-available-height) w-(--bits-popover-content-available-width) mt-2 max-h-none max-w-none"
+				class="mt-2 h-(--bits-popover-content-available-height) max-h-none w-(--bits-popover-content-available-width) max-w-none"
 			>
 				<div class="flex flex-col gap-2">
 					{#each navigation.sidebar as navItem, index (index)}
 						<div class="flex flex-col pt-3" data-index={index}>
 							<h4
-								class="text-muted-foreground mb-2 px-5 text-sm font-medium uppercase"
+								class="mb-2 px-5 text-sm font-medium text-muted-foreground uppercase"
 							>
 								{navItem.title}
 							</h4>
@@ -50,7 +50,7 @@
 										href="/"
 										data-active={page.url.pathname === "/"}
 										onClose={() => (open = false)}
-										class="text-foreground/95 dark:data-[active=true]:text-accent px-5 py-1.5 text-[22px] font-normal data-[active=true]:font-semibold dark:font-medium dark:data-[active=true]:font-medium"
+										class="px-5 py-1.5 text-[22px] font-normal text-foreground/95 data-[active=true]:font-semibold dark:font-medium dark:data-[active=true]:font-medium dark:data-[active=true]:text-accent"
 									>
 										Home
 									</MobileLink>
@@ -62,7 +62,7 @@
 												href={item.href}
 												data-active={item.href === page.url.pathname}
 												onClose={() => (open = false)}
-												class="text-foreground/95 dark:data-[active=true]:text-accent px-5 py-1.5 text-[22px] font-normal data-[active=true]:font-semibold dark:font-medium dark:data-[active=true]:font-medium"
+												class="px-5 py-1.5 text-[22px] font-normal text-foreground/95 data-[active=true]:font-semibold dark:font-medium dark:data-[active=true]:font-medium dark:data-[active=true]:text-accent"
 											>
 												{item.title}
 											</MobileLink>

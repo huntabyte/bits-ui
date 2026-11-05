@@ -4,7 +4,7 @@
 	import Smiley from "phosphor-svelte/lib/Smiley";
 	import ArrowLeft from "phosphor-svelte/lib/ArrowLeft";
 	import { Button } from "../ui/button/index.js";
-	import { cn } from "$lib/utils/index.js";
+	import { cn } from "#lib/utils/index.js";
 
 	type Item = {
 		icon?: typeof Sticker;
@@ -144,7 +144,7 @@
 <Command.Root
 	disableInitialScroll={true}
 	columns={currentView.columns}
-	class="divide-border border-muted bg-background flex h-full w-full flex-col divide-y self-start overflow-hidden rounded-xl border"
+	class="flex h-full w-full flex-col divide-y divide-border self-start overflow-hidden rounded-xl border border-muted bg-background"
 >
 	<div class="flex items-center">
 		{#if views.length > 1}
@@ -155,7 +155,7 @@
 		<Command.Input
 			autofocus={false}
 			class={cn(
-				"focus-override h-input placeholder:text-foreground-alt/50 bg-background focus:outline-hidden inline-flex flex-1 truncate rounded-tl-xl rounded-tr-xl pr-4 text-sm transition-colors focus:ring-0",
+				"focus-override inline-flex h-input flex-1 truncate rounded-tl-xl rounded-tr-xl bg-background pr-4 text-sm transition-colors placeholder:text-foreground-alt/50 focus:ring-0 focus:outline-hidden",
 				{ "pl-4": views.length === 1 }
 			)}
 			bind:value={search}
@@ -169,22 +169,22 @@
 		/>
 	</div>
 	{#if currentView.columns !== undefined}
-		<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
+		<Command.List class="max-h-[280px] overflow-x-hidden overflow-y-auto px-2 pb-2">
 			<Command.Viewport>
 				<Command.Empty
-					class="text-muted-foreground flex w-full items-center justify-center pb-6 pt-8 text-sm"
+					class="flex w-full items-center justify-center pt-8 pb-6 text-sm text-muted-foreground"
 				>
 					{currentView.empty}
 				</Command.Empty>
 				{#each currentView.groups as group (group)}
 					<Command.Group>
-						<Command.GroupHeading class="text-muted-foreground px-2 pb-2 pt-4 text-xs">
+						<Command.GroupHeading class="px-2 pt-4 pb-2 text-xs text-muted-foreground">
 							{group.name}
 						</Command.GroupHeading>
 						<Command.GroupItems class="grid grid-cols-8 gap-2 px-2">
 							{#each group.items as groupItem (groupItem)}
 								<Command.Item
-									class="rounded-button bg-muted data-selected:ring-foreground outline-hidden flex aspect-square size-full cursor-pointer select-none items-center justify-center text-2xl ring-2 ring-transparent aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+									class="flex aspect-square size-full cursor-pointer items-center justify-center rounded-button bg-muted text-2xl ring-2 ring-transparent outline-hidden select-none aria-disabled:cursor-not-allowed aria-disabled:opacity-50 data-selected:ring-foreground"
 									keywords={groupItem.keywords}
 									disabled={groupItem.disabled}
 								>
@@ -201,22 +201,22 @@
 			</Command.Viewport>
 		</Command.List>
 	{:else}
-		<Command.List class="max-h-[280px] overflow-y-auto overflow-x-hidden px-2 pb-2">
+		<Command.List class="max-h-[280px] overflow-x-hidden overflow-y-auto px-2 pb-2">
 			<Command.Viewport>
 				<Command.Empty
-					class="text-muted-foreground flex w-full items-center justify-center pb-6 pt-8 text-sm"
+					class="flex w-full items-center justify-center pt-8 pb-6 text-sm text-muted-foreground"
 				>
 					{currentView.empty}
 				</Command.Empty>
 				{#each currentView.groups as group (group)}
 					<Command.Group>
-						<Command.GroupHeading class="text-muted-foreground px-3 pb-2 pt-4 text-xs">
+						<Command.GroupHeading class="px-3 pt-4 pb-2 text-xs text-muted-foreground">
 							{group.name}
 						</Command.GroupHeading>
 						<Command.GroupItems>
 							{#each group.items as groupItem (groupItem)}
 								<Command.Item
-									class="rounded-button data-selected:bg-muted outline-hidden flex h-10 cursor-pointer select-none items-center gap-2 px-3 py-2.5 text-sm capitalize"
+									class="flex h-10 cursor-pointer items-center gap-2 rounded-button px-3 py-2.5 text-sm capitalize outline-hidden select-none data-selected:bg-muted"
 									keywords={groupItem.keywords}
 									disabled={groupItem.disabled}
 									onSelect={groupItem.action}

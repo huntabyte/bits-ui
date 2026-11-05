@@ -34,20 +34,20 @@
 
 <Select.Root type="multiple" items={themes} allowDeselect={true}>
 	<Select.Trigger
-		class="h-input rounded-9px border-border-input bg-background data-placeholder:text-foreground-alt/50 inline-flex w-[296px] touch-none select-none items-center border px-[11px] text-sm transition-colors"
+		class="inline-flex h-input w-[296px] touch-none items-center rounded-9px border border-border-input bg-background px-[11px] text-sm transition-colors select-none data-placeholder:text-foreground-alt/50"
 		aria-label="Select a theme"
 	>
-		<Palette class="text-muted-foreground mr-[9px] size-6 shrink-0" />
+		<Palette class="mr-[9px] size-6 shrink-0 text-muted-foreground" />
 		<Select.Value placeholder="Select your favorite themes">
 			{#snippet child({ props, selection, placeholder, disabled })}
 				<div
 					{...props}
-					class="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+					class="flex min-w-0 flex-1 [scrollbar-width:none] items-center gap-1.5 overflow-x-auto [&::-webkit-scrollbar]:hidden"
 				>
 					{#if selection.type === "multiple" && selection.selected.length > 0}
 						{#each selection.selected as selectedTheme (selectedTheme.value)}
 							<div
-								class="rounded-button bg-muted flex shrink-0 items-center gap-0.5 py-0.5 pl-2 pr-1 text-sm"
+								class="flex shrink-0 items-center gap-0.5 rounded-button bg-muted py-0.5 pr-1 pl-2 text-sm"
 							>
 								<span class="text-nowrap">{selectedTheme.label}</span>
 								<div
@@ -74,23 +74,23 @@
 												.map((theme) => theme.value)
 										);
 									}}
-									class="text-muted-foreground hover:bg-background/60 hover:text-foreground rounded-sm p-0.5 transition-colors disabled:cursor-not-allowed"
+									class="rounded-sm p-0.5 text-muted-foreground transition-colors hover:bg-background/60 hover:text-foreground disabled:cursor-not-allowed"
 								>
 									<X class="size-3" />
 								</div>
 							</div>
 						{/each}
 					{:else}
-						<span class="text-foreground-alt/50 truncate">{placeholder}</span>
+						<span class="truncate text-foreground-alt/50">{placeholder}</span>
 					{/if}
 				</div>
 			{/snippet}
 		</Select.Value>
-		<CaretUpDown class="text-muted-foreground ml-2 size-6 shrink-0" />
+		<CaretUpDown class="ml-2 size-6 shrink-0 text-muted-foreground" />
 	</Select.Trigger>
 	<Select.Portal>
 		<Select.Content
-			class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 outline-hidden z-50 h-96 max-h-[var(--bits-select-content-available-height)] w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] select-none rounded-xl border px-1 py-3 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
+			class="focus-override z-50 h-96 max-h-[var(--bits-select-content-available-height)] w-[var(--bits-select-anchor-width)] min-w-[var(--bits-select-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-hidden select-none data-[side=bottom]:translate-y-1 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:-translate-x-1 data-[side=left]:slide-in-from-right-2 data-[side=right]:translate-x-1 data-[side=right]:slide-in-from-left-2 data-[side=top]:-translate-y-1 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
 			sideOffset={10}
 		>
 			<Select.ScrollUpButton class="flex w-full items-center justify-center">
@@ -99,7 +99,7 @@
 			<Select.Viewport class="p-1">
 				{#each themes as theme, i (i + theme.value)}
 					<Select.Item
-						class="rounded-button data-highlighted:bg-muted outline-hidden data-disabled:opacity-50 flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
+						class="flex h-10 w-full items-center rounded-button py-3 pr-1.5 pl-5 text-sm capitalize outline-hidden select-none data-disabled:opacity-50 data-highlighted:bg-muted"
 						value={theme.value}
 						label={theme.label}
 						disabled={theme.disabled}

@@ -2,9 +2,9 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CheckboxGroupProps } from "../types.js";
 	import { CheckboxGroupState } from "../checkbox.svelte.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { arraysAreEqual } from "$lib/internal/arrays.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { arraysAreEqual } from "#lib/internal/arrays.js";
 
 	const uid = $props.id();
 

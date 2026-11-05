@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { afterSleep, boxWith, mergeProps } from "svelte-toolbelt";
 	import type { AlertDialogContentProps } from "../types.js";
-	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
-	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
-	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
-	import { DialogContentState } from "$lib/bits/dialog/dialog.svelte.js";
+	import DismissibleLayer from "#lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import EscapeLayer from "#lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import FocusScope from "#lib/bits/utilities/focus-scope/focus-scope.svelte";
+	import TextSelectionLayer from "#lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import ScrollLock from "#lib/bits/utilities/scroll-lock/scroll-lock.svelte";
+	import { DialogContentState } from "#lib/bits/dialog/dialog.svelte.js";
 
 	const uid = $props.id();
 
@@ -24,6 +24,7 @@
 		onOpenAutoFocus = noop,
 		onInteractOutside = noop,
 		preventScroll = true,
+		preventOverflowTextSelection = true,
 		trapFocus = true,
 		restoreScrollDelay = null,
 		...restProps
@@ -51,7 +52,11 @@
 			onOpenAutoFocus(e);
 			if (e.defaultPrevented) return;
 			e.preventDefault();
-			afterSleep(0, () => contentState.opts.ref.current?.focus());
+			// capture the node so a replacement can't receive this node's delayed autofocus
+			const node = contentState.opts.ref.current;
+			afterSleep(0, () => {
+				if (node?.isConnected) node.focus();
+			});
 		}}
 	>
 		{#snippet focusScope({ props: focusScopeProps })}
@@ -78,6 +83,7 @@
 				>
 					<TextSelectionLayer
 						{...mergedProps}
+						{preventOverflowTextSelection}
 						ref={contentState.opts.ref}
 						enabled={contentState.root.opts.open.current}
 					>

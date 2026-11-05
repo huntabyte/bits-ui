@@ -109,7 +109,8 @@
 		"packages/bits-ui/dist/**/*",
 		"packages/bits-ui/.svelte-kit/**/*",
 		"tests/.svelte-kit/**/*",
-		"bundle-analyzer/.temp-bundle-analysis/**/*"
+		"bundle-analyzer/.temp-bundle-analysis/**/*",
+		".tmp/"
 	],
 	"overrides": [
 		{
@@ -131,13 +132,6 @@
 				"no-with": "off",
 				"prefer-rest-params": "error",
 				"prefer-spread": "error"
-			}
-		},
-		{
-			"files": ["*.svelte", "**/*.svelte"],
-			"rules": {
-				"no-inner-declarations": "off",
-				"no-self-assign": "off"
 			}
 		},
 		{

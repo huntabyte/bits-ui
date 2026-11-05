@@ -6,7 +6,7 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { TooltipTriggerProps } from "../types.js";
 	import { TooltipTriggerState } from "../tooltip.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

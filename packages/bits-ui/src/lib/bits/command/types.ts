@@ -4,7 +4,7 @@ import type {
 	BitsPrimitiveInputAttributes,
 	WithChild,
 	Without,
-} from "$lib/shared/index.js";
+} from "#lib/shared/index.js";
 
 export type CommandState = {
 	/** The value of the search query */

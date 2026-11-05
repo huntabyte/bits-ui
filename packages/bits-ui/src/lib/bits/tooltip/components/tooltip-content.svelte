@@ -2,11 +2,11 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { TooltipContentProps } from "../types.js";
 	import { TooltipContentState } from "../tooltip.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
-	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import PopperLayer from "#lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { getFloatingContentCSSVars } from "#lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "#lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 
@@ -85,7 +85,11 @@
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps: finalWrapperProps,
+					...contentState.snippetProps,
+				})}
 			{:else}
 				<div {...finalWrapperProps}>
 					<div {...finalProps}>
@@ -122,7 +126,11 @@
 				{ style }
 			)}
 			{#if child}
-				{@render child({ props: finalProps, wrapperProps: finalWrapperProps, ...contentState.snippetProps })}
+				{@render child({
+					props: finalProps,
+					wrapperProps: finalWrapperProps,
+					...contentState.snippetProps,
+				})}
 			{:else}
 				<div {...finalWrapperProps}>
 					<div {...finalProps}>

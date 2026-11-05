@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let {
 		class: className,
@@ -11,7 +11,7 @@
 
 <p
 	class={cn(
-		"text-foreground/40 mt-3 text-balance text-lg font-semibold leading-7 tracking-[-0.01em] sm:text-[21px]",
+		"mt-3 text-lg leading-7 font-semibold tracking-[-0.01em] text-balance text-foreground/40 sm:text-[21px]",
 		className
 	)}
 	{...restProps}

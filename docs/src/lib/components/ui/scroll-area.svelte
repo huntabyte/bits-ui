@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 	import { ScrollArea } from "bits-ui";
 	import type { ComponentProps } from "svelte";
 
@@ -26,11 +26,11 @@
 			orientation="vertical"
 			{...scrollbarYProps}
 			class={cn(
-				"hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 bg-background before:bg-background relative flex w-2.5 touch-none select-none rounded-full p-px transition-all duration-150 before:absolute before:inset-0 hover:w-3",
+				"relative flex w-2.5 touch-none rounded-full bg-background p-px transition-all duration-150 select-none before:absolute before:inset-0 before:bg-background hover:w-3 hover:bg-dark-10 data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:animate-in data-[state=visible]:fade-in-0",
 				scrollbarYProps?.class
 			)}
 		>
-			<ScrollArea.Thumb class="bg-muted-foreground flex-1 rounded-full" />
+			<ScrollArea.Thumb class="flex-1 rounded-full bg-muted-foreground" />
 		</ScrollArea.Scrollbar>
 	{/if}
 	{#if orientation === "horizontal" || orientation === "both"}
@@ -38,11 +38,11 @@
 			orientation="horizontal"
 			{...scrollbarXProps}
 			class={cn(
-				"hover:bg-dark-10 data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:fade-in-0 bg-background before:bg-background relative flex h-2.5 touch-none select-none rounded-full p-px transition-all duration-150 before:absolute before:inset-0 hover:h-3",
+				"relative flex h-2.5 touch-none rounded-full bg-background p-px transition-all duration-150 select-none before:absolute before:inset-0 before:bg-background hover:h-3 hover:bg-dark-10 data-[state=hidden]:animate-out data-[state=hidden]:fade-out-0 data-[state=visible]:animate-in data-[state=visible]:fade-in-0",
 				scrollbarXProps?.class
 			)}
 		>
-			<ScrollArea.Thumb class="bg-muted-foreground rounded-full" />
+			<ScrollArea.Thumb class="rounded-full bg-muted-foreground" />
 		</ScrollArea.Scrollbar>
 	{/if}
 	{#if orientation === "both"}

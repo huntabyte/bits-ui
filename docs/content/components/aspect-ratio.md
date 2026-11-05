@@ -4,7 +4,7 @@ description: Displays content while maintaining a specified aspect ratio.
 ---
 
 <script>
-	import { APISection, ComponentPreview, AspectRatioDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AspectRatioDemo } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -62,7 +62,7 @@ You can then use the `MyAspectRatio` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyAspectRatio from "$lib/components/MyAspectRatio.svelte";
+  import MyAspectRatio from "#lib/components/MyAspectRatio.svelte";
 </script>
 
 <MyAspectRatio

@@ -1,9 +1,9 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveDivAttributes,
 	BitsPrimitiveImgAttributes,
 	BitsPrimitiveSpanAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 
 export type AvatarImageLoadingStatus = "loading" | "loaded" | "error";
 

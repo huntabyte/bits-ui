@@ -8,8 +8,8 @@ import {
 import type { HTMLImgAttributes } from "svelte/elements";
 import { Context, watch } from "runed";
 import type { AvatarImageLoadingStatus } from "./types.js";
-import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
 
 const avatarAttrs = createBitsAttrs({
 	component: "avatar",
@@ -62,6 +62,11 @@ export class AvatarRootState {
 			this.opts.loadingStatus.current = "error";
 		};
 		return () => {
+			// Detach the handlers before anything else: the request may still be in
+			// flight, and `onload` would otherwise fire after teardown and reach
+			// `domContext`'s destroyed `$derived` via `setTimeout` → `derived_inert`.
+			image.onload = null;
+			image.onerror = null;
 			if (!imageTimerId) return;
 			this.domContext.clearTimeout(imageTimerId);
 		};
@@ -79,7 +84,8 @@ export class AvatarRootState {
 }
 
 interface AvatarImageStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			src: AvatarImageSrc;
 			crossOrigin: CrossOrigin;
@@ -106,7 +112,10 @@ export class AvatarImageState {
 					this.root.opts.loadingStatus.current = "error";
 					return;
 				}
-				this.root.loadImage(src, crossOrigin, this.opts.referrerPolicy.current);
+				// Returned so the watch runs it on re-run and on destroy. Without this
+				// the cleanup `loadImage` builds was constructed and then dropped, so
+				// a `src` change left the previous image's handlers attached.
+				return this.root.loadImage(src, crossOrigin, this.opts.referrerPolicy.current);
 			}
 		);
 	}

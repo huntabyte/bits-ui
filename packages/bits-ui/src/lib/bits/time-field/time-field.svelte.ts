@@ -18,16 +18,16 @@ import type {
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import {
 	createBitsAttrs,
 	boolToStr,
 	boolToStrTrueOrUndef,
 	boolToEmptyStrOrUndef,
-} from "$lib/internal/attrs.js";
-import { isBrowser, isNumberString } from "$lib/internal/is.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { useId } from "$lib/internal/use-id.js";
+} from "#lib/internal/attrs.js";
+import { isBrowser, isNumberString } from "#lib/internal/is.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { useId } from "#lib/internal/use-id.js";
 import type {
 	TimeSegmentObj,
 	SegmentPart,
@@ -36,13 +36,13 @@ import type {
 	TimeValidator,
 	TimeOnInvalid,
 	EditableTimeSegmentPart,
-} from "$lib/shared/date/types.js";
-import { type TimeFormatter, createTimeFormatter } from "$lib/internal/date-time/formatter.js";
-import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
-import { EDITABLE_TIME_SEGMENT_PARTS } from "$lib/internal/date-time/field/parts.js";
-import { toDate } from "$lib/internal/date-time/utils.js";
+} from "#lib/shared/date/types.js";
+import { type TimeFormatter, createTimeFormatter } from "#lib/internal/date-time/formatter.js";
+import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
+import { EDITABLE_TIME_SEGMENT_PARTS } from "#lib/internal/date-time/field/parts.js";
+import { toDate } from "#lib/internal/date-time/utils.js";
 
-import type { TimeValue } from "$lib/shared/date/types.js";
+import type { TimeValue } from "#lib/shared/date/types.js";
 import {
 	areAllTimeSegmentsFilled,
 	convertTimeValueToTime,
@@ -54,18 +54,20 @@ import {
 	isTimeBefore,
 	removeTimeDescriptionElement,
 	setTimeDescription,
-} from "$lib/internal/date-time/field/time-helpers.js";
+} from "#lib/internal/date-time/field/time-helpers.js";
 import {
 	getFirstTimeSegment,
 	handleTimeSegmentNavigation,
 	isSegmentNavigationKey,
 	moveToNextTimeSegment,
 	moveToPrevTimeSegment,
-} from "$lib/internal/date-time/field/segments.js";
+} from "#lib/internal/date-time/field/segments.js";
 import {
+	get24HourValueFromTypedHour,
 	getDefaultHourCycle,
+	getTypedHourFrom24HourValue,
 	isAcceptableSegmentKey,
-} from "$lib/internal/date-time/field/helpers.js";
+} from "#lib/internal/date-time/field/helpers.js";
 import type { TimeRangeFieldRootState } from "../time-range-field/time-range-field.svelte.js";
 
 export const timeFieldAttrs = createBitsAttrs({
@@ -112,20 +114,9 @@ const SEGMENT_CONFIGS: Record<"hour" | "minute" | "second", SegmentConfig> = {
 	},
 };
 
-function get24HourValueFromTypedHour(
-	hour: string,
-	dayPeriod: Exclude<TimeSegmentObj["dayPeriod"], null>
-): string {
-	const parsedHour = Number.parseInt(hour);
-	if (Number.isNaN(parsedHour)) return hour;
-	if (dayPeriod === "AM") {
-		return parsedHour === 12 ? "0" : `${parsedHour}`;
-	}
-	return parsedHour < 12 ? `${parsedHour + 12}` : `${parsedHour}`;
-}
-
 export interface TimeFieldRootStateOpts<T extends TimeValue = Time>
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			value: T | undefined;
 			placeholder: TimeValue;
 		}>,
@@ -533,11 +524,20 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 			}
 			newSegmentValues = { ...prev, [part]: next };
 		} else if (part === "hour") {
-			const next = cb(prev[part]) as TimeSegmentObj["hour"];
+			const dayPeriodHint = this.hourCycle !== 24 ? this.hourInputDayPeriodHint : null;
+			const typed = cb(
+				(dayPeriodHint !== null
+					? getTypedHourFrom24HourValue(prev.hour)
+					: prev.hour) as TimeSegmentObj[T]
+			) as TimeSegmentObj["hour"];
+			const next =
+				typed !== null && dayPeriodHint !== null
+					? get24HourValueFromTypedHour(typed, dayPeriodHint)
+					: typed;
 			this.states.hour.updating = next;
 			if (next !== null && prev.dayPeriod !== null) {
-				if (this.hourCycle !== 24 && this.hourInputDayPeriodHint !== null) {
-					prev.dayPeriod = this.hourInputDayPeriodHint;
+				if (dayPeriodHint !== null) {
+					prev.dayPeriod = dayPeriodHint;
 				} else {
 					const dayPeriod = this.formatter.dayPeriod(
 						toDate(
@@ -563,24 +563,10 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 
 		this.segmentValues = newSegmentValues;
 
-		const segmentObjForValue: TimeSegmentObj =
-			part === "hour" &&
-			this.hourCycle !== 24 &&
-			this.hourInputDayPeriodHint !== null &&
-			newSegmentValues.hour !== null
-				? {
-						...newSegmentValues,
-						hour: get24HourValueFromTypedHour(
-							newSegmentValues.hour,
-							this.hourInputDayPeriodHint
-						),
-					}
-				: newSegmentValues;
-
 		if (areAllTimeSegmentsFilled(newSegmentValues, this.#fieldNode)) {
 			this.setValue(
 				getTimeValueFromSegments({
-					segmentObj: segmentObjForValue,
+					segmentObj: newSegmentValues,
 					fieldNode: this.#fieldNode,
 					timeRef: this.timeRef,
 				})
@@ -633,7 +619,8 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 }
 
 interface TimeFieldInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			name: string;
 		}> {}
@@ -1045,34 +1032,13 @@ class TimeFieldHourSegmentState extends BaseTimeSegmentState {
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
-		const oldUpdateSegment = this.root.updateSegment.bind(this.root);
-
-		if (isNumberString(e.key)) {
+		if (isNumberString(e.key) || isBackspace(e.key)) {
 			this.root.hourInputDayPeriodHint =
 				this.root.hourCycle === 24 ? null : this.root.segmentValues.dayPeriod;
-			this.root.updateSegment = <T extends EditableTimeSegmentPart>(
-				part: T,
-				cb: Updater<TimeSegmentObj[T]>
-			): void => {
-				oldUpdateSegment(part, cb);
-
-				// after updating hour, check if we need to display "12" instead of "0"
-				if (part === "hour" && "hour" in this.root.segmentValues) {
-					const hourValue = this.root.segmentValues.hour;
-					if (
-						hourValue === "0" &&
-						this.root.dayPeriodNode &&
-						this.root.hourCycle !== 24
-					) {
-						this.root.segmentValues.hour = "12";
-					}
-				}
-			};
 		}
 
 		super.onkeydown(e);
 
-		this.root.updateSegment = oldUpdateSegment;
 		this.root.hourInputDayPeriodHint = null;
 	}
 }

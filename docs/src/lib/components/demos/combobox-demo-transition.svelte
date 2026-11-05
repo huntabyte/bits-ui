@@ -48,21 +48,21 @@
 >
 	<div class="relative">
 		<OrangeSlice
-			class="text-muted-foreground absolute start-3 top-1/2 size-6 -translate-y-1/2"
+			class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
 		/>
 		<Combobox.Input
 			oninput={(e) => (searchValue = e.currentTarget.value)}
-			class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 focus:ring-foreground focus:ring-offset-background focus:outline-hidden inline-flex w-[296px] truncate border px-11 text-base transition-colors focus:ring-2 focus:ring-offset-2 sm:text-sm"
+			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-base transition-colors placeholder:text-foreground-alt/50 focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background focus:outline-hidden sm:text-sm"
 			placeholder="Search a fruit"
 			aria-label="Search a fruit"
 		/>
 		<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2">
-			<CaretUpDown class="text-muted-foreground size-6" />
+			<CaretUpDown class="size-6 text-muted-foreground" />
 		</Combobox.Trigger>
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-			class="border-muted bg-background shadow-popover outline-hidden h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border px-1 py-3"
+			class="z-50 h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-hidden"
 			sideOffset={10}
 			forceMount
 		>
@@ -78,7 +78,7 @@
 							<Combobox.Viewport class="p-1">
 								{#each filteredFruits as fruit, i (i + fruit.value)}
 									<Combobox.Item
-										class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm  capitalize"
+										class="flex h-10 w-full items-center rounded-button py-3 pr-1.5 pl-5 text-sm capitalize outline-hidden select-none  data-highlighted:bg-muted"
 										value={fruit.value}
 										label={fruit.label}
 									>

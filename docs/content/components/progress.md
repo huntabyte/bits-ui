@@ -4,7 +4,7 @@ description: Shows the completion status of a task.
 ---
 
 <script>
-	import { APISection, ComponentPreview, ProgressDemo, ProgressDemoCustom } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ProgressDemo, ProgressDemoCustom } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -84,7 +84,7 @@ You can then use the `MyProgress` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyProgress from "$lib/components/MyProgress.svelte";
+  import MyProgress from "#lib/components/MyProgress.svelte";
 
   let value = $state(50);
 </script>

@@ -4,7 +4,7 @@ description: A modal window for displaying content or requesting user input.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DialogDemo, DialogDemoCustom, DialogDemoNested, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -120,7 +120,7 @@ The following example demonstrates how to create a versatile, reusable Dialog co
 
 ```svelte
 <script lang="ts">
-  import MyDialog from "$lib/components/MyDialog.svelte";
+  import MyDialog from "#lib/components/MyDialog.svelte";
 </script>
 
 <MyDialog buttonText="Open Dialog">
@@ -140,7 +140,7 @@ The following example demonstrates how to create a versatile, reusable Dialog co
 
 ```svelte
 <script lang="ts">
-  import MyDialog from "$lib/components/MyDialog.svelte";
+  import MyDialog from "#lib/components/MyDialog.svelte";
 </script>
 
 {#snippet title()}
@@ -291,6 +291,12 @@ To change which element receives focus when the Dialog closes, use the `onCloseA
   </Dialog.Content>
 </Dialog.Root>
 ```
+
+#### When the trigger is removed
+
+If closing the dialog also removes its trigger (for example, after deleting a row), use `onCloseAutoFocus` to prevent the default focus return and focus a logical element that remains in the page, such as the next row's action or an Add button. Keep that destination outside the content being removed.
+
+Test both paths with the keyboard: canceling should return focus to the existing trigger, while deleting should move focus to the chosen destination without leaving focus on the document body.
 
 ### Best Practices
 
@@ -538,7 +544,7 @@ You can then use the `MyDialogOverlay` component alongside the other `Dialog` pr
 ```svelte
 <script lang="ts">
   import { Dialog } from "bits-ui";
-  import { MyDialogOverlay } from "$lib/components";
+  import { MyDialogOverlay } from "#lib/components/index.js";
 </script>
 
 <Dialog.Root>

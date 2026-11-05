@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BitsConfigProps } from "$lib/bits/utilities/config/types.js";
+	import type { BitsConfigProps } from "#lib/bits/utilities/config/types.js";
 	import { useBitsConfig } from "../bits-config.js";
 	import { boxWith } from "svelte-toolbelt";
 

@@ -4,7 +4,7 @@ description: Enables users to input a range of dates within a designated field.
 ---
 
 <script>
-	import { APISection, ComponentPreview, DateRangeFieldDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, DateRangeFieldDemo, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -30,7 +30,7 @@ The `DateRangeField` component combines two [Date Field](/docs/components/date-f
 
 ```svelte
 <script lang="ts">
-  import { DateRangeField } from "$lib";
+  import { DateRangeField } from "#lib";
 </script>
 
 <DateRangeField.Root>

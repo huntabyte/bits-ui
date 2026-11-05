@@ -27,6 +27,7 @@ import {
 	escapeLayerProps,
 	floatingContentChildDefinition,
 	floatingProps,
+	floatingSideProp,
 	focusScopeProps,
 	forceMountProp,
 	indeterminateProp,
@@ -51,8 +52,8 @@ import {
 import { MenuCheckedStateAttr } from "./extended-types/menu/index.js";
 import { RadioGroupStateAttr } from "./extended-types/radio-group/index.js";
 import { CheckboxGroupOnValueChangeProp } from "./extended-types/checkbox/index.js";
-import type { ComponentAPISchema, PropObj } from "$lib/types/index.js";
-import { omit } from "$lib/utils/omit.js";
+import type { ComponentAPISchema, PropObj } from "#lib/types/index.js";
+import { omit } from "#lib/utils/omit.js";
 import {
 	defineBooleanProp,
 	defineEnumDataAttr,
@@ -140,9 +141,15 @@ const contentStaticProps = {
 	}),
 } satisfies PropObj<DropdownMenuContentStaticPropsWithoutHTML>;
 
-const subContentProps = contentProps satisfies PropObj<
-	Omit<DropdownMenuSubContentPropsWithoutHTML, "style">
->;
+const subContentProps = {
+	...contentProps,
+	side: floatingSideProp("right"),
+	loop: defineBooleanProp({
+		default: true,
+		description:
+			"Whether or not to loop through the menu items when reaching the end of the list when using the keyboard.",
+	}),
+} satisfies PropObj<Omit<DropdownMenuSubContentPropsWithoutHTML, "style">>;
 
 const subContentStaticProps = {
 	...escapeLayerProps,

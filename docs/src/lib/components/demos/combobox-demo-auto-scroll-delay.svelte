@@ -66,21 +66,21 @@
 >
 	<div class="relative">
 		<OrangeSlice
-			class="text-muted-foreground absolute start-3 top-1/2 size-6 -translate-y-1/2"
+			class="absolute start-3 top-1/2 size-6 -translate-y-1/2 text-muted-foreground"
 		/>
 		<Combobox.Input
 			oninput={(e) => (searchValue = e.currentTarget.value)}
-			class="h-input rounded-9px border-border-input bg-background placeholder:text-foreground-alt/50 focus:ring-foreground focus:ring-offset-background focus:outline-hidden inline-flex w-[296px] truncate border px-11 text-base transition-colors focus:ring-2 focus:ring-offset-2 sm:text-sm"
+			class="inline-flex h-input w-[296px] truncate rounded-9px border border-border-input bg-background px-11 text-base transition-colors placeholder:text-foreground-alt/50 focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background focus:outline-hidden sm:text-sm"
 			placeholder="Search a fruit"
 			aria-label="Search a fruit"
 		/>
 		<Combobox.Trigger class="absolute end-3 top-1/2 size-6 -translate-y-1/2">
-			<CaretUpDown class="text-muted-foreground size-6" />
+			<CaretUpDown class="size-6 text-muted-foreground" />
 		</Combobox.Trigger>
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-			class="focus-override border-muted bg-background shadow-popover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 outline-hidden z-50 h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] select-none rounded-xl border px-1 py-3 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1"
+			class="focus-override z-50 h-96 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] rounded-xl border border-muted bg-background px-1 py-3 shadow-popover outline-hidden select-none data-[side=bottom]:translate-y-1 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:-translate-x-1 data-[side=left]:slide-in-from-right-2 data-[side=right]:translate-x-1 data-[side=right]:slide-in-from-left-2 data-[side=top]:-translate-y-1 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
 			sideOffset={10}
 		>
 			<Combobox.ScrollUpButton
@@ -92,7 +92,7 @@
 			<Combobox.Viewport class="p-1">
 				{#each filteredFruits as fruit, i (i + fruit.value)}
 					<Combobox.Item
-						class="rounded-button data-highlighted:bg-muted outline-hidden flex h-10 w-full select-none items-center py-3 pl-5 pr-1.5 text-sm capitalize"
+						class="flex h-10 w-full items-center rounded-button py-3 pr-1.5 pl-5 text-sm capitalize outline-hidden select-none data-highlighted:bg-muted"
 						value={fruit.value}
 						label={fruit.label}
 					>

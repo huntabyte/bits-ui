@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMountEffect } from "svelte-toolbelt";
-	import { noop } from "$lib/internal/noop.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	let {
 		mounted = $bindable(false),

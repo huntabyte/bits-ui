@@ -16,18 +16,21 @@ import {
 	getWindow,
 	styleToString,
 	type ReadableBoxedValues,
-	type ReadableBox,
 	type Box,
 	simpleBox,
-	boxFrom,
 } from "svelte-toolbelt";
 import { Context, ElementSize, watch } from "runed";
-import type { Arrayable, WithRefOpts } from "$lib/internal/types.js";
-import { isNotNull } from "$lib/internal/is.js";
-import { useId } from "$lib/internal/use-id.js";
-import { useFloating } from "$lib/internal/floating-svelte/use-floating.svelte.js";
-import type { Measurable, UseFloatingReturn } from "$lib/internal/floating-svelte/types.js";
-import type { Direction, StyleProperties } from "$lib/shared/index.js";
+import {
+	FloatingRootContext,
+	FloatingTooltipRootContext,
+	type FloatingRootState,
+} from "./floating-root.svelte.js";
+import type { Arrayable, WithRefOpts } from "#lib/internal/types.js";
+import { isNotNull } from "#lib/internal/is.js";
+import { useId } from "#lib/internal/use-id.js";
+import { useFloating } from "#lib/internal/floating-svelte/use-floating.svelte.js";
+import type { Measurable, UseFloatingReturn } from "#lib/internal/floating-svelte/types.js";
+import type { Direction, StyleProperties } from "#lib/shared/index.js";
 
 export const SIDE_OPTIONS = ["top", "right", "bottom", "left"] as const;
 export const ALIGN_OPTIONS = ["start", "center", "end"] as const;
@@ -39,62 +42,34 @@ const OPPOSITE_SIDE: Record<Side, Side> = {
 	left: "right",
 };
 
-const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");
 const FloatingContentContext = new Context<FloatingContentState>("Floating.Content");
-const FloatingTooltipRootContext = new Context<FloatingRootState>("Floating.Root");
 
 export type Side = (typeof SIDE_OPTIONS)[number];
 export type Align = (typeof ALIGN_OPTIONS)[number];
 
 export type Boundary = Element | null;
 
-export class FloatingRootState {
-	static create(tooltip = false) {
-		return tooltip
-			? FloatingTooltipRootContext.set(new FloatingRootState())
-			: FloatingRootContext.set(new FloatingRootState());
-	}
-	anchorNode = simpleBox<Measurable | HTMLElement | null>(null);
-	customAnchorNode = simpleBox<Measurable | HTMLElement | null | string>(null);
-	triggerNode: ReadableBox<Measurable | HTMLElement | null> = simpleBox(null);
-
-	constructor() {
-		$effect(() => {
-			if (this.customAnchorNode.current) {
-				if (typeof this.customAnchorNode.current === "string") {
-					this.anchorNode.current = document.querySelector(this.customAnchorNode.current);
-				} else {
-					this.anchorNode.current = this.customAnchorNode.current;
-				}
-			} else {
-				this.anchorNode.current = this.triggerNode.current;
-			}
-		});
-	}
-}
-
-export interface FloatingContentStateOpts
-	extends ReadableBoxedValues<{
-		id: string;
-		wrapperId: string;
-		side: Side;
-		sideOffset: number;
-		align: Align;
-		alignOffset: number;
-		arrowPadding: number;
-		avoidCollisions: boolean;
-		collisionBoundary: Arrayable<Boundary>;
-		collisionPadding: number | Partial<Record<Side, number>>;
-		sticky: "partial" | "always";
-		hideWhenDetached: boolean;
-		updatePositionStrategy: "optimized" | "always";
-		strategy: "fixed" | "absolute";
-		onPlaced: () => void;
-		dir: Direction;
-		style: StyleProperties | null | undefined | string;
-		enabled: boolean;
-		customAnchor: string | HTMLElement | null | Measurable;
-	}> {}
+export interface FloatingContentStateOpts extends ReadableBoxedValues<{
+	id: string;
+	wrapperId: string;
+	side: Side;
+	sideOffset: number;
+	align: Align;
+	alignOffset: number;
+	arrowPadding: number;
+	avoidCollisions: boolean;
+	collisionBoundary: Arrayable<Boundary>;
+	collisionPadding: number | Partial<Record<Side, number>>;
+	sticky: "partial" | "always";
+	hideWhenDetached: boolean;
+	updatePositionStrategy: "optimized" | "always";
+	strategy: "fixed" | "absolute";
+	onPlaced: () => void;
+	dir: Direction;
+	style: StyleProperties | null | undefined | string;
+	enabled: boolean;
+	customAnchor: string | HTMLElement | null | Measurable;
+}> {}
 
 export class FloatingContentState {
 	static create(opts: FloatingContentStateOpts, tooltip = false) {
@@ -136,14 +111,15 @@ export class FloatingContentState {
 					: "")) as Placement
 	);
 	#boundary = $derived.by(() =>
-		Array.isArray(this.opts.collisionBoundary.current)
+		(Array.isArray(this.opts.collisionBoundary.current)
 			? this.opts.collisionBoundary.current
 			: [this.opts.collisionBoundary.current]
+		).filter(isNotNull)
 	);
 	hasExplicitBoundaries = $derived(this.#boundary.length > 0);
 	detectOverflowOptions = $derived.by(() => ({
 		padding: this.opts.collisionPadding.current,
-		boundary: this.#boundary.filter(isNotNull),
+		boundary: this.#boundary,
 		altBoundary: this.hasExplicitBoundaries,
 	}));
 	#availableWidth = $state<number | undefined>(undefined);
@@ -183,6 +159,13 @@ export class FloatingContentState {
 				transformOrigin({ arrowWidth: this.#arrowWidth, arrowHeight: this.#arrowHeight }),
 				this.opts.hideWhenDetached.current &&
 					hide({ strategy: "referenceHidden", ...this.detectOverflowOptions }),
+				// without an explicit boundary, also hide when the anchor is clipped by its scroll
+				// containers. `collisionPadding` is meant for the viewport, so it isn't applied here.
+				this.opts.hideWhenDetached.current &&
+					!this.hasExplicitBoundaries && {
+						...hide({ strategy: "referenceHidden", boundary: "clippingAncestors" }),
+						name: "hideClipping",
+					},
 			].filter(Boolean) as Middleware[]
 	);
 	floating: UseFloatingReturn;
@@ -191,7 +174,7 @@ export class FloatingContentState {
 	arrowX = $derived.by(() => this.floating.middlewareData.arrow?.x ?? 0);
 	arrowY = $derived.by(() => this.floating.middlewareData.arrow?.y ?? 0);
 	cannotCenterArrow = $derived.by(() => this.floating.middlewareData.arrow?.centerOffset !== 0);
-	contentZIndex = $state<string>();
+	contentZIndex = $state<string>("auto");
 	arrowBaseSide = $derived(OPPOSITE_SIDE[this.placedSide]);
 	wrapperProps = $derived.by(
 		() =>
@@ -212,7 +195,8 @@ export class FloatingContentState {
 					"--bits-floating-anchor-width": `${this.#anchorWidth}px`,
 					"--bits-floating-anchor-height": `${this.#anchorHeight}px`,
 					// hide the content if using the hide middleware and should be hidden
-					...(this.floating.middlewareData.hide?.referenceHidden && {
+					...((this.floating.middlewareData.hide?.referenceHidden ||
+						this.floating.middlewareData.hideClipping?.referenceHidden) && {
 						visibility: "hidden",
 						"pointer-events": "none",
 					}),
@@ -293,9 +277,9 @@ export class FloatingContentState {
 		});
 
 		watch(
-			() => this.contentRef.current,
-			(contentNode) => {
-				if (!contentNode || !this.opts.enabled.current) return;
+			[() => this.contentRef.current, () => this.opts.enabled.current],
+			([contentNode, enabled]) => {
+				if (!contentNode || !enabled) return;
 				const win = getWindow(contentNode);
 				const rafId = win.requestAnimationFrame(() => {
 					// avoid applying stale values when refs change quickly
@@ -342,34 +326,6 @@ export class FloatingArrowState {
 				...this.content.arrowAttachment,
 			}) as const
 	);
-}
-
-interface FloatingAnchorStateOpts
-	extends ReadableBoxedValues<{
-		id: string;
-		virtualEl?: Measurable | null;
-		ref: Measurable | HTMLElement | null;
-	}> {}
-
-export class FloatingAnchorState {
-	static create(opts: FloatingAnchorStateOpts, tooltip = false) {
-		return tooltip
-			? new FloatingAnchorState(opts, FloatingTooltipRootContext.get())
-			: new FloatingAnchorState(opts, FloatingRootContext.get());
-	}
-	readonly opts: FloatingAnchorStateOpts;
-	readonly root: FloatingRootState;
-
-	constructor(opts: FloatingAnchorStateOpts, root: FloatingRootState) {
-		this.opts = opts;
-		this.root = root;
-
-		if (opts.virtualEl && opts.virtualEl.current) {
-			root.triggerNode = boxFrom(opts.virtualEl.current);
-		} else {
-			root.triggerNode = opts.ref;
-		}
-	}
 }
 
 //

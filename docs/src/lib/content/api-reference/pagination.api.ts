@@ -23,7 +23,6 @@ import {
 	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
-
 export const root = defineComponentApiSchema<PaginationRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root pagination component which contains all other pagination components.",

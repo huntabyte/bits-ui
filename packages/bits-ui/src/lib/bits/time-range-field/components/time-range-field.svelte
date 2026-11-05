@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { TimeRange, TimeValue } from "$lib/shared/date/types.js";
+	import type { TimeRange, TimeValue } from "#lib/shared/date/types.js";
 	import type { Time } from "@internationalized/date";
 
 	type T = unknown;
@@ -10,10 +10,10 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { TimeRangeFieldRootState } from "../time-range-field.svelte.js";
 	import type { TimeRangeFieldRootProps } from "../types.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { getDefaultTime } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	const uid = $props.id();
 
@@ -47,10 +47,11 @@
 	let startValue = $state<T | undefined>(value?.start);
 	let endValue = $state<T | undefined>(value?.end);
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return;
+	function handleDefaultPlaceholder(setPlaceholder = true) {
+		if (placeholder !== undefined) return placeholder;
 		const defaultPlaceholder = getDefaultTime({ granularity, defaultValue: value?.start });
-		placeholder = defaultPlaceholder;
+		if (setPlaceholder) placeholder = defaultPlaceholder;
+		return defaultPlaceholder;
 	}
 
 	// SSR
@@ -101,7 +102,7 @@
 		maxValue: boxWith(() => maxValue),
 		minValue: boxWith(() => minValue),
 		placeholder: boxWith(
-			() => placeholder as TimeValue,
+			() => placeholder ?? handleDefaultPlaceholder(false),
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);

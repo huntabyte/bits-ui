@@ -1,8 +1,10 @@
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import process from "node:process";
 import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig } from "vite";
+import { playwright } from "@vitest/browser-playwright";
 import type { Plugin } from "vite";
+import { defineConfig } from "vitest/config";
 
 const vitestBrowserConditionPlugin: Plugin = {
 	name: "vite-plugin-vitest-browser-condition",
@@ -20,29 +22,39 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
-	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit()],
-	test: {
-		poolOptions: {
-			forks: {
-				maxForks: 7,
+	plugins: [
+		tailwindcss(),
+		vitestBrowserConditionPlugin,
+		sveltekit({
+			// Consult https://kit.svelte.dev/docs/integrations#preprocessors
+			// for more information about preprocessors
+			preprocess: vitePreprocess(),
+
+			compilerOptions: {
+				warningFilter: (w) => {
+					if (w.code === "state_referenced_locally") return false;
+
+					return true;
+				},
 			},
-		},
+		}),
+	],
+	test: {
+		maxWorkers: 7,
 		projects: [
 			{
-				extends: "./vite.config.ts",
 				test: {
 					name: "browser",
+					isolate: true,
 					include: ["src/tests/**/*.browser.test.ts"],
 					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
 					setupFiles: ["./other/setup-browser-test.ts"],
-					environment: "browser",
 					testTimeout: 5000,
 					retry: 3,
 					browser: {
 						enabled: true,
 						headless: true,
-						provider: "playwright",
-						isolate: true,
+						provider: playwright(),
 						instances: [{ browser: "chromium" }, { browser: "webkit" }],
 					},
 				},

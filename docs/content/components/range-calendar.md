@@ -4,7 +4,7 @@ description: Enables users to select a range of dates using a calendar interface
 ---
 
 <script>
-	import { APISection, ComponentPreview, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, RangeCalendarDemo, Callout, RangeCalendarDemoMin, RangeCalendarDemoMax, RangeCalendarDemoMinMax, RangeCalendarDemoExcludeDisabled } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

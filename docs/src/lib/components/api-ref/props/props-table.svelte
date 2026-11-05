@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { PropObj, PropSchema } from "$lib/types/index.js";
-	import * as Table from "$lib/components/ui/table/index.js";
-	import Code from "$lib/components/markdown/code.svelte";
+	import type { PropObj, PropSchema } from "#lib/types/index.js";
+	import * as Table from "#lib/components/ui/table/index.js";
+	import Code from "#lib/components/markdown/code.svelte";
 	import PropsRequiredBadge from "./props-required-badge.svelte";
 	import PropsBindableBadge from "./props-bindable-badge.svelte";
-	import { parseMarkdown } from "$lib/utils/markdown.js";
+	import { parseMarkdown } from "#lib/utils/markdown.js";
 	import PropsTypeContent from "./props-type-content.svelte";
 	import PropsTypeContentMobile from "./props-type-content-mobile.svelte";
 
@@ -25,8 +25,8 @@
 	<Table.Root>
 		<Table.Header>
 			<Table.Row>
-				<Table.Head class="w-[90%] whitespace-nowrap pr-1 sm:w-[38%]">Property</Table.Head>
-				<Table.Head class="hidden w-[22%] whitespace-nowrap pr-1 sm:table-cell">
+				<Table.Head class="w-[90%] pr-1 whitespace-nowrap sm:w-[38%]">Property</Table.Head>
+				<Table.Head class="hidden w-[22%] pr-1 whitespace-nowrap sm:table-cell">
 					Type
 				</Table.Head>
 				<Table.Head class="hidden w-[40%] whitespace-nowrap sm:table-cell">
@@ -39,7 +39,7 @@
 			{#each propData as p, i (p.name + i)}
 				<Table.Row>
 					<Table.Cell class="flex items-center gap-1 pr-1 align-baseline">
-						<Code class="text-foreground h-fit py-1.5 font-semibold sm:h-[27px] sm:py-0"
+						<Code class="h-fit py-1.5 font-semibold text-foreground sm:h-[27px] sm:py-0"
 							>{p.name}</Code
 						>
 						{#if p.required}
@@ -57,7 +57,7 @@
 							{@html parseMarkdown(p.description)}
 						</p>
 						<div class="mt-2">
-							<Code class="bg-background h-auto px-0">
+							<Code class="h-auto bg-background px-0">
 								Default:
 								{#if p.default}
 									{` ${p.default.value}`}

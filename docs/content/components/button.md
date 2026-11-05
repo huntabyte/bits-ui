@@ -4,7 +4,7 @@ description: A component that can switch between a button and an anchor tag base
 ---
 
 <script>
-	import { APISection, ComponentPreview, ButtonDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ButtonDemo } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

@@ -47,7 +47,7 @@
 	] as const;
 
 	const contentClass =
-		"border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[250px] rounded-xl border px-1 py-1.5";
+		"z-50 border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[250px] rounded-xl border px-1 py-1.5";
 	const subContentClass =
 		"border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden z-100 w-[230px] rounded-xl border px-1 py-1.5";
 	const itemClass =
@@ -59,7 +59,7 @@
 {#snippet radioCheckedIndicator(checked: boolean)}
 	{#if checked}
 		<svg
-			class="text-foreground-alt ml-auto size-4 shrink-0"
+			class="ml-auto size-4 shrink-0 text-foreground-alt"
 			viewBox="0 0 16 16"
 			aria-hidden="true"
 		>
@@ -70,7 +70,7 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="border-input text-foreground shadow-btn hover:bg-muted inline-flex h-10 select-none items-center justify-center rounded-full border px-4 text-sm font-medium active:scale-[0.98]"
+		class="border-input inline-flex h-10 items-center justify-center rounded-full border px-4 text-sm font-medium text-foreground shadow-btn select-none hover:bg-muted active:scale-[0.98]"
 	>
 		<FunnelSimple class="size-5" />
 		<span class="ml-1.5">Filter issue</span>
@@ -82,7 +82,7 @@
 			<DropdownMenu.Sub>
 				<DropdownMenu.SubTrigger class={subTriggerClass}>
 					Status
-					<CaretRight class="text-foreground-alt ml-auto size-4" />
+					<CaretRight class="ml-auto size-4 text-foreground-alt" />
 				</DropdownMenu.SubTrigger>
 				<DropdownMenu.Portal>
 					<DropdownMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -103,14 +103,14 @@
 			<DropdownMenu.Sub>
 				<DropdownMenu.SubTrigger class={subTriggerClass}>
 					Issue properties
-					<CaretRight class="text-foreground-alt ml-auto size-4" />
+					<CaretRight class="ml-auto size-4 text-foreground-alt" />
 				</DropdownMenu.SubTrigger>
 				<DropdownMenu.Portal>
 					<DropdownMenu.SubContent class={subContentClass} sideOffset={10}>
 						<DropdownMenu.Sub>
 							<DropdownMenu.SubTrigger class={subTriggerClass}>
 								Priority
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.Portal>
 								<DropdownMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -134,7 +134,7 @@
 						<DropdownMenu.Sub>
 							<DropdownMenu.SubTrigger class={subTriggerClass}>
 								Type
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.Portal>
 								<DropdownMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -155,11 +155,11 @@
 							</DropdownMenu.Portal>
 						</DropdownMenu.Sub>
 
-						<DropdownMenu.Separator class="bg-muted -mx-1 my-1 block h-px" />
+						<DropdownMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
 
 						<DropdownMenu.CheckboxGroup bind:value={digestPrefs}>
 							<DropdownMenu.GroupHeading
-								class="text-muted-foreground px-3 pb-2 pt-3 text-xs font-medium"
+								class="px-3 pt-3 pb-2 text-xs font-medium text-muted-foreground"
 							>
 								Email digest
 							</DropdownMenu.GroupHeading>
@@ -169,7 +169,7 @@
 										<span>{item.label}</span>
 										{#if checked}
 											<Check
-												class="text-foreground-alt ml-auto size-4 shrink-0"
+												class="ml-auto size-4 shrink-0 text-foreground-alt"
 											/>
 										{/if}
 									{/snippet}
@@ -180,7 +180,7 @@
 						<DropdownMenu.Sub>
 							<DropdownMenu.SubTrigger class={subTriggerClass}>
 								Labels
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.Portal>
 								<DropdownMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -202,7 +202,7 @@
 										<DropdownMenu.SubTrigger class={subTriggerClass}>
 											Product area
 											<CaretRight
-												class="text-foreground-alt ml-auto size-4"
+												class="ml-auto size-4 text-foreground-alt"
 											/>
 										</DropdownMenu.SubTrigger>
 										<DropdownMenu.Portal>

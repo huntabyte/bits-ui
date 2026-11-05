@@ -18,7 +18,7 @@ description: Displays supplementary information when users hover over or interac
 		TooltipDemoSingletonForceMount,
 		APISection,
 		Callout
-	} from '$lib/components'
+	} from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -346,7 +346,7 @@ You could then use the `MyTooltip` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyTooltip from "$lib/components/MyTooltip.svelte";
+  import MyTooltip from "#lib/components/MyTooltip.svelte";
   import BoldIcon from "..some-icon-library"; // not real
 </script>
 
@@ -394,7 +394,7 @@ This is ideal for toolbars, nav items, or any group of controls where the user's
 
 ## Close on Trigger Click
 
-By default, the tooltip will close when the user clicks the trigger. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true`.
+By default, the tooltip will close when the user presses the trigger with any pointer button, including right and middle click. If you want to disable this behavior, you can set the `disableCloseOnTriggerClick` prop to `true`.
 
 ```svelte /disableCloseOnTriggerClick/
 <Tooltip.Root disableCloseOnTriggerClick>

@@ -3,7 +3,9 @@ import { render } from "vitest-browser-svelte";
 import { CalendarDate, CalendarDateTime, toZoned } from "@internationalized/date";
 import { getTestKbd } from "../utils.js";
 import DateRangeFieldTest, { type DateRangeFieldTestProps } from "./date-range-field-test.svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
+import DateRangeFieldSpreadPropsTest from "./date-range-field-spread-props-test.svelte";
+import { collectErrors } from "../browser-utils";
 
 const kbd = getTestKbd();
 
@@ -21,8 +23,8 @@ const zonedDateTime = {
 	end: toZoned(calendarDateTime.end, "America/New_York"),
 };
 
-function setup(props: DateRangeFieldTestProps = {}) {
-	const t = render(DateRangeFieldTest, { ...props });
+async function setup(props: DateRangeFieldTestProps = {}) {
+	const t = await render(DateRangeFieldTest, { ...props });
 
 	const start = {
 		month: page.getByTestId("start-month"),
@@ -48,91 +50,91 @@ function setup(props: DateRangeFieldTestProps = {}) {
 }
 
 it("should populate segment with value - `CalendarDate`", async () => {
-	const t = setup({ value: calendarDate });
+	const t = await setup({ value: calendarDate });
 
-	await expect.element(t.start.month).toHaveTextContent(String(calendarDate.start.month));
-	await expect.element(t.start.day).toHaveTextContent(String(calendarDate.start.day));
-	await expect.element(t.start.year).toHaveTextContent(String(calendarDate.start.year));
-	await expect.element(t.start.value).toHaveTextContent(calendarDate.start.toString());
+	await expect.element(t.start.month).toMatchTextContent(String(calendarDate.start.month));
+	await expect.element(t.start.day).toMatchTextContent(String(calendarDate.start.day));
+	await expect.element(t.start.year).toMatchTextContent(String(calendarDate.start.year));
+	await expect.element(t.start.value).toMatchTextContent(calendarDate.start.toString());
 
-	await expect.element(t.end.month).toHaveTextContent(String(calendarDate.end.month));
-	await expect.element(t.end.day).toHaveTextContent(String(calendarDate.end.day));
-	await expect.element(t.end.year).toHaveTextContent(String(calendarDate.end.year));
-	await expect.element(t.end.value).toHaveTextContent(calendarDate.end.toString());
+	await expect.element(t.end.month).toMatchTextContent(String(calendarDate.end.month));
+	await expect.element(t.end.day).toMatchTextContent(String(calendarDate.end.day));
+	await expect.element(t.end.year).toMatchTextContent(String(calendarDate.end.year));
+	await expect.element(t.end.value).toMatchTextContent(calendarDate.end.toString());
 });
 
 it("should populate segment with value - `CalendarDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: calendarDateTime,
 		granularity: "second",
 	});
 
-	await expect.element(t.start.month).toHaveTextContent(String(calendarDateTime.start.month));
-	await expect.element(t.start.day).toHaveTextContent(String(calendarDateTime.start.day));
-	await expect.element(t.start.year).toHaveTextContent(String(calendarDateTime.start.year));
+	await expect.element(t.start.month).toMatchTextContent(String(calendarDateTime.start.month));
+	await expect.element(t.start.day).toMatchTextContent(String(calendarDateTime.start.day));
+	await expect.element(t.start.year).toMatchTextContent(String(calendarDateTime.start.year));
 	await expect
 		.element(page.getByTestId("start-hour"))
-		.toHaveTextContent(String(calendarDateTime.start.hour));
+		.toMatchTextContent(String(calendarDateTime.start.hour));
 	await expect
 		.element(page.getByTestId("start-minute"))
-		.toHaveTextContent(String(calendarDateTime.start.minute));
+		.toMatchTextContent(String(calendarDateTime.start.minute));
 	await expect
 		.element(page.getByTestId("start-second"))
-		.toHaveTextContent(String(calendarDateTime.start.second));
-	await expect.element(t.start.value).toHaveTextContent(calendarDateTime.start.toString());
+		.toMatchTextContent(String(calendarDateTime.start.second));
+	await expect.element(t.start.value).toMatchTextContent(calendarDateTime.start.toString());
 
-	await expect.element(t.end.month).toHaveTextContent(String(calendarDateTime.end.month));
-	await expect.element(t.end.day).toHaveTextContent(String(calendarDateTime.end.day));
-	await expect.element(t.end.year).toHaveTextContent(String(calendarDateTime.end.year));
+	await expect.element(t.end.month).toMatchTextContent(String(calendarDateTime.end.month));
+	await expect.element(t.end.day).toMatchTextContent(String(calendarDateTime.end.day));
+	await expect.element(t.end.year).toMatchTextContent(String(calendarDateTime.end.year));
 	await expect
 		.element(page.getByTestId("end-hour"))
-		.toHaveTextContent(String(calendarDateTime.end.hour));
+		.toMatchTextContent(String(calendarDateTime.end.hour));
 	await expect
 		.element(page.getByTestId("end-minute"))
-		.toHaveTextContent(String(calendarDateTime.end.minute));
+		.toMatchTextContent(String(calendarDateTime.end.minute));
 	await expect
 		.element(page.getByTestId("end-second"))
-		.toHaveTextContent(String(calendarDateTime.end.second));
-	await expect.element(t.end.value).toHaveTextContent(calendarDateTime.end.toString());
+		.toMatchTextContent(String(calendarDateTime.end.second));
+	await expect.element(t.end.value).toMatchTextContent(calendarDateTime.end.toString());
 });
 
 it("should populate segment with value - `ZonedDateTime`", async () => {
-	const t = setup({
+	const t = await setup({
 		value: zonedDateTime,
 		granularity: "second",
 	});
 
-	await expect.element(t.start.month).toHaveTextContent(String(calendarDateTime.start.month));
-	await expect.element(t.start.day).toHaveTextContent(String(calendarDateTime.start.day));
-	await expect.element(t.start.year).toHaveTextContent(String(calendarDateTime.start.year));
+	await expect.element(t.start.month).toMatchTextContent(String(calendarDateTime.start.month));
+	await expect.element(t.start.day).toMatchTextContent(String(calendarDateTime.start.day));
+	await expect.element(t.start.year).toMatchTextContent(String(calendarDateTime.start.year));
 	await expect
 		.element(page.getByTestId("start-hour"))
-		.toHaveTextContent(String(calendarDateTime.start.hour));
+		.toMatchTextContent(String(calendarDateTime.start.hour));
 	await expect
 		.element(page.getByTestId("start-minute"))
-		.toHaveTextContent(String(calendarDateTime.start.minute));
+		.toMatchTextContent(String(calendarDateTime.start.minute));
 	await expect
 		.element(page.getByTestId("start-second"))
-		.toHaveTextContent(String(calendarDateTime.start.second));
-	await expect.element(t.start.value).toHaveTextContent(calendarDateTime.start.toString());
+		.toMatchTextContent(String(calendarDateTime.start.second));
+	await expect.element(t.start.value).toMatchTextContent(calendarDateTime.start.toString());
 
-	await expect.element(t.end.month).toHaveTextContent(String(calendarDateTime.end.month));
-	await expect.element(t.end.day).toHaveTextContent(String(calendarDateTime.end.day));
-	await expect.element(t.end.year).toHaveTextContent(String(calendarDateTime.end.year));
+	await expect.element(t.end.month).toMatchTextContent(String(calendarDateTime.end.month));
+	await expect.element(t.end.day).toMatchTextContent(String(calendarDateTime.end.day));
+	await expect.element(t.end.year).toMatchTextContent(String(calendarDateTime.end.year));
 	await expect
 		.element(page.getByTestId("end-hour"))
-		.toHaveTextContent(String(calendarDateTime.end.hour));
+		.toMatchTextContent(String(calendarDateTime.end.hour));
 	await expect
 		.element(page.getByTestId("end-minute"))
-		.toHaveTextContent(String(calendarDateTime.end.minute));
+		.toMatchTextContent(String(calendarDateTime.end.minute));
 	await expect
 		.element(page.getByTestId("end-second"))
-		.toHaveTextContent(String(calendarDateTime.end.second));
-	await expect.element(t.end.value).toHaveTextContent(calendarDateTime.end.toString());
+		.toMatchTextContent(String(calendarDateTime.end.second));
+	await expect.element(t.end.value).toMatchTextContent(calendarDateTime.end.toString());
 });
 
 it("should navigate between the fields", async () => {
-	setup({ value: calendarDate });
+	await setup({ value: calendarDate });
 
 	const fields = ["start", "end"] as const;
 	const segments = ["month", "day", "year"] as const;
@@ -161,7 +163,7 @@ it("should navigate between the fields", async () => {
 });
 
 it("should navigate between the fields - right to left", async () => {
-	const t = setup({ value: calendarDate });
+	const t = await setup({ value: calendarDate });
 
 	const fields = ["end", "start"] as const;
 	const segments = ["year", "day", "month"] as const;
@@ -191,18 +193,18 @@ it("should navigate between the fields - right to left", async () => {
 });
 
 it("should respect `bind:value` to the value", async () => {
-	const t = setup({ value: calendarDate });
-	await expect.element(t.start.value).toHaveTextContent(calendarDate.start.toString());
-	await expect.element(t.end.value).toHaveTextContent(calendarDate.end.toString());
+	const t = await setup({ value: calendarDate });
+	await expect.element(t.start.value).toMatchTextContent(calendarDate.start.toString());
+	await expect.element(t.end.value).toMatchTextContent(calendarDate.end.toString());
 
 	await t.start.month.click();
 	await userEvent.keyboard("2");
-	await expect.element(t.start.value).toHaveTextContent("2022-02-01");
-	await expect.element(t.end.value).toHaveTextContent(calendarDate.end.toString());
+	await expect.element(t.start.value).toMatchTextContent("2022-02-01");
+	await expect.element(t.end.value).toMatchTextContent(calendarDate.end.toString());
 });
 
 it("should render an input for the start and end", async () => {
-	const t = setup({
+	const t = await setup({
 		startProps: {
 			name: "start-hidden-input",
 		},
@@ -211,27 +213,27 @@ it("should render an input for the start and end", async () => {
 		},
 	});
 	await expect
-		.element(t.container.querySelector('input[name="start-hidden-input"]'))
+		.element(t.container.querySelector<HTMLInputElement>('input[name="start-hidden-input"]'))
 		.toBeInTheDocument();
 	await expect
-		.element(t.container.querySelector('input[name="end-hidden-input"]'))
+		.element(t.container.querySelector<HTMLInputElement>('input[name="end-hidden-input"]'))
 		.toBeInTheDocument();
 });
 
 it("should populate calendar date with keyboard", async () => {
-	const t = setup({ value: calendarDate });
+	const t = await setup({ value: calendarDate });
 
 	await page.getByTestId("start-month").click();
 
 	await userEvent.keyboard("2142020");
 	await userEvent.keyboard("2152020");
 
-	await expect.element(t.start.value).toHaveTextContent("2020-02-14");
-	await expect.element(t.end.value).toHaveTextContent("2020-02-15");
+	await expect.element(t.start.value).toMatchTextContent("2020-02-14");
+	await expect.element(t.end.value).toMatchTextContent("2020-02-15");
 });
 
 it("should allow valid days in end month regardless of start month", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await t.start.month.click();
 	await userEvent.keyboard("2");
@@ -242,14 +244,14 @@ it("should allow valid days in end month regardless of start month", async () =>
 	await userEvent.keyboard("2025");
 
 	const seg = page.getByTestId(`end-day`);
-	await expect.element(seg).toHaveTextContent("31");
+	await expect.element(seg).toMatchTextContent("31");
 
-	await expect.element(t.start.value).toHaveTextContent("2025-02-02");
-	await expect.element(t.end.value).toHaveTextContent("2025-12-31");
+	await expect.element(t.start.value).toMatchTextContent("2025-02-02");
+	await expect.element(t.end.value).toMatchTextContent("2025-12-31");
 });
 
 it("should allow valid days in end month when a value is prepopulated", async () => {
-	setup({
+	await setup({
 		value: {
 			start: new CalendarDate(2025, 2, 1),
 			end: new CalendarDate(2025, 5, 31),
@@ -257,9 +259,163 @@ it("should allow valid days in end month when a value is prepopulated", async ()
 	});
 
 	const seg = page.getByTestId("end-day");
-	await expect.element(seg).toHaveTextContent("31");
+	await expect.element(seg).toMatchTextContent("31");
 
 	(seg.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
-	await expect.element(seg).toHaveTextContent("30");
+	await expect.element(seg).toMatchTextContent("30");
+});
+
+it("should allow valid days in the end month with a day-first locale", async () => {
+	const t = await setup({
+		locale: "en-GB",
+		value: {
+			// start sits in a 30-day month, end in a 31-day one
+			start: new CalendarDate(2024, 11, 1),
+			end: new CalendarDate(2026, 8, 30),
+		},
+	});
+
+	await t.end.day.click();
+	await userEvent.keyboard("31");
+
+	await expect.element(t.end.day).toMatchTextContent("31");
+	await expect.element(t.end.value).toMatchTextContent("2026-08-31");
+	await expect.element(t.start.value).toMatchTextContent("2024-11-01");
+});
+
+it("should update segment positioning when the `locale` changes", async () => {
+	const rangeValue = { start: new CalendarDate(2022, 1, 31), end: new CalendarDate(2022, 3, 15) };
+	const t = await setup({ value: rangeValue, locale: "en-US" });
+	const input = (type: "start" | "end") =>
+		t.container.querySelector(`[data-testid="${type}-input"]`)!;
+
+	expect(input("start").textContent).toBe("01/31/2022");
+	expect(input("end").textContent).toBe("03/15/2022");
+
+	await t.rerender({ value: rangeValue, locale: "sv-SE" });
+
+	expect(input("start").textContent).toBe("2022-01-31");
+	expect(input("end").textContent).toBe("2022-03-15");
+});
+
+it("should fall back to the default placeholder when spread props are reassigned during mount (#1950)", async () => {
+	const errors = await collectErrors(() => render(DateRangeFieldSpreadPropsTest));
+	expect(errors).toEqual([]);
+	await expect.element(page.getByTestId("root")).toHaveAttribute("data-updated");
+	await expect.element(page.getByTestId("start-month")).toMatchTextContent("mm");
+	await expect.element(page.getByTestId("end-year")).toMatchTextContent("yyyy");
+});
+
+function at(hour: number) {
+	return new CalendarDateTime(2026, 3, 11, hour, 30, 0, 0);
+}
+
+async function setupDayPeriod(value: CalendarDateTime) {
+	const t = await setup({
+		value: { start: value, end: new CalendarDateTime(2026, 3, 11, 23, 59) },
+	});
+	return {
+		...t,
+		hour: page.getByTestId("start-hour"),
+		minute: page.getByTestId("start-minute"),
+		dayPeriod: page.getByTestId("start-dayPeriod"),
+		value: t.start.value,
+	};
+}
+
+it("should keep PM when typing the hour and then the minutes", async () => {
+	const t = await setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{9}");
+	await expect.element(t.minute).toHaveFocus();
+	await userEvent.keyboard("{3}{0}");
+
+	await expect.element(t.hour).toMatchTextContent("09");
+	await expect.element(t.dayPeriod).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T21:30");
+});
+
+it("should keep PM when typing the hour and then pressing ArrowUp on it", async () => {
+	const t = await setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}{0}");
+	await expect.element(t.minute).toHaveFocus();
+	await expect.element(t.value).toMatchTextContent("2026-03-11T22:30");
+
+	await t.hour.click();
+	await userEvent.keyboard(kbd.ARROW_UP);
+
+	await expect.element(t.hour).toMatchTextContent("11");
+	await expect.element(t.dayPeriod).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T23:30");
+});
+
+it("should keep 12 AM when typing 12 and then the minutes", async () => {
+	const t = await setupDayPeriod(at(0));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}{2}");
+	await expect.element(t.minute).toHaveFocus();
+	await userEvent.keyboard("{3}{0}");
+
+	await expect.element(t.hour).toMatchTextContent("12");
+	await expect.element(t.dayPeriod).toMatchTextContent("AM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T00:30");
+});
+
+it("should keep PM when typing the hour after switching to PM", async () => {
+	const t = await setupDayPeriod(at(9));
+
+	await t.dayPeriod.click();
+	await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(t.dayPeriod).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T21:30");
+
+	await t.hour.click();
+	await userEvent.keyboard("{3}");
+
+	await expect.element(t.hour).toMatchTextContent("03");
+	await expect.element(t.dayPeriod).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T15:30");
+});
+
+it("should keep PM when typing one hour digit and then tabbing away", async () => {
+	const t = await setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}");
+	await expect.element(t.hour).toHaveFocus();
+	await userEvent.keyboard(kbd.TAB);
+	await expect.element(t.minute).toHaveFocus();
+
+	await expect.element(t.hour).toMatchTextContent("01");
+	await expect.element(t.dayPeriod).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T13:30");
+});
+
+it("should keep PM when typing one hour digit and then blurring", async () => {
+	const t = await setupDayPeriod(at(21));
+
+	await t.hour.click();
+	await userEvent.keyboard("{1}");
+	await t.value.click();
+	await expect.element(t.hour).not.toHaveFocus();
+
+	await expect.element(t.hour).toMatchTextContent("01");
+	await expect.element(t.dayPeriod).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T13:30");
+});
+
+it("should keep PM when pressing Backspace on the hour", async () => {
+	const t = await setupDayPeriod(at(22));
+
+	await t.hour.click();
+	await userEvent.keyboard(kbd.BACKSPACE);
+
+	await expect.element(t.hour).toMatchTextContent("01");
+	await expect.element(t.dayPeriod).toMatchTextContent("PM");
+	await expect.element(t.value).toMatchTextContent("2026-03-11T13:30");
 });

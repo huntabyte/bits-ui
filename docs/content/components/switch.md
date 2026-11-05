@@ -4,7 +4,7 @@ description: A toggle control that allows users to switch between "on" and "off"
 ---
 
 <script>
-	import { APISection, ComponentPreview, SwitchDemo, SwitchDemoCustom, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, SwitchDemo, SwitchDemoCustom, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -79,7 +79,7 @@ You can then use the `MySwitch` component in your application like so:
 
 ```svelte
 <script lang="ts">
-  import MySwitch from "$lib/components/MySwitch.svelte";
+  import MySwitch from "#lib/components/MySwitch.svelte";
 
   let notifications = $state(true);
 </script>
