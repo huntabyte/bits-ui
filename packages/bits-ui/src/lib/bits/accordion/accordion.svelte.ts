@@ -6,30 +6,30 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import {
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import type { Orientation } from "$lib/shared/index.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import type { Orientation } from "#lib/shared/index.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 import { on } from "svelte/events";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 import {
 	MountAnimationGuard,
 	measureWithoutAnimation,
-} from "$lib/internal/mount-animation.svelte.js";
+} from "#lib/internal/mount-animation.svelte.js";
 
 const accordionAttrs = createBitsAttrs({
 	component: "accordion",

@@ -11,16 +11,16 @@ import {
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	boolToTrueOrUndef,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import type { Orientation } from "$lib/shared/index.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import type { Orientation } from "#lib/shared/index.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+} from "#lib/internal/types.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 
 export const toggleGroupAttrs = createBitsAttrs({
 	component: "toggle-group",
@@ -30,7 +30,8 @@ export const toggleGroupAttrs = createBitsAttrs({
 const ToggleGroupRootContext = new Context<ToggleGroup>("ToggleGroup.Root");
 
 interface ToggleGroupBaseStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			rovingFocus: boolean;
@@ -69,7 +70,8 @@ abstract class ToggleGroupBaseState {
 }
 
 interface ToggleGroupSingleStateOpts
-	extends ToggleGroupBaseStateOpts,
+	extends
+		ToggleGroupBaseStateOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -103,7 +105,8 @@ class ToggleGroupSingleState extends ToggleGroupBaseState {
 //
 
 interface ToggleGroupMultipleStateOpts
-	extends ToggleGroupBaseStateOpts,
+	extends
+		ToggleGroupBaseStateOpts,
 		WritableBoxedValues<{
 			value: string[];
 		}> {}
@@ -136,7 +139,8 @@ class ToggleGroupMultipleState extends ToggleGroupBaseState {
 type ToggleGroup = ToggleGroupSingleState | ToggleGroupMultipleState;
 
 interface ToggleGroupRootOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			rovingFocus: boolean;
@@ -159,7 +163,8 @@ export class ToggleGroupRootState {
 }
 
 interface ToggleGroupItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;

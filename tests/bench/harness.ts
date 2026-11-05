@@ -1,6 +1,6 @@
 import { flushSync, mount, unmount, type Component } from "svelte";
 import { afterAll } from "vitest";
-import { commands } from "@vitest/browser/context";
+import { commands } from "vitest/browser";
 
 declare const __BENCH_LABEL__: string;
 declare const __BENCH_RUNS__: number;

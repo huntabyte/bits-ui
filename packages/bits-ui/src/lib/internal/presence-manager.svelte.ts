@@ -3,11 +3,10 @@ import type { ReadableBoxedValues } from "svelte-toolbelt";
 import { AnimationsComplete } from "./animations-complete.js";
 import type { TransitionState } from "./attrs.js";
 
-interface PresenceManagerOpts
-	extends ReadableBoxedValues<{
-		open: boolean;
-		ref: HTMLElement | null;
-	}> {
+interface PresenceManagerOpts extends ReadableBoxedValues<{
+	open: boolean;
+	ref: HTMLElement | null;
+}> {
 	onComplete?: () => void;
 	enabled?: boolean;
 	shouldSkipExitAnimation?: () => boolean;
@@ -45,7 +44,9 @@ export class PresenceManager {
 			(isOpen) => {
 				if (!this.#hasMounted) {
 					this.#hasMounted = true;
-					return cleanup;
+					// `open` can change between construction and this first run (e.g. a root
+					// mounted and opened in one flush); only skip when it still matches.
+					if (isOpen === this.#shouldRender) return cleanup;
 				}
 
 				this.#clearTransitionFrame();

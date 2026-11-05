@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { SelectContentStaticProps } from "../types.js";
 	import { SelectContentState } from "../select.svelte.js";
-	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import PopperLayer from "#lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import PopperLayerForceMount from "#lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	const uid = $props.id();
 

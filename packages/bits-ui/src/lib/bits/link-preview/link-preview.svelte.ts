@@ -6,7 +6,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { on } from "svelte/events";
 import {
@@ -14,18 +14,18 @@ import {
 	boolToStr,
 	getDataOpenClosed,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import { isElement, isFocusVisible, isTouch } from "$lib/internal/is.js";
+} from "#lib/internal/attrs.js";
+import { isElement, isFocusVisible, isTouch } from "#lib/internal/is.js";
 import type {
 	BitsFocusEvent,
 	BitsPointerEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { getTabbableCandidates } from "$lib/internal/focus.js";
-import { SafePolygon } from "$lib/internal/safe-polygon.svelte.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+} from "#lib/internal/types.js";
+import { getTabbableCandidates } from "#lib/internal/focus.js";
+import { SafePolygon } from "#lib/internal/safe-polygon.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 
 const linkPreviewAttrs = createBitsAttrs({
 	component: "link-preview",
@@ -35,7 +35,8 @@ const linkPreviewAttrs = createBitsAttrs({
 const LinkPreviewRootContext = new Context<LinkPreviewRootState>("LinkPreview.Root");
 
 interface LinkPreviewRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 		}>,
 		ReadableBoxedValues<{
@@ -222,7 +223,8 @@ export class LinkPreviewTriggerState {
 }
 
 interface LinkPreviewContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;

@@ -1,15 +1,15 @@
-import { page, userEvent } from "@vitest/browser/context";
 import { expect, it, vi, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
 
 import { expectExists, expectNotExists } from "../browser-utils";
 import { getTestKbd } from "../utils.js";
 import ScrollAreaTest, { type ScrollAreaTestProps } from "./scroll-area-test.svelte";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
-function setup(props: ScrollAreaTestProps = {}) {
-	render(ScrollAreaTest, { ...props });
+async function setup(props: ScrollAreaTestProps = {}) {
+	await render(ScrollAreaTest, { ...props });
 
 	const root = page.getByTestId("root");
 	const viewport = page.getByTestId("viewport");
@@ -60,7 +60,7 @@ describe("ScrollArea", () => {
 	// }
 
 	it("should have bits data attrs", async () => {
-		setup({ type: "always", height: 5, numParagraphs: 10, wrapText: false });
+		await setup({ type: "always", height: 5, numParagraphs: 10, wrapText: false });
 		const parts = [
 			"root",
 			"viewport",
@@ -84,13 +84,13 @@ describe("ScrollArea", () => {
 	});
 
 	it("should render the root and viewport elements", async () => {
-		const t = setup();
+		const t = await setup();
 		await expect.element(t.root).toBeInTheDocument();
 		await expect.element(t.viewport).toBeInTheDocument();
 	});
 
 	it("should show scrollbars when content overflows", async () => {
-		const t = setup({ numParagraphs: 20, height: 100 });
+		const t = await setup({ numParagraphs: 20, height: 100 });
 
 		await t.root.hover();
 
@@ -99,7 +99,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should hide scrollbars when content fits", async () => {
-		const t = setup({ numParagraphs: 1, height: 400 });
+		const t = await setup({ numParagraphs: 1, height: 400 });
 
 		await t.root.hover();
 
@@ -108,7 +108,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should show horizontal scrollbar when text doesn't wrap", async () => {
-		const t = setup({ wrapText: false, numParagraphs: 1, width: 50 });
+		const t = await setup({ wrapText: false, numParagraphs: 1, width: 50 });
 
 		await t.root.hover();
 
@@ -117,7 +117,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should hide horizontal scrollbar when text wraps", async () => {
-		const t = setup({ wrapText: true, numParagraphs: 1, width: 100 });
+		const t = await setup({ wrapText: true, numParagraphs: 1, width: 100 });
 
 		await t.root.hover();
 
@@ -126,7 +126,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should show corner when both scrollbars are visible", async () => {
-		const t = setup({ wrapText: false, numParagraphs: 20, height: 100, width: 50 });
+		const t = await setup({ wrapText: false, numParagraphs: 20, height: 100, width: 50 });
 
 		await t.root.hover();
 
@@ -134,7 +134,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should hide corner when only one scrollbar is visible", async () => {
-		const t = setup({ wrapText: true, numParagraphs: 20, height: 100 });
+		const t = await setup({ wrapText: true, numParagraphs: 20, height: 100 });
 
 		await t.root.hover();
 
@@ -142,7 +142,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should show scrollbars on hover when type is 'hover'", async () => {
-		const t = setup({ type: "hover", numParagraphs: 20, height: 100 });
+		const t = await setup({ type: "hover", numParagraphs: 20, height: 100 });
 
 		await expectNotExists(t.getScrollbarY());
 
@@ -155,7 +155,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should always show scrollbars when type is 'always'", async () => {
-		const t = setup({ type: "always", numParagraphs: 20, height: 100 });
+		const t = await setup({ type: "always", numParagraphs: 20, height: 100 });
 
 		await expectExists(t.getScrollbarY());
 
@@ -166,7 +166,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should show scrollbars on scroll when type is 'scroll'", async () => {
-		const t = setup({ type: "scroll", numParagraphs: 20, height: 100 });
+		const t = await setup({ type: "scroll", numParagraphs: 20, height: 100 });
 
 		expectNotExists(t.getScrollbarY());
 
@@ -176,13 +176,62 @@ describe("ScrollArea", () => {
 	});
 
 	it("should show scrollbars when content overflows when type is `auto`", async () => {
-		const t = setup({ type: "auto", numParagraphs: 20, height: 100, width: 100 });
+		const t = await setup({ type: "auto", numParagraphs: 20, height: 100, width: 100 });
 
 		await expectExists(t.getScrollbarY());
 	});
 
+	it.each([
+		{
+			change: "content and viewport",
+			scrollbar: "scrollbar-y",
+			base: {},
+			overflow: { numParagraphs: 20, height: 100 },
+			fit: { numParagraphs: 1, height: 400 },
+		},
+		{
+			change: "content only",
+			scrollbar: "scrollbar-y",
+			base: { height: 400 },
+			overflow: { numParagraphs: 20 },
+			fit: { numParagraphs: 1 },
+		},
+		{
+			change: "viewport only",
+			scrollbar: "scrollbar-y",
+			base: { numParagraphs: 1 },
+			overflow: { height: 100 },
+			fit: { height: 400 },
+		},
+		{
+			change: "text wrapping (horizontal)",
+			scrollbar: "scrollbar-x",
+			base: { numParagraphs: 1, width: 100 },
+			overflow: { wrapText: false },
+			fit: { wrapText: true },
+		},
+	] satisfies {
+		change: string;
+		scrollbar: string;
+		base: ScrollAreaTestProps;
+		overflow: ScrollAreaTestProps;
+		fit: ScrollAreaTestProps;
+	}[])(
+		"should toggle the `auto` scrollbar when $change changes overflow",
+		async ({ scrollbar, base, overflow, fit }) => {
+			const rendered = await render(ScrollAreaTest, { type: "auto", ...base, ...overflow });
+			const scrollbarEl = page.getByTestId(scrollbar);
+
+			await expectExists(scrollbarEl);
+			await rendered.rerender(fit);
+			await expectNotExists(scrollbarEl);
+			await rendered.rerender(overflow);
+			await expectExists(scrollbarEl);
+		}
+	);
+
 	it("should respond to dynamic content changes", async () => {
-		const t = setup({ numParagraphs: 1, height: 100 });
+		const t = await setup({ numParagraphs: 1, height: 100 });
 
 		await expectNotExists(t.getScrollbarY());
 
@@ -196,7 +245,7 @@ describe("ScrollArea", () => {
 	});
 
 	it("should respond to size changes", async () => {
-		const t = setup({ numParagraphs: 20, height: 400 });
+		const t = await setup({ numParagraphs: 20, height: 400 });
 
 		await expectNotExists(t.getScrollbarY());
 
@@ -221,7 +270,7 @@ describe("ScrollArea", () => {
 			const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
 
 			try {
-				const rendered = render(ScrollAreaTest, {
+				const rendered = await render(ScrollAreaTest, {
 					type,
 					height: 5,
 					numParagraphs: 10,
@@ -263,7 +312,7 @@ describe("ScrollArea", () => {
 			return;
 		}
 
-		const t = setup({ numParagraphs: 20, height: 100 });
+		const t = await setup({ numParagraphs: 20, height: 100 });
 
 		await t.viewport.hover({ position: { x: 50, y: 50 } });
 		await expectExists(t.getScrollbarY());
@@ -284,7 +333,7 @@ describe("ScrollArea", () => {
 			return;
 		}
 
-		const t = setup({ wrapText: false, numParagraphs: 20, height: 100, width: 50 });
+		const t = await setup({ wrapText: false, numParagraphs: 20, height: 100, width: 50 });
 
 		await t.root.hover();
 
@@ -312,7 +361,7 @@ describe("ScrollArea", () => {
 			expect(true);
 			return;
 		}
-		const t = setup({ numParagraphs: 20, height: 100 });
+		const t = await setup({ numParagraphs: 20, height: 100 });
 
 		await t.root.hover({ position: { x: 10, y: 10 } });
 		await expectExists(t.getScrollbarY());
@@ -346,7 +395,7 @@ describe("ScrollArea", () => {
 			return;
 		}
 
-		const t = setup({ dir: "rtl", wrapText: false, numParagraphs: 1, width: 50 });
+		const t = await setup({ dir: "rtl", wrapText: false, numParagraphs: 1, width: 50 });
 
 		await t.root.hover();
 		const scrollbarX = t.getScrollbarX();
@@ -363,7 +412,7 @@ describe("ScrollArea", () => {
 	it("should restore webkitUserSelect when pointer capture is lost without pointerup", async () => {
 		document.body.style.webkitUserSelect = "";
 
-		const t = setup({ type: "always", numParagraphs: 20, height: 100 });
+		const t = await setup({ type: "always", numParagraphs: 20, height: 100 });
 
 		await expectExists(t.getScrollbarY());
 		const scrollbar = t.getScrollbarY().element();
@@ -391,5 +440,63 @@ describe("ScrollArea", () => {
 		scrollbar.dispatchEvent(lostCaptureEvent);
 
 		expect(document.body.style.webkitUserSelect).toBe("");
+	});
+	it("should clear pending scroll timers and the thumb rAF loop on unmount (#2253)", async () => {
+		const scheduled = new Set<number>();
+		const cleared = new Set<number>();
+		const origSetTimeout = window.setTimeout;
+		const origClearTimeout = window.clearTimeout;
+		const setTimeoutSpy = vi.spyOn(window, "setTimeout").mockImplementation(((
+			fn: TimerHandler,
+			ms?: number,
+			...args: unknown[]
+		) => {
+			const id = origSetTimeout(fn, ms, ...args);
+			if (ms === 100) scheduled.add(id);
+			return id;
+		}) as typeof setTimeout);
+		const clearTimeoutSpy = vi.spyOn(window, "clearTimeout").mockImplementation((id) => {
+			if (typeof id === "number") cleared.add(id);
+			origClearTimeout(id);
+		});
+		const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+
+		try {
+			const { unmount } = await render(ScrollAreaTest, {
+				type: "scroll",
+				numParagraphs: 20,
+				height: 100,
+			});
+			const viewport = page.getByTestId("viewport").element() as HTMLElement;
+
+			async function scrollBy(delta: number) {
+				const scrolled = new Promise((r) =>
+					viewport.addEventListener("scroll", r, { once: true })
+				);
+				viewport.scrollTop += delta;
+				await scrolled;
+			}
+
+			await scrollBy(20);
+			await expectExists(page.getByTestId("thumb-y"));
+			// the thumb is mounted now, so this scroll starts its rAF loop
+			await scrollBy(20);
+			expect(scheduled.size).toBeGreaterThan(0);
+
+			unmount();
+
+			// every pending 100ms debounce timer is cancelled on teardown
+			for (const id of scheduled) expect(cleared.has(id)).toBe(true);
+
+			// and the thumb's rAF loop stops rescheduling itself
+			await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+			const rafCalls = rafSpy.mock.calls.length;
+			await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+			expect(rafSpy.mock.calls.length - rafCalls).toBe(2);
+		} finally {
+			setTimeoutSpy.mockRestore();
+			clearTimeoutSpy.mockRestore();
+			rafSpy.mockRestore();
+		}
 	});
 });

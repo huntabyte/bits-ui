@@ -4,7 +4,7 @@ description: Learn how to migrate from 0.x to 1.x+
 ---
 
 <script>
-	import { Callout } from '$lib/components';
+	import { Callout } from '#lib/components/index.js';
 </script>
 
 ## Bits UI v1

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Code from "$lib/components/markdown/code.svelte";
-	import * as Table from "$lib/components/ui/table/index.js";
-	import type { CSSVarSchema } from "$lib/types/index.js";
-	import { parseMarkdown } from "$lib/utils/index.js";
+	import Code from "#lib/components/markdown/code.svelte";
+	import * as Table from "#lib/components/ui/table/index.js";
+	import type { CSSVarSchema } from "#lib/types/index.js";
+	import { parseMarkdown } from "#lib/utils/index.js";
 	import CssVarsDetailsMobile from "./css-vars-details-mobile.svelte";
 
 	let { cssVars = [] }: { cssVars: CSSVarSchema[] } = $props();
@@ -24,7 +24,7 @@
 				<Table.Row>
 					<Table.Cell class="align-baseline">
 						<Code
-							class="text-foreground h-fit py-1.5 font-semibold md:py-1 lg:h-[27px] lg:py-0"
+							class="h-fit py-1.5 font-semibold text-foreground md:py-1 lg:h-[27px] lg:py-0"
 							>{attr.name}</Code
 						>
 					</Table.Cell>

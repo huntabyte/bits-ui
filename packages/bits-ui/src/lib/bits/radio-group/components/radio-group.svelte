@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { RadioGroupRootProps } from "../types.js";
 	import { RadioGroupRootState } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 

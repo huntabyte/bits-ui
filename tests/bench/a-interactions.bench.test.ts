@@ -50,8 +50,7 @@ describe("dropdown-menu", () => {
 			component: MenuSub,
 			props: props({ count: 100, subOpen: false }),
 			run: ({ props }) => void (props.subOpen = true),
-			verify: () =>
-				assert($$(document, "[data-bench=sub-item]").length === 100, "sub items"),
+			verify: () => assert($$(document, "[data-bench=sub-item]").length === 100, "sub items"),
 		}));
 	it("close submenu of 100", () =>
 		bench("dropdown-menu/sub-close-100", {
@@ -80,7 +79,10 @@ describe("dialog", () => {
 			props: props({ innerOpen: true }),
 			run: ({ props }) => void (props.innerOpen = false),
 			verify: () =>
-				assert($(document, "[data-bench=inner]")?.dataset.state !== "open", "inner closing"),
+				assert(
+					$(document, "[data-bench=inner]")?.dataset.state !== "open",
+					"inner closing"
+				),
 		}));
 });
 
@@ -136,7 +138,8 @@ describe("tooltip", () => {
 			run: ({ target }) => {
 				const triggers = $$(target, "[data-bench=trigger]");
 				for (let i = 0; i < 20; i++) {
-					if (i > 0) pointer(triggers[i - 1]!, "pointerleave", { relatedTarget: triggers[i] });
+					if (i > 0)
+						pointer(triggers[i - 1]!, "pointerleave", { relatedTarget: triggers[i] });
 					pointer(triggers[i]!, "pointerenter");
 					flushSync();
 				}
@@ -181,7 +184,8 @@ describe("popover scroll", () => {
 			props: props({}),
 			setup: () => {
 				window.scrollTo(0, 0);
-				startTransform = $(document, "[data-bench=content]")!.parentElement!.style.transform;
+				startTransform = $(document, "[data-bench=content]")!.parentElement!.style
+					.transform;
 			},
 			// the real `scroll` event waits for a frame; dispatch it right away instead
 			run: async () => {
@@ -192,7 +196,8 @@ describe("popover scroll", () => {
 				}
 			},
 			verify: () => {
-				const transform = $(document, "[data-bench=content]")?.parentElement?.style.transform;
+				const transform = $(document, "[data-bench=content]")?.parentElement?.style
+					.transform;
 				window.scrollTo(0, 0);
 				assert(transform && transform !== startTransform, "content followed the scroll");
 			},

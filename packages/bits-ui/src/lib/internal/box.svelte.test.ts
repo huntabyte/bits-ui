@@ -15,14 +15,32 @@ describe("internal boxes", () => {
 	it("are recognised by svelte-toolbelt like its own boxes", () => {
 		const cases = [
 			[boxWith(() => 1), toolbeltBoxWith(() => 1)],
-			[boxWith(() => 1, () => {}), toolbeltBoxWith(() => 1, () => {})],
+			[
+				boxWith(
+					() => 1,
+					() => {}
+				),
+				toolbeltBoxWith(
+					() => 1,
+					() => {}
+				),
+			],
 			[simpleBox(1), toolbeltSimpleBox(1)],
 		] as const;
 		for (const [ours, theirs] of cases) {
 			expect(isBox(ours)).toBe(isBox(theirs));
 			expect(isWritableBox(ours)).toBe(isWritableBox(theirs));
 		}
-		expect(isWritableBox(toReadonlyBox(boxWith(() => 1, () => {})))).toBe(false);
+		expect(
+			isWritableBox(
+				toReadonlyBox(
+					boxWith(
+						() => 1,
+						() => {}
+					)
+				)
+			)
+		).toBe(false);
 	});
 
 	it("read through the getter and write through the setter", () => {

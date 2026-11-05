@@ -16,70 +16,70 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger
-		class="border-input text-foreground shadow-btn hover:bg-muted inline-flex h-10 w-10 select-none items-center justify-center rounded-full border text-sm font-medium active:scale-[0.98]"
+		class="border-input inline-flex h-10 w-10 items-center justify-center rounded-full border text-sm font-medium text-foreground shadow-btn select-none hover:bg-muted active:scale-[0.98]"
 	>
-		<DotsThree class="text-foreground h-6 w-6" />
+		<DotsThree class="h-6 w-6 text-foreground" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content
-			class="border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden z-50 w-[229px] rounded-xl border px-1 py-1.5"
+			class="z-50 w-[229px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover outline-hidden focus-visible:outline-hidden"
 			sideOffset={8}
 		>
 			<DropdownMenu.Item
-				class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+				class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium ring-0! ring-transparent! select-none focus-visible:outline-none data-highlighted:bg-muted"
 			>
 				<div class="flex items-center">
-					<UserCircle class="text-foreground-alt mr-2 size-5" />
+					<UserCircle class="mr-2 size-5 text-foreground-alt" />
 					Profile
 				</div>
 				<div class="ml-auto flex items-center gap-px">
 					<kbd
-						class="rounded-button border-dark-10 bg-background-alt text-muted-foreground shadow-kbd inline-flex size-5 items-center justify-center border text-xs"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
 					>
 						⌘
 					</kbd>
 					<kbd
-						class="rounded-button border-dark-10 bg-background-alt text-muted-foreground shadow-kbd inline-flex size-5 items-center justify-center border text-[10px]"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
 					>
 						P
 					</kbd>
 				</div>
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
-				class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+				class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium ring-0! ring-transparent! select-none focus-visible:outline-none data-highlighted:bg-muted"
 			>
 				<div class="flex items-center">
-					<Cardholder class="text-foreground-alt mr-2 size-5" />
+					<Cardholder class="mr-2 size-5 text-foreground-alt" />
 					Billing
 				</div>
 				<div class="ml-auto flex items-center gap-px">
 					<kbd
-						class="rounded-button border-dark-10 bg-background-alt text-muted-foreground shadow-kbd inline-flex size-5 items-center justify-center border text-xs"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
 					>
 						⌘
 					</kbd>
 					<kbd
-						class="rounded-button border-dark-10 bg-background-alt text-muted-foreground shadow-kbd inline-flex size-5 items-center justify-center border text-[10px]"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
 					>
 						B
 					</kbd>
 				</div>
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
-				class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+				class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium ring-0! ring-transparent! select-none focus-visible:outline-none data-highlighted:bg-muted"
 			>
 				<div class="flex items-center">
-					<GearSix class="text-foreground-alt mr-2 size-5" />
+					<GearSix class="mr-2 size-5 text-foreground-alt" />
 					Settings
 				</div>
 				<div class="ml-auto flex items-center gap-px">
 					<kbd
-						class="rounded-button border-dark-10 bg-background-alt text-muted-foreground shadow-kbd inline-flex size-5 items-center justify-center border text-xs"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-xs text-muted-foreground shadow-kbd"
 					>
 						⌘
 					</kbd>
 					<kbd
-						class="rounded-button border-dark-10 bg-background-alt text-muted-foreground shadow-kbd inline-flex size-5 items-center justify-center border text-[10px]"
+						class="inline-flex size-5 items-center justify-center rounded-button border border-dark-10 bg-background-alt text-[10px] text-muted-foreground shadow-kbd"
 					>
 						S
 					</kbd>
@@ -87,11 +87,11 @@
 			</DropdownMenu.Item>
 			<DropdownMenu.CheckboxItem
 				bind:checked={notifications}
-				class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+				class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium ring-0! ring-transparent! select-none focus-visible:outline-none data-highlighted:bg-muted"
 			>
 				{#snippet children({ checked })}
 					<div class="flex items-center pr-4">
-						<Bell class="text-foreground-alt mr-2 size-5" />
+						<Bell class="mr-2 size-5 text-foreground-alt" />
 						Notifications
 					</div>
 					<div class="ml-auto flex items-center gap-px">
@@ -103,29 +103,29 @@
 			</DropdownMenu.CheckboxItem>
 			<DropdownMenu.Sub>
 				<DropdownMenu.SubTrigger
-					class="rounded-button data-highlighted:bg-muted data-[state=open]:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+					class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium ring-0! ring-transparent! select-none focus-visible:outline-none data-highlighted:bg-muted data-[state=open]:bg-muted"
 				>
 					<div class="flex items-center">
-						<UserCirclePlus class="text-foreground-alt mr-2 size-5" />
+						<UserCirclePlus class="mr-2 size-5 text-foreground-alt" />
 						Workspace
 					</div>
 					<div class="ml-auto flex items-center gap-px">
-						<CaretRight class="text-foreground-alt size-5" />
+						<CaretRight class="size-5 text-foreground-alt" />
 					</div>
 				</DropdownMenu.SubTrigger>
 				<DropdownMenu.Portal>
 					<DropdownMenu.SubContent
-						class="border-muted bg-background shadow-popover ring-0! ring-transparent! z-50 w-[209px] rounded-xl border px-1 py-1.5 outline-none"
+						class="z-50 w-[209px] rounded-xl border border-muted bg-background px-1 py-1.5 shadow-popover ring-0! ring-transparent! outline-none"
 						sideOffset={10}
 					>
 						<DropdownMenu.RadioGroup bind:value={invited}>
 							<DropdownMenu.RadioItem
 								value="huntabyte"
-								class="rounded-button data-highlighted:bg-muted ring-0! ring-transparent! flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+								class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium ring-0! ring-transparent! select-none focus-visible:outline-none data-highlighted:bg-muted"
 							>
 								{#snippet children({ checked })}
 									<Avatar.Root
-										class="border-foreground/50 relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border"
+										class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 									>
 										<Avatar.Image
 											src="https://github.com/huntabyte.png"
@@ -133,7 +133,7 @@
 											class="aspect-square h-full w-full"
 										/>
 										<Avatar.Fallback
-											class="bg-muted text-xxs flex h-full w-full items-center justify-center rounded-full"
+											class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xxs"
 											>HJ</Avatar.Fallback
 										>
 									</Avatar.Root>
@@ -145,11 +145,11 @@
 							</DropdownMenu.RadioItem>
 							<DropdownMenu.RadioItem
 								value="pavel"
-								class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+								class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 							>
 								{#snippet children({ checked })}
 									<Avatar.Root
-										class="border-foreground/50 relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border"
+										class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 									>
 										<Avatar.Image
 											src="https://github.com/pavelstianko.png"
@@ -157,7 +157,7 @@
 											class="aspect-square h-full w-full"
 										/>
 										<Avatar.Fallback
-											class="bg-muted flex h-full w-full items-center justify-center rounded-full text-xs"
+											class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
 											>PS</Avatar.Fallback
 										>
 									</Avatar.Root>
@@ -169,11 +169,11 @@
 							</DropdownMenu.RadioItem>
 							<DropdownMenu.RadioItem
 								value="cokakoala"
-								class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+								class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 							>
 								{#snippet children({ checked })}
 									<Avatar.Root
-										class="border-foreground/50 relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border"
+										class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 									>
 										<Avatar.Image
 											src="https://github.com/adriangonz97.png"
@@ -181,7 +181,7 @@
 											class="aspect-square h-full w-full"
 										/>
 										<Avatar.Fallback
-											class="bg-muted flex h-full w-full items-center justify-center rounded-full text-xs"
+											class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
 											>CK</Avatar.Fallback
 										>
 									</Avatar.Root>
@@ -193,11 +193,11 @@
 							</DropdownMenu.RadioItem>
 							<DropdownMenu.RadioItem
 								value="tglide"
-								class="rounded-button data-highlighted:bg-muted flex h-10 select-none items-center py-3 pl-3 pr-1.5 text-sm font-medium focus-visible:outline-none"
+								class="flex h-10 items-center rounded-button py-3 pr-1.5 pl-3 text-sm font-medium select-none focus-visible:outline-none data-highlighted:bg-muted"
 							>
 								{#snippet children({ checked })}
 									<Avatar.Root
-										class="border-foreground/50 relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border"
+										class="relative mr-3 flex size-5 shrink-0 overflow-hidden rounded-full border border-foreground/50"
 									>
 										<Avatar.Image
 											src="https://github.com/tglide.png"
@@ -205,7 +205,7 @@
 											class="aspect-square h-full w-full"
 										/>
 										<Avatar.Fallback
-											class="bg-muted flex h-full w-full items-center justify-center rounded-full text-xs"
+											class="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs"
 										>
 											TL
 										</Avatar.Fallback>

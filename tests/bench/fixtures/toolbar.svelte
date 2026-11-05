@@ -6,7 +6,7 @@
 <Toolbar.Root>
 	<Toolbar.Group type="multiple" bind:value>
 		{#each { length: count }, i (i)}
-			<Toolbar.GroupItem value="{i}" data-bench="item">{i}</Toolbar.GroupItem>
+			<Toolbar.GroupItem value={i} data-bench="item">{i}</Toolbar.GroupItem>
 		{/each}
 	</Toolbar.Group>
 	{#each { length: count }, i (i)}

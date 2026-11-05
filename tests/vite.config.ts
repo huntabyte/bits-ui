@@ -1,16 +1,17 @@
+import { svelte, vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import process from "node:process";
 import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig } from "vite";
+import { playwright } from "@vitest/browser-playwright";
 import type { Plugin } from "vite";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "vitest/config";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
 const srcLib = fileURLToPath(new URL("../packages/bits-ui/src/lib", import.meta.url));
 
 /**
- * Resolves `bits-ui` (and its internal `$lib/*` imports) to source at `lib` instead of `dist`.
+ * Resolves `bits-ui` (and its internal `#lib/*` imports) to source at `lib` instead of `dist`.
  * SvelteKit's `$lib` alias runs first and points at this package's `src/lib`, so undo that
  * for imports coming from inside `lib`. Tests that import a `dist` module by path (to spy on
  * a state class) get the matching source module, so they see the instances components use.
@@ -30,11 +31,13 @@ function bitsUiSource(lib: string): Plugin {
 				}
 			}
 			if (!importer?.startsWith(lib)) return;
-			const rest = id.startsWith("$lib/")
-				? id.slice(5)
-				: id.startsWith(testsLib)
-					? id.slice(testsLib.length)
-					: null;
+			// `#lib/*` is the package's subpath import; `$lib/*` is kept for older baseline snapshots
+			const rest =
+				id.startsWith("#lib/") || id.startsWith("$lib/")
+					? id.slice(5)
+					: id.startsWith(testsLib)
+						? id.slice(testsLib.length)
+						: null;
 			if (rest !== null) return this.resolve(`${lib}/${rest}`, importer, { skipSelf: true });
 		},
 	};
@@ -66,37 +69,50 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
-	plugins: [tailwindcss(), vitestBrowserConditionPlugin, sveltekit()],
-	test: {
-		poolOptions: {
-			forks: {
-				maxForks: 7,
+	plugins: [
+		tailwindcss(),
+		vitestBrowserConditionPlugin,
+		sveltekit({
+			// Consult https://kit.svelte.dev/docs/integrations#preprocessors
+			// for more information about preprocessors
+			preprocess: vitePreprocess(),
+
+			compilerOptions: {
+				warningFilter: (w) => {
+					if (w.code === "state_referenced_locally") return false;
+
+					return true;
+				},
 			},
-		},
+		}),
+	],
+	test: {
+		maxWorkers: 7,
 		projects: [
 			{
-				extends: "./vite.config.ts",
 				// `BITS_UI_SRC=1` tests bits-ui source directly instead of the built `dist`.
 				plugins: process.env.BITS_UI_SRC ? [bitsUiSource(srcLib)] : [],
 				test: {
 					name: "browser",
+					isolate: true,
 					include: ["src/tests/**/*.browser.test.ts"],
 					includeSource: ["src/tests/**/*.{js,ts,svelte}"],
 					setupFiles: ["./other/setup-browser-test.ts"],
-					environment: "browser",
 					testTimeout: 5000,
 					retry: 3,
 					browser: {
 						enabled: true,
 						headless: true,
-						provider: "playwright",
-						isolate: true,
+						provider: playwright(),
 						instances: [{ browser: "chromium" }, { browser: "webkit" }],
 					},
 				},
 			},
 			{
 				// Perf benchmarks against bits-ui *source* in production mode. See bench/README.md.
+				// Vitest 5 projects inherit the root config by default; the root `sveltekit()` would
+				// compile Svelte a second time, in dev mode.
+				extends: false,
 				plugins: [bitsUiSource(benchLib), svelte({ compilerOptions: { dev: false } })],
 				resolve: {
 					conditions: ["browser", "production", "module", "import", "default"],
@@ -116,18 +132,12 @@ export default defineConfig({
 					browser: {
 						enabled: true,
 						headless: true,
-						provider: "playwright",
-						instances: [
-							{
-								browser: "chromium",
-								launch: {
-									args: [
-										"--js-flags=--expose-gc",
-										"--enable-precise-memory-info",
-									],
-								},
+						provider: playwright({
+							launchOptions: {
+								args: ["--js-flags=--expose-gc", "--enable-precise-memory-info"],
 							},
-						],
+						}),
+						instances: [{ browser: "chromium" }],
 					},
 				},
 			},

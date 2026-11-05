@@ -4,7 +4,7 @@ import { getTestKbd } from "../utils.js";
 import TabsTest from "./tabs-test.svelte";
 import TabsNestedTest from "./tabs-nested-test.svelte";
 import type { Item, TabsTestProps } from "./tabs-test.svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
@@ -23,16 +23,16 @@ const items: Item[] = [
 	},
 ];
 
-function setup(props: Partial<TabsTestProps> = {}) {
+async function setup(props: Partial<TabsTestProps> = {}) {
 	const withDefaults = { ...{ items }, ...props };
-	render(TabsTest, withDefaults);
+	await render(TabsTest, withDefaults);
 }
 
 describe("Tabs", () => {
 	it.each(["text", "text-button"] as const)(
 		"should tab to the panel when its first content is not focusable (%s)",
 		async (contentLayout) => {
-			setup({ contentLayout });
+			await setup({ contentLayout });
 			await page.getByTestId("trigger-1").click();
 			await userEvent.tab();
 			await expect.element(page.getByTestId("content-1")).toHaveFocus();
@@ -40,7 +40,7 @@ describe("Tabs", () => {
 	);
 
 	it("should allow skipping the panel when its first content is focusable", async () => {
-		setup({ contentLayout: "button", contentTabindex: -1 });
+		await setup({ contentLayout: "button", contentTabindex: -1 });
 		await page.getByTestId("trigger-1").click();
 		await expect.element(page.getByTestId("content-1")).toHaveAttribute("tabindex", "-1");
 		await userEvent.tab();
@@ -50,7 +50,7 @@ describe("Tabs", () => {
 	});
 
 	it("should have bits data attrs", async () => {
-		render(TabsTest, {
+		await render(TabsTest, {
 			items: [items[0] as Item],
 		});
 
@@ -66,7 +66,7 @@ describe("Tabs", () => {
 	});
 
 	it("should switch tabs on click", async () => {
-		setup();
+		await setup();
 
 		const trigger1 = page.getByTestId("trigger-1");
 		const trigger2 = page.getByTestId("trigger-2");
@@ -97,7 +97,7 @@ describe("Tabs", () => {
 	});
 
 	it("should navigate the tabs with the keyboard", async () => {
-		setup();
+		await setup();
 
 		const trigger1 = page.getByTestId("trigger-1");
 		const trigger2 = page.getByTestId("trigger-2");
@@ -139,7 +139,7 @@ describe("Tabs", () => {
 	});
 
 	it("should respect the loop prop", async () => {
-		setup({ loop: false });
+		await setup({ loop: false });
 
 		const trigger1 = page.getByTestId("trigger-1");
 		const trigger3 = page.getByTestId("trigger-3");
@@ -156,7 +156,7 @@ describe("Tabs", () => {
 	});
 
 	it("should respect the `activationMode: 'manual'` prop", async () => {
-		setup({
+		await setup({
 			activationMode: "manual",
 		});
 
@@ -181,7 +181,7 @@ describe("Tabs", () => {
 	});
 
 	it("should navigate using up & down when orientation is vertical", async () => {
-		setup({
+		await setup({
 			orientation: "vertical",
 		});
 
@@ -225,7 +225,7 @@ describe("Tabs", () => {
 	});
 
 	it("should apply appropriate `aria-controls` and `aria-labelledby` attributes to the `Tabs.Trigger` and `Tabs.Content` components", async () => {
-		setup();
+		await setup();
 		const triggers = [
 			page.getByTestId("trigger-1"),
 			page.getByTestId("trigger-2"),
@@ -250,7 +250,7 @@ describe("Tabs", () => {
 	});
 
 	it("should apply tabindex 0 to the active tab trigger on mount", async () => {
-		setup({
+		await setup({
 			value: "2",
 		});
 		const [trigger1, trigger2, trigger3] = [
@@ -265,7 +265,7 @@ describe("Tabs", () => {
 	});
 
 	it("should ignore the triggers of a nested `Tabs.Root` when navigating with the keyboard", async () => {
-		render(TabsNestedTest);
+		await render(TabsNestedTest);
 
 		const outerTrigger1 = page.getByTestId("outer-trigger-1");
 		const outerTrigger2 = page.getByTestId("outer-trigger-2");

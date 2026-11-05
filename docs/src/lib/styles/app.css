@@ -332,11 +332,11 @@
 
 @layer components {
 	.link {
-		@apply hover:text-foreground/80 focus-visible:ring-foreground focus-visible:ring-offset-background rounded-xs focus-visible:outline-hidden inline-flex items-center gap-1 font-medium underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-offset-2;
+		@apply inline-flex items-center gap-1 rounded-xs font-medium underline underline-offset-4 hover:text-foreground/80 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden;
 	}
 
 	.search-result mark {
-		@apply dark:text-background text-foreground rounded bg-[#fdffa4] px-0.5 py-px;
+		@apply rounded bg-[#fdffa4] px-0.5 py-px text-foreground dark:text-background;
 	}
 }
 

@@ -5,7 +5,7 @@ description: An alternative to the native `<input type="time">` element.
 
 <script>
 	import { CalendarDateTime, CalendarDate, now, getLocalTimeZone, parseDateTime, today, Time } from "@internationalized/date";
-	import { APISection, ComponentPreview, TimeFieldDemo, TimeFieldDemoCustom, DemoContainer, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, TimeFieldDemo, TimeFieldDemoCustom, DemoContainer, Callout } from '#lib/components/index.js'
 	import { toast } from 'svelte-sonner';
 	let { schemas } = $props()
 </script>
@@ -115,7 +115,7 @@ By default, the `placeholder` will be set to `12:00 AM` or `00:00` depending on 
 
 ```svelte
 <script lang="ts">
-  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "#lib/components/MyTimeField.svelte";
   import { Time } from "@internationalized/date";
 </script>
 
@@ -130,7 +130,7 @@ If we're collecting a time from the user where we want the timezone to be displa
 
 ```svelte
 <script lang="ts">
-  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "#lib/components/MyTimeField.svelte";
   import { now, getLocalTimeZone } from "@internationalized/date";
 </script>
 
@@ -268,7 +268,7 @@ You can set a minimum value for the `TimeField.Root` component by using the `min
 
 ```svelte
 <script lang="ts">
-  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "#lib/components/MyTimeField.svelte";
   import { Time } from "@internationalized/date";
 </script>
 
@@ -287,7 +287,7 @@ You can set a maximum value for the `TimeField.Root` component by using the `max
 
 ```svelte
 <script lang="ts">
-  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "#lib/components/MyTimeField.svelte";
   import { Time } from "@internationalized/date";
 </script>
 
@@ -308,7 +308,7 @@ The strings are then passed to the `onInvalid` callback, which you can use to di
 
 ```svelte
 <script lang="ts">
-  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "#lib/components/MyTimeField.svelte";
   import type { TimeValue } from "bits-ui";
   import { Time } from "@internationalized/date";
   import { toast } from "your-favorite-toast-library";
@@ -372,7 +372,7 @@ The `granularity` prop sets the granularity of the date field, which determines 
 
 ```svelte
 <script lang="ts">
-  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "#lib/components/MyTimeField.svelte";
   import { Time } from "@internationalized/date";
 
   const value = new Time(12, 30);
@@ -393,7 +393,7 @@ You can use the `locale` prop to set the locale of the date field. This will aff
 
 ```svelte
 <script lang="ts">
-  import MyTimeField from "$lib/components/MyTimeField.svelte";
+  import MyTimeField from "#lib/components/MyTimeField.svelte";
 </script>
 
 <MyTimeField locale="de" value={new Time(13, 30, 0)} />

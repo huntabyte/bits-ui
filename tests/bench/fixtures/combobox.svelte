@@ -5,7 +5,9 @@
 		open = false,
 		search = "",
 	}: { count: number; open?: boolean; search?: string } = $props();
-	const items = $derived(Array.from({ length: count }, (_, i) => ({ value: `${i}`, label: `Item ${i}` })));
+	const items = $derived(
+		Array.from({ length: count }, (_, i) => ({ value: `${i}`, label: `Item ${i}` }))
+	);
 	const filtered = $derived(search ? items.filter((it) => it.label.includes(search)) : items);
 </script>
 

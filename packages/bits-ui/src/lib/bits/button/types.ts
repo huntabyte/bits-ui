@@ -1,6 +1,6 @@
 import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
 import type { WithoutChildren } from "svelte-toolbelt";
-import type { WithChildren } from "$lib/shared/index.js";
+import type { WithChildren } from "#lib/shared/index.js";
 
 export type ButtonRootPropsWithoutHTML = WithChildren<{
 	ref?: HTMLElement | null;

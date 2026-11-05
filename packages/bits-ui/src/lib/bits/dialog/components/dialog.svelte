@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { DialogRootState } from "../dialog.svelte.js";
 	import type { DialogRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	let {
 		open = $bindable(false),

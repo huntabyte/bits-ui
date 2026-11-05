@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { watch } from "runed";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { DateFieldRootState } from "../date-field.svelte.js";
 	import type { DateFieldRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { getDefaultDate } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		disabled = false,

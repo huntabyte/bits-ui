@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { DialogContentState } from "../dialog.svelte.js";
 	import type { DialogContentProps } from "../types.js";
-	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
-	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
-	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
+	import DismissibleLayer from "#lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import EscapeLayer from "#lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import FocusScope from "#lib/bits/utilities/focus-scope/focus-scope.svelte";
+	import TextSelectionLayer from "#lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import ScrollLock from "#lib/bits/utilities/scroll-lock/scroll-lock.svelte";
 	const uid = $props.id();
 
 	let {

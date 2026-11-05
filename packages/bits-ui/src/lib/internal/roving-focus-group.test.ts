@@ -107,7 +107,9 @@ describe("RovingFocusGroup.handleKeydown", () => {
 								expect(e.defaultPrevented, label).toBe(expected.prevented);
 								expect(target?.id, label).toBe(expected.target?.id);
 								if (expected.target) {
-									expect(document.activeElement?.id, label).toBe(expected.target.id);
+									expect(document.activeElement?.id, label).toBe(
+										expected.target.id
+									);
 								}
 								checked++;
 							}

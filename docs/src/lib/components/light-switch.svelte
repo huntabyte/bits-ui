@@ -13,7 +13,7 @@
 	aria-label="Light Switch"
 	aria-checked={mode.current === "light"}
 	title="Toggle {mode.current === 'dark' ? 'Dark' : 'Light'} Mode"
-	class="rounded-input hover:bg-dark-10 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden relative inline-flex h-10 w-10 cursor-pointer items-center justify-center px-2 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
+	class="relative inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 >
 	{#if mode.current === "light"}
 		<div

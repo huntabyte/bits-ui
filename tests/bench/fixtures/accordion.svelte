@@ -5,7 +5,7 @@
 
 <Accordion.Root type="multiple" bind:value>
 	{#each { length: count }, i (i)}
-		<Accordion.Item value="{i}">
+		<Accordion.Item value={i}>
 			<Accordion.Header>
 				<Accordion.Trigger data-bench="trigger">Item {i}</Accordion.Trigger>
 			</Accordion.Header>

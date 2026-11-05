@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import type { TextSelectionLayerImplProps } from "./types.js";
 	import { TextSelectionLayerState } from "./use-text-selection-layer.svelte.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	let {
 		preventOverflowTextSelection = true,

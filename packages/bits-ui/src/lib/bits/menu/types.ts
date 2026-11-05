@@ -7,14 +7,14 @@ import type {
 	WithChildNoChildrenSnippetProps,
 	WithChildren,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
-import type { Direction } from "$lib/shared/index.js";
-import type { PortalProps } from "$lib/bits/utilities/portal/types.js";
-import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
+} from "#lib/shared/attributes.js";
+import type { Direction } from "#lib/shared/index.js";
+import type { PortalProps } from "#lib/bits/utilities/portal/types.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "#lib/shared/types.js";
 
 export type MenuRootPropsWithoutHTML = WithChildren<{
 	/**

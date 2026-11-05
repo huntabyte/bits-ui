@@ -1,6 +1,6 @@
 import type { SeparatorRootPropsWithoutHTML } from "bits-ui";
 import { OrientationProp } from "./extended-types/shared/index.js";
-import { withChildProps } from "$lib/content/api-reference/shared.js";
+import { withChildProps } from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,

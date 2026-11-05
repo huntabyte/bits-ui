@@ -12,9 +12,9 @@ import {
 	type WritableBoxedValues,
 	type Box,
 } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
 import { on } from "svelte/events";
-import { backward, forward } from "$lib/internal/arrays.js";
+import { backward, forward } from "#lib/internal/arrays.js";
 import {
 	boolToStr,
 	boolToStrTrueOrUndef,
@@ -22,8 +22,9 @@ import {
 	getDataOpenClosed,
 	boolToTrueOrUndef,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { isEventTargetWithin } from "#lib/internal/events.js";
 import type {
 	BitsEvent,
 	BitsFocusEvent,
@@ -33,16 +34,16 @@ import type {
 	OnChangeFn,
 	WithRefOpts,
 	RefAttachment,
-} from "$lib/internal/types.js";
-import { noop } from "$lib/internal/noop.js";
-import { isDisabledElement, isIOS } from "$lib/internal/is.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
-import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
-import { DataTypeahead } from "$lib/internal/data-typeahead.svelte.js";
-import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+} from "#lib/internal/types.js";
+import { noop } from "#lib/internal/noop.js";
+import { isDisabledElement, isIOS } from "#lib/internal/is.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
+import { getFloatingContentCSSVars } from "#lib/internal/floating-svelte/floating-utils.svelte.js";
+import { DataTypeahead } from "#lib/internal/data-typeahead.svelte.js";
+import { DOMTypeahead } from "#lib/internal/dom-typeahead.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 import { DEV } from "esm-env";
-import { findAdjacentElement, queryAll } from "$lib/internal/dom.js";
+import { findAdjacentElement, queryAll } from "#lib/internal/dom.js";
 import type { SelectValueSnippetProps } from "./types.js";
 
 // prettier-ignore
@@ -80,7 +81,8 @@ const SelectGroupContext = new Context<SelectGroupState>("Select.Group | Combobo
 const SelectContentContext = new Context<SelectContentState>("Select.Content | Combobox.Content");
 
 interface SelectBaseRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			name: string;
@@ -393,7 +395,8 @@ abstract class SelectBaseRootState {
 }
 
 interface SelectSingleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string;
 		}> {}
@@ -497,7 +500,8 @@ export class SelectSingleRootState extends SelectBaseRootState {
 }
 
 interface SelectMultipleRootStateOpts
-	extends SelectBaseRootStateOpts,
+	extends
+		SelectBaseRootStateOpts,
 		WritableBoxedValues<{
 			value: string[];
 		}> {}
@@ -597,7 +601,8 @@ class SelectMultipleRootState extends SelectBaseRootState {
 }
 
 interface SelectRootStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
 			loop: boolean;
@@ -710,7 +715,8 @@ export class SelectValueState {
 }
 
 interface SelectInputStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			clearOnDeselect: boolean;
 		}> {}
@@ -783,6 +789,7 @@ export class SelectInputState {
 
 		if (e.key === kbd.ENTER && !e.isComposing) {
 			e.preventDefault();
+			if (this.root.opts.disabled.current) return;
 
 			const isCurrentSelectedValue =
 				this.root.highlightedValue === this.root.opts.value.current;
@@ -903,6 +910,7 @@ export class SelectComboTriggerState {
 		this.onkeydown = this.onkeydown.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
+		this.onclick = this.onclick.bind(this);
 	}
 
 	#focusInputAndToggle() {
@@ -950,6 +958,17 @@ export class SelectComboTriggerState {
 		this.#focusInputAndToggle();
 	}
 
+	/**
+	 * Screen readers can activate the trigger with a `click` that no pointer events
+	 * precede (VoiceOver in Safari). A click that ends a press has a non-zero `detail`
+	 * and was already handled by `onpointerdown` / `onpointerup`.
+	 */
+	onclick(e: BitsMouseEvent) {
+		if (this.root.opts.disabled.current || e.detail !== 0) return;
+		this.#focusInputAndToggle();
+		e.preventDefault();
+	}
+
 	readonly props = $derived.by(
 		() =>
 			({
@@ -961,6 +980,7 @@ export class SelectComboTriggerState {
 				[this.root.getBitsAttr("trigger")]: "",
 				onpointerdown: this.onpointerdown,
 				onpointerup: this.onpointerup,
+				onclick: this.onclick,
 				onkeydown: this.onkeydown,
 				...this.attachment,
 			}) as const
@@ -1037,6 +1057,7 @@ export class SelectTriggerState {
 	 *
 	 */
 	#handleKeyboardSelection() {
+		if (this.root.opts.disabled.current) return false;
 		const isCurrentSelectedValue = this.root.highlightedValue === this.root.opts.value.current;
 
 		if (!this.root.opts.allowDeselect.current && isCurrentSelectedValue && !this.root.isMulti) {
@@ -1255,7 +1276,8 @@ export class SelectTriggerState {
 }
 
 interface SelectContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			onInteractOutside: (e: PointerEvent) => void;
 			onEscapeKeydown: (e: KeyboardEvent) => void;
@@ -1349,7 +1371,10 @@ export class SelectContentState {
 	});
 
 	onInteractOutside = (e: PointerEvent) => {
-		if (e.target === this.root.triggerNode || e.target === this.root.inputNode) {
+		if (
+			isEventTargetWithin(e, this.root.triggerNode) ||
+			isEventTargetWithin(e, this.root.inputNode)
+		) {
 			e.preventDefault();
 			return;
 		}
@@ -1420,7 +1445,8 @@ export class SelectContentState {
 }
 
 interface SelectItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -1436,6 +1462,9 @@ export class SelectItemState {
 	readonly opts: SelectItemStateOpts;
 	readonly root: SelectRoot;
 	readonly attachment: RefAttachment;
+	readonly isDisabled = $derived.by(
+		() => this.root.opts.disabled.current || this.opts.disabled.current
+	);
 	readonly isSelected = $derived.by(() => this.root.isValueSelected(this.opts.value.current));
 	readonly isHighlighted = $derived.by(() =>
 		this.root.isValueHighlighted(this.opts.value.current)
@@ -1446,9 +1475,7 @@ export class SelectItemState {
 	 * highlighted state actually changed, rather than for every mounted item each time the
 	 * highlighted value moves.
 	 */
-	readonly #isHighlightedAndEnabled = $derived.by(
-		() => this.isHighlighted && !this.opts.disabled.current
-	);
+	readonly #isHighlightedAndEnabled = $derived.by(() => this.isHighlighted && !this.isDisabled);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
 
@@ -1515,7 +1542,7 @@ export class SelectItemState {
 	}
 
 	handleSelect() {
-		if (this.opts.disabled.current) return;
+		if (this.isDisabled) return;
 		const isCurrentSelectedValue = this.opts.value.current === this.root.opts.value.current;
 
 		// if allowDeselect is false and the item is already selected and we're not in a
@@ -1618,7 +1645,7 @@ export class SelectItemState {
 				role: "option",
 				"aria-selected": boolToStr(this.isSelected),
 				"data-value": this.opts.value.current,
-				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
+				"data-disabled": boolToEmptyStrOrUndef(this.isDisabled),
 				"data-highlighted": boolToEmptyStrOrUndef(this.#isHighlightedAndEnabled),
 				"data-selected": boolToEmptyStrOrUndef(this.isSelected),
 				"data-label": this.opts.label.current,
@@ -1686,10 +1713,9 @@ export class SelectGroupHeadingState {
 	);
 }
 
-interface SelectHiddenInputStateOpts
-	extends ReadableBoxedValues<{
-		value: string | undefined;
-	}> {}
+interface SelectHiddenInputStateOpts extends ReadableBoxedValues<{
+	value: string | undefined;
+}> {}
 
 export class SelectHiddenInputState {
 	static create(opts: SelectHiddenInputStateOpts) {
@@ -1768,7 +1794,8 @@ export class SelectViewportState {
 }
 
 interface SelectScrollButtonImplStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			delay: (tick: number) => number;
 		}> {}

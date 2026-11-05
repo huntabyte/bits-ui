@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { Select } from "bits-ui";
-	let { count, open = false, value = "" }: { count: number; open?: boolean; value?: string } =
-		$props();
-	const items = $derived(Array.from({ length: count }, (_, i) => ({ value: `${i}`, label: `Item ${i}` })));
+	let {
+		count,
+		open = false,
+		value = "",
+	}: { count: number; open?: boolean; value?: string } = $props();
+	const items = $derived(
+		Array.from({ length: count }, (_, i) => ({ value: `${i}`, label: `Item ${i}` }))
+	);
 </script>
 
 <Select.Root type="single" bind:open bind:value {items}>

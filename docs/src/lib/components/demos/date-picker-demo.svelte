@@ -7,21 +7,21 @@
 
 <DatePicker.Root weekdayFormat="short" fixedWeeks={true}>
 	<div class="flex w-full max-w-[232px] flex-col gap-1.5">
-		<DatePicker.Label class="block select-none text-sm font-medium">Birthday</DatePicker.Label>
+		<DatePicker.Label class="block text-sm font-medium select-none">Birthday</DatePicker.Label>
 		<DatePicker.Input
-			class="h-input rounded-input border-border-input bg-background text-foreground focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover flex w-full max-w-[232px] select-none items-center border px-2 py-3 text-sm tracking-[0.01em]"
+			class="flex h-input w-full max-w-[232px] items-center rounded-input border border-border-input bg-background px-2 py-3 text-sm tracking-[0.01em] text-foreground select-none focus-within:border-border-input-hover focus-within:shadow-date-field-focus hover:border-border-input-hover"
 		>
 			{#snippet children({ segments })}
 				{#each segments as { part, value }, i (part + i)}
 					<div class="inline-block select-none">
 						{#if part === "literal"}
-							<DatePicker.Segment {part} class="text-muted-foreground p-1">
+							<DatePicker.Segment {part} class="p-1 text-muted-foreground">
 								{value}
 							</DatePicker.Segment>
 						{:else}
 							<DatePicker.Segment
 								{part}
-								class="rounded-5px hover:bg-muted focus:bg-muted focus:text-foreground aria-[valuetext=Empty]:text-muted-foreground focus-visible:ring-0! focus-visible:ring-offset-0! px-1 py-1"
+								class="rounded-5px px-1 py-1 hover:bg-muted focus:bg-muted focus:text-foreground focus-visible:ring-0! focus-visible:ring-offset-0! aria-[valuetext=Empty]:text-muted-foreground"
 							>
 								{value}
 							</DatePicker.Segment>
@@ -29,7 +29,7 @@
 					</div>
 				{/each}
 				<DatePicker.Trigger
-					class="text-foreground/60 hover:bg-muted active:bg-dark-10 ml-auto inline-flex size-8 items-center justify-center rounded-[5px] transition-all"
+					class="ml-auto inline-flex size-8 items-center justify-center rounded-[5px] text-foreground/60 transition-all hover:bg-muted active:bg-dark-10"
 				>
 					<CalendarBlank class="size-6" />
 				</DatePicker.Trigger>
@@ -37,30 +37,30 @@
 		</DatePicker.Input>
 		<DatePicker.Content sideOffset={6} class="z-50">
 			<DatePicker.Calendar
-				class="border-dark-10 bg-background-alt shadow-popover rounded-[15px] border p-[22px]"
+				class="rounded-[15px] border border-dark-10 bg-background-alt p-[22px] shadow-popover"
 			>
 				{#snippet children({ months, weekdays })}
 					<DatePicker.Header class="flex items-center justify-between">
 						<DatePicker.PrevButton
-							class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
+							class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt transition-all hover:bg-muted active:scale-[0.98]"
 						>
 							<CaretLeft class="size-6" />
 						</DatePicker.PrevButton>
 						<DatePicker.Heading class="text-[15px] font-medium" />
 						<DatePicker.NextButton
-							class="rounded-9px bg-background-alt hover:bg-muted inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
+							class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt transition-all hover:bg-muted active:scale-[0.98]"
 						>
 							<CaretRight class="size-6" />
 						</DatePicker.NextButton>
 					</DatePicker.Header>
-					<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+					<div class="flex flex-col space-y-4 pt-4 sm:flex-row sm:space-y-0 sm:space-x-4">
 						{#each months as month (month.value)}
-							<DatePicker.Grid class="w-full border-collapse select-none space-y-1">
+							<DatePicker.Grid class="w-full border-collapse space-y-1 select-none">
 								<DatePicker.GridHead>
 									<DatePicker.GridRow class="mb-1 flex w-full justify-between">
 										{#each weekdays as day (day)}
 											<DatePicker.HeadCell
-												class="text-muted-foreground font-normal! w-10 rounded-md text-xs"
+												class="w-10 rounded-md text-xs font-normal! text-muted-foreground"
 											>
 												<div>{day.slice(0, 2)}</div>
 											</DatePicker.HeadCell>
@@ -74,13 +74,13 @@
 												<DatePicker.Cell
 													{date}
 													month={month.value}
-													class="p-0! relative size-10 text-center text-sm"
+													class="relative size-10 p-0! text-center text-sm"
 												>
 													<DatePicker.Day
-														class="rounded-9px text-foreground hover:border-foreground data-selected:bg-foreground data-disabled:text-foreground/30 data-selected:text-background data-unavailable:text-muted-foreground data-disabled:pointer-events-none data-outside-month:pointer-events-none data-selected:font-medium data-unavailable:line-through group relative inline-flex size-10 items-center justify-center whitespace-nowrap border border-transparent bg-transparent p-0 text-sm font-normal transition-all"
+														class="group relative inline-flex size-10 items-center justify-center rounded-9px border border-transparent bg-transparent p-0 text-sm font-normal whitespace-nowrap text-foreground transition-all hover:border-foreground data-disabled:pointer-events-none data-disabled:text-foreground/30 data-outside-month:pointer-events-none data-selected:bg-foreground data-selected:font-medium data-selected:text-background data-unavailable:text-muted-foreground data-unavailable:line-through"
 													>
 														<div
-															class="bg-foreground group-data-selected:bg-background group-data-today:block absolute top-[5px] hidden size-1 rounded-full transition-all"
+															class="absolute top-[5px] hidden size-1 rounded-full bg-foreground transition-all group-data-selected:bg-background group-data-today:block"
 														></div>
 														{date.day}
 													</DatePicker.Day>

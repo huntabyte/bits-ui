@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { untrack, type Snippet } from "svelte";
 	import type { NavigationMenuContentProps } from "../types.js";
 	import {
@@ -8,10 +8,10 @@
 		NavigationMenuItemState,
 		NavigationMenuContentImplState,
 	} from "../navigation-menu.svelte.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import { noop } from "#lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import DismissibleLayer from "#lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import EscapeLayer from "#lib/bits/utilities/escape-layer/escape-layer.svelte";
 
 	const uid = $props.id();
 

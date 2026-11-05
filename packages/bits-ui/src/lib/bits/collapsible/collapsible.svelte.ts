@@ -4,7 +4,7 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import {
 	createBitsAttrs,
@@ -12,21 +12,21 @@ import {
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import { on } from "svelte/events";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 import {
 	MountAnimationGuard,
 	measureWithoutAnimation,
-} from "$lib/internal/mount-animation.svelte.js";
+} from "#lib/internal/mount-animation.svelte.js";
 
 const collapsibleAttrs = createBitsAttrs({
 	component: "collapsible",

@@ -15,17 +15,17 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
-import { boolToStr, boolToStrTrueOrUndef, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
+import { boolToStr, boolToStrTrueOrUndef, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { useId } from "$lib/internal/use-id.js";
-import type { DateMatcher, Month } from "$lib/shared/index.js";
-import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
-import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+} from "#lib/internal/types.js";
+import { useId } from "#lib/internal/use-id.js";
+import type { DateMatcher, Month } from "#lib/shared/index.js";
+import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "#lib/internal/date-time/formatter.js";
 import {
 	createIsOutsideVisibleMonths,
 	calendarAttrs,
@@ -46,12 +46,13 @@ import {
 	getTabbableDate,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/internal/date-time/calendar-helpers.svelte.js";
-import { getDateValueType, isBefore, isSameMonth, toDate } from "$lib/internal/date-time/utils.js";
-import type { WeekStartsOn } from "$lib/shared/date/types.js";
+} from "#lib/internal/date-time/calendar-helpers.svelte.js";
+import { getDateValueType, isBefore, isSameMonth, toDate } from "#lib/internal/date-time/utils.js";
+import type { WeekStartsOn } from "#lib/shared/date/types.js";
 
 interface CalendarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateValue | undefined | DateValue[];
 			placeholder: DateValue;
@@ -582,7 +583,8 @@ export class CalendarHeadingState {
 const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
 
 interface CalendarCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
 			month: DateValue;
@@ -999,7 +1001,8 @@ export class CalendarHeaderState {
 }
 
 interface CalendarMonthSelectStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			months: number[];
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
@@ -1093,7 +1096,8 @@ export class CalendarMonthSelectState {
 }
 
 interface CalendarYearSelectStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			years: number[] | undefined;
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);

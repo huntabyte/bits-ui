@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import type { PresenceLayerImplProps } from "./types.js";
 	import { Presence } from "./presence.svelte.js";

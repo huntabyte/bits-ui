@@ -4,7 +4,7 @@ description: A menu that allows users to navigate between pages of a website.
 ---
 
 <script>
-	import { APISection, ComponentPreview, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoNoViewport, NavigationMenuDemoNoHover } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, NavigationMenuDemo, Callout, NavigationMenuDemoForceMount, NavigationMenuDemoNoViewport, NavigationMenuDemoNoHover } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

@@ -4,7 +4,9 @@
 </script>
 
 <DropdownMenu.Root bind:open>
-	<DropdownMenu.Trigger data-bench="trigger" style="display:block;width:100px;height:40px">open</DropdownMenu.Trigger>
+	<DropdownMenu.Trigger data-bench="trigger" style="display:block;width:100px;height:40px"
+		>open</DropdownMenu.Trigger
+	>
 	<DropdownMenu.Portal>
 		<DropdownMenu.Content data-bench="content" style="max-height: 300px; overflow: auto">
 			<DropdownMenu.Group>
@@ -14,7 +16,9 @@
 				{/each}
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
-			<DropdownMenu.CheckboxItem>{#snippet children({ checked })}{checked}{/snippet}</DropdownMenu.CheckboxItem>
+			<DropdownMenu.CheckboxItem
+				>{#snippet children({ checked })}{checked}{/snippet}</DropdownMenu.CheckboxItem
+			>
 			<DropdownMenu.Sub>
 				<DropdownMenu.SubTrigger>sub</DropdownMenu.SubTrigger>
 				<DropdownMenu.SubContent>

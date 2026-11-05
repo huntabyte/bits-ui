@@ -1,7 +1,7 @@
 import { Context } from "runed";
 import type { ReadableBox, ReadableBoxedValues } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
-import type { BitsConfigPropsWithoutChildren } from "$lib/bits/utilities/config/types.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
+import type { BitsConfigPropsWithoutChildren } from "#lib/bits/utilities/config/types.js";
 
 type BitsConfigStateProps = ReadableBoxedValues<BitsConfigPropsWithoutChildren>;
 

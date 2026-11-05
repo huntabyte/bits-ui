@@ -37,7 +37,6 @@ import {
 } from "../utils.js";
 import { dateValueProp } from "./shared.js";
 
-
 export const root = defineComponentApiSchema<DateFieldRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root date field component.",
@@ -123,7 +122,9 @@ export const input = defineComponentApiSchema<DateFieldInputPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			children: {
 				definition: DateFieldInputChildrenSnippetProps,
-				stringDefinition: stringDefinitionFromMarkdown(dateFieldInputChildrenSnippetPropsRaw),
+				stringDefinition: stringDefinitionFromMarkdown(
+					dateFieldInputChildrenSnippetPropsRaw
+				),
 			},
 			child: {
 				definition: DateFieldInputChildSnippetProps,

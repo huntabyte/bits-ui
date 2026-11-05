@@ -12,7 +12,9 @@
 				<AlertDialog.Title>title</AlertDialog.Title>
 				<AlertDialog.Description>desc</AlertDialog.Description>
 				<input />
-				<AlertDialog.Cancel>cancel</AlertDialog.Cancel><AlertDialog.Action>ok</AlertDialog.Action>
+				<AlertDialog.Cancel>cancel</AlertDialog.Cancel><AlertDialog.Action
+					>ok</AlertDialog.Action
+				>
 			</AlertDialog.Content>
 		</AlertDialog.Portal>
 	</AlertDialog.Root>

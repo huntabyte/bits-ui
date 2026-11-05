@@ -25,20 +25,20 @@ import {
 	getTickLabelStyles,
 	getThumbLabelStyles,
 } from "./helpers.js";
-import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { isElementOrSVGElement } from "$lib/internal/is.js";
-import { isValidIndex } from "$lib/internal/arrays.js";
-import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { isElementOrSVGElement } from "#lib/internal/is.js";
+import { isValidIndex } from "#lib/internal/arrays.js";
+import { SvelteResizeObserver } from "#lib/internal/svelte-resize-observer.svelte.js";
 import type {
 	BitsKeyboardEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
-import { linearScale } from "$lib/internal/math.js";
-import type { SliderLabelPosition } from "./types.js";
+} from "#lib/internal/types.js";
+import type { Direction, Orientation, SliderThumbPositioning } from "#lib/shared/index.js";
+import { linearScale } from "#lib/internal/math.js";
+import type { SliderLabelPosition, SliderRootSnippetProps } from "./types.js";
 
 const sliderAttrs = createBitsAttrs({
 	component: "slider",
@@ -48,7 +48,8 @@ const sliderAttrs = createBitsAttrs({
 export const SliderRootContext = new Context<SliderRoot>("Slider.Root");
 
 interface SliderBaseRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			orientation: Orientation;
@@ -107,8 +108,6 @@ abstract class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
-		void this.#layoutVersion;
-
 		// If trackPadding is explicitly set, use it directly instead of calculating from thumb size
 		const trackPadding = this.opts.trackPadding?.current;
 		if (trackPadding !== undefined && trackPadding > 0) {
@@ -119,6 +118,9 @@ abstract class SliderBaseRootState {
 			// User opted out of containment
 			return [0, 100];
 		}
+
+		// only the measuring path below needs to rerun when the layout changes
+		void this.#layoutVersion;
 
 		const isVertical = this.opts.orientation.current === "vertical";
 
@@ -147,11 +149,16 @@ abstract class SliderBaseRootState {
 	};
 
 	getPositionFromValue = (thumbValue: number) => {
-		const thumbScale = this.getThumbScale();
+		return this.getValueToPosition()(thumbValue);
+	};
 
-		const scale = linearScale([this.opts.min.current, this.opts.max.current], thumbScale);
-
-		return scale(thumbValue);
+	/**
+	 * Returns a function that maps a value to its position. The thumb scale is
+	 * measured once, so mapping many values (e.g. every tick) does not query
+	 * and measure the DOM for each of them.
+	 */
+	getValueToPosition = () => {
+		return linearScale([this.opts.min.current, this.opts.max.current], this.getThumbScale());
 	};
 
 	readonly props = $derived.by(
@@ -170,7 +177,8 @@ abstract class SliderBaseRootState {
 }
 
 interface SliderSingleRootStateOpts
-	extends SliderBaseRootStateOpts,
+	extends
+		SliderBaseRootStateOpts,
 		ReadableBoxedValues<{
 			onValueCommit: OnChangeFn<number>;
 		}>,
@@ -339,14 +347,11 @@ class SliderSingleRootState extends SliderBaseRootState {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 		if (steps.length === 0) return [];
-		const positionFromValue = linearScale(
-			[this.opts.min.current, this.opts.max.current],
-			this.getThumbScale()
-		);
+		const valueToPosition = this.getValueToPosition();
 
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = positionFromValue(tickValue);
+			const tickPosition = valueToPosition(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
@@ -388,19 +393,12 @@ class SliderSingleRootState extends SliderBaseRootState {
 		];
 	});
 
-	readonly snippetProps = $derived.by(
-		() =>
-			({
-				ticks: this.ticksRenderArr,
-				thumbs: this.thumbsRenderArr,
-				tickItems: this.tickItemsArr,
-				thumbItems: this.thumbItemsArr,
-			}) as const
-	);
+	readonly snippetProps = createSnippetProps(this);
 }
 
 interface SliderMultiRootStateOpts
-	extends SliderBaseRootStateOpts,
+	extends
+		SliderBaseRootStateOpts,
 		ReadableBoxedValues<{
 			onValueCommit: OnChangeFn<number[]>;
 		}>,
@@ -670,14 +668,11 @@ class SliderMultiRootState extends SliderBaseRootState {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
 		if (steps.length === 0) return [];
-		const positionFromValue = linearScale(
-			[this.opts.min.current, this.opts.max.current],
-			this.getThumbScale()
-		);
+		const valueToPosition = this.getValueToPosition();
 
 		return steps.map((tickValue, i) => {
 			// Calculate position relative to the range
-			const tickPosition = positionFromValue(tickValue);
+			const tickPosition = valueToPosition(tickValue);
 
 			const isFirst = i === 0;
 			const isLast = i === steps.length - 1;
@@ -719,18 +714,37 @@ class SliderMultiRootState extends SliderBaseRootState {
 		}));
 	});
 
-	readonly snippetProps = $derived.by(
-		() =>
-			({
-				ticks: this.ticksRenderArr,
-				thumbs: this.thumbsRenderArr,
-				tickItems: this.tickItemsArr,
-				thumbItems: this.thumbItemsArr,
-			}) as const
-	);
+	readonly snippetProps = createSnippetProps(this);
 }
 
 type SliderRoot = SliderSingleRootState | SliderMultiRootState;
+
+/**
+ * The root's snippet props as getters, so each array is only computed when a
+ * snippet reads it: a slider with many steps that renders no ticks would
+ * otherwise build every tick on each value change.
+ */
+function createSnippetProps(root: {
+	readonly ticksRenderArr: SliderRootSnippetProps["ticks"];
+	readonly thumbsRenderArr: SliderRootSnippetProps["thumbs"];
+	readonly tickItemsArr: SliderRootSnippetProps["tickItems"];
+	readonly thumbItemsArr: SliderRootSnippetProps["thumbItems"];
+}): Readonly<SliderRootSnippetProps> {
+	return {
+		get ticks() {
+			return root.ticksRenderArr;
+		},
+		get thumbs() {
+			return root.thumbsRenderArr;
+		},
+		get tickItems() {
+			return root.tickItemsArr;
+		},
+		get thumbItems() {
+			return root.thumbItemsArr;
+		},
+	};
+}
 
 interface SliderRootStateOpts extends Omit<SliderBaseRootStateOpts, "type"> {
 	type: "single" | "multiple";
@@ -826,7 +840,8 @@ export class SliderRangeState {
 }
 
 interface SliderThumbStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 			disabled: boolean;
@@ -953,7 +968,8 @@ export class SliderThumbState {
 }
 
 interface SliderTickStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 		}> {}
@@ -983,7 +999,8 @@ export class SliderTickState {
 }
 
 interface SliderTickLabelStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 			position?: SliderLabelPosition;
@@ -1028,7 +1045,8 @@ export class SliderTickLabelState {
 }
 
 interface SliderThumbLabelStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			index: number;
 			position?: SliderLabelPosition;

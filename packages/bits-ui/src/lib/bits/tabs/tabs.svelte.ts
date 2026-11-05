@@ -7,17 +7,17 @@ import {
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	boolToTrueOrUndef,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import type { Orientation } from "$lib/shared/index.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+} from "#lib/internal/types.js";
+import type { Orientation } from "#lib/shared/index.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 
 const tabsAttrs = createBitsAttrs({
 	component: "tabs",
@@ -27,7 +27,8 @@ const tabsAttrs = createBitsAttrs({
 const TabsRootContext = new Context<TabsRootState>("Tabs.Root");
 
 interface TabsRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			orientation: Orientation;
 			loop: boolean;
@@ -130,7 +131,8 @@ export class TabsListState {
 }
 
 interface TabsTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			disabled: boolean;
@@ -224,7 +226,8 @@ export class TabsTriggerState {
 }
 
 interface TabsContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: string;
 			tabindex: number;

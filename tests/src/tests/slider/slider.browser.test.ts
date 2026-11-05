@@ -8,31 +8,35 @@ import SliderWithLabelsTest, {
 	type SliderWithLabelsTestProps,
 } from "./slider-test-with-labels.svelte";
 import SliderInAccordionTest from "./slider-in-accordion-test.svelte";
-import { page, userEvent, type Locator } from "@vitest/browser/context";
+import SliderManyStepsTest, {
+	type SliderManyStepsTestProps,
+} from "./slider-many-steps-test.svelte";
+import { page, userEvent, type Locator } from "vitest/browser";
+import { SliderRootState } from "../../../../packages/bits-ui/dist/bits/slider/slider.svelte.js";
 
 const kbd = getTestKbd();
 
-function renderSlider(props: SliderMultiTestProps = {}) {
-	return render(SliderMultiTest, { ...props });
+async function renderSlider(props: SliderMultiTestProps = {}) {
+	return await render(SliderMultiTest, { ...props });
 }
-function renderSliderRange(props: SliderMultiRangeTestProps = {}) {
-	return render(SliderRangeTest, { ...props });
+async function renderSliderRange(props: SliderMultiRangeTestProps = {}) {
+	return await render(SliderRangeTest, { ...props });
 }
-function renderSliderWithLabels(props: SliderWithLabelsTestProps = {}) {
-	return render(SliderWithLabelsTest, { ...props });
+async function renderSliderWithLabels(props: SliderWithLabelsTestProps = {}) {
+	return await render(SliderWithLabelsTest, { ...props });
 }
 
-function setup(
+async function setup(
 	props: SliderMultiTestProps | SliderWithLabelsTestProps = {},
 	kind: "default" | "range" | "labels" = "default"
 ) {
-	let t: ReturnType<typeof render>;
+	let t: Awaited<ReturnType<typeof render>>;
 	if (kind === "default") {
-		t = renderSlider(props as SliderMultiTestProps);
+		t = await renderSlider(props as SliderMultiTestProps);
 	} else if (kind === "range") {
-		t = renderSliderRange(props as SliderMultiRangeTestProps);
+		t = await renderSliderRange(props as SliderMultiRangeTestProps);
 	} else {
-		t = renderSliderWithLabels(props as SliderWithLabelsTestProps);
+		t = await renderSliderWithLabels(props as SliderWithLabelsTestProps);
 	}
 
 	const root = page.getByTestId("root");
@@ -44,7 +48,7 @@ function setup(
 }
 
 it("should have a thumb positioned at 30% of the container", async () => {
-	setup();
+	await setup();
 
 	const thumb = page.getByTestId("thumb");
 	await expect.element(thumb).toBeInTheDocument();
@@ -52,7 +56,7 @@ it("should have a thumb positioned at 30% of the container", async () => {
 	expect(isCloseEnough(30, (thumb.element() as HTMLElement).style.left)).toBeTruthy();
 });
 it("should have a range that covers from 0 to 30%", async () => {
-	setup();
+	await setup();
 
 	const range = page.getByTestId("range");
 	await expect.element(range).toBeInTheDocument();
@@ -62,7 +66,7 @@ it("should have a range that covers from 0 to 30%", async () => {
 });
 
 it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("should change by 1% when pressing %s", async (key) => {
-	setup();
+	await setup();
 
 	const thumb = page.getByTestId("thumb");
 	await expect.element(thumb).toBeInTheDocument();
@@ -80,7 +84,7 @@ it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])("should change by 1% when pressing %s",
 });
 
 it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("should change by 1% when pressing %s", async (key) => {
-	setup();
+	await setup();
 
 	const thumb = page.getByTestId("thumb").element() as HTMLElement;
 	const range = page.getByTestId("range").element() as HTMLElement;
@@ -92,7 +96,7 @@ it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])("should change by 1% when pressing %s"
 });
 
 it("should go to minimum when pressing Home", async () => {
-	setup();
+	await setup();
 
 	const thumb = page.getByTestId("thumb").element() as HTMLElement;
 	const range = page.getByTestId("range").element() as HTMLElement;
@@ -104,7 +108,7 @@ it("should go to minimum when pressing Home", async () => {
 });
 
 it("should go to maximum when pressing End", async () => {
-	setup();
+	await setup();
 	const thumb = page.getByTestId("thumb").element() as HTMLElement;
 	const range = page.getByTestId("range").element() as HTMLElement;
 
@@ -116,7 +120,7 @@ it("should go to maximum when pressing End", async () => {
 
 it("should call onValueChange when the value changes", async () => {
 	const mock = vi.fn();
-	setup({
+	await setup({
 		onValueChange: mock,
 	});
 
@@ -128,7 +132,7 @@ it("should call onValueChange when the value changes", async () => {
 });
 
 it("should not allow the value to change when the `disabled` prop is set to true", async () => {
-	setup({ disabled: true });
+	await setup({ disabled: true });
 
 	const thumb = page.getByTestId("thumb").element() as HTMLElement;
 	const range = page.getByTestId("range").element() as HTMLElement;
@@ -139,7 +143,7 @@ it("should not allow the value to change when the `disabled` prop is set to true
 });
 
 it("should recalculate thumb position when a hidden slider becomes visible", async () => {
-	render(SliderInAccordionTest);
+	await render(SliderInAccordionTest);
 
 	const secondThumb = page.getByTestId("thumb-2");
 	await expect.element(secondThumb).toBeInTheDocument();
@@ -153,7 +157,7 @@ it("should recalculate thumb position when a hidden slider becomes visible", asy
 
 describe("range", () => {
 	it("should have a thumb positioned at 20% of the container and one at 80%", async () => {
-		setup({}, "range");
+		await setup({}, "range");
 
 		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 		expect(thumb0).toBeInTheDocument();
@@ -165,7 +169,7 @@ describe("range", () => {
 	});
 
 	it("should have a range that covers from 20% to 80%", async () => {
-		setup({}, "range");
+		await setup({}, "range");
 
 		const range = page.getByTestId("range").element() as HTMLElement;
 		expect(range).toBeInTheDocument();
@@ -177,7 +181,7 @@ describe("range", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
-			setup({}, "range");
+			await setup({}, "range");
 
 			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -193,7 +197,7 @@ describe("range", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
-			setup({}, "range");
+			await setup({}, "range");
 
 			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -209,7 +213,7 @@ describe("range", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 1% when pressing %s (pressing on the first thumb)",
 		async (key) => {
-			setup({}, "range");
+			await setup({}, "range");
 
 			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -225,7 +229,7 @@ describe("range", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 1% when pressing %s (pressing on the last thumb)",
 		async (key) => {
-			setup({}, "range");
+			await setup({}, "range");
 
 			const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 			const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -241,7 +245,7 @@ describe("range", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should swap handler places when they overlap pressing %s (going up)",
 		async (key) => {
-			setup(
+			await setup(
 				{
 					value: [49, 51],
 				},
@@ -266,7 +270,7 @@ describe("range", () => {
 		"should call onValueChange when handlers swap places when they overlap pressing %s (going up)",
 		async (key) => {
 			const mock = vi.fn();
-			setup(
+			await setup(
 				{
 					value: [49, 51],
 					onValueChange: mock,
@@ -294,7 +298,7 @@ describe("range", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should swap handler places when they overlap pressing %s (going down)",
 		async (key) => {
-			setup(
+			await setup(
 				{
 					value: [49, 51],
 				},
@@ -316,7 +320,7 @@ describe("range", () => {
 	);
 
 	it("should bring thumb to 0  to minimum when pressing Home", async () => {
-		setup({}, "range");
+		await setup({}, "range");
 
 		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -329,7 +333,7 @@ describe("range", () => {
 	});
 
 	it("should bring thumb 1  to maximum when pressing End", async () => {
-		setup({}, "range");
+		await setup({}, "range");
 
 		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -342,7 +346,7 @@ describe("range", () => {
 	});
 
 	it("should bring thumb 1  to minimum when pressing Home (thumbs swap places)", async () => {
-		setup({}, "range");
+		await setup({}, "range");
 
 		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -356,7 +360,7 @@ describe("range", () => {
 	});
 
 	it("should bring thumb 0 to maximum when pressing End (thumbs swap places)", async () => {
-		setup({}, "range");
+		await setup({}, "range");
 
 		const thumb0 = page.getByTestId("thumb-0").element() as HTMLElement;
 		const thumb1 = page.getByTestId("thumb-1").element() as HTMLElement;
@@ -372,7 +376,7 @@ describe("range", () => {
 
 describe("small min, max, step", () => {
 	it("should have a thumb positioned at 50% of the container", async () => {
-		setup({
+		await setup({
 			value: [0.5],
 			min: 0,
 			max: 1,
@@ -388,7 +392,7 @@ describe("small min, max, step", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s",
 		async (key) => {
-			setup({
+			await setup({
 				value: [0.5],
 				min: 0,
 				max: 1,
@@ -408,7 +412,7 @@ describe("small min, max, step", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 10% when pressing %s",
 		async (key) => {
-			setup({
+			await setup({
 				value: [0.5],
 				min: 0,
 				max: 1,
@@ -428,7 +432,7 @@ describe("small min, max, step", () => {
 
 describe("slider (negative min)", () => {
 	it("should have a thumb positioned at 50% of the container", async () => {
-		setup({
+		await setup({
 			value: [0],
 			min: -50,
 			max: 50,
@@ -444,7 +448,7 @@ describe("slider (negative min)", () => {
 	it.each([kbd.ARROW_RIGHT, kbd.ARROW_UP])(
 		"should change by 1% when pressing %s",
 		async (key) => {
-			setup({
+			await setup({
 				value: [0],
 				min: -50,
 				max: 50,
@@ -464,7 +468,7 @@ describe("slider (negative min)", () => {
 	it.each([kbd.ARROW_LEFT, kbd.ARROW_DOWN])(
 		"should change by 10% when pressing %s",
 		async (key) => {
-			setup({
+			await setup({
 				value: [0],
 				min: -50,
 				max: 50,
@@ -490,14 +494,14 @@ describe("slider (value=[5], min=0, max=10, step=1)", () => {
 		step: 1,
 	};
 
-	it("should render 11 ticks", () => {
-		const t = setup(props);
+	it("should render 11 ticks", async () => {
+		const t = await setup(props);
 
 		expect(t.getAllByTestId("tick")).toHaveLength(11);
 	});
 
-	it("should have a data-bounded attribute on ticks 0-5", () => {
-		const t = setup(props);
+	it("should have a data-bounded attribute on ticks 0-5", async () => {
+		const t = await setup(props);
 
 		const ticks = t.getAllByTestId("tick");
 		for (let i = 0; i <= 5; ++i) {
@@ -505,8 +509,8 @@ describe("slider (value=[5], min=0, max=10, step=1)", () => {
 		}
 	});
 
-	it("should not have a data-bounded attribute on ticks 6-10", () => {
-		const t = setup(props);
+	it("should not have a data-bounded attribute on ticks 6-10", async () => {
+		const t = await setup(props);
 
 		const ticks = t.getAllByTestId("tick");
 		for (let i = 6; i <= 10; ++i) {
@@ -516,8 +520,8 @@ describe("slider (value=[5], min=0, max=10, step=1)", () => {
 });
 
 describe("slider (min=0, max=8, step=3)", () => {
-	it("should render 3 ticks", () => {
-		const t = setup({
+	it("should render 3 ticks", async () => {
+		const t = await setup({
 			min: 0,
 			max: 8,
 			step: 3,
@@ -528,8 +532,8 @@ describe("slider (min=0, max=8, step=3)", () => {
 });
 
 describe("slider (min=0, max=9, step=3)", () => {
-	it("should render 4 ticks", () => {
-		const t = setup({
+	it("should render 4 ticks", async () => {
+		const t = await setup({
 			min: 0,
 			max: 9,
 			step: 3,
@@ -547,14 +551,14 @@ describe("slider (value=[3,6], min=0, max=10, step=3)", () => {
 		step: 3,
 	};
 
-	it("should render 4 ticks", () => {
-		const t = setup(props);
+	it("should render 4 ticks", async () => {
+		const t = await setup(props);
 
 		expect(t.getAllByTestId("tick")).toHaveLength(4);
 	});
 
-	it("should have a data-bounded attribute on ticks 1,2", () => {
-		const t = setup(props);
+	it("should have a data-bounded attribute on ticks 1,2", async () => {
+		const t = await setup(props);
 
 		const ticks = t.getAllByTestId("tick");
 		for (const i of [1, 2]) {
@@ -562,8 +566,8 @@ describe("slider (value=[3,6], min=0, max=10, step=3)", () => {
 		}
 	});
 
-	it("should not have a data-bounded attribute on ticks 0,3", () => {
-		const t = setup(props);
+	it("should not have a data-bounded attribute on ticks 0,3", async () => {
+		const t = await setup(props);
 
 		const ticks = t.getAllByTestId("tick");
 		for (const i of [0, 3]) {
@@ -581,7 +585,7 @@ describe("slider changing options after building", () => {
 	};
 
 	it("should change the min", async () => {
-		const t = setup(props);
+		const t = await setup(props);
 
 		expect(t.getAllByTestId("tick")).toHaveLength(11);
 
@@ -591,7 +595,7 @@ describe("slider changing options after building", () => {
 	});
 
 	it("should change the max", async () => {
-		const t = setup(props);
+		const t = await setup(props);
 
 		expect(t.getAllByTestId("tick")).toHaveLength(11);
 
@@ -601,7 +605,7 @@ describe("slider changing options after building", () => {
 	});
 
 	it("should change the  step", async () => {
-		const t = setup(props);
+		const t = await setup(props);
 
 		expect(t.getAllByTestId("tick")).toHaveLength(11);
 
@@ -614,7 +618,7 @@ describe("slider changing options after building", () => {
 describe("floating point precision", () => {
 	it("should handle decimal steps without floating point precision errors", async () => {
 		const mock = vi.fn();
-		setup({
+		await setup({
 			value: [1.1],
 			min: 0,
 			max: 2,
@@ -638,7 +642,7 @@ describe("floating point precision", () => {
 
 	it("should handle smaller decimal steps (0.01) without precision errors", async () => {
 		const mock = vi.fn();
-		setup({
+		await setup({
 			value: [0.11],
 			min: 0,
 			max: 1,
@@ -659,7 +663,7 @@ describe("floating point precision", () => {
 	});
 
 	it("should generate correct step values for decimal steps", async () => {
-		const t = setup({
+		const t = await setup({
 			value: [1.2],
 			min: 1,
 			max: 1.5,
@@ -733,7 +737,7 @@ function expectPercentages({
 describe("labels", () => {
 	describe("tick labels", () => {
 		it("should render tick labels with correct data attributes", async () => {
-			const t = setup({ value: [50], min: 0, max: 100, step: 25 }, "labels");
+			const t = await setup({ value: [50], min: 0, max: 100, step: 25 }, "labels");
 
 			const tickLabels = t.getAllByTestId(/^tick-label-/);
 			expect(tickLabels).toHaveLength(5);
@@ -757,7 +761,7 @@ describe("labels", () => {
 		});
 
 		it("should render tick labels with correct content", async () => {
-			const t = setup({ value: [50], min: 0, max: 100, step: 25 }, "labels");
+			const t = await setup({ value: [50], min: 0, max: 100, step: 25 }, "labels");
 
 			const tickLabels = t.getAllByTestId(/^tick-label-/);
 			const expectedValues = ["0", "25", "50", "75", "100"];
@@ -768,7 +772,7 @@ describe("labels", () => {
 		});
 
 		it("should position tick labels correctly with different positions", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [50],
 					min: 0,
@@ -787,7 +791,7 @@ describe("labels", () => {
 		});
 
 		it("should handle disabled state correctly", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [50],
 					min: 0,
@@ -805,7 +809,7 @@ describe("labels", () => {
 		});
 
 		it("should handle vertical orientation correctly", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [50],
 					min: 0,
@@ -824,7 +828,7 @@ describe("labels", () => {
 		});
 
 		it("should update bounded state when value changes", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [25],
 					min: 0,
@@ -854,7 +858,7 @@ describe("labels", () => {
 
 	describe("thumb labels", () => {
 		it("should render thumb labels with correct data attributes", async () => {
-			setup({ value: [50] }, "labels");
+			await setup({ value: [50] }, "labels");
 
 			const thumbLabel = page.getByTestId("thumb-label-0");
 			expect(thumbLabel).toHaveAttribute("data-value", "50");
@@ -866,14 +870,14 @@ describe("labels", () => {
 		});
 
 		it("should render thumb labels with correct content", async () => {
-			setup({ value: [75] }, "labels");
+			await setup({ value: [75] }, "labels");
 
 			const thumbLabel = page.getByTestId("thumb-label-0");
 			expect(thumbLabel.element().textContent).toBe("75");
 		});
 
 		it("should handle disabled state correctly", async () => {
-			setup(
+			await setup(
 				{
 					value: [50],
 					disabled: true,
@@ -886,7 +890,7 @@ describe("labels", () => {
 		});
 
 		it("should position thumb labels correctly with different positions", async () => {
-			setup(
+			await setup(
 				{
 					value: [50],
 					thumbLabelPosition: "bottom",
@@ -900,7 +904,7 @@ describe("labels", () => {
 		});
 
 		it("should handle vertical orientation correctly", async () => {
-			setup(
+			await setup(
 				{
 					value: [50],
 					orientation: "vertical",
@@ -914,7 +918,7 @@ describe("labels", () => {
 		});
 
 		it("should update value when thumb moves", async () => {
-			setup({ value: [50] }, "labels");
+			await setup({ value: [50] }, "labels");
 
 			const thumb = page.getByTestId("thumb-0").element() as HTMLElement;
 			const thumbLabel = page.getByTestId("thumb-label-0").element() as HTMLElement;
@@ -927,7 +931,7 @@ describe("labels", () => {
 		});
 
 		it("should handle multiple thumb labels correctly", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [20, 80],
 				},
@@ -948,7 +952,7 @@ describe("labels", () => {
 		});
 
 		it("should maintain correct labels when thumbs swap positions (autoSort=true)", async () => {
-			setup(
+			await setup(
 				{
 					value: [49, 51],
 				},
@@ -969,7 +973,7 @@ describe("labels", () => {
 		});
 
 		it("should maintain correct labels when thumbs swap positions (autoSort=false)", async () => {
-			setup(
+			await setup(
 				{
 					value: [49, 51],
 					autoSort: false,
@@ -993,7 +997,7 @@ describe("labels", () => {
 
 	describe("labels with custom steps", () => {
 		it("should render correct tick labels for custom step values", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [6],
 					min: 0,
@@ -1020,7 +1024,7 @@ describe("labels", () => {
 		});
 
 		it("should handle fractional step values correctly", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [0.5],
 					min: 0,
@@ -1042,7 +1046,7 @@ describe("labels", () => {
 
 	describe("labels visibility", () => {
 		it("should render both types of labels when both are enabled", async () => {
-			const t = setup(
+			const t = await setup(
 				{
 					value: [50],
 					min: 0,
@@ -1070,7 +1074,86 @@ describe("non-finite bounds (#1663)", () => {
 		{ max: Number.NaN },
 		{ step: Number.POSITIVE_INFINITY },
 		{ step: 0 },
-	])("should throw a descriptive error for %o", (props) => {
-		expect(() => setup(props)).toThrow(/finite/);
+	])("should throw a descriptive error for %o", async (props) => {
+		await expect(setup(props)).rejects.toThrow(/finite/);
 	});
+});
+
+describe("many steps", () => {
+	it("should not measure the DOM per step when the value changes and no ticks are rendered", async () => {
+		await render(SliderManyStepsTest);
+		const thumb = page.getByTestId("thumb");
+		await expect.element(thumb).toBeInTheDocument();
+		(thumb.element() as HTMLElement).focus();
+
+		const querySelectorAll = vi.spyOn(Element.prototype, "querySelectorAll");
+		try {
+			for (let i = 0; i < 5; i++) await userEvent.keyboard(kbd.ARROW_RIGHT);
+			await expect.element(thumb).toHaveAttribute("aria-valuenow", "5");
+			// 10,001 steps: measuring once per step would query the thumbs tens of thousands of times
+			expect(querySelectorAll.mock.calls.length).toBeLessThan(100);
+		} finally {
+			querySelectorAll.mockRestore();
+		}
+	});
+
+	it("should still position every rendered tick", async () => {
+		const t = await setup({ value: [5], min: 0, max: 10, step: 1 });
+		const ticks = await t.getAllByTestId("tick");
+		expect(ticks).toHaveLength(11);
+		expect(isCloseEnough(50, (ticks[5]!.element() as HTMLElement).style.left)).toBeTruthy();
+	});
+});
+
+describe("layout changes", () => {
+	const nextFrame = () => new Promise((r) => requestAnimationFrame(r));
+	const halveWidth = (el: HTMLElement) => {
+		el.style.width = `${el.offsetWidth / 2}px`;
+	};
+	const unmeasured = [
+		{ name: "trackPadding is set", props: { trackPadding: 5 } },
+		{ name: "thumbPositioning is exact", props: { thumbPositioning: "exact" } },
+	] as const;
+
+	async function renderTracked(props: Partial<SliderManyStepsTestProps> = {}) {
+		const create = vi.spyOn(SliderRootState, "create");
+		// value 0 so a contained thumb's position depends on the track width
+		const view = await render(SliderManyStepsTest, { max: 10, value: 0, ...props });
+		const root = create.mock.results[0]!.value;
+		create.mockRestore();
+		const el = root.opts.ref.current as HTMLElement;
+		const thumb = el.querySelector<HTMLElement>("[data-testid=thumb]")!;
+		// let the initial resize observation settle
+		await nextFrame();
+		await nextFrame();
+		return { view, root, el, thumb };
+	}
+
+	it.each(unmeasured)("does not recompute positions on resize when $name", async ({ props }) => {
+		const subject = await renderTracked(props);
+		const control = await renderTracked();
+		const getThumbScale = vi.spyOn(subject.root, "getThumbScale");
+		const controlLeft = control.thumb.style.left;
+
+		halveWidth(subject.el);
+		halveWidth(control.el);
+		// both resizes go through the same observer, so once the measured control has moved,
+		// the unmeasured subject would have recomputed too if it tracked layout changes
+		await vi.waitFor(() => expect(control.thumb.style.left).not.toBe(controlLeft));
+		await nextFrame();
+		expect(getThumbScale).not.toHaveBeenCalled();
+	});
+
+	it.each(unmeasured)(
+		"repositions on resize after switching from $name to contained",
+		async ({ props }) => {
+			const t = await renderTracked(props);
+			await t.view.rerender({ trackPadding: undefined, thumbPositioning: "contain" });
+			await nextFrame();
+			const left = t.thumb.style.left;
+
+			halveWidth(t.el);
+			await vi.waitFor(() => expect(t.thumb.style.left).not.toBe(left));
+		}
+	);
 });

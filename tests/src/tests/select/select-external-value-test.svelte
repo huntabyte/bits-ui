@@ -25,7 +25,8 @@
 				</Select.Item>
 			{/each}
 			{#if extra}
-				<Select.Item value="3" label="Item 3 again" data-testid="extra-3">again</Select.Item>
+				<Select.Item value="3" label="Item 3 again" data-testid="extra-3">again</Select.Item
+				>
 			{/if}
 		</Select.Content>
 	</Select.Portal>

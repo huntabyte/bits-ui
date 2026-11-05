@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { AlertDialogCancelProps } from "../types.js";
-	import { AlertDialogCancelState } from "$lib/bits/dialog/dialog.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { AlertDialogCancelState } from "#lib/bits/dialog/dialog.svelte.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

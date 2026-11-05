@@ -96,7 +96,9 @@ export const content = defineComponentApiSchema<CollapsibleContentPropsWithoutHT
 			elType: "HTMLDivElement",
 			child: {
 				definition: CollapsibleContentChildSnippetProps,
-				stringDefinition: stringDefinitionFromMarkdown(collapsibleContentChildSnippetPropsRaw),
+				stringDefinition: stringDefinitionFromMarkdown(
+					collapsibleContentChildSnippetPropsRaw
+				),
 			},
 		}),
 	},

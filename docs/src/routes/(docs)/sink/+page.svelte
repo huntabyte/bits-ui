@@ -14,7 +14,7 @@
 		</Tooltip.Trigger>
 		<Tooltip.Content sideOffset={8} side="bottom">
 			<div
-				class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden z-0 flex items-center justify-center border p-3 text-sm font-medium"
+				class="z-0 flex items-center justify-center rounded-input border border-dark-10 bg-background p-3 text-sm font-medium shadow-popover outline-hidden"
 			>
 				Tooltip Content
 			</div>
@@ -24,7 +24,7 @@
 	<Dialog.Root bind:open>
 		<Dialog.Portal>
 			<Dialog.Content
-				class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden z-0 border p-3 text-sm font-medium"
+				class="z-0 rounded-input border border-dark-10 bg-background p-3 text-sm font-medium shadow-popover outline-hidden"
 			>
 				<p>Dialog Content</p>
 				<p>

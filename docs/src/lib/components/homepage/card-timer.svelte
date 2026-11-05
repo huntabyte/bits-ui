@@ -1,7 +1,7 @@
 <script lang="ts">
 	import X from "phosphor-svelte/lib/X";
-	import HomeSwitch from "$lib/components/homepage/home-switch.svelte";
-	import HomeSelect from "$lib/components/homepage/home-select.svelte";
+	import HomeSwitch from "#lib/components/homepage/home-switch.svelte";
+	import HomeSelect from "#lib/components/homepage/home-select.svelte";
 
 	let checked = $state(false);
 	let startTime = $state(0);
@@ -48,24 +48,24 @@
 
 <div class="relative order-4 lg:order-5 lg:translate-y-[7%]">
 	<div
-		class="line_top_gradient absolute left-8 top-0 hidden h-[1px] w-[calc(100%+50px)] lg:block"
+		class="line_top_gradient absolute top-0 left-8 hidden h-[1px] w-[calc(100%+50px)] lg:block"
 	></div>
 	<div
-		class="line_right_gradient absolute -top-[200px] bottom-0 right-0 hidden w-px rotate-180 lg:block"
+		class="line_right_gradient absolute -top-[200px] right-0 bottom-0 hidden w-px rotate-180 lg:block"
 	></div>
 	<div class="m-1.5 lg:m-[10px]">
 		<div
-			class="rounded-card-lg border-border-input shadow-card aspect-square w-full border bg-white p-2 lg:px-[14px] lg:py-3 dark:bg-[#FAF8F5]"
+			class="aspect-square w-full rounded-card-lg border border-border-input bg-white p-2 shadow-card lg:px-[14px] lg:py-3 dark:bg-[#FAF8F5]"
 		>
-			<div class="rounded-15px bg-foreground mb-3 p-1 lg:mb-5 dark:bg-[#171717]">
-				<div class="rounded-xl bg-[rgba(81,84,95,0.6)] px-2 pb-7 pt-3 text-white lg:pb-8">
-					<div class="text-[1.88519rem] font-medium leading-[100%] lg:text-[2.563rem]">
+			<div class="mb-3 rounded-15px bg-foreground p-1 lg:mb-5 dark:bg-[#171717]">
+				<div class="rounded-xl bg-[rgba(81,84,95,0.6)] px-2 pt-3 pb-7 text-white lg:pb-8">
+					<div class="text-[1.88519rem] leading-[100%] font-medium lg:text-[2.563rem]">
 						{displayTime}
 					</div>
 					<div class="text-xxs font-medium lg:text-[13px]">
 						Task:
 						<span
-							class="relative ml-1 mr-1 mt-[2px] inline-flex h-[7px] w-[7px] lg:mr-2 lg:h-[10px] lg:w-[10px]"
+							class="relative mt-[2px] mr-1 ml-1 inline-flex h-[7px] w-[7px] lg:mr-2 lg:h-[10px] lg:w-[10px]"
 						>
 							<span
 								class="{checked
@@ -79,15 +79,15 @@
 						<span class="capitalize">{foo}</span>
 					</div>
 				</div>
-				<div class="labels mb-2 mt-[9px] flex gap-[3px] px-1 font-medium">
+				<div class="labels mt-[9px] mb-2 flex gap-[3px] px-1 font-medium">
 					{#each chips as chip, i (i)}
 						<div
 							data-active={i === 0 ? "" : undefined}
-							class="data-active:text-foreground data-active:bg-white dark:data-active:text-[#171717] group flex select-none items-center rounded-[25px] bg-[#31343e] px-1 text-[8px] text-white/70 lg:px-2 lg:text-[11px]"
+							class="group flex items-center rounded-[25px] bg-[#31343e] px-1 text-[8px] text-white/70 select-none data-active:bg-white data-active:text-foreground lg:px-2 lg:text-[11px] dark:data-active:text-[#171717]"
 						>
 							{chip}
 							<X
-								class="group-data-active:block relative ml-1.5 hidden size-1.5"
+								class="relative ml-1.5 hidden size-1.5 group-data-active:block"
 								weight="bold"
 								aria-label="Close"
 							/>

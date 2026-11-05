@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { FloatingArrowState } from "../use-floating-layer.svelte.js";
-	import { Arrow, type ArrowProps } from "$lib/bits/utilities/arrow/index.js";
-	import { useId } from "$lib/internal/use-id.js";
+	import { Arrow, type ArrowProps } from "#lib/bits/utilities/arrow/index.js";
+	import { useId } from "#lib/internal/use-id.js";
 
 	let { id = useId(), ref = $bindable(null), ...restProps }: ArrowProps = $props();
 

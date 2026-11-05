@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { ContextMenuRootProps } from "../types.js";
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { noop } from "$lib/internal/noop.js";
-	import { MenuMenuState, MenuRootState } from "$lib/bits/menu/menu.svelte.js";
+	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import { noop } from "#lib/internal/noop.js";
+	import { MenuMenuState, MenuRootState } from "#lib/bits/menu/menu.svelte.js";
 
 	let {
 		open = $bindable(false),

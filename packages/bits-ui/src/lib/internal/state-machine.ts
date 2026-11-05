@@ -1,5 +1,5 @@
 import type { WritableBox } from "svelte-toolbelt";
-import { simpleBox } from "$lib/internal/box.svelte.js";
+import { simpleBox } from "#lib/internal/box.svelte.js";
 
 interface Machine<S> {
 	[k: string]: { [k: string]: S };

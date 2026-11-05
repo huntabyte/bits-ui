@@ -1,5 +1,5 @@
 import { kbd } from "./kbd.js";
-import type { Direction, Orientation } from "$lib/shared/index.js";
+import type { Direction, Orientation } from "#lib/shared/index.js";
 
 export const FIRST_KEYS = [kbd.ARROW_DOWN, kbd.PAGE_UP, kbd.HOME];
 export const LAST_KEYS = [kbd.ARROW_UP, kbd.PAGE_DOWN, kbd.END];

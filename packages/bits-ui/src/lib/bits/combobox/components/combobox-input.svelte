@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import type { ComboboxInputProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
-	import { SelectInputState } from "$lib/bits/select/select.svelte.js";
+	import { useId } from "#lib/internal/use-id.js";
+	import { FloatingLayer } from "#lib/bits/utilities/floating-layer/index.js";
+	import { SelectInputState } from "#lib/bits/select/select.svelte.js";
 
 	let {
 		id = useId(),

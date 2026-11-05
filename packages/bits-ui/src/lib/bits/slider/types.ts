@@ -1,6 +1,6 @@
-import type { OnChangeFn, WithChild, Without } from "$lib/internal/types.js";
-import type { BitsPrimitiveSpanAttributes } from "$lib/shared/attributes.js";
-import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
+import type { OnChangeFn, WithChild, Without } from "#lib/internal/types.js";
+import type { BitsPrimitiveSpanAttributes } from "#lib/shared/attributes.js";
+import type { Direction, Orientation, SliderThumbPositioning } from "#lib/shared/index.js";
 
 export type TickItem = {
 	/**

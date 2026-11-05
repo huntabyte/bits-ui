@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLAnchorAttributes } from "svelte/elements";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let {
 		onClose,

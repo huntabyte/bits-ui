@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { ContextMenuContentStaticProps } from "../types.js";
-	import { MenuContentState } from "$lib/bits/menu/menu.svelte.js";
-	import { CONTEXT_MENU_TRIGGER_ATTR } from "$lib/bits/menu/context-menu-attributes.js";
-	import { useId } from "$lib/internal/use-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
-	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { MenuContentState } from "#lib/bits/menu/menu.svelte.js";
+	import { CONTEXT_MENU_TRIGGER_ATTR } from "#lib/bits/menu/context-menu-attributes.js";
+	import { useId } from "#lib/internal/use-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import PopperLayer from "#lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { getFloatingContentCSSVars } from "#lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "#lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	let {
 		id = useId(),

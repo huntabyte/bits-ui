@@ -6,28 +6,28 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { TimeFieldRootState } from "../time-field/time-field.svelte.js";
 import { TimeFieldInputState } from "../time-field/time-field.svelte.js";
-import { useId } from "$lib/internal/use-id.js";
-import type { TimeSegmentPart } from "$lib/shared/index.js";
-import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
+import { useId } from "#lib/internal/use-id.js";
+import type { TimeSegmentPart } from "#lib/shared/index.js";
+import type { RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import { createBitsAttrs, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
 import type {
 	TimeGranularity,
 	TimeOnInvalid,
 	TimeRange,
 	TimeRangeValidator,
 	TimeValue,
-} from "$lib/shared/date/types.js";
-import { type TimeFormatter, createTimeFormatter } from "$lib/internal/date-time/formatter.js";
-import { removeDescriptionElement } from "$lib/internal/date-time/field/helpers.js";
-import { getFirstSegment } from "$lib/internal/date-time/field/segments.js";
+} from "#lib/shared/date/types.js";
+import { type TimeFormatter, createTimeFormatter } from "#lib/internal/date-time/formatter.js";
+import { removeDescriptionElement } from "#lib/internal/date-time/field/helpers.js";
+import { getFirstSegment } from "#lib/internal/date-time/field/segments.js";
 import {
 	convertTimeValueToTime,
 	isTimeBefore,
-} from "$lib/internal/date-time/field/time-helpers.js";
+} from "#lib/internal/date-time/field/time-helpers.js";
 
 export const timeRangeFieldAttrs = createBitsAttrs({
 	component: "time-range-field",

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { TabsRootProps } from "../types.js";
 	import { TabsRootState } from "../tabs.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 

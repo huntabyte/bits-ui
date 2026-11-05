@@ -1,10 +1,9 @@
 import { afterTick, onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
 
-interface AnimationsCompleteOpts
-	extends ReadableBoxedValues<{
-		ref: HTMLElement | null;
-		afterTick: boolean;
-	}> {
+interface AnimationsCompleteOpts extends ReadableBoxedValues<{
+	ref: HTMLElement | null;
+	afterTick: boolean;
+}> {
 	/**
 	 * The owner calls `cancel()` on destroy itself, so no destroy effect of our own is
 	 * registered. Saves an effect per instance for owners that already have one.

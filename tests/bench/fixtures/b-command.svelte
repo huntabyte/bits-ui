@@ -15,7 +15,9 @@
 	} = $props();
 	const customFilter = (value: string, search: string, keywords?: string[]) =>
 		exact
-			? Number(value.includes(search) || keywords?.some((keyword) => keyword.includes(search)))
+			? Number(
+					value.includes(search) || keywords?.some((keyword) => keyword.includes(search))
+				)
 			: computeCommandScore(value, search, keywords);
 </script>
 

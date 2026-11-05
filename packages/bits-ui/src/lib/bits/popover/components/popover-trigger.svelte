@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { PopoverTriggerProps } from "../types.js";
 	import { PopoverTriggerState } from "../popover.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import FloatingLayerAnchor from "$lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import FloatingLayerAnchor from "#lib/bits/utilities/floating-layer/components/floating-layer-anchor.svelte";
 
 	const uid = $props.id();
 

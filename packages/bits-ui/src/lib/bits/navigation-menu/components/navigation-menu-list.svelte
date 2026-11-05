@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { NavigationMenuListProps } from "../types.js";
 	import { NavigationMenuListState } from "../navigation-menu.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import Mounted from "#lib/bits/utilities/mounted.svelte";
 
 	const uid = $props.id();
 

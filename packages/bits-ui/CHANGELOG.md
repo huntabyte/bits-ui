@@ -1,5 +1,80 @@
 # bits-ui
 
+## 2.20.5
+
+### Patch Changes
+
+- fix: `hideWhenDetached` no longer hides content when `collisionPadding` overlaps the trigger's scroll container but the trigger is still visible in the viewport ([#2278](https://github.com/huntabyte/bits-ui/pull/2278))
+
+- fix: render (or start exiting) content when `open` changes in the same flush the component mounts in ([#2274](https://github.com/huntabyte/bits-ui/pull/2274))
+
+- fix(Tooltip): don't read trigger props when the trigger's ref detaches during teardown ([#2273](https://github.com/huntabyte/bits-ui/pull/2273))
+
+- fix: observe element resizes with the element's own window's `ResizeObserver`, so components rendered into another window (an iframe or Document Picture-in-Picture) measure correctly, and don't measure mid-render when a second subscriber attaches to an already-observed element ([#2276](https://github.com/huntabyte/bits-ui/pull/2276))
+
+- perf(ScrollArea): measure `type="auto"` overflow inside the resize observer report instead of the next animation frame, avoiding a forced synchronous layout ([#2272](https://github.com/huntabyte/bits-ui/pull/2272))
+
+- fix(Slider): don't recompute thumb and tick positions on resize when `trackPadding` is set or `thumbPositioning` is `"exact"`, since those paths never measure the DOM ([#2275](https://github.com/huntabyte/bits-ui/pull/2275))
+
+## 2.20.4
+
+### Patch Changes
+
+- fix: `hideWhenDetached` now respects the anchor's scroll containers when no `collisionBoundary` is set ([#2207](https://github.com/huntabyte/bits-ui/pull/2207))
+
+- fix(Menu): don't focus the content when the pointer leaves an item while the menu is closing, so focus moved elsewhere after a selection stays there ([#2271](https://github.com/huntabyte/bits-ui/pull/2271))
+
+- fix(PinInput): run `onComplete` untracked so a callback that reads and writes state no longer loops with `effect_update_depth_exceeded` ([#2267](https://github.com/huntabyte/bits-ui/pull/2267))
+
+- fix(Slider): measure the thumb scale once per update instead of once per step, and compute ticks only when a snippet reads them, so sliders with many steps stay fast (#1623) ([#2265](https://github.com/huntabyte/bits-ui/pull/2265))
+
+- Prevent selecting options when an open Select becomes disabled. Re-enabling the Select restores option interaction. ([#2266](https://github.com/huntabyte/bits-ui/pull/2266))
+
+- fix: preserve composed pointer paths for dismissible overlays in open shadow roots ([#2256](https://github.com/huntabyte/bits-ui/pull/2256))
+
+## 2.20.3
+
+### Patch Changes
+
+- fix(Calendar/RangeCalendar): keep the weekday when `ArrowUp`/`ArrowDown` crosses the month edge with disabled days ([#2249](https://github.com/huntabyte/bits-ui/pull/2249))
+
+- fix(Command): scroll the first item of a group into view along with its heading, so arrowing down onto it no longer leaves the item hidden below the list ([#2252](https://github.com/huntabyte/bits-ui/pull/2252))
+
+- fix(DropdownMenu): close on a click outside when the trigger's `id` isn't a valid CSS identifier, such as `"1"` ([#2259](https://github.com/huntabyte/bits-ui/pull/2259))
+
+- Preserve user focus and autofocus callbacks when an already mounted focus scope ([#2264](https://github.com/huntabyte/bits-ui/pull/2264))
+  receives the same container reference again.
+
+- fix(RadioGroup): focus the item on an invalid form submission when its `id` isn't a valid CSS identifier ([#2259](https://github.com/huntabyte/bits-ui/pull/2259))
+
+- fix(ScrollArea): cancel the pending scroll-end timers and stop the thumb's scroll loop on unmount, so `type="scroll"` no longer keeps detached instances alive after unmount ([#2261](https://github.com/huntabyte/bits-ui/pull/2261))
+
+- fix(Menu): keep positioning props such as `align` and `side` off the sub content element, where `align` is the HTML attribute that aligns text ([#2248](https://github.com/huntabyte/bits-ui/pull/2248))
+
+- fix(Menu): only extend the submenu safe area while the pointer moves closer to the submenu. A sibling sub trigger now takes over 100ms after the pointer stops making progress, instead of 500ms after its last move. ([#2192](https://github.com/huntabyte/bits-ui/pull/2192))
+
+- fix(Tooltip): stay open when focusing the trigger scrolls it into view, while later scrolling still closes it ([#2263](https://github.com/huntabyte/bits-ui/pull/2263))
+
+- fix(Tooltip): don't open on the focus that follows a tap, which left the tooltip over a menu opened from the same trigger ([#2245](https://github.com/huntabyte/bits-ui/pull/2245))
+
+## 2.20.2
+
+### Patch Changes
+
+- fix(Combobox): let `Home`/`End` move the text cursor in `Combobox.Input` instead of highlighting the first/last item ([#2241](https://github.com/huntabyte/bits-ui/pull/2241))
+
+- fix(Select): space to toggle items ([#2073](https://github.com/huntabyte/bits-ui/pull/2073))
+
+- Fix Date Field rejecting and rendering day 31 before a month is selected ([#2187](https://github.com/huntabyte/bits-ui/pull/2187))
+
+- fix(Floating): apply the content's z-index to the floating wrapper when force-mounted content opens ([#1961](https://github.com/huntabyte/bits-ui/pull/1961))
+
+- fix(Select, Combobox): select the pressed item when the list scrolls under a still pointer before release ([#2232](https://github.com/huntabyte/bits-ui/pull/2232))
+
+- fix(Combobox): open the trigger on a click that no pointer press precedes (`detail: 0`), such as `element.click()` or a VoiceOver activation in Safari ([#2186](https://github.com/huntabyte/bits-ui/pull/2186))
+
+- fix: silence `state_referenced_locally` compiler warnings emitted in consumer builds by wrapping intentional initialization-time prop reads in `untrack` ([#2179](https://github.com/huntabyte/bits-ui/pull/2179))
+
 ## 2.20.1
 
 ### Patch Changes

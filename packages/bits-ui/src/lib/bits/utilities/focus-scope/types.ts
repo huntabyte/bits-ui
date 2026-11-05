@@ -1,5 +1,5 @@
 import type { Snippet } from "svelte";
-import type { EventCallback } from "$lib/internal/events.js";
+import type { EventCallback } from "#lib/internal/events.js";
 import type { ReadableBox } from "svelte-toolbelt";
 
 export type FocusScopeProps = {

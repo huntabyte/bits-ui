@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { LinkPreviewTriggerProps } from "../types.js";
 	import { LinkPreviewTriggerState } from "../link-preview.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { FloatingLayer } from "#lib/bits/utilities/floating-layer/index.js";
 
 	const uid = $props.id();
 

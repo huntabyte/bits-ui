@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { BitsPrimitiveElementAttributes, WithChildren } from "bits-ui";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let {
 		class: className,

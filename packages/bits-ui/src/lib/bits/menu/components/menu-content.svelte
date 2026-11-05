@@ -1,13 +1,14 @@
 <script lang="ts">
+	import { getEventTargetClosest } from "#lib/internal/events.js";
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { MenuContentProps } from "../types.js";
 	import { MenuContentState } from "../menu.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import PopperLayer from "$lib/bits/utilities/popper-layer/popper-layer.svelte";
-	import { getFloatingContentCSSVars } from "$lib/internal/floating-svelte/floating-utils.svelte.js";
-	import PopperLayerForceMount from "$lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import PopperLayer from "#lib/bits/utilities/popper-layer/popper-layer.svelte";
+	import { getFloatingContentCSSVars } from "#lib/internal/floating-svelte/floating-utils.svelte.js";
+	import PopperLayerForceMount from "#lib/bits/utilities/popper-layer/popper-layer-force-mount.svelte";
 
 	const uid = $props.id();
 
@@ -47,7 +48,7 @@
 		// don't close if the interaction is with a submenu content or items
 		if (e.target && e.target instanceof Element) {
 			const subContentSelector = `[${contentState.parentMenu.root.getBitsAttr("sub-content")}]`;
-			if (e.target.closest(subContentSelector)) return;
+			if (getEventTargetClosest(e, subContentSelector)) return;
 		}
 		contentState.parentMenu.onClose();
 	}

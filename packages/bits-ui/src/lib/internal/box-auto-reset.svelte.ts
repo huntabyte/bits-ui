@@ -1,5 +1,5 @@
 import { type WritableBox } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
 import { noop } from "./noop.js";
 
 type BoxAutoResetOptions<T> = {

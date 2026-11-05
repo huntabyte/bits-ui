@@ -10,24 +10,31 @@ import { watch } from "runed";
 import { untrack } from "svelte";
 import { on } from "svelte/events";
 import type { DismissibleLayerImplProps, InteractOutsideBehaviorType } from "./types.js";
-import { type EventCallback } from "$lib/internal/events.js";
-import { debounce } from "$lib/internal/debounce.js";
-import { noop } from "$lib/internal/noop.js";
-import { getOwnerDocument, isOrContainsTarget } from "$lib/internal/elements.js";
-import { isElementOrSVGElement } from "$lib/internal/is.js";
-import { isClickTrulyOutside } from "$lib/internal/dom.js";
+import {
+	captureEventPath,
+	copyEventPath,
+	getEventTargetClosest,
+	isEventTargetWithin,
+	type EventCallback,
+} from "#lib/internal/events.js";
+import { debounce } from "#lib/internal/debounce.js";
+import { noop } from "#lib/internal/noop.js";
+import { getOwnerDocument, isOrContainsTarget } from "#lib/internal/elements.js";
+import { isElementOrSVGElement } from "#lib/internal/is.js";
+import { isClickTrulyOutside } from "#lib/internal/dom.js";
 import {
 	CONTEXT_MENU_CONTENT_ATTR,
 	CONTEXT_MENU_TRIGGER_ATTR,
-} from "$lib/bits/menu/context-menu-attributes.js";
+} from "#lib/bits/menu/context-menu-attributes.js";
 
 globalThis.bitsDismissableLayers ??= new Map<
 	DismissibleLayerState,
 	ReadableBox<InteractOutsideBehaviorType>
 >();
 
-interface DismissibleLayerStateOpts
-	extends ReadableBoxedValues<Required<Omit<DismissibleLayerImplProps, "children" | "ref">>> {
+interface DismissibleLayerStateOpts extends ReadableBoxedValues<
+	Required<Omit<DismissibleLayerImplProps, "children" | "ref">>
+> {
 	ref: WritableBox<HTMLElement | null>;
 }
 
@@ -204,6 +211,7 @@ export class DismissibleLayerState {
 					this.#documentObj,
 					"click",
 					(event: MouseEvent) => {
+						captureEventPath(event);
 						backup = setTimeout(() => dismiss(event), 0);
 					},
 					{ once: true, capture: true }
@@ -231,6 +239,7 @@ export class DismissibleLayerState {
 
 	#markResponsibleLayer = (event: PointerEvent) => {
 		this.#capturedPointerDown = event;
+		captureEventPath(event);
 		if (!this.opts.ref.current) return;
 		this.#isResponsibleLayer = isResponsibleLayer(this.opts.ref.current);
 	};
@@ -308,7 +317,9 @@ function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
 	const target = e.target;
 	if (!isElementOrSVGElement(target)) return false;
 
-	const targetIsContextMenuTrigger = Boolean(target.closest(`[${CONTEXT_MENU_TRIGGER_ATTR}]`));
+	const targetIsContextMenuTrigger = Boolean(
+		getEventTargetClosest(e, `[${CONTEXT_MENU_TRIGGER_ATTR}]`)
+	);
 	const nodeIsContextMenu = Boolean(node.closest(`[${CONTEXT_MENU_CONTENT_ATTR}]`));
 
 	if ("button" in e && e.button > 0 && !targetIsContextMenuTrigger) return false;
@@ -320,7 +331,7 @@ function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {
 	const ownerDocument = getOwnerDocument(target);
 	const isValid =
 		ownerDocument.documentElement.contains(target) &&
-		!isOrContainsTarget(node, target) &&
+		!isEventTargetWithin(e, node) &&
 		isClickTrulyOutside(e, node);
 	return isValid;
 }
@@ -364,12 +375,15 @@ function createWrappedEvent(e: PointerEvent | MouseEvent): PointerEvent {
 			}
 			if (prop in target) {
 				// oxlint-disable-next-line no-explicit-any
-				return (target as any)[prop];
+				const value = (target as any)[prop];
+				return typeof value === "function" ? value.bind(target) : value;
 			}
 			// oxlint-disable-next-line no-explicit-any
-			return (e as any)[prop];
+			const value = (e as any)[prop];
+			return typeof value === "function" ? value.bind(e) : value;
 		},
 	});
 
+	copyEventPath(e, wrappedEvent);
 	return wrappedEvent as PointerEvent;
 }

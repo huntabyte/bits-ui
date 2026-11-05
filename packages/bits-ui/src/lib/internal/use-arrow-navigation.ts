@@ -1,4 +1,4 @@
-import type { Direction } from "$lib/shared/index.js";
+import type { Direction } from "#lib/shared/index.js";
 import { queryAll } from "./dom.js";
 
 type ArrowKeyOptions = "horizontal" | "vertical" | "both";

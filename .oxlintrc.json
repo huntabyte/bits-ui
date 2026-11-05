@@ -110,7 +110,8 @@
 		"packages/bits-ui/.svelte-kit/**/*",
 		"packages/bits-ui/.bench-baseline/**/*",
 		"tests/.svelte-kit/**/*",
-		"bundle-analyzer/.temp-bundle-analysis/**/*"
+		"bundle-analyzer/.temp-bundle-analysis/**/*",
+		".tmp/"
 	],
 	"overrides": [
 		{
@@ -142,16 +143,30 @@
 			}
 		},
 		{
-			"files": ["*.svelte", "**/*.svelte"],
+			"files": ["packages/bits-ui/src/lib/**/*"],
 			"rules": {
-				"no-inner-declarations": "off",
-				"no-self-assign": "off"
+				"no-console": "error",
+				"no-restricted-imports": [
+					"error",
+					{
+						"paths": [
+							{
+								"name": "svelte-toolbelt",
+								"importNames": ["boxWith", "simpleBox"],
+								"message": "Use the cheaper `#lib/internal/box.svelte.js` versions."
+							}
+						]
+					}
+				]
 			}
 		},
 		{
-			"files": ["packages/bits-ui/src/lib/**/*"],
+			"files": [
+				"packages/bits-ui/src/lib/**/*.test.ts",
+				"packages/bits-ui/src/lib/internal/box.svelte.ts"
+			],
 			"rules": {
-				"no-console": "error"
+				"no-restricted-imports": "off"
 			}
 		}
 	]

@@ -13,7 +13,11 @@
 					<Command.GroupHeading>Group {g}</Command.GroupHeading>
 					<Command.GroupItems>
 						{#each { length: count / 10 }, i (i)}
-							<Command.Item value="item {g}-{i}" keywords={["kw" + i]} data-bench="item">
+							<Command.Item
+								value="item {g}-{i}"
+								keywords={["kw" + i]}
+								data-bench="item"
+							>
 								Item {g}-{i}
 							</Command.Item>
 						{/each}

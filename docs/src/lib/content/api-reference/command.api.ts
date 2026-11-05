@@ -15,7 +15,7 @@ import type {
 import { NoopProp, OnStringValueChangeProp } from "./extended-types/shared/index.js";
 import { CommandFilterProp, CommandOnStateChangeProp } from "./extended-types/command/index.js";
 import commandOnStateChangePropRaw from "./extended-types/command/command-on-state-change-prop.md?raw";
-import { withChildProps } from "$lib/content/api-reference/shared.js";
+import { withChildProps } from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
@@ -27,7 +27,6 @@ import {
 	defineSimplePropSchema,
 	stringDefinitionFromMarkdown,
 } from "../utils.js";
-
 
 const root = defineComponentApiSchema<CommandRootPropsWithoutHTML>({
 	title: "Root",

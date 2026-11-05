@@ -4,10 +4,10 @@
 
 <script lang="ts" generics="T = never">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { TooltipTriggerProps } from "../types.js";
 	import { TooltipTriggerState } from "../tooltip.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

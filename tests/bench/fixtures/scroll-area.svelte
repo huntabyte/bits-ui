@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { ScrollArea } from "bits-ui";
-	let { count, type = "always" }: { count: number; type?: "always" | "hover" | "auto" | "scroll" } =
-		$props();
+	let {
+		count,
+		type = "always",
+	}: { count: number; type?: "always" | "hover" | "auto" | "scroll" } = $props();
 </script>
 
 {#each { length: count }, i (i)}

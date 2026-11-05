@@ -66,9 +66,9 @@ export function boxWith<T>(getter: () => T): ReadableBox<T>;
 export function boxWith<T>(getter: () => T, setter: (v: T) => void): WritableBox<T>;
 export function boxWith<T>(getter: () => T, setter?: (v: T) => void): ReadableBox<T> {
 	// the marker symbols live on the prototypes, which TypeScript can't see
-	return (
-		setter ? new WritableGetterBox(getter, setter) : new ReadonlyGetterBox(getter)
-	) as unknown as ReadableBox<T>;
+	return (setter
+		? new WritableGetterBox(getter, setter)
+		: new ReadonlyGetterBox(getter)) as unknown as ReadableBox<T>;
 }
 
 class StateBox<T> {

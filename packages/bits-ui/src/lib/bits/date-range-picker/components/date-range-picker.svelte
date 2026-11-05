@@ -1,19 +1,19 @@
 <script lang="ts">
 	import { watch } from "runed";
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import type { DateValue } from "@internationalized/date";
 	import { DateRangePickerRootState } from "../date-range-picker.svelte.js";
 	import type { DateRangePickerRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { PopoverRootState } from "$lib/bits/popover/popover.svelte.js";
-	import { DateRangeFieldRootState } from "$lib/bits/date-range-field/date-range-field.svelte.js";
-	import FloatingLayer from "$lib/bits/utilities/floating-layer/components/floating-layer.svelte";
-	import { useId } from "$lib/internal/use-id.js";
-	import type { DateRange } from "$lib/shared/index.js";
-	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { PopoverRootState } from "#lib/bits/popover/popover.svelte.js";
+	import { DateRangeFieldRootState } from "#lib/bits/date-range-field/date-range-field.svelte.js";
+	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
+	import { useId } from "#lib/internal/use-id.js";
+	import type { DateRange } from "#lib/shared/index.js";
+	import { getDefaultDate } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	let {
 		open = $bindable(false),

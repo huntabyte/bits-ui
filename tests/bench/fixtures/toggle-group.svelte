@@ -5,6 +5,6 @@
 
 <ToggleGroup.Root type="multiple" bind:value>
 	{#each { length: count }, i (i)}
-		<ToggleGroup.Item value="{i}" data-bench="item">{i}</ToggleGroup.Item>
+		<ToggleGroup.Item value={i} data-bench="item">{i}</ToggleGroup.Item>
 	{/each}
 </ToggleGroup.Root>

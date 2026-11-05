@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { SelectScrollUpButtonProps } from "../types.js";
 	import { SelectScrollUpButtonState } from "../select.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { Mounted } from "$lib/bits/utilities/index.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { Mounted } from "#lib/bits/utilities/index.js";
 
 	const uid = $props.id();
 

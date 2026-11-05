@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { untrack } from "svelte";
 	import type { FocusScopeImplProps } from "./types.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { noop } from "#lib/internal/noop.js";
 	import { FocusScope } from "./focus-scope.svelte.js";
 
 	let {

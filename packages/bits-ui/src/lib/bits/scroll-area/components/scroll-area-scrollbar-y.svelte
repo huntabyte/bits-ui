@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { IsMounted } from "runed";
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { ScrollAreaScrollbarYState } from "../scroll-area.svelte.js";
 	import type { _ScrollbarStubProps } from "../types.js";
 	import ScrollAreaScrollbarShared from "./scroll-area-scrollbar-shared.svelte";

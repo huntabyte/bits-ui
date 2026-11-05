@@ -4,7 +4,9 @@
 </script>
 
 <ContextMenu.Root bind:open>
-	<ContextMenu.Trigger data-bench="trigger" style="display:block;width:100px;height:40px">open</ContextMenu.Trigger>
+	<ContextMenu.Trigger data-bench="trigger" style="display:block;width:100px;height:40px"
+		>open</ContextMenu.Trigger
+	>
 	<ContextMenu.Portal>
 		<ContextMenu.Content data-bench="content" style="max-height: 300px; overflow: auto">
 			<ContextMenu.Group>
@@ -14,7 +16,9 @@
 				{/each}
 			</ContextMenu.Group>
 			<ContextMenu.Separator />
-			<ContextMenu.CheckboxItem>{#snippet children({ checked })}{checked}{/snippet}</ContextMenu.CheckboxItem>
+			<ContextMenu.CheckboxItem
+				>{#snippet children({ checked })}{checked}{/snippet}</ContextMenu.CheckboxItem
+			>
 			<ContextMenu.Sub>
 				<ContextMenu.SubTrigger>sub</ContextMenu.SubTrigger>
 				<ContextMenu.SubContent>

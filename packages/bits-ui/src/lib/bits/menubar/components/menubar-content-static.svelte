@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { MenubarContentStaticProps } from "../types.js";
 	import { MenubarContentState } from "../menubar.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import MenuContentStatic from "$lib/bits/menu/components/menu-content-static.svelte";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import MenuContentStatic from "#lib/bits/menu/components/menu-content-static.svelte";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 

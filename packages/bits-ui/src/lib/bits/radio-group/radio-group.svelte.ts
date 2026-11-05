@@ -6,17 +6,17 @@ import type {
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import {
 	createBitsAttrs,
 	getAriaChecked,
 	boolToEmptyStrOrUndef,
 	boolToStr,
-} from "$lib/internal/attrs.js";
+} from "#lib/internal/attrs.js";
 import type { HTMLInputAttributes } from "svelte/elements";
-import type { Orientation } from "$lib/shared/index.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+import type { Orientation } from "#lib/shared/index.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 
 const radioGroupAttrs = createBitsAttrs({
 	component: "radio-group",
@@ -26,7 +26,8 @@ const radioGroupAttrs = createBitsAttrs({
 const RadioGroupRootContext = new Context<RadioGroupRootState>("RadioGroup.Root");
 
 interface RadioGroupRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;
@@ -91,7 +92,8 @@ export class RadioGroupRootState {
 }
 
 interface RadioGroupItemStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			value: string;

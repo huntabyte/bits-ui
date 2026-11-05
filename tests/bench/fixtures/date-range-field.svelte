@@ -13,7 +13,9 @@
 			<DateRangeField.Input {type}>
 				{#snippet children({ segments })}
 					{#each segments as { part, value }, s (s)}
-						<DateRangeField.Segment {part} data-bench="segment">{value}</DateRangeField.Segment>
+						<DateRangeField.Segment {part} data-bench="segment"
+							>{value}</DateRangeField.Segment
+						>
 					{/each}
 				{/snippet}
 			</DateRangeField.Input>

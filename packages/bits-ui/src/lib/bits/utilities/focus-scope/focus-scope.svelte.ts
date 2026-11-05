@@ -19,17 +19,17 @@ function retargetToScopeTree(node: Node | null, container: HTMLElement): Node | 
 	return null;
 }
 
-interface FocusScopeOpts
-	extends ReadableBoxedValues<{
-		onOpenAutoFocus: (event: Event) => void;
-		onCloseAutoFocus: (event: Event) => void;
-		trap: boolean;
-	}> {
+interface FocusScopeOpts extends ReadableBoxedValues<{
+	onOpenAutoFocus: (event: Event) => void;
+	onCloseAutoFocus: (event: Event) => void;
+	trap: boolean;
+}> {
 	loop: boolean;
 }
 
 interface FocusScopeUseOpts
-	extends FocusScopeOpts,
+	extends
+		FocusScopeOpts,
 		ReadableBoxedValues<{
 			enabled: boolean;
 			ref: HTMLElement | null;
@@ -66,6 +66,8 @@ export class FocusScope {
 	}
 
 	mount(container: HTMLElement) {
+		if (this.#container === container) return;
+
 		if (this.#container) {
 			this.unmount();
 		}

@@ -1,5 +1,5 @@
 import type { Getter, ReadableBox } from "svelte-toolbelt";
-import { boxWith } from "$lib/internal/box.svelte.js";
+import { boxWith } from "#lib/internal/box.svelte.js";
 import { type BitsConfigState, getBitsConfig } from "./bits-config.js";
 
 /**

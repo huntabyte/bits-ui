@@ -6,7 +6,7 @@ import type {
 } from "bits-ui";
 import { OnStringValueChangeProp, OrientationProp } from "./extended-types/shared/index.js";
 import { TabsRootActivationModeProp, TabsTriggerStateProp } from "./extended-types/tabs/index.js";
-import { withChildProps } from "$lib/content/api-reference/shared.js";
+import { withChildProps } from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,

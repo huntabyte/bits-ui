@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import type { ContextMenuTriggerProps } from "../types.js";
-	import { ContextMenuTriggerState } from "$lib/bits/menu/menu.svelte.js";
-	import { useId } from "$lib/internal/use-id.js";
-	import { FloatingLayer } from "$lib/bits/utilities/floating-layer/index.js";
+	import { ContextMenuTriggerState } from "#lib/bits/menu/menu.svelte.js";
+	import { useId } from "#lib/internal/use-id.js";
+	import { FloatingLayer } from "#lib/bits/utilities/floating-layer/index.js";
 
 	let {
 		id = useId(),

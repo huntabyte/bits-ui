@@ -1,4 +1,4 @@
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
@@ -7,13 +7,14 @@ import { getTestKbd } from "../utils.js";
 import CommandTest from "./command-test.svelte";
 import CommandRerenderTest from "./command-rerender-test.svelte";
 import CommandFlatScrollTest from "./command-flat-scroll-test.svelte";
+import CommandScrollTest from "./command-scroll-test.svelte";
 import { expectExists, expectNotExists } from "../browser-utils";
 
 const kbd = getTestKbd();
 
-function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
+async function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(CommandTest, props as any);
+	const returned = await render(CommandTest, props as any);
 	const input = page.getByTestId("input");
 	const root = page.getByTestId("root");
 	const list = page.getByTestId("list");
@@ -25,9 +26,9 @@ function setup(props: Partial<ComponentProps<typeof CommandTest>> = {}) {
 	};
 }
 
-function setupRerenderTest(props: Partial<ComponentProps<typeof CommandRerenderTest>> = {}) {
+async function setupRerenderTest(props: Partial<ComponentProps<typeof CommandRerenderTest>> = {}) {
 	// oxlint-disable-next-line no-explicit-any
-	const returned = render(CommandRerenderTest, props as any);
+	const returned = await render(CommandRerenderTest, props as any);
 	const input = page.getByTestId("input");
 	return {
 		...returned,
@@ -36,7 +37,7 @@ function setupRerenderTest(props: Partial<ComponentProps<typeof CommandRerenderT
 }
 
 it("should select the first item by default", async () => {
-	setup();
+	await setup();
 
 	// since we aren't hardcoding a value for the item, we need to wait for
 	// the component to render before we can check if the first item is selected
@@ -44,13 +45,13 @@ it("should select the first item by default", async () => {
 });
 
 it("should allow forcing the selected value", async () => {
-	setup({ value: "Introduction" });
+	await setup({ value: "Introduction" });
 
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 });
 
 it("should respect initial value when it's not the first item", async () => {
-	setup({ value: "Radio Group" });
+	await setup({ value: "Radio Group" });
 
 	// ensure the initial value is selected, not the first item
 	await expect.element(page.getByText("Radio Group")).toHaveAttribute("data-selected");
@@ -58,7 +59,7 @@ it("should respect initial value when it's not the first item", async () => {
 });
 
 it("should respect initial value for items in the first group", async () => {
-	setup({ value: "Styling" });
+	await setup({ value: "Styling" });
 
 	// ensure the provided value is selected, not the first item
 	await expect.element(page.getByText("Styling")).toHaveAttribute("data-selected");
@@ -66,11 +67,13 @@ it("should respect initial value for items in the first group", async () => {
 });
 
 it("should keep the clicked item active on initial click", async () => {
-	const t = setupRerenderTest();
+	const t = await setupRerenderTest();
 
 	await userEvent.click(page.getByTestId("item-done"));
-	await expect.element(page.getByTestId("selected-done")).toHaveTextContent("selected");
-	await expect.element(page.getByText("Done")).toHaveAttribute("data-selected");
+	await expect.element(page.getByTestId("selected-done")).toMatchTextContent("selected");
+	await expect
+		.element(page.getByRole("option", { name: /Done/ }))
+		.toHaveAttribute("data-selected");
 	await expect.element(page.getByText("Backlog")).not.toHaveAttribute("data-selected");
 
 	(t.input.element() as HTMLElement).focus();
@@ -79,7 +82,7 @@ it("should keep the clicked item active on initial click", async () => {
 });
 
 it("should select the first item when searching with shouldFilter false", async () => {
-	const t = setup({ shouldFilter: false });
+	const t = await setup({ shouldFilter: false });
 
 	(t.input.element() as HTMLElement).focus();
 	await userEvent.keyboard(kbd.ARROW_DOWN);
@@ -93,7 +96,7 @@ it("should select the first item when searching with shouldFilter false", async 
 });
 
 it("should not remount items when the first character is typed with shouldFilter false", async () => {
-	const t = setup({ shouldFilter: false });
+	const t = await setup({ shouldFilter: false });
 
 	const item = page.getByText("Introduction").element();
 	await userEvent.type(t.input, "a");
@@ -106,7 +109,7 @@ it("should not remount items when the first character is typed with shouldFilter
 });
 
 it("should render the separator when search is empty and remove it when search is not empty", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await expectExists(page.getByTestId("separator"));
 	await userEvent.type(t.input, "a");
@@ -114,7 +117,7 @@ it("should render the separator when search is empty and remove it when search i
 });
 
 it("should always render the separator when forceMount", async () => {
-	const t = setup({
+	const t = await setup({
 		separatorProps: {
 			forceMount: true,
 		},
@@ -126,7 +129,7 @@ it("should always render the separator when forceMount", async () => {
 });
 
 it("should show empty state when no items are found", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await expectNotExists(page.getByTestId("empty"));
 
@@ -136,25 +139,25 @@ it("should show empty state when no items are found", async () => {
 });
 
 it("should restore original order when search is cleared", async () => {
-	const t = setup();
+	const t = await setup();
 
 	(t.input.element() as HTMLElement).focus();
 	await userEvent.keyboard("d");
 	await expect.element(t.input).toHaveValue("d");
 	await expect.element(page.getByText("Delegation")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
-		.toHaveTextContent("Delegation");
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
+		.toMatchTextContent("Delegation");
 	await userEvent.keyboard(kbd.BACKSPACE);
 	await expect.element(t.input).toHaveValue("");
 	await expect.element(page.getByText("Introduction")).toHaveAttribute("data-selected");
 	await expect
-		.element(page.getByTestId("group-a-items").element().children[0])
-		.toHaveTextContent("Introduction");
+		.element(page.getByTestId("group-a-items").element().children[0] as HTMLElement)
+		.toMatchTextContent("Introduction");
 });
 
 it("should hide the group if all items are filtered out", async () => {
-	const t = setup();
+	const t = await setup();
 
 	await userEvent.type(t.input, "radio");
 	await expect.element(page.getByTestId("group-a")).not.toBeVisible();
@@ -163,7 +166,7 @@ it("should hide the group if all items are filtered out", async () => {
 });
 
 it("should scroll the first item back into view when there are no groups", async () => {
-	render(CommandFlatScrollTest);
+	await render(CommandFlatScrollTest);
 	const viewport = page.getByTestId("viewport").element() as HTMLElement;
 	(page.getByTestId("input").element() as HTMLElement).focus();
 
@@ -177,7 +180,7 @@ it("should scroll the first item back into view when there are no groups", async
 });
 
 it("should select keyword matches when repeating searches across groups", async () => {
-	const t = setup();
+	const t = await setup();
 	for (const [search, item] of [
 		["tutorial", "item-introduction"],
 		["forms", "item-radio-group"],
@@ -192,7 +195,7 @@ it("should select keyword matches when repeating searches across groups", async 
 
 it("should keep invoking a custom filter when repeating searches", async () => {
 	let included = "Introduction";
-	const t = setup({ filter: (value) => Number(value === included) });
+	const t = await setup({ filter: (value) => Number(value === included) });
 	await userEvent.fill(t.input, "query");
 	await expect.element(page.getByTestId("item-introduction")).toHaveAttribute("data-selected");
 	included = "Radio Group";
@@ -203,4 +206,34 @@ it("should keep invoking a custom filter when repeating searches", async () => {
 	await t.rerender({ filter: computeCommandScore });
 	await userEvent.fill(t.input, "tutorial");
 	await expect.element(page.getByTestId("item-introduction")).toHaveAttribute("data-selected");
+});
+
+it("should scroll the first item of a group into view along with its heading", async () => {
+	await render(CommandScrollTest);
+	const viewport = page.getByTestId("viewport").element() as HTMLElement;
+	const heading = page.getByTestId("group-b-heading").element() as HTMLElement;
+	const calendar = page.getByText("Calendar");
+	(page.getByTestId("input").element() as HTMLElement).focus();
+
+	function isInView(el: HTMLElement) {
+		const rect = el.getBoundingClientRect();
+		const viewportRect = viewport.getBoundingClientRect();
+		return rect.top >= viewportRect.top - 1 && rect.bottom <= viewportRect.bottom + 1;
+	}
+
+	// moving down onto the first item of a group below the fold
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await userEvent.keyboard(kbd.ARROW_DOWN);
+	await expect.element(calendar).toHaveAttribute("data-selected");
+	await expect.poll(() => isInView(calendar.element() as HTMLElement)).toBe(true);
+	await expect.poll(() => isInView(heading)).toBe(true);
+
+	// moving up onto the first item of a group above the fold
+	await userEvent.keyboard(kbd.END);
+	await expect.element(page.getByText("Popover")).toHaveAttribute("data-selected");
+	for (let i = 0; i < 5; i++) await userEvent.keyboard(kbd.ARROW_UP);
+	await expect.element(calendar).toHaveAttribute("data-selected");
+	await expect.poll(() => isInView(calendar.element() as HTMLElement)).toBe(true);
+	await expect.poll(() => isInView(heading)).toBe(true);
 });

@@ -4,7 +4,7 @@ description: Visually separates content or UI elements.
 ---
 
 <script>
-	import { APISection, ComponentPreview, SeparatorDemo } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, SeparatorDemo } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

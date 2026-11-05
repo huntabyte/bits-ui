@@ -13,7 +13,9 @@
 			<TimeRangeField.Input {type}>
 				{#snippet children({ segments })}
 					{#each segments as { part, value }, s (s)}
-						<TimeRangeField.Segment {part} data-bench="segment">{value}</TimeRangeField.Segment>
+						<TimeRangeField.Segment {part} data-bench="segment"
+							>{value}</TimeRangeField.Segment
+						>
 					{/each}
 				{/snippet}
 			</TimeRangeField.Input>

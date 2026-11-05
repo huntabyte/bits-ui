@@ -4,7 +4,7 @@ description: Groups multiple radio items under a common name for form submission
 ---
 
 <script>
-	import { APISection, ComponentPreview, RadioGroupDemo, RadioGroupDemoReadonly, RadioGroupDemoDisabled, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, RadioGroupDemo, RadioGroupDemoReadonly, RadioGroupDemoDisabled, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -88,7 +88,7 @@ You can then use the `MyRadioGroup` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyRadioGroup from "$lib/components/MyRadioGroup.svelte";
+  import MyRadioGroup from "#lib/components/MyRadioGroup.svelte";
 
   const myItems = [
     { value: "apple", label: "Apple" },

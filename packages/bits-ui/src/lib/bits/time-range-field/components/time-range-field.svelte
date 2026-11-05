@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import type { TimeRange, TimeValue } from "$lib/shared/date/types.js";
+	import type { TimeRange, TimeValue } from "#lib/shared/date/types.js";
 	import type { Time } from "@internationalized/date";
 
 	type T = unknown;
@@ -8,13 +8,13 @@
 <script lang="ts" generics="T extends TimeValue = Time">
 	import { watch } from "runed";
 	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "$lib/internal/box.svelte.js";
+	import { boxWith } from "#lib/internal/box.svelte.js";
 	import { TimeRangeFieldRootState } from "../time-range-field.svelte.js";
 	import type { TimeRangeFieldRootProps } from "../types.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { getDefaultTime } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { getDefaultTime } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	const uid = $props.id();
 

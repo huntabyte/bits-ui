@@ -2,10 +2,11 @@ import { type Box, type ReadableBox, box } from "svelte-toolbelt";
 import { getElemDirection } from "./locale.js";
 import { getDirectionalKeys } from "./get-directional-keys.js";
 import { kbd } from "./kbd.js";
-import type { Orientation } from "$lib/shared/index.js";
+import type { Orientation } from "#lib/shared/index.js";
 import { BROWSER } from "esm-env";
 import { isHTMLElement } from "./is.js";
 import { findAdjacentElement, queryAll } from "./dom.js";
+import { cssEscape } from "./css-escape.js";
 
 type RovingFocusGroupOptions = (
 	| {
@@ -134,7 +135,8 @@ export class RovingFocusGroup {
 		else if (e.key === prevKey) step = -1;
 		else if (both) {
 			if (e.key === (nextKey === kbd.ARROW_DOWN ? kbd.ARROW_RIGHT : kbd.ARROW_DOWN)) step = 1;
-			else if (e.key === (prevKey === kbd.ARROW_UP ? kbd.ARROW_LEFT : kbd.ARROW_UP)) step = -1;
+			else if (e.key === (prevKey === kbd.ARROW_UP ? kbd.ARROW_LEFT : kbd.ARROW_UP))
+				step = -1;
 		}
 		// any other key is ignored, so don't collect the candidates for it (e.g. typeahead)
 		if (!step && e.key !== kbd.HOME && e.key !== kbd.END) return;
@@ -209,7 +211,9 @@ export class RovingFocusGroup {
 	focusCurrentTabStop() {
 		const currentTabStopId = this.#currentTabStopId.current;
 		if (!currentTabStopId) return;
-		const currentTabStop = this.#opts.rootNode.current?.querySelector(`#${currentTabStopId}`);
+		const currentTabStop = this.#opts.rootNode.current?.querySelector(
+			`#${cssEscape(currentTabStopId)}`
+		);
 		if (!currentTabStop || !isHTMLElement(currentTabStop)) return;
 		currentTabStop.focus();
 	}

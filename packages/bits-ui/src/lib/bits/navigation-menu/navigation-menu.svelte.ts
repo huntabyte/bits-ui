@@ -15,39 +15,39 @@ import {
 	DOMContext,
 	getWindow,
 } from "svelte-toolbelt";
-import { boxWith, simpleBox } from "$lib/internal/box.svelte.js";
+import { boxWith, simpleBox } from "#lib/internal/box.svelte.js";
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
 import { SvelteMap } from "svelte/reactivity";
-import { type Direction, type Orientation, useId } from "$lib/shared/index.js";
+import { type Direction, type Orientation, useId } from "#lib/shared/index.js";
 import {
 	createBitsAttrs,
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-} from "$lib/internal/attrs.js";
-import { noop } from "$lib/internal/noop.js";
-import { getTabbableCandidates } from "$lib/internal/focus.js";
+} from "#lib/internal/attrs.js";
+import { noop } from "#lib/internal/noop.js";
+import { getTabbableCandidates } from "#lib/internal/focus.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	BitsPointerEvent,
 	RefAttachment,
-} from "$lib/internal/types.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { CustomEventDispatcher } from "$lib/internal/events.js";
-import { useArrowNavigation } from "$lib/internal/use-arrow-navigation.js";
-import { boxAutoReset } from "$lib/internal/box-auto-reset.svelte.js";
-import { isElement } from "$lib/internal/is.js";
+} from "#lib/internal/types.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { CustomEventDispatcher, isEventTargetWithin } from "#lib/internal/events.js";
+import { useArrowNavigation } from "#lib/internal/use-arrow-navigation.js";
+import { boxAutoReset } from "#lib/internal/box-auto-reset.svelte.js";
+import { isElement } from "#lib/internal/is.js";
 import type {
 	FocusEventHandler,
 	KeyboardEventHandler,
 	MouseEventHandler,
 	PointerEventHandler,
 } from "svelte/elements";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
-import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
+import { SvelteResizeObserver } from "#lib/internal/svelte-resize-observer.svelte.js";
 
 const navigationMenuAttrs = createBitsAttrs({
 	component: "navigation-menu",
@@ -78,7 +78,8 @@ const NavigationMenuContentContext = new Context<NavigationMenuContentState>(
 const NavigationMenuSubContext = new Context<NavigationMenuSubState>("NavigationMenu.Sub");
 
 interface NavigationMenuProviderStateOpts
-	extends ReadableBoxedValues<{
+	extends
+		ReadableBoxedValues<{
 			dir: Direction;
 			orientation: Orientation;
 		}>,
@@ -130,7 +131,8 @@ class NavigationMenuProviderState {
 }
 
 interface NavigationMenuRootStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -252,7 +254,8 @@ export class NavigationMenuRootState {
 }
 
 interface NavigationMenuSubStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		WritableBoxedValues<{
 			value: string;
 		}>,
@@ -372,7 +375,8 @@ export class NavigationMenuListState {
 }
 
 interface NavigationMenuItemStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			value: string;
 			openOnHover: boolean;
@@ -438,7 +442,8 @@ export class NavigationMenuItemState {
 }
 
 interface NavigationMenuTriggerStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			disabled: boolean | null | undefined;
 		}> {}
@@ -597,7 +602,8 @@ export class NavigationMenuTriggerState {
 }
 
 interface NavigationMenuLinkStateOpts
-	extends WithRefProps,
+	extends
+		WithRefProps,
 		ReadableBoxedValues<{
 			active: boolean;
 			onSelect: (e: Event) => void;
@@ -965,10 +971,12 @@ export class NavigationMenuContentImplState {
 	};
 
 	onInteractOutside = (e: PointerEvent) => {
-		const target = e.target as HTMLElement;
-		const isTrigger = this.listContext.listTriggers.some((trigger) => trigger.contains(target));
+		const isTrigger = this.listContext.listTriggers.some((trigger) =>
+			isEventTargetWithin(e, trigger)
+		);
 		const isRootViewport =
-			this.context.opts.isRootMenu && this.context.viewportRef.current?.contains(target);
+			this.context.opts.isRootMenu &&
+			isEventTargetWithin(e, this.context.viewportRef.current);
 		if (!this.context.opts.isRootMenu && !isTrigger) {
 			this.context.onItemDismiss();
 			return;

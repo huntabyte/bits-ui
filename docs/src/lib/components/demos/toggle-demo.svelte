@@ -7,10 +7,10 @@
 </script>
 
 <div
-	class="min-h-input rounded-card-sm border-border bg-background-alt shadow-mini flex h-full w-[176px] items-center gap-2 border py-1 pl-[18px] pr-1.5"
+	class="flex h-full min-h-input w-[176px] items-center gap-2 rounded-card-sm border border-border bg-background-alt py-1 pr-1.5 pl-[18px] shadow-mini"
 >
 	<div
-		class="font-alt text-end text-[19px] tracking-[13.87px] {unlocked
+		class="text-end font-alt text-[19px] tracking-[13.87px] {unlocked
 			? 'text-foreground'
 			: 'text-muted-foreground'}"
 	>
@@ -18,7 +18,7 @@
 	</div>
 	<Toggle.Root
 		aria-label="toggle code visibility"
-		class="bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center rounded-[9px] transition-all active:scale-[0.98]"
+		class="inline-flex size-10 items-center justify-center rounded-[9px] bg-background-alt transition-all hover:bg-muted active:scale-[0.98] active:bg-dark-10 data-[state=off]:text-foreground-alt data-[state=on]:bg-muted data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
 		bind:pressed={unlocked}
 	>
 		<LockKeyOpen class="size-6" />

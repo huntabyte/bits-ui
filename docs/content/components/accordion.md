@@ -4,7 +4,7 @@ description: Organizes content into collapsible sections.
 ---
 
 <script>
-	import { APISection, ComponentPreview, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, AccordionDemoHorizontalCards, Callout, AccordionDemoCheckoutSteps } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, AccordionDemo, AccordionDemoTransitions, AccordionDemoCustom, AccordionDemoHorizontalCards, Callout, AccordionDemoCheckoutSteps } from '#lib/components/index.js'
 
 	let { schemas } = $props()
 </script>
@@ -102,7 +102,7 @@ Wraps `Root` and renders multiple `MyAccordionItem` components:
 ```svelte title="MyAccordion.svelte"
 <script lang="ts">
   import { Accordion, type WithoutChildrenOrChild } from "bits-ui";
-  import MyAccordionItem from "$lib/components/MyAccordionItem.svelte";
+  import MyAccordionItem from "#lib/components/MyAccordionItem.svelte";
 
   type Item = {
     value?: string;
@@ -137,7 +137,7 @@ Wraps `Root` and renders multiple `MyAccordionItem` components:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyAccordion from "$lib/components/MyAccordion.svelte";
+  import MyAccordion from "#lib/components/MyAccordion.svelte";
   const items = [
     { title: "Item 1", content: "Content 1" },
     { title: "Item 2", content: "Content 2" },
