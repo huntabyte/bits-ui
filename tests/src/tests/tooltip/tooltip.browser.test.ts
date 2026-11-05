@@ -142,6 +142,34 @@ it("should open on focus and close on blur", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
+it.each([false, true])(
+	"should stay open on pointer leave while the trigger has keyboard focus (disableHoverableContent: %s)",
+	async (disableHoverableContent) => {
+		const t = await setup({ providerProps: { disableHoverableContent } });
+		await userEvent.tab();
+		await expectExists(page.getByTestId("content"));
+
+		await t.trigger.hover();
+		await page.getByTestId("outside").hover();
+		// wait past the safe polygon's transit intent timeout
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expectExists(page.getByTestId("content"));
+	}
+);
+
+it("should close on pointer leave when hover reopens the tooltip after escape", async () => {
+	const t = await setup();
+	await userEvent.tab();
+	await expectExists(page.getByTestId("content"));
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(page.getByTestId("content"));
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("outside").hover();
+	await expectNotExists(page.getByTestId("content"));
+});
+
 it("should not open on the focus that follows a tap", async () => {
 	const t = await setup();
 	const trigger = t.trigger.element() as HTMLElement;
@@ -399,6 +427,17 @@ it("singleton: should open with either trigger and update payload", async () => 
 	await expect.element(page.getByTestId("payload")).toMatchTextContent("Italic");
 	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-2");
 
+	await t.outside.hover();
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("singleton: should close on pointer leave after hover moves away from the focused trigger", async () => {
+	const t = await setupSingleton();
+	await userEvent.tab();
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Bold");
+
+	await t.trigger2.hover();
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Italic");
 	await t.outside.hover();
 	await expectNotExists(page.getByTestId("content"));
 });
