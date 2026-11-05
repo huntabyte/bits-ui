@@ -82,6 +82,18 @@ it("should open on focus and close on blur", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
+it("should stay open on pointer leave when focus opened it", async () => {
+	const t = await setup();
+	await page.getByTestId("outside").hover();
+	(t.trigger.element() as HTMLElement).focus();
+	await expectExists(page.getByTestId("content"));
+
+	await t.trigger.hover();
+	await page.getByTestId("outside").hover();
+	await new Promise((resolve) => setTimeout(resolve, 100));
+	await expectExists(page.getByTestId("content"));
+});
+
 it("should portal to the body by default", async () => {
 	await open();
 	expect(page.getByTestId("content").element().parentElement?.parentElement).toBe(document.body);
