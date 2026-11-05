@@ -20,6 +20,8 @@ export interface ScrollBodyOption {
 }
 /** A map of lock ids to their `locked` state. */
 const lockMap = new SvelteMap<string, boolean>();
+/** Whether each lock needs `pointer-events: none` on the body. Entries track `lockMap`'s keys. */
+const pointerBlockers = new Map<string, Getter<boolean>>();
 
 const MANAGED_PROPERTIES = [
 	"padding-right",
@@ -59,6 +61,14 @@ function setManagedProperty(style: CSSStyleDeclaration, property: ManagedPropert
 const anyLocked = boxWith(() => {
 	for (const value of lockMap.values()) {
 		if (value) return true;
+	}
+	return false;
+});
+
+// iterates `lockMap` (reactive) rather than `pointerBlockers` so adding/removing a lock re-runs it
+const anyPointerBlocking = boxWith(() => {
+	for (const [id, locked] of lockMap) {
+		if (locked && (pointerBlockers.get(id)?.() ?? true)) return true;
 	}
 	return false;
 });
@@ -229,10 +239,30 @@ const bodyLockStackCount = new SharedState(() => {
 			 * focus/interaction.
 			 */
 			afterTick(() => {
-				setManagedProperty(document.body.style, "pointer-events", "none");
+				if (anyPointerBlocking.current) {
+					setManagedProperty(document.body.style, "pointer-events", "none");
+				}
 				setManagedProperty(document.body.style, "overflow", "hidden");
 			});
 		}
+	);
+
+	// while locked, a lock that needs pointer blocking can come or go (a menu opening inside a
+	// dialog that relies on its overlay), or an overlay can mount after its content's lock
+	watch(
+		() => anyPointerBlocking.current,
+		() => {
+			if (!anyLocked.current) return;
+			afterTick(() => {
+				if (!anyLocked.current) return;
+				if (anyPointerBlocking.current) {
+					setManagedProperty(document.body.style, "pointer-events", "none");
+				} else {
+					restorePointerEvents(document);
+				}
+			});
+		},
+		{ lazy: true }
 	);
 
 	onDestroyEffect(() => {
@@ -262,7 +292,8 @@ export class BodyScrollLock {
 
 	constructor(
 		initialState?: boolean | undefined,
-		restoreScrollDelay: Getter<number | null> = () => null
+		restoreScrollDelay: Getter<number | null> = () => null,
+		blockPointer: Getter<boolean> = () => true
 	) {
 		this.#initialState = initialState;
 		this.#restoreScrollDelay = restoreScrollDelay;
@@ -282,6 +313,7 @@ export class BodyScrollLock {
 		// capture initial style before this lock is registered
 		this.#countState.ensureInitialStyleCaptured();
 
+		pointerBlockers.set(this.#id, blockPointer);
 		this.#countState.lockMap.set(this.#id, this.#initialState ?? false);
 
 		this.locked = boxWith(
@@ -291,6 +323,7 @@ export class BodyScrollLock {
 
 		onDestroyEffect(() => {
 			this.#countState.lockMap.delete(this.#id);
+			pointerBlockers.delete(this.#id);
 
 			// if not the last lock, we don't need to do anything
 			if (isAnyLocked(this.#countState.lockMap)) return;

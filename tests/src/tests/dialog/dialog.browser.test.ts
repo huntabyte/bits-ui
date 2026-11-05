@@ -21,6 +21,7 @@ import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
 import DialogShadowFieldTest from "./dialog-shadow-field-test.svelte";
 import DialogOpenOnMountTest from "./dialog-open-on-mount-test.svelte";
+import DialogBodyPointerTest from "./dialog-body-pointer-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -830,6 +831,49 @@ describe("Scroll Lock", () => {
 		const restored = bodyPointerEventsOnRemoval(page.getByTestId("content").element());
 		await userEvent.keyboard(kbd.ESCAPE);
 		expect(await restored).toBe("");
+	});
+
+	describe("preventBodyPointerEvents={false}", () => {
+		async function openPointerTest(overlay: boolean) {
+			await expect.poll(() => document.body.style.pointerEvents).toBe("");
+			await render(DialogBodyPointerTest, { overlay });
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await waitForDismissibleLayer(page.getByTestId("content"));
+			await expect.poll(() => document.body.style.overflow).toBe("hidden");
+		}
+
+		it("should leave body pointer-events alone when an overlay is rendered", async () => {
+			await openPointerTest(true);
+			await tick();
+			await new Promise((r) => setTimeout(r, 50));
+			expect(document.body.style.pointerEvents).toBe("");
+
+			// the overlay still catches outside interaction
+			await page.getByTestId("overlay").click();
+			await expectNotExists(page.getByTestId("content"));
+		});
+
+		it("should still block body pointer-events without an overlay", async () => {
+			await openPointerTest(false);
+			await expect.poll(() => document.body.style.pointerEvents).toBe("none");
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("content"));
+			await expect.poll(() => document.body.style.pointerEvents).toBe("");
+		});
+
+		it("should block body pointer-events while a menu inside the dialog is open", async () => {
+			await openPointerTest(true);
+			await page.getByTestId("menu-trigger").click();
+			await expectExists(page.getByTestId("menu-content"));
+			await expect.poll(() => document.body.style.pointerEvents).toBe("none");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("menu-content"));
+			await expectExists(page.getByTestId("content"));
+			await expect.poll(() => document.body.style.pointerEvents).toBe("");
+			expect(document.body.style.overflow).toBe("hidden");
+		});
 	});
 
 	it("should restore a single inline overflow axis on body after closing", async () => {
