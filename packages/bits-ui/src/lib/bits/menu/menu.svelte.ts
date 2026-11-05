@@ -9,8 +9,9 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type ReadableBox,
+	boxWith,
+	simpleBox,
 } from "svelte-toolbelt";
-import { boxWith, simpleBox } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import {
 	FIRST_LAST_KEYS,

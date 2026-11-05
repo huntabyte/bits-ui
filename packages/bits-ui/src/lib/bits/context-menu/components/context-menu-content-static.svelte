@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { ContextMenuContentStaticProps } from "../types.js";
 	import { MenuContentState } from "#lib/bits/menu/menu.svelte.js";
 	import { CONTEXT_MENU_TRIGGER_ATTR } from "#lib/bits/menu/context-menu-attributes.js";

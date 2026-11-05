@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { type WritableBox, mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { type WritableBox, mergeProps, boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import { AccordionRootState } from "../accordion.svelte.js";
 	import type { AccordionRootProps } from "../types.js";

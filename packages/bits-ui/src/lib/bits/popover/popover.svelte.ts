@@ -3,8 +3,8 @@ import {
 	type WritableBoxedValues,
 	attachRef,
 	DOMContext,
+	boxWith,
 } from "svelte-toolbelt";
-import { boxWith } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { isEventTargetWithin, getEventTargetClosest } from "#lib/internal/events.js";
 import { kbd } from "#lib/internal/kbd.js";

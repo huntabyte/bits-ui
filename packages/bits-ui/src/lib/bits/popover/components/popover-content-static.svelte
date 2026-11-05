@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { PopoverContentStaticProps } from "../types.js";
 	import { PopoverContentState } from "../popover.svelte.js";
 	import PopperLayer from "#lib/bits/utilities/popper-layer/popper-layer.svelte";

@@ -1,5 +1,10 @@
-import { type ReadableBox, type ReadableBoxedValues, boxFrom } from "svelte-toolbelt";
-import { boxWith, simpleBox } from "#lib/internal/box.svelte.js";
+import {
+	type ReadableBox,
+	type ReadableBoxedValues,
+	boxFrom,
+	boxWith,
+	simpleBox,
+} from "svelte-toolbelt";
 import { Context } from "runed";
 import type { Measurable } from "#lib/internal/floating-svelte/types.js";
 

@@ -1,6 +1,11 @@
 import { SvelteMap } from "svelte/reactivity";
-import { type Getter, type ReadableBox, afterTick, onDestroyEffect } from "svelte-toolbelt";
-import { boxWith } from "#lib/internal/box.svelte.js";
+import {
+	type Getter,
+	type ReadableBox,
+	afterTick,
+	onDestroyEffect,
+	boxWith,
+} from "svelte-toolbelt";
 import type { Fn } from "./types.js";
 import { isIOS } from "./is.js";
 import { useId } from "./use-id.js";

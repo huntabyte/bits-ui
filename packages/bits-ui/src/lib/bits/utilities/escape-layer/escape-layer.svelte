@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import type { EscapeLayerImplProps } from "./types.js";
 	import { EscapeLayerState } from "./use-escape-layer.svelte.js";

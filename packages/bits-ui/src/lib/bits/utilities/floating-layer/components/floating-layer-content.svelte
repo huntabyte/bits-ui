@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import { FloatingContentState } from "../use-floating-layer.svelte.js";
 	import type { ContentImplProps } from "./index.js";

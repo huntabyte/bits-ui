@@ -11,8 +11,8 @@ import {
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
 	type Box,
+	boxWith,
 } from "svelte-toolbelt";
-import { boxWith } from "#lib/internal/box.svelte.js";
 import { on } from "svelte/events";
 import { backward, forward } from "#lib/internal/arrays.js";
 import {

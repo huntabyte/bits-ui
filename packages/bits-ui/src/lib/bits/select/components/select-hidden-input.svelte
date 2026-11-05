@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { boxWith } from "svelte-toolbelt";
 	import { SelectHiddenInputState } from "../select.svelte.js";
 	import type { HTMLInputAttributes } from "svelte/elements";
 	import HiddenInput from "#lib/bits/utilities/hidden-input.svelte";

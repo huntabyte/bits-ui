@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { PaginationRootProps } from "../types.js";
 	import { PaginationRootState } from "../pagination.svelte.js";
 	import { noop } from "#lib/internal/noop.js";

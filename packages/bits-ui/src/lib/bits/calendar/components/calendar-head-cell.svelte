@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { CalendarHeadCellState } from "../calendar.svelte.js";
 	import type { CalendarHeadCellProps } from "../types.js";
 	import { createId } from "#lib/internal/create-id.js";

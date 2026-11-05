@@ -5,8 +5,8 @@ import {
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	boxWith,
 } from "svelte-toolbelt";
-import { boxWith } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import { DateFieldInputState, DateFieldRootState } from "../date-field/date-field.svelte.js";
 import { useId } from "#lib/internal/use-id.js";

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import { FloatingAnchorState } from "../floating-root.svelte.js";
 	import type { AnchorProps } from "./index.js";

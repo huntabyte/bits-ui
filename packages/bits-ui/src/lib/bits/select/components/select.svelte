@@ -2,7 +2,7 @@
 	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
 	import { noop } from "#lib/internal/noop.js";
 	import type { WritableBox } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import { SelectRootState } from "../select.svelte.js";
 	import type { SelectRootProps } from "../types.js";

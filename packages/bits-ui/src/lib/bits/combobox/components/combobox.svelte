@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { WritableBox } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import type { ComboboxRootProps } from "../types.js";
 	import { noop } from "#lib/internal/noop.js";

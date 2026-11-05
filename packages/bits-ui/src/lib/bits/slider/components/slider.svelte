@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps, type WritableBox } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, type WritableBox, boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import type { SliderRootProps } from "../types.js";
 	import { SliderRootState } from "../slider.svelte.js";

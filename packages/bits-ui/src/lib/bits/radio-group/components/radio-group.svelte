@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { RadioGroupRootProps } from "../types.js";
 	import { RadioGroupRootState } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";

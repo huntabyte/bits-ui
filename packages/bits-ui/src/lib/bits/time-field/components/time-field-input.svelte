@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { TimeFieldInputState } from "../time-field.svelte.js";
 	import type { TimeFieldInputProps } from "../types.js";
 	import DateFieldHiddenInput from "./time-field-hidden-input.svelte";

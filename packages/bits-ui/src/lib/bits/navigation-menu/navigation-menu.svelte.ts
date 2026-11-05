@@ -14,8 +14,9 @@ import {
 	attachRef,
 	DOMContext,
 	getWindow,
+	boxWith,
+	simpleBox,
 } from "svelte-toolbelt";
-import { boxWith, simpleBox } from "#lib/internal/box.svelte.js";
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";
 import { SvelteMap } from "svelte/reactivity";

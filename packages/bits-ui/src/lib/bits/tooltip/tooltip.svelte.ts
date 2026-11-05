@@ -4,8 +4,9 @@ import {
 	DOMContext,
 	type WritableBoxedValues,
 	type ReadableBoxedValues,
+	boxWith,
+	simpleBox,
 } from "svelte-toolbelt";
-import { boxWith, simpleBox } from "#lib/internal/box.svelte.js";
 import { on } from "svelte/events";
 import { SvelteMap } from "svelte/reactivity";
 import { isEventTargetWithin } from "#lib/internal/events.js";

@@ -7,8 +7,7 @@
 
 <script lang="ts" generics="T extends TimeValue = Time">
 	import { watch } from "runed";
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { TimeRangeFieldRootState } from "../time-range-field.svelte.js";
 	import type { TimeRangeFieldRootProps } from "../types.js";
 	import { createId } from "#lib/internal/create-id.js";

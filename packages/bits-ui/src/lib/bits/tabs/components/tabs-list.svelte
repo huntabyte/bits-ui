@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { TabsListProps } from "../types.js";
 	import { TabsListState } from "../tabs.svelte.js";
 	import { createId } from "#lib/internal/create-id.js";

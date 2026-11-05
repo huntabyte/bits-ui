@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { mergeProps } from "svelte-toolbelt";
-	import { boxWith } from "#lib/internal/box.svelte.js";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { NavigationMenuIndicatorProps } from "../types.js";
 	import { NavigationMenuIndicatorState } from "../navigation-menu.svelte.js";
 	import NavigationMenuIndicatorImpl from "./navigation-menu-indicator-impl.svelte";

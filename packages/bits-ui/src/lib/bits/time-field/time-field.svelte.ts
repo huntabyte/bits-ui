@@ -7,8 +7,8 @@ import {
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
-import { simpleBox } from "#lib/internal/box.svelte.js";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type {

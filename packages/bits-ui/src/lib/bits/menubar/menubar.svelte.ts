@@ -4,8 +4,8 @@ import {
 	attachRef,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	boxWith,
 } from "svelte-toolbelt";
-import { boxWith } from "#lib/internal/box.svelte.js";
 import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
 import type { Direction } from "#lib/shared/index.js";

@@ -13,8 +13,8 @@ import {
 	DOMContext,
 	getWindow,
 	type ReadableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
-import { simpleBox } from "#lib/internal/box.svelte.js";
 import type { ScrollAreaType } from "./types.js";
 import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
 import { type Direction, type Orientation, mergeProps, useId } from "#lib/shared/index.js";

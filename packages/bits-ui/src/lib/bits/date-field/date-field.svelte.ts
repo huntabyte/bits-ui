@@ -7,8 +7,9 @@ import {
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	boxWith,
+	simpleBox,
 } from "svelte-toolbelt";
-import { boxWith, simpleBox } from "#lib/internal/box.svelte.js";
 import { onMount, untrack } from "svelte";
 import { Context, watch } from "runed";
 import type { DateRangeFieldRootState } from "../date-range-field/date-range-field.svelte.js";
