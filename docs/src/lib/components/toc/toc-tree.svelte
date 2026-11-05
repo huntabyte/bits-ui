@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { cn } from "$lib/utils/styles.js";
-	import type { TableOfContents } from "$lib/utils/use-toc.svelte.js";
+	import { cn } from "#lib/utils/styles.js";
+	import type { TableOfContents } from "#lib/utils/use-toc.svelte.js";
 	import Tree from "./toc-tree.svelte";
 
 	let {
@@ -18,7 +18,7 @@
 	<ul
 		class={cn("m-0 list-none", {
 			"pl-4": level !== 1,
-			"border-border/50 border-l": level === 1,
+			"border-l border-border/50": level === 1,
 		})}
 	>
 		{#each tree.items as item, index (index)}
@@ -28,10 +28,10 @@
 					aria-current={isActive ? "location" : undefined}
 					href={item.url}
 					class={cn(
-						"hover:text-foreground inline-block border-l border-l-transparent py-[5px] pl-5 leading-4 no-underline",
+						"inline-block border-l border-l-transparent py-[5px] pl-5 leading-4 no-underline hover:text-foreground",
 						isActive
-							? "text-foreground border-l-foreground"
-							: "text-muted-foreground border-l-transparent",
+							? "border-l-foreground text-foreground"
+							: "border-l-transparent text-muted-foreground",
 						level !== 1 && "-ml-4 pl-10"
 					)}
 				>

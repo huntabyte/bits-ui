@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ComboboxDemo, ComboboxDemoTransition, ComboboxDemoAutoScrollDelay, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -153,7 +153,7 @@ side, the component will still be type-checked correctly.
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import { CustomCombobox } from "$lib/components";
+  import { CustomCombobox } from "#lib/components/index.js";
 
   const items = [
     { value: "mango", label: "Mango" },

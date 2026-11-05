@@ -25,7 +25,7 @@ import {
 	portalProps,
 	transitionStyleDataAttrs,
 	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+} from "#lib/content/api-reference/shared.js";
 import { TooltipStateDataAttr } from "./extended-types/tooltip/index.js";
 import {
 	defineBooleanProp,

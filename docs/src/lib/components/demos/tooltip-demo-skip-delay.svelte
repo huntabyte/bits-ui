@@ -23,29 +23,29 @@
 
 <Tooltip.Provider delayDuration={600} skipDelayDuration={200}>
 	<div
-		class="rounded-10px border-border bg-background-alt shadow-mini inline-flex items-center gap-0.5 border p-1"
+		class="inline-flex items-center gap-0.5 rounded-10px border border-border bg-background-alt p-1 shadow-mini"
 	>
 		{#each tools as tool, i (tool.label)}
 			{#if i === 4}
-				<div class="bg-border mx-0.5 h-5 w-px shrink-0"></div>
+				<div class="mx-0.5 h-5 w-px shrink-0 bg-border"></div>
 			{/if}
 			<Tooltip.Root>
 				<Tooltip.Trigger
-					class="rounded-9px text-foreground/70 hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground inline-flex size-8 items-center justify-center transition-colors"
+					class="inline-flex size-8 items-center justify-center rounded-9px text-foreground/70 transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
 				>
 					<tool.icon class="size-4" weight="bold" />
 				</Tooltip.Trigger>
 				<Tooltip.Portal>
 					<Tooltip.Content
 						sideOffset={8}
-						class="data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 origin-(--bits-tooltip-content-transform-origin) z-50"
+						class="z-50 origin-(--bits-tooltip-content-transform-origin) data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=delayed-open]:animate-in data-[state=delayed-open]:fade-in-0 data-[state=delayed-open]:zoom-in-95"
 					>
 						<div
-							class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden flex items-center gap-2 border px-2.5 py-1.5"
+							class="flex items-center gap-2 rounded-input border border-dark-10 bg-background px-2.5 py-1.5 shadow-popover outline-hidden"
 						>
 							<span class="text-sm font-medium">{tool.label}</span>
 							<kbd
-								class="border-dark-10 text-foreground/50 bg-background-alt rounded-[4px] border px-1.5 py-0.5 font-mono text-[11px] leading-none"
+								class="rounded-[4px] border border-dark-10 bg-background-alt px-1.5 py-0.5 font-mono text-[11px] leading-none text-foreground/50"
 							>
 								{tool.shortcut}
 							</kbd>

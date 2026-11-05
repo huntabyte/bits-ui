@@ -2,7 +2,7 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenuGroupProps } from "../types.js";
 	import { MenuGroupState } from "../menu.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

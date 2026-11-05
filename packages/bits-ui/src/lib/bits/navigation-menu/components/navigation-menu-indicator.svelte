@@ -3,10 +3,10 @@
 	import type { NavigationMenuIndicatorProps } from "../types.js";
 	import { NavigationMenuIndicatorState } from "../navigation-menu.svelte.js";
 	import NavigationMenuIndicatorImpl from "./navigation-menu-indicator-impl.svelte";
-	import { createId } from "$lib/internal/create-id.js";
-	import { getDataTransitionAttrs } from "$lib/internal/attrs.js";
-	import PresenceLayer from "$lib/bits/utilities/presence-layer/presence-layer.svelte";
-	import Portal from "$lib/bits/utilities/portal/portal.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import { getDataTransitionAttrs } from "#lib/internal/attrs.js";
+	import PresenceLayer from "#lib/bits/utilities/presence-layer/presence-layer.svelte";
+	import Portal from "#lib/bits/utilities/portal/portal.svelte";
 
 	const uid = $props.id();
 

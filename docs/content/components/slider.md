@@ -4,7 +4,7 @@ description: Enables users to select a value from a continuous range.
 ---
 
 <script>
-	import { APISection, ComponentPreview, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps, SliderDemoTickLabels, SliderDemoThumbLabels, SliderDemoVertical } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, SliderDemo, SliderDemoMultiple, SliderDemoTicks, SliderDemoCustomSteps, SliderDemoTickLabels, SliderDemoThumbLabels, SliderDemoVertical } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -73,7 +73,7 @@ You can then use the `MySlider` component in your application like so:
 
 ```svelte
 <script lang="ts">
-  import MySlider from "$lib/components/MySlider.svelte";
+  import MySlider from "#lib/components/MySlider.svelte";
 
   let multiValue = $state([5, 10]);
   let singleValue = $state(50);
@@ -171,7 +171,7 @@ Here's an example of how you might do that:
 
 ```svelte
 <script lang="ts">
-  import MySlider from "$lib/components/MySlider.svelte";
+  import MySlider from "#lib/components/MySlider.svelte";
 
   let expectedIncome = $state([50, 100]);
   let desiredIncome = $state(50);

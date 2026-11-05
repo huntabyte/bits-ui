@@ -44,7 +44,7 @@ import {
 	preventScrollProp,
 	transitionStyleDataAttrs,
 	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+} from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,

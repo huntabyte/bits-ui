@@ -2,7 +2,7 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { PaginationPageProps } from "../types.js";
 	import { PaginationPageState } from "../pagination.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

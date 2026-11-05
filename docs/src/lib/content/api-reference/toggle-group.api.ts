@@ -5,7 +5,7 @@ import {
 	StringOrArrayStringProp,
 } from "./extended-types/shared/index.js";
 import { ToggleRootStateDataAttr } from "./extended-types/toggle/index.js";
-import { typeSingleOrMultipleProp, withChildProps } from "$lib/content/api-reference/shared.js";
+import { typeSingleOrMultipleProp, withChildProps } from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,

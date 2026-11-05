@@ -3,7 +3,7 @@
 	import { TimeFieldInputState } from "../time-field.svelte.js";
 	import type { TimeFieldInputProps } from "../types.js";
 	import DateFieldHiddenInput from "./time-field-hidden-input.svelte";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

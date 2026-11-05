@@ -8,16 +8,16 @@ import type {
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import {
 	boolToStr,
 	createBitsAttrs,
 	getAriaChecked,
 	boolToEmptyStrOrUndef,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { arraysAreEqual } from "$lib/internal/arrays.js";
-import { isHTMLElement } from "$lib/internal/is.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { arraysAreEqual } from "#lib/internal/arrays.js";
+import { isHTMLElement } from "#lib/internal/is.js";
 
 const checkboxAttrs = createBitsAttrs({
 	component: "checkbox",

@@ -10,26 +10,26 @@
 <ToggleGroup.Root
 	bind:value
 	type="multiple"
-	class="h-input rounded-card-sm border-border bg-background-alt shadow-mini flex items-center gap-x-0.5 border px-[4px] py-1"
+	class="flex h-input items-center gap-x-0.5 rounded-card-sm border border-border bg-background-alt px-[4px] py-1 shadow-mini"
 >
 	<ToggleGroup.Item
 		aria-label="toggle bold"
 		value="bold"
-		class="rounded-9px bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
+		class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt transition-all hover:bg-muted active:scale-[0.98] active:bg-dark-10 data-[state=off]:text-foreground-alt data-[state=on]:bg-muted data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
 	>
 		<TextB class="size-6" />
 	</ToggleGroup.Item>
 	<ToggleGroup.Item
 		aria-label="toggle italic"
 		value="italic"
-		class="rounded-9px bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
+		class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt transition-all hover:bg-muted active:scale-[0.98] active:bg-dark-10 data-[state=off]:text-foreground-alt data-[state=on]:bg-muted data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
 	>
 		<TextItalic class="size-6" />
 	</ToggleGroup.Item>
 	<ToggleGroup.Item
 		aria-label="toggle strikethrough"
 		value="strikethrough"
-		class="rounded-9px bg-background-alt hover:bg-muted active:bg-dark-10 data-[state=on]:bg-muted data-[state=off]:text-foreground-alt data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10 inline-flex size-10 items-center justify-center transition-all active:scale-[0.98]"
+		class="inline-flex size-10 items-center justify-center rounded-9px bg-background-alt transition-all hover:bg-muted active:scale-[0.98] active:bg-dark-10 data-[state=off]:text-foreground-alt data-[state=on]:bg-muted data-[state=on]:text-foreground active:data-[state=on]:bg-dark-10"
 	>
 		<TextStrikethrough class="size-6" />
 	</ToggleGroup.Item>

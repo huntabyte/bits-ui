@@ -4,7 +4,7 @@ description: Enables users to provide ratings using customizable items (like sta
 ---
 
 <script>
-	import { APISection, ComponentPreview, RatingGroupDemo, RatingGroupDemoCustom, RatingGroupDemoNoHover, RatingGroupDemoRtl, RatingGroupDemoHalfStars, Callout, DemoContainer } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, RatingGroupDemo, RatingGroupDemoCustom, RatingGroupDemoNoHover, RatingGroupDemoRtl, RatingGroupDemoHalfStars, Callout, DemoContainer } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -79,7 +79,7 @@ In the example below, we're creating a custom `MyRatingGroup` component that ren
   </RatingGroup.Root>
 
   {#if showLabel}
-    <p class="text-muted-foreground text-sm">
+    <p class="text-sm text-muted-foreground">
       Rating: {value} out of {max} stars
     </p>
   {/if}
@@ -90,7 +90,7 @@ You can then use the `MyRatingGroup` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyRatingGroup from "$lib/components/MyRatingGroup.svelte";
+  import MyRatingGroup from "#lib/components/MyRatingGroup.svelte";
   let productRating = $state(4);
 </script>
 

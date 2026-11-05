@@ -1,6 +1,6 @@
 import { attachRef, type ReadableBoxedValues } from "svelte-toolbelt";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
-import type { RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
+import type { RefAttachment, WithRefOpts } from "#lib/internal/types.js";
 
 const progressAttrs = createBitsAttrs({
 	component: "progress",
@@ -8,7 +8,8 @@ const progressAttrs = createBitsAttrs({
 });
 
 interface ProgressRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			value: number | null;
 			max: number;

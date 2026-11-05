@@ -2,7 +2,7 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { TabsTriggerProps } from "../types.js";
 	import { TabsTriggerState } from "../tabs.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

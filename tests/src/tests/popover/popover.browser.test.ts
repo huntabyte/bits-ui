@@ -1281,6 +1281,19 @@ it("should hide the content when the trigger is scrolled out of a nested scroll 
 	await expect.element(content).toBeVisible();
 });
 
+it("should not stack `collisionPadding` on the trigger's scroll container when checking `hideWhenDetached`", async () => {
+	// the scroller starts 200px down; a 230px top padding clears the viewport edge but
+	// would fully cover the trigger if it were added to the scroller's top edge instead
+	await render(PopoverHideWhenDetachedTest, { collisionPadding: { top: 230 } });
+	const content = page.getByTestId("content");
+	const trigger = page.getByTestId("trigger").element() as HTMLElement;
+	expect(trigger.getBoundingClientRect().bottom).toBeGreaterThan(230);
+	await expect.element(content).toBeVisible();
+	// let the position update land before asserting it didn't hide the content
+	await new Promise((r) => setTimeout(r, 100));
+	await expect.element(content).toBeVisible();
+});
+
 it("should keep the viewport as the collision boundary for non-portalled content inside a scroll container", async () => {
 	await render(PopoverHideWhenDetachedTest, { portalDisabled: true });
 	const content = page.getByTestId("content");

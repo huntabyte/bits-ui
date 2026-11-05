@@ -3,8 +3,8 @@
 	import { untrack } from "svelte";
 	import type { DateRangeFieldInputProps } from "../types.js";
 	import { DateRangeFieldInputState } from "../date-range-field.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import DateFieldHiddenInput from "$lib/bits/date-field/components/date-field-hidden-input.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import DateFieldHiddenInput from "#lib/bits/date-field/components/date-field-hidden-input.svelte";
 
 	const uid = $props.id();
 

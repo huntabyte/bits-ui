@@ -25,19 +25,19 @@ import {
 	getTickLabelStyles,
 	getThumbLabelStyles,
 } from "./helpers.js";
-import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { isElementOrSVGElement } from "$lib/internal/is.js";
-import { isValidIndex } from "$lib/internal/arrays.js";
-import { SvelteResizeObserver } from "$lib/internal/svelte-resize-observer.svelte.js";
+import { createBitsAttrs, boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { isElementOrSVGElement } from "#lib/internal/is.js";
+import { isValidIndex } from "#lib/internal/arrays.js";
+import { SvelteResizeObserver } from "#lib/internal/svelte-resize-observer.svelte.js";
 import type {
 	BitsKeyboardEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import type { Direction, Orientation, SliderThumbPositioning } from "$lib/shared/index.js";
-import { linearScale } from "$lib/internal/math.js";
+} from "#lib/internal/types.js";
+import type { Direction, Orientation, SliderThumbPositioning } from "#lib/shared/index.js";
+import { linearScale } from "#lib/internal/math.js";
 import type { SliderLabelPosition, SliderRootSnippetProps } from "./types.js";
 
 const sliderAttrs = createBitsAttrs({
@@ -108,8 +108,6 @@ abstract class SliderBaseRootState {
 	};
 
 	getThumbScale = (): [number, number] => {
-		void this.#layoutVersion;
-
 		// If trackPadding is explicitly set, use it directly instead of calculating from thumb size
 		const trackPadding = this.opts.trackPadding?.current;
 		if (trackPadding !== undefined && trackPadding > 0) {
@@ -120,6 +118,9 @@ abstract class SliderBaseRootState {
 			// User opted out of containment
 			return [0, 100];
 		}
+
+		// only the measuring path below needs to rerun when the layout changes
+		void this.#layoutVersion;
 
 		const isVertical = this.opts.orientation.current === "vertical";
 

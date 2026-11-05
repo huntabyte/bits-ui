@@ -2,7 +2,7 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { CommandGroupProps } from "../types.js";
 	import { CommandGroupContainerState } from "../command.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

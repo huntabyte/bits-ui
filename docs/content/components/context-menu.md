@@ -4,7 +4,7 @@ description: Displays contextual options and actions triggered by right-click.
 ---
 
 <script>
-	import { APISection, ComponentPreview, ContextMenuDemo, ContextMenuDemoNested, ContextMenuDemoTransition, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, ContextMenuDemo, ContextMenuDemoNested, ContextMenuDemoTransition, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

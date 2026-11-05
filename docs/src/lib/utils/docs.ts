@@ -1,14 +1,14 @@
 import { error, redirect } from "@sveltejs/kit";
 import type { Component } from "svelte";
-import type { Doc } from "$content/index.js";
+import type { Doc } from "#content/index.js";
 import {
 	getAPISchemas,
 	getUtilityAPISchemas,
 	isBit,
 	isUtility,
-} from "$lib/content/api-reference/index.js";
-import { utilityDocs, componentDocs, docs, typeHelperDocs, policyDocs } from "$content/index.js";
-import type { APISchema } from "$lib/content/types.js";
+} from "#lib/content/api-reference/index.js";
+import { utilityDocs, componentDocs, docs, typeHelperDocs, policyDocs } from "#content/index.js";
+import type { APISchema } from "#lib/content/types.js";
 
 const allDocs = [...docs, ...componentDocs, ...utilityDocs, ...typeHelperDocs, ...policyDocs];
 

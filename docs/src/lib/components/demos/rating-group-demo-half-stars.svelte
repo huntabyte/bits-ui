@@ -10,7 +10,7 @@
 		{#each items as item (item.index)}
 			<RatingGroup.Item
 				index={item.index}
-				class="text-foreground data-[state=inactive]:text-muted-foreground size-10 cursor-pointer transition-colors data-[readonly]:cursor-default md:size-8"
+				class="size-10 cursor-pointer text-foreground transition-colors data-[readonly]:cursor-default data-[state=inactive]:text-muted-foreground md:size-8"
 			>
 				{#if item.state === "inactive"}
 					<Star class="size-full" />

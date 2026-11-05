@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from "svelte/elements";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let {
 		class: className,
@@ -9,6 +9,6 @@
 	}: HTMLAttributes<HTMLParagraphElement> = $props();
 </script>
 
-<p class={cn("not-first:mt-6 leading-7", className)} {...restProps}>
+<p class={cn("leading-7 not-first:mt-6", className)} {...restProps}>
 	{@render children?.()}
 </p>

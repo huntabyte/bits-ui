@@ -1,5 +1,5 @@
 import { srOnlyStylesString } from "svelte-toolbelt";
-import { isBrowser, isHTMLElement } from "$lib/internal/is.js";
+import { isBrowser, isHTMLElement } from "#lib/internal/is.js";
 
 /**
  * Creates or gets an announcer element which is used to announce messages to screen readers.

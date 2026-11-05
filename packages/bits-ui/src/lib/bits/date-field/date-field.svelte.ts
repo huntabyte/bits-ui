@@ -19,16 +19,16 @@ import type {
 	BitsMouseEvent,
 	WithRefOpts,
 	RefAttachment,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import {
 	createBitsAttrs,
 	boolToStr,
 	boolToStrTrueOrUndef,
 	boolToEmptyStrOrUndef,
-} from "$lib/internal/attrs.js";
-import { isBrowser, isNull, isNumberString } from "$lib/internal/is.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { useId } from "$lib/internal/use-id.js";
+} from "#lib/internal/attrs.js";
+import { isBrowser, isNull, isNumberString } from "#lib/internal/is.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { useId } from "#lib/internal/use-id.js";
 import type {
 	DateAndTimeSegmentObj,
 	DateOnInvalid,
@@ -41,9 +41,9 @@ import type {
 	SegmentValueObj,
 	TimeSegmentObj,
 	EditableTimeSegmentPart,
-} from "$lib/shared/date/types.js";
-import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
-import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
+} from "#lib/shared/date/types.js";
+import { type Formatter, createFormatter } from "#lib/internal/date-time/formatter.js";
+import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
 import {
 	areAllSegmentsFilled,
 	createContent,
@@ -63,19 +63,19 @@ import {
 	MAX_DAYS_IN_MONTH,
 	removeDescriptionElement,
 	setDescription,
-} from "$lib/internal/date-time/field/helpers.js";
+} from "#lib/internal/date-time/field/helpers.js";
 import {
 	DATE_SEGMENT_PARTS,
 	EDITABLE_TIME_SEGMENT_PARTS,
-} from "$lib/internal/date-time/field/parts.js";
-import { getDaysInMonth, isBefore, toDate } from "$lib/internal/date-time/utils.js";
+} from "#lib/internal/date-time/field/parts.js";
+import { getDaysInMonth, isBefore, toDate } from "#lib/internal/date-time/utils.js";
 import {
 	getFirstSegment,
 	handleSegmentNavigation,
 	isSegmentNavigationKey,
 	moveToNextSegment,
 	moveToPrevSegment,
-} from "$lib/internal/date-time/field/segments.js";
+} from "#lib/internal/date-time/field/segments.js";
 
 export const dateFieldAttrs = createBitsAttrs({
 	component: "date-field",

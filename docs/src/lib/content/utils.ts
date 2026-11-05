@@ -305,8 +305,6 @@ export function defineCSSVarSchema(opts: CSSVarSchema) {
  * a plain string definition used by API schema prop helpers.
  */
 export function stringDefinitionFromMarkdown(raw: string): string {
-	const fencedBlockMatch = raw
-		.trim()
-		.match(/^```[^\r\n]*\r?\n([\s\S]*?)\r?\n```$/);
+	const fencedBlockMatch = raw.trim().match(/^```[^\r\n]*\r?\n([\s\S]*?)\r?\n```$/);
 	return (fencedBlockMatch?.[1] ?? raw).trim();
 }

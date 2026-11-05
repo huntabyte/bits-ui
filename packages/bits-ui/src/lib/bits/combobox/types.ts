@@ -2,13 +2,13 @@ import type {
 	BitsPrimitiveInputAttributes,
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
+} from "#lib/shared/attributes.js";
 import type {
 	SelectBaseRootPropsWithoutHTML,
 	SelectMultipleRootPropsWithoutHTML,
 	SelectSingleRootPropsWithoutHTML,
-} from "$lib/bits/select/types.js";
-import type { WithChild, Without } from "$lib/internal/types.js";
+} from "#lib/bits/select/types.js";
+import type { WithChild, Without } from "#lib/internal/types.js";
 
 export type ComboboxBaseRootPropsWithoutHTML = Omit<
 	SelectBaseRootPropsWithoutHTML,
@@ -62,7 +62,7 @@ export type {
 	SelectArrowPropsWithoutHTML as ComboboxArrowPropsWithoutHTML,
 	SelectPortalProps as ComboboxPortalProps,
 	SelectPortalPropsWithoutHTML as ComboboxPortalPropsWithoutHTML,
-} from "$lib/bits/select/types.js";
+} from "#lib/bits/select/types.js";
 
 export type ComboboxInputPropsWithoutHTML = WithChild<{
 	/**

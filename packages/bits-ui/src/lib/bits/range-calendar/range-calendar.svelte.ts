@@ -14,18 +14,18 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
-import type { DateRange, Month } from "$lib/shared/index.js";
+import type { DateRange, Month } from "#lib/shared/index.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { useId } from "$lib/internal/use-id.js";
-import { boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
-import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+} from "#lib/internal/types.js";
+import { useId } from "#lib/internal/use-id.js";
+import { boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "#lib/internal/date-time/formatter.js";
 import {
 	calendarAttrs,
 	createMonths,
@@ -43,7 +43,7 @@ import {
 	getTabbableDate,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/internal/date-time/calendar-helpers.svelte.js";
+} from "#lib/internal/date-time/calendar-helpers.svelte.js";
 import {
 	areAllDaysBetweenValid,
 	getDateValueType,
@@ -51,8 +51,8 @@ import {
 	isBefore,
 	isBetweenInclusive,
 	toDate,
-} from "$lib/internal/date-time/utils.js";
-import type { WeekStartsOn } from "$lib/shared/date/types.js";
+} from "#lib/internal/date-time/utils.js";
+import type { WeekStartsOn } from "#lib/shared/date/types.js";
 import { onMount, untrack } from "svelte";
 
 const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");

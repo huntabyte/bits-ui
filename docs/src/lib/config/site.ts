@@ -1,4 +1,4 @@
-import { defineSiteConfig } from "$lib/utils/use-site-config.svelte.js";
+import { defineSiteConfig } from "#lib/utils/use-site-config.svelte.js";
 
 export const siteConfig = defineSiteConfig({
 	name: "Bits UI",

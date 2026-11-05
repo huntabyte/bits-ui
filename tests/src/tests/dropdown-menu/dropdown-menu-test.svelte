@@ -65,7 +65,7 @@
 						</DropdownMenu.GroupHeading>
 						<DropdownMenu.Item
 							data-testid="item"
-							class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 						>
 							<span>item</span>
 						</DropdownMenu.Item>
@@ -80,14 +80,14 @@
 								<DropdownMenu.Item
 									{...subItemProps}
 									data-testid="sub-item"
-									class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+									class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 								>
 									<span>Email</span>
 								</DropdownMenu.Item>
 								<DropdownMenu.CheckboxItem
 									bind:checked={subChecked}
 									data-testid="sub-checkbox-item"
-									class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+									class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 								>
 									{#snippet children({ checked, indeterminate: _indeterminate })}
 										<span data-testid="sub-checkbox-indicator">
@@ -102,19 +102,19 @@
 					<DropdownMenu.Item
 						disabled
 						data-testid="disabled-item"
-						class="focus:bg-gray-100 focus:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+						class="focus:bg-gray-100 focus:text-gray-500 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
 						>disabled item</DropdownMenu.Item
 					>
 					<DropdownMenu.Item
 						disabled
 						data-testid="disabled-item-2"
-						class="focus:bg-gray-100 focus:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
+						class="focus:bg-gray-100 focus:text-gray-500 focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 focus:outline-none"
 						>disabled item 2</DropdownMenu.Item
 					>
 					<DropdownMenu.CheckboxItem
 						bind:checked
 						data-testid="checkbox-item"
-						class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+						class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 					>
 						{#snippet children({ checked, indeterminate: _indeterminate })}
 							<span data-testid="checkbox-indicator">
@@ -125,14 +125,14 @@
 					</DropdownMenu.CheckboxItem>
 					<DropdownMenu.Item
 						data-testid="item-2"
-						class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+						class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 						>item 2</DropdownMenu.Item
 					>
 					<DropdownMenu.RadioGroup bind:value={radio} data-testid="radio-group">
 						<DropdownMenu.RadioItem
 							value="1"
 							data-testid="radio-item"
-							class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 						>
 							{#snippet children({ checked })}
 								<span data-testid="radio-indicator-1">
@@ -144,7 +144,7 @@
 						<DropdownMenu.RadioItem
 							value="2"
 							data-testid="radio-item-2"
-							class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 						>
 							{#snippet children({ checked })}
 								<span data-testid="radio-indicator-2"> {checked} </span>
@@ -160,7 +160,7 @@
 						<DropdownMenu.CheckboxItem
 							value="1"
 							data-testid="checkbox-group-item-1"
-							class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 						>
 							{#snippet children({ checked })}
 								<span data-testid="checkbox-indicator-1"> {checked} </span>
@@ -170,7 +170,7 @@
 						<DropdownMenu.CheckboxItem
 							value="2"
 							data-testid="checkbox-group-item-2"
-							class="focus:bg-blue-100 focus:text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							class="focus:bg-blue-100 focus:text-blue-900 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 						>
 							{#snippet children({ checked })}
 								<span data-testid="checkbox-indicator-2"> {checked} </span>

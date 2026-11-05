@@ -2,7 +2,7 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ToolbarRootProps } from "../types.js";
 	import { ToolbarRootState } from "../toolbar.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

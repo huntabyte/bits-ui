@@ -2,8 +2,8 @@
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { NavigationMenuListProps } from "../types.js";
 	import { NavigationMenuListState } from "../navigation-menu.svelte.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import Mounted from "$lib/bits/utilities/mounted.svelte";
+	import { createId } from "#lib/internal/create-id.js";
+	import Mounted from "#lib/bits/utilities/mounted.svelte";
 
 	const uid = $props.id();
 

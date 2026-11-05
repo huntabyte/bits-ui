@@ -21,7 +21,7 @@
 }
 
 [data-rehype-pretty-code-figure] [data-line-numbers] > [data-line]::before {
-	@apply text-muted-foreground text-xs;
+	@apply text-xs text-muted-foreground;
 	counter-increment: line;
 	content: counter(line);
 	display: inline-block;
@@ -38,7 +38,7 @@
 	@apply relative;
 
 	& pre {
-		@apply rounded-card mb-4 mt-6 w-full overflow-x-auto py-5 text-sm font-semibold;
+		@apply mt-6 mb-4 w-full overflow-x-auto rounded-card py-5 text-sm font-semibold;
 	}
 
 	& pre[data-metadata] {
@@ -46,13 +46,13 @@
 	}
 
 	& code {
-		@apply grid min-w-full break-words rounded-none border-0 bg-transparent p-0;
+		@apply grid min-w-full rounded-none border-0 bg-transparent p-0 break-words;
 		counter-reset: line;
 		box-decoration-break: clone;
 	}
 
 	& [data-line] {
-		@apply inline-block w-full basis-4 border-l-[3px] border-l-transparent py-0.5 pl-2.5 pr-5;
+		@apply inline-block w-full basis-4 border-l-[3px] border-l-transparent py-0.5 pr-5 pl-2.5;
 	}
 
 	& [data-chars-id] {
@@ -60,7 +60,7 @@
 	}
 
 	& [data-highlighted-chars] {
-		@apply bg-muted rounded-md px-1 pb-0.5 font-bold;
+		@apply rounded-md bg-muted px-1 pb-0.5 font-bold;
 	}
 
 	& [data-highlighted-line] {
@@ -70,7 +70,7 @@
 
 [data-preview] {
 	& pre {
-		@apply mb-0 mt-0;
+		@apply mt-0 mb-0;
 	}
 
 	& [data-copy-code] {
@@ -79,7 +79,7 @@
 }
 
 [data-chars-id="ul"] {
-	@apply border-border! border-b! font-bold!;
+	@apply border-b! border-border! font-bold!;
 }
 
 [data-chars-id="hi"] {
@@ -99,7 +99,7 @@
 }
 
 [data-rehype-pretty-code-title] {
-	@apply bg-muted text-foreground/70 mt-4 rounded-t-xl px-4 py-2.5 text-sm tracking-wide;
+	@apply mt-4 rounded-t-xl bg-muted px-4 py-2.5 text-sm tracking-wide text-foreground/70;
 }
 
 [data-rehype-pretty-code-title] + pre {

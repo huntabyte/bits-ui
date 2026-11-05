@@ -1,0 +1,36 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"tabWidth": 4,
+	"singleQuote": false,
+	"trailingComma": "es5",
+	"semi": true,
+	"printWidth": 100,
+	"sortPackageJson": false,
+	"svelte": true,
+	"sortTailwindcss": {
+		"stylesheet": "./docs/src/lib/styles/app.css",
+		"functions": ["clsx", "cn", "tv"]
+	},
+	"overrides": [
+		{
+			"files": ["*.md"],
+			"options": { "tabWidth": 2, "useTabs": false, "printWidth": 79 }
+		}
+	],
+	"ignorePatterns": [
+		"**/build",
+		"**/.svelte-kit",
+		"**/.changeset/",
+		"**/.velite",
+		"**/dist",
+		"**/CHANGELOG.md",
+		"package.json",
+		"pnpm-lock.yaml",
+		"pnpm-workspace.yaml",
+		"vite.config.*.timestamp-*",
+		"docs/src/routes/api/search.json/search.json",
+		"docs/src/routes/api/demos.json/demos.json",
+		"docs/src/routes/api/demos.json/stackblitz-files.json"
+	]
+}

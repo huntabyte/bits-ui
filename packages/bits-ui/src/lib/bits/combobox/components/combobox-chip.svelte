@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { ComboboxChipProps } from "../types.js";
-	import { useId } from "$lib/internal/use-id.js";
-	import { SelectComboChipState } from "$lib/bits/select/select.svelte.js";
+	import { useId } from "#lib/internal/use-id.js";
+	import { SelectComboChipState } from "#lib/bits/select/select.svelte.js";
 
 	let {
 		id = useId(),

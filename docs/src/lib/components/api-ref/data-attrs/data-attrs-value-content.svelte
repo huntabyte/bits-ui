@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Code from "$lib/components/markdown/code.svelte";
+	import Code from "#lib/components/markdown/code.svelte";
 	import { Popover } from "bits-ui";
-	import ScrollArea from "$lib/components/ui/scroll-area.svelte";
-	import type { DataAttrSchema } from "$lib/types/index.js";
+	import ScrollArea from "#lib/components/ui/scroll-area.svelte";
+	import type { DataAttrSchema } from "#lib/types/index.js";
 	import Info from "phosphor-svelte/lib/Info";
 
 	let { attr }: { attr: DataAttrSchema } = $props();
@@ -14,7 +14,7 @@
 		<Popover.Root>
 			<Popover.Trigger
 				data-llm-ignore
-				class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
+				class="inline-flex items-center justify-center rounded-button text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 			>
 				<Info class="size-4" weight="bold" />
 				<span class="sr-only">See enum options</span>
@@ -23,11 +23,11 @@
 				preventScroll={false}
 				side="top"
 				sideOffset={10}
-				class="rounded-card border-border shadow-popover z-50 border-2 bg-zinc-50 py-1.5 pl-1.5 pr-0.5 dark:bg-[#121212]"
+				class="z-50 rounded-card border-2 border-border bg-zinc-50 py-1.5 pr-0.5 pl-1.5 shadow-popover dark:bg-[#121212]"
 			>
 				<ScrollArea>
 					<div
-						class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pt-0! [&_pre]:pb-0! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:outline-hidden! [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
+						class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mt-0 [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:border-0 [&_pre]:p-0 [&_pre]:pt-0! [&_pre]:pb-0! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:outline-hidden!"
 					>
 						<attr.value />
 					</div>

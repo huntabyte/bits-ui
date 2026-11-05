@@ -4,8 +4,8 @@ import {
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	boolToTrueOrUndef,
-} from "$lib/internal/attrs.js";
-import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+} from "#lib/internal/attrs.js";
+import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
 
 export const toggleAttrs = createBitsAttrs({
 	component: "toggle",
@@ -13,7 +13,8 @@ export const toggleAttrs = createBitsAttrs({
 });
 
 interface ToggleRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}>,

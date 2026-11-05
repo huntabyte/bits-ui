@@ -28,7 +28,7 @@ When you need to customize this element, the `child` snippet lets you take contr
 
 ```svelte
 <script lang="ts">
-  import MyCustomButton from "$lib/components";
+  import MyCustomButton from "#lib/components/index.js";
   import { Accordion } from "bits-ui";
 </script>
 

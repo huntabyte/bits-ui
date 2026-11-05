@@ -21,8 +21,8 @@ import {
 	getCheckedState,
 	isMouseEvent,
 } from "./utils.js";
-import { focusFirst } from "$lib/internal/focus.js";
-import { CustomEventDispatcher, isEventTargetWithin } from "$lib/internal/events.js";
+import { focusFirst } from "#lib/internal/focus.js";
+import { CustomEventDispatcher, isEventTargetWithin } from "#lib/internal/events.js";
 import type {
 	AnyFn,
 	BitsFocusEvent,
@@ -32,14 +32,14 @@ import type {
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import {
 	isDisabledElement,
 	isElement,
 	isElementOrSVGElement,
 	isHTMLElement,
-} from "$lib/internal/is.js";
-import { kbd } from "$lib/internal/kbd.js";
+} from "#lib/internal/is.js";
+import { kbd } from "#lib/internal/kbd.js";
 import {
 	createBitsAttrs,
 	getAriaChecked,
@@ -47,16 +47,16 @@ import {
 	getDataOpenClosed,
 	boolToEmptyStrOrUndef,
 	getDataTransitionAttrs,
-} from "$lib/internal/attrs.js";
-import type { Direction } from "$lib/shared/index.js";
-import { IsUsingKeyboard } from "$lib/bits/utilities/is-using-keyboard/is-using-keyboard.svelte.js";
-import { getTabbableFrom } from "$lib/internal/tabbable.js";
+} from "#lib/internal/attrs.js";
+import type { Direction } from "#lib/shared/index.js";
+import { IsUsingKeyboard } from "#lib/bits/utilities/is-using-keyboard/is-using-keyboard.svelte.js";
+import { getTabbableFrom } from "#lib/internal/tabbable.js";
 import { isTabbable } from "tabbable";
 import type { KeyboardEventHandler, PointerEventHandler, MouseEventHandler } from "svelte/elements";
-import { DOMTypeahead } from "$lib/internal/dom-typeahead.svelte.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
-import { arraysAreEqual } from "$lib/internal/arrays.js";
+import { DOMTypeahead } from "#lib/internal/dom-typeahead.svelte.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
+import { arraysAreEqual } from "#lib/internal/arrays.js";
 
 import { CONTEXT_MENU_TRIGGER_ATTR } from "./context-menu-attributes.js";
 

@@ -7,14 +7,14 @@ import {
 	boolToTrueOrUndef,
 	createBitsAttrs,
 	boolToEmptyStrOrUndef,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
 import type {
 	BitsKeyboardEvent,
 	BitsPointerEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 
 const switchAttrs = createBitsAttrs({
 	component: "switch",
@@ -24,7 +24,8 @@ const switchAttrs = createBitsAttrs({
 const SwitchRootContext = new Context<SwitchRootState>("Switch.Root");
 
 interface SwitchRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			required: boolean;

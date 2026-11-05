@@ -1,6 +1,6 @@
 import { type ReadableBox, type ReadableBoxedValues, boxFrom, simpleBox } from "svelte-toolbelt";
 import { Context } from "runed";
-import type { Measurable } from "$lib/internal/floating-svelte/types.js";
+import type { Measurable } from "#lib/internal/floating-svelte/types.js";
 
 export const FloatingRootContext = new Context<FloatingRootState>("Floating.Root");
 export const FloatingTooltipRootContext = new Context<FloatingRootState>("Floating.Root");
@@ -30,12 +30,11 @@ export class FloatingRootState {
 	}
 }
 
-interface FloatingAnchorStateOpts
-	extends ReadableBoxedValues<{
-		id: string;
-		virtualEl?: Measurable | null;
-		ref: Measurable | HTMLElement | null;
-	}> {}
+interface FloatingAnchorStateOpts extends ReadableBoxedValues<{
+	id: string;
+	virtualEl?: Measurable | null;
+	ref: Measurable | HTMLElement | null;
+}> {}
 
 export class FloatingAnchorState {
 	static create(opts: FloatingAnchorStateOpts, tooltip = false) {
