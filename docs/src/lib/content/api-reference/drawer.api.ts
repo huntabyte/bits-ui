@@ -33,6 +33,7 @@ import {
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,
+	defineFunctionProp,
 	defineSimpleDataAttr,
 	defineSimplePropSchema,
 	defineUnionProp,
@@ -85,10 +86,15 @@ const root = defineComponentApiSchema<DrawerRootPropsWithoutHTML>({
 			definition: null as never,
 		}),
 		snapPoint: { ...snapPointProp, bindable: true },
-		onSnapPointChange: onOpenChangeProp,
+		onSnapPointChange: defineFunctionProp({
+			definition: null as never,
+			description: "Called when the drawer changes the active snap point.",
+			stringDefinition: "(snapPoint: number | string | null | undefined) => void",
+		}),
 		snapToSequentialPoints: defineBooleanProp({
 			default: false,
-			description: "When `true`, swipes advance through snap points sequentially.",
+			description:
+				"When `true`, snap point selection uses drag distance without projecting release velocity.",
 		}),
 		tether: drawerTetherProp,
 		triggerId: triggerIdProp,
@@ -398,7 +404,12 @@ const swipeArea = defineComponentApiSchema<DrawerSwipeAreaPropsWithoutHTML>({
 			default: false,
 			description: "Whether the swipe area is disabled.",
 		}),
-		swipeDirection: swipeDirectionProp,
+		swipeDirection: defineUnionProp({
+			options: ["up", "down", "left", "right"],
+			description:
+				"The direction to swipe to open the drawer. Defaults to the opposite of Root.swipeDirection.",
+			definition: null as never,
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [

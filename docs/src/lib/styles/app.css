@@ -196,7 +196,6 @@
 	}
 
 	@keyframes caret-blink {
-
 		0%,
 		70%,
 		100% {
@@ -303,7 +302,6 @@
 }
 
 @layer base {
-
 	*,
 	::after,
 	::before,

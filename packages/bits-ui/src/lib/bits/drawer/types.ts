@@ -54,7 +54,7 @@ export type DrawerRootPropsWithoutHTML<Payload = never> = {
 
 	/**
 	 * Snap points for the drawer. Numbers from `0` to `1` are treated as viewport fractions.
-	 * Numbers larger than `1` are treated as pixels. Strings should use CSS length units.
+	 * Numbers larger than `1` are treated as pixels. Strings must use `px` or `rem` units.
 	 */
 	snapPoints?: DrawerSnapPoint[];
 
@@ -69,7 +69,7 @@ export type DrawerRootPropsWithoutHTML<Payload = never> = {
 	onSnapPointChange?: OnChangeFn<DrawerSnapPoint | null | undefined>;
 
 	/**
-	 * When `true`, the drawer should move through snap points sequentially.
+	 * When `true`, choose a snap point by distance without projecting release velocity.
 	 *
 	 * @default false
 	 */

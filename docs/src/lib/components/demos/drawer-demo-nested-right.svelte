@@ -25,7 +25,7 @@
 
 <Drawer.Root swipeDirection="right">
 	<Drawer.Trigger
-		class="rounded-input bg-dark text-background shadow-mini hover:bg-dark/95 inline-flex h-12 select-none items-center justify-center px-[21px] text-[15px] font-semibold active:scale-[0.98]"
+		class="inline-flex h-12 items-center justify-center rounded-input bg-dark px-[21px] text-[15px] font-semibold text-background shadow-mini select-none hover:bg-dark/95 active:scale-[0.98]"
 	>
 		Nested Right Drawers
 	</Drawer.Trigger>
@@ -35,24 +35,24 @@
 			<Drawer.Popup class={popupClass}>
 				<Drawer.Content class="mx-auto flex h-full w-full max-w-[32rem] flex-col">
 					<Drawer.Title
-						class="text-muted-foreground mb-3 text-xs font-medium uppercase tracking-widest"
+						class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
 					>
 						Workspace
 					</Drawer.Title>
-					<Drawer.Description class="text-foreground-alt mb-6 text-sm">
+					<Drawer.Description class="mb-6 text-sm text-foreground-alt">
 						Open nested drawers that all slide from the right side.
 					</Drawer.Description>
 
 					<div class="space-y-3">
 						<div class="rounded-card-sm bg-muted p-3">
 							<p class="text-sm font-medium">General settings</p>
-							<p class="text-foreground-alt mt-0.5 text-xs">
+							<p class="mt-0.5 text-xs text-foreground-alt">
 								Timezone, locale, and visibility
 							</p>
 						</div>
 						<div class="rounded-card-sm bg-muted p-3">
 							<p class="text-sm font-medium">Collaborators</p>
-							<p class="text-foreground-alt mt-0.5 text-xs">
+							<p class="mt-0.5 text-xs text-foreground-alt">
 								Manage members and roles
 							</p>
 						</div>
@@ -69,12 +69,12 @@
 											class="mx-auto flex h-full w-full max-w-[28rem] flex-col"
 										>
 											<Drawer.Title
-												class="text-muted-foreground mb-3 text-xs font-medium uppercase tracking-widest"
+												class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
 											>
 												Collaborators
 											</Drawer.Title>
 											<Drawer.Description
-												class="text-foreground-alt mb-5 text-sm"
+												class="mb-5 text-sm text-foreground-alt"
 											>
 												Invite someone new. This input is for keyboard
 												behavior testing.
@@ -83,7 +83,7 @@
 											<div class="mb-4 space-y-2">
 												<label
 													for="invite-email"
-													class="text-foreground text-sm font-medium"
+													class="text-sm font-medium text-foreground"
 												>
 													Invite by email
 												</label>
@@ -91,14 +91,14 @@
 													id="invite-email"
 													type="email"
 													placeholder="teammate@company.com"
-													class="border-border-input bg-background rounded-input text-foreground placeholder:text-foreground-alt h-10 w-full border px-3 text-sm outline-none"
+													class="h-10 w-full rounded-input border border-border-input bg-background px-3 text-sm text-foreground outline-none placeholder:text-foreground-alt"
 												/>
 											</div>
 
 											<div class="mb-6 space-y-2">
 												<label
 													for="invite-role"
-													class="text-foreground text-sm font-medium"
+													class="text-sm font-medium text-foreground"
 												>
 													Role
 												</label>
@@ -106,7 +106,7 @@
 													id="invite-role"
 													type="text"
 													placeholder="Editor"
-													class="border-border-input bg-background rounded-input text-foreground placeholder:text-foreground-alt h-10 w-full border px-3 text-sm outline-none"
+													class="h-10 w-full rounded-input border border-border-input bg-background px-3 text-sm text-foreground outline-none placeholder:text-foreground-alt"
 												/>
 											</div>
 
@@ -125,12 +125,12 @@
 																	class="mx-auto w-full max-w-[24rem]"
 																>
 																	<Drawer.Title
-																		class="text-muted-foreground mb-3 text-xs font-medium uppercase tracking-widest"
+																		class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
 																	>
 																		Advanced Roles
 																	</Drawer.Title>
 																	<Drawer.Description
-																		class="text-foreground-alt mb-5 text-sm"
+																		class="mb-5 text-sm text-foreground-alt"
 																	>
 																		Permissions for custom
 																		project roles.

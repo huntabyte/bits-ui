@@ -593,7 +593,8 @@ export function createTether<Payload = unknown>() {
 const DrawerRootContext = new Context<DrawerRootState>("Drawer.Root");
 
 interface DrawerRootStateOpts
-	extends WritableBoxedValues<{
+	extends
+		WritableBoxedValues<{
 			open: boolean;
 			snapPoint: DrawerSnapPoint | null | undefined;
 			triggerId: string | null;
@@ -1055,7 +1056,8 @@ export class DrawerRootState {
 }
 
 interface DrawerTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			// oxlint-disable-next-line no-explicit-any
@@ -1318,8 +1320,7 @@ export class DrawerCloseState {
 }
 
 interface DrawerTitleStateOpts
-	extends WithRefOpts,
-		ReadableBoxedValues<{ level: 1 | 2 | 3 | 4 | 5 | 6 }> {}
+	extends WithRefOpts, ReadableBoxedValues<{ level: 1 | 2 | 3 | 4 | 5 | 6 }> {}
 
 export class DrawerTitleState {
 	static create(opts: DrawerTitleStateOpts) {
@@ -2714,7 +2715,8 @@ export class DrawerViewportState {
 }
 
 interface DrawerPopupStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			trapFocus: boolean;
 			preventScroll: boolean;
@@ -2881,8 +2883,8 @@ export class DrawerPopupState {
 					const activeElement = doc.activeElement;
 					return Boolean(
 						activeElement &&
-							popup.contains(activeElement) &&
-							isVirtualKeyboardTarget(activeElement)
+						popup.contains(activeElement) &&
+						isVirtualKeyboardTarget(activeElement)
 					);
 				};
 
@@ -3015,21 +3017,21 @@ export class DrawerPopupState {
 						const activeElementIsBody = activeElement === doc.body;
 						const shouldUseRecentTouchIntentFallback = Boolean(
 							recentTouchIntentTarget &&
-								recentTouchIntentTarget.isConnected &&
-								popup.contains(recentTouchIntentTarget) &&
-								isVirtualKeyboardTarget(recentTouchIntentTarget) &&
-								touchIntentAgeMs !== null &&
-								touchIntentAgeMs <= IOS_RECENT_TOUCH_INTENT_WINDOW_MS &&
-								!recentTouchTargetIsBlurredTarget
+							recentTouchIntentTarget.isConnected &&
+							popup.contains(recentTouchIntentTarget) &&
+							isVirtualKeyboardTarget(recentTouchIntentTarget) &&
+							touchIntentAgeMs !== null &&
+							touchIntentAgeMs <= IOS_RECENT_TOUCH_INTENT_WINDOW_MS &&
+							!recentTouchTargetIsBlurredTarget
 						);
 						const shouldUseSameTargetCloneFallback = Boolean(
 							recentTouchTargetIsBlurredTarget &&
-								touchIntentAgeMs !== null &&
-								touchIntentAgeMs <= IOS_RECENT_TOUCH_INTENT_WINDOW_MS &&
-								activeElementIsBody &&
-								currentLayoutInset !== null &&
-								currentLayoutInset >= IOS_VIRTUAL_KEYBOARD_DELTA_THRESHOLD &&
-								isVirtualKeyboardTarget(target)
+							touchIntentAgeMs !== null &&
+							touchIntentAgeMs <= IOS_RECENT_TOUCH_INTENT_WINDOW_MS &&
+							activeElementIsBody &&
+							currentLayoutInset !== null &&
+							currentLayoutInset >= IOS_VIRTUAL_KEYBOARD_DELTA_THRESHOLD &&
+							isVirtualKeyboardTarget(target)
 						);
 
 						if (shouldUseRecentTouchIntentFallback && recentTouchIntentTarget) {
@@ -3214,7 +3216,8 @@ export class DrawerContentState {
 }
 
 interface DrawerSwipeAreaStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 			swipeDirection: DrawerSwipeDirection | undefined;

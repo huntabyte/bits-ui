@@ -21,7 +21,7 @@
 
 <Drawer.Root>
 	<Drawer.Trigger
-		class="rounded-input bg-dark text-background shadow-mini hover:bg-dark/95 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex h-12 select-none items-center justify-center px-[21px] text-[15px] font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.98]"
+		class="inline-flex h-12 items-center justify-center rounded-input bg-dark px-[21px] text-[15px] font-semibold text-background shadow-mini select-none hover:bg-dark/95 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden active:scale-[0.98]"
 	>
 		View cart
 	</Drawer.Trigger>
@@ -36,41 +36,41 @@
 					<Drawer.Title class="mb-1 text-center text-lg font-semibold tracking-tight">
 						Your Cart
 					</Drawer.Title>
-					<Drawer.Description class="text-foreground-alt mb-6 text-center text-sm">
+					<Drawer.Description class="mb-6 text-center text-sm text-foreground-alt">
 						Review your items and proceed to checkout.
 					</Drawer.Description>
 
 					<ul class="mb-6 space-y-3">
-						<li class="rounded-card-sm bg-muted flex items-center gap-3 p-3">
+						<li class="flex items-center gap-3 rounded-card-sm bg-muted p-3">
 							<div
-								class="rounded-9px bg-dark-10 flex size-10 shrink-0 items-center justify-center text-xs font-semibold"
+								class="flex size-10 shrink-0 items-center justify-center rounded-9px bg-dark-10 text-xs font-semibold"
 							>
 								RS
 							</div>
 							<div class="min-w-0 flex-1">
 								<p class="truncate text-sm font-medium">Running Shoes</p>
-								<p class="text-foreground-alt text-xs">Size 10 · Black</p>
+								<p class="text-xs text-foreground-alt">Size 10 · Black</p>
 							</div>
 							<span class="shrink-0 text-sm font-semibold">$129</span>
 						</li>
-						<li class="rounded-card-sm bg-muted flex items-center gap-3 p-3">
+						<li class="flex items-center gap-3 rounded-card-sm bg-muted p-3">
 							<div
-								class="rounded-9px bg-dark-10 flex size-10 shrink-0 items-center justify-center text-xs font-semibold"
+								class="flex size-10 shrink-0 items-center justify-center rounded-9px bg-dark-10 text-xs font-semibold"
 							>
 								BC
 							</div>
 							<div class="min-w-0 flex-1">
 								<p class="truncate text-sm font-medium">Baseball Cap</p>
-								<p class="text-foreground-alt text-xs">One size · Navy</p>
+								<p class="text-xs text-foreground-alt">One size · Navy</p>
 							</div>
 							<span class="shrink-0 text-sm font-semibold">$34</span>
 						</li>
 					</ul>
 
 					<div
-						class="border-border-card mb-6 flex items-center justify-between border-t pt-4"
+						class="mb-6 flex items-center justify-between border-t border-border-card pt-4"
 					>
-						<span class="text-foreground-alt text-sm">Subtotal</span>
+						<span class="text-sm text-foreground-alt">Subtotal</span>
 						<span class="text-sm font-semibold">$163.00</span>
 					</div>
 
@@ -94,20 +94,20 @@
 													Shipping
 												</Drawer.Title>
 												<Drawer.Description
-													class="text-foreground-alt mb-6 text-center text-sm"
+													class="mb-6 text-center text-sm text-foreground-alt"
 												>
 													Choose your preferred delivery speed.
 												</Drawer.Description>
 
 												<ul class="mb-6 space-y-2">
 													<li
-														class="rounded-card-sm bg-muted flex items-center justify-between p-3"
+														class="flex items-center justify-between rounded-card-sm bg-muted p-3"
 													>
 														<div>
 															<p class="text-sm font-medium">
 																Standard
 															</p>
-															<p class="text-foreground-alt text-xs">
+															<p class="text-xs text-foreground-alt">
 																5-7 business days
 															</p>
 														</div>
@@ -116,13 +116,13 @@
 														</span>
 													</li>
 													<li
-														class="rounded-card-sm bg-muted flex items-center justify-between p-3"
+														class="flex items-center justify-between rounded-card-sm bg-muted p-3"
 													>
 														<div>
 															<p class="text-sm font-medium">
 																Express
 															</p>
-															<p class="text-foreground-alt text-xs">
+															<p class="text-xs text-foreground-alt">
 																2-3 business days
 															</p>
 														</div>
@@ -131,13 +131,13 @@
 														</span>
 													</li>
 													<li
-														class="rounded-card-sm bg-muted flex items-center justify-between p-3"
+														class="flex items-center justify-between rounded-card-sm bg-muted p-3"
 													>
 														<div>
 															<p class="text-sm font-medium">
 																Overnight
 															</p>
-															<p class="text-foreground-alt text-xs">
+															<p class="text-xs text-foreground-alt">
 																Next business day
 															</p>
 														</div>
@@ -175,7 +175,7 @@
 																				Promo Code
 																			</Drawer.Title>
 																			<Drawer.Description
-																				class="text-foreground-alt mb-6 text-center text-sm"
+																				class="mb-6 text-center text-sm text-foreground-alt"
 																			>
 																				Enter a code or gift
 																				card to apply a
@@ -193,7 +193,7 @@
 																				</label>
 																				<input
 																					id="promo-code"
-																					class="h-input rounded-input border-border-input bg-background placeholder:text-foreground-alt/50 hover:border-dark-40 focus:ring-foreground focus:ring-offset-background focus:outline-hidden w-full border px-3 text-base focus:ring-2 focus:ring-offset-2 md:text-sm"
+																					class="h-input w-full rounded-input border border-border-input bg-background px-3 text-base placeholder:text-foreground-alt/50 hover:border-dark-40 focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background focus:outline-hidden md:text-sm"
 																					placeholder="e.g. SAVE20"
 																				/>
 																			</div>
@@ -209,7 +209,7 @@
 																				</label>
 																				<input
 																					id="gift-card"
-																					class="h-input rounded-input border-border-input bg-background placeholder:text-foreground-alt/50 hover:border-dark-40 focus:ring-foreground focus:ring-offset-background focus:outline-hidden w-full border px-3 text-base focus:ring-2 focus:ring-offset-2 md:text-sm"
+																					class="h-input w-full rounded-input border border-border-input bg-background px-3 text-base placeholder:text-foreground-alt/50 hover:border-dark-40 focus:ring-2 focus:ring-foreground focus:ring-offset-2 focus:ring-offset-background focus:outline-hidden md:text-sm"
 																					placeholder="XXXX-XXXX-XXXX"
 																				/>
 																			</div>

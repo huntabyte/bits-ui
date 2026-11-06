@@ -36,6 +36,10 @@ The Drawer component provides an accessible, gesture-driven sheet that slides in
 
 Derived from [Base UI's Drawer](https://base-ui.com/react/components/drawer) component, adapted for Bits UI and Svelte.
 
+## Migrating from vaul-svelte
+
+Import `unstable_Drawer as Drawer` from `bits-ui`. Replace `Overlay` with `Backdrop` and wrap your sheet in `Viewport` and `Popup`. Move focus, scroll lock, and dismissal props to `Popup`, and update your CSS to use the Drawer attributes and variables shown below. See the [migration skill](https://github.com/huntabyte/bits-ui/blob/main/.agents/skills/migrate-vaul-svelte/SKILL.md) for a mapping of props and behavior to check.
+
 ## Key Features
 
 - **Compound structure**: Primitives compose the same way as other Bits UI components, with clear roles for viewport, popup, and portal layers.
@@ -64,7 +68,7 @@ The Drawer is composed of several sub-components:
 
 ```svelte
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
 </script>
 
 <Drawer.Provider>
@@ -100,7 +104,7 @@ Use `bind:open` for simple synchronization:
 
 ```svelte {3,6,8}
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
   let isOpen = $state(false);
 </script>
 
@@ -117,7 +121,7 @@ Use a [function binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
   let myOpen = $state(false);
 
   function getOpen() {
@@ -144,7 +148,7 @@ Use `bind:snapPoint` alongside `snapPoints`:
 
 ```svelte {4,10}
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
   const snapPoints = ["160px", 1];
   let snapPoint = $state<string | number | null>(snapPoints[0]);
 </script>
@@ -160,7 +164,7 @@ Use a [function binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ```svelte
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
   const snapPoints = ["160px", 1];
   let mySnapPoint = $state<string | number | null>(snapPoints[0]);
 
@@ -206,7 +210,7 @@ Focus moves into the popup on open. Target a specific control with `onOpenAutoFo
 
 ```svelte {12-15}
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
   let nameInput = $state<HTMLInputElement>();
 </script>
 
@@ -238,11 +242,11 @@ Ensure something in the sheet receives focus when it opens.
 
 ### Close Focus
 
-On close, focus returns to the opening trigger by default. Customize with `onCloseAutoFocus` on **`Drawer.Popup`**.
+On close, focus returns to the element that was focused before the drawer opened. Customize with `onCloseAutoFocus` on **`Drawer.Popup`**.
 
 ### Modal Semantics and Scroll Lock
 
-`trapFocus` and `preventScroll` default to `true`. The popup sets `aria-modal` only when **both** are `true`. For a non-modal sheet, set one or both to `false` on **`Drawer.Popup`** (see [Non-Modal](#non-modal)). To trap focus without locking document scroll, use `preventScroll={false}`.
+`trapFocus` and `preventScroll` default to `true`. The popup sets `aria-modal` only when **both** are `true`. For a non-modal sheet, set both to `false` on **`Drawer.Popup`** (see [Non-Modal](#non-modal)). To trap focus without locking document scroll, use `preventScroll={false}`.
 
 ## Tether
 
@@ -258,7 +262,7 @@ Use a shared tether when controls and the sheet root live in different regions (
 
 ```svelte
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
 
   const queueTether = Drawer.createTether<{
     title: string;
@@ -407,8 +411,8 @@ The `swipeDirection` prop on `Drawer.Root` controls which edge the drawer slides
 
 The component automatically adjusts its CSS variables based on direction - horizontal drawers use `--drawer-swipe-movement-x` and `--drawer-transition-slide-x` for transforms, while vertical drawers use the `-y` variants. The `data-swipe-direction` attribute on the popup reflects the active direction, which is useful for applying direction-specific styles.
 
-```svelte /swipeDirection="bottom"/
-<Drawer.Root swipeDirection="bottom">
+```svelte /swipeDirection="down"/
+<Drawer.Root swipeDirection="down">
   <!-- slides in from the bottom edge, dismissed by swiping down -->
 </Drawer.Root>
 ```
@@ -423,11 +427,11 @@ The component automatically adjusts its CSS variables based on direction - horiz
 
 ## Snap Points
 
-The `snapPoints` prop on `Drawer.Root` accepts an array of heights the drawer can settle at. Values from `0` to `1` represent viewport fractions, values greater than `1` are raw pixels, and strings support `px` or `rem` units. The last value in the array is typically `1` (full viewport height).
+For a vertical drawer, the `snapPoints` prop on `Drawer.Root` accepts an array of heights the drawer can settle at. Values from `0` to `1` represent viewport fractions, values greater than `1` are raw pixels, and strings support `px` or `rem` units. The last value in the array is typically `1` (full viewport height).
 
 When snap points are active, the popup's `--drawer-snap-point-offset` CSS variable reflects the current snap offset - use it in your `transform` to position the sheet. The `data-expanded` attribute is present on the popup when the drawer is at the fully expanded snap point (value `1`).
 
-Use `bind:snapPoint` or `defaultSnapPoint` to control or initialize the active snap. Set `snapToSequentialPoints` to `true` to prevent velocity-based skipping, so swipes advance one snap at a time.
+Use `bind:snapPoint` to control the active snap. Initialize the bound value to a member of `snapPoints`, or omit it to start at the first point. Set `snapToSequentialPoints` to `true` to choose the nearest snap point by distance without projecting the release velocity.
 
 <Callout>
 
@@ -509,9 +513,9 @@ The demo below integrates a `ScrollArea` for the navigation list and uses a long
 
 ## Swipe To Open
 
-`Drawer.SwipeArea` provides an invisible edge hit-area that opens the drawer with a drag gesture. Position it along the edge the drawer slides from (for example, a thin strip on the right edge for a `swipeDirection="right"` drawer). The user swipes in the **opposite** direction of `swipeDirection` to open - so a right-dismissing drawer opens with a left-to-right swipe on the area.
+`Drawer.SwipeArea` provides an invisible edge hit-area that opens the drawer with a drag gesture. Position it along the edge the drawer slides from (for example, a thin strip on the right edge for a `swipeDirection="right"` drawer). The user swipes in the **opposite** direction of `swipeDirection` to open - so a right-dismissing drawer opens with a right-to-left swipe on the area.
 
-The swipe area accepts an optional `swipeDirection` prop to override the root's direction, and exposes `data-swiping` and `data-disabled` attributes for styling. During the swipe, the popup's `--drawer-swipe-movement-*` CSS variables update in real time so the sheet tracks the user's finger.
+The swipe area accepts an optional `swipeDirection` prop to set the opening gesture direction, and exposes `data-swiping` and `data-disabled` attributes for styling. During the swipe, the popup's `--drawer-swipe-movement-*` CSS variables update in real time so the sheet tracks the user's finger.
 
 <ComponentPreview name="drawer-demo-swipe-area" componentName="Drawer" size="sm">
 
@@ -539,7 +543,7 @@ Use `forceMount` with the `child` snippet on **`Drawer.Backdrop`** and **`Drawer
 
 ```svelte /forceMount/ /transition:fade/
 <script lang="ts">
-  import { Drawer } from "bits-ui";
+  import { unstable_Drawer as Drawer } from "bits-ui";
   import { fade } from "svelte/transition";
 </script>
 
