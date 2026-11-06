@@ -18,7 +18,7 @@ description: A swipeable panel that slides in from the edge of the viewport.
 		DrawerDemoSwipeArea,
 		DrawerDemoTether,
 		DrawerDemoUncontained
-	} from "$lib/components/index.js";
+	} from "#lib/components/index.js";
 	let { schemas } = $props();
 </script>
 
