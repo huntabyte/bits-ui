@@ -85,13 +85,35 @@ it("should open on focus and close on blur", async () => {
 it("should stay open on pointer leave when focus opened it", async () => {
 	const t = await setup();
 	await page.getByTestId("outside").hover();
-	(t.trigger.element() as HTMLElement).focus();
+	await userEvent.tab();
 	await expectExists(page.getByTestId("content"));
 
 	await t.trigger.hover();
 	await page.getByTestId("outside").hover();
 	await new Promise((resolve) => setTimeout(resolve, 100));
 	await expectExists(page.getByTestId("content"));
+});
+
+it("should still open from focus when the pointer passes over the trigger during the open delay", async () => {
+	const t = await setup({ openDelay: 500 });
+	await page.getByTestId("outside").hover();
+	await userEvent.tab();
+	expect(document.activeElement).toBe(t.trigger.element());
+	await t.trigger.hover();
+	await page.getByTestId("outside").hover();
+	await expectExists(page.getByTestId("content"));
+});
+
+it("should close on pointer leave when hover opens it after a focus open was cancelled by blur", async () => {
+	const t = await setup({ openDelay: 500 });
+	await page.getByTestId("outside").hover();
+	await userEvent.tab();
+	expect(document.activeElement).toBe(t.trigger.element());
+	(t.trigger.element() as HTMLElement).blur();
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("outside").hover();
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should portal to the body by default", async () => {
