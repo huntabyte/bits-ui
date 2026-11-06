@@ -560,7 +560,7 @@ describe("combobox - single", () => {
 		await expectExists(t.getContent());
 		await t.rerender({ disabled: true });
 		await page.getByTestId("2").click();
-		await expect.element(t.valueBinding).toHaveTextContent("1");
+		await expect.element(t.valueBinding).toMatchTextContent("1");
 		expect(onValueChange).not.toHaveBeenCalled();
 	});
 
@@ -580,7 +580,7 @@ describe("combobox - single", () => {
 			.dispatchEvent(
 				new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true })
 			);
-		await expect.element(t.valueBinding).toHaveTextContent("1");
+		await expect.element(t.valueBinding).toMatchTextContent("1");
 		expect(onValueChange).not.toHaveBeenCalled();
 	});
 });
