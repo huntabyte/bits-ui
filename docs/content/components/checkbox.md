@@ -4,7 +4,7 @@ description: Enables users to select or deselect options with support for indete
 ---
 
 <script>
-	import { APISection, ComponentPreview, CheckboxDemo, CheckboxDemoCustom, CheckboxDemoGroup, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, CheckboxDemo, CheckboxDemoCustom, CheckboxDemoGroup, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -100,7 +100,7 @@ You can then use the `MyCheckbox` component in your application like so:
 
 ```svelte title="+page.svelte"
 <script lang="ts">
-  import MyCheckbox from "$lib/components/MyCheckbox.svelte";
+  import MyCheckbox from "#lib/components/MyCheckbox.svelte";
 </script>
 
 <MyCheckbox labelText="Enable notifications" />
@@ -160,7 +160,7 @@ Use `bind:indeterminate` for simple, automatic state synchronization:
 
 ```svelte
 <script lang="ts">
-  import MyCheckbox from "$lib/components/MyCheckbox.svelte";
+  import MyCheckbox from "#lib/components/MyCheckbox.svelte";
   let myIndeterminate = $state(true);
 </script>
 

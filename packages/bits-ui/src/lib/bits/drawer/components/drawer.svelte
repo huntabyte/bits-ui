@@ -2,8 +2,8 @@
 	import { boxWith } from "svelte-toolbelt";
 	import { DrawerRootState } from "../drawer.svelte.js";
 	import type { DrawerRootProps } from "../types.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { createId } from "$lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
 
 	const uid = $props.id();
 

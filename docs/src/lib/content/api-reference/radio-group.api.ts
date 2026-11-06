@@ -57,6 +57,11 @@ export const root = defineComponentApiSchema<RadioGroupRootPropsWithoutHTML>({
 			description:
 				"Whether or not the radio group is readonly. When readonly, users can focus and navigate through items but cannot change the value.",
 		}),
+		autocomplete: defineStringProp({
+			default: "off",
+			description:
+				"The autocomplete attribute to forward to the hidden input element. It defaults to `off` so browsers don't autofill the hidden input.",
+		}),
 		...withChildProps({ elType: "HTMLDivElement" }),
 	},
 	dataAttributes: [

@@ -4,7 +4,7 @@ description: Enables users to pick from a list of options displayed in a dropdow
 ---
 
 <script>
-	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue } from '$lib/components'
+	import { APISection, ComponentPreview, SelectDemo, SelectDemoCustomAnchor, SelectDemoMultiple, SelectDemoTransition, SelectDemoAutoScrollDelay, Callout, SelectDemoCustomValue } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -108,7 +108,7 @@ TypeScript Discriminated Unions + destructing (required for "bindable") do not
 get along, so we shut typescript up by casting `value` to `never`, however,
 from the perspective of the consumer of this component, it will be typed appropriately.
 -->
-<Select.Root bind:value={value as never} {...restProps}>
+<Select.Root {items} bind:value={value as never} {...restProps}>
   <Select.Trigger>
     <Select.Value {placeholder} />
   </Select.Trigger>
@@ -135,7 +135,7 @@ You can then use the `MySelect` component throughout your application like so:
 
 ```svelte
 <script lang="ts">
-  import MySelect from "$lib/components/MySelect.svelte";
+  import MySelect from "#lib/components/MySelect.svelte";
 
   const items = [
     { value: "apple", label: "Apple" },

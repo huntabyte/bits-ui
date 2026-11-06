@@ -10,12 +10,12 @@ import type {
 	WithChildNoChildrenSnippetProps,
 	WithChildren,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
-import type { PortalProps } from "$lib/bits/utilities/portal/index.js";
+} from "#lib/shared/attributes.js";
+import type { PortalProps } from "#lib/bits/utilities/portal/index.js";
 import type { DrawerTether as DrawerTetherImpl } from "./drawer.svelte.js";
 
 export type DrawerTether<Payload = unknown> = DrawerTetherImpl<Payload>;

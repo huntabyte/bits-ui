@@ -15,7 +15,7 @@ import {
 	orientationDataAttr,
 	typeSingleOrMultipleProp,
 	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+} from "#lib/content/api-reference/shared.js";
 import {
 	defineBooleanProp,
 	defineComponentApiSchema,

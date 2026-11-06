@@ -15,17 +15,17 @@ import {
 	getDataOpenClosed,
 	getDataTransitionAttrs,
 	type TransitionState,
-} from "$lib/internal/attrs.js";
+} from "#lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	OnChangeFn,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { isIOS } from "$lib/internal/is.js";
-import { PresenceManager } from "$lib/internal/presence-manager.svelte.js";
+} from "#lib/internal/types.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { isIOS } from "#lib/internal/is.js";
+import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 import type { DrawerSnapPoint, DrawerSwipeDirection } from "./types.js";
 import {
 	SwipeDismiss,

@@ -47,7 +47,7 @@
 	] as const;
 
 	const contentClass =
-		"border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[250px] rounded-xl border px-1 py-1.5";
+		"z-50 border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden w-[250px] rounded-xl border px-1 py-1.5";
 	const subContentClass =
 		"border-muted bg-background shadow-popover outline-hidden focus-visible:outline-hidden z-100 w-[230px] rounded-xl border px-1 py-1.5";
 	const itemClass =
@@ -59,7 +59,7 @@
 {#snippet radioCheckedIndicator(checked: boolean)}
 	{#if checked}
 		<svg
-			class="text-foreground-alt ml-auto size-4 shrink-0"
+			class="ml-auto size-4 shrink-0 text-foreground-alt"
 			viewBox="0 0 16 16"
 			aria-hidden="true"
 		>
@@ -70,7 +70,7 @@
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger
-		class="rounded-card border-border-input text-muted-foreground flex h-[220px] w-full max-w-[320px] select-none items-center justify-center border-2 border-dashed bg-transparent text-sm font-semibold"
+		class="flex h-[220px] w-full max-w-[320px] items-center justify-center rounded-card border-2 border-dashed border-border-input bg-transparent text-sm font-semibold text-muted-foreground select-none"
 	>
 		<div class="flex flex-col items-center justify-center gap-3 text-center">
 			<MouseSimple class="size-8" />
@@ -84,7 +84,7 @@
 			<ContextMenu.Sub>
 				<ContextMenu.SubTrigger class={subTriggerClass}>
 					Status
-					<CaretRight class="text-foreground-alt ml-auto size-4" />
+					<CaretRight class="ml-auto size-4 text-foreground-alt" />
 				</ContextMenu.SubTrigger>
 				<ContextMenu.Portal>
 					<ContextMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -105,14 +105,14 @@
 			<ContextMenu.Sub>
 				<ContextMenu.SubTrigger class={subTriggerClass}>
 					Issue properties
-					<CaretRight class="text-foreground-alt ml-auto size-4" />
+					<CaretRight class="ml-auto size-4 text-foreground-alt" />
 				</ContextMenu.SubTrigger>
 				<ContextMenu.Portal>
 					<ContextMenu.SubContent class={subContentClass} sideOffset={10}>
 						<ContextMenu.Sub>
 							<ContextMenu.SubTrigger class={subTriggerClass}>
 								Priority
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</ContextMenu.SubTrigger>
 							<ContextMenu.Portal>
 								<ContextMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -136,7 +136,7 @@
 						<ContextMenu.Sub>
 							<ContextMenu.SubTrigger class={subTriggerClass}>
 								Type
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</ContextMenu.SubTrigger>
 							<ContextMenu.Portal>
 								<ContextMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -157,11 +157,11 @@
 							</ContextMenu.Portal>
 						</ContextMenu.Sub>
 
-						<ContextMenu.Separator class="bg-muted -mx-1 my-1 block h-px" />
+						<ContextMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
 
 						<ContextMenu.CheckboxGroup bind:value={digestPrefs}>
 							<ContextMenu.GroupHeading
-								class="text-muted-foreground px-3 pb-2 pt-3 text-xs font-medium"
+								class="px-3 pt-3 pb-2 text-xs font-medium text-muted-foreground"
 							>
 								Email digest
 							</ContextMenu.GroupHeading>
@@ -171,7 +171,7 @@
 										<span>{item.label}</span>
 										{#if checked}
 											<Check
-												class="text-foreground-alt ml-auto size-4 shrink-0"
+												class="ml-auto size-4 shrink-0 text-foreground-alt"
 											/>
 										{/if}
 									{/snippet}
@@ -182,7 +182,7 @@
 						<ContextMenu.Sub>
 							<ContextMenu.SubTrigger class={subTriggerClass}>
 								Labels
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</ContextMenu.SubTrigger>
 							<ContextMenu.Portal>
 								<ContextMenu.SubContent class={subContentClass} sideOffset={10}>
@@ -204,7 +204,7 @@
 										<ContextMenu.SubTrigger class={subTriggerClass}>
 											Product area
 											<CaretRight
-												class="text-foreground-alt ml-auto size-4"
+												class="ml-auto size-4 text-foreground-alt"
 											/>
 										</ContextMenu.SubTrigger>
 										<ContextMenu.Portal>

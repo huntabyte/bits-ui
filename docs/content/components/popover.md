@@ -4,7 +4,7 @@ description: Displays rich content in a floating panel anchored to a trigger ele
 ---
 
 <script>
-	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoHover, PopoverDemoTransition, PopoverDemoOverlay } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PopoverDemo, PopoverDemoHover, PopoverDemoTransition, PopoverDemoOverlay } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 
@@ -123,7 +123,7 @@ By default, when a Popover is opened, focus will be trapped within that Popover.
 
 ### Open Focus
 
-By default, when a Popover is opened, focus will be set to the first focusable element with the `Popover.Content`. This ensures that users navigating my keyboard end up somewhere within the Popover that they can interact with.
+By default, when a Popover is opened, focus will be set to the first focusable element with the `Popover.Content`. This ensures that users navigating by keyboard end up somewhere within the Popover that they can interact with.
 
 You can override this behavior using the `onOpenAutoFocus` prop on the `Popover.Content` component. It's _highly_ recommended that you use this prop to focus _something_ within the Popover's content.
 

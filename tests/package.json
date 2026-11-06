@@ -16,7 +16,7 @@
 		"@sveltejs/vite-plugin-svelte": "catalog:",
 		"@tailwindcss/vite": "catalog:",
 		"@types/node": "catalog:",
-		"@vitest/browser": "^3.2.4",
+		"@vitest/browser-playwright": "^5.1.0",
 		"playwright": "catalog:",
 		"svelte": "catalog:",
 		"svelte-check": "catalog:",
@@ -27,9 +27,13 @@
 		"vitest-browser-svelte": "catalog:"
 	},
 	"dependencies": {
-		"@internationalized/date": "^3.8.2",
+		"@internationalized/date": "^3.12.4",
 		"bits-ui": "workspace:*"
 	},
 	"type": "module",
-	"sideEffects": false
+	"sideEffects": false,
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
+	}
 }

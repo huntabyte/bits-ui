@@ -1,11 +1,11 @@
 import type { ArrowPropsWithoutHTML } from "../utilities/arrow/types.js";
 import type { MenuArrowProps } from "../menu/types.js";
-import type { OnChangeFn, WithChild, WithChildren, Without } from "$lib/internal/types.js";
+import type { OnChangeFn, WithChild, WithChildren, Without } from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
-import type { Direction } from "$lib/shared/index.js";
+} from "#lib/shared/attributes.js";
+import type { Direction } from "#lib/shared/index.js";
 
 export type MenubarRootPropsWithoutHTML = WithChild<{
 	/**

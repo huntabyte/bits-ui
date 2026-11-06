@@ -1,16 +1,15 @@
 <script lang="ts">
 	import { boxWith, mergeProps } from "svelte-toolbelt";
-	import { isDrawerPopupInteractOutsideEvent } from "../drawer-dismissible-interact-outside.js";
 	import { DrawerPopupState } from "../drawer.svelte.js";
 	import type { DrawerPopupProps } from "../types.js";
-	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
-	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
-	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import ScrollLock from "$lib/bits/utilities/scroll-lock/scroll-lock.svelte";
-	import { isClickTrulyOutside } from "$lib/internal/dom.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import DismissibleLayer from "#lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import EscapeLayer from "#lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import FocusScope from "#lib/bits/utilities/focus-scope/focus-scope.svelte";
+	import TextSelectionLayer from "#lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
+	import ScrollLock from "#lib/bits/utilities/scroll-lock/scroll-lock.svelte";
+	import { isClickTrulyOutside } from "#lib/internal/dom.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 
@@ -77,7 +76,6 @@
 					{...mergedProps}
 					ref={popupState.opts.ref}
 					enabled={dismissibleEnabled}
-					isValidEvent={isDrawerPopupInteractOutsideEvent}
 					onInteractOutside={(e) => {
 						const target = e.target instanceof Element ? e.target : null;
 						const viewportAttr = popupState.root.getBitsAttr("viewport");

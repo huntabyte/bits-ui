@@ -9,7 +9,7 @@ import { on } from "svelte/events";
 import { watch } from "runed";
 import { boxAutoReset } from "./box-auto-reset.svelte.js";
 import { isElement, isHTMLElement } from "./is.js";
-import type { Side } from "$lib/bits/utilities/floating-layer/use-floating-layer.svelte.js";
+import type { Side } from "#lib/bits/utilities/floating-layer/use-floating-layer.svelte.js";
 
 interface GraceAreaOptions {
 	enabled: Getter<boolean>;
@@ -183,7 +183,7 @@ function isPointInPolygon(point: Point, polygon: Polygon) {
 		const yj = polygon[j]!.y;
 
 		// prettier-ignore
-		const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)
+		const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
 		if (intersect) inside = !inside;
 	}
 

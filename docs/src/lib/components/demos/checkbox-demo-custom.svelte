@@ -22,12 +22,12 @@
 			bind:checked
 			{id}
 			aria-labelledby="terms-label"
-			class="border-muted bg-foreground data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40 data-disabled:cursor-not-allowed data-disabled:opacity-70 data-disabled:pointer-events-none  peer inline-flex size-[25px] items-center justify-center rounded-md border transition-all duration-150 ease-in-out active:scale-[0.98]"
+			class="peer inline-flex size-[25px] items-center justify-center rounded-md border border-muted  bg-foreground transition-all duration-150 ease-in-out active:scale-[0.98] data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-70 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
 			name="hello"
 			{...restProps}
 		>
 			{#snippet children({ checked, indeterminate })}
-				<div class="text-background inline-flex items-center justify-center">
+				<div class="inline-flex items-center justify-center text-background">
 					{#if indeterminate}
 						<Minus class="size-[15px]" weight="bold" />
 					{:else if checked}
@@ -39,7 +39,7 @@
 		<Label.Root
 			id="terms-label"
 			for={id}
-			class="text-sm font-medium leading-none peer-disabled:pointer-events-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+			class="text-sm leading-none font-medium peer-disabled:pointer-events-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 		>
 			{labelText}
 		</Label.Root>

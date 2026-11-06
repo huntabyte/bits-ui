@@ -1,5 +1,5 @@
-import type { WithChildren } from "$lib/internal/types.js";
-import type { PortalTarget } from "$lib/bits/utilities/portal/types.js";
+import type { WithChildren } from "#lib/internal/types.js";
+import type { PortalTarget } from "#lib/bits/utilities/portal/types.js";
 
 export type BitsConfigPropsWithoutChildren = {
 	/**

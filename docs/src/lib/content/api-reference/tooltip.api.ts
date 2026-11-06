@@ -25,7 +25,7 @@ import {
 	portalProps,
 	transitionStyleDataAttrs,
 	withChildProps,
-} from "$lib/content/api-reference/shared.js";
+} from "#lib/content/api-reference/shared.js";
 import { TooltipStateDataAttr } from "./extended-types/tooltip/index.js";
 import {
 	defineBooleanProp,
@@ -64,7 +64,7 @@ const disabled = defineBooleanProp({
 const disableCloseOnTriggerClick = defineBooleanProp({
 	default: false,
 	description:
-		"Whether or not to close the tooltip when pressing the escape key. This is useful when the content contains interactive elements.",
+		"Whether or not to prevent the tooltip from closing when the trigger is pressed with any pointer button.",
 });
 
 const skipDelayDuration = defineNumberProp({
@@ -159,7 +159,7 @@ export const content = defineComponentApiSchema<TooltipContentPropsWithoutHTML>(
 	title: "Content",
 	description: "The contents of the tooltip which are displayed when the tooltip is open.",
 	props: {
-		...floatingProps(),
+		...floatingProps({ defaultSide: "top" }),
 		...dismissibleLayerProps,
 		...escapeLayerProps,
 		forceMount: forceMountProp,

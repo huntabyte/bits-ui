@@ -4,7 +4,7 @@ description: Enables users to input a sequence of one-character inputs.
 ---
 
 <script>
-	import { APISection, ComponentPreview, PinInputDemo, Callout } from '$lib/components/index.js'
+	import { APISection, ComponentPreview, PinInputDemo, Callout } from '#lib/components/index.js'
 	let { schemas } = $props()
 </script>
 

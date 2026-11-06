@@ -17,11 +17,11 @@ jobs:
         name: Release
         runs-on: macos-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
               with:
                   fetch-depth: 0
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
+            - uses: pnpm/action-setup@v5
+            - uses: actions/setup-node@v6
               with:
                   node-version: 24
                   cache: pnpm
@@ -33,9 +33,7 @@ jobs:
 
             - name: Create Release Pull Request or Publish to npm
               id: changesets
-              uses: changesets/action@v1
+              uses: changesets/action@v2
               with:
-                  publish: pnpm ci:publish
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  publish-script: pnpm ci:publish
+                  github-token: ${{ secrets.GITHUB_TOKEN }}

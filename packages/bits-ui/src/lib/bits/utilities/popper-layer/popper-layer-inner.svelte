@@ -3,10 +3,10 @@
 	import ScrollLock from "../scroll-lock/scroll-lock.svelte";
 	import type { PopperLayerImplProps } from "./types.js";
 	import PopperContent from "./popper-content.svelte";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
-	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
-	import TextSelectionLayer from "$lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
-	import FocusScope from "$lib/bits/utilities/focus-scope/focus-scope.svelte";
+	import EscapeLayer from "#lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import DismissibleLayer from "#lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import TextSelectionLayer from "#lib/bits/utilities/text-selection-layer/text-selection-layer.svelte";
+	import FocusScope from "#lib/bits/utilities/focus-scope/focus-scope.svelte";
 
 	let {
 		popper,
@@ -44,6 +44,7 @@
 		customAnchor = null,
 		isStatic = false,
 		enabled,
+		forceMount,
 		ref,
 		tooltip = false,
 		contentPointerEvents = "auto",
@@ -81,9 +82,9 @@
 	{tooltip}
 >
 	{#snippet content({ props: floatingProps, wrapperProps })}
-		{#if restProps.forceMount && enabled}
+		{#if forceMount && enabled}
 			<ScrollLock preventScroll={resolvedPreventScroll} />
-		{:else if !restProps.forceMount}
+		{:else if !forceMount}
 			<ScrollLock preventScroll={resolvedPreventScroll} />
 		{/if}
 		<FocusScope
@@ -92,7 +93,7 @@
 			{loop}
 			{enabled}
 			{trapFocus}
-			forceMount={restProps.forceMount}
+			{forceMount}
 			{ref}
 		>
 			{#snippet focusScope({ props: focusScopeProps })}
@@ -122,6 +123,7 @@
 										dismissibleProps,
 										focusScopeProps,
 										{
+											id,
 											style: {
 												pointerEvents: contentPointerEvents,
 											},

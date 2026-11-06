@@ -4,7 +4,7 @@ export { default as Indent } from "./components/drawer-indent.svelte";
 export { default as Root } from "./components/drawer.svelte";
 export { default as Trigger } from "./components/drawer-trigger.svelte";
 export { default as SwipeArea } from "./components/drawer-swipe-area.svelte";
-export { default as Portal } from "$lib/bits/utilities/portal/portal.svelte";
+export { default as Portal } from "#lib/bits/utilities/portal/portal.svelte";
 export { default as Backdrop } from "./components/drawer-backdrop.svelte";
 export { default as Viewport } from "./components/drawer-viewport.svelte";
 export { default as Popup } from "./components/drawer-popup.svelte";

@@ -1,6 +1,6 @@
 import { attachRef } from "svelte-toolbelt";
-import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
-import { createBitsAttrs } from "$lib/internal/attrs.js";
+import type { BitsMouseEvent, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
+import { createBitsAttrs } from "#lib/internal/attrs.js";
 
 const labelAttrs = createBitsAttrs({
 	component: "label",

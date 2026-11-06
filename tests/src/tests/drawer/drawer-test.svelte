@@ -10,8 +10,6 @@
 </script>
 
 <script lang="ts">
-	import { useId } from "bits-ui";
-
 	let {
 		open = false,
 		popupProps = {},
@@ -21,7 +19,7 @@
 		...restProps
 	}: DrawerTestProps = $props();
 
-	let descriptionId = $state<string>(descriptionProps.id ?? useId());
+	let descriptionId = $state<string>(descriptionProps.id ?? $props.id());
 </script>
 
 <main>

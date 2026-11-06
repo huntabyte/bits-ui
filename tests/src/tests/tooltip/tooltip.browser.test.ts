@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { mount, unmount, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import TooltipTest, { type TooltipTestProps } from "./tooltip-test.svelte";
 import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svelte";
@@ -18,22 +18,25 @@ import TooltipSingletonForceMountTest, {
 import TooltipSingletonEdgeTest from "./tooltip-singleton-edge-test.svelte";
 import TooltipSafePolygonIntermediateTargetTest from "./tooltip-safe-polygon-intermediate-target-test.svelte";
 import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
+import TooltipScrollContainerTest from "./tooltip-scroll-container-test.svelte";
+import TooltipTriggerTeardownTest from "./tooltip-trigger-teardown-test.svelte";
+import TooltipTriggerDetachTest from "./tooltip-trigger-detach-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
 
-function setup(
+async function setup(
 	props: Partial<TooltipTestProps | TooltipForceMountTestProps> = {},
 	component: Component = TooltipTest
 ) {
-	render(component, { ...props });
+	await render(component, { ...props });
 	const trigger = page.getByTestId("trigger");
 	return { trigger };
 }
 
 async function open(props: Partial<TooltipTestProps> = {}) {
-	const t = setup(props);
+	const t = await setup(props);
 	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
@@ -41,11 +44,11 @@ async function open(props: Partial<TooltipTestProps> = {}) {
 	return { content, trigger: t.trigger };
 }
 
-function setupSingleton(
+async function setupSingleton(
 	component: Component = TooltipSingletonTest,
 	props: Partial<TooltipSingletonForceMountTestProps> | TooltipSingletonTestProps = {}
 ) {
-	render(component, { ...props });
+	await render(component, { ...props });
 	const trigger1 = page.getByTestId("trigger-1");
 	const trigger2 = page.getByTestId("trigger-2");
 	const outside = page.getByTestId("outside");
@@ -62,8 +65,15 @@ it("should have bits data attrs", async () => {
 	}
 });
 
+it("should render an id on the content and reference it via aria-describedby on the trigger", async () => {
+	const t = await open();
+	const contentId = (t.content.element() as HTMLElement).id;
+	expect(contentId).not.toBe("");
+	await expect.element(t.trigger).toHaveAttribute("aria-describedby", contentId);
+});
+
 it("should use provider delay duration if provided and the tooltip.root did not provide one", async () => {
-	const t = setup();
+	const t = await setup();
 	expect(t.trigger).toHaveAttribute("data-delay-duration", "0");
 });
 
@@ -92,9 +102,27 @@ it("should close when pointer moves outside the trigger and content", async () =
 it("should close on scroll when the scrolled target contains the trigger", async () => {
 	const t = await open();
 	const main = page.getByTestId("main").element() as HTMLElement;
-	main.dispatchEvent(new Event("scroll", { bubbles: true }));
+	// An element's scroll does not bubble.
+	main.dispatchEvent(new Event("scroll"));
 	await expectNotExists(page.getByTestId("content"));
 	await expect.element(t.trigger).toBeVisible();
+});
+
+it("should stay open when focusing the trigger scrolls it into view", async () => {
+	await render(TooltipScrollContainerTest);
+	const scroller = page.getByTestId("scroller").element() as HTMLElement;
+	(page.getByTestId("before").element() as HTMLElement).focus();
+	expect(scroller.scrollTop).toBe(0);
+
+	await userEvent.tab();
+	await expect.element(page.getByTestId("trigger")).toHaveFocus();
+	expect(scroller.scrollTop).toBeGreaterThan(0);
+	// let the scroll event from the focus scroll-into-view fire
+	await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+	await expectExists(page.getByTestId("content"));
+
+	scroller.scrollTop -= 10;
+	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should stay open when hovering content", async () => {
@@ -104,7 +132,7 @@ it("should stay open when hovering content", async () => {
 });
 
 it("should open on focus and close on blur", async () => {
-	const t = setup();
+	const t = await setup();
 	await expectNotExists(page.getByTestId("content"));
 
 	(t.trigger.element() as HTMLElement).focus();
@@ -112,6 +140,23 @@ it("should open on focus and close on blur", async () => {
 
 	(t.trigger.element() as HTMLElement).blur();
 	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should not open on the focus that follows a tap", async () => {
+	const t = await setup();
+	const trigger = t.trigger.element() as HTMLElement;
+
+	// a tap can focus the trigger after `pointerup`, e.g. when the trigger also opens a
+	// menu, which prevents the default of a touch `pointerdown`
+	trigger.dispatchEvent(new PointerEvent("pointerdown", { pointerType: "touch", bubbles: true }));
+	trigger.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	trigger.focus();
+	await new Promise((resolve) => setTimeout(resolve, 50));
+	await expectNotExists(page.getByTestId("content"));
+
+	trigger.blur();
+	trigger.focus();
+	await expectExists(page.getByTestId("content"));
 });
 
 it("should portal to the body by default", async () => {
@@ -148,23 +193,23 @@ it("should allow ignoring escapeKeydownBehavior ", async () => {
 it("should respect binding the open prop", async () => {
 	await open();
 	const binding = page.getByTestId("binding");
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 	await userEvent.keyboard(kbd.ESCAPE);
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 	await binding.click();
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should forceMount the content when `forceMount` is true", async () => {
-	setup({}, TooltipForceMountTest);
+	await setup({}, TooltipForceMountTest);
 
 	expect(page.getByTestId("content")).toBeVisible();
 });
 
 it("should apply transition attrs to content during open and close", async () => {
-	const t = setup({}, TooltipForceMountTest);
+	const t = await setup({}, TooltipForceMountTest);
 	const observer = observeTransitionAttrs(page.getByTestId("content").element());
 
 	await t.trigger.hover();
@@ -177,7 +222,7 @@ it("should apply transition attrs to content during open and close", async () =>
 });
 
 it("should forceMount the content when `forceMount` is true and the `open` snippet prop is used to conditionally render the content", async () => {
-	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
+	const t = await setup({ withOpenCheck: true }, TooltipForceMountTest);
 	await expectNotExists(page.getByTestId("content"));
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
@@ -185,63 +230,63 @@ it("should forceMount the content when `forceMount` is true and the `open` snipp
 });
 
 it("should open and close correctly with forceMount + open check", async () => {
-	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
+	const t = await setup({ withOpenCheck: true }, TooltipForceMountTest);
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("false");
 
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("true");
 
 	await page.getByTestId("outside").hover();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("false");
 });
 
 it("should keep open state behavior when forceMount keeps content mounted", async () => {
-	const t = setup({}, TooltipForceMountTest);
+	const t = await setup({}, TooltipForceMountTest);
 	const binding = page.getByTestId("binding");
 	await expect.element(page.getByTestId("content")).toBeVisible();
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 
 	await t.trigger.hover();
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 
 	await page.getByTestId("outside").hover();
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 	await expect.element(page.getByTestId("content")).toBeVisible();
 });
 
 it("should close on trigger leave after reopening with forceMount", async () => {
-	const t = setup({ withOpenCheck: true }, TooltipForceMountTest);
+	const t = await setup({ withOpenCheck: true }, TooltipForceMountTest);
 	const outside = page.getByTestId("outside");
 
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("true");
 
 	await outside.hover();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("false");
 
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("true");
 
 	await outside.hover();
-	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("binding")).toMatchTextContent("false");
 	await expectNotExists(page.getByTestId("content"));
 });
 
 it("should use the custom anchor element when `customAnchor` is provided", async () => {
 	// type check
-	const t = setup();
+	const t = await setup();
 	await t.trigger.hover();
 	await expectExists(page.getByTestId("content"));
 });
 
 it("should open when composed with another floating trigger", async () => {
-	render(TooltipPopoverTest);
+	await render(TooltipPopoverTest);
 	await page.getByTestId("trigger").hover();
 	await expectExists(page.getByTestId("tooltip-content"));
 	await page.getByTestId("trigger").click();
@@ -269,12 +314,12 @@ it("should close when hovering content with disableHoverableContent: true", asyn
 });
 
 it("should respect custom tabindex on trigger", async () => {
-	const t = setup({ triggerProps: { tabindex: -1 } });
+	const t = await setup({ triggerProps: { tabindex: -1 } });
 	await expect.element(t.trigger).toHaveAttribute("tabindex", "-1");
 });
 
 it("should have default tabindex of 0 on trigger", async () => {
-	const t = setup();
+	const t = await setup();
 	await expect.element(t.trigger).toHaveAttribute("tabindex", "0");
 });
 
@@ -291,7 +336,7 @@ it("should apply custom style prop to content", async () => {
 it("should not add a scroll listener per tooltip instance", async () => {
 	const addEventListenerSpy = vi.spyOn(window, "addEventListener");
 
-	render(TooltipManyTest, { count: 80 });
+	await render(TooltipManyTest, { count: 80 });
 
 	const scrollListenerCalls = addEventListenerSpy.mock.calls.filter(
 		([type]) => type === "scroll"
@@ -302,7 +347,7 @@ it("should not add a scroll listener per tooltip instance", async () => {
 });
 
 it("provider: should not re-enable delay while switching between tooltips", async () => {
-	render(TooltipManyTest, {
+	await render(TooltipManyTest, {
 		count: 2,
 		delayDuration: 150,
 		skipDelayDuration: 500,
@@ -341,25 +386,25 @@ it("provider: should not re-enable delay while switching between tooltips", asyn
 });
 
 it("singleton: should open with either trigger and update payload", async () => {
-	const t = setupSingleton();
+	const t = await setupSingleton();
 	await expectNotExists(page.getByTestId("content"));
 
 	await t.trigger1.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Bold");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-1");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Bold");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-1");
 
 	await t.trigger2.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Italic");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-2");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Italic");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-2");
 
 	await t.outside.hover();
 	await expectNotExists(page.getByTestId("content"));
 });
 
 it("singleton: should reuse the same content node while switching triggers", async () => {
-	const t = setupSingleton();
+	const t = await setupSingleton();
 	await t.trigger1.hover();
 	await expectExists(page.getByTestId("content"));
 	const contentEl = page.getByTestId("content").element() as HTMLElement;
@@ -367,11 +412,11 @@ it("singleton: should reuse the same content node while switching triggers", asy
 	await t.trigger2.hover();
 	await expectExists(page.getByTestId("content"));
 	expect(page.getByTestId("content").element()).toBe(contentEl);
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Italic");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Italic");
 });
 
 it("singleton: should work with detached triggers through tether", async () => {
-	render(TooltipTetherTest);
+	await render(TooltipTetherTest);
 	const triggerTop = page.getByTestId("trigger-top");
 	const triggerBottom = page.getByTestId("trigger-bottom");
 	const topEl = triggerTop.element() as HTMLElement;
@@ -379,112 +424,112 @@ it("singleton: should work with detached triggers through tether", async () => {
 
 	topEl.focus();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Top");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-top");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Top");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-top");
 
 	topEl.blur();
 	bottomEl.focus();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Bottom");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-bottom");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Bottom");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-bottom");
 
 	bottomEl.blur();
 	await expectNotExists(page.getByTestId("content"));
 });
 
 it("singleton: should support imperative tether open/close", async () => {
-	render(TooltipTetherTest);
+	await render(TooltipTetherTest);
 
 	await page.getByTestId("tether-open-top").click();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Top");
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Top");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("true");
 
 	await page.getByTestId("tether-open-bottom").click();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Bottom");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-bottom");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Bottom");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-bottom");
 
 	await page.getByTestId("tether-close").click();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("false");
 });
 
 it("singleton: should close when hovering a detached disabled trigger", async () => {
-	render(TooltipTetherTest);
+	await render(TooltipTetherTest);
 	await page.getByTestId("trigger-top").hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Top");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Top");
 
 	await page.getByTestId("trigger-disabled").hover();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("false");
 });
 
 it("singleton: controlled mode should support programmatic trigger changes", async () => {
-	render(TooltipSingletonControlledTest);
+	await render(TooltipSingletonControlledTest);
 
 	await page.getByTestId("open-trigger-1").click();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("One");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-1");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("One");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-1");
 
 	await page.getByTestId("open-trigger-2").click();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Two");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-2");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Two");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-2");
 
 	await page.getByTestId("set-null-trigger").click();
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("null");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("null");
 
 	await page.getByTestId("close").click();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("false");
 });
 
 it("singleton forceMount: should keep mounted content and update payload", async () => {
-	const t = setupSingleton(TooltipSingletonForceMountTest);
+	const t = await setupSingleton(TooltipSingletonForceMountTest);
 	await expectExists(page.getByTestId("content-node"));
 
 	await t.trigger1.hover();
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Alpha");
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Alpha");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("true");
 
 	await t.trigger2.hover();
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Beta");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-2");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Beta");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-2");
 
 	await t.outside.hover();
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("false");
 	await expectExists(page.getByTestId("content-node"));
 });
 
 it("singleton forceMount: should support open-check conditional rendering", async () => {
-	const t = setupSingleton(TooltipSingletonForceMountTest, { withOpenCheck: true });
+	const t = await setupSingleton(TooltipSingletonForceMountTest, { withOpenCheck: true });
 	await expectNotExists(page.getByTestId("content-node"));
 
 	await t.trigger1.hover();
 	await expectExists(page.getByTestId("content-node"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Alpha");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Alpha");
 
 	await t.outside.hover();
 	await expectNotExists(page.getByTestId("content-node"));
 });
 
 it("singleton edge: should close when active trigger unmounts", async () => {
-	render(TooltipSingletonEdgeTest);
+	await render(TooltipSingletonEdgeTest);
 	await page.getByTestId("trigger-1").hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("First");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("First");
 
 	await page.getByTestId("toggle-trigger-one").click();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("null");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("null");
 });
 
 it("singleton edge: should keep aria-describedby only on active trigger", async () => {
-	render(TooltipSingletonEdgeTest);
+	await render(TooltipSingletonEdgeTest);
 	const trigger1 = page.getByTestId("trigger-1");
 	const trigger2 = page.getByTestId("trigger-2");
 	await trigger1.hover();
@@ -501,18 +546,18 @@ it("singleton edge: should keep aria-describedby only on active trigger", async 
 });
 
 it("singleton edge: disabled trigger interaction should close open content", async () => {
-	render(TooltipSingletonEdgeTest);
+	await render(TooltipSingletonEdgeTest);
 	await page.getByTestId("trigger-1").hover();
 	await expectExists(page.getByTestId("content"));
 
 	await page.getByTestId("toggle-trigger-two-disabled").click();
 	await page.getByTestId("trigger-2").hover();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("false");
 });
 
 it("singleton edge: customAnchor should override active trigger anchoring", async () => {
-	render(TooltipSingletonEdgeTest);
+	await render(TooltipSingletonEdgeTest);
 	await page.getByTestId("trigger-1").hover();
 	await expectExists(page.getByTestId("content"));
 	const contentLeftWithoutCustomAnchor = (
@@ -538,7 +583,7 @@ it("singleton edge: customAnchor should override active trigger anchoring", asyn
 });
 
 it("singleton: should not transition through closed state when moving directly between sibling triggers (skipDelayDuration > 0)", async () => {
-	const t = setupSingleton();
+	const t = await setupSingleton();
 	await t.trigger1.hover();
 	await expectExists(page.getByTestId("content"));
 	const contentEl = page.getByTestId("content").element() as HTMLElement;
@@ -561,7 +606,10 @@ it("singleton: should not transition through closed state when moving directly b
 });
 
 it("singleton: should transition through closed state when moving between triggers with skipDelayDuration=0", async () => {
-	const t = setupSingleton(TooltipSingletonTest, { delayDuration: 50, skipDelayDuration: 0 });
+	const t = await setupSingleton(TooltipSingletonTest, {
+		delayDuration: 50,
+		skipDelayDuration: 0,
+	});
 	await t.trigger1.hover();
 	await expectExists(page.getByTestId("content"));
 	const contentEl = page.getByTestId("content").element() as HTMLElement;
@@ -583,7 +631,10 @@ it("singleton: should transition through closed state when moving between trigge
 });
 
 it("singleton: should use instant-open state (no enter animation) when sliding between triggers within skipDelayDuration window", async () => {
-	const t = setupSingleton(TooltipSingletonTest, { delayDuration: 50, skipDelayDuration: 300 });
+	const t = await setupSingleton(TooltipSingletonTest, {
+		delayDuration: 50,
+		skipDelayDuration: 300,
+	});
 
 	await t.trigger1.hover();
 	await expectExists(page.getByTestId("content"));
@@ -595,7 +646,10 @@ it("singleton: should use instant-open state (no enter animation) when sliding b
 });
 
 it("singleton: should use delayed-open state (re-animate) when sliding between triggers with skipDelayDuration=0", async () => {
-	const t = setupSingleton(TooltipSingletonTest, { delayDuration: 50, skipDelayDuration: 0 });
+	const t = await setupSingleton(TooltipSingletonTest, {
+		delayDuration: 50,
+		skipDelayDuration: 0,
+	});
 
 	await t.trigger1.hover();
 	await expectExists(page.getByTestId("content"));
@@ -607,7 +661,7 @@ it("singleton: should use delayed-open state (re-animate) when sliding between t
 });
 
 it("should stay open on first hover when pointer moves through gap between trigger and content", async () => {
-	render(TooltipTetherTest);
+	await render(TooltipTetherTest);
 	const trigger = page.getByTestId("trigger-top");
 	await trigger.hover();
 	await expectExists(page.getByTestId("content"));
@@ -628,11 +682,11 @@ it("should stay open on first hover when pointer moves through gap between trigg
 	);
 
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("true");
 });
 
 it("should stay open when moving through an intermediate element toward content", async () => {
-	render(TooltipSafePolygonIntermediateTargetTest);
+	await render(TooltipSafePolygonIntermediateTargetTest);
 	const trigger = page.getByTestId("trigger");
 	await trigger.hover();
 	await expectExists(page.getByTestId("content"));
@@ -641,7 +695,7 @@ it("should stay open when moving through an intermediate element toward content"
 });
 
 it("tether: should stay open when moving across a sibling-trigger gap", async () => {
-	render(TooltipTetherGapTest);
+	await render(TooltipTetherGapTest);
 	const leftTrigger = page.getByTestId("trigger-left");
 	const rightTrigger = page.getByTestId("trigger-right");
 
@@ -686,20 +740,20 @@ it("tether: should stay open when moving across a sibling-trigger gap", async ()
 	observer.disconnect();
 
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Right");
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Right");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("true");
 	expect(stateHistory).not.toContain("closed");
 });
 
 it("tether: should not close on frame after sibling handoff via shared container", async () => {
-	render(TooltipTetherGapTest);
+	await render(TooltipTetherGapTest);
 	const leftTrigger = page.getByTestId("trigger-left");
 	const rightTrigger = page.getByTestId("trigger-right");
 	const cardEl = page.getByTestId("automation-card").element() as HTMLElement;
 
 	await leftTrigger.hover();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Left");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Left");
 
 	const leftEl = leftTrigger.element() as HTMLElement;
 	const rightEl = rightTrigger.element() as HTMLElement;
@@ -729,12 +783,12 @@ it("tether: should not close on frame after sibling handoff via shared container
 	await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 	await expectExists(page.getByTestId("content"));
-	await expect.element(page.getByTestId("payload")).toHaveTextContent("Right");
-	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Right");
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("true");
 });
 
 it("tether: should close when pointer idles in the sibling gap", async () => {
-	render(TooltipTetherGapTest);
+	await render(TooltipTetherGapTest);
 	const leftTrigger = page.getByTestId("trigger-left");
 	const rightTrigger = page.getByTestId("trigger-right");
 	const cardEl = page.getByTestId("automation-card").element() as HTMLElement;
@@ -768,5 +822,259 @@ it("tether: should close when pointer idles in the sibling gap", async () => {
 	await new Promise<void>((resolve) => setTimeout(resolve, 260));
 
 	await expectNotExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("open-binding")).toMatchTextContent("false");
+});
+
+function dispatchPointerDown(el: HTMLElement, button: number) {
+	el.dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			pointerType: "mouse",
+			button,
+		})
+	);
+}
+
+it("should close when the trigger is clicked", async () => {
+	const t = await open();
+	await t.trigger.click();
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should close when the trigger is right clicked", async () => {
+	const t = await open();
+	await t.trigger.click({ button: "right" });
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should close when the trigger is middle clicked", async () => {
+	const t = await open();
+	dispatchPointerDown(t.trigger.element() as HTMLElement, 1);
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should not close on non-primary button press when `disableCloseOnTriggerClick` is true", async () => {
+	const t = await open({ disableCloseOnTriggerClick: true });
+	dispatchPointerDown(t.trigger.element() as HTMLElement, 2);
+	await expect.element(t.content).toBeVisible();
+});
+
+it("should not close on a trigger press inside a shadow root when `disableCloseOnTriggerClick` is true", async () => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const shadowRoot = host.attachShadow({ mode: "open" });
+	const app = shadowRoot.appendChild(document.createElement("div"));
+	const portalTo = shadowRoot.appendChild(document.createElement("div"));
+	const component = mount(TooltipTest, {
+		target: app,
+		props: { disableCloseOnTriggerClick: true, portalProps: { to: portalTo } },
+	});
+	const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+
+	try {
+		await userEvent.hover(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+
+		// the document sees the shadow host as the target of this press
+		await userEvent.click(get("trigger")!);
+		// the dismissible layer handles an outside press 10ms after pointerdown
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+		expect(get("content")).not.toBeNull();
+
+		// a press outside the trigger still closes it
+		const rect = get("outside")!.getBoundingClientRect();
+		get("outside")!.dispatchEvent(
+			new PointerEvent("pointerdown", {
+				bubbles: true,
+				composed: true,
+				pointerType: "mouse",
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			})
+		);
+		await vi.waitFor(() => expect(get("content")).toBeNull());
+	} finally {
+		unmount(component);
+		host.remove();
+	}
+});
+
+it("should cancel a pending delayed open when the trigger is right clicked", async () => {
+	// offset the trigger so the real pointer (parked over the previous test's trigger)
+	// can't land on it and restart the delay timer mid-test
+	const t = await setup({
+		delayDuration: 300,
+		triggerProps: { style: "margin: 200px 0 0 300px" },
+	});
+	const el = t.trigger.element() as HTMLElement;
+
+	el.dispatchEvent(new PointerEvent("pointerenter", { bubbles: true, pointerType: "mouse" }));
+	await expectNotExists(page.getByTestId("content"));
+
+	dispatchPointerDown(el, 2);
+	await new Promise<void>((resolve) => setTimeout(resolve, 500));
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it.each([false, true])(
+	"touch trigger press inside shadow DOM keeps tooltip open (stop click: %s)",
+	async (stopClick) => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const shadowRoot = host.attachShadow({ mode: "open" });
+		const app = shadowRoot.appendChild(document.createElement("div"));
+		const portalTo = shadowRoot.appendChild(document.createElement("div"));
+		const component = mount(TooltipTest, {
+			target: app,
+			props: { disableCloseOnTriggerClick: true, portalProps: { to: portalTo } },
+		});
+		const get = (id: string) => shadowRoot.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		try {
+			await userEvent.hover(get("trigger")!);
+			await vi.waitFor(() => expect(get("content")).not.toBeNull());
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			const trigger = get("trigger")!;
+			const rect = trigger.getBoundingClientRect();
+			const init = {
+				bubbles: true,
+				composed: true,
+				cancelable: true,
+				pointerType: "touch",
+				button: 0,
+				clientX: rect.left + rect.width / 2,
+				clientY: rect.top + rect.height / 2,
+			};
+			trigger.dispatchEvent(new PointerEvent("pointerdown", init));
+			await new Promise((resolve) => setTimeout(resolve, 60));
+			trigger.dispatchEvent(new PointerEvent("pointerup", init));
+			if (stopClick)
+				trigger.addEventListener("click", (e) => e.stopPropagation(), { once: true });
+			trigger.dispatchEvent(new PointerEvent("click", init));
+			await new Promise((resolve) => setTimeout(resolve, 60));
+			expect(get("content")).not.toBeNull();
+		} finally {
+			await unmount(component);
+			host.remove();
+		}
+	}
+);
+
+it("trigger containing a shadow child keeps tooltip open", async () => {
+	const t = await render(TooltipTest, { disableCloseOnTriggerClick: true });
+	const trigger = t.getByTestId("trigger").element() as HTMLElement;
+	const host = trigger.appendChild(document.createElement("span"));
+	const shadow = host.attachShadow({ mode: "open" });
+	const child = shadow.appendChild(document.createElement("span"));
+	child.textContent = "shadow child";
+	await userEvent.hover(trigger);
+	await expect.element(t.getByTestId("content")).toBeVisible();
+	const rect = child.getBoundingClientRect();
+	child.dispatchEvent(
+		new PointerEvent("pointerdown", {
+			bubbles: true,
+			composed: true,
+			cancelable: true,
+			pointerType: "mouse",
+			button: 0,
+			clientX: rect.left + rect.width / 2,
+			clientY: rect.top + rect.height / 2,
+		})
+	);
+	await new Promise((resolve) => setTimeout(resolve, 60));
+	expect(document.querySelector('[data-testid="content"]')).not.toBeNull();
+});
+
+it("prevented shadow trigger pointerdown retains its captured path", async () => {
+	const host = document.body.appendChild(document.createElement("div"));
+	const root = host.attachShadow({ mode: "open" });
+	const app = root.appendChild(document.createElement("div"));
+	const portalTo = root.appendChild(document.createElement("div"));
+	const component = mount(TooltipTest, {
+		target: app,
+		props: { disableCloseOnTriggerClick: true, portalProps: { to: portalTo } },
+	});
+	const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+	try {
+		await userEvent.hover(get("trigger")!);
+		await vi.waitFor(() => expect(get("content")).not.toBeNull());
+		const rect = get("trigger")!.getBoundingClientRect();
+		const event = new PointerEvent("pointerdown", {
+			bubbles: true,
+			composed: true,
+			cancelable: true,
+			pointerType: "mouse",
+			button: 0,
+			clientX: rect.left + rect.width / 2,
+			clientY: rect.top + rect.height / 2,
+		});
+		event.preventDefault();
+		get("trigger")!.dispatchEvent(event);
+		await new Promise((resolve) => setTimeout(resolve, 60));
+		expect(get("content")).not.toBeNull();
+	} finally {
+		await unmount(component);
+		host.remove();
+	}
+});
+
+it("should not read trigger props when the trigger ref detaches during teardown", async () => {
+	const errors: unknown[] = [];
+	const onError = (e: ErrorEvent) => errors.push(e.error);
+	window.addEventListener("error", onError);
+	try {
+		await render(TooltipTriggerTeardownTest);
+		await expectExists(page.getByTestId("trigger"));
+		await page.getByTestId("remove").click();
+		await expectNotExists(page.getByTestId("trigger"));
+		expect(errors).toEqual([]);
+	} finally {
+		window.removeEventListener("error", onError);
+	}
+});
+
+async function expectContentAnchoredToTrigger() {
+	await expectExists(page.getByTestId("content"));
+	await expect
+		.poll(() => {
+			const trigger = page.getByTestId("trigger").element().getBoundingClientRect();
+			const content = page.getByTestId("content").element().getBoundingClientRect();
+			return Math.round(content.top - trigger.bottom);
+		})
+		.toBe(8);
+}
+
+it("should re-register the trigger when its element detaches and re-attaches while mounted", async () => {
+	await render(TooltipTriggerDetachTest);
+	await page.getByTestId("toggle").click();
+	await expectNotExists(page.getByTestId("trigger"));
+	await page.getByTestId("toggle").click();
+	await expectExists(page.getByTestId("trigger"));
+
+	await page.getByTestId("open-a").click();
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-a");
+	await expect.element(page.getByTestId("payload")).toHaveTextContent("A");
+	await expectContentAnchoredToTrigger();
+});
+
+it("should register id and payload changes made while the trigger element is detached", async () => {
+	await render(TooltipTriggerDetachTest);
+	await page.getByTestId("toggle").click();
+	await expectNotExists(page.getByTestId("trigger"));
+	await page.getByTestId("rename").click();
+
+	await page.getByTestId("open-b").click();
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-b");
+	await expect.element(page.getByTestId("payload")).toHaveTextContent("B");
+
+	// the old id is gone from the registry
+	await page.getByTestId("close").click();
 	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+	await page.getByTestId("open-a").click();
+	await expect.element(page.getByTestId("open-binding")).toHaveTextContent("false");
+
+	await page.getByTestId("toggle").click();
+	await expectExists(page.getByTestId("trigger"));
+	await page.getByTestId("open-b").click();
+	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-b");
+	await expectContentAnchoredToTrigger();
 });

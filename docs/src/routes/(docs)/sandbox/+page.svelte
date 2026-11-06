@@ -65,16 +65,16 @@
 </script>
 
 <div class="mx-auto flex w-full max-w-[980px] flex-col gap-6 p-6">
-	<div class="border-muted bg-background shadow-popover rounded-xl border p-4">
+	<div class="rounded-xl border border-muted bg-background p-4 shadow-popover">
 		<div class="mb-4 flex items-center justify-between gap-3">
 			<div>
-				<p class="text-foreground text-sm font-semibold">submenu intent sandbox</p>
-				<p class="text-muted-foreground text-xs">
+				<p class="text-sm font-semibold text-foreground">submenu intent sandbox</p>
+				<p class="text-xs text-muted-foreground">
 					Use this page to stress nested submenu transitions and safe-area debug overlays.
 				</p>
 			</div>
 			<div
-				class="text-muted-foreground rounded-button bg-muted px-2.5 py-1.5 text-xs font-medium"
+				class="rounded-button bg-muted px-2.5 py-1.5 text-xs font-medium text-muted-foreground"
 			>
 				depth: 4 levels
 			</div>
@@ -82,16 +82,16 @@
 
 		<div class="grid gap-3 md:grid-cols-2">
 			<label
-				class="border-input rounded-button flex items-center gap-3 border px-3 py-2 text-sm"
+				class="border-input flex items-center gap-3 rounded-button border px-3 py-2 text-sm"
 			>
 				<input type="checkbox" bind:checked={debugMode} class="size-4" />
 				<span class="font-medium">debugMode</span>
-				<span class="text-muted-foreground ml-auto text-xs">{debugMode ? "on" : "off"}</span
+				<span class="ml-auto text-xs text-muted-foreground">{debugMode ? "on" : "off"}</span
 				>
 			</label>
 
 			<label
-				class="border-input rounded-button flex items-center gap-3 border px-3 py-2 text-sm"
+				class="border-input flex items-center gap-3 rounded-button border px-3 py-2 text-sm"
 			>
 				<span class="font-medium">openDelay</span>
 				<input
@@ -102,12 +102,12 @@
 					bind:value={openDelay}
 					class="w-full"
 				/>
-				<span class="text-muted-foreground min-w-[55px] text-right text-xs"
+				<span class="min-w-[55px] text-right text-xs text-muted-foreground"
 					>{openDelay}ms</span
 				>
 			</label>
 
-			<div class="border-input rounded-button flex flex-col gap-2 border px-3 py-2 text-sm">
+			<div class="border-input flex flex-col gap-2 rounded-button border px-3 py-2 text-sm">
 				<p class="font-medium">content offsets</p>
 				<label class="flex items-center gap-3 text-xs">
 					<span class="min-w-[68px] font-medium">sideOffset</span>
@@ -119,7 +119,7 @@
 						bind:value={contentSideOffset}
 						class="w-full"
 					/>
-					<span class="text-muted-foreground min-w-[30px] text-right"
+					<span class="min-w-[30px] text-right text-muted-foreground"
 						>{contentSideOffset}</span
 					>
 				</label>
@@ -133,13 +133,13 @@
 						bind:value={contentAlignOffset}
 						class="w-full"
 					/>
-					<span class="text-muted-foreground min-w-[30px] text-right"
+					<span class="min-w-[30px] text-right text-muted-foreground"
 						>{contentAlignOffset}</span
 					>
 				</label>
 			</div>
 
-			<div class="border-input rounded-button flex flex-col gap-2 border px-3 py-2 text-sm">
+			<div class="border-input flex flex-col gap-2 rounded-button border px-3 py-2 text-sm">
 				<p class="font-medium">subcontent offsets</p>
 				<label class="flex items-center gap-3 text-xs">
 					<span class="min-w-[68px] font-medium">sideOffset</span>
@@ -151,7 +151,7 @@
 						bind:value={subContentSideOffset}
 						class="w-full"
 					/>
-					<span class="text-muted-foreground min-w-[30px] text-right"
+					<span class="min-w-[30px] text-right text-muted-foreground"
 						>{subContentSideOffset}</span
 					>
 				</label>
@@ -165,7 +165,7 @@
 						bind:value={subContentAlignOffset}
 						class="w-full"
 					/>
-					<span class="text-muted-foreground min-w-[30px] text-right"
+					<span class="min-w-[30px] text-right text-muted-foreground"
 						>{subContentAlignOffset}</span
 					>
 				</label>
@@ -174,9 +174,9 @@
 	</div>
 
 	<div class="grid gap-6 lg:grid-cols-2">
-		<section class="border-muted bg-background rounded-xl border p-5">
+		<section class="rounded-xl border border-muted bg-background p-5">
 			<div class="mb-4 flex items-center gap-2">
-				<FunnelSimple class="text-foreground-alt size-5" />
+				<FunnelSimple class="size-5 text-foreground-alt" />
 				<h2 class="text-sm font-semibold">dropdown stress test</h2>
 			</div>
 
@@ -198,7 +198,7 @@
 						<DropdownMenu.Sub>
 							<DropdownMenu.SubTrigger class={subTriggerClass} {openDelay}>
 								Status
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.Portal>
 								<DropdownMenu.SubContent
@@ -229,7 +229,7 @@
 						<DropdownMenu.Sub>
 							<DropdownMenu.SubTrigger class={subTriggerClass} {openDelay}>
 								Project properties
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.Portal>
 								<DropdownMenu.SubContent
@@ -251,7 +251,7 @@
 										>
 											Project priority
 											<CaretRight
-												class="text-foreground-alt ml-auto size-4"
+												class="ml-auto size-4 text-foreground-alt"
 											/>
 										</DropdownMenu.SubTrigger>
 										<DropdownMenu.Portal>
@@ -290,7 +290,7 @@
 										>
 											Project labels
 											<CaretRight
-												class="text-foreground-alt ml-auto size-4"
+												class="ml-auto size-4 text-foreground-alt"
 											/>
 										</DropdownMenu.SubTrigger>
 										<DropdownMenu.Portal>
@@ -324,7 +324,7 @@
 													>
 														Infrastructure...
 														<CaretRight
-															class="text-foreground-alt ml-auto size-4"
+															class="ml-auto size-4 text-foreground-alt"
 														/>
 													</DropdownMenu.SubTrigger>
 													<DropdownMenu.Portal>
@@ -359,7 +359,7 @@
 										>
 											Project lead
 											<CaretRight
-												class="text-foreground-alt ml-auto size-4"
+												class="ml-auto size-4 text-foreground-alt"
 											/>
 										</DropdownMenu.SubTrigger>
 										<DropdownMenu.Portal>
@@ -396,15 +396,15 @@
 			</DropdownMenu.Root>
 		</section>
 
-		<section class="border-muted bg-background rounded-xl border p-5">
+		<section class="rounded-xl border border-muted bg-background p-5">
 			<div class="mb-4 flex items-center gap-2">
-				<MouseSimple class="text-foreground-alt size-5" />
+				<MouseSimple class="size-5 text-foreground-alt" />
 				<h2 class="text-sm font-semibold">context-menu stress test</h2>
 			</div>
 
 			<ContextMenu.Root {...debugRootProps}>
 				<ContextMenu.Trigger
-					class="rounded-card border-input text-muted-foreground flex h-[220px] w-full select-none items-center justify-center border-2 border-dashed bg-transparent text-sm font-semibold"
+					class="border-input flex h-[220px] w-full items-center justify-center rounded-card border-2 border-dashed bg-transparent text-sm font-semibold text-muted-foreground select-none"
 				>
 					right click in this panel
 				</ContextMenu.Trigger>
@@ -419,7 +419,7 @@
 						<ContextMenu.Sub>
 							<ContextMenu.SubTrigger class={subTriggerClass} {openDelay}>
 								Move to...
-								<CaretRight class="text-foreground-alt ml-auto size-4" />
+								<CaretRight class="ml-auto size-4 text-foreground-alt" />
 							</ContextMenu.SubTrigger>
 							<ContextMenu.Portal>
 								<ContextMenu.SubContent
@@ -436,7 +436,7 @@
 										<ContextMenu.SubTrigger class={subTriggerClass} {openDelay}>
 											Archive...
 											<CaretRight
-												class="text-foreground-alt ml-auto size-4"
+												class="ml-auto size-4 text-foreground-alt"
 											/>
 										</ContextMenu.SubTrigger>
 										<ContextMenu.Portal>

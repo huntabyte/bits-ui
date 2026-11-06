@@ -48,14 +48,14 @@
 				>
 					<Accordion.Header>
 						<Accordion.Trigger
-							class="focus-override text-left font-bold text-white transition-all duration-300 focus-visible:!outline-none data-[state=open]:mb-2 data-[state=closed]:text-sm data-[state=open]:text-base data-[state=closed]:opacity-0 data-[state=open]:opacity-100 md:data-[state=open]:text-xl"
+							class="focus-override text-left font-bold text-white transition-all duration-300 focus-visible:!outline-none data-[state=closed]:text-sm data-[state=closed]:opacity-0 data-[state=open]:mb-2 data-[state=open]:text-base data-[state=open]:opacity-100 md:data-[state=open]:text-xl"
 						>
 							{item.title}
 						</Accordion.Trigger>
 					</Accordion.Header>
 					<Accordion.Content
 						forceMount
-						class="max-h-0 overflow-hidden text-white/90 transition-all duration-700 data-[state=open]:max-h-[100px] data-[state=open]:text-xs data-[state=closed]:opacity-0 data-[state=open]:opacity-100 md:data-[state=open]:text-base"
+						class="max-h-0 overflow-hidden text-white/90 transition-all duration-700 data-[state=closed]:opacity-0 data-[state=open]:max-h-[100px] data-[state=open]:text-xs data-[state=open]:opacity-100 md:data-[state=open]:text-base"
 					>
 						{item.description}
 					</Accordion.Content>

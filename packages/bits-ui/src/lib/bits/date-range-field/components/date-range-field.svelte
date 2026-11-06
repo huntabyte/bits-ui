@@ -4,11 +4,11 @@
 	import type { DateValue } from "@internationalized/date";
 	import { DateRangeFieldRootState } from "../date-range-field.svelte.js";
 	import type { DateRangeFieldRootProps } from "../types.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
-	import type { DateRange } from "$lib/shared/index.js";
-	import { getDefaultDate } from "$lib/internal/date-time/utils.js";
-	import { resolveLocaleProp } from "$lib/bits/utilities/config/prop-resolvers.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
+	import type { DateRange } from "#lib/shared/index.js";
+	import { getDefaultDate } from "#lib/internal/date-time/utils.js";
+	import { resolveLocaleProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 
 	const uid = $props.id();
 
@@ -42,15 +42,16 @@
 	let startValue = $state<DateValue | undefined>(value?.start);
 	let endValue = $state<DateValue | undefined>(value?.end);
 
-	function handleDefaultPlaceholder() {
-		if (placeholder !== undefined) return;
+	function handleDefaultPlaceholder(setPlaceholder = true) {
+		if (placeholder !== undefined) return placeholder;
 		const defaultPlaceholder = getDefaultDate({
 			granularity,
 			defaultValue: value?.start,
 			minValue,
 			maxValue,
 		});
-		placeholder = defaultPlaceholder;
+		if (setPlaceholder) placeholder = defaultPlaceholder;
+		return defaultPlaceholder;
 	}
 
 	// SSR
@@ -101,7 +102,7 @@
 		maxValue: boxWith(() => maxValue),
 		minValue: boxWith(() => minValue),
 		placeholder: boxWith(
-			() => placeholder as DateValue,
+			() => placeholder ?? handleDefaultPlaceholder(false),
 			(v) => {
 				placeholder = v;
 				onPlaceholderChange(v);

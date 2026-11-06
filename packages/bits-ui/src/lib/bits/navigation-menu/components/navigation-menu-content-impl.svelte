@@ -7,10 +7,10 @@
 		NavigationMenuItemState,
 		NavigationMenuContentImplState,
 	} from "../navigation-menu.svelte.js";
-	import { noop } from "$lib/internal/noop.js";
-	import { createId } from "$lib/internal/create-id.js";
-	import DismissibleLayer from "$lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
-	import EscapeLayer from "$lib/bits/utilities/escape-layer/escape-layer.svelte";
+	import { noop } from "#lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import DismissibleLayer from "#lib/bits/utilities/dismissible-layer/dismissible-layer.svelte";
+	import EscapeLayer from "#lib/bits/utilities/escape-layer/escape-layer.svelte";
 
 	const uid = $props.id();
 
@@ -44,12 +44,14 @@
 				}
 			),
 		},
-		itemState
+		untrack(() => itemState)
 	);
 
-	if (itemState) {
-		NavigationMenuItemContext.set(itemState);
-	}
+	untrack(() => {
+		if (itemState) {
+			NavigationMenuItemContext.set(itemState);
+		}
+	});
 
 	const mergedProps = $derived(mergeProps(restProps, contentImplState.props));
 </script>
@@ -57,7 +59,7 @@
 <DismissibleLayer
 	{id}
 	ref={contentImplState.opts.ref}
-	enabled={true}
+	enabled={contentImplState.open}
 	onInteractOutside={(e) => {
 		onInteractOutside(e);
 		if (e.defaultPrevented) return;
@@ -72,7 +74,7 @@
 >
 	{#snippet children({ props: dismissibleProps })}
 		<EscapeLayer
-			enabled={true}
+			enabled={contentImplState.open}
 			ref={contentImplState.opts.ref}
 			onEscapeKeydown={(e) => {
 				onEscapeKeydown(e);

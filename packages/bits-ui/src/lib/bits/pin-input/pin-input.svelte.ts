@@ -1,5 +1,5 @@
 import { Previous, watch } from "runed";
-import { onMount } from "svelte";
+import { onMount, untrack } from "svelte";
 import {
 	type WritableBox,
 	attachRef,
@@ -17,8 +17,8 @@ import type {
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { createBitsAttrs, boolToTrueOrUndef } from "$lib/internal/attrs.js";
+} from "#lib/internal/types.js";
+import { createBitsAttrs, boolToTrueOrUndef } from "#lib/internal/attrs.js";
 import { on } from "svelte/events";
 
 export const REGEXP_ONLY_DIGITS = "^\\d+$";
@@ -31,7 +31,8 @@ const pinInputAttrs = createBitsAttrs({
 });
 
 interface PinInputRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: string;
 			inputRef: HTMLInputElement | null;
@@ -172,7 +173,8 @@ export class PinInputRootState {
 			};
 			updateRootHeight();
 
-			const resizeObserver = new ResizeObserver(updateRootHeight);
+			const win = this.domContext.getWindow();
+			const resizeObserver = new win.ResizeObserver(updateRootHeight);
 			resizeObserver.observe(input);
 
 			return () => {
@@ -205,11 +207,11 @@ export class PinInputRootState {
 			const value = this.opts.value.current;
 			const prevValue = this.#previousValue.current;
 			const maxLength = this.opts.maxLength.current;
-			const onComplete = this.opts.onComplete.current;
 
 			if (prevValue === undefined) return;
 			if (value !== prevValue && prevValue.length < maxLength && value.length === maxLength) {
-				onComplete(value);
+				// untracked so the callback's reads (and a new `onComplete` reference) don't re-run this effect
+				untrack(() => this.opts.onComplete.current(value));
 			}
 		});
 	}
@@ -529,7 +531,8 @@ export class PinInputRootState {
 }
 
 interface PinInputCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			cell: PinInputCell;
 		}> {}

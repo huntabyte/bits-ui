@@ -28,7 +28,7 @@
 })}
 	<div {...wrapperProps}>
 		<div {...props}>
-			<div data-testid="content-text">content</div>
+			<div data-testid="content-text" data-wrapper-style={wrapperProps.style}>content</div>
 			<button data-testid="focusable-button">focusable button</button>
 			<input data-testid="focusable-input" type="text" placeholder="input" />
 			<Popover.Close data-testid="close">close</Popover.Close>

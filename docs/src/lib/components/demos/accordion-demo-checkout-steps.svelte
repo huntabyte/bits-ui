@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 	import { Accordion, useId, Button } from "bits-ui";
 	import CaretDown from "phosphor-svelte/lib/CaretDown";
 	import { SvelteSet } from "svelte/reactivity";
@@ -12,11 +12,11 @@
 	{@const isCompleted = completedSteps.has(value)}
 	<Accordion.Header>
 		<Accordion.Trigger
-			class="flex w-full flex-1 select-none items-center justify-between gap-3 py-5 text-[15px] font-medium transition-all [&[data-state=open]>span>svg]:rotate-180"
+			class="flex w-full flex-1 items-center justify-between gap-3 py-5 text-[15px] font-medium transition-all select-none [&[data-state=open]>span>svg]:rotate-180"
 		>
 			<div
 				class={cn(
-					"border-foreground/30 flex size-6 shrink-0 items-center justify-center rounded-full border text-xs font-medium",
+					"flex size-6 shrink-0 items-center justify-center rounded-full border border-foreground/30 text-xs font-medium",
 					isCompleted ? "text-foreground" : "text-muted-foreground"
 				)}
 			>
@@ -26,7 +26,7 @@
 				{title}
 			</span>
 			<span
-				class="hover:bg-dark-10 inline-flex size-8 items-center justify-center rounded-[7px] bg-transparent"
+				class="inline-flex size-8 items-center justify-center rounded-[7px] bg-transparent hover:bg-dark-10"
 			>
 				<CaretDown class="size-[18px] transition-transform duration-200" />
 			</span>
@@ -45,24 +45,24 @@
 })}
 	{@const id = useId()}
 	<div class="flex flex-col gap-1">
-		<label class="select-none text-sm font-medium" for={id}>{label}</label>
+		<label class="text-sm font-medium select-none" for={id}>{label}</label>
 		<input
 			{type}
 			{id}
 			name={label}
 			{placeholder}
-			class="rounded-card-sm border-border-input bg-background placeholder:text-foreground-alt/50 hover:border-dark-40 focus-override inline-flex h-10 w-full items-center border px-4 text-base sm:text-sm"
+			class="focus-override inline-flex h-10 w-full items-center rounded-card-sm border border-border-input bg-background px-4 text-base placeholder:text-foreground-alt/50 hover:border-dark-40 sm:text-sm"
 		/>
 	</div>
 {/snippet}
 
 <Accordion.Root bind:value={activeStep} class="w-full sm:max-w-[70%]" type="single">
-	<Accordion.Item value="1" class="border-dark-10 group border-b px-1.5">
+	<Accordion.Item value="1" class="group border-b border-dark-10 px-1.5">
 		{@render MyAccordionHeader({ title: "Shipping Information", value: "1" })}
 		<Accordion.Content
-			class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm tracking-[-0.01em]"
+			class="overflow-hidden text-sm tracking-[-0.01em] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 		>
-			<div class="flex flex-col gap-4 pb-6 pt-2">
+			<div class="flex flex-col gap-4 pt-2 pb-6">
 				<div class="grid grid-cols-2 gap-4">
 					{@render InputField({ label: "First Name", placeholder: "John" })}
 					{@render InputField({ label: "Last Name", placeholder: "Doe" })}
@@ -77,7 +77,7 @@
 				</div>
 				<div class="pt-2">
 					<Button.Root
-						class="rounded-input bg-dark text-background shadow-mini hover:bg-dark/95 inline-flex h-10 select-none items-center justify-center whitespace-nowrap px-[21px] text-sm font-medium transition-all hover:cursor-pointer active:scale-[0.98]"
+						class="inline-flex h-10 items-center justify-center rounded-input bg-dark px-[21px] text-sm font-medium whitespace-nowrap text-background shadow-mini transition-all select-none hover:cursor-pointer hover:bg-dark/95 active:scale-[0.98]"
 						onclick={() => {
 							completedSteps.add("1");
 							activeStep = "2";
@@ -89,12 +89,12 @@
 			</div>
 		</Accordion.Content>
 	</Accordion.Item>
-	<Accordion.Item value="2" class="border-dark-10 group border-b px-1.5">
+	<Accordion.Item value="2" class="group border-b border-dark-10 px-1.5">
 		{@render MyAccordionHeader({ title: "Payment Method", value: "2" })}
 		<Accordion.Content
-			class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm tracking-[-0.01em]"
+			class="overflow-hidden text-sm tracking-[-0.01em] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 		>
-			<div class="flex flex-col gap-4 pb-6 pt-2">
+			<div class="flex flex-col gap-4 pt-2 pb-6">
 				<div class="grid grid-cols-3 gap-4">
 					<div class="col-span-3">
 						{@render InputField({
@@ -108,7 +108,7 @@
 				</div>
 				<div class="pt-2">
 					<Button.Root
-						class="rounded-input bg-dark text-background shadow-mini hover:bg-dark/95 inline-flex h-10 select-none items-center justify-center whitespace-nowrap px-[21px] text-sm font-medium transition-all hover:cursor-pointer active:scale-[0.98]"
+						class="inline-flex h-10 items-center justify-center rounded-input bg-dark px-[21px] text-sm font-medium whitespace-nowrap text-background shadow-mini transition-all select-none hover:cursor-pointer hover:bg-dark/95 active:scale-[0.98]"
 						onclick={() => {
 							completedSteps.add("2");
 							activeStep = "3";
@@ -120,10 +120,10 @@
 			</div>
 		</Accordion.Content>
 	</Accordion.Item>
-	<Accordion.Item value="3" class="border-dark-10 group border-b px-1.5">
+	<Accordion.Item value="3" class="group border-b border-dark-10 px-1.5">
 		{@render MyAccordionHeader({ title: "Payment Method", value: "3" })}
 		<Accordion.Content
-			class="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden pb-6 text-sm tracking-[-0.01em]"
+			class="overflow-hidden pb-6 text-sm tracking-[-0.01em] data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
 		>
 			<div class="flex flex-col gap-4 pt-2">
 				<div class="rounded-lg border p-4">
@@ -149,7 +149,7 @@
 				</div>
 				<div class="pt-2">
 					<Button.Root
-						class="rounded-input bg-dark text-background shadow-mini hover:bg-dark/95 inline-flex h-10 select-none items-center justify-center whitespace-nowrap px-[21px] text-sm font-medium transition-all hover:cursor-pointer active:scale-[0.98]"
+						class="inline-flex h-10 items-center justify-center rounded-input bg-dark px-[21px] text-sm font-medium whitespace-nowrap text-background shadow-mini transition-all select-none hover:cursor-pointer hover:bg-dark/95 active:scale-[0.98]"
 						onclick={() => {
 							completedSteps.add("3");
 							activeStep = "";

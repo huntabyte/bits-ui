@@ -3,7 +3,8 @@ import {
 	getLocalTimeZone,
 	isSameDay,
 	isSameMonth,
-	isToday,
+	toCalendarDate,
+	today,
 } from "@internationalized/date";
 import { DEV } from "esm-env";
 import { onMount, untrack } from "svelte";
@@ -15,17 +16,17 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { RangeCalendarRootState } from "../range-calendar/range-calendar.svelte.js";
-import { boolToStr, boolToStrTrueOrUndef, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
+import { boolToStr, boolToStrTrueOrUndef, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
 import type {
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { useId } from "$lib/internal/use-id.js";
-import type { DateMatcher, Month } from "$lib/shared/index.js";
-import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
-import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+} from "#lib/internal/types.js";
+import { useId } from "#lib/internal/use-id.js";
+import type { DateMatcher, Month } from "#lib/shared/index.js";
+import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "#lib/internal/date-time/formatter.js";
 import {
 	calendarAttrs,
 	createAccessibleHeading,
@@ -42,14 +43,16 @@ import {
 	handleCalendarPrevPage,
 	shiftCalendarFocus,
 	useEnsureNonDisabledPlaceholder,
+	getTabbableDate,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/internal/date-time/calendar-helpers.svelte.js";
-import { getDateValueType, isBefore, toDate } from "$lib/internal/date-time/utils.js";
-import type { WeekStartsOn } from "$lib/shared/date/types.js";
+} from "#lib/internal/date-time/calendar-helpers.svelte.js";
+import { getDateValueType, isBefore, toDate } from "#lib/internal/date-time/utils.js";
+import type { WeekStartsOn } from "#lib/shared/date/types.js";
 
 interface CalendarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateValue | undefined | DateValue[];
 			placeholder: DateValue;
@@ -95,11 +98,25 @@ export class CalendarRootState {
 
 	readonly opts: CalendarRootStateOpts;
 	readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
+	/**
+	 * `today()` resolves the local timezone via `Intl.DateTimeFormat#formatToParts`, which is
+	 * far too expensive to run once per rendered cell. We read `months` so this refreshes on
+	 * the same cadence the per-cell computation used to (whenever the visible dates change).
+	 */
+	readonly todayDate = $derived.by(() => {
+		this.months;
+		return today(getLocalTimeZone());
+	});
 	readonly formatter: Formatter;
 	readonly accessibleHeadingId = useId();
 	readonly domContext: DOMContext;
 	readonly attachment: RefAttachment;
 	months: Month<DateValue>[] = $state([]);
+	readonly tabbableDate = $derived.by(() =>
+		getTabbableDate(this.opts.placeholder.current, this.months, (date) =>
+			this.isDateDisabled(date)
+		)
+	);
 	announcer: Announcer;
 
 	constructor(opts: CalendarRootStateOpts) {
@@ -404,6 +421,7 @@ export class CalendarRootState {
 		return shiftCalendarFocus({
 			node,
 			add,
+			useCalendarDayOffset: Math.abs(add) === 7,
 			placeholder: this.opts.placeholder,
 			calendarNode: this.opts.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,
@@ -568,7 +586,8 @@ export class CalendarHeadingState {
 const CalendarCellContext = new Context<CalendarCellState>("Calendar.Cell | RangeCalendar.Cell");
 
 interface CalendarCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
 			month: DateValue;
@@ -583,11 +602,13 @@ export class CalendarCellState {
 
 	readonly opts: CalendarCellStateOpts;
 	readonly root: CalendarRootState;
-	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
+	readonly cellDate = $derived.by(() => toDate(toCalendarDate(this.opts.date.current)));
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
-	readonly isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
+	readonly isDateToday = $derived.by(() =>
+		isSameDay(this.opts.date.current, this.root.todayDate)
+	);
 	readonly isOutsideMonth = $derived.by(
 		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
 	);
@@ -688,7 +709,8 @@ export class CalendarDayState {
 		(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 		this.cell.isDisabled
 			? undefined
-			: this.cell.isFocusedDate
+			: this.cell.root.tabbableDate &&
+				  isSameDay(this.cell.opts.date.current, this.cell.root.tabbableDate)
 				? 0
 				: -1
 	);
@@ -989,7 +1011,8 @@ export class CalendarHeaderState {
 }
 
 interface CalendarMonthSelectStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			months: number[];
 			monthFormat: Intl.DateTimeFormatOptions["month"] | ((month: number) => string);
@@ -1027,7 +1050,9 @@ export class CalendarMonthSelectState {
 			if (typeof monthFormat === "function") {
 				label = monthFormat(month);
 			} else {
-				label = this.root.formatter.custom(toDate(date), { month: monthFormat });
+				label = this.root.formatter.custom(toDate(toCalendarDate(date)), {
+					month: monthFormat,
+				});
 			}
 			months.push({
 				value: month,
@@ -1081,7 +1106,8 @@ export class CalendarMonthSelectState {
 }
 
 interface CalendarYearSelectStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			years: number[] | undefined;
 			yearFormat: Intl.DateTimeFormatOptions["year"] | ((year: number) => string);
@@ -1123,7 +1149,9 @@ export class CalendarYearSelectState {
 			if (typeof yearFormat === "function") {
 				label = yearFormat(year);
 			} else {
-				label = this.root.formatter.custom(toDate(date), { year: yearFormat });
+				label = this.root.formatter.custom(toDate(toCalendarDate(date)), {
+					year: yearFormat,
+				});
 			}
 			localYears.push({
 				value: year,

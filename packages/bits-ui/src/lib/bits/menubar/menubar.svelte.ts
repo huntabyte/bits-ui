@@ -8,20 +8,20 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import type { InteractOutsideBehaviorType } from "../utilities/dismissible-layer/types.js";
-import type { Direction } from "$lib/shared/index.js";
+import type { Direction } from "#lib/shared/index.js";
 import {
 	createBitsAttrs,
 	boolToStr,
 	boolToEmptyStrOrUndef,
 	getDataOpenClosed,
-} from "$lib/internal/attrs.js";
-import { kbd } from "$lib/internal/kbd.js";
-import { wrapArray } from "$lib/internal/arrays.js";
-import type { OnChangeFn, RefAttachment, WithRefOpts } from "$lib/internal/types.js";
+} from "#lib/internal/attrs.js";
+import { kbd } from "#lib/internal/kbd.js";
+import { wrapArray } from "#lib/internal/arrays.js";
+import type { OnChangeFn, RefAttachment, WithRefOpts } from "#lib/internal/types.js";
 import { onMount } from "svelte";
 import type { FocusEventHandler, KeyboardEventHandler, PointerEventHandler } from "svelte/elements";
 import { getFloatingContentCSSVars } from "../../internal/floating-svelte/floating-utils.svelte.js";
-import { RovingFocusGroup } from "$lib/internal/roving-focus-group.js";
+import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 
 const menubarAttrs = createBitsAttrs({
 	component: "menubar",
@@ -31,7 +31,8 @@ const menubarAttrs = createBitsAttrs({
 const MenubarRootContext = new Context<MenubarRootState>("Menubar.Root");
 const MenubarMenuContext = new Context<MenubarMenuState>("Menubar.Menu");
 interface MenubarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			dir: Direction;
 			loop: boolean;
@@ -59,6 +60,7 @@ export class MenubarRootState {
 		this.rovingFocusGroup = new RovingFocusGroup({
 			rootNode: this.opts.ref,
 			candidateAttr: menubarAttrs.trigger,
+			rootAttr: menubarAttrs.root,
 			loop: this.opts.loop,
 			orientation: boxWith(() => "horizontal"),
 		});
@@ -143,11 +145,10 @@ export class MenubarRootState {
 	);
 }
 
-interface MenubarMenuStateOpts
-	extends ReadableBoxedValues<{
-		value: string;
-		onOpenChange: OnChangeFn<boolean>;
-	}> {}
+interface MenubarMenuStateOpts extends ReadableBoxedValues<{
+	value: string;
+	onOpenChange: OnChangeFn<boolean>;
+}> {}
 
 export class MenubarMenuState {
 	static create(opts: MenubarMenuStateOpts) {
@@ -195,7 +196,8 @@ export class MenubarMenuState {
 }
 
 interface MenubarTriggerStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			disabled: boolean;
 		}> {}
@@ -303,7 +305,8 @@ export class MenubarTriggerState {
 }
 
 interface MenubarContentStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			interactOutsideBehavior: InteractOutsideBehaviorType;
 			onOpenAutoFocus: (e: Event) => void;

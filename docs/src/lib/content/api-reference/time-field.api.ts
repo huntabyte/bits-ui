@@ -34,7 +34,6 @@ import {
 	stringDefinitionFromMarkdown,
 } from "../utils.js";
 
-
 export const root = defineComponentApiSchema<TimeFieldRootPropsWithoutHTML>({
 	title: "Root",
 	description: "The root time field component.",
@@ -140,7 +139,9 @@ export const input = defineComponentApiSchema<TimeFieldInputPropsWithoutHTML>({
 			elType: "HTMLDivElement",
 			children: {
 				definition: TimeFieldInputChildrenSnippetProps,
-				stringDefinition: stringDefinitionFromMarkdown(timeFieldInputChildrenSnippetPropsRaw),
+				stringDefinition: stringDefinitionFromMarkdown(
+					timeFieldInputChildrenSnippetPropsRaw
+				),
 			},
 			child: {
 				definition: TimeFieldInputChildSnippetProps,

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { Popover, Separator } from "bits-ui";
-	import ScrollArea from "$lib/components/ui/scroll-area.svelte";
-	import type { PropSchema } from "$lib/types/index.js";
+	import ScrollArea from "#lib/components/ui/scroll-area.svelte";
+	import type { PropSchema } from "#lib/types/index.js";
 	import Info from "phosphor-svelte/lib/Info";
 	import PropsRequiredBadge from "./props-required-badge.svelte";
 	import PropsBindableBadge from "./props-bindable-badge.svelte";
-	import Code from "$lib/components/markdown/code.svelte";
-	import { parseMarkdown } from "$lib/utils/markdown.js";
-	import PopoverContent from "$lib/components/ui/popover/popover-content.svelte";
+	import Code from "#lib/components/markdown/code.svelte";
+	import { parseMarkdown } from "#lib/utils/markdown.js";
+	import PopoverContent from "#lib/components/ui/popover/popover-content.svelte";
 
 	let { prop }: { prop: PropSchema & { name: string } } = $props();
 </script>
@@ -15,7 +15,7 @@
 <Popover.Root>
 	<Popover.Trigger
 		data-llm-ignore
-		class="rounded-button text-muted-foreground focus-visible:ring-foreground focus-visible:ring-offset-background extend-touch-target focus-visible:outline-hidden inline-flex h-full w-full items-center justify-end px-2 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2"
+		class="extend-touch-target inline-flex h-full w-full items-center justify-end rounded-button px-2 py-3 text-muted-foreground transition-colors focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 	>
 		<Info class="size-4" weight="bold" />
 		<span class="sr-only">See type definition</span>
@@ -52,24 +52,24 @@
 		{:else}
 			<ScrollArea
 				type="scroll"
-				class="bg-muted rounded-button flex max-h-[200px] min-w-full p-2"
+				class="flex max-h-[200px] min-w-full rounded-button bg-muted p-2"
 				scrollbarXProps={{ class: "h-1.5" }}
 				scrollbarYProps={{ class: "w-1.5" }}
 			>
 				<div
-					class="**:data-line:pr-2.5! [&_pre]:my-0! [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:pt-0! [&_pre]:pb-0! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:outline-hidden! w-full !text-xs [&_[data-line]]:!pl-0 [&_[data-line]]:!text-xs [&_code]:text-start [&_pre]:mt-0 [&_pre]:border-0 [&_pre]:p-0"
+					class="w-full !text-xs **:data-line:pr-2.5! [&_[data-line]]:!pl-0 [&_[data-line]]:!text-xs [&_code]:text-start [&_pre]:my-0! [&_pre]:mt-0 [&_pre]:mb-0! [&_pre]:overflow-x-visible! [&_pre]:border-0 [&_pre]:p-0 [&_pre]:pt-0! [&_pre]:pb-0! [&_pre]:ring-0! [&_pre]:ring-offset-0! [&_pre]:outline-hidden!"
 				>
 					<prop.type.definition />
 				</div>
 			</ScrollArea>
 		{/if}
-		<Separator.Root class="dark:bg-dark-10 bg-border !h-px w-full " />
+		<Separator.Root class="!h-px w-full bg-border dark:bg-dark-10 " />
 
 		<div class="flex w-full flex-col gap-2">
-			<span class="text-foreground text-left font-semibold">Description</span>
+			<span class="text-left font-semibold text-foreground">Description</span>
 			<ScrollArea
 				type="scroll"
-				class="text-foreground/85 max-h-[200px] min-w-full p-0 text-left text-sm leading-relaxed"
+				class="max-h-[200px] min-w-full p-0 text-left text-sm leading-relaxed text-foreground/85"
 				scrollbarXProps={{ class: "h-1.5" }}
 				scrollbarYProps={{ class: "w-1.5 -mr-2" }}
 			>

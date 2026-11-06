@@ -1,5 +1,5 @@
-import { componentDocs } from "$content/index.js";
-import { getComponentDoc } from "$lib/utils/docs.js";
+import { componentDocs } from "#content/index.js";
+import { getComponentDoc } from "#lib/utils/docs.js";
 import type { EntryGenerator } from "./$types.js";
 
 export const prerender = true;

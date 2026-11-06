@@ -1,19 +1,28 @@
-import { expect, it, vi, afterEach, onTestFinished } from "vitest";
+import { mount, unmount } from "svelte";
+import DropdownMenuShadowTest from "./dropdown-menu-shadow-test.svelte";
+import { expect, it, vi, afterEach, onTestFinished, describe } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { page, userEvent } from "@vitest/browser/context";
+import { page, userEvent } from "vitest/browser";
 import { getTestKbd } from "../utils.js";
 import type { DropdownMenuTestProps } from "./dropdown-menu-test.svelte";
 import type { DropdownMenuForceMountTestProps } from "./dropdown-menu-force-mount-test.svelte";
 import DropdownMenuForceMountTest from "./dropdown-menu-force-mount-test.svelte";
 import {
+	bodyPointerEventsOnRemoval,
 	expectExists,
 	expectNotExists,
 	getPointerAwayFromSubmenuIntentClientCoords,
 	getPointerLeaveTowardSubmenuClientCoords,
 	getPointerMidpointTowardSubmenuClientCoords,
+	waitForDismissibleLayer,
 } from "../browser-utils";
 import DropdownMenuTest from "./dropdown-menu-test.svelte";
+import DropdownMenuInitiallyOpenTest from "./dropdown-menu-initially-open-test.svelte";
 import DropdownMenuMultipleTest from "./dropdown-menu-multiple-test.svelte";
+import DropdownMenuScrollPaddingTest from "./dropdown-menu-scroll-padding-test.svelte";
+import DropdownMenuFieldsetDisabledTest from "./dropdown-menu-fieldset-disabled-test.svelte";
+import DropdownMenuTooltipTriggerTest from "./dropdown-menu-tooltip-trigger-test.svelte";
+import DropdownMenuScrollItemsTest from "./dropdown-menu-scroll-items-test.svelte";
 
 const kbd = getTestKbd();
 const OPEN_KEYS = [kbd.ENTER, kbd.ARROW_DOWN, kbd.SPACE];
@@ -27,7 +36,7 @@ type DropdownMenuSetupProps = (DropdownMenuTestProps | DropdownMenuForceMountTes
  */
 async function setup(props: DropdownMenuSetupProps = {}) {
 	const { component: comp = DropdownMenuTest, ...rest } = props;
-	const t = render(comp, { ...rest });
+	const t = await render(comp, { ...rest });
 	const trigger = page.getByTestId("trigger");
 	onTestFinished(() => t.unmount());
 
@@ -49,6 +58,7 @@ async function open(props: DropdownMenuSetupProps = {}) {
 	await expectNotExists(t.getContent());
 	await t.trigger.click();
 	await expectExists(t.getContent());
+	await waitForDismissibleLayer(t.getContent());
 	return { ...t };
 }
 
@@ -59,6 +69,7 @@ async function openWithKbd(props: DropdownMenuSetupProps = {}, key: string = kbd
 	await expect.element(t.trigger).toHaveFocus();
 	await userEvent.keyboard(key);
 	await expectExists(page.getByTestId("content"));
+	await waitForDismissibleLayer(page.getByTestId("content"));
 	return t;
 }
 
@@ -83,6 +94,29 @@ async function focusSubTrigger(): Promise<void> {
 	if (subtrigger.element() === document.activeElement) return;
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expect.element(subtrigger).toHaveFocus();
+}
+
+function holdOpenAutoFocusFrame() {
+	const requestAnimationFrame = window.requestAnimationFrame;
+	let heldFrame: FrameRequestCallback | undefined;
+
+	return {
+		onOpenAutoFocus() {
+			window.requestAnimationFrame = (callback) => {
+				window.requestAnimationFrame = requestAnimationFrame;
+				heldFrame = callback;
+				return -1;
+			};
+		},
+		async release() {
+			if (!heldFrame) throw new Error("Open autofocus frame was not scheduled");
+			heldFrame(performance.now());
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+		},
+		restore() {
+			window.requestAnimationFrame = requestAnimationFrame;
+		},
+	};
 }
 
 afterEach(() => {
@@ -118,6 +152,24 @@ it("should have bits data attrs", async () => {
 	await expect.element(subContent).toHaveAttribute(`data-dropdown-menu-sub-content`);
 });
 
+it("should not expose the group heading and separator as groups", async () => {
+	const t = await setup();
+	await t.trigger.click();
+
+	// The group itself is the only `group` in the menu — a heading is the group's
+	// accessible name (referenced by `aria-labelledby`, which works off the id, not the
+	// role), and a separator is a separator. Exposing either as `role="group"` puts empty
+	// groups into the a11y tree. This also matches `Select`/`Command`, whose group
+	// headings set no role at all.
+	await expect.element(page.getByTestId("group")).toHaveAttribute("role", "group");
+	await expect.element(page.getByTestId("separator")).toHaveAttribute("role", "separator");
+	expect(page.getByTestId("group-heading").element().hasAttribute("role")).toBe(false);
+
+	// The heading still names its group.
+	const headingId = page.getByTestId("group-heading").element().id;
+	await expect.element(page.getByTestId("group")).toHaveAttribute("aria-labelledby", headingId);
+});
+
 it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (key) => {
 	await openWithKbd({}, key);
 	await expect.element(page.getByTestId("item")).toHaveFocus();
@@ -126,10 +178,10 @@ it.each(OPEN_KEYS)("should open when %s is pressed & respects binding", async (k
 it("should open when clicked & respects binding", async () => {
 	const t = await setup();
 	const binding = page.getByTestId("binding");
-	await expect.element(binding).toHaveTextContent("false");
+	await expect.element(binding).toMatchTextContent("false");
 	await t.trigger.click();
 	await expectExists(page.getByTestId("content"));
-	await expect.element(binding).toHaveTextContent("true");
+	await expect.element(binding).toMatchTextContent("true");
 });
 
 it("should manage focus correctly when opened with pointer", async () => {
@@ -164,6 +216,70 @@ it("should open submenu with keyboard on subtrigger", async () => {
 	await userEvent.keyboard(kbd.ARROW_RIGHT);
 	await expectExists(page.getByTestId("sub-content"));
 	await expect.element(page.getByTestId("sub-item")).toHaveFocus();
+});
+
+it("should not let delayed parent autofocus dismiss a focused submenu", async () => {
+	const parentAutoFocus = holdOpenAutoFocusFrame();
+
+	try {
+		const t = await setup({
+			contentProps: { onOpenAutoFocus: parentAutoFocus.onOpenAutoFocus },
+		});
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		const subTrigger = page.getByTestId("sub-trigger");
+		(subTrigger.element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ARROW_RIGHT);
+		await expectExists(t.getSubContent());
+		await waitForDismissibleLayer(t.getSubContent());
+
+		const subItem = page.getByTestId("sub-item");
+		await expect.element(subItem).toHaveFocus();
+		await parentAutoFocus.release();
+
+		await expect.element(t.getSubContent()).toBeInTheDocument();
+		await expect.element(subItem).toHaveFocus();
+	} finally {
+		parentAutoFocus.restore();
+	}
+});
+
+it("should not let delayed autofocus override focus already inside its scope", async () => {
+	const autoFocus = holdOpenAutoFocusFrame();
+
+	try {
+		const t = await setup({
+			contentProps: { onOpenAutoFocus: autoFocus.onOpenAutoFocus },
+		});
+
+		await t.trigger.click();
+		await expectExists(t.getContent());
+
+		const subTrigger = page.getByTestId("sub-trigger");
+		(subTrigger.element() as HTMLElement).focus();
+		await expect.element(subTrigger).toHaveFocus();
+		await autoFocus.release();
+
+		await expect.element(subTrigger).toHaveFocus();
+	} finally {
+		autoFocus.restore();
+	}
+});
+
+it("should focus the content when opened with the keyboard while the trigger's tooltip is open", async () => {
+	const t = await render(DropdownMenuTooltipTriggerTest);
+	onTestFinished(() => t.unmount());
+	await page.getByTestId("outside").click();
+
+	const trigger = page.getByTestId("trigger");
+	(trigger.element() as HTMLElement).focus();
+	await expectExists(page.getByTestId("tooltip-content"));
+	trigger.element().dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+
+	await expectExists(page.getByTestId("content"));
+	await expect.element(page.getByTestId("item")).toHaveFocus();
 });
 
 it("should keep submenu open while pointer is moving toward it", async () => {
@@ -244,24 +360,151 @@ it("should close submenu when pointer intent changes away from submenu", async (
 	await expect.element(page.getByTestId("item-2")).toHaveAttribute("data-highlighted");
 });
 
+it("should close submenu soon after the pointer stops moving closer to it", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 16 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const subContentWrapper = subContentEl.parentElement as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(triggerRect, contentRect);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentWrapper,
+		})
+	);
+
+	for (let i = 0; i < 10; i++) {
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+				clientX: leavePt.x,
+				clientY: leavePt.y,
+			})
+		);
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+	}
+
+	expect(() => t.getSubContent().element()).toThrow();
+});
+
+it("should keep submenu open while the pointer keeps moving closer", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 40 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const triggerRect = subTriggerEl.getBoundingClientRect();
+	const contentRect = subContentEl.getBoundingClientRect();
+	const y = triggerRect.top + triggerRect.height / 2;
+	// the submenu may flip to either side of the trigger
+	const dir = contentRect.left >= triggerRect.right ? 1 : -1;
+	const startX = dir === 1 ? triggerRect.right + 1 : triggerRect.left - 1;
+	const endX = dir === 1 ? contentRect.left - 2 : contentRect.right + 2;
+	const steps = Math.floor(Math.abs(endX - startX) / 2);
+	expect(steps).toBeGreaterThan(10);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: startX,
+			clientY: y,
+			relatedTarget: subContentEl.parentElement,
+		})
+	);
+
+	// 2px closer every 20ms, staying short of the content, for well over the 100ms window
+	for (let i = 1; i <= steps; i++) {
+		document.dispatchEvent(
+			new PointerEvent("pointermove", {
+				bubbles: true,
+				pointerType: "mouse",
+				clientX: startX + dir * i * 2,
+				clientY: y,
+			})
+		);
+		await new Promise<void>((resolve) => setTimeout(resolve, 20));
+	}
+
+	expect(t.getSubContent().element()).toBeTruthy();
+});
+
+it("should close submenu within ~300ms when the pointer leaves and stops", async () => {
+	const t = await open({
+		subTriggerProps: { openDelay: 0 },
+		subContentProps: { sideOffset: 16 },
+	});
+	const subTrigger = page.getByTestId("sub-trigger");
+	await subTrigger.click();
+	await expectExists(t.getSubContent());
+
+	const subTriggerEl = subTrigger.element() as HTMLElement;
+	const subContentEl = t.getSubContent().element() as HTMLElement;
+	const leavePt = getPointerMidpointTowardSubmenuClientCoords(
+		subTriggerEl.getBoundingClientRect(),
+		subContentEl.getBoundingClientRect()
+	);
+
+	subTriggerEl.dispatchEvent(
+		new PointerEvent("pointerleave", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+			relatedTarget: subContentEl.parentElement,
+		})
+	);
+	document.dispatchEvent(
+		new PointerEvent("pointermove", {
+			bubbles: true,
+			pointerType: "mouse",
+			clientX: leavePt.x,
+			clientY: leavePt.y,
+		})
+	);
+
+	await expect
+		.poll(() => document.querySelector("[data-testid='sub-content']"), { timeout: 300 })
+		.toBeNull();
+});
+
 it("should toggle the checkbox item when clicked & respects binding", async () => {
 	const t = await open();
 	const checkedBinding = page.getByTestId("checked-binding");
 	const indicator = page.getByTestId("checkbox-indicator");
-	await expect.element(indicator).not.toHaveTextContent("checked");
-	await expect.element(checkedBinding).toHaveTextContent("false");
+	await expect.element(indicator).not.toMatchTextContent("checked");
+	await expect.element(checkedBinding).toMatchTextContent("false");
 	const checkbox = page.getByTestId("checkbox-item");
 	await checkbox.click();
-	await expect.element(checkedBinding).toHaveTextContent("true");
+	await expect.element(checkedBinding).toMatchTextContent("true");
 	await t.trigger.click();
-	await expect.element(indicator).toHaveTextContent("true");
+	await expect.element(indicator).toMatchTextContent("true");
 	await page.getByTestId("checkbox-item").click();
-	await expect.element(checkedBinding).toHaveTextContent("false");
+	await expect.element(checkedBinding).toMatchTextContent("false");
 
 	await checkedBinding.click();
-	await expect.element(checkedBinding).toHaveTextContent("true");
+	await expect.element(checkedBinding).toMatchTextContent("true");
 	await t.trigger.click();
-	await expect.element(page.getByTestId("checkbox-indicator")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator")).toMatchTextContent("true");
 });
 
 it("should toggle checkbox items within submenus when clicked & respects binding", async () => {
@@ -269,22 +512,22 @@ it("should toggle checkbox items within submenus when clicked & respects binding
 	await openSubmenu(props);
 
 	const subCheckedBinding = page.getByTestId("sub-checked-binding");
-	await expect.element(subCheckedBinding).toHaveTextContent("false");
+	await expect.element(subCheckedBinding).toMatchTextContent("false");
 	const indicator = page.getByTestId("sub-checkbox-indicator");
-	await expect.element(indicator).not.toHaveTextContent("true");
+	await expect.element(indicator).not.toMatchTextContent("true");
 	const subCheckbox = page.getByTestId("sub-checkbox-item");
 	await subCheckbox.click();
 	await expectNotExists(page.getByTestId("content"));
-	await expect.element(subCheckedBinding).toHaveTextContent("true");
+	await expect.element(subCheckedBinding).toMatchTextContent("true");
 });
 
 it("should check the radio item when clicked & respects binding", async () => {
 	await open();
 	const radioBinding = page.getByTestId("radio-binding");
-	await expect.element(radioBinding).toHaveTextContent("");
+	await expect.element(radioBinding).toMatchTextContent("");
 	const radioItem1 = page.getByTestId("radio-item");
 	await radioItem1.click();
-	await expect.element(radioBinding).toHaveTextContent("1");
+	await expect.element(radioBinding).toMatchTextContent("1");
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -346,6 +589,38 @@ it("should close the menu on escape", async () => {
 	await expectNotExists(page.getByTestId("content"));
 });
 
+it.each([
+	["default", {}],
+	["forceMount", { component: DropdownMenuForceMountTest, withOpenCheck: true }],
+] as const)(
+	"should restore body pointer-events as soon as the menu closes (%s)",
+	async (_, props) => {
+		// https://github.com/huntabyte/bits-ui/issues/2202
+		await openWithKbd(props);
+		await vi.waitFor(() => expect(document.body.style.pointerEvents).toBe("none"));
+		const restored = bodyPointerEventsOnRemoval(page.getByTestId("content").element());
+		await userEvent.keyboard(kbd.ESCAPE);
+		expect(await restored).toBe("");
+	}
+);
+
+it("should not take focus back when the pointer leaves an item of a closed menu", async () => {
+	const t = await setup({ component: DropdownMenuForceMountTest });
+	await t.trigger.click();
+	await expect.element(t.trigger).toHaveAttribute("data-state", "open");
+	const item = page.getByTestId("item");
+	await item.click();
+	await expect.element(t.trigger).toHaveAttribute("data-state", "closed");
+	const nextButton = page.getByTestId("next-button");
+	(nextButton.element() as HTMLElement).focus();
+
+	item.element().dispatchEvent(
+		new PointerEvent("pointerleave", { bubbles: true, pointerType: "mouse" })
+	);
+
+	await expect.element(nextButton).toHaveFocus();
+});
+
 it("should respect the `escapeKeydownBehavior` prop", async () => {
 	await openWithKbd({
 		contentProps: {
@@ -375,6 +650,12 @@ it("should respect the `interactOutsideBehavior` prop - close", async () => {
 
 	const outside = page.getByTestId("outside");
 	await outside.click({ force: true });
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("should close when clicking outside if the trigger's id isn't a valid CSS identifier", async () => {
+	await open({ triggerProps: { id: "1" } });
+	await page.getByTestId("outside").click({ force: true });
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -494,21 +775,21 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	const checkboxGroupItem1 = page.getByTestId("checkbox-group-item-1");
 	await expect.element(checkboxGroupItem1).toHaveAttribute("aria-checked", "true");
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("true");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 
 	await checkboxGroupItem1.click();
 	await expectNotExists(page.getByTestId("content"));
 	await t.open();
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 
 	await page.getByTestId("checkbox-group-item-2").click();
 	await t.open();
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("true");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("true");
 
 	await userEvent.keyboard(kbd.ESCAPE);
 
@@ -518,8 +799,8 @@ it("should respect the `value` prop on CheckboxGroup", async () => {
 	await expectNotExists(page.getByTestId("content"));
 	await t.open();
 
-	await expect.element(page.getByTestId("checkbox-indicator-1")).toHaveTextContent("false");
-	await expect.element(page.getByTestId("checkbox-indicator-2")).toHaveTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-1")).toMatchTextContent("false");
+	await expect.element(page.getByTestId("checkbox-indicator-2")).toMatchTextContent("false");
 });
 
 // CI hates this
@@ -591,7 +872,7 @@ it.each([true, false])(
 );
 
 it("should not cause unwanted focus jumps between different dropdown menus", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -622,7 +903,7 @@ it("should not cause unwanted focus jumps between different dropdown menus", asy
 });
 
 it("should not scroll to previous dropdown trigger when closing a different dropdown", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -656,13 +937,14 @@ it("should not scroll to previous dropdown trigger when closing a different drop
 	// open dropdown 3
 	await trigger3.click();
 	await expectExists(content3);
+	await waitForDismissibleLayer(content3);
 	await userEvent.click(topButton, { force: true });
 
 	await expectNotExists(content3);
 });
 
 it("should properly restore focus when clicking between multiple dropdowns", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -702,7 +984,7 @@ it("should properly restore focus when clicking between multiple dropdowns", asy
 });
 
 it("should maintain correct focus when opening dropdown via keyboard", async () => {
-	const t = render(DropdownMenuMultipleTest);
+	const t = await render(DropdownMenuMultipleTest);
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -746,7 +1028,7 @@ it("should apply custom style prop to content", async () => {
 });
 
 it("keyboard navigation should not cause unwanted jumps between menus", async () => {
-	const t = render(DropdownMenuMultipleTest, { contentProps: { preventScroll: false } });
+	const t = await render(DropdownMenuMultipleTest, { contentProps: { preventScroll: false } });
 	onTestFinished(() => t.unmount());
 
 	const trigger1 = page.getByTestId("trigger-1");
@@ -756,9 +1038,228 @@ it("keyboard navigation should not cause unwanted jumps between menus", async ()
 
 	await trigger1.click();
 	await expectExists(content1);
+	await waitForDismissibleLayer(content1);
 	await trigger2.click();
 	await expectExists(content2);
 	await expectNotExists(content1);
 	await userEvent.keyboard(kbd.ARROW_DOWN);
 	await expectNotExists(content1);
 });
+
+it("should call `focus` with `preventScroll: true` on hover and item-leave so `scroll-padding` does not scroll the page", async () => {
+	const t = await render(DropdownMenuScrollPaddingTest);
+	onTestFinished(() => t.unmount());
+
+	await page.getByTestId("trigger").click();
+	await expectExists(page.getByTestId("content"));
+
+	const focusSpy = vi.spyOn(HTMLElement.prototype, "focus");
+	try {
+		const scrollYBeforeHover = window.scrollY;
+		// hover one item then another to trigger both onpointermove (item focus)
+		// and onItemLeave (content focus)
+		await page.getByTestId("item-1").hover();
+		await page.getByTestId("item-2").hover();
+
+		const relevantCalls = focusSpy.mock.calls
+			.map(([options], i) => ({
+				options,
+				testid: (focusSpy.mock.contexts[i] as HTMLElement).getAttribute("data-testid"),
+			}))
+			.filter(
+				({ testid }) => testid === "item-1" || testid === "item-2" || testid === "content"
+			);
+
+		expect(window.scrollY).toBe(scrollYBeforeHover);
+		expect(relevantCalls).toEqual(
+			expect.arrayContaining([
+				{ testid: "item-1", options: { preventScroll: true } },
+				{ testid: "item-2", options: { preventScroll: true } },
+				{ testid: "content", options: { preventScroll: true } },
+			])
+		);
+	} finally {
+		focusSpy.mockRestore();
+	}
+});
+
+it("should point the trigger at the content while the menu is open", async () => {
+	const t = await open();
+	const id = t.getContent().element().id;
+	expect(id).not.toBe("");
+	await expect.element(t.trigger).toHaveAttribute("aria-controls", id);
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(t.getContent());
+	await expect.element(t.trigger).not.toHaveAttribute("aria-controls");
+});
+
+it("should point the trigger at the content when the menu starts open", async () => {
+	await render(DropdownMenuInitiallyOpenTest);
+	await expectExists(page.getByTestId("content"));
+	await expect
+		.element(page.getByTestId("trigger"))
+		.toHaveAttribute("aria-controls", "menu-content-a");
+});
+
+it("should follow the content id when it changes while the menu is open", async () => {
+	await render(DropdownMenuInitiallyOpenTest);
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("rename").click();
+	await expect.element(page.getByTestId("content")).toHaveAttribute("id", "menu-content-b");
+	await expect
+		.element(page.getByTestId("trigger"))
+		.toHaveAttribute("aria-controls", "menu-content-b");
+});
+
+it("should not render positioning props as attributes on the sub content", async () => {
+	const t = await openSubmenu(
+		await openWithKbd({ subContentProps: { side: "left", align: "center", sideOffset: 4 } })
+	);
+	const subContent = t.getSubContent();
+	await expect.element(subContent).not.toHaveAttribute("align");
+	await expect.element(subContent).not.toHaveAttribute("side");
+	await expect.element(subContent).not.toHaveAttribute("sideOffset");
+	await expect.element(subContent).toHaveAttribute("data-align", "center");
+});
+
+it("should point the sub trigger at the sub content while the submenu is open", async () => {
+	const t = await openSubmenu(await openWithKbd());
+	const id = t.getSubContent().element().id;
+	expect(id).not.toBe("");
+	await expect.element(page.getByTestId("sub-trigger")).toHaveAttribute("aria-controls", id);
+});
+
+it("should not open when the trigger is disabled by an ancestor `fieldset`", async () => {
+	await render(DropdownMenuFieldsetDisabledTest);
+	const trigger = page.getByTestId("trigger");
+	await expect.element(trigger).toBeDisabled();
+
+	async function expectClosed() {
+		await new Promise((r) => setTimeout(r, 100));
+		expect(page.getByTestId("open-binding").element()).toMatchTextContent("false");
+		expect(page.getByTestId("content").query()).toBeNull();
+	}
+
+	// browsers still dispatch pointer events to disabled form controls
+	await trigger.click({ force: true });
+	await expectClosed();
+
+	trigger
+		.element()
+		.dispatchEvent(new PointerEvent("pointerup", { pointerType: "touch", bubbles: true }));
+	await expectClosed();
+});
+
+describe("mouse press on an item", () => {
+	type Point = { clientX: number; clientY: number };
+
+	function mousePointer(type: string, point: Point) {
+		return new PointerEvent(type, {
+			...point,
+			bubbles: true,
+			cancelable: true,
+			pointerType: "mouse",
+			isPrimary: true,
+			button: 0,
+		});
+	}
+
+	function centerOf(testId: string): Point {
+		const rect = page.getByTestId(testId).element().getBoundingClientRect();
+		return { clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 };
+	}
+
+	function itemAt({ clientX, clientY }: Point) {
+		return document
+			.elementFromPoint(clientX, clientY)!
+			.closest<HTMLElement>("[role=menuitem]")!;
+	}
+
+	async function scrollContent(px: number) {
+		(page.getByTestId("content").element() as HTMLElement).scrollTop += px;
+		await new Promise((r) => setTimeout(r, 100));
+	}
+
+	async function setupScroll() {
+		const onSelect = vi.fn();
+		await render(DropdownMenuScrollItemsTest, { onSelect });
+		await page.getByTestId("trigger").click();
+		await expectExists(page.getByTestId("content"));
+		await new Promise((r) => setTimeout(r, 100));
+		return onSelect;
+	}
+
+	it("should select the pressed item when the content scrolls under a still pointer", async () => {
+		const onSelect = await setupScroll();
+		const point = centerOf("item-1");
+		page.getByTestId("item-1").element().dispatchEvent(mousePointer("pointerdown", point));
+		await scrollContent(60);
+
+		const released = itemAt(point);
+		expect(released.dataset.testid).not.toBe("item-1");
+		released.dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(1);
+	});
+
+	it("should not reuse a press that ended off an item", async () => {
+		const onSelect = await setupScroll();
+		const point = centerOf("item-1");
+		const content = page.getByTestId("content").element();
+		page.getByTestId("item-1").element().dispatchEvent(mousePointer("pointerdown", point));
+		content.dispatchEvent(mousePointer("pointerup", point));
+		await scrollContent(60);
+
+		const released = itemAt(point);
+		content.dispatchEvent(mousePointer("pointerdown", point));
+		released.dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(Number(released.dataset.testid!.slice(5)));
+	});
+
+	it("should select the item released on when dragging from the trigger", async () => {
+		const onSelect = vi.fn();
+		await render(DropdownMenuScrollItemsTest, { onSelect });
+		const trigger = page.getByTestId("trigger").element();
+		trigger.dispatchEvent(mousePointer("pointerdown", centerOf("trigger")));
+		await expectExists(page.getByTestId("content"));
+		await new Promise((r) => setTimeout(r, 100));
+		const point = centerOf("item-2");
+		page.getByTestId("item-2").element().dispatchEvent(mousePointer("pointerup", point));
+		await vi.waitFor(() => expect(onSelect).toHaveBeenCalledTimes(1));
+		expect(onSelect).toHaveBeenCalledWith(2);
+	});
+});
+
+for (const inShadow of [false, true]) {
+	it(`disabled portaled submenu press keeps parent open in ${inShadow ? "shadow" : "light"} DOM`, async () => {
+		const host = document.body.appendChild(document.createElement("div"));
+		const root = inShadow ? host.attachShadow({ mode: "open" }) : host;
+		const app = root.appendChild(document.createElement("div"));
+		const portalTo = root.appendChild(document.createElement("div"));
+		const component = mount(DropdownMenuShadowTest, { target: app, props: { portalTo } });
+		const get = (id: string) => root.querySelector<HTMLElement>(`[data-testid="${id}"]`);
+		try {
+			await vi.waitFor(() => expect(get("shadow-menu-disabled")).not.toBeNull());
+			await new Promise((resolve) => setTimeout(resolve, 100));
+			const target = get("shadow-menu-disabled")!;
+			const rect = target.getBoundingClientRect();
+			target.dispatchEvent(
+				new PointerEvent("pointerdown", {
+					bubbles: true,
+					composed: true,
+					cancelable: true,
+					pointerType: "mouse",
+					button: 0,
+					clientX: rect.left + rect.width / 2,
+					clientY: rect.top + rect.height / 2,
+				})
+			);
+			await new Promise((resolve) => setTimeout(resolve, 60));
+			expect(get("shadow-menu-content")).not.toBeNull();
+		} finally {
+			await unmount(component);
+			host.remove();
+		}
+	});
+}

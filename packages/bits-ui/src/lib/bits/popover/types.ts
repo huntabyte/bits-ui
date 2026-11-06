@@ -6,13 +6,13 @@ import type {
 	WithChildNoChildrenSnippetProps,
 	WithChildren,
 	Without,
-} from "$lib/internal/types.js";
+} from "#lib/internal/types.js";
 import type {
 	BitsPrimitiveButtonAttributes,
 	BitsPrimitiveDivAttributes,
-} from "$lib/shared/attributes.js";
-import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "$lib/shared/types.js";
-import type { PortalProps } from "$lib/types.js";
+} from "#lib/shared/attributes.js";
+import type { FloatingContentSnippetProps, StaticContentSnippetProps } from "#lib/shared/types.js";
+import type { PortalProps } from "#lib/types.js";
 import type { PresenceLayerProps } from "../utilities/presence-layer/types.js";
 
 export type PopoverRootPropsWithoutHTML = WithChildren<{

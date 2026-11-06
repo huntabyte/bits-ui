@@ -3,7 +3,8 @@ import {
 	getLocalTimeZone,
 	isSameDay,
 	isSameMonth,
-	isToday,
+	toCalendarDate,
+	today,
 } from "@internationalized/date";
 import {
 	attachRef,
@@ -13,18 +14,18 @@ import {
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import { CalendarRootContext } from "../calendar/calendar.svelte.js";
-import type { DateRange, Month } from "$lib/shared/index.js";
+import type { DateRange, Month } from "#lib/shared/index.js";
 import type {
 	BitsFocusEvent,
 	BitsKeyboardEvent,
 	BitsMouseEvent,
 	RefAttachment,
 	WithRefOpts,
-} from "$lib/internal/types.js";
-import { useId } from "$lib/internal/use-id.js";
-import { boolToStr, boolToEmptyStrOrUndef } from "$lib/internal/attrs.js";
-import { type Announcer, getAnnouncer } from "$lib/internal/date-time/announcer.js";
-import { type Formatter, createFormatter } from "$lib/internal/date-time/formatter.js";
+} from "#lib/internal/types.js";
+import { useId } from "#lib/internal/use-id.js";
+import { boolToStr, boolToEmptyStrOrUndef } from "#lib/internal/attrs.js";
+import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
+import { type Formatter, createFormatter } from "#lib/internal/date-time/formatter.js";
 import {
 	calendarAttrs,
 	createMonths,
@@ -39,9 +40,10 @@ import {
 	handleCalendarPrevPage,
 	shiftCalendarFocus,
 	useEnsureNonDisabledPlaceholder,
+	getTabbableDate,
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
-} from "$lib/internal/date-time/calendar-helpers.svelte.js";
+} from "#lib/internal/date-time/calendar-helpers.svelte.js";
 import {
 	areAllDaysBetweenValid,
 	getDateValueType,
@@ -49,14 +51,15 @@ import {
 	isBefore,
 	isBetweenInclusive,
 	toDate,
-} from "$lib/internal/date-time/utils.js";
-import type { WeekStartsOn } from "$lib/shared/date/types.js";
+} from "#lib/internal/date-time/utils.js";
+import type { WeekStartsOn } from "#lib/shared/date/types.js";
 import { onMount, untrack } from "svelte";
 
 const RangeCalendarCellContext = new Context<RangeCalendarCellState>("RangeCalendar.Cell");
 
 interface RangeCalendarRootStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		WritableBoxedValues<{
 			value: DateRange;
 			placeholder: DateValue;
@@ -101,7 +104,21 @@ export class RangeCalendarRootState {
 	readonly opts: RangeCalendarRootStateOpts;
 	readonly attachment: RefAttachment;
 	readonly visibleMonths = $derived.by(() => this.months.map((month) => month.value));
+	/**
+	 * `today()` resolves the local timezone via `Intl.DateTimeFormat#formatToParts`, which is
+	 * far too expensive to run once per rendered cell. We read `months` so this refreshes on
+	 * the same cadence the per-cell computation used to (whenever the visible dates change).
+	 */
+	readonly todayDate = $derived.by(() => {
+		this.months;
+		return today(getLocalTimeZone());
+	});
 	months: Month<DateValue>[] = $state([]);
+	readonly tabbableDate = $derived.by(() =>
+		getTabbableDate(this.opts.placeholder.current, this.months, (date) =>
+			this.isDateDisabled(date)
+		)
+	);
 	announcer: Announcer;
 	formatter: Formatter;
 	accessibleHeadingId = useId();
@@ -514,6 +531,7 @@ export class RangeCalendarRootState {
 		return shiftCalendarFocus({
 			node,
 			add,
+			useCalendarDayOffset: Math.abs(add) === 7,
 			placeholder: this.opts.placeholder,
 			calendarNode: this.opts.ref.current,
 			isPrevButtonDisabled: this.isPrevButtonDisabled,
@@ -710,7 +728,8 @@ export class RangeCalendarRootState {
 }
 
 interface RangeCalendarCellStateOpts
-	extends WithRefOpts,
+	extends
+		WithRefOpts,
 		ReadableBoxedValues<{
 			date: DateValue;
 			month: DateValue;
@@ -725,7 +744,7 @@ export class RangeCalendarCellState {
 	readonly opts: RangeCalendarCellStateOpts;
 	readonly root: RangeCalendarRootState;
 	readonly attachment: RefAttachment;
-	readonly cellDate = $derived.by(() => toDate(this.opts.date.current));
+	readonly cellDate = $derived.by(() => toDate(toCalendarDate(this.opts.date.current)));
 	readonly isOutsideMonth = $derived.by(
 		() => !isSameMonth(this.opts.date.current, this.opts.month.current)
 	);
@@ -737,7 +756,9 @@ export class RangeCalendarCellState {
 	readonly isUnavailable = $derived.by(() =>
 		this.root.opts.isDateUnavailable.current(this.opts.date.current)
 	);
-	readonly isDateToday = $derived.by(() => isToday(this.opts.date.current, getLocalTimeZone()));
+	readonly isDateToday = $derived.by(() =>
+		isSameDay(this.opts.date.current, this.root.todayDate)
+	);
 
 	readonly isOutsideVisibleMonths = $derived.by(() =>
 		this.root.isOutsideVisibleMonths(this.opts.date.current)
@@ -867,7 +888,8 @@ export class RangeCalendarDayState {
 		(this.cell.isOutsideMonth && this.cell.root.opts.disableDaysOutsideMonth.current) ||
 		this.cell.isDisabled
 			? undefined
-			: this.cell.isFocusedDate
+			: this.cell.root.tabbableDate &&
+				  isSameDay(this.cell.opts.date.current, this.cell.root.tabbableDate)
 				? 0
 				: -1
 	);

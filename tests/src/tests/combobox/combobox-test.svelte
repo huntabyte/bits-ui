@@ -37,7 +37,7 @@
 	const filteredItems = $derived(
 		searchValue === ""
 			? items
-			: items.filter((item) => item.label.includes(searchValue.toLowerCase()))
+			: items.filter((item) => item.label.toLowerCase().includes(searchValue.toLowerCase()))
 	);
 
 	const inputValue = $derived.by(() => {
@@ -74,7 +74,7 @@
 							{disabled}
 							{value}
 							{label}
-							class="data-highlighted:bg-red-500 data-highlighted:text-white data-selected:bg-blue-500 data-selected:text-white p-2"
+							class="p-2 data-highlighted:bg-red-500 data-highlighted:text-white data-selected:bg-blue-500 data-selected:text-white"
 						>
 							{#snippet children({ selected, highlighted: _highlighted })}
 								{#if selected}

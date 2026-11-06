@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Slider } from "bits-ui";
-	import { cn } from "$lib/utils/styles.js";
+	import { cn } from "#lib/utils/styles.js";
 
 	let value = $state([25, 75]);
 </script>
@@ -9,19 +9,19 @@
 	<Slider.Root
 		type="multiple"
 		bind:value
-		class="relative flex w-full touch-none select-none items-center"
+		class="relative flex w-full touch-none items-center select-none"
 	>
 		{#snippet children({ thumbItems })}
 			<span
-				class="bg-dark-10 relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full"
+				class="relative h-2 w-full grow cursor-pointer overflow-hidden rounded-full bg-dark-10"
 			>
-				<Slider.Range class="bg-foreground absolute h-full" />
+				<Slider.Range class="absolute h-full bg-foreground" />
 			</span>
 			{#each thumbItems as { index } (index)}
 				<Slider.Thumb
 					{index}
 					class={cn(
-						"border-border-input bg-background hover:border-dark-40 focus-visible:ring-foreground dark:bg-foreground dark:shadow-card data-active:border-dark-40 focus-visible:outline-hidden data-active:scale-[0.98] block size-[25px] cursor-pointer rounded-full border shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+						"block size-[25px] cursor-pointer rounded-full border border-border-input bg-background shadow-sm transition-colors hover:border-dark-40 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 data-active:scale-[0.98] data-active:border-dark-40 dark:bg-foreground dark:shadow-card"
 					)}
 				/>
 			{/each}

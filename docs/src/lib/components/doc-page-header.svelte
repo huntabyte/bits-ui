@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { DocMetadata } from "$lib/utils/docs.js";
+	import type { DocMetadata } from "#lib/utils/docs.js";
 	import PageHeaderDescription from "./page-header/page-header-description.svelte";
 	import PageHeaderHeading from "./page-header/page-header-heading.svelte";
 	import PageHeader from "./page-header/page-header.svelte";
 	import Copy from "phosphor-svelte/lib/Copy";
-	import { CopyToClipboard } from "$lib/utils/copy-to-clipboard.svelte.js";
+	import { CopyToClipboard } from "#lib/utils/copy-to-clipboard.svelte.js";
 	import { page } from "$app/state";
 	import Check from "phosphor-svelte/lib/Check";
 	import CopyPageDropdown from "./copy-page-dropdown.svelte";
@@ -52,9 +52,9 @@
 			documentation, you can ignore the classnames applied to the demos unless they are
 			relevant to the user's issue.
 		</span>
-		<div class="mb-3 mt-3 flex items-center">
+		<div class="mt-3 mb-3 flex items-center">
 			<button
-				class="hover:bg-muted/50 text-foreground-alt hover:text-foreground flex h-8 select-none items-center gap-1.5 rounded-md rounded-r-none border border-r-0 px-2 py-1.5 text-xs font-semibold leading-none no-underline group-hover:no-underline"
+				class="flex h-8 items-center gap-1.5 rounded-md rounded-r-none border border-r-0 px-2 py-1.5 text-xs leading-none font-semibold text-foreground-alt no-underline select-none group-hover:no-underline hover:bg-muted/50 hover:text-foreground"
 				onmouseenter={fetchText}
 				onfocus={fetchText}
 				onclick={copyMarkdown}

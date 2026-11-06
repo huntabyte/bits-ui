@@ -3,8 +3,8 @@
 	import type { RadioGroupRootProps } from "../types.js";
 	import { RadioGroupRootState } from "../radio-group.svelte.js";
 	import RadioGroupInput from "./radio-group-input.svelte";
-	import { createId } from "$lib/internal/create-id.js";
-	import { noop } from "$lib/internal/noop.js";
+	import { createId } from "#lib/internal/create-id.js";
+	import { noop } from "#lib/internal/noop.js";
 
 	const uid = $props.id();
 
@@ -19,6 +19,7 @@
 		name = undefined,
 		required = false,
 		readonly = false,
+		autocomplete = "off",
 		id = createId(uid),
 		onValueChange = noop,
 		...restProps
@@ -31,6 +32,7 @@
 		name: boxWith(() => name),
 		required: boxWith(() => required),
 		readonly: boxWith(() => readonly),
+		autocomplete: boxWith(() => autocomplete),
 		id: boxWith(() => id),
 		value: boxWith(
 			() => value,

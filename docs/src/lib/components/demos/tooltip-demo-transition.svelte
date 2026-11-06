@@ -7,18 +7,18 @@
 <Tooltip.Provider>
 	<Tooltip.Root delayDuration={200}>
 		<Tooltip.Trigger
-			class="border-border-input bg-background-alt shadow-btn ring-dark ring-offset-background
-		hover:bg-muted focus-visible:ring-dark focus-visible:ring-offset-background focus-visible:outline-hidden inline-flex size-10 items-center justify-center rounded-full border focus-visible:ring-2 focus-visible:ring-offset-2"
+			class="inline-flex size-10 items-center justify-center rounded-full
+		border border-border-input bg-background-alt shadow-btn ring-dark ring-offset-background hover:bg-muted focus-visible:ring-2 focus-visible:ring-dark focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 		>
 			<MagicWand class="size-5" />
 		</Tooltip.Trigger>
-		<Tooltip.Content sideOffset={8} forceMount>
+		<Tooltip.Content class="z-50" sideOffset={8} forceMount>
 			{#snippet child({ wrapperProps, props, open })}
 				{#if open}
 					<div {...wrapperProps}>
 						<div {...props} transition:fly={{ duration: 300 }}>
 							<div
-								class="rounded-input border-dark-10 bg-background shadow-popover outline-hidden z-0 flex items-center justify-center border p-3 text-sm font-medium"
+								class="z-0 flex items-center justify-center rounded-input border border-dark-10 bg-background p-3 text-sm font-medium shadow-popover outline-hidden"
 							>
 								Make some magic!
 							</div>
