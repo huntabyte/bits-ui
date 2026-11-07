@@ -63,6 +63,17 @@ describe("date field", () => {
 		await expect.element(t.value).toMatchTextContent(calendarDate.toString());
 	});
 
+	it("should use the value's time zone for the hour's day period - `ZonedDateTime`", async () => {
+		// 08:00 in Tokyo is 23:00 UTC / 18:00 New York the previous day (PM there)
+		const tokyo = toZoned(new CalendarDateTime(1980, 1, 20, 8, 30), "Asia/Tokyo");
+		await setup({ value: tokyo });
+
+		await expect.element(page.getByTestId("dayPeriod")).toMatchTextContent("AM");
+		await expect
+			.element(page.getByTestId("hour"))
+			.toHaveAttribute("aria-valuetext", "8 AM");
+	});
+
 	it("should populate segment with value - `ZonedDateTime`", async () => {
 		const t = await setup({
 			value: zonedDateTime,
