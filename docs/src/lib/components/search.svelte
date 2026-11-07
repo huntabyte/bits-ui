@@ -76,10 +76,10 @@
 		<Drawer.Portal>
 			<Drawer.Backdrop class="search-backdrop fixed inset-0 z-50 bg-black/50" />
 			<Drawer.Viewport
-				class="fixed inset-0 z-100 flex items-end justify-center pb-[var(--drawer-keyboard-inset)]"
+				class="search-viewport fixed top-0 left-0 z-100 flex w-full items-end justify-center"
 			>
 				<Drawer.Popup
-					class="search-drawer flex w-full flex-col overflow-hidden rounded-t-2xl bg-background shadow-popover outline-hidden"
+					class="search-drawer flex w-full shrink-0 flex-col overflow-hidden rounded-t-2xl bg-background shadow-popover outline-hidden"
 					onOpenAutoFocus={(event) => {
 						event.preventDefault();
 						searchInput?.focus({ preventScroll: true });
@@ -192,7 +192,7 @@
 		{#if (isMobile.current && (searchQuery === "" || searchState === "loading")) || (searchQuery !== "" && results.length > 0)}
 			<Command.List
 				class={isMobile.current
-					? "min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+					? "min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom),var(--drawer-keyboard-inset,0px))]"
 					: "mt-1 max-h-[400px] overflow-x-hidden px-2 pt-2 pb-2"}
 			>
 				{#snippet child({ props })}
@@ -255,9 +255,13 @@
 {/snippet}
 
 <style>
+	/* Keep the sheet anchored while the software keyboard covers the lower viewport. */
+	:global(.search-viewport) {
+		height: 100svh;
+	}
+
 	:global(.search-drawer) {
-		height: min(32rem, calc(100dvh - var(--drawer-keyboard-inset, 0px) - 1rem));
-		max-height: 100%;
+		height: calc(100svh - max(1rem, env(safe-area-inset-top)));
 		transform: translateY(var(--drawer-swipe-movement-y));
 		transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
 	}
