@@ -9,6 +9,8 @@ import { page, userEvent } from "vitest/browser";
 import RangeCalendarSpreadPropsTest from "./range-calendar-spread-props-test.svelte";
 import { collectErrors } from "../browser-utils";
 
+import CalendarMonthBoundaryTest from "../calendar/calendar-month-boundary-test.svelte";
+
 const kbd = getTestKbd();
 
 const calendarDateRange = {
@@ -1449,4 +1451,18 @@ describe("Spread Props", () => {
 		await expect.element(page.getByTestId("month-select")).toBeVisible();
 		await expect.element(page.getByTestId("year-select")).toBeVisible();
 	});
+});
+
+it("should keep a Japanese month together across an era change", async () => {
+	await render(CalendarMonthBoundaryTest, { range: true });
+	for (const id of ["before", "after"]) {
+		await expect.element(page.getByTestId(id)).not.toHaveAttribute("data-outside-month");
+		await expect
+			.element(page.getByTestId(id))
+			.not.toHaveAttribute("data-outside-visible-months");
+	}
+	await expect.element(page.getByTestId("outside")).toHaveAttribute("data-outside-month");
+	await expect
+		.element(page.getByTestId("outside"))
+		.toHaveAttribute("data-outside-visible-months");
 });

@@ -595,7 +595,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 		if (part === "literal") return defaultAttrs;
 
 		const descriptionId = this.descriptionNode?.id;
-		const hasDescription = isFirstTimeSegment(segmentId, this.#fieldNode) && descriptionId;
+		const hasDescription = descriptionId && isFirstTimeSegment(segmentId, this.#fieldNode);
 		const errorMsgId = this.errorMessageId?.current;
 
 		const describedBy = hasDescription

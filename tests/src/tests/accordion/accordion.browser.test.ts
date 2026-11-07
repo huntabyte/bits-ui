@@ -10,7 +10,7 @@ import AccordionSingleForceMountTest from "./accordion-single-force-mount-test.s
 import AccordionHiddenUntilFoundTest from "./accordion-hidden-until-found-test.svelte";
 import AccordionMultiHiddenUntilFoundTest from "./accordion-multi-hidden-until-found-test.svelte";
 import AccordionNestedTest from "./accordion-nested-test.svelte";
-import type { ComponentProps } from "svelte";
+import { tick, type ComponentProps } from "svelte";
 import { getTestKbd } from "../utils.js";
 import { expectNotExists, observeTransitionAttrs } from "../browser-utils";
 
@@ -702,10 +702,9 @@ describe("Hidden Until Found Behavior", () => {
 		await expect.element(t.content).toHaveAttribute("hidden", "until-found");
 
 		// simulate the beforematch event that browsers fire when content is found during search
+		await tick();
 		const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 		t.content.element().dispatchEvent(beforeMatchEvent);
-
-		await new Promise((resolve) => setTimeout(resolve, 10));
 
 		await expect.element(t.content).not.toHaveAttribute("hidden");
 	});
@@ -718,13 +717,11 @@ describe("Hidden Until Found Behavior", () => {
 			onValueChange: mock,
 		});
 
+		await tick();
 		const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 		t.content.element().dispatchEvent(beforeMatchEvent);
 
-		// wait for state to update
-		await new Promise((resolve) => setTimeout(resolve, 10));
-
-		expect(mock).toHaveBeenCalledWith(t.item.value);
+		await expect.poll(() => mock).toHaveBeenCalledWith(t.item.value);
 	});
 
 	it("should not trigger value change when already open and beforematch is fired", async () => {
@@ -735,10 +732,12 @@ describe("Hidden Until Found Behavior", () => {
 			onValueChange: mock,
 		});
 
+		await tick();
 		const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 		t.content.element().dispatchEvent(beforeMatchEvent);
 
-		await new Promise((resolve) => setTimeout(resolve, 10));
+		await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+		await tick();
 
 		expect(mock).not.toHaveBeenCalled();
 	});
@@ -801,11 +800,9 @@ describe("Hidden Until Found Behavior", () => {
 			await expect.element(t.items[0].content).toHaveAttribute("hidden", "until-found");
 
 			// simulate the beforematch event that browsers fire when content is found during search
+			await tick();
 			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 			t.items[0].content.element().dispatchEvent(beforeMatchEvent);
-
-			// wait for requestAnimationFrame and state update
-			await new Promise((resolve) => setTimeout(resolve, 10));
 
 			await expect.element(t.binding).toMatchTextContent(`["${t.items[0].item.value}"]`);
 		});
@@ -816,6 +813,7 @@ describe("Hidden Until Found Behavior", () => {
 			await expect.element(t.items[1].content).toHaveAttribute("hidden", "until-found");
 
 			// simulate the beforematch event that browsers fire when content is found during search
+			await tick();
 			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 			t.items[1].content.element().dispatchEvent(beforeMatchEvent);
 
@@ -830,12 +828,11 @@ describe("Hidden Until Found Behavior", () => {
 				onValueChange: mock,
 			});
 
+			await tick();
 			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 			t.items[0].content.element().dispatchEvent(beforeMatchEvent);
 
-			await new Promise((resolve) => setTimeout(resolve, 10));
-
-			expect(mock).toHaveBeenCalledWith([t.items[0].item.value]);
+			await expect.poll(() => mock).toHaveBeenCalledWith([t.items[0].item.value]);
 		});
 
 		it("should not trigger value change when already open and beforematch is fired", async () => {
@@ -847,8 +844,12 @@ describe("Hidden Until Found Behavior", () => {
 				onValueChange: mock,
 			});
 
+			await tick();
 			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 			t.items[0].content.element().dispatchEvent(beforeMatchEvent);
+
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+			await tick();
 
 			expect(mock).not.toHaveBeenCalled();
 		});

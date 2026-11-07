@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import { FloatingContentState } from "../use-floating-layer.svelte.js";
 	import type { ContentImplProps } from "./index.js";
@@ -61,6 +61,18 @@
 			},
 		})
 	);
+
+	// A snippet argument is re-evaluated as a whole, so a plain `{ props, wrapperProps }`
+	// would make everything reading `props` also re-run on every `wrapperProps` (position)
+	// update. Getters keep the two dependencies separate.
+	const snippetProps = {
+		get props() {
+			return contentState.props;
+		},
+		get wrapperProps() {
+			return mergedProps;
+		},
+	};
 </script>
 
-{@render content?.({ props: contentState.props, wrapperProps: mergedProps })}
+{@render content?.(snippetProps)}

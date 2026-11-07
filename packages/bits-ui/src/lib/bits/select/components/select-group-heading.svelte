@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { SelectGroupHeadingProps } from "../types.js";
 	import { SelectGroupHeadingState } from "../select.svelte.js";
 	import { createId } from "#lib/internal/create-id.js";

@@ -14,8 +14,8 @@ import {
 	attachRef,
 	DOMContext,
 	getWindow,
-	simpleBox,
 	boxWith,
+	simpleBox,
 } from "svelte-toolbelt";
 import { Context, useDebounce, watch } from "runed";
 import { untrack, type Snippet } from "svelte";

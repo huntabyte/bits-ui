@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import type { ComboboxInputProps } from "../types.js";
 	import { useId } from "#lib/internal/use-id.js";

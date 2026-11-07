@@ -1,8 +1,10 @@
 import { SvelteMap } from "svelte/reactivity";
+import { untrack } from "svelte";
 import { Context, Previous, watch } from "runed";
 import {
 	afterTick,
 	onDestroyEffect,
+	onMountEffect,
 	attachRef,
 	DOMContext,
 	executeCallbacks,
@@ -12,7 +14,7 @@ import {
 	boxWith,
 } from "svelte-toolbelt";
 import { on } from "svelte/events";
-import { backward, forward, next, prev } from "#lib/internal/arrays.js";
+import { backward, forward } from "#lib/internal/arrays.js";
 import {
 	boolToStr,
 	boolToStrTrueOrUndef,
@@ -41,6 +43,7 @@ import { DataTypeahead } from "#lib/internal/data-typeahead.svelte.js";
 import { DOMTypeahead } from "#lib/internal/dom-typeahead.svelte.js";
 import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 import { DEV } from "esm-env";
+import { findAdjacentElement, queryAll } from "#lib/internal/dom.js";
 import type { SelectValueSnippetProps } from "./types.js";
 
 // prettier-ignore
@@ -94,6 +97,61 @@ interface SelectBaseRootStateOpts
 			inputValue: string;
 		}> {
 	isCombobox: boolean;
+}
+
+class ValueFlag {
+	current = $state(false);
+	refs = 0;
+	constructor(initial: boolean) {
+		this.current = initial;
+	}
+}
+
+/**
+ * Per-value boolean flags, retained by the mounted items. Changing which values are flagged
+ * then only invalidates the items whose value gains or loses the flag, rather than every
+ * mounted item reading the shared state the flag is derived from.
+ */
+class ValueFlags {
+	readonly #flags = new Map<string, ValueFlag>();
+	readonly #released = new Set<string>();
+
+	get(value: string) {
+		return this.#flags.get(value);
+	}
+
+	set(value: string, on: boolean) {
+		const flag = this.#flags.get(value);
+		if (flag) flag.current = on;
+	}
+
+	/** Returns a release function. */
+	retain(value: string, initial: () => boolean) {
+		let flag = this.#flags.get(value);
+		if (!flag) {
+			flag = new ValueFlag(untrack(initial));
+			this.#flags.set(value, flag);
+		}
+		flag.refs++;
+		const retained = flag;
+		return () => {
+			if (--retained.refs > 0) return;
+			if (this.#released.size === 0) queueMicrotask(() => this.#prune());
+			this.#released.add(value);
+		};
+	}
+
+	/**
+	 * Unretained flags are dropped after the flush, not on release: an item whose value
+	 * changes reads its new value's flag before its watcher retains it, so a flag released
+	 * in between (say, by an item swapping values with it) must still be the one it retains.
+	 */
+	#prune() {
+		for (const value of this.#released) {
+			if (this.#flags.get(value)?.refs === 0) this.#flags.delete(value);
+		}
+		this.#released.clear();
+	}
 }
 
 abstract class SelectBaseRootState {
@@ -156,9 +214,56 @@ abstract class SelectBaseRootState {
 
 	setHighlightedNode(node: HTMLElement | null, initial = false) {
 		this.highlightedNode = node;
+		this.#setFlaggedValue(node?.getAttribute("data-value") ?? null);
 		if (node && (this.isUsingKeyboard || initial)) {
 			this.scrollHighlightedNodeIntoView(node);
 		}
+	}
+
+	/** Flags moved by `setHighlightedNode`, so moving the highlight is O(1) in items. */
+	readonly #highlightFlags = new ValueFlags();
+	#flaggedValue: string | null = null;
+	/** Flags synced from the value by the subclasses. */
+	protected readonly selectedFlags = new ValueFlags();
+
+	#setFlaggedValue(value: string | null) {
+		const prev = this.#flaggedValue;
+		if (value === prev) return;
+		this.#flaggedValue = value;
+		if (prev !== null) this.#highlightFlags.set(prev, false);
+		if (value !== null) this.#highlightFlags.set(value, true);
+	}
+
+	abstract includesItem(itemValue: string): boolean;
+
+	/** Retains an item's highlighted and selected flags. Returns a release function. */
+	retainItemFlags(value: string) {
+		const releaseHighlight = this.#highlightFlags.retain(
+			value,
+			() => value === this.#flaggedValue
+		);
+		const releaseSelected = this.selectedFlags.retain(value, () => this.includesItem(value));
+		return () => {
+			releaseHighlight();
+			releaseSelected();
+		};
+	}
+
+	// an item reads before it retains its flags only while its value is changing
+	isValueHighlighted(value: string) {
+		const flag = this.#highlightFlags.get(value);
+		return flag ? flag.current : this.highlightedValue === value;
+	}
+
+	/**
+	 * Whether the value changed since the subclass last synced `selectedFlags` to it, which
+	 * it does in a `$effect.pre`. Untracked, so it doesn't subscribe every item to the value.
+	 */
+	abstract selectedFlagsStale(): boolean;
+
+	isValueSelected(value: string) {
+		const flag = this.selectedFlags.get(value);
+		return flag ? flag.current : this.includesItem(value);
 	}
 
 	scrollHighlightedNodeIntoView(node: HTMLElement) {
@@ -169,22 +274,49 @@ abstract class SelectBaseRootState {
 	getCandidateNodes(): HTMLElement[] {
 		const node = this.contentNode;
 		if (!node) return [];
-		return Array.from(
-			node.querySelectorAll<HTMLElement>(`[${this.getBitsAttr("item")}]:not([data-disabled])`)
-		);
+		return queryAll(node, `[${this.getBitsAttr("item")}]:not([data-disabled])`);
+	}
+
+	/**
+	 * What `next` (`1`) / `prev` (`-1`) return for the highlighted node over
+	 * `getCandidateNodes()`, found by walking the DOM from it rather than collecting every
+	 * item on each arrow key press.
+	 */
+	getAdjacentCandidate(direction: 1 | -1, loop: boolean): HTMLElement | undefined {
+		const content = this.contentNode;
+		const current = this.highlightedNode;
+		if (!content || !current || current === content || !content.contains(current)) return;
+		const selector = `[${this.getBitsAttr("item")}]:not([data-disabled])`;
+		// not a candidate: `indexOf` would be -1
+		if (!current.matches(selector)) return;
+
+		const isCandidate = (el: Element) => el.matches(selector);
+		const adjacent = findAdjacentElement(content, current, direction, isCandidate);
+		if (adjacent) return adjacent;
+		// `current` is the last (or first) candidate
+		if (loop) {
+			if (direction === 1) return content.querySelector<HTMLElement>(selector) ?? undefined;
+			return this.getCandidateNodes().at(-1);
+		}
+		// a lone candidate is returned as its own neighbour
+		const other = findAdjacentElement(content, current, -direction as 1 | -1, isCandidate);
+		return other ? undefined : current;
 	}
 
 	setHighlightedToFirstCandidate(initial = false) {
 		this.setHighlightedNode(null);
 
-		let nodes = this.getCandidateNodes();
+		const nodes = this.getCandidateNodes();
 		if (!nodes.length) return;
+
+		let first: HTMLElement | undefined = nodes[0];
 
 		// don't consider nodes that aren't visible within the viewport
 		if (this.viewportNode) {
 			const viewportRect = this.viewportNode.getBoundingClientRect();
 
-			nodes = nodes.filter((node) => {
+			// only the first visible node is used, so stop measuring once it's found
+			first = nodes.find((node) => {
 				if (!this.viewportNode) return false;
 
 				const nodeRect = node.getBoundingClientRect();
@@ -199,7 +331,7 @@ abstract class SelectBaseRootState {
 			});
 		}
 
-		this.setHighlightedNode(nodes[0]!, initial);
+		this.setHighlightedNode(first!, initial);
 	}
 
 	getNodeByValue(value: string): HTMLElement | null {
@@ -291,6 +423,9 @@ export class SelectSingleRootState extends SelectBaseRootState {
 		return true;
 	});
 
+	/** The value `selectedFlags` was last synced to. */
+	#syncedValue: string;
+
 	constructor(opts: SelectSingleRootStateOpts) {
 		super(opts);
 
@@ -316,6 +451,20 @@ export class SelectSingleRootState extends SelectBaseRootState {
 				this.pruneSelectedLabels(value === "" ? [] : [value]);
 			}
 		);
+
+		// runs before the items render, so they see the flags already moved
+		this.#syncedValue = untrack(() => this.opts.value.current);
+		$effect.pre(() => {
+			const value = this.opts.value.current;
+			if (value === this.#syncedValue) return;
+			this.selectedFlags.set(this.#syncedValue, false);
+			this.selectedFlags.set(value, true);
+			this.#syncedValue = value;
+		});
+	}
+
+	selectedFlagsStale() {
+		return untrack(() => this.opts.value.current) !== this.#syncedValue;
 	}
 
 	includesItem(itemValue: string) {
@@ -367,6 +516,9 @@ class SelectMultipleRootState extends SelectBaseRootState {
 	 */
 	readonly #valueSet = $derived.by(() => new Set(this.opts.value.current));
 
+	/** The values `selectedFlags` were last synced to. */
+	#syncedValues: Set<string>;
+
 	constructor(opts: SelectMultipleRootStateOpts) {
 		super(opts);
 
@@ -392,6 +544,25 @@ class SelectMultipleRootState extends SelectBaseRootState {
 				this.pruneSelectedLabels(value);
 			}
 		);
+
+		// runs before the items render, so they see the flags already moved
+		this.#syncedValues = untrack(() => this.#valueSet);
+		$effect.pre(() => {
+			const values = this.#valueSet;
+			const synced = this.#syncedValues;
+			if (values === synced) return;
+			for (const value of synced) {
+				if (!values.has(value)) this.selectedFlags.set(value, false);
+			}
+			for (const value of values) {
+				if (!synced.has(value)) this.selectedFlags.set(value, true);
+			}
+			this.#syncedValues = values;
+		});
+	}
+
+	selectedFlagsStale() {
+		return untrack(() => this.#valueSet) !== this.#syncedValues;
 	}
 
 	includesItem(itemValue: string) {
@@ -657,20 +828,25 @@ export class SelectInputState {
 
 		if (FIRST_LAST_KEYS.includes(e.key)) {
 			e.preventDefault();
+			const loop = this.root.opts.loop.current;
+			if (e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+				const nextItem = this.root.getAdjacentCandidate(
+					e.key === kbd.ARROW_DOWN ? 1 : -1,
+					loop
+				);
+				if (!nextItem) return;
+				this.root.setHighlightedNode(nextItem);
+				return;
+			}
 			const candidateNodes = this.root.getCandidateNodes();
 			const currHighlightedNode = this.root.highlightedNode;
 			const currIndex = currHighlightedNode
 				? candidateNodes.indexOf(currHighlightedNode)
 				: -1;
 
-			const loop = this.root.opts.loop.current;
 			let nextItem: HTMLElement | undefined;
 
-			if (e.key === kbd.ARROW_DOWN) {
-				nextItem = next(candidateNodes, currIndex, loop);
-			} else if (e.key === kbd.ARROW_UP) {
-				nextItem = prev(candidateNodes, currIndex, loop);
-			} else if (e.key === kbd.PAGE_DOWN) {
+			if (e.key === kbd.PAGE_DOWN) {
 				nextItem = forward(candidateNodes, currIndex, 10, loop);
 			} else if (e.key === kbd.PAGE_UP) {
 				nextItem = backward(candidateNodes, currIndex, 10, loop);
@@ -967,20 +1143,25 @@ export class SelectTriggerState {
 
 		if (FIRST_LAST_KEYS.includes(e.key)) {
 			e.preventDefault();
+			const loop = this.root.opts.loop.current;
+			if (e.key === kbd.ARROW_DOWN || e.key === kbd.ARROW_UP) {
+				const nextItem = this.root.getAdjacentCandidate(
+					e.key === kbd.ARROW_DOWN ? 1 : -1,
+					loop
+				);
+				if (!nextItem) return;
+				this.root.setHighlightedNode(nextItem);
+				return;
+			}
 			const candidateNodes = this.root.getCandidateNodes();
 			const currHighlightedNode = this.root.highlightedNode;
 			const currIndex = currHighlightedNode
 				? candidateNodes.indexOf(currHighlightedNode)
 				: -1;
 
-			const loop = this.root.opts.loop.current;
 			let nextItem: HTMLElement | undefined;
 
-			if (e.key === kbd.ARROW_DOWN) {
-				nextItem = next(candidateNodes, currIndex, loop);
-			} else if (e.key === kbd.ARROW_UP) {
-				nextItem = prev(candidateNodes, currIndex, loop);
-			} else if (e.key === kbd.PAGE_DOWN) {
+			if (e.key === kbd.PAGE_DOWN) {
 				nextItem = forward(candidateNodes, currIndex, 10, loop);
 			} else if (e.key === kbd.PAGE_UP) {
 				nextItem = backward(candidateNodes, currIndex, 10, loop);
@@ -1284,9 +1465,9 @@ export class SelectItemState {
 	readonly isDisabled = $derived.by(
 		() => this.root.opts.disabled.current || this.opts.disabled.current
 	);
-	readonly isSelected = $derived.by(() => this.root.includesItem(this.opts.value.current));
-	readonly isHighlighted = $derived.by(
-		() => this.root.highlightedValue === this.opts.value.current
+	readonly isSelected = $derived.by(() => this.root.isValueSelected(this.opts.value.current));
+	readonly isHighlighted = $derived.by(() =>
+		this.root.isValueHighlighted(this.opts.value.current)
 	);
 	/**
 	 * Kept as a separate boolean derived so that `props` (and the `mergeProps` /
@@ -1303,6 +1484,19 @@ export class SelectItemState {
 		this.root = root;
 		this.attachment = attachRef(opts.ref);
 
+		// retained up front so the first render already reads the flags
+		let initialFlags: (() => void) | null = root.retainItemFlags(
+			untrack(() => opts.value.current)
+		);
+		watch(
+			() => this.opts.value.current,
+			(value) => {
+				const release = initialFlags ?? this.root.retainItemFlags(value);
+				initialFlags = null;
+				return release;
+			}
+		);
+
 		watch([() => this.isHighlighted, () => this.prevHighlighted.current], () => {
 			if (this.isHighlighted) {
 				this.opts.onHighlight.current();
@@ -1310,14 +1504,6 @@ export class SelectItemState {
 				this.opts.onUnhighlight.current();
 			}
 		});
-
-		watch(
-			() => this.mounted,
-			() => {
-				if (!this.mounted) return;
-				this.root.setInitialHighlightedNode();
-			}
-		);
 
 		// keep the cached label in sync while this item is selected and mounted
 		watch(
@@ -1332,6 +1518,15 @@ export class SelectItemState {
 				this.root.setSelectedLabel(value, this.#resolveLabel());
 			}
 		);
+
+		// Created last, so it runs after the watchers above like the `<Mounted>` child it
+		// replaces. `mounted` isn't reset on destroy: only the label watcher above reads it,
+		// and it is torn down with the item, so the write would only cost time when large
+		// lists unmount.
+		onMountEffect(() => {
+			this.mounted = true;
+			this.root.setInitialHighlightedNode();
+		});
 
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
@@ -1365,10 +1560,16 @@ export class SelectItemState {
 		}
 	}
 
-	snippetProps = $derived.by(() => ({
-		selected: this.isSelected,
-		highlighted: this.isHighlighted,
-	}));
+	/**
+	 * `isSelected`, also right after a value change: it reads flags that catch up with the
+	 * value in a `$effect.pre`, so a read before that (say, in the event handler that changed
+	 * the value) checks the value itself. For the snippet props, which consumers can read
+	 * outside a render.
+	 */
+	get selectedNow() {
+		if (!this.root.selectedFlagsStale()) return this.isSelected;
+		return this.root.includesItem(this.opts.value.current);
+	}
 
 	onpointerdown(e: BitsPointerEvent) {
 		// prevent focus from leaving the input/select trigger

@@ -27,6 +27,10 @@ import SelectScrollButtonsTest from "./select-scroll-buttons-test.svelte";
 import SelectFieldsetDisabledTest from "./select-fieldset-disabled-test.svelte";
 import SelectSettlingContentTest from "./select-settling-content-test.svelte";
 import SelectChildTriggerTest from "./select-child-trigger-test.svelte";
+import SelectHighlightCallbacksTest from "./select-highlight-callbacks-test.svelte";
+import SelectExternalValueTest from "./select-external-value-test.svelte";
+import SelectArrowWalkTest from "./select-arrow-walk-test.svelte";
+import SelectUnkeyedItemsTest from "./select-unkeyed-items-test.svelte";
 import { page, userEvent } from "vitest/browser";
 
 const kbd = getTestKbd();
@@ -1807,4 +1811,153 @@ describe("select - activation without a pointer press", () => {
 		await expectNotExists(page.getByTestId("content"));
 		expect(onOpenChange).not.toHaveBeenCalled();
 	});
+
+	it("should call `onHighlight` / `onUnhighlight` only for the items whose highlight changed", async () => {
+		const log: string[] = [];
+		render(SelectHighlightCallbacksTest, {
+			items: testItems.slice(1),
+			onLog: (entry: string) => log.push(entry),
+		});
+		(page.getByTestId("trigger").element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ENTER);
+		await expectHighlighted(page.getByTestId("1"));
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("2"));
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("3"));
+		await vi.waitFor(() => expect(log).toEqual(["h:1", "u:1", "h:2", "u:2", "h:3"]));
+	});
+});
+
+describe("select - value changed from outside while open", () => {
+	const selectedIds = () =>
+		["1", "2", "3", "4", "extra-3"].filter((id) =>
+			document.querySelector(`[data-testid="${id}"]`)?.hasAttribute("data-selected")
+		);
+	const expectSelected = (ids: string[]) =>
+		vi.waitFor(() => {
+			expect(selectedIds()).toEqual(ids);
+			for (const id of ["1", "2", "3", "4"]) {
+				const node = document.querySelector(`[data-testid="${id}"]`)!;
+				const selected = ids.includes(id);
+				expect(node.getAttribute("aria-selected")).toBe(String(selected));
+				expect(node.textContent?.endsWith("✓")).toBe(selected);
+			}
+		});
+
+	it("moves the selection to the new single value", async () => {
+		const t = await render(SelectExternalValueTest, { type: "single", value: "1" });
+		await expectSelected(["1"]);
+		await t.rerender({ value: "3" });
+		await expectSelected(["3"]);
+		await t.rerender({ value: "" });
+		await expectSelected([]);
+		// an item mounting in the same update as the change starts out selected
+		await t.rerender({ value: "3", extra: true });
+		await expectSelected(["3", "extra-3"]);
+	});
+
+	it("updates every added and removed value of a multiple select", async () => {
+		const t = await render(SelectExternalValueTest, { type: "multiple", value: ["1", "2"] });
+		await expectSelected(["1", "2"]);
+		await t.rerender({ value: ["2", "4"] });
+		await expectSelected(["2", "4"]);
+		await t.rerender({ value: ["3"], extra: true });
+		await expectSelected(["3", "extra-3"]);
+		await t.rerender({ value: [] });
+		await expectSelected([]);
+	});
+});
+
+describe("select - items whose values change in place", () => {
+	const item = (value: string) =>
+		document.querySelector(`[data-select-item][data-value="${value}"]`) as HTMLElement;
+	const flagged = (attr: string) =>
+		Array.from(document.querySelectorAll(`[data-select-item][${attr}]`)).map((n) =>
+			n.getAttribute("data-value")
+		);
+
+	it("keeps selected and highlighted in sync after unkeyed items swap values", async () => {
+		const t = await render(SelectUnkeyedItemsTest, { values: ["a", "b", "c"] });
+		await vi.waitFor(() => expect(flagged("data-selected")).toEqual(["a"]));
+		await t.rerender({ values: ["c", "b", "a"] });
+		await vi.waitFor(() => expect(item("a").textContent?.trim()).toBe("a"));
+
+		for (const value of ["b", "a", "c"]) {
+			await userEvent.hover(item(value));
+			await vi.waitFor(() => expect(flagged("data-highlighted")).toEqual([value]));
+		}
+
+		(page.getByTestId("select-b").element() as HTMLElement).click();
+		await vi.waitFor(() => expect(flagged("data-selected")).toEqual(["b"]));
+		expect(item("a").getAttribute("aria-selected")).toBe("false");
+	});
+
+	it("reflects a value change in `selected` synchronously", async () => {
+		render(SelectUnkeyedItemsTest, { values: ["a", "b"] });
+		await vi.waitFor(() => expect(flagged("data-selected")).toEqual(["a"]));
+		(page.getByTestId("select-b").element() as HTMLElement).click();
+		await expect.element(page.getByTestId("observed")).toHaveTextContent("false");
+	});
+});
+
+describe("select - arrow keys across groups and disabled items", () => {
+	const highlighted = () =>
+		document.querySelector("[data-select-item][data-highlighted]")?.getAttribute("data-value");
+
+	async function walk(groups: string[][], loop: boolean, keys: string[]) {
+		render(SelectArrowWalkTest, { groups, loop });
+		(page.getByTestId("trigger").element() as HTMLElement).focus();
+		await userEvent.keyboard(kbd.ENTER);
+		await expectExists(page.getByTestId("content"));
+		await vi.waitFor(() => expect(highlighted()).toBeTruthy());
+		const seen = [highlighted()];
+		for (const key of keys) {
+			await userEvent.keyboard(key);
+			seen.push(highlighted());
+		}
+		return seen;
+	}
+
+	const groups = [["!a", "b", "c"], ["!d"], ["e", "!f"], ["g", "!h"]];
+
+	it("skips disabled items and stops at the ends without loop", async () => {
+		const down = Array(5).fill(kbd.ARROW_DOWN);
+		const up = Array(5).fill(kbd.ARROW_UP);
+		expect(await walk(groups, false, [...down, ...up])).toEqual([
+			"b",
+			"c",
+			"e",
+			"g",
+			"g",
+			"g",
+			"e",
+			"c",
+			"b",
+			"b",
+			"b",
+		]);
+	});
+
+	it("wraps past disabled items at both ends with loop", async () => {
+		expect(
+			await walk(groups, true, [
+				kbd.ARROW_UP,
+				kbd.ARROW_UP,
+				kbd.ARROW_DOWN,
+				kbd.ARROW_DOWN,
+				kbd.ARROW_DOWN,
+			])
+		).toEqual(["b", "g", "e", "g", "b", "c"]);
+	});
+
+	for (const loop of [false, true]) {
+		it(`keeps a lone enabled item highlighted (loop = ${loop})`, async () => {
+			expect(await walk([["!a", "b", "!c"]], loop, [kbd.ARROW_DOWN, kbd.ARROW_UP])).toEqual([
+				"b",
+				"b",
+				"b",
+			]);
+		});
+	}
 });

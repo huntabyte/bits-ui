@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { CalendarNextButtonState } from "../calendar.svelte.js";
 	import type { CalendarNextButtonProps } from "../types.js";
 	import { createId } from "#lib/internal/create-id.js";

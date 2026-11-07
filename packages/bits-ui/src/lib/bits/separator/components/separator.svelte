@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { SeparatorRootState } from "../separator.svelte.js";
 	import type { SeparatorRootProps } from "../types.js";
 	import { createId } from "#lib/internal/create-id.js";

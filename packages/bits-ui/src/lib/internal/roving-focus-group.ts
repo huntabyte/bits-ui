@@ -5,6 +5,7 @@ import { kbd } from "./kbd.js";
 import type { Orientation } from "#lib/shared/index.js";
 import { BROWSER } from "esm-env";
 import { isHTMLElement } from "./is.js";
+import { findAdjacentElement, queryAll } from "./dom.js";
 import { cssEscape } from "./css-escape.js";
 
 type RovingFocusGroupOptions = (
@@ -59,26 +60,18 @@ export class RovingFocusGroup {
 		this.#opts = opts;
 	}
 
+	#getCandidateSelector() {
+		if (this.#opts.candidateSelector) return this.#opts.candidateSelector;
+		if (this.#opts.candidateAttr) return `[${this.#opts.candidateAttr}]:not([data-disabled])`;
+		return null;
+	}
+
 	getCandidateNodes() {
-		if (!BROWSER || !this.#opts.rootNode.current) return [];
-
-		if (this.#opts.candidateSelector) {
-			const candidates = Array.from(
-				this.#opts.rootNode.current.querySelectorAll<HTMLElement>(
-					this.#opts.candidateSelector
-				)
-			);
-			return this.#ownCandidates(this.#opts.rootNode.current, candidates);
-		} else if (this.#opts.candidateAttr) {
-			const candidates = Array.from(
-				this.#opts.rootNode.current.querySelectorAll<HTMLElement>(
-					`[${this.#opts.candidateAttr}]:not([data-disabled])`
-				)
-			);
-			return this.#ownCandidates(this.#opts.rootNode.current, candidates);
-		}
-
-		return [];
+		const rootNode = this.#opts.rootNode.current;
+		if (!BROWSER || !rootNode) return [];
+		const selector = this.#getCandidateSelector();
+		if (!selector) return [];
+		return this.#ownCandidates(rootNode, queryAll(rootNode, selector));
 	}
 
 	/**
@@ -89,6 +82,10 @@ export class RovingFocusGroup {
 		const rootAttr = this.#opts.rootAttr;
 		if (!rootAttr) return candidates;
 		const rootSelector = `[${rootAttr}]`;
+		// without a nested root every candidate is our own; skip the per-node `closest`
+		if (rootNode.matches(rootSelector) && !rootNode.querySelector(rootSelector)) {
+			return candidates;
+		}
 		return candidates.filter((node) => node.closest(rootSelector) === rootNode);
 	}
 
@@ -98,17 +95,62 @@ export class RovingFocusGroup {
 		items[0]?.focus();
 	}
 
+	/**
+	 * The own candidate after (`1`) or before (`-1`) `node`, wrapping when `loop`, found by
+	 * walking the DOM from `node` rather than collecting every candidate. `null` when `node`
+	 * isn't an own candidate.
+	 */
+	#adjacentCandidate(rootNode: HTMLElement, node: HTMLElement, step: 1 | -1, loop: boolean) {
+		if (node === rootNode || !rootNode.contains(node)) return null;
+		const selector = this.#getCandidateSelector();
+		if (!selector) return null;
+		const rootAttr = this.#opts.rootAttr;
+		const rootSelector = rootAttr ? `[${rootAttr}]` : null;
+		// same shortcut as `#ownCandidates`
+		const checkOwner =
+			rootSelector !== null &&
+			!(rootNode.matches(rootSelector) && !rootNode.querySelector(rootSelector));
+		const isOwn = (el: Element) =>
+			el.matches(selector) && (!checkOwner || el.closest(rootSelector!) === rootNode);
+		if (!isOwn(node)) return null;
+
+		const adjacent = findAdjacentElement(rootNode, node, step, isOwn);
+		if (adjacent) return adjacent;
+		if (!loop) return undefined;
+		if (step === -1) return this.getCandidateNodes().at(-1);
+		return findAdjacentElement(rootNode, rootNode, 1, isOwn) ?? undefined;
+	}
+
 	handleKeydown(node: HTMLElement | null | undefined, e: KeyboardEvent, both: boolean = false) {
 		const rootNode = this.#opts.rootNode.current;
 		if (!rootNode || !node) return;
+
+		const dir = getElemDirection(rootNode);
+		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#opts.orientation.current);
+		const loop = this.#opts.loop.current;
+
+		// none of these keys can coincide, so the order of the checks doesn't matter
+		let step: 1 | -1 | 0 = 0;
+		if (e.key === nextKey) step = 1;
+		else if (e.key === prevKey) step = -1;
+		else if (both) {
+			if (e.key === (nextKey === kbd.ARROW_DOWN ? kbd.ARROW_RIGHT : kbd.ARROW_DOWN)) step = 1;
+			else if (e.key === (prevKey === kbd.ARROW_UP ? kbd.ARROW_LEFT : kbd.ARROW_UP))
+				step = -1;
+		}
+		// any other key is ignored, so don't collect the candidates for it (e.g. typeahead)
+		if (!step && e.key !== kbd.HOME && e.key !== kbd.END) return;
+		// moving to a neighbour of a candidate doesn't need the full candidate list
+		const adjacent = step ? this.#adjacentCandidate(rootNode, node, step, loop) : null;
+		if (adjacent !== null) {
+			e.preventDefault();
+			return adjacent ? this.#focusCandidate(adjacent) : undefined;
+		}
 
 		const items = this.getCandidateNodes();
 		if (!items.length) return;
 
 		const currentIndex = items.indexOf(node);
-		const dir = getElemDirection(rootNode);
-		const { nextKey, prevKey } = getDirectionalKeys(dir, this.#opts.orientation.current);
-		const loop = this.#opts.loop.current;
 
 		const keyToIndex = {
 			[nextKey]: currentIndex + 1,
@@ -136,6 +178,10 @@ export class RovingFocusGroup {
 
 		const itemToFocus = items[itemIndex];
 		if (!itemToFocus) return;
+		return this.#focusCandidate(itemToFocus);
+	}
+
+	#focusCandidate(itemToFocus: HTMLElement) {
 		itemToFocus.focus();
 		this.#currentTabStopId.current = itemToFocus.id;
 		this.#opts.onCandidateFocus?.(itemToFocus);
@@ -143,10 +189,12 @@ export class RovingFocusGroup {
 	}
 
 	getTabIndex(node: HTMLElement | null | undefined) {
-		const items = this.getCandidateNodes();
+		// read unconditionally: callers rely on it as a reactive dependency
+		const rootNode = this.#opts.rootNode.current;
 		const anyActive = this.#currentTabStopId.current !== null;
 
-		if (node && !anyActive && items[0] === node) {
+		// the candidate scan only matters while no tab stop is set, and per item it's O(n²)
+		if (rootNode && node && !anyActive && this.getCandidateNodes()[0] === node) {
 			this.#currentTabStopId.current = node.id;
 			return 0;
 		} else if (node?.id === this.#currentTabStopId.current) {

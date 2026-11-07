@@ -5,6 +5,7 @@ import {
 	Time,
 	ZonedDateTime,
 	getDayOfWeek,
+	isSameMonth as isSameMonthIntl,
 	getLocalTimeZone,
 	parseDate,
 	parseDateTime,
@@ -292,4 +293,11 @@ export function areAllDaysBetweenValid(
 		}
 	}
 	return true;
+}
+
+export function isSameMonth(a: DateValue, b: DateValue): boolean {
+	if (a.calendar.identifier === "gregory" && b.calendar.identifier === "gregory") {
+		return a.era === b.era && a.year === b.year && a.month === b.month;
+	}
+	return isSameMonthIntl(a, b);
 }

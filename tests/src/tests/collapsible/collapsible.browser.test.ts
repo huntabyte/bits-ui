@@ -1,7 +1,7 @@
 import { page } from "vitest/browser";
 import { describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import type { Component } from "svelte";
+import { tick, type Component } from "svelte";
 import type { Collapsible } from "bits-ui";
 import CollapsibleTest from "./collapsible-test.svelte";
 import CollapsibleForceMountTest from "./collapsible-force-mount-test.svelte";
@@ -155,13 +155,11 @@ describe("Collapsible ", () => {
 				onOpenChange: mock,
 			});
 
+			await tick();
 			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 			t.content.element().dispatchEvent(beforeMatchEvent);
 
-			// wait for state to update
-			await new Promise((resolve) => setTimeout(resolve, 10));
-
-			expect(mock).toHaveBeenCalledWith(true);
+			await expect.poll(() => mock).toHaveBeenCalledWith(true);
 		});
 
 		it("should not trigger open change when already open and beforematch is fired", async () => {
@@ -172,10 +170,12 @@ describe("Collapsible ", () => {
 				onOpenChange: mock,
 			});
 
+			await tick();
 			const beforeMatchEvent = new Event("beforematch", { bubbles: true });
 			t.content.element().dispatchEvent(beforeMatchEvent);
 
-			await new Promise((resolve) => setTimeout(resolve, 10));
+			await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+			await tick();
 
 			expect(mock).not.toHaveBeenCalled();
 		});

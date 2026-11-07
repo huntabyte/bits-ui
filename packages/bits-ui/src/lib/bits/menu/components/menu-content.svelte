@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getEventTargetClosest } from "#lib/internal/events.js";
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { MenuContentProps } from "../types.js";
 	import { MenuContentState } from "../menu.svelte.js";
 	import { createId } from "#lib/internal/create-id.js";

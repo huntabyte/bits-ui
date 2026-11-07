@@ -346,7 +346,7 @@ class SliderSingleRootState extends SliderBaseRootState {
 	readonly ticksPropsArr = $derived.by(() => {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
-
+		if (steps.length === 0) return [];
 		const valueToPosition = this.getValueToPosition();
 
 		return steps.map((tickValue, i) => {
@@ -667,7 +667,7 @@ class SliderMultiRootState extends SliderBaseRootState {
 	readonly ticksPropsArr = $derived.by(() => {
 		const steps = this.normalizedSteps;
 		const currValue = this.opts.value.current;
-
+		if (steps.length === 0) return [];
 		const valueToPosition = this.getValueToPosition();
 
 		return steps.map((tickValue, i) => {

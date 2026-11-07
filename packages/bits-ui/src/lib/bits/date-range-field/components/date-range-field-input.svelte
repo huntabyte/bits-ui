@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import type { DateRangeFieldInputProps } from "../types.js";
 	import { DateRangeFieldInputState } from "../date-range-field.svelte.js";

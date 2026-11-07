@@ -3,7 +3,13 @@ import { afterTick, onDestroyEffect, type ReadableBoxedValues } from "svelte-too
 interface AnimationsCompleteOpts extends ReadableBoxedValues<{
 	ref: HTMLElement | null;
 	afterTick: boolean;
-}> {}
+}> {
+	/**
+	 * The owner calls `cancel()` on destroy itself, so no destroy effect of our own is
+	 * registered. Saves an effect per instance for owners that already have one.
+	 */
+	manualCleanup?: boolean;
+}
 
 export class AnimationsComplete {
 	#opts: AnimationsCompleteOpts;
@@ -13,10 +19,11 @@ export class AnimationsComplete {
 
 	constructor(opts: AnimationsCompleteOpts) {
 		this.#opts = opts;
-		onDestroyEffect(() => this.#cleanup());
+		if (!opts.manualCleanup) onDestroyEffect(() => this.cancel());
 	}
 
-	#cleanup(): void {
+	/** Cancels any pending wait; a callback already deferred by `run()` will not run. */
+	cancel(): void {
 		if (this.#currentFrame !== null) {
 			window.cancelAnimationFrame(this.#currentFrame);
 			this.#currentFrame = null;
@@ -27,7 +34,7 @@ export class AnimationsComplete {
 	}
 
 	run(fn: () => void | Promise<void>): void {
-		this.#cleanup();
+		this.cancel();
 
 		const runId = this.#runId;
 

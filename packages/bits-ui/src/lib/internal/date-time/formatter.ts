@@ -32,9 +32,11 @@ type CreateFormatterOptions = {
  */
 export function createFormatter(opts: CreateFormatterOptions) {
 	let locale = opts.initialLocale;
+	let fullDateFormatter: DateFormatter | undefined;
 
 	function setLocale(newLocale: string) {
 		locale = newLocale;
+		fullDateFormatter = undefined;
 	}
 
 	function getLocale() {
@@ -43,6 +45,16 @@ export function createFormatter(opts: CreateFormatterOptions) {
 
 	function custom(date: Date, options: Intl.DateTimeFormatOptions) {
 		return new DateFormatter(locale, options).format(date);
+	}
+
+	function fullDate(date: Date) {
+		fullDateFormatter ??= new DateFormatter(locale, {
+			weekday: "long",
+			month: "long",
+			day: "numeric",
+			year: "numeric",
+		});
+		return fullDateFormatter.format(date);
 	}
 
 	function selectedDate(date: DateValue, includeTime = true) {
@@ -130,6 +142,7 @@ export function createFormatter(opts: CreateFormatterOptions) {
 	return {
 		setLocale,
 		getLocale,
+		fullDate,
 		fullMonth,
 		fullYear,
 		fullMonthAndYear,
