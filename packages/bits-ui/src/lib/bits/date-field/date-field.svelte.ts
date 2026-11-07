@@ -441,7 +441,7 @@ export class DateFieldRootState {
 					if (this.states.dayPeriod.updating) {
 						return [part, this.states.dayPeriod.updating];
 					} else {
-						return [part, this.formatter.dayPeriod(toDate(value))];
+						return [part, this.formatter.dayPeriod(value)];
 					}
 				} else if (part === "hour") {
 					if (this.states.hour.updating) {
@@ -638,7 +638,7 @@ export class DateFieldRootState {
 						prev.dayPeriod = dayPeriodHint;
 					} else {
 						const dayPeriod = this.formatter.dayPeriod(
-							toDate(dateRef.set({ hour: Number.parseInt(next) })),
+							dateRef.set({ hour: Number.parseInt(next) }),
 							this.hourCycle.current
 						);
 						if (dayPeriod === "AM" || dayPeriod === "PM") {
