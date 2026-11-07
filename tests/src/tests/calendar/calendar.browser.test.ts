@@ -264,7 +264,7 @@ describe("type='single'", () => {
 		});
 
 		it("should preserve the weekday when moving vertically past disabled dates", async () => {
-			setup({
+			await setup({
 				value: new CalendarDate(2026, 10, 13),
 				isDateDisabled: (date) =>
 					date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-10-20",
@@ -278,7 +278,7 @@ describe("type='single'", () => {
 		});
 
 		it("should preserve the weekday when moving vertically across the month edge past disabled dates", async () => {
-			setup({
+			await setup({
 				value: new CalendarDate(2026, 10, 27),
 				isDateDisabled: (date) => date.toDate("UTC").getUTCDay() === 1,
 			});
@@ -297,7 +297,7 @@ describe("type='single'", () => {
 		});
 
 		it("should skip a disabled target day across the month edge to the same weekday", async () => {
-			setup({
+			await setup({
 				value: new CalendarDate(2026, 10, 27),
 				isDateDisabled: (date) =>
 					date.toDate("UTC").getUTCDay() === 1 || date.toString() === "2026-11-03",
@@ -560,7 +560,7 @@ describe("type='single'", () => {
 		it("should not shift weekdays, heading, or labels for a `ZonedDateTime` ahead of the local time zone (#2022)", async () => {
 			// UTC+14, so midnight there is the previous day in (almost) every local zone
 			const value = toZoned(new CalendarDateTime(2026, 3, 1), "Pacific/Kiritimati");
-			setup({ value, weekdayFormat: "short", weekStartsOn: 0 });
+			await setup({ value, weekdayFormat: "short", weekStartsOn: 0 });
 			for (const [i, weekday] of shortWeekdays.entries()) {
 				await expect
 					.element(page.getByTestId(`weekday-3-${i}`))
@@ -570,6 +570,44 @@ describe("type='single'", () => {
 			await expect
 				.element(page.getByTestId("date-3-1"))
 				.toHaveAttribute("aria-label", "Sunday, March 1, 2026");
+		});
+	});
+
+	describe("Week Numbers", () => {
+		it("should not render week number cells when `showWeekNumbers` is false (default)", async () => {
+			await setup({ placeholder: calendarDate });
+			const cell = page.getByTestId("week-number-cell-1-0");
+			const headCell = page.getByTestId("week-number-head-cell-1");
+			await expect.element(cell).not.toBeInTheDocument();
+			await expect.element(headCell).not.toBeInTheDocument();
+		});
+
+		it("should render week number cells when `showWeekNumbers` is true", async () => {
+			await setup({ placeholder: calendarDate, showWeekNumbers: true });
+			// calendarDate is January 20, 1980. January 1980 has 5 weeks in the grid (no fixedWeeks).
+			// Check that head cell and at least the first body cell render.
+			const headCell = page.getByTestId("week-number-head-cell-1");
+			await expect.element(headCell).toBeInTheDocument();
+			const firstWeekCell = page.getByTestId("week-number-cell-1-0");
+			await expect.element(firstWeekCell).toBeInTheDocument();
+		});
+
+		it("should display the correct ISO 8601 week number", async () => {
+			// calendarDate = Jan 20, 1980 (Sunday). With weekStartsOn=0 (default),
+			// week numbers are anchored to each row's Thursday.
+			// Row 3 spans Jan 20-26, and its Thursday is Jan 24, 1980 => ISO week 4.
+			await setup({ placeholder: calendarDate, showWeekNumbers: true });
+			const weekCell = page.getByTestId("week-number-cell-1-3");
+			await expect.element(weekCell).toMatchTextContent("04");
+		});
+
+		it("should display correct ISO week numbers at year boundaries (Dec 30, 2024 → W01 of 2025)", async () => {
+			// With weekStartsOn=1 (Monday), December 2024 grid:
+			// Row 5: Dec 30 (Mon) → week[0]=Dec 30 → day=1 → +4-1=Jan 2, 2025 → yearStart=Jan1,2025 → W1
+			const decDate = new CalendarDate(2024, 12, 1);
+			await setup({ placeholder: decDate, showWeekNumbers: true, weekStartsOn: 1 });
+			const lastWeekCell = page.getByTestId("week-number-cell-12-5");
+			await expect.element(lastWeekCell).toMatchTextContent("01");
 		});
 	});
 
