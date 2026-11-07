@@ -21,6 +21,7 @@ import {
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
+	preventBodyPointerEventsProp,
 	transitionStyleDataAttrs,
 	withChildProps,
 } from "./shared.js";
@@ -104,6 +105,7 @@ export const content = defineComponentApiSchema<DialogContentPropsWithoutHTML>({
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
 		restoreScrollDelay: restoreScrollDelayProp,
+		preventBodyPointerEvents: preventBodyPointerEventsProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
 			child: openChildDefinition,
