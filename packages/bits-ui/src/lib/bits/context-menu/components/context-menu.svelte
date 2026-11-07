@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 	import { boxWith } from "svelte-toolbelt";
 	import type { ContextMenuRootProps } from "../types.js";
 	import FloatingLayer from "#lib/bits/utilities/floating-layer/components/floating-layer.svelte";
@@ -7,7 +8,7 @@
 
 	let {
 		open = $bindable(false),
-		dir = "ltr",
+		dir,
 		// debugMode = false,
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
@@ -16,7 +17,7 @@
 
 	const root = MenuRootState.create({
 		variant: boxWith(() => "context-menu" as const),
-		dir: boxWith(() => dir),
+		dir: resolveDirProp(() => dir),
 		// debugMode: boxWith(() => debugMode),
 		onClose: () => {
 			open = false;

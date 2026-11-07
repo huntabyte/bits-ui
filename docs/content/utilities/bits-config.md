@@ -10,7 +10,7 @@ description: A global context provider for configuring default props across all 
 
 ## Overview
 
-`BitsConfig` is a global context provider that simplifies managing default prop values across all Bits UI components within its scope. Use it to set defaults like portal targets or locales centrally, and avoid the need to pass the same props to every component.
+`BitsConfig` is a global context provider that simplifies managing default prop values across all Bits UI components within its scope. Use it to set defaults like portal targets, locales, or reading direction centrally, and avoid the need to pass the same props to every component.
 
 ## Key Features
 
@@ -90,6 +90,44 @@ Child instances inherit and override parent values:
       </Dialog.Portal>
     </Dialog.Root>
   </BitsConfig>
+</BitsConfig>
+```
+
+## Reading Direction
+
+Set `dir` on `BitsConfig` to share a reading direction across components that support the `dir` prop. This includes Context Menu, Dropdown Menu, Menubar, Navigation Menu, Scroll Area, Slider, and floating content such as Popover and Tooltip.
+
+```svelte title="+layout.svelte"
+<script lang="ts">
+  import { BitsConfig } from "bits-ui";
+
+  let { children } = $props();
+</script>
+
+<BitsConfig dir="rtl">
+  {@render children()}
+</BitsConfig>
+```
+
+The value can be `"ltr"` or `"rtl"`. Components use `"ltr"` when neither the component nor a parent `BitsConfig` provides a direction. If the value changes, components update their direction and keyboard behavior.
+
+`BitsConfig` does not render an element or set the direction of your page. Set the matching `dir` attribute on your `<html>` element, or on a container, to control text layout and components that inherit direction from the DOM.
+
+A nested `BitsConfig` inherits its parent's direction unless it provides its own. Set `dir` directly on a component to override the configured default:
+
+```svelte
+<script lang="ts">
+  import { BitsConfig, Slider } from "bits-ui";
+</script>
+
+<BitsConfig dir="rtl">
+  <Slider.Root type="single" value={50}>
+    <Slider.Thumb index={0} />
+  </Slider.Root>
+
+  <Slider.Root type="single" value={50} dir="ltr">
+    <Slider.Thumb index={0} />
+  </Slider.Root>
 </BitsConfig>
 ```
 
@@ -193,6 +231,6 @@ Bits UI resolves default values in this priority:
 1. **Direct Component prop**
 2. **Nearest parent BitsConfig**
 3. **Inherited from parent BitsConfig(s)**
-4. **Built-in component default** (e.g., portals default to `"body"`, locales default to `"en"`)
+4. **Built-in component default** (e.g., portals default to `"body"`, locales default to `"en"`, direction defaults to `"ltr"`)
 
 <APISection {schemas} />
