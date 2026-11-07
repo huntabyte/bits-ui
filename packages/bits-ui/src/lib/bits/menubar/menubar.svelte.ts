@@ -138,6 +138,7 @@ export class MenubarRootState {
 		() =>
 			({
 				id: this.opts.id.current,
+				dir: this.opts.dir.current,
 				role: "menubar",
 				[menubarAttrs.root]: "",
 				...this.attachment,

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 	import { boxWith, mergeProps, type WritableBox } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import type { SliderRootProps } from "../types.js";
@@ -22,7 +23,7 @@
 		min: minProp,
 		max: maxProp,
 		step = 1,
-		dir = "ltr",
+		dir,
 		autoSort = true,
 		orientation = "horizontal",
 		thumbPositioning = "contain",
@@ -80,7 +81,7 @@
 		min: boxWith(() => min),
 		max: boxWith(() => max),
 		step: boxWith(() => step),
-		dir: boxWith(() => dir),
+		dir: resolveDirProp(() => dir),
 		autoSort: boxWith(() => autoSort),
 		orientation: boxWith(() => orientation),
 		thumbPositioning: boxWith(() => thumbPositioning),

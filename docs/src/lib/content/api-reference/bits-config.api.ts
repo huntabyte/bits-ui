@@ -1,5 +1,5 @@
 import { defineStringProp, defineUtilityApiSchema } from "../utils.js";
-import { childrenSnippet, portalToProp } from "./shared.js";
+import { childrenSnippet, portalToProp, dirProp } from "./shared.js";
 import type { BitsConfigProps } from "bits-ui";
 
 export const bitsConfig = defineUtilityApiSchema<BitsConfigProps>({
@@ -7,6 +7,7 @@ export const bitsConfig = defineUtilityApiSchema<BitsConfigProps>({
 	description:
 		"A global context provider for configuring default props across all Bits UI components.",
 	props: {
+		dir: dirProp,
 		defaultPortalTo: portalToProp,
 		defaultLocale: defineStringProp({
 			description: "The default locale to use for the app.",

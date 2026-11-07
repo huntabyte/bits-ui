@@ -165,6 +165,7 @@ abstract class SliderBaseRootState {
 		() =>
 			({
 				id: this.opts.id.current,
+				dir: this.opts.dir.current,
 				"data-orientation": this.opts.orientation.current,
 				"data-disabled": boolToEmptyStrOrUndef(this.opts.disabled.current),
 				style: {

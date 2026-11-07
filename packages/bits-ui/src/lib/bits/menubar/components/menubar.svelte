@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenubarRootProps } from "../types.js";
 	import { MenubarRootState } from "../menubar.svelte.js";
@@ -13,7 +14,7 @@
 		child,
 		ref = $bindable(null),
 		value = $bindable(""),
-		dir = "ltr",
+		dir,
 		loop = true,
 		onValueChange = noop,
 		...restProps
@@ -28,7 +29,7 @@
 				onValueChange?.(v);
 			}
 		),
-		dir: boxWith(() => dir),
+		dir: resolveDirProp(() => dir),
 		loop: boxWith(() => loop),
 		ref: boxWith(
 			() => ref,
