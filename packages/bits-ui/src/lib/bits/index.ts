@@ -15,6 +15,7 @@ export { DatePicker } from "./date-picker/index.js";
 export { DateRangeField } from "./date-range-field/index.js";
 export { DateRangePicker } from "./date-range-picker/index.js";
 export { Dialog } from "./dialog/index.js";
+export { Drawer } from "./drawer/index.js";
 export { DropdownMenu } from "./dropdown-menu/index.js";
 export { Label } from "./label/index.js";
 export { LinkPreview } from "./link-preview/index.js";
