@@ -99,6 +99,7 @@
 				class="flex h-full w-full flex-col self-start overflow-hidden rounded-xl bg-background"
 			>
 				<Command.Input
+					autofocus
 					bind:value={searchQuery}
 					autocomplete="off"
 					spellcheck="false"
