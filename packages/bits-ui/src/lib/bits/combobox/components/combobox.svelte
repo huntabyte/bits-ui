@@ -22,6 +22,7 @@
 		required = false,
 		items = [],
 		allowDeselect = true,
+		autoHighlight = false,
 		inputValue = "",
 		children,
 	}: ComboboxRootProps = $props();
@@ -64,6 +65,7 @@
 		isCombobox: true,
 		items: boxWith(() => items),
 		allowDeselect: boxWith(() => allowDeselect),
+		autoHighlight: boxWith(() => autoHighlight),
 		inputValue: boxWith(
 			() => inputValue,
 			(v) => (inputValue = v)

@@ -11,6 +11,16 @@ export type ComboboxBaseRootPropsWithoutHTML = Omit<
 	"autocomplete"
 > & {
 	/**
+	 * Whether the first matching item should be highlighted automatically as the
+	 * user filters the list.
+	 * Results arriving asynchronously are included. Does not highlight the first
+	 * item on trigger open; selected items and keyboard navigation still highlight.
+	 *
+	 * @default false
+	 */
+	autoHighlight?: boolean;
+
+	/**
 	 * A read-only value that can be used to programmatically
 	 * update the input value.
 	 *
