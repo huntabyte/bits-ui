@@ -51,21 +51,27 @@ it("focuses search again when the mobile trigger reopens it", async () => {
 	await expect.element(page.getByRole("combobox")).toHaveFocus();
 });
 
-it("keeps new typing when search reopens before the close reset", async () => {
-	await render(Search);
-	const trigger = page.getByRole("button", { name: "Search Docs" });
-	await trigger.click();
-	await userEvent.keyboard("old");
-	await userEvent.keyboard("{Escape}");
-	await expect.element(page.getByRole("combobox")).not.toBeInTheDocument();
-	await trigger.click();
-	const input = page.getByRole("combobox");
-	await expect.element(input).toHaveValue("");
-	await userEvent.keyboard("dialog");
-	// Wait past the 300ms close reset to prove it cannot erase the new query.
-	await new Promise((resolve) => setTimeout(resolve, 350));
-	await expect.element(input).toHaveValue("dialog");
-});
+// Reopen inside the 300ms close-reset window. Check synchronously: expect.element polls,
+// which would wait out the reset and hide the race.
+it.each(["Control", "Meta"])(
+	"keeps new typing when search reopens before the close reset (%s+K)",
+	async (modifier) => {
+		await render(Search);
+		await userEvent.keyboard(`{${modifier}>}k{/${modifier}}`);
+		const input = page.getByRole("combobox");
+		await expect.element(input).toHaveFocus();
+		await userEvent.keyboard("old");
+		await userEvent.keyboard("{Escape}");
+		await expect.element(input).not.toBeInTheDocument();
+		await userEvent.keyboard(`{${modifier}>}k{/${modifier}}`);
+		await expect.element(input).toBeInTheDocument();
+		expect((input.element() as HTMLInputElement).value).toBe("");
+		await userEvent.keyboard("new");
+		// Wait past the 300ms close reset to prove it cannot erase the new query.
+		await new Promise((resolve) => setTimeout(resolve, 350));
+		expect((input.element() as HTMLInputElement).value).toBe("new");
+	}
+);
 
 it("focuses and accepts typing from the desktop trigger", async () => {
 	await page.viewport(1280, 800);
