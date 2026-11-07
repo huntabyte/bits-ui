@@ -6,6 +6,9 @@
 	import MobileNav from "#lib/components/navigation/mobile-nav.svelte";
 	import { siteConfig } from "#lib/config/index.js";
 	import Github from "#icons/github.svelte";
+
+	let searchOpen = $state(false);
+	let focusSearch = $state(true);
 </script>
 
 <header
@@ -14,7 +17,13 @@
 	<div class="px-4">
 		<div class="flex h-[70px] items-center justify-between gap-3">
 			<div class="flex w-full items-center gap-1.5 md:w-auto">
-				<MobileNav />
+				<MobileNav
+					open={searchOpen}
+					onOpen={() => {
+						focusSearch = false;
+						searchOpen = true;
+					}}
+				/>
 
 				<a
 					href="/"
@@ -23,7 +32,7 @@
 					<Logo />
 				</a>
 
-				<Search />
+				<Search bind:open={searchOpen} bind:focusOnOpen={focusSearch} />
 			</div>
 			<div class="flex items-center justify-end">
 				<Button.Root
