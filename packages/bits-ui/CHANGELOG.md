@@ -1,5 +1,15 @@
 # bits-ui
 
+## 2.20.7
+
+### Patch Changes
+
+- fix(LinkPreview): don't close a preview opened by focus when the pointer leaves the trigger ([#2284](https://github.com/huntabyte/bits-ui/pull/2284))
+
+- fix(TimeField, DateField): use the `ZonedDateTime` value's time zone, not the local one, when computing AM/PM ([#2290](https://github.com/huntabyte/bits-ui/pull/2290))
+
+- fix(Tooltip): don't close a tooltip opened by focus when the pointer leaves the trigger ([#2284](https://github.com/huntabyte/bits-ui/pull/2284))
+
 ## 2.20.6
 
 ### Patch Changes
