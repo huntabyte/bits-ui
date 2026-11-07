@@ -8,6 +8,9 @@ import type {
 	ComboboxItemPropsWithoutHTML,
 	ComboboxPortalPropsWithoutHTML,
 	ComboboxRootPropsWithoutHTML,
+	ComboboxChipPropsWithoutHTML,
+	ComboboxChipRemoveButtonPropsWithoutHTML,
+	ComboboxChipsPropsWithoutHTML,
 	ComboboxTriggerPropsWithoutHTML,
 	ComboboxViewportPropsWithoutHTML,
 	SelectScrollDownButtonPropsWithoutHTML,
@@ -276,6 +279,16 @@ export const input = defineComponentApiSchema<ComboboxInputPropsWithoutHTML>({
 			description: "Whether to clear the input when the last item is deselected.",
 			default: false,
 		}),
+		clearInputOnSelect: defineBooleanProp({
+			description:
+				"Whether to clear the input value whenever an item is selected or deselected. Useful in multiple-select tag scenarios.",
+			default: false,
+		}),
+		removeOnBackspace: defineBooleanProp({
+			description:
+				"When `true`, pressing `Backspace` while the input is empty will remove the last selected item. Only applies when `type='multiple'`.",
+			default: false,
+		}),
 		...withChildProps({ elType: "HTMLInputElement" }),
 	},
 	dataAttributes: [
@@ -402,6 +415,60 @@ export const viewport = defineComponentApiSchema<ComboboxViewportPropsWithoutHTM
 	],
 });
 
+export const chips = defineComponentApiSchema<ComboboxChipsPropsWithoutHTML>({
+	title: "Chips",
+	description:
+		"A container for the selected value chips in a multiple combobox. Rendered alongside the `Combobox.Input` and wraps both chips and input.",
+	props: withChildProps({ elType: "HTMLDivElement" }),
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "combobox-chips",
+			description: "Present on the chips container element.",
+		}),
+	],
+});
+
+export const chip = defineComponentApiSchema<ComboboxChipPropsWithoutHTML>({
+	title: "Chip",
+	description: "An individual chip representing a selected value in a multiple combobox.",
+	props: {
+		value: defineStringProp({
+			description: "The value this chip represents. Should match one of the selected values.",
+			required: true,
+		}),
+		...withChildProps({ elType: "HTMLDivElement" }),
+	},
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "value",
+			description: "The value of the chip.",
+			value: "string",
+		}),
+		defineSimpleDataAttr({
+			name: "label",
+			description: "The resolved label of the chip's value.",
+			value: "string",
+		}),
+		defineSimpleDataAttr({
+			name: "combobox-chip",
+			description: "Present on the chip element.",
+		}),
+	],
+});
+
+export const chipRemoveButton = defineComponentApiSchema<ComboboxChipRemoveButtonPropsWithoutHTML>({
+	title: "ChipRemoveButton",
+	description:
+		"A button inside a `Combobox.Chip` that removes the associated value from the selection when clicked.",
+	props: withChildProps({ elType: "HTMLButtonElement" }),
+	dataAttributes: [
+		defineSimpleDataAttr({
+			name: "combobox-chip-remove",
+			description: "Present on the chip remove button element.",
+		}),
+	],
+});
+
 export const combobox = [
 	root,
 	trigger,
@@ -416,4 +483,7 @@ export const combobox = [
 	scrollUpButton,
 	scrollDownButton,
 	arrow,
+	chips,
+	chip,
+	chipRemoveButton,
 ];
