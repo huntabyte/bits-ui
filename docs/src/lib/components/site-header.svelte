@@ -3,12 +3,8 @@
 	import Search from "./search.svelte";
 	import { Logo } from "#icons/index.js";
 	import LightSwitch from "#lib/components/light-switch.svelte";
-	import MobileNav from "#lib/components/navigation/mobile-nav.svelte";
 	import { siteConfig } from "#lib/config/index.js";
 	import Github from "#icons/github.svelte";
-
-	let searchOpen = $state(false);
-	let focusSearch = $state(true);
 </script>
 
 <header
@@ -17,14 +13,6 @@
 	<div class="px-4">
 		<div class="flex h-[70px] items-center justify-between gap-3">
 			<div class="flex w-full items-center gap-1.5 md:w-auto">
-				<MobileNav
-					open={searchOpen}
-					onOpen={() => {
-						focusSearch = false;
-						searchOpen = true;
-					}}
-				/>
-
 				<a
 					href="/"
 					class="ml-2 rounded-md focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden md:mr-[125px]"
@@ -32,7 +20,7 @@
 					<Logo />
 				</a>
 
-				<Search bind:open={searchOpen} bind:focusOnOpen={focusSearch} />
+				<Search />
 			</div>
 			<div class="flex items-center justify-end">
 				<Button.Root

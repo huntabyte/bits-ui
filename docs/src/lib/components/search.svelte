@@ -13,11 +13,8 @@
 	} from "#lib/utils/search.js";
 	import ScrollArea from "./ui/scroll-area.svelte";
 
-	let {
-		showTrigger = true,
-		open = $bindable(false),
-		focusOnOpen = $bindable(true),
-	}: { showTrigger?: boolean; open?: boolean; focusOnOpen?: boolean } = $props();
+	let { showTrigger = true, open = $bindable(false) }: { showTrigger?: boolean; open?: boolean } =
+		$props();
 
 	const isMobile = new MediaQuery("(width < 48rem)");
 	let searchInput = $state<HTMLInputElement | null>(null);
@@ -42,7 +39,6 @@
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
-			focusOnOpen = true;
 			open = true;
 		}
 	}
@@ -72,7 +68,6 @@
 	<Drawer.Root bind:open swipeDirection="down" onOpenChange={handleOpenChange}>
 		{#if showTrigger}
 			<Drawer.Trigger
-				onclick={() => (focusOnOpen = true)}
 				aria-label="Search Docs"
 				class="relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden md:hidden"
 			>
@@ -87,7 +82,6 @@
 				<Drawer.Popup
 					class="search-drawer flex w-full shrink-0 flex-col overflow-hidden rounded-t-2xl bg-background shadow-popover outline-hidden"
 					onOpenAutoFocus={(event) => {
-						if (!focusOnOpen) return;
 						event.preventDefault();
 						searchInput?.focus({ preventScroll: true });
 					}}
