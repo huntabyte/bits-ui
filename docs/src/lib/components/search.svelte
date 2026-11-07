@@ -262,17 +262,19 @@
 
 	:global(.search-drawer) {
 		height: calc(100svh - max(1rem, env(safe-area-inset-top)));
-		transform: translateY(var(--drawer-swipe-movement-y));
+		transform: translate3d(0, var(--drawer-swipe-movement-y), 0);
+		will-change: transform;
 		transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
 	}
 
 	:global(.search-drawer[data-starting-style]),
 	:global(.search-drawer[data-ending-style]) {
-		transform: translateY(calc(100% + 2px));
+		transform: translate3d(0, calc(100% + 2px), 0);
 	}
 
 	:global(.search-backdrop) {
 		opacity: calc(1 - var(--drawer-swipe-progress));
+		will-change: opacity;
 		transition: opacity 280ms cubic-bezier(0.32, 0.72, 0, 1);
 	}
 
