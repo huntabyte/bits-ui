@@ -1,4 +1,6 @@
 <script lang="ts">
+	import X from "phosphor-svelte/lib/X";
+	import ArrowUpRight from "phosphor-svelte/lib/ArrowUpRight";
 	import MagnifyingGlass from "phosphor-svelte/lib/MagnifyingGlass";
 	import { onMount } from "svelte";
 	import { MediaQuery } from "svelte/reactivity";
@@ -55,7 +57,7 @@
 		clearTimeoutId = window.setTimeout(() => {
 			searchQuery = "";
 			clearTimeoutId = undefined;
-		}, 450);
+		}, 300);
 	}
 </script>
 
@@ -72,12 +74,12 @@
 			</Drawer.Trigger>
 		{/if}
 		<Drawer.Portal>
-			<Drawer.Backdrop class="search-backdrop fixed inset-0 z-50 bg-black/80" />
+			<Drawer.Backdrop class="search-backdrop fixed inset-0 z-50 bg-black/50" />
 			<Drawer.Viewport
 				class="fixed inset-0 z-100 flex items-end justify-center pb-[var(--drawer-keyboard-inset)]"
 			>
 				<Drawer.Popup
-					class="search-drawer w-full overflow-y-auto overscroll-contain rounded-t-2xl bg-background px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-popover outline-hidden"
+					class="search-drawer flex w-full flex-col overflow-hidden rounded-t-2xl bg-background shadow-popover outline-hidden"
 					onOpenAutoFocus={(event) => {
 						event.preventDefault();
 						searchInput?.focus({ preventScroll: true });
@@ -85,15 +87,12 @@
 				>
 					<div
 						aria-hidden="true"
-						class="mx-auto my-3 h-1 w-10 rounded-full bg-muted-foreground/40"
+						class="mx-auto mt-2.5 mb-1 h-1 w-8 shrink-0 rounded-full bg-dark-10"
 					></div>
-					<Drawer.Content>
+					<Drawer.Content class="flex min-h-0 flex-1 flex-col">
 						<Drawer.Title class="sr-only">Search</Drawer.Title>
 						<Drawer.Description class="sr-only"
 							>Search for documentation</Drawer.Description
-						>
-						<Drawer.Close class="ml-auto block px-3 py-2 text-sm text-muted-foreground"
-							>Close</Drawer.Close
 						>
 						{@render searchContent()}
 					</Drawer.Content>
@@ -145,81 +144,122 @@
 {#snippet searchContent()}
 	<Command.Root
 		shouldFilter={false}
-		class="flex h-full w-full flex-col self-start overflow-hidden rounded-xl bg-background"
+		class={isMobile.current
+			? "flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-background"
+			: "flex h-full w-full flex-col self-start overflow-hidden rounded-xl bg-background"}
 	>
-		<Command.Input
-			bind:ref={searchInput}
-			aria-label="Search documentation"
-			bind:value={searchQuery}
-			autocomplete="off"
-			spellcheck="false"
-			type="search"
-			data-empty={searchQuery === ""}
-			class="focus-override inline-flex h-input w-full touch-manipulation truncate rounded-xl bg-background px-4 text-base transition-colors placeholder:text-foreground-alt/50 focus:ring-0 focus:outline-hidden data-[empty=false]:rounded-b-none data-[empty=false]:border-b"
-			placeholder="Search for something..."
-		/>
-		{#if searchQuery !== "" && results.length === 0}
+		<div
+			class={isMobile.current
+				? "flex shrink-0 items-center gap-3 border-b border-border-card px-4 pb-2"
+				: "contents"}
+		>
+			{#if isMobile.current}
+				<MagnifyingGlass class="size-5 shrink-0 text-foreground-alt" aria-hidden="true" />
+			{/if}
+			<Command.Input
+				bind:ref={searchInput}
+				aria-label="Search documentation"
+				bind:value={searchQuery}
+				autocomplete="off"
+				spellcheck="false"
+				type="search"
+				data-empty={searchQuery === ""}
+				class={isMobile.current
+					? "focus-override h-12 min-w-0 flex-1 appearance-none bg-transparent text-base text-foreground outline-hidden placeholder:text-foreground-alt focus:ring-0"
+					: "focus-override inline-flex h-input w-full touch-manipulation truncate rounded-xl bg-background px-4 text-base transition-colors placeholder:text-foreground-alt/50 focus:ring-0 focus:outline-hidden data-[empty=false]:rounded-b-none data-[empty=false]:border-b"}
+				placeholder={isMobile.current ? "Search documentation…" : "Search for something..."}
+				enterkeyhint="search"
+				autocapitalize="off"
+			/>
+			{#if isMobile.current}
+				<Drawer.Close
+					aria-label="Close search"
+					class="flex size-10 shrink-0 items-center justify-center rounded-full text-foreground-alt hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground active:bg-muted"
+				>
+					<X class="size-[18px]" aria-hidden="true" />
+				</Drawer.Close>
+			{/if}
+		</div>
+		{#if searchQuery !== "" && results.length === 0 && searchState === "ready"}
 			<Command.Empty
 				forceMount
-				class="flex w-full items-center justify-center pt-8 pb-6 text-sm text-foreground"
-				>No results found.</Command.Empty
+				class="flex flex-1 flex-col items-center justify-center gap-1 px-6 py-10 text-center text-sm"
 			>
+				<span class="font-medium text-foreground">No results found</span>
+				<span class="text-foreground-alt">Try another component or keyword.</span>
+			</Command.Empty>
 		{/if}
-
-		{#if searchQuery !== "" && results.length > 0}
-			<Command.List class="mt-1 max-h-[400px] overflow-x-hidden px-2 pt-2 pb-2">
+		{#if (isMobile.current && (searchQuery === "" || searchState === "loading")) || (searchQuery !== "" && results.length > 0)}
+			<Command.List
+				class={isMobile.current
+					? "min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+					: "mt-1 max-h-[400px] overflow-x-hidden px-2 pt-2 pb-2"}
+			>
 				{#snippet child({ props })}
-					<ScrollArea
-						{...props}
-						type="auto"
-						class={isMobile.current
-							? "max-h-[min(400px,calc(100dvh-var(--drawer-keyboard-inset)-12rem))]"
-							: undefined}
-					>
-						<Command.Viewport>
-							{#if searchState === "loading"}
-								<Command.Loading>Loading...</Command.Loading>
-							{/if}
-
-							{#each results as { title, href, snippet, category } (title + href)}
-								<Command.LinkItem
-									{href}
-									class="flex cursor-pointer flex-col items-start gap-1 rounded-button px-3 py-2.5 text-sm outline-hidden select-none data-selected:bg-muted"
-									onSelect={() => {
-										searchQuery = "";
-										open = false;
-									}}
-								>
-									<div class="flex w-full items-center justify-between">
-										<span class="font-medium capitalize">{title}</span>
-										{#if category}
-											<span class="text-xs text-muted-foreground"
-												>{category}</span
-											>
-										{/if}
-									</div>
-									{#if snippet}
-										<div
-											class="search-result text-xs leading-relaxed text-muted-foreground"
-										>
-											{@html snippet}
-										</div>
-									{/if}
-								</Command.LinkItem>
-							{/each}
-						</Command.Viewport>
-					</ScrollArea>
+					{#if isMobile.current}
+						<div {...props}>{@render resultItems()}</div>
+					{:else}
+						<ScrollArea {...props} type="auto">{@render resultItems()}</ScrollArea>
+					{/if}
 				{/snippet}
 			</Command.List>
 		{/if}
 	</Command.Root>
 {/snippet}
 
+{#snippet resultItems()}
+	<Command.Viewport>
+		{#if searchState === "loading"}
+			<Command.Loading class="px-3 py-4 text-sm text-foreground-alt"
+				>Loading documentation…</Command.Loading
+			>
+		{:else if isMobile.current && searchQuery === ""}
+			<p class="px-3 pt-1 pb-2 text-xs font-medium text-foreground-alt">Quick links</p>
+			{#each [{ title: "Introduction", href: "/docs/introduction", category: "Guide" }, { title: "Drawer", href: "/docs/components/drawer", category: "Component" }, { title: "Dialog", href: "/docs/components/dialog", category: "Component" }, { title: "Combobox", href: "/docs/components/combobox", category: "Component" }] as link (link.href)}
+				<Command.LinkItem
+					href={link.href}
+					onSelect={() => (open = false)}
+					class="flex min-h-12 items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm outline-hidden data-selected:bg-muted"
+				>
+					<span class="font-medium">{link.title}</span>
+					<span class="flex items-center gap-2 text-xs text-foreground-alt"
+						>{link.category}<ArrowUpRight class="size-3.5" aria-hidden="true" /></span
+					>
+				</Command.LinkItem>
+			{/each}
+		{:else}
+			{#each results as { title, href, snippet, category } (title + href)}
+				<Command.LinkItem
+					{href}
+					class="flex cursor-pointer flex-col items-start gap-1 rounded-button px-3 py-2.5 text-sm outline-hidden select-none data-selected:bg-muted"
+					onSelect={() => {
+						searchQuery = "";
+						open = false;
+					}}
+				>
+					<div class="flex w-full items-center justify-between">
+						<span class="font-medium capitalize">{title}</span>
+						{#if category}
+							<span class="text-xs text-muted-foreground">{category}</span>
+						{/if}
+					</div>
+					{#if snippet}
+						<div class="search-result text-xs leading-relaxed text-muted-foreground">
+							{@html snippet}
+						</div>
+					{/if}
+				</Command.LinkItem>
+			{/each}
+		{/if}
+	</Command.Viewport>
+{/snippet}
+
 <style>
 	:global(.search-drawer) {
-		max-height: calc(100dvh - var(--drawer-keyboard-inset) - 2rem);
+		height: min(32rem, calc(100dvh - var(--drawer-keyboard-inset, 0px) - 1rem));
+		max-height: 100%;
 		transform: translateY(var(--drawer-swipe-movement-y));
-		transition: transform 450ms cubic-bezier(0.32, 0.72, 0, 1);
+		transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
 	}
 
 	:global(.search-drawer[data-starting-style]),
@@ -229,7 +269,7 @@
 
 	:global(.search-backdrop) {
 		opacity: calc(1 - var(--drawer-swipe-progress));
-		transition: opacity 450ms cubic-bezier(0.32, 0.72, 0, 1);
+		transition: opacity 280ms cubic-bezier(0.32, 0.72, 0, 1);
 	}
 
 	:global(.search-backdrop[data-starting-style]),
