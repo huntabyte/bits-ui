@@ -707,6 +707,7 @@ export class SelectInputState {
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
 				"aria-expanded": boolToStr(this.root.opts.open.current),
+				"aria-controls": this.root.contentNode?.id || undefined,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				onkeydown: this.onkeydown,

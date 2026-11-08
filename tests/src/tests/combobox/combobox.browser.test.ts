@@ -181,6 +181,22 @@ describe("combobox - single", () => {
 			.toHaveAttribute("aria-labelledby", t.groupHeading.element().id);
 	});
 
+	it("should point the input's `aria-controls` at the listbox only while it is mounted", async () => {
+		const t = await setupSingle();
+		await expect.element(t.input).not.toHaveAttribute("aria-controls");
+
+		(t.input.element() as HTMLElement).focus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		const listbox = page.getByRole("listbox");
+		await expect.element(listbox).toBeInTheDocument();
+		await expect.element(t.input).toHaveAttribute("aria-expanded", "true");
+		await expect.element(t.input).toHaveAttribute("aria-controls", listbox.element().id);
+
+		await t.user.keyboard(kbd.ESCAPE);
+		await expect.element(listbox).not.toBeInTheDocument();
+		await expect.element(t.input).not.toHaveAttribute("aria-controls");
+	});
+
 	it("should select item with the enter key", async () => {
 		await openSingle();
 		await expect.element(page.getByTestId("input")).toHaveFocus();
