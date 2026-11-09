@@ -15,6 +15,29 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	const alignOffsetOption = $derived(get(options.alignOffset) ?? 0);
 	const reference = options.reference;
 
+	// `update` runs from floating-ui's observers, which keep firing while a parent's
+	// outro holds this layer inert. Reading the `$derived`s above then warns
+	// `derived_inert`, so `update` reads what this effect last saw: effects don't run
+	// while inert.
+	let latestOptions: {
+		middleware: typeof middlewareOption;
+		placement: typeof placementOption;
+		strategy: typeof strategyOption;
+		open: typeof openOption;
+		sideOffset: typeof sideOffsetOption;
+		alignOffset: typeof alignOffsetOption;
+	};
+	$effect.pre(() => {
+		latestOptions = {
+			middleware: middlewareOption,
+			placement: placementOption,
+			strategy: strategyOption,
+			open: openOption,
+			sideOffset: sideOffsetOption,
+			alignOffset: alignOffsetOption,
+		};
+	});
+
 	/** State */
 	let x = $state(0);
 	let y = $state(0);
@@ -70,9 +93,9 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 		const requestId = ++updateRequestId;
 
 		computePosition(referenceNode, floatingNode, {
-			middleware: middlewareOption,
-			placement: placementOption,
-			strategy: strategyOption,
+			middleware: latestOptions.middleware,
+			placement: latestOptions.placement,
+			strategy: latestOptions.strategy,
 		}).then((position) => {
 			// ignore stale async resolutions when newer updates were requested.
 			if (requestId !== updateRequestId) return;
@@ -95,12 +118,12 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 			}
 
 			// ignore bad coordinates that cause jumping during close transitions
-			if (!openOption && x !== 0 && y !== 0) {
+			if (!latestOptions.open && x !== 0 && y !== 0) {
 				// if we had a good position and now getting coordinates near
 				// the expected offset bounds during close, ignore it
 				const maxExpectedOffset = Math.max(
-					Math.abs(sideOffsetOption),
-					Math.abs(alignOffsetOption),
+					Math.abs(latestOptions.sideOffset),
+					Math.abs(latestOptions.alignOffset),
 					15
 				);
 				if (position.x <= maxExpectedOffset && position.y <= maxExpectedOffset) return;
@@ -127,6 +150,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 		cleanup();
 
 		if (whileElementsMountedOption === undefined) {
+			trackPositionDeps();
 			update();
 			return;
 		}
@@ -135,11 +159,17 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 
 		if (reference.current === null || floating.current === null) return;
 
+		trackPositionDeps();
 		whileElementsMountedCleanup = whileElementsMountedOption(
 			reference.current,
 			floating.current,
 			update
 		);
+	}
+
+	// `update` doesn't subscribe the effect calling it, so that effect does it here.
+	function trackPositionDeps() {
+		return [middlewareOption, placementOption, strategyOption] as const;
 	}
 
 	function reset() {
@@ -162,6 +192,7 @@ export function useFloating(options: UseFloatingOptions): UseFloatingReturn {
 	$effect(() => {
 		if (whileElementsMountedOption !== undefined) return;
 		if (!openOption) return;
+		trackPositionDeps();
 		update();
 	});
 	$effect(attach);

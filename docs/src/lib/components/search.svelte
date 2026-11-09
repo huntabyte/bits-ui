@@ -1,7 +1,7 @@
 <script lang="ts">
 	import X from "phosphor-svelte/lib/X";
 	import MagnifyingGlass from "phosphor-svelte/lib/MagnifyingGlass";
-	import { onMount } from "svelte";
+	import { flushSync, onMount } from "svelte";
 	import { page } from "$app/state";
 	import { navigation, type NavItem } from "#lib/config/index.js";
 	import { MediaQuery } from "svelte/reactivity";
@@ -17,10 +17,10 @@
 		$props();
 
 	const isMobile = new MediaQuery("(width < 48rem)");
-	let searchInput = $state<HTMLInputElement | null>(null);
 
 	let searchState = $state<"loading" | "ready">("loading");
 	let searchQuery = $state("");
+	let searchInput = $state<HTMLInputElement | null>(null);
 	let results = $state<SearchResult[]>([]);
 
 	onMount(async () => {
@@ -36,10 +36,21 @@
 
 	let clearTimeoutId: number | undefined;
 
+	function openSearch() {
+		if (clearTimeoutId !== undefined) {
+			window.clearTimeout(clearTimeoutId);
+			clearTimeoutId = undefined;
+			searchQuery = "";
+		}
+		// iOS needs focus within the user gesture to open the software keyboard.
+		flushSync(() => (open = true));
+		searchInput?.focus({ preventScroll: true });
+	}
+
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
-			open = true;
+			openSearch();
 		}
 	}
 
@@ -68,8 +79,9 @@
 	<Drawer.Root bind:open swipeDirection="down" onOpenChange={handleOpenChange}>
 		{#if showTrigger}
 			<Drawer.Trigger
+				onclick={openSearch}
 				aria-label="Search Docs"
-				class="relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden md:hidden"
+				class="relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 			>
 				<MagnifyingGlass class="size-5" />
 			</Drawer.Trigger>
@@ -105,7 +117,8 @@
 	<Dialog.Root bind:open onOpenChange={handleOpenChange}>
 		{#if showTrigger}
 			<Dialog.Trigger
-				class="relative hidden h-10 items-center justify-between gap-3 rounded-[9px] bg-muted px-3 text-sm font-normal whitespace-nowrap text-muted-foreground ring-offset-background transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden sm:inline-flex sm:w-72"
+				onclick={openSearch}
+				class="relative inline-flex h-10 w-72 items-center justify-between gap-3 rounded-[9px] bg-muted px-3 text-sm font-normal whitespace-nowrap text-muted-foreground ring-offset-background transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 			>
 				<span class="flex items-center gap-2">
 					<MagnifyingGlass class="size-5" />Search Docs ...

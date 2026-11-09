@@ -876,42 +876,32 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 		};
 	}
 
-	it("should not read the layer ref from pending focus work after unmount", async () => {
-		const t = await open();
-		const content = page.getByTestId("content").element();
-		const layers = (
-			globalThis as {
-				bitsDismissableLayers?: Map<
-					{ opts: { ref: { current: HTMLElement | null } } },
-					unknown
-				>;
-			}
-		).bitsDismissableLayers!;
-		const layer = [...layers.keys()].find((layer) => layer.opts.ref.current === content)!;
-		const originalRef = layer.opts.ref;
-		const readRef = vi.fn(() => originalRef.current);
-		layer.opts.ref = {
-			get current() {
-				return readRef();
-			},
-			set current(value) {
-				originalRef.current = value;
-			},
-		};
+	/** A blur out of the layer is what lets it report the focus outside. */
+	function moveFocusOutside() {
+		page.getByTestId("content").element().dispatchEvent(new FocusEvent("blur"));
+		document.body.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+	}
 
-		try {
-			content.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
-			expect(readRef).toHaveBeenCalled();
-			// Unmount synchronously before the focus handler's afterTick callback runs.
-			t.unmount();
-			expect(layers.has(layer)).toBe(false);
-			readRef.mockClear();
+	it("should report focus moving outside", async () => {
+		const onFocusOutside = vi.fn((event: FocusEvent) => event.preventDefault());
+		await open({ contentProps: { onFocusOutside } });
 
-			await tick();
-			expect(readRef).not.toHaveBeenCalled();
-		} finally {
-			layer.opts.ref = originalRef;
-		}
+		moveFocusOutside();
+		await tick();
+
+		expect(onFocusOutside).toHaveBeenCalledTimes(1);
+	});
+
+	it("should not run pending focus work after unmount", async () => {
+		const onFocusOutside = vi.fn();
+		const t = await open({ contentProps: { onFocusOutside } });
+
+		moveFocusOutside();
+		// Unmount synchronously before the focus handler's afterTick callback runs.
+		t.unmount();
+		await tick();
+
+		expect(onFocusOutside).not.toHaveBeenCalled();
 	});
 
 	it("should not emit derived_inert when unmounted while open", async () => {

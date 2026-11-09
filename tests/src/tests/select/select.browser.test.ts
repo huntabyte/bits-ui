@@ -781,6 +781,63 @@ describe("select - single", () => {
 		expect(Math.abs(window.scrollY - baselineY)).toBeLessThanOrEqual(1);
 	});
 
+	it("should scroll only the viewport, not the page, when highlighting an item that overflows the window", async () => {
+		await render(SelectScrollJumpTest, { avoidCollisions: false });
+
+		// the trigger sits in the last ~100px of the window, so the content opens below the fold
+		const trigger = page.getByTestId("trigger").element() as HTMLElement;
+		window.scrollTo(
+			0,
+			trigger.getBoundingClientRect().top + window.scrollY - window.innerHeight + 100
+		);
+		for (let i = 0; i < 3; i++) await nextFrame();
+		const baselineY = window.scrollY;
+		expect(baselineY).toBeGreaterThan(0);
+
+		// open from the keyboard: a pointer click lets the driver scroll the page itself
+		trigger.focus({ preventScroll: true });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectExists(page.getByTestId("content"));
+		await expectHighlighted(page.getByTestId("item-90"));
+		await sleep(100);
+
+		expect(window.scrollY).toBe(baselineY);
+		const viewportRect = (
+			page.getByTestId("viewport").element() as HTMLElement
+		).getBoundingClientRect();
+		const itemRect = (
+			page.getByTestId("item-90").element() as HTMLElement
+		).getBoundingClientRect();
+		expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top);
+		expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
+
+		// keyboard highlight goes through the same scroll
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("item-91"));
+		await sleep(50);
+		expect(window.scrollY).toBe(baselineY);
+	});
+
+	it("should center the highlighted item in the viewport when scrollAlignment is center", async () => {
+		await render(SelectScrollJumpTest, { scrollAlignment: "center" });
+		window.scrollTo(0, 640);
+		const trigger = page.getByTestId("trigger").element() as HTMLElement;
+		trigger.focus({ preventScroll: true });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("item-90"));
+		await sleep(100);
+
+		const viewportRect = (
+			page.getByTestId("viewport").element() as HTMLElement
+		).getBoundingClientRect();
+		const itemRect = (
+			page.getByTestId("item-90").element() as HTMLElement
+		).getBoundingClientRect();
+		const viewportCenter = viewportRect.top + viewportRect.height / 2;
+		const itemCenter = itemRect.top + itemRect.height / 2;
+		expect(Math.abs(itemCenter - viewportCenter)).toBeLessThanOrEqual(1);
+	});
+
 	it("should keep the user's scroll position when the scroll down button remounts", async () => {
 		await render(SelectScrollButtonsTest, { overlayScrollButtons: true });
 
@@ -1806,5 +1863,75 @@ describe("select - activation without a pointer press", () => {
 		(page.getByTestId("trigger").element() as HTMLElement).click();
 		await expectNotExists(page.getByTestId("content"));
 		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+});
+
+describe("select - touch presses on an item", () => {
+	function press(item: Element, pointerType: "touch" | "mouse") {
+		for (const type of ["pointerdown", "pointerup"] as const) {
+			item.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType,
+					isPrimary: true,
+					button: 0,
+					buttons: type === "pointerdown" ? 1 : 0,
+				})
+			);
+		}
+	}
+
+	function click(item: Element) {
+		item.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 }));
+	}
+
+	it("should select on the click that ends a tap", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ onValueChange });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		expect(onValueChange).not.toHaveBeenCalled();
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+	});
+
+	// a finger that moves on a `touch-action: none` item ends in a `pointerup` with no click
+	it("should select once when a tap follows a press that ended without a click", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ onValueChange, allowDeselect: true });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		press(item, "touch");
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+	});
+
+	it("should toggle once when a tap follows a press that ended without a click in a multi select", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupMultiple({ onValueChange });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		press(item, "touch");
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+	});
+
+	it("should select once when a mouse press follows a touch that ended without a click", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ onValueChange, allowDeselect: true });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		press(item, "mouse");
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
 	});
 });

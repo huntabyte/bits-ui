@@ -162,8 +162,20 @@ abstract class SelectBaseRootState {
 	}
 
 	scrollHighlightedNodeIntoView(node: HTMLElement) {
-		if (!this.viewportNode || !this.contentIsPositioned) return;
-		node.scrollIntoView({ block: this.opts.scrollAlignment.current });
+		const viewport = this.viewportNode;
+		if (!viewport || !this.contentIsPositioned) return;
+		// scroll the viewport only: `scrollIntoView` also scrolls the page and every other
+		// scrollable ancestor
+		const nodeRect = node.getBoundingClientRect();
+		const viewportRect = viewport.getBoundingClientRect();
+		if (this.opts.scrollAlignment.current === "center") {
+			viewport.scrollTop +=
+				nodeRect.top + nodeRect.height / 2 - (viewportRect.top + viewportRect.height / 2);
+		} else if (nodeRect.top < viewportRect.top) {
+			viewport.scrollTop -= viewportRect.top - nodeRect.top;
+		} else if (nodeRect.bottom > viewportRect.bottom) {
+			viewport.scrollTop += nodeRect.bottom - viewportRect.bottom;
+		}
 	}
 
 	getCandidateNodes(): HTMLElement[] {
@@ -707,6 +719,7 @@ export class SelectInputState {
 				"aria-activedescendant": this.root.highlightedId,
 				"aria-autocomplete": "list",
 				"aria-expanded": boolToStr(this.root.opts.open.current),
+				"aria-controls": this.root.contentNode?.id || undefined,
 				"data-state": getDataOpenClosed(this.root.opts.open.current),
 				"data-disabled": boolToEmptyStrOrUndef(this.root.opts.disabled.current),
 				onkeydown: this.onkeydown,
@@ -1297,6 +1310,7 @@ export class SelectItemState {
 	readonly #isHighlightedAndEnabled = $derived.by(() => this.isHighlighted && !this.isDisabled);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
+	#removeTouchClickListener: (() => void) | undefined;
 
 	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -1382,6 +1396,9 @@ export class SelectItemState {
 	 * multiple clicks.
 	 */
 	onpointerup(e: BitsPointerEvent) {
+		// not every touch `pointerup` is followed by a click (a finger that moves on a
+		// `touch-action: none` item isn't), which leaves the earlier listener armed
+		this.#removeTouchClickListener?.();
 		if (e.defaultPrevented || !this.opts.ref.current) return;
 		const press = this.root.pressedItem;
 		this.root.pressedItem = null;
@@ -1401,7 +1418,7 @@ export class SelectItemState {
 		 * otherwise a click event will fire on the element _behind_ the item.
 		 */
 		if (e.pointerType === "touch" && !isIOS) {
-			on(
+			this.#removeTouchClickListener = on(
 				this.opts.ref.current,
 				"click",
 				() => {
