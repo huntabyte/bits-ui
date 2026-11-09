@@ -7,6 +7,11 @@
 		label: `Item ${i}`,
 	}));
 
+	let {
+		avoidCollisions = true,
+		scrollAlignment = "nearest",
+	}: { avoidCollisions?: boolean; scrollAlignment?: "nearest" | "center" } = $props();
+
 	let value = $state("90");
 	let open = $state(false);
 
@@ -19,12 +24,13 @@
 	<div data-testid="spacer-top" style="height: 900px;"></div>
 
 	<div data-testid="anchor-zone" style="padding-left: 64px;">
-		<Select.Root bind:value bind:open type="single">
+		<Select.Root bind:value bind:open type="single" {scrollAlignment}>
 			<Select.Trigger data-testid="trigger">{selectedLabel}</Select.Trigger>
 			<Select.Portal>
 				<Select.Content
 					data-testid="content"
 					preventScroll={false}
+					{avoidCollisions}
 					side="bottom"
 					sideOffset={8}
 					style={{ width: "220px", maxHeight: "220px", backgroundColor: "white" }}

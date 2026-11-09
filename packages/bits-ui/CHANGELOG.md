@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.20.6
+
+### Patch Changes
+
+- chore: update `svelte-toolbelt` and `tabbable` to their latest patch versions ([#2279](https://github.com/huntabyte/bits-ui/pull/2279))
+
 ## 2.20.5
 
 ### Patch Changes

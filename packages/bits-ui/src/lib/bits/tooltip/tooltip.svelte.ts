@@ -293,6 +293,8 @@ export class TooltipRootState {
 	contentNode = $state<HTMLElement | null>(null);
 	contentPresence: PresenceManager;
 	#wasOpenDelayed = $state(false);
+	/** Focus opened the tooltip, so the pointer leaving does not close it. */
+	openedViaFocus = $state(false);
 	#timerFn: TimeoutFn<() => void>;
 	readonly stateAttr = $derived.by(() => {
 		if (!this.opts.open.current) return "closed";
@@ -346,6 +348,7 @@ export class TooltipRootState {
 					this.ensureActiveTrigger();
 					this.provider.onOpen(this);
 				} else {
+					this.openedViaFocus = false;
 					this.provider.onClose(this);
 				}
 			},
@@ -403,12 +406,14 @@ export class TooltipRootState {
 	};
 
 	onTriggerEnter = (triggerId: string) => {
+		// hovering another trigger moves the tooltip away from the focused one
+		if (!this.isActiveTrigger(triggerId)) this.openedViaFocus = false;
 		this.setActiveTrigger(triggerId);
 		this.#handleDelayedOpen();
 	};
 
 	onTriggerLeave = () => {
-		if (this.disableHoverableContent) {
+		if (this.disableHoverableContent && !this.openedViaFocus) {
 			this.handleClose();
 		} else {
 			this.#timerFn.stop();
@@ -773,6 +778,7 @@ export class TooltipTriggerState {
 
 		if (root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) return;
 		root.setActiveTrigger(this.opts.id.current);
+		root.openedViaFocus = true;
 		root.handleOpen();
 		root.provider.ignoreFocusScroll();
 	};
@@ -842,7 +848,10 @@ export class TooltipContentState {
 		new SafePolygon({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
-			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
+			enabled: () =>
+				this.root.opts.open.current &&
+				!this.root.disableHoverableContent &&
+				!this.root.openedViaFocus,
 			transitIntentTimeout: 180,
 			ignoredTargets: () => {
 				// only skip closing for sibling triggers when there's a skip-delay grace period;
