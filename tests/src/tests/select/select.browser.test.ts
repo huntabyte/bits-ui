@@ -781,6 +781,63 @@ describe("select - single", () => {
 		expect(Math.abs(window.scrollY - baselineY)).toBeLessThanOrEqual(1);
 	});
 
+	it("should scroll only the viewport, not the page, when highlighting an item that overflows the window", async () => {
+		await render(SelectScrollJumpTest, { avoidCollisions: false });
+
+		// the trigger sits in the last ~100px of the window, so the content opens below the fold
+		const trigger = page.getByTestId("trigger").element() as HTMLElement;
+		window.scrollTo(
+			0,
+			trigger.getBoundingClientRect().top + window.scrollY - window.innerHeight + 100
+		);
+		for (let i = 0; i < 3; i++) await nextFrame();
+		const baselineY = window.scrollY;
+		expect(baselineY).toBeGreaterThan(0);
+
+		// open from the keyboard: a pointer click lets the driver scroll the page itself
+		trigger.focus({ preventScroll: true });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectExists(page.getByTestId("content"));
+		await expectHighlighted(page.getByTestId("item-90"));
+		await sleep(100);
+
+		expect(window.scrollY).toBe(baselineY);
+		const viewportRect = (
+			page.getByTestId("viewport").element() as HTMLElement
+		).getBoundingClientRect();
+		const itemRect = (
+			page.getByTestId("item-90").element() as HTMLElement
+		).getBoundingClientRect();
+		expect(itemRect.top).toBeGreaterThanOrEqual(viewportRect.top);
+		expect(itemRect.bottom).toBeLessThanOrEqual(viewportRect.bottom);
+
+		// keyboard highlight goes through the same scroll
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("item-91"));
+		await sleep(50);
+		expect(window.scrollY).toBe(baselineY);
+	});
+
+	it("should center the highlighted item in the viewport when scrollAlignment is center", async () => {
+		await render(SelectScrollJumpTest, { scrollAlignment: "center" });
+		window.scrollTo(0, 640);
+		const trigger = page.getByTestId("trigger").element() as HTMLElement;
+		trigger.focus({ preventScroll: true });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectHighlighted(page.getByTestId("item-90"));
+		await sleep(100);
+
+		const viewportRect = (
+			page.getByTestId("viewport").element() as HTMLElement
+		).getBoundingClientRect();
+		const itemRect = (
+			page.getByTestId("item-90").element() as HTMLElement
+		).getBoundingClientRect();
+		const viewportCenter = viewportRect.top + viewportRect.height / 2;
+		const itemCenter = itemRect.top + itemRect.height / 2;
+		expect(Math.abs(itemCenter - viewportCenter)).toBeLessThanOrEqual(1);
+	});
+
 	it("should keep the user's scroll position when the scroll down button remounts", async () => {
 		await render(SelectScrollButtonsTest, { overlayScrollButtons: true });
 
