@@ -51,7 +51,7 @@
 		"@floating-ui/dom": "^1.8.0",
 		"esm-env": "^1.2.2",
 		"runed": "catalog:",
-		"svelte-toolbelt": "^0.10.7",
+		"svelte-toolbelt": "^0.12.0",
 		"tabbable": "^6.5.1"
 	},
 	"peerDependencies": {

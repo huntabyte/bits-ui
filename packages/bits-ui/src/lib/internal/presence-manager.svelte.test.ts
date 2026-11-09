@@ -182,4 +182,16 @@ describe("PresenceManager", () => {
 		expect(seen).toEqual([true, false]);
 		destroy?.();
 	});
+
+	it("does not call onComplete for a transition still pending when destroyed", async () => {
+		const { open, onComplete, mountContent, cleanup } = createManager(false);
+
+		open.current = true;
+		flushSync();
+		mountContent();
+		cleanup();
+		await settleAnimations();
+
+		expect(onComplete).not.toHaveBeenCalled();
+	});
 });

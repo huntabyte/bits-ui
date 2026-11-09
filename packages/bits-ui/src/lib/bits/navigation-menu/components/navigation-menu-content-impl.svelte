@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { untrack, type Snippet } from "svelte";
 	import type { NavigationMenuContentProps } from "../types.js";
 	import {

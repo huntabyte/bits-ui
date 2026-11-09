@@ -2,87 +2,12 @@
 	import type { PopperLayerImplProps } from "./types.js";
 	import PopperLayerInner from "./popper-layer-inner.svelte";
 
-	let {
-		popper,
-		open,
-		onEscapeKeydown,
-		escapeKeydownBehavior,
-		preventOverflowTextSelection,
-		id,
-		onPointerDown,
-		onPointerUp,
-		side,
-		sideOffset,
-		align,
-		alignOffset,
-		arrowPadding,
-		avoidCollisions,
-		collisionBoundary,
-		collisionPadding,
-		sticky,
-		hideWhenDetached,
-		updatePositionStrategy,
-		strategy,
-		dir,
-		preventScroll,
-		wrapperId,
-		style,
-		onPlaced,
-		onInteractOutside,
-		onCloseAutoFocus,
-		onOpenAutoFocus,
-		onFocusOutside,
-		interactOutsideBehavior = "close",
-		loop,
-		trapFocus = true,
-		isValidEvent = () => false,
-		customAnchor = null,
-		isStatic = false,
-		ref,
-		shouldRender,
-		...restProps
-	}: PopperLayerImplProps = $props();
+	// Only `shouldRender` is read while closed: destructuring (or defaulting) any other prop
+	// here would eagerly evaluate the caller's spread props (and their `mergeProps`) for
+	// every closed instance. `PopperLayerInner` applies the same defaults.
+	let { open, shouldRender, ...restProps }: PopperLayerImplProps = $props();
 </script>
 
 {#if shouldRender}
-	<PopperLayerInner
-		{popper}
-		{onEscapeKeydown}
-		{escapeKeydownBehavior}
-		{preventOverflowTextSelection}
-		{id}
-		{onPointerDown}
-		{onPointerUp}
-		{side}
-		{sideOffset}
-		{align}
-		{alignOffset}
-		{arrowPadding}
-		{avoidCollisions}
-		{collisionBoundary}
-		{collisionPadding}
-		{sticky}
-		{hideWhenDetached}
-		{updatePositionStrategy}
-		{strategy}
-		{dir}
-		{preventScroll}
-		{wrapperId}
-		{style}
-		{onPlaced}
-		{customAnchor}
-		{isStatic}
-		enabled={open}
-		{onInteractOutside}
-		{onCloseAutoFocus}
-		{onOpenAutoFocus}
-		{interactOutsideBehavior}
-		{loop}
-		{trapFocus}
-		{isValidEvent}
-		{onFocusOutside}
-		forceMount={false}
-		{ref}
-		{...restProps}
-	/>
+	<PopperLayerInner enabled={open} forceMount={false} {...restProps} />
 {/if}

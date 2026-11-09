@@ -8,12 +8,12 @@
 import { Context, watch } from "runed";
 import { untrack } from "svelte";
 import {
-	simpleBox,
 	executeCallbacks,
 	attachRef,
 	DOMContext,
 	getWindow,
 	type ReadableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
 import type { ScrollAreaType } from "./types.js";
 import type { BitsPointerEvent, RefAttachment, WithRefOpts } from "#lib/internal/types.js";

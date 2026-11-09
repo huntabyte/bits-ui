@@ -2,7 +2,6 @@ import {
 	type DateValue,
 	getLocalTimeZone,
 	isSameDay,
-	isSameMonth,
 	toCalendarDate,
 	today,
 } from "@internationalized/date";
@@ -28,6 +27,7 @@ import type { DateMatcher, Month } from "#lib/shared/index.js";
 import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
 import { type Formatter, createFormatter } from "#lib/internal/date-time/formatter.js";
 import {
+	createIsOutsideVisibleMonths,
 	calendarAttrs,
 	createAccessibleHeading,
 	createMonths,
@@ -47,7 +47,7 @@ import {
 	useMonthViewOptionsSync,
 	useMonthViewPlaceholderSync,
 } from "#lib/internal/date-time/calendar-helpers.svelte.js";
-import { getDateValueType, isBefore, toDate } from "#lib/internal/date-time/utils.js";
+import { getDateValueType, isBefore, isSameMonth, toDate } from "#lib/internal/date-time/utils.js";
 import type { WeekStartsOn } from "#lib/shared/date/types.js";
 
 interface CalendarRootStateOpts
@@ -137,7 +137,6 @@ export class CalendarRootState {
 		this.nextYear = this.nextYear.bind(this);
 		this.setYear = this.setYear.bind(this);
 		this.setMonth = this.setMonth.bind(this);
-		this.isOutsideVisibleMonths = this.isOutsideVisibleMonths.bind(this);
 		this.isDateDisabled = this.isDateDisabled.bind(this);
 		this.isDateSelected = this.isDateSelected.bind(this);
 		this.shiftFocus = this.shiftFocus.bind(this);
@@ -394,9 +393,7 @@ export class CalendarRootState {
 		return `${this.opts.calendarLabel.current} ${this.headingValue}`;
 	});
 
-	isOutsideVisibleMonths(date: DateValue) {
-		return !this.visibleMonths.some((month) => isSameMonth(date, month));
-	}
+	isOutsideVisibleMonths = createIsOutsideVisibleMonths(() => this.visibleMonths);
 
 	isDateDisabled(date: DateValue) {
 		if (this.opts.isDateDisabled.current(date) || this.opts.disabled.current) return true;
@@ -624,14 +621,7 @@ export class CalendarCellState {
 		isSameDay(this.opts.date.current, this.root.opts.placeholder.current)
 	);
 	readonly isSelectedDate = $derived.by(() => this.root.isDateSelected(this.opts.date.current));
-	readonly labelText = $derived.by(() =>
-		this.root.formatter.custom(this.cellDate, {
-			weekday: "long",
-			month: "long",
-			day: "numeric",
-			year: "numeric",
-		})
-	);
+	readonly labelText = $derived.by(() => this.root.formatter.fullDate(this.cellDate));
 	readonly attachment: RefAttachment;
 
 	constructor(opts: CalendarCellStateOpts, root: CalendarRootState) {

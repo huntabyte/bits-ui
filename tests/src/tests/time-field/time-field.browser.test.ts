@@ -1054,3 +1054,15 @@ it("should fall back to the default placeholder when spread props are reassigned
 	await expect.element(page.getByTestId("hour")).toMatchTextContent("––");
 	await expect.element(page.getByTestId("minute")).toMatchTextContent("––");
 });
+
+it("should update the inferred hour cycle when switching locales repeatedly", async () => {
+	const view = await render(TimeFieldTest, { value: new Time(13, 30), locale: "en-US" });
+	await expect.element(page.getByTestId("hour")).toHaveTextContent("01");
+	await expect.element(page.getByTestId("dayPeriod")).toHaveTextContent("PM");
+	await view.rerender({ locale: "en-GB" });
+	await expect.element(page.getByTestId("hour")).toHaveTextContent("13");
+	await expectNotExists(page.getByTestId("dayPeriod"));
+	await view.rerender({ locale: "en-US" });
+	await expect.element(page.getByTestId("hour")).toHaveTextContent("01");
+	await expect.element(page.getByTestId("dayPeriod")).toHaveTextContent("PM");
+});

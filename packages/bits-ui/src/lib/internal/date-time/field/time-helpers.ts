@@ -11,7 +11,7 @@ import type {
 import { CalendarDateTime, Time, ZonedDateTime } from "@internationalized/date";
 import type { TimeFormatter } from "../formatter.js";
 import { ALL_TIME_SEGMENT_PARTS, EDITABLE_TIME_SEGMENT_PARTS } from "./parts.js";
-import { getTimeSegments } from "./segments.js";
+import { getFirstTimeSegment, getTimeSegments } from "./segments.js";
 import type { TimeSegmentPart } from "./types.js";
 import { styleToString } from "svelte-toolbelt";
 import { useId } from "#lib/internal/use-id.js";
@@ -74,10 +74,6 @@ function createTimeContentObj(props: CreateTimeContentObjProps) {
 		const intValue = value !== null ? Number.parseInt(value) : null;
 
 		if (!isNull(value) && !isNull(intValue)) {
-			const formatted = formatter.part(timeRef.set({ [part]: value }), part, {
-				hourCycle: props.hourCycle === 24 ? "h23" : undefined,
-			});
-
 			/**
 			 * If we're operating in a 12 hour clock and the part is an hour, we handle
 			 * the conversion to 12 hour format with 2 digit hours and leading zeros here.
@@ -120,6 +116,10 @@ function createTimeContentObj(props: CreateTimeContentObjProps) {
 				 */
 				return `${intValue}`;
 			}
+
+			const formatted = formatter.part(timeRef.set({ [part]: value }), part, {
+				hourCycle: props.hourCycle === 24 ? "h23" : undefined,
+			});
 
 			if (leadingZero && formatted.length === 1) {
 				return `0${formatted}`;
@@ -297,8 +297,7 @@ export function inferTimeGranularity(granularity: TimeGranularity | undefined): 
  */
 export function isFirstTimeSegment(id: string, fieldNode: HTMLElement | null) {
 	if (!isBrowser) return false;
-	const segments = getTimeSegments(fieldNode);
-	return segments.length ? segments[0]!.id === id : false;
+	return getFirstTimeSegment(fieldNode)?.id === id;
 }
 
 type SetTimeDescriptionProps = {

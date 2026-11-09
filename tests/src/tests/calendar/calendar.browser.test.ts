@@ -10,6 +10,8 @@ import CalendarSelectsTest from "./calendar-selects-test.svelte";
 import { collectErrors, focusAndExpectToHaveFocus } from "../browser-utils";
 import CalendarSpreadPropsTest from "./calendar-spread-props-test.svelte";
 
+import CalendarMonthBoundaryTest from "../calendar/calendar-month-boundary-test.svelte";
+
 const kbd = getTestKbd();
 
 const calendarDate = new CalendarDate(1980, 1, 20);
@@ -1225,4 +1227,18 @@ describe("Spread Props", () => {
 			await expect.element(page.getByTestId("year-select")).toBeVisible();
 		}
 	);
+});
+
+it("should keep a Japanese month together across an era change", async () => {
+	await render(CalendarMonthBoundaryTest, { range: false });
+	for (const id of ["before", "after"]) {
+		await expect.element(page.getByTestId(id)).not.toHaveAttribute("data-outside-month");
+		await expect
+			.element(page.getByTestId(id))
+			.not.toHaveAttribute("data-outside-visible-months");
+	}
+	await expect.element(page.getByTestId("outside")).toHaveAttribute("data-outside-month");
+	await expect
+		.element(page.getByTestId("outside"))
+		.toHaveAttribute("data-outside-visible-months");
 });

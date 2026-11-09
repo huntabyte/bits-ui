@@ -8,9 +8,9 @@ import {
 	getWindow,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
-	simpleBox,
-	boxWith,
 	type ReadableBox,
+	boxWith,
+	simpleBox,
 } from "svelte-toolbelt";
 import { Context, watch } from "runed";
 import {
@@ -57,6 +57,7 @@ import { DOMTypeahead } from "#lib/internal/dom-typeahead.svelte.js";
 import { RovingFocusGroup } from "#lib/internal/roving-focus-group.js";
 import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
 import { arraysAreEqual } from "#lib/internal/arrays.js";
+import { queryAll } from "#lib/internal/dom.js";
 
 import { CONTEXT_MENU_TRIGGER_ATTR } from "./context-menu-attributes.js";
 
@@ -1002,12 +1003,7 @@ export class MenuContentState {
 	#getCandidateNodes() {
 		const node = this.parentMenu.contentNode;
 		if (!node) return [];
-		const candidates = Array.from(
-			node.querySelectorAll<HTMLElement>(
-				`[${this.parentMenu.root.getBitsAttr("item")}]:not([data-disabled])`
-			)
-		);
-		return candidates;
+		return queryAll(node, `[${this.parentMenu.root.getBitsAttr("item")}]:not([data-disabled])`);
 	}
 
 	#isPointerMovingToSubmenu() {
@@ -1232,6 +1228,8 @@ class MenuItemSharedState {
 	readonly content: MenuContentState;
 	readonly attachment: RefAttachment;
 	#isFocused = $state(false);
+	/** Static handlers an owner adds to `props`, so it needn't copy `props` into its own. */
+	handlers: Record<string, unknown> | undefined;
 
 	constructor(opts: MenuItemSharedStateOpts, content: MenuContentState) {
 		this.opts = opts;
@@ -1293,6 +1291,7 @@ class MenuItemSharedState {
 				onpointerleave: this.onpointerleave,
 				onfocus: this.onfocus,
 				onblur: this.onblur,
+				...this.handlers,
 				...this.attachment,
 			}) as const
 	);
@@ -1324,6 +1323,14 @@ export class MenuItemState {
 		this.onclick = this.onclick.bind(this);
 		this.onpointerdown = this.onpointerdown.bind(this);
 		this.onpointerup = this.onpointerup.bind(this);
+		// added to `item.props` itself rather than copied with it into a second object; none
+		// of these keys are already in it
+		item.handlers = {
+			onclick: this.onclick,
+			onpointerdown: this.onpointerdown,
+			onpointerup: this.onpointerup,
+			onkeydown: this.onkeydown,
+		};
 	}
 
 	#handleSelect() {
@@ -1380,14 +1387,9 @@ export class MenuItemState {
 		this.item.content.pressedItem = { item: this, x: e.clientX, y: e.clientY };
 	}
 
-	readonly props = $derived.by(() =>
-		mergeProps(this.item.props, {
-			onclick: this.onclick,
-			onpointerdown: this.onpointerdown,
-			onpointerup: this.onpointerup,
-			onkeydown: this.onkeydown,
-		})
-	);
+	get props() {
+		return this.item.props;
+	}
 }
 
 interface MenuSubTriggerStateOpts

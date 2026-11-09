@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { CommandLinkItemProps } from "../types.js";
 	import { CommandItemState } from "../command.svelte.js";
 	import { noop } from "#lib/internal/noop.js";

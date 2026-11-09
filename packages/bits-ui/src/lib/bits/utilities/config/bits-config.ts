@@ -1,5 +1,6 @@
 import { Context } from "runed";
-import { boxWith, type ReadableBox, type ReadableBoxedValues } from "svelte-toolbelt";
+import type { ReadableBox, ReadableBoxedValues } from "svelte-toolbelt";
+import { boxWith } from "svelte-toolbelt";
 import type { BitsConfigPropsWithoutChildren } from "#lib/bits/utilities/config/types.js";
 
 type BitsConfigStateProps = ReadableBoxedValues<BitsConfigPropsWithoutChildren>;
@@ -12,8 +13,8 @@ export const BitsConfigContext = new Context<BitsConfigState>("BitsConfig");
  * Returns a default configuration (where all values are `undefined`) if no configuration is found.
  */
 export function getBitsConfig() {
-	const fallback = new BitsConfigState(null, {});
-	return BitsConfigContext.getOr(fallback).opts;
+	// only build the fallback when there's no config, rather than on every call
+	return (BitsConfigContext.getOr(null) ?? new BitsConfigState(null, {})).opts;
 }
 
 /**

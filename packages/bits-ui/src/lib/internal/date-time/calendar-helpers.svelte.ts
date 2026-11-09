@@ -971,3 +971,26 @@ export function getDefaultYears(opts: GetDefaultYearsProps) {
 	const totalYears = maxYear - minYear + 1;
 	return Array.from({ length: totalYears }, (_, i) => minYear + i);
 }
+
+function getMonthKey(date: DateValue) {
+	// Other calendars can cross an era boundary within a month (e.g. Japanese).
+	const start = date.calendar.identifier === "gregory" ? date : startOfMonth(date);
+	return `${start.era}/${start.year}/${start.month}`;
+}
+
+export function createIsOutsideVisibleMonths(getVisibleMonths: () => DateValue[]) {
+	const index = $derived.by(() => {
+		const months = getVisibleMonths();
+		const calendar = months[0]?.calendar;
+		if (!calendar || months.some((month) => month.calendar !== calendar)) return;
+		const keys = new Set(months.map(getMonthKey));
+		return { calendar, keys };
+	});
+
+	return (date: DateValue) => {
+		if (index && date.calendar === index.calendar) {
+			return !index.keys.has(getMonthKey(date));
+		}
+		return !getVisibleMonths().some((month) => isSameMonth(date, month));
+	};
+}

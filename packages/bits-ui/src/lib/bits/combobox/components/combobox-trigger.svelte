@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { ComboboxTriggerProps } from "../types.js";
 	import { useId } from "#lib/internal/use-id.js";
 	import { SelectComboTriggerState } from "#lib/bits/select/select.svelte.js";

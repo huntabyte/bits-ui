@@ -13,3 +13,5 @@ vite.config.ts.timestamp-*
 
 ## contentlayer build output
 .contentlayer
+.bench-baseline
+

@@ -24,6 +24,7 @@
 		"**/.changeset/",
 		"**/.velite",
 		"**/dist",
+		"**/.bench-baseline",
 		"**/CHANGELOG.md",
 		"package.json",
 		"pnpm-lock.yaml",

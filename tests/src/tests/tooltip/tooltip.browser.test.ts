@@ -954,6 +954,14 @@ it("should cancel a pending delayed open when the trigger is right clicked", asy
 	await expectNotExists(page.getByTestId("content"));
 });
 
+it("should cancel a pending delayed open when `delayDuration` changes", async () => {
+	const t = await render(TooltipTest, { delayDuration: 200 });
+	await page.getByTestId("trigger").hover();
+	await t.rerender({ delayDuration: 400 });
+	await new Promise((r) => setTimeout(r, 500));
+	await expectNotExists(page.getByTestId("content"));
+});
+
 it.each([false, true])(
 	"touch trigger press inside shadow DOM keeps tooltip open (stop click: %s)",
 	async (stopClick) => {

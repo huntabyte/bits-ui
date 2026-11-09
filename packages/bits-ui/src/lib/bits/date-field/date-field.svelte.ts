@@ -2,12 +2,12 @@ import type { Updater } from "svelte/store";
 import type { DateValue } from "@internationalized/date";
 import {
 	type WritableBox,
-	boxWith,
 	onDestroyEffect,
 	attachRef,
 	DOMContext,
 	type ReadableBoxedValues,
 	type WritableBoxedValues,
+	boxWith,
 	simpleBox,
 } from "svelte-toolbelt";
 import { onMount, untrack } from "svelte";
@@ -733,7 +733,7 @@ export class DateFieldRootState {
 		if (part === "literal") return defaultAttrs;
 
 		const descriptionId = this.descriptionNode?.id;
-		const hasDescription = isFirstSegment(segmentId, this.#fieldNode) && descriptionId;
+		const hasDescription = descriptionId && isFirstSegment(segmentId, this.#fieldNode);
 		const errorMsgId = this.errorMessageId?.current;
 
 		const describedBy = hasDescription

@@ -1,4 +1,4 @@
-import { onDestroyEffect, type ReadableBox, type ReadableBoxedValues } from "svelte-toolbelt";
+import type { ReadableBox, ReadableBoxedValues } from "svelte-toolbelt";
 import { watch } from "runed";
 import { AnimationsComplete } from "#lib/internal/animations-complete.js";
 import type { TransitionState } from "#lib/internal/attrs.js";
@@ -24,15 +24,21 @@ export class Presence {
 		this.#afterAnimations = new AnimationsComplete({
 			ref: this.opts.ref,
 			afterTick: this.opts.open,
+			manualCleanup: true,
 		});
-		onDestroyEffect(() => this.#clearTransitionFrame());
+
+		// pending work is cancelled by the watcher's cleanup (destroy and every re-run)
+		const cleanup = () => {
+			this.#clearTransitionFrame();
+			this.#afterAnimations.cancel();
+		};
 
 		watch(
 			() => this.present.current,
 			(isOpen) => {
 				if (!this.#hasMounted) {
 					this.#hasMounted = true;
-					return;
+					return cleanup;
 				}
 
 				this.#clearTransitionFrame();
@@ -58,6 +64,7 @@ export class Presence {
 					}
 					this.#transitionStatus = undefined;
 				});
+				return cleanup;
 			}
 		);
 	}

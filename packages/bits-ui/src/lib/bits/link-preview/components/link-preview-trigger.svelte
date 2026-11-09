@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import type { LinkPreviewTriggerProps } from "../types.js";
 	import { LinkPreviewTriggerState } from "../link-preview.svelte.js";
 	import { createId } from "#lib/internal/create-id.js";

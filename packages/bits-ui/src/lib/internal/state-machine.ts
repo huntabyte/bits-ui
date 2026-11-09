@@ -1,4 +1,5 @@
-import { simpleBox, type WritableBox } from "svelte-toolbelt";
+import type { WritableBox } from "svelte-toolbelt";
+import { simpleBox } from "svelte-toolbelt";
 
 interface Machine<S> {
 	[k: string]: { [k: string]: S };

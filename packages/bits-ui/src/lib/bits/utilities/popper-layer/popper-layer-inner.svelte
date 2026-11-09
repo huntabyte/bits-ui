@@ -108,6 +108,19 @@
 						{ref}
 					>
 						{#snippet children({ props: dismissibleProps })}
+							<!-- merged once per change rather than on every `wrapperProps` update; see `FloatingLayerContent` -->
+							{@const contentProps = mergeProps(
+								restProps,
+								floatingProps,
+								dismissibleProps,
+								focusScopeProps,
+								{
+									id,
+									style: {
+										pointerEvents: contentPointerEvents,
+									},
+								}
+							)}
 							<TextSelectionLayer
 								{id}
 								{preventOverflowTextSelection}
@@ -117,19 +130,12 @@
 								{ref}
 							>
 								{@render popper?.({
-									props: mergeProps(
-										restProps,
-										floatingProps,
-										dismissibleProps,
-										focusScopeProps,
-										{
-											id,
-											style: {
-												pointerEvents: contentPointerEvents,
-											},
-										}
-									),
-									wrapperProps,
+									get props() {
+										return contentProps;
+									},
+									get wrapperProps() {
+										return wrapperProps;
+									},
 								})}
 							</TextSelectionLayer>
 						{/snippet}

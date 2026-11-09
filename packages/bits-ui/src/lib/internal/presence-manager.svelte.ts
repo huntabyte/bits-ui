@@ -1,5 +1,5 @@
 import { watch } from "runed";
-import { onDestroyEffect, type ReadableBoxedValues } from "svelte-toolbelt";
+import type { ReadableBoxedValues } from "svelte-toolbelt";
 import { AnimationsComplete } from "./animations-complete.js";
 import type { TransitionState } from "./attrs.js";
 
@@ -28,8 +28,16 @@ export class PresenceManager {
 		this.#afterAnimations = new AnimationsComplete({
 			ref: this.#opts.ref,
 			afterTick: this.#opts.open,
+			manualCleanup: true,
 		});
-		onDestroyEffect(() => this.#clearTransitionFrame());
+
+		// Pending work is cancelled by the watcher's cleanup, which runs on destroy and
+		// before every re-run (each run cancels the previous one's work anyway), instead of
+		// by separate destroy effects.
+		const cleanup = () => {
+			this.#clearTransitionFrame();
+			this.#afterAnimations.cancel();
+		};
 
 		watch(
 			() => this.#opts.open.current,
@@ -38,7 +46,7 @@ export class PresenceManager {
 					this.#hasMounted = true;
 					// `open` can change between construction and this first run (e.g. a root
 					// mounted and opened in one flush); only skip when it still matches.
-					if (isOpen === this.#shouldRender) return;
+					if (isOpen === this.#shouldRender) return cleanup;
 				}
 
 				this.#clearTransitionFrame();
@@ -47,7 +55,7 @@ export class PresenceManager {
 					this.#shouldRender = false;
 					this.#transitionStatus = undefined;
 					this.#opts.onComplete?.();
-					return;
+					return cleanup;
 				}
 
 				if (isOpen) this.#shouldRender = true;
@@ -67,7 +75,7 @@ export class PresenceManager {
 					}
 					this.#transitionStatus = undefined;
 					this.#opts.onComplete?.();
-					return;
+					return cleanup;
 				}
 
 				this.#afterAnimations.run(() => {
@@ -79,6 +87,7 @@ export class PresenceManager {
 						this.#opts.onComplete?.();
 					}
 				});
+				return cleanup;
 			}
 		);
 	}

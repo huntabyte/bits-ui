@@ -2,6 +2,7 @@ import { page, userEvent } from "vitest/browser";
 import { expect, it } from "vitest";
 import { render } from "vitest-browser-svelte";
 import type { ComponentProps } from "svelte";
+import { computeCommandScore } from "bits-ui";
 import { getTestKbd } from "../utils.js";
 import CommandTest from "./command-test.svelte";
 import CommandRerenderTest from "./command-rerender-test.svelte";
@@ -176,6 +177,35 @@ it("should scroll the first item back into view when there are no groups", async
 	await userEvent.keyboard(kbd.HOME);
 	await expect.element(page.getByText("Item 0")).toHaveAttribute("data-selected");
 	await expect.poll(() => viewport.scrollTop).toBe(0);
+});
+
+it("should select keyword matches when repeating searches across groups", async () => {
+	const t = await setup();
+	for (const [search, item] of [
+		["tutorial", "item-introduction"],
+		["forms", "item-radio-group"],
+		["tutorial", "item-introduction"],
+	] as const) {
+		await userEvent.fill(t.input, search);
+		await expect.element(page.getByTestId(item)).toHaveAttribute("data-selected");
+	}
+	await userEvent.clear(t.input);
+	await expect.element(page.getByTestId("item-introduction")).toHaveAttribute("data-selected");
+});
+
+it("should keep invoking a custom filter when repeating searches", async () => {
+	let included = "Introduction";
+	const t = await setup({ filter: (value) => Number(value === included) });
+	await userEvent.fill(t.input, "query");
+	await expect.element(page.getByTestId("item-introduction")).toHaveAttribute("data-selected");
+	included = "Radio Group";
+	await userEvent.fill(t.input, "other query");
+	await expect.element(page.getByTestId("item-radio-group")).toHaveAttribute("data-selected");
+	await userEvent.fill(t.input, "query");
+	await expect.element(page.getByTestId("item-radio-group")).toHaveAttribute("data-selected");
+	await t.rerender({ filter: computeCommandScore });
+	await userEvent.fill(t.input, "tutorial");
+	await expect.element(page.getByTestId("item-introduction")).toHaveAttribute("data-selected");
 });
 
 it("should scroll the first item of a group into view along with its heading", async () => {

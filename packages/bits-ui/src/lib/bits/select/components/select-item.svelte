@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { boxWith, mergeProps } from "svelte-toolbelt";
+	import { mergeProps, boxWith } from "svelte-toolbelt";
 	import { SelectItemState } from "../select.svelte.js";
 	import type { SelectItemProps } from "../types.js";
 	import { createId } from "#lib/internal/create-id.js";
@@ -35,14 +35,21 @@
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, itemState.props));
+
+	const snippetProps = {
+		get selected() {
+			return itemState.selectedNow;
+		},
+		get highlighted() {
+			return itemState.isHighlighted;
+		},
+	};
 </script>
 
 {#if child}
-	{@render child({ props: mergedProps, ...itemState.snippetProps })}
+	{@render child({ props: mergedProps, ...snippetProps })}
 {:else}
 	<div {...mergedProps}>
-		{@render children?.(itemState.snippetProps)}
+		{@render children?.(snippetProps)}
 	</div>
 {/if}
-
-<Mounted bind:mounted={itemState.mounted} />
