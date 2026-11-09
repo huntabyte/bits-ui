@@ -162,8 +162,20 @@ abstract class SelectBaseRootState {
 	}
 
 	scrollHighlightedNodeIntoView(node: HTMLElement) {
-		if (!this.viewportNode || !this.contentIsPositioned) return;
-		node.scrollIntoView({ block: this.opts.scrollAlignment.current });
+		const viewport = this.viewportNode;
+		if (!viewport || !this.contentIsPositioned) return;
+		// scroll the viewport only: `scrollIntoView` also scrolls the page and every other
+		// scrollable ancestor
+		const nodeRect = node.getBoundingClientRect();
+		const viewportRect = viewport.getBoundingClientRect();
+		if (this.opts.scrollAlignment.current === "center") {
+			viewport.scrollTop +=
+				nodeRect.top + nodeRect.height / 2 - (viewportRect.top + viewportRect.height / 2);
+		} else if (nodeRect.top < viewportRect.top) {
+			viewport.scrollTop -= viewportRect.top - nodeRect.top;
+		} else if (nodeRect.bottom > viewportRect.bottom) {
+			viewport.scrollTop += nodeRect.bottom - viewportRect.bottom;
+		}
 	}
 
 	getCandidateNodes(): HTMLElement[] {

@@ -13,6 +13,7 @@ import ComboboxForceMountTest, {
 } from "./combobox-force-mount-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 import ComboboxFieldsetDisabledTest from "./combobox-fieldset-disabled-test.svelte";
+import ComboboxPageScrollTest from "./combobox-page-scroll-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -598,6 +599,33 @@ describe("combobox - single", () => {
 			);
 		await expect.element(t.valueBinding).toHaveTextContent("1");
 		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("should scroll only the viewport, not the page, when highlighting an item that overflows the window", async () => {
+		render(ComboboxPageScrollTest);
+		const input = page.getByTestId("input");
+		const inputEl = input.element() as HTMLElement;
+		window.scrollTo(
+			0,
+			// the input sits at the bottom edge, so the first item opens below the fold
+			inputEl.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 5
+		);
+		await new Promise((r) => setTimeout(r, 50));
+		const baselineY = window.scrollY;
+		expect(baselineY).toBeGreaterThan(0);
+
+		// open from the keyboard: a pointer click lets the driver scroll the page itself
+		inputEl.focus({ preventScroll: true });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectExists(page.getByTestId("content"));
+		await expect.element(page.getByTestId("0")).toHaveAttribute("data-highlighted");
+		await new Promise((r) => setTimeout(r, 100));
+		expect(window.scrollY).toBe(baselineY);
+
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("1")).toHaveAttribute("data-highlighted");
+		await new Promise((r) => setTimeout(r, 50));
+		expect(window.scrollY).toBe(baselineY);
 	});
 });
 
