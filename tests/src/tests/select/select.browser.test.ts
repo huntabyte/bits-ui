@@ -1808,3 +1808,73 @@ describe("select - activation without a pointer press", () => {
 		expect(onOpenChange).not.toHaveBeenCalled();
 	});
 });
+
+describe("select - touch presses on an item", () => {
+	function press(item: Element, pointerType: "touch" | "mouse") {
+		for (const type of ["pointerdown", "pointerup"] as const) {
+			item.dispatchEvent(
+				new PointerEvent(type, {
+					bubbles: true,
+					cancelable: true,
+					pointerType,
+					isPrimary: true,
+					button: 0,
+					buttons: type === "pointerdown" ? 1 : 0,
+				})
+			);
+		}
+	}
+
+	function click(item: Element) {
+		item.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, detail: 1 }));
+	}
+
+	it("should select on the click that ends a tap", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ onValueChange });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		expect(onValueChange).not.toHaveBeenCalled();
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+	});
+
+	// a finger that moves on a `touch-action: none` item ends in a `pointerup` with no click
+	it("should select once when a tap follows a press that ended without a click", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ onValueChange, allowDeselect: true });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		press(item, "touch");
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+	});
+
+	it("should toggle once when a tap follows a press that ended without a click in a multi select", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupMultiple({ onValueChange });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		press(item, "touch");
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+	});
+
+	it("should select once when a mouse press follows a touch that ended without a click", async () => {
+		const onValueChange = vi.fn();
+		const t = await setupSingle({ onValueChange, allowDeselect: true });
+		await t.trigger.click();
+		const item = page.getByTestId("1").element();
+		press(item, "touch");
+		press(item, "mouse");
+		click(item);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		await expect.element(t.valueBinding).toMatchTextContent("1");
+	});
+});

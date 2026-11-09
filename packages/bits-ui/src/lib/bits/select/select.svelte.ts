@@ -1298,6 +1298,7 @@ export class SelectItemState {
 	readonly #isHighlightedAndEnabled = $derived.by(() => this.isHighlighted && !this.isDisabled);
 	readonly prevHighlighted = new Previous(() => this.isHighlighted);
 	mounted = $state(false);
+	#removeTouchClickListener: (() => void) | undefined;
 
 	constructor(opts: SelectItemStateOpts, root: SelectRoot) {
 		this.opts = opts;
@@ -1383,6 +1384,9 @@ export class SelectItemState {
 	 * multiple clicks.
 	 */
 	onpointerup(e: BitsPointerEvent) {
+		// not every touch `pointerup` is followed by a click (a finger that moves on a
+		// `touch-action: none` item isn't), which leaves the earlier listener armed
+		this.#removeTouchClickListener?.();
 		if (e.defaultPrevented || !this.opts.ref.current) return;
 		const press = this.root.pressedItem;
 		this.root.pressedItem = null;
@@ -1402,7 +1406,7 @@ export class SelectItemState {
 		 * otherwise a click event will fire on the element _behind_ the item.
 		 */
 		if (e.pointerType === "touch" && !isIOS) {
-			on(
+			this.#removeTouchClickListener = on(
 				this.opts.ref.current,
 				"click",
 				() => {
