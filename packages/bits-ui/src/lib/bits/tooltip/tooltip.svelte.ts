@@ -37,38 +37,34 @@ type TooltipTriggerRecord = {
 };
 
 class TooltipTriggerRegistryState {
-	triggers = $state(new Map<string, TooltipTriggerRecord>());
+	// Mutated in place. Only the active trigger's record is read reactively, so registering,
+	// updating, or removing any other trigger is O(1) and invalidates nothing. Copying the map
+	// on every write made mounting n triggers on one tether O(n²).
+	triggers = new Map<string, TooltipTriggerRecord>();
+	#activeRecordVersion = $state(0);
 	activeTriggerId = $state<string | null>(null);
 	activeTriggerNode = $derived.by(() => {
+		void this.#activeRecordVersion;
 		const activeTriggerId = this.activeTriggerId;
 		if (activeTriggerId === null) return null;
 		return this.triggers.get(activeTriggerId)?.node ?? null;
 	});
 	activePayload = $derived.by(() => {
+		void this.#activeRecordVersion;
 		const activeTriggerId = this.activeTriggerId;
 		if (activeTriggerId === null) return null;
 		return this.triggers.get(activeTriggerId)?.payload ?? null;
 	});
 
 	register = (record: TooltipTriggerRecord) => {
-		const next = new Map(this.triggers);
-		next.set(record.id, record);
-		this.triggers = next;
-		this.#coerceActiveTrigger();
+		this.triggers.set(record.id, record);
+		if (record.id === this.activeTriggerId) this.#activeRecordVersion++;
 	};
 
-	update = (record: TooltipTriggerRecord) => {
-		const next = new Map(this.triggers);
-		next.set(record.id, record);
-		this.triggers = next;
-		this.#coerceActiveTrigger();
-	};
+	update = this.register;
 
 	unregister = (id: string) => {
-		if (!this.triggers.has(id)) return;
-		const next = new Map(this.triggers);
-		next.delete(id);
-		this.triggers = next;
+		if (!this.triggers.delete(id)) return;
 		if (this.activeTriggerId === id) {
 			this.activeTriggerId = null;
 		}
@@ -98,14 +94,6 @@ class TooltipTriggerRegistryState {
 		const firstEntry = this.triggers.entries().next();
 		if (firstEntry.done) return null;
 		return firstEntry.value[0];
-	};
-
-	#coerceActiveTrigger = () => {
-		const activeTriggerId = this.activeTriggerId;
-		if (activeTriggerId === null) return;
-		if (!this.triggers.has(activeTriggerId)) {
-			this.activeTriggerId = null;
-		}
 	};
 }
 
