@@ -38,7 +38,8 @@
 		customAnchor: boxWith(() => customAnchor),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+	// default role matches the trigger's `aria-haspopup="dialog"`; user `role` overrides it
+	const mergedProps = $derived(mergeProps({ role: "dialog" }, restProps, contentState.props));
 
 	// respect user's trapFocus setting, but disable when hover-opened without interaction
 	const effectiveTrapFocus = $derived(trapFocus && contentState.shouldTrapFocus);
