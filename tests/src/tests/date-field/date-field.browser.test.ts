@@ -69,9 +69,7 @@ describe("date field", () => {
 		await setup({ value: tokyo });
 
 		await expect.element(page.getByTestId("dayPeriod")).toMatchTextContent("AM");
-		await expect
-			.element(page.getByTestId("hour"))
-			.toHaveAttribute("aria-valuetext", "8 AM");
+		await expect.element(page.getByTestId("hour")).toHaveAttribute("aria-valuetext", "8 AM");
 	});
 
 	it("should populate segment with value - `ZonedDateTime`", async () => {
