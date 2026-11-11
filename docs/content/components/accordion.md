@@ -149,7 +149,7 @@ Wraps `Root` and renders multiple `MyAccordionItem` components:
 
 <Callout type="tip">
 
-Use unique `value` props for each `Item` if you plan to control the state programatically.
+Use unique `value` props for each `Item` if you plan to control the state programmatically.
 
 </Callout>
 

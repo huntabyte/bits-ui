@@ -71,7 +71,7 @@ The `placeholder` prop for the `Calendar.Root` component determines what date ou
 
 As the user navigates through the calendar, the `placeholder` will be updated to reflect the currently focused date in that view.
 
-By default, the `placeholder` will be set to the closed alowed (by `maxValue`, `minValue`) value to current date, and be of type `CalendarDate`.
+By default, the `placeholder` will be set to the closest allowed (by `maxValue`, `minValue`) value to current date, and be of type `CalendarDate`.
 
 ## Managing Placeholder State
 
@@ -365,7 +365,7 @@ You can set the `type` prop to `'multiple'` to allow users to select multiple da
 
 The `Calendar` component includes a `PrevButton` and `NextButton` component to allow users to navigate between months. This is useful, but sometimes you may want to allow the user to select a specific month from a list of months, rather than having to navigate one at a time.
 
-To achieve this, you can use the `placeholder` prop to set the month of the the calendar view programmatically.
+To achieve this, you can use the `placeholder` prop to set the month of the calendar view programmatically.
 
 ```svelte
 <script lang="ts">
@@ -407,7 +407,7 @@ This example demonstrates how to use the `placeholder` prop to set the month and
 
 ### Preset Dates
 
-This example demonstrates how to programatically set the `value` of the calendar to a specific date when a user presses a button.
+This example demonstrates how to programmatically set the `value` of the calendar to a specific date when a user presses a button.
 
 <ComponentPreview name="calendar-demo-presets" componentName="Calendar Presets">
 
