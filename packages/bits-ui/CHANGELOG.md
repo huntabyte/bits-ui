@@ -1,5 +1,11 @@
 # bits-ui
 
+## 2.21.1
+
+### Patch Changes
+
+- fix(Popover): set `role="dialog"` on `Popover.Content` to match the trigger's `aria-haspopup="dialog"` (overridable via the `role` prop) ([#2300](https://github.com/huntabyte/bits-ui/pull/2300))
+
 ## 2.21.0
 
 ### Minor Changes
