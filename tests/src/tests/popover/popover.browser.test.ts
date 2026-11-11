@@ -102,6 +102,23 @@ it("should apply custom style prop to content (static)", async () => {
 	expect(contentEl.style.backgroundColor).toBe("rgb(0, 255, 0)");
 });
 
+it("should set role=dialog on content to match the trigger's aria-haspopup", async () => {
+	const t = await open();
+	await expect.element(t.trigger).toHaveAttribute("aria-haspopup", "dialog");
+	await expect.element(t.content).toHaveAttribute("role", "dialog");
+});
+
+it("should set role=dialog on content (static)", async () => {
+	const t = await setup({}, PopoverForceMountTest);
+	await expectExists(t.getContent());
+	await expect.element(t.getContent()).toHaveAttribute("role", "dialog");
+});
+
+it("should allow overriding the content role", async () => {
+	const t = await open({ contentProps: { role: "region" } });
+	await expect.element(t.content).toHaveAttribute("role", "region");
+});
+
 it("should have bits data attrs for overlay", async () => {
 	await open({ withOverlay: true });
 	const overlay = page.getByTestId("overlay");

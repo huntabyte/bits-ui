@@ -36,7 +36,8 @@
 		customAnchor: boxWith(() => null),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, contentState.props));
+	// default role matches the trigger's `aria-haspopup="dialog"`; user `role` overrides it
+	const mergedProps = $derived(mergeProps({ role: "dialog" }, restProps, contentState.props));
 </script>
 
 {#if forceMount}
