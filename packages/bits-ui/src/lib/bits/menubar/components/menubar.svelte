@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
+	import { getBitsConfig } from "#lib/bits/utilities/config/bits-config.js";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import type { MenubarRootProps } from "../types.js";
 	import { MenubarRootState } from "../menubar.svelte.js";
@@ -37,7 +38,11 @@
 		),
 	});
 
-	const mergedProps = $derived(mergeProps(restProps, rootState.props));
+	// only set `dir` when the prop or a BitsConfig provides one, so the DOM direction is otherwise inherited
+	const config = getBitsConfig();
+	const mergedProps = $derived(
+		mergeProps(restProps, rootState.props, { dir: dir ?? config.dir.current })
+	);
 </script>
 
 {#if child}

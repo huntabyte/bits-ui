@@ -34,7 +34,7 @@
 		<Slider.Root type="single" value={50} dir={componentDir} data-testid="slider">
 			<Slider.Thumb index={0} data-testid="thumb" />
 		</Slider.Root>
-		<Menubar.Root dir={componentDir} data-testid="menubar">
+		<Menubar.Root dir={componentDir} loop={false} data-testid="menubar">
 			<Menubar.Menu value="first"
 				><Menubar.Trigger data-testid="first-menu">First</Menubar.Trigger></Menubar.Menu
 			>
