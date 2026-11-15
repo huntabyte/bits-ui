@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 	import { boxWith } from "svelte-toolbelt";
 	import type { MenuRootProps } from "../types.js";
 	import { MenuMenuState, MenuRootState } from "../menu.svelte.js";
@@ -7,7 +8,7 @@
 
 	let {
 		open = $bindable(false),
-		dir = "ltr",
+		dir,
 		// debugMode = false,
 		onOpenChange = noop,
 		onOpenChangeComplete = noop,
@@ -21,7 +22,7 @@
 
 	const root = MenuRootState.create({
 		variant: boxWith(() => variant),
-		dir: boxWith(() => dir),
+		dir: resolveDirProp(() => dir),
 		// debugMode: boxWith(() => debugMode),
 		onClose: () => {
 			open = false;

@@ -25,6 +25,7 @@
 		preventScroll = true,
 		preventOverflowTextSelection = true,
 		restoreScrollDelay = null,
+		preventBodyPointerEvents = true,
 		...restProps
 	}: DialogContentProps = $props();
 
@@ -36,6 +37,7 @@
 		),
 	});
 
+	const blockPointer = () => preventBodyPointerEvents || !contentState.root.overlayNode;
 	const mergedProps = $derived(mergeProps(restProps, contentState.props));
 </script>
 
@@ -77,14 +79,14 @@
 					>
 						{#if child}
 							{#if contentState.root.opts.open.current}
-								<ScrollLock {preventScroll} {restoreScrollDelay} />
+								<ScrollLock {preventScroll} {restoreScrollDelay} {blockPointer} />
 							{/if}
 							{@render child({
 								props: mergeProps(mergedProps, focusScopeProps),
 								...contentState.snippetProps,
 							})}
 						{:else}
-							<ScrollLock {preventScroll} />
+							<ScrollLock {preventScroll} {blockPointer} />
 							<div {...mergeProps(mergedProps, focusScopeProps)}>
 								{@render children?.()}
 							</div>

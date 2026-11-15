@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolveDirProp } from "#lib/bits/utilities/config/prop-resolvers.js";
 	import { boxWith, mergeProps } from "svelte-toolbelt";
 	import { untrack } from "svelte";
 	import { FloatingContentState } from "../use-floating-layer.svelte.js";
@@ -21,7 +22,7 @@
 		sticky = "partial",
 		updatePositionStrategy = "optimized",
 		strategy = "fixed",
-		dir = "ltr",
+		dir,
 		style = {},
 		wrapperId = useId(),
 		customAnchor = null,
@@ -45,7 +46,7 @@
 			sticky: boxWith(() => sticky),
 			updatePositionStrategy: boxWith(() => updatePositionStrategy),
 			strategy: boxWith(() => strategy),
-			dir: boxWith(() => dir),
+			dir: resolveDirProp(() => dir),
 			style: boxWith(() => style),
 			enabled: boxWith(() => enabled),
 			wrapperId: boxWith(() => wrapperId),

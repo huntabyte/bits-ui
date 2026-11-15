@@ -29,6 +29,7 @@ import {
 	preventOverflowTextSelectionProp,
 	preventScrollProp,
 	restoreScrollDelayProp,
+	preventBodyPointerEventsProp,
 	transitionStyleDataAttrs,
 	withChildProps,
 } from "#lib/content/api-reference/shared.js";
@@ -95,6 +96,7 @@ const content = defineComponentApiSchema<AlertDialogContentPropsWithoutHTML>({
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
 		restoreScrollDelay: restoreScrollDelayProp,
+		preventBodyPointerEvents: preventBodyPointerEventsProp,
 		...withChildProps({
 			elType: "HTMLDivElement",
 			child: {

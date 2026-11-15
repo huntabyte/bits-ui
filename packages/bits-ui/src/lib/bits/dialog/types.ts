@@ -47,7 +47,21 @@ export type DialogContentPropsWithoutHTML = WithChildNoChildrenSnippetProps<
 			PresenceLayerProps &
 			FocusScopeProps &
 			TextSelectionLayerProps &
-			ScrollLockProps,
+			ScrollLockProps & {
+				/**
+				 * Whether to set `pointer-events: none` on the `<body>` while the dialog is open.
+				 * When `false` and a `Dialog.Overlay` is rendered, the overlay blocks pointer
+				 * interaction with the page instead, which avoids restyling every element on the
+				 * page when the dialog opens and closes. Without an overlay, the body is still
+				 * blocked.
+				 *
+				 * Elements stacked above the overlay that aren't part of the dialog (toasts,
+				 * a header with a higher `z-index`) receive pointer events when this is `false`.
+				 *
+				 * @default true
+				 */
+				preventBodyPointerEvents?: boolean;
+			},
 		"loop"
 	>,
 	DialogContentSnippetProps
