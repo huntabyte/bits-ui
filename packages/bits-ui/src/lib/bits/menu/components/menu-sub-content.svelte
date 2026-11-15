@@ -26,7 +26,7 @@
 		onOpenAutoFocus: onOpenAutoFocusProp = noop,
 		onCloseAutoFocus: onCloseAutoFocusProp = noop,
 		onFocusOutside = noop,
-		side = "right",
+		side,
 		trapFocus = false,
 		style,
 		...restProps
@@ -57,10 +57,13 @@
 	}
 
 	const dataAttr = $derived(subContentState.parentMenu.root.getBitsAttr("sub-content"));
+	const resolvedSide = $derived(
+		side ?? (subContentState.parentMenu.root.opts.dir.current === "rtl" ? "left" : "right")
+	);
 
 	const mergedProps = $derived(
 		mergeProps(restProps, subContentState.props, {
-			side,
+			side: resolvedSide,
 			onkeydown,
 			[dataAttr]: "",
 		})
