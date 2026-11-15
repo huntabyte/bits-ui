@@ -43,6 +43,20 @@ async function expectPlacement(side: PhysicalSide, kind: Kind = "popover") {
 			return getComputedStyle(wrapper).getPropertyValue("--bits-floating-transform-origin");
 		})
 		.toMatch(/^-?\d+(?:\.\d+)?px -?\d+(?:\.\d+)?px$/);
+	await expect
+		.poll(() => {
+			const wrapper = content.element().parentElement!;
+			const [x, y] = getComputedStyle(wrapper)
+				.getPropertyValue("--bits-floating-transform-origin")
+				.split(" ")
+				.map(Number.parseFloat);
+			const rect = content.element().getBoundingClientRect();
+			if (side === "left") return x >= rect.width && y >= 0 && y <= rect.height;
+			if (side === "right") return x <= 0 && y >= 0 && y <= rect.height;
+			if (side === "top") return y >= rect.height && x >= 0 && x <= rect.width;
+			return y <= 0 && x >= 0 && x <= rect.width;
+		})
+		.toBe(true);
 }
 
 describe.each<Kind>(["popover", "dropdown", "context", "menubar"])("%s logical sides", (kind) => {
@@ -108,6 +122,26 @@ it.each([
 	"flips $side at the $edge edge in $dir, reporting physical sides",
 	async ({ dir, side, edge, placed }) => {
 		await render(LogicalSideTest, { dir, side, edge, avoidCollisions: true });
+		await open("popover", dir);
+		await expectPlacement(placed);
+	}
+);
+
+it.each([
+	{ dir: "ltr", side: "inline-start", blocked: "left", placed: "right" },
+	{ dir: "ltr", side: "inline-end", blocked: "right", placed: "left" },
+	{ dir: "rtl", side: "inline-start", blocked: "right", placed: "left" },
+	{ dir: "rtl", side: "inline-end", blocked: "left", placed: "right" },
+] as const)(
+	"keeps asymmetric $blocked collision padding physical in $dir",
+	async ({ dir, side, blocked, placed }) => {
+		const padding = window.innerWidth / 2 - (blocked === "right" ? 150 : 50);
+		await render(LogicalSideTest, {
+			dir,
+			side,
+			avoidCollisions: true,
+			collisionPadding: { [blocked]: padding },
+		});
 		await open("popover", dir);
 		await expectPlacement(placed);
 	}

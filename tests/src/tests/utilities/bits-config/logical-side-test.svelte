@@ -16,6 +16,7 @@
 		side = "inline-end",
 		forceMount = false,
 		avoidCollisions = false,
+		collisionPadding = 0,
 		edge,
 	}: {
 		kind?: "popover" | "dropdown" | "context" | "menubar";
@@ -25,6 +26,7 @@
 		side?: Popover.ContentProps["side"];
 		forceMount?: boolean;
 		avoidCollisions?: boolean;
+		collisionPadding?: Popover.ContentProps["collisionPadding"];
 		edge?: "left" | "right";
 	} = $props();
 	const menu = $derived(
@@ -49,6 +51,7 @@
 							{side}
 							{forceMount}
 							{avoidCollisions}
+							{collisionPadding}
 							dir={componentDir}
 							style="width: 100px; height: 60px;"
 						>
@@ -82,6 +85,7 @@
 						{side}
 						{forceMount}
 						{avoidCollisions}
+						{collisionPadding}
 						style="width: 100px; height: 60px;"
 					>
 						<menu.Arrow data-testid="arrow" />
