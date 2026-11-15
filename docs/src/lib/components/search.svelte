@@ -76,43 +76,45 @@
 <svelte:document onkeydown={handleKeydown} />
 
 {#if isMobile.current}
-	<Drawer.Root bind:open swipeDirection="down" onOpenChange={handleOpenChange}>
-		{#if showTrigger}
-			<Drawer.Trigger
-				onclick={openSearch}
-				aria-label="Search Docs"
-				class="relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
-			>
-				<MagnifyingGlass class="size-5" />
-			</Drawer.Trigger>
-		{/if}
-		<Drawer.Portal>
-			<Drawer.Backdrop class="search-backdrop fixed inset-0 z-50 bg-black/50" />
-			<Drawer.Viewport
-				class="search-viewport fixed top-0 left-0 z-100 flex w-full items-end justify-center"
-			>
-				<Drawer.Popup
-					class="search-drawer flex w-full shrink-0 flex-col overflow-hidden rounded-t-2xl bg-background shadow-popover outline-hidden"
-					onOpenAutoFocus={(event) => {
-						event.preventDefault();
-						searchInput?.focus({ preventScroll: true });
-					}}
+	<Drawer.VirtualKeyboardProvider>
+		<Drawer.Root bind:open swipeDirection="down" onOpenChange={handleOpenChange}>
+			{#if showTrigger}
+				<Drawer.Trigger
+					onclick={openSearch}
+					aria-label="Search Docs"
+					class="relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden"
 				>
-					<div
-						aria-hidden="true"
-						class="mx-auto mt-2.5 mb-1 h-1 w-8 shrink-0 rounded-full bg-dark-10"
-					></div>
-					<Drawer.Content class="flex min-h-0 flex-1 flex-col">
-						<Drawer.Title class="sr-only">Documentation</Drawer.Title>
-						<Drawer.Description class="sr-only"
-							>Browse all documentation or search for a page</Drawer.Description
-						>
-						{@render searchContent()}
-					</Drawer.Content>
-				</Drawer.Popup>
-			</Drawer.Viewport>
-		</Drawer.Portal>
-	</Drawer.Root>
+					<MagnifyingGlass class="size-5" />
+				</Drawer.Trigger>
+			{/if}
+			<Drawer.Portal>
+				<Drawer.Backdrop class="search-backdrop fixed inset-0 z-50 bg-black/50" />
+				<Drawer.Viewport
+					class="search-viewport fixed top-0 left-0 z-100 flex w-full items-end justify-center"
+				>
+					<Drawer.Popup
+						class="search-drawer flex w-full shrink-0 flex-col overflow-hidden rounded-t-2xl bg-background shadow-popover outline-hidden"
+						onOpenAutoFocus={(event) => {
+							event.preventDefault();
+							searchInput?.focus({ preventScroll: true });
+						}}
+					>
+						<div
+							aria-hidden="true"
+							class="mx-auto mt-2.5 mb-1 h-1 w-8 shrink-0 rounded-full bg-dark-10"
+						></div>
+						<Drawer.Content class="flex min-h-0 flex-1 flex-col">
+							<Drawer.Title class="sr-only">Documentation</Drawer.Title>
+							<Drawer.Description class="sr-only"
+								>Browse all documentation or search for a page</Drawer.Description
+							>
+							{@render searchContent()}
+						</Drawer.Content>
+					</Drawer.Popup>
+				</Drawer.Viewport>
+			</Drawer.Portal>
+		</Drawer.Root>
+	</Drawer.VirtualKeyboardProvider>
 {:else}
 	<Dialog.Root bind:open onOpenChange={handleOpenChange}>
 		{#if showTrigger}

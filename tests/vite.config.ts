@@ -1,5 +1,6 @@
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { playwright } from "@vitest/browser-playwright";
@@ -22,6 +23,14 @@ const vitestBrowserConditionPlugin: Plugin = {
 };
 
 export default defineConfig({
+	resolve: {
+		alias: {
+			"bits-ui": fileURLToPath(
+				new URL("../packages/bits-ui/src/lib/index.ts", import.meta.url)
+			),
+		},
+		dedupe: ["svelte"],
+	},
 	plugins: [
 		tailwindcss(),
 		vitestBrowserConditionPlugin,

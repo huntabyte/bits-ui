@@ -91,3 +91,65 @@ it.each(["Control", "Meta"])("focuses from the %s+K shortcut", async (modifier) 
 	await userEvent.keyboard("slider");
 	await expect.element(input).toHaveValue("slider");
 });
+
+it("shows mobile navigation only while the query is empty and restores focus on close", async () => {
+	await render(Search);
+	const trigger = page.getByRole("button", { name: "Search Docs" });
+	await trigger.click();
+	const home = page.getByRole("option", { name: "Home", exact: true });
+	await expect.element(home).toBeInTheDocument();
+	await userEvent.keyboard("no-matching-document");
+	await expect.element(home).not.toBeInTheDocument();
+	await expect.element(page.getByText("No results found", { exact: true })).toBeInTheDocument();
+	await userEvent.clear(page.getByRole("combobox"));
+	await expect.element(home).toBeInTheDocument();
+	await page.getByRole("button", { name: "Close search" }).click();
+	await expect.element(page.getByRole("combobox")).not.toBeInTheDocument();
+	await expect.element(trigger).toHaveFocus();
+});
+
+it("keeps an open search usable when crossing the desktop breakpoint", async () => {
+	await render(Search);
+	await page.getByRole("button", { name: "Search Docs" }).click();
+	await userEvent.keyboard("tabs");
+	await page.viewport(1280, 800);
+	await expect.element(page.getByRole("combobox")).toHaveValue("tabs");
+	await expect.element(page.getByRole("combobox")).toHaveFocus();
+	await page.viewport(390, 844);
+	await expect.element(page.getByRole("combobox")).toHaveValue("tabs");
+	await expect.element(page.getByRole("combobox")).toHaveFocus();
+	await page.getByRole("button", { name: "Close search" }).click();
+	await expect.element(page.getByRole("combobox")).not.toBeInTheDocument();
+});
+
+it("keeps the sheet anchored while reserving space for a simulated software keyboard", async () => {
+	const visualViewport = window.visualViewport!;
+	const originalHeight = visualViewport.height;
+	const height = vi.spyOn(visualViewport, "height", "get").mockReturnValue(originalHeight);
+	try {
+		await render(Search);
+		await page.getByRole("button", { name: "Search Docs" }).click();
+		const viewport = document.querySelector<HTMLElement>("[data-drawer-viewport]")!;
+		const popup = document.querySelector<HTMLElement>("[data-drawer-popup]")!;
+		await expect.poll(() => popup.hasAttribute("data-starting-style")).toBe(false);
+		await Promise.all(popup.getAnimations().map((animation) => animation.finished));
+		const top = popup.getBoundingClientRect().top;
+		height.mockReturnValue(originalHeight - 300);
+		visualViewport.dispatchEvent(new Event("resize"));
+		await expect
+			.poll(() =>
+				getComputedStyle(viewport).getPropertyValue("--drawer-keyboard-inset").trim()
+			)
+			.toBe("300px");
+		expect(popup.getBoundingClientRect().top).toBeCloseTo(top);
+		height.mockReturnValue(originalHeight);
+		visualViewport.dispatchEvent(new Event("resize"));
+		await expect
+			.poll(() =>
+				getComputedStyle(viewport).getPropertyValue("--drawer-keyboard-inset").trim()
+			)
+			.toBe("0px");
+	} finally {
+		height.mockRestore();
+	}
+});
