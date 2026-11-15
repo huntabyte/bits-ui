@@ -24,6 +24,43 @@ import type { Snippet } from "svelte";
 export type DrawerSwipeDirection = "up" | "down" | "left" | "right";
 export type DrawerSnapPoint = number | string;
 
+export type DrawerChangeReason =
+	| "trigger-press"
+	| "outside-press"
+	| "escape-key"
+	| "close-watcher"
+	| "close-press"
+	| "focus-out"
+	| "imperative-action"
+	| "swipe"
+	| "none";
+
+export type DrawerChangeEventDetails = {
+	reason: DrawerChangeReason;
+	event: Event | undefined;
+	trigger: HTMLElement | undefined;
+	cancel: () => void;
+	readonly isCanceled: boolean;
+};
+
+export type DrawerOpenChangeEventDetails = DrawerChangeEventDetails & {
+	/** Keep the closing drawer mounted until `actions.unmount()` is called. */
+	preventUnmountOnClose: () => void;
+};
+
+export type DrawerActions = {
+	close: () => void;
+	unmount: () => void;
+};
+
+export type DrawerInteractionType = "mouse" | "touch" | "pen" | "keyboard";
+export type DrawerFocusTarget =
+	| boolean
+	| HTMLElement
+	| null
+	| ((interactionType: DrawerInteractionType) => boolean | HTMLElement | null | void);
+export type DrawerVirtualKeyboardProviderProps = WithChildren<{ enabled?: boolean }>;
+
 export type DrawerRootSnippetProps<Payload = never> = {
 	triggerId: string | null;
 	payload: [Payload] extends [never] ? null : Payload | null;
@@ -38,7 +75,16 @@ export type DrawerRootPropsWithoutHTML<Payload = never> = {
 	/**
 	 * A callback that is called when the drawer's open state changes.
 	 */
-	onOpenChange?: OnChangeFn<boolean>;
+	onOpenChange?: (open: boolean, details: DrawerOpenChangeEventDetails) => void;
+
+	/** `"trap-focus"` traps focus without locking page scroll. @default true */
+	modal?: boolean | "trap-focus";
+
+	/** Disable outside-pointer dismissal and non-modal focus-out dismissal without disabling swipe dismissal. @default false */
+	disablePointerDismissal?: boolean;
+
+	/** Bind to the drawer's imperative closing and unmount actions. */
+	actions?: DrawerActions;
 
 	/**
 	 * A callback called when the drawer finishes opening/closing animations.
@@ -66,7 +112,10 @@ export type DrawerRootPropsWithoutHTML<Payload = never> = {
 	/**
 	 * A callback fired when the active snap point changes.
 	 */
-	onSnapPointChange?: OnChangeFn<DrawerSnapPoint | null | undefined>;
+	onSnapPointChange?: (
+		snapPoint: DrawerSnapPoint | null | undefined,
+		details: DrawerChangeEventDetails
+	) => void;
 
 	/**
 	 * When `true`, choose a snap point by distance without projecting release velocity.
@@ -141,7 +190,7 @@ export type DrawerPopupSnippetProps = {
 };
 
 export type DrawerPopupPropsWithoutHTML = WithChildNoChildrenSnippetProps<
-	Omit<
+	{ initialFocus?: DrawerFocusTarget; finalFocus?: DrawerFocusTarget } & Omit<
 		EscapeLayerProps &
 			Omit<DismissibleLayerProps, "onInteractOutsideStart"> &
 			PresenceLayerProps &

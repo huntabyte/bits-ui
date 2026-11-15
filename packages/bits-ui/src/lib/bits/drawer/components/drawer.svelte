@@ -12,6 +12,9 @@
 		snapPoint = $bindable(),
 		triggerId = $bindable<string | null>(null),
 		onOpenChange = noop,
+		modal = true,
+		disablePointerDismissal = false,
+		actions = $bindable(),
 		onOpenChangeComplete = noop,
 		onSnapPointChange = noop,
 		swipeDirection = "down",
@@ -29,14 +32,12 @@
 			() => open,
 			(v) => {
 				open = v;
-				onOpenChange(v);
 			}
 		),
 		snapPoint: boxWith(
 			() => snapPoint,
 			(v) => {
 				snapPoint = v;
-				onSnapPointChange(v);
 			}
 		),
 		triggerId: boxWith(
@@ -45,12 +46,18 @@
 				triggerId = v;
 			}
 		),
+		modal: boxWith(() => modal),
+		disablePointerDismissal: boxWith(() => disablePointerDismissal),
+		onOpenChange: boxWith(() => onOpenChange),
 		onOpenChangeComplete: boxWith(() => onOpenChangeComplete),
 		onSnapPointChange: boxWith(() => onSnapPointChange),
 		swipeDirection: boxWith(() => swipeDirection),
 		snapPoints: boxWith(() => snapPoints),
 		snapToSequentialPoints: boxWith(() => snapToSequentialPoints),
 		tether: boxWith(() => tether),
+	});
+	$effect(() => {
+		actions = rootState.actions;
 	});
 </script>
 

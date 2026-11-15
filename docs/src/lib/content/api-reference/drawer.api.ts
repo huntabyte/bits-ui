@@ -1,4 +1,5 @@
 import type {
+	DrawerVirtualKeyboardProviderProps,
 	DrawerBackdropPropsWithoutHTML,
 	DrawerClosePropsWithoutHTML,
 	DrawerContentPropsWithoutHTML,
@@ -21,7 +22,6 @@ import {
 	focusScopeProps,
 	forceMountProp,
 	onOpenChangeCompleteProp,
-	onOpenChangeProp,
 	openChildDefinition,
 	portalProps,
 	preventOverflowTextSelectionProp,
@@ -77,7 +77,30 @@ const root = defineComponentApiSchema<DrawerRootPropsWithoutHTML>({
 			description: "Whether the drawer is open.",
 			bindable: true,
 		}),
-		onOpenChange: onOpenChangeProp,
+		onOpenChange: defineFunctionProp({
+			definition: null as never,
+			description:
+				"Called before a requested change. Includes reason, event, trigger, cancel(), and preventUnmountOnClose().",
+			stringDefinition: "(open: boolean, details: DrawerOpenChangeEventDetails) => void",
+		}),
+		modal: defineUnionProp({
+			options: ["boolean", "'trap-focus'"],
+			definition: null as never,
+			default: "true",
+			description:
+				"Whether to trap focus and lock scrolling. 'trap-focus' traps focus while allowing page scrolling; false allows outside focus and interaction.",
+		}),
+		disablePointerDismissal: defineBooleanProp({
+			default: false,
+			description:
+				"Prevent outside-pointer dismissal while preserving swipe, escape, and close-button dismissal.",
+		}),
+		actions: defineSimplePropSchema({
+			type: "DrawerActions",
+			bindable: true,
+			description:
+				"Bind to close() and unmount(). Use unmount() to finish a close deferred by preventUnmountOnClose().",
+		}),
 		onOpenChangeComplete: onOpenChangeCompleteProp,
 		swipeDirection: swipeDirectionProp,
 		snapPoints: defineUnionProp({
@@ -88,8 +111,10 @@ const root = defineComponentApiSchema<DrawerRootPropsWithoutHTML>({
 		snapPoint: { ...snapPointProp, bindable: true },
 		onSnapPointChange: defineFunctionProp({
 			definition: null as never,
-			description: "Called when the drawer changes the active snap point.",
-			stringDefinition: "(snapPoint: number | string | null | undefined) => void",
+			description:
+				"Called before changing the active snap point. Call details.cancel() to keep the current snap point.",
+			stringDefinition:
+				"(snapPoint: number | string | null | undefined, details: DrawerChangeEventDetails) => void",
 		}),
 		snapToSequentialPoints: defineBooleanProp({
 			default: false,
@@ -98,6 +123,19 @@ const root = defineComponentApiSchema<DrawerRootPropsWithoutHTML>({
 		}),
 		tether: drawerTetherProp,
 		triggerId: triggerIdProp,
+		children: childrenSnippet(),
+	},
+});
+
+const virtualKeyboardProvider = defineComponentApiSchema<DrawerVirtualKeyboardProviderProps>({
+	title: "VirtualKeyboardProvider",
+	description:
+		"Opts descendant drawers into virtual keyboard viewport adjustments and iOS input handling.",
+	props: {
+		enabled: defineBooleanProp({
+			default: true,
+			description: "Enable virtual keyboard handling for descendant drawers.",
+		}),
 		children: childrenSnippet(),
 	},
 });
@@ -257,6 +295,16 @@ const popup = defineComponentApiSchema<DrawerPopupPropsWithoutHTML>({
 		...escapeLayerProps,
 		...dismissibleLayerProps,
 		...focusScopeProps,
+		initialFocus: defineSimplePropSchema({
+			type: "DrawerFocusTarget",
+			description:
+				"Defaults to the popup. Use true for the first tabbable element, false to leave focus, an element, or a callback receiving the interaction type.",
+		}),
+		finalFocus: defineSimplePropSchema({
+			type: "DrawerFocusTarget",
+			description:
+				"Defaults to the trigger or previously focused element. Accepts a boolean, element, or callback receiving the interaction type.",
+		}),
 		forceMount: forceMountProp,
 		preventOverflowTextSelection: preventOverflowTextSelectionProp,
 		preventScroll: preventScrollProp,
@@ -433,6 +481,7 @@ const swipeArea = defineComponentApiSchema<DrawerSwipeAreaPropsWithoutHTML>({
 });
 
 export const drawer = [
+	virtualKeyboardProvider,
 	provider,
 	indentBackground,
 	indent,

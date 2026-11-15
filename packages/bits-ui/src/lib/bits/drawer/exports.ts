@@ -32,3 +32,11 @@ export type {
 	DrawerSnapPoint,
 	DrawerSwipeDirection,
 } from "./types.js";
+
+export { default as VirtualKeyboardProvider } from "./components/drawer-virtual-keyboard-provider.svelte";
+export type {
+	DrawerVirtualKeyboardProviderProps as VirtualKeyboardProviderProps,
+	DrawerActions as Actions,
+	DrawerChangeEventDetails as ChangeEventDetails,
+	DrawerOpenChangeEventDetails as OpenChangeEventDetails,
+} from "./types.js";

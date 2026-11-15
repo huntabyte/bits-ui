@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { unstable_Drawer as Drawer } from "bits-ui";
 
+	let { nestedOnOpenChange }: { nestedOnOpenChange?: Drawer.RootProps["onOpenChange"] } =
+		$props();
 	let buttonClicks = $state(0);
 	let nestedOpen = $state(false);
 </script>
@@ -17,7 +19,7 @@
 							Action
 						</button>
 						<input data-testid="text-input" />
-						<Drawer.Root bind:open={nestedOpen}>
+						<Drawer.Root bind:open={nestedOpen} onOpenChange={nestedOnOpenChange}>
 							<Drawer.Trigger data-testid="nested-trigger">Open nested</Drawer.Trigger
 							>
 							<Drawer.Portal>

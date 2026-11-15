@@ -524,6 +524,46 @@ describe("Swipe and snap behavior", () => {
 		await expectNotExists(popup);
 	});
 
+	it("cancels swipe dismissal and settles back without stale dismiss attributes", async () => {
+		const onOpenChange = vi.fn((open, details) => {
+			if (!open) details.cancel();
+		});
+		await open({ onOpenChange, popupProps: { style: "height: 200px;" } });
+		await drag(page.getByTestId("swipe-surface").element(), 0, 140);
+		await expectExists(page.getByTestId("popup"));
+		await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+		await expect.element(page.getByTestId("popup")).not.toHaveAttribute("data-swipe-dismiss");
+		expect(onOpenChange.mock.lastCall?.[1]).toMatchObject({
+			reason: "swipe",
+			isCanceled: true,
+		});
+	});
+
+	it("cancels snap changes before mutating the binding", async () => {
+		await open({
+			snapPoints: ["80px", "160px", 1],
+			snapPoint: "80px",
+			snapToSequentialPoints: true,
+			onSnapPointChange: (_, details) => details.cancel(),
+			popupProps: { style: "height: 320px;" },
+		});
+		await drag(page.getByTestId("swipe-surface").element(), 0, -85);
+		await expect.element(page.getByTestId("snap-point")).toHaveTextContent("80px");
+	});
+
+	it("keeps swipe dismissal available when pointer dismissal is disabled", async () => {
+		await open({ disablePointerDismissal: true, popupProps: { style: "height: 200px;" } });
+		await drag(page.getByTestId("swipe-surface").element(), 0, 140);
+		await expectNotExists(page.getByTestId("popup"));
+	});
+
+	it("cancels opening from a swipe area", async () => {
+		await setup({ onOpenChange: (_, details) => details.cancel() });
+		await drag(page.getByTestId("swipe-area").element(), 0, -160);
+		await expectNotExists(page.getByTestId("popup"));
+		await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	});
+
 	it("opens from the bottom swipe area with an upward gesture", async () => {
 		await setup();
 		await drag(page.getByTestId("swipe-area").element(), 0, -160);
@@ -544,7 +584,10 @@ describe("Swipe and snap behavior", () => {
 		await expect.element(snapPoint).toHaveTextContent("80px");
 		await drag(page.getByTestId("swipe-surface").element(), 0, -85);
 		await expect.element(snapPoint).toHaveTextContent("160px");
-		expect(onSnapPointChange).toHaveBeenLastCalledWith("160px");
+		expect(onSnapPointChange).toHaveBeenLastCalledWith(
+			"160px",
+			expect.objectContaining({ reason: "swipe", event: expect.any(PointerEvent) })
+		);
 
 		await page.getByTestId("expand").click();
 		await expect.element(popup).toHaveAttribute("data-expanded");
@@ -572,4 +615,146 @@ it("keeps the popup mounted through its exit transition", async () => {
 	expect(onOpenChangeComplete).not.toHaveBeenCalledWith(false);
 	await expectNotExists(popup);
 	expect(onOpenChangeComplete.mock.calls).toEqual([[true], [false]]);
+});
+
+describe("Base UI change contracts", () => {
+	it("cancels trigger opening and exposes the originating event and trigger", async () => {
+		const onOpenChange = vi.fn((_, details) => details.cancel());
+		const { trigger } = await setup({ onOpenChange });
+		await trigger.click();
+		await expectNotExists(page.getByTestId("popup"));
+		expect(onOpenChange).toHaveBeenCalledWith(
+			true,
+			expect.objectContaining({
+				reason: "trigger-press",
+				trigger: trigger.element(),
+				isCanceled: true,
+				event: expect.any(MouseEvent),
+			})
+		);
+	});
+
+	it.each(["escape-key", "close-press"] as const)("cancels %s closing", async (reason) => {
+		const onOpenChange = vi.fn((open, details) => {
+			if (!open) details.cancel();
+		});
+		await open({ onOpenChange });
+		if (reason === "escape-key") await userEvent.keyboard(kbd.ESCAPE);
+		else await page.getByTestId("close").click();
+		await expectExists(page.getByTestId("popup"));
+		expect(onOpenChange.mock.lastCall?.[1]).toMatchObject({ reason, isCanceled: true });
+	});
+
+	it("disables pointer dismissal while allowing escape", async () => {
+		await open({ disablePointerDismissal: true });
+		await page.getByTestId("backdrop").click({ position: { x: 20, y: 20 } });
+		await expectExists(page.getByTestId("popup"));
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expectNotExists(page.getByTestId("popup"));
+	});
+
+	it("retains popup, viewport and backdrop until explicit unmount", async () => {
+		const onOpenChangeComplete = vi.fn();
+		await open({
+			onOpenChangeComplete,
+			onOpenChange: (open, details) => {
+				if (!open) details.preventUnmountOnClose();
+			},
+		});
+		await expect.poll(() => onOpenChangeComplete.mock.lastCall).toEqual([true]);
+		clickInFlowButtonWhileDrawerOpen("action-close");
+		await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+		await tick();
+		await expectExists(page.getByTestId("popup"));
+		await expectExists(page.getByTestId("backdrop"));
+		await expectExists(page.getByTestId("viewport"));
+		expect(onOpenChangeComplete).not.toHaveBeenCalledWith(false);
+		clickInFlowButtonWhileDrawerOpen("action-unmount");
+		await expectNotExists(page.getByTestId("popup"));
+		await expectNotExists(page.getByTestId("backdrop"));
+		expect(onOpenChangeComplete.mock.calls).toEqual([[true], [false]]);
+	});
+
+	it("reopens a retained drawer without a stale close completion", async () => {
+		const onOpenChangeComplete = vi.fn();
+		await open({
+			onOpenChangeComplete,
+			onOpenChange: (open, details) => {
+				if (!open) details.preventUnmountOnClose();
+			},
+		});
+		await page.getByTestId("close").click();
+		await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+		clickInFlowButtonWhileDrawerOpen("toggle");
+		await expect.element(page.getByTestId("binding")).toHaveTextContent("true");
+		clickInFlowButtonWhileDrawerOpen("action-unmount");
+		await expectExists(page.getByTestId("popup"));
+		expect(onOpenChangeComplete).not.toHaveBeenCalledWith(false);
+	});
+
+	it.each([true, false, "trap-focus"] as const)("applies modal=%s defaults", async (modal) => {
+		await open({ modal });
+		const popup = page.getByTestId("popup");
+		if (modal === true) await expect.element(popup).toHaveAttribute("aria-modal", "true");
+		else await expect.element(popup).not.toHaveAttribute("aria-modal");
+		const outside = page.getByTestId("close-focus-override").element() as HTMLElement;
+		outside.focus();
+		if (modal === false) await expectNotExists(popup);
+		else await expect.element(popup).toHaveFocus();
+	});
+
+	it("supports explicit focus targets and passes interaction type", async () => {
+		const initialFocus = vi.fn(
+			() => page.getByTestId("open-focus-override").element() as HTMLElement
+		);
+		await open({
+			popupProps: {
+				initialFocus,
+				finalFocus: () => page.getByTestId("close-focus-override").element() as HTMLElement,
+			},
+		});
+		await expect.element(page.getByTestId("open-focus-override")).toHaveFocus();
+		expect(initialFocus).toHaveBeenCalledWith("mouse");
+		await userEvent.keyboard(kbd.ESCAPE);
+		await expect.element(page.getByTestId("close-focus-override")).toHaveFocus();
+	});
+
+	it("allows default first-tabbable focus with initialFocus=true", async () => {
+		await open({ popupProps: { initialFocus: true } });
+		await expect.element(page.getByTestId("close")).toHaveFocus();
+	});
+});
+
+it("completes a close caused by updating the bound open state", async () => {
+	const onOpenChangeComplete = vi.fn();
+	await open({ onOpenChangeComplete });
+	await expect.poll(() => onOpenChangeComplete.mock.lastCall).toEqual([true]);
+	clickInFlowButtonWhileDrawerOpen("toggle");
+	await expectNotExists(page.getByTestId("popup"));
+	await expect.poll(() => onOpenChangeComplete.mock.calls).toEqual([[true], [false]]);
+});
+
+it("completes a deferred close once when unmount is requested before CSS exit ends", async () => {
+	const onOpenChangeComplete = vi.fn();
+	await open({
+		exitTransition: true,
+		onOpenChangeComplete,
+		onOpenChange: (open, details) => {
+			if (!open) details.preventUnmountOnClose();
+		},
+	});
+	await expect.poll(() => onOpenChangeComplete.mock.lastCall).toEqual([true]);
+	clickInFlowButtonWhileDrawerOpen("action-close");
+	await expect.element(page.getByTestId("binding")).toHaveTextContent("false");
+	clickInFlowButtonWhileDrawerOpen("action-unmount");
+	await expectNotExists(page.getByTestId("popup"));
+	await vi.waitFor(() => expect(onOpenChangeComplete.mock.calls).toEqual([[true], [false]]));
+});
+
+it("can leave initial focus on the trigger", async () => {
+	const { trigger } = await setup({ popupProps: { initialFocus: false, trapFocus: false } });
+	(trigger.element() as HTMLElement).focus();
+	await userEvent.keyboard(kbd.ENTER);
+	await expectExists(page.getByTestId("popup"));
+	await expect.element(trigger).toHaveFocus();
 });
