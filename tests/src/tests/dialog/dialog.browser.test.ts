@@ -101,7 +101,7 @@ describe("Open/Close Behavior", () => {
 		await expectNotExists(page.getByTestId("content"));
 	});
 
-	it.todo("should close when the `Escape` key is pressed", async () => {
+	it("should close when the `Escape` key is pressed", async () => {
 		await open();
 		await userEvent.keyboard(kbd.ESCAPE);
 		await expectNotExists(page.getByTestId("content"));
@@ -216,7 +216,10 @@ describe("Focus Management", () => {
 		await expect.element(outsideButton).toHaveFocus();
 
 		const toggleButton = page.getByTestId("toggle");
-		await page.getByTestId("toggle").click();
+		const toggleElement = toggleButton.element();
+		if (!(toggleElement instanceof HTMLElement)) throw new Error("Missing toggle button");
+		toggleElement.focus();
+		await userEvent.keyboard(kbd.ENTER);
 		await expectExists(page.getByTestId("content"));
 
 		await userEvent.keyboard(kbd.ESCAPE);
