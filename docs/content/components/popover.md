@@ -109,6 +109,27 @@ When opened via hover, the popover will automatically close when the mouse leave
 - **Keyboard**: `openOnHover` does not open on keyboard focus. Keyboard users can still press Enter or Space to open.
 - **Touch devices**: Touch events are ignored for hover functionality to prevent conflicts with tap-to-open behavior.
 
+## Logical Sides
+
+Use `side="inline-start"` or `side="inline-end"` to position content according to its resolved direction. In LTR, `inline-start` means left and `inline-end` means right; RTL reverses those mappings. Direction follows `BitsConfig` defaults or an explicit `dir` on the content, and changing it updates an open popover, including through a portal.
+
+```svelte
+<BitsConfig dir="rtl">
+  <Popover.Root>
+    <Popover.Trigger>Open</Popover.Trigger>
+    <Popover.Portal>
+      <Popover.Content side="inline-end">
+        This prefers the left side in RTL.
+      </Popover.Content>
+    </Popover.Portal>
+  </Popover.Root>
+</BitsConfig>
+```
+
+Logical sides support horizontal writing modes only. They do not follow vertical CSS writing modes. The physical values `top`, `right`, `bottom`, and `left` retain their existing meaning. Collisions can flip the preferred side; `data-side`, arrows, and transform origins still use the resulting physical side, so existing animation selectors continue to work.
+
+These side values are also available on other floating content components, including menu submenus. Menus use their root's resolved direction.
+
 ## Managing Focus
 
 ### Focus Trap
