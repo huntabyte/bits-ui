@@ -1,6 +1,6 @@
 import { expect, it, vi } from "vitest";
 import { render } from "vitest-browser-svelte";
-import { mount, unmount, type Component } from "svelte";
+import { mount, unmount, tick, type Component } from "svelte";
 import { getTestKbd } from "../utils.js";
 import TooltipTest, { type TooltipTestProps } from "./tooltip-test.svelte";
 import type { TooltipForceMountTestProps } from "./tooltip-force-mount-test.svelte";
@@ -396,6 +396,9 @@ it("provider: should not re-enable delay while switching between tooltips", asyn
 
 	pointerEnter(trigger0El);
 	await expectExists(page.getByTestId("content-0"));
+	expect(trigger0El.getAttribute("data-state")).toBe("delayed-open");
+	pointerEnter(trigger0El);
+	await tick();
 	expect(trigger0El.getAttribute("data-state")).toBe("delayed-open");
 
 	pointerEnter(trigger1El);

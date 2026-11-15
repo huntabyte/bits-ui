@@ -394,6 +394,7 @@ export class TooltipRootState {
 	};
 
 	onTriggerEnter = (triggerId: string) => {
+		if (this.opts.open.current && this.isActiveTrigger(triggerId)) return;
 		// hovering another trigger moves the tooltip away from the focused one
 		if (!this.isActiveTrigger(triggerId)) this.openedViaFocus = false;
 		this.setActiveTrigger(triggerId);
