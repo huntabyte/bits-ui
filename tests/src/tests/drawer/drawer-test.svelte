@@ -27,11 +27,12 @@
 
 	const uid = $props.id();
 	let snapPoint = $state(untrack(() => restProps.snapPoint));
+	let actions = $state<Drawer.Actions>();
 	let descriptionId = $state(untrack(() => descriptionProps.id ?? uid));
 </script>
 
 <main>
-	<Drawer.Root {...restProps} bind:open bind:snapPoint>
+	<Drawer.Root {...restProps} bind:open bind:snapPoint bind:actions>
 		<Drawer.Trigger data-testid="trigger">open</Drawer.Trigger>
 		<Drawer.SwipeArea
 			data-testid="swipe-area"
@@ -88,6 +89,8 @@
 			</Drawer.Viewport>
 		</Drawer.Portal>
 	</Drawer.Root>
+	<button data-testid="action-close" onclick={() => actions?.close()}>Close imperatively</button>
+	<button data-testid="action-unmount" onclick={() => actions?.unmount()}>Unmount</button>
 	<p data-testid="binding">{open}</p>
 	<button data-testid="toggle" onclick={() => (open = !open)}>toggle</button>
 	<button data-testid="close-focus-override" id="close-focus-override"

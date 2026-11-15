@@ -26,7 +26,15 @@ import type {
 import { kbd } from "#lib/internal/kbd.js";
 import { isIOS } from "#lib/internal/is.js";
 import { PresenceManager } from "#lib/internal/presence-manager.svelte.js";
-import type { DrawerSnapPoint, DrawerSwipeDirection } from "./types.js";
+import type {
+	DrawerRootProps,
+	DrawerInteractionType,
+	DrawerChangeReason,
+	DrawerChangeEventDetails,
+	DrawerOpenChangeEventDetails,
+	DrawerSnapPoint,
+	DrawerSwipeDirection,
+} from "./types.js";
 import {
 	SwipeDismiss,
 	getDisplacement,
@@ -560,9 +568,10 @@ export class DrawerTether<Payload = unknown> {
 
 	open(triggerId: string) {
 		if (!this.#state.registry.has(triggerId)) return;
+		const trigger = this.#state.registry.get(triggerId);
+		const root = this.#state.root;
+		if (root && !root.handleOpen("imperative-action", undefined, trigger?.node)) return;
 		this.#state.registry.setActiveTrigger(triggerId);
-		this.#state.root?.setActiveTrigger(triggerId);
-		this.#state.root?.handleOpen();
 	}
 
 	openWithPayload(payload: Payload) {
@@ -570,7 +579,7 @@ export class DrawerTether<Payload = unknown> {
 	}
 
 	close() {
-		this.#state.root?.handleClose();
+		this.#state.root?.handleClose("imperative-action");
 	}
 
 	get isOpen() {
@@ -590,6 +599,10 @@ export function createTether<Payload = unknown>() {
 	return new DrawerTether<Payload>();
 }
 
+export const DrawerVirtualKeyboardContext = new Context<{ readonly enabled: boolean }>(
+	"Drawer.VirtualKeyboardProvider"
+);
+
 const DrawerRootContext = new Context<DrawerRootState>("Drawer.Root");
 
 interface DrawerRootStateOpts
@@ -607,7 +620,10 @@ interface DrawerRootStateOpts
 			// oxlint-disable-next-line no-explicit-any
 			tether: DrawerTether<any> | undefined;
 			onOpenChangeComplete: OnChangeFn<boolean>;
-			onSnapPointChange: OnChangeFn<DrawerSnapPoint | null | undefined>;
+			onSnapPointChange: NonNullable<DrawerRootProps["onSnapPointChange"]>;
+			onOpenChange: NonNullable<DrawerRootProps["onOpenChange"]>;
+			modal: boolean | "trap-focus";
+			disablePointerDismissal: boolean;
 		}> {}
 
 export class DrawerRootState {
@@ -620,6 +636,33 @@ export class DrawerRootState {
 	readonly parent: DrawerRootState | null;
 	readonly provider = DrawerProviderContext.getOr(null);
 	readonly depth: number;
+	readonly virtualKeyboard = DrawerVirtualKeyboardContext.getOr(null);
+	get virtualKeyboardEnabled() {
+		return this.virtualKeyboard?.enabled ?? false;
+	}
+	retained = $state(false);
+	closingPending = false;
+	manuallyUnmounted = $state(false);
+	get shouldRenderPopup() {
+		return !this.manuallyUnmounted && (this.popupPresence.shouldRender || this.retained);
+	}
+	get shouldRenderBackdrop() {
+		return !this.manuallyUnmounted && (this.backdropPresence.shouldRender || this.retained);
+	}
+	readonly actions = {
+		close: () => {
+			this.handleClose("imperative-action");
+		},
+		unmount: () => {
+			if (this.opts.open.current || !this.retained) return;
+			this.retained = false;
+			this.manuallyUnmounted = true;
+			if (this.closingPending) {
+				this.closingPending = false;
+				this.opts.onOpenChangeComplete.current(false);
+			}
+		},
+	};
 	readonly tetherState: DrawerTetherState | null;
 	readonly registry: DrawerTriggerRegistryState;
 
@@ -661,6 +704,8 @@ export class DrawerRootState {
 	lastCommittedSnapOffset = $state<number | null>(null);
 	backdropSwipeProgress = $state(0);
 	isOpen = false;
+	interactionType: DrawerInteractionType = "keyboard";
+	lastChangeReason: DrawerChangeReason = "none";
 
 	popupPresence: PresenceManager;
 	backdropPresence: PresenceManager;
@@ -672,12 +717,20 @@ export class DrawerRootState {
 		this.tetherState = opts.tether.current?.state ?? null;
 		this.registry = this.tetherState?.registry ?? new DrawerTriggerRegistryState();
 		this.isOpen = this.opts.open.current;
+		if (this.isOpen) {
+			this.parent?.incrementNested();
+			this.provider?.setDrawerOpen(this.opts.id.current, true);
+		}
+
+		const initialSnapPoint = opts.snapPoint.current;
 
 		this.popupPresence = new PresenceManager({
 			ref: boxWith(() => this.popupNode),
 			open: this.opts.open,
 			enabled: true,
 			onComplete: () => {
+				if (!this.opts.open.current && (this.retained || !this.closingPending)) return;
+				this.closingPending = false;
 				this.opts.onOpenChangeComplete.current(this.opts.open.current);
 			},
 		});
@@ -692,7 +745,7 @@ export class DrawerRootState {
 			[
 				() => this.activeResolvedSnapPoint?.offset ?? null,
 				() => this.opts.open.current,
-				() => this.popupPresence.shouldRender,
+				() => this.shouldRenderPopup,
 			],
 			([offset, open, shouldRender]) => {
 				if (typeof offset === "number" && Number.isFinite(offset)) {
@@ -723,22 +776,28 @@ export class DrawerRootState {
 		watch(
 			() => this.opts.open.current,
 			(isOpen) => {
+				if (this.isOpen !== isOpen) this.lastChangeReason = "none";
 				this.isOpen = isOpen;
+				if (isOpen) {
+					this.retained = false;
+					this.manuallyUnmounted = false;
+				}
 				if (isOpen) {
 					this.ensureActiveTrigger();
 					this.parent?.incrementNested();
 				} else {
 					this.parent?.decrementNested();
+					if (!this.manuallyUnmounted) this.closingPending = true;
 					const snaps = this.opts.snapPoints.current;
 					if (snaps?.length) {
 						// use raw snap list so we reset even when popupHeight is already 0 (no resolved points)
-						const def = this.opts.snapPoint.current;
+						const def = initialSnapPoint;
 						const next =
 							def !== undefined && def !== null
 								? (snaps.find((s) => Object.is(s, def)) ?? snaps[0])
 								: snaps[0];
 						if (next !== undefined && this.opts.snapPoint.current !== next) {
-							this.opts.snapPoint.current = next;
+							this.setSnapPoint(next, "none");
 						}
 					}
 				}
@@ -772,23 +831,96 @@ export class DrawerRootState {
 		});
 	}
 
-	handleOpen = () => {
+	createChangeDetails = (
+		reason: DrawerChangeReason,
+		event?: Event,
+		trigger = this.triggerNode
+	): DrawerChangeEventDetails => {
+		let canceled = false;
+		return {
+			reason,
+			event,
+			trigger: trigger ?? undefined,
+			cancel: () => {
+				canceled = true;
+			},
+			get isCanceled() {
+				return canceled;
+			},
+		};
+	};
+
+	requestOpen = (
+		open: boolean,
+		reason: DrawerChangeReason,
+		event?: Event,
+		trigger = this.triggerNode
+	) => {
+		if (open === this.isOpen) return true;
+		let retain = false;
+		const details = this.createChangeDetails(
+			reason,
+			event,
+			trigger
+		) as DrawerOpenChangeEventDetails;
+		details.preventUnmountOnClose = () => {
+			retain = true;
+		};
+		this.opts.onOpenChange.current(open, details);
+		if (details.isCanceled) return false;
+		this.lastChangeReason = reason;
+		if (event instanceof KeyboardEvent) this.interactionType = "keyboard";
+		else if (
+			event instanceof PointerEvent &&
+			["mouse", "touch", "pen"].includes(event.pointerType)
+		)
+			this.interactionType = event.pointerType as DrawerInteractionType;
+		else if (typeof TouchEvent !== "undefined" && event instanceof TouchEvent)
+			this.interactionType = "touch";
+		else if (event instanceof MouseEvent)
+			this.interactionType = event.detail === 0 ? "keyboard" : "mouse";
+		this.manuallyUnmounted = false;
+		this.retained = !open && retain;
+		this.closingPending = !open;
+		this.isOpen = open;
+		this.opts.open.current = open;
+		return true;
+	};
+
+	handleOpen = (
+		reason: DrawerChangeReason = "imperative-action",
+		event?: Event,
+		trigger = this.triggerNode
+	) => {
+		if (!this.requestOpen(true, reason, event, trigger)) return false;
 		this.ensureActiveTrigger();
-		this.isOpen = true;
-		this.opts.open.current = true;
+		return true;
 	};
 
 	handleOpenWithPayload = (payload: unknown) => {
+		if (!this.requestOpen(true, "imperative-action")) return;
 		this.registry.setActiveTrigger(null);
 		this.tetherPayload = payload;
-		this.isOpen = true;
-		this.opts.open.current = true;
 	};
 
-	handleClose = () => {
-		if (!this.isOpen) return;
-		this.isOpen = false;
-		this.opts.open.current = false;
+	handleClose = (reason: DrawerChangeReason = "none", event?: Event) => {
+		if ((reason === "outside-press" || reason === "focus-out") && this.nestedOpenCount > 0)
+			return false;
+		if (reason === "outside-press" && this.opts.disablePointerDismissal.current) return false;
+		return this.requestOpen(false, reason, event);
+	};
+
+	setSnapPoint = (
+		value: DrawerSnapPoint | null | undefined,
+		reason: DrawerChangeReason,
+		event?: Event
+	) => {
+		if (Object.is(value, this.opts.snapPoint.current)) return true;
+		const details = this.createChangeDetails(reason, event);
+		this.opts.onSnapPointChange.current(value, details);
+		if (details.isCanceled) return false;
+		this.opts.snapPoint.current = value;
+		return true;
 	};
 
 	setActiveTrigger = (triggerId: string | null) => {
@@ -1006,7 +1138,7 @@ export class DrawerRootState {
 		const resolved = this.activeResolvedSnapPoint?.offset;
 		if (typeof resolved === "number" && Number.isFinite(resolved)) return resolved;
 		if (
-			(this.opts.open.current || this.popupPresence.shouldRender) &&
+			(this.opts.open.current || this.shouldRenderPopup) &&
 			typeof this.lastCommittedSnapOffset === "number" &&
 			Number.isFinite(this.lastCommittedSnapOffset)
 		) {
@@ -1187,15 +1319,11 @@ export class DrawerTriggerState {
 		this.#lastRegisteredId = id;
 	};
 
-	#open() {
+	#open(event: Event) {
 		const root = this.#getRoot();
 		if (!root) return;
-		if (this.opts.tether.current) {
-			this.opts.tether.current.open(this.opts.id.current);
-			return;
-		}
-		root.setActiveTrigger(this.opts.id.current);
-		root.handleOpen();
+		if (root.handleOpen("trigger-press", event, this.opts.ref.current))
+			root.setActiveTrigger(this.opts.id.current);
 	}
 
 	#getOpenState() {
@@ -1210,7 +1338,7 @@ export class DrawerTriggerState {
 	onclick(e: BitsMouseEvent) {
 		if (this.opts.disabled.current) return;
 		if (e.button > 0) return;
-		this.#open();
+		this.#open(e);
 	}
 
 	onpointerup(event: PointerEvent) {
@@ -1225,7 +1353,7 @@ export class DrawerTriggerState {
 		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.#open();
+			this.#open(e);
 		}
 	}
 
@@ -1274,7 +1402,7 @@ export class DrawerCloseState {
 		const el = this.opts.ref.current;
 		if (!el) return;
 		if (!(e.target instanceof Node) || !el.contains(e.target)) return;
-		this.root.handleClose();
+		this.root.handleClose("close-press", e);
 	}
 
 	onclick(e: BitsMouseEvent) {
@@ -1292,14 +1420,14 @@ export class DrawerCloseState {
 				return;
 			}
 		}
-		this.root.handleClose();
+		this.root.handleClose("close-press", e);
 	}
 
 	onkeydown(e: BitsKeyboardEvent) {
 		if (this.opts.disabled.current) return;
 		if (e.key === kbd.SPACE || e.key === kbd.ENTER) {
 			e.preventDefault();
-			this.root.handleClose();
+			this.root.handleClose("close-press", e);
 		}
 	}
 
@@ -1443,7 +1571,7 @@ export class DrawerBackdropState {
 		if (top !== backdrop && !backdrop.contains(top)) {
 			return;
 		}
-		this.root.handleClose();
+		this.root.handleClose("outside-press", e);
 	}
 
 	onpointerdown(event: PointerEvent) {
@@ -1479,7 +1607,7 @@ export class DrawerBackdropState {
 		if (top !== backdrop && !backdrop.contains(top)) {
 			return;
 		}
-		this.root.handleClose();
+		this.root.handleClose("outside-press", event);
 	}
 
 	onpointercancel(event: PointerEvent) {
@@ -1545,7 +1673,7 @@ export class DrawerBackdropState {
 	);
 
 	get shouldRender() {
-		return this.root.backdropPresence.shouldRender;
+		return this.root.shouldRenderBackdrop;
 	}
 }
 
@@ -1714,6 +1842,7 @@ export class DrawerViewportState {
 				this.applySwipeProgress(resolvedProgress, shouldTrackProgress, true);
 			},
 			onRelease: ({
+				event,
 				direction,
 				deltaX,
 				deltaY,
@@ -1722,7 +1851,8 @@ export class DrawerViewportState {
 				releaseVelocityX,
 				releaseVelocityY,
 			}) => {
-				return this.onRelease({
+				const close = this.onRelease({
+					event,
 					direction,
 					deltaX,
 					deltaY,
@@ -1731,10 +1861,16 @@ export class DrawerViewportState {
 					releaseVelocityX,
 					releaseVelocityY,
 				});
+				if (close && !this.root.handleClose("swipe", event)) {
+					this.root.swipeDismissed = false;
+					this.root.swipeReleaseStrength = null;
+					this.clearSwipeStyles();
+					return false;
+				}
+				return close;
 			},
 			onDismiss: () => {
 				this.prepareSwipeDismissTransition();
-				this.root.handleClose();
 			},
 		});
 
@@ -1932,9 +2068,13 @@ export class DrawerViewportState {
 		);
 
 		watch(
-			[() => this.root.opts.open.current, () => this.opts.ref.current],
-			([open, viewport]) => {
-				if (!isIOS || !open || !viewport) {
+			[
+				() => this.root.opts.open.current,
+				() => this.opts.ref.current,
+				() => this.root.virtualKeyboardEnabled,
+			],
+			([open, viewport, keyboardEnabled]) => {
+				if (!keyboardEnabled || !open || !viewport) {
 					this.keyboardViewportInset = 0;
 					return;
 				}
@@ -2298,6 +2438,7 @@ export class DrawerViewportState {
 	}
 
 	onRelease({
+		event,
 		direction,
 		deltaX,
 		deltaY,
@@ -2306,6 +2447,7 @@ export class DrawerViewportState {
 		releaseVelocityX,
 		releaseVelocityY,
 	}: {
+		event: Event;
 		direction: SwipeDirection | undefined;
 		deltaX: number;
 		deltaY: number;
@@ -2439,11 +2581,10 @@ export class DrawerViewportState {
 			this.root.swipeReleaseStrength = resolvedSwipeStrength;
 			popupElement.setAttribute("data-swipe-dismiss", "");
 			popupElement.style.setProperty("--drawer-swipe-strength", `${resolvedSwipeStrength}`);
-			this.root.opts.snapPoint.current = null;
 			return true;
 		}
 
-		this.root.opts.snapPoint.current = closestSnapPoint.value;
+		this.root.setSnapPoint(closestSnapPoint.value, "swipe", event);
 		this.clearSwipeStyles();
 		return false;
 	}
@@ -2710,7 +2851,7 @@ export class DrawerViewportState {
 	);
 
 	get shouldRender() {
-		return this.root.popupPresence.shouldRender;
+		return this.root.shouldRenderPopup;
 	}
 }
 
@@ -2748,7 +2889,7 @@ export class DrawerPopupState {
 				const syncHeight = () => {
 					// during leave, offsetHeight can grow to full intrinsic content
 					// before unmount; applying that blows up --drawer-height and snap offsets for one frame
-					if (!this.root.opts.open.current && this.root.popupPresence.shouldRender) {
+					if (!this.root.opts.open.current && this.root.shouldRenderPopup) {
 						return;
 					}
 
@@ -2792,7 +2933,7 @@ export class DrawerPopupState {
 			[
 				() => this.root.parent,
 				() => this.root.opts.open.current,
-				() => this.root.popupPresence.shouldRender,
+				() => this.root.shouldRenderPopup,
 				() => this.root.frontmostHeight,
 			],
 			([parent, open, shouldRender, height]) => {
@@ -2811,7 +2952,7 @@ export class DrawerPopupState {
 			[
 				() => this.root.parent,
 				() => this.root.opts.open.current,
-				() => this.root.popupPresence.shouldRender,
+				() => this.root.shouldRenderPopup,
 			],
 			([parent, open, shouldRender]) => {
 				if (!parent) return;
@@ -2846,15 +2987,15 @@ export class DrawerPopupState {
 
 				const closeWatcher = new CloseWatcherCtor();
 
-				const handleCloseWatcher = () => {
-					if (!this.root.opts.open.current) return;
-					this.root.handleClose();
+				const handleCloseWatcher = (event: Event) => {
+					if (!this.root.opts.open.current || this.root.nestedOpenCount > 0) return;
+					if (!this.root.handleClose("close-watcher", event)) event.preventDefault();
 				};
 
-				closeWatcher.addEventListener("close", handleCloseWatcher);
+				closeWatcher.addEventListener("cancel", handleCloseWatcher);
 
 				return () => {
-					closeWatcher.removeEventListener("close", handleCloseWatcher);
+					closeWatcher.removeEventListener("cancel", handleCloseWatcher);
 					closeWatcher.destroy?.();
 				};
 			}
@@ -2865,9 +3006,10 @@ export class DrawerPopupState {
 				() => this.root.opts.open.current,
 				() => this.opts.preventScroll.current,
 				() => this.opts.ref.current,
+				() => this.root.virtualKeyboardEnabled,
 			],
-			([open, preventScroll, popup]) => {
-				if (!open || !preventScroll || !isIOS || !popup) return;
+			([open, preventScroll, popup, keyboardEnabled]) => {
+				if (!keyboardEnabled || !open || !preventScroll || !isIOS || !popup) return;
 
 				const doc = popup.ownerDocument;
 				const win = doc.defaultView;
@@ -3129,7 +3271,7 @@ export class DrawerPopupState {
 		// intrinsic height before exit
 		const exitLayoutLocked =
 			this.root.popupPresence.transitionStatus === "ending" ||
-			(!this.root.opts.open.current && this.root.popupPresence.shouldRender);
+			(!this.root.opts.open.current && this.root.shouldRenderPopup);
 		const shouldUseAutoHeight = !this.root.hasNestedDrawer && !exitLayoutLocked;
 		const popupHeightCssVarValue =
 			this.root.popupHeight > 0 && !shouldUseAutoHeight
@@ -3181,7 +3323,7 @@ export class DrawerPopupState {
 	});
 
 	get shouldRender() {
-		return this.root.popupPresence.shouldRender;
+		return this.root.shouldRenderPopup;
 	}
 }
 
@@ -3280,14 +3422,14 @@ export class DrawerSwipeAreaState {
 				if (displacement < 1 && !this.openedBySwipe) return;
 
 				if (!this.openedBySwipe) {
+					if (!this.root.handleOpen("swipe", details.event)) return;
 					this.openedBySwipe = true;
-					this.root.handleOpen();
 				}
 
 				this.applySwipeMovement(details.deltaX, details.deltaY);
 			},
 			onRelease: ({
-				event: _event,
+				event,
 				direction,
 				deltaX,
 				deltaY,
@@ -3314,10 +3456,10 @@ export class DrawerSwipeAreaState {
 
 				if (shouldOpen) {
 					if (!this.root.isOpen) {
-						this.root.handleOpen();
+						this.root.handleOpen("swipe", event);
 					}
 				} else if (this.openedBySwipe) {
-					this.root.handleClose();
+					this.root.handleClose("swipe", event);
 				}
 
 				this.swipeActive = false;

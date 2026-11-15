@@ -23,8 +23,11 @@
 		onOpenAutoFocus = noop,
 		onEscapeKeydown = noop,
 		onInteractOutside = noop,
-		trapFocus = true,
-		preventScroll = true,
+		onFocusOutside = noop,
+		initialFocus,
+		finalFocus,
+		trapFocus,
+		preventScroll,
 		restoreScrollDelay = null,
 		...restProps
 	}: DrawerPopupProps = $props();
@@ -35,20 +38,39 @@
 			() => ref,
 			(v) => (ref = v)
 		),
-		trapFocus: boxWith(() => trapFocus),
-		preventScroll: boxWith(() => preventScroll),
+		trapFocus: boxWith(() => trapFocus ?? popupState.root.opts.modal.current !== false),
+		preventScroll: boxWith(() => preventScroll ?? popupState.root.opts.modal.current === true),
 	});
 
 	const mergedProps = $derived(mergeProps(restProps, popupState.props));
-	const focusEnabled = $derived(popupState.root.opts.open.current && trapFocus);
+	const focusEnabled = $derived(
+		popupState.root.opts.open.current && popupState.opts.trapFocus.current
+	);
 	const dismissibleEnabled = $derived(popupState.root.opts.open.current);
-	const shouldPreventScroll = $derived(popupState.root.opts.open.current && preventScroll);
+	const shouldPreventScroll = $derived(
+		popupState.root.opts.open.current && popupState.opts.preventScroll.current
+	);
+
+	function focusTarget(target: typeof initialFocus, event: Event) {
+		const resolved =
+			typeof target === "function" ? target(popupState.root.interactionType) : target;
+		if (
+			resolved === false ||
+			resolved instanceof HTMLElement ||
+			(typeof target === "function" && resolved !== true)
+		) {
+			event.preventDefault();
+			if (resolved instanceof HTMLElement) resolved.focus({ preventScroll: true });
+		}
+	}
 
 	function handleOpenAutoFocus(event: Event) {
 		onOpenAutoFocus(event);
 		if (event.defaultPrevented) return;
-		event.preventDefault();
-		popupState.opts.ref.current?.focus();
+		if (initialFocus === undefined) {
+			event.preventDefault();
+			popupState.opts.ref.current?.focus({ preventScroll: true });
+		} else focusTarget(initialFocus, event);
 	}
 </script>
 
@@ -57,9 +79,25 @@
 		ref={popupState.opts.ref}
 		loop
 		trapFocus={focusEnabled}
-		enabled={focusEnabled}
+		enabled={popupState.root.opts.open.current}
 		onOpenAutoFocus={handleOpenAutoFocus}
-		{onCloseAutoFocus}
+		onCloseAutoFocus={(event) => {
+			onCloseAutoFocus(event);
+			if (event.defaultPrevented) return;
+			if (
+				finalFocus === undefined &&
+				popupState.root.opts.modal.current === false &&
+				["focus-out", "outside-press"].includes(popupState.root.lastChangeReason)
+			)
+				event.preventDefault();
+			else if (
+				(finalFocus === undefined || finalFocus === true) &&
+				popupState.root.triggerNode
+			) {
+				event.preventDefault();
+				popupState.root.triggerNode.focus({ preventScroll: true });
+			} else focusTarget(finalFocus, event);
+		}}
 	>
 		{#snippet focusScope({ props: focusScopeProps })}
 			<EscapeLayer
@@ -69,13 +107,22 @@
 				onEscapeKeydown={(e) => {
 					onEscapeKeydown(e);
 					if (e.defaultPrevented) return;
-					popupState.root.handleClose();
+					popupState.root.handleClose("escape-key", e);
 				}}
 			>
 				<DismissibleLayer
 					{...mergedProps}
 					ref={popupState.opts.ref}
 					enabled={dismissibleEnabled}
+					onFocusOutside={(e) => {
+						onFocusOutside(e);
+						if (
+							!e.defaultPrevented &&
+							!popupState.root.opts.disablePointerDismissal.current &&
+							popupState.root.opts.modal.current === false
+						)
+							popupState.root.handleClose("focus-out", e);
+					}}
 					onInteractOutside={(e) => {
 						const target = e.target instanceof Element ? e.target : null;
 						const viewportAttr = popupState.root.getBitsAttr("viewport");
@@ -83,7 +130,11 @@
 						const targetIsViewport = Boolean(target?.closest(`[${viewportAttr}]`));
 						const targetIsBackdrop = Boolean(target?.closest(`[${backdropAttr}]`));
 						onInteractOutside(e);
-						if (e.defaultPrevented) return;
+						if (
+							e.defaultPrevented ||
+							popupState.root.opts.disablePointerDismissal.current
+						)
+							return;
 
 						// mouse/pen: dismissible fires on pointerdown; closing here would unmount before
 						// swipe-from-outside can run. defer close until pointerup if still outside popup.
@@ -132,7 +183,7 @@
 								if (atPoint && popupEl.contains(atPoint)) return;
 								if (!isClickTrulyOutside(up, popupEl)) return;
 
-								popupState.root.handleClose();
+								popupState.root.handleClose("outside-press", up);
 							};
 
 							doc.addEventListener("pointerup", onPtrEnd, true);
@@ -163,7 +214,7 @@
 								if (!truly) return;
 							}
 						}
-						popupState.root.handleClose();
+						popupState.root.handleClose("outside-press", e);
 					}}
 				>
 					<TextSelectionLayer
@@ -174,7 +225,10 @@
 					>
 						{#if child}
 							{#if shouldPreventScroll}
-								<ScrollLock {preventScroll} {restoreScrollDelay} />
+								<ScrollLock
+									preventScroll={shouldPreventScroll}
+									{restoreScrollDelay}
+								/>
 							{/if}
 							{@render child({
 								props: mergeProps(mergedProps, focusScopeProps),
@@ -182,7 +236,10 @@
 							})}
 						{:else}
 							{#if shouldPreventScroll}
-								<ScrollLock {preventScroll} {restoreScrollDelay} />
+								<ScrollLock
+									preventScroll={shouldPreventScroll}
+									{restoreScrollDelay}
+								/>
 							{/if}
 							<div {...mergeProps(mergedProps, focusScopeProps)}>
 								{@render children?.()}

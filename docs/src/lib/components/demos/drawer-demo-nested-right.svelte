@@ -23,161 +23,173 @@
 		"-m-0.5 rounded px-1.5 py-0.5 text-sm font-medium text-foreground underline underline-offset-4 hover:bg-dark-04 focus-visible:ring-foreground focus-visible:ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 active:bg-dark-10";
 </script>
 
-<Drawer.Root swipeDirection="right">
-	<Drawer.Trigger
-		class="inline-flex h-12 items-center justify-center rounded-input bg-dark px-[21px] text-[15px] font-semibold text-background shadow-mini select-none hover:bg-dark/95 active:scale-[0.98]"
-	>
-		Nested Right Drawers
-	</Drawer.Trigger>
-	<Drawer.Portal>
-		<Drawer.Backdrop class={backdropClass} />
-		<Drawer.Viewport class={viewportClass}>
-			<Drawer.Popup class={popupClass}>
-				<Drawer.Content class="mx-auto flex h-full w-full max-w-[32rem] flex-col">
-					<Drawer.Title
-						class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
-					>
-						Workspace
-					</Drawer.Title>
-					<Drawer.Description class="mb-6 text-sm text-foreground-alt">
-						Open nested drawers that all slide from the right side.
-					</Drawer.Description>
+<Drawer.VirtualKeyboardProvider>
+	<Drawer.Root swipeDirection="right">
+		<Drawer.Trigger
+			class="inline-flex h-12 items-center justify-center rounded-input bg-dark px-[21px] text-[15px] font-semibold text-background shadow-mini select-none hover:bg-dark/95 active:scale-[0.98]"
+		>
+			Nested Right Drawers
+		</Drawer.Trigger>
+		<Drawer.Portal>
+			<Drawer.Backdrop class={backdropClass} />
+			<Drawer.Viewport class={viewportClass}>
+				<Drawer.Popup class={popupClass}>
+					<Drawer.Content class="mx-auto flex h-full w-full max-w-[32rem] flex-col">
+						<Drawer.Title
+							class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
+						>
+							Workspace
+						</Drawer.Title>
+						<Drawer.Description class="mb-6 text-sm text-foreground-alt">
+							Open nested drawers that all slide from the right side.
+						</Drawer.Description>
 
-					<div class="space-y-3">
-						<div class="rounded-card-sm bg-muted p-3">
-							<p class="text-sm font-medium">General settings</p>
-							<p class="mt-0.5 text-xs text-foreground-alt">
-								Timezone, locale, and visibility
-							</p>
+						<div class="space-y-3">
+							<div class="rounded-card-sm bg-muted p-3">
+								<p class="text-sm font-medium">General settings</p>
+								<p class="mt-0.5 text-xs text-foreground-alt">
+									Timezone, locale, and visibility
+								</p>
+							</div>
+							<div class="rounded-card-sm bg-muted p-3">
+								<p class="text-sm font-medium">Collaborators</p>
+								<p class="mt-0.5 text-xs text-foreground-alt">
+									Manage members and roles
+								</p>
+							</div>
 						</div>
-						<div class="rounded-card-sm bg-muted p-3">
-							<p class="text-sm font-medium">Collaborators</p>
-							<p class="mt-0.5 text-xs text-foreground-alt">
-								Manage members and roles
-							</p>
-						</div>
-					</div>
 
-					<div class="mt-6 flex items-center justify-between">
-						<Drawer.Root swipeDirection="right">
-							<Drawer.Trigger class={linkClass}>Open collaborators</Drawer.Trigger>
-							<Drawer.Portal>
-								<Drawer.Backdrop class={backdropClass} />
-								<Drawer.Viewport class={viewportClass}>
-									<Drawer.Popup class={nestedPopupClass}>
-										<Drawer.Content
-											class="mx-auto flex h-full w-full max-w-[28rem] flex-col"
-										>
-											<Drawer.Title
-												class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
+						<div class="mt-6 flex items-center justify-between">
+							<Drawer.Root swipeDirection="right">
+								<Drawer.Trigger class={linkClass}>Open collaborators</Drawer.Trigger
+								>
+								<Drawer.Portal>
+									<Drawer.Backdrop class={backdropClass} />
+									<Drawer.Viewport class={viewportClass}>
+										<Drawer.Popup class={nestedPopupClass}>
+											<Drawer.Content
+												class="mx-auto flex h-full w-full max-w-[28rem] flex-col"
 											>
-												Collaborators
-											</Drawer.Title>
-											<Drawer.Description
-												class="mb-5 text-sm text-foreground-alt"
-											>
-												Invite someone new. This input is for keyboard
-												behavior testing.
-											</Drawer.Description>
-
-											<div class="mb-4 space-y-2">
-												<label
-													for="invite-email"
-													class="text-sm font-medium text-foreground"
+												<Drawer.Title
+													class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
 												>
-													Invite by email
-												</label>
-												<input
-													id="invite-email"
-													type="email"
-													placeholder="teammate@company.com"
-													class="h-10 w-full rounded-input border border-border-input bg-background px-3 text-sm text-foreground outline-none placeholder:text-foreground-alt"
-												/>
-											</div>
-
-											<div class="mb-6 space-y-2">
-												<label
-													for="invite-role"
-													class="text-sm font-medium text-foreground"
+													Collaborators
+												</Drawer.Title>
+												<Drawer.Description
+													class="mb-5 text-sm text-foreground-alt"
 												>
-													Role
-												</label>
-												<input
-													id="invite-role"
-													type="text"
-													placeholder="Editor"
-													class="h-10 w-full rounded-input border border-border-input bg-background px-3 text-sm text-foreground outline-none placeholder:text-foreground-alt"
-												/>
-											</div>
+													Invite someone new. This input is for keyboard
+													behavior testing.
+												</Drawer.Description>
 
-											<div class="mt-auto flex items-center justify-between">
-												<Drawer.Root swipeDirection="right">
-													<Drawer.Trigger class={linkClass}
-														>Advanced roles</Drawer.Trigger
+												<div class="mb-4 space-y-2">
+													<label
+														for="invite-email"
+														class="text-sm font-medium text-foreground"
 													>
-													<Drawer.Portal>
-														<Drawer.Backdrop class={backdropClass} />
-														<Drawer.Viewport class={viewportClass}>
-															<Drawer.Popup
-																class={nestedDeepPopupClass}
-															>
-																<Drawer.Content
-																	class="mx-auto w-full max-w-[24rem]"
+														Invite by email
+													</label>
+													<input
+														id="invite-email"
+														type="email"
+														placeholder="teammate@company.com"
+														class="h-10 w-full rounded-input border border-border-input bg-background px-3 text-sm text-foreground outline-none placeholder:text-foreground-alt"
+													/>
+												</div>
+
+												<div class="mb-6 space-y-2">
+													<label
+														for="invite-role"
+														class="text-sm font-medium text-foreground"
+													>
+														Role
+													</label>
+													<input
+														id="invite-role"
+														type="text"
+														placeholder="Editor"
+														class="h-10 w-full rounded-input border border-border-input bg-background px-3 text-sm text-foreground outline-none placeholder:text-foreground-alt"
+													/>
+												</div>
+
+												<div
+													class="mt-auto flex items-center justify-between"
+												>
+													<Drawer.Root swipeDirection="right">
+														<Drawer.Trigger class={linkClass}
+															>Advanced roles</Drawer.Trigger
+														>
+														<Drawer.Portal>
+															<Drawer.Backdrop
+																class={backdropClass}
+															/>
+															<Drawer.Viewport class={viewportClass}>
+																<Drawer.Popup
+																	class={nestedDeepPopupClass}
 																>
-																	<Drawer.Title
-																		class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
+																	<Drawer.Content
+																		class="mx-auto w-full max-w-[24rem]"
 																	>
-																		Advanced Roles
-																	</Drawer.Title>
-																	<Drawer.Description
-																		class="mb-5 text-sm text-foreground-alt"
-																	>
-																		Permissions for custom
-																		project roles.
-																	</Drawer.Description>
-																	<ul class="space-y-2 text-sm">
-																		<li
-																			class="rounded-card-sm bg-muted p-3"
+																		<Drawer.Title
+																			class="mb-3 text-xs font-medium tracking-widest text-muted-foreground uppercase"
 																		>
-																			Can publish releases
-																		</li>
-																		<li
-																			class="rounded-card-sm bg-muted p-3"
+																			Advanced Roles
+																		</Drawer.Title>
+																		<Drawer.Description
+																			class="mb-5 text-sm text-foreground-alt"
 																		>
-																			Can manage billing
-																		</li>
-																		<li
-																			class="rounded-card-sm bg-muted p-3"
+																			Permissions for custom
+																			project roles.
+																		</Drawer.Description>
+																		<ul
+																			class="space-y-2 text-sm"
 																		>
-																			Can modify access rules
-																		</li>
-																	</ul>
-																	<div
-																		class="mt-6 flex justify-end"
-																	>
-																		<Drawer.Close
-																			class={closeClass}
-																			>Done</Drawer.Close
+																			<li
+																				class="rounded-card-sm bg-muted p-3"
+																			>
+																				Can publish releases
+																			</li>
+																			<li
+																				class="rounded-card-sm bg-muted p-3"
+																			>
+																				Can manage billing
+																			</li>
+																			<li
+																				class="rounded-card-sm bg-muted p-3"
+																			>
+																				Can modify access
+																				rules
+																			</li>
+																		</ul>
+																		<div
+																			class="mt-6 flex justify-end"
 																		>
-																	</div>
-																</Drawer.Content>
-															</Drawer.Popup>
-														</Drawer.Viewport>
-													</Drawer.Portal>
-												</Drawer.Root>
+																			<Drawer.Close
+																				class={closeClass}
+																				>Done</Drawer.Close
+																			>
+																		</div>
+																	</Drawer.Content>
+																</Drawer.Popup>
+															</Drawer.Viewport>
+														</Drawer.Portal>
+													</Drawer.Root>
 
-												<Drawer.Close class={closeClass}>Save</Drawer.Close>
-											</div>
-										</Drawer.Content>
-									</Drawer.Popup>
-								</Drawer.Viewport>
-							</Drawer.Portal>
-						</Drawer.Root>
+													<Drawer.Close class={closeClass}
+														>Save</Drawer.Close
+													>
+												</div>
+											</Drawer.Content>
+										</Drawer.Popup>
+									</Drawer.Viewport>
+								</Drawer.Portal>
+							</Drawer.Root>
 
-						<Drawer.Close class={closeClass}>Close</Drawer.Close>
-					</div>
-				</Drawer.Content>
-			</Drawer.Popup>
-		</Drawer.Viewport>
-	</Drawer.Portal>
-</Drawer.Root>
+							<Drawer.Close class={closeClass}>Close</Drawer.Close>
+						</div>
+					</Drawer.Content>
+				</Drawer.Popup>
+			</Drawer.Viewport>
+		</Drawer.Portal>
+	</Drawer.Root>
+</Drawer.VirtualKeyboardProvider>

@@ -184,7 +184,29 @@ Use a [function binding](https://svelte.dev/docs/svelte/bind#Function-bindings) 
 
 ## Focus Management
 
-Focus behavior is configured on **`Drawer.Popup`** (not on Root).
+`Drawer.Root` defaults to `modal={true}`: focus is trapped, page scrolling is locked, and outside controls cannot be activated. `modal="trap-focus"` keeps focus inside while allowing page scrolling. With `modal={false}`, outside focus and interaction are allowed, and moving focus outside closes the drawer. Omit the backdrop for a non-modal layout when appropriate.
+
+`Drawer.Popup` keeps its `trapFocus` and `preventScroll` overrides. Use `initialFocus` and `finalFocus` for focus targets, or the existing autofocus events for custom behavior. Initial focus defaults to the popup; `initialFocus={true}` selects the first tabbable element. Pass an element, `false` to leave focus in place, or a callback receiving `"mouse"`, `"touch"`, `"pen"`, or `"keyboard"`. Returning `true` uses the default behavior, while `false` or no return value skips focus.
+
+### Canceling Changes
+
+`onOpenChange` receives the requested state and event details before the binding changes. The details include `reason`, `event`, `trigger`, `cancel()`, and `isCanceled`. Reasons include `trigger-press`, `outside-press`, `escape-key`, `close-press`, `swipe`, `focus-out`, `close-watcher`, `imperative-action`, and `none`. `onSnapPointChange` receives the same cancelable details.
+
+```svelte
+<Drawer.Root
+  onOpenChange={(open, details) => {
+    if (!open && hasUnsavedChanges) details.cancel();
+  }}
+>
+  <!-- ... -->
+</Drawer.Root>
+```
+
+Set `disablePointerDismissal` on Root to ignore outside-pointer dismissal and non-modal focus-out dismissal while keeping swipe and escape dismissal available.
+
+### Deferred Closing
+
+Bind Root's `actions` to access `close()` and `unmount()`. For an exit animation managed outside the browser's CSS animation lifecycle, call `details.preventUnmountOnClose()` inside `onOpenChange` when closing. The popup, viewport, and backdrop stay mounted until `actions.unmount()` finishes the close. `onOpenChangeComplete(false)` then runs once. Reopening cancels the deferred close. `forceMount` remains available for permanently mounted content.
 
 ### Focus Trap
 
@@ -329,9 +351,19 @@ Allowing body scroll can affect focus and perceived modality; use intentionally.
 
 </Callout>
 
-### iOS Keyboard Inset
+### Virtual Keyboard Handling
 
-`Drawer.Viewport` exposes `--drawer-keyboard-inset` so you can handle keyboard padding in your own styles.
+Wrap the drawer subtree in `Drawer.VirtualKeyboardProvider` to opt into virtual keyboard viewport adjustments and iOS input handling. Without this provider, the keyboard inset is zero. Use `enabled={false}` to disable it dynamically. `Drawer.Viewport` exposes `--drawer-keyboard-inset` for your own padding styles.
+
+```svelte
+<Drawer.VirtualKeyboardProvider>
+  <Drawer.Root>
+    <!-- trigger, portal, viewport and popup -->
+  </Drawer.Root>
+</Drawer.VirtualKeyboardProvider>
+```
+
+Test keyboard behavior on the target devices, including iOS Safari; simulated viewport tests do not exercise an actual software keyboard.
 
 A common pattern is adding bottom padding to the viewport:
 

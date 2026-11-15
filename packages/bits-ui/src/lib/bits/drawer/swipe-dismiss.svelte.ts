@@ -5,6 +5,7 @@ export type SwipeDirection = "up" | "down" | "left" | "right";
 export type SwipeDismissNativeEvent = PointerEvent | TouchEvent;
 
 export type SwipeProgressDetails = {
+	event?: SwipeDismissNativeEvent;
 	deltaX: number;
 	deltaY: number;
 	direction: SwipeDirection | undefined;
@@ -773,6 +774,7 @@ export class SwipeDismiss {
 		const progressDirection = this.primaryDirection ?? this.intendedSwipeDirection;
 		if (!progressDirection) {
 			this.updateSwipeProgress(0, {
+				event,
 				deltaX: dragDeltaX,
 				deltaY: dragDeltaY,
 				direction: swipeDirectionDetails,
@@ -787,6 +789,7 @@ export class SwipeDismiss {
 		const scale = this.initialTransform.scale || 1;
 		if (size <= 0 || scale <= 0) {
 			this.updateSwipeProgress(0, {
+				event,
 				deltaX: dragDeltaX,
 				deltaY: dragDeltaY,
 				direction: swipeDirectionDetails,
@@ -801,6 +804,7 @@ export class SwipeDismiss {
 		);
 		if (progressDisplacement <= 0) {
 			this.updateSwipeProgress(0, {
+				event,
 				deltaX: dragDeltaX,
 				deltaY: dragDeltaY,
 				direction: swipeDirectionDetails,
@@ -809,6 +813,7 @@ export class SwipeDismiss {
 		}
 
 		this.updateSwipeProgress(progressDisplacement / (size * scale), {
+			event,
 			deltaX: dragDeltaX,
 			deltaY: dragDeltaY,
 			direction: swipeDirectionDetails,
@@ -923,6 +928,7 @@ export class SwipeDismiss {
 		const releaseDeltaX = resolvedDragOffset.x - resolvedInitialTransform.x;
 		const releaseDeltaY = resolvedDragOffset.y - resolvedInitialTransform.y;
 		const progressDetails: SwipeProgressDetails = {
+			event,
 			deltaX: releaseDeltaX,
 			deltaY: releaseDeltaY,
 			direction: this.swipeDirection ?? this.intendedSwipeDirection,
