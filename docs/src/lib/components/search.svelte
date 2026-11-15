@@ -1,6 +1,6 @@
 <script lang="ts">
 	import MagnifyingGlass from "phosphor-svelte/lib/MagnifyingGlass";
-	import { onMount } from "svelte";
+	import { flushSync, onMount } from "svelte";
 	import { Button, Command, Dialog } from "bits-ui";
 	import {
 		type SearchResult,
@@ -14,6 +14,7 @@
 
 	let searchState = $state<"loading" | "ready">("loading");
 	let searchQuery = $state("");
+	let searchInput = $state<HTMLInputElement | null>(null);
 	let results = $state<SearchResult[]>([]);
 
 	onMount(async () => {
@@ -29,10 +30,21 @@
 
 	let clearTimeoutId: number | undefined;
 
+	function openSearch() {
+		if (clearTimeoutId !== undefined) {
+			window.clearTimeout(clearTimeoutId);
+			clearTimeoutId = undefined;
+			searchQuery = "";
+		}
+		// iOS needs focus within the user gesture to open the software keyboard.
+		flushSync(() => (open = true));
+		searchInput?.focus({ preventScroll: true });
+	}
+
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
-			open = true;
+			openSearch();
 		}
 	}
 
@@ -56,13 +68,14 @@
 >
 	{#if showTrigger}
 		<Button.Root
-			onclick={() => (open = true)}
+			onclick={openSearch}
 			aria-label="Search Docs"
 			class="relative -mr-3 ml-auto inline-flex h-10 w-10 touch-manipulation items-center justify-center rounded-input px-2 transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden sm:hidden"
 		>
 			<MagnifyingGlass class="size-5" />
 		</Button.Root>
 		<Dialog.Trigger
+			onclick={openSearch}
 			class="relative hidden h-10 items-center justify-between gap-3 rounded-[9px] bg-muted px-3 text-sm font-normal whitespace-nowrap text-muted-foreground ring-offset-background transition-colors hover:bg-dark-10 focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-hidden sm:inline-flex sm:w-72"
 		>
 			<span class="flex items-center gap-2">
@@ -99,6 +112,8 @@
 				class="flex h-full w-full flex-col self-start overflow-hidden rounded-xl bg-background"
 			>
 				<Command.Input
+					bind:ref={searchInput}
+					autofocus
 					bind:value={searchQuery}
 					autocomplete="off"
 					spellcheck="false"

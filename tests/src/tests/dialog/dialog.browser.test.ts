@@ -21,6 +21,7 @@ import DialogSingleFocusableTest from "./dialog-single-focusable-test.svelte";
 import DialogShadowRootTest from "./dialog-shadow-root-test.svelte";
 import DialogShadowFieldTest from "./dialog-shadow-field-test.svelte";
 import DialogOpenOnMountTest from "./dialog-open-on-mount-test.svelte";
+import DialogBodyPointerTest from "./dialog-body-pointer-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -832,6 +833,49 @@ describe("Scroll Lock", () => {
 		expect(await restored).toBe("");
 	});
 
+	describe("preventBodyPointerEvents={false}", () => {
+		async function openPointerTest(overlay: boolean) {
+			await expect.poll(() => document.body.style.pointerEvents).toBe("");
+			await render(DialogBodyPointerTest, { overlay });
+			await page.getByTestId("trigger").click();
+			await expectExists(page.getByTestId("content"));
+			await waitForDismissibleLayer(page.getByTestId("content"));
+			await expect.poll(() => document.body.style.overflow).toBe("hidden");
+		}
+
+		it("should leave body pointer-events alone when an overlay is rendered", async () => {
+			await openPointerTest(true);
+			await tick();
+			await new Promise((r) => setTimeout(r, 50));
+			expect(document.body.style.pointerEvents).toBe("");
+
+			// the overlay still catches outside interaction
+			await page.getByTestId("overlay").click();
+			await expectNotExists(page.getByTestId("content"));
+		});
+
+		it("should still block body pointer-events without an overlay", async () => {
+			await openPointerTest(false);
+			await expect.poll(() => document.body.style.pointerEvents).toBe("none");
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("content"));
+			await expect.poll(() => document.body.style.pointerEvents).toBe("");
+		});
+
+		it("should block body pointer-events while a menu inside the dialog is open", async () => {
+			await openPointerTest(true);
+			await page.getByTestId("menu-trigger").click();
+			await expectExists(page.getByTestId("menu-content"));
+			await expect.poll(() => document.body.style.pointerEvents).toBe("none");
+
+			await userEvent.keyboard(kbd.ESCAPE);
+			await expectNotExists(page.getByTestId("menu-content"));
+			await expectExists(page.getByTestId("content"));
+			await expect.poll(() => document.body.style.pointerEvents).toBe("");
+			expect(document.body.style.overflow).toBe("hidden");
+		});
+	});
+
 	it("should restore a single inline overflow axis on body after closing", async () => {
 		// a lock left by the previous test releases on a delay and would reuse its stale snapshot
 		await expect.poll(() => document.body.style.overflow).toBe("");
@@ -876,42 +920,32 @@ describe("DismissibleLayer teardown (derived_inert / #2080)", () => {
 		};
 	}
 
-	it("should not read the layer ref from pending focus work after unmount", async () => {
-		const t = await open();
-		const content = page.getByTestId("content").element();
-		const layers = (
-			globalThis as {
-				bitsDismissableLayers?: Map<
-					{ opts: { ref: { current: HTMLElement | null } } },
-					unknown
-				>;
-			}
-		).bitsDismissableLayers!;
-		const layer = [...layers.keys()].find((layer) => layer.opts.ref.current === content)!;
-		const originalRef = layer.opts.ref;
-		const readRef = vi.fn(() => originalRef.current);
-		layer.opts.ref = {
-			get current() {
-				return readRef();
-			},
-			set current(value) {
-				originalRef.current = value;
-			},
-		};
+	/** A blur out of the layer is what lets it report the focus outside. */
+	function moveFocusOutside() {
+		page.getByTestId("content").element().dispatchEvent(new FocusEvent("blur"));
+		document.body.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+	}
 
-		try {
-			content.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
-			expect(readRef).toHaveBeenCalled();
-			// Unmount synchronously before the focus handler's afterTick callback runs.
-			t.unmount();
-			expect(layers.has(layer)).toBe(false);
-			readRef.mockClear();
+	it("should report focus moving outside", async () => {
+		const onFocusOutside = vi.fn((event: FocusEvent) => event.preventDefault());
+		await open({ contentProps: { onFocusOutside } });
 
-			await tick();
-			expect(readRef).not.toHaveBeenCalled();
-		} finally {
-			layer.opts.ref = originalRef;
-		}
+		moveFocusOutside();
+		await tick();
+
+		expect(onFocusOutside).toHaveBeenCalledTimes(1);
+	});
+
+	it("should not run pending focus work after unmount", async () => {
+		const onFocusOutside = vi.fn();
+		const t = await open({ contentProps: { onFocusOutside } });
+
+		moveFocusOutside();
+		// Unmount synchronously before the focus handler's afterTick callback runs.
+		t.unmount();
+		await tick();
+
+		expect(onFocusOutside).not.toHaveBeenCalled();
 	});
 
 	it("should not emit derived_inert when unmounted while open", async () => {

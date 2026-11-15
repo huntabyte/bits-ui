@@ -62,6 +62,8 @@ export class LinkPreviewRootState {
 	contentPresence: PresenceManager;
 	triggerNode = $state<HTMLElement | null>(null);
 	isOpening = false;
+	/** Focus opened the preview, so the pointer leaving does not close it. */
+	openedViaFocus = $state(false);
 	domContext: DOMContext = new DOMContext(() => null);
 
 	constructor(opts: LinkPreviewRootStateOpts) {
@@ -80,6 +82,7 @@ export class LinkPreviewRootState {
 			(isOpen) => {
 				if (!isOpen) {
 					this.hasSelection = false;
+					this.openedViaFocus = false;
 					return;
 				}
 				if (!this.domContext) return;
@@ -188,7 +191,7 @@ export class LinkPreviewTriggerState {
 	}
 
 	onpointerleave(e: BitsPointerEvent) {
-		if (isTouch(e)) return;
+		if (isTouch(e) || this.root.openedViaFocus) return;
 		if (!this.root.contentMounted || !this.root.opts.open.current) {
 			this.root.immediateClose();
 		}
@@ -196,10 +199,12 @@ export class LinkPreviewTriggerState {
 
 	onfocus(e: BitsFocusEvent) {
 		if (!isFocusVisible(e.currentTarget)) return;
+		this.root.openedViaFocus = true;
 		this.root.handleOpen();
 	}
 
 	onblur(_: BitsFocusEvent) {
+		this.root.openedViaFocus = false;
 		this.root.handleClose();
 	}
 
@@ -251,7 +256,7 @@ export class LinkPreviewContentState {
 		new SafePolygon({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.opts.ref.current,
-			enabled: () => this.root.opts.open.current,
+			enabled: () => this.root.opts.open.current && !this.root.openedViaFocus,
 			onPointerExit: () => {
 				this.root.handleClose();
 			},

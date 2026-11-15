@@ -103,12 +103,12 @@ export function createFormatter(opts: CreateFormatterOptions) {
 		return new DateFormatter(locale, { weekday: length }).format(date);
 	}
 
-	function dayPeriod(date: Date, hourCycle: HourCycle | undefined = undefined) {
-		const parts = new DateFormatter(locale, {
+	function dayPeriod(date: DateValue, hourCycle: HourCycle | undefined = undefined) {
+		const parts = toParts(date, {
 			hour: "numeric",
 			minute: "numeric",
 			hourCycle: hourCycle === 24 ? "h23" : undefined,
-		}).formatToParts(date);
+		});
 		const value = parts.find((p) => p.type === "dayPeriod")?.value;
 		if (value === "PM") {
 			return "PM";
@@ -176,12 +176,12 @@ export function createTimeFormatter(initialLocale: string) {
 		}
 	}
 
-	function dayPeriod(date: Date, hourCycle: HourCycle | undefined = undefined) {
-		const parts = new DateFormatter(locale, {
+	function dayPeriod(time: TimeValue, hourCycle: HourCycle | undefined = undefined) {
+		const parts = toParts(time, {
 			hour: "numeric",
 			minute: "numeric",
 			hourCycle: hourCycle === 24 ? "h23" : undefined,
-		}).formatToParts(date);
+		});
 		const value = parts.find((p) => p.type === "dayPeriod")?.value;
 		if (value === "PM") return "PM";
 		return "AM";

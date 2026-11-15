@@ -13,6 +13,7 @@ import ComboboxForceMountTest, {
 } from "./combobox-force-mount-test.svelte";
 import { expectExists, expectNotExists, waitForDismissibleLayer } from "../browser-utils";
 import ComboboxFieldsetDisabledTest from "./combobox-fieldset-disabled-test.svelte";
+import ComboboxPageScrollTest from "./combobox-page-scroll-test.svelte";
 
 const kbd = getTestKbd();
 
@@ -179,6 +180,22 @@ describe("combobox - single", () => {
 		await expect
 			.element(t.group)
 			.toHaveAttribute("aria-labelledby", t.groupHeading.element().id);
+	});
+
+	it("should point the input's `aria-controls` at the listbox only while it is mounted", async () => {
+		const t = await setupSingle();
+		await expect.element(t.input).not.toHaveAttribute("aria-controls");
+
+		(t.input.element() as HTMLElement).focus();
+		await t.user.keyboard(kbd.ARROW_DOWN);
+		const listbox = page.getByRole("listbox");
+		await expect.element(listbox).toBeInTheDocument();
+		await expect.element(t.input).toHaveAttribute("aria-expanded", "true");
+		await expect.element(t.input).toHaveAttribute("aria-controls", listbox.element().id);
+
+		await t.user.keyboard(kbd.ESCAPE);
+		await expect.element(listbox).not.toBeInTheDocument();
+		await expect.element(t.input).not.toHaveAttribute("aria-controls");
 	});
 
 	it("should select item with the enter key", async () => {
@@ -582,6 +599,33 @@ describe("combobox - single", () => {
 			);
 		await expect.element(t.valueBinding).toHaveTextContent("1");
 		expect(onValueChange).not.toHaveBeenCalled();
+	});
+
+	it("should scroll only the viewport, not the page, when highlighting an item that overflows the window", async () => {
+		render(ComboboxPageScrollTest);
+		const input = page.getByTestId("input");
+		const inputEl = input.element() as HTMLElement;
+		window.scrollTo(
+			0,
+			// the input sits at the bottom edge, so the first item opens below the fold
+			inputEl.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 5
+		);
+		await new Promise((r) => setTimeout(r, 50));
+		const baselineY = window.scrollY;
+		expect(baselineY).toBeGreaterThan(0);
+
+		// open from the keyboard: a pointer click lets the driver scroll the page itself
+		inputEl.focus({ preventScroll: true });
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expectExists(page.getByTestId("content"));
+		await expect.element(page.getByTestId("0")).toHaveAttribute("data-highlighted");
+		await new Promise((r) => setTimeout(r, 100));
+		expect(window.scrollY).toBe(baselineY);
+
+		await userEvent.keyboard(kbd.ARROW_DOWN);
+		await expect.element(page.getByTestId("1")).toHaveAttribute("data-highlighted");
+		await new Promise((r) => setTimeout(r, 50));
+		expect(window.scrollY).toBe(baselineY);
 	});
 });
 

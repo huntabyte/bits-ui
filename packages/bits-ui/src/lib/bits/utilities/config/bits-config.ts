@@ -53,6 +53,7 @@ export class BitsConfigState {
 	constructor(parent: BitsConfigState | null, opts: BitsConfigStateProps) {
 		const resolveConfigOption = createConfigResolver(parent, opts);
 		this.opts = {
+			dir: resolveConfigOption((config) => config.dir),
 			defaultPortalTo: resolveConfigOption((config) => config.defaultPortalTo),
 			defaultLocale: resolveConfigOption((config) => config.defaultLocale),
 		};

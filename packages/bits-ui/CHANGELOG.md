@@ -1,5 +1,29 @@
 # bits-ui
 
+## 2.21.0
+
+### Minor Changes
+
+- feat(Dialog/AlertDialog): add `preventBodyPointerEvents` to `Content`. Set it to `false` to let a rendered overlay block the page instead of setting `pointer-events: none` on `<body>`, which restyles every element on large pages ([#2282](https://github.com/huntabyte/bits-ui/pull/2282))
+
+### Patch Changes
+
+- fix(Combobox): set `aria-controls` on `Combobox.Input` to the listbox while it is mounted ([#2293](https://github.com/huntabyte/bits-ui/pull/2293))
+
+- fix(Floating, DismissibleLayer): don't read `$derived` options from observers and document listeners while a parent's outro holds the layer inert ([#2295](https://github.com/huntabyte/bits-ui/pull/2295))
+
+- fix(LinkPreview): don't close a preview opened by focus when the pointer leaves the trigger ([#2284](https://github.com/huntabyte/bits-ui/pull/2284))
+
+- fix(Select, Combobox): select once when a touch press that ended without a click came before the tap ([#2296](https://github.com/huntabyte/bits-ui/pull/2296))
+
+- fix(Select, Combobox): scroll only the viewport, not the page, when highlighting an item ([#2298](https://github.com/huntabyte/bits-ui/pull/2298))
+
+- fix(TimeField, DateField): use the `ZonedDateTime` value's time zone, not the local one, when computing AM/PM ([#2290](https://github.com/huntabyte/bits-ui/pull/2290))
+
+- fix(Tooltip): don't close a tooltip opened by focus when the pointer leaves the trigger ([#2284](https://github.com/huntabyte/bits-ui/pull/2284))
+
+- perf(Tooltip): register and unregister tether triggers in O(1) instead of copying the registry on every write, so mounting many triggers on one tether is no longer quadratic ([#2282](https://github.com/huntabyte/bits-ui/pull/2282))
+
 ## 2.20.6
 
 ### Patch Changes

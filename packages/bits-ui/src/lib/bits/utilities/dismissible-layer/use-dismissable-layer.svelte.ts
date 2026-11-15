@@ -5,6 +5,7 @@ import {
 	executeCallbacks,
 	onDestroyEffect,
 	type ReadableBoxedValues,
+	simpleBox,
 } from "svelte-toolbelt";
 import { watch } from "runed";
 import { untrack } from "svelte";
@@ -43,8 +44,13 @@ export class DismissibleLayerState {
 		return new DismissibleLayerState(opts);
 	}
 	readonly opts: DismissibleLayerStateOpts;
-	#interactOutsideProp: ReadableBox<EventCallback<PointerEvent>>;
-	#behaviorType: ReadableBox<InteractOutsideBehaviorType>;
+	// The handlers below run from document listeners, which keep firing while a parent's
+	// outro holds this layer inert. Reading `opts` then warns `derived_inert`, so they read
+	// what the effect in the constructor last saw: effects don't run while inert.
+	#interactOutsideSnapshot: EventCallback<PointerEvent> = noop;
+	#isValidEventSnapshot: DismissibleLayerStateOpts["isValidEvent"]["current"] = () => false;
+	#nodeSnapshot: HTMLElement | null = null;
+	#behaviorType = simpleBox<InteractOutsideBehaviorType>("close");
 	#interceptedEvents: Record<string, boolean> = {
 		pointerdown: false,
 	};
@@ -52,23 +58,26 @@ export class DismissibleLayerState {
 	#capturedPointerDown: PointerEvent | null = null;
 	#isFocusInsideDOMTree = false;
 	#documentObj = undefined as unknown as Document;
-	#onFocusOutside: DismissibleLayerStateOpts["onFocusOutside"];
+	#onFocusOutsideSnapshot: DismissibleLayerStateOpts["onFocusOutside"]["current"] = noop;
 	#unsubClickListener = noop;
 	/**
 	 * Set once the layer is torn down. Deferred work scheduled before teardown can
 	 * still run afterwards, so every such callback must short-circuit on this
-	 * before reading `this.opts.ref.current` — reading a destroyed `$derived`
-	 * triggers Svelte's `derived_inert` warning. A class field rather than a
-	 * constructor local so the class-field handlers below can see it too.
+	 * before using `this.#nodeSnapshot`. A class field rather than a constructor
+	 * local so the class-field handlers below can see it too.
 	 */
 	#destroyed = false;
 
 	constructor(opts: DismissibleLayerStateOpts) {
 		this.opts = opts;
 
-		this.#behaviorType = opts.interactOutsideBehavior;
-		this.#interactOutsideProp = opts.onInteractOutside;
-		this.#onFocusOutside = opts.onFocusOutside;
+		$effect.pre(() => {
+			this.#behaviorType.current = opts.interactOutsideBehavior.current;
+			this.#interactOutsideSnapshot = opts.onInteractOutside.current;
+			this.#onFocusOutsideSnapshot = opts.onFocusOutside.current;
+			this.#isValidEventSnapshot = opts.isValidEvent.current;
+			this.#nodeSnapshot = opts.ref.current;
+		});
 
 		let unsubEvents = noop;
 		let registeredNode: HTMLElement | null = null;
@@ -103,17 +112,17 @@ export class DismissibleLayerState {
 
 	#handleFocus = (event: FocusEvent) => {
 		if (event.defaultPrevented) return;
-		if (this.#destroyed || !this.opts.ref.current) return;
+		if (this.#destroyed || !this.#nodeSnapshot) return;
 		afterTick(() => {
 			// The layer can be destroyed between the focus event and this tick — a
 			// focus change is frequently what closes it. `#destroyed` must
-			// short-circuit before any `this.opts.ref.current` read.
+			// short-circuit before `this.#nodeSnapshot` is used.
 			if (this.#destroyed) return;
-			if (!this.opts.ref.current || this.#isTargetWithinLayer(event.target as HTMLElement))
+			if (!this.#nodeSnapshot || this.#isTargetWithinLayer(event.target as HTMLElement))
 				return;
 
 			if (event.target && !this.#isFocusInsideDOMTree) {
-				this.#onFocusOutside.current?.(event);
+				this.#onFocusOutsideSnapshot?.(event);
 			}
 		});
 	};
@@ -162,17 +171,17 @@ export class DismissibleLayerState {
 		if (event.defaultPrevented) {
 			event = createWrappedEvent(e);
 		}
-		this.#interactOutsideProp.current(e as PointerEvent);
+		this.#interactOutsideSnapshot(e as PointerEvent);
 	};
 
 	#interactOutside = (e: PointerEvent) => {
-		if (!this.opts.ref.current) {
+		if (!this.#nodeSnapshot) {
 			this.#unsubClickListener();
 			return;
 		}
 		const isEventValid =
-			this.opts.isValidEvent.current(e, this.opts.ref.current) ||
-			isValidEvent(e, this.opts.ref.current);
+			this.#isValidEventSnapshot(e, this.#nodeSnapshot) ||
+			isValidEvent(e, this.#nodeSnapshot);
 
 		if (!this.#isResponsibleLayer || this.#isAnyEventIntercepted() || !isEventValid) {
 			this.#unsubClickListener();
@@ -223,7 +232,7 @@ export class DismissibleLayerState {
 			);
 			this.#unsubClickListener = unsubClick;
 		} else {
-			this.#interactOutsideProp.current(event);
+			this.#interactOutsideSnapshot(event);
 		}
 	};
 
@@ -240,13 +249,13 @@ export class DismissibleLayerState {
 	#markResponsibleLayer = (event: PointerEvent) => {
 		this.#capturedPointerDown = event;
 		captureEventPath(event);
-		if (!this.opts.ref.current) return;
-		this.#isResponsibleLayer = isResponsibleLayer(this.opts.ref.current);
+		if (!this.#nodeSnapshot) return;
+		this.#isResponsibleLayer = isResponsibleLayer(this);
 	};
 
 	#isTargetWithinLayer = (target: HTMLElement) => {
-		if (!this.opts.ref.current) return false;
-		return isOrContainsTarget(this.opts.ref.current, target);
+		if (!this.#nodeSnapshot) return false;
+		return isOrContainsTarget(this.#nodeSnapshot, target);
 	};
 
 	/**
@@ -299,18 +308,18 @@ export function getTopMostDismissableLayer(
 	);
 }
 
-function isResponsibleLayer(node: HTMLElement): boolean {
+function isResponsibleLayer(layer: DismissibleLayerState): boolean {
 	const layersArr = [...globalThis.bitsDismissableLayers];
 	/**
 	 * We first check if we can find a top layer with `close` or `ignore`.
-	 * If that top layer was found and matches the provided node, then the node is
+	 * If that top layer was found and is the provided layer, then that layer is
 	 * responsible for the outside interaction. Otherwise, we know that all layers defer so
 	 * the first layer is the responsible one.
 	 */
 	const topMostLayer = getTopMostDismissableLayer(layersArr);
-	if (topMostLayer) return topMostLayer[0].opts.ref.current === node;
-	const [firstLayerNode] = layersArr[0]!;
-	return firstLayerNode.opts.ref.current === node;
+	if (topMostLayer) return topMostLayer[0] === layer;
+	const [firstLayer] = layersArr[0]!;
+	return firstLayer === layer;
 }
 
 function isValidEvent(e: PointerEvent, node: HTMLElement): boolean {

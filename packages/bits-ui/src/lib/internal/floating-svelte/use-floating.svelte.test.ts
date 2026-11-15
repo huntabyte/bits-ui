@@ -49,4 +49,73 @@ describe("useFloating", () => {
 			floatingNode.remove();
 		}
 	});
+
+	it("updates when an option changes without whileElementsMounted", async () => {
+		const referenceNode = document.createElement("button");
+		const floatingNode = document.createElement("div");
+		document.body.append(referenceNode, floatingNode);
+		let placement = $state<"top" | "bottom">("bottom");
+		let floating: UseFloatingReturn | undefined;
+		// jsdom has no layout, and `update` ignores a reference without client rects.
+		vi.spyOn(referenceNode, "getClientRects").mockReturnValue([{}] as unknown as DOMRectList);
+
+		const destroy = $effect.root(() => {
+			floating = useFloating({
+				reference: box.with(() => referenceNode),
+				placement: () => placement,
+			});
+			floating.floating.current = floatingNode;
+		});
+
+		try {
+			flushSync();
+			await vi.waitFor(() => expect(floating?.placement).toBe("bottom"));
+
+			placement = "top";
+			flushSync();
+
+			await vi.waitFor(() => expect(floating?.placement).toBe("top"));
+		} finally {
+			destroy();
+			referenceNode.remove();
+			floatingNode.remove();
+		}
+	});
+
+	it("reattaches whileElementsMounted when an option changes", () => {
+		const referenceNode = document.createElement("button");
+		const floatingNode = document.createElement("div");
+		document.body.append(referenceNode, floatingNode);
+		let placement = $state<"top" | "bottom">("bottom");
+		// floating-ui's `autoUpdate` calls `update` once as it attaches.
+		const whileElementsMounted = vi.fn(
+			(_reference: unknown, _floating: unknown, update: () => void) => {
+				update();
+				return () => {};
+			}
+		);
+
+		const destroy = $effect.root(() => {
+			const floating = useFloating({
+				reference: box.with(() => referenceNode),
+				placement: () => placement,
+				whileElementsMounted,
+			});
+			floating.floating.current = floatingNode;
+		});
+
+		try {
+			flushSync();
+			expect(whileElementsMounted).toHaveBeenCalledTimes(1);
+
+			placement = "top";
+			flushSync();
+
+			expect(whileElementsMounted).toHaveBeenCalledTimes(2);
+		} finally {
+			destroy();
+			referenceNode.remove();
+			floatingNode.remove();
+		}
+	});
 });

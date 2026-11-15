@@ -37,38 +37,34 @@ type TooltipTriggerRecord = {
 };
 
 class TooltipTriggerRegistryState {
-	triggers = $state(new Map<string, TooltipTriggerRecord>());
+	// Mutated in place. Only the active trigger's record is read reactively, so registering,
+	// updating, or removing any other trigger is O(1) and invalidates nothing. Copying the map
+	// on every write made mounting n triggers on one tether O(n²).
+	triggers = new Map<string, TooltipTriggerRecord>();
+	#activeRecordVersion = $state(0);
 	activeTriggerId = $state<string | null>(null);
 	activeTriggerNode = $derived.by(() => {
+		void this.#activeRecordVersion;
 		const activeTriggerId = this.activeTriggerId;
 		if (activeTriggerId === null) return null;
 		return this.triggers.get(activeTriggerId)?.node ?? null;
 	});
 	activePayload = $derived.by(() => {
+		void this.#activeRecordVersion;
 		const activeTriggerId = this.activeTriggerId;
 		if (activeTriggerId === null) return null;
 		return this.triggers.get(activeTriggerId)?.payload ?? null;
 	});
 
 	register = (record: TooltipTriggerRecord) => {
-		const next = new Map(this.triggers);
-		next.set(record.id, record);
-		this.triggers = next;
-		this.#coerceActiveTrigger();
+		this.triggers.set(record.id, record);
+		if (record.id === this.activeTriggerId) this.#activeRecordVersion++;
 	};
 
-	update = (record: TooltipTriggerRecord) => {
-		const next = new Map(this.triggers);
-		next.set(record.id, record);
-		this.triggers = next;
-		this.#coerceActiveTrigger();
-	};
+	update = this.register;
 
 	unregister = (id: string) => {
-		if (!this.triggers.has(id)) return;
-		const next = new Map(this.triggers);
-		next.delete(id);
-		this.triggers = next;
+		if (!this.triggers.delete(id)) return;
 		if (this.activeTriggerId === id) {
 			this.activeTriggerId = null;
 		}
@@ -98,14 +94,6 @@ class TooltipTriggerRegistryState {
 		const firstEntry = this.triggers.entries().next();
 		if (firstEntry.done) return null;
 		return firstEntry.value[0];
-	};
-
-	#coerceActiveTrigger = () => {
-		const activeTriggerId = this.activeTriggerId;
-		if (activeTriggerId === null) return;
-		if (!this.triggers.has(activeTriggerId)) {
-			this.activeTriggerId = null;
-		}
 	};
 }
 
@@ -293,6 +281,8 @@ export class TooltipRootState {
 	contentNode = $state<HTMLElement | null>(null);
 	contentPresence: PresenceManager;
 	#wasOpenDelayed = $state(false);
+	/** Focus opened the tooltip, so the pointer leaving does not close it. */
+	openedViaFocus = $state(false);
 	#timerFn: TimeoutFn<() => void>;
 	readonly stateAttr = $derived.by(() => {
 		if (!this.opts.open.current) return "closed";
@@ -346,6 +336,7 @@ export class TooltipRootState {
 					this.ensureActiveTrigger();
 					this.provider.onOpen(this);
 				} else {
+					this.openedViaFocus = false;
 					this.provider.onClose(this);
 				}
 			},
@@ -403,12 +394,14 @@ export class TooltipRootState {
 	};
 
 	onTriggerEnter = (triggerId: string) => {
+		// hovering another trigger moves the tooltip away from the focused one
+		if (!this.isActiveTrigger(triggerId)) this.openedViaFocus = false;
 		this.setActiveTrigger(triggerId);
 		this.#handleDelayedOpen();
 	};
 
 	onTriggerLeave = () => {
-		if (this.disableHoverableContent) {
+		if (this.disableHoverableContent && !this.openedViaFocus) {
 			this.handleClose();
 		} else {
 			this.#timerFn.stop();
@@ -773,6 +766,7 @@ export class TooltipTriggerState {
 
 		if (root.ignoreNonKeyboardFocus && !isFocusVisible(e.currentTarget)) return;
 		root.setActiveTrigger(this.opts.id.current);
+		root.openedViaFocus = true;
 		root.handleOpen();
 		root.provider.ignoreFocusScroll();
 	};
@@ -842,7 +836,10 @@ export class TooltipContentState {
 		new SafePolygon({
 			triggerNode: () => this.root.triggerNode,
 			contentNode: () => this.root.contentNode,
-			enabled: () => this.root.opts.open.current && !this.root.disableHoverableContent,
+			enabled: () =>
+				this.root.opts.open.current &&
+				!this.root.disableHoverableContent &&
+				!this.root.openedViaFocus,
 			transitIntentTimeout: 180,
 			ignoredTargets: () => {
 				// only skip closing for sibling triggers when there's a skip-delay grace period;

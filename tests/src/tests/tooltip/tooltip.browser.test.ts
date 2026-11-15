@@ -21,6 +21,7 @@ import TooltipTetherGapTest from "./tooltip-tether-gap-test.svelte";
 import TooltipScrollContainerTest from "./tooltip-scroll-container-test.svelte";
 import TooltipTriggerTeardownTest from "./tooltip-trigger-teardown-test.svelte";
 import TooltipTriggerDetachTest from "./tooltip-trigger-detach-test.svelte";
+import TooltipTetherRegistryTest from "./tooltip-tether-registry-test.svelte";
 import { expectExists, expectNotExists, observeTransitionAttrs } from "../browser-utils";
 import { page, userEvent } from "vitest/browser";
 
@@ -139,6 +140,34 @@ it("should open on focus and close on blur", async () => {
 	await expectExists(page.getByTestId("content"));
 
 	(t.trigger.element() as HTMLElement).blur();
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it.each([false, true])(
+	"should stay open on pointer leave while the trigger has keyboard focus (disableHoverableContent: %s)",
+	async (disableHoverableContent) => {
+		const t = await setup({ providerProps: { disableHoverableContent } });
+		await userEvent.tab();
+		await expectExists(page.getByTestId("content"));
+
+		await t.trigger.hover();
+		await page.getByTestId("outside").hover();
+		// wait past the safe polygon's transit intent timeout
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		await expectExists(page.getByTestId("content"));
+	}
+);
+
+it("should close on pointer leave when hover reopens the tooltip after escape", async () => {
+	const t = await setup();
+	await userEvent.tab();
+	await expectExists(page.getByTestId("content"));
+	await userEvent.keyboard(kbd.ESCAPE);
+	await expectNotExists(page.getByTestId("content"));
+
+	await t.trigger.hover();
+	await expectExists(page.getByTestId("content"));
+	await page.getByTestId("outside").hover();
 	await expectNotExists(page.getByTestId("content"));
 });
 
@@ -399,6 +428,17 @@ it("singleton: should open with either trigger and update payload", async () => 
 	await expect.element(page.getByTestId("payload")).toMatchTextContent("Italic");
 	await expect.element(page.getByTestId("trigger-binding")).toMatchTextContent("trigger-2");
 
+	await t.outside.hover();
+	await expectNotExists(page.getByTestId("content"));
+});
+
+it("singleton: should close on pointer leave after hover moves away from the focused trigger", async () => {
+	const t = await setupSingleton();
+	await userEvent.tab();
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Bold");
+
+	await t.trigger2.hover();
+	await expect.element(page.getByTestId("payload")).toMatchTextContent("Italic");
 	await t.outside.hover();
 	await expectNotExists(page.getByTestId("content"));
 });
@@ -1077,4 +1117,20 @@ it("should register id and payload changes made while the trigger element is det
 	await page.getByTestId("open-b").click();
 	await expect.element(page.getByTestId("trigger-binding")).toHaveTextContent("trigger-b");
 	await expectContentAnchoredToTrigger();
+});
+
+it("tether: should keep the active payload current while other triggers mount and unmount", async () => {
+	const { component } = await render(TooltipTetherRegistryTest);
+	const content = page.getByTestId("tether-content");
+	component.open();
+	await expect.element(content).toHaveTextContent("first");
+
+	component.setLabel("second");
+	await expect.element(content).toHaveTextContent("second");
+
+	component.setOthers(200);
+	await expect.element(page.getByText("other 199")).toBeInTheDocument();
+	component.setOthers(0);
+	await expectNotExists(page.getByText("other 0"));
+	await expect.element(content).toHaveTextContent("second");
 });

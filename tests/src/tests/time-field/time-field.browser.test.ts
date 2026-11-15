@@ -87,6 +87,15 @@ it("should populate segment with value - `ZonedDateTime`", async () => {
 	await expect.element(t.value).toMatchTextContent(zonedDateTime.toString());
 });
 
+it("should use the value's time zone for the day period - `ZonedDateTime`", async () => {
+	// 08:00 in Tokyo is 23:00 UTC / 18:00 New York the previous day (PM there)
+	const tokyo = toZoned(new CalendarDateTime(1980, 1, 20, 8, 30), "Asia/Tokyo");
+	const t = await setup({ value: tokyo });
+
+	await expect.element(t.getHour()).toMatchTextContent("8");
+	await expect.element(t.getDayPeriod()).toMatchTextContent("AM");
+});
+
 it("should not show the day period for locales that don't use them", async () => {
 	if (navigator.userAgent.includes("WebKit")) {
 		expect(true);

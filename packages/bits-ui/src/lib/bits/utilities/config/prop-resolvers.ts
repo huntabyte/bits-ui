@@ -1,4 +1,5 @@
 import { boxWith, type Getter, type ReadableBox } from "svelte-toolbelt";
+import type { Direction } from "#lib/shared/index.js";
 import { type BitsConfigState, getBitsConfig } from "./bits-config.js";
 
 /**
@@ -39,3 +40,10 @@ export const resolveLocaleProp = createPropResolver((config) => config.defaultLo
  * Default value: `"body"`
  */
 export const resolvePortalToProp = createPropResolver((config) => config.defaultPortalTo, "body");
+
+/**
+ * Resolves a reading direction using the prop, the config default, or a fallback.
+ *
+ * Default value: `"ltr"`
+ */
+export const resolveDirProp = createPropResolver<Direction>((config) => config.dir, "ltr");

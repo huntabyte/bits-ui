@@ -271,6 +271,12 @@ export const preventScrollProp = defineBooleanProp({
 	default: true,
 });
 
+export const preventBodyPointerEventsProp = defineBooleanProp({
+	description:
+		"When `true`, sets `pointer-events: none` on the `<body>` while the dialog is open. Set to `false` to let a rendered overlay block pointer interaction with the page instead, which avoids restyling every element on large pages each time the dialog opens and closes. Without an overlay, the body is still blocked. When `false`, elements stacked above the overlay that aren't part of the dialog (such as toasts) receive pointer events.",
+	default: true,
+});
+
 export const restoreScrollDelayProp = defineNumberProp({
 	description:
 		"The delay in milliseconds before the scrollbar is restored after closing the dialog. This is only applicable when using the `child` snippet for custom transitions and `preventScroll` and `forceMount` are `true`. You should set this to a value greater than the transition duration to prevent content from shifting during the transition.",

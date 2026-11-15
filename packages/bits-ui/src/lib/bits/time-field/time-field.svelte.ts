@@ -40,7 +40,6 @@ import type {
 import { type TimeFormatter, createTimeFormatter } from "#lib/internal/date-time/formatter.js";
 import { type Announcer, getAnnouncer } from "#lib/internal/date-time/announcer.js";
 import { EDITABLE_TIME_SEGMENT_PARTS } from "#lib/internal/date-time/field/parts.js";
-import { toDate } from "#lib/internal/date-time/utils.js";
 
 import type { TimeValue } from "#lib/shared/date/types.js";
 import {
@@ -388,7 +387,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 				if (this.states.dayPeriod.updating) {
 					return [part, this.states.dayPeriod.updating];
 				} else {
-					return [part, this.formatter.dayPeriod(toDate(this.#toDateValue(value)))];
+					return [part, this.formatter.dayPeriod(value)];
 				}
 			} else if (part === "hour") {
 				if (this.states.hour.updating) {
@@ -540,9 +539,7 @@ export class TimeFieldRootState<T extends TimeValue = Time> {
 					prev.dayPeriod = dayPeriodHint;
 				} else {
 					const dayPeriod = this.formatter.dayPeriod(
-						toDate(
-							this.#toDateValue(this.timeRef.set({ hour: Number.parseInt(next) }))
-						),
+						this.timeRef.set({ hour: Number.parseInt(next) }),
 						this.hourCycle
 					);
 					if (dayPeriod === "AM" || dayPeriod === "PM") {
